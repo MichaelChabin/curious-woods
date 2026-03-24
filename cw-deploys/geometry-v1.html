@@ -994,14 +994,37 @@ function findClosedRegionEdges() {
     return orderedEdges.length === adj.size ? orderedEdges : null;
 }
 
+// Returns true if adding a segment/arc with the given endpoints would be a valid
+// next step in the current chain. Invalid means the click would create a branch
+// (a vertex with 3+ emphasized edges) without closing the loop.
+// Rule: at least one endpoint must be a current open end (degree-1 vertex),
+//       OR no segments are emphasized yet (starting fresh).
+function isValidNextSegment(ptAId, ptBId) {
+    var edgeCount = new Map();
+    function tally(id) { edgeCount.set(id, (edgeCount.get(id)||0) + 1); }
+    logicalSegments.forEach(function(seg) { if (seg.isEmphasized) { tally(seg.pointAId); tally(seg.pointBId); } });
+    logicalArcs.forEach(function(arc)     { if (arc.isEmphasized) { tally(arc.pointAId); tally(arc.pointBId); } });
+    if (edgeCount.size === 0) return true; // nothing selected yet — any segment valid
+    var degA = edgeCount.get(ptAId) || 0;
+    var degB = edgeCount.get(ptBId) || 0;
+    // At least one endpoint must be an open end (degree 1)
+    if (degA !== 1 && degB !== 1) return false;
+    // The other endpoint must not be saturated (degree 2 would create a branch)
+    if (degA === 1 && degB > 1) return false;
+    if (degB === 1 && degA > 1) return false;
+    return true;
+}
+
 function checkAndFill() {
     var edges = findClosedRegionEdges(); if (!edges) return;
     var fillId = 'fill:'+Date.now();
     var vertices = edges.map(function(e) { return e.a; });
     var isFirstFill = fills.size === 0;
     fillRegion(fillId, vertices, edges);
-    logicalSegments.forEach(function(seg,k) { if (seg.isEmphasized) appendOp({ op:'deemphasize', key:k }); });
-    logicalArcs.forEach(function(arc,k) { if (arc.isEmphasized) appendOp({ op:'deemphasize', key:k }); });
+    var deKeys = [];
+    logicalSegments.forEach(function(seg,k) { if (seg.isEmphasized) deKeys.push(k); });
+    logicalArcs.forEach(function(arc,k)     { if (arc.isEmphasized) deKeys.push(k); });
+    deKeys.forEach(function(k) { appendOp({ op:'deemphasize', key:k }); });
     playSound('fill');
     // On first fill, open the color tool so the child can paint immediately.
     // Delay enough for the tools menu to fully collapse first (~160ms transition + 120ms dispatch delay).
@@ -1195,6 +1218,8 @@ function render() {
                          ((seg.pointAId===selPtA && seg.pointBId===selPtB) ||
                           (seg.pointAId===selPtB && seg.pointBId===selPtA));
             if (!sharesEndpoint || isSelf) return;
+            if (seg.isEmphasized) return; // already selected — no hint needed
+            if (!isValidNextSegment(seg.pointAId, seg.pointBId)) return;
             var A2=points.get(seg.pointAId), B2=points.get(seg.pointBId); if (!A2||!B2) return;
             var cx3=B2.x-A2.x, cy3=B2.y-A2.y, lq3=cx3*cx3+cy3*cy3; if (!lq3) return;
             var pv3=Math.max(0,Math.min(1,((worldMouse.x-A2.x)*cx3+(worldMouse.y-A2.y)*cy3)/lq3));
@@ -1217,6 +1242,8 @@ function render() {
                          ((arc.pointAId===selPtA && arc.pointBId===selPtB) ||
                           (arc.pointAId===selPtB && arc.pointBId===selPtA));
             if (!sharesEndpoint || isSelf) return;
+            if (arc.isEmphasized) return; // already selected — no hint needed
+            if (!isValidNextSegment(arc.pointAId, arc.pointBId)) return;
             var ci=circles.get(arc.circIdx); if (!ci) return;
             var ce=points.get(ci.centerId); if (!ce) return;
             var pA=points.get(arc.pointAId), pB=points.get(arc.pointBId); if (!pA||!pB) return;
@@ -1596,7 +1623,13 @@ function onDown(e) {
             if (hl.type==='arc')     isSameAsLast=(hl.obj.pointAId===lastTapTarget.obj.pointAId&&hl.obj.pointBId===lastTapTarget.obj.pointBId);
         }
         if (isSameAsLast) {
-            // Potential double-click. Record enough info for onUp (fade) or onMove (sweep).
+            // Potential double-click. Clear all emphasis immediately so the glow
+            // disappears on the second mousedown rather than waiting for release.
+            var dcDeKeys = [];
+            logicalSegments.forEach(function(seg,k) { if (seg.isEmphasized) dcDeKeys.push(k); });
+            logicalArcs.forEach(function(arc,k)     { if (arc.isEmphasized) dcDeKeys.push(k); });
+            dcDeKeys.forEach(function(k) { appendOp({ op:'deemphasize', key:k }); });
+            // Record enough info for onUp (fade) or onMove (sweep).
             // lineIdx = the underlying line/circle index; isCircle distinguishes them.
             eraserCandidate = {
                 lineIdx: hl.type==='segment' ? hl.obj.lineIdx : hl.obj.circIdx,
@@ -1611,7 +1644,8 @@ function onDown(e) {
 
     // ── 3. Bare line hit (no construction points yet, not in logicalSegments) ──────
     // Not selectable. Double-click fades/restores; double-click+drag sweeps.
-    var bareIdx = hitLineForEraser(world.x, world.y);
+    var bareHit = hitForEraser(world.x, world.y);
+    var bareIdx = (bareHit && !bareHit.isCircle) ? bareHit.idx : -1;
     if (bareIdx >= 0) {
         var bareLast = lastTapTarget && lastTapTarget.type==='bare' && lastTapTarget.obj===bareIdx;
         if (bareLast && now-lastTapTime<THRESHOLDS.doubleClickTime) {
@@ -1651,7 +1685,12 @@ function onMove(e) {
                 eraserSweepMode = seedObj.isScaffold ? 'restore' : 'fade';
                 eraserTouched   = new Set();
                 lastTapTime     = 0;
-                eraserSweepHit(eraserCandidate.lineIdx);
+                // Clear all emphasis — entering sweep mode exits loop-building
+                var sweepDeKeys = [];
+                logicalSegments.forEach(function(seg,k) { if (seg.isEmphasized) sweepDeKeys.push(k); });
+                logicalArcs.forEach(function(arc,k)     { if (arc.isEmphasized) sweepDeKeys.push(k); });
+                sweepDeKeys.forEach(function(k) { appendOp({ op:'deemphasize', key:k }); });
+                eraserSweepHit(eraserCandidate.lineIdx, eraserCandidate.isCircle);
             }
             eraserCandidate = null;
         }
@@ -1665,8 +1704,8 @@ function onMove(e) {
         var dex = pos.x - prevX, dey = pos.y - prevY;
         if (Math.sqrt(dex*dex+dey*dey) > 1.5) eraserAngle = Math.atan2(dey, dex) + Math.PI / 2;
         // Apply fade/restore to any line under the cursor
-        var sweepIdx = hitLineForEraser(world.x, world.y);
-        if (sweepIdx >= 0) eraserSweepHit(sweepIdx);
+        var sweepHit = hitForEraser(world.x, world.y);
+        if (sweepHit) eraserSweepHit(sweepHit.idx, sweepHit.isCircle);
         return;
     }
 
@@ -1681,36 +1720,54 @@ function onMove(e) {
     if (interactionState==='AWAITING_SECOND_TAP' && firstTapPoint) ghostLineEnd=pos;
 }
 
-// Toggle fade state on a line index. Mode locked at eraser start:
-// 'fade' → makes normal lines recessive; 'restore' → restores faded lines.
-// Works on both lines with logical segments and bare lines.
-function eraserSweepHit(lineIdx) {
-    if (eraserTouched.has(lineIdx)) return;
-    eraserTouched.add(lineIdx);
-    var l = lines.get(lineIdx); if (!l) return;
-    if (eraserSweepMode === 'fade' && !l.isScaffold) {
-        appendOp({ op:'scaffold', target:'line', idx:lineIdx, value:true });
-        playSound('scaffold_fade');
-    } else if (eraserSweepMode === 'restore' && l.isScaffold) {
-        appendOp({ op:'scaffold', target:'line', idx:lineIdx, value:false });
-        playSound('scaffold_restore');
+// Toggle fade state on a line or circle index. Mode locked at eraser start:
+// 'fade' → makes normal lines/circles recessive; 'restore' → restores faded ones.
+// isCircle=true handles circle scaffolding; false handles lines (including bare).
+function eraserSweepHit(idx, isCircle) {
+    var key = (isCircle ? 'c:' : 'l:') + idx;
+    if (eraserTouched.has(key)) return;
+    eraserTouched.add(key);
+    if (isCircle) {
+        var c = circles.get(idx); if (!c) return;
+        if (eraserSweepMode === 'fade' && !c.isScaffold) {
+            appendOp({ op:'scaffold', target:'circle', idx:idx, value:true });
+            playSound('scaffold_fade');
+        } else if (eraserSweepMode === 'restore' && c.isScaffold) {
+            appendOp({ op:'scaffold', target:'circle', idx:idx, value:false });
+            playSound('scaffold_restore');
+        }
+    } else {
+        var l = lines.get(idx); if (!l) return;
+        if (eraserSweepMode === 'fade' && !l.isScaffold) {
+            appendOp({ op:'scaffold', target:'line', idx:idx, value:true });
+            playSound('scaffold_fade');
+        } else if (eraserSweepMode === 'restore' && l.isScaffold) {
+            appendOp({ op:'scaffold', target:'line', idx:idx, value:false });
+            playSound('scaffold_restore');
+        }
     }
 }
 
-// Hit-test all lines (including bare ones) near world point.
-// Returns the lineIdx of the nearest line within threshold, or -1.
-function hitLineForEraser(wx, wy) {
-    var t = THRESHOLDS.lineHitRadius / viewScale;
-    var bestIdx = -1, bestD = Infinity;
+// Hit-test all lines and circles near world point for the eraser.
+// Returns {idx, isCircle} for the nearest hit within threshold, or null.
+function hitForEraser(wx, wy) {
+    var tL = THRESHOLDS.lineHitRadius / viewScale;
+    var tC = THRESHOLDS.circleHitRadius / viewScale;
+    var bestIdx = -1, bestD = Infinity, bestIsCircle = false;
     lines.forEach(function(l, idx) {
         var p1=points.get(l.p1Id), p2=points.get(l.p2Id); if (!p1||!p2) return;
         var ext = extLine(p1, p2); if (!ext) return;
         var dx=ext.x2-ext.x1, dy=ext.y2-ext.y1, lq=dx*dx+dy*dy; if (!lq) return;
         var tv=((wx-ext.x1)*dx+(wy-ext.y1)*dy)/lq;
         var d=dist(wx,wy,ext.x1+tv*dx,ext.y1+tv*dy);
-        if (d < t && d < bestD) { bestD=d; bestIdx=idx; }
+        if (d < tL && d < bestD) { bestD=d; bestIdx=idx; bestIsCircle=false; }
     });
-    return bestIdx;
+    circles.forEach(function(ci, idx) {
+        var ce=points.get(ci.centerId); if (!ce) return;
+        var d=Math.abs(dist(wx,wy,ce.x,ce.y)-ci.radius);
+        if (d < tC && d < bestD) { bestD=d; bestIdx=idx; bestIsCircle=true; }
+    });
+    return bestIdx >= 0 ? { idx:bestIdx, isCircle:bestIsCircle } : null;
 }
 
 function onUp(e) {
@@ -1732,6 +1789,12 @@ function onUp(e) {
     // This is a quick release on the same segment/line — execute fade/restore.
     if (eraserCandidate && isTap) {
         eraserFlash = true; eraserFlashTime = Date.now();
+        // Clear ALL emphasis — the eraser is an exit from loop-building mode,
+        // so any partially-built loop must be cleared or it corrupts future fills.
+        var eraseDeKeys = [];
+        logicalSegments.forEach(function(seg,k) { if (seg.isEmphasized) eraseDeKeys.push(k); });
+        logicalArcs.forEach(function(arc,k)     { if (arc.isEmphasized) eraseDeKeys.push(k); });
+        eraseDeKeys.forEach(function(k) { appendOp({ op:'deemphasize', key:k }); });
         if (eraserCandidate.isCircle) {
             var fadeCirc = circles.get(eraserCandidate.lineIdx);
             if (fadeCirc) {
@@ -1776,6 +1839,7 @@ function onUp(e) {
             if (hit.type==='arc')     key=hit.obj.circIdx+':'+hit.obj.pointAId+':'+hit.obj.pointBId;
             if (key) {
                 var was=hit.obj.isEmphasized;
+                if (!was && !isValidNextSegment(hit.obj.pointAId, hit.obj.pointBId)) return;
                 appendOp({ op:was?'deemphasize':'emphasize', key:key });
                 if (was) { checkAndDissolve(key); playSound('emphasis_off'); }
                 else { var fb=fills.size; checkAndFill(); playSound(fills.size>fb?'fill':'emphasis_on'); }
