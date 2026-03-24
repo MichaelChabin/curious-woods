@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursor Modes — CW Prototype</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: #f4f1e8;
+      font-family: Georgia, serif;
+    }
+
+    #canvas {
+      position: fixed;
+      inset: 0;
+      display: block;
+    }
+
+    #mode-bar {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      background: rgba(244,241,232,0.97);
+      border: 0.5px solid #c8b89a;
+      border-radius: 8px;
+      padding: 10px 14px;
+      z-index: 10;
+      pointer-events: all;
+    }
+
+    .mode-btn {
+      font-family: Georgia, serif;
+      font-size: 11px;
+      font-style: italic;
+      color: #546A80;
+      background: transparent;
+      border: 0.5px solid #c8b89a;
+      border-radius: 4px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .mode-btn:hover { background: rgba(84,106,128,0.08); }
+
+    .mode-btn.active {
+      background: #546A80;
+      color: #f4f1e8;
+      border-color: #546A80;
+    }
+
+    #state-label {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: Georgia, serif;
+      font-size: 12px;
+      font-style: italic;
+      color: #9a8e80;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: 0.03em;
+    }
+
+    #mode-desc {
+      position: fixed;
+      top: 76px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: Georgia, serif;
+      font-size: 11px;
+      font-style: italic;
+      color: #9a8e80;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+
+    #legend {
+      position: fixed;
+      bottom: 52px;
+      right: 20px;
+      background: rgba(244,241,232,0.97);
+      border: 0.5px solid #c8b89a;
+      border-radius: 6px;
+      padding: 10px 14px;
+      pointer-events: none;
+    }
+
+    #legend p {
+      font-family: Georgia, serif;
+      font-size: 10px;
+      font-style: italic;
+      color: #9a8e80;
+      line-height: 1.8;
+    }
+
+    #legend span { color: #546A80; }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div id="mode-bar">
+  <button class="mode-btn active" data-mode="arrow">arrow</button>
+  <button class="mode-btn" data-mode="crosshair">crosshair</button>
+  <button class="mode-btn" data-mode="transform">arrow → crosshair</button>
+  <button class="mode-btn" data-mode="magnifier">magnifier crosshair</button>
+  <button class="mode-btn" data-mode="precision">precision magnifier</button>
+</div>
+
+<div id="zoom-control" style="
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  background: rgba(244,241,232,0.97);
+  border: 0.5px solid #c8b89a;
+  border-radius: 6px;
+  padding: 10px 14px;
+  z-index: 10;
+">
+  <label style="font-family: Georgia, serif; font-size: 11px; font-style: italic; color: #546A80;">
+    zoom &nbsp;<span id="zoom-val">4×</span>
+  </label>
+  <input id="zoom-slider" type="range" min="2" max="12" step="0.5" value="4"
+    style="width: 120px; accent-color: #546A80;">
+</div>
+
+<div id="mode-desc">standard system arrow</div>
+<div id="state-label"></div>
+
+<div id="legend">
+  <p>
+    <span>click</span> point or segment — select<br>
+    <span>double-click</span> segment — fade / restore<br>
+    <span>double-click + hold</span> — eraser sweep
+  </p>
+</div>
+
+<script>
+'use strict';
+
+/* ════════════════════════════════════════════════════════════════
+   CONSTANTS
+   ════════════════════════════════════════════════════════════════ */
+
+const COLORS = {
+  background:  '#f4f1e8',
+  paynesGray:  '#546A80',
+  copper:      '#BE622F',
+  lineStroke:  '#546A80',
+  lineHover:     '#8aaccc',
+  lineCandidate: '#c87d3a',   // warm copper-amber — connected segment anticipation
+  point:       '#BE622F',
+  pointHover:  '#e07830',
+  cursorDark:  '#1a2830',
+  cursorLight: '#8a9aaa',
+};
+
+const CURSOR = {
+  circleRadius:    9,
+  circleWidth:     1.5,
+  crossLen:        6,
+  crossGap:        2,
+  crossWidth:      0.6,
+  snapDistance:    3,    // px — point highlight: only when she'll actually land on it
+  segHoverDist:    12,   // px — segment highlight
+  hitRadius:       3,    // px — click registers as hitting a point
+  segHitDist:      10,   // px — click registers as hitting a segment
+  magnifierRadius: 68,
+  magnifierZoom:   5,
+  magnifierBorder: 1.2,
+  precisionRadius: 18,
+  precisionZoom:   4,
+};
+
+const POINT_RADIUS       = 2;
+const POINT_RADIUS_HOVER = 4;
+
+const SEG_WIDTH_NORMAL   = 0.5;
+const SEG_WIDTH_HOVER    = 2.0;
+const SEG_ALPHA_NORMAL   = 1.0;
+const SEG_ALPHA_FADED    = 0.10;
+const SEG_ALPHA_HOVER    = 0.85;
+
+const DOUBLE_CLICK_MS    = 320;
+const TOUCH_CURSOR_OFFSET = 40;   // px above contact point — finger obscures below
+
+/* ════════════════════════════════════════════════════════════════
+   CANVAS
+   ════════════════════════════════════════════════════════════════ */
+
+const canvas = document.getElementById('canvas');
+const ctx    = canvas.getContext('2d');
+let W, H;
+
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+/* ════════════════════════════════════════════════════════════════
+   SCENE
+   ════════════════════════════════════════════════════════════════ */
+
+function makeScene() {
+  const cx = W / 2;
+  const cy = H / 2;
+  const r  = 110;
+  return {
+    points: [
+      { x: cx,                 y: cy,                    id: 0 },
+      { x: cx + r * 1.9,      y: cy,                    id: 1 },
+      { x: cx + r * 0.95,     y: cy - r * Math.sqrt(3), id: 2 },
+      { x: cx + r * 0.95,     y: cy + r * Math.sqrt(3), id: 3 },
+      { x: cx - r * 0.8,      y: cy - r * 0.5,          id: 4 },
+      { x: cx + r * 0.4,      y: cy + r * 0.15,         id: 5 },
+      { x: cx + r * 0.4 + 10, y: cy + r * 0.15 - 6,     id: 6 },
+    ],
+    segments: [
+      [0, 1], [0, 2], [0, 3], [1, 2], [2, 4], [3, 4], [5, 6],
+    ],
+  };
+}
+
+let scene = makeScene();
+
+/* ════════════════════════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════════════════════════ */
+
+let mode = 'arrow';
+let transformSubState = 'arrow';
+
+let selectedPoint   = null;
+let selectedSegment = null;
+let commitFlash     = 0;
+
+let tapActive = false;
+let tapTime   = 0;
+let tapPoint  = null;
+
+let fadedSegments   = new Set();
+let eraserActive    = false;
+let eraserAngle     = -0.45;
+let preEraseMode    = 'arrow';
+let lastClickTime   = 0;
+let lastClickSeg    = -1;
+let eraserFlash     = false;
+let eraserFlashTime = 0;
+
+let undoStack = [];
+
+const mouse = { x: 0, y: 0 };
+
+// Touch state
+let isTouch           = false;   // true once any touch event fires
+let touchActive       = false;
+
+// Tap-vs-drag detection
+const DRAG_THRESHOLD  = 8;       // px — movement beyond this = drag, not tap
+let touchStartX       = 0;
+let touchStartY       = 0;
+let touchStartTime    = 0;
+let touchIsDrag       = false;
+let touchStartPt      = null;    // point under finger at touchstart (if any)
+
+// Double-tap detection (resolved at touchend)
+let lastTapEndTime    = 0;       // time of last confirmed tap (touchend)
+let lastTapWasEmpty   = false;   // was last tap on empty space?
+
+// Circle preview
+let circlePreview     = null;    // { cx, cy, r } while dragging from a point
+
+const MODE_DESCS = {
+  arrow:      'standard system arrow',
+  crosshair:  'precision crosshair — static near-black, no transitions',
+  transform:  'arrow near canvas · crosshair near a point or segment · click commits and returns to arrow',
+  magnifier:  'crosshair with magnifying lens · click commits and returns to arrow',
+  precision:  'large crosshair arms · magnified view inside · 1:1 mouse movement · use slider to set zoom',
+};
+
+/* ════════════════════════════════════════════════════════════════
+   GEOMETRY HELPERS
+   ════════════════════════════════════════════════════════════════ */
+
+function dist(ax, ay, bx, by) {
+  return Math.sqrt((ax - bx) ** 2 + (ay - by) ** 2);
+}
+
+function pointToSegDist(px, py, ax, ay, bx, by) {
+  const dx = bx - ax, dy = by - ay;
+  const lenSq = dx * dx + dy * dy;
+  if (lenSq === 0) return dist(px, py, ax, ay);
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lenSq));
+  return dist(px, py, ax + t * dx, ay + t * dy);
+}
+
+function nearestPoint() {
+  let best = null, bestD = Infinity;
+  scene.points.forEach(pt => {
+    const d = dist(mouse.x, mouse.y, pt.x, pt.y);
+    if (d < bestD) { bestD = d; best = pt; }
+  });
+  return { pt: best, d: bestD };
+}
+
+function nearestSegment() {
+  let best = null, bestD = Infinity, bestIdx = -1;
+  scene.segments.forEach((seg, i) => {
+    const a = scene.points[seg[0]];
+    const b = scene.points[seg[1]];
+    const d = pointToSegDist(mouse.x, mouse.y, a.x, a.y, b.x, b.y);
+    if (d < bestD) { bestD = d; best = seg; bestIdx = i; }
+  });
+  return { seg: best, idx: bestIdx, d: bestD };
+}
+
+function isNearClickable() {
+  const { d: pd } = nearestPoint();
+  const { d: sd } = nearestSegment();
+  return pd <= CURSOR.snapDistance || sd <= CURSOR.hitRadius;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   HOVER QUERIES
+   — suppressed while eraser is active so hover state never
+     fights or overrides the fade state mid-sweep
+   ════════════════════════════════════════════════════════════════ */
+
+function hoveredPoint() {
+  if (eraserActive) return null;          // FIX: no hover during erase
+  const { pt, d } = nearestPoint();
+  return d <= CURSOR.snapDistance ? pt : null;
+}
+
+function hoveredSegIdx() {
+  if (eraserActive) return -1;            // FIX: no hover during erase
+  if (hoveredPoint() !== null) return -1;
+  const { idx, d } = nearestSegment();
+  return d <= CURSOR.segHoverDist ? idx : -1;
+}
+
+/* candidateSegIdx — when a segment is selected, returns the index of a
+   nearby segment that shares one of its endpoints (connected-segment
+   anticipation). Returns -1 if no selection, or point is hovered, or
+   the hovered segment is already the selected one. */
+function candidateSegIdx() {
+  if (eraserActive) return -1;
+  if (selectedSegment === null) return -1;
+  if (hoveredPoint() !== null) return -1;
+
+  const selSeg = scene.segments[selectedSegment];
+  if (!selSeg) return -1;
+  const selPtIds = new Set([selSeg[0], selSeg[1]]);
+
+  // Find the nearest segment within hover distance
+  const { idx, d } = nearestSegment();
+  if (d > CURSOR.segHoverDist) return -1;
+  if (idx === selectedSegment) return -1;
+
+  // Does it share an endpoint with the selected segment?
+  const cand = scene.segments[idx];
+  if (selPtIds.has(cand[0]) || selPtIds.has(cand[1])) return idx;
+  return -1;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ERASER HELPERS
+   ════════════════════════════════════════════════════════════════ */
+
+function saveUndo() {
+  undoStack.push(new Set(fadedSegments));
+  if (undoStack.length > 50) undoStack.shift();
+}
+
+function toggleFade(segIdx) {
+  saveUndo();
+  if (fadedSegments.has(segIdx)) fadedSegments.delete(segIdx);
+  else fadedSegments.add(segIdx);
+}
+
+let eraserSweepMode = null;
+let eraserTouched   = new Set();
+
+function eraserSweepHit(segIdx) {
+  if (eraserTouched.has(segIdx)) return;  // already handled this segment
+  eraserTouched.add(segIdx);
+  // eraserSweepMode is locked at double-click time — never changes mid-sweep.
+  // 'fade'    → only fades unfaded lines, skips already-faded ones
+  // 'restore' → only restores faded lines, skips unfaded ones
+  if (eraserSweepMode === 'fade' && !fadedSegments.has(segIdx)) {
+    fadedSegments.add(segIdx);
+  } else if (eraserSweepMode === 'restore' && fadedSegments.has(segIdx)) {
+    fadedSegments.delete(segIdx);
+  }
+  // If the segment is already in the target state, do nothing.
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CURSOR RENDERING
+   ════════════════════════════════════════════════════════════════ */
+
+function setCursorVisibility(hidden) {
+  canvas.style.cursor = hidden ? 'none' : 'default';
+}
+
+function drawCrosshairAt(x, y, color, alpha) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.globalAlpha = alpha ?? 1.0;
+
+  const r   = CURSOR.circleRadius;
+  const gap = CURSOR.crossGap;
+  const len = CURSOR.crossLen;
+
+  ctx.beginPath();
+  ctx.arc(0, 0, r + 2, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+  ctx.lineWidth = CURSOR.circleWidth + 2;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(0, 0, r, 0, Math.PI * 2);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = CURSOR.circleWidth;
+  ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+  ctx.lineWidth = CURSOR.crossWidth + 2;
+  ctx.lineCap = 'round';
+  drawCrossArms(gap, len);
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = CURSOR.crossWidth;
+  drawCrossArms(gap, len);
+
+  ctx.restore();
+
+  function drawCrossArms(g, l) {
+    [[g, g+l, 0, 0], [-g, -(g+l), 0, 0],
+     [0, 0, g, g+l], [0, 0, -g, -(g+l)]].forEach(([x1, x2, y1, y2]) => {
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    });
+  }
+}
+
+function drawEraserCursor(x, y, angle) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.globalAlpha = 0.92;
+  ctx.beginPath();
+  ctx.roundRect(-10, -5.5, 20, 11, 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.roundRect(-9, -4.5, 18, 9, 1.5);
+  ctx.fillStyle = COLORS.paynesGray;
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawPrecisionMagnifier(mx, my) {
+  const R    = CURSOR.precisionRadius;
+  const zoom = CURSOR.precisionZoom;
+  const gap  = CURSOR.crossGap;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(mx, my, R, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.fillStyle = '#f8f5ee';
+  ctx.fillRect(mx - R, my - R, R * 2, R * 2);
+  ctx.save();
+  ctx.translate(mx, my);
+  ctx.scale(zoom, zoom);
+  ctx.translate(-mx, -my);
+  drawSceneGeometry(true);
+  ctx.restore();
+  ctx.restore();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(mx, my, R + 1, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(mx, my, R, 0, Math.PI * 2);
+  ctx.strokeStyle = COLORS.cursorDark;
+  ctx.lineWidth = 0.75;
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(mx, my);
+  ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+  ctx.lineWidth = CURSOR.crossWidth + 2;
+  ctx.lineCap = 'round';
+  drawPrecisionArms(R, gap);
+  ctx.strokeStyle = COLORS.cursorDark;
+  ctx.lineWidth = CURSOR.crossWidth;
+  drawPrecisionArms(R, gap);
+  ctx.restore();
+
+  function drawPrecisionArms(reach, g) {
+    [[g, reach, 0, 0], [-g, -reach, 0, 0],
+     [0, 0, g, reach], [0, 0, -g, -reach]].forEach(([x1, x2, y1, y2]) => {
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    });
+  }
+}
+
+function drawMagnifier(mx, my) {
+  const R    = CURSOR.magnifierRadius;
+  const zoom = CURSOR.magnifierZoom;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(mx, my, R, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.fillStyle = '#f8f5ee';
+  ctx.fillRect(mx - R, my - R, R * 2, R * 2);
+  ctx.save();
+  ctx.translate(mx, my);
+  ctx.scale(zoom, zoom);
+  ctx.translate(-mx, -my);
+  drawSceneGeometry(true);
+  ctx.restore();
+  drawCrosshairAt(mx, my, COLORS.cursorDark, 1.0);
+  ctx.restore();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(mx, my, R + 1.5, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(0,0,0,0.10)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(mx, my, R, 0, Math.PI * 2);
+  ctx.strokeStyle = COLORS.cursorDark;
+  ctx.lineWidth = CURSOR.magnifierBorder;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawCirclePreview() {
+  if (!circlePreview) return;
+  const { cx, cy, r } = circlePreview;
+  // Radius line from center to cursor
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(mouse.x, mouse.y);
+  ctx.strokeStyle = COLORS.copper;
+  ctx.lineWidth   = 0.8;
+  ctx.globalAlpha = 0.5;
+  ctx.setLineDash([4, 4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // Live circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = COLORS.copper;
+  ctx.lineWidth   = 1.2;
+  ctx.globalAlpha = 0.6;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawTapRing() {
+  if (!tapActive || !tapPoint) return;
+  const elapsed = Date.now() - tapTime;
+  const t = elapsed / 300;
+  if (t >= 1) { tapActive = false; return; }
+  const ro = 6, ri = 3;
+  ctx.save();
+  ctx.translate(tapPoint.x, tapPoint.y);
+  ctx.globalAlpha = 1.0 - t;
+  ctx.beginPath();
+  ctx.arc(0, 0, ro + 1.5, 0, Math.PI * 2);
+  ctx.arc(0, 0, Math.max(0, ri - 1.5), 0, Math.PI * 2, true);
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.fill('evenodd');
+  ctx.beginPath();
+  ctx.arc(0, 0, ro, 0, Math.PI * 2);
+  ctx.arc(0, 0, ri, 0, Math.PI * 2, true);
+  ctx.fillStyle = COLORS.cursorDark;
+  ctx.fill('evenodd');
+  ctx.restore();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SCENE DRAWING
+   ════════════════════════════════════════════════════════════════ */
+
+function drawSceneGeometry(insideLens) {
+  const now         = Date.now();
+  const flashActive = (now - commitFlash) < 400;
+  const hPt         = insideLens ? null : hoveredPoint();
+  const hSeg        = insideLens ? -1   : hoveredSegIdx();
+  const hCand       = insideLens ? -1   : candidateSegIdx();
+
+  // Segments
+  scene.segments.forEach((seg, i) => {
+    const a = scene.points[seg[0]];
+    const b = scene.points[seg[1]];
+    const faded      = fadedSegments.has(i);
+    const isHovered   = !faded && (hSeg === i) && hCand === -1;  // plain hover suppressed when a candidate is lit
+    const isCandidate = !faded && (hCand === i);
+    const isSelected  = selectedSegment === i && flashActive;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+
+    if (insideLens) {
+      ctx.strokeStyle = COLORS.lineStroke;
+      ctx.lineWidth   = 0.4;
+      ctx.globalAlpha = faded ? 0.08 : 0.7;
+    } else if (isSelected) {
+      ctx.strokeStyle = COLORS.copper;
+      ctx.lineWidth   = 1.4;
+      ctx.globalAlpha = 0.9;
+    } else if (isCandidate) {
+      ctx.strokeStyle = COLORS.lineCandidate;
+      ctx.lineWidth   = SEG_WIDTH_HOVER;
+      ctx.globalAlpha = SEG_ALPHA_HOVER;
+    } else if (isHovered) {
+      ctx.strokeStyle = COLORS.lineHover;
+      ctx.lineWidth   = SEG_WIDTH_HOVER;
+      ctx.globalAlpha = SEG_ALPHA_HOVER;
+    } else {
+      ctx.strokeStyle = COLORS.lineStroke;
+      ctx.lineWidth   = SEG_WIDTH_NORMAL;
+      ctx.globalAlpha = faded ? SEG_ALPHA_FADED : SEG_ALPHA_NORMAL;
+    }
+
+    ctx.stroke();
+    ctx.restore();
+  });
+
+  // Committed circles
+  (scene.circles || []).forEach(c => {
+    const flashActive2 = (Date.now() - commitFlash) < 400;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(c.cx, c.cy, c.r, 0, Math.PI * 2);
+    ctx.strokeStyle = flashActive2 ? COLORS.copper : COLORS.lineStroke;
+    ctx.lineWidth   = insideLens ? 0.4 : (flashActive2 ? 1.4 : SEG_WIDTH_NORMAL);
+    ctx.globalAlpha = insideLens ? 0.7 : (flashActive2 ? 0.9 : SEG_ALPHA_NORMAL);
+    ctx.stroke();
+    ctx.restore();
+  });
+
+  // Points — bare copper dots, grow only within 3px
+  scene.points.forEach(pt => {
+    const isHovered  = !insideLens && hPt && hPt.id === pt.id;
+    const isSelected = selectedPoint === pt.id && flashActive;
+    const r     = isHovered ? POINT_RADIUS_HOVER : POINT_RADIUS;
+    const color = isSelected ? '#d4772a' : (isHovered ? COLORS.pointHover : COLORS.point);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 1.0;
+    ctx.fill();
+    ctx.restore();
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MAIN DRAW
+   ════════════════════════════════════════════════════════════════ */
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = COLORS.background;
+  ctx.fillRect(0, 0, W, H);
+
+  drawSceneGeometry(false);
+  drawCirclePreview();
+  drawTapRing();
+
+  const showEraserFlash = eraserFlash && (Date.now() - eraserFlashTime) < 350;
+
+  if (eraserActive || showEraserFlash) {
+    setCursorVisibility(true);
+    drawEraserCursor(mouse.x, mouse.y, eraserAngle);
+  } else {
+    switch (mode) {
+      case 'arrow':
+        if (isTouch) {
+          setCursorVisibility(true);
+          drawCrosshairAt(mouse.x, mouse.y, COLORS.cursorDark, 1.0);
+        } else {
+          setCursorVisibility(false);
+        }
+        break;
+      case 'crosshair':
+        setCursorVisibility(true);
+        drawCrosshairAt(mouse.x, mouse.y, COLORS.cursorDark, 1.0);
+        break;
+      case 'transform':
+        if (isNearClickable()) {
+          setCursorVisibility(true);
+          drawCrosshairAt(mouse.x, mouse.y, COLORS.cursorDark, 1.0);
+        } else {
+          setCursorVisibility(false);
+        }
+        break;
+      case 'magnifier':
+        setCursorVisibility(true);
+        drawMagnifier(mouse.x, mouse.y);
+        break;
+      case 'precision':
+        setCursorVisibility(true);
+        drawPrecisionMagnifier(mouse.x, mouse.y);
+        break;
+    }
+  }
+
+  updateStateLabel();
+  requestAnimationFrame(draw);
+}
+
+function updateStateLabel() {
+  const el = document.getElementById('state-label');
+  if (eraserActive) {
+    el.textContent = 'eraser sweep — release to exit';
+    return;
+  }
+  const hPt  = hoveredPoint();
+  const hSeg = hoveredSegIdx();
+  if (hPt !== null) {
+    el.textContent = `point ${hPt.id} — click to select`;
+    return;
+  }
+  const hCand2 = candidateSegIdx();
+  if (hCand2 >= 0) {
+    el.textContent = `segment ${hCand2} — connects to selection · click to select`;
+    return;
+  }
+  if (hSeg >= 0) {
+    const isFaded = fadedSegments.has(hSeg);
+    el.textContent = isFaded
+      ? `segment ${hSeg} (faded) — click to select · double-click to restore`
+      : `segment ${hSeg} — click to select · double-click to fade`;
+    return;
+  }
+  if (mode === 'transform')      el.textContent = 'arrow — move near a point or line';
+  else if (mode === 'magnifier') el.textContent = 'magnifier active — click to commit';
+  else if (mode === 'precision') el.textContent = `precision magnifier — zoom ${CURSOR.precisionZoom}×`;
+  else if (mode === 'crosshair') el.textContent = 'crosshair — click a point or segment';
+  else                           el.textContent = '';
+}
+
+/* ════════════════════════════════════════════════════════════════
+   INPUT
+   ════════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════════
+   TOUCH INPUT
+   Cursor is offset 40px above the contact point so the finger
+   doesn't obscure what she's selecting.
+
+   Tap vs drag is resolved at touchend — nothing is committed
+   until the finger lifts. During the drag, the circle preview
+   is the feedback.
+
+   Gesture vocabulary:
+     tap point              → select point (1st tap) or construct line (2nd tap)
+     drag from point        → circle preview → construct circle on 2nd point
+     tap empty              → undo
+     double-tap segment     → fade / restore
+     double-tap+hold+drag   → eraser sweep
+   ════════════════════════════════════════════════════════════════ */
+
+canvas.addEventListener('touchstart', e => {
+  if (e.touches.length !== 1) return;   // ignore palm / multi-touch
+  e.preventDefault();
+  isTouch = true;
+  setCursorVisibility(true);
+
+  const t = e.touches[0];
+  mouse.x = t.clientX;
+  mouse.y = t.clientY - TOUCH_CURSOR_OFFSET;
+
+  // Record start state for tap-vs-drag decision at touchend
+  touchStartX    = mouse.x;
+  touchStartY    = mouse.y;
+  touchStartTime = Date.now();
+  touchIsDrag    = false;
+  touchActive    = true;
+  circlePreview  = null;
+
+  // Snapshot whether there is a point under the cursor right now
+  const { pt, d: pd } = nearestPoint();
+  touchStartPt = (pd <= CURSOR.hitRadius) ? pt : null;
+
+  // If eraser is already active (double-tap+hold in progress) do nothing else
+  if (eraserActive) return;
+
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+  if (e.touches.length !== 1) return;
+  e.preventDefault();
+
+  const t = e.touches[0];
+  const prevX = mouse.x, prevY = mouse.y;
+  mouse.x = t.clientX;
+  mouse.y = t.clientY - TOUCH_CURSOR_OFFSET;
+
+  // Check if we've crossed the drag threshold
+  if (!touchIsDrag) {
+    const dx = mouse.x - touchStartX;
+    const dy = mouse.y - touchStartY;
+    if (Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD) {
+      touchIsDrag = true;
+
+      // If we started on a point, check for double-tap+hold → eraser
+      // A double-tap+hold starts on a SEGMENT not a point, so only
+      // activate eraser if we have no touchStartPt and a segment is near
+      if (!touchStartPt) {
+        const now = Date.now();
+        const gap = now - lastTapEndTime;
+        const { idx, d: sd } = nearestSegment();
+        const hitSeg = sd <= CURSOR.segHitDist;
+        if (gap < DOUBLE_CLICK_MS && hitSeg) {
+          eraserActive    = true;
+          preEraseMode    = mode;
+          eraserSweepMode = fadedSegments.has(idx) ? 'restore' : 'fade';
+          saveUndo();
+          if (eraserSweepMode === 'fade') fadedSegments.add(idx);
+          else                            fadedSegments.delete(idx);
+          eraserTouched = new Set([idx]);
+        }
+      }
+    }
+  }
+
+  // Eraser sweep
+  if (eraserActive) {
+    const dx = mouse.x - prevX, dy = mouse.y - prevY;
+    if (Math.sqrt(dx * dx + dy * dy) > 1.5) {
+      eraserAngle = Math.atan2(dy, dx) + Math.PI / 2;
+    }
+    const { idx, d } = nearestSegment();
+    if (d <= CURSOR.segHoverDist + 6) eraserSweepHit(idx);
+    return;
+  }
+
+  // Circle preview — dragging from a point
+  if (touchIsDrag && touchStartPt) {
+    const r = dist(touchStartPt.x, touchStartPt.y, mouse.x, mouse.y);
+    circlePreview = { cx: touchStartPt.x, cy: touchStartPt.y, r };
+  }
+
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+  e.preventDefault();
+  touchActive = false;
+
+  // ── Eraser sweep end ──────────────────────────────────────────
+  if (eraserActive) {
+    eraserFlash     = true;
+    eraserFlashTime = Date.now();
+    eraserActive    = false;
+    eraserSweepMode = null;
+    eraserTouched   = new Set();
+    circlePreview   = null;
+    setMode(preEraseMode);
+    return;
+  }
+
+  // ── Circle construction: drag from point, release near a point ─
+  if (touchIsDrag && touchStartPt) {
+    circlePreview = null;
+    const { pt: endPt, d: endD } = nearestPoint();
+    if (endPt && endD <= CURSOR.hitRadius * 4 && endPt.id !== touchStartPt.id) {
+      // Commit circle — for now record as selected point + flash
+      // (actual circle construction lives in the geometry tool)
+      const r = dist(touchStartPt.x, touchStartPt.y, endPt.x, endPt.y);
+      scene.circles = scene.circles || [];
+      scene.circles.push({ cx: touchStartPt.x, cy: touchStartPt.y, r });
+      commitFlash = Date.now();
+    }
+    // If drag released on empty space, just abandon — preview disappears
+    touchStartPt = null;
+    return;
+  }
+
+  // ── It was a tap — resolve double vs single ────────────────────
+  circlePreview = null;
+  if (touchIsDrag) { touchStartPt = null; return; }  // drag to nowhere, ignore
+
+  const now = Date.now();
+  const gap = now - lastTapEndTime;
+  const isDoubleTap = gap < DOUBLE_CLICK_MS;
+
+  // Re-query at the lifted position (same as where finger was)
+  const { pt, d: pd }   = nearestPoint();
+  const { idx, d: sd }  = nearestSegment();
+  const hitPt  = pd <= CURSOR.hitRadius;
+  const hitSeg = !hitPt && sd <= CURSOR.segHitDist;
+  const hitEmpty = !hitPt && !hitSeg;
+
+  // Double-tap segment → fade/restore
+  if (isDoubleTap && hitSeg) {
+    toggleFade(idx);
+    lastTapEndTime  = 0;
+    touchStartPt    = null;
+    return;
+  }
+
+  // Double-tap empty → undo
+  if (isDoubleTap && hitEmpty) {
+    if (undoStack.length > 0) fadedSegments = undoStack.pop();
+    lastTapEndTime = 0;
+    touchStartPt   = null;
+    return;
+  }
+
+  // Single-tap point → select (1st tap) or construct line (2nd tap)
+  if (hitPt) {
+    if (selectedPoint !== null && selectedPoint !== pt.id) {
+      // Second tap on a different point → construct line
+      scene.segments.push([selectedPoint, pt.id]);
+      selectedPoint = null;
+      commitFlash   = Date.now();
+    } else {
+      // First tap → select
+      selectedPoint   = pt.id;
+      selectedSegment = null;
+      commitFlash     = Date.now();
+      tapActive = true;
+      tapTime   = Date.now();
+      tapPoint  = { x: pt.x, y: pt.y };
+    }
+    lastTapEndTime = now;
+    touchStartPt   = null;
+    return;
+  }
+
+  // Single-tap segment → select
+  if (hitSeg) {
+    selectedSegment = idx;
+    selectedPoint   = null;
+    commitFlash     = Date.now();
+    lastTapEndTime  = now;
+    touchStartPt    = null;
+    return;
+  }
+
+  // Single-tap empty → undo
+  if (hitEmpty && undoStack.length > 0) {
+    fadedSegments = undoStack.pop();
+  }
+
+  lastTapEndTime = now;
+  touchStartPt   = null;
+
+}, { passive: false });
+
+canvas.addEventListener('mousemove', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+
+  if (eraserActive) {
+    const dx = e.movementX, dy = e.movementY;
+    if (Math.sqrt(dx * dx + dy * dy) > 1.5) {
+      eraserAngle = Math.atan2(dy, dx) + Math.PI / 2;
+    }
+    const { idx, d } = nearestSegment();
+    if (d <= CURSOR.segHoverDist + 6) eraserSweepHit(idx);
+  }
+});
+
+canvas.addEventListener('mousedown', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+  if (eraserActive) return;
+
+  const now = Date.now();
+  const gap = now - lastClickTime;
+  const { d: pd } = nearestPoint();
+  const { idx, d: sd } = nearestSegment();
+  const hitPt        = pd <= CURSOR.hitRadius;
+  const hitSeg       = !hitPt && sd <= CURSOR.segHitDist;
+  const isDoubleClick = gap < DOUBLE_CLICK_MS;
+
+  if (isDoubleClick && hitSeg) {
+    eraserActive = true;
+    preEraseMode = mode;
+    // Lock sweep direction NOW based on the double-clicked segment's current state.
+    // 'fade'    → this sweep only fades; 'restore' → this sweep only restores.
+    eraserSweepMode = fadedSegments.has(idx) ? 'restore' : 'fade';
+    saveUndo();
+    // Apply the action to the double-clicked segment immediately.
+    if (eraserSweepMode === 'fade')    fadedSegments.add(idx);
+    else                               fadedSegments.delete(idx);
+    // Pre-seed eraserTouched so the first mousemove doesn't re-hit the same segment.
+    eraserTouched = new Set([idx]);
+    lastClickTime = 0;
+    return;
+  }
+
+  if (isDoubleClick && !hitPt && !hitSeg) {
+    if (undoStack.length > 0) fadedSegments = undoStack.pop();
+    lastClickTime = 0;
+    return;
+  }
+
+  lastClickTime = now;
+  lastClickSeg  = hitSeg ? idx : -1;
+});
+
+canvas.addEventListener('click', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+  if (eraserActive) return;
+
+  const { pt, d: pd } = nearestPoint();
+  const { idx, d: sd } = nearestSegment();
+  const hitPt  = pd <= CURSOR.hitRadius;
+  const hitSeg = !hitPt && sd <= CURSOR.segHitDist;
+
+  if (mode === 'arrow' && !hitPt && !hitSeg) return;
+
+  if (hitPt) {
+    selectedPoint   = pt.id;
+    selectedSegment = null;
+    commitFlash     = Date.now();
+    tapActive = true;
+    tapTime   = Date.now();
+    tapPoint  = { x: pt.x, y: pt.y };
+  } else if (hitSeg) {
+    selectedSegment = idx;
+    selectedPoint   = null;
+    commitFlash     = Date.now();
+  }
+
+  if ((mode === 'transform' || mode === 'magnifier') && (hitPt || hitSeg)) {
+    setMode('arrow');
+  }
+});
+
+canvas.addEventListener('mouseup', () => {
+  if (eraserActive) {
+    eraserFlash     = true;
+    eraserFlashTime = Date.now();
+    eraserActive    = false;
+    eraserSweepMode = null;
+    eraserTouched   = new Set();
+    setMode(preEraseMode);
+  }
+});
+
+/* ════════════════════════════════════════════════════════════════
+   MODE SWITCHING
+   ════════════════════════════════════════════════════════════════ */
+
+function setMode(m) {
+  mode = m;
+  transformSubState = 'arrow';
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === m);
+  });
+  document.getElementById('mode-desc').textContent = MODE_DESCS[m] ?? '';
+  document.getElementById('zoom-control').style.display =
+    m === 'precision' ? 'flex' : 'none';
+  if (m === 'arrow') setCursorVisibility(false);
+}
+
+const zoomSlider = document.getElementById('zoom-slider');
+const zoomVal    = document.getElementById('zoom-val');
+zoomSlider.addEventListener('input', () => {
+  const z = parseFloat(zoomSlider.value);
+  CURSOR.precisionZoom = z;
+  zoomVal.textContent = z % 1 === 0 ? z + '×' : z.toFixed(1) + '×';
+});
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => setMode(btn.dataset.mode));
+});
+
+/* ════════════════════════════════════════════════════════════════
+   START
+   ════════════════════════════════════════════════════════════════ */
+
+draw();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <title>Triangle with Medial Triangle</title>
+  <desc>Equilateral triangle with medial triangle connecting midpoints. Inner has one quarter the area.</desc>
+  <!-- Outer triangle R=360, pointing up. Angles: -90, 30, 150 -->
+  <!-- top: 400, 40 -->
+  <!-- right: 400+360*cos(30), 400+360*sin(30) = 711.769, 580 -->
+  <!-- left:  400+360*cos(150), 400+360*sin(150) = 88.231, 580 -->
+  <polygon points="400,40 711.769,580 88.231,580"
+           fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Medial: midpoints of each side -->
+  <!-- mid(top,right): (555.885, 310) -->
+  <!-- mid(right,left): (400, 580) -->
+  <!-- mid(left,top): (244.115, 310) -->
+  <polygon points="555.885,310 400,580 244.115,310"
+           fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>

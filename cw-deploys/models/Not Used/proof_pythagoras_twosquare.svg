@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <title>Pythagorean Theorem — Two Squares</title>
+  <desc>
+    Outer square side=600=a+b, a=250, b=350.
+    Layout:
+      Top-left rectangle (a wide, b tall):     (100,100)-(350,100)-(350,450)-(100,450)  split by diagonal
+      Top-right square (b×b):                  (350,100)-(700,100)-(700,450)-(350,450)
+      Bottom-left square (a×a):                (100,450)-(350,450)-(350,700)-(100,700)
+      Bottom-right rectangle (b wide, a tall): (350,450)-(700,450)-(700,700)-(350,700)  split by diagonal
+    Each rectangle split by its diagonal into two identical right triangles (legs a and b).
+  </desc>
+
+  <!-- Outer square -->
+  <rect x="100" y="100" width="600" height="600"
+        fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Horizontal divider y=450 (splits a-height from b-height) -->
+  <line x1="100" y1="450" x2="700" y2="450"
+        stroke="#555" stroke-width="1.5"/>
+
+  <!-- Vertical divider x=350 (splits a-width from b-width) -->
+  <line x1="350" y1="100" x2="350" y2="700"
+        stroke="#555" stroke-width="1.5"/>
+
+  <!-- Diagonal in top-left rectangle: (100,100)→(350,450) -->
+  <line x1="100" y1="100" x2="350" y2="450"
+        stroke="#555" stroke-width="1.5"/>
+
+  <!-- Diagonal in bottom-right rectangle: (350,450)→(700,700) -->
+  <line x1="350" y1="450" x2="700" y2="700"
+        stroke="#555" stroke-width="1.5"/>
+
+</svg>

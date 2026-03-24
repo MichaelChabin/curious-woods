@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "name": "Equilateral Triangle",
+  "description": "Two circles of equal radius from each seed point. Their intersection gives the apex. Connect the three vertices.",
+  "operations": [
+    { "op": "init", "seed0": { "x": -100, "y": 0 }, "seed1": { "x": 100, "y": 0 } },
+    { "op": "circle", "centerId": "seed:0", "edgeId": "seed:1" },
+    { "op": "circle", "centerId": "seed:1", "edgeId": "seed:0" },
+    { "op": "line", "p1Id": "seed:0", "p2Id": "seed:1" },
+    { "op": "line", "p1Id": "seed:0", "p2Id": "cc:1:2:0" },
+    { "op": "line", "p1Id": "seed:1", "p2Id": "cc:1:2:0" },
+    { "op": "emphasize", "key": "3:seed:0:seed:1" },
+    { "op": "emphasize", "key": "4:seed:0:cc:1:2:0" },
+    { "op": "emphasize", "key": "5:seed:1:cc:1:2:0" }
+  ]
+}

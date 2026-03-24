@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "name": "Nested Squares",
+  "description": "A square whose vertices are the midpoints of a larger square. Start with two lines through the seed points, then circles to find the corners.",
+  "operations": [
+    { "op": "init", "seed0": { "x": -100, "y": 0 }, "seed1": { "x": 100, "y": 0 } },
+    { "op": "circle", "centerId": "seed:0", "edgeId": "seed:1" },
+    { "op": "circle", "centerId": "seed:1", "edgeId": "seed:0" },
+    { "op": "line", "p1Id": "seed:0", "p2Id": "seed:1" },
+    { "op": "line", "p1Id": "cc:1:2:0", "p2Id": "cc:1:2:1" },
+    { "op": "circle", "centerId": "cc:1:2:0", "edgeId": "seed:0" },
+    { "op": "circle", "centerId": "cc:1:2:1", "edgeId": "seed:0" },
+    { "op": "line", "p1Id": "seed:0", "p2Id": "cc:1:2:0" },
+    { "op": "line", "p1Id": "seed:1", "p2Id": "cc:1:2:0" },
+    { "op": "line", "p1Id": "seed:0", "p2Id": "cc:1:2:1" },
+    { "op": "line", "p1Id": "seed:1", "p2Id": "cc:1:2:1" }
+  ]
+}

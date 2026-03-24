@@ -1,0 +1,275 @@
+{
+  "version": "1.1",
+  "generated": "2026-03-05",
+  "note": "Palettes extracted from source images by Designer Chat. Colors selected for distinctiveness, usability, and fidelity to source. Recipe lines added Mar 5 2026 — one to four words, uncertain:true where chemistry is genuinely unresolved.",
+
+  "palettes": [
+
+    {
+      "id": "chartres_glass",
+      "name": "Chartres",
+      "source": "Glass Chartres.jpg",
+      "description": "Medieval cathedral glass, 12th–13th century",
+      "colors": [
+        { "hex": "#1a3a8c", "recipe": "cobalt oxide", "uncertain": false },
+        { "hex": "#8b1a1a", "recipe": "gold, colloidal", "uncertain": false },
+        { "hex": "#c8780a", "recipe": "iron, sulfur", "uncertain": false },
+        { "hex": "#4a1a8c", "recipe": "cobalt, manganese", "uncertain": false },
+        { "hex": "#1a6a2a", "recipe": "copper oxide", "uncertain": false },
+        { "hex": "#8a8a7a", "recipe": "iron, unrefined", "uncertain": true },
+        { "hex": "#d4a878", "recipe": "iron oxide, lead", "uncertain": true },
+        { "hex": "#c8c0a8", "recipe": "tin oxide", "uncertain": false },
+        { "hex": "#c84878", "recipe": "gold, manganese", "uncertain": true }
+      ]
+    },
+
+    {
+      "id": "gaudi_glass",
+      "name": "Gaudí",
+      "source": "Glass Gaudi.jpg",
+      "description": "Antoni Gaudí, Sagrada Família and Park Güell glass",
+      "colors": [
+        { "hex": "#c8a800", "recipe": "silver stain", "uncertain": false },
+        { "hex": "#c86820", "recipe": "iron, sulfur", "uncertain": false },
+        { "hex": "#4a8a30", "recipe": "copper oxide", "uncertain": false },
+        { "hex": "#1a4a9a", "recipe": "cobalt oxide", "uncertain": false },
+        { "hex": "#f0e8c8", "recipe": "tin oxide", "uncertain": false },
+        { "hex": "#a83018", "recipe": "gold, colloidal", "uncertain": false },
+        { "hex": "#2a8a8a", "recipe": "copper oxide", "uncertain": true },
+        { "hex": "#c8b878", "recipe": "iron, silver stain", "uncertain": true }
+      ]
+    },
+
+    {
+      "id": "alhambra_tiles",
+      "name": "Alhambra",
+      "source": "Alahambra.jpg",
+      "description": "Nasrid dynasty tile patterns, Granada, 13th–14th century",
+      "colors": [
+        { "hex": "#1a3a8a", "recipe": "cobalt oxide", "uncertain": false },
+        { "hex": "#c8a800", "recipe": "lead antimonate", "uncertain": false },
+        { "hex": "#f0ece0", "recipe": "tin oxide glaze", "uncertain": false },
+        { "hex": "#a81818", "recipe": "iron oxide", "uncertain": false },
+        { "hex": "#2a6a28", "recipe": "copper oxide", "uncertain": false },
+        { "hex": "#8a6018", "recipe": "iron, manganese", "uncertain": true },
+        { "hex": "#4a8ab0", "recipe": "cobalt, copper", "uncertain": true },
+        { "hex": "#e8e0c0", "recipe": "tin oxide glaze", "uncertain": false },
+        { "hex": "#181818", "recipe": "manganese dioxide", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "hokusai_wave",
+      "name": "Hokusai — The Great Wave",
+      "source": "Hokusai Great Wave.jpg",
+      "description": "Katsushika Hokusai, Under the Wave off Kanagawa, c. 1831",
+      "colors": [
+        { "hex": "#1a3a5c", "recipe": "iron, cyanide", "uncertain": false },
+        { "hex": "#2e6a9e", "recipe": "iron, cyanide", "uncertain": false },
+        { "hex": "#5a9ab8", "recipe": "iron, cyanide, diluted", "uncertain": false },
+        { "hex": "#c8dce8", "recipe": "iron, cyanide, diluted", "uncertain": false },
+        { "hex": "#f0ece0", "recipe": "paper, unprinted", "uncertain": false },
+        { "hex": "#dde0e0", "recipe": "bokashi, pale", "uncertain": true },
+        { "hex": "#8b4a2a", "recipe": "iron oxide", "uncertain": false },
+        { "hex": "#e8e4d0", "recipe": "paper, unprinted", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "hiroshige_rain",
+      "name": "Hiroshige — Sudden Shower",
+      "source": "Hiroshige Rain on Bridge.jpg",
+      "description": "Utagawa Hiroshige, Sudden Shower over Shin-Ohashi Bridge, 1857",
+      "colors": [
+        { "hex": "#1a2a3a", "recipe": "iron, cyanide", "uncertain": false },
+        { "hex": "#3a5a78", "recipe": "iron, cyanide", "uncertain": false },
+        { "hex": "#8aaabb", "recipe": "iron, cyanide, diluted", "uncertain": false },
+        { "hex": "#a8b8c0", "recipe": "iron, cyanide, diluted", "uncertain": false },
+        { "hex": "#e8e0c8", "recipe": "paper, unprinted", "uncertain": false },
+        { "hex": "#c8a878", "recipe": "iron oxide, ochre", "uncertain": false },
+        { "hex": "#4a3020", "recipe": "carbon ink", "uncertain": false },
+        { "hex": "#c84830", "recipe": "mercury sulfide", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "vangogh_starrynight",
+      "name": "Van Gogh — Starry Night",
+      "source": "Van Gogh Stary Night.jpg",
+      "description": "Vincent van Gogh, The Starry Night, 1889",
+      "colors": [
+        { "hex": "#1a2a6c", "recipe": "cobalt blue", "uncertain": false },
+        { "hex": "#2e4a9e", "recipe": "cobalt, ultramarine", "uncertain": false },
+        { "hex": "#4a8ab0", "recipe": "Prussian blue", "uncertain": false },
+        { "hex": "#c8d8f0", "recipe": "cobalt blue, lead white", "uncertain": false },
+        { "hex": "#f0c030", "recipe": "lead chromate", "uncertain": false },
+        { "hex": "#f0e898", "recipe": "lead chromate, diluted", "uncertain": false },
+        { "hex": "#1a2818", "recipe": "carbon black, viridian", "uncertain": false },
+        { "hex": "#c89040", "recipe": "yellow ochre, lead white", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "matisse_redroom",
+      "name": "Matisse — The Red Room",
+      "source": "Matisse The Red Room.jpg",
+      "description": "Henri Matisse, The Dessert: Harmony in Red, 1908",
+      "colors": [
+        { "hex": "#c01830", "recipe": "cadmium red", "uncertain": false },
+        { "hex": "#1a2840", "recipe": "ultramarine, carbon black", "uncertain": false },
+        { "hex": "#3a8030", "recipe": "viridian", "uncertain": false },
+        { "hex": "#e8c030", "recipe": "cadmium yellow", "uncertain": false },
+        { "hex": "#6a8aaa", "recipe": "cobalt blue, lead white", "uncertain": true },
+        { "hex": "#c8d8e8", "recipe": "cobalt blue, lead white", "uncertain": false },
+        { "hex": "#1a2858", "recipe": "ultramarine", "uncertain": false },
+        { "hex": "#c89848", "recipe": "yellow ochre", "uncertain": true }
+      ]
+    },
+
+    {
+      "id": "vermeer_pearl",
+      "name": "Vermeer — Girl with a Pearl Earring",
+      "source": "Vermeer Girl with Perl Earring.jpeg",
+      "description": "Johannes Vermeer, Girl with a Pearl Earring, c. 1665",
+      "colors": [
+        { "hex": "#0a0a0e", "recipe": "bone black", "uncertain": false },
+        { "hex": "#2a4a8c", "recipe": "lapis lazuli", "uncertain": false },
+        { "hex": "#8aaac8", "recipe": "lapis lazuli, lead white", "uncertain": false },
+        { "hex": "#7a5020", "recipe": "yellow ochre", "uncertain": true },
+        { "hex": "#d4956a", "recipe": "vermilion, lead white", "uncertain": true },
+        { "hex": "#e8dcc0", "recipe": "lead white, ochre", "uncertain": true },
+        { "hex": "#a03028", "recipe": "vermilion", "uncertain": false },
+        { "hex": "#e8e4d8", "recipe": "lead white", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "manet_piper",
+      "name": "Manet — The Piper",
+      "source": "Manet The Piper.jpeg",
+      "description": "Édouard Manet, The Fifer, 1866",
+      "colors": [
+        { "hex": "#a8b098", "recipe": "lead white, carbon black", "uncertain": true },
+        { "hex": "#1a2040", "recipe": "ultramarine", "uncertain": false },
+        { "hex": "#c02018", "recipe": "vermilion", "uncertain": false },
+        { "hex": "#a01808", "recipe": "vermilion", "uncertain": false },
+        { "hex": "#c8901e", "recipe": "yellow ochre", "uncertain": false },
+        { "hex": "#d4a878", "recipe": "yellow ochre, lead white", "uncertain": false },
+        { "hex": "#181818", "recipe": "ivory black", "uncertain": false },
+        { "hex": "#e8e0c8", "recipe": "lead white", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "sargent_carnation",
+      "name": "Sargent — Carnation, Lily, Lily, Rose",
+      "source": "Sargent Lilly and Rose.jpeg",
+      "description": "John Singer Sargent, Carnation, Lily, Lily, Rose, 1885–86",
+      "colors": [
+        { "hex": "#2a3a30", "recipe": "viridian, carbon black", "uncertain": false },
+        { "hex": "#1a2a18", "recipe": "viridian, carbon black", "uncertain": false },
+        { "hex": "#c87890", "recipe": "rose madder, lead white", "uncertain": false },
+        { "hex": "#e8c8c8", "recipe": "rose madder, lead white", "uncertain": false },
+        { "hex": "#a898b8", "recipe": "cobalt, lead white", "uncertain": true },
+        { "hex": "#e8e0d0", "recipe": "lead white", "uncertain": false },
+        { "hex": "#d4884a", "recipe": "cadmium yellow, vermilion", "uncertain": false },
+        { "hex": "#e05820", "recipe": "chrome orange", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "earth_bluemarble",
+      "name": "Earth — Blue Marble",
+      "source": "Earth.jpeg",
+      "description": "NASA Blue Marble, composite satellite image, 2002",
+      "colors": [
+        { "hex": "#050508", "recipe": "no light, vacuum", "uncertain": false },
+        { "hex": "#1a3a6a", "recipe": "water, depth", "uncertain": false },
+        { "hex": "#2a6aaa", "recipe": "water, depth", "uncertain": false },
+        { "hex": "#7aaad0", "recipe": "water, shallow", "uncertain": false },
+        { "hex": "#5a9ab0", "recipe": "water, atmosphere", "uncertain": true },
+        { "hex": "#6a8a48", "recipe": "chlorophyll", "uncertain": false },
+        { "hex": "#c8a060", "recipe": "iron oxide, dust", "uncertain": false },
+        { "hex": "#e8eaf0", "recipe": "ice crystals", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "sun_granulation",
+      "name": "Sun — Solar Surface",
+      "source": "Sun surface closup.jpg",
+      "description": "Inouye Solar Telescope, solar granulation, Maui, 2020",
+      "colors": [
+        { "hex": "#2a1a08", "recipe": "plasma, ~3000°C", "uncertain": false },
+        { "hex": "#6a3a10", "recipe": "plasma, ~3500°C", "uncertain": false },
+        { "hex": "#8a4a18", "recipe": "plasma, ~4000°C", "uncertain": false },
+        { "hex": "#b87020", "recipe": "plasma, ~4500°C", "uncertain": false },
+        { "hex": "#e0a030", "recipe": "plasma, ~5500°C", "uncertain": false },
+        { "hex": "#f0c060", "recipe": "plasma, ~6000°C", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "vangogh_cafeterrace",
+      "name": "Van Gogh — Café Terrace",
+      "source": "Van Gogh Cafe Terrace.jpeg",
+      "description": "Vincent van Gogh, Café Terrace at Night, 1888",
+      "colors": [
+        { "hex": "#0a0a1a", "recipe": "carbon black, ultramarine", "uncertain": false },
+        { "hex": "#1a2a6a", "recipe": "ultramarine", "uncertain": false },
+        { "hex": "#4a6ab0", "recipe": "cobalt blue, lead white", "uncertain": false },
+        { "hex": "#c8a818", "recipe": "lead chromate", "uncertain": false },
+        { "hex": "#e8c840", "recipe": "lead chromate", "uncertain": false },
+        { "hex": "#f0e898", "recipe": "lead chromate, lead white", "uncertain": false },
+        { "hex": "#7a4a18", "recipe": "yellow ochre, carbon black", "uncertain": false },
+        { "hex": "#c8b888", "recipe": "yellow ochre, lead white", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "degas_guitarist",
+      "name": "Degas — The Guitarist",
+      "source": "Degas Guitarist.jpeg",
+      "description": "Edgar Degas, Lorenzo Pagans and Auguste De Gas, c. 1871–72",
+      "colors": [
+        { "hex": "#1a1208", "recipe": "carbon black, umber", "uncertain": false },
+        { "hex": "#4a3018", "recipe": "raw umber", "uncertain": false },
+        { "hex": "#8a6030", "recipe": "yellow ochre, umber", "uncertain": true },
+        { "hex": "#c8a060", "recipe": "yellow ochre, lead white", "uncertain": true },
+        { "hex": "#e8c888", "recipe": "yellow ochre, lead white", "uncertain": true },
+        { "hex": "#2a1a08", "recipe": "carbon black, umber", "uncertain": false },
+        { "hex": "#c8b898", "recipe": "lead white, ochre", "uncertain": true },
+        { "hex": "#e8e0c8", "recipe": "lead white", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "chinese_porcelain",
+      "name": "Chinese Blue and White",
+      "source": "Chinese Porcelan.jpeg",
+      "description": "Chinese blue and white porcelain, Qing dynasty",
+      "colors": [
+        { "hex": "#1a3070", "recipe": "cobalt oxide", "uncertain": false },
+        { "hex": "#3a5aa0", "recipe": "cobalt oxide", "uncertain": false },
+        { "hex": "#6a8ac0", "recipe": "cobalt oxide, diluted", "uncertain": false },
+        { "hex": "#a8bcd8", "recipe": "cobalt oxide, trace", "uncertain": false },
+        { "hex": "#f0eee8", "recipe": "kaolin, fired", "uncertain": false },
+        { "hex": "#f8f8f8", "recipe": "kaolin, fired", "uncertain": false }
+      ]
+    }
+
+  ],
+
+  "craft_swatches": {
+    "id": "craft_swatches",
+    "name": "craft",
+    "source": null,
+    "description": "Materials of the craft — always present",
+    "colors": [
+      { "hex": null, "label": "empty", "recipe": "no glass", "uncertain": false },
+      { "hex": "#c2d4bc", "label": "clear", "recipe": "iron in sand, unrefined", "uncertain": false },
+      { "hex": null, "label": "lead", "recipe": "lead, antimony", "uncertain": false }
+    ]
+  }
+
+}

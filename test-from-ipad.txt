@@ -1,5 +1,0 @@
-This file was created by Claude while you were reading this conversation!
-
-Timestamp: 2025-11-06
-
-If you can see this file in your CuriousWoods folder, then remote filesystem access is working perfectly.

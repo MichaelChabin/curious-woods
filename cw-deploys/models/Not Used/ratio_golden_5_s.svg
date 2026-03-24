@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <title>Golden Rectangle — Five Squares Scaffolded (outer corners)</title>
+  <desc>
+    Five levels of golden rectangle recursion.
+    Each construction arc is centered at the OUTER corner of its rectangle,
+    radius = short side, sweeping a quarter circle to mark the next square boundary.
+    The arcs pinwheel around the figure as the spiral winds inward.
+
+    Arc 2: center=(699.34,585),   r=228.68, from (470.66,585) CCW to (699.34,356.33)
+    Arc 3: center=(470.66,215),   r=141.33, from (470.66,356.33) CW  to (558.01,215)
+    Arc 4: center=(558.01,356.33),r=87.35,  from (470.66,356.33) CCW to (558.01,268.98)
+    Arc 5: center=(558.01,268.98),r=53.98,  from (504.03,268.98) CCW to (558.01,215)
+  </desc>
+
+  <!-- ===================== SCAFFOLDING (dashed) ===================== -->
+
+  <!-- Arc 2: outer corner = bottom-right of R1 = (699.34,585) -->
+  <!-- from (470.66,585) sweeping CCW to (699.34,356.33) -->
+  <path d="M 470.66,585 A 228.68,228.68 0 0,0 699.34,356.33"
+        fill="none" stroke="#555" stroke-width="1.0"
+        stroke-dasharray="6,5" stroke-linecap="round"/>
+
+  <!-- Arc 3: outer corner = top-left of R2 = (470.66,215) -->
+  <!-- from (470.66,356.33) sweeping CW to (558.01,215) -->
+  <path d="M 470.66,356.33 A 141.33,141.33 0 0,1 558.01,215"
+        fill="none" stroke="#555" stroke-width="1.0"
+        stroke-dasharray="6,5" stroke-linecap="round"/>
+
+  <!-- Arc 4: outer corner = bottom-right of R3 = (558.01,356.33) -->
+  <!-- from (470.66,356.33) sweeping CCW to (558.01,268.98) -->
+  <path d="M 470.66,356.33 A 87.35,87.35 0 0,0 558.01,268.98"
+        fill="none" stroke="#555" stroke-width="1.0"
+        stroke-dasharray="6,5" stroke-linecap="round"/>
+
+  <!-- Arc 5: outer corner = bottom-right of R4 = (558.01,268.98) -->
+  <!-- from (504.03,268.98) sweeping CCW to (558.01,215) -->
+  <path d="M 504.03,268.98 A 53.98,53.98 0 0,0 558.01,215"
+        fill="none" stroke="#555" stroke-width="1.0"
+        stroke-dasharray="6,5" stroke-linecap="round"/>
+
+  <!-- ===================== SOLID CONSTRUCTION ===================== -->
+
+  <!-- Outer golden rectangle -->
+  <rect x="100.66" y="215" width="598.68" height="370"
+        fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Cut 1: vertical x=470.66 — Square 1 -->
+  <line x1="470.66" y1="215" x2="470.66" y2="585"
+        stroke="#555" stroke-width="1.5"/>
+
+  <!-- Cut 2: horizontal y=356.33 — Square 2 -->
+  <line x1="470.66" y1="356.33" x2="699.34" y2="356.33"
+        stroke="#555" stroke-width="1.5"/>
+
+  <!-- Cut 3: vertical x=558.01 — Square 3 -->
+  <line x1="558.01" y1="215" x2="558.01" y2="356.33"
+        stroke="#555" stroke-width="1.5"/>
+
+  <!-- Cut 4: horizontal y=268.98 — Square 4 -->
+  <line x1="470.66" y1="268.98" x2="558.01" y2="268.98"
+        stroke="#555" stroke-width="1.5"/>
+
+  <!-- Cut 5: vertical x=504.03 — Square 5 -->
+  <line x1="504.03" y1="215" x2="504.03" y2="268.98"
+        stroke="#555" stroke-width="1.5"/>
+
+</svg>

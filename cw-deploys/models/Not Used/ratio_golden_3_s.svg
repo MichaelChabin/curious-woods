@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <title>Golden Rectangle — Scaffolded</title>
+  <desc>
+    Golden rectangle with construction arc (dashed) showing how the proportions were found,
+    plus two levels of recursion: the square cut from the outer rectangle reveals a golden rectangle,
+    cut again reveals another.
+
+    phi = 1.61803...
+    Short side = 400, long side = 647.2
+    Positioned: left=76.4, top=200, right=723.6, bottom=600
+
+    Square 1: x=76.4 to x=476.4  (width=400)
+    Golden rect 1: x=476.4 to x=723.6  (width=247.2, height=400)
+
+    Square 2 inside golden rect 1: height=247.2, so cut at y=200+247.2=447.2
+      from x=476.4 to x=723.6, y=200 to y=447.2
+    Golden rect 2: x=476.4 to x=723.6, y=447.2 to y=600  (width=247.2, height=152.8)
+
+    Construction arc:
+      Midpoint of left side of outer rectangle: (76.4, 400)
+      Far corner: (476.4, 600)  [bottom-right of the square]
+      Radius = distance = sqrt((476.4-76.4)^2 + (600-400)^2)
+             = sqrt(400^2 + 200^2) = sqrt(160000+40000) = sqrt(200000) ≈ 447.2
+      Arc swings from the far corner down to the baseline (y=600)
+      Landing point x = 76.4 + 447.2 = 523.6... 
+      
+      Wait — the standard construction:
+        Start with square of side s. Midpoint of bottom edge M.
+        Radius = distance from M to top-right corner of square.
+        Swing arc from top-right corner down to extension of bottom edge.
+        
+      Let me redo with square on LEFT, oriented landscape:
+        Square: (76.4, 200) to (476.4, 600), side=400
+        Midpoint of bottom edge of square: M = (276.4, 600)
+        Top-right corner of square: C = (476.4, 200)
+        Radius = sqrt((476.4-276.4)^2 + (200-600)^2) = sqrt(200^2+400^2) = sqrt(200000) ≈ 447.2
+        Arc center = M = (276.4, 600)
+        Arc swings from C=(476.4,200) clockwise down to baseline y=600
+        Landing x = 276.4 + 447.2 = 723.6 ✓  (that's exactly our right edge!)
+        
+      So the arc: center=(276.4,600), radius=447.2
+        from C=(476.4,200) sweeping clockwise to (723.6,600)
+        Start angle from center to C: atan2(200-600, 476.4-276.4) = atan2(-400,200) ≈ -63.43° = 296.57°
+        End angle: 0° (point to the right on baseline)
+        SVG arc: large-arc=0, sweep=1 (clockwise)
+  </desc>
+
+  <!-- Outer golden rectangle — solid -->
+  <rect x="76.4" y="200" width="647.2" height="400"
+        fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Square 1 divider — solid -->
+  <line x1="476.4" y1="200" x2="476.4" y2="600"
+        stroke="#555" stroke-width="1.5"/>
+
+  <!-- Recursion level 2: horizontal cut inside first inner rectangle -->
+  <!-- Square 2: from (476.4,200) width=247.2, height=247.2, bottom at y=447.2 -->
+  <line x1="476.4" y1="447.2" x2="723.6" y2="447.2"
+        stroke="#555" stroke-width="1.5"/>
+
+  <!-- Recursion level 3: vertical cut inside second inner rectangle -->
+  <!-- Golden rect 2 is (476.4,447.2)→(723.6,600), width=247.2, height=152.8 -->
+  <!-- Square 3: from (476.4,447.2), side=152.8, right edge at x=476.4+152.8=629.2 -->
+  <line x1="629.2" y1="447.2" x2="629.2" y2="600"
+        stroke="#555" stroke-width="1.5"/>
+
+  <!-- Construction arc — dashed -->
+  <!-- Center=(276.4,600), radius=447.2 -->
+  <!-- From (476.4,200) sweeping clockwise to (723.6,600) -->
+  <path d="M 476.4,200 A 447.2,447.2 0 0,1 723.6,600"
+        fill="none" stroke="#555" stroke-width="1.2"
+        stroke-dasharray="8,6" stroke-linecap="round"/>
+
+  <!-- Dashed radius lines to make the arc's meaning clear -->
+  <!-- From center M to top-right corner C -->
+  <line x1="276.4" y1="600" x2="476.4" y2="200"
+        stroke="#555" stroke-width="1.0"
+        stroke-dasharray="5,5" stroke-linecap="round"/>
+  <!-- From center M to landing point -->
+  <line x1="276.4" y1="600" x2="723.6" y2="600"
+        stroke="#555" stroke-width="1.0"
+        stroke-dasharray="5,5" stroke-linecap="round"/>
+
+</svg>

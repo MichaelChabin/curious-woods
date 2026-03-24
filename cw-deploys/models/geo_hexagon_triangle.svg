@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <title>Hexagon with Inscribed Triangle</title>
+  <desc>Regular hexagon with equilateral triangle connecting every other vertex. Triangle area is half the hexagon.</desc>
+  <!-- Hexagon R=360, first vertex up (-90°) -->
+  <!-- 0: 400, 40 -->
+  <!-- 1: 400+360*cos(-30), 400+360*sin(-30) = 711.769, 220 -->
+  <!-- 2: 400+360*cos(30),  400+360*sin(30)  = 711.769, 580 -->
+  <!-- 3: 400, 760 -->
+  <!-- 4: 400+360*cos(150), 400+360*sin(150) = 88.231, 580 -->
+  <!-- 5: 400+360*cos(210), 400+360*sin(210) = 88.231, 220 -->
+  <polygon points="400,40 711.769,220 711.769,580 400,760 88.231,580 88.231,220"
+           fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Triangle: vertices 0, 2, 4 -->
+  <polygon points="400,40 711.769,580 88.231,580"
+           fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>

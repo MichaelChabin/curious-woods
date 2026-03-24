@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <title>Pythagorean Theorem — Proof Without Words</title>
+  <desc>
+    A large square of side (a+b) contains four identical right triangles arranged around a tilted inner square.
+    a=250, b=350. Outer square side=600, centered with margin 100.
+    Inner tilted square has side c=hypotenuse. Its area = (a+b)²−2ab = a²+b² = c².
+  </desc>
+
+  <!-- Outer square -->
+  <rect x="100" y="100" width="600" height="600"
+        fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Four triangle legs (hypotenuses are the inner square sides) -->
+  <polyline points="350,100 100,100 100,450"
+            fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+  <polyline points="350,100 700,100 700,350"
+            fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+  <polyline points="700,350 700,700 450,700"
+            fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+  <polyline points="100,450 100,700 450,700"
+            fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Inner tilted square -->
+  <polygon points="350,100 700,350 450,700 100,450"
+           fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+
+</svg>

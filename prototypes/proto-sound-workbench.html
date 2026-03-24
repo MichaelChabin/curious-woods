@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sound Workbench — CW Prototype</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --parchment:   #f4f1e8;
+      --parchment-2: #ede9dc;
+      --border:      #c8b89a;
+      --payne:       #546A80;
+      --copper:      #BE622F;
+      --ink:         #2a2620;
+      --muted:       #9a8e80;
+      --panel-gap:   16px;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--parchment-2);
+      font-family: Georgia, serif;
+      color: var(--ink);
+    }
+
+    /* ── Layout ─────────────────────────────────────────────── */
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 14px var(--panel-gap) 10px;
+      gap: 10px;
+    }
+
+    #header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    #header h1 {
+      font-size: 14px;
+      font-weight: normal;
+      color: var(--payne);
+      letter-spacing: 0.05em;
+    }
+
+    #header .subtitle {
+      font-size: 11px;
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    #panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--panel-gap);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .panel {
+      background: var(--parchment);
+      border: 0.5px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 10px 14px 8px;
+      border-bottom: 0.5px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .panel-header h2 {
+      font-size: 12px;
+      font-weight: normal;
+      color: var(--payne);
+      letter-spacing: 0.04em;
+    }
+
+    .panel-header p {
+      font-size: 10px;
+      font-style: italic;
+      color: var(--muted);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ── Controls ───────────────────────────────────────────── */
+    .ctrl-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .ctrl-label {
+      font-size: 10px;
+      font-style: italic;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+    }
+
+    .ctrl-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    input[type=range] {
+      flex: 1;
+      accent-color: var(--payne);
+      height: 2px;
+    }
+
+    .ctrl-val {
+      font-size: 10px;
+      color: var(--ink);
+      min-width: 36px;
+      text-align: right;
+    }
+
+    .seg-btns {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .seg-btn {
+      font-family: Georgia, serif;
+      font-size: 10px;
+      font-style: italic;
+      color: var(--payne);
+      background: transparent;
+      border: 0.5px solid var(--border);
+      border-radius: 3px;
+      padding: 4px 9px;
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .seg-btn:hover   { background: rgba(84,106,128,0.08); }
+    .seg-btn.active  { background: var(--payne); color: var(--parchment); border-color: var(--payne); }
+    .seg-btn.copper  { border-color: var(--copper); color: var(--copper); }
+    .seg-btn.copper:hover { background: rgba(190,98,47,0.08); }
+    .seg-btn.copper.active { background: var(--copper); color: var(--parchment); }
+
+    /* ── Gesture canvas ─────────────────────────────────────── */
+    #gesture-canvas {
+      width: 100%;
+      flex: 1;
+      min-height: 140px;
+      background: var(--parchment-2);
+      border: 0.5px solid var(--border);
+      border-radius: 4px;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    /* ── Feedback buttons ───────────────────────────────────── */
+    .event-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .event-btn {
+      font-family: Georgia, serif;
+      font-size: 11px;
+      font-style: italic;
+      color: var(--ink);
+      background: var(--parchment-2);
+      border: 0.5px solid var(--border);
+      border-radius: 5px;
+      padding: 10px 8px;
+      cursor: pointer;
+      transition: background 0.1s;
+      text-align: center;
+    }
+
+    .event-btn:hover    { background: #e8e4d8; }
+    .event-btn:active   { background: #ddd9cc; }
+    .event-btn .ev-name { display: block; font-size: 11px; color: var(--payne); }
+    .event-btn .ev-desc { display: block; font-size: 9px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Piano ──────────────────────────────────────────────── */
+    #piano-wrap {
+      display: flex;
+      gap: 2px;
+      height: 80px;
+      flex-shrink: 0;
+    }
+
+    .key {
+      flex: 1;
+      border: 0.5px solid var(--border);
+      border-radius: 0 0 3px 3px;
+      background: var(--parchment);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.08s;
+      user-select: none;
+    }
+
+    .key:hover  { background: #e8e4d8; }
+    .key.active { background: var(--payne); }
+
+    .key .key-label {
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 8px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .key.active .key-label { color: var(--parchment); }
+
+    /* ── Interval display ───────────────────────────────────── */
+    #interval-display {
+      background: var(--parchment-2);
+      border: 0.5px solid var(--border);
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 11px;
+      color: var(--payne);
+      font-style: italic;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #interval-display .ratio { font-size: 13px; color: var(--ink); }
+    #interval-display .name  { color: var(--muted); font-size: 10px; }
+
+    /* ── JSON output ────────────────────────────────────────── */
+    #footer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    #export-btn {
+      font-family: Georgia, serif;
+      font-size: 11px;
+      font-style: italic;
+      color: var(--parchment);
+      background: var(--payne);
+      border: none;
+      border-radius: 4px;
+      padding: 7px 16px;
+      cursor: pointer;
+    }
+
+    #export-btn:hover { background: #435869; }
+
+    #export-preview {
+      font-family: 'Menlo', 'Monaco', monospace;
+      font-size: 9px;
+      color: var(--muted);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── Divider ────────────────────────────────────────────── */
+    .divider {
+      height: 0.5px;
+      background: var(--border);
+      margin: 2px 0;
+    }
+
+    /* ── Flash ring on event fire ───────────────────────────── */
+    .event-btn.firing {
+      background: rgba(84,106,128,0.15);
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <div id="header">
+    <h1>sound workbench</h1>
+    <span class="subtitle">three panels · synthesized · exports JSON</span>
+  </div>
+
+  <div id="panels">
+
+    <!-- ══════════════════════════════════════════════
+         PANEL 1 — GESTURE SOUNDS
+         ══════════════════════════════════════════════ -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2>gesture sounds</h2>
+        <p>draw on the canvas · tap, drag a line, or drag a circle</p>
+      </div>
+      <div class="panel-body">
+
+        <canvas id="gesture-canvas"></canvas>
+
+        <!-- Gesture type (read-only, detected automatically) -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">last gesture</span>
+          <div class="seg-btns" id="gesture-indicator">
+            <span class="seg-btn active" id="gi-tap">tap</span>
+            <span class="seg-btn" id="gi-line">line</span>
+            <span class="seg-btn" id="gi-circle">circle</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Waveform -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">waveform</span>
+          <div class="seg-btns" id="g-wave-btns">
+            <button class="seg-btn active" data-wave="sine">sine</button>
+            <button class="seg-btn" data-wave="triangle">triangle</button>
+            <button class="seg-btn" data-wave="square">square</button>
+            <button class="seg-btn" data-wave="sawtooth">sawtooth</button>
+          </div>
+        </div>
+
+        <!-- Pitch -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">base pitch (Hz)</span>
+          <div class="ctrl-row">
+            <input type="range" id="g-pitch" min="80" max="1200" step="1" value="440">
+            <span class="ctrl-val" id="g-pitch-val">440 Hz</span>
+          </div>
+        </div>
+
+        <!-- Pitch contour -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">pitch contour during gesture</span>
+          <div class="seg-btns" id="g-contour-btns">
+            <button class="seg-btn active" data-contour="flat">flat</button>
+            <button class="seg-btn" data-contour="rise">rise</button>
+            <button class="seg-btn" data-contour="fall">fall</button>
+            <button class="seg-btn" data-contour="arch">arch</button>
+          </div>
+        </div>
+
+        <!-- Contour amount -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">contour amount (semitones)</span>
+          <div class="ctrl-row">
+            <input type="range" id="g-contour-amt" min="0" max="24" step="1" value="7">
+            <span class="ctrl-val" id="g-contour-amt-val">7 st</span>
+          </div>
+        </div>
+
+        <!-- Attack -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">attack (ms)</span>
+          <div class="ctrl-row">
+            <input type="range" id="g-attack" min="1" max="300" step="1" value="10">
+            <span class="ctrl-val" id="g-attack-val">10 ms</span>
+          </div>
+        </div>
+
+        <!-- Release -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">release (ms)</span>
+          <div class="ctrl-row">
+            <input type="range" id="g-release" min="10" max="1500" step="10" value="300">
+            <span class="ctrl-val" id="g-release-val">300 ms</span>
+          </div>
+        </div>
+
+        <!-- Volume -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">volume</span>
+          <div class="ctrl-row">
+            <input type="range" id="g-vol" min="0" max="1" step="0.01" value="0.4">
+            <span class="ctrl-val" id="g-vol-val">0.40</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         PANEL 2 — FEEDBACK SOUNDS
+         ══════════════════════════════════════════════ -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2>feedback sounds</h2>
+        <p>click an event to hear it · tune each one independently</p>
+      </div>
+      <div class="panel-body">
+
+        <div class="event-grid">
+          <button class="event-btn" id="ev-snap" data-event="snap">
+            <span class="ev-name">snap</span>
+            <span class="ev-desc">cursor reaches a point</span>
+          </button>
+          <button class="event-btn" id="ev-tap" data-event="tap">
+            <span class="ev-name">tap</span>
+            <span class="ev-desc">click on a point</span>
+          </button>
+          <button class="event-btn" id="ev-release" data-event="release">
+            <span class="ev-name">release</span>
+            <span class="ev-desc">end of a drag gesture</span>
+          </button>
+          <button class="event-btn" id="ev-consequence" data-event="consequence">
+            <span class="ev-name">consequence</span>
+            <span class="ev-desc">intersection imminent</span>
+          </button>
+        </div>
+
+        <!-- Selected event label -->
+        <div class="ctrl-group">
+          <span class="ctrl-label" id="fb-selected-label">editing: snap</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Waveform -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">waveform</span>
+          <div class="seg-btns" id="fb-wave-btns">
+            <button class="seg-btn active" data-wave="sine">sine</button>
+            <button class="seg-btn" data-wave="triangle">triangle</button>
+            <button class="seg-btn" data-wave="square">square</button>
+            <button class="seg-btn" data-wave="sawtooth">sawtooth</button>
+          </div>
+        </div>
+
+        <!-- Pitch -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">pitch (Hz)</span>
+          <div class="ctrl-row">
+            <input type="range" id="fb-pitch" min="80" max="2400" step="1" value="880">
+            <span class="ctrl-val" id="fb-pitch-val">880 Hz</span>
+          </div>
+        </div>
+
+        <!-- Duration -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">duration (ms)</span>
+          <div class="ctrl-row">
+            <input type="range" id="fb-dur" min="10" max="800" step="5" value="80">
+            <span class="ctrl-val" id="fb-dur-val">80 ms</span>
+          </div>
+        </div>
+
+        <!-- Attack -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">attack (ms)</span>
+          <div class="ctrl-row">
+            <input type="range" id="fb-attack" min="1" max="200" step="1" value="5">
+            <span class="ctrl-val" id="fb-attack-val">5 ms</span>
+          </div>
+        </div>
+
+        <!-- Release -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">release (ms)</span>
+          <div class="ctrl-row">
+            <input type="range" id="fb-release" min="5" max="600" step="5" value="60">
+            <span class="ctrl-val" id="fb-release-val">60 ms</span>
+          </div>
+        </div>
+
+        <!-- Volume -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">volume</span>
+          <div class="ctrl-row">
+            <input type="range" id="fb-vol" min="0" max="1" step="0.01" value="0.3">
+            <span class="ctrl-val" id="fb-vol-val">0.30</span>
+          </div>
+        </div>
+
+        <!-- Second partial (adds a harmonic overtone) -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">overtone mix (adds 2nd partial)</span>
+          <div class="ctrl-row">
+            <input type="range" id="fb-overtone" min="0" max="1" step="0.01" value="0">
+            <span class="ctrl-val" id="fb-overtone-val">0.00</span>
+          </div>
+        </div>
+
+        <!-- Detune -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">detune (cents)</span>
+          <div class="ctrl-row">
+            <input type="range" id="fb-detune" min="-50" max="50" step="1" value="0">
+            <span class="ctrl-val" id="fb-detune-val">0 ¢</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         PANEL 3 — PEDAGOGY / PITCH
+         ══════════════════════════════════════════════ -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2>pitch & ratios</h2>
+        <p>play two notes · hear the interval · compare tuning systems</p>
+      </div>
+      <div class="panel-body">
+
+        <!-- Tuning system -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">tuning system</span>
+          <div class="seg-btns" id="tuning-btns">
+            <button class="seg-btn active" data-tuning="equal">equal temperament</button>
+            <button class="seg-btn" data-tuning="just">just intonation</button>
+            <button class="seg-btn" data-tuning="pythagorean">Pythagorean</button>
+          </div>
+        </div>
+
+        <!-- Root pitch -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">root (A =)</span>
+          <div class="ctrl-row">
+            <input type="range" id="p-root" min="220" max="880" step="1" value="440">
+            <span class="ctrl-val" id="p-root-val">440 Hz</span>
+          </div>
+        </div>
+
+        <!-- Octave -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">octave</span>
+          <div class="seg-btns" id="octave-btns">
+            <button class="seg-btn" data-oct="-1">−1</button>
+            <button class="seg-btn active" data-oct="0">0</button>
+            <button class="seg-btn" data-oct="1">+1</button>
+          </div>
+        </div>
+
+        <!-- Piano -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">keyboard — click to play · two notes sound together</span>
+          <div id="piano-wrap"></div>
+        </div>
+
+        <!-- Interval display -->
+        <div id="interval-display">
+          <span style="color:var(--muted); font-style:italic; font-size:10px;">play two notes to see the interval</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Waveform for piano -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">piano waveform</span>
+          <div class="seg-btns" id="p-wave-btns">
+            <button class="seg-btn active" data-wave="sine">sine</button>
+            <button class="seg-btn" data-wave="triangle">triangle</button>
+            <button class="seg-btn" data-wave="square">square</button>
+          </div>
+        </div>
+
+        <!-- Sustain -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">sustain (ms)</span>
+          <div class="ctrl-row">
+            <input type="range" id="p-sustain" min="200" max="3000" step="100" value="1200">
+            <span class="ctrl-val" id="p-sustain-val">1200 ms</span>
+          </div>
+        </div>
+
+        <!-- Volume -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">volume</span>
+          <div class="ctrl-row">
+            <input type="range" id="p-vol" min="0" max="1" step="0.01" value="0.35">
+            <span class="ctrl-val" id="p-vol-val">0.35</span>
+          </div>
+        </div>
+
+        <!-- Play both together button -->
+        <button class="seg-btn copper" id="play-both-btn" style="align-self:flex-start; margin-top:2px;">
+          play both together
+        </button>
+
+      </div>
+    </div>
+
+  </div><!-- /panels -->
+
+  <!-- Footer: export JSON -->
+  <div id="footer">
+    <button id="export-btn">export JSON</button>
+    <span id="export-preview">—</span>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+'use strict';
+
+/* ════════════════════════════════════════════════════════════════
+   AUDIO CONTEXT
+   ════════════════════════════════════════════════════════════════ */
+
+let audioCtx = null;
+
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   Core synth: play a tone with ADSR-ish envelope and optional
+   pitch contour. Returns the stop time so callers can chain.
+──────────────────────────────────────────────────────────────── */
+function playTone({
+  freq      = 440,
+  wave      = 'sine',
+  vol       = 0.4,
+  attack    = 0.01,     // seconds
+  release   = 0.3,      // seconds
+  duration  = null,     // seconds — if null, attack+release only
+  detune    = 0,        // cents
+  overtone  = 0,        // 0–1 mix of 2nd partial
+  freqEnd   = null,     // if set, sweep pitch from freq to freqEnd
+}) {
+  const ac  = getAudio();
+  const now = ac.currentTime;
+  const dur = duration ?? (attack + release);
+
+  const gain = ac.createGain();
+  gain.connect(ac.destination);
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(vol, now + attack);
+  gain.gain.setValueAtTime(vol, now + Math.max(attack, dur - release));
+  gain.gain.linearRampToValueAtTime(0.0001, now + dur);
+
+  function makeOsc(frequency, detuneVal) {
+    const osc = ac.createOscillator();
+    osc.type = wave;
+    osc.frequency.setValueAtTime(frequency, now);
+    if (freqEnd !== null) {
+      osc.frequency.linearRampToValueAtTime(freqEnd, now + dur);
+    }
+    osc.detune.setValueAtTime(detuneVal, now);
+    osc.connect(gain);
+    osc.start(now);
+    osc.stop(now + dur + 0.05);
+    return osc;
+  }
+
+  makeOsc(freq, detune);
+  if (overtone > 0.01) {
+    const g2 = ac.createGain();
+    g2.gain.setValueAtTime(overtone * vol, now);
+    g2.connect(ac.destination);
+    const osc2 = ac.createOscillator();
+    osc2.type = wave;
+    osc2.frequency.setValueAtTime(freq * 2, now);
+    osc2.connect(g2);
+    osc2.start(now);
+    osc2.stop(now + dur + 0.05);
+  }
+
+  return now + dur;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PANEL 1 — GESTURE SOUNDS
+   ════════════════════════════════════════════════════════════════ */
+
+const gState = {
+  wave:        'sine',
+  pitch:       440,
+  contour:     'flat',
+  contourAmt:  7,    // semitones
+  attack:      10,   // ms
+  release:     300,  // ms
+  vol:         0.4,
+};
+
+// Gesture canvas
+const gCanvas = document.getElementById('gesture-canvas');
+const gCtx    = gCanvas.getContext('2d');
+let gDragging = false;
+let gPoints   = [];
+let gLastGesture = 'tap';
+
+function resizeGestureCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = gCanvas.getBoundingClientRect();
+  gCanvas.width  = rect.width  * dpr;
+  gCanvas.height = rect.height * dpr;
+  gCanvas.style.width  = rect.width  + 'px';
+  gCanvas.style.height = rect.height + 'px';
+  gCtx.scale(dpr, dpr);
+}
+
+function clearGestureCanvas() {
+  const w = gCanvas.getBoundingClientRect().width;
+  const h = gCanvas.getBoundingClientRect().height;
+  gCtx.clearRect(0, 0, w, h);
+}
+
+function drawGestureTrail() {
+  clearGestureCanvas();
+  if (gPoints.length < 2) return;
+  gCtx.save();
+  gCtx.beginPath();
+  gCtx.moveTo(gPoints[0].x, gPoints[0].y);
+  gPoints.forEach(p => gCtx.lineTo(p.x, p.y));
+  gCtx.strokeStyle = '#546A80';
+  gCtx.lineWidth   = 1;
+  gCtx.globalAlpha = 0.5;
+  gCtx.stroke();
+  gCtx.restore();
+}
+
+function detectGesture(points) {
+  if (points.length < 3) return 'tap';
+  const first  = points[0];
+  const last   = points[points.length - 1];
+  const span   = Math.sqrt((last.x-first.x)**2 + (last.y-first.y)**2);
+  // Compute bounding box aspect ratio
+  const xs = points.map(p => p.x);
+  const ys = points.map(p => p.y);
+  const bw = Math.max(...xs) - Math.min(...xs);
+  const bh = Math.max(...ys) - Math.min(...ys);
+  const aspect = bw / (bh + 0.01);
+  // Circularity: how close does end return to start?
+  const closure = span / (Math.max(bw, bh) + 0.01);
+  if (closure < 0.4 && points.length > 12) return 'circle';
+  if (aspect > 1.8 || aspect < 0.55) return 'line';
+  return 'line';
+}
+
+function pitchWithContour(basePitch, t) {
+  // t: 0 at gesture start, 1 at gesture end
+  const semitones = gState.contourAmt;
+  const ratio = Math.pow(2, semitones / 12);
+  switch (gState.contour) {
+    case 'flat':  return basePitch;
+    case 'rise':  return basePitch * Math.pow(ratio, t);
+    case 'fall':  return basePitch * Math.pow(ratio, 1 - t);
+    case 'arch':  return basePitch * Math.pow(ratio, Math.sin(t * Math.PI));
+  }
+  return basePitch;
+}
+
+function playGestureSound(gesture, durationMs) {
+  const dur = Math.max(0.05, Math.min(durationMs / 1000, 2.0));
+  const start = pitchWithContour(gState.pitch, 0);
+  const end   = pitchWithContour(gState.pitch, 1);
+  playTone({
+    freq:     start,
+    freqEnd:  gState.contour === 'flat' ? null : end,
+    wave:     gState.wave,
+    vol:      gState.vol,
+    attack:   gState.attack / 1000,
+    release:  gState.release / 1000,
+    duration: dur,
+  });
+}
+
+function indicateGesture(name) {
+  gLastGesture = name;
+  ['tap','line','circle'].forEach(g => {
+    document.getElementById('gi-' + g).classList.toggle('active', g === name);
+  });
+}
+
+gCanvas.addEventListener('mousedown', e => {
+  getAudio();
+  const rect = gCanvas.getBoundingClientRect();
+  gDragging = true;
+  gPoints = [{ x: e.clientX - rect.left, y: e.clientY - rect.top, t: Date.now() }];
+  clearGestureCanvas();
+});
+
+gCanvas.addEventListener('mousemove', e => {
+  if (!gDragging) return;
+  const rect = gCanvas.getBoundingClientRect();
+  gPoints.push({ x: e.clientX - rect.left, y: e.clientY - rect.top, t: Date.now() });
+  drawGestureTrail();
+});
+
+gCanvas.addEventListener('mouseup', e => {
+  if (!gDragging) return;
+  gDragging = false;
+  const durationMs = gPoints.length > 1
+    ? gPoints[gPoints.length-1].t - gPoints[0].t
+    : 80;
+  const gesture = detectGesture(gPoints);
+  indicateGesture(gPoints.length < 3 ? 'tap' : gesture);
+  playGestureSound(gesture, Math.max(80, durationMs));
+  // Fade trail
+  setTimeout(() => clearGestureCanvas(), 800);
+});
+
+// Waveform buttons
+segBtnGroup('g-wave-btns', v => { gState.wave = v; });
+
+// Sliders
+sliderCtrl('g-pitch',       v => { gState.pitch      = v; }, v => v + ' Hz');
+sliderCtrl('g-contour-amt', v => { gState.contourAmt = v; }, v => v + ' st');
+sliderCtrl('g-attack',      v => { gState.attack      = v; }, v => v + ' ms');
+sliderCtrl('g-release',     v => { gState.release     = v; }, v => v + ' ms');
+sliderCtrl('g-vol',         v => { gState.vol         = v; }, v => parseFloat(v).toFixed(2));
+
+// Contour buttons
+segBtnGroup('g-contour-btns', v => { gState.contour = v; });
+
+/* ════════════════════════════════════════════════════════════════
+   PANEL 2 — FEEDBACK SOUNDS
+   ════════════════════════════════════════════════════════════════ */
+
+// Per-event settings
+const fbDefaults = {
+  snap:        { wave:'sine',     pitch:1046, dur:60,  attack:3,  release:50,  vol:0.25, overtone:0,    detune:0  },
+  tap:         { wave:'sine',     pitch:880,  dur:80,  attack:5,  release:60,  vol:0.30, overtone:0.1,  detune:0  },
+  release:     { wave:'triangle', pitch:660,  dur:120, attack:8,  release:100, vol:0.25, overtone:0,    detune:0  },
+  consequence: { wave:'sine',     pitch:440,  dur:400, attack:20, release:300, vol:0.30, overtone:0.3,  detune:8  },
+};
+
+const fbState = JSON.parse(JSON.stringify(fbDefaults));  // deep copy
+let fbSelected = 'snap';
+
+function loadFbControls(event) {
+  const s = fbState[event];
+  document.getElementById('fb-pitch').value    = s.pitch;
+  document.getElementById('fb-pitch-val').textContent = s.pitch + ' Hz';
+  document.getElementById('fb-dur').value      = s.dur;
+  document.getElementById('fb-dur-val').textContent   = s.dur + ' ms';
+  document.getElementById('fb-attack').value   = s.attack;
+  document.getElementById('fb-attack-val').textContent = s.attack + ' ms';
+  document.getElementById('fb-release').value  = s.release;
+  document.getElementById('fb-release-val').textContent = s.release + ' ms';
+  document.getElementById('fb-vol').value      = s.vol;
+  document.getElementById('fb-vol-val').textContent    = s.vol.toFixed(2);
+  document.getElementById('fb-overtone').value = s.overtone;
+  document.getElementById('fb-overtone-val').textContent = s.overtone.toFixed(2);
+  document.getElementById('fb-detune').value   = s.detune;
+  document.getElementById('fb-detune-val').textContent = s.detune + ' ¢';
+  // Waveform buttons
+  document.querySelectorAll('#fb-wave-btns .seg-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.wave === s.wave);
+  });
+  document.getElementById('fb-selected-label').textContent = 'editing: ' + event;
+}
+
+function playFbEvent(event) {
+  const s = fbState[event];
+  playTone({
+    freq:    s.pitch,
+    wave:    s.wave,
+    vol:     s.vol,
+    attack:  s.attack  / 1000,
+    release: s.release / 1000,
+    duration: s.dur    / 1000,
+    detune:  s.detune,
+    overtone: s.overtone,
+  });
+}
+
+// Event buttons — click plays the sound AND selects it for editing
+document.querySelectorAll('.event-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    getAudio();
+    const ev = btn.dataset.event;
+    fbSelected = ev;
+    loadFbControls(ev);
+    playFbEvent(ev);
+    btn.classList.add('firing');
+    setTimeout(() => btn.classList.remove('firing'), 200);
+  });
+});
+
+// Waveform
+segBtnGroup('fb-wave-btns', v => { fbState[fbSelected].wave = v; });
+
+// Sliders — each updates the selected event's state
+sliderCtrl('fb-pitch',    v => { fbState[fbSelected].pitch    = +v; }, v => v + ' Hz');
+sliderCtrl('fb-dur',      v => { fbState[fbSelected].dur      = +v; }, v => v + ' ms');
+sliderCtrl('fb-attack',   v => { fbState[fbSelected].attack   = +v; }, v => v + ' ms');
+sliderCtrl('fb-release',  v => { fbState[fbSelected].release  = +v; }, v => v + ' ms');
+sliderCtrl('fb-vol',      v => { fbState[fbSelected].vol      = +v; }, v => parseFloat(v).toFixed(2));
+sliderCtrl('fb-overtone', v => { fbState[fbSelected].overtone = +v; }, v => parseFloat(v).toFixed(2));
+sliderCtrl('fb-detune',   v => { fbState[fbSelected].detune   = +v; }, v => v + ' ¢');
+
+loadFbControls('snap');
+
+/* ════════════════════════════════════════════════════════════════
+   PANEL 3 — PITCH & RATIOS
+   ════════════════════════════════════════════════════════════════ */
+
+// Tuning systems — frequencies for C major scale starting from A=440
+// Intervals: unison, m2, M2, m3, M3, P4, tritone, P5, m6, M6, m7, M7, octave
+const TUNING = {
+  equal: [1, 1.0595, 1.1225, 1.1892, 1.2599, 1.3348, 1.4142, 1.4983, 1.5874, 1.6818, 1.7818, 1.8877, 2],
+  just:  [1, 16/15, 9/8, 6/5, 5/4, 4/3, 45/32, 3/2, 8/5, 5/3, 9/5, 15/8, 2],
+  pythagorean: [1, 256/243, 9/8, 32/27, 81/64, 4/3, 729/512, 3/2, 128/81, 27/16, 16/9, 243/128, 2],
+};
+
+const INTERVAL_NAMES = [
+  'unison','minor 2nd','major 2nd','minor 3rd','major 3rd',
+  'perfect 4th','tritone','perfect 5th','minor 6th','major 6th',
+  'minor 7th','major 7th','octave'
+];
+
+// Ratio fractions for just intonation (for display)
+const JUST_RATIOS = [
+  '1/1','16/15','9/8','6/5','5/4','4/3','45/32','3/2','8/5','5/3','9/5','15/8','2/1'
+];
+
+const PYTH_RATIOS = [
+  '1/1','256/243','9/8','32/27','81/64','4/3','729/512','3/2','128/81','27/16','16/9','243/128','2/1'
+];
+
+let pState = {
+  tuning:  'equal',
+  root:    440,
+  octave:  0,
+  wave:    'sine',
+  sustain: 1200,
+  vol:     0.35,
+};
+
+let activePianoKeys = [];  // up to 2
+
+// Build piano keys (13 keys, one octave + octave)
+const pianoWrap = document.getElementById('piano-wrap');
+const NOTE_NAMES = ['A','B♭','B','C','C♯','D','E♭','E','F','F♯','G','A♭','A'];
+
+for (let i = 0; i < 13; i++) {
+  const key = document.createElement('div');
+  key.className = 'key';
+  key.dataset.step = i;
+  const label = document.createElement('span');
+  label.className = 'key-label';
+  label.textContent = NOTE_NAMES[i];
+  key.appendChild(label);
+  pianoWrap.appendChild(key);
+
+  key.addEventListener('click', () => {
+    getAudio();
+    playPianoKey(i, key);
+  });
+}
+
+function pianoFreq(step) {
+  const ratios = TUNING[pState.tuning];
+  const octMul = Math.pow(2, pState.octave);
+  return pState.root * ratios[step] * octMul;
+}
+
+function playPianoKey(step, keyEl) {
+  const freq = pianoFreq(step);
+  playTone({
+    freq:    freq,
+    wave:    pState.wave,
+    vol:     pState.vol,
+    attack:  0.01,
+    release: pState.sustain / 1000 * 0.4,
+    duration: pState.sustain / 1000,
+  });
+
+  // Track up to 2 active keys
+  keyEl.classList.toggle('active');
+  if (keyEl.classList.contains('active')) {
+    activePianoKeys.push(step);
+    if (activePianoKeys.length > 2) {
+      const oldest = activePianoKeys.shift();
+      document.querySelectorAll('.key').forEach(k => {
+        if (+k.dataset.step === oldest) k.classList.remove('active');
+      });
+    }
+  } else {
+    activePianoKeys = activePianoKeys.filter(s => s !== step);
+  }
+  updateIntervalDisplay();
+}
+
+function updateIntervalDisplay() {
+  const el = document.getElementById('interval-display');
+  if (activePianoKeys.length < 2) {
+    el.innerHTML = '<span style="color:var(--muted); font-style:italic; font-size:10px;">play two notes to see the interval</span>';
+    return;
+  }
+  const lo   = Math.min(...activePianoKeys);
+  const hi   = Math.max(...activePianoKeys);
+  const diff = hi - lo;
+  const name = INTERVAL_NAMES[diff] ?? (diff + ' semitones');
+
+  let ratioStr = '';
+  if (pState.tuning === 'just') {
+    ratioStr = JUST_RATIOS[diff] ?? '—';
+  } else if (pState.tuning === 'pythagorean') {
+    ratioStr = PYTH_RATIOS[diff] ?? '—';
+  } else {
+    // Equal temperament — show decimal ratio
+    ratioStr = TUNING.equal[diff].toFixed(4);
+  }
+
+  const freqLo = pianoFreq(lo).toFixed(1);
+  const freqHi = pianoFreq(hi).toFixed(1);
+
+  el.innerHTML = `
+    <span class="ratio">${ratioStr}</span>
+    <span style="color:var(--payne)">${name}</span>
+    <span class="name">${freqLo} Hz · ${freqHi} Hz</span>
+  `;
+}
+
+document.getElementById('play-both-btn').addEventListener('click', () => {
+  getAudio();
+  if (activePianoKeys.length < 2) return;
+  activePianoKeys.forEach(step => {
+    playTone({
+      freq:    pianoFreq(step),
+      wave:    pState.wave,
+      vol:     pState.vol,
+      attack:  0.01,
+      release: pState.sustain / 1000 * 0.4,
+      duration: pState.sustain / 1000,
+    });
+  });
+});
+
+segBtnGroup('tuning-btns', v => { pState.tuning = v; updateIntervalDisplay(); });
+segBtnGroup('p-wave-btns', v => { pState.wave   = v; });
+segBtnGroup('octave-btns', v => { pState.octave = +v; updateIntervalDisplay(); });
+
+sliderCtrl('p-root',    v => { pState.root    = +v; updateIntervalDisplay(); }, v => v + ' Hz');
+sliderCtrl('p-sustain', v => { pState.sustain = +v; }, v => v + ' ms');
+sliderCtrl('p-vol',     v => { pState.vol     = +v; }, v => parseFloat(v).toFixed(2));
+
+/* ════════════════════════════════════════════════════════════════
+   JSON EXPORT
+   ════════════════════════════════════════════════════════════════ */
+
+document.getElementById('export-btn').addEventListener('click', () => {
+  const payload = {
+    version: 1,
+    gesture: {
+      wave:       gState.wave,
+      pitch:      gState.pitch,
+      contour:    gState.contour,
+      contourAmt: gState.contourAmt,
+      attackMs:   gState.attack,
+      releaseMs:  gState.release,
+      vol:        gState.vol,
+    },
+    feedback: Object.fromEntries(
+      Object.entries(fbState).map(([ev, s]) => [ev, {
+        wave:      s.wave,
+        pitchHz:   s.pitch,
+        durationMs: s.dur,
+        attackMs:  s.attack,
+        releaseMs: s.release,
+        vol:       s.vol,
+        overtone:  s.overtone,
+        detuneCents: s.detune,
+      }])
+    ),
+    pitch: {
+      tuning:   pState.tuning,
+      rootHz:   pState.root,
+      wave:     pState.wave,
+      sustainMs: pState.sustain,
+      vol:      pState.vol,
+    },
+  };
+
+  const json = JSON.stringify(payload, null, 2);
+  // Show preview in footer
+  document.getElementById('export-preview').textContent = JSON.stringify(payload);
+  // Copy to clipboard
+  navigator.clipboard.writeText(json).then(() => {
+    const btn = document.getElementById('export-btn');
+    btn.textContent = 'copied ✓';
+    setTimeout(() => btn.textContent = 'export JSON', 1800);
+  });
+});
+
+/* ════════════════════════════════════════════════════════════════
+   HELPERS
+   ════════════════════════════════════════════════════════════════ */
+
+function segBtnGroup(groupId, onChange) {
+  const btns = document.querySelectorAll('#' + groupId + ' .seg-btn');
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const val = btn.dataset.wave ?? btn.dataset.contour ??
+                  btn.dataset.tuning ?? btn.dataset.oct ?? btn.textContent.trim();
+      onChange(val);
+    });
+  });
+}
+
+function sliderCtrl(id, onChange, fmt) {
+  const slider = document.getElementById(id);
+  const valEl  = document.getElementById(id + '-val');
+  slider.addEventListener('input', () => {
+    const v = slider.value;
+    onChange(v);
+    if (valEl && fmt) valEl.textContent = fmt(v);
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════════════════════════════ */
+
+// Resize gesture canvas once layout is done
+requestAnimationFrame(() => {
+  resizeGestureCanvas();
+});
+
+window.addEventListener('resize', () => {
+  resizeGestureCanvas();
+});
+
+</script>
+</body>
+</html>

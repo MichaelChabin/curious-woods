@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <title>Nested Squares</title>
+  <desc>Outer square with inner square rotated 45°, touching midpoints. Inner has half the area.</desc>
+  <!-- Outer square: half-side=360, axis-aligned -->
+  <rect x="40" y="40" width="720" height="720"
+        fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Inner square: vertices at midpoints of outer sides -->
+  <polygon points="400,40 760,400 400,760 40,400"
+           fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>

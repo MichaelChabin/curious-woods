@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <title>Golden Rectangle</title>
+  <desc>
+    A golden rectangle with a square cut from the left end, revealing a smaller golden rectangle on the right.
+    phi = (1+sqrt(5))/2 ≈ 1.61803
+    Short side = 400, long side = 400*phi ≈ 647.2
+    Centered in 800x800:
+      left   = (800 - 647.2) / 2 = 76.4
+      top    = (800 - 400)   / 2 = 200
+      right  = 76.4 + 647.2 = 723.6
+      bottom = 200 + 400     = 600
+    Square occupies left portion: width = 400 (the short side)
+      square right edge x = 76.4 + 400 = 476.4
+    Remaining rectangle: x=476.4 to x=723.6, y=200 to y=600
+      width = 247.2 ≈ 400/phi  height = 400
+      ratio = 400/247.2 ≈ 1.618 ✓ — it's another golden rectangle
+  </desc>
+
+  <!-- Outer golden rectangle -->
+  <rect x="76.4" y="200" width="647.2" height="400"
+        fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Vertical line separating the square from the inner golden rectangle -->
+  <line x1="476.4" y1="200" x2="476.4" y2="600"
+        stroke="#555" stroke-width="1.5"/>
+
+</svg>

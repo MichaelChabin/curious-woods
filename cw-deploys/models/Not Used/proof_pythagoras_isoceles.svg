@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <title>Pythagorean Theorem — Isoceles Case (a=b)</title>
+  <desc>
+    When a=b the four triangles exactly equal the inner square.
+    Both have area 2ab = 2*280*280 = 156800.
+    Outer square = (a+b)^2 = 560^2 = 313600.
+    Inner square = a^2+b^2 = 2*280^2 = 156800.
+    Four triangles = 2ab = 156800.
+    Inner square = four triangles exactly.
+
+    Outer square: (120,120) to (680,680), side=560
+    With a=b=280, the cut points are exactly at the MIDPOINTS of each side:
+      P1=(400,120) — midpoint of top
+      P2=(680,400) — midpoint of right
+      P3=(400,680) — midpoint of bottom
+      P4=(120,400) — midpoint of left
+    The inner square is rotated exactly 45°.
+  </desc>
+
+  <!-- Outer square -->
+  <rect x="120" y="120" width="560" height="560"
+        fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Four triangle legs -->
+  <!-- T1: top-left corner, legs to midpoints of top and left sides -->
+  <polyline points="400,120 120,120 120,400"
+            fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- T2: top-right corner -->
+  <polyline points="400,120 680,120 680,400"
+            fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- T3: bottom-right corner -->
+  <polyline points="680,400 680,680 400,680"
+            fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- T4: bottom-left corner -->
+  <polyline points="120,400 120,680 400,680"
+            fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Inner tilted square — vertices at midpoints, rotated exactly 45° -->
+  <polygon points="400,120 680,400 400,680 120,400"
+           fill="none" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/>
+
+</svg>
