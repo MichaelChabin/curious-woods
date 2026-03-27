@@ -67,7 +67,9 @@
     #tools-l2.revealed .l2-item:nth-child(6) { transition-delay: 240ms; }
     #tools-l2.revealed .l2-item:nth-child(7) { transition-delay: 280ms; }
     #tools-l2.revealed .l2-item:nth-child(8) { transition-delay: 320ms; }
-    #tools-l2.revealed .l2-item:nth-child(9) { transition-delay: 360ms; }
+    #tools-l2.revealed .l2-item:nth-child(9)  { transition-delay: 360ms; }
+    #tools-l2.revealed .l2-item:nth-child(10) { transition-delay: 400ms; }
+    #tools-l2.revealed .l2-item:nth-child(11) { transition-delay: 440ms; }
     #tools-l2:not(.revealed) .l2-item { opacity: 0; transform: translateX(-8px); transition: opacity 160ms ease-in, transform 160ms ease-in; transition-delay: 0ms !important; }
     .l2-label {
       display: block; color: #546A80; font-family: Georgia, serif;
@@ -117,6 +119,27 @@
     .panel-tool-title { font-family: Georgia, serif; font-size: 14px; color: #546A80; font-weight: normal; line-height: 1; }
     .panel-tool-close { font-family: Georgia, serif; font-size: 11px; color: #b0a090; cursor: default; transition: color 80ms; line-height: 1; }
     .panel-tool-close:hover { color: #546A80; }
+
+    /* --- How-this-works tip window --- */
+    .htw-canvas { position: fixed; z-index: 500; background: rgba(244,241,232,0.96); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 14px 14px; box-shadow: 0 2px 12px rgba(42,38,32,0.08); user-select: none; touch-action: none; cursor: grab; pointer-events: all; width: 220px; }
+    .htw-canvas.dragging { cursor: grabbing; }
+    .htw-canvas.closing { transition: opacity 400ms ease-in, transform 400ms ease-in; opacity: 0; transform: translateX(-80px) scaleX(0.3); pointer-events: none; }
+    .htw-canvas-close { font-family: Georgia, serif; font-size: 11px; color: #b0a090; cursor: default; transition: color 80ms; }
+    .htw-canvas-close:hover { color: #546A80; }
+    .htw-body { font: 13px/1.55 Georgia, serif; color: #546A80; }
+    .htw-para { margin: 0 0 9px 0; }
+    .htw-indent-1 { padding-left: 14px; }
+    .htw-indent-2 { padding-left: 28px; }
+    #htw-panel { position: fixed; left: 16px; z-index: 100; pointer-events: all; user-select: none; }
+    #htw-panel-heading { display: block; font-family: Georgia, serif; font-size: 14px; color: #546A80; padding-left: 12px; cursor: default; transition: color 80ms; line-height: 1; }
+    #htw-panel-heading:hover { color: #3D3D3A; }
+    #htw-panel-list { margin: 6px 0 0 0; padding: 0; list-style: none; overflow: hidden; max-height: 0; transition: max-height 180ms ease-in; }
+    #htw-panel-list.revealed { max-height: 200px; transition: max-height 240ms cubic-bezier(0.4,0,0.2,1); }
+    .htw-panel-item { margin-top: 6px; opacity: 0; transition: opacity 200ms ease-out; }
+    .htw-panel-item.visible { opacity: 1; }
+    .htw-panel-bullet { display: block; font-family: Georgia, serif; font-size: 13px; color: #546A80; padding-left: 20px; cursor: default; transition: color 80ms; line-height: 1; position: relative; }
+    .htw-panel-bullet::before { content: '\2022'; position: absolute; left: 8px; }
+    .htw-panel-bullet:hover { color: #3D3D3A; }
 
     /* --- Slider --- */
     .cw-slider-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
@@ -262,6 +285,22 @@
   </ul>
 </div>
 
+<!-- How this works: left-panel index (independent of Tools dropdown) -->
+<div id="htw-panel" style="display:none;">
+  <span id="htw-panel-heading">How this works</span>
+  <ul id="htw-panel-list">
+    <!-- Bullets added by JS as stages are encountered -->
+  </ul>
+</div>
+
+<!-- How this works canvas window -->
+<div id="htw-canvas" class="htw-canvas" style="display:none;">
+  <div style="display:flex;justify-content:flex-end;margin-bottom:4px;">
+    <span class="htw-canvas-close" id="htw-close">close</span>
+  </div>
+  <div class="htw-body" id="htw-canvas-body"></div>
+</div>
+
 <div id="remember">
   <span class="remember-plain">I want to</span>
   <span class="remember-word">Remember</span>
@@ -287,15 +326,6 @@
     <span class="cx-section-label" id="cx-numbers-label" style="font-size:13px;">Numbers</span>
     <span id="cx-numbers-toggle" style="font-family:Georgia,serif;font-size:11px;color:#b0a090;cursor:default;transition:color 80ms;">on</span>
   </div>
-  <span class="cx-section-label" id="cx-how-label">How this works</span>
-  <ul class="cx-how-list" id="cx-how-list">
-    <li class="cx-how-item">tap two points to make a line</li>
-    <li class="cx-how-item">drag a point to draw a circle</li>
-    <li class="cx-how-item">tap a segment to mark it</li>
-    <li class="cx-how-item">close a shape to fill it</li>
-    <li class="cx-how-item">tap a color to paint</li>
-    <li class="cx-how-item">double tap a line to fade it · double tap again to restore</li>
-  </ul>
   <div class="cx-examples-section">
     <span class="cx-section-label">Examples</span>
     <div class="cx-thumbs-row" id="cx-thumbs-row"></div>
@@ -552,7 +582,7 @@ function regX(id, pt, prev, an) {
     });
 }
 
-function appendOp(op) { operationLog.push(op); replayLog(true); }
+function appendOp(op) { operationLog.push(op); replayLog(true); checkHtwTriggers(); }
 function undoOp() { if (operationLog.length <= 1) return; operationLog.pop(); replayLog(false); }
 function newConstruction() { operationLog = [{ op:'init', seed0:{x:-100,y:0}, seed1:{x:100,y:0} }]; replayLog(false); viewX=0; viewY=0; viewScale=Math.min(window.innerWidth,window.innerHeight)/900; }
 
@@ -1839,7 +1869,7 @@ function onUp(e) {
             if (hit.type==='arc')     key=hit.obj.circIdx+':'+hit.obj.pointAId+':'+hit.obj.pointBId;
             if (key) {
                 var was=hit.obj.isEmphasized;
-                if (!was && !isValidNextSegment(hit.obj.pointAId, hit.obj.pointBId)) return;
+                if (!isValidNextSegment(hit.obj.pointAId, hit.obj.pointBId)) return;
                 appendOp({ op:was?'deemphasize':'emphasize', key:key });
                 if (was) { checkAndDissolve(key); playSound('emphasis_off'); }
                 else { var fb=fills.size; checkAndFill(); playSound(fills.size>fb?'fill':'emphasis_on'); }
@@ -1982,7 +2012,7 @@ var PANEL_BASE_WIDTH = 220, PANEL_WIDE_WIDTH = 260;
 var state = {
     menuOpen:false, activeL3:null, collapseTimer:null, revealTimer:null,
     panelTools:[], workspaceTools:{}, rememberManual:false,
-    palette: { current:'chartres_glass', selected:null, emptyActive:false, leadActive:false },
+    palette: { current:'chartres_glass', selected:null, emptyActive:false, leadActive:true },
     model:   { current:null, visible:false, scale:0.25, opacity:0.35, x:0, y:0 },
 };
 
@@ -2110,6 +2140,10 @@ function exportImage() {
 function layoutPanelTools() {
     var menuBottom = TOOLS_TOP + toolsRoot.offsetHeight;
     var cursor = menuBottom + TOOLS_PANEL_GAP;
+    var htwPanel = document.getElementById('htw-panel');
+    if (htwPanel && htwPanel.style.display !== 'none') {
+        htwPanel.style.top = cursor + 'px'; cursor += htwPanel.offsetHeight + PANEL_TOOL_GAP;
+    }
     state.panelTools.forEach(function(id) {
         var el = getPanelToolEl(id);
         if (!el || el.style.display==='none') return;
@@ -2429,13 +2463,6 @@ function initConstructions() {
     numToggle.addEventListener('click', toggleNumbers);
     updateNumbersToggle();
 
-    // "How this works" toggle
-    var howLabel = document.getElementById('cx-how-label');
-    var howList  = document.getElementById('cx-how-list');
-    howLabel.addEventListener('click', function() {
-        var open = howList.classList.toggle('revealed');
-        howLabel.classList.toggle('cx-open', open);
-    });
     // Preview card close
     document.getElementById('cx-card-close').addEventListener('click', closePreviewCard);
     // Preview card show-me
@@ -2986,6 +3013,196 @@ function toast(msg) {
 }
 
 // ============================================================
+// HOW-THIS-WORKS TIP WINDOW
+// What:    Context-sensitive guide. Appears on first visit as a draggable
+//          canvas window (no title bar — entire surface is drag handle).
+//          Each stage fires once; closing adds a bullet to the tool area
+//          index under "How this works". Clicking a bullet reopens that
+//          stage's canvas window.
+//          HTW_STAGES keeps content separate from mechanism.
+// Depends: localStorage, points (Map), w2s(), collapseMenu()
+// Exposes: initHowThisWorks(), checkHtwTriggers()
+// ============================================================
+
+var HTW_KEY = 'cw-htw-geometry-v1';  // base key; per-stage: HTW_KEY + '-' + stage.id
+var HTW_DEBUG_RESET = true;          // set false before releasing to users
+
+var HTW_STAGES = [
+    {
+        id: 'construction',
+        heading: 'Making Lines and Circles',
+        label: 'Lines and Circles',
+        trigger: function() { return true; },  // always shown on first visit
+        content: [
+            { text: 'You have circles and lines, and you start with two points. All your beautiful patterns begin with these.', indent: 0 },
+            { text: 'Tap one point, then tap another to make a line.', indent: 0 },
+            { text: 'Tap and hold one point, then drag to another to make a circle.', indent: 0 },
+            { text: 'New points appear wherever lines and circles cross.', indent: 1 },
+            { text: 'You can use those points to construct other lines and circles.', indent: 2 },
+            { text: 'Tap in any empty space to undo.', indent: 0 }
+        ]
+    },
+    {
+        id: 'shapes',
+        heading: 'Cutting Shapes',
+        label: 'Making Shapes',
+        trigger: function() { return points.size >= 15; },
+        content: [
+            { text: 'Shapes are forming.', indent: 0 },
+            { text: 'To cut a shape, tap a line. It will darken.', indent: 0 },
+            { text: 'Then tap connected lines.', indent: 0 },
+            { text: 'Enclosed shapes turn to glass.', indent: 0 },
+            { text: 'To color your glass, tap a color, then the glass.', indent: 0 }
+        ]
+    }
+];
+
+var htwActiveStageIdx = -1;  // index of stage currently shown on canvas
+var htwLastPos = null;        // { left, top } — last dragged position of canvas window
+
+function htwStageSeen(stage) {
+    if (stage.id === 'construction') return localStorage.getItem(HTW_KEY) || localStorage.getItem(HTW_KEY + '-construction');
+    return localStorage.getItem(HTW_KEY + '-' + stage.id);
+}
+
+function htwMarkStageSeen(stage) {
+    localStorage.setItem(HTW_KEY + '-' + stage.id, '1');
+    if (stage.id === 'construction') localStorage.setItem(HTW_KEY, '1');  // backward compat
+}
+
+function htwBuildBody(stageIdx) {
+    var stage = HTW_STAGES[stageIdx];
+    var bodyEl = document.getElementById('htw-canvas-body');
+    bodyEl.innerHTML = '';
+    stage.content.forEach(function(item) {
+        var p = document.createElement('p');
+        p.className = 'htw-para' + (item.indent===1 ? ' htw-indent-1' : item.indent===2 ? ' htw-indent-2' : '');
+        p.textContent = item.text;
+        bodyEl.appendChild(p);
+    });
+}
+
+function addHtwBullet(stageIdx) {
+    var stage = HTW_STAGES[stageIdx];
+    var list = document.getElementById('htw-panel-list');
+    if (!list || document.getElementById('htw-bullet-' + stage.id)) return;
+    // Show the panel if this is the first bullet
+    var panel = document.getElementById('htw-panel');
+    if (panel.style.display === 'none') {
+        panel.style.display = ''; panel.style.opacity = '0';
+        layoutPanelTools();
+        requestAnimationFrame(function() { panel.style.transition = 'opacity 200ms ease-in'; panel.style.opacity = '1'; setTimeout(function() { panel.style.transition = ''; }, 220); });
+    }
+    var li = document.createElement('li'); li.className = 'htw-panel-item'; li.id = 'htw-bullet-' + stage.id;
+    var span = document.createElement('span'); span.className = 'htw-panel-bullet'; span.textContent = stage.label;
+    span.addEventListener('click', function() { openHtwFromPanel(stage.id); });
+    li.appendChild(span); list.appendChild(li);
+    // Fade in the new bullet after a short delay
+    setTimeout(function() { li.classList.add('visible'); }, 50);
+    list.classList.add('revealed');  // expand list to show new bullet
+}
+
+function toggleHtwPanel() {
+    var list = document.getElementById('htw-panel-list');
+    if (!list) return;
+    list.classList.toggle('revealed');
+}
+
+function openHtwOnCanvas(stageId) {
+    var stageIdx = -1;
+    for (var i = 0; i < HTW_STAGES.length; i++) { if (HTW_STAGES[i].id === stageId) { stageIdx = i; break; } }
+    if (stageIdx < 0) return;
+    htwActiveStageIdx = stageIdx;
+    htwBuildBody(stageIdx);
+    var el = document.getElementById('htw-canvas');
+    if (htwLastPos) {
+        el.style.left = htwLastPos.left; el.style.top = htwLastPos.top;
+    } else {
+        var s0 = w2s(-100, 0);
+        var winW = 248, winH = 260;
+        el.style.left = Math.max(s0.x - winW - 20, 10) + 'px';
+        el.style.top  = Math.max(Math.round(s0.y - winH / 2), 20) + 'px';
+    }
+    el.style.opacity = '0'; el.style.display = '';
+    requestAnimationFrame(function() {
+        el.style.transition = 'opacity 200ms ease-in'; el.style.opacity = '1';
+        setTimeout(function() { el.style.transition = ''; }, 220);
+    });
+}
+
+function closeHtwCanvas() {
+    var stageIdx = htwActiveStageIdx;
+    var stage = stageIdx >= 0 ? HTW_STAGES[stageIdx] : null;
+    var el = document.getElementById('htw-canvas');
+    htwActiveStageIdx = -1;
+    el.classList.add('closing');
+    el.addEventListener('transitionend', function onDone() {
+        el.removeEventListener('transitionend', onDone);
+        el.classList.remove('closing');
+        el.style.display = 'none';
+        el.style.transform = ''; el.style.opacity = '';
+        if (stage) { htwMarkStageSeen(stage); addHtwBullet(stageIdx); }
+    }, { once: true });
+}
+
+function openHtwFromPanel(stageId) {
+    collapseMenu();
+    openHtwOnCanvas(stageId);
+}
+
+function checkHtwTriggers() {
+    var el = document.getElementById('htw-canvas');
+    if (el && el.style.display !== 'none') return;  // canvas window already showing
+    for (var i = 1; i < HTW_STAGES.length; i++) {
+        var s = HTW_STAGES[i];
+        if (!s.trigger || htwStageSeen(s)) continue;
+        if (s.trigger()) { openHtwOnCanvas(s.id); break; }
+    }
+}
+
+function initHowThisWorks() {
+    if (HTW_DEBUG_RESET) { localStorage.removeItem(HTW_KEY); HTW_STAGES.forEach(function(s) { localStorage.removeItem(HTW_KEY + '-' + s.id); }); }
+
+    // Wire close button
+    document.getElementById('htw-close').addEventListener('click', closeHtwCanvas);
+
+    // Wire panel heading to collapse/expand
+    document.getElementById('htw-panel-heading').addEventListener('click', toggleHtwPanel);
+
+    // Pointer-based drag — entire window is the drag surface
+    var el = document.getElementById('htw-canvas');
+    var dragging = false, sx, sy, ox, oy;
+    el.addEventListener('pointerdown', function(e) {
+        if (e.target.id === 'htw-close') return;
+        e.preventDefault();
+        dragging = true; sx = e.clientX; sy = e.clientY;
+        ox = parseInt(el.style.left) || 0; oy = parseInt(el.style.top) || 0;
+        el.classList.add('dragging'); el.setPointerCapture(e.pointerId);
+    });
+    el.addEventListener('pointermove', function(e) {
+        if (!dragging) return;
+        el.style.left = (ox + e.clientX - sx) + 'px';
+        el.style.top  = (oy + e.clientY - sy) + 'px';
+        htwLastPos = { left: el.style.left, top: el.style.top };
+    });
+    el.addEventListener('pointerup', function() { dragging = false; el.classList.remove('dragging'); });
+
+    // Restore bullets for stages already seen (return visit)
+    var anySeenStages = false;
+    HTW_STAGES.forEach(function(s, i) {
+        if (htwStageSeen(s)) { anySeenStages = true; addHtwBullet(i); }
+    });
+
+    // On return visit, panel starts collapsed (just heading, no bullets shown)
+    if (anySeenStages) {
+        document.getElementById('htw-panel-list').classList.remove('revealed');
+    }
+
+    // First visit: open stage 0 on canvas
+    if (!htwStageSeen(HTW_STAGES[0])) openHtwOnCanvas('construction');
+}
+
+// ============================================================
 // STARTUP
 // What:    Three sequential init calls that wire up the application:
 //          1. loadPalettesJSON() — async fetch, populates PALETTES_DATA
@@ -2999,6 +3216,7 @@ function toast(msg) {
 loadPalettesJSON();
 initLog();
 initConstructions();
+initHowThisWorks();
 
 }); // end DOMContentLoaded
 </script>
