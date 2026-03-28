@@ -3094,7 +3094,7 @@ var HTW_STAGES = [
 var HTW_ACTIONS = {
     construction: function() { openHtwOnCanvas('construction'); },
     shapes:       function() { openHtwOnCanvas('shapes'); },
-    color:        function() { openHtwOnCanvas('color'); },
+    color:        function() { openColorTool(); openHtwOnCanvas('color'); },
     eraser:       function() { openHtwOnCanvas('eraser'); },
     save:         function() { openHtwOnCanvas('save'); },
     newopen:      function() { openHtwOnCanvas('newopen'); }
@@ -3188,7 +3188,10 @@ function checkHtwTriggers() {
         if (!s.trigger || htwStageSeen(s)) continue;
         // Smart suppression: skip if child is already doing this action
         if (s.suppress && s.suppress()) { htwMarkStageSeen(s); continue; }
-        if (s.trigger()) { openHtwOnCanvas(s.id); break; }
+        if (s.trigger()) {
+            if (s.id === 'color') openColorTool();
+            openHtwOnCanvas(s.id); break;
+        }
     }
 }
 
@@ -3229,6 +3232,9 @@ function initHowThisWorks() {
 
     // First visit: open stage 0 on canvas
     if (!htwStageSeen(HTW_STAGES[0])) openHtwOnCanvas('construction');
+
+    // Return visits: open color panel immediately (it's always available)
+    if (htwStageSeen(HTW_STAGES[0])) openColorTool();
 }
 
 // ============================================================
