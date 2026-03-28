@@ -976,16 +976,12 @@ function checkAndFill() {
     var edges = findClosedRegionEdges(); if (!edges) return;
     var fillId = 'fill:'+Date.now();
     var vertices = edges.map(function(e) { return e.a; });
-    var isFirstFill = fills.size === 0;
     fillRegion(fillId, vertices, edges);
     var deKeys = [];
     logicalSegments.forEach(function(seg,k) { if (seg.isEmphasized) deKeys.push(k); });
     logicalArcs.forEach(function(arc,k)     { if (arc.isEmphasized) deKeys.push(k); });
     deKeys.forEach(function(k) { appendOp({ op:'deemphasize', key:k }); });
     playSound('fill');
-    // On first fill, open the color tool so the child can paint immediately.
-    // Delay enough for the tools menu to fully collapse first (~160ms transition + 120ms dispatch delay).
-    if (isFirstFill) setTimeout(openColorTool, 600);
 }
 
 function checkAndDissolve(segKey) {
