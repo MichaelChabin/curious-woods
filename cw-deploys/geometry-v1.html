@@ -40,60 +40,7 @@
       max-width: none; transform-origin: center center;
     }
 
-    /* --- Tools menu --- */
-    #tools-root {
-      position: fixed; top: 20px; left: 16px;
-      z-index: 110; pointer-events: all;
-      user-select: none; padding: 0 20px 16px 0;
-    }
-    #tools-word {
-      color: #546A80; font-family: Georgia, serif;
-      font-size: 14px; font-weight: normal; line-height: 1;
-      cursor: default; display: block;
-    }
-    #tools-l2 {
-      margin: 0; padding: 0; list-style: none;
-      overflow: hidden; max-height: 0;
-      transition: max-height 200ms ease-in;
-    }
-    #tools-l2.revealed { max-height: 500px; transition: max-height 320ms cubic-bezier(0.4,0,0.2,1); }
-    .l2-item { position: relative; margin-top: 10px; opacity: 0; transform: translateX(-8px); transition: opacity 220ms ease-out, transform 220ms ease-out; }
-    #tools-l2.revealed .l2-item { opacity: 1; transform: translateX(0); }
-    #tools-l2.revealed .l2-item:nth-child(1) { transition-delay: 40ms; }
-    #tools-l2.revealed .l2-item:nth-child(2) { transition-delay: 80ms; }
-    #tools-l2.revealed .l2-item:nth-child(3) { transition-delay: 120ms; }
-    #tools-l2.revealed .l2-item:nth-child(4) { transition-delay: 160ms; }
-    #tools-l2.revealed .l2-item:nth-child(5) { transition-delay: 200ms; }
-    #tools-l2.revealed .l2-item:nth-child(6) { transition-delay: 240ms; }
-    #tools-l2.revealed .l2-item:nth-child(7) { transition-delay: 280ms; }
-    #tools-l2.revealed .l2-item:nth-child(8) { transition-delay: 320ms; }
-    #tools-l2.revealed .l2-item:nth-child(9)  { transition-delay: 360ms; }
-    #tools-l2.revealed .l2-item:nth-child(10) { transition-delay: 400ms; }
-    #tools-l2.revealed .l2-item:nth-child(11) { transition-delay: 440ms; }
-    #tools-l2:not(.revealed) .l2-item { opacity: 0; transform: translateX(-8px); transition: opacity 160ms ease-in, transform 160ms ease-in; transition-delay: 0ms !important; }
-    .l2-label {
-      display: block; color: #546A80; font-family: Georgia, serif;
-      font-size: 14px; font-weight: normal; line-height: 1;
-      padding-left: 12px; cursor: default; transition: color 80ms ease;
-    }
-    .l2-label:hover { color: #3D3D3A; }
-    .l2-label.toggle-active { color: #3D3D3A; font-style: italic; }
-    .l3-list { margin: 0; padding: 0; list-style: none; overflow: hidden; max-height: 0; transition: max-height 180ms ease-in; }
-    .l3-list.revealed { max-height: 200px; transition: max-height 240ms cubic-bezier(0.4,0,0.2,1); }
-    .l3-item { margin-top: 8px; opacity: 0; transform: translateX(-8px); transition: opacity 200ms ease-out, transform 200ms ease-out; }
-    .l3-list.revealed .l3-item { opacity: 1; transform: translateX(0); }
-    .l3-list.revealed .l3-item:nth-child(1) { transition-delay: 40ms; }
-    .l3-list.revealed .l3-item:nth-child(2) { transition-delay: 80ms; }
-    .l3-list.revealed .l3-item:nth-child(3) { transition-delay: 120ms; }
-    .l3-list:not(.revealed) .l3-item { opacity: 0; transform: translateX(-8px); transition: opacity 160ms ease-in, transform 160ms ease-in; transition-delay: 0ms !important; }
-    .l3-label {
-      display: block; color: #546A80; font-family: Georgia, serif;
-      font-size: 13px; font-weight: normal; line-height: 1;
-      padding-left: 24px; cursor: default; transition: color 80ms ease;
-    }
-    .l3-label:hover { color: #3D3D3A; }
-
-    /* --- Remember --- */
+        /* --- Remember --- */
     #remember {
       position: fixed; left: 16px; top: 65%;
       transform: translateY(-50%);
@@ -130,16 +77,14 @@
     .htw-para { margin: 0 0 9px 0; }
     .htw-indent-1 { padding-left: 14px; }
     .htw-indent-2 { padding-left: 28px; }
-    #htw-panel { position: fixed; left: 16px; z-index: 100; pointer-events: all; user-select: none; }
-    #htw-panel-heading { display: block; font-family: Georgia, serif; font-size: 14px; color: #546A80; padding-left: 12px; cursor: default; transition: color 80ms; line-height: 1; }
+    #htw-panel { position: fixed; left: 16px; top: 20px; z-index: 110; pointer-events: all; user-select: none; }
+    #htw-panel-heading { display: block; font-family: Georgia, serif; font-size: 14px; color: #546A80; font-weight: normal; cursor: default; transition: color 80ms; line-height: 1; }
     #htw-panel-heading:hover { color: #3D3D3A; }
-    #htw-panel-list { margin: 6px 0 0 0; padding: 0; list-style: none; overflow: hidden; max-height: 0; transition: max-height 180ms ease-in; }
-    #htw-panel-list.revealed { max-height: 200px; transition: max-height 240ms cubic-bezier(0.4,0,0.2,1); }
-    .htw-panel-item { margin-top: 6px; opacity: 0; transition: opacity 200ms ease-out; }
-    .htw-panel-item.visible { opacity: 1; }
-    .htw-panel-bullet { display: block; font-family: Georgia, serif; font-size: 13px; color: #546A80; padding-left: 20px; cursor: default; transition: color 80ms; line-height: 1; position: relative; }
-    .htw-panel-bullet::before { content: '\2022'; position: absolute; left: 8px; }
-    .htw-panel-bullet:hover { color: #3D3D3A; }
+    #htw-panel-list { margin: 6px 0 0 0; padding: 0; list-style: none; overflow: hidden; max-height: 0; transition: max-height 200ms ease-in; }
+    #htw-panel-list.revealed { max-height: 300px; transition: max-height 320ms cubic-bezier(0.4,0,0.2,1); }
+    .htw-item { display: block; font-family: Georgia, serif; font-size: 13px; color: #546A80; padding-left: 12px; cursor: default; transition: color 80ms; line-height: 1; margin-top: 8px; position: relative; }
+    .htw-item::before { content: '\2022'; position: absolute; left: 0; }
+    .htw-item:hover { color: #3D3D3A; }
 
     /* --- Slider --- */
     .cw-slider-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
@@ -263,33 +208,16 @@
 <div id="left-panel"></div>
 <div id="model-layer"><img id="model-img" src="" alt="" draggable="false"></div>
 
-<div id="tools-root">
-  <span id="tools-word">Tools</span>
-  <ul id="tools-l2">
-    <li class="l2-item" data-tool="save">
-      <span class="l2-label">Save</span>
-      <ul class="l3-list">
-        <li class="l3-item"><span class="l3-label" data-action="save-construction">As Construction</span></li>
-        <li class="l3-item"><span class="l3-label" data-action="save-image">As Image</span></li>
-      </ul>
-    </li>
-    <li class="l2-item" data-tool="load"><span class="l2-label" data-action="load">Load</span></li>
-    <li class="l2-item" data-tool="new"><span class="l2-label" data-action="new">New</span></li>
-    <li class="l2-item" data-tool="labels"><span class="l2-label" data-action="labels">Labels</span></li>
-    <li class="l2-item" data-tool="lines"><span class="l2-label" id="lines-label" data-action="toggle-lines">Lines</span></li>
-    <li class="l2-item" data-tool="color"><span class="l2-label" data-action="open-color">Color</span></li>
-    <li class="l2-item" data-tool="sound"><span class="l2-label" id="sound-label" data-action="toggle-sound">Sound</span></li>
-    <li class="l2-item" data-tool="constructions"><span class="l2-label" data-action="open-constructions">Constructions</span></li>
-    <li class="l2-item" data-tool="glass"><span class="l2-label" id="glass-label" data-action="toggle-glass">Glass</span></li>
-    <li class="l2-item" data-tool="share"><span class="l2-label" data-action="share">Share</span></li>
-  </ul>
-</div>
-
-<!-- How this works: left-panel index (independent of Tools dropdown) -->
-<div id="htw-panel" style="display:none;">
+<!-- How this works panel -->
+<div id="htw-panel">
   <span id="htw-panel-heading">How this works</span>
-  <ul id="htw-panel-list">
-    <!-- Bullets added by JS as stages are encountered -->
+  <ul id="htw-panel-list" class="revealed">
+    <li class="htw-item" data-stage="construction">Lines and Circles</li>
+    <li class="htw-item" data-stage="shapes">Cutting Shapes</li>
+    <li class="htw-item" data-stage="color">Using Color</li>
+    <li class="htw-item" data-stage="eraser">Erasing Lines</li>
+    <li class="htw-item" data-stage="save">Save or Share</li>
+    <li class="htw-item" data-stage="constructions">Open Construction</li>
   </ul>
 </div>
 
@@ -525,6 +453,7 @@ function replayLog(animateNew) {
             var f = fills.get(op.fillId); if (f) f.dissolved = true;
         } else if (op.op === 'scaffold') {
             if (op.target === 'line') { var l = lines.get(op.idx); if (l) l.isScaffold = op.value; }
+            else if (op.target === 'point') { var pt = points.get(op.idx); if (pt) pt.isScaffold = op.value; }
             else { var cir = circles.get(op.idx); if (cir) cir.isScaffold = op.value; }
         } else if (op.op === 'numbers') {
             showNumbers = op.value;
@@ -533,7 +462,7 @@ function replayLog(animateNew) {
 }
 
 function _addPt(id, x, y, type, prev, animateNew) {
-    points.set(id, { id:id, x:x, y:y, type:type });
+    points.set(id, { id:id, x:x, y:y, type:type, isScaffold:false });
     if (prev.has(id)) pointAnimations.set(id, prev.get(id));
     else if (animateNew) pointAnimations.set(id, { startTime:Date.now(), duration:PARAMS.birthDuration });
 }
@@ -945,6 +874,14 @@ function expandFillToPolygon(fill) {
     return fill.vertices.map(function(id) { return points.get(id); }).filter(Boolean);
 }
 
+function shoelaceArea(poly) {
+    var a = 0;
+    for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        a += (poly[j].x + poly[i].x) * (poly[j].y - poly[i].y);
+    }
+    return Math.abs(a) / 2;
+}
+
 function pip(px,py,v) {
     var inside=false;
     for (var i=0,j=v.length-1; i<v.length; j=i++) {
@@ -957,7 +894,10 @@ function pip(px,py,v) {
 function hitFilledRegion(wx,wy) {
     var arr = [];
     fills.forEach(function(f) { if (!f.dissolved) arr.push(f); });
-    arr.reverse();
+    // Sort by area ascending so smallest (topmost) fill is tested first
+    arr.sort(function(a, b) {
+        return shoelaceArea(expandFillToPolygon(a)) - shoelaceArea(expandFillToPolygon(b));
+    });
     for (var i=0; i<arr.length; i++) {
         var v = expandFillToPolygon(arr[i]);
         if (v.length>=3 && pip(wx,wy,v)) return arr[i];
@@ -1022,27 +962,6 @@ function findClosedRegionEdges() {
         prevPt = curPt; curPt = nextConn.nb;
     }
     return orderedEdges.length === adj.size ? orderedEdges : null;
-}
-
-// Returns true if adding a segment/arc with the given endpoints would be a valid
-// next step in the current chain. Invalid means the click would create a branch
-// (a vertex with 3+ emphasized edges) without closing the loop.
-// Rule: at least one endpoint must be a current open end (degree-1 vertex),
-//       OR no segments are emphasized yet (starting fresh).
-function isValidNextSegment(ptAId, ptBId) {
-    var edgeCount = new Map();
-    function tally(id) { edgeCount.set(id, (edgeCount.get(id)||0) + 1); }
-    logicalSegments.forEach(function(seg) { if (seg.isEmphasized) { tally(seg.pointAId); tally(seg.pointBId); } });
-    logicalArcs.forEach(function(arc)     { if (arc.isEmphasized) { tally(arc.pointAId); tally(arc.pointBId); } });
-    if (edgeCount.size === 0) return true; // nothing selected yet — any segment valid
-    var degA = edgeCount.get(ptAId) || 0;
-    var degB = edgeCount.get(ptBId) || 0;
-    // At least one endpoint must be an open end (degree 1)
-    if (degA !== 1 && degB !== 1) return false;
-    // The other endpoint must not be saturated (degree 2 would create a branch)
-    if (degA === 1 && degB > 1) return false;
-    if (degB === 1 && degA > 1) return false;
-    return true;
 }
 
 function checkAndFill() {
@@ -1194,8 +1113,14 @@ function render() {
     ctx.fillStyle = COLORS.background;
     ctx.fillRect(0,0,canvas.clientWidth,canvas.clientHeight);
 
-    fills.forEach(function(f) {
-        if (f.dissolved) return;
+    // Sort fills by area descending (largest first, smallest on top)
+    var sortedFills = [];
+    fills.forEach(function(f) { if (!f.dissolved) sortedFills.push(f); });
+    sortedFills.sort(function(a, b) {
+        var polyA = expandFillToPolygon(a), polyB = expandFillToPolygon(b);
+        return shoelaceArea(polyB) - shoelaceArea(polyA);
+    });
+    sortedFills.forEach(function(f) {
         var poly = expandFillToPolygon(f);
         var v = poly.map(function(p) { return w2s(p.x,p.y); });
         if (v.length < 3) return;
@@ -1249,7 +1174,6 @@ function render() {
                           (seg.pointAId===selPtB && seg.pointBId===selPtA));
             if (!sharesEndpoint || isSelf) return;
             if (seg.isEmphasized) return; // already selected — no hint needed
-            if (!isValidNextSegment(seg.pointAId, seg.pointBId)) return;
             var A2=points.get(seg.pointAId), B2=points.get(seg.pointBId); if (!A2||!B2) return;
             var cx3=B2.x-A2.x, cy3=B2.y-A2.y, lq3=cx3*cx3+cy3*cy3; if (!lq3) return;
             var pv3=Math.max(0,Math.min(1,((worldMouse.x-A2.x)*cx3+(worldMouse.y-A2.y)*cy3)/lq3));
@@ -1273,7 +1197,6 @@ function render() {
                           (arc.pointAId===selPtB && arc.pointBId===selPtA));
             if (!sharesEndpoint || isSelf) return;
             if (arc.isEmphasized) return; // already selected — no hint needed
-            if (!isValidNextSegment(arc.pointAId, arc.pointBId)) return;
             var ci=circles.get(arc.circIdx); if (!ci) return;
             var ce=points.get(ci.centerId); if (!ce) return;
             var pA=points.get(arc.pointAId), pB=points.get(arc.pointBId); if (!pA||!pB) return;
@@ -1359,10 +1282,13 @@ function render() {
         if (hovered) r = Math.max(r, 4 * sm * sc);
         else if (ap) r = r * 1.33;
         ctx.fillStyle = COLORS.point;
+        ctx.globalAlpha = pt.isScaffold ? PARAMS.scaffoldOpacity : 1;
         ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2); ctx.fill();
         if (ap && !hovered) {
-            ctx.globalAlpha=0.3; ctx.beginPath(); ctx.arc(s.x,s.y,r*2,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+            ctx.globalAlpha = (pt.isScaffold ? PARAMS.scaffoldOpacity : 1) * 0.3;
+            ctx.beginPath(); ctx.arc(s.x,s.y,r*2,0,Math.PI*2); ctx.fill();
         }
+        ctx.globalAlpha = 1;
     });
 
     drawAxisLabels();
@@ -1543,13 +1469,23 @@ function hitAnyLine(wx,wy) {
 }
 
 function findSnap(cp,cr) {
-    var t=THRESHOLDS.snapDistance/viewScale,b=null,bd=Infinity;
+    var t=THRESHOLDS.snapDistance/viewScale;
+    // Collect all candidate snap points (within threshold of the circle arc)
+    var candidates = [];
     points.forEach(function(p) {
         if (p.id===cp.id) return;
         var d=Math.abs(dist(cp.x,cp.y,p.x,p.y)-cr);
-        if (d<t&&d<bd) { b=p; bd=d; }
+        if (d<t) candidates.push(p);
     });
-    return b;
+    if (candidates.length === 0) return null;
+    // Return only the candidate nearest to the current cursor position
+    var cursorWorld = s2w(mouseScreenPos.x, mouseScreenPos.y);
+    var best = null, bestDist = Infinity;
+    candidates.forEach(function(p) {
+        var d = dist(p.x, p.y, cursorWorld.x, cursorWorld.y);
+        if (d < bestDist) { best = p; bestDist = d; }
+    });
+    return best;
 }
 
 // ============================================================
@@ -1620,15 +1556,29 @@ var mouseScreenPos = { x: 0, y: 0 };
 // Points grow from 2px to 4px when cursor is within this many screen pixels.
 var POINT_HOVER_SCREEN = 12;
 
+var activeTouches = new Map(); // track multi-touch for pinch-to-zoom
+var pinchBaseDist = null, pinchBaseScale = null;
+
 function getPos(e) {
     var r=canvas.getBoundingClientRect();
-    var src=(e.touches&&e.touches.length)?e.touches[0]:e;
-    return { x:src.clientX-r.left, y:src.clientY-r.top };
+    return { x:e.clientX-r.left, y:e.clientY-r.top };
 }
 
 function onDown(e) {
     if (e.target !== canvas) return;
     e.preventDefault(); unlockAudio();
+    canvas.setPointerCapture(e.pointerId);
+    activeTouches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    // Pinch-to-zoom: if two pointers are down, start pinch mode
+    if (activeTouches.size === 2) {
+        var pts = Array.from(activeTouches.values());
+        pinchBaseDist = dist(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
+        pinchBaseScale = viewScale;
+        return;
+    }
+    if (activeTouches.size > 2) return; // ignore 3+ fingers
+
     var pos=getPos(e), world=s2w(pos.x,pos.y), now=Date.now();
     pointerStart=pos;
     mouseScreenPos.x = pos.x; mouseScreenPos.y = pos.y;
@@ -1701,6 +1651,19 @@ function onDown(e) {
 
 function onMove(e) {
     e.preventDefault();
+    if (activeTouches.has(e.pointerId)) {
+        activeTouches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    }
+
+    // Pinch-to-zoom: update scale when two pointers are active
+    if (activeTouches.size === 2 && pinchBaseDist) {
+        var pts = Array.from(activeTouches.values());
+        var curDist = dist(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
+        var s = pinchBaseScale * (curDist / pinchBaseDist);
+        if (s > 0.1 && s < 10) viewScale = s;
+        return;
+    }
+
     var pos=getPos(e), world=s2w(pos.x,pos.y);
     mouseScreenPos.x = pos.x; mouseScreenPos.y = pos.y;
 
@@ -1750,6 +1713,84 @@ function onMove(e) {
     if (interactionState==='AWAITING_SECOND_TAP' && firstTapPoint) ghostLineEnd=pos;
 }
 
+// When fading a line, also fade its points — unless the point is on a labeled
+// axis or is shared with another non-faded line/circle.
+// When restoring, do NOT cascade to points.
+function fadePointsForLine(lineIdx) {
+    var l = lines.get(lineIdx); if (!l) return;
+    var axisPointIds = getAxisPointIds();
+    l.pointsOnLine.forEach(function(ptId) {
+        var pt = points.get(ptId); if (!pt || pt.isScaffold) return;
+        if (axisPointIds.has(ptId)) return; // axis point — don't fade
+        // Check if point is on any other non-scaffolded line
+        var shared = false;
+        lines.forEach(function(other, otherIdx) {
+            if (otherIdx === lineIdx || other.isScaffold) return;
+            if (other.pointsOnLine.includes(ptId)) shared = true;
+        });
+        if (shared) return;
+        // Check if point is on any non-scaffolded circle
+        circles.forEach(function(c) {
+            if (c.isScaffold) return;
+            if (c.pointsOnCircle.includes(ptId)) shared = true;
+        });
+        if (shared) return;
+        appendOp({ op:'scaffold', target:'point', idx:ptId, value:true });
+    });
+}
+
+function fadePointsForCircle(circIdx) {
+    var c = circles.get(circIdx); if (!c) return;
+    var axisPointIds = getAxisPointIds();
+    c.pointsOnCircle.forEach(function(ptId) {
+        var pt = points.get(ptId); if (!pt || pt.isScaffold) return;
+        if (axisPointIds.has(ptId)) return;
+        var shared = false;
+        lines.forEach(function(other) {
+            if (other.isScaffold) return;
+            if (other.pointsOnLine.includes(ptId)) shared = true;
+        });
+        if (shared) return;
+        circles.forEach(function(otherC, otherIdx) {
+            if (otherIdx === circIdx || otherC.isScaffold) return;
+            if (otherC.pointsOnCircle.includes(ptId)) shared = true;
+        });
+        if (shared) return;
+        appendOp({ op:'scaffold', target:'point', idx:ptId, value:true });
+    });
+}
+
+// Returns a Set of point IDs that lie on labeled axes (should not be faded).
+function getAxisPointIds() {
+    var ids = new Set();
+    var s0 = points.get('seed:0'), s1 = points.get('seed:1');
+    if (!s0 || !s1) return ids;
+    // Find x-axis line (through both seeds)
+    var xAxisLine = null;
+    lines.forEach(function(l) {
+        if ((l.p1Id==='seed:0'||l.p2Id==='seed:0') && (l.p1Id==='seed:1'||l.p2Id==='seed:1')) xAxisLine = l;
+        if (!xAxisLine && l.pointsOnLine.includes('seed:0') && l.pointsOnLine.includes('seed:1')) xAxisLine = l;
+    });
+    if (xAxisLine) xAxisLine.pointsOnLine.forEach(function(id) { ids.add(id); });
+    // Find y-axis line (perpendicular through seed:0)
+    var unit = dist(s0.x,s0.y,s1.x,s1.y); if (!unit) return ids;
+    var axDx = (s1.x - s0.x) / unit, axDy = (s1.y - s0.y) / unit;
+    lines.forEach(function(l) {
+        var p1 = points.get(l.p1Id), p2 = points.get(l.p2Id); if (!p1 || !p2) return;
+        var onOrigin = l.p1Id === 'seed:0' || l.p2Id === 'seed:0';
+        if (!onOrigin) {
+            var ldx0 = p2.x-p1.x, ldy0 = p2.y-p1.y, llen0 = Math.sqrt(ldx0*ldx0+ldy0*ldy0);
+            if (llen0 > 0 && Math.abs((ldy0*(s0.x-p1.x)-ldx0*(s0.y-p1.y))/llen0) < 1e-6) onOrigin = true;
+        }
+        if (!onOrigin) return;
+        var ldx = p2.x-p1.x, ldy = p2.y-p1.y, llen = Math.sqrt(ldx*ldx+ldy*ldy); if (!llen) return;
+        if (Math.abs((ldx/llen)*axDx + (ldy/llen)*axDy) < 0.05) {
+            l.pointsOnLine.forEach(function(id) { ids.add(id); });
+        }
+    });
+    return ids;
+}
+
 // Toggle fade state on a line or circle index. Mode locked at eraser start:
 // 'fade' → makes normal lines/circles recessive; 'restore' → restores faded ones.
 // isCircle=true handles circle scaffolding; false handles lines (including bare).
@@ -1761,6 +1802,7 @@ function eraserSweepHit(idx, isCircle) {
         var c = circles.get(idx); if (!c) return;
         if (eraserSweepMode === 'fade' && !c.isScaffold) {
             appendOp({ op:'scaffold', target:'circle', idx:idx, value:true });
+            fadePointsForCircle(idx);
             playSound('scaffold_fade');
         } else if (eraserSweepMode === 'restore' && c.isScaffold) {
             appendOp({ op:'scaffold', target:'circle', idx:idx, value:false });
@@ -1770,6 +1812,7 @@ function eraserSweepHit(idx, isCircle) {
         var l = lines.get(idx); if (!l) return;
         if (eraserSweepMode === 'fade' && !l.isScaffold) {
             appendOp({ op:'scaffold', target:'line', idx:idx, value:true });
+            fadePointsForLine(idx);
             playSound('scaffold_fade');
         } else if (eraserSweepMode === 'restore' && l.isScaffold) {
             appendOp({ op:'scaffold', target:'line', idx:idx, value:false });
@@ -1802,9 +1845,18 @@ function hitForEraser(wx, wy) {
 
 function onUp(e) {
     e.preventDefault(); unlockAudio();
+    activeTouches.delete(e.pointerId);
+
+    // If we were pinching and one finger lifts, reset pinch state
+    if (pinchBaseDist && activeTouches.size < 2) {
+        pinchBaseDist = null; pinchBaseScale = null;
+        return;
+    }
+    if (activeTouches.size > 0) return; // still touches active
+
     var pos=getPos(e), world=s2w(pos.x,pos.y), now=Date.now();
     mouseScreenPos.x = pos.x; mouseScreenPos.y = pos.y;
-    var moved = dist(pointerStart.x, pointerStart.y, pos.x, pos.y);
+    var moved = pointerStart ? dist(pointerStart.x, pointerStart.y, pos.x, pos.y) : 0;
     var isTap = moved < THRESHOLDS.tapMovement;
 
     // ── Eraser sweep end ──────────────────────────────────────────────────────
@@ -1828,14 +1880,18 @@ function onUp(e) {
         if (eraserCandidate.isCircle) {
             var fadeCirc = circles.get(eraserCandidate.lineIdx);
             if (fadeCirc) {
-                appendOp({ op:'scaffold', target:'circle', idx:eraserCandidate.lineIdx, value:!fadeCirc.isScaffold });
-                playSound(fadeCirc.isScaffold ? 'scaffold_restore' : 'scaffold_fade');
+                var wasFaded = fadeCirc.isScaffold;
+                appendOp({ op:'scaffold', target:'circle', idx:eraserCandidate.lineIdx, value:!wasFaded });
+                if (!wasFaded) fadePointsForCircle(eraserCandidate.lineIdx);
+                playSound(wasFaded ? 'scaffold_restore' : 'scaffold_fade');
             }
         } else {
             var fadeLine = lines.get(eraserCandidate.lineIdx);
             if (fadeLine) {
-                appendOp({ op:'scaffold', target:'line', idx:eraserCandidate.lineIdx, value:!fadeLine.isScaffold });
-                playSound(fadeLine.isScaffold ? 'scaffold_restore' : 'scaffold_fade');
+                var wasFaded = fadeLine.isScaffold;
+                appendOp({ op:'scaffold', target:'line', idx:eraserCandidate.lineIdx, value:!wasFaded });
+                if (!wasFaded) fadePointsForLine(eraserCandidate.lineIdx);
+                playSound(wasFaded ? 'scaffold_restore' : 'scaffold_fade');
             }
         }
         eraserCandidate = null;
@@ -1869,7 +1925,6 @@ function onUp(e) {
             if (hit.type==='arc')     key=hit.obj.circIdx+':'+hit.obj.pointAId+':'+hit.obj.pointBId;
             if (key) {
                 var was=hit.obj.isEmphasized;
-                if (!isValidNextSegment(hit.obj.pointAId, hit.obj.pointBId)) return;
                 appendOp({ op:was?'deemphasize':'emphasize', key:key });
                 if (was) { checkAndDissolve(key); playSound('emphasis_off'); }
                 else { var fb=fills.size; checkAndFill(); playSound(fills.size>fb?'fill':'emphasis_on'); }
@@ -1898,12 +1953,10 @@ function onUp(e) {
     interactionState='IDLE'; selectedPoint=null; firstTapPoint=null; ghostLineEnd=null; ghostCircle=null; snapTarget=null;
 }
 
-canvas.addEventListener('mousedown',  onDown);
-canvas.addEventListener('mousemove',  onMove);
-canvas.addEventListener('mouseup',    onUp);
-canvas.addEventListener('touchstart', onDown, { passive:false });
-canvas.addEventListener('touchmove',  onMove, { passive:false });
-canvas.addEventListener('touchend',   onUp,   { passive:false });
+canvas.addEventListener('pointerdown',  onDown);
+canvas.addEventListener('pointermove',  onMove);
+canvas.addEventListener('pointerup',    onUp);
+canvas.addEventListener('pointercancel', onUp);
 canvas.addEventListener('wheel', function(e) {
     e.preventDefault();
     var s=viewScale*(e.deltaY>0?0.9:1.1);
@@ -2000,9 +2053,9 @@ var SVG_CACHE = {
 //          panel tool stack (max 2), pinned workspace tool map,
 //          and the palette/model sub-states.
 // Depends: DOM (getElementById)
-// Exposes: state {menuOpen, activeL3, panelTools[], workspaceTools{},
+// Exposes: state {panelTools[], workspaceTools{},
 //                 rememberManual, palette{…}, model{…}},
-//          toolsRoot, toolsL2, leftPanel, remember, dragHint,
+//          leftPanel, remember, dragHint,
 //          toolPalette, toolModel, modelLayer, modelImg
 // ============================================================
 
@@ -2010,14 +2063,11 @@ var TOOLS_TOP = 20, TOOLS_PANEL_GAP = 20, PANEL_TOOL_GAP = 14, REMEMBER_GAP = 24
 var PANEL_BASE_WIDTH = 220, PANEL_WIDE_WIDTH = 260;
 
 var state = {
-    menuOpen:false, activeL3:null, collapseTimer:null, revealTimer:null,
     panelTools:[], workspaceTools:{}, rememberManual:false,
     palette: { current:'chartres_glass', selected:null, emptyActive:false, leadActive:true },
     model:   { current:null, visible:false, scale:0.25, opacity:0.35, x:0, y:0 },
 };
 
-var toolsRoot   = document.getElementById('tools-root');
-var toolsL2     = document.getElementById('tools-l2');
 var leftPanel   = document.getElementById('left-panel');
 var remember    = document.getElementById('remember');
 var dragHint    = document.getElementById('drag-hint');
@@ -2027,63 +2077,19 @@ var modelLayer  = document.getElementById('model-layer');
 var modelImg    = document.getElementById('model-img');
 
 // ============================================================
-// TOOLS MENU
-// What:    Hover-reveal cascading menu (Tools → L2 → L3).
-//          Mouseenter/leave on #tools-root drives the reveal/collapse
-//          with deliberate delays. dispatch() routes L2/L3 clicks to
-//          named actions. collapseMenu() is called after every action.
-// Depends: toolsRoot, toolsL2, state (collapseTimer, revealTimer,
-//          menuOpen, activeL3), DOM query selectors
-// Exposes: collapseMenu(), collapseAllL3(), dispatch(action),
-//          toggleLines(), toggleGlass(), exportImage()
+// TOOL ACTIONS
+// What:    Actions formerly in the Tools dropdown, now called directly
+//          from the "How this works" panel or other UI.
+// Exposes: toggleLines(), toggleGlass(), exportImage()
 // ============================================================
 
-toolsRoot.addEventListener('mouseenter', function() {
-    clearTimeout(state.collapseTimer); clearTimeout(state.revealTimer);
-    // Small deliberate pause before reveal — not instant, not slow
-    state.revealTimer = setTimeout(function() { toolsL2.classList.add('revealed'); state.menuOpen=true; }, 200);
-});
-toolsRoot.addEventListener('mouseleave', function() {
-    clearTimeout(state.revealTimer);
-    state.collapseTimer = setTimeout(collapseMenu, 1200);
-});
-
-function collapseMenu() { toolsL2.classList.remove('revealed'); state.menuOpen=false; collapseAllL3(); }
-function collapseAllL3() { document.querySelectorAll('.l3-list').forEach(function(l) { l.classList.remove('revealed'); }); state.activeL3=null; }
-
-document.querySelectorAll('.l2-item').forEach(function(item) {
-    var l3=item.querySelector('.l3-list'), key=item.dataset.tool;
-    item.addEventListener('mouseenter', function() {
-        if (state.activeL3&&state.activeL3!==key) collapseAllL3();
-        if (l3) { l3.classList.add('revealed'); state.activeL3=key; } else collapseAllL3();
-    });
-});
-document.querySelectorAll('.l3-label').forEach(function(el) { el.addEventListener('click', function() { dispatch(el.dataset.action); }); });
-toolsL2.addEventListener('click', function(e) { var label=e.target.closest('.l2-label[data-action]'); if (label) dispatch(label.dataset.action); });
-
-function dispatch(action) {
-    switch(action) {
-        case 'save-construction': saveConstruction(); break;
-        case 'save-image':        exportImage(); break;
-        case 'load':              loadConstruction(); break;
-        case 'new':               if (confirm('Start a new construction?')) newConstruction(); break;
-        case 'labels':            toast('Labels -- not yet implemented'); break;
-        case 'toggle-lines':      toggleLines(); break;
-        case 'open-color':        openColorTool(); break;
-        case 'open-constructions': openConstructions(); break;
-        case 'toggle-glass':      toggleGlass(); break;
-        case 'share':             toast('Share -- not yet implemented'); break;
-    }
-    setTimeout(collapseMenu, 120);
-}
+function collapseMenu() { /* no-op — Tools menu removed */ }
 
 function toggleLines() {
     showLines = !showLines;
-    document.getElementById('lines-label').classList.toggle('toggle-active', !showLines);
 }
 function toggleGlass() {
     showGlass = !showGlass;
-    document.getElementById('glass-label').classList.toggle('toggle-active', showGlass);
 }
 
 function exportImage() {
@@ -2138,11 +2144,10 @@ function exportImage() {
 // ============================================================
 
 function layoutPanelTools() {
-    var menuBottom = TOOLS_TOP + toolsRoot.offsetHeight;
-    var cursor = menuBottom + TOOLS_PANEL_GAP;
     var htwPanel = document.getElementById('htw-panel');
+    var cursor = TOOLS_TOP;
     if (htwPanel && htwPanel.style.display !== 'none') {
-        htwPanel.style.top = cursor + 'px'; cursor += htwPanel.offsetHeight + PANEL_TOOL_GAP;
+        cursor += htwPanel.offsetHeight + PANEL_TOOL_GAP;
     }
     state.panelTools.forEach(function(id) {
         var el = getPanelToolEl(id);
@@ -2920,20 +2925,42 @@ function buildPickerModels() {
 function buildPickerPalettes() {
     pickerGrid.innerHTML=''; pickerGrid.style.gridTemplateColumns='repeat(3,200px)';
     Object.keys(PALETTES_DATA).forEach(function(id) {
-        var pal=PALETTES_DATA[id]; if (!pal.source) return;
+        var pal=PALETTES_DATA[id];
         var item=document.createElement('div'); item.className='picker-item';
         var thumb=document.createElement('div'); thumb.className='picker-thumb';
         if (pal.id===state.palette.current) thumb.classList.add('selected');
-        var img=document.createElement('img');
-        img.src='art/'+encodeURIComponent(pal.source); img.alt=pal.name;
-        img.style.cssText='width:184px;height:184px;object-fit:contain;pointer-events:none;border-radius:2px;';
-        img.onerror=function(){thumb.style.background='rgba(200,184,154,0.2)';};
-        thumb.appendChild(img);
+        if (pal.source) {
+            var img=document.createElement('img');
+            img.src='art/'+encodeURIComponent(pal.source); img.alt=pal.name;
+            img.style.cssText='width:184px;height:184px;object-fit:contain;pointer-events:none;border-radius:2px;';
+            img.onerror=function(){ buildSwatchFallback(thumb, pal); };
+            thumb.appendChild(img);
+        } else {
+            buildSwatchFallback(thumb, pal);
+        }
         var label=document.createElement('div'); label.className='picker-item-name'; label.textContent=pal.name;
         item.appendChild(thumb); item.appendChild(label);
         thumb.addEventListener('click', function() { openPaletteTool(pal.id); pickerGrid.querySelectorAll('.picker-thumb').forEach(function(t){t.classList.remove('selected');}); thumb.classList.add('selected'); });
         pickerGrid.appendChild(item);
     });
+}
+
+function buildSwatchFallback(thumb, pal) {
+    thumb.innerHTML = '';
+    var grid = document.createElement('div');
+    grid.style.cssText = 'width:184px;height:184px;display:flex;flex-wrap:wrap;border-radius:2px;overflow:hidden;';
+    var colors = pal.colors || [];
+    var count = colors.length || 1;
+    var cols = Math.ceil(Math.sqrt(count));
+    var rows = Math.ceil(count / cols);
+    var cellW = 184 / cols, cellH = 184 / rows;
+    colors.forEach(function(c) {
+        var hex = (typeof c === 'string') ? c : c.hex;
+        var swatch = document.createElement('div');
+        swatch.style.cssText = 'width:' + cellW + 'px;height:' + cellH + 'px;background:' + hex + ';';
+        grid.appendChild(swatch);
+    });
+    thumb.appendChild(grid);
 }
 
 // ============================================================
@@ -2969,32 +2996,11 @@ setTimeout(function() { dragHint.classList.add('faded'); }, 4000);
 
 // ============================================================
 // LAYOUT ENGINE
-// What:    MutationObserver on #tools-l2 and all .l3-list elements
-//          so layoutPanelTools() runs automatically whenever the menu
-//          opens, closes, or a sub-menu expands. Polls at 40ms during
-//          the open animation for smooth tracking. Also wired to
-//          window resize.
-// Depends: toolsL2, layoutPanelTools()
-// Exposes: nothing (self-contained observer setup)
+// What:    Runs layoutPanelTools() on resize and at startup.
+// Depends: layoutPanelTools()
+// Exposes: nothing
 // ============================================================
 
-var menuObserver=new MutationObserver(function() {
-    var isOpen = toolsL2.classList.contains('revealed');
-    if (isOpen) {
-        // Menu is opening: poll layout during the stagger animation so panel tools
-        // track the expanding menu in real time rather than jumping at the end.
-        var elapsed = 0, interval = setInterval(function() {
-            layoutPanelTools();
-            elapsed += 40;
-            if (elapsed >= 640) clearInterval(interval);
-        }, 40);
-    } else {
-        // Menu is closing: single call after the CSS transition finishes.
-        setTimeout(layoutPanelTools, 200);
-    }
-});
-menuObserver.observe(toolsL2,{attributes:true,attributeFilter:['class']});
-document.querySelectorAll('.l3-list').forEach(function(l3) { menuObserver.observe(l3,{attributes:true,attributeFilter:['class']}); });
 window.addEventListener('resize', layoutPanelTools);
 setTimeout(layoutPanelTools, 50);
 
@@ -3020,7 +3026,7 @@ function toast(msg) {
 //          index under "How this works". Clicking a bullet reopens that
 //          stage's canvas window.
 //          HTW_STAGES keeps content separate from mechanism.
-// Depends: localStorage, points (Map), w2s(), collapseMenu()
+// Depends: localStorage, points (Map), w2s()
 // Exposes: initHowThisWorks(), checkHtwTriggers()
 // ============================================================
 
@@ -3033,6 +3039,7 @@ var HTW_STAGES = [
         heading: 'Making Lines and Circles',
         label: 'Lines and Circles',
         trigger: function() { return true; },  // always shown on first visit
+        suppress: function() { return false; }, // never suppress stage 1
         content: [
             { text: 'You have circles and lines, and you start with two points. All your beautiful patterns begin with these.', indent: 0 },
             { text: 'Tap one point, then tap another to make a line.', indent: 0 },
@@ -3045,8 +3052,14 @@ var HTW_STAGES = [
     {
         id: 'shapes',
         heading: 'Cutting Shapes',
-        label: 'Making Shapes',
+        label: 'Cutting Shapes',
         trigger: function() { return points.size >= 15; },
+        suppress: function() {
+            // Suppress if child has already emphasized segments or made fills
+            var hasEmph = false;
+            for (var i = 0; i < operationLog.length; i++) { if (operationLog[i].op === 'emphasize') { hasEmph = true; break; } }
+            return hasEmph || fills.size > 0;
+        },
         content: [
             { text: 'Shapes are forming.', indent: 0 },
             { text: 'To cut a shape, tap a line. It will darken.', indent: 0 },
@@ -3056,6 +3069,16 @@ var HTW_STAGES = [
         ]
     }
 ];
+
+// Map from htw-item data-stage to actions
+var HTW_ACTIONS = {
+    construction: function() { openHtwOnCanvas('construction'); },
+    shapes:       function() { openHtwOnCanvas('shapes'); },
+    color:        function() { openColorTool(); },
+    eraser:       function() { openHtwTip('Erasing Lines', 'Double-tap a line to fade it. Double-tap a faded line to restore it.'); },
+    save:         function() { saveConstruction(); },
+    constructions: function() { openConstructions(); }
+};
 
 var htwActiveStageIdx = -1;  // index of stage currently shown on canvas
 var htwLastPos = null;        // { left, top } — last dragged position of canvas window
@@ -3082,24 +3105,13 @@ function htwBuildBody(stageIdx) {
     });
 }
 
-function addHtwBullet(stageIdx) {
-    var stage = HTW_STAGES[stageIdx];
-    var list = document.getElementById('htw-panel-list');
-    if (!list || document.getElementById('htw-bullet-' + stage.id)) return;
-    // Show the panel if this is the first bullet
-    var panel = document.getElementById('htw-panel');
-    if (panel.style.display === 'none') {
-        panel.style.display = ''; panel.style.opacity = '0';
-        layoutPanelTools();
-        requestAnimationFrame(function() { panel.style.transition = 'opacity 200ms ease-in'; panel.style.opacity = '1'; setTimeout(function() { panel.style.transition = ''; }, 220); });
-    }
-    var li = document.createElement('li'); li.className = 'htw-panel-item'; li.id = 'htw-bullet-' + stage.id;
-    var span = document.createElement('span'); span.className = 'htw-panel-bullet'; span.textContent = stage.label;
-    span.addEventListener('click', function() { openHtwFromPanel(stage.id); });
-    li.appendChild(span); list.appendChild(li);
-    // Fade in the new bullet after a short delay
-    setTimeout(function() { li.classList.add('visible'); }, 50);
-    list.classList.add('revealed');  // expand list to show new bullet
+function htwBuildTipBody(heading, text) {
+    var bodyEl = document.getElementById('htw-canvas-body');
+    bodyEl.innerHTML = '';
+    var p = document.createElement('p');
+    p.className = 'htw-para';
+    p.textContent = text;
+    bodyEl.appendChild(p);
 }
 
 function toggleHtwPanel() {
@@ -3130,6 +3142,25 @@ function openHtwOnCanvas(stageId) {
     });
 }
 
+function openHtwTip(heading, text) {
+    htwActiveStageIdx = -1;
+    htwBuildTipBody(heading, text);
+    var el = document.getElementById('htw-canvas');
+    if (htwLastPos) {
+        el.style.left = htwLastPos.left; el.style.top = htwLastPos.top;
+    } else {
+        var s0 = w2s(-100, 0);
+        var winW = 248, winH = 200;
+        el.style.left = Math.max(s0.x - winW - 20, 10) + 'px';
+        el.style.top  = Math.max(Math.round(s0.y - winH / 2), 20) + 'px';
+    }
+    el.style.opacity = '0'; el.style.display = '';
+    requestAnimationFrame(function() {
+        el.style.transition = 'opacity 200ms ease-in'; el.style.opacity = '1';
+        setTimeout(function() { el.style.transition = ''; }, 220);
+    });
+}
+
 function closeHtwCanvas() {
     var stageIdx = htwActiveStageIdx;
     var stage = stageIdx >= 0 ? HTW_STAGES[stageIdx] : null;
@@ -3141,13 +3172,8 @@ function closeHtwCanvas() {
         el.classList.remove('closing');
         el.style.display = 'none';
         el.style.transform = ''; el.style.opacity = '';
-        if (stage) { htwMarkStageSeen(stage); addHtwBullet(stageIdx); }
+        if (stage) { htwMarkStageSeen(stage); }
     }, { once: true });
-}
-
-function openHtwFromPanel(stageId) {
-    collapseMenu();
-    openHtwOnCanvas(stageId);
 }
 
 function checkHtwTriggers() {
@@ -3156,6 +3182,8 @@ function checkHtwTriggers() {
     for (var i = 1; i < HTW_STAGES.length; i++) {
         var s = HTW_STAGES[i];
         if (!s.trigger || htwStageSeen(s)) continue;
+        // Smart suppression: skip if child is already doing this action
+        if (s.suppress && s.suppress()) { htwMarkStageSeen(s); continue; }
         if (s.trigger()) { openHtwOnCanvas(s.id); break; }
     }
 }
@@ -3169,7 +3197,15 @@ function initHowThisWorks() {
     // Wire panel heading to collapse/expand
     document.getElementById('htw-panel-heading').addEventListener('click', toggleHtwPanel);
 
-    // Pointer-based drag — entire window is the drag surface
+    // Wire each htw-item to its action
+    document.querySelectorAll('.htw-item').forEach(function(el) {
+        var stage = el.dataset.stage;
+        if (HTW_ACTIONS[stage]) {
+            el.addEventListener('click', function() { HTW_ACTIONS[stage](); });
+        }
+    });
+
+    // Pointer-based drag on canvas tip window — entire window is the drag surface
     var el = document.getElementById('htw-canvas');
     var dragging = false, sx, sy, ox, oy;
     el.addEventListener('pointerdown', function(e) {
@@ -3186,17 +3222,6 @@ function initHowThisWorks() {
         htwLastPos = { left: el.style.left, top: el.style.top };
     });
     el.addEventListener('pointerup', function() { dragging = false; el.classList.remove('dragging'); });
-
-    // Restore bullets for stages already seen (return visit)
-    var anySeenStages = false;
-    HTW_STAGES.forEach(function(s, i) {
-        if (htwStageSeen(s)) { anySeenStages = true; addHtwBullet(i); }
-    });
-
-    // On return visit, panel starts collapsed (just heading, no bullets shown)
-    if (anySeenStages) {
-        document.getElementById('htw-panel-list').classList.remove('revealed');
-    }
 
     // First visit: open stage 0 on canvas
     if (!htwStageSeen(HTW_STAGES[0])) openHtwOnCanvas('construction');
