@@ -287,7 +287,7 @@
   </div>
 </div>
 
-<div id="tool-palette" class="panel-tool">
+<div id="tool-palette" class="panel-tool" style="display:none;">
   <div class="panel-tool-header" id="palette-drag-handle">
     <span class="panel-tool-title palette-name" id="palette-name-btn">Chartres</span>
   </div>
@@ -2022,15 +2022,13 @@ function loadPalettesJSON() {
 }
 
 function initColorPanel() {
-    var id = state.palette.current || 'chartres_glass';
-    var pal = PALETTES_DATA[id];
-    if (!pal) return;
-    document.getElementById('palette-name-btn').textContent = pal.name;
-    buildPaletteSwatches(id, document.getElementById('palette-grid'));
-    buildCraftRow(document.getElementById('craft-row'));
-    // Register palette as an active panel tool for layout
-    if (!state.panelTools.includes('palette')) state.panelTools.push('palette');
-    layoutPanelTools();
+    // Data is loaded — if the color panel should already be open, open it now.
+    // On return visits initHowThisWorks() will have called openColorTool(),
+    // but PALETTES_DATA was empty at that point. Re-call it now that data exists.
+    if (state.palette.pendingOpen) {
+        state.palette.pendingOpen = false;
+        openColorTool();
+    }
 }
 
 // ============================================================
@@ -2286,6 +2284,11 @@ function pulseWorkspaceTool(id) {
 
 function openColorTool() {
     var id = state.palette.current || 'chartres_glass';
+    if (!PALETTES_DATA[id]) {
+        // Palette data not loaded yet — defer until initColorPanel runs
+        state.palette.pendingOpen = true;
+        return;
+    }
     openPaletteTool(id);
 }
 
