@@ -75,8 +75,6 @@
     .htw-canvas-close:hover { color: #546A80; }
     .htw-body { font: 13px/1.55 Georgia, serif; color: #546A80; }
     .htw-para { margin: 0 0 9px 0; }
-    .htw-indent-1 { padding-left: 14px; }
-    .htw-indent-2 { padding-left: 28px; }
     #htw-panel { position: fixed; left: 16px; top: 20px; z-index: 110; pointer-events: all; user-select: none; }
     #htw-panel-heading { display: block; font-family: Georgia, serif; font-size: 14px; color: #546A80; font-weight: normal; cursor: default; transition: color 80ms; line-height: 1; }
     #htw-panel-heading:hover { color: #3D3D3A; }
@@ -85,6 +83,7 @@
     .htw-item { display: block; font-family: Georgia, serif; font-size: 13px; color: #546A80; padding-left: 12px; cursor: default; transition: color 80ms; line-height: 1; margin-top: 8px; position: relative; }
     .htw-item::before { content: '\2022'; position: absolute; left: 0; }
     .htw-item:hover { color: #3D3D3A; }
+    .htw-keyword { color: #3D3D3A; }
 
     /* --- Slider --- */
     .cw-slider-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
@@ -95,21 +94,24 @@
     /* --- Palette tool --- */
     #tool-palette .palette-name { font-family: Georgia, serif; font-size: 14px; color: #546A80; cursor: default; user-select: none; line-height: 1; transition: color 80ms; }
     #tool-palette .palette-name:hover { color: #3D3D3A; }
-    #palette-switcher { margin-bottom: 10px; }
-    .palette-switch-item { display: block; font-family: Georgia, serif; font-size: 13px; color: #546A80; padding: 5px 0 0 10px; cursor: default; transition: color 80ms; user-select: none; }
-    .palette-switch-item:hover { color: #3D3D3A; }
-    .palette-switch-item.current { color: #3D3D3A; }
-    .palette-switch-item.choose { color: #9a8e80; font-style: italic; }
     .palette-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; }
     .palette-grid.wide { grid-template-columns: repeat(4,1fr); }
-    .palette-swatch { height: 28px; width: 100%; border-radius: 3px; cursor: pointer; border: 1.5px solid transparent; transition: border-color 100ms; box-sizing: border-box; }
+    .palette-swatch { height: 28px; width: 100%; border-radius: 3px; cursor: pointer; border: 1.5px solid transparent; transition: border-color 100ms; box-sizing: border-box; box-shadow: inset 0 0 0 2px #4a4540; }
     .palette-swatch:hover { border-color: rgba(84,106,128,0.4); }
     .palette-swatch.selected { border-color: #546A80; }
-    .lead-active .palette-swatch { box-shadow: inset 0 0 0 2px #4a4540; }
-    .craft-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; margin-top: 8px; padding-top: 8px; border-top: 0.5px solid #d8ceba; }
-    .craft-swatch-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-    .craft-swatch-label { font-family: Georgia, serif; font-style: italic; font-size: 10px; color: #7a6e60; line-height: 1; }
+    .craft-row { display: grid; grid-template-columns: repeat(2,1fr); gap: 5px; margin-top: 8px; padding-top: 8px; border-top: 0.5px solid #d8ceba; }
     .palette-recipe { font-family: Georgia, serif; font-style: italic; font-size: 11px; color: rgba(42,38,32,0.7); margin-top: 8px; min-height: 14px; line-height: 1.3; }
+    .lead-slider-row { margin-top: 10px; }
+    .lead-slider-label { display: block; font-family: Georgia, serif; font-size: 11px; color: #546A80; margin-bottom: 4px; user-select: none; }
+    .lead-slider-track-wrap { position: relative; height: 20px; display: flex; align-items: center; }
+    .lead-slider-track { position: absolute; left: 0; right: 0; background: #546A80; border-radius: 1px; pointer-events: none; }
+    .lead-slider { position: absolute; left: 0; width: 100%; margin: 0; -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; height: 20px; }
+    .lead-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #546A80; border: 1.5px solid #f4f1e8; cursor: grab; }
+    .lead-slider::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: #546A80; border: 1.5px solid #f4f1e8; cursor: grab; }
+    .lead-slider::-webkit-slider-runnable-track { background: transparent; }
+    .lead-slider::-moz-range-track { background: transparent; }
+    .palette-choose { display: block; font-family: Georgia, serif; font-size: 13px; color: #546A80; cursor: default; margin-top: 10px; transition: color 80ms; user-select: none; }
+    .palette-choose:hover { color: #3D3D3A; }
 
     /* --- Model tool --- */
     #tool-model .model-hint { font-family: Georgia, serif; font-size: 11px; font-style: italic; color: #9a8e80; display: block; margin-bottom: 10px; }
@@ -214,10 +216,10 @@
   <ul id="htw-panel-list" class="revealed">
     <li class="htw-item" data-stage="construction">Lines and Circles</li>
     <li class="htw-item" data-stage="shapes">Cutting Shapes</li>
-    <li class="htw-item" data-stage="color">Using Color</li>
-    <li class="htw-item" data-stage="eraser">Erasing Lines</li>
-    <li class="htw-item" data-stage="save">Save or Share</li>
-    <li class="htw-item" data-stage="constructions">Open Construction</li>
+    <li class="htw-item" data-stage="color">Color</li>
+    <li class="htw-item" data-stage="eraser">Hiding Lines</li>
+    <li class="htw-item" data-stage="save"><span class="htw-keyword">Save</span> or <span class="htw-keyword">Share</span></li>
+    <li class="htw-item" data-stage="newopen"><span class="htw-keyword">New</span> and <span class="htw-keyword">Open</span></li>
   </ul>
 </div>
 
@@ -285,15 +287,21 @@
   </div>
 </div>
 
-<div id="tool-palette" class="panel-tool" style="display:none;">
+<div id="tool-palette" class="panel-tool">
   <div class="panel-tool-header" id="palette-drag-handle">
     <span class="panel-tool-title palette-name" id="palette-name-btn">Chartres</span>
-    <span class="panel-tool-close" id="palette-close">close</span>
   </div>
-  <div id="palette-switcher" style="display:none;"></div>
   <div class="palette-grid" id="palette-grid"></div>
   <div class="craft-row" id="craft-row"></div>
   <div class="palette-recipe" id="palette-recipe">&nbsp;</div>
+  <div class="lead-slider-row">
+    <span class="lead-slider-label">lead thickness</span>
+    <div class="lead-slider-track-wrap">
+      <div class="lead-slider-track" id="lead-slider-track"></div>
+      <input type="range" class="lead-slider" id="lead-slider" min="5" max="60" value="20" step="1">
+    </div>
+  </div>
+  <span class="palette-choose" id="palette-choose">Choose new colors</span>
 </div>
 
 <div id="tool-model" class="panel-tool" style="display:none;">
@@ -1037,13 +1045,13 @@ function s2w(sx,sy) { return { x:(sx-canvas.clientWidth/2)/viewScale+viewX,   y:
 // What:    Single rAF loop that clears and redraws every frame:
 //          fills → construction lines/circles → emphasized segments/arcs
 //          (with glow) → ghost previews → snap indicator → points.
-//          Reads state.palette.leadActive for lead-border rendering.
+//          Lead border is always rendered on fills.
 // Depends: canvas, ctx, COLORS, PARAMS, GLOW, LEAD_BORDER_COLOR,
 //          LEAD_WIDTH, fills, lines, circles, logicalSegments,
 //          logicalArcs, points, pointAnimations,
 //          showLines, showGlass, viewScale,
 //          w2s(), s2w(), snap(), extLine(), expandFillToPolygon(),
-//          state.palette.leadActive [cross-cut from UI],
+//          LEAD_WIDTH, LEAD_BORDER_COLOR,
 //          ghostLineEnd, ghostCircle, snapTarget, firstTapPoint
 // Exposes: render(), animate() — animate() self-schedules via rAF
 // ============================================================
@@ -1128,10 +1136,8 @@ function render() {
         for (var i=1; i<v.length; i++) ctx.lineTo(v[i].x,v[i].y);
         ctx.closePath();
         ctx.fillStyle = f.color; ctx.globalAlpha = f.opacity; ctx.fill('evenodd');
-        if (state.palette.leadActive) {
-            ctx.strokeStyle = LEAD_BORDER_COLOR; ctx.lineWidth = LEAD_WIDTH;
-            ctx.globalAlpha = 1; ctx.stroke();
-        }
+        ctx.strokeStyle = LEAD_BORDER_COLOR; ctx.lineWidth = LEAD_WIDTH;
+        ctx.globalAlpha = 1; ctx.stroke();
         ctx.globalAlpha = 1;
     });
 
@@ -1502,11 +1508,6 @@ function findSnap(cp,cr) {
 function tryPaletteAction(wx, wy) {
     var hf = hitFilledRegion(wx, wy);
     if (!hf) return false;
-    if (state.palette.emptyActive) {
-        dissolveRegion(hf.fillId); playSound('repaint'); return true;
-    }
-    // Color selection repaints regardless of whether lead is also active —
-    // lead is a global border toggle, not a mode that blocks color.
     if (state.palette.selected !== null) {
         recolorRegion(hf.fillId, state.palette.selected, 1.0); playSound('repaint'); return true;
     }
@@ -1637,7 +1638,7 @@ function onDown(e) {
     }
 
     // ── 4. Palette action on fills ───────────────────────────────────────────
-    var paletteActive = state.palette.emptyActive || state.palette.selected !== null;
+    var paletteActive = state.palette.selected !== null;
     if (paletteActive && hitFilledRegion(world.x, world.y)) {
         if (interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; interactionState='IDLE'; selectedPoint=null; }
         isPanning=true; panStart={ x:viewX, y:viewY, sx:pos.x, sy:pos.y };
@@ -1991,6 +1992,7 @@ function loadPalettesJSON() {
         .then(function(json) {
             json.palettes.forEach(function(p) { PALETTES_DATA[p.id]=p; });
             if (json.craft_swatches) CRAFT_SWATCHES=json.craft_swatches.colors;
+            initColorPanel();
         })
         .catch(function(e) {
             console.warn('palettes.json not loaded, using fallback:', e);
@@ -2015,7 +2017,20 @@ function loadPalettesJSON() {
                 {hex:'#2a8a8a',recipe:'copper oxide',uncertain:true},
                 {hex:'#c8b878',recipe:'iron, silver stain',uncertain:true},
             ]};
+            initColorPanel();
         });
+}
+
+function initColorPanel() {
+    var id = state.palette.current || 'chartres_glass';
+    var pal = PALETTES_DATA[id];
+    if (!pal) return;
+    document.getElementById('palette-name-btn').textContent = pal.name;
+    buildPaletteSwatches(id, document.getElementById('palette-grid'));
+    buildCraftRow(document.getElementById('craft-row'));
+    // Register palette as an active panel tool for layout
+    if (!state.panelTools.includes('palette')) state.panelTools.push('palette');
+    layoutPanelTools();
 }
 
 // ============================================================
@@ -2064,7 +2079,7 @@ var PANEL_BASE_WIDTH = 220, PANEL_WIDE_WIDTH = 260;
 
 var state = {
     panelTools:[], workspaceTools:{}, rememberManual:false,
-    palette: { current:'chartres_glass', selected:null, emptyActive:false, leadActive:true },
+    palette: { current:'chartres_glass', selected:null },
     model:   { current:null, visible:false, scale:0.25, opacity:0.35, x:0, y:0 },
 };
 
@@ -2080,7 +2095,7 @@ var modelImg    = document.getElementById('model-img');
 // TOOL ACTIONS
 // What:    Actions formerly in the Tools dropdown, now called directly
 //          from the "How this works" panel or other UI.
-// Exposes: toggleLines(), toggleGlass(), exportImage()
+// Exposes: toggleLines(), exportImage()
 // ============================================================
 
 function collapseMenu() { /* no-op — Tools menu removed */ }
@@ -2088,9 +2103,7 @@ function collapseMenu() { /* no-op — Tools menu removed */ }
 function toggleLines() {
     showLines = !showLines;
 }
-function toggleGlass() {
-    showGlass = !showGlass;
-}
+// toggleGlass removed — lead is always on
 
 function exportImage() {
     if (points.size===0) { alert('Nothing to export.'); return; }
@@ -2114,11 +2127,8 @@ function exportImage() {
         oc.beginPath(); oc.moveTo(poly[0].x,poly[0].y);
         for (var i=1;i<poly.length;i++) oc.lineTo(poly[i].x,poly[i].y);
         oc.closePath(); oc.fillStyle=f.color; oc.globalAlpha=f.opacity; oc.fill('evenodd');
-        // Draw lead border if active
-        if (state.palette.leadActive) {
-            oc.strokeStyle=LEAD_BORDER_COLOR; oc.lineWidth=LEAD_WIDTH*sc;
-            oc.globalAlpha=1; oc.stroke();
-        }
+        oc.strokeStyle=LEAD_BORDER_COLOR; oc.lineWidth=LEAD_WIDTH*sc;
+        oc.globalAlpha=1; oc.stroke();
         oc.globalAlpha=1;
     });
     off.toBlob(function(blob) {
@@ -2263,7 +2273,7 @@ function pulseWorkspaceTool(id) {
 //          craft row (empty / clear glass / lead),
 //          recipe tooltip on hover.
 //          State lives in state.palette {current, selected,
-//          emptyActive, leadActive}. Can render in both the panel
+//          selected}. Can render in both the panel
 //          position and as a dragged-off workspace tool.
 // Depends: PALETTES_DATA, CRAFT_SWATCHES, state.palette,
 //          openPanelTool(), closePanelTool(), openPickerWindow(),
@@ -2274,10 +2284,8 @@ function pulseWorkspaceTool(id) {
 //          buildWorkspacePalette()
 // ============================================================
 
-var PALETTE_SHORTLIST = ['chartres_glass','gaudi_glass'];
-
 function openColorTool() {
-    var id = state.palette.current || PALETTE_SHORTLIST[0];
+    var id = state.palette.current || 'chartres_glass';
     openPaletteTool(id);
 }
 
@@ -2287,7 +2295,6 @@ function openPaletteTool(paletteId) {
     if (!pal) { console.warn('Palette not found:',paletteId); return; }
     var nameBtn = document.getElementById('palette-name-btn');
     if (nameBtn) nameBtn.textContent = pal.name;
-    closePaletteSwitcher();
     if (state.panelTools.includes('palette')) { buildPaletteSwatches(paletteId,document.getElementById('palette-grid')); buildCraftRow(document.getElementById('craft-row')); return; }
     if (state.workspaceTools['palette']) {
         var wt=state.workspaceTools['palette'];
@@ -2305,43 +2312,14 @@ function openPaletteTool(paletteId) {
 
 document.getElementById('palette-name-btn').addEventListener('click', function(e) {
     e.stopPropagation();
-    var sw = document.getElementById('palette-switcher');
-    if (sw.style.display==='none') openPaletteSwitcher(); else closePaletteSwitcher();
+    openPickerWindow('palettes');
 });
-
-function openPaletteSwitcher() {
-    var sw = document.getElementById('palette-switcher'); sw.innerHTML='';
-    PALETTE_SHORTLIST.forEach(function(id) {
-        var p=PALETTES_DATA[id]; if (!p) return;
-        var item=document.createElement('span');
-        item.className='palette-switch-item'+(id===state.palette.current?' current':'');
-        item.textContent=p.name;
-        item.addEventListener('click', function(e) { e.stopPropagation(); openPaletteTool(id); });
-        sw.appendChild(item);
-    });
-    var choose=document.createElement('span'); choose.className='palette-switch-item choose'; choose.textContent='Choose...';
-    choose.addEventListener('click', function(e) { e.stopPropagation(); closePaletteSwitcher(); openPickerWindow('palettes'); });
-    sw.appendChild(choose);
-    sw.style.display='block';
-    document.getElementById('palette-grid').style.visibility='hidden';
-    document.getElementById('craft-row').style.visibility='hidden';
-    document.getElementById('palette-recipe').style.visibility='hidden';
-}
-
-function closePaletteSwitcher() {
-    var sw=document.getElementById('palette-switcher'); if (!sw) return;
-    sw.style.display='none';
-    document.getElementById('palette-grid').style.visibility='';
-    document.getElementById('craft-row').style.visibility='';
-    document.getElementById('palette-recipe').style.visibility='';
-}
 
 function setRecipe(text) { var el=document.getElementById('palette-recipe'); if (el) el.textContent=text||'\u00a0'; }
 
 function buildPaletteSwatches(paletteId, grid) {
     var pal=PALETTES_DATA[paletteId]; if (!pal||!grid) return;
     grid.innerHTML=''; grid.classList.toggle('wide',pal.colors.length>12);
-    if (state.palette.leadActive) grid.classList.add('lead-active');
     pal.colors.forEach(function(c) {
         var sw=document.createElement('div'); sw.className='palette-swatch'; sw.style.background=c.hex;
         var recipe=c.uncertain?c.recipe+'?':c.recipe;
@@ -2349,56 +2327,48 @@ function buildPaletteSwatches(paletteId, grid) {
         sw.addEventListener('mouseleave', function() { setRecipe(''); });
         sw.addEventListener('click', function() {
             state.palette.selected=c.hex;
-            state.palette.emptyActive=false;
             document.querySelectorAll('#palette-grid .palette-swatch, #craft-row .palette-swatch').forEach(function(s) { s.classList.remove('selected'); });
             sw.classList.add('selected'); setRecipe(recipe);
         });
-        if (state.palette.selected===c.hex && !state.palette.emptyActive) sw.classList.add('selected');
+        if (state.palette.selected===c.hex) sw.classList.add('selected');
         grid.appendChild(sw);
     });
 }
 
 function buildCraftRow(row) {
     if (!row) return; row.innerHTML='';
-    CRAFT_SWATCHES.forEach(function(c) {
-        var wrap=document.createElement('div'); wrap.className='craft-swatch-wrap';
+    var universalChips = [
+        { hex: COLORS.background, recipe: 'remove color', border: true },
+        { hex: FOREST_GLASS, recipe: 'clear glass' }
+    ];
+    universalChips.forEach(function(c) {
         var sw=document.createElement('div'); sw.className='palette-swatch';
-        if      (c.label==='empty') { sw.style.cssText='background:transparent;border:1.5px solid #c8b89a;'; }
-        else if (c.label==='lead')  { sw.style.cssText='background:transparent;border:2px solid #777;'; }
-        else                        { sw.style.background=c.hex; }
+        sw.style.background=c.hex;
+        if (c.border) sw.style.border='1.5px solid #c8b89a';
         sw.addEventListener('mouseenter', function() { setRecipe(c.recipe); });
         sw.addEventListener('mouseleave', function() { setRecipe(''); });
         sw.addEventListener('click', function() {
-            if (c.label==='lead') {
-                state.palette.leadActive=!state.palette.leadActive;
-                sw.classList.toggle('selected',state.palette.leadActive);
-                applyLeadState();
-            } else if (c.label==='empty') {
-                state.palette.emptyActive=!state.palette.emptyActive;
-                state.palette.selected=null;
-                document.querySelectorAll('#palette-grid .palette-swatch, #craft-row .palette-swatch').forEach(function(s) { s.classList.remove('selected'); });
-                sw.classList.toggle('selected', state.palette.emptyActive);
-            } else {
-                state.palette.selected=c.hex;
-                state.palette.emptyActive=false;
-                document.querySelectorAll('#palette-grid .palette-swatch, #craft-row .palette-swatch').forEach(function(s) { s.classList.remove('selected'); });
-                sw.classList.add('selected');
-            }
-            setRecipe(c.recipe);
+            state.palette.selected=c.hex;
+            document.querySelectorAll('#palette-grid .palette-swatch, #craft-row .palette-swatch').forEach(function(s) { s.classList.remove('selected'); });
+            sw.classList.add('selected'); setRecipe(c.recipe);
         });
-        if (c.label==='lead' && state.palette.leadActive) sw.classList.add('selected');
-        if (c.label==='empty' && state.palette.emptyActive) sw.classList.add('selected');
-        wrap.appendChild(sw);
-        var lbl=document.createElement('span'); lbl.className='craft-swatch-label'; lbl.textContent=c.label; wrap.appendChild(lbl);
-        row.appendChild(wrap);
+        if (state.palette.selected===c.hex) sw.classList.add('selected');
+        row.appendChild(sw);
     });
 }
 
-function applyLeadState() {
-    document.querySelectorAll('.palette-grid,.craft-row').forEach(function(g) { g.classList.toggle('lead-active',state.palette.leadActive); });
-}
+// "Choose new colors" opens palette picker
+document.getElementById('palette-choose').addEventListener('click', function() { openPickerWindow('palettes'); });
 
-document.getElementById('palette-close').addEventListener('click', function() { closePanelTool('palette'); });
+// Lead thickness slider — track thickness matches the current setting
+var leadSlider = document.getElementById('lead-slider');
+var leadTrack  = document.getElementById('lead-slider-track');
+function updateLeadSlider() {
+    LEAD_WIDTH = leadSlider.value / 10;
+    leadTrack.style.height = Math.max(1, LEAD_WIDTH) + 'px';
+}
+leadSlider.addEventListener('input', updateLeadSlider);
+updateLeadSlider();
 
 function buildWorkspacePalette() {
     var pal=PALETTES_DATA[state.palette.current]||{ name:'--' };
@@ -3036,36 +3006,86 @@ var HTW_DEBUG_RESET = true;          // set false before releasing to users
 var HTW_STAGES = [
     {
         id: 'construction',
-        heading: 'Making Lines and Circles',
         label: 'Lines and Circles',
-        trigger: function() { return true; },  // always shown on first visit
-        suppress: function() { return false; }, // never suppress stage 1
+        trigger: function() { return true; },
+        suppress: function() { return false; },
         content: [
-            { text: 'You have circles and lines, and you start with two points. All your beautiful patterns begin with these.', indent: 0 },
-            { text: 'Tap one point, then tap another to make a line.', indent: 0 },
-            { text: 'Tap and hold one point, then drag to another to make a circle.', indent: 0 },
-            { text: 'New points appear wherever lines and circles cross.', indent: 1 },
-            { text: 'You can use those points to construct other lines and circles.', indent: 2 },
-            { text: 'Tap in any empty space to undo.', indent: 0 }
+            { text: 'All your beautiful patterns begin with circles, lines, and two points.' },
+            { text: '' },
+            { text: 'To make a line, tap a point, then tap another.' },
+            { text: 'To make a circle, tap a point, then drag to another.' },
+            { text: 'Where lines and circles intersect, new points appear.' },
+            { text: 'Use those to make more lines and circles.' },
+            { text: '' },
+            { text: 'Tap any empty space to undo.' }
         ]
     },
     {
         id: 'shapes',
-        heading: 'Cutting Shapes',
         label: 'Cutting Shapes',
         trigger: function() { return points.size >= 15; },
         suppress: function() {
-            // Suppress if child has already emphasized segments or made fills
             var hasEmph = false;
             for (var i = 0; i < operationLog.length; i++) { if (operationLog[i].op === 'emphasize') { hasEmph = true; break; } }
             return hasEmph || fills.size > 0;
         },
         content: [
-            { text: 'Shapes are forming.', indent: 0 },
-            { text: 'To cut a shape, tap a line. It will darken.', indent: 0 },
-            { text: 'Then tap connected lines.', indent: 0 },
-            { text: 'Enclosed shapes turn to glass.', indent: 0 },
-            { text: 'To color your glass, tap a color, then the glass.', indent: 0 }
+            { text: 'To cut your glass, tap a line. It will fill with lead.' },
+            { text: 'Then tap connected lines.' },
+            { text: '' },
+            { text: 'When you enclose a shape it will turn to glass.' }
+        ]
+    },
+    {
+        id: 'color',
+        label: 'Color',
+        trigger: function() {
+            var count = 0;
+            fills.forEach(function(f) { if (!f.dissolved) count++; });
+            return count >= 4;
+        },
+        suppress: function() {
+            // Suppress if child has already used the color palette
+            for (var i = 0; i < operationLog.length; i++) { if (operationLog[i].op === 'repaint_fill') return true; }
+            return false;
+        },
+        content: [
+            { text: 'To color glass, tap a color, then tap the glass.' },
+            { text: '' },
+            { text: 'To choose a different set of colors, tap {Choose new colors}.' },
+            { text: 'Use the slider to change lead thickness.' }
+        ]
+    },
+    {
+        id: 'eraser',
+        label: 'Hiding Lines',
+        trigger: function() { return points.size >= 30; },
+        suppress: function() {
+            for (var i = 0; i < operationLog.length; i++) { if (operationLog[i].op === 'scaffold') return true; }
+            return false;
+        },
+        content: [
+            { text: 'Double click a line to make it fade or to make a faded line reappear.' },
+            { text: '' },
+            { text: 'Double click a line and hold the mouse down to change more than one line.' }
+        ]
+    },
+    {
+        id: 'save',
+        label: 'Save or Share',
+        trigger: null,
+        content: [
+            { text: 'Tap {Save} to save your work as an image or as a file you can open and work on later.' },
+            { text: 'Tap {Share} to send a copy to someone else.' }
+        ]
+    },
+    {
+        id: 'newopen',
+        label: 'New and Open',
+        trigger: null,
+        content: [
+            { text: 'Tap {New} to start a new construction.' },
+            { text: 'Tap {Open} to see examples and to open constructions you\'ve saved.' }
         ]
     }
 ];
@@ -3074,10 +3094,10 @@ var HTW_STAGES = [
 var HTW_ACTIONS = {
     construction: function() { openHtwOnCanvas('construction'); },
     shapes:       function() { openHtwOnCanvas('shapes'); },
-    color:        function() { openColorTool(); },
-    eraser:       function() { openHtwTip('Erasing Lines', 'Double-tap a line to fade it. Double-tap a faded line to restore it.'); },
-    save:         function() { saveConstruction(); },
-    constructions: function() { openConstructions(); }
+    color:        function() { openHtwOnCanvas('color'); },
+    eraser:       function() { openHtwOnCanvas('eraser'); },
+    save:         function() { openHtwOnCanvas('save'); },
+    newopen:      function() { openHtwOnCanvas('newopen'); }
 };
 
 var htwActiveStageIdx = -1;  // index of stage currently shown on canvas
@@ -3098,20 +3118,23 @@ function htwBuildBody(stageIdx) {
     var bodyEl = document.getElementById('htw-canvas-body');
     bodyEl.innerHTML = '';
     stage.content.forEach(function(item) {
+        if (item.text === '') { bodyEl.appendChild(document.createElement('br')); return; }
         var p = document.createElement('p');
-        p.className = 'htw-para' + (item.indent===1 ? ' htw-indent-1' : item.indent===2 ? ' htw-indent-2' : '');
-        p.textContent = item.text;
+        p.className = 'htw-para';
+        // Parse {keyword} markers into highlighted spans
+        var parts = item.text.split(/\{([^}]+)\}/);
+        for (var i = 0; i < parts.length; i++) {
+            if (i % 2 === 0) {
+                p.appendChild(document.createTextNode(parts[i]));
+            } else {
+                var kw = document.createElement('span');
+                kw.className = 'htw-keyword';
+                kw.textContent = parts[i];
+                p.appendChild(kw);
+            }
+        }
         bodyEl.appendChild(p);
     });
-}
-
-function htwBuildTipBody(heading, text) {
-    var bodyEl = document.getElementById('htw-canvas-body');
-    bodyEl.innerHTML = '';
-    var p = document.createElement('p');
-    p.className = 'htw-para';
-    p.textContent = text;
-    bodyEl.appendChild(p);
 }
 
 function toggleHtwPanel() {
@@ -3132,25 +3155,6 @@ function openHtwOnCanvas(stageId) {
     } else {
         var s0 = w2s(-100, 0);
         var winW = 248, winH = 260;
-        el.style.left = Math.max(s0.x - winW - 20, 10) + 'px';
-        el.style.top  = Math.max(Math.round(s0.y - winH / 2), 20) + 'px';
-    }
-    el.style.opacity = '0'; el.style.display = '';
-    requestAnimationFrame(function() {
-        el.style.transition = 'opacity 200ms ease-in'; el.style.opacity = '1';
-        setTimeout(function() { el.style.transition = ''; }, 220);
-    });
-}
-
-function openHtwTip(heading, text) {
-    htwActiveStageIdx = -1;
-    htwBuildTipBody(heading, text);
-    var el = document.getElementById('htw-canvas');
-    if (htwLastPos) {
-        el.style.left = htwLastPos.left; el.style.top = htwLastPos.top;
-    } else {
-        var s0 = w2s(-100, 0);
-        var winW = 248, winH = 200;
         el.style.left = Math.max(s0.x - winW - 20, 10) + 'px';
         el.style.top  = Math.max(Math.round(s0.y - winH / 2), 20) + 'px';
     }
