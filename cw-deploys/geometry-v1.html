@@ -1002,37 +1002,44 @@ function renderPostcardPNG(name, note, noteScreenPos, callback) {
     });
     if (!isFinite(minX)) { minX = -100; minY = -100; maxX = 100; maxY = 100; }
 
-    var pad = 60;
-    var mat = 60; // border mat width at 1x
-    var hiRes = 3; // 3x resolution
-    var ww = maxX - minX + pad * 2, wh = maxY - minY + pad * 2;
-    var targetW = 1200, targetH = 1200;
-    var sc = Math.min(targetW / ww, targetH / wh, 6);
-    var artW = Math.round(ww * sc), artH = Math.round(wh * sc);
-    var pw = (artW + mat * 2) * hiRes, ph = (artH + mat * 2) * hiRes;
-    var s = sc * hiRes; // combined scale
-    var mx = mat * hiRes; // mat in pixels
+    // 15% padding around bounding box
+    var contentW = maxX - minX, contentH = maxY - minY;
+    var padFrac = 0.15;
+    var padX = contentW * padFrac, padY = contentH * padFrac;
+    minX -= padX; minY -= padY; maxX += padX; maxY += padY;
+    var ww = maxX - minX, wh = maxY - minY;
+
+    // Render at 300 DPI based on current view scale
+    // viewScale = screen pixels per world unit (at 72 DPI)
+    // 300/72 ≈ 4.167 — multiply to get 300 DPI pixels per world unit
+    var dpiScale = 300 / 72;
+    var s = viewScale * dpiScale; // pixels per world unit at 300 DPI
+    var artW = Math.round(ww * s), artH = Math.round(wh * s);
+
+    // Border mat: 0.5 inches at 300 DPI = 150px
+    var matPx = 150;
+    var pw = artW + matPx * 2, ph = artH + matPx * 2;
 
     var off = document.createElement('canvas'); off.width = pw; off.height = ph;
     var oc = off.getContext('2d');
-    function wp(wx, wy) { return { x: (wx - minX + pad) * s + mx, y: (wy - minY + pad) * s + mx }; }
+    function wp(wx, wy) { return { x: (wx - minX) * s + matPx, y: (wy - minY) * s + matPx }; }
 
     // Dark border mat
     oc.fillStyle = '#2a2620'; oc.fillRect(0, 0, pw, ph);
     // Inner border line
-    oc.strokeStyle = '#c8b89a'; oc.lineWidth = 1.5 * hiRes;
-    oc.strokeRect(mx - 1.5, mx - 1.5, artW * hiRes + 3, artH * hiRes + 3);
+    oc.strokeStyle = '#c8b89a'; oc.lineWidth = 2;
+    oc.strokeRect(matPx - 1, matPx - 1, artW + 2, artH + 2);
 
     // Parchment background
     oc.fillStyle = COLORS.background;
-    oc.fillRect(mx, mx, artW * hiRes, artH * hiRes);
+    oc.fillRect(matPx, matPx, artW, artH);
 
     // Subtle vignette
-    var vgr = oc.createRadialGradient(pw / 2, ph / 2, Math.min(artW, artH) * hiRes * 0.3, pw / 2, ph / 2, Math.max(pw, ph) * 0.7);
+    var vgr = oc.createRadialGradient(pw / 2, ph / 2, Math.min(artW, artH) * 0.3, pw / 2, ph / 2, Math.max(pw, ph) * 0.7);
     vgr.addColorStop(0, 'rgba(0,0,0,0)');
     vgr.addColorStop(1, 'rgba(0,0,0,0.12)');
     oc.fillStyle = vgr;
-    oc.fillRect(mx, mx, artW * hiRes, artH * hiRes);
+    oc.fillRect(matPx, matPx, artW, artH);
 
     // Glass fills (sorted largest first)
     var sorted = allPolys.slice().sort(function(a, b) { return shoelaceArea(b.poly) - shoelaceArea(a.poly); });
@@ -1044,12 +1051,12 @@ function renderPostcardPNG(name, note, noteScreenPos, callback) {
         oc.closePath(); oc.fillStyle = f.color; oc.globalAlpha = f.opacity; oc.fill('evenodd');
         // Glass noise texture
         oc.globalAlpha = 1;
-        for (var n = 0; n < 200; n++) {
+        for (var n = 0; n < 300; n++) {
             var rx = mapped[Math.floor(Math.random() * mapped.length)];
-            var nx = rx.x + (Math.random() - 0.5) * 60 * hiRes;
-            var ny = rx.y + (Math.random() - 0.5) * 60 * hiRes;
+            var nx = rx.x + (Math.random() - 0.5) * 80;
+            var ny = rx.y + (Math.random() - 0.5) * 80;
             oc.fillStyle = Math.random() > 0.5 ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)';
-            oc.fillRect(nx, ny, hiRes, hiRes);
+            oc.fillRect(nx, ny, 2, 2);
         }
     });
 
@@ -1066,7 +1073,7 @@ function renderPostcardPNG(name, note, noteScreenPos, callback) {
     }
     // Shadow
     oc.save();
-    oc.translate(hiRes, hiRes); // 1px offset at 1x
+    oc.translate(3, 3); // subtle offset
     oc.strokeStyle = 'rgba(0,0,0,0.2)'; oc.lineWidth = leadW;
     leadLines.forEach(drawLeadLine);
     oc.restore();
@@ -1083,9 +1090,10 @@ function renderPostcardPNG(name, note, noteScreenPos, callback) {
     leadLines.forEach(drawLeadLine);
 
     // Note text at the position the child placed it
+    // Fixed physical size: 13pt at 300 DPI ≈ 54px
     var noteText = (note || '').trim();
     if (noteText) {
-        var noteFontPx = 15 * hiRes, noteLineH = noteFontPx * 1.45;
+        var noteFontPx = 54, noteLineH = noteFontPx * 1.45;
         // Split on actual newlines from textarea
         var rawLines = noteText.split('\n');
         var noteLines2 = [];
