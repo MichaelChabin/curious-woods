@@ -137,7 +137,9 @@
     #picker-close-btn:hover { color: #546A80; }
     .picker-grid { display: grid; grid-template-columns: repeat(3,200px); gap: 20px; margin-top: 14px; }
     .picker-item { display: flex; flex-direction: column; align-items: center; cursor: default; }
-    .picker-thumb { width: 200px; height: 200px; border-radius: 5px; border: 1.5px solid transparent; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(244,241,232,0.6); transition: border-color 100ms; }
+    .picker-thumb { position: relative; width: 200px; height: 200px; border-radius: 5px; border: 1.5px solid transparent; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(244,241,232,0.6); transition: border-color 100ms; }
+    .picker-delete { position: absolute; top: 4px; right: 6px; font-family: Georgia, serif; font-size: 16px; color: #b0a090; cursor: default; transition: color 80ms; z-index: 1; line-height: 1; }
+    .picker-delete:hover { color: #8b1a1a; }
     .picker-thumb:hover { border-color: rgba(84,106,128,0.4); }
     .picker-thumb.selected { border-color: #546A80; }
     .picker-item-name { font-family: Georgia, serif; font-size: 12px; color: #7a6e60; margin-top: 6px; text-align: center; line-height: 1.3; width: 200px; }
@@ -197,9 +199,21 @@
     .cx-step-label:hover { color: #3D3D3A; }
 
     /* --- WIP / cancel dialogs --- */
-    #cx-wip-dialog, #cx-cancel-dialog { position: fixed; z-index: 800; pointer-events: all; user-select: none; background: rgba(244,241,232,0.94); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 16px; box-shadow: 0 2px 12px rgba(42,38,32,0.1); left: 50%; top: 40%; transform: translate(-50%,-50%); display: flex; gap: 24px; }
+    #cx-wip-dialog, #cx-cancel-dialog, #new-open-dialog, #save-type-dialog { position: fixed; z-index: 800; pointer-events: all; user-select: none; background: rgba(244,241,232,0.94); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 16px; box-shadow: 0 2px 12px rgba(42,38,32,0.1); left: 50%; top: 40%; transform: translate(-50%,-50%); display: flex; gap: 24px; }
     .cx-wip-option { font-family: Georgia, serif; font-size: 13px; color: #546A80; cursor: default; transition: color 80ms; }
     .cx-wip-option:hover { color: #3D3D3A; }
+
+    /* --- Save note box --- */
+    #save-note-box { position: fixed; z-index: 800; pointer-events: all; width: 240px; background: rgba(244,241,232,0.96); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 0 14px 10px; box-shadow: 0 2px 14px rgba(42,38,32,0.14); }
+    .save-note-header { cursor: grab; padding: 10px 0 4px; }
+    .save-note-header:active { cursor: grabbing; }
+    #save-note-name { font-family: Georgia, serif; font-size: 14px; color: #546A80; background: transparent; border: none; border-bottom: 0.5px solid rgba(200,184,154,0.7); outline: none; width: 100%; padding: 0 0 4px; line-height: 1.3; }
+    #save-note-name::placeholder { color: #546A80; opacity: 0.45; }
+    #save-note-text { font-family: Georgia, serif; font-style: italic; font-size: 13px; color: #546A80; background: transparent; border: none; border-bottom: 0.5px solid rgba(200,184,154,0.5); padding: 6px 0 4px; resize: both; overflow: auto; width: 100%; min-height: 54px; outline: none; line-height: 1.5; margin-top: 6px; }
+    #save-note-text::placeholder { color: #546A80; opacity: 0.35; }
+    .save-note-footer { display: flex; justify-content: flex-end; margin-top: 8px; }
+    .save-note-ok { font-family: Georgia, serif; font-size: 14px; color: #546A80; cursor: default; transition: color 80ms; }
+    .save-note-ok:hover { color: #3D3D3A; }
 
     /* --- Note box (save-as-construction) --- */
     #cx-note-box { position: fixed; z-index: 800; pointer-events: all; display: none; width: 240px; background: rgba(244,241,232,0.92); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 0 14px 12px; box-shadow: 0 2px 14px rgba(42,38,32,0.14); }
@@ -306,14 +320,37 @@
   <span class="cx-wip-option" id="cx-wip-save">Save and continue</span>
 </div>
 
+<!-- New/Open dialog (return visits) -->
+<div id="new-open-dialog" style="display:none;">
+  <span class="cx-wip-option" id="new-open-new">New</span>
+  <span class="cx-wip-option" id="new-open-open">Open</span>
+</div>
+
 <!-- Cancel replay dialog -->
 <div id="cx-cancel-dialog" style="display:none;">
   <span class="cx-wip-option" id="cx-cancel-start-over">Start over</span>
   <span class="cx-wip-option" id="cx-cancel-continue">Continue from here</span>
 </div>
 
-<!-- Note box (save-as-construction) -->
-<div id="cx-note-box">
+<!-- Save type dialog -->
+<div id="save-type-dialog" style="display:none;">
+  <span class="cx-wip-option" id="save-type-construction">Save Construction</span>
+  <span class="cx-wip-option" id="save-type-image">Save as Image</span>
+</div>
+
+<!-- Note box (used by Save Construction, Save as Image, and Share) -->
+<div id="save-note-box" style="display:none;">
+  <div class="save-note-header" id="save-note-drag">
+    <input type="text" id="save-note-name" placeholder="name" autocomplete="off">
+  </div>
+  <textarea id="save-note-text" placeholder="add a note..."></textarea>
+  <div class="save-note-footer">
+    <span class="save-note-ok" id="save-note-ok">OK</span>
+  </div>
+</div>
+
+<!-- Old note box kept for backward compat with initConstructions wiring -->
+<div id="cx-note-box" style="display:none;">
   <div id="cx-note-drag-handle"><span id="cx-note-drag-dots">· · · · · · · ·</span></div>
   <input id="cx-note-name" type="text" placeholder="name this construction…" autocomplete="off">
   <textarea id="cx-note-textarea" placeholder="a note… (optional)"></textarea>
@@ -751,6 +788,151 @@ function showUniquenessObservation() {
         el.style.transition = 'opacity 200ms ease-in'; el.style.opacity = '1';
         setTimeout(function() { el.style.transition = ''; }, 220);
     });
+}
+
+// ============================================================
+// SAVE FLOW (revised)
+// What:    "Save Construction" saves ops+thumbnail to localStorage.
+//          "Save as Image" renders glass+lead+note as downloadable PNG.
+//          Both use the new save-note-box for name/note input.
+// ============================================================
+
+var _saveMode = null; // 'construction' | 'image' | 'share'
+
+function showNewOpenDialog() {
+    document.getElementById('new-open-dialog').style.display = '';
+}
+
+function showSaveDialog() {
+    if (operationLog.length <= 1) { toast('nothing to save yet'); return; }
+    document.getElementById('save-type-dialog').style.display = '';
+}
+
+function showSaveNoteBox(mode) {
+    _saveMode = mode;
+    var box = document.getElementById('save-note-box');
+    var nameEl = document.getElementById('save-note-name');
+    var textEl = document.getElementById('save-note-text');
+    nameEl.value = ''; textEl.value = '';
+    // Position: center of canvas area
+    var panelW = parseInt(leftPanel.style.width) || PANEL_BASE_WIDTH;
+    var cx2 = panelW + (window.innerWidth - panelW) / 2;
+    box.style.left = (cx2 - 120) + 'px';
+    box.style.top = ((window.innerHeight - 180) / 2) + 'px';
+    box.style.display = '';
+    setTimeout(function() { nameEl.focus(); }, 60);
+}
+
+function dismissSaveNoteBox() {
+    document.getElementById('save-note-box').style.display = 'none';
+    _saveMode = null;
+}
+
+function executeSave() {
+    var name = document.getElementById('save-note-name').value.trim();
+    var note = document.getElementById('save-note-text').value.trim();
+    var mode = _saveMode;
+    dismissSaveNoteBox();
+
+    if (mode === 'construction') {
+        doSaveConstruction(name, note);
+    } else if (mode === 'image' || mode === 'share') {
+        doSaveImage(name, note, mode === 'share');
+    }
+}
+
+function doSaveConstruction(name, note) {
+    var log = operationLog.slice();
+    captureConstructionPNG(note, function(png) {
+        name = name || ('construction ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        var key = 'cw-cx-' + Date.now();
+        var entry = { key: key, name: name, note: note || '', created: new Date().toISOString(), operations: log, png: png };
+        try {
+            localStorage.setItem(key, JSON.stringify(entry));
+            var index = cxGetStorageIndex();
+            index.push({ key: key, name: name, created: entry.created });
+            localStorage.setItem('cw-cx-index', JSON.stringify(index));
+        } catch (e) {
+            console.warn('localStorage save failed:', e);
+            toast('could not save (storage full?)');
+        }
+        // Also offer JSON download as backup
+        var blob = new Blob([JSON.stringify({ version: 1, name: name, note: note || '', created: entry.created, operations: log }, null, 2)], { type: 'application/json' });
+        var url = URL.createObjectURL(blob), a = document.createElement('a');
+        a.href = url; a.download = (name.replace(/[^a-z0-9 _-]/gi, '_').trim() || 'construction') + '.json'; a.click();
+        URL.revokeObjectURL(url);
+        if (document.getElementById('tool-constructions').style.display !== 'none') buildCxExampleThumbs();
+        toast('saved');
+        if (points.size >= 15) setTimeout(showUniquenessObservation, 800);
+    });
+}
+
+function doSaveImage(name, note, isShare) {
+    // Render full-size PNG: glass fills + lead borders + note text, nothing else
+    var allPolys = [];
+    fills.forEach(function(f) {
+        if (f.dissolved) return;
+        var poly = expandFillToPolygon(f);
+        if (poly.length >= 3) allPolys.push({ poly: poly, fill: f });
+    });
+    if (allPolys.length === 0 && !note) { toast('nothing to save yet'); return; }
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    allPolys.forEach(function(item) {
+        item.poly.forEach(function(p) {
+            minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
+            maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
+        });
+    });
+    if (!isFinite(minX)) { minX = -100; minY = -100; maxX = 100; maxY = 100; }
+    var pad = 60, ww = maxX - minX + pad * 2, wh = maxY - minY + pad * 2;
+    var noteText = (note || '').trim();
+    var noteFontPx = 15, noteLineH = noteFontPx * 1.45;
+    var noteLines = noteText ? wrapText(noteText, 500) : [];
+    var noteReserve = noteLines.length > 0 ? (noteLines.length * noteLineH + 24) : 0;
+    var targetW = 1200, targetH = 1200;
+    var sc = Math.min(targetW / ww, (targetH - noteReserve) / wh, 6);
+    var pw = Math.round(ww * sc), ph = Math.round(wh * sc + noteReserve);
+    var off = document.createElement('canvas'); off.width = pw; off.height = ph;
+    var oc = off.getContext('2d');
+    oc.fillStyle = COLORS.background; oc.fillRect(0, 0, pw, ph);
+    function wp(wx, wy) { return { x: (wx - minX + pad) * sc, y: (wy - minY + pad) * sc }; }
+    // Sort fills by area descending (same as render)
+    var sorted = allPolys.slice().sort(function(a, b) { return shoelaceArea(b.poly) - shoelaceArea(a.poly); });
+    sorted.forEach(function(item) {
+        var f = item.fill;
+        var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
+        oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
+        for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
+        oc.closePath(); oc.fillStyle = f.color; oc.globalAlpha = f.opacity; oc.fill('evenodd');
+        // Lead border
+        oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = LEAD_WIDTH * sc;
+        oc.globalAlpha = 1; oc.stroke();
+    });
+    // Note text at bottom
+    if (noteLines.length > 0) {
+        oc.fillStyle = noteBoxTextColor();
+        oc.font = 'italic ' + noteFontPx + 'px Georgia, serif';
+        oc.textBaseline = 'top';
+        var ty = ph - noteReserve + 12, tx = pad * sc;
+        noteLines.forEach(function(line) { oc.fillText(line, tx, ty); ty += noteLineH; });
+    }
+    oc.globalAlpha = 1;
+    // Convert to blob
+    off.toBlob(function(blob) {
+        var filename = (name || 'glass-' + new Date().toISOString().slice(0, 10)).replace(/[^a-z0-9 _-]/gi, '_') + '.png';
+        if (isShare && navigator.share && navigator.canShare) {
+            var file = new File([blob], filename, { type: 'image/png' });
+            navigator.share({ title: name || 'My Glass Construction', text: note || '', files: [file] })
+                .catch(function() {});
+        } else {
+            // Download
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+            URL.revokeObjectURL(url);
+            if (isShare) toast('Sharing not available on this browser \u2014 image downloaded instead');
+        }
+        if (points.size >= 15) setTimeout(showUniquenessObservation, 800);
+    }, 'image/png');
 }
 
 function cxGetStorageIndex() {
@@ -2601,6 +2783,49 @@ function initConstructions() {
         document.getElementById('cx-cancel-dialog').style.display = 'none';
         exitStepThrough();
     });
+
+    // New/Open dialog
+    document.getElementById('new-open-new').addEventListener('click', function() {
+        document.getElementById('new-open-dialog').style.display = 'none';
+        checkWipThen(function() { newConstruction(); });
+    });
+    document.getElementById('new-open-open').addEventListener('click', function() {
+        document.getElementById('new-open-dialog').style.display = 'none';
+        openPickerWindow('constructions');
+    });
+
+    // Save type dialog
+    document.getElementById('save-type-construction').addEventListener('click', function() {
+        document.getElementById('save-type-dialog').style.display = 'none';
+        showSaveNoteBox('construction');
+    });
+    document.getElementById('save-type-image').addEventListener('click', function() {
+        document.getElementById('save-type-dialog').style.display = 'none';
+        showSaveNoteBox('image');
+    });
+
+    // Save note box OK button
+    document.getElementById('save-note-ok').addEventListener('click', executeSave);
+
+    // Save note box drag
+    (function() {
+        var box = document.getElementById('save-note-box');
+        var handle = document.getElementById('save-note-drag');
+        var dragging = false, sx, sy, ox, oy;
+        handle.addEventListener('pointerdown', function(e) {
+            if (e.target.tagName === 'INPUT') return; // let input focus work
+            e.preventDefault();
+            dragging = true; sx = e.clientX; sy = e.clientY;
+            ox = parseInt(box.style.left) || 0; oy = parseInt(box.style.top) || 0;
+            handle.setPointerCapture(e.pointerId);
+        });
+        handle.addEventListener('pointermove', function(e) {
+            if (!dragging) return;
+            box.style.left = (ox + e.clientX - sx) + 'px';
+            box.style.top = (oy + e.clientY - sy) + 'px';
+        });
+        handle.addEventListener('pointerup', function() { dragging = false; });
+    })();
 }
 
 // Build the two-thumbnail Examples row from localStorage + builtins
@@ -3138,13 +3363,30 @@ function buildPickerConstructions() {
             img.src = url;
         }
         thumb.appendChild(img);
+        // Delete button for saved (non-canonical) constructions
+        var isBuiltin = entry.key && entry.key.indexOf('_builtin_') === 0;
+        if (!isBuiltin) {
+            var del = document.createElement('span');
+            del.className = 'picker-delete';
+            del.textContent = '\u00d7';
+            del.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (!confirm('Delete this?')) return;
+                try {
+                    localStorage.removeItem(entry.key);
+                    var index = cxGetStorageIndex().filter(function(ref) { return ref.key !== entry.key; });
+                    localStorage.setItem('cw-cx-index', JSON.stringify(index));
+                } catch (ex) {}
+                item.remove();
+            });
+            thumb.appendChild(del);
+        }
         var label = document.createElement('div'); label.className='picker-item-name';
         label.textContent = entry.name || 'untitled';
         item.appendChild(thumb); item.appendChild(label);
         thumb.addEventListener('click', function() {
             pickerWindow.classList.remove('visible');
             setTimeout(function(){ pickerBackdrop.classList.remove('visible'); }, 200);
-            // Load construction into step-through replay
             loadConstructionEntry(entry);
         });
         pickerGrid.appendChild(item);
@@ -3398,8 +3640,16 @@ var HTW_ACTIONS = {
     shapes:       function() { openHtwOnCanvas('shapes'); },
     color:        function() { openColorTool(); openHtwOnCanvas('color'); },
     eraser:       function() { openHtwOnCanvas('eraser'); },
-    save:         function() { openHtwOnCanvas('save'); },
-    newopen:      function() { openHtwOnCanvas('newopen'); }
+    save:         function() {
+        // Return visit: go directly to save dialog. First visit: show tip window.
+        if (htwStageSeen(HTW_STAGES[0])) { showSaveDialog(); }
+        else { openHtwOnCanvas('save'); }
+    },
+    newopen:      function() {
+        // Return visit: show new/open dialog. First visit: show tip window.
+        if (htwStageSeen(HTW_STAGES[0])) { showNewOpenDialog(); }
+        else { openHtwOnCanvas('newopen'); }
+    }
 };
 
 var htwActiveStageIdx = -1;  // index of stage currently shown on canvas
@@ -3418,8 +3668,8 @@ function htwMarkStageSeen(stage) {
 var HTW_TIP_ACTIONS = {
     'New': function() { closeHtwCanvas(); checkWipThen(function() { newConstruction(); }); },
     'Open': function() { closeHtwCanvas(); openPickerWindow('constructions'); },
-    'Save': function() { closeHtwCanvas(); saveConstruction(); },
-    'Share': function() { closeHtwCanvas(); saveConstruction(); toast('Sharing coming soon'); },
+    'Save': function() { closeHtwCanvas(); showSaveDialog(); },
+    'Share': function() { closeHtwCanvas(); showSaveNoteBox('share'); },
     'Choose new colors': function() { openPickerWindow('palettes'); }
 };
 
