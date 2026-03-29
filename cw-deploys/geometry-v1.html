@@ -834,12 +834,15 @@ function executeSave() {
     var name = document.getElementById('save-note-name').value.trim();
     var note = document.getElementById('save-note-text').value.trim();
     var mode = _saveMode;
+    // Capture note box position BEFORE hiding it
+    var noteBox = document.getElementById('save-note-box');
+    var noteScreenPos = { left: parseInt(noteBox.style.left) || 0, top: parseInt(noteBox.style.top) || 0 };
     dismissSaveNoteBox();
 
     if (mode === 'construction') {
         doSaveConstruction(name, note);
     } else if (mode === 'image' || mode === 'share') {
-        doSaveImage(name, note, mode === 'share');
+        doSaveImage(name, note, mode === 'share', noteScreenPos);
     }
 }
 
@@ -871,8 +874,8 @@ function doSaveConstruction(name, note) {
     });
 }
 
-function doSaveImage(name, note, isShare) {
-    renderPostcardPNG(name, note, function(blob) {
+function doSaveImage(name, note, isShare, noteScreenPos) {
+    renderPostcardPNG(name, note, noteScreenPos, function(blob) {
         var filename = (name || 'glass-' + new Date().toISOString().slice(0, 10)).replace(/[^a-z0-9 _-]/gi, '_') + '.png';
         if (isShare && navigator.share && navigator.canShare) {
             var file = new File([blob], filename, { type: 'image/png' });
@@ -907,8 +910,70 @@ function collectLeadLines() {
     return leadSegs;
 }
 
+// Patch PNG blob to set 300 DPI via pHYs chunk (11811 pixels/meter)
+function patchPngDpi(blob, dpi, callback) {
+    var ppm = Math.round(dpi / 0.0254); // pixels per meter
+    var reader = new FileReader();
+    reader.onload = function() {
+        var buf = new Uint8Array(reader.result);
+        // Find IDAT chunk — insert pHYs before it
+        var pos = 8; // skip PNG signature
+        while (pos < buf.length) {
+            var len = (buf[pos] << 24) | (buf[pos+1] << 16) | (buf[pos+2] << 8) | buf[pos+3];
+            var type = String.fromCharCode(buf[pos+4], buf[pos+5], buf[pos+6], buf[pos+7]);
+            if (type === 'IDAT') {
+                // Build pHYs chunk: 4 len + 4 type + 9 data + 4 crc = 21 bytes
+                var phys = new Uint8Array(21);
+                // Length = 9
+                phys[0] = 0; phys[1] = 0; phys[2] = 0; phys[3] = 9;
+                // Type: pHYs
+                phys[4] = 0x70; phys[5] = 0x48; phys[6] = 0x59; phys[7] = 0x73;
+                // X pixels per unit (big-endian)
+                phys[8]  = (ppm >> 24) & 0xff; phys[9]  = (ppm >> 16) & 0xff;
+                phys[10] = (ppm >> 8) & 0xff;  phys[11] = ppm & 0xff;
+                // Y pixels per unit
+                phys[12] = (ppm >> 24) & 0xff; phys[13] = (ppm >> 16) & 0xff;
+                phys[14] = (ppm >> 8) & 0xff;  phys[15] = ppm & 0xff;
+                // Unit type: 1 = meter
+                phys[16] = 1;
+                // CRC over type+data
+                var crc = crc32(phys.subarray(4, 17));
+                phys[17] = (crc >> 24) & 0xff; phys[18] = (crc >> 16) & 0xff;
+                phys[19] = (crc >> 8) & 0xff; phys[20] = crc & 0xff;
+                // Splice: before IDAT
+                var result = new Uint8Array(buf.length + 21);
+                result.set(buf.subarray(0, pos), 0);
+                result.set(phys, pos);
+                result.set(buf.subarray(pos), pos + 21);
+                callback(new Blob([result], { type: 'image/png' }));
+                return;
+            }
+            pos += 12 + len; // 4 len + 4 type + data + 4 crc
+        }
+        // Fallback: return original blob
+        callback(blob);
+    };
+    reader.readAsArrayBuffer(blob);
+}
+
+// CRC32 for PNG chunk validation
+var _crc32Table = null;
+function crc32(data) {
+    if (!_crc32Table) {
+        _crc32Table = new Uint32Array(256);
+        for (var n = 0; n < 256; n++) {
+            var c = n;
+            for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+            _crc32Table[n] = c;
+        }
+    }
+    var crc = 0xFFFFFFFF;
+    for (var i = 0; i < data.length; i++) crc = _crc32Table[(crc ^ data[i]) & 0xFF] ^ (crc >>> 8);
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
 // Postcard-quality image export
-function renderPostcardPNG(name, note, callback) {
+function renderPostcardPNG(name, note, noteScreenPos, callback) {
     var allPolys = [];
     fills.forEach(function(f) {
         if (f.dissolved) return;
@@ -1017,25 +1082,37 @@ function renderPostcardPNG(name, note, callback) {
     oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = leadW; oc.globalAlpha = 1;
     leadLines.forEach(drawLeadLine);
 
-    // Note text at placed position
+    // Note text at the position the child placed it
     var noteText = (note || '').trim();
-    var noteFontPx = 15 * hiRes, noteLineH = noteFontPx * 1.45;
-    var noteLines2 = noteText ? wrapText(noteText, 500) : [];
-    if (noteLines2.length > 0) {
+    if (noteText) {
+        var noteFontPx = 15 * hiRes, noteLineH = noteFontPx * 1.45;
+        // Split on actual newlines from textarea
+        var rawLines = noteText.split('\n');
+        var noteLines2 = [];
+        rawLines.forEach(function(rl) {
+            if (rl.trim() === '') { noteLines2.push(''); return; }
+            wrapText(rl, 500).forEach(function(wl) { noteLines2.push(wl); });
+        });
         oc.fillStyle = noteBoxTextColor();
         oc.font = 'italic ' + noteFontPx + 'px Georgia, serif';
         oc.textBaseline = 'top';
-        var noteBox = document.getElementById('save-note-box');
-        var nbLeft = parseInt(noteBox.style.left) || 0;
-        var nbTop = parseInt(noteBox.style.top) || 0;
+        // Use captured screen position (before note box was hidden)
+        var nbLeft = noteScreenPos ? noteScreenPos.left : 100;
+        var nbTop = noteScreenPos ? noteScreenPos.top : 100;
         var noteWorld = s2w(nbLeft, nbTop);
-        var notePos = wp(noteWorld.x, noteWorld.y);
-        var ty = notePos.y, tx = notePos.x;
-        noteLines2.forEach(function(line) { oc.fillText(line, tx, ty); ty += noteLineH; });
+        var nPos = wp(noteWorld.x, noteWorld.y);
+        var ty = nPos.y, tx = nPos.x;
+        noteLines2.forEach(function(line) {
+            if (line === '') { ty += noteLineH * 0.5; return; }
+            oc.fillText(line, tx, ty); ty += noteLineH;
+        });
     }
     oc.globalAlpha = 1;
 
-    off.toBlob(function(blob) { callback(blob); }, 'image/png');
+    // Convert to blob, patch DPI to 300, then call back
+    off.toBlob(function(blob) {
+        patchPngDpi(blob, 300, callback);
+    }, 'image/png');
 }
 
 function cxGetStorageIndex() {
