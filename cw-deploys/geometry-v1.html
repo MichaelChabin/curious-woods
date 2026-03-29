@@ -3354,7 +3354,7 @@ var HTW_STAGES = [
         content: [
             { text: 'To color glass, tap a color, then tap the glass.' },
             { text: '' },
-            { text: 'To choose a different set of colors, tap {Choose new colors}.' },
+            { text: 'To choose a different set of colors, tap [Choose new colors].' },
             { text: 'Use the slider to change lead thickness.' }
         ]
     },
@@ -3540,6 +3540,7 @@ function initHowThisWorks() {
     var dragging = false, sx, sy, ox, oy;
     el.addEventListener('pointerdown', function(e) {
         if (e.target.id === 'htw-close') return;
+        if (e.target.classList.contains('htw-action')) return;
         e.preventDefault();
         dragging = true; sx = e.clientX; sy = e.clientY;
         ox = parseInt(el.style.left) || 0; oy = parseInt(el.style.top) || 0;
