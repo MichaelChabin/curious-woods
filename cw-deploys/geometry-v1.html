@@ -83,6 +83,9 @@
     .htw-item { display: block; font-family: Georgia, serif; font-size: 13px; color: #546A80; padding-left: 12px; cursor: default; transition: color 80ms; line-height: 1; margin-top: 8px; position: relative; }
     .htw-item::before { content: '\2022'; position: absolute; left: 0; }
     .htw-item:hover { color: #3D3D3A; }
+    .htw-action-row { display: flex; gap: 14px; margin-top: 8px; padding-left: 12px; }
+    .htw-action-word { font-family: Georgia, serif; font-size: 13px; font-style: italic; color: #546A80; cursor: default; transition: color 80ms; }
+    .htw-action-word:hover { color: #3D3D3A; }
     .htw-keyword { color: #3D3D3A; }
     .htw-action { color: #3D3D3A; cursor: default; transition: color 80ms; }
     .htw-action:hover { color: #1a1a18; }
@@ -191,7 +194,8 @@
     #cx-post-replay span:hover { color: #8a5220; }
 
     /* --- Step-through replay controls --- */
-    #cx-step-controls { position: fixed; z-index: 560; pointer-events: all; user-select: none; background: rgba(244,241,232,0.88); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 8px 14px 6px; }
+    #cx-step-controls { position: fixed; z-index: 560; pointer-events: all; user-select: none; background: rgba(244,241,232,0.88); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 8px 14px 6px; cursor: grab; touch-action: none; }
+    #cx-step-controls.dragging { cursor: grabbing; }
     .cx-step-arrows { display: flex; gap: 18px; justify-content: center; margin-bottom: 4px; }
     .cx-step-arrow { font-family: Georgia, serif; font-size: 16px; color: #546A80; cursor: default; transition: color 80ms; }
     .cx-step-arrow:hover { color: #3D3D3A; }
@@ -199,7 +203,7 @@
     .cx-step-label:hover { color: #3D3D3A; }
 
     /* --- WIP / cancel dialogs --- */
-    #cx-wip-dialog, #cx-cancel-dialog, #new-open-dialog, #save-type-dialog { position: fixed; z-index: 800; pointer-events: all; user-select: none; background: rgba(244,241,232,0.94); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 16px; box-shadow: 0 2px 12px rgba(42,38,32,0.1); left: 50%; top: 40%; transform: translate(-50%,-50%); display: flex; gap: 24px; }
+    #cx-wip-dialog, #cx-cancel-dialog, #save-type-dialog { position: fixed; z-index: 800; pointer-events: all; user-select: none; background: rgba(244,241,232,0.94); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 16px; box-shadow: 0 2px 12px rgba(42,38,32,0.1); left: 50%; top: 40%; transform: translate(-50%,-50%); display: flex; gap: 24px; }
     .cx-wip-option { font-family: Georgia, serif; font-size: 13px; color: #546A80; cursor: default; transition: color 80ms; }
     .cx-wip-option:hover { color: #3D3D3A; }
 
@@ -211,7 +215,9 @@
     #save-note-name::placeholder { color: #546A80; opacity: 0.45; }
     #save-note-text { font-family: Georgia, serif; font-style: italic; font-size: 13px; color: #546A80; background: transparent; border: none; border-bottom: 0.5px solid rgba(200,184,154,0.5); padding: 6px 0 4px; resize: both; overflow: auto; width: 100%; min-height: 54px; outline: none; line-height: 1.5; margin-top: 6px; }
     #save-note-text::placeholder { color: #546A80; opacity: 0.35; }
-    .save-note-footer { display: flex; justify-content: flex-end; margin-top: 8px; }
+    .save-note-footer { display: flex; justify-content: flex-end; gap: 16px; margin-top: 8px; }
+    .save-note-cancel { font-family: Georgia, serif; font-size: 14px; color: #b0a090; cursor: default; transition: color 80ms; }
+    .save-note-cancel:hover { color: #546A80; }
     .save-note-ok { font-family: Georgia, serif; font-size: 14px; color: #546A80; cursor: default; transition: color 80ms; }
     .save-note-ok:hover { color: #3D3D3A; }
 
@@ -247,8 +253,11 @@
     <li class="htw-item" data-stage="shapes">Cutting Shapes</li>
     <li class="htw-item" data-stage="color">Color</li>
     <li class="htw-item" data-stage="eraser">Hiding Lines</li>
-    <li class="htw-item" data-stage="save"><span class="htw-keyword">Save</span> or <span class="htw-keyword">Share</span></li>
-    <li class="htw-item" data-stage="newopen"><span class="htw-keyword">New</span> and <span class="htw-keyword">Open</span></li>
+    <li class="htw-action-row">
+      <span class="htw-action-word" id="htw-action-new">New</span>
+      <span class="htw-action-word" id="htw-action-open">Open</span>
+      <span class="htw-action-word" id="htw-action-save">Save</span>
+    </li>
   </ul>
 </div>
 
@@ -318,12 +327,7 @@
 <div id="cx-wip-dialog" style="display:none;">
   <span class="cx-wip-option" id="cx-wip-start-over">Start over</span>
   <span class="cx-wip-option" id="cx-wip-save">Save and continue</span>
-</div>
-
-<!-- New/Open dialog (return visits) -->
-<div id="new-open-dialog" style="display:none;">
-  <span class="cx-wip-option" id="new-open-new">New</span>
-  <span class="cx-wip-option" id="new-open-open">Open</span>
+  <span class="cx-wip-option" id="cx-wip-cancel">Cancel</span>
 </div>
 
 <!-- Cancel replay dialog -->
@@ -336,6 +340,7 @@
 <div id="save-type-dialog" style="display:none;">
   <span class="cx-wip-option" id="save-type-construction">Save Construction</span>
   <span class="cx-wip-option" id="save-type-image">Save as Image</span>
+  <span class="cx-wip-option" id="save-type-cancel">Cancel</span>
 </div>
 
 <!-- Note box (used by Save Construction, Save as Image, and Share) -->
@@ -345,6 +350,7 @@
   </div>
   <textarea id="save-note-text" placeholder="add a note..."></textarea>
   <div class="save-note-footer">
+    <span class="save-note-cancel" id="save-note-cancel">Cancel</span>
     <span class="save-note-ok" id="save-note-ok">OK</span>
   </div>
 </div>
@@ -799,10 +805,6 @@ function showUniquenessObservation() {
 
 var _saveMode = null; // 'construction' | 'image' | 'share'
 
-function showNewOpenDialog() {
-    document.getElementById('new-open-dialog').style.display = '';
-}
-
 function showSaveDialog() {
     if (operationLog.length <= 1) { toast('nothing to save yet'); return; }
     document.getElementById('save-type-dialog').style.display = '';
@@ -846,7 +848,9 @@ function doSaveConstruction(name, note) {
     captureConstructionPNG(note, function(png) {
         name = name || ('construction ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
         var key = 'cw-cx-' + Date.now();
-        var entry = { key: key, name: name, note: note || '', created: new Date().toISOString(), operations: log, png: png };
+        var noteBox = document.getElementById('save-note-box');
+        var notePos = { left: parseInt(noteBox.style.left) || 0, top: parseInt(noteBox.style.top) || 0 };
+        var entry = { key: key, name: name, note: note || '', notePos: notePos, created: new Date().toISOString(), operations: log, png: png, viewport: { viewX: viewX, viewY: viewY, viewScale: viewScale } };
         try {
             localStorage.setItem(key, JSON.stringify(entry));
             var index = cxGetStorageIndex();
@@ -888,10 +892,9 @@ function doSaveImage(name, note, isShare) {
     var noteText = (note || '').trim();
     var noteFontPx = 15, noteLineH = noteFontPx * 1.45;
     var noteLines = noteText ? wrapText(noteText, 500) : [];
-    var noteReserve = noteLines.length > 0 ? (noteLines.length * noteLineH + 24) : 0;
     var targetW = 1200, targetH = 1200;
-    var sc = Math.min(targetW / ww, (targetH - noteReserve) / wh, 6);
-    var pw = Math.round(ww * sc), ph = Math.round(wh * sc + noteReserve);
+    var sc = Math.min(targetW / ww, targetH / wh, 6);
+    var pw = Math.round(ww * sc), ph = Math.round(wh * sc);
     var off = document.createElement('canvas'); off.width = pw; off.height = ph;
     var oc = off.getContext('2d');
     oc.fillStyle = COLORS.background; oc.fillRect(0, 0, pw, ph);
@@ -908,12 +911,18 @@ function doSaveImage(name, note, isShare) {
         oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = LEAD_WIDTH * sc;
         oc.globalAlpha = 1; oc.stroke();
     });
-    // Note text at bottom
+    // Note text at the position the child placed it
     if (noteLines.length > 0) {
         oc.fillStyle = noteBoxTextColor();
         oc.font = 'italic ' + noteFontPx + 'px Georgia, serif';
         oc.textBaseline = 'top';
-        var ty = ph - noteReserve + 12, tx = pad * sc;
+        // Convert note box screen position to world coords, then to PNG coords
+        var noteBox = document.getElementById('save-note-box');
+        var nbLeft = parseInt(noteBox.style.left) || 0;
+        var nbTop = parseInt(noteBox.style.top) || 0;
+        var noteWorld = s2w(nbLeft, nbTop);
+        var notePos = wp(noteWorld.x, noteWorld.y);
+        var ty = notePos.y, tx = notePos.x;
         noteLines.forEach(function(line) { oc.fillText(line, tx, ty); ty += noteLineH; });
     }
     oc.globalAlpha = 1;
@@ -1201,8 +1210,30 @@ function findClosedRegionEdges() {
         addEdge(arc.pointAId, arc.pointBId, { type:'arc', a:arc.pointAId, b:arc.pointBId, circIdx:arc.circIdx, angleA:aA, angleB:aB, sweep:sweep });
     });
     if (adj.size < 2) return null;
+    // Prune orphan edges: iteratively remove degree-1 vertices (leaves)
+    // until all remaining vertices have degree 2 (a clean cycle).
+    var changed = true;
+    while (changed) {
+        changed = false;
+        adj.forEach(function(nbs, v) {
+            if (nbs.length === 1) {
+                // Remove this vertex and its edge from the neighbor
+                var nb = nbs[0].nb;
+                var otherNbs = adj.get(nb);
+                if (otherNbs) {
+                    adj.set(nb, otherNbs.filter(function(c) { return c.nb !== v; }));
+                }
+                adj.delete(v);
+                changed = true;
+            } else if (nbs.length === 0) {
+                adj.delete(v);
+                changed = true;
+            }
+        });
+    }
+    if (adj.size < 3) return null;
     var ok = true;
-    adj.forEach(function(nb) { if (nb.length!==2) ok=false; });
+    adj.forEach(function(nb) { if (nb.length !== 2) ok = false; });
     if (!ok) return null;
     var start = adj.keys().next().value;
     var orderedEdges = [], prevPt = null, curPt = start;
@@ -2759,6 +2790,25 @@ function initConstructions() {
         document.getElementById('cx-cancel-dialog').style.display = '';
     });
 
+    // Step controls drag
+    (function() {
+        var box = document.getElementById('cx-step-controls');
+        var dragging = false, sx, sy, ox, oy;
+        box.addEventListener('pointerdown', function(e) {
+            if (e.target.classList.contains('cx-step-arrow') || e.target.classList.contains('cx-step-label')) return;
+            e.preventDefault();
+            dragging = true; sx = e.clientX; sy = e.clientY;
+            ox = parseInt(box.style.left) || 0; oy = parseInt(box.style.top) || 0;
+            box.classList.add('dragging'); box.setPointerCapture(e.pointerId);
+        });
+        box.addEventListener('pointermove', function(e) {
+            if (!dragging) return;
+            box.style.left = (ox + e.clientX - sx) + 'px';
+            box.style.top = (oy + e.clientY - sy) + 'px';
+        });
+        box.addEventListener('pointerup', function() { dragging = false; box.classList.remove('dragging'); });
+    })();
+
     // WIP dialog
     document.getElementById('cx-wip-start-over').addEventListener('click', function() {
         document.getElementById('cx-wip-dialog').style.display = 'none';
@@ -2768,9 +2818,11 @@ function initConstructions() {
         document.getElementById('cx-wip-dialog').style.display = 'none';
         var cb = stepState.pendingCallback; stepState.pendingCallback = null;
         saveConstruction();
-        // After save completes, continue with the callback
-        // Use a small delay to let save UI appear first
         if (cb) setTimeout(cb, 300);
+    });
+    document.getElementById('cx-wip-cancel').addEventListener('click', function() {
+        document.getElementById('cx-wip-dialog').style.display = 'none';
+        stepState.pendingCallback = null;
     });
 
     // Cancel replay dialog
@@ -2784,16 +2836,6 @@ function initConstructions() {
         exitStepThrough();
     });
 
-    // New/Open dialog
-    document.getElementById('new-open-new').addEventListener('click', function() {
-        document.getElementById('new-open-dialog').style.display = 'none';
-        checkWipThen(function() { newConstruction(); });
-    });
-    document.getElementById('new-open-open').addEventListener('click', function() {
-        document.getElementById('new-open-dialog').style.display = 'none';
-        openPickerWindow('constructions');
-    });
-
     // Save type dialog
     document.getElementById('save-type-construction').addEventListener('click', function() {
         document.getElementById('save-type-dialog').style.display = 'none';
@@ -2803,9 +2845,13 @@ function initConstructions() {
         document.getElementById('save-type-dialog').style.display = 'none';
         showSaveNoteBox('image');
     });
+    document.getElementById('save-type-cancel').addEventListener('click', function() {
+        document.getElementById('save-type-dialog').style.display = 'none';
+    });
 
-    // Save note box OK button
+    // Save note box OK and Cancel
     document.getElementById('save-note-ok').addEventListener('click', executeSave);
+    document.getElementById('save-note-cancel').addEventListener('click', dismissSaveNoteBox);
 
     // Save note box drag
     (function() {
@@ -3089,11 +3135,9 @@ function computeStepGroups(ops) {
 
 function positionStepControls() {
     var el = document.getElementById('cx-step-controls');
-    var htwPanel = document.getElementById('htw-panel');
-    var top = 20;
-    if (htwPanel) top += htwPanel.offsetHeight + 14;
-    el.style.left = '16px';
-    el.style.top = top + 'px';
+    var panelW = parseInt(leftPanel.style.width) || PANEL_BASE_WIDTH;
+    el.style.left = (panelW + 20) + 'px';
+    el.style.top = '20px';
 }
 
 function showStepControls() {
@@ -3106,7 +3150,7 @@ function hideStepControls() {
     document.getElementById('cx-step-controls').style.display = 'none';
 }
 
-function startStepThrough(ops) {
+function startStepThrough(ops, viewport) {
     if (stepState.active) exitStepThrough();
     // Stop any auto-playback
     if (cxState.playing) stopPlayback();
@@ -3119,7 +3163,13 @@ function startStepThrough(ops) {
     // Reset canvas to init op only
     operationLog = [ops[0]];
     replayLog(false);
-    fitViewToConstruction();
+
+    // Restore viewport if saved, otherwise use default
+    if (viewport && viewport.viewScale) {
+        viewX = viewport.viewX; viewY = viewport.viewY; viewScale = viewport.viewScale;
+    } else {
+        viewX = 0; viewY = 0; viewScale = Math.min(window.innerWidth, window.innerHeight) / 900;
+    }
 
     showStepControls();
 }
@@ -3203,11 +3253,43 @@ function checkWipThen(callback) {
 }
 
 // Load a construction entry into step-through, checking WIP first
+function showLoadedNote(entry) {
+    if (!entry.note) return;
+    var bodyEl = document.getElementById('htw-canvas-body');
+    bodyEl.innerHTML = '';
+    if (entry.name) {
+        var h = document.createElement('p');
+        h.className = 'htw-para';
+        h.style.fontWeight = 'normal'; h.style.color = '#3D3D3A';
+        h.textContent = entry.name;
+        bodyEl.appendChild(h);
+    }
+    var p = document.createElement('p');
+    p.className = 'htw-para';
+    p.style.fontStyle = 'italic';
+    p.textContent = entry.note;
+    bodyEl.appendChild(p);
+    htwActiveStageIdx = -1;
+    var el = document.getElementById('htw-canvas');
+    if (entry.notePos) {
+        el.style.left = entry.notePos.left + 'px'; el.style.top = entry.notePos.top + 'px';
+    } else {
+        el.style.left = '260px'; el.style.top = '60px';
+    }
+    el.style.opacity = '0'; el.style.display = '';
+    requestAnimationFrame(function() {
+        el.style.transition = 'opacity 200ms ease-in'; el.style.opacity = '1';
+        setTimeout(function() { el.style.transition = ''; }, 220);
+    });
+}
+
 function loadConstructionEntry(entry) {
+    var vp = entry.viewport || null;
     function doLoad(ops) {
         checkWipThen(function() {
             newConstruction();
-            startStepThrough(ops);
+            startStepThrough(ops, vp);
+            if (entry.note) showLoadedNote(entry);
         });
     }
     if (entry.operations) {
@@ -3219,6 +3301,7 @@ function loadConstructionEntry(entry) {
             .then(function(resp) { if (!resp.ok) throw new Error(); return resp.json(); })
             .then(function(data) {
                 if (!data.operations || data.operations.length === 0) throw new Error();
+                vp = data.viewport || vp;
                 doLoad(data.operations.slice());
             })
             .catch(function() { toast('could not load construction'); });
@@ -3614,24 +3697,7 @@ var HTW_STAGES = [
             { text: 'Double click a line and hold the mouse down to change more than one line.' }
         ]
     },
-    {
-        id: 'save',
-        label: 'Save or Share',
-        trigger: null,
-        content: [
-            { text: 'Tap [Save] to save your work as an image or as a file you can open and work on later.' },
-            { text: 'Tap [Share] to send a copy to someone else.' }
-        ]
-    },
-    {
-        id: 'newopen',
-        label: 'New and Open',
-        trigger: null,
-        content: [
-            { text: 'Tap [New] to start a new construction.' },
-            { text: 'Tap [Open] to see examples and to open constructions you\'ve saved.' }
-        ]
-    }
+    // save and newopen are direct action words in the panel, not tip window stages
 ];
 
 // Map from htw-item data-stage to actions
@@ -3640,16 +3706,7 @@ var HTW_ACTIONS = {
     shapes:       function() { openHtwOnCanvas('shapes'); },
     color:        function() { openColorTool(); openHtwOnCanvas('color'); },
     eraser:       function() { openHtwOnCanvas('eraser'); },
-    save:         function() {
-        // Return visit: go directly to save dialog. First visit: show tip window.
-        if (htwStageSeen(HTW_STAGES[0])) { showSaveDialog(); }
-        else { openHtwOnCanvas('save'); }
-    },
-    newopen:      function() {
-        // Return visit: show new/open dialog. First visit: show tip window.
-        if (htwStageSeen(HTW_STAGES[0])) { showNewOpenDialog(); }
-        else { openHtwOnCanvas('newopen'); }
-    }
+    // save and newopen are now direct action words in the panel, not tip window stages
 };
 
 var htwActiveStageIdx = -1;  // index of stage currently shown on canvas
@@ -3669,7 +3726,6 @@ var HTW_TIP_ACTIONS = {
     'New': function() { closeHtwCanvas(); checkWipThen(function() { newConstruction(); }); },
     'Open': function() { closeHtwCanvas(); openPickerWindow('constructions'); },
     'Save': function() { closeHtwCanvas(); showSaveDialog(); },
-    'Share': function() { closeHtwCanvas(); showSaveNoteBox('share'); },
     'Choose new colors': function() { openPickerWindow('palettes'); }
 };
 
@@ -3783,6 +3839,17 @@ function initHowThisWorks() {
         if (HTW_ACTIONS[stage]) {
             el.addEventListener('click', function() { HTW_ACTIONS[stage](); });
         }
+    });
+
+    // Wire action row words (direct actions, no tip windows)
+    document.getElementById('htw-action-new').addEventListener('click', function() {
+        checkWipThen(function() { newConstruction(); });
+    });
+    document.getElementById('htw-action-open').addEventListener('click', function() {
+        checkWipThen(function() { openPickerWindow('constructions'); });
+    });
+    document.getElementById('htw-action-save').addEventListener('click', function() {
+        showSaveDialog();
     });
 
     // Pointer-based drag on canvas tip window — entire window is the drag surface
