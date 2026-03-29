@@ -872,14 +872,53 @@ function doSaveConstruction(name, note) {
 }
 
 function doSaveImage(name, note, isShare) {
-    // Render full-size PNG: glass fills + lead borders + note text, nothing else
+    renderPostcardPNG(name, note, function(blob) {
+        var filename = (name || 'glass-' + new Date().toISOString().slice(0, 10)).replace(/[^a-z0-9 _-]/gi, '_') + '.png';
+        if (isShare && navigator.share && navigator.canShare) {
+            var file = new File([blob], filename, { type: 'image/png' });
+            navigator.share({ title: name || 'My Glass Construction', text: note || '', files: [file] })
+                .catch(function() {});
+        } else {
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+            URL.revokeObjectURL(url);
+            if (isShare) toast('Sharing not available on this browser \u2014 image downloaded instead');
+        }
+        if (points.size >= 15) setTimeout(showUniquenessObservation, 800);
+    });
+}
+
+// Collect all emphasized (lead) segments and arcs for rendering
+function collectLeadLines() {
+    var leadSegs = [];
+    logicalSegments.forEach(function(seg) {
+        if (!seg.isEmphasized) return;
+        var A = points.get(seg.pointAId), B = points.get(seg.pointBId);
+        if (A && B) leadSegs.push({ type: 'seg', x1: A.x, y1: A.y, x2: B.x, y2: B.y });
+    });
+    logicalArcs.forEach(function(arc) {
+        if (!arc.isEmphasized) return;
+        var ci = circles.get(arc.circIdx), ce = ci && points.get(ci.centerId);
+        var pA = points.get(arc.pointAId), pB = points.get(arc.pointBId);
+        if (!ci || !ce || !pA || !pB) return;
+        var aA = getAngle(pA.x, pA.y, ce), aB = getAngle(pB.x, pB.y, ce);
+        leadSegs.push({ type: 'arc', cx: ce.x, cy: ce.y, r: ci.radius, aA: aA, aB: aB });
+    });
+    return leadSegs;
+}
+
+// Postcard-quality image export
+function renderPostcardPNG(name, note, callback) {
     var allPolys = [];
     fills.forEach(function(f) {
         if (f.dissolved) return;
         var poly = expandFillToPolygon(f);
         if (poly.length >= 3) allPolys.push({ poly: poly, fill: f });
     });
-    if (allPolys.length === 0 && !note) { toast('nothing to save yet'); return; }
+    var leadLines = collectLeadLines();
+    if (allPolys.length === 0 && leadLines.length === 0 && !note) { toast('nothing to save yet'); return; }
+
+    // Bounding box: fills + lead endpoints
     var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     allPolys.forEach(function(item) {
         item.poly.forEach(function(p) {
@@ -887,19 +926,50 @@ function doSaveImage(name, note, isShare) {
             maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
         });
     });
+    leadLines.forEach(function(l) {
+        if (l.type === 'seg') {
+            minX = Math.min(minX, l.x1, l.x2); minY = Math.min(minY, l.y1, l.y2);
+            maxX = Math.max(maxX, l.x1, l.x2); maxY = Math.max(maxY, l.y1, l.y2);
+        } else {
+            minX = Math.min(minX, l.cx - l.r); minY = Math.min(minY, l.cy - l.r);
+            maxX = Math.max(maxX, l.cx + l.r); maxY = Math.max(maxY, l.cy + l.r);
+        }
+    });
     if (!isFinite(minX)) { minX = -100; minY = -100; maxX = 100; maxY = 100; }
-    var pad = 60, ww = maxX - minX + pad * 2, wh = maxY - minY + pad * 2;
-    var noteText = (note || '').trim();
-    var noteFontPx = 15, noteLineH = noteFontPx * 1.45;
-    var noteLines = noteText ? wrapText(noteText, 500) : [];
+
+    var pad = 60;
+    var mat = 60; // border mat width at 1x
+    var hiRes = 3; // 3x resolution
+    var ww = maxX - minX + pad * 2, wh = maxY - minY + pad * 2;
     var targetW = 1200, targetH = 1200;
     var sc = Math.min(targetW / ww, targetH / wh, 6);
-    var pw = Math.round(ww * sc), ph = Math.round(wh * sc);
+    var artW = Math.round(ww * sc), artH = Math.round(wh * sc);
+    var pw = (artW + mat * 2) * hiRes, ph = (artH + mat * 2) * hiRes;
+    var s = sc * hiRes; // combined scale
+    var mx = mat * hiRes; // mat in pixels
+
     var off = document.createElement('canvas'); off.width = pw; off.height = ph;
     var oc = off.getContext('2d');
-    oc.fillStyle = COLORS.background; oc.fillRect(0, 0, pw, ph);
-    function wp(wx, wy) { return { x: (wx - minX + pad) * sc, y: (wy - minY + pad) * sc }; }
-    // Sort fills by area descending (same as render)
+    function wp(wx, wy) { return { x: (wx - minX + pad) * s + mx, y: (wy - minY + pad) * s + mx }; }
+
+    // Dark border mat
+    oc.fillStyle = '#2a2620'; oc.fillRect(0, 0, pw, ph);
+    // Inner border line
+    oc.strokeStyle = '#c8b89a'; oc.lineWidth = 1.5 * hiRes;
+    oc.strokeRect(mx - 1.5, mx - 1.5, artW * hiRes + 3, artH * hiRes + 3);
+
+    // Parchment background
+    oc.fillStyle = COLORS.background;
+    oc.fillRect(mx, mx, artW * hiRes, artH * hiRes);
+
+    // Subtle vignette
+    var vgr = oc.createRadialGradient(pw / 2, ph / 2, Math.min(artW, artH) * hiRes * 0.3, pw / 2, ph / 2, Math.max(pw, ph) * 0.7);
+    vgr.addColorStop(0, 'rgba(0,0,0,0)');
+    vgr.addColorStop(1, 'rgba(0,0,0,0.12)');
+    oc.fillStyle = vgr;
+    oc.fillRect(mx, mx, artW * hiRes, artH * hiRes);
+
+    // Glass fills (sorted largest first)
     var sorted = allPolys.slice().sort(function(a, b) { return shoelaceArea(b.poly) - shoelaceArea(a.poly); });
     sorted.forEach(function(item) {
         var f = item.fill;
@@ -907,41 +977,65 @@ function doSaveImage(name, note, isShare) {
         oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
         for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
         oc.closePath(); oc.fillStyle = f.color; oc.globalAlpha = f.opacity; oc.fill('evenodd');
-        // Lead border
-        oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = LEAD_WIDTH * sc;
-        oc.globalAlpha = 1; oc.stroke();
+        // Glass noise texture
+        oc.globalAlpha = 1;
+        for (var n = 0; n < 200; n++) {
+            var rx = mapped[Math.floor(Math.random() * mapped.length)];
+            var nx = rx.x + (Math.random() - 0.5) * 60 * hiRes;
+            var ny = rx.y + (Math.random() - 0.5) * 60 * hiRes;
+            oc.fillStyle = Math.random() > 0.5 ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)';
+            oc.fillRect(nx, ny, hiRes, hiRes);
+        }
     });
-    // Note text at the position the child placed it
-    if (noteLines.length > 0) {
+
+    // Lead lines — shadow pass then lead pass
+    var leadW = LEAD_WIDTH * s;
+    function drawLeadLine(l) {
+        if (l.type === 'seg') {
+            var p1 = wp(l.x1, l.y1), p2 = wp(l.x2, l.y2);
+            oc.beginPath(); oc.moveTo(p1.x, p1.y); oc.lineTo(p2.x, p2.y); oc.stroke();
+        } else {
+            var c = wp(l.cx, l.cy);
+            oc.beginPath(); oc.arc(c.x, c.y, l.r * s, l.aA, l.aB, false); oc.stroke();
+        }
+    }
+    // Shadow
+    oc.save();
+    oc.translate(hiRes, hiRes); // 1px offset at 1x
+    oc.strokeStyle = 'rgba(0,0,0,0.2)'; oc.lineWidth = leadW;
+    leadLines.forEach(drawLeadLine);
+    oc.restore();
+    // Lead on fill boundaries
+    sorted.forEach(function(item) {
+        var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
+        oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = leadW; oc.globalAlpha = 1;
+        oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
+        for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
+        oc.closePath(); oc.stroke();
+    });
+    // Standalone lead lines (emphasized segments/arcs not part of fills)
+    oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = leadW; oc.globalAlpha = 1;
+    leadLines.forEach(drawLeadLine);
+
+    // Note text at placed position
+    var noteText = (note || '').trim();
+    var noteFontPx = 15 * hiRes, noteLineH = noteFontPx * 1.45;
+    var noteLines2 = noteText ? wrapText(noteText, 500) : [];
+    if (noteLines2.length > 0) {
         oc.fillStyle = noteBoxTextColor();
         oc.font = 'italic ' + noteFontPx + 'px Georgia, serif';
         oc.textBaseline = 'top';
-        // Convert note box screen position to world coords, then to PNG coords
         var noteBox = document.getElementById('save-note-box');
         var nbLeft = parseInt(noteBox.style.left) || 0;
         var nbTop = parseInt(noteBox.style.top) || 0;
         var noteWorld = s2w(nbLeft, nbTop);
         var notePos = wp(noteWorld.x, noteWorld.y);
         var ty = notePos.y, tx = notePos.x;
-        noteLines.forEach(function(line) { oc.fillText(line, tx, ty); ty += noteLineH; });
+        noteLines2.forEach(function(line) { oc.fillText(line, tx, ty); ty += noteLineH; });
     }
     oc.globalAlpha = 1;
-    // Convert to blob
-    off.toBlob(function(blob) {
-        var filename = (name || 'glass-' + new Date().toISOString().slice(0, 10)).replace(/[^a-z0-9 _-]/gi, '_') + '.png';
-        if (isShare && navigator.share && navigator.canShare) {
-            var file = new File([blob], filename, { type: 'image/png' });
-            navigator.share({ title: name || 'My Glass Construction', text: note || '', files: [file] })
-                .catch(function() {});
-        } else {
-            // Download
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement('a'); a.href = url; a.download = filename; a.click();
-            URL.revokeObjectURL(url);
-            if (isShare) toast('Sharing not available on this browser \u2014 image downloaded instead');
-        }
-        if (points.size >= 15) setTimeout(showUniquenessObservation, 800);
-    }, 'image/png');
+
+    off.toBlob(function(blob) { callback(blob); }, 'image/png');
 }
 
 function cxGetStorageIndex() {
@@ -1378,19 +1472,9 @@ function extLine(p1,p2) {
 
 // Draw an emphasized segment or arc with a soft glow halo, then a crisp line on top.
 function drawEmphasisPath(drawFn) {
-    // Glow pass
-    ctx.save();
-    ctx.shadowColor = GLOW.color;
-    ctx.shadowBlur  = GLOW.blur * (window.devicePixelRatio || 1);
-    ctx.strokeStyle = GLOW.color;
-    ctx.lineWidth   = GLOW.width;
-    ctx.globalAlpha = 1;
-    ctx.beginPath(); drawFn(); ctx.stroke();
-    ctx.restore();
-    // Crisp pass
-    ctx.shadowBlur  = 0;
-    ctx.strokeStyle = COLORS.border;
-    ctx.lineWidth   = PARAMS.emphasisWidth;
+    // Render as lead came — same visual as completed glass boundaries
+    ctx.strokeStyle = LEAD_BORDER_COLOR;
+    ctx.lineWidth   = LEAD_WIDTH;
     ctx.globalAlpha = 1;
     ctx.beginPath(); drawFn(); ctx.stroke();
 }
