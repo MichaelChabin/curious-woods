@@ -1,0 +1,46 @@
+{
+  "htw": {
+    "construction": {
+      "heading": "Lines and Circles",
+      "body": [
+        "All your beautiful patterns begin with circles, lines, and two points.",
+        "To make a line, tap a point, then tap another.",
+        "To make a circle, tap a point, then drag to another.",
+        "Where lines and circles intersect, new points appear.",
+        "Use those to make more lines and circles.",
+        "",
+        "Tap any empty space to undo."
+      ]
+    },
+    "shapes": {
+      "heading": "Cutting Shapes",
+      "body": [
+        "To cut your glass, tap a line. It will fill with lead.",
+        "Then tap connected lines.",
+        "",
+        "When you enclose a shape it will turn to glass."
+      ]
+    },
+    "color": {
+      "heading": "Color",
+      "body": [
+        "To color glass, tap a color, then tap the glass.",
+        "",
+        "To choose a different set of colors, tap [Choose new colors].",
+        "Use the slider to change lead thickness."
+      ]
+    },
+    "eraser": {
+      "heading": "Hiding Lines",
+      "body": [
+        "Double click a line to make it fade",
+        "or to make a faded line reappear.",
+        "",
+        "Double click a line and hold the mouse down to",
+        "change more than one line."
+      ]
+    }
+  },
+  "uniqueness": "You\u2019ve made {points} points, {lines} lines, and {circles} circles. With those, there are more possible arrangements than atoms in the universe. The one you just made \u2014 no one has made that before.",
+  "note_instruction": "This note will appear as part of your image. You can place it anywhere you like."
+}

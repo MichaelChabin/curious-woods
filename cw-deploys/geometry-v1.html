@@ -207,6 +207,10 @@
     .cx-wip-option { font-family: Georgia, serif; font-size: 13px; color: #546A80; cursor: default; transition: color 80ms; }
     .cx-wip-option:hover { color: #3D3D3A; }
 
+    /* --- Export preview --- */
+    #export-preview { position: fixed; inset: 0; z-index: 790; background: rgba(42,38,32,0.6); display: flex; align-items: center; justify-content: center; pointer-events: all; }
+    #export-preview img { max-width: 90vw; max-height: 85vh; border-radius: 4px; box-shadow: 0 4px 24px rgba(0,0,0,0.3); user-select: none; }
+
     /* --- Save note box --- */
     #save-note-box { position: fixed; z-index: 800; pointer-events: all; width: 240px; background: rgba(244,241,232,0.75); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 0 14px 10px; box-shadow: 0 2px 14px rgba(42,38,32,0.14); }
     .save-note-header { cursor: grab; padding: 10px 0 4px; }
@@ -363,6 +367,11 @@
     <span class="save-note-cancel" id="save-note-cancel">Cancel</span>
     <span class="save-note-ok" id="save-note-ok">OK</span>
   </div>
+</div>
+
+<!-- Export preview overlay -->
+<div id="export-preview" style="display:none;">
+  <img id="export-preview-img" draggable="false">
 </div>
 
 <!-- Old note box kept for backward compat with initConstructions wiring -->
@@ -792,10 +801,8 @@ function commitSaveConstruction(note) {
 
 function showUniquenessObservation() {
     var nPts = points.size, nLines = lines.size, nCircles = circles.size;
-    var text = 'You\u2019ve made ' + nPts + ' points, ' + nLines + ' line' + (nLines !== 1 ? 's' : '') +
-        ', and ' + nCircles + ' circle' + (nCircles !== 1 ? 's' : '') + '. ' +
-        'With those, there are more possible arrangements than atoms in the universe. ' +
-        'The one you just made \u2014 no one has made that before.';
+    var tmpl = (CONTENT && CONTENT.uniqueness) || 'You\u2019ve made {points} points, {lines} lines, and {circles} circles. With those, there are more possible arrangements than atoms in the universe. The one you just made \u2014 no one has made that before.';
+    var text = tmpl.replace('{points}', nPts).replace('{lines}', nLines).replace('{circles}', nCircles);
     // Use the HTW canvas tip window
     var bodyEl = document.getElementById('htw-canvas-body');
     bodyEl.innerHTML = '';
@@ -828,6 +835,100 @@ function showUniquenessObservation() {
 
 var _saveMode = null; // 'construction' | 'image' | 'share'
 var _imageSize = 'postcard'; // 'postcard' | 'fullsheet'
+var _previewActive = false;
+var _previewData = null; // { minX, minY, ww, wh, s, matPx, offX, offY, artW, artH, imgEl }
+
+function renderPreviewCanvas(sizeKey) {
+    // Fast preview: artwork + lead + border mat, no texture enhancements
+    var allPolys = [];
+    fills.forEach(function(f) {
+        if (f.dissolved) return;
+        var poly = expandFillToPolygon(f);
+        if (poly.length >= 3) allPolys.push({ poly: poly, fill: f });
+    });
+    var leadLines2 = collectLeadLines();
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    allPolys.forEach(function(item) {
+        item.poly.forEach(function(p) {
+            minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
+            maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
+        });
+    });
+    leadLines2.forEach(function(l) {
+        if (l.type === 'seg') {
+            minX = Math.min(minX, l.x1, l.x2); minY = Math.min(minY, l.y1, l.y2);
+            maxX = Math.max(maxX, l.x1, l.x2); maxY = Math.max(maxY, l.y1, l.y2);
+        } else {
+            minX = Math.min(minX, l.cx - l.r); minY = Math.min(minY, l.cy - l.r);
+            maxX = Math.max(maxX, l.cx + l.r); maxY = Math.max(maxY, l.cy + l.r);
+        }
+    });
+    if (!isFinite(minX)) { minX = -100; minY = -100; maxX = 100; maxY = 100; }
+    var cW = maxX - minX, cH = maxY - minY;
+    var pf = 0.15;
+    minX -= cW * pf; minY -= cH * pf; maxX += cW * pf; maxY += cH * pf;
+    var ww = maxX - minX, wh = maxY - minY;
+    var sizes = { postcard: { w: 900, h: 600 }, fullsheet: { w: 1000, h: 800 } }; // screen-res preview
+    var sz = sizes[sizeKey] || sizes.postcard;
+    var matPx = 30;
+    var artW = sz.w - matPx * 2, artH = sz.h - matPx * 2;
+    var sc = Math.min(artW / ww, artH / wh);
+    var offX = (artW - ww * sc) / 2, offY = (artH - wh * sc) / 2;
+    var off = document.createElement('canvas'); off.width = sz.w; off.height = sz.h;
+    var oc = off.getContext('2d');
+    function wp(wx, wy) { return { x: (wx - minX) * sc + matPx + offX, y: (wy - minY) * sc + matPx + offY }; }
+    oc.fillStyle = '#2a2620'; oc.fillRect(0, 0, sz.w, sz.h);
+    oc.strokeStyle = '#c8b89a'; oc.lineWidth = 1;
+    oc.strokeRect(matPx - 0.5, matPx - 0.5, artW + 1, artH + 1);
+    oc.fillStyle = COLORS.background; oc.fillRect(matPx, matPx, artW, artH);
+    var sorted = allPolys.slice().sort(function(a, b) { return shoelaceArea(b.poly) - shoelaceArea(a.poly); });
+    sorted.forEach(function(item) {
+        var f = item.fill;
+        var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
+        oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
+        for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
+        oc.closePath(); oc.fillStyle = f.color; oc.globalAlpha = f.opacity; oc.fill('evenodd');
+        oc.globalAlpha = 1;
+    });
+    var lw = Math.max(1, LEAD_WIDTH * sc);
+    oc.lineJoin = 'round'; oc.lineCap = 'round';
+    function drawLL(l) {
+        if (l.type === 'seg') { var p1 = wp(l.x1, l.y1), p2 = wp(l.x2, l.y2); oc.beginPath(); oc.moveTo(p1.x, p1.y); oc.lineTo(p2.x, p2.y); oc.stroke(); }
+        else { var c = wp(l.cx, l.cy); oc.beginPath(); oc.arc(c.x, c.y, l.r * sc, l.aA, l.aB, false); oc.stroke(); }
+    }
+    oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = lw;
+    sorted.forEach(function(item) {
+        var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
+        oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
+        for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
+        oc.closePath(); oc.stroke();
+    });
+    leadLines2.forEach(drawLL);
+    return off.toDataURL('image/png');
+}
+
+function showExportPreview(sizeKey) {
+    _previewActive = true;
+    var dataUrl = renderPreviewCanvas(sizeKey);
+    var preview = document.getElementById('export-preview');
+    var img = document.getElementById('export-preview-img');
+    img.src = dataUrl;
+    preview.style.display = '';
+    // Position note box on top of the preview image, centered
+    showSaveNoteBox('image');
+    // Re-center note box after image loads
+    img.onload = function() {
+        var rect = img.getBoundingClientRect();
+        var box = document.getElementById('save-note-box');
+        box.style.left = Math.round(rect.left + rect.width / 2 - 120) + 'px';
+        box.style.top = Math.round(rect.top + rect.height * 0.7) + 'px';
+    };
+}
+
+function hideExportPreview() {
+    _previewActive = false;
+    document.getElementById('export-preview').style.display = 'none';
+}
 
 function showSaveDialog() {
     if (operationLog.length <= 1) { toast('nothing to save yet'); return; }
@@ -851,7 +952,7 @@ function showSaveNoteBox(mode) {
     if (!prompt) {
         prompt = document.createElement('div'); prompt.id = 'save-note-prompt';
         prompt.style.cssText = 'position:absolute;bottom:100%;left:0;right:0;font:12px Georgia,serif;color:#546A80;pointer-events:none;padding-bottom:4px;line-height:1.4;';
-        prompt.textContent = 'This note will appear as part of your image. You can place it anywhere you like.';
+        prompt.textContent = (CONTENT && CONTENT.note_instruction) || 'This note will appear as part of your image. You can place it anywhere you like.';
         box.appendChild(prompt);
     }
     prompt.style.display = '';
@@ -862,6 +963,7 @@ function dismissSaveNoteBox() {
     document.getElementById('save-note-box').style.display = 'none';
     var prompt = document.getElementById('save-note-prompt');
     if (prompt) prompt.style.display = 'none';
+    if (_previewActive) hideExportPreview();
     _saveMode = null;
 }
 
@@ -869,15 +971,31 @@ function executeSave() {
     var name = document.getElementById('save-note-name').value.trim();
     var note = document.getElementById('save-note-text').value.trim();
     var mode = _saveMode;
-    // Capture note box position BEFORE hiding it
-    var noteBox = document.getElementById('save-note-box');
-    var noteScreenPos = { left: parseInt(noteBox.style.left) || 0, top: parseInt(noteBox.style.top) || 0 };
+    var noteExportPos = null;
+
+    if ((mode === 'image' || mode === 'share') && _previewActive) {
+        // Compute note position as fraction of the preview image
+        var noteBox = document.getElementById('save-note-box');
+        var img = document.getElementById('export-preview-img');
+        var imgRect = img.getBoundingClientRect();
+        var nbLeft = parseInt(noteBox.style.left) || 0;
+        var nbTop = parseInt(noteBox.style.top) || 0;
+        // Fraction within the preview image
+        noteExportPos = {
+            fx: (nbLeft - imgRect.left) / imgRect.width,
+            fy: (nbTop - imgRect.top) / imgRect.height
+        };
+    } else {
+        // Construction save or no preview — use screen position
+        var noteBox = document.getElementById('save-note-box');
+        noteExportPos = { left: parseInt(noteBox.style.left) || 0, top: parseInt(noteBox.style.top) || 0 };
+    }
     dismissSaveNoteBox();
 
     if (mode === 'construction') {
         doSaveConstruction(name, note);
     } else if (mode === 'image' || mode === 'share') {
-        doSaveImage(name, note, mode === 'share', noteScreenPos);
+        doSaveImage(name, note, mode === 'share', noteExportPos);
     }
 }
 
@@ -1139,6 +1257,8 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
         for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
         oc.closePath(); oc.stroke();
     }
+    // Round joints for all lead
+    oc.lineJoin = 'round'; oc.lineCap = 'round';
     // Shadow pass (all lead)
     oc.save(); oc.translate(2, 2);
     oc.strokeStyle = 'rgba(0,0,0,0.2)'; oc.lineWidth = leadW;
@@ -1171,12 +1291,20 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
         oc.fillStyle = noteBoxTextColor();
         oc.font = 'italic ' + noteFontPx + 'px Georgia, serif';
         oc.textBaseline = 'top';
-        // Use captured screen position (before note box was hidden)
-        var nbLeft = noteScreenPos ? noteScreenPos.left : 100;
-        var nbTop = noteScreenPos ? noteScreenPos.top : 100;
-        var noteWorld = s2w(nbLeft, nbTop);
-        var nPos = wp(noteWorld.x, noteWorld.y);
-        var ty = nPos.y, tx = nPos.x;
+        // Position from preview fractional coordinates or screen coords
+        var tx, ty;
+        if (noteScreenPos && noteScreenPos.fx !== undefined) {
+            // Fractional position within the full export
+            tx = noteScreenPos.fx * pw;
+            ty = noteScreenPos.fy * ph;
+        } else {
+            // Fallback: screen position → world → export
+            var nbLeft = noteScreenPos ? noteScreenPos.left : 100;
+            var nbTop = noteScreenPos ? noteScreenPos.top : 100;
+            var noteWorld = s2w(nbLeft, nbTop);
+            var nPos = wp(noteWorld.x, noteWorld.y);
+            tx = nPos.x; ty = nPos.y;
+        }
         noteLines2.forEach(function(line) {
             if (line === '') { ty += noteLineH * 0.5; return; }
             oc.fillText(line, tx, ty); ty += noteLineH;
@@ -1627,6 +1755,8 @@ function drawEmphasisPath(drawFn) {
     // Render as lead came — same visual as completed glass boundaries
     ctx.strokeStyle = LEAD_BORDER_COLOR;
     ctx.lineWidth   = LEAD_WIDTH;
+    ctx.lineJoin    = 'round';
+    ctx.lineCap     = 'round';
     ctx.globalAlpha = 1;
     ctx.beginPath(); drawFn(); ctx.stroke();
 }
@@ -1651,6 +1781,7 @@ function render() {
         ctx.closePath();
         ctx.fillStyle = f.color; ctx.globalAlpha = f.opacity; ctx.fill('evenodd');
         ctx.strokeStyle = LEAD_BORDER_COLOR; ctx.lineWidth = LEAD_WIDTH;
+        ctx.lineJoin = 'round'; ctx.lineCap = 'round';
         ctx.globalAlpha = 1; ctx.stroke();
         ctx.globalAlpha = 1;
     });
@@ -2509,6 +2640,24 @@ var CRAFT_FALLBACK = [
 ];
 var CRAFT_SWATCHES = CRAFT_FALLBACK;
 
+// External text content (loaded from text/geometry-v1.json, with hardcoded fallback)
+var CONTENT = null;
+
+function loadContentJSON() {
+    fetch('text/geometry-v1.json')
+        .then(function(resp) { return resp.json(); })
+        .then(function(json) {
+            CONTENT = json;
+            // Update HTW_STAGES content from loaded JSON
+            HTW_STAGES.forEach(function(stage) {
+                if (CONTENT.htw && CONTENT.htw[stage.id] && CONTENT.htw[stage.id].body) {
+                    stage.content = CONTENT.htw[stage.id].body.map(function(line) { return { text: line }; });
+                }
+            });
+        })
+        .catch(function() { /* fallback to hardcoded defaults */ });
+}
+
 function loadPalettesJSON() {
     fetch('art/palettes.json')
         .then(function(resp) { return resp.json(); })
@@ -2649,6 +2798,7 @@ function exportImage() {
         for (var i=1;i<poly.length;i++) oc.lineTo(poly[i].x,poly[i].y);
         oc.closePath(); oc.fillStyle=f.color; oc.globalAlpha=f.opacity; oc.fill('evenodd');
         oc.strokeStyle=LEAD_BORDER_COLOR; oc.lineWidth=LEAD_WIDTH*sc;
+        oc.lineJoin='round'; oc.lineCap='round';
         oc.globalAlpha=1; oc.stroke();
         oc.globalAlpha=1;
     });
@@ -3093,12 +3243,12 @@ function initConstructions() {
     document.getElementById('image-size-postcard').addEventListener('click', function() {
         document.getElementById('image-size-dialog').style.display = 'none';
         _imageSize = 'postcard';
-        showSaveNoteBox('image');
+        showExportPreview('postcard');
     });
     document.getElementById('image-size-full').addEventListener('click', function() {
         document.getElementById('image-size-dialog').style.display = 'none';
         _imageSize = 'fullsheet';
-        showSaveNoteBox('image');
+        showExportPreview('fullsheet');
     });
     document.getElementById('image-size-cancel').addEventListener('click', function() {
         document.getElementById('image-size-dialog').style.display = 'none';
@@ -4137,6 +4287,7 @@ function initHowThisWorks() {
 // Exposes: nothing
 // ============================================================
 
+loadContentJSON();
 loadPalettesJSON();
 initLog();
 initConstructions();
