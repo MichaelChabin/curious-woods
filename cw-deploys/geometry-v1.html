@@ -922,12 +922,25 @@ function showExportPreview(sizeKey) {
         var box = document.getElementById('save-note-box');
         box.style.left = Math.round(rect.left + rect.width / 2 - 120) + 'px';
         box.style.top = Math.round(rect.top + rect.height * 0.7) + 'px';
+        // Scale note font to match export proportionally
+        // Export note is 54px at full resolution (e.g., 1800px wide)
+        // Preview is displayed at rect.width. Scale = rect.width / exportWidth
+        var sizes = { postcard: { w: 1800 }, fullsheet: { w: 3000 } };
+        var exportW = (sizes[sizeKey] || sizes.postcard).w;
+        var previewScale = rect.width / exportW;
+        var previewFontPx = Math.round(54 * previewScale);
+        var ta = document.getElementById('save-note-text');
+        ta.style.fontSize = previewFontPx + 'px';
+        ta.style.lineHeight = '1.45';
     };
 }
 
 function hideExportPreview() {
     _previewActive = false;
     document.getElementById('export-preview').style.display = 'none';
+    // Reset note font size
+    var ta = document.getElementById('save-note-text');
+    ta.style.fontSize = ''; ta.style.lineHeight = '';
 }
 
 function showSaveDialog() {
@@ -1288,7 +1301,7 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
             if (rl.trim() === '') { noteLines2.push(''); return; }
             wrapText(rl, 500).forEach(function(wl) { noteLines2.push(wl); });
         });
-        oc.fillStyle = noteBoxTextColor();
+        oc.fillStyle = '#546A80';
         oc.font = 'italic ' + noteFontPx + 'px Georgia, serif';
         oc.textBaseline = 'top';
         // Position from preview fractional coordinates or screen coords
