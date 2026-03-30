@@ -134,7 +134,7 @@
     #picker-backdrop.visible { display: block; }
     #picker-window { position: fixed; z-index: 601; background: #f0ede4; border: 0.5px solid #c8b89a; border-radius: 8px; padding: 18px; box-shadow: 0 4px 24px rgba(42,38,32,0.18); opacity: 0; transition: opacity 200ms ease-in; pointer-events: none; max-height: 85vh; overflow-y: auto; }
     #picker-window.visible { opacity: 1; pointer-events: all; }
-    #picker-drag-handle { height: 14px; margin: -18px -18px 0 -18px; border-radius: 8px 8px 0 0; cursor: grab; background: rgba(200,184,154,0.25); display: flex; align-items: center; justify-content: flex-end; padding: 0 10px; }
+    #picker-drag-handle { height: 14px; margin: -18px -18px 0 -18px; border-radius: 8px 8px 0 0; cursor: grab; background: rgba(200,184,154,0.25); display: flex; align-items: center; justify-content: flex-end; padding: 0 10px; position: sticky; top: 0; z-index: 1; background: #f0ede4; }
     #picker-drag-handle:active { cursor: grabbing; }
     #picker-close-btn { font-family: Georgia, serif; font-size: 11px; color: #b0a090; cursor: default; transition: color 80ms; pointer-events: all; line-height: 14px; }
     #picker-close-btn:hover { color: #546A80; }
@@ -317,16 +317,19 @@
 <!-- Step-through replay controls -->
 <div id="cx-step-controls" style="display:none;">
   <div class="cx-step-arrows">
+    <span id="cx-step-first" class="cx-step-arrow">|&larr;</span>
     <span id="cx-step-back" class="cx-step-arrow">&larr;</span>
     <span id="cx-step-fwd" class="cx-step-arrow">&rarr;</span>
+    <span id="cx-step-last" class="cx-step-arrow">&rarr;|</span>
   </div>
   <span id="cx-step-cancel" class="cx-step-label">Cancel</span>
 </div>
 
 <!-- WIP dialog (save before clearing) -->
 <div id="cx-wip-dialog" style="display:none;">
-  <span class="cx-wip-option" id="cx-wip-start-over">Start over</span>
-  <span class="cx-wip-option" id="cx-wip-save">Save and continue</span>
+  <span class="cx-wip-option" id="cx-wip-prompt" style="color:#b0a090;margin-right:8px;">Save first?</span>
+  <span class="cx-wip-option" id="cx-wip-save">Yes</span>
+  <span class="cx-wip-option" id="cx-wip-start-over">No</span>
   <span class="cx-wip-option" id="cx-wip-cancel">Cancel</span>
 </div>
 
@@ -600,7 +603,20 @@ function regX(id, pt, prev, an) {
 
 function appendOp(op) { operationLog.push(op); replayLog(true); checkHtwTriggers(); }
 function undoOp() { if (operationLog.length <= 1) return; operationLog.pop(); replayLog(false); }
-function newConstruction() { operationLog = [{ op:'init', seed0:{x:-100,y:0}, seed1:{x:100,y:0} }]; replayLog(false); viewX=0; viewY=0; viewScale=Math.min(window.innerWidth,window.innerHeight)/900; }
+function newConstruction() {
+    operationLog = [{ op:'init', seed0:{x:-100,y:0}, seed1:{x:100,y:0} }];
+    replayLog(false);
+    viewX=0; viewY=0; viewScale=Math.min(window.innerWidth,window.innerHeight)/900;
+    // Reset color to clear (bottle green)
+    state.palette.selected = FOREST_GLASS;
+    // Close any note tip windows or step-through controls
+    var htwEl = document.getElementById('htw-canvas');
+    if (htwEl && htwEl.style.display !== 'none') { htwEl.style.display = 'none'; htwActiveStageIdx = -1; }
+    if (isStepThroughActive()) exitStepThrough();
+    // Reset interaction state
+    interactionState = 'IDLE'; selectedPoint = null; firstTapPoint = null;
+    ghostLineEnd = null; ghostCircle = null; snapTarget = null;
+}
 
 function saveConstruction() {
     if (operationLog.length <= 1) { toast('nothing to save yet'); return; }
@@ -822,11 +838,22 @@ function showSaveNoteBox(mode) {
     box.style.left = (cx2 - 120) + 'px';
     box.style.top = ((window.innerHeight - 180) / 2) + 'px';
     box.style.display = '';
+    // Show positioning prompt
+    var prompt = document.getElementById('save-note-prompt');
+    if (!prompt) {
+        prompt = document.createElement('div'); prompt.id = 'save-note-prompt';
+        prompt.style.cssText = 'position:absolute;top:-22px;left:0;font:12px Georgia,serif;color:#b0a090;white-space:nowrap;pointer-events:none;';
+        prompt.textContent = 'This note will appear as part of your image. You can place it anywhere you like.';
+        box.appendChild(prompt);
+    }
+    prompt.style.display = '';
     setTimeout(function() { nameEl.focus(); }, 60);
 }
 
 function dismissSaveNoteBox() {
     document.getElementById('save-note-box').style.display = 'none';
+    var prompt = document.getElementById('save-note-prompt');
+    if (prompt) prompt.style.display = 'none';
     _saveMode = null;
 }
 
@@ -1410,7 +1437,7 @@ function findClosedRegionEdges() {
             }
         });
     }
-    if (adj.size < 3) return null;
+    if (adj.size < 2) return null;
     var ok = true;
     adj.forEach(function(nb) { if (nb.length !== 2) ok = false; });
     if (!ok) return null;
@@ -2071,6 +2098,7 @@ function onDown(e) {
                 isCircle: hl.type==='arc',
                 hit: hl
             };
+            eraserFlash = true; eraserFlashTime = Date.now();
         } else {
             lastTapTarget = hl; lastTapTime = now;
         }
@@ -2084,7 +2112,8 @@ function onDown(e) {
     if (bareIdx >= 0) {
         var bareLast = lastTapTarget && lastTapTarget.type==='bare' && lastTapTarget.obj===bareIdx;
         if (bareLast && now-lastTapTime<THRESHOLDS.doubleClickTime) {
-            eraserCandidate = { lineIdx: bareIdx, hit: null }; // hit:null means bare line
+            eraserCandidate = { lineIdx: bareIdx, hit: null };
+            eraserFlash = true; eraserFlashTime = Date.now();
         } else {
             lastTapTarget = { type:'bare', obj: bareIdx }; lastTapTime = now;
         }
@@ -2953,8 +2982,10 @@ function initConstructions() {
     cxGenerateBuiltinPreviews();
 
     // Step-through controls
-    document.getElementById('cx-step-fwd').addEventListener('click', stepForward);
+    document.getElementById('cx-step-first').addEventListener('click', stepFirst);
     document.getElementById('cx-step-back').addEventListener('click', stepBack);
+    document.getElementById('cx-step-fwd').addEventListener('click', stepForward);
+    document.getElementById('cx-step-last').addEventListener('click', stepLast);
     document.getElementById('cx-step-cancel').addEventListener('click', function() {
         document.getElementById('cx-cancel-dialog').style.display = '';
     });
@@ -3278,23 +3309,23 @@ function computeStepGroups(ops) {
     while (i < ops.length) {
         var op = ops[i];
         if (op.op === 'emphasize') {
-            // Batch emphasize + subsequent emphasize/deemphasize/fill/repaint_fill
+            // Group emphasize ops up to (and including) the next fill.
+            // Each fill becomes its own step with its preceding emphasize/deemphasize ops.
             var end = i + 1;
             while (end < ops.length) {
                 var next = ops[end].op;
-                if (next === 'emphasize' || next === 'deemphasize' || next === 'fill' || next === 'repaint_fill') end++;
-                else break;
+                if (next === 'fill' || next === 'repaint_fill') { end++; break; } // include the fill, stop
+                if (next === 'emphasize' || next === 'deemphasize') { end++; continue; }
+                break; // different op type — stop before it
             }
             groups.push({ start: i, end: end });
             i = end;
         } else if (op.op === 'scaffold') {
-            // Batch consecutive scaffold ops
             var end = i + 1;
             while (end < ops.length && ops[end].op === 'scaffold') end++;
             groups.push({ start: i, end: end });
             i = end;
         } else {
-            // Single step: line, circle, numbers, dissolve_fill, deemphasize, etc.
             groups.push({ start: i, end: i + 1 });
             i++;
         }
@@ -3321,7 +3352,6 @@ function hideStepControls() {
 
 function startStepThrough(ops, viewport) {
     if (stepState.active) exitStepThrough();
-    // Stop any auto-playback
     if (cxState.playing) stopPlayback();
 
     stepState.active = true;
@@ -3340,37 +3370,42 @@ function startStepThrough(ops, viewport) {
         viewX = 0; viewY = 0; viewScale = Math.min(window.innerWidth, window.innerHeight) / 900;
     }
 
+    // Show the first step immediately (don't start with blank canvas)
+    if (stepState.stepBounds.length > 1) {
+        var group = stepState.stepBounds[1];
+        for (var i = group.start; i < group.end; i++) appendOp(ops[i]);
+        stepState.currentStep = 1;
+    }
+
     showStepControls();
 }
 
 function stepForward() {
     if (!stepState.active) return;
     var nextStep = stepState.currentStep + 1;
-    if (nextStep >= stepState.stepBounds.length) return; // already at end
+    if (nextStep >= stepState.stepBounds.length) return;
 
     var group = stepState.stepBounds[nextStep];
     var ops = stepState.ops;
+    for (var i = group.start; i < group.end; i++) appendOp(ops[i]);
+    stepState.currentStep = nextStep;
+}
 
-    // For line/circle: briefly highlight the two points before adding the geometry
-    var firstOp = ops[group.start];
-    if ((firstOp.op === 'line' || firstOp.op === 'circle') && group.end - group.start === 1) {
-        // Highlight the two anchor points
-        var ptAId = firstOp.op === 'line' ? firstOp.p1Id : firstOp.centerId;
-        var ptBId = firstOp.op === 'line' ? firstOp.p2Id : firstOp.edgeId;
-        highlightPoints([ptAId, ptBId], function() {
-            // After highlight, apply the operation
-            for (var i = group.start; i < group.end; i++) {
-                appendOp(ops[i]);
-            }
-            stepState.currentStep = nextStep;
-        });
-    } else {
-        // Apply all operations in the group immediately
-        for (var i = group.start; i < group.end; i++) {
-            appendOp(ops[i]);
-        }
-        stepState.currentStep = nextStep;
-    }
+function stepFirst() {
+    if (!stepState.active) return;
+    // Jump to first step (init + first geometry)
+    stepState.currentStep = Math.min(1, stepState.stepBounds.length - 1);
+    var group = stepState.stepBounds[stepState.currentStep];
+    operationLog = stepState.ops.slice(0, group.end);
+    replayLog(false);
+}
+
+function stepLast() {
+    if (!stepState.active) return;
+    // Jump to completed construction — apply all ops
+    operationLog = stepState.ops.slice();
+    replayLog(false);
+    stepState.currentStep = stepState.stepBounds.length - 1;
 }
 
 function stepBack() {
@@ -3398,16 +3433,6 @@ function forkStepThrough() {
     stepState.ops = null;
     stepState.stepBounds = [];
     hideStepControls();
-}
-
-// Briefly highlight specific points (glow pulse) then call callback
-function highlightPoints(ptIds, callback) {
-    // Add temporary animations to the points
-    ptIds.forEach(function(id) {
-        var pt = points.get(id);
-        if (pt) pointAnimations.set(id, { startTime: Date.now(), duration: 350 });
-    });
-    setTimeout(callback, 380);
 }
 
 // Check for work in progress, show dialog if needed, then call callback
