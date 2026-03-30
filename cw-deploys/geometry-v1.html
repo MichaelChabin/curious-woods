@@ -931,7 +931,7 @@ function showExportPreview(sizeKey) {
         var previewFontPx = Math.round(38 * previewScale);
         var ta = document.getElementById('save-note-text');
         ta.style.fontSize = previewFontPx + 'px';
-        ta.style.lineHeight = '1.45';
+        ta.style.lineHeight = '1.5';
     };
 }
 
@@ -1293,49 +1293,52 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     leadLines.forEach(drawLeadLine);
 
     // Note text at the position the child placed it
-    // Fixed physical size: 13pt at 300 DPI ≈ 54px
+    // 9pt at 300 DPI ≈ 38px, line-height 1.5 (matches textarea CSS)
     var noteText = (note || '').trim();
-    if (noteText) {
-        var noteFontPx = 38, noteLineH = noteFontPx * 1.45;
+    var noteName = (name || '').trim();
+    if (noteText || noteName) {
+        var noteFontPx = 38, noteLineH = noteFontPx * 1.5;
+        var titleFontPx = Math.round(noteFontPx * 1.15); // ~10.3pt, slightly larger
         oc.fillStyle = '#546A80';
-        oc.font = 'italic ' + noteFontPx + 'px Georgia, serif';
         oc.textBaseline = 'top';
         // Determine wrap width from captured box width fraction, or fallback
         var wrapWidthPx = (noteScreenPos && noteScreenPos.fw !== undefined)
             ? noteScreenPos.fw * pw
             : pw * 0.4;
-        // Word-wrap using measureText, honoring manual newlines
-        var rawLines = noteText.split('\n');
-        var noteLines2 = [];
-        rawLines.forEach(function(rl) {
-            if (rl.trim() === '') { noteLines2.push(''); return; }
-            var words = rl.split(' '), cur = '';
-            words.forEach(function(w) {
-                var test = cur ? cur + ' ' + w : w;
-                if (oc.measureText(test).width > wrapWidthPx && cur) {
-                    noteLines2.push(cur); cur = w;
-                } else { cur = test; }
-            });
-            if (cur) noteLines2.push(cur);
-        });
         // Position from preview fractional coordinates or screen coords
         var tx, ty;
         if (noteScreenPos && noteScreenPos.fx !== undefined) {
-            // Fractional position within the full export
             tx = noteScreenPos.fx * pw;
             ty = noteScreenPos.fy * ph;
         } else {
-            // Fallback: screen position → world → export
             var nbLeft = noteScreenPos ? noteScreenPos.left : 100;
             var nbTop = noteScreenPos ? noteScreenPos.top : 100;
             var noteWorld = s2w(nbLeft, nbTop);
             var nPos = wp(noteWorld.x, noteWorld.y);
             tx = nPos.x; ty = nPos.y;
         }
-        noteLines2.forEach(function(line) {
-            if (line === '') { ty += noteLineH * 0.5; return; }
-            oc.fillText(line, tx, ty); ty += noteLineH;
-        });
+        // Render name as title (slightly larger, not italic)
+        if (noteName) {
+            oc.font = titleFontPx + 'px Georgia, serif';
+            oc.fillText(noteName, tx, ty);
+            ty += titleFontPx * 1.5;
+        }
+        // Render note body (italic, word-wrapped)
+        if (noteText) {
+            oc.font = 'italic ' + noteFontPx + 'px Georgia, serif';
+            var rawLines = noteText.split('\n');
+            rawLines.forEach(function(rl) {
+                if (rl.trim() === '') { ty += noteLineH * 0.5; return; }
+                var words = rl.split(' '), cur = '';
+                words.forEach(function(w) {
+                    var test = cur ? cur + ' ' + w : w;
+                    if (oc.measureText(test).width > wrapWidthPx && cur) {
+                        oc.fillText(cur, tx, ty); ty += noteLineH; cur = w;
+                    } else { cur = test; }
+                });
+                if (cur) { oc.fillText(cur, tx, ty); ty += noteLineH; }
+            });
+        }
     }
     oc.globalAlpha = 1;
 
