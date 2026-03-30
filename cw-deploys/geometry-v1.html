@@ -920,8 +920,8 @@ function showExportPreview(sizeKey) {
     img.onload = function() {
         var rect = img.getBoundingClientRect();
         var box = document.getElementById('save-note-box');
-        box.style.left = Math.round(rect.left + rect.width / 2 - 120) + 'px';
-        box.style.top = Math.round(rect.top + rect.height * 0.7) + 'px';
+        box.style.left = Math.round(rect.left + 20) + 'px';
+        box.style.top = Math.round(rect.top + 20) + 'px';
         // Scale note font to match export proportionally
         // Export note is 54px at full resolution (e.g., 1800px wide)
         // Preview is displayed at rect.width. Scale = rect.width / exportWidth
@@ -994,9 +994,12 @@ function executeSave() {
         var nbLeft = parseInt(noteBox.style.left) || 0;
         var nbTop = parseInt(noteBox.style.top) || 0;
         // Fraction within the preview image
+        // Also capture box width as fraction for word-wrap in export
+        var boxW = noteBox.offsetWidth;
         noteExportPos = {
             fx: (nbLeft - imgRect.left) / imgRect.width,
-            fy: (nbTop - imgRect.top) / imgRect.height
+            fy: (nbTop - imgRect.top) / imgRect.height,
+            fw: boxW / imgRect.width
         };
     } else {
         // Construction save or no preview — use screen position
@@ -1294,16 +1297,27 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     var noteText = (note || '').trim();
     if (noteText) {
         var noteFontPx = 54, noteLineH = noteFontPx * 1.45;
-        // Split on actual newlines from textarea
+        oc.fillStyle = '#546A80';
+        oc.font = 'italic ' + noteFontPx + 'px Georgia, serif';
+        oc.textBaseline = 'top';
+        // Determine wrap width from captured box width fraction, or fallback
+        var wrapWidthPx = (noteScreenPos && noteScreenPos.fw !== undefined)
+            ? noteScreenPos.fw * pw
+            : pw * 0.4;
+        // Word-wrap using measureText, honoring manual newlines
         var rawLines = noteText.split('\n');
         var noteLines2 = [];
         rawLines.forEach(function(rl) {
             if (rl.trim() === '') { noteLines2.push(''); return; }
-            wrapText(rl, 500).forEach(function(wl) { noteLines2.push(wl); });
+            var words = rl.split(' '), cur = '';
+            words.forEach(function(w) {
+                var test = cur ? cur + ' ' + w : w;
+                if (oc.measureText(test).width > wrapWidthPx && cur) {
+                    noteLines2.push(cur); cur = w;
+                } else { cur = test; }
+            });
+            if (cur) noteLines2.push(cur);
         });
-        oc.fillStyle = '#546A80';
-        oc.font = 'italic ' + noteFontPx + 'px Georgia, serif';
-        oc.textBaseline = 'top';
         // Position from preview fractional coordinates or screen coords
         var tx, ty;
         if (noteScreenPos && noteScreenPos.fx !== undefined) {
