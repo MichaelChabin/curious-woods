@@ -212,12 +212,12 @@
     #export-preview img { max-width: 90vw; max-height: 85vh; border-radius: 4px; box-shadow: 0 4px 24px rgba(0,0,0,0.3); user-select: none; }
 
     /* --- Save note box --- */
-    #save-note-box { position: fixed; z-index: 800; pointer-events: all; width: 240px; background: rgba(244,241,232,0.75); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 0 14px 10px; box-shadow: 0 2px 14px rgba(42,38,32,0.14); }
+    #save-note-box { position: fixed; z-index: 800; pointer-events: all; width: 240px; min-height: 140px; background: rgba(244,241,232,0.75); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 0 14px 10px; box-shadow: 0 2px 14px rgba(42,38,32,0.14); display: flex; flex-direction: column; resize: both; overflow: hidden; }
     .save-note-header { cursor: grab; padding: 10px 0 4px; }
     .save-note-header:active { cursor: grabbing; }
     #save-note-name { font-family: Georgia, serif; font-size: 14px; color: #546A80; background: transparent; border: none; border-bottom: 0.5px solid rgba(200,184,154,0.7); outline: none; width: 100%; padding: 0 0 4px; line-height: 1.3; }
     #save-note-name::placeholder { color: #546A80; opacity: 0.45; }
-    #save-note-text { font-family: Georgia, serif; font-style: italic; font-size: 13px; color: #546A80; background: transparent; border: none; border-bottom: 0.5px solid rgba(200,184,154,0.5); padding: 6px 0 4px; resize: both; overflow: auto; width: 100%; min-height: 54px; outline: none; line-height: 1.5; margin-top: 6px; }
+    #save-note-text { font-family: Georgia, serif; font-style: italic; font-size: 13px; color: #546A80; background: transparent; border: none; border-bottom: 0.5px solid rgba(200,184,154,0.5); padding: 6px 0 4px; resize: none; overflow: auto; width: 100%; min-height: 40px; outline: none; line-height: 1.5; margin-top: 6px; flex: 1; }
     #save-note-text::placeholder { color: #546A80; opacity: 0.35; }
     .save-note-footer { display: flex; justify-content: flex-end; gap: 16px; margin-top: 8px; }
     .save-note-cancel { font-family: Georgia, serif; font-size: 14px; color: #b0a090; cursor: default; transition: color 80ms; }
@@ -928,7 +928,7 @@ function showExportPreview(sizeKey) {
         var sizes = { postcard: { w: 1800 }, fullsheet: { w: 3000 } };
         var exportW = (sizes[sizeKey] || sizes.postcard).w;
         var previewScale = rect.width / exportW;
-        var previewFontPx = Math.round(54 * previewScale);
+        var previewFontPx = Math.round(38 * previewScale);
         var ta = document.getElementById('save-note-text');
         ta.style.fontSize = previewFontPx + 'px';
         ta.style.lineHeight = '1.45';
@@ -1296,7 +1296,7 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     // Fixed physical size: 13pt at 300 DPI ≈ 54px
     var noteText = (note || '').trim();
     if (noteText) {
-        var noteFontPx = 54, noteLineH = noteFontPx * 1.45;
+        var noteFontPx = 38, noteLineH = noteFontPx * 1.45;
         oc.fillStyle = '#546A80';
         oc.font = 'italic ' + noteFontPx + 'px Georgia, serif';
         oc.textBaseline = 'top';
