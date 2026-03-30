@@ -203,12 +203,12 @@
     .cx-step-label:hover { color: #3D3D3A; }
 
     /* --- WIP / cancel dialogs --- */
-    #cx-wip-dialog, #cx-cancel-dialog, #save-type-dialog { position: fixed; z-index: 800; pointer-events: all; user-select: none; background: rgba(244,241,232,0.94); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 16px; box-shadow: 0 2px 12px rgba(42,38,32,0.1); left: 50%; top: 40%; transform: translate(-50%,-50%); display: flex; gap: 24px; }
+    #cx-wip-dialog, #cx-cancel-dialog, #save-type-dialog, #image-size-dialog { position: fixed; z-index: 800; pointer-events: all; user-select: none; background: rgba(244,241,232,0.94); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 16px; box-shadow: 0 2px 12px rgba(42,38,32,0.1); left: 50%; top: 40%; transform: translate(-50%,-50%); display: flex; gap: 24px; }
     .cx-wip-option { font-family: Georgia, serif; font-size: 13px; color: #546A80; cursor: default; transition: color 80ms; }
     .cx-wip-option:hover { color: #3D3D3A; }
 
     /* --- Save note box --- */
-    #save-note-box { position: fixed; z-index: 800; pointer-events: all; width: 240px; background: rgba(244,241,232,0.96); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 0 14px 10px; box-shadow: 0 2px 14px rgba(42,38,32,0.14); }
+    #save-note-box { position: fixed; z-index: 800; pointer-events: all; width: 240px; background: rgba(244,241,232,0.75); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 0 14px 10px; box-shadow: 0 2px 14px rgba(42,38,32,0.14); }
     .save-note-header { cursor: grab; padding: 10px 0 4px; }
     .save-note-header:active { cursor: grabbing; }
     #save-note-name { font-family: Georgia, serif; font-size: 14px; color: #546A80; background: transparent; border: none; border-bottom: 0.5px solid rgba(200,184,154,0.7); outline: none; width: 100%; padding: 0 0 4px; line-height: 1.3; }
@@ -344,6 +344,13 @@
   <span class="cx-wip-option" id="save-type-construction">Save Construction</span>
   <span class="cx-wip-option" id="save-type-image">Save as Image</span>
   <span class="cx-wip-option" id="save-type-cancel">Cancel</span>
+</div>
+
+<!-- Image size dialog -->
+<div id="image-size-dialog" style="display:none;">
+  <span class="cx-wip-option" id="image-size-postcard">Postcard</span>
+  <span class="cx-wip-option" id="image-size-full">Full sheet</span>
+  <span class="cx-wip-option" id="image-size-cancel">Cancel</span>
 </div>
 
 <!-- Note box (used by Save Construction, Save as Image, and Share) -->
@@ -820,6 +827,7 @@ function showUniquenessObservation() {
 // ============================================================
 
 var _saveMode = null; // 'construction' | 'image' | 'share'
+var _imageSize = 'postcard'; // 'postcard' | 'fullsheet'
 
 function showSaveDialog() {
     if (operationLog.length <= 1) { toast('nothing to save yet'); return; }
@@ -842,7 +850,7 @@ function showSaveNoteBox(mode) {
     var prompt = document.getElementById('save-note-prompt');
     if (!prompt) {
         prompt = document.createElement('div'); prompt.id = 'save-note-prompt';
-        prompt.style.cssText = 'position:absolute;top:-22px;left:0;font:12px Georgia,serif;color:#b0a090;white-space:nowrap;pointer-events:none;';
+        prompt.style.cssText = 'position:absolute;bottom:100%;left:0;right:0;font:12px Georgia,serif;color:#546A80;pointer-events:none;padding-bottom:4px;line-height:1.4;';
         prompt.textContent = 'This note will appear as part of your image. You can place it anywhere you like.';
         box.appendChild(prompt);
     }
@@ -902,7 +910,7 @@ function doSaveConstruction(name, note) {
 }
 
 function doSaveImage(name, note, isShare, noteScreenPos) {
-    renderPostcardPNG(name, note, noteScreenPos, function(blob) {
+    renderPostcardPNG(name, note, noteScreenPos, _imageSize, function(blob) {
         var filename = (name || 'glass-' + new Date().toISOString().slice(0, 10)).replace(/[^a-z0-9 _-]/gi, '_') + '.png';
         if (isShare && navigator.share && navigator.canShare) {
             var file = new File([blob], filename, { type: 'image/png' });
@@ -1000,7 +1008,7 @@ function crc32(data) {
 }
 
 // Postcard-quality image export
-function renderPostcardPNG(name, note, noteScreenPos, callback) {
+function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     var allPolys = [];
     fills.forEach(function(f) {
         if (f.dissolved) return;
@@ -1036,20 +1044,26 @@ function renderPostcardPNG(name, note, noteScreenPos, callback) {
     minX -= padX; minY -= padY; maxX += padX; maxY += padY;
     var ww = maxX - minX, wh = maxY - minY;
 
-    // Render at 300 DPI based on current view scale
-    // viewScale = screen pixels per world unit (at 72 DPI)
-    // 300/72 ≈ 4.167 — multiply to get 300 DPI pixels per world unit
-    var dpiScale = 300 / 72;
-    var s = viewScale * dpiScale; // pixels per world unit at 300 DPI
-    var artW = Math.round(ww * s), artH = Math.round(wh * s);
+    // Fixed output sizes at 300 DPI
+    var sizes = { postcard: { w: 1800, h: 1200 }, fullsheet: { w: 3000, h: 2400 } };
+    var sz = sizes[sizeKey] || sizes.postcard;
 
-    // Border mat: 0.5 inches at 300 DPI = 150px
-    var matPx = 150;
-    var pw = artW + matPx * 2, ph = artH + matPx * 2;
+    // Border mat: 60px at output scale
+    var matPx = 60;
+    var artW = sz.w - matPx * 2, artH = sz.h - matPx * 2;
+
+    // Scale artwork to fit within art area, centered
+    var s = Math.min(artW / ww, artH / wh);
+    var offX = (artW - ww * s) / 2; // centering offset within art area
+    var offY = (artH - wh * s) / 2;
+    var pw = sz.w, ph = sz.h;
+
+    // Lead thickness: scale proportionally, clamped to 2–17px (0.5pt–4pt at 300 DPI)
+    var leadW = Math.max(2, Math.min(17, LEAD_WIDTH * s));
 
     var off = document.createElement('canvas'); off.width = pw; off.height = ph;
     var oc = off.getContext('2d');
-    function wp(wx, wy) { return { x: (wx - minX) * s + matPx, y: (wy - minY) * s + matPx }; }
+    function wp(wx, wy) { return { x: (wx - minX) * s + matPx + offX, y: (wy - minY) * s + matPx + offY }; }
 
     // Dark border mat
     oc.fillStyle = '#2a2620'; oc.fillRect(0, 0, pw, ph);
@@ -1075,7 +1089,20 @@ function renderPostcardPNG(name, note, noteScreenPos, callback) {
         var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
         oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
         for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
-        oc.closePath(); oc.fillStyle = f.color; oc.globalAlpha = f.opacity; oc.fill('evenodd');
+        oc.closePath();
+        // Base color fill
+        oc.fillStyle = f.color; oc.globalAlpha = f.opacity; oc.fill('evenodd');
+        // Subtle glass gradient (lighter center, darker edges ~5%)
+        oc.save(); oc.clip();
+        var bb = { x1: Infinity, y1: Infinity, x2: -Infinity, y2: -Infinity };
+        mapped.forEach(function(p) { bb.x1 = Math.min(bb.x1, p.x); bb.y1 = Math.min(bb.y1, p.y); bb.x2 = Math.max(bb.x2, p.x); bb.y2 = Math.max(bb.y2, p.y); });
+        var gcx = (bb.x1 + bb.x2) / 2, gcy = (bb.y1 + bb.y2) / 2;
+        var gr = Math.max(bb.x2 - bb.x1, bb.y2 - bb.y1) / 2;
+        var gg = oc.createRadialGradient(gcx, gcy, 0, gcx, gcy, gr);
+        gg.addColorStop(0, 'rgba(255,255,255,0.05)');
+        gg.addColorStop(1, 'rgba(0,0,0,0.05)');
+        oc.fillStyle = gg; oc.globalAlpha = 1; oc.fill('evenodd');
+        oc.restore();
         // Glass noise texture
         oc.globalAlpha = 1;
         for (var n = 0; n < 300; n++) {
@@ -1087,8 +1114,16 @@ function renderPostcardPNG(name, note, noteScreenPos, callback) {
         }
     });
 
-    // Lead lines — shadow pass then lead pass
-    var leadW = LEAD_WIDTH * s;
+    // Warm light overlay across all glass
+    sorted.forEach(function(item) {
+        var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
+        oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
+        for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
+        oc.closePath();
+        oc.fillStyle = 'rgba(255,248,230,0.03)'; oc.globalAlpha = 1; oc.fill('evenodd');
+    });
+
+    // Lead lines — helper
     function drawLeadLine(l) {
         if (l.type === 'seg') {
             var p1 = wp(l.x1, l.y1), p2 = wp(l.x2, l.y2);
@@ -1098,22 +1133,27 @@ function renderPostcardPNG(name, note, noteScreenPos, callback) {
             oc.beginPath(); oc.arc(c.x, c.y, l.r * s, l.aA, l.aB, false); oc.stroke();
         }
     }
-    // Shadow
-    oc.save();
-    oc.translate(3, 3); // subtle offset
-    oc.strokeStyle = 'rgba(0,0,0,0.2)'; oc.lineWidth = leadW;
-    leadLines.forEach(drawLeadLine);
-    oc.restore();
-    // Lead on fill boundaries
-    sorted.forEach(function(item) {
+    function drawFillBoundary(item) {
         var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
-        oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = leadW; oc.globalAlpha = 1;
         oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
         for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
         oc.closePath(); oc.stroke();
-    });
-    // Standalone lead lines (emphasized segments/arcs not part of fills)
+    }
+    // Shadow pass (all lead)
+    oc.save(); oc.translate(2, 2);
+    oc.strokeStyle = 'rgba(0,0,0,0.2)'; oc.lineWidth = leadW;
+    sorted.forEach(drawFillBoundary);
+    leadLines.forEach(drawLeadLine);
+    oc.restore();
+    // Highlight pass (top-left edge)
+    oc.save(); oc.translate(-1, -1);
+    oc.strokeStyle = 'rgba(255,255,255,0.15)'; oc.lineWidth = Math.max(1, leadW * 0.4);
+    sorted.forEach(drawFillBoundary);
+    leadLines.forEach(drawLeadLine);
+    oc.restore();
+    // Main lead pass
     oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = leadW; oc.globalAlpha = 1;
+    sorted.forEach(drawFillBoundary);
     leadLines.forEach(drawLeadLine);
 
     // Note text at the position the child placed it
@@ -3043,10 +3083,25 @@ function initConstructions() {
     });
     document.getElementById('save-type-image').addEventListener('click', function() {
         document.getElementById('save-type-dialog').style.display = 'none';
-        showSaveNoteBox('image');
+        document.getElementById('image-size-dialog').style.display = '';
     });
     document.getElementById('save-type-cancel').addEventListener('click', function() {
         document.getElementById('save-type-dialog').style.display = 'none';
+    });
+
+    // Image size dialog
+    document.getElementById('image-size-postcard').addEventListener('click', function() {
+        document.getElementById('image-size-dialog').style.display = 'none';
+        _imageSize = 'postcard';
+        showSaveNoteBox('image');
+    });
+    document.getElementById('image-size-full').addEventListener('click', function() {
+        document.getElementById('image-size-dialog').style.display = 'none';
+        _imageSize = 'fullsheet';
+        showSaveNoteBox('image');
+    });
+    document.getElementById('image-size-cancel').addEventListener('click', function() {
+        document.getElementById('image-size-dialog').style.display = 'none';
     });
 
     // Save note box OK and Cancel
@@ -3480,11 +3535,10 @@ function showLoadedNote(entry) {
 function loadConstructionEntry(entry) {
     var vp = entry.viewport || null;
     function doLoad(ops) {
-        checkWipThen(function() {
-            newConstruction();
-            startStepThrough(ops, vp);
-            if (entry.note) showLoadedNote(entry);
-        });
+        // No WIP check here — the Open flow already handled it before showing the picker
+        newConstruction();
+        startStepThrough(ops, vp);
+        if (entry.note) showLoadedNote(entry);
     }
     if (entry.operations) {
         doLoad(entry.operations.slice());
