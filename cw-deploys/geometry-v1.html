@@ -659,14 +659,11 @@ function syncCanvasNoteDOMs() {
             el = createCanvasNoteDom(cn, inReplay);
             document.body.appendChild(el);
         }
-        // Position from world coords, scale text with box
+        // Position from world coords; box size is fixed screen pixels (zoom-independent)
         var s = w2s(cn.x, cn.y);
         el.style.left = s.x + 'px';
         el.style.top = s.y + 'px';
-        var boxW = cn.width * viewScale;
-        el.style.width = boxW + 'px';
-        var ta = el.querySelector('textarea');
-        if (ta) ta.style.fontSize = Math.max(9, Math.round(13 * boxW / 200)) + 'px';
+        el.style.width = cn.width + 'px';
     });
 }
 
@@ -708,7 +705,7 @@ function createCanvasNoteDom(cn, readOnly) {
         // Resize observer: sync width changes to the operation log
         if (typeof ResizeObserver !== 'undefined') {
             new ResizeObserver(function() {
-                var newW = el.offsetWidth / viewScale;
+                var newW = el.offsetWidth;
                 cn.width = newW;
                 for (var i = operationLog.length - 1; i >= 0; i--) {
                     if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
@@ -751,7 +748,7 @@ function createCanvasNoteDom(cn, readOnly) {
 function placeCanvasNote(screenX, screenY) {
     var world = s2w(screenX, screenY);
     var noteId = 'n:' + (_noteCounter++);
-    appendOp({ op: 'note_open', noteId: noteId, text: '', x: world.x, y: world.y, width: 200 / viewScale });
+    appendOp({ op: 'note_open', noteId: noteId, text: '', x: world.x, y: world.y, width: 200 });
     // Focus the textarea
     setTimeout(function() {
         var el = document.querySelector('.canvas-note[data-note-id="' + noteId + '"] textarea');
@@ -1533,7 +1530,8 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     canvasNotes.forEach(function(cn) {
         if (!cn.open || !cn.text) return;
         var nPos = wp(cn.x, cn.y);
-        var nWrapW = cn.width * s;
+        // cn.width is in screen pixels; scale to export pixels via (export scale / screen scale)
+        var nWrapW = cn.width * (s / viewScale);
         oc.fillStyle = '#546A80';
         oc.font = 'italic ' + cNoteFontPx + 'px Georgia, serif';
         oc.textBaseline = 'top';
