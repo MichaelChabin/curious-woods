@@ -3832,7 +3832,9 @@ function stepForward() {
 
     var group = stepState.stepBounds[nextStep];
     var ops = stepState.ops;
-    for (var i = group.start; i < group.end; i++) appendOp(ops[i]);
+    // Push all ops in the group to the log, then replay once (no per-op animation flicker)
+    for (var i = group.start; i < group.end; i++) operationLog.push(ops[i]);
+    replayLog(false);
     stepState.currentStep = nextStep;
 }
 
