@@ -41,6 +41,17 @@
       ]
     }
   },
-  "uniqueness": "You\u2019ve made {points} points, {lines} lines, and {circles} circles. With those, there are more possible arrangements than atoms in the universe. The one you just made \u2014 no one has made that before.",
+  "uniqueness": {
+    "intro": "You made {points} points, {lines} lines, and {circles} circles.",
+    "calculation": "With those points alone, there are {mantissa} \u00d7 10{exponent} possible arrangements \u2014 {comparison}.",
+    "conclusion": "The one you just made \u2014 no one has made that before.",
+    "comparisons": [
+      { "min_exponent": 13, "text": "more than all the grains of sand on every beach on Earth" },
+      { "min_exponent": 20, "text": "more than all the drops of water in all the oceans" },
+      { "min_exponent": 50, "text": "more than all the atoms in the Earth" },
+      { "min_exponent": 80, "text": "more than all the atoms in the universe" },
+      { "min_exponent": 120, "text": "more than all the atoms in a billion universes" }
+    ]
+  },
   "note_instruction": "This note will appear as part of your image. You can place it anywhere you like."
 }

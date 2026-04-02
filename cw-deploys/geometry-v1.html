@@ -89,6 +89,16 @@
     .htw-keyword { color: #3D3D3A; }
     .htw-action { color: #3D3D3A; cursor: default; transition: color 80ms; }
     .htw-action:hover { color: #1a1a18; }
+    .htw-pulse { color: #3D3D3A !important; font-weight: bold; transition: color 2s ease-out, font-weight 2s ease-out; }
+
+    /* --- Canvas notes --- */
+    .canvas-note { position: fixed; z-index: 550; pointer-events: all; width: 200px; min-height: 60px; background: rgba(244,241,232,0.75); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 6px 10px 4px; display: flex; flex-direction: column; resize: both; overflow: hidden; cursor: grab; }
+    .canvas-note.dragging { cursor: grabbing; }
+    .canvas-note textarea { font-family: Georgia, serif; font-style: italic; font-size: 13px; color: #546A80; background: transparent; border: none; outline: none; width: 100%; flex: 1; min-height: 30px; resize: none; line-height: 1.5; }
+    .canvas-note textarea::placeholder { color: #546A80; opacity: 0.35; }
+    .canvas-note-close { position: absolute; top: 3px; right: 6px; font-family: Georgia, serif; font-size: 11px; color: #b0a090; cursor: default; transition: color 80ms; }
+    .canvas-note-close:hover { color: #546A80; }
+    .canvas-note.fading { transition: opacity 1s ease-out; opacity: 0; }
 
     /* --- Slider --- */
     .cw-slider-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
@@ -513,7 +523,7 @@ function playSound(type) {
 var operationLog = [];
 var points = new Map(), lines = new Map(), circles = new Map();
 var logicalSegments = new Map(), logicalArcs = new Map();
-var fills = new Map(), pointAnimations = new Map();
+var fills = new Map(), pointAnimations = new Map(), canvasNotes = new Map();
 
 function initLog() {
     operationLog = [{ op:'init', seed0:{x:-100,y:0}, seed1:{x:100,y:0} }];
@@ -526,7 +536,7 @@ function initLog() {
 function replayLog(animateNew) {
     var prev = new Map(pointAnimations);
     points.clear(); lines.clear(); circles.clear();
-    logicalSegments.clear(); logicalArcs.clear(); fills.clear(); pointAnimations.clear();
+    logicalSegments.clear(); logicalArcs.clear(); fills.clear(); pointAnimations.clear(); canvasNotes.clear();
     for (var i = 0; i < operationLog.length; i++) {
         var op = operationLog[i];
         if (op.op === 'init') {
@@ -563,8 +573,13 @@ function replayLog(animateNew) {
             else { var cir = circles.get(op.idx); if (cir) cir.isScaffold = op.value; }
         } else if (op.op === 'numbers') {
             showNumbers = op.value;
+        } else if (op.op === 'note_open') {
+            canvasNotes.set(op.noteId, { noteId: op.noteId, text: op.text, x: op.x, y: op.y, width: op.width, open: true });
+        } else if (op.op === 'note_close') {
+            var cn = canvasNotes.get(op.noteId); if (cn) cn.open = false;
         }
     }
+    syncCanvasNoteDOMs();
 }
 
 function _addPt(id, x, y, type, prev, animateNew) {
@@ -617,8 +632,108 @@ function regX(id, pt, prev, an) {
     });
 }
 
-function appendOp(op) { operationLog.push(op); replayLog(true); checkHtwTriggers(); }
+function appendOp(op) { operationLog.push(op); replayLog(true); checkHtwTriggers(); checkTipFadeThresholds(); }
 function undoOp() { if (operationLog.length <= 1) return; operationLog.pop(); replayLog(false); }
+
+// ============================================================
+// CANVAS NOTES
+// What:    Notes as operations in the log. Double-click empty space
+//          to place. note_open/note_close in operation log.
+// ============================================================
+
+var _noteCounter = 0;
+var _undoTimer = null; // 300ms delay to distinguish single click (undo) from double click (note)
+
+function syncCanvasNoteDOMs() {
+    // Remove note DOMs that are no longer in canvasNotes or are closed
+    document.querySelectorAll('.canvas-note').forEach(function(el) {
+        var nid = el.dataset.noteId;
+        var cn = canvasNotes.get(nid);
+        if (!cn || !cn.open) el.remove();
+    });
+    // Create/update DOMs for open notes
+    canvasNotes.forEach(function(cn) {
+        if (!cn.open) return;
+        var el = document.querySelector('.canvas-note[data-note-id="' + cn.noteId + '"]');
+        if (!el) {
+            el = createCanvasNoteDom(cn);
+            document.body.appendChild(el);
+        }
+        // Position from world coords
+        var s = w2s(cn.x, cn.y);
+        el.style.left = s.x + 'px';
+        el.style.top = s.y + 'px';
+        el.style.width = (cn.width * viewScale) + 'px';
+    });
+}
+
+function createCanvasNoteDom(cn) {
+    var el = document.createElement('div');
+    el.className = 'canvas-note';
+    el.dataset.noteId = cn.noteId;
+    var close = document.createElement('span');
+    close.className = 'canvas-note-close';
+    close.textContent = '\u00d7';
+    close.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeCanvasNote(cn.noteId);
+    });
+    var ta = document.createElement('textarea');
+    ta.placeholder = 'type a note...';
+    ta.value = cn.text || '';
+    ta.addEventListener('input', function() {
+        // Update the note_open op in the log with new text
+        for (var i = operationLog.length - 1; i >= 0; i--) {
+            if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
+                operationLog[i].text = ta.value;
+                cn.text = ta.value;
+                break;
+            }
+        }
+    });
+    // Drag via the note container (not textarea)
+    var dragging = false, sx, sy, ox, oy;
+    el.addEventListener('pointerdown', function(e) {
+        if (e.target === ta || e.target === close) return;
+        e.preventDefault(); e.stopPropagation();
+        dragging = true; sx = e.clientX; sy = e.clientY;
+        ox = parseInt(el.style.left) || 0; oy = parseInt(el.style.top) || 0;
+        el.classList.add('dragging'); el.setPointerCapture(e.pointerId);
+    });
+    el.addEventListener('pointermove', function(e) {
+        if (!dragging) return;
+        el.style.left = (ox + e.clientX - sx) + 'px';
+        el.style.top = (oy + e.clientY - sy) + 'px';
+        // Update world coords in the op
+        var wc = s2w(parseInt(el.style.left), parseInt(el.style.top));
+        cn.x = wc.x; cn.y = wc.y;
+        for (var i = operationLog.length - 1; i >= 0; i--) {
+            if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
+                operationLog[i].x = wc.x; operationLog[i].y = wc.y;
+                break;
+            }
+        }
+    });
+    el.addEventListener('pointerup', function() { dragging = false; el.classList.remove('dragging'); });
+    el.appendChild(close);
+    el.appendChild(ta);
+    return el;
+}
+
+function placeCanvasNote(screenX, screenY) {
+    var world = s2w(screenX, screenY);
+    var noteId = 'n:' + (_noteCounter++);
+    appendOp({ op: 'note_open', noteId: noteId, text: '', x: world.x, y: world.y, width: 200 / viewScale });
+    // Focus the textarea
+    setTimeout(function() {
+        var el = document.querySelector('.canvas-note[data-note-id="' + noteId + '"] textarea');
+        if (el) el.focus();
+    }, 50);
+}
+
+function closeCanvasNote(noteId) {
+    appendOp({ op: 'note_close', noteId: noteId });
+}
 function newConstruction() {
     operationLog = [{ op:'init', seed0:{x:-100,y:0}, seed1:{x:100,y:0} }];
     replayLog(false);
@@ -799,17 +914,59 @@ function commitSaveConstruction(note) {
     });
 }
 
+var UNIQUENESS_COMPARISONS = [
+    { min: 13,  text: 'more than all the grains of sand on every beach on Earth' },
+    { min: 20,  text: 'more than all the drops of water in all the oceans' },
+    { min: 50,  text: 'more than all the atoms in the Earth' },
+    { min: 80,  text: 'more than all the atoms in the universe' },
+    { min: 120, text: 'more than all the atoms in a billion universes' }
+];
+
+function computeUniqueness(p) {
+    var pairs = p * (p - 1) / 2;
+    var log10 = pairs * Math.log10(2);
+    var exponent = Math.floor(log10);
+    var mantissa = Math.pow(10, log10 - exponent);
+    return { mantissa: Math.round(mantissa * 10) / 10, exponent: exponent };
+}
+
+function superscript(n) {
+    var digits = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+    return String(n).split('').map(function(d) { return digits[parseInt(d)] || d; }).join('');
+}
+
 function showUniquenessObservation() {
     var nPts = points.size, nLines = lines.size, nCircles = circles.size;
-    var tmpl = (CONTENT && CONTENT.uniqueness) || 'You\u2019ve made {points} points, {lines} lines, and {circles} circles. With those, there are more possible arrangements than atoms in the universe. The one you just made \u2014 no one has made that before.';
-    var text = tmpl.replace('{points}', nPts).replace('{lines}', nLines).replace('{circles}', nCircles);
-    // Use the HTW canvas tip window
+    var u = computeUniqueness(nPts);
+
+    // Find comparison
+    var comparison = '';
+    for (var i = UNIQUENESS_COMPARISONS.length - 1; i >= 0; i--) {
+        if (u.exponent >= UNIQUENESS_COMPARISONS[i].min) { comparison = UNIQUENESS_COMPARISONS[i].text; break; }
+    }
+    if (!comparison) return; // exponent < 13, don't show
+
     var bodyEl = document.getElementById('htw-canvas-body');
     bodyEl.innerHTML = '';
-    var p = document.createElement('p');
-    p.className = 'htw-para';
-    p.textContent = text;
-    bodyEl.appendChild(p);
+
+    // Line 1: counts
+    var p1 = document.createElement('p'); p1.className = 'htw-para';
+    p1.textContent = 'You made ' + nPts + ' points, ' + nLines + ' line' + (nLines !== 1 ? 's' : '') + ', and ' + nCircles + ' circle' + (nCircles !== 1 ? 's' : '') + '.';
+    bodyEl.appendChild(p1);
+
+    bodyEl.appendChild(document.createElement('br'));
+
+    // Line 2: scientific notation + comparison
+    var p2 = document.createElement('p'); p2.className = 'htw-para';
+    p2.textContent = 'With those points alone, there are ' + u.mantissa + ' \u00d7 10' + superscript(u.exponent) + ' possible arrangements \u2014 ' + comparison + '.';
+    bodyEl.appendChild(p2);
+
+    bodyEl.appendChild(document.createElement('br'));
+
+    // Line 3: the clincher
+    var p3 = document.createElement('p'); p3.className = 'htw-para';
+    p3.textContent = 'The one you just made \u2014 no one has made that before.';
+    bodyEl.appendChild(p3);
     htwActiveStageIdx = -1;
     var el = document.getElementById('htw-canvas');
     if (htwLastPos) {
@@ -1039,7 +1196,7 @@ function doSaveConstruction(name, note) {
         URL.revokeObjectURL(url);
         if (document.getElementById('tool-constructions').style.display !== 'none') buildCxExampleThumbs();
         toast('saved');
-        if (points.size >= 15) setTimeout(showUniquenessObservation, 800);
+        if (points.size >= 10) setTimeout(showUniquenessObservation, 800);
     });
 }
 
@@ -1056,7 +1213,7 @@ function doSaveImage(name, note, isShare, noteScreenPos) {
             URL.revokeObjectURL(url);
             if (isShare) toast('Sharing not available on this browser \u2014 image downloaded instead');
         }
-        if (points.size >= 15) setTimeout(showUniquenessObservation, 800);
+        if (points.size >= 10) setTimeout(showUniquenessObservation, 800);
     });
 }
 
@@ -1341,6 +1498,30 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
         }
     }
     oc.globalAlpha = 1;
+
+    // Render open canvas notes into the export
+    var cNoteFontPx = 38, cNoteLineH = cNoteFontPx * 1.5;
+    canvasNotes.forEach(function(cn) {
+        if (!cn.open || !cn.text) return;
+        var nPos = wp(cn.x, cn.y);
+        var nWrapW = cn.width * s;
+        oc.fillStyle = '#546A80';
+        oc.font = 'italic ' + cNoteFontPx + 'px Georgia, serif';
+        oc.textBaseline = 'top';
+        var nLines = cn.text.split('\n');
+        var ty = nPos.y;
+        nLines.forEach(function(rl) {
+            if (rl.trim() === '') { ty += cNoteLineH * 0.5; return; }
+            var words = rl.split(' '), cur = '';
+            words.forEach(function(w) {
+                var test = cur ? cur + ' ' + w : w;
+                if (oc.measureText(test).width > nWrapW && cur) {
+                    oc.fillText(cur, nPos.x, ty); ty += cNoteLineH; cur = w;
+                } else { cur = test; }
+            });
+            if (cur) { oc.fillText(cur, nPos.x, ty); ty += cNoteLineH; }
+        });
+    });
 
     // Convert to blob, patch DPI to 300, then call back
     off.toBlob(function(blob) {
@@ -2591,8 +2772,17 @@ function onUp(e) {
         if (isTap) {
             if (tryPaletteAction(world.x, world.y)) return;
             if (hitAnyLine(world.x,world.y)) return;
-            if (now-lastTapTime < THRESHOLDS.doubleClickTime) { if (confirm('Start a new construction?')) newConstruction(); lastTapTime=0; }
-            else { undoOp(); lastTapTime=now; }
+            if (now-lastTapTime < THRESHOLDS.doubleClickTime) {
+                // Double-click empty space: place a note
+                if (_undoTimer) { clearTimeout(_undoTimer); _undoTimer = null; }
+                placeCanvasNote(pos.x, pos.y);
+                lastTapTime=0;
+            } else {
+                // Single click: delay undo to distinguish from double-click
+                lastTapTime=now;
+                var savedPos = { x: pos.x, y: pos.y };
+                _undoTimer = setTimeout(function() { _undoTimer = null; undoOp(); }, 310);
+            }
         }
         return;
     }
@@ -3113,7 +3303,7 @@ var CX_BUILTINS = [
 ];
 
 // Tiered playback delays (ms) by op type
-var CX_DELAYS = { init:0, line:800, circle:900, emphasize:500, deemphasize:300, fill:600, repaint_fill:500, dissolve_fill:300, scaffold:400 };
+var CX_DELAYS = { init:0, line:800, circle:900, emphasize:500, deemphasize:300, fill:600, repaint_fill:500, dissolve_fill:300, scaffold:400, note_open:500, note_close:300 };
 function cxDelay(op) { return CX_DELAYS[op.op] !== undefined ? CX_DELAYS[op.op] : 500; }
 
 var cxState = {
@@ -4250,6 +4440,59 @@ function checkHtwTriggers() {
             openHtwOnCanvas(s.id); break;
         }
     }
+}
+
+// Competence thresholds: auto-fade tip window when child demonstrates understanding
+var _tipFadeFired = {};
+
+function checkTipFadeThresholds() {
+    if (htwActiveStageIdx < 0) return; // no tip window open
+    var stageId = HTW_STAGES[htwActiveStageIdx].id;
+    if (_tipFadeFired[stageId]) return;
+
+    var shouldFade = false;
+    if (stageId === 'construction') {
+        shouldFade = lines.size >= 2 && circles.size >= 2;
+    } else if (stageId === 'shapes') {
+        var fillCount = 0; fills.forEach(function(f) { if (!f.dissolved) fillCount++; });
+        shouldFade = fillCount >= 1;
+    } else if (stageId === 'color') {
+        var repaints = 0;
+        for (var i = 0; i < operationLog.length; i++) { if (operationLog[i].op === 'repaint_fill') repaints++; }
+        shouldFade = repaints >= 2;
+    } else if (stageId === 'eraser') {
+        var hasScaffold = false;
+        for (var i = 0; i < operationLog.length; i++) { if (operationLog[i].op === 'scaffold') { hasScaffold = true; break; } }
+        shouldFade = hasScaffold;
+    }
+
+    if (!shouldFade) return;
+    _tipFadeFired[stageId] = true;
+
+    // Fade out the tip window
+    var el = document.getElementById('htw-canvas');
+    if (!el || el.style.display === 'none') {
+        // Window already closed — just pulse the bullet
+        pulsePanelBullet(stageId);
+        return;
+    }
+    el.style.transition = 'opacity 2.5s ease-out';
+    el.style.opacity = '0';
+    pulsePanelBullet(stageId);
+    setTimeout(function() {
+        el.style.display = 'none';
+        el.style.transition = ''; el.style.opacity = '';
+        htwActiveStageIdx = -1;
+        var stage = HTW_STAGES.find(function(s) { return s.id === stageId; });
+        if (stage) htwMarkStageSeen(stage);
+    }, 2600);
+}
+
+function pulsePanelBullet(stageId) {
+    var item = document.querySelector('.htw-item[data-stage="' + stageId + '"]');
+    if (!item) return;
+    item.classList.add('htw-pulse');
+    setTimeout(function() { item.classList.remove('htw-pulse'); }, 2500);
 }
 
 function initHowThisWorks() {
