@@ -565,7 +565,9 @@ function replayLog(animateNew) {
         } else if (op.op === 'numbers') {
             showNumbers = op.value;
         } else if (op.op === 'note_open') {
-            canvasNotes.set(op.noteId, { noteId: op.noteId, text: op.text, x: op.x, y: op.y, width: op.width, open: true });
+            // width is stored in screen pixels; legacy logs may have world-coord values (< 100) — normalize
+            var noteW = (op.width && op.width >= 100) ? op.width : 200;
+            canvasNotes.set(op.noteId, { noteId: op.noteId, text: op.text, x: op.x, y: op.y, width: noteW, open: true });
         } else if (op.op === 'note_close') {
             var cn = canvasNotes.get(op.noteId); if (cn) cn.open = false;
         }
