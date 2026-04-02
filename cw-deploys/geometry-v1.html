@@ -92,7 +92,7 @@
     .htw-pulse { color: #3D3D3A !important; font-weight: bold; transition: color 2s ease-out, font-weight 2s ease-out; }
 
     /* --- Canvas notes --- */
-    .canvas-note { position: fixed; z-index: 550; pointer-events: all; width: 200px; min-height: 60px; background: rgba(244,241,232,0.75); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 6px 10px 4px; display: flex; flex-direction: column; resize: both; overflow: hidden; cursor: grab; }
+    .canvas-note { position: fixed; z-index: 550; pointer-events: all; width: 200px; min-height: 60px; background: rgba(244,241,232,0.75); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 6px 10px 4px; display: flex; flex-direction: column; resize: both; overflow: hidden; cursor: grab; user-select: none; touch-action: none; }
     .canvas-note.dragging { cursor: grabbing; }
     .canvas-note textarea { font-family: Georgia, serif; font-style: italic; font-size: 13px; color: #546A80; background: transparent; border: none; outline: none; width: 100%; flex: 1; min-height: 30px; resize: none; line-height: 1.5; }
     .canvas-note textarea::placeholder { color: #546A80; opacity: 0.35; }
@@ -199,12 +199,9 @@
     .cx-note-x:hover { color: #546A80; }
 
     /* --- Post-replay controls --- */
-    #cx-post-replay { position: fixed; top: 20px; left: 240px; z-index: 560; pointer-events: all; display: none; }
-    #cx-post-replay span { font-family: Georgia, serif; font-size: 13px; color: #b87333; cursor: default; transition: color 80ms; margin-right: 14px; }
-    #cx-post-replay span:hover { color: #8a5220; }
 
     /* --- Step-through replay controls --- */
-    #cx-step-controls { position: fixed; z-index: 560; pointer-events: all; user-select: none; background: rgba(244,241,232,0.88); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 8px 14px 6px; cursor: grab; touch-action: none; }
+    #cx-step-controls { position: fixed; z-index: 560; pointer-events: all; user-select: none; background: rgba(244,241,232,0.96); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 8px 14px 6px; cursor: grab; touch-action: none; }
     #cx-step-controls.dragging { cursor: grabbing; }
     .cx-step-arrows { display: flex; gap: 18px; justify-content: center; margin-bottom: 4px; }
     .cx-step-arrow { font-family: Georgia, serif; font-size: 16px; color: #546A80; cursor: default; transition: color 80ms; }
@@ -323,11 +320,6 @@
   <span class="cx-card-show" id="cx-card-show">Show me how this was done</span>
 </div>
 
-<!-- Post-replay controls (old auto-playback) -->
-<div id="cx-post-replay">
-  <span id="cx-replay-close">close</span><span id="cx-replay-repeat">repeat</span>
-</div>
-
 <!-- Step-through replay controls -->
 <div id="cx-step-controls" style="display:none;">
   <div class="cx-step-arrows">
@@ -341,9 +333,8 @@
 
 <!-- WIP dialog (save before clearing) -->
 <div id="cx-wip-dialog" style="display:none;">
-  <span class="cx-wip-option" id="cx-wip-prompt" style="color:#b0a090;margin-right:8px;">Save first?</span>
-  <span class="cx-wip-option" id="cx-wip-save">Yes</span>
-  <span class="cx-wip-option" id="cx-wip-start-over">No</span>
+  <span class="cx-wip-option" id="cx-wip-save">Save</span>
+  <span class="cx-wip-option" id="cx-wip-start-over">Discard</span>
   <span class="cx-wip-option" id="cx-wip-cancel">Cancel</span>
 </div>
 
@@ -645,18 +636,27 @@ var _noteCounter = 0;
 var _undoTimer = null; // 300ms delay to distinguish single click (undo) from double click (note)
 
 function syncCanvasNoteDOMs() {
+    var inReplay = isStepThroughActive();
     // Remove note DOMs that are no longer in canvasNotes or are closed
     document.querySelectorAll('.canvas-note').forEach(function(el) {
         var nid = el.dataset.noteId;
         var cn = canvasNotes.get(nid);
-        if (!cn || !cn.open) el.remove();
+        if (!cn || !cn.open) {
+            if (inReplay && cn && !cn.open && !el.classList.contains('fading')) {
+                // Fade out over ~1 second during replay
+                el.classList.add('fading');
+                setTimeout(function() { el.remove(); }, 1050);
+            } else if (!el.classList.contains('fading')) {
+                el.remove();
+            }
+        }
     });
     // Create/update DOMs for open notes
     canvasNotes.forEach(function(cn) {
         if (!cn.open) return;
         var el = document.querySelector('.canvas-note[data-note-id="' + cn.noteId + '"]');
         if (!el) {
-            el = createCanvasNoteDom(cn);
+            el = createCanvasNoteDom(cn, inReplay);
             document.body.appendChild(el);
         }
         // Position from world coords, scale text with box
@@ -670,10 +670,11 @@ function syncCanvasNoteDOMs() {
     });
 }
 
-function createCanvasNoteDom(cn) {
+function createCanvasNoteDom(cn, readOnly) {
     var el = document.createElement('div');
     el.className = 'canvas-note';
     el.dataset.noteId = cn.noteId;
+    el.style.touchAction = 'none';
     var close = document.createElement('span');
     close.className = 'canvas-note-close';
     close.textContent = '\u00d7';
@@ -681,23 +682,47 @@ function createCanvasNoteDom(cn) {
         e.stopPropagation();
         closeCanvasNote(cn.noteId);
     });
-    var ta = document.createElement('textarea');
-    ta.placeholder = 'type a note...';
-    ta.value = cn.text || '';
-    ta.addEventListener('input', function() {
-        // Update the note_open op in the log with new text
-        for (var i = operationLog.length - 1; i >= 0; i--) {
-            if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
-                operationLog[i].text = ta.value;
-                cn.text = ta.value;
-                break;
+    if (readOnly) {
+        // During replay: show text as non-editable div
+        var textDiv = document.createElement('div');
+        textDiv.style.cssText = 'font-family:Georgia,serif;font-style:italic;font-size:13px;color:#546A80;white-space:pre-wrap;line-height:1.5;min-height:30px;';
+        textDiv.textContent = cn.text || '';
+        el.appendChild(close);
+        el.appendChild(textDiv);
+    } else {
+        var ta = document.createElement('textarea');
+        ta.placeholder = 'type a note...';
+        ta.value = cn.text || '';
+        ta.addEventListener('input', function() {
+            // Update the note_open op in the log with new text
+            for (var i = operationLog.length - 1; i >= 0; i--) {
+                if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
+                    operationLog[i].text = ta.value;
+                    cn.text = ta.value;
+                    break;
+                }
             }
+        });
+        el.appendChild(close);
+        el.appendChild(ta);
+        // Resize observer: sync width changes to the operation log
+        if (typeof ResizeObserver !== 'undefined') {
+            new ResizeObserver(function() {
+                var newW = el.offsetWidth / viewScale;
+                cn.width = newW;
+                for (var i = operationLog.length - 1; i >= 0; i--) {
+                    if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
+                        operationLog[i].width = newW;
+                        break;
+                    }
+                }
+            }).observe(el);
         }
-    });
-    // Drag via the note container (not textarea)
+    }
+    // Drag via the note container (not textarea or close)
     var dragging = false, sx, sy, ox, oy;
     el.addEventListener('pointerdown', function(e) {
-        if (e.target === ta || e.target === close) return;
+        if (e.target.tagName === 'TEXTAREA' || e.target === close) return;
         e.preventDefault(); e.stopPropagation();
         dragging = true; sx = e.clientX; sy = e.clientY;
         ox = parseInt(el.style.left) || 0; oy = parseInt(el.style.top) || 0;
@@ -707,19 +732,19 @@ function createCanvasNoteDom(cn) {
         if (!dragging) return;
         el.style.left = (ox + e.clientX - sx) + 'px';
         el.style.top = (oy + e.clientY - sy) + 'px';
-        // Update world coords in the op
-        var wc = s2w(parseInt(el.style.left), parseInt(el.style.top));
-        cn.x = wc.x; cn.y = wc.y;
-        for (var i = operationLog.length - 1; i >= 0; i--) {
-            if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
-                operationLog[i].x = wc.x; operationLog[i].y = wc.y;
-                break;
+        if (!readOnly) {
+            // Update world coords in the op
+            var wc = s2w(parseInt(el.style.left), parseInt(el.style.top));
+            cn.x = wc.x; cn.y = wc.y;
+            for (var i = operationLog.length - 1; i >= 0; i--) {
+                if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
+                    operationLog[i].x = wc.x; operationLog[i].y = wc.y;
+                    break;
+                }
             }
         }
     });
     el.addEventListener('pointerup', function() { dragging = false; el.classList.remove('dragging'); });
-    el.appendChild(close);
-    el.appendChild(ta);
     return el;
 }
 
@@ -743,10 +768,11 @@ function newConstruction() {
     viewX=0; viewY=0; viewScale=Math.min(window.innerWidth,window.innerHeight)/900;
     // Reset color to clear (bottle green)
     state.palette.selected = FOREST_GLASS;
-    // Close any note tip windows or step-through controls
+    // Close any note tip windows, step-through controls, and loaded notes
     var htwEl = document.getElementById('htw-canvas');
     if (htwEl && htwEl.style.display !== 'none') { htwEl.style.display = 'none'; htwActiveStageIdx = -1; }
     if (isStepThroughActive()) exitStepThrough();
+    dismissLoadedNote();
     // Reset interaction state
     interactionState = 'IDLE'; selectedPoint = null; firstTapPoint = null;
     ghostLineEnd = null; ghostCircle = null; snapTarget = null;
@@ -2778,6 +2804,7 @@ function onUp(e) {
             if (now-lastTapTime < THRESHOLDS.doubleClickTime) {
                 // Double-click empty space: place a note
                 if (_undoTimer) { clearTimeout(_undoTimer); _undoTimer = null; }
+                if (isStepThroughActive()) forkStepThrough();
                 placeCanvasNote(pos.x, pos.y);
                 lastTapTime=0;
             } else {
@@ -3295,7 +3322,7 @@ function buildWorkspacePalette() {
 //          DOM: #tool-constructions, #ghost-layer + all new cx- elements
 // Exposes: initConstructions(), openConstructions(), cxState,
 //          showPreviewCard(), closePreviewCard(),
-//          startPlayback(), stopPlayback()
+//          startStepThrough(), exitStepThrough()
 // ============================================================
 
 // Built-in starter constructions (thumbnails use SVG_CACHE inline renders)
@@ -3305,18 +3332,9 @@ var CX_BUILTINS = [
     { key:'_builtin_squares',  name:'Nested Squares',       svgFile:'geo_squares_nested.svg',   logFile:'models/logs/geo_squares_nested.json',   note:'' },
 ];
 
-// Tiered playback delays (ms) by op type
-var CX_DELAYS = { init:0, line:800, circle:900, emphasize:500, deemphasize:300, fill:600, repaint_fill:500, dissolve_fill:300, scaffold:400, note_open:500, note_close:300 };
-function cxDelay(op) { return CX_DELAYS[op.op] !== undefined ? CX_DELAYS[op.op] : 500; }
-
 var cxState = {
     ghostActive: false,
     ghostFile:   null,
-    playbackTimer: null,   // setTimeout handle (chained, not interval)
-    playing: false,
-    savedLog: null,
-    currentOps: null,      // ops array during playback
-    currentIdx: 0,
     previewEntry: null,    // entry shown in current preview card
 };
 
@@ -3347,20 +3365,6 @@ function initConstructions() {
     });
     // Preview card draggable
     makeCxCardDraggable();
-    // Post-replay buttons
-    document.getElementById('cx-replay-close').addEventListener('click', function() {
-        stopPlayback();
-        clearPostReplayControls();
-    });
-    document.getElementById('cx-replay-repeat').addEventListener('click', function() {
-        if (cxState.currentOps) {
-            // Don't call stopPlayback — savedLog must survive into startPlayback
-            if (cxState.playbackTimer) { clearTimeout(cxState.playbackTimer); cxState.playbackTimer = null; }
-            cxState.playing = false;
-            clearPostReplayControls();
-            startPlayback(cxState.currentOps);
-        }
-    });
     // Note box save / skip
     document.getElementById('cx-note-save').addEventListener('click', function() {
         commitSaveConstruction(document.getElementById('cx-note-textarea').value.trim());
@@ -3380,9 +3384,9 @@ function initConstructions() {
     makeCxNoteDraggable();
     // Constructions panel close
     document.getElementById('constructions-close').addEventListener('click', function() {
-        stopPlayback();
         clearGhost();
         closePreviewCard();
+        if (isStepThroughActive()) exitStepThrough();
         closePanelTool('constructions');
     });
     // Choose…
@@ -3631,79 +3635,6 @@ function makeCxCardDraggable() {
     document.addEventListener('mouseup', function(){ dragging=false; });
 }
 
-// --- Show Me: load from entry and play back ---
-function cxShowMeEntry(entry) {
-    if (cxState.playing) { stopPlayback(); return; }
-    if (entry.operations) {
-        startPlayback(entry.operations.slice());
-        return;
-    }
-    if (entry.logFile) {
-        fetch(entry.logFile)
-            .then(function(resp) { if (!resp.ok) throw new Error(); return resp.json(); })
-            .then(function(data) {
-                if (!data.operations || data.operations.length===0) throw new Error();
-                startPlayback(data.operations.slice());
-            })
-            .catch(function() { toast('log not ready yet'); });
-    }
-}
-
-// Tiered-delay chained playback
-// savedLog is preserved on repeat so the user's original work is always restored.
-function startPlayback(ops) {
-    if (!cxState.savedLog) cxState.savedLog = operationLog.slice();
-    cxState.currentOps = ops;
-    cxState.currentIdx = 1;
-    cxState.playing = true;
-    // Canonical view: reset to init op seeds, fit view
-    var initOp = ops[0];
-    operationLog = [initOp];
-    replayLog(false);
-    fitViewToConstruction();
-    cxScheduleNextOp();
-}
-
-function cxScheduleNextOp() {
-    if (!cxState.playing) return;
-    var ops = cxState.currentOps;
-    var i   = cxState.currentIdx;
-    if (i >= ops.length) {
-        // Playback complete — show post-replay controls
-        cxState.playing = false;
-        cxState.playbackTimer = null;
-        showPostReplayControls();
-        return;
-    }
-    var op = ops[i];
-    var delay = cxDelay(op);
-    cxState.playbackTimer = setTimeout(function() {
-        if (!cxState.playing) return;
-        appendOp(op);
-        cxState.currentIdx++;
-        cxScheduleNextOp();
-    }, delay);
-}
-
-function stopPlayback() {
-    if (cxState.playbackTimer) { clearTimeout(cxState.playbackTimer); cxState.playbackTimer = null; }
-    cxState.playing = false;
-    clearPostReplayControls();
-    if (cxState.savedLog) {
-        operationLog = cxState.savedLog;
-        cxState.savedLog = null;
-        replayLog(false);
-        fitViewToConstruction();
-    }
-}
-
-function showPostReplayControls() {
-    document.getElementById('cx-post-replay').style.display = 'block';
-}
-function clearPostReplayControls() {
-    document.getElementById('cx-post-replay').style.display = 'none';
-}
-
 // ============================================================
 // STEP-THROUGH REPLAY
 // What:    Manual step-through of a construction. Child clicks → to
@@ -3822,8 +3753,7 @@ function computeStepGroups(ops) {
 
 function positionStepControls() {
     var el = document.getElementById('cx-step-controls');
-    var panelW = parseInt(leftPanel.style.width) || PANEL_BASE_WIDTH;
-    el.style.left = (panelW + 20) + 'px';
+    el.style.left = (window.innerWidth - 200) + 'px';
     el.style.top = '20px';
 }
 
@@ -3837,9 +3767,8 @@ function hideStepControls() {
     document.getElementById('cx-step-controls').style.display = 'none';
 }
 
-function startStepThrough(ops, viewport) {
+function startStepThrough(ops) {
     if (stepState.active) exitStepThrough();
-    if (cxState.playing) stopPlayback();
 
     stepState.active = true;
     stepState.ops = ops;
@@ -3850,17 +3779,14 @@ function startStepThrough(ops, viewport) {
     operationLog = [ops[0]];
     replayLog(false);
 
-    // Restore viewport if saved, otherwise use default
-    if (viewport && viewport.viewScale) {
-        viewX = viewport.viewX; viewY = viewport.viewY; viewScale = viewport.viewScale;
-    } else {
-        viewX = 0; viewY = 0; viewScale = Math.min(window.innerWidth, window.innerHeight) / 900;
-    }
+    // Always use default viewport — do not restore saved zoom
+    viewX = 0; viewY = 0; viewScale = Math.min(window.innerWidth, window.innerHeight) / 900;
 
     // Show the first step immediately (don't start with blank canvas)
     if (stepState.stepBounds.length > 1) {
         var group = stepState.stepBounds[1];
-        for (var i = group.start; i < group.end; i++) appendOp(ops[i]);
+        for (var i = group.start; i < group.end; i++) operationLog.push(ops[i]);
+        replayLog(false);
         stepState.currentStep = 1;
     }
 
@@ -3912,6 +3838,7 @@ function exitStepThrough() {
     stepState.stepBounds = [];
     stepState.currentStep = 0;
     hideStepControls();
+    dismissLoadedNote();
 }
 
 // Fork: child takes over during replay
@@ -3922,6 +3849,7 @@ function forkStepThrough() {
     stepState.ops = null;
     stepState.stepBounds = [];
     hideStepControls();
+    dismissLoadedNote();
 }
 
 // Check for work in progress, show dialog if needed, then call callback
@@ -3938,40 +3866,68 @@ function checkWipThen(callback) {
 // Load a construction entry into step-through, checking WIP first
 function showLoadedNote(entry) {
     if (!entry.note) return;
-    var bodyEl = document.getElementById('htw-canvas-body');
-    bodyEl.innerHTML = '';
+    dismissLoadedNote(); // remove any previous loaded note
+    var el = document.createElement('div');
+    el.id = 'loaded-note';
+    el.style.cssText = 'position:fixed;z-index:550;pointer-events:all;min-width:140px;max-width:300px;' +
+        'background:rgba(244,241,232,0.75);border:0.5px solid #c8b89a;border-radius:6px;' +
+        'padding:8px 12px 6px;font:13px Georgia,serif;color:#546A80;user-select:none;touch-action:none;cursor:grab;';
+    // Title
     if (entry.name) {
-        var h = document.createElement('p');
-        h.className = 'htw-para';
-        h.style.fontWeight = 'normal'; h.style.color = '#3D3D3A';
+        var h = document.createElement('div');
+        h.style.cssText = 'font-style:normal;color:#3D3D3A;margin-bottom:4px;';
         h.textContent = entry.name;
-        bodyEl.appendChild(h);
+        el.appendChild(h);
     }
-    var p = document.createElement('p');
-    p.className = 'htw-para';
-    p.style.fontStyle = 'italic';
-    p.textContent = entry.note;
-    bodyEl.appendChild(p);
-    htwActiveStageIdx = -1;
-    var el = document.getElementById('htw-canvas');
+    // Note body
+    var body = document.createElement('div');
+    body.style.cssText = 'font-style:italic;white-space:pre-wrap;line-height:1.5;';
+    body.textContent = entry.note;
+    el.appendChild(body);
+    // Close button
+    var close = document.createElement('span');
+    close.textContent = '\u00d7';
+    close.style.cssText = 'position:absolute;top:3px;right:6px;cursor:default;font-size:14px;color:#546A80;';
+    close.addEventListener('click', function(e) { e.stopPropagation(); dismissLoadedNote(); });
+    el.appendChild(close);
+    // Position
     if (entry.notePos) {
         el.style.left = entry.notePos.left + 'px'; el.style.top = entry.notePos.top + 'px';
     } else {
-        el.style.left = '260px'; el.style.top = '60px';
+        el.style.left = (window.innerWidth - 320) + 'px'; el.style.top = '60px';
     }
-    el.style.opacity = '0'; el.style.display = '';
+    // Draggable
+    var dragging = false, sx, sy, ox, oy;
+    el.addEventListener('pointerdown', function(e) {
+        if (e.target === close) return;
+        e.preventDefault(); dragging = true; sx = e.clientX; sy = e.clientY;
+        ox = parseInt(el.style.left) || 0; oy = parseInt(el.style.top) || 0;
+        el.style.cursor = 'grabbing'; el.setPointerCapture(e.pointerId);
+    });
+    el.addEventListener('pointermove', function(e) {
+        if (!dragging) return;
+        el.style.left = (ox + e.clientX - sx) + 'px'; el.style.top = (oy + e.clientY - sy) + 'px';
+    });
+    el.addEventListener('pointerup', function() { dragging = false; el.style.cursor = 'grab'; });
+    document.body.appendChild(el);
+    // Fade in
+    el.style.opacity = '0';
     requestAnimationFrame(function() {
         el.style.transition = 'opacity 200ms ease-in'; el.style.opacity = '1';
         setTimeout(function() { el.style.transition = ''; }, 220);
     });
 }
 
+function dismissLoadedNote() {
+    var el = document.getElementById('loaded-note');
+    if (el) el.remove();
+}
+
 function loadConstructionEntry(entry) {
-    var vp = entry.viewport || null;
     function doLoad(ops) {
         // No WIP check here — the Open flow already handled it before showing the picker
         newConstruction();
-        startStepThrough(ops, vp);
+        startStepThrough(ops);
         if (entry.note) showLoadedNote(entry);
     }
     if (entry.operations) {
@@ -3983,7 +3939,6 @@ function loadConstructionEntry(entry) {
             .then(function(resp) { if (!resp.ok) throw new Error(); return resp.json(); })
             .then(function(data) {
                 if (!data.operations || data.operations.length === 0) throw new Error();
-                vp = data.viewport || vp;
                 doLoad(data.operations.slice());
             })
             .catch(function() { toast('could not load construction'); });
