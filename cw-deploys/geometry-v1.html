@@ -342,6 +342,7 @@
 <div id="cx-cancel-dialog" style="display:none;">
   <span class="cx-wip-option" id="cx-cancel-start-over">Start over</span>
   <span class="cx-wip-option" id="cx-cancel-continue">Continue from here</span>
+  <span class="cx-wip-option" id="cx-cancel-dismiss">Cancel</span>
 </div>
 
 <!-- Save type dialog -->
@@ -2312,18 +2313,23 @@ animate();
 // ============================================================
 
 function hitPt(wx,wy) {
-    var t=THRESHOLDS.pointHitRadius/viewScale, found=null;
-    points.forEach(function(p) { if (dist(wx,wy,p.x,p.y)<t) found=p; });
+    var t=THRESHOLDS.pointHitRadius/viewScale, tFade=t*0.5, found=null;
+    points.forEach(function(p) {
+        var r = p.isScaffold ? tFade : t;
+        if (dist(wx,wy,p.x,p.y)<r) found=p;
+    });
     return found;
 }
 
 function hitLC(wx,wy) {
     var cT=THRESHOLDS.circleHitRadius/viewScale, sT=THRESHOLDS.lineHitRadius/viewScale;
+    var cTf=cT*0.5, sTf=sT*0.5; // halved thresholds for faded (scaffold) elements
     var bA=null, bAd=Infinity;
     logicalArcs.forEach(function(arc) {
         var ci=circles.get(arc.circIdx),ce=points.get(ci.centerId);
+        var thresh = ci.isScaffold ? cTf : cT;
         var d=Math.abs(dist(wx,wy,ce.x,ce.y)-ci.radius);
-        if (d>=cT||d>=bAd) return;
+        if (d>=thresh||d>=bAd) return;
         var pA=points.get(arc.pointAId),pB=points.get(arc.pointBId);
         if (angleBetween(getAngle(wx,wy,ce),getAngle(pA.x,pA.y,ce),getAngle(pB.x,pB.y,ce))) { bA=arc; bAd=d; }
     });
@@ -2332,29 +2338,33 @@ function hitLC(wx,wy) {
     circles.forEach(function(ci) {
         if (ci.pointsOnCircle.length>=2) return;
         var ce=points.get(ci.centerId);
+        var thresh = ci.isScaffold ? cTf : cT;
         var d=Math.abs(dist(wx,wy,ce.x,ce.y)-ci.radius);
-        if (d<cT&&d<bCd) { bC=ci; bCd=d; }
+        if (d<thresh&&d<bCd) { bC=ci; bCd=d; }
     });
     if (bC) return { type:'circle', obj:bC };
     var bS=null, bSd=Infinity;
     logicalSegments.forEach(function(seg) {
+        var parentLine = lines.get(seg.lineIdx);
+        var thresh = (parentLine && parentLine.isScaffold) ? sTf : sT;
         var A=points.get(seg.pointAId),B=points.get(seg.pointBId);
         var cx=B.x-A.x,cy=B.y-A.y,lq=cx*cx+cy*cy; if (!lq) return;
         var pv=Math.max(0,Math.min(1,((wx-A.x)*cx+(wy-A.y)*cy)/lq));
         var d=dist(wx,wy,A.x+pv*cx,A.y+pv*cy);
-        if (d<sT&&d<bSd) { bS=seg; bSd=d; }
+        if (d<thresh&&d<bSd) { bS=seg; bSd=d; }
     });
     if (bS) return { type:'segment', obj:bS };
     return null;
 }
 
 function hitAnyLine(wx,wy) {
-    var t=THRESHOLDS.lineHitRadius/viewScale, found=false;
+    var t=THRESHOLDS.lineHitRadius/viewScale, tFade=t*0.5, found=false;
     lines.forEach(function(l) {
+        var thresh = l.isScaffold ? tFade : t;
         var p1=points.get(l.p1Id),p2=points.get(l.p2Id);
         var dx=p2.x-p1.x,dy=p2.y-p1.y,lq=dx*dx+dy*dy; if (!lq) return;
         var tv=((wx-p1.x)*dx+(wy-p1.y)*dy)/lq;
-        if (dist(wx,wy,p1.x+tv*dx,p1.y+tv*dy)<t) found=true;
+        if (dist(wx,wy,p1.x+tv*dx,p1.y+tv*dy)<thresh) found=true;
     });
     return found;
 }
@@ -3453,6 +3463,9 @@ function initConstructions() {
         document.getElementById('cx-cancel-dialog').style.display = 'none';
         exitStepThrough();
     });
+    document.getElementById('cx-cancel-dismiss').addEventListener('click', function() {
+        document.getElementById('cx-cancel-dialog').style.display = 'none';
+    });
 
     // Save type dialog
     document.getElementById('save-type-construction').addEventListener('click', function() {
@@ -3754,7 +3767,8 @@ function computeStepGroups(ops) {
 
 function positionStepControls() {
     var el = document.getElementById('cx-step-controls');
-    el.style.left = (window.innerWidth - 200) + 'px';
+    var panelW = parseInt(leftPanel.style.width) || PANEL_BASE_WIDTH;
+    el.style.left = (panelW + 16) + 'px';
     el.style.top = '20px';
 }
 
@@ -4266,7 +4280,7 @@ function toast(msg) {
 // ============================================================
 
 var HTW_KEY = 'cw-htw-geometry-v1';  // base key; per-stage: HTW_KEY + '-' + stage.id
-var HTW_DEBUG_RESET = true;          // set false before releasing to users
+var HTW_DEBUG_RESET = false;
 
 var HTW_STAGES = [
     {
