@@ -92,12 +92,20 @@
     .htw-pulse { color: #3D3D3A !important; font-weight: bold; transition: color 2s ease-out, font-weight 2s ease-out; }
 
     /* --- Canvas notes --- */
-    .canvas-note { position: fixed; z-index: 550; pointer-events: all; width: 200px; min-height: 60px; background: rgba(244,241,232,0.75); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 6px 10px 4px; display: flex; flex-direction: column; resize: both; overflow: hidden; cursor: grab; user-select: none; touch-action: none; }
-    .canvas-note.dragging { cursor: grabbing; }
-    .canvas-note textarea { font-family: Georgia, serif; font-style: italic; font-size: 13px; color: #546A80; background: transparent; border: none; outline: none; width: 100%; flex: 1; min-height: 30px; resize: none; line-height: 1.5; }
-    .canvas-note textarea::placeholder { color: #546A80; opacity: 0.35; }
-    .canvas-note-close { position: absolute; top: 3px; right: 6px; font-family: Georgia, serif; font-size: 11px; color: #b0a090; cursor: default; transition: color 80ms; }
+    .canvas-note { position: fixed; z-index: 550; pointer-events: all; width: 200px; min-height: 60px; background: rgba(244,241,232,0.75); border: 0.5px solid #c8b89a; border-radius: 6px; display: flex; flex-direction: column; resize: both; overflow: hidden; user-select: none; touch-action: none; }
+    .canvas-note.dragging .cn-drag { cursor: grabbing; }
+    .cn-drag { height: 6px; background: rgba(200,184,154,0.4); border-radius: 6px 6px 0 0; cursor: grab; position: relative; flex-shrink: 0; }
+    .canvas-note-close { position: absolute; top: -1px; right: 4px; font-family: Georgia, serif; font-size: 11px; color: #b0a090; cursor: default; transition: color 80ms; z-index: 1; }
     .canvas-note-close:hover { color: #546A80; }
+    .cn-body { display: flex; flex: 1; min-height: 0; }
+    .cn-arrow { width: 20px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; border-right: 0.5px solid rgba(200,184,154,0.5); flex-shrink: 0; cursor: grab; touch-action: none; color: #546A80; opacity: 0.5; font-size: 11px; font-family: Georgia, serif; }
+    .cn-arrow.has-anchor { opacity: 0.25; }
+    .cn-text-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .canvas-note textarea { font-family: Georgia, serif; font-style: italic; font-size: 13px; color: #546A80; background: transparent; border: none; outline: none; width: 100%; flex: 1; min-height: 30px; resize: none; line-height: 1.5; padding: 4px 8px; }
+    .canvas-note textarea::placeholder { color: #546A80; opacity: 0.35; }
+    .cn-done { font-family: Georgia, serif; font-size: 11px; color: #546A80; cursor: default; text-align: right; padding: 2px 8px 4px; opacity: 0.6; flex-shrink: 0; }
+    .cn-done:hover { opacity: 1; }
+    .cn-text-display { font-family: Georgia, serif; font-style: italic; font-size: 13px; color: #546A80; white-space: pre-wrap; line-height: 1.5; min-height: 30px; padding: 4px 8px; }
     .canvas-note.fading { transition: opacity 1s ease-out; opacity: 0; }
 
     /* --- Slider --- */
@@ -527,6 +535,9 @@ function initLog() {
 
 function replayLog(animateNew) {
     var prev = new Map(pointAnimations);
+    // Preserve editing state across replay
+    var prevEditing = {};
+    canvasNotes.forEach(function(cn) { if (cn.editing) prevEditing[cn.noteId] = true; });
     points.clear(); lines.clear(); circles.clear();
     logicalSegments.clear(); logicalArcs.clear(); fills.clear(); pointAnimations.clear(); canvasNotes.clear();
     for (var i = 0; i < operationLog.length; i++) {
@@ -568,7 +579,9 @@ function replayLog(animateNew) {
         } else if (op.op === 'note_open') {
             // width is stored in screen pixels; legacy logs may have world-coord values (< 100) — normalize
             var noteW = (op.width && op.width >= 100) ? op.width : 200;
-            canvasNotes.set(op.noteId, { noteId: op.noteId, text: op.text, x: op.x, y: op.y, width: noteW, open: true });
+            var noteObj = { noteId: op.noteId, text: op.text, x: op.x, y: op.y, width: noteW, open: true, editing: !!prevEditing[op.noteId] };
+            if (op.anchorX !== undefined && op.anchorY !== undefined) { noteObj.anchorX = op.anchorX; noteObj.anchorY = op.anchorY; }
+            canvasNotes.set(op.noteId, noteObj);
         } else if (op.op === 'note_close') {
             var cn = canvasNotes.get(op.noteId); if (cn) cn.open = false;
         }
@@ -670,92 +683,184 @@ function syncCanvasNoteDOMs() {
     });
 }
 
+function _updateNoteOp(cn, fields) {
+    for (var i = operationLog.length - 1; i >= 0; i--) {
+        if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
+            for (var k in fields) { operationLog[i][k] = fields[k]; cn[k] = fields[k]; }
+            return;
+        }
+    }
+}
+
+function _finalizeNote(cn, el) {
+    if (!cn.editing) return;
+    cn.editing = false;
+    var ta = el.querySelector('textarea');
+    if (!ta) return;
+    var textDiv = document.createElement('div');
+    textDiv.className = 'cn-text-display';
+    textDiv.textContent = ta.value || '';
+    ta.parentNode.replaceChild(textDiv, ta);
+    var done = el.querySelector('.cn-done');
+    if (done) done.remove();
+}
+
+function _finalizeAllEditingNotes() {
+    canvasNotes.forEach(function(cn) {
+        if (!cn.editing) return;
+        var el = document.querySelector('.canvas-note[data-note-id="' + cn.noteId + '"]');
+        if (el) _finalizeNote(cn, el);
+    });
+}
+
 function createCanvasNoteDom(cn, readOnly) {
     var el = document.createElement('div');
     el.className = 'canvas-note';
     el.dataset.noteId = cn.noteId;
-    el.style.touchAction = 'none';
+
+    // Drag bar
+    var dragBar = document.createElement('div');
+    dragBar.className = 'cn-drag';
     var close = document.createElement('span');
     close.className = 'canvas-note-close';
     close.textContent = '\u00d7';
-    close.addEventListener('click', function(e) {
-        e.stopPropagation();
-        closeCanvasNote(cn.noteId);
-    });
+    close.addEventListener('click', function(e) { e.stopPropagation(); closeCanvasNote(cn.noteId); });
+    dragBar.appendChild(close);
+    el.appendChild(dragBar);
+
+    // Body: arrow cell + text area
+    var body = document.createElement('div');
+    body.className = 'cn-body';
+    var arrow = document.createElement('div');
+    arrow.className = 'cn-arrow' + (cn.anchorX !== undefined ? ' has-anchor' : '');
+    arrow.textContent = '\u25C1'; // ◁
+    body.appendChild(arrow);
+
+    var textWrap = document.createElement('div');
+    textWrap.className = 'cn-text-wrap';
+
     if (readOnly) {
-        // During replay: show text as non-editable div
         var textDiv = document.createElement('div');
-        textDiv.style.cssText = 'font-family:Georgia,serif;font-style:italic;font-size:13px;color:#546A80;white-space:pre-wrap;line-height:1.5;min-height:30px;';
+        textDiv.className = 'cn-text-display';
         textDiv.textContent = cn.text || '';
-        el.appendChild(close);
-        el.appendChild(textDiv);
-    } else {
+        textWrap.appendChild(textDiv);
+    } else if (cn.editing) {
         var ta = document.createElement('textarea');
         ta.placeholder = 'type a note...';
         ta.value = cn.text || '';
-        ta.addEventListener('input', function() {
-            // Update the note_open op in the log with new text
-            for (var i = operationLog.length - 1; i >= 0; i--) {
-                if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
-                    operationLog[i].text = ta.value;
-                    cn.text = ta.value;
-                    break;
-                }
-            }
-        });
-        el.appendChild(close);
-        el.appendChild(ta);
-        // Resize observer: sync width changes to the operation log
-        if (typeof ResizeObserver !== 'undefined') {
-            new ResizeObserver(function() {
-                var newW = el.offsetWidth;
-                cn.width = newW;
-                for (var i = operationLog.length - 1; i >= 0; i--) {
-                    if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
-                        operationLog[i].width = newW;
-                        break;
-                    }
-                }
-            }).observe(el);
-        }
+        ta.addEventListener('input', function() { _updateNoteOp(cn, { text: ta.value }); });
+        textWrap.appendChild(ta);
+        var done = document.createElement('div');
+        done.className = 'cn-done';
+        done.textContent = 'done';
+        done.addEventListener('click', function(e) { e.stopPropagation(); _finalizeNote(cn, el); });
+        textWrap.appendChild(done);
+    } else {
+        var textDiv = document.createElement('div');
+        textDiv.className = 'cn-text-display';
+        textDiv.textContent = cn.text || '';
+        textWrap.appendChild(textDiv);
     }
-    // Drag via the note container (not textarea or close)
+    body.appendChild(textWrap);
+    el.appendChild(body);
+
+    // Resize observer
+    if (!readOnly && typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(function() { _updateNoteOp(cn, { width: el.offsetWidth }); }).observe(el);
+    }
+
+    // Drag via the drag bar
     var dragging = false, sx, sy, ox, oy;
-    el.addEventListener('pointerdown', function(e) {
-        if (e.target.tagName === 'TEXTAREA' || e.target === close) return;
+    dragBar.addEventListener('pointerdown', function(e) {
+        if (e.target === close) return;
         e.preventDefault(); e.stopPropagation();
         dragging = true; sx = e.clientX; sy = e.clientY;
         ox = parseInt(el.style.left) || 0; oy = parseInt(el.style.top) || 0;
-        el.classList.add('dragging'); el.setPointerCapture(e.pointerId);
+        el.classList.add('dragging'); dragBar.setPointerCapture(e.pointerId);
     });
-    el.addEventListener('pointermove', function(e) {
+    dragBar.addEventListener('pointermove', function(e) {
         if (!dragging) return;
         el.style.left = (ox + e.clientX - sx) + 'px';
         el.style.top = (oy + e.clientY - sy) + 'px';
         if (!readOnly) {
-            // Update world coords in the op
             var wc = s2w(parseInt(el.style.left), parseInt(el.style.top));
-            cn.x = wc.x; cn.y = wc.y;
-            for (var i = operationLog.length - 1; i >= 0; i--) {
-                if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
-                    operationLog[i].x = wc.x; operationLog[i].y = wc.y;
-                    break;
-                }
-            }
+            _updateNoteOp(cn, { x: wc.x, y: wc.y });
         }
     });
-    el.addEventListener('pointerup', function() { dragging = false; el.classList.remove('dragging'); });
+    dragBar.addEventListener('pointerup', function() { dragging = false; el.classList.remove('dragging'); });
+
+    // Callout line: drag from arrow cell to place/reposition anchor
+    if (!readOnly) {
+        var anchorDragging = false;
+        arrow.addEventListener('pointerdown', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            anchorDragging = true;
+            cn._anchorDragScreen = { x: e.clientX, y: e.clientY };
+            arrow.setPointerCapture(e.pointerId);
+        });
+        arrow.addEventListener('pointermove', function(e) {
+            if (!anchorDragging) return;
+            cn._anchorDragScreen = { x: e.clientX, y: e.clientY };
+        });
+        arrow.addEventListener('pointerup', function(e) {
+            if (!anchorDragging) return;
+            anchorDragging = false;
+            delete cn._anchorDragScreen;
+            var aw = s2w(e.clientX, e.clientY);
+            // If dropped close to the note box, remove the anchor
+            var noteScreen = w2s(cn.x, cn.y);
+            var dFromNote = Math.sqrt(Math.pow(e.clientX - noteScreen.x, 2) + Math.pow(e.clientY - noteScreen.y, 2));
+            if (dFromNote < 30) {
+                _updateNoteOp(cn, {});
+                delete cn.anchorX; delete cn.anchorY;
+                for (var i = operationLog.length - 1; i >= 0; i--) {
+                    if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
+                        delete operationLog[i].anchorX; delete operationLog[i].anchorY;
+                        break;
+                    }
+                }
+                arrow.classList.remove('has-anchor');
+            } else {
+                _updateNoteOp(cn, { anchorX: aw.x, anchorY: aw.y });
+                arrow.classList.add('has-anchor');
+            }
+        });
+    }
+
+    // Click outside to finalize editing
+    if (!readOnly && cn.editing) {
+        setTimeout(function() {
+            function onClickOutside(e) {
+                if (!cn.editing) { document.removeEventListener('pointerdown', onClickOutside, true); return; }
+                if (el.contains(e.target)) return;
+                _finalizeNote(cn, el);
+                document.removeEventListener('pointerdown', onClickOutside, true);
+            }
+            document.addEventListener('pointerdown', onClickOutside, true);
+        }, 100);
+    }
+
     return el;
 }
 
 function placeCanvasNote(screenX, screenY) {
+    _finalizeAllEditingNotes();
     var world = s2w(screenX, screenY);
     var noteId = 'n:' + (_noteCounter++);
+    // The note starts in editing mode; replayLog will set editing:false, so we set it after
     appendOp({ op: 'note_open', noteId: noteId, text: '', x: world.x, y: world.y, width: 200 });
-    // Focus the textarea
+    var cn = canvasNotes.get(noteId);
+    if (cn) cn.editing = true;
+    // Recreate the DOM in editing mode
+    var oldEl = document.querySelector('.canvas-note[data-note-id="' + noteId + '"]');
+    if (oldEl) oldEl.remove();
+    var el = createCanvasNoteDom(cn, false);
+    document.body.appendChild(el);
+    var s = w2s(cn.x, cn.y);
+    el.style.left = s.x + 'px'; el.style.top = s.y + 'px'; el.style.width = cn.width + 'px';
     setTimeout(function() {
-        var el = document.querySelector('.canvas-note[data-note-id="' + noteId + '"] textarea');
-        if (el) el.focus();
+        var ta = el.querySelector('textarea');
+        if (ta) ta.focus();
     }, 50);
 }
 
@@ -2181,6 +2286,58 @@ function render() {
             ctx.beginPath(); ctx.arc(s.x,s.y,r*2,0,Math.PI*2); ctx.fill();
         }
         ctx.globalAlpha = 1;
+    });
+
+    // Draw callout lines from canvas notes to their anchor points
+    canvasNotes.forEach(function(cn) {
+        if (!cn.open) return;
+        var hasAnchor = cn.anchorX !== undefined && cn.anchorY !== undefined;
+        var isDragging = cn._anchorDragScreen !== undefined;
+        if (!hasAnchor && !isDragging) return;
+
+        // Note box screen position and size
+        var noteEl = document.querySelector('.canvas-note[data-note-id="' + cn.noteId + '"]');
+        var noteS = w2s(cn.x, cn.y);
+        var boxW = cn.width || 200, boxH = (noteEl ? noteEl.offsetHeight : 60);
+        // Box rect in screen coords
+        var bx1 = noteS.x, by1 = noteS.y, bx2 = noteS.x + boxW, by2 = noteS.y + boxH;
+        var bCx = (bx1 + bx2) / 2, bCy = (by1 + by2) / 2;
+
+        // Anchor screen position
+        var ax, ay;
+        if (isDragging) {
+            ax = cn._anchorDragScreen.x; ay = cn._anchorDragScreen.y;
+        } else {
+            var as = w2s(cn.anchorX, cn.anchorY);
+            ax = as.x; ay = as.y;
+        }
+
+        // Find nearest edge point on box to the anchor
+        var dx = ax - bCx, dy = ay - bCy;
+        var absDx = Math.abs(dx), absDy = Math.abs(dy);
+        var ex, ey;
+        if (absDx < 1 && absDy < 1) return; // anchor at center of box
+        // Scale to box edge
+        var scaleX = absDx > 0 ? ((boxW / 2) / absDx) : Infinity;
+        var scaleY = absDy > 0 ? ((boxH / 2) / absDy) : Infinity;
+        var scale = Math.min(scaleX, scaleY);
+        ex = bCx + dx * scale; ey = bCy + dy * scale;
+
+        // Draw line
+        ctx.save();
+        ctx.strokeStyle = '#546A80'; ctx.globalAlpha = 0.6; ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(ax, ay); ctx.stroke();
+
+        // Arrowhead at anchor end
+        var angle = Math.atan2(ay - ey, ax - ex);
+        var aLen = 6;
+        ctx.fillStyle = '#546A80';
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(ax - aLen * Math.cos(angle - 0.4), ay - aLen * Math.sin(angle - 0.4));
+        ctx.lineTo(ax - aLen * Math.cos(angle + 0.4), ay - aLen * Math.sin(angle + 0.4));
+        ctx.closePath(); ctx.fill();
+        ctx.restore();
     });
 
     drawAxisLabels();
