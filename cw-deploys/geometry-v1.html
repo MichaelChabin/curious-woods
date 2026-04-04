@@ -2529,6 +2529,122 @@ function findSnap(cp,cr) {
 }
 
 // ============================================================
+// SEGMENT AUTO-COMPLETE
+// What:    When a clicked segment is not adjacent to any emphasized
+//          segment, BFS for the unique shortest path (≤6 segments)
+//          from the most recently emphasized segment. Returns array
+//          of keys to emphasize (including clicked), or null.
+// ============================================================
+
+function _segEndpoints(key) {
+    var seg = logicalSegments.get(key);
+    if (seg) return [seg.pointAId, seg.pointBId];
+    var arc = logicalArcs.get(key);
+    if (arc) return [arc.pointAId, arc.pointBId];
+    return null;
+}
+
+function _segIsEmphasized(key) {
+    var seg = logicalSegments.get(key);
+    if (seg) return seg.isEmphasized;
+    var arc = logicalArcs.get(key);
+    if (arc) return arc.isEmphasized;
+    return false;
+}
+
+function tryAutoComplete(clickedKey) {
+    var clickedPts = _segEndpoints(clickedKey);
+    if (!clickedPts) return null;
+
+    // Check if clicked segment is adjacent to any emphasized segment
+    var anyAdjacent = false;
+    var lastEmphasizedKey = null;
+    // Walk log backwards to find the most recently emphasized segment
+    for (var i = operationLog.length - 1; i >= 0; i--) {
+        var op = operationLog[i];
+        if (op.op === 'emphasize') {
+            if (_segIsEmphasized(op.key)) {
+                if (!lastEmphasizedKey) lastEmphasizedKey = op.key;
+                var pts = _segEndpoints(op.key);
+                if (pts && (pts.includes(clickedPts[0]) || pts.includes(clickedPts[1]))) {
+                    anyAdjacent = true;
+                    break;
+                }
+            }
+        }
+    }
+    if (anyAdjacent || !lastEmphasizedKey) return null;
+
+    // Build adjacency: for each segment/arc key, list of neighbor keys sharing an endpoint
+    var allKeys = [];
+    var ptToKeys = {}; // pointId → [key, ...]
+    logicalSegments.forEach(function(seg, k) {
+        allKeys.push(k);
+        [seg.pointAId, seg.pointBId].forEach(function(pid) {
+            if (!ptToKeys[pid]) ptToKeys[pid] = [];
+            ptToKeys[pid].push(k);
+        });
+    });
+    logicalArcs.forEach(function(arc, k) {
+        allKeys.push(k);
+        [arc.pointAId, arc.pointBId].forEach(function(pid) {
+            if (!ptToKeys[pid]) ptToKeys[pid] = [];
+            ptToKeys[pid].push(k);
+        });
+    });
+
+    function neighbors(key) {
+        var pts = _segEndpoints(key);
+        if (!pts) return [];
+        var nb = {};
+        pts.forEach(function(pid) {
+            (ptToKeys[pid] || []).forEach(function(k) { if (k !== key) nb[k] = true; });
+        });
+        return Object.keys(nb);
+    }
+
+    // BFS from lastEmphasizedKey to clickedKey, max 6 hops.
+    // Track visited-at-depth to allow multiple paths at the same depth (for ambiguity detection).
+    var MAX_LEN = 6;
+    var queue = [[lastEmphasizedKey]];
+    var visitedAtDepth = {}; visitedAtDepth[lastEmphasizedKey] = 1;
+    var foundPaths = [];
+    var foundLen = Infinity;
+
+    while (queue.length > 0) {
+        var path = queue.shift();
+        if (path.length > MAX_LEN || path.length > foundLen) break;
+
+        var last = path[path.length - 1];
+        var nbs = neighbors(last);
+        for (var n = 0; n < nbs.length; n++) {
+            var nb = nbs[n];
+            var newLen = path.length + 1;
+            if (nb === clickedKey) {
+                if (newLen <= MAX_LEN) {
+                    if (foundPaths.length === 0) foundLen = newLen;
+                    if (newLen === foundLen) foundPaths.push(path.concat([nb]));
+                    if (foundPaths.length > 1) return null; // ambiguous
+                }
+                continue;
+            }
+            // Allow visiting at same depth (to find multiple paths), but not at greater depth
+            if (visitedAtDepth[nb] !== undefined && visitedAtDepth[nb] <= newLen) continue;
+            if (newLen >= foundLen) continue;
+            visitedAtDepth[nb] = newLen;
+            queue.push(path.concat([nb]));
+        }
+    }
+
+    if (foundPaths.length !== 1) return null;
+
+    // Return intermediate + clicked keys to emphasize (skip lastEmphasizedKey which is already emphasized)
+    var result = foundPaths[0].slice(1); // remove the start (already emphasized)
+    // Filter out already-emphasized segments
+    return result.filter(function(k) { return !_segIsEmphasized(k); });
+}
+
+// ============================================================
 // PALETTE ACTION HELPER
 // What:    Single entry point for pointer-up on a filled region.
 //          Dispatches to dissolve (empty swatch active) or recolor
@@ -2973,12 +3089,22 @@ function onUp(e) {
 
         var hit=hitLC(world.x,world.y);
         if (hit && (hit.type==='segment' || hit.type==='arc')) {
-            // Single click — emphasize the segment (toggle glow for region building)
             var key=null;
             if (hit.type==='segment') key=hit.obj.lineIdx+':'+hit.obj.pointAId+':'+hit.obj.pointBId;
             if (hit.type==='arc')     key=hit.obj.circIdx+':'+hit.obj.pointAId+':'+hit.obj.pointBId;
             if (key) {
                 var was=hit.obj.isEmphasized;
+                if (!was) {
+                    // Try auto-complete: if clicked segment is not adjacent to any emphasized,
+                    // and there's a unique shortest path from the last emphasized segment, fill it
+                    var autoPath = tryAutoComplete(key);
+                    if (autoPath) {
+                        for (var ai = 0; ai < autoPath.length; ai++) appendOp({ op:'emphasize', key:autoPath[ai] });
+                        var fb=fills.size; checkAndFill(); playSound(fills.size>fb?'fill':'emphasis_on');
+                        lastTapTarget=hit; lastTapTime=now;
+                        return;
+                    }
+                }
                 appendOp({ op:was?'deemphasize':'emphasize', key:key });
                 if (was) { checkAndDissolve(key); playSound('emphasis_off'); }
                 else { var fb=fills.size; checkAndFill(); playSound(fills.size>fb?'fill':'emphasis_on'); }
