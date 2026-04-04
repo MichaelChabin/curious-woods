@@ -782,40 +782,45 @@ function createCanvasNoteDom(cn, readOnly) {
     dragBar.addEventListener('pointerup', function() { dragging = false; el.classList.remove('dragging'); });
 
     // Callout lines: drag from arrow cell to add anchor, double-click to remove last
-    // Use noteId to look up the LIVE cn object from canvasNotes (closure cn may go stale after replayLog)
     if (!readOnly) {
         var noteId = cn.noteId;
-        function _liveCn() { return canvasNotes.get(noteId) || cn; }
-        var anchorDragging = false, anchorMoved = false;
-        arrow.addEventListener('pointerdown', function(e) {
+        // Store drag state on the DOM element so it survives canvasNotes rebuilds
+        arrow.addEventListener('mousedown', function(e) {
             e.preventDefault(); e.stopPropagation();
-            anchorDragging = true; anchorMoved = false;
-            _liveCn()._anchorDragScreen = { x: e.clientX, y: e.clientY };
+            el.dataset.anchorDragging = '1';
+            el.dataset.anchorMoved = '';
+            // Set initial drag position on all live cn objects
+            var live = canvasNotes.get(noteId);
+            if (live) live._anchorDragScreen = { x: e.clientX, y: e.clientY };
         });
-        document.addEventListener('pointermove', function(e) {
-            if (!anchorDragging) return;
-            anchorMoved = true;
-            _liveCn()._anchorDragScreen = { x: e.clientX, y: e.clientY };
+        document.addEventListener('mousemove', function(e) {
+            if (el.dataset.anchorDragging !== '1') return;
+            el.dataset.anchorMoved = '1';
+            var live = canvasNotes.get(noteId);
+            if (live) live._anchorDragScreen = { x: e.clientX, y: e.clientY };
         });
-        document.addEventListener('pointerup', function(e) {
-            if (!anchorDragging) return;
-            anchorDragging = false;
-            var live = _liveCn();
-            delete live._anchorDragScreen;
-            if (!anchorMoved) return;
+        document.addEventListener('mouseup', function(e) {
+            if (el.dataset.anchorDragging !== '1') return;
+            delete el.dataset.anchorDragging;
+            var live = canvasNotes.get(noteId);
+            if (live) delete live._anchorDragScreen;
+            if (el.dataset.anchorMoved !== '1') return;
+            delete el.dataset.anchorMoved;
             var aw = s2w(e.clientX, e.clientY);
-            if (!live.anchors) live.anchors = [];
-            live.anchors.push({ x: aw.x, y: aw.y });
-            _updateNoteOp(live, { anchors: live.anchors.slice() });
+            if (live) {
+                if (!live.anchors) live.anchors = [];
+                live.anchors.push({ x: aw.x, y: aw.y });
+                _updateNoteOp(live, { anchors: live.anchors.slice() });
+            }
         });
         // Double-click arrow cell: remove most recent anchor
         var lastArrowClick = 0;
         arrow.addEventListener('click', function(e) {
             e.stopPropagation();
             var now = Date.now();
-            var live = _liveCn();
+            var live = canvasNotes.get(noteId);
             if (now - lastArrowClick < 300) {
-                if (live.anchors && live.anchors.length) {
+                if (live && live.anchors && live.anchors.length) {
                     live.anchors.pop();
                     _updateNoteOp(live, { anchors: live.anchors.slice() });
                 }
