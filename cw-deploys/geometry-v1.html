@@ -795,6 +795,9 @@ function createCanvasNoteDom(cn, readOnly) {
         }
 
         el.addEventListener('pointerdown', function(e) {
+            // Debug: flash arrow background on any note pointerdown
+            arrow.style.background = 'rgba(255,0,0,0.3)';
+            setTimeout(function() { arrow.style.background = ''; }, 300);
             if (!isInArrowRegion(e)) return;
             e.preventDefault(); e.stopPropagation();
             anchorDragActive = true; anchorDragMoved = false;
