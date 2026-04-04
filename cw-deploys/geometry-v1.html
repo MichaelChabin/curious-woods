@@ -788,14 +788,13 @@ function createCanvasNoteDom(cn, readOnly) {
             e.preventDefault(); e.stopPropagation();
             anchorDragging = true; anchorMoved = false;
             cn._anchorDragScreen = { x: e.clientX, y: e.clientY };
-            arrow.setPointerCapture(e.pointerId);
         });
-        arrow.addEventListener('pointermove', function(e) {
+        document.addEventListener('pointermove', function(e) {
             if (!anchorDragging) return;
             anchorMoved = true;
             cn._anchorDragScreen = { x: e.clientX, y: e.clientY };
         });
-        arrow.addEventListener('pointerup', function(e) {
+        document.addEventListener('pointerup', function(e) {
             if (!anchorDragging) return;
             anchorDragging = false;
             delete cn._anchorDragScreen;
