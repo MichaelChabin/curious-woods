@@ -781,31 +781,38 @@ function createCanvasNoteDom(cn, readOnly) {
     });
     dragBar.addEventListener('pointerup', function() { dragging = false; el.classList.remove('dragging'); });
 
-    // Callout lines: drag from arrow cell to add anchor, double-click to remove last
+    // Callout lines: drag from arrow region to add anchor, double-click to remove last.
+    // We detect clicks in the arrow region (left 24px of note body) via the note element
+    // itself, since direct listeners on the arrow child can fail to fire in some layouts.
     if (!readOnly) {
         var noteId = cn.noteId;
-        // Store drag state on the DOM element so it survives canvasNotes rebuilds
-        arrow.addEventListener('mousedown', function(e) {
+        var anchorDragActive = false, anchorDragMoved = false;
+
+        function isInArrowRegion(e) {
+            var rect = el.getBoundingClientRect();
+            var dragBarH = 6; // height of .cn-drag
+            return e.clientX < rect.left + 24 && e.clientY > rect.top + dragBarH;
+        }
+
+        el.addEventListener('pointerdown', function(e) {
+            if (!isInArrowRegion(e)) return;
             e.preventDefault(); e.stopPropagation();
-            el.dataset.anchorDragging = '1';
-            el.dataset.anchorMoved = '';
-            // Set initial drag position on all live cn objects
+            anchorDragActive = true; anchorDragMoved = false;
             var live = canvasNotes.get(noteId);
             if (live) live._anchorDragScreen = { x: e.clientX, y: e.clientY };
         });
-        document.addEventListener('mousemove', function(e) {
-            if (el.dataset.anchorDragging !== '1') return;
-            el.dataset.anchorMoved = '1';
+        document.addEventListener('pointermove', function(e) {
+            if (!anchorDragActive) return;
+            anchorDragMoved = true;
             var live = canvasNotes.get(noteId);
             if (live) live._anchorDragScreen = { x: e.clientX, y: e.clientY };
         });
-        document.addEventListener('mouseup', function(e) {
-            if (el.dataset.anchorDragging !== '1') return;
-            delete el.dataset.anchorDragging;
+        document.addEventListener('pointerup', function(e) {
+            if (!anchorDragActive) return;
+            anchorDragActive = false;
             var live = canvasNotes.get(noteId);
             if (live) delete live._anchorDragScreen;
-            if (el.dataset.anchorMoved !== '1') return;
-            delete el.dataset.anchorMoved;
+            if (!anchorDragMoved) return;
             var aw = s2w(e.clientX, e.clientY);
             if (live) {
                 if (!live.anchors) live.anchors = [];
@@ -813,20 +820,15 @@ function createCanvasNoteDom(cn, readOnly) {
                 _updateNoteOp(live, { anchors: live.anchors.slice() });
             }
         });
-        // Double-click arrow cell: remove most recent anchor
+        // Double-click in arrow region: remove most recent anchor
         var lastArrowClick = 0;
-        arrow.addEventListener('click', function(e) {
+        el.addEventListener('dblclick', function(e) {
+            if (!isInArrowRegion(e)) return;
             e.stopPropagation();
-            var now = Date.now();
             var live = canvasNotes.get(noteId);
-            if (now - lastArrowClick < 300) {
-                if (live && live.anchors && live.anchors.length) {
-                    live.anchors.pop();
-                    _updateNoteOp(live, { anchors: live.anchors.slice() });
-                }
-                lastArrowClick = 0;
-            } else {
-                lastArrowClick = now;
+            if (live && live.anchors && live.anchors.length) {
+                live.anchors.pop();
+                _updateNoteOp(live, { anchors: live.anchors.slice() });
             }
         });
     }
