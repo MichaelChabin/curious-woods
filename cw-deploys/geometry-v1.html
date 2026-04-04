@@ -782,37 +782,42 @@ function createCanvasNoteDom(cn, readOnly) {
     dragBar.addEventListener('pointerup', function() { dragging = false; el.classList.remove('dragging'); });
 
     // Callout lines: drag from arrow cell to add anchor, double-click to remove last
+    // Use noteId to look up the LIVE cn object from canvasNotes (closure cn may go stale after replayLog)
     if (!readOnly) {
+        var noteId = cn.noteId;
+        function _liveCn() { return canvasNotes.get(noteId) || cn; }
         var anchorDragging = false, anchorMoved = false;
         arrow.addEventListener('pointerdown', function(e) {
             e.preventDefault(); e.stopPropagation();
             anchorDragging = true; anchorMoved = false;
-            cn._anchorDragScreen = { x: e.clientX, y: e.clientY };
+            _liveCn()._anchorDragScreen = { x: e.clientX, y: e.clientY };
         });
         document.addEventListener('pointermove', function(e) {
             if (!anchorDragging) return;
             anchorMoved = true;
-            cn._anchorDragScreen = { x: e.clientX, y: e.clientY };
+            _liveCn()._anchorDragScreen = { x: e.clientX, y: e.clientY };
         });
         document.addEventListener('pointerup', function(e) {
             if (!anchorDragging) return;
             anchorDragging = false;
-            delete cn._anchorDragScreen;
-            if (!anchorMoved) return; // no drag — let dblclick handle it
+            var live = _liveCn();
+            delete live._anchorDragScreen;
+            if (!anchorMoved) return;
             var aw = s2w(e.clientX, e.clientY);
-            if (!cn.anchors) cn.anchors = [];
-            cn.anchors.push({ x: aw.x, y: aw.y });
-            _updateNoteOp(cn, { anchors: cn.anchors.slice() });
+            if (!live.anchors) live.anchors = [];
+            live.anchors.push({ x: aw.x, y: aw.y });
+            _updateNoteOp(live, { anchors: live.anchors.slice() });
         });
         // Double-click arrow cell: remove most recent anchor
         var lastArrowClick = 0;
         arrow.addEventListener('click', function(e) {
             e.stopPropagation();
             var now = Date.now();
+            var live = _liveCn();
             if (now - lastArrowClick < 300) {
-                if (cn.anchors && cn.anchors.length) {
-                    cn.anchors.pop();
-                    _updateNoteOp(cn, { anchors: cn.anchors.slice() });
+                if (live.anchors && live.anchors.length) {
+                    live.anchors.pop();
+                    _updateNoteOp(live, { anchors: live.anchors.slice() });
                 }
                 lastArrowClick = 0;
             } else {
