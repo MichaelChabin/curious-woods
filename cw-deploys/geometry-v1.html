@@ -795,14 +795,17 @@ function createCanvasNoteDom(cn, readOnly) {
         }
 
         el.addEventListener('pointerdown', function(e) {
-            // Debug: flash arrow background on any note pointerdown
-            arrow.style.background = 'rgba(255,0,0,0.3)';
-            setTimeout(function() { arrow.style.background = ''; }, 300);
             if (!isInArrowRegion(e)) return;
             e.preventDefault(); e.stopPropagation();
+            // Debug: flash green = region check passed, drag starting
+            arrow.style.background = 'rgba(0,200,0,0.4)';
+            setTimeout(function() { arrow.style.background = ''; }, 500);
             anchorDragActive = true; anchorDragMoved = false;
+            el.style.cursor = 'crosshair';
             var live = canvasNotes.get(noteId);
             if (live) live._anchorDragScreen = { x: e.clientX, y: e.clientY };
+            // Debug: log whether live cn exists and its editing state
+            console.log('[callout] drag start, live cn:', !!live, 'editing:', live && live.editing);
         });
         document.addEventListener('pointermove', function(e) {
             if (!anchorDragActive) return;
