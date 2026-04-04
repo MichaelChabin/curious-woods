@@ -99,7 +99,6 @@
     .canvas-note-close:hover { color: #546A80; }
     .cn-body { display: flex; flex: 1; min-height: 0; }
     .cn-arrow { width: 20px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; border-right: 0.5px solid rgba(200,184,154,0.5); flex-shrink: 0; cursor: grab; touch-action: none; color: #546A80; opacity: 0.5; font-size: 11px; font-family: Georgia, serif; }
-    .cn-arrow.has-anchor { opacity: 0.25; }
     .cn-text-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
     .canvas-note textarea { font-family: Georgia, serif; font-style: italic; font-size: 13px; color: #546A80; background: transparent; border: none; outline: none; width: 100%; flex: 1; min-height: 30px; resize: none; line-height: 1.5; padding: 4px 8px; }
     .canvas-note textarea::placeholder { color: #546A80; opacity: 0.35; }
@@ -578,7 +577,9 @@ function replayLog(animateNew) {
             // width is stored in screen pixels; legacy logs may have world-coord values (< 100) — normalize
             var noteW = (op.width && op.width >= 100) ? op.width : 200;
             var noteObj = { noteId: op.noteId, text: op.text, x: op.x, y: op.y, width: noteW, open: true, editing: !!prevEditing[op.noteId] };
-            if (op.anchorX !== undefined && op.anchorY !== undefined) { noteObj.anchorX = op.anchorX; noteObj.anchorY = op.anchorY; }
+            if (op.anchors && op.anchors.length) { noteObj.anchors = op.anchors.slice(); }
+            // Legacy: migrate anchorX/anchorY to anchors array
+            else if (op.anchorX !== undefined && op.anchorY !== undefined) { noteObj.anchors = [{ x: op.anchorX, y: op.anchorY }]; }
             canvasNotes.set(op.noteId, noteObj);
         } else if (op.op === 'note_close') {
             var cn = canvasNotes.get(op.noteId); if (cn) cn.open = false;
@@ -728,7 +729,7 @@ function createCanvasNoteDom(cn, readOnly) {
     var body = document.createElement('div');
     body.className = 'cn-body';
     var arrow = document.createElement('div');
-    arrow.className = 'cn-arrow' + (cn.anchorX !== undefined ? ' has-anchor' : '');
+    arrow.className = 'cn-arrow';
     arrow.textContent = '\u25C1'; // ◁
     body.appendChild(arrow);
 
@@ -780,50 +781,54 @@ function createCanvasNoteDom(cn, readOnly) {
     });
     dragBar.addEventListener('pointerup', function() { dragging = false; el.classList.remove('dragging'); });
 
-    // Callout line: drag from arrow cell to place/reposition anchor
+    // Callout lines: drag from arrow cell to add anchor, double-click to remove last
     if (!readOnly) {
-        var anchorDragging = false;
+        var anchorDragging = false, anchorMoved = false;
         arrow.addEventListener('pointerdown', function(e) {
             e.preventDefault(); e.stopPropagation();
-            anchorDragging = true;
+            anchorDragging = true; anchorMoved = false;
             cn._anchorDragScreen = { x: e.clientX, y: e.clientY };
             arrow.setPointerCapture(e.pointerId);
         });
         arrow.addEventListener('pointermove', function(e) {
             if (!anchorDragging) return;
+            anchorMoved = true;
             cn._anchorDragScreen = { x: e.clientX, y: e.clientY };
         });
         arrow.addEventListener('pointerup', function(e) {
             if (!anchorDragging) return;
             anchorDragging = false;
             delete cn._anchorDragScreen;
+            if (!anchorMoved) return; // no drag — let dblclick handle it
             var aw = s2w(e.clientX, e.clientY);
-            // If dropped close to the note box, remove the anchor
-            var noteScreen = w2s(cn.x, cn.y);
-            var dFromNote = Math.sqrt(Math.pow(e.clientX - noteScreen.x, 2) + Math.pow(e.clientY - noteScreen.y, 2));
-            if (dFromNote < 30) {
-                _updateNoteOp(cn, {});
-                delete cn.anchorX; delete cn.anchorY;
-                for (var i = operationLog.length - 1; i >= 0; i--) {
-                    if (operationLog[i].op === 'note_open' && operationLog[i].noteId === cn.noteId) {
-                        delete operationLog[i].anchorX; delete operationLog[i].anchorY;
-                        break;
-                    }
+            if (!cn.anchors) cn.anchors = [];
+            cn.anchors.push({ x: aw.x, y: aw.y });
+            _updateNoteOp(cn, { anchors: cn.anchors.slice() });
+        });
+        // Double-click arrow cell: remove most recent anchor
+        var lastArrowClick = 0;
+        arrow.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var now = Date.now();
+            if (now - lastArrowClick < 300) {
+                if (cn.anchors && cn.anchors.length) {
+                    cn.anchors.pop();
+                    _updateNoteOp(cn, { anchors: cn.anchors.slice() });
                 }
-                arrow.classList.remove('has-anchor');
+                lastArrowClick = 0;
             } else {
-                _updateNoteOp(cn, { anchorX: aw.x, anchorY: aw.y });
-                arrow.classList.add('has-anchor');
+                lastArrowClick = now;
             }
         });
     }
 
-    // Click outside to finalize editing
+    // Click outside to finalize editing — the finalizing click is consumed
     if (!readOnly && cn.editing) {
         setTimeout(function() {
             function onClickOutside(e) {
                 if (!cn.editing) { document.removeEventListener('pointerdown', onClickOutside, true); return; }
                 if (el.contains(e.target)) return;
+                e.stopPropagation(); e.preventDefault();
                 _finalizeNote(cn, el);
                 document.removeEventListener('pointerdown', onClickOutside, true);
             }
@@ -2281,53 +2286,39 @@ function render() {
 
     // Draw callout lines from canvas notes to their anchor points
     canvasNotes.forEach(function(cn) {
-        if (!cn.open) return;
-        var hasAnchor = cn.anchorX !== undefined && cn.anchorY !== undefined;
-        var isDragging = cn._anchorDragScreen !== undefined;
-        if (!hasAnchor && !isDragging) return;
-
-        // Note box screen position and size
+        if (!cn.open || cn.editing) return; // no lines during editing
         var noteEl = document.querySelector('.canvas-note[data-note-id="' + cn.noteId + '"]');
         var noteS = w2s(cn.x, cn.y);
         var boxW = cn.width || 200, boxH = (noteEl ? noteEl.offsetHeight : 60);
-        // Box rect in screen coords
         var bx1 = noteS.x, by1 = noteS.y, bx2 = noteS.x + boxW, by2 = noteS.y + boxH;
         var bCx = (bx1 + bx2) / 2, bCy = (by1 + by2) / 2;
 
-        // Anchor screen position
-        var ax, ay;
-        if (isDragging) {
-            ax = cn._anchorDragScreen.x; ay = cn._anchorDragScreen.y;
-        } else {
-            var as = w2s(cn.anchorX, cn.anchorY);
-            ax = as.x; ay = as.y;
+        function drawCallout(ax, ay) {
+            var dx = ax - bCx, dy = ay - bCy;
+            if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+            var scaleX = Math.abs(dx) > 0 ? ((boxW / 2) / Math.abs(dx)) : Infinity;
+            var scaleY = Math.abs(dy) > 0 ? ((boxH / 2) / Math.abs(dy)) : Infinity;
+            var sc = Math.min(scaleX, scaleY);
+            var ex = bCx + dx * sc, ey = bCy + dy * sc;
+            ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(ax, ay); ctx.stroke();
+            var angle = Math.atan2(ay - ey, ax - ex), aLen = 8;
+            ctx.beginPath(); ctx.moveTo(ax, ay);
+            ctx.lineTo(ax - aLen * Math.cos(angle - 0.4), ay - aLen * Math.sin(angle - 0.4));
+            ctx.lineTo(ax - aLen * Math.cos(angle + 0.4), ay - aLen * Math.sin(angle + 0.4));
+            ctx.closePath(); ctx.fill();
         }
 
-        // Find nearest edge point on box to the anchor
-        var dx = ax - bCx, dy = ay - bCy;
-        var absDx = Math.abs(dx), absDy = Math.abs(dy);
-        var ex, ey;
-        if (absDx < 1 && absDy < 1) return; // anchor at center of box
-        // Scale to box edge
-        var scaleX = absDx > 0 ? ((boxW / 2) / absDx) : Infinity;
-        var scaleY = absDy > 0 ? ((boxH / 2) / absDy) : Infinity;
-        var scale = Math.min(scaleX, scaleY);
-        ex = bCx + dx * scale; ey = bCy + dy * scale;
-
-        // Draw line
         ctx.save();
-        ctx.strokeStyle = '#546A80'; ctx.globalAlpha = 0.6; ctx.lineWidth = 0.5;
-        ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(ax, ay); ctx.stroke();
+        ctx.strokeStyle = '#546A80'; ctx.fillStyle = '#546A80'; ctx.globalAlpha = 0.8; ctx.lineWidth = 1;
 
-        // Arrowhead at anchor end
-        var angle = Math.atan2(ay - ey, ax - ex);
-        var aLen = 6;
-        ctx.fillStyle = '#546A80';
-        ctx.beginPath();
-        ctx.moveTo(ax, ay);
-        ctx.lineTo(ax - aLen * Math.cos(angle - 0.4), ay - aLen * Math.sin(angle - 0.4));
-        ctx.lineTo(ax - aLen * Math.cos(angle + 0.4), ay - aLen * Math.sin(angle + 0.4));
-        ctx.closePath(); ctx.fill();
+        // Draw all anchors
+        if (cn.anchors && cn.anchors.length) {
+            cn.anchors.forEach(function(a) { var as = w2s(a.x, a.y); drawCallout(as.x, as.y); });
+        }
+        // Draw drag-in-progress line
+        if (cn._anchorDragScreen) {
+            drawCallout(cn._anchorDragScreen.x, cn._anchorDragScreen.y);
+        }
         ctx.restore();
     });
 
