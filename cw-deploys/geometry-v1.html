@@ -797,15 +797,9 @@ function createCanvasNoteDom(cn, readOnly) {
         el.addEventListener('pointerdown', function(e) {
             if (!isInArrowRegion(e)) return;
             e.preventDefault(); e.stopPropagation();
-            // Debug: flash green = region check passed, drag starting
-            arrow.style.background = 'rgba(0,200,0,0.4)';
-            setTimeout(function() { arrow.style.background = ''; }, 500);
             anchorDragActive = true; anchorDragMoved = false;
-            el.style.cursor = 'crosshair';
             var live = canvasNotes.get(noteId);
             if (live) live._anchorDragScreen = { x: e.clientX, y: e.clientY };
-            // Debug: log whether live cn exists and its editing state
-            console.log('[callout] drag start, live cn:', !!live, 'editing:', live && live.editing);
         });
         document.addEventListener('pointermove', function(e) {
             if (!anchorDragActive) return;
@@ -2303,7 +2297,7 @@ function render() {
 
     // Draw callout lines from canvas notes to their anchor points
     canvasNotes.forEach(function(cn) {
-        if (!cn.open || cn.editing) return; // no lines during editing
+        if (!cn.open) return;
         var noteEl = document.querySelector('.canvas-note[data-note-id="' + cn.noteId + '"]');
         var noteS = w2s(cn.x, cn.y);
         var boxW = cn.width || 200, boxH = (noteEl ? noteEl.offsetHeight : 60);
