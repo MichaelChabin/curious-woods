@@ -1,4 +1,6 @@
 .DS_Store
 Backups/
-CuriousWoods/
+CWVault/
 cw-deploys-2/
+.claude/
+.obsidian/

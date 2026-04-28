@@ -6,7 +6,7 @@
  * Add one script tag to activate. Remove it to leave no trace.
  *
  * Usage:
- *   <script src="/Users/michaelchabin/CuriousWoods/tools/cw-dev-tools.js"></script>
+ *   <script src="/Users/michaelchabin/_CW/tools/cw-dev-tools.js"></script>
  *
  * Keyboard shortcuts:
  *   `        Toggle toolbar visible/hidden

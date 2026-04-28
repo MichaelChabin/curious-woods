@@ -157,11 +157,13 @@ Numbers are from the child's actual session. Shows every time the child saves. T
 
 ## File Layout
 
+Project root lives at `/Users/michaelchabin/_CW/` (the leading underscore floats it to the top of directory listings). Local disk only — git repos and iCloud sync don't mix.
+
 ```
-CuriousWoods/
+_CW/
 ├── CLAUDE.md              ← You are here
 ├── plans/                 ← Sprint plans for Claude Code (read before working)
-├── CuriousWoods/          ← Obsidian vault (design docs, specs, planning)
+├── CWVault/               ← Obsidian vault (design docs, specs, planning)
 │   ├── 00-FOUNDATION/     ← Read-only reference (philosophy, UI spec, story template)
 │   ├── 01-ACTIVE/         ← Current focus, status, next priorities
 │   ├── 10-PROJECTS/       ← Design explorations (Geometry, Geography, Stories)
@@ -219,10 +221,10 @@ CuriousWoods/
 
 ## Key Specs (in Obsidian vault)
 
-- **Layer 1 (construction engine):** `CuriousWoods/20-SPECS/Layer 1 — Consolidated Specification.md`
-- **UI language:** `CuriousWoods/00-FOUNDATION/UI-Language.md`
-- **Interface design:** `CuriousWoods/00-FOUNDATION/Interface-Foundation.md`
-- **System philosophy:** `CuriousWoods/00-FOUNDATION/CW-System-Foundation.md`
+- **Layer 1 (construction engine):** `CWVault/20-SPECS/Layer 1 — Consolidated Specification.md`
+- **UI language:** `CWVault/00-FOUNDATION/UI-Language.md`
+- **Interface design:** `CWVault/00-FOUNDATION/Interface-Foundation.md`
+- **System philosophy:** `CWVault/00-FOUNDATION/CW-System-Foundation.md`
 
 ## Five Cognitive Modes (Foundation)
 
