@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Necker Cube — Curious Woods</title>
+<style>
+/* ==== RESET & BASE ==== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%; width: 100%;
+  overflow: hidden;
+  background: #f4f1e8;
+  font-family: Georgia, serif;
+  color: #546A80;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==== LAYOUT ==== */
+#app {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100vh; width: 100vw;
+}
+
+#visual-pane {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#text-pane {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 3rem 2.5rem;
+  overflow-y: auto;
+}
+
+#text-pane .text-content {
+  max-width: 420px;
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+/* ==== OPEN SCREEN (Act 1) ==== */
+#open-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 15px;
+  color: #546A80;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#open-hint.visible { opacity: 0.6; }
+
+/* In Act 1, cube is centered across full viewport */
+body.act-open #app {
+  grid-template-columns: 1fr;
+}
+body.act-open #text-pane { display: none; }
+
+/* ==== CUBE CANVAS ==== */
+#cube-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ==== BRAIN IMAGE + OVERLAY ==== */
+#brain-container {
+  position: relative;
+  width: 90%;
+  max-width: 560px;
+  display: none;
+}
+#brain-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+}
+#brain-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+/* ==== TEXT ELEMENTS ==== */
+.narrative-paragraph {
+  margin-bottom: 1.2em;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.narrative-paragraph.visible { opacity: 1; }
+
+#tap-prompt {
+  margin-top: 1.5em;
+  font-size: 14px;
+  color: #546A80;
+  opacity: 0.5;
+}
+
+/* ==== PRACTICE (Act 3) ==== */
+#practice-section {
+  display: none;
+}
+
+#see-it-btn {
+  display: inline-block;
+  margin-top: 1.8em;
+  font-family: Georgia, serif;
+  font-size: 17px;
+  color: #3D3D3A;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #c8b89a;
+  padding: 0.3em 0;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  -webkit-tap-highlight-color: transparent;
+}
+#see-it-btn:hover {
+  border-bottom-color: #b87333;
+}
+
+#practice-response {
+  margin-top: 1em;
+  min-height: 1.6em;
+  font-style: italic;
+  color: #b87333;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+#practice-response.visible { opacity: 1; }
+
+#practice-continue {
+  margin-top: 1.5em;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+#practice-continue.visible { opacity: 1; }
+
+#continue-btn {
+  font-family: Georgia, serif;
+  font-size: 16px;
+  color: #3D3D3A;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #c8b89a;
+  padding: 0.3em 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#continue-btn:hover {
+  border-bottom-color: #b87333;
+}
+
+/* ==== BRAIN ANIMATION TEXT ==== */
+#brain-text {
+  display: none;
+}
+
+.station-text {
+  margin-bottom: 1em;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.station-text.visible { opacity: 1; }
+
+/* ==== CLOSE (Act 5) ==== */
+#close-section {
+  display: none;
+}
+
+#gallery-link {
+  display: inline-block;
+  margin-top: 2em;
+  font-family: Georgia, serif;
+  font-size: 15px;
+  color: #3D3D3A;
+  border-bottom: 1px solid #c8b89a;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+#gallery-link.visible { opacity: 1; }
+#gallery-link:hover { border-bottom-color: #b87333; }
+
+/* ==== RETURN VISIT ==== */
+#return-section {
+  display: none;
+}
+
+.return-link {
+  display: inline-block;
+  margin-top: 1em;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  color: #3D3D3A;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #c8b89a;
+  padding: 0.3em 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.return-link:hover { border-bottom-color: #b87333; }
+
+.return-small {
+  display: inline-block;
+  margin-top: 1.5em;
+  font-size: 14px;
+  color: #546A80;
+  opacity: 0.6;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: Georgia, serif;
+  -webkit-tap-highlight-color: transparent;
+}
+.return-small:hover { opacity: 1; }
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 700px) {
+  #app {
+    grid-template-columns: 1fr;
+    grid-template-rows: 45vh 1fr;
+  }
+  body.act-open #app {
+    grid-template-rows: 1fr;
+  }
+  #text-pane {
+    padding: 1.5rem 1.5rem;
+    justify-content: flex-start;
+  }
+  .text-content { font-size: 16px; }
+}
+</style>
+</head>
+<body class="act-open">
+
+<div id="app">
+  <!-- ==== VISUAL PANE ==== -->
+  <div id="visual-pane">
+    <canvas id="cube-canvas"></canvas>
+
+    <div id="brain-container">
+      <img id="brain-img" src="brain-watercolor.jpeg" alt="Watercolor of a human brain">
+      <canvas id="brain-canvas"></canvas>
+    </div>
+
+    <div id="open-hint">tap to begin</div>
+  </div>
+
+  <!-- ==== TEXT PANE ==== -->
+  <div id="text-pane">
+
+    <!-- Narrative (Act 2) -->
+    <div id="narrative-section" class="text-content"></div>
+
+    <!-- Practice (Act 3) -->
+    <div id="practice-section" class="text-content">
+      <p>Let your eyes rest on one circle. When the cube seems to shift, click the button.</p>
+      <p style="margin-top:0.6em">Keep your gaze on the cube — you don't need to look at the button.</p>
+      <button id="see-it-btn">I see it</button>
+      <div id="practice-response"></div>
+      <div id="practice-continue">
+        <button id="continue-btn">See what happened in your brain</button>
+      </div>
+    </div>
+
+    <!-- Brain animation text (Act 4) -->
+    <div id="brain-text" class="text-content"></div>
+
+    <!-- Close (Act 5) -->
+    <div id="close-section" class="text-content">
+      <p>This is what learning feels like. It is easy. It is fun. It is wonderful.</p>
+      <a id="gallery-link" href="../">Back to Curious Woods</a>
+    </div>
+
+    <!-- Return visit (welcome back) -->
+    <div id="return-section" class="text-content">
+      <p>Welcome back. Ready to practice?</p>
+      <button class="return-link" id="return-practice-btn">Practice</button>
+      <button class="return-small" id="return-story-btn">Or read the full story again</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ============================================================
+// NECKER CUBE INTERACTIVE — Curious Woods
+// Single-file, no dependencies. Vanilla JS + Canvas + Web Audio.
+// ============================================================
+
+// ==== NARRATIVE CONTENT (loaded from narrative.json) ====
+let NARRATIVE = [];
+let BRAIN_STATIONS = [];
+let PRACTICE_RESPONSES = [];
+
+// ==== STATE ====
+let state = 'OPEN';  // OPEN, NARRATIVE, PRACTICE, BRAIN_ANIM, CLOSE, RETURN_WELCOME
+let narrativeIndex = -1;
+let currentCubeForm = 'wireframe';  // wireframe, orientedA, orientedB, focus
+let targetCubeForm = 'wireframe';
+let cubeTransition = 0;  // 0..1, 1 = fully at target
+let cubeTransitionStart = 0;
+const CUBE_TRANSITION_MS = 400;
+
+let flipCount = 0;
+let practiceStartTime = 0;
+let responseIndex = 0;
+
+let brainStation = -1;
+let brainGlows = [];       // { x, y, opacity, targetOpacity }
+let brainPulse = null;     // { x0, y0, x1, y1, progress }
+let brainAnimFrame = 0;
+
+let audioCtx = null;
+
+// ==== DOM REFS ====
+const app = document.getElementById('app');
+const visualPane = document.getElementById('visual-pane');
+const cubeCanvas = document.getElementById('cube-canvas');
+const cubeCtx = cubeCanvas.getContext('2d');
+const brainContainer = document.getElementById('brain-container');
+const brainImg = document.getElementById('brain-img');
+const brainCanvas = document.getElementById('brain-canvas');
+const brainCtx = brainCanvas.getContext('2d');
+const openHint = document.getElementById('open-hint');
+const narrativeSection = document.getElementById('narrative-section');
+const practiceSection = document.getElementById('practice-section');
+const seeItBtn = document.getElementById('see-it-btn');
+const practiceResponse = document.getElementById('practice-response');
+const practiceContinue = document.getElementById('practice-continue');
+const continueBtn = document.getElementById('continue-btn');
+const brainText = document.getElementById('brain-text');
+const closeSection = document.getElementById('close-section');
+const galleryLink = document.getElementById('gallery-link');
+const returnSection = document.getElementById('return-section');
+const returnPracticeBtn = document.getElementById('return-practice-btn');
+const returnStoryBtn = document.getElementById('return-story-btn');
+const textPane = document.getElementById('text-pane');
+
+// ==== CUBE GEOMETRY ====
+// Classic Necker cube: two squares offset diagonally, connected
+// Defined in normalized coords (-1..1), rendered to canvas center
+const S = 0.38;  // half-size of cube face
+const D = 0.22;  // diagonal offset for depth
+const CUBE_VERTICES = [
+  // Front face (or face A)
+  { x: -S, y: -S },           // 0 top-left
+  { x:  S, y: -S },           // 1 top-right
+  { x:  S, y:  S },           // 2 bottom-right
+  { x: -S, y:  S },           // 3 bottom-left
+  // Back face (or face B)
+  { x: -S + D, y: -S - D },   // 4 top-left back
+  { x:  S + D, y: -S - D },   // 5 top-right back
+  { x:  S + D, y:  S - D },   // 6 bottom-right back
+  { x: -S + D, y:  S - D },   // 7 bottom-left back
+];
+
+// Edges as pairs of vertex indices
+const CUBE_EDGES = [
+  // Front face
+  [0, 1], [1, 2], [2, 3], [3, 0],
+  // Back face
+  [4, 5], [5, 6], [6, 7], [7, 4],
+  // Connecting edges
+  [0, 4], [1, 5], [2, 6], [3, 7],
+];
+
+// Front face edges (indices into CUBE_EDGES)
+const FRONT_EDGES = [0, 1, 2, 3];
+// Back face edges
+const BACK_EDGES = [4, 5, 6, 7];
+// Connecting edges
+const CONNECT_EDGES = [8, 9, 10, 11];
+
+// Focus circle corners: vertex 5 (upper-right back) and vertex 3 (lower-left front)
+// These are the diagonal corners of the inner parallelogram, each with 3 edges meeting
+const FOCUS_CORNERS = [5, 3];
+
+// Focus circle positions (normalized coords, calibrated from reference image)
+const focusCircles = [
+  { x: 0.3808, y: -0.3840 },  // upper-right (inner square)
+  { x: -0.1488, y: 0.1551 },  // lower-left (inner square)
+];
+
+// ==== CUBE EDGE WEIGHTS FOR EACH FORM ====
+// Each form defines { weight, opacity } per edge index
+function getEdgeStyle(form, edgeIdx) {
+  const base = { weight: 2, opacity: 1.0, color: '#3D3D3A' };
+
+  if (form === 'wireframe' || form === 'focus') {
+    return base;
+  }
+
+  if (form === 'orientedA') {
+    // Front face = bold (facing down-right interpretation)
+    if (FRONT_EDGES.includes(edgeIdx)) return { weight: 3, opacity: 1.0, color: '#3D3D3A' };
+    if (BACK_EDGES.includes(edgeIdx)) return { weight: 1.2, opacity: 0.45, color: '#3D3D3A' };
+    return { weight: 1.8, opacity: 0.7, color: '#3D3D3A' };
+  }
+
+  if (form === 'orientedB') {
+    // Back face = bold (facing up-left interpretation)
+    if (BACK_EDGES.includes(edgeIdx)) return { weight: 3, opacity: 1.0, color: '#3D3D3A' };
+    if (FRONT_EDGES.includes(edgeIdx)) return { weight: 1.2, opacity: 0.45, color: '#3D3D3A' };
+    return { weight: 1.8, opacity: 0.7, color: '#3D3D3A' };
+  }
+
+  return base;
+}
+
+// ==== CANVAS SIZING ====
+function sizeCubeCanvas() {
+  const rect = visualPane.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  cubeCanvas.width = rect.width * dpr;
+  cubeCanvas.height = rect.height * dpr;
+  cubeCanvas.style.width = rect.width + 'px';
+  cubeCanvas.style.height = rect.height + 'px';
+  cubeCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function sizeBrainCanvas() {
+  const rect = brainImg.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  brainCanvas.width = rect.width * dpr;
+  brainCanvas.height = rect.height * dpr;
+  brainCanvas.style.width = rect.width + 'px';
+  brainCanvas.style.height = rect.height + 'px';
+  brainCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+// ==== CUBE RENDERER ====
+function drawCube(timestamp) {
+  const rect = visualPane.getBoundingClientRect();
+  const w = rect.width;
+  const h = rect.height;
+  cubeCtx.clearRect(0, 0, w, h);
+
+  // Cube size scales to fit pane
+  const scale = Math.min(w, h) * 0.23;
+  const cx = w / 2;
+  const cy = h / 2;
+
+  // Interpolation factor
+  let t = 1;
+  if (cubeTransition < 1) {
+    const elapsed = timestamp - cubeTransitionStart;
+    t = Math.min(1, elapsed / CUBE_TRANSITION_MS);
+    // Ease in-out
+    t = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    cubeTransition = t;
+  }
+
+  // Draw edges
+  for (let i = 0; i < CUBE_EDGES.length; i++) {
+    const [a, b] = CUBE_EDGES[i];
+    const fromStyle = getEdgeStyle(currentCubeForm, i);
+    const toStyle = getEdgeStyle(targetCubeForm, i);
+
+    const weight = fromStyle.weight + (toStyle.weight - fromStyle.weight) * t;
+    const opacity = fromStyle.opacity + (toStyle.opacity - fromStyle.opacity) * t;
+
+    const x1 = cx + CUBE_VERTICES[a].x * scale;
+    const y1 = cy + CUBE_VERTICES[a].y * scale;
+    const x2 = cx + CUBE_VERTICES[b].x * scale;
+    const y2 = cy + CUBE_VERTICES[b].y * scale;
+
+    cubeCtx.beginPath();
+    cubeCtx.moveTo(x1, y1);
+    cubeCtx.lineTo(x2, y2);
+    cubeCtx.strokeStyle = `rgba(61, 61, 58, ${opacity})`;
+    cubeCtx.lineWidth = weight;
+    cubeCtx.lineCap = 'round';
+    cubeCtx.stroke();
+  }
+
+  // If transition complete, commit
+  if (t >= 1 && currentCubeForm !== targetCubeForm) {
+    currentCubeForm = targetCubeForm;
+  }
+
+  // Focus circles (use draggable positions)
+  const showFocus = (targetCubeForm === 'focus' && t >= 0.5) || currentCubeForm === 'focus';
+  if (showFocus) {
+    const focusOpacity = targetCubeForm === 'focus' ? Math.min(1, (t - 0.5) * 2) : 1;
+    cubeCtx.fillStyle = `rgba(184, 115, 51, ${focusOpacity})`;
+
+    for (const fc of focusCircles) {
+      const vx = cx + fc.x * scale;
+      const vy = cy + fc.y * scale;
+      cubeCtx.beginPath();
+      cubeCtx.arc(vx, vy, scale * 0.03, 0, Math.PI * 2);
+      cubeCtx.fill();
+    }
+  }
+}
+
+// ==== CUBE TRANSITION ====
+function setCubeForm(form) {
+  if (form === targetCubeForm) return;
+  currentCubeForm = targetCubeForm;  // commit any in-progress
+  targetCubeForm = form;
+  cubeTransition = 0;
+  cubeTransitionStart = performance.now();
+}
+
+// ==== WEB AUDIO — DING ====
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playDing() {
+  if (!audioCtx) initAudio();
+  if (!audioCtx) return;
+
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(560, now);
+  osc.frequency.exponentialRampToValueAtTime(480, now + 0.15);
+
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.18, now + 0.02);   // gentle attack
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5); // long decay
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + 0.5);
+}
+
+// ==== BRAIN RENDERER ====
+function drawBrain(timestamp) {
+  const rect = brainImg.getBoundingClientRect();
+  const w = rect.width;
+  const h = rect.height;
+  brainCtx.clearRect(0, 0, w, h);
+
+  // Draw glows
+  for (const g of brainGlows) {
+    // Animate opacity toward target
+    if (g.opacity < g.targetOpacity) {
+      g.opacity = Math.min(g.targetOpacity, g.opacity + 0.02);
+    }
+
+    const px = g.x * w;
+    const py = g.y * h;
+    const r = Math.min(w, h) * 0.08;
+
+    const grad = brainCtx.createRadialGradient(px, py, 0, px, py, r);
+    grad.addColorStop(0, `rgba(184, 115, 51, ${g.opacity * 0.8})`);
+    grad.addColorStop(0.5, `rgba(184, 115, 51, ${g.opacity * 0.3})`);
+    grad.addColorStop(1, `rgba(184, 115, 51, 0)`);
+
+    brainCtx.fillStyle = grad;
+    brainCtx.beginPath();
+    brainCtx.arc(px, py, r, 0, Math.PI * 2);
+    brainCtx.fill();
+  }
+
+  // Draw pulse
+  if (brainPulse && brainPulse.progress < 1) {
+    brainPulse.progress = Math.min(1, brainPulse.progress + 0.025);
+    const p = brainPulse.progress;
+    // Ease
+    const ep = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+
+    const px = (brainPulse.x0 + (brainPulse.x1 - brainPulse.x0) * ep) * w;
+    const py = (brainPulse.y0 + (brainPulse.y1 - brainPulse.y0) * ep) * h;
+
+    const pr = Math.min(w, h) * 0.025;
+    const grad = brainCtx.createRadialGradient(px, py, 0, px, py, pr);
+    grad.addColorStop(0, `rgba(184, 115, 51, ${0.9 * (1 - p * 0.3)})`);
+    grad.addColorStop(1, `rgba(184, 115, 51, 0)`);
+
+    brainCtx.fillStyle = grad;
+    brainCtx.beginPath();
+    brainCtx.arc(px, py, pr, 0, Math.PI * 2);
+    brainCtx.fill();
+  }
+}
+
+// ==== ADVANCE BRAIN STATION ====
+function advanceBrainStation() {
+  brainStation++;
+  if (brainStation >= BRAIN_STATIONS.length) {
+    enterClose();
+    return;
+  }
+
+  const station = BRAIN_STATIONS[brainStation];
+
+  // Add station text
+  const p = document.createElement('p');
+  p.className = 'station-text';
+  p.textContent = station.label;
+  brainText.appendChild(p);
+  requestAnimationFrame(() => p.classList.add('visible'));
+
+  if (station.allGlow) {
+    // Final: all glow
+    for (const g of brainGlows) {
+      g.targetOpacity = 0.6;
+    }
+    return;
+  }
+
+  // Dim previous stations
+  for (const g of brainGlows) {
+    g.targetOpacity = 0.2;
+  }
+
+  // Add new glow
+  brainGlows.push({ x: station.x, y: station.y, opacity: 0, targetOpacity: 0.7 });
+
+  // Pulse from previous station
+  if (brainStation > 0) {
+    const prev = BRAIN_STATIONS[brainStation - 1];
+    const prevX = prev.x2 !== undefined ? prev.x2 : prev.x;
+    const prevY = prev.y2 !== undefined ? prev.y2 : prev.y;
+    brainPulse = { x0: prevX, y0: prevY, x1: station.x, y1: station.y, progress: 0 };
+  }
+
+  // Handle cube inset flips (if we add a mini cube later)
+  // For now the labels describe what's happening
+}
+
+// ==== STATE TRANSITIONS ====
+function enterNarrative() {
+  state = 'NARRATIVE';
+  document.body.classList.remove('act-open');
+  narrativeSection.style.display = 'block';
+  narrativeIndex = -1;
+  advanceNarrative();
+}
+
+function advanceNarrative() {
+  narrativeIndex++;
+  if (narrativeIndex >= NARRATIVE.length) {
+    enterPractice();
+    return;
+  }
+
+  const entry = NARRATIVE[narrativeIndex];
+
+  const p = document.createElement('p');
+  p.className = 'narrative-paragraph';
+  p.textContent = entry.text;
+  narrativeSection.appendChild(p);
+  requestAnimationFrame(() => p.classList.add('visible'));
+
+  // Scroll to bottom of text pane
+  textPane.scrollTop = textPane.scrollHeight;
+
+  // Cube form change
+  if (entry.cubeForm) {
+    setCubeForm(entry.cubeForm);
+  }
+}
+
+function enterPractice() {
+  state = 'PRACTICE';
+  narrativeSection.style.display = 'none';
+  practiceSection.style.display = 'block';
+  setCubeForm('focus');
+  flipCount = 0;
+  practiceStartTime = Date.now();
+  responseIndex = 0;
+}
+
+function handleFlip() {
+  initAudio();
+  playDing();
+  flipCount++;
+
+  // Show response
+  practiceResponse.textContent = PRACTICE_RESPONSES[responseIndex % PRACTICE_RESPONSES.length];
+  practiceResponse.classList.remove('visible');
+  requestAnimationFrame(() => practiceResponse.classList.add('visible'));
+  responseIndex++;
+
+  // Fade out response after a moment
+  setTimeout(() => {
+    practiceResponse.classList.remove('visible');
+  }, 2000);
+
+  // After enough flips, offer to continue
+  if (flipCount >= 4) {
+    setTimeout(() => {
+      practiceContinue.classList.add('visible');
+    }, 2500);
+  }
+}
+
+function enterBrainAnim() {
+  state = 'BRAIN_ANIM';
+  practiceSection.style.display = 'none';
+  cubeCanvas.style.display = 'none';
+  brainContainer.style.display = 'block';
+  brainText.style.display = 'block';
+
+  // Size brain canvas after image loads
+  if (brainImg.complete) {
+    sizeBrainCanvas();
+  } else {
+    brainImg.onload = sizeBrainCanvas;
+  }
+
+  brainStation = -1;
+  brainGlows = [];
+  brainPulse = null;
+
+  // Add initial prompt
+  const prompt = document.createElement('p');
+  prompt.className = 'station-text visible';
+  prompt.textContent = 'Tap to follow the signal through your brain.';
+  prompt.style.fontStyle = 'italic';
+  prompt.style.opacity = '0.6';
+  brainText.appendChild(prompt);
+}
+
+function enterClose() {
+  state = 'CLOSE';
+  brainText.style.display = 'none';
+  closeSection.style.display = 'block';
+  setTimeout(() => galleryLink.classList.add('visible'), 2000);
+
+  // Save to localStorage
+  saveVisit();
+}
+
+function enterReturnWelcome() {
+  state = 'RETURN_WELCOME';
+  document.body.classList.remove('act-open');
+  cubeCanvas.style.display = 'block';
+  setCubeForm('focus');
+  returnSection.style.display = 'block';
+}
+
+// ==== localStorage ====
+function saveVisit() {
+  try {
+    const visits = JSON.parse(localStorage.getItem('cw-necker-visits') || '[]');
+    visits.push({
+      date: new Date().toISOString(),
+      type: visits.length === 0 ? 'first' : 'return',
+      flips: flipCount,
+      durationMs: Date.now() - practiceStartTime,
+    });
+    localStorage.setItem('cw-necker-visits', JSON.stringify(visits));
+    localStorage.setItem('cw-necker-narrative-seen', 'true');
+  } catch (e) { /* localStorage unavailable */ }
+}
+
+function isReturnVisit() {
+  try {
+    return localStorage.getItem('cw-necker-narrative-seen') === 'true';
+  } catch (e) { return false; }
+}
+
+// ==== MAIN LOOP ====
+function frame(timestamp) {
+  if (state !== 'BRAIN_ANIM' && state !== 'CLOSE') {
+    sizeCubeCanvas();
+    drawCube(timestamp);
+  }
+
+  if (state === 'BRAIN_ANIM') {
+    sizeBrainCanvas();
+    drawBrain(timestamp);
+  }
+
+  requestAnimationFrame(frame);
+}
+
+// ==== EVENT HANDLERS ====
+// Act 1: tap anywhere to begin
+visualPane.addEventListener('pointerdown', function onOpenTap(e) {
+  if (state !== 'OPEN') return;
+  visualPane.removeEventListener('pointerdown', onOpenTap);
+  initAudio();
+  enterNarrative();
+});
+
+// Act 2: tap text pane to advance
+textPane.addEventListener('pointerdown', function(e) {
+  if (state === 'NARRATIVE') {
+    // Don't advance if clicking a button
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') return;
+    advanceNarrative();
+  }
+  if (state === 'BRAIN_ANIM') {
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') return;
+    advanceBrainStation();
+  }
+});
+
+// Also allow tapping visual pane to advance brain animation
+visualPane.addEventListener('pointerdown', function(e) {
+  if (state === 'BRAIN_ANIM') {
+    advanceBrainStation();
+  }
+});
+
+// Act 3: "I see it" button
+seeItBtn.addEventListener('pointerdown', function(e) {
+  e.stopPropagation();
+  if (state !== 'PRACTICE') return;
+  handleFlip();
+});
+
+// Continue to brain animation
+continueBtn.addEventListener('pointerdown', function(e) {
+  e.stopPropagation();
+  if (state !== 'PRACTICE') return;
+  enterBrainAnim();
+});
+
+// Return visit buttons
+returnPracticeBtn.addEventListener('pointerdown', function(e) {
+  e.stopPropagation();
+  returnSection.style.display = 'none';
+  enterPractice();
+});
+
+returnStoryBtn.addEventListener('pointerdown', function(e) {
+  e.stopPropagation();
+  returnSection.style.display = 'none';
+  state = 'OPEN';
+  document.body.classList.add('act-open');
+  enterNarrative();
+});
+
+// Window resize
+window.addEventListener('resize', () => {
+  if (state !== 'BRAIN_ANIM') sizeCubeCanvas();
+  else sizeBrainCanvas();
+});
+
+// ==== INIT ====
+async function init() {
+  // Load narrative content from JSON
+  try {
+    const resp = await fetch('narrative.json');
+    const data = await resp.json();
+    NARRATIVE = data.narrative;
+    BRAIN_STATIONS = data.brainStations;
+    PRACTICE_RESPONSES = data.practiceResponses;
+  } catch (e) {
+    console.error('Failed to load narrative.json:', e);
+    return;
+  }
+
+  sizeCubeCanvas();
+
+  if (isReturnVisit()) {
+    enterReturnWelcome();
+  } else {
+    // Show hint after 3 seconds
+    setTimeout(() => openHint.classList.add('visible'), 3000);
+  }
+
+  requestAnimationFrame(frame);
+}
+
+init();
+</script>
+</body>
+</html>

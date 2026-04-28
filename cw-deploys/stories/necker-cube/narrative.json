@@ -1,0 +1,39 @@
+{
+  "narrative": [
+    { "text": "We learn best when we are relaxed, when we are focused on a single thing, and when we are interested. Even trying to learn interferes with that." },
+    { "text": "So, you might ask, what does learning without trying feel like?" },
+    { "text": "Here\u2019s an experiment that seems to work for me. It is based on this shape people sometimes call the Necker cube. I\u2019m sure you\u2019ve seen it before. The question is, which way is the cube facing?" },
+    { "text": "That should be easy enough. After all, the shape is printed on paper. It can\u2019t change\u2026 except that it seems to." },
+    { "text": "Sometimes it seems to be facing down and to the right.", "cubeForm": "orientedA" },
+    { "text": "Sometimes it faces up and to the left.", "cubeForm": "orientedB" },
+    { "text": "Still, the cube doesn\u2019t change. It is always the cube. Why should there be any difference?", "cubeForm": "wireframe" },
+    { "text": "The reason is that this figure is ambiguous. There isn\u2019t enough information in this shape to tell your brain which way it is facing. Your brain responds in the best possible way. It shows you both possibilities, one after another." },
+    { "text": "I mention this because you can learn to tell your brain which way you want to see the cube. Here is how. Notice on this version of the cube, two corners are circled.", "cubeForm": "focus" },
+    { "text": "Notice that if the cube were facing toward the upper left, the upper left circle would be in the center of the face. The same is true of the other circle." },
+    { "text": "Now, to learn to control the cube, let your eyes rest on one circle or the other. In a few seconds the cube will shift. When this happens allow yourself to be pleased. That pleasure is essential to your learning. Let yourself feel it for a few seconds and shift your gaze to the other circle long enough for it to face the front." },
+    { "text": "Again, allow yourself to be pleased. The pleasure you feel comes when your brain releases the neurotransmitter dopamine. When that happens you feel rewarded for accomplishing something you wanted to do. But dopamine does something else in your brain. It tells your hippocampus to strengthen the connections you are using at the moment." },
+    { "text": "That is why it is important not to try. That\u2019s why it is important to be focusing on this single thing. That is why it is important to be pleased when you succeed. The neural links you want to reinforce are exactly the ones that let you flip the direction the cube seems to be facing." },
+    { "text": "So, don\u2019t try. There is no trick to this. It isn\u2019t an achievement. All you\u2019re doing is learning to let your brain know which way you\u2019d like to see the cube. Trying will make it harder." }
+  ],
+
+  "brainStations": [
+    { "x": 0.120, "y": 0.560, "label": "Light hits your retina." },
+    { "x": 0.880, "y": 0.490, "label": "The back of your brain detects edges and lines." },
+    { "x": 0.780, "y": 0.410, "label": "Your brain assembles the lines into a cube." },
+    { "x": 0.580, "y": 0.230, "label": "But wait \u2014 it could be two different cubes.", "cubeFlip": "once" },
+    { "x": 0.400, "y": 0.240, "label": "Your brain holds both versions at once, switching between them.", "cubeFlip": "rhythm", "x2": 0.580, "y2": 0.230 },
+    { "x": 0.220, "y": 0.330, "label": "When you focus on one corner, you tell your brain which one to see.", "cubeFlip": "stabilize" },
+    { "x": -1, "y": -1, "label": "Six places in your brain worked together \u2014 in less than a second.", "allGlow": true }
+  ],
+
+  "practiceResponses": [
+    "There it is.",
+    "Yes.",
+    "Good.",
+    "You felt that.",
+    "Mm-hm.",
+    "That\u2019s the one.",
+    "Yes \u2014 right there.",
+    "There."
+  ]
+}
