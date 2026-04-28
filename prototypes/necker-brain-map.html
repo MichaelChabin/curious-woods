@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Necker Cube Brain Path — Station Map</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Georgia', serif;
+    color: #e8e0d4;
+  }
+  h1 {
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin: 1.5rem 0 0.5rem;
+    letter-spacing: 0.05em;
+    color: #c8a96e;
+  }
+  .container {
+    position: relative;
+    display: inline-block;
+    margin: 1rem;
+  }
+  .container img {
+    display: block;
+    max-width: 720px;
+    width: 100%;
+    border-radius: 4px;
+  }
+  svg.overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+
+  /* Path lines */
+  .path-line {
+    stroke: #c8a96e;
+    stroke-width: 2;
+    stroke-dasharray: 8 4;
+    fill: none;
+    opacity: 0.7;
+  }
+  .path-arrow {
+    fill: #c8a96e;
+    opacity: 0.7;
+  }
+  .oscillation-line {
+    stroke: #c8a96e;
+    stroke-width: 2;
+    stroke-dasharray: 3 3;
+    fill: none;
+    opacity: 0.5;
+  }
+
+  /* Station markers */
+  .station-ring {
+    fill: none;
+    stroke-width: 2.5;
+    opacity: 0.85;
+  }
+  .station-fill {
+    opacity: 0.15;
+  }
+  .station-dot {
+    opacity: 0.9;
+  }
+
+  /* Station colors */
+  .s1 .station-ring, .s1 .station-dot { stroke: #e8c547; fill: #e8c547; }
+  .s1 .station-fill { fill: #e8c547; }
+  .s2 .station-ring, .s2 .station-dot { stroke: #e07840; fill: #e07840; }
+  .s2 .station-fill { fill: #e07840; }
+  .s3 .station-ring, .s3 .station-dot { stroke: #d45e5e; fill: #d45e5e; }
+  .s3 .station-fill { fill: #d45e5e; }
+  .s4 .station-ring, .s4 .station-dot { stroke: #8e6cc8; fill: #8e6cc8; }
+  .s4 .station-fill { fill: #8e6cc8; }
+  .s5 .station-ring, .s5 .station-dot { stroke: #5ba8d4; fill: #5ba8d4; }
+  .s5 .station-fill { fill: #5ba8d4; }
+
+  /* Cerebellum exclusion */
+  .excluded-ring {
+    fill: none;
+    stroke: #666;
+    stroke-width: 1.5;
+    stroke-dasharray: 4 4;
+    opacity: 0.5;
+  }
+
+  /* Labels */
+  .label {
+    font-family: 'Georgia', serif;
+    font-size: 12px;
+    fill: #e8e0d4;
+    opacity: 0.95;
+  }
+  .label-num {
+    font-family: 'Georgia', serif;
+    font-size: 11px;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .label-excluded {
+    font-family: 'Georgia', serif;
+    font-size: 10px;
+    fill: #888;
+    font-style: italic;
+  }
+  .label-desc {
+    font-family: 'Georgia', serif;
+    font-size: 10px;
+    fill: #a09080;
+  }
+
+  /* Sequence panel */
+  .sequence {
+    max-width: 720px;
+    width: 100%;
+    margin: 1.5rem 1rem 2rem;
+    padding: 0;
+  }
+  .seq-step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    gap: 0.75rem;
+  }
+  .seq-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #1a1a1a;
+  }
+  .seq-text {
+    padding-top: 4px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  .seq-name { font-weight: bold; }
+  .seq-maya {
+    display: block;
+    font-style: italic;
+    color: #a09080;
+    margin-top: 2px;
+  }
+  .seq-arrow {
+    color: #c8a96e;
+    margin: 0 0 0.5rem 12px;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+  }
+
+  .s1-bg { background: #e8c547; }
+  .s2-bg { background: #e07840; }
+  .s3-bg { background: #d45e5e; }
+  .s4-bg { background: #8e6cc8; }
+  .s5-bg { background: #5ba8d4; }
+</style>
+</head>
+<body>
+
+<h1>Necker Cube — Brain Animation Path</h1>
+
+<div class="container">
+  <!-- Brain image placeholder — replace src with actual image -->
+  <img id="brain-img" src="" alt="Brain watercolor illustration" />
+
+  <svg class="overlay" viewBox="0 0 900 900" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="path-arrow" />
+      </marker>
+    </defs>
+
+    <!-- PATH: Retina → V1 -->
+    <line x1="150" y1="480" x2="845" y2="420" class="path-line" marker-end="url(#arrowhead)" />
+
+    <!-- PATH: V1 → LOC -->
+    <line x1="850" y1="400" x2="800" y2="355" class="path-line" marker-end="url(#arrowhead)" />
+
+    <!-- PATH: LOC → Parietal -->
+    <line x1="760" y1="340" x2="610" y2="210" class="path-line" marker-end="url(#arrowhead)" />
+
+    <!-- PATH: Parietal → Prefrontal (oscillation zone) -->
+    <line x1="560" y1="200" x2="255" y2="280" class="oscillation-line" marker-end="url(#arrowhead)" />
+    <line x1="255" y1="285" x2="560" y2="205" class="oscillation-line" />
+
+    <!-- STATION 1: Retina -->
+    <g class="s1">
+      <circle cx="120" cy="480" r="30" class="station-fill" />
+      <circle cx="120" cy="480" r="30" class="station-ring" />
+    </g>
+    <text class="label-num s1" style="fill: #1a1a1a;" x="120" y="480">1</text>
+    <text class="label" x="90" y="530">Retina</text>
+    <text class="label-desc" x="90" y="545">Edge detection</text>
+
+    <!-- STATION 2: V1, Occipital Pole -->
+    <g class="s2">
+      <circle cx="880" cy="420" r="30" class="station-fill" />
+      <circle cx="880" cy="420" r="30" class="station-ring" />
+    </g>
+    <text class="label-num" style="fill: #1a1a1a;" x="880" y="420">2</text>
+    <text class="label" x="830" y="470">V1</text>
+    <text class="label-desc" x="830" y="485">Lines &amp; edges</text>
+
+    <!-- STATION 3: LOC -->
+    <g class="s3">
+      <circle cx="780" cy="350" r="28" class="station-fill" />
+      <circle cx="780" cy="350" r="28" class="station-ring" />
+    </g>
+    <text class="label-num" style="fill: #1a1a1a;" x="780" y="350">3</text>
+    <text class="label" x="815" y="345">LOC</text>
+    <text class="label-desc" x="815" y="360">Shape assembly</text>
+
+    <!-- STATION 4: Parietal Cortex -->
+    <g class="s4">
+      <circle cx="580" cy="200" r="30" class="station-fill" />
+      <circle cx="580" cy="200" r="30" class="station-ring" />
+    </g>
+    <text class="label-num" style="fill: #1a1a1a;" x="580" y="200">4</text>
+    <text class="label" x="615" y="195">Parietal</text>
+    <text class="label-desc" x="615" y="210">Ambiguity detected</text>
+
+    <!-- STATION 5: Prefrontal Cortex -->
+    <g class="s5">
+      <circle cx="220" cy="280" r="32" class="station-fill" />
+      <circle cx="220" cy="280" r="32" class="station-ring" />
+    </g>
+    <text class="label-num" style="fill: #1a1a1a;" x="220" y="280">5</text>
+    <text class="label" x="155" y="240">Prefrontal</text>
+    <text class="label-desc" x="155" y="255">Voluntary control</text>
+
+    <!-- EXCLUDED: Cerebellum -->
+    <circle cx="780" cy="680" r="45" class="excluded-ring" />
+    <line x1="750" y1="650" x2="810" y2="710" style="stroke:#666; stroke-width:1.5; opacity:0.4;" />
+    <text class="label-excluded" x="730" y="740">Cerebellum</text>
+    <text class="label-excluded" x="730" y="753">(not in path)</text>
+
+    <!-- Step numbers along path -->
+    <text class="label" x="460" y="460" style="fill:#c8a96e; font-size:10px; opacity:0.6;">1 → 2</text>
+    <text class="label" x="830" y="395" style="fill:#c8a96e; font-size:10px; opacity:0.6;">2 → 3</text>
+    <text class="label" x="700" y="275" style="fill:#c8a96e; font-size:10px; opacity:0.6;">3 → 4</text>
+    <text class="label" x="380" y="225" style="fill:#c8a96e; font-size:10px; opacity:0.6;">4 ↔ 5</text>
+  </svg>
+</div>
+
+<!-- Sequence legend -->
+<div class="sequence">
+  <div class="seq-step">
+    <div class="seq-num s1-bg">1</div>
+    <div class="seq-text">
+      <span class="seq-name">Retina</span> (~120, 480)
+      <span class="seq-maya">"Light hits the retina."</span>
+    </div>
+  </div>
+  <div class="seq-arrow">&#9660;</div>
+
+  <div class="seq-step">
+    <div class="seq-num s2-bg">2</div>
+    <div class="seq-text">
+      <span class="seq-name">V1 — Occipital Pole</span> (~880, 420)
+      <span class="seq-maya">"The back of your brain detects edges and lines."</span>
+    </div>
+  </div>
+  <div class="seq-arrow">&#9660;</div>
+
+  <div class="seq-step">
+    <div class="seq-num s3-bg">3</div>
+    <div class="seq-text">
+      <span class="seq-name">LOC — Higher Visual Areas</span> (~780, 350)
+      <span class="seq-maya">"Your brain assembles the lines into a cube."</span>
+    </div>
+  </div>
+  <div class="seq-arrow">&#9660;</div>
+
+  <div class="seq-step">
+    <div class="seq-num s4-bg">4</div>
+    <div class="seq-text">
+      <span class="seq-name">Parietal Cortex</span> (~580, 200)
+      <span class="seq-maya">"But wait — it could be two different cubes."</span>
+      <span class="seq-maya" style="color:#8e6cc8;">Cube flips once slowly</span>
+    </div>
+  </div>
+  <div class="seq-arrow">&#9660; &#9650; oscillation</div>
+
+  <div class="seq-step">
+    <div class="seq-num s5-bg">5</div>
+    <div class="seq-text">
+      <span class="seq-name">Prefrontal Cortex</span> (~220, 280)
+      <span class="seq-maya">"Your brain holds both versions at once, switching between them."</span>
+      <span class="seq-maya" style="color:#5ba8d4;">Cube flips rhythmically → child takes control</span>
+    </div>
+  </div>
+  <div class="seq-arrow">&#9660; all regions</div>
+
+  <div class="seq-step">
+    <div class="seq-num" style="background:#c8a96e;">&#10022;</div>
+    <div class="seq-text">
+      <span class="seq-name">All regions glow</span>
+      <span class="seq-maya">"Six places in your brain worked together — in less than a second."</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Load brain image — tries local file, falls back to placeholder
+  const img = document.getElementById('brain-img');
+
+  // Try to load from art folder (when deployed)
+  img.onerror = function() {
+    // Create a placeholder canvas
+    const c = document.createElement('canvas');
+    c.width = 900; c.height = 900;
+    const ctx = c.getContext('2d');
+
+    // Soft blue-gray background mimicking watercolor
+    const g = ctx.createRadialGradient(450, 450, 100, 450, 450, 450);
+    g.addColorStop(0, '#6b8fad');
+    g.addColorStop(0.6, '#4a6f8a');
+    g.addColorStop(1, '#e8e0d4');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 900, 900);
+
+    // Brain silhouette hint
+    ctx.beginPath();
+    ctx.ellipse(480, 380, 340, 280, -0.1, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(60, 90, 120, 0.3)';
+    ctx.fill();
+
+    // Cerebellum hint
+    ctx.beginPath();
+    ctx.ellipse(750, 650, 80, 60, 0.2, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(60, 90, 120, 0.25)';
+    ctx.fill();
+
+    ctx.font = '16px Georgia';
+    ctx.fillStyle = '#a0a0a0';
+    ctx.textAlign = 'center';
+    ctx.fillText('(brain watercolor image placeholder)', 450, 800);
+
+    img.src = c.toDataURL();
+  };
+
+  // Try the art folder path
+  img.src = '../cw-deploys/art/brain-watercolor.png';
+</script>
+
+</body>
+</html>
