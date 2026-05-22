@@ -41,7 +41,7 @@ const BG_COLOR       = '#f4f1e8';
 const INK_COLOR      = '#546A80';
 const GRID_OPACITY   = 0.3;
 const GRID_WIDTH     = 0.5;
-const AXIS_WIDTH     = 1.5;
+const AXIS_WIDTH     = 1;     // 1px snapped to half-pixel = single crisp pixel
 const LABEL_FONT      = '12px Georgia, serif';
 const LABEL_FONT_BOLD = 'bold 12px Georgia, serif';
 const AREA_FONT       = '16px Georgia, serif';
@@ -55,7 +55,7 @@ const ZOOM_INIT = 60;
 
 // Rectangles — visual treatment.
 const RECT_FILL_ALPHA = 0.05;
-const RECT_OUTLINE_W  = 1.5;
+const RECT_OUTLINE_W  = 1;     // 1px snapped to half-pixel = single crisp pixel
 const RECT_LABEL_PAD  = 6;
 
 // Hover affordance on axis numbers.
@@ -228,12 +228,17 @@ function drawRectangle(rect, isDraft) {
 
   ctx.strokeStyle = INK_COLOR;
   ctx.lineWidth   = RECT_OUTLINE_W;
-  // No half-pixel offset here — the rectangle's left/bottom edges
-  // must align exactly with the y-axis and x-axis when the rect
-  // touches them. The +0.5 crispness trick is for 1px lines on
-  // standalone shapes; here it would visibly de-align the rect
-  // from the axes.
-  ctx.strokeRect(x, y, w, h);
+  // Snap all four corners to half-pixel boundaries — same snap()
+  // used for the axes, so a rectangle touching the origin aligns
+  // exactly with the y-axis and x-axis. The crispness trick that
+  // earlier broke alignment was applied unilaterally; doing it on
+  // both sides restores alignment AND eliminates the anti-alias
+  // halo (the "shadow above the rectangle").
+  const ox0 = snap(Math.min(a.x, b.x));
+  const oy0 = snap(Math.min(a.y, b.y));
+  const ox1 = snap(Math.max(a.x, b.x));
+  const oy1 = snap(Math.max(a.y, b.y));
+  ctx.strokeRect(ox0, oy0, ox1 - ox0, oy1 - oy0);
 
   // Three labels — always positive magnitudes. Each edge label equals
   // the LENGTH of the edge it sits on. Labels mirror to the
@@ -325,14 +330,17 @@ function draw() {
   ctx.stroke();
   ctx.globalAlpha = 1;
 
-  // Axes.
+  // Axes — snapped to half-pixel boundaries so 1px lines render
+  // crisply with no anti-alias halo.
   ctx.strokeStyle = INK_COLOR;
   ctx.lineWidth   = AXIS_WIDTH;
+  const axisX = snap(origin.x);
+  const axisY = snap(origin.y);
   ctx.beginPath();
-  ctx.moveTo(origin.x, 0);
-  ctx.lineTo(origin.x, viewH);
-  ctx.moveTo(0, origin.y);
-  ctx.lineTo(viewW, origin.y);
+  ctx.moveTo(axisX, 0);
+  ctx.lineTo(axisX, viewH);
+  ctx.moveTo(0, axisY);
+  ctx.lineTo(viewW, axisY);
   ctx.stroke();
 
   // Rectangles — committed first, then the in-progress draft on top.
@@ -407,6 +415,13 @@ function draw() {
 }
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+// Snap a CSS pixel position to a half-pixel boundary. Used for
+// 1px-wide lines (axes, rectangle outlines) so they render as a
+// single solid pixel rather than two anti-aliased pixels with a
+// halo. Same trick is the reason rectangles now align cleanly to
+// the axes when they touch the origin.
+function snap(v) { return Math.round(v) + 0.5; }
 
 // ==== Pointer interaction ====
 // What: one small state machine handling pan, hover, and rectangle
