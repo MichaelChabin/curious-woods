@@ -228,15 +228,23 @@ function drawRectangle(rect, isDraft) {
 
   ctx.strokeStyle = INK_COLOR;
   ctx.lineWidth   = RECT_OUTLINE_W;
-  ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+  // No half-pixel offset here — the rectangle's left/bottom edges
+  // must align exactly with the y-axis and x-axis when the rect
+  // touches them. The +0.5 crispness trick is for 1px lines on
+  // standalone shapes; here it would visibly de-align the rect
+  // from the axes.
+  ctx.strokeRect(x, y, w, h);
 
-  // Three labels — always positive magnitudes. Labels mirror to the
+  // Three labels — always positive magnitudes. Each edge label equals
+  // the LENGTH of the edge it sits on. Labels mirror to the
   // rectangle's OUTER corner (the corner farthest from origin), so
   // they never collide with axis labels.
-  //   Height → outer horizontal edge (top for upward rects, bottom
-  //            for downward), centred horizontally.
-  //   Width  → outer vertical edge (right for rightward, left for
-  //            leftward), centred vertically.
+  //   Width  → outer horizontal edge (top for upward rects, bottom
+  //            for downward), centred horizontally — top/bottom edges
+  //            have length = width.
+  //   Height → outer vertical edge (right for rightward, left for
+  //            leftward), centred vertically — left/right edges
+  //            have length = height.
   //   Area   → at the outer corner itself.
   const width  = Math.abs(rect.x);
   const height = Math.abs(rect.y);
@@ -252,17 +260,17 @@ function drawRectangle(rect, isDraft) {
 
   ctx.fillStyle = INK_COLOR;
 
-  // Height — outer horizontal edge. Bold.
+  // Width — outer horizontal edge. Bold.
   ctx.font = LABEL_FONT_BOLD;
   ctx.textAlign = 'center';
   ctx.textBaseline = hBaseline;
-  ctx.fillText(formatInteger(height), x + w / 2, hEdgeY);
+  ctx.fillText(formatInteger(width), x + w / 2, hEdgeY);
 
-  // Width — outer vertical edge. Bold.
+  // Height — outer vertical edge. Bold.
   ctx.font = LABEL_FONT_BOLD;
   ctx.textAlign = vAlign;
   ctx.textBaseline = 'middle';
-  ctx.fillText(formatInteger(width), vEdgeX, y + h / 2);
+  ctx.fillText(formatInteger(height), vEdgeX, y + h / 2);
 
   // Area — outer corner. 16pt, regular weight.
   ctx.font = AREA_FONT;
