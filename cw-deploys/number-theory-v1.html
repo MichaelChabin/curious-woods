@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Number Theory Lab</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #f4f1e8; overflow: hidden; }
+  body { font-family: Georgia, serif; }
+  #canvas { display: block; cursor: grab; touch-action: none; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<script>
+// ============================================================
+// Number Theory Lab — Stages 1 & 2: the plane + rectangles
+//
+// Stage 1: a coordinate plane (0 at centre, positive in all four
+// directions, free pan/zoom, edgeless, Glass-inherited visuals).
+//
+// Stage 2: hover any axis number → drag → an origin-anchored
+// rectangle appears with three live labels (height, width, area).
+// Two paths to the same object — hovering 5 on x and dragging up to
+// 4, or hovering 4 on y and dragging right to 5, both produce the
+// same 5×4 rectangle. Rectangles persist; multiple at once is the
+// point (factor pairs of a number visible together).
+//
+// A tap (no drag) outside any rectangle undoes the last one —
+// Glass's convention. Taps inside a rectangle are reserved for the
+// future selection / close affordance.
+//
+// Deferred to a follow-up: rotation, triangle-as-half, selection /
+// delete.
+// ============================================================
+
+// ==== Visual constants ====
+// What: colours and sizes inherited from Glass / Interface-Foundation.
+const BG_COLOR       = '#f4f1e8';
+const INK_COLOR      = '#546A80';
+const GRID_OPACITY   = 0.3;
+const GRID_WIDTH     = 0.5;
+const AXIS_WIDTH     = 1.5;
+const LABEL_FONT      = '12px Georgia, serif';
+const LABEL_FONT_BOLD = 'bold 12px Georgia, serif';
+const AREA_FONT       = '16px Georgia, serif';
+const LABEL_PAD       = 4;   // px gap between axis line and label
+
+// Zoom in pixels-per-unit. Bounds chosen so labels stay legible
+// and panning across hundreds of units stays fluid.
+const ZOOM_MIN  = 4;
+const ZOOM_MAX  = 600;
+const ZOOM_INIT = 60;
+
+// Rectangles — visual treatment.
+const RECT_FILL_ALPHA = 0.05;
+const RECT_OUTLINE_W  = 1.5;
+const RECT_LABEL_PAD  = 6;
+
+// Hover affordance on axis numbers.
+const HOVER_RADIUS     = 12;   // px along the axis
+const HOVER_AXIS_BAND  = 22;   // px perpendicular to the axis
+const HOVER_DOT_RADIUS = 4;    // filled dot at the hovered tick
+
+// A mousedown→mouseup within this distance counts as a tap (rather
+// than a drag). Taps outside any rectangle undo the last rectangle.
+const TAP_THRESHOLD    = 4;    // px
+
+// ==== State ====
+// What: a single transform — pan (world coords at screen centre) and
+// zoom (pixels per unit). Plus committed rectangles and a small
+// interaction state machine.
+const canvas = document.getElementById('canvas');
+const ctx    = canvas.getContext('2d');
+let pan  = { x: 0, y: 0 };
+let zoom = ZOOM_INIT;
+let viewW = 0, viewH = 0;   // CSS pixels (logical)
+
+// Each rectangle is anchored at the origin. rect.x and rect.y are the
+// opposite corner's signed world coords — negative values just mean
+// the rectangle lives in another quadrant. Width, height, and area
+// are always displayed as positive magnitudes.
+const rectangles = [];
+
+// Interaction modes:
+//   'idle'    — nothing held; hover may be active
+//   'panning' — dragging the plane on empty canvas
+//   'drawing' — constructing a rectangle from a hovered axis number
+let mode      = 'idle';
+let panStart  = null;   // { sx, sy, panX, panY }
+let drawState = null;   // { axis: 'x'|'y', fixed: int, current: int }
+let hoverTick = null;   // { axis: 'x'|'y', value: int } | null
+let downPos   = null;   // { sx, sy } at mousedown — used to detect tap-vs-drag
+
+// ==== Canvas sizing ====
+// What: high-DPI canvas. Internal pixels = CSS pixels × devicePixelRatio,
+// drawing is scaled so all subsequent draws use CSS-pixel units.
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  viewW = window.innerWidth;
+  viewH = window.innerHeight;
+  canvas.width  = Math.round(viewW * dpr);
+  canvas.height = Math.round(viewH * dpr);
+  canvas.style.width  = viewW + 'px';
+  canvas.style.height = viewH + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+// ==== Coordinate conversion ====
+// What: world ↔ screen. World y is up; screen y is down. Pan stores
+// the world coordinate sitting under the centre of the screen.
+function worldToScreen(wx, wy) {
+  return {
+    x: (wx - pan.x) * zoom + viewW / 2,
+    y: -(wy - pan.y) * zoom + viewH / 2,
+  };
+}
+function screenToWorld(sx, sy) {
+  return {
+    x: (sx - viewW / 2) / zoom + pan.x,
+    y: -(sy - viewH / 2) / zoom + pan.y,
+  };
+}
+
+// ==== Number formatting ====
+// What: integers shown with commas every three digits. Decimals are
+// not used in Stage 1, but the right-of-point thin-space grouping
+// (§3) lives here too so other stages can reuse it. Labels are
+// always positive — "positive in all four directions."
+const THIN_SPACE = ' ';
+function formatInteger(n) {
+  return Math.abs(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+// eslint-disable-next-line no-unused-vars
+function formatNumber(n, fractionDigits) {
+  const abs = Math.abs(n);
+  if (fractionDigits == null || fractionDigits === 0) return formatInteger(abs);
+  const [intPart, fracPart = ''] = abs.toFixed(fractionDigits).split('.');
+  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const fracGrouped = fracPart.replace(/(\d{3})(?=\d)/g, '$1' + THIN_SPACE);
+  return fracGrouped ? grouped + '.' + fracGrouped : grouped;
+}
+
+// ==== Adaptive label step ====
+// What: choose how many world-units between labels so on-screen
+// spacing stays readable. Grid spacing > 40px → every unit;
+// 10–40px → every 5th; ≤ 10px → every 10th. The grid itself
+// follows the same step so the visual texture stays clean at any
+// zoom.
+function labelStep() {
+  if (zoom > 40) return 1;
+  if (zoom > 10) return 5;
+  return 10;
+}
+
+// ==== Hover detection ====
+// What: is the cursor near a labeled tick on either axis? Returns
+// { axis, value } or null. Detection respects the current label
+// step — at low zoom only ticks at multiples of 5 or 10 are
+// hoverable; zooming reveals finer numbers. Works on both sides of
+// the origin: hovering "5" on the left of the y-axis (world x = -5)
+// is a separate, valid target from the "5" on the right.
+function hitTestAxisNumber(sx, sy) {
+  const step   = labelStep();
+  const origin = worldToScreen(0, 0);
+
+  // x-axis (horizontal at origin.y) — snap world x to nearest step.
+  if (Math.abs(sy - origin.y) < HOVER_AXIS_BAND) {
+    const wx = screenToWorld(sx, sy).x;
+    const x  = Math.round(wx / step) * step;
+    if (x !== 0) {
+      const tx = worldToScreen(x, 0).x;
+      if (Math.abs(sx - tx) < HOVER_RADIUS) {
+        return { axis: 'x', value: x };
+      }
+    }
+  }
+  // y-axis (vertical at origin.x).
+  if (Math.abs(sx - origin.x) < HOVER_AXIS_BAND) {
+    const wy = screenToWorld(sx, sy).y;
+    const y  = Math.round(wy / step) * step;
+    if (y !== 0) {
+      const ty = worldToScreen(0, y).y;
+      if (Math.abs(sy - ty) < HOVER_RADIUS) {
+        return { axis: 'y', value: y };
+      }
+    }
+  }
+  return null;
+}
+
+function sameHit(a, b) {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return a.axis === b.axis && a.value === b.value;
+}
+
+// What: is a screen point inside a given rectangle? Used to decide
+// whether a tap should undo (outside any rectangle) or be reserved
+// for future selection (inside one).
+function pointInRect(sx, sy, rect) {
+  const a = worldToScreen(0, 0);
+  const b = worldToScreen(rect.x, rect.y);
+  return sx >= Math.min(a.x, b.x) && sx <= Math.max(a.x, b.x)
+      && sy >= Math.min(a.y, b.y) && sy <= Math.max(a.y, b.y);
+}
+
+// ==== Rectangle drawing ====
+// What: render one rectangle anchored at origin, plus its three
+// labels (height, width, area). Labels live INSIDE the rectangle —
+// never moved outside, even when the rectangle is tiny. The §4
+// "tiny rectangles" rule is solved by zoom, not by relocation.
+function drawRectangle(rect, isDraft) {
+  const a = worldToScreen(0, 0);
+  const b = worldToScreen(rect.x, rect.y);
+  const x = Math.min(a.x, b.x);
+  const y = Math.min(a.y, b.y);
+  const w = Math.abs(b.x - a.x);
+  const h = Math.abs(b.y - a.y);
+  if (w < 1 || h < 1) return;
+
+  ctx.fillStyle   = INK_COLOR;
+  ctx.globalAlpha = isDraft ? RECT_FILL_ALPHA * 0.7 : RECT_FILL_ALPHA;
+  ctx.fillRect(x, y, w, h);
+  ctx.globalAlpha = 1;
+
+  ctx.strokeStyle = INK_COLOR;
+  ctx.lineWidth   = RECT_OUTLINE_W;
+  ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+
+  // Three labels — always positive magnitudes. Labels mirror to the
+  // rectangle's OUTER corner (the corner farthest from origin), so
+  // they never collide with axis labels.
+  //   Height → outer horizontal edge (top for upward rects, bottom
+  //            for downward), centred horizontally.
+  //   Width  → outer vertical edge (right for rightward, left for
+  //            leftward), centred vertically.
+  //   Area   → at the outer corner itself.
+  const width  = Math.abs(rect.x);
+  const height = Math.abs(rect.y);
+  const area   = width * height;
+
+  const outerRight = rect.x > 0;
+  const outerTop   = rect.y > 0;
+
+  const hEdgeY      = outerTop ? y + RECT_LABEL_PAD : y + h - RECT_LABEL_PAD;
+  const hBaseline   = outerTop ? 'top' : 'bottom';
+  const vEdgeX      = outerRight ? x + w - RECT_LABEL_PAD : x + RECT_LABEL_PAD;
+  const vAlign      = outerRight ? 'right' : 'left';
+
+  ctx.fillStyle = INK_COLOR;
+
+  // Height — outer horizontal edge. Bold.
+  ctx.font = LABEL_FONT_BOLD;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = hBaseline;
+  ctx.fillText(formatInteger(height), x + w / 2, hEdgeY);
+
+  // Width — outer vertical edge. Bold.
+  ctx.font = LABEL_FONT_BOLD;
+  ctx.textAlign = vAlign;
+  ctx.textBaseline = 'middle';
+  ctx.fillText(formatInteger(width), vEdgeX, y + h / 2);
+
+  // Area — outer corner. 16pt, regular weight.
+  ctx.font = AREA_FONT;
+  ctx.textAlign = vAlign;
+  ctx.textBaseline = hBaseline;
+  ctx.fillText(formatInteger(area), vEdgeX, hEdgeY);
+}
+
+// What: the in-progress rectangle as the user drags. Built from
+// drawState into the same shape drawRectangle understands.
+function currentDraftRect() {
+  if (!drawState) return null;
+  if (drawState.current === 0) return null;
+  return drawState.axis === 'x'
+    ? { x: drawState.fixed,   y: drawState.current }
+    : { x: drawState.current, y: drawState.fixed   };
+}
+
+// ==== Drawing ====
+// What: clear, draw grid lines, draw axes, draw labels. Re-drawn
+// on every pan, zoom, or resize.
+function draw() {
+  ctx.fillStyle = BG_COLOR;
+  ctx.fillRect(0, 0, viewW, viewH);
+
+  const step   = labelStep();
+  const origin = worldToScreen(0, 0);
+
+  // Visible world bounds (with a one-step margin so edges don't pop).
+  const topLeft     = screenToWorld(0, 0);
+  const bottomRight = screenToWorld(viewW, viewH);
+  const wMinX = Math.floor(topLeft.x     / step) * step - step;
+  const wMaxX = Math.ceil (bottomRight.x / step) * step + step;
+  const wMinY = Math.floor(bottomRight.y / step) * step - step;
+  const wMaxY = Math.ceil (topLeft.y     / step) * step + step;
+
+  // Grid lines.
+  ctx.strokeStyle = INK_COLOR;
+  ctx.globalAlpha = GRID_OPACITY;
+  ctx.lineWidth   = GRID_WIDTH;
+  ctx.beginPath();
+  for (let x = wMinX; x <= wMaxX; x += step) {
+    const sx = worldToScreen(x, 0).x;
+    ctx.moveTo(sx, 0);
+    ctx.lineTo(sx, viewH);
+  }
+  for (let y = wMinY; y <= wMaxY; y += step) {
+    const sy = worldToScreen(0, y).y;
+    ctx.moveTo(0, sy);
+    ctx.lineTo(viewW, sy);
+  }
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Axes.
+  ctx.strokeStyle = INK_COLOR;
+  ctx.lineWidth   = AXIS_WIDTH;
+  ctx.beginPath();
+  ctx.moveTo(origin.x, 0);
+  ctx.lineTo(origin.x, viewH);
+  ctx.moveTo(0, origin.y);
+  ctx.lineTo(viewW, origin.y);
+  ctx.stroke();
+
+  // Rectangles — committed first, then the in-progress draft on top.
+  // Light fill (alpha 0.05) keeps axis labels readable underneath.
+  for (const rect of rectangles) drawRectangle(rect, false);
+  const draft = currentDraftRect();
+  if (draft) drawRectangle(draft, true);
+
+  // Labels — positive in all four directions. When an axis pans
+  // off-screen, the labels cling to the nearer edge: x-labels to
+  // the top or bottom, y-labels to the left or right. The text
+  // baseline / alignment flips so the visible side of each label
+  // hugs the edge — otherwise text gets clipped at the wrong end.
+  ctx.fillStyle = INK_COLOR;
+  ctx.font = LABEL_FONT;
+
+  let xLabelY, xLabelBaseline;
+  if (origin.y < 0) {
+    xLabelY = LABEL_PAD;            xLabelBaseline = 'top';
+  } else if (origin.y > viewH) {
+    xLabelY = viewH - LABEL_PAD;    xLabelBaseline = 'bottom';
+  } else {
+    xLabelY = origin.y + LABEL_PAD; xLabelBaseline = 'top';
+  }
+  ctx.textAlign = 'center';
+  ctx.textBaseline = xLabelBaseline;
+  for (let x = wMinX; x <= wMaxX; x += step) {
+    if (x === 0) {
+      // The "0" label sits slightly left of the y-axis so it doesn't
+      // collide with the axis line. (Only matters when the y-axis is
+      // on-screen; when it isn't, x=0 is off-screen too.)
+      ctx.font = LABEL_FONT;
+      ctx.fillText('0', origin.x - 8, xLabelY);
+      continue;
+    }
+    const sx = worldToScreen(x, 0).x;
+    if (sx < -20 || sx > viewW + 20) continue;
+    const isHovered = hoverTick && hoverTick.axis === 'x' && hoverTick.value === x;
+    ctx.font = isHovered ? LABEL_FONT_BOLD : LABEL_FONT;
+    ctx.fillText(formatInteger(x), sx, xLabelY);
+  }
+
+  let yLabelX, yLabelAlign;
+  if (origin.x < 0) {
+    yLabelX = LABEL_PAD;            yLabelAlign = 'left';
+  } else if (origin.x > viewW) {
+    yLabelX = viewW - LABEL_PAD;    yLabelAlign = 'right';
+  } else {
+    yLabelX = origin.x - LABEL_PAD; yLabelAlign = 'right';
+  }
+  ctx.textAlign = yLabelAlign;
+  ctx.textBaseline = 'middle';
+  for (let y = wMinY; y <= wMaxY; y += step) {
+    if (y === 0) continue;
+    const sy = worldToScreen(0, y).y;
+    if (sy < -10 || sy > viewH + 10) continue;
+    const isHovered = hoverTick && hoverTick.axis === 'y' && hoverTick.value === y;
+    ctx.font = isHovered ? LABEL_FONT_BOLD : LABEL_FONT;
+    ctx.fillText(formatInteger(y), yLabelX, sy);
+  }
+
+  // Hover dot — last so it sits on top of everything else.
+  if (hoverTick) {
+    const pos = hoverTick.axis === 'x'
+      ? worldToScreen(hoverTick.value, 0)
+      : worldToScreen(0, hoverTick.value);
+    ctx.fillStyle = INK_COLOR;
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, HOVER_DOT_RADIUS, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+// ==== Pointer interaction ====
+// What: one small state machine handling pan, hover, and rectangle
+// drag. On mousedown the current hover decides what we do: if the
+// cursor is on an axis number we start a rectangle drag; otherwise
+// we pan. Mousemove either extends the drag, pans, or just refreshes
+// hover. The rectangle commits on mouseup (unless the drag closed to
+// zero); Escape cancels in progress.
+
+function setIdleCursor() {
+  canvas.style.cursor = hoverTick ? 'crosshair' : 'grab';
+}
+
+canvas.addEventListener('mousedown', (e) => {
+  downPos = { sx: e.clientX, sy: e.clientY };
+  if (hoverTick) {
+    mode = 'drawing';
+    drawState = { axis: hoverTick.axis, fixed: hoverTick.value, current: 0 };
+    canvas.style.cursor = 'crosshair';
+    e.preventDefault();
+    return;
+  }
+  mode = 'panning';
+  panStart = { sx: e.clientX, sy: e.clientY, panX: pan.x, panY: pan.y };
+  canvas.style.cursor = 'grabbing';
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (mode === 'panning') {
+    const dx = e.clientX - panStart.sx;
+    const dy = e.clientY - panStart.sy;
+    pan.x = panStart.panX - dx / zoom;
+    pan.y = panStart.panY + dy / zoom;
+    draw();
+    return;
+  }
+  if (mode === 'drawing') {
+    // Snap to integers — Stage 1 resolution. (Half / tenths arrive
+    // in Stage 3 when division needs them.)
+    const w = screenToWorld(e.clientX, e.clientY);
+    drawState.current = drawState.axis === 'x' ? Math.round(w.y) : Math.round(w.x);
+    draw();
+    return;
+  }
+  // idle: refresh hover state
+  const hit = hitTestAxisNumber(e.clientX, e.clientY);
+  if (!sameHit(hit, hoverTick)) {
+    hoverTick = hit;
+    setIdleCursor();
+    draw();
+  }
+});
+
+window.addEventListener('mouseup', (e) => {
+  const wasTap = downPos
+    && Math.hypot(e.clientX - downPos.sx, e.clientY - downPos.sy) < TAP_THRESHOLD;
+  downPos = null;
+
+  if (mode === 'drawing') {
+    if (drawState.current !== 0) {
+      rectangles.push(currentDraftRect());
+    } else if (wasTap) {
+      tryUndo(e.clientX, e.clientY);
+    }
+    drawState = null;
+    mode = 'idle';
+    hoverTick = hitTestAxisNumber(e.clientX, e.clientY);
+    setIdleCursor();
+    draw();
+    return;
+  }
+  if (mode === 'panning') {
+    if (wasTap) tryUndo(e.clientX, e.clientY);
+    panStart = null;
+    mode = 'idle';
+    hoverTick = hitTestAxisNumber(e.clientX, e.clientY);
+    setIdleCursor();
+    draw();
+  }
+});
+
+// What: undo by popping the last rectangle, but only if the tap is
+// OUTSIDE every existing rectangle. In-rectangle taps are reserved
+// for the future selection / close affordance (§4).
+function tryUndo(sx, sy) {
+  if (rectangles.length === 0) return;
+  for (const r of rectangles) {
+    if (pointInRect(sx, sy, r)) return;
+  }
+  rectangles.pop();
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && mode === 'drawing') {
+    drawState = null;
+    mode = 'idle';
+    setIdleCursor();
+    draw();
+  }
+});
+
+// ==== Zoom ====
+// What: mouse wheel zooms, centred on the cursor. The world point
+// under the cursor before the zoom is the same world point under
+// the cursor after.
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const before = screenToWorld(e.clientX, e.clientY);
+  const factor = Math.exp(-e.deltaY * 0.0015);
+  zoom = clamp(zoom * factor, ZOOM_MIN, ZOOM_MAX);
+  const after = screenToWorld(e.clientX, e.clientY);
+  pan.x += before.x - after.x;
+  pan.y += before.y - after.y;
+  draw();
+}, { passive: false });
+
+// ==== Init ====
+window.addEventListener('resize', resize);
+resize();
+</script>
+</body>
+</html>
