@@ -49,7 +49,7 @@
 
 <script>
 // ============================================================
-// Number Theory Lab — Stages 1, 2, & 3a: plane + rectangles + division setup
+// Number Theory Lab — Stages 1, 2, 3a, & 3b: plane + rectangles + division setup + distribution
 //
 // Stage 1: a coordinate plane (0 at centre, positive in all four
 // directions, free pan/zoom, edgeless, Glass-inherited visuals).
@@ -85,9 +85,12 @@
 //     the x-axis segment from 0 to that number lights up in active
 //     blue, marking the width of the rectangle the tiles will
 //     build. Tap the same number again to clear.
-//   • Distribution (Iteration B) sends the tiles down from the
-//     pile to settle row by row above this segment — the rectangle
-//     emerges; its height is revealed at the end, not previewed.
+//   • When count ≥ width, a "divide" action word appears below
+//     the width segment. Tap it → tiles flock from the pile to the
+//     slots, one per column per round, divisor-many tiles per round.
+//     The first round is slow enough to count along; later rounds
+//     speed up. The rectangle emerges row by row. Any leftover
+//     tiles (count mod width) remain in the pile.
 //   • Slicing into tenths is Iteration C.
 // ============================================================
 
@@ -147,6 +150,15 @@ const PILE_PER_ROW  = 10;   // wrap every 10 tiles (place-value reading)
 const TILE_FILL_A   = 0.08; // pile tile fill alpha
 const WIDTH_HL_W    = 2;    // px — heavier line for the active width segment
 
+// Distribution animation (Stage 3b).
+const ROUND_DURATION_FIRST = 1500;  // ms — slow enough to count along
+const ROUND_DURATION_REST  = 500;   // ms — faster subsequent rounds
+const ROUND_PAUSE          = 250;   // ms — brief pause between rounds
+const FLIGHT_FRACTION      = 0.7;   // fraction of round each tile takes mid-air
+const FLOCK_PHASE_MAX      = 0.3;   // 1 - FLIGHT_FRACTION — max random start delay
+const FLOCK_WOBBLE_X       = 30;    // px — sideways drift amplitude
+const FLOCK_WOBBLE_Y       = 20;    // px — vertical drift amplitude
+
 // ==== State ====
 // What: a single transform — pan (world coords at screen centre) and
 // zoom (pixels per unit). Plus committed rectangles and a small
@@ -184,6 +196,16 @@ let actionWordHits = [];    // [{ rect, action, sx, sy, w, h }]
 // divisor is set by tapping a positive x-axis number; null = unset.
 let dividend = 17;
 let divisor  = null;
+
+// Active distribution (Stage 3b). null when no distribution has
+// happened yet, or after one has been cleared. When set, holds
+// per-round state and the in-flight tiles being animated.
+//   placedRounds   — completed integer rounds (0 .. totalRounds)
+//   totalRounds    — floor(dividend / divisor)
+//   tilesInFlight  — array of in-flight tile records, [] between rounds
+//   roundStart     — performance.now() at the round's start
+//   roundDuration  — ms for the current round's animation
+let dist = null;
 
 // ==== Canvas sizing ====
 // What: high-DPI canvas. Internal pixels = CSS pixels × devicePixelRatio,
@@ -466,7 +488,11 @@ function performAction(rect, action) {
 function handleTap(sx, sy) {
   const action = hitTestActionWord(sx, sy);
   if (action) {
-    performAction(action.rect, action.action);
+    if (action.action === 'divide') {
+      startDistribution();
+    } else if (action.rect) {
+      performAction(action.rect, action.action);
+    }
     hoveredAction = null;   // positions may have shifted; let next move re-test
     return;
   }
@@ -475,6 +501,7 @@ function handleTap(sx, sy) {
   const tick = hitTestAxisNumber(sx, sy);
   if (tick && tick.axis === 'x' && tick.value > 0) {
     divisor = (divisor === tick.value) ? null : tick.value;
+    dist = null;   // changing the width invalidates any prior distribution
     return;
   }
   const rect = findRectContaining(sx, sy);
@@ -487,6 +514,65 @@ function handleTap(sx, sy) {
   } else {
     tryUndo(sx, sy);
   }
+}
+
+// ==== Distribution control (Stage 3b) ====
+// What: divide the dividend count into the divisor slots, one round
+// at a time. Each round flies `divisor` tiles from the pile to the
+// next stack height of each slot. Animation is driven by
+// requestAnimationFrame; rounds are paced by setTimeout between them.
+function startDistribution() {
+  if (!divisor || divisor <= 0) return;
+  const totalRounds = Math.floor(dividend / divisor);
+  if (totalRounds <= 0) return;
+  dist = {
+    placedRounds:  0,
+    totalRounds,
+    tilesInFlight: [],
+    roundStart:    0,
+    roundDuration: 0,
+  };
+  scheduleRound();
+}
+
+function scheduleRound() {
+  if (!dist) return;
+  if (dist.placedRounds >= dist.totalRounds) return;  // done
+
+  const isFirst = dist.placedRounds === 0;
+  dist.roundDuration = isFirst ? ROUND_DURATION_FIRST : ROUND_DURATION_REST;
+  dist.tilesInFlight = [];
+  // Source pile positions: the last `divisor` positions still in
+  // the pile right now — i.e. the bottom-right corner of the pile.
+  const pileBase = dividend - dist.placedRounds * divisor - divisor;
+  for (let i = 0; i < divisor; i++) {
+    dist.tilesInFlight.push({
+      slot:    i,
+      pileIdx: pileBase + i,
+      phase:   Math.random() * FLOCK_PHASE_MAX,
+      wobbleX: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_X,
+      wobbleY: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_Y,
+    });
+  }
+  dist.roundStart = performance.now();
+  requestAnimationFrame(animateDistFrame);
+}
+
+function animateDistFrame(now) {
+  if (!dist || dist.tilesInFlight.length === 0) return;
+  const elapsed = now - dist.roundStart;
+  if (elapsed >= dist.roundDuration) {
+    // Round complete — promote in-flight tiles to landed.
+    dist.placedRounds += 1;
+    dist.tilesInFlight = [];
+    draw();
+    if (dist.placedRounds < dist.totalRounds) {
+      setTimeout(scheduleRound, ROUND_PAUSE);
+    }
+    return;
+  }
+  draw();
+  requestAnimationFrame(animateDistFrame);
 }
 
 // ==== Diagonal rendering ====
@@ -556,27 +642,121 @@ function drawActionWords(rect) {
   }
 }
 
+// ==== Tile rendering primitive ====
+// What: a single square tile at a given screen position and size.
+// Used by the pile (PILE_TILE px), in-flight tiles (interpolated),
+// and landed tiles in slots (zoom px). One consistent visual.
+function drawSquareTile(x, y, size) {
+  ctx.fillStyle = INK_COLOR;
+  ctx.globalAlpha = TILE_FILL_A;
+  ctx.fillRect(x, y, size, size);
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = INK_COLOR;
+  ctx.lineWidth   = 1;
+  ctx.strokeRect(snap(x), snap(y), Math.round(size), Math.round(size));
+}
+
+function pileTileScreenPos(pileIndex) {
+  const step = PILE_TILE + PILE_PADDING;
+  const col  = pileIndex % PILE_PER_ROW;
+  const row  = Math.floor(pileIndex / PILE_PER_ROW);
+  return { x: PILE_LEFT + col * step, y: PILE_TOP + row * step };
+}
+
+function lerp(a, b, t)   { return a + (b - a) * t; }
+function easeOutQuad(t)  { return 1 - (1 - t) * (1 - t); }
+
 // ==== Dividend pile ====
-// What: render N unit tiles in a screen-fixed pile just below the
-// Dividend panel. 10 per row (place-value reading). Independent of
-// pan/zoom. In Iteration B these tiles will fly out of the pile and
-// into the divisor slots.
+// What: render the tiles still IN the pile (not yet flying, not yet
+// landed). The visible count shrinks as distribution proceeds: each
+// completed round removes `divisor` tiles, and tiles currently in
+// flight are excluded too. Drain happens from the bottom-right
+// (highest indices first).
 function drawDividendPile() {
   if (dividend <= 0) return;
-  const step = PILE_TILE + PILE_PADDING;
-  for (let i = 0; i < dividend; i++) {
-    const col = i % PILE_PER_ROW;
-    const row = Math.floor(i / PILE_PER_ROW);
-    const x = PILE_LEFT + col * step;
-    const y = PILE_TOP  + row * step;
-    ctx.fillStyle = INK_COLOR;
-    ctx.globalAlpha = TILE_FILL_A;
-    ctx.fillRect(x, y, PILE_TILE, PILE_TILE);
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = INK_COLOR;
-    ctx.lineWidth   = 1;
-    ctx.strokeRect(snap(x), snap(y), PILE_TILE, PILE_TILE);
+  let piled = dividend;
+  if (dist) piled -= dist.placedRounds * divisor + dist.tilesInFlight.length;
+  if (piled <= 0) return;
+  for (let i = 0; i < piled; i++) {
+    const p = pileTileScreenPos(i);
+    drawSquareTile(p.x, p.y, PILE_TILE);
   }
+}
+
+// ==== Landed tiles ====
+// What: tiles that have completed their flight and settled into a
+// slot. Stack height per slot = dist.placedRounds. Rendered on the
+// plane in world coords — these tiles ARE the rectangle that
+// division is building.
+function drawLandedTiles() {
+  if (!dist || !divisor || dist.placedRounds <= 0) return;
+  for (let slot = 0; slot < divisor; slot++) {
+    for (let h = 0; h < dist.placedRounds; h++) {
+      const tl = worldToScreen(slot, h + 1);
+      const size = zoom;  // 1 world unit in CSS px
+      drawSquareTile(tl.x, tl.y, size);
+    }
+  }
+}
+
+// ==== In-flight tiles ====
+// What: the M tiles currently animating from the pile to their
+// slot destinations. Each has a random phase (stagger) and small
+// wobble for a flocking feel. Size interpolates from PILE_TILE to
+// the zoom-derived slot tile size.
+function drawInFlightTiles() {
+  if (!dist || dist.tilesInFlight.length === 0) return;
+  const t = Math.min(1, (performance.now() - dist.roundStart) / dist.roundDuration);
+  for (const tile of dist.tilesInFlight) {
+    // Source: pile position that this tile is vacating.
+    const startPos = pileTileScreenPos(tile.pileIdx);
+    // Destination: slot=tile.slot, stack height=placedRounds (the
+    // row this round is filling). Top-left in screen.
+    const endTL   = worldToScreen(tile.slot, dist.placedRounds + 1);
+
+    const localT  = Math.max(0, Math.min(1, (t - tile.phase) / FLIGHT_FRACTION));
+    const eased   = easeOutQuad(localT);
+    const wob     = Math.sin(eased * Math.PI);  // 0 at endpoints, 1 mid-flight
+    const x = lerp(startPos.x, endTL.x, eased) + tile.wobbleX * wob;
+    const y = lerp(startPos.y, endTL.y, eased) + tile.wobbleY * wob;
+    const size = lerp(PILE_TILE, zoom, eased);
+    drawSquareTile(x, y, size);
+  }
+}
+
+// ==== "divide" action word ====
+// What: shown below the width segment when count ≥ divisor (a full
+// integer round is possible). Tapping triggers / replays the
+// distribution. Hidden during the animation itself.
+function drawDivideAction() {
+  if (!divisor || divisor <= 0) return;
+  if (dividend < divisor) return;
+  if (dist && dist.tilesInFlight.length > 0) return;  // animating
+
+  const isReplay = dist && dist.placedRounds >= dist.totalRounds;
+  const word = isReplay ? 'divide again' : 'divide';
+
+  const center = worldToScreen(divisor / 2, 0);
+  const labelY = center.y + 14;  // px below the x-axis
+
+  ctx.font = ACTION_FONT;
+  ctx.textBaseline = 'top';
+  ctx.textAlign    = 'center';
+  const hover = hoveredAction
+             && hoveredAction.rect === null
+             && hoveredAction.action === 'divide';
+  ctx.fillStyle = hover ? ACTION_HOVER_COLOR : ACTION_COLOR;
+  ctx.fillText(word, center.x, labelY);
+
+  const w = ctx.measureText(word).width;
+  actionWordHits.push({
+    rect: null,
+    action: 'divide',
+    sx: center.x - w / 2,
+    sy: labelY,
+    w,
+    h: ACTION_LINE_HEIGHT,
+  });
 }
 
 // ==== Width highlight ====
@@ -664,6 +844,14 @@ function draw() {
     drawActionWords(selectedRect);
   }
 
+  // Landed tiles — the rectangle being built by division. Drawn
+  // before axis labels so labels read on top (consistent with how
+  // rectangles handle the same case).
+  drawLandedTiles();
+
+  // "divide" action word — registers a hit zone in actionWordHits.
+  drawDivideAction();
+
   // Labels — positive in all four directions. When an axis pans
   // off-screen, the labels cling to the nearer edge: x-labels to
   // the top or bottom, y-labels to the left or right. The text
@@ -728,7 +916,11 @@ function draw() {
     ctx.fill();
   }
 
-  // Dividend pile — screen-fixed overlay, on top of plane elements.
+  // In-flight tiles — drawn above plane elements; they're the
+  // moving focus during a round.
+  drawInFlightTiles();
+
+  // Dividend pile — screen-fixed overlay, top of stack.
   drawDividendPile();
 }
 
@@ -870,6 +1062,7 @@ dividend = Math.max(0, Math.min(100, parseInt(dividendInput.value, 10) || 0));
 dividendInput.addEventListener('input', (e) => {
   const v = parseInt(e.target.value, 10);
   dividend = Math.max(0, Math.min(100, Number.isFinite(v) ? v : 0));
+  dist = null;  // count changed; any prior distribution is stale
   draw();
 });
 
