@@ -8,14 +8,48 @@
   html, body { margin: 0; padding: 0; height: 100%; background: #f4f1e8; overflow: hidden; }
   body { font-family: Georgia, serif; }
   #canvas { display: block; cursor: grab; touch-action: none; }
+
+  /* Dividend panel — Glass-style floating control */
+  #dividend-panel {
+    position: fixed; top: 20px; left: 20px;
+    padding: 10px 14px;
+    background: rgba(244, 241, 232, 0.92);
+    border: 0.5px solid #c8b89a;
+    border-radius: 6px;
+    color: #546A80;
+    font: 13px Georgia, serif;
+    display: flex; align-items: center; gap: 10px;
+    user-select: none;
+  }
+  #dividend-panel label { cursor: default; }
+  #dividend-panel input {
+    width: 56px; padding: 3px 6px;
+    background: transparent;
+    border: 0.5px solid #c8b89a;
+    border-radius: 3px;
+    color: #546A80;
+    font: 13px Georgia, serif;
+    text-align: center;
+    outline: none;
+  }
+  #dividend-panel input:focus { border-color: #546A80; }
+  /* Hide the spinner arrows in number inputs (Chrome/Safari + Firefox) */
+  #dividend-panel input::-webkit-outer-spin-button,
+  #dividend-panel input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  #dividend-panel input[type=number] { -moz-appearance: textfield; }
 </style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
 
+<div id="dividend-panel">
+  <label for="dividend-input">Dividend</label>
+  <input id="dividend-input" type="number" value="17" min="0" max="100">
+</div>
+
 <script>
 // ============================================================
-// Number Theory Lab — Stages 1 & 2: the plane + rectangles
+// Number Theory Lab — Stages 1, 2, & 3a: plane + rectangles + division setup
 //
 // Stage 1: a coordinate plane (0 at centre, positive in all four
 // directions, free pan/zoom, edgeless, Glass-inherited visuals).
@@ -42,6 +76,15 @@
 //              the area as half (one of the two right triangles
 //              formed). Tap again to toggle off.
 //   close    — removes the rectangle.
+//
+// Stage 3a (division setup):
+//   • The "Dividend" panel at top-left sets the dividend N. N unit
+//     tiles appear in a screen-fixed pile below the panel.
+//   • Tap a positive x-axis number → sets the divisor: M empty
+//     slots appear below the x-axis from 0 to M. Tap the same
+//     number again to clear.
+//   • Distribution (the tiles flying into slots) is Iteration B.
+//     Slicing into tenths is Iteration C.
 // ============================================================
 
 // ==== Visual constants ====
@@ -88,6 +131,19 @@ const ACTION_SEP         = '   '; // separator between words (3 spaces)
 const SELECTED_COLOR     = '#2c5aa0';
 const DIAGONAL_WIDTH     = 1;
 
+// Division (Stage 3) — dividend tile pile (screen-fixed) and divisor
+// slots (on the plane). The pile lives in screen space because the
+// tiles are "supply" rather than constructions; they'll fly down
+// into the slots when distribution arrives in Iteration B.
+const PILE_LEFT     = 20;   // px from canvas left
+const PILE_TOP      = 70;   // px from canvas top (just below the panel)
+const PILE_TILE     = 22;   // each tile is 22×22 px
+const PILE_PADDING  = 1;    // gap between tiles
+const PILE_PER_ROW  = 10;   // wrap every 10 tiles (place-value reading)
+const TILE_FILL_A   = 0.08; // pile tile fill alpha
+const SLOT_HEIGHT   = 4;    // world units — default slot depth below x-axis
+const SLOT_FILL_A   = 0.04; // slot box fill alpha
+
 // ==== State ====
 // What: a single transform — pan (world coords at screen centre) and
 // zoom (pixels per unit). Plus committed rectangles and a small
@@ -120,6 +176,11 @@ let downPos   = null;   // { sx, sy } at mousedown — used to detect tap-vs-dra
 let selectedRect   = null;
 let hoveredAction  = null;  // { rect, action } | null
 let actionWordHits = [];    // [{ rect, action, sx, sy, w, h }]
+
+// Division state (Stage 3a). dividend is sync'd to the panel input.
+// divisor is set by tapping a positive x-axis number; null = unset.
+let dividend = 17;
+let divisor  = null;
 
 // ==== Canvas sizing ====
 // What: high-DPI canvas. Internal pixels = CSS pixels × devicePixelRatio,
@@ -406,6 +467,13 @@ function handleTap(sx, sy) {
     hoveredAction = null;   // positions may have shifted; let next move re-test
     return;
   }
+  // Tap on a positive x-axis number: toggle the divisor. (Negative
+  // x and the y-axis fall through to selection / deselect / undo.)
+  const tick = hitTestAxisNumber(sx, sy);
+  if (tick && tick.axis === 'x' && tick.value > 0) {
+    divisor = (divisor === tick.value) ? null : tick.value;
+    return;
+  }
   const rect = findRectContaining(sx, sy);
   if (rect) {
     selectedRect = rect;
@@ -485,6 +553,70 @@ function drawActionWords(rect) {
   }
 }
 
+// ==== Dividend pile ====
+// What: render N unit tiles in a screen-fixed pile just below the
+// Dividend panel. 10 per row (place-value reading). Independent of
+// pan/zoom. In Iteration B these tiles will fly out of the pile and
+// into the divisor slots.
+function drawDividendPile() {
+  if (dividend <= 0) return;
+  const step = PILE_TILE + PILE_PADDING;
+  for (let i = 0; i < dividend; i++) {
+    const col = i % PILE_PER_ROW;
+    const row = Math.floor(i / PILE_PER_ROW);
+    const x = PILE_LEFT + col * step;
+    const y = PILE_TOP  + row * step;
+    ctx.fillStyle = INK_COLOR;
+    ctx.globalAlpha = TILE_FILL_A;
+    ctx.fillRect(x, y, PILE_TILE, PILE_TILE);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = INK_COLOR;
+    ctx.lineWidth   = 1;
+    ctx.strokeRect(snap(x), snap(y), PILE_TILE, PILE_TILE);
+  }
+}
+
+// ==== Divisor slots ====
+// What: an empty M-slot container below the x-axis from world (0, 0)
+// to (M, -SLOT_HEIGHT). Internal dividers at every integer mark the
+// individual slots. The top edge of the container is the x-axis itself.
+function drawDivisorSlots() {
+  if (!divisor || divisor <= 0) return;
+
+  const a = worldToScreen(0, 0);
+  const b = worldToScreen(divisor, -SLOT_HEIGHT);
+  const x = Math.min(a.x, b.x);
+  const y = Math.min(a.y, b.y);
+  const w = Math.abs(b.x - a.x);
+  const h = Math.abs(b.y - a.y);
+
+  // Faint fill so the empty container reads against the plane.
+  ctx.fillStyle = INK_COLOR;
+  ctx.globalAlpha = SLOT_FILL_A;
+  ctx.fillRect(x, y, w, h);
+  ctx.globalAlpha = 1;
+
+  // Internal slot dividers — one per integer between 0 and M.
+  ctx.strokeStyle = INK_COLOR;
+  ctx.lineWidth   = 1;
+  ctx.globalAlpha = 0.4;
+  ctx.beginPath();
+  for (let i = 1; i < divisor; i++) {
+    const sx = snap(worldToScreen(i, 0).x);
+    ctx.moveTo(sx, y);
+    ctx.lineTo(sx, y + h);
+  }
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Outer outline — slightly more present than the dividers.
+  ctx.strokeStyle = INK_COLOR;
+  ctx.lineWidth   = 1;
+  ctx.globalAlpha = 0.6;
+  ctx.strokeRect(snap(x), snap(y), Math.round(w), Math.round(h));
+  ctx.globalAlpha = 1;
+}
+
 // ==== Drawing ====
 // What: clear, draw grid lines, draw axes, draw labels. Re-drawn
 // on every pan, zoom, or resize.
@@ -533,6 +665,10 @@ function draw() {
   ctx.moveTo(0, axisY);
   ctx.lineTo(viewW, axisY);
   ctx.stroke();
+
+  // Divisor slots — drawn under rectangles so they sit on the plane
+  // without obscuring constructions.
+  drawDivisorSlots();
 
   // Rectangles — committed first, then the in-progress draft on top.
   // Light fill (alpha 0.05) keeps axis labels readable underneath.
@@ -599,7 +735,7 @@ function draw() {
     ctx.fillText(formatInteger(y), yLabelX, sy);
   }
 
-  // Hover dot — last so it sits on top of everything else.
+  // Hover dot — sits on top of plane elements but under the pile.
   if (hoverTick) {
     const pos = hoverTick.axis === 'x'
       ? worldToScreen(hoverTick.value, 0)
@@ -609,6 +745,9 @@ function draw() {
     ctx.arc(pos.x, pos.y, HOVER_DOT_RADIUS, 0, Math.PI * 2);
     ctx.fill();
   }
+
+  // Dividend pile — screen-fixed overlay, on top of plane elements.
+  drawDividendPile();
 }
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
@@ -739,6 +878,18 @@ canvas.addEventListener('wheel', (e) => {
   pan.y += before.y - after.y;
   draw();
 }, { passive: false });
+
+// ==== Dividend input ====
+// What: sync the dividend panel's <input> with the dividend state.
+// Clamped to [0, 100] for v1 — large piles overflow the screen
+// pile area; we can extend later.
+const dividendInput = document.getElementById('dividend-input');
+dividend = Math.max(0, Math.min(100, parseInt(dividendInput.value, 10) || 0));
+dividendInput.addEventListener('input', (e) => {
+  const v = parseInt(e.target.value, 10);
+  dividend = Math.max(0, Math.min(100, Number.isFinite(v) ? v : 0));
+  draw();
+});
 
 // ==== Init ====
 window.addEventListener('resize', resize);
