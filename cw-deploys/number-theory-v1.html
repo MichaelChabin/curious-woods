@@ -690,6 +690,28 @@ function leftoverPieceWorldPos(pieceIdx, level) {
   };
 }
 
+// During an active slice round, how many slices have departed from
+// their source pieces so far (cumulative across waves, with smooth
+// interpolation mid-wave).
+function totalSlicesGone() {
+  if (!dist || !dist.sliceState) return 0;
+  const s = dist.sliceState;
+  let gone = s.waveIdx * divisor;
+  if (s.leftoverPlaced) gone += s.leftoverCount;
+  if (dist.tilesInFlight.length > 0) {
+    const animFrac = Math.min(1, (performance.now() - dist.roundStart) / dist.roundDuration);
+    gone += animFrac * dist.tilesInFlight.length;
+  }
+  return gone;
+}
+
+// How many of parent `parentIdx`'s 10 slices have departed.
+// (Parents drain front-to-back: parent 0 fully empties before
+// parent 1 starts emptying.)
+function slicesGoneFromParent(parentIdx) {
+  return Math.max(0, Math.min(10, totalSlicesGone() - 10 * parentIdx));
+}
+
 // How many leftover pieces are available to slice, and at what level?
 function pendingLeftover() {
   if (!dist) return null;
@@ -766,14 +788,20 @@ function setupSliceWave(s, isLeftover) {
   if (!isLeftover) {
     // Wave waveIdx of distribution: divisor slices, one per slot,
     // landing at row waveIdx above the previously-completed column.
+    // Source y for each slice = current top of its parent (after
+    // earlier waves have already peeled some slices off the top).
+    const goneBefore = s.waveIdx * divisor;
     for (let slotI = 0; slotI < divisor; slotI++) {
-      const sliceIdx = s.waveIdx * divisor + slotI;
+      const sliceIdx  = goneBefore + slotI;
       const parentIdx = Math.floor(sliceIdx / 10);
       const parent    = leftoverPieceWorldPos(parentIdx, s.level - 1);
-      const sourceTL  = worldToScreen(parent.x, parent.y);
+      const goneFromParent = Math.max(0, Math.min(10, goneBefore - 10 * parentIdx));
+      const childH = parent.h / 10;
+      const currentTopY = parent.y - goneFromParent * childH;
+      const sourceTL    = worldToScreen(parent.x, currentTopY);
       dist.tilesInFlight.push(makeFlightTile({
         sourceX: sourceTL.x, sourceY: sourceTL.y,
-        sourceW: parent.w * zoom, sourceH: parent.h * zoom,
+        sourceW: parent.w * zoom, sourceH: childH * zoom,
         destWX:  slotI,
         destWY:  baseY + (s.waveIdx + 1) * sliceH,
         pieceW:  1, pieceH: sliceH,
@@ -781,21 +809,23 @@ function setupSliceWave(s, isLeftover) {
     }
   } else {
     // Leftover wave: `leftoverCount` slices fly to a centred
-    // floating row above the column. Their source is the parent
-    // pieces (which are about to vanish).
+    // floating row above the column. Source is whatever's left at
+    // the current top of each parent.
     const leftOffset = (divisor - s.leftoverCount) / 2;
     const colTop = dist.totalRounds + cumPrev + s.digit * sliceH;
     const destY  = colTop + LEFTOVER_GAP + sliceH;
-    // The leftover slices are sliceIdx [totalDistributed .. totalDistributed + leftoverCount - 1].
-    const distributedSlices = s.totalWaves * divisor;
+    const goneBefore = s.totalWaves * divisor;
     for (let i = 0; i < s.leftoverCount; i++) {
-      const sliceIdx  = distributedSlices + i;
+      const sliceIdx  = goneBefore + i;
       const parentIdx = Math.floor(sliceIdx / 10);
       const parent    = leftoverPieceWorldPos(parentIdx, s.level - 1);
-      const sourceTL  = worldToScreen(parent.x, parent.y);
+      const goneFromParent = Math.max(0, Math.min(10, goneBefore - 10 * parentIdx));
+      const childH = parent.h / 10;
+      const currentTopY = parent.y - goneFromParent * childH;
+      const sourceTL    = worldToScreen(parent.x, currentTopY);
       dist.tilesInFlight.push(makeFlightTile({
         sourceX: sourceTL.x, sourceY: sourceTL.y,
-        sourceW: parent.w * zoom, sourceH: parent.h * zoom,
+        sourceW: parent.w * zoom, sourceH: childH * zoom,
         destWX:  leftOffset + i,
         destWY:  destY,
         pieceW:  1, pieceH: sliceH,
@@ -979,47 +1009,119 @@ function drawDividendPile() {
 // division is building.
 function drawLandedTiles() {
   if (!dist || !divisor) return;
-  // Integer rounds: a filled `divisor × placedRounds` rectangle of tiles.
+
+  // Integer rectangle: a filled `divisor × placedRounds` block of tiles.
   for (let slot = 0; slot < divisor; slot++) {
     for (let h = 0; h < dist.placedRounds; h++) {
       const tl = worldToScreen(slot, h + 1);
       drawSquareTile(tl.x, tl.y, zoom);
     }
   }
-  // Level-0 leftover row: visible only until it gets sliced into
-  // the level-1 round (at which point the source pieces are
-  // consumed and the row is replaced by slice content).
-  if (dist.leftoverPlaced && dist.sliceRounds.length === 0) {
-    const leftOffset = leftoverLeftEdge();
-    for (let i = 0; i < dist.remainder; i++) {
-      const tl = worldToScreen(leftOffset + i, dist.totalRounds + 1 + LEFTOVER_GAP);
-      drawSquareTile(tl.x, tl.y, zoom);
-    }
-  }
-  // Slice rounds: each adds a row of `digit` slices in every slot,
-  // and optionally a centred floating leftover row of `leftoverCount`
-  // slices above the column (consumed when the NEXT slice round runs).
+
+  // Completed slice rounds: each adds a row of `digit` slices in
+  // every slot, stacked on top of the integer rectangle.
   for (let i = 0; i < dist.sliceRounds.length; i++) {
     const r = dist.sliceRounds[i];
     const pieceH = Math.pow(0.1, r.level);
     const baseY  = dist.totalRounds + cumulativeSlicedHeight(r.level - 1);
-    // Stacked slices in every slot
     for (let slot = 0; slot < divisor; slot++) {
       for (let k = 0; k < r.digit; k++) {
         const tl = worldToScreen(slot, baseY + (k + 1) * pieceH);
         drawTileRect(tl.x, tl.y, zoom, zoom * pieceH);
       }
     }
-    // Floating leftover slices — only for the most recent round
-    // (older rounds' leftovers were consumed by the next slice).
-    const isLast = (i === dist.sliceRounds.length - 1);
-    if (isLast && r.leftoverCount > 0 && r.leftoverPlaced) {
-      const leftOffset = (divisor - r.leftoverCount) / 2;
-      const colTop = dist.totalRounds + cumulativeSlicedHeight(r.level);
-      for (let j = 0; j < r.leftoverCount; j++) {
+  }
+
+  // In-progress slice round: render slices that completed waves
+  // have placed, so they don't vanish between waves.
+  if (dist.sliceState) {
+    const s = dist.sliceState;
+    const pieceH = Math.pow(0.1, s.level);
+    const baseY  = dist.totalRounds + cumulativeSlicedHeight(s.level - 1);
+    for (let slot = 0; slot < divisor; slot++) {
+      for (let k = 0; k < s.waveIdx; k++) {
+        const tl = worldToScreen(slot, baseY + (k + 1) * pieceH);
+        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH);
+      }
+    }
+    // If the leftover wave has already completed, show those slices too.
+    if (s.leftoverPlaced && s.leftoverCount > 0) {
+      const leftOffset = (divisor - s.leftoverCount) / 2;
+      const colTop = baseY + s.digit * pieceH;
+      for (let j = 0; j < s.leftoverCount; j++) {
         const tl = worldToScreen(leftOffset + j, colTop + LEFTOVER_GAP + pieceH);
         drawTileRect(tl.x, tl.y, zoom, zoom * pieceH);
       }
+    }
+  }
+
+  // The current floating leftover (the "source" for the next slice
+  // operation), drawn as a stack of 10 slices per parent piece so
+  // the structure-about-to-be-revealed is visible. When a slice
+  // round is in progress, parents diminish from the top as slices
+  // peel off.
+  drawCurrentLeftover();
+}
+
+function drawCurrentLeftover() {
+  // The current floating leftover row is whichever of these is
+  // most recent: the level-0 leftover (from integer rounds) or
+  // the leftover of the last completed slice round.
+  let count, level, baseTopY, leftOffset, parentH;
+  if (dist.sliceRounds.length === 0) {
+    if (!dist.leftoverPlaced || dist.remainder <= 0) return;
+    count      = dist.remainder;
+    level      = 0;
+    baseTopY   = dist.totalRounds + 1 + LEFTOVER_GAP;
+    leftOffset = leftoverLeftEdge();
+    parentH    = 1;
+  } else {
+    const last = dist.sliceRounds[dist.sliceRounds.length - 1];
+    if (last.leftoverCount <= 0 || !last.leftoverPlaced) return;
+    count      = last.leftoverCount;
+    level      = last.level;
+    parentH    = Math.pow(0.1, last.level);
+    leftOffset = (divisor - last.leftoverCount) / 2;
+    const colTop = dist.totalRounds + cumulativeSlicedHeight(last.level);
+    baseTopY   = colTop + LEFTOVER_GAP + parentH;
+  }
+
+  const isBeingSliced = !!(dist.sliceState && dist.sliceState.level === level + 1);
+  const childH = parentH / 10;
+
+  // Draw the internal slice dividers iff the resulting child slices
+  // would be at least a couple pixels tall on screen — otherwise
+  // the dividers just smudge the parent.
+  const showDividers = childH * zoom >= 3;
+
+  for (let i = 0; i < count; i++) {
+    let slicesLeft = 10;
+    if (isBeingSliced) slicesLeft = 10 - slicesGoneFromParent(i);
+    if (slicesLeft <= 0.001) continue;
+
+    const remainingH = slicesLeft * childH;
+    const topY = baseTopY - (10 - slicesLeft) * childH;
+    const tl = worldToScreen(leftOffset + i, topY);
+    const w  = parentH === 1 ? zoom : zoom;  // always 1 world unit wide
+    const h  = remainingH * zoom;
+
+    // Filled body + outer outline.
+    drawTileRect(tl.x, tl.y, w, h);
+
+    // Internal horizontal dividers showing each remaining slice.
+    if (showDividers) {
+      const wholeLeft = Math.floor(slicesLeft + 0.0001);
+      ctx.strokeStyle = INK_COLOR;
+      ctx.globalAlpha = 0.35;
+      ctx.lineWidth   = 1;
+      ctx.beginPath();
+      for (let k = 1; k < wholeLeft; k++) {
+        const y = snap(tl.y + (k / slicesLeft) * h);
+        ctx.moveTo(snap(tl.x),      y);
+        ctx.lineTo(snap(tl.x + w),  y);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
     }
   }
 }
