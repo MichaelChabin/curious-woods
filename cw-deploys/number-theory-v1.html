@@ -158,6 +158,8 @@ const FLIGHT_FRACTION      = 0.7;   // fraction of round each tile takes mid-air
 const FLOCK_PHASE_MAX      = 0.3;   // 1 - FLIGHT_FRACTION — max random start delay
 const FLOCK_WOBBLE_X       = 30;    // px — sideways drift amplitude
 const FLOCK_WOBBLE_Y       = 20;    // px — vertical drift amplitude
+const LEFTOVER_GAP         = 0.25;  // world units — gap between completed
+                                    // rectangle and the floating leftover row
 
 // ==== State ====
 // What: a single transform — pan (world coords at screen centre) and
@@ -518,57 +520,96 @@ function handleTap(sx, sy) {
 
 // ==== Distribution control (Stage 3b) ====
 // What: divide the dividend count into the divisor slots, one round
-// at a time. Each round flies `divisor` tiles from the pile to the
-// next stack height of each slot. Animation is driven by
-// requestAnimationFrame; rounds are paced by setTimeout between them.
+// at a time. Integer rounds fill the slots row by row. Then a final
+// "leftover" round lifts the remainder out of the pile and places
+// them as an incomplete row floating just above the completed
+// rectangle — full-size tiles, ready to be sliced in Iteration C.
 function startDistribution() {
   if (!divisor || divisor <= 0) return;
   const totalRounds = Math.floor(dividend / divisor);
-  if (totalRounds <= 0) return;
+  const remainder   = dividend - totalRounds * divisor;
+  if (totalRounds <= 0) return;  // need at least one full round for v1
   dist = {
-    placedRounds:  0,
+    placedRounds:    0,
     totalRounds,
-    tilesInFlight: [],
-    roundStart:    0,
-    roundDuration: 0,
+    remainder,
+    leftoverPlaced:  false,
+    isLeftoverRound: false,
+    tilesInFlight:   [],
+    roundStart:      0,
+    roundDuration:   0,
   };
-  scheduleRound();
+  scheduleNext();
+}
+
+function scheduleNext() {
+  if (!dist) return;
+  if (dist.placedRounds < dist.totalRounds) {
+    scheduleRound();
+  } else if (dist.remainder > 0 && !dist.leftoverPlaced) {
+    scheduleLeftoverRound();
+  }
+  // otherwise: fully done
 }
 
 function scheduleRound() {
-  if (!dist) return;
-  if (dist.placedRounds >= dist.totalRounds) return;  // done
-
+  if (!dist || dist.placedRounds >= dist.totalRounds) return;
   const isFirst = dist.placedRounds === 0;
   dist.roundDuration = isFirst ? ROUND_DURATION_FIRST : ROUND_DURATION_REST;
   dist.tilesInFlight = [];
+  dist.isLeftoverRound = false;
   // Source pile positions: the last `divisor` positions still in
   // the pile right now — i.e. the bottom-right corner of the pile.
   const pileBase = dividend - dist.placedRounds * divisor - divisor;
+  const destStack = dist.placedRounds;
   for (let i = 0; i < divisor; i++) {
-    dist.tilesInFlight.push({
-      slot:    i,
-      pileIdx: pileBase + i,
-      phase:   Math.random() * FLOCK_PHASE_MAX,
-      wobbleX: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_X,
-      wobbleY: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_Y,
-    });
+    dist.tilesInFlight.push(makeFlightTile(i, pileBase + i, destStack, 0));
   }
   dist.roundStart = performance.now();
   requestAnimationFrame(animateDistFrame);
+}
+
+function scheduleLeftoverRound() {
+  if (!dist || dist.remainder <= 0 || dist.leftoverPlaced) return;
+  dist.roundDuration = ROUND_DURATION_REST;
+  dist.tilesInFlight = [];
+  dist.isLeftoverRound = true;
+  // Source: the LAST tiles still in the pile — pile positions
+  // [0 .. remainder - 1] after the drain-from-the-top integer rounds.
+  // Destination: the row above the completed rectangle (stack =
+  // totalRounds), with a small vertical gap so the tiles read as
+  // "not yet attached." They land in slots 0 .. remainder - 1, an
+  // incomplete row by design.
+  const destStack = dist.totalRounds;
+  for (let i = 0; i < dist.remainder; i++) {
+    dist.tilesInFlight.push(makeFlightTile(i, i, destStack, LEFTOVER_GAP));
+  }
+  dist.roundStart = performance.now();
+  requestAnimationFrame(animateDistFrame);
+}
+
+function makeFlightTile(slot, pileIdx, destStack, destGap) {
+  return {
+    slot, pileIdx, destStack, destGap,
+    phase:   Math.random() * FLOCK_PHASE_MAX,
+    wobbleX: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_X,
+    wobbleY: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_Y,
+  };
 }
 
 function animateDistFrame(now) {
   if (!dist || dist.tilesInFlight.length === 0) return;
   const elapsed = now - dist.roundStart;
   if (elapsed >= dist.roundDuration) {
-    // Round complete — promote in-flight tiles to landed.
-    dist.placedRounds += 1;
+    if (dist.isLeftoverRound) {
+      dist.leftoverPlaced = true;
+      dist.isLeftoverRound = false;
+    } else {
+      dist.placedRounds += 1;
+    }
     dist.tilesInFlight = [];
     draw();
-    if (dist.placedRounds < dist.totalRounds) {
-      setTimeout(scheduleRound, ROUND_PAUSE);
-    }
+    setTimeout(scheduleNext, ROUND_PAUSE);
     return;
   }
   draw();
@@ -675,7 +716,10 @@ function easeOutQuad(t)  { return 1 - (1 - t) * (1 - t); }
 function drawDividendPile() {
   if (dividend <= 0) return;
   let piled = dividend;
-  if (dist) piled -= dist.placedRounds * divisor + dist.tilesInFlight.length;
+  if (dist) {
+    piled -= dist.placedRounds * divisor + dist.tilesInFlight.length;
+    if (dist.leftoverPlaced) piled -= dist.remainder;
+  }
   if (piled <= 0) return;
   for (let i = 0; i < piled; i++) {
     const p = pileTileScreenPos(i);
@@ -689,12 +733,22 @@ function drawDividendPile() {
 // plane in world coords — these tiles ARE the rectangle that
 // division is building.
 function drawLandedTiles() {
-  if (!dist || !divisor || dist.placedRounds <= 0) return;
+  if (!dist || !divisor) return;
+  // Integer rounds: a filled `divisor × placedRounds` rectangle of tiles.
   for (let slot = 0; slot < divisor; slot++) {
     for (let h = 0; h < dist.placedRounds; h++) {
       const tl = worldToScreen(slot, h + 1);
-      const size = zoom;  // 1 world unit in CSS px
-      drawSquareTile(tl.x, tl.y, size);
+      drawSquareTile(tl.x, tl.y, zoom);
+    }
+  }
+  // Leftover row: `remainder` tiles in slots 0..remainder-1, floating
+  // a small gap above the completed rectangle. The incomplete row is
+  // the visible "not yet enough to make another row" that Iteration C
+  // will slice and distribute.
+  if (dist.leftoverPlaced) {
+    for (let i = 0; i < dist.remainder; i++) {
+      const tl = worldToScreen(i, dist.totalRounds + 1 + LEFTOVER_GAP);
+      drawSquareTile(tl.x, tl.y, zoom);
     }
   }
 }
@@ -710,9 +764,10 @@ function drawInFlightTiles() {
   for (const tile of dist.tilesInFlight) {
     // Source: pile position that this tile is vacating.
     const startPos = pileTileScreenPos(tile.pileIdx);
-    // Destination: slot=tile.slot, stack height=placedRounds (the
-    // row this round is filling). Top-left in screen.
-    const endTL   = worldToScreen(tile.slot, dist.placedRounds + 1);
+    // Destination: tile carries its own destStack (which row it
+    // lands in) and destGap (extra vertical world-unit offset, used
+    // by the leftover round to float above the completed rectangle).
+    const endTL   = worldToScreen(tile.slot, tile.destStack + 1 + tile.destGap);
 
     const localT  = Math.max(0, Math.min(1, (t - tile.phase) / FLIGHT_FRACTION));
     const eased   = easeOutQuad(localT);
@@ -731,9 +786,16 @@ function drawInFlightTiles() {
 function drawDivideAction() {
   if (!divisor || divisor <= 0) return;
   if (dividend < divisor) return;
-  if (dist && dist.tilesInFlight.length > 0) return;  // animating
 
-  const isReplay = dist && dist.placedRounds >= dist.totalRounds;
+  // Hide whenever a distribution is in progress — animating, or
+  // paused between integer rounds, or about to fly the leftover row.
+  if (dist) {
+    const fullyDone = dist.placedRounds >= dist.totalRounds
+                   && (dist.remainder === 0 || dist.leftoverPlaced);
+    if (!fullyDone) return;
+  }
+
+  const isReplay = dist != null;
   const word = isReplay ? 'divide again' : 'divide';
 
   const center = worldToScreen(divisor / 2, 0);
