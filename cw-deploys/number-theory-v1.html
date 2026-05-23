@@ -158,8 +158,11 @@ const FLIGHT_FRACTION      = 0.7;   // fraction of round each tile takes mid-air
 const FLOCK_PHASE_MAX      = 0.3;   // 1 - FLIGHT_FRACTION — max random start delay
 const FLOCK_WOBBLE_X       = 30;    // px — sideways drift amplitude
 const FLOCK_WOBBLE_Y       = 20;    // px — vertical drift amplitude
-const LEFTOVER_GAP         = 0.25;  // world units — gap between completed
-                                    // rectangle and the floating leftover row
+const LEFTOVER_GAP         = 1;     // world units — one full tile-height of
+                                    // breathing room between the completed
+                                    // rectangle and the floating leftover row,
+                                    // so the slices in Iteration C have room
+                                    // to redistribute without crowding
 
 // ==== State ====
 // What: a single transform — pan (world coords at screen centre) and
@@ -562,6 +565,8 @@ function scheduleRound() {
   // the pile right now — i.e. the bottom-right corner of the pile.
   const pileBase = dividend - dist.placedRounds * divisor - divisor;
   const destStack = dist.placedRounds;
+  // Integer-round destinations sit exactly on the integer grid:
+  // destX = slot index for slots 0 .. divisor - 1.
   for (let i = 0; i < divisor; i++) {
     dist.tilesInFlight.push(makeFlightTile(i, pileBase + i, destStack, 0));
   }
@@ -574,23 +579,29 @@ function scheduleLeftoverRound() {
   dist.roundDuration = ROUND_DURATION_REST;
   dist.tilesInFlight = [];
   dist.isLeftoverRound = true;
-  // Source: the LAST tiles still in the pile — pile positions
-  // [0 .. remainder - 1] after the drain-from-the-top integer rounds.
-  // Destination: the row above the completed rectangle (stack =
-  // totalRounds), with a small vertical gap so the tiles read as
-  // "not yet attached." They land in slots 0 .. remainder - 1, an
-  // incomplete row by design.
-  const destStack = dist.totalRounds;
+  // Source: pile positions [0 .. remainder - 1] — the last tiles
+  // still in the pile after the integer rounds.
+  // Destination: an incomplete row CENTRED over the completed
+  // rectangle, lifted by one full tile-height of gap. destX is
+  // fractional when remainder and divisor have different parities.
+  const destStack  = dist.totalRounds;
+  const leftOffset = leftoverLeftEdge();
   for (let i = 0; i < dist.remainder; i++) {
-    dist.tilesInFlight.push(makeFlightTile(i, i, destStack, LEFTOVER_GAP));
+    dist.tilesInFlight.push(makeFlightTile(leftOffset + i, i, destStack, LEFTOVER_GAP));
   }
   dist.roundStart = performance.now();
   requestAnimationFrame(animateDistFrame);
 }
 
-function makeFlightTile(slot, pileIdx, destStack, destGap) {
+// World x of the leftmost leftover tile's left edge. Centred over
+// the rectangle: (divisor - remainder) / 2.
+function leftoverLeftEdge() {
+  return (divisor - dist.remainder) / 2;
+}
+
+function makeFlightTile(destX, pileIdx, destStack, destGap) {
   return {
-    slot, pileIdx, destStack, destGap,
+    destX, pileIdx, destStack, destGap,
     phase:   Math.random() * FLOCK_PHASE_MAX,
     wobbleX: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_X,
     wobbleY: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_Y,
@@ -741,13 +752,14 @@ function drawLandedTiles() {
       drawSquareTile(tl.x, tl.y, zoom);
     }
   }
-  // Leftover row: `remainder` tiles in slots 0..remainder-1, floating
-  // a small gap above the completed rectangle. The incomplete row is
-  // the visible "not yet enough to make another row" that Iteration C
-  // will slice and distribute.
+  // Leftover row: `remainder` tiles centred over the completed
+  // rectangle, lifted one full tile-height of gap. The incomplete
+  // row is the visible "not yet enough to make another row" that
+  // Iteration C will slice and redistribute on top.
   if (dist.leftoverPlaced) {
+    const leftOffset = leftoverLeftEdge();
     for (let i = 0; i < dist.remainder; i++) {
-      const tl = worldToScreen(i, dist.totalRounds + 1 + LEFTOVER_GAP);
+      const tl = worldToScreen(leftOffset + i, dist.totalRounds + 1 + LEFTOVER_GAP);
       drawSquareTile(tl.x, tl.y, zoom);
     }
   }
@@ -764,10 +776,11 @@ function drawInFlightTiles() {
   for (const tile of dist.tilesInFlight) {
     // Source: pile position that this tile is vacating.
     const startPos = pileTileScreenPos(tile.pileIdx);
-    // Destination: tile carries its own destStack (which row it
-    // lands in) and destGap (extra vertical world-unit offset, used
-    // by the leftover round to float above the completed rectangle).
-    const endTL   = worldToScreen(tile.slot, tile.destStack + 1 + tile.destGap);
+    // Destination: tile carries its own destX (world x of its left
+    // edge — fractional for the centred leftover row), destStack
+    // (the row), and destGap (extra vertical world-unit offset for
+    // the leftover row's float).
+    const endTL   = worldToScreen(tile.destX, tile.destStack + 1 + tile.destGap);
 
     const localT  = Math.max(0, Math.min(1, (t - tile.phase) / FLIGHT_FRACTION));
     const eased   = easeOutQuad(localT);
