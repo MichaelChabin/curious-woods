@@ -233,14 +233,26 @@ function pointInRect(sx, sy, rect) {
       && sy >= Math.min(a.y, b.y) && sy <= Math.max(a.y, b.y);
 }
 
-// What: find the topmost (most recently drawn) rectangle under a
-// point, or null. Iterate in reverse so later-drawn rectangles win
-// when stacked.
+// What: find the SMALLEST rectangle under a point, or null. The
+// nested-rectangles case (squares 1×1 / 2×2 / 3×3 all anchored at
+// origin, or the pronic staircase) is the common one in this lab,
+// and the smaller rectangle is fully covered by the larger ones —
+// so the usual "topmost wins" rule makes inner shapes unreachable.
+// Smallest-area-wins means every shape is selectable by clicking
+// any region only it occupies. Ties broken by most-recently-drawn.
 function findRectContaining(sx, sy) {
+  let best = null;
+  let bestArea = Infinity;
   for (let i = rectangles.length - 1; i >= 0; i--) {
-    if (pointInRect(sx, sy, rectangles[i])) return rectangles[i];
+    const r = rectangles[i];
+    if (!pointInRect(sx, sy, r)) continue;
+    const area = Math.abs(r.x * r.y);
+    if (area < bestArea) {
+      best = r;
+      bestArea = area;
+    }
   }
-  return null;
+  return best;
 }
 
 // What: action-word hit-testing. The hit zones are populated each
