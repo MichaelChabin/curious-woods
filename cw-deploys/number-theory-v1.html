@@ -9,7 +9,7 @@
   body { font-family: Georgia, serif; }
   #canvas { display: block; cursor: grab; touch-action: none; }
 
-  /* Dividend panel — Glass-style floating control */
+  /* Count panel — Glass-style floating control (the "dividend") */
   #dividend-panel {
     position: fixed; top: 20px; left: 20px;
     padding: 10px 14px;
@@ -43,7 +43,7 @@
 <canvas id="canvas"></canvas>
 
 <div id="dividend-panel">
-  <label for="dividend-input">Dividend</label>
+  <label for="dividend-input">Count</label>
   <input id="dividend-input" type="number" value="17" min="0" max="100">
 </div>
 
@@ -78,12 +78,15 @@
 //   close    — removes the rectangle.
 //
 // Stage 3a (division setup):
-//   • The "Dividend" panel at top-left sets the dividend N. N unit
-//     tiles appear in a screen-fixed pile below the panel.
-//   • Tap a positive x-axis number → sets the divisor: M empty
-//     slots appear below the x-axis from 0 to M. Tap the same
-//     number again to clear.
-//   • Distribution (the tiles flying into slots) is Iteration B.
+//   • The "Count" panel at top-left sets how many unit tiles the
+//     child has (the dividend, internally). The tiles appear in a
+//     screen-fixed pile below the panel.
+//   • Tap a positive x-axis number → sets the width (the divisor):
+//     M empty slots rise UP from the x-axis from 0 to M, so the
+//     rectangle eventually built by division sits in the same
+//     orientation as one built by multiplication. The §7 spine —
+//     same rectangle, two routes — is honoured visually.
+//   • Distribution (the tiles flying into the slots) is Iteration B.
 //     Slicing into tenths is Iteration C.
 // ============================================================
 
@@ -141,7 +144,7 @@ const PILE_TILE     = 22;   // each tile is 22×22 px
 const PILE_PADDING  = 1;    // gap between tiles
 const PILE_PER_ROW  = 10;   // wrap every 10 tiles (place-value reading)
 const TILE_FILL_A   = 0.08; // pile tile fill alpha
-const SLOT_HEIGHT   = 4;    // world units — default slot depth below x-axis
+const SLOT_HEIGHT   = 4;    // world units — slot height above x-axis
 const SLOT_FILL_A   = 0.04; // slot box fill alpha
 
 // ==== State ====
@@ -577,14 +580,16 @@ function drawDividendPile() {
 }
 
 // ==== Divisor slots ====
-// What: an empty M-slot container below the x-axis from world (0, 0)
-// to (M, -SLOT_HEIGHT). Internal dividers at every integer mark the
-// individual slots. The top edge of the container is the x-axis itself.
+// What: an empty M-slot container ABOVE the x-axis from world (0, 0)
+// to (M, +SLOT_HEIGHT). Internal dividers at every integer mark the
+// individual slots. The bottom edge of the container is the x-axis
+// itself. Building upward keeps division geometrically aligned with
+// multiplication — same rectangle, two routes of construction.
 function drawDivisorSlots() {
   if (!divisor || divisor <= 0) return;
 
   const a = worldToScreen(0, 0);
-  const b = worldToScreen(divisor, -SLOT_HEIGHT);
+  const b = worldToScreen(divisor, SLOT_HEIGHT);
   const x = Math.min(a.x, b.x);
   const y = Math.min(a.y, b.y);
   const w = Math.abs(b.x - a.x);
