@@ -27,12 +27,21 @@
 // same 5×4 rectangle. Rectangles persist; multiple at once is the
 // point (factor pairs of a number visible together).
 //
-// A tap (no drag) outside any rectangle undoes the last one —
-// Glass's convention. Taps inside a rectangle are reserved for the
-// future selection / close affordance.
+// Tap-and-action gesture grammar:
+//   • Tap inside a rectangle → selects it. Action words ("rotate",
+//     "diagonal", "close") fade in just outside the outer corner.
+//   • Tap an action word → performs that action.
+//   • Tap outside any rectangle while one is selected → deselects.
+//   • Tap outside any rectangle with nothing selected → undoes the
+//     last rectangle (Glass's convention).
 //
-// Deferred to a follow-up: rotation, triangle-as-half, selection /
-// delete.
+// Actions on the selected rectangle:
+//   rotate   — swap width and height (area preserved). Commutativity
+//              made visible: a 3×5 becomes a 5×3.
+//   diagonal — draws the diagonal across the rectangle and labels
+//              the area as half (one of the two right triangles
+//              formed). Tap again to toggle off.
+//   close    — removes the rectangle.
 // ============================================================
 
 // ==== Visual constants ====
@@ -67,6 +76,18 @@ const HOVER_DOT_RADIUS = 4;    // filled dot at the hovered tick
 // than a drag). Taps outside any rectangle undo the last rectangle.
 const TAP_THRESHOLD    = 4;    // px
 
+// Action words appearing beside a selected rectangle.
+const ACTION_FONT        = '13px Georgia, serif';
+const ACTION_COLOR       = '#546A80';
+const ACTION_HOVER_COLOR = '#3D3D3A';
+const ACTION_PAD         = 8;    // gap between rect edge and action words
+const ACTION_LINE_HEIGHT = 16;   // approx height of one action word line
+const ACTION_SEP         = '   '; // separator between words (3 spaces)
+
+// Selection: brighter outline; Glass's "active" blue.
+const SELECTED_COLOR     = '#2c5aa0';
+const DIAGONAL_WIDTH     = 1;
+
 // ==== State ====
 // What: a single transform — pan (world coords at screen centre) and
 // zoom (pixels per unit). Plus committed rectangles and a small
@@ -92,6 +113,13 @@ let panStart  = null;   // { sx, sy, panX, panY }
 let drawState = null;   // { axis: 'x'|'y', fixed: int, current: int }
 let hoverTick = null;   // { axis: 'x'|'y', value: int } | null
 let downPos   = null;   // { sx, sy } at mousedown — used to detect tap-vs-drag
+
+// Selection: which rectangle (by reference) is currently selected, if any.
+// Action-word hit zones are recomputed every draw — they need the latest
+// rectangle positions and font metrics — and consulted on every tap.
+let selectedRect   = null;
+let hoveredAction  = null;  // { rect, action } | null
+let actionWordHits = [];    // [{ rect, action, sx, sy, w, h }]
 
 // ==== Canvas sizing ====
 // What: high-DPI canvas. Internal pixels = CSS pixels × devicePixelRatio,
@@ -197,14 +225,41 @@ function sameHit(a, b) {
   return a.axis === b.axis && a.value === b.value;
 }
 
-// What: is a screen point inside a given rectangle? Used to decide
-// whether a tap should undo (outside any rectangle) or be reserved
-// for future selection (inside one).
+// What: is a screen point inside a given rectangle?
 function pointInRect(sx, sy, rect) {
   const a = worldToScreen(0, 0);
   const b = worldToScreen(rect.x, rect.y);
   return sx >= Math.min(a.x, b.x) && sx <= Math.max(a.x, b.x)
       && sy >= Math.min(a.y, b.y) && sy <= Math.max(a.y, b.y);
+}
+
+// What: find the topmost (most recently drawn) rectangle under a
+// point, or null. Iterate in reverse so later-drawn rectangles win
+// when stacked.
+function findRectContaining(sx, sy) {
+  for (let i = rectangles.length - 1; i >= 0; i--) {
+    if (pointInRect(sx, sy, rectangles[i])) return rectangles[i];
+  }
+  return null;
+}
+
+// What: action-word hit-testing. The hit zones are populated each
+// draw() — see drawActionWords. A tap matching one returns the
+// rectangle and action to perform.
+function hitTestActionWord(sx, sy) {
+  for (const h of actionWordHits) {
+    if (sx >= h.sx && sx <= h.sx + h.w
+     && sy >= h.sy && sy <= h.sy + h.h) {
+      return { rect: h.rect, action: h.action };
+    }
+  }
+  return null;
+}
+
+function sameAction(a, b) {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return a.rect === b.rect && a.action === b.action;
 }
 
 // ==== Rectangle drawing ====
@@ -221,24 +276,31 @@ function drawRectangle(rect, isDraft) {
   const h = Math.abs(b.y - a.y);
   if (w < 1 || h < 1) return;
 
+  const isSelected = rect === selectedRect;
+  const lineColor  = isSelected ? SELECTED_COLOR : INK_COLOR;
+
   ctx.fillStyle   = INK_COLOR;
-  ctx.globalAlpha = isDraft ? RECT_FILL_ALPHA * 0.7 : RECT_FILL_ALPHA;
+  ctx.globalAlpha = isDraft ? RECT_FILL_ALPHA * 0.7
+                  : (isSelected ? RECT_FILL_ALPHA * 1.8 : RECT_FILL_ALPHA);
   ctx.fillRect(x, y, w, h);
   ctx.globalAlpha = 1;
 
-  ctx.strokeStyle = INK_COLOR;
+  ctx.strokeStyle = lineColor;
   ctx.lineWidth   = RECT_OUTLINE_W;
   // Snap all four corners to half-pixel boundaries — same snap()
   // used for the axes, so a rectangle touching the origin aligns
-  // exactly with the y-axis and x-axis. The crispness trick that
-  // earlier broke alignment was applied unilaterally; doing it on
-  // both sides restores alignment AND eliminates the anti-alias
-  // halo (the "shadow above the rectangle").
+  // exactly with the y-axis and x-axis.
   const ox0 = snap(Math.min(a.x, b.x));
   const oy0 = snap(Math.min(a.y, b.y));
   const ox1 = snap(Math.max(a.x, b.x));
   const oy1 = snap(Math.max(a.y, b.y));
   ctx.strokeRect(ox0, oy0, ox1 - ox0, oy1 - oy0);
+
+  // Diagonal — draw before labels so labels sit on top.
+  if (rect.diagonal && !isDraft) {
+    ctx.strokeStyle = lineColor;
+    drawDiagonal(a, b);
+  }
 
   // Three labels — always positive magnitudes. Each edge label equals
   // the LENGTH of the edge it sits on. Labels mirror to the
@@ -253,7 +315,12 @@ function drawRectangle(rect, isDraft) {
   //   Area   → at the outer corner itself.
   const width  = Math.abs(rect.x);
   const height = Math.abs(rect.y);
-  const area   = width * height;
+  // When diagonal is on, the "area" we show is the triangle's: half
+  // the rectangle's. May be non-integer (e.g., 3×5 → 7.5).
+  const fullArea = width * height;
+  const area     = rect.diagonal ? fullArea / 2 : fullArea;
+  const areaStr  = Number.isInteger(area) ? formatInteger(area)
+                                          : formatNumber(area, 1);
 
   const outerRight = rect.x > 0;
   const outerTop   = rect.y > 0;
@@ -277,11 +344,12 @@ function drawRectangle(rect, isDraft) {
   ctx.textBaseline = 'middle';
   ctx.fillText(formatInteger(height), vEdgeX, y + h / 2);
 
-  // Area — outer corner. 16pt, regular weight.
+  // Area — outer corner. 16pt, regular weight. When diagonal is on,
+  // this shows the triangle's area (half the rectangle's).
   ctx.font = AREA_FONT;
   ctx.textAlign = vAlign;
   ctx.textBaseline = hBaseline;
-  ctx.fillText(formatInteger(area), vEdgeX, hEdgeY);
+  ctx.fillText(areaStr, vEdgeX, hEdgeY);
 }
 
 // What: the in-progress rectangle as the user drags. Built from
@@ -292,6 +360,117 @@ function currentDraftRect() {
   return drawState.axis === 'x'
     ? { x: drawState.fixed,   y: drawState.current }
     : { x: drawState.current, y: drawState.fixed   };
+}
+
+// ==== Actions on the selected rectangle ====
+// What: rotate swaps width and height (signs preserved → same
+// quadrant). diagonal toggles a half-area triangle. close removes
+// the rectangle.
+function performAction(rect, action) {
+  const idx = rectangles.indexOf(rect);
+  if (idx < 0) return;
+  if (action === 'rotate') {
+    const nx = (rect.x < 0 ? -1 : 1) * Math.abs(rect.y);
+    const ny = (rect.y < 0 ? -1 : 1) * Math.abs(rect.x);
+    rect.x = nx;
+    rect.y = ny;
+  } else if (action === 'diagonal') {
+    rect.diagonal = !rect.diagonal;
+  } else if (action === 'close') {
+    rectangles.splice(idx, 1);
+    if (selectedRect === rect) selectedRect = null;
+  }
+}
+
+// What: a unified tap handler called from mouseup when the gesture
+// was a tap (no significant movement). Decides what the tap means
+// based on what's under it: action word → action; inside a rect →
+// select; outside, with a selection → deselect; outside, no
+// selection → undo last rectangle.
+function handleTap(sx, sy) {
+  const action = hitTestActionWord(sx, sy);
+  if (action) {
+    performAction(action.rect, action.action);
+    hoveredAction = null;   // positions may have shifted; let next move re-test
+    return;
+  }
+  const rect = findRectContaining(sx, sy);
+  if (rect) {
+    selectedRect = rect;
+    return;
+  }
+  if (selectedRect) {
+    selectedRect = null;
+  } else {
+    tryUndo(sx, sy);
+  }
+}
+
+// ==== Diagonal rendering ====
+// What: a thin line from the origin-corner of the rectangle to the
+// opposite corner — splits the rectangle into two equal right
+// triangles. When diagonal is on, the area label switches to half.
+function drawDiagonal(a, b) {
+  ctx.strokeStyle = INK_COLOR;
+  ctx.lineWidth   = DIAGONAL_WIDTH;
+  ctx.beginPath();
+  ctx.moveTo(snap(a.x), snap(a.y));
+  ctx.lineTo(snap(b.x), snap(b.y));
+  ctx.stroke();
+}
+
+// ==== Action words ====
+// What: render "rotate · diagonal · close" beside the selected
+// rectangle, just OUTSIDE its outer corner. Push hit zones to
+// actionWordHits so taps can find them.
+function drawActionWords(rect) {
+  const a  = worldToScreen(0, 0);
+  const b  = worldToScreen(rect.x, rect.y);
+  const xL = Math.min(a.x, b.x);
+  const xR = Math.max(a.x, b.x);
+  const yT = Math.min(a.y, b.y);
+  const yB = Math.max(a.y, b.y);
+
+  const outerRight = rect.x > 0;
+  const outerTop   = rect.y > 0;
+
+  // Top of the action-word strip in screen y.
+  const stripTop = outerTop
+    ? yT - ACTION_PAD - ACTION_LINE_HEIGHT
+    : yB + ACTION_PAD;
+
+  ctx.font = ACTION_FONT;
+  ctx.textBaseline = 'top';
+  ctx.textAlign    = 'left';
+
+  const actions = ['rotate', 'diagonal', 'close'];
+  const widths  = actions.map(w => ctx.measureText(w).width);
+  const sepW    = ctx.measureText(ACTION_SEP).width;
+  const totalW  = widths.reduce((s, w) => s + w, 0) + sepW * (actions.length - 1);
+
+  // Right-align under the outer corner, or left-align if outer is left.
+  let cursorX = outerRight ? xR - totalW : xL;
+
+  for (let i = 0; i < actions.length; i++) {
+    const word = actions[i];
+    const w    = widths[i];
+    const hover = hoveredAction
+               && hoveredAction.rect   === rect
+               && hoveredAction.action === word;
+    ctx.fillStyle = hover ? ACTION_HOVER_COLOR : ACTION_COLOR;
+    ctx.fillText(word, cursorX, stripTop);
+    actionWordHits.push({
+      rect, action: word,
+      sx: cursorX, sy: stripTop,
+      w, h: ACTION_LINE_HEIGHT,
+    });
+    cursorX += w;
+    if (i < actions.length - 1) {
+      ctx.fillStyle = ACTION_COLOR;
+      ctx.fillText(ACTION_SEP, cursorX, stripTop);
+      cursorX += sepW;
+    }
+  }
 }
 
 // ==== Drawing ====
@@ -345,9 +524,15 @@ function draw() {
 
   // Rectangles — committed first, then the in-progress draft on top.
   // Light fill (alpha 0.05) keeps axis labels readable underneath.
+  // Clear action-word hit zones; they're repopulated by drawActionWords.
+  actionWordHits = [];
   for (const rect of rectangles) drawRectangle(rect, false);
   const draft = currentDraftRect();
   if (draft) drawRectangle(draft, true);
+  // Action words for the selected rectangle (if still in the list).
+  if (selectedRect && rectangles.indexOf(selectedRect) >= 0) {
+    drawActionWords(selectedRect);
+  }
 
   // Labels — positive in all four directions. When an axis pans
   // off-screen, the labels cling to the nearer edge: x-labels to
@@ -432,7 +617,9 @@ function snap(v) { return Math.round(v) + 0.5; }
 // zero); Escape cancels in progress.
 
 function setIdleCursor() {
-  canvas.style.cursor = hoverTick ? 'crosshair' : 'grab';
+  if (hoveredAction) canvas.style.cursor = 'pointer';
+  else if (hoverTick) canvas.style.cursor = 'crosshair';
+  else canvas.style.cursor = 'grab';
 }
 
 canvas.addEventListener('mousedown', (e) => {
@@ -466,10 +653,13 @@ window.addEventListener('mousemove', (e) => {
     draw();
     return;
   }
-  // idle: refresh hover state
-  const hit = hitTestAxisNumber(e.clientX, e.clientY);
-  if (!sameHit(hit, hoverTick)) {
-    hoverTick = hit;
+  // idle: refresh hover state for both axis ticks and action words.
+  const tickHit   = hitTestAxisNumber(e.clientX, e.clientY);
+  const actionHit = hitTestActionWord(e.clientX, e.clientY);
+  const changed = !sameHit(tickHit, hoverTick) || !sameAction(actionHit, hoveredAction);
+  if (changed) {
+    hoverTick     = tickHit;
+    hoveredAction = actionHit;
     setIdleCursor();
     draw();
   }
@@ -484,7 +674,7 @@ window.addEventListener('mouseup', (e) => {
     if (drawState.current !== 0) {
       rectangles.push(currentDraftRect());
     } else if (wasTap) {
-      tryUndo(e.clientX, e.clientY);
+      handleTap(e.clientX, e.clientY);
     }
     drawState = null;
     mode = 'idle';
@@ -494,7 +684,7 @@ window.addEventListener('mouseup', (e) => {
     return;
   }
   if (mode === 'panning') {
-    if (wasTap) tryUndo(e.clientX, e.clientY);
+    if (wasTap) handleTap(e.clientX, e.clientY);
     panStart = null;
     mode = 'idle';
     hoverTick = hitTestAxisNumber(e.clientX, e.clientY);
