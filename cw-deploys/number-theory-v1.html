@@ -82,12 +82,13 @@
 //     child has (the dividend, internally). The tiles appear in a
 //     screen-fixed pile below the panel.
 //   • Tap a positive x-axis number → sets the width (the divisor):
-//     M empty slots rise UP from the x-axis from 0 to M, so the
-//     rectangle eventually built by division sits in the same
-//     orientation as one built by multiplication. The §7 spine —
-//     same rectangle, two routes — is honoured visually.
-//   • Distribution (the tiles flying into the slots) is Iteration B.
-//     Slicing into tenths is Iteration C.
+//     the x-axis segment from 0 to that number lights up in active
+//     blue, marking the width of the rectangle the tiles will
+//     build. Tap the same number again to clear.
+//   • Distribution (Iteration B) sends the tiles down from the
+//     pile to settle row by row above this segment — the rectangle
+//     emerges; its height is revealed at the end, not previewed.
+//   • Slicing into tenths is Iteration C.
 // ============================================================
 
 // ==== Visual constants ====
@@ -144,8 +145,7 @@ const PILE_TILE     = 22;   // each tile is 22×22 px
 const PILE_PADDING  = 1;    // gap between tiles
 const PILE_PER_ROW  = 10;   // wrap every 10 tiles (place-value reading)
 const TILE_FILL_A   = 0.08; // pile tile fill alpha
-const SLOT_HEIGHT   = 4;    // world units — slot height above x-axis
-const SLOT_FILL_A   = 0.04; // slot box fill alpha
+const WIDTH_HL_W    = 2;    // px — heavier line for the active width segment
 
 // ==== State ====
 // What: a single transform — pan (world coords at screen centre) and
@@ -579,47 +579,22 @@ function drawDividendPile() {
   }
 }
 
-// ==== Divisor slots ====
-// What: an empty M-slot container ABOVE the x-axis from world (0, 0)
-// to (M, +SLOT_HEIGHT). Internal dividers at every integer mark the
-// individual slots. The bottom edge of the container is the x-axis
-// itself. Building upward keeps division geometrically aligned with
-// multiplication — same rectangle, two routes of construction.
-function drawDivisorSlots() {
+// ==== Width highlight ====
+// What: when a width (divisor) is set, the x-axis segment from 0
+// to width lights up in active blue. This marks the base of the
+// rectangle that distribution will build — the width is given, the
+// height is what the child will discover when the tiles flock down
+// and stack row by row.
+function drawWidthHighlight() {
   if (!divisor || divisor <= 0) return;
-
   const a = worldToScreen(0, 0);
-  const b = worldToScreen(divisor, SLOT_HEIGHT);
-  const x = Math.min(a.x, b.x);
-  const y = Math.min(a.y, b.y);
-  const w = Math.abs(b.x - a.x);
-  const h = Math.abs(b.y - a.y);
-
-  // Faint fill so the empty container reads against the plane.
-  ctx.fillStyle = INK_COLOR;
-  ctx.globalAlpha = SLOT_FILL_A;
-  ctx.fillRect(x, y, w, h);
-  ctx.globalAlpha = 1;
-
-  // Internal slot dividers — one per integer between 0 and M.
-  ctx.strokeStyle = INK_COLOR;
-  ctx.lineWidth   = 1;
-  ctx.globalAlpha = 0.4;
+  const b = worldToScreen(divisor, 0);
+  ctx.strokeStyle = SELECTED_COLOR;
+  ctx.lineWidth   = WIDTH_HL_W;
   ctx.beginPath();
-  for (let i = 1; i < divisor; i++) {
-    const sx = snap(worldToScreen(i, 0).x);
-    ctx.moveTo(sx, y);
-    ctx.lineTo(sx, y + h);
-  }
+  ctx.moveTo(snap(a.x), snap(a.y));
+  ctx.lineTo(snap(b.x), snap(b.y));
   ctx.stroke();
-  ctx.globalAlpha = 1;
-
-  // Outer outline — slightly more present than the dividers.
-  ctx.strokeStyle = INK_COLOR;
-  ctx.lineWidth   = 1;
-  ctx.globalAlpha = 0.6;
-  ctx.strokeRect(snap(x), snap(y), Math.round(w), Math.round(h));
-  ctx.globalAlpha = 1;
 }
 
 // ==== Drawing ====
@@ -671,9 +646,11 @@ function draw() {
   ctx.lineTo(viewW, axisY);
   ctx.stroke();
 
-  // Divisor slots — drawn under rectangles so they sit on the plane
-  // without obscuring constructions.
-  drawDivisorSlots();
+  // Width highlight — drawn over the axis but under any rectangles
+  // that might share the same baseline, so an existing rectangle's
+  // bottom edge stays primary while the highlight fills the gap
+  // between the rect and the width endpoint.
+  drawWidthHighlight();
 
   // Rectangles — committed first, then the in-progress draft on top.
   // Light fill (alpha 0.05) keeps axis labels readable underneath.
