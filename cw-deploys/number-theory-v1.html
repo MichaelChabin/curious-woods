@@ -49,7 +49,7 @@
 
 <script>
 // ============================================================
-// Number Theory Lab — Stages 1, 2, 3a, & 3b: plane + rectangles + division setup + distribution
+// Number Theory Lab — Stages 1, 2, 3a, 3b, & 3c: plane + rectangles + division (setup + distribution + slicing)
 //
 // Stage 1: a coordinate plane (0 at centre, positive in all four
 // directions, free pan/zoom, edgeless, Glass-inherited visuals).
@@ -91,7 +91,16 @@
 //     The first round is slow enough to count along; later rounds
 //     speed up. The rectangle emerges row by row. Any leftover
 //     tiles (count mod width) remain in the pile.
-//   • Slicing into tenths is Iteration C.
+//   • When the integer rounds leave a leftover row, a "slice"
+//     action word also appears. Tapping it splits each leftover
+//     piece into 10 thinner pieces and distributes them into the
+//     slots in waves of `divisor`. The slot label updates with
+//     each new decimal digit. Repeated taps drill deeper (level
+//     1 = tenths, level 2 = hundredths, …) until either the
+//     division terminates or a slice would render smaller than
+//     one pixel at the current zoom — the screen is honest about
+//     what it can show. The "you can do this forever" popup for
+//     repeating decimals is a follow-up iteration.
 // ============================================================
 
 // ==== Visual constants ====
@@ -164,6 +173,15 @@ const LEFTOVER_GAP         = 1;     // world units — one full tile-height of
                                     // so the slices in Iteration C have room
                                     // to redistribute without crowding
 
+// Slicing (Stage 3c). Each "slice round" subdivides leftover pieces
+// by 10, producing the next decimal digit.
+const SLICE_WAVE_DURATION  = 350;  // ms per wave of divisor slices
+const SLICE_PAUSE          = 120;  // ms between waves within a slice round
+const MIN_PIECE_PX         = 1.0;  // floor: don't slice if a new piece would be
+                                   // smaller than this in screen pixels
+const SLOT_LABEL_FONT      = 'bold 14px Georgia, serif';
+const SLOT_LABEL_OFFSET    = 14;   // px above column top
+
 // ==== State ====
 // What: a single transform — pan (world coords at screen centre) and
 // zoom (pixels per unit). Plus committed rectangles and a small
@@ -202,14 +220,22 @@ let actionWordHits = [];    // [{ rect, action, sx, sy, w, h }]
 let dividend = 17;
 let divisor  = null;
 
-// Active distribution (Stage 3b). null when no distribution has
-// happened yet, or after one has been cleared. When set, holds
-// per-round state and the in-flight tiles being animated.
-//   placedRounds   — completed integer rounds (0 .. totalRounds)
-//   totalRounds    — floor(dividend / divisor)
-//   tilesInFlight  — array of in-flight tile records, [] between rounds
-//   roundStart     — performance.now() at the round's start
-//   roundDuration  — ms for the current round's animation
+// Active distribution. null when no distribution has happened yet,
+// or after one has been cleared. Holds integer-round state, the
+// leftover row state, and any slice rounds that have completed.
+//   placedRounds    — completed integer rounds (0 .. totalRounds)
+//   totalRounds     — floor(dividend / divisor)
+//   remainder       — dividend mod divisor (the leftover-row count)
+//   leftoverPlaced  — true after the leftover row finishes its flight
+//   isLeftoverRound — flag during the leftover round's animation
+//   tilesInFlight   — array of in-flight piece records, [] between rounds
+//   roundStart      — performance.now() at the round's start
+//   roundDuration   — ms for the current round's animation
+//   sliceRounds     — array of completed slice rounds:
+//                     { level, digit, leftoverCount, leftoverPlaced }
+//   sliceState      — non-null while a slice round is animating:
+//                     { level, digit, leftoverCount, waveIdx, totalWaves,
+//                       isLeftoverWave }
 let dist = null;
 
 // ==== Canvas sizing ====
@@ -493,8 +519,10 @@ function performAction(rect, action) {
 function handleTap(sx, sy) {
   const action = hitTestActionWord(sx, sy);
   if (action) {
-    if (action.action === 'divide') {
+    if (action.action === 'divide' || action.action === 'divide again') {
       startDistribution();
+    } else if (action.action === 'slice') {
+      startSlice();
     } else if (action.rect) {
       performAction(action.rect, action.action);
     }
@@ -541,6 +569,8 @@ function startDistribution() {
     tilesInFlight:   [],
     roundStart:      0,
     roundDuration:   0,
+    sliceRounds:     [],
+    sliceState:      null,
   };
   scheduleNext();
 }
@@ -565,10 +595,14 @@ function scheduleRound() {
   // the pile right now — i.e. the bottom-right corner of the pile.
   const pileBase = dividend - dist.placedRounds * divisor - divisor;
   const destStack = dist.placedRounds;
-  // Integer-round destinations sit exactly on the integer grid:
-  // destX = slot index for slots 0 .. divisor - 1.
   for (let i = 0; i < divisor; i++) {
-    dist.tilesInFlight.push(makeFlightTile(i, pileBase + i, destStack, 0));
+    const pilePos = pileTileScreenPos(pileBase + i);
+    dist.tilesInFlight.push(makeFlightTile({
+      sourceX: pilePos.x, sourceY: pilePos.y,
+      sourceW: PILE_TILE, sourceH: PILE_TILE,
+      destWX:  i,         destWY:  destStack + 1,
+      pieceW:  1,         pieceH:  1,
+    }));
   }
   dist.roundStart = performance.now();
   requestAnimationFrame(animateDistFrame);
@@ -579,15 +613,19 @@ function scheduleLeftoverRound() {
   dist.roundDuration = ROUND_DURATION_REST;
   dist.tilesInFlight = [];
   dist.isLeftoverRound = true;
-  // Source: pile positions [0 .. remainder - 1] — the last tiles
-  // still in the pile after the integer rounds.
-  // Destination: an incomplete row CENTRED over the completed
-  // rectangle, lifted by one full tile-height of gap. destX is
-  // fractional when remainder and divisor have different parities.
+  // Source: pile positions [0 .. remainder - 1]; destination: an
+  // incomplete row CENTRED over the completed rectangle, lifted by
+  // one full tile-height of gap.
   const destStack  = dist.totalRounds;
   const leftOffset = leftoverLeftEdge();
   for (let i = 0; i < dist.remainder; i++) {
-    dist.tilesInFlight.push(makeFlightTile(leftOffset + i, i, destStack, LEFTOVER_GAP));
+    const pilePos = pileTileScreenPos(i);
+    dist.tilesInFlight.push(makeFlightTile({
+      sourceX: pilePos.x, sourceY: pilePos.y,
+      sourceW: PILE_TILE, sourceH: PILE_TILE,
+      destWX:  leftOffset + i, destWY: destStack + 1 + LEFTOVER_GAP,
+      pieceW:  1,              pieceH: 1,
+    }));
   }
   dist.roundStart = performance.now();
   requestAnimationFrame(animateDistFrame);
@@ -599,28 +637,216 @@ function leftoverLeftEdge() {
   return (divisor - dist.remainder) / 2;
 }
 
-function makeFlightTile(destX, pileIdx, destStack, destGap) {
+function makeFlightTile(p) {
   return {
-    destX, pileIdx, destStack, destGap,
+    sourceX: p.sourceX, sourceY: p.sourceY,
+    sourceW: p.sourceW, sourceH: p.sourceH,
+    destWX:  p.destWX,  destWY:  p.destWY,
+    pieceW:  p.pieceW,  pieceH:  p.pieceH,
     phase:   Math.random() * FLOCK_PHASE_MAX,
     wobbleX: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_X,
     wobbleY: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_Y,
   };
 }
 
+// ==== Slicing (Stage 3c) ====
+// What: subdivide the leftover pieces (tiles or earlier slices) by 10
+// to produce the next decimal digit. Each tap of "slice" runs one
+// level of subdivision: 10x slices fly out of the leftover pieces in
+// waves of `divisor` until either all slices have landed (terminating
+// digit, leftover = 0) or some are left over to float above the
+// column as the next round's source.
+
+function cumulativeSlicedHeight(uptoLevelInclusive) {
+  // Sum of digit_k * pieceHeight_k for completed slice rounds.
+  let sum = 0;
+  for (let i = 0; i < uptoLevelInclusive && i < dist.sliceRounds.length; i++) {
+    const r = dist.sliceRounds[i];
+    sum += r.digit * Math.pow(0.1, r.level);
+  }
+  return sum;
+}
+
+// World coordinates of leftover piece `pieceIdx` at slice-level
+// `level` (0 = leftover tile from integer rounds; k>0 = leftover
+// slice from slice round k). Returns { x, y, w, h } — y is the
+// piece's TOP edge in world y (so the bottom is y - h).
+function leftoverPieceWorldPos(pieceIdx, level) {
+  if (level === 0) {
+    return {
+      x: leftoverLeftEdge() + pieceIdx,
+      y: dist.totalRounds + 1 + LEFTOVER_GAP,
+      w: 1, h: 1,
+    };
+  }
+  const round = dist.sliceRounds[level - 1];
+  const pieceH = Math.pow(0.1, level);
+  const leftOffset = (divisor - round.leftoverCount) / 2;
+  const colTop = dist.totalRounds + cumulativeSlicedHeight(level);
+  return {
+    x: leftOffset + pieceIdx,
+    y: colTop + LEFTOVER_GAP + pieceH,
+    w: 1, h: pieceH,
+  };
+}
+
+// How many leftover pieces are available to slice, and at what level?
+function pendingLeftover() {
+  if (!dist) return null;
+  if (dist.sliceRounds.length === 0) {
+    if (!dist.leftoverPlaced || dist.remainder <= 0) return null;
+    return { level: 0, count: dist.remainder };
+  }
+  const last = dist.sliceRounds[dist.sliceRounds.length - 1];
+  if (last.leftoverCount <= 0 || !last.leftoverPlaced) return null;
+  return { level: last.level, count: last.leftoverCount };
+}
+
+// Can we slice further without producing pieces smaller than 1 pixel?
+function canSlice() {
+  const pending = pendingLeftover();
+  if (!pending) return false;
+  const nextPieceH = Math.pow(0.1, pending.level + 1);
+  return nextPieceH * zoom >= MIN_PIECE_PX;
+}
+
+function startSlice() {
+  if (!dist || dist.sliceState) return;
+  const pending = pendingLeftover();
+  if (!pending) return;
+  if (!canSlice()) return;
+
+  const newLevel       = pending.level + 1;
+  const totalSlices    = pending.count * 10;
+  const digit          = Math.floor(totalSlices / divisor);
+  const leftoverCount  = totalSlices - digit * divisor;
+
+  dist.sliceState = {
+    level: newLevel,
+    digit,
+    leftoverCount,
+    waveIdx: 0,
+    totalWaves: digit,
+    isLeftoverWave: false,
+    leftoverPlaced: false,
+  };
+  scheduleSliceWave();
+}
+
+function scheduleSliceWave() {
+  if (!dist || !dist.sliceState) return;
+  const s = dist.sliceState;
+
+  if (s.waveIdx < s.totalWaves) {
+    // Distribution wave: divisor slices, one per slot, all landing
+    // at the next stack row above the rectangle.
+    setupSliceWave(s, false);
+    return;
+  }
+  if (s.leftoverCount > 0 && !s.leftoverPlaced) {
+    // Leftover wave: the slices that didn't make a full row fly to
+    // the centred floating position above the column.
+    setupSliceWave(s, true);
+    return;
+  }
+  finalizeSliceRound();
+}
+
+function setupSliceWave(s, isLeftover) {
+  dist.roundDuration   = SLICE_WAVE_DURATION;
+  dist.tilesInFlight   = [];
+  // isLeftoverWave lives on the slice state; dist.isLeftoverRound
+  // is for the integer-round leftover only (different state machine).
+  s.isLeftoverWave     = isLeftover;
+
+  const sliceH = Math.pow(0.1, s.level);
+  const cumPrev = cumulativeSlicedHeight(s.level - 1);
+  const baseY = dist.totalRounds + cumPrev;
+
+  if (!isLeftover) {
+    // Wave waveIdx of distribution: divisor slices, one per slot,
+    // landing at row waveIdx above the previously-completed column.
+    for (let slotI = 0; slotI < divisor; slotI++) {
+      const sliceIdx = s.waveIdx * divisor + slotI;
+      const parentIdx = Math.floor(sliceIdx / 10);
+      const parent    = leftoverPieceWorldPos(parentIdx, s.level - 1);
+      const sourceTL  = worldToScreen(parent.x, parent.y);
+      dist.tilesInFlight.push(makeFlightTile({
+        sourceX: sourceTL.x, sourceY: sourceTL.y,
+        sourceW: parent.w * zoom, sourceH: parent.h * zoom,
+        destWX:  slotI,
+        destWY:  baseY + (s.waveIdx + 1) * sliceH,
+        pieceW:  1, pieceH: sliceH,
+      }));
+    }
+  } else {
+    // Leftover wave: `leftoverCount` slices fly to a centred
+    // floating row above the column. Their source is the parent
+    // pieces (which are about to vanish).
+    const leftOffset = (divisor - s.leftoverCount) / 2;
+    const colTop = dist.totalRounds + cumPrev + s.digit * sliceH;
+    const destY  = colTop + LEFTOVER_GAP + sliceH;
+    // The leftover slices are sliceIdx [totalDistributed .. totalDistributed + leftoverCount - 1].
+    const distributedSlices = s.totalWaves * divisor;
+    for (let i = 0; i < s.leftoverCount; i++) {
+      const sliceIdx  = distributedSlices + i;
+      const parentIdx = Math.floor(sliceIdx / 10);
+      const parent    = leftoverPieceWorldPos(parentIdx, s.level - 1);
+      const sourceTL  = worldToScreen(parent.x, parent.y);
+      dist.tilesInFlight.push(makeFlightTile({
+        sourceX: sourceTL.x, sourceY: sourceTL.y,
+        sourceW: parent.w * zoom, sourceH: parent.h * zoom,
+        destWX:  leftOffset + i,
+        destWY:  destY,
+        pieceW:  1, pieceH: sliceH,
+      }));
+    }
+  }
+  dist.roundStart = performance.now();
+  requestAnimationFrame(animateDistFrame);
+}
+
+function finalizeSliceRound() {
+  if (!dist || !dist.sliceState) return;
+  const s = dist.sliceState;
+  dist.sliceRounds.push({
+    level: s.level,
+    digit: s.digit,
+    leftoverCount: s.leftoverCount,
+    leftoverPlaced: s.leftoverCount > 0 ? true : false,
+  });
+  dist.sliceState = null;
+}
+
 function animateDistFrame(now) {
   if (!dist || dist.tilesInFlight.length === 0) return;
   const elapsed = now - dist.roundStart;
   if (elapsed >= dist.roundDuration) {
-    if (dist.isLeftoverRound) {
-      dist.leftoverPlaced = true;
-      dist.isLeftoverRound = false;
+    // Promote in-flight pieces to landed, then schedule what's next.
+    if (dist.sliceState) {
+      // Active slicing
+      const s = dist.sliceState;
+      if (s.isLeftoverWave) {
+        s.leftoverPlaced = true;
+        s.isLeftoverWave = false;
+      } else {
+        s.waveIdx += 1;
+      }
+      dist.tilesInFlight = [];
+      draw();
+      setTimeout(scheduleSliceWave, SLICE_PAUSE);
     } else {
-      dist.placedRounds += 1;
+      // Integer / leftover round
+      if (dist.isLeftoverRound) {
+        dist.leftoverPlaced = true;
+        dist.isLeftoverRound = false;
+      } else {
+        dist.placedRounds += 1;
+      }
+      dist.tilesInFlight = [];
+      draw();
+      setTimeout(scheduleNext, ROUND_PAUSE);
     }
-    dist.tilesInFlight = [];
-    draw();
-    setTimeout(scheduleNext, ROUND_PAUSE);
     return;
   }
   draw();
@@ -698,14 +924,18 @@ function drawActionWords(rect) {
 // What: a single square tile at a given screen position and size.
 // Used by the pile (PILE_TILE px), in-flight tiles (interpolated),
 // and landed tiles in slots (zoom px). One consistent visual.
-function drawSquareTile(x, y, size) {
+function drawTileRect(x, y, w, h) {
   ctx.fillStyle = INK_COLOR;
   ctx.globalAlpha = TILE_FILL_A;
-  ctx.fillRect(x, y, size, size);
+  ctx.fillRect(x, y, w, h);
   ctx.globalAlpha = 1;
   ctx.strokeStyle = INK_COLOR;
   ctx.lineWidth   = 1;
-  ctx.strokeRect(snap(x), snap(y), Math.round(size), Math.round(size));
+  ctx.strokeRect(snap(x), snap(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h)));
+}
+
+function drawSquareTile(x, y, size) {
+  drawTileRect(x, y, size, size);
 }
 
 function pileTileScreenPos(pileIndex) {
@@ -728,7 +958,11 @@ function drawDividendPile() {
   if (dividend <= 0) return;
   let piled = dividend;
   if (dist) {
-    piled -= dist.placedRounds * divisor + dist.tilesInFlight.length;
+    piled -= dist.placedRounds * divisor;
+    // During the leftover round's animation, those tiles are in flight.
+    if (dist.isLeftoverRound) piled -= dist.tilesInFlight.length;
+    // During integer-round animations, those tiles are in flight too.
+    else if (!dist.sliceState) piled -= dist.tilesInFlight.length;
     if (dist.leftoverPlaced) piled -= dist.remainder;
   }
   if (piled <= 0) return;
@@ -752,17 +986,71 @@ function drawLandedTiles() {
       drawSquareTile(tl.x, tl.y, zoom);
     }
   }
-  // Leftover row: `remainder` tiles centred over the completed
-  // rectangle, lifted one full tile-height of gap. The incomplete
-  // row is the visible "not yet enough to make another row" that
-  // Iteration C will slice and redistribute on top.
-  if (dist.leftoverPlaced) {
+  // Level-0 leftover row: visible only until it gets sliced into
+  // the level-1 round (at which point the source pieces are
+  // consumed and the row is replaced by slice content).
+  if (dist.leftoverPlaced && dist.sliceRounds.length === 0) {
     const leftOffset = leftoverLeftEdge();
     for (let i = 0; i < dist.remainder; i++) {
       const tl = worldToScreen(leftOffset + i, dist.totalRounds + 1 + LEFTOVER_GAP);
       drawSquareTile(tl.x, tl.y, zoom);
     }
   }
+  // Slice rounds: each adds a row of `digit` slices in every slot,
+  // and optionally a centred floating leftover row of `leftoverCount`
+  // slices above the column (consumed when the NEXT slice round runs).
+  for (let i = 0; i < dist.sliceRounds.length; i++) {
+    const r = dist.sliceRounds[i];
+    const pieceH = Math.pow(0.1, r.level);
+    const baseY  = dist.totalRounds + cumulativeSlicedHeight(r.level - 1);
+    // Stacked slices in every slot
+    for (let slot = 0; slot < divisor; slot++) {
+      for (let k = 0; k < r.digit; k++) {
+        const tl = worldToScreen(slot, baseY + (k + 1) * pieceH);
+        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH);
+      }
+    }
+    // Floating leftover slices — only for the most recent round
+    // (older rounds' leftovers were consumed by the next slice).
+    const isLast = (i === dist.sliceRounds.length - 1);
+    if (isLast && r.leftoverCount > 0 && r.leftoverPlaced) {
+      const leftOffset = (divisor - r.leftoverCount) / 2;
+      const colTop = dist.totalRounds + cumulativeSlicedHeight(r.level);
+      for (let j = 0; j < r.leftoverCount; j++) {
+        const tl = worldToScreen(leftOffset + j, colTop + LEFTOVER_GAP + pieceH);
+        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH);
+      }
+    }
+  }
+}
+
+// ==== Slot length label ====
+// What: the filled length of one slot — the rectangle's height,
+// the "answer" of the division — drawn above the column once the
+// first slice round has completed. Shows the integer plus all the
+// decimal digits we've discovered so far (e.g., "3.4", "2.75",
+// "3.333"). Per §5 we label one slot rather than all of them.
+function drawSlotLengthLabel() {
+  if (!dist || !divisor) return;
+  if (dist.sliceRounds.length === 0) return;
+  // Don't draw mid-animation; the column height is fluid then.
+  if (dist.tilesInFlight.length > 0) return;
+
+  const colHeight = dist.placedRounds + cumulativeSlicedHeight(dist.sliceRounds.length);
+  // One decimal place per completed slice round.
+  const digits = dist.sliceRounds.length;
+  const str = colHeight.toFixed(digits);
+
+  // Place above the rightmost slot's column top, centred on its slot.
+  const lastSlot = divisor - 1;
+  const colTopWorld = dist.totalRounds + cumulativeSlicedHeight(dist.sliceRounds.length);
+  const anchor = worldToScreen(lastSlot + 0.5, colTopWorld);
+
+  ctx.font = SLOT_LABEL_FONT;
+  ctx.fillStyle = SELECTED_COLOR;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(str, anchor.x, anchor.y - SLOT_LABEL_OFFSET);
 }
 
 // ==== In-flight tiles ====
@@ -774,21 +1062,20 @@ function drawInFlightTiles() {
   if (!dist || dist.tilesInFlight.length === 0) return;
   const t = Math.min(1, (performance.now() - dist.roundStart) / dist.roundDuration);
   for (const tile of dist.tilesInFlight) {
-    // Source: pile position that this tile is vacating.
-    const startPos = pileTileScreenPos(tile.pileIdx);
-    // Destination: tile carries its own destX (world x of its left
-    // edge — fractional for the centred leftover row), destStack
-    // (the row), and destGap (extra vertical world-unit offset for
-    // the leftover row's float).
-    const endTL   = worldToScreen(tile.destX, tile.destStack + 1 + tile.destGap);
+    // Each tile carries its source rectangle in SCREEN coords and
+    // its destination rectangle in WORLD coords + world-piece size.
+    const endTL = worldToScreen(tile.destWX, tile.destWY);
+    const endW  = tile.pieceW * zoom;
+    const endH  = tile.pieceH * zoom;
 
-    const localT  = Math.max(0, Math.min(1, (t - tile.phase) / FLIGHT_FRACTION));
-    const eased   = easeOutQuad(localT);
-    const wob     = Math.sin(eased * Math.PI);  // 0 at endpoints, 1 mid-flight
-    const x = lerp(startPos.x, endTL.x, eased) + tile.wobbleX * wob;
-    const y = lerp(startPos.y, endTL.y, eased) + tile.wobbleY * wob;
-    const size = lerp(PILE_TILE, zoom, eased);
-    drawSquareTile(x, y, size);
+    const localT = Math.max(0, Math.min(1, (t - tile.phase) / FLIGHT_FRACTION));
+    const eased  = easeOutQuad(localT);
+    const wob    = Math.sin(eased * Math.PI);
+    const x = lerp(tile.sourceX, endTL.x, eased) + tile.wobbleX * wob;
+    const y = lerp(tile.sourceY, endTL.y, eased) + tile.wobbleY * wob;
+    const w = lerp(tile.sourceW, endW, eased);
+    const h = lerp(tile.sourceH, endH, eased);
+    drawTileRect(x, y, w, h);
   }
 }
 
@@ -798,40 +1085,56 @@ function drawInFlightTiles() {
 // distribution. Hidden during the animation itself.
 function drawDivideAction() {
   if (!divisor || divisor <= 0) return;
-  if (dividend < divisor) return;
 
-  // Hide whenever a distribution is in progress — animating, or
-  // paused between integer rounds, or about to fly the leftover row.
-  if (dist) {
+  // While any animation is mid-flight, no actions.
+  if (dist && (dist.tilesInFlight.length > 0 || dist.sliceState)) return;
+
+  // What action words to render, in order. "divide" if no
+  // distribution yet; "slice" if there's a slicable leftover;
+  // "divide again" if everything ran and either terminated or hit
+  // the pixel floor.
+  const words = [];
+  if (!dist) {
+    if (dividend >= divisor) words.push('divide');
+  } else {
     const fullyDone = dist.placedRounds >= dist.totalRounds
                    && (dist.remainder === 0 || dist.leftoverPlaced);
-    if (!fullyDone) return;
+    if (!fullyDone) return;  // mid-distribution (between rounds)
+    if (canSlice()) words.push('slice');
+    words.push('divide again');
   }
-
-  const isReplay = dist != null;
-  const word = isReplay ? 'divide again' : 'divide';
-
-  const center = worldToScreen(divisor / 2, 0);
-  const labelY = center.y + 14;  // px below the x-axis
+  if (words.length === 0) return;
 
   ctx.font = ACTION_FONT;
   ctx.textBaseline = 'top';
-  ctx.textAlign    = 'center';
-  const hover = hoveredAction
-             && hoveredAction.rect === null
-             && hoveredAction.action === 'divide';
-  ctx.fillStyle = hover ? ACTION_HOVER_COLOR : ACTION_COLOR;
-  ctx.fillText(word, center.x, labelY);
+  ctx.textAlign    = 'left';
+  const sepW   = ctx.measureText(ACTION_SEP).width;
+  const widths = words.map(w => ctx.measureText(w).width);
+  const total  = widths.reduce((s, w) => s + w, 0) + sepW * (words.length - 1);
 
-  const w = ctx.measureText(word).width;
-  actionWordHits.push({
-    rect: null,
-    action: 'divide',
-    sx: center.x - w / 2,
-    sy: labelY,
-    w,
-    h: ACTION_LINE_HEIGHT,
-  });
+  const center = worldToScreen(divisor / 2, 0);
+  const labelY = center.y + 14;
+  let cursorX  = center.x - total / 2;
+
+  for (let i = 0; i < words.length; i++) {
+    const word  = words[i];
+    const w     = widths[i];
+    const hover = hoveredAction
+               && hoveredAction.rect === null
+               && hoveredAction.action === word;
+    ctx.fillStyle = hover ? ACTION_HOVER_COLOR : ACTION_COLOR;
+    ctx.fillText(word, cursorX, labelY);
+    actionWordHits.push({
+      rect: null, action: word,
+      sx: cursorX, sy: labelY, w, h: ACTION_LINE_HEIGHT,
+    });
+    cursorX += w;
+    if (i < words.length - 1) {
+      ctx.fillStyle = ACTION_COLOR;
+      ctx.fillText(ACTION_SEP, cursorX, labelY);
+      cursorX += sepW;
+    }
+  }
 }
 
 // ==== Width highlight ====
@@ -924,7 +1227,11 @@ function draw() {
   // rectangles handle the same case).
   drawLandedTiles();
 
-  // "divide" action word — registers a hit zone in actionWordHits.
+  // Slot length label — the decimal answer reveals one digit per
+  // completed slice round.
+  drawSlotLengthLabel();
+
+  // "divide" / "slice" / "divide again" action words.
   drawDivideAction();
 
   // Labels — positive in all four directions. When an axis pans
