@@ -2,9 +2,11 @@
 
 ## What This Is
 
-Curious Woods is an AI-guided learning platform for curious, independent children (ages 8–14). It is built on the principle that curiosity and independence drive learning — not assessment or standards. The first interactive is **Glass**, a stained-glass geometric construction and coloring tool.
+Curious Woods is an AI-guided learning platform for curious, independent children aged 10 and up. It is built on the principle that curiosity and independence drive learning — not assessment or standards. The platform has four pillars: **Labs** (substantial visual environments — Euclid, the Number Theory Lab, Codes/Bases/Modulus), **Stories**, **Practice**, and **Maya** (the embedded Claude Guide).
 
-This is not a typical edtech app. There is no tracking, no standardization, no curriculum alignment. Stories broaden experience and generate curiosity; the AI guide (Maya) is an infinitely patient partner, not a tutor.
+The first Lab is **Euclid** — a compass-and-straightedge construction environment. *Glass* is Euclid's first story mode, where constructions become stained-glass windows. The destination is MIT OpenCourseWare and equivalents; the method is recursive decomposition of university material until accessible to a curious ten-year-old.
+
+This is not a typical edtech app. There is no tracking, no standardization, no curriculum alignment. Stories broaden experience and generate curiosity; Maya is an infinitely patient partner, not a tutor — and architecturally refuses to teach, reference educational standards, or follow current educational best practices. See [CWVault/00-FOUNDATION/CW-System-Foundation.md](CWVault/00-FOUNDATION/CW-System-Foundation.md) for the full philosophy.
 
 ## Architecture
 
@@ -237,7 +239,7 @@ All design decisions connect back to these:
 
 ## Target Users
 
-- Children ages 8–14 (curious, independent learners)
+- Children aged 10 and up (curious, independent learners). 10 is the floor of competence-map decomposition; there is no upper bound.
 - Homeschooling families
 - Neurodivergent learners whose curiosity outpaces standard curriculum
 - Global reach — must work on older devices (2017+ iPads)
