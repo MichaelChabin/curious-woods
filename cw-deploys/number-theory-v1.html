@@ -602,6 +602,7 @@ function scheduleRound() {
       sourceW: PILE_TILE, sourceH: PILE_TILE,
       destWX:  i,         destWY:  destStack + 1,
       pieceW:  1,         pieceH:  1,
+      id:      `rect:s${i}:h${destStack}`,
     }));
   }
   dist.roundStart = performance.now();
@@ -625,6 +626,7 @@ function scheduleLeftoverRound() {
       sourceW: PILE_TILE, sourceH: PILE_TILE,
       destWX:  leftOffset + i, destWY: destStack + 1 + LEFTOVER_GAP,
       pieceW:  1,              pieceH: 1,
+      id:      `lft:L0:i${i}`,
     }));
   }
   dist.roundStart = performance.now();
@@ -643,6 +645,7 @@ function makeFlightTile(p) {
     sourceW: p.sourceW, sourceH: p.sourceH,
     destWX:  p.destWX,  destWY:  p.destWY,
     pieceW:  p.pieceW,  pieceH:  p.pieceH,
+    id:      p.id,
     phase:   Math.random() * FLOCK_PHASE_MAX,
     wobbleX: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_X,
     wobbleY: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_Y,
@@ -805,6 +808,7 @@ function setupSliceWave(s, isLeftover) {
         destWX:  slotI,
         destWY:  baseY + (s.waveIdx + 1) * sliceH,
         pieceW:  1, pieceH: sliceH,
+        id:      `slice:L${s.level}:s${slotI}:k${s.waveIdx}`,
       }));
     }
   } else {
@@ -829,6 +833,7 @@ function setupSliceWave(s, isLeftover) {
         destWX:  leftOffset + i,
         destWY:  destY,
         pieceW:  1, pieceH: sliceH,
+        id:      `lft:L${s.level}:i${i}`,
       }));
     }
   }
@@ -954,18 +959,44 @@ function drawActionWords(rect) {
 // What: a single square tile at a given screen position and size.
 // Used by the pile (PILE_TILE px), in-flight tiles (interpolated),
 // and landed tiles in slots (zoom px). One consistent visual.
-function drawTileRect(x, y, w, h) {
-  ctx.fillStyle = INK_COLOR;
-  ctx.globalAlpha = TILE_FILL_A;
-  ctx.fillRect(x, y, w, h);
-  ctx.globalAlpha = 1;
-  ctx.strokeStyle = INK_COLOR;
-  ctx.lineWidth   = 1;
-  ctx.strokeRect(snap(x), snap(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h)));
+// ==== Glass tile rendering (experimental) ====
+// Division unit-squares and slices render as transparent colour fills
+// with deterministic per-tile jitter in a cobalt neighbourhood — no
+// strokes. The coordinate gridlines underneath do the structural
+// work the outlines used to do. Palette is hard-coded for now;
+// palettes.json plumbing is a follow-up.
+const GLASS_BASE_H   = 215;   // cobalt hue
+const GLASS_BASE_S   = 70;    // saturation %
+const GLASS_BASE_L   = 45;    // lightness %
+const GLASS_JIT_H    = 3;     // hue jitter ± degrees
+const GLASS_JIT_S    = 5;     // saturation jitter ± %
+const GLASS_JIT_L    = 4;     // lightness jitter ± %
+const GLASS_ALPHA    = 0.82;  // fill opacity
+
+function hash01(str) {
+  // FNV-1a 32-bit, returned as a [0, 1] float — deterministic so
+  // a given tile id always produces the same colour.
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+  }
+  return ((h >>> 0) / 4294967295);
 }
 
-function drawSquareTile(x, y, size) {
-  drawTileRect(x, y, size, size);
+function jitterColor(id) {
+  const jH = (hash01(id + ':h') - 0.5) * 2 * GLASS_JIT_H;
+  const jS = (hash01(id + ':s') - 0.5) * 2 * GLASS_JIT_S;
+  const jL = (hash01(id + ':l') - 0.5) * 2 * GLASS_JIT_L;
+  return `hsla(${GLASS_BASE_H + jH},${GLASS_BASE_S + jS}%,${GLASS_BASE_L + jL}%,${GLASS_ALPHA})`;
+}
+
+function drawTileRect(x, y, w, h, id) {
+  ctx.fillStyle = jitterColor(id || 'default');
+  ctx.fillRect(x, y, w, h);
+}
+
+function drawSquareTile(x, y, size, id) {
+  drawTileRect(x, y, size, size, id);
 }
 
 function pileTileScreenPos(pileIndex) {
@@ -998,7 +1029,7 @@ function drawDividendPile() {
   if (piled <= 0) return;
   for (let i = 0; i < piled; i++) {
     const p = pileTileScreenPos(i);
-    drawSquareTile(p.x, p.y, PILE_TILE);
+    drawSquareTile(p.x, p.y, PILE_TILE, `pile:${i}`);
   }
 }
 
@@ -1014,7 +1045,7 @@ function drawLandedTiles() {
   for (let slot = 0; slot < divisor; slot++) {
     for (let h = 0; h < dist.placedRounds; h++) {
       const tl = worldToScreen(slot, h + 1);
-      drawSquareTile(tl.x, tl.y, zoom);
+      drawSquareTile(tl.x, tl.y, zoom, `rect:s${slot}:h${h}`);
     }
   }
 
@@ -1027,7 +1058,7 @@ function drawLandedTiles() {
     for (let slot = 0; slot < divisor; slot++) {
       for (let k = 0; k < r.digit; k++) {
         const tl = worldToScreen(slot, baseY + (k + 1) * pieceH);
-        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH);
+        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH, `slice:L${r.level}:s${slot}:k${k}`);
       }
     }
   }
@@ -1041,7 +1072,7 @@ function drawLandedTiles() {
     for (let slot = 0; slot < divisor; slot++) {
       for (let k = 0; k < s.waveIdx; k++) {
         const tl = worldToScreen(slot, baseY + (k + 1) * pieceH);
-        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH);
+        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH, `slice:L${s.level}:s${slot}:k${k}`);
       }
     }
     // If the leftover wave has already completed, show those slices too.
@@ -1050,7 +1081,7 @@ function drawLandedTiles() {
       const colTop = baseY + s.digit * pieceH;
       for (let j = 0; j < s.leftoverCount; j++) {
         const tl = worldToScreen(leftOffset + j, colTop + LEFTOVER_GAP + pieceH);
-        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH);
+        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH, `lft:L${s.level}:i${j}`);
       }
     }
   }
@@ -1088,40 +1119,32 @@ function drawCurrentLeftover() {
 
   const isBeingSliced = !!(dist.sliceState && dist.sliceState.level === level + 1);
   const childH = parentH / 10;
+  const baseBottomY = baseTopY - parentH;
 
-  // Draw the internal slice dividers iff the resulting child slices
-  // would be at least a couple pixels tall on screen — otherwise
-  // the dividers just smudge the parent.
-  const showDividers = childH * zoom >= 3;
-
+  // Render each parent piece as a stack of separate slices, bottom
+  // up. Each slice gets its own deterministic jitter colour, so
+  // the slice structure reads through colour variation rather than
+  // outlines. Slices peel off the top as the source is sliced.
   for (let i = 0; i < count; i++) {
     let slicesLeft = 10;
     if (isBeingSliced) slicesLeft = 10 - slicesGoneFromParent(i);
     if (slicesLeft <= 0.001) continue;
 
-    const remainingH = slicesLeft * childH;
-    const topY = baseTopY - (10 - slicesLeft) * childH;
-    const tl = worldToScreen(leftOffset + i, topY);
-    const w  = parentH === 1 ? zoom : zoom;  // always 1 world unit wide
-    const h  = remainingH * zoom;
+    const wholeLeft = Math.floor(slicesLeft + 0.0001);
+    const fracLeft  = slicesLeft - wholeLeft;
 
-    // Filled body + outer outline.
-    drawTileRect(tl.x, tl.y, w, h);
+    // Full slices at their original positions (bottom up).
+    for (let k = 0; k < wholeLeft; k++) {
+      const sliceTopY = baseBottomY + (k + 1) * childH;
+      const tl = worldToScreen(leftOffset + i, sliceTopY);
+      drawTileRect(tl.x, tl.y, zoom, zoom * childH, `src:L${level}:p${i}:k${k}`);
+    }
 
-    // Internal horizontal dividers showing each remaining slice.
-    if (showDividers) {
-      const wholeLeft = Math.floor(slicesLeft + 0.0001);
-      ctx.strokeStyle = INK_COLOR;
-      ctx.globalAlpha = 0.35;
-      ctx.lineWidth   = 1;
-      ctx.beginPath();
-      for (let k = 1; k < wholeLeft; k++) {
-        const y = snap(tl.y + (k / slicesLeft) * h);
-        ctx.moveTo(snap(tl.x),      y);
-        ctx.lineTo(snap(tl.x + w),  y);
-      }
-      ctx.stroke();
-      ctx.globalAlpha = 1;
+    // Partial top slice (mid-departure): shrinks smoothly while a wave is in flight.
+    if (fracLeft > 0.01) {
+      const sliceTopY = baseBottomY + wholeLeft * childH + fracLeft * childH;
+      const tl = worldToScreen(leftOffset + i, sliceTopY);
+      drawTileRect(tl.x, tl.y, zoom, zoom * childH * fracLeft, `src:L${level}:p${i}:k${wholeLeft}`);
     }
   }
 }
@@ -1177,7 +1200,7 @@ function drawInFlightTiles() {
     const y = lerp(tile.sourceY, endTL.y, eased) + tile.wobbleY * wob;
     const w = lerp(tile.sourceW, endW, eased);
     const h = lerp(tile.sourceH, endH, eased);
-    drawTileRect(x, y, w, h);
+    drawTileRect(x, y, w, h, tile.id);
   }
 }
 
