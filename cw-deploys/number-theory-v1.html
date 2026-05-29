@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Number Theory Lab</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #f4f1e8; overflow: hidden; }
+  body { font-family: Georgia, serif; }
+  #canvas { display: block; cursor: grab; touch-action: none; }
+
+  /* Count panel — Glass-style floating control (the "dividend") */
+  #dividend-panel {
+    position: fixed; top: 20px; left: 20px;
+    padding: 10px 14px;
+    background: rgba(244, 241, 232, 0.92);
+    border: 0.5px solid #c8b89a;
+    border-radius: 6px;
+    color: #546A80;
+    font: 13px Georgia, serif;
+    display: flex; align-items: center; gap: 10px;
+    user-select: none;
+  }
+  #dividend-panel label { cursor: default; }
+  #dividend-panel input {
+    width: 56px; padding: 3px 6px;
+    background: transparent;
+    border: 0.5px solid #c8b89a;
+    border-radius: 3px;
+    color: #546A80;
+    font: 13px Georgia, serif;
+    text-align: center;
+    outline: none;
+  }
+  #dividend-panel input:focus { border-color: #546A80; }
+  /* Hide the spinner arrows in number inputs (Chrome/Safari + Firefox) */
+  #dividend-panel input::-webkit-outer-spin-button,
+  #dividend-panel input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  #dividend-panel input[type=number] { -moz-appearance: textfield; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<div id="dividend-panel">
+  <label for="dividend-input">Count</label>
+  <input id="dividend-input" type="number" value="17" min="0" max="100">
+</div>
+
+<script>
+// ============================================================
+// Number Theory Lab — Stages 1, 2, 3a, 3b, & 3c: plane + rectangles + division (setup + distribution + slicing)
+//
+// Stage 1: a coordinate plane (0 at centre, positive in all four
+// directions, free pan/zoom, edgeless, Glass-inherited visuals).
+//
+// Stage 2: hover any axis number → drag → an origin-anchored
+// rectangle appears with three live labels (height, width, area).
+// Two paths to the same object — hovering 5 on x and dragging up to
+// 4, or hovering 4 on y and dragging right to 5, both produce the
+// same 5×4 rectangle. Rectangles persist; multiple at once is the
+// point (factor pairs of a number visible together).
+//
+// Tap-and-action gesture grammar:
+//   • Tap inside a rectangle → selects it. Action words ("rotate",
+//     "diagonal", "close") fade in just outside the outer corner.
+//   • Tap an action word → performs that action.
+//   • Tap outside any rectangle while one is selected → deselects.
+//   • Tap outside any rectangle with nothing selected → undoes the
+//     last rectangle (Glass's convention).
+//
+// Actions on the selected rectangle:
+//   rotate   — swap width and height (area preserved). Commutativity
+//              made visible: a 3×5 becomes a 5×3.
+//   diagonal — draws the diagonal across the rectangle and labels
+//              the area as half (one of the two right triangles
+//              formed). Tap again to toggle off.
+//   close    — removes the rectangle.
+//
+// Stage 3a (division setup):
+//   • The "Count" panel at top-left sets how many unit tiles the
+//     child has (the dividend, internally). The tiles appear in a
+//     screen-fixed pile below the panel.
+//   • Tap a positive x-axis number → sets the width (the divisor):
+//     the x-axis segment from 0 to that number lights up in active
+//     blue, marking the width of the rectangle the tiles will
+//     build. Tap the same number again to clear.
+//   • When count ≥ width, a "divide" action word appears below
+//     the width segment. Tap it → tiles flock from the pile to the
+//     slots, one per column per round, divisor-many tiles per round.
+//     The first round is slow enough to count along; later rounds
+//     speed up. The rectangle emerges row by row. Any leftover
+//     tiles (count mod width) remain in the pile.
+//   • When the integer rounds leave a leftover row, a "slice"
+//     action word also appears. Tapping it splits each leftover
+//     piece into 10 thinner pieces and distributes them into the
+//     slots in waves of `divisor`. The slot label updates with
+//     each new decimal digit. Repeated taps drill deeper (level
+//     1 = tenths, level 2 = hundredths, …) until either the
+//     division terminates or a slice would render smaller than
+//     one pixel at the current zoom — the screen is honest about
+//     what it can show. The "you can do this forever" popup for
+//     repeating decimals is a follow-up iteration.
+// ============================================================
+
+// ==== Visual constants ====
+// What: colours and sizes inherited from Glass / Interface-Foundation.
+const BG_COLOR       = '#f4f1e8';
+const INK_COLOR      = '#546A80';
+const GRID_OPACITY   = 0.3;
+const GRID_WIDTH     = 0.5;
+const AXIS_WIDTH     = 1;     // 1px snapped to half-pixel = single crisp pixel
+const LABEL_FONT      = '12px Georgia, serif';
+const LABEL_FONT_BOLD = 'bold 12px Georgia, serif';
+const AREA_FONT       = '16px Georgia, serif';
+const LABEL_PAD       = 4;   // px gap between axis line and label
+
+// Zoom in pixels-per-unit. Bounds chosen so labels stay legible
+// and panning across hundreds of units stays fluid.
+const ZOOM_MIN  = 4;
+const ZOOM_MAX  = 600;
+const ZOOM_INIT = 60;
+
+// Rectangles — visual treatment.
+const RECT_FILL_ALPHA = 0.05;
+const RECT_OUTLINE_W  = 1;     // 1px snapped to half-pixel = single crisp pixel
+const RECT_LABEL_PAD  = 6;
+
+// Hover affordance on axis numbers.
+const HOVER_RADIUS     = 12;   // px along the axis
+const HOVER_AXIS_BAND  = 22;   // px perpendicular to the axis
+const HOVER_DOT_RADIUS = 4;    // filled dot at the hovered tick
+
+// A mousedown→mouseup within this distance counts as a tap (rather
+// than a drag). Taps outside any rectangle undo the last rectangle.
+const TAP_THRESHOLD    = 4;    // px
+
+// Action words appearing beside a selected rectangle.
+const ACTION_FONT        = '13px Georgia, serif';
+const ACTION_COLOR       = '#546A80';
+const ACTION_HOVER_COLOR = '#3D3D3A';
+const ACTION_PAD         = 8;    // gap between rect edge and action words
+const ACTION_LINE_HEIGHT = 16;   // approx height of one action word line
+const ACTION_SEP         = '   '; // separator between words (3 spaces)
+
+// Selection: brighter outline; Glass's "active" blue.
+const SELECTED_COLOR     = '#2c5aa0';
+const DIAGONAL_WIDTH     = 1;
+
+// Division (Stage 3) — dividend tile pile (screen-fixed) and divisor
+// slots (on the plane). The pile lives in screen space because the
+// tiles are "supply" rather than constructions; they'll fly down
+// into the slots when distribution arrives in Iteration B.
+const PILE_LEFT     = 20;   // px from canvas left
+const PILE_TOP      = 70;   // px from canvas top (just below the panel)
+const PILE_TILE     = 22;   // each tile is 22×22 px
+const PILE_PADDING  = 1;    // gap between tiles
+const PILE_PER_ROW  = 10;   // wrap every 10 tiles (place-value reading)
+const TILE_FILL_A   = 0.08; // pile tile fill alpha
+const WIDTH_HL_W    = 2;    // px — heavier line for the active width segment
+
+// Distribution animation (Stage 3b).
+const ROUND_DURATION_FIRST = 1500;  // ms — slow enough to count along
+const ROUND_DURATION_REST  = 500;   // ms — faster subsequent rounds
+const ROUND_PAUSE          = 250;   // ms — brief pause between rounds
+const FLIGHT_FRACTION      = 0.7;   // fraction of round each tile takes mid-air
+const FLOCK_PHASE_MAX      = 0.3;   // 1 - FLIGHT_FRACTION — max random start delay
+const FLOCK_WOBBLE_X       = 30;    // px — sideways drift amplitude
+const FLOCK_WOBBLE_Y       = 20;    // px — vertical drift amplitude
+const LEFTOVER_GAP         = 1;     // world units — one full tile-height of
+                                    // breathing room between the completed
+                                    // rectangle and the floating leftover row,
+                                    // so the slices in Iteration C have room
+                                    // to redistribute without crowding
+
+// Slicing (Stage 3c). Each "slice round" subdivides leftover pieces
+// by 10, producing the next decimal digit.
+const SLICE_WAVE_DURATION  = 350;  // ms per wave of divisor slices
+const SLICE_PAUSE          = 120;  // ms between waves within a slice round
+const MIN_PIECE_PX         = 1.0;  // floor: don't slice if a new piece would be
+                                   // smaller than this in screen pixels
+const SLOT_LABEL_FONT      = 'bold 14px Georgia, serif';
+const SLOT_LABEL_OFFSET    = 14;   // px above column top
+
+// ==== State ====
+// What: a single transform — pan (world coords at screen centre) and
+// zoom (pixels per unit). Plus committed rectangles and a small
+// interaction state machine.
+const canvas = document.getElementById('canvas');
+const ctx    = canvas.getContext('2d');
+let pan  = { x: 0, y: 0 };
+let zoom = ZOOM_INIT;
+let viewW = 0, viewH = 0;   // CSS pixels (logical)
+
+// Each rectangle is anchored at the origin. rect.x and rect.y are the
+// opposite corner's signed world coords — negative values just mean
+// the rectangle lives in another quadrant. Width, height, and area
+// are always displayed as positive magnitudes.
+const rectangles = [];
+
+// Interaction modes:
+//   'idle'    — nothing held; hover may be active
+//   'panning' — dragging the plane on empty canvas
+//   'drawing' — constructing a rectangle from a hovered axis number
+let mode      = 'idle';
+let panStart  = null;   // { sx, sy, panX, panY }
+let drawState = null;   // { axis: 'x'|'y', fixed: int, current: int }
+let hoverTick = null;   // { axis: 'x'|'y', value: int } | null
+let downPos   = null;   // { sx, sy } at mousedown — used to detect tap-vs-drag
+
+// Selection: which rectangle (by reference) is currently selected, if any.
+// Action-word hit zones are recomputed every draw — they need the latest
+// rectangle positions and font metrics — and consulted on every tap.
+let selectedRect   = null;
+let hoveredAction  = null;  // { rect, action } | null
+let actionWordHits = [];    // [{ rect, action, sx, sy, w, h }]
+
+// Division state (Stage 3a). dividend is sync'd to the panel input.
+// divisor is set by tapping a positive x-axis number; null = unset.
+let dividend = 17;
+let divisor  = null;
+
+// Active distribution. null when no distribution has happened yet,
+// or after one has been cleared. Holds integer-round state, the
+// leftover row state, and any slice rounds that have completed.
+//   placedRounds    — completed integer rounds (0 .. totalRounds)
+//   totalRounds     — floor(dividend / divisor)
+//   remainder       — dividend mod divisor (the leftover-row count)
+//   leftoverPlaced  — true after the leftover row finishes its flight
+//   isLeftoverRound — flag during the leftover round's animation
+//   tilesInFlight   — array of in-flight piece records, [] between rounds
+//   roundStart      — performance.now() at the round's start
+//   roundDuration   — ms for the current round's animation
+//   sliceRounds     — array of completed slice rounds:
+//                     { level, digit, leftoverCount, leftoverPlaced }
+//   sliceState      — non-null while a slice round is animating:
+//                     { level, digit, leftoverCount, waveIdx, totalWaves,
+//                       isLeftoverWave }
+let dist = null;
+
+// ==== Canvas sizing ====
+// What: high-DPI canvas. Internal pixels = CSS pixels × devicePixelRatio,
+// drawing is scaled so all subsequent draws use CSS-pixel units.
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  viewW = window.innerWidth;
+  viewH = window.innerHeight;
+  canvas.width  = Math.round(viewW * dpr);
+  canvas.height = Math.round(viewH * dpr);
+  canvas.style.width  = viewW + 'px';
+  canvas.style.height = viewH + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+// ==== Coordinate conversion ====
+// What: world ↔ screen. World y is up; screen y is down. Pan stores
+// the world coordinate sitting under the centre of the screen.
+function worldToScreen(wx, wy) {
+  return {
+    x: (wx - pan.x) * zoom + viewW / 2,
+    y: -(wy - pan.y) * zoom + viewH / 2,
+  };
+}
+function screenToWorld(sx, sy) {
+  return {
+    x: (sx - viewW / 2) / zoom + pan.x,
+    y: -(sy - viewH / 2) / zoom + pan.y,
+  };
+}
+
+// ==== Number formatting ====
+// What: integers shown with commas every three digits. Decimals are
+// not used in Stage 1, but the right-of-point thin-space grouping
+// (§3) lives here too so other stages can reuse it. Labels are
+// always positive — "positive in all four directions."
+const THIN_SPACE = ' ';
+function formatInteger(n) {
+  return Math.abs(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+// eslint-disable-next-line no-unused-vars
+function formatNumber(n, fractionDigits) {
+  const abs = Math.abs(n);
+  if (fractionDigits == null || fractionDigits === 0) return formatInteger(abs);
+  const [intPart, fracPart = ''] = abs.toFixed(fractionDigits).split('.');
+  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const fracGrouped = fracPart.replace(/(\d{3})(?=\d)/g, '$1' + THIN_SPACE);
+  return fracGrouped ? grouped + '.' + fracGrouped : grouped;
+}
+
+// ==== Adaptive label step ====
+// What: choose how many world-units between labels so on-screen
+// spacing stays readable. Grid spacing > 40px → every unit;
+// 10–40px → every 5th; ≤ 10px → every 10th. The grid itself
+// follows the same step so the visual texture stays clean at any
+// zoom.
+function labelStep() {
+  if (zoom > 40) return 1;
+  if (zoom > 10) return 5;
+  return 10;
+}
+
+// ==== Hover detection ====
+// What: is the cursor near a labeled tick on either axis? Returns
+// { axis, value } or null. Detection respects the current label
+// step — at low zoom only ticks at multiples of 5 or 10 are
+// hoverable; zooming reveals finer numbers. Works on both sides of
+// the origin: hovering "5" on the left of the y-axis (world x = -5)
+// is a separate, valid target from the "5" on the right.
+function hitTestAxisNumber(sx, sy) {
+  const step   = labelStep();
+  const origin = worldToScreen(0, 0);
+
+  // x-axis (horizontal at origin.y) — snap world x to nearest step.
+  if (Math.abs(sy - origin.y) < HOVER_AXIS_BAND) {
+    const wx = screenToWorld(sx, sy).x;
+    const x  = Math.round(wx / step) * step;
+    if (x !== 0) {
+      const tx = worldToScreen(x, 0).x;
+      if (Math.abs(sx - tx) < HOVER_RADIUS) {
+        return { axis: 'x', value: x };
+      }
+    }
+  }
+  // y-axis (vertical at origin.x).
+  if (Math.abs(sx - origin.x) < HOVER_AXIS_BAND) {
+    const wy = screenToWorld(sx, sy).y;
+    const y  = Math.round(wy / step) * step;
+    if (y !== 0) {
+      const ty = worldToScreen(0, y).y;
+      if (Math.abs(sy - ty) < HOVER_RADIUS) {
+        return { axis: 'y', value: y };
+      }
+    }
+  }
+  return null;
+}
+
+function sameHit(a, b) {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return a.axis === b.axis && a.value === b.value;
+}
+
+// What: is a screen point inside a given rectangle?
+function pointInRect(sx, sy, rect) {
+  const a = worldToScreen(0, 0);
+  const b = worldToScreen(rect.x, rect.y);
+  return sx >= Math.min(a.x, b.x) && sx <= Math.max(a.x, b.x)
+      && sy >= Math.min(a.y, b.y) && sy <= Math.max(a.y, b.y);
+}
+
+// What: find the SMALLEST rectangle under a point, or null. The
+// nested-rectangles case (squares 1×1 / 2×2 / 3×3 all anchored at
+// origin, or the pronic staircase) is the common one in this lab,
+// and the smaller rectangle is fully covered by the larger ones —
+// so the usual "topmost wins" rule makes inner shapes unreachable.
+// Smallest-area-wins means every shape is selectable by clicking
+// any region only it occupies. Ties broken by most-recently-drawn.
+function findRectContaining(sx, sy) {
+  let best = null;
+  let bestArea = Infinity;
+  for (let i = rectangles.length - 1; i >= 0; i--) {
+    const r = rectangles[i];
+    if (!pointInRect(sx, sy, r)) continue;
+    const area = Math.abs(r.x * r.y);
+    if (area < bestArea) {
+      best = r;
+      bestArea = area;
+    }
+  }
+  return best;
+}
+
+// What: action-word hit-testing. The hit zones are populated each
+// draw() — see drawActionWords. A tap matching one returns the
+// rectangle and action to perform.
+function hitTestActionWord(sx, sy) {
+  for (const h of actionWordHits) {
+    if (sx >= h.sx && sx <= h.sx + h.w
+     && sy >= h.sy && sy <= h.sy + h.h) {
+      return { rect: h.rect, action: h.action };
+    }
+  }
+  return null;
+}
+
+function sameAction(a, b) {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return a.rect === b.rect && a.action === b.action;
+}
+
+// ==== Rectangle drawing ====
+// What: render one rectangle anchored at origin, plus its three
+// labels (height, width, area). Labels live INSIDE the rectangle —
+// never moved outside, even when the rectangle is tiny. The §4
+// "tiny rectangles" rule is solved by zoom, not by relocation.
+function drawRectangle(rect, isDraft) {
+  const a = worldToScreen(0, 0);
+  const b = worldToScreen(rect.x, rect.y);
+  const x = Math.min(a.x, b.x);
+  const y = Math.min(a.y, b.y);
+  const w = Math.abs(b.x - a.x);
+  const h = Math.abs(b.y - a.y);
+  if (w < 1 || h < 1) return;
+
+  const isSelected = rect === selectedRect;
+  const lineColor  = isSelected ? SELECTED_COLOR : INK_COLOR;
+
+  ctx.fillStyle   = INK_COLOR;
+  ctx.globalAlpha = isDraft ? RECT_FILL_ALPHA * 0.7
+                  : (isSelected ? RECT_FILL_ALPHA * 1.8 : RECT_FILL_ALPHA);
+  ctx.fillRect(x, y, w, h);
+  ctx.globalAlpha = 1;
+
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth   = RECT_OUTLINE_W;
+  // Snap all four corners to half-pixel boundaries — same snap()
+  // used for the axes, so a rectangle touching the origin aligns
+  // exactly with the y-axis and x-axis.
+  const ox0 = snap(Math.min(a.x, b.x));
+  const oy0 = snap(Math.min(a.y, b.y));
+  const ox1 = snap(Math.max(a.x, b.x));
+  const oy1 = snap(Math.max(a.y, b.y));
+  ctx.strokeRect(ox0, oy0, ox1 - ox0, oy1 - oy0);
+
+  // Diagonal — draw before labels so labels sit on top.
+  if (rect.diagonal && !isDraft) {
+    ctx.strokeStyle = lineColor;
+    drawDiagonal(a, b);
+  }
+
+  // Three labels — always positive magnitudes. Each edge label equals
+  // the LENGTH of the edge it sits on. Labels mirror to the
+  // rectangle's OUTER corner (the corner farthest from origin), so
+  // they never collide with axis labels.
+  //   Width  → outer horizontal edge (top for upward rects, bottom
+  //            for downward), centred horizontally — top/bottom edges
+  //            have length = width.
+  //   Height → outer vertical edge (right for rightward, left for
+  //            leftward), centred vertically — left/right edges
+  //            have length = height.
+  //   Area   → at the outer corner itself.
+  const width  = Math.abs(rect.x);
+  const height = Math.abs(rect.y);
+  // When diagonal is on, the "area" we show is the triangle's: half
+  // the rectangle's. May be non-integer (e.g., 3×5 → 7.5).
+  const fullArea = width * height;
+  const area     = rect.diagonal ? fullArea / 2 : fullArea;
+  const areaStr  = Number.isInteger(area) ? formatInteger(area)
+                                          : formatNumber(area, 1);
+
+  const outerRight = rect.x > 0;
+  const outerTop   = rect.y > 0;
+
+  const hEdgeY      = outerTop ? y + RECT_LABEL_PAD : y + h - RECT_LABEL_PAD;
+  const hBaseline   = outerTop ? 'top' : 'bottom';
+  const vEdgeX      = outerRight ? x + w - RECT_LABEL_PAD : x + RECT_LABEL_PAD;
+  const vAlign      = outerRight ? 'right' : 'left';
+
+  ctx.fillStyle = INK_COLOR;
+
+  // Width — outer horizontal edge. Bold.
+  ctx.font = LABEL_FONT_BOLD;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = hBaseline;
+  ctx.fillText(formatInteger(width), x + w / 2, hEdgeY);
+
+  // Height — outer vertical edge. Bold.
+  ctx.font = LABEL_FONT_BOLD;
+  ctx.textAlign = vAlign;
+  ctx.textBaseline = 'middle';
+  ctx.fillText(formatInteger(height), vEdgeX, y + h / 2);
+
+  // Area — outer corner. 16pt, regular weight. When diagonal is on,
+  // this shows the triangle's area (half the rectangle's).
+  ctx.font = AREA_FONT;
+  ctx.textAlign = vAlign;
+  ctx.textBaseline = hBaseline;
+  ctx.fillText(areaStr, vEdgeX, hEdgeY);
+}
+
+// What: the in-progress rectangle as the user drags. Built from
+// drawState into the same shape drawRectangle understands.
+function currentDraftRect() {
+  if (!drawState) return null;
+  if (drawState.current === 0) return null;
+  return drawState.axis === 'x'
+    ? { x: drawState.fixed,   y: drawState.current }
+    : { x: drawState.current, y: drawState.fixed   };
+}
+
+// ==== Actions on the selected rectangle ====
+// What: rotate swaps width and height (signs preserved → same
+// quadrant). diagonal toggles a half-area triangle. close removes
+// the rectangle.
+function performAction(rect, action) {
+  const idx = rectangles.indexOf(rect);
+  if (idx < 0) return;
+  if (action === 'rotate') {
+    const nx = (rect.x < 0 ? -1 : 1) * Math.abs(rect.y);
+    const ny = (rect.y < 0 ? -1 : 1) * Math.abs(rect.x);
+    rect.x = nx;
+    rect.y = ny;
+  } else if (action === 'diagonal') {
+    rect.diagonal = !rect.diagonal;
+  } else if (action === 'close') {
+    rectangles.splice(idx, 1);
+    if (selectedRect === rect) selectedRect = null;
+  }
+}
+
+// What: a unified tap handler called from mouseup when the gesture
+// was a tap (no significant movement). Decides what the tap means
+// based on what's under it: action word → action; inside a rect →
+// select; outside, with a selection → deselect; outside, no
+// selection → undo last rectangle.
+function handleTap(sx, sy) {
+  const action = hitTestActionWord(sx, sy);
+  if (action) {
+    if (action.action === 'divide' || action.action === 'divide again') {
+      startDistribution();
+    } else if (action.action === 'slice') {
+      startSlice();
+    } else if (action.rect) {
+      performAction(action.rect, action.action);
+    }
+    hoveredAction = null;   // positions may have shifted; let next move re-test
+    return;
+  }
+  // Tap on a positive x-axis number: toggle the divisor. (Negative
+  // x and the y-axis fall through to selection / deselect / undo.)
+  const tick = hitTestAxisNumber(sx, sy);
+  if (tick && tick.axis === 'x' && tick.value > 0) {
+    divisor = (divisor === tick.value) ? null : tick.value;
+    dist = null;   // changing the width invalidates any prior distribution
+    return;
+  }
+  const rect = findRectContaining(sx, sy);
+  if (rect) {
+    selectedRect = rect;
+    return;
+  }
+  if (selectedRect) {
+    selectedRect = null;
+  } else {
+    tryUndo(sx, sy);
+  }
+}
+
+// ==== Distribution control (Stage 3b) ====
+// What: divide the dividend count into the divisor slots, one round
+// at a time. Integer rounds fill the slots row by row. Then a final
+// "leftover" round lifts the remainder out of the pile and places
+// them as an incomplete row floating just above the completed
+// rectangle — full-size tiles, ready to be sliced in Iteration C.
+function startDistribution() {
+  if (!divisor || divisor <= 0) return;
+  const totalRounds = Math.floor(dividend / divisor);
+  const remainder   = dividend - totalRounds * divisor;
+  if (totalRounds <= 0) return;  // need at least one full round for v1
+  dist = {
+    placedRounds:    0,
+    totalRounds,
+    remainder,
+    leftoverPlaced:  false,
+    isLeftoverRound: false,
+    tilesInFlight:   [],
+    roundStart:      0,
+    roundDuration:   0,
+    sliceRounds:     [],
+    sliceState:      null,
+  };
+  scheduleNext();
+}
+
+function scheduleNext() {
+  if (!dist) return;
+  if (dist.placedRounds < dist.totalRounds) {
+    scheduleRound();
+  } else if (dist.remainder > 0 && !dist.leftoverPlaced) {
+    scheduleLeftoverRound();
+  }
+  // otherwise: fully done
+}
+
+function scheduleRound() {
+  if (!dist || dist.placedRounds >= dist.totalRounds) return;
+  const isFirst = dist.placedRounds === 0;
+  dist.roundDuration = isFirst ? ROUND_DURATION_FIRST : ROUND_DURATION_REST;
+  dist.tilesInFlight = [];
+  dist.isLeftoverRound = false;
+  // Source pile positions: the last `divisor` positions still in
+  // the pile right now — i.e. the bottom-right corner of the pile.
+  const pileBase = dividend - dist.placedRounds * divisor - divisor;
+  const destStack = dist.placedRounds;
+  for (let i = 0; i < divisor; i++) {
+    const pilePos = pileTileScreenPos(pileBase + i);
+    dist.tilesInFlight.push(makeFlightTile({
+      sourceX: pilePos.x, sourceY: pilePos.y,
+      sourceW: PILE_TILE, sourceH: PILE_TILE,
+      destWX:  i,         destWY:  destStack + 1,
+      pieceW:  1,         pieceH:  1,
+      id:      `rect:s${i}:h${destStack}`,
+    }));
+  }
+  dist.roundStart = performance.now();
+  requestAnimationFrame(animateDistFrame);
+}
+
+function scheduleLeftoverRound() {
+  if (!dist || dist.remainder <= 0 || dist.leftoverPlaced) return;
+  dist.roundDuration = ROUND_DURATION_REST;
+  dist.tilesInFlight = [];
+  dist.isLeftoverRound = true;
+  // Source: pile positions [0 .. remainder - 1]; destination: an
+  // incomplete row CENTRED over the completed rectangle, lifted by
+  // one full tile-height of gap.
+  const destStack  = dist.totalRounds;
+  const leftOffset = leftoverLeftEdge();
+  for (let i = 0; i < dist.remainder; i++) {
+    const pilePos = pileTileScreenPos(i);
+    dist.tilesInFlight.push(makeFlightTile({
+      sourceX: pilePos.x, sourceY: pilePos.y,
+      sourceW: PILE_TILE, sourceH: PILE_TILE,
+      destWX:  leftOffset + i, destWY: destStack + 1 + LEFTOVER_GAP,
+      pieceW:  1,              pieceH: 1,
+      id:      `lft:L0:i${i}`,
+    }));
+  }
+  dist.roundStart = performance.now();
+  requestAnimationFrame(animateDistFrame);
+}
+
+// World x of the leftmost leftover tile's left edge. Centred over
+// the rectangle: (divisor - remainder) / 2.
+function leftoverLeftEdge() {
+  return (divisor - dist.remainder) / 2;
+}
+
+function makeFlightTile(p) {
+  return {
+    sourceX: p.sourceX, sourceY: p.sourceY,
+    sourceW: p.sourceW, sourceH: p.sourceH,
+    destWX:  p.destWX,  destWY:  p.destWY,
+    pieceW:  p.pieceW,  pieceH:  p.pieceH,
+    id:      p.id,
+    phase:   Math.random() * FLOCK_PHASE_MAX,
+    wobbleX: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_X,
+    wobbleY: (Math.random() - 0.5) * 2 * FLOCK_WOBBLE_Y,
+  };
+}
+
+// ==== Slicing (Stage 3c) ====
+// What: subdivide the leftover pieces (tiles or earlier slices) by 10
+// to produce the next decimal digit. Each tap of "slice" runs one
+// level of subdivision: 10x slices fly out of the leftover pieces in
+// waves of `divisor` until either all slices have landed (terminating
+// digit, leftover = 0) or some are left over to float above the
+// column as the next round's source.
+
+function cumulativeSlicedHeight(uptoLevelInclusive) {
+  // Sum of digit_k * pieceHeight_k for completed slice rounds.
+  let sum = 0;
+  for (let i = 0; i < uptoLevelInclusive && i < dist.sliceRounds.length; i++) {
+    const r = dist.sliceRounds[i];
+    sum += r.digit * Math.pow(0.1, r.level);
+  }
+  return sum;
+}
+
+// World coordinates of leftover piece `pieceIdx` at slice-level
+// `level` (0 = leftover tile from integer rounds; k>0 = leftover
+// slice from slice round k). Returns { x, y, w, h } — y is the
+// piece's TOP edge in world y (so the bottom is y - h).
+function leftoverPieceWorldPos(pieceIdx, level) {
+  if (level === 0) {
+    return {
+      x: leftoverLeftEdge() + pieceIdx,
+      y: dist.totalRounds + 1 + LEFTOVER_GAP,
+      w: 1, h: 1,
+    };
+  }
+  const round = dist.sliceRounds[level - 1];
+  const pieceH = Math.pow(0.1, level);
+  const leftOffset = (divisor - round.leftoverCount) / 2;
+  const colTop = dist.totalRounds + cumulativeSlicedHeight(level);
+  return {
+    x: leftOffset + pieceIdx,
+    y: colTop + LEFTOVER_GAP + pieceH,
+    w: 1, h: pieceH,
+  };
+}
+
+// During an active slice round, how many slices have departed from
+// their source pieces so far (cumulative across waves, with smooth
+// interpolation mid-wave).
+function totalSlicesGone() {
+  if (!dist || !dist.sliceState) return 0;
+  const s = dist.sliceState;
+  let gone = s.waveIdx * divisor;
+  if (s.leftoverPlaced) gone += s.leftoverCount;
+  if (dist.tilesInFlight.length > 0) {
+    const animFrac = Math.min(1, (performance.now() - dist.roundStart) / dist.roundDuration);
+    gone += animFrac * dist.tilesInFlight.length;
+  }
+  return gone;
+}
+
+// How many of parent `parentIdx`'s 10 slices have departed.
+// (Parents drain front-to-back: parent 0 fully empties before
+// parent 1 starts emptying.)
+function slicesGoneFromParent(parentIdx) {
+  return Math.max(0, Math.min(10, totalSlicesGone() - 10 * parentIdx));
+}
+
+// How many leftover pieces are available to slice, and at what level?
+function pendingLeftover() {
+  if (!dist) return null;
+  if (dist.sliceRounds.length === 0) {
+    if (!dist.leftoverPlaced || dist.remainder <= 0) return null;
+    return { level: 0, count: dist.remainder };
+  }
+  const last = dist.sliceRounds[dist.sliceRounds.length - 1];
+  if (last.leftoverCount <= 0 || !last.leftoverPlaced) return null;
+  return { level: last.level, count: last.leftoverCount };
+}
+
+// Can we slice further without producing pieces smaller than 1 pixel?
+function canSlice() {
+  const pending = pendingLeftover();
+  if (!pending) return false;
+  const nextPieceH = Math.pow(0.1, pending.level + 1);
+  return nextPieceH * zoom >= MIN_PIECE_PX;
+}
+
+function startSlice() {
+  if (!dist || dist.sliceState) return;
+  const pending = pendingLeftover();
+  if (!pending) return;
+  if (!canSlice()) return;
+
+  const newLevel       = pending.level + 1;
+  const totalSlices    = pending.count * 10;
+  const digit          = Math.floor(totalSlices / divisor);
+  const leftoverCount  = totalSlices - digit * divisor;
+
+  dist.sliceState = {
+    level: newLevel,
+    digit,
+    leftoverCount,
+    waveIdx: 0,
+    totalWaves: digit,
+    isLeftoverWave: false,
+    leftoverPlaced: false,
+  };
+  scheduleSliceWave();
+}
+
+function scheduleSliceWave() {
+  if (!dist || !dist.sliceState) return;
+  const s = dist.sliceState;
+
+  if (s.waveIdx < s.totalWaves) {
+    // Distribution wave: divisor slices, one per slot, all landing
+    // at the next stack row above the rectangle.
+    setupSliceWave(s, false);
+    return;
+  }
+  if (s.leftoverCount > 0 && !s.leftoverPlaced) {
+    // Leftover wave: the slices that didn't make a full row fly to
+    // the centred floating position above the column.
+    setupSliceWave(s, true);
+    return;
+  }
+  finalizeSliceRound();
+}
+
+function setupSliceWave(s, isLeftover) {
+  dist.roundDuration   = SLICE_WAVE_DURATION;
+  dist.tilesInFlight   = [];
+  // isLeftoverWave lives on the slice state; dist.isLeftoverRound
+  // is for the integer-round leftover only (different state machine).
+  s.isLeftoverWave     = isLeftover;
+
+  const sliceH = Math.pow(0.1, s.level);
+  const cumPrev = cumulativeSlicedHeight(s.level - 1);
+  const baseY = dist.totalRounds + cumPrev;
+
+  if (!isLeftover) {
+    // Wave waveIdx of distribution: divisor slices, one per slot,
+    // landing at row waveIdx above the previously-completed column.
+    // Source y for each slice = current top of its parent (after
+    // earlier waves have already peeled some slices off the top).
+    const goneBefore = s.waveIdx * divisor;
+    for (let slotI = 0; slotI < divisor; slotI++) {
+      const sliceIdx  = goneBefore + slotI;
+      const parentIdx = Math.floor(sliceIdx / 10);
+      const parent    = leftoverPieceWorldPos(parentIdx, s.level - 1);
+      const goneFromParent = Math.max(0, Math.min(10, goneBefore - 10 * parentIdx));
+      const childH = parent.h / 10;
+      const currentTopY = parent.y - goneFromParent * childH;
+      const sourceTL    = worldToScreen(parent.x, currentTopY);
+      dist.tilesInFlight.push(makeFlightTile({
+        sourceX: sourceTL.x, sourceY: sourceTL.y,
+        sourceW: parent.w * zoom, sourceH: childH * zoom,
+        destWX:  slotI,
+        destWY:  baseY + (s.waveIdx + 1) * sliceH,
+        pieceW:  1, pieceH: sliceH,
+        id:      `slice:L${s.level}:s${slotI}:k${s.waveIdx}`,
+      }));
+    }
+  } else {
+    // Leftover wave: `leftoverCount` slices fly to a centred
+    // floating row above the column. Source is whatever's left at
+    // the current top of each parent.
+    const leftOffset = (divisor - s.leftoverCount) / 2;
+    const colTop = dist.totalRounds + cumPrev + s.digit * sliceH;
+    const destY  = colTop + LEFTOVER_GAP + sliceH;
+    const goneBefore = s.totalWaves * divisor;
+    for (let i = 0; i < s.leftoverCount; i++) {
+      const sliceIdx  = goneBefore + i;
+      const parentIdx = Math.floor(sliceIdx / 10);
+      const parent    = leftoverPieceWorldPos(parentIdx, s.level - 1);
+      const goneFromParent = Math.max(0, Math.min(10, goneBefore - 10 * parentIdx));
+      const childH = parent.h / 10;
+      const currentTopY = parent.y - goneFromParent * childH;
+      const sourceTL    = worldToScreen(parent.x, currentTopY);
+      dist.tilesInFlight.push(makeFlightTile({
+        sourceX: sourceTL.x, sourceY: sourceTL.y,
+        sourceW: parent.w * zoom, sourceH: childH * zoom,
+        destWX:  leftOffset + i,
+        destWY:  destY,
+        pieceW:  1, pieceH: sliceH,
+        id:      `lft:L${s.level}:i${i}`,
+      }));
+    }
+  }
+  dist.roundStart = performance.now();
+  requestAnimationFrame(animateDistFrame);
+}
+
+function finalizeSliceRound() {
+  if (!dist || !dist.sliceState) return;
+  const s = dist.sliceState;
+  dist.sliceRounds.push({
+    level: s.level,
+    digit: s.digit,
+    leftoverCount: s.leftoverCount,
+    leftoverPlaced: s.leftoverCount > 0 ? true : false,
+  });
+  dist.sliceState = null;
+}
+
+function animateDistFrame(now) {
+  if (!dist || dist.tilesInFlight.length === 0) return;
+  const elapsed = now - dist.roundStart;
+  if (elapsed >= dist.roundDuration) {
+    // Promote in-flight pieces to landed, then schedule what's next.
+    if (dist.sliceState) {
+      // Active slicing
+      const s = dist.sliceState;
+      if (s.isLeftoverWave) {
+        s.leftoverPlaced = true;
+        s.isLeftoverWave = false;
+      } else {
+        s.waveIdx += 1;
+      }
+      dist.tilesInFlight = [];
+      draw();
+      setTimeout(scheduleSliceWave, SLICE_PAUSE);
+    } else {
+      // Integer / leftover round
+      if (dist.isLeftoverRound) {
+        dist.leftoverPlaced = true;
+        dist.isLeftoverRound = false;
+      } else {
+        dist.placedRounds += 1;
+      }
+      dist.tilesInFlight = [];
+      draw();
+      setTimeout(scheduleNext, ROUND_PAUSE);
+    }
+    return;
+  }
+  draw();
+  requestAnimationFrame(animateDistFrame);
+}
+
+// ==== Diagonal rendering ====
+// What: a thin line from the origin-corner of the rectangle to the
+// opposite corner — splits the rectangle into two equal right
+// triangles. When diagonal is on, the area label switches to half.
+function drawDiagonal(a, b) {
+  ctx.strokeStyle = INK_COLOR;
+  ctx.lineWidth   = DIAGONAL_WIDTH;
+  ctx.beginPath();
+  ctx.moveTo(snap(a.x), snap(a.y));
+  ctx.lineTo(snap(b.x), snap(b.y));
+  ctx.stroke();
+}
+
+// ==== Action words ====
+// What: render "rotate · diagonal · close" beside the selected
+// rectangle, just OUTSIDE its outer corner. Push hit zones to
+// actionWordHits so taps can find them.
+function drawActionWords(rect) {
+  const a  = worldToScreen(0, 0);
+  const b  = worldToScreen(rect.x, rect.y);
+  const xL = Math.min(a.x, b.x);
+  const xR = Math.max(a.x, b.x);
+  const yT = Math.min(a.y, b.y);
+  const yB = Math.max(a.y, b.y);
+
+  const outerRight = rect.x > 0;
+  const outerTop   = rect.y > 0;
+
+  // Top of the action-word strip in screen y.
+  const stripTop = outerTop
+    ? yT - ACTION_PAD - ACTION_LINE_HEIGHT
+    : yB + ACTION_PAD;
+
+  ctx.font = ACTION_FONT;
+  ctx.textBaseline = 'top';
+  ctx.textAlign    = 'left';
+
+  const actions = ['rotate', 'diagonal', 'close'];
+  const widths  = actions.map(w => ctx.measureText(w).width);
+  const sepW    = ctx.measureText(ACTION_SEP).width;
+  const totalW  = widths.reduce((s, w) => s + w, 0) + sepW * (actions.length - 1);
+
+  // Right-align under the outer corner, or left-align if outer is left.
+  let cursorX = outerRight ? xR - totalW : xL;
+
+  for (let i = 0; i < actions.length; i++) {
+    const word = actions[i];
+    const w    = widths[i];
+    const hover = hoveredAction
+               && hoveredAction.rect   === rect
+               && hoveredAction.action === word;
+    ctx.fillStyle = hover ? ACTION_HOVER_COLOR : ACTION_COLOR;
+    ctx.fillText(word, cursorX, stripTop);
+    actionWordHits.push({
+      rect, action: word,
+      sx: cursorX, sy: stripTop,
+      w, h: ACTION_LINE_HEIGHT,
+    });
+    cursorX += w;
+    if (i < actions.length - 1) {
+      ctx.fillStyle = ACTION_COLOR;
+      ctx.fillText(ACTION_SEP, cursorX, stripTop);
+      cursorX += sepW;
+    }
+  }
+}
+
+// ==== Tile rendering primitive ====
+// What: a single square tile at a given screen position and size.
+// Used by the pile (PILE_TILE px), in-flight tiles (interpolated),
+// and landed tiles in slots (zoom px). One consistent visual.
+// ==== Glass tile rendering (experimental) ====
+// Division unit-squares and slices render as transparent colour fills
+// with deterministic per-tile jitter in a cobalt neighbourhood — no
+// strokes. The coordinate gridlines underneath do the structural
+// work the outlines used to do. Palette is hard-coded for now;
+// palettes.json plumbing is a follow-up.
+const GLASS_BASE_H   = 215;   // cobalt hue
+const GLASS_BASE_S   = 70;    // saturation %
+const GLASS_BASE_L   = 45;    // lightness %
+const GLASS_JIT_H    = 3;     // hue jitter ± degrees
+const GLASS_JIT_S    = 5;     // saturation jitter ± %
+const GLASS_JIT_L    = 4;     // lightness jitter ± %
+const GLASS_ALPHA    = 0.82;  // fill opacity
+
+function hash01(str) {
+  // FNV-1a 32-bit, returned as a [0, 1] float — deterministic so
+  // a given tile id always produces the same colour.
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+  }
+  return ((h >>> 0) / 4294967295);
+}
+
+function jitterColor(id) {
+  const jH = (hash01(id + ':h') - 0.5) * 2 * GLASS_JIT_H;
+  const jS = (hash01(id + ':s') - 0.5) * 2 * GLASS_JIT_S;
+  const jL = (hash01(id + ':l') - 0.5) * 2 * GLASS_JIT_L;
+  return `hsla(${GLASS_BASE_H + jH},${GLASS_BASE_S + jS}%,${GLASS_BASE_L + jL}%,${GLASS_ALPHA})`;
+}
+
+function drawTileRect(x, y, w, h, id) {
+  ctx.fillStyle = jitterColor(id || 'default');
+  ctx.fillRect(x, y, w, h);
+}
+
+function drawSquareTile(x, y, size, id) {
+  drawTileRect(x, y, size, size, id);
+}
+
+function pileTileScreenPos(pileIndex) {
+  const step = PILE_TILE + PILE_PADDING;
+  const col  = pileIndex % PILE_PER_ROW;
+  const row  = Math.floor(pileIndex / PILE_PER_ROW);
+  return { x: PILE_LEFT + col * step, y: PILE_TOP + row * step };
+}
+
+function lerp(a, b, t)   { return a + (b - a) * t; }
+function easeOutQuad(t)  { return 1 - (1 - t) * (1 - t); }
+
+// ==== Dividend pile ====
+// What: render the tiles still IN the pile (not yet flying, not yet
+// landed). The visible count shrinks as distribution proceeds: each
+// completed round removes `divisor` tiles, and tiles currently in
+// flight are excluded too. Drain happens from the bottom-right
+// (highest indices first).
+function drawDividendPile() {
+  if (dividend <= 0) return;
+  let piled = dividend;
+  if (dist) {
+    piled -= dist.placedRounds * divisor;
+    // During the leftover round's animation, those tiles are in flight.
+    if (dist.isLeftoverRound) piled -= dist.tilesInFlight.length;
+    // During integer-round animations, those tiles are in flight too.
+    else if (!dist.sliceState) piled -= dist.tilesInFlight.length;
+    if (dist.leftoverPlaced) piled -= dist.remainder;
+  }
+  if (piled <= 0) return;
+  for (let i = 0; i < piled; i++) {
+    const p = pileTileScreenPos(i);
+    drawSquareTile(p.x, p.y, PILE_TILE, `pile:${i}`);
+  }
+}
+
+// ==== Landed tiles ====
+// What: tiles that have completed their flight and settled into a
+// slot. Stack height per slot = dist.placedRounds. Rendered on the
+// plane in world coords — these tiles ARE the rectangle that
+// division is building.
+function drawLandedTiles() {
+  if (!dist || !divisor) return;
+
+  // Integer rectangle: a filled `divisor × placedRounds` block of tiles.
+  for (let slot = 0; slot < divisor; slot++) {
+    for (let h = 0; h < dist.placedRounds; h++) {
+      const tl = worldToScreen(slot, h + 1);
+      drawSquareTile(tl.x, tl.y, zoom, `rect:s${slot}:h${h}`);
+    }
+  }
+
+  // Completed slice rounds: each adds a row of `digit` slices in
+  // every slot, stacked on top of the integer rectangle.
+  for (let i = 0; i < dist.sliceRounds.length; i++) {
+    const r = dist.sliceRounds[i];
+    const pieceH = Math.pow(0.1, r.level);
+    const baseY  = dist.totalRounds + cumulativeSlicedHeight(r.level - 1);
+    for (let slot = 0; slot < divisor; slot++) {
+      for (let k = 0; k < r.digit; k++) {
+        const tl = worldToScreen(slot, baseY + (k + 1) * pieceH);
+        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH, `slice:L${r.level}:s${slot}:k${k}`);
+      }
+    }
+  }
+
+  // In-progress slice round: render slices that completed waves
+  // have placed, so they don't vanish between waves.
+  if (dist.sliceState) {
+    const s = dist.sliceState;
+    const pieceH = Math.pow(0.1, s.level);
+    const baseY  = dist.totalRounds + cumulativeSlicedHeight(s.level - 1);
+    for (let slot = 0; slot < divisor; slot++) {
+      for (let k = 0; k < s.waveIdx; k++) {
+        const tl = worldToScreen(slot, baseY + (k + 1) * pieceH);
+        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH, `slice:L${s.level}:s${slot}:k${k}`);
+      }
+    }
+    // If the leftover wave has already completed, show those slices too.
+    if (s.leftoverPlaced && s.leftoverCount > 0) {
+      const leftOffset = (divisor - s.leftoverCount) / 2;
+      const colTop = baseY + s.digit * pieceH;
+      for (let j = 0; j < s.leftoverCount; j++) {
+        const tl = worldToScreen(leftOffset + j, colTop + LEFTOVER_GAP + pieceH);
+        drawTileRect(tl.x, tl.y, zoom, zoom * pieceH, `lft:L${s.level}:i${j}`);
+      }
+    }
+  }
+
+  // The current floating leftover (the "source" for the next slice
+  // operation), drawn as a stack of 10 slices per parent piece so
+  // the structure-about-to-be-revealed is visible. When a slice
+  // round is in progress, parents diminish from the top as slices
+  // peel off.
+  drawCurrentLeftover();
+}
+
+function drawCurrentLeftover() {
+  // The current floating leftover row is whichever of these is
+  // most recent: the level-0 leftover (from integer rounds) or
+  // the leftover of the last completed slice round.
+  let count, level, baseTopY, leftOffset, parentH;
+  if (dist.sliceRounds.length === 0) {
+    if (!dist.leftoverPlaced || dist.remainder <= 0) return;
+    count      = dist.remainder;
+    level      = 0;
+    baseTopY   = dist.totalRounds + 1 + LEFTOVER_GAP;
+    leftOffset = leftoverLeftEdge();
+    parentH    = 1;
+  } else {
+    const last = dist.sliceRounds[dist.sliceRounds.length - 1];
+    if (last.leftoverCount <= 0 || !last.leftoverPlaced) return;
+    count      = last.leftoverCount;
+    level      = last.level;
+    parentH    = Math.pow(0.1, last.level);
+    leftOffset = (divisor - last.leftoverCount) / 2;
+    const colTop = dist.totalRounds + cumulativeSlicedHeight(last.level);
+    baseTopY   = colTop + LEFTOVER_GAP + parentH;
+  }
+
+  const isBeingSliced = !!(dist.sliceState && dist.sliceState.level === level + 1);
+  const childH = parentH / 10;
+  const baseBottomY = baseTopY - parentH;
+
+  // Render each parent piece as a stack of separate slices, bottom
+  // up. Each slice gets its own deterministic jitter colour, so
+  // the slice structure reads through colour variation rather than
+  // outlines. Slices peel off the top as the source is sliced.
+  for (let i = 0; i < count; i++) {
+    let slicesLeft = 10;
+    if (isBeingSliced) slicesLeft = 10 - slicesGoneFromParent(i);
+    if (slicesLeft <= 0.001) continue;
+
+    const wholeLeft = Math.floor(slicesLeft + 0.0001);
+    const fracLeft  = slicesLeft - wholeLeft;
+
+    // Full slices at their original positions (bottom up).
+    for (let k = 0; k < wholeLeft; k++) {
+      const sliceTopY = baseBottomY + (k + 1) * childH;
+      const tl = worldToScreen(leftOffset + i, sliceTopY);
+      drawTileRect(tl.x, tl.y, zoom, zoom * childH, `src:L${level}:p${i}:k${k}`);
+    }
+
+    // Partial top slice (mid-departure): shrinks smoothly while a wave is in flight.
+    if (fracLeft > 0.01) {
+      const sliceTopY = baseBottomY + wholeLeft * childH + fracLeft * childH;
+      const tl = worldToScreen(leftOffset + i, sliceTopY);
+      drawTileRect(tl.x, tl.y, zoom, zoom * childH * fracLeft, `src:L${level}:p${i}:k${wholeLeft}`);
+    }
+  }
+}
+
+// ==== Slot length label ====
+// What: the filled length of one slot — the rectangle's height,
+// the "answer" of the division — drawn above the column once the
+// first slice round has completed. Shows the integer plus all the
+// decimal digits we've discovered so far (e.g., "3.4", "2.75",
+// "3.333"). Per §5 we label one slot rather than all of them.
+function drawSlotLengthLabel() {
+  if (!dist || !divisor) return;
+  if (dist.sliceRounds.length === 0) return;
+  // Don't draw mid-animation; the column height is fluid then.
+  if (dist.tilesInFlight.length > 0) return;
+
+  const colHeight = dist.placedRounds + cumulativeSlicedHeight(dist.sliceRounds.length);
+  // One decimal place per completed slice round.
+  const digits = dist.sliceRounds.length;
+  const str = colHeight.toFixed(digits);
+
+  // Place above the rightmost slot's column top, centred on its slot.
+  const lastSlot = divisor - 1;
+  const colTopWorld = dist.totalRounds + cumulativeSlicedHeight(dist.sliceRounds.length);
+  const anchor = worldToScreen(lastSlot + 0.5, colTopWorld);
+
+  ctx.font = SLOT_LABEL_FONT;
+  ctx.fillStyle = SELECTED_COLOR;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(str, anchor.x, anchor.y - SLOT_LABEL_OFFSET);
+}
+
+// ==== In-flight tiles ====
+// What: the M tiles currently animating from the pile to their
+// slot destinations. Each has a random phase (stagger) and small
+// wobble for a flocking feel. Size interpolates from PILE_TILE to
+// the zoom-derived slot tile size.
+function drawInFlightTiles() {
+  if (!dist || dist.tilesInFlight.length === 0) return;
+  const t = Math.min(1, (performance.now() - dist.roundStart) / dist.roundDuration);
+  for (const tile of dist.tilesInFlight) {
+    // Each tile carries its source rectangle in SCREEN coords and
+    // its destination rectangle in WORLD coords + world-piece size.
+    const endTL = worldToScreen(tile.destWX, tile.destWY);
+    const endW  = tile.pieceW * zoom;
+    const endH  = tile.pieceH * zoom;
+
+    const localT = Math.max(0, Math.min(1, (t - tile.phase) / FLIGHT_FRACTION));
+    const eased  = easeOutQuad(localT);
+    const wob    = Math.sin(eased * Math.PI);
+    const x = lerp(tile.sourceX, endTL.x, eased) + tile.wobbleX * wob;
+    const y = lerp(tile.sourceY, endTL.y, eased) + tile.wobbleY * wob;
+    const w = lerp(tile.sourceW, endW, eased);
+    const h = lerp(tile.sourceH, endH, eased);
+    drawTileRect(x, y, w, h, tile.id);
+  }
+}
+
+// ==== "divide" action word ====
+// What: shown below the width segment when count ≥ divisor (a full
+// integer round is possible). Tapping triggers / replays the
+// distribution. Hidden during the animation itself.
+function drawDivideAction() {
+  if (!divisor || divisor <= 0) return;
+
+  // While any animation is mid-flight, no actions.
+  if (dist && (dist.tilesInFlight.length > 0 || dist.sliceState)) return;
+
+  // What action words to render, in order. "divide" if no
+  // distribution yet; "slice" if there's a slicable leftover;
+  // "divide again" if everything ran and either terminated or hit
+  // the pixel floor.
+  const words = [];
+  if (!dist) {
+    if (dividend >= divisor) words.push('divide');
+  } else {
+    const fullyDone = dist.placedRounds >= dist.totalRounds
+                   && (dist.remainder === 0 || dist.leftoverPlaced);
+    if (!fullyDone) return;  // mid-distribution (between rounds)
+    if (canSlice()) words.push('slice');
+    words.push('divide again');
+  }
+  if (words.length === 0) return;
+
+  ctx.font = ACTION_FONT;
+  ctx.textBaseline = 'top';
+  ctx.textAlign    = 'left';
+  const sepW   = ctx.measureText(ACTION_SEP).width;
+  const widths = words.map(w => ctx.measureText(w).width);
+  const total  = widths.reduce((s, w) => s + w, 0) + sepW * (words.length - 1);
+
+  const center = worldToScreen(divisor / 2, 0);
+  const labelY = center.y + 14;
+  let cursorX  = center.x - total / 2;
+
+  for (let i = 0; i < words.length; i++) {
+    const word  = words[i];
+    const w     = widths[i];
+    const hover = hoveredAction
+               && hoveredAction.rect === null
+               && hoveredAction.action === word;
+    ctx.fillStyle = hover ? ACTION_HOVER_COLOR : ACTION_COLOR;
+    ctx.fillText(word, cursorX, labelY);
+    actionWordHits.push({
+      rect: null, action: word,
+      sx: cursorX, sy: labelY, w, h: ACTION_LINE_HEIGHT,
+    });
+    cursorX += w;
+    if (i < words.length - 1) {
+      ctx.fillStyle = ACTION_COLOR;
+      ctx.fillText(ACTION_SEP, cursorX, labelY);
+      cursorX += sepW;
+    }
+  }
+}
+
+// ==== Width highlight ====
+// What: when a width (divisor) is set, the x-axis segment from 0
+// to width lights up in active blue. This marks the base of the
+// rectangle that distribution will build — the width is given, the
+// height is what the child will discover when the tiles flock down
+// and stack row by row.
+function drawWidthHighlight() {
+  if (!divisor || divisor <= 0) return;
+  const a = worldToScreen(0, 0);
+  const b = worldToScreen(divisor, 0);
+  ctx.strokeStyle = SELECTED_COLOR;
+  ctx.lineWidth   = WIDTH_HL_W;
+  ctx.beginPath();
+  ctx.moveTo(snap(a.x), snap(a.y));
+  ctx.lineTo(snap(b.x), snap(b.y));
+  ctx.stroke();
+}
+
+// ==== Drawing ====
+// What: clear, draw grid lines, draw axes, draw labels. Re-drawn
+// on every pan, zoom, or resize.
+function draw() {
+  ctx.fillStyle = BG_COLOR;
+  ctx.fillRect(0, 0, viewW, viewH);
+
+  const step   = labelStep();
+  const origin = worldToScreen(0, 0);
+
+  // Visible world bounds (with a one-step margin so edges don't pop).
+  const topLeft     = screenToWorld(0, 0);
+  const bottomRight = screenToWorld(viewW, viewH);
+  const wMinX = Math.floor(topLeft.x     / step) * step - step;
+  const wMaxX = Math.ceil (bottomRight.x / step) * step + step;
+  const wMinY = Math.floor(bottomRight.y / step) * step - step;
+  const wMaxY = Math.ceil (topLeft.y     / step) * step + step;
+
+  // Grid lines.
+  ctx.strokeStyle = INK_COLOR;
+  ctx.globalAlpha = GRID_OPACITY;
+  ctx.lineWidth   = GRID_WIDTH;
+  ctx.beginPath();
+  for (let x = wMinX; x <= wMaxX; x += step) {
+    const sx = worldToScreen(x, 0).x;
+    ctx.moveTo(sx, 0);
+    ctx.lineTo(sx, viewH);
+  }
+  for (let y = wMinY; y <= wMaxY; y += step) {
+    const sy = worldToScreen(0, y).y;
+    ctx.moveTo(0, sy);
+    ctx.lineTo(viewW, sy);
+  }
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Axes — snapped to half-pixel boundaries so 1px lines render
+  // crisply with no anti-alias halo.
+  ctx.strokeStyle = INK_COLOR;
+  ctx.lineWidth   = AXIS_WIDTH;
+  const axisX = snap(origin.x);
+  const axisY = snap(origin.y);
+  ctx.beginPath();
+  ctx.moveTo(axisX, 0);
+  ctx.lineTo(axisX, viewH);
+  ctx.moveTo(0, axisY);
+  ctx.lineTo(viewW, axisY);
+  ctx.stroke();
+
+  // Width highlight — drawn over the axis but under any rectangles
+  // that might share the same baseline, so an existing rectangle's
+  // bottom edge stays primary while the highlight fills the gap
+  // between the rect and the width endpoint.
+  drawWidthHighlight();
+
+  // Rectangles — committed first, then the in-progress draft on top.
+  // Light fill (alpha 0.05) keeps axis labels readable underneath.
+  // Clear action-word hit zones; they're repopulated by drawActionWords.
+  actionWordHits = [];
+  for (const rect of rectangles) drawRectangle(rect, false);
+  const draft = currentDraftRect();
+  if (draft) drawRectangle(draft, true);
+  // Action words for the selected rectangle (if still in the list).
+  if (selectedRect && rectangles.indexOf(selectedRect) >= 0) {
+    drawActionWords(selectedRect);
+  }
+
+  // Landed tiles — the rectangle being built by division. Drawn
+  // before axis labels so labels read on top (consistent with how
+  // rectangles handle the same case).
+  drawLandedTiles();
+
+  // Slot length label — the decimal answer reveals one digit per
+  // completed slice round.
+  drawSlotLengthLabel();
+
+  // "divide" / "slice" / "divide again" action words.
+  drawDivideAction();
+
+  // Labels — positive in all four directions. When an axis pans
+  // off-screen, the labels cling to the nearer edge: x-labels to
+  // the top or bottom, y-labels to the left or right. The text
+  // baseline / alignment flips so the visible side of each label
+  // hugs the edge — otherwise text gets clipped at the wrong end.
+  ctx.fillStyle = INK_COLOR;
+  ctx.font = LABEL_FONT;
+
+  let xLabelY, xLabelBaseline;
+  if (origin.y < 0) {
+    xLabelY = LABEL_PAD;            xLabelBaseline = 'top';
+  } else if (origin.y > viewH) {
+    xLabelY = viewH - LABEL_PAD;    xLabelBaseline = 'bottom';
+  } else {
+    xLabelY = origin.y + LABEL_PAD; xLabelBaseline = 'top';
+  }
+  ctx.textAlign = 'center';
+  ctx.textBaseline = xLabelBaseline;
+  for (let x = wMinX; x <= wMaxX; x += step) {
+    if (x === 0) {
+      // The "0" label sits slightly left of the y-axis so it doesn't
+      // collide with the axis line. (Only matters when the y-axis is
+      // on-screen; when it isn't, x=0 is off-screen too.)
+      ctx.font = LABEL_FONT;
+      ctx.fillText('0', origin.x - 8, xLabelY);
+      continue;
+    }
+    const sx = worldToScreen(x, 0).x;
+    if (sx < -20 || sx > viewW + 20) continue;
+    const isHovered = hoverTick && hoverTick.axis === 'x' && hoverTick.value === x;
+    ctx.font = isHovered ? LABEL_FONT_BOLD : LABEL_FONT;
+    ctx.fillText(formatInteger(x), sx, xLabelY);
+  }
+
+  let yLabelX, yLabelAlign;
+  if (origin.x < 0) {
+    yLabelX = LABEL_PAD;            yLabelAlign = 'left';
+  } else if (origin.x > viewW) {
+    yLabelX = viewW - LABEL_PAD;    yLabelAlign = 'right';
+  } else {
+    yLabelX = origin.x - LABEL_PAD; yLabelAlign = 'right';
+  }
+  ctx.textAlign = yLabelAlign;
+  ctx.textBaseline = 'middle';
+  for (let y = wMinY; y <= wMaxY; y += step) {
+    if (y === 0) continue;
+    const sy = worldToScreen(0, y).y;
+    if (sy < -10 || sy > viewH + 10) continue;
+    const isHovered = hoverTick && hoverTick.axis === 'y' && hoverTick.value === y;
+    ctx.font = isHovered ? LABEL_FONT_BOLD : LABEL_FONT;
+    ctx.fillText(formatInteger(y), yLabelX, sy);
+  }
+
+  // Hover dot — sits on top of plane elements but under the pile.
+  if (hoverTick) {
+    const pos = hoverTick.axis === 'x'
+      ? worldToScreen(hoverTick.value, 0)
+      : worldToScreen(0, hoverTick.value);
+    ctx.fillStyle = INK_COLOR;
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, HOVER_DOT_RADIUS, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // In-flight tiles — drawn above plane elements; they're the
+  // moving focus during a round.
+  drawInFlightTiles();
+
+  // Dividend pile — screen-fixed overlay, top of stack.
+  drawDividendPile();
+}
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+// Snap a CSS pixel position to a half-pixel boundary. Used for
+// 1px-wide lines (axes, rectangle outlines) so they render as a
+// single solid pixel rather than two anti-aliased pixels with a
+// halo. Same trick is the reason rectangles now align cleanly to
+// the axes when they touch the origin.
+function snap(v) { return Math.round(v) + 0.5; }
+
+// ==== Pointer interaction ====
+// What: one small state machine handling pan, hover, and rectangle
+// drag. On mousedown the current hover decides what we do: if the
+// cursor is on an axis number we start a rectangle drag; otherwise
+// we pan. Mousemove either extends the drag, pans, or just refreshes
+// hover. The rectangle commits on mouseup (unless the drag closed to
+// zero); Escape cancels in progress.
+
+function setIdleCursor() {
+  if (hoveredAction) canvas.style.cursor = 'pointer';
+  else if (hoverTick) canvas.style.cursor = 'crosshair';
+  else canvas.style.cursor = 'grab';
+}
+
+canvas.addEventListener('mousedown', (e) => {
+  downPos = { sx: e.clientX, sy: e.clientY };
+  if (hoverTick) {
+    mode = 'drawing';
+    drawState = { axis: hoverTick.axis, fixed: hoverTick.value, current: 0 };
+    canvas.style.cursor = 'crosshair';
+    e.preventDefault();
+    return;
+  }
+  mode = 'panning';
+  panStart = { sx: e.clientX, sy: e.clientY, panX: pan.x, panY: pan.y };
+  canvas.style.cursor = 'grabbing';
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (mode === 'panning') {
+    const dx = e.clientX - panStart.sx;
+    const dy = e.clientY - panStart.sy;
+    pan.x = panStart.panX - dx / zoom;
+    pan.y = panStart.panY + dy / zoom;
+    draw();
+    return;
+  }
+  if (mode === 'drawing') {
+    // Snap to integers — Stage 1 resolution. (Half / tenths arrive
+    // in Stage 3 when division needs them.)
+    const w = screenToWorld(e.clientX, e.clientY);
+    drawState.current = drawState.axis === 'x' ? Math.round(w.y) : Math.round(w.x);
+    draw();
+    return;
+  }
+  // idle: refresh hover state for both axis ticks and action words.
+  const tickHit   = hitTestAxisNumber(e.clientX, e.clientY);
+  const actionHit = hitTestActionWord(e.clientX, e.clientY);
+  const changed = !sameHit(tickHit, hoverTick) || !sameAction(actionHit, hoveredAction);
+  if (changed) {
+    hoverTick     = tickHit;
+    hoveredAction = actionHit;
+    setIdleCursor();
+    draw();
+  }
+});
+
+window.addEventListener('mouseup', (e) => {
+  const wasTap = downPos
+    && Math.hypot(e.clientX - downPos.sx, e.clientY - downPos.sy) < TAP_THRESHOLD;
+  downPos = null;
+
+  if (mode === 'drawing') {
+    if (drawState.current !== 0) {
+      rectangles.push(currentDraftRect());
+    } else if (wasTap) {
+      handleTap(e.clientX, e.clientY);
+    }
+    drawState = null;
+    mode = 'idle';
+    hoverTick = hitTestAxisNumber(e.clientX, e.clientY);
+    setIdleCursor();
+    draw();
+    return;
+  }
+  if (mode === 'panning') {
+    if (wasTap) handleTap(e.clientX, e.clientY);
+    panStart = null;
+    mode = 'idle';
+    hoverTick = hitTestAxisNumber(e.clientX, e.clientY);
+    setIdleCursor();
+    draw();
+  }
+});
+
+// What: undo by popping the last rectangle, but only if the tap is
+// OUTSIDE every existing rectangle. In-rectangle taps are reserved
+// for the future selection / close affordance (§4).
+function tryUndo(sx, sy) {
+  if (rectangles.length === 0) return;
+  for (const r of rectangles) {
+    if (pointInRect(sx, sy, r)) return;
+  }
+  rectangles.pop();
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && mode === 'drawing') {
+    drawState = null;
+    mode = 'idle';
+    setIdleCursor();
+    draw();
+  }
+});
+
+// ==== Zoom ====
+// What: mouse wheel zooms, centred on the cursor. The world point
+// under the cursor before the zoom is the same world point under
+// the cursor after.
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const before = screenToWorld(e.clientX, e.clientY);
+  const factor = Math.exp(-e.deltaY * 0.0015);
+  zoom = clamp(zoom * factor, ZOOM_MIN, ZOOM_MAX);
+  const after = screenToWorld(e.clientX, e.clientY);
+  pan.x += before.x - after.x;
+  pan.y += before.y - after.y;
+  draw();
+}, { passive: false });
+
+// ==== Dividend input ====
+// What: sync the dividend panel's <input> with the dividend state.
+// Clamped to [0, 100] for v1 — large piles overflow the screen
+// pile area; we can extend later.
+const dividendInput = document.getElementById('dividend-input');
+dividend = Math.max(0, Math.min(100, parseInt(dividendInput.value, 10) || 0));
+dividendInput.addEventListener('input', (e) => {
+  const v = parseInt(e.target.value, 10);
+  dividend = Math.max(0, Math.min(100, Number.isFinite(v) ? v : 0));
+  dist = null;  // count changed; any prior distribution is stale
+  draw();
+});
+
+// ==== Init ====
+window.addEventListener('resize', resize);
+resize();
+</script>
+</body>
+</html>
