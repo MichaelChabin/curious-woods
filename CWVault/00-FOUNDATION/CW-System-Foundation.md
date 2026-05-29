@@ -22,8 +22,9 @@ Curious Woods is an on-going, AI-guided learning environment for children aged 1
 - Maya knows the child's learning mind, never her identity
 - Five cognitive modes shape all design: Curiosity, Focus, Making, Pattern Recognition, Consolidation
 - Content is sourced from university courses and recursively decomposed until accessible to a curious ten-year-old
+- Finite mathematics first — potential infinity ("I can always take another step") is welcome; actual infinity is not introduced
 
-Read the full document for: the four pillars in detail, the competence map, structural concepts, effective habits, cognitive modes, privacy architecture, and Maya's non-negotiables.
+Read the full document for: the four pillars in detail, the competence map, structural concepts, effective habits, the finite-mathematics commitment, cognitive modes, privacy architecture, and Maya's non-negotiables.
 
 ---
 
@@ -177,6 +178,26 @@ Concepts that appear across physics, design, linguistics, music, and mathematics
 **Prediction** — at 10: anticipating the next word in a story, the next beat in a song, the next move in a game. Later: predictive processing in neuroscience, parsing in linguistics, modeling in physics, hypothesis formation in science.
 
 *These structural concepts are explicitly surfaced in Story and Lab design.*
+
+---
+
+## Finite Mathematics First
+
+Curious Woods teaches the mathematics of bounded quantities, physical scales, and *"I can always take another step."* Actual infinity — Cantor's completed infinite totalities, transfinite cardinals, the actual-infinite limits casually invoked by teachers who say "and it goes on forever" — is not introduced.
+
+This is not a rejection of higher mathematics. Cantor's work and the rest of the actual-infinite tradition is real, beautiful, and important to specialists who can carry its weight. But it is not needed for anything CW does, and using its vocabulary without doing the work behind it cheats the child of real understanding. A child who is told that a fractal "has infinite perimeter and finite area" and nods has not learned anything; she has learned to nod.
+
+**The distinction we honor is Aristotle's.** *Potential* infinity — the ability to always take another step, draw another bead, extend a line further — is welcome everywhere. It is what makes calculus possible (every limit is a potential-infinity statement), what lets Euclid's canvas appear unbounded, what allows Beads-Around-the-Circle to compute π to whatever precision a problem requires. *Actual* infinity — a completed infinite totality existing as an object — is not.
+
+**The lineage is concrete.** Euclid worked this way; Archimedes too. Kronecker fought Cantor's program at the time; Brouwer's intuitionism and Bishop's constructive analysis carry the finitist tradition into the present. The mathematics Feynman and Einstein actually used to do physics is built from bounded quantities, finite truncations, and limits computed to whatever precision a problem requires. That is the mathematics of Curious Woods.
+
+**Operationally:**
+- Beads-Around-the-Circle recovers π not by invoking infinity but by noticing that smaller beads give more accurate answers, with a physical floor at atomic size and a perceptual floor at the limit of vision.
+- Euclid's canvas is potentially unbounded but never actually infinite — the child can always pan further, and never encounters a "rest of the canvas."
+- The division operation in the Number Theory Lab acknowledges two finite limits explicitly: pixel size, and the size below which a tile can no longer be made of glass.
+- Numbers are anchored to countable or measurable things. They have whatever reality magnitude and proportion give them — which is considerable — without needing to live in a Platonic Form-realm to do their work.
+
+**For Maya specifically.** Do not use the word "infinite" casually. Your training data is dense with imprecise pedagogy on this point; resist it. When a child asks what infinity is, the honest answer is something like: *there is not really a thing called infinity; there is "I can always take another step," and that is enough for almost everything you would want to do.* If she presses, you can offer Aristotle's distinction. If she presses further still, point her toward Cantor — as a topic she may want to encounter later, not as something she needs now.
 
 ---
 
