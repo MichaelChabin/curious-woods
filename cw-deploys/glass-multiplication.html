@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Glass Multiplication · Curious Woods</title>
+  <style>
+    * { box-sizing:border-box; }
+    html,body { margin:0; min-height:100%; background:#f4f1e8; color:#3D3D3A; font-family:Georgia,serif; }
+    body { padding:18px 14px 28px; }
+    button,output { font:inherit; }
+    button { color:inherit; }
+    [hidden] { display:none !important; }
+    .cw-page { width:min(760px,100%); margin:0 auto; }
+    .cw-home { display:inline-block; margin:0 0 12px; color:#546A80; font-size:12px; text-decoration:none; letter-spacing:.03em; }
+    .cw-home:hover { color:#3D3D3A; }
+    .card { padding:7px 10px; color:#546A80; background:rgba(244,241,232,.88); border:.5px solid #c8b89a; border-radius:6px; }
+    .viz-controls,.viz-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .btn { appearance:none; border:0; border-bottom:1px solid transparent; border-radius:0; padding:4px 3px; background:transparent; color:#546A80; cursor:pointer; }
+    .btn:hover,.btn:focus-visible { color:#3D3D3A; border-bottom-color:#c8b89a; outline:none; }
+    .btn[aria-pressed="true"],.btn-primary { color:#3D3D3A; border-bottom-color:#546A80; }
+    .btn:disabled { opacity:.38; cursor:default; border-bottom-color:transparent; }
+    .text-small { font-size:11px; }
+    .text-muted { color:#a09880; }
+    @media(max-width:520px){ body{padding:10px 7px 20px} }
+  </style>
+</head>
+<body>
+<main class="cw-page">
+<a class="cw-home" href="index.html">The Curious Woods</a>
+<div id="playable-prime-mosaic">
+  <div class="card" id="ppm-readout" aria-live="polite">Choose any glass tile, or touch a prime below.</div>
+  <div class="viz-controls ppm-modebar" aria-label="Ways to explore the table">
+    <button class="btn" type="button" data-mode="explore" aria-pressed="true">Explore</button>
+    <button class="btn" type="button" data-mode="compose" aria-pressed="false">Compose</button>
+    <button class="btn" type="button" data-mode="squares" aria-pressed="false">Squares</button>
+    <button class="btn" type="button" data-mode="paths" aria-pressed="false">Paths</button>
+  </div>
+  <div class="ppm-compose-bar" id="ppm-compose-panel" hidden>
+    <output id="ppm-expression" aria-live="polite">Touch Compose, then choose primes.</output>
+    <div class="viz-row">
+      <button class="btn" id="ppm-undo" type="button" disabled>Undo</button>
+      <button class="btn btn-primary" id="ppm-equals" type="button" disabled>=</button>
+      <button class="btn btn-ghost" id="ppm-clear" type="button" disabled>Clear</button>
+    </div>
+  </div>
+  <div id="ppm-grid" class="ppm-grid" aria-label="Playable numberless multiplication mosaic"></div>
+  <div class="ppm-decoder" aria-label="Playable prime decoder">
+    <button class="btn ppm-key" type="button" data-prime="2"><span class="ppm-swatch p2"></span><span><strong>2 · C</strong><small>Gaudí cobalt</small></span></button>
+    <button class="btn ppm-key" type="button" data-prime="3"><span class="ppm-swatch p3"></span><span><strong>3 · E</strong><small>silver-stain gold</small></span></button>
+    <button class="btn ppm-key" type="button" data-prime="5"><span class="ppm-swatch p5"></span><span><strong>5 · G</strong><small>copper green</small></span></button>
+    <button class="btn ppm-key" type="button" data-prime="7"><span class="ppm-swatch p7"></span><span><strong>7 · B</strong><small>Gaudí ruby</small></span></button>
+  </div>
+  <p class="text-small text-muted">Touch the glass, compose with primes, awaken the squares, or trace a musical path.</p>
+</div>
+
+<style>
+  #playable-prime-mosaic {
+    --foreground:#3D3D3A;
+    --muted-foreground:#a09880;
+    --ring:#546A80;
+    --lead: #07090E;
+    --p2a:#0A214F; --p2b:#123875; --p2c:#1A4A9A; --p2d:#5B8ED1;
+    --p3a:#594400; --p3b:#927600; --p3c:#C8A800; --p3d:#E9D65C;
+    --p5a:#17351B; --p5b:#326924; --p5c:#4A8A30; --p5d:#8DC36A;
+    --p7a:#48100C; --p7b:#781F13; --p7c:#A83018; --p7d:#DF7555;
+  }
+  #playable-prime-mosaic .card { margin-bottom: .65rem; text-align: center; font-variant-numeric: tabular-nums; }
+  #playable-prime-mosaic .ppm-grid { position:relative; width:100%; aspect-ratio:1; display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); grid-template-rows:repeat(10,minmax(0,1fr)); gap:4px; padding:4px; background:var(--lead); }
+  #playable-prime-mosaic.mode-paths .ppm-grid { touch-action:none; }
+  #playable-prime-mosaic .ppm-modebar { justify-content:center; margin:0 0 .65rem; }
+  #playable-prime-mosaic .ppm-compose-bar { display:flex; align-items:center; justify-content:space-between; gap:.6rem; margin:0 0 .65rem; flex-wrap:wrap; }
+  #playable-prime-mosaic #ppm-expression { flex:1 1 15rem; text-align:center; font-variant-numeric:tabular-nums; }
+  #playable-prime-mosaic .ppm-factor-cell { outline:3px solid rgb(255 248 205 / .98); outline-offset:-3px; z-index:4; }
+  #playable-prime-mosaic .ppm-factor-cell .ppm-piece { filter:saturate(1.38) brightness(1.32); }
+  #playable-prime-mosaic .ppm-rectangle { position:absolute; left:4px; bottom:4px; border:3px solid rgb(255 239 142 / .96); outline:1px solid rgb(7 9 14 / .9); outline-offset:0; background:rgb(255 226 86 / .045); box-shadow:0 0 8px rgb(255 229 111 / .72),inset 0 0 9px rgb(255 229 111 / .28); pointer-events:none; z-index:7; }
+  #playable-prime-mosaic .ppm-rectangle.mirror { border-color:rgb(102 220 255 / .94); background:rgb(83 210 255 / .045); box-shadow:0 0 8px rgb(99 219 255 / .68),inset 0 0 9px rgb(99 219 255 / .24); }
+  #playable-prime-mosaic .ppm-square-frame { position:absolute; left:4px; bottom:4px; border:2px solid rgb(255 238 153 / .46); background:transparent; pointer-events:none; z-index:7; transition:opacity 180ms ease,box-shadow 180ms ease; }
+  #playable-prime-mosaic .ppm-square-frame.current { border-color:rgb(255 246 194 / .98); box-shadow:0 0 11px rgb(255 231 127 / .76),inset 0 0 8px rgb(255 231 127 / .25); }
+  #playable-prime-mosaic .ppm-path-cell { outline:3px solid rgb(159 230 255 / .96); outline-offset:-3px; z-index:4; }
+  #playable-prime-mosaic .ppm-path-cell .ppm-piece { filter:saturate(1.35) brightness(1.28); }
+  #playable-prime-mosaic .ppm-cell { position:relative; overflow:hidden; border:0; padding:0; margin:0; min-width:0; background:#B5AE9F; cursor:pointer; }
+  #playable-prime-mosaic .ppm-cell:focus-visible { outline:3px solid var(--ring); outline-offset:-3px; }
+  #playable-prime-mosaic .ppm-inner { position:absolute; inset:0; display:flex; flex-direction:column; gap:1px; pointer-events:none; }
+  #playable-prime-mosaic .ppm-cell.mirrored .ppm-inner { transform:rotate(-90deg) scaleY(-1); }
+  #playable-prime-mosaic .ppm-cell.diagonal .ppm-inner { inset:-24%; transform:rotate(-45deg); }
+  #playable-prime-mosaic .ppm-cell.diagonal { box-shadow:inset 0 0 0 1px #81796B; }
+  #playable-prime-mosaic .ppm-piece { flex:1 1 0; min-height:0; position:relative; overflow:hidden; background-size:155% 155%; background-position:var(--shift-x) var(--shift-y); box-shadow:inset 0 0 12px rgb(0 0 0 / .2); transition:filter 120ms ease; }
+  #playable-prime-mosaic .ppm-piece::before { content:""; position:absolute; inset:-15%; background:linear-gradient(31deg,transparent 0 25%,rgb(0 0 0/.16) 26% 28%,transparent 29% 62%,rgb(0 0 0/.11) 63% 65%,transparent 66%),linear-gradient(139deg,transparent 0 38%,rgb(0 0 0/.13) 39% 41%,transparent 42% 76%,rgb(0 0 0/.09) 77% 79%,transparent 80%); transform:translate(var(--facet-x),var(--facet-y)); }
+  #playable-prime-mosaic .ppm-piece.sounding, #playable-prime-mosaic .ppm-cell.sounding .ppm-piece { filter:saturate(1.45) brightness(1.32); }
+  #playable-prime-mosaic .ppm-cell.sounding { outline:2px solid rgb(255 246 205 / .95); outline-offset:-2px; z-index:2; }
+  #playable-prime-mosaic .ppm-piece.family-glow { filter:saturate(1.25) brightness(1.22); box-shadow:inset 0 0 8px rgb(255 255 255 / .2),0 0 7px rgb(255 244 189 / .3); z-index:2; }
+  #playable-prime-mosaic .ppm-numeral { position:absolute; top:5%; right:7%; z-index:3; color:rgb(255 252 229 / .96); font-size:clamp(11px,2.5vw,22px); font-weight:500; line-height:1; text-shadow:0 1px 3px rgb(0 0 0 / .9),0 0 7px rgb(255 244 190 / .75); opacity:0; transform:translateY(-2px); transition:opacity 180ms ease,transform 180ms ease; pointer-events:none; }
+  #playable-prime-mosaic .ppm-cell.revealed .ppm-numeral { opacity:1; transform:translateY(0); }
+  #playable-prime-mosaic .p2 { background-image:radial-gradient(circle at 70% 28%,var(--p2d),transparent 28%),linear-gradient(137deg,var(--p2a),var(--p2b) 35%,var(--p2c) 68%,var(--p2b)); }
+  #playable-prime-mosaic .p3 { background-image:radial-gradient(circle at 32% 26%,var(--p3d),transparent 27%),linear-gradient(145deg,var(--p3a),var(--p3b) 34%,var(--p3c) 69%,var(--p3b)); }
+  #playable-prime-mosaic .p5 { background-image:radial-gradient(circle at 66% 30%,var(--p5d),transparent 27%),linear-gradient(132deg,var(--p5a),var(--p5b) 34%,var(--p5c) 68%,var(--p5b)); }
+  #playable-prime-mosaic .p7 { background-image:radial-gradient(circle at 34% 24%,var(--p7d),transparent 26%),linear-gradient(141deg,var(--p7a),var(--p7b) 35%,var(--p7c) 69%,var(--p7b)); }
+  #playable-prime-mosaic .ppm-cell.clear { background:radial-gradient(circle at 44% 40%,#F0ECE1,#C8C1B4 68%,#948D80); }
+  #playable-prime-mosaic .ppm-decoder { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.55rem; margin-top:.7rem; }
+  #playable-prime-mosaic .ppm-key { display:flex; align-items:center; justify-content:flex-start; gap:.5rem; min-width:0; }
+  #playable-prime-mosaic .ppm-key > span:last-child { display:flex; flex-direction:column; align-items:flex-start; min-width:0; }
+  #playable-prime-mosaic .ppm-key strong { font-weight:500; }
+  #playable-prime-mosaic .ppm-key small { color:var(--muted-foreground); }
+  #playable-prime-mosaic .ppm-swatch { width:2rem; height:2rem; flex:0 0 2rem; border:2px solid var(--lead); box-shadow:inset 0 0 8px rgb(0 0 0/.24); }
+  #playable-prime-mosaic p { margin:.5rem 0 0; text-align:center; }
+  @media(max-width:520px){ #playable-prime-mosaic .ppm-grid{gap:2px;padding:2px} #playable-prime-mosaic .ppm-inner{gap:0} #playable-prime-mosaic .ppm-decoder{grid-template-columns:repeat(2,minmax(0,1fr))} #playable-prime-mosaic .ppm-compose-bar{align-items:stretch} #playable-prime-mosaic #ppm-expression{text-align:left;flex-basis:100%} }
+  @media(prefers-reduced-motion:reduce){ #playable-prime-mosaic .ppm-piece,#playable-prime-mosaic .ppm-numeral,#playable-prime-mosaic .ppm-square-frame{transition:none} }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById('playable-prime-mosaic');
+    const grid = root.querySelector('#ppm-grid');
+    const readout = root.querySelector('#ppm-readout');
+    const modeButtons = [...root.querySelectorAll('[data-mode]')];
+    const composePanel = root.querySelector('#ppm-compose-panel');
+    const expression = root.querySelector('#ppm-expression');
+    const undoButton = root.querySelector('#ppm-undo');
+    const equalsButton = root.querySelector('#ppm-equals');
+    const clearButton = root.querySelector('#ppm-clear');
+    const primeInfo = {
+      2:{ midi:48, note:'C', pan:-.32 },
+      3:{ midi:52, note:'E', pan:-.1 },
+      5:{ midi:55, note:'G', pan:.12 },
+      7:{ midi:59, note:'B', pan:.34 }
+    };
+    let audio = null;
+    let visualTimers = [];
+    const cells = new Map();
+    let mode = 'explore';
+    let composition = [];
+    let activePairs = [];
+    let resultCommitted = false;
+    let pathActive = false;
+    let pathStart = null;
+    let pathAxis = null;
+    let pathCells = [];
+
+    const factorize = value => {
+      const factors=[]; let remaining=value;
+      [2,3,5,7].forEach(prime=>{ while(remaining%prime===0){ factors.push(prime); remaining/=prime; } });
+      return factors;
+    };
+    const powerText = factors => {
+      if(!factors.length) return '1';
+      return [2,3,5,7].map(prime=>{
+        const count=factors.filter(value=>value===prime).length;
+        return count ? `${prime}${count>1?'⁰¹²³⁴⁵⁶⁷⁸⁹'[count]:''}` : '';
+      }).filter(Boolean).join(' × ');
+    };
+    const notesFor = factors => {
+      const counts={};
+      return factors.map(prime=>{
+        const octaveIndex=counts[prime]||0; counts[prime]=octaveIndex+1;
+        return { prime, midi:primeInfo[prime].midi+12*octaveIndex, name:`${primeInfo[prime].note}${3+octaveIndex}`, pan:primeInfo[prime].pan };
+      });
+    };
+    const frequency = midi => 440*Math.pow(2,(midi-69)/12);
+
+    function createAudio(){
+      if(audio) return audio;
+      const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+      if(!AudioContextClass){ readout.textContent='This browser does not support interactive audio.'; return null; }
+      const ctx=new AudioContextClass();
+      const compressor=ctx.createDynamicsCompressor();
+      compressor.threshold.value=-18; compressor.knee.value=18; compressor.ratio.value=3; compressor.attack.value=.008; compressor.release.value=.28;
+      const dry=ctx.createGain(); dry.gain.value=.72;
+      const wet=ctx.createGain(); wet.gain.value=.24;
+      const convolver=ctx.createConvolver();
+      const length=Math.floor(ctx.sampleRate*2.6); const impulse=ctx.createBuffer(2,length,ctx.sampleRate);
+      for(let channel=0;channel<2;channel++){
+        const data=impulse.getChannelData(channel);
+        for(let i=0;i<length;i++){ const decay=Math.pow(1-i/length,2.7); data[i]=(Math.random()*2-1)*decay*(channel?0.92:1); }
+      }
+      convolver.buffer=impulse; dry.connect(compressor); convolver.connect(wet); wet.connect(compressor); compressor.connect(ctx.destination);
+      audio={ctx,dry,convolver}; return audio;
+    }
+
+    function pianoNote(note, when, duration=3.8, velocity=.34){
+      const engine=createAudio(); if(!engine) return;
+      const {ctx,dry,convolver}=engine; const freq=frequency(note.midi);
+      const voice=ctx.createGain(); const panner=ctx.createStereoPanner(); panner.pan.value=note.pan;
+      voice.gain.setValueAtTime(.0001,when); voice.gain.exponentialRampToValueAtTime(velocity,when+.009); voice.gain.exponentialRampToValueAtTime(velocity*.34,when+.22); voice.gain.exponentialRampToValueAtTime(.0001,when+duration);
+      voice.connect(panner); panner.connect(dry); panner.connect(convolver);
+      [[1,1],[2,.23],[3,.11],[4,.045],[5,.018]].forEach(([multiple,level],index)=>{
+        const osc=ctx.createOscillator(); const partial=ctx.createGain(); osc.type='sine'; osc.frequency.value=freq*multiple; osc.detune.value=index%2?-.8:.55; partial.gain.value=level; osc.connect(partial); partial.connect(voice); osc.start(when); osc.stop(when+duration+.08);
+      });
+      const noiseLength=Math.max(1,Math.floor(ctx.sampleRate*.032)); const noiseBuffer=ctx.createBuffer(1,noiseLength,ctx.sampleRate); const noise=noiseBuffer.getChannelData(0);
+      for(let i=0;i<noiseLength;i++) noise[i]=(Math.random()*2-1)*Math.pow(1-i/noiseLength,2);
+      const strike=ctx.createBufferSource(); const strikeFilter=ctx.createBiquadFilter(); const strikeGain=ctx.createGain(); strike.buffer=noiseBuffer; strikeFilter.type='bandpass'; strikeFilter.frequency.value=Math.min(6500,freq*5); strikeFilter.Q.value=.7; strikeGain.gain.value=velocity*.16; strike.connect(strikeFilter); strikeFilter.connect(strikeGain); strikeGain.connect(panner); strike.start(when);
+    }
+
+    function clearVisuals(){ visualTimers.forEach(clearTimeout); visualTimers=[]; root.querySelectorAll('.sounding,.family-glow,.revealed').forEach(el=>el.classList.remove('sounding','family-glow','revealed')); }
+    function later(fn,ms){ visualTimers.push(setTimeout(fn,ms)); }
+    function clearFactorDisplay(){
+      root.querySelectorAll('.ppm-factor-cell').forEach(el=>el.classList.remove('ppm-factor-cell'));
+      root.querySelectorAll('.ppm-rectangle').forEach(el=>el.remove());
+      activePairs=[];
+    }
+    function renderComposition(result=null){
+      const factorText=composition.length?composition.join(' × '):'Choose prime colors below';
+      expression.textContent=result===null?factorText:`${factorText} = ${result}`;
+      const hasFactors=composition.length>0;
+      undoButton.disabled=!hasFactors; equalsButton.disabled=!hasFactors; clearButton.disabled=!hasFactors;
+    }
+    function drawFactorRectangles(){
+      root.querySelectorAll('.ppm-rectangle').forEach(el=>el.remove());
+      const gridBox=grid.getBoundingClientRect();
+      activePairs.forEach(({column,row,mirror})=>{
+        const target=cells.get(`${row},${column}`); if(!target) return;
+        const box=target.getBoundingClientRect();
+        const rectangle=document.createElement('span'); rectangle.className=`ppm-rectangle${mirror?' mirror':''}`;
+        rectangle.style.width=`${Math.max(0,box.right-gridBox.left-4)}px`;
+        rectangle.style.height=`${Math.max(0,gridBox.bottom-box.top-4)}px`;
+        rectangle.setAttribute('aria-hidden','true'); grid.appendChild(rectangle);
+      });
+    }
+    function clearSpecialDisplays(){
+      root.querySelectorAll('.ppm-square-frame').forEach(el=>el.remove());
+      root.querySelectorAll('.ppm-path-cell').forEach(el=>el.classList.remove('ppm-path-cell'));
+      pathActive=false; pathStart=null; pathAxis=null; pathCells=[];
+    }
+    function frameToCell(cell,className){
+      const gridBox=grid.getBoundingClientRect(); const box=cell.getBoundingClientRect();
+      const frame=document.createElement('span'); frame.className=className;
+      frame.style.width=`${Math.max(0,box.right-gridBox.left-4)}px`;
+      frame.style.height=`${Math.max(0,gridBox.bottom-box.top-4)}px`;
+      frame.setAttribute('aria-hidden','true'); grid.appendChild(frame); return frame;
+    }
+    async function playNumberPulse(cell,duration=1.65){
+      const engine=createAudio(); if(!engine) return; await engine.ctx.resume();
+      const factors=factorize(Number(cell.dataset.product));
+      const notes=factors.length?notesFor(factors):[{midi:36,name:'C2',pan:0}];
+      const now=engine.ctx.currentTime+.015;
+      notes.forEach(note=>pianoNote(note,now,duration,.16/Math.sqrt(Math.max(1,notes.length/2))));
+      cell.classList.add('sounding','revealed');
+      setTimeout(()=>cell.classList.remove('sounding'),Math.min(720,duration*500));
+      setTimeout(()=>cell.classList.remove('revealed'),1200);
+    }
+    async function playSquares(){
+      const engine=createAudio(); if(!engine) return; await engine.ctx.resume();
+      clearVisuals(); clearFactorDisplay(); clearSpecialDisplays();
+      for(let n=1;n<=10;n++){
+        later(()=>{
+          root.querySelectorAll('.ppm-square-frame.current').forEach(frame=>frame.classList.remove('current'));
+          const cell=cells.get(`${n},${n}`); if(!cell) return;
+          frameToCell(cell,'ppm-square-frame current'); playNumberPulse(cell,1.9);
+          readout.textContent=`${n} × ${n} = ${n*n} · square ${n} by ${n}`;
+        },(n-1)*720);
+      }
+      later(()=>{ readout.textContent='The diagonal holds the square numbers: 1, 4, 9, 16 … 100.'; },10*720+250);
+    }
+    function pathAllows(cell){
+      if(!pathStart) return true;
+      const row=Number(cell.dataset.row), column=Number(cell.dataset.column);
+      const sr=Number(pathStart.dataset.row), sc=Number(pathStart.dataset.column);
+      if(!pathAxis){
+        const dr=row-sr, dc=column-sc;
+        if(dr===0&&dc!==0) pathAxis='row';
+        else if(dc===0&&dr!==0) pathAxis='column';
+        else if(Math.abs(dr)===Math.abs(dc)&&dr!==0) pathAxis=dr===dc?'diagonal-up':'diagonal-down';
+        else return false;
+      }
+      if(pathAxis==='row') return row===sr;
+      if(pathAxis==='column') return column===sc;
+      if(pathAxis==='diagonal-up') return row-sr===column-sc;
+      return row-sr===-(column-sc);
+    }
+    function visitPathCell(cell){
+      if(!cell||pathCells.includes(cell)||!pathAllows(cell)) return;
+      if(!pathStart) pathStart=cell;
+      pathCells.push(cell); cell.classList.add('ppm-path-cell'); playNumberPulse(cell,1.5);
+      readout.textContent=`${cell.dataset.row} × ${cell.dataset.column} = ${cell.dataset.product} · ${pathAxis||'choose a direction'}`;
+    }
+    function setMode(next){
+      mode=next; modeButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mode===mode)));
+      root.classList.toggle('mode-paths',mode==='paths');
+      composePanel.hidden=mode!=='compose'; clearVisuals(); clearFactorDisplay(); clearSpecialDisplays();
+      composition=[]; resultCommitted=false; renderComposition();
+      if(mode==='explore') readout.textContent='Explore · choose any glass tile or prime color.';
+      if(mode==='compose') readout.textContent='Compose · choose prime colors, then press =.';
+      if(mode==='squares'){ readout.textContent='Squares · watch the nested squares grow from unity.'; playSquares(); }
+      if(mode==='paths') readout.textContent='Paths · drag through a row, column, or diagonal.';
+    }
+    function revealProduct(product){
+      clearFactorDisplay();
+      const seen=new Set();
+      const productCells=[];
+      for(let width=1;width<=10;width++){
+        if(product%width!==0) continue;
+        const height=product/width; if(height<1||height>10) continue;
+        const key=[Math.min(width,height),Math.max(width,height)].join(','); if(seen.has(key)) continue; seen.add(key);
+        const first=cells.get(`${height},${width}`); const second=cells.get(`${width},${height}`);
+        first?.classList.add('ppm-factor-cell'); second?.classList.add('ppm-factor-cell');
+        if(first&&!productCells.includes(first)) productCells.push(first);
+        if(second&&!productCells.includes(second)) productCells.push(second);
+        activePairs.push({column:width,row:height,mirror:false});
+        if(width!==height) activePairs.push({column:height,row:width,mirror:true});
+      }
+      drawFactorRectangles();
+      const count=seen.size;
+      readout.textContent=count?`${product} makes ${count} visible factor ${count===1?'pair':'pairs'} — each rectangle is reflected across the diagonal.`:`${product} has no complete factor rectangle inside this 10 × 10 window.`;
+      return productCells;
+    }
+    async function playFactors(factors, cell=null, twin=null, productCells=[]){
+      const engine=createAudio(); if(!engine) return;
+      await engine.ctx.resume(); clearVisuals();
+      const notes=factors.length?notesFor(factors):[{midi:36,name:'C2',pan:0}]; const start=engine.ctx.currentTime+.05; const spacing=.18;
+      const soundingCells=productCells.length?productCells:[cell,twin].filter((item,index,list)=>item&&list.indexOf(item)===index);
+      notes.forEach((note,index)=>{
+        pianoNote(note,start+index*spacing,2.6,.25);
+        if(soundingCells.length){
+          const pieces=soundingCells.map(target=>target.querySelectorAll('.ppm-piece')[index]).filter(Boolean);
+          later(()=>pieces.forEach(piece=>piece.classList.add('sounding')),index*spacing*1000);
+          later(()=>pieces.forEach(piece=>piece.classList.remove('sounding')),index*spacing*1000+330);
+        }
+      });
+      const chordTime=start+notes.length*spacing+.2;
+      notes.forEach(note=>pianoNote(note,chordTime,4.5,.22/Math.sqrt(Math.max(1,notes.length/2))));
+      if(soundingCells.length){
+        const chordDelay=(chordTime-engine.ctx.currentTime)*1000;
+        later(()=>soundingCells.forEach(target=>target.classList.add('sounding','revealed')),chordDelay);
+        later(()=>soundingCells.forEach(target=>target.classList.remove('sounding')),chordDelay+1250);
+        later(()=>soundingCells.forEach(target=>target.classList.remove('revealed')),chordDelay+2000);
+      }
+    }
+
+    const seedValue=(low,high,index,salt)=>(low*37+high*19+index*23+salt)%100;
+    for(let row=10;row>=1;row--){
+      for(let column=1;column<=10;column++){
+        const product=row*column; const factors=factorize(product); const low=Math.min(row,column); const high=Math.max(row,column);
+        const cell=document.createElement('button'); cell.type='button'; cell.className=`ppm-cell${row>column?' mirrored':''}${row===column?' diagonal':''}${product===1?' clear':''}`;
+        cell.dataset.row=row; cell.dataset.column=column; cell.dataset.product=product;
+        cell.setAttribute('aria-label',`${row} times ${column} equals ${product}; play ${powerText(factors)}`);
+        if(factors.length){ const inner=document.createElement('span'); inner.className='ppm-inner'; factors.forEach((prime,index)=>{ const piece=document.createElement('span'); piece.className=`ppm-piece p${prime}`; piece.style.setProperty('--shift-x',`${seedValue(low,high,index,7)}%`); piece.style.setProperty('--shift-y',`${seedValue(low,high,index,41)}%`); piece.style.setProperty('--facet-x',`${seedValue(low,high,index,13)-50}%`); piece.style.setProperty('--facet-y',`${seedValue(low,high,index,61)-50}%`); inner.appendChild(piece); }); cell.appendChild(inner); }
+        const numeral=document.createElement('span'); numeral.className='ppm-numeral'; numeral.textContent=product; cell.appendChild(numeral);
+        cells.set(`${row},${column}`,cell);
+        cell.addEventListener('click',()=>{
+          if(mode!=='explore') return;
+          const notes=(factors.length?notesFor(factors):[{name:'C2'}]).map(note=>note.name).join(' · '); const twin=cells.get(`${column},${row}`);
+          readout.textContent=factors.length?`${row} × ${column} = ${column} × ${row} = ${product} = ${powerText(factors)}  ·  ${notes}`:`1 × 1 = 1 · unity · C2`;
+          playFactors(factors,cell,twin);
+        });
+        grid.appendChild(cell);
+      }
+    }
+    grid.addEventListener('pointerdown',event=>{
+      if(mode!=='paths') return; const cell=event.target.closest('.ppm-cell'); if(!cell) return;
+      event.preventDefault(); clearVisuals(); clearFactorDisplay(); clearSpecialDisplays(); pathActive=true; visitPathCell(cell);
+    });
+    grid.addEventListener('pointermove',event=>{
+      if(mode!=='paths'||!pathActive) return; const target=document.elementFromPoint(event.clientX,event.clientY); const cell=target?.closest?.('.ppm-cell');
+      if(cell&&grid.contains(cell)) visitPathCell(cell);
+    });
+    window.addEventListener('pointerup',()=>{ pathActive=false; });
+    root.querySelectorAll('[data-prime]').forEach(button=>button.addEventListener('click',async()=>{
+      const prime=Number(button.dataset.prime); const engine=createAudio(); if(!engine) return; await engine.ctx.resume(); clearVisuals();
+      if(mode==='compose'){
+        if(resultCommitted){ composition=[]; clearVisuals(); clearFactorDisplay(); resultCommitted=false; }
+        if(composition.length>=10){ readout.textContent='Ten prime pieces are enough for this experiment.'; return; }
+        composition.push(prime); clearFactorDisplay(); renderComposition();
+        readout.textContent=`Added ${prime} · ${primeInfo[prime].note}3`;
+        pianoNote(notesFor([prime])[0],engine.ctx.currentTime+.04,2.6,.32); return;
+      }
+      readout.textContent=`Prime ${prime} · ${primeInfo[prime].note}3 · glowing wherever it appears`;
+      const pieces=[...root.querySelectorAll(`.ppm-piece.p${prime}`)]; pieces.forEach((piece,index)=>later(()=>piece.classList.add('family-glow'),Math.min(420,index*5)));
+      pianoNote(notesFor([prime])[0],engine.ctx.currentTime+.04,4.2,.36);
+      later(()=>pieces.forEach(piece=>piece.classList.remove('family-glow')),1900);
+    }));
+    modeButtons.forEach(button=>button.addEventListener('click',()=>{
+      if(button.dataset.mode==='squares'&&mode==='squares') playSquares(); else setMode(button.dataset.mode);
+    }));
+    undoButton.addEventListener('click',()=>{ if(resultCommitted){ composition=[]; resultCommitted=false; } else composition.pop(); clearFactorDisplay(); renderComposition(); });
+    clearButton.addEventListener('click',()=>{ composition=[]; resultCommitted=false; clearVisuals(); clearFactorDisplay(); renderComposition(); readout.textContent='Choose prime colors, then press =.'; });
+    equalsButton.addEventListener('click',()=>{
+      if(!composition.length) return; const product=composition.reduce((total,prime)=>total*prime,1);
+      renderComposition(product); const productCells=revealProduct(product); playFactors(composition,null,null,productCells); resultCommitted=true;
+    });
+    window.addEventListener('resize',()=>{ if(activePairs.length) drawFactorRectangles(); });
+  })();
+</script>
+</main>
+</body>
+</html>
