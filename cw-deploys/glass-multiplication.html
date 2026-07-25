@@ -11,7 +11,7 @@
     button,output { font:inherit; }
     button { color:inherit; }
     [hidden] { display:none !important; }
-    .cw-page { width:min(760px,100%); margin:0 auto; }
+    .cw-page { width:min(960px,100%); margin:0 auto; }
     .cw-home { display:inline-block; margin:0 0 12px; color:#546A80; font-size:12px; text-decoration:none; letter-spacing:.03em; }
     .cw-home:hover { color:#3D3D3A; }
     .card { padding:7px 10px; color:#546A80; background:rgba(244,241,232,.88); border:.5px solid #c8b89a; border-radius:6px; }
@@ -29,29 +29,35 @@
 <main class="cw-page">
 <a class="cw-home" href="index.html">The Curious Woods</a>
 <div id="playable-prime-mosaic">
-  <div class="card" id="ppm-readout" aria-live="polite">Choose any glass tile, or touch a prime below.</div>
   <div class="viz-controls ppm-modebar" aria-label="Ways to explore the table">
-    <button class="btn" type="button" data-mode="explore" aria-pressed="true">Explore</button>
-    <button class="btn" type="button" data-mode="compose" aria-pressed="false">Compose</button>
+    <button class="btn" type="button" data-mode="build" aria-pressed="true">Build</button>
+    <button class="btn" type="button" data-mode="explore" aria-pressed="false">Explore</button>
     <button class="btn" type="button" data-mode="squares" aria-pressed="false">Squares</button>
     <button class="btn" type="button" data-mode="paths" aria-pressed="false">Paths</button>
   </div>
-  <div class="ppm-compose-bar" id="ppm-compose-panel" hidden>
-    <output id="ppm-expression" aria-live="polite">Touch Compose, then choose primes.</output>
-    <div class="viz-row">
-      <button class="btn" id="ppm-undo" type="button" disabled>Undo</button>
-      <button class="btn btn-primary" id="ppm-equals" type="button" disabled>=</button>
-      <button class="btn btn-ghost" id="ppm-clear" type="button" disabled>Clear</button>
+  <div class="ppm-stage">
+    <aside class="ppm-instrument">
+      <output id="ppm-expression" aria-live="polite">unity</output>
+      <div id="ppm-readout" aria-live="polite">Choose a prime to begin.</div>
+      <div class="ppm-decoder" aria-label="Prime glass">
+        <button class="btn ppm-key" type="button" data-prime="2"><span class="ppm-swatch p2"></span><span><strong>2</strong><small>Gaudí cobalt</small></span></button>
+        <button class="btn ppm-key" type="button" data-prime="3"><span class="ppm-swatch p3"></span><span><strong>3</strong><small>silver-stain gold</small></span></button>
+        <button class="btn ppm-key" type="button" data-prime="5"><span class="ppm-swatch p5"></span><span><strong>5</strong><small>copper green</small></span></button>
+        <button class="btn ppm-key" type="button" data-prime="7"><span class="ppm-swatch p7"></span><span><strong>7</strong><small>Gaudí ruby</small></span></button>
+      </div>
+      <div class="ppm-side-actions">
+        <button class="btn" id="ppm-numbers" type="button" aria-pressed="false">show numbers</button>
+        <button class="btn" id="ppm-empty" type="button">begin again</button>
+      </div>
+    </aside>
+    <div class="ppm-board">
+      <div id="ppm-y-axis" class="ppm-y-axis" aria-label="Rows"></div>
+      <div id="ppm-grid" class="ppm-grid" aria-label="Glass multiplication table"></div>
+      <span aria-hidden="true"></span>
+      <div id="ppm-x-axis" class="ppm-x-axis" aria-label="Columns"></div>
     </div>
   </div>
-  <div id="ppm-grid" class="ppm-grid" aria-label="Playable numberless multiplication mosaic"></div>
-  <div class="ppm-decoder" aria-label="Playable prime decoder">
-    <button class="btn ppm-key" type="button" data-prime="2"><span class="ppm-swatch p2"></span><span><strong>2 · C</strong><small>Gaudí cobalt</small></span></button>
-    <button class="btn ppm-key" type="button" data-prime="3"><span class="ppm-swatch p3"></span><span><strong>3 · E</strong><small>silver-stain gold</small></span></button>
-    <button class="btn ppm-key" type="button" data-prime="5"><span class="ppm-swatch p5"></span><span><strong>5 · G</strong><small>copper green</small></span></button>
-    <button class="btn ppm-key" type="button" data-prime="7"><span class="ppm-swatch p7"></span><span><strong>7 · B</strong><small>Gaudí ruby</small></span></button>
-  </div>
-  <p class="text-small text-muted">Touch the glass, compose with primes, awaken the squares, or trace a musical path.</p>
+  <p class="text-small text-muted">Build the glass from unity, then explore what you have made.</p>
 </div>
 
 <style>
@@ -65,12 +71,19 @@
     --p5a:#17351B; --p5b:#326924; --p5c:#4A8A30; --p5d:#8DC36A;
     --p7a:#48100C; --p7b:#781F13; --p7c:#A83018; --p7d:#DF7555;
   }
-  #playable-prime-mosaic .card { margin-bottom: .65rem; text-align: center; font-variant-numeric: tabular-nums; }
+  #playable-prime-mosaic .ppm-stage { display:grid; grid-template-columns:minmax(145px,180px) minmax(0,1fr); gap:18px; align-items:start; }
+  #playable-prime-mosaic .ppm-instrument { padding-top:24px; min-width:0; }
+  #playable-prime-mosaic #ppm-expression { display:block; min-height:2.5em; margin-bottom:5px; color:#3D3D3A; font-size:15px; line-height:1.3; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+  #playable-prime-mosaic #ppm-expression.miss { color:#a09880; }
+  #playable-prime-mosaic #ppm-readout { min-height:3.3em; margin-bottom:14px; color:#546A80; font-size:11px; line-height:1.45; }
+  #playable-prime-mosaic .ppm-board { display:grid; grid-template-columns:24px minmax(0,1fr); grid-template-rows:minmax(0,1fr) 24px; align-items:stretch; }
   #playable-prime-mosaic .ppm-grid { position:relative; width:100%; aspect-ratio:1; display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); grid-template-rows:repeat(10,minmax(0,1fr)); gap:4px; padding:4px; background:var(--lead); }
   #playable-prime-mosaic.mode-paths .ppm-grid { touch-action:none; }
   #playable-prime-mosaic .ppm-modebar { justify-content:center; margin:0 0 .65rem; }
-  #playable-prime-mosaic .ppm-compose-bar { display:flex; align-items:center; justify-content:space-between; gap:.6rem; margin:0 0 .65rem; flex-wrap:wrap; }
-  #playable-prime-mosaic #ppm-expression { flex:1 1 15rem; text-align:center; font-variant-numeric:tabular-nums; }
+  #playable-prime-mosaic .ppm-x-axis { display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); align-items:center; gap:4px; padding:0 4px; }
+  #playable-prime-mosaic .ppm-y-axis { display:grid; grid-template-rows:repeat(10,minmax(0,1fr)); align-items:center; gap:4px; padding:4px 0; }
+  #playable-prime-mosaic .ppm-axis-key { appearance:none; border:0; padding:0; background:transparent; color:#8d897f; font:11px Georgia,serif; cursor:pointer; }
+  #playable-prime-mosaic .ppm-axis-key:hover,#playable-prime-mosaic .ppm-axis-key:focus-visible,#playable-prime-mosaic .ppm-axis-key.playing { color:#3D3D3A; outline:none; }
   #playable-prime-mosaic .ppm-factor-cell { outline:3px solid rgb(255 248 205 / .98); outline-offset:-3px; z-index:4; }
   #playable-prime-mosaic .ppm-factor-cell .ppm-piece { filter:saturate(1.38) brightness(1.32); }
   #playable-prime-mosaic .ppm-rectangle { position:absolute; left:4px; bottom:4px; border:3px solid rgb(255 239 142 / .96); outline:1px solid rgb(7 9 14 / .9); outline-offset:0; background:rgb(255 226 86 / .045); box-shadow:0 0 8px rgb(255 229 111 / .72),inset 0 0 9px rgb(255 229 111 / .28); pointer-events:none; z-index:7; }
@@ -79,32 +92,46 @@
   #playable-prime-mosaic .ppm-square-frame.current { border-color:rgb(255 246 194 / .98); box-shadow:0 0 11px rgb(255 231 127 / .76),inset 0 0 8px rgb(255 231 127 / .25); }
   #playable-prime-mosaic .ppm-path-cell { outline:3px solid rgb(159 230 255 / .96); outline-offset:-3px; z-index:4; }
   #playable-prime-mosaic .ppm-path-cell .ppm-piece { filter:saturate(1.35) brightness(1.28); }
-  #playable-prime-mosaic .ppm-cell { position:relative; overflow:hidden; border:0; padding:0; margin:0; min-width:0; background:#B5AE9F; cursor:pointer; }
+  #playable-prime-mosaic .ppm-cell { position:relative; overflow:hidden; border:0; padding:0; margin:0; min-width:0; background:#ece8dd; cursor:pointer; transition:background 240ms ease; }
   #playable-prime-mosaic .ppm-cell:focus-visible { outline:3px solid var(--ring); outline-offset:-3px; }
-  #playable-prime-mosaic .ppm-inner { position:absolute; inset:0; display:flex; flex-direction:column; gap:1px; pointer-events:none; }
+  #playable-prime-mosaic .ppm-inner { position:absolute; inset:0; display:flex; flex-direction:column; gap:1px; pointer-events:none; opacity:0; transform:scale(.9); transition:opacity 360ms ease,transform 420ms cubic-bezier(.2,.8,.2,1); }
+  #playable-prime-mosaic .ppm-cell.built .ppm-inner { opacity:1; transform:scale(1); }
   #playable-prime-mosaic .ppm-cell.mirrored .ppm-inner { transform:rotate(-90deg) scaleY(-1); }
+  #playable-prime-mosaic .ppm-cell.mirrored.built .ppm-inner { transform:rotate(-90deg) scaleY(-1); }
   #playable-prime-mosaic .ppm-cell.diagonal .ppm-inner { inset:-24%; transform:rotate(-45deg); }
+  #playable-prime-mosaic .ppm-cell.diagonal.built .ppm-inner { transform:rotate(-45deg); }
   #playable-prime-mosaic .ppm-cell.diagonal { box-shadow:inset 0 0 0 1px #81796B; }
   #playable-prime-mosaic .ppm-piece { flex:1 1 0; min-height:0; position:relative; overflow:hidden; background-size:155% 155%; background-position:var(--shift-x) var(--shift-y); box-shadow:inset 0 0 12px rgb(0 0 0 / .2); transition:filter 120ms ease; }
   #playable-prime-mosaic .ppm-piece::before { content:""; position:absolute; inset:-15%; background:linear-gradient(31deg,transparent 0 25%,rgb(0 0 0/.16) 26% 28%,transparent 29% 62%,rgb(0 0 0/.11) 63% 65%,transparent 66%),linear-gradient(139deg,transparent 0 38%,rgb(0 0 0/.13) 39% 41%,transparent 42% 76%,rgb(0 0 0/.09) 77% 79%,transparent 80%); transform:translate(var(--facet-x),var(--facet-y)); }
   #playable-prime-mosaic .ppm-piece.sounding, #playable-prime-mosaic .ppm-cell.sounding .ppm-piece { filter:saturate(1.45) brightness(1.32); }
   #playable-prime-mosaic .ppm-cell.sounding { outline:2px solid rgb(255 246 205 / .95); outline-offset:-2px; z-index:2; }
   #playable-prime-mosaic .ppm-piece.family-glow { filter:saturate(1.25) brightness(1.22); box-shadow:inset 0 0 8px rgb(255 255 255 / .2),0 0 7px rgb(255 244 189 / .3); z-index:2; }
-  #playable-prime-mosaic .ppm-numeral { position:absolute; top:5%; right:7%; z-index:3; color:rgb(255 252 229 / .96); font-size:clamp(11px,2.5vw,22px); font-weight:500; line-height:1; text-shadow:0 1px 3px rgb(0 0 0 / .9),0 0 7px rgb(255 244 190 / .75); opacity:0; transform:translateY(-2px); transition:opacity 180ms ease,transform 180ms ease; pointer-events:none; }
+  #playable-prime-mosaic .ppm-numeral { position:absolute; top:5%; right:7%; z-index:3; color:#54514a; font-size:clamp(11px,2.2vw,20px); font-weight:500; line-height:1; text-shadow:none; opacity:0; transform:translateY(-2px); transition:opacity 180ms ease,transform 180ms ease; pointer-events:none; }
+  #playable-prime-mosaic .ppm-cell.built .ppm-numeral { color:rgb(255 252 229 / .96); text-shadow:0 1px 3px rgb(0 0 0 / .9),0 0 7px rgb(255 244 190 / .75); }
   #playable-prime-mosaic .ppm-cell.revealed .ppm-numeral { opacity:1; transform:translateY(0); }
+  #playable-prime-mosaic.show-numbers .ppm-cell .ppm-numeral { opacity:.78; transform:translateY(0); }
+  #playable-prime-mosaic.show-numbers .ppm-cell.built .ppm-numeral { opacity:.92; }
   #playable-prime-mosaic .p2 { background-image:radial-gradient(circle at 70% 28%,var(--p2d),transparent 28%),linear-gradient(137deg,var(--p2a),var(--p2b) 35%,var(--p2c) 68%,var(--p2b)); }
   #playable-prime-mosaic .p3 { background-image:radial-gradient(circle at 32% 26%,var(--p3d),transparent 27%),linear-gradient(145deg,var(--p3a),var(--p3b) 34%,var(--p3c) 69%,var(--p3b)); }
   #playable-prime-mosaic .p5 { background-image:radial-gradient(circle at 66% 30%,var(--p5d),transparent 27%),linear-gradient(132deg,var(--p5a),var(--p5b) 34%,var(--p5c) 68%,var(--p5b)); }
   #playable-prime-mosaic .p7 { background-image:radial-gradient(circle at 34% 24%,var(--p7d),transparent 26%),linear-gradient(141deg,var(--p7a),var(--p7b) 35%,var(--p7c) 69%,var(--p7b)); }
-  #playable-prime-mosaic .ppm-cell.clear { background:radial-gradient(circle at 44% 40%,#F0ECE1,#C8C1B4 68%,#948D80); }
-  #playable-prime-mosaic .ppm-decoder { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.55rem; margin-top:.7rem; }
+  #playable-prime-mosaic .ppm-cell.clear.built { background:radial-gradient(circle at 44% 40%,#F0ECE1,#C8C1B4 68%,#948D80); }
+  #playable-prime-mosaic .ppm-decoder { display:grid; grid-template-columns:1fr; gap:7px; }
   #playable-prime-mosaic .ppm-key { display:flex; align-items:center; justify-content:flex-start; gap:.5rem; min-width:0; }
   #playable-prime-mosaic .ppm-key > span:last-child { display:flex; flex-direction:column; align-items:flex-start; min-width:0; }
   #playable-prime-mosaic .ppm-key strong { font-weight:500; }
   #playable-prime-mosaic .ppm-key small { color:var(--muted-foreground); }
   #playable-prime-mosaic .ppm-swatch { width:2rem; height:2rem; flex:0 0 2rem; border:2px solid var(--lead); box-shadow:inset 0 0 8px rgb(0 0 0/.24); }
+  #playable-prime-mosaic .ppm-side-actions { display:flex; flex-direction:column; align-items:flex-start; gap:3px; margin-top:15px; }
   #playable-prime-mosaic p { margin:.5rem 0 0; text-align:center; }
-  @media(max-width:520px){ #playable-prime-mosaic .ppm-grid{gap:2px;padding:2px} #playable-prime-mosaic .ppm-inner{gap:0} #playable-prime-mosaic .ppm-decoder{grid-template-columns:repeat(2,minmax(0,1fr))} #playable-prime-mosaic .ppm-compose-bar{align-items:stretch} #playable-prime-mosaic #ppm-expression{text-align:left;flex-basis:100%} }
+  @media(max-width:680px){
+    #playable-prime-mosaic .ppm-stage{grid-template-columns:1fr;gap:8px}
+    #playable-prime-mosaic .ppm-instrument{padding-top:0;display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,2fr);gap:5px 12px;align-items:start}
+    #playable-prime-mosaic #ppm-expression,#playable-prime-mosaic #ppm-readout{grid-column:1}
+    #playable-prime-mosaic .ppm-decoder{grid-column:2;grid-row:1 / span 3;grid-template-columns:repeat(2,minmax(0,1fr))}
+    #playable-prime-mosaic .ppm-side-actions{grid-column:1;margin-top:0}
+  }
+  @media(max-width:520px){ #playable-prime-mosaic .ppm-grid{gap:2px;padding:2px} #playable-prime-mosaic .ppm-inner{gap:0} #playable-prime-mosaic .ppm-board{grid-template-columns:20px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 20px} #playable-prime-mosaic .ppm-key small{display:none} }
   @media(prefers-reduced-motion:reduce){ #playable-prime-mosaic .ppm-piece,#playable-prime-mosaic .ppm-numeral,#playable-prime-mosaic .ppm-square-frame{transition:none} }
 </style>
 
@@ -114,11 +141,11 @@
     const grid = root.querySelector('#ppm-grid');
     const readout = root.querySelector('#ppm-readout');
     const modeButtons = [...root.querySelectorAll('[data-mode]')];
-    const composePanel = root.querySelector('#ppm-compose-panel');
     const expression = root.querySelector('#ppm-expression');
-    const undoButton = root.querySelector('#ppm-undo');
-    const equalsButton = root.querySelector('#ppm-equals');
-    const clearButton = root.querySelector('#ppm-clear');
+    const xAxis = root.querySelector('#ppm-x-axis');
+    const yAxis = root.querySelector('#ppm-y-axis');
+    const numbersButton = root.querySelector('#ppm-numbers');
+    const emptyButton = root.querySelector('#ppm-empty');
     const primeInfo = {
       2:{ midi:48, note:'C', pan:-.32 },
       3:{ midi:52, note:'E', pan:-.1 },
@@ -128,10 +155,12 @@
     let audio = null;
     let visualTimers = [];
     const cells = new Map();
-    let mode = 'explore';
+    let mode = 'build';
     let composition = [];
     let activePairs = [];
-    let resultCommitted = false;
+    let expressionTimer = null;
+    let builtProducts = new Set([1]);
+    let emptyArmed = false;
     let pathActive = false;
     let pathStart = null;
     let pathAxis = null;
@@ -190,6 +219,14 @@
       for(let i=0;i<noiseLength;i++) noise[i]=(Math.random()*2-1)*Math.pow(1-i/noiseLength,2);
       const strike=ctx.createBufferSource(); const strikeFilter=ctx.createBiquadFilter(); const strikeGain=ctx.createGain(); strike.buffer=noiseBuffer; strikeFilter.type='bandpass'; strikeFilter.frequency.value=Math.min(6500,freq*5); strikeFilter.Q.value=.7; strikeGain.gain.value=velocity*.16; strike.connect(strikeFilter); strikeFilter.connect(strikeGain); strikeGain.connect(panner); strike.start(when);
     }
+    async function beyondWindowSound(){
+      const engine=createAudio(); if(!engine) return; await engine.ctx.resume();
+      const {ctx,dry,convolver}=engine; const now=ctx.currentTime+.02;
+      const tone=ctx.createOscillator(); const toneGain=ctx.createGain(); tone.type='sine';
+      tone.frequency.setValueAtTime(170,now); tone.frequency.exponentialRampToValueAtTime(92,now+.72);
+      toneGain.gain.setValueAtTime(.0001,now); toneGain.gain.exponentialRampToValueAtTime(.09,now+.025); toneGain.gain.exponentialRampToValueAtTime(.0001,now+.9);
+      tone.connect(toneGain); toneGain.connect(dry); toneGain.connect(convolver); tone.start(now); tone.stop(now+1);
+    }
 
     function clearVisuals(){ visualTimers.forEach(clearTimeout); visualTimers=[]; root.querySelectorAll('.sounding,.family-glow,.revealed').forEach(el=>el.classList.remove('sounding','family-glow','revealed')); }
     function later(fn,ms){ visualTimers.push(setTimeout(fn,ms)); }
@@ -199,10 +236,24 @@
       activePairs=[];
     }
     function renderComposition(result=null){
-      const factorText=composition.length?composition.join(' × '):'Choose prime colors below';
-      expression.textContent=result===null?factorText:`${factorText} = ${result}`;
-      const hasFactors=composition.length>0;
-      undoButton.disabled=!hasFactors; equalsButton.disabled=!hasFactors; clearButton.disabled=!hasFactors;
+      clearTimeout(expressionTimer); expression.classList.remove('miss');
+      if(!composition.length){ expression.textContent='unity'; return; }
+      const factorText=composition.join(' × ');
+      const product=composition.reduce((total,prime)=>total*prime,1);
+      expression.textContent=result===null?(composition.length===1?factorText:`${factorText} = ${product}`):`${factorText} = ${result}`;
+    }
+    function saveBuiltProducts(){
+      try{ localStorage.setItem('cw-glass-multiplication-built-v1',JSON.stringify([...builtProducts])); }catch(error){}
+    }
+    function loadBuiltProducts(){
+      try{
+        const saved=JSON.parse(localStorage.getItem('cw-glass-multiplication-built-v1')||'null');
+        if(Array.isArray(saved)&&saved.length) builtProducts=new Set(saved.filter(value=>Number.isInteger(value)&&value>=1&&value<=100));
+      }catch(error){}
+      builtProducts.add(1);
+    }
+    function applyBuiltProducts(){
+      cells.forEach(cell=>cell.classList.toggle('built',builtProducts.has(Number(cell.dataset.product))));
     }
     function drawFactorRectangles(){
       root.querySelectorAll('.ppm-rectangle').forEach(el=>el.remove());
@@ -276,10 +327,10 @@
     function setMode(next){
       mode=next; modeButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mode===mode)));
       root.classList.toggle('mode-paths',mode==='paths');
-      composePanel.hidden=mode!=='compose'; clearVisuals(); clearFactorDisplay(); clearSpecialDisplays();
-      composition=[]; resultCommitted=false; renderComposition();
+      clearVisuals(); clearFactorDisplay(); clearSpecialDisplays();
+      composition=[]; renderComposition();
+      if(mode==='build') readout.textContent='Build · choose primes and awaken the empty glass.';
       if(mode==='explore') readout.textContent='Explore · choose any glass tile or prime color.';
-      if(mode==='compose') readout.textContent='Compose · choose prime colors, then press =.';
       if(mode==='squares'){ readout.textContent='Squares · watch the nested squares grow from unity.'; playSquares(); }
       if(mode==='paths') readout.textContent='Paths · drag through a row, column, or diagonal.';
     }
@@ -302,6 +353,46 @@
       const count=seen.size;
       readout.textContent=count?`${product} makes ${count} visible factor ${count===1?'pair':'pairs'} — each rectangle is reflected across the diagonal.`:`${product} has no complete factor rectangle inside this 10 × 10 window.`;
       return productCells;
+    }
+    function emptyCellsForProduct(product){
+      return [...cells.values()].filter(cell=>Number(cell.dataset.product)===product&&!cell.classList.contains('built'));
+    }
+    function hasReachableEmptyProduct(product){
+      const queue=[product]; const seen=new Set(queue);
+      while(queue.length){
+        const current=queue.shift();
+        for(const prime of [2,3,5,7]){
+          const next=current*prime;
+          if(next>100||seen.has(next)) continue;
+          if(emptyCellsForProduct(next).length) return true;
+          seen.add(next); queue.push(next);
+        }
+      }
+      return false;
+    }
+    function completeBuild(product,matchedCells,factors){
+      builtProducts.add(product); matchedCells.forEach(cell=>cell.classList.add('built'));
+      saveBuiltProducts(); renderComposition(product);
+      readout.textContent=matchedCells.length===1?`${product} has found its place.`:`${product} appears in ${matchedCells.length} places.`;
+      playFactors(factors,null,null,matchedCells);
+      composition=[];
+      expressionTimer=setTimeout(()=>{ expression.textContent='unity'; readout.textContent='Choose another prime.'; },1800);
+    }
+    function releaseBuild(product){
+      const factorText=composition.join(' × ');
+      expression.textContent=`${factorText} = ${product}`;
+      expression.classList.add('miss');
+      readout.textContent='That number continues beyond this window.';
+      beyondWindowSound(); composition=[];
+      expressionTimer=setTimeout(()=>{ expression.classList.remove('miss'); expression.textContent='unity'; readout.textContent='Choose another prime.'; },1700);
+    }
+    function addPrimeToBuild(prime){
+      clearTimeout(expressionTimer); composition.push(prime); renderComposition();
+      const product=composition.reduce((total,value)=>total*value,1);
+      const matchedCells=emptyCellsForProduct(product);
+      if(matchedCells.length){ completeBuild(product,matchedCells,[...composition]); return 'complete'; }
+      if(!hasReachableEmptyProduct(product)){ releaseBuild(product); return 'released'; }
+      readout.textContent=`${product} is already here. Keep building.`; return 'waiting';
     }
     async function playFactors(factors, cell=null, twin=null, productCells=[]){
       const engine=createAudio(); if(!engine) return;
@@ -338,13 +429,36 @@
         cells.set(`${row},${column}`,cell);
         cell.addEventListener('click',()=>{
           if(mode!=='explore') return;
-          const notes=(factors.length?notesFor(factors):[{name:'C2'}]).map(note=>note.name).join(' · '); const twin=cells.get(`${column},${row}`);
-          readout.textContent=factors.length?`${row} × ${column} = ${column} × ${row} = ${product} = ${powerText(factors)}  ·  ${notes}`:`1 × 1 = 1 · unity · C2`;
+          if(!cell.classList.contains('built')){ readout.textContent=`${product} has not entered the glass yet.`; return; }
+          const twin=cells.get(`${column},${row}`);
+          readout.textContent=factors.length?`${row} × ${column} = ${column} × ${row} = ${product} = ${powerText(factors)}`:`1 × 1 = 1 · unity`;
           playFactors(factors,cell,twin);
         });
         grid.appendChild(cell);
       }
     }
+    async function playAxis(kind,value,button){
+      const engine=createAudio(); if(!engine) return; await engine.ctx.resume();
+      clearVisuals(); clearFactorDisplay(); clearSpecialDisplays();
+      root.querySelectorAll('.ppm-axis-key.playing').forEach(key=>key.classList.remove('playing'));
+      button.classList.add('playing');
+      const sequence=[];
+      for(let n=1;n<=10;n++) sequence.push(kind==='row'?cells.get(`${value},${n}`):cells.get(`${n},${value}`));
+      sequence.forEach((cell,index)=>later(()=>{
+        playNumberPulse(cell,1.35);
+        readout.textContent=kind==='row'?`${value} × ${cell.dataset.column} = ${cell.dataset.product}`:`${cell.dataset.row} × ${value} = ${cell.dataset.product}`;
+      },index*310));
+      later(()=>{ button.classList.remove('playing'); readout.textContent=`${kind==='row'?'Row':'Column'} ${value} completes the same passage.`; },sequence.length*310+500);
+    }
+    for(let value=10;value>=1;value--){
+      const button=document.createElement('button'); button.type='button'; button.className='ppm-axis-key'; button.textContent=value;
+      button.setAttribute('aria-label',`Play row ${value}`); button.addEventListener('click',()=>playAxis('row',value,button)); yAxis.appendChild(button);
+    }
+    for(let value=1;value<=10;value++){
+      const button=document.createElement('button'); button.type='button'; button.className='ppm-axis-key'; button.textContent=value;
+      button.setAttribute('aria-label',`Play column ${value}`); button.addEventListener('click',()=>playAxis('column',value,button)); xAxis.appendChild(button);
+    }
+    loadBuiltProducts(); applyBuiltProducts();
     grid.addEventListener('pointerdown',event=>{
       if(mode!=='paths') return; const cell=event.target.closest('.ppm-cell'); if(!cell) return;
       event.preventDefault(); clearVisuals(); clearFactorDisplay(); clearSpecialDisplays(); pathActive=true; visitPathCell(cell);
@@ -356,26 +470,30 @@
     window.addEventListener('pointerup',()=>{ pathActive=false; });
     root.querySelectorAll('[data-prime]').forEach(button=>button.addEventListener('click',async()=>{
       const prime=Number(button.dataset.prime); const engine=createAudio(); if(!engine) return; await engine.ctx.resume(); clearVisuals();
-      if(mode==='compose'){
-        if(resultCommitted){ composition=[]; clearVisuals(); clearFactorDisplay(); resultCommitted=false; }
-        if(composition.length>=10){ readout.textContent='Ten prime pieces are enough for this experiment.'; return; }
-        composition.push(prime); clearFactorDisplay(); renderComposition();
-        readout.textContent=`Added ${prime} · ${primeInfo[prime].note}3`;
-        pianoNote(notesFor([prime])[0],engine.ctx.currentTime+.04,2.6,.32); return;
+      if(mode==='build'){
+        const buildState=addPrimeToBuild(prime);
+        if(buildState==='waiting') pianoNote(notesFor([prime])[0],engine.ctx.currentTime+.04,2.6,.30);
+        return;
       }
       readout.textContent=`Prime ${prime} · ${primeInfo[prime].note}3 · glowing wherever it appears`;
-      const pieces=[...root.querySelectorAll(`.ppm-piece.p${prime}`)]; pieces.forEach((piece,index)=>later(()=>piece.classList.add('family-glow'),Math.min(420,index*5)));
+      const pieces=[...root.querySelectorAll(`.ppm-cell.built .ppm-piece.p${prime}`)]; pieces.forEach((piece,index)=>later(()=>piece.classList.add('family-glow'),Math.min(420,index*5)));
       pianoNote(notesFor([prime])[0],engine.ctx.currentTime+.04,4.2,.36);
       later(()=>pieces.forEach(piece=>piece.classList.remove('family-glow')),1900);
     }));
     modeButtons.forEach(button=>button.addEventListener('click',()=>{
       if(button.dataset.mode==='squares'&&mode==='squares') playSquares(); else setMode(button.dataset.mode);
     }));
-    undoButton.addEventListener('click',()=>{ if(resultCommitted){ composition=[]; resultCommitted=false; } else composition.pop(); clearFactorDisplay(); renderComposition(); });
-    clearButton.addEventListener('click',()=>{ composition=[]; resultCommitted=false; clearVisuals(); clearFactorDisplay(); renderComposition(); readout.textContent='Choose prime colors, then press =.'; });
-    equalsButton.addEventListener('click',()=>{
-      if(!composition.length) return; const product=composition.reduce((total,prime)=>total*prime,1);
-      renderComposition(product); const productCells=revealProduct(product); playFactors(composition,null,null,productCells); resultCommitted=true;
+    numbersButton.addEventListener('click',()=>{
+      const showing=root.classList.toggle('show-numbers');
+      numbersButton.setAttribute('aria-pressed',String(showing)); numbersButton.textContent=showing?'hide numbers':'show numbers';
+    });
+    emptyButton.addEventListener('click',()=>{
+      if(!emptyArmed){
+        emptyArmed=true; emptyButton.textContent='begin again?';
+        setTimeout(()=>{ emptyArmed=false; emptyButton.textContent='begin again'; },3000); return;
+      }
+      emptyArmed=false; emptyButton.textContent='begin again'; builtProducts=new Set([1]); saveBuiltProducts(); applyBuiltProducts();
+      setMode('build'); readout.textContent='Unity remains. Choose a prime to begin.';
     });
     window.addEventListener('resize',()=>{ if(activePairs.length) drawFactorRectangles(); });
   })();
