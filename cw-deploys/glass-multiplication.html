@@ -1,502 +1,409 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
   <title>Glass Multiplication · Curious Woods</title>
   <style>
-    * { box-sizing:border-box; }
-    html,body { margin:0; min-height:100%; background:#f4f1e8; color:#3D3D3A; font-family:Georgia,serif; }
-    body { padding:18px 14px 28px; }
-    button,output { font:inherit; }
-    button { color:inherit; }
-    [hidden] { display:none !important; }
-    .cw-page { width:min(960px,100%); margin:0 auto; }
-    .cw-home { display:inline-block; margin:0 0 12px; color:#546A80; font-size:12px; text-decoration:none; letter-spacing:.03em; }
-    .cw-home:hover { color:#3D3D3A; }
-    .card { padding:7px 10px; color:#546A80; background:rgba(244,241,232,.88); border:.5px solid #c8b89a; border-radius:6px; }
-    .viz-controls,.viz-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-    .btn { appearance:none; border:0; border-bottom:1px solid transparent; border-radius:0; padding:4px 3px; background:transparent; color:#546A80; cursor:pointer; }
-    .btn:hover,.btn:focus-visible { color:#3D3D3A; border-bottom-color:#c8b89a; outline:none; }
-    .btn[aria-pressed="true"],.btn-primary { color:#3D3D3A; border-bottom-color:#546A80; }
-    .btn:disabled { opacity:.38; cursor:default; border-bottom-color:transparent; }
-    .text-small { font-size:11px; }
-    .text-muted { color:#a09880; }
-    @media(max-width:520px){ body{padding:10px 7px 20px} }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:#f4f1e8;color:#3d3d3a;font-family:Georgia,serif}
+    body{padding:18px 14px 28px}
+    button,output{font:inherit;color:inherit}
+    button{touch-action:manipulation}
+    [hidden]{display:none!important}
+    .cw-page{width:min(1040px,100%);margin:auto}
+    .cw-home{display:inline-block;margin:0 0 12px;color:#546a80;font-size:12px;text-decoration:none;letter-spacing:.03em}
+    .btn{appearance:none;border:0;border-bottom:1px solid transparent;padding:4px 3px;background:transparent;color:#546a80;cursor:pointer}
+    .btn:hover,.btn:focus-visible{color:#292a28;border-bottom-color:#bcae93;outline:none}
+    .btn[aria-pressed=true],.btn.active{color:#252623;border-bottom-color:#546a80}
+    .text-small{font-size:11px;color:#98917f;text-align:center}
   </style>
 </head>
 <body>
 <main class="cw-page">
-<a class="cw-home" href="index.html">The Curious Woods</a>
-<div id="playable-prime-mosaic">
-  <div class="viz-controls ppm-modebar" aria-label="Ways to explore the table">
-    <button class="btn" type="button" data-mode="build" aria-pressed="true">Build</button>
-    <button class="btn" type="button" data-mode="explore" aria-pressed="false">Explore</button>
-    <button class="btn" type="button" data-mode="squares" aria-pressed="false">Squares</button>
-    <button class="btn" type="button" data-mode="paths" aria-pressed="false">Paths</button>
-  </div>
-  <div class="ppm-stage">
-    <aside class="ppm-instrument">
-      <output id="ppm-expression" aria-live="polite">unity</output>
-      <div id="ppm-readout" aria-live="polite">Choose a prime to begin.</div>
-      <div class="ppm-decoder" aria-label="Prime glass">
-        <button class="btn ppm-key" type="button" data-prime="2"><span class="ppm-swatch p2"></span><span><strong>2</strong><small>Gaudí cobalt</small></span></button>
-        <button class="btn ppm-key" type="button" data-prime="3"><span class="ppm-swatch p3"></span><span><strong>3</strong><small>silver-stain gold</small></span></button>
-        <button class="btn ppm-key" type="button" data-prime="5"><span class="ppm-swatch p5"></span><span><strong>5</strong><small>copper green</small></span></button>
-        <button class="btn ppm-key" type="button" data-prime="7"><span class="ppm-swatch p7"></span><span><strong>7</strong><small>Gaudí ruby</small></span></button>
+  <a class="cw-home" href="index.html">The Curious Woods</a>
+  <section id="glass-map">
+    <nav class="modebar" aria-label="Ways to use the multiplication map">
+      <button class="btn" data-mode="build" aria-pressed="true">Build</button>
+      <button class="btn" data-mode="explore" aria-pressed="false">Explore</button>
+      <button class="btn" data-mode="families" aria-pressed="false">Families</button>
+    </nav>
+
+    <div class="stage">
+      <aside class="instrument">
+        <button class="btn numbers" id="numbers" aria-pressed="false">Show numbers</button>
+        <output class="product" id="product" aria-live="polite">
+          <span class="product-number">1</span>
+          <span class="product-factors">unity</span>
+        </output>
+        <div class="readout" id="readout" aria-live="polite">Choose a prime to begin.</div>
+
+        <div class="decoder" aria-label="Prime glass">
+          <button class="btn prime-key" data-prime="2"><i class="swatch p2"></i><span><strong>2</strong><small>C · Gaudí cobalt</small></span></button>
+          <button class="btn prime-key" data-prime="3"><i class="swatch p3"></i><span><strong>3</strong><small>E · silver-stain gold</small></span></button>
+          <button class="btn prime-key" data-prime="5"><i class="swatch p5"></i><span><strong>5</strong><small>G · copper green</small></span></button>
+          <button class="btn prime-key" data-prime="7"><i class="swatch p7"></i><span><strong>7</strong><small>B · Gaudí ruby</small></span></button>
+        </div>
+
+        <div class="build-tools panel" id="build-tools">
+          <button class="btn" id="build-method">Build by row and column</button>
+          <button class="btn" id="start-over">Start Over</button>
+          <button class="btn" id="fill-map">Fill the Map</button>
+        </div>
+
+        <div class="properties panel" id="properties" hidden>
+          <h2>What this number knows</h2>
+          <div id="property-copy">Choose a panel in the glass.</div>
+        </div>
+
+        <div class="family-tools panel" id="family-tools" hidden>
+          <button class="btn family" data-family="squares">Squares</button>
+          <button class="btn family" data-family="pronics">Pronics</button>
+          <button class="btn family" data-family="powers2">Powers of 2</button>
+          <button class="btn family" data-family="powers3">Powers of 3</button>
+          <button class="btn family" data-family="triangular">Triangular numbers</button>
+          <button class="btn family" data-family="axes">Rows and columns</button>
+          <button class="btn family" data-family="diagonals">Diagonals</button>
+        </div>
+      </aside>
+
+      <div class="map-wrap">
+        <div class="plane" id="plane">
+          <span class="axis-line axis-y" aria-hidden="true"></span>
+          <span class="axis-line axis-x" aria-hidden="true"></span>
+          <span class="origin">0</span>
+          <div class="board">
+            <div class="y-axis" id="y-axis" aria-label="Rows"></div>
+            <div class="grid" id="grid" aria-label="Glass multiplication map"></div>
+            <span></span>
+            <div class="x-axis" id="x-axis" aria-label="Columns"></div>
+          </div>
+        </div>
+        <div class="diagonal-tools" id="diagonal-tools" hidden>
+          <div><span>same difference</span><div id="difference-buttons"></div></div>
+          <div><span>same sum</span><div id="sum-buttons"></div></div>
+        </div>
       </div>
-      <div class="ppm-side-actions">
-        <button class="btn" id="ppm-numbers" type="button" aria-pressed="false">show numbers</button>
-        <button class="btn" id="ppm-empty" type="button">begin again</button>
-      </div>
-    </aside>
-    <div class="ppm-board">
-      <div id="ppm-y-axis" class="ppm-y-axis" aria-label="Rows"></div>
-      <div id="ppm-grid" class="ppm-grid" aria-label="Glass multiplication table"></div>
-      <span aria-hidden="true"></span>
-      <div id="ppm-x-axis" class="ppm-x-axis" aria-label="Columns"></div>
     </div>
-  </div>
-  <p class="text-small text-muted">Build the glass from unity, then explore what you have made.</p>
-</div>
+    <p class="text-small">A small window onto a multiplication map that continues beyond the glass.</p>
+  </section>
 
 <style>
-  #playable-prime-mosaic {
-    --foreground:#3D3D3A;
-    --muted-foreground:#a09880;
-    --ring:#546A80;
-    --lead: #07090E;
-    --p2a:#0A214F; --p2b:#123875; --p2c:#1A4A9A; --p2d:#5B8ED1;
-    --p3a:#594400; --p3b:#927600; --p3c:#C8A800; --p3d:#E9D65C;
-    --p5a:#17351B; --p5b:#326924; --p5c:#4A8A30; --p5d:#8DC36A;
-    --p7a:#48100C; --p7b:#781F13; --p7c:#A83018; --p7d:#DF7555;
+  #glass-map{
+    --lead:#090b0f;--fine-lead:#8b887f;--paper:#f4f1e8;--ink:#3d3d3a;--bluegray:#546a80;
+    --p2a:#0a214f;--p2b:#123875;--p2c:#1a4a9a;--p2d:#5b8ed1;
+    --p3a:#594400;--p3b:#927600;--p3c:#c8a800;--p3d:#e9d65c;
+    --p5a:#17351b;--p5b:#326924;--p5c:#4a8a30;--p5d:#8dc36a;
+    --p7a:#48100c;--p7b:#781f13;--p7c:#a83018;--p7d:#df7555
   }
-  #playable-prime-mosaic .ppm-stage { display:grid; grid-template-columns:minmax(145px,180px) minmax(0,1fr); gap:18px; align-items:start; }
-  #playable-prime-mosaic .ppm-instrument { padding-top:24px; min-width:0; }
-  #playable-prime-mosaic #ppm-expression { display:block; min-height:2.5em; margin-bottom:5px; color:#3D3D3A; font-size:15px; line-height:1.3; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
-  #playable-prime-mosaic #ppm-expression.miss { color:#a09880; }
-  #playable-prime-mosaic #ppm-readout { min-height:3.3em; margin-bottom:14px; color:#546A80; font-size:11px; line-height:1.45; }
-  #playable-prime-mosaic .ppm-board { display:grid; grid-template-columns:24px minmax(0,1fr); grid-template-rows:minmax(0,1fr) 24px; align-items:stretch; }
-  #playable-prime-mosaic .ppm-grid { position:relative; width:100%; aspect-ratio:1; display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); grid-template-rows:repeat(10,minmax(0,1fr)); gap:4px; padding:4px; background:var(--lead); }
-  #playable-prime-mosaic.mode-paths .ppm-grid { touch-action:none; }
-  #playable-prime-mosaic .ppm-modebar { justify-content:center; margin:0 0 .65rem; }
-  #playable-prime-mosaic .ppm-x-axis { display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); align-items:center; gap:4px; padding:0 4px; }
-  #playable-prime-mosaic .ppm-y-axis { display:grid; grid-template-rows:repeat(10,minmax(0,1fr)); align-items:center; gap:4px; padding:4px 0; }
-  #playable-prime-mosaic .ppm-axis-key { appearance:none; border:0; padding:0; background:transparent; color:#8d897f; font:11px Georgia,serif; cursor:pointer; }
-  #playable-prime-mosaic .ppm-axis-key:hover,#playable-prime-mosaic .ppm-axis-key:focus-visible,#playable-prime-mosaic .ppm-axis-key.playing { color:#3D3D3A; outline:none; }
-  #playable-prime-mosaic .ppm-factor-cell { outline:3px solid rgb(255 248 205 / .98); outline-offset:-3px; z-index:4; }
-  #playable-prime-mosaic .ppm-factor-cell .ppm-piece { filter:saturate(1.38) brightness(1.32); }
-  #playable-prime-mosaic .ppm-rectangle { position:absolute; left:4px; bottom:4px; border:3px solid rgb(255 239 142 / .96); outline:1px solid rgb(7 9 14 / .9); outline-offset:0; background:rgb(255 226 86 / .045); box-shadow:0 0 8px rgb(255 229 111 / .72),inset 0 0 9px rgb(255 229 111 / .28); pointer-events:none; z-index:7; }
-  #playable-prime-mosaic .ppm-rectangle.mirror { border-color:rgb(102 220 255 / .94); background:rgb(83 210 255 / .045); box-shadow:0 0 8px rgb(99 219 255 / .68),inset 0 0 9px rgb(99 219 255 / .24); }
-  #playable-prime-mosaic .ppm-square-frame { position:absolute; left:4px; bottom:4px; border:2px solid rgb(255 238 153 / .46); background:transparent; pointer-events:none; z-index:7; transition:opacity 180ms ease,box-shadow 180ms ease; }
-  #playable-prime-mosaic .ppm-square-frame.current { border-color:rgb(255 246 194 / .98); box-shadow:0 0 11px rgb(255 231 127 / .76),inset 0 0 8px rgb(255 231 127 / .25); }
-  #playable-prime-mosaic .ppm-path-cell { outline:3px solid rgb(159 230 255 / .96); outline-offset:-3px; z-index:4; }
-  #playable-prime-mosaic .ppm-path-cell .ppm-piece { filter:saturate(1.35) brightness(1.28); }
-  #playable-prime-mosaic .ppm-cell { position:relative; overflow:hidden; border:0; padding:0; margin:0; min-width:0; background:#ece8dd; cursor:pointer; transition:background 240ms ease; }
-  #playable-prime-mosaic .ppm-cell:focus-visible { outline:3px solid var(--ring); outline-offset:-3px; }
-  #playable-prime-mosaic .ppm-inner { position:absolute; inset:0; display:flex; flex-direction:column; gap:1px; pointer-events:none; opacity:0; transform:scale(.9); transition:opacity 360ms ease,transform 420ms cubic-bezier(.2,.8,.2,1); }
-  #playable-prime-mosaic .ppm-cell.built .ppm-inner { opacity:1; transform:scale(1); }
-  #playable-prime-mosaic .ppm-cell.mirrored .ppm-inner { transform:rotate(-90deg) scaleY(-1); }
-  #playable-prime-mosaic .ppm-cell.mirrored.built .ppm-inner { transform:rotate(-90deg) scaleY(-1); }
-  #playable-prime-mosaic .ppm-cell.diagonal .ppm-inner { inset:-24%; transform:rotate(-45deg); }
-  #playable-prime-mosaic .ppm-cell.diagonal.built .ppm-inner { transform:rotate(-45deg); }
-  #playable-prime-mosaic .ppm-cell.diagonal { box-shadow:inset 0 0 0 1px #81796B; }
-  #playable-prime-mosaic .ppm-piece { flex:1 1 0; min-height:0; position:relative; overflow:hidden; background-size:155% 155%; background-position:var(--shift-x) var(--shift-y); box-shadow:inset 0 0 12px rgb(0 0 0 / .2); transition:filter 120ms ease; }
-  #playable-prime-mosaic .ppm-piece::before { content:""; position:absolute; inset:-15%; background:linear-gradient(31deg,transparent 0 25%,rgb(0 0 0/.16) 26% 28%,transparent 29% 62%,rgb(0 0 0/.11) 63% 65%,transparent 66%),linear-gradient(139deg,transparent 0 38%,rgb(0 0 0/.13) 39% 41%,transparent 42% 76%,rgb(0 0 0/.09) 77% 79%,transparent 80%); transform:translate(var(--facet-x),var(--facet-y)); }
-  #playable-prime-mosaic .ppm-piece.sounding, #playable-prime-mosaic .ppm-cell.sounding .ppm-piece { filter:saturate(1.45) brightness(1.32); }
-  #playable-prime-mosaic .ppm-cell.sounding { outline:2px solid rgb(255 246 205 / .95); outline-offset:-2px; z-index:2; }
-  #playable-prime-mosaic .ppm-piece.family-glow { filter:saturate(1.25) brightness(1.22); box-shadow:inset 0 0 8px rgb(255 255 255 / .2),0 0 7px rgb(255 244 189 / .3); z-index:2; }
-  #playable-prime-mosaic .ppm-numeral { position:absolute; top:5%; right:7%; z-index:3; color:#54514a; font-size:clamp(11px,2.2vw,20px); font-weight:500; line-height:1; text-shadow:none; opacity:0; transform:translateY(-2px); transition:opacity 180ms ease,transform 180ms ease; pointer-events:none; }
-  #playable-prime-mosaic .ppm-cell.built .ppm-numeral { color:rgb(255 252 229 / .96); text-shadow:0 1px 3px rgb(0 0 0 / .9),0 0 7px rgb(255 244 190 / .75); }
-  #playable-prime-mosaic .ppm-cell.revealed .ppm-numeral { opacity:1; transform:translateY(0); }
-  #playable-prime-mosaic.show-numbers .ppm-cell .ppm-numeral { opacity:.78; transform:translateY(0); }
-  #playable-prime-mosaic.show-numbers .ppm-cell.built .ppm-numeral { opacity:.92; }
-  #playable-prime-mosaic .p2 { background-image:radial-gradient(circle at 70% 28%,var(--p2d),transparent 28%),linear-gradient(137deg,var(--p2a),var(--p2b) 35%,var(--p2c) 68%,var(--p2b)); }
-  #playable-prime-mosaic .p3 { background-image:radial-gradient(circle at 32% 26%,var(--p3d),transparent 27%),linear-gradient(145deg,var(--p3a),var(--p3b) 34%,var(--p3c) 69%,var(--p3b)); }
-  #playable-prime-mosaic .p5 { background-image:radial-gradient(circle at 66% 30%,var(--p5d),transparent 27%),linear-gradient(132deg,var(--p5a),var(--p5b) 34%,var(--p5c) 68%,var(--p5b)); }
-  #playable-prime-mosaic .p7 { background-image:radial-gradient(circle at 34% 24%,var(--p7d),transparent 26%),linear-gradient(141deg,var(--p7a),var(--p7b) 35%,var(--p7c) 69%,var(--p7b)); }
-  #playable-prime-mosaic .ppm-cell.clear.built { background:radial-gradient(circle at 44% 40%,#F0ECE1,#C8C1B4 68%,#948D80); }
-  #playable-prime-mosaic .ppm-decoder { display:grid; grid-template-columns:1fr; gap:7px; }
-  #playable-prime-mosaic .ppm-key { display:flex; align-items:center; justify-content:flex-start; gap:.5rem; min-width:0; }
-  #playable-prime-mosaic .ppm-key > span:last-child { display:flex; flex-direction:column; align-items:flex-start; min-width:0; }
-  #playable-prime-mosaic .ppm-key strong { font-weight:500; }
-  #playable-prime-mosaic .ppm-key small { color:var(--muted-foreground); }
-  #playable-prime-mosaic .ppm-swatch { width:2rem; height:2rem; flex:0 0 2rem; border:2px solid var(--lead); box-shadow:inset 0 0 8px rgb(0 0 0/.24); }
-  #playable-prime-mosaic .ppm-side-actions { display:flex; flex-direction:column; align-items:flex-start; gap:3px; margin-top:15px; }
-  #playable-prime-mosaic p { margin:.5rem 0 0; text-align:center; }
-  @media(max-width:680px){
-    #playable-prime-mosaic .ppm-stage{grid-template-columns:1fr;gap:8px}
-    #playable-prime-mosaic .ppm-instrument{padding-top:0;display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,2fr);gap:5px 12px;align-items:start}
-    #playable-prime-mosaic #ppm-expression,#playable-prime-mosaic #ppm-readout{grid-column:1}
-    #playable-prime-mosaic .ppm-decoder{grid-column:2;grid-row:1 / span 3;grid-template-columns:repeat(2,minmax(0,1fr))}
-    #playable-prime-mosaic .ppm-side-actions{grid-column:1;margin-top:0}
+  #glass-map .modebar{display:flex;justify-content:center;gap:14px;margin:0 0 9px}
+  #glass-map .stage{display:grid;grid-template-columns:minmax(164px,190px) minmax(0,1fr);gap:17px;align-items:start}
+  #glass-map .instrument{padding-top:17px;min-width:0}
+  #glass-map .numbers{font-size:12px;margin-bottom:7px;text-transform:none}
+  #glass-map .product{display:flex;min-height:75px;flex-direction:column;justify-content:center;align-items:center;margin-bottom:4px;border-block:1px solid rgba(84,106,128,.18);font-variant-numeric:tabular-nums;text-align:center}
+  #glass-map .product-number{font-size:28px;line-height:1.05;color:#31322f;overflow-wrap:anywhere}
+  #glass-map .product-factors{min-height:1.4em;margin-top:4px;color:#546a80;font-size:15px;line-height:1.25}
+  #glass-map .product.miss .product-number,#glass-map .product.miss .product-factors{color:#999283}
+  #glass-map .readout{min-height:3.8em;margin:7px 0 12px;color:#546a80;font-size:11px;line-height:1.45}
+  #glass-map .decoder{display:grid;gap:6px}
+  #glass-map .prime-key{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-width:0}
+  #glass-map .prime-key>span{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+  #glass-map .prime-key strong{font-weight:500}
+  #glass-map .prime-key small{color:#98917f;white-space:nowrap}
+  #glass-map .swatch{width:30px;height:30px;flex:0 0 30px;border:2px solid var(--lead);box-shadow:inset 0 0 8px rgb(0 0 0/.24)}
+  #glass-map .panel{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-top:15px;padding-top:10px;border-top:1px solid rgba(84,106,128,.17)}
+  #glass-map .properties{display:block;font-size:12px;line-height:1.45;color:#5b5b55}
+  #glass-map .properties h2{margin:0 0 7px;font-size:12px;font-weight:normal;color:#546a80}
+  #glass-map .properties p{margin:0 0 7px}
+  #glass-map .properties strong{font-weight:normal;color:#292a28}
+  #glass-map .family-tools .btn{text-align:left}
+  #glass-map .map-wrap{min-width:0}
+  #glass-map .plane{
+    position:relative;padding:24px 30px 31px 26px;
+    background-color:#f4f1e8;
+    background-image:linear-gradient(rgba(99,105,104,.17) 1px,transparent 1px),linear-gradient(90deg,rgba(99,105,104,.17) 1px,transparent 1px);
+    background-size:calc((100% - 56px)/10) calc((100% - 55px)/10);
+    background-position:26px 24px
   }
-  @media(max-width:520px){ #playable-prime-mosaic .ppm-grid{gap:2px;padding:2px} #playable-prime-mosaic .ppm-inner{gap:0} #playable-prime-mosaic .ppm-board{grid-template-columns:20px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 20px} #playable-prime-mosaic .ppm-key small{display:none} }
-  @media(prefers-reduced-motion:reduce){ #playable-prime-mosaic .ppm-piece,#playable-prime-mosaic .ppm-numeral,#playable-prime-mosaic .ppm-square-frame{transition:none} }
+  #glass-map .board{position:relative;z-index:2;display:grid;grid-template-columns:25px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 25px}
+  #glass-map .grid{position:relative;width:100%;aspect-ratio:1;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(10,minmax(0,1fr));gap:4px;padding:4px;background:var(--lead);box-shadow:0 1px 5px rgb(25 28 31/.24)}
+  #glass-map .axis-line{position:absolute;z-index:1;background:#667177;pointer-events:none}
+  #glass-map .axis-y{left:50px;top:8px;bottom:10px;width:2px}
+  #glass-map .axis-x{left:9px;right:11px;bottom:55px;height:2px}
+  #glass-map .origin{position:absolute;z-index:3;left:39px;bottom:39px;color:#434b50;font-size:11px}
+  #glass-map .x-axis{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));align-items:center;gap:4px;padding:0 4px}
+  #glass-map .y-axis{display:grid;grid-template-rows:repeat(10,minmax(0,1fr));align-items:center;gap:4px;padding:4px 0}
+  #glass-map .axis-key{appearance:none;border:0;padding:0;background:transparent;color:#777970;font:11px Georgia,serif;cursor:pointer}
+  #glass-map .axis-key:hover,#glass-map .axis-key:focus-visible,#glass-map .axis-key.selected,#glass-map .axis-key.playing{color:#222722;outline:none;font-weight:bold}
+  #glass-map .cell{position:relative;overflow:hidden;border:0;padding:0;margin:0;min-width:0;background:#eeece4;cursor:pointer;transition:background 240ms ease,filter 180ms ease}
+  #glass-map .cell:focus-visible{outline:3px solid #546a80;outline-offset:-3px;z-index:5}
+  #glass-map .cell.built{background:var(--fine-lead)}
+  #glass-map .cell.clear.built{background:radial-gradient(circle at 44% 38%,#f4f0e2,#c7bfae 68%,#8d867a)}
+  #glass-map .inner{position:absolute;inset:0;display:flex;flex-direction:column;gap:1px;pointer-events:none;opacity:0;transform:scale(.88);transition:opacity 360ms ease,transform 410ms cubic-bezier(.2,.8,.2,1)}
+  #glass-map .cell.built .inner{opacity:1;transform:scale(1)}
+  #glass-map .cell.mirrored .inner{transform:rotate(-90deg) scaleY(-1)}
+  #glass-map .cell.mirrored.built .inner{transform:rotate(-90deg) scaleY(-1)}
+  #glass-map .cell.diagonal .inner{inset:-24%;transform:rotate(-45deg)}
+  #glass-map .cell.diagonal.built .inner{transform:rotate(-45deg)}
+  #glass-map .cell.diagonal{box-shadow:inset 0 0 0 1px #81796b}
+  #glass-map .piece{flex:1 1 0;min-height:0;position:relative;overflow:hidden;background-size:155% 155%;background-position:var(--sx) var(--sy);box-shadow:inset 0 0 12px rgb(0 0 0/.2);transition:filter 140ms ease}
+  #glass-map .piece:before{content:"";position:absolute;inset:-15%;background:linear-gradient(31deg,transparent 0 25%,rgb(0 0 0/.16) 26% 28%,transparent 29% 62%,rgb(0 0 0/.11) 63% 65%,transparent 66%),linear-gradient(139deg,transparent 0 38%,rgb(0 0 0/.13) 39% 41%,transparent 42% 76%,rgb(0 0 0/.09) 77% 79%,transparent 80%);transform:translate(var(--fx),var(--fy))}
+  #glass-map .p2{background-image:radial-gradient(circle at 70% 28%,var(--p2d),transparent 28%),linear-gradient(137deg,var(--p2a),var(--p2b) 35%,var(--p2c) 68%,var(--p2b))}
+  #glass-map .p3{background-image:radial-gradient(circle at 32% 26%,var(--p3d),transparent 27%),linear-gradient(145deg,var(--p3a),var(--p3b) 34%,var(--p3c) 69%,var(--p3b))}
+  #glass-map .p5{background-image:radial-gradient(circle at 66% 30%,var(--p5d),transparent 27%),linear-gradient(132deg,var(--p5a),var(--p5b) 34%,var(--p5c) 68%,var(--p5b))}
+  #glass-map .p7{background-image:radial-gradient(circle at 34% 24%,var(--p7d),transparent 26%),linear-gradient(141deg,var(--p7a),var(--p7b) 35%,var(--p7c) 69%,var(--p7b))}
+  #glass-map .numeral{position:absolute;top:5%;right:7%;z-index:3;color:#4d4e4a;font-size:clamp(10px,1.8vw,18px);line-height:1;opacity:0;pointer-events:none}
+  #glass-map.show-numbers .numeral,#glass-map .cell.revealed .numeral{opacity:.84}
+  #glass-map .cell.built .numeral{color:rgb(255 252 229/.96);text-shadow:0 1px 3px rgb(0 0 0/.9),0 0 7px rgb(255 244 190/.65)}
+  #glass-map .cell.sounding,#glass-map .cell.family-cell{outline:3px solid rgb(255 246 205/.96);outline-offset:-3px;z-index:5}
+  #glass-map .cell.sounding .piece,#glass-map .cell.family-cell .piece,#glass-map .piece.glow{filter:saturate(1.3) brightness(1.3)}
+  #glass-map .rectangle{position:absolute;left:4px;bottom:4px;border:3px solid rgb(255 239 142/.96);background:rgb(255 226 86/.035);box-shadow:0 0 9px rgb(255 229 111/.72),inset 0 0 8px rgb(255 229 111/.22);pointer-events:none;z-index:7}
+  #glass-map .rectangle.mirror{border-color:rgb(102 220 255/.94);box-shadow:0 0 9px rgb(99 219 255/.68),inset 0 0 8px rgb(99 219 255/.2)}
+  #glass-map .triangle{position:absolute;left:4px;bottom:4px;pointer-events:none;z-index:8;background:linear-gradient(to top right,transparent calc(50% - 1px),rgb(255 244 182/.95) 50%,transparent calc(50% + 1px))}
+  #glass-map .diagonal-tools{margin:4px 30px 0 51px;color:#777970;font-size:10px}
+  #glass-map .diagonal-tools>div{display:grid;grid-template-columns:86px 1fr;align-items:center;margin:3px 0}
+  #glass-map .diagonal-tools>div>div{display:flex;justify-content:space-between;gap:1px}
+  #glass-map .diagonal-button{appearance:none;border:0;background:transparent;color:#657276;font:12px Georgia,serif;cursor:pointer;padding:2px}
+  #glass-map .diagonal-button:hover{color:#111}
+  @media(max-width:710px){
+    #glass-map .stage{grid-template-columns:1fr;gap:7px}
+    #glass-map .instrument{padding-top:0;display:grid;grid-template-columns:minmax(135px,1fr) minmax(0,2fr);gap:4px 12px;align-items:start}
+    #glass-map .numbers,#glass-map .product,#glass-map .readout,#glass-map .panel{grid-column:1}
+    #glass-map .decoder{grid-column:2;grid-row:1/span 5;grid-template-columns:repeat(2,minmax(0,1fr))}
+    #glass-map .prime-key small{white-space:normal}
+  }
+  @media(max-width:520px){
+    body{padding:10px 6px 20px}
+    #glass-map .grid{gap:2px;padding:2px}
+    #glass-map .inner{gap:0}
+    #glass-map .plane{padding-right:7px}
+    #glass-map .axis-x{right:1px}
+    #glass-map .prime-key small{display:none}
+    #glass-map .diagonal-tools{margin-right:7px}
+  }
+  @media(prefers-reduced-motion:reduce){#glass-map .piece,#glass-map .inner,#glass-map .cell{transition:none}}
 </style>
 
 <script>
-  (() => {
-    const root = document.getElementById('playable-prime-mosaic');
-    const grid = root.querySelector('#ppm-grid');
-    const readout = root.querySelector('#ppm-readout');
-    const modeButtons = [...root.querySelectorAll('[data-mode]')];
-    const expression = root.querySelector('#ppm-expression');
-    const xAxis = root.querySelector('#ppm-x-axis');
-    const yAxis = root.querySelector('#ppm-y-axis');
-    const numbersButton = root.querySelector('#ppm-numbers');
-    const emptyButton = root.querySelector('#ppm-empty');
-    const primeInfo = {
-      2:{ midi:48, note:'C', pan:-.32 },
-      3:{ midi:52, note:'E', pan:-.1 },
-      5:{ midi:55, note:'G', pan:.12 },
-      7:{ midi:59, note:'B', pan:.34 }
-    };
-    let audio = null;
-    let visualTimers = [];
-    const cells = new Map();
-    let mode = 'build';
-    let composition = [];
-    let activePairs = [];
-    let expressionTimer = null;
-    let builtProducts = new Set([1]);
-    let emptyArmed = false;
-    let pathActive = false;
-    let pathStart = null;
-    let pathAxis = null;
-    let pathCells = [];
+(() => {
+  const root=document.getElementById('glass-map');
+  const grid=root.querySelector('#grid'), readout=root.querySelector('#readout');
+  const productBox=root.querySelector('#product'), productNumber=productBox.querySelector('.product-number'), productFactors=productBox.querySelector('.product-factors');
+  const xAxis=root.querySelector('#x-axis'), yAxis=root.querySelector('#y-axis');
+  const numbersButton=root.querySelector('#numbers'), startOverButton=root.querySelector('#start-over'), fillButton=root.querySelector('#fill-map');
+  const methodButton=root.querySelector('#build-method'), buildTools=root.querySelector('#build-tools');
+  const properties=root.querySelector('#properties'), propertyCopy=root.querySelector('#property-copy');
+  const familyTools=root.querySelector('#family-tools'), diagonalTools=root.querySelector('#diagonal-tools');
+  const modeButtons=[...root.querySelectorAll('[data-mode]')], familyButtons=[...root.querySelectorAll('[data-family]')];
+  const cells=new Map(), rowButtons=new Map(), columnButtons=new Map();
+  const primeInfo={2:{midi:48,note:'C',pan:-.32},3:{midi:52,note:'E',pan:-.1},5:{midi:55,note:'G',pan:.12},7:{midi:59,note:'B',pan:.34}};
+  let audio=null, mode='build', buildMethod='primes', composition=[], builtProducts=new Set([1]);
+  let visualTimers=[], expressionTimer=null, resetArmed=false, selectedRow=null, selectedColumn=null, activeFamily=null;
+  const storageKey='cw-glass-multiplication-built-v1';
 
-    const factorize = value => {
-      const factors=[]; let remaining=value;
-      [2,3,5,7].forEach(prime=>{ while(remaining%prime===0){ factors.push(prime); remaining/=prime; } });
-      return factors;
-    };
-    const powerText = factors => {
-      if(!factors.length) return '1';
-      return [2,3,5,7].map(prime=>{
-        const count=factors.filter(value=>value===prime).length;
-        return count ? `${prime}${count>1?'⁰¹²³⁴⁵⁶⁷⁸⁹'[count]:''}` : '';
-      }).filter(Boolean).join(' × ');
-    };
-    const notesFor = factors => {
-      const counts={};
-      return factors.map(prime=>{
-        const octaveIndex=counts[prime]||0; counts[prime]=octaveIndex+1;
-        return { prime, midi:primeInfo[prime].midi+12*octaveIndex, name:`${primeInfo[prime].note}${3+octaveIndex}`, pan:primeInfo[prime].pan };
-      });
-    };
-    const frequency = midi => 440*Math.pow(2,(midi-69)/12);
+  const later=(fn,ms)=>visualTimers.push(setTimeout(fn,ms));
+  const factorize=value=>{const out=[];let n=value;[2,3,5,7].forEach(p=>{while(n%p===0){out.push(p);n/=p}});return out};
+  const superscript=n=>String(n).split('').map(d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(d)]).join('');
+  const powerText=factors=>factors.length?[2,3,5,7].map(p=>{const c=factors.filter(v=>v===p).length;return c?`${p}${c>1?superscript(c):''}`:''}).filter(Boolean).join(' × '):'unity';
+  const notesFor=factors=>{const count={};return factors.map(p=>{const octave=count[p]||0;count[p]=octave+1;return{midi:primeInfo[p].midi+12*octave,pan:primeInfo[p].pan}})};
+  const frequency=midi=>440*Math.pow(2,(midi-69)/12);
 
-    function createAudio(){
-      if(audio) return audio;
-      const AudioContextClass=window.AudioContext||window.webkitAudioContext;
-      if(!AudioContextClass){ readout.textContent='This browser does not support interactive audio.'; return null; }
-      const ctx=new AudioContextClass();
-      const compressor=ctx.createDynamicsCompressor();
-      compressor.threshold.value=-18; compressor.knee.value=18; compressor.ratio.value=3; compressor.attack.value=.008; compressor.release.value=.28;
-      const dry=ctx.createGain(); dry.gain.value=.72;
-      const wet=ctx.createGain(); wet.gain.value=.24;
-      const convolver=ctx.createConvolver();
-      const length=Math.floor(ctx.sampleRate*2.6); const impulse=ctx.createBuffer(2,length,ctx.sampleRate);
-      for(let channel=0;channel<2;channel++){
-        const data=impulse.getChannelData(channel);
-        for(let i=0;i<length;i++){ const decay=Math.pow(1-i/length,2.7); data[i]=(Math.random()*2-1)*decay*(channel?0.92:1); }
-      }
-      convolver.buffer=impulse; dry.connect(compressor); convolver.connect(wet); wet.connect(compressor); compressor.connect(ctx.destination);
-      audio={ctx,dry,convolver}; return audio;
+  function createAudio(){
+    if(audio)return audio;
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC){readout.textContent='This browser does not support interactive audio.';return null}
+    const ctx=new AC(), compressor=ctx.createDynamicsCompressor(), dry=ctx.createGain(), wet=ctx.createGain(), convolver=ctx.createConvolver();
+    compressor.threshold.value=-18;compressor.knee.value=18;compressor.ratio.value=3;dry.gain.value=.72;wet.gain.value=.22;
+    const length=Math.floor(ctx.sampleRate*2.4), impulse=ctx.createBuffer(2,length,ctx.sampleRate);
+    for(let c=0;c<2;c++){const data=impulse.getChannelData(c);for(let i=0;i<length;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/length,2.7)}
+    convolver.buffer=impulse;dry.connect(compressor);convolver.connect(wet);wet.connect(compressor);compressor.connect(ctx.destination);
+    return audio={ctx,dry,convolver};
+  }
+  function pianoNote(note,when,duration=3.5,velocity=.3){
+    const e=createAudio();if(!e)return;const voice=e.ctx.createGain(),pan=e.ctx.createStereoPanner();pan.pan.value=note.pan||0;
+    voice.gain.setValueAtTime(.0001,when);voice.gain.exponentialRampToValueAtTime(velocity,when+.009);voice.gain.exponentialRampToValueAtTime(velocity*.34,when+.22);voice.gain.exponentialRampToValueAtTime(.0001,when+duration);
+    voice.connect(pan);pan.connect(e.dry);pan.connect(e.convolver);
+    [[1,1],[2,.23],[3,.11],[4,.045],[5,.018]].forEach(([m,l],i)=>{const o=e.ctx.createOscillator(),g=e.ctx.createGain();o.type='sine';o.frequency.value=frequency(note.midi)*m;o.detune.value=i%2?-.8:.55;g.gain.value=l;o.connect(g);g.connect(voice);o.start(when);o.stop(when+duration+.08)});
+  }
+  async function softMiss(){
+    const e=createAudio();if(!e)return;await e.ctx.resume();const now=e.ctx.currentTime+.02,o=e.ctx.createOscillator(),g=e.ctx.createGain();
+    o.type='sine';o.frequency.setValueAtTime(170,now);o.frequency.exponentialRampToValueAtTime(92,now+.7);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.08,now+.025);g.gain.exponentialRampToValueAtTime(.0001,now+.85);o.connect(g);g.connect(e.dry);g.connect(e.convolver);o.start(now);o.stop(now+.9);
+  }
+  function clearVisuals(){
+    visualTimers.forEach(clearTimeout);visualTimers=[];
+    root.querySelectorAll('.sounding,.family-cell,.glow,.revealed').forEach(el=>el.classList.remove('sounding','family-cell','glow','revealed'));
+    root.querySelectorAll('.rectangle,.triangle').forEach(el=>el.remove());
+  }
+  function setProduct(n=1,factors=[] ,miss=false){
+    clearTimeout(expressionTimer);productBox.classList.toggle('miss',miss);productNumber.textContent=n;productFactors.textContent=powerText(factors);
+  }
+  function resetProductSoon(message='Choose another prime.',delay=1800){
+    clearTimeout(expressionTimer);expressionTimer=setTimeout(()=>{composition=[];productBox.classList.remove('miss');setProduct();readout.textContent=message},delay);
+  }
+  function save(){try{localStorage.setItem(storageKey,JSON.stringify([...builtProducts]))}catch(e){}}
+  function load(){try{const v=JSON.parse(localStorage.getItem(storageKey)||'null');if(Array.isArray(v))builtProducts=new Set(v.filter(n=>Number.isInteger(n)&&n>=1&&n<=100))}catch(e){}builtProducts.add(1)}
+  function applyBuilt(){cells.forEach(c=>c.classList.toggle('built',builtProducts.has(+c.dataset.product)))}
+  function productCells(n,builtOnly=false){return [...cells.values()].filter(c=>+c.dataset.product===n&&(!builtOnly||c.classList.contains('built')))}
+  function visiblePairs(n){
+    const pairs=[];for(let a=1;a<=10;a++)if(n%a===0&&n/a<=10&&a<=n/a)pairs.push([a,n/a]);return pairs;
+  }
+  function frame(width,height,mirror=false,triangle=false){
+    const target=cells.get(`${height},${width}`);if(!target)return null;
+    const gb=grid.getBoundingClientRect(),b=target.getBoundingClientRect(),el=document.createElement('span');
+    el.className=triangle?'triangle':`rectangle${mirror?' mirror':''}`;el.style.width=`${Math.max(0,b.right-gb.left-4)}px`;el.style.height=`${Math.max(0,gb.bottom-b.top-4)}px`;grid.appendChild(el);return el;
+  }
+  async function playFactors(factors,targets=[],duration=2000){
+    const e=createAudio();if(!e)return;await e.ctx.resume();
+    const notes=factors.length?notesFor(factors):[{midi:36,pan:0}],start=e.ctx.currentTime+.04,spacing=.18;
+    notes.forEach((note,i)=>{pianoNote(note,start+i*spacing,2.6,.24);later(()=>targets.forEach(c=>c.querySelectorAll('.piece')[i]?.classList.add('glow')),i*spacing*1000);later(()=>targets.forEach(c=>c.querySelectorAll('.piece')[i]?.classList.remove('glow')),i*spacing*1000+340)});
+    const chord=start+notes.length*spacing+.18;notes.forEach(note=>pianoNote(note,chord,4.2,.21/Math.sqrt(Math.max(1,notes.length/2))));
+    const delay=(chord-e.ctx.currentTime)*1000;later(()=>targets.forEach(c=>c.classList.add('sounding','revealed')),delay);later(()=>targets.forEach(c=>c.classList.remove('sounding')),delay+1100);later(()=>targets.forEach(c=>c.classList.remove('revealed')),delay+duration);
+  }
+  function showAllRectangles(n){
+    visiblePairs(n).forEach(([a,b])=>{frame(a,b,false);if(a!==b)frame(b,a,true)});
+  }
+  function fillProduct(n,factors=factorize(n),message=true){
+    const targets=productCells(n);if(!targets.length)return false;
+    clearVisuals();
+    builtProducts.add(n);targets.forEach(c=>c.classList.add('built'));save();setProduct(n,factors);
+    showAllRectangles(n);playFactors(factors,targets);
+    if(message)readout.textContent=targets.length===1?`${n} has found its place.`:`${n} appears in ${targets.length} places.`;
+    resetProductSoon();return true;
+  }
+  function hasReachableEmpty(n){
+    const q=[n],seen=new Set(q);while(q.length){const v=q.shift();for(const p of [2,3,5,7]){const x=v*p;if(x>100||seen.has(x))continue;if(productCells(x).some(c=>!c.classList.contains('built')))return true;seen.add(x);q.push(x)}}return false;
+  }
+  function addPrime(prime){
+    clearTimeout(expressionTimer);composition.push(prime);const n=composition.reduce((a,b)=>a*b,1);setProduct(n,composition);
+    if(productCells(n).some(c=>!c.classList.contains('built'))){fillProduct(n,[...composition]);composition=[];return}
+    if(!hasReachableEmpty(n)){readout.textContent='That number continues beyond this window.';setProduct(n,composition,true);softMiss();composition=[];resetProductSoon();return}
+    readout.textContent=`${n} is already here. Keep building.`;
+  }
+  function selectAxis(kind,value,button){
+    if(kind==='row'){selectedRow=value;rowButtons.forEach(b=>b.classList.remove('selected'))}
+    else{selectedColumn=value;columnButtons.forEach(b=>b.classList.remove('selected'))}
+    button.classList.add('selected');
+    const a=selectedColumn,b=selectedRow;
+    readout.textContent=a&&b?`${b} × ${a} = ${a*b}`:`Choose a ${kind==='row'?'column':'row'} number.`;
+    if(a&&b){clearVisuals();frame(a,b,false);if(a!==b)frame(b,a,true);fillProduct(a*b);selectedRow=selectedColumn=null;later(()=>root.querySelectorAll('.axis-key.selected').forEach(k=>k.classList.remove('selected')),900)}
+  }
+  function directBuild(cell){
+    const n=+cell.dataset.product;if(cell.classList.contains('built')){readout.textContent=`${n} is already in the glass.`;return}
+    composition=factorize(n);fillProduct(n,[...composition]);composition=[];
+  }
+  function divisorClass(n){
+    if(n===1)return'neither abundant nor deficient';
+    let sum=1;for(let i=2;i<=Math.sqrt(n);i++)if(n%i===0){sum+=i;if(i!==n/i)sum+=n/i}
+    return sum===n?'perfect':sum>n?'abundant':'deficient';
+  }
+  function numberProperties(n){
+    const factors=factorize(n),pairs=visiblePairs(n),sqrt=Math.sqrt(n),square=Number.isInteger(sqrt);
+    const pk=Math.floor((Math.sqrt(1+4*n)-1)/2),pronic=pk*(pk+1)===n;
+    const tk=Math.floor((Math.sqrt(1+8*n)-1)/2),triangular=tk*(tk+1)/2===n;
+    const labels=[];
+    if(n===1)labels.push('unity: the unit that measures every other whole number');
+    if(square)labels.push(`a square: ${sqrt} × ${sqrt}`);
+    if(pronic)labels.push(`a pronic: ${pk} × ${pk+1}, two neighboring sides`);
+    if(triangular)labels.push(`triangular: 1 + 2 + … + ${tk}`);
+    if(factors.length>1&&new Set(factors).size===1)labels.push(`a power of ${factors[0]}`);
+    if(factors.length===2)labels.push('semiprime: the product of two primes');
+    if(n>1)labels.push(divisorClass(n));
+    const below=Math.floor(sqrt)**2,above=Math.ceil(sqrt)**2;
+    if(!square&&n-below<=2)labels.push(`${n-below} more than the square ${below}`);
+    else if(!square&&above-n<=2)labels.push(`${above-n} short of the square ${above}`);
+    const pairText=pairs.length?pairs.map(([a,b])=>`${a} × ${b}`).join(', '):'no complete rectangle in this window';
+    propertyCopy.innerHTML=`<p><strong>${n} = ${powerText(factors)}</strong></p><p>Visible rectangles: ${pairText}</p>${labels.map(x=>`<p>${x}</p>`).join('')}`;
+  }
+  function explore(cell){
+    const n=+cell.dataset.product;if(!cell.classList.contains('built')){propertyCopy.innerHTML=`<p><strong>${n}</strong> has not entered the glass yet.</p>`;readout.textContent='This panel is still empty.';return}
+    clearVisuals();const targets=productCells(n,true);setProduct(n,factorize(n));showAllRectangles(n);playFactors(factorize(n),targets);numberProperties(n);
+    readout.textContent=`Every ${n} is sounding together.`;
+  }
+  async function pulseCell(cell,duration=1350){
+    const n=+cell.dataset.product,targets=productCells(n,true);if(!targets.length)return;
+    setProduct(n,factorize(n));await playFactors(factorize(n),targets,duration);
+  }
+  function playSequence(items,label,frameFn){
+    clearVisuals();let delay=0;
+    items.forEach((item,index)=>{later(()=>{clearVisuals();const n=typeof item==='number'?item:item.n;const targets=productCells(n,true);if(!targets.length)return;if(frameFn)frameFn(item,index);pulseCell(targets[0],950);readout.textContent=`${label}: ${n}`},delay);delay+=760});
+    later(()=>{readout.textContent=`${label} — choose it again to replay.`},delay+250);
+  }
+  function playFamily(name){
+    activeFamily=name;familyButtons.forEach(b=>b.classList.toggle('active',b.dataset.family===name));diagonalTools.hidden=name!=='diagonals';
+    if(name==='squares')playSequence(Array.from({length:10},(_,i)=>({n:(i+1)**2,k:i+1})),'Squares',o=>frame(o.k,o.k));
+    if(name==='pronics')playSequence(Array.from({length:9},(_,i)=>({n:(i+1)*(i+2),a:i+1,b:i+2})),'Pronics',o=>{frame(o.a,o.b);frame(o.b,o.a,true)});
+    if(name==='powers2')playSequence([1,2,4,8,16,32,64],'Powers of 2');
+    if(name==='powers3')playSequence([1,3,9,27,81],'Powers of 3');
+    if(name==='triangular'){
+      const list=[];for(let k=1;k<=13;k++){const n=k*(k+1)/2;if(n<=100)list.push({n,k})}
+      playSequence(list,'Triangular numbers',o=>{frame(o.k,o.k+1);frame(o.k,o.k+1,false,true)});
     }
+    if(name==='axes')readout.textContent='Choose a row or column number at the edge of the glass.';
+    if(name==='diagonals')readout.textContent='Choose an arrow: ↗ keeps the side difference; ↘ keeps the side sum.';
+  }
+  async function playAxis(kind,value,button){
+    const seq=[];for(let n=1;n<=10;n++)seq.push(kind==='row'?cells.get(`${value},${n}`):cells.get(`${n},${value}`));
+    clearVisuals();button.classList.add('playing');seq.forEach((cell,i)=>later(()=>{pulseCell(cell,780);readout.textContent=`${cell.dataset.row} × ${cell.dataset.column} = ${cell.dataset.product}`},i*440));later(()=>button.classList.remove('playing'),seq.length*440+300);
+  }
+  function axisAction(kind,value,button){
+    if(mode==='build'&&buildMethod==='axes')selectAxis(kind,value,button);
+    else if(mode==='families'&&activeFamily==='axes')playAxis(kind,value,button);
+  }
+  function diagonalSequence(type,value){
+    const seq=[];
+    for(let row=1;row<=10;row++)for(let col=1;col<=10;col++){
+      if((type==='difference'&&row-col===value)||(type==='sum'&&row+col===value))seq.push(cells.get(`${row},${col}`));
+    }
+    seq.sort((a,b)=>+a.dataset.column-+b.dataset.column);
+    clearVisuals();seq.forEach((cell,i)=>later(()=>{pulseCell(cell,800);readout.textContent=`${cell.dataset.row} × ${cell.dataset.column} = ${cell.dataset.product}`},i*470));
+  }
+  function setMode(next){
+    mode=next;composition=[];selectedRow=selectedColumn=null;activeFamily=null;clearVisuals();setProduct();
+    modeButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
+    buildTools.hidden=mode!=='build';properties.hidden=mode!=='explore';familyTools.hidden=mode!=='families';diagonalTools.hidden=true;
+    familyButtons.forEach(b=>b.classList.remove('active'));root.querySelectorAll('.axis-key.selected').forEach(k=>k.classList.remove('selected'));
+    if(mode==='build')readout.textContent=buildMethod==='primes'?'Build · choose primes or an empty panel.':'Build · choose one row and one column.';
+    if(mode==='explore')readout.textContent='Explore · choose any glass panel or prime color.';
+    if(mode==='families')readout.textContent='Choose a family of numbers.';
+  }
 
-    function pianoNote(note, when, duration=3.8, velocity=.34){
-      const engine=createAudio(); if(!engine) return;
-      const {ctx,dry,convolver}=engine; const freq=frequency(note.midi);
-      const voice=ctx.createGain(); const panner=ctx.createStereoPanner(); panner.pan.value=note.pan;
-      voice.gain.setValueAtTime(.0001,when); voice.gain.exponentialRampToValueAtTime(velocity,when+.009); voice.gain.exponentialRampToValueAtTime(velocity*.34,when+.22); voice.gain.exponentialRampToValueAtTime(.0001,when+duration);
-      voice.connect(panner); panner.connect(dry); panner.connect(convolver);
-      [[1,1],[2,.23],[3,.11],[4,.045],[5,.018]].forEach(([multiple,level],index)=>{
-        const osc=ctx.createOscillator(); const partial=ctx.createGain(); osc.type='sine'; osc.frequency.value=freq*multiple; osc.detune.value=index%2?-.8:.55; partial.gain.value=level; osc.connect(partial); partial.connect(voice); osc.start(when); osc.stop(when+duration+.08);
-      });
-      const noiseLength=Math.max(1,Math.floor(ctx.sampleRate*.032)); const noiseBuffer=ctx.createBuffer(1,noiseLength,ctx.sampleRate); const noise=noiseBuffer.getChannelData(0);
-      for(let i=0;i<noiseLength;i++) noise[i]=(Math.random()*2-1)*Math.pow(1-i/noiseLength,2);
-      const strike=ctx.createBufferSource(); const strikeFilter=ctx.createBiquadFilter(); const strikeGain=ctx.createGain(); strike.buffer=noiseBuffer; strikeFilter.type='bandpass'; strikeFilter.frequency.value=Math.min(6500,freq*5); strikeFilter.Q.value=.7; strikeGain.gain.value=velocity*.16; strike.connect(strikeFilter); strikeFilter.connect(strikeGain); strikeGain.connect(panner); strike.start(when);
-    }
-    async function beyondWindowSound(){
-      const engine=createAudio(); if(!engine) return; await engine.ctx.resume();
-      const {ctx,dry,convolver}=engine; const now=ctx.currentTime+.02;
-      const tone=ctx.createOscillator(); const toneGain=ctx.createGain(); tone.type='sine';
-      tone.frequency.setValueAtTime(170,now); tone.frequency.exponentialRampToValueAtTime(92,now+.72);
-      toneGain.gain.setValueAtTime(.0001,now); toneGain.gain.exponentialRampToValueAtTime(.09,now+.025); toneGain.gain.exponentialRampToValueAtTime(.0001,now+.9);
-      tone.connect(toneGain); toneGain.connect(dry); toneGain.connect(convolver); tone.start(now); tone.stop(now+1);
-    }
+  const seed=(a,b,i,s)=>(a*37+b*19+i*23+s)%100;
+  for(let row=10;row>=1;row--)for(let column=1;column<=10;column++){
+    const n=row*column,factors=factorize(n),low=Math.min(row,column),high=Math.max(row,column),cell=document.createElement('button');
+    cell.type='button';cell.className=`cell${row>column?' mirrored':''}${row===column?' diagonal':''}${n===1?' clear':''}`;
+    cell.dataset.row=row;cell.dataset.column=column;cell.dataset.product=n;cell.setAttribute('aria-label',`${row} times ${column} equals ${n}`);
+    if(factors.length){const inner=document.createElement('span');inner.className='inner';factors.forEach((p,i)=>{const piece=document.createElement('span');piece.className=`piece p${p}`;piece.style.setProperty('--sx',`${seed(low,high,i,7)}%`);piece.style.setProperty('--sy',`${seed(low,high,i,41)}%`);piece.style.setProperty('--fx',`${seed(low,high,i,13)-50}%`);piece.style.setProperty('--fy',`${seed(low,high,i,61)-50}%`);inner.appendChild(piece)});cell.appendChild(inner)}
+    const numeral=document.createElement('span');numeral.className='numeral';numeral.textContent=n;cell.appendChild(numeral);
+    cells.set(`${row},${column}`,cell);grid.appendChild(cell);
+    cell.addEventListener('click',()=>{if(mode==='build')directBuild(cell);else if(mode==='explore')explore(cell)});
+  }
+  for(let value=10;value>=1;value--){const b=document.createElement('button');b.className='axis-key';b.textContent=value;b.setAttribute('aria-label',`Row ${value}`);b.addEventListener('click',()=>axisAction('row',value,b));yAxis.appendChild(b);rowButtons.set(value,b)}
+  for(let value=1;value<=10;value++){const b=document.createElement('button');b.className='axis-key';b.textContent=value;b.setAttribute('aria-label',`Column ${value}`);b.addEventListener('click',()=>axisAction('column',value,b));xAxis.appendChild(b);columnButtons.set(value,b)}
+  for(let d=-9;d<=9;d++){const b=document.createElement('button');b.className='diagonal-button';b.textContent='↗';b.title=`side difference ${d}`;b.addEventListener('click',()=>diagonalSequence('difference',d));root.querySelector('#difference-buttons').appendChild(b)}
+  for(let s=2;s<=20;s++){const b=document.createElement('button');b.className='diagonal-button';b.textContent='↘';b.title=`side sum ${s}`;b.addEventListener('click',()=>diagonalSequence('sum',s));root.querySelector('#sum-buttons').appendChild(b)}
 
-    function clearVisuals(){ visualTimers.forEach(clearTimeout); visualTimers=[]; root.querySelectorAll('.sounding,.family-glow,.revealed').forEach(el=>el.classList.remove('sounding','family-glow','revealed')); }
-    function later(fn,ms){ visualTimers.push(setTimeout(fn,ms)); }
-    function clearFactorDisplay(){
-      root.querySelectorAll('.ppm-factor-cell').forEach(el=>el.classList.remove('ppm-factor-cell'));
-      root.querySelectorAll('.ppm-rectangle').forEach(el=>el.remove());
-      activePairs=[];
-    }
-    function renderComposition(result=null){
-      clearTimeout(expressionTimer); expression.classList.remove('miss');
-      if(!composition.length){ expression.textContent='unity'; return; }
-      const factorText=composition.join(' × ');
-      const product=composition.reduce((total,prime)=>total*prime,1);
-      expression.textContent=result===null?(composition.length===1?factorText:`${factorText} = ${product}`):`${factorText} = ${result}`;
-    }
-    function saveBuiltProducts(){
-      try{ localStorage.setItem('cw-glass-multiplication-built-v1',JSON.stringify([...builtProducts])); }catch(error){}
-    }
-    function loadBuiltProducts(){
-      try{
-        const saved=JSON.parse(localStorage.getItem('cw-glass-multiplication-built-v1')||'null');
-        if(Array.isArray(saved)&&saved.length) builtProducts=new Set(saved.filter(value=>Number.isInteger(value)&&value>=1&&value<=100));
-      }catch(error){}
-      builtProducts.add(1);
-    }
-    function applyBuiltProducts(){
-      cells.forEach(cell=>cell.classList.toggle('built',builtProducts.has(Number(cell.dataset.product))));
-    }
-    function drawFactorRectangles(){
-      root.querySelectorAll('.ppm-rectangle').forEach(el=>el.remove());
-      const gridBox=grid.getBoundingClientRect();
-      activePairs.forEach(({column,row,mirror})=>{
-        const target=cells.get(`${row},${column}`); if(!target) return;
-        const box=target.getBoundingClientRect();
-        const rectangle=document.createElement('span'); rectangle.className=`ppm-rectangle${mirror?' mirror':''}`;
-        rectangle.style.width=`${Math.max(0,box.right-gridBox.left-4)}px`;
-        rectangle.style.height=`${Math.max(0,gridBox.bottom-box.top-4)}px`;
-        rectangle.setAttribute('aria-hidden','true'); grid.appendChild(rectangle);
-      });
-    }
-    function clearSpecialDisplays(){
-      root.querySelectorAll('.ppm-square-frame').forEach(el=>el.remove());
-      root.querySelectorAll('.ppm-path-cell').forEach(el=>el.classList.remove('ppm-path-cell'));
-      pathActive=false; pathStart=null; pathAxis=null; pathCells=[];
-    }
-    function frameToCell(cell,className){
-      const gridBox=grid.getBoundingClientRect(); const box=cell.getBoundingClientRect();
-      const frame=document.createElement('span'); frame.className=className;
-      frame.style.width=`${Math.max(0,box.right-gridBox.left-4)}px`;
-      frame.style.height=`${Math.max(0,gridBox.bottom-box.top-4)}px`;
-      frame.setAttribute('aria-hidden','true'); grid.appendChild(frame); return frame;
-    }
-    async function playNumberPulse(cell,duration=1.65){
-      const engine=createAudio(); if(!engine) return; await engine.ctx.resume();
-      const factors=factorize(Number(cell.dataset.product));
-      const notes=factors.length?notesFor(factors):[{midi:36,name:'C2',pan:0}];
-      const now=engine.ctx.currentTime+.015;
-      notes.forEach(note=>pianoNote(note,now,duration,.16/Math.sqrt(Math.max(1,notes.length/2))));
-      cell.classList.add('sounding','revealed');
-      setTimeout(()=>cell.classList.remove('sounding'),Math.min(720,duration*500));
-      setTimeout(()=>cell.classList.remove('revealed'),1200);
-    }
-    async function playSquares(){
-      const engine=createAudio(); if(!engine) return; await engine.ctx.resume();
-      clearVisuals(); clearFactorDisplay(); clearSpecialDisplays();
-      for(let n=1;n<=10;n++){
-        later(()=>{
-          root.querySelectorAll('.ppm-square-frame.current').forEach(frame=>frame.classList.remove('current'));
-          const cell=cells.get(`${n},${n}`); if(!cell) return;
-          frameToCell(cell,'ppm-square-frame current'); playNumberPulse(cell,1.9);
-          readout.textContent=`${n} × ${n} = ${n*n} · square ${n} by ${n}`;
-        },(n-1)*720);
-      }
-      later(()=>{ readout.textContent='The diagonal holds the square numbers: 1, 4, 9, 16 … 100.'; },10*720+250);
-    }
-    function pathAllows(cell){
-      if(!pathStart) return true;
-      const row=Number(cell.dataset.row), column=Number(cell.dataset.column);
-      const sr=Number(pathStart.dataset.row), sc=Number(pathStart.dataset.column);
-      if(!pathAxis){
-        const dr=row-sr, dc=column-sc;
-        if(dr===0&&dc!==0) pathAxis='row';
-        else if(dc===0&&dr!==0) pathAxis='column';
-        else if(Math.abs(dr)===Math.abs(dc)&&dr!==0) pathAxis=dr===dc?'diagonal-up':'diagonal-down';
-        else return false;
-      }
-      if(pathAxis==='row') return row===sr;
-      if(pathAxis==='column') return column===sc;
-      if(pathAxis==='diagonal-up') return row-sr===column-sc;
-      return row-sr===-(column-sc);
-    }
-    function visitPathCell(cell){
-      if(!cell||pathCells.includes(cell)||!pathAllows(cell)) return;
-      if(!pathStart) pathStart=cell;
-      pathCells.push(cell); cell.classList.add('ppm-path-cell'); playNumberPulse(cell,1.5);
-      readout.textContent=`${cell.dataset.row} × ${cell.dataset.column} = ${cell.dataset.product} · ${pathAxis||'choose a direction'}`;
-    }
-    function setMode(next){
-      mode=next; modeButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mode===mode)));
-      root.classList.toggle('mode-paths',mode==='paths');
-      clearVisuals(); clearFactorDisplay(); clearSpecialDisplays();
-      composition=[]; renderComposition();
-      if(mode==='build') readout.textContent='Build · choose primes and awaken the empty glass.';
-      if(mode==='explore') readout.textContent='Explore · choose any glass tile or prime color.';
-      if(mode==='squares'){ readout.textContent='Squares · watch the nested squares grow from unity.'; playSquares(); }
-      if(mode==='paths') readout.textContent='Paths · drag through a row, column, or diagonal.';
-    }
-    function revealProduct(product){
-      clearFactorDisplay();
-      const seen=new Set();
-      const productCells=[];
-      for(let width=1;width<=10;width++){
-        if(product%width!==0) continue;
-        const height=product/width; if(height<1||height>10) continue;
-        const key=[Math.min(width,height),Math.max(width,height)].join(','); if(seen.has(key)) continue; seen.add(key);
-        const first=cells.get(`${height},${width}`); const second=cells.get(`${width},${height}`);
-        first?.classList.add('ppm-factor-cell'); second?.classList.add('ppm-factor-cell');
-        if(first&&!productCells.includes(first)) productCells.push(first);
-        if(second&&!productCells.includes(second)) productCells.push(second);
-        activePairs.push({column:width,row:height,mirror:false});
-        if(width!==height) activePairs.push({column:height,row:width,mirror:true});
-      }
-      drawFactorRectangles();
-      const count=seen.size;
-      readout.textContent=count?`${product} makes ${count} visible factor ${count===1?'pair':'pairs'} — each rectangle is reflected across the diagonal.`:`${product} has no complete factor rectangle inside this 10 × 10 window.`;
-      return productCells;
-    }
-    function emptyCellsForProduct(product){
-      return [...cells.values()].filter(cell=>Number(cell.dataset.product)===product&&!cell.classList.contains('built'));
-    }
-    function hasReachableEmptyProduct(product){
-      const queue=[product]; const seen=new Set(queue);
-      while(queue.length){
-        const current=queue.shift();
-        for(const prime of [2,3,5,7]){
-          const next=current*prime;
-          if(next>100||seen.has(next)) continue;
-          if(emptyCellsForProduct(next).length) return true;
-          seen.add(next); queue.push(next);
-        }
-      }
-      return false;
-    }
-    function completeBuild(product,matchedCells,factors){
-      builtProducts.add(product); matchedCells.forEach(cell=>cell.classList.add('built'));
-      saveBuiltProducts(); renderComposition(product);
-      readout.textContent=matchedCells.length===1?`${product} has found its place.`:`${product} appears in ${matchedCells.length} places.`;
-      playFactors(factors,null,null,matchedCells);
-      composition=[];
-      expressionTimer=setTimeout(()=>{ expression.textContent='unity'; readout.textContent='Choose another prime.'; },1800);
-    }
-    function releaseBuild(product){
-      const factorText=composition.join(' × ');
-      expression.textContent=`${factorText} = ${product}`;
-      expression.classList.add('miss');
-      readout.textContent='That number continues beyond this window.';
-      beyondWindowSound(); composition=[];
-      expressionTimer=setTimeout(()=>{ expression.classList.remove('miss'); expression.textContent='unity'; readout.textContent='Choose another prime.'; },1700);
-    }
-    function addPrimeToBuild(prime){
-      clearTimeout(expressionTimer); composition.push(prime); renderComposition();
-      const product=composition.reduce((total,value)=>total*value,1);
-      const matchedCells=emptyCellsForProduct(product);
-      if(matchedCells.length){ completeBuild(product,matchedCells,[...composition]); return 'complete'; }
-      if(!hasReachableEmptyProduct(product)){ releaseBuild(product); return 'released'; }
-      readout.textContent=`${product} is already here. Keep building.`; return 'waiting';
-    }
-    async function playFactors(factors, cell=null, twin=null, productCells=[]){
-      const engine=createAudio(); if(!engine) return;
-      await engine.ctx.resume(); clearVisuals();
-      const notes=factors.length?notesFor(factors):[{midi:36,name:'C2',pan:0}]; const start=engine.ctx.currentTime+.05; const spacing=.18;
-      const soundingCells=productCells.length?productCells:[cell,twin].filter((item,index,list)=>item&&list.indexOf(item)===index);
-      notes.forEach((note,index)=>{
-        pianoNote(note,start+index*spacing,2.6,.25);
-        if(soundingCells.length){
-          const pieces=soundingCells.map(target=>target.querySelectorAll('.ppm-piece')[index]).filter(Boolean);
-          later(()=>pieces.forEach(piece=>piece.classList.add('sounding')),index*spacing*1000);
-          later(()=>pieces.forEach(piece=>piece.classList.remove('sounding')),index*spacing*1000+330);
-        }
-      });
-      const chordTime=start+notes.length*spacing+.2;
-      notes.forEach(note=>pianoNote(note,chordTime,4.5,.22/Math.sqrt(Math.max(1,notes.length/2))));
-      if(soundingCells.length){
-        const chordDelay=(chordTime-engine.ctx.currentTime)*1000;
-        later(()=>soundingCells.forEach(target=>target.classList.add('sounding','revealed')),chordDelay);
-        later(()=>soundingCells.forEach(target=>target.classList.remove('sounding')),chordDelay+1250);
-        later(()=>soundingCells.forEach(target=>target.classList.remove('revealed')),chordDelay+2000);
-      }
-    }
-
-    const seedValue=(low,high,index,salt)=>(low*37+high*19+index*23+salt)%100;
-    for(let row=10;row>=1;row--){
-      for(let column=1;column<=10;column++){
-        const product=row*column; const factors=factorize(product); const low=Math.min(row,column); const high=Math.max(row,column);
-        const cell=document.createElement('button'); cell.type='button'; cell.className=`ppm-cell${row>column?' mirrored':''}${row===column?' diagonal':''}${product===1?' clear':''}`;
-        cell.dataset.row=row; cell.dataset.column=column; cell.dataset.product=product;
-        cell.setAttribute('aria-label',`${row} times ${column} equals ${product}; play ${powerText(factors)}`);
-        if(factors.length){ const inner=document.createElement('span'); inner.className='ppm-inner'; factors.forEach((prime,index)=>{ const piece=document.createElement('span'); piece.className=`ppm-piece p${prime}`; piece.style.setProperty('--shift-x',`${seedValue(low,high,index,7)}%`); piece.style.setProperty('--shift-y',`${seedValue(low,high,index,41)}%`); piece.style.setProperty('--facet-x',`${seedValue(low,high,index,13)-50}%`); piece.style.setProperty('--facet-y',`${seedValue(low,high,index,61)-50}%`); inner.appendChild(piece); }); cell.appendChild(inner); }
-        const numeral=document.createElement('span'); numeral.className='ppm-numeral'; numeral.textContent=product; cell.appendChild(numeral);
-        cells.set(`${row},${column}`,cell);
-        cell.addEventListener('click',()=>{
-          if(mode!=='explore') return;
-          if(!cell.classList.contains('built')){ readout.textContent=`${product} has not entered the glass yet.`; return; }
-          const twin=cells.get(`${column},${row}`);
-          readout.textContent=factors.length?`${row} × ${column} = ${column} × ${row} = ${product} = ${powerText(factors)}`:`1 × 1 = 1 · unity`;
-          playFactors(factors,cell,twin);
-        });
-        grid.appendChild(cell);
-      }
-    }
-    async function playAxis(kind,value,button){
-      const engine=createAudio(); if(!engine) return; await engine.ctx.resume();
-      clearVisuals(); clearFactorDisplay(); clearSpecialDisplays();
-      root.querySelectorAll('.ppm-axis-key.playing').forEach(key=>key.classList.remove('playing'));
-      button.classList.add('playing');
-      const sequence=[];
-      for(let n=1;n<=10;n++) sequence.push(kind==='row'?cells.get(`${value},${n}`):cells.get(`${n},${value}`));
-      sequence.forEach((cell,index)=>later(()=>{
-        playNumberPulse(cell,1.35);
-        readout.textContent=kind==='row'?`${value} × ${cell.dataset.column} = ${cell.dataset.product}`:`${cell.dataset.row} × ${value} = ${cell.dataset.product}`;
-      },index*310));
-      later(()=>{ button.classList.remove('playing'); readout.textContent=`${kind==='row'?'Row':'Column'} ${value} completes the same passage.`; },sequence.length*310+500);
-    }
-    for(let value=10;value>=1;value--){
-      const button=document.createElement('button'); button.type='button'; button.className='ppm-axis-key'; button.textContent=value;
-      button.setAttribute('aria-label',`Play row ${value}`); button.addEventListener('click',()=>playAxis('row',value,button)); yAxis.appendChild(button);
-    }
-    for(let value=1;value<=10;value++){
-      const button=document.createElement('button'); button.type='button'; button.className='ppm-axis-key'; button.textContent=value;
-      button.setAttribute('aria-label',`Play column ${value}`); button.addEventListener('click',()=>playAxis('column',value,button)); xAxis.appendChild(button);
-    }
-    loadBuiltProducts(); applyBuiltProducts();
-    grid.addEventListener('pointerdown',event=>{
-      if(mode!=='paths') return; const cell=event.target.closest('.ppm-cell'); if(!cell) return;
-      event.preventDefault(); clearVisuals(); clearFactorDisplay(); clearSpecialDisplays(); pathActive=true; visitPathCell(cell);
-    });
-    grid.addEventListener('pointermove',event=>{
-      if(mode!=='paths'||!pathActive) return; const target=document.elementFromPoint(event.clientX,event.clientY); const cell=target?.closest?.('.ppm-cell');
-      if(cell&&grid.contains(cell)) visitPathCell(cell);
-    });
-    window.addEventListener('pointerup',()=>{ pathActive=false; });
-    root.querySelectorAll('[data-prime]').forEach(button=>button.addEventListener('click',async()=>{
-      const prime=Number(button.dataset.prime); const engine=createAudio(); if(!engine) return; await engine.ctx.resume(); clearVisuals();
-      if(mode==='build'){
-        const buildState=addPrimeToBuild(prime);
-        if(buildState==='waiting') pianoNote(notesFor([prime])[0],engine.ctx.currentTime+.04,2.6,.30);
-        return;
-      }
-      readout.textContent=`Prime ${prime} · ${primeInfo[prime].note}3 · glowing wherever it appears`;
-      const pieces=[...root.querySelectorAll(`.ppm-cell.built .ppm-piece.p${prime}`)]; pieces.forEach((piece,index)=>later(()=>piece.classList.add('family-glow'),Math.min(420,index*5)));
-      pianoNote(notesFor([prime])[0],engine.ctx.currentTime+.04,4.2,.36);
-      later(()=>pieces.forEach(piece=>piece.classList.remove('family-glow')),1900);
-    }));
-    modeButtons.forEach(button=>button.addEventListener('click',()=>{
-      if(button.dataset.mode==='squares'&&mode==='squares') playSquares(); else setMode(button.dataset.mode);
-    }));
-    numbersButton.addEventListener('click',()=>{
-      const showing=root.classList.toggle('show-numbers');
-      numbersButton.setAttribute('aria-pressed',String(showing)); numbersButton.textContent=showing?'hide numbers':'show numbers';
-    });
-    emptyButton.addEventListener('click',()=>{
-      if(!emptyArmed){
-        emptyArmed=true; emptyButton.textContent='begin again?';
-        setTimeout(()=>{ emptyArmed=false; emptyButton.textContent='begin again'; },3000); return;
-      }
-      emptyArmed=false; emptyButton.textContent='begin again'; builtProducts=new Set([1]); saveBuiltProducts(); applyBuiltProducts();
-      setMode('build'); readout.textContent='Unity remains. Choose a prime to begin.';
-    });
-    window.addEventListener('resize',()=>{ if(activePairs.length) drawFactorRectangles(); });
-  })();
+  load();applyBuilt();
+  root.querySelectorAll('[data-prime]').forEach(button=>button.addEventListener('click',async()=>{
+    const p=+button.dataset.prime,e=createAudio();if(!e)return;await e.ctx.resume();clearVisuals();
+    if(mode==='build'&&buildMethod==='primes'){addPrime(p);return}
+    const pieces=[...root.querySelectorAll(`.cell.built .piece.p${p}`)];pieces.forEach((piece,i)=>later(()=>piece.classList.add('glow'),Math.min(420,i*5)));pianoNote(notesFor([p])[0],e.ctx.currentTime+.03,4,.36);later(()=>pieces.forEach(piece=>piece.classList.remove('glow')),1800);
+    readout.textContent=`Prime ${p} · ${primeInfo[p].note} · glowing wherever it appears.`;
+  }));
+  modeButtons.forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+  familyButtons.forEach(b=>b.addEventListener('click',()=>playFamily(b.dataset.family)));
+  numbersButton.addEventListener('click',()=>{const on=root.classList.toggle('show-numbers');numbersButton.setAttribute('aria-pressed',String(on));numbersButton.textContent=on?'Hide numbers':'Show numbers'});
+  methodButton.addEventListener('click',()=>{buildMethod=buildMethod==='primes'?'axes':'primes';methodButton.textContent=buildMethod==='primes'?'Build by row and column':'Build with Primes';composition=[];setProduct();readout.textContent=buildMethod==='primes'?'Choose primes or an empty panel.':'Choose one row and one column.'});
+  startOverButton.addEventListener('click',()=>{
+    if(!resetArmed){resetArmed=true;startOverButton.textContent='Start Over?';setTimeout(()=>{resetArmed=false;startOverButton.textContent='Start Over'},3000);return}
+    resetArmed=false;startOverButton.textContent='Start Over';builtProducts=new Set([1]);save();applyBuilt();setMode('build');readout.textContent='Unity remains. Choose a prime to begin.';
+  });
+  fillButton.addEventListener('click',()=>{
+    const products=[...new Set([...cells.values()].map(c=>+c.dataset.product))].sort((a,b)=>a-b);fillButton.disabled=true;readout.textContent='The map is gathering its glass…';
+    products.forEach((n,i)=>later(()=>{builtProducts.add(n);productCells(n).forEach(c=>c.classList.add('built'));if(i%5===0)setProduct(n,factorize(n))},i*45));
+    later(()=>{save();setProduct();fillButton.disabled=false;readout.textContent='The stained-glass map is complete.'},products.length*45+250);
+  });
+  window.addEventListener('resize',clearVisuals);
+})();
 </script>
 </main>
 </body>
