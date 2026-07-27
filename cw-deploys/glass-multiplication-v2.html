@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Glass Multiplication v2 · Curious Woods</title>
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:#f4f1e8;color:#3d3d3a;font-family:Georgia,serif}
+    body{padding:18px 14px 28px}
+    button,output{font:inherit;color:inherit}
+    button{touch-action:manipulation}
+    [hidden]{display:none!important}
+    .cw-page{width:min(1040px,100%);margin:auto}
+    .cw-home{display:inline-block;margin:0 0 12px;color:#546a80;font-size:12px;text-decoration:none;letter-spacing:.03em}
+    .btn{appearance:none;border:0;border-bottom:1px solid transparent;padding:4px 3px;background:transparent;color:#546a80;cursor:pointer}
+    .btn:hover,.btn:focus-visible{color:#292a28;border-bottom-color:#bcae93;outline:none}
+    .btn[aria-pressed=true],.btn.active{color:#252623;border-bottom-color:#546a80}
+    .text-small{font-size:11px;color:#98917f;text-align:center}
+  </style>
+</head>
+<body>
+<main class="cw-page">
+  <a class="cw-home" href="index.html">The Curious Woods</a>
+  <section id="glass-map">
+    <nav class="modebar" aria-label="Ways to use the multiplication map">
+      <button class="btn" data-mode="multiply" aria-pressed="true">Multiply</button>
+      <button class="btn" data-mode="build" aria-pressed="false">Build</button>
+      <button class="btn" data-mode="explore" aria-pressed="false">Explore</button>
+      <button class="btn" data-mode="properties" aria-pressed="false">Properties</button>
+    </nav>
+
+    <div class="stage">
+      <aside class="instrument">
+        <div class="globals" id="globals" aria-label="The whole table">
+          <button class="btn" id="fill-map">Fill</button>
+          <button class="btn" id="clear-map">Clear</button>
+          <button class="btn" id="numbers" aria-pressed="false">Show numbers</button>
+        </div>
+
+        <output class="product" id="product" aria-live="polite">
+          <span class="product-number"></span>
+          <span class="product-factors"></span>
+        </output>
+        <div class="readout" id="readout" aria-live="polite">Tap a number along the bottom, then one up the left side.</div>
+
+        <div class="properties panel" id="properties">
+          <div id="property-copy"></div>
+        </div>
+
+        <div class="decoder" aria-label="Prime glass">
+          <button class="btn prime-key" data-prime="2"><i class="swatch p2"><span class="chip-num">2</span></i></button>
+          <button class="btn prime-key" data-prime="3"><i class="swatch p3"><span class="chip-num">3</span></i></button>
+          <button class="btn prime-key" data-prime="5"><i class="swatch p5"><span class="chip-num">5</span></i></button>
+          <button class="btn prime-key" data-prime="7"><i class="swatch p7"><span class="chip-num">7</span></i></button>
+        </div>
+
+        <div class="build-tools panel" id="build-tools" hidden>
+          <button class="btn build-sub" data-build="primes" aria-pressed="true">Build with primes</button>
+          <button class="btn build-sub" data-build="select" aria-pressed="false">Build by selecting</button>
+          <button class="btn build-sub" data-build="axes" aria-pressed="false">Rows &amp; columns</button>
+          <button class="btn build-sub" data-build="multiples" aria-pressed="false">Multiples</button>
+          <button class="btn build-sub" data-build="diagup" aria-pressed="false">Diagonals ↗</button>
+          <button class="btn build-sub" data-build="diagdown" aria-pressed="false">Diagonals ↘</button>
+        </div>
+
+        <div class="property-tools panel" id="property-tools" hidden>
+          <button class="btn property-key" data-property="squares">Squares</button>
+          <button class="btn property-key" data-property="pronics">Pronics</button>
+          <button class="btn property-key" data-property="powers2">Powers of 2</button>
+          <button class="btn property-key" data-property="powers3">Powers of 3</button>
+          <button class="btn property-key" data-property="triangular">Triangular numbers</button>
+          <button class="btn property-key" data-property="nearlysquare">Nearly square</button>
+        </div>
+      </aside>
+
+      <div class="map-wrap">
+        <div class="plane" id="plane">
+          <span class="axis-line axis-y" aria-hidden="true"></span>
+          <span class="axis-line axis-x" aria-hidden="true"></span>
+          <span class="origin">0</span>
+          <div class="board">
+            <div class="grid" id="grid" aria-label="Glass multiplication map"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="text-small">A small window onto a multiplication map that continues beyond the glass.</p>
+  </section>
+
+<style>
+  #glass-map{
+    --lead:#090b0f;--fine-lead:#8b887f;--paper:#f4f1e8;--ink:#3d3d3a;--bluegray:#546a80;
+    --p2a:#0a214f;--p2b:#123875;--p2c:#1a4a9a;--p2d:#5b8ed1;
+    --p3a:#594400;--p3b:#927600;--p3c:#c8a800;--p3d:#e9d65c;
+    --p5a:#17351b;--p5b:#326924;--p5c:#4a8a30;--p5d:#8dc36a;
+    --p7a:#48100c;--p7b:#781f13;--p7c:#a83018;--p7d:#df7555
+  }
+  #glass-map .modebar{display:flex;justify-content:center;gap:14px;margin:0 0 9px}
+  #glass-map .stage{display:grid;grid-template-columns:minmax(164px,190px) minmax(0,1fr);gap:17px;align-items:start}
+  #glass-map .instrument{padding-top:17px;min-width:0}
+  #glass-map .numbers{font-size:12px;margin-bottom:7px;text-transform:none}
+  #glass-map .product{display:flex;min-height:75px;flex-direction:column;justify-content:center;align-items:center;margin-bottom:4px;border-block:1px solid rgba(84,106,128,.18);font-variant-numeric:tabular-nums;text-align:center}
+  #glass-map .product-number{font-size:28px;line-height:1.05;color:#31322f;overflow-wrap:anywhere}
+  #glass-map .product-factors{min-height:1.4em;margin-top:4px;color:#546a80;font-size:15px;line-height:1.25}
+  #glass-map .product.miss .product-number,#glass-map .product.miss .product-factors{color:#999283}
+  #glass-map .readout{min-height:3.8em;margin:7px 0 12px;color:#546a80;font-size:11px;line-height:1.45}
+  #glass-map .decoder{display:grid;gap:6px}
+  #glass-map .prime-key{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-width:0}
+  #glass-map .prime-key>span{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+  #glass-map .prime-key strong{font-weight:500}
+  #glass-map .prime-key small{color:#98917f;white-space:nowrap}
+  #glass-map .swatch{width:30px;height:30px;flex:0 0 30px;border:2px solid var(--lead);box-shadow:inset 0 0 8px rgb(0 0 0/.24)}
+  #glass-map .panel{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-top:15px;padding-top:10px;border-top:1px solid rgba(84,106,128,.17)}
+  #glass-map .properties{display:block;font-size:12px;line-height:1.45;color:#5b5b55}
+  #glass-map .properties h2{margin:0 0 7px;font-size:12px;font-weight:normal;color:#546a80}
+  #glass-map .properties p{margin:0 0 7px}
+  #glass-map .properties strong{font-weight:normal;color:#292a28}
+  #glass-map .map-wrap{min-width:0}
+  #glass-map .plane{
+    position:relative;padding:24px 30px 31px 26px;
+    background-color:#f4f1e8;
+    background-image:linear-gradient(rgba(99,105,104,.17) 1px,transparent 1px),linear-gradient(90deg,rgba(99,105,104,.17) 1px,transparent 1px);
+    background-size:calc((100% - 56px)/10) calc((100% - 55px)/10);
+    background-position:26px 24px
+  }
+  #glass-map .board{position:relative;z-index:2}
+  #glass-map .grid{position:relative;width:100%;aspect-ratio:1;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(10,minmax(0,1fr));gap:4px;padding:4px;background:var(--lead);box-shadow:0 1px 5px rgb(25 28 31/.24)}
+  #glass-map .axis-line{position:absolute;z-index:1;background:#667177;pointer-events:none}
+  #glass-map .axis-y{left:50px;top:8px;bottom:10px;width:2px}
+  #glass-map .axis-x{left:9px;right:11px;bottom:55px;height:2px}
+  #glass-map .origin{position:absolute;z-index:3;left:39px;bottom:39px;color:#434b50;font-size:11px}
+  #glass-map .cell{position:relative;overflow:hidden;border:0;padding:0;margin:0;min-width:0;background:#eeece4;cursor:pointer;transition:background 240ms ease,filter 180ms ease}
+  #glass-map .cell:focus-visible{outline:3px solid #546a80;outline-offset:-3px;z-index:5}
+  #glass-map .cell.built{background:var(--fine-lead)}
+  #glass-map .cell.clear.built{background:radial-gradient(circle at 44% 38%,#f4f0e2,#c7bfae 68%,#8d867a)}
+  #glass-map .inner{position:absolute;inset:0;display:flex;flex-direction:column;gap:1px;pointer-events:none;opacity:0;transform:scale(.88);transition:opacity 360ms ease,transform 410ms cubic-bezier(.2,.8,.2,1)}
+  #glass-map .cell.built .inner{opacity:1;transform:scale(1)}
+  #glass-map .cell.mirrored .inner{transform:rotate(-90deg) scaleY(-1)}
+  #glass-map .cell.mirrored.built .inner{transform:rotate(-90deg) scaleY(-1)}
+  #glass-map .cell.diagonal .inner{inset:-24%;transform:rotate(-45deg)}
+  #glass-map .cell.diagonal.built .inner{transform:rotate(-45deg)}
+  #glass-map .cell.diagonal{box-shadow:inset 0 0 0 1px #81796b}
+  #glass-map .piece{flex:1 1 0;min-height:0;position:relative;overflow:hidden;background-size:155% 155%;background-position:var(--sx) var(--sy);box-shadow:inset 0 0 12px rgb(0 0 0/.2);transition:filter 140ms ease}
+  #glass-map .piece:before{content:"";position:absolute;inset:-15%;background:linear-gradient(31deg,transparent 0 25%,rgb(0 0 0/.16) 26% 28%,transparent 29% 62%,rgb(0 0 0/.11) 63% 65%,transparent 66%),linear-gradient(139deg,transparent 0 38%,rgb(0 0 0/.13) 39% 41%,transparent 42% 76%,rgb(0 0 0/.09) 77% 79%,transparent 80%);transform:translate(var(--fx),var(--fy))}
+  #glass-map .p2{background-image:radial-gradient(circle at 70% 28%,var(--p2d),transparent 28%),linear-gradient(137deg,var(--p2a),var(--p2b) 35%,var(--p2c) 68%,var(--p2b))}
+  #glass-map .p3{background-image:radial-gradient(circle at 32% 26%,var(--p3d),transparent 27%),linear-gradient(145deg,var(--p3a),var(--p3b) 34%,var(--p3c) 69%,var(--p3b))}
+  #glass-map .p5{background-image:radial-gradient(circle at 66% 30%,var(--p5d),transparent 27%),linear-gradient(132deg,var(--p5a),var(--p5b) 34%,var(--p5c) 68%,var(--p5b))}
+  #glass-map .p7{background-image:radial-gradient(circle at 34% 24%,var(--p7d),transparent 26%),linear-gradient(141deg,var(--p7a),var(--p7b) 35%,var(--p7c) 69%,var(--p7b))}
+  #glass-map .numeral{position:absolute;top:5%;right:7%;z-index:3;color:#4d4e4a;font-size:clamp(10px,1.8vw,18px);line-height:1;opacity:0;pointer-events:none}
+  #glass-map.show-numbers .numeral,#glass-map .cell.revealed .numeral{opacity:.84}
+  #glass-map .cell.built .numeral{color:rgb(255 252 229/.96);text-shadow:0 1px 3px rgb(0 0 0/.9),0 0 7px rgb(255 244 190/.65)}
+  #glass-map .cell.sounding,#glass-map .cell.family-cell{outline:3px solid rgb(255 246 205/.96);outline-offset:-3px;z-index:5}
+  #glass-map .cell.sounding .piece,#glass-map .cell.family-cell .piece,#glass-map .piece.glow{filter:saturate(1.3) brightness(1.3)}
+  #glass-map .rectangle{position:absolute;left:4px;bottom:4px;border:3px solid rgb(255 239 142/.96);background:rgb(255 226 86/.035);box-shadow:0 0 9px rgb(255 229 111/.72),inset 0 0 8px rgb(255 229 111/.22);pointer-events:none;z-index:7}
+  #glass-map .rectangle.mirror{border-color:rgb(102 220 255/.94);box-shadow:0 0 9px rgb(99 219 255/.68),inset 0 0 8px rgb(99 219 255/.2)}
+  #glass-map .triangle{position:absolute;left:4px;bottom:4px;pointer-events:none;z-index:8;background:linear-gradient(to top right,transparent calc(50% - 1px),rgb(255 244 182/.95) 50%,transparent calc(50% + 1px))}
+  @media(max-width:710px){
+    #glass-map .stage{grid-template-columns:1fr;gap:7px}
+    #glass-map .instrument{padding-top:0;display:grid;grid-template-columns:minmax(135px,1fr) minmax(0,2fr);gap:4px 12px;align-items:start}
+    #glass-map .numbers,#glass-map .product,#glass-map .readout,#glass-map .panel{grid-column:1}
+    #glass-map .decoder{grid-column:2;grid-row:1/span 5;grid-template-columns:repeat(2,minmax(0,1fr))}
+    #glass-map .prime-key small{white-space:normal}
+  }
+  @media(max-width:520px){
+    body{padding:10px 6px 20px}
+    #glass-map .grid{gap:2px;padding:2px}
+    #glass-map .inner{gap:0}
+    #glass-map .plane{padding-right:7px}
+    #glass-map .axis-x{right:1px}
+    #glass-map .prime-key small{display:none}
+  }
+  @media(prefers-reduced-motion:reduce){#glass-map .piece,#glass-map .inner,#glass-map .cell{transition:none}}
+</style>
+
+<style id="v2-construction-style">
+  /* v2 — the map as the residue of a glass-geometry construction */
+  #glass-map .plane{background-image:none;padding:54px 72px 98px 98px;overflow:visible}
+  #glass-map .map-wrap{overflow:visible}
+  #glass-map .axis-line,#glass-map .origin{display:none}
+  #glass-map #construction{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1}
+  #glass-map #construction .c-grid{stroke:rgba(99,105,104,.16);stroke-width:1;fill:none}
+  #glass-map #construction .c-axis{stroke:#5f6a70;stroke-width:1.6;fill:none;stroke-linecap:round}
+  #glass-map #construction .c-origin{fill:#434b50}
+  #glass-map #construction .c-unit{fill:none;stroke:rgba(84,106,128,.55);stroke-width:1}
+  #glass-map #construction .c-tick{stroke:rgba(95,106,112,.5);stroke-width:1.4}
+  #glass-map #construction .c-beyond{fill:rgba(120,120,110,.5);font:italic 12px Georgia,serif}
+  #glass-map .board{transition:opacity .9s ease}
+  #glass-map .rebuild{margin-top:2px;font-size:11px}
+  @media(prefers-reduced-motion:reduce){#glass-map .board{transition:none}}
+</style>
+<style id="v2-a-style">
+  /* Batch A — appearance & sound */
+  /* prime recolour: 2 blue, 3 gold, 5 red, 7 green */
+  #glass-map{--p5a:#48100c;--p5b:#781f13;--p5c:#a83018;--p5d:#df7555;
+            --p7a:#17351b;--p7b:#326924;--p7c:#4a8a30;--p7d:#8dc36a;
+            --leading:#6c6b62}
+  /* glass panels: green transparent, thin lead leading, no black grid */
+  #glass-map .grid{gap:2px;padding:2px;background:var(--leading);box-shadow:none}
+  /* flat glass matched to the geometry green rgb(194,212,188); opaque so the dark leading doesn't gray it */
+  #glass-map .cell{background:linear-gradient(155deg,rgb(201,218,196),rgb(187,207,182));box-shadow:none}
+  #glass-map .cell.built{background:var(--leading)}
+  /* remove v1's extra inset outline on the square (diagonal) cells so leading stays uniform */
+  #glass-map .cell.diagonal{box-shadow:none}
+  /* factor rectangles all white */
+  #glass-map .rectangle{border-color:rgb(255 255 255/.95);background:rgb(255 255 255/.05);box-shadow:0 0 9px rgb(255 255 255/.6),inset 0 0 8px rgb(255 255 255/.25)}
+  #glass-map .rectangle.mirror{border-color:rgb(255 255 255/.95);box-shadow:0 0 9px rgb(255 255 255/.55),inset 0 0 8px rgb(255 255 255/.2)}
+  /* info block above the primes */
+  #glass-map .product{min-height:68px;height:68px;border:0;align-items:flex-start;justify-content:flex-start;text-align:left;margin:0 0 2px}
+  #glass-map .product-number{font-size:40px;color:#31322f}
+  #glass-map .product-factors{font-size:19px;margin-top:2px}
+  #glass-map .readout{font-size:14px;min-height:2.2em;margin:2px 0 6px}
+  #glass-map #properties.panel{margin-top:4px;padding-top:8px;border-top:1px solid rgba(84,106,128,.15);min-height:268px}
+  #glass-map .properties{font-size:15px;line-height:1.5;color:#4a4a45}
+  #glass-map .properties p{margin:0 0 6px}
+  /* prime chips: horizontal row about mid-table, number in each square's corner */
+  #glass-map .decoder{display:flex;flex-direction:row;gap:15px;justify-content:flex-start;margin-top:14px}
+  #glass-map .prime-key{padding:0}
+  #glass-map .swatch{position:relative;width:46px;height:46px;flex:0 0 46px;border:2px solid var(--leading);box-shadow:inset 0 0 10px rgb(0 0 0/.26)}
+  #glass-map .chip-num{position:absolute;top:2px;right:5px;color:rgb(255 252 229/.96);font-size:16px;line-height:1;text-shadow:0 1px 3px rgb(0 0 0/.85),0 0 7px rgb(255 244 190/.5)}
+  #glass-map .board{display:block}
+</style>
+<style id="v2-1-style">
+  /* v2.1 — globals group, pane selection, tool panels */
+
+  /* Globals: left-justified group at the top of the left column, above the info block. */
+  #glass-map .globals{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px;margin:0 0 10px;padding-bottom:9px;border-bottom:1px solid rgba(84,106,128,.15)}
+  #glass-map .globals .btn{padding:2px 1px;font-size:15px}
+
+  /* Selection now happens on the big edge panes, so they need to be tappable and readable. */
+  #glass-map .cell{touch-action:none}
+  #glass-map.selecting .cell.edge .numeral{opacity:.9}
+  #glass-map.selecting .cell.edge:not(.built){background:linear-gradient(155deg,rgb(210,225,205),rgb(196,215,191))}
+  #glass-map.selecting .cell.edge:not(.built):hover{background:linear-gradient(155deg,rgb(219,232,214),rgb(205,222,200))}
+  #glass-map .cell.chosen{outline:3px solid rgb(255 246 205/.96);outline-offset:-3px;z-index:6}
+
+  /* Tool lists */
+  #glass-map .build-tools .btn,#glass-map .property-tools .btn{text-align:left;font-size:14px}
+
+  /* Narrow screens: the left column folds into two, so the globals join the
+     info stack and the prime chips are allowed to wrap instead of overflowing. */
+  @media(max-width:710px){
+    #glass-map .globals{grid-column:1;margin-bottom:6px;padding-bottom:6px}
+    #glass-map .decoder{flex-wrap:wrap;gap:10px;margin-top:0}
+    #glass-map .swatch{width:38px;height:38px;flex:0 0 38px}
+    #glass-map #properties.panel{min-height:0}
+  }
+  @media(max-width:520px){
+    /* the construction margins only need room for the axis marks beyond the grid */
+    #glass-map .plane{padding:22px 26px 42px 38px}
+    #glass-map .globals .btn,#glass-map .build-tools .btn,#glass-map .property-tools .btn{font-size:13px}
+  }
+</style>
+
+<script>
+(() => {
+  const root=document.getElementById('glass-map');
+  const grid=root.querySelector('#grid'), readout=root.querySelector('#readout');
+  const productBox=root.querySelector('#product'), productNumber=productBox.querySelector('.product-number'), productFactors=productBox.querySelector('.product-factors');
+  const numbersButton=root.querySelector('#numbers'), fillButton=root.querySelector('#fill-map'), clearButton=root.querySelector('#clear-map');
+  const buildTools=root.querySelector('#build-tools'), buildSubButtons=[...root.querySelectorAll('[data-build]')];
+  const propertyTools=root.querySelector('#property-tools'), propertyButtons=[...root.querySelectorAll('[data-property]')];
+  const propertyCopy=root.querySelector('#property-copy');
+  const modeButtons=[...root.querySelectorAll('[data-mode]')];
+  const cells=new Map();
+  const primeInfo={2:{midi:48,note:'C',pan:-.32},3:{midi:52,note:'E',pan:-.1},5:{midi:55,note:'G',pan:.12},7:{midi:59,note:'B',pan:.34}};
+
+  let audio=null, mode='multiply', buildTool='primes', composition=[];
+  let fxTimers=[], seqTimers=[], expressionTimer=null;
+  let pendingColumn=null, pendingRow=null;
+
+  // ==== helpers =============================================================
+  const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+  const fx=(fn,ms)=>fxTimers.push(setTimeout(fn,ms));
+  const seq=(fn,ms)=>seqTimers.push(setTimeout(fn,ms));
+  const factorize=value=>{const out=[];let n=value;[2,3,5,7].forEach(p=>{while(n%p===0){out.push(p);n/=p}});return out};
+  const superscript=n=>String(n).split('').map(d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(d)]).join('');
+  const powerText=factors=>factors.length?[2,3,5,7].map(p=>{const c=factors.filter(v=>v===p).length;return c?`${p}${c>1?superscript(c):''}`:''}).filter(Boolean).join(' × '):'unity';
+  const arc=[0,4,7,12,12,7,4,0];  // rise to the octave, hold, fall back to the tonic
+  const notesFor=factors=>{const count={};return factors.map(p=>{const k=count[p]||0;count[p]=k+1;return{midi:primeInfo[p].midi+arc[k%arc.length],pan:primeInfo[p].pan}})};
+  const frequency=midi=>440*Math.pow(2,(midi-69)/12);
+  const productCells=n=>[...cells.values()].filter(c=>+c.dataset.product===n);
+  const allProducts=()=>[...new Set([...cells.values()].map(c=>+c.dataset.product))].sort((a,b)=>a-b);
+
+  // ==== sound ===============================================================
+  function createAudio(){
+    if(audio)return audio;
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC){readout.textContent='This browser does not support interactive audio.';return null}
+    const ctx=new AC(), compressor=ctx.createDynamicsCompressor(), dry=ctx.createGain(), wet=ctx.createGain(), convolver=ctx.createConvolver();
+    compressor.threshold.value=-18;compressor.knee.value=18;compressor.ratio.value=3;dry.gain.value=.72;wet.gain.value=.22;
+    const length=Math.floor(ctx.sampleRate*2.4), impulse=ctx.createBuffer(2,length,ctx.sampleRate);
+    for(let c=0;c<2;c++){const data=impulse.getChannelData(c);for(let i=0;i<length;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/length,2.7)}
+    convolver.buffer=impulse;dry.connect(compressor);convolver.connect(wet);wet.connect(compressor);compressor.connect(ctx.destination);
+    return audio={ctx,dry,convolver};
+  }
+  function pianoNote(note,when,duration=3.5,velocity=.3){
+    const e=createAudio();if(!e)return;const voice=e.ctx.createGain(),pan=e.ctx.createStereoPanner();pan.pan.value=note.pan||0;
+    voice.gain.setValueAtTime(.0001,when);voice.gain.exponentialRampToValueAtTime(velocity,when+.009);voice.gain.exponentialRampToValueAtTime(velocity*.34,when+.22);voice.gain.exponentialRampToValueAtTime(.0001,when+duration);
+    voice.connect(pan);pan.connect(e.dry);pan.connect(e.convolver);
+    [[1,1],[2,.23],[3,.11],[4,.045],[5,.018]].forEach(([m,l],i)=>{const o=e.ctx.createOscillator(),g=e.ctx.createGain();o.type='sine';o.frequency.value=frequency(note.midi)*m;o.detune.value=i%2?-.8:.55;g.gain.value=l;o.connect(g);g.connect(voice);o.start(when);o.stop(when+duration+.08)});
+  }
+  async function softMiss(){
+    const e=createAudio();if(!e)return;await e.ctx.resume();const now=e.ctx.currentTime+.02,o=e.ctx.createOscillator(),g=e.ctx.createGain();
+    o.type='sine';o.frequency.setValueAtTime(170,now);o.frequency.exponentialRampToValueAtTime(92,now+.7);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.08,now+.025);g.gain.exponentialRampToValueAtTime(.0001,now+.85);o.connect(g);g.connect(e.dry);g.connect(e.convolver);o.start(now);o.stop(now+.9);
+  }
+  // One tone per prime factor. No finale chord — the chord anchor below is a
+  // timing marker for the visual highlight only. Do not sound it.
+  async function playFactors(factors,targets=[],duration=2000){
+    const e=createAudio();if(!e)return;await e.ctx.resume();
+    const notes=factors.length?notesFor(factors):[{midi:36,pan:0}],start=e.ctx.currentTime+.04,spacing=.18;
+    notes.forEach((note,i)=>{pianoNote(note,start+i*spacing,2.6,.24);fx(()=>targets.forEach(c=>c.querySelectorAll('.piece')[i]?.classList.add('glow')),i*spacing*1000);fx(()=>targets.forEach(c=>c.querySelectorAll('.piece')[i]?.classList.remove('glow')),i*spacing*1000+340)});
+    const chord=start+notes.length*spacing+.18;
+    const delay=(chord-e.ctx.currentTime)*1000;fx(()=>targets.forEach(c=>c.classList.add('sounding','revealed')),delay);fx(()=>targets.forEach(c=>c.classList.remove('sounding')),delay+1100);fx(()=>targets.forEach(c=>c.classList.remove('revealed')),delay+duration);
+  }
+  function soundNumber(n){const note=notesFor(factorize(n))[0];if(!note)return;const e=createAudio();if(e)pianoNote(note,e.ctx.currentTime+.02,1.4,.2);}
+
+  // ==== transient visuals ===================================================
+  function clearFx(){
+    fxTimers.forEach(clearTimeout);fxTimers=[];
+    root.querySelectorAll('.sounding,.family-cell,.glow,.revealed,.chosen').forEach(el=>el.classList.remove('sounding','family-cell','glow','revealed','chosen'));
+    root.querySelectorAll('.rectangle,.triangle').forEach(el=>el.remove());
+  }
+  function cancelSequence(){seqTimers.forEach(clearTimeout);seqTimers=[]}
+  function setProduct(n,factors=[],miss=false){
+    clearTimeout(expressionTimer);productBox.classList.toggle('miss',miss);
+    if(n==null){productNumber.textContent='';productFactors.textContent='';return}
+    productNumber.textContent=n;productFactors.textContent=powerText(factors);
+  }
+  function resetProductSoon(message='Choose another prime.',delay=1800){
+    clearTimeout(expressionTimer);expressionTimer=setTimeout(()=>{composition=[];productBox.classList.remove('miss');setProduct();readout.textContent=message},delay);
+  }
+  function frame(width,height,mirror=false,triangle=false){
+    const target=cells.get(`${height},${width}`);if(!target)return null;
+    const gb=grid.getBoundingClientRect(),b=target.getBoundingClientRect(),el=document.createElement('span');
+    el.className=triangle?'triangle':`rectangle${mirror?' mirror':''}`;el.style.width=`${Math.max(0,b.right-gb.left-4)}px`;el.style.height=`${Math.max(0,gb.bottom-b.top-4)}px`;grid.appendChild(el);return el;
+  }
+  function visiblePairs(n){const pairs=[];for(let a=1;a<=10;a++)if(n%a===0&&n/a<=10&&a<=n/a)pairs.push([a,n/a]);return pairs}
+  function showAllRectangles(n){visiblePairs(n).forEach(([a,b])=>{frame(a,b,false);if(a!==b)frame(b,a,true)})}
+  function scheduleRectClear(noteCount){
+    fx(()=>root.querySelectorAll('.rectangle,.triangle').forEach(el=>el.remove()),(Math.max(1,noteCount)*180)+2200);
+  }
+
+  // ==== Reveal — the atomic action ==========================================
+  // Fill every cell where the number lives with its prime-colour glass, and
+  // sound its prime tones once. Always all instances: a×b and b×a together.
+  function revealNumber(n,{rectangles=true,sound=true,message}={}){
+    const targets=productCells(n);if(!targets.length)return false;
+    clearFx();
+    targets.forEach(c=>c.classList.add('built'));
+    setProduct(n,factorize(n));numberProperties(n);
+    if(rectangles){showAllRectangles(n);scheduleRectClear(factorize(n).length)}
+    if(sound)playFactors(factorize(n),targets);
+    readout.textContent=message!==undefined?message:(targets.length===1?`${n} has found its place.`:`${n} appears in ${targets.length} places.`);
+    return true;
+  }
+  // Reveal a run of cells (a line, a diagonal, a set of multiples, a property)
+  // in succession — grouped by number so each distinct number sounds once.
+  function revealRun(list,label,closing){
+    cancelSequence();clearFx();
+    const groups=new Map();
+    list.forEach(c=>{const n=+c.dataset.product;if(!groups.has(n))groups.set(n,[]);groups.get(n).push(c)});
+    const entries=[...groups.entries()];
+    if(!entries.length)return;
+    const step=clamp(Math.round(7000/entries.length),140,560);
+    entries.forEach(([n,group],i)=>seq(()=>{
+      clearFx();
+      group.forEach(c=>c.classList.add('built'));
+      setProduct(n,factorize(n));numberProperties(n);
+      playFactors(factorize(n),group);
+      readout.textContent=label;
+    },i*step));
+    const numbers=entries.map(([n])=>n);
+    seq(()=>{readout.textContent=closing||`${label} — ${numbers.join(', ')}`},entries.length*step+320);
+  }
+
+  // ==== number properties panel =============================================
+  function divisorClass(n){
+    if(n===1)return'neither abundant nor deficient';
+    let sum=1;for(let i=2;i<=Math.sqrt(n);i++)if(n%i===0){sum+=i;if(i!==n/i)sum+=n/i}
+    return sum===n?'perfect':sum>n?'abundant':'deficient';
+  }
+  function numberProperties(n){
+    if(n===1){propertyCopy.innerHTML='<p><strong>1</strong> — sets the scale for all other numbers.</p>';return}
+    const factors=factorize(n),pairs=visiblePairs(n),sqrt=Math.sqrt(n),square=Number.isInteger(sqrt);
+    const pk=Math.floor((Math.sqrt(1+4*n)-1)/2),pronic=pk*(pk+1)===n;
+    const tk=Math.floor((Math.sqrt(1+8*n)-1)/2),triangular=tk*(tk+1)/2===n;
+    const labels=[];
+    if(square)labels.push(`a square: ${sqrt} × ${sqrt}`);
+    if(pronic)labels.push(`a pronic: ${pk} × ${pk+1}, two neighboring sides`);
+    if(triangular)labels.push(`triangular: 1 + 2 + … + ${tk}`);
+    if(factors.length>1&&new Set(factors).size===1)labels.push(`a power of ${factors[0]}`);
+    if(factors.length===2)labels.push('semiprime: the product of two primes');
+    labels.push(divisorClass(n));
+    const below=Math.floor(sqrt)**2,above=Math.ceil(sqrt)**2;
+    if(!square&&n-below<=2)labels.push(`${n-below} more than the square ${below}`);
+    else if(!square&&above-n<=2)labels.push(`${above-n} short of the square ${above}`);
+    const pairText=pairs.length?pairs.map(([a,b])=>`${a} × ${b}`).join(', '):'no complete rectangle in this window';
+    propertyCopy.innerHTML=`<p><strong>${n} = ${powerText(factors)}</strong></p><p>Visible rectangles: ${pairText}</p>${labels.map(x=>`<p>${x}</p>`).join('')}`;
+  }
+
+  // ==== the whole table =====================================================
+  function clearTable(){
+    cancelSequence();clearFx();
+    cells.forEach(c=>c.classList.toggle('built',+c.dataset.product===1));
+    composition=[];pendingColumn=pendingRow=null;setProduct();propertyCopy.innerHTML='';
+  }
+  function fillTable(){   // silent — the one reveal that makes no sound
+    cancelSequence();clearFx();
+    const products=allProducts();
+    products.forEach((n,i)=>seq(()=>productCells(n).forEach(c=>c.classList.add('built')),i*22));
+    seq(()=>{setProduct();readout.textContent=modePrompt()},products.length*22+240);
+  }
+
+  // ==== cell sets ===========================================================
+  const columnCells=c=>{const out=[];for(let r=1;r<=10;r++)out.push(cells.get(`${r},${c}`));return out};
+  const rowCells=r=>{const out=[];for(let c=1;c<=10;c++)out.push(cells.get(`${r},${c}`));return out};
+  function multipleCells(v){
+    const out=[];allProducts().filter(n=>n%v===0).forEach(n=>out.push(...productCells(n)));return out;
+  }
+  function diagonalCells(kind,value){
+    const out=[];
+    for(let c=1;c<=10;c++)for(let r=1;r<=10;r++){
+      if(kind==='difference'?r-c===value:r+c===value)out.push(cells.get(`${r},${c}`));
+    }
+    return out;
+  }
+
+  // ==== Properties ==========================================================
+  const isSquare=n=>{const r=Math.round(Math.sqrt(n));return r*r===n};
+  const isPronic=n=>{const k=Math.floor((Math.sqrt(1+4*n)-1)/2);return k>=1&&k*(k+1)===n};
+  const isTriangular=n=>{const k=Math.floor((Math.sqrt(8*n+1)-1)/2);return k*(k+1)/2===n};
+  const isPowerOf=(n,p)=>{let v=1;while(v<n)v*=p;return v===n};
+  const isNearSquare=n=>n>1&&!isSquare(n)&&(isSquare(n-1)||isSquare(n+1));
+  const propertyLabels={squares:'Squares',pronics:'Pronics',powers2:'Powers of 2',powers3:'Powers of 3',triangular:'Triangular numbers',nearlysquare:'Nearly square'};
+  const propertyTests={squares:isSquare,pronics:isPronic,powers2:n=>isPowerOf(n,2),powers3:n=>isPowerOf(n,3),triangular:isTriangular,nearlysquare:isNearSquare};
+  function revealProperty(name){
+    propertyButtons.forEach(b=>b.classList.toggle('active',b.dataset.property===name));
+    const numbers=allProducts().filter(propertyTests[name]);
+    const list=[];numbers.forEach(n=>list.push(...productCells(n)));
+    revealRun(list,propertyLabels[name],`${propertyLabels[name]} — ${numbers.join(', ')}`);
+  }
+
+  // ==== Multiply ============================================================
+  function revealFactorPane(kind,value){
+    const cell=kind==='column'?cells.get(`1,${value}`):cells.get(`${value},1`);
+    if(!cell)return;
+    clearFx();
+    cell.classList.add('built','chosen');
+    setProduct(value,factorize(value));
+    playFactors(factorize(value),[cell]);
+  }
+  function multiplyReveal(column,row,fromDrag){
+    const n=column*row;
+    cancelSequence();
+    if(fromDrag){
+      revealFactorPane('column',column);
+      readout.textContent=`${row} × ${column} = ${n}`;
+      seq(()=>revealFactorPane('row',row),520);
+      seq(()=>revealNumber(n,{message:`${row} × ${column} = ${n}`}),1060);
+    } else {
+      seq(()=>revealNumber(n,{message:`${row} × ${column} = ${n}`}),620);
+    }
+  }
+  function tapEdge(row,column){
+    cancelSequence();
+    if(row===1&&column===1){
+      if(pendingColumn==null){pendingColumn=1;revealFactorPane('column',1)}
+      else{pendingRow=1;revealFactorPane('row',1)}
+    } else if(row===1){pendingColumn=column;revealFactorPane('column',column)}
+    else{pendingRow=row;revealFactorPane('row',row)}
+    if(pendingColumn!=null&&pendingRow!=null){
+      const c=pendingColumn,r=pendingRow;pendingColumn=pendingRow=null;
+      readout.textContent=`${r} × ${c} = ${r*c}`;
+      multiplyReveal(c,r,false);
+    } else {
+      readout.textContent=pendingColumn!=null
+        ? `${pendingColumn} — now choose a number up the left side.`
+        : `${pendingRow} — now choose a number along the bottom.`;
+    }
+  }
+
+  // ==== Build ===============================================================
+  function addPrime(prime){
+    clearTimeout(expressionTimer);composition.push(prime);
+    const n=composition.reduce((a,b)=>a*b,1);setProduct(n,composition);
+    if(productCells(n).some(c=>!c.classList.contains('built'))){cancelSequence();revealNumber(n);composition=[];return}
+    if(!hasReachableEmpty(n)){readout.textContent='That number continues beyond this window.';setProduct(n,composition,true);softMiss();composition=[];resetProductSoon();return}
+    readout.textContent=`${n} is already here. Keep building.`;
+  }
+  function hasReachableEmpty(n){
+    const q=[n],seen=new Set(q);
+    while(q.length){const v=q.shift();for(const p of [2,3,5,7]){const x=v*p;if(x>100||seen.has(x))continue;if(productCells(x).some(c=>!c.classList.contains('built')))return true;seen.add(x);q.push(x)}}
+    return false;
+  }
+  function buildTap(cell){
+    const row=+cell.dataset.row,column=+cell.dataset.column,n=row*column;
+    if(buildTool==='primes'){readout.textContent='Tap a prime below to multiply it in.';return}
+    if(buildTool==='select'){cancelSequence();revealNumber(n);return}
+    if(buildTool==='axes'){
+      if(row===1)revealRun(columnCells(column),`Column ${column}`);
+      else if(column===1)revealRun(rowCells(row),`Row ${row}`);
+      else readout.textContent='Tap a pane along the bottom for its column, or up the left side for its row.';
+      return;
+    }
+    if(buildTool==='multiples'){
+      if(row===1||column===1){const v=row===1?column:row;revealRun(multipleCells(v),`Multiples of ${v}`)}
+      else readout.textContent='Tap a number along the bottom or up the left side.';
+      return;
+    }
+    if(buildTool==='diagup'){revealRun(diagonalCells('difference',row-column),`↗ same difference · ${Math.abs(row-column)}`);return}
+    if(buildTool==='diagdown'){revealRun(diagonalCells('sum',row+column),`↘ same sum · ${row+column}`)}
+  }
+
+  // ==== Explore =============================================================
+  function explore(cell){
+    const n=+cell.dataset.product;
+    if(!cell.classList.contains('built')){propertyCopy.innerHTML=`<p><strong>${n}</strong> has not entered the glass yet.</p>`;readout.textContent='This panel is still empty.';return}
+    cancelSequence();revealNumber(n,{message:`Every ${n} is sounding together.`});
+  }
+
+  // ==== modes ===============================================================
+  const buildPrompts={
+    primes:'Tap a prime to multiply it into the number.',
+    select:'Tap any pane to reveal that number, everywhere it lives.',
+    axes:'Tap along the bottom for a column, up the left side for a row.',
+    multiples:'Tap a number along the bottom or the left side to find its multiples.',
+    diagup:'Tap any pane to run the ↗ diagonal through it — same difference.',
+    diagdown:'Tap any pane to run the ↘ diagonal through it — same sum.'
+  };
+  const selectingTools=new Set(['axes','multiples','diagup','diagdown']);
+  function modePrompt(){
+    if(mode==='multiply')return 'Tap a number along the bottom, then one up the left side. Or drag a rectangle out from either edge.';
+    if(mode==='build')return buildPrompts[buildTool];
+    if(mode==='explore')return 'Tap any pane to hear it and see all of its rectangles.';
+    return 'Choose a property to see every number that has it.';
+  }
+  function updateSelecting(){
+    const on=mode==='multiply'||(mode==='build'&&selectingTools.has(buildTool));
+    root.classList.toggle('selecting',on);
+  }
+  function setBuildTool(tool){   // switching tools never clears — Build accumulates
+    buildTool=tool;
+    buildSubButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.build===tool)));
+    cancelSequence();clearFx();composition=[];
+    updateSelecting();readout.textContent=buildPrompts[tool];
+  }
+  function setMode(next){
+    mode=next;composition=[];pendingColumn=pendingRow=null;
+    cancelSequence();clearFx();setProduct();propertyCopy.innerHTML='';
+    modeButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
+    buildTools.hidden=mode!=='build';propertyTools.hidden=mode!=='properties';
+    propertyButtons.forEach(b=>b.classList.remove('active'));
+    updateSelecting();
+    if(mode==='explore')fillTable();else clearTable();
+    readout.textContent=modePrompt();
+  }
+
+  // ==== the glass ===========================================================
+  const seed=(a,b,i,s)=>(a*37+b*19+i*23+s)%100;
+  for(let row=10;row>=1;row--)for(let column=1;column<=10;column++){
+    const n=row*column,factors=factorize(n),low=Math.min(row,column),high=Math.max(row,column),cell=document.createElement('button');
+    cell.type='button';cell.className=`cell${row>column?' mirrored':''}${row===column?' diagonal':''}${n===1?' clear':''}${row===1||column===1?' edge':''}`;
+    cell.dataset.row=row;cell.dataset.column=column;cell.dataset.product=n;cell.setAttribute('aria-label',`${row} times ${column} equals ${n}`);
+    if(factors.length){const inner=document.createElement('span');inner.className='inner';factors.forEach((p,i)=>{const piece=document.createElement('span');piece.className=`piece p${p}`;piece.style.setProperty('--sx',`${seed(low,high,i,7)}%`);piece.style.setProperty('--sy',`${seed(low,high,i,41)}%`);piece.style.setProperty('--fx',`${seed(low,high,i,13)-50}%`);piece.style.setProperty('--fy',`${seed(low,high,i,61)-50}%`);inner.appendChild(piece)});cell.appendChild(inner)}
+    const numeral=document.createElement('span');numeral.className='numeral';numeral.textContent=n;cell.appendChild(numeral);
+    cells.set(`${row},${column}`,cell);grid.appendChild(cell);
+  }
+
+  // ==== gestures ============================================================
+  // Multiply owns pointer events (tap and drag coexist, told apart by movement);
+  // every other mode listens for plain clicks.
+  let drag=null;
+  function pointerCell(ev){const el=ev.target.closest?.('.cell');return el&&el.dataset.product?el:null}
+  grid.addEventListener('pointerdown',ev=>{
+    if(mode!=='multiply')return;
+    const cell=pointerCell(ev);if(!cell)return;
+    const row=+cell.dataset.row,column=+cell.dataset.column;
+    if(row!==1&&column!==1){readout.textContent='Start from a pane along the bottom or up the left side.';return}
+    ev.preventDefault();
+    drag={x:ev.clientX,y:ev.clientY,row,column,moved:false,col:null,rw:null};
+    window.addEventListener('pointermove',onDragMove);
+    window.addEventListener('pointerup',onDragEnd,{once:true});
+    window.addEventListener('pointercancel',onDragEnd,{once:true});
+  });
+  function onDragMove(ev){
+    if(!drag)return;
+    if(!drag.moved&&Math.hypot(ev.clientX-drag.x,ev.clientY-drag.y)<9)return;
+    if(!drag.moved){drag.moved=true;cancelSequence();clearFx()}
+    const g=grid.getBoundingClientRect(),cw=g.width/10,ch=g.height/10;
+    drag.col=clamp(Math.ceil((ev.clientX-g.left)/cw),1,10);
+    drag.rw=clamp(Math.ceil((g.bottom-ev.clientY)/ch),1,10);
+    root.querySelectorAll('.rectangle,.triangle').forEach(el=>el.remove());
+    frame(drag.col,drag.rw);   // always anchored at the origin — area is the product
+    const n=drag.col*drag.rw;setProduct(n,factorize(n));
+    readout.textContent=`${drag.rw} × ${drag.col} = ${n}`;
+  }
+  function onDragEnd(){
+    window.removeEventListener('pointermove',onDragMove);
+    const d=drag;drag=null;if(!d)return;
+    root.querySelectorAll('.rectangle,.triangle').forEach(el=>el.remove());
+    if(d.moved&&d.col&&d.rw)multiplyReveal(d.col,d.rw,true);
+    else tapEdge(d.row,d.column);
+  }
+  grid.addEventListener('click',ev=>{
+    const cell=pointerCell(ev);if(!cell||mode==='multiply')return;
+    if(mode==='explore')explore(cell);
+    else if(mode==='build')buildTap(cell);
+    else if(mode==='properties'){cancelSequence();revealNumber(+cell.dataset.product)}
+  });
+
+  // ==== controls ============================================================
+  root.querySelectorAll('[data-prime]').forEach(button=>button.addEventListener('click',async()=>{
+    const p=+button.dataset.prime,e=createAudio();if(!e)return;await e.ctx.resume();
+    cancelSequence();clearFx();
+    if(mode==='build'&&buildTool==='primes'){addPrime(p);return}
+    const pieces=[...root.querySelectorAll(`.cell.built .piece.p${p}`)];
+    pieces.forEach((piece,i)=>fx(()=>piece.classList.add('glow'),Math.min(420,i*5)));
+    pianoNote(notesFor([p])[0],e.ctx.currentTime+.03,4,.36);
+    fx(()=>pieces.forEach(piece=>piece.classList.remove('glow')),1800);
+    readout.textContent=`Prime ${p} · ${primeInfo[p].note} · glowing wherever it appears.`;
+  }));
+  modeButtons.forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+  buildSubButtons.forEach(b=>b.addEventListener('click',()=>setBuildTool(b.dataset.build)));
+  propertyButtons.forEach(b=>b.addEventListener('click',()=>revealProperty(b.dataset.property)));
+  numbersButton.addEventListener('click',()=>{
+    const on=root.classList.toggle('show-numbers');
+    numbersButton.setAttribute('aria-pressed',String(on));
+    numbersButton.textContent=on?'Hide numbers':'Show numbers';
+  });
+  fillButton.addEventListener('click',()=>fillTable());
+  clearButton.addEventListener('click',()=>{clearTable();readout.textContent=modePrompt()});
+  window.addEventListener('resize',clearFx);
+
+  setMode('multiply');
+})();
+</script>
+</main>
+<script id="v2-construction-script">
+(function(){
+  const root=document.getElementById('glass-map');
+  if(!root) return;
+  const plane=root.querySelector('.plane');
+  const grid=root.querySelector('#grid');
+  const board=root.querySelector('.board');
+  const svgNS='http://www.w3.org/2000/svg';
+  const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let svg=null, resizeTimer=null;
+
+  const el=(t,a)=>{const e=document.createElementNS(svgNS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+
+  function geom(){
+    const gb=grid.getBoundingClientRect(), pb=plane.getBoundingClientRect();
+    return {left:gb.left-pb.left, top:gb.top-pb.top, w:gb.width, h:gb.height,
+            cell:gb.width/10, right:gb.left-pb.left+gb.width, bottom:gb.top-pb.top+gb.height,
+            pw:pb.width, ph:pb.height};
+  }
+
+  function draw(animate){
+    if(svg) svg.remove();
+    const g=geom();
+    if(!g.w) return;
+    svg=el('svg',{id:'construction','aria-hidden':'true'});
+    svg.setAttribute('viewBox','0 0 '+g.pw+' '+g.ph);
+    svg.setAttribute('preserveAspectRatio','none');
+    const persist=el('g',{class:'c-persist'});
+    const anim=el('g',{class:'c-anim'});
+    svg.appendChild(persist); svg.appendChild(anim);
+
+    const axisY=g.bottom, axisX=g.left;
+    const markX=i=>g.left+i*g.cell;   // integer i on x-axis gridline
+    const markY=j=>g.bottom-j*g.cell;
+    const bx=0.75*g.cell;                    // how far axes/marks run past the grid
+
+    // faint interior gridlines (cell boundaries)
+    for(let k=0;k<=10;k++){
+      persist.appendChild(el('line',{class:'c-grid',x1:g.left+k*g.cell,y1:g.top,x2:g.left+k*g.cell,y2:g.bottom}));
+      persist.appendChild(el('line',{class:'c-grid',x1:g.left,y1:g.top+k*g.cell,x2:g.right,y2:g.top+k*g.cell}));
+    }
+    // axes, extended past the grid in both directions
+    persist.appendChild(el('line',{class:'c-axis',x1:g.left-bx,y1:axisY,x2:g.right+bx,y2:axisY}));
+    persist.appendChild(el('line',{class:'c-axis',x1:axisX,y1:g.bottom+bx,x2:axisX,y2:g.top-bx}));
+    persist.appendChild(el('circle',{class:'c-origin',cx:axisX,cy:axisY,r:2.6}));
+    // faint marks continuing beyond the window
+    const tick=(x,y,horiz)=>persist.appendChild(el('line',{class:'c-tick',
+      x1:horiz?x:x-4,y1:horiz?y-4:y,x2:horiz?x:x+4,y2:horiz?y+4:y}));
+    tick(markX(11),axisY,true); tick(g.left-1*g.cell,axisY,true);
+    tick(axisX,markY(11),false); tick(axisX,g.bottom+1*g.cell,false);
+    const beyond=(x,y,txt,anchor)=>{const t=el('text',{class:'c-beyond',x:x,y:y,'text-anchor':anchor||'middle'});t.textContent=txt;persist.appendChild(t);};
+    beyond(markX(11),axisY+18,'11'); beyond(g.left-1*g.cell,axisY+18,'1');
+    beyond(axisX-14,markY(11)+4,'11','end'); beyond(axisX-14,g.bottom+1*g.cell+4,'1','end');
+
+    // the numbering circles: an equal-unit chain stepping off each integer
+    const circles=[];
+    for(let i=1;i<=10;i++) circles.push(el('circle',{class:'c-unit',cx:markX(i),cy:axisY,r:g.cell}));
+    for(let j=1;j<=10;j++) circles.push(el('circle',{class:'c-unit',cx:axisX,cy:markY(j),r:g.cell}));
+    circles.forEach(c=>anim.appendChild(c));
+
+    plane.insertBefore(svg, plane.firstChild);
+
+    if(animate && !reduce){ play(persist,anim,circles); }
+    else { board.style.opacity=''; anim.remove(); }
+  }
+
+  function play(persist,anim,circles){
+    board.style.opacity='0';
+    persist.style.opacity='0'; persist.style.transition='opacity .8s ease';
+    circles.forEach(c=>{const C=2*Math.PI*c.r.baseVal.value;c.style.strokeDasharray=C;c.style.strokeDashoffset=C;c.style.transition='stroke-dashoffset .5s ease';});
+    requestAnimationFrame(()=>{persist.style.opacity='1';});
+    const step=90;
+    circles.forEach((c,i)=>setTimeout(()=>{c.style.strokeDashoffset='0';},260+i*step));
+    const total=260+circles.length*step+520;
+    setTimeout(()=>{board.style.opacity='1';},total);            // glass panels cut
+    setTimeout(()=>{anim.style.transition='opacity 1s ease';anim.style.opacity='0';},total+320);
+    setTimeout(()=>{if(anim.parentNode)anim.remove();},total+1400);
+  }
+
+  function boot(){ draw(false); addRebuild(); }
+  function addRebuild(){
+    if(root.querySelector('.rebuild')) return;
+    const cap=root.querySelector('.text-small');
+    if(!cap) return;
+    const b=document.createElement('button');
+    b.className='btn rebuild'; b.textContent='rebuild';
+    b.addEventListener('click',()=>draw(true));
+    cap.after(b);
+    b.style.display='block'; b.style.margin='4px auto 0';
+  }
+
+  window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>draw(false),200);});
+  if(document.readyState==='complete') boot();
+  else window.addEventListener('load',boot);
+})();
+</script>
+
+</body>
+</html>
