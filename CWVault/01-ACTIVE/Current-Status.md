@@ -37,7 +37,7 @@ See Handoff-Coder-Mar16.md for full design and implementation detail.
 ### Active File
 **`/Users/michaelchabin/CuriousWoods/cw-deploys/geometry-v1.html`**
 This is the single working file. All previous files superseded.
-Deploy: drag `cw-deploys/` folder to Netlify → thecuriouswoods.netlify.app
+Deploy: drag `cw-deploys/` folder to Netlify → curiouswoods.netlify.app
 
 ### Construction Engine
 - Two seed points, tap-tap for infinite lines, drag for circles

@@ -183,7 +183,7 @@ _CW/
 
 ## Deployment
 
-- **Deploy target:** `cw-deploys/` folder → Netlify (thecuriouswoods.netlify.app)
+- **Deploy target:** `cw-deploys/` folder → Netlify (curiouswoods.netlify.app)
 - **Workflow:** Edit files → `git commit` → `git push` → Netlify auto-deploys (~30 seconds)
 - **Git remote:** `https://github.com/MichaelChabin/curious-woods.git`
 - **Netlify publish directory:** `cw-deploys` (no build command)
