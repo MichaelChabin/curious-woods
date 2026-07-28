@@ -44,15 +44,17 @@
         </output>
         <div class="readout" id="readout" aria-live="polite">Tap a number along the bottom, then one up the left side.</div>
 
-        <div class="properties panel" id="properties">
-          <div id="property-copy"></div>
-        </div>
-
         <div class="decoder" aria-label="Prime glass">
+          <button class="btn prime-key unity-key" data-prime="1"><i class="swatch p1"><span class="chip-num">1</span></i></button>
           <button class="btn prime-key" data-prime="2"><i class="swatch p2"><span class="chip-num">2</span></i></button>
           <button class="btn prime-key" data-prime="3"><i class="swatch p3"><span class="chip-num">3</span></i></button>
           <button class="btn prime-key" data-prime="5"><i class="swatch p5"><span class="chip-num">5</span></i></button>
           <button class="btn prime-key" data-prime="7"><i class="swatch p7"><span class="chip-num">7</span></i></button>
+        </div>
+        <div class="tally" id="tally" aria-live="polite" hidden></div>
+
+        <div class="properties panel" id="properties">
+          <div id="property-copy"></div>
         </div>
 
         <div class="build-tools panel" id="build-tools" hidden>
@@ -251,6 +253,55 @@
     #glass-map .globals .btn,#glass-map .build-tools .btn,#glass-map .property-tools .btn{font-size:13px}
   }
 </style>
+<style id="v2-1b-style">
+  /* v2.1b — empty apertures, drawn came, the unity chip */
+
+  /* An empty pane is a number not yet made. The parchment and the background
+     construction show through it; glass arrives only when a number is built.
+     The came used to be the grid's dark background showing through the gaps —
+     with transparent panes that would flood every aperture, so it becomes a
+     drawn overlay instead and the gaps close up. */
+  #glass-map .grid{background:transparent;gap:0;padding:0}
+  #glass-map .cell{background:transparent}
+  #glass-map .cell.built{background:var(--leading)}
+  /* the one pane that says "something is here and it happens to be colourless" */
+  #glass-map .cell.clear.built{background:radial-gradient(circle at 44% 38%,#fbf8ee,#c9c1af 62%,#857e70)}
+
+  /* The came itself: one line per boundary, so no doubled interior joins.
+     Stroke width is in screen pixels, independent of how small the panes get. */
+  #glass-map .came{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;overflow:visible}
+  #glass-map .came line,#glass-map .came rect{fill:none;stroke:var(--leading);vector-effect:non-scaling-stroke}
+  #glass-map .came line{stroke-width:2.5}
+  #glass-map .came rect{stroke-width:4}
+
+  /* the grid no longer has padding, so origin-anchored rectangles start at its corner */
+  #glass-map .rectangle,#glass-map .triangle{left:0;bottom:0}
+
+  /* With no green left to tint, selectable edge panes take a faint warm wash. */
+  #glass-map.selecting .cell.edge:not(.built){background:rgb(141 122 84/.13)}
+  #glass-map.selecting .cell.edge:not(.built):hover{background:rgb(141 122 84/.24)}
+
+  /* Unity chip: clear glass, matching the origin pane. Dark numeral — the
+     light-on-dark treatment the other chips use is unreadable here. */
+  #glass-map .swatch.p1{background:radial-gradient(circle at 44% 38%,#fbf8ee,#c9c1af 62%,#857e70)}
+  #glass-map .unity-key .chip-num{color:#4a463c;text-shadow:0 1px 2px rgb(255 255 255/.55)}
+
+  /* The chip row moves above the properties panel (see the markup), which is what
+     raises it — so the panel keeps its 268px reserve. Measured: the longest copy
+     is 261px (for 6), and anything less makes the tool lists below jump as the
+     copy changes length. The row wraps; more chips are coming. */
+  #glass-map .decoder{flex-wrap:wrap;gap:12px;margin-top:10px}
+  #glass-map .tally{margin:7px 0 0;color:#546a80;font-size:14px;font-variant-numeric:tabular-nums;min-height:1.3em}
+
+  /* Compass letters — a sibling of .c-beyond, one step quieter and smaller. */
+  #glass-map #construction .c-compass{fill:rgb(104 106 98/.6);font:italic 11px Georgia,serif;letter-spacing:.07em}
+
+  /* Narrow screens keep the earlier batch's rules: no reserved panel height
+     (it would push the map off the phone) and a tighter chip row. */
+  @media(max-width:710px){
+    #glass-map .decoder{gap:10px;margin-top:0}
+  }
+</style>
 
 <script>
 (() => {
@@ -258,6 +309,7 @@
   const grid=root.querySelector('#grid'), readout=root.querySelector('#readout');
   const productBox=root.querySelector('#product'), productNumber=productBox.querySelector('.product-number'), productFactors=productBox.querySelector('.product-factors');
   const numbersButton=root.querySelector('#numbers'), fillButton=root.querySelector('#fill-map'), clearButton=root.querySelector('#clear-map');
+  const tally=root.querySelector('#tally');
   const buildTools=root.querySelector('#build-tools'), buildSubButtons=[...root.querySelectorAll('[data-build]')];
   const propertyTools=root.querySelector('#property-tools'), propertyButtons=[...root.querySelectorAll('[data-property]')];
   const propertyCopy=root.querySelector('#property-copy');
@@ -327,13 +379,10 @@
     if(n==null){productNumber.textContent='';productFactors.textContent='';return}
     productNumber.textContent=n;productFactors.textContent=powerText(factors);
   }
-  function resetProductSoon(message='Choose another prime.',delay=1800){
-    clearTimeout(expressionTimer);expressionTimer=setTimeout(()=>{composition=[];productBox.classList.remove('miss');setProduct();readout.textContent=message},delay);
-  }
   function frame(width,height,mirror=false,triangle=false){
     const target=cells.get(`${height},${width}`);if(!target)return null;
     const gb=grid.getBoundingClientRect(),b=target.getBoundingClientRect(),el=document.createElement('span');
-    el.className=triangle?'triangle':`rectangle${mirror?' mirror':''}`;el.style.width=`${Math.max(0,b.right-gb.left-4)}px`;el.style.height=`${Math.max(0,gb.bottom-b.top-4)}px`;grid.appendChild(el);return el;
+    el.className=triangle?'triangle':`rectangle${mirror?' mirror':''}`;el.style.width=`${Math.max(0,b.right-gb.left)}px`;el.style.height=`${Math.max(0,gb.bottom-b.top)}px`;grid.appendChild(el);return el;
   }
   function visiblePairs(n){const pairs=[];for(let a=1;a<=10;a++)if(n%a===0&&n/a<=10&&a<=n/a)pairs.push([a,n/a]);return pairs}
   function showAllRectangles(n){visiblePairs(n).forEach(([a,b])=>{frame(a,b,false);if(a!==b)frame(b,a,true)})}
@@ -403,7 +452,7 @@
   function clearTable(){
     cancelSequence();clearFx();
     cells.forEach(c=>c.classList.toggle('built',+c.dataset.product===1));
-    composition=[];pendingColumn=pendingRow=null;setProduct();propertyCopy.innerHTML='';
+    composition=[];updateTally();pendingColumn=pendingRow=null;setProduct();propertyCopy.innerHTML='';
   }
   function fillTable(){   // silent — the one reveal that makes no sound
     cancelSequence();clearFx();
@@ -481,21 +530,32 @@
   }
 
   // ==== Build ===============================================================
-  function addPrime(prime){
-    clearTimeout(expressionTimer);composition.push(prime);
-    const n=composition.reduce((a,b)=>a*b,1);setProduct(n,composition);
-    if(productCells(n).some(c=>!c.classList.contains('built'))){cancelSequence();revealNumber(n);composition=[];return}
-    if(!hasReachableEmpty(n)){readout.textContent='That number continues beyond this window.';setProduct(n,composition,true);softMiss();composition=[];resetProductSoon();return}
-    readout.textContent=`${n} is already here. Keep building.`;
+  // The number keeps growing: 2, then 6, then 30. Every intermediate stays on the
+  // glass, and every one of them divides where she ends up. No "=" and no timing.
+  const compositionTotal=()=>composition.reduce((a,b)=>a*b,1);
+  function compositionText(){
+    return composition.length?`1 × ${composition.join(' × ')} = ${compositionTotal()}`:'1';
   }
-  function hasReachableEmpty(n){
-    const q=[n],seen=new Set(q);
-    while(q.length){const v=q.shift();for(const p of [2,3,5,7]){const x=v*p;if(x>100||seen.has(x))continue;if(productCells(x).some(c=>!c.classList.contains('built')))return true;seen.add(x);q.push(x)}}
-    return false;
+  function updateTally(){
+    const on=mode==='build'&&buildTool==='primes';
+    tally.hidden=!on;if(on)tally.textContent=compositionText();
+  }
+  function resetComposition(){clearTimeout(expressionTimer);composition=[];updateTally()}
+  function addPrime(prime){
+    clearTimeout(expressionTimer);
+    const n=compositionTotal()*prime;
+    // Refuse a tap that would leave the window; the composition stays as it was.
+    // softMiss is a shrug, not an error tone — nothing else marks this.
+    if(!productCells(n).length){readout.textContent='That number continues beyond this window.';softMiss();return}
+    composition.push(prime);updateTally();
+    cancelSequence();revealNumber(n);
   }
   function buildTap(cell){
     const row=+cell.dataset.row,column=+cell.dataset.column,n=row*column;
-    if(buildTool==='primes'){readout.textContent='Tap a prime below to multiply it in.';return}
+    if(buildTool==='primes'){
+      if(n===1){resetComposition();setProduct();revealNumber(1,{message:'Back to 1. Every number starts here.'});return}
+      readout.textContent='Tap a prime below to multiply it in.';return;
+    }
     if(buildTool==='select'){cancelSequence();revealNumber(n);return}
     if(buildTool==='axes'){
       if(row===1)revealRun(columnCells(column),`Column ${column}`);
@@ -542,11 +602,11 @@
   function setBuildTool(tool){   // switching tools never clears — Build accumulates
     buildTool=tool;
     buildSubButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.build===tool)));
-    cancelSequence();clearFx();composition=[];
+    cancelSequence();clearFx();composition=[];updateTally();
     updateSelecting();readout.textContent=buildPrompts[tool];
   }
   function setMode(next){
-    mode=next;composition=[];pendingColumn=pendingRow=null;
+    mode=next;composition=[];updateTally();pendingColumn=pendingRow=null;
     cancelSequence();clearFx();setProduct();propertyCopy.innerHTML='';
     modeButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
     buildTools.hidden=mode!=='build';propertyTools.hidden=mode!=='properties';
@@ -566,6 +626,21 @@
     const numeral=document.createElement('span');numeral.className='numeral';numeral.textContent=n;cell.appendChild(numeral);
     cells.set(`${row},${column}`,cell);grid.appendChild(cell);
   }
+
+  // The came, drawn over the apertures. One line per boundary — no doubling at
+  // interior joins — and pointer-events:none, so the cells still catch every tap.
+  (function came(){
+    const ns='http://www.w3.org/2000/svg', svg=document.createElementNS(ns,'svg');
+    svg.setAttribute('class','came');svg.setAttribute('viewBox','0 0 10 10');
+    svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('aria-hidden','true');
+    for(let k=1;k<10;k++){
+      const v=document.createElementNS(ns,'line');v.setAttribute('x1',k);v.setAttribute('y1',0);v.setAttribute('x2',k);v.setAttribute('y2',10);svg.appendChild(v);
+      const h=document.createElementNS(ns,'line');h.setAttribute('x1',0);h.setAttribute('y1',k);h.setAttribute('x2',10);h.setAttribute('y2',k);svg.appendChild(h);
+    }
+    const edge=document.createElementNS(ns,'rect');
+    edge.setAttribute('x',0);edge.setAttribute('y',0);edge.setAttribute('width',10);edge.setAttribute('height',10);
+    svg.appendChild(edge);grid.appendChild(svg);
+  })();
 
   // ==== gestures ============================================================
   // Multiply owns pointer events (tap and drag coexist, told apart by movement);
@@ -613,6 +688,8 @@
   root.querySelectorAll('[data-prime]').forEach(button=>button.addEventListener('click',async()=>{
     const p=+button.dataset.prime,e=createAudio();if(!e)return;await e.ctx.resume();
     cancelSequence();clearFx();
+    // The unity chip is where every build starts, and the way back to it.
+    if(p===1){resetComposition();setProduct();revealNumber(1,{message:'Back to 1. Every number starts here.'});return}
     if(mode==='build'&&buildTool==='primes'){addPrime(p);return}
     const pieces=[...root.querySelectorAll(`.cell.built .piece.p${p}`)];
     pieces.forEach((piece,i)=>fx(()=>piece.classList.add('glow'),Math.min(420,i*5)));
@@ -689,6 +766,13 @@
     const beyond=(x,y,txt,anchor)=>{const t=el('text',{class:'c-beyond',x:x,y:y,'text-anchor':anchor||'middle'});t.textContent=txt;persist.appendChild(t);};
     beyond(markX(11),axisY+18,'11'); beyond(g.left-1*g.cell,axisY+18,'1');
     beyond(axisX-14,markY(11)+4,'11','end'); beyond(axisX-14,g.bottom+1*g.cell+4,'1','end');
+
+    // The map has directions even with one quadrant drawn. W and S point into
+    // territory that exists and is not drawn; that is the point, and needs no
+    // explanation. Placed on the far side of each axis from the "1"/"11" marks.
+    const compass=(x,y,txt,anchor)=>{const t=el('text',{class:'c-compass',x:x,y:y,'text-anchor':anchor||'middle'});t.textContent=txt;persist.appendChild(t);};
+    compass(g.right+bx-1,axisY-9,'E','end');   compass(axisX-bx+1,axisY-9,'W','start');
+    compass(axisX+12,g.top-bx+3,'N','start');  compass(axisX+12,g.bottom+bx+3,'S','start');
 
     // the numbering circles: an equal-unit chain stepping off each integer
     const circles=[];
