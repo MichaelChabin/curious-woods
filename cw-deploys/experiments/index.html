@@ -70,12 +70,12 @@
       letter-spacing: 0.04em;
     }
 
-    .empty {
-      text-align: center;
-      color: #a09880;
-      font-size: 14px;
-      font-style: italic;
-      margin: 80px 0;
+    /* a standing note about a file, not a status stamp */
+    .item .note {
+      font-size: 12px;
+      color: #b87333;
+      line-height: 1.5;
+      margin-top: 5px;
     }
 
     .back {
@@ -108,13 +108,42 @@
     </div>
 
     When an experiment becomes obsolete, either tag the meta line with
-    "(retired)" or move the file into experiments/archive/ — don't delete
+    "(retired)" or move the file into ../../outdated-files/ — don't delete
     it, in case someone still has the link.
     -->
 
-    <div class="empty">No experiments posted yet.</div>
+    <div class="item">
+      <a class="title" href="number-theory-v1.html">Number Theory Lab</a>
+      <div class="desc">Multiplication and division as rectangles, on a number plane you can pan across.</div>
+      <div class="note">Its grid and axis rendering is the visual reference for Glass Multiplication v2.2.</div>
+    </div>
 
-    <a class="back" href="../">← curious woods</a>
+    <div class="item">
+      <a class="title" href="pi-beads.html">Beads Around a Circle</a>
+      <div class="desc">How many beads fit around a circle — count them, divide circumference by diameter, and keep the past measurements.</div>
+    </div>
+
+    <div class="item">
+      <a class="title" href="clinks-triangular.html">Clinks</a>
+      <div class="desc">Someone arrives, someone leaves, and everyone clinks glasses: the triangular numbers, counted out.</div>
+    </div>
+
+    <div class="item">
+      <a class="title" href="necker-brain-map.html">Necker Cube Brain Path</a>
+      <div class="desc">The route a Necker cube flip takes through the brain, drawn as a station map.</div>
+    </div>
+
+    <div class="item">
+      <a class="title" href="sound-workbench.html">Sound Workbench</a>
+      <div class="desc">A bench for auditioning the interface's voice — gesture sounds, feedback sounds, pitch and ratios.</div>
+    </div>
+
+    <div class="item">
+      <a class="title" href="cursor-modes.html">Cursor Modes</a>
+      <div class="desc">What the pointer becomes for each gesture: arrow to crosshair, magnifier, precision magnifier, double-click and hold.</div>
+    </div>
+
+    <a class="back" href="../index.html">← curious woods</a>
 
   </div>
 

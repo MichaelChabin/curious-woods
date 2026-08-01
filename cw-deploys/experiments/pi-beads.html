@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curious Woods — Beads Around a Circle</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; background: #f4f1e8; font-family: Georgia, serif; }
+
+#canvas {
+  position: fixed; inset: 0; z-index: 0;
+  touch-action: none; display: block;
+  cursor: grab;
+}
+#canvas.panning { cursor: grabbing; }
+
+/* --- Floating tool cards --- */
+.tool-card {
+  position: fixed;
+  z-index: 100;
+  background: rgba(244,241,232,0.96);
+  border: 0.5px solid #c8b89a;
+  border-radius: 6px;
+  padding: 12px 14px 14px;
+  box-shadow: 0 2px 12px rgba(42,38,32,0.08);
+  pointer-events: all;
+  width: 220px;
+  user-select: none;
+}
+.tool-card.dragging { cursor: grabbing; }
+.tool-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+  cursor: grab;
+}
+.tool-card-header:active { cursor: grabbing; }
+.tool-card-title {
+  font-family: Georgia, serif;
+  font-size: 14px;
+  color: #546A80;
+  font-weight: normal;
+  line-height: 1;
+}
+
+.cw-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.cw-slider-label {
+  font-family: Georgia, serif;
+  font-size: 10px;
+  color: #9a8e80;
+  width: 56px;
+  flex-shrink: 0;
+}
+.cw-slider-value {
+  font-family: Georgia, serif;
+  font-size: 11px;
+  color: #546A80;
+  width: 38px;
+  text-align: right;
+  flex-shrink: 0;
+}
+input[type=range].cw-slider {
+  flex: 1;
+  height: 3px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #c8b89a;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range].cw-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 15px;
+  background: #546A80;
+  border-radius: 2px;
+  cursor: pointer;
+}
+input[type=range].cw-slider::-moz-range-thumb {
+  width: 10px;
+  height: 15px;
+  background: #546A80;
+  border-radius: 2px;
+  cursor: pointer;
+  border: none;
+}
+
+.tool-action {
+  display: inline-block;
+  font-family: Georgia, serif;
+  font-size: 13px;
+  color: #546A80;
+  cursor: default;
+  transition: color 80ms;
+  margin-top: 8px;
+}
+.tool-action:hover { color: #3D3D3A; }
+.tool-action.disabled { color: #c8b89a; pointer-events: none; }
+.tool-action.italic { font-style: italic; }
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 4px 0;
+}
+.result-row + .result-row {
+  border-top: 0.5px solid rgba(200,184,154,0.5);
+}
+.result-label {
+  font-family: Georgia, serif;
+  font-size: 11px;
+  color: #9a8e80;
+  font-style: italic;
+}
+.result-value {
+  font-family: Georgia, serif;
+  font-size: 18px;
+  color: #2a2620;
+}
+.result-value.empty { color: #c8b89a; }
+.result-value.ratio { color: #b87333; }
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Georgia, serif;
+  font-size: 12px;
+}
+.history-table th {
+  text-align: left;
+  padding: 4px 6px;
+  font-weight: normal;
+  font-style: italic;
+  color: #9a8e80;
+  font-size: 10px;
+  border-bottom: 0.5px solid #c8b89a;
+}
+.history-table th:last-child, .history-table td:last-child { text-align: right; }
+.history-table td {
+  padding: 4px 6px;
+  color: #2a2620;
+  border-bottom: 0.5px solid rgba(200,184,154,0.4);
+}
+.history-table tr:last-child td { border-bottom: none; }
+.history-empty {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 11px;
+  color: #9a8e80;
+  padding: 4px 0;
+}
+
+#title-block {
+  position: fixed;
+  left: 24px;
+  top: 24px;
+  z-index: 90;
+  pointer-events: none;
+}
+#title-block .title-line {
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  color: #2a2620;
+}
+#title-block .title-word {
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 19px;
+  color: #b87333;
+}
+
+#drag-hint {
+  position: fixed;
+  font: 9px/1 system-ui;
+  color: #b0a090;
+  pointer-events: none;
+  z-index: 99;
+  transition: opacity 1s ease-in;
+}
+#drag-hint.faded { opacity: 0; }
+
+#zoom-indicator {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 90;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 11px;
+  color: #9a8e80;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div id="title-block">
+  <span class="title-line">how many beads fit around</span>
+  <span class="title-word">a circle?</span>
+</div>
+
+<div class="tool-card" id="tool-settings" style="left: 24px; top: 100px;">
+  <div class="tool-card-header" id="settings-drag">
+    <span class="tool-card-title">Beads</span>
+  </div>
+
+  <div class="cw-slider-row">
+    <span class="cw-slider-label">diameter</span>
+    <input type="range" id="diameter-slider" class="cw-slider" min="0" max="13" step="1" value="3">
+    <span class="cw-slider-value" id="diameter-value">101</span>
+  </div>
+
+  <div style="margin-top: 14px; padding-top: 10px; border-top: 0.5px solid #d8ceba; display: flex; justify-content: space-between;">
+    <span class="tool-action" id="action-count">count around</span>
+    <span class="tool-action italic" id="action-recenter">recenter</span>
+  </div>
+</div>
+
+<div class="tool-card" id="tool-results" style="right: 24px; top: 100px; width: 200px;">
+  <div class="tool-card-header" id="results-drag">
+    <span class="tool-card-title">What we found</span>
+  </div>
+  <div class="result-row">
+    <span class="result-label">diameter</span>
+    <span class="result-value" id="result-diameter">101</span>
+  </div>
+  <div class="result-row">
+    <span class="result-label">circumference</span>
+    <span class="result-value empty" id="result-count">—</span>
+  </div>
+  <div class="result-row">
+    <span class="result-label">circumference ÷ diameter</span>
+    <span class="result-value ratio empty" id="result-ratio">—</span>
+  </div>
+</div>
+
+<div class="tool-card" id="tool-history" style="right: 24px; top: 290px; width: 240px;">
+  <div class="tool-card-header" id="history-drag">
+    <span class="tool-card-title">Past measurements</span>
+  </div>
+  <div id="history-content">
+    <div class="history-empty">Nothing measured yet.</div>
+  </div>
+  <div id="history-footer" style="margin-top: 10px; padding-top: 8px; border-top: 0.5px solid #d8ceba; display: none; justify-content: flex-end;">
+    <span class="tool-action italic" id="history-clear">clear all</span>
+  </div>
+</div>
+
+<div id="drag-hint" style="left: 24px; top: 90px;">drag any card to move it</div>
+<div id="zoom-indicator">scroll to zoom · drag canvas to pan</div>
+
+<script>
+(function() {
+'use strict';
+
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+
+var state = {
+  diameter: 101,           // count of beads on the diameter
+  beadPx: 6,               // rendered size of one bead in screen pixels (before zoom)
+  zoom: 1,
+  panX: 0,
+  panY: 0,
+  isPanning: false,
+  panStart: {x:0, y:0},
+  panOrigin: {x:0, y:0},
+  counting: false,
+  placedBeads: [],         // array of {x, y, angle} in bead-units
+  totalBeadsToPlace: 0,
+  lastCount: null,
+  lastRatio: null,
+  history: []
+};
+
+function resizeCanvas() {
+  var dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  // Choose beadPx such that the whole circle fits comfortably
+  var maxRadiusPx = Math.min(window.innerWidth, window.innerHeight) * 0.42;
+  var radiusInBeads = (state.diameter - 1) / 2;  // bead-centers go from -r to +r
+  state.beadPx = Math.max(2, Math.min(12, maxRadiusPx / Math.max(radiusInBeads, 1)));
+  draw();
+}
+window.addEventListener('resize', resizeCanvas);
+
+// ---------- Geometry ----------
+// Diameter has N beads (N = state.diameter). Beads are centered at integer
+// positions x = -(N-1)/2 ... +(N-1)/2 in bead-units. The radius (in bead-units)
+// is (N-1)/2. Bead diameter = 1 bead-unit.
+
+function radiusInBeads() {
+  return (state.diameter - 1) / 2;
+}
+
+// Compute how many beads fit around the circle, given the chord-1 construction.
+// Each bead's center is on the circle of radius r; adjacent bead centers are
+// separated by chord = 1.
+//   chord = 2 * r * sin(theta / 2), so theta = 2 * asin(1 / (2r)).
+//   number of beads that fit = floor(2*pi / theta).
+function computeCircumferenceBeads() {
+  var r = radiusInBeads();
+  if (r < 0.5) return [];
+  var theta = 2 * Math.asin(1 / (2 * r));
+  var n = Math.floor((2 * Math.PI) / theta);
+  var beads = [];
+  // Place first bead at angle 0 (right side), then sweep counterclockwise.
+  // (We use canvas convention: +y is down. To make "counterclockwise visually"
+  // we negate y. We'll just compute mathematical positions and let render flip.)
+  for (var i = 0; i < n; i++) {
+    var angle = i * theta;
+    beads.push({
+      x: r * Math.cos(angle),
+      y: r * Math.sin(angle),
+      angle: angle
+    });
+  }
+  return beads;
+}
+
+// ---------- Drawing ----------
+function draw() {
+  var w = window.innerWidth;
+  var h = window.innerHeight;
+
+  ctx.fillStyle = '#f4f1e8';
+  ctx.fillRect(0, 0, w, h);
+
+  var bp = state.beadPx * state.zoom;
+  var cx = w / 2 + state.panX;
+  var cy = h / 2 + state.panY;
+  var r = radiusInBeads();
+  var rPx = r * bp;
+
+  // Faint grid when zoomed enough
+  if (bp >= 14) {
+    ctx.strokeStyle = 'rgba(84,106,128,0.06)';
+    ctx.lineWidth = 0.5;
+    var startX = ((cx % bp) + bp) % bp;
+    var startY = ((cy % bp) + bp) % bp;
+    ctx.beginPath();
+    for (var x = startX; x < w; x += bp) {
+      ctx.moveTo(x + 0.5, 0);
+      ctx.lineTo(x + 0.5, h);
+    }
+    for (var y = startY; y < h; y += bp) {
+      ctx.moveTo(0, y + 0.5);
+      ctx.lineTo(w, y + 0.5);
+    }
+    ctx.stroke();
+  }
+
+  // Faint guide circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, rPx, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(84,106,128,0.18)';
+  ctx.lineWidth = 0.5;
+  ctx.stroke();
+
+  // Diameter line — a faint reference
+  ctx.beginPath();
+  ctx.moveTo(cx - rPx, cy);
+  ctx.lineTo(cx + rPx, cy);
+  ctx.strokeStyle = 'rgba(84,106,128,0.18)';
+  ctx.lineWidth = 0.5;
+  ctx.stroke();
+
+  // Diameter beads — Payne's gray, slightly muted
+  for (var i = 0; i < state.diameter; i++) {
+    var bx = -r + i;
+    drawBead(cx + bx * bp, cy, bp / 2, '#7e8da0');
+  }
+
+  // Center marker — a small ring around the center bead
+  ctx.beginPath();
+  ctx.arc(cx, cy, bp * 0.85, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(190,98,47,0.4)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Sweep ray (during counting)
+  if (state.counting && state.placedBeads.length > 0) {
+    var lastBead = state.placedBeads[state.placedBeads.length - 1];
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + lastBead.x * bp, cy - lastBead.y * bp);
+    ctx.strokeStyle = 'rgba(190,98,47,0.35)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Circumference beads — copper
+  for (var i = 0; i < state.placedBeads.length; i++) {
+    var b = state.placedBeads[i];
+    drawBead(cx + b.x * bp, cy - b.y * bp, bp / 2, '#BE622F');
+  }
+
+  // After counting completes, draw the closing-gap arc
+  if (!state.counting && state.placedBeads.length > 0 && state.lastCount !== null) {
+    var firstBead = state.placedBeads[0];
+    var lastBead = state.placedBeads[state.placedBeads.length - 1];
+    // Arc from last bead back to first bead — this is the visible gap
+    var startAngle = Math.atan2(-lastBead.y, lastBead.x);
+    var endAngle = Math.atan2(-firstBead.y, firstBead.x);
+    // We want to go from last bead counterclockwise to first bead, which in
+    // canvas (y-flipped) coords means clockwise.
+    ctx.beginPath();
+    ctx.arc(cx, cy, rPx, startAngle, endAngle, true);
+    ctx.strokeStyle = '#BE622F';
+    ctx.lineWidth = Math.max(1.5, bp * 0.3);
+    ctx.lineCap = 'round';
+    ctx.stroke();
+  }
+}
+
+function drawBead(cx, cy, r, color) {
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+// ---------- Run the count ----------
+function runCount() {
+  if (state.counting) return;
+  var beads = computeCircumferenceBeads();
+  state.counting = true;
+  state.placedBeads = [];
+  state.totalBeadsToPlace = beads.length;
+  state.lastCount = null;
+  state.lastRatio = null;
+  updateResults();
+
+  var totalDuration = Math.min(2400, 700 + beads.length * 4);
+  var startTime = performance.now();
+
+  function tick() {
+    var elapsed = performance.now() - startTime;
+    var progress = Math.min(1, elapsed / totalDuration);
+    var idx = Math.floor(progress * beads.length);
+    state.placedBeads = beads.slice(0, idx);
+    document.getElementById('result-count').textContent = state.placedBeads.length;
+    document.getElementById('result-count').classList.remove('empty');
+    draw();
+
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      state.placedBeads = beads;
+      state.lastCount = beads.length;
+      state.lastRatio = beads.length / state.diameter;
+      state.counting = false;
+      addToHistory();
+      updateResults();
+      draw();
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+function addToHistory() {
+  state.history.push({
+    diameter: state.diameter,
+    count: state.lastCount,
+    ratio: state.lastRatio
+  });
+  renderHistory();
+}
+
+function renderHistory() {
+  var content = document.getElementById('history-content');
+  var footer = document.getElementById('history-footer');
+  if (state.history.length === 0) {
+    content.innerHTML = '<div class="history-empty">Nothing measured yet.</div>';
+    footer.style.display = 'none';
+    return;
+  }
+  footer.style.display = 'flex';
+  var html = '<table class="history-table"><thead><tr>' +
+    '<th>diameter</th><th>around</th><th>ratio</th>' +
+    '</tr></thead><tbody>';
+  for (var i = 0; i < state.history.length; i++) {
+    var r = state.history[i];
+    html += '<tr>' +
+      '<td>' + r.diameter + '</td>' +
+      '<td>' + r.count + '</td>' +
+      '<td>' + r.ratio.toFixed(4) + '</td>' +
+      '</tr>';
+  }
+  html += '</tbody></table>';
+  content.innerHTML = html;
+}
+
+function updateResults() {
+  document.getElementById('result-diameter').textContent = state.diameter;
+  var countEl = document.getElementById('result-count');
+  var ratioEl = document.getElementById('result-ratio');
+  if (state.lastCount !== null) {
+    countEl.textContent = state.lastCount;
+    countEl.classList.remove('empty');
+  } else if (!state.counting) {
+    countEl.textContent = '—';
+    countEl.classList.add('empty');
+  }
+  if (state.lastRatio !== null) {
+    ratioEl.textContent = state.lastRatio.toFixed(4);
+    ratioEl.classList.remove('empty');
+  } else {
+    ratioEl.textContent = '—';
+    ratioEl.classList.add('empty');
+  }
+}
+
+// Diameter stops — chosen to show convergence shape: rapid early growth,
+// then slowing approach. Index into this with the slider.
+var DIAMETER_STOPS = [11, 21, 51, 101, 151, 201, 301, 401, 501, 601, 801, 1001, 1501, 2007];
+
+document.getElementById('diameter-slider').addEventListener('input', function(e) {
+  var idx = parseInt(e.target.value);
+  state.diameter = DIAMETER_STOPS[idx];
+  document.getElementById('diameter-value').textContent = state.diameter;
+  state.lastCount = null;
+  state.lastRatio = null;
+  state.placedBeads = [];
+  // Reset view so each new circle is cleanly centered
+  state.zoom = 1;
+  state.panX = 0;
+  state.panY = 0;
+  // Recompute beadPx so the circle fits
+  var maxRadiusPx = Math.min(window.innerWidth, window.innerHeight) * 0.42;
+  var radiusInBeadsVal = (state.diameter - 1) / 2;
+  state.beadPx = Math.max(0.5, Math.min(12, maxRadiusPx / Math.max(radiusInBeadsVal, 1)));
+  updateResults();
+  draw();
+});
+
+document.getElementById('action-count').addEventListener('click', runCount);
+
+document.getElementById('action-recenter').addEventListener('click', function() {
+  state.zoom = 1;
+  state.panX = 0;
+  state.panY = 0;
+  draw();
+});
+
+document.getElementById('history-clear').addEventListener('click', function() {
+  state.history = [];
+  renderHistory();
+});
+
+// Pan/zoom
+canvas.addEventListener('mousedown', function(e) {
+  state.isPanning = true;
+  state.panStart = {x: e.clientX, y: e.clientY};
+  state.panOrigin = {x: state.panX, y: state.panY};
+  canvas.classList.add('panning');
+});
+window.addEventListener('mousemove', function(e) {
+  if (!state.isPanning) return;
+  state.panX = state.panOrigin.x + (e.clientX - state.panStart.x);
+  state.panY = state.panOrigin.y + (e.clientY - state.panStart.y);
+  draw();
+});
+window.addEventListener('mouseup', function() {
+  state.isPanning = false;
+  canvas.classList.remove('panning');
+});
+canvas.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  var factor = e.deltaY > 0 ? 0.9 : 1.1;
+  state.zoom = Math.max(0.2, Math.min(8, state.zoom * factor));
+  draw();
+}, {passive: false});
+
+canvas.addEventListener('touchstart', function(e) {
+  if (e.touches.length === 1) {
+    state.isPanning = true;
+    state.panStart = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+    state.panOrigin = {x: state.panX, y: state.panY};
+  }
+});
+canvas.addEventListener('touchmove', function(e) {
+  if (state.isPanning && e.touches.length === 1) {
+    state.panX = state.panOrigin.x + (e.touches[0].clientX - state.panStart.x);
+    state.panY = state.panOrigin.y + (e.touches[0].clientY - state.panStart.y);
+    draw();
+    e.preventDefault();
+  }
+}, {passive: false});
+canvas.addEventListener('touchend', function() {
+  state.isPanning = false;
+});
+
+// Card dragging
+function makeDraggable(card, handle) {
+  var dragging = false;
+  var startX, startY, origLeft, origTop;
+  handle.addEventListener('mousedown', function(e) {
+    dragging = true;
+    var rect = card.getBoundingClientRect();
+    startX = e.clientX;
+    startY = e.clientY;
+    origLeft = rect.left;
+    origTop = rect.top;
+    card.classList.add('dragging');
+    card.style.right = 'auto';
+    card.style.bottom = 'auto';
+    card.style.left = origLeft + 'px';
+    card.style.top = origTop + 'px';
+    e.preventDefault();
+    var hint = document.getElementById('drag-hint');
+    if (hint && !hint.classList.contains('faded')) hint.classList.add('faded');
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    var dx = e.clientX - startX;
+    var dy = e.clientY - startY;
+    card.style.left = (origLeft + dx) + 'px';
+    card.style.top = (origTop + dy) + 'px';
+  });
+  window.addEventListener('mouseup', function() {
+    if (dragging) {
+      dragging = false;
+      card.classList.remove('dragging');
+    }
+  });
+}
+
+makeDraggable(document.getElementById('tool-settings'),
+              document.getElementById('settings-drag'));
+makeDraggable(document.getElementById('tool-results'),
+              document.getElementById('results-drag'));
+makeDraggable(document.getElementById('tool-history'),
+              document.getElementById('history-drag'));
+
+resizeCanvas();
+updateResults();
+
+setTimeout(function() {
+  var hint = document.getElementById('drag-hint');
+  if (hint) hint.classList.add('faded');
+}, 4000);
+
+})();
+</script>
+
+</body>
+</html>

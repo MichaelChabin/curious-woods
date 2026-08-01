@@ -57,22 +57,17 @@
       align-items: center;
     }
 
+    /* the one item that opens a room rather than a lab */
+    .item.aside { margin-top: 12px; }
+    .item.aside a { font-size: 14px; color: #a09880; }
+    .item.aside a:hover { color: #b87333; }
+
     footer {
       position: fixed;
       bottom: 32px;
       font-size: 11px;
       color: #c8b89a;
       letter-spacing: 0.06em;
-    }
-
-    footer a {
-      color: #c8b89a;
-      text-decoration: none;
-      transition: color 80ms ease;
-    }
-
-    footer a:hover {
-      color: #546A80;
     }
   </style>
 </head>
@@ -83,31 +78,23 @@
   <nav>
 
     <div class="item">
-      <a href="geometry-v1.html">Glass</a>
+      <a href="active/glass-geometry.html">Glass Geometry</a>
       <div class="label">stained glass construction tool</div>
     </div>
 
     <div class="item">
-      <a href="number-theory-v1.html">Number Theory Lab</a>
-      <div class="label">multiplication and division as rectangles</div>
-    </div>
-
-    <div class="item">
-      <a href="glass-multiplication-v2.html">Glass Multiplication</a>
+      <a href="active/glass-multiplication.html">Glass Multiplication</a>
       <div class="label">prime factors in color, light, and sound</div>
     </div>
 
-    <!-- add entries here as new things are ready to test -->
-    <!-- example:
-    <div class="item">
-      <a href="stories/montparnasse/page1-what.html">Montparnasse</a>
-      <div class="label">a train, a station, a Paris street</div>
+    <div class="item aside">
+      <a href="experiments/index.html">Experiments</a>
+      <div class="label">sketches and unfinished things</div>
     </div>
-    -->
 
   </nav>
 
-  <footer><a href="experiments/">experiments</a> · curious woods — development preview</footer>
+  <footer>curious woods — development preview</footer>
 
 </body>
 </html>

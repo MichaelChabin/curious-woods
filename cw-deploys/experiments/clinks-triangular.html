@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clinks</title>
+<style>
+  :root{
+    --paper:#f4f1e8;
+    --ink:#3d3d3a;
+    --lead:#090b0f;
+    --bluegray:#546a80;
+    --fine:#8b887f;
+  }
+  html,body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);
+    font-family:Georgia,serif;-webkit-font-smoothing:antialiased}
+  #clinks{max-width:880px;margin:0 auto;padding:26px 22px 34px}
+  .stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,300px);
+    gap:18px;align-items:center}
+  svg{display:block;width:100%;height:auto;overflow:visible}
+  .name{font-family:Georgia,serif;font-size:13px;fill:#4a4a45}
+  .name.faint{fill:#8b887f}
+  .totaltile{font-family:Georgia,serif;font-size:15px;fill:#f4f1e8}
+
+  .readout{margin:16px 2px 0;min-height:3.4em;line-height:1.5}
+  .sum{font-size:19px;color:#31322f;font-variant-numeric:tabular-nums;
+    letter-spacing:.01em;min-height:1.3em}
+  .gloss{margin-top:5px;font-size:13px;color:var(--bluegray)}
+
+  .controls{margin-top:14px;display:flex;gap:20px;align-items:baseline;
+    flex-wrap:wrap}
+  .word{font-size:14px;color:var(--bluegray);cursor:pointer;
+    border-bottom:1px solid rgba(84,106,128,.28);padding-bottom:1px;
+    transition:opacity .35s ease,color .2s ease;user-select:none}
+  .word:hover{color:#2f4356;border-bottom-color:rgba(47,67,86,.55)}
+  .word.gone{opacity:0;pointer-events:none}
+  .word.quiet{color:#9a978c;border-bottom-color:rgba(154,151,140,.3)}
+
+  @media (max-width:680px){
+    .stage{grid-template-columns:minmax(0,1fr)}
+  }
+</style>
+</head>
+<body>
+<div id="clinks">
+  <div class="stage">
+    <svg id="graph" viewBox="0 0 440 380" aria-label="people and the clinks between them"></svg>
+    <svg id="tiles" viewBox="0 0 300 260" aria-label="the clinks counted as tiles"></svg>
+  </div>
+
+  <div class="readout">
+    <div class="sum" id="sum"></div>
+    <div class="gloss" id="gloss"></div>
+  </div>
+
+  <div class="controls">
+    <span class="word" id="add">someone else arrives</span>
+    <span class="word" id="remove">someone leaves</span>
+    <span class="word" id="reset">start over</span>
+    <span class="word quiet" id="sound">sound off</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  const PEOPLE = [
+    {name:'Pip',     c:'#e8e3d2', dark:'#8d8874', pale:true},
+    {name:'Heather', c:'#efece0', dark:'#918d7c', pale:true},
+    {name:'Britton', c:'#4a6a8f', dark:'#2a3e55'},
+    {name:'Eileen',  c:'#b06a3a', dark:'#6a3f21'},
+    {name:'Michael', c:'#3f5f43', dark:'#253825'},
+    {name:'Nadia',   c:'#9a8420', dark:'#5c4e11'},
+    {name:'Tomás',   c:'#6a4a7a', dark:'#3f2b49'},
+    {name:'Rosa',    c:'#2f6f6f', dark:'#1b4141'}
+  ];
+  const MAX = PEOPLE.length;
+
+  const G = document.getElementById('graph');
+  const T = document.getElementById('tiles');
+  const sumEl = document.getElementById('sum');
+  const glossEl = document.getElementById('gloss');
+  const addEl = document.getElementById('add');
+  const remEl = document.getElementById('remove');
+  const resetEl = document.getElementById('reset');
+  const soundEl = document.getElementById('sound');
+
+  const CX = 220, CY = 176, R = 132;
+  const TILE = 26, TGAP = 2;
+
+  let n = 1;                 // people present
+  let nodes = [];            // {x,y,tx,ty}
+  let edges = [];            // {a,b,owner,p}  p = draw progress 0..1
+  let tiles = [];            // {col,row,owner,p}
+  let queue = [];            // pending reveal steps
+  let busy = false;
+  let soundOn = false;
+  let audio = null;
+
+  /* ---------- geometry ---------- */
+  function target(i,count){
+    if(count===1) return {x:CX, y:CY};
+    const a = -Math.PI/2 + (i*2*Math.PI)/count;
+    return {x:CX + R*Math.cos(a), y:CY + R*Math.sin(a)};
+  }
+  function retarget(){
+    for(let i=0;i<n;i++){
+      const t = target(i,n);
+      nodes[i].tx = t.x; nodes[i].ty = t.y;
+    }
+  }
+
+  /* ---------- sound ---------- */
+  function clink(k){
+    if(!soundOn) return;
+    try{
+      audio = audio || new (window.AudioContext||window.webkitAudioContext)();
+      const t0 = audio.currentTime;
+      const base = 880 * Math.pow(2, ((k%5)-2)/12);
+      [1, 2.71, 5.43].forEach((mult,idx)=>{
+        const o = audio.createOscillator(), g = audio.createGain();
+        o.type='sine'; o.frequency.value = base*mult;
+        const peak = [0.16,0.07,0.035][idx];
+        g.gain.setValueAtTime(0.0001,t0);
+        g.gain.exponentialRampToValueAtTime(peak,t0+0.006);
+        g.gain.exponentialRampToValueAtTime(0.0001,t0+0.9-idx*0.22);
+        o.connect(g); g.connect(audio.destination);
+        o.start(t0); o.stop(t0+1.0);
+      });
+    }catch(e){}
+  }
+
+  /* ---------- state changes ---------- */
+  function addPerson(){
+    if(busy || n>=MAX) return;
+    const k = n;                       // index of the arriving person
+    n++;
+    nodes.push({x:CX, y:CY-R-30, tx:0, ty:0});
+    retarget();
+    busy = true;
+    queue = [];
+    for(let j=0;j<k;j++){
+      queue.push({a:j, b:k, owner:k, col:k-1, row:j});
+    }
+    setTimeout(step, 430);
+    paintWords();
+  }
+
+  function step(){
+    if(!queue.length){ busy = false; paintWords(); return; }
+    const q = queue.shift();
+    edges.push({a:q.a, b:q.b, owner:q.owner, p:0});
+    setTimeout(()=>{
+      tiles.push({col:q.col, row:q.row, owner:q.owner, p:0});
+      clink(q.row);
+      write();
+    }, 250);
+    setTimeout(step, 330);
+    write();
+  }
+
+  function removePerson(){
+    if(busy || n<=1) return;
+    const k = n-1;
+    edges = edges.filter(e=>e.b!==k && e.a!==k);
+    tiles = tiles.filter(t=>t.owner!==k);
+    nodes.pop(); n--;
+    retarget(); write(); paintWords();
+  }
+
+  function reset(){
+    if(busy) return;
+    n = 1; nodes = [{x:CX,y:CY,tx:CX,ty:CY}]; edges = []; tiles = [];
+    write(); paintWords();
+  }
+
+  /* ---------- rendering ---------- */
+  function lerp(a,b,t){ return a + (b-a)*t; }
+
+  function frame(){
+    let moving = false;
+    for(const nd of nodes){
+      const dx = nd.tx-nd.x, dy = nd.ty-nd.y;
+      if(Math.abs(dx)>0.2 || Math.abs(dy)>0.2){ moving = true; }
+      nd.x += dx*0.16; nd.y += dy*0.16;
+    }
+    for(const e of edges){ if(e.p<1){ e.p = Math.min(1, e.p+0.075); moving = true; } }
+    for(const t of tiles){ if(t.p<1){ t.p = Math.min(1, t.p+0.11); moving = true; } }
+    if(moving) draw();
+    requestAnimationFrame(frame);
+  }
+
+  function el(tag, attrs){
+    const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for(const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function draw(){
+    /* --- graph --- */
+    G.textContent = '';
+    for(const e of edges){
+      const A = nodes[e.a], B = nodes[e.b];
+      const ease = 1-Math.pow(1-e.p,3);
+      const x2 = lerp(B.x, A.x, ease), y2 = lerp(B.y, A.y, ease);
+      const P = PEOPLE[e.owner];
+      const ln = el('line',{x1:B.x, y1:B.y, x2:x2, y2:y2,
+        stroke:P.c, 'stroke-width':P.pale?3.5:4, 'stroke-linecap':'round'});
+      if(P.pale) ln.setAttribute('stroke','#e2ddcb');
+      G.appendChild(ln);
+    }
+    for(let i=0;i<n;i++){
+      const nd = nodes[i], P = PEOPLE[i];
+      G.appendChild(el('circle',{cx:nd.x, cy:nd.y, r:9, fill:P.c,
+        stroke: P.pale ? '#a9a494' : 'rgba(9,11,15,.35)', 'stroke-width':1.4}));
+      const right = nd.x > CX+2, below = nd.y > CY+2, centre = n===1;
+      const t = el('text',{
+        x: centre ? nd.x : nd.x + (right?16:-16),
+        y: nd.y + (centre? -20 : (below? 17 : -13)),
+        'text-anchor': centre ? 'middle' : (right?'start':'end'),
+        class:'name'});
+      t.textContent = P.name;
+      G.appendChild(t);
+    }
+
+    /* --- tiles --- */
+    T.textContent = '';
+    const cols = Math.max(1, n-1);
+    const w = cols*(TILE+TGAP), h = cols*(TILE+TGAP);
+    const ox = 8, oy = 250 - h;
+    for(const t of tiles){
+      const P = PEOPLE[t.owner];
+      const x = ox + t.col*(TILE+TGAP);
+      const y = 250 - (t.row+1)*(TILE+TGAP);
+      const top = (t.col===cols-1) && (t.row===t.col);
+      const s = 0.55 + 0.45*t.p;
+      const off = (TILE-TILE*s)/2;
+      T.appendChild(el('rect',{
+        x:x+off, y:y+off, width:TILE*s, height:TILE*s,
+        fill: top ? P.dark : P.c,
+        stroke: P.pale && !top ? '#c9c4b2' : 'rgba(9,11,15,.14)',
+        'stroke-width':1, opacity:t.p}));
+      if(top && t.p>0.5){
+        const lab = el('text',{x:x+TILE/2, y:y+TILE/2+5.5,
+          'text-anchor':'middle', class:'totaltile', opacity:(t.p-0.5)*2});
+        lab.textContent = tiles.length;
+        T.appendChild(lab);
+      }
+    }
+  }
+
+  /* ---------- words ---------- */
+  function write(){
+    const total = tiles.length;
+    const cols = n-1;
+    if(cols<=0){
+      sumEl.textContent = '';
+      glossEl.textContent = 'One person. Nobody to clink with.';
+      return;
+    }
+    const parts = [];
+    for(let c=0;c<cols;c++){
+      const inCol = tiles.filter(t=>t.col===c).length;
+      if(inCol>0) parts.push(inCol);
+    }
+    sumEl.textContent = parts.join(' + ') + ' = ' + total;
+    glossEl.textContent = n + ' people, ' + total +
+      (total===1 ? ' clink.' : ' clinks.');
+  }
+
+  function paintWords(){
+    addEl.classList.toggle('gone', n>=MAX || busy);
+    remEl.classList.toggle('gone', n<=1 || busy);
+    resetEl.classList.toggle('gone', n<=1 || busy);
+  }
+
+  addEl.onclick = addPerson;
+  remEl.onclick = removePerson;
+  resetEl.onclick = reset;
+  soundEl.onclick = ()=>{
+    soundOn = !soundOn;
+    soundEl.textContent = soundOn ? 'sound on' : 'sound off';
+    soundEl.classList.toggle('quiet', !soundOn);
+    if(soundOn) clink(0);
+  };
+
+  reset();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
