@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Tones — 11 and 13</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f4f1e8;font-family:Georgia,serif;color:#3D3D3A;padding:52px 24px 90px;line-height:1.5}
+  .container{max-width:660px;margin:0 auto}
+  h1{font-size:22px;font-weight:normal;letter-spacing:.04em;color:#546A80;margin-bottom:8px}
+  .subtitle{font-size:13px;color:#a09880;margin-bottom:34px;letter-spacing:.02em}
+  p{font-size:14px;color:#5a564e;margin-bottom:12px}
+  .question{border-left:2px solid #b87333;padding-left:14px;margin:0 0 34px}
+  h2{font-size:12px;font-weight:normal;color:#546A80;letter-spacing:.09em;text-transform:uppercase;margin:34px 0 12px}
+
+  /* typographic word controls, not buttons */
+  button{font:inherit;color:#546A80;background:none;border:0;border-bottom:1px solid transparent;cursor:pointer;padding:2px 1px;transition:color 80ms ease,border-color 80ms ease}
+  button:hover{color:#3D3D3A;border-bottom-color:#c8b89a}
+  button[aria-pressed=true]{color:#252623;border-bottom-color:#546A80}
+  button:disabled{color:#c8b89a;cursor:default}
+
+  .schemes{display:flex;flex-direction:column;gap:9px;margin-bottom:6px}
+  .scheme{display:grid;grid-template-columns:16px 1fr;gap:9px;align-items:baseline}
+  .scheme .dot{font-size:11px;color:#c8b89a}
+  .scheme[data-on=true] .dot{color:#b87333}
+  .scheme .name{font-size:15px}
+  .scheme .how{font-size:12.5px;color:#8d8879;margin-top:1px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:11px;margin:6px 0 4px}
+  .chip{position:relative;width:52px;height:52px;border:2px solid #6c6b62;box-shadow:inset 0 0 10px rgb(0 0 0/.26);padding:0;border-bottom-width:2px}
+  .chip:hover{border-color:#3D3D3A}
+  .chip.sounding{outline:3px solid rgb(255 246 205/.96);outline-offset:-3px}
+  .chip .n{position:absolute;top:3px;right:6px;font-size:15px;color:rgb(255 252 229/.96);text-shadow:0 1px 3px rgb(0 0 0/.85)}
+  .chip .note{position:absolute;bottom:3px;left:6px;font-size:10px;color:rgb(255 252 229/.7);font-style:italic}
+  .p2{background:radial-gradient(circle at 70% 28%,#5b8ed1,transparent 28%),linear-gradient(137deg,#0a214f,#123875 35%,#1a4a9a 68%,#123875)}
+  .p3{background:radial-gradient(circle at 32% 26%,#e9d65c,transparent 27%),linear-gradient(145deg,#594400,#927600 34%,#c8a800 69%,#927600)}
+  .p5{background:radial-gradient(circle at 66% 30%,#df7555,transparent 27%),linear-gradient(132deg,#48100c,#781f13 34%,#a83018 68%,#781f13)}
+  .p7{background:radial-gradient(circle at 34% 24%,#8dc36a,transparent 26%),linear-gradient(141deg,#17351b,#326924 35%,#4a8a30 69%,#326924)}
+  .p11{background:radial-gradient(circle at 68% 27%,#b78ede,transparent 27%),linear-gradient(139deg,#2c0f4a,#4a1d78 35%,#6b2ea8 69%,#4a1d78)}
+  .p13{background:radial-gradient(circle at 33% 25%,#f0a760,transparent 27%),linear-gradient(143deg,#5a2a00,#8f4500 34%,#c26a10 69%,#8f4500)}
+  .new{box-shadow:inset 0 0 10px rgb(0 0 0/.26),0 0 0 1px #b87333}
+
+  .pairs{display:flex;flex-wrap:wrap;gap:8px 20px;margin:4px 0 2px;font-size:15px}
+  .ctx{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:15px;margin-top:4px}
+  .ctx button{font-variant-numeric:tabular-nums}
+  .ctx .f{font-size:11.5px;color:#a09880;margin-left:6px}
+
+  .opts{font-size:12.5px;color:#8d8879;margin-top:20px;display:flex;gap:20px;flex-wrap:wrap}
+  .opts button{font-size:12.5px;color:#8d8879}
+  .opts button[aria-pressed=true]{color:#546A80;border-bottom-color:#546A80}
+
+  .verdict{margin-top:34px;padding-top:16px;border-top:1px solid rgba(84,106,128,.18);font-size:13px;color:#8d8879}
+  .back{display:inline-block;margin-top:40px;font-size:13px;color:#a09880;letter-spacing:.04em;text-decoration:none}
+  .back:hover{color:#546A80}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Prime Tones — 11 and 13</h1>
+  <div class="subtitle">a listening bench · nothing here is wired into the lab</div>
+
+  <div class="question">
+    <p>The standing proposal is that <strong>11 and 13 take the first two notes an octave
+    up</strong>. The problem is that an octave is perceptually <em>the same note</em>: 11
+    will sound like 2, and 13 like 3. That might read as a second family of primes, which
+    would be lovely — or it might just be confusing.</p>
+    <p>Three alternatives are here too. Switch schemes while listening; the comparison
+    pairs are the fastest way to hear it.</p>
+  </div>
+
+  <h2>Scheme</h2>
+  <div class="schemes" id="schemes"></div>
+
+  <h2>The six primes</h2>
+  <div class="chips" id="chips"></div>
+  <p style="font-size:12.5px;color:#a09880">2 · 3 · 5 · 7 are fixed — they are what the lab already sounds. Only 11 and 13 change.</p>
+
+  <h2>Hear them side by side</h2>
+  <div class="pairs" id="pairs"></div>
+
+  <h2>In a number</h2>
+  <div class="ctx" id="ctx"></div>
+
+  <div class="opts">
+    <button id="opt-pan" aria-pressed="false">centre all panning</button>
+    <button id="opt-slow" aria-pressed="false">slower</button>
+  </div>
+
+  <div class="verdict">
+    <p style="font-size:13px;color:#8d8879">The question to answer: with 11 and 13 in the
+    set, can a child tell six primes apart — or does she hear four, twice?</p>
+  </div>
+
+  <a class="back" href="index.html">← experiments</a>
+</div>
+
+<script>
+(() => {
+  // ===== audio: lifted verbatim from the lab, so this sounds like the lab =====
+  let audio=null;
+  function createAudio(){
+    if(audio)return audio;
+    const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return null;
+    const ctx=new AC(),compressor=ctx.createDynamicsCompressor(),dry=ctx.createGain(),wet=ctx.createGain(),convolver=ctx.createConvolver();
+    compressor.threshold.value=-18;compressor.knee.value=18;compressor.ratio.value=3;dry.gain.value=.72;wet.gain.value=.22;
+    const length=Math.floor(ctx.sampleRate*2.4),impulse=ctx.createBuffer(2,length,ctx.sampleRate);
+    for(let c=0;c<2;c++){const d=impulse.getChannelData(c);for(let i=0;i<length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/length,2.7)}
+    convolver.buffer=impulse;dry.connect(compressor);convolver.connect(wet);wet.connect(compressor);compressor.connect(ctx.destination);
+    return audio={ctx,dry,convolver};
+  }
+  const frequency=midi=>440*Math.pow(2,(midi-69)/12);
+
+  // glass = the lab's partial stack. bell = inharmonic, a different material.
+  const VOICES={
+    glass:{partials:[[1,1],[2,.23],[3,.11],[4,.045],[5,.018]],dur:2.6},
+    bell: {partials:[[1,1],[2.76,.28],[5.40,.14],[8.93,.07],[11.3,.03]],dur:3.4}
+  };
+  function tone(note,when,velocity=.26){
+    const e=createAudio(); if(!e)return;
+    const V=VOICES[note.voice||'glass'], dur=V.dur;
+    const voice=e.ctx.createGain(), pan=e.ctx.createStereoPanner();
+    pan.pan.value=centrePan?0:(note.pan||0);
+    voice.gain.setValueAtTime(.0001,when);
+    voice.gain.exponentialRampToValueAtTime(velocity,when+.009);
+    voice.gain.exponentialRampToValueAtTime(velocity*.34,when+.22);
+    voice.gain.exponentialRampToValueAtTime(.0001,when+dur);
+    voice.connect(pan);pan.connect(e.dry);pan.connect(e.convolver);
+    V.partials.forEach(([m,l],i)=>{
+      const o=e.ctx.createOscillator(),g=e.ctx.createGain();
+      o.type='sine';o.frequency.value=frequency(note.midi)*m;o.detune.value=i%2?-.8:.55;
+      g.gain.value=l;o.connect(g);g.connect(voice);o.start(when);o.stop(when+dur+.08);
+    });
+  }
+
+  // ===== the four fixed primes, exactly as the lab has them =====
+  const BASE={
+    2:{midi:48,name:'C',pan:-.32},
+    3:{midi:52,name:'E',pan:-.10},
+    5:{midi:55,name:'G',pan:.12},
+    7:{midi:59,name:'B',pan:.34}
+  };
+
+  // ===== candidate schemes for 11 and 13 =====
+  const SCHEMES=[
+    { id:'octave', name:'Octave up',
+      how:'11 = C above 2, 13 = E above 3. Same instrument. The standing proposal — and the one at risk of sounding like 2 and 3.',
+      map:{11:{midi:60,name:'C′',pan:-.32,voice:'glass'},13:{midi:64,name:'E′',pan:-.10,voice:'glass'}} },
+    { id:'thirds', name:'Keep stacking thirds',
+      how:'2·3·5·7 are C E G B — a stack of thirds. Carry it on: 11 = D, 13 = F♯. New pitches, no octave to collide with.',
+      map:{11:{midi:62,name:'D',pan:.50,voice:'glass'},13:{midi:66,name:'F♯',pan:.62,voice:'glass'}} },
+    { id:'octave-bell', name:'Octave up, but struck',
+      how:'The same octave-up pitches, sounded as bell rather than glass. If the octave family reading is the good one, this keeps it while making the two audibly a different material.',
+      map:{11:{midi:60,name:'C′',pan:-.32,voice:'bell'},13:{midi:64,name:'E′',pan:-.10,voice:'bell'}} },
+    { id:'material', name:'Material alone',
+      how:'11 = D, 13 = A, inside the range the other four already occupy, told apart only by being struck. Pitch carries none of the distinction.',
+      map:{11:{midi:50,name:'D',pan:-.20,voice:'bell'},13:{midi:57,name:'A',pan:.24,voice:'bell'}} }
+  ];
+
+  let scheme=SCHEMES[0], centrePan=false, slow=false;
+  const gap=()=>slow?.95:.52;
+  const noteFor=p=>p<=7?{...BASE[p],voice:'glass'}:scheme.map[p];
+
+  // ===== render =====
+  const schemesEl=document.getElementById('schemes');
+  SCHEMES.forEach(s=>{
+    const row=document.createElement('div'); row.className='scheme'; row.dataset.on=String(s===scheme);
+    row.innerHTML='<span class="dot">●</span><span></span>';
+    const cell=row.lastElementChild;
+    const b=document.createElement('button'); b.className='name'; b.textContent=s.name;
+    b.setAttribute('aria-pressed',String(s===scheme));
+    b.addEventListener('click',()=>{scheme=s;paint();play([11,13])});
+    const how=document.createElement('div'); how.className='how'; how.textContent=s.how;
+    cell.appendChild(b); cell.appendChild(how);
+    s._row=row; s._btn=b; schemesEl.appendChild(row);
+  });
+
+  const PRIMES=[2,3,5,7,11,13];
+  const chipsEl=document.getElementById('chips');
+  PRIMES.forEach(p=>{
+    const b=document.createElement('button');
+    b.className='chip p'+p+(p>7?' new':'');
+    b.innerHTML='<span class="n">'+p+'</span><span class="note"></span>';
+    b.addEventListener('click',()=>play([p]));
+    chipsEl.appendChild(b); b._p=p;
+  });
+
+  const PAIRS=[['2 then 11',[2,11]],['3 then 13',[3,13]],['11 then 2',[11,2]],['13 then 3',[13,3]],
+               ['all six, climbing',[2,3,5,7,11,13]],['the four alone',[2,3,5,7]]];
+  const pairsEl=document.getElementById('pairs');
+  PAIRS.forEach(([label,seq])=>{
+    const b=document.createElement('button'); b.textContent=label;
+    b.addEventListener('click',()=>play(seq)); pairsEl.appendChild(b);
+  });
+
+  // numbers whose factorisation actually uses 11 or 13, plus one that doesn't
+  const CTX=[[22,[2,11]],[33,[3,11]],[26,[2,13]],[39,[3,13]],[121,[11,11]],[143,[11,13]],[12,[2,2,3]]];
+  const ctxEl=document.getElementById('ctx');
+  CTX.forEach(([n,fs])=>{
+    const b=document.createElement('button');
+    b.innerHTML=n+'<span class="f">= '+fs.join(' × ')+'</span>';
+    b.addEventListener('click',()=>play(fs)); ctxEl.appendChild(b);
+  });
+
+  function paint(){
+    SCHEMES.forEach(s=>{s._row.dataset.on=String(s===scheme);s._btn.setAttribute('aria-pressed',String(s===scheme))});
+    [...chipsEl.children].forEach(b=>{
+      const nt=noteFor(b._p);
+      b.querySelector('.note').textContent=nt.name+(nt.voice==='bell'?' ·':'');
+      b.title=b._p+' — '+nt.name+', midi '+nt.midi+', '+(nt.voice||'glass');
+    });
+  }
+
+  let timers=[];
+  async function play(seq){
+    timers.forEach(clearTimeout); timers=[];
+    [...chipsEl.children].forEach(b=>b.classList.remove('sounding'));
+    const e=createAudio(); if(!e)return; await e.ctx.resume();
+    const t0=e.ctx.currentTime+.04, g=gap();
+    seq.forEach((p,i)=>{
+      tone(noteFor(p),t0+i*g);
+      timers.push(setTimeout(()=>{
+        [...chipsEl.children].forEach(b=>b.classList.toggle('sounding',b._p===p));
+      },i*g*1000));
+    });
+    timers.push(setTimeout(()=>{
+      [...chipsEl.children].forEach(b=>b.classList.remove('sounding'));
+    },seq.length*g*1000+700));
+  }
+
+  document.getElementById('opt-pan').addEventListener('click',function(){
+    centrePan=!centrePan; this.setAttribute('aria-pressed',String(centrePan));
+  });
+  document.getElementById('opt-slow').addEventListener('click',function(){
+    slow=!slow; this.setAttribute('aria-pressed',String(slow));
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>
