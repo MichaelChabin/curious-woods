@@ -48,6 +48,10 @@
 
   <div class="lbl">workshop</div>
   <div class="row" id="shops"></div>
+  <div class="hint" id="shophint"></div>
+  <div class="row" style="margin-top:5px">
+    <button id="rotate">rotate which colour is which prime →</button>
+  </div>
 
   <div class="lbl">show a set — members go to the lit palette</div>
   <div class="row">
@@ -163,19 +167,84 @@
     return { hex:rgb2hex(raw), clipped:raw.some(v=>v<-0.6||v>255.6) };
   }
 
-  // ---- workshops declare the LIT colour; resting is derived by the rule above ----
-  const SHOPS=[
-    { id:'chartres', name:'Chartres',
-      lit:{2:'#123875',3:'#b8960a',5:'#8f2415',7:'#326924',11:'#4a1d78',13:'#8f4500'} },
-    { id:'shore', name:'Shore',
-      lit:{2:'#2e6b8f',3:'#c2a04a',5:'#a35242',7:'#4d8a6a',11:'#6b5f93',13:'#c07a3a'} },
-    { id:'ember', name:'Ember',
-      lit:{2:'#22355e',3:'#a8720c',5:'#8a1f12',7:'#3a5c2c',11:'#5a2a6b',13:'#b04a12'} },
-    { id:'signal', name:'Signal',
-      lit:{2:'#0072B2',3:'#E69F00',5:'#D55E00',7:'#009E73',11:'#CC79A7',13:'#56B4E9'} }
+  // ---- palettes ----
+  // The real ones from ../art/palettes.json, embedded so the bench still works from
+  // file://, and re-fetched at load so it tracks the file if it changes. They declare
+  // glass colours, not prime assignments, so primes are chosen from each palette by
+  // hue separation (see assignPrimes).
+  const REAL_PALETTES=[
+    {id:"chartres_glass",name:"Chartres",colors:["#1a3a8c","#8b1a1a","#c8780a","#4a1a8c","#1a6a2a","#8a8a7a","#d4a878","#c8c0a8","#c84878"]},
+    {id:"gaudi_glass",name:"Gaud\u00ed",colors:["#c8a800","#c86820","#4a8a30","#1a4a9a","#f0e8c8","#a83018","#2a8a8a","#c8b878"]},
+    {id:"alhambra_tiles",name:"Alhambra",colors:["#1a3a8a","#c8a800","#f0ece0","#a81818","#2a6a28","#8a6018","#4a8ab0","#e8e0c0","#181818"]},
+    {id:"hokusai_wave",name:"Hokusai \u2014 The Great Wave",colors:["#1a3a5c","#2e6a9e","#5a9ab8","#c8dce8","#f0ece0","#dde0e0","#8b4a2a","#e8e4d0"]},
+    {id:"hiroshige_rain",name:"Hiroshige \u2014 Sudden Shower",colors:["#1a2a3a","#3a5a78","#8aaabb","#a8b8c0","#e8e0c8","#c8a878","#4a3020","#c84830"]},
+    {id:"vangogh_starrynight",name:"Van Gogh \u2014 Starry Night",colors:["#1a2a6c","#2e4a9e","#4a8ab0","#c8d8f0","#f0c030","#f0e898","#1a2818","#c89040"]},
+    {id:"matisse_redroom",name:"Matisse \u2014 The Red Room",colors:["#c01830","#1a2840","#3a8030","#e8c030","#6a8aaa","#c8d8e8","#1a2858","#c89848"]},
+    {id:"vermeer_pearl",name:"Vermeer \u2014 Girl with a Pearl Earring",colors:["#0a0a0e","#2a4a8c","#8aaac8","#7a5020","#d4956a","#e8dcc0","#a03028","#e8e4d8"]},
+    {id:"manet_piper",name:"Manet \u2014 The Piper",colors:["#a8b098","#1a2040","#c02018","#a01808","#c8901e","#d4a878","#181818","#e8e0c8"]},
+    {id:"sargent_carnation",name:"Sargent \u2014 Carnation, Lily, Lily, Rose",colors:["#2a3a30","#1a2a18","#c87890","#e8c8c8","#a898b8","#e8e0d0","#d4884a","#e05820"]},
+    {id:"earth_bluemarble",name:"Earth \u2014 Blue Marble",colors:["#050508","#1a3a6a","#2a6aaa","#7aaad0","#5a9ab0","#6a8a48","#c8a060","#e8eaf0"]},
+    {id:"sun_granulation",name:"Sun \u2014 Solar Surface",colors:["#2a1a08","#6a3a10","#8a4a18","#b87020","#e0a030","#f0c060"]},
+    {id:"vangogh_cafeterrace",name:"Van Gogh \u2014 Caf\u00e9 Terrace",colors:["#0a0a1a","#1a2a6a","#4a6ab0","#c8a818","#e8c840","#f0e898","#7a4a18","#c8b888"]},
+    {id:"degas_guitarist",name:"Degas \u2014 The Guitarist",colors:["#1a1208","#4a3018","#8a6030","#c8a060","#e8c888","#2a1a08","#c8b898","#e8e0c8"]},
+    {id:"chinese_porcelain",name:"Chinese Blue and White",colors:["#1a3070","#3a5aa0","#6a8ac0","#a8bcd8","#f0eee8","#f8f8f8"]},
   ];
 
-  let shop=SHOPS[0], activeSet='none', mode='rest',
+  // Hand-authored sets that are not in palettes.json. Signal is built from Okabe-Ito,
+  // so no two primes rely on the red-green axis.
+  const HAND_SHOPS=[
+    { id:'signal', name:'Signal',
+      lit:{2:'#0072B2',3:'#E69F00',5:'#D55E00',7:'#009E73',11:'#CC79A7',13:'#56B4E9'} },
+    { id:'ember', name:'Ember',
+      lit:{2:'#22355e',3:'#a8720c',5:'#8a1f12',7:'#3a5c2c',11:'#5a2a6b',13:'#b04a12'} }
+  ];
+
+  // A palette declares glass colours, not prime assignments. Choose six that are as
+  // far apart in hue as the palette allows: greedy farthest-point on the hue circle,
+  // after dropping near-greys and near-white/near-black, which make poor primes.
+  // `rot` rotates which colour lands on which prime, since the choice of six is a
+  // stronger claim than the order they are handed out in.
+  function assignPrimes(colors, rot){
+    const cand=colors.map(h=>({hex:h,...hex2oklch(h)}));
+    // Relax the filter in steps; replace rather than concat, or the same objects
+    // appear twice and the greedy loop runs past the distinct candidates.
+    let ok=cand.filter(c=>c.C>0.045 && c.L>0.18 && c.L<0.86);
+    if (ok.length<6) ok=cand.filter(c=>c.C>0.02 && c.L>0.10 && c.L<0.92);
+    if (ok.length<6) ok=cand.slice();
+    if (!ok.length) return null;
+    const dh=(a,b)=>{const d=Math.abs(a-b)%(2*Math.PI);return d>Math.PI?2*Math.PI-d:d;};
+    const pick=[ok.reduce((a,b)=>b.C>a.C?b:a)];
+    while (pick.length<6){
+      let best=null,bd=-1;
+      for (const c of ok){
+        if (pick.includes(c)) continue;
+        const d=Math.min(...pick.map(p=>dh(p.h,c.h)));
+        if (d>bd){bd=d;best=c;}
+      }
+      if (!best) break;              // ran out of distinct colours
+      pick.push(best);
+    }
+    // A palette with fewer than six usable hues has to repeat, which is itself worth
+    // seeing: it means that workshop cannot tell six primes apart by colour.
+    const distinct=pick.length, base=pick.slice();
+    let i=0; while (pick.length<6) pick.push(base[i++ % base.length]);
+    pick.sort((a,b)=>a.h-b.h);
+    const out={ _distinct:distinct };
+    PRIMES.forEach((p,k)=>out[p]=pick[(k+rot)%pick.length].hex);
+    return out;
+  }
+
+  let PALETTES=REAL_PALETTES.slice();
+  let SHOPS=[], shop=null, rot=0;
+  function buildShops(){
+    SHOPS=HAND_SHOPS.concat(PALETTES.map(p=>({
+      id:p.id, name:p.name, colors:p.colors, lit:assignPrimes(p.colors,rot)
+    })));
+    if (!shop) shop=SHOPS[0];
+    else shop=SHOPS.find(s=>s.id===shop.id)||SHOPS[0];
+  }
+
+  let activeSet='none', mode='rest',
       restC=42, restL=6, litC=100, litL=0,
       texKind='both', texAmt=0.30, leadStyle='geom', selected=null;
 
@@ -324,12 +393,38 @@
   bind('[data-mode]','mode',v=>{mode=v;modeHint();});
 
   const shopRow=document.getElementById('shops');
-  SHOPS.forEach((w,i)=>{
-    const b=document.createElement('button'); b.textContent=w.name; b.dataset.shop=w.id;
-    b.setAttribute('aria-pressed',String(i===0));
-    b.addEventListener('click',()=>{shop=w;press('[data-shop]',w.id,'shop');strip();draw();});
-    shopRow.appendChild(b);
+  function renderShops(){
+    shopRow.innerHTML='';
+    SHOPS.forEach(w=>{
+      const b=document.createElement('button'); b.textContent=w.name; b.dataset.shop=w.id;
+      b.setAttribute('aria-pressed',String(w.id===shop.id));
+      b.addEventListener('click',()=>{shop=w;press('[data-shop]',w.id,'shop');shopHint();strip();draw();});
+      shopRow.appendChild(b);
+    });
+    shopHint();
+  }
+  function shopHint(){
+    const el=document.getElementById('shophint');
+    if (!shop.colors){ el.textContent='hand-authored — six primes declared directly';
+                       el.className='hint'; return; }
+    const d=shop.lit._distinct||6;
+    el.textContent = shop.colors.length+' glass colours; six chosen by hue separation'
+      + (d<6 ? ' — only '+d+' usable hues, so primes repeat' : '');
+    el.className = 'hint'+(d<6?' warn':'');
+  }
+  document.getElementById('rotate').addEventListener('click',()=>{
+    rot++; buildShops(); renderShops(); strip(); draw();
   });
+
+  // Track ../art/palettes.json when it is reachable; fall back to the embedded copy
+  // so the bench still works opened straight off disk.
+  fetch('../art/palettes.json').then(r=>r.json()).then(j=>{
+    if (!j || !Array.isArray(j.palettes)) return;
+    PALETTES = j.palettes.map(p=>({ id:p.id, name:p.name,
+      colors:(p.colors||[]).map(c=>c && c.hex).filter(Boolean) }))
+      .filter(p=>p.colors.length>=3);
+    buildShops(); renderShops(); strip(); draw();
+  }).catch(()=>{});
 
   function modeHint(){
     const el=document.getElementById('modehint');
@@ -374,7 +469,7 @@
       +(anyClip?' — warning: some colours are out of gamut':'');
   });
 
-  modeHint(); leadHint(); strip(); resize();
+  buildShops(); renderShops(); modeHint(); leadHint(); strip(); resize();
 })();
 </script>
 </body>
