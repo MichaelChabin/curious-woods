@@ -3,23 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fills and Light — backing, texture, and what dimming does</title>
+<title>Fills and Light — two palettes, not one dimmed</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%}
   body{background:#f4f1e8;font-family:Georgia,serif;color:#3D3D3A;overflow:hidden;
        user-select:none;-webkit-user-select:none}
   canvas{display:block;position:fixed;inset:0;touch-action:none}
-
-  .panel{position:fixed;left:14px;top:14px;bottom:14px;z-index:10;width:272px;overflow-y:auto;
+  .panel{position:fixed;left:14px;top:14px;bottom:14px;z-index:10;width:284px;overflow-y:auto;
          background:rgba(244,241,232,.95);border:.5px solid #c8b89a;border-radius:6px;
          padding:13px 15px 16px;box-shadow:0 2px 12px rgba(42,38,32,.08)}
   .panel::-webkit-scrollbar{width:7px}
   .panel::-webkit-scrollbar-thumb{background:#d8cdb8;border-radius:4px}
   h1{font-size:15px;font-weight:normal;color:#546A80;margin-bottom:3px}
   .sub{font-size:11px;color:#a09880;margin-bottom:10px;line-height:1.45}
-  .lbl{font-size:10.5px;color:#8d8879;letter-spacing:.07em;text-transform:uppercase;
-       margin:13px 0 4px}
+  .lbl{font-size:10.5px;color:#8d8879;letter-spacing:.07em;text-transform:uppercase;margin:13px 0 4px}
   .row{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:12.5px;align-items:baseline}
   button{font:inherit;font-size:12.5px;color:#546A80;background:none;border:0;
          border-bottom:1px solid transparent;cursor:pointer;padding:1px 1px;text-align:left}
@@ -27,12 +25,17 @@
   button[aria-pressed=true]{color:#252623;border-bottom-color:#546A80}
   input[type=range]{width:100%;accent-color:#546A80;margin:4px 0 0}
   .sv{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:#a09880}
-  .sv b{font-weight:normal;font-size:15px;color:#3D3D3A;font-variant-numeric:tabular-nums}
-  .hint{font-size:11px;color:#a09880;line-height:1.45;margin-top:3px}
+  .sv b{font-weight:normal;font-size:14px;color:#3D3D3A;font-variant-numeric:tabular-nums}
+  .hint{font-size:11px;color:#a09880;line-height:1.45;margin-top:4px}
   .hint.warn{color:#b87333}
-  .foot{margin-top:14px;padding-top:11px;border-top:1px solid rgba(84,106,128,.18);
+  /* the twelve colours as a set — they have to work together, not pane by pane */
+  .strip{margin-top:7px}
+  .pair{display:flex;align-items:center;gap:7px;margin-bottom:3px;font-size:11px;
+        color:#8d8879;font-variant-numeric:tabular-nums}
+  .pair i{width:34px;height:19px;display:block;border:1px solid #777}
+  .pair code{font-family:ui-monospace,Menlo,monospace;font-size:10px;color:#a09880}
+  .foot{margin-top:13px;padding-top:11px;border-top:1px solid rgba(84,106,128,.18);
         font-size:11.5px;color:#5a564e;line-height:1.5}
-  #marks{font-size:11px;color:#8d8879;margin-top:6px;line-height:1.65;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -40,10 +43,13 @@
 
 <div class="panel">
   <h1>Fills and Light</h1>
-  <div class="sub">Stained glass has no brightness of its own — it has light behind it.
-    Everything here follows from that.</div>
+  <div class="sub">Two declared palettes — a resting one and a lit one. Nothing is
+    degraded to make anything else stand out.</div>
 
-  <div class="lbl">show a set</div>
+  <div class="lbl">workshop</div>
+  <div class="row" id="shops"></div>
+
+  <div class="lbl">show a set — members go to the lit palette</div>
   <div class="row">
     <button data-set="none" aria-pressed="true">nothing</button>
     <button data-set="pow2">powers of 2</button>
@@ -52,315 +58,283 @@
     <button data-set="primes">primes</button>
   </div>
 
-  <div class="lbl">how the rest is quietened</div>
+  <div class="lbl">how the rest behaves</div>
   <div class="row">
-    <button data-mode="unlit" aria-pressed="true">light goes out</button>
-    <button data-mode="grey">grey, same value</button>
-    <button data-mode="alpha">fade out</button>
-    <button data-mode="wash">wash to parchment</button>
+    <button data-mode="rest" aria-pressed="true">stays at rest</button>
+    <button data-mode="unlit">light goes out</button>
+    <button data-mode="alpha">fades (old)</button>
   </div>
   <div class="hint" id="modehint"></div>
 
-  <div class="lbl">amount</div>
-  <input type="range" id="dim" min="0" max="100" value="70">
-  <div class="sv"><span>none</span><b id="dimval">70%</b><span>full</span></div>
+  <div class="lbl">finding the resting colour — a rule, in OKLCH</div>
+  <input type="range" id="chroma" min="0" max="100" value="42">
+  <div class="sv"><span>chroma</span><b id="chromav">42%</b><span>of lit</span></div>
+  <input type="range" id="light" min="-30" max="30" value="6">
+  <div class="sv"><span>lightness</span><b id="lightv">+6</b><span>shift</span></div>
+  <div class="hint">Hue never moves. The question is whether one rule serves all six
+    primes, or whether they have to be picked individually.</div>
 
-  <div class="lbl">backing behind the glass</div>
-  <div class="row">
-    <button data-back="lit" aria-pressed="true">lit / unlit</button>
-    <button data-back="all">all lit</button>
-    <button data-back="none">none</button>
-  </div>
+  <div class="lbl">the twelve, as a set</div>
+  <div class="strip" id="strip"></div>
 
-  <div class="lbl">glass opacity</div>
-  <input type="range" id="op" min="20" max="100" value="72">
-  <div class="sv"><span>translucent</span><b id="opval">72%</b><span>opaque</span></div>
-  <div class="hint">At 100% the backing cannot show through and the light model does
-    nothing. That is the current state of both labs.</div>
-
-  <div class="lbl">glass texture</div>
+  <div class="lbl">glass</div>
   <div class="row">
     <button data-tex="both" aria-pressed="true">striations + seeds</button>
     <button data-tex="stri">striations</button>
-    <button data-tex="seed">seeds</button>
-    <button data-tex="off">off</button>
+    <button data-tex="off">flat</button>
   </div>
-  <input type="range" id="tex" min="0" max="100" value="34">
-  <div class="sv"><span>invisible</span><b id="texval">34%</b><span>dirty</span></div>
+  <input type="range" id="tex" min="0" max="100" value="30">
+  <div class="sv"><span>invisible</span><b id="texv">30%</b><span>dirty</span></div>
 
-  <div class="lbl">striation direction</div>
+  <div class="lbl">leading</div>
   <div class="row">
-    <button data-dir="h" aria-pressed="true">horizontal</button>
-    <button data-dir="v">vertical</button>
-    <button data-dir="perpane">per pane</button>
+    <button data-lead="geom" aria-pressed="true">geometry (per region)</button>
+    <button data-lead="grid">shared lattice</button>
   </div>
-
-  <div class="lbl">compare selection against</div>
-  <div class="row">
-    <button data-cmp="lead" aria-pressed="true">lead (new)</button>
-    <button data-cmp="glow">glow (current)</button>
-  </div>
+  <div class="hint" id="leadhint"></div>
 
   <div class="foot">
-    Click a pane to select it.
-    <div style="margin-top:7px"><button id="markbtn">mark this setting</button></div>
-    <div id="marks">nothing marked yet</div>
+    Click a pane to select it — selection lives in the lead.
+    <div style="margin-top:6px"><button id="copy">copy the twelve as JSON</button></div>
+    <div class="hint" id="copied"></div>
   </div>
 </div>
 
 <script>
 (() => {
   const canvas=document.getElementById('c'), ctx=canvas.getContext('2d');
-  let viewW=0, viewH=0;
+  let viewW=0,viewH=0;
   function resize(){
     const dpr=window.devicePixelRatio||1;
-    viewW=window.innerWidth; viewH=window.innerHeight;
+    viewW=innerWidth; viewH=innerHeight;
     canvas.width=viewW*dpr; canvas.height=viewH*dpr;
     canvas.style.width=viewW+'px'; canvas.style.height=viewH+'px';
     ctx.setTransform(dpr,0,0,dpr,0,0); draw();
   }
-  window.addEventListener('resize', resize);
+  addEventListener('resize',resize);
 
-  const N=12, PAPER='#f4f1e8', LEAD='#6c6b62';
-  const LIT   = '#fffdf6';   // warm white — the sun behind the window
-  const UNLIT = '#2e2c28';   // what a real window looks like with the light off
+  const N=12, PAPER='#f4f1e8';
+  // geometry's own leading, so this reads as one platform
+  const GEOM_LEAD='#777777', GEOM_LEAD_W=2;
   const PRIMES=[2,3,5,7,11,13];
-  const GLASS={2:'#123875',3:'#b8960a',5:'#8f2415',7:'#326924',11:'#4a1d78',13:'#8f4500'};
-  const factorize=n=>{const o=[];let v=n;for(const p of PRIMES)while(v%p===0){o.push(p);v/=p;}return o;};
 
-  // ---- colour helpers ----
+  // ---- colour: OKLCH, so chroma can drop without the hue drifting or muddying ----
+  const s2l=v=>v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4);
+  const l2s=v=>v<=0.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-0.055;
   const hex2rgb=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
-  const rgb=a=>'rgb('+a.map(v=>Math.round(Math.max(0,Math.min(255,v)))).join(',')+')';
-  // Mix each channel toward the colour's OWN luminance. Value structure survives;
-  // hue does not. A uniform grey would flatten dark navy and bright gold together.
-  const clamp255=v=>Math.round(Math.max(0,Math.min(255,v)));
-  const rgb2hex=a=>'#'+a.map(v=>clamp255(v).toString(16).padStart(2,'0')).join('');
-  // Everything stays hex so these compose freely.
-  function greyToward(h,t){
-    const c=hex2rgb(h), L=0.2126*c[0]+0.7152*c[1]+0.0722*c[2];
-    return rgb2hex(c.map(v=>v+(L-v)*t));
+  const cl=v=>Math.max(0,Math.min(255,Math.round(v)));
+  const rgb2hex=a=>'#'+a.map(v=>cl(v).toString(16).padStart(2,'0')).join('');
+  function hex2oklch(hex){
+    let [r,g,b]=hex2rgb(hex).map(v=>s2l(v/255));
+    const l=Math.cbrt(0.4122214708*r+0.5363325363*g+0.0514459929*b);
+    const m=Math.cbrt(0.2119034982*r+0.6806995451*g+0.1073969566*b);
+    const s=Math.cbrt(0.0883024619*r+0.2817188376*g+0.6299787005*b);
+    const L=0.2104542553*l+0.7936177850*m-0.0040720468*s;
+    const A=1.9779984951*l-2.4285922050*m+0.4505937099*s;
+    const B=0.0259040371*l+0.7827717662*m-0.8086757660*s;
+    return { L, C:Math.hypot(A,B), h:Math.atan2(B,A) };
   }
-  const mixHex=(a,b,t)=>{const A=hex2rgb(a),B=hex2rgb(b);
-    return rgb2hex(A.map((v,i)=>v+(B[i]-v)*t));};
-
-  // ---- noise tile, built once, used as a CanvasPattern ----
-  // Real antique glass is not film grain. It has striations (directional draw
-  // marks) and seeds (small bubbles). Isotropic noise reads as dirt.
-  const TILE=256;
-  let texCanvas=null, texPattern=null, texKey='';
-  const hash=(x,y)=>{let h=(x*374761393+y*668265263)|0;h=((h^(h>>13))*1274126177)|0;
-                     return ((h^(h>>16))>>>0)/4294967295;};
-  function vnoise(x,y,px,py){ // periodic value noise so the tile wraps seamlessly
-    const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi;
-    const u=xf*xf*(3-2*xf), v=yf*yf*(3-2*yf);
-    const w=(a,p)=>((a%p)+p)%p;
-    const a=hash(w(xi,px),w(yi,py)),   b=hash(w(xi+1,px),w(yi,py));
-    const c=hash(w(xi,px),w(yi+1,py)), d=hash(w(xi+1,px),w(yi+1,py));
-    return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v;
+  function oklch2hex({L,C,h}){
+    const A=C*Math.cos(h), B=C*Math.sin(h);
+    const l=Math.pow(L+0.3963377774*A+0.2158037573*B,3);
+    const m=Math.pow(L-0.1055613458*A-0.0638541728*B,3);
+    const s=Math.pow(L-0.0894841775*A-1.2914855480*B,3);
+    return rgb2hex([
+      l2s( 4.0767416621*l-3.3077115913*m+0.2309699292*s)*255,
+      l2s(-1.2684380046*l+2.6097574011*m-0.3413193965*s)*255,
+      l2s(-0.0041960863*l-0.7034186147*m+1.7076147010*s)*255 ]);
   }
-  function buildTexture(kind, dir){
-    const key=kind+'|'+dir;
-    if (key===texKey) return texPattern;
-    texKey=key;
-    if (kind==='off'){ texPattern=null; return null; }
-    const cv=document.createElement('canvas'); cv.width=cv.height=TILE;
-    const x=cv.getContext('2d');
-    const img=x.createImageData(TILE,TILE), d=img.data;
-    // striations: sample the noise field stretched along one axis
-    const along = dir==='v' ? 1 : 0;         // 0 = streaks run horizontally
-    const PX = 4, PY = 32;                    // periods → wraps at the tile edge
-    for (let py=0;py<TILE;py++){
-      for (let px=0;px<TILE;px++){
-        let v=0.5;
-        if (kind==='stri'||kind==='both'){
-          const u = along? py:px, w = along? px:py;
-          v = vnoise(u/TILE*PX, w/TILE*PY, PX, PY)*0.72
-            + vnoise(u/TILE*PX*2, w/TILE*PY*2, PX*2, PY*2)*0.28;
-        }
-        const i=(py*TILE+px)*4, s=(v-0.5)*255;
-        d[i]=d[i+1]=d[i+2]= s>0?255:0;
-        d[i+3]=Math.min(255, Math.abs(s)*1.5);
-      }
-    }
-    x.putImageData(img,0,0);
-    // seeds: small bubbles, bright core with a darker rim, scattered
-    if (kind==='seed'||kind==='both'){
-      for (let i=0;i<46;i++){
-        const bx=hash(i,7)*TILE, by=hash(i,13)*TILE, r=1.2+hash(i,29)*3.4;
-        const g=x.createRadialGradient(bx,by,0,bx,by,r);
-        g.addColorStop(0,'rgba(255,255,255,.75)');
-        g.addColorStop(.55,'rgba(255,255,255,.18)');
-        g.addColorStop(1,'rgba(0,0,0,.30)');
-        x.fillStyle=g; x.beginPath(); x.arc(bx,by,r,0,6.284); x.fill();
-      }
-    }
-    texCanvas=cv; texPattern=ctx.createPattern(cv,'repeat');
-    return texPattern;
+  // The resting colour keeps the hue exactly and loses chroma. Nothing moves toward
+  // white or grey, which is what made every earlier attempt wash out.
+  function restingOf(hex, chromaPct, lightShift){
+    const c=hex2oklch(hex);
+    return oklch2hex({ L:Math.max(0,Math.min(1,c.L+lightShift/100)),
+                       C:c.C*chromaPct/100, h:c.h });
   }
 
-  // ---- state ----
-  let activeSet='none', dimMode='unlit', dim=0.70, backing='lit', glassOp=0.72,
-      texKind='both', texAmt=0.34, texDir='h', cmp='lead', selected=null;
-  const marks=[];
+  // ---- workshops declare the LIT colour; resting is derived by the rule above ----
+  const SHOPS=[
+    { id:'chartres', name:'Chartres',
+      lit:{2:'#123875',3:'#b8960a',5:'#8f2415',7:'#326924',11:'#4a1d78',13:'#8f4500'} },
+    { id:'shore', name:'Shore',
+      lit:{2:'#2e6b8f',3:'#c2a04a',5:'#a35242',7:'#4d8a6a',11:'#6b5f93',13:'#c07a3a'} },
+    { id:'ember', name:'Ember',
+      lit:{2:'#22355e',3:'#a8720c',5:'#8a1f12',7:'#3a5c2c',11:'#5a2a6b',13:'#b04a12'} },
+    { id:'signal', name:'Signal',
+      lit:{2:'#0072B2',3:'#E69F00',5:'#D55E00',7:'#009E73',11:'#CC79A7',13:'#56B4E9'} }
+  ];
 
+  let shop=SHOPS[0], activeSet='none', mode='rest', chromaPct=42, lightShift=6,
+      texKind='both', texAmt=0.30, leadStyle='geom', selected=null;
+
+  const resting = p => restingOf(shop.lit[p], chromaPct, lightShift);
+  const factorize=n=>{const o=[];let v=n;for(const p of PRIMES)while(v%p===0){o.push(p);v/=p;}return o;};
   const isSq=n=>{const r=Math.round(Math.sqrt(n));return r*r===n;};
   const isP2=n=>{let v=1;while(v<n)v*=2;return v===n;};
-  const inSet=n=>{switch(activeSet){
-    case 'pow2':return isP2(n); case 'mult3':return n%3===0;
-    case 'squares':return isSq(n); case 'primes':return PRIMES.includes(n);
-    default:return true;}};
+  const inSet=n=>({pow2:isP2(n),mult3:n%3===0,squares:isSq(n),
+                   primes:PRIMES.includes(n),none:true}[activeSet]);
 
+  // ---- texture: a tiled noise pattern, striations plus seeds ----
+  const TILE=256; let pat=null, patKey='';
+  const hash=(x,y)=>{let h=(x*374761393+y*668265263)|0;h=((h^(h>>13))*1274126177)|0;
+                     return ((h^(h>>16))>>>0)/4294967295;};
+  function vnoise(x,y,px,py){
+    const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi;
+    const u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),w=(a,p)=>((a%p)+p)%p;
+    const a=hash(w(xi,px),w(yi,py)),b=hash(w(xi+1,px),w(yi,py));
+    const c=hash(w(xi,px),w(yi+1,py)),d=hash(w(xi+1,px),w(yi+1,py));
+    return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v;
+  }
+  function texture(kind){
+    if (kind===patKey) return pat;
+    patKey=kind; if (kind==='off'){ pat=null; return null; }
+    const cv=document.createElement('canvas'); cv.width=cv.height=TILE;
+    const x=cv.getContext('2d'), img=x.createImageData(TILE,TILE), d=img.data;
+    const PX=4, PY=34;
+    for (let py=0;py<TILE;py++) for (let px=0;px<TILE;px++){
+      const v=vnoise(px/TILE*PX,py/TILE*PY,PX,PY)*0.72
+             +vnoise(px/TILE*PX*2,py/TILE*PY*2,PX*2,PY*2)*0.28;
+      const i=(py*TILE+px)*4, s=(v-0.5)*255;
+      d[i]=d[i+1]=d[i+2]= s>0?255:0;
+      d[i+3]=Math.min(255,Math.abs(s)*1.5);
+    }
+    x.putImageData(img,0,0);
+    if (kind==='both') for (let i=0;i<44;i++){
+      const bx=hash(i,7)*TILE, by=hash(i,13)*TILE, r=1.2+hash(i,29)*3.2;
+      const g=x.createRadialGradient(bx,by,0,bx,by,r);
+      g.addColorStop(0,'rgba(255,255,255,.70)');
+      g.addColorStop(.55,'rgba(255,255,255,.16)');
+      g.addColorStop(1,'rgba(0,0,0,.28)');
+      x.fillStyle=g; x.beginPath(); x.arc(bx,by,r,0,6.284); x.fill();
+    }
+    pat=ctx.createPattern(cv,'repeat'); return pat;
+  }
+
+  // ---- layout ----
   let cell=0, ox=0, oy=0;
   function layout(){
-    cell=Math.min(viewW*0.60, viewH*0.86)/N;
-    ox=viewW*0.635-(N*cell)/2; oy=viewH/2-(N*cell)/2;
+    cell=Math.min(viewW*0.58, viewH*0.86)/N;
+    ox=viewW*0.645-(N*cell)/2; oy=viewH/2-(N*cell)/2;
   }
   const paneRect=(r,c)=>({x:ox+(c-1)*cell, y:oy+(N-r)*cell, w:cell, h:cell});
 
   function draw(){
     layout();
     ctx.fillStyle=PAPER; ctx.fillRect(0,0,viewW,viewH);
-    const showing = activeSet!=='none';
+    const showing=activeSet!=='none';
 
     for (let r=1;r<=N;r++) for (let c=1;c<=N;c++){
       const n=r*c, {x,y,w,h}=paneRect(r,c);
-      const quiet = showing && !inSet(n);
+      const member=!showing||inSet(n), quiet=showing&&!member;
       const f=factorize(n);
 
-      // 1. the light behind the window. This is the only thing that varies in
-      //    brightness — the glass itself never gets brighter or paler.
-      const light = (quiet && dimMode==='unlit' && backing!=='all')
-        ? rgb(hex2rgb(LIT).map((v,i)=>v+(hex2rgb(UNLIT)[i]-v)*dim))
-        : LIT;
-      if (backing!=='none'){ ctx.fillStyle=light; ctx.fillRect(x,y,w,h); }
-
-      // 2. the glass FILTERS that light. Multiplicative, not alpha — compositing
-      //    coloured glass over white with alpha is precisely the pastel maker we
-      //    are trying to escape, so only the 'fade out' comparison uses it.
-      const fading = quiet && (dimMode==='alpha');
-      if (!f.length){
-        ctx.save(); ctx.globalCompositeOperation='multiply';
-        ctx.fillStyle=mixHex('#cfc8b8','#ffffff',1-glassOp);
-        ctx.fillRect(x,y,w,h); ctx.restore();
-      }
+      if (!f.length){ ctx.fillStyle='#e6e0d2'; ctx.fillRect(x,y,w,h); }
       const ph=h/Math.max(1,f.length);
       for (let i=0;i<f.length;i++){
-        let col=GLASS[f[i]];
-        if (quiet && dimMode==='grey') col=greyToward(col,dim);
-        // thinner glass filters less light — mix the filter toward clear
-        const filter=mixHex(col,'#ffffff',1-glassOp);
+        const p=f[i];
+        // Flat fill. No inner shadow, no gradient — that doming was multiplication's
+        // artifact and geometry has never had it.
+        let col = quiet ? resting(p) : (showing ? shop.lit[p] : resting(p));
         ctx.save();
-        if (fading){ ctx.globalAlpha=glassOp*(1-dim*0.88); ctx.fillStyle=col; }
-        else       { ctx.globalCompositeOperation='multiply'; ctx.fillStyle=filter; }
-        ctx.fillRect(x,y+i*ph,w,ph);
-        // shading band: a slightly denser filter along the lower edge
-        ctx.globalCompositeOperation='multiply'; ctx.globalAlpha=1;
-        ctx.fillStyle='rgb(214,211,204)';
-        ctx.fillRect(x,y+i*ph+ph*0.68,w,ph*0.32);
+        if (quiet && mode==='unlit'){
+          const o=hex2oklch(col); col=oklch2hex({L:o.L*0.55,C:o.C*0.8,h:o.h});
+        }
+        if (quiet && mode==='alpha') ctx.globalAlpha=0.30;
+        ctx.fillStyle=col; ctx.fillRect(x,y+i*ph,w,ph);
         ctx.restore();
       }
-      if (quiet && dimMode==='wash'){
-        ctx.save(); ctx.globalAlpha=dim*0.9; ctx.fillStyle=PAPER;
-        ctx.fillRect(x,y,w,h); ctx.restore();
-      }
-      if (cmp==='glow' && showing && !quiet){
-        ctx.save(); ctx.globalAlpha=0.30; ctx.fillStyle='#fff6cd';
-        ctx.fillRect(x,y,w,h); ctx.restore();
-      }
     }
 
-    // 3. texture, one pass over the whole window rather than per piece.
-    //    Locked to the table's origin, not the screen — in the lab this locks to
-    //    world, so it does not swim underneath the glass during a pan.
-    const pat=buildTexture(texKind,texDir);
-    if (pat && texAmt>0){
+    // texture over the whole window, locked to the table origin
+    const t=texture(texKind);
+    if (t && texAmt>0){
       ctx.save();
       ctx.beginPath(); ctx.rect(ox,oy,N*cell,N*cell); ctx.clip();
-      if (pat.setTransform) pat.setTransform(new DOMMatrix().translate(ox,oy));
-      else ctx.translate(ox,oy);
-      ctx.globalAlpha=texAmt*0.55;
-      ctx.globalCompositeOperation='overlay';
-      ctx.fillStyle=pat;
-      ctx.fillRect(ox,oy,N*cell,N*cell);
+      if (t.setTransform) t.setTransform(new DOMMatrix().translate(ox,oy));
+      ctx.globalAlpha=texAmt*0.5; ctx.globalCompositeOperation='overlay';
+      ctx.fillStyle=t; ctx.fillRect(ox,oy,N*cell,N*cell);
       ctx.restore();
     }
-    // per-pane variation: no two panes cut from quite the same sheet
-    if (texAmt>0 && texKind!=='off' && texDir==='perpane'){
-      ctx.save(); ctx.beginPath(); ctx.rect(ox,oy,N*cell,N*cell); ctx.clip();
+
+    // ---- leading ----
+    const s=v=>Math.round(v)+0.5;
+    ctx.strokeStyle=GEOM_LEAD; ctx.lineWidth=GEOM_LEAD_W;
+    ctx.lineJoin='round'; ctx.lineCap='round';
+    if (leadStyle==='geom'){
+      // exactly what geometry does: every region strokes its own outline, so a
+      // shared edge is drawn twice and comes out heavier
       for (let r=1;r<=N;r++) for (let c=1;c<=N;c++){
         const {x,y,w,h}=paneRect(r,c);
-        ctx.globalAlpha=texAmt*0.16*hash(r,c);
-        ctx.fillStyle = hash(c,r)>0.5?'#fff':'#000';
-        ctx.fillRect(x,y,w,h);
+        ctx.strokeRect(s(x),s(y),Math.round(w),Math.round(h));
       }
-      ctx.restore();
+    } else {
+      ctx.beginPath();
+      for (let c=0;c<=N;c++){const sx=s(ox+c*cell);ctx.moveTo(sx,s(oy));ctx.lineTo(sx,s(oy+N*cell));}
+      for (let r=0;r<=N;r++){const sy=s(oy+r*cell);ctx.moveTo(s(ox),sy);ctx.lineTo(s(ox+N*cell),sy);}
+      ctx.stroke();
     }
 
-    // 4. came
-    const s=v=>Math.round(v)+0.5;
-    ctx.strokeStyle=LEAD; ctx.lineWidth=2; ctx.beginPath();
-    for (let c=0;c<=N;c++){const sx=s(ox+c*cell);ctx.moveTo(sx,s(oy));ctx.lineTo(sx,s(oy+N*cell));}
-    for (let r=0;r<=N;r++){const sy=s(oy+r*cell);ctx.moveTo(s(ox),sy);ctx.lineTo(s(ox+N*cell),sy);}
-    ctx.stroke();
-    ctx.lineWidth=4; ctx.strokeRect(s(ox),s(oy),Math.round(N*cell),Math.round(N*cell));
-
-    // 5. selection — in the lead, never in the glass
     if (selected){
       const {x,y,w,h}=paneRect(selected.r,selected.c);
-      if (cmp==='lead'){
-        ctx.strokeStyle='#efe3c6'; ctx.lineWidth=5;
-        ctx.strokeRect(s(x),s(y),Math.round(w),Math.round(h));
-        ctx.strokeStyle=LEAD; ctx.lineWidth=1.5;
-        ctx.strokeRect(s(x),s(y),Math.round(w),Math.round(h));
-      } else {
-        ctx.save(); ctx.globalAlpha=.42; ctx.fillStyle='#fff6cd';
-        ctx.fillRect(x,y,w,h); ctx.restore();
-      }
+      ctx.strokeStyle='#efe3c6'; ctx.lineWidth=5;
+      ctx.strokeRect(s(x),s(y),Math.round(w),Math.round(h));
+      ctx.strokeStyle=GEOM_LEAD; ctx.lineWidth=1.5;
+      ctx.strokeRect(s(x),s(y),Math.round(w),Math.round(h));
     }
 
     ctx.fillStyle='#a09880'; ctx.font='italic 12px Georgia, serif'; ctx.textAlign='center';
     ctx.fillText(showing
       ? ({pow2:'powers of 2',mult3:'multiples of 3',squares:'squares',primes:'primes'})[activeSet]
-        + ' lit · the rest ' + ({unlit:'unlit',grey:'greyed',alpha:'faded',wash:'washed'})[dimMode]
-        + ' at ' + Math.round(dim*100) + '%'
-      : 'the whole window lit', ox+N*cell/2, oy+N*cell+27);
+        + ' lit · the rest ' + ({rest:'at rest',unlit:'unlit',alpha:'faded'})[mode]
+      : 'the whole window at rest', ox+N*cell/2, oy+N*cell+27);
+  }
+
+  // ---- the twelve, as a set ----
+  function strip(){
+    document.getElementById('strip').innerHTML = PRIMES.map(p=>{
+      const L=shop.lit[p], R=resting(p);
+      return '<div class="pair"><i style="background:'+R+'"></i>'
+           + '<i style="background:'+L+'"></i>'
+           + '<span>'+p+'</span><code>'+R+' → '+L+'</code></div>';
+    }).join('');
   }
 
   // ---- controls ----
-  const press=(sel,val,attr)=>document.querySelectorAll(sel).forEach(b=>
-    b.setAttribute('aria-pressed',String(b.dataset[attr]===val)));
-  const bind=(sel,attr,fn)=>document.querySelectorAll(sel).forEach(b=>
-    b.addEventListener('click',()=>{fn(b.dataset[attr]);press(sel,b.dataset[attr],attr);draw();}));
-
+  const press=(sel,v,a)=>document.querySelectorAll(sel).forEach(b=>
+    b.setAttribute('aria-pressed',String(b.dataset[a]===v)));
+  const bind=(sel,a,fn)=>document.querySelectorAll(sel).forEach(b=>
+    b.addEventListener('click',()=>{fn(b.dataset[a]);press(sel,b.dataset[a],a);draw();}));
   bind('[data-set]','set',v=>activeSet=v);
-  bind('[data-back]','back',v=>backing=v);
   bind('[data-tex]','tex',v=>texKind=v);
-  bind('[data-dir]','dir',v=>texDir=v);
-  bind('[data-cmp]','cmp',v=>cmp=v);
-  bind('[data-mode]','mode',v=>{dimMode=v;modeHint();});
+  bind('[data-lead]','lead',v=>{leadStyle=v;leadHint();});
+  bind('[data-mode]','mode',v=>{mode=v;modeHint();});
+
+  const shopRow=document.getElementById('shops');
+  SHOPS.forEach((w,i)=>{
+    const b=document.createElement('button'); b.textContent=w.name; b.dataset.shop=w.id;
+    b.setAttribute('aria-pressed',String(i===0));
+    b.addEventListener('click',()=>{shop=w;press('[data-shop]',w.id,'shop');strip();draw();});
+    shopRow.appendChild(b);
+  });
 
   function modeHint(){
     const el=document.getElementById('modehint');
-    const t={
-      unlit:['The backing goes dark. The glass keeps its full colour — it simply has no light behind it, which is what an unlit window actually looks like.',''],
-      grey:['Each channel moves toward the pane\'s own luminance, so dark navies stay dark and bright golds stay bright. Hue goes, value structure survives.',''],
-      alpha:['Compositing toward a pale background. This is the pastel maker — no opacity value avoids it, because the destination colour is the problem.','warn'],
-      wash:['Parchment painted over the top. Same failure as fade, stated more honestly.','warn']
-    }[dimMode];
+    const t={rest:['Nothing is degraded. The table normally sits in the resting palette; showing a set moves those panes to the lit one. Some things get better, nothing gets worse.',''],
+             unlit:['The light behind the rest goes out. Physically true, but it still makes most of the window darker than it was.',''],
+             alpha:['The old approach, kept as the counter-example. Compositing toward parchment; this is the pastel maker.','warn']}[mode];
     el.textContent=t[0]; el.className='hint'+(t[1]?' warn':'');
   }
-
-  const wire=(id,valId,set,fmt)=>{
-    const el=document.getElementById(id);
-    el.addEventListener('input',e=>{
-      set(+e.target.value);
-      document.getElementById(valId).textContent=(fmt?fmt(+e.target.value):e.target.value+'%');
-      draw();
-    });
-  };
-  wire('dim','dimval',v=>dim=v/100);
-  wire('op','opval',v=>glassOp=v/100);
-  wire('tex','texval',v=>texAmt=v/100);
+  function leadHint(){
+    document.getElementById('leadhint').textContent = leadStyle==='geom'
+      ? 'Every region strokes its own outline, so shared edges are drawn twice and read heavier. This is what geometry actually does.'
+      : 'One line per boundary. Lighter and more even, but not what geometry produces.';
+  }
+  const wire=(id,vid,fn,fmt)=>{const el=document.getElementById(id);
+    el.addEventListener('input',e=>{fn(+e.target.value);
+      document.getElementById(vid).textContent=fmt(+e.target.value); strip(); draw();});};
+  wire('chroma','chromav',v=>chromaPct=v, v=>v+'%');
+  wire('light','lightv', v=>lightShift=v, v=>(v>0?'+':'')+v);
+  wire('tex','texv',     v=>texAmt=v/100, v=>v+'%');
 
   canvas.addEventListener('pointerdown',e=>{
     e.preventDefault();
@@ -369,13 +343,17 @@
     draw();
   });
 
-  document.getElementById('markbtn').addEventListener('click',()=>{
-    marks.push(Math.round(dim*100)+'% '+dimMode+' · glass '+Math.round(glassOp*100)
-      +'% · '+backing+' backing · tex '+Math.round(texAmt*100)+'% '+texKind);
-    document.getElementById('marks').innerHTML=marks.join('<br>');
+  document.getElementById('copy').addEventListener('click',()=>{
+    const o={id:shop.id,name:shop.name,rule:{chroma:chromaPct+'%',lightness:lightShift},
+             primes:{}};
+    PRIMES.forEach(p=>o.primes[p]={rest:resting(p),lit:shop.lit[p]});
+    const txt=JSON.stringify(o,null,2);
+    navigator.clipboard?.writeText(txt);
+    document.getElementById('copied').textContent='copied — '+shop.name
+      +' at '+chromaPct+'% chroma, '+(lightShift>0?'+':'')+lightShift+' lightness';
   });
 
-  modeHint(); resize();
+  modeHint(); leadHint(); strip(); resize();
 })();
 </script>
 </body>
