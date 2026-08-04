@@ -66,13 +66,21 @@
   </div>
   <div class="hint" id="modehint"></div>
 
-  <div class="lbl">finding the resting colour — a rule, in OKLCH</div>
-  <input type="range" id="chroma" min="0" max="100" value="42">
-  <div class="sv"><span>chroma</span><b id="chromav">42%</b><span>of lit</span></div>
+  <div class="lbl">the resting palette — most of the window, most of the time</div>
+  <input type="range" id="chroma" min="0" max="130" value="42">
+  <div class="sv"><span>chroma</span><b id="chromav">42%</b><span>of declared</span></div>
   <input type="range" id="light" min="-30" max="30" value="6">
   <div class="sv"><span>lightness</span><b id="lightv">+6</b><span>shift</span></div>
-  <div class="hint">Hue never moves. The question is whether one rule serves all six
-    primes, or whether they have to be picked individually.</div>
+
+  <div class="lbl">the lit palette — only the shown set</div>
+  <input type="range" id="lchroma" min="0" max="130" value="100">
+  <div class="sv"><span>chroma</span><b id="lchromav">100%</b><span>of declared</span></div>
+  <input type="range" id="llight" min="-30" max="30" value="0">
+  <div class="sv"><span>lightness</span><b id="llightv">0</b><span>shift</span></div>
+  <div class="hint">Both are derived from the workshop's declared colour, so hue never
+    moves. At 100% / 0 the lit palette <em>is</em> the declared colour. Anything marked
+    <span style="color:#b87333">!</span> has left sRGB and is being clipped, which shifts
+    its hue — back it off.</div>
 
   <div class="lbl">the twelve, as a set</div>
   <div class="strip" id="strip"></div>
@@ -134,22 +142,25 @@
     const B=0.0259040371*l+0.7827717662*m-0.8086757660*s;
     return { L, C:Math.hypot(A,B), h:Math.atan2(B,A) };
   }
-  function oklch2hex({L,C,h}){
+  function oklch2raw({L,C,h}){
     const A=C*Math.cos(h), B=C*Math.sin(h);
     const l=Math.pow(L+0.3963377774*A+0.2158037573*B,3);
     const m=Math.pow(L-0.1055613458*A-0.0638541728*B,3);
     const s=Math.pow(L-0.0894841775*A-1.2914855480*B,3);
-    return rgb2hex([
-      l2s( 4.0767416621*l-3.3077115913*m+0.2309699292*s)*255,
-      l2s(-1.2684380046*l+2.6097574011*m-0.3413193965*s)*255,
-      l2s(-0.0041960863*l-0.7034186147*m+1.7076147010*s)*255 ]);
+    return [ l2s( 4.0767416621*l-3.3077115913*m+0.2309699292*s)*255,
+             l2s(-1.2684380046*l+2.6097574011*m-0.3413193965*s)*255,
+             l2s(-0.0041960863*l-0.7034186147*m+1.7076147010*s)*255 ];
   }
-  // The resting colour keeps the hue exactly and loses chroma. Nothing moves toward
-  // white or grey, which is what made every earlier attempt wash out.
-  function restingOf(hex, chromaPct, lightShift){
+  const oklch2hex=c=>rgb2hex(oklch2raw(c));
+  // Both palettes are derived from the workshop's declared colour, keeping the hue
+  // exactly. Nothing moves toward white or grey — that is what washed everything out
+  // before. Out-of-gamut results are reported rather than silently clipped, because
+  // clipping in RGB shifts the hue we just went to the trouble of preserving.
+  function derive(hex, chromaPct, lightShift){
     const c=hex2oklch(hex);
-    return oklch2hex({ L:Math.max(0,Math.min(1,c.L+lightShift/100)),
-                       C:c.C*chromaPct/100, h:c.h });
+    const raw=oklch2raw({ L:Math.max(0,Math.min(1,c.L+lightShift/100)),
+                          C:c.C*chromaPct/100, h:c.h });
+    return { hex:rgb2hex(raw), clipped:raw.some(v=>v<-0.6||v>255.6) };
   }
 
   // ---- workshops declare the LIT colour; resting is derived by the rule above ----
@@ -164,10 +175,12 @@
       lit:{2:'#0072B2',3:'#E69F00',5:'#D55E00',7:'#009E73',11:'#CC79A7',13:'#56B4E9'} }
   ];
 
-  let shop=SHOPS[0], activeSet='none', mode='rest', chromaPct=42, lightShift=6,
+  let shop=SHOPS[0], activeSet='none', mode='rest',
+      restC=42, restL=6, litC=100, litL=0,
       texKind='both', texAmt=0.30, leadStyle='geom', selected=null;
 
-  const resting = p => restingOf(shop.lit[p], chromaPct, lightShift);
+  const resting = p => derive(shop.lit[p], restC, restL);
+  const litOf   = p => derive(shop.lit[p], litC, litL);
   const factorize=n=>{const o=[];let v=n;for(const p of PRIMES)while(v%p===0){o.push(p);v/=p;}return o;};
   const isSq=n=>{const r=Math.round(Math.sqrt(n));return r*r===n;};
   const isP2=n=>{let v=1;while(v<n)v*=2;return v===n;};
@@ -234,7 +247,7 @@
         const p=f[i];
         // Flat fill. No inner shadow, no gradient — that doming was multiplication's
         // artifact and geometry has never had it.
-        let col = quiet ? resting(p) : (showing ? shop.lit[p] : resting(p));
+        let col = (showing && !quiet) ? litOf(p).hex : resting(p).hex;
         ctx.save();
         if (quiet && mode==='unlit'){
           const o=hex2oklch(col); col=oklch2hex({L:o.L*0.55,C:o.C*0.8,h:o.h});
@@ -292,10 +305,11 @@
   // ---- the twelve, as a set ----
   function strip(){
     document.getElementById('strip').innerHTML = PRIMES.map(p=>{
-      const L=shop.lit[p], R=resting(p);
-      return '<div class="pair"><i style="background:'+R+'"></i>'
-           + '<i style="background:'+L+'"></i>'
-           + '<span>'+p+'</span><code>'+R+' → '+L+'</code></div>';
+      const R=resting(p), L=litOf(p);
+      const flag=(R.clipped||L.clipped)?' <span style="color:#b87333">!</span>':'';
+      return '<div class="pair"><i style="background:'+R.hex+'"></i>'
+           + '<i style="background:'+L.hex+'"></i>'
+           + '<span>'+p+'</span><code>'+R.hex+' → '+L.hex+'</code>'+flag+'</div>';
     }).join('');
   }
 
@@ -332,9 +346,11 @@
   const wire=(id,vid,fn,fmt)=>{const el=document.getElementById(id);
     el.addEventListener('input',e=>{fn(+e.target.value);
       document.getElementById(vid).textContent=fmt(+e.target.value); strip(); draw();});};
-  wire('chroma','chromav',v=>chromaPct=v, v=>v+'%');
-  wire('light','lightv', v=>lightShift=v, v=>(v>0?'+':'')+v);
-  wire('tex','texv',     v=>texAmt=v/100, v=>v+'%');
+  wire('chroma','chromav',  v=>restC=v, v=>v+'%');
+  wire('light','lightv',    v=>restL=v, v=>(v>0?'+':'')+v);
+  wire('lchroma','lchromav',v=>litC=v,  v=>v+'%');
+  wire('llight','llightv',  v=>litL=v,  v=>(v>0?'+':'')+v);
+  wire('tex','texv',        v=>texAmt=v/100, v=>v+'%');
 
   canvas.addEventListener('pointerdown',e=>{
     e.preventDefault();
@@ -344,13 +360,18 @@
   });
 
   document.getElementById('copy').addEventListener('click',()=>{
-    const o={id:shop.id,name:shop.name,rule:{chroma:chromaPct+'%',lightness:lightShift},
-             primes:{}};
-    PRIMES.forEach(p=>o.primes[p]={rest:resting(p),lit:shop.lit[p]});
-    const txt=JSON.stringify(o,null,2);
-    navigator.clipboard?.writeText(txt);
+    const o={ id:shop.id, name:shop.name,
+              rule:{ rest:{chroma:restC+'%',lightness:restL},
+                     lit :{chroma:litC+'%', lightness:litL} },
+              declared:{}, primes:{} };
+    PRIMES.forEach(p=>{ o.declared[p]=shop.lit[p];
+      o.primes[p]={ rest:resting(p).hex, lit:litOf(p).hex }; });
+    navigator.clipboard?.writeText(JSON.stringify(o,null,2));
+    const anyClip=PRIMES.some(p=>resting(p).clipped||litOf(p).clipped);
     document.getElementById('copied').textContent='copied — '+shop.name
-      +' at '+chromaPct+'% chroma, '+(lightShift>0?'+':'')+lightShift+' lightness';
+      +' · rest '+restC+'%/'+(restL>0?'+':'')+restL
+      +' · lit '+litC+'%/'+(litL>0?'+':'')+litL
+      +(anyClip?' — warning: some colours are out of gamut':'');
   });
 
   modeHint(); leadHint(); strip(); resize();
