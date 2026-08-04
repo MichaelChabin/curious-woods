@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canvas Panes — a load test</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{background:#f4f1e8;font-family:Georgia,serif;color:#3D3D3A;overflow:hidden;
+       user-select:none;-webkit-user-select:none}
+  canvas{display:block;position:fixed;inset:0;touch-action:none;cursor:grab}
+  canvas.dragging{cursor:grabbing}
+
+  .panel{position:fixed;left:16px;top:16px;z-index:10;width:250px;
+         background:rgba(244,241,232,.94);border:.5px solid #c8b89a;border-radius:6px;
+         padding:13px 15px 15px;box-shadow:0 2px 12px rgba(42,38,32,.08)}
+  h1{font-size:15px;font-weight:normal;color:#546A80;margin-bottom:3px}
+  .sub{font-size:11px;color:#a09880;margin-bottom:12px;line-height:1.4}
+  .row{display:flex;flex-wrap:wrap;gap:4px 12px;margin-bottom:9px;font-size:13px;align-items:baseline}
+  .lbl{font-size:10.5px;color:#8d8879;letter-spacing:.07em;text-transform:uppercase;width:100%;margin-bottom:1px}
+  button{font:inherit;font-size:13px;color:#546A80;background:none;border:0;
+         border-bottom:1px solid transparent;cursor:pointer;padding:1px 1px}
+  button:hover{color:#3D3D3A;border-bottom-color:#c8b89a}
+  button[aria-pressed=true]{color:#252623;border-bottom-color:#546A80}
+
+  .verdict{margin-top:11px;padding-top:10px;border-top:1px solid rgba(84,106,128,.18)}
+  .stat{display:flex;justify-content:space-between;font-size:12.5px;
+        font-variant-numeric:tabular-nums;margin-bottom:2px}
+  .stat span:first-child{color:#8d8879}
+  .big{font-size:26px;line-height:1.15;font-variant-numeric:tabular-nums;margin:2px 0 1px}
+  .ok{color:#3f6b47}.warn{color:#b87333}.bad{color:#8f3020}
+  .note{font-size:11px;color:#a09880;line-height:1.45;margin-top:8px}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="panel">
+  <h1>Canvas Panes</h1>
+  <div class="sub">Can canvas carry leaded panes of layered glass at 60fps while panning and zooming?</div>
+
+  <div class="row"><span class="lbl">panes</span>
+    <button data-n="10" aria-pressed="false">10×10</button>
+    <button data-n="16" aria-pressed="true">16×16</button>
+    <button data-n="24" aria-pressed="false">24×24</button>
+    <button data-n="32" aria-pressed="false">32×32</button>
+  </div>
+
+  <div class="row"><span class="lbl">glass detail</span>
+    <button data-d="full" aria-pressed="true">full</button>
+    <button data-d="flat" aria-pressed="false">flat</button>
+    <button data-d="none" aria-pressed="false">came only</button>
+  </div>
+
+  <div class="row"><span class="lbl">measure</span>
+    <button id="stress" aria-pressed="false">auto-stress</button>
+    <button id="reset">reset</button>
+  </div>
+
+  <div class="verdict">
+    <div class="big" id="verdict">—</div>
+    <div class="stat"><span>draw time, median</span><span id="dmed">—</span></div>
+    <div class="stat"><span>draw time, 95th</span><span id="dp95">—</span></div>
+    <div class="stat"><span>budget used</span><span id="budget">—</span></div>
+    <div class="stat"><span>frame interval</span><span id="med">—</span></div>
+    <div class="stat"><span>frames over 16.7ms</span><span id="p95">—</span></div>
+    <div class="stat"><span>panes / pieces</span><span id="np">—</span></div>
+    <div class="note" id="note">Drag to pan, wheel to zoom. Auto-stress pans and zooms
+      continuously so the number doesn't depend on your hand.</div>
+    <div class="note">Frame interval is capped by vsync at 16.7ms, so it reads 60fps
+      until things are already bad. <strong>Draw time is the real measure</strong> — it is
+      how much of the 16.7ms budget the scene actually costs.</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+  let viewW = 0, viewH = 0;
+
+  // ---- the plane, in the shape Phase 1 wants it: pan + zoom, y up ----
+  let pan = { x: 0, y: 0 }, zoom = 46;
+  const ZOOM_MIN = 4, ZOOM_MAX = 400;
+  const w2s = (wx, wy) => ({ x:(wx-pan.x)*zoom + viewW/2, y:-(wy-pan.y)*zoom + viewH/2 });
+  const snapPx = v => Math.round(v) + 0.5;
+
+  function resize(){
+    const dpr = window.devicePixelRatio || 1;
+    viewW = window.innerWidth; viewH = window.innerHeight;
+    canvas.width = viewW*dpr; canvas.height = viewH*dpr;
+    canvas.style.width = viewW+'px'; canvas.style.height = viewH+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize', resize); resize();
+
+  // ---- primes: the same colours the lab uses, plus 11 and 13 ----
+  const PRIME_GLASS = {
+     2:['#0a214f','#123875','#1a4a9a','#5b8ed1'],
+     3:['#594400','#927600','#c8a800','#e9d65c'],
+     5:['#48100c','#781f13','#a83018','#df7555'],
+     7:['#17351b','#326924','#4a8a30','#8dc36a'],
+    11:['#2c0f4a','#4a1d78','#6b2ea8','#b78ede'],
+    13:['#5a2a00','#8f4500','#c26a10','#f0a760']
+  };
+  const PRIMES = [2,3,5,7,11,13];
+  const LEAD = '#6c6b62';
+
+  function factorize(n){ const out=[]; let v=n;
+    for (const p of PRIMES) while (v%p===0){ out.push(p); v/=p; }
+    return out.length?out:[]; }
+
+  // Gradient cache — building a CanvasGradient per piece per frame is the
+  // obvious way to make this test fail for the wrong reason.
+  const gradCache = new Map();
+  function glassFill(prime, w, h){
+    const key = prime+'|'+Math.round(w)+'|'+Math.round(h);
+    let g = gradCache.get(key);
+    if (!g){
+      const c = PRIME_GLASS[prime];
+      g = ctx.createLinearGradient(0,0,w,h);
+      g.addColorStop(0,c[0]); g.addColorStop(.35,c[1]);
+      g.addColorStop(.68,c[2]); g.addColorStop(1,c[1]);
+      gradCache.set(key,g);
+      if (gradCache.size > 4000) gradCache.clear();
+    }
+    return g;
+  }
+
+  // ---- scene ----
+  let N = 16, detail = 'full';
+  let paneCount = 0, pieceCount = 0;
+
+  // Stripe wrapping by COUNT, never by prime: above 4 pieces go to two columns.
+  function stripeLayout(k){
+    if (k <= 4) return { cols:1, rows:k };
+    return { cols:2, rows:Math.ceil(k/2) };
+  }
+
+  function drawScene(){
+    ctx.fillStyle = '#f4f1e8';
+    ctx.fillRect(0,0,viewW,viewH);
+
+    // visible world bounds → only draw panes on screen
+    const wx0 = (0 - viewW/2)/zoom + pan.x, wx1 = (viewW - viewW/2)/zoom + pan.x;
+    const wy1 = -(0 - viewH/2)/zoom + pan.y, wy0 = -(viewH - viewH/2)/zoom + pan.y;
+    const c0 = Math.max(1, Math.floor(wx0)+1), c1 = Math.min(N, Math.ceil(wx1));
+    const r0 = Math.max(1, Math.floor(wy0)+1), r1 = Math.min(N, Math.ceil(wy1));
+
+    paneCount = 0; pieceCount = 0;
+    const cw = zoom, ch = zoom;
+
+    for (let r = r0; r <= r1; r++){
+      for (let c = c0; c <= c1; c++){
+        const tl = w2s(c-1, r);           // pane occupies [c-1,c] × [r-1,r]
+        const x = tl.x, y = tl.y;
+        if (x > viewW || y > viewH || x+cw < 0 || y+ch < 0) continue;
+        paneCount++;
+        if (detail === 'none') continue;
+
+        const f = factorize(r*c);
+        if (!f.length){ // unity
+          ctx.fillStyle = '#d8d2c4'; ctx.fillRect(x,y,cw,ch); continue;
+        }
+        const { cols, rows } = stripeLayout(f.length);
+        const pw = cw/cols, ph = ch/rows;
+        for (let i = 0; i < f.length; i++){
+          const cx = x + (i % cols) * pw;
+          const cy = y + Math.floor(i / cols) * ph;
+          if (detail === 'full'){
+            ctx.save(); ctx.translate(cx,cy);
+            ctx.fillStyle = glassFill(f[i], pw, ph);
+            ctx.fillRect(0,0,pw,ph);
+            // inner shading — the thing that makes it read as glass rather than paint
+            ctx.globalAlpha = .18; ctx.fillStyle = '#000';
+            ctx.fillRect(0, ph*0.62, pw, ph*0.38);
+            ctx.globalAlpha = 1; ctx.restore();
+          } else {
+            ctx.fillStyle = PRIME_GLASS[f[i]][1];
+            ctx.fillRect(cx,cy,pw,ph);
+          }
+          pieceCount++;
+        }
+      }
+    }
+
+    // ---- came: one line per boundary, snapped, drawn last ----
+    ctx.strokeStyle = LEAD; ctx.lineWidth = 2; ctx.beginPath();
+    for (let c = c0-1; c <= c1; c++){
+      const sx = snapPx(w2s(c,0).x);
+      ctx.moveTo(sx, snapPx(w2s(0,r0-1).y)); ctx.lineTo(sx, snapPx(w2s(0,r1).y));
+    }
+    for (let r = r0-1; r <= r1; r++){
+      const sy = snapPx(w2s(0,r).y);
+      ctx.moveTo(snapPx(w2s(c0-1,0).x), sy); ctx.lineTo(snapPx(w2s(c1,0).x), sy);
+    }
+    ctx.stroke();
+    ctx.lineWidth = 4;
+    const a = w2s(0,N), b = w2s(N,0);
+    ctx.strokeRect(snapPx(a.x), snapPx(a.y), Math.round(b.x-a.x), Math.round(b.y-a.y));
+  }
+
+  // ---- timing ----
+  // Two measurements, and only one of them is informative. The frame interval is
+  // clamped by vsync, so it says 60fps right up until the moment it says 30 —
+  // useless as a gate. Draw time is how long drawScene() actually takes, which is
+  // what tells you whether there is headroom.
+  const frames = [], draws = []; const KEEP = 180;
+  let last = performance.now(), stressing = false, t0 = performance.now();
+  const BUDGET = 1000/60;
+
+  const pct = (arr, p) => { const s = arr.slice().sort((a,b)=>a-b);
+                            return s[Math.min(s.length-1, Math.floor(s.length*p))]; };
+
+  function paintStats(){
+    document.getElementById('np').textContent = paneCount + ' / ' + pieceCount;
+    if (draws.length < 20){ document.getElementById('verdict').textContent='—'; return; }
+    const f = v => v.toFixed(2)+' ms';
+    const dMed = pct(draws,.5), dP95 = pct(draws,.95);
+    const over = frames.filter(v => v > BUDGET*1.15).length;
+
+    document.getElementById('dmed').textContent = f(dMed);
+    document.getElementById('dp95').textContent = f(dP95);
+    document.getElementById('budget').textContent = (dP95/BUDGET*100).toFixed(0)+'%';
+    document.getElementById('med').textContent = pct(frames,.5).toFixed(1)+' ms';
+    document.getElementById('p95').textContent = over + ' of ' + frames.length;
+
+    const el = document.getElementById('verdict');
+    const share = dP95/BUDGET;
+    el.textContent = share < 1 ? (share*100).toFixed(0)+'% of budget' : 'over budget';
+    el.className = 'big ' + (share <= .5 ? 'ok' : share <= .85 ? 'warn' : 'bad');
+    document.getElementById('note').textContent =
+      share <= .5  ? 'Half the frame budget or less, with room for the geometry layer on top. Canvas is not the constraint.'
+    : share <= .85 ? 'Fits, but without much spare. Anything drawn on top of this competes for the same budget.'
+    :                'At or over budget. Note which setting caused it before concluding anything.';
+  }
+
+  function frame(now){
+    const dt = now - last; last = now;
+    if (stressing){
+      const t = (now - t0)/1000;
+      pan.x = N/2 + Math.sin(t*0.55)*N*0.32;
+      pan.y = N/2 + Math.cos(t*0.41)*N*0.32;
+      zoom = 46 + Math.sin(t*0.33)*30;
+    }
+    const d0 = performance.now();
+    drawScene();
+    const d1 = performance.now();
+    draws.push(d1-d0); if (draws.length > KEEP) draws.shift();
+    frames.push(dt);   if (frames.length > KEEP) frames.shift();
+    paintStats();
+    requestAnimationFrame(frame);
+  }
+
+  // ---- gestures ----
+  let drag = null;
+  canvas.addEventListener('pointerdown', e => {
+    e.preventDefault(); canvas.setPointerCapture(e.pointerId);
+    canvas.classList.add('dragging');
+    drag = { sx:e.clientX, sy:e.clientY, px:pan.x, py:pan.y };
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (!drag) return;
+    pan.x = drag.px - (e.clientX-drag.sx)/zoom;
+    pan.y = drag.py + (e.clientY-drag.sy)/zoom;
+  });
+  const endDrag = () => { drag = null; canvas.classList.remove('dragging'); };
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoom * (e.deltaY>0?0.92:1.08)));
+  }, { passive:false });
+
+  // ---- controls ----
+  const press = (sel, val, attr) => document.querySelectorAll(sel).forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset[attr] === val)));
+  document.querySelectorAll('[data-n]').forEach(b => b.addEventListener('click', () => {
+    N = +b.dataset.n; press('[data-n]', b.dataset.n, 'n'); frames.length = draws.length = 0; recentre();
+  }));
+  document.querySelectorAll('[data-d]').forEach(b => b.addEventListener('click', () => {
+    detail = b.dataset.d; press('[data-d]', b.dataset.d, 'd'); frames.length = draws.length = 0;
+  }));
+  document.getElementById('stress').addEventListener('click', function(){
+    stressing = !stressing; this.setAttribute('aria-pressed', String(stressing));
+    frames.length = draws.length = 0; t0 = performance.now();
+  });
+  document.getElementById('reset').addEventListener('click', () => { frames.length = draws.length = 0; recentre(); });
+
+  function recentre(){ pan.x = N/2; pan.y = N/2; zoom = Math.min(viewW, viewH)/(N*1.35); }
+
+  recentre();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

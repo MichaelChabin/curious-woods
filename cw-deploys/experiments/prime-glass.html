@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Glass — is the table readable without colour?</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{background:#f4f1e8;font-family:Georgia,serif;color:#3D3D3A;overflow:hidden;
+       user-select:none;-webkit-user-select:none}
+  canvas{display:block;position:fixed;inset:0;touch-action:none}
+
+  .panel{position:fixed;left:16px;top:16px;z-index:10;width:272px;max-height:calc(100% - 32px);
+         overflow-y:auto;background:rgba(244,241,232,.94);border:.5px solid #c8b89a;
+         border-radius:6px;padding:13px 15px 15px;box-shadow:0 2px 12px rgba(42,38,32,.08)}
+  h1{font-size:15px;font-weight:normal;color:#546A80;margin-bottom:3px}
+  .sub{font-size:11px;color:#a09880;margin-bottom:12px;line-height:1.45}
+  .lbl{font-size:10.5px;color:#8d8879;letter-spacing:.07em;text-transform:uppercase;
+       margin:12px 0 4px}
+  .row{display:flex;flex-wrap:wrap;gap:4px 13px;font-size:13px;align-items:baseline}
+  button{font:inherit;font-size:13px;color:#546A80;background:none;border:0;
+         border-bottom:1px solid transparent;cursor:pointer;padding:1px 1px;text-align:left}
+  button:hover{color:#3D3D3A;border-bottom-color:#c8b89a}
+  button[aria-pressed=true]{color:#252623;border-bottom-color:#546A80}
+  .wsdesc{font-size:11px;color:#8d8879;line-height:1.4;margin:3px 0 0}
+  .test{margin-top:13px;padding-top:11px;border-top:1px solid rgba(84,106,128,.18);
+        font-size:12px;color:#5a564e;line-height:1.55}
+  .test strong{font-weight:normal;color:#b87333}
+  .big{font-size:15px;color:#546A80;margin:7px 0 3px}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="panel">
+  <h1>Prime Glass</h1>
+  <div class="sub">Stripes ordered smallest prime to largest, so a pane's shape is its
+    factorisation. The question that matters: <em>with colour off, is the table still
+    readable?</em></div>
+
+  <div class="lbl">workshop</div>
+  <div class="row" id="palettes"></div>
+  <div class="wsdesc" id="wsdesc"></div>
+
+  <div class="lbl">colour</div>
+  <div class="row">
+    <button data-col="on" aria-pressed="true">on</button>
+    <button data-col="off">monochrome</button>
+  </div>
+
+  <div class="lbl">second channel — what carries meaning when colour cannot</div>
+  <div class="row">
+    <button data-ch="order" aria-pressed="true">order only</button>
+    <button data-ch="width">order + width</button>
+    <button data-ch="divs">order + divisions</button>
+  </div>
+
+  <div class="lbl">show</div>
+  <div class="row">
+    <button data-view="table" aria-pressed="true">the table</button>
+    <button data-view="trio">6 · 10 · 14</button>
+    <button data-view="ladder">2 · 4 · 8 · 16</button>
+  </div>
+
+  <div class="test">
+    <div class="big" id="q">The test</div>
+    <div id="qtext"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const canvas=document.getElementById('c'), ctx=canvas.getContext('2d');
+  let viewW=0,viewH=0;
+  function resize(){
+    const dpr=window.devicePixelRatio||1;
+    viewW=window.innerWidth; viewH=window.innerHeight;
+    canvas.width=viewW*dpr; canvas.height=viewH*dpr;
+    canvas.style.width=viewW+'px'; canvas.style.height=viewH+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0); draw();
+  }
+  window.addEventListener('resize', resize);
+
+  const PRIMES=[2,3,5,7,11,13], LEAD='#6c6b62', PAPER='#f4f1e8';
+
+  // Each workshop declares what every prime looks like. The child picks a
+  // workshop; she never assigns a colour to a number.
+  const WORKSHOPS = [
+    { id:'chartres', name:'Chartres',
+      desc:'Cathedral glass. Deep cobalt and gold, the colours the lab already uses.',
+      primes:{2:'#123875',3:'#b8960a',5:'#8f2415',7:'#326924',11:'#4a1d78',13:'#8f4500'} },
+    { id:'shore', name:'Shore',
+      desc:'Sea glass. Softer, cooler, lower contrast — the hardest case for reading by hue.',
+      primes:{2:'#3d6b8a',3:'#c2a878',5:'#a35d4f',7:'#5c8a72',11:'#7b6b96',13:'#c08a52'} },
+    { id:'ember', name:'Ember',
+      desc:'Fired glass. Warm and dark, with the two new primes carrying the most heat.',
+      primes:{2:'#2b3a63',3:'#9c6b12',5:'#7d1f14',7:'#3f5c30',11:'#5a2a6b',13:'#b04a12'} },
+    { id:'signal', name:'Signal',
+      desc:'Built from the Okabe–Ito set, so no two primes rely on the red–green axis.',
+      primes:{2:'#0072B2',3:'#E69F00',5:'#D55E00',7:'#009E73',11:'#CC79A7',13:'#56B4E9'} }
+  ];
+
+  let ws=WORKSHOPS[0], colour=true, channel='order', view='table';
+
+  const factorize = n => { const o=[]; let v=n;
+    for (const p of PRIMES) while (v%p===0){ o.push(p); v/=p; } return o; };
+
+  // Monochrome: every piece is the same ink. Only arrangement can distinguish.
+  const INK='#4a4540';
+  const pieceColour = p => colour ? ws.primes[p] : INK;
+
+  // Width channel: a piece's height is proportional to log(prime), so 2 is a
+  // thin band and 13 a thick one — magnitude readable without hue.
+  function weights(f){
+    if (channel!=='width') return f.map(()=>1);
+    return f.map(p => 0.55 + Math.log2(p)/Math.log2(13)*0.95);
+  }
+
+  function drawPane(x,y,w,h,n){
+    const f=factorize(n);
+    if (!f.length){ ctx.fillStyle='#d8d2c4'; ctx.fillRect(x,y,w,h); return; }
+    const ws_=weights(f), total=ws_.reduce((a,b)=>a+b,0);
+    let cy=y;
+    for (let i=0;i<f.length;i++){
+      const ph=h*ws_[i]/total;
+      const base=pieceColour(f[i]);
+      ctx.fillStyle=base; ctx.fillRect(x,cy,w,ph);
+      // depth so it reads as glass, not paint
+      ctx.save(); ctx.globalAlpha=.20; ctx.fillStyle='#000';
+      ctx.fillRect(x,cy+ph*.64,w,ph*.36); ctx.restore();
+      ctx.save(); ctx.globalAlpha=.13; ctx.fillStyle='#fff';
+      ctx.fillRect(x,cy,w,ph*.28); ctx.restore();
+      // divisions channel: the piece for prime p is cut into p parts.
+      // Literal, and countable without colour.
+      if (channel==='divs' && ph>7 && w>10){
+        ctx.save(); ctx.strokeStyle='rgba(255,255,255,.42)'; ctx.lineWidth=1;
+        ctx.beginPath();
+        for (let k=1;k<f[i];k++){ const dx=x+w*k/f[i];
+          ctx.moveTo(Math.round(dx)+.5,cy+1); ctx.lineTo(Math.round(dx)+.5,cy+ph-1); }
+        ctx.stroke(); ctx.restore();
+      }
+      cy+=ph;
+    }
+  }
+
+  function came(x,y,w,h,thick){
+    const s=v=>Math.round(v)+0.5;
+    ctx.strokeStyle=LEAD; ctx.lineWidth=thick||2;
+    ctx.strokeRect(s(x),s(y),Math.round(w),Math.round(h));
+  }
+
+  function draw(){
+    ctx.fillStyle=PAPER; ctx.fillRect(0,0,viewW,viewH);
+    const L=viewW*0.60, cx=viewW*0.63;
+
+    if (view==='table'){
+      const N=12, cell=Math.min(L,viewH*0.84)/N;
+      const ox=cx-(N*cell)/2, oy=viewH/2-(N*cell)/2;
+      for (let r=1;r<=N;r++) for (let c=1;c<=N;c++)
+        drawPane(ox+(c-1)*cell, oy+(N-r)*cell, cell, cell, r*c);
+      const s=v=>Math.round(v)+0.5;
+      ctx.strokeStyle=LEAD; ctx.lineWidth=2; ctx.beginPath();
+      for (let c=0;c<=N;c++){ const sx=s(ox+c*cell);
+        ctx.moveTo(sx,s(oy)); ctx.lineTo(sx,s(oy+N*cell)); }
+      for (let r=0;r<=N;r++){ const sy=s(oy+r*cell);
+        ctx.moveTo(s(ox),sy); ctx.lineTo(s(ox+N*cell),sy); }
+      ctx.stroke();
+      came(ox,oy,N*cell,N*cell,4);
+      caption('the 12 × 12 table', cx, oy+N*cell+28);
+    }
+    else {
+      const nums = view==='trio' ? [6,10,14] : [2,4,8,16];
+      const size = Math.min(L/nums.length*0.62, viewH*0.40);
+      const gap  = size*0.42;
+      const totalW = nums.length*size + (nums.length-1)*gap;
+      let x = cx - totalW/2, y = viewH/2 - size/2;
+      nums.forEach(n=>{
+        drawPane(x,y,size,size,n); came(x,y,size,size,4);
+        ctx.fillStyle='#5a564e'; ctx.font='16px Georgia, serif'; ctx.textAlign='center';
+        ctx.fillText(String(n), x+size/2, y+size+30);
+        ctx.fillStyle='#a09880'; ctx.font='italic 12px Georgia, serif';
+        ctx.fillText(factorize(n).join(' × '), x+size/2, y+size+50);
+        x += size+gap;
+      });
+      caption(view==='trio'
+        ? 'all three are 2 × a prime — two pieces each'
+        : 'the same prime, stacked — count is the only signal',
+        cx, y+size+82);
+    }
+  }
+  function caption(t,x,y){
+    ctx.fillStyle='#a09880'; ctx.font='italic 12px Georgia, serif';
+    ctx.textAlign='center'; ctx.fillText(t,x,y);
+  }
+
+  // ---- the question, restated for whatever is currently on screen ----
+  function updateQuestion(){
+    const el=document.getElementById('qtext');
+    if (colour){
+      el.innerHTML = 'Colour is on, so this is the easy case. Turn it off — that is the '
+        + 'condition the answer depends on.';
+      return;
+    }
+    if (channel==='order'){
+      el.innerHTML = '<strong>6, 10 and 14 are now identical.</strong> Each is two equal '
+        + 'pieces. Order alone cannot separate 2×3 from 2×5 from 2×7, because order only '
+        + 'says which came first, not which prime it was. If this is where it rests, '
+        + 'colour is carrying information and a monochrome table is unreadable.';
+    } else if (channel==='width'){
+      el.innerHTML = 'Piece height now grows with the prime, so 2 is a thin band and 13 a '
+        + 'thick one. Check whether 6, 10 and 14 separate — and whether 4 and 9 still read '
+        + 'as squares when their two pieces are unequal.';
+    } else {
+      el.innerHTML = 'Each piece is cut into as many parts as its prime: the 3-piece has '
+        + 'three divisions, the 7-piece seven. <strong>Countable rather than remembered.</strong> '
+        + 'Check whether it survives at table scale, not just on the big panes.';
+    }
+  }
+
+  // ---- controls ----
+  const palRow=document.getElementById('palettes');
+  WORKSHOPS.forEach((w,i)=>{
+    const b=document.createElement('button');
+    b.textContent=w.name; b.dataset.ws=w.id;
+    b.setAttribute('aria-pressed',String(i===0));
+    b.addEventListener('click',()=>{
+      ws=w;
+      document.querySelectorAll('[data-ws]').forEach(x=>
+        x.setAttribute('aria-pressed',String(x.dataset.ws===w.id)));
+      document.getElementById('wsdesc').textContent=w.desc;
+      draw();
+    });
+    palRow.appendChild(b);
+  });
+  document.getElementById('wsdesc').textContent=WORKSHOPS[0].desc;
+
+  const press=(sel,val,attr)=>document.querySelectorAll(sel).forEach(b=>
+    b.setAttribute('aria-pressed',String(b.dataset[attr]===val)));
+  document.querySelectorAll('[data-col]').forEach(b=>b.addEventListener('click',()=>{
+    colour=b.dataset.col==='on'; press('[data-col]',b.dataset.col,'col');
+    draw(); updateQuestion(); }));
+  document.querySelectorAll('[data-ch]').forEach(b=>b.addEventListener('click',()=>{
+    channel=b.dataset.ch; press('[data-ch]',channel,'ch'); draw(); updateQuestion(); }));
+  document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{
+    view=b.dataset.view; press('[data-view]',view,'view'); draw(); }));
+
+  resize(); updateQuestion();
+})();
+</script>
+</body>
+</html>
