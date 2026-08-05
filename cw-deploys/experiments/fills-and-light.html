@@ -97,6 +97,11 @@
   </div>
   <input type="range" id="tex" min="0" max="100" value="30">
   <div class="sv"><span>invisible</span><b id="texv">30%</b><span>dirty</span></div>
+  <input type="range" id="vary" min="0" max="30" value="9">
+  <div class="sv"><span>uniform</span><b id="varyv">9%</b><span>every pane differs</span></div>
+  <div class="hint">Per-piece lightness variation. The lab gets this free from its
+    randomised gradient window; a flat fill has none, which reads as dead however bright
+    it is. Hue and chroma hold, so the prime is never in doubt.</div>
 
   <div class="lbl">leading</div>
   <div class="row">
@@ -193,12 +198,13 @@
   // Hand-authored sets that are not in palettes.json. Signal is built from Okabe-Ito,
   // so no two primes rely on the red-green axis.
   const HAND_SHOPS=[
-    // What the lab actually ships today. These are the dominant stop of each prime's
-    // four-stop gradient in active/glass-multiplication.html, after Batch A swapped
-    // 5 and 7. Only 2/3/5/7 exist there; 11 and 13 are invented to the decisions
-    // doc's "rich purple, rich orange" and are marked as such.
+    // What the lab actually ships today. NOT the `b` stop of each prime's four-stop
+    // gradient — that is the dark body tone and reads 6-12 luminance points below the
+    // pane. These are the measured *mean* of the rendered piece: the 137deg ramp
+    // a → b 35% → c 68% → b, plus the radial --Xd highlight at 70%/28%. Batch A had
+    // already swapped 5 and 7. Only 2/3/5/7 exist there; 11 and 13 are invented.
     { id:'aslab', name:'As the lab ships', invented:[11,13],
-      lit:{2:'#123875',3:'#927600',5:'#781f13',7:'#326924',11:'#4a1d78',13:'#8f4500'} },
+      lit:{2:'#163e7e',3:'#9d8204',5:'#842616',7:'#3a6f29',11:'#4a1d78',13:'#8f4500'} },
     { id:'signal', name:'Signal',
       lit:{2:'#0072B2',3:'#E69F00',5:'#D55E00',7:'#009E73',11:'#CC79A7',13:'#56B4E9'} },
     { id:'ember', name:'Ember', invented:[2,3,5,7,11,13],
@@ -252,7 +258,7 @@
 
   let activeSet='none', mode='rest',
       restC=42, restL=6, litC=100, litL=0,
-      texKind='both', texAmt=0.30, leadStyle='geom', selected=null;
+      texKind='both', texAmt=0.30, vary=0.09, leadStyle='geom', selected=null;
 
   const resting = p => derive(shop.lit[p], restC, restL);
   const litOf   = p => derive(shop.lit[p], litC, litL);
@@ -327,6 +333,16 @@
         if (quiet && mode==='unlit'){
           const o=hex2oklch(col); col=oklch2hex({L:o.L*0.55,C:o.C*0.8,h:o.h});
         }
+        // Per-piece variation. The lab gets this for free: background-size:155% with a
+        // randomised background-position means every piece samples a different window
+        // of its gradient, so no two are identical and the eye reads the brightest.
+        // A flat fill has zero variance, which reads as dead however bright it is.
+        // Lightness only — hue and chroma hold, so the prime is never in doubt.
+        if (vary>0){
+          const o=hex2oklch(col);
+          col=oklch2hex({L:Math.max(0,Math.min(1,o.L+(hash(r*31+i,c*17)-0.5)*vary)),
+                         C:o.C, h:o.h});
+        }
         if (quiet && mode==='alpha') ctx.globalAlpha=0.30;
         ctx.fillStyle=col; ctx.fillRect(x,y+i*ph,w,ph);
         ctx.restore();
@@ -339,7 +355,9 @@
       ctx.save();
       ctx.beginPath(); ctx.rect(ox,oy,N*cell,N*cell); ctx.clip();
       if (t.setTransform) t.setTransform(new DOMMatrix().translate(ox,oy));
-      ctx.globalAlpha=texAmt*0.5; ctx.globalCompositeOperation='overlay';
+      // soft-light rather than overlay: overlay darkened by 3-5 luminance points net,
+      // because the seed rims are darker than the striations are light.
+      ctx.globalAlpha=texAmt*0.5; ctx.globalCompositeOperation='soft-light';
       ctx.fillStyle=t; ctx.fillRect(ox,oy,N*cell,N*cell);
       ctx.restore();
     }
@@ -458,6 +476,7 @@
   wire('lchroma','lchromav',v=>litC=v,  v=>v+'%');
   wire('llight','llightv',  v=>litL=v,  v=>(v>0?'+':'')+v);
   wire('tex','texv',        v=>texAmt=v/100, v=>v+'%');
+  wire('vary','varyv',      v=>vary=v/100,   v=>v+'%');
 
   canvas.addEventListener('pointerdown',e=>{
     e.preventDefault();
