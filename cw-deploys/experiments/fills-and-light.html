@@ -102,6 +102,12 @@
   <div class="hint">Per-piece lightness variation. The lab gets this free from its
     randomised gradient window; a flat fill has none, which reads as dead however bright
     it is. Hue and chroma hold, so the prime is never in doubt.</div>
+  <input type="range" id="spec" min="0" max="100" value="0">
+  <div class="sv"><span>no highlight</span><b id="specv">0%</b><span>glossy</span></div>
+  <div class="hint">Specular highlight — light reflecting <em>off</em> the glass, not
+    shading applied to it. This is the cue that reads as glass rather than paint, and it
+    is a different thing from the inset edge-shadow that domed the lab's pieces. The
+    question it answers: does flat glass need one?</div>
 
   <div class="lbl">leading</div>
   <div class="row">
@@ -198,13 +204,14 @@
   // Hand-authored sets that are not in palettes.json. Signal is built from Okabe-Ito,
   // so no two primes rely on the red-green axis.
   const HAND_SHOPS=[
-    // What the lab actually ships today. NOT the `b` stop of each prime's four-stop
-    // gradient — that is the dark body tone and reads 6-12 luminance points below the
-    // pane. These are the measured *mean* of the rendered piece: the 137deg ramp
-    // a → b 35% → c 68% → b, plus the radial --Xd highlight at 70%/28%. Batch A had
-    // already swapped 5 and 7. Only 2/3/5/7 exist there; 11 and 13 are invented.
+    // What the lab actually ships. Not the `b` stop (the dark body tone) and not the
+    // measured mean either: the eye discounts shading and reads the LIT part of a
+    // gradient as the surface colour, so the pane reads at roughly its `c` stop. A
+    // flat fill has no shading to discount, so it must declare what the gradient
+    // *appears* to be, not what it averages. Batch A had already swapped 5 and 7.
+    // Only 2/3/5/7 exist in the lab; 11 and 13 are invented at matching value.
     { id:'aslab', name:'As the lab ships', invented:[11,13],
-      lit:{2:'#163e7e',3:'#9d8204',5:'#842616',7:'#3a6f29',11:'#4a1d78',13:'#8f4500'} },
+      lit:{2:'#1a4a9a',3:'#c8a800',5:'#a83018',7:'#4a8a30',11:'#6b2ea8',13:'#c26a10'} },
     { id:'signal', name:'Signal',
       lit:{2:'#0072B2',3:'#E69F00',5:'#D55E00',7:'#009E73',11:'#CC79A7',13:'#56B4E9'} },
     { id:'ember', name:'Ember', invented:[2,3,5,7,11,13],
@@ -258,7 +265,7 @@
 
   let activeSet='none', mode='rest',
       restC=42, restL=6, litC=100, litL=0,
-      texKind='both', texAmt=0.30, vary=0.09, leadStyle='geom', selected=null;
+      texKind='both', texAmt=0.30, vary=0.09, spec=0, leadStyle='geom', selected=null;
 
   const resting = p => derive(shop.lit[p], restC, restL);
   const litOf   = p => derive(shop.lit[p], litC, litL);
@@ -345,6 +352,20 @@
         }
         if (quiet && mode==='alpha') ctx.globalAlpha=0.30;
         ctx.fillStyle=col; ctx.fillRect(x,y+i*ph,w,ph);
+        // Specular highlight — light reflecting OFF the surface, not shading applied
+        // to it. This is the cue that says "glass" rather than "paint", and it is a
+        // different thing from the inset edge-shadow that domed the lab's pieces.
+        // Off by default; the question is whether flat glass needs it.
+        if (spec>0 && !(quiet && mode==='alpha')){
+          const hx=x+w*(0.52+hash(r+i,c*3)*0.30);
+          const hy=y+i*ph+ph*(0.16+hash(c,r*3+i)*0.22);
+          const hr=Math.min(w,ph)*(0.34+hash(i,r+c)*0.22);
+          const gg=ctx.createRadialGradient(hx,hy,0,hx,hy,Math.max(1,hr));
+          gg.addColorStop(0,'rgba(255,255,255,'+(spec*0.60).toFixed(3)+')');
+          gg.addColorStop(0.6,'rgba(255,255,255,'+(spec*0.14).toFixed(3)+')');
+          gg.addColorStop(1,'rgba(255,255,255,0)');
+          ctx.fillStyle=gg; ctx.fillRect(x,y+i*ph,w,ph);
+        }
         ctx.restore();
       }
     }
@@ -477,6 +498,7 @@
   wire('llight','llightv',  v=>litL=v,  v=>(v>0?'+':'')+v);
   wire('tex','texv',        v=>texAmt=v/100, v=>v+'%');
   wire('vary','varyv',      v=>vary=v/100,   v=>v+'%');
+  wire('spec','specv',      v=>spec=v/100,   v=>v+'%');
 
   canvas.addEventListener('pointerdown',e=>{
     e.preventDefault();
