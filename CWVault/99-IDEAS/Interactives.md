@@ -21,6 +21,19 @@
 - Area under curves by counting grid squares (Riemann sums)
 - Linear equations — two points define a line, slope is visible, systems solved by intersection
 
+## The Large Number Plane (property-coloured lattice) — follow-on to Glass Multiplication
+
+A positive-integer plane extending ~20 cells (or more) in all four directions from
+the origin, where cells are coloured by the properties of the number they carry —
+primes, squares, pronics, triangulars, Fibonacci, and so on. The patterns that
+emerge are often beautiful and sometimes genuinely hard to explain (the Fibonacci
+colouring especially). It's the natural scaling-up of Glass Multiplication: the
+multiplication table is a small window (first quadrant, 10×10) onto this larger
+plane. Michael notes an earlier experiment along these lines changed his own sense
+of what the word *space* can mean — worth holding onto as a story/interactive seed
+about number-as-place. Rhymes with Glass Multiplication (symmetry, factor structure
+made visible) and with the coordinate-plane construction work.
+
 ## Out of Scope for Now (Aspirational)
 
 - Subitizing tests

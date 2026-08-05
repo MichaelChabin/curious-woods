@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Memory Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #808080;  /* Neutral gray background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2em;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .display-area {
+            width: 500px;
+            height: 500px;
+            margin: 0 auto 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: #808080;
+            transition: background-color 0.3s ease;
+        }
+
+        .display-area.showing-color {
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+        }
+
+        .countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            color: white;
+            font-weight: 300;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .instruction-text {
+            font-size: 1.5em;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .swatch-row {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 40px auto;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .swatch-row.visible {
+            opacity: 1;
+        }
+
+        .color-swatch {
+            width: 70px;
+            height: 70px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 3px solid transparent;
+        }
+
+        .color-swatch:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .color-swatch.selected {
+            border-color: #2c3e50;
+            transform: translateY(-5px);
+        }
+
+        .color-swatch.correct {
+            border-color: #27ae60;
+            animation: pulse 0.5s;
+        }
+
+        .color-swatch.incorrect {
+            border-color: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .controls {
+            margin: 30px 0;
+        }
+
+        .btn {
+            background: #1D3B4F;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(29, 59, 79, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 59, 79, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .feedback {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback.visible {
+            opacity: 1;
+        }
+
+        .feedback.correct {
+            background: #d4f1d4;
+            color: #27ae60;
+        }
+
+        .feedback.incorrect {
+            background: #ffd6d6;
+            color: #c0392b;
+        }
+
+        .difficulty-indicator {
+            margin: 15px 0;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Color Memory Test</h1>
+        <p class="subtitle">How accurately can you remember colors?</p>
+        
+        <div class="display-area" id="displayArea">
+            <div class="instruction-text" id="instructionText">Click Start to begin</div>
+            <div class="countdown" id="countdown" style="display: none;"></div>
+        </div>
+        
+        <div class="swatch-row" id="swatchRow">
+            <!-- Color swatches will be generated here -->
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="controls">
+            <button class="btn" id="startBtn" onclick="startTest()">Start Test</button>
+            <button class="btn" id="nextBtn" onclick="nextRound()" style="display: none;">Next Round</button>
+        </div>
+        
+        <div class="info-panel">
+            <h3>Your Performance</h3>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">Round</div>
+                    <div class="stat-value" id="roundNum">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Accuracy</div>
+                    <div class="stat-value" id="accuracy">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Difficulty</div>
+                    <div class="stat-value" id="difficulty">Medium</div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="difficulty-indicator" id="difficultyInfo">
+                Color differences: 4% intervals
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let currentRound = 0;
+        let correctCount = 0;
+        let currentColor = null;
+        let correctIndex = 0;
+        let difficulty = 0; // Start at Easy
+        let intervalPercent = 8; // Starting with wide intervals
+        let testActive = false;
+        let hasAnswered = false;
+
+        // Color generation
+        function generateRandomColor() {
+            return {
+                r: Math.floor(Math.random() * 200) + 28, // Avoid extremes
+                g: Math.floor(Math.random() * 200) + 28,
+                b: Math.floor(Math.random() * 200) + 28
+            };
+        }
+
+        function colorToRgb(color) {
+            return `rgb(${color.r}, ${color.g}, ${color.b})`;
+        }
+
+        function adjustColor(color, percent) {
+            // Adjust brightness by percent
+            const factor = 1 + (percent / 100);
+            return {
+                r: Math.min(255, Math.max(0, Math.round(color.r * factor))),
+                g: Math.min(255, Math.max(0, Math.round(color.g * factor))),
+                b: Math.min(255, Math.max(0, Math.round(color.b * factor)))
+            };
+        }
+
+        function generateColorArray(baseColor, intervals) {
+            const colors = [];
+            const numColors = 9;
+            const middleIndex = Math.floor(numColors / 2);
+            
+            for (let i = 0; i < numColors; i++) {
+                const offset = (i - middleIndex) * intervals;
+                colors.push(adjustColor(baseColor, offset));
+            }
+            
+            // Randomly place the correct color
+            correctIndex = Math.floor(Math.random() * numColors);
+            colors[correctIndex] = {...baseColor};
+            
+            return colors;
+        }
+
+        function startTest() {
+            currentRound = 0;
+            correctCount = 0;
+            document.getElementById('startBtn').style.display = 'none';
+            startRound();
+        }
+
+        function startRound() {
+            currentRound++;
+            hasAnswered = false;
+            document.getElementById('roundNum').textContent = currentRound;
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('feedback').classList.remove('visible');
+            document.getElementById('swatchRow').classList.remove('visible');
+            document.getElementById('swatchRow').innerHTML = '';
+            
+            // Generate new color
+            currentColor = generateRandomColor();
+            
+            // Show the color
+            const displayArea = document.getElementById('displayArea');
+            displayArea.style.backgroundColor = colorToRgb(currentColor);
+            displayArea.classList.add('showing-color');
+            
+            // Show countdown
+            document.getElementById('instructionText').textContent = 'Remember this color';
+            document.getElementById('countdown').style.display = 'block';
+            let timeLeft = 3;
+            document.getElementById('countdown').textContent = timeLeft;
+            
+            const countdownInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    document.getElementById('countdown').textContent = timeLeft;
+                } else {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdown').style.display = 'none';
+                    showGrayPause();
+                }
+            }, 1000);
+        }
+
+        function showGrayPause() {
+            const displayArea = document.getElementById('displayArea');
+            displayArea.style.backgroundColor = '#808080';
+            displayArea.classList.remove('showing-color');
+            document.getElementById('instructionText').textContent = 'Get ready...';
+            
+            setTimeout(showChoices, 2000);
+        }
+
+        function showChoices() {
+            document.getElementById('instructionText').textContent = 'Which color did you see?';
+            
+            // Generate color array based on difficulty
+            const colors = generateColorArray(currentColor, intervalPercent);
+            
+            // Create swatches
+            const swatchRow = document.getElementById('swatchRow');
+            colors.forEach((color, index) => {
+                const swatch = document.createElement('div');
+                swatch.className = 'color-swatch';
+                swatch.style.backgroundColor = colorToRgb(color);
+                swatch.dataset.index = index;
+                swatch.onclick = () => selectColor(index);
+                swatchRow.appendChild(swatch);
+            });
+            
+            swatchRow.classList.add('visible');
+            testActive = true;
+        }
+
+        function selectColor(index) {
+            if (!testActive || hasAnswered) return;
+            
+            hasAnswered = true;
+            testActive = false;
+            
+            // Mark selected
+            const swatches = document.querySelectorAll('.color-swatch');
+            swatches[index].classList.add('selected');
+            
+            // Check if correct
+            const isCorrect = index === correctIndex;
+            if (isCorrect) {
+                correctCount++;
+                swatches[index].classList.add('correct');
+                showFeedback(true);
+                adjustDifficulty(true);
+            } else {
+                swatches[index].classList.add('incorrect');
+                swatches[correctIndex].classList.add('correct');
+                const distance = Math.abs(index - correctIndex);
+                showFeedback(false, distance);
+                adjustDifficulty(false, distance);
+            }
+            
+            // Update stats
+            updateStats();
+            
+            // Show next button
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function showFeedback(correct, distance = 0) {
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback visible ' + (correct ? 'correct' : 'incorrect');
+            
+            if (correct) {
+                feedback.textContent = 'Perfect! You found the exact color.';
+            } else {
+                const direction = distance > 0 ? 'off' : 'off';
+                feedback.textContent = `Close! You were ${distance} ${distance === 1 ? 'shade' : 'shades'} ${direction}.`;
+            }
+        }
+
+        function adjustDifficulty(correct, distance = 0) {
+            if (correct) {
+                // Make it harder gradually
+                if (intervalPercent > 2) {
+                    intervalPercent = Math.max(2, intervalPercent - 1);
+                }
+            } else {
+                // Make it significantly easier based on how wrong
+                if (distance >= 3) {
+                    // Very wrong - make much easier
+                    intervalPercent = Math.min(12, intervalPercent + 4);
+                } else if (distance === 2) {
+                    // Somewhat wrong - moderately easier
+                    intervalPercent = Math.min(10, intervalPercent + 2);
+                } else {
+                    // Just missed - slightly easier
+                    intervalPercent = Math.min(8, intervalPercent + 1);
+                }
+            }
+            
+            updateDifficultyDisplay();
+        }
+
+        function updateDifficultyDisplay() {
+            const difficultyNames = ['Easy', 'Medium', 'Hard', 'Expert'];
+            const diffIndex = intervalPercent <= 2 ? 3 : (intervalPercent <= 3 ? 2 : (intervalPercent <= 5 ? 1 : 0));
+            document.getElementById('difficulty').textContent = difficultyNames[diffIndex];
+            document.getElementById('difficultyInfo').textContent = `Color differences: ${intervalPercent}% intervals`;
+        }
+
+        function updateStats() {
+            const accuracy = Math.round((correctCount / currentRound) * 100);
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            document.getElementById('progressFill').style.width = accuracy + '%';
+        }
+
+        function nextRound() {
+            if (currentRound < 10) {
+                startRound();
+            } else {
+                endTest();
+            }
+        }
+
+        function endTest() {
+            const displayArea = document.getElementById('displayArea');
+            displayArea.style.backgroundColor = '#808080';
+            document.getElementById('instructionText').textContent = `Test complete! Accuracy: ${Math.round((correctCount / currentRound) * 100)}%`;
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('startBtn').textContent = 'Restart';
+        }
+
+        // Initialize
+        updateDifficultyDisplay();
+    </script>
+</body>
+</html>

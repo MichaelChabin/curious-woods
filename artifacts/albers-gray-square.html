@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Josef Albers - Homage to the Square</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #FFFFE7;
+            font-family: 'Georgia', serif;
+            color: #2c3e50;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1D3B4F;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        /* The main demonstration - Albers style nested squares */
+        .albers-demonstration {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px auto;
+        }
+
+        .painting {
+            width: 400px;
+            height: 400px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            background: white;
+            border: 2px solid #ddd;
+        }
+
+        /* Left painting - warm browns/golds */
+        .left-painting {
+            background: #704214; /* Outer dark brown */
+        }
+
+        .left-outer {
+            width: 320px;
+            height: 320px;
+            background: #8B6914; /* Medium brown */
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .left-middle {
+            width: 260px;
+            height: 260px;
+            background: #DAA520; /* Goldenrod */
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .left-inner {
+            width: 200px;
+            height: 200px;
+            background: #FFD700; /* Bright gold */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Right painting - reds */
+        .right-painting {
+            background: #8B0000; /* Dark red */
+        }
+
+        .right-outer {
+            width: 320px;
+            height: 320px;
+            background: #B22222; /* Firebrick */
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .right-middle {
+            width: 260px;
+            height: 260px;
+            background: #DC143C; /* Crimson */
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .right-inner {
+            width: 200px;
+            height: 200px;
+            background: #FF6347; /* Tomato */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* The "magic" gray squares - exactly the same color */
+        .gray-square {
+            width: 80px;
+            height: 80px;
+            background: #808080; /* Exactly middle gray - RGB(128,128,128) */
+        }
+
+        /* Controls */
+        .controls {
+            margin: 40px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        button {
+            background: linear-gradient(145deg, #1D3B4F, #0f2332);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 59, 79, 0.3);
+        }
+
+        .reveal-section {
+            margin: 30px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            opacity: 0;
+            max-width: 600px;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .reveal-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .comparison-squares {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .isolated-square {
+            width: 80px;
+            height: 80px;
+            background: #808080;
+            border: 2px solid #ddd;
+        }
+
+        .label {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        /* Color value display */
+        .color-info {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            color: #2c3e50;
+        }
+
+        /* Explanation panel */
+        .explanation {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 40px auto;
+            border-left: 5px solid #BE622F;
+            text-align: left;
+            line-height: 1.6;
+            max-width: 700px;
+        }
+
+        .explanation h3 {
+            color: #1D3B4F;
+            margin-bottom: 15px;
+        }
+
+        /* Variation controls */
+        .variation-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .color-button {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .color-button:hover {
+            transform: scale(1.05);
+            border-color: #BE622F;
+        }
+
+        .color-button.active {
+            background: #BE622F;
+            color: white;
+            border-color: #BE622F;
+        }
+
+        /* Animation for emphasis */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Quote styling */
+        .quote {
+            font-style: italic;
+            color: #7f8c8d;
+            padding: 20px;
+            border-left: 3px solid #BE622F;
+            margin: 20px 0;
+            background: rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Homage to the Square</h1>
+        <p class="subtitle">Josef Albers' proof that context changes everything</p>
+
+        <div class="albers-demonstration" id="mainDemo">
+            <!-- Left painting with warm colors -->
+            <div class="painting left-painting">
+                <div class="left-outer">
+                    <div class="left-middle">
+                        <div class="left-inner">
+                            <div class="gray-square" id="leftGray"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right painting with cool/red colors -->
+            <div class="painting right-painting">
+                <div class="right-outer">
+                    <div class="right-middle">
+                        <div class="right-inner">
+                            <div class="gray-square" id="rightGray"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="revealTruth()">Reveal the Truth</button>
+            
+            <div class="variation-controls">
+                <button class="color-button active" onclick="changeScheme('warm-cool')">Warm/Cool</button>
+                <button class="color-button" onclick="changeScheme('blue-orange')">Blue/Orange</button>
+                <button class="color-button" onclick="changeScheme('green-purple')">Green/Purple</button>
+                <button class="color-button" onclick="changeScheme('monochrome')">Light/Dark</button>
+            </div>
+        </div>
+
+        <div class="reveal-section" id="revealSection">
+            <h3>Both Center Squares Are Identical</h3>
+            <div class="color-info">
+                RGB(128, 128, 128) - Perfect Middle Gray - #808080
+            </div>
+            
+            <div class="comparison-squares">
+                <div>
+                    <div class="isolated-square"></div>
+                    <div class="label">Left center square</div>
+                </div>
+                <div>
+                    <div class="isolated-square"></div>
+                    <div class="label">Right center square</div>
+                </div>
+            </div>
+            
+            <p style="margin-top: 20px; color: #7f8c8d;">
+                The surrounding colors completely change how we perceive the gray. 
+                The warm yellows make it appear cooler and darker. 
+                The reds make it appear warmer and lighter.
+            </p>
+        </div>
+
+        <div class="explanation">
+            <h3>Albers' Method</h3>
+            <p>
+                Josef Albers painted hundreds of these nested square compositions, which he called 
+                <strong>"Homage to the Square."</strong> Each painting was a scientific experiment 
+                in color perception.
+            </p>
+            <p style="margin-top: 15px;">
+                By nesting squares within squares, he created what he called "color environments" - 
+                the gray square doesn't just sit next to other colors, it's <em>surrounded</em> by them, 
+                intensifying the effect.
+            </p>
+            <p style="margin-top: 15px;">
+                The off-center placement (weighted toward the bottom) creates visual tension and 
+                prevents the eye from settling, making the color interactions even more dynamic.
+            </p>
+        </div>
+
+        <div class="quote">
+            "In order to use color effectively it is necessary to recognize that color deceives continually. 
+            To this end, the beginning is not a study of color systems, but rather, a study of the interaction 
+            of color." - Josef Albers, <em>Interaction of Color</em> (1963)
+        </div>
+
+        <div class="explanation">
+            <h3>Why This Matters</h3>
+            <p>
+                This isn't just about art. This principle affects everything we see:
+            </p>
+            <ul style="margin: 15px 0; padding-left: 25px; line-height: 1.8;">
+                <li>Why the same paint looks different on different walls</li>
+                <li>Why colors in logos must be tested on various backgrounds</li>
+                <li>Why your phone screen looks blue at night but normal during the day</li>
+                <li>Why artists care so much about the color of gallery walls</li>
+            </ul>
+            <p style="margin-top: 15px;">
+                Albers taught that we never really see a "true" color - we only see colors in relationship 
+                to other colors. Every color experience is relative.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Color schemes for different demonstrations
+        const colorSchemes = {
+            'warm-cool': {
+                left: {
+                    outer: '#704214',
+                    middle1: '#8B6914',
+                    middle2: '#DAA520',
+                    inner: '#FFD700'
+                },
+                right: {
+                    outer: '#8B0000',
+                    middle1: '#B22222',
+                    middle2: '#DC143C',
+                    inner: '#FF6347'
+                }
+            },
+            'blue-orange': {
+                left: {
+                    outer: '#000080',
+                    middle1: '#0000CD',
+                    middle2: '#4169E1',
+                    inner: '#87CEEB'
+                },
+                right: {
+                    outer: '#8B4513',
+                    middle1: '#D2691E',
+                    middle2: '#FF8C00',
+                    inner: '#FFA500'
+                }
+            },
+            'green-purple': {
+                left: {
+                    outer: '#013220',
+                    middle1: '#228B22',
+                    middle2: '#32CD32',
+                    inner: '#90EE90'
+                },
+                right: {
+                    outer: '#4B0082',
+                    middle1: '#6A0DAD',
+                    middle2: '#9370DB',
+                    inner: '#DDA0DD'
+                }
+            },
+            'monochrome': {
+                left: {
+                    outer: '#000000',
+                    middle1: '#2F2F2F',
+                    middle2: '#5F5F5F',
+                    inner: '#8F8F8F'
+                },
+                right: {
+                    outer: '#FFFFFF',
+                    middle1: '#D0D0D0',
+                    middle2: '#A0A0A0',
+                    inner: '#707070'
+                }
+            }
+        };
+
+        function changeScheme(schemeName) {
+            const scheme = colorSchemes[schemeName];
+            
+            // Update left painting
+            document.querySelector('.left-painting').style.background = scheme.left.outer;
+            document.querySelector('.left-outer').style.background = scheme.left.middle1;
+            document.querySelector('.left-middle').style.background = scheme.left.middle2;
+            document.querySelector('.left-inner').style.background = scheme.left.inner;
+            
+            // Update right painting
+            document.querySelector('.right-painting').style.background = scheme.right.outer;
+            document.querySelector('.right-outer').style.background = scheme.right.middle1;
+            document.querySelector('.right-middle').style.background = scheme.right.middle2;
+            document.querySelector('.right-inner').style.background = scheme.right.inner;
+            
+            // Update active button
+            document.querySelectorAll('.color-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Hide reveal section when changing
+            document.getElementById('revealSection').classList.remove('visible');
+        }
+
+        function revealTruth() {
+            const revealSection = document.getElementById('revealSection');
+            revealSection.classList.add('visible');
+            
+            // Add pulse animation to the gray squares
+            document.querySelectorAll('.gray-square').forEach(square => {
+                square.classList.add('pulse');
+            });
+            
+            setTimeout(() => {
+                document.querySelectorAll('.gray-square').forEach(square => {
+                    square.classList.remove('pulse');
+                });
+            }, 4000);
+        }
+
+        // Allow clicking on gray squares to verify they're the same
+        document.querySelectorAll('.gray-square').forEach(square => {
+            square.style.cursor = 'pointer';
+            square.addEventListener('click', function() {
+                const styles = window.getComputedStyle(this);
+                const bg = styles.backgroundColor;
+                console.log('Gray square color:', bg);
+                
+                // Visual feedback
+                this.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>

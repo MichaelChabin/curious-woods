@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoClock - Continental Drift Through Time</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #FFFFE7;
+            font-family: 'Georgia', serif;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1D3B4F;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .geoclock-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 20px auto;
+        }
+
+        #globeCanvas {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .time-btn {
+            background: white;
+            color: #2c3e50;
+            border: 2px solid #1D3B4F;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .time-btn:hover {
+            background: #1D3B4F;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(29, 59, 79, 0.3);
+        }
+
+        .time-btn.active {
+            background: #BE622F;
+            color: white;
+            border-color: #BE622F;
+        }
+
+        .play-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .play-btn {
+            background: linear-gradient(145deg, #1D3B4F, #0f2332);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 59, 79, 0.3);
+        }
+
+        .play-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .time-display {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 3px solid #1D3B4F;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .era-label {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+
+        .info-panel {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border-left: 5px solid #BE622F;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .info-panel h3 {
+            color: #1D3B4F;
+            margin-bottom: 10px;
+        }
+
+        .event-marker {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .event-extinction {
+            background: #e74c3c;
+        }
+
+        .event-formation {
+            background: #3498db;
+        }
+
+        .event-life {
+            background: #27ae60;
+        }
+
+        /* Continental colors */
+        .continent {
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .continent:hover {
+            opacity: 0.8;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            font-size: 0.9em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 15px;
+            border: 1px solid #333;
+        }
+
+        /* Speed control */
+        .speed-control {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .speed-slider {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GeoClock: Earth Through Deep Time</h1>
+        <p class="subtitle">Watch 750 million years of continental drift</p>
+
+        <div class="geoclock-container">
+            <div class="time-display" id="timeDisplay">
+                Present Day
+                <div class="era-label">Holocene Epoch</div>
+            </div>
+
+            <svg id="globeCanvas" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+                <!-- Ocean background -->
+                <circle cx="300" cy="300" r="250" fill="#87CEEB" stroke="#1D3B4F" stroke-width="3"/>
+                
+                <!-- Grid lines for reference -->
+                <line x1="300" y1="50" x2="300" y2="550" stroke="#ffffff40" stroke-width="1"/>
+                <line x1="50" y1="300" x2="550" y2="300" stroke="#ffffff40" stroke-width="1"/>
+                
+                <!-- Equator -->
+                <ellipse cx="300" cy="300" rx="250" ry="40" fill="none" stroke="#ffffff60" stroke-width="2" stroke-dasharray="5,5"/>
+                
+                <!-- Continents will be drawn here -->
+                <g id="continents">
+                    <!-- Africa -->
+                    <path id="africa" class="continent" fill="#8B7355" stroke="#654321" stroke-width="2"
+                          d="M 320 250 L 340 230 L 350 240 L 360 280 L 355 320 L 340 360 L 320 380 L 310 370 L 300 340 L 295 300 L 300 260 Z"/>
+                    
+                    <!-- North America -->
+                    <path id="northAmerica" class="continent" fill="#228B22" stroke="#1F5F1F" stroke-width="2"
+                          d="M 180 200 L 220 190 L 240 210 L 230 240 L 210 270 L 180 280 L 160 260 L 150 230 L 160 210 Z"/>
+                    
+                    <!-- South America -->
+                    <path id="southAmerica" class="continent" fill="#DAA520" stroke="#B8860B" stroke-width="2"
+                          d="M 240 350 L 250 340 L 260 360 L 255 390 L 245 420 L 235 430 L 225 410 L 230 380 L 235 360 Z"/>
+                    
+                    <!-- Eurasia -->
+                    <path id="eurasia" class="continent" fill="#4169E1" stroke="#27408B" stroke-width="2"
+                          d="M 350 180 L 420 170 L 480 180 L 490 200 L 470 220 L 430 230 L 380 225 L 350 210 L 340 190 Z"/>
+                    
+                    <!-- India -->
+                    <path id="india" class="continent" fill="#FF6347" stroke="#CD5C5C" stroke-width="2"
+                          d="M 380 280 L 395 275 L 400 290 L 395 305 L 380 310 L 370 300 L 372 285 Z"/>
+                    
+                    <!-- Australia -->
+                    <path id="australia" class="continent" fill="#9370DB" stroke="#7B68EE" stroke-width="2"
+                          d="M 420 350 L 450 345 L 460 360 L 455 375 L 430 380 L 415 370 L 418 355 Z"/>
+                    
+                    <!-- Antarctica -->
+                    <path id="antarctica" class="continent" fill="#E0E0E0" stroke="#A0A0A0" stroke-width="2"
+                          d="M 250 480 L 350 480 L 380 490 L 350 510 L 250 510 L 220 490 Z"/>
+                </g>
+                
+                <!-- Event markers -->
+                <g id="eventMarkers" style="display: none;">
+                    <!-- These will appear at specific times -->
+                </g>
+            </svg>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #8B7355;"></div>
+                    <span>Africa</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #228B22;"></div>
+                    <span>North America</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #DAA520;"></div>
+                    <span>South America</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4169E1;"></div>
+                    <span>Eurasia</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FF6347;"></div>
+                    <span>India</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #9370DB;"></div>
+                    <span>Australia</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="time-btn active" onclick="goToTime(0)">Present</button>
+                <button class="time-btn" onclick="goToTime(65)">65 MYA<br><small>Dinosaur End</small></button>
+                <button class="time-btn" onclick="goToTime(150)">150 MYA<br><small>Jurassic</small></button>
+                <button class="time-btn" onclick="goToTime(250)">250 MYA<br><small>Pangaea</small></button>
+                <button class="time-btn" onclick="goToTime(450)">450 MYA<br><small>First Plants</small></button>
+                <button class="time-btn" onclick="goToTime(550)">550 MYA<br><small>Cambrian</small></button>
+                <button class="time-btn" onclick="goToTime(750)">750 MYA<br><small>Snowball</small></button>
+            </div>
+
+            <div class="play-controls">
+                <button class="play-btn" onclick="playAnimation()">▶ Play Timeline</button>
+                <button class="play-btn" onclick="reverseAnimation()">◀ Reverse</button>
+                <button class="play-btn" onclick="stopAnimation()">⏸ Pause</button>
+            </div>
+
+            <div class="speed-control">
+                <label>Animation Speed:</label>
+                <input type="range" class="speed-slider" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedDisplay">5 MY/second</span>
+            </div>
+        </div>
+
+        <div class="info-panel" id="infoPanel">
+            <h3>Present Day</h3>
+            <p>
+                The continents as we know them today. But they're still moving! 
+                The Atlantic Ocean grows 2.5 cm wider each year. 
+                The Pacific shrinks. Africa is splitting apart along the Great Rift Valley.
+                In 250 million years, there may be a new supercontinent.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Continental positions at different times (simplified)
+        // Transform data: {translateX, translateY, rotate, scale}
+        const continentalPositions = {
+            0: { // Present
+                africa: {x: 0, y: 0, r: 0, s: 1},
+                northAmerica: {x: 0, y: 0, r: 0, s: 1},
+                southAmerica: {x: 0, y: 0, r: 0, s: 1},
+                eurasia: {x: 0, y: 0, r: 0, s: 1},
+                india: {x: 0, y: 0, r: 0, s: 1},
+                australia: {x: 0, y: 0, r: 0, s: 1},
+                antarctica: {x: 0, y: 0, r: 0, s: 1}
+            },
+            65: { // K-Pg boundary
+                africa: {x: -10, y: 15, r: -5, s: 1},
+                northAmerica: {x: -30, y: -10, r: -10, s: 0.95},
+                southAmerica: {x: -15, y: 20, r: 5, s: 1},
+                eurasia: {x: 10, y: -5, r: 5, s: 0.98},
+                india: {x: -50, y: 120, r: 0, s: 1}, // Island in Indian Ocean!
+                australia: {x: -20, y: 80, r: -15, s: 1},
+                antarctica: {x: 0, y: 30, r: 0, s: 1.1}
+            },
+            150: { // Jurassic
+                africa: {x: -20, y: 30, r: -10, s: 1},
+                northAmerica: {x: -60, y: -20, r: -20, s: 0.9},
+                southAmerica: {x: -30, y: 40, r: 10, s: 1},
+                eurasia: {x: 20, y: -10, r: 10, s: 0.95},
+                india: {x: -80, y: 180, r: 0, s: 1},
+                australia: {x: -60, y: 140, r: -30, s: 1},
+                antarctica: {x: -10, y: 60, r: 10, s: 1.2}
+            },
+            250: { // Pangaea
+                africa: {x: 0, y: 20, r: 0, s: 1},
+                northAmerica: {x: 30, y: -30, r: 30, s: 0.9},
+                southAmerica: {x: 20, y: 30, r: -20, s: 1},
+                eurasia: {x: -20, y: -20, r: -15, s: 1},
+                india: {x: 10, y: 60, r: 0, s: 1},
+                australia: {x: 40, y: 100, r: 45, s: 1},
+                antarctica: {x: 20, y: 120, r: 30, s: 1.3}
+            },
+            450: { // Ordovician
+                africa: {x: 0, y: 150, r: 180, s: 1}, // At South Pole!
+                northAmerica: {x: -100, y: 50, r: 90, s: 0.8},
+                southAmerica: {x: 30, y: 140, r: -90, s: 0.9},
+                eurasia: {x: 50, y: -50, r: -45, s: 0.9},
+                india: {x: 20, y: 160, r: 45, s: 0.9},
+                australia: {x: 40, y: 170, r: 135, s: 0.9},
+                antarctica: {x: 10, y: 180, r: 90, s: 1.4}
+            },
+            550: { // Cambrian
+                africa: {x: -20, y: 160, r: 170, s: 0.95},
+                northAmerica: {x: -120, y: 70, r: 110, s: 0.75},
+                southAmerica: {x: 40, y: 150, r: -100, s: 0.85},
+                eurasia: {x: 80, y: -60, r: -60, s: 0.85},
+                india: {x: 30, y: 170, r: 60, s: 0.85},
+                australia: {x: 50, y: 180, r: 150, s: 0.85},
+                antarctica: {x: 0, y: 190, r: 120, s: 1.5}
+            },
+            750: { // Cryogenian (Snowball Earth)
+                africa: {x: 0, y: 0, r: 90, s: 0.9},
+                northAmerica: {x: -140, y: 0, r: 180, s: 0.7},
+                southAmerica: {x: 60, y: 0, r: -180, s: 0.8},
+                eurasia: {x: 100, y: 0, r: -90, s: 0.8},
+                india: {x: 40, y: 0, r: 135, s: 0.8},
+                australia: {x: 80, y: 0, r: 180, s: 0.8},
+                antarctica: {x: 0, y: 0, r: 180, s: 1.6}
+            }
+        };
+
+        const timeInfo = {
+            0: {
+                name: "Present Day",
+                era: "Holocene Epoch",
+                description: "The continents as we know them today. But they're still moving! The Atlantic Ocean grows 2.5 cm wider each year."
+            },
+            65: {
+                name: "65 Million Years Ago",
+                era: "End of Cretaceous",
+                description: "The asteroid impact at Chicxulub. India is an island racing toward Asia. The Atlantic is 2/3 its current width. No Panama connecting the Americas."
+            },
+            150: {
+                name: "150 Million Years Ago",
+                era: "Late Jurassic",
+                description: "The age of giant dinosaurs. Pangaea is breaking apart. The Atlantic Ocean is just beginning to open. The first birds are evolving."
+            },
+            250: {
+                name: "250 Million Years Ago",
+                era: "End Permian - The Great Dying",
+                description: "All continents merged into the supercontinent Pangaea. The worst mass extinction in Earth's history is about to occur - 90% of species will die."
+            },
+            450: {
+                name: "450 Million Years Ago",
+                era: "Ordovician Period",
+                description: "Life exists only in the oceans. The first land plants are just beginning to emerge. Most continents are in the southern hemisphere."
+            },
+            550: {
+                name: "550 Million Years Ago",
+                era: "Cambrian Explosion",
+                description: "The sudden appearance of complex life! Trilobites rule the seas. All animal phyla appear. No life on land yet."
+            },
+            750: {
+                name: "750 Million Years Ago",
+                era: "Cryogenian - Snowball Earth",
+                description: "Earth is frozen from pole to pole! Ice covers even the equator. Life survives in small pockets. The supercontinent Rodinia is breaking up."
+            }
+        };
+
+        let currentTime = 0;
+        let animationInterval = null;
+        let animationDirection = 1;
+
+        function interpolatePosition(start, end, progress) {
+            return {
+                x: start.x + (end.x - start.x) * progress,
+                y: start.y + (end.y - start.y) * progress,
+                r: start.r + (end.r - start.r) * progress,
+                s: start.s + (end.s - start.s) * progress
+            };
+        }
+
+        function updateContinents(time) {
+            const times = Object.keys(continentalPositions).map(Number).sort((a, b) => a - b);
+            
+            // Find the two times to interpolate between
+            let fromTime = 0, toTime = 0;
+            for (let i = 0; i < times.length - 1; i++) {
+                if (time >= times[i] && time <= times[i + 1]) {
+                    fromTime = times[i];
+                    toTime = times[i + 1];
+                    break;
+                }
+            }
+            
+            if (time >= times[times.length - 1]) {
+                fromTime = toTime = times[times.length - 1];
+            }
+            
+            const progress = toTime === fromTime ? 0 : (time - fromTime) / (toTime - fromTime);
+            
+            // Update each continent
+            const continents = ['africa', 'northAmerica', 'southAmerica', 'eurasia', 'india', 'australia', 'antarctica'];
+            
+            continents.forEach(continent => {
+                const element = document.getElementById(continent);
+                const fromPos = continentalPositions[fromTime][continent];
+                const toPos = continentalPositions[toTime][continent];
+                const currentPos = interpolatePosition(fromPos, toPos, progress);
+                
+                const transform = `translate(${currentPos.x}px, ${currentPos.y}px) rotate(${currentPos.r}deg) scale(${currentPos.s})`;
+                element.style.transform = transform;
+            });
+            
+            // Update display
+            const timeDisplay = document.getElementById('timeDisplay');
+            const infoPanel = document.getElementById('infoPanel');
+            
+            // Find closest time point for info
+            let closestTime = times.reduce((prev, curr) => {
+                return Math.abs(curr - time) < Math.abs(prev - time) ? curr : prev;
+            });
+            
+            const info = timeInfo[closestTime];
+            timeDisplay.innerHTML = `${Math.round(time)} Million Years Ago<div class="era-label">${info.era}</div>`;
+            if (time === 0) {
+                timeDisplay.innerHTML = `Present Day<div class="era-label">${info.era}</div>`;
+            }
+            
+            infoPanel.innerHTML = `<h3>${info.name}</h3><p>${info.description}</p>`;
+        }
+
+        function goToTime(time) {
+            currentTime = time;
+            updateContinents(time);
+            
+            // Update active button
+            document.querySelectorAll('.time-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function playAnimation() {
+            if (animationInterval) clearInterval(animationInterval);
+            
+            const speed = parseInt(document.getElementById('speedSlider').value);
+            animationDirection = 1;
+            
+            animationInterval = setInterval(() => {
+                currentTime += speed;
+                if (currentTime >= 750) {
+                    currentTime = 750;
+                    clearInterval(animationInterval);
+                }
+                updateContinents(currentTime);
+            }, 50);
+        }
+
+        function reverseAnimation() {
+            if (animationInterval) clearInterval(animationInterval);
+            
+            const speed = parseInt(document.getElementById('speedSlider').value);
+            animationDirection = -1;
+            
+            if (currentTime === 0) currentTime = 750;
+            
+            animationInterval = setInterval(() => {
+                currentTime -= speed;
+                if (currentTime <= 0) {
+                    currentTime = 0;
+                    clearInterval(animationInterval);
+                }
+                updateContinents(currentTime);
+            }, 50);
+        }
+
+        function stopAnimation() {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+        }
+
+        // Speed slider
+        document.getElementById('speedSlider').addEventListener('input', function() {
+            document.getElementById('speedDisplay').textContent = `${this.value} MY/second`;
+        });
+
+        // Initialize
+        updateContinents(0);
+    </script>
+</body>
+</html>

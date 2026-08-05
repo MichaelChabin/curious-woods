@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetary Scale Explorer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0a0a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .story-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* CRITICAL FIX: Buttons positioned to avoid overlap */
+        .planet-buttons {
+            position: fixed; /* Use fixed positioning */
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000; /* High z-index */
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none; /* Prevent clicks when invisible */
+        }
+
+        .planet-buttons.visible {
+            opacity: 1;
+            pointer-events: auto; /* Allow clicks when visible */
+        }
+
+        .planet-btn {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #333;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            text-align: left;
+        }
+
+        .planet-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            border-color: #555;
+            transform: translateX(5px);
+        }
+
+        .planet-btn.active {
+            background: #1976d2;
+            border-color: #1976d2;
+        }
+
+        .planet-btn.sun {
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
+        .planet-btn.sun:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: #ffd700;
+        }
+
+        .planet-btn.sun.active {
+            background: #ffd700;
+            color: #000;
+        }
+
+        .planet-btn.clear {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            margin-top: 10px;
+        }
+
+        .planet-btn.clear:hover {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: #ff6b6b;
+        }
+
+        /* Canvas positioned to not overlap buttons */
+        .canvas-area {
+            width: 600px; /* Reduced from 800px */
+            height: 600px; /* Reduced from 800px */
+            position: relative;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0a 100%);
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 2s ease;
+            margin-left: 150px; /* Push away from buttons */
+        }
+
+        /* Earth - always visible as reference */
+        .earth {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle at 30% 30%, #00bcd4, #0097a7, #00695c);
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            opacity: 0;
+            transition: all 1s ease;
+            box-shadow: 0 0 20px rgba(0, 188, 212, 0.4);
+        }
+
+        .earth.visible {
+            opacity: 1;
+        }
+
+        /* Construction elements */
+        .point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: all 0.8s ease;
+            z-index: 110;
+        }
+
+        .point.visible { opacity: 1; }
+        .point.pulse { animation: pulse 1.5s ease-in-out 2; }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .point-label {
+            position: absolute;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.8s ease;
+            z-index: 111;
+        }
+
+        .point-label.visible { opacity: 1; }
+
+        .construction-line, .axis-line {
+            position: absolute;
+            background: white;
+            opacity: 0;
+            transition: all 1.2s ease;
+            z-index: 52;
+        }
+
+        .construction-line.visible, .axis-line.visible { opacity: 0.8; }
+        .axis-line.visible { opacity: 1; }
+
+        .grid-line {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transition: all 0.6s ease;
+            z-index: 50;
+        }
+
+        .grid-line.visible { opacity: 0.3; }
+
+        .unit-circle {
+            position: absolute;
+            border: 2px solid white;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: all 0.8s ease;
+            z-index: 53;
+        }
+
+        .unit-circle.visible { opacity: 0.4; }
+
+        .number-label {
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.6s ease;
+            z-index: 54;
+        }
+
+        .number-label.visible { opacity: 0.9; }
+
+        /* Planets - scaled down for smaller canvas */
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 1.5s ease;
+            opacity: 0;
+        }
+
+        .jupiter {
+            width: 537px;
+            height: 537px;
+            background: radial-gradient(circle at 30% 30%, #ffa726, #ff8f00, #e65100);
+            z-index: 10;
+            box-shadow: 0 0 40px rgba(255, 167, 38, 0.3);
+        }
+
+        .saturn {
+            width: 452px;
+            height: 452px;
+            background: radial-gradient(circle at 30% 30%, #8d6e63, #6d4c41, #4e342e);
+            z-index: 20;
+            box-shadow: 0 0 35px rgba(141, 110, 99, 0.3);
+        }
+
+        .neptune {
+            width: 188px;
+            height: 188px;
+            background: radial-gradient(circle at 30% 30%, #81d4fa, #29b6f6, #0277bd);
+            z-index: 40;
+            box-shadow: 0 0 25px rgba(129, 212, 250, 0.3);
+        }
+
+        .uranus {
+            width: 192px;
+            height: 192px;
+            background: radial-gradient(circle at 30% 30%, #78909c, #546e7a, #37474f);
+            z-index: 30;
+            box-shadow: 0 0 25px rgba(120, 144, 156, 0.3);
+        }
+
+        .venus {
+            width: 46px;
+            height: 46px;
+            background: radial-gradient(circle at 30% 30%, #fafafa, #f5f5f5, #e0e0e0);
+            z-index: 110;
+            box-shadow: 0 0 15px rgba(250, 250, 250, 0.4);
+        }
+
+        .mars {
+            width: 26px;
+            height: 26px;
+            background: radial-gradient(circle at 30% 30%, #ff7043, #e64a19, #d84315);
+            z-index: 120;
+            box-shadow: 0 0 12px rgba(255, 112, 67, 0.3);
+        }
+
+        .mercury {
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle at 30% 30%, #90a4ae, #607d8b, #455a64);
+            z-index: 130;
+            box-shadow: 0 0 10px rgba(144, 164, 174, 0.3);
+        }
+
+        .sun {
+            width: 5232px;
+            height: 5232px;
+            background: radial-gradient(circle at 30% 30%, #ffeb3b, #ff9800, #ff5722);
+            z-index: 1;
+            box-shadow: 0 0 100px rgba(255, 235, 59, 0.6);
+            opacity: 0;
+        }
+
+        .story-text {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 16px;
+            line-height: 1.5;
+            opacity: 0;
+            transition: opacity 1s ease;
+            z-index: 200;
+            text-align: center;
+        }
+
+        .story-text.visible {
+            opacity: 1;
+        }
+
+        .scale-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 1s ease;
+            z-index: 150;
+            max-width: 200px;
+        }
+
+        .scale-indicator.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="story-container">
+        <!-- Button container exists from the start -->
+        <div class="planet-buttons" id="planetButtons">
+            <!-- Buttons will be added dynamically -->
+        </div>
+
+        <div class="canvas-area" id="canvasArea">
+            <!-- Earth - always present -->
+            <div class="earth" id="earth"></div>
+            
+            <!-- Planets (appear on demand) -->
+            <div class="planet jupiter" id="jupiter"></div>
+            <div class="planet saturn" id="saturn"></div>
+            <div class="planet uranus" id="uranus"></div>
+            <div class="planet neptune" id="neptune"></div>
+            <div class="planet venus" id="venus"></div>
+            <div class="planet mars" id="mars"></div>
+            <div class="planet mercury" id="mercury"></div>
+            <div class="planet sun" id="sun"></div>
+            
+            <div class="scale-indicator" id="scaleIndicator">
+                <strong>Coordinate Scale:</strong><br>
+                <span id="scaleText">1 unit = Earth radius</span><br>
+                <span id="gridRange">Grid: -12 to +12</span><br><br>
+                Click planets to explore!
+            </div>
+        </div>
+        
+        <div class="story-text" id="storyText">
+            <div id="storyContent">Starting coordinate plane construction...</div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        let isConstructing = true;
+        let isShowingSun = false;
+        let currentPlanet = null;
+        let restoreTimeout = null;
+        let planetStoryIndex = {};
+        
+        const centerX = 300; // Adjusted for smaller canvas
+        const centerY = 300;
+        const unit = 24; // Adjusted for smaller canvas
+
+        // Planet stories
+        const planetStories = {
+            jupiter: [
+                "Jupiter is the king of planets - a gas giant so massive it could swallow over 1,300 Earths! Its Great Red Spot is a storm larger than our entire planet."
+            ],
+            saturn: [
+                "Saturn's rings are made of billions of chunks of ice and rock! If Saturn were the size of a football field, the rings would be thinner than paper!"
+            ],
+            uranus: [
+                "Uranus rotates on its side like a rolling ball! Each pole gets 42 years of continuous sunlight, then 42 years of darkness."
+            ],
+            neptune: [
+                "Neptune has the fastest winds in the solar system - up to 1,200 mph! That's faster than the speed of sound on Earth!"
+            ],
+            venus: [
+                "Venus is Earth's evil twin - nearly identical in size but hot enough to melt lead! A day on Venus lasts longer than its year!"
+            ],
+            mars: [
+                "Mars has the largest volcano in the solar system - Olympus Mons is three times taller than Mount Everest!"
+            ],
+            mercury: [
+                "Mercury is the smallest planet but has temperature swings from 800°F in day to -300°F at night!"
+            ]
+        };
+
+        Object.keys(planetStories).forEach(planet => {
+            planetStoryIndex[planet] = 0;
+        });
+
+        // Global functions for button clicks
+        window.showPlanet = function(planetId, event) {
+            if (event) event.stopPropagation();
+            if (isConstructing) return;
+            
+            clearActiveStates();
+            
+            // Find and activate the button
+            const buttons = document.querySelectorAll('.planet-btn');
+            buttons.forEach(btn => {
+                if (btn.dataset.planet === planetId) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            if (restoreTimeout) clearTimeout(restoreTimeout);
+            if (isShowingSun) restoreFromSun();
+            
+            currentPlanet = planetId;
+            
+            // Show the planet
+            document.getElementById(planetId).style.opacity = '1';
+            
+            // Show story
+            const story = planetStories[planetId][0];
+            document.getElementById('storyContent').textContent = story;
+            document.getElementById('storyText').classList.add('visible');
+            
+            // Auto-clear after 8 seconds
+            restoreTimeout = setTimeout(() => {
+                clearPlanets();
+            }, 8000);
+        };
+
+        window.showSun = function(event) {
+            if (event) event.stopPropagation();
+            if (isConstructing) return;
+            
+            clearActiveStates();
+            
+            const buttons = document.querySelectorAll('.planet-btn');
+            buttons.forEach(btn => {
+                if (btn.dataset.planet === 'sun') {
+                    btn.classList.add('active');
+                }
+            });
+            
+            if (restoreTimeout) clearTimeout(restoreTimeout);
+            
+            isShowingSun = true;
+            
+            // Hide all planets
+            document.querySelectorAll('.planet:not(.sun)').forEach(planet => {
+                planet.style.opacity = '0';
+            });
+            
+            // Scale down canvas
+            const canvasArea = document.getElementById('canvasArea');
+            canvasArea.style.transform = 'scale(0.08)';
+            canvasArea.style.transformOrigin = 'center center';
+            
+            setTimeout(() => {
+                document.getElementById('sun').style.opacity = '1';
+            }, 1000);
+            
+            document.getElementById('storyContent').textContent = "The Sun is absolutely massive - 109 times Earth's radius!";
+            document.getElementById('storyText').classList.add('visible');
+            
+            restoreTimeout = setTimeout(() => {
+                clearPlanets();
+            }, 8000);
+        };
+
+        window.clearPlanets = function(event) {
+            if (event) event.stopPropagation();
+            if (restoreTimeout) {
+                clearTimeout(restoreTimeout);
+                restoreTimeout = null;
+            }
+            
+            clearActiveStates();
+            
+            if (isShowingSun) {
+                restoreFromSun();
+            }
+            
+            document.querySelectorAll('.planet').forEach(planet => {
+                planet.style.opacity = '0';
+            });
+            
+            document.getElementById('storyText').classList.remove('visible');
+            currentPlanet = null;
+        };
+
+        function restoreFromSun() {
+            isShowingSun = false;
+            document.getElementById('sun').style.opacity = '0';
+            document.getElementById('canvasArea').style.transform = 'scale(1)';
+        }
+
+        function clearActiveStates() {
+            document.querySelectorAll('.planet-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+        }
+
+        // Simplified construction
+        const constructionSteps = [
+            {
+                text: "You can put 0 anywhere you like. That just says where you want to start.",
+                duration: 2500,
+                action: () => {
+                    document.getElementById('earth').classList.add('visible');
+                    document.getElementById('storyText').classList.add('visible');
+                }
+            },
+            {
+                text: "Let's put 0 at Earth's center and 1 at its surface. Now we can compare planets!",
+                duration: 3000,
+                action: () => {
+                    // Skip the detailed construction for now
+                    finishConstruction();
+                }
+            }
+        ];
+
+        function startConstruction() {
+            runConstructionStep();
+        }
+
+        function runConstructionStep() {
+            if (currentStep >= constructionSteps.length) {
+                isConstructing = false;
+                return;
+            }
+
+            const step = constructionSteps[currentStep];
+            document.getElementById('storyContent').textContent = step.text;
+            
+            setTimeout(() => {
+                step.action();
+            }, 500);
+
+            setTimeout(() => {
+                currentStep++;
+                runConstructionStep();
+            }, step.duration);
+        }
+
+        function finishConstruction() {
+            const container = document.getElementById('planetButtons');
+            
+            // Create buttons
+            const planets = [
+                { id: 'jupiter', text: 'Jupiter' },
+                { id: 'saturn', text: 'Saturn' },
+                { id: 'uranus', text: 'Uranus' },
+                { id: 'neptune', text: 'Neptune' },
+                { id: 'venus', text: 'Venus' },
+                { id: 'mars', text: 'Mars' },
+                { id: 'mercury', text: 'Mercury' }
+            ];
+            
+            planets.forEach(planet => {
+                const btn = document.createElement('button');
+                btn.className = 'planet-btn';
+                btn.textContent = planet.text;
+                btn.dataset.planet = planet.id;
+                btn.onclick = function(e) {
+                    e.stopPropagation();
+                    showPlanet(planet.id, e);
+                };
+                container.appendChild(btn);
+            });
+            
+            // Sun button
+            const sunBtn = document.createElement('button');
+            sunBtn.className = 'planet-btn sun';
+            sunBtn.textContent = '☀️ Sun';
+            sunBtn.dataset.planet = 'sun';
+            sunBtn.onclick = function(e) {
+                e.stopPropagation();
+                showSun(e);
+            };
+            container.appendChild(sunBtn);
+            
+            // Clear button
+            const clearBtn = document.createElement('button');
+            clearBtn.className = 'planet-btn clear';
+            clearBtn.textContent = 'Clear';
+            clearBtn.onclick = function(e) {
+                e.stopPropagation();
+                clearPlanets(e);
+            };
+            container.appendChild(clearBtn);
+            
+            // Make visible
+            container.classList.add('visible');
+            document.getElementById('scaleIndicator').classList.add('visible');
+            document.getElementById('storyText').classList.remove('visible');
+            
+            isConstructing = false;
+        }
+
+        // Start
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                startConstruction();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

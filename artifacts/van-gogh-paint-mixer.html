@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Van Gogh's Paint Mixer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Georgia, serif;
+            background: linear-gradient(135deg, #8B7355 0%, #D2B48C 100%);
+            min-height: 100vh;
+        }
+
+        .easel-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #F5E6D3;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            padding: 30px;
+            position: relative;
+        }
+
+        .easel-container::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 10px;
+            background: #8B4513;
+            border-radius: 5px 5px 0 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4A4A4A;
+            margin-bottom: 10px;
+            font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .palette-section {
+            background: #8B7355;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section-title {
+            color: #FFF;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .paint-tubes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .paint-tube {
+            background: linear-gradient(180deg, #E0E0E0 0%, #C0C0C0 100%);
+            border: 2px solid #666;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            text-align: center;
+        }
+
+        .paint-tube:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .paint-tube.selected {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .paint-cap {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 8px;
+            border-radius: 50%;
+            border: 2px solid #333;
+            box-shadow: inset 0 -3px 5px rgba(0,0,0,0.3);
+        }
+
+        .paint-name {
+            font-size: 11px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .paint-clicks {
+            font-size: 10px;
+            color: #666;
+            background: rgba(255,255,255,0.8);
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-top: 4px;
+        }
+
+        .mixing-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .mixing-palette {
+            width: 100%;
+            height: 200px;
+            background: #FAF0E6;
+            border: 3px solid #8B4513;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: relative;
+            margin-bottom: 20px;
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.2);
+        }
+
+        .mixed-paint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            transition: all 0.5s;
+        }
+
+        .paint-blob {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            opacity: 0;
+            animation: blobDrop 0.5s ease-out forwards;
+        }
+
+        @keyframes blobDrop {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 0.8;
+            }
+        }
+
+        .canvas-preview {
+            background: white;
+            border: 2px solid #8B4513;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .canvas-area {
+            width: 100%;
+            height: 150px;
+            background: #FFFFF0;
+            border: 1px solid #DDD;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brushstroke {
+            position: absolute;
+            height: 30px;
+            border-radius: 15px;
+            opacity: 0.8;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: Georgia, serif;
+            font-weight: bold;
+        }
+
+        .btn-mix {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-mix:hover {
+            background: #45a049;
+        }
+
+        .btn-clear {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #da190b;
+        }
+
+        .btn-apply {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-apply:hover {
+            background: #0b7dda;
+        }
+
+        .recipe-book {
+            background: #FFF9E6;
+            border: 2px solid #D4A574;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .recipe-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #6B4423;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .recipe-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .recipe {
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #D4A574;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+
+        .recipe:hover {
+            background: #FFF5E1;
+            transform: translateX(3px);
+        }
+
+        .recipe-name {
+            font-weight: bold;
+            color: #6B4423;
+            margin-bottom: 3px;
+        }
+
+        .recipe-formula {
+            font-size: 10px;
+            color: #888;
+        }
+
+        .info-panel {
+            background: #E8F5E9;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .mixing-formula {
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+            padding: 10px;
+            background: #F5F5F5;
+            border-radius: 4px;
+        }
+
+        .paint-properties {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 11px;
+        }
+
+        .property {
+            background: rgba(255,255,255,0.5);
+            padding: 5px;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .property-label {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .impasto-indicator {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .thickness-bar {
+            width: 100%;
+            height: 20px;
+            background: #E0E0E0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .thickness-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="easel-container">
+        <h1>Van Gogh's Paint Mixer</h1>
+        <p class="subtitle">Mix paints like Vincent did in 1889 - Click tubes to add paint!</p>
+
+        <div class="workspace">
+            <div class="palette-section">
+                <div class="section-title">🎨 Van Gogh's Paint Tubes</div>
+                <div class="paint-tubes" id="paintTubes"></div>
+                
+                <div class="info-panel">
+                    <strong>How to mix:</strong><br>
+                    • Click a tube to add paint (multiple clicks = more paint)<br>
+                    • Order matters: first color dominates<br>
+                    • Too many colors = muddy brown!<br>
+                    • Historical tip: Van Gogh often mixed just 2-3 colors
+                </div>
+            </div>
+
+            <div class="mixing-section">
+                <div class="section-title">🖌️ Mixing Palette</div>
+                <div class="mixing-palette">
+                    <div class="mixed-paint" id="mixedPaint"></div>
+                </div>
+                
+                <div class="mixing-formula" id="mixingFormula">
+                    Click paint tubes to start mixing...
+                </div>
+
+                <div class="paint-properties">
+                    <div class="property">
+                        <div class="property-label">Opacity</div>
+                        <div id="opacityValue">-</div>
+                    </div>
+                    <div class="property">
+                        <div class="property-label">Tinting</div>
+                        <div id="tintingValue">-</div>
+                    </div>
+                    <div class="property">
+                        <div class="property-label">Cost</div>
+                        <div id="costValue">-</div>
+                    </div>
+                </div>
+
+                <div class="impasto-indicator">
+                    <div>Paint Thickness (Impasto)</div>
+                    <div class="thickness-bar">
+                        <div class="thickness-fill" id="thicknessFill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-mix" onclick="mixPaints()">Mix Paints</button>
+                    <button class="btn btn-apply" onclick="applyToCanvas()">Apply to Canvas</button>
+                    <button class="btn btn-clear" onclick="clearPalette()">Clear Palette</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas-preview">
+            <div class="section-title" style="color: #6B4423;">Canvas Test Area</div>
+            <div class="canvas-area" id="canvasArea"></div>
+        </div>
+
+        <div class="recipe-book">
+            <div class="recipe-title">📖 Van Gogh's Color Recipes</div>
+            <div class="recipe-list" id="recipeList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Van Gogh's actual pigments with properties
+        const pigments = [
+            {
+                name: "Prussian Blue",
+                rgb: [30, 58, 95],
+                opacity: 0.9,
+                tintingStrength: 0.95,
+                cost: 2,
+                toxic: false
+            },
+            {
+                name: "Ultramarine",
+                rgb: [46, 80, 144],
+                opacity: 0.7,
+                tintingStrength: 0.7,
+                cost: 3,
+                toxic: false
+            },
+            {
+                name: "Chrome Yellow",
+                rgb: [255, 200, 46],
+                opacity: 0.8,
+                tintingStrength: 0.8,
+                cost: 4,
+                toxic: true
+            },
+            {
+                name: "Cadmium Yellow",
+                rgb: [255, 215, 0],
+                opacity: 0.9,
+                tintingStrength: 0.9,
+                cost: 5,
+                toxic: true
+            },
+            {
+                name: "Yellow Ochre",
+                rgb: [196, 160, 0],
+                opacity: 0.8,
+                tintingStrength: 0.5,
+                cost: 1,
+                toxic: false
+            },
+            {
+                name: "Vermillion",
+                rgb: [227, 66, 52],
+                opacity: 0.85,
+                tintingStrength: 0.8,
+                cost: 4,
+                toxic: true
+            },
+            {
+                name: "Emerald Green",
+                rgb: [80, 200, 120],
+                opacity: 0.6,
+                tintingStrength: 0.7,
+                cost: 3,
+                toxic: true
+            },
+            {
+                name: "Viridian",
+                rgb: [64, 130, 109],
+                opacity: 0.5,
+                tintingStrength: 0.6,
+                cost: 3,
+                toxic: false
+            },
+            {
+                name: "Lead White",
+                rgb: [255, 254, 247],
+                opacity: 1.0,
+                tintingStrength: 0.3,
+                cost: 2,
+                toxic: true
+            },
+            {
+                name: "Zinc White",
+                rgb: [250, 255, 245],
+                opacity: 0.7,
+                tintingStrength: 0.2,
+                cost: 2,
+                toxic: false
+            },
+            {
+                name: "Burnt Umber",
+                rgb: [138, 51, 36],
+                opacity: 0.8,
+                tintingStrength: 0.6,
+                cost: 1,
+                toxic: false
+            },
+            {
+                name: "Ivory Black",
+                rgb: [28, 28, 28],
+                opacity: 0.9,
+                tintingStrength: 0.9,
+                cost: 1,
+                toxic: false
+            }
+        ];
+
+        const recipes = [
+            {
+                name: "Starry Night Blue",
+                formula: "Prussian Blue (3) + Ultramarine (1) + Lead White (1)",
+                paints: [{index: 0, clicks: 3}, {index: 1, clicks: 1}, {index: 8, clicks: 1}]
+            },
+            {
+                name: "Cypress Green",
+                formula: "Viridian (2) + Prussian Blue (1) + Yellow Ochre (1)",
+                paints: [{index: 7, clicks: 2}, {index: 0, clicks: 1}, {index: 4, clicks: 1}]
+            },
+            {
+                name: "Moon Glow",
+                formula: "Chrome Yellow (3) + Lead White (2)",
+                paints: [{index: 2, clicks: 3}, {index: 8, clicks: 2}]
+            },
+            {
+                name: "Sunset Orange",
+                formula: "Vermillion (2) + Chrome Yellow (1)",
+                paints: [{index: 5, clicks: 2}, {index: 2, clicks: 1}]
+            },
+            {
+                name: "Shadow Purple",
+                formula: "Ultramarine (2) + Vermillion (1)",
+                paints: [{index: 1, clicks: 2}, {index: 5, clicks: 1}]
+            },
+            {
+                name: "Earth Brown",
+                formula: "Burnt Umber (2) + Yellow Ochre (1)",
+                paints: [{index: 10, clicks: 2}, {index: 4, clicks: 1}]
+            }
+        ];
+
+        let selectedPaints = [];
+        let mixedColor = null;
+        let totalClicks = 0;
+
+        // Initialize paint tubes
+        function initPaintTubes() {
+            const container = document.getElementById('paintTubes');
+            pigments.forEach((pigment, index) => {
+                const tube = document.createElement('div');
+                tube.className = 'paint-tube';
+                tube.onclick = () => addPaint(index);
+                
+                const cap = document.createElement('div');
+                cap.className = 'paint-cap';
+                cap.style.background = `rgb(${pigment.rgb[0]}, ${pigment.rgb[1]}, ${pigment.rgb[2]})`;
+                
+                const name = document.createElement('div');
+                name.className = 'paint-name';
+                name.textContent = pigment.name;
+                
+                const clicks = document.createElement('div');
+                clicks.className = 'paint-clicks';
+                clicks.id = `clicks-${index}`;
+                clicks.textContent = 'Clicks: 0';
+                
+                tube.appendChild(cap);
+                tube.appendChild(name);
+                tube.appendChild(clicks);
+                
+                if (pigment.toxic) {
+                    tube.title = "⚠️ Toxic pigment - Van Gogh used it anyway!";
+                }
+                
+                container.appendChild(tube);
+            });
+        }
+
+        // Initialize recipes
+        function initRecipes() {
+            const container = document.getElementById('recipeList');
+            recipes.forEach(recipe => {
+                const recipeDiv = document.createElement('div');
+                recipeDiv.className = 'recipe';
+                recipeDiv.onclick = () => applyRecipe(recipe);
+                
+                recipeDiv.innerHTML = `
+                    <div class="recipe-name">${recipe.name}</div>
+                    <div class="recipe-formula">${recipe.formula}</div>
+                `;
+                
+                container.appendChild(recipeDiv);
+            });
+        }
+
+        // Add paint to selection
+        function addPaint(index) {
+            const paint = {
+                ...pigments[index],
+                index: index,
+                clickTime: Date.now()
+            };
+            
+            selectedPaints.push(paint);
+            totalClicks++;
+            
+            // Update click counter
+            const clickCounter = document.getElementById(`clicks-${index}`);
+            const currentClicks = selectedPaints.filter(p => p.index === index).length;
+            clickCounter.textContent = `Clicks: ${currentClicks}`;
+            
+            // Add visual blob to mixing palette
+            addBlobToPalette(paint);
+            
+            // Update formula
+            updateFormula();
+            
+            // Update thickness
+            updateThickness();
+        }
+
+        // Add visual blob to palette
+        function addBlobToPalette(paint) {
+            const palette = document.querySelector('.mixing-palette');
+            const blob = document.createElement('div');
+            blob.className = 'paint-blob';
+            blob.style.background = `rgb(${paint.rgb[0]}, ${paint.rgb[1]}, ${paint.rgb[2]})`;
+            blob.style.left = `${40 + Math.random() * 20}%`;
+            blob.style.top = `${40 + Math.random() * 20}%`;
+            palette.appendChild(blob);
+            
+            setTimeout(() => blob.remove(), 2000);
+        }
+
+        // Mix the selected paints
+        function mixPaints() {
+            if (selectedPaints.length === 0) {
+                alert('Add some paint first!');
+                return;
+            }
+            
+            // Subtractive color mixing simulation
+            mixedColor = calculateMixedColor();
+            
+            // Display mixed color
+            const mixedPaint = document.getElementById('mixedPaint');
+            mixedPaint.style.background = `rgb(${mixedColor.r}, ${mixedColor.g}, ${mixedColor.b})`;
+            mixedPaint.style.width = '120px';
+            mixedPaint.style.height = '120px';
+            
+            // Update properties
+            updateProperties();
+        }
+
+        // Calculate mixed color using subtractive mixing
+        function calculateMixedColor() {
+            if (selectedPaints.length === 0) return {r: 200, g: 200, b: 200};
+            
+            // Count clicks per pigment
+            const paintCounts = {};
+            selectedPaints.forEach(paint => {
+                if (!paintCounts[paint.index]) {
+                    paintCounts[paint.index] = {paint: paint, count: 0};
+                }
+                paintCounts[paint.index].count++;
+            });
+            
+            // Weighted average based on clicks and tinting strength
+            let totalWeight = 0;
+            let r = 0, g = 0, b = 0;
+            
+            for (let index in paintCounts) {
+                const {paint, count} = paintCounts[index];
+                const weight = count * paint.tintingStrength;
+                totalWeight += weight;
+                
+                // Subtractive mixing (darker colors dominate)
+                r += paint.rgb[0] * weight;
+                g += paint.rgb[1] * weight;
+                b += paint.rgb[2] * weight;
+            }
+            
+            if (totalWeight > 0) {
+                r = Math.round(r / totalWeight);
+                g = Math.round(g / totalWeight);
+                b = Math.round(b / totalWeight);
+            }
+            
+            // Mudding effect if too many colors
+            if (Object.keys(paintCounts).length > 4) {
+                // Pull toward gray/brown
+                const gray = 100;
+                const muddingFactor = (Object.keys(paintCounts).length - 4) * 0.15;
+                r = Math.round(r * (1 - muddingFactor) + gray * muddingFactor);
+                g = Math.round(g * (1 - muddingFactor) + gray * muddingFactor);
+                b = Math.round(b * (1 - muddingFactor) + gray * muddingFactor);
+            }
+            
+            return {r, g, b};
+        }
+
+        // Update formula display
+        function updateFormula() {
+            const formula = document.getElementById('mixingFormula');
+            
+            if (selectedPaints.length === 0) {
+                formula.textContent = 'Click paint tubes to start mixing...';
+                return;
+            }
+            
+            // Count clicks per pigment
+            const paintCounts = {};
+            selectedPaints.forEach(paint => {
+                if (!paintCounts[paint.name]) {
+                    paintCounts[paint.name] = 0;
+                }
+                paintCounts[paint.name]++;
+            });
+            
+            // Create formula string
+            const formulaParts = [];
+            for (let name in paintCounts) {
+                formulaParts.push(`${name} (${paintCounts[name]})`);
+            }
+            
+            formula.textContent = formulaParts.join(' + ');
+        }
+
+        // Update properties display
+        function updateProperties() {
+            // Calculate average properties
+            let opacity = 0;
+            let tinting = 0;
+            let cost = 0;
+            
+            const uniquePaints = {};
+            selectedPaints.forEach(paint => {
+                uniquePaints[paint.index] = paint;
+            });
+            
+            const paintArray = Object.values(uniquePaints);
+            if (paintArray.length > 0) {
+                paintArray.forEach(paint => {
+                    opacity += paint.opacity;
+                    tinting += paint.tintingStrength;
+                    cost += paint.cost;
+                });
+                
+                opacity = (opacity / paintArray.length * 100).toFixed(0);
+                tinting = (tinting / paintArray.length * 100).toFixed(0);
+            }
+            
+            document.getElementById('opacityValue').textContent = opacity > 0 ? `${opacity}%` : '-';
+            document.getElementById('tintingValue').textContent = tinting > 0 ? `${tinting}%` : '-';
+            document.getElementById('costValue').textContent = cost > 0 ? `${cost} francs` : '-';
+        }
+
+        // Update thickness indicator
+        function updateThickness() {
+            const thickness = Math.min(100, totalClicks * 10);
+            document.getElementById('thicknessFill').style.width = `${thickness}%`;
+        }
+
+        // Apply to canvas
+        function applyToCanvas() {
+            if (!mixedColor) {
+                alert('Mix your paints first!');
+                return;
+            }
+            
+            const canvas = document.getElementById('canvasArea');
+            const stroke = document.createElement('div');
+            stroke.className = 'brushstroke';
+            stroke.style.background = `rgb(${mixedColor.r}, ${mixedColor.g}, ${mixedColor.b})`;
+            stroke.style.width = `${80 + Math.random() * 40}%`;
+            stroke.style.left = `${Math.random() * 20}%`;
+            stroke.style.top = `${Math.random() * 70}%`;
+            stroke.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
+            
+            // Thicker stroke for more paint
+            stroke.style.height = `${20 + Math.min(30, totalClicks * 2)}px`;
+            
+            canvas.appendChild(stroke);
+            
+            // Remove old strokes if too many
+            const strokes = canvas.querySelectorAll('.brushstroke');
+            if (strokes.length > 5) {
+                strokes[0].remove();
+            }
+        }
+
+        // Clear palette
+        function clearPalette() {
+            selectedPaints = [];
+            mixedColor = null;
+            totalClicks = 0;
+            
+            // Reset UI
+            document.getElementById('mixedPaint').style.background = 'transparent';
+            document.getElementById('mixedPaint').style.width = '0';
+            document.getElementById('mixedPaint').style.height = '0';
+            
+            // Reset all click counters
+            pigments.forEach((_, index) => {
+                document.getElementById(`clicks-${index}`).textContent = 'Clicks: 0';
+            });
+            
+            // Clear formula
+            updateFormula();
+            
+            // Reset properties
+            document.getElementById('opacityValue').textContent = '-';
+            document.getElementById('tintingValue').textContent = '-';
+            document.getElementById('costValue').textContent = '-';
+            
+            // Reset thickness
+            document.getElementById('thicknessFill').style.width = '0%';
+            
+            // Clear blobs
+            document.querySelectorAll('.paint-blob').forEach(blob => blob.remove());
+        }
+
+        // Apply a recipe
+        function applyRecipe(recipe) {
+            clearPalette();
+            
+            recipe.paints.forEach(paint => {
+                for (let i = 0; i < paint.clicks; i++) {
+                    setTimeout(() => addPaint(paint.index), i * 200);
+                }
+            });
+            
+            setTimeout(() => mixPaints(), recipe.paints.length * 200 + 500);
+        }
+
+        // Initialize
+        initPaintTubes();
+        initRecipes();
+    </script>
+</body>
+</html>

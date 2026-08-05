@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Discrimination Test - Color Wheel Edition</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .instructions {
+            text-align: center;
+            max-width: 700px;
+            margin-bottom: 15px;
+            color: #666;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+
+        .container {
+            position: relative;
+            width: 600px;
+            height: 200px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .circle {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: none;
+        }
+
+        .patches-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            max-width: 600px;
+            min-height: 52px;
+            margin-bottom: 30px;
+        }
+
+        .color-patch {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #ddd;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .color-patch::after {
+            content: attr(data-index);
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.7);
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+
+        .color-controls {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .palette-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .palette-label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #444;
+            text-align: center;
+        }
+
+        .color-wheel-palette {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1px;
+            width: 156px;
+        }
+
+        .color-swatch {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.3);
+            border-color: #333;
+            z-index: 10;
+            position: relative;
+        }
+
+        .color-swatch.selected {
+            border: 2px solid #2196F3;
+            box-shadow: 0 0 0 1px rgba(33, 150, 243, 0.3);
+        }
+
+        .current-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 8px;
+            padding: 8px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .selection-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-preview {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+        }
+
+        .stats {
+            margin-top: 15px;
+            padding: 12px;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .stats p {
+            margin: 5px 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .reset-btn {
+            background: #4CAF50;
+        }
+
+        .reset-btn:hover {
+            background: #45a049;
+        }
+
+        .start-btn {
+            background: #2196F3;
+        }
+
+        .start-btn:hover {
+            background: #1976D2;
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .preset-btn {
+            padding: 4px 8px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .preset-btn:hover {
+            background: #d0d0d0;
+        }
+
+        #maxReached {
+            color: green;
+            font-weight: bold;
+        }
+
+        .rgb-value {
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Color Discrimination Test - Color Wheel Edition</h1>
+    
+    <div class="instructions">
+        Click the circle as soon as you can see it against the background.
+        The palettes below are arranged by hue (like a color wheel) with different lightness levels.
+    </div>
+
+    <div class="container" id="container">
+        <div class="circle" id="circle"></div>
+    </div>
+
+    <div class="patches-container" id="patches"></div>
+
+    <div class="color-controls">
+        <div class="palette-section">
+            <div class="palette-label">Start Color</div>
+            <div class="color-wheel-palette" id="startPalette"></div>
+            <div class="current-selection">
+                <div class="selection-row">
+                    <div class="color-preview" id="startPreview"></div>
+                    <span id="startHex">#8B0000</span>
+                </div>
+                <div class="rgb-value">
+                    RGB: <span id="startRGB">(139, 0, 0)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <div class="palette-label">End Color</div>
+            <div class="color-wheel-palette" id="endPalette"></div>
+            <div class="current-selection">
+                <div class="selection-row">
+                    <div class="color-preview" id="endPreview"></div>
+                    <span id="endHex">#FFB6C1</span>
+                </div>
+                <div class="rgb-value">
+                    RGB: <span id="endRGB">(255, 182, 193)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="preset-buttons">
+        <button class="preset-btn" onclick="setPreset('dark-to-light')">Dark Red → Light Pink</button>
+        <button class="preset-btn" onclick="setPreset('complementary')">Complementary Colors</button>
+        <button class="preset-btn" onclick="setPreset('analogous')">Analogous (neighbors)</button>
+        <button class="preset-btn" onclick="setPreset('triadic')">Triadic (120° apart)</button>
+        <button class="preset-btn" onclick="setPreset('warm-cool')">Warm → Cool</button>
+        <button class="preset-btn" onclick="setPreset('gray-scale')">Black → White</button>
+    </div>
+
+    <div class="stats">
+        <p>Clicks: <span id="clickCount">0</span></p>
+        <p>Blend Progress: <span id="blendProgress">0</span>% <span id="maxReached" style="display: none;">(End color reached!)</span></p>
+        <p>Current Circle RGB: <span id="currentRGB">-</span></p>
+    </div>
+
+    <div class="button-group">
+        <button class="btn start-btn" onclick="startTest()">Start New Test</button>
+        <button class="btn reset-btn" onclick="resetTest()">Clear Results</button>
+    </div>
+
+    <script>
+        // Generate color wheel based palette
+        function generateColorWheelPalette() {
+            const colors = [];
+            
+            // 12 hues around the color wheel (every 30 degrees)
+            // 4 rows: different lightness/saturation levels
+            for (let row = 0; row < 4; row++) {
+                for (let hue = 0; hue < 360; hue += 30) {
+                    let h = hue;
+                    let s, l;
+                    
+                    switch(row) {
+                        case 0: // Fully saturated, dark
+                            s = 100;
+                            l = 30;
+                            break;
+                        case 1: // Fully saturated, medium
+                            s = 100;
+                            l = 50;
+                            break;
+                        case 2: // Less saturated, light
+                            s = 60;
+                            l = 70;
+                            break;
+                        case 3: // Pastel
+                            s = 40;
+                            l = 85;
+                            break;
+                    }
+                    
+                    colors.push(hslToHex(h, s, l));
+                }
+            }
+            
+            // Add grayscale row at bottom
+            for (let i = 0; i <= 11; i++) {
+                const gray = Math.round((i / 11) * 255);
+                colors.push(rgbToHex(gray, gray, gray));
+            }
+            
+            return colors;
+        }
+
+        function hslToHex(h, s, l) {
+            s /= 100;
+            l /= 100;
+            
+            const c = (1 - Math.abs(2 * l - 1)) * s;
+            const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+            const m = l - c / 2;
+            
+            let r = 0, g = 0, b = 0;
+            
+            if (0 <= h && h < 60) {
+                r = c; g = x; b = 0;
+            } else if (60 <= h && h < 120) {
+                r = x; g = c; b = 0;
+            } else if (120 <= h && h < 180) {
+                r = 0; g = c; b = x;
+            } else if (180 <= h && h < 240) {
+                r = 0; g = x; b = c;
+            } else if (240 <= h && h < 300) {
+                r = x; g = 0; b = c;
+            } else if (300 <= h && h < 360) {
+                r = c; g = 0; b = x;
+            }
+            
+            r = Math.round((r + m) * 255);
+            g = Math.round((g + m) * 255);
+            b = Math.round((b + m) * 255);
+            
+            return rgbToHex(r, g, b);
+        }
+
+        const container = document.getElementById('container');
+        const circle = document.getElementById('circle');
+        const patchesContainer = document.getElementById('patches');
+        const clickCountEl = document.getElementById('clickCount');
+        const blendProgressEl = document.getElementById('blendProgress');
+        const currentRGBEl = document.getElementById('currentRGB');
+        const maxReachedEl = document.getElementById('maxReached');
+
+        let selectedStartColor = '#8B0000';
+        let selectedEndColor = '#FFB6C1';
+        let startColor = { r: 139, g: 0, b: 0 };
+        let endColor = { r: 255, g: 182, b: 193 };
+        let currentBaseColor = { ...startColor };
+        let currentCircleColor = { ...startColor };
+        let blendAmount = 0;
+        let clicks = 0;
+        let animationFrame;
+        let circlePosition = { x: 100, y: 100 };
+        let circleVelocity = { x: 1, y: 0.7 };
+        let lastTime = Date.now();
+        let blendRate = 0.0005;
+        let isRunning = false;
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(x => {
+                const hex = Math.round(x).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+
+        function interpolateColor(color1, color2, amount) {
+            const t = Math.min(1, Math.max(0, amount));
+            return {
+                r: color1.r + (color2.r - color1.r) * t,
+                g: color1.g + (color2.g - color1.g) * t,
+                b: color1.b + (color2.b - color1.b) * t
+            };
+        }
+
+        function createPalettes() {
+            const startPalette = document.getElementById('startPalette');
+            const endPalette = document.getElementById('endPalette');
+            const colorPalette = generateColorWheelPalette();
+
+            colorPalette.forEach(color => {
+                // Start palette swatch
+                const startSwatch = document.createElement('div');
+                startSwatch.className = 'color-swatch';
+                startSwatch.style.backgroundColor = color;
+                startSwatch.title = color;
+                startSwatch.onclick = () => selectStartColor(color);
+                if (color.toUpperCase() === selectedStartColor.toUpperCase()) {
+                    startSwatch.classList.add('selected');
+                }
+                startPalette.appendChild(startSwatch);
+
+                // End palette swatch
+                const endSwatch = document.createElement('div');
+                endSwatch.className = 'color-swatch';
+                endSwatch.style.backgroundColor = color;
+                endSwatch.title = color;
+                endSwatch.onclick = () => selectEndColor(color);
+                if (color.toUpperCase() === selectedEndColor.toUpperCase()) {
+                    endSwatch.classList.add('selected');
+                }
+                endPalette.appendChild(endSwatch);
+            });
+        }
+
+        function selectStartColor(color) {
+            selectedStartColor = color;
+            const rgb = hexToRgb(color);
+            document.getElementById('startPreview').style.backgroundColor = color;
+            document.getElementById('startHex').textContent = color.toUpperCase();
+            document.getElementById('startRGB').textContent = `(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            
+            // Update selected state
+            document.querySelectorAll('#startPalette .color-swatch').forEach(swatch => {
+                if (swatch.style.backgroundColor === color || 
+                    swatch.title.toUpperCase() === color.toUpperCase()) {
+                    swatch.classList.add('selected');
+                } else {
+                    swatch.classList.remove('selected');
+                }
+            });
+        }
+
+        function selectEndColor(color) {
+            selectedEndColor = color;
+            const rgb = hexToRgb(color);
+            document.getElementById('endPreview').style.backgroundColor = color;
+            document.getElementById('endHex').textContent = color.toUpperCase();
+            document.getElementById('endRGB').textContent = `(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            
+            // Update selected state
+            document.querySelectorAll('#endPalette .color-swatch').forEach(swatch => {
+                if (swatch.style.backgroundColor === color || 
+                    swatch.title.toUpperCase() === color.toUpperCase()) {
+                    swatch.classList.add('selected');
+                } else {
+                    swatch.classList.remove('selected');
+                }
+            });
+        }
+
+        function updateCircleColor() {
+            if (blendAmount < 1) {
+                blendAmount += blendRate;
+                blendAmount = Math.min(1, blendAmount);
+            }
+            
+            currentCircleColor = interpolateColor(currentBaseColor, endColor, blendAmount);
+
+            circle.style.background = rgbToHex(
+                currentCircleColor.r,
+                currentCircleColor.g,
+                currentCircleColor.b
+            );
+
+            const progress = (blendAmount * 100).toFixed(1);
+            blendProgressEl.textContent = progress;
+            
+            if (blendAmount >= 1) {
+                maxReachedEl.style.display = 'inline';
+            } else {
+                maxReachedEl.style.display = 'none';
+            }
+            
+            currentRGBEl.textContent = `(${Math.round(currentCircleColor.r)}, ${Math.round(currentCircleColor.g)}, ${Math.round(currentCircleColor.b)})`;
+        }
+
+        function moveCircle() {
+            const containerRect = container.getBoundingClientRect();
+            const circleRadius = 20;
+
+            circlePosition.x += circleVelocity.x;
+            circlePosition.y += circleVelocity.y;
+
+            if (circlePosition.x <= circleRadius || 
+                circlePosition.x >= containerRect.width - circleRadius) {
+                circleVelocity.x *= -1;
+                circlePosition.x = Math.max(circleRadius, 
+                    Math.min(containerRect.width - circleRadius, circlePosition.x));
+            }
+
+            if (circlePosition.y <= circleRadius || 
+                circlePosition.y >= containerRect.height - circleRadius) {
+                circleVelocity.y *= -1;
+                circlePosition.y = Math.max(circleRadius, 
+                    Math.min(containerRect.height - circleRadius, circlePosition.y));
+            }
+
+            circle.style.left = (circlePosition.x - circleRadius) + 'px';
+            circle.style.top = (circlePosition.y - circleRadius) + 'px';
+        }
+
+        function animate() {
+            if (isRunning) {
+                updateCircleColor();
+                moveCircle();
+                animationFrame = requestAnimationFrame(animate);
+            }
+        }
+
+        function handleClick() {
+            if (!isRunning) return;
+
+            const patch = document.createElement('div');
+            patch.className = 'color-patch';
+            patch.style.background = rgbToHex(
+                currentCircleColor.r,
+                currentCircleColor.g,
+                currentCircleColor.b
+            );
+            patch.setAttribute('data-index', clicks + 1);
+            patch.title = `Blend: ${(blendAmount * 100).toFixed(1)}%`;
+            patchesContainer.appendChild(patch);
+
+            currentBaseColor = { ...currentCircleColor };
+            container.style.background = rgbToHex(
+                currentBaseColor.r, 
+                currentBaseColor.g, 
+                currentBaseColor.b
+            );
+
+            blendAmount = 0;
+            clicks++;
+            clickCountEl.textContent = clicks;
+
+            circleVelocity.x = 0.8 + Math.random() * 0.4;
+            circleVelocity.y = 0.6 + Math.random() * 0.4;
+            if (Math.random() < 0.5) circleVelocity.x *= -1;
+            if (Math.random() < 0.5) circleVelocity.y *= -1;
+        }
+
+        function setPreset(preset) {
+            const presets = {
+                'dark-to-light': { start: '#990000', end: '#FAB3B3' },
+                'complementary': { start: '#FF0000', end: '#00FFFF' },
+                'analogous': { start: '#FF0000', end: '#FF7F00' },
+                'triadic': { start: '#FF0000', end: '#0000FF' },
+                'warm-cool': { start: '#FF7F00', end: '#007FFF' },
+                'gray-scale': { start: '#000000', end: '#FFFFFF' }
+            };
+
+            if (presets[preset]) {
+                selectStartColor(presets[preset].start);
+                selectEndColor(presets[preset].end);
+            }
+        }
+
+        function startTest() {
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+            }
+
+            startColor = hexToRgb(selectedStartColor);
+            endColor = hexToRgb(selectedEndColor);
+
+            currentBaseColor = { ...startColor };
+            currentCircleColor = { ...startColor };
+            blendAmount = 0;
+
+            container.style.background = rgbToHex(startColor.r, startColor.g, startColor.b);
+            circle.style.background = rgbToHex(startColor.r, startColor.g, startColor.b);
+            maxReachedEl.style.display = 'none';
+
+            circlePosition = { x: 100, y: 100 };
+            circleVelocity = { x: 1, y: 0.7 };
+
+            isRunning = true;
+            lastTime = Date.now();
+            animate();
+        }
+
+        function resetTest() {
+            patchesContainer.innerHTML = '';
+            clicks = 0;
+            clickCountEl.textContent = '0';
+            blendProgressEl.textContent = '0';
+            currentRGBEl.textContent = '-';
+            maxReachedEl.style.display = 'none';
+        }
+
+        container.addEventListener('click', handleClick);
+
+        // Initialize
+        createPalettes();
+        selectStartColor(selectedStartColor);
+        selectEndColor(selectedEndColor);
+        document.getElementById('startPreview').style.backgroundColor = selectedStartColor;
+        document.getElementById('endPreview').style.backgroundColor = selectedEndColor;
+        
+        // Set initial RGB display
+        let rgb = hexToRgb(selectedStartColor);
+        document.getElementById('startRGB').textContent = `(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        rgb = hexToRgb(selectedEndColor);
+        document.getElementById('endRGB').textContent = `(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        
+        startTest();
+    </script>
+</body>
+</html>

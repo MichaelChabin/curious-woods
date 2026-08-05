@@ -174,6 +174,106 @@ Wonder *is* comfortable not-yet-knowing — the positive emotional valence aroun
 
 ---
 
+## Part III — Added August 2026
+
+*The four questions held open in the earlier intuition notes — making, computational
+thinking, attention, collaboration — were answered yes on 5 August 2026. They append as
+18–21 rather than being slotted in by theme, because seed facets in `03-SEEDS/` reference
+intuitions by number and renumbering would orphan them. Theme is what the two-part
+division above is for; number is only an address.*
+
+### 18. Making things well — craft, and grace as a function
+
+Caring how a made thing looks and reads, and knowing that this is not decoration. A thing
+made with grace gets attended to; a thing made carelessly gets set down. This applies to a
+stained-glass window, a diagram, a proof, and a paper.
+
+Michael, 5 August: *professional papers that lack grace don't get read.* That is the whole
+argument, and it is why this is a competence rather than a courtesy. The child who learns
+that her work has an audience — and that the audience is under no obligation — has learned
+something most undergraduates have not.
+
+Distinct from #16, which is a stance toward *other people's* making: knowing that things
+were figured out by people working. #18 is her own hands.
+
+**Evidence:** 21W writing courses exist because MIT found that engineers who cannot write
+are less useful engineers. 18.06 and 18.100 both grade proofs partly on clarity — an
+unreadable correct proof is marked down, and the reason given is that a proof is an
+argument addressed to a reader. Design and lab courses assess presentation directly.
+
+**Seeding:** every lab ends in something she would show someone. The artifact is the
+point, not the residue. Glass windows, coloured walks, her own stripe of just-perceivable
+steps. Nothing in the platform should produce output that is only evidence she did the
+activity.
+
+### 19. Encoding a procedure so something else can run it
+
+Writing down a multi-step action precisely enough that a machine, or another person,
+executes it without you there. The externalising is the intuition — not the loop, not the
+branch, but the discovery that a procedure is *a thing that can be written down and
+handed over*.
+
+Distinct from #7 and #8, which are about performing decomposition and iteration in your
+own head. This is about getting the procedure out of your head intact, which is harder and
+is where the errors live.
+
+**Evidence:** 6.0001 and 6.006 are essentially courses in this. But it reaches much
+further — a lab protocol, a proof written for a reader, and a construction script are the
+same move.
+
+**Seeding:** a small language — a subset of Python, or something smaller still — that the
+child uses to encode actions in the labs. This converges with something already specified
+for a different reason: `Plan-Plane-Extraction.md` notes that a script is an operation log
+written by an author rather than a child, replayed with timing, and that `zoom to 3` must
+mean the same thing in every lab for a script to be portable. **The scripting system and
+the child's small language are the same object approached from two ends.** Whoever builds
+either should know that.
+
+### 20. Attention — sustained, deliberate noticing
+
+The capacity to hold attention on one thing long enough for it to yield, and to notice
+small differences that a glance would miss.
+
+**Structurally this is a substrate, not a sibling** — the same double role #17 plays, and
+for the same reason. None of the other twenty develops in a child who cannot stay with
+something. Listed as an item because it can be worked on directly, which the flat list
+makes possible; see the open question below about whether the list eventually wants a
+foundational tier.
+
+**Evidence:** every course assumes it and none teaches it. The failure mode it produces —
+bouncing off dense material after one pass — is the same failure #12 describes from the
+other side.
+
+**Seeding:** already latent across the platform and worth making explicit. Rhythmic
+practice is an attention exercise. So is the colour just-noticeable-difference instrument:
+a child who taps the moment she can see a change has been attending closely for a
+sustained stretch, and her stripe is the record of it. Long constructions do the same work
+for a different flavour of attention. What none of these should do is *announce* that
+attention is being trained.
+
+### 21. Collaboration — working with someone on a hard problem
+
+Doing difficult work with another person: dividing it, disagreeing usefully, and building
+on something you did not think of.
+
+**Evidence:** MIT problem sets are collaborative by design and explicitly permitted to be.
+Lab courses are structurally two-person or larger. The graduate pipeline is entirely
+collaborative.
+
+**Seeding: this is the honest gap.** The other twenty can be seeded by a child alone with
+a screen. This one cannot, and no amount of good design inside a single-player web
+platform will produce it. Michael, 5 August: *collaboration is hard.* Recorded as a real
+intuition anyway, because leaving it off the list would mean pretending the platform is
+complete when it is not.
+
+Candidate directions, none decided: shareable artifacts that invite a response rather than
+applause (which is #18 doing double duty); a child and an adult at the same screen; two
+children, asynchronously, working the same construction. See also `Mayas-Map.md` — Maya's
+discipline is to point the child outward, and this is the intuition that discipline exists
+to serve.
+
+---
+
 ## Open Questions
 
 These are live and worth holding, not urgent:

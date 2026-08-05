@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leonardo da Vinci - Grotesque Head Study</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #FFFFE7;
+            font-family: 'Georgia', serif;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1D3B4F;
+            margin-bottom: 10px;
+            font-size: 2em;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .drawing-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 20px auto;
+        }
+
+        #leonardoDrawing {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+        }
+
+        .controls {
+            margin: 30px 0;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(145deg, #1D3B4F, #0f2332);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 59, 79, 0.3);
+        }
+
+        /* Drawing styles */
+        .main-line {
+            stroke: #2c3e50;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .detail-line {
+            stroke: #7f8c8d;
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .construction-line {
+            stroke: #BE622F;
+            stroke-width: 1;
+            fill: none;
+            stroke-dasharray: 5,5;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .construction-visible {
+            opacity: 0.5;
+        }
+
+        .sketch-line {
+            stroke: #8B7355;
+            stroke-width: 1;
+            fill: none;
+            opacity: 0.3;
+        }
+
+        /* Animation for drawing */
+        @keyframes drawLine {
+            from {
+                stroke-dashoffset: 1000;
+            }
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .animated-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 3s ease forwards;
+        }
+
+        .info-panel {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border-left: 5px solid #BE622F;
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .info-panel h3 {
+            color: #1D3B4F;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Leonardo's Grotesque Studies</h1>
+        <p class="subtitle">A simplified tracing of Leonardo da Vinci's character studies (c. 1490)</p>
+
+        <div class="drawing-container">
+            <svg id="leonardoDrawing" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                <!-- Construction circles (hidden by default) -->
+                <circle cx="200" cy="180" r="80" class="construction-line" id="headCircle"/>
+                <circle cx="200" cy="250" r="50" class="construction-line" id="jawCircle"/>
+                
+                <!-- Profile outline -->
+                <!-- Forehead and brow -->
+                <path class="main-line" d="M 140 150 Q 130 160 125 175 Q 120 185 118 195"/>
+                
+                <!-- Prominent nose -->
+                <path class="main-line" d="M 118 195 Q 115 200 115 205 Q 115 210 120 215 L 140 220 Q 155 222 165 225 Q 170 227 170 232 Q 170 237 165 240"/>
+                
+                <!-- Mouth area with exaggerated lips -->
+                <path class="main-line" d="M 165 240 Q 160 242 155 245 Q 145 250 135 255 Q 125 260 120 265 Q 115 270 115 275 Q 115 280 120 285 Q 130 290 145 292 Q 160 294 175 290"/>
+                
+                <!-- Prominent chin -->
+                <path class="main-line" d="M 175 290 Q 180 295 180 305 Q 180 315 175 325 Q 170 335 160 340 Q 150 345 140 345"/>
+                
+                <!-- Neck -->
+                <path class="main-line" d="M 140 345 L 135 380 L 140 420"/>
+                
+                <!-- Back of head -->
+                <path class="main-line" d="M 140 150 Q 160 130 190 125 Q 220 120 250 130 Q 270 140 275 160 Q 280 180 275 200 Q 270 220 260 240"/>
+                
+                <!-- Ear (enlarged) -->
+                <path class="detail-line" d="M 235 190 Q 245 185 250 190 Q 255 195 255 205 Q 255 215 250 220 Q 245 225 235 225 Q 230 225 228 220"/>
+                <path class="detail-line" d="M 235 195 Q 240 200 242 205 Q 240 210 235 215"/>
+                
+                <!-- Eye (deep set) -->
+                <path class="main-line" d="M 155 180 Q 165 178 175 180 Q 180 182 180 187 Q 180 192 175 194 Q 165 196 155 194 Q 150 192 150 187 Q 150 182 155 180 Z"/>
+                <circle cx="165" cy="187" r="4" fill="#2c3e50"/>
+                
+                <!-- Eyebrow (heavy) -->
+                <path class="detail-line" d="M 145 170 Q 160 165 180 168"/>
+                
+                <!-- Wrinkles and character lines -->
+                <path class="sketch-line" d="M 125 200 Q 130 202 135 200"/>
+                <path class="sketch-line" d="M 125 210 Q 130 212 135 210"/>
+                <path class="sketch-line" d="M 160 260 Q 165 262 170 260"/>
+                <path class="sketch-line" d="M 165 270 Q 170 272 175 270"/>
+                
+                <!-- Hair (wild and sparse) -->
+                <path class="detail-line" d="M 190 125 Q 185 115 180 110"/>
+                <path class="detail-line" d="M 210 122 Q 208 112 205 105"/>
+                <path class="detail-line" d="M 230 128 Q 230 118 232 108"/>
+                <path class="detail-line" d="M 250 135 Q 252 125 255 115"/>
+                <path class="detail-line" d="M 265 145 Q 268 135 272 125"/>
+                
+                <!-- Additional character details -->
+                <!-- Crow's feet -->
+                <path class="sketch-line" d="M 185 185 L 190 183"/>
+                <path class="sketch-line" d="M 185 190 L 190 190"/>
+                <path class="sketch-line" d="M 185 195 L 190 197"/>
+                
+                <!-- Chin stubble suggestion -->
+                <circle cx="150" cy="320" r="1" fill="#8B7355" opacity="0.5"/>
+                <circle cx="155" cy="325" r="1" fill="#8B7355" opacity="0.5"/>
+                <circle cx="160" cy="322" r="1" fill="#8B7355" opacity="0.5"/>
+                <circle cx="165" cy="328" r="1" fill="#8B7355" opacity="0.5"/>
+            </svg>
+        </div>
+
+        <div class="controls">
+            <button onclick="toggleConstruction()">Show Construction Lines</button>
+            <button onclick="animateDrawing()">Animate Drawing</button>
+            <button onclick="simplifyDrawing()">Simplify</button>
+            <button onclick="detailDrawing()">Add Details</button>
+        </div>
+
+        <div class="info-panel">
+            <h3>About Leonardo's Grotesque Studies</h3>
+            <p>
+                Leonardo da Vinci created hundreds of grotesque heads between 1485 and 1490, studying the extremes 
+                of human physiognomy. These weren't meant to mock but to understand - Leonardo believed that 
+                understanding the extremes helped him capture normal beauty.
+            </p>
+            <p style="margin-top: 15px;">
+                These drawings show Leonardo's interest in character and emotion. He wrote: "The good painter has 
+                two principal things to paint: man and the intention of his soul."
+            </p>
+            <p style="margin-top: 15px; color: #7f8c8d; font-style: italic;">
+                This simplified tracing captures the essential lines of Leonardo's studies - the prominent features, 
+                the characteristic profiles, and the sense of personality that made these sketches so influential 
+                on later artists.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let constructionVisible = false;
+        let simplified = false;
+
+        function toggleConstruction() {
+            constructionVisible = !constructionVisible;
+            const constructionLines = document.querySelectorAll('.construction-line');
+            constructionLines.forEach(line => {
+                if (constructionVisible) {
+                    line.classList.add('construction-visible');
+                } else {
+                    line.classList.remove('construction-visible');
+                }
+            });
+        }
+
+        function animateDrawing() {
+            // Reset all lines
+            const allLines = document.querySelectorAll('.main-line, .detail-line');
+            allLines.forEach(line => {
+                line.classList.remove('animated-line');
+                line.style.animation = 'none';
+            });
+            
+            // Trigger reflow
+            void document.body.offsetHeight;
+            
+            // Add animation class with staggered delays
+            allLines.forEach((line, index) => {
+                setTimeout(() => {
+                    line.classList.add('animated-line');
+                    line.style.animation = `drawLine ${2 + index * 0.3}s ease forwards`;
+                }, index * 100);
+            });
+        }
+
+        function simplifyDrawing() {
+            if (!simplified) {
+                document.querySelectorAll('.detail-line, .sketch-line').forEach(line => {
+                    line.style.opacity = '0';
+                });
+                simplified = true;
+            } else {
+                document.querySelectorAll('.detail-line').forEach(line => {
+                    line.style.opacity = '1';
+                });
+                document.querySelectorAll('.sketch-line').forEach(line => {
+                    line.style.opacity = '0.3';
+                });
+                simplified = false;
+            }
+        }
+
+        function detailDrawing() {
+            document.querySelectorAll('.detail-line').forEach(line => {
+                line.style.opacity = '1';
+            });
+            document.querySelectorAll('.sketch-line').forEach(line => {
+                line.style.opacity = '0.6';
+            });
+        }
+    </script>
+</body>
+</html>

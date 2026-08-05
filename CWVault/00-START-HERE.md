@@ -28,9 +28,17 @@ Read those three first. The rest of the vault makes sense once you have them.
 
 ## Current Work
 
-- `01-ACTIVE/Current-Status.md` — where Glass is right now
-- `01-ACTIVE/Next-3.md` — priority order for the next few sessions
+- **`00-BOARD.md` — read this first.** Every thread, its status, its next action. Replaces
+  `Current-Status.md` and `Next-3.md`, both archived 2026-08-05 as five months stale.
+- `01-ACTIVE/Decisions-*.md` — session ledgers. The most recent is current truth.
 - `01-ACTIVE/Handoff-*.md` — session handoffs (most recent wins; additive when marked)
+
+## Ideas
+
+- `03-SEEDS/` — one idea per file, carrying closed facets so connections are queried
+  rather than authored. Start at `03-SEEDS/README.md`.
+- `00-FOUNDATION/Facet-Vocabulary.md` — the closed value lists and how to amend them.
+- `99-IDEAS/` — closed to new writing; legacy lists awaiting opportunistic migration.
 
 ## Design Explorations
 

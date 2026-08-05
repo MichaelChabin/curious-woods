@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Character That Walks - 人</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #FFFFE7;
+            font-family: 'Georgia', serif;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1D3B4F;
+            margin-bottom: 10px;
+            font-size: 2em;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .practice-area {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 20px auto;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 30px;
+            background: white;
+            border: 3px solid #1D3B4F;
+            border-radius: 15px;
+            cursor: crosshair;
+            overflow: hidden;
+        }
+
+        #characterCanvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Grid lines for guidance */
+        .grid-line {
+            stroke: #f0f0f0;
+            stroke-width: 1;
+            stroke-dasharray: 5,5;
+        }
+
+        /* Ghost strokes (the gray guide) */
+        .ghost-stroke {
+            stroke: #d0d0d0;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            opacity: 0.3;
+        }
+
+        /* Animated guide arrow */
+        .guide-dot {
+            fill: #BE622F;
+            opacity: 0;
+            animation: none;
+        }
+
+        .guide-dot.active {
+            animation: guidePulse 2s infinite;
+        }
+
+        @keyframes guidePulse {
+            0%, 100% { opacity: 0.3; r: 8; }
+            50% { opacity: 1; r: 12; }
+        }
+
+        /* User's drawn stroke */
+        .user-stroke {
+            stroke: #2c3e50;
+            stroke-width: 4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke-width 0.2s ease;
+        }
+
+        /* Completed stroke effect */
+        .completed-stroke {
+            stroke: #1D3B4F;
+            stroke-width: 5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            animation: completeAnimation 0.5s ease;
+        }
+
+        @keyframes completeAnimation {
+            0% { stroke-width: 4; opacity: 0.8; }
+            50% { stroke-width: 8; opacity: 1; }
+            100% { stroke-width: 5; opacity: 1; }
+        }
+
+        /* Stroke order indicators */
+        .stroke-number {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #BE622F;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stroke-number.visible {
+            opacity: 1;
+        }
+
+        #strokeNum1 {
+            top: 90px;
+            left: 145px;
+        }
+
+        #strokeNum2 {
+            top: 90px;
+            left: 155px;
+        }
+
+        /* Control buttons */
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        button {
+            background: linear-gradient(145deg, #1D3B4F, #0f2332);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 59, 79, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.success {
+            background: linear-gradient(145deg, #27ae60, #229954);
+        }
+
+        /* Instructions */
+        .instruction {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin: 20px 0;
+            min-height: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .instruction.highlight {
+            color: #BE622F;
+            font-weight: 500;
+        }
+
+        /* Progress indicator */
+        .progress {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.completed {
+            background: #27ae60;
+            transform: scale(1.2);
+        }
+
+        .progress-dot.current {
+            background: #BE622F;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        /* Character info panel */
+        .info-panel {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border-left: 5px solid #BE622F;
+            text-align: left;
+        }
+
+        .info-panel h3 {
+            color: #1D3B4F;
+            margin-bottom: 10px;
+        }
+
+        .meaning {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+
+        .pinyin {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        /* Success message */
+        .success-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(39, 174, 96, 0.95);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 1.5em;
+            font-weight: bold;
+            transition: transform 0.5s ease;
+            z-index: 100;
+        }
+
+        .success-message.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Hint arrow */
+        .hint-arrow {
+            stroke: #BE622F;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .hint-arrow.visible {
+            opacity: 0.6;
+            animation: arrowGuide 2s ease-in-out infinite;
+        }
+
+        @keyframes arrowGuide {
+            0%, 100% { stroke-dashoffset: 0; }
+            50% { stroke-dashoffset: -10; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>人</h1>
+        <p class="subtitle">The character that walks</p>
+
+        <div class="practice-area">
+            <div class="canvas-container">
+                <svg id="characterCanvas" viewBox="0 0 300 300">
+                    <!-- Arrow marker definition -->
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="10" 
+                                refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#BE622F"/>
+                        </marker>
+                    </defs>
+
+                    <!-- Grid lines for guidance -->
+                    <line x1="150" y1="0" x2="150" y2="300" class="grid-line"/>
+                    <line x1="0" y1="150" x2="300" y2="150" class="grid-line"/>
+                    
+                    <!-- Ghost strokes (guides) -->
+                    <path d="M 150,100 L 100,200" class="ghost-stroke" id="ghost1"/>
+                    <path d="M 150,100 L 200,200" class="ghost-stroke" id="ghost2"/>
+                    
+                    <!-- Hint arrows (initially hidden) -->
+                    <path d="M 150,80 L 150,100 L 100,200" class="hint-arrow" id="hint1" 
+                          stroke-dasharray="5,5"/>
+                    <path d="M 150,80 L 150,100 L 200,200" class="hint-arrow" id="hint2"
+                          stroke-dasharray="5,5"/>
+                    
+                    <!-- Guide dots for starting points -->
+                    <circle cx="150" cy="100" r="8" class="guide-dot" id="guide1"/>
+                    <circle cx="150" cy="100" r="8" class="guide-dot" id="guide2"/>
+                    
+                    <!-- User strokes will be added here dynamically -->
+                    <path d="" class="user-stroke" id="userStroke1"/>
+                    <path d="" class="user-stroke" id="userStroke2"/>
+                    
+                    <!-- Completed strokes -->
+                    <path d="" class="completed-stroke" id="completed1" style="display:none"/>
+                    <path d="" class="completed-stroke" id="completed2" style="display:none"/>
+                </svg>
+                
+                <!-- Stroke number indicators -->
+                <div class="stroke-number" id="strokeNum1">1</div>
+                <div class="stroke-number" id="strokeNum2">2</div>
+                
+                <!-- Success message -->
+                <div class="success-message" id="successMsg">
+                    Perfect! 完美!
+                </div>
+            </div>
+
+            <div class="instruction" id="instruction">
+                Click and drag from the glowing dot
+            </div>
+
+            <div class="progress">
+                <div class="progress-dot current" id="prog1"></div>
+                <div class="progress-dot" id="prog2"></div>
+            </div>
+
+            <div class="controls">
+                <button onclick="showHint()">Show me</button>
+                <button onclick="resetCharacter()">Try again</button>
+                <button onclick="playStrokeAnimation()" id="watchBtn">Watch the stroke order</button>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3>About this character</h3>
+            <div class="meaning">
+                <strong>人</strong> means "person" or "human"
+            </div>
+            <div class="pinyin">
+                Pronounced: rén (second tone, rising like a question)
+            </div>
+            <p style="margin-top: 15px; color: #2c3e50;">
+                Look at how it resembles a person walking - two legs striding forward. 
+                This is one of the oldest Chinese characters, found on oracle bones from 3,000 years ago.
+            </p>
+            <p style="margin-top: 10px; color: #7f8c8d; font-size: 0.9em;">
+                <strong>Stroke order matters:</strong> Like a dance, each character has its own rhythm. 
+                Left leg first (falling left), then right leg (falling right).
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Character data for 人
+        const characterData = {
+            strokes: [
+                {
+                    path: "M 150,100 L 100,200",
+                    checkpoints: [
+                        {x: 150, y: 100, tolerance: 30},  // Start
+                        {x: 125, y: 150, tolerance: 40},  // Middle
+                        {x: 100, y: 200, tolerance: 30}   // End
+                    ]
+                },
+                {
+                    path: "M 150,100 L 200,200",
+                    checkpoints: [
+                        {x: 150, y: 100, tolerance: 30},  // Start
+                        {x: 175, y: 150, tolerance: 40},  // Middle
+                        {x: 200, y: 200, tolerance: 30}   // End
+                    ]
+                }
+            ]
+        };
+
+        let currentStroke = 0;
+        let isDrawing = false;
+        let currentPath = [];
+        let checkpointIndex = 0;
+        let strokesCompleted = 0;
+
+        const canvas = document.getElementById('characterCanvas');
+        const instruction = document.getElementById('instruction');
+
+        // Initialize
+        function init() {
+            showGuideForStroke(0);
+            
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
+            
+            // Touch support
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouch);
+            canvas.addEventListener('touchend', stopDrawing);
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            
+            if (e.type === 'touchstart') {
+                startDrawing(mouseEvent);
+            } else {
+                draw(mouseEvent);
+            }
+        }
+
+        function showGuideForStroke(strokeIndex) {
+            // Hide all guides first
+            document.querySelectorAll('.guide-dot').forEach(dot => {
+                dot.classList.remove('active');
+            });
+            
+            // Show guide for current stroke
+            if (strokeIndex < characterData.strokes.length) {
+                document.getElementById(`guide${strokeIndex + 1}`).classList.add('active');
+                document.getElementById(`strokeNum${strokeIndex + 1}`).classList.add('visible');
+                
+                // Update instruction
+                if (strokeIndex === 0) {
+                    instruction.textContent = "Start at the dot and draw down to the left";
+                } else {
+                    instruction.textContent = "Now draw down to the right";
+                }
+                instruction.classList.add('highlight');
+                setTimeout(() => instruction.classList.remove('highlight'), 1000);
+            }
+        }
+
+        function startDrawing(e) {
+            // Check if we've completed all strokes
+            if (currentStroke >= characterData.strokes.length) {
+                return;
+            }
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (300 / rect.width);
+            const y = (e.clientY - rect.top) * (300 / rect.height);
+            
+            const startPoint = characterData.strokes[currentStroke].checkpoints[0];
+            const distance = Math.sqrt((x - startPoint.x) ** 2 + (y - startPoint.y) ** 2);
+            
+            // Only start if clicking near the starting point
+            if (distance < startPoint.tolerance) {
+                isDrawing = true;
+                currentPath = [{x, y}];
+                checkpointIndex = 1;
+                
+                // Start visual feedback
+                const userStroke = document.getElementById(`userStroke${currentStroke + 1}`);
+                userStroke.setAttribute('d', `M ${x},${y}`);
+                
+                instruction.textContent = "Good! Keep going...";
+            }
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            // Safety check
+            if (currentStroke >= characterData.strokes.length) {
+                isDrawing = false;
+                return;
+            }
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (300 / rect.width);
+            const y = (e.clientY - rect.top) * (300 / rect.height);
+            
+            currentPath.push({x, y});
+            
+            // Check if we're near the next checkpoint
+            if (checkpointIndex < characterData.strokes[currentStroke].checkpoints.length) {
+                const checkpoint = characterData.strokes[currentStroke].checkpoints[checkpointIndex];
+                const distance = Math.sqrt((x - checkpoint.x) ** 2 + (y - checkpoint.y) ** 2);
+                
+                if (distance < checkpoint.tolerance) {
+                    checkpointIndex++;
+                    
+                    // Update the drawn path
+                    const pathString = currentPath.reduce((acc, point, i) => {
+                        return acc + (i === 0 ? `M ${point.x},${point.y}` : ` L ${point.x},${point.y}`);
+                    }, '');
+                    
+                    const userStroke = document.getElementById(`userStroke${currentStroke + 1}`);
+                    userStroke.setAttribute('d', pathString);
+                    
+                    // Check if stroke is complete
+                    if (checkpointIndex >= characterData.strokes[currentStroke].checkpoints.length) {
+                        completeStroke();
+                    }
+                }
+            }
+        }
+
+        function stopDrawing() {
+            if (!isDrawing) return;
+            
+            isDrawing = false;
+            
+            // Safety check
+            if (currentStroke >= characterData.strokes.length) {
+                return;
+            }
+            
+            // If stroke wasn't completed, fade out the partial stroke
+            if (checkpointIndex < characterData.strokes[currentStroke].checkpoints.length) {
+                const userStroke = document.getElementById(`userStroke${currentStroke + 1}`);
+                userStroke.style.opacity = '0.3';
+                setTimeout(() => {
+                    userStroke.style.opacity = '1';
+                    userStroke.setAttribute('d', '');
+                }, 500);
+                
+                instruction.textContent = "Try again - start from the dot";
+            }
+            
+            checkpointIndex = 0;
+        }
+
+        function completeStroke() {
+            // Hide user stroke and show completed stroke
+            const userStroke = document.getElementById(`userStroke${currentStroke + 1}`);
+            const completedStroke = document.getElementById(`completed${currentStroke + 1}`);
+            
+            userStroke.setAttribute('d', '');
+            completedStroke.setAttribute('d', characterData.strokes[currentStroke].path);
+            completedStroke.style.display = 'block';
+            
+            // Update progress
+            document.getElementById(`prog${currentStroke + 1}`).classList.remove('current');
+            document.getElementById(`prog${currentStroke + 1}`).classList.add('completed');
+            
+            // Hide current guide
+            document.getElementById(`guide${currentStroke + 1}`).classList.remove('active');
+            
+            strokesCompleted++;
+            currentStroke++;
+            
+            if (currentStroke < characterData.strokes.length) {
+                // Move to next stroke
+                document.getElementById(`prog${currentStroke + 1}`).classList.add('current');
+                showGuideForStroke(currentStroke);
+            } else {
+                // Character complete!
+                instruction.textContent = "Beautiful! You wrote 人 perfectly!";
+                instruction.classList.add('highlight');
+                document.getElementById('successMsg').classList.add('show');
+                
+                setTimeout(() => {
+                    document.getElementById('successMsg').classList.remove('show');
+                }, 2000);
+            }
+        }
+
+        function showHint() {
+            // Show animated hint for current stroke
+            const hint = document.getElementById(`hint${currentStroke + 1}`);
+            hint.classList.add('visible');
+            
+            setTimeout(() => {
+                hint.classList.remove('visible');
+            }, 3000);
+        }
+
+        function resetCharacter() {
+            // Reset everything
+            currentStroke = 0;
+            strokesCompleted = 0;
+            checkpointIndex = 0;
+            
+            // Clear all strokes
+            document.querySelectorAll('.user-stroke').forEach(s => s.setAttribute('d', ''));
+            document.querySelectorAll('.completed-stroke').forEach(s => {
+                s.style.display = 'none';
+                s.setAttribute('d', '');
+            });
+            
+            // Reset progress dots
+            document.querySelectorAll('.progress-dot').forEach((dot, i) => {
+                dot.classList.remove('completed', 'current');
+                if (i === 0) dot.classList.add('current');
+            });
+            
+            // Reset stroke numbers
+            document.querySelectorAll('.stroke-number').forEach(num => {
+                num.classList.remove('visible');
+            });
+            
+            // Hide hints
+            document.querySelectorAll('.hint-arrow').forEach(h => h.classList.remove('visible'));
+            
+            // Show first guide
+            showGuideForStroke(0);
+            
+            instruction.textContent = "Click and drag from the glowing dot";
+        }
+
+        function playStrokeAnimation() {
+            resetCharacter();
+            const watchBtn = document.getElementById('watchBtn');
+            watchBtn.disabled = true;
+            
+            // Animate stroke 1
+            const path1 = document.getElementById('completed1');
+            path1.setAttribute('d', characterData.strokes[0].path);
+            path1.style.display = 'block';
+            path1.style.strokeDasharray = '300';
+            path1.style.strokeDashoffset = '300';
+            path1.style.animation = 'drawStroke 1s ease forwards';
+            
+            setTimeout(() => {
+                // Animate stroke 2
+                const path2 = document.getElementById('completed2');
+                path2.setAttribute('d', characterData.strokes[1].path);
+                path2.style.display = 'block';
+                path2.style.strokeDasharray = '300';
+                path2.style.strokeDashoffset = '300';
+                path2.style.animation = 'drawStroke 1s ease forwards';
+                
+                setTimeout(() => {
+                    watchBtn.disabled = false;
+                    instruction.textContent = "Now you try!";
+                    setTimeout(resetCharacter, 2000);
+                }, 1000);
+            }, 1200);
+        }
+
+        // Add the animation to the page
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes drawStroke {
+                to {
+                    stroke-dashoffset: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

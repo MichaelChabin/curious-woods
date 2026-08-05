@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Van Gogh's Starry Night Palette</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Georgia, serif;
+            background: #f5f5f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .palette-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 800px;
+        }
+
+        .color-group {
+            margin-bottom: 35px;
+        }
+
+        .group-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 5px;
+        }
+
+        .color-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .color-swatch {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #333;
+            border-radius: 4px;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.05);
+        }
+
+        .color-info {
+            flex: 1;
+        }
+
+        .pigment-name {
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .chemical-name {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 4px;
+        }
+
+        .usage-note {
+            font-size: 12px;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        .palette-notes {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .rgb-value {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Van Gogh's Palette for "The Starry Night"</h1>
+    <p class="subtitle">Saint-Rémy-de-Provence, June 1889</p>
+
+    <div class="palette-container">
+        <div class="color-group">
+            <div class="group-title">Blues - The Night Sky</div>
+            
+            <div class="color-row">
+                <div class="color-swatch" style="background: #1e3a5f;" title="Prussian Blue"></div>
+                <div class="color-info">
+                    <div class="pigment-name">Prussian Blue</div>
+                    <div class="chemical-name">Ferric ferrocyanide (Fe₇(CN)₁₈)</div>
+                    <div class="usage-note">The deep, rich blues of the swirling night sky. Van Gogh's workhorse blue for dark values.</div>
+                    <div class="rgb-value">RGB: (30, 58, 95)</div>
+                </div>
+            </div>
+
+            <div class="color-row">
+                <div class="color-swatch" style="background: #0047AB;" title="Cobalt Blue"></div>
+                <div class="color-info">
+                    <div class="pigment-name">Cobalt Blue</div>
+                    <div class="chemical-name">Cobalt(II) aluminate (CoAl₂O₄)</div>
+                    <div class="usage-note">Used for the lighter spiraling stars and middle tones. More expensive but brilliant.</div>
+                    <div class="rgb-value">RGB: (0, 71, 171)</div>
+                </div>
+            </div>
+
+            <div class="color-row">
+                <div class="color-swatch" style="background: #2E5090;" title="Ultramarine Blue"></div>
+                <div class="color-info">
+                    <div class="pigment-name">French Ultramarine</div>
+                    <div class="chemical-name">Synthetic lapis lazuli (Na₈Al₆Si₆O₂₄S₄)</div>
+                    <div class="usage-note">The warm, brilliant blue for the large star near the crescent moon.</div>
+                    <div class="rgb-value">RGB: (46, 80, 144)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-group">
+            <div class="group-title">Yellows - Stars and Moon</div>
+            
+            <div class="color-row">
+                <div class="color-swatch" style="background: #FFC82E;" title="Chrome Yellow"></div>
+                <div class="color-info">
+                    <div class="pigment-name">Chrome Yellow</div>
+                    <div class="chemical-name">Lead chromate (PbCrO₄)</div>
+                    <div class="usage-note">Brilliant yellow for the moon and bright stars. Van Gogh loved this despite its toxicity.</div>
+                    <div class="rgb-value">RGB: (255, 200, 46)</div>
+                </div>
+            </div>
+
+            <div class="color-row">
+                <div class="color-swatch" style="background: #FFD700;" title="Cadmium Yellow"></div>
+                <div class="color-info">
+                    <div class="pigment-name">Cadmium Yellow (early version)</div>
+                    <div class="chemical-name">Cadmium sulfide (CdS)</div>
+                    <div class="usage-note">New and expensive in Van Gogh's time. Used for the glowing halos around stars.</div>
+                    <div class="rgb-value">RGB: (255, 215, 0)</div>
+                </div>
+            </div>
+
+            <div class="color-row">
+                <div class="color-swatch" style="background: #C4A000;" title="Yellow Ochre"></div>
+                <div class="color-info">
+                    <div class="pigment-name">Yellow Ochre</div>
+                    <div class="chemical-name">Hydrated iron oxide (Fe₂O₃·H₂O)</div>
+                    <div class="usage-note">Earth pigment for warmer, muted yellows in the village lights.</div>
+                    <div class="rgb-value">RGB: (196, 160, 0)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-group">
+            <div class="group-title">Greens - Cypress and Landscape</div>
+            
+            <div class="color-row">
+                <div class="color-swatch" style="background: #50C878;" title="Emerald Green"></div>
+                <div class="color-info">
+                    <div class="pigment-name">Emerald Green</div>
+                    <div class="chemical-name">Copper acetoarsenite (Cu(C₂H₃O₂)₂·3Cu(AsO₂)₂)</div>
+                    <div class="usage-note">Bright, transparent green for the fluid, wavy hills. Highly toxic.</div>
+                    <div class="rgb-value">RGB: (80, 200, 120)</div>
+                </div>
+            </div>
+
+            <div class="color-row">
+                <div class="color-swatch" style="background: #40826D;" title="Viridian"></div>
+                <div class="color-info">
+                    <div class="pigment-name">Viridian</div>
+                    <div class="chemical-name">Hydrated chromium oxide (Cr₂O₃·2H₂O)</div>
+                    <div class="usage-note">Dark bluish-green for shadows and the silhouette of the cypress tree.</div>
+                    <div class="rgb-value">RGB: (64, 130, 109)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-group">
+            <div class="group-title">Whites and Earth Tones</div>
+            
+            <div class="color-row">
+                <div class="color-swatch" style="background: #FFFEF7;" title="Lead White"></div>
+                <div class="color-info">
+                    <div class="pigment-name">Lead White (Blanc d'Argent)</div>
+                    <div class="chemical-name">Basic lead carbonate (2PbCO₃·Pb(OH)₂)</div>
+                    <div class="usage-note">Primary white for mixing and the impasto technique on stars. Toxic but unmatched in handling.</div>
+                    <div class="rgb-value">RGB: (255, 254, 247)</div>
+                </div>
+            </div>
+
+            <div class="color-row">
+                <div class="color-swatch" style="background: #FAFFF5;" title="Zinc White"></div>
+                <div class="color-info">
+                    <div class="pigment-name">Zinc White</div>
+                    <div class="chemical-name">Zinc oxide (ZnO)</div>
+                    <div class="usage-note">Cooler, more transparent white for glazing effects.</div>
+                    <div class="rgb-value">RGB: (250, 255, 245)</div>
+                </div>
+            </div>
+
+            <div class="color-row">
+                <div class="color-swatch" style="background: #1C1C1C;" title="Ivory Black"></div>
+                <div class="color-info">
+                    <div class="pigment-name">Ivory Black</div>
+                    <div class="chemical-name">Carbon from charred bone</div>
+                    <div class="usage-note">Used sparingly for the darkest outlines and mixing deep tones.</div>
+                    <div class="rgb-value">RGB: (28, 28, 28)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-notes">
+            <h3 style="font-size: 16px; margin-bottom: 10px;">Van Gogh's Painting Technique:</h3>
+            <p>Van Gogh applied these pigments with bold, expressive brushstrokes, often straight from the tube for maximum intensity. The thick impasto technique he used for the stars made them literally stand out from the canvas, catching light at different angles.</p>
+            
+            <p>He wrote to his brother Theo: <em>"I have limited myself to simple colors... but I refrained from buying colours one ought to mix oneself."</em> Yet for "The Starry Night," he used some of the most vivid and expensive pigments available, showing the importance of this work to him.</p>
+
+            <div class="warning">
+                <strong>Historical Note:</strong> Many of Van Gogh's pigments were highly toxic. Lead white, chrome yellow, and emerald green contained lead, chromium, and arsenic respectively. Modern artists use safer alternatives, but these original pigments contributed to the unique luminosity and texture of Van Gogh's work.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

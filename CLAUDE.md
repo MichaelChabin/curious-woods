@@ -1,5 +1,37 @@
 # Curious Woods — CLAUDE.md
 
+## Read This First
+
+**Before changing anything, read `CWVault/00-BOARD.md`.** It is the single statement of
+what is moving, what is parked, and what each thread's next action is. It is written at
+the end of every session and read at the start of the next. If this file and the board
+disagree, the board wins — it is newer by construction.
+
+Three rules for every chat working on this project:
+
+1. **Read the board before acting.** Not the whole vault. The board, plus whatever spec
+   the board points at.
+2. **Write the delta before finishing.** Update the board yourself. Never leave it to
+   Michael to remember — that dependency is what broke the previous system.
+3. **Ideas go to `CWVault/03-SEEDS/` as faceted notes,** never into a flat list. Facet
+   values are closed; see `CWVault/00-FOUNDATION/Facet-Vocabulary.md`. Propose new values,
+   never add them silently.
+4. **Anything that produces a file updates `cw-deploys/MANIFEST.md` and
+   `CWVault/00-BOARD.md` in the same commit.** The disk is the coordination surface
+   between chat sessions and Claude Code sessions, which cannot see each other. Three
+   benches sat unregistered for a day because this rule did not exist.
+5. **Do not infer a document's contents from its filename.** On 5 August a board was
+   built from a folder listing while `01-ACTIVE/Plan-Plane-Extraction.md` sat unopened in
+   that same listing, and the resulting advice contradicted the active plan. If a file is
+   in `01-ACTIVE/`, open it.
+
+A note on staleness, learned the hard way: this project accumulated three documents all
+claiming to describe current state, all five months old, one pointing at a directory that
+no longer existed. Sections of *this* file are dated too, and say so where they are. When
+something here contradicts `MANIFEST.md`, `00-BOARD.md`, or the most recent
+`01-ACTIVE/Decisions-*.md`, those win, and the contradiction should be reported rather
+than quietly worked around.
+
 ## What This Is
 
 Curious Woods is an AI-guided learning platform for curious, independent children aged 10 and up. It is built on the principle that curiosity and independence drive learning — not assessment or standards. The platform has four pillars: **Labs** (substantial visual environments — Euclid, the Number Theory Lab, Codes/Bases/Modulus), **Stories**, **Practice**, and **Maya** (the embedded Claude Guide).

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Secret Counter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #FFFFE7;
+            font-family: 'Georgia', serif;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        .narrative-container {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .chapter {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease;
+        }
+
+        .chapter.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .prose {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin: 2rem 0;
+        }
+
+        .prose.centered {
+            text-align: center;
+        }
+
+        .prose.delayed {
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+            animation-delay: 2s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .pause {
+            margin: 4rem 0;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+
+        .whisper {
+            font-size: 1rem;
+            color: #95a5a6;
+            font-style: italic;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .highlight {
+            color: #BE622F;
+            font-weight: 500;
+        }
+
+        /* Story Images */
+        .story-image {
+            width: 100%;
+            max-width: 500px;
+            margin: 2rem auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .image-caption {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        /* Flash Recognition Interactive */
+        .interactive-space {
+            margin: 3rem auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        .dots-area {
+            width: 500px;
+            height: 350px;
+            background: white;
+            border: 3px solid #1D3B4F;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(29, 59, 79, 0.2);
+        }
+
+        .dot {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #2C3E50;
+            transition: none;
+        }
+
+        .dot.visible {
+            animation: dotPulse 0.3s ease;
+        }
+
+        @keyframes dotPulse {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Controls */
+        .control-section {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        button {
+            background: linear-gradient(145deg, #1D3B4F, #0f2332);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 59, 79, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .answer-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 1rem 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .answer-buttons.visible {
+            opacity: 1;
+        }
+
+        .answer-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #1D3B4F;
+            color: #1D3B4F;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .answer-btn:hover {
+            background: #1D3B4F;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .answer-btn.correct {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+            animation: correctPulse 0.5s ease;
+        }
+
+        .answer-btn.incorrect {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Timing Controls */
+        .timing-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 2rem 0;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .timing-controls.visible {
+            opacity: 1;
+        }
+
+        .timing-btn {
+            padding: 8px 16px;
+            background: #34495E;
+            color: white;
+            border: 1px solid #4A5F7A;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .timing-btn:hover {
+            background: #3A526B;
+        }
+
+        .timing-btn.active {
+            background: #BE622F;
+            border-color: #BE622F;
+        }
+
+        /* Progress Tracking */
+        .discovery-tracker {
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            border-left: 5px solid #BE622F;
+            max-width: 400px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .discovery-tracker.visible {
+            opacity: 1;
+        }
+
+        .tracker-title {
+            font-weight: bold;
+            color: #1D3B4F;
+            margin-bottom: 1rem;
+        }
+
+        .discovery-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .discovery-item.unlocked {
+            background: linear-gradient(90deg, #27ae6010, white);
+        }
+
+        /* Scroll Indicator */
+        .scroll-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            opacity: 0;
+            animation: fadeInOut 3s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.7; }
+        }
+
+        .scroll-arrow {
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
+        }
+
+        /* Shepherd visualization */
+        .sheep-field {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98D98E 60%);
+            border-radius: 10px;
+            position: relative;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .sheep {
+            position: absolute;
+            width: 15px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            bottom: 20%;
+        }
+
+        .sheep::before {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 5px;
+            background: #333;
+            bottom: -5px;
+            left: 2px;
+        }
+
+        .sheep::after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 5px;
+            background: #333;
+            bottom: -5px;
+            right: 2px;
+        }
+
+        /* Final revelation */
+        .revelation {
+            padding: 2rem;
+            background: linear-gradient(135deg, #1D3B4F, #2C3E50);
+            color: white;
+            border-radius: 15px;
+            margin: 2rem 0;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 1s ease;
+        }
+
+        .revelation.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .revelation h2 {
+            margin-bottom: 1rem;
+            color: #FFFFE7;
+        }
+    </style>
+</head>
+<body>
+    <div class="narrative-container">
+        <!-- Chapter 1: The Hook -->
+        <div class="chapter" id="chapter1">
+            <div class="prose">
+                Your brain has a secret superpower.
+            </div>
+            <div class="prose pause">
+                It's been with you since you were born, but no one told you about it.
+            </div>
+            <div class="prose delayed">
+                Today, you're going to discover it.
+            </div>
+        </div>
+
+        <!-- Chapter 2: The Ancient Secret -->
+        <div class="chapter" id="chapter2">
+            <div class="prose">
+                Three thousand years ago, shepherds in the hills of ancient Greece had a problem.
+            </div>
+            <div class="sheep-field" id="sheepField"></div>
+            <div class="prose">
+                They needed to know if all their sheep came home each evening. But counting takes time, and wolves don't wait.
+            </div>
+            <div class="prose">
+                So they discovered something remarkable.
+            </div>
+        </div>
+
+        <!-- Chapter 3: The Discovery -->
+        <div class="chapter" id="chapter3">
+            <div class="prose">
+                They found they could <span class="highlight">look</span> at a small group of sheep and instantly <span class="highlight">know</span> how many there were.
+            </div>
+            <div class="prose">
+                Not count. Not calculate. Just... know.
+            </div>
+            <div class="prose">
+                Three sheep? They knew. Four? They knew. Five? Still instant.
+            </div>
+            <div class="prose pause">
+                How?
+            </div>
+        </div>
+
+        <!-- Chapter 4: Your Turn -->
+        <div class="chapter" id="chapter4">
+            <div class="prose centered">
+                Let's see if you have this same ability.
+            </div>
+            <div class="prose centered whisper">
+                (Spoiler: You do.)
+            </div>
+            <div class="interactive-space">
+                <div class="dots-area" id="dotsArea"></div>
+                <div class="control-section">
+                    <button id="startBtn" onclick="startFlash()">Show me</button>
+                    <div class="whisper">When you see the dots, don't count. Just look.</div>
+                    <div class="answer-buttons" id="answerButtons">
+                        <button class="answer-btn" onclick="checkAnswer(1)">1</button>
+                        <button class="answer-btn" onclick="checkAnswer(2)">2</button>
+                        <button class="answer-btn" onclick="checkAnswer(3)">3</button>
+                        <button class="answer-btn" onclick="checkAnswer(4)">4</button>
+                        <button class="answer-btn" onclick="checkAnswer(5)">5</button>
+                        <button class="answer-btn" onclick="checkAnswer(6)">6</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chapter 5: Getting Faster -->
+        <div class="chapter" id="chapter5">
+            <div class="prose">
+                Did you notice? You didn't count. You just <span class="highlight">knew</span>.
+            </div>
+            <div class="prose">
+                Your brain can do this in less time than it takes to blink.
+            </div>
+            <div class="prose centered">
+                Want to see how fast?
+            </div>
+            <div class="timing-controls" id="timingControls">
+                <button class="timing-btn" onclick="setTiming(200)">200 ms</button>
+                <button class="timing-btn active" onclick="setTiming(150)">150 ms</button>
+                <button class="timing-btn" onclick="setTiming(100)">100 ms</button>
+                <button class="timing-btn" onclick="setTiming(50)">50 ms</button>
+            </div>
+            <div class="whisper">50 milliseconds is faster than you can snap your fingers</div>
+        </div>
+
+        <!-- Chapter 6: The Science -->
+        <div class="chapter" id="chapter6">
+            <div class="prose">
+                Scientists have a name for what you're doing: <span class="highlight">subitizing</span>.
+            </div>
+            <div class="prose">
+                It means "sudden knowing" - seeing a number without counting.
+            </div>
+            <div class="prose">
+                Your brain has special circuits, probably in the parietal cortex, that recognize patterns of up to about four or five objects instantly.
+            </div>
+            <div class="prose pause">
+                It's not math. It's older than math. It's pattern recognition so fundamental that babies can do it.
+            </div>
+        </div>
+
+        <!-- Chapter 7: Your Progress -->
+        <div class="chapter" id="chapter7">
+            <div class="prose centered">
+                Let's see what you've discovered about your ability.
+            </div>
+            <div class="discovery-tracker" id="tracker">
+                <div class="tracker-title">Your Discoveries</div>
+                <div class="discovery-item" id="track1">
+                    <span>Can see 3 items instantly</span>
+                    <span id="check1">⭐</span>
+                </div>
+                <div class="discovery-item" id="track2">
+                    <span>Can see 4 items instantly</span>
+                    <span id="check2">⭐</span>
+                </div>
+                <div class="discovery-item" id="track3">
+                    <span>Works at 100ms</span>
+                    <span id="check3">⭐</span>
+                </div>
+                <div class="discovery-item" id="track4">
+                    <span>Works at 50ms</span>
+                    <span id="check4">⭐</span>
+                </div>
+            </div>
+            <button onclick="continuePractice()">Keep Exploring</button>
+        </div>
+
+        <!-- Chapter 8: The Bigger Picture -->
+        <div class="chapter" id="chapter8">
+            <div class="prose">
+                This ability you've discovered? It's why you can glance at dice and know the number. Why you can see three birds on a wire without counting them.
+            </div>
+            <div class="prose">
+                It's why musical notation works - your brain sees the pattern of notes, not individual dots.
+            </div>
+            <div class="prose">
+                It's even why we invented this: <span class="highlight">III</span> before we invented this: <span class="highlight">3</span>.
+            </div>
+        </div>
+
+        <!-- Chapter 9: The Gift -->
+        <div class="chapter" id="chapter9">
+            <div class="revelation" id="finalReveal">
+                <h2>You've always had this power</h2>
+                <p>Every human does. It's part of how your brain understands the world.</p>
+                <p>The shepherds knew. Now you know too.</p>
+            </div>
+            <div class="prose centered whisper">
+                What other hidden abilities do you have, waiting to be discovered?
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-hint">
+        <span class="scroll-arrow">↓</span> Scroll to continue
+    </div>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Special handling for specific chapters
+                    if (entry.target.id === 'chapter2') {
+                        animateSheep();
+                    }
+                    if (entry.target.id === 'chapter5') {
+                        document.getElementById('timingControls').classList.add('visible');
+                    }
+                    if (entry.target.id === 'chapter7') {
+                        document.getElementById('tracker').classList.add('visible');
+                    }
+                    if (entry.target.id === 'chapter9') {
+                        document.getElementById('finalReveal').classList.add('visible');
+                    }
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.chapter').forEach(chapter => {
+            observer.observe(chapter);
+        });
+
+        // Sheep animation
+        function animateSheep() {
+            const field = document.getElementById('sheepField');
+            if (field.children.length === 0) {
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const sheep = document.createElement('div');
+                        sheep.className = 'sheep';
+                        sheep.style.left = Math.random() * 90 + '%';
+                        sheep.style.bottom = Math.random() * 40 + 10 + '%';
+                        field.appendChild(sheep);
+                    }, i * 100);
+                }
+            }
+        }
+
+        // Flash Recognition Game Logic
+        let currentCount = 0;
+        let displayTime = 150;
+        let isShowingDots = false;
+        let attempts = 0;
+        let successes = 0;
+        let discoveries = {
+            saw3: false,
+            saw4: false,
+            at100ms: false,
+            at50ms: false
+        };
+
+        function createDots(count) {
+            const area = document.getElementById('dotsArea');
+            area.innerHTML = '';
+            
+            const positions = [];
+            for (let i = 0; i < count; i++) {
+                let x, y, attempts = 0;
+                do {
+                    x = 50 + Math.random() * 400;
+                    y = 50 + Math.random() * 250;
+                    attempts++;
+                } while (positions.some(pos => 
+                    Math.sqrt((pos.x - x) ** 2 + (pos.y - y) ** 2) < 60) && attempts < 20
+                );
+                
+                positions.push({x, y});
+                
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                dot.style.left = x + 'px';
+                dot.style.top = y + 'px';
+                dot.style.display = 'none';
+                area.appendChild(dot);
+            }
+        }
+
+        function startFlash() {
+            if (isShowingDots) return;
+            
+            // Generate 2-5 dots, weighted toward 3-4
+            const weights = [0.1, 0.35, 0.35, 0.2]; // for 2,3,4,5
+            const random = Math.random();
+            let sum = 0;
+            for (let i = 0; i < weights.length; i++) {
+                sum += weights[i];
+                if (random < sum) {
+                    currentCount = i + 2;
+                    break;
+                }
+            }
+            
+            createDots(currentCount);
+            
+            const startBtn = document.getElementById('startBtn');
+            startBtn.disabled = true;
+            startBtn.textContent = 'Watch...';
+            
+            // Show dots after brief delay
+            setTimeout(() => {
+                const dots = document.querySelectorAll('.dot');
+                dots.forEach(dot => {
+                    dot.style.display = 'block';
+                    dot.classList.add('visible');
+                });
+                
+                isShowingDots = true;
+                
+                // Hide dots after display time
+                setTimeout(() => {
+                    dots.forEach(dot => {
+                        dot.style.display = 'none';
+                    });
+                    
+                    // Show answer buttons
+                    document.getElementById('answerButtons').classList.add('visible');
+                    startBtn.textContent = 'How many?';
+                    isShowingDots = false;
+                }, displayTime);
+            }, 500);
+        }
+
+        function checkAnswer(guess) {
+            attempts++;
+            
+            // Reset button states
+            document.querySelectorAll('.answer-btn').forEach(btn => {
+                btn.classList.remove('correct', 'incorrect');
+            });
+            
+            const btn = event.target;
+            if (guess === currentCount) {
+                btn.classList.add('correct');
+                successes++;
+                
+                // Track discoveries
+                if (currentCount === 3) discoveries.saw3 = true;
+                if (currentCount === 4) discoveries.saw4 = true;
+                if (displayTime <= 100) discoveries.at100ms = true;
+                if (displayTime <= 50) discoveries.at50ms = true;
+                
+                updateTracker();
+                
+                setTimeout(() => {
+                    document.getElementById('answerButtons').classList.remove('visible');
+                    document.getElementById('startBtn').disabled = false;
+                    document.getElementById('startBtn').textContent = 'Try again';
+                }, 1000);
+            } else {
+                btn.classList.add('incorrect');
+                // Don't punish - just let them try again
+                setTimeout(() => {
+                    btn.classList.remove('incorrect');
+                }, 500);
+            }
+        }
+
+        function setTiming(ms) {
+            displayTime = ms;
+            document.querySelectorAll('.timing-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function updateTracker() {
+            if (discoveries.saw3) {
+                document.getElementById('track1').classList.add('unlocked');
+                document.getElementById('check1').textContent = '✨';
+            }
+            if (discoveries.saw4) {
+                document.getElementById('track2').classList.add('unlocked');
+                document.getElementById('check2').textContent = '✨';
+            }
+            if (discoveries.at100ms) {
+                document.getElementById('track3').classList.add('unlocked');
+                document.getElementById('check3').textContent = '✨';
+            }
+            if (discoveries.at50ms) {
+                document.getElementById('track4').classList.add('unlocked');
+                document.getElementById('check4').textContent = '✨';
+            }
+        }
+
+        function continuePractice() {
+            // Scroll back to interactive
+            document.getElementById('chapter4').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Hide scroll hint at bottom
+        window.addEventListener('scroll', () => {
+            const scrollPercentage = (window.scrollY + window.innerHeight) / document.body.scrollHeight;
+            if (scrollPercentage > 0.95) {
+                document.querySelector('.scroll-hint').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

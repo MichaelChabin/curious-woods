@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Walk - From Chaos to Order</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #FFFFE7;
+            font-family: 'Georgia', serif;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1D3B4F;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .visualization-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            position: relative;
+            overflow-x: auto;
+            overflow-y: visible;
+        }
+
+        #walkCanvas {
+            position: relative;
+            width: 100%;
+            min-width: 700px;
+            height: 550px;
+            margin: 0 auto;
+        }
+
+        .walk-line {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 620px;
+            height: 2px;
+            background: #808080;
+        }
+
+        .position-marker {
+            position: absolute;
+            bottom: 48px;
+            width: 1px;
+            height: 6px;
+            background: #808080;
+        }
+
+        .coin {
+            position: absolute;
+            width: 20px;
+            height: 3px;
+            border-radius: 1px;
+            transition: left 0.4s ease, bottom 0.4s ease;
+            z-index: 100;
+        }
+
+        .coin-BE622F { background: #BE622F; }
+        .coin-9CB785 { background: #9CB785; }
+        .coin-F4F6EF { background: #F4F6EF; border: 0.5px solid #ccc; }
+        .coin-7F6491 { background: #7F6491; }
+        .coin-1D3B4F { background: #1D3B4F; }
+
+        .controls {
+            margin: 30px 0;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(145deg, #1D3B4F, #0f2332);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 59, 79, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stats {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #1D3B4F;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .mode-btn {
+            background: white;
+            color: #2c3e50;
+            border: 2px solid #1D3B4F;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background: #1D3B4F;
+            color: white;
+        }
+
+        .info-panel {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border-left: 5px solid #BE622F;
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .position-label {
+            position: absolute;
+            bottom: 30px;
+            font-size: 10px;
+            color: #7f8c8d;
+            transform: translateX(-50%);
+            width: 20px;
+            text-align: center;
+        }
+
+        #stepCounter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.2em;
+            color: #1D3B4F;
+            font-weight: bold;
+        }
+
+        .height-scale-left {
+            position: absolute;
+            left: calc(50% - 310px);
+            bottom: 50px;
+            width: 1px;
+            height: 660px;  /* Increased to accommodate 200 coins */
+            background: #ccc;
+        }
+
+        .height-scale-right {
+            position: absolute;
+            left: calc(50% + 310px);
+            bottom: 50px;
+            width: 1px;
+            height: 660px;  /* Increased to accommodate 200 coins */
+            background: #ccc;
+        }
+
+        .height-label-left {
+            position: absolute;
+            left: -25px;
+            font-size: 9px;
+            color: #7f8c8d;
+            width: 20px;
+            text-align: right;
+        }
+
+        .height-label-right {
+            position: absolute;
+            right: -25px;
+            font-size: 9px;
+            color: #7f8c8d;
+            width: 20px;
+            text-align: left;
+        }
+
+        .grid-line-horizontal {
+            position: absolute;
+            left: calc(50% - 310px);
+            width: 620px;
+            height: 1px;
+            background: #e8e8e8;
+            z-index: 1;
+        }
+
+        .bias-control {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            z-index: 200;
+        }
+
+        .bias-slider {
+            width: 200px;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(to right, #1D3B4F 0%, #ccc 50%, #BE622F 100%);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .bias-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid #1D3B4F;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .bias-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid #1D3B4F;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .bias-label {
+            font-size: 11px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .edge-counter {
+            position: absolute;
+            padding: 4px 8px;
+            background: rgba(29, 59, 79, 0.9);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: bold;
+            z-index: 150;
+            display: none;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Random Walk to Bell Curve</h1>
+        <p class="subtitle">Watch randomness create the normal distribution</p>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode('single')">Single Coin</button>
+            <button class="mode-btn" onclick="setMode('hundred')">100 Coins</button>
+            <button class="mode-btn" onclick="setMode('twohundred')">200 Coins</button>
+        </div>
+
+        <div class="visualization-container">
+            <div id="stepCounter">Step: 0</div>
+            <div id="walkCanvas">
+                <div class="walk-line" id="walkLine"></div>
+                <!-- Scales and grid lines will be added by JavaScript -->
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="startWalk()">Start Walk</button>
+            <button onclick="stepWalk()">Single Step</button>
+            <button onclick="resetWalk()">Reset</button>
+            <button onclick="toggleSpeed()">Speed: <span id="speedText">Normal</span></button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">Total Steps</div>
+                <div class="stat-value" id="totalSteps">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Position</div>
+                <div class="stat-value" id="currentPosition">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Coins at Edges</div>
+                <div class="stat-value" id="edgeCoins">0</div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3 id="infoTitle">Single Coin Random Walk</h3>
+            <p id="infoText">
+                A single coin starts at the center and randomly moves left or right. 
+                Each step is completely random - like flipping a coin. 
+                Watch how long it takes to reach the edge!
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const POSITIONS = 31;  // -15 to +15
+        const CENTER = 15;
+        const COIN_WIDTH = 20;
+        const COIN_HEIGHT = 3;
+        const COIN_GAP = 0.3;
+        const COLORS = ['#1D3B4F', '#BE622F', '#9CB785', '#F4F6EF', '#7F6491'];
+        
+        // State
+        let mode = 'single';
+        let coins = [];
+        let stepCount = 0;
+        let isRunning = false;
+        let speed = 500;
+        let animationInterval = null;
+        let bias = 0.5; // 0.5 = unbiased, 0 = all left, 1 = all right
+
+        // Initialize
+        function init() {
+            const canvas = document.getElementById('walkCanvas');
+            
+            // Clear and rebuild
+            canvas.innerHTML = '<div class="walk-line" id="walkLine"></div>';
+            
+            // Add height scales
+            const leftScale = document.createElement('div');
+            leftScale.className = 'height-scale-left';
+            canvas.appendChild(leftScale);
+            
+            const rightScale = document.createElement('div');
+            rightScale.className = 'height-scale-right';
+            canvas.appendChild(rightScale);
+            
+            // Add horizontal grid lines and labels
+            for (let i = 20; i <= 200; i += 20) {
+                const y = i * (COIN_HEIGHT + COIN_GAP);
+                
+                // Grid line
+                const gridLine = document.createElement('div');
+                gridLine.className = 'grid-line-horizontal';
+                gridLine.style.bottom = `${50 + y}px`;
+                canvas.appendChild(gridLine);
+                
+                // Left label
+                const leftLabel = document.createElement('div');
+                leftLabel.className = 'height-label-left';
+                leftLabel.style.bottom = `${50 + y - 5}px`;
+                leftLabel.textContent = i;
+                leftScale.appendChild(leftLabel);
+                
+                // Right label
+                const rightLabel = document.createElement('div');
+                rightLabel.className = 'height-label-right';
+                rightLabel.style.bottom = `${50 + y - 5}px`;
+                rightLabel.textContent = i;
+                rightScale.appendChild(rightLabel);
+            }
+            
+            // Add position markers and labels
+            for (let i = 0; i < POSITIONS; i++) {
+                const marker = document.createElement('div');
+                marker.className = 'position-marker';
+                marker.style.left = `calc(50% - 300px + ${i * COIN_WIDTH}px)`;
+                canvas.appendChild(marker);
+                
+                const pos = i - CENTER;
+                if (pos % 5 === 0) {
+                    const label = document.createElement('div');
+                    label.className = 'position-label';
+                    label.style.left = `calc(50% - 300px + ${i * COIN_WIDTH}px)`;
+                    label.textContent = pos;
+                    canvas.appendChild(label);
+                }
+            }
+            
+            // Add edge counters
+            const leftCounter = document.createElement('div');
+            leftCounter.className = 'edge-counter';
+            leftCounter.id = 'leftEdgeCounter';
+            leftCounter.style.left = `calc(50% - 290px)`;
+            canvas.appendChild(leftCounter);
+            
+            const rightCounter = document.createElement('div');
+            rightCounter.className = 'edge-counter';
+            rightCounter.id = 'rightEdgeCounter';
+            rightCounter.style.left = `calc(50% + 310px)`;
+            canvas.appendChild(rightCounter);
+            
+            // Add bias control
+            const biasControl = document.createElement('div');
+            biasControl.className = 'bias-control';
+            biasControl.innerHTML = `
+                <input type="range" class="bias-slider" id="biasSlider" 
+                       min="0" max="100" value="50" step="1">
+                <div class="bias-label">
+                    <span id="leftPercent">50</span>% ← Bias → <span id="rightPercent">50</span>%
+                </div>
+            `;
+            canvas.appendChild(biasControl);
+            
+            // Set up bias slider event
+            document.getElementById('biasSlider').addEventListener('input', function(e) {
+                const value = parseInt(e.target.value);
+                bias = value / 100;
+                document.getElementById('leftPercent').textContent = value;
+                document.getElementById('rightPercent').textContent = 100 - value;
+            });
+            
+            resetWalk();
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (mode === 'single') {
+                document.getElementById('infoTitle').textContent = 'Single Coin Random Walk';
+                document.getElementById('infoText').textContent = 
+                    'A single coin starts at the center and randomly moves left or right. ' +
+                    'Each step is completely random - like flipping a coin. ' +
+                    'Watch how long it takes to reach the edge!';
+            } else if (mode === 'hundred') {
+                document.getElementById('infoTitle').textContent = '100 Coins: Creating the Bell Curve';
+                document.getElementById('infoText').textContent = 
+                    'Now 100 coins all start at the center. Each coin independently chooses to go left or right. ' +
+                    'Watch how they stack up - the bell curve emerges from pure randomness!';
+            } else {
+                document.getElementById('infoTitle').textContent = '200 Coins: Perfect Bell Curve';
+                document.getElementById('infoText').textContent = 
+                    'With 200 coins, the bell curve becomes even smoother and more consistent. ' +
+                    'Notice how the edge counts stay nearly equal - perfect symmetry from randomness!';
+            }
+            
+            resetWalk();
+        }
+
+        function createCoin(id, position, color) {
+            const coin = {
+                id: id,
+                position: position,
+                color: color,
+                element: null,
+                finished: false
+            };
+            
+            const coinEl = document.createElement('div');
+            coinEl.className = `coin coin-${color.substring(1)}`;
+            coinEl.id = `coin-${id}`;
+            document.getElementById('walkCanvas').appendChild(coinEl);
+            coin.element = coinEl;
+            
+            return coin;
+        }
+
+        function resetWalk() {
+            stopWalk();
+            stepCount = 0;
+            
+            document.querySelectorAll('.coin').forEach(coin => coin.remove());
+            coins = [];
+            
+            if (mode === 'single') {
+                const coin = createCoin(0, CENTER, COLORS[0]);
+                coins.push(coin);
+            } else if (mode === 'hundred') {
+                for (let i = 0; i < 100; i++) {
+                    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+                    const coin = createCoin(i, CENTER, color);
+                    coins.push(coin);
+                }
+            } else if (mode === 'twohundred') {
+                for (let i = 0; i < 200; i++) {
+                    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+                    const coin = createCoin(i, CENTER, color);
+                    coins.push(coin);
+                }
+            }
+            
+            updateCoinPositions();
+            updateStats();
+        }
+
+        function updateCoinPositions() {
+            const stacks = {};
+            coins.forEach(coin => {
+                if (!stacks[coin.position]) {
+                    stacks[coin.position] = [];
+                }
+                stacks[coin.position].push(coin);
+            });
+            
+            Object.keys(stacks).forEach(pos => {
+                const stack = stacks[pos];
+                stack.forEach((coin, index) => {
+                    const x = `calc(50% - 310px + ${pos * COIN_WIDTH}px)`;
+                    const y = 52 + index * (COIN_HEIGHT + COIN_GAP);
+                    
+                    coin.element.style.left = x;
+                    coin.element.style.bottom = `${y}px`;
+                });
+            });
+            
+            // Update edge counters
+            const leftEdgeCount = stacks[0] ? stacks[0].length : 0;
+            const rightEdgeCount = stacks[POSITIONS - 1] ? stacks[POSITIONS - 1].length : 0;
+            
+            const leftCounter = document.getElementById('leftEdgeCounter');
+            const rightCounter = document.getElementById('rightEdgeCounter');
+            
+            if (leftEdgeCount > 0) {
+                leftCounter.textContent = leftEdgeCount;
+                leftCounter.style.display = 'block';
+                leftCounter.style.bottom = `${52 + leftEdgeCount * (COIN_HEIGHT + COIN_GAP) + 10}px`;
+            } else {
+                leftCounter.style.display = 'none';
+            }
+            
+            if (rightEdgeCount > 0) {
+                rightCounter.textContent = rightEdgeCount;
+                rightCounter.style.display = 'block';
+                rightCounter.style.bottom = `${52 + rightEdgeCount * (COIN_HEIGHT + COIN_GAP) + 10}px`;
+            } else {
+                rightCounter.style.display = 'none';
+            }
+        }
+
+        function stepWalk() {
+            if (mode === 'single') {
+                stepSingleCoin();
+            } else {
+                stepMultipleCoins();
+            }
+        }
+
+        function stepSingleCoin() {
+            const coin = coins[0];
+            if (coin.finished) return;
+            
+            const direction = Math.random() < bias ? -1 : 1;
+            const newPosition = coin.position + direction;
+            
+            if (newPosition < 0 || newPosition >= POSITIONS) {
+                coin.finished = true;
+                coin.position = newPosition < 0 ? 0 : POSITIONS - 1;
+            } else {
+                coin.position = newPosition;
+            }
+            
+            stepCount++;
+            updateCoinPositions();
+            updateStats();
+            
+            if (coin.finished) {
+                stopWalk();
+            }
+        }
+
+        function stepMultipleCoins() {
+            let anyMoved = false;
+            
+            coins.forEach(coin => {
+                if (!coin.finished) {
+                    const direction = Math.random() < bias ? -1 : 1;
+                    const newPosition = coin.position + direction;
+                    
+                    if (newPosition < 0 || newPosition >= POSITIONS) {
+                        coin.finished = true;
+                        coin.position = newPosition < 0 ? 0 : POSITIONS - 1;
+                    } else {
+                        coin.position = newPosition;
+                        anyMoved = true;
+                    }
+                }
+            });
+            
+            stepCount++;
+            updateCoinPositions();
+            updateStats();
+            
+            if (!anyMoved) {
+                stopWalk();
+            }
+        }
+
+        function startWalk() {
+            if (isRunning) return;
+            isRunning = true;
+            
+            animationInterval = setInterval(() => {
+                stepWalk();
+                
+                if (coins.every(coin => coin.finished)) {
+                    stopWalk();
+                }
+            }, speed);
+        }
+
+        function stopWalk() {
+            isRunning = false;
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+        }
+
+        function toggleSpeed() {
+            const speeds = [500, 200, 50];
+            const labels = ['Normal', 'Fast', 'Very Fast'];
+            const currentIndex = speeds.indexOf(speed);
+            const nextIndex = (currentIndex + 1) % speeds.length;
+            
+            speed = speeds[nextIndex];
+            document.getElementById('speedText').textContent = labels[nextIndex];
+            
+            if (isRunning) {
+                stopWalk();
+                startWalk();
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalSteps').textContent = stepCount;
+            document.getElementById('stepCounter').textContent = `Step: ${stepCount}`;
+            
+            if (mode === 'single') {
+                document.getElementById('currentPosition').textContent = coins[0].position - CENTER;
+                document.getElementById('edgeCoins').textContent = coins[0].finished ? '1' : '0';
+            } else {
+                const positionCounts = {};
+                let maxCount = 0;
+                let modePosition = CENTER;
+                
+                coins.forEach(coin => {
+                    positionCounts[coin.position] = (positionCounts[coin.position] || 0) + 1;
+                    if (positionCounts[coin.position] > maxCount) {
+                        maxCount = positionCounts[coin.position];
+                        modePosition = coin.position;
+                    }
+                });
+                
+                document.getElementById('currentPosition').textContent = `Peak: ${modePosition - CENTER}`;
+                
+                const edgeCount = coins.filter(c => c.position === 0 || c.position === POSITIONS - 1).length;
+                document.getElementById('edgeCoins').textContent = edgeCount;
+            }
+        }
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

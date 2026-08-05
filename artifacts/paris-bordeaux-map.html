@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paris-Bordeaux: The Great Race of 1895</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #FFFFE7;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1D3B4F;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .map-container {
+            position: relative;
+            background: white;
+            border: 3px solid #1D3B4F;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            margin: 20px auto;
+            max-width: 900px;
+        }
+
+        .map-svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .route-btn {
+            background: white;
+            color: #2c3e50;
+            border: 2px solid #1D3B4F;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+        }
+
+        .route-btn:hover {
+            background: #1D3B4F;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(29, 59, 79, 0.3);
+        }
+
+        .route-btn.active {
+            background: #BE622F;
+            color: white;
+            border-color: #BE622F;
+        }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #BE622F;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-card h3 {
+            color: #1D3B4F;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .info-card p {
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 5px 0;
+            border-bottom: 1px dotted #ddd;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #1D3B4F;
+        }
+
+        .narrative-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border-left: 5px solid #1D3B4F;
+            line-height: 1.8;
+        }
+
+        .narrative-section h2 {
+            color: #1D3B4F;
+            margin-bottom: 15px;
+        }
+
+        .distance-display {
+            text-align: center;
+            font-size: 1.3em;
+            color: #BE622F;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        /* SVG Styles */
+        .route-line {
+            fill: none;
+            stroke-width: 3;
+            transition: opacity 0.3s ease;
+        }
+
+        .route-1895 {
+            stroke: #8B4513;
+            stroke-dasharray: none;
+        }
+
+        .route-train {
+            stroke: #4169E1;
+            stroke-dasharray: 10, 5;
+        }
+
+        .route-modern {
+            stroke: #228B22;
+            stroke-dasharray: none;
+        }
+
+        .route-tgv {
+            stroke: #FF6347;
+            stroke-dasharray: 5, 5;
+        }
+
+        .city-marker {
+            fill: #1D3B4F;
+            stroke: white;
+            stroke-width: 2;
+        }
+
+        .city-label {
+            fill: #1D3B4F;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: 'Georgia', serif;
+        }
+
+        .route-hidden {
+            opacity: 0;
+        }
+
+        .route-visible {
+            opacity: 1;
+        }
+
+        .legend {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+
+        .legend-line {
+            width: 30px;
+            height: 3px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Paris → Bordeaux → Paris</h1>
+        <p class="subtitle">The Great Automobile Race of June 1895</p>
+
+        <div class="controls">
+            <button class="route-btn active" onclick="showRoute('1895')">1895 Race Route</button>
+            <button class="route-btn" onclick="showRoute('train')">1895 Train Line</button>
+            <button class="route-btn" onclick="showRoute('modern')">Modern Autoroute</button>
+            <button class="route-btn" onclick="showRoute('tgv')">TGV High-Speed Rail</button>
+            <button class="route-btn" onclick="showRoute('all')">Compare All</button>
+        </div>
+
+        <div class="map-container">
+            <svg class="map-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+                <!-- Background -->
+                <rect width="800" height="600" fill="#F0E6D2"/>
+                
+                <!-- Simple outline of France -->
+                <path d="M 400 50 L 500 80 L 550 150 L 580 250 L 550 350 L 500 420 L 400 450 L 300 420 L 250 350 L 220 250 L 250 150 L 300 80 Z" 
+                      fill="#FFFFE7" stroke="#8B7355" stroke-width="2"/>
+                
+                <!-- Routes -->
+                <!-- 1895 Race Route (winding through cities) -->
+                <path id="route1895" class="route-line route-1895 route-visible" 
+                      d="M 435 180 L 420 190 L 410 210 L 400 240 L 385 270 L 370 310 L 350 350 L 320 380"/>
+                
+                <!-- Train Route (more direct) -->
+                <path id="routeTrain" class="route-line route-train route-hidden" 
+                      d="M 435 180 L 410 220 L 390 260 L 370 310 L 350 350 L 320 380"/>
+                
+                <!-- Modern Highway (A10 - quite direct) -->
+                <path id="routeModern" class="route-line route-modern route-hidden" 
+                      d="M 435 180 L 415 215 L 395 255 L 375 305 L 355 345 L 320 380"/>
+                
+                <!-- TGV Route (most direct) -->
+                <path id="routeTGV" class="route-line route-tgv route-hidden" 
+                      d="M 435 180 L 400 250 L 350 340 L 320 380"/>
+                
+                <!-- City markers -->
+                <circle cx="435" cy="180" r="8" class="city-marker"/>
+                <text x="450" y="185" class="city-label">PARIS</text>
+                
+                <circle cx="320" cy="380" r="8" class="city-marker"/>
+                <text x="335" y="385" class="city-label">BORDEAUX</text>
+                
+                <!-- Intermediate cities -->
+                <circle cx="410" cy="210" r="5" fill="#BE622F" stroke="white" stroke-width="2"/>
+                <text x="420" y="210" font-size="11" fill="#7f8c8d">Versailles</text>
+                
+                <circle cx="400" cy="240" r="5" fill="#BE622F" stroke="white" stroke-width="2"/>
+                <text x="410" y="240" font-size="11" fill="#7f8c8d">Chartres</text>
+                
+                <circle cx="370" cy="310" r="5" fill="#BE622F" stroke="white" stroke-width="2"/>
+                <text x="380" y="310" font-size="11" fill="#7f8c8d">Tours</text>
+                
+                <circle cx="350" cy="350" r="5" fill="#BE622F" stroke="white" stroke-width="2"/>
+                <text x="360" y="350" font-size="11" fill="#7f8c8d">Poitiers</text>
+                
+                <!-- Scale indicator -->
+                <line x1="50" y1="550" x2="150" y2="550" stroke="#2c3e50" stroke-width="2"/>
+                <line x1="50" y1="545" x2="50" y2="555" stroke="#2c3e50" stroke-width="2"/>
+                <line x1="150" y1="545" x2="150" y2="555" stroke="#2c3e50" stroke-width="2"/>
+                <text x="100" y="570" text-anchor="middle" font-size="12" fill="#2c3e50">100 km</text>
+                
+                <!-- Compass -->
+                <g transform="translate(720, 80)">
+                    <circle r="30" fill="white" stroke="#2c3e50" stroke-width="2"/>
+                    <path d="M 0,-25 L 5,-5 L 0,0 L -5,-5 Z" fill="#2c3e50"/>
+                    <text y="-35" text-anchor="middle" font-size="14" font-weight="bold" fill="#2c3e50">N</text>
+                </g>
+            </svg>
+        </div>
+
+        <div class="distance-display" id="distanceDisplay">
+            1895 Race Route: ~1,200 kilometers round trip
+        </div>
+
+        <div class="legend" id="legend" style="display: none;">
+            <strong>Route Comparison:</strong>
+            <div class="legend-item">
+                <div class="legend-line" style="background: #8B4513;"></div>
+                <span>1895 Race Route (coaching roads)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line" style="background: #4169E1; border-top: 2px dashed #4169E1; height: 0;"></div>
+                <span>1895 Railway</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line" style="background: #228B22;"></div>
+                <span>Modern A10 Autoroute</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line" style="background: #FF6347; border-top: 2px dashed #FF6347; height: 0;"></div>
+                <span>TGV High-Speed Line</span>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-card">
+                <h3>Émile Levassor's Achievement</h3>
+                <div class="stat">
+                    <span class="stat-label">Total Time:</span>
+                    <span class="stat-value">48h 48min</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Average Speed:</span>
+                    <span class="stat-value">24.5 km/h</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Vehicle:</span>
+                    <span class="stat-value">Panhard 2-seater</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Driver Changes:</span>
+                    <span class="stat-value">None (solo!)</span>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>Travel Times Comparison</h3>
+                <div class="stat">
+                    <span class="stat-label">1820s Coach:</span>
+                    <span class="stat-value">6-8 days</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">1895 Train:</span>
+                    <span class="stat-value">16-20 hours</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">1895 Automobile:</span>
+                    <span class="stat-value">48 hours nonstop</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">2025 TGV:</span>
+                    <span class="stat-value">4 hours round trip</span>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>The Route Cities</h3>
+                <p>
+                    The 1895 racers followed coaching roads through:
+                </p>
+                <p style="margin-top: 10px;">
+                    <strong>Outbound:</strong> Paris → Versailles → Rambouillet → Chartres → Tours → Poitiers → Angoulême → Bordeaux
+                </p>
+                <p style="margin-top: 10px;">
+                    <strong>Return:</strong> The same route back, without rest!
+                </p>
+            </div>
+        </div>
+
+        <div class="narrative-section">
+            <h2>The Story</h2>
+            <p>
+                On June 11, 1895, at the crack of dawn, 22 automobiles lined up in Paris for what seemed impossible: 
+                a race to Bordeaux and back, nearly 1,200 kilometers, to prove these new "horseless carriages" 
+                could handle real distances.
+            </p>
+            <p style="margin-top: 15px;">
+                Émile Levassor took no relief driver. For 48 hours and 48 minutes, he drove alone through day, 
+                night, rain, and dust, stopping only for fuel. When he crossed the finish line, exhausted but 
+                triumphant, he had averaged 24.5 km/h - faster than a galloping horse can sustain for even an hour.
+            </p>
+            <p style="margin-top: 15px;">
+                The crowd was astounded. Though technically disqualified (his car had only 2 seats, rules required 4), 
+                Levassor had proven the automobile wasn't a toy but the future. The same journey that took a week 
+                by coach, two days by train, he had done without stopping.
+            </p>
+            <p style="margin-top: 15px; font-style: italic; color: #7f8c8d;">
+                Today, the TGV makes this journey in 2 hours. The distance hasn't changed, but our perception 
+                of France has shrunk. What was once an epic journey is now a morning commute.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function showRoute(routeType) {
+            // Get all routes
+            const routes = {
+                '1895': document.getElementById('route1895'),
+                'train': document.getElementById('routeTrain'),
+                'modern': document.getElementById('routeModern'),
+                'tgv': document.getElementById('routeTGV')
+            };
+            
+            // Update button states
+            document.querySelectorAll('.route-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Hide all routes first
+            Object.values(routes).forEach(route => {
+                route.classList.remove('route-visible');
+                route.classList.add('route-hidden');
+            });
+            
+            // Show selected route(s) and update distance display
+            const distanceDisplay = document.getElementById('distanceDisplay');
+            const legend = document.getElementById('legend');
+            
+            switch(routeType) {
+                case '1895':
+                    routes['1895'].classList.remove('route-hidden');
+                    routes['1895'].classList.add('route-visible');
+                    distanceDisplay.textContent = '1895 Race Route: ~1,200 km round trip (following coaching roads)';
+                    legend.style.display = 'none';
+                    break;
+                    
+                case 'train':
+                    routes['train'].classList.remove('route-hidden');
+                    routes['train'].classList.add('route-visible');
+                    distanceDisplay.textContent = '1895 Railway: ~1,150 km round trip (more direct than roads)';
+                    legend.style.display = 'none';
+                    break;
+                    
+                case 'modern':
+                    routes['modern'].classList.remove('route-hidden');
+                    routes['modern'].classList.add('route-visible');
+                    distanceDisplay.textContent = 'Modern A10 Autoroute: ~1,140 km round trip';
+                    legend.style.display = 'none';
+                    break;
+                    
+                case 'tgv':
+                    routes['tgv'].classList.remove('route-hidden');
+                    routes['tgv'].classList.add('route-visible');
+                    distanceDisplay.textContent = 'TGV High-Speed Rail: ~1,100 km round trip (almost straight line!)';
+                    legend.style.display = 'none';
+                    break;
+                    
+                case 'all':
+                    // Show all routes for comparison
+                    Object.values(routes).forEach(route => {
+                        route.classList.remove('route-hidden');
+                        route.classList.add('route-visible');
+                    });
+                    distanceDisplay.textContent = 'All routes shown - notice how they get progressively straighter over 130 years';
+                    legend.style.display = 'block';
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>

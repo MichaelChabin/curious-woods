@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Van Gogh Pigment Analyzer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Georgia, serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #34495e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: normal;
+        }
+
+        .subtitle {
+            margin-top: 5px;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .painting-section {
+            flex: 2;
+        }
+
+        .canvas-container {
+            position: relative;
+            background: #2c3e50;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .painting-title {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        #paintingCanvas {
+            display: block;
+            width: 100%;
+            cursor: crosshair;
+            border: 3px solid #8B7355;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .magnifier {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 3px solid white;
+            border-radius: 50%;
+            pointer-events: none;
+            display: none;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            background-size: 500%;
+            z-index: 10;
+        }
+
+        .analysis-section {
+            flex: 1;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .current-analysis {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .color-display {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .picked-color {
+            width: 80px;
+            height: 80px;
+            border: 3px solid #333;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .color-info {
+            flex: 1;
+        }
+
+        .color-rgb {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .coordinates {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .pigment-match {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #4caf50;
+        }
+
+        .pigment-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+
+        .match-quality {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .pigment-details {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .mixture-analysis {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #ff9800;
+        }
+
+        .mixture-title {
+            font-weight: bold;
+            color: #e65100;
+            margin-bottom: 10px;
+        }
+
+        .mixture-components {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .component {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .component-swatch {
+            width: 30px;
+            height: 30px;
+            border: 2px solid #333;
+            border-radius: 4px;
+        }
+
+        .component-name {
+            font-size: 12px;
+        }
+
+        .plus-sign {
+            font-size: 18px;
+            color: #999;
+        }
+
+        .history-section {
+            margin-top: 20px;
+        }
+
+        .history-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .history-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .history-item:hover {
+            transform: translateX(3px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .history-swatch {
+            width: 25px;
+            height: 25px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        .history-info {
+            flex: 1;
+            font-size: 12px;
+        }
+
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-magnify {
+            background: #9c27b0;
+            color: white;
+        }
+
+        .btn-magnify:hover {
+            background: #7b1fa2;
+        }
+
+        .btn-magnify.active {
+            background: #4a148c;
+        }
+
+        .btn-clear {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #d32f2f;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .legend-swatch {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Van Gogh Pigment Analyzer</h1>
+            <div class="subtitle">Click anywhere on the painting to identify the pigments Van Gogh used</div>
+        </div>
+
+        <div class="main-content">
+            <div class="painting-section">
+                <div class="canvas-container">
+                    <div class="painting-title">"The Starry Night" - Click to analyze colors</div>
+                    <canvas id="paintingCanvas"></canvas>
+                    <div class="magnifier" id="magnifier"></div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-magnify" id="magnifyBtn" onclick="toggleMagnifier()">
+                        🔍 Magnifier: OFF
+                    </button>
+                    <button class="btn btn-clear" onclick="clearHistory()">
+                        Clear History
+                    </button>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background: rgb(30, 58, 95)"></div>
+                        <span>Prussian Blue</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background: rgb(46, 80, 144)"></div>
+                        <span>Ultramarine</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background: rgb(255, 200, 46)"></div>
+                        <span>Chrome Yellow</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background: rgb(80, 200, 120)"></div>
+                        <span>Emerald Green</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background: rgb(255, 254, 247)"></div>
+                        <span>Lead White</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background: rgb(28, 28, 28)"></div>
+                        <span>Ivory Black</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analysis-section">
+                <div class="instructions">
+                    <strong>How to use:</strong><br>
+                    • Click anywhere on the painting to sample a color<br>
+                    • The analyzer will identify if it's a pure pigment or mixture<br>
+                    • Turn on the magnifier for precise selection<br>
+                    • Build a history of analyzed points
+                </div>
+
+                <div class="current-analysis" id="currentAnalysis">
+                    <div style="text-align: center; color: #999; padding: 20px;">
+                        Click on the painting to begin analysis
+                    </div>
+                </div>
+
+                <div class="history-section">
+                    <div class="history-title">Analysis History</div>
+                    <div id="historyList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Van Gogh's pigments
+        const pigments = [
+            {
+                name: "Prussian Blue",
+                rgb: [30, 58, 95],
+                chemical: "Ferric ferrocyanide",
+                use: "Deep night sky, shadows",
+                historical: "Van Gogh's workhorse blue, discovered by accident in 1706"
+            },
+            {
+                name: "Ultramarine",
+                rgb: [46, 80, 144],
+                chemical: "Synthetic lapis lazuli",
+                use: "Sky highlights, stars",
+                historical: "Once more valuable than gold"
+            },
+            {
+                name: "Cobalt Blue",
+                rgb: [0, 71, 171],
+                chemical: "Cobalt aluminate",
+                use: "Clear sky areas",
+                historical: "Expensive but brilliant"
+            },
+            {
+                name: "Chrome Yellow",
+                rgb: [255, 200, 46],
+                chemical: "Lead chromate",
+                use: "Moon, bright stars",
+                historical: "Toxic but beloved by Van Gogh"
+            },
+            {
+                name: "Cadmium Yellow",
+                rgb: [255, 215, 0],
+                chemical: "Cadmium sulfide",
+                use: "Star halos",
+                historical: "Brand new in 1889"
+            },
+            {
+                name: "Yellow Ochre",
+                rgb: [196, 160, 0],
+                chemical: "Iron oxide",
+                use: "Village lights",
+                historical: "Ancient earth pigment"
+            },
+            {
+                name: "Emerald Green",
+                rgb: [80, 200, 120],
+                chemical: "Copper acetoarsenite",
+                use: "Landscape",
+                historical: "Contains arsenic!"
+            },
+            {
+                name: "Viridian",
+                rgb: [64, 130, 109],
+                chemical: "Chromium oxide",
+                use: "Cypress tree",
+                historical: "Transparent green"
+            },
+            {
+                name: "Lead White",
+                rgb: [255, 254, 247],
+                chemical: "Lead carbonate",
+                use: "Stars, highlights",
+                historical: "Toxic but unmatched for impasto"
+            },
+            {
+                name: "Zinc White",
+                rgb: [250, 255, 245],
+                chemical: "Zinc oxide",
+                use: "Glazing",
+                historical: "Safer but cracks over time"
+            },
+            {
+                name: "Vermillion",
+                rgb: [227, 66, 52],
+                chemical: "Mercury sulfide",
+                use: "Accents",
+                historical: "Toxic mercury compound"
+            },
+            {
+                name: "Burnt Umber",
+                rgb: [138, 51, 36],
+                chemical: "Iron oxide + manganese",
+                use: "Outlines, mixing",
+                historical: "Stable earth color"
+            },
+            {
+                name: "Ivory Black",
+                rgb: [28, 28, 28],
+                chemical: "Carbon black",
+                use: "Deep shadows",
+                historical: "Originally from burnt ivory"
+            }
+        ];
+
+        let canvas, ctx;
+        let magnifierOn = false;
+        let history = [];
+
+        // Initialize canvas
+        window.onload = function() {
+            canvas = document.getElementById('paintingCanvas');
+            ctx = canvas.getContext('2d');
+            
+            const img = new Image();
+            img.crossOrigin = "anonymous"; // For CORS if needed
+            
+            img.onload = function() {
+                // Set canvas size to match image
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                // Draw image
+                ctx.drawImage(img, 0, 0);
+                
+                // Remove loading message
+                document.getElementById('currentAnalysis').innerHTML = `
+                    <div style="text-align: center; color: #999; padding: 20px;">
+                        Click on the painting to begin analysis
+                    </div>
+                `;
+            };
+            
+            img.onerror = function() {
+                document.getElementById('currentAnalysis').innerHTML = `
+                    <div class="error">
+                        Could not load image. Please make sure 'VanGogh/StarrySkies.png' is in the correct location.
+                    </div>
+                `;
+            };
+            
+            // IMPORTANT: Update this path to match your file
+            img.src = 'VanGogh/StarrySkies.png';
+            
+            // Set up click handler
+            canvas.addEventListener('click', handleCanvasClick);
+            canvas.addEventListener('mousemove', handleMouseMove);
+        };
+
+        // Handle canvas click
+        function handleCanvasClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) * (canvas.width / rect.width));
+            const y = Math.floor((e.clientY - rect.top) * (canvas.height / rect.height));
+            
+            // Get pixel color
+            const pixel = ctx.getImageData(x, y, 1, 1).data;
+            const rgb = [pixel[0], pixel[1], pixel[2]];
+            
+            analyzeColor(rgb, x, y);
+        }
+
+        // Handle mouse movement for magnifier
+        function handleMouseMove(e) {
+            if (!magnifierOn) {
+                document.getElementById('magnifier').style.display = 'none';
+                return;
+            }
+            
+            const rect = canvas.getBoundingClientRect();
+            const magnifier = document.getElementById('magnifier');
+            
+            magnifier.style.display = 'block';
+            magnifier.style.left = (e.clientX - rect.left - 50) + 'px';
+            magnifier.style.top = (e.clientY - rect.top - 50) + 'px';
+            
+            // Create magnified background
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            
+            magnifier.style.backgroundImage = `url(${canvas.toDataURL()})`;
+            magnifier.style.backgroundPosition = `-${x * 5 - 50}px -${y * 5 - 50}px`;
+        }
+
+        // Analyze the selected color
+        function analyzeColor(rgb, x, y) {
+            const [r, g, b] = rgb;
+            
+            // Find closest pigment match
+            let closestPigment = null;
+            let closestDistance = Infinity;
+            
+            pigments.forEach(pigment => {
+                const distance = colorDistance(rgb, pigment.rgb);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestPigment = pigment;
+                }
+            });
+            
+            // Check if it's likely a mixture
+            const possibleMixture = findMixture(rgb);
+            
+            // Display analysis
+            displayAnalysis(rgb, x, y, closestPigment, closestDistance, possibleMixture);
+            
+            // Add to history
+            addToHistory(rgb, closestPigment, possibleMixture);
+        }
+
+        // Calculate color distance
+        function colorDistance(color1, color2) {
+            return Math.sqrt(
+                Math.pow(color1[0] - color2[0], 2) +
+                Math.pow(color1[1] - color2[1], 2) +
+                Math.pow(color1[2] - color2[2], 2)
+            );
+        }
+
+        // Find possible mixture
+        function findMixture(rgb) {
+            let bestMixture = null;
+            let bestDistance = Infinity;
+            
+            // Try common Van Gogh mixtures
+            const mixtures = [
+                {pigments: [0, 1], ratio: [2, 1], name: "Night Sky Blue"},
+                {pigments: [3, 8], ratio: [3, 2], name: "Moon Glow"},
+                {pigments: [0, 5], ratio: [1, 1], name: "Dark Yellow"},
+                {pigments: [7, 0], ratio: [2, 1], name: "Dark Cypress"},
+                {pigments: [1, 10], ratio: [2, 1], name: "Shadow Purple"}
+            ];
+            
+            mixtures.forEach(mix => {
+                const mixed = mixColors(
+                    pigments[mix.pigments[0]].rgb,
+                    pigments[mix.pigments[1]].rgb,
+                    mix.ratio[0],
+                    mix.ratio[1]
+                );
+                
+                const distance = colorDistance(rgb, mixed);
+                if (distance < bestDistance && distance < 50) {
+                    bestDistance = distance;
+                    bestMixture = {
+                        ...mix,
+                        pigment1: pigments[mix.pigments[0]],
+                        pigment2: pigments[mix.pigments[1]],
+                        distance: distance
+                    };
+                }
+            });
+            
+            return bestMixture;
+        }
+
+        // Mix two colors
+        function mixColors(color1, color2, ratio1, ratio2) {
+            const total = ratio1 + ratio2;
+            return [
+                Math.round((color1[0] * ratio1 + color2[0] * ratio2) / total),
+                Math.round((color1[1] * ratio1 + color2[1] * ratio2) / total),
+                Math.round((color1[2] * ratio1 + color2[2] * ratio2) / total)
+            ];
+        }
+
+        // Display analysis results
+        function displayAnalysis(rgb, x, y, pigment, distance, mixture) {
+            const analysisDiv = document.getElementById('currentAnalysis');
+            
+            let html = `
+                <div class="color-display">
+                    <div class="picked-color" style="background: rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})"></div>
+                    <div class="color-info">
+                        <div class="color-rgb">RGB(${rgb[0]}, ${rgb[1]}, ${rgb[2]})</div>
+                        <div class="coordinates">Position: ${x}, ${y}</div>
+                    </div>
+                </div>
+            `;
+            
+            if (distance < 30) {
+                // Close match to pure pigment
+                html += `
+                    <div class="pigment-match">
+                        <div class="pigment-name">${pigment.name}</div>
+                        <div class="match-quality">Confidence: ${Math.round(100 - distance)}%</div>
+                        <div class="pigment-details">
+                            <strong>Chemical:</strong> ${pigment.chemical}<br>
+                            <strong>Van Gogh used for:</strong> ${pigment.use}<br>
+                            <strong>Historical note:</strong> ${pigment.historical}
+                        </div>
+                    </div>
+                `;
+            } else if (mixture) {
+                // Likely a mixture
+                html += `
+                    <div class="mixture-analysis">
+                        <div class="mixture-title">Likely Mixture: ${mixture.name}</div>
+                        <div class="mixture-components">
+                            <div class="component">
+                                <div class="component-swatch" style="background: rgb(${mixture.pigment1.rgb[0]}, ${mixture.pigment1.rgb[1]}, ${mixture.pigment1.rgb[2]})"></div>
+                                <div class="component-name">${mixture.pigment1.name} (${mixture.ratio[0]} parts)</div>
+                            </div>
+                            <div class="plus-sign">+</div>
+                            <div class="component">
+                                <div class="component-swatch" style="background: rgb(${mixture.pigment2.rgb[0]}, ${mixture.pigment2.rgb[1]}, ${mixture.pigment2.rgb[2]})"></div>
+                                <div class="component-name">${mixture.pigment2.name} (${mixture.ratio[1]} parts)</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // No clear match
+                html += `
+                    <div class="pigment-match" style="background: #fff3e0; border-left-color: #ff9800;">
+                        <div class="pigment-name">Complex Mixture</div>
+                        <div class="match-quality">Closest: ${pigment.name} (${Math.round(100 - distance)}% match)</div>
+                        <div class="pigment-details">
+                            This appears to be a complex mixture of multiple pigments or a degraded area where colors have changed over time.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            analysisDiv.innerHTML = html;
+        }
+
+        // Add to history
+        function addToHistory(rgb, pigment, mixture) {
+            const historyItem = {
+                rgb: rgb,
+                pigment: pigment,
+                mixture: mixture,
+                timestamp: new Date()
+            };
+            
+            history.unshift(historyItem);
+            if (history.length > 10) history.pop();
+            
+            updateHistoryDisplay();
+        }
+
+        // Update history display
+        function updateHistoryDisplay() {
+            const historyDiv = document.getElementById('historyList');
+            
+            if (history.length === 0) {
+                historyDiv.innerHTML = '<div style="color: #999; text-align: center;">No analysis history yet</div>';
+                return;
+            }
+            
+            let html = '';
+            history.forEach((item, index) => {
+                const name = item.mixture ? item.mixture.name : item.pigment.name;
+                html += `
+                    <div class="history-item" onclick="showHistoryItem(${index})">
+                        <div class="history-swatch" style="background: rgb(${item.rgb[0]}, ${item.rgb[1]}, ${item.rgb[2]})"></div>
+                        <div class="history-info">
+                            <strong>${name}</strong><br>
+                            RGB(${item.rgb[0]}, ${item.rgb[1]}, ${item.rgb[2]})
+                        </div>
+                    </div>
+                `;
+            });
+            
+            historyDiv.innerHTML = html;
+        }
+
+        // Show history item
+        function showHistoryItem(index) {
+            const item = history[index];
+            displayAnalysis(item.rgb, 0, 0, item.pigment, 0, item.mixture);
+        }
+
+        // Toggle magnifier
+        function toggleMagnifier() {
+            magnifierOn = !magnifierOn;
+            const btn = document.getElementById('magnifyBtn');
+            
+            if (magnifierOn) {
+                btn.textContent = '🔍 Magnifier: ON';
+                btn.classList.add('active');
+            } else {
+                btn.textContent = '🔍 Magnifier: OFF';
+                btn.classList.remove('active');
+                document.getElementById('magnifier').style.display = 'none';
+            }
+        }
+
+        // Clear history
+        function clearHistory() {
+            history = [];
+            updateHistoryDisplay();
+        }
+    </script>
+</body>
+</html>

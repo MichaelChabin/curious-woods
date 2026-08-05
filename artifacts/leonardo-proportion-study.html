@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leonardo's Proportional Head Study</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #FFFFE7;
+            font-family: 'Georgia', serif;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1D3B4F;
+            margin-bottom: 10px;
+            font-size: 2em;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .drawing-container {
+            background: #F5F0E8;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            position: relative;
+        }
+
+        #leonardoDrawing {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+        }
+
+        .controls {
+            margin: 30px 0;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(145deg, #1D3B4F, #0f2332);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 59, 79, 0.3);
+        }
+
+        button.active {
+            background: linear-gradient(145deg, #BE622F, #a0521f);
+        }
+
+        /* Drawing styles */
+        .grid-line {
+            stroke: #8B7355;
+            stroke-width: 0.5;
+            opacity: 0.6;
+        }
+
+        .construction-line {
+            stroke: #BE622F;
+            stroke-width: 1;
+            fill: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .construction-visible {
+            opacity: 0.5;
+        }
+
+        .main-outline {
+            stroke: #2c3e50;
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .feature-line {
+            stroke: #2c3e50;
+            stroke-width: 1.2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .hatching {
+            stroke: #5c4a3a;
+            stroke-width: 0.3;
+            opacity: 0.7;
+        }
+
+        .hatching-group {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .hatching-visible {
+            opacity: 1;
+        }
+
+        /* Grid labels */
+        .grid-label {
+            fill: #8B7355;
+            font-size: 10px;
+            font-family: serif;
+            opacity: 0.7;
+        }
+
+        /* Animation */
+        @keyframes drawLine {
+            from { stroke-dashoffset: 1000; }
+            to { stroke-dashoffset: 0; }
+        }
+
+        .animated-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2s ease forwards;
+        }
+
+        .info-panel {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border-left: 5px solid #BE622F;
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .info-panel h3 {
+            color: #1D3B4F;
+            margin-bottom: 15px;
+        }
+
+        .proportion-note {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Leonardo's Divine Proportions</h1>
+        <p class="subtitle">Study of ideal head proportions with mathematical grid (c. 1490)</p>
+
+        <div class="drawing-container">
+            <svg id="leonardoDrawing" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                <!-- Paper background texture -->
+                <rect width="400" height="500" fill="#F5F0E8"/>
+                
+                <!-- Proportional grid -->
+                <g id="proportionalGrid">
+                    <!-- Vertical lines -->
+                    <line x1="100" y1="50" x2="100" y2="450" class="grid-line"/>
+                    <line x1="150" y1="50" x2="150" y2="450" class="grid-line"/>
+                    <line x1="200" y1="50" x2="200" y2="450" class="grid-line"/>
+                    <line x1="250" y1="50" x2="250" y2="450" class="grid-line"/>
+                    <line x1="300" y1="50" x2="300" y2="450" class="grid-line"/>
+                    
+                    <!-- Horizontal lines -->
+                    <line x1="100" y1="100" x2="300" y2="100" class="grid-line"/>
+                    <line x1="100" y1="150" x2="300" y2="150" class="grid-line"/>
+                    <line x1="100" y1="200" x2="300" y2="200" class="grid-line"/>
+                    <line x1="100" y1="250" x2="300" y2="250" class="grid-line"/>
+                    <line x1="100" y1="300" x2="300" y2="300" class="grid-line"/>
+                    <line x1="100" y1="350" x2="300" y2="350" class="grid-line"/>
+                    <line x1="100" y1="400" x2="300" y2="400" class="grid-line"/>
+                    
+                    <!-- Grid labels (Leonardo style) -->
+                    <text x="95" y="105" class="grid-label" text-anchor="end">a</text>
+                    <text x="95" y="155" class="grid-label" text-anchor="end">b</text>
+                    <text x="95" y="205" class="grid-label" text-anchor="end">c</text>
+                    <text x="95" y="255" class="grid-label" text-anchor="end">d</text>
+                    <text x="95" y="305" class="grid-label" text-anchor="end">e</text>
+                    <text x="95" y="355" class="grid-label" text-anchor="end">f</text>
+                </g>
+
+                <!-- Construction circles (hidden by default) -->
+                <g id="constructionLines" class="construction-line">
+                    <circle cx="200" cy="200" r="100"/>
+                    <circle cx="200" cy="150" r="50"/>
+                    <rect x="150" y="100" width="100" height="150" fill="none" stroke="#BE622F"/>
+                </g>
+
+                <!-- Profile outline -->
+                <g id="profileOutline">
+                    <!-- Skull/cranium -->
+                    <path class="main-outline" d="M 150 150 Q 150 120 175 105 Q 200 90 230 95 Q 260 100 275 120 Q 290 140 290 170 Q 290 200 280 230 Q 270 250 250 265"/>
+                    
+                    <!-- Forehead to brow -->
+                    <path class="main-outline" d="M 150 150 L 150 170 Q 148 180 145 185"/>
+                    
+                    <!-- Brow ridge -->
+                    <path class="feature-line" d="M 145 185 Q 142 188 142 192 Q 142 195 145 197"/>
+                    
+                    <!-- Nose -->
+                    <path class="main-outline" d="M 145 197 L 145 220 Q 145 230 150 235 L 165 238 Q 175 239 180 240 Q 185 241 185 245 Q 185 248 182 250"/>
+                    
+                    <!-- Mouth/lips -->
+                    <path class="feature-line" d="M 182 250 Q 175 252 170 254 Q 165 256 165 260 Q 165 264 170 266 Q 175 268 180 268"/>
+                    
+                    <!-- Chin -->
+                    <path class="main-outline" d="M 180 268 Q 185 275 185 285 Q 185 295 180 305 Q 175 315 165 320"/>
+                    
+                    <!-- Jaw to neck -->
+                    <path class="main-outline" d="M 165 320 Q 155 325 150 335 L 150 380 L 155 420"/>
+                    
+                    <!-- Back of neck -->
+                    <path class="main-outline" d="M 250 265 Q 245 280 240 300 L 235 380 L 240 420"/>
+                </g>
+
+                <!-- Facial features -->
+                <g id="facialFeatures">
+                    <!-- Eye -->
+                    <ellipse cx="170" cy="195" rx="15" ry="8" fill="none" class="feature-line"/>
+                    <circle cx="170" cy="195" r="5" fill="none" class="feature-line"/>
+                    <circle cx="170" cy="195" r="2" fill="#2c3e50"/>
+                    
+                    <!-- Eyebrow -->
+                    <path class="feature-line" d="M 155 185 Q 170 182 185 184"/>
+                    
+                    <!-- Ear -->
+                    <path class="feature-line" d="M 240 195 Q 255 190 260 200 Q 265 210 260 225 Q 255 235 245 235 Q 238 235 235 225"/>
+                    <path class="feature-line" d="M 245 205 Q 250 210 248 215"/>
+                    
+                    <!-- Nostril -->
+                    <ellipse cx="175" cy="235" rx="4" ry="3" fill="none" class="feature-line"/>
+                </g>
+
+                <!-- Leonardo's characteristic hatching -->
+                <g id="hatchingGroup" class="hatching-group">
+                    <!-- Diagonal hatching for shadows -->
+                    <g id="foreheadHatching">
+                        <line x1="155" y1="130" x2="165" y2="140" class="hatching"/>
+                        <line x1="160" y1="130" x2="170" y2="140" class="hatching"/>
+                        <line x1="165" y1="130" x2="175" y2="140" class="hatching"/>
+                        <line x1="170" y1="130" x2="180" y2="140" class="hatching"/>
+                        <line x1="175" y1="130" x2="185" y2="140" class="hatching"/>
+                        <line x1="180" y1="130" x2="190" y2="140" class="hatching"/>
+                    </g>
+                    
+                    <!-- Cheek hatching -->
+                    <g id="cheekHatching">
+                        <line x1="185" y1="250" x2="195" y2="260" class="hatching"/>
+                        <line x1="188" y1="252" x2="198" y2="262" class="hatching"/>
+                        <line x1="191" y1="254" x2="201" y2="264" class="hatching"/>
+                        <line x1="194" y1="256" x2="204" y2="266" class="hatching"/>
+                        <line x1="197" y1="258" x2="207" y2="268" class="hatching"/>
+                    </g>
+                    
+                    <!-- Neck hatching -->
+                    <g id="neckHatching">
+                        <line x1="155" y1="340" x2="165" y2="350" class="hatching"/>
+                        <line x1="158" y1="343" x2="168" y2="353" class="hatching"/>
+                        <line x1="161" y1="346" x2="171" y2="356" class="hatching"/>
+                        <line x1="164" y1="349" x2="174" y2="359" class="hatching"/>
+                        <line x1="167" y1="352" x2="177" y2="362" class="hatching"/>
+                        <line x1="170" y1="355" x2="180" y2="365" class="hatching"/>
+                    </g>
+                    
+                    <!-- Skull hatching -->
+                    <g id="skullHatching">
+                        <line x1="200" y1="100" x2="210" y2="110" class="hatching"/>
+                        <line x1="205" y1="100" x2="215" y2="110" class="hatching"/>
+                        <line x1="210" y1="100" x2="220" y2="110" class="hatching"/>
+                        <line x1="215" y1="100" x2="225" y2="110" class="hatching"/>
+                        <line x1="220" y1="100" x2="230" y2="110" class="hatching"/>
+                        <line x1="225" y1="100" x2="235" y2="110" class="hatching"/>
+                        <line x1="230" y1="100" x2="240" y2="110" class="hatching"/>
+                    </g>
+                </g>
+
+                <!-- Proportion annotations -->
+                <g id="annotations" opacity="0">
+                    <text x="320" y="125" font-size="12" fill="#BE622F">1/3</text>
+                    <text x="320" y="200" font-size="12" fill="#BE622F">1/3</text>
+                    <text x="320" y="275" font-size="12" fill="#BE622F">1/3</text>
+                </g>
+            </svg>
+        </div>
+
+        <div class="controls">
+            <button onclick="toggleGrid()">Toggle Grid</button>
+            <button onclick="toggleConstruction()">Show Construction</button>
+            <button onclick="toggleHatching()">Leonardo's Hatching</button>
+            <button onclick="showProportions()">Reveal Proportions</button>
+            <button onclick="animateDrawing()">Animate Drawing</button>
+        </div>
+
+        <div class="info-panel">
+            <h3>Leonardo's Mathematical Beauty</h3>
+            <p>
+                This drawing shows Leonardo's systematic approach to ideal proportions. The grid divides the head 
+                into mathematical units, revealing the hidden geometry of the human face.
+            </p>
+            
+            <div class="proportion-note">
+                <strong>The Divine Proportions:</strong><br>
+                • The face divides into three equal parts: hairline to brow, brow to nose bottom, nose to chin<br>
+                • The head fits within a square from chin to top of skull<br>
+                • The ear aligns with the eyebrow and nose<br>
+                • These ratios appear throughout nature - Leonardo called them "divine"
+            </div>
+            
+            <p style="margin-top: 15px;">
+                Notice the characteristic left-handed hatching (diagonal lines going from lower-left to upper-right) 
+                that Leonardo used for shading. This technique creates volume and depth with just pen and ink.
+            </p>
+            
+            <p style="margin-top: 15px; color: #7f8c8d; font-style: italic;">
+                "The painter who draws merely by practice and by eye, without any reason, is like a mirror which 
+                copies everything placed in front of it without being conscious of their existence." - Leonardo da Vinci
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let gridVisible = true;
+        let constructionVisible = false;
+        let hatchingVisible = false;
+        let proportionsVisible = false;
+
+        function toggleGrid() {
+            const grid = document.getElementById('proportionalGrid');
+            gridVisible = !gridVisible;
+            grid.style.opacity = gridVisible ? '1' : '0';
+        }
+
+        function toggleConstruction() {
+            const construction = document.getElementById('constructionLines');
+            constructionVisible = !constructionVisible;
+            if (constructionVisible) {
+                construction.classList.add('construction-visible');
+            } else {
+                construction.classList.remove('construction-visible');
+            }
+        }
+
+        function toggleHatching() {
+            const hatching = document.getElementById('hatchingGroup');
+            hatchingVisible = !hatchingVisible;
+            if (hatchingVisible) {
+                hatching.classList.add('hatching-visible');
+            } else {
+                hatching.classList.remove('hatching-visible');
+            }
+        }
+
+        function showProportions() {
+            const annotations = document.getElementById('annotations');
+            proportionsVisible = !proportionsVisible;
+            annotations.style.opacity = proportionsVisible ? '1' : '0';
+            
+            // Also highlight the three main divisions
+            if (proportionsVisible) {
+                toggleConstruction();
+            }
+        }
+
+        function animateDrawing() {
+            const paths = document.querySelectorAll('.main-outline, .feature-line');
+            
+            // Reset animation
+            paths.forEach(path => {
+                path.style.strokeDasharray = 'none';
+                path.style.strokeDashoffset = '0';
+            });
+            
+            // Trigger reflow
+            void document.body.offsetHeight;
+            
+            // Animate each path
+            paths.forEach((path, index) => {
+                const length = path.getTotalLength();
+                path.style.strokeDasharray = length;
+                path.style.strokeDashoffset = length;
+                path.style.animation = `drawLine ${1 + index * 0.2}s ease forwards`;
+                path.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+
+        // Add interactivity - clicking on different parts shows their proportional relationships
+        document.getElementById('leonardoDrawing').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 400;
+            const y = ((e.clientY - rect.top) / rect.height) * 500;
+            
+            // Check which grid section was clicked
+            if (x > 100 && x < 300 && y > 100 && y < 400) {
+                const section = Math.floor((y - 100) / 50);
+                console.log(`Clicked section ${String.fromCharCode(97 + section)} of the grid`);
+            }
+        });
+    </script>
+</body>
+</html>

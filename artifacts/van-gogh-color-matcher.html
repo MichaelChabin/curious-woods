@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Van Gogh Color Matcher</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Georgia, serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: normal;
+        }
+
+        .subtitle {
+            margin-top: 5px;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .painting-section {
+            flex: 1;
+        }
+
+        .painting-container {
+            position: relative;
+            background: #f5f5f0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .painting-image {
+            width: 100%;
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .painting-title {
+            font-size: 16px;
+            font-style: italic;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #666;
+        }
+
+        .color-spots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .color-spot {
+            aspect-ratio: 1;
+            border: 2px solid #333;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .color-spot:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        .color-spot.active {
+            box-shadow: 0 0 0 3px #FFD700;
+            transform: scale(1.1);
+        }
+
+        .spot-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            white-space: nowrap;
+            background: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .color-spot:hover .spot-label {
+            opacity: 1;
+        }
+
+        .matching-section {
+            flex: 1;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .target-display {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .swatch-container {
+            text-align: center;
+        }
+
+        .swatch {
+            width: 120px;
+            height: 120px;
+            border: 3px solid #333;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.2);
+        }
+
+        .swatch-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .rgb-display {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .slider-controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .slider-group {
+            margin-bottom: 20px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .slider-label span:first-child {
+            font-weight: bold;
+        }
+
+        .slider-value {
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        #redSlider {
+            background: linear-gradient(to right, #000, #FF0000);
+        }
+
+        #greenSlider {
+            background: linear-gradient(to right, #000, #00FF00);
+        }
+
+        #blueSlider {
+            background: linear-gradient(to right, #000, #0000FF);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: Georgia, serif;
+        }
+
+        .btn-check {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-check:hover {
+            background: #229954;
+        }
+
+        .btn-hint {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-hint:hover {
+            background: #e67e22;
+        }
+
+        .btn-next {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-next:hover {
+            background: #2980b9;
+        }
+
+        .score-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .accuracy {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.perfect {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.close {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .feedback.far {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .toggle-label {
+            font-size: 12px;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #FFD700;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .pigment-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f0f8ff;
+            border-left: 3px solid #3498db;
+            border-radius: 3px;
+            font-size: 13px;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .pigment-info.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Van Gogh Color Matcher</h1>
+            <div class="subtitle">Learn RGB by matching colors from "The Starry Night"</div>
+            <div class="mode-toggle">
+                <span class="toggle-label">Show RGB Values:</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="easyMode" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="painting-section">
+                <div class="painting-container">
+                    <div class="painting-title">"The Starry Night" - Vincent van Gogh, 1889</div>
+                    <!-- Add your image here by replacing YOUR_IMAGE_URL with the actual URL or file path -->
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" alt="The Starry Night" class="painting-image">
+                    <div class="painting-title">Click a color below to start matching!</div>
+                    <div class="color-spots" id="colorSpots"></div>
+                </div>
+            </div>
+
+            <div class="matching-section">
+                <h2 style="margin-top: 0; font-size: 20px; text-align: center;">Match the Color!</h2>
+                
+                <div class="target-display">
+                    <div class="swatch-container">
+                        <div class="swatch" id="targetSwatch"></div>
+                        <div class="swatch-label">Van Gogh's Color</div>
+                        <div class="rgb-display" id="targetRGB">Click a color!</div>
+                    </div>
+                    <div class="swatch-container">
+                        <div class="swatch" id="userSwatch" style="background: rgb(128,128,128)"></div>
+                        <div class="swatch-label">Your Match</div>
+                        <div class="rgb-display" id="userRGB">RGB(128, 128, 128)</div>
+                    </div>
+                </div>
+
+                <div class="slider-controls">
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span style="color: #CC0000;">Red</span>
+                            <span class="slider-value" id="redValue">128</span>
+                        </div>
+                        <input type="range" id="redSlider" min="0" max="255" value="128">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span style="color: #00AA00;">Green</span>
+                            <span class="slider-value" id="greenValue">128</span>
+                        </div>
+                        <input type="range" id="greenSlider" min="0" max="255" value="128">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span style="color: #0066CC;">Blue</span>
+                            <span class="slider-value" id="blueValue">128</span>
+                        </div>
+                        <input type="range" id="blueSlider" min="0" max="255" value="128">
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-check" onclick="checkMatch()">Check Match</button>
+                    <button class="btn btn-hint" onclick="showHint()">Hint</button>
+                    <button class="btn btn-next" onclick="nextColor()">Next Color</button>
+                </div>
+
+                <div class="feedback" id="feedback"></div>
+                
+                <div class="pigment-info" id="pigmentInfo"></div>
+
+                <div class="score-section">
+                    <div>Score: <span class="score" id="score">0</span> / <span id="attempts">0</span></div>
+                    <div class="accuracy" id="accuracy"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Van Gogh's palette colors with historical info
+        const vanGoghColors = [
+            {
+                name: "Prussian Blue",
+                rgb: [30, 58, 95],
+                pigment: "Ferric ferrocyanide",
+                use: "The deep, swirling night sky",
+                historical: "Discovered by accident in 1706, this was Van Gogh's darkest blue."
+            },
+            {
+                name: "Cobalt Blue",
+                rgb: [0, 71, 171],
+                pigment: "Cobalt aluminate",
+                use: "Spiraling stars",
+                historical: "Expensive but stable, discovered in 1802."
+            },
+            {
+                name: "Ultramarine",
+                rgb: [46, 80, 144],
+                pigment: "Synthetic lapis lazuli",
+                use: "The large star",
+                historical: "Once more valuable than gold when made from real lapis."
+            },
+            {
+                name: "Chrome Yellow",
+                rgb: [255, 200, 46],
+                pigment: "Lead chromate",
+                use: "Moon and bright stars",
+                historical: "Toxic but beloved by Van Gogh for its brilliance."
+            },
+            {
+                name: "Cadmium Yellow",
+                rgb: [255, 215, 0],
+                pigment: "Cadmium sulfide",
+                use: "Star halos",
+                historical: "Brand new and expensive in 1889."
+            },
+            {
+                name: "Yellow Ochre",
+                rgb: [196, 160, 0],
+                pigment: "Iron oxide",
+                use: "Village lights",
+                historical: "One of the oldest pigments known to humanity."
+            },
+            {
+                name: "Emerald Green",
+                rgb: [80, 200, 120],
+                pigment: "Copper acetoarsenite",
+                use: "Rolling hills",
+                historical: "Contains arsenic! Also called 'Paris Green'."
+            },
+            {
+                name: "Viridian",
+                rgb: [64, 130, 109],
+                pigment: "Chromium oxide",
+                use: "Cypress tree shadows",
+                historical: "Transparent and stable, loved by Impressionists."
+            },
+            {
+                name: "Lead White",
+                rgb: [255, 254, 247],
+                pigment: "Lead carbonate",
+                use: "Star highlights",
+                historical: "The only white that worked well with oil until the 20th century."
+            },
+            {
+                name: "Zinc White", 
+                rgb: [250, 255, 245],
+                pigment: "Zinc oxide",
+                use: "Glazing effects",
+                historical: "Cooler and more transparent than lead white."
+            },
+            {
+                name: "Ivory Black",
+                rgb: [28, 28, 28],
+                pigment: "Charred bone",
+                use: "Outlines and mixing",
+                historical: "Originally made from burnt ivory, later from bones."
+            },
+            {
+                name: "Mixed Purple",
+                rgb: [75, 0, 130],
+                pigment: "Cobalt Blue + Red Lake",
+                use: "Night sky depths",
+                historical: "Van Gogh mixed his own purples from red and blue."
+            }
+        ];
+
+        let currentColor = null;
+        let score = 0;
+        let attempts = 0;
+        let hintGiven = false;
+
+        // Initialize color spots
+        function initColorSpots() {
+            const container = document.getElementById('colorSpots');
+            vanGoghColors.forEach((color, index) => {
+                const spot = document.createElement('div');
+                spot.className = 'color-spot';
+                spot.style.background = `rgb(${color.rgb[0]}, ${color.rgb[1]}, ${color.rgb[2]})`;
+                spot.onclick = () => selectColor(index);
+                
+                const label = document.createElement('div');
+                label.className = 'spot-label';
+                label.textContent = color.name;
+                spot.appendChild(label);
+                
+                container.appendChild(spot);
+            });
+        }
+
+        // Select a color to match
+        function selectColor(index) {
+            // Remove active class from all spots
+            document.querySelectorAll('.color-spot').forEach(spot => {
+                spot.classList.remove('active');
+            });
+            
+            // Add active class to selected spot
+            document.querySelectorAll('.color-spot')[index].classList.add('active');
+            
+            currentColor = vanGoghColors[index];
+            const [r, g, b] = currentColor.rgb;
+            
+            // Update target swatch
+            document.getElementById('targetSwatch').style.background = `rgb(${r}, ${g}, ${b})`;
+            document.getElementById('targetRGB').textContent = `RGB(${r}, ${g}, ${b})`;
+            
+            // Hide feedback and pigment info
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('pigmentInfo').classList.remove('show');
+            
+            // Reset hint flag
+            hintGiven = false;
+            
+            // Reset sliders to middle gray
+            resetSliders();
+        }
+
+        // Reset sliders
+        function resetSliders() {
+            document.getElementById('redSlider').value = 128;
+            document.getElementById('greenSlider').value = 128;
+            document.getElementById('blueSlider').value = 128;
+            updateUserColor();
+        }
+
+        // Update user color based on sliders
+        function updateUserColor() {
+            const r = document.getElementById('redSlider').value;
+            const g = document.getElementById('greenSlider').value;
+            const b = document.getElementById('blueSlider').value;
+            
+            document.getElementById('userSwatch').style.background = `rgb(${r}, ${g}, ${b})`;
+            
+            // Update slider values display
+            document.getElementById('redValue').textContent = r;
+            document.getElementById('greenValue').textContent = g;
+            document.getElementById('blueValue').textContent = b;
+            
+            // Update RGB display if in easy mode
+            if (document.getElementById('easyMode').checked) {
+                document.getElementById('userRGB').textContent = `RGB(${r}, ${g}, ${b})`;
+            } else {
+                document.getElementById('userRGB').textContent = `RGB(?, ?, ?)`;
+            }
+        }
+
+        // Check color match
+        function checkMatch() {
+            if (!currentColor) {
+                alert('Please select a color from the palette first!');
+                return;
+            }
+            
+            const userR = parseInt(document.getElementById('redSlider').value);
+            const userG = parseInt(document.getElementById('greenSlider').value);
+            const userB = parseInt(document.getElementById('blueSlider').value);
+            
+            const [targetR, targetG, targetB] = currentColor.rgb;
+            
+            // Calculate color distance (Euclidean distance in RGB space)
+            const distance = Math.sqrt(
+                Math.pow(userR - targetR, 2) +
+                Math.pow(userG - targetG, 2) +
+                Math.pow(userB - targetB, 2)
+            );
+            
+            // Maximum possible distance is ~441 (from black to white)
+            const accuracy = Math.max(0, 100 - (distance / 441 * 100));
+            
+            attempts++;
+            
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('perfect', 'close', 'far');
+            
+            if (accuracy >= 95) {
+                score++;
+                feedback.innerHTML = `<strong>Perfect!</strong> You matched ${currentColor.name} exactly!`;
+                feedback.classList.add('perfect');
+                showPigmentInfo();
+            } else if (accuracy >= 80) {
+                score += 0.5;
+                feedback.innerHTML = `<strong>Very close!</strong> ${accuracy.toFixed(1)}% accurate. Try adjusting slightly.`;
+                feedback.classList.add('close');
+            } else {
+                feedback.innerHTML = `<strong>Keep trying!</strong> ${accuracy.toFixed(1)}% accurate. ${getColorHint(userR, userG, userB, targetR, targetG, targetB)}`;
+                feedback.classList.add('far');
+            }
+            
+            feedback.classList.add('show');
+            updateScore();
+        }
+
+        // Get hint about which way to adjust
+        function getColorHint(userR, userG, userB, targetR, targetG, targetB) {
+            const hints = [];
+            if (Math.abs(userR - targetR) > 30) {
+                hints.push(userR < targetR ? "more red" : "less red");
+            }
+            if (Math.abs(userG - targetG) > 30) {
+                hints.push(userG < targetG ? "more green" : "less green");
+            }
+            if (Math.abs(userB - targetB) > 30) {
+                hints.push(userB < targetB ? "more blue" : "less blue");
+            }
+            return hints.length > 0 ? `Try ${hints.join(", ")}.` : "";
+        }
+
+        // Show hint
+        function showHint() {
+            if (!currentColor) {
+                alert('Please select a color from the palette first!');
+                return;
+            }
+            
+            if (!hintGiven) {
+                const [r, g, b] = currentColor.rgb;
+                const feedback = document.getElementById('feedback');
+                feedback.innerHTML = `<strong>Hint:</strong> The ${currentColor.name} has ${r > 127 ? 'high' : 'low'} red, ${g > 127 ? 'high' : 'low'} green, and ${b > 127 ? 'high' : 'low'} blue values.`;
+                feedback.classList.remove('perfect', 'close', 'far');
+                feedback.classList.add('close');
+                feedback.classList.add('show');
+                hintGiven = true;
+            }
+        }
+
+        // Show pigment info
+        function showPigmentInfo() {
+            const info = document.getElementById('pigmentInfo');
+            info.innerHTML = `
+                <strong>${currentColor.name}</strong><br>
+                <em>Pigment:</em> ${currentColor.pigment}<br>
+                <em>Used for:</em> ${currentColor.use}<br>
+                <em>Historical note:</em> ${currentColor.historical}
+            `;
+            info.classList.add('show');
+        }
+
+        // Next color
+        function nextColor() {
+            const randomIndex = Math.floor(Math.random() * vanGoghColors.length);
+            selectColor(randomIndex);
+        }
+
+        // Update score display
+        function updateScore() {
+            document.getElementById('score').textContent = score.toFixed(1);
+            document.getElementById('attempts').textContent = attempts;
+            if (attempts > 0) {
+                const percentage = (score / attempts * 100).toFixed(1);
+                document.getElementById('accuracy').textContent = `Overall Accuracy: ${percentage}%`;
+            }
+        }
+
+        // Easy mode toggle
+        document.getElementById('easyMode').addEventListener('change', function() {
+            updateUserColor();
+            if (!this.checked) {
+                document.getElementById('targetRGB').textContent = currentColor ? '???' : 'Click a color!';
+            } else if (currentColor) {
+                const [r, g, b] = currentColor.rgb;
+                document.getElementById('targetRGB').textContent = `RGB(${r}, ${g}, ${b})`;
+            }
+        });
+
+        // Slider event listeners
+        document.getElementById('redSlider').addEventListener('input', updateUserColor);
+        document.getElementById('greenSlider').addEventListener('input', updateUserColor);
+        document.getElementById('blueSlider').addEventListener('input', updateUserColor);
+
+        // Initialize
+        initColorSpots();
+        updateUserColor();
+    </script>
+</body>
+</html>

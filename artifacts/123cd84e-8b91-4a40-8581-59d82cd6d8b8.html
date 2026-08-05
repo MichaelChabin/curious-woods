@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Biomorphs — after Dawkins</title>
+<style>
+  :root{
+    --paper:#f3efe6; --ink:#2a2722; --line:#2a2722;
+    --copper:#be622f; --muted:#8a8070; --cell:#fbf9f3;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:Georgia,"Times New Roman",serif}
+  .wrap{max-width:760px;margin:0 auto;padding:18px 16px 40px}
+  h1{font-size:22px;font-weight:normal;letter-spacing:.2px;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:13px;font-style:italic;margin:0 0 14px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .cell{position:relative;background:var(--cell);border:1px solid #e4ddcd;
+    border-radius:6px;aspect-ratio:1/1;overflow:hidden;cursor:pointer;
+    transition:border-color .15s, box-shadow .15s}
+  .cell:active{box-shadow:inset 0 0 0 2px var(--copper)}
+  .cell.parent{border-color:var(--copper);box-shadow:0 0 0 1px var(--copper)}
+  .cell canvas{width:100%;height:100%;display:block}
+  .tag{position:absolute;top:5px;left:7px;font-size:10px;font-style:italic;
+    color:var(--copper);letter-spacing:.3px}
+  .bar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:14px 2px 0;
+    font-size:13px;color:var(--muted)}
+  .bar button{font-family:inherit;font-size:13px;color:var(--ink);background:none;
+    border:none;border-bottom:1px solid var(--copper);padding:2px 0;cursor:pointer}
+  .bar button:disabled{color:#c8c0b0;border-color:#ddd5c4;cursor:default}
+  .genome{margin:12px 2px 0;font-size:12px;color:var(--muted)}
+  .genome b{color:var(--ink);font-weight:normal}
+  .genome code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:12px;
+    color:var(--ink);letter-spacing:.5px}
+  .note{margin:18px 2px 0;font-size:12px;line-height:1.5;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Biomorphs</h1>
+  <p class="sub">After Dawkins, <em>The Blind Watchmaker</em> (1986). Tap any creature to breed from it.</p>
+  <div class="grid" id="grid"></div>
+  <div class="bar">
+    <span>generation <b id="gen" style="color:var(--ink)">0</b></span>
+    <button id="back">← step back</button>
+    <button id="rnd">↻ new ancestor</button>
+  </div>
+  <div class="genome">parent genome &nbsp; <code id="geno"></code></div>
+  <div class="note">
+    Nine genes. Eight shape the branching directions; the ninth sets recursion
+    depth. Each child differs from the parent by a single mutation of one gene —
+    asexual reproduction, exactly as Dawkins described. Selection is yours: the
+    eye decides what survives.
+  </div>
+</div>
+<script>
+(function(){
+  const NSHAPE = 8, GMIN = -9, GMAX = 9, OMIN = 2, OMAX = 8;
+  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+  const rint = (a,b)=>a+Math.floor(Math.random()*(b-a+1));
+
+  function randomGenome(){
+    const g = [];
+    for(let i=0;i<NSHAPE;i++) g.push(rint(-4,4));
+    g.push(rint(3,6)); // order/depth
+    return g;
+  }
+
+  // 8 direction vectors, built with bilateral symmetry about the vertical axis.
+  function dirs(g){
+    const dx = [0, g[0], g[1], g[2], 0, -g[2], -g[1], -g[0]];
+    const dy = [g[3], g[4], g[5], g[6], g[7], g[6], g[5], g[4]];
+    return {dx,dy};
+  }
+
+  // Walk the recursive tree, calling fn(x1,y1,x2,y2) for each segment.
+  function walk(g, fn){
+    const {dx,dy} = dirs(g);
+    const order = clamp(g[8], OMIN, OMAX);
+    (function rec(x,y,depth,dir){
+      dir = ((dir%8)+8)%8;
+      const nx = x + depth*dx[dir];
+      const ny = y - depth*dy[dir];   // screen y grows downward; minus = up
+      fn(x,y,nx,ny);
+      if(depth>0){ rec(nx,ny,depth-1,dir-1); rec(nx,ny,depth-1,dir+1); }
+    })(0,0,order,0);
+  }
+
+  function draw(canvas, g, isParent){
+    const dpr = window.devicePixelRatio||1;
+    const rect = canvas.getBoundingClientRect();
+    const W = Math.max(40,rect.width), H = Math.max(40,rect.height);
+    canvas.width = W*dpr; canvas.height = H*dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+
+    // pass 1: bounding box
+    let minX=0,maxX=0,minY=0,maxY=0;
+    walk(g,(x1,y1,x2,y2)=>{
+      minX=Math.min(minX,x2);maxX=Math.max(maxX,x2);
+      minY=Math.min(minY,y2);maxY=Math.max(maxY,y2);
+    });
+    const pad=14;
+    const bw=Math.max(1,maxX-minX), bh=Math.max(1,maxY-minY);
+    const scale=Math.min((W-2*pad)/bw,(H-2*pad)/bh);
+    const ox=pad+((W-2*pad)-scale*bw)/2 - scale*minX;
+    const oy=pad+((H-2*pad)-scale*bh)/2 - scale*minY;
+    const X=p=>ox+scale*p, Y=p=>oy+scale*p;
+
+    // pass 2: draw
+    ctx.strokeStyle = isParent ? '#1d1a16' : '#2a2722';
+    ctx.lineWidth = isParent ? 1.4 : 1.1;
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.beginPath();
+    walk(g,(x1,y1,x2,y2)=>{ ctx.moveTo(X(x1),Y(y1)); ctx.lineTo(X(x2),Y(y2)); });
+    ctx.stroke();
+  }
+
+  // Eight distinct single-gene mutations (gene index + direction), sampled without repeats.
+  function children(parent, n){
+    const opts=[];
+    for(let i=0;i<9;i++){ opts.push([i,+1]); opts.push([i,-1]); }
+    for(let i=opts.length-1;i>0;i--){ const j=rint(0,i); [opts[i],opts[j]]=[opts[j],opts[i]]; }
+    const kids=[];
+    for(let k=0;k<n;k++){
+      const c=parent.slice();
+      const [gi,d]=opts[k%opts.length];
+      if(gi<NSHAPE) c[gi]=clamp(c[gi]+d,GMIN,GMAX);
+      else c[8]=clamp(c[8]+d,OMIN,OMAX);
+      kids.push(c);
+    }
+    return kids;
+  }
+
+  // State
+  const gridEl=document.getElementById('grid');
+  const genoEl=document.getElementById('geno');
+  const genEl=document.getElementById('gen');
+  const backBtn=document.getElementById('back');
+  let parent, history=[], generation=0;
+  const cells=[];
+
+  for(let i=0;i<9;i++){
+    const d=document.createElement('div');
+    d.className='cell';
+    const c=document.createElement('canvas');
+    d.appendChild(c);
+    d.addEventListener('click',()=>select(i));
+    gridEl.appendChild(d);
+    cells.push({el:d,canvas:c,genome:null});
+  }
+
+  function render(){
+    const kids=children(parent,8);
+    const layout=[]; let ki=0;
+    for(let i=0;i<9;i++){ if(i===4){layout.push(parent);} else {layout.push(kids[ki++]);} }
+    cells.forEach((cell,i)=>{
+      cell.genome=layout[i];
+      const isP = i===4;
+      cell.el.classList.toggle('parent',isP);
+      cell.el.querySelector('.tag')?.remove();
+      if(isP){ const t=document.createElement('span'); t.className='tag'; t.textContent='parent'; cell.el.appendChild(t); }
+      draw(cell.canvas,layout[i],isP);
+    });
+    genoEl.textContent='['+parent.join(', ')+']';
+    genEl.textContent=generation;
+    backBtn.disabled=history.length===0;
+  }
+
+  function select(i){
+    if(i===4) return;            // tapping the parent does nothing
+    history.push(parent.slice());
+    parent=cells[i].genome.slice();
+    generation++;
+    render();
+  }
+
+  document.getElementById('back').addEventListener('click',()=>{
+    if(history.length){ parent=history.pop(); generation=Math.max(0,generation-1); render(); }
+  });
+  document.getElementById('rnd').addEventListener('click',()=>{
+    history=[]; generation=0; parent=randomGenome(); render();
+  });
+
+  window.addEventListener('resize',()=>render());
+
+  parent=randomGenome();
+  render();
+})();
+</script>
+</body>
+</html>

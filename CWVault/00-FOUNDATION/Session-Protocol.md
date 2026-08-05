@@ -1,5 +1,13 @@
 # Session Protocol — Curious Woods
 
+> **STALE IN PARTS — flagged 2026-08-05.** The Project Manager chat, the five-persona
+> chat roster, and `Current-Focus.md` no longer exist; the toolkit path below points at
+> a directory that is gone. What remains correct and important: the filesystem-tools
+> warning, the DECISION / OPEN / HANDOFF markers, and the end-of-session handoff format.
+> **Start a session at `00-BOARD.md`, not at `Current-Focus.md`.** End it by writing the
+> delta back to the board. Rewrite this document when the new rhythm has settled enough
+> to describe honestly.
+
 **Version:** 1.0  
 **Date:** February 18, 2026  
 **Purpose:** Every chat that works on Curious Woods follows this protocol.

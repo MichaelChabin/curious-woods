@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetary - Visual Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0a0a;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        
+        .button-container {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 0, 0, 0.2);
+            padding: 10px;
+            border: 2px solid yellow;
+        }
+        
+        button {
+            display: block;
+            width: 150px;
+            height: 40px;
+            margin: 5px;
+            background: white;
+            color: black;
+            border: 2px solid blue;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: yellow;
+        }
+        
+        .canvas-area {
+            width: 600px;
+            height: 600px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #222;
+            border: 2px solid #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .planet {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: none;
+            position: absolute;
+        }
+        
+        .earth {
+            background: blue;
+            width: 50px;
+            height: 50px;
+        }
+        
+        .jupiter {
+            background: orange;
+            width: 200px;
+            height: 200px;
+        }
+        
+        .mars {
+            background: red;
+            width: 30px;
+            height: 30px;
+        }
+        
+        #message {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            background: black;
+            padding: 10px;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div id="message">Click a button to show a planet</div>
+    
+    <div class="button-container">
+        <button onclick="showPlanet('earth')">Earth</button>
+        <button onclick="showPlanet('jupiter')">Jupiter</button>
+        <button onclick="showPlanet('mars')">Mars</button>
+        <button onclick="hidePlanets()">Clear</button>
+    </div>
+    
+    <div class="canvas-area">
+        <div class="planet earth" id="earth"></div>
+        <div class="planet jupiter" id="jupiter"></div>
+        <div class="planet mars" id="mars"></div>
+    </div>
+    
+    <script>
+        function showPlanet(planetName) {
+            // Hide all planets first
+            document.querySelectorAll('.planet').forEach(p => {
+                p.style.display = 'none';
+            });
+            
+            // Show selected planet
+            const planet = document.getElementById(planetName);
+            if (planet) {
+                planet.style.display = 'block';
+            }
+            
+            // Update message
+            document.getElementById('message').textContent = 'Showing: ' + planetName;
+        }
+        
+        function hidePlanets() {
+            document.querySelectorAll('.planet').forEach(p => {
+                p.style.display = 'none';
+            });
+            document.getElementById('message').textContent = 'All planets hidden';
+        }
+    </script>
+</body>
+</html>
