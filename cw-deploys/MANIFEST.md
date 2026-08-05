@@ -34,8 +34,25 @@ A page that moves between folders must have those paths checked.
 
 ### experiments/
 - **`number-theory-v1.html`** — multiplication and division as rectangles on a
-  pannable number plane. Its grid and axis rendering is the visual reference for
-  Glass Multiplication v2.2.
+  pannable number plane. **The behavioural reference for the extracted plane** — y-up,
+  `viewW/viewH` caching, and a single `labelStep()` driving both labels and grid lines,
+  which is why its texture stays coherent under zoom.
+- **`canvas-panes.html`** — bench: can canvas carry leaded panes of layered glass while
+  panning and zooming? Pane counts 10/16/24/32, glass detail full / flat / came-only,
+  auto-stress. **Passed** — 32×32 is 1024 panes and 3840 pieces at 2.4 ms p95, 14% of
+  the frame budget. It reports *draw time against the budget*, not frame rate: frame
+  rate is vsync-clamped and reads 60fps until it reads 30, so it cannot fail and is
+  useless as a gate. Any future performance bench should measure the same way.
+- **`fills-and-light.html`** — bench: two declared palettes, a resting one and a lit one,
+  rather than one degraded. Both derived from the workshop's declared colour in OKLCH so
+  hue never moves; showing a set moves those panes to the lit palette and nothing is
+  dimmed. All fifteen palettes from `../art/palettes.json` are imported. Selection lives
+  in the lead. Glass is flat with striations and seeds, leaded the way geometry leads.
+  In progress.
+- **`prime-glass.html`** — bench: prime colours across four workshops with ordered
+  stripes and a monochrome toggle. With colour off and order the only channel, 6, 10 and
+  14 render identical — so colour currently carries information rather than delight, and
+  a second channel is required. Two candidates are in the bench. In progress.
 - **`pi-beads.html`** — how many beads fit around a circle; circumference ÷
   diameter, with past measurements kept.
 - **`clinks-triangular.html`** — triangular numbers as people arriving, leaving,
