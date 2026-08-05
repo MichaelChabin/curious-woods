@@ -95,6 +95,10 @@
     <button data-tex="stri" aria-pressed="true">striations</button>
     <button data-tex="off">flat</button>
   </div>
+  <div class="row" style="margin-top:3px">
+    <button data-dir="v" aria-pressed="true">across the stack</button>
+    <button data-dir="h">along the stack</button>
+  </div>
   <input type="range" id="tex" min="0" max="100" value="84">
   <div class="sv"><span>invisible</span><b id="texv">84%</b><span>dirty</span></div>
   <input type="range" id="vary" min="0" max="30" value="9">
@@ -104,17 +108,28 @@
     it is. Hue and chroma hold, so the prime is never in doubt.</div>
   <input type="range" id="spec" min="0" max="100" value="100">
   <div class="sv"><span>no highlight</span><b id="specv">100%</b><span>glossy</span></div>
+  <input type="range" id="aspect" min="0" max="250" value="120">
+  <div class="sv"><span>round</span><b id="aspectv">120%</b><span>elongated</span></div>
+  <input type="range" id="cover" min="0" max="100" value="50">
+  <div class="sv"><span>none catch</span><b id="coverv">50%</b><span>all catch</span></div>
   <div class="hint">Specular highlight — light reflecting <em>off</em> the glass, not
-    shading applied to it. This is the cue that reads as glass rather than paint, and it
-    is a different thing from the inset edge-shadow that domed the lab's pieces. The
-    question it answers: does flat glass need one?</div>
+    shading applied to it, and a different thing from the inset edge-shadow that domed
+    the lab's pieces. A reflection is the shape of the <em>source</em> seen at an angle,
+    so it is rarely round; and a flat sheet catches the light only where the angle
+    happens to be right, not everywhere at once.</div>
 
   <div class="lbl">leading</div>
   <div class="row">
-    <button data-lead="geom" aria-pressed="true">geometry (per region)</button>
+    <button data-lead="piece" aria-pressed="true">every piece</button>
+    <button data-lead="geom">every pane</button>
     <button data-lead="grid">shared lattice</button>
   </div>
+  <input type="range" id="leadv" min="0" max="200" value="52">
+  <div class="sv"><span>black came</span><b id="leadvv">52</b><span>pale came</span></div>
+  <input type="range" id="leadw" min="10" max="50" value="20">
+  <div class="sv"><span>fine</span><b id="leadwv">2.0px</b><span>heavy</span></div>
   <div class="hint" id="leadhint"></div>
+  <div class="hint" id="contrast"></div>
 
   <div class="foot">
     Click a pane to select it — selection lives in the lead.
@@ -265,7 +280,8 @@
 
   let activeSet='none', mode='unlit',
       restC=42, restL=6, litC=125, litL=7,
-      texKind='stri', texAmt=0.84, vary=0.09, spec=1.0, leadStyle='geom', selected=null;
+      texKind='stri', texAmt=0.84, vary=0.09, spec=1.0, aspect=1.2, coverage=0.5,
+      leadStyle='piece', leadVal=52, leadW=2.0, texDir='v', selected=null;
 
   const resting = p => derive(shop.lit[p], restC, restL);
   const litOf   = p => derive(shop.lit[p], litC, litL);
@@ -287,14 +303,18 @@
     return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v;
   }
   function texture(kind){
-    if (kind===patKey) return pat;
-    patKey=kind; if (kind==='off'){ pat=null; return null; }
+    const key=kind+'|'+texDir;
+    if (key===patKey) return pat;
+    patKey=key; if (kind==='off'){ pat=null; return null; }
     const cv=document.createElement('canvas'); cv.width=cv.height=TILE;
     const x=cv.getContext('2d'), img=x.createImageData(TILE,TILE), d=img.data;
     const PX=4, PY=34;
     for (let py=0;py<TILE;py++) for (let px=0;px<TILE;px++){
-      const v=vnoise(px/TILE*PX,py/TILE*PY,PX,PY)*0.72
-             +vnoise(px/TILE*PX*2,py/TILE*PY*2,PX*2,PY*2)*0.28;
+      // 'v' runs the streaks ACROSS the stacking axis, so they do not compete
+      // with the lead lines between pieces.
+      const u=texDir==='v'?py:px, w2=texDir==='v'?px:py;
+      const v=vnoise(u/TILE*PX,w2/TILE*PY,PX,PY)*0.72
+             +vnoise(u/TILE*PX*2,w2/TILE*PY*2,PX*2,PY*2)*0.28;
       const i=(py*TILE+px)*4, s=(v-0.5)*255;
       d[i]=d[i+1]=d[i+2]= s>0?255:0;
       d[i+3]=Math.min(255,Math.abs(s)*1.5);
@@ -357,25 +377,35 @@
         // different thing from the inset edge-shadow that domed the lab's pieces.
         // Off by default; the question is whether flat glass needs it.
         // No highlight on a pane whose light has gone out — nothing to reflect.
-        if (spec>0 && !quiet){
-          const hx=x+w*(0.50+hash(r+i,c*3)*0.32);
-          const hy=y+i*ph+ph*(0.14+hash(c,r*3+i)*0.26);
+        // Only some pieces catch the light at all: a flat sheet reflects the source
+        // where the angle happens to be right, not everywhere at once.
+        const catches = hash(r*13+i, c*29) < coverage;
+        if (spec>0 && !quiet && catches){
+          const hx=x+w*(0.46+hash(r+i,c*3)*0.36);
+          const hy=y+i*ph+ph*(0.12+hash(c,r*3+i)*0.30);
           const span=Math.min(w,ph);
-          const size=0.16+hash(i*7,r+c)*0.40;          // 0.16 .. 0.56 of the piece
-          const hr=Math.max(1,span*size);
-          // Smaller highlights are brighter. A specular highlight is a reflection of
-          // the source: a smoother surface reflects it tightly and intensely, a rougher
-          // one spreads the same energy wider and dimmer. Constant intensity across
-          // sizes reads as wrong because one light cannot make both.
-          const tight=Math.min(2.6, Math.pow(0.42/size, 1.25));
-          // Per-piece strength lands between 50% and 80% of the slider.
-          const strength=spec*(0.50+hash(c*5,r+i)*0.30)*tight;
-          const peak=Math.min(0.95, strength);
-          const gg=ctx.createRadialGradient(hx,hy,0,hx,hy,hr);
+          const size=0.14+hash(i*7,r+c)*0.42;          // 0.14 .. 0.56 of the piece
+          // Elliptical, not round. A reflection is the shape of the source seen at an
+          // angle — a window is not a disc, and the glass is not a sphere.
+          const stretch=1+hash(c*3+i,r*11)*aspect;
+          const along=hash(r*5,c*7+i)>0.5;
+          const rw=Math.max(1, span*size*(along?stretch:1/stretch));
+          const rh=Math.max(1, span*size*(along?1/stretch:stretch));
+          // Smaller highlights burn brighter: the same reflected energy spread over
+          // more area is dimmer per unit area. Scale on AREA now that the two axes
+          // move independently, or a long thin highlight would read too hot.
+          const area=(rw*rh)/(span*span*0.42*0.42);
+          const tight=Math.min(2.8, Math.pow(1/Math.max(0.04,area), 0.62));
+          const peak=Math.min(0.95, spec*(0.50+hash(c*5,r+i)*0.30)*tight);
+          ctx.save();
+          ctx.beginPath(); ctx.rect(x,y+i*ph,w,ph); ctx.clip();
+          ctx.translate(hx,hy); ctx.scale(rw,rh);
+          const gg=ctx.createRadialGradient(0,0,0,0,0,1);
           gg.addColorStop(0,'rgba(255,255,255,'+peak.toFixed(3)+')');
-          gg.addColorStop(0.55,'rgba(255,255,255,'+(peak*0.22).toFixed(3)+')');
+          gg.addColorStop(0.5,'rgba(255,255,255,'+(peak*0.26).toFixed(3)+')');
           gg.addColorStop(1,'rgba(255,255,255,0)');
-          ctx.fillStyle=gg; ctx.fillRect(x,y+i*ph,w,ph);
+          ctx.fillStyle=gg; ctx.fillRect(-1.3,-1.3,2.6,2.6);
+          ctx.restore();
         }
         ctx.restore();
       }
@@ -396,11 +426,21 @@
 
     // ---- leading ----
     const s=v=>Math.round(v)+0.5;
-    ctx.strokeStyle=GEOM_LEAD; ctx.lineWidth=GEOM_LEAD_W;
+    ctx.strokeStyle=rgb2hex([leadVal,leadVal,leadVal]); ctx.lineWidth=leadW;
     ctx.lineJoin='round'; ctx.lineCap='round';
-    if (leadStyle==='geom'){
-      // exactly what geometry does: every region strokes its own outline, so a
-      // shared edge is drawn twice and comes out heavier
+    if (leadStyle==='piece'){
+      // Decision 6 taken literally: a piece is a region, so every piece strokes its
+      // own outline. This is what puts lead between the two blues of 4 and the three
+      // of 8 — without it, same-prime neighbours share an invisible edge and the pane
+      // reads as one block. Shared edges are drawn twice and come out heavier, which
+      // is exactly what geometry produces.
+      for (let r=1;r<=N;r++) for (let c=1;c<=N;c++){
+        const {x,y,w,h}=paneRect(r,c);
+        const k=Math.max(1,factorize(r*c).length), ph=h/k;
+        for (let i=0;i<k;i++) ctx.strokeRect(s(x),s(y+i*ph),Math.round(w),Math.round(ph));
+      }
+    } else if (leadStyle==='geom'){
+      // every PANE strokes its outline; pieces inside share no lead
       for (let r=1;r<=N;r++) for (let c=1;c<=N;c++){
         const {x,y,w,h}=paneRect(r,c);
         ctx.strokeRect(s(x),s(y),Math.round(w),Math.round(h));
@@ -428,7 +468,7 @@
   }
 
   // ---- the twelve, as a set ----
-  function strip(){
+  function strip(){ contrastHint();
     document.getElementById('strip').innerHTML = PRIMES.map(p=>{
       const R=resting(p), L=litOf(p);
       const flag=(R.clipped||L.clipped)?' <span style="color:#b87333">!</span>':'';
@@ -446,6 +486,7 @@
   bind('[data-set]','set',v=>activeSet=v);
   bind('[data-tex]','tex',v=>texKind=v);
   bind('[data-lead]','lead',v=>{leadStyle=v;leadHint();});
+  bind('[data-dir]','dir',v=>{texDir=v;patKey='';});
   bind('[data-mode]','mode',v=>{mode=v;modeHint();});
 
   const shopRow=document.getElementById('shops');
@@ -496,9 +537,31 @@
     el.textContent=t[0]; el.className='hint'+(t[1]?' warn':'');
   }
   function leadHint(){
-    document.getElementById('leadhint').textContent = leadStyle==='geom'
-      ? 'Every region strokes its own outline, so shared edges are drawn twice and read heavier. This is what geometry actually does.'
-      : 'One line per boundary. Lighter and more even, but not what geometry produces.';
+    document.getElementById('leadhint').textContent =
+      leadStyle==='piece' ? 'Decision 6 taken literally: a piece is a region, so each strokes its own outline. This is what separates the two blues of 4 and the three of 8 — without it, same-prime neighbours share an invisible edge.'
+    : leadStyle==='geom'  ? 'Only the pane is leaded. Pieces inside it share no lead, so adjacent pieces of the same prime merge into one block.'
+    :                       'One line per boundary. Lighter and more even, but not what geometry produces.';
+    contrastHint();
+  }
+  // Geometry's #777777 came was chosen against its own glass, #c2d4bc at luminance 207,
+  // where it is a strong dark line. Against a dark resting pane it becomes a *lighter*
+  // line at a fraction of that contrast, which is why piece boundaries stop reading.
+  // Report the weakest separation across the six so it cannot be missed by eye.
+  function contrastHint(){
+    const L=h=>{const c=hex2rgb(h);return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2];};
+    const lead=leadVal;
+    let worst=999, at=null;
+    PRIMES.forEach(p=>{
+      const d=Math.abs(L(resting(p).hex)-lead);
+      if (d<worst){worst=d;at=p;}
+    });
+    const el=document.getElementById('contrast');
+    el.textContent='weakest came separation: '+Math.round(worst)
+      +' luminance, against the resting '+at
+      +(worst<28?' — too close to read as a line'
+        :worst<45?' — thin but holding'
+        :' — clear');
+    el.className='hint'+(worst<28?' warn':'');
   }
   const wire=(id,vid,fn,fmt)=>{const el=document.getElementById(id);
     el.addEventListener('input',e=>{fn(+e.target.value);
@@ -510,6 +573,10 @@
   wire('tex','texv',        v=>texAmt=v/100, v=>v+'%');
   wire('vary','varyv',      v=>vary=v/100,   v=>v+'%');
   wire('spec','specv',      v=>spec=v/100,   v=>v+'%');
+  wire('aspect','aspectv',  v=>aspect=v/100, v=>v+'%');
+  wire('cover','coverv',    v=>coverage=v/100, v=>v+'%');
+  wire('leadv','leadvv',    v=>leadVal=v,    v=>String(v));
+  wire('leadw','leadwv',    v=>leadW=v/10,   v=>(v/10).toFixed(1)+'px');
 
   canvas.addEventListener('pointerdown',e=>{
     e.preventDefault();
