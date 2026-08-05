@@ -64,8 +64,8 @@
 
   <div class="lbl">how the rest behaves</div>
   <div class="row">
-    <button data-mode="rest" aria-pressed="true">stays at rest</button>
-    <button data-mode="unlit">light goes out</button>
+    <button data-mode="rest">stays at rest</button>
+    <button data-mode="unlit" aria-pressed="true">light goes out</button>
     <button data-mode="alpha">fades (old)</button>
   </div>
   <div class="hint" id="modehint"></div>
@@ -77,10 +77,10 @@
   <div class="sv"><span>lightness</span><b id="lightv">+6</b><span>shift</span></div>
 
   <div class="lbl">the lit palette — only the shown set</div>
-  <input type="range" id="lchroma" min="0" max="130" value="100">
-  <div class="sv"><span>chroma</span><b id="lchromav">100%</b><span>of declared</span></div>
-  <input type="range" id="llight" min="-30" max="30" value="0">
-  <div class="sv"><span>lightness</span><b id="llightv">0</b><span>shift</span></div>
+  <input type="range" id="lchroma" min="0" max="130" value="125">
+  <div class="sv"><span>chroma</span><b id="lchromav">125%</b><span>of declared</span></div>
+  <input type="range" id="llight" min="-30" max="30" value="7">
+  <div class="sv"><span>lightness</span><b id="llightv">+7</b><span>shift</span></div>
   <div class="hint">Both are derived from the workshop's declared colour, so hue never
     moves. At 100% / 0 the lit palette <em>is</em> the declared colour. Anything marked
     <span style="color:#b87333">!</span> has left sRGB and is being clipped, which shifts
@@ -91,19 +91,19 @@
 
   <div class="lbl">glass</div>
   <div class="row">
-    <button data-tex="both" aria-pressed="true">striations + seeds</button>
-    <button data-tex="stri">striations</button>
+    <button data-tex="both">striations + seeds</button>
+    <button data-tex="stri" aria-pressed="true">striations</button>
     <button data-tex="off">flat</button>
   </div>
-  <input type="range" id="tex" min="0" max="100" value="30">
-  <div class="sv"><span>invisible</span><b id="texv">30%</b><span>dirty</span></div>
+  <input type="range" id="tex" min="0" max="100" value="84">
+  <div class="sv"><span>invisible</span><b id="texv">84%</b><span>dirty</span></div>
   <input type="range" id="vary" min="0" max="30" value="9">
   <div class="sv"><span>uniform</span><b id="varyv">9%</b><span>every pane differs</span></div>
   <div class="hint">Per-piece lightness variation. The lab gets this free from its
     randomised gradient window; a flat fill has none, which reads as dead however bright
     it is. Hue and chroma hold, so the prime is never in doubt.</div>
-  <input type="range" id="spec" min="0" max="100" value="0">
-  <div class="sv"><span>no highlight</span><b id="specv">0%</b><span>glossy</span></div>
+  <input type="range" id="spec" min="0" max="100" value="100">
+  <div class="sv"><span>no highlight</span><b id="specv">100%</b><span>glossy</span></div>
   <div class="hint">Specular highlight — light reflecting <em>off</em> the glass, not
     shading applied to it. This is the cue that reads as glass rather than paint, and it
     is a different thing from the inset edge-shadow that domed the lab's pieces. The
@@ -263,9 +263,9 @@
     else shop=SHOPS.find(s=>s.id===shop.id)||SHOPS[0];
   }
 
-  let activeSet='none', mode='rest',
-      restC=42, restL=6, litC=100, litL=0,
-      texKind='both', texAmt=0.30, vary=0.09, spec=0, leadStyle='geom', selected=null;
+  let activeSet='none', mode='unlit',
+      restC=42, restL=6, litC=125, litL=7,
+      texKind='stri', texAmt=0.84, vary=0.09, spec=1.0, leadStyle='geom', selected=null;
 
   const resting = p => derive(shop.lit[p], restC, restL);
   const litOf   = p => derive(shop.lit[p], litC, litL);
@@ -356,13 +356,24 @@
         // to it. This is the cue that says "glass" rather than "paint", and it is a
         // different thing from the inset edge-shadow that domed the lab's pieces.
         // Off by default; the question is whether flat glass needs it.
-        if (spec>0 && !(quiet && mode==='alpha')){
-          const hx=x+w*(0.52+hash(r+i,c*3)*0.30);
-          const hy=y+i*ph+ph*(0.16+hash(c,r*3+i)*0.22);
-          const hr=Math.min(w,ph)*(0.34+hash(i,r+c)*0.22);
-          const gg=ctx.createRadialGradient(hx,hy,0,hx,hy,Math.max(1,hr));
-          gg.addColorStop(0,'rgba(255,255,255,'+(spec*0.60).toFixed(3)+')');
-          gg.addColorStop(0.6,'rgba(255,255,255,'+(spec*0.14).toFixed(3)+')');
+        // No highlight on a pane whose light has gone out — nothing to reflect.
+        if (spec>0 && !quiet){
+          const hx=x+w*(0.50+hash(r+i,c*3)*0.32);
+          const hy=y+i*ph+ph*(0.14+hash(c,r*3+i)*0.26);
+          const span=Math.min(w,ph);
+          const size=0.16+hash(i*7,r+c)*0.40;          // 0.16 .. 0.56 of the piece
+          const hr=Math.max(1,span*size);
+          // Smaller highlights are brighter. A specular highlight is a reflection of
+          // the source: a smoother surface reflects it tightly and intensely, a rougher
+          // one spreads the same energy wider and dimmer. Constant intensity across
+          // sizes reads as wrong because one light cannot make both.
+          const tight=Math.min(2.6, Math.pow(0.42/size, 1.25));
+          // Per-piece strength lands between 50% and 80% of the slider.
+          const strength=spec*(0.50+hash(c*5,r+i)*0.30)*tight;
+          const peak=Math.min(0.95, strength);
+          const gg=ctx.createRadialGradient(hx,hy,0,hx,hy,hr);
+          gg.addColorStop(0,'rgba(255,255,255,'+peak.toFixed(3)+')');
+          gg.addColorStop(0.55,'rgba(255,255,255,'+(peak*0.22).toFixed(3)+')');
           gg.addColorStop(1,'rgba(255,255,255,0)');
           ctx.fillStyle=gg; ctx.fillRect(x,y+i*ph,w,ph);
         }
