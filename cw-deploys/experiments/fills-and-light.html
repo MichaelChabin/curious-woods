@@ -193,9 +193,15 @@
   // Hand-authored sets that are not in palettes.json. Signal is built from Okabe-Ito,
   // so no two primes rely on the red-green axis.
   const HAND_SHOPS=[
+    // What the lab actually ships today. These are the dominant stop of each prime's
+    // four-stop gradient in active/glass-multiplication.html, after Batch A swapped
+    // 5 and 7. Only 2/3/5/7 exist there; 11 and 13 are invented to the decisions
+    // doc's "rich purple, rich orange" and are marked as such.
+    { id:'aslab', name:'As the lab ships', invented:[11,13],
+      lit:{2:'#123875',3:'#927600',5:'#781f13',7:'#326924',11:'#4a1d78',13:'#8f4500'} },
     { id:'signal', name:'Signal',
       lit:{2:'#0072B2',3:'#E69F00',5:'#D55E00',7:'#009E73',11:'#CC79A7',13:'#56B4E9'} },
-    { id:'ember', name:'Ember',
+    { id:'ember', name:'Ember', invented:[2,3,5,7,11,13],
       lit:{2:'#22355e',3:'#a8720c',5:'#8a1f12',7:'#3a5c2c',11:'#5a2a6b',13:'#b04a12'} }
   ];
 
@@ -405,8 +411,14 @@
   }
   function shopHint(){
     const el=document.getElementById('shophint');
-    if (!shop.colors){ el.textContent='hand-authored — six primes declared directly';
-                       el.className='hint'; return; }
+    if (!shop.colors){
+      const inv=shop.invented;
+      el.textContent = shop.id==='aslab'
+        ? 'the colours active/glass-multiplication.html ships today — 11 and 13 invented'
+        : 'hand-authored — six primes declared directly'
+          + (inv && inv.length===6 ? ', none of them from the lab or palettes.json' : '');
+      el.className='hint'; return;
+    }
     const d=shop.lit._distinct||6;
     el.textContent = shop.colors.length+' glass colours; six chosen by hue separation'
       + (d<6 ? ' — only '+d+' usable hues, so primes repeat' : '');
