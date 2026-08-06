@@ -71,8 +71,8 @@
   <div class="hint" id="modehint"></div>
 
   <div class="lbl">the resting palette — most of the window, most of the time</div>
-  <input type="range" id="chroma" min="0" max="130" value="42">
-  <div class="sv"><span>chroma</span><b id="chromav">42%</b><span>of declared</span></div>
+  <input type="range" id="chroma" min="0" max="130" value="93">
+  <div class="sv"><span>chroma</span><b id="chromav">93%</b><span>of declared</span></div>
   <input type="range" id="light" min="-30" max="30" value="6">
   <div class="sv"><span>lightness</span><b id="lightv">+6</b><span>shift</span></div>
 
@@ -95,23 +95,24 @@
     <button data-tex="stri" aria-pressed="true">striations</button>
     <button data-tex="off">flat</button>
   </div>
-  <div class="row" style="margin-top:3px">
-    <button data-dir="v" aria-pressed="true">across the stack</button>
-    <button data-dir="h">along the stack</button>
-  </div>
+  <input type="range" id="texmix" min="0" max="100" value="30">
+  <div class="sv"><span>all across</span><b id="texmixv">30%</b><span>all along</span></div>
+  <div class="hint">Pieces stack vertically, so their boundaries are horizontal. Striations
+    <em>across</em> the stack run vertical and cross those boundaries; <em>along</em> runs
+    horizontal and competes with them. This is the fraction cut along.</div>
   <input type="range" id="tex" min="0" max="100" value="84">
   <div class="sv"><span>invisible</span><b id="texv">84%</b><span>dirty</span></div>
-  <input type="range" id="vary" min="0" max="30" value="9">
-  <div class="sv"><span>uniform</span><b id="varyv">9%</b><span>every pane differs</span></div>
+  <input type="range" id="vary" min="0" max="30" value="10">
+  <div class="sv"><span>uniform</span><b id="varyv">10%</b><span>every pane differs</span></div>
   <div class="hint">Per-piece lightness variation. The lab gets this free from its
     randomised gradient window; a flat fill has none, which reads as dead however bright
     it is. Hue and chroma hold, so the prime is never in doubt.</div>
-  <input type="range" id="spec" min="0" max="100" value="100">
-  <div class="sv"><span>no highlight</span><b id="specv">100%</b><span>glossy</span></div>
-  <input type="range" id="aspect" min="0" max="250" value="120">
-  <div class="sv"><span>round</span><b id="aspectv">120%</b><span>elongated</span></div>
-  <input type="range" id="cover" min="0" max="100" value="50">
-  <div class="sv"><span>none catch</span><b id="coverv">50%</b><span>all catch</span></div>
+  <input type="range" id="spec" min="0" max="100" value="89">
+  <div class="sv"><span>no highlight</span><b id="specv">89%</b><span>glossy</span></div>
+  <input type="range" id="aspect" min="0" max="250" value="203">
+  <div class="sv"><span>round</span><b id="aspectv">203%</b><span>elongated</span></div>
+  <input type="range" id="cover" min="0" max="100" value="20">
+  <div class="sv"><span>none catch</span><b id="coverv">20%</b><span>all catch</span></div>
   <div class="hint">Specular highlight — light reflecting <em>off</em> the glass, not
     shading applied to it, and a different thing from the inset edge-shadow that domed
     the lab's pieces. A reflection is the shape of the <em>source</em> seen at an angle,
@@ -120,19 +121,32 @@
 
   <div class="lbl">leading</div>
   <div class="row">
-    <button data-lead="piece" aria-pressed="true">every piece</button>
-    <button data-lead="geom">every pane</button>
+    <button data-lead="both" aria-pressed="true">pieces and panes</button>
+    <button data-lead="geom">panes only</button>
     <button data-lead="grid">shared lattice</button>
   </div>
-  <input type="range" id="leadv" min="0" max="200" value="52">
-  <div class="sv"><span>black came</span><b id="leadvv">52</b><span>pale came</span></div>
-  <input type="range" id="leadw" min="10" max="50" value="20">
-  <div class="sv"><span>fine</span><b id="leadwv">2.0px</b><span>heavy</span></div>
+  <div class="lbl" style="margin-top:9px">between pieces — the inner cames</div>
+  <input type="range" id="pcv" min="0" max="200" value="145">
+  <div class="sv"><span>black</span><b id="pcvv">145</b><span>pale</span></div>
+  <input type="range" id="pcw" min="5" max="50" value="10">
+  <div class="sv"><span>fine</span><b id="pcwv">1.0px</b><span>heavy</span></div>
+  <div class="lbl">around panes — the frame</div>
+  <input type="range" id="pnv" min="0" max="200" value="98">
+  <div class="sv"><span>black</span><b id="pnvv">98</b><span>pale</span></div>
+  <input type="range" id="pnw" min="5" max="50" value="15">
+  <div class="sv"><span>fine</span><b id="pnwv">1.5px</b><span>heavy</span></div>
   <div class="hint" id="leadhint"></div>
   <div class="hint" id="contrast"></div>
 
+  <div class="lbl">while it runs</div>
+  <div class="row">
+    <button id="anim">let the light move</button>
+  </div>
+  <div class="hint">The glass itself is fixed — it is a made object and should not
+    shimmer. Only the light moves, slowly, as the sun would.</div>
+
   <div class="foot">
-    Click a pane to select it — selection lives in the lead.
+    Click a pane to select it — a selected pane goes to the lit palette.
     <div style="margin-top:6px"><button id="copy">copy the twelve as JSON</button></div>
     <div class="hint" id="copied"></div>
   </div>
@@ -281,7 +295,8 @@
   let activeSet='none', mode='unlit',
       restC=42, restL=6, litC=125, litL=7,
       texKind='stri', texAmt=0.84, vary=0.09, spec=1.0, aspect=1.2, coverage=0.5,
-      leadStyle='piece', leadVal=52, leadW=2.0, texDir='v', selected=null;
+      leadStyle='both', pcV=145, pcW=1.0, pnV=98, pnW=1.5,
+      texMix=0.30, moving=false, tNow=0, selected=null;
 
   const resting = p => derive(shop.lit[p], restC, restL);
   const litOf   = p => derive(shop.lit[p], litC, litL);
@@ -292,7 +307,7 @@
                    primes:PRIMES.includes(n),none:true}[activeSet]);
 
   // ---- texture: a tiled noise pattern, striations plus seeds ----
-  const TILE=256; let pat=null, patKey='';
+  const TILE=256; const patCache=new Map();
   const hash=(x,y)=>{let h=(x*374761393+y*668265263)|0;h=((h^(h>>13))*1274126177)|0;
                      return ((h^(h>>16))>>>0)/4294967295;};
   function vnoise(x,y,px,py){
@@ -302,17 +317,18 @@
     const c=hash(w(xi,px),w(yi+1,py)),d=hash(w(xi+1,px),w(yi+1,py));
     return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v;
   }
-  function texture(kind){
-    const key=kind+'|'+texDir;
-    if (key===patKey) return pat;
-    patKey=key; if (kind==='off'){ pat=null; return null; }
+  // Two tiles, one per direction, so the choice can be made per piece.
+  function texture(kind,dir){
+    if (kind==='off') return null;
+    const key=kind+'|'+dir;
+    if (patCache.has(key)) return patCache.get(key);
     const cv=document.createElement('canvas'); cv.width=cv.height=TILE;
     const x=cv.getContext('2d'), img=x.createImageData(TILE,TILE), d=img.data;
     const PX=4, PY=34;
     for (let py=0;py<TILE;py++) for (let px=0;px<TILE;px++){
-      // 'v' runs the streaks ACROSS the stacking axis, so they do not compete
-      // with the lead lines between pieces.
-      const u=texDir==='v'?py:px, w2=texDir==='v'?px:py;
+      // 'v' runs the streaks ACROSS the stacking axis — vertical, crossing the
+      // horizontal piece boundaries rather than lying parallel and competing.
+      const u=dir==='v'?py:px, w2=dir==='v'?px:py;
       const v=vnoise(u/TILE*PX,w2/TILE*PY,PX,PY)*0.72
              +vnoise(u/TILE*PX*2,w2/TILE*PY*2,PX*2,PY*2)*0.28;
       const i=(py*TILE+px)*4, s=(v-0.5)*255;
@@ -328,7 +344,7 @@
       g.addColorStop(1,'rgba(0,0,0,.28)');
       x.fillStyle=g; x.beginPath(); x.arc(bx,by,r,0,6.284); x.fill();
     }
-    pat=ctx.createPattern(cv,'repeat'); return pat;
+    const p=ctx.createPattern(cv,'repeat'); patCache.set(key,p); return p;
   }
 
   // ---- layout ----
@@ -346,8 +362,14 @@
 
     for (let r=1;r<=N;r++) for (let c=1;c<=N;c++){
       const n=r*c, {x,y,w,h}=paneRect(r,c);
-      const member=!showing||inSet(n), quiet=showing&&!member;
+      // A selected pane behaves exactly as set membership does — it goes to the lit
+      // palette. Selection is a reason to be lit, not a separate kind of marking.
+      const picked=!!(selected&&selected.r===r&&selected.c===c);
+      const anyLit=showing||!!selected;
+      const member=picked||(showing&&inSet(n))||(!anyLit);
+      const quiet=anyLit&&!member;
       const f=factorize(n);
+      const showing2=anyLit;
 
       if (!f.length){ ctx.fillStyle='#e6e0d2'; ctx.fillRect(x,y,w,h); }
       const ph=h/Math.max(1,f.length);
@@ -355,7 +377,7 @@
         const p=f[i];
         // Flat fill. No inner shadow, no gradient — that doming was multiplication's
         // artifact and geometry has never had it.
-        let col = (showing && !quiet) ? litOf(p).hex : resting(p).hex;
+        let col = (anyLit && !quiet) ? litOf(p).hex : resting(p).hex;
         ctx.save();
         if (quiet && mode==='unlit'){
           const o=hex2oklch(col); col=oklch2hex({L:o.L*0.55,C:o.C*0.8,h:o.h});
@@ -381,7 +403,8 @@
         // where the angle happens to be right, not everywhere at once.
         const catches = hash(r*13+i, c*29) < coverage;
         if (spec>0 && !quiet && catches){
-          const hx=x+w*(0.46+hash(r+i,c*3)*0.36);
+          const drift=moving?Math.sin(tNow*0.00021+hash(r,c+i)*6.283)*0.16:0;
+          const hx=x+w*(0.46+hash(r+i,c*3)*0.36+drift);
           const hy=y+i*ph+ph*(0.12+hash(c,r*3+i)*0.30);
           const span=Math.min(w,ph);
           const size=0.14+hash(i*7,r+c)*0.42;          // 0.14 .. 0.56 of the piece
@@ -411,24 +434,48 @@
       }
     }
 
-    // texture over the whole window, locked to the table origin
-    const t=texture(texKind);
-    if (t && texAmt>0){
-      ctx.save();
-      ctx.beginPath(); ctx.rect(ox,oy,N*cell,N*cell); ctx.clip();
-      if (t.setTransform) t.setTransform(new DOMMatrix().translate(ox,oy));
-      // soft-light rather than overlay: overlay darkened by 3-5 luminance points net,
-      // because the seed rims are darker than the striations are light.
-      ctx.globalAlpha=texAmt*0.5; ctx.globalCompositeOperation='soft-light';
-      ctx.fillStyle=t; ctx.fillRect(ox,oy,N*cell,N*cell);
-      ctx.restore();
+    // Texture, chosen per piece rather than once for the whole window: a glazier
+    // cuts from a sheet, and not every piece comes off it the same way round.
+    // soft-light rather than overlay — overlay darkened by 3-5 luminance points net,
+    // because the seed rims are darker than the striations are light.
+    if (texKind!=='off' && texAmt>0){
+      const tv=texture(texKind,'v'), th=texture(texKind,'h');
+      for (let r=1;r<=N;r++) for (let c=1;c<=N;c++){
+        const {x,y,w,h}=paneRect(r,c);
+        const k=Math.max(1,factorize(r*c).length), ph=h/k;
+        for (let i=0;i<k;i++){
+          const along=hash(r*17+i,c*23)<texMix;
+          const p=along?th:tv; if (!p) continue;
+          ctx.save();
+          ctx.beginPath(); ctx.rect(x,y+i*ph,w,ph); ctx.clip();
+          if (p.setTransform) p.setTransform(new DOMMatrix().translate(ox,oy));
+          ctx.globalAlpha=texAmt*0.5; ctx.globalCompositeOperation='soft-light';
+          ctx.fillStyle=p; ctx.fillRect(x,y+i*ph,w,ph);
+          ctx.restore();
+        }
+      }
     }
 
     // ---- leading ----
     const s=v=>Math.round(v)+0.5;
-    ctx.strokeStyle=rgb2hex([leadVal,leadVal,leadVal]); ctx.lineWidth=leadW;
     ctx.lineJoin='round'; ctx.lineCap='round';
-    if (leadStyle==='piece'){
+    if (leadStyle==='both'){
+      // Inner cames first, then the pane frame over them. Real leaded glass does the
+      // same: the frame is heavier and sits on top of the finer internal leads.
+      ctx.strokeStyle=rgb2hex([pcV,pcV,pcV]); ctx.lineWidth=pcW;
+      for (let r=1;r<=N;r++) for (let c=1;c<=N;c++){
+        const {x,y,w,h}=paneRect(r,c);
+        const k=Math.max(1,factorize(r*c).length), ph=h/k;
+        for (let i=1;i<k;i++){                       // interior boundaries only
+          ctx.beginPath(); ctx.moveTo(s(x),s(y+i*ph)); ctx.lineTo(s(x+w),s(y+i*ph)); ctx.stroke();
+        }
+      }
+      ctx.strokeStyle=rgb2hex([pnV,pnV,pnV]); ctx.lineWidth=pnW;
+      for (let r=1;r<=N;r++) for (let c=1;c<=N;c++){
+        const {x,y,w,h}=paneRect(r,c);
+        ctx.strokeRect(s(x),s(y),Math.round(w),Math.round(h));
+      }
+    } else if (leadStyle==='OLDPIECE'){
       // Decision 6 taken literally: a piece is a region, so every piece strokes its
       // own outline. This is what puts lead between the two blues of 4 and the three
       // of 8 — without it, same-prime neighbours share an invisible edge and the pane
@@ -440,24 +487,17 @@
         for (let i=0;i<k;i++) ctx.strokeRect(s(x),s(y+i*ph),Math.round(w),Math.round(ph));
       }
     } else if (leadStyle==='geom'){
-      // every PANE strokes its outline; pieces inside share no lead
+      ctx.strokeStyle=rgb2hex([pnV,pnV,pnV]); ctx.lineWidth=pnW;
       for (let r=1;r<=N;r++) for (let c=1;c<=N;c++){
         const {x,y,w,h}=paneRect(r,c);
         ctx.strokeRect(s(x),s(y),Math.round(w),Math.round(h));
       }
     } else {
+      ctx.strokeStyle=rgb2hex([pnV,pnV,pnV]); ctx.lineWidth=pnW;
       ctx.beginPath();
       for (let c=0;c<=N;c++){const sx=s(ox+c*cell);ctx.moveTo(sx,s(oy));ctx.lineTo(sx,s(oy+N*cell));}
       for (let r=0;r<=N;r++){const sy=s(oy+r*cell);ctx.moveTo(s(ox),sy);ctx.lineTo(s(ox+N*cell),sy);}
       ctx.stroke();
-    }
-
-    if (selected){
-      const {x,y,w,h}=paneRect(selected.r,selected.c);
-      ctx.strokeStyle='#efe3c6'; ctx.lineWidth=5;
-      ctx.strokeRect(s(x),s(y),Math.round(w),Math.round(h));
-      ctx.strokeStyle=GEOM_LEAD; ctx.lineWidth=1.5;
-      ctx.strokeRect(s(x),s(y),Math.round(w),Math.round(h));
     }
 
     ctx.fillStyle='#a09880'; ctx.font='italic 12px Georgia, serif'; ctx.textAlign='center';
@@ -486,7 +526,7 @@
   bind('[data-set]','set',v=>activeSet=v);
   bind('[data-tex]','tex',v=>texKind=v);
   bind('[data-lead]','lead',v=>{leadStyle=v;leadHint();});
-  bind('[data-dir]','dir',v=>{texDir=v;patKey='';});
+
   bind('[data-mode]','mode',v=>{mode=v;modeHint();});
 
   const shopRow=document.getElementById('shops');
@@ -549,7 +589,7 @@
   // Report the weakest separation across the six so it cannot be missed by eye.
   function contrastHint(){
     const L=h=>{const c=hex2rgb(h);return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2];};
-    const lead=leadVal;
+    const lead=pcV;
     let worst=999, at=null;
     PRIMES.forEach(p=>{
       const d=Math.abs(L(resting(p).hex)-lead);
@@ -575,8 +615,11 @@
   wire('spec','specv',      v=>spec=v/100,   v=>v+'%');
   wire('aspect','aspectv',  v=>aspect=v/100, v=>v+'%');
   wire('cover','coverv',    v=>coverage=v/100, v=>v+'%');
-  wire('leadv','leadvv',    v=>leadVal=v,    v=>String(v));
-  wire('leadw','leadwv',    v=>leadW=v/10,   v=>(v/10).toFixed(1)+'px');
+  wire('pcv','pcvv',        v=>pcV=v,        v=>String(v));
+  wire('pcw','pcwv',        v=>pcW=v/10,     v=>(v/10).toFixed(1)+'px');
+  wire('pnv','pnvv',        v=>pnV=v,        v=>String(v));
+  wire('pnw','pnwv',        v=>pnW=v/10,     v=>(v/10).toFixed(1)+'px');
+  wire('texmix','texmixv',  v=>texMix=v/100, v=>v+'%');
 
   canvas.addEventListener('pointerdown',e=>{
     e.preventDefault();
@@ -599,6 +642,12 @@
       +' · lit '+litC+'%/'+(litL>0?'+':'')+litL
       +(anyClip?' — warning: some colours are out of gamut':'');
   });
+
+  document.getElementById('anim').addEventListener('click',function(){
+    moving=!moving; this.setAttribute('aria-pressed',String(moving));
+    if (moving) requestAnimationFrame(tick);
+  });
+  function tick(t){ if(!moving) return; tNow=t; draw(); requestAnimationFrame(tick); }
 
   buildShops(); renderShops(); modeHint(); leadHint(); strip(); resize();
 })();
