@@ -34,28 +34,35 @@ to protect.
 Not a bigger multiplication lab. A **plane** that both labs stand on; the labs become
 viewings of one coordinate space. Ten settled decisions, four phases, three benches.
 
-> **UNCOMMITTED WORK — check before anything else.** As of 5 Aug evening the entire vault
-> restructure is untracked: this board, `Facet-Vocabulary.md`, all of `03-SEEDS/`, both
-> handoffs, and `artifacts/`. `Current-Status.md` and `Next-3.md` show deleted but
-> unstaged; `MANIFEST.md` is modified. Six commits are unpushed, last push 3 Aug, so the
-> three benches 404 on the live site. On 2 Aug five vault documents were lost this way.
-> **`git ls-files` is the check** — `git log` on the directory returns commits and looks
-> reassuring while the specific files are absent from all of them.
+> **Cleared 6 Aug.** The vault restructure, `artifacts/` and the three benches are
+> committed and pushed; the benches are live. `Current-Status.md` and `Next-3.md` went to
+> `99-ARCHIVE/` as renames, so their history followed them. **`git ls-files` remains the
+> check** — `git log` on a directory returns commits and looks reassuring while the
+> specific files are absent from all of them.
 
 - **Authority:** `01-ACTIVE/Plan-Plane-Extraction.md` (instructions) ·
   `01-ACTIVE/Inventory-GlassGeometry.md` (what the code actually contains) ·
   `01-ACTIVE/Decisions-Benches-Aug05.md` (bench results and the decisions they amend) ·
+  `01-ACTIVE/Decisions-Fills-Aug06.md` (glass, light and lead — settled at the bench) ·
   `_msc/_mscVault/5. Claude Design/1. Redesign.md` (the reasoning).
 - **Benches:** `canvas-panes` **passed decisively** — 32×32 is 1024 panes and 3840 pieces
   at 2.4 ms p95, zero dropped frames. `prime-glass` **reports a problem**: with colour off,
   6, 10 and 14 are pixel-identical. `fills-and-light` **replaced a settled decision**:
   dimming is out, two declared palettes are in.
+- **Decision 10 is now overturned in both halves.** Showing a set lights its members
+  rather than dimming the rest (5 Aug); and selecting a pane moves it to the lit palette
+  rather than thickening its came (6 Aug). One visual language for "this one".
+- **Platform-level, from the fills bench:** geometry's `#777777` came was chosen against
+  its own light glass and becomes a *lighter* line at a third of the contrast against dark
+  panes. If both labs share leading, the came must work against both.
 - **The open question that now gates Phase 4:** what is the second, non-colour channel?
   It is required, not desirable — several real palettes have fewer than six usable hues
   and cannot carry six primes however tuned.
 - **The explicit instruction: stop at the end of Phase 1 for review.**
-- **Next action:** commit and push. Then settle the second channel. Phase 1 does not start
-  until `fills-and-light` reports.
+- **Next action:** settle the second channel. Two smaller items are open in
+  `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and an inner came
+  value that clears all six resting colours. Phase 1 does not start until the appearance
+  work is closed.
 
 ### 2. Perception Lab — the child's own instrument
 Colour, pitch, and rhythm discrimination. One measurement harness, three axes.

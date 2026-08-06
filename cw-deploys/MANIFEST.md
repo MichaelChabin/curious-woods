@@ -45,10 +45,13 @@ A page that moves between folders must have those paths checked.
   useless as a gate. Any future performance bench should measure the same way.
 - **`fills-and-light.html`** — bench: two declared palettes, a resting one and a lit one,
   rather than one degraded. Both derived from the workshop's declared colour in OKLCH so
-  hue never moves; showing a set moves those panes to the lit palette and nothing is
-  dimmed. All fifteen palettes from `../art/palettes.json` are imported. Selection lives
-  in the lead. Glass is flat with striations and seeds, leaded the way geometry leads.
-  In progress.
+  hue never moves, with out-of-gamut results flagged rather than silently clipped. All
+  fifteen palettes from `../art/palettes.json` are imported, plus the colours the lab
+  ships today. Showing a set — or selecting a pane — moves those panes to the lit palette;
+  nothing is dimmed. Glass is flat with directional striations and seeds; inner cames and
+  the pane frame carry separate colour and weight; highlights are elliptical, brighter
+  when smaller, and only some pieces catch them. Results in
+  `CWVault/01-ACTIVE/Decisions-Fills-Aug06.md`.
 - **`prime-glass.html`** — bench: prime colours across four workshops with ordered
   stripes and a monochrome toggle. With colour off and order the only channel, 6, 10 and
   14 render identical — so colour currently carries information rather than delight, and
