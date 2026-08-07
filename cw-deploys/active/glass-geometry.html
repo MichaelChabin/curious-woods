@@ -234,6 +234,12 @@
       <span class="htw-action-word" id="htw-action-open">Open</span>
       <span class="htw-action-word" id="htw-action-save">Save</span>
     </li>
+    <li class="htw-action-row" style="margin-top: 12px;">
+      <span class="htw-action-word" id="numbers-cycle">Numbers &middot; points</span>
+    </li>
+    <li class="htw-action-row" id="lattice-tie-row" style="display: none;">
+      <span class="htw-action-word" id="lattice-tie">grid follows zoom</span>
+    </li>
   </ul>
 </div>
 
@@ -394,7 +400,12 @@ var LEAD_WIDTH        = 2;
 
 var showLines   = true;
 var showGlass   = false;
-var showNumbers = true;
+// Where numbers live: 'map' shows the plane's ambient lattice (grid and
+// tick numbers); 'points' turns the lattice down to reveal the emergent
+// numbering — numbers only where the child has constructed a point;
+// 'off' shows none. Default is 'points': numbers stay earned until the
+// child asks for the map. (Default flagged for review, Phase 3.)
+var numbersMode = 'points';
 
 // ============================================================
 // AUDIO
@@ -477,10 +488,11 @@ function replayLog(animateNew) {
         if (op.op === 'init') {
             _addPt('seed:0', op.seed0.x, op.seed0.y, 'seed', prev, animateNew);
             _addPt('seed:1', op.seed1.x, op.seed1.y, 'seed', prev, animateNew);
-            // The seed distance IS the unit interval. The lab declares it to
-            // the plane here (decision 4) rather than the plane reaching in.
+            // The seed distance IS the unit interval, and seed:0 is where the
+            // count starts. The lab declares the whole frame to the plane here
+            // (decision 4) rather than the plane reaching in.
             var seedUnit = dist(op.seed0.x, op.seed0.y, op.seed1.x, op.seed1.y);
-            plane.setUnitLength(seedUnit);
+            plane.setUnitFrame(op.seed0.x, op.seed0.y, seedUnit);
             // Duplicate-intersection merge radius, proportional to the unit
             // so a log with different seeds still replays sensibly. It must
             // stay view-independent: replay decides which intersections are
@@ -517,7 +529,12 @@ function replayLog(animateNew) {
             else if (op.target === 'point') { var pt = points.get(op.idx); if (pt) pt.isScaffold = op.value; }
             else { var cir = circles.get(op.idx); if (cir) cir.isScaffold = op.value; }
         } else if (op.op === 'numbers') {
-            showNumbers = op.value;
+            // Three modes since Phase 3; legacy logs recorded a boolean
+            // for the old emergent-numbers toggle — map it forward.
+            numbersMode = (op.value === true) ? 'points'
+                        : (op.value === false) ? 'off'
+                        : (op.value === 'map' || op.value === 'points' || op.value === 'off') ? op.value
+                        : 'points';
         } else if (op.op === 'note_open') {
             // One space: a note records x, y, and widthW all in world
             // coordinates. Legacy logs stored `width` in screen pixels
@@ -538,6 +555,7 @@ function replayLog(animateNew) {
         }
     }
     syncCanvasNoteDOMs();
+    updateNumbersControl();
 }
 
 function _addPt(id, x, y, type, prev, animateNew) {
@@ -1920,9 +1938,10 @@ function checkAndDissolve(segKey) {
 // Depends: nothing (DOM only at construction and resize)
 // Exposes: plane {viewportWidth, viewportHeight, setViewport,
 //                 zoom, setZoom, pan, setPan, view, setView,
-//                 resetView, setUnitLength, unitLength,
-//                 worldToScreen, screenToWorld,
-//                 latticeStep, pixelFloor},
+//                 resetView, setUnitFrame, unitOrigin, unitLength,
+//                 setLatticeTied, latticeTied, latticeStep,
+//                 drawLattice, worldToScreen, screenToWorld,
+//                 pixelFloor},
 //          canvas, ctx, resizeCanvas(), snap(v),
 //          w2s(wx,wy), s2w(sx,sy) (aliases into the plane)
 // ============================================================
@@ -1935,12 +1954,33 @@ var plane = (function() {
     // machines — flagged in the inventory, kept as designed.
     var zoom  = Math.min(window.innerWidth, window.innerHeight) / 900; // px per world unit
     var viewW = window.innerWidth, viewH = window.innerHeight;         // cached CSS px
-    var unitLength = 200;         // world units per unit interval; the lab declares this
+
+    // The unit frame, declared by the lab (decision 4): where "0" sits in
+    // world space and how many world units one unit interval spans. The
+    // plane never reaches into the geometry model to find these.
+    var unitOrigin = { x: -100, y: 0 };
+    var unitLength = 200;
+
+    // Lattice state: tied, the step adapts to zoom and the picture stays
+    // self-similar as she descends; untied, the step freezes and zooming
+    // crowds or spreads the same lines. Both are wanted (Phase 3).
+    var _latticeTied = true, _latticeFrozenStep = null;
 
     // The one zoom clamp. Wheel, pinch, and fit-to-construction all pass
     // through here — previously three clamps with two ranges (0.1–10 twice,
     // 0.05–2.0 once); this is their union, applied once.
     var ZOOM_MIN = 0.05, ZOOM_MAX = 10;
+
+    // Tick label: positive in all four directions (map convention) is the
+    // caller's job; this handles digits. Integers group thousands with a
+    // thin space; sub-unit steps show as trimmed decimals.
+    function latticeLabelText(v, step) {
+        if (step >= 1) {
+            return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+        var dec = Math.max(0, -Math.floor(Math.log10(step) + 1e-9));
+        return v.toFixed(dec).replace(/0+$/, '').replace(/\.$/, '');
+    }
 
     return {
         setViewport: function(w, h) { viewW = w; viewH = h; },
@@ -1958,8 +1998,18 @@ var plane = (function() {
             zoom = Math.min(viewW, viewH) / 900;
         },
 
-        setUnitLength: function(len) { if (len > 0) unitLength = len; },
+        setUnitFrame: function(ox, oy, len) {
+            unitOrigin.x = ox; unitOrigin.y = oy;
+            if (len > 0) unitLength = len;
+        },
+        unitOrigin: function() { return { x: unitOrigin.x, y: unitOrigin.y }; },
         unitLength: function() { return unitLength; },
+
+        setLatticeTied: function(t) {
+            _latticeFrozenStep = t ? null : this.latticeStep();
+            _latticeTied = !!t;
+        },
+        latticeTied: function() { return _latticeTied; },
 
         // World y is up: screen y grows downward, so y negates on the way
         // through. These are the only two places that know that.
@@ -1972,14 +2022,88 @@ var plane = (function() {
                      y: -(sy - viewH / 2) / zoom + pan.y };
         },
 
-        // Ambient lattice step, in unit intervals, adapted to zoom — one
-        // function will drive both labels and grid lines (Phase 3), the
-        // way number-theory-v1's labelStep() keeps its texture coherent.
+        // Ambient lattice step, in unit intervals: the smallest rung of
+        // the 1–5–10 ladder whose line spacing exceeds 40px. One function
+        // drives both labels and grid lines, the way number-theory-v1's
+        // labelStep() keeps its texture coherent — and unlike the sketch,
+        // the ladder renumbers by decades in both directions: 0.05, 0.1,
+        // 0.5, 1, 5, 10, 50… as far as the zoom clamp lets it walk.
         latticeStep: function() {
-            var pxPerUnit = zoom * unitLength;
-            if (pxPerUnit > 40) return 1;
-            if (pxPerUnit > 10) return 5;
-            return 10;
+            if (!_latticeTied && _latticeFrozenStep) return _latticeFrozenStep;
+            var ppu = zoom * unitLength;
+            var m = Math.floor(Math.log10(40 / ppu) + 1e-9);
+            var step = Math.pow(10, m);              // spacing ≤ 40 by construction
+            return (step * 5 * ppu > 40) ? step * 5 : step * 10;
+        },
+
+        // The ambient lattice, generated and never stored (decision 5).
+        // Every stroke is a 1px line snapped to half-pixels: the sketch's
+        // half-pixel-snapping inconsistency — everything snapped except
+        // the grid — does not get to arrive here with the lattice, and a
+        // 1px line at low opacity replaces the sketch's 0.5px stroke,
+        // which could never resolve to a crisp pixel at any position.
+        drawLattice: function(ctx) {
+            var step = this.latticeStep();
+            var stepW = step * unitLength;           // world units between lines
+            var spacing = stepW * zoom;              // px between lines
+            if (spacing < 3) return;                 // untied and far out: crowding has made its point
+            var tl = this.screenToWorld(0, 0), br = this.screenToWorld(viewW, viewH);
+            // Visible tick ranges with a one-step margin so lines don't pop at the edges
+            var nx0 = Math.floor((Math.min(tl.x, br.x) - unitOrigin.x) / stepW) - 1;
+            var nx1 = Math.ceil((Math.max(tl.x, br.x) - unitOrigin.x) / stepW) + 1;
+            var ny0 = Math.floor((Math.min(tl.y, br.y) - unitOrigin.y) / stepW) - 1;
+            var ny1 = Math.ceil((Math.max(tl.y, br.y) - unitOrigin.y) / stepW) + 1;
+            var n, sx, sy;
+
+            ctx.save();
+            ctx.strokeStyle = '#546A80';
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.13;
+            ctx.beginPath();
+            for (n = nx0; n <= nx1; n++) {
+                if (n === 0) continue;               // the axis pass draws it stronger
+                sx = snap(this.worldToScreen(unitOrigin.x + n * stepW, 0).x);
+                ctx.moveTo(sx, 0); ctx.lineTo(sx, viewH);
+            }
+            for (n = ny0; n <= ny1; n++) {
+                if (n === 0) continue;
+                sy = snap(this.worldToScreen(0, unitOrigin.y + n * stepW).y);
+                ctx.moveTo(0, sy); ctx.lineTo(viewW, sy);
+            }
+            ctx.stroke();
+
+            // The two axes through the origin, one step up in presence
+            var ax = snap(this.worldToScreen(unitOrigin.x, 0).x);
+            var ay = snap(this.worldToScreen(0, unitOrigin.y).y);
+            ctx.globalAlpha = 0.3;
+            ctx.beginPath();
+            ctx.moveTo(ax, 0); ctx.lineTo(ax, viewH);
+            ctx.moveTo(0, ay); ctx.lineTo(viewW, ay);
+            ctx.stroke();
+
+            // Tick numbers, positive in all four directions (map convention).
+            // Label rows clamp to the viewport edge when their axis is out of
+            // view — the window is small, the map is not.
+            var rowY = Math.max(2, Math.min(ay + 4, viewH - 14));
+            var colX = Math.max(28, Math.min(ax - 5, viewW - 4));
+            ctx.globalAlpha = 0.55;
+            ctx.fillStyle = '#546A80';
+            ctx.font = '10px Georgia, serif';
+            ctx.textBaseline = 'top'; ctx.textAlign = 'center';
+            for (n = nx0; n <= nx1; n++) {
+                if (n === 0) continue;
+                sx = this.worldToScreen(unitOrigin.x + n * stepW, 0).x;
+                ctx.fillText(latticeLabelText(Math.abs(n) * step, step), sx, rowY);
+            }
+            ctx.textBaseline = 'middle'; ctx.textAlign = 'right';
+            for (n = ny0; n <= ny1; n++) {
+                if (n === 0) continue;
+                sy = this.worldToScreen(0, unitOrigin.y + n * stepW).y;
+                ctx.fillText(latticeLabelText(Math.abs(n) * step, step), colX, sy);
+            }
+            ctx.textBaseline = 'top'; ctx.textAlign = 'right';
+            ctx.fillText('0', colX, rowY);
+            ctx.restore();
         },
 
         // The screen's limit, not the plane's: how much world one screen
@@ -2093,6 +2217,9 @@ function drawEmphasisPath(drawFn) {
 function render() {
     ctx.fillStyle = COLORS.background;
     ctx.fillRect(0,0,canvas.clientWidth,canvas.clientHeight);
+
+    // The ambient lattice, under everything the child has made
+    if (numbersMode === 'map' && !showGlass) plane.drawLattice(ctx);
 
     // Sort fills by area descending (largest first, smallest on top)
     var sortedFills = [];
@@ -2313,6 +2440,9 @@ function render() {
     });
 
     drawAxisLabels();
+
+    // The pixel floor, part of the map's furniture
+    if (numbersMode === 'map' && !showGlass) drawPixelFloorReadout();
 }
 
 // ============================================================
@@ -2323,14 +2453,17 @@ function render() {
 //          whose distance from seed:0 is a near-integer multiple of
 //          the seed unit distance and returns label descriptors.
 //          All integers are positive (map convention — no negatives).
-//          Labels are suppressed in glass mode and during PNG export.
-// Depends: points, lines, showNumbers, showGlass, w2s(), dist(),
+//          Shown only in 'points' numbers mode — the ambient lattice
+//          turned down reveals this — and never in glass mode/export.
+// Depends: points, lines, numbersMode, showGlass, w2s(), dist(),
 //          plane (unitLength — declared by the lab at init replay)
 // Exposes: getAxisLabels()
 // ============================================================
 
 function getAxisLabels() {
-    if (!showNumbers || showGlass) return [];
+    // Emergent numbering shows in 'points' mode only: in 'map' mode the
+    // lattice carries the numbers, and turning the map down reveals these.
+    if (numbersMode !== 'points' || showGlass) return [];
     var s0 = points.get('seed:0'), s1 = points.get('seed:1');
     if (!s0 || !s1) return [];
     // The unit interval is not measured from the model here: the lab declared
@@ -4686,6 +4819,60 @@ function initHowThisWorks() {
 
     // Return visits: open color panel immediately (it's always available)
     if (htwStageSeen(HTW_STAGES[0])) openColorTool();
+}
+
+// ============================================================
+// NUMBERS CONTROL
+// What:    The re-homed Numbers control (formerly a toggle in the
+//          removed constructions panel): one word in the left panel
+//          cycling map → points → off. 'map' shows the plane's
+//          ambient lattice; 'points' turns it down to reveal the
+//          emergent numbering; 'off' hides both. In map mode a second
+//          word toggles whether the lattice step follows the zoom
+//          (self-similar) or keeps its step (zooming crowds or
+//          spreads the same lines). Mode changes are recorded as
+//          'numbers' ops; the tie is a transient view preference and
+//          is not recorded. Also owns the pixel-floor readout the lab
+//          reports in its declared units.
+// Depends: numbersMode, appendOp(), plane, ctx, canvas
+// Exposes: updateNumbersControl() (called from replayLog),
+//          drawPixelFloorReadout() (called from render)
+// ============================================================
+
+var NUMBERS_CYCLE = { points: 'map', map: 'off', off: 'points' };
+
+function updateNumbersControl() {
+    var word = document.getElementById('numbers-cycle');
+    if (word) word.innerHTML = 'Numbers &middot; ' + numbersMode;
+    var tieRow = document.getElementById('lattice-tie-row');
+    if (tieRow) tieRow.style.display = (numbersMode === 'map') ? '' : 'none';
+    var tie = document.getElementById('lattice-tie');
+    if (tie) tie.textContent = plane.latticeTied() ? 'grid follows zoom' : 'grid keeps its step';
+}
+
+document.getElementById('numbers-cycle').addEventListener('click', function() {
+    appendOp({ op: 'numbers', value: NUMBERS_CYCLE[numbersMode] || 'points' });
+});
+
+document.getElementById('lattice-tie').addEventListener('click', function() {
+    plane.setLatticeTied(!plane.latticeTied());
+    updateNumbersControl();
+});
+
+// The screen's limit, reported in the lab's declared units. The lab has
+// not yet named its unit, so the copy says "units" — wording flagged for
+// review in the Phase 3 ledger.
+function drawPixelFloorReadout() {
+    var unitsPerPixel = 1 / (plane.zoom() * plane.unitLength());
+    var num = parseFloat(unitsPerPixel.toPrecision(2)).toString();
+    ctx.save();
+    ctx.font = '10px Georgia, serif';
+    ctx.fillStyle = '#546A80';
+    ctx.globalAlpha = 0.45;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('one pixel = ' + num + ' units', canvas.clientWidth - 10, canvas.clientHeight - 8);
+    ctx.restore();
 }
 
 // ============================================================

@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-07 (Phase 1 reviewed and pushed; Phase 2 executed, committed unpushed)
+updated: 2026-08-07 (Phases 1–2 reviewed and pushed; panel removed; Phase 3 executed, committed unpushed)
 ---
 
 # The Board
@@ -45,15 +45,21 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
 > clamp, world y up with the audit. Deviations and the legacy-mirror consequence:
 > `01-ACTIVE/Decisions-Phase1-Aug07.md`.
 >
-> **Phase 2 executed, 7 Aug — committed, not pushed.** One code change (the
-> `getAxisLabels()` reach is gone; the unit comes from the plane, decision 4) and a
-> full verification sweep on a cleared profile: gestures, fades, both eraser sweeps,
-> fills, recolor, both save paths' survivor, drop-load, step-through with fork, tip
-> suppression observed marking stages seen unshown, all 15 palettes, uniqueness at
-> 15 points. Zero console errors. What only a human hand can still check (pinch,
-> Share, iPad Safari) is listed in `01-ACTIVE/Decisions-Phase2-Aug07.md` — along
-> with one dormant-UI find: the constructions panel (Numbers toggle) has no caller,
-> and that predates the extraction.
+> **Phase 2 reviewed and pushed, 7 Aug** (`1a5b089`). The dormant constructions
+> panel is removed per Michael's ruling (`7e245a3`); the hands-on list (pinch,
+> Share, iPad Safari) still stands in `01-ACTIVE/Decisions-Phase2-Aug07.md`.
+>
+> **Phase 3 executed, 7 Aug — committed, not pushed.** The plane has its ambient
+> lattice: one step function drives grid and labels on the 1–5–10 ladder across
+> decades; labels positive in all four directions; the unit frame (origin + length)
+> declared by the lab so the lattice lands on the child's 0 and 1; every stroke
+> half-pixel-snapped at 1px from birth — the sketch's snapping defect cannot arrive
+> here; tied/untied zoom as a toggle; the pixel floor on screen in map mode. The
+> Numbers control re-homed as one word cycling map · points · off, recorded as
+> `numbers` ops, legacy booleans mapped forward. Three defaults chosen by Claude
+> and flagged for review (fresh constructions default to `points`, provisional
+> copy, control placement) plus one deliberate deferral (lattice-click minting →
+> Phase 4 design): `01-ACTIVE/Decisions-Phase3-Aug07.md`.
 
 - **Authority:** `01-ACTIVE/Plan-Plane-Extraction.md` (instructions) ·
   `01-ACTIVE/Inventory-GlassGeometry.md` (what the code actually contains) ·
@@ -61,6 +67,7 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   `01-ACTIVE/Decisions-Fills-Aug06.md` (glass, light and lead — settled at the bench) ·
   `01-ACTIVE/Decisions-Phase1-Aug07.md` (Phase 1 as executed, with deviations) ·
   `01-ACTIVE/Decisions-Phase2-Aug07.md` (Phase 2 — the verification sweep) ·
+  `01-ACTIVE/Decisions-Phase3-Aug07.md` (Phase 3 — the lattice, and its flagged defaults) ·
   `20-SPECS/Spec-Workshop-Palette-Schema.md` (decision 9's data path, exported from
   the bench — now tracked in git) ·
   `_msc/_mscVault/5. Claude Design/1. Redesign.md` (the reasoning).
@@ -84,11 +91,14 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   and one addition are recorded at the end of `Decisions-Benches-Aug05.md`; read them
   first, because one Phase 1 item (half-pixel snapping) describes a defect that is not in
   Glass Geometry at all.
-- **Next action:** Michael reviews Phase 2 (`Decisions-Phase2-Aug07.md` — short, plus
-  the hands-on list: pinch, Share, iPad Safari), pushes if it holds. Phase 3 (the
-  ambient lattice) does not start before that review. In parallel, settle the second
-  channel — the standing recommendation is subdivision rather than width, argued in
-  `Decisions-Benches-Aug05.md` and to be overruled by the bench if the bench disagrees. Two smaller appearance items
+- **Next action:** Michael reviews Phase 3 — the ledger's three flagged defaults are
+  the substance (does a fresh construction greet the child as a map or as earned
+  points; the provisional copy; the control's home), then the lattice itself by eye,
+  served locally. Push if it holds. Phase 4 stays gated on the second channel — the
+  standing recommendation is subdivision rather than width, argued in
+  `Decisions-Benches-Aug05.md` and to be overruled by the bench if the bench
+  disagrees — and its design now also owes an answer on lattice-click minting
+  (decision 5's second half, deferred out of Phase 3). Two smaller appearance items
   remain open in `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and
   an inner came value that clears all six resting colours.
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto
