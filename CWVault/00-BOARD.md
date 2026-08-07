@@ -91,6 +91,10 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   `Decisions-Benches-Aug05.md` and to be overruled by the bench if the bench disagrees. Two smaller appearance items
   remain open in `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and
   an inner came value that clears all six resting colours.
+- **Known gap, decided worth a line here:** drop-loading a `.json` construction onto
+  the canvas skips the work-in-progress check and silently replaces unsaved work. The
+  New and Open words both guard; the drop does not. Pre-existing, found in the Phase 2
+  sweep, not yet fixed anywhere.
 - **Also unresolved, and now bigger than it looked:** the mirrored-pane transform
   (`rotate(-90deg) scaleY(-1)`) contradicts decision 8's stripe order *and* the fills
   bench's texture rule, since a 90° rotation turns every "across" striation into an

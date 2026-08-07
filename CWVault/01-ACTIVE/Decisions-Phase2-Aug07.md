@@ -96,3 +96,21 @@ end to end.
 
 Phase 3 — the ambient lattice, with number-theory-v1 as the behavioural
 reference — does not start until this is reviewed.
+
+---
+
+## Resolved after review, 7 Aug
+
+Michael accepted Phase 2 and ruled on the dormant-UI find: **the constructions
+panel is removed, and the Numbers toggle re-homes in Phase 3 as part of
+lattice-label visibility.** Executed same day:
+
+- `#tool-constructions` and everything only it could reach are gone — the
+  Examples thumbnail row, the preview card with "Show me how this was done"
+  (the picker loads straight into step-through, which serves the same intent;
+  that copy now lives nowhere, noted in case it is wanted back), their CSS, and
+  the `openConstructions`/`getPanelToolEl('constructions')` plumbing.
+- The ghost overlay (`#ghost-layer`) stays — separate dormant piece, marked in
+  code as reserved for a future try-it mode; removing it was not the ruling.
+- The `numbers` op and `showNumbers` are untouched here; they are re-homed by
+  Phase 3, where the lattice-label visibility control absorbs them.

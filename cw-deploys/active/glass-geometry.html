@@ -176,36 +176,6 @@
     .sound-ask-word { font-family: Georgia, serif; font-size: 13px; color: #546A80; cursor: default; transition: color 80ms; margin-right: 10px; }
     .sound-ask-word:hover { color: #3D3D3A; }
 
-    /* --- Constructions panel (redesigned) --- */
-    #tool-constructions { width: 188px; }
-    .cx-section-label { display: block; font-family: Georgia, serif; font-size: 14px; color: #546A80; line-height: 1; cursor: default; transition: color 80ms; user-select: none; }
-    .cx-section-label:hover { color: #3D3D3A; }
-    .cx-section-label.cx-open { color: #3D3D3A; font-style: italic; }
-    .cx-how-list { margin: 0; padding: 0; list-style: none; overflow: hidden; max-height: 0; transition: max-height 240ms cubic-bezier(0.4,0,0.2,1); }
-    .cx-how-list.revealed { max-height: 200px; }
-    .cx-how-item { font-family: Georgia, serif; font-size: 12px; color: #7a6e60; line-height: 1.6; padding-left: 12px; opacity: 0; transition: opacity 200ms ease-out; }
-    .cx-how-list.revealed .cx-how-item { opacity: 1; }
-    .cx-examples-section { margin-top: 12px; }
-    .cx-thumbs-row { display: flex; gap: 8px; margin-top: 8px; }
-    .cx-thumb-wrap { display: flex; flex-direction: column; align-items: center; }
-    .cx-thumb { width: 80px; height: 80px; border-radius: 4px; border: 0.5px solid #d8ceba; background: rgba(244,241,232,0.6); overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: default; transition: border-color 100ms; flex-shrink: 0; }
-    .cx-thumb:hover { border-color: rgba(84,106,128,0.4); }
-    .cx-thumb img { width: 76px; height: 76px; object-fit: contain; pointer-events: none; }
-    .cx-thumb-name { font-family: Georgia, serif; font-size: 10px; color: #7a6e60; margin-top: 3px; line-height: 1; text-align: center; width: 80px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-    .cx-choose { display: block; font-family: Georgia, serif; font-style: italic; font-size: 12px; color: #9a8e80; margin-top: 8px; cursor: default; transition: color 80ms; }
-    .cx-choose:hover { color: #546A80; }
-
-    /* --- Construction preview card (canvas overlay) --- */
-    #cx-preview-card { position: fixed; z-index: 550; background: rgba(244,241,232,0.97); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 14px 14px; pointer-events: all; box-shadow: 0 2px 12px rgba(42,38,32,0.12); display: none; }
-    #cx-preview-card .cx-card-close { font-family: Georgia, serif; font-size: 11px; color: #b0a090; cursor: default; transition: color 80ms; display: block; margin-bottom: 8px; }
-    #cx-preview-card .cx-card-close:hover { color: #546A80; }
-    #cx-preview-card .cx-card-img { display: block; width: 200px; height: 200px; object-fit: contain; border-radius: 3px; cursor: move; background: rgba(200,184,154,0.08); }
-    #cx-preview-card .cx-card-show { display: block; font-family: Georgia, serif; font-size: 13px; color: #546A80; margin-top: 10px; cursor: default; transition: color 80ms; line-height: 1.4; }
-    #cx-preview-card .cx-card-show:hover { color: #3D3D3A; }
-    #cx-preview-note { font-family: Georgia, serif; font-style: italic; font-size: 11px; color: rgba(42,38,32,0.6); margin-bottom: 6px; line-height: 1.4; max-width: 200px; }
-    .cx-note-x { font-style: normal; font-size: 11px; color: #b0a090; margin-left: 6px; cursor: default; }
-    .cx-note-x:hover { color: #546A80; }
-
     /* --- Post-replay controls --- */
 
     /* --- Step-through replay controls --- */
@@ -290,30 +260,6 @@
 </div>
 
 <div id="ghost-layer"><img id="ghost-img" src="" alt="" draggable="false"></div>
-
-<div id="tool-constructions" class="panel-tool" style="display:none;">
-  <div class="panel-tool-header" id="constructions-drag-handle">
-    <span class="panel-tool-title">Constructions</span>
-    <span class="panel-tool-close" id="constructions-close">close</span>
-  </div>
-  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">
-    <span class="cx-section-label" id="cx-numbers-label" style="font-size:13px;">Numbers</span>
-    <span id="cx-numbers-toggle" style="font-family:Georgia,serif;font-size:11px;color:#b0a090;cursor:default;transition:color 80ms;">on</span>
-  </div>
-  <div class="cx-examples-section">
-    <span class="cx-section-label">Examples</span>
-    <div class="cx-thumbs-row" id="cx-thumbs-row"></div>
-    <span class="cx-choose" id="cx-choose">Choose…</span>
-  </div>
-</div>
-
-<!-- Construction preview card -->
-<div id="cx-preview-card">
-  <span class="cx-card-close" id="cx-card-close">close</span>
-  <div id="cx-preview-note"></div>
-  <img class="cx-card-img" id="cx-card-img" src="" alt="" draggable="false">
-  <span class="cx-card-show" id="cx-card-show">Show me how this was done</span>
-</div>
 
 <!-- Step-through replay controls -->
 <div id="cx-step-controls" style="display:none;">
@@ -1288,7 +1234,6 @@ function doSaveConstruction(name, note) {
         var url = URL.createObjectURL(blob), a = document.createElement('a');
         a.href = url; a.download = (name.replace(/[^a-z0-9 _-]/gi, '_').trim() || 'construction') + '.json'; a.click();
         URL.revokeObjectURL(url);
-        if (document.getElementById('tool-constructions').style.display !== 'none') buildCxExampleThumbs();
         toast('saved');
         if (points.size >= 10) setTimeout(showUniquenessObservation, 800);
     });
@@ -3435,7 +3380,6 @@ function layoutPanelTools() {
 function getPanelToolEl(id) {
     if (id==='palette')       return toolPalette;
     if (id==='model')         return toolModel;
-    if (id==='constructions') return document.getElementById('tool-constructions');
     return null;
 }
 
@@ -3637,21 +3581,18 @@ function buildWorkspacePalette() {
 }
 
 // ============================================================
-// CONSTRUCTIONS PANEL
-// What:    Left-panel tool with two collapsible sections:
-//          "How this works" (command list) and "Examples" (two
-//          thumbnails from localStorage + built-in defaults).
-//          Thumbnails open a preview card; the card's
-//          "Show me how this was done" triggers playback.
-//          Playback uses tiered delays per op type and resets to
-//          canonical view. Post-replay shows close · repeat controls.
-//          Save-as-Construction: PNG capture → note box → localStorage.
+// CONSTRUCTIONS
+// What:    Built-in construction catalog (CX_BUILTINS), background
+//          preview-PNG generation for the picker, and the dialog
+//          wiring shared by save, replay, and work-in-progress flows
+//          (initConstructions). The old left-panel Constructions tool
+//          and its preview card were removed 7 Aug 2026 — they had no
+//          caller; the picker is the one entry to opening work, and
+//          the Numbers control re-homes with the lattice labels.
 // Depends: SVG_CACHE, operationLog, replayLog(), appendOp(),
-//          fitViewToConstruction(), openPanelTool(), closePanelTool(),
-//          captureConstructionPNG(), openPickerWindow(),
-//          DOM: #tool-constructions, #ghost-layer + all new cx- elements
-// Exposes: initConstructions(), openConstructions(), cxState,
-//          showPreviewCard(), closePreviewCard(),
+//          captureConstructionPNG(), openPickerWindow(), plane,
+//          DOM: dialogs, step controls, save-note box, #ghost-layer
+// Exposes: initConstructions(), cxState,
 //          startStepThrough(), exitStepThrough()
 // ============================================================
 
@@ -3665,49 +3606,9 @@ var CX_BUILTINS = [
 var cxState = {
     ghostActive: false,
     ghostFile:   null,
-    previewEntry: null,    // entry shown in current preview card
 };
 
 function initConstructions() {
-    // Numbers toggle
-    var numLabel  = document.getElementById('cx-numbers-label');
-    var numToggle = document.getElementById('cx-numbers-toggle');
-    function updateNumbersToggle() {
-        numToggle.textContent = showNumbers ? 'on' : 'off';
-        numToggle.style.color = showNumbers ? '#b0a090' : '#546A80';
-    }
-    function toggleNumbers() {
-        showNumbers = !showNumbers;
-        appendOp({ op:'numbers', value:showNumbers });
-        updateNumbersToggle();
-    }
-    numLabel.addEventListener('click',  toggleNumbers);
-    numToggle.addEventListener('click', toggleNumbers);
-    updateNumbersToggle();
-
-    // Preview card close
-    document.getElementById('cx-card-close').addEventListener('click', closePreviewCard);
-    // Preview card show-me
-    document.getElementById('cx-card-show').addEventListener('click', function() {
-        if (!cxState.previewEntry) return;
-        closePreviewCard();
-        loadConstructionEntry(cxState.previewEntry);
-    });
-    // Preview card draggable
-    makeCxCardDraggable();
-    // Constructions panel close
-    document.getElementById('constructions-close').addEventListener('click', function() {
-        clearGhost();
-        closePreviewCard();
-        if (isStepThroughActive()) exitStepThrough();
-        closePanelTool('constructions');
-    });
-    // Choose…
-    document.getElementById('cx-choose').addEventListener('click', function() {
-        openPickerWindow('constructions');
-    });
-    // Build initial thumbnail row
-    buildCxExampleThumbs();
     // Generate built-in PNG previews and cache in localStorage if not already done
     cxGenerateBuiltinPreviews();
 
@@ -3830,43 +3731,6 @@ function initConstructions() {
     })();
 }
 
-// Build the two-thumbnail Examples row from localStorage + builtins
-function buildCxExampleThumbs() {
-    var row = document.getElementById('cx-thumbs-row');
-    if (!row) return;
-    row.innerHTML = '';
-    // Show user-saved entries first, then builtins, limit to 2 visible
-    var userEntries = cxGetAllEntries().slice(-2).reverse(); // most recent 2
-    var builtins = CX_BUILTINS.slice(0, 2);
-    var toShow = userEntries.length > 0 ? userEntries.slice(0,2) : builtins.slice(0,2);
-    toShow.forEach(function(entry) {
-        var wrap = document.createElement('div');
-        wrap.className = 'cx-thumb-wrap';
-        var thumb = document.createElement('div');
-        thumb.className = 'cx-thumb';
-        // Build thumbnail image
-        var img = new Image();
-        if (entry.png) {
-            img.src = entry.png;
-        } else if (entry.svgFile && SVG_CACHE[entry.svgFile]) {
-            var svgStr = SVG_CACHE[entry.svgFile];
-            var blob = new Blob([svgStr],{type:'image/svg+xml'});
-            var url = URL.createObjectURL(blob);
-            img.onload = function(){ URL.revokeObjectURL(url); };
-            img.src = url;
-        }
-        img.width=76; img.height=76; img.draggable=false;
-        thumb.appendChild(img);
-        var label = document.createElement('div');
-        label.className = 'cx-thumb-name';
-        label.textContent = entry.name || 'untitled';
-        thumb.addEventListener('click', function() { showPreviewCard(entry, thumb); });
-        wrap.appendChild(thumb);
-        wrap.appendChild(label);
-        row.appendChild(wrap);
-    });
-}
-
 // Generate PNG previews for built-in logs in the background
 function cxGenerateBuiltinPreviews() {
     CX_BUILTINS.forEach(function(cx) {
@@ -3894,71 +3758,10 @@ function cxGenerateBuiltinPreviews() {
                     operationLog = savedLog;
                     replayLog(false);
                     plane.setView(savedView);
-                    // Refresh thumbnails
-                    buildCxExampleThumbs();
                 });
             })
             .catch(function(){});
     });
-}
-
-function openConstructions() {
-    openPanelTool('constructions');
-    buildCxExampleThumbs();
-}
-
-// --- Preview card ---
-function showPreviewCard(entry, anchorEl) {
-    cxState.previewEntry = entry;
-    var card = document.getElementById('cx-preview-card');
-    var noteEl = document.getElementById('cx-preview-note');
-    var imgEl  = document.getElementById('cx-card-img');
-    // Note text with dismiss x
-    noteEl.innerHTML = '';
-    if (entry.note) {
-        var noteText = document.createTextNode(entry.note);
-        var nx = document.createElement('span'); nx.className='cx-note-x'; nx.textContent='×';
-        nx.addEventListener('click', function() {
-            noteEl.innerHTML = '';
-            noteEl.style.display = 'none';
-        });
-        noteEl.appendChild(noteText); noteEl.appendChild(nx);
-        noteEl.style.display = 'block';
-    } else {
-        noteEl.style.display = 'none';
-    }
-    // Image
-    if (entry.png) {
-        imgEl.src = entry.png;
-    } else if (entry.svgFile && SVG_CACHE[entry.svgFile]) {
-        var svgStr = SVG_CACHE[entry.svgFile];
-        var blob = new Blob([svgStr],{type:'image/svg+xml'});
-        var url = URL.createObjectURL(blob);
-        imgEl.onload = function(){ URL.revokeObjectURL(url); };
-        imgEl.src = url;
-    }
-    // Position: near the thumbnail, in the canvas area
-    var panelW = parseInt(leftPanel.style.width)||PANEL_BASE_WIDTH;
-    card.style.display = 'block';
-    var cardLeft = panelW + 24;
-    var anchorRect = anchorEl ? anchorEl.getBoundingClientRect() : null;
-    var cardTop = anchorRect ? Math.max(20, anchorRect.top - 20) : Math.max(20, window.innerHeight/2 - 130);
-    card.style.left = cardLeft + 'px';
-    card.style.top  = cardTop + 'px';
-}
-
-function closePreviewCard() {
-    document.getElementById('cx-preview-card').style.display = 'none';
-    cxState.previewEntry = null;
-}
-
-function makeCxCardDraggable() {
-    var card = document.getElementById('cx-preview-card');
-    var imgEl = document.getElementById('cx-card-img');
-    var dragging=false, sx,sy,ox,oy;
-    imgEl.addEventListener('mousedown', function(e) { e.preventDefault(); dragging=true; sx=e.clientX; sy=e.clientY; ox=parseInt(card.style.left)||0; oy=parseInt(card.style.top)||0; });
-    document.addEventListener('mousemove', function(e) { if (!dragging) return; card.style.left=(ox+e.clientX-sx)+'px'; card.style.top=(oy+e.clientY-sy)+'px'; });
-    document.addEventListener('mouseup', function(){ dragging=false; });
 }
 
 // ============================================================
