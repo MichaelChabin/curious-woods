@@ -12,6 +12,9 @@
     #canvas {
       position: fixed; inset: 0; z-index: 0;
       touch-action: none; display: block;
+      /* The plane owns these, not any one lab's chrome: without them a
+         circle-drag can select and paint the whole document in Safari. */
+      user-select: none; -webkit-user-select: none;
     }
 
     #left-panel {
@@ -237,19 +240,6 @@
     .save-note-ok { font-family: Georgia, serif; font-size: 14px; color: #546A80; cursor: default; transition: color 80ms; }
     .save-note-ok:hover { color: #3D3D3A; }
 
-    /* --- Note box (save-as-construction) --- */
-    #cx-note-box { position: fixed; z-index: 800; pointer-events: all; display: none; width: 240px; background: rgba(244,241,232,0.92); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 0 14px 12px; box-shadow: 0 2px 14px rgba(42,38,32,0.14); }
-    #cx-note-drag-handle { height: 20px; width: 100%; cursor: grab; display: flex; align-items: center; justify-content: center; margin: 0 -14px; width: calc(100% + 28px); border-radius: 6px 6px 0 0; background: rgba(200,184,154,0.25); }
-    #cx-note-drag-handle:active { cursor: grabbing; }
-    #cx-note-drag-dots { font-family: Georgia, serif; font-size: 11px; color: #b0a090; letter-spacing: 2px; line-height: 1; user-select: none; }
-    #cx-note-name { font-family: Georgia, serif; font-size: 14px; color: #546A80; background: transparent; border: none; border-bottom: 0.5px solid rgba(200,184,154,0.7); outline: none; width: 100%; padding: 8px 0 4px; margin-top: 8px; line-height: 1.3; }
-    #cx-note-name::placeholder { color: #546A80; opacity: 0.45; }
-    #cx-note-box textarea { font-family: Georgia, serif; font-style: italic; font-size: 13px; color: #546A80; background: transparent; border: none; border-bottom: 0.5px solid rgba(200,184,154,0.5); padding: 6px 0 4px; resize: none; width: 100%; height: 54px; outline: none; line-height: 1.5; margin-top: 6px; }
-    #cx-note-box textarea::placeholder { color: #546A80; opacity: 0.35; }
-    .cx-note-actions { display: flex; gap: 16px; margin-top: 8px; }
-    .cx-note-btn { font-family: Georgia, serif; font-size: 14px; color: #546A80; cursor: default; transition: color 80ms; }
-    .cx-note-btn:hover { color: #3D3D3A; }
-
     /* Ghost SVG overlay */
     #ghost-layer { position: fixed; inset: 0; z-index: 591; pointer-events: none; display: none; overflow: hidden; }
     #ghost-layer img { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: 0.22; max-width: none; user-select: none; width: 340px; height: 340px; }
@@ -381,17 +371,6 @@
   <img id="export-preview-img" draggable="false">
 </div>
 
-<!-- Old note box kept for backward compat with initConstructions wiring -->
-<div id="cx-note-box" style="display:none;">
-  <div id="cx-note-drag-handle"><span id="cx-note-drag-dots">· · · · · · · ·</span></div>
-  <input id="cx-note-name" type="text" placeholder="name this construction…" autocomplete="off">
-  <textarea id="cx-note-textarea" placeholder="a note… (optional)"></textarea>
-  <div class="cx-note-actions">
-    <span class="cx-note-btn" id="cx-note-save">save</span>
-    <span class="cx-note-btn" id="cx-note-skip">skip</span>
-  </div>
-</div>
-
 <div id="tool-palette" class="panel-tool" style="display:none;">
   <div class="panel-tool-header" id="palette-drag-handle">
     <span class="panel-tool-title palette-name" id="palette-name-btn">Chartres</span>
@@ -453,6 +432,16 @@ var PARAMS     = { pointSize:2, birthScale:2.0, birthDuration:400, lineWidth:0.5
 var GLOW = { color:'rgba(84,106,128,0.18)', blur:9, width:10 };
 
 var FOREST_GLASS      = '#c2d4bc';
+
+// ── LEADING (platform-level, shared by every lab that leads glass) ──
+// The came colour is not this lab's to choose alone. #777777 was picked
+// against this lab's light glass (#c2d4bc, luminance 207), where it is a
+// strong dark line; against a dark pane (luminance ~85) it becomes a
+// *lighter* line at a third of the contrast and stops reading as a line.
+// Rule, from the fills bench (Decisions-Fills-Aug06): the came must hold
+// contrast against light and dark glass both. The value below satisfies
+// only the light half; choosing the shared value is open work — what is
+// settled here is that it belongs to this platform layer, not to a lab.
 var LEAD_COLOR        = '#4a4540';
 var LEAD_BORDER_COLOR = '#777777';
 var LEAD_WIDTH        = 2;
@@ -507,13 +496,14 @@ function playSound(type) {
 //          free undo and save/load. Intersection points are auto-
 //          detected and keyed (ll:, lc:, cc:).
 // Depends: PARAMS (birthDuration), GEOMETRY HELPERS,
-//          viewX/viewY/viewScale (write on initLog/newConstruction),
+//          plane (resetView on initLog/newConstruction;
+//          setUnitLength declared from the init op's seeds),
 //          resizeCanvas() (called after file load)
 // Exposes: operationLog, points, lines, circles,
 //          logicalSegments, logicalArcs, fills, pointAnimations,
 //          initLog(), replayLog(animateNew), appendOp(op),
 //          undoOp(), newConstruction(),
-//          saveConstruction(), loadConstruction(), _loadFromFile(file),
+//          loadConstruction(), _loadFromFile(file),
 //          fitViewToConstruction()
 // ============================================================
 
@@ -526,8 +516,7 @@ function initLog() {
     operationLog = [{ op:'init', seed0:{x:-100,y:0}, seed1:{x:100,y:0} }];
     replayLog(false);
     // Always reset view to show seeds centered on a fresh canvas.
-    viewX = 0; viewY = 0;
-    viewScale = Math.min(window.innerWidth, window.innerHeight) / 900;
+    plane.resetView();
 }
 
 function replayLog(animateNew) {
@@ -542,6 +531,16 @@ function replayLog(animateNew) {
         if (op.op === 'init') {
             _addPt('seed:0', op.seed0.x, op.seed0.y, 'seed', prev, animateNew);
             _addPt('seed:1', op.seed1.x, op.seed1.y, 'seed', prev, animateNew);
+            // The seed distance IS the unit interval. The lab declares it to
+            // the plane here (decision 4) rather than the plane reaching in.
+            var seedUnit = dist(op.seed0.x, op.seed0.y, op.seed1.x, op.seed1.y);
+            plane.setUnitLength(seedUnit);
+            // Duplicate-intersection merge radius, proportional to the unit
+            // so a log with different seeds still replays sensibly. It must
+            // stay view-independent: replay decides which intersections are
+            // "the same point", and that decision cannot depend on zoom or
+            // saved constructions would replay differently per device.
+            _dupEpsilon = seedUnit * 0.025;
         } else if (op.op === 'line') {
             var p1 = points.get(op.p1Id), p2 = points.get(op.p2Id); if (!p1||!p2) continue;
             var line = { logIdx:i, p1Id:op.p1Id, p2Id:op.p2Id, pointsOnLine:[op.p1Id,op.p2Id], isScaffold:false };
@@ -574,9 +573,16 @@ function replayLog(animateNew) {
         } else if (op.op === 'numbers') {
             showNumbers = op.value;
         } else if (op.op === 'note_open') {
-            // width is stored in screen pixels; legacy logs may have world-coord values (< 100) — normalize
-            var noteW = (op.width && op.width >= 100) ? op.width : 200;
-            var noteObj = { noteId: op.noteId, text: op.text, x: op.x, y: op.y, width: noteW, open: true, editing: !!prevEditing[op.noteId] };
+            // One space: a note records x, y, and widthW all in world
+            // coordinates. Legacy logs stored `width` in screen pixels
+            // (>= 100) or, earlier still, world values (< 100); a legacy
+            // pixel width is adopted as world units directly — at the
+            // default zoom (~1 px per world unit) that is what it meant.
+            var noteW;
+            if (op.widthW) noteW = op.widthW;
+            else if (op.width && op.width >= 100) noteW = op.width;
+            else noteW = 200;
+            var noteObj = { noteId: op.noteId, text: op.text, x: op.x, y: op.y, widthW: noteW, open: true, editing: !!prevEditing[op.noteId] };
             if (op.anchors && op.anchors.length) { noteObj.anchors = op.anchors.slice(); }
             // Legacy: migrate anchorX/anchorY to anchors array
             else if (op.anchorX !== undefined && op.anchorY !== undefined) { noteObj.anchors = [{ x: op.anchorX, y: op.anchorY }]; }
@@ -620,10 +626,12 @@ function detectCircX(circI, prev, an) {
     });
 }
 
+var _dupEpsilon = 5; // world units; set from the seed unit on every init replay
+
 function regX(id, pt, prev, an) {
     if (points.has(id)) return;
     var dup = false;
-    points.forEach(function(ex) { if (dist(pt.x,pt.y,ex.x,ex.y) < 5) dup = true; });
+    points.forEach(function(ex) { if (dist(pt.x,pt.y,ex.x,ex.y) < _dupEpsilon) dup = true; });
     if (dup) return;
     _addPt(id, pt.x, pt.y, 'intersection', prev, an);
     var np = points.get(id);
@@ -674,11 +682,12 @@ function syncCanvasNoteDOMs() {
             el = createCanvasNoteDom(cn, inReplay);
             document.body.appendChild(el);
         }
-        // Position from world coords; box size is fixed screen pixels (zoom-independent)
+        // Position and width both from world coords — the note is part of
+        // the construction, so its box scales with the view like everything else.
         var s = w2s(cn.x, cn.y);
         el.style.left = s.x + 'px';
         el.style.top = s.y + 'px';
-        el.style.width = cn.width + 'px';
+        el.style.width = (cn.widthW * plane.zoom()) + 'px';
     });
 }
 
@@ -756,9 +765,9 @@ function createCanvasNoteDom(cn, readOnly) {
     body.appendChild(textWrap);
     el.appendChild(body);
 
-    // Resize observer
+    // Resize observer — record the new width in world units
     if (!readOnly && typeof ResizeObserver !== 'undefined') {
-        new ResizeObserver(function() { _updateNoteOp(cn, { width: el.offsetWidth }); }).observe(el);
+        new ResizeObserver(function() { _updateNoteOp(cn, { widthW: el.offsetWidth / plane.zoom() }); }).observe(el);
     }
 
     // Drag via the drag bar
@@ -854,8 +863,9 @@ function placeCanvasNote(screenX, screenY) {
     _finalizeAllEditingNotes();
     var world = s2w(screenX, screenY);
     var noteId = 'n:' + (_noteCounter++);
-    // The note starts in editing mode; replayLog will set editing:false, so we set it after
-    appendOp({ op: 'note_open', noteId: noteId, text: '', x: world.x, y: world.y, width: 200 });
+    // The note starts in editing mode; replayLog will set editing:false, so we set it after.
+    // A new note opens 200 screen px wide; recorded in world units.
+    appendOp({ op: 'note_open', noteId: noteId, text: '', x: world.x, y: world.y, widthW: 200 / plane.zoom() });
     var cn = canvasNotes.get(noteId);
     if (cn) cn.editing = true;
     // Recreate the DOM in editing mode
@@ -864,7 +874,7 @@ function placeCanvasNote(screenX, screenY) {
     var el = createCanvasNoteDom(cn, false);
     document.body.appendChild(el);
     var s = w2s(cn.x, cn.y);
-    el.style.left = s.x + 'px'; el.style.top = s.y + 'px'; el.style.width = cn.width + 'px';
+    el.style.left = s.x + 'px'; el.style.top = s.y + 'px'; el.style.width = (cn.widthW * plane.zoom()) + 'px';
     setTimeout(function() {
         var ta = el.querySelector('textarea');
         if (ta) ta.focus();
@@ -877,7 +887,7 @@ function closeCanvasNote(noteId) {
 function newConstruction() {
     operationLog = [{ op:'init', seed0:{x:-100,y:0}, seed1:{x:100,y:0} }];
     replayLog(false);
-    viewX=0; viewY=0; viewScale=Math.min(window.innerWidth,window.innerHeight)/900;
+    plane.resetView();
     // Reset color to clear (bottle green)
     state.palette.selected = FOREST_GLASS;
     // Close any note tip windows, step-through controls, and loaded notes
@@ -888,12 +898,6 @@ function newConstruction() {
     // Reset interaction state
     interactionState = 'IDLE'; selectedPoint = null; firstTapPoint = null;
     ghostLineEnd = null; ghostCircle = null; snapTarget = null;
-}
-
-function saveConstruction() {
-    if (operationLog.length <= 1) { toast('nothing to save yet'); return; }
-    _pendingSaveLog = operationLog.slice();
-    showNoteUI();
 }
 
 // Render filled regions only, cropped tight, with optional note text.
@@ -932,7 +936,8 @@ function captureConstructionPNG(note, callback) {
     var off = document.createElement('canvas'); off.width=pw; off.height=ph;
     var oc  = off.getContext('2d');
     oc.fillStyle = COLORS.background; oc.fillRect(0,0,pw,ph);
-    function wp(wx,wy) { return { x:(wx-minX+pad)*sc, y:(wy-minY+pad)*sc }; }
+    // World y is up; canvas y is down — flip so the export matches the screen
+    function wp(wx,wy) { return { x:(wx-minX+pad)*sc, y:(maxY-wy+pad)*sc }; }
     // Fills only — no construction lines
     allPolys.forEach(function(item) {
         var f = item.fill;
@@ -993,67 +998,10 @@ function noteBoxTextColor() {
     return (darkest && darkestLum<0.15) ? darkest : PAYNES_GRAY;
 }
 
-var _pendingPngDataUrl = null;
+// Log snapshot taken when a save is initiated by a flow whose continuation
+// may clear the canvas before the child finishes naming (save-before-discard).
+// doSaveConstruction consumes it; the save box's Cancel clears it.
 var _pendingSaveLog = null;
-
-function showNoteUI() {
-    var box  = document.getElementById('cx-note-box');
-    var name = document.getElementById('cx-note-name');
-    var ta   = document.getElementById('cx-note-textarea');
-    name.value = '';
-    ta.value   = '';
-    // Position: center of canvas area (right of panel)
-    var panelW = parseInt(leftPanel.style.width)||PANEL_BASE_WIDTH;
-    var cx2 = panelW + (window.innerWidth-panelW)/2;
-    box.style.left = (cx2-120)+'px';
-    box.style.top  = ((window.innerHeight-160)/2)+'px';
-    box.style.display = 'block';
-    setTimeout(function(){ name.focus(); }, 60);
-}
-
-function dismissNoteUI() {
-    document.getElementById('cx-note-box').style.display = 'none';
-    _pendingPngDataUrl = null;
-    _pendingSaveLog = null;
-}
-
-function commitSaveConstruction(note) {
-    if (!_pendingSaveLog) return;
-    var log = _pendingSaveLog;
-    dismissNoteUI();
-    // Capture PNG now that we have the note text
-    captureConstructionPNG(note, function(png) {
-        var nameField = document.getElementById('cx-note-name');
-        var rawName = nameField ? nameField.value.trim() : '';
-        var name = rawName || ('construction ' + new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}));
-        var key  = 'cw-cx-' + Date.now();
-        var entry = { key:key, name:name, note:note||'', created:new Date().toISOString(), operations:log, png:png };
-        // Store in localStorage
-        try {
-            localStorage.setItem(key, JSON.stringify(entry));
-            var index = cxGetStorageIndex();
-            index.push({ key:key, name:name, created:entry.created });
-            localStorage.setItem('cw-cx-index', JSON.stringify(index));
-        } catch(e) {
-            console.warn('localStorage save failed:', e);
-            toast('could not save (storage full?)');
-        }
-        // Also offer JSON download as backup
-        var blob = new Blob([JSON.stringify({ version:1, name:name, note:note||'', created:entry.created, operations:log }, null, 2)], { type:'application/json' });
-        var url = URL.createObjectURL(blob), a = document.createElement('a');
-        a.href=url; a.download=(name.replace(/[^a-z0-9 _-]/gi,'_').trim()||'construction')+'.json'; a.click();
-        URL.revokeObjectURL(url);
-        // Refresh panel thumbnails
-        if (document.getElementById('tool-constructions').style.display!=='none') {
-            buildCxExampleThumbs();
-        }
-        toast('saved');
-        // Show uniqueness observation if enough points
-        if (points.size >= 15) {
-            setTimeout(function() { showUniquenessObservation(); }, 800);
-        }
-    });
-}
 
 var UNIQUENESS_COMPARISONS = [
     { min: 13,  text: 'more than all the grains of sand on every beach on Earth' },
@@ -1174,7 +1122,8 @@ function renderPreviewCanvas(sizeKey) {
     var offX = (artW - ww * sc) / 2, offY = (artH - wh * sc) / 2;
     var off = document.createElement('canvas'); off.width = sz.w; off.height = sz.h;
     var oc = off.getContext('2d');
-    function wp(wx, wy) { return { x: (wx - minX) * sc + matPx + offX, y: (wy - minY) * sc + matPx + offY }; }
+    // World y is up; canvas y is down — flip so the preview matches the screen
+    function wp(wx, wy) { return { x: (wx - minX) * sc + matPx + offX, y: (maxY - wy) * sc + matPx + offY }; }
     oc.fillStyle = '#2a2620'; oc.fillRect(0, 0, sz.w, sz.h);
     oc.strokeStyle = '#c8b89a'; oc.lineWidth = 1;
     oc.strokeRect(matPx - 0.5, matPx - 0.5, artW + 1, artH + 1);
@@ -1192,7 +1141,7 @@ function renderPreviewCanvas(sizeKey) {
     oc.lineJoin = 'round'; oc.lineCap = 'round';
     function drawLL(l) {
         if (l.type === 'seg') { var p1 = wp(l.x1, l.y1), p2 = wp(l.x2, l.y2); oc.beginPath(); oc.moveTo(p1.x, p1.y); oc.lineTo(p2.x, p2.y); oc.stroke(); }
-        else { var c = wp(l.cx, l.cy); oc.beginPath(); oc.arc(c.x, c.y, l.r * sc, l.aA, l.aB, false); oc.stroke(); }
+        else { var c = wp(l.cx, l.cy); oc.beginPath(); oc.arc(c.x, c.y, l.r * sc, -l.aA, -l.aB, true); oc.stroke(); } // y-up flip
     }
     oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = lw;
     sorted.forEach(function(item) {
@@ -1314,13 +1263,17 @@ function executeSave() {
 }
 
 function doSaveConstruction(name, note) {
-    var log = operationLog.slice();
+    // Use the snapshot if one was taken (save-before-discard), else the live log.
+    var log = _pendingSaveLog || operationLog.slice();
+    _pendingSaveLog = null;
     captureConstructionPNG(note, function(png) {
         name = name || ('construction ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
         var key = 'cw-cx-' + Date.now();
         var noteBox = document.getElementById('save-note-box');
         var notePos = { left: parseInt(noteBox.style.left) || 0, top: parseInt(noteBox.style.top) || 0 };
-        var entry = { key: key, name: name, note: note || '', notePos: notePos, created: new Date().toISOString(), operations: log, png: png, viewport: { viewX: viewX, viewY: viewY, viewScale: viewScale } };
+        // No viewport block: load never restored it (a construction always
+        // opens at the default view), so it is not recorded either.
+        var entry = { key: key, name: name, note: note || '', notePos: notePos, created: new Date().toISOString(), operations: log, png: png };
         try {
             localStorage.setItem(key, JSON.stringify(entry));
             var index = cxGetStorageIndex();
@@ -1495,7 +1448,8 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
 
     var off = document.createElement('canvas'); off.width = pw; off.height = ph;
     var oc = off.getContext('2d');
-    function wp(wx, wy) { return { x: (wx - minX) * s + matPx + offX, y: (wy - minY) * s + matPx + offY }; }
+    // World y is up; canvas y is down — flip so the export matches the screen
+    function wp(wx, wy) { return { x: (wx - minX) * s + matPx + offX, y: (maxY - wy) * s + matPx + offY }; }
 
     // Dark border mat
     oc.fillStyle = '#2a2620'; oc.fillRect(0, 0, pw, ph);
@@ -1562,7 +1516,7 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
             oc.beginPath(); oc.moveTo(p1.x, p1.y); oc.lineTo(p2.x, p2.y); oc.stroke();
         } else {
             var c = wp(l.cx, l.cy);
-            oc.beginPath(); oc.arc(c.x, c.y, l.r * s, l.aA, l.aB, false); oc.stroke();
+            oc.beginPath(); oc.arc(c.x, c.y, l.r * s, -l.aA, -l.aB, true); oc.stroke(); // y-up flip
         }
     }
     function drawFillBoundary(item) {
@@ -1645,8 +1599,9 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     canvasNotes.forEach(function(cn) {
         if (!cn.open || !cn.text) return;
         var nPos = wp(cn.x, cn.y);
-        // cn.width is in screen pixels; scale to export pixels via (export scale / screen scale)
-        var nWrapW = cn.width * (s / viewScale);
+        // widthW is world units, so the export no longer depends on whatever
+        // zoom the child happened to be at when saving
+        var nWrapW = cn.widthW * s;
         oc.fillStyle = '#546A80';
         oc.font = 'italic ' + cNoteFontPx + 'px Georgia, serif';
         oc.textBaseline = 'top';
@@ -1710,20 +1665,18 @@ function fitViewToConstruction() {
         minY=Math.min(minY,ce.y-ci.radius); maxY=Math.max(maxY,ce.y+ci.radius);
     });
     var padX = 120, padY = 100;
-    var cw = window.innerWidth, ch = window.innerHeight;
+    var cw = plane.viewportWidth(), ch = plane.viewportHeight();
     var contentW = maxX - minX, contentH = maxY - minY;
     if (contentW < 1) contentW = 200;
     if (contentH < 1) contentH = 200;
     var scaleX = (cw - padX*2) / contentW;
     var scaleY = (ch - padY*2) / contentH;
-    viewScale = Math.min(scaleX, scaleY);
-    viewScale = Math.max(0.05, Math.min(viewScale, 2.0));
-    // Set view center to bounding box center — w2s(viewX,viewY) maps to screen center by definition.
-    viewX = (minX + maxX) / 2;
-    viewY = (minY + maxY) / 2;
+    plane.setZoom(Math.min(scaleX, scaleY)); // the plane's single clamp applies
+    // Centre the view on the bounding box — the pan point maps to screen centre by definition.
+    plane.setPan((minX + maxX) / 2, (minY + maxY) / 2);
 }
 document.addEventListener('keydown', function(e) {
-    if ((e.metaKey||e.ctrlKey) && e.key==='s') { e.preventDefault(); saveConstruction(); }
+    if ((e.metaKey||e.ctrlKey) && e.key==='s') { e.preventDefault(); showSaveDialog(); }
     if ((e.metaKey||e.ctrlKey) && e.key==='o') { e.preventDefault(); loadConstruction(); }
 });
 
@@ -2006,44 +1959,123 @@ function checkAndDissolve(segKey) {
 }
 
 // ============================================================
-// CANVAS + VIEW
-// What:    Canvas setup with Retina/HiDPI support, viewport state
-//          (viewX, viewY, viewScale), and world↔screen coordinate
-//          transforms. resizeCanvas() must be called after any
-//          layout change to avoid coordinate drift on dpr > 1.
-// Depends: nothing (DOM only)
-// Exposes: viewX, viewY, viewScale (mutable),
-//          canvas, ctx,
-//          resizeCanvas(), snap(v), w2s(wx,wy), s2w(sx,sy)
+// THE PLANE
+// What:    The coordinate space both labs will stand on. Owns view
+//          state (pan = world point under the screen centre, zoom =
+//          pixels per world unit), the world↔screen transforms, the
+//          single zoom clamp, cached viewport dimensions, the ambient
+//          lattice step, and the pixel floor. World y is UP: +y is
+//          toward the top of the screen, as in number-theory-v1.
+//          The transforms are pure functions of (world point, view
+//          state) — the viewport size is held as state, never read
+//          from the DOM at transform time.
+//          The plane knows nothing about points, glass, or primes.
+//          The lab declares its unit length (decision 4); the plane
+//          never reaches into the geometry model to find it.
+// Depends: nothing (DOM only at construction and resize)
+// Exposes: plane {viewportWidth, viewportHeight, setViewport,
+//                 zoom, setZoom, pan, setPan, view, setView,
+//                 resetView, setUnitLength, unitLength,
+//                 worldToScreen, screenToWorld,
+//                 latticeStep, pixelFloor},
+//          canvas, ctx, resizeCanvas(), snap(v),
+//          w2s(wx,wy), s2w(sx,sy) (aliases into the plane)
 // ============================================================
 
-var viewX=0, viewY=0;
-// Scale the initial view so the workspace feels the same size regardless of screen.
-// Base the scale on screen height: a 900px screen gets scale=1, larger gets more, smaller gets less.
-var viewScale = Math.min(window.innerWidth, window.innerHeight) / 900;
+var plane = (function() {
+    var pan   = { x: 0, y: 0 };   // world point under the screen centre
+    // Initial zoom keyed to screen size so the workspace feels the same
+    // size regardless of device: a 900px screen gets 1 px per world unit.
+    // Deliberate, and it means initial zoom is not reproducible across
+    // machines — flagged in the inventory, kept as designed.
+    var zoom  = Math.min(window.innerWidth, window.innerHeight) / 900; // px per world unit
+    var viewW = window.innerWidth, viewH = window.innerHeight;         // cached CSS px
+    var unitLength = 200;         // world units per unit interval; the lab declares this
+
+    // The one zoom clamp. Wheel, pinch, and fit-to-construction all pass
+    // through here — previously three clamps with two ranges (0.1–10 twice,
+    // 0.05–2.0 once); this is their union, applied once.
+    var ZOOM_MIN = 0.05, ZOOM_MAX = 10;
+
+    return {
+        setViewport: function(w, h) { viewW = w; viewH = h; },
+        viewportWidth:  function() { return viewW; },
+        viewportHeight: function() { return viewH; },
+
+        zoom:    function() { return zoom; },
+        setZoom: function(z) { zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z)); },
+        pan:     function() { return { x: pan.x, y: pan.y }; },
+        setPan:  function(x, y) { pan.x = x; pan.y = y; },
+        view:    function() { return { x: pan.x, y: pan.y, zoom: zoom }; },
+        setView: function(v) { pan.x = v.x; pan.y = v.y; this.setZoom(v.zoom); },
+        resetView: function() {
+            pan.x = 0; pan.y = 0;
+            zoom = Math.min(viewW, viewH) / 900;
+        },
+
+        setUnitLength: function(len) { if (len > 0) unitLength = len; },
+        unitLength: function() { return unitLength; },
+
+        // World y is up: screen y grows downward, so y negates on the way
+        // through. These are the only two places that know that.
+        worldToScreen: function(wx, wy) {
+            return { x: (wx - pan.x) * zoom + viewW / 2,
+                     y: -(wy - pan.y) * zoom + viewH / 2 };
+        },
+        screenToWorld: function(sx, sy) {
+            return { x: (sx - viewW / 2) / zoom + pan.x,
+                     y: -(sy - viewH / 2) / zoom + pan.y };
+        },
+
+        // Ambient lattice step, in unit intervals, adapted to zoom — one
+        // function will drive both labels and grid lines (Phase 3), the
+        // way number-theory-v1's labelStep() keeps its texture coherent.
+        latticeStep: function() {
+            var pxPerUnit = zoom * unitLength;
+            if (pxPerUnit > 40) return 1;
+            if (pxPerUnit > 10) return 5;
+            return 10;
+        },
+
+        // The screen's limit, not the plane's: how much world one screen
+        // pixel spans. The only unconditional floor; the lab reports it
+        // in whatever units it declared.
+        pixelFloor: function() { return 1 / zoom; }
+    };
+})();
+
 var canvas = document.getElementById('canvas');
 var ctx    = canvas.getContext('2d');
 
 function resizeCanvas() {
     var dpr = window.devicePixelRatio || 1;
-    canvas.width  = window.innerWidth  * dpr;
-    canvas.height = window.innerHeight * dpr;
+    var w = window.innerWidth  || document.documentElement.clientWidth;
+    var h = window.innerHeight || document.documentElement.clientHeight;
+    // Embedded contexts can report a 0×0 window at load and deliver real
+    // dimensions later without a resize event. Retry until they exist.
+    if (!w || !h) { requestAnimationFrame(resizeCanvas); return; }
+    canvas.width  = w * dpr;
+    canvas.height = h * dpr;
     // Pin the CSS layout size to CSS pixels so canvas.clientWidth === window.innerWidth
     // on all screens including Retina/HiDPI. Without this the layout box grows to
     // physical pixel dimensions and all coordinate math breaks on dpr > 1.
-    canvas.style.width  = window.innerWidth  + 'px';
-    canvas.style.height = window.innerHeight + 'px';
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
     // Reset transform before scaling — prevents compounding on repeated calls
     // and ensures correct rendering on any DPI (Retina, 4K, standard).
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
+    plane.setViewport(w, h);
+    // If the view was initialized while the viewport had no size, its zoom
+    // is 0 (unusable); give it its first real default now.
+    if (plane.zoom() === 0) plane.resetView();
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 function snap(v) { return Math.round(v)+0.5; }
-function w2s(wx,wy) { return { x:(wx-viewX)*viewScale+canvas.clientWidth/2,  y:(wy-viewY)*viewScale+canvas.clientHeight/2 }; }
-function s2w(sx,sy) { return { x:(sx-canvas.clientWidth/2)/viewScale+viewX,   y:(sy-canvas.clientHeight/2)/viewScale+viewY }; }
+function w2s(wx,wy) { return plane.worldToScreen(wx,wy); }
+function s2w(sx,sy) { return plane.screenToWorld(sx,sy); }
 
 // ============================================================
 // RENDER
@@ -2054,9 +2086,8 @@ function s2w(sx,sy) { return { x:(sx-canvas.clientWidth/2)/viewScale+viewX,   y:
 // Depends: canvas, ctx, COLORS, PARAMS, GLOW, LEAD_BORDER_COLOR,
 //          LEAD_WIDTH, fills, lines, circles, logicalSegments,
 //          logicalArcs, points, pointAnimations,
-//          showLines, showGlass, viewScale,
+//          showLines, showGlass, plane (zoom, transforms),
 //          w2s(), s2w(), snap(), extLine(), expandFillToPolygon(),
-//          LEAD_WIDTH, LEAD_BORDER_COLOR,
 //          ghostLineEnd, ghostCircle, snapTarget, firstTapPoint
 // Exposes: render(), animate() — animate() self-schedules via rAF
 // ============================================================
@@ -2150,7 +2181,7 @@ function render() {
             ctx.globalAlpha=1;
         });
         circles.forEach(function(ci) {
-            var ce=points.get(ci.centerId),sc=w2s(ce.x,ce.y),sr=ci.radius*viewScale;
+            var ce=points.get(ci.centerId),sc=w2s(ce.x,ce.y),sr=ci.radius*plane.zoom();
             ctx.strokeStyle=COLORS.border; ctx.lineWidth=PARAMS.circleWidth;
             ctx.globalAlpha=ci.isScaffold?PARAMS.scaffoldOpacity:1;
             ctx.beginPath(); ctx.arc(sc.x,sc.y,sr,0,Math.PI*2); ctx.stroke();
@@ -2165,8 +2196,8 @@ function render() {
     if (lastTapTarget && (lastTapTarget.type === 'segment' || lastTapTarget.type === 'arc')) {
         var selObj = lastTapTarget.obj;
         var selPtA = selObj.pointAId, selPtB = selObj.pointBId;
-        var sT2 = THRESHOLDS.lineHitRadius / viewScale;
-        var cT2 = THRESHOLDS.circleHitRadius / viewScale;
+        var sT2 = THRESHOLDS.lineHitRadius / plane.zoom();
+        var cT2 = THRESHOLDS.circleHitRadius / plane.zoom();
         var worldMouse = s2w(mouseScreenPos.x, mouseScreenPos.y);
 
         // Highlight connected straight segments
@@ -2208,13 +2239,15 @@ function render() {
             var d3=Math.abs(dist(worldMouse.x,worldMouse.y,ce.x,ce.y)-ci.radius);
             if (d3 > cT2) return;
             if (!angleBetween(getAngle(worldMouse.x,worldMouse.y,ce),getAngle(pA.x,pA.y,ce),getAngle(pB.x,pB.y,ce))) return;
-            var sc2=w2s(ce.x,ce.y), sr2=ci.radius*viewScale;
+            var sc2=w2s(ce.x,ce.y), sr2=ci.radius*plane.zoom();
             var aA=getAngle(pA.x,pA.y,ce), aB=getAngle(pB.x,pB.y,ce);
             ctx.save();
             ctx.strokeStyle = '#c87d3a';
             ctx.lineWidth = 2.0;
             ctx.globalAlpha = 0.85;
-            ctx.beginPath(); ctx.arc(sc2.x,sc2.y,sr2,aA,aB,false); ctx.stroke();
+            // World y is up: world angle θ lands at screen angle −θ, and an
+            // increasing world sweep runs anticlockwise on the canvas.
+            ctx.beginPath(); ctx.arc(sc2.x,sc2.y,sr2,-aA,-aB,true); ctx.stroke();
             ctx.restore();
         });
     }
@@ -2233,11 +2266,12 @@ function render() {
     logicalArcs.forEach(function(arc) {
         if (!arc.isEmphasized) return;
         var ci=circles.get(arc.circIdx),ce=points.get(ci.centerId);
-        var sc=w2s(ce.x,ce.y),sr=ci.radius*viewScale;
+        var sc=w2s(ce.x,ce.y),sr=ci.radius*plane.zoom();
         var pA=points.get(arc.pointAId),pB=points.get(arc.pointBId);
         var aA=getAngle(pA.x,pA.y,ce),aB=getAngle(pB.x,pB.y,ce);
         drawEmphasisPath(function() {
-            ctx.arc(sc.x,sc.y,sr,aA,aB,false);
+            // y-up: world angles negate on screen, sweep runs anticlockwise
+            ctx.arc(sc.x,sc.y,sr,-aA,-aB,true);
         });
     });
 
@@ -2252,7 +2286,7 @@ function render() {
     if (ghostCircle) {
         var sc=w2s(ghostCircle.center.x,ghostCircle.center.y);
         ctx.strokeStyle=COLORS.border; ctx.globalAlpha=0.4; ctx.lineWidth=PARAMS.circleWidth;
-        ctx.beginPath(); ctx.arc(sc.x,sc.y,ghostCircle.radius*viewScale,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1;
+        ctx.beginPath(); ctx.arc(sc.x,sc.y,ghostCircle.radius*plane.zoom(),0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1;
     }
     if (snapTarget) {
         var s=w2s(snapTarget.x,snapTarget.y),pulse=0.7+0.3*Math.sin(Date.now()/200);
@@ -2276,7 +2310,7 @@ function render() {
         if (ghostCircle && snapTarget && snapTarget.id===pt.id) ap=true;
         if (!ap && ghostLineEnd && firstTapPoint) {
             var gw2=s2w(ghostLineEnd.x,ghostLineEnd.y);
-            if (dist(pt.x,pt.y,gw2.x,gw2.y) < THRESHOLDS.pointHitRadius/viewScale) ap=true;
+            if (dist(pt.x,pt.y,gw2.x,gw2.y) < THRESHOLDS.pointHitRadius/plane.zoom()) ap=true;
         }
         // Cursor proximity hover: grow point when cursor is within POINT_HOVER_SCREEN px
         var screenDist = dist(mouseScreenPos.x, mouseScreenPos.y, s.x, s.y);
@@ -2300,7 +2334,7 @@ function render() {
         if (!cn.open) return;
         var noteEl = document.querySelector('.canvas-note[data-note-id="' + cn.noteId + '"]');
         var noteS = w2s(cn.x, cn.y);
-        var boxW = cn.width || 200, boxH = (noteEl ? noteEl.offsetHeight : 60);
+        var boxW = (cn.widthW ? cn.widthW * plane.zoom() : 200), boxH = (noteEl ? noteEl.offsetHeight : 60);
         var bx1 = noteS.x, by1 = noteS.y, bx2 = noteS.x + boxW, by2 = noteS.y + boxH;
         var bCx = (bx1 + bx2) / 2, bCy = (by1 + by2) / 2;
 
@@ -2454,16 +2488,16 @@ animate();
 //          logical arcs, bare circles, and any underlying line.
 //          Also findSnap() for circle-drag radius snapping.
 //          All radii are converted from screen px to world units
-//          using viewScale so they stay consistent at any zoom.
+//          using plane.zoom() so they stay consistent at any zoom.
 // Depends: THRESHOLDS, points, lines, circles,
-//          logicalSegments, logicalArcs, viewScale,
+//          logicalSegments, logicalArcs, plane,
 //          dist(), ptOnLine(), getAngle(), angleBetween()
 // Exposes: hitPt(wx,wy), hitLC(wx,wy), hitAnyLine(wx,wy),
 //          findSnap(centerPt, radius)
 // ============================================================
 
 function hitPt(wx,wy) {
-    var t=THRESHOLDS.pointHitRadius/viewScale, tFade=t*0.5, found=null;
+    var t=THRESHOLDS.pointHitRadius/plane.zoom(), tFade=t*0.5, found=null;
     points.forEach(function(p) {
         var r = p.isScaffold ? tFade : t;
         if (dist(wx,wy,p.x,p.y)<r) found=p;
@@ -2472,7 +2506,7 @@ function hitPt(wx,wy) {
 }
 
 function hitLC(wx,wy) {
-    var cT=THRESHOLDS.circleHitRadius/viewScale, sT=THRESHOLDS.lineHitRadius/viewScale;
+    var cT=THRESHOLDS.circleHitRadius/plane.zoom(), sT=THRESHOLDS.lineHitRadius/plane.zoom();
     var cTf=cT*0.5, sTf=sT*0.5; // halved thresholds for faded (scaffold) elements
     var bA=null, bAd=Infinity;
     logicalArcs.forEach(function(arc) {
@@ -2508,7 +2542,7 @@ function hitLC(wx,wy) {
 }
 
 function hitAnyLine(wx,wy) {
-    var t=THRESHOLDS.lineHitRadius/viewScale, tFade=t*0.5, found=false;
+    var t=THRESHOLDS.lineHitRadius/plane.zoom(), tFade=t*0.5, found=false;
     lines.forEach(function(l) {
         var thresh = l.isScaffold ? tFade : t;
         var p1=points.get(l.p1Id),p2=points.get(l.p2Id);
@@ -2520,7 +2554,7 @@ function hitAnyLine(wx,wy) {
 }
 
 function findSnap(cp,cr) {
-    var t=THRESHOLDS.snapDistance/viewScale;
+    var t=THRESHOLDS.snapDistance/plane.zoom();
     // Collect all candidate snap points (within threshold of the circle arc)
     var candidates = [];
     points.forEach(function(p) {
@@ -2690,7 +2724,7 @@ function tryPaletteAction(wx, wy) {
 //          appendOp(), undoOp(), newConstruction(), _loadFromFile(),
 //          playSound(), unlockAudio(),
 //          checkAndFill(), checkAndDissolve(),
-//          viewX, viewY, viewScale,
+//          plane (pan/zoom via API),
 //          ghostLineEnd, ghostCircle, snapTarget (mutable render hints)
 // Exposes: interactionState, ghostLineEnd, ghostCircle, snapTarget
 //          (all read by RENDER)
@@ -2736,7 +2770,7 @@ function onDown(e) {
     if (activeTouches.size === 2) {
         var pts = Array.from(activeTouches.values());
         pinchBaseDist = dist(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
-        pinchBaseScale = viewScale;
+        pinchBaseScale = plane.zoom();
         return;
     }
     if (activeTouches.size > 2) return; // ignore 3+ fingers
@@ -2811,13 +2845,13 @@ function onDown(e) {
     var paletteActive = state.palette.selected !== null;
     if (paletteActive && hitFilledRegion(world.x, world.y)) {
         if (interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; interactionState='IDLE'; selectedPoint=null; }
-        isPanning=true; panStart={ x:viewX, y:viewY, sx:pos.x, sy:pos.y };
+        isPanning=true; panStart={ pan:plane.pan(), sx:pos.x, sy:pos.y };
         return;
     }
 
     // ── 5. Empty space ────────────────────────────────────────────────────────
     if (interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; interactionState='IDLE'; selectedPoint=null; return; }
-    isPanning=true; panStart={ x:viewX,y:viewY,sx:pos.x,sy:pos.y };
+    isPanning=true; panStart={ pan:plane.pan(), sx:pos.x, sy:pos.y };
 }
 
 function onMove(e) {
@@ -2830,8 +2864,8 @@ function onMove(e) {
     if (activeTouches.size === 2 && pinchBaseDist) {
         var pts = Array.from(activeTouches.values());
         var curDist = dist(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
-        var s = pinchBaseScale * (curDist / pinchBaseDist);
-        if (s > 0.1 && s < 10) viewScale = s;
+        plane.setZoom(pinchBaseScale * (curDist / pinchBaseDist));
+        syncCanvasNoteDOMs();
         return;
     }
 
@@ -2873,7 +2907,13 @@ function onMove(e) {
         return;
     }
 
-    if (isPanning && panStart) { viewX=panStart.x-(pos.x-panStart.sx)/viewScale; viewY=panStart.y-(pos.y-panStart.sy)/viewScale; return; }
+    if (isPanning && panStart) {
+        // y-up: screen-down drag carries the pan point up in world terms
+        plane.setPan(panStart.pan.x - (pos.x-panStart.sx)/plane.zoom(),
+                     panStart.pan.y + (pos.y-panStart.sy)/plane.zoom());
+        syncCanvasNoteDOMs();
+        return;
+    }
     if (interactionState==='POINT_PRESSED' && dist(pointerStart.x,pointerStart.y,pos.x,pos.y)>THRESHOLDS.tapMovement) interactionState='DRAGGING_CIRCLE';
     if (interactionState==='DRAGGING_CIRCLE' && selectedPoint) {
         var r=dist(selectedPoint.x,selectedPoint.y,world.x,world.y);
@@ -2995,8 +3035,8 @@ function eraserSweepHit(idx, isCircle) {
 // Hit-test all lines and circles near world point for the eraser.
 // Returns {idx, isCircle} for the nearest hit within threshold, or null.
 function hitForEraser(wx, wy) {
-    var tL = THRESHOLDS.lineHitRadius / viewScale;
-    var tC = THRESHOLDS.circleHitRadius / viewScale;
+    var tL = THRESHOLDS.lineHitRadius / plane.zoom();
+    var tC = THRESHOLDS.circleHitRadius / plane.zoom();
     var bestIdx = -1, bestD = Infinity, bestIsCircle = false;
     lines.forEach(function(l, idx) {
         var p1=points.get(l.p1Id), p2=points.get(l.p2Id); if (!p1||!p2) return;
@@ -3151,8 +3191,8 @@ canvas.addEventListener('pointerup',    onUp);
 canvas.addEventListener('pointercancel', onUp);
 canvas.addEventListener('wheel', function(e) {
     e.preventDefault();
-    var s=viewScale*(e.deltaY>0?0.9:1.1);
-    if (s>0.1&&s<10) viewScale=s;
+    plane.setZoom(plane.zoom()*(e.deltaY>0?0.9:1.1));
+    syncCanvasNoteDOMs();
 }, { passive:false });
 canvas.addEventListener('dragover', function(e) { e.preventDefault(); e.dataTransfer.dropEffect='copy'; });
 canvas.addEventListener('drop', function(e) { e.preventDefault(); var f=e.dataTransfer.files[0]; if (f) _loadFromFile(f); });
@@ -3305,8 +3345,6 @@ var modelImg    = document.getElementById('model-img');
 // Exposes: toggleLines(), exportImage()
 // ============================================================
 
-function collapseMenu() { /* no-op — Tools menu removed */ }
-
 function toggleLines() {
     showLines = !showLines;
 }
@@ -3326,7 +3364,8 @@ function exportImage() {
     var sc=Math.min(1200/ww,900/wh,3), pw=Math.round(ww*sc), ph=Math.round(wh*sc);
     var off=document.createElement('canvas'); off.width=pw; off.height=ph;
     var oc=off.getContext('2d'); oc.fillStyle=COLORS.background; oc.fillRect(0,0,pw,ph);
-    function wp(wx,wy) { return { x:(wx-minX+pad)*sc, y:(wy-minY+pad)*sc }; }
+    // World y is up; canvas y is down — flip so the export matches the screen
+    function wp(wx,wy) { return { x:(wx-minX+pad)*sc, y:(maxY-wy+pad)*sc }; }
     fills.forEach(function(f) {
         if (f.dissolved) return;
         var poly=expandFillToPolygon(f).map(function(p) { return wp(p.x,p.y); });
@@ -3652,23 +3691,6 @@ function initConstructions() {
     });
     // Preview card draggable
     makeCxCardDraggable();
-    // Note box save / skip
-    document.getElementById('cx-note-save').addEventListener('click', function() {
-        commitSaveConstruction(document.getElementById('cx-note-textarea').value.trim());
-    });
-    document.getElementById('cx-note-skip').addEventListener('click', function() {
-        commitSaveConstruction('');
-    });
-    // Enter in name field = move to note textarea
-    document.getElementById('cx-note-name').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { e.preventDefault(); document.getElementById('cx-note-textarea').focus(); }
-    });
-    // Enter in note textarea = save
-    document.getElementById('cx-note-textarea').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); commitSaveConstruction(e.target.value.trim()); }
-    });
-    // Note box draggable
-    makeCxNoteDraggable();
     // Constructions panel close
     document.getElementById('constructions-close').addEventListener('click', function() {
         clearGhost();
@@ -3721,7 +3743,12 @@ function initConstructions() {
     document.getElementById('cx-wip-save').addEventListener('click', function() {
         document.getElementById('cx-wip-dialog').style.display = 'none';
         var cb = stepState.pendingCallback; stepState.pendingCallback = null;
-        saveConstruction();
+        if (operationLog.length > 1) {
+            // Snapshot now: the continuation below may clear the canvas
+            // while the child is still naming the construction.
+            _pendingSaveLog = operationLog.slice();
+            showSaveNoteBox('construction');
+        }
         if (cb) setTimeout(cb, 300);
     });
     document.getElementById('cx-wip-cancel').addEventListener('click', function() {
@@ -3773,7 +3800,10 @@ function initConstructions() {
 
     // Save note box OK and Cancel
     document.getElementById('save-note-ok').addEventListener('click', executeSave);
-    document.getElementById('save-note-cancel').addEventListener('click', dismissSaveNoteBox);
+    document.getElementById('save-note-cancel').addEventListener('click', function() {
+        dismissSaveNoteBox();
+        _pendingSaveLog = null; // cancelled — drop any snapshot so a later save uses the live log
+    });
 
     // Save note box drag
     (function() {
@@ -3837,7 +3867,9 @@ function buildCxExampleThumbs() {
 function cxGenerateBuiltinPreviews() {
     CX_BUILTINS.forEach(function(cx) {
         if (cx.png) return; // already have inline PNG
-        var previewKey = 'cw-cx-builtin-png-'+cx.key;
+        // Key suffix v2: previews cached before the y-up flip are mirrored
+        // relative to how the construction now renders — regenerate.
+        var previewKey = 'cw-cx-builtin-png-v2-'+cx.key;
         var cached = null;
         try { cached = localStorage.getItem(previewKey); } catch(e) {}
         if (cached) { cx.png = cached; return; }
@@ -3848,7 +3880,7 @@ function cxGenerateBuiltinPreviews() {
                 if (!data.operations) return;
                 // Save current state
                 var savedLog = operationLog.slice();
-                var savedVX=viewX, savedVY=viewY, savedVS=viewScale;
+                var savedView = plane.view();
                 operationLog = data.operations.slice();
                 replayLog(false);
                 captureConstructionPNG('', function(pngDataUrl) {
@@ -3857,7 +3889,7 @@ function cxGenerateBuiltinPreviews() {
                     // Restore state
                     operationLog = savedLog;
                     replayLog(false);
-                    viewX=savedVX; viewY=savedVY; viewScale=savedVS;
+                    plane.setView(savedView);
                     // Refresh thumbnails
                     buildCxExampleThumbs();
                 });
@@ -3932,7 +3964,7 @@ function makeCxCardDraggable() {
 //          grouped into visible steps. Forking (child draws during
 //          replay) discards remaining steps.
 // Depends: operationLog, replayLog, appendOp, newConstruction,
-//          saveConstruction, fitViewToConstruction, layoutPanelTools
+//          showSaveNoteBox, fitViewToConstruction, layoutPanelTools
 // Exposes: startStepThrough(ops), exitStepThrough(),
 //          stepForward(), stepBack(), isStepThroughActive()
 // ============================================================
@@ -4071,7 +4103,7 @@ function startStepThrough(ops) {
     replayLog(false);
 
     // Always use default viewport — do not restore saved zoom
-    viewX = 0; viewY = 0; viewScale = Math.min(window.innerWidth, window.innerHeight) / 900;
+    plane.resetView();
 
     // Show the first step immediately (don't start with blank canvas)
     if (stepState.stepBounds.length > 1) {
@@ -4242,16 +4274,6 @@ function clearGhost() {
     document.getElementById('ghost-img').src = '';
     cxState.ghostActive = false;
     cxState.ghostFile = null;
-}
-
-// --- Note box draggable ---
-function makeCxNoteDraggable() {
-    var box = document.getElementById('cx-note-box');
-    var handle = document.getElementById('cx-note-drag-handle');
-    var dragging=false, sx,sy,ox,oy;
-    handle.addEventListener('mousedown', function(e) { e.preventDefault(); dragging=true; sx=e.clientX; sy=e.clientY; ox=parseInt(box.style.left)||0; oy=parseInt(box.style.top)||0; });
-    document.addEventListener('mousemove', function(e) { if (!dragging) return; box.style.left=(ox+e.clientX-sx)+'px'; box.style.top=(oy+e.clientY-sy)+'px'; });
-    document.addEventListener('mouseup', function(){ dragging=false; });
 }
 
 // ============================================================

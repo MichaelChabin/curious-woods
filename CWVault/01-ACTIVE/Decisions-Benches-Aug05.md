@@ -7,7 +7,8 @@ date: 2026-08-05
 # Decisions — the three graphics benches
 
 Reported by Claude Code, 5 August. Method per `experiments/prime-tones.html`: a perceptual
-question gets a bench, not an argument.
+question gets a bench, not an argument. **Extended by `Decisions-Fills-Aug06.md`**, which
+carries the colour, lead, glass and motion work and overturns decision 10's first half.
 
 ## canvas-panes — passed decisively
 
@@ -90,5 +91,95 @@ Phase 4.
 
 ## Status
 
-Phase 1 has not started, per the plan's instruction to review the benches first. Two of
-three have reported; `fills-and-light` is still being worked.
+Phase 1 has not started, per the plan's instruction to review the benches first.
+
+---
+
+# What is still open before Phase 4
+
+*Reviewed 6 August against `Plan-Plane-Extraction.md` and `Decisions-Fills-Aug06.md`.
+The benches have answered what they were built to answer. Three things remain, and only
+one of them is a gate.*
+
+## 1. The second channel — the gate
+
+`prime-glass` carries two candidates (piece width by prime; cutting each piece into as
+many parts as its prime) and has reported the *problem* — 6, 10 and 14 pixel-identical —
+but not a *decision between them*. By the project's own method the bench should settle it
+by being looked at.
+
+The question to put to it: **with colour off, can you tell 6, 10 and 14 apart at a glance,
+and does the answer survive at small pane sizes?**
+
+Standing recommendation, to be overruled by the bench if the bench disagrees:
+**subdivision, not width.** Width is an encoding — a pane says "1.4 units wide" and cannot
+be read without a key, which is the same failure as colour. Subdivision is a *count*: two
+is a piece cut in two, seven is a piece cut in seven, read by looking, no key. It is the
+only candidate decision 6 already endorses — *panes are regions, cut and leaded exactly as
+geometry cuts and leads.* Subdivision is cutting; width-by-prime is a bar chart wearing a
+window. It serves i11 (measure by counting) directly.
+
+Two things now argue for it that did not on 5 Aug. **Every piece is leaded**, so a
+subdivided piece already has the machinery to show its divisions. And the fills bench
+found that same-prime neighbours merge without inner cames — subdivision is that same
+finding used deliberately rather than suffered.
+
+Expected failure mode is small pane sizes, which `canvas-panes`'s detail ladder handles.
+
+## 2. Decision 9 — half-specified now, not unspecified
+
+The fills bench has supplied the *shape*: **a workshop declares a colour per prime**, and
+resting and lit palettes derive from it in OKLCH. That is the data path decision 9 lacked.
+
+Still owed: the `palettes.json` schema change itself (currently
+`{id, name, source, description, colors}`, with prime colours living separately as 16 CSS
+variables), and **the 16th workshop** — the colourblind-safe one, which must be authored
+rather than relabelled, since all 15 existing palettes derive from artworks. It does not
+exist yet.
+
+Settle the channel first: if subdivision lands, the low-hue palettes (Chinese Blue and
+White, Hokusai) become viable, which changes how hard the 16th workshop has to work.
+
+## 3. Decision 8 — mirroring, now with a second consequence
+
+Stripes are ordered smallest prime first in the data, but stripes stack vertically and
+mirrored panes get `rotate(-90deg) scaleY(-1)`, so the same factorisation reads in
+opposite directions on either side of the diagonal.
+
+**The fills work makes this worse and more interesting.** Texture direction was chosen
+*relative to the stacking*: pieces stack vertically, their boundaries are horizontal, and
+striations run across those boundaries 70% of the time. A 90° rotation turns every
+"across" into an "along" — so the mirror transform now contradicts both the stripe order
+and the texture rule, and the two halves of the table would be made of different glass.
+
+So this is not a tidiness question. **Does a pane read the same way everywhere, or does it
+mirror with the table?** Commutativity is visible either way; only one keeps "a pane's
+shape is its factorisation" true, and only one keeps the glass consistent. Decide before
+Phase 4, not during it.
+
+---
+
+# Phase 1 is not blocked by any of this
+
+Worth stating plainly, because "benches first" reads as though it gates everything. It
+does not. **The benches gate Phase 4.** Phase 1 is the plane extracted from Glass
+Geometry — view state, transforms, one zoom clamp, the y-up flip, save-path consolidation
+— and none of it touches panes, primes, colour or stripes.
+
+Two corrections to the Phase 1 item list, from Claude Code's reading of the code:
+
+- **Half-pixel snapping is not a Phase 1 item.** The plan describes it as "applied to
+  everything except the grid," but that describes `number-theory-v1`. Glass Geometry has
+  no grid, so the inconsistency cannot exist there yet. The `snap()` audit belongs in
+  **Phase 3**, when the lattice arrives and creates it. Do not hunt for it in Phase 1.
+- **`user-select` splits across two phases.** Glass Geometry has 15 rules, all on chrome,
+  none on canvas or body — so the Phase 1 work is as written. But Glass Multiplication has
+  *zero* rules anywhere and a drag gesture over text-bearing panes, so it is the likelier
+  source of the Safari blue-paint and its fix lands in **Phase 4**.
+
+One addition to Phase 1, from the fills bench: **the came is platform-level.** Geometry's
+`#777777` was chosen against light glass and becomes a lighter line at a third of the
+contrast against dark panes. If both labs share leading, came colour belongs to the shared
+layer with a rule that works against both, not to one lab's stylesheet.
+
+Everything else in the Phase 1 list is confirmed against the inventory and can proceed.

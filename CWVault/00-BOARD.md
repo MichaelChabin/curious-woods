@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-05 (evening — corrected against Plan-Plane-Extraction.md)
+updated: 2026-08-07 (Phase 1 executed, committed unpushed, awaiting review)
 ---
 
 # The Board
@@ -40,10 +40,21 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
 > check** — `git log` on a directory returns commits and looks reassuring while the
 > specific files are absent from all of them.
 
+> **Phase 1 executed, 7 Aug.** The plane is extracted: view state behind a `plane`
+> API, pure transforms over a cached viewport, one zoom clamp (0.05–10), world y up
+> with the audit (pan sign, every arc, all four export renderers), unit declared by
+> the lab, save paths consolidated, `viewport` block retired, `regX` epsilon made
+> unit-relative, came marked platform-level. Committed, **not pushed** — nothing has
+> reached Netlify. Two deliberate deviations and one consequence (old saves render
+> mirrored across the seed axis) are in `01-ACTIVE/Decisions-Phase1-Aug07.md`.
+
 - **Authority:** `01-ACTIVE/Plan-Plane-Extraction.md` (instructions) ·
   `01-ACTIVE/Inventory-GlassGeometry.md` (what the code actually contains) ·
   `01-ACTIVE/Decisions-Benches-Aug05.md` (bench results and the decisions they amend) ·
   `01-ACTIVE/Decisions-Fills-Aug06.md` (glass, light and lead — settled at the bench) ·
+  `01-ACTIVE/Decisions-Phase1-Aug07.md` (Phase 1 as executed, with deviations) ·
+  `20-SPECS/Spec-Workshop-Palette-Schema.md` (decision 9's data path, exported from
+  the bench — now tracked in git) ·
   `_msc/_mscVault/5. Claude Design/1. Redesign.md` (the reasoning).
 - **Benches:** `canvas-panes` **passed decisively** — 32×32 is 1024 panes and 3840 pieces
   at 2.4 ms p95, zero dropped frames. `prime-glass` **reports a problem**: with colour off,
@@ -59,10 +70,24 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   It is required, not desirable — several real palettes have fewer than six usable hues
   and cannot carry six primes however tuned.
 - **The explicit instruction: stop at the end of Phase 1 for review.**
-- **Next action:** settle the second channel. Two smaller items are open in
-  `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and an inner came
-  value that clears all six resting colours. Phase 1 does not start until the appearance
-  work is closed.
+- **Phase 1 is not gated by the appearance work.** The benches gate **Phase 4**. Phase 1 is
+  view state, transforms, one zoom clamp, the y-up flip and the save-path consolidation —
+  none of which touches panes, primes, colour or stripes. Two corrections to its item list
+  and one addition are recorded at the end of `Decisions-Benches-Aug05.md`; read them
+  first, because one Phase 1 item (half-pixel snapping) describes a defect that is not in
+  Glass Geometry at all.
+- **Next action:** Michael reviews Phase 1 (`Decisions-Phase1-Aug07.md`, then the app
+  served locally — `python3 -m http.server` in `cw-deploys/`), pushes if it holds.
+  Phase 2 does not start before that review. In parallel, settle the second channel —
+  the standing recommendation is subdivision rather than width, argued in
+  `Decisions-Benches-Aug05.md` and to be overruled by the bench if the bench disagrees. Two smaller appearance items
+  remain open in `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and
+  an inner came value that clears all six resting colours.
+- **Also unresolved, and now bigger than it looked:** the mirrored-pane transform
+  (`rotate(-90deg) scaleY(-1)`) contradicts decision 8's stripe order *and* the fills
+  bench's texture rule, since a 90° rotation turns every "across" striation into an
+  "along". The two halves of the table would be made of different glass. Decide before
+  Phase 4.
 
 ### 2. Perception Lab — the child's own instrument
 Colour, pitch, and rhythm discrimination. One measurement harness, three axes.
@@ -85,13 +110,15 @@ established with a closed facet vocabulary. `99-IDEAS/` closed to new writing bu
 deliberately **not** archived — it still holds unmigrated live threads.
 
 **Still owed:**
-- Register `canvas-panes.html`, `fills-and-light.html`, `prime-glass.html` in `MANIFEST.md`.
+- ~~Register the three benches in `MANIFEST.md`.~~ **Already done** — commit `93417d0`,
+  before this board entry was written. The owed item was stale, not undone; struck 7 Aug.
 - `CLAUDE.md`'s file-layout and "current design" sections still describe March.
 - `Session-Protocol.md` needs an honest rewrite once the new rhythm has run a few sessions.
 - Obsidian views over `03-SEEDS/` — the facets are inert until something queries them.
 - **`_msc/_mscVault/` is a second vault this board cannot see.** At minimum the Claude
   Design folder is load-bearing for CW. Decide whether it moves, is linked, or is indexed.
-- **Next action:** register the benches. It is two minutes and it is the rule being broken.
+- **Next action:** rewrite `CLAUDE.md`'s file-layout and current-design sections — they
+  still describe March, and every new session reads them before anything else.
 
 ---
 
