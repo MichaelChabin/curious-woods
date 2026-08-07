@@ -106,3 +106,25 @@ app behaviour; noted so nobody re-chases it.
 
 Phase 4 — porting Glass Multiplication onto the plane — does not start until
 this is reviewed. Its gate remains the second channel, unchanged.
+
+---
+
+## Resolved after review, 7 Aug
+
+Michael accepted Phase 3 and ruled on the three flagged defaults:
+
+1. **`points` stays Geometry's default — and the default is per-viewing.**
+   Each viewing chooses how the plane greets the child; Multiplication is
+   expected to default to `map`. Recorded in code beside `numbersMode`. This
+   is a small early instance of decision 7 (a viewing supplies meaning): the
+   numbers default belongs to the viewing, not the plane.
+2. **The pixel floor speaks at the declared unit's natural scale**, never in
+   decimals of a unit: a viewing that names its unit will read "about 4 mm";
+   Geometry has not named one, so it says "one pixel is about 4 thousandths
+   of a unit" — implemented and verified same day. This line is settled copy;
+   the **full voice pass on the remaining Phase 3 copy is deferred to Michael
+   and is owed before Phase 4 ships** (mode words, "grid follows zoom" /
+   "grid keeps its step").
+3. **The control's home in the How-this-works block is accepted as
+   provisional**, pending the Phase 4 viewing layer — where per-viewing
+   controls will need a settled place anyway.

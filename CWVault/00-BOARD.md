@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-07 (Phases 1–2 reviewed and pushed; panel removed; Phase 3 executed, committed unpushed)
+updated: 2026-08-07 (Phases 1–3 all reviewed and pushed; Phase 4 gated on the second channel and the voice pass)
 ---
 
 # The Board
@@ -49,17 +49,19 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
 > panel is removed per Michael's ruling (`7e245a3`); the hands-on list (pinch,
 > Share, iPad Safari) still stands in `01-ACTIVE/Decisions-Phase2-Aug07.md`.
 >
-> **Phase 3 executed, 7 Aug — committed, not pushed.** The plane has its ambient
-> lattice: one step function drives grid and labels on the 1–5–10 ladder across
-> decades; labels positive in all four directions; the unit frame (origin + length)
-> declared by the lab so the lattice lands on the child's 0 and 1; every stroke
-> half-pixel-snapped at 1px from birth — the sketch's snapping defect cannot arrive
-> here; tied/untied zoom as a toggle; the pixel floor on screen in map mode. The
-> Numbers control re-homed as one word cycling map · points · off, recorded as
-> `numbers` ops, legacy booleans mapped forward. Three defaults chosen by Claude
-> and flagged for review (fresh constructions default to `points`, provisional
-> copy, control placement) plus one deliberate deferral (lattice-click minting →
-> Phase 4 design): `01-ACTIVE/Decisions-Phase3-Aug07.md`.
+> **Phase 3 reviewed and pushed, 7 Aug.** The plane has its ambient lattice: one
+> step function, 1–5–10 ladder across decades, labels positive in all four
+> directions, the unit frame declared by the lab, every stroke half-pixel-snapped
+> at 1px from birth, tied/untied zoom, the pixel floor on screen. The Numbers
+> control cycles map · points · off. Rulings recorded in
+> `01-ACTIVE/Decisions-Phase3-Aug07.md`: the numbers default is **per-viewing**
+> (Geometry rests at `points`; Multiplication is expected to default to `map`);
+> the pixel floor speaks at the declared unit's natural scale ("about 4
+> thousandths of a unit", or "about 4 mm" once a viewing names its unit —
+> implemented); the control's home is provisional pending the Phase 4 viewing
+> layer. **Owed before Phase 4 ships: Michael's voice pass on the remaining
+> Phase 3 copy.** Deferred into the Phase 4 design: lattice-click minting
+> (decision 5's second half).
 
 - **Authority:** `01-ACTIVE/Plan-Plane-Extraction.md` (instructions) ·
   `01-ACTIVE/Inventory-GlassGeometry.md` (what the code actually contains) ·
@@ -91,14 +93,12 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   and one addition are recorded at the end of `Decisions-Benches-Aug05.md`; read them
   first, because one Phase 1 item (half-pixel snapping) describes a defect that is not in
   Glass Geometry at all.
-- **Next action:** Michael reviews Phase 3 — the ledger's three flagged defaults are
-  the substance (does a fresh construction greet the child as a map or as earned
-  points; the provisional copy; the control's home), then the lattice itself by eye,
-  served locally. Push if it holds. Phase 4 stays gated on the second channel — the
-  standing recommendation is subdivision rather than width, argued in
-  `Decisions-Benches-Aug05.md` and to be overruled by the bench if the bench
-  disagrees — and its design now also owes an answer on lattice-click minting
-  (decision 5's second half, deferred out of Phase 3). Two smaller appearance items
+- **Next action:** the Phase 4 design. Its gates, in order: settle the second channel
+  at the bench (standing recommendation: subdivision rather than width, argued in
+  `Decisions-Benches-Aug05.md`, the bench to overrule if it disagrees); decide the
+  mirrored-pane transform (below); answer lattice-click minting (decision 5's second
+  half); and Michael's voice pass on the Phase 3 copy before anything ships. The
+  three benches' other open items (125% chroma clip, inner-came value) ride along. Two smaller appearance items
   remain open in `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and
   an inner came value that clears all six resting colours.
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto

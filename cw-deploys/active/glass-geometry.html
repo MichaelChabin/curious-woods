@@ -403,8 +403,9 @@ var showGlass   = false;
 // Where numbers live: 'map' shows the plane's ambient lattice (grid and
 // tick numbers); 'points' turns the lattice down to reveal the emergent
 // numbering — numbers only where the child has constructed a point;
-// 'off' shows none. Default is 'points': numbers stay earned until the
-// child asks for the map. (Default flagged for review, Phase 3.)
+// 'off' shows none. Geometry's default is 'points': numbers stay earned
+// until the child asks for the map. The default is per-viewing (settled
+// at the Phase 3 review) — Multiplication is expected to default to 'map'.
 var numbersMode = 'points';
 
 // ============================================================
@@ -4859,19 +4860,38 @@ document.getElementById('lattice-tie').addEventListener('click', function() {
     updateNumbersControl();
 });
 
-// The screen's limit, reported in the lab's declared units. The lab has
-// not yet named its unit, so the copy says "units" — wording flagged for
-// review in the Phase 3 ledger.
+// The screen's limit, spoken at the declared unit's natural scale
+// (settled at the Phase 3 review): a viewing that names its unit reads
+// like "about 4 mm"; Geometry has not named one, so it speaks the scale
+// in words — "about 4 thousandths of a unit" — never raw decimals.
+// This one line is settled copy; the rest awaits Michael's voice pass.
 function drawPixelFloorReadout() {
-    var unitsPerPixel = 1 / (plane.zoom() * plane.unitLength());
-    var num = parseFloat(unitsPerPixel.toPrecision(2)).toString();
+    var v = 1 / (plane.zoom() * plane.unitLength()); // units per pixel
+    function sig(x) { return parseFloat(x.toPrecision(1)); }
+    var n, txt;
+    if (v >= 1) {
+        n = sig(v);
+        txt = 'about ' + n + (n === 1 ? ' unit' : ' units');
+    } else if (v >= 0.1) {
+        n = sig(v * 10);
+        txt = 'about ' + n + (n === 1 ? ' tenth' : ' tenths') + ' of a unit';
+    } else if (v >= 0.01) {
+        n = sig(v * 100);
+        txt = 'about ' + n + (n === 1 ? ' hundredth' : ' hundredths') + ' of a unit';
+    } else if (v >= 0.001) {
+        n = sig(v * 1000);
+        txt = 'about ' + n + (n === 1 ? ' thousandth' : ' thousandths') + ' of a unit';
+    } else {
+        n = sig(v * 1e6);
+        txt = 'about ' + n + (n === 1 ? ' millionth' : ' millionths') + ' of a unit';
+    }
     ctx.save();
     ctx.font = '10px Georgia, serif';
     ctx.fillStyle = '#546A80';
     ctx.globalAlpha = 0.45;
     ctx.textAlign = 'right';
     ctx.textBaseline = 'bottom';
-    ctx.fillText('one pixel = ' + num + ' units', canvas.clientWidth - 10, canvas.clientHeight - 8);
+    ctx.fillText('one pixel is ' + txt, canvas.clientWidth - 10, canvas.clientHeight - 8);
     ctx.restore();
 }
 
