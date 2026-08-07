@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-07 (Phase 1 executed, committed unpushed, awaiting review)
+updated: 2026-08-07 (Phase 1 reviewed and pushed; Phase 2 executed, committed unpushed)
 ---
 
 # The Board
@@ -40,19 +40,27 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
 > check** — `git log` on a directory returns commits and looks reassuring while the
 > specific files are absent from all of them.
 
-> **Phase 1 executed, 7 Aug.** The plane is extracted: view state behind a `plane`
-> API, pure transforms over a cached viewport, one zoom clamp (0.05–10), world y up
-> with the audit (pan sign, every arc, all four export renderers), unit declared by
-> the lab, save paths consolidated, `viewport` block retired, `regX` epsilon made
-> unit-relative, came marked platform-level. Committed, **not pushed** — nothing has
-> reached Netlify. Two deliberate deviations and one consequence (old saves render
-> mirrored across the seed axis) are in `01-ACTIVE/Decisions-Phase1-Aug07.md`.
+> **Phase 1 executed, reviewed and pushed, 7 Aug** (`8b5f25e`, live on Netlify). The
+> plane is extracted: view state behind a `plane` API, pure transforms, one zoom
+> clamp, world y up with the audit. Deviations and the legacy-mirror consequence:
+> `01-ACTIVE/Decisions-Phase1-Aug07.md`.
+>
+> **Phase 2 executed, 7 Aug — committed, not pushed.** One code change (the
+> `getAxisLabels()` reach is gone; the unit comes from the plane, decision 4) and a
+> full verification sweep on a cleared profile: gestures, fades, both eraser sweeps,
+> fills, recolor, both save paths' survivor, drop-load, step-through with fork, tip
+> suppression observed marking stages seen unshown, all 15 palettes, uniqueness at
+> 15 points. Zero console errors. What only a human hand can still check (pinch,
+> Share, iPad Safari) is listed in `01-ACTIVE/Decisions-Phase2-Aug07.md` — along
+> with one dormant-UI find: the constructions panel (Numbers toggle) has no caller,
+> and that predates the extraction.
 
 - **Authority:** `01-ACTIVE/Plan-Plane-Extraction.md` (instructions) ·
   `01-ACTIVE/Inventory-GlassGeometry.md` (what the code actually contains) ·
   `01-ACTIVE/Decisions-Benches-Aug05.md` (bench results and the decisions they amend) ·
   `01-ACTIVE/Decisions-Fills-Aug06.md` (glass, light and lead — settled at the bench) ·
   `01-ACTIVE/Decisions-Phase1-Aug07.md` (Phase 1 as executed, with deviations) ·
+  `01-ACTIVE/Decisions-Phase2-Aug07.md` (Phase 2 — the verification sweep) ·
   `20-SPECS/Spec-Workshop-Palette-Schema.md` (decision 9's data path, exported from
   the bench — now tracked in git) ·
   `_msc/_mscVault/5. Claude Design/1. Redesign.md` (the reasoning).
@@ -76,10 +84,10 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   and one addition are recorded at the end of `Decisions-Benches-Aug05.md`; read them
   first, because one Phase 1 item (half-pixel snapping) describes a defect that is not in
   Glass Geometry at all.
-- **Next action:** Michael reviews Phase 1 (`Decisions-Phase1-Aug07.md`, then the app
-  served locally — `python3 -m http.server` in `cw-deploys/`), pushes if it holds.
-  Phase 2 does not start before that review. In parallel, settle the second channel —
-  the standing recommendation is subdivision rather than width, argued in
+- **Next action:** Michael reviews Phase 2 (`Decisions-Phase2-Aug07.md` — short, plus
+  the hands-on list: pinch, Share, iPad Safari), pushes if it holds. Phase 3 (the
+  ambient lattice) does not start before that review. In parallel, settle the second
+  channel — the standing recommendation is subdivision rather than width, argued in
   `Decisions-Benches-Aug05.md` and to be overruled by the bench if the bench disagrees. Two smaller appearance items
   remain open in `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and
   an inner came value that clears all six resting colours.

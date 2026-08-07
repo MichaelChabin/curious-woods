@@ -27,11 +27,13 @@ A page that moves between folders must have those paths checked.
 - **`glass-geometry.html`** — compass-and-straightedge construction environment;
   constructions become stained glass. Reads `../text/geometry-v1.json` for its
   copy, `../art/palettes.json` for palettes, and `../models/` for the built-in
-  constructions. **Stands on the extracted plane** (Phase 1, 7 Aug 2026): view
-  state lives in a `plane` module behind an API, world y is up, one zoom clamp.
-  Saved logs replay unchanged but render mirrored across the seed axis relative
-  to the retired y-down view. Ledger:
-  `CWVault/01-ACTIVE/Decisions-Phase1-Aug07.md`.
+  constructions. **Stands on the extracted plane** (Phases 1–2, 7 Aug 2026):
+  view state lives in a `plane` module behind an API, world y is up, one zoom
+  clamp, and the emergent numbering reads its unit from the plane rather than
+  the model. Saved logs replay unchanged but render mirrored across the seed
+  axis relative to the retired y-down view. Ledgers:
+  `CWVault/01-ACTIVE/Decisions-Phase1-Aug07.md` and `…Phase2-Aug07.md`
+  (the latter carries the verification sweep and the remaining hands-on list).
 - **`glass-multiplication.html`** — the times table as a window onto the number
   plane: every product a rectangle, prime factors in colour and sound. Self-
   contained apart from the link home.

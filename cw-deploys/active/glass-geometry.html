@@ -2379,7 +2379,8 @@ function render() {
 //          the seed unit distance and returns label descriptors.
 //          All integers are positive (map convention — no negatives).
 //          Labels are suppressed in glass mode and during PNG export.
-// Depends: points, lines, showNumbers, showGlass, w2s(), dist()
+// Depends: points, lines, showNumbers, showGlass, w2s(), dist(),
+//          plane (unitLength — declared by the lab at init replay)
 // Exposes: getAxisLabels()
 // ============================================================
 
@@ -2387,7 +2388,10 @@ function getAxisLabels() {
     if (!showNumbers || showGlass) return [];
     var s0 = points.get('seed:0'), s1 = points.get('seed:1');
     if (!s0 || !s1) return [];
-    var unit = dist(s0.x, s0.y, s1.x, s1.y);
+    // The unit interval is not measured from the model here: the lab declared
+    // it to the plane when the init op replayed (decision 4). The seeds are
+    // still read — deciding where labels go is this lab's own geometry work.
+    var unit = plane.unitLength();
     if (unit < 1) return [];
     var tol = unit * 0.012; // 1.2% tolerance for float imprecision
     var labels = [];
@@ -2983,8 +2987,8 @@ function getAxisPointIds() {
         if (!xAxisLine && l.pointsOnLine.includes('seed:0') && l.pointsOnLine.includes('seed:1')) xAxisLine = l;
     });
     if (xAxisLine) xAxisLine.pointsOnLine.forEach(function(id) { ids.add(id); });
-    // Find y-axis line (perpendicular through seed:0)
-    var unit = dist(s0.x,s0.y,s1.x,s1.y); if (!unit) return ids;
+    // Find y-axis line (perpendicular through seed:0); unit from the plane
+    var unit = plane.unitLength(); if (!unit) return ids;
     var axDx = (s1.x - s0.x) / unit, axDy = (s1.y - s0.y) / unit;
     lines.forEach(function(l) {
         var p1 = points.get(l.p1Id), p2 = points.get(l.p2Id); if (!p1 || !p2) return;
