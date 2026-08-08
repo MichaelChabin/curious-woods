@@ -130,3 +130,47 @@ mechanism is exercised; a VoiceOver pass is not), iPad Safari, and sound.
 Phase 4 stops here for review. **Michael's voice pass covers every string in
 the port plus the surviving Phase 3 copy before anything ships.** The plan's
 four phases are, with this, all executed.
+
+---
+
+## The iPad session, 8 Aug — fixed before the push
+
+Michael's review on the iPad (served over the home network) surfaced two bugs
+and three organisational rulings, all executed same day:
+
+- **Safari audio.** Most of this lab's sounds fire from timers staged after
+  the gesture ends, and Safari only lets an AudioContext start inside a live
+  gesture. Geometry's `unlockAudio` pattern adopted: create, resume (Safari
+  also parks contexts `interrupted`), and push one silent sample through, on
+  every pointerdown and on keyboard activation. **Safari — macOS and iPad —
+  joins the acceptance checklist for both labs**, permanently.
+- **Tap highlights read barely lit next to the bench.** Root cause: the
+  highlight-catch decision was seeded per colour bucket, not per piece, so
+  whole colours decided together and far fewer than 20% of the glass ever
+  sparkled; and highlights drew only on the largest detail tier. Now seeded
+  per pane position and piece (striations too), drawn from the middle tier
+  up, with the smaller-burns-brighter clamp opened to 2.0. The bench's 20% /
+  89% / 203% values are untouched — this was distribution, not taste.
+- **Interim layout, explicitly provisional ahead of the controls pass.** The
+  number and its factorization stay top-left. The number's description
+  ("appears in 2 places", visible rectangles, deficient…) moved off the
+  column into a floating info panel on Geometry's window pattern — movable,
+  closable, fading, reopening on each reveal, keeping wherever the child
+  drags it — extracted as the shared component `js/cw-panel.js` (every canvas
+  window must be draggable and closeable; that rule is now code). The tool
+  words (Build with primes…) sit directly below the prime chips — on iPad
+  they fell below the fold — and the viewing strip closes the column, still
+  functional. The canvas shows its focus ring after a tap (it is the arrows
+  affordance); the controls pass can quiet it if it nags.
+- **Standing practice, recorded on the board:** any commit that adds or
+  changes child-facing text prints the full current list at review. The
+  first full list was printed at this session's review.
+- **Noted on the board:** save-as-image / share does not exist in
+  Multiplication yet and needs a menu word; the tiling-rotation idea and the
+  quadrant toggle are recorded as bench-first design items, not smuggled into
+  this session.
+
+Verified after the fixes: reveal flow with the info panel (content, position,
+close word), the compact column, audio unlock path exercised, zero console
+errors. Pushed with Michael's approval — the voice pass now runs against the
+live pages.

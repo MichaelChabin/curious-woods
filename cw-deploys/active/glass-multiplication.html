@@ -42,11 +42,9 @@
     #glass-map .viewing-strip{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:12px;padding-top:8px;border-top:1px solid rgba(84,106,128,.15)}
     #glass-map .viewing-strip .btn{font-size:13px;font-style:italic;padding:2px 1px}
     #glass-map .panel{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-top:15px;padding-top:10px;border-top:1px solid rgba(84,106,128,.17)}
-    #glass-map #properties.panel{margin-top:4px;padding-top:8px;border-top:1px solid rgba(84,106,128,.15);min-height:268px;display:block;font-size:15px;line-height:1.5;color:#4a4a45}
-    #glass-map .properties h2{margin:0 0 7px;font-size:12px;font-weight:normal;color:#546a80}
-    #glass-map .properties p,#glass-map #properties p{margin:0 0 6px}
-    #glass-map #properties strong{font-weight:normal;color:#292a28}
     #glass-map .build-tools .btn,#glass-map .property-tools .btn{text-align:left;font-size:14px}
+    .cw-info-panel p{margin:0 0 6px}
+    .cw-info-panel strong{font-weight:normal;color:#292a28}
     #glass-map .map-wrap{min-width:0}
     #glass-map canvas{display:block;width:100%;aspect-ratio:1/1;background:#f4f1e8;touch-action:none;
       /* The plane's container owns these — without them a rectangle-drag can
@@ -60,7 +58,6 @@
       #glass-map .globals,#glass-map .product,#glass-map .readout,#glass-map .panel,#glass-map .viewing-strip{grid-column:1}
       #glass-map .decoder{grid-column:2;grid-row:1/span 5;gap:10px;margin-top:0}
       #glass-map .swatch{width:38px;height:38px;flex:0 0 38px}
-      #glass-map #properties.panel{min-height:0}
     }
     @media(max-width:520px){
       body{padding:10px 6px 20px}
@@ -102,18 +99,11 @@
         </div>
         <div class="tally" id="tally" aria-live="polite" hidden></div>
 
-        <!-- The viewing's control strip — the Numbers control's permanent home.
-             This viewing defaults to map (Phase 3 ledger) and cycles map · off. -->
-        <div class="viewing-strip" id="viewing-strip" aria-label="The map itself">
-          <button class="btn" id="numbers-cycle">Numbers &middot; map</button>
-          <button class="btn" id="lattice-tie">grid follows zoom</button>
-          <button class="btn" id="axes-toggle">axes &middot; shown</button>
-        </div>
-
-        <div class="properties panel" id="properties">
-          <div id="property-copy"></div>
-        </div>
-
+        <!-- Interim layout, provisional ahead of the controls pass: the tool
+             words sit directly below the chips (on iPad they fell below the
+             fold), the number description lives in a floating info panel on
+             Geometry's window pattern, and the viewing strip closes the
+             column. -->
         <div class="build-tools panel" id="build-tools" hidden>
           <button class="btn build-sub" data-build="primes" aria-pressed="true">Build with primes</button>
           <button class="btn build-sub" data-build="select" aria-pressed="false">Build by selecting</button>
@@ -131,6 +121,14 @@
           <button class="btn property-key" data-property="triangular">Triangular numbers</button>
           <button class="btn property-key" data-property="nearlysquare">Nearly square</button>
         </div>
+
+        <!-- The viewing's control strip — the Numbers control's permanent home.
+             This viewing defaults to map (Phase 3 ledger) and cycles map · off. -->
+        <div class="viewing-strip" id="viewing-strip" aria-label="The map itself">
+          <button class="btn" id="numbers-cycle">Numbers &middot; map</button>
+          <button class="btn" id="lattice-tie">grid follows zoom</button>
+          <button class="btn" id="axes-toggle">axes &middot; shown</button>
+        </div>
       </aside>
 
       <div class="map-wrap">
@@ -144,6 +142,7 @@
 </main>
 
 <script src="../js/plane.js"></script>
+<script src="../js/cw-panel.js"></script>
 <script>
 (() => {
   'use strict';
@@ -278,8 +277,29 @@
   const tally=root.querySelector('#tally');
   const buildTools=root.querySelector('#build-tools'), buildSubButtons=[...root.querySelectorAll('[data-build]')];
   const propertyTools=root.querySelector('#property-tools'), propertyButtons=[...root.querySelectorAll('[data-property]')];
-  const propertyCopy=root.querySelector('#property-copy');
   const modeButtons=[...root.querySelectorAll('[data-mode]')];
+
+  // The number's description lives in a floating info panel on Geometry's
+  // window pattern (shared component, ../js/cw-panel.js): movable, closable,
+  // fading. Interim, provisional ahead of the controls pass. It reopens on
+  // each reveal and keeps wherever the child dragged it.
+  const infoPanel=CW.createInfoPanel({width:240,ariaLive:'polite'});
+  const panelMessage=document.createElement('div');
+  panelMessage.style.cssText='margin:0 0 6px;color:#31322f;';
+  const propertyCopy=document.createElement('div');
+  infoPanel.body.appendChild(panelMessage);
+  infoPanel.body.appendChild(propertyCopy);
+  function showInfo(message){
+    if(message!==undefined)panelMessage.textContent=message;
+    if(!infoPanel.userMoved()){
+      const r=canvas.getBoundingClientRect();
+      infoPanel.setPosition(Math.round(r.right-260),Math.round(r.top+16));
+    }
+    infoPanel.show();
+  }
+  function clearInfo(){
+    panelMessage.textContent='';propertyCopy.innerHTML='';infoPanel.hide();
+  }
 
   // Chip swatches take the workshop's resting colours — the workshop knows
   // what 2 looks like; the child never assigns colours to numbers.
@@ -358,6 +378,20 @@
   }
 
   // ==== sound (unchanged from the DOM build, apart from the lit targets) =====
+  // Safari (macOS and iPad) only lets an AudioContext start inside a user
+  // gesture, and most of this lab's sounds fire from timers staged after the
+  // gesture is over. Geometry's answer, adopted here: unlock on every
+  // pointerdown — create, resume (Safari also parks contexts 'interrupted'),
+  // and push one silent sample through, all while the gesture is live.
+  let audioUnlocked=false;
+  function unlockAudio(){
+    const e=createAudio();if(!e)return;
+    if(e.ctx.state==='suspended'||e.ctx.state==='interrupted')e.ctx.resume();
+    if(!audioUnlocked){
+      const b=e.ctx.createBuffer(1,1,22050),s=e.ctx.createBufferSource();
+      s.buffer=b;s.connect(e.ctx.destination);s.start(0);audioUnlocked=true;
+    }
+  }
   function createAudio(){
     if(audio)return audio;
     const AC=window.AudioContext||window.webkitAudioContext;
@@ -422,7 +456,7 @@
     setProduct(n,factorize(n));numberProperties(n);
     if(rectangles)showAllRectangles(n);
     if(sound)playFactors(factorize(n),targets);
-    readout.textContent=message!==undefined?message:(targets.length===1?`${n} has found its place.`:`${n} appears in ${targets.length} places.`);
+    showInfo(message!==undefined?message:(targets.length===1?`${n} has found its place.`:`${n} appears in ${targets.length} places.`));
     return true;
   }
   function revealRun(list,label,closing){
@@ -437,10 +471,10 @@
       built.add(n);
       setProduct(n,factorize(n));numberProperties(n);
       playFactors(factorize(n),group);
-      readout.textContent=label;
+      showInfo(label);
     },i*step));
     const numbers=entries.map(([n])=>n);
-    seq(()=>{readout.textContent=closing||`${label} — ${numbers.join(', ')}`},entries.length*step+320);
+    seq(()=>{showInfo(closing||`${label} — ${numbers.join(', ')}`)},entries.length*step+320);
   }
 
   // ==== number properties panel =============================================
@@ -472,7 +506,7 @@
   function clearTable(){
     cancelSequence();clearFx();
     built.clear();built.add(1);
-    composition=[];updateTally();pendingColumn=pendingRow=null;setProduct();propertyCopy.innerHTML='';
+    composition=[];updateTally();pendingColumn=pendingRow=null;setProduct();clearInfo();
   }
   function fillTable(){   // silent — the one reveal that makes no sound
     cancelSequence();clearFx();
@@ -595,7 +629,7 @@
   // ==== Explore =============================================================
   function explore(column,row){
     const n=viewing.name(column,row);
-    if(!built.has(n)){propertyCopy.innerHTML=`<p><strong>${n}</strong> has not entered the glass yet.</p>`;readout.textContent='This panel is still empty.';return}
+    if(!built.has(n)){propertyCopy.innerHTML=`<p><strong>${n}</strong> has not entered the glass yet.</p>`;showInfo('This panel is still empty.');return}
     cancelSequence();revealNumber(n,{message:`Every ${n} is sounding together.`});
   }
 
@@ -624,7 +658,7 @@
   }
   function setMode(next){
     mode=next;composition=[];updateTally();pendingColumn=pendingRow=null;
-    cancelSequence();clearFx();setProduct();propertyCopy.innerHTML='';
+    cancelSequence();clearFx();setProduct();clearInfo();
     modeButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
     buildTools.hidden=mode!=='build';propertyTools.hidden=mode!=='properties';
     propertyButtons.forEach(b=>b.classList.remove('active'));
@@ -643,43 +677,51 @@
     return {x:tl.x,y:tl.y,w:br.x-tl.x,h:br.y-tl.y};
   }
 
-  function drawPiece(x,y,w,h,p,variant,lit,tier){
+  function drawPiece(x,y,w,h,p,variant,lit,tier,c,r,i){
     ctx.fillStyle=pieceFill(p,variant,lit);
     ctx.fillRect(x,y,w,h);
-    if(tier<2)return;
-    // Striations: directional, chosen per piece — a glazier cuts from a sheet
-    // and not every piece comes off it the same way round. 70% across the
-    // stack (vertical, crossing the horizontal boundaries), 30% along.
-    const across=seedOf(0,0,variant,p*3+17)<70;
+    // The catch decision is seeded per pane position and piece, not per
+    // colour bucket — otherwise every piece of one colour decides together
+    // and far fewer than 20% of the glass ever sparkles. (Found on the
+    // iPad: taps read barely lit next to the bench.) Highlights also draw
+    // on the middle detail tier, not only the largest panes.
+    const wantHighlight=lit&&tier>=1&&seedOf(c,r,i,83)<20;
+    if(tier<2&&!wantHighlight)return;
     ctx.save();
     ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
-    for(let k=0;k<2;k++){
-      const off=(seedOf(p,variant,k,29)/100);
-      ctx.strokeStyle=k?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.07)';
-      ctx.lineWidth=1;
-      ctx.beginPath();
-      if(across){const sx=CW.snap(x+off*w);ctx.moveTo(sx,y);ctx.lineTo(sx,y+h)}
-      else{const sy=CW.snap(y+off*h);ctx.moveTo(x,sy);ctx.lineTo(x+w,sy)}
-      ctx.stroke();
-    }
-    // Seeds: tiny bubbles in the glass
-    for(let k=0;k<2;k++){
-      const bx=x+(seedOf(p,variant,k,53)/100)*w, by=y+(seedOf(p,variant,k,71)/100)*h;
-      ctx.fillStyle=k?'rgba(255,255,255,0.16)':'rgba(0,0,0,0.12)';
-      ctx.fillRect(bx,by,1.5,1.5);
+    if(tier===2){
+      // Striations: directional, chosen per piece — a glazier cuts from a
+      // sheet and not every piece comes off it the same way round. 70%
+      // across the stack (vertical, crossing the horizontal boundaries).
+      const across=seedOf(c,r,i,29)<70;
+      for(let k=0;k<2;k++){
+        const off=(seedOf(c,r,i*2+k,37)/100);
+        ctx.strokeStyle=k?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.07)';
+        ctx.lineWidth=1;
+        ctx.beginPath();
+        if(across){const sx=CW.snap(x+off*w);ctx.moveTo(sx,y);ctx.lineTo(sx,y+h)}
+        else{const sy=CW.snap(y+off*h);ctx.moveTo(x,sy);ctx.lineTo(x+w,sy)}
+        ctx.stroke();
+      }
+      // Seeds: tiny bubbles in the glass
+      for(let k=0;k<2;k++){
+        const bx=x+(seedOf(c,r,i*2+k,53)/100)*w, by=y+(seedOf(c,r,i*2+k,71)/100)*h;
+        ctx.fillStyle=k?'rgba(255,255,255,0.16)':'rgba(0,0,0,0.12)';
+        ctx.fillRect(bx,by,1.5,1.5);
+      }
     }
     // Specular highlight — light reflecting off the glass, only when lit,
     // only on the pieces whose angle happens to be right (20%), elliptical,
     // and smaller burns brighter (intensity scales on area).
-    if(lit&&seedOf(p,variant,3,83)<20){
+    if(wantHighlight){
       const area=w*h, ref=60*60;
-      const strength=0.89*clamp(Math.sqrt(ref/Math.max(1,area)),0.55,1.6);
-      const hx=x+w*(0.3+0.4*(seedOf(p,variant,4,11)/100)), hy=y+h*0.3;
+      const strength=0.89*clamp(Math.sqrt(ref/Math.max(1,area)),0.55,2.0);
+      const hx=x+w*(0.3+0.4*(seedOf(c,r,i,11)/100)), hy=y+h*0.3;
       const rx=Math.min(w,h)*0.42, ry=rx/2.03;   // 203% elongation
       ctx.save();
       ctx.translate(hx,hy);ctx.rotate(-0.35);
       const g=ctx.createRadialGradient(0,0,0,0,0,rx);
-      g.addColorStop(0,`rgba(255,252,240,${clamp(strength*0.55,0,0.85)})`);
+      g.addColorStop(0,`rgba(255,252,240,${clamp(strength*0.55,0,0.9)})`);
       g.addColorStop(1,'rgba(255,252,240,0)');
       ctx.scale(1,ry/rx);
       ctx.fillStyle=g;
@@ -707,12 +749,12 @@
                                     // identically everywhere — no mirrored panes
       const k=factors.length;
       if(tier===0){
-        drawPiece(rect.x,rect.y,rect.w,rect.h,factors[0],seedOf(c,r,0,7)%VARIANTS,paneLit,0);
+        drawPiece(rect.x,rect.y,rect.w,rect.h,factors[0],seedOf(c,r,0,7)%VARIANTS,paneLit,0,c,r,0);
       } else {
         for(let i=0;i<k;i++){
           const py=rect.y+(rect.h*i/k), ph=rect.h/k;
           const lit=paneLit||((litPieces.get(`${c},${r},${i}`)||0)>now);
-          drawPiece(rect.x,py,rect.w,ph,factors[i],seedOf(c,r,i,7)%VARIANTS,lit,tier);
+          drawPiece(rect.x,py,rect.w,ph,factors[i],seedOf(c,r,i,7)%VARIANTS,lit,tier,c,r,i);
         }
         // Inner cames: every piece is leaded, not just every pane — without
         // them, adjacent pieces of the same prime merge into a solid block.
@@ -919,6 +961,7 @@
       keepCursorInView();announceCursor();
     } else if(ev.key==='Enter'||ev.key===' '){
       ev.preventDefault();
+      unlockAudio();
       if(cursor===null)cursor={c:1,r:1};
       activateCursor();
     }
@@ -939,6 +982,7 @@
   }
   canvas.addEventListener('pointerdown',ev=>{
     ev.preventDefault();
+    unlockAudio();
     canvas.focus({preventScroll:true});   // preventDefault suppresses click-to-focus; restore it
     canvas.setPointerCapture(ev.pointerId);
     activeTouches.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});
@@ -1010,6 +1054,7 @@
 
   // ==== controls =============================================================
   root.querySelectorAll('[data-prime]').forEach(button=>button.addEventListener('click',async()=>{
+    unlockAudio();
     const p=+button.dataset.prime,e=createAudio();if(!e)return;await e.ctx.resume();
     cancelSequence();clearFx();
     // The unity chip is where every build starts, and the way back to it.

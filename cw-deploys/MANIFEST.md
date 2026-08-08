@@ -16,10 +16,12 @@ allowed here.
 **`../outdated-files/`** — outside this folder, so Netlify never serves it.
 Superseded versions, kept as the archive record.
 
-**`js/`** — shared code, at the root of this folder. One file so far:
-`plane.js`, the coordinate space both labs stand on (view state, transforms,
-one zoom clamp, the ambient lattice, the pixel floor). Classic script, no
-build step; extracted in Phase 4 so the labs cannot drift apart.
+**`js/`** — shared code, at the root of this folder. Classic scripts, no
+build step. `plane.js` — the coordinate space both labs stand on (view state,
+transforms, one zoom clamp, the ambient lattice, the pixel floor); extracted
+in Phase 4 so the labs cannot drift apart. `cw-panel.js` — the canvas info
+window as a component (draggable, closable, fading — Geometry's tip-window
+pattern); used by Multiplication's number description.
 
 **`art/` `models/` `stories/` `text/`** — assets, at the root of this folder.
 Pages in `active/` and `experiments/` reach them with `../` —

@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-08 (Phase 4 implemented, committed unpushed — all four phases executed; the voice pass gates shipping)
+updated: 2026-08-08 (iPad-review fixes in; everything pushed; the voice pass now runs against live pages)
 ---
 
 # The Board
@@ -120,10 +120,21 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   `01-ACTIVE/Decisions-Phase4-Aug08.md`, including the load-bearing note — with
   colour the sole prime indicator, **the colourblind-safe workshop is the
   accessibility answer and must be authored to full standard; it does not exist yet**.
-- **Next action:** Michael reviews Phase 4 (both labs served locally), then his voice
-  pass over every string in the port plus the surviving Phase 3 copy — the gate
-  before anything ships. After that, the largest open item this phase created:
-  **author the 16th workshop**. The plan's four phases are, with this, all executed. Two smaller appearance items
+- **iPad review done, 8 Aug; fixes in and pushed.** Safari audio unlock adopted from
+  Geometry (Safari joins the acceptance checklist for both labs, permanently); the
+  lit-visibility bug was seeding, not taste — bench values untouched; interim layout
+  with the number description in a floating info panel (`js/cw-panel.js`, Geometry's
+  window pattern as a shared component), tools up under the chips, viewing strip at
+  the column's foot. Provisional ahead of the controls pass.
+- **Known gaps, Multiplication:** save-as-image / share is not implemented and needs
+  a menu word when the controls pass designs one.
+- **Bench-first design items, not yet sessions:** the tiling-rotation idea and the
+  quadrant toggle (the map around zero, per the Jul 28 ledger). Per the standing
+  method, each gets a bench before an argument.
+- **Next action:** Michael's voice pass over every child-facing string (the full list
+  was printed at this session's review; the practice below makes that standing),
+  against the live pages. Then: **author the 16th workshop** — with colour the sole
+  prime indicator it is the accessibility answer, and it does not exist yet. Two smaller appearance items
   remain open in `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and
   an inner came value that clears all six resting colours.
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto
@@ -268,5 +279,10 @@ never a verdict delivered to her.
 announces what you are about to learn; it asks questions it already knows the answer to;
 it congratulates; and it does one thing correctly and then stops, leaving nothing to mess
 with. The mathematics is a property of the material, not a lesson wrapped around it.
+
+**Child-facing copy prints in full at review.** Any commit that adds or changes a
+child-facing string prints the complete current list — every string, both labs — in
+the review summary, so Michael reads the whole voice at once, never a diff of it.
+Established 8 Aug 2026 at the Phase 4 iPad review.
 
 **Not now is a complete sentence.** Claude says it; the board catches what it was said to.
