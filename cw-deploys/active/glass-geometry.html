@@ -362,6 +362,7 @@
   <div class="picker-grid" id="picker-grid"></div>
 </div>
 
+<script src="../js/plane.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 'use strict';
@@ -529,6 +530,21 @@ function replayLog(animateNew) {
             if (op.target === 'line') { var l = lines.get(op.idx); if (l) l.isScaffold = op.value; }
             else if (op.target === 'point') { var pt = points.get(op.idx); if (pt) pt.isScaffold = op.value; }
             else { var cir = circles.get(op.idx); if (cir) cir.isScaffold = op.value; }
+        } else if (op.op === 'lattice_point') {
+            // Minted at a lattice intersection (decision 5's second half):
+            // the op records the address in unit coordinates — exactly the
+            // information the click contributed — and the world position is
+            // resolved from the declared frame, so a log that redeclares its
+            // frame replays coherently.
+            var lo = plane.unitOrigin(), llen = plane.unitLength();
+            var lpx = lo.x + op.u * llen, lpy = lo.y + op.v * llen;
+            var lpDup = false;
+            points.forEach(function(ex) { if (dist(lpx, lpy, ex.x, ex.y) < _dupEpsilon) lpDup = true; });
+            if (!lpDup) {
+                var lpId = 'lp:' + op.u + ':' + op.v;
+                _addPt(lpId, lpx, lpy, 'lattice', prev, animateNew);
+                _integrateNewPoint(lpId);
+            }
         } else if (op.op === 'numbers') {
             // Three modes since Phase 3; legacy logs recorded a boolean
             // for the old emergent-numbers toggle — map it forward.
@@ -599,6 +615,12 @@ function regX(id, pt, prev, an) {
     points.forEach(function(ex) { if (dist(pt.x,pt.y,ex.x,ex.y) < _dupEpsilon) dup = true; });
     if (dup) return;
     _addPt(id, pt.x, pt.y, 'intersection', prev, an);
+    _integrateNewPoint(id);
+}
+
+// A newly recorded point joins any line or circle it happens to lie on —
+// used by intersection registration and by lattice-point minting alike.
+function _integrateNewPoint(id) {
     var np = points.get(id);
     lines.forEach(function(l) {
         var lp1 = points.get(l.p1Id), lp2 = points.get(l.p2Id);
@@ -1923,196 +1945,18 @@ function checkAndDissolve(segKey) {
 }
 
 // ============================================================
-// THE PLANE
-// What:    The coordinate space both labs will stand on. Owns view
-//          state (pan = world point under the screen centre, zoom =
-//          pixels per world unit), the world↔screen transforms, the
-//          single zoom clamp, cached viewport dimensions, the ambient
-//          lattice step, and the pixel floor. World y is UP: +y is
-//          toward the top of the screen, as in number-theory-v1.
-//          The transforms are pure functions of (world point, view
-//          state) — the viewport size is held as state, never read
-//          from the DOM at transform time.
-//          The plane knows nothing about points, glass, or primes.
-//          The lab declares its unit length (decision 4); the plane
-//          never reaches into the geometry model to find it.
-// Depends: nothing (DOM only at construction and resize)
-// Exposes: plane {viewportWidth, viewportHeight, setViewport,
-//                 zoom, setZoom, pan, setPan, view, setView,
-//                 resetView, setUnitFrame, unitOrigin, unitLength,
-//                 setLatticeTied, latticeTied, latticeStep,
-//                 drawLattice, worldToScreen, screenToWorld,
-//                 pixelFloor},
-//          canvas, ctx, resizeCanvas(), snap(v),
+// THE PLANE (shared)
+// What:    The coordinate space both labs stand on. Since Phase 4 it
+//          lives in ../js/plane.js — one file, two consumers, so the
+//          labs cannot drift apart. This lab instantiates it with the
+//          default view policy (origin-centred, zoom keyed to screen
+//          size) and declares its unit frame at init replay.
+// Depends: ../js/plane.js (CW.createPlane, CW.snap)
+// Exposes: plane, canvas, ctx, resizeCanvas(), snap(v),
 //          w2s(wx,wy), s2w(sx,sy) (aliases into the plane)
 // ============================================================
 
-var plane = (function() {
-    var pan   = { x: 0, y: 0 };   // world point under the screen centre
-    // Initial zoom keyed to screen size so the workspace feels the same
-    // size regardless of device: a 900px screen gets 1 px per world unit.
-    // Deliberate, and it means initial zoom is not reproducible across
-    // machines — flagged in the inventory, kept as designed.
-    var zoom  = Math.min(window.innerWidth, window.innerHeight) / 900; // px per world unit
-    var viewW = window.innerWidth, viewH = window.innerHeight;         // cached CSS px
-
-    // The unit frame, declared by the lab (decision 4): where "0" sits in
-    // world space and how many world units one unit interval spans. The
-    // plane never reaches into the geometry model to find these.
-    var unitOrigin = { x: -100, y: 0 };
-    var unitLength = 200;
-
-    // Lattice state: tied, the step adapts to zoom and the picture stays
-    // self-similar as she descends; untied, the step freezes and zooming
-    // crowds or spreads the same lines. Both are wanted (Phase 3).
-    var _latticeTied = true, _latticeFrozenStep = null;
-
-    // The one zoom clamp. Wheel, pinch, and fit-to-construction all pass
-    // through here — previously three clamps with two ranges (0.1–10 twice,
-    // 0.05–2.0 once); this is their union, applied once.
-    var ZOOM_MIN = 0.05, ZOOM_MAX = 10;
-
-    // Tick label: positive in all four directions (map convention) is the
-    // caller's job; this handles digits. Integers group thousands with a
-    // thin space; sub-unit steps show as trimmed decimals.
-    function latticeLabelText(v, step) {
-        if (step >= 1) {
-            return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-        }
-        var dec = Math.max(0, -Math.floor(Math.log10(step) + 1e-9));
-        return v.toFixed(dec).replace(/0+$/, '').replace(/\.$/, '');
-    }
-
-    return {
-        setViewport: function(w, h) { viewW = w; viewH = h; },
-        viewportWidth:  function() { return viewW; },
-        viewportHeight: function() { return viewH; },
-
-        zoom:    function() { return zoom; },
-        setZoom: function(z) { zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z)); },
-        pan:     function() { return { x: pan.x, y: pan.y }; },
-        setPan:  function(x, y) { pan.x = x; pan.y = y; },
-        view:    function() { return { x: pan.x, y: pan.y, zoom: zoom }; },
-        setView: function(v) { pan.x = v.x; pan.y = v.y; this.setZoom(v.zoom); },
-        resetView: function() {
-            pan.x = 0; pan.y = 0;
-            zoom = Math.min(viewW, viewH) / 900;
-        },
-
-        setUnitFrame: function(ox, oy, len) {
-            unitOrigin.x = ox; unitOrigin.y = oy;
-            if (len > 0) unitLength = len;
-        },
-        unitOrigin: function() { return { x: unitOrigin.x, y: unitOrigin.y }; },
-        unitLength: function() { return unitLength; },
-
-        setLatticeTied: function(t) {
-            _latticeFrozenStep = t ? null : this.latticeStep();
-            _latticeTied = !!t;
-        },
-        latticeTied: function() { return _latticeTied; },
-
-        // World y is up: screen y grows downward, so y negates on the way
-        // through. These are the only two places that know that.
-        worldToScreen: function(wx, wy) {
-            return { x: (wx - pan.x) * zoom + viewW / 2,
-                     y: -(wy - pan.y) * zoom + viewH / 2 };
-        },
-        screenToWorld: function(sx, sy) {
-            return { x: (sx - viewW / 2) / zoom + pan.x,
-                     y: -(sy - viewH / 2) / zoom + pan.y };
-        },
-
-        // Ambient lattice step, in unit intervals: the smallest rung of
-        // the 1–5–10 ladder whose line spacing exceeds 40px. One function
-        // drives both labels and grid lines, the way number-theory-v1's
-        // labelStep() keeps its texture coherent — and unlike the sketch,
-        // the ladder renumbers by decades in both directions: 0.05, 0.1,
-        // 0.5, 1, 5, 10, 50… as far as the zoom clamp lets it walk.
-        latticeStep: function() {
-            if (!_latticeTied && _latticeFrozenStep) return _latticeFrozenStep;
-            var ppu = zoom * unitLength;
-            var m = Math.floor(Math.log10(40 / ppu) + 1e-9);
-            var step = Math.pow(10, m);              // spacing ≤ 40 by construction
-            return (step * 5 * ppu > 40) ? step * 5 : step * 10;
-        },
-
-        // The ambient lattice, generated and never stored (decision 5).
-        // Every stroke is a 1px line snapped to half-pixels: the sketch's
-        // half-pixel-snapping inconsistency — everything snapped except
-        // the grid — does not get to arrive here with the lattice, and a
-        // 1px line at low opacity replaces the sketch's 0.5px stroke,
-        // which could never resolve to a crisp pixel at any position.
-        drawLattice: function(ctx) {
-            var step = this.latticeStep();
-            var stepW = step * unitLength;           // world units between lines
-            var spacing = stepW * zoom;              // px between lines
-            if (spacing < 3) return;                 // untied and far out: crowding has made its point
-            var tl = this.screenToWorld(0, 0), br = this.screenToWorld(viewW, viewH);
-            // Visible tick ranges with a one-step margin so lines don't pop at the edges
-            var nx0 = Math.floor((Math.min(tl.x, br.x) - unitOrigin.x) / stepW) - 1;
-            var nx1 = Math.ceil((Math.max(tl.x, br.x) - unitOrigin.x) / stepW) + 1;
-            var ny0 = Math.floor((Math.min(tl.y, br.y) - unitOrigin.y) / stepW) - 1;
-            var ny1 = Math.ceil((Math.max(tl.y, br.y) - unitOrigin.y) / stepW) + 1;
-            var n, sx, sy;
-
-            ctx.save();
-            ctx.strokeStyle = '#546A80';
-            ctx.lineWidth = 1;
-            ctx.globalAlpha = 0.13;
-            ctx.beginPath();
-            for (n = nx0; n <= nx1; n++) {
-                if (n === 0) continue;               // the axis pass draws it stronger
-                sx = snap(this.worldToScreen(unitOrigin.x + n * stepW, 0).x);
-                ctx.moveTo(sx, 0); ctx.lineTo(sx, viewH);
-            }
-            for (n = ny0; n <= ny1; n++) {
-                if (n === 0) continue;
-                sy = snap(this.worldToScreen(0, unitOrigin.y + n * stepW).y);
-                ctx.moveTo(0, sy); ctx.lineTo(viewW, sy);
-            }
-            ctx.stroke();
-
-            // The two axes through the origin, one step up in presence
-            var ax = snap(this.worldToScreen(unitOrigin.x, 0).x);
-            var ay = snap(this.worldToScreen(0, unitOrigin.y).y);
-            ctx.globalAlpha = 0.3;
-            ctx.beginPath();
-            ctx.moveTo(ax, 0); ctx.lineTo(ax, viewH);
-            ctx.moveTo(0, ay); ctx.lineTo(viewW, ay);
-            ctx.stroke();
-
-            // Tick numbers, positive in all four directions (map convention).
-            // Label rows clamp to the viewport edge when their axis is out of
-            // view — the window is small, the map is not.
-            var rowY = Math.max(2, Math.min(ay + 4, viewH - 14));
-            var colX = Math.max(28, Math.min(ax - 5, viewW - 4));
-            ctx.globalAlpha = 0.55;
-            ctx.fillStyle = '#546A80';
-            ctx.font = '10px Georgia, serif';
-            ctx.textBaseline = 'top'; ctx.textAlign = 'center';
-            for (n = nx0; n <= nx1; n++) {
-                if (n === 0) continue;
-                sx = this.worldToScreen(unitOrigin.x + n * stepW, 0).x;
-                ctx.fillText(latticeLabelText(Math.abs(n) * step, step), sx, rowY);
-            }
-            ctx.textBaseline = 'middle'; ctx.textAlign = 'right';
-            for (n = ny0; n <= ny1; n++) {
-                if (n === 0) continue;
-                sy = this.worldToScreen(0, unitOrigin.y + n * stepW).y;
-                ctx.fillText(latticeLabelText(Math.abs(n) * step, step), colX, sy);
-            }
-            ctx.textBaseline = 'top'; ctx.textAlign = 'right';
-            ctx.fillText('0', colX, rowY);
-            ctx.restore();
-        },
-
-        // The screen's limit, not the plane's: how much world one screen
-        // pixel spans. The only unconditional floor; the lab reports it
-        // in whatever units it declared.
-        pixelFloor: function() { return 1 / zoom; }
-    };
-})();
+var plane = CW.createPlane();
 
 var canvas = document.getElementById('canvas');
 var ctx    = canvas.getContext('2d');
@@ -2143,7 +1987,7 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-function snap(v) { return Math.round(v)+0.5; }
+function snap(v) { return CW.snap(v); }
 function w2s(wx,wy) { return plane.worldToScreen(wx,wy); }
 function s2w(sx,sy) { return plane.screenToWorld(sx,sy); }
 
@@ -3117,6 +2961,23 @@ function eraserSweepHit(idx, isCircle) {
 
 // Hit-test all lines and circles near world point for the eraser.
 // Returns {idx, isCircle} for the nearest hit within threshold, or null.
+// Nearest lattice intersection within snap range, in unit coordinates —
+// only these may mint (decision 5: the ambient lattice is generated and
+// never stored; a click turns one intersection into history). Returns null
+// off-intersection or where a recorded point already sits.
+function latticeMintTarget(wx, wy) {
+    var step = plane.latticeStep(), len = plane.unitLength(), o = plane.unitOrigin();
+    var u = Math.round(((wx - o.x) / len) / step) * step;
+    var v = Math.round(((wy - o.y) / len) / step) * step;
+    u = Math.round(u * 1e6) / 1e6; v = Math.round(v * 1e6) / 1e6;
+    var px = o.x + u * len, py = o.y + v * len;
+    var si = w2s(px, py), st = w2s(wx, wy);
+    if (dist(si.x, si.y, st.x, st.y) > THRESHOLDS.snapDistance) return null;
+    var exists = false;
+    points.forEach(function(ex) { if (dist(px, py, ex.x, ex.y) < _dupEpsilon) exists = true; });
+    return exists ? null : { u: u, v: v };
+}
+
 function hitForEraser(wx, wy) {
     var tL = THRESHOLDS.lineHitRadius / plane.zoom();
     var tC = THRESHOLDS.circleHitRadius / plane.zoom();
@@ -3200,6 +3061,19 @@ function onUp(e) {
         if (isTap) {
             if (tryPaletteAction(world.x, world.y)) return;
             if (hitAnyLine(world.x,world.y)) return;
+            // Rule and record meet at the click (decision 5): with the map
+            // showing, a tap on a lattice intersection creates a recorded
+            // point — the moment possibility becomes history. Inside the
+            // snap radius this outranks undo; everywhere else taps behave
+            // exactly as before.
+            if (numbersMode === 'map') {
+                var mint = latticeMintTarget(world.x, world.y);
+                if (mint) {
+                    appendOp({ op:'lattice_point', u:mint.u, v:mint.v });
+                    playSound('point');
+                    return;
+                }
+            }
             if (now-lastTapTime < THRESHOLDS.doubleClickTime) {
                 // Double-click empty space: place a note
                 if (_undoTimer) { clearTimeout(_undoTimer); _undoTimer = null; }

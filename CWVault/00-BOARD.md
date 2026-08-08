@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-08 (design note reviewed — subdivision overruled, colour is the sole prime indicator; implementation running)
+updated: 2026-08-08 (Phase 4 implemented, committed unpushed — all four phases executed; the voice pass gates shipping)
 ---
 
 # The Board
@@ -109,8 +109,21 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   requires six distinguishable prime colours per workshop. Subdivision parked as
   `03-SEEDS/subdivision-viewing.md` (a possible future viewing). Everything else
   accepted as written.
-- **Next action:** implementation per the note's §10, minus subdivision. Michael's
-  voice pass on all copy remains the gate before anything ships. Two smaller appearance items
+- **Phase 4 implemented, 8 Aug — committed, not pushed.** The plane lives in
+  `js/plane.js`, one file under both labs. Multiplication is a canvas viewing of it:
+  panes as regions keyed by number (revealed everywhere they live, honest gaps where
+  a number was never made), pieces smallest-prime-first identically everywhere, the
+  `aslab` workshop's resting/lit palettes with drift check, primes to 19 in sound and
+  clear glass beyond the declared six, keyboard access via a pane cursor, defaults to
+  Numbers · map. Geometry gains lattice-click minting (`lattice_point` ops recording
+  unit addresses). Everything verified in the browser, zero console errors; ledger:
+  `01-ACTIVE/Decisions-Phase4-Aug08.md`, including the load-bearing note — with
+  colour the sole prime indicator, **the colourblind-safe workshop is the
+  accessibility answer and must be authored to full standard; it does not exist yet**.
+- **Next action:** Michael reviews Phase 4 (both labs served locally), then his voice
+  pass over every string in the port plus the surviving Phase 3 copy — the gate
+  before anything ships. After that, the largest open item this phase created:
+  **author the 16th workshop**. The plan's four phases are, with this, all executed. Two smaller appearance items
   remain open in `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and
   an inner came value that clears all six resting colours.
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto

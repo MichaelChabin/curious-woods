@@ -16,6 +16,11 @@ allowed here.
 **`../outdated-files/`** — outside this folder, so Netlify never serves it.
 Superseded versions, kept as the archive record.
 
+**`js/`** — shared code, at the root of this folder. One file so far:
+`plane.js`, the coordinate space both labs stand on (view state, transforms,
+one zoom clamp, the ambient lattice, the pixel floor). Classic script, no
+build step; extracted in Phase 4 so the labs cannot drift apart.
+
 **`art/` `models/` `stories/` `text/`** — assets, at the root of this folder.
 Pages in `active/` and `experiments/` reach them with `../` —
 `../art/palettes.json`, `../models/logs/geo_hexagon_triangle.json`.
@@ -27,19 +32,26 @@ A page that moves between folders must have those paths checked.
 - **`glass-geometry.html`** — compass-and-straightedge construction environment;
   constructions become stained glass. Reads `../text/geometry-v1.json` for its
   copy, `../art/palettes.json` for palettes, and `../models/` for the built-in
-  constructions. **Stands on the extracted plane** (Phases 1–3, 7 Aug 2026):
-  view state lives in a `plane` module behind an API, world y is up, one zoom
-  clamp, the emergent numbering reads its unit from the plane, and the plane
-  carries the ambient lattice — 1–5–10 ladder across decades, labels positive
-  in all four directions, half-pixel-snapped 1px strokes, tied/untied zoom, a
-  pixel-floor readout — behind a Numbers control cycling map · points · off.
-  Saved logs replay unchanged but render mirrored across the seed axis
-  relative to the retired y-down view. Ledgers:
-  `CWVault/01-ACTIVE/Decisions-Phase{1,2,3}-Aug07.md` — Phase 2 carries the
-  verification sweep and hands-on list, Phase 3 the flagged defaults.
+  constructions. **Stands on the shared plane** (`../js/plane.js`, Phases 1–4):
+  view state behind the plane's API, world y up, one zoom clamp, the emergent
+  numbering's unit declared to the plane, the ambient lattice behind a Numbers
+  control cycling map · points · off — and, since Phase 4, lattice-click
+  minting: with the map showing, tapping a lattice intersection records a
+  point (`lattice_point` op, unit-coordinate address). Saved logs replay
+  unchanged but render mirrored across the seed axis relative to the retired
+  y-down view. Ledgers: `CWVault/01-ACTIVE/Decisions-Phase{1,2,3}-Aug07.md`
+  and `…Phase4-Aug08.md`.
 - **`glass-multiplication.html`** — the times table as a window onto the number
-  plane: every product a rectangle, prime factors in colour and sound. Self-
-  contained apart from the link home.
+  plane: every product a rectangle, prime factors in colour and sound.
+  **Rewritten on the plane** (Phase 4, 8 Aug 2026): the map is a canvas
+  viewing of the shared coordinate space (`../js/plane.js`) — panes are
+  regions keyed by number, revealed everywhere they live including panes
+  panned into later; pieces stack smallest prime first, identically
+  everywhere (no mirror); colours are the `aslab` workshop's resting and lit
+  palettes; primes reach 19 in sound and render as clear glass beyond the
+  workshop's six; keyboard access via a pane cursor on the one tabbable
+  canvas. Defaults to Numbers · map. Awaiting Michael's voice pass before
+  shipping. Ledger: `CWVault/01-ACTIVE/Decisions-Phase4-Aug08.md`.
 
 ### experiments/
 - **`number-theory-v1.html`** — multiplication and division as rectangles on a
