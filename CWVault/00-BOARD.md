@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-07 (Phases 1–3 all reviewed and pushed; Phase 4 gated on the second channel and the voice pass)
+updated: 2026-08-08 (Phase 4 design note written; implementation paused for Michael's look)
 ---
 
 # The Board
@@ -93,12 +93,19 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   and one addition are recorded at the end of `Decisions-Benches-Aug05.md`; read them
   first, because one Phase 1 item (half-pixel snapping) describes a defect that is not in
   Glass Geometry at all.
-- **Next action:** the Phase 4 design. Its gates, in order: settle the second channel
-  at the bench (standing recommendation: subdivision rather than width, argued in
-  `Decisions-Benches-Aug05.md`, the bench to overrule if it disagrees); decide the
-  mirrored-pane transform (below); answer lattice-click minting (decision 5's second
-  half); and Michael's voice pass on the Phase 3 copy before anything ships. The
-  three benches' other open items (125% chroma clip, inner-came value) ride along. Two smaller appearance items
+- **Phase 4 design note written, 8 Aug:** `01-ACTIVE/Design-Phase4-Aug08.md`. It
+  adopts subdivision as the second channel (the bench can still overrule — look at
+  `prime-glass` with colour off), kills the mirror transform, designs lattice-click
+  minting as a Geometry-side `lattice_point` op recording unit addresses, takes the
+  virtual-cursor route for canvas accessibility, defines the viewing object and puts
+  the Numbers control's permanent home in the viewing's control strip
+  (Multiplication defaults to `map`), resolves the 125% clip by declaring 3 and 13's
+  lit colours directly per the schema spec, extends primes to 19 with clear glass
+  beyond, and extracts the plane to `js/plane.js` so both labs stand on one file.
+  Overrule points are gathered at the note's foot.
+- **Next action:** Michael's quick look at the design note (the overrule points are
+  the checklist), then implementation per its §10 order. His voice pass on all copy
+  remains the gate before anything ships. Two smaller appearance items
   remain open in `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and
   an inner came value that clears all six resting colours.
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto
