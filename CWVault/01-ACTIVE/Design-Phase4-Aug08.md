@@ -61,6 +61,16 @@ is required, and this note decides it (§2).
 
 ## 2. The second channel: subdivision
 
+> **OVERRULED at the design review, 8 Aug (Michael).** No second channel in
+> this port. **Colour is the sole prime indicator** — a standing principle the
+> monochrome framing didn't inherit. The colourblind-safe workshop is the
+> accessibility answer, which makes its quality load-bearing. Workshops must
+> declare six distinguishable prime colours, and the schema now requires it
+> (`20-SPECS/Spec-Workshop-Palette-Schema.md`). Subdivision is parked as a
+> seed — a possible future *viewing*, not a port feature
+> (`03-SEEDS/subdivision-viewing.md`). The section below stands as the record
+> of what was proposed and why.
+
 **Decision: subdivision, not width.** A piece for prime *p* is cut into *p*
 parts by inner cames — 2 is a piece cut in two, 7 a piece cut in seven — read
 by counting, no key. This is the standing recommendation from

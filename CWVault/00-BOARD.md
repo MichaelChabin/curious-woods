@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-08 (Phase 4 design note written; implementation paused for Michael's look)
+updated: 2026-08-08 (design note reviewed — subdivision overruled, colour is the sole prime indicator; implementation running)
 ---
 
 # The Board
@@ -103,9 +103,14 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   lit colours directly per the schema spec, extends primes to 19 with clear glass
   beyond, and extracts the plane to `js/plane.js` so both labs stand on one file.
   Overrule points are gathered at the note's foot.
-- **Next action:** Michael's quick look at the design note (the overrule points are
-  the checklist), then implementation per its §10 order. His voice pass on all copy
-  remains the gate before anything ships. Two smaller appearance items
+- **Design note reviewed, 8 Aug.** One overrule: **no second channel — colour is the
+  sole prime indicator**, a standing principle; the colourblind-safe workshop is the
+  accessibility answer and its quality is therefore load-bearing; the schema now
+  requires six distinguishable prime colours per workshop. Subdivision parked as
+  `03-SEEDS/subdivision-viewing.md` (a possible future viewing). Everything else
+  accepted as written.
+- **Next action:** implementation per the note's §10, minus subdivision. Michael's
+  voice pass on all copy remains the gate before anything ships. Two smaller appearance items
   remain open in `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and
   an inner came value that clears all six resting colours.
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto

@@ -84,6 +84,22 @@ distinguish six. Rather than a defect, that can be honest: *a workshop with four
 makes a smaller window.* Whether the platform says so out loud, or simply offers those
 workshops only where they work, is undecided.
 
+## Requirement added at the Phase 4 design review, 8 Aug 2026
+
+**A workshop must declare six distinguishable prime colours.** Colour is the sole
+prime indicator — the second-channel proposal was overruled — so `declared` is not
+optional garnish but the whole channel: six entries (2, 3, 5, 7, 11, 13), each
+distinguishable from the other five in both resting and lit form. A workshop that
+cannot furnish six (Chinese Blue and White, Hokusai) is not a prime workshop until
+it can; the honest-smaller-window idea above survives only as a question, not as a
+loophole.
+
+The same ruling makes **the colourblind-safe workshop the accessibility answer**,
+and therefore load-bearing: it must be authored to the same standard as the
+artwork palettes — a workshop with a name and character, never labelled as an
+accessibility option (decision 9) — and its six must be distinguishable under the
+common colour-vision deficiencies, not merely to the median eye.
+
 ## Status
 
 `aslab` — "As the lab ships" — is the first workshop authored in this schema and the
