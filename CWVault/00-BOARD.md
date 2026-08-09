@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-09 (Interface Standard v2 and the sorted Multiplication review committed; fog seed planted)
+updated: 2026-08-09 (design-session docs committed; Jankó instruments staged out of the publish directory; pushed)
 ---
 
 # The Board
@@ -219,10 +219,12 @@ different zoom. Build once, not twice.
 **Sound Series** (was *Music for Physicists*, and absorbs *MIDI keyboard input*).
 Promoted from two parked lines to a Series in its own right, 8 Aug. Not music
 appreciation and not notation instruction: what sound is made of, with instruments a
-child plays. **Two working instruments now live** — `experiments/janko-lattice.html`
-(touch) and `experiments/janko-midi.html` (Mac, Web MIDI, Chrome only). Twelve tones,
-two tiers of six, all one colour; home is chosen and marked rather than baked in;
-the scale shape is rigid and slides.
+child plays. **Two working instruments, committed but not deployed** — staged as
+`prototypes/janko-lattice.html` (touch) and `prototypes/janko-midi.html` (Mac, Web
+MIDI, Chrome only), deliberately outside the Netlify publish directory until the
+Series decides its opening; they are not publicly reachable. Twelve tones, two tiers
+of six, all one colour; home is chosen and marked rather than baked in; the scale
+shape is rigid and slides.
 
 *Settled this session:* **no traditional notation anywhere in this Series** — no
 letters, sharps, flats or staff. The replacements are steps from a chosen home (0–11),

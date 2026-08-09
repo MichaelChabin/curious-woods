@@ -9,6 +9,11 @@ updated: 2026-08-08
 **Produced this session:** `cw-deploys/experiments/janko-lattice.html`,
 `cw-deploys/experiments/janko-midi.html`. Everything else here is conversation.
 
+> **Path correction, 9 Aug.** Both instruments now live at
+> `prototypes/janko-lattice.html` and `prototypes/janko-midi.html` — moved out
+> of the Netlify publish directory before the push, per Michael: experimental
+> work must not be publicly reachable until the Series decides its opening.
+
 ---
 
 ## What this is

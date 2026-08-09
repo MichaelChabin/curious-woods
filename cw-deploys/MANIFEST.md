@@ -82,21 +82,6 @@ A page that moves between folders must have those paths checked.
   stripes and a monochrome toggle. With colour off and order the only channel, 6, 10 and
   14 render identical — so colour currently carries information rather than delight, and
   a second channel is required. Two candidates are in the bench. In progress.
-- **`janko-lattice.html`** — first instrument of the Sound Series. A Jankó
-  lattice: twelve notes on two tiers, front tier the even steps and back tier
-  the odd, offset by half a key, so an octave spans six columns and fits a
-  child's hand. All keys one colour — the black-and-white of a standard
-  keyboard encodes C major and is a historical accident, so home is chosen and
-  marked instead. Major-scale shape slides intact; moving home by one step
-  flips tiers, which is honest, not a bug. Touch, multi-touch and drag.
-  Self-contained, Web Audio oscillators, no shared code. Design and the
-  reasoning: `CWVault/01-ACTIVE/Sound-Series-Aug08.md`.
-- **`janko-midi.html`** — the same lattice for the Mac, lit by a MIDI keyboard
-  over Web MIDI: four octaves (notes 36–84), octave shift, sustain pedal,
-  velocity, and a `hertz` label so the doubling every six columns can be read
-  while it is heard. **Chrome only** — Safari has no Web MIDI, and a `file://`
-  URL may need serving from localhost. Deliberately carries no letter names,
-  sharps or flats; steps from home, ratios and frequencies are the vocabulary.
 - **`pi-beads.html`** — how many beads fit around a circle; circumference ÷
   diameter, with past measurements kept.
 - **`clinks-triangular.html`** — triangular numbers as people arriving, leaving,
@@ -119,3 +104,10 @@ while the version that replaced it lives as `active/glass-geometry.html`.
 
 `../prototypes/` is staging — work that has not yet earned a URL. A prototype
 becomes an experiment by moving into `experiments/` with a descriptive name.
+
+Staged there now (9 Aug 2026): the Sound Series' two Jankó instruments,
+`janko-lattice.html` (touch — twelve notes on two tiers, all one colour, home
+chosen and marked) and `janko-midi.html` (the same lattice lit by Web MIDI,
+Chrome only). Built 8 Aug, deliberately **not publicly reachable** until the
+Series decides its opening; both are self-contained. Design and reasoning:
+`CWVault/01-ACTIVE/Sound-Series-Aug08.md`.

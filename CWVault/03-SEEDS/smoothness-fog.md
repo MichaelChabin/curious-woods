@@ -1,6 +1,6 @@
 ---
 kind: mechanic
-status: warm
+status: parked
 intuitions: [i01, i02, i05]
 domain: [mathematics]
 era:
@@ -17,6 +17,8 @@ hook: the map that refuses to go dark
      (→ mathematics), lab: multiplication (→ number-theory). -->
 
 # The fog map — smoothness in grayscale
+
+*A curiosity, recorded for later — not an input to current design.*
 
 A viewing, not a workshop. Recolor every prime piece by rank in gray: 2 is white,
 and the shade deepens with each later prime toward black. Tile the map exactly as
