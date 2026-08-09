@@ -2,8 +2,11 @@
 
 ## BRIEF (read this, skip the rest if you're building)
 
-Status: Partially superseded. Authoritative for color palette, typography, and Maya text UI.
-Last updated: February 27, 2026 (UI Language companion document added)
+Status: Sits under `01-ACTIVE/Spec-Interface-Standard-v2-Aug09.md` (9 Aug 2026), which
+reconciles the February documents with built reality and names the winner where they
+disagree. This file remains authoritative for the color palette, typography, and (when
+built) the Maya conversation UI. Read the standard first.
+Last updated: February 27, 2026 (UI Language companion added); status line 9 Aug 2026.
 
 Companion document: `00-FOUNDATION/UI-Language.md` — read alongside this.
 UI-Language covers: two-panel layout, living left panel, contextual controls, Remember inscription,

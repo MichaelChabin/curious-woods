@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Twelve — MIDI</title>
+<style>
+  :root{
+    --parchment:#f4f1e8;
+    --slate:#546A80;
+    --copper:#b87333;
+    --ink:#2a2620;
+    --key:#faf8f2;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:var(--parchment);
+    font-family:Georgia,'Times New Roman',serif;
+    color:var(--ink);
+    -webkit-user-select:none;user-select:none;
+    overscroll-behavior:none;
+  }
+  body{display:flex;flex-direction:column;justify-content:center;padding:0 2.5vw;}
+
+  #controls{
+    display:flex;gap:24px;align-items:baseline;flex-wrap:wrap;
+    font-size:15px;letter-spacing:.04em;
+    padding:0 4px 14px 4px;
+  }
+  .word{color:rgba(84,106,128,.55);cursor:pointer;transition:color 120ms;}
+  .word.on{color:var(--copper);}
+  .word:focus-visible{outline:1px solid var(--copper);outline-offset:3px;}
+  .sep{color:rgba(84,106,128,.25);}
+  #status{
+    margin-left:auto;font-size:13px;font-style:italic;
+    color:rgba(84,106,128,.45);
+  }
+  #status.live{color:var(--copper);font-style:normal;}
+
+  #board{position:relative;width:100%;height:min(44vh,300px);touch-action:none;}
+  .key{
+    position:absolute;background:var(--key);
+    border:1px solid rgba(84,106,128,.30);border-radius:2px;
+    display:flex;align-items:flex-end;justify-content:center;
+    padding-bottom:6px;font-size:11px;color:rgba(84,106,128,.5);
+    transition:background 50ms;overflow:hidden;
+  }
+  .key.back{height:47%;top:0;border-bottom:none;border-radius:2px 2px 0 0;}
+  .key.front{height:53%;bottom:0;border-radius:0 0 3px 3px;}
+  .key.scale{background:#f6ece0;}
+  .key.down{background:#e3c09a;}
+  .key .num{pointer-events:none;white-space:nowrap;}
+  .key.hz .num{font-size:9px;}
+  .key .dot{
+    position:absolute;left:50%;transform:translateX(-50%);
+    width:6px;height:6px;border-radius:50%;background:var(--copper);
+  }
+  .key.back .dot{top:8px;}
+  .key.front .dot{bottom:8px;}
+  .key.front .num{position:relative;top:-13px;}
+  .key.front.home .num{top:-18px;}
+
+  #caption{padding:14px 4px 0 4px;font-size:14px;color:rgba(84,106,128,.55);line-height:1.5;}
+</style>
+</head>
+<body>
+
+<div id="controls">
+  <span class="word" id="w-home" tabindex="0">move home</span>
+  <span class="word on" id="w-shape" tabindex="0">shape</span>
+  <span class="word" id="w-steps" tabindex="0">steps</span>
+  <span class="word" id="w-hertz" tabindex="0">hertz</span>
+  <span class="sep">|</span>
+  <span class="word" id="w-down" tabindex="0">lower</span>
+  <span class="word" id="w-up" tabindex="0">higher</span>
+  <span id="status">looking for a keyboard</span>
+</div>
+
+<div id="board"></div>
+
+<div id="caption">Twelve notes, all the same. Six across is an octave.</div>
+
+<script>
+/* ---------- tones ---------- */
+var ac=null, voices={};
+function unlock(){
+  if(!ac) ac=new (window.AudioContext||window.webkitAudioContext)();
+  if(ac.state!=='running') ac.resume();
+}
+function freq(n){ return 440*Math.pow(2,(n-69)/12); }
+
+function start(id,note,vel){
+  unlock();
+  if(!ac||voices[id]) return;
+  var peak=.06+.18*((vel==null?100:vel)/127);
+  var t=ac.currentTime;
+  var g=ac.createGain(), lp=ac.createBiquadFilter();
+  lp.type='lowpass'; lp.frequency.value=2200; lp.Q.value=.4;
+  var o1=ac.createOscillator(), o2=ac.createOscillator();
+  o1.type='triangle'; o2.type='sawtooth';
+  o1.frequency.value=freq(note); o2.frequency.value=freq(note);
+  o2.detune.value=6;
+  var g2=ac.createGain(); g2.gain.value=.30;
+  o1.connect(g); o2.connect(g2); g2.connect(g);
+  g.connect(lp); lp.connect(ac.destination);
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(peak,t+.012);
+  g.gain.exponentialRampToValueAtTime(peak*.55,t+.4);
+  o1.start(t); o2.start(t);
+  voices[id]={g:g,o1:o1,o2:o2};
+}
+function stop(id){
+  var v=voices[id]; if(!v) return;
+  delete voices[id];
+  var t=ac.currentTime;
+  v.g.gain.cancelScheduledValues(t);
+  v.g.gain.setValueAtTime(Math.max(v.g.gain.value,.0009),t);
+  v.g.gain.exponentialRampToValueAtTime(.0008,t+.28);
+  v.o1.stop(t+.32); v.o2.stop(t+.32);
+}
+
+/* ---------- lattice ---------- */
+var BASE=36, FRONT=25, BACK=24, W=100/FRONT;
+var board=document.getElementById('board');
+var keys=[], byNote={};
+
+function make(row,note,left){
+  var d=document.createElement('div');
+  d.className='key '+row;
+  d.style.left=left+'%'; d.style.width=W+'%';
+  d.dataset.note=note;
+  var n=document.createElement('span'); n.className='num'; d.appendChild(n);
+  board.appendChild(d);
+  var k={el:d,note:note,num:n};
+  keys.push(k); byNote[note]=k;
+}
+function build(){
+  board.innerHTML=''; keys=[]; byNote={};
+  for(var i=0;i<FRONT;i++) make('front', BASE+2*i, i*W);
+  for(var j=0;j<BACK;j++)  make('back',  BASE+2*j+1, (j+0.5)*W);
+  paint();
+}
+
+/* ---------- state ---------- */
+var home=48, MAJOR=[0,2,4,5,7,9,11];
+var showShape=true, label='none';
+
+function paint(){
+  keys.forEach(function(k){
+    var deg=((k.note-home)%12+12)%12;
+    k.el.classList.toggle('scale', showShape && MAJOR.indexOf(deg)>-1);
+    k.el.classList.toggle('home', deg===0);
+    k.el.classList.toggle('hz', label==='hertz');
+    var dot=k.el.querySelector('.dot');
+    if(deg===0 && !dot){ var s=document.createElement('span'); s.className='dot'; k.el.appendChild(s); }
+    if(deg!==0 && dot) dot.remove();
+    if(label==='steps') k.num.textContent=deg;
+    else if(label==='hertz'){ var f=freq(k.note); k.num.textContent = f<1000 ? f.toFixed(1) : Math.round(f); }
+    else k.num.textContent='';
+  });
+}
+build();
+
+/* ---------- lighting keys ---------- */
+var lit={};
+function light(note,on){
+  var k=byNote[note]; if(!k) return;
+  lit[note]=(lit[note]||0)+(on?1:-1);
+  if(lit[note]<=0){ delete lit[note]; k.el.classList.remove('down'); }
+  else k.el.classList.add('down');
+}
+
+/* ---------- MIDI ---------- */
+var pedal=false, sustained={};
+var status=document.getElementById('status');
+
+function midiNoteOn(note,vel){
+  light(note,true); start('m'+note,note,vel); delete sustained[note];
+}
+function midiNoteOff(note){
+  if(pedal){ sustained[note]=true; return; }
+  light(note,false); stop('m'+note);
+}
+function onMessage(e){
+  var d=e.data, cmd=d[0]&0xf0;
+  if(cmd===0x90 && d[2]>0) midiNoteOn(d[1],d[2]);
+  else if(cmd===0x80 || (cmd===0x90 && d[2]===0)) midiNoteOff(d[1]);
+  else if(cmd===0xb0 && d[1]===64){
+    pedal = d[2]>=64;
+    if(!pedal){ for(var n in sustained){ light(+n,false); stop('m'+n); } sustained={}; }
+  }
+}
+function attach(access){
+  var names=[];
+  access.inputs.forEach(function(inp){ inp.onmidimessage=onMessage; names.push(inp.name); });
+  if(names.length){ status.textContent=names.join(', '); status.className='live'; }
+  else { status.textContent='no keyboard found'; status.className=''; }
+}
+if(navigator.requestMIDIAccess){
+  navigator.requestMIDIAccess().then(function(access){
+    attach(access);
+    access.onstatechange=function(){ attach(access); };
+  },function(){ status.textContent='midi permission refused'; });
+} else {
+  status.textContent='this browser has no midi — try chrome';
+}
+
+/* ---------- touch and mouse ---------- */
+function keyAt(x,y){
+  var el=document.elementFromPoint(x,y);
+  return (el && el.classList && el.classList.contains('key')) ? el : null;
+}
+var held={}, arming=false;
+
+board.addEventListener('pointerdown',function(e){
+  unlock();
+  var el=keyAt(e.clientX,e.clientY); if(!el) return;
+  e.preventDefault();
+  if(arming){
+    home=+el.dataset.note; arming=false;
+    document.getElementById('w-home').classList.remove('on');
+    paint();
+  }
+  press(e.pointerId,el);
+},{passive:false});
+
+window.addEventListener('pointermove',function(e){
+  if(!(e.pointerId in held)) return;
+  var el=keyAt(e.clientX,e.clientY);
+  if(el!==held[e.pointerId]){ release(e.pointerId); if(el) press(e.pointerId,el); }
+});
+window.addEventListener('pointerup',function(e){ release(e.pointerId); });
+window.addEventListener('pointercancel',function(e){ release(e.pointerId); });
+
+function press(id,el){
+  held[id]=el; light(+el.dataset.note,true); start(id,+el.dataset.note,100);
+}
+function release(id){
+  var el=held[id]; if(!el) return;
+  delete held[id]; light(+el.dataset.note,false); stop(id);
+}
+
+/* ---------- words ---------- */
+function tie(id,fn){
+  var el=document.getElementById(id);
+  el.addEventListener('click',fn);
+  el.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();fn();} });
+}
+tie('w-home',function(){
+  unlock(); arming=!arming;
+  document.getElementById('w-home').classList.toggle('on',arming);
+});
+tie('w-shape',function(){
+  showShape=!showShape;
+  document.getElementById('w-shape').classList.toggle('on',showShape);
+  paint();
+});
+function setLabel(which){
+  label = (label===which) ? 'none' : which;
+  document.getElementById('w-steps').classList.toggle('on',label==='steps');
+  document.getElementById('w-hertz').classList.toggle('on',label==='hertz');
+  paint();
+}
+tie('w-steps',function(){ setLabel('steps'); });
+tie('w-hertz',function(){ setLabel('hertz'); });
+tie('w-down',function(){ BASE-=12; home-=12; build(); });
+tie('w-up',function(){ BASE+=12; home+=12; build(); });
+
+document.addEventListener('gesturestart',function(e){e.preventDefault();});
+</script>
+</body>
+</html>

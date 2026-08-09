@@ -52,8 +52,11 @@ A page that moves between folders must have those paths checked.
   everywhere (no mirror); colours are the `aslab` workshop's resting and lit
   palettes; primes reach 19 in sound and render as clear glass beyond the
   workshop's six; keyboard access via a pane cursor on the one tabbable
-  canvas. Defaults to Numbers · map. Awaiting Michael's voice pass before
-  shipping. Ledger: `CWVault/01-ACTIVE/Decisions-Phase4-Aug08.md`.
+  canvas. Defaults to Numbers · map. Live since 8 Aug (that push's copy was
+  approved via the printed-strings scan; the full read-aloud pass with Eileen
+  comes later). Ledger: `CWVault/01-ACTIVE/Decisions-Phase4-Aug08.md`;
+  Michael's sorted post-Phase-4 review, eight lanes from fix-now to design
+  conversations: `CWVault/01-ACTIVE/Review-GlassMult-Aug09.md`.
 
 ### experiments/
 - **`number-theory-v1.html`** — multiplication and division as rectangles on a
@@ -79,6 +82,21 @@ A page that moves between folders must have those paths checked.
   stripes and a monochrome toggle. With colour off and order the only channel, 6, 10 and
   14 render identical — so colour currently carries information rather than delight, and
   a second channel is required. Two candidates are in the bench. In progress.
+- **`janko-lattice.html`** — first instrument of the Sound Series. A Jankó
+  lattice: twelve notes on two tiers, front tier the even steps and back tier
+  the odd, offset by half a key, so an octave spans six columns and fits a
+  child's hand. All keys one colour — the black-and-white of a standard
+  keyboard encodes C major and is a historical accident, so home is chosen and
+  marked instead. Major-scale shape slides intact; moving home by one step
+  flips tiers, which is honest, not a bug. Touch, multi-touch and drag.
+  Self-contained, Web Audio oscillators, no shared code. Design and the
+  reasoning: `CWVault/01-ACTIVE/Sound-Series-Aug08.md`.
+- **`janko-midi.html`** — the same lattice for the Mac, lit by a MIDI keyboard
+  over Web MIDI: four octaves (notes 36–84), octave shift, sustain pedal,
+  velocity, and a `hertz` label so the doubling every six columns can be read
+  while it is heard. **Chrome only** — Safari has no Web MIDI, and a `file://`
+  URL may need serving from localhost. Deliberately carries no letter names,
+  sharps or flats; steps from home, ratios and frequencies are the vocabulary.
 - **`pi-beads.html`** — how many beads fit around a circle; circumference ÷
   diameter, with past measurements kept.
 - **`clinks-triangular.html`** — triangular numbers as people arriving, leaving,

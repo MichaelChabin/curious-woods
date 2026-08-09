@@ -6,7 +6,7 @@ Curious Woods — UI Language Document
 
 ## BRIEF (read this, skip the rest if you're building)
 
-Status: First complete statement. Authoritative for all new interactive and story content. Last updated: February 27, 2026
+Status: Sits under `01-ACTIVE/Spec-Interface-Standard-v2-Aug09.md` (9 Aug 2026), which reconciles this document with built reality and names the winner where they disagree. This file remains the source for animation timing and the two-panel story layout, **except** hover-expand (replaced by choice panels — it assumed a cursor) and unconditional panel fading (a moved panel is now a commitment). Read the standard first. Last updated: February 27, 2026; status line 9 Aug 2026.
 
 Core decisions:
 

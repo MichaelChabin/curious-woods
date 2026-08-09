@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-08 (iPad-review fixes in; everything pushed; the voice pass now runs against live pages)
+updated: 2026-08-09 (Interface Standard v2 and the sorted Multiplication review committed; fog seed planted)
 ---
 
 # The Board
@@ -83,9 +83,6 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
 - **Platform-level, from the fills bench:** geometry's `#777777` came was chosen against
   its own light glass and becomes a *lighter* line at a third of the contrast against dark
   panes. If both labs share leading, the came must work against both.
-- **The open question that now gates Phase 4:** what is the second, non-colour channel?
-  It is required, not desirable — several real palettes have fewer than six usable hues
-  and cannot carry six primes however tuned.
 - **The explicit instruction: stop at the end of Phase 1 for review.**
 - **Phase 1 is not gated by the appearance work.** The benches gate **Phase 4**. Phase 1 is
   view state, transforms, one zoom clamp, the y-up flip and the save-path consolidation —
@@ -109,7 +106,7 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   requires six distinguishable prime colours per workshop. Subdivision parked as
   `03-SEEDS/subdivision-viewing.md` (a possible future viewing). Everything else
   accepted as written.
-- **Phase 4 implemented, 8 Aug — committed, not pushed.** The plane lives in
+- **Phase 4 implemented, 8 Aug — pushed same day with the iPad fixes.** The plane lives in
   `js/plane.js`, one file under both labs. Multiplication is a canvas viewing of it:
   panes as regions keyed by number (revealed everywhere they live, honest gaps where
   a number was never made), pieces smallest-prime-first identically everywhere, the
@@ -131,21 +128,39 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
 - **Bench-first design items, not yet sessions:** the tiling-rotation idea and the
   quadrant toggle (the map around zero, per the Jul 28 ledger). Per the standing
   method, each gets a bench before an argument.
-- **Next action:** Michael's voice pass over every child-facing string (the full list
-  was printed at this session's review; the practice below makes that standing),
-  against the live pages. Then: **author the 16th workshop** — with colour the sole
-  prime indicator it is the accessibility answer, and it does not exist yet. Two smaller appearance items
-  remain open in `Decisions-Fills-Aug06.md`: the 125% chroma gamut clip on 3 and 13, and
-  an inner came value that clears all six resting colours.
+- **Committed 9 Aug, from Michael's design session:**
+  `01-ACTIVE/Spec-Interface-Standard-v2-Aug09.md` — the interface standard, sitting
+  above Interface-Foundation and UI-Language (both now carry status lines pointing up
+  to it); five-surface test, panels as lens or record, choice panels replacing
+  hover-expand, undo never touching viewing state, the tap contract, sound permission,
+  and the gesture registry opened. `01-ACTIVE/Review-GlassMult-Aug09.md` — the
+  post-Phase-4 review sorted into eight lanes so deferred work is never picked up
+  piecemeal: Lane 1 is the fix-now list (Safari audio and tap highlights were fixed
+  8 Aug — confirm, don't redo; new: selection outline, startup grid, axis shading,
+  the white 1, fill-pause at powers of two, no letterbox, plus four Geometry items
+  including constructions painting over the membrane and undo eating viewing changes).
+  `03-SEEDS/smoothness-fog.md` — the grayscale magnitude viewing and its poster,
+  facets corrected to the closed vocabulary.
+- **Voice-pass status (Lane 2):** the 8 Aug push was approved via the printed-strings
+  scan; the full read-aloud pass with Eileen returns when there is text to see.
+- **Next action:** a code session on Lane 1 of `Review-GlassMult-Aug09.md`, confirming
+  the two already-fixed items rather than redoing them. Then the controls pass with
+  the Interface Standard as its brief — beginning with a Geometry walk examining New,
+  Open and Save as choice-panel candidates. Still owed behind those: **the 16th
+  workshop** (the accessibility answer; Lane 8 calls it the first post-extraction
+  build) and the inner-came value that clears all six resting colours
+  (`Decisions-Fills-Aug06.md`).
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto
   the canvas skips the work-in-progress check and silently replaces unsaved work. The
   New and Open words both guard; the drop does not. Pre-existing, found in the Phase 2
   sweep, not yet fixed anywhere.
-- **Also unresolved, and now bigger than it looked:** the mirrored-pane transform
-  (`rotate(-90deg) scaleY(-1)`) contradicts decision 8's stripe order *and* the fills
-  bench's texture rule, since a 90° rotation turns every "across" striation into an
-  "along". The two halves of the table would be made of different glass. Decide before
-  Phase 4.
+- **Rotational tiling — a deliberate amendment on the bench.** The Phase 4 port ships
+  panes identical everywhere (the old mirror transform is dead), and Michael's review
+  proposes spending that: below the diagonal pieces stack bottom-up, above it rotated
+  90°, squares rotated 45° along the diagonal — rotation, not mirroring; every pane
+  keeps its pieces and order, turned like real panels in a frame. Recorded as an
+  amendment to the design note's §3, **bench first** (`prime-glass` holds both
+  schemes; the 45° squares are the untested part). `Review-GlassMult-Aug09.md`, Lane 4.
 
 ### 2. Perception Lab — the child's own instrument
 Colour, pitch, and rhythm discrimination. One measurement harness, three axes.
@@ -201,17 +216,48 @@ inventory as cheap to decide now and expensive in six months. *Next: decide.*
 **Deep time / continental drift (M12).** Structurally the same object as T1 at a
 different zoom. Build once, not twice.
 
-**Music for Physicists — the Jankó lattice.** Twelve tones, no sharps or flats, two rows
-of six offset. A key becomes a position rather than a different object; transposition is
-felt in the fingers. On-screen SVG, no hardware needed. Later beat with its own trigger:
-slide up by seven twelve times and land almost home — 531441 against 524288, a near-miss
-you can hear. Joins the drumbeat with 5-5-7 and 12-12-17.
-*Next: nothing until Phase 1 clears. It has no dependencies, which is exactly why it can
-wait without rotting.*
+**Sound Series** (was *Music for Physicists*, and absorbs *MIDI keyboard input*).
+Promoted from two parked lines to a Series in its own right, 8 Aug. Not music
+appreciation and not notation instruction: what sound is made of, with instruments a
+child plays. **Two working instruments now live** — `experiments/janko-lattice.html`
+(touch) and `experiments/janko-midi.html` (Mac, Web MIDI, Chrome only). Twelve tones,
+two tiers of six, all one colour; home is chosen and marked rather than baked in;
+the scale shape is rigid and slides.
 
-**MIDI keyboard input.** Web MIDI, no driver, roughly twenty lines; note to frequency is
-440·2^((n−69)/12). *Next: a one-page device-listing probe to settle whether iOS Safari
-supports it. Ten seconds, and it decides whether the iPad is a music device.*
+*Settled this session:* **no traditional notation anywhere in this Series** — no
+letters, sharps, flats or staff. The replacements are steps from a chosen home (0–11),
+ratios, and Hz. Three scales are enough (major, natural minor only, pentatonic), plus
+shapes she builds herself. Culture arrives attached to a tool, never as context ahead
+of it.
+
+*The argument the Series is built on:* ratios and equal steps are two valid,
+incompatible understandings of the twelve, and **the gap between them is audible** as
+beats. That makes the 531441-against-524288 near-miss a measurement rather than a
+fact to be told. Same shape as the walking stick.
+
+*Why it is worth building soon:* sound puts time on one axis and frequency on the
+other — different kinds, one wanting a log scale. It is the hardest test the shared
+plane has been given.
+
+- **Authority:** `01-ACTIVE/Sound-Series-Aug08.md` (the full session, decisions and
+  inventory) · `03-SEEDS/story-with-instruments.md` (the new story form).
+- **Next action:** decide what opens the Series. The beat-tuner is argued for — the
+  only instrument where she measures with her ears and gets a number back. Then
+  Michael's voice pass on the two live pages' copy, which has not had one.
+- **Open, cheap, unresolved:** does iOS Safari support Web MIDI? A one-page
+  device-listing probe settles whether the iPad is a music device.
+- **Open:** `sound` is not a value in the `lab` facet. Only Michael approves one;
+  seeds use `lab: none` meanwhile.
+- **Open:** whether `experiments/sound-workbench.html` and `experiments/prime-tones.html`
+  belong to this Series or stay interface work. `prime-tones.html` is in
+  `experiments/index.html` but **missing from `MANIFEST.md`**.
+
+**The story that hands you the instrument.** A story form, not a lab item: the
+narrative does not advance until the child has made a judgment about a physical
+quantity — the mallet in Issun-bōshi has to sound right for what is happening, and as
+he grows the pitch must fall. Distinct from choose-your-path, which is consumption
+with a button. Never told whether she got it right. Two or three such moments in a
+whole story, no more. *Next: name it. `03-SEEDS/story-with-instruments.md`.*
 
 **Continued fractions (M5).** Two React prototypes exist. This is the Euclidean algorithm
 as a geometric act — the incommensurability thread from Shortest Paths, already half
