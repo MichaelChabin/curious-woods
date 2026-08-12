@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-09 (design-session docs committed; Jankó instruments staged out of the publish directory; pushed)
+updated: 2026-08-12 (fog sketch committed unlisted; colour ruling scoped per-viewing; session-end git check adopted)
 ---
 
 # The Board
@@ -30,38 +30,20 @@ to protect.
 
 ## Moving
 
-### 1. Plane extraction — Phase 1
+### 1. The plane, and the labs standing on it
 Not a bigger multiplication lab. A **plane** that both labs stand on; the labs become
 viewings of one coordinate space. Ten settled decisions, four phases, three benches.
 
-> **Cleared 6 Aug.** The vault restructure, `artifacts/` and the three benches are
-> committed and pushed; the benches are live. `Current-Status.md` and `Next-3.md` went to
-> `99-ARCHIVE/` as renames, so their history followed them. **`git ls-files` remains the
-> check** — `git log` on a directory returns commits and looks reassuring while the
-> specific files are absent from all of them.
-
-> **Phase 1 executed, reviewed and pushed, 7 Aug** (`8b5f25e`, live on Netlify). The
-> plane is extracted: view state behind a `plane` API, pure transforms, one zoom
-> clamp, world y up with the audit. Deviations and the legacy-mirror consequence:
-> `01-ACTIVE/Decisions-Phase1-Aug07.md`.
->
-> **Phase 2 reviewed and pushed, 7 Aug** (`1a5b089`). The dormant constructions
-> panel is removed per Michael's ruling (`7e245a3`); the hands-on list (pinch,
-> Share, iPad Safari) still stands in `01-ACTIVE/Decisions-Phase2-Aug07.md`.
->
-> **Phase 3 reviewed and pushed, 7 Aug.** The plane has its ambient lattice: one
-> step function, 1–5–10 ladder across decades, labels positive in all four
-> directions, the unit frame declared by the lab, every stroke half-pixel-snapped
-> at 1px from birth, tied/untied zoom, the pixel floor on screen. The Numbers
-> control cycles map · points · off. Rulings recorded in
-> `01-ACTIVE/Decisions-Phase3-Aug07.md`: the numbers default is **per-viewing**
-> (Geometry rests at `points`; Multiplication is expected to default to `map`);
-> the pixel floor speaks at the declared unit's natural scale ("about 4
-> thousandths of a unit", or "about 4 mm" once a viewing names its unit —
-> implemented); the control's home is provisional pending the Phase 4 viewing
-> layer. **Owed before Phase 4 ships: Michael's voice pass on the remaining
-> Phase 3 copy.** Deferred into the Phase 4 design: lattice-click minting
-> (decision 5's second half).
+> **All four phases are built, reviewed and live** (7–8 Aug). The plane is extracted to
+> `cw-deploys/js/plane.js` and both labs stand on it: view state behind one API, pure
+> transforms, one zoom clamp, world y up, an ambient lattice with a 1–5–10 ladder across
+> decades and labels positive in all four directions, the pixel floor spoken at the
+> declared unit's scale. Multiplication is a canvas viewing of it — panes as regions keyed
+> by number, pieces smallest-prime-first identically everywhere, primes to 19, keyboard
+> access by pane cursor. Geometry gained lattice-click minting. Per-phase detail and every
+> deviation: the four `Decisions-Phase*` ledgers below. **Saved Geometry logs replay
+> unchanged but render mirrored** across the seed axis, a known consequence of the y-up
+> flip.
 
 - **Authority:** `01-ACTIVE/Plan-Plane-Extraction.md` (instructions) ·
   `01-ACTIVE/Inventory-GlassGeometry.md` (what the code actually contains) ·
@@ -70,6 +52,12 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   `01-ACTIVE/Decisions-Phase1-Aug07.md` (Phase 1 as executed, with deviations) ·
   `01-ACTIVE/Decisions-Phase2-Aug07.md` (Phase 2 — the verification sweep) ·
   `01-ACTIVE/Decisions-Phase3-Aug07.md` (Phase 3 — the lattice, and its flagged defaults) ·
+  `01-ACTIVE/Decisions-Phase4-Aug08.md` (Phase 4 as built — and the load-bearing note that
+  the colourblind-safe workshop does not exist yet) ·
+  `01-ACTIVE/Spec-Interface-Standard-v2-Aug09.md` (**the interface standard — sits above
+  Interface-Foundation and UI-Language; read before any controls work**) ·
+  `01-ACTIVE/Review-GlassMult-Aug09.md` (the post-Phase-4 review, eight lanes) ·
+  `01-ACTIVE/Decisions-Fog-Aug12.md` (colour scoped per-viewing; the session-end git check) ·
   `20-SPECS/Spec-Workshop-Palette-Schema.md` (decision 9's data path, exported from
   the bench — now tracked in git) ·
   `_msc/_mscVault/5. Claude Design/1. Redesign.md` (the reasoning).
@@ -83,13 +71,6 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
 - **Platform-level, from the fills bench:** geometry's `#777777` came was chosen against
   its own light glass and becomes a *lighter* line at a third of the contrast against dark
   panes. If both labs share leading, the came must work against both.
-- **The explicit instruction: stop at the end of Phase 1 for review.**
-- **Phase 1 is not gated by the appearance work.** The benches gate **Phase 4**. Phase 1 is
-  view state, transforms, one zoom clamp, the y-up flip and the save-path consolidation —
-  none of which touches panes, primes, colour or stripes. Two corrections to its item list
-  and one addition are recorded at the end of `Decisions-Benches-Aug05.md`; read them
-  first, because one Phase 1 item (half-pixel snapping) describes a defect that is not in
-  Glass Geometry at all.
 - **Phase 4 design note written, 8 Aug:** `01-ACTIVE/Design-Phase4-Aug08.md`. It
   adopts subdivision as the second channel (the bench can still overrule — look at
   `prime-glass` with colour off), kills the mirror transform, designs lattice-click
@@ -106,6 +87,14 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   requires six distinguishable prime colours per workshop. Subdivision parked as
   `03-SEEDS/subdivision-viewing.md` (a possible future viewing). Everything else
   accepted as written.
+- **That ruling is scoped, not repealed — 12 Aug** (`01-ACTIVE/Decisions-Fog-Aug12.md`).
+  **Within any one viewing colour means one declared thing**; nothing may compete with
+  it. **Across viewings the child assigns colour to the question she is asking, and
+  choosing is the point.** This supersedes the global colour-monopoly reading, which
+  would have made every future viewing that wants to say something else with colour
+  illegal before it was designed. **The default Multiplication view is unchanged** —
+  colour is prime identity, no second channel, and the 16th workshop is still the
+  accessibility answer and still unbuilt.
 - **Phase 4 implemented, 8 Aug — pushed same day with the iPad fixes.** The plane lives in
   `js/plane.js`, one file under both labs. Multiplication is a canvas viewing of it:
   panes as regions keyed by number (revealed everywhere they live, honest gaps where
@@ -143,6 +132,12 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   facets corrected to the closed vocabulary.
 - **Voice-pass status (Lane 2):** the 8 Aug push was approved via the printed-strings
   scan; the full read-aloud pass with Eileen returns when there is text to see.
+- **Committed 12 Aug:** `experiments/fog-map.html`, a standalone grayscale sketch of the
+  smoothness viewing — **not linked from the experiments index**, and not on the plane.
+  It provoked the colour-ruling scoping above. Seed grew a session section
+  (`03-SEEDS/smoothness-fog.md`): *constructable infinity — a rule plus a window*,
+  landmark overlays as viewings (the squares diagonal as a spine, pronics beside it,
+  doubling as an exponential lattice), and five parameter candidates. Status still cold.
 - **Next action:** a code session on Lane 1 of `Review-GlassMult-Aug09.md`, confirming
   the two already-fixed items rather than redoing them. Then the controls pass with
   the Interface Standard as its brief — beginning with a Geometry walk examining New,
@@ -332,5 +327,13 @@ with. The mathematics is a property of the material, not a lesson wrapped around
 child-facing string prints the complete current list — every string, both labs — in
 the review summary, so Michael reads the whole voice at once, never a diff of it.
 Established 8 Aug 2026 at the Phase 4 iPad review.
+
+**Every session ends with a `git status` check, and reports anything untracked** —
+whether or not that session created it. On 2 Aug five vault documents turned out to have
+no recovery path; on 5 Aug the whole vault restructure, this board included, sat untracked
+for a day. Both were found by accident. For any named file the verification is
+**`git ls-files`, not `git log`** — `git log` on a directory returns commits and reads as
+reassurance while the named files are absent from every one of them. Noticing without
+reporting does not count. Established 12 Aug 2026.
 
 **Not now is a complete sentence.** Claude says it; the board catches what it was said to.

@@ -82,8 +82,19 @@ A page that moves between folders must have those paths checked.
   stripes and a monochrome toggle. With colour off and order the only channel, 6, 10 and
   14 render identical — so colour currently carries information rather than delight, and
   a second channel is required. Two candidates are in the bench. In progress.
+- **`fog-map.html`** — sketch: every pane shaded by the rank of its largest prime
+  factor, white at 2, saturating at the 256th, panning to a million. A *magnitude*
+  viewing rather than a factor-reading one. Standalone — it does not stand on the plane
+  and is not the port. **Deliberately not linked from `experiments/index.html`**:
+  experimental, unadvertised, though reachable by URL since anything under `cw-deploys/`
+  is served. Seed: `CWVault/03-SEEDS/smoothness-fog.md`; ruling it provoked:
+  `CWVault/01-ACTIVE/Decisions-Fog-Aug12.md`.
 - **`pi-beads.html`** — how many beads fit around a circle; circumference ÷
   diameter, with past measurements kept.
+- **`prime-tones.html`** — listening bench for the primes 11 and 13: four candidate
+  schemes played against the four the lab already has. Settled the octave question
+  (`CWVault/01-ACTIVE/Decisions-GlassMult-Aug03.md`). Whether it belongs to the Sound
+  Series or stays interface work is open.
 - **`clinks-triangular.html`** — triangular numbers as people arriving, leaving,
   and clinking glasses.
 - **`necker-brain-map.html`** — the path a Necker cube flip takes through the
