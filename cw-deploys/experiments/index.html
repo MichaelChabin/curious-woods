@@ -113,6 +113,12 @@
     -->
 
     <div class="item">
+      <a class="title" href="fog-map.html">The Fog Map</a>
+      <div class="desc">Every pane shaded by the rank of its largest prime factor — white at 2, deepening toward black at the 256th. Drag and scroll out as far as you like: the map refuses to go dark, because almost everything is built from small primes.</div>
+      <div class="note">A magnitude viewing rather than a factor-reading one. It asks how big, not which — and the stripes running the full width are the prime gaps.</div>
+    </div>
+
+    <div class="item">
       <a class="title" href="canvas-panes.html">Canvas Panes</a>
       <div class="desc">A load test: how much of a frame does it cost to draw a table of leaded panes while panning and zooming? Reports draw time against the 16.7ms budget, because frame rate alone reads 60fps until things are already bad.</div>
       <div class="note">Bench for the plane extraction — the one that could have blocked moving Glass Multiplication to canvas. It didn't.</div>
@@ -120,8 +126,8 @@
 
     <div class="item">
       <a class="title" href="fills-and-light.html">Fills and Light</a>
-      <div class="desc">Selection lives in the lead; discovery dims everything else. Hunts the opacity at which a dimmed pane reads as quiet rather than broken, and compares three ways of dimming against the current glow.</div>
-      <div class="note">Bench for the plane extraction — the answer is a number to be carried into the design.</div>
+      <div class="desc">Two declared palettes, a resting one and a lit one, both derived from the workshop's own colour so hue never moves. Showing a set — or selecting a pane — lights its members. Nothing is dimmed to make anything else stand out.</div>
+      <div class="note">Bench for the plane extraction. Dimming was tried and abandoned: every procedural route to a quiet colour computes one nobody chose.</div>
     </div>
 
     <div class="item">
@@ -133,13 +139,13 @@
     <div class="item">
       <a class="title" href="prime-tones.html">Prime Tones — 11 and 13</a>
       <div class="desc">A listening bench for the primes Glass Multiplication does not yet have: four candidate ways to sound 11 and 13, heard against the four that exist.</div>
-      <div class="note">Open question for v2.2 — an octave is perceptually the same note, so the standing proposal risks 11 sounding like 2. Nothing here is wired into the lab.</div>
+      <div class="note">Settled here by listening: the octave works, a child can tell C from C′. Timbre stayed unspent as a result, and is still reserved.</div>
     </div>
 
     <div class="item">
       <a class="title" href="number-theory-v1.html">Number Theory Lab</a>
       <div class="desc">Multiplication and division as rectangles, on a number plane you can pan across.</div>
-      <div class="note">Its grid and axis rendering is the visual reference for Glass Multiplication v2.2.</div>
+      <div class="note">Its grid and axis rendering was the behavioural reference for the shared plane — the adaptive step driving labels and gridlines from one function.</div>
     </div>
 
     <div class="item">

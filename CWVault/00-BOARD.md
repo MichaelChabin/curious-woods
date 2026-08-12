@@ -133,7 +133,7 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
 - **Voice-pass status (Lane 2):** the 8 Aug push was approved via the printed-strings
   scan; the full read-aloud pass with Eileen returns when there is text to see.
 - **Committed 12 Aug:** `experiments/fog-map.html`, a standalone grayscale sketch of the
-  smoothness viewing — **not linked from the experiments index**, and not on the plane.
+  smoothness viewing — listed in the experiments index, and not on the plane.
   It provoked the colour-ruling scoping above. Seed grew a session section
   (`03-SEEDS/smoothness-fog.md`): *constructable infinity — a rule plus a window*,
   landmark overlays as viewings (the squares diagonal as a spine, pronics beside it,

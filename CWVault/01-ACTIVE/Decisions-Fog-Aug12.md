@@ -86,11 +86,18 @@ seed it belongs to is `03-SEEDS/smoothness-fog.md`, whose status is unchanged �
 cold — and which grew a session section today: the phrase *constructable infinity — a
 rule plus a window*, landmark overlays as viewings, and five parameter candidates.
 
-**Publish handling, and a discrepancy worth knowing.** The instruction was
-`cw-deploys/experiments/`, with the same handling as the Jankó pages — experimental, not
-for public reach. Those two differ in one way that matters: the Jankó instruments live in
-`prototypes/`, **outside** the Netlify publish directory, so they are not reachable at
-all. Anything inside `cw-deploys/` is served. The fog map is therefore committed at the
-named path and **deliberately not linked from `experiments/index.html`** — unadvertised,
-but reachable by URL. If genuinely-unreachable was meant, it is one `git mv` to
-`prototypes/`.
+**Publish handling, settled.** It lives in `cw-deploys/experiments/` and **is listed in
+`experiments/index.html`** — reachable like any other experiment. The Jankó comparison in
+the original instruction was a slip: those instruments are genuinely early and stay in
+`prototypes/`, **outside** the publish directory, unreachable until the Sound Series
+decides its opening. The two are different situations and the distinction is worth
+keeping, because it is the only thing separating "unpolished but public" from "not
+public at all":
+
+| | where | served by Netlify | listed |
+|---|---|---|---|
+| experiments | `cw-deploys/experiments/` | yes | in the experiments index |
+| staged work | `prototypes/` | no | nowhere |
+
+There is no third state. A file under `cw-deploys/` is public whether or not anything
+links to it.
