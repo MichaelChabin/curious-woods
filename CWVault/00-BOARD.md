@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-12 evening (CLAUDE.md rewritten to August truth; S3 spec drafted to 20-SPECS with the reading unit decided — value and time required, uncertainty optional)
+updated: 2026-08-12 evening (CLAUDE.md rewritten; S3 spec drafted; controls walk begun — two panel species named, Save/Share and Color settled in principle, ledger in 01-ACTIVE)
 ---
 
 # The Board
@@ -156,9 +156,42 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   the checklist in real Safari. Hands-on Safari/iPad stays owed. Small items flagged
   to the controls pass: the W compass letter now sits behind the membrane; the
   bottom-row numerals and lattice labels both number the x axis in Multiply.
-- **Next action:** the controls pass with the Interface Standard as its brief —
-  beginning with a Geometry walk examining New, Open and Save as choice-panel
-  candidates. Still owed behind it: **the 16th workshop** (the accessibility answer;
+- **Walk brief written 12 Aug (evening):** `01-ACTIVE/Walk-Controls-Geometry-Aug12.md`
+  — every Geometry control as built, with the standard's question for each; found in
+  passing that **Share is unreachable** (a full share path exists in code, no word
+  invokes it). Walk order proposed at the brief's foot.
+- **Walk begun, first decisions taken 12 Aug (evening):**
+  `01-ACTIVE/Decisions-Controls-Aug12.md` — two panel species named (**choice panels**
+  decide and fade; **tool panels** stay until closed); Save/Share flattens to one
+  choice panel with Share rejoining the surface; the color panel becomes summonable
+  and closable, no longer auto-opening on return visits. Recipe-line strings are
+  drafts pending the voice pass.
+- **Walk continued, same evening:** the WIP guard settled in Michael's words and now
+  covers the `.json` drop (Phase 2 gap closed by decision); auto-keep of unsaved work
+  considered and rejected on record; replay Cancel settled, Start over kept. Ledger
+  sections 5–6.
+- **Walk continued into the map itself:** minting's reach answered (any tool starts
+  from a lattice crossing, minting in passing — Multiplication's fractions depend on
+  it); **the map constructs itself once per session** when the child asks — ~5s,
+  accelerating, world live beneath; timing and skip are a **bench** (`experiments/`,
+  not yet built). Ledger §§7–8. Story seeded:
+  `03-SEEDS/the-map-euclid-never-drew.md` (era 11637 — Descartes; note: era value used,
+  facet vocabulary unchanged). Numbers-as-choice-panel and the destination-named
+  lattice-tie toggle are proposed in ledger §9, **awaiting Michael's confirmation**.
+- **Walk continued:** "Just the glass" viewing decided (ledger §9 — `showGlass` found
+  built and unreachable, the walk's second such path after Share; export already
+  clean). The Numbers three-state cycle **dissolved by Michael into Show map ↔ Hide
+  map** (§10) — earned numbers belong to the points, "no numbers" belongs to Just the
+  glass; propagates to Multiplication as the same word pair.
+- **Walk continued:** the tie settled per-viewing (§11) — Multiplication's grid
+  follows zoom, **Geometry's keeps its step with no toggle at all**; the last
+  state-word problem dissolves. Re-stepping-as-construction named as a question for
+  the map-reveal bench. Share examined (§12): the record/artifact split applies to
+  sending too — *Send a picture / Send the construction* — **proposal awaiting
+  Michael**, along with whether both ship in the controls build.
+- **Next action:** Michael's yes/no on Share's two lines (§12); the palette-name cue;
+  where New, Open and Save live. Then the walk closes into a build brief, and the
+  map-reveal bench queues behind it. Still owed behind it: **the 16th workshop** (the accessibility answer;
   Lane 8 calls it the first post-extraction build) and the inner-came value that
   clears all six resting colours (`Decisions-Fills-Aug06.md`).
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto
