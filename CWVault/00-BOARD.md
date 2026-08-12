@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-12 (Lane 1 executed and verified; the 8-Aug acceptance-test swap found undone and done; greeting-view latch found and fixed)
+updated: 2026-08-12 evening (CLAUDE.md rewritten to August truth; S3 spec drafted to 20-SPECS with the reading unit decided — value and time required, uncertainty optional)
 ---
 
 # The Board
@@ -182,8 +182,11 @@ Colour, pitch, and rhythm discrimination. One measurement harness, three axes.
 - **The real blocker is not a tool, it is `S3` — the reading store.** Append-only,
   timestamped, per instrument, exportable, never rendered as a score or streak. Small,
   and it is what turns five orphan prototypes into a constellation.
-- **Next action:** spec S3. One page. It is the cheapest high-leverage item in the whole
-  inventory and nothing in §2 of the inventory works without it.
+- **Spec drafted 12 Aug (evening):** `20-SPECS/Spec-S3-Reading-Store.md` — append-only,
+  one store per instrument, reading unit `(value, t, u?)` with uncertainty optional
+  (Michael's decision, same session). Awaiting his read.
+- **Next action:** Michael reads the spec; then put S3 under one instrument — the colour
+  JND prototype is the candidate — and a reading becomes a series.
 
 ### 3. Vault truth repair — mostly done 2026-08-05
 
@@ -196,13 +199,14 @@ deliberately **not** archived — it still holds unmigrated live threads.
 **Still owed:**
 - ~~Register the three benches in `MANIFEST.md`.~~ **Already done** — commit `93417d0`,
   before this board entry was written. The owed item was stale, not undone; struck 7 Aug.
-- `CLAUDE.md`'s file-layout and "current design" sections still describe March.
+- ~~`CLAUDE.md`'s file-layout and "current design" sections still describe March.~~ **Done 12 Aug (evening):** Architecture, Current Design and File Layout rewritten; design description replaced with pointers to this board and the ledgers, dated and expected to stale honestly. Key Specs now leads with the Interface Standard.
 - `Session-Protocol.md` needs an honest rewrite once the new rhythm has run a few sessions.
 - Obsidian views over `03-SEEDS/` — the facets are inert until something queries them.
 - **`_msc/_mscVault/` is a second vault this board cannot see.** At minimum the Claude
   Design folder is load-bearing for CW. Decide whether it moves, is linked, or is indexed.
-- **Next action:** rewrite `CLAUDE.md`'s file-layout and current-design sections — they
-  still describe March, and every new session reads them before anything else.
+- **Next action:** decide what `_msc/_mscVault/` is to this vault — moved, linked, or
+  indexed. The Claude Design folder there is load-bearing for CW and this board cannot
+  see it.
 
 ---
 
