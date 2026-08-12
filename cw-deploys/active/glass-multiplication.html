@@ -23,8 +23,17 @@
     .text-small{font-size:11px;color:#98917f;text-align:center}
 
     #glass-map .modebar{display:flex;justify-content:center;gap:14px;margin:0 0 9px}
-    #glass-map .stage{display:grid;grid-template-columns:minmax(164px,190px) minmax(0,1fr);gap:17px;align-items:start}
-    #glass-map .instrument{padding-top:17px;min-width:0}
+    /* No letterbox: the canvas spans the whole stage and the instrument
+       column floats over it as membrane — the world continues behind the
+       tools, showing through translucently while the contents win
+       (Interface Standard, principle 2). Narrow screens keep the stacked
+       layout, where there is no left tool region to continue behind. */
+    #glass-map .stage{position:relative}
+    @media(min-width:711px){
+      #glass-map .instrument{position:absolute;top:0;left:0;bottom:0;width:190px;z-index:10;
+        padding:17px 12px 14px;overflow-y:auto;overscroll-behavior:contain;
+        background:rgba(244,241,232,0.9);border-right:0.5px solid rgba(200,184,154,0.55)}
+    }
     #glass-map .globals{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px;margin:0 0 10px;padding-bottom:9px;border-bottom:1px solid rgba(84,106,128,.15)}
     #glass-map .globals .btn{padding:2px 1px;font-size:15px}
     #glass-map .product{display:flex;min-height:68px;height:68px;flex-direction:column;justify-content:flex-start;align-items:flex-start;margin:0 0 2px;font-variant-numeric:tabular-nums;text-align:left}
@@ -36,7 +45,10 @@
     #glass-map .prime-key{padding:0}
     #glass-map .swatch{position:relative;display:block;width:46px;height:46px;flex:0 0 46px;border:2px solid #6c6b62;box-shadow:inset 0 0 10px rgb(0 0 0/.26)}
     #glass-map .chip-num{position:absolute;top:2px;right:5px;color:rgb(255 252 229/.96);font-size:16px;line-height:1;text-shadow:0 1px 3px rgb(0 0 0/.85),0 0 7px rgb(255 244 190/.5)}
-    #glass-map .swatch.p1{background:radial-gradient(circle at 44% 38%,#fbf8ee,#c9c1af 62%,#857e70)}
+    /* 1 reads whole and white — quietly crystalline, a slight bluish tint.
+       The tint is what separates it from clear leaded glass, which means
+       "prime beyond this workshop". */
+    #glass-map .swatch.p1{background:radial-gradient(circle at 44% 38%,#ffffff,#e9eef5 62%,#cfd6e0)}
     #glass-map .unity-key .chip-num{color:#4a463c;text-shadow:0 1px 2px rgb(255 255 255/.55)}
     #glass-map .tally{margin:7px 0 0;color:#546a80;font-size:14px;font-variant-numeric:tabular-nums;min-height:1.3em}
     #glass-map .viewing-strip{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:12px;padding-top:8px;border-top:1px solid rgba(84,106,128,.15)}
@@ -46,14 +58,14 @@
     .cw-info-panel p{margin:0 0 6px}
     .cw-info-panel strong{font-weight:normal;color:#292a28}
     #glass-map .map-wrap{min-width:0}
-    #glass-map canvas{display:block;width:100%;aspect-ratio:1/1;background:#f4f1e8;touch-action:none;
+    #glass-map canvas{display:block;width:100%;background:#f4f1e8;touch-action:none;
       /* The plane's container owns these — without them a rectangle-drag can
          select and paint the document in Safari. */
       user-select:none;-webkit-user-select:none;cursor:default}
     #glass-map canvas:focus-visible{outline:3px solid #546a80;outline-offset:-3px}
     #glass-map .rebuild{margin-top:2px;font-size:11px;display:block;margin-inline:auto}
     @media(max-width:710px){
-      #glass-map .stage{grid-template-columns:1fr;gap:7px}
+      #glass-map .stage{display:grid;grid-template-columns:1fr;gap:7px}
       #glass-map .instrument{padding-top:0;display:grid;grid-template-columns:minmax(135px,1fr) minmax(0,2fr);gap:4px 12px;align-items:start}
       #glass-map .globals,#glass-map .product,#glass-map .readout,#glass-map .panel,#glass-map .viewing-strip{grid-column:1}
       #glass-map .decoder{grid-column:2;grid-row:1/span 5;gap:10px;margin-top:0}
@@ -80,6 +92,7 @@
       <aside class="instrument">
         <div class="globals" id="globals" aria-label="The whole table">
           <button class="btn" id="fill-map">Fill</button>
+          <button class="btn" id="fill-continue" hidden>Continue?</button>
           <button class="btn" id="clear-map">Clear</button>
           <button class="btn" id="numbers" aria-pressed="false">Show numbers</button>
         </div>
@@ -244,23 +257,40 @@
   const U=200;   // world units per unit interval — the same scale Geometry declares
   const canvas=document.getElementById('map');
   const ctx=canvas.getContext('2d');
+  // The instrument column overlays the canvas's left edge on wide screens;
+  // the greeting window centres in the glass to its right, and the map
+  // continues behind the tools.
+  const MEMBRANE_W=190;
+  const membraneWide=window.matchMedia('(min-width:711px)');
   const plane=CW.createPlane({
-    defaultView:(w,h)=>({ x:5.5*U, y:5.5*U, zoom:Math.min(w,h)/(12.5*U) })
+    defaultView:(w,h)=>{
+      const m=membraneWide.matches?MEMBRANE_W:0;
+      const vis=Math.max(120,w-m);
+      const zoom=Math.min(vis,h)/(12.5*U);
+      return { x:5.5*U-(m/2)/zoom, y:5.5*U, zoom };
+    }
   });
   plane.setUnitFrame(0,0,U);
 
-  let viewInitialized=false;
+  // Until the child's first gesture, every layout change recomputes the
+  // greeting view: embedded and slow-settling contexts can report a
+  // transient tiny layout at load, and a view latched from it would greet
+  // her zoomed to the wrong window. After she pans, zooms, or walks the
+  // cursor, the view is hers and layout changes leave it alone.
+  let viewSettled=false;
   function resizeCanvas(){
     const dpr=window.devicePixelRatio||1;
-    const r=canvas.getBoundingClientRect();
+    let r=canvas.getBoundingClientRect();
     // Embedded contexts can report 0×0 at load; retry until layout exists.
-    if(!r.width||!r.height){requestAnimationFrame(resizeCanvas);return}
+    if(!r.width){requestAnimationFrame(resizeCanvas);return}
+    // The canvas spans the stage; its height keeps the map area beside the
+    // membrane square, as the old two-column layout did (190px column + 17px gap).
+    const targetH=Math.max(220,Math.round(membraneWide.matches?r.width-207:r.width));
+    if(Math.round(r.height)!==targetH){canvas.style.height=targetH+'px';r=canvas.getBoundingClientRect()}
     canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);
     ctx.setTransform(1,0,0,1,0,0);ctx.scale(dpr,dpr);
     plane.setViewport(r.width,r.height);
-    // The plane was constructed against the window; the first real layout of
-    // the canvas is when the default view can actually be computed.
-    if(!viewInitialized||plane.zoom()===0){plane.resetView();viewInitialized=true}
+    if(!viewSettled||plane.zoom()===0)plane.resetView();
   }
   window.addEventListener('resize',resizeCanvas);
   resizeCanvas();
@@ -273,7 +303,7 @@
   const root=document.getElementById('glass-map');
   const readout=root.querySelector('#readout');
   const productBox=root.querySelector('#product'), productNumber=productBox.querySelector('.product-number'), productFactors=productBox.querySelector('.product-factors');
-  const numbersButton=root.querySelector('#numbers'), fillButton=root.querySelector('#fill-map'), clearButton=root.querySelector('#clear-map');
+  const numbersButton=root.querySelector('#numbers'), fillButton=root.querySelector('#fill-map'), fillContinueButton=root.querySelector('#fill-continue'), clearButton=root.querySelector('#clear-map');
   const tally=root.querySelector('#tally');
   const buildTools=root.querySelector('#build-tools'), buildSubButtons=[...root.querySelectorAll('[data-build]')];
   const propertyTools=root.querySelector('#property-tools'), propertyButtons=[...root.querySelectorAll('[data-property]')];
@@ -506,15 +536,37 @@
   function clearTable(){
     cancelSequence();clearFx();
     built.clear();built.add(1);
+    fillCorner=0;updateFillWord();
     composition=[];updateTally();pendingColumn=pendingRow=null;setProduct();clearInfo();
   }
-  function fillTable(){   // silent — the one reveal that makes no sound
+  // Fill has a shape independent of the viewport, which the no-window layout
+  // requires: it fills the entire square below-left of a power-of-two corner,
+  // pausing at 16² and at every power of two after. The single word Continue?
+  // resumes toward the next corner. Still silent — the one reveal that makes
+  // no sound.
+  let fillCorner=0;                       // last completed corner; 0 = no fill run
+  const FILL_FIRST=16, FILL_LAST=1024;    // sanity ceiling on the doubling
+  function updateFillWord(){fillContinueButton.hidden=!(fillCorner&&fillCorner<FILL_LAST)}
+  function fillSquare(k){
     cancelSequence();clearFx();
-    const products=allProducts();
-    const step=clamp(Math.round(2500/Math.max(1,products.length)),4,22);
-    products.forEach((n,i)=>seq(()=>built.add(n),i*step));
-    seq(()=>{setProduct();readout.textContent=modePrompt()},products.length*step+240);
+    const nums=new Set();
+    for(let c=1;c<=k;c++)for(let r=1;r<=k;r++)nums.add(c*r);
+    const products=[...nums].filter(n=>!built.has(n)).sort((a,b)=>a-b);
+    // Large squares reveal in chunks so the sweep stays ~2.5s and the timer
+    // count stays bounded.
+    const chunk=Math.max(1,Math.ceil(products.length/140));
+    const ticks=Math.ceil(products.length/chunk);
+    const step=clamp(Math.round(2500/Math.max(1,ticks)),4,22);
+    for(let i=0;i<ticks;i++){
+      const slice=products.slice(i*chunk,(i+1)*chunk);
+      seq(()=>slice.forEach(n=>built.add(n)),i*step);
+    }
+    seq(()=>{
+      fillCorner=k;updateFillWord();
+      setProduct();readout.textContent=modePrompt();
+    },ticks*step+240);
   }
+  function fillTable(){fillSquare(fillCorner?Math.min(fillCorner*2,FILL_LAST):FILL_FIRST)}
 
   // ==== cell sets ===========================================================
   const columnCells=c=>{const vb=visibleBounds(),out=[];for(let r=vb.rMin;r<=vb.rMax;r++)out.push([c,r]);return out};
@@ -732,8 +784,11 @@
   }
 
   function drawUnityPane(rect){
+    // Whole and white — quietly crystalline, a slight bluish tint. No prime
+    // pieces: the empty product. The tint separates it from clear leaded
+    // glass, which means "prime beyond this workshop".
     const g=ctx.createRadialGradient(rect.x+rect.w*0.44,rect.y+rect.h*0.38,0,rect.x+rect.w*0.44,rect.y+rect.h*0.38,rect.w*0.75);
-    g.addColorStop(0,'#fbf8ee');g.addColorStop(0.62,'#c9c1af');g.addColorStop(1,'#857e70');
+    g.addColorStop(0,'#ffffff');g.addColorStop(0.62,'#e9eef5');g.addColorStop(1,'#cfd6e0');
     ctx.fillStyle=g;ctx.fillRect(rect.x,rect.y,rect.w,rect.h);
   }
 
@@ -885,12 +940,17 @@
       ctx.globalAlpha=paneAlpha;
       const vb=visibleBounds();
       const sel=selecting();
+      // In Multiply the axis numbers stand unshaded on the drawn lattice —
+      // no table-style backgrounds behind the edge panes; first paint is the
+      // lattice used everywhere else. The Build tools that ask for a row or
+      // column keep their shaded hint.
+      const shade=sel&&mode!=='multiply';
       const cellCount=(vb.cMax-vb.cMin+1)*(vb.rMax-vb.rMin+1);
       if(cellCount<25000){
         for(let c=vb.cMin;c<=vb.cMax;c++)for(let r=vb.rMin;r<=vb.rMax;r++){
           const n=viewing.name(c,r);
           if(built.has(n)){drawPane(c,r,n);continue}
-          if(sel&&(c===1||r===1)){
+          if(shade&&(c===1||r===1)){
             const rect=paneScreenRect(c,r);
             ctx.fillStyle='rgba(141,122,84,0.13)';
             ctx.fillRect(rect.x,rect.y,rect.w,rect.h);
@@ -921,8 +981,13 @@
   // move, Enter reveals, the aria-live readout announces. The cursor pans the
   // view when it walks off the visible window.
   let cursor=null;   // {c,r} or null
+  // The outline is the keyboard affordance only. A tap still moves the
+  // cursor's position (so the arrows resume from the tapped pane) but must
+  // not leave a heavy outline behind — the lit palette is the one visual
+  // language for "this one" (the port's rule; Review Lane 1).
+  let cursorFromKeys=false;
   function drawCursor(){
-    if(cursor===null||document.activeElement!==canvas)return;
+    if(cursor===null||!cursorFromKeys||document.activeElement!==canvas)return;
     const rect=paneScreenRect(cursor.c,cursor.r);
     ctx.save();
     ctx.strokeStyle='#546a80';ctx.lineWidth=3;
@@ -956,11 +1021,13 @@
     const moves={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,1],ArrowDown:[0,-1]};
     if(moves[ev.key]){
       ev.preventDefault();
+      cursorFromKeys=true;viewSettled=true;
       if(cursor===null)cursor={c:1,r:1};
       else{cursor.c=Math.max(1,cursor.c+moves[ev.key][0]);cursor.r=Math.max(1,cursor.r+moves[ev.key][1])}
       keepCursorInView();announceCursor();
     } else if(ev.key==='Enter'||ev.key===' '){
       ev.preventDefault();
+      cursorFromKeys=true;
       unlockAudio();
       if(cursor===null)cursor={c:1,r:1};
       activateCursor();
@@ -982,6 +1049,7 @@
   }
   canvas.addEventListener('pointerdown',ev=>{
     ev.preventDefault();
+    cursorFromKeys=false;viewSettled=true;
     unlockAudio();
     canvas.focus({preventScroll:true});   // preventDefault suppresses click-to-focus; restore it
     canvas.setPointerCapture(ev.pointerId);
@@ -1048,6 +1116,7 @@
   canvas.addEventListener('pointercancel',pointerEnd);
   canvas.addEventListener('wheel',ev=>{
     ev.preventDefault();
+    viewSettled=true;
     plane.setZoom(plane.zoom()*(ev.deltaY>0?0.9:1.1));
   },{passive:false});
   canvas.addEventListener('contextmenu',ev=>ev.preventDefault());
@@ -1081,6 +1150,7 @@
     numbersButton.textContent=showNumerals?'Hide numbers':'Show numbers';
   });
   fillButton.addEventListener('click',()=>fillTable());
+  fillContinueButton.addEventListener('click',()=>fillTable());
   clearButton.addEventListener('click',()=>{clearTable();readout.textContent=modePrompt()});
 
   // The viewing strip — the Numbers control's permanent home.

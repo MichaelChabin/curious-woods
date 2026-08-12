@@ -229,9 +229,14 @@ smuggled in here).
 3. Geometry-side minting (§4), unless struck at this pause.
 4. Verify: every mode and tool exercised in the browser; the acceptance
    checklist from the v2.1/v2.1b handoffs re-run where it still applies;
-   monochrome check — 6, 10, 14 distinguishable with colour off via
-   subdivision; performance sanity against the canvas-panes method (draw
-   time, not fps).
+   colourblind-workshop check — the 16th workshop's six primes hold apart
+   under the common colour-vision deficiencies (the workshop is not yet
+   authored; until it is, this check is the standing vacancy, not a pass);
+   performance sanity against the canvas-panes method (draw time, not fps).
+   *(This item originally read "monochrome check — 6, 10, 14 distinguishable
+   with colour off via subdivision"; that test belonged to the overruled §2
+   and was swapped per the 8 Aug ruling — executed 12 Aug, having been
+   ordered on the 8th but found undone.)*
 
 Then **stop for review. Michael's voice pass covers all new and surviving copy
 before anything ships** — every string in the port plus the Phase 3 words is

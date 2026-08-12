@@ -20,7 +20,11 @@
     #left-panel {
       width: 220px; min-width: 220px;
       position: fixed; top: 0; left: 0; bottom: 0;
-      background: rgba(210,200,180,0.18);
+      /* The membrane renders above the world, always: the world shows
+         through translucently, but the contents — palette, words — win
+         (Interface Standard, principle 2). The old 18%-opaque tint let
+         constructions paint straight over the words. */
+      background: rgba(244,241,232,0.86);
       pointer-events: none;
       transition: width 400ms ease-in-out, min-width 400ms ease-in-out;
       overflow: visible; z-index: 10;
@@ -634,7 +638,19 @@ function _integrateNewPoint(id) {
 }
 
 function appendOp(op) { operationLog.push(op); replayLog(true); checkHtwTriggers(); checkTipFadeThresholds(); }
-function undoOp() { if (operationLog.length <= 1) return; operationLog.pop(); replayLog(false); }
+// Undo touches only marks on the world (Interface Standard §2): the log
+// keeps viewing ops so replay reproduces what the child saw, but undo skips
+// over them — tap-in-empty-space must never make the map disappear. Viewing
+// state is reversed by its own control (that is what destination-named
+// titles are for).
+var VIEWING_OPS = { numbers: true };
+function undoOp() {
+    var i = operationLog.length - 1;
+    while (i >= 1 && VIEWING_OPS[operationLog[i].op]) i--;
+    if (i < 1) return;
+    operationLog.splice(i, 1);
+    replayLog(false);
+}
 
 // ============================================================
 // CANVAS NOTES
@@ -1154,8 +1170,14 @@ function showExportPreview(sizeKey) {
     img.onload = function() {
         var rect = img.getBoundingClientRect();
         var box = document.getElementById('save-note-box');
-        box.style.left = Math.round(rect.left + 20) + 'px';
-        box.style.top = Math.round(rect.top + 20) + 'px';
+        // The preview renders a dark border mat (30px at canvas resolution)
+        // around the parchment; the name field sits fully inside the
+        // parchment area, never over the frame.
+        var previewSizes = { postcard: { w: 900, h: 600 }, fullsheet: { w: 1000, h: 800 } };
+        var psz = previewSizes[sizeKey] || previewSizes.postcard;
+        var matX = rect.width * (30 / psz.w), matY = rect.height * (30 / psz.h);
+        box.style.left = Math.round(rect.left + matX + 12) + 'px';
+        box.style.top = Math.round(rect.top + matY + 12) + 'px';
         // Scale note font to match export proportionally
         // Export note is 54px at full resolution (e.g., 1800px wide)
         // Preview is displayed at rect.width. Scale = rect.width / exportWidth
@@ -4535,6 +4557,9 @@ function toggleHtwPanel() {
     var list = document.getElementById('htw-panel-list');
     if (!list) return;
     list.classList.toggle('revealed');
+    // The list's max-height transition runs up to 320ms; relayout the panel
+    // tools once it has settled so they sit below the new height.
+    setTimeout(layoutPanelTools, 360);
 }
 
 function openHtwOnCanvas(stageId) {
@@ -4723,6 +4748,10 @@ function updateNumbersControl() {
     if (tieRow) tieRow.style.display = (numbersMode === 'map') ? '' : 'none';
     var tie = document.getElementById('lattice-tie');
     if (tie) tie.textContent = plane.latticeTied() ? 'grid follows zoom' : 'grid keeps its step';
+    // The tie row changes the How-this-works panel's height; anything
+    // positioned below it (the colors panel) must follow, or the viewing
+    // words collide with it.
+    layoutPanelTools();
 }
 
 document.getElementById('numbers-cycle').addEventListener('click', function() {

@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-12 (fog sketch committed unlisted; colour ruling scoped per-viewing; session-end git check adopted)
+updated: 2026-08-12 (Lane 1 executed and verified; the 8-Aug acceptance-test swap found undone and done; greeting-view latch found and fixed)
 ---
 
 # The Board
@@ -58,6 +58,7 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   Interface-Foundation and UI-Language; read before any controls work**) ·
   `01-ACTIVE/Review-GlassMult-Aug09.md` (the post-Phase-4 review, eight lanes) ·
   `01-ACTIVE/Decisions-Fog-Aug12.md` (colour scoped per-viewing; the session-end git check) ·
+  `01-ACTIVE/Decisions-Lane1-Aug12.md` (Lane 1 as executed — the fix-now list, both labs) ·
   `20-SPECS/Spec-Workshop-Palette-Schema.md` (decision 9's data path, exported from
   the bench — now tracked in git) ·
   `_msc/_mscVault/5. Claude Design/1. Redesign.md` (the reasoning).
@@ -138,13 +139,28 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   (`03-SEEDS/smoothness-fog.md`): *constructable infinity — a rule plus a window*,
   landmark overlays as viewings (the squares diagonal as a spine, pronics beside it,
   doubling as an exponential lattice), and five parameter candidates. Status still cold.
-- **Next action:** a code session on Lane 1 of `Review-GlassMult-Aug09.md`, confirming
-  the two already-fixed items rather than redoing them. Then the controls pass with
-  the Interface Standard as its brief — beginning with a Geometry walk examining New,
-  Open and Save as choice-panel candidates. Still owed behind those: **the 16th
-  workshop** (the accessibility answer; Lane 8 calls it the first post-extraction
-  build) and the inner-came value that clears all six resting colours
-  (`Decisions-Fills-Aug06.md`).
+- **Lane 1 executed, 12 Aug** (`01-ACTIVE/Decisions-Lane1-Aug12.md`). The two 8-Aug
+  fixes confirmed in code, not redone. **The acceptance-test swap, also sent 8 Aug,
+  was found undone** — the overrule commit rewrote §2 but left §10's monochrome
+  check standing; swapped today. All ten new items fixed and browser-verified, zero
+  console errors: no letterbox (the canvas spans the stage, the instrument column
+  floats over it as membrane), fill pauses at power-of-two squares with **Continue?**
+  (one new child-facing string, printed with the full list at review), the white
+  crystalline 1, axis numbers unshaded on the drawn lattice, the tap outline now
+  keyboard-only; Geometry's membrane wins over constructions, the colors panel
+  follows the viewing strip's height, the postcard name field sits inside the
+  parchment, and undo skips viewing ops. Found in passing and fixed: the greeting
+  view latched from a transient first layout in embedded contexts. **Safari could
+  not be driven** — `safaridriver` needs *Allow Remote Automation* enabled in
+  Safari's Developer settings, Michael's call; with it on, future sessions can run
+  the checklist in real Safari. Hands-on Safari/iPad stays owed. Small items flagged
+  to the controls pass: the W compass letter now sits behind the membrane; the
+  bottom-row numerals and lattice labels both number the x axis in Multiply.
+- **Next action:** the controls pass with the Interface Standard as its brief —
+  beginning with a Geometry walk examining New, Open and Save as choice-panel
+  candidates. Still owed behind it: **the 16th workshop** (the accessibility answer;
+  Lane 8 calls it the first post-extraction build) and the inner-came value that
+  clears all six resting colours (`Decisions-Fills-Aug06.md`).
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto
   the canvas skips the work-in-progress check and silently replaces unsaved work. The
   New and Open words both guard; the drop does not. Pre-existing, found in the Phase 2
