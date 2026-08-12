@@ -156,6 +156,11 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   the checklist in real Safari. Hands-on Safari/iPad stays owed. Small items flagged
   to the controls pass: the W compass letter now sits behind the membrane; the
   bottom-row numerals and lattice labels both number the x axis in Multiply.
+  **Pushed and live 12 Aug** — Michael read the printed string list and said push;
+  Netlify verified serving the Lane 1 build. Screen-recording permission was granted
+  for driving Safari checks, but captures still fail ("could not create image from
+  display") — the app holding the permission likely needs a quit-and-reopen before
+  it takes effect; until then hands-on Safari stays owed.
 - **Walk brief written 12 Aug (evening):** `01-ACTIVE/Walk-Controls-Geometry-Aug12.md`
   — every Geometry control as built, with the standard's question for each; found in
   passing that **Share is unreachable** (a full share path exists in code, no word
