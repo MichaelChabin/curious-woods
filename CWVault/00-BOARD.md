@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-13 afternoon (the replay panel built per the amended brief §4 and verified; the library is content-only via models/constructions.json; committed, not pushed — four new strings ride the voice gate)
+updated: 2026-08-13 afternoon (the replay panel shipped — Michael approved the four strings; the controls pass is fully live; next hands-on is the iPad pass, next build waits on the map-reveal bench)
 ---
 
 # The Board
@@ -254,15 +254,15 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   line. All replay acceptance checks verified (backward stepping to the floor,
   instant play, the 3.5s↔8s speed round-trip, mid-play tap-skip), zero console
   errors. Observed pre-existing, for the next walk: undo is live inside a paused
-  replay and can eat a replayed step. **Committed, not pushed** — Play, duration,
-  instant, and *tap skips ahead* are new strings; the print is in the session
-  review and the voice gate applies.
-- **Next action:** Michael reads the replay section of the build ledger and the
-  string print, then says push. Behind it: the iPad pass (share sheet, pinch,
-  VoiceOver), the model tool's summoning word, the reveal itself once its bench
-  settles the tempo, **the 16th workshop** (the accessibility answer; Lane 8
-  calls it the first post-extraction build) and the inner-came value that clears
-  all six resting colours (`Decisions-Fills-Aug06.md`).
+  replay and can eat a replayed step. **Pushed and live 13 Aug** — Michael
+  approved the four new strings (Play, duration, instant, *tap skips ahead*);
+  the whole controls pass is now live.
+- **Next action:** the iPad pass — the share sheet (postcard and construction
+  file), pinch, VoiceOver, and the replay panel under real fingers. Behind it:
+  the model tool's summoning word, the reveal itself once its bench settles the
+  tempo, **the 16th workshop** (the accessibility answer; Lane 8 calls it the
+  first post-extraction build) and the inner-came value that clears all six
+  resting colours (`Decisions-Fills-Aug06.md`).
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto
   the canvas skips the work-in-progress check and silently replaces unsaved work. The
   New and Open words both guard; the drop does not. Pre-existing, found in the Phase 2
@@ -457,5 +457,12 @@ for a day. Both were found by accident. For any named file the verification is
 **`git ls-files`, not `git log`** — `git log` on a directory returns commits and reads as
 reassurance while the named files are absent from every one of them. Noticing without
 reporting does not count. Established 12 Aug 2026.
+
+**Every deployed page carries a version stamp — benches included.** A `CW_VERSION`
+constant (date + short commit hash) near the top of the file, logged to the console,
+updated in the same commit as the change, like MANIFEST. Shared scripts are referenced
+with a version query (`plane.js?v=...`) so caches cannot serve a stale one. It does not
+help to test yesterday's work. Established 13 Aug 2026, after a Safari cache muddied a
+deploy check.
 
 **Not now is a complete sentence.** Claude says it; the board catches what it was said to.
