@@ -19,9 +19,12 @@ Superseded versions, kept as the archive record.
 **`js/`** — shared code, at the root of this folder. Classic scripts, no
 build step. `plane.js` — the coordinate space both labs stand on (view state,
 transforms, one zoom clamp, the ambient lattice, the pixel floor); extracted
-in Phase 4 so the labs cannot drift apart. `cw-panel.js` — the canvas info
-window as a component (draggable, closable, fading — Geometry's tip-window
-pattern); used by Multiplication's number description.
+in Phase 4 so the labs cannot drift apart. `cw-panel.js` — the canvas panels
+as components: the info window (draggable, closable, fading — Geometry's
+tip-window pattern; used by Multiplication's number description) and, since
+the controls build (13 Aug), the **choice panel** — an occasional act's
+outcomes as words with recipe lines, taking one choice and fading; used by
+both labs for Save, and by Geometry for the WIP guard and replay Cancel.
 
 **`art/` `models/` `stories/` `text/`** — assets, at the root of this folder.
 Pages in `active/` and `experiments/` reach them with `../` —
@@ -41,8 +44,16 @@ A page that moves between folders must have those paths checked.
   minting: with the map showing, tapping a lattice intersection records a
   point (`lattice_point` op, unit-coordinate address). Saved logs replay
   unchanged but render mirrored across the seed axis relative to the retired
-  y-down view. Ledgers: `CWVault/01-ACTIVE/Decisions-Phase{1,2,3}-Aug07.md`
-  and `…Phase4-Aug08.md`.
+  y-down view. **Controls build (13 Aug):** occasional acts open choice
+  panels (Save construction / Postcard / Full sheet — Postcard shares at
+  1200×800, Full sheet keeps the 3000×2400 print render; the WIP guard also
+  fronts the `.json` drop; replay Cancel); the action row is conditional
+  (empty canvas shows only Open); the color panel is summoned by Color and
+  closable; Numbers became Show map ↔ Hide map (old logs migrate at replay);
+  the lattice tie is gone (grid keeps its step); Just the glass ↔ Show the
+  making wires the `show_glass` viewing op. Ledgers:
+  `CWVault/01-ACTIVE/Decisions-Phase{1,2,3}-Aug07.md`, `…Phase4-Aug08.md`,
+  `…ControlsBuild-Aug13.md`.
 - **`glass-multiplication.html`** — the times table as a window onto the number
   plane: every product a rectangle, prime factors in colour and sound.
   **Rewritten on the plane** (Phase 4, 8 Aug 2026): the map is a canvas
@@ -52,11 +63,16 @@ A page that moves between folders must have those paths checked.
   everywhere (no mirror); colours are the `aslab` workshop's resting and lit
   palettes; primes reach 19 in sound and render as clear glass beyond the
   workshop's six; keyboard access via a pane cursor on the one tabbable
-  canvas. Defaults to Numbers · map. Live since 8 Aug (that push's copy was
+  canvas. Defaults to the map shown. Live since 8 Aug (that push's copy was
   approved via the printed-strings scan; the full read-aloud pass with Eileen
-  comes later). Ledger: `CWVault/01-ACTIVE/Decisions-Phase4-Aug08.md`;
-  Michael's sorted post-Phase-4 review, eight lanes from fix-now to design
-  conversations: `CWVault/01-ACTIVE/Review-GlassMult-Aug09.md`.
+  comes later). **Controls build (13 Aug):** a conditional Save word (present
+  when anything beyond 1 is on the glass) opens the choice panel — Postcard
+  shares the window at 1200×800, Full sheet downloads the 3000×2400 print
+  render (no construction save: this lab keeps no operation log, reported to
+  the board); Numbers became Show map ↔ Hide map. Ledgers:
+  `CWVault/01-ACTIVE/Decisions-Phase4-Aug08.md`,
+  `…ControlsBuild-Aug13.md`; Michael's sorted post-Phase-4 review:
+  `CWVault/01-ACTIVE/Review-GlassMult-Aug09.md`.
 
 ### experiments/
 - **`number-theory-v1.html`** — multiplication and division as rectangles on a

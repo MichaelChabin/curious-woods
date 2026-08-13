@@ -91,8 +91,11 @@
     .htw-item::before { content: '\2022'; position: absolute; left: 0; }
     .htw-item:hover { color: #3D3D3A; }
     .htw-action-row { display: flex; gap: 14px; margin-top: 8px; padding-left: 12px; }
-    .htw-action-word { font-family: Georgia, serif; font-size: 13px; font-style: italic; color: #546A80; cursor: default; transition: color 80ms; }
+    .htw-action-word { font-family: Georgia, serif; font-size: 13px; font-style: italic; color: #546A80; cursor: default; transition: color 80ms, opacity 400ms ease-in-out; }
     .htw-action-word:hover { color: #3D3D3A; }
+    /* Conditional presence (ledger §14): a word is present only when tapping
+       it would do something; it fades in and out, never greys. */
+    .htw-action-word.absent { opacity: 0; pointer-events: none; }
     .htw-keyword { color: #3D3D3A; }
     .htw-action { color: #3D3D3A; cursor: default; transition: color 80ms; }
     .htw-action:hover { color: #1a1a18; }
@@ -119,8 +122,8 @@
     input[type=range].cw-slider::-webkit-slider-thumb { appearance: none; width: 10px; height: 15px; background: #546A80; border-radius: 2px; cursor: pointer; }
 
     /* --- Palette tool --- */
-    #tool-palette .palette-name { font-family: Georgia, serif; font-size: 14px; color: #546A80; cursor: default; user-select: none; line-height: 1; transition: color 80ms; }
-    #tool-palette .palette-name:hover { color: #3D3D3A; }
+    /* The palette title is a fact, not a control (ledger §13) — no hover. */
+    #tool-palette .palette-name { font-family: Georgia, serif; font-size: 14px; color: #546A80; cursor: default; user-select: none; line-height: 1; }
     .palette-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; }
     .palette-grid.wide { grid-template-columns: repeat(4,1fr); }
     .palette-swatch { height: 28px; width: 100%; border-radius: 3px; cursor: pointer; border: 1.5px solid transparent; transition: border-color 100ms; box-sizing: border-box; box-shadow: inset 0 0 0 2px #4a4540; }
@@ -192,9 +195,8 @@
     .cx-step-label:hover { color: #3D3D3A; }
 
     /* --- WIP / cancel dialogs --- */
-    #cx-wip-dialog, #cx-cancel-dialog, #save-type-dialog, #image-size-dialog { position: fixed; z-index: 800; pointer-events: all; user-select: none; background: rgba(244,241,232,0.94); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 16px; box-shadow: 0 2px 12px rgba(42,38,32,0.1); left: 50%; top: 40%; transform: translate(-50%,-50%); display: flex; gap: 24px; }
-    .cx-wip-option { font-family: Georgia, serif; font-size: 13px; color: #546A80; cursor: default; transition: color 80ms; }
-    .cx-wip-option:hover { color: #3D3D3A; }
+    /* The old bare-dialog styles left with the dialogs — occasional acts
+       open choice panels now (CW.createChoicePanel). */
 
     /* --- Export preview --- */
     #export-preview { position: fixed; inset: 0; z-index: 790; background: rgba(42,38,32,0.6); display: flex; align-items: center; justify-content: center; pointer-events: all; }
@@ -238,11 +240,15 @@
       <span class="htw-action-word" id="htw-action-open">Open</span>
       <span class="htw-action-word" id="htw-action-save">Save</span>
     </li>
+    <!-- The viewing words. The three-state Numbers cycle dissolved into one
+         destination-named pair (ledger §10); the lattice tie left this
+         surface entirely — Geometry's grid keeps its step, always (§11);
+         Just the glass is the finished-window viewing (§9). -->
     <li class="htw-action-row" style="margin-top: 12px;">
-      <span class="htw-action-word" id="numbers-cycle">Numbers &middot; points</span>
+      <span class="htw-action-word" id="map-toggle">Show map</span>
     </li>
-    <li class="htw-action-row" id="lattice-tie-row" style="display: none;">
-      <span class="htw-action-word" id="lattice-tie">grid follows zoom</span>
+    <li class="htw-action-row">
+      <span class="htw-action-word" id="glass-toggle">Just the glass</span>
     </li>
   </ul>
 </div>
@@ -282,35 +288,11 @@
   <span id="cx-step-cancel" class="cx-step-label">Cancel</span>
 </div>
 
-<!-- WIP dialog (save before clearing) -->
-<div id="cx-wip-dialog" style="display:none;">
-  <span class="cx-wip-option" id="cx-wip-save">Save</span>
-  <span class="cx-wip-option" id="cx-wip-start-over">Discard</span>
-  <span class="cx-wip-option" id="cx-wip-cancel">Cancel</span>
-</div>
+<!-- The WIP guard, replay Cancel, and Save act are choice panels now
+     (Decisions-Controls-Aug12 §§2,5,6,12) — built by CW.createChoicePanel;
+     the old bare dialogs are gone. -->
 
-<!-- Cancel replay dialog -->
-<div id="cx-cancel-dialog" style="display:none;">
-  <span class="cx-wip-option" id="cx-cancel-start-over">Start over</span>
-  <span class="cx-wip-option" id="cx-cancel-continue">Continue from here</span>
-  <span class="cx-wip-option" id="cx-cancel-dismiss">Cancel</span>
-</div>
-
-<!-- Save type dialog -->
-<div id="save-type-dialog" style="display:none;">
-  <span class="cx-wip-option" id="save-type-construction">Save Construction</span>
-  <span class="cx-wip-option" id="save-type-image">Save as Image</span>
-  <span class="cx-wip-option" id="save-type-cancel">Cancel</span>
-</div>
-
-<!-- Image size dialog -->
-<div id="image-size-dialog" style="display:none;">
-  <span class="cx-wip-option" id="image-size-postcard">Postcard</span>
-  <span class="cx-wip-option" id="image-size-full">Full sheet</span>
-  <span class="cx-wip-option" id="image-size-cancel">Cancel</span>
-</div>
-
-<!-- Note box (used by Save Construction, Save as Image, and Share) -->
+<!-- Note box (used by Save construction, Postcard, and Full sheet) -->
 <div id="save-note-box" style="display:none;">
   <div class="save-note-header" id="save-note-drag">
     <input type="text" id="save-note-name" placeholder="name" autocomplete="off">
@@ -329,7 +311,10 @@
 
 <div id="tool-palette" class="panel-tool" style="display:none;">
   <div class="panel-tool-header" id="palette-drag-handle">
+    <!-- The title is a fact, not a control (ledger §13); the panel is a
+         tool panel now — summoned by Color, closed by the child (§3). -->
     <span class="panel-tool-title palette-name" id="palette-name-btn">Chartres</span>
+    <span class="panel-tool-close" id="palette-close">close</span>
   </div>
   <div class="palette-grid" id="palette-grid"></div>
   <div class="craft-row" id="craft-row"></div>
@@ -358,6 +343,7 @@
     <span class="cw-slider-label">opacity</span>
     <input type="range" id="model-opacity" class="cw-slider" min="5" max="100" value="35" step="1">
   </div>
+  <span class="palette-choose" id="model-choose">Choose new model</span>
 </div>
 
 <div id="picker-backdrop"></div>
@@ -367,6 +353,7 @@
 </div>
 
 <script src="../js/plane.js"></script>
+<script src="../js/cw-panel.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 'use strict';
@@ -411,7 +398,11 @@ var showGlass   = false;
 // 'off' shows none. Geometry's default is 'points': numbers stay earned
 // until the child asks for the map. The default is per-viewing (settled
 // at the Phase 3 review) — Multiplication is expected to default to 'map'.
-var numbersMode = 'points';
+// The map is one thing (ledger §10): shown or hidden, one destination-named
+// word. Earned numbers belong to the points and render whenever the map is
+// hidden; "no numbers at all" is Just the glass's job. Geometry greets with
+// the map hidden — earned numbers first.
+var mapShown = false;
 
 // ============================================================
 // AUDIO
@@ -466,7 +457,7 @@ function playSound(type) {
 //          logicalSegments, logicalArcs, fills, pointAnimations,
 //          initLog(), replayLog(animateNew), appendOp(op),
 //          undoOp(), newConstruction(),
-//          loadConstruction(), _loadFromFile(file),
+//          _loadFromFile(file),
 //          fitViewToConstruction()
 // ============================================================
 
@@ -550,12 +541,17 @@ function replayLog(animateNew) {
                 _integrateNewPoint(lpId);
             }
         } else if (op.op === 'numbers') {
-            // Three modes since Phase 3; legacy logs recorded a boolean
-            // for the old emergent-numbers toggle — map it forward.
-            numbersMode = (op.value === true) ? 'points'
-                        : (op.value === false) ? 'off'
-                        : (op.value === 'map' || op.value === 'points' || op.value === 'off') ? op.value
-                        : 'points';
+            // The vocabulary shrank at the controls build (ledger §10):
+            // shown/hidden. Historical logs carry three values from Phase 3
+            // (map/points/off) and booleans from the old emergent-numbers
+            // toggle before that — all map forward: map → shown, everything
+            // else → hidden (points and off differed only in numerals, and
+            // earned numbers now render whenever the map is hidden).
+            mapShown = (op.value === 'shown' || op.value === 'map');
+        } else if (op.op === 'show_glass') {
+            // Just the glass (ledger §9): a viewing change, recorded so
+            // replay reproduces what she saw; undo skips it.
+            showGlass = !!op.value;
         } else if (op.op === 'note_open') {
             // One space: a note records x, y, and widthW all in world
             // coordinates. Legacy logs stored `width` in screen pixels
@@ -576,7 +572,7 @@ function replayLog(animateNew) {
         }
     }
     syncCanvasNoteDOMs();
-    updateNumbersControl();
+    updateViewingWords();
 }
 
 function _addPt(id, x, y, type, prev, animateNew) {
@@ -643,7 +639,16 @@ function appendOp(op) { operationLog.push(op); replayLog(true); checkHtwTriggers
 // over them — tap-in-empty-space must never make the map disappear. Viewing
 // state is reversed by its own control (that is what destination-named
 // titles are for).
-var VIEWING_OPS = { numbers: true };
+var VIEWING_OPS = { numbers: true, show_glass: true };
+// Work means marks on the world. Viewing ops alone are not work: they must
+// not summon New and Save onto an empty canvas, and the WIP guard has
+// nothing to guard when only the viewing changed.
+function logHasMarks() {
+    for (var i = 1; i < operationLog.length; i++) {
+        if (!VIEWING_OPS[operationLog[i].op]) return true;
+    }
+    return false;
+}
 function undoOp() {
     var i = operationLog.length - 1;
     while (i >= 1 && VIEWING_OPS[operationLog[i].op]) i--;
@@ -1178,13 +1183,12 @@ function showExportPreview(sizeKey) {
         var matX = rect.width * (30 / psz.w), matY = rect.height * (30 / psz.h);
         box.style.left = Math.round(rect.left + matX + 12) + 'px';
         box.style.top = Math.round(rect.top + matY + 12) + 'px';
-        // Scale note font to match export proportionally
-        // Export note is 54px at full resolution (e.g., 1800px wide)
+        // Scale note font to match export proportionally.
         // Preview is displayed at rect.width. Scale = rect.width / exportWidth
-        var sizes = { postcard: { w: 1800 }, fullsheet: { w: 3000 } };
-        var exportW = (sizes[sizeKey] || sizes.postcard).w;
-        var previewScale = rect.width / exportW;
-        var previewFontPx = Math.round(38 * previewScale);
+        var sizes = { postcard: { w: 1200, noteFont: 25 }, fullsheet: { w: 3000, noteFont: 38 } };
+        var xsz = sizes[sizeKey] || sizes.postcard;
+        var previewScale = rect.width / xsz.w;
+        var previewFontPx = Math.round(xsz.noteFont * previewScale);
         var ta = document.getElementById('save-note-text');
         ta.style.fontSize = previewFontPx + 'px';
         ta.style.lineHeight = '1.5';
@@ -1199,9 +1203,25 @@ function hideExportPreview() {
     ta.style.fontSize = ''; ta.style.lineHeight = '';
 }
 
-function showSaveDialog() {
-    if (operationLog.length <= 1) { toast('nothing to save yet'); return; }
-    document.getElementById('save-type-dialog').style.display = '';
+// The Save panel (ledger §§2, 12): one choice panel, three words about
+// three destinations. Postcard IS the share action — there is no Share
+// word anywhere. When the canvas is empty the Save word is simply absent
+// (conditional presence, §14); the guard below only covers Cmd+S.
+function openSavePanel() {
+    if (!logHasMarks()) return;
+    choicePanel.open({ choices: [
+        { word: 'Save construction', line: 'a file you can open and keep working on', action: function() {
+            showSaveNoteBox('construction');
+        } },
+        { word: 'Postcard', line: 'a picture to send', action: function() {
+            _imageSize = 'postcard';
+            showExportPreview('postcard');
+        } },
+        { word: 'Full sheet', line: 'a picture to keep', action: function() {
+            _imageSize = 'fullsheet';
+            showExportPreview('fullsheet');
+        } }
+    ] });
 }
 
 function showSaveNoteBox(mode) {
@@ -1267,7 +1287,9 @@ function executeSave() {
     if (mode === 'construction') {
         doSaveConstruction(name, note);
     } else if (mode === 'image' || mode === 'share') {
-        doSaveImage(name, note, mode === 'share', noteExportPos);
+        // Postcard IS the share action (ledger §12): a picture to send goes
+        // to the share sheet; the full sheet — a picture to keep — downloads.
+        doSaveImage(name, note, _imageSize === 'postcard', noteExportPos);
     }
 }
 
@@ -1292,11 +1314,28 @@ function doSaveConstruction(name, note) {
             console.warn('localStorage save failed:', e);
             toast('could not save (storage full?)');
         }
-        // Also offer JSON download as backup
+        // The construction's own file rides the share sheet where one exists
+        // (ledger §12) — on iPad the OS sheet is where saving and sending
+        // both live; elsewhere it downloads as before. The receiving child
+        // opens it as a copy and makes it her own.
         var blob = new Blob([JSON.stringify({ version: 1, name: name, note: note || '', created: entry.created, operations: log }, null, 2)], { type: 'application/json' });
-        var url = URL.createObjectURL(blob), a = document.createElement('a');
-        a.href = url; a.download = (name.replace(/[^a-z0-9 _-]/gi, '_').trim() || 'construction') + '.json'; a.click();
-        URL.revokeObjectURL(url);
+        var fname = (name.replace(/[^a-z0-9 _-]/gi, '_').trim() || 'construction') + '.json';
+        function downloadJson() {
+            var url = URL.createObjectURL(blob), a = document.createElement('a');
+            a.href = url; a.download = fname; a.click();
+            URL.revokeObjectURL(url);
+        }
+        var jfile = null;
+        try { jfile = new File([blob], fname, { type: 'application/json' }); } catch (e) {}
+        if (jfile && navigator.share && navigator.canShare && navigator.canShare({ files: [jfile] })) {
+            navigator.share({ title: name, files: [jfile] }).catch(function(err) {
+                // The sheet declined (lost gesture, platform refusal) — fall
+                // back to the download. A cancelled sheet is the child's no.
+                if (!err || err.name !== 'AbortError') downloadJson();
+            });
+        } else {
+            downloadJson();
+        }
         toast('saved');
         if (points.size >= 10) setTimeout(showUniquenessObservation, 800);
     });
@@ -1308,7 +1347,15 @@ function doSaveImage(name, note, isShare, noteScreenPos) {
         if (isShare && navigator.share && navigator.canShare) {
             var file = new File([blob], filename, { type: 'image/png' });
             navigator.share({ title: name || 'My Glass Construction', text: note || '', files: [file] })
-                .catch(function() {});
+                .catch(function(err) {
+                    // Declined by the platform → download instead; a
+                    // cancelled sheet is the child's no and stays quiet.
+                    if (!err || err.name !== 'AbortError') {
+                        var url2 = URL.createObjectURL(blob);
+                        var a2 = document.createElement('a'); a2.href = url2; a2.download = filename; a2.click();
+                        URL.revokeObjectURL(url2);
+                    }
+                });
         } else {
             var url = URL.createObjectURL(blob);
             var a = document.createElement('a'); a.href = url; a.download = filename; a.click();
@@ -1409,7 +1456,9 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
         if (poly.length >= 3) allPolys.push({ poly: poly, fill: f });
     });
     var leadLines = collectLeadLines();
-    if (allPolys.length === 0 && leadLines.length === 0 && !note) { toast('nothing to save yet'); return; }
+    // No toast-block (acceptance: absent means absent, nothing toast-blocked):
+    // a construction with no glass renders an honest empty parchment — the
+    // preview shows the child exactly what she would get, and she decides.
 
     // Bounding box: fills + lead endpoints
     var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -1437,12 +1486,18 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     minX -= padX; minY -= padY; maxX += padX; maxY += padY;
     var ww = maxX - minX, wh = maxY - minY;
 
-    // Fixed output sizes at 300 DPI
-    var sizes = { postcard: { w: 1800, h: 1200 }, fullsheet: { w: 3000, h: 2400 } };
+    // Two renders, two purposes (ledger §12): the postcard is the sent
+    // version — screen-sized, doubled for retina, a few hundred KB — because
+    // screens ignore the DPI tag and paint raw pixels; the full sheet keeps
+    // the 300dpi render she prints. (The build brief's note said the full
+    // sheet was 1800×1200; in code it has been 3000×2400 since March —
+    // "keeps" means unchanged, reported at review.) The mat and note scale
+    // with the postcard so it keeps its look at the new size.
+    var sizes = { postcard: { w: 1200, h: 800,  mat: 40, noteFont: 25, leadMin: 1.3, leadMax: 11.3, dpi: null },
+                  fullsheet:{ w: 3000, h: 2400, mat: 60, noteFont: 38, leadMin: 2,   leadMax: 17,   dpi: 300 } };
     var sz = sizes[sizeKey] || sizes.postcard;
 
-    // Border mat: 60px at output scale
-    var matPx = 60;
+    var matPx = sz.mat;
     var artW = sz.w - matPx * 2, artH = sz.h - matPx * 2;
 
     // Scale artwork to fit within art area, centered
@@ -1451,8 +1506,10 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     var offY = (artH - wh * s) / 2;
     var pw = sz.w, ph = sz.h;
 
-    // Lead thickness: scale proportionally, clamped to 2–17px (0.5pt–4pt at 300 DPI)
-    var leadW = Math.max(2, Math.min(17, LEAD_WIDTH * s));
+    // Lead thickness: scale proportionally, clamped per render size (the
+    // full sheet keeps its 0.5pt–4pt-at-300dpi clamp; the postcard's is the
+    // same clamp scaled to its width, so lead reads the weight it always has).
+    var leadW = Math.max(sz.leadMin, Math.min(sz.leadMax, LEAD_WIDTH * s));
 
     var off = document.createElement('canvas'); off.width = pw; off.height = ph;
     var oc = off.getContext('2d');
@@ -1557,7 +1614,7 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     var noteText = (note || '').trim();
     var noteName = (name || '').trim();
     if (noteText || noteName) {
-        var noteFontPx = 38, noteLineH = noteFontPx * 1.5;
+        var noteFontPx = sz.noteFont, noteLineH = noteFontPx * 1.5;
         var titleFontPx = Math.round(noteFontPx * 1.15); // ~10.3pt, slightly larger
         oc.fillStyle = '#546A80';
         oc.textBaseline = 'top';
@@ -1603,7 +1660,7 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     oc.globalAlpha = 1;
 
     // Render open canvas notes into the export
-    var cNoteFontPx = 38, cNoteLineH = cNoteFontPx * 1.5;
+    var cNoteFontPx = sz.noteFont, cNoteLineH = cNoteFontPx * 1.5;
     canvasNotes.forEach(function(cn) {
         if (!cn.open || !cn.text) return;
         var nPos = wp(cn.x, cn.y);
@@ -1628,9 +1685,11 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
         });
     });
 
-    // Convert to blob, patch DPI to 300, then call back
+    // Convert to blob; only the print render carries a DPI tag — screens
+    // ignore it, and tagging the postcard 300dpi would print it tiny.
     off.toBlob(function(blob) {
-        patchPngDpi(blob, 300, callback);
+        if (sz.dpi) patchPngDpi(blob, sz.dpi, callback);
+        else callback(blob);
     }, 'image/png');
 }
 
@@ -1642,7 +1701,6 @@ function cxGetAllEntries() {
         try { return JSON.parse(localStorage.getItem(ref.key)); } catch(e) { return null; }
     }).filter(Boolean);
 }
-function loadConstruction() { alert('To load: drag a construction .json file onto the canvas.'); }
 function _loadFromFile(file) {
     var r = new FileReader();
     r.onload = function(ev) {
@@ -1684,8 +1742,8 @@ function fitViewToConstruction() {
     plane.setPan((minX + maxX) / 2, (minY + maxY) / 2);
 }
 document.addEventListener('keydown', function(e) {
-    if ((e.metaKey||e.ctrlKey) && e.key==='s') { e.preventDefault(); showSaveDialog(); }
-    if ((e.metaKey||e.ctrlKey) && e.key==='o') { e.preventDefault(); loadConstruction(); }
+    if ((e.metaKey||e.ctrlKey) && e.key==='s') { e.preventDefault(); openSavePanel(); }
+    if ((e.metaKey||e.ctrlKey) && e.key==='o') { e.preventDefault(); checkWipThen(function() { openPickerWindow('constructions'); }); }
 });
 
 // ============================================================
@@ -2086,7 +2144,7 @@ function render() {
     ctx.fillRect(0,0,canvas.clientWidth,canvas.clientHeight);
 
     // The ambient lattice, under everything the child has made
-    if (numbersMode === 'map' && !showGlass) plane.drawLattice(ctx);
+    if (mapShown && !showGlass) plane.drawLattice(ctx);
 
     // Sort fills by area descending (largest first, smallest on top)
     var sortedFills = [];
@@ -2243,7 +2301,9 @@ function render() {
         canvas.style.cursor = '';
     }
 
-    points.forEach(function(pt) {
+    // Just the glass (ledger §9): the finished window shows glass, lead and
+    // notes — no points, no construction lines, no lattice.
+    if (!showGlass) points.forEach(function(pt) {
         var s=w2s(pt.x,pt.y),sc=ptScale(pt.id),sm=(pt.type==='seed'?1.4:1.0);
         var ap = false;
         if (ghostCircle && snapTarget && snapTarget.id===pt.id) ap=true;
@@ -2309,7 +2369,7 @@ function render() {
     drawAxisLabels();
 
     // The pixel floor, part of the map's furniture
-    if (numbersMode === 'map' && !showGlass) drawPixelFloorReadout();
+    if (mapShown && !showGlass) drawPixelFloorReadout();
 }
 
 // ============================================================
@@ -2322,7 +2382,7 @@ function render() {
 //          All integers are positive (map convention — no negatives).
 //          Shown only in 'points' numbers mode — the ambient lattice
 //          turned down reveals this — and never in glass mode/export.
-// Depends: points, lines, numbersMode, showGlass, w2s(), dist(),
+// Depends: points, lines, mapShown, showGlass, w2s(), dist(),
 //          plane (unitLength — declared by the lab at init replay)
 // Exposes: getAxisLabels()
 // ============================================================
@@ -2330,7 +2390,8 @@ function render() {
 function getAxisLabels() {
     // Emergent numbering shows in 'points' mode only: in 'map' mode the
     // lattice carries the numbers, and turning the map down reveals these.
-    if (numbersMode !== 'points' || showGlass) return [];
+    // Earned numbers render whenever the map is hidden (ledger §10).
+    if (mapShown || showGlass) return [];
     var s0 = points.get('seed:0'), s1 = points.get('seed:1');
     if (!s0 || !s1) return [];
     // The unit interval is not measured from the model here: the lab declared
@@ -3088,7 +3149,7 @@ function onUp(e) {
             // point — the moment possibility becomes history. Inside the
             // snap radius this outranks undo; everywhere else taps behave
             // exactly as before.
-            if (numbersMode === 'map') {
+            if (mapShown) {
                 var mint = latticeMintTarget(world.x, world.y);
                 if (mint) {
                     appendOp({ op:'lattice_point', u:mint.u, v:mint.v });
@@ -3174,7 +3235,13 @@ canvas.addEventListener('wheel', function(e) {
     syncCanvasNoteDOMs();
 }, { passive:false });
 canvas.addEventListener('dragover', function(e) { e.preventDefault(); e.dataTransfer.dropEffect='copy'; });
-canvas.addEventListener('drop', function(e) { e.preventDefault(); var f=e.dataTransfer.files[0]; if (f) _loadFromFile(f); });
+// The drop goes through the same WIP guard as New and Open (ledger §5) —
+// it used to silently replace unsaved work (Phase 2 gap).
+canvas.addEventListener('drop', function(e) {
+    e.preventDefault();
+    var f = e.dataTransfer.files[0];
+    if (f) checkWipThen(function() { _loadFromFile(f); });
+});
 
 // ============================================================
 // PALETTE DATA
@@ -3310,6 +3377,9 @@ var state = {
 };
 
 var leftPanel   = document.getElementById('left-panel');
+// One choice panel serves every occasional act (Save, the WIP guard, replay
+// Cancel): it opens, takes one choice, and fades (ledger §1).
+var choicePanel = CW.createChoicePanel();
 var remember    = document.getElementById('remember');
 var dragHint    = document.getElementById('drag-hint');
 var toolPalette = document.getElementById('tool-palette');
@@ -3540,9 +3610,11 @@ function openPaletteTool(paletteId) {
     buildCraftRow(document.getElementById('craft-row'));
 }
 
-document.getElementById('palette-name-btn').addEventListener('click', function(e) {
-    e.stopPropagation();
-    openPickerWindow('palettes');
+// The palette title is a fact — the name of what is loaded (ledger §13).
+// "Choose new colors" is the one way to the picker. The panel is a tool
+// panel: summoned by Color, closed by the child, never fading (§3).
+document.getElementById('palette-close').addEventListener('click', function() {
+    closePanelTool('palette');
 });
 
 function setRecipe(text) { var el=document.getElementById('palette-recipe'); if (el) el.textContent=text||'\u00a0'; }
@@ -3647,8 +3719,18 @@ function initConstructions() {
     document.getElementById('cx-step-back').addEventListener('click', stepBack);
     document.getElementById('cx-step-fwd').addEventListener('click', stepForward);
     document.getElementById('cx-step-last').addEventListener('click', stepLast);
+    // Replay Cancel is a choice panel (ledger §6). Keep watching is the
+    // quiet no; Start over stays — fewer steps for a busy kid.
     document.getElementById('cx-step-cancel').addEventListener('click', function() {
-        document.getElementById('cx-cancel-dialog').style.display = '';
+        choicePanel.open({ choices: [
+            { word: 'Start over', line: 'a blank window', action: function() {
+                exitStepThrough(); newConstruction();
+            } },
+            { word: 'Continue from here', line: "keep what's built and make it your own", action: function() {
+                exitStepThrough();
+            } },
+            { word: 'Keep watching', line: 'the replay goes on' }
+        ] });
     });
 
     // Step controls drag
@@ -3670,68 +3752,8 @@ function initConstructions() {
         box.addEventListener('pointerup', function() { dragging = false; box.classList.remove('dragging'); });
     })();
 
-    // WIP dialog
-    document.getElementById('cx-wip-start-over').addEventListener('click', function() {
-        document.getElementById('cx-wip-dialog').style.display = 'none';
-        if (stepState.pendingCallback) { var cb = stepState.pendingCallback; stepState.pendingCallback = null; cb(); }
-    });
-    document.getElementById('cx-wip-save').addEventListener('click', function() {
-        document.getElementById('cx-wip-dialog').style.display = 'none';
-        var cb = stepState.pendingCallback; stepState.pendingCallback = null;
-        if (operationLog.length > 1) {
-            // Snapshot now: the continuation below may clear the canvas
-            // while the child is still naming the construction.
-            _pendingSaveLog = operationLog.slice();
-            showSaveNoteBox('construction');
-        }
-        if (cb) setTimeout(cb, 300);
-    });
-    document.getElementById('cx-wip-cancel').addEventListener('click', function() {
-        document.getElementById('cx-wip-dialog').style.display = 'none';
-        stepState.pendingCallback = null;
-    });
-
-    // Cancel replay dialog
-    document.getElementById('cx-cancel-start-over').addEventListener('click', function() {
-        document.getElementById('cx-cancel-dialog').style.display = 'none';
-        exitStepThrough();
-        newConstruction();
-    });
-    document.getElementById('cx-cancel-continue').addEventListener('click', function() {
-        document.getElementById('cx-cancel-dialog').style.display = 'none';
-        exitStepThrough();
-    });
-    document.getElementById('cx-cancel-dismiss').addEventListener('click', function() {
-        document.getElementById('cx-cancel-dialog').style.display = 'none';
-    });
-
-    // Save type dialog
-    document.getElementById('save-type-construction').addEventListener('click', function() {
-        document.getElementById('save-type-dialog').style.display = 'none';
-        showSaveNoteBox('construction');
-    });
-    document.getElementById('save-type-image').addEventListener('click', function() {
-        document.getElementById('save-type-dialog').style.display = 'none';
-        document.getElementById('image-size-dialog').style.display = '';
-    });
-    document.getElementById('save-type-cancel').addEventListener('click', function() {
-        document.getElementById('save-type-dialog').style.display = 'none';
-    });
-
-    // Image size dialog
-    document.getElementById('image-size-postcard').addEventListener('click', function() {
-        document.getElementById('image-size-dialog').style.display = 'none';
-        _imageSize = 'postcard';
-        showExportPreview('postcard');
-    });
-    document.getElementById('image-size-full').addEventListener('click', function() {
-        document.getElementById('image-size-dialog').style.display = 'none';
-        _imageSize = 'fullsheet';
-        showExportPreview('fullsheet');
-    });
-    document.getElementById('image-size-cancel').addEventListener('click', function() {
-        document.getElementById('image-size-dialog').style.display = 'none';
-    });
+    // The WIP guard and the Save panel are choice panels now — see
+    // checkWipThen() and openSavePanel(); the old dialog chain is gone.
 
     // Save note box OK and Cancel
     document.getElementById('save-note-ok').addEventListener('click', executeSave);
@@ -3812,7 +3834,7 @@ var stepState = {
     stepBounds: [],      // array of op indices where each step begins
     currentStep: 0,      // index into stepBounds (0 = init only)
     pendingOps: null,    // ops to load after WIP dialog resolves
-    pendingCallback: null // callback after WIP dialog resolves
+    pendingCallback: null // unused since the WIP guard became a choice panel; kept for shape
 };
 
 function isStepThroughActive() { return stepState.active; }
@@ -4012,15 +4034,27 @@ function forkStepThrough() {
     dismissLoadedNote();
 }
 
-// Check for work in progress, show dialog if needed, then call callback
+// The work-in-progress guard (ledger §5), one choice panel in Michael's
+// words. It fronts New, Open, and the .json drop alike — the drop used to
+// slip past it (Phase 2 gap, closed here). Keep working is the quiet no.
 function checkWipThen(callback) {
-    if (operationLog.length <= 1) {
+    if (!logHasMarks()) {
         callback();
         return;
     }
-    stepState.pendingCallback = callback;
-    var dlg = document.getElementById('cx-wip-dialog');
-    dlg.style.display = '';
+    choicePanel.open({ choices: [
+        { word: 'Save this first', line: 'then start a new construction', action: function() {
+            if (operationLog.length > 1) {
+                // Snapshot now: the continuation below may clear the canvas
+                // while the child is still naming the construction.
+                _pendingSaveLog = operationLog.slice();
+                showSaveNoteBox('construction');
+            }
+            setTimeout(callback, 300);
+        } },
+        { word: 'Start a new construction', line: 'and forget this one', action: callback },
+        { word: 'Keep working', line: 'on this one' }
+    ] });
 }
 
 // Load a construction entry into step-through, checking WIP first
@@ -4146,12 +4180,12 @@ function loadModel(modelObj) {
 function clearModel() { state.model.current=null; state.model.visible=false; modelLayer.style.display='none'; closePanelTool('model'); }
 function applyModelTransform() { modelImg.style.transform='translate(calc(-50% + '+state.model.x+'px), calc(-50% + '+state.model.y+'px)) scale('+state.model.scale+')'; modelImg.style.opacity=state.model.opacity; }
 
-var modelNameIsChooser=false;
-function setModelNameBtn(name) { var b=document.getElementById('model-name-btn'); if (b) { b.textContent=name; modelNameIsChooser=false; } }
-function enterChooserMode() { var b=document.getElementById('model-name-btn'); if (b) { b.textContent='Choose'; modelNameIsChooser=true; openPickerWindow('models'); } }
-function exitChooserMode() { setModelNameBtn(state.model.current?state.model.current.name:'None'); }
+// The model title is a fact, not a control (ledger §13): it names what is
+// loaded. "Choose new model" is the way to the picker — the same word
+// pattern the palette uses.
+function setModelNameBtn(name) { var b=document.getElementById('model-name-btn'); if (b) { b.textContent=name; } }
 
-document.getElementById('model-name-btn').addEventListener('click', function(e) { e.stopPropagation(); if (!modelNameIsChooser) enterChooserMode(); });
+document.getElementById('model-choose').addEventListener('click', function() { openPickerWindow('models'); });
 document.getElementById('model-close').addEventListener('click', function() { closePanelTool('model'); });
 document.getElementById('model-opacity').addEventListener('input', function(e) { state.model.opacity=e.target.value/100; applyModelTransform(); });
 document.getElementById('model-scale').addEventListener('input', function(e) { state.model.scale=e.target.value/100; applyModelTransform(); });
@@ -4169,7 +4203,6 @@ function buildWorkspaceModel() {
     var sliders=el.querySelectorAll('input.cw-slider');
     sliders[0].addEventListener('input', function(e) { state.model.scale=e.target.value/100; var ps=document.getElementById('model-scale'); if (ps) ps.value=e.target.value; applyModelTransform(); });
     sliders[1].addEventListener('input', function(e) { state.model.opacity=e.target.value/100; var ps=document.getElementById('model-opacity'); if (ps) ps.value=e.target.value; applyModelTransform(); });
-    el.querySelector('.ws-model-name').addEventListener('click', function() { enterChooserMode(); });
     el.querySelector('.workspace-tool-close').addEventListener('click', function() { el.remove(); delete state.workspaceTools['model']; });
     return el;
 }
@@ -4182,7 +4215,7 @@ function buildWorkspaceModel() {
 //          handle bar. Two modes: 'models' | 'palettes'.
 // Depends: MODELS, PALETTES_DATA, state.model, state.palette,
 //          SVG_CACHE, loadModel(), openPaletteTool(),
-//          leftPanel (for centering), exitChooserMode(),
+//          leftPanel (for centering),
 //          DOM: #picker-backdrop, #picker-window, #picker-grid
 // Exposes: openPickerWindow(mode), closePicker()
 // ============================================================
@@ -4205,7 +4238,6 @@ function openPickerWindow(mode) {
 function closePicker() {
     pickerWindow.classList.remove('visible');
     setTimeout(function() { pickerBackdrop.classList.remove('visible'); },200);
-    if (pickerMode==='models') exitChooserMode();
 }
 
 function buildPickerConstructions() {
@@ -4288,7 +4320,7 @@ function buildPickerModels() {
     noneThumb.style.background='rgba(200,184,154,0.12)';
     var noneLabel=document.createElement('div'); noneLabel.className='picker-item-name'; noneLabel.textContent='None';
     noneItem.appendChild(noneThumb); noneItem.appendChild(noneLabel);
-    noneThumb.addEventListener('click', function() { pickerWindow.classList.remove('visible'); setTimeout(function(){pickerBackdrop.classList.remove('visible');},200); modelNameIsChooser=false; clearModel(); });
+    noneThumb.addEventListener('click', function() { pickerWindow.classList.remove('visible'); setTimeout(function(){pickerBackdrop.classList.remove('visible');},200); clearModel(); });
     pickerGrid.appendChild(noneItem);
     MODELS.forEach(function(m) {
         var item=document.createElement('div'); item.className='picker-item';
@@ -4301,7 +4333,7 @@ function buildPickerModels() {
         }
         var label=document.createElement('div'); label.className='picker-item-name'; label.textContent=m.name;
         item.appendChild(thumb); item.appendChild(label);
-        thumb.addEventListener('click', function() { loadModel(m); openPanelTool('model'); pickerWindow.classList.remove('visible'); setTimeout(function(){pickerBackdrop.classList.remove('visible');},200); modelNameIsChooser=false; });
+        thumb.addEventListener('click', function() { loadModel(m); openPanelTool('model'); pickerWindow.classList.remove('visible'); setTimeout(function(){pickerBackdrop.classList.remove('visible');},200); });
         pickerGrid.appendChild(item);
     });
 }
@@ -4512,7 +4544,7 @@ function htwMarkStageSeen(stage) {
 var HTW_TIP_ACTIONS = {
     'New': function() { closeHtwCanvas(); checkWipThen(function() { newConstruction(); }); },
     'Open': function() { closeHtwCanvas(); openPickerWindow('constructions'); },
-    'Save': function() { closeHtwCanvas(); showSaveDialog(); },
+    'Save': function() { closeHtwCanvas(); openSavePanel(); },
     'Choose new colors': function() { openPickerWindow('palettes'); }
 };
 
@@ -4692,7 +4724,7 @@ function initHowThisWorks() {
         checkWipThen(function() { openPickerWindow('constructions'); });
     });
     document.getElementById('htw-action-save').addEventListener('click', function() {
-        showSaveDialog();
+        openSavePanel();
     });
 
     // Pointer-based drag on canvas tip window — entire window is the drag surface
@@ -4717,50 +4749,60 @@ function initHowThisWorks() {
     // First visit: open stage 0 on canvas
     if (!htwStageSeen(HTW_STAGES[0])) openHtwOnCanvas('construction');
 
-    // Return visits: open color panel immediately (it's always available)
-    if (htwStageSeen(HTW_STAGES[0])) openColorTool();
+    // Return visits: the color panel no longer opens itself (ledger §3) —
+    // the child summons it with Color. Its one uninvited opening remains
+    // the first-visit teaching moment, via checkHtwTriggers.
 }
 
 // ============================================================
-// NUMBERS CONTROL
-// What:    The re-homed Numbers control (formerly a toggle in the
-//          removed constructions panel): one word in the left panel
-//          cycling map → points → off. 'map' shows the plane's
-//          ambient lattice; 'points' turns it down to reveal the
-//          emergent numbering; 'off' hides both. In map mode a second
-//          word toggles whether the lattice step follows the zoom
-//          (self-similar) or keeps its step (zooming crowds or
-//          spreads the same lines). Mode changes are recorded as
-//          'numbers' ops; the tie is a transient view preference and
-//          is not recorded. Also owns the pixel-floor readout the lab
-//          reports in its declared units.
-// Depends: numbersMode, appendOp(), plane, ctx, canvas
-// Exposes: updateNumbersControl() (called from replayLog),
+// VIEWING WORDS
+// What:    Show map ↔ Hide map (the three-state Numbers cycle
+//          dissolved, ledger §10) and Just the glass ↔ Show the
+//          making (§9). Both are destination-named toggles; both are
+//          recorded as viewing ops (replay reproduces them, undo
+//          skips them). The lattice tie has no control here — the
+//          grid keeps its step, always (§11). Also owns the
+//          conditional action row (§14) and the pixel-floor readout.
+// Depends: mapShown, showGlass, appendOp(), plane, ctx, canvas
+// Exposes: updateViewingWords() (called from replayLog),
 //          drawPixelFloorReadout() (called from render)
 // ============================================================
 
-var NUMBERS_CYCLE = { points: 'map', map: 'off', off: 'points' };
+// A word is present only when tapping it would do something; it fades in
+// and out (Marauder's Map), and once faded it releases its space.
+function setWordPresent(el, present) {
+    if (!el) return;
+    if (present) {
+        if (el.style.display === 'none') {
+            el.style.display = '';
+            requestAnimationFrame(function() { el.classList.remove('absent'); });
+        } else el.classList.remove('absent');
+    } else if (!el.classList.contains('absent')) {
+        el.classList.add('absent');
+        setTimeout(function() { if (el.classList.contains('absent')) el.style.display = 'none'; }, 420);
+    }
+}
 
-function updateNumbersControl() {
-    var word = document.getElementById('numbers-cycle');
-    if (word) word.innerHTML = 'Numbers &middot; ' + numbersMode;
-    var tieRow = document.getElementById('lattice-tie-row');
-    if (tieRow) tieRow.style.display = (numbersMode === 'map') ? '' : 'none';
-    var tie = document.getElementById('lattice-tie');
-    if (tie) tie.textContent = plane.latticeTied() ? 'grid follows zoom' : 'grid keeps its step';
-    // The tie row changes the How-this-works panel's height; anything
-    // positioned below it (the colors panel) must follow, or the viewing
-    // words collide with it.
+function updateViewingWords() {
+    var mapWord = document.getElementById('map-toggle');
+    if (mapWord) mapWord.textContent = mapShown ? 'Hide map' : 'Show map';
+    var glassWord = document.getElementById('glass-toggle');
+    if (glassWord) glassWord.textContent = showGlass ? 'Show the making' : 'Just the glass';
+    // Conditional presence (ledger §14): an empty canvas shows only Open —
+    // New is irrelevant and Save has nothing to save. Marks count; viewing
+    // changes alone do not.
+    var hasWork = logHasMarks();
+    setWordPresent(document.getElementById('htw-action-new'), hasWork);
+    setWordPresent(document.getElementById('htw-action-save'), hasWork);
     layoutPanelTools();
 }
 
-document.getElementById('numbers-cycle').addEventListener('click', function() {
-    appendOp({ op: 'numbers', value: NUMBERS_CYCLE[numbersMode] || 'points' });
+document.getElementById('map-toggle').addEventListener('click', function() {
+    appendOp({ op: 'numbers', value: mapShown ? 'hidden' : 'shown' });
 });
 
-document.getElementById('lattice-tie').addEventListener('click', function() {
-    plane.setLatticeTied(!plane.latticeTied());
-    updateNumbersControl();
+document.getElementById('glass-toggle').addEventListener('click', function() {
+    appendOp({ op: 'show_glass', value: !showGlass });
 });
 
 // The screen's limit, spoken at the declared unit's natural scale
@@ -4812,6 +4854,11 @@ function drawPixelFloorReadout() {
 loadContentJSON();
 loadPalettesJSON();
 initLog();
+// Geometry's grid keeps its step, always — no toggle (ledger §11): a tied
+// grid quietly mints finer lines nobody constructed at every decade
+// crossing. Frozen at the default view's step; zoom in and its lines
+// spread like any drawn thing seen closer.
+plane.setLatticeTied(false);
 initConstructions();
 initHowThisWorks();
 

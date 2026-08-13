@@ -17,7 +17,10 @@
     [hidden]{display:none!important}
     .cw-page{width:min(1040px,100%);margin:auto}
     .cw-home{display:inline-block;margin:0 0 12px;color:#546a80;font-size:12px;text-decoration:none;letter-spacing:.03em}
-    .btn{appearance:none;border:0;border-bottom:1px solid transparent;padding:4px 3px;background:transparent;color:#546a80;cursor:pointer}
+    .btn{appearance:none;border:0;border-bottom:1px solid transparent;padding:4px 3px;background:transparent;color:#546a80;cursor:pointer;transition:opacity 400ms ease-in-out}
+    /* Conditional presence: a word is there only when tapping it would do
+       something; it fades, never greys. */
+    .btn.absent{opacity:0;pointer-events:none}
     .btn:hover,.btn:focus-visible{color:#292a28;border-bottom-color:#bcae93;outline:none}
     .btn[aria-pressed=true],.btn.active{color:#252623;border-bottom-color:#546a80}
     .text-small{font-size:11px;color:#98917f;text-align:center}
@@ -95,6 +98,9 @@
           <button class="btn" id="fill-continue" hidden>Continue?</button>
           <button class="btn" id="clear-map">Clear</button>
           <button class="btn" id="numbers" aria-pressed="false">Show numbers</button>
+          <!-- Conditional presence (controls build, 13 Aug): Save is present
+               only when there is something on the glass to save. -->
+          <button class="btn absent" id="save-map" style="display:none">Save</button>
         </div>
 
         <output class="product" id="product" aria-live="polite">
@@ -973,7 +979,7 @@
     drawCursor();
     if(numbersMode==='map')drawPixelFloorReadout();
   }
-  function animate(){render();requestAnimationFrame(animate)}
+  function animate(){render();syncSaveWord();requestAnimationFrame(animate)}
 
   // ==== virtual cursor (keyboard access) =====================================
   // The panes were buttons with aria-labels; on canvas that disappears, so the
@@ -1158,7 +1164,10 @@
   const tieWord=document.getElementById('lattice-tie');
   const axesWord=document.getElementById('axes-toggle');
   function updateViewingStrip(){
-    numbersWord.innerHTML='Numbers &middot; '+numbersMode;
+    // One destination-named pair, the same grammar as Geometry (controls
+    // build, 13 Aug — ledger §10). The tie stays: here it is honest,
+    // resolution is the subject (§11).
+    numbersWord.textContent=numbersMode==='map'?'Hide map':'Show map';
     tieWord.hidden=numbersMode!=='map';
     tieWord.textContent=plane.latticeTied()?'grid follows zoom':'grid keeps its step';
     axesWord.innerHTML='axes &middot; '+(axesVisible?'shown':'hidden');
@@ -1167,6 +1176,128 @@
   tieWord.addEventListener('click',()=>{plane.setLatticeTied(!plane.latticeTied());updateViewingStrip()});
   axesWord.addEventListener('click',()=>{axesVisible=!axesVisible;updateViewingStrip()});
   updateViewingStrip();
+
+  // ==== Save (controls build, 13 Aug) ========================================
+  // The Save word opens the choice panel (ledger §§2, 12, 14): Postcard is
+  // the sent picture and IS the share action; Full sheet is the kept picture,
+  // the 300dpi print render. There is no Share word. "Save construction" —
+  // the record — is NOT here: this lab keeps no operation log and has no
+  // open path (Phase 4's explicit no-persistence choice), so the record has
+  // nothing to record yet; reported at review rather than faked.
+  const savePanel=CW.createChoicePanel();
+  const saveWord=root.querySelector('#save-map');
+
+  // PNG pHYs patcher and its CRC, as in Geometry — single-file pages carry
+  // their own copies by design; only plane.js and cw-panel.js are shared.
+  let _crc32Table=null;
+  function crc32(data){
+    if(!_crc32Table){
+      _crc32Table=new Uint32Array(256);
+      for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);_crc32Table[n]=c}
+    }
+    let crc=0xFFFFFFFF;
+    for(let i=0;i<data.length;i++)crc=_crc32Table[(crc^data[i])&0xFF]^(crc>>>8);
+    return (crc^0xFFFFFFFF)>>>0;
+  }
+  function patchPngDpi(blob,dpi,callback){
+    const ppm=Math.round(dpi/0.0254);
+    const reader=new FileReader();
+    reader.onload=function(){
+      const buf=new Uint8Array(reader.result);
+      let pos=8;
+      while(pos<buf.length){
+        const len=(buf[pos]<<24)|(buf[pos+1]<<16)|(buf[pos+2]<<8)|buf[pos+3];
+        const type=String.fromCharCode(buf[pos+4],buf[pos+5],buf[pos+6],buf[pos+7]);
+        if(type==='IDAT'){
+          const phys=new Uint8Array(21);
+          phys[0]=0;phys[1]=0;phys[2]=0;phys[3]=9;
+          phys[4]=0x70;phys[5]=0x48;phys[6]=0x59;phys[7]=0x73;
+          phys[8]=(ppm>>24)&0xff;phys[9]=(ppm>>16)&0xff;phys[10]=(ppm>>8)&0xff;phys[11]=ppm&0xff;
+          phys[12]=(ppm>>24)&0xff;phys[13]=(ppm>>16)&0xff;phys[14]=(ppm>>8)&0xff;phys[15]=ppm&0xff;
+          phys[16]=1;
+          const crc=crc32(phys.subarray(4,17));
+          phys[17]=(crc>>24)&0xff;phys[18]=(crc>>16)&0xff;phys[19]=(crc>>8)&0xff;phys[20]=crc&0xff;
+          const result=new Uint8Array(buf.length+21);
+          result.set(buf.subarray(0,pos),0);result.set(phys,pos);result.set(buf.subarray(pos),pos+21);
+          callback(new Blob([result],{type:'image/png'}));return;
+        }
+        pos+=12+len;
+      }
+      callback(blob);
+    };
+    reader.readAsArrayBuffer(blob);
+  }
+
+  // The export is a picture of the window: the live canvas (the map as she
+  // sees it, membrane region cropped) matted like Geometry's postcard.
+  function composeMapExport(spec){
+    const dpr=window.devicePixelRatio||1;
+    const cropX=membraneWide.matches?Math.round(MEMBRANE_W*dpr):0;
+    const sw=canvas.width-cropX, sh=canvas.height;
+    const off=document.createElement('canvas');off.width=spec.w;off.height=spec.h;
+    const c2=off.getContext('2d');
+    c2.fillStyle='#2a2620';c2.fillRect(0,0,spec.w,spec.h);
+    c2.strokeStyle='#c8b89a';c2.lineWidth=2;
+    c2.strokeRect(spec.mat-1,spec.mat-1,spec.w-2*spec.mat+2,spec.h-2*spec.mat+2);
+    c2.fillStyle='#f4f1e8';c2.fillRect(spec.mat,spec.mat,spec.w-2*spec.mat,spec.h-2*spec.mat);
+    const artW=spec.w-2*spec.mat,artH=spec.h-2*spec.mat;
+    const s=Math.min(artW/Math.max(1,sw),artH/Math.max(1,sh)),dw=sw*s,dh=sh*s;
+    c2.imageSmoothingEnabled=true;c2.imageSmoothingQuality='high';
+    c2.drawImage(canvas,cropX,0,sw,sh,spec.mat+(artW-dw)/2,spec.mat+(artH-dh)/2,dw,dh);
+    return off;
+  }
+  function exportMap(kind){
+    const spec=kind==='postcard'
+      ?{w:1200,h:800,mat:40,dpi:null}      // the sent version: screen-sized, retina-doubled
+      :{w:3000,h:2400,mat:60,dpi:300};     // the kept version: the 300dpi print render
+    const off=composeMapExport(spec);
+    const filename='glass-multiplication-'+new Date().toISOString().slice(0,10)+'.png';
+    const download=blob=>{
+      const u=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=u;a.download=filename;a.click();
+      URL.revokeObjectURL(u);
+    };
+    if(kind==='postcard'){
+      // Synchronous render and blob so the share sheet opens inside the
+      // child's tap (Safari requires the gesture to still be live).
+      const bin=atob(off.toDataURL('image/png').split(',')[1]);
+      const bytes=new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+      const blob=new Blob([bytes],{type:'image/png'});
+      let file=null;try{file=new File([blob],filename,{type:'image/png'})}catch(e){}
+      if(file&&navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+        navigator.share({title:'Glass Multiplication',files:[file]}).catch(err=>{
+          if(!err||err.name!=='AbortError')download(blob);  // declined ≠ cancelled
+        });
+      }else{
+        download(blob);
+        readout.textContent='Sharing not available on this browser — image downloaded instead';
+      }
+    }else{
+      off.toBlob(blob=>patchPngDpi(blob,spec.dpi,download),'image/png');
+    }
+  }
+  saveWord.addEventListener('click',()=>{
+    savePanel.open({choices:[
+      {word:'Postcard',line:'a picture to send',action:()=>exportMap('postcard')},
+      {word:'Full sheet',line:'a picture to keep',action:()=>exportMap('fullsheet')}
+    ]});
+  });
+  // Present only when there is something on the glass beyond 1; fades in
+  // and out, and once faded releases its place in the row.
+  let saveWordPresent=false;
+  function syncSaveWord(){
+    const on=built.size>1;
+    if(on===saveWordPresent)return;
+    saveWordPresent=on;
+    if(on){
+      if(saveWord.style.display==='none'){saveWord.style.display='';requestAnimationFrame(()=>saveWord.classList.remove('absent'))}
+      else saveWord.classList.remove('absent');
+    }else{
+      saveWord.classList.add('absent');
+      setTimeout(()=>{if(saveWord.classList.contains('absent'))saveWord.style.display='none'},420);
+    }
+  }
 
   document.getElementById('rebuild').addEventListener('click',()=>{
     if(reduceMotion)return;

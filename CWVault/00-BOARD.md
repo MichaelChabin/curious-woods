@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-13 morning (the controls walk is closed — fourteen ledger sections; build brief assembled at 01-ACTIVE/Brief-Controls-Build-Aug13.md; map-reveal bench queued)
+updated: 2026-08-13 (controls build executed in both labs per the brief; committed, not pushed — the string print gates the push; three contradictions reported in the build ledger)
 ---
 
 # The Board
@@ -207,12 +207,37 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
 - **Build brief assembled:** `01-ACTIVE/Brief-Controls-Build-Aug13.md` — every walk
   decision ordered for execution, both labs, with acceptance checks. Ready for a
   Claude Code build session.
-- **Next action:** execute the build brief (Claude Code), and in parallel the
-  **map-reveal bench** — an `experiments/` page for the assembling-grid timing
-  (duration, acceleration, legible phase, skip; plus re-stepping at deep zoom).
-  Still owed behind both: the 16th workshop, and the inner-came value. Still owed behind it: **the 16th workshop** (the accessibility answer;
-  Lane 8 calls it the first post-extraction build) and the inner-came value that
-  clears all six resting colours (`Decisions-Fills-Aug06.md`).
+- **Controls build executed, 13 Aug** (`01-ACTIVE/Decisions-ControlsBuild-Aug13.md`).
+  Everything in the brief is built and browser-verified, zero console errors, both
+  labs: the choice panel as a `cw-panel.js` component; the WIP guard fronting New,
+  Open and the `.json` drop; the Save panel with Postcard-as-share (1200×800) and
+  the `.json` riding the share sheet; replay Cancel; the color panel summoned and
+  closable, never auto-opening on return; titles-are-facts (palette and model);
+  Show map ↔ Hide map in both labs with old-log migration verified both directions
+  through the real drop path; Geometry's tie gone (grid keeps its step, frozen at
+  the default step); Just the glass wired to the dormant `showGlass` as a logged
+  viewing op; conditional presence (empty canvas shows only Open; both
+  nothing-to-save toasts dead; Cmd+O's alert now the guarded picker). Multiplication
+  gains the conditional Save word and the two-word panel. **Three contradictions
+  reported, not accommodated:** the full sheet was never 1800×1200 (it is 3000×2400
+  in code and keeps that); Multiplication has no construction to save (Phase 4's
+  no-persistence choice stands — *what is the record of a multiplication session?*
+  is an open design question this board now owns); and **the model tool is
+  unreachable** — the walk's third dormant path after Share and showGlass; its
+  title-as-control is removed and Choose new model sits inside the panel, but the
+  panel itself needs a summoning word only Michael can place. Found and fixed in
+  passing: viewing ops alone counted as "work" for the guard and the action row.
+  **Committed, not pushed** — many new child-facing strings; the full string print
+  is in the session review and the voice gate applies. The iPad pass owns the real
+  share sheet, VoiceOver and pinch.
+- **Next action:** Michael reads the build ledger and the string print, then says
+  push — the build ships on his word. Behind it: the **map-reveal bench** (an
+  `experiments/` page for the assembling-grid timing — duration, acceleration,
+  legible phase, skip; plus re-stepping at deep zoom), the iPad pass (share sheet,
+  pinch, VoiceOver), the model tool's summoning word, **the 16th workshop** (the
+  accessibility answer; Lane 8 calls it the first post-extraction build) and the
+  inner-came value that clears all six resting colours
+  (`Decisions-Fills-Aug06.md`).
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto
   the canvas skips the work-in-progress check and silently replaces unsaved work. The
   New and Open words both guard; the drop does not. Pre-existing, found in the Phase 2
