@@ -186,13 +186,11 @@
     /* --- Post-replay controls --- */
 
     /* --- Step-through replay controls --- */
-    #cx-step-controls { position: fixed; z-index: 560; pointer-events: all; user-select: none; background: rgba(244,241,232,0.96); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 8px 14px 6px; cursor: grab; touch-action: none; }
-    #cx-step-controls.dragging { cursor: grabbing; }
-    .cx-step-arrows { display: flex; gap: 18px; justify-content: center; margin-bottom: 4px; }
+    /* The replay panel's rows (the panel shell is the shared component). The
+       arrows are the surface's only glyph controls — kept, flagged at review. */
+    .cx-step-arrows { display: flex; gap: 18px; justify-content: center; margin: 2px 0 8px; }
     .cx-step-arrow { font-family: Georgia, serif; font-size: 16px; color: #546A80; cursor: default; transition: color 80ms; }
     .cx-step-arrow:hover { color: #3D3D3A; }
-    .cx-step-label { font-family: Georgia, serif; font-size: 13px; color: #546A80; cursor: default; transition: color 80ms; display: block; text-align: center; }
-    .cx-step-label:hover { color: #3D3D3A; }
 
     /* --- WIP / cancel dialogs --- */
     /* The old bare-dialog styles left with the dialogs — occasional acts
@@ -277,16 +275,8 @@
 
 <div id="ghost-layer"><img id="ghost-img" src="" alt="" draggable="false"></div>
 
-<!-- Step-through replay controls -->
-<div id="cx-step-controls" style="display:none;">
-  <div class="cx-step-arrows">
-    <span id="cx-step-first" class="cx-step-arrow">|&larr;</span>
-    <span id="cx-step-back" class="cx-step-arrow">&larr;</span>
-    <span id="cx-step-fwd" class="cx-step-arrow">&rarr;</span>
-    <span id="cx-step-last" class="cx-step-arrow">&rarr;|</span>
-  </div>
-  <span id="cx-step-cancel" class="cx-step-label">Cancel</span>
-</div>
+<!-- The replay panel (ledger §15) is built in JS on the shared info-panel
+     component: play + duration, the step arrows, Start over, close-as-fork. -->
 
 <!-- The WIP guard, replay Cancel, and Save act are choice panels now
      (Decisions-Controls-Aug12 §§2,5,6,12) — built by CW.createChoicePanel;
@@ -1303,8 +1293,9 @@ function doSaveConstruction(name, note) {
         var noteBox = document.getElementById('save-note-box');
         var notePos = { left: parseInt(noteBox.style.left) || 0, top: parseInt(noteBox.style.top) || 0 };
         // No viewport block: load never restored it (a construction always
-        // opens at the default view), so it is not recorded either.
-        var entry = { key: key, name: name, note: note || '', notePos: notePos, created: new Date().toISOString(), operations: log, png: png };
+        // opens at the default view), so it is not recorded either. The
+        // playback duration saves with the construction (ledger §15).
+        var entry = { key: key, name: name, note: note || '', notePos: notePos, created: new Date().toISOString(), operations: log, speed: replayDuration, png: png };
         try {
             localStorage.setItem(key, JSON.stringify(entry));
             var index = cxGetStorageIndex();
@@ -1318,7 +1309,7 @@ function doSaveConstruction(name, note) {
         // (ledger §12) — on iPad the OS sheet is where saving and sending
         // both live; elsewhere it downloads as before. The receiving child
         // opens it as a copy and makes it her own.
-        var blob = new Blob([JSON.stringify({ version: 1, name: name, note: note || '', created: entry.created, operations: log }, null, 2)], { type: 'application/json' });
+        var blob = new Blob([JSON.stringify({ version: 1, name: name, note: note || '', created: entry.created, speed: replayDuration, operations: log }, null, 2)], { type: 'application/json' });
         var fname = (name.replace(/[^a-z0-9 _-]/gi, '_').trim() || 'construction') + '.json';
         function downloadJson() {
             var url = URL.createObjectURL(blob), a = document.createElement('a');
@@ -1707,6 +1698,7 @@ function _loadFromFile(file) {
         try {
             var d = JSON.parse(ev.target.result);
             if (d.version===1 && Array.isArray(d.operations)) {
+                if (typeof d.speed === 'number' && isFinite(d.speed)) setReplayDuration(d.speed, false);
                 operationLog = d.operations;
                 replayLog(false);
                 // Ensure canvas dimensions are current before fitting view.
@@ -2773,6 +2765,9 @@ function getPos(e) {
 function onDown(e) {
     if (e.target !== canvas) return;
     e.preventDefault(); unlockAudio();
+    // A tap during play skips to the end and closes the panel (ledger §15)
+    // — consumed entirely; it draws nothing.
+    if (replayPlaying) { skipReplayToEnd(); return; }
     canvas.setPointerCapture(e.pointerId);
     activeTouches.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
@@ -3699,11 +3694,20 @@ function buildWorkspacePalette() {
 // ============================================================
 
 // Built-in starter constructions (thumbnails use SVG_CACHE inline renders)
-var CX_BUILTINS = [
-    { key:'_builtin_triangle', name:'Equilateral Triangle', svgFile:'geo_nested_triangle.svg',  logFile:'../models/logs/geo_nested_triangle.json',  note:'' },
-    { key:'_builtin_hexagon',  name:'Hexagon',              svgFile:'geo_hexagon_triangle.svg', logFile:'../models/logs/geo_hexagon_triangle.json',  note:'' },
-    { key:'_builtin_squares',  name:'Nested Squares',       svgFile:'geo_squares_nested.svg',   logFile:'../models/logs/geo_squares_nested.json',   note:'' },
-];
+// The library is content-only (ledger §15, amended brief §4): the built-in
+// constructions live in ../models/constructions.json, read at load. Library
+// growth is a log file plus a manifest line — no code.
+var CX_BUILTINS = [];
+function loadConstructionsManifest() {
+    fetch('../models/constructions.json')
+        .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
+        .then(function(data) {
+            if (!data || !Array.isArray(data.constructions)) return;
+            CX_BUILTINS = data.constructions;
+            cxGenerateBuiltinPreviews();
+        })
+        .catch(function() { console.warn('construction library manifest failed to load'); });
+}
 
 var cxState = {
     ghostActive: false,
@@ -3711,46 +3715,12 @@ var cxState = {
 };
 
 function initConstructions() {
-    // Generate built-in PNG previews and cache in localStorage if not already done
-    cxGenerateBuiltinPreviews();
+    // The library manifest loads the built-ins and generates their previews.
+    loadConstructionsManifest();
 
-    // Step-through controls
-    document.getElementById('cx-step-first').addEventListener('click', stepFirst);
-    document.getElementById('cx-step-back').addEventListener('click', stepBack);
-    document.getElementById('cx-step-fwd').addEventListener('click', stepForward);
-    document.getElementById('cx-step-last').addEventListener('click', stepLast);
-    // Replay Cancel is a choice panel (ledger §6). Keep watching is the
-    // quiet no; Start over stays — fewer steps for a busy kid.
-    document.getElementById('cx-step-cancel').addEventListener('click', function() {
-        choicePanel.open({ choices: [
-            { word: 'Start over', line: 'a blank window', action: function() {
-                exitStepThrough(); newConstruction();
-            } },
-            { word: 'Continue from here', line: "keep what's built and make it your own", action: function() {
-                exitStepThrough();
-            } },
-            { word: 'Keep watching', line: 'the replay goes on' }
-        ] });
-    });
-
-    // Step controls drag
-    (function() {
-        var box = document.getElementById('cx-step-controls');
-        var dragging = false, sx, sy, ox, oy;
-        box.addEventListener('pointerdown', function(e) {
-            if (e.target.classList.contains('cx-step-arrow') || e.target.classList.contains('cx-step-label')) return;
-            e.preventDefault();
-            dragging = true; sx = e.clientX; sy = e.clientY;
-            ox = parseInt(box.style.left) || 0; oy = parseInt(box.style.top) || 0;
-            box.classList.add('dragging'); box.setPointerCapture(e.pointerId);
-        });
-        box.addEventListener('pointermove', function(e) {
-            if (!dragging) return;
-            box.style.left = (ox + e.clientX - sx) + 'px';
-            box.style.top = (oy + e.clientY - sy) + 'px';
-        });
-        box.addEventListener('pointerup', function() { dragging = false; box.classList.remove('dragging'); });
-    })();
+    // The replay panel (ledger §15) — built once on the shared component,
+    // shown whenever a construction replays.
+    buildReplayPanel();
 
     // The WIP guard and the Save panel are choice panels now — see
     // checkWipThen() and openSavePanel(); the old dialog chain is gone.
@@ -3932,21 +3902,158 @@ function computeStepGroups(ops) {
     return merged;
 }
 
-function positionStepControls() {
-    var el = document.getElementById('cx-step-controls');
-    var panelW = parseInt(leftPanel.style.width) || PANEL_BASE_WIDTH;
-    el.style.left = (panelW + 16) + 'px';
-    el.style.top = '20px';
+// ---- The replay panel (ledger §15; amended brief §4) ----------------------
+// One panel, appearing with the act: close at the top (closing IS the
+// deliberate fork — she is now working on the new construction), the step
+// arrows, Play with a duration control (0–15s; 0 is instant), Start over,
+// and the quiet fact that a tap during play skips ahead. The chosen
+// duration saves with the construction; her last-used duration persists
+// locally as the default. Zoom is not here — she has already set it.
+var replayPanel = null;
+var replayPlaying = false;
+var replayPlayTimer = null;
+var replayDuration = (function() {
+    var v = parseFloat(localStorage.getItem('cw-replay-duration'));
+    return (isNaN(v) || v < 0 || v > 15) ? 5 : v;
+})();
+var _replayDurationLabel = null;
+
+function replayDurationText() { return replayDuration === 0 ? 'instant' : (replayDuration + 's'); }
+
+function setReplayDuration(v, fromChild) {
+    replayDuration = Math.max(0, Math.min(15, v));
+    if (_replayDurationLabel) _replayDurationLabel.textContent = replayDurationText();
+    var slider = document.getElementById('replay-duration');
+    if (slider && parseFloat(slider.value) !== replayDuration) slider.value = replayDuration;
+    // Only the child's own touch of the slider becomes the local default —
+    // a construction opening at its saved speed does not.
+    if (fromChild) { try { localStorage.setItem('cw-replay-duration', String(replayDuration)); } catch (e) {} }
+    if (replayPlaying) { stopReplayPlay(); startReplayPlay(); }
 }
 
-function showStepControls() {
-    var el = document.getElementById('cx-step-controls');
-    el.style.display = '';
-    positionStepControls();
+function buildReplayPanel() {
+    replayPanel = CW.createInfoPanel({ width: 200, onClose: function() {
+        // Close is the deliberate fork: keep what is on the canvas as her
+        // copy and stop replaying. Originals are untouched — every
+        // construction opens as a copy.
+        stopReplayPlay();
+        stepState.active = false;
+        stepState.ops = null;
+        stepState.stepBounds = [];
+        stepState.currentStep = 0;
+        dismissLoadedNote();
+    } });
+    var b = replayPanel.body;
+
+    var arrows = document.createElement('div');
+    arrows.className = 'cx-step-arrows';
+    [['|←', stepFirst], ['←', stepBack], ['→', stepForward], ['→|', stepLast]].forEach(function(pair) {
+        var a = document.createElement('span');
+        a.className = 'cx-step-arrow';
+        a.textContent = pair[0];
+        a.addEventListener('click', function() { stopReplayPlay(); pair[1](); });
+        arrows.appendChild(a);
+    });
+    b.appendChild(arrows);
+
+    var playRow = document.createElement('div');
+    playRow.style.cssText = 'margin:0 0 2px;';
+    var playWord = document.createElement('span');
+    playWord.textContent = 'Play';
+    playWord.style.cssText = 'font:13px Georgia,serif;color:#546A80;cursor:default;transition:color 80ms;';
+    playWord.addEventListener('mouseenter', function() { playWord.style.color = '#3D3D3A'; });
+    playWord.addEventListener('mouseleave', function() { playWord.style.color = '#546A80'; });
+    playWord.addEventListener('click', function() { startReplayPlay(); });
+    playRow.appendChild(playWord);
+    b.appendChild(playRow);
+
+    var durRow = document.createElement('div');
+    durRow.style.cssText = 'margin:2px 0 8px;';
+    var durLabel = document.createElement('span');
+    durLabel.textContent = 'duration · ';
+    durLabel.style.cssText = 'font:italic 11px Georgia,serif;color:#546A80;opacity:0.75;';
+    _replayDurationLabel = document.createElement('span');
+    _replayDurationLabel.textContent = replayDurationText();
+    _replayDurationLabel.style.cssText = 'font:italic 11px Georgia,serif;color:#546A80;opacity:0.9;';
+    var slider = document.createElement('input');
+    slider.type = 'range'; slider.id = 'replay-duration';
+    slider.className = 'cw-slider';
+    slider.min = '0'; slider.max = '15'; slider.step = '0.5'; slider.value = replayDuration;
+    slider.style.cssText = 'width:100%;margin-top:2px;';
+    slider.addEventListener('input', function() { setReplayDuration(parseFloat(slider.value), true); });
+    durRow.appendChild(durLabel);
+    durRow.appendChild(_replayDurationLabel);
+    durRow.appendChild(slider);
+    b.appendChild(durRow);
+
+    var startOver = document.createElement('div');
+    startOver.style.cssText = 'margin:0 0 6px;cursor:default;';
+    var soWord = document.createElement('span');
+    soWord.textContent = 'Start over';
+    soWord.style.cssText = 'font:13px Georgia,serif;color:#546A80;transition:color 80ms;';
+    var soLine = document.createElement('span');
+    soLine.textContent = ' — a blank window';
+    soLine.style.cssText = 'font:italic 11px Georgia,serif;color:#546A80;opacity:0.65;';
+    startOver.appendChild(soWord);
+    startOver.appendChild(soLine);
+    startOver.addEventListener('mouseenter', function() { soWord.style.color = '#3D3D3A'; });
+    startOver.addEventListener('mouseleave', function() { soWord.style.color = '#546A80'; });
+    startOver.addEventListener('click', function() {
+        stopReplayPlay();
+        exitStepThrough();
+        newConstruction();
+    });
+    b.appendChild(startOver);
+
+    var skipLine = document.createElement('div');
+    skipLine.textContent = 'tap skips ahead';
+    skipLine.style.cssText = 'font:italic 11px Georgia,serif;color:#546A80;opacity:0.6;';
+    b.appendChild(skipLine);
 }
 
-function hideStepControls() {
-    document.getElementById('cx-step-controls').style.display = 'none';
+function showReplayPanel() {
+    if (!replayPanel) return;
+    if (!replayPanel.userMoved()) {
+        var panelW = parseInt(leftPanel.style.width) || PANEL_BASE_WIDTH;
+        replayPanel.setPosition(panelW + 16, 20);
+    }
+    replayPanel.show();
+}
+
+// Play: every logged step plays — content is never compressed, only time.
+// The duration divides across the whole construction so tempo scales; at 0
+// the whole thing is instant.
+function replayStepDelay() {
+    var steps = Math.max(1, stepState.stepBounds.length - 1);
+    return (replayDuration * 1000) / steps;
+}
+function startReplayPlay() {
+    if (!stepState.active) return;
+    stopReplayPlay();
+    if (replayDuration === 0) { stepLast(); return; }
+    if (stepState.currentStep >= stepState.stepBounds.length - 1) stepFirst(); // at the end, play begins again
+    replayPlaying = true;
+    replayPlayTimer = setInterval(function() {
+        if (!stepState.active) { stopReplayPlay(); return; }
+        stepForward();
+        if (stepState.currentStep >= stepState.stepBounds.length - 1) stopReplayPlay();
+    }, replayStepDelay());
+}
+function stopReplayPlay() {
+    replayPlaying = false;
+    if (replayPlayTimer) { clearInterval(replayPlayTimer); replayPlayTimer = null; }
+}
+// A tap during play jumps to the end and closes the panel — the same fork
+// as closing it (ledger §15).
+function skipReplayToEnd() {
+    stopReplayPlay();
+    stepLast();
+    if (replayPanel) replayPanel.hide();
+    stepState.active = false;
+    stepState.ops = null;
+    stepState.stepBounds = [];
+    stepState.currentStep = 0;
+    dismissLoadedNote();
 }
 
 function startStepThrough(ops) {
@@ -3972,7 +4079,9 @@ function startStepThrough(ops) {
         stepState.currentStep = 1;
     }
 
-    showStepControls();
+    // The panel appears with the act — it is part of what she started,
+    // not an interruption (the step-controls precedent, ledger §15).
+    showReplayPanel();
 }
 
 function stepForward() {
@@ -4015,22 +4124,25 @@ function stepBack() {
 }
 
 function exitStepThrough() {
+    stopReplayPlay();
     stepState.active = false;
     stepState.ops = null;
     stepState.stepBounds = [];
     stepState.currentStep = 0;
-    hideStepControls();
+    if (replayPanel) replayPanel.hide();
     dismissLoadedNote();
 }
 
 // Fork: child takes over during replay
 function forkStepThrough() {
     if (!stepState.active) return;
-    // Discard remaining unplayed steps, keep current geometry
+    // The silent fork (drawing during replay), unchanged: discard the
+    // remaining unplayed steps, keep current geometry.
+    stopReplayPlay();
     stepState.active = false;
     stepState.ops = null;
     stepState.stepBounds = [];
-    hideStepControls();
+    if (replayPanel) replayPanel.hide();
     dismissLoadedNote();
 }
 
@@ -4118,14 +4230,17 @@ function dismissLoadedNote() {
 }
 
 function loadConstructionEntry(entry) {
-    function doLoad(ops) {
+    function doLoad(ops, speed) {
         // No WIP check here — the Open flow already handled it before showing the picker
         newConstruction();
+        // A construction saved with a speed reopens at that speed; the
+        // child's own last-used duration stays the local default.
+        if (typeof speed === 'number' && isFinite(speed)) setReplayDuration(speed, false);
         startStepThrough(ops);
         if (entry.note) showLoadedNote(entry);
     }
     if (entry.operations) {
-        doLoad(entry.operations.slice());
+        doLoad(entry.operations.slice(), entry.speed);
         return;
     }
     if (entry.logFile) {
@@ -4133,7 +4248,7 @@ function loadConstructionEntry(entry) {
             .then(function(resp) { if (!resp.ok) throw new Error(); return resp.json(); })
             .then(function(data) {
                 if (!data.operations || data.operations.length === 0) throw new Error();
-                doLoad(data.operations.slice());
+                doLoad(data.operations.slice(), (typeof data.speed === 'number') ? data.speed : entry.speed);
             })
             .catch(function() { toast('could not load construction'); });
     }

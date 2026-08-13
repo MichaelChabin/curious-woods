@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "comment": "The construction library's manifest (controls build, 13 Aug 2026 — ledger §15). The picker reads this at load; library growth is a log file plus a line here, no code. Keys keep the _builtin_ prefix so preview caches stay stable. An entry may carry `speed` (seconds, 0–15) to open at a chosen playback duration.",
+  "constructions": [
+    { "key": "_builtin_triangle", "name": "Equilateral Triangle", "svgFile": "geo_nested_triangle.svg",  "logFile": "../models/logs/geo_nested_triangle.json",  "note": "" },
+    { "key": "_builtin_hexagon",  "name": "Hexagon",              "svgFile": "geo_hexagon_triangle.svg", "logFile": "../models/logs/geo_hexagon_triangle.json", "note": "" },
+    { "key": "_builtin_squares",  "name": "Nested Squares",       "svgFile": "geo_squares_nested.svg",   "logFile": "../models/logs/geo_squares_nested.json",   "note": "" }
+  ]
+}

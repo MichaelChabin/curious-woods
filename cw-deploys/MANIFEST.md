@@ -30,6 +30,10 @@ both labs for Save, and by Geometry for the WIP guard and replay Cancel.
 Pages in `active/` and `experiments/` reach them with `../` —
 `../art/palettes.json`, `../models/logs/geo_hexagon_triangle.json`.
 A page that moves between folders must have those paths checked.
+`models/constructions.json` — the construction library's manifest (controls
+build, 13 Aug): Geometry's picker reads it at load, so library growth is a
+log file plus a line here, no code. An entry may carry `speed` (seconds) to
+open at a chosen playback duration.
 
 ## Pages
 
@@ -47,7 +51,11 @@ A page that moves between folders must have those paths checked.
   y-down view. **Controls build (13 Aug):** occasional acts open choice
   panels (Save construction / Postcard / Full sheet — Postcard shares at
   1200×800, Full sheet keeps the 3000×2400 print render; the WIP guard also
-  fronts the `.json` drop; replay Cancel); the action row is conditional
+  fronts the `.json` drop); **replaying opens the replay panel** (13 Aug
+  afternoon, ledger §15): step arrows, Play with a 0–15s duration saved per
+  construction (0 instant; last-used is the local default), Start over,
+  tap-skips-ahead, close-as-fork — and the built-ins come from
+  `models/constructions.json`; the action row is conditional
   (empty canvas shows only Open); the color panel is summoned by Color and
   closable; Numbers became Show map ↔ Hide map (old logs migrate at replay);
   the lattice tie is gone (grid keeps its step); Just the glass ↔ Show the

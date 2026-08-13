@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-13 midday (map-reveal bench built and reviewed; ledger §15 — the reveal is replay, one machinery; brief §4 amended to the replay panel; the build and the bench push together on Michael's word)
+updated: 2026-08-13 afternoon (the replay panel built per the amended brief §4 and verified; the library is content-only via models/constructions.json; committed, not pushed — four new strings ride the voice gate)
 ---
 
 # The Board
@@ -243,13 +243,26 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   (Start over survives as a word inside the panel). **Brief §4 amended
   accordingly**, and the built-ins list moves to a JSON manifest under `models/` —
   library growth becomes a log file plus a manifest line.
-- **Next action:** execute the amended brief §4 (the replay panel and the
-  constructions manifest — the rest of the build shipped 13 Aug). Behind it: the
-  iPad pass (share sheet, pinch, VoiceOver), the model tool's summoning word, the
-  reveal itself once its bench settles the tempo, **the 16th workshop** (the
-  accessibility answer; Lane 8 calls it the first post-extraction build) and the
-  inner-came value that clears all six resting colours
-  (`Decisions-Fills-Aug06.md`).
+- **Replay panel built, 13 Aug afternoon** (build ledger, replay section). One
+  panel on the shared component, appearing with the act: step arrows, **Play**
+  with a 0–15s duration (0 instant) that **saves with the construction** — the
+  child's own slider touch is the local default — **Start over**, the quiet *tap
+  skips ahead* (a tap during play jumps to the end and closes the panel), and
+  **close as the deliberate fork**. The morning's choice-panel Cancel is
+  superseded and gone. The library is content-only: the picker reads
+  `models/constructions.json`; pentagon and kin are a log file plus a manifest
+  line. All replay acceptance checks verified (backward stepping to the floor,
+  instant play, the 3.5s↔8s speed round-trip, mid-play tap-skip), zero console
+  errors. Observed pre-existing, for the next walk: undo is live inside a paused
+  replay and can eat a replayed step. **Committed, not pushed** — Play, duration,
+  instant, and *tap skips ahead* are new strings; the print is in the session
+  review and the voice gate applies.
+- **Next action:** Michael reads the replay section of the build ledger and the
+  string print, then says push. Behind it: the iPad pass (share sheet, pinch,
+  VoiceOver), the model tool's summoning word, the reveal itself once its bench
+  settles the tempo, **the 16th workshop** (the accessibility answer; Lane 8
+  calls it the first post-extraction build) and the inner-came value that clears
+  all six resting colours (`Decisions-Fills-Aug06.md`).
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto
   the canvas skips the work-in-progress check and silently replaces unsaved work. The
   New and Open words both guard; the drop does not. Pre-existing, found in the Phase 2

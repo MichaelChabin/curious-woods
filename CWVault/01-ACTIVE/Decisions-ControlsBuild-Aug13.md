@@ -103,6 +103,48 @@ applied as the ledger specifies); Multiplication's share-fallback line
 reusing Geometry's ("Sharing not available on this browser — image
 downloaded instead").
 
+## The replay panel — built 13 Aug afternoon, per the amended §4 (ledger §15)
+
+The choice-panel replay Cancel built in the morning is superseded and
+removed. Replaying any construction now opens **one panel** on the shared
+info-panel component — it appears with the act, and it remembers where she
+drags it:
+
+- **close** at the top: the deliberate fork — she is working on the copy;
+  originals untouched. The silent fork (drawing during replay) stands.
+- The **step arrows** |← ← → →| — kept as arrows, the surface's only glyph
+  controls, flagged to the voice pass as the ledger left open.
+- **Play** with **duration · Ns** (slider 0–15s, half-second steps; 0 reads
+  *instant*). Every logged step plays — the duration divides across the
+  whole construction, so content is never compressed, only time. Play from
+  the end begins again; play at 0 jumps to the finished construction.
+- **Start over** — *a blank window*.
+- The quiet line **tap skips ahead**: a tap during play jumps to the end
+  and closes the panel — consumed entirely, it draws nothing.
+
+**Speed persistence:** the chosen duration saves with the construction
+(localStorage entry and exported `.json` alike, field `speed`); a
+construction saved with a speed reopens at that speed; only the child's own
+touch of the slider becomes the local default. Verified end to end: saved
+at 3.5s, default moved to 8s, reopened at 3.5s with the default untouched.
+Pre-speed saves load unchanged.
+
+**The library is content-only:** `CX_BUILTINS` is gone; the picker reads
+`models/constructions.json` at load. Pentagon and kin are now a log file
+plus a manifest line. Manifest entries may carry `speed`.
+
+**Verified:** manifest-driven picker; panel contents and placement;
+backward stepping from the end walks every step to the init floor; instant
+play; mid-play tap-skip (synthetic pointer mid-play — jumps to the end,
+panel closes); close-as-fork; zero console errors. Multiplication and
+`cw-panel.js` untouched this pass.
+
+**Observed in passing, pre-existing, not fixed:** tap-in-empty-space is
+undo everywhere, including *paused* replay — a stray tap while paused can
+undo a replayed step, and stepping forward afterward pushes later ops onto
+a log missing that step (replay skips missing dependencies gracefully).
+Worth a line in the next walk: should undo be live inside a replay?
+
 ## Owed to hands-on
 
 Safari could not be driven (Allow Remote Automation still off; the screen
