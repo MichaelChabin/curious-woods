@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-13 afternoon (the replay panel shipped — Michael approved the four strings; the controls pass is fully live; next hands-on is the iPad pass, next build waits on the map-reveal bench)
+updated: 2026-08-13 afternoon (controls pass fully live; version stamps on every deployed page with _headers revalidation, committed and pushed — a standing method now; next the iPad pass, and the map-reveal bench holds the next build)
 ---
 
 # The Board
@@ -444,6 +444,13 @@ never a verdict delivered to her.
 announces what you are about to learn; it asks questions it already knows the answer to;
 it congratulates; and it does one thing correctly and then stops, leaving nothing to mess
 with. The mathematics is a property of the material, not a lesson wrapped around it.
+
+**Every deployed page carries a version stamp.** A `CW_VERSION` constant (date +
+the short hash of the commit it was built on top of) logged to the console on load;
+shared scripts referenced with a `?v=` query; `_headers` makes pages revalidate.
+Bumping `CW_VERSION` rides every commit that touches a page — the same rule as
+MANIFEST. It exists because it does not help to test yesterday's work.
+Established 13 Aug 2026.
 
 **Child-facing copy prints in full at review.** Any commit that adds or changes a
 child-facing string prints the complete current list — every string, both labs — in

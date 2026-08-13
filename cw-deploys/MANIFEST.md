@@ -35,6 +35,14 @@ build, 13 Aug): Geometry's picker reads it at load, so library growth is a
 log file plus a line here, no code. An entry may carry `speed` (seconds) to
 open at a chosen playback duration.
 
+## Version stamps (standing method, 13 Aug 2026)
+
+Every page here carries a `CW_VERSION` constant (date + short commit hash) logged to
+the console on load — updated in the same commit as the change, like this file.
+Shared scripts are referenced with a version query (`plane.js?v=...`), bumped when
+the script changes. `_headers` makes HTML revalidate on every load. It does not help
+to test yesterday's work.
+
 ## Pages
 
 ### active/
