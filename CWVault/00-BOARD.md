@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-12 evening (CLAUDE.md rewritten; S3 spec drafted; controls walk begun — two panel species named, Save/Share and Color settled in principle, ledger in 01-ACTIVE)
+updated: 2026-08-13 morning (the controls walk is closed — fourteen ledger sections; build brief assembled at 01-ACTIVE/Brief-Controls-Build-Aug13.md; map-reveal bench queued)
 ---
 
 # The Board
@@ -194,9 +194,23 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   the map-reveal bench. Share examined (§12): the record/artifact split applies to
   sending too — *Send a picture / Send the construction* — **proposal awaiting
   Michael**, along with whether both ship in the controls build.
-- **Next action:** Michael's yes/no on Share's two lines (§12); the palette-name cue;
-  where New, Open and Save live. Then the walk closes into a build brief, and the
-  map-reveal bench queues behind it. Still owed behind it: **the 16th workshop** (the accessibility answer;
+- **Share resolved, 13 Aug morning (ledger §12):** the Share word is deleted —
+  **tapping Postcard shares it** (1200×800, retina-crisp at postcard display size,
+  share sheet with download fallback); Full sheet keeps the 300dpi print render; the
+  construction's own file rides the same sheet through Save construction. The Save
+  panel stays three words. Voice-pass flag: the summoning word "Save" now contains a
+  send.
+- **The walk is closed — 13 Aug morning.** Final decisions: titles are facts, acts
+  get words (§13 — the palette and model titles stop being controls); conditional
+  presence for the action row (§14 — empty canvas shows only Open; the
+  nothing-to-save toast dies). Ledger complete at fourteen sections.
+- **Build brief assembled:** `01-ACTIVE/Brief-Controls-Build-Aug13.md` — every walk
+  decision ordered for execution, both labs, with acceptance checks. Ready for a
+  Claude Code build session.
+- **Next action:** execute the build brief (Claude Code), and in parallel the
+  **map-reveal bench** — an `experiments/` page for the assembling-grid timing
+  (duration, acceleration, legible phase, skip; plus re-stepping at deep zoom).
+  Still owed behind both: the 16th workshop, and the inner-came value. Still owed behind it: **the 16th workshop** (the accessibility answer;
   Lane 8 calls it the first post-extraction build) and the inner-came value that
   clears all six resting colours (`Decisions-Fills-Aug06.md`).
 - **Known gap, decided worth a line here:** drop-loading a `.json` construction onto

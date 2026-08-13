@@ -1,7 +1,7 @@
 ---
 status: Current
 role: Session ledger — the controls walk begins; two panel species named; Save/Share and Color settled in principle
-date: 2026-08-12 (evening)
+date: 2026-08-12 (evening) — continued 2026-08-13 (morning)
 brief: Walk-Controls-Geometry-Aug12.md · Spec-Interface-Standard-v2-Aug09.md
 ---
 
@@ -47,7 +47,8 @@ One tap chooses; the note box follows as today. **Share rejoins the surface** �
 walk found a complete share path in the code with no word invoking it. Whether the
 summoning word stays "Save" or becomes something honest about containing Share is a
 walk item still open; the strings above are drafts and the full child-facing list
-prints at review when this is built.
+prints at review when this is built. *(Superseded 13 Aug: Share dissolves into the
+postcard — the panel is three words, and no Share word exists. See §12.)*
 
 ## 3. Color becomes a summonable tool panel
 
@@ -201,25 +202,70 @@ earned on camera rather than minted from nowhere. Whether that is lovely or madd
 on every decade crossing is a look-at-it question. The conservative version — the
 grid simply keeps its step — is coherent and shippable without it.
 
-## 12. Share, examined — proposal awaiting Michael
+## 12. Share dissolves into the postcard — resolved 13 Aug, morning
 
-Share was found unreachable (§2 put it back on the surface as a word in the Save
-panel). Walking it properly: today's share path sends *the image only* (system share
-sheet, download fallback). But the record/artifact distinction applies to sharing the
-same way it applies to saving — a construction file is just as sendable as a
-postcard, and the receiving child opens it as a copy (the existing rule: all
-constructions open as copies) and makes it her own. That is the lab's social loop,
-and it is exactly "sharing is child-initiated" with the child's data hers to carry.
+Share was found unreachable (§2 put it back as a word in the Save panel draft). A
+separate Share word — even a separate Share panel — was considered overnight.
+Michael's morning resolution deletes both: **tapping Postcard shares it.** The recipe
+lines had already assigned the meanings — postcard, *a picture to send*; full sheet,
+*a picture to keep* — so a Share word was a duplicate of Postcard's own line. The
+panel stays three words about three destinations:
 
-Draft, pending Michael and the voice pass:
+> **Save construction** — *a file you can open and keep working on*
+> **Postcard** — *a picture to send*
+> **Full sheet** — *a picture to keep*
 
-> **Send a picture** — *the postcard, finished*
-> **Send the construction** — *a file they can open and make their own*
+**Sizes settled with it.** Screens ignore the DPI tag and paint raw pixels — the
+300dpi render that prints beautifully displays enormous in an email. So: **Postcard
+renders at 1200×800** (postcard-at-screen-size, doubled for retina; a few hundred KB)
+and goes straight to the share sheet, download fallback where sharing is unavailable.
+**Full sheet keeps the 300dpi render (1800×1200)** — the one she prints and does what
+she likes with. Kept version for keeping, sent version for sending.
 
-Open: whether both ship in the controls build or picture-first; and whether these two
-lines live inside the one Save panel or Share opens its own small panel.
+**The construction's sendability needs no new word either.** Save construction
+already exports the `.json` file, and on iPad the OS sheet is where saving and
+sending both live. Build note: offer the construction file through `navigator.share`
+where available, download otherwise — the postcard's own pattern. The receiving child
+opens it as a copy (the standing rule) and makes it her own; the social loop closes
+with zero added surface.
 
-## 13. Still open in the walk
+**Flag for the voice pass:** the panel's summoning word is still *Save*, and the
+panel now contains a send. The recipe lines carry the meaning; whether the word
+should too is a voice question, not a structure question.
 
-The palette-name-as-control cue; where New, Open and Save live once the membrane sheds
-occasional acts. The brief (`Walk-Controls-Geometry-Aug12.md`) holds the full list.
+## 13. Titles are facts; acts get words — 13 Aug, morning
+
+The palette-name cue dissolved on inspection: it was never a cue problem, it was a
+redundancy. "Chartres" (tappable, opens the picker) and "Choose new colors" (opens
+the same picker) were two controls for one act, and only one of them says what
+tapping does. Resolved: **the title stops being a control.** The palette name is a
+fact — the name of what is loaded; "Choose new colors" is the one way in, already
+correctly named. The same rule covers the model panel's title ("Nested Squares"):
+**titles are facts; acts get words.** Nothing is secretly a button.
+
+## 14. Conditional presence — the Marauder's Map, applied literally
+
+Where do the occasional acts live? Not in a menu. **The words stay in their row, but
+only when tapping them would do something:**
+
+- **Empty canvas: only Open shows.** New is irrelevant — the canvas already is new —
+  and Save has nothing to save.
+- **Work exists: New, Open, Save all present.**
+
+Residence becomes conditional presence — which is what "no permanent residence"
+means once it stops being read as "hide them behind a menu." The "nothing to save
+yet" toast dies with this (it was a disabled state wearing a trench coat). A
+first-visit child on an empty canvas sees exactly one act available.
+
+**Propagation:** Multiplication inherits the same conditional row — it currently has
+no save word at all (the known gap), and §12's three-word panel comes with it.
+
+---
+
+## The walk is closed — 13 Aug, morning
+
+Every item from the brief is decided, confirmed-as-conforming, or explicitly
+benched. Fourteen sections above; the build brief assembles them for execution.
+Benched: the map reveal's timing and skip behaviour, and re-stepping-as-construction
+(§8, §11). Flagged to the voice pass: every draft string in this ledger, the
+summoning word "Save" (§12), and the state of the How-this-works copy generally.
