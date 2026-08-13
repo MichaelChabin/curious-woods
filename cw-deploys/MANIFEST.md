@@ -98,6 +98,12 @@ A page that moves between folders must have those paths checked.
   stripes and a monochrome toggle. With colour off and order the only channel, 6, 10 and
   14 render identical — so colour currently carries information rather than delight, and
   a second channel is required. Two candidates are in the bench. In progress.
+- **`map-reveal.html`** — bench: the map reveal. The grid of the visible window
+  constructed by compass and straightedge — full circles only, the lab's own
+  vocabulary — with knobs for duration, legible opening and acceleration, tap-skip,
+  and a deep-zoom mode where the tenths construct themselves. Settles the reveal's
+  tempo by looking (`CWVault/01-ACTIVE/Decisions-Controls-Aug12.md` §8, §11, §15:
+  content is never compressed, only time). Standalone; does not stand on the plane.
 - **`fog-map.html`** — sketch: every pane shaded by the rank of its largest prime
   factor, white at 2, saturating at the 256th, panning to a million. A *magnitude*
   viewing rather than a factor-reading one — it asks how big, not which. Standalone: it

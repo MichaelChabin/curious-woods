@@ -262,6 +262,54 @@ no save word at all (the known gap), and §12's three-word panel comes with it.
 
 ---
 
+## 15. The reveal is replay — one machinery (13 Aug, from the bench review)
+
+Michael's cascade, on seeing the bench, each step following from the last:
+
+- **Full circles, never arcs.** The lab has no arcs; tap-hold-drag makes a whole
+  circle, and that is the gesture the child has drawn a hundred times. The reveal's
+  ceremony uses full circles that fade — her own language, or she will not recognize
+  the construction as hers. (Bench updated accordingly, same day.)
+- **The reveal constructs at her current zoom.** The animation is constructing the
+  map *in her space*; no zoom control in the panel — she has already set it.
+- **The map is a construction like any other — so it enters the library.** It can be
+  saved among the sample constructions and returned to, with notes (the construction
+  format already carries them). The seed's open question is answered: the reveal and
+  the canonical construction share one operation log — the reveal *is* replay of a
+  generated log, sized to her window, rendered by the machinery the lab already has.
+- **Therefore she gets the full replay controls** — step back, step forward — not
+  just play. If she has questions about what she just watched, she backs it up and
+  takes it one step at a time.
+- **Therefore play joins the controls for *every* loaded construction**, with
+  playback speed (0–15s; 0 is instant) — and speed and zoom save with the
+  construction. Zoom is already a logged viewing op; speed is one field of metadata.
+- **Therefore the replay controls live in a panel** — close at the top; replay/play,
+  duration, step words, "tap skips ahead" (which also closes it). It appears with
+  the act, which has precedent: the step controls already appear uninvited during
+  replay, because they are part of the act the child started, not an interruption.
+- **Closing the panel means: she is now working on the new construction.** The
+  deliberate fork, beside the existing silent one (drawing during replay). All
+  constructions open as copies, so no guard is needed at the close.
+
+- **The log is complete — content is never compressed, only time.** Michael's catch,
+  same review: the bench let ceremony decay by sequence position, so the horizontal
+  lines "just appeared." Wrong layer. Every line — horizontal and vertical — carries
+  its circles in the log; acceleration compresses durations, never steps. At speed
+  the late circles flash past; stepped backward, every line's construction is there
+  to be seen. Fast playback and honest stepping are the same log at different
+  tempos. (Bench corrected same day; ceremony fade now rides each step's own
+  tempo, so clutter stays bounded at any speed.)
+
+**Supersession note:** this absorbs most of §6. "Keep watching" is simply
+not-closing the panel; "Continue from here" is closing it; **Start over** survives
+as a word inside the panel. §6's wording stands as the record of the intermediate
+step.
+
+**Open details, for the build or the voice pass:** whether the step controls become
+words or keep their arrows (the surface's only glyph controls); the child-facing
+name of the panel and of the duration control; whether her chosen speed persists
+globally (like sound permission) as well as per-construction.
+
 ## The walk is closed — 13 Aug, morning
 
 Every item from the brief is decided, confirmed-as-conforming, or explicitly

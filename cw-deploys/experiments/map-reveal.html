@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>map reveal — bench</title>
+<style>
+  html, body { margin:0; padding:0; height:100%; overflow:hidden; background:#f4f1e8; }
+  #stage { position:fixed; inset:0; touch-action:none; }
+  #panel {
+    position:fixed; left:16px; top:16px; z-index:10; width:230px;
+    background:rgba(244,241,232,0.94); border:0.5px solid #c8b89a; border-radius:6px;
+    padding:12px 14px; font:13px/1.5 Georgia, serif; color:#546A80;
+    user-select:none;
+  }
+  #panel h1 { font-size:14px; font-weight:normal; margin:0 0 2px; color:#546A80; }
+  .quiet { font-size:11px; font-style:italic; opacity:0.75; margin:0 0 10px; }
+  .row { margin:9px 0 0; }
+  .row label { display:block; font-size:12px; margin-bottom:2px; }
+  .row input[type=range] { width:100%; }
+  .val { opacity:0.8; }
+  .word { color:#3D3D3A; cursor:pointer; }
+  .word:hover { color:#2c5aa0; }
+  .sep { border-top:0.5px solid #d8cbb0; margin:12px 0 2px; }
+  #readout {
+    position:fixed; right:16px; bottom:14px; z-index:10;
+    font:12px Georgia, serif; color:#546A80; opacity:0.85; text-align:right;
+    user-select:none; pointer-events:none;
+  }
+  #benchnote {
+    position:fixed; left:16px; bottom:14px; z-index:10; max-width:340px;
+    font:11px/1.5 Georgia, serif; font-style:italic; color:#546A80; opacity:0.65;
+    user-select:none; pointer-events:none;
+  }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<div id="panel">
+  <h1>map reveal</h1>
+  <p class="quiet">the grid, constructed in front of you</p>
+  <div class="row"><span class="word" id="replay">replay</span></div>
+  <div class="row">
+    <label>duration &nbsp;<span class="val" id="v-dur">5.0s</span></label>
+    <input type="range" id="k-dur" min="2" max="10" step="0.5" value="5">
+  </div>
+  <div class="row">
+    <label>legible opening &nbsp;<span class="val" id="v-leg">6 steps</span></label>
+    <input type="range" id="k-leg" min="0" max="12" step="1" value="6">
+  </div>
+  <div class="row">
+    <label>acceleration &nbsp;<span class="val" id="v-acc">3</span></label>
+    <input type="range" id="k-acc" min="1" max="6" step="1" value="3">
+  </div>
+  <div class="row"><span class="word" id="skip-word">tap skips ahead</span></div>
+  <div class="sep"></div>
+  <div class="row">
+    <label>zoom &nbsp;<span class="val" id="v-zoom"></span></label>
+    <input type="range" id="k-zoom" min="22" max="260" step="1" value="56">
+  </div>
+  <div class="row"><span class="word" id="mode-word">finer grid constructs itself</span></div>
+</div>
+
+<div id="readout"></div>
+<div id="benchnote">
+  A bench for the map reveal (Decisions-Controls-Aug12, §8 and §11). It settles by
+  looking: the duration, the acceleration, how long the opening stays legible, whether
+  a tap should skip, and what deep zoom should do. It constructs the opening window;
+  it is not the lab.
+</div>
+
+<script>
+(function () {
+'use strict';
+
+// ---------- canvas ----------
+var canvas = document.getElementById('stage');
+var ctx = canvas.getContext('2d');
+var DPR = Math.min(window.devicePixelRatio || 1, 2);
+var W = 0, H = 0;
+function resize() {
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+}
+window.addEventListener('resize', function () { resize(); });
+resize();
+
+// ---------- view ----------
+var view = { scale: 56, cx: 0.6, cy: 0.4 };   // px per unit; center in world units
+function sx(x) { return W / 2 + (x - view.cx) * view.scale; }
+function sy(y) { return H / 2 - (y - view.cy) * view.scale; }
+
+// ---------- palette ----------
+var INK       = '#546A80';                    // axes, labels
+var GRID      = 'rgba(84,106,128,0.30)';      // settled grid lines
+var ARC       = '#2c5aa0';                    // compass ceremony
+var POINT     = '#BE622F';                    // minted points
+var SUBGRID   = 'rgba(84,106,128,0.16)';      // constructed tenths
+
+// ---------- knobs ----------
+var kDur = document.getElementById('k-dur');
+var kLeg = document.getElementById('k-leg');
+var kAcc = document.getElementById('k-acc');
+var kZoom = document.getElementById('k-zoom');
+var skipOn = true;
+var modeConstruct = true;
+
+function knobLabels() {
+  document.getElementById('v-dur').textContent = (+kDur.value).toFixed(1) + 's';
+  document.getElementById('v-leg').textContent = kLeg.value + ' steps';
+  document.getElementById('v-acc').textContent = kAcc.value;
+  document.getElementById('v-zoom').textContent = '';
+  document.getElementById('skip-word').textContent = skipOn ? 'tap skips ahead' : 'tap does nothing';
+  document.getElementById('mode-word').textContent = modeConstruct ? 'finer grid constructs itself' : 'grid keeps its step';
+}
+knobLabels();
+
+// ---------- the construction, as steps ----------
+// Each step: { t:type, dur assigned later, geometry..., ceremony:'full'|'short'|'none' }
+var steps = [], total = 0, t0 = 0, running = false, builtBounds = null;
+
+function visibleBounds(pad) {
+  var hw = W / (2 * view.scale), hh = H / (2 * view.scale);
+  return {
+    x0: Math.floor(view.cx - hw - pad), x1: Math.ceil(view.cx + hw + pad),
+    y0: Math.floor(view.cy - hh - pad), y1: Math.ceil(view.cy + hh + pad)
+  };
+}
+
+function buildSteps() {
+  var b = visibleBounds(1);
+  builtBounds = b;
+  var s = [];
+  var SQ3 = Math.sqrt(3);
+
+  // seeds
+  s.push({ t: 'pt', x: 0, y: 0 });
+  s.push({ t: 'pt', x: 1, y: 0 });
+  // the first line: through the two seeds (the x axis)
+  s.push({ t: 'line', axis: true, x1: b.x0, y1: 0, x2: b.x1, y2: 0, from: 0 });
+  // perpendicular ceremony at O — full circles only; the lab has no arcs.
+  // circle O r1 mints -1 (and, once the y axis exists, (0,1) too)
+  var TAU = 6.2832;
+  s.push({ t: 'arc', cx: 0, cy: 0, r: 1, a0: 3.14, a1: 3.14 + TAU });
+  s.push({ t: 'pt', x: -1, y: 0 });
+  s.push({ t: 'arc', cx: 1, cy: 0, r: 2, a0: 1.57, a1: 1.57 + TAU });
+  s.push({ t: 'arc', cx: -1, cy: 0, r: 2, a0: 1.57, a1: 1.57 + TAU });
+  s.push({ t: 'pt', x: 0, y: SQ3 });
+  s.push({ t: 'line', axis: true, x1: 0, y1: b.y0, x2: 0, y2: b.y1, from: 0, vertical: true });
+  // the circle O r1 again, briefly, to mint (0,1) where it crosses the new axis
+  s.push({ t: 'arc', cx: 0, cy: 0, r: 1, a0: 1.57, a1: 1.57 + TAU, faint: true });
+  s.push({ t: 'pt', x: 0, y: 1 });
+
+  // compass transfers outward along both axes, interleaved with the line each mints
+  var order = [];
+  var maxR = Math.max(b.x1, -b.x0, b.y1, -b.y0);
+  for (var k = 1; k <= maxR; k++) {
+    if (k + 1 <= b.x1) order.push({ axis: 'x', from: k, to: k + 1 });
+    if (-(k + 1) >= b.x0) order.push({ axis: 'x', from: -k, to: -(k + 1) });
+    if (k + 1 <= b.y1) order.push({ axis: 'y', from: k, to: k + 1 });
+    if (-(k + 1) >= b.y0) order.push({ axis: 'y', from: -k, to: -(k + 1) });
+  }
+  order.forEach(function (o) {
+    var dir = o.to > o.from ? 1 : -1;
+    // a full unit circle rolled onto each new integer — her own gesture, repeated
+    if (o.axis === 'x') {
+      s.push({ t: 'arc', cx: o.from, cy: 0, r: 1, a0: dir > 0 ? 0 : 3.14, a1: (dir > 0 ? 0 : 3.14) + TAU });
+      s.push({ t: 'pt', x: o.to, y: 0 });
+    } else {
+      s.push({ t: 'arc', cx: 0, cy: o.from, r: 1, a0: dir > 0 ? 1.57 : -1.57, a1: (dir > 0 ? 1.57 : -1.57) + TAU });
+      s.push({ t: 'pt', x: 0, y: o.to });
+    }
+  });
+
+  // grid lines outward from the axes; ceremony decays with sequence position
+  var lines = [];
+  for (k = 1; k <= Math.max(b.x1, -b.x0); k++) {
+    if (k <= b.x1) lines.push({ vertical: true, at: k });
+    if (-k >= b.x0) lines.push({ vertical: true, at: -k });
+  }
+  for (k = 1; k <= Math.max(b.y1, -b.y0); k++) {
+    if (k <= b.y1) lines.push({ vertical: false, at: k });
+    if (-k >= b.y0) lines.push({ vertical: false, at: -k });
+  }
+  // Every line carries its full ceremony in the log — content is never compressed,
+  // only time. At speed the circles flash past; stepped through, they are all there.
+  lines.forEach(function (L) {
+    var r = 1.5;
+    if (L.vertical) {
+      s.push({ t: 'arc', cx: L.at - 1, cy: 0, r: r, a0: 0, a1: TAU });
+      s.push({ t: 'arc', cx: L.at + 1, cy: 0, r: r, a0: 3.14, a1: 3.14 + TAU });
+      s.push({ t: 'line', x1: L.at, y1: b.y0, x2: L.at, y2: b.y1, from: 0, vertical: true });
+    } else {
+      s.push({ t: 'arc', cx: 0, cy: L.at - 1, r: r, a0: 1.57, a1: 1.57 + TAU });
+      s.push({ t: 'arc', cx: 0, cy: L.at + 1, r: r, a0: -1.57, a1: -1.57 + TAU });
+      s.push({ t: 'line', x1: b.x0, y1: L.at, x2: b.x1, y2: L.at, from: 0 });
+    }
+  });
+
+  // labels arrive last, quickly, along both axes
+  for (k = b.x0; k <= b.x1; k++) if (k !== 0) s.push({ t: 'lab', x: k, y: 0, txt: '' + k });
+  for (k = b.y0; k <= b.y1; k++) if (k !== 0) s.push({ t: 'lab', x: 0, y: k, txt: '' + k });
+
+  // ---------- timing ----------
+  var T = +kDur.value, L0 = +kLeg.value, c = +kAcc.value;
+  var wBase = { line: 1.0, arc: 0.75, pt: 0.3, lab: 0.12 };
+  var n = s.length;
+  var weights = s.map(function (st, i) {
+    var w = wBase[st.t] || 0.5;
+    if (i < L0) return w;                          // legible opening: full weight
+    var j = (i - L0) / Math.max(1, n - L0);        // 0..1 through the accelerando
+    return w * Math.exp(-c * j);
+  });
+  var sum = weights.reduce(function (a, b2) { return a + b2; }, 0);
+  var t = 0;
+  s.forEach(function (st, i) {
+    st.dur = (weights[i] / sum) * T;
+    st.t0 = t; t += st.dur; st.t1 = t;
+  });
+  steps = s; total = T;
+}
+
+// ---------- the finer grid (deep zoom) ----------
+var sub = { active: false, steps: [], t0: 0, total: 1.4, done: false };
+function buildSub() {
+  var b = visibleBounds(0);
+  var s = [];
+  var x, y, k;
+  for (x = b.x0; x < b.x1; x++)
+    for (k = 1; k < 10; k++) s.push({ vertical: true, at: x + k / 10, y0: b.y0, y1: b.y1 });
+  for (y = b.y0; y < b.y1; y++)
+    for (k = 1; k < 10; k++) s.push({ vertical: false, at: y + k / 10, x0: b.x0, x1: b.x1 });
+  // strong accelerando, no ceremony — fluency already earned
+  var n = s.length, c = 5, t = 0;
+  var weights = s.map(function (_, i) { return Math.exp(-c * i / n); });
+  var sum = weights.reduce(function (a, b2) { return a + b2; }, 0);
+  s.forEach(function (st, i) { st.dur = weights[i] / sum * sub.total; st.t0 = t; t += st.dur; st.t1 = t; });
+  sub.steps = s; sub.done = false; sub.t0 = performance.now() / 1000;
+}
+
+// ---------- drawing ----------
+function drawPartialLine(st, p) {
+  var x1 = st.x1, y1 = st.y1, x2 = st.x2, y2 = st.y2;
+  // grow outward from the axis (from=0) in both directions
+  var mx, my;
+  if (st.vertical) { mx = x1; my = st.from; }
+  else             { mx = st.from; my = y1; }
+  ctx.beginPath();
+  ctx.moveTo(sx(mx + (x1 - mx) * p), sy(my + (y1 - my) * p));
+  ctx.lineTo(sx(mx), sy(my));
+  ctx.lineTo(sx(mx + (x2 - mx) * p), sy(my + (y2 - my) * p));
+  ctx.stroke();
+}
+
+function render(now) {
+  var t = running ? (now / 1000 - t0) : total + 10;
+  if (t > total + 0.02 && running) running = false;
+
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+
+  var i, st, p;
+
+  // settled + in-flight steps
+  for (i = 0; i < steps.length; i++) {
+    st = steps[i];
+    if (t < st.t0) break;
+    p = st.dur > 0 ? Math.min(1, (t - st.t0) / st.dur) : 1;
+
+    if (st.t === 'line') {
+      ctx.strokeStyle = st.axis ? INK : GRID;
+      ctx.lineWidth = st.axis ? 1.4 : 0.7;
+      drawPartialLine(st, p);
+    }
+    else if (st.t === 'arc') {
+      // ceremony: sweeps in, then fades away entirely once its work is done
+      // fade rides the step's own tempo: slow ceremony lingers, fast ceremony
+      // vanishes as quickly as it came — clutter stays bounded at any speed
+      var fadeT = Math.max(0.22, Math.min(1.2, st.dur * 5));
+      var age = t - st.t1;
+      var alpha = age < 0 ? 0.8 : Math.max(0, 0.8 * (1 - age / fadeT));
+      if (st.faint) alpha *= 0.6;
+      if (alpha > 0.01) {
+        ctx.strokeStyle = ARC; ctx.globalAlpha = alpha; ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        var a1 = st.a0 + (st.a1 - st.a0) * p;
+        ctx.arc(sx(st.cx), sy(st.cy), st.r * view.scale, -st.a0, -a1, st.a1 > st.a0);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+    else if (st.t === 'pt') {
+      var rr = 2 + (p < 0.4 ? (0.4 - p) * 8 : 0);   // birth pop
+      ctx.fillStyle = POINT;
+      ctx.beginPath(); ctx.arc(sx(st.x), sy(st.y), rr, 0, 6.284); ctx.fill();
+    }
+    else if (st.t === 'lab') {
+      ctx.globalAlpha = p;
+      ctx.fillStyle = INK; ctx.font = '11px Georgia, serif';
+      ctx.textAlign = 'center';
+      if (st.y === 0 && st.x !== 0) ctx.fillText(st.txt, sx(st.x), sy(0) + 16);
+      else { ctx.textAlign = 'right'; ctx.fillText(st.txt, sx(0) - 7, sy(st.y) + 4); }
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // the finer grid
+  if (sub.active) {
+    var ts = performance.now() / 1000 - sub.t0;
+    ctx.strokeStyle = SUBGRID; ctx.lineWidth = 0.5;
+    for (i = 0; i < sub.steps.length; i++) {
+      st = sub.steps[i];
+      if (ts < st.t0) break;
+      p = st.dur > 0 ? Math.min(1, (ts - st.t0) / st.dur) : 1;
+      ctx.beginPath();
+      if (st.vertical) {
+        var ym = (st.y0 + st.y1) / 2, hh = (st.y1 - st.y0) / 2 * p;
+        ctx.moveTo(sx(st.at), sy(ym - hh)); ctx.lineTo(sx(st.at), sy(ym + hh));
+      } else {
+        var xm = (st.x0 + st.x1) / 2, hw = (st.x1 - st.x0) / 2 * p;
+        ctx.moveTo(sx(xm - hw), sy(st.at)); ctx.lineTo(sx(xm + hw), sy(st.at));
+      }
+      ctx.stroke();
+    }
+    if (ts >= sub.total) sub.done = true;
+  }
+
+  // readout
+  var ro = document.getElementById('readout');
+  if (running) {
+    var doneCount = 0;
+    for (i = 0; i < steps.length; i++) if (t >= steps[i].t1) doneCount++;
+    ro.textContent = 'constructing · step ' + doneCount + ' / ' + steps.length +
+      ' · ' + Math.max(0, t).toFixed(1) + 's of ' + total.toFixed(1) + 's';
+  } else {
+    ro.textContent = 'constructed · ' + steps.length + ' steps' +
+      (sub.active ? ' · tenths: ' + (sub.done ? 'constructed' : 'constructing') : '');
+  }
+
+  requestAnimationFrame(render);
+}
+
+// ---------- control wiring ----------
+function replay() {
+  sub.active = false; sub.done = false;
+  buildSteps();
+  t0 = performance.now() / 1000;
+  running = true;
+}
+document.getElementById('replay').addEventListener('click', replay);
+[kDur, kLeg, kAcc].forEach(function (k) {
+  k.addEventListener('input', function () { knobLabels(); });
+  k.addEventListener('change', function () { replay(); });
+});
+document.getElementById('skip-word').addEventListener('click', function () {
+  skipOn = !skipOn; knobLabels();
+});
+document.getElementById('mode-word').addEventListener('click', function () {
+  modeConstruct = !modeConstruct; knobLabels();
+  if (!modeConstruct) sub.active = false;
+  checkSub();
+});
+
+function checkSub() {
+  if (modeConstruct && view.scale > 150 && !sub.active) { buildSub(); sub.active = true; }
+  if (view.scale <= 120 && sub.active) sub.active = false;
+}
+kZoom.addEventListener('input', function () {
+  view.scale = +kZoom.value; checkSub();
+});
+canvas.addEventListener('wheel', function (e) {
+  e.preventDefault();
+  var f = Math.exp(-e.deltaY * 0.0015);
+  view.scale = Math.max(22, Math.min(260, view.scale * f));
+  kZoom.value = view.scale; checkSub();
+}, { passive: false });
+
+canvas.addEventListener('pointerdown', function () {
+  if (skipOn && running) { t0 -= total; }          // jump the clock to the end
+  if (skipOn && sub.active && !sub.done) sub.t0 -= sub.total;
+});
+
+// ---------- go ----------
+replay();
+requestAnimationFrame(render);
+
+})();
+</script>
+</body>
+</html>

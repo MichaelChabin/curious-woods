@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-13 (controls build executed in both labs per the brief; committed, not pushed — the string print gates the push; three contradictions reported in the build ledger)
+updated: 2026-08-13 midday (map-reveal bench built and reviewed; ledger §15 — the reveal is replay, one machinery; brief §4 amended to the replay panel; the build and the bench push together on Michael's word)
 ---
 
 # The Board
@@ -230,11 +230,23 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   **Committed, not pushed** — many new child-facing strings; the full string print
   is in the session review and the voice gate applies. The iPad pass owns the real
   share sheet, VoiceOver and pinch.
-- **Next action:** Michael reads the build ledger and the string print, then says
-  push — the build ships on his word. Behind it: the **map-reveal bench** (an
-  `experiments/` page for the assembling-grid timing — duration, acceleration,
-  legible phase, skip; plus re-stepping at deep zoom), the iPad pass (share sheet,
-  pinch, VoiceOver), the model tool's summoning word, **the 16th workshop** (the
+- **Map-reveal bench built, 13 Aug morning:** `experiments/map-reveal.html`, listed
+  in the experiments index and MANIFEST — the grid constructed by compass and
+  straightedge with knobs for duration, legible opening, acceleration, tap-skip, and
+  a deep-zoom mode where the tenths construct themselves. Michael's review produced
+  **ledger §15 — the reveal is replay, one machinery**: full circles never arcs; the
+  reveal constructs at her zoom; the map is a construction and enters the library;
+  therefore full replay controls for every loaded construction — play with a 0–15s
+  duration (0 instant), saved per construction, last-used as local default; the
+  controls live in a panel that appears with the act; **closing the panel is the
+  deliberate fork**; content is never compressed, only time. Supersedes most of §6
+  (Start over survives as a word inside the panel). **Brief §4 amended
+  accordingly**, and the built-ins list moves to a JSON manifest under `models/` —
+  library growth becomes a log file plus a manifest line.
+- **Next action:** execute the amended brief §4 (the replay panel and the
+  constructions manifest — the rest of the build shipped 13 Aug). Behind it: the
+  iPad pass (share sheet, pinch, VoiceOver), the model tool's summoning word, the
+  reveal itself once its bench settles the tempo, **the 16th workshop** (the
   accessibility answer; Lane 8 calls it the first post-extraction build) and the
   inner-came value that clears all six resting colours
   (`Decisions-Fills-Aug06.md`).
