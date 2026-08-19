@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-13 afternoon (controls pass fully live; version stamps on every deployed page with _headers revalidation, committed and pushed — a standing method now; next the iPad pass, and the map-reveal bench holds the next build)
+updated: 2026-08-13 evening (Multiplication walk opened: Clear guarded, the mode bar dissolved into left-column mode panels, the Explore rescope sketched — Restack and Make Square bring division and roots as acts; walk paused, Michael traveling)
 ---
 
 # The Board
@@ -257,23 +257,33 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   replay and can eat a replayed step. **Pushed and live 13 Aug** — Michael
   approved the four new strings (Play, duration, instant, *tap skips ahead*);
   the whole controls pass is now live.
-- **Next action:** the iPad pass — the share sheet (postcard and construction
-  file), pinch, VoiceOver, and the replay panel under real fingers. Behind it:
-  the model tool's summoning word, the reveal itself once its bench settles the
-  tempo, **the 16th workshop** (the accessibility answer; Lane 8 calls it the
-  first post-extraction build) and the inner-came value that clears all six
-  resting colours (`Decisions-Fills-Aug06.md`).
-- **Known gap, decided worth a line here:** drop-loading a `.json` construction onto
-  the canvas skips the work-in-progress check and silently replaces unsaved work. The
-  New and Open words both guard; the drop does not. Pre-existing, found in the Phase 2
-  sweep, not yet fixed anywhere.
-- **Rotational tiling — a deliberate amendment on the bench.** The Phase 4 port ships
-  panes identical everywhere (the old mirror transform is dead), and Michael's review
-  proposes spending that: below the diagonal pieces stack bottom-up, above it rotated
-  90°, squares rotated 45° along the diagonal — rotation, not mirroring; every pane
-  keeps its pieces and order, turned like real panels in a frame. Recorded as an
-  amendment to the design note's §3, **bench first** (`prime-glass` holds both
-  schemes; the 45° squares are the untested part). `Review-GlassMult-Aug09.md`, Lane 4.
+- **Multiplication walk brief written, 13 Aug evening:**
+  `01-ACTIVE/Walk-Controls-Multiplication-Aug13.md` — the shipped surface read
+  control by control; biggest items: Clear has no guard, and the lab has **no
+  operation log**, so the record half of Save is missing (a log would bring the
+  replay panel for free). The Geometry ledger's species and rules are its brief.
+- **Multiplication walk opened, 13 Aug evening**
+  (`01-ACTIVE/Decisions-Walk-Multiplication-Aug13.md`). Clear gains the guard —
+  **Start fresh? / Keep working**, Save's Postcard as the escape; the phrasing
+  needs no noun, so "what is a build called" is never asked. The record question
+  stays open **deliberately** — no log, no escape clause either; the lab is
+  mid-metamorphosis (workshop → pattern-space) and the question returns when its
+  identity settles. **The mode bar is dissolved** — the four words were
+  arbitrary (Michael, on record); modes move to the left column as summonable,
+  closable panels, Geometry's species unchanged. Multiply demotes to a tool
+  inside a rescoped **Explore**: five tools sketched (Multiply, Choose,
+  Rectangles only, Restack, Make Square) — division and square roots as physical
+  acts, fractions sliced by the divisor, decimals by ten, the two notations side
+  by side, and the readout never speaking more precision than the act showed.
+  Startup correction: axis panes are panes — honest gaps, no pre-instantiation.
+  New child-facing strings (the guard pair); voice gate applies.
+- **Next action:** resume the walk at the ledger's open questions (overlap vs
+  union vs difference in Rectangles only; Restack's remainder picture; Make
+  Square's tenths-vs-hundredths cut), then the brief's unwalked sections (§3
+  chips, §5 viewing strip, §6 readout, §7 odds and ends), then Build and
+  Properties as mode panels. Also owed: Claude Code commits the version stamps
+  (prompt already with Michael); Michael's iPad pass; the map-reveal bench when
+  Michael has knob-time. Standing owed: 16th workshop, inner-came value.
 
 ### 2. Perception Lab — the child's own instrument
 Colour, pitch, and rhythm discrimination. One measurement harness, three axes.
