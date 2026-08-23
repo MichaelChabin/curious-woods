@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-13 evening (Multiplication walk opened: Clear guarded, the mode bar dissolved into left-column mode panels, the Explore rescope sketched — Restack and Make Square bring division and roots as acts; walk paused, Michael traveling)
+updated: 2026-08-23 (Map tools migrated out of Claude Project uploads into `CWVault/claude/` — nine documents, in neither git nor the vault until today; the catalog made authoritative and T8/T9 appended; 00-DECISIONS.md recorded as the second vault-root file. Multiplication walk still paused where the 13 Aug entry left it)
 ---
 
 # The Board
@@ -19,6 +19,16 @@ to protect.
    the same commit. Three benches sat unregistered for a day because this rule did not
    exist.
 5. Parked is not lost. That is the whole point.
+
+**The vault root holds two files, and they do different jobs.** This board says what is
+**moving**; it goes stale by design and is rewritten every session. `00-DECISIONS.md`
+(new, 22 Aug 2026) says what was **settled, and why** — append-only, never edited, never
+reordered, one line per question. It cannot conflict with anything, because it does not
+describe how the world is. It carries two things this board deliberately does not: a
+standing table of **which document to believe** when two disagree, and a **Corrections**
+section that keeps a wrong claim visible beside what replaced it, on the ground that the
+wrong version is often the memorable one. When you have forgotten *why* something is the
+way it is, look there before here.
 
 > **Correction, 5 Aug evening.** The morning version of this board had "write the
 > Glass Multiplication v2.2 handoff" as its top action. That was wrong and is struck.
@@ -313,6 +323,13 @@ deliberately **not** archived — it still holds unmigrated live threads.
   before this board entry was written. The owed item was stale, not undone; struck 7 Aug.
 - ~~`CLAUDE.md`'s file-layout and "current design" sections still describe March.~~ **Done 12 Aug (evening):** Architecture, Current Design and File Layout rewritten; design description replaced with pointers to this board and the ledgers, dated and expected to stale honestly. Key Specs now leads with the Interface Standard.
 - `Session-Protocol.md` needs an honest rewrite once the new rhythm has run a few sessions.
+- **A third batch of untracked documents surfaced and was migrated, 23 Aug** — nine
+  map-tool documents, into `CWVault/claude/`; the thread now has a board entry under
+  Parked — warm. The pattern is not the vault's structure: it is that work done inside a
+  Claude Project has no path onto disk unless someone carries it. **`MANIFEST.md` was
+  deliberately not widened to cover it** — its scope is the publish directory, and a
+  second file describing what exists is the failure this session was fixing
+  (`00-DECISIONS.md`, 23 Aug). The board carries the registration alone.
 - Obsidian views over `03-SEEDS/` — the facets are inert until something queries them.
 - **`_msc/_mscVault/` is a second vault this board cannot see.** At minimum the Claude
   Design folder is load-bearing for CW. Decide whether it moves, is linked, or is indexed.
@@ -323,6 +340,89 @@ deliberately **not** archived — it still holds unmigrated live threads.
 ---
 
 ## Parked — warm
+
+**Map tools — the number map and what can be done to it (19–22 Aug).** A thread this
+board has never carried a line for, because it happened entirely inside a Claude Project
+and produced nine documents that were in **neither git nor the vault**. Migrated
+23 Aug into `CWVault/claude/`. Third instance of the same failure — five vault documents
+on 2 Aug, the whole vault restructure on 5 Aug, these nine now.
+
+The content: a **catalogue of tools that can be applied to the number map**, each with
+the uses it unlocks. Nine entries, **T1–T9**, none of them built — light up every cell
+that…, wrap the numbers into n columns, hold a rectangle and drag its corner, peel
+squares off a rectangle, colour the plane by a property, the orchard, add two trees
+(mediant/Farey), change what a cell is worth, hold the perimeter. The organizing spine is
+the roadmap's **Twelve Acts**: a tool belongs on the list only if it is something you
+*do* to the plane, which is what keeps it twelve acts rather than forty topics.
+
+- **Authority:** `claude/Map-Tool-Catalog.md` — **single source for map tools**, and the
+  only one of the nine that is. `claude/Voice-Samples-Map.md` — the register.
+  `claude/Modular-Arithmetic-for-Kids.md` — modular arithmetic sorted by how soon a child
+  can have it; not superseded, and it arrives at T2 from the other side, arguing *wrap the
+  numbers into n columns* pays for three of the best patterns on its page and should be
+  built first. The two long-form documents the catalog links to and which are believed on
+  detail,
+  `claude/Fog-Map.md` (why the plaid is separable, and where π falls out of counting) and
+  `claude/Irrationality-on-the-Map.md` (incommensurability as the heights no ray reaches).
+  Four more carry a `superseded:` line pointing at the catalog and are kept for history
+  only: `claude/Rectangle-Tool-worknote.md`, `claude/Map-Tools.md`,
+  `claude/Map-Tool-Roadmap.md`, `claude/Map-Regroup-Aug19.md`. That ordering is the
+  standing table in `00-DECISIONS.md`, not a local convention.
+- **Three gates, and the third is the real one.** A tool is Draft until: the gesture is
+  one sentence (if it takes a paragraph, it is two tools); every claim is **computed, not
+  remembered**; and the kid-voice paragraph exists. **Nothing goes to Claude Code until
+  Michael has read that paragraph and it landed** — gate 3 is also the comprehension
+  gate. A paragraph that will not come out clean costs an hour; a built tool that cannot
+  be explained costs a month.
+- **Gate 2 has already caught two things**, both now standing in `00-DECISIONS.md`'s
+  Corrections section rather than being quietly fixed: a 10×10 map holds **55 rectangles
+  but only 42 distinct products** (the gap is the collisions, and is itself worth
+  showing); and the idea that a constant-area drag would *settle* into √N by perimeter
+  friction is **true but useless** — at N = 53 the perimeter 0.28 away from the root sits
+  0.077% above its minimum, far too shallow to feel. **Drive the detent from the
+  difference between the sides, |x − N/x|**, which is 0.571 at x = 7 and falls cleanly to
+  zero. That is an interface instruction, not a footnote.
+- **T8 and T9 appended 23 Aug** from `01-ACTIVE/Map-Tool-Catalog-Additions-Aug22.md`
+  (now `status: merged`), verbatim with their computed tables and voice paragraphs. T8 —
+  *change what a cell is worth* — carries the thread's strongest single observation:
+  a 10-wide map at tenths and a 100-wide map at integers are **the same grid, same pixels,
+  same picture**, and one holds 100% of its numbers while the other holds 29%. Nothing
+  changed but what a cell was declared to be worth. T9 — *hold the perimeter* — is T3's
+  dual: fix the fence and area peaks at the square, fix the area and perimeter bottoms out
+  there. **Both are still Draft; neither voice paragraph has had Michael's read.**
+- **Held back on Michael's instruction:** *sum the rectangle's contents* (origin-anchored
+  blocks total the sum of cubes, always a perfect square). May be a use under T1 rather
+  than a tool of its own. It stays in the 01-ACTIVE additions file, unmerged.
+- **Michael's decisions, 22 Aug** (all on record in `00-DECISIONS.md`): the walk restarts
+  and **its first step is handles-versus-menu**, because everything else in the interface
+  inherits from that choice; **the walk designs the container, not the membership** —
+  stress-test the architecture against roughly thirty tools while seven are catalogued,
+  since what is expensive to change is how many collections exist and where explanation
+  lives, and which tools sit where is cheap; the seventeen-tool list is available as the
+  stress test; deploy when a child could do something she could not do the day before,
+  **not once per session**; and **sound is a separate project and does not belong on this
+  thread**.
+- **Where this lands:** Glass Multiplication's rescoped **Explore** (Moving #1, the walk
+  opened 13 Aug) is the surface these tools arrive on — Restack and Make Square are
+  already division and square roots as physical acts, which is T3 and T9 under other
+  names. The two threads should be read together before either is built.
+- **Open, and deliberately so** (from `00-DECISIONS.md`): a **base-six map** — the
+  arithmetic is easy, the symbols are the problem, since 101 does not look like five; and
+  whether the real-number plane, polar and spherical maps arrive at all, held until each
+  can be shown to delight rather than merely generalise.
+- **The documents arrived with their markdown stripped, and the repair is a second
+  commit.** `pbpaste` captured the *rendered* preview, so the syntax was gone before the
+  files existed: frontmatter flattened onto one line, headings and lists reduced to plain
+  paragraphs. The frontmatter was rebuilt on migration by splitting at the known keys —
+  **every value is original, the structure is inferred**, and that is on record in
+  `00-DECISIONS.md`'s Corrections. Restoring headings and lists is the same inference at
+  larger scale: **it is reconstruction, not repair**, done conservatively, with anything
+  ambiguous flagged rather than guessed. The migration commit stays mechanical; the
+  restoration follows it.
+- **Next action:** Michael reads T8's and T9's voice paragraphs — gate 3, and the gate
+  that governs whether anything reaches Claude Code. Then handles-versus-menu, as the
+  walk's declared first step. *Candidate for Moving; it reads like a moving thread and is
+  parked only because Moving already holds three, and which one drops is Michael's call.*
 
 **Artifact salvage.** ~23 downloaded artifacts, 8–10 months old, inventoried 5 Aug.
 Ideas worth keeping, interfaces uniformly not. See `03-SEEDS/artifact-salvage.md`.
