@@ -91,6 +91,22 @@ to test yesterday's work.
   `CWVault/01-ACTIVE/Review-GlassMult-Aug09.md`.
 
 ### experiments/
+- **`six-against-five.html`** — bench: does the ratio material survive being delivered as
+  *counting* rather than as waves? Two click tracks at a fixed whole-number ratio, one speed
+  knob from 1.5 to 330 per second. Below ~8 it is a countable rhythm, above ~20 a pitch, and
+  the two numbers are the same the whole way; the track is ticked at both boundaries because
+  the flutter between them is the finding. **Both voices lay down one identical click** and
+  differ only in rate, so the tone at the top was never introduced — it assembles itself out
+  of repetition. Brightness is a lowpass (kazoo → reed); seven ratios, 2:1 through 45:32.
+  Audio is a looping buffer rebuilt one full pattern long on every change, so nothing is
+  resampled and no scheduler runs. **Carries its own reading below the bench** — the first
+  extended sample of the child voice for this material, which is why this is one page and
+  not two. Two short pieces sit directly under the instrument (*what note is that*, *what
+  the picture is showing*) answering what the bench provokes at once; the long reading
+  follows. Standalone; does not stand on the plane. Design:
+  `CWVault/01-ACTIVE/Sound-Counting-Bench-Aug25.md`, `…/Sound-Rhythm-Roll-Aug21.md`,
+  `…/Sound-Series-Aug08.md`.
+  Open: no tapping, and no way to hear a true ratio against equal temperament.
 - **`number-theory-v1.html`** — multiplication and division as rectangles on a
   pannable number plane. **The behavioural reference for the extracted plane** — y-up,
   `viewW/viewH` caching, and a single `labelStep()` driving both labels and grid lines,

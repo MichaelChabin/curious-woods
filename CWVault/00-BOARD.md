@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-23 (Map tools migrated out of Claude Project uploads into `CWVault/claude/` — nine documents, in neither git nor the vault until today; the catalog made authoritative and T8/T9 appended; 00-DECISIONS.md recorded as the second vault-root file. Multiplication walk still paused where the 13 Aug entry left it)
+updated: 2026-08-25 (Six Against Five deployed to `experiments/` — the counting bench for the Sound Series, listed in the experiments index and registered in `MANIFEST.md`, with both pages' version stamps carrying the hash. Waves deferred to timbre; the tapping version is the next thing the Series wants)
 ---
 
 # The Board
@@ -468,11 +468,42 @@ fact to be told. Same shape as the walking stick.
 other — different kinds, one wanting a log scale. It is the hardest test the shared
 plane has been given.
 
+*Counting, not waves (25 Aug).* Michael's objection, and it was the right one: before a
+child can meet ratios through waves she has to understand frequency as a wave and read a
+sine curve as a picture of pressure — a long prerequisite chain for an idea that does not
+need it. **Waves are deferred to timbre**, where they are genuinely required and where she
+will want them by the time she arrives. Two clicks at 6 against 5 is a polyrhythm,
+countable, no waves involved; one speed knob then carries the same two numbers across the
+boundary where rhythm becomes pitch. This collapses the tapping bench and the pitch axis
+into **one instrument at two speeds**, and makes the band between roughly 8 and 20 per
+second — neither rhythm nor pitch — a place to sit rather than pass through.
+
 - **Authority:** `01-ACTIVE/Sound-Series-Aug08.md` (the full session, decisions and
-  inventory) · `03-SEEDS/story-with-instruments.md` (the new story form).
-- **Next action:** decide what opens the Series. The beat-tuner is argued for — the
-  only instrument where she measures with her ears and gets a number back. Then
-  Michael's voice pass on the two live pages' copy, which has not had one.
+  inventory) · `01-ACTIVE/Sound-Rhythm-Roll-Aug21.md` (the roll, the tapping
+  bench and colour) · `01-ACTIVE/Sound-Counting-Bench-Aug25.md` (ratios by
+  counting; the bench as built) · `03-SEEDS/story-with-instruments.md` (the new
+  story form).
+- **Bench built and deployed, 25 Aug:** `experiments/six-against-five.html`, listed in
+  `experiments/index.html` and registered in `MANIFEST.md`. Speed 1.5–330 per second,
+  log, with the track ticked at both boundaries. **Both voices lay down one identical
+  click** and differ only in rate, so the tone at the top was never introduced — it
+  assembles itself out of repetition. Brightness is a lowpass, kazoo → reed; seven
+  ratios, 2:1 through 45:32. Audio is a looping buffer rebuilt one full pattern long on
+  every change: nothing resampled, no scheduler. Standalone — it does not stand on the
+  plane. **Carries its own reading below the instrument**, the first extended sample of
+  the child voice for this material, which is why it is one page and not two.
+- **Open at the bench:** no tapping — and since calibration is the front door (21 Aug),
+  the tapping version probably matters more than the ratio picker does; no way to hear a
+  true ratio against the keyboard's approximation of it; a nearest-key readout and
+  snap-to-key toggle, left open deliberately because the speed knob is continuous and the
+  keyboard is not; whether the strength-by-simplicity gradient on the prime colours earns
+  its keep; whether home should be uncoloured rather than sharing blue with the octave.
+- **Next action:** Michael plays the bench, and in particular sits in the band between
+  roughly 8 and 20 per second, which is the whole finding. Then the **tapping** version,
+  which the 25 Aug session argues matters more than the ratio picker does. What opens the
+  Series is still undecided; the beat-tuner remains argued for — the only instrument
+  where she measures with her ears and gets a number back. Michael's voice pass on the
+  two live pages' copy, and on the bench's reading, still has not happened.
 - **Open, cheap, unresolved:** does iOS Safari support Web MIDI? A one-page
   device-listing probe settles whether the iPad is a music device.
 - **Open:** `sound` is not a value in the `lab` facet. Only Michael approves one;
