@@ -26,7 +26,7 @@
       font-family: Georgia, serif;
       min-height: 100vh;
       color: var(--ink);
-      padding: 60px 24px 80px;
+      padding: 46px 24px 70px;
       -webkit-text-size-adjust: 100%;
     }
 
@@ -34,11 +34,11 @@
 
     h1 {
       font-size: 22px; font-weight: normal; letter-spacing: 0.04em;
-      color: var(--payne); margin-bottom: 8px; text-align: center;
+      color: var(--payne); margin-bottom: 6px; text-align: center;
     }
     .subtitle {
       font-size: 13px; color: var(--meta); text-align: center;
-      margin-bottom: 44px; letter-spacing: 0.02em;
+      margin-bottom: 28px; letter-spacing: 0.02em;
     }
 
     a { color: var(--payne); text-decoration: none; transition: color 80ms ease; }
@@ -52,117 +52,114 @@
 
     /* ---------- the bench ---------- */
 
-    .bench { display: flex; flex-direction: column; gap: 24px; }
+    .bench { display: flex; flex-direction: column; gap: 16px; }
 
     .strip {
       background: var(--panel); border: 0.5px solid var(--rule); border-radius: 3px;
-      box-shadow: 0 1px 3px var(--shadow); padding: 16px 18px 12px;
+      box-shadow: 0 1px 3px var(--shadow); padding: 12px 14px 9px;
     }
-    .striphead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+    .striphead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
     .striphead .n {
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
       font-size: 11px; color: var(--meta); font-variant-numeric: tabular-nums; text-align: right;
     }
-    canvas { display: block; width: 100%; height: 132px; touch-action: none; }
+    #c { display: block; width: 100%; height: 104px; touch-action: none; }
+    #kb { display: block; width: 100%; height: 66px; touch-action: none; cursor: pointer; }
 
     .readout { display: flex; border-top: 0.5px solid var(--rule); border-bottom: 0.5px solid var(--rule); }
-    .voice { flex: 1; padding: 16px 4px 15px; display: flex; flex-direction: column; gap: 3px; }
-    .voice + .voice { border-left: 0.5px solid var(--rule); padding-left: 20px; }
+    .voice { flex: 1; padding: 11px 4px 10px; display: flex; flex-direction: column; gap: 2px; }
+    .voice + .voice { border-left: 0.5px solid var(--rule); padding-left: 18px; }
     .voice .tag {
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-      font-size: 10.5px; letter-spacing: 0.15em; text-transform: uppercase;
-      display: flex; align-items: center; gap: 7px;
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+      display: flex; align-items: center; gap: 6px;
     }
-    .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
-    .voice .num { font-size: 38px; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
+    .voice .num { font-size: 28px; line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
     .voice .unit {
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-      font-size: 11.5px; color: var(--meta);
+      font-size: 11px; color: var(--meta);
     }
     .voice.off { opacity: 0.32; }
 
-    .zone { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-    .zone .word { font-size: 19px; color: var(--gold); }
-    .zone .said { font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); flex: 1; min-width: 240px; }
+    .zone { display: flex; align-items: baseline; gap: 11px; flex-wrap: wrap; }
+    .zone .word { font-size: 17px; color: var(--gold); }
+    .zone .said { font-size: 13px; line-height: 1.5; color: var(--ink-soft); flex: 1; min-width: 240px; }
 
-    .controls { display: flex; flex-direction: column; gap: 20px; }
-    .field { display: flex; flex-direction: column; gap: 9px; }
+    .controls { display: flex; flex-direction: column; gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 4px; }
     .field .lab {
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-      font-size: 10.5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--meta);
-      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--meta);
+      display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
     }
     .field .lab em {
-      font-style: normal; font-family: Georgia, serif; font-size: 13px;
+      font-style: normal; font-family: Georgia, serif; font-size: 12.5px;
       color: var(--ink); letter-spacing: 0; font-variant-numeric: tabular-nums;
+      text-align: right;
     }
 
     input[type=range] {
-      -webkit-appearance: none; appearance: none; width: 100%; height: 44px;
+      -webkit-appearance: none; appearance: none; width: 100%; height: 34px;
       background: transparent; cursor: pointer; margin: 0;
     }
     input[type=range]::-webkit-slider-runnable-track { height: 3px; background: var(--rule); border-radius: 2px; }
     input[type=range]::-moz-range-track { height: 3px; background: var(--rule); border-radius: 2px; }
     input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none; appearance: none; width: 30px; height: 30px; border-radius: 50%;
-      background: var(--paper); border: 2px solid var(--payne); margin-top: -13.5px;
+      -webkit-appearance: none; appearance: none; width: 26px; height: 26px; border-radius: 50%;
+      background: var(--paper); border: 2px solid var(--payne); margin-top: -11.5px;
       box-shadow: 0 1px 3px var(--shadow);
     }
     input[type=range]::-moz-range-thumb {
-      width: 30px; height: 30px; border-radius: 50%; background: var(--paper);
+      width: 26px; height: 26px; border-radius: 50%; background: var(--paper);
       border: 2px solid var(--payne); box-shadow: 0 1px 3px var(--shadow);
     }
     input[type=range]:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--gold); outline-offset: 2px; }
 
-    .ticks { position: relative; height: 14px; margin-top: -6px; }
+    .ticks { position: relative; height: 12px; margin-top: -8px; }
     .ticks span {
       position: absolute; transform: translateX(-50%);
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
       font-size: 9.5px; color: var(--meta); letter-spacing: 0.06em; white-space: nowrap;
     }
     .ticks span::before {
-      content: ''; position: absolute; left: 50%; top: -7px; width: 1px; height: 5px; background: var(--rule);
+      content: ''; position: absolute; left: 50%; top: -6px; width: 1px; height: 4px; background: var(--rule);
     }
 
-    .row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
     button {
-      font-family: Georgia, serif; font-size: 15px; color: var(--ink); background: transparent;
-      border: 0.5px solid var(--rule); border-radius: 3px; padding: 11px 15px; cursor: pointer;
-      min-height: 44px; font-variant-numeric: tabular-nums; transition: background 120ms, border-color 120ms;
+      font-family: Georgia, serif; font-size: 14px; color: var(--ink); background: transparent;
+      border: 0.5px solid var(--rule); border-radius: 3px; padding: 8px 12px; cursor: pointer;
+      min-height: 38px; font-variant-numeric: tabular-nums; transition: background 120ms, border-color 120ms;
     }
     button:hover { background: var(--panel); }
     button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
     button.on { background: var(--payne); border-color: var(--payne); color: var(--paper); }
-    button.play { font-size: 16px; padding: 13px 26px; border-color: var(--payne); color: var(--payne); }
+    button.play { font-size: 15px; padding: 9px 22px; border-color: var(--payne); color: var(--payne); margin-left: auto; }
     button.play.running { background: var(--payne); color: var(--paper); }
     button.vlow.on { background: var(--low); border-color: var(--low); color: var(--paper); }
     button.vhigh.on { background: var(--high); border-color: var(--high); color: var(--paper); }
 
-    .ratiosub { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; }
+    .ratiosub { font-size: 13px; color: var(--ink-soft); line-height: 1.55; }
     .benchfoot {
-      font-size: 12.5px; line-height: 1.7; color: var(--ink-soft);
-      border-top: 0.5px solid var(--rule); padding-top: 16px;
+      font-size: 12.5px; line-height: 1.65; color: var(--ink-soft);
+      border-top: 0.5px solid var(--rule); padding-top: 14px;
     }
     .benchfoot b { font-weight: normal; color: var(--ink); }
 
     /* ---------- the two immediate notes ---------- */
 
-    .quicknotes {
-      margin-top: 34px; display: flex; flex-wrap: wrap; gap: 28px 40px;
-    }
+    .quicknotes { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 26px 40px; }
     .qn { flex: 1 1 270px; }
-    .qn h3 {
-      font-size: 15px; font-weight: normal; color: var(--payne);
-      margin-bottom: 9px; letter-spacing: 0.01em;
-    }
+    .qn h3 { font-size: 15px; font-weight: normal; color: var(--payne); margin-bottom: 9px; letter-spacing: 0.01em; }
     .qn p { font-size: 14.5px; line-height: 1.68; color: var(--ink-soft); margin-bottom: 11px; }
     .qn p:last-child { margin-bottom: 0; }
     .qn em { font-style: italic; }
 
     /* ---------- the reading ---------- */
 
-    .reading { margin-top: 64px; padding-top: 40px; border-top: 0.5px solid var(--rule); }
-    .reading .eyebrow { display: block; text-align: center; margin-bottom: 34px; }
+    .reading { margin-top: 58px; padding-top: 38px; border-top: 0.5px solid var(--rule); }
+    .reading .eyebrow { display: block; text-align: center; margin-bottom: 32px; }
     .reading h2 {
       font-size: 19px; font-weight: normal; color: var(--payne);
       margin: 40px 0 14px; text-wrap: balance; line-height: 1.3;
@@ -174,16 +171,17 @@
     .reading strong { font-weight: normal; font-style: italic; }
 
     .back {
-      display: block; text-align: center; margin-top: 64px;
+      display: block; text-align: center; margin-top: 60px;
       font-size: 13px; color: var(--meta); letter-spacing: 0.04em;
     }
     .back:hover { color: var(--payne); }
 
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
     @media (max-width: 560px) {
-      body { padding: 40px 18px 60px; }
-      .voice .num { font-size: 30px; }
+      body { padding: 34px 16px 56px; }
+      .voice .num { font-size: 24px; }
       .reading p { font-size: 15.5px; }
+      button.play { margin-left: 0; }
     }
   </style>
 </head>
@@ -202,6 +200,11 @@
         <div class="n" id="cyclenote"></div>
       </div>
       <canvas id="c"></canvas>
+      <div class="striphead" style="margin:10px 0 6px">
+        <div class="eyebrow">where that lands on a piano</div>
+        <div class="n" id="kbnote"></div>
+      </div>
+      <canvas id="kb"></canvas>
     </section>
 
     <section class="readout">
@@ -236,6 +239,11 @@
       </div>
 
       <div class="field">
+        <div class="lab"><span>click pitch</span><em id="clickread"></em></div>
+        <input id="clickp" type="range" min="0" max="1000" value="0" aria-label="click pitch">
+      </div>
+
+      <div class="field">
         <div class="lab"><span>ratio</span></div>
         <div class="row" id="ratios"></div>
         <p class="ratiosub" id="ratiosub"></p>
@@ -263,11 +271,11 @@
     <div class="qn">
       <h3>What note is that?</h3>
       <p>The note you hear is the ticking rate. Not the sound of the click itself.</p>
-      <p>The click in here is a tiny blip somewhere up around 1,850 a second &mdash; and you
-      never hear 1,850. Move the brightness knob while a note is playing and listen carefully:
-      the character changes completely, buzzy to soft, and the note does not shift a hair.</p>
-      <p>Worth doing once, because it isn&rsquo;t what you&rsquo;d guess. The click decides what
-      the note <em>sounds like</em>. The rate decides what the note <em>is</em>.</p>
+      <p>Each click in here is a very short tone of its own, high up and gone in a few thousandths of a
+      second &mdash; and you never hear it as a note. Move the <em>click pitch</em> slider while a note
+      is playing: the character changes completely, and the note does not shift a hair.</p>
+      <p>Worth doing once, because it isn&rsquo;t what you&rsquo;d guess. The click decides what the
+      note <em>sounds like</em>. The rate decides what the note <em>is</em>.</p>
     </div>
 
     <div class="qn">
@@ -311,65 +319,22 @@
 
     <h2>The two numbers survive the trip</h2>
 
-    <p>Look at what your two tickers are doing now. The slow one is going 250 times a second. The fast
-    one, 300.</p>
+    <p>Look at what your two tickers are doing now. The slow one is going 200 times a second. The fast
+    one, 240.</p>
 
-    <p>300 against 250 is 6 against 5. It&rsquo;s the same six and five you started with, back when it
+    <p>240 against 200 is 6 against 5. It&rsquo;s the same six and five you started with, back when it
     was a rhythm you could tap along to. You changed the speed and nothing else. And what you&rsquo;re
     hearing now is a chord.</p>
 
     <p>There&rsquo;s a word people use for &ldquo;times per second&rdquo; &mdash; hertz, usually written
-    Hz. It isn&rsquo;t a new idea. 250 Hz means 250 times a second. That&rsquo;s all. The number
+    Hz. It isn&rsquo;t a new idea. 200 Hz means 200 times a second. That&rsquo;s all. The number
     didn&rsquo;t change; the name for it did, because it got too fast to count and people wanted a
     different word for the fast version.</p>
-
-    <h2>Why some pairs sound sweet and others sound like a scrape</h2>
-
-    <p>Six against five is easy on the ear. Here&rsquo;s what&rsquo;s actually happening.</p>
-
-    <p>After five ticks of the slower one and six of the faster, they arrive at the same instant,
-    together. Then the whole thing starts over. The pattern comes back around, quickly and reliably,
-    and your ear notices that and reports one sound rather than two things happening near each other.</p>
-
-    <p>Now try 45 against 32. That&rsquo;s a real pair; it&rsquo;s sitting on pianos right now. The
-    pattern still comes back around &mdash; but not for 32 ticks. That is far too long ago for an ear to
-    remember. Nothing ever seems to line up. And what you hear is not a chord, it&rsquo;s a roughness, a
-    scrape, something restless.</p>
-
-    <p>Small numbers, sweet. Big numbers, scrape. That&rsquo;s most of what a chord is.</p>
-
-    <h2>The third note nobody is playing</h2>
-
-    <p>Both voices are ticking away at their own rates. But the two of them <em>together</em>
-    also make a pattern &mdash; and that pattern repeats too, at a rate of its own.</p>
-
-    <p>With the slow voice at 250 and the fast one at 300, the whole arrangement comes back
-    around fifty times a second.</p>
-
-    <p>Fifty times a second is a note.</p>
-
-    <p>So a pair of notes quietly produces a third one underneath them, that neither of them is
-    playing and nobody put there. Usually it&rsquo;s faint. Sometimes you can hear it outright,
-    and once you have, you can&rsquo;t stop hearing it.</p>
-
-    <p>Here is where it gets tidy. That bottom note is always the slow voice divided by how many
-    of its clicks fit in one pattern. Six against five: 250 divided by 5. Three against two:
-    divided by 2 &mdash; which lands close underneath, loud and easy to find. That is why two
-    notes seven keys apart feel like they are <em>standing on something</em>.</p>
-
-    <p>Now 45 against 32. The bottom note would be the slow voice divided by 32, which comes out
-    around eight a second. You already know what eight a second is. It isn&rsquo;t a note, it is
-    a flutter.</p>
-
-    <p>So there is no bottom. Nothing underneath to stand on.</p>
-
-    <p>Which means the lining-up, the size of the numbers, and whether a chord has a floor under
-    it are not three separate facts. <strong>They are one fact, described three ways.</strong></p>
 
     <h2>Nobody invented the numbers</h2>
 
     <p>You might reasonably suspect that six and five got chosen by some committee. They didn&rsquo;t,
-    and this is the good part.</p>
+    and this is the part everything else depends on.</p>
 
     <p>Pluck a guitar string. The string is not vibrating at one speed. It&rsquo;s vibrating at its
     speed, and at twice that speed, and three times, and four, and five, and six &mdash; all at the same
@@ -379,9 +344,63 @@
     <p>That stack of speeds is why a violin and a clarinet playing the same note don&rsquo;t sound the
     same. They&rsquo;re the same note with different amounts of each ingredient.</p>
 
-    <p>Which means six and five were never music theory. They&rsquo;re two ingredients you&rsquo;ll find
-    inside a single plucked string, held up next to each other. The whole numbers were already there.
-    Somebody just noticed.</p>
+    <p>So six and five were never music theory. They&rsquo;re two ingredients you&rsquo;ll find inside a
+    single plucked string, held up next to each other. The whole numbers were already there. Somebody
+    just noticed.</p>
+
+    <p><strong>Keep the stack in mind.</strong> Every note in this bench is dragging one along behind
+    it, and in a moment that turns out to be the whole story.</p>
+
+    <h2>Why some pairs grind and others don&rsquo;t</h2>
+
+    <p>Switch the bench to three against two &mdash; 200 and 300 &mdash; and it is about as easy on the
+    ear as two notes get. Switch it to forty-five against thirty-two and it is horrible. It looks like
+    the difference is the size of the numbers. It isn&rsquo;t.</p>
+
+    <p>Two hundred a second doesn&rsquo;t arrive alone. It brings 400, 600, 800, 1000. Three hundred
+    brings 600, 900, 1200.</p>
+
+    <p>Look at 600. They both have it &mdash; exactly, not nearly. Several of their ingredients land on
+    the same spot, and the ones that don&rsquo;t coincide sit comfortably far apart from each other.</p>
+
+    <p>Now take 200 against 281, which is what forty-five against thirty-two comes to. Its stack is 562,
+    843, 1125. Nothing coincides with anything. And worse &mdash; this is the actual trouble &mdash;
+    562 lands right <em>beside</em> 600. Not on it. Beside it.</p>
+
+    <p>Two ingredients close but not equal refuse to blend. They wobble against each other. A slow
+    wobble you hear as a wobble; a fast one you don&rsquo;t hear as a wobble at all. Your ear gives up
+    and reports it as grating.</p>
+
+    <p><strong>So the scrape is not the numbers being big. It is ingredients grinding.</strong></p>
+
+    <p>You can check this in about ten seconds without leaving the page. Pull the brightness slider all
+    the way down &mdash; that strips the stacks away and leaves something close to two bare tones. Now
+    switch between the smooth pairs and the rough ones. If the grinding is what makes the difference,
+    most of the difference should go, because there&rsquo;s almost nothing left to grind. Run brightness
+    back up and it should come storming back.</p>
+
+    <p>Same two notes. Same fraction. Nothing changed but how many ingredients are in the room.</p>
+
+    <h2>The third note nobody is playing</h2>
+
+    <p>Both voices are ticking at their own rates. But the two of them <em>together</em> also make a
+    pattern, and that pattern repeats at a rate of its own. With 200 and 300, the whole arrangement
+    comes back around a hundred times a second.</p>
+
+    <p>A hundred times a second is a note.</p>
+
+    <p>You probably won&rsquo;t hear it as a separate voice, and anyone who tells you it&rsquo;s
+    obviously there is overselling. It&rsquo;s more of a lean. But look at everything in the air: 200,
+    300, 400, 600, 800, 900, 1200. That is very nearly the stack belonging to a note at 100, with a few
+    members missing. Your ear has decent grounds for suspecting a 100 in the room, and it leans that
+    way.</p>
+
+    <p>That lean is why two notes seven keys apart feel like they are <em>standing on something</em>.</p>
+
+    <p>For forty-five against thirty-two, the equivalent bottom would be around six a second. You
+    already know what six a second is. It isn&rsquo;t a note, it&rsquo;s a flutter. Nothing to lean on
+    &mdash; which is part of why that pair sounds like it is hanging in mid-air with nothing underneath
+    it.</p>
 
     <h2>A keyboard is a machine for multiplying</h2>
 
@@ -413,34 +432,66 @@
 
     <p>That&rsquo;s what the colours are doing. Not decoration. The 3s and the 5s.</p>
 
+    <p>One warning, though, and the last section is about it. The colours tell you how a note is
+    <em>built</em> out of home. They do not tell you how it will <em>sound</em>. Those turn out to be
+    two different questions.</p>
+
     <h2>One place where it doesn&rsquo;t quite work, which is the best part</h2>
 
-    <p>Three keys up on a real keyboard isn&rsquo;t 6/5. It&rsquo;s very slightly less. Six-fifths is
-    1.2 exactly. The keyboard gives you 1.1892.</p>
+    <p>Seven keys up on a real keyboard isn&rsquo;t 3/2. It&rsquo;s very slightly less.</p>
 
-    <p>That&rsquo;s about one per cent off, which sounds like nothing, and isn&rsquo;t. Play both at
-    once and you can hear a slow throb, a wobble, like the sound is breathing. That throb is the size of
-    the mistake, out loud.</p>
+    <p>You can watch this happen. Tap any key on the strip with three-against-two selected: the slower
+    note reads dead on, and the faster one reads about <em>+2&cent;</em>. A cent is a hundredth of a
+    key. So the true 3/2 sits two hundredths of a key above where the keyboard put its own.</p>
+
+    <p>Two hundredths of a key sounds like nothing. It isn&rsquo;t nothing. Play a fifth on a real
+    piano, somewhere in the middle, and listen underneath the notes rather than at them. There&rsquo;s a
+    slow pulse in there, roughly once a second, as though the sound is breathing. That is the two
+    hundredths, made audible: the sixth ingredient of one note and the fourth of the other, close but
+    not equal, wobbling against each other once a second. Piano tuners listen for exactly that pulse and
+    count it out loud.</p>
 
     <p>Somebody decided, a few hundred years ago, that it was better to be slightly wrong everywhere
-    than perfectly right in one place and badly wrong everywhere else. That decision is sitting inside
-    every piano you have ever heard. You can hear the seam if you know where to listen.</p>
+    than perfectly right in one place and unbearable in the rest. That decision is inside every piano
+    you have ever heard, and it has been beating once a second ever since.</p>
 
-    <h2>And one that&rsquo;s simply broken</h2>
+    <h2>Two fractions, one sound</h2>
 
-    <p>Go up six keys &mdash; exactly halfway up the octave, the middle of the middle.</p>
+    <p>Go up six keys &mdash; halfway up the octave, the middle of the middle. It&rsquo;s the interval
+    people used to call the devil&rsquo;s interval, mostly because it refuses to sit still.</p>
 
-    <p>There&rsquo;s no good fraction for it. Not 3/2, not 5/4, not 6/5, not anything small. Every
-    candidate is either far away or made of unpleasantly large numbers. The arithmetic has nothing to
-    offer.</p>
+    <p>There are two buttons on this bench for that one spot. <em>7:5</em>, which looks tidy and
+    reasonable. And <em>45:32</em>, which looks like something went wrong.</p>
 
-    <p>You can hear that too. Six keys up is the interval that sounds like a question nobody answered.
-    It&rsquo;s the one they used to call the devil&rsquo;s interval, mostly because it wouldn&rsquo;t sit
-    still.</p>
+    <p>Play them one after the other.</p>
 
-    <p>The interval that sounds unsettled is the one the numbers can&rsquo;t name. That&rsquo;s not a
-    coincidence, and it&rsquo;s not a flaw in the keyboard. It&rsquo;s the keyboard telling you the
-    truth.</p>
+    <p>They sound the same. Not similar &mdash; the same. They land within about a twelfth of a key of
+    each other, which is under what anyone can hear. Two fractions that look nothing alike, arriving at
+    one sound.</p>
+
+    <p>Which ruins a rule that was starting to look extremely solid. If small numbers caused sweetness,
+    then 7:5 &mdash; small, tidy, perfectly respectable &mdash; ought to sound clearly better than
+    45:32. It doesn&rsquo;t sound better. It doesn&rsquo;t sound like anything different at all.</p>
+
+    <p>And this isn&rsquo;t a fluke you stumbled on. Pick any spot on the keyboard and there is a
+    tidy-looking fraction sitting close enough to it that nobody alive could tell the difference. The
+    fractions aren&rsquo;t lying to you. <strong>They just aren&rsquo;t the thing that decides.</strong></p>
+
+    <p>What decides is where the ingredients land. Real stacks, in real air, grinding or not grinding.
+    Which is why you can take one pair of notes and make it mild or make it unbearable using a knob that
+    doesn&rsquo;t touch either note.</p>
+
+    <p>There&rsquo;s a version of this you have almost certainly already heard. A flute playing those
+    six-keys-apart notes sounds mild, a bit unsettled, nothing worse. A distorted electric guitar
+    playing the identical two notes sounds like a threat. Distortion is a machine for adding
+    ingredients &mdash; that is the entire job. Which is why rock guitarists build nearly everything out
+    of fifths and leave most other intervals out: through that much distortion a fifth stays clean and
+    almost everything else turns to mud.</p>
+
+    <p>Nobody worked that out on paper. They found it by ear, extremely loudly, some time around 1968.
+    And it is the same fact you have sitting on a slider.</p>
+
+    <p>The simple fractions are still where the sweet intervals live. They are just not the reason.</p>
 
   </div>
 
@@ -463,11 +514,14 @@ var RATIOS = [
 ];
 var ri = 4;                 // 6:5
 var FMIN=1.5, FMAX=330;
-var f = 2.5, cutoff = 3000;
+var CPMIN=400, CPMAX=4200;
+var f = 2.5, cutoff = 3000, clickHz = 1850;
 var lowOn = true, highOn = true, running = false;
+var CENTS_TOL = 15;         // how near a key counts as being on it
 
-var ac=null, src=null, filt=null, master=null, buf=null, startT=0, cycleT=1;
+var ac=null, src=null, filt=null, master=null, startT=0, cycleT=1;
 var cvs=document.getElementById('c'), ctx=cvs.getContext('2d');
+var kbc=document.getElementById('kb'), kctx=kbc.getContext('2d');
 
 function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 function ratio(){ return RATIOS[ri]; }
@@ -487,18 +541,21 @@ function makeBuffer(){
   var b = ac.createBuffer(2, len, sr);
   var L = b.getChannelData(0), R = b.getChannelData(1);
 
-  var clickLen = Math.min(Math.round(0.014*sr), Math.round(len/2));
+  var clickLen = Math.round(0.014*sr);
   var click = new Float32Array(clickLen);
   for(var i=0;i<clickLen;i++){
     var t=i/sr;
-    click[i] = Math.sin(2*Math.PI*1850*t) * Math.exp(-t/0.0026);
+    click[i] = Math.sin(2*Math.PI*clickHz*t) * Math.exp(-t/0.0026);
   }
+  // Clicks wrap around the end of the buffer rather than being cut off there.
+  // Truncating them left a step at every click and at the loop seam — a hard
+  // edge repeating at the pattern rate, which is broadband, so opening the
+  // filter turned it into a ringing that belonged to neither voice.
   function lay(rate, count, gL, gR){
     for(var k=0;k<count;k++){
-      var at = Math.round(k*sr/rate);
-      if(at>=len) break;
+      var at = Math.round(k*sr/rate) % len;
       for(var j=0;j<clickLen;j++){
-        var p=at+j; if(p>=len) break;
+        var p=(at+j) % len;
         L[p]+=click[j]*gL; R[p]+=click[j]*gR;
       }
     }
@@ -522,9 +579,8 @@ function stopSrc(){ if(src){ try{src.stop();}catch(e){} src.disconnect(); src=nu
 function restart(){
   if(!running || !ac) return;
   stopSrc();
-  buf = makeBuffer();
   src = ac.createBufferSource();
-  src.buffer = buf; src.loop = true;
+  src.buffer = makeBuffer(); src.loop = true;
   src.connect(filt);
   startT = ac.currentTime + 0.03;
   src.start(startT);
@@ -545,12 +601,148 @@ function rebuildSoon(){
   pending=setTimeout(function(){ pending=null; restart(); }, 90);
 }
 
+/* ---------- the piano strip ----------
+   A designer's orientation aid: where the arithmetic lands on the
+   instrument everyone already knows. Letters are deliberate here and
+   are not the child-facing scheme. */
+var KB_LO=12, KB_HI=108, KW=27, PIANO_LO=21;
+var WHITE_PC={0:1,2:1,4:1,5:1,7:1,9:1,11:1};
+var kbCenters={}, kbRects=[], kbTotal=0, kbOffset=0, kbTarget=0, kbInit=false;
+
+(function buildKeys(){
+  var wi=0;
+  for(var m=KB_LO;m<=KB_HI;m++){
+    if(WHITE_PC[m%12]){
+      kbCenters[m]=wi*KW+KW/2;
+      kbRects.push({m:m,x:wi*KW,w:KW,black:false});
+      wi++;
+    } else {
+      var bw=KW*0.62;
+      kbCenters[m]=wi*KW;
+      kbRects.push({m:m,x:wi*KW-bw/2,w:bw,black:true});
+    }
+  }
+  kbTotal=wi*KW;
+})();
+
+function midiOf(hz){ return 69 + 12*Math.log(hz/440)/Math.LN2; }
+function hzOfMidi(m){ return 440*Math.pow(2,(m-69)/12); }
+function xOfMidi(m){
+  if(m<=KB_LO) return kbCenters[KB_LO];
+  if(m>=KB_HI) return kbCenters[KB_HI];
+  var lo=Math.floor(m), hi=lo+1, t=m-lo;
+  return kbCenters[lo] + (kbCenters[hi]-kbCenters[lo])*t;
+}
+var NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+function nameOf(m){ return NAMES[((m%12)+12)%12] + (Math.floor(m/12)-1); }
+
+function drawKeys(){
+  var w=kbc.clientWidth, h=kbc.clientHeight;
+  kctx.clearRect(0,0,w,h);
+
+  var mA=midiOf(fA()), mB=midiOf(fB());
+  kbTarget = xOfMidi((mA+mB)/2) - w/2;
+  kbTarget = Math.max(0, Math.min(Math.max(0,kbTotal-w), kbTarget));
+  if(!kbInit){ kbOffset=kbTarget; kbInit=true; }
+  else kbOffset += (kbTarget-kbOffset)*0.18;
+  var off=kbOffset;
+
+  var lit={};
+  [[mA,css('--low')],[mB,css('--high')]].forEach(function(p){
+    var near=Math.round(p[0]);
+    if(Math.abs(p[0]-near)*100 <= CENTS_TOL && near>=KB_LO && near<=KB_HI) lit[near]=p[1];
+  });
+
+  kctx.font='9px -apple-system, Helvetica Neue, Arial, sans-serif';
+  kctx.textAlign='center';
+
+  // white keys
+  kbRects.forEach(function(k){
+    if(k.black) return;
+    var x=k.x-off;
+    if(x+k.w<-2 || x>w+2) return;
+    kctx.fillStyle = lit[k.m] ? lit[k.m] : (k.m<PIANO_LO ? '#e6e0d0' : '#fbf9f2');
+    kctx.fillRect(x,0,k.w-1,h);
+    kctx.strokeStyle=css('--rule'); kctx.lineWidth=1;
+    kctx.strokeRect(x+0.5,0.5,k.w-2,h-1);
+    if(k.m%12===0){
+      kctx.fillStyle = lit[k.m] ? 'rgba(255,255,255,0.9)' : css('--meta');
+      kctx.fillText(nameOf(k.m), x+k.w/2, h-4);
+    }
+  });
+  // black keys on top
+  kbRects.forEach(function(k){
+    if(!k.black) return;
+    var x=k.x-off;
+    if(x+k.w<-2 || x>w+2) return;
+    kctx.fillStyle = lit[k.m] ? lit[k.m] : (k.m<PIANO_LO ? '#6a6558' : '#3a352c');
+    kctx.fillRect(x,0,k.w,h*0.62);
+  });
+
+  // where a real piano begins
+  var px=kbCenters[PIANO_LO]-KW/2-off;
+  if(px>-40 && px<w+40){
+    kctx.strokeStyle=css('--payne'); kctx.globalAlpha=0.5; kctx.lineWidth=1;
+    kctx.beginPath(); kctx.moveTo(px+0.5,0); kctx.lineTo(px+0.5,h); kctx.stroke();
+    kctx.globalAlpha=1;
+  }
+
+  // continuous markers — the exact pitch, on or off a key
+  [[mA,css('--low'),lowOn],[mB,css('--high'),highOn]].forEach(function(p){
+    var x=xOfMidi(p[0])-off;
+    kctx.globalAlpha = p[2]?1:0.3;
+    kctx.fillStyle=p[1];
+    kctx.beginPath();
+    kctx.moveTo(x,11); kctx.lineTo(x-5.5,0); kctx.lineTo(x+5.5,0); kctx.closePath();
+    kctx.fill();
+    kctx.fillRect(x-0.75,0,1.5,h*0.40);
+    kctx.globalAlpha=1;
+  });
+}
+
+function kbReadout(){
+  function part(hz,on){
+    var m=midiOf(hz), near=Math.round(m), c=Math.round((m-near)*100);
+    if(near<KB_LO) return 'below the keyboard';
+    var s=nameOf(near)+' '+(c>0?'+':(c<0?'−':'±'))+Math.abs(c)+'¢';
+    return on ? s : s;
+  }
+  document.getElementById('kbnote').textContent =
+    part(fA(),lowOn) + '  ·  ' + part(fB(),highOn);
+}
+
+kbc.addEventListener('pointerdown', function(e){
+  var rect=kbc.getBoundingClientRect();
+  var x=e.clientX-rect.left+kbOffset, y=e.clientY-rect.top;
+  var h=kbc.clientHeight, hit=null;
+  for(var i=0;i<kbRects.length;i++){
+    var k=kbRects[i];
+    if(!k.black) continue;
+    if(y<=h*0.62 && x>=k.x && x<=k.x+k.w){ hit=k.m; break; }
+  }
+  if(hit===null){
+    for(var j=0;j<kbRects.length;j++){
+      var w2=kbRects[j];
+      if(w2.black) continue;
+      if(x>=w2.x && x<=w2.x+w2.w){ hit=w2.m; break; }
+    }
+  }
+  if(hit===null) return;
+  var hz=Math.max(FMIN, Math.min(FMAX, hzOfMidi(hit)));
+  f=hz;
+  document.getElementById('speed').value=fToSp(f);
+  paint(); rebuildSoon();
+});
+
 /* ---------- drawing ---------- */
 function resize(){
   var dpr=window.devicePixelRatio||1;
-  var w=cvs.clientWidth, h=cvs.clientHeight;
-  cvs.width=Math.round(w*dpr); cvs.height=Math.round(h*dpr);
-  ctx.setTransform(dpr,0,0,dpr,0,0);
+  [[cvs,ctx],[kbc,kctx]].forEach(function(pair){
+    var el=pair[0], c=pair[1];
+    var w=el.clientWidth, h=el.clientHeight;
+    el.width=Math.round(w*dpr); el.height=Math.round(h*dpr);
+    c.setTransform(dpr,0,0,dpr,0,0);
+  });
 }
 window.addEventListener('resize',function(){ resize(); });
 
@@ -575,7 +767,7 @@ function draw(){
 
   function lane(count,y,colour,on){
     ctx.fillStyle=colour; ctx.globalAlpha= on?1:0.22;
-    var rad = count>40 ? 2.2 : (count>16 ? 3.2 : 4.6);
+    var rad = count>40 ? 2.2 : (count>16 ? 3.2 : 4.4);
     for(var k=0;k<count;k++){
       var x=padL+W*(k/count);
       ctx.beginPath(); ctx.arc(x,y,rad,0,6.2832); ctx.fill();
@@ -596,6 +788,8 @@ function draw(){
       ctx.globalAlpha=1;
     }
   }
+
+  drawKeys();
   requestAnimationFrame(draw);
 }
 
@@ -603,9 +797,9 @@ function draw(){
 function fmt(v){ return v>=100 ? v.toFixed(0) : (v>=20 ? v.toFixed(1) : v.toFixed(2)); }
 
 function paint(){
-  var r=ratio(), a=fA(), b=fB();
+  var r=ratio(), a=fA();
   document.getElementById('numA').textContent=fmt(a);
-  document.getElementById('numB').textContent=fmt(b);
+  document.getElementById('numB').textContent=fmt(fB());
   var unit = a>=20 ? 'per second — now called Hz' : 'clicks per second';
   document.getElementById('unitA').textContent=unit;
   document.getElementById('unitB').textContent=unit;
@@ -625,11 +819,13 @@ function paint(){
     r.d+' slower · '+r.n+' faster · repeats every '+(T>=1?T.toFixed(2)+' s':(T*1000).toFixed(0)+' ms');
   document.getElementById('speedread').textContent=fmt(a)+' per second';
   document.getElementById('brightread').textContent=Math.round(cutoff)+' Hz and below';
+  document.getElementById('clickread').textContent=Math.round(clickHz)+' Hz tick';
   document.getElementById('ratiosub').textContent=r.n+':'+r.d+' — '+r.note;
+  kbReadout();
 }
 
 /* ---------- controls ---------- */
-var sp=document.getElementById('speed'), br=document.getElementById('bright');
+var sp=document.getElementById('speed'), br=document.getElementById('bright'), cp=document.getElementById('clickp');
 function spToF(v){ return FMIN*Math.pow(FMAX/FMIN, v/1000); }
 function fToSp(x){ return 1000*Math.log(x/FMIN)/Math.log(FMAX/FMIN); }
 
@@ -644,12 +840,16 @@ br.addEventListener('input',function(){
   paint();
 });
 
+function cpToHz(v){ return CPMIN*Math.pow(CPMAX/CPMIN, v/1000); }
+cp.value = 1000*Math.log(clickHz/CPMIN)/Math.log(CPMAX/CPMIN);
+cp.addEventListener('input',function(){ clickHz=cpToHz(+this.value); paint(); rebuildSoon(); });
+
 (function(){
   var t=document.getElementById('ticks');
   [[8,'rhythm ends'],[20,'a note begins']].forEach(function(p){
     var s=document.createElement('span');
     var frac=fToSp(p[0])/1000;
-    s.style.left='calc(15px + '+frac.toFixed(4)+' * (100% - 30px))';  // thumb is 30px wide
+    s.style.left='calc(13px + '+frac.toFixed(4)+' * (100% - 26px))';  // thumb is 26px wide
     s.textContent=p[1];
     t.appendChild(s);
   });
@@ -691,6 +891,6 @@ resize(); paint(); draw();
 })();
 </script>
 
-<script>var CW_VERSION = '2026-08-25 e4cd030'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
+<script>var CW_VERSION = '2026-08-25 736744d'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-25 (Six Against Five deployed to `experiments/` — the counting bench for the Sound Series, listed in the experiments index and registered in `MANIFEST.md`, with both pages' version stamps carrying the hash. Waves deferred to timbre; the tapping version is the next thing the Series wants)
+updated: 2026-08-25 (Six Against Five revised and redeployed after a listening pass. Three claims the page asserted are disproved — the fraction is not the sound, consonance is not fusion, roughness lives in the partials — and a ringing Michael heard turned out to be a click truncated at the loop seam, now fixed. Piano strip and click-pitch knob added; the long reading rewritten to match. One listen owed: 3:2 at full brightness)
 ---
 
 # The Board
@@ -487,23 +487,56 @@ second — neither rhythm nor pitch — a place to sit rather than pass through.
   `experiments/index.html` and registered in `MANIFEST.md`. Speed 1.5–330 per second,
   log, with the track ticked at both boundaries. **Both voices lay down one identical
   click** and differ only in rate, so the tone at the top was never introduced — it
-  assembles itself out of repetition. Brightness is a lowpass, kazoo → reed; seven
-  ratios, 2:1 through 45:32. Audio is a looping buffer rebuilt one full pattern long on
-  every change: nothing resampled, no scheduler. Standalone — it does not stand on the
-  plane. **Carries its own reading below the instrument**, the first extended sample of
-  the child voice for this material, which is why it is one page and not two.
-- **Open at the bench:** no tapping — and since calibration is the front door (21 Aug),
-  the tapping version probably matters more than the ratio picker does; no way to hear a
-  true ratio against the keyboard's approximation of it; a nearest-key readout and
-  snap-to-key toggle, left open deliberately because the speed knob is continuous and the
-  keyboard is not; whether the strength-by-simplicity gradient on the prime colours earns
-  its keep; whether home should be uncoloured rather than sharing blue with the octave.
-- **Next action:** Michael plays the bench, and in particular sits in the band between
-  roughly 8 and 20 per second, which is the whole finding. Then the **tapping** version,
-  which the 25 Aug session argues matters more than the ratio picker does. What opens the
-  Series is still undecided; the beat-tuner remains argued for — the only instrument
-  where she measures with her ears and gets a number back. Michael's voice pass on the
-  two live pages' copy, and on the bench's reading, still has not happened.
+  assembles itself out of repetition. Seven ratios, 2:1 through 45:32. Audio is a looping
+  buffer rebuilt one full pattern long on every change: nothing resampled, no scheduler.
+  Standalone — it does not stand on the plane. **Carries its own reading below the
+  instrument**, the first extended sample of the child voice for this material, which is
+  why it is one page and not two.
+- **Second pass the same day, and the corrections are the session's best material.**
+  Michael tested it by ear and disproved three things the page asserted with confidence.
+  **(1) The fraction is not the sound** — 7:5 and 45:32 land about 8 cents apart and are
+  one interval wearing two labels, so simple ratios cannot be the *cause* of consonance;
+  every interval has a tidy-looking fraction sitting closer to it than anyone can hear.
+  The famous fractions are where the sweet intervals *are*, not why. **(2) Consonance is
+  not fusion** — a fifth stays two notes, and Michael's line about the octave, *"I think
+  I can still distinguish the two notes, but there is no question they are the same
+  pitch"*, is height and chroma arrived at by ear and should be used verbatim.
+  **(3) Roughness lives in the partials and identity does not** — interval identity
+  survives brightness at minimum, so one knob separates two things that had been treated
+  as one, and **brightness is promoted from a comfort control to the roughness control**.
+  A ringing he heard above ~1200 Hz was a **real defect, found by ear from its character
+  and its dependence on a control**: the click was being truncated at the loop seam, and
+  clicks now wrap around the buffer end. Any claim gathered from this bench before the
+  fix is suspect if brightness was involved.
+- **What the second pass added to the instrument:** a **click-pitch** knob, 400–4200 Hz —
+  1850 was a constant chosen by feel that shapes what you hear, which is exactly the case
+  Aug 8's rule covers — and a **piano strip** under the dot rows, with a continuous marker
+  at each voice's exact pitch, the nearest key lit only within 15 cents, and a cents
+  readout. It is **designer-facing**: the letter names are deliberate and are *not* the
+  child-facing scheme, which stays open until the all-white axis exists. Side effect worth
+  keeping: tap a key with 3:2 selected and the faster voice reads **+2¢**, so equal
+  temperament announces itself in the corner of the screen with no words at all.
+- **The colour ruling gains a limit.** The prime colouring says how a note is *built* out
+  of home; it does not predict how a pair will *sound*. Those are different questions, the
+  bench separates them cleanly, and any copy that lets colour stand in for consonance is
+  wrong.
+- **Open at the bench:** **does 3:2 stay clean at full brightness on the fixed build?** —
+  the one control not yet run, and if it does not the click is too bright and wants fixing
+  before anything further is concluded. Whether brightness still earns its slot now that
+  click pitch exists; whether 15 cents is the right lighting tolerance and the strip the
+  right size; no tapping — and since calibration is the front door (21 Aug), the tapping
+  version probably matters more than the ratio picker does; no door yet onto hearing a
+  true ratio against equal temperament, though the +2¢ readout is half of one; whether the
+  strength-by-simplicity gradient on the prime colours earns its keep; whether home should
+  be uncoloured rather than sharing blue with the octave.
+- **Next action:** run 3:2 at full brightness on the fixed build — it is one listen, it
+  is the only knob not yet turned, and a bad answer invalidates the roughness material.
+  Then the **tapping** version, which the 25 Aug session argues matters more than the
+  ratio picker does. Also owed: the band between roughly 8 and 20 per second still wants
+  sitting in. What opens the Series is still undecided; the beat-tuner remains argued for
+  — the only instrument where she measures with her ears and gets a number back.
+  Michael's voice pass on the two live pages' copy still has not happened; the bench's
+  reading has had one and is the reference sample.
 - **Open, cheap, unresolved:** does iOS Safari support Web MIDI? A one-page
   device-listing probe settles whether the iPad is a music device.
 - **Open:** `sound` is not a value in the `lab` facet. Only Michael approves one;

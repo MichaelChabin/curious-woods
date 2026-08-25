@@ -97,16 +97,28 @@ to test yesterday's work.
   the two numbers are the same the whole way; the track is ticked at both boundaries because
   the flutter between them is the finding. **Both voices lay down one identical click** and
   differ only in rate, so the tone at the top was never introduced — it assembles itself out
-  of repetition. Brightness is a lowpass (kazoo → reed); seven ratios, 2:1 through 45:32.
+  of repetition. Seven ratios, 2:1 through 45:32. Three knobs: speed, **brightness** (a
+  lowpass — now understood as the *roughness* control rather than a comfort control), and
+  **click pitch** 400–4200 Hz, which was a buried constant at 1850 and is now choosable.
+  A **piano strip** under the dot rows carries a continuous marker at each voice's exact
+  pitch, lights the nearest key only within 15 cents, and reads both notes with cents
+  deviation; tapping a key sets the slower voice and the faster follows by ratio. It is
+  **designer-facing** — the letter names are deliberate and are not the child-facing scheme.
   Audio is a looping buffer rebuilt one full pattern long on every change, so nothing is
   resampled and no scheduler runs. **Carries its own reading below the bench** — the first
   extended sample of the child voice for this material, which is why this is one page and
   not two. Two short pieces sit directly under the instrument (*what note is that*, *what
-  the picture is showing*) answering what the bench provokes at once; the long reading
-  follows. Standalone; does not stand on the plane. Design:
+  the picture is showing*); the long reading follows. Standalone; does not stand on the
+  plane.
+  **Revised the same day after a listening pass** (25 Aug) which disproved three claims the
+  page had made with confidence: 7:5 and 45:32 are one sound about 8 cents apart, so simple
+  fractions are *where* the sweet intervals are and not *why*; consonance is not the pair
+  fusing into one note; and roughness lives in the partials, which is what brightness moves.
+  A ringing at high brightness was a real defect — the click was truncated at the loop seam —
+  and clicks now wrap around the buffer end. The reading was rewritten to match. Design:
   `CWVault/01-ACTIVE/Sound-Counting-Bench-Aug25.md`, `…/Sound-Rhythm-Roll-Aug21.md`,
   `…/Sound-Series-Aug08.md`.
-  Open: no tapping, and no way to hear a true ratio against equal temperament.
+  Open: no tapping, and whether 3:2 stays clean at full brightness on the fixed build.
 - **`number-theory-v1.html`** — multiplication and division as rectangles on a
   pannable number plane. **The behavioural reference for the extracted plane** — y-up,
   `viewW/viewH` caching, and a single `labelStep()` driving both labels and grid lines,
