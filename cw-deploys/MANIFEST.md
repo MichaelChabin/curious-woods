@@ -91,6 +91,24 @@ to test yesterday's work.
   `CWVault/01-ACTIVE/Review-GlassMult-Aug09.md`.
 
 ### experiments/
+- **`scale-from-a-rhythm.html`** — bench: a whole major scale as one rhythm. Eight click
+  voices at **24 : 27 : 30 : 32 : 36 : 40 : 45 : 48** — the just major scale over a common
+  denominator — with a speed knob, per-voice toggles, the brightness and click-pitch controls
+  shared with `six-against-five.html`, and a walk mode stepping one voice at a time so the
+  scale sounds as a scale. Presets isolate the three 4:5:6 triads (24·30·36, 32·40·48,
+  27·36·45), which between them use all eight numbers and nothing else: **the scale is one
+  chord planted three times.** A sieve strip of 24–48 marks which numbers are built from only
+  2s, 3s and 5s; nine survive, and dropping 25 (under a semitone from 24, crowding it) leaves
+  the scale exactly — **a sieve, not a list.** Two findings that were not designed in: the
+  **floor readout** (gcd of the active voices × the unit) is a real note under any one triad
+  and falls to ~8 per second under all eight, which is *a chord has a floor and a scale does
+  not*; and with the bottom voice tapped onto a real key, the three scale notes containing a 5
+  (5/4, 5/3, 15/8) are exactly the three that miss the keyboard by more than 10 cents while
+  the 3-limit ones land within 2 — at the 15-cent lighting tolerance five keys light and three
+  do not, so the argument draws itself. Lane colours are the odd primes of each ratio; the
+  piano strip is shared with the sound bench and is **designer-facing**, the letter names
+  deliberate and not the child-facing scheme. Standalone; does not stand on the plane. Design:
+  `CWVault/01-ACTIVE/Sound-Counting-Bench-Aug25.md`.
 - **`six-against-five.html`** — bench: does the ratio material survive being delivered as
   *counting* rather than as waves? Two click tracks at a fixed whole-number ratio, one speed
   knob from 1.5 to 330 per second. Below ~8 it is a countable rhythm, above ~20 a pitch, and

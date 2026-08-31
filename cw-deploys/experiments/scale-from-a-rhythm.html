@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Twenty-Four to Forty-Eight — The Curious Woods</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root{
+      --paper:#f4f1e8;
+      --panel:#eae5d7;
+      --ink:#3D3D3A;
+      --ink-soft:#5a564e;
+      --meta:#a09880;
+      --rule:#c8b89a;
+      --payne:#546A80;
+      --gold:#b8960a;
+      --shadow:rgba(60,50,30,0.10);
+    }
+
+    body {
+      background: var(--paper);
+      font-family: Georgia, serif;
+      min-height: 100vh;
+      color: var(--ink);
+      padding: 46px 24px 70px;
+      -webkit-text-size-adjust: 100%;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+
+    h1 { font-size: 22px; font-weight: normal; letter-spacing: 0.04em; color: var(--payne); margin-bottom: 6px; text-align: center; }
+    .subtitle { font-size: 13px; color: var(--meta); text-align: center; margin-bottom: 28px; letter-spacing: 0.02em; }
+
+    a { color: var(--payne); text-decoration: none; transition: color 80ms ease; }
+    a:hover { color: var(--ink); }
+
+    .eyebrow {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--meta);
+    }
+
+    .bench { display: flex; flex-direction: column; gap: 16px; }
+
+    .strip {
+      background: var(--panel); border: 0.5px solid var(--rule); border-radius: 3px;
+      box-shadow: 0 1px 3px var(--shadow); padding: 12px 14px 9px;
+    }
+    .striphead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+    .striphead .n {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 11px; color: var(--meta); font-variant-numeric: tabular-nums; text-align: right;
+    }
+    #c  { display: block; width: 100%; height: 168px; touch-action: none; }
+    #kb { display: block; width: 100%; height: 66px; touch-action: none; cursor: pointer; }
+    .striphead.wrap { align-items: flex-start; }
+    .striphead.wrap .n { white-space: normal; line-height: 1.5; max-width: 62%; }
+
+    /* the floor readout */
+    .floor {
+      border-top: 0.5px solid var(--rule); border-bottom: 0.5px solid var(--rule);
+      padding: 13px 2px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+    }
+    .floor .lab {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--meta);
+    }
+    .floor .val { font-size: 26px; line-height: 1; font-variant-numeric: tabular-nums; }
+    .floor .said { font-size: 13px; line-height: 1.5; color: var(--ink-soft); flex: 1; min-width: 230px; }
+
+    .controls { display: flex; flex-direction: column; gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field .lab {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--meta);
+      display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+    }
+    .field .lab em {
+      font-style: normal; font-family: Georgia, serif; font-size: 12.5px;
+      color: var(--ink); letter-spacing: 0; font-variant-numeric: tabular-nums; text-align: right;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 34px;
+      background: transparent; cursor: pointer; margin: 0;
+    }
+    input[type=range]::-webkit-slider-runnable-track { height: 3px; background: var(--rule); border-radius: 2px; }
+    input[type=range]::-moz-range-track { height: 3px; background: var(--rule); border-radius: 2px; }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 26px; height: 26px; border-radius: 50%;
+      background: var(--paper); border: 2px solid var(--payne); margin-top: -11.5px; box-shadow: 0 1px 3px var(--shadow);
+    }
+    input[type=range]::-moz-range-thumb {
+      width: 26px; height: 26px; border-radius: 50%; background: var(--paper);
+      border: 2px solid var(--payne); box-shadow: 0 1px 3px var(--shadow);
+    }
+    input[type=range]:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+    .ticks { position: relative; height: 12px; margin-top: -8px; }
+    .ticks span {
+      position: absolute; transform: translateX(-50%);
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 9.5px; color: var(--meta); letter-spacing: 0.06em; white-space: nowrap;
+    }
+    .ticks span::before { content:''; position:absolute; left:50%; top:-6px; width:1px; height:4px; background:var(--rule); }
+
+    /* the eight voices */
+    .voices { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; }
+    .vb {
+      font-family: Georgia, serif; background: transparent; cursor: pointer;
+      border: 0.5px solid var(--rule); border-radius: 3px; padding: 8px 2px 7px;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      min-height: 62px; transition: background 120ms, border-color 120ms;
+    }
+    .vb:hover { background: var(--panel); }
+    .vb:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .vb .num { font-size: 17px; font-variant-numeric: tabular-nums; line-height: 1; color: var(--ink); }
+    .vb .rat {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 9.5px; color: var(--meta); font-variant-numeric: tabular-nums;
+    }
+    .vb .stp {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 9px; color: var(--meta); letter-spacing: 0.05em;
+    }
+    .vb.on { border-width: 0; }
+    .vb.on .num, .vb.on .rat, .vb.on .stp { color: #fff; }
+    .vb.on.pale .num, .vb.on.pale .rat, .vb.on.pale .stp { color: #2d2820; }
+
+    .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    button.pill {
+      font-family: Georgia, serif; font-size: 14px; color: var(--ink); background: transparent;
+      border: 0.5px solid var(--rule); border-radius: 3px; padding: 8px 12px; cursor: pointer;
+      min-height: 38px; font-variant-numeric: tabular-nums; transition: background 120ms;
+    }
+    button.pill:hover { background: var(--panel); }
+    button.pill:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    button.pill.on { background: var(--payne); border-color: var(--payne); color: var(--paper); }
+    button.play { margin-left: auto; font-size: 15px; padding: 9px 22px; border-color: var(--payne); color: var(--payne); }
+    button.play.running { background: var(--payne); color: var(--paper); }
+
+    /* the sieve */
+    .sieve { display: flex; flex-wrap: wrap; gap: 4px; }
+    .sv {
+      width: 36px; height: 32px; border-radius: 3px; border: 0.5px solid var(--rule);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-variant-numeric: tabular-nums; color: var(--meta);
+    }
+    .sv.out { opacity: 0.42; text-decoration: line-through; text-decoration-thickness: 0.5px; }
+    .sv.near { border-style: dashed; border-color: var(--payne); color: var(--payne); }
+    .sv.in { color: #fff; border: 0; }
+    .sv.in.pale { color: #2d2820; }
+    .sievenote { font-size: 13px; line-height: 1.6; color: var(--ink-soft); }
+
+    .benchfoot { font-size: 12.5px; line-height: 1.65; color: var(--ink-soft); border-top: 0.5px solid var(--rule); padding-top: 14px; }
+    .benchfoot b { font-weight: normal; color: var(--ink); }
+
+    .reading { margin-top: 58px; padding-top: 38px; border-top: 0.5px solid var(--rule); }
+    .reading .eyebrow { display: block; text-align: center; margin-bottom: 32px; }
+    .reading h2 { font-size: 19px; font-weight: normal; color: var(--payne); margin: 40px 0 14px; text-wrap: balance; line-height: 1.3; }
+    .reading h2:first-of-type { margin-top: 0; }
+    .reading p { font-size: 16px; line-height: 1.72; margin-bottom: 16px; max-width: 62ch; }
+    .reading p.lead { font-size: 17px; }
+    .reading strong { font-weight: normal; font-style: italic; }
+    .reading .nums {
+      font-size: 17px; letter-spacing: 0.06em; color: var(--payne);
+      font-variant-numeric: tabular-nums; margin: 22px 0; text-align: center;
+    }
+
+    .back { display: block; text-align: center; margin-top: 60px; font-size: 13px; color: var(--meta); letter-spacing: 0.04em; }
+    .back:hover { color: var(--payne); }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    @media (max-width: 620px) {
+      .voices { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (max-width: 560px) {
+      body { padding: 34px 16px 56px; }
+      .reading p { font-size: 15.5px; }
+      button.play { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <h1>Twenty-Four to Forty-Eight</h1>
+  <div class="subtitle">a whole major scale hiding in one rhythm</div>
+
+  <div class="bench">
+
+    <section class="strip">
+      <div class="striphead">
+        <div class="eyebrow">one full pattern</div>
+        <div class="n" id="cyclenote"></div>
+      </div>
+      <canvas id="c"></canvas>
+      <div class="striphead wrap" style="margin:10px 0 6px">
+        <div class="eyebrow">where those land on a piano<br><span style="text-transform:none;letter-spacing:0">tap a key to move the bottom voice onto it</span></div>
+        <div class="n" id="kbnote"></div>
+      </div>
+      <canvas id="kb"></canvas>
+    </section>
+
+    <section class="floor">
+      <div>
+        <div class="lab">the floor underneath</div>
+        <div class="val" id="floorval">—</div>
+      </div>
+      <div class="said" id="floorsaid"></div>
+    </section>
+
+    <section class="controls">
+
+      <div class="field">
+        <div class="lab"><span>speed &mdash; the slowest voice</span><em id="speedread"></em></div>
+        <input id="speed" type="range" min="0" max="1000" value="130" aria-label="speed">
+        <div class="ticks" id="ticks"></div>
+      </div>
+
+      <div class="field">
+        <div class="lab"><span>the eight voices &mdash; tap to switch each on and off</span></div>
+        <div class="voices" id="voices"></div>
+      </div>
+
+      <div class="field">
+        <div class="lab"><span>sets worth hearing</span></div>
+        <div class="row" id="presets"></div>
+        <p class="sievenote" id="presetnote"></p>
+      </div>
+
+      <div class="field">
+        <div class="lab"><span>brightness</span><em id="brightread"></em></div>
+        <input id="bright" type="range" min="0" max="1000" value="560" aria-label="brightness">
+      </div>
+
+      <div class="field">
+        <div class="lab"><span>click pitch</span><em id="clickread"></em></div>
+        <input id="clickp" type="range" min="0" max="1000" value="0" aria-label="click pitch">
+      </div>
+
+      <div class="row">
+        <button class="pill" id="bWalk">Walk up</button>
+        <button class="pill play" id="bPlay">Start</button>
+      </div>
+
+    </section>
+
+    <p class="benchfoot"><b>Every voice is the same click.</b> The only difference between any two of
+    them is how often it happens. If you hear nothing on an iPad, check the little switch on the side.</p>
+
+  </div>
+
+  <div style="margin-top:34px">
+    <span class="eyebrow" style="display:block;margin-bottom:12px">every number from 24 to 48</span>
+    <div class="sieve" id="sieve"></div>
+    <p class="sievenote" style="margin-top:12px">Filled: built out of nothing but 2s, 3s and 5s. Struck
+    out: needs a 7 or an 11 or a 13 or something worse. Dashed: passes the test but sits less than a
+    semitone from 24, too close to be a step of its own. What survives is the scale.</p>
+  </div>
+
+
+  <div class="reading">
+    <span class="eyebrow">what you are looking at</span>
+
+    <h2>Eight tickers</h2>
+
+    <p class="lead">You have already seen two things ticking at once turn into a chord. So here is the
+    obvious next question, and it has a much better answer than it deserves: is there a rhythm that
+    gives you a whole scale?</p>
+
+    <p>There is. Here it is.</p>
+
+    <p class="nums">24 &nbsp; 27 &nbsp; 30 &nbsp; 32 &nbsp; 36 &nbsp; 40 &nbsp; 45 &nbsp; 48</p>
+
+    <p>Eight tickers. In the time the slowest one gets 24 clicks, the others get 27, 30, 32, 36, 40, 45
+    and 48. Speed the whole thing up and you have every note of a major scale &mdash; the eight notes
+    people sing as <em>do re mi fa sol la ti do</em>. The last ticker is going exactly twice as fast as
+    the first, which is the octave closing the loop.</p>
+
+    <h2>You could never tap it</h2>
+
+    <p>Try the speed slider down at the bottom and listen honestly. Twenty-four against twenty-seven is
+    not a rhythm any human being can follow. The pattern doesn&rsquo;t come back around for
+    twenty-four clicks, and you lost the thread around the fourth one.</p>
+
+    <p>Which is worth sitting with for a second. <strong>This scale has no slow version.</strong> It
+    only becomes something you can understand once it is going too fast to count. Some relationships
+    are only ever audible as pitch, and this is one of them.</p>
+
+    <h2>But it is three copies of something small</h2>
+
+    <p>Switch everything off except <b>24</b>, <b>30</b> and <b>36</b>. Those three numbers are 4, 5 and
+    6 with everything multiplied by six &mdash; so what you are hearing is four against five against
+    six, which <em>is</em> a rhythm you could tap. It comes back around every four slow clicks.</p>
+
+    <p>Now try <b>32</b>, <b>40</b> and <b>48</b>. Divide by eight: 4, 5, 6 again. Identical rhythm,
+    planted somewhere else.</p>
+
+    <p>And <b>27</b>, <b>36</b>, <b>45</b>. Divide by nine: 3, 4, 5 &mdash; which is the same three
+    notes as the last one, standing on a different one of themselves.</p>
+
+    <p>Between them those three little chords use every one of the eight numbers and nothing else.
+    <strong>The major scale is one small chord, planted in three places.</strong> Nobody wrote a scale.
+    Somebody built one thing and put it down three times.</p>
+
+    <h2>Why those eight numbers and no others</h2>
+
+    <p>Look at the strip of numbers above the reading, running from 24 to 48. Take each one apart into
+    the smallest pieces it will break into. 30 is 2 &times; 3 &times; 5. 32 is five 2s. 45 is 3 &times;
+    3 &times; 5.</p>
+
+    <p>Now throw away every number that needs anything bigger than a 5 to build it. 28 needs a 7, so it
+    goes. 33 needs an 11. 39 needs a 13. 37 is a prime all by itself and can&rsquo;t be built out of
+    anything.</p>
+
+    <p>Nine numbers survive: 24, 25, 27, 30, 32, 36, 40, 45, 48.</p>
+
+    <p>Eight of those nine are your scale. The one intruder is <b>25</b>, and it fails for a completely
+    different reason &mdash; it sits so close to 24 that it isn&rsquo;t a separate step at all, less
+    than a semitone away, crowding the note it came from. Throw out anything that close and what is
+    left is <em>exactly</em> the major scale. Nothing missing, nothing spare.</p>
+
+    <p>So the scale is not a list handed down by somebody. <strong>It is what falls out of a sieve.</strong>
+    Numbers made of 2s, 3s and 5s, no two of them crowding each other. That is the whole recipe, and you
+    could run it on paper in about five minutes.</p>
+
+    <h2>The three the piano gets wrong</h2>
+
+    <p>Tap any key on the strip and the bottom voice lands exactly on it. Now read the row of note
+    names above the keyboard.</p>
+
+    <p>Three of the eight come out with a number stuck to them &mdash; they miss the nearest key by
+    enough to be worth mentioning. And it is the same three every time, wherever you put the bottom
+    note: the third one up, the sixth, and the seventh.</p>
+
+    <p>Look at what those three are built from. 5/4, 5/3, 15/8. Every one of them has a 5 in it. And
+    the ones with no 5 &mdash; 9/8, 4/3, 3/2 &mdash; land within about two hundredths of a key, near
+    enough that nobody would ever complain.</p>
+
+    <p><strong>The piano is good at 3s and bad at 5s.</strong> The notes built out of threes it gets
+    almost exactly right. The notes built out of fives it misses by something like a seventh of a
+    step, every time, in every key, on every piano ever made. That isn&rsquo;t a fault in the
+    instrument. It is the bill for a keyboard where every key works the same as every other, and
+    somebody decided a long time ago that it was worth paying.</p>
+
+    <h2>The floor underneath</h2>
+
+    <p>Every set of tickers has a slowest thing they all agree on &mdash; the moment they all land
+    together, which then repeats. The bench shows it as <em>the floor underneath</em>.</p>
+
+    <p>Turn on just 24, 30 and 36 and look at it. The floor sits comfortably below the chord, low but
+    solidly a note, and the chord feels like it is standing on something.</p>
+
+    <p>Now turn on all eight. The floor drops through the bottom of hearing and turns into a flutter
+    &mdash; too slow to be a note at all. There is nothing down there to stand on any more, which is
+    exactly why all eight notes at once is a beautiful sort of fog rather than a chord.</p>
+
+    <p><strong>A chord has a floor. A scale does not.</strong> That is most of the difference between
+    them, and you can watch the number fall.</p>
+
+    <h2>The near miss</h2>
+
+    <p>One last thing, and it may be the best of them.</p>
+
+    <p>Try the simplest possible rhythm instead: just counting. 8, 9, 10, 11, 12, 13, 14, 15, 16. Speed
+    that up and you do get a scale &mdash; it is the scale a bugle plays, and the reason a bugle can
+    play anything at all without valves.</p>
+
+    <p>But it is not <em>this</em> scale. It goes wrong in three places, and the three places are
+    11, 13 and 14. Every one of those needs a 7 or an 11 or a 13 to build it &mdash; the numbers the
+    sieve threw away.</p>
+
+    <p>So plain counting gives you a scale. It just isn&rsquo;t ours. The difference between the scale
+    you grew up with and the one a bugle plays is entirely a matter of which primes somebody was
+    willing to allow.</p>
+
+  </div>
+
+  <a class="back" href="index.html">&larr; experiments</a>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* Odd-prime colours, the same ones Glass Multiplication uses. */
+var P3='#c8a800', P5='#a81818', P2='#1a3a8c';
+
+/* Each voice: how many clicks it gets while the slowest gets 24. */
+var V = [
+  {n:24, r:'1/1',  step:0,  odd:[]},
+  {n:27, r:'9/8',  step:2,  odd:[3,3]},
+  {n:30, r:'5/4',  step:4,  odd:[5]},
+  {n:32, r:'4/3',  step:5,  odd:[3]},
+  {n:36, r:'3/2',  step:7,  odd:[3]},
+  {n:40, r:'5/3',  step:9,  odd:[5,3]},
+  {n:45, r:'15/8', step:11, odd:[3,5]},
+  {n:48, r:'2/1',  step:12, odd:[]}
+];
+function hex2rgb(h){ return [parseInt(h.substr(1,2),16),parseInt(h.substr(3,2),16),parseInt(h.substr(5,2),16)]; }
+function mixOdd(list){
+  if(!list.length) return hex2rgb(P2);
+  var a=[0,0,0];
+  list.forEach(function(p){ var c=hex2rgb(p===3?P3:P5); a[0]+=c[0]; a[1]+=c[1]; a[2]+=c[2]; });
+  return [a[0]/list.length, a[1]/list.length, a[2]/list.length];
+}
+V.forEach(function(v){
+  var p=v.r.split('/'), nd=(+p[0])*(+p[1]);
+  v.rgb=mixOdd(v.odd);
+  v.a=Math.max(0.30, Math.min(1, 1.30-0.13*(Math.log(nd)/Math.LN2)));
+  v.css='rgba('+v.rgb.map(Math.round).join(',')+','+v.a.toFixed(3)+')';
+  // is the flat colour light enough that dark text reads better on it?
+  var eR=v.rgb[0]*v.a+244*(1-v.a), eG=v.rgb[1]*v.a+241*(1-v.a), eB=v.rgb[2]*v.a+232*(1-v.a);
+  v.pale=(0.299*eR+0.587*eG+0.114*eB) > 150;
+});
+
+var on = V.map(function(){ return true; });
+var FMIN=1.5, FMAX=330, CPMIN=400, CPMAX=4200;
+var f=2.5, cutoff=3000, clickHz=1850, running=false, walking=false, walkStep=0, walkTimer=null;
+
+var ac=null, src=null, filt=null, master=null, startT=0, cycleT=1;
+var cvs=document.getElementById('c'), ctx=cvs.getContext('2d');
+var kbc=document.getElementById('kb'), kctx=kbc.getContext('2d');
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+
+function unit(){ return f/24; }                 // the beat everything is a multiple of
+function rateOf(i){ return V[i].n*unit(); }
+function activeIdx(){ var a=[]; on.forEach(function(o,i){ if(o) a.push(i); }); return a; }
+function gcd(a,b){ while(b){ var t=a%b; a=b; b=t; } return a; }
+function floorRate(){
+  var act=activeIdx(); if(!act.length) return 0;
+  var g=V[act[0]].n;
+  act.forEach(function(i){ g=gcd(g,V[i].n); });
+  return g*unit();
+}
+
+/* ---------- audio ---------- */
+function makeBuffer(){
+  var sr=ac.sampleRate;
+  var T=24/f;                                   // the full pattern
+  if(T>24) T=24;
+  cycleT=T;
+  var len=Math.max(64, Math.round(T*sr));
+  var b=ac.createBuffer(2,len,sr);
+  var L=b.getChannelData(0), R=b.getChannelData(1);
+
+  var clickLen=Math.round(0.014*sr);
+  var click=new Float32Array(clickLen);
+  for(var i=0;i<clickLen;i++){
+    var t=i/sr;
+    click[i]=Math.sin(2*Math.PI*clickHz*t)*Math.exp(-t/0.0026);
+  }
+  var act=activeIdx();
+  if(!act.length) return b;
+  var g=0.80/Math.sqrt(act.length);
+  act.forEach(function(idx,k){
+    var v=V[idx];
+    var pan=act.length>1 ? k/(act.length-1) : 0.5;   // spread them across the stereo field
+    var gL=g*(1-0.45*pan), gR=g*(0.55+0.45*pan);
+    for(var q=0;q<v.n;q++){
+      var at=Math.round(q*len/v.n)%len;
+      for(var j=0;j<clickLen;j++){
+        var p=(at+j)%len;
+        L[p]+=click[j]*gL; R[p]+=click[j]*gR;
+      }
+    }
+  });
+  var peak=0;
+  for(var z=0;z<len;z++){
+    var x=Math.abs(L[z]); if(x>peak)peak=x;
+    var y=Math.abs(R[z]); if(y>peak)peak=y;
+  }
+  if(peak>1){ for(var w=0;w<len;w++){ L[w]/=peak; R[w]/=peak; } }
+  return b;
+}
+function stopSrc(){ if(src){ try{src.stop();}catch(e){} src.disconnect(); src=null; } }
+function restart(){
+  if(!running||!ac) return;
+  stopSrc();
+  src=ac.createBufferSource();
+  src.buffer=makeBuffer(); src.loop=true;
+  src.connect(filt);
+  startT=ac.currentTime+0.03;
+  src.start(startT);
+}
+function ensureAudio(){
+  if(ac) return;
+  ac=new (window.AudioContext||window.webkitAudioContext)();
+  filt=ac.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=cutoff; filt.Q.value=0.6;
+  master=ac.createGain(); master.gain.value=0.34;
+  filt.connect(master); master.connect(ac.destination);
+}
+var pending=null;
+function rebuildSoon(){ if(pending) clearTimeout(pending); pending=setTimeout(function(){ pending=null; restart(); },90); }
+
+/* ---------- the piano strip (designer-facing) ---------- */
+var KB_LO=12, KB_HI=108, KW=27, PIANO_LO=21, CENTS_TOL=15;
+var WHITE_PC={0:1,2:1,4:1,5:1,7:1,9:1,11:1};
+var kbCenters={}, kbRects=[], kbTotal=0, kbOffset=0, kbInit=false;
+(function(){
+  var wi=0;
+  for(var m=KB_LO;m<=KB_HI;m++){
+    if(WHITE_PC[m%12]){ kbCenters[m]=wi*KW+KW/2; kbRects.push({m:m,x:wi*KW,w:KW,black:false}); wi++; }
+    else { var bw=KW*0.62; kbCenters[m]=wi*KW; kbRects.push({m:m,x:wi*KW-bw/2,w:bw,black:true}); }
+  }
+  kbTotal=wi*KW;
+})();
+function midiOf(hz){ return 69+12*Math.log(hz/440)/Math.LN2; }
+function hzOfMidi(m){ return 440*Math.pow(2,(m-69)/12); }
+function xOfMidi(m){
+  if(m<=KB_LO) return kbCenters[KB_LO];
+  if(m>=KB_HI) return kbCenters[KB_HI];
+  var lo=Math.floor(m); return kbCenters[lo]+(kbCenters[lo+1]-kbCenters[lo])*(m-lo);
+}
+var NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+function nameOf(m){ return NAMES[((m%12)+12)%12]+(Math.floor(m/12)-1); }
+
+function drawKeys(){
+  var w=kbc.clientWidth,h=kbc.clientHeight;
+  kctx.clearRect(0,0,w,h);
+  var act=activeIdx();
+  var ms=act.map(function(i){ return midiOf(rateOf(i)); });
+  var mid = ms.length ? (Math.min.apply(null,ms)+Math.max.apply(null,ms))/2 : midiOf(f);
+  var target=Math.max(0,Math.min(Math.max(0,kbTotal-w), xOfMidi(mid)-w/2));
+  if(!kbInit){ kbOffset=target; kbInit=true; } else kbOffset+=(target-kbOffset)*0.18;
+  var off=kbOffset;
+
+  var lit={};
+  act.forEach(function(i){
+    var m=midiOf(rateOf(i)), near=Math.round(m);
+    if(Math.abs(m-near)*100<=CENTS_TOL && near>=KB_LO && near<=KB_HI) lit[near]=V[i].css;
+  });
+
+  kctx.font='9px -apple-system, Helvetica Neue, Arial, sans-serif';
+  kctx.textAlign='center';
+  kbRects.forEach(function(k){
+    if(k.black) return;
+    var x=k.x-off; if(x+k.w<-2||x>w+2) return;
+    kctx.fillStyle = lit[k.m] ? lit[k.m] : (k.m<PIANO_LO?'#e6e0d0':'#fbf9f2');
+    kctx.fillRect(x,0,k.w-1,h);
+    kctx.strokeStyle=css('--rule'); kctx.lineWidth=1;
+    kctx.strokeRect(x+0.5,0.5,k.w-2,h-1);
+    if(k.m%12===0){ kctx.fillStyle=css('--meta'); kctx.fillText(nameOf(k.m),x+k.w/2,h-4); }
+  });
+  kbRects.forEach(function(k){
+    if(!k.black) return;
+    var x=k.x-off; if(x+k.w<-2||x>w+2) return;
+    kctx.fillStyle = lit[k.m] ? lit[k.m] : (k.m<PIANO_LO?'#6a6558':'#3a352c');
+    kctx.fillRect(x,0,k.w,h*0.62);
+  });
+  act.forEach(function(i){
+    var x=xOfMidi(midiOf(rateOf(i)))-off;
+    kctx.fillStyle=V[i].css;
+    kctx.beginPath(); kctx.moveTo(x,11); kctx.lineTo(x-5.5,0); kctx.lineTo(x+5.5,0); kctx.closePath(); kctx.fill();
+    kctx.fillRect(x-0.75,0,1.5,h*0.34);
+  });
+}
+
+// tap a key to put the bottom voice exactly on it
+kbc.addEventListener('pointerdown', function(e){
+  var rect=kbc.getBoundingClientRect();
+  var x=e.clientX-rect.left+kbOffset, y=e.clientY-rect.top, h=kbc.clientHeight, hit=null;
+  for(var i=0;i<kbRects.length;i++){
+    var k=kbRects[i];
+    if(k.black && y<=h*0.62 && x>=k.x && x<=k.x+k.w){ hit=k.m; break; }
+  }
+  if(hit===null){
+    for(var j=0;j<kbRects.length;j++){
+      var k2=kbRects[j];
+      if(!k2.black && x>=k2.x && x<=k2.x+k2.w){ hit=k2.m; break; }
+    }
+  }
+  if(hit===null) return;
+  f=Math.max(FMIN, Math.min(FMAX, hzOfMidi(hit)));
+  document.getElementById('speed').value=fToSp(f);
+  paint(); rebuildSoon();
+});
+
+/* ---------- the eight lanes ---------- */
+function resize(){
+  var dpr=window.devicePixelRatio||1;
+  [[cvs,ctx],[kbc,kctx]].forEach(function(pr){
+    var el=pr[0],c=pr[1],w=el.clientWidth,h=el.clientHeight;
+    el.width=Math.round(w*dpr); el.height=Math.round(h*dpr); c.setTransform(dpr,0,0,dpr,0,0);
+  });
+}
+window.addEventListener('resize',resize);
+
+function draw(){
+  var w=cvs.clientWidth,h=cvs.clientHeight;
+  ctx.clearRect(0,0,w,h);
+  var padL=30,padR=10,W=w-padL-padR;
+  var top=13, bot=h-11, lanes=V.length;
+  ctx.font='9.5px -apple-system, Helvetica Neue, Arial, sans-serif';
+  ctx.textAlign='right'; ctx.textBaseline='middle';
+
+  V.forEach(function(v,i){
+    var y=top+(bot-top)*(1-i/(lanes-1));       // 24 at the bottom, 48 at the top
+    ctx.strokeStyle=css('--rule'); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,y+0.5); ctx.lineTo(padL+W,y+0.5); ctx.stroke();
+    ctx.fillStyle=css('--meta'); ctx.globalAlpha=on[i]?1:0.4;
+    ctx.fillText(v.n, padL-7, y);
+    ctx.globalAlpha=1;
+    ctx.fillStyle=v.css; ctx.globalAlpha=on[i]?1:0.16;
+    var rad=v.n>40?1.8:2.2;
+    for(var k=0;k<v.n;k++){
+      var x=padL+W*(k/v.n);
+      ctx.beginPath(); ctx.arc(x,y,rad,0,6.2832); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  });
+
+  ctx.strokeStyle=css('--gold'); ctx.globalAlpha=0.75; ctx.lineWidth=1.5;
+  [padL,padL+W].forEach(function(x){
+    ctx.beginPath(); ctx.moveTo(x+0.5,top-7); ctx.lineTo(x+0.5,bot+7); ctx.stroke();
+  });
+  ctx.globalAlpha=1;
+
+  if(running&&ac&&cycleT>0.22){
+    var el=ac.currentTime-startT;
+    if(el>0){
+      var ph=(el%cycleT)/cycleT;
+      ctx.strokeStyle=css('--payne'); ctx.globalAlpha=0.5; ctx.lineWidth=1;
+      var x=padL+W*ph;
+      ctx.beginPath(); ctx.moveTo(x+0.5,top-7); ctx.lineTo(x+0.5,bot+7); ctx.stroke();
+      ctx.globalAlpha=1;
+    }
+  }
+  drawKeys();
+  requestAnimationFrame(draw);
+}
+
+/* ---------- readouts ---------- */
+function fmt(v){ return v>=100?v.toFixed(0):(v>=20?v.toFixed(1):v.toFixed(2)); }
+function paint(){
+  document.getElementById('speedread').textContent=fmt(f)+' per second';
+  document.getElementById('brightread').textContent=Math.round(cutoff)+' Hz and below';
+  document.getElementById('clickread').textContent=Math.round(clickHz)+' Hz tick';
+
+  var T=24/f;
+  document.getElementById('cyclenote').textContent =
+    '24 slow clicks · repeats every '+(T>=1?T.toFixed(2)+' s':(T*1000).toFixed(0)+' ms');
+
+  var fr=floorRate(), act=activeIdx();
+  var fv=document.getElementById('floorval'), fs=document.getElementById('floorsaid');
+  if(!act.length){ fv.textContent='—'; fs.textContent='Nothing is switched on.'; }
+  else {
+    fv.textContent=fmt(fr)+(fr>=20?' Hz':' a second');
+    if(fr<8) fs.textContent='Too slow to be a note. There is nothing underneath this to stand on — which is why everything at once is a fog rather than a chord.';
+    else if(fr<20) fs.textContent='Right on the edge. Not quite a note, not quite a rhythm — you can feel it fluttering under the sound.';
+    else fs.textContent='A real note, sitting under the others. Nobody is playing it, but the ear leans on it, and that lean is why this set feels like it is standing on something.';
+  }
+
+  Array.prototype.forEach.call(document.getElementById('voices').children,function(el,i){
+    el.className='vb'+(on[i]?' on':'')+(on[i]&&V[i].pale?' pale':'');
+    el.style.background = on[i]?V[i].css:'transparent';
+  });
+
+  // names, with the cents deviation shown only where it is big enough to matter
+  var ms=act.map(function(i){
+    var m=midiOf(rateOf(i)), near=Math.round(m), c=Math.round((m-near)*100);
+    return nameOf(near) + (Math.abs(c)>=5 ? ' '+(c>0?'+':'−')+Math.abs(c)+'¢' : '');
+  });
+  document.getElementById('kbnote').textContent = ms.length? ms.join(' · ') : '';
+}
+
+/* ---------- controls ---------- */
+var sp=document.getElementById('speed'), br=document.getElementById('bright'), cp=document.getElementById('clickp');
+function spToF(v){ return FMIN*Math.pow(FMAX/FMIN,v/1000); }
+function fToSp(x){ return 1000*Math.log(x/FMIN)/Math.log(FMAX/FMIN); }
+sp.value=fToSp(f);
+sp.addEventListener('input',function(){ f=spToF(+this.value); paint(); rebuildSoon(); });
+
+function brToC(v){ return 300*Math.pow(9000/300,v/1000); }
+br.value=1000*Math.log(cutoff/300)/Math.log(9000/300);
+br.addEventListener('input',function(){
+  cutoff=brToC(+this.value);
+  if(filt) filt.frequency.setTargetAtTime(cutoff,ac.currentTime,0.02);
+  paint();
+});
+function cpToHz(v){ return CPMIN*Math.pow(CPMAX/CPMIN,v/1000); }
+cp.value=1000*Math.log(clickHz/CPMIN)/Math.log(CPMAX/CPMIN);
+cp.addEventListener('input',function(){ clickHz=cpToHz(+this.value); paint(); rebuildSoon(); });
+
+(function(){
+  var t=document.getElementById('ticks');
+  [[8,'rhythm ends'],[20,'a note begins']].forEach(function(p){
+    var s=document.createElement('span');
+    s.style.left='calc(13px + '+(fToSp(p[0])/1000).toFixed(4)+' * (100% - 26px))';
+    s.textContent=p[1];
+    t.appendChild(s);
+  });
+})();
+
+(function(){
+  var box=document.getElementById('voices');
+  V.forEach(function(v,i){
+    var b=document.createElement('button');
+    b.className='vb'; b.type='button';
+    b.innerHTML='<span class="num">'+v.n+'</span><span class="rat">'+v.r+'</span>'+
+                '<span class="stp">'+v.step+' up</span>';
+    b.onclick=function(){ stopWalk(); on[i]=!on[i]; paint(); rebuildSoon(); };
+    box.appendChild(b);
+  });
+})();
+
+var PRESETS=[
+  {label:'all eight', set:[0,1,2,3,4,5,6,7],
+   note:'Every note of the scale at once. Listen to the floor — it falls through the bottom of hearing, and the sound stops being a chord.'},
+  {label:'24 · 30 · 36', set:[0,2,4],
+   note:'Divide by six: 4 against 5 against 6. A rhythm you could clap. Sped up, a major chord standing on the first note.'},
+  {label:'32 · 40 · 48', set:[3,5,7],
+   note:'Divide by eight: 4, 5, 6 again. The identical rhythm, planted on a different note.'},
+  {label:'27 · 36 · 45', set:[1,4,6],
+   note:'Divide by nine: 3, 4, 5. The same three notes as the last one, standing on a different one of themselves.'},
+  {label:'just 24', set:[0],
+   note:'One voice on its own. This is the thing everything else is measured against.'},
+  {label:'24 · 48', set:[0,7],
+   note:'Twice as fast, exactly. The two are so agreeable the ear can barely tell they are two.'}
+];
+(function(){
+  var box=document.getElementById('presets');
+  PRESETS.forEach(function(p){
+    var b=document.createElement('button');
+    b.className='pill'; b.type='button'; b.textContent=p.label;
+    b.onclick=function(){
+      stopWalk();
+      on=V.map(function(_,i){ return p.set.indexOf(i)>=0; });
+      document.getElementById('presetnote').textContent=p.note;
+      paint(); rebuildSoon();
+    };
+    box.appendChild(b);
+  });
+})();
+
+/* ---------- the sieve ---------- */
+(function(){
+  var box=document.getElementById('sieve');
+  function smooth(n){ [2,3,5].forEach(function(p){ while(n%p===0) n/=p; }); return n===1; }
+  for(var n=24;n<=48;n++){
+    var d=document.createElement('div');
+    d.className='sv'; d.textContent=n;
+    var v=null;
+    V.forEach(function(x){ if(x.n===n) v=x; });
+    if(v){ d.className='sv in'+(v.pale?' pale':''); d.style.background=v.css; d.title=v.r; }
+    else if(smooth(n)){ d.className='sv near'; d.title='built from 2s, 3s and 5s — but under a semitone from 24'; }
+    else { d.className='sv out'; }
+    box.appendChild(d);
+  }
+})();
+
+/* ---------- walk ---------- */
+function stopWalk(){
+  walking=false; walkTimer&&clearInterval(walkTimer); walkTimer=null;
+  document.getElementById('bWalk').className='pill';
+}
+document.getElementById('bWalk').onclick=function(){
+  if(walking){ stopWalk(); on=V.map(function(){return true;}); paint(); rebuildSoon(); return; }
+  ensureAudio(); if(ac.state!=='running') ac.resume();
+  if(!running){ running=true; var pb=document.getElementById('bPlay'); pb.textContent='Stop'; pb.className='pill play running'; }
+  walking=true; walkStep=0; this.className='pill on';
+  document.getElementById('presetnote').textContent='One voice at a time, bottom to top. This is the scale as a scale.';
+  function stepOnce(){
+    on=V.map(function(_,i){ return i===walkStep; });
+    walkStep=(walkStep+1)%V.length;
+    paint(); restart();
+  }
+  stepOnce();
+  walkTimer=setInterval(stepOnce,780);
+};
+
+var play=document.getElementById('bPlay');
+play.onclick=function(){
+  ensureAudio(); if(ac.state!=='running') ac.resume();
+  if(running){ running=false; stopWalk(); stopSrc(); play.textContent='Start'; play.className='pill play'; }
+  else { running=true; play.textContent='Stop'; play.className='pill play running'; restart(); }
+};
+
+resize(); paint(); draw();
+})();
+</script>
+
+<script>var CW_VERSION = '2026-08-25 UNCOMMITTED'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
+</body>
+</html>

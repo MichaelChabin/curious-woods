@@ -1,7 +1,7 @@
 ---
 status: Draft — one thing built and shipped, several claims corrected by listening
-role: Ratios delivered by counting rather than by waves — 25 Aug session
-updated: 2026-08-25
+role: Ratios delivered by counting rather than by waves — 25 Aug, continued 31 Aug
+updated: 2026-08-31
 extends: Sound-Rhythm-Roll-Aug21.md
 ---
 
@@ -281,6 +281,67 @@ reads as an assignment however it is phrased.
 
 Roughly 1,870 words. The closing line is *"The simple fractions are still where the
 sweet intervals live. They are just not the reason."*
+
+---
+
+## A second bench: the scale as one rhythm (31 Aug)
+
+Michael, several days later: *"is there a simple rhythem that would give us an entire major
+scale?"* There is, and the answer is better than the question promised. Built and live as
+`cw-deploys/experiments/scale-from-a-rhythm.html` (**Twenty-Four to Forty-Eight**).
+
+**The rhythm is 24 : 27 : 30 : 32 : 36 : 40 : 45 : 48** — the just major scale put over a
+common denominator. Eight voices; in the time the slowest gets 24 clicks the others get their
+number. Sped up, the whole scale.
+
+### Three things it turns out to be
+
+**Not tappable.** 24 against 27 is not a rhythm any listener can follow — the pattern does not
+return for 24 clicks. *This scale has no slow version.* Some relationships are only ever
+audible as pitch, and saying so is more honest than pretending the rhythm framing scales up.
+
+**One chord, three times.** 24·30·36 is 4:5:6. 32·40·48 is 4:5:6. 27·36·45 is 3:4:5, the same
+three notes standing on a different one of themselves. Between them the three triads use all
+eight numbers and nothing else. **The major scale is one small chord planted in three places** —
+the same-shape-moved property the lattice argument depends on, arriving from a different room
+entirely.
+
+**A sieve, not a list.** The 5-smooth numbers in [24, 48] are 24, 25, 27, 30, 32, 36, 40, 45,
+48. Nine. Drop 25 — 71 cents from 24, under a semitone, crowding the note it came from — and
+the remaining eight *are* the major scale, nothing missing and nothing spare. So the scale
+falls out of two rules a child can apply on paper: **built from 2s, 3s and 5s only, and no two
+crowding each other.** The bench draws the sieve as a strip of 24–48.
+
+### Two findings that were not designed in
+
+**A chord has a floor; a scale does not.** The bench shows *the floor underneath* — the gcd of
+the active voices times the unit, i.e. the rate at which the whole arrangement realigns. Any
+one triad has gcd 6, so the floor sits at f/4: a real note, low, and the chord audibly stands
+on it. All eight together have gcd 1, so the floor is f/24 — about 8 per second at a musical
+f, which is the flutter band, not a note. Nothing to lean on, which is why all eight at once
+is a fog rather than a chord. **This is the implied-root material from the first bench, made
+into a number that visibly falls.**
+
+**The keyboard is good at 3s and bad at 5s.** Tap the piano strip to put the bottom voice on a
+real key and read the row: the three notes carrying a prime 5 (5/4, 5/3, 15/8) miss their
+nearest key by −14, −16 and −12 cents, while the 3-limit notes (9/8, 4/3, 3/2) land within 2.
+Same three every time, in every key. With the lighting tolerance at 15 cents, five keys light
+and three do not — **the lit keys are the 3-limit ones and the demonstration draws itself.**
+This is the strongest argument yet that the prime colouring is describing something real, and
+it also shows the colours' limit: they say how a note is *built*, and here that predicts how
+badly the piano will approximate it, but it still says nothing about consonance.
+
+**The near miss, kept.** Plain counting — 8, 9, 10, … 16 — gives a scale too, the bugle's. It
+differs in exactly three places (11, 13, 14), all of which need a 7, an 11 or a 13. Counting
+gives *a* scale; which one you get is a question of which primes you allow.
+
+### Shape of the page
+
+Eight lanes in the pattern strip (24 at the bottom, 48 at the top, coloured by the odd primes
+in each ratio), the shared piano strip, the floor readout, eight voice toggles, six presets, a
+walk mode stepping one voice at a time, the three shared sliders, the sieve, and about 900
+words of reading. Audio is the same looping-buffer method; voices are panned across the field
+by index so eight at once stays legible.
 
 ---
 
