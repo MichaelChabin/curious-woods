@@ -345,6 +345,44 @@ by index so eight at once stays legible.
 
 ---
 
+## A third bench: the strobe (31 Aug)
+
+Michael's proposal, unprompted: a speaker seen edge-on is one bar between `{` and `}`; light it
+with a strobe and the bar freezes; can notes and chords be read as arrangements of bars, more
+easily than as sine waves? Built as `cw-deploys/experiments/strobe-and-stars.html`
+(**Frozen or Crawling**).
+
+**The mechanism.** Strobe at rate `S`, voice at `f`, write `f/S = p/q` in lowest terms: the bar
+visits exactly `q` phases and then repeats forever. With the strobe locked to the bottom note,
+**the number of positions is the denominator of the interval.**
+
+**The representation, which is the better half.** The bar is the *shadow* of a point going round
+a circle at constant speed, so the bench draws the circle above every window with drop lines to
+the bar. This is a sine wave's content — circular motion projected — with no sine wave drawn,
+which is what Michael was reaching for. Joining successive flashes in order draws a polygon, and
+where the step skips round the rim, a **star polygon**: 7:5 is a pentagram, 4:3 a triangle, 5:4
+a square, 45:32 a dense mess. *Every interval has a shape, and the shape is what the thing does.*
+
+**The shadow loses information, and this is stated rather than hidden.** `sin` sends phases θ and
+π−θ to the same place, so even denominators collapse: 3:2 has two places on the circle and **one**
+shadow; 5:4 has four and three. Captions read "4 places · 3 shadows". The circle is the honest
+object; the bar is what a real speaker would actually show you.
+
+**It fills the gap open since the first bench.** Switching from the true fraction to equal
+temperament, nothing closes — the figure creeps round the rim at `|q·f − p·S|` per second, which
+*is* the beat rate. A tempered fifth at 200 Hz reads 0.68 per second on screen and throbs 0.68
+times a second in the ear. **The eye and the ear are watching the same number.** Frozen means
+exact, crawling means nearly, racing means no. This is the strobe-tuner principle and it is a
+real instrument, not a metaphor.
+
+**And it carries its own falsification.** 7:5 draws a clean pentagram; 45:32 draws a mess; they
+sound identical. So the bench is a picture of the *arithmetic*, not of the *sound* — the same
+trap as the small-numbers rule, in visual form. The reading says so plainly and ends on it: a
+good picture shows you something real, and it does not follow that the thing it shows is the
+thing you care about.
+
+---
+
 ## Open
 
 - **Does 3:2 stay clean at full brightness on the fixed build?** The one control not

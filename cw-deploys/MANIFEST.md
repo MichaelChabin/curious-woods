@@ -91,6 +91,22 @@ to test yesterday's work.
   `CWVault/01-ACTIVE/Review-GlassMult-Aug09.md`.
 
 ### experiments/
+- **`strobe-and-stars.html`** — bench: a loudspeaker edge-on under a strobe. The cone is one
+  bar between `{` and `}`; the strobe runs at the bottom note, so that note freezes and is the
+  reference. A voice at `n/d` visits exactly **d** phases and the flashes joined in order draw
+  a polygon or star polygon `{d/(n mod d)}` — 7:5 is a pentagram, 45:32 is a mess.
+  **Above each window is the circle the bar is the shadow of**, with drop lines: circular motion
+  projected, which is a sine wave's content with no sine wave drawn. The shadow loses phases
+  that `sin` maps together, so captions read "4 places · 3 shadows" — the even-denominator
+  collapse is labelled rather than hidden. A tuning switch (true fraction ↔ equal temperament)
+  **fills the gap that has been open since 25 Aug**: on a true ratio every figure closes and
+  freezes; on the keyboard's version nothing closes and the figure creeps at `|q·f − p·S|`
+  per second, which is the beat rate — 0.68/s for a tempered fifth at 200 Hz, matching the
+  audible throb to two decimals. Additive tones (5 harmonics per voice) so the beat is audible
+  while the drift is visible. Two or three voices; the triad shows the collapse plainly.
+  **Carries its own warning in the reading**: this is a picture of the arithmetic, not of the
+  sound — 7:5 and 45:32 look nothing alike and are indistinguishable by ear. Standalone.
+  Design: `CWVault/01-ACTIVE/Sound-Counting-Bench-Aug25.md`.
 - **`scale-from-a-rhythm.html`** — bench: a whole major scale as one rhythm. Eight click
   voices at **24 : 27 : 30 : 32 : 36 : 40 : 45 : 48** — the just major scale over a common
   denominator — with a speed knob, per-voice toggles, the brightness and click-pitch controls

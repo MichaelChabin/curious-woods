@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frozen or Crawling — The Curious Woods</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root{
+      --paper:#f4f1e8;
+      --panel:#eae5d7;
+      --ink:#3D3D3A;
+      --ink-soft:#5a564e;
+      --meta:#a09880;
+      --rule:#c8b89a;
+      --payne:#546A80;
+      --ref:#1a3a8c;
+      --v2:#a81818;
+      --v3:#b8960a;
+      --shadow:rgba(60,50,30,0.10);
+    }
+
+    body {
+      background: var(--paper); font-family: Georgia, serif; min-height: 100vh;
+      color: var(--ink); padding: 46px 24px 70px; -webkit-text-size-adjust: 100%;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+
+    h1 { font-size: 22px; font-weight: normal; letter-spacing: 0.04em; color: var(--payne); margin-bottom: 6px; text-align: center; }
+    .subtitle { font-size: 13px; color: var(--meta); text-align: center; margin-bottom: 28px; letter-spacing: 0.02em; }
+
+    a { color: var(--payne); text-decoration: none; transition: color 80ms ease; }
+    a:hover { color: var(--ink); }
+
+    .eyebrow {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--meta);
+    }
+
+    .bench { display: flex; flex-direction: column; gap: 16px; }
+
+    .strip {
+      background: var(--panel); border: 0.5px solid var(--rule); border-radius: 3px;
+      box-shadow: 0 1px 3px var(--shadow); padding: 12px 14px 10px;
+    }
+    .striphead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+    .striphead .n {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 11px; color: var(--meta); font-variant-numeric: tabular-nums; text-align: right;
+    }
+    #c { display: block; width: 100%; height: 296px; touch-action: none; }
+
+    .verdict {
+      border-top: 0.5px solid var(--rule); border-bottom: 0.5px solid var(--rule);
+      padding: 13px 2px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+    }
+    .verdict .lab {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--meta);
+    }
+    .verdict .val { font-size: 26px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+    .verdict .said { font-size: 13px; line-height: 1.5; color: var(--ink-soft); flex: 1; min-width: 250px; }
+
+    .controls { display: flex; flex-direction: column; gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field .lab {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--meta);
+      display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+    }
+    .field .lab em {
+      font-style: normal; font-family: Georgia, serif; font-size: 12.5px; color: var(--ink);
+      letter-spacing: 0; font-variant-numeric: tabular-nums; text-align: right;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 34px; background: transparent; cursor: pointer; margin: 0;
+    }
+    input[type=range]::-webkit-slider-runnable-track { height: 3px; background: var(--rule); border-radius: 2px; }
+    input[type=range]::-moz-range-track { height: 3px; background: var(--rule); border-radius: 2px; }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 26px; height: 26px; border-radius: 50%;
+      background: var(--paper); border: 2px solid var(--payne); margin-top: -11.5px; box-shadow: 0 1px 3px var(--shadow);
+    }
+    input[type=range]::-moz-range-thumb {
+      width: 26px; height: 26px; border-radius: 50%; background: var(--paper);
+      border: 2px solid var(--payne); box-shadow: 0 1px 3px var(--shadow);
+    }
+    input[type=range]:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--v3); outline-offset: 2px; }
+
+    .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    button {
+      font-family: Georgia, serif; font-size: 14px; color: var(--ink); background: transparent;
+      border: 0.5px solid var(--rule); border-radius: 3px; padding: 8px 12px; cursor: pointer;
+      min-height: 38px; font-variant-numeric: tabular-nums; transition: background 120ms, border-color 120ms;
+    }
+    button:hover { background: var(--panel); }
+    button:focus-visible { outline: 2px solid var(--v3); outline-offset: 2px; }
+    button.on { background: var(--payne); border-color: var(--payne); color: var(--paper); }
+    button.play { margin-left: auto; font-size: 15px; padding: 9px 22px; border-color: var(--payne); color: var(--payne); }
+    button.play.on { background: var(--payne); color: var(--paper); }
+
+    .note { font-size: 13px; line-height: 1.55; color: var(--ink-soft); }
+    .benchfoot { font-size: 12.5px; line-height: 1.65; color: var(--ink-soft); border-top: 0.5px solid var(--rule); padding-top: 14px; }
+    .benchfoot b { font-weight: normal; color: var(--ink); }
+
+    .reading { margin-top: 58px; padding-top: 38px; border-top: 0.5px solid var(--rule); }
+    .reading .eyebrow { display: block; text-align: center; margin-bottom: 32px; }
+    .reading h2 { font-size: 19px; font-weight: normal; color: var(--payne); margin: 40px 0 14px; text-wrap: balance; line-height: 1.3; }
+    .reading h2:first-of-type { margin-top: 0; }
+    .reading p { font-size: 16px; line-height: 1.72; margin-bottom: 16px; max-width: 62ch; }
+    .reading p.lead { font-size: 17px; }
+    .reading strong { font-weight: normal; font-style: italic; }
+
+    .back { display: block; text-align: center; margin-top: 60px; font-size: 13px; color: var(--meta); letter-spacing: 0.04em; }
+    .back:hover { color: var(--payne); }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    @media (max-width: 560px) {
+      body { padding: 34px 16px 56px; }
+      .reading p { font-size: 15.5px; }
+      button.play { margin-left: 0; }
+      #c { height: 250px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <h1>Frozen or Crawling</h1>
+  <div class="subtitle">a speaker seen from the side, lit by a strobe</div>
+
+  <div class="bench">
+
+    <section class="strip">
+      <div class="striphead">
+        <div class="eyebrow">the circle, and its shadow</div>
+        <div class="n" id="head"></div>
+      </div>
+      <canvas id="c"></canvas>
+    </section>
+
+    <section class="verdict">
+      <div>
+        <div class="lab">verdict</div>
+        <div class="val" id="verdictval">—</div>
+      </div>
+      <div class="said" id="verdictsaid"></div>
+    </section>
+
+    <section class="controls">
+
+      <div class="field">
+        <div class="lab"><span>the interval</span></div>
+        <div class="row" id="ratios"></div>
+      </div>
+
+      <div class="field">
+        <div class="lab"><span>tuned how</span></div>
+        <div class="row">
+          <button id="bJust" class="on">the true fraction</button>
+          <button id="bTemp">the way a keyboard does it</button>
+        </div>
+        <p class="note" id="tuningnote"></p>
+      </div>
+
+      <div class="field">
+        <div class="lab"><span>how many notes</span></div>
+        <div class="row">
+          <button id="bTwo" class="on">two</button>
+          <button id="bTriad">a chord of three</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="lab"><span>the bottom note &mdash; the strobe follows it</span><em id="baseread"></em></div>
+        <input id="base" type="range" min="120" max="400" value="200" aria-label="bottom note">
+      </div>
+
+      <div class="row">
+        <button class="play" id="bPlay">Start the sound</button>
+      </div>
+
+    </section>
+
+    <p class="benchfoot"><b>The strobe flashes once for every wobble of the bottom note.</b> That note
+    is therefore caught in the same place every time and never moves &mdash; it is the thing everything
+    else is measured against. Nothing here is animated for effect: every drift you see is a real
+    difference in frequency.</p>
+
+  </div>
+
+
+  <div class="reading">
+    <span class="eyebrow">what you are looking at</span>
+
+    <h2>A speaker, edge on</h2>
+
+    <p class="lead">Take a loudspeaker and look at it from the side, so the cone is a single line
+    pushing forward and back. Give it walls to move between &mdash; call them <b>{</b> and <b>}</b>
+    &mdash; and the whole of what a note does is one bar sliding between them, very fast.</p>
+
+    <p>Too fast to see. So put a strobe on it: a light that flashes, briefly, at a rate you choose.
+    Between flashes the room is dark and the bar might as well not exist. You only ever see it at the
+    instants the light is on.</p>
+
+    <p>Set the strobe to flash once for every wobble of the note, and something odd happens. Every
+    flash catches the bar at the same point of its journey. The bar stops. It is still moving &mdash;
+    hundreds of times a second &mdash; and it looks like it has been nailed down.</p>
+
+    <h2>The circle behind the bar</h2>
+
+    <p>Here is the part worth having, and it is why this bench draws a circle above every window.</p>
+
+    <p>A note going back and forth is not really a thing sliding along a line. It is easier to think of
+    it as a point going round and round a circle at a steady speed &mdash; and the bar you see is just
+    its <em>shadow</em>, cast sideways onto the wall. Round and round becomes back and forth.</p>
+
+    <p>That matters because the shadow throws information away. Near the edges the point is turning
+    round and the shadow dawdles; through the middle it is moving straight across and the shadow
+    races. Two quite different moments can put the shadow in the same place. The circle never lies
+    like that.</p>
+
+    <p>So watch the circle, and read the bar as what a speaker would actually show you.</p>
+
+    <h2>Counting the dots</h2>
+
+    <p>Now put a second note on, some fraction faster, and keep the strobe on the first.</p>
+
+    <p>The second note is not caught in the same place each time. It lands somewhere else, then
+    somewhere else, and after a while it starts repeating &mdash; and the number of places it visits is
+    exactly the <em>bottom number of the fraction</em>.</p>
+
+    <p>Three against two: two dots. Four against three: three dots. Six against five: five. The
+    fraction stops being arithmetic and becomes something you count on a screen.</p>
+
+    <p>Better than that: the bench draws a line from each flash to the next, in the order they
+    happened. For simple fractions you get a shape. A triangle, a square, a pentagon. And sometimes a
+    star &mdash; because the dots are not always visited in order round the rim; seven against five
+    skips two places each time, and skipping two places round five points is exactly how you draw a
+    five-pointed star without lifting the pen.</p>
+
+    <p><strong>So every interval has a shape.</strong> Not a picture of one &mdash; the shape is what
+    the thing does.</p>
+
+    <h2>The one that never closes</h2>
+
+    <p>Switch the tuning over to <em>the way a keyboard does it</em> and keep watching.</p>
+
+    <p>The shape stops closing. The dots never quite land where they landed before, so the figure
+    creeps round the rim, slowly, and it will do that for as long as you leave it running. It never
+    repeats. Not ever.</p>
+
+    <p>That is not a fault in the drawing. A keyboard&rsquo;s intervals are deliberately <em>not</em>
+    simple fractions &mdash; they are chosen so that every key works the same as every other, and the
+    price is that nothing quite lines up. On a true fraction the shape closes and freezes. On a
+    keyboard it crawls.</p>
+
+    <p>And here is the good part: <strong>the speed of the crawl is the size of the mistake.</strong>
+    Start the sound and listen while you watch. There is a slow throb underneath the two notes, and
+    the shape comes back round to where it started once per throb. Exactly once. The thing your eye is
+    watching and the thing your ear is hearing are the same number.</p>
+
+    <h2>Where the picture lies</h2>
+
+    <p>One warning, and it is a real one.</p>
+
+    <p>Try seven against five, then forty-five against thirty-two. On this screen they could not look
+    more different: five dots and a clean star, against a mess of thirty-two that barely holds still.</p>
+
+    <p>Now listen to them. They sound the same. They <em>are</em> the same, to closer than anyone can
+    hear.</p>
+
+    <p>So this is a picture of the arithmetic, not a picture of the sound. It is honest about
+    fractions and it will happily tell you two things are miles apart when your ears cannot tell them
+    apart at all. <strong>Trust it about numbers. Do not trust it about music.</strong></p>
+
+    <p>Which is worth knowing about pictures in general. A good one shows you something real. It does
+    not follow that the thing it shows you is the thing you care about.</p>
+
+  </div>
+
+  <a class="back" href="index.html">&larr; experiments</a>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var RATIOS=[
+  {n:2, d:1, steps:12, label:'2:1'},
+  {n:3, d:2, steps:7,  label:'3:2'},
+  {n:4, d:3, steps:5,  label:'4:3'},
+  {n:5, d:4, steps:4,  label:'5:4'},
+  {n:6, d:5, steps:3,  label:'6:5'},
+  {n:7, d:5, steps:6,  label:'7:5'},
+  {n:45,d:32,steps:6,  label:'45:32'}
+];
+var ri=1, just=true, triad=false, base=200, playing=false;
+var GHOSTS=17;
+
+var cvs=document.getElementById('c'), ctx=cvs.getContext('2d');
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+function gcd(a,b){ while(b){ var t=a%b; a=b; b=t; } return a; }
+
+/* The voices, as exact fractions of the bottom note (n/d), plus the
+   frequency actually sounded — which is the fraction only when the
+   tuning is set to the true fraction. */
+function voices(){
+  var out=[{n:1,d:1,steps:0,label:'1:1',colour:css('--ref')}];
+  if(triad){
+    out.push({n:5,d:4,steps:4,label:'5:4',colour:css('--v2')});
+    out.push({n:3,d:2,steps:7,label:'3:2',colour:css('--v3')});
+  } else {
+    var r=RATIOS[ri];
+    out.push({n:r.n,d:r.d,steps:r.steps,label:r.label,colour:css('--v2')});
+  }
+  out.forEach(function(v){
+    v.q = v.d/gcd(v.n,v.d);
+    v.p = v.n/gcd(v.n,v.d);
+    v.hz = just ? base*v.n/v.d : base*Math.pow(2, v.steps/12);
+    // how fast the frozen figure creeps: the beat between the p-th harmonic
+    // of the strobe and the q-th harmonic of this voice
+    v.drift = Math.abs(v.q*v.hz - v.p*base);
+  });
+  return out;
+}
+
+/* ---------- sound ---------- */
+var ac=null, master=null, nodes=[];
+function ensureAudio(){
+  if(ac) return;
+  ac=new (window.AudioContext||window.webkitAudioContext)();
+  master=ac.createGain(); master.gain.value=0.0001; master.connect(ac.destination);
+}
+function stopTones(){ nodes.forEach(function(o){ try{o.stop();}catch(e){} o.disconnect(); }); nodes=[]; }
+function startTones(){
+  if(!playing||!ac) return;
+  stopTones();
+  var vs=voices();
+  var amps=[1,0.5,0.34,0.25,0.16];   // harmonics, so the beats are audible at all
+  vs.forEach(function(v){
+    amps.forEach(function(a,k){
+      var o=ac.createOscillator(), g=ac.createGain();
+      o.type='sine'; o.frequency.value=v.hz*(k+1);
+      g.gain.value=a*0.10/vs.length;
+      o.connect(g); g.connect(master); o.start();
+      nodes.push(o);
+    });
+  });
+}
+
+/* ---------- drawing ---------- */
+function resize(){
+  var dpr=window.devicePixelRatio||1, w=cvs.clientWidth, h=cvs.clientHeight;
+  cvs.width=Math.round(w*dpr); cvs.height=Math.round(h*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener('resize',resize);
+
+var t0=performance.now()/1000;
+function draw(){
+  var w=cvs.clientWidth, h=cvs.clientHeight;
+  ctx.clearRect(0,0,w,h);
+  var vs=voices(), S=base;
+  var t=performance.now()/1000-t0;
+  var m=Math.floor(t*S);
+
+  var cellW=w/vs.length;
+  var R=Math.min(cellW*0.30, 60, (h-140)/2);
+  var cy=18+R, winTop=cy+R+30, winH=42;
+
+  vs.forEach(function(v,vi){
+    var cx=cellW*(vi+0.5);
+
+    // rim
+    ctx.strokeStyle=css('--rule'); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,6.2832); ctx.stroke();
+
+    // the window the bar moves in, with its two walls
+    var wx=cx-R, ww=2*R;
+    ctx.strokeRect(wx+0.5, winTop+0.5, ww-1, winH-1);
+    ctx.fillStyle=css('--meta');
+    ctx.font='15px Georgia, serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('{', wx-9, winTop+winH/2);
+    ctx.fillText('}', wx+ww+9, winTop+winH/2);
+
+    // the flashes: newest first
+    var pts=[];
+    for(var k=0;k<GHOSTS;k++){
+      var ph=(v.hz*(m-k)/S)%1; if(ph<0) ph+=1;
+      var th=6.2832*ph;
+      pts.push({x:cx+R*Math.sin(th), y:cy-R*Math.cos(th), sx:cx+R*Math.sin(th)});
+    }
+    // the figure: each flash joined to the next
+    ctx.strokeStyle=v.colour; ctx.globalAlpha=0.42; ctx.lineWidth=1;
+    ctx.beginPath();
+    pts.forEach(function(p,i){ i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y); });
+    ctx.stroke(); ctx.globalAlpha=1;
+
+    // dots on the rim, every flash
+    pts.forEach(function(p,i){
+      ctx.globalAlpha=0.34+0.66*(1-i/GHOSTS);
+      ctx.fillStyle=v.colour;
+      ctx.beginPath(); ctx.arc(p.x,p.y,3.1,0,6.2832); ctx.fill();
+      ctx.globalAlpha=1;
+    });
+    // shadows: one drop and one bar per distinct place, so overlapping
+    // flashes do not stack up into a solid line
+    var drawn=[];
+    pts.forEach(function(p){
+      for(var q2=0;q2<drawn.length;q2++) if(Math.abs(drawn[q2]-p.sx)<0.7) return;
+      drawn.push(p.sx);
+      ctx.strokeStyle=v.colour; ctx.globalAlpha=0.30; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.sx,winTop); ctx.stroke();
+      ctx.globalAlpha=0.92; ctx.fillStyle=v.colour;
+      ctx.fillRect(p.sx-1.1, winTop+5, 2.2, winH-10);
+      ctx.globalAlpha=1;
+    });
+
+    // caption
+    ctx.fillStyle=css('--ink'); ctx.font='13px Georgia, serif'; ctx.textAlign='center';
+    ctx.fillText(v.label, cx, winTop+winH+18);
+    ctx.fillStyle=css('--meta'); ctx.font='10.5px -apple-system, Helvetica Neue, Arial, sans-serif';
+    ctx.fillText(v.hz.toFixed(2)+' Hz', cx, winTop+winH+34);
+    var dots;
+    if(v.drift>0.0005) dots='never repeats';
+    else {
+      // the shadow loses some of them: sin sends two phases to one place
+      var seen={}, nsh=0;
+      for(var s2=0;s2<v.q;s2++){
+        var key=String(Math.round(Math.sin(2*Math.PI*s2/v.q)*1000)+0);
+        if(!seen[key]){ seen[key]=1; nsh++; }
+      }
+      dots=(v.q===1?'1 place':v.q+' places');
+      if(nsh<v.q) dots+=' · '+nsh+' shadow'+(nsh===1?'':'s');
+    }
+    ctx.fillText(dots, cx, winTop+winH+48);
+  });
+
+  requestAnimationFrame(draw);
+}
+
+/* ---------- readouts ---------- */
+function paint(){
+  var vs=voices();
+  document.getElementById('baseread').textContent=base+' Hz';
+  document.getElementById('head').textContent =
+    'strobe '+base+' flashes a second · '+vs.length+' note'+(vs.length===1?'':'s');
+
+  var moving=vs.filter(function(v){ return v.drift>0.0005; });
+  var vv=document.getElementById('verdictval'), vsd=document.getElementById('verdictsaid');
+  if(!moving.length){
+    vv.textContent='Frozen';
+    vsd.textContent='Every figure closes and stops. These frequencies are exact whole-number fractions of each other, so the flashes catch them in the same places forever.';
+  } else {
+    var d=Math.max.apply(null,moving.map(function(v){ return v.drift; }));
+    vv.textContent=d.toFixed(2)+' a second';
+    vsd.textContent='Nothing closes. The figures creep round the rim and come back to where they started '+d.toFixed(2)+' times a second — which is exactly the throb you can hear underneath the notes. That number is the size of the compromise.';
+  }
+  document.getElementById('tuningnote').textContent = just
+    ? 'Exact fractions of the bottom note. Everything closes and holds still.'
+    : 'Each note set to where a keyboard would actually put it — twelve equal steps to the octave, which are never quite whole-number fractions.';
+
+  document.getElementById('bJust').className = just?'on':'';
+  document.getElementById('bTemp').className = just?'':'on';
+  document.getElementById('bTwo').className = triad?'':'on';
+  document.getElementById('bTriad').className = triad?'on':'';
+  Array.prototype.forEach.call(document.getElementById('ratios').children,function(el,i){
+    el.className = (!triad && i===ri)?'on':'';
+    el.disabled = triad;
+    el.style.opacity = triad?0.4:1;
+  });
+  if(playing) startTones();
+}
+
+(function(){
+  var box=document.getElementById('ratios');
+  RATIOS.forEach(function(r,k){
+    var b=document.createElement('button'); b.type='button'; b.textContent=r.label;
+    b.onclick=function(){ ri=k; paint(); };
+    box.appendChild(b);
+  });
+})();
+
+document.getElementById('bJust').onclick=function(){ just=true; paint(); };
+document.getElementById('bTemp').onclick=function(){ just=false; paint(); };
+document.getElementById('bTwo').onclick=function(){ triad=false; paint(); };
+document.getElementById('bTriad').onclick=function(){ triad=true; paint(); };
+document.getElementById('base').addEventListener('input',function(){ base=+this.value; paint(); });
+
+var pb=document.getElementById('bPlay');
+pb.onclick=function(){
+  ensureAudio(); if(ac.state!=='running') ac.resume();
+  if(playing){
+    playing=false; master.gain.setTargetAtTime(0.0001, ac.currentTime, 0.03);
+    setTimeout(stopTones,200);
+    pb.textContent='Start the sound'; pb.className='play';
+  } else {
+    playing=true; startTones();
+    master.gain.setTargetAtTime(0.9, ac.currentTime, 0.05);
+    pb.textContent='Stop the sound'; pb.className='play on';
+  }
+};
+
+resize(); paint(); draw();
+})();
+</script>
+
+<script>var CW_VERSION = '2026-08-31 UNCOMMITTED'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
+</body>
+</html>
