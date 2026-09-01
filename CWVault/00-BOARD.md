@@ -477,7 +477,22 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   now benched rather than argued. Arithmetic is integer ratios throughout, so
   thirds exist — they do not in the Multiply bench's base ten. Registered in
   `MANIFEST.md` and `experiments/index.html`; **pushed, so both benches are on
-  Netlify** and Michael can drive them on the iPad.
+  Netlify**.
+- **iPad pass done, 2 Sep — both benches work on the device.** Pinch-zoom has
+  now met real fingers; the standing owed item from the Multiply bench is
+  closed. No defects reported.
+- **The ruling readout, four lines deep (2 Sep, Michael's ask).** The right-hand
+  side is the same number on every line, which is the bench's sentence told
+  twice — once in pieces and once in fractions. Count and worth; then the two
+  sides, **height first, each with the denominator of the ruling that measures
+  it** (3 × 2 → 6/2 × 4/2 → 9/3 × 6/3 → 15/5 × 10/5 → 30/10 × 20/10, every one
+  of them 6); then the same two over the **smallest common denominator**; then
+  the **mixed number**. The last two lines draw only when they add something — a
+  linked ruling has already put both sides over one denominator, which is worth
+  noticing, and a proper fraction has no whole part to lift out. Reading of the
+  ask that was taken and should be confirmed: *"the height over the width"* as
+  each side written numerator-over-denominator, height first, not height ÷ width;
+  *"times each other"* is what settles it.
 - **What the ruling bench found that nobody designed.** Re-ruling and fractional
   sides collide: 3/5 is not a whole number of halves, so *the rectangle never
   moves* and *any word may be chosen* cannot both hold. Resolved in favour of the

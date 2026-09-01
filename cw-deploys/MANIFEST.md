@@ -103,7 +103,16 @@ to test yesterday's work.
   Tenths — with **Split** to unlink the two rows. The rectangle never moves,
   never resizes; only the came does. 6 pieces × 1 = 6 · 24 × ¹⁄₄ = 6 · 54 × ¹⁄₉
   = 6 · 150 × ¹⁄₂₅ = 6 · 600 × ¹⁄₁₀₀ = 6, the total identical on every ruling
-  and read off a fixed corner readout in properly stacked fractions. Split
+  and read off a fixed corner readout in properly stacked fractions. **The
+  readout runs four lines deep** (2 Sep, Michael's ask), and the right-hand side
+  is the same number on every one: the count and the worth of a piece; then the
+  two sides as fractions, **the height first, each with the denominator of the
+  ruling that measures it** — 3 × 2, then 6/2 × 4/2, then 9/3 × 6/3, then
+  30/10 × 20/10, all of them 6; then the same two over the **smallest common
+  denominator**; then the **mixed number** we would normally write. The last two
+  lines are drawn only when they say something — a linked ruling has already put
+  both sides over one denominator, and a proper fraction has no whole part to
+  lift out. Split
   rulings make a piece worth the product of the two grains: x in fifths and y in
   halves, and 3/5 × 1/2 is one stroke reading `3 pieces × ¹⁄₁₀ = ³⁄₁₀`. **The
   drag snaps to the ruling, not to the zoom** — which is the whole difference

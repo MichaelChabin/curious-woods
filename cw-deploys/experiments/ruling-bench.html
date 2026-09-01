@@ -36,8 +36,10 @@
   button.dark{visibility:hidden}
 
   .out{margin-top:11px;padding-top:10px;border-top:1px solid rgba(84,106,128,.18);
-       font-size:15px;line-height:1.9;color:#3D3D3A;min-height:30px}
+       font-size:15px;line-height:1.85;color:#3D3D3A;min-height:30px}
   .out .lbl{font-size:12.5px;color:#8d8879}
+  .ln{margin-bottom:5px}
+  .ln:last-child{margin-bottom:0}
   .frac{display:inline-flex;flex-direction:column;align-items:center;
         vertical-align:-0.42em;line-height:1.08;font-size:.82em}
   .frac .nu{border-bottom:1px solid currentColor;padding:0 3px}
@@ -534,15 +536,50 @@ function syncPanel() {
   homeBtn.classList.toggle('gone', atGreeting());
   clearBtn.classList.toggle('gone', !rect);
 
-  // count · worth of one piece · total. The total is the same on every ruling,
-  // which is the sentence the bench exists to make. The two sides are not here
-  // on purpose — see Q2.
+  // THE READOUT, four lines deep, and the right-hand side is the same number on
+  // every one of them. That repetition is the whole sentence: rule the plane
+  // however you like, write the sides however you like, the area does not move.
+  //
+  //   54 pieces × 1/9 = 6        what the ruling did to the count
+  //   9/3 × 6/3 = 6              the two sides, each in the terms ITS OWN axis
+  //                              is ruled in — the height first, then the width
+  //   5/10 × 6/10 = 3/10         the same two on the smallest common denominator
+  //   = 10 1/2                   and the mixed number we would normally write
+  //
+  // The last two earn their place or they are not drawn. A common denominator
+  // says nothing while the rows are linked, because a linked ruling has already
+  // put both sides over one denominator — which is worth noticing in itself, and
+  // is why the line appears the moment she presses Split. A mixed number says
+  // nothing unless there is a whole part to lift out of an improper fraction.
+  // (Options fade when irrelevant, per the standard; a derivation whose second
+  // step repeats its first reads as broken.)
   if (!r) { outEl.innerHTML = ''; return; }
   const pieces = r.nx * r.ny, den = r.dx * r.dy;
-  const g = gcd(pieces, den);
-  outEl.innerHTML = '<span class="lbl">' + pieces + (pieces === 1 ? ' piece' : ' pieces') +
-                    ' ×</span> ' + frac(1, den) +
-                    ' <span class="lbl">=</span> ' + frac(pieces / g, den / g);
+  const g0 = gcd(pieces, den), P = pieces / g0, Q = den / g0;
+  const total = frac(P, Q);
+  const X = ' <span class="lbl">×</span> ', EQ = ' <span class="lbl">=</span> ';
+
+  let html = '<div class="ln">' + pieces +
+             ' <span class="lbl">' + (pieces === 1 ? 'piece' : 'pieces') + ' ×</span> ' +
+             frac(1, den) + EQ + total + '</div>';
+
+  // The sides, each with the denominator of the ruling that measures it.
+  html += '<div class="ln">' + frac(r.ny, r.dy) + X + frac(r.nx, r.dx) + EQ + total + '</div>';
+
+  // The same two fractions over the smallest common denominator.
+  if (r.dx !== r.dy) {
+    const L = r.dx / gcd(r.dx, r.dy) * r.dy;
+    html += '<div class="ln">' + frac(r.ny * (L / r.dy), L) + X +
+            frac(r.nx * (L / r.dx), L) + EQ + total + '</div>';
+  }
+
+  // And the mixed number. In lowest terms with Q > 1 the remainder is never
+  // zero, so there is always a fraction beside the whole part.
+  if (Q > 1 && P > Q)
+    html += '<div class="ln"><span class="lbl">=</span> ' + Math.floor(P / Q) +
+            ' ' + frac(P % Q, Q) + '</div>';
+
+  outEl.innerHTML = html;
 }
 
 linkBtn.addEventListener('click', toggleLink);
