@@ -336,11 +336,14 @@ function tileGlass(square, w, h) {
 // white on the diagonal. The 1 is white because 1 × 1 is a square.
 const isSquare = t => t.w === t.h;
 
-function tileRect(t) {
-  const a = plane.worldToScreen((t.w - t.cell) * U, t.h * U);
-  const b = plane.worldToScreen(t.w * U, (t.h - t.cell) * U);
+// The far-corner cell of a w × h rectangle at a given grain — the cell the tile
+// occupies, and the one a drag is about to write its product on.
+function cornerCellRect(w, h, cell) {
+  const a = plane.worldToScreen((w - cell) * U, h * U);
+  const b = plane.worldToScreen(w * U, (h - cell) * U);
   return { x: a.x, y: a.y, w: b.x - a.x, h: b.y - a.y };
 }
+function tileRect(t) { return cornerCellRect(t.w, t.h, t.cell); }
 
 function numeralSize(text, r) {
   ctx.font = '100px Georgia, serif';
@@ -372,6 +375,15 @@ function drawGlass(t) {
 // are earned. Q3 lives in these few lines. Drawn in its own pass, after every
 // piece of glass, so a large new tile can never bury an older tile's name.
 function drawNumeral(t) {
+  // While a tile is showing its making, it wears its two sides instead of its
+  // name. JUDGEMENT CALL, 3rd pass — not asked for, and one line to undo. A
+  // rectangle one cell wide or one cell tall puts a side numeral in the corner
+  // cell, on the same centre line as the product, and for a single-cell square
+  // all three land in one small square and none of them can be read. The tile
+  // she tapped is the one thing she already knows the name of; the sides are
+  // what she asked for. Dismissing the rectangle brings the product straight
+  // back.
+  if (t === shownRect) return;
   const r = tileRect(t);
   if (!onScreen(r) || Math.min(r.w, r.h) < TILE_MUTE) return;
   const text = decStr(t.pNum, t.pD);
@@ -388,8 +400,9 @@ function drawNumeral(t) {
 // height sit on the rectangle itself, each centred on its side, inside, on
 // both rectangles — so the twin shows the same two numbers exchanged and
 // commutativity is readable without a word. No product anywhere during a drag.
-function drawDragRect(wNum, hNum, d, faint) {
-  const a = plane.worldToScreen(0, val(hNum, d) * U), b = plane.worldToScreen(val(wNum, d) * U, 0);
+function drawDragRect(wNum, hNum, d, cell, faint) {
+  const w = val(wNum, d), h = val(hNum, d);
+  const a = plane.worldToScreen(0, h * U), b = plane.worldToScreen(w * U, 0);
   const r = { x: a.x, y: a.y, w: b.x - a.x, h: b.y - a.y };
   ctx.save();
   ctx.fillStyle = '#e9eef5'; ctx.globalAlpha = faint * 0.34;
@@ -398,14 +411,31 @@ function drawDragRect(wNum, hNum, d, faint) {
   ctx.strokeStyle = LATTICE; ctx.lineWidth = 1.5;
   ctx.strokeRect(CW.snap(r.x), CW.snap(r.y), Math.round(r.w), Math.round(r.h));
 
-  const size = Math.max(9, Math.min(15, Math.min(r.w, r.h) * 0.3));
-  ctx.font = size + 'px Georgia, serif';
+  // The two sides, on the TOP and the RIGHT (3rd pass, 1 Sep). They were on the
+  // bottom and the left, where they sat a few pixels from the plane's own axis
+  // labels and were read as those. Top and right also puts them beside the far
+  // corner, which is where the number they are making will land. They take the
+  // size the product will be written at on that corner cell — computed exactly
+  // as drawNumeral() computes it, so a tapped tile's sides and its product are
+  // one size — and they are bold, which is the only weight difference on the
+  // glass: her two numbers, against everything the plane says.
+  const corner = cornerCellRect(w, h, cell);
+  // The size the product will be written at on that corner cell — except where
+  // the rectangle is too short to hold two numerals of that size without them
+  // running into each other. The top numeral sits in a band of its own height
+  // and the right numeral straddles the middle, so they stay apart while
+  // r.h / 5 keeps a clear gap between the two bands at Georgia's real glyph
+  // extents, which run past the nominal em box. Only a ONE-CELL-TALL rectangle
+  // ever trips this; every taller one keeps the product's size exactly.
+  const size = Math.max(NUMERAL_FLOOR,
+                        Math.min(numeralSize(decStr(wNum * hNum, 2 * d), corner), r.h / 5));
+  ctx.font = 'bold ' + size + 'px Georgia, serif';
   ctx.fillStyle = INK; ctx.globalAlpha = faint * 0.92;
-  const pad = size * 0.55;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
-  ctx.fillText(decStr(wNum, d), r.x + r.w / 2, r.y + r.h - pad);   // width, centred on its side
-  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  ctx.fillText(decStr(hNum, d), r.x + pad, r.y + r.h / 2);          // height, centred on its side
+  const pad = size * 0.42;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText(decStr(wNum, d), r.x + r.w / 2, r.y + pad);            // width, on the top side
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  ctx.fillText(decStr(hNum, d), r.x + r.w - pad, r.y + r.h / 2);      // height, on the right side
   ctx.restore();
 }
 
@@ -438,15 +468,15 @@ function draw() {
   // The tap's answer: the rectangle that minted this tile, in the drag's own
   // style. The still form of tap-the-mark; the animated replay waits for the
   // operation log (walk, step 6).
-  if (shownRect) drawDragRect(shownRect.wNum, shownRect.hNum, shownRect.d, 1);
+  if (shownRect) drawDragRect(shownRect.wNum, shownRect.hNum, shownRect.d, shownRect.cell, 1);
 
   if (build && build.moved) {
     // The twin first, so the one she is drawing sits over it where they
     // overlap. On the diagonal they coincide and only one is drawn: a square
     // is its own twin.
     if (showDup && build.wNum !== build.hNum)
-      drawDragRect(build.hNum, build.wNum, build.d, TWIN_FAINT);
-    drawDragRect(build.wNum, build.hNum, build.d, 1);
+      drawDragRect(build.hNum, build.wNum, build.d, build.cell, TWIN_FAINT);
+    drawDragRect(build.wNum, build.hNum, build.d, build.cell, 1);
   }
   syncPanel();
 }
@@ -537,7 +567,7 @@ canvas.addEventListener('pointerdown', e => {
   } else if (pointers.size === 1) {
     if (overOne(e.clientX, e.clientY)) {
       mode = 'build';
-      build = Object.assign({ sx: e.clientX, sy: e.clientY, moved: false },
+      build = Object.assign({ sx: e.clientX, sy: e.clientY, moved: false, wasShown: wasShown },
                             snapUnits(e.clientX, e.clientY));
     } else {
       mode = 'pan'; panLast = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY,
@@ -582,6 +612,18 @@ function endPointer(e) {
   pointers.delete(e.pointerId);
   if (mode === 'build' && build) {
     if (build.moved) place(build);
+    else {
+      // A touch on the 1 that never moved. The 1 itself still answers nothing —
+      // a drag of zero length is the honest answer to 1 × 1 — but once she has
+      // built at a finer grain INSIDE the unit square, those tiles live under
+      // the 1's own grab box, and the multiply gesture was swallowing every tap
+      // aimed at them (3rd pass, 1 Sep, Michael). The drag still starts here, so
+      // multiply works from anywhere on the 1; only a tap falls through, and
+      // tileAt() picks the smallest tile under the finger, which is the sub-tile
+      // if there is one and the 1 itself if there is not.
+      const t = tileAt(build.sx, build.sy);
+      if (t && !t.seed) tapMark(t, build.wasShown);
+    }
     build = null; mode = null;
   } else if (mode === 'pan' && panLast) {
     if (!panLast.moved) {

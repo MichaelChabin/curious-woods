@@ -428,6 +428,22 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   **General lesson worth carrying to the other benches:** when a hit test and a
   paint order are written separately they agree by luck; one comparator makes
   them agree by construction.
+- **Third pass, continued — two more from Michael at the bench.** (i) **Tiles
+  built inside the 1** (only reachable at a finer grain) **would not answer a
+  tap**: the multiply gesture claims the whole unit square before the tap can
+  resolve. Fixed by letting a zero-length drag fall through to the tap — the
+  drag still begins anywhere on the 1, so multiply is untouched, and the 1
+  itself still answers nothing, which is the walk's settled reading of 1 × 1.
+  (ii) **The two side numerals moved to the top and right sides**, bold, at the
+  size the product will be written at on the corner cell. On the bottom and left
+  they sat a few pixels from plane.js's own axis labels and were read as those;
+  top and right also puts them beside the corner where their number will land,
+  and bold makes them the only weight difference on the glass — her two numbers
+  against everything the plane says. **One judgement call inside that**, not
+  asked for and one line to undo: a tile showing its making does not also write
+  its product, because for a one-cell rectangle the two sides and the product
+  all land in the same small square and none of the three can be read; the
+  sides also shrink below product size in that one case, and only that one.
 - **Two things the second pass did not foresee, left standing:**
   **(a) Changes 1 and 6 collide.** With duplicates hidden, the surviving mark
   is the mirror, and tapping it shows *its own* rectangle — stroke 2 × 6 and

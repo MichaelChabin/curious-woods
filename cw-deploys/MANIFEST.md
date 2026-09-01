@@ -149,9 +149,15 @@ to test yesterday's work.
   equals newest first, so the smallest and the oldest finish on top** — which
   keeps his newest-under-oldest rule where it applies (equal-size numerals
   crowding at zoom-out) and extends it to nesting. Glass and came travel
-  together, so a buried tile keeps its cell and not only its name. Standalone
-  otherwise; deliberately not deployed into `active/` and not linked from the
-  main index.
+  together, so a buried tile keeps its cell and not only its name. Two more from
+  the same pass: **a tap inside the 1 now reaches the tiles she has built there**
+  at a finer grain — the multiply gesture claims that whole square, so a
+  zero-length drag on it falls through to the tap, while the 1 itself still
+  answers nothing — and **the two side numerals moved to the top and right
+  sides, bold, at the size the product will be written at on the corner cell**,
+  because on the bottom and left they sat against the plane's own axis labels
+  and were read as those. Standalone otherwise; deliberately not deployed into
+  `active/` and not linked from the main index.
 - **`strobe-and-stars.html`** — bench: a loudspeaker edge-on under a strobe. The cone is one
   bar between `{` and `}`; the strobe runs at the bottom note, so that note freezes and is the
   reference. A voice at `n/d` visits exactly **d** phases and the flashes joined in order draw
