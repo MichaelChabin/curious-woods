@@ -112,7 +112,9 @@ to test yesterday's work.
   denominator**; then the **mixed number** we would normally write. The last two
   lines are drawn only when they say something — a linked ruling has already put
   both sides over one denominator, and a proper fraction has no whole part to
-  lift out. Split
+  lift out. Its second bench question narrowed with that change — the sides are
+  written now, so what is left to watch is whether the picture is still consulted
+  or the panel carries her alone. Split
   rulings make a piece worth the product of the two grains: x in fifths and y in
   halves, and 3/5 × 1/2 is one stroke reading `3 pieces × ¹⁄₁₀ = ³⁄₁₀`. **The
   drag snaps to the ruling, not to the zoom** — which is the whole difference
