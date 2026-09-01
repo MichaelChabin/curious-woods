@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Multiply — a bench</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{background:#f4f1e8;font-family:Georgia,serif;color:#3D3D3A;overflow:hidden;
+       user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+  canvas{display:block;position:fixed;inset:0;touch-action:none;cursor:grab}
+  canvas.dragging{cursor:grabbing}
+  canvas.overone{cursor:crosshair}
+
+  .panel{position:fixed;left:16px;top:16px;z-index:10;width:222px;
+         background:rgba(244,241,232,.94);border:.5px solid #c8b89a;border-radius:6px;
+         padding:13px 15px 13px;box-shadow:0 2px 12px rgba(42,38,32,.08)}
+  h1{font-size:15px;font-weight:normal;color:#546A80;margin-bottom:3px}
+  .sub{font-size:11px;color:#a09880;margin-bottom:11px;line-height:1.45}
+  .row{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;align-items:baseline}
+  button{font:inherit;font-size:13px;color:#546A80;background:none;border:0;
+         border-bottom:1px solid transparent;cursor:pointer;padding:1px 1px}
+  button:hover{color:#3D3D3A;border-bottom-color:#c8b89a}
+  button.gone{display:none}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="panel">
+  <h1>Multiply</h1>
+  <div class="sub">Bench — the stroke, the twin, the tile.<br>Touch the 1 and drag.</div>
+  <div class="row">
+    <button id="dup">Hide duplicates</button>
+    <button id="undo" class="gone">Undo</button>
+  </div>
+</div>
+
+<script src="../js/plane.js?v=2026-08-13"></script>
+<script>
+var CW_VERSION = '2026-09-01 pending'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+// ============================================================================
+// MULTIPLY — A BENCH
+//
+// Step 3 of Review-Glass-Aug26.md's order of work: one file per tool, standing
+// on plane.js alone, with no table code. Nothing here is a lab. It exists to be
+// looked at.
+//
+// Authority, in order — where this file and those disagree, they win:
+//   CWVault/01-ACTIVE/Walk-Glass-Aug26.md   steps 1, 2 (all four passes), 6
+//   CWVault/01-ACTIVE/Review-Glass-Aug26.md "The order of work", step 4
+//   CWVault/00-DECISIONS.md
+//
+// Note on the 24 Aug gesture-grammar entries in 00-DECISIONS: the bar on the
+// axis and the floating-readout-plus-fixed-corner-copy are both superseded by
+// the walk of 26 Aug, which says so in as many words ("the bar of the 24 Aug
+// spec is gone"; the live dimensions on the rectangle "replaces the floating
+// readout for Multiply"). That ledger is append-only, so the old lines stand.
+// The same-axis pair (6 and 7 both from x, the pronic doorway) went with the
+// bar — cost accepted at the walk, and not smuggled back in here.
+//
+// ---------------------------------------------------------------------------
+// WHAT TO LOOK AT — the four questions this bench is for. None is answered
+// here by fiat; each is left standing where it can be seen.
+//
+//  Q1. Do the persisting tiles read as a map she built? Build 1×2, 2×3, 3×4,
+//      4×5, then 2×2, 3×3, 4×4 and look: squares on the diagonal, pronics
+//      hugging it one off. Is that legible, or is it just scattered white?
+//
+//  Q2. Is the twin's faintness right — is which rectangle she is making ever
+//      ambiguous? One number: TWIN_FAINT. Move it and look again.
+//
+//  Q3. Does the product numeral stay legible on a tile at the greeting zoom,
+//      and at tenths? NUMERAL_FIT / NUMERAL_FLOOR / NUMERAL_CAP / TILE_MUTE
+//      are the whole of the rule; a tenths tile at the zoom that mints it is
+//      a tenth the size of a unit tile and the numeral is the same length or
+//      longer. This is the question the constants are exposed for.
+//
+//  Q4. The two-kinds-of-number tension. Her rectangle covers cells that are
+//      other products' homes — the drag's fill is transparent precisely so
+//      that collision is visible rather than hidden. Rich or confusing?
+//
+//  Q5. NOT ASKED FOR — the bench found this on its first drive, and it is the
+//      reason to look before building the lab. plane.js draws a lattice rung
+//      only while its lines are more than 40px apart, so TENTHS EXIST ONLY
+//      ABOVE ~400px PER UNIT. At that zoom the stroke can reach x ≈ 2 on an
+//      iPad and x ≈ 2.4 on a laptop. The walk's own illustration — 6.3 × 2 —
+//      needs about 2 500px of run from the origin and cannot be drawn on any
+//      screen this project targets. 1.3 × 2 = 2.6 builds correctly and reads
+//      exactly; 6.3 × 2 is unreachable, not wrong. Every stroke starts at the
+//      1, so reach is bounded by zoom, and zoom is what buys the decimals:
+//      the two pull opposite ways. Nothing is invented here to paper over it
+//      — no auto-pan at the edge, no second anchor, no grain control — because
+//      each of those is a design decision the walk has not made. Worth noting
+//      the walk's own step 3 says division, not multiplication, is what puts
+//      tiles between the lines; this may be the map telling us it was right.
+//
+// Still open in the walk and NOT settled here — this bench takes the prompt's
+// reading and the alternatives remain live:
+//
+//  • Redrawing a rectangle that already has a tile. The walk (step 2, open)
+//    named two candidates — the second draw toggles the tile off, or replaces
+//    it. This bench does neither: a place gets a tile once, and drawing it
+//    again places nothing. Idempotent, so the map only ever grows. If the
+//    toggle is wanted, it goes in addTile().
+//  • What an off-grid mark looks like (walk, step 4: "unit tile scaled to
+//    grain? small pane?" — flagged there as a bench question, not an
+//    argument). This bench takes the first: a tile is one cell of the lattice
+//    that was on screen when it was made, and it keeps that size forever, so
+//    a tenths tile stays a tenths tile when you zoom back out. The tile
+//    records the resolution of its own making. The second candidate — every
+//    mark a unit pane wherever it lands — is the thing to compare against.
+//  • Tap on a placed tile is RESERVED (walk step 6: the mark is the memory;
+//    tapping a mark replays its making). Deliberately a no-op here. The hit
+//    test is wired and tapMark() is the seam; nothing is built behind it,
+//    because replay wants the operation log and the log is not this bench.
+//
+// Not in this bench, on purpose: no table, no modes, no Build, no Properties,
+// no Fill, no prime colour, no sound, no keyboard cursor, no operation log,
+// no save. Colour says one thing here and it is "built by her".
+// ============================================================================
+(() => {
+'use strict';
+
+const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+
+// ---- the bench's dials, gathered so a question is one number away ---------
+const U            = 200;   // world units per unit interval — as both labs declare it
+const PPU_MIN      = 46;    // px per unit at the greeting. plane.js's 1–5–10 ladder
+const PPU_MAX      = 78;    // gives step = 1 for ppu in (40, 80]: integers at greeting
+const ORIGIN_PAD   = 56;    // px from the bottom-left corner to the origin
+const GRAB_MIN     = 22;    // px: the 1's grab box never shrinks below this
+const MOVE_SLOP    = 5;     // px before a touch on the 1 counts as a drag at all
+const TWIN_FAINT   = 0.42;  // Q2 — the twin's share of the drawn rectangle's presence
+const CAME_ALPHA   = 0.30;  // a tile's edge, at the weight plane.js gives its axes:
+                            // the lattice is the came (Review-Glass, order of work §4)
+const NUMERAL_FIT  = 0.62;  // Q3 — numeral width as a share of tile width
+const NUMERAL_FLOOR= 7;     // Q3 — px below which the numeral stops shrinking…
+const NUMERAL_CAP  = 26;    // Q3 — …and above which it stops growing
+const TILE_MUTE    = 6;     // Q3 — px of tile below which no numeral is drawn at all
+const INK          = '#2b2a26';  // the numeral, black against the white glass
+const LATTICE      = '#546A80';  // plane.js's own line colour; the came borrows it
+
+// ---- the plane ------------------------------------------------------------
+// The greeting: origin low and left, the north-east quadrant filling the glass,
+// zoom held where plane.js's ambient ladder draws whole units. Nothing here
+// declares a grain — resolution is zoom, and the lattice says what it is.
+const plane = CW.createPlane({
+  defaultView: (w, h) => {
+    const ppu = Math.max(PPU_MIN, Math.min(PPU_MAX, Math.min(w, h) / 11));
+    const zoom = ppu / U;
+    return { x: (w / 2 - ORIGIN_PAD) / zoom, y: (h / 2 - ORIGIN_PAD) / zoom, zoom };
+  }
+});
+plane.setUnitFrame(0, 0, U);
+
+let viewSettled = false;
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = window.innerWidth, h = window.innerHeight;
+  canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+  canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  plane.setViewport(w, h);
+  if (!viewSettled) plane.resetView();
+  draw();
+}
+window.addEventListener('resize', resize);
+
+// ---- exact numbers --------------------------------------------------------
+// Every coordinate she can reach is a whole number of lattice steps, and every
+// step on plane.js's 1–5–10 ladder is a whole number of some power of ten. So
+// a coordinate is carried as (num, d) meaning num / 10^d — an integer and a
+// decimal place — and the product is an integer multiply. 6.3 × 2 is 63 × 20
+// over 10², which is 12.60, which trims to 12.6. Exactly. No float ever
+// reaches a numeral, which is what "the readout never speaks more precision
+// than the act showed" costs in arithmetic.
+function grain() {
+  const step = plane.latticeStep();                       // in unit intervals
+  const d = Math.max(0, Math.ceil(-Math.log10(step) - 1e-9));
+  return { step, d, k: Math.round(step * Math.pow(10, d)) };
+}
+const val = (num, d) => num / Math.pow(10, d);
+function canon(num, d) {                                  // one place, one name
+  while (d > 0 && num % 10 === 0) { num /= 10; d--; }
+  return num + 'e' + d;
+}
+function decStr(num, d) {
+  let s = String(num);
+  if (d > 0) {
+    while (s.length <= d) s = '0' + s;
+    const ip = s.slice(0, s.length - d), fp = s.slice(s.length - d).replace(/0+$/, '');
+    s = fp ? ip + '.' + fp : ip;
+  }
+  const dot = s.indexOf('.');
+  const ip = dot < 0 ? s : s.slice(0, dot), rest = dot < 0 ? '' : s.slice(dot);
+  return ip.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + rest;  // grouped as plane.js groups
+}
+
+// ---- what is on the glass -------------------------------------------------
+// tiles: keyed by place. A tile carries the numbers it was made from, the
+// product written on it, and the cell size of the lattice that minted it.
+// The 1 is simply the first tile — the product of nothing, same system, same
+// font (walk, step 2, fourth pass). It is the opening state, not a build, so
+// undo can never reach it.
+const tiles = new Map();
+const ONE_KEY = canon(1, 0) + '|' + canon(1, 0);
+tiles.set(ONE_KEY, { w: 1, h: 1, cell: 1, pNum: 1, pD: 0, primary: true, seed: true });
+
+const builds = [];            // [{created:[key], promoted:[key]}] — undo's ledger
+let showDup = true;
+
+function addTile(wNum, hNum, d, cell, primary, created, promoted) {
+  const key = canon(wNum, d) + '|' + canon(hNum, d);
+  const have = tiles.get(key);
+  if (!have) {
+    tiles.set(key, { w: val(wNum, d), h: val(hNum, d), cell: cell,
+                     pNum: wNum * hNum, pD: 2 * d, primary: primary });
+    created.push(key);
+  } else if (primary && !have.primary) {
+    // A place first reached as a twin, now reached directly. That is a real
+    // change — it is what Hide duplicates stops hiding — so undo must reverse it.
+    have.primary = true;
+    promoted.push(key);
+  }
+}
+
+function place(b) {
+  const created = [], promoted = [];
+  addTile(b.wNum, b.hNum, b.d, b.cell, true, created, promoted);
+  if (b.wNum !== b.hNum) addTile(b.hNum, b.wNum, b.d, b.cell, false, created, promoted);
+  // A build that changed nothing is not recorded, so Undo always takes
+  // something visible away rather than spending a press on a redraw.
+  if (created.length || promoted.length) builds.push({ created, promoted });
+  syncPanel();
+}
+
+function undo() {
+  const b = builds.pop();
+  if (!b) return;
+  b.created.forEach(k => tiles.delete(k));
+  b.promoted.forEach(k => { const t = tiles.get(k); if (t) t.primary = false; });
+  syncPanel(); draw();
+}
+
+// Hiding is a viewing, not an unmaking: the twin's tile is still placed and
+// still there, it is simply not shown. Otherwise Show duplicates would have to
+// invent history it never had. A tile that has ever been reached directly is
+// hers outright and shows either way.
+const visible = t => showDup || t.primary;
+
+// ---- drawing --------------------------------------------------------------
+// Unity glass, the lab's own recipe: whole and white with a slight bluish tint,
+// a shade off the parchment so it reads as made. No prime pieces — the empty
+// product. Cached by size and filled through a translate, so a long session
+// does not build a CanvasGradient per tile per frame (canvas-panes' warning).
+const glassCache = new Map();
+function unityGlass(w, h) {
+  const key = Math.round(w) + 'x' + Math.round(h);
+  let g = glassCache.get(key);
+  if (!g) {
+    g = ctx.createRadialGradient(w * 0.44, h * 0.38, 0, w * 0.44, h * 0.38, w * 0.75);
+    g.addColorStop(0, '#ffffff'); g.addColorStop(0.62, '#e9eef5'); g.addColorStop(1, '#cfd6e0');
+    if (glassCache.size > 400) glassCache.clear();
+    glassCache.set(key, g);
+  }
+  return g;
+}
+
+function tileRect(t) {
+  const a = plane.worldToScreen((t.w - t.cell) * U, t.h * U);
+  const b = plane.worldToScreen(t.w * U, (t.h - t.cell) * U);
+  return { x: a.x, y: a.y, w: b.x - a.x, h: b.y - a.y };
+}
+
+function numeralSize(text, r) {
+  ctx.font = '100px Georgia, serif';
+  const w100 = ctx.measureText(text).width || 1;
+  const bySide = (r.w * NUMERAL_FIT) * 100 / w100;
+  return Math.max(NUMERAL_FLOOR, Math.min(NUMERAL_CAP, bySide, r.h * 0.66));
+}
+
+function drawTile(t) {
+  const r = tileRect(t);
+  if (r.x > plane.viewportWidth() || r.y > plane.viewportHeight() ||
+      r.x + r.w < 0 || r.y + r.h < 0) return;
+  ctx.save();
+  ctx.translate(r.x, r.y);
+  ctx.fillStyle = unityGlass(r.w, r.h);
+  ctx.fillRect(0, 0, r.w, r.h);
+  ctx.restore();
+  // The came. Not a frame of its own invention — the lattice's line, at the
+  // weight plane.js gives an axis, carried around a cell that has been filled.
+  ctx.save();
+  ctx.globalAlpha = CAME_ALPHA; ctx.strokeStyle = LATTICE; ctx.lineWidth = 1;
+  ctx.strokeRect(CW.snap(r.x), CW.snap(r.y), Math.round(r.w), Math.round(r.h));
+  ctx.restore();
+  // The numeral, written at the moment of placement and never since — numerals
+  // are earned. Q3 lives in the next four lines.
+  if (Math.min(r.w, r.h) < TILE_MUTE) return;
+  const text = decStr(t.pNum, t.pD);
+  const size = numeralSize(text, r);
+  ctx.save();
+  ctx.font = size + 'px Georgia, serif';
+  ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, r.x + r.w / 2, r.y + r.h / 2 + size * 0.04);
+  ctx.restore();
+}
+
+// The drag: the 1's glass stretched. Same outline, transparent fill — so what
+// her rectangle covers stays visible underneath it (Q4). The live width and
+// height sit on the rectangle itself, each centred on its side, inside, on
+// both rectangles — so the twin shows the same two numbers exchanged and
+// commutativity is readable without a word. No product anywhere during a drag.
+function drawDragRect(wNum, hNum, d, faint) {
+  const a = plane.worldToScreen(0, val(hNum, d) * U), b = plane.worldToScreen(val(wNum, d) * U, 0);
+  const r = { x: a.x, y: a.y, w: b.x - a.x, h: b.y - a.y };
+  ctx.save();
+  ctx.fillStyle = '#e9eef5'; ctx.globalAlpha = faint * 0.34;
+  ctx.fillRect(r.x, r.y, r.w, r.h);
+  ctx.globalAlpha = faint * 0.8;
+  ctx.strokeStyle = LATTICE; ctx.lineWidth = 1.5;
+  ctx.strokeRect(CW.snap(r.x), CW.snap(r.y), Math.round(r.w), Math.round(r.h));
+
+  const size = Math.max(9, Math.min(15, Math.min(r.w, r.h) * 0.3));
+  ctx.font = size + 'px Georgia, serif';
+  ctx.fillStyle = INK; ctx.globalAlpha = faint * 0.92;
+  const pad = size * 0.55;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText(decStr(wNum, d), r.x + r.w / 2, r.y + r.h - pad);   // width, centred on its side
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(decStr(hNum, d), r.x + pad, r.y + r.h / 2);          // height, centred on its side
+  ctx.restore();
+}
+
+function draw() {
+  const W = plane.viewportWidth(), H = plane.viewportHeight();
+  ctx.fillStyle = '#f4f1e8'; ctx.fillRect(0, 0, W, H);
+  plane.drawLattice(ctx);                     // the lattice, its axes, its ladder labels
+  tiles.forEach(t => { if (visible(t)) drawTile(t); });
+  if (build && build.moved) {
+    // The twin first, so the one she is drawing sits over it where they
+    // overlap. On the diagonal they coincide and only one is drawn: a square
+    // is its own twin.
+    if (showDup && build.wNum !== build.hNum)
+      drawDragRect(build.hNum, build.wNum, build.d, TWIN_FAINT);
+    drawDragRect(build.wNum, build.hNum, build.d, 1);
+  }
+}
+
+// ---- the grammar ----------------------------------------------------------
+// Touch the 1 and drag: multiply. Touch anywhere else and drag: pan. Pinch or
+// wheel: zoom, as plane.js already does. A tap on the 1 is a drag of zero
+// length and nothing happens — the honest answer to 1 × 1. A tap on a placed
+// tile is reserved (see tapMark).
+const pointers = new Map();
+let mode = null, build = null, panLast = null, pinch = null;
+
+function oneRect() {
+  const a = plane.worldToScreen(0, U), b = plane.worldToScreen(U, 0);
+  return { x: a.x, y: a.y, w: b.x - a.x, h: b.y - a.y };
+}
+function overOne(x, y) {
+  const r = oneRect(), cx = r.x + r.w / 2, cy = r.y + r.h / 2;
+  // The grab box never falls below GRAB_MIN: zoomed out, the 1 is a speck and
+  // the lab's home key would otherwise be unreachable. The cost is that a pan
+  // begun inside that box near the origin multiplies instead — small, and
+  // exactly the kind of thing a bench is for.
+  const hw = Math.max(r.w / 2, GRAB_MIN / 2), hh = Math.max(r.h / 2, GRAB_MIN / 2);
+  return Math.abs(x - cx) <= hw && Math.abs(y - cy) <= hh;
+}
+function snapUnits(x, y) {
+  const p = plane.screenToWorld(x, y), g = grain();
+  // Release is forgiving (00-DECISIONS, 24 Aug): a stray release snaps to the
+  // nearest legal spot rather than cancelling. The nearest legal spot is never
+  // smaller than one cell, so a drag back past the origin gives the 1 itself.
+  const nx = Math.max(1, Math.round(p.x / U / g.step));
+  const ny = Math.max(1, Math.round(p.y / U / g.step));
+  return { wNum: nx * g.k, hNum: ny * g.k, d: g.d, cell: g.step };
+}
+function tileAt(x, y) {
+  let hit = null;
+  tiles.forEach(t => {
+    if (!visible(t)) return;
+    const r = tileRect(t);
+    if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) hit = t;
+  });
+  return hit;
+}
+// RESERVED. Walk step 6: the mark is the memory, and tapping a mark replays
+// its making. Not built here — replay wants the operation log, and this bench
+// has no log. The seam is kept open so the bench cannot foreclose it.
+function tapMark(t) { /* no-op in this bench */ }
+
+function zoomAbout(sx, sy, factor) {
+  const before = plane.screenToWorld(sx, sy);
+  plane.setZoom(plane.zoom() * factor);
+  const after = plane.screenToWorld(sx, sy);
+  const p = plane.pan();
+  plane.setPan(p.x + (before.x - after.x), p.y + (before.y - after.y));
+  viewSettled = true;
+}
+
+canvas.addEventListener('pointerdown', e => {
+  canvas.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 2) {
+    const p = [...pointers.values()];
+    mode = 'pinch'; build = null; panLast = null;
+    pinch = { d: Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y),
+              mx: (p[0].x + p[1].x) / 2, my: (p[0].y + p[1].y) / 2 };
+  } else if (pointers.size === 1) {
+    if (overOne(e.clientX, e.clientY)) {
+      mode = 'build';
+      build = Object.assign({ sx: e.clientX, sy: e.clientY, moved: false },
+                            snapUnits(e.clientX, e.clientY));
+    } else {
+      mode = 'pan'; panLast = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false };
+      canvas.classList.add('dragging');
+    }
+  }
+  draw();
+});
+
+canvas.addEventListener('pointermove', e => {
+  if (!pointers.has(e.pointerId)) {
+    canvas.classList.toggle('overone', overOne(e.clientX, e.clientY));
+    return;
+  }
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (mode === 'pinch' && pointers.size >= 2) {
+    const p = [...pointers.values()];
+    const d = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+    const mx = (p[0].x + p[1].x) / 2, my = (p[0].y + p[1].y) / 2;
+    if (pinch.d > 0) zoomAbout(mx, my, d / pinch.d);
+    const pan = plane.pan();
+    plane.setPan(pan.x - (mx - pinch.mx) / plane.zoom(), pan.y + (my - pinch.my) / plane.zoom());
+    pinch = { d, mx, my };
+  } else if (mode === 'build' && build) {
+    if (!build.moved && Math.hypot(e.clientX - build.sx, e.clientY - build.sy) > MOVE_SLOP)
+      build.moved = true;
+    Object.assign(build, snapUnits(e.clientX, e.clientY));
+  } else if (mode === 'pan' && panLast) {
+    const dx = e.clientX - panLast.x, dy = e.clientY - panLast.y;
+    const pan = plane.pan();
+    plane.setPan(pan.x - dx / plane.zoom(), pan.y + dy / plane.zoom());
+    if (Math.hypot(e.clientX - panLast.sx, e.clientY - panLast.sy) > MOVE_SLOP) panLast.moved = true;
+    panLast.x = e.clientX; panLast.y = e.clientY;
+    viewSettled = true;
+  } else return;
+  draw();
+});
+
+function endPointer(e) {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.delete(e.pointerId);
+  if (mode === 'build' && build) {
+    if (build.moved) place(build);
+    build = null; mode = null;
+  } else if (mode === 'pan' && panLast) {
+    if (!panLast.moved) {
+      const t = tileAt(panLast.sx, panLast.sy);
+      if (t) tapMark(t);                       // reserved; nothing happens here
+    }
+    panLast = null; mode = null;
+    canvas.classList.remove('dragging');
+  } else if (mode === 'pinch') {
+    if (pointers.size === 1) {                 // one finger left: carry on panning
+      const p = [...pointers.values()][0];
+      mode = 'pan'; panLast = { x: p.x, y: p.y, sx: p.x, sy: p.y, moved: true };
+    } else { mode = null; pinch = null; }
+  }
+  if (pointers.size === 0) { mode = null; pinch = null; canvas.classList.remove('dragging'); }
+  draw();
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoomAbout(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0015));
+  draw();
+}, { passive: false });
+
+// ---- the panel: two words, and one of them fades when it has nothing to do -
+const dupBtn = document.getElementById('dup'), undoBtn = document.getElementById('undo');
+function syncPanel() {
+  dupBtn.textContent = showDup ? 'Hide duplicates' : 'Show duplicates';
+  undoBtn.classList.toggle('gone', builds.length === 0);   // no greyed-out states
+}
+dupBtn.addEventListener('click', () => { showDup = !showDup; syncPanel(); draw(); });
+undoBtn.addEventListener('click', undo);
+
+syncPanel();
+resize();
+})();
+</script>
+</body>
+</html>

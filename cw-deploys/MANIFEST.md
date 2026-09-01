@@ -96,6 +96,36 @@ to test yesterday's work.
   (`CWVault/01-ACTIVE/Walk-Glass-Aug26.md`), and this lab stays live throughout.
 
 ### experiments/
+- **`multiply-bench.html`** — bench: Multiply, alone, on the plane. Step 3 of
+  `CWVault/01-ACTIVE/Review-Glass-Aug26.md`'s order of work — one file per tool,
+  standing on `js/plane.js` and nothing else, with **no table code**: no panes
+  keyed by number, no modes, no Build, no Properties, no Fill, no prime colour,
+  no sound, no log. The opening state is the plane as Geometry draws it plus one
+  white unit tile at the origin, the 1, with its numeral. The grammar is the
+  walk's (`01-ACTIVE/Walk-Glass-Aug26.md`, steps 1, 2 and 6): touch the 1 and
+  drag to multiply, touch anywhere else to pan, pinch or wheel to zoom, tap a
+  placed tile is **reserved** and does nothing here. During the drag the 1's
+  glass stretches — outline and transparent fill — with the twin riding across
+  the diagonal at `TWIN_FAINT`, the live width and height centred on their own
+  sides inside both rectangles so the twin reads the same two numbers exchanged,
+  and no product anywhere. On release only the far-corner tile of each rectangle
+  remains, unity glass, with the product written on it at the moment of placing:
+  one tile on the diagonal, two off it. Tiles persist; a place gets a tile once;
+  Undo steps back one build at a time to empty and then fades. Colour says one
+  thing, *built by her*. Resolution is zoom and there is **no grain control** —
+  the finger snaps to whatever rung of plane.js's 1–5–10 ladder is on screen,
+  and products are carried as exact integer-over-power-of-ten, so 1.3 × 2 reads
+  2.6 and never 2.6000000000000005.
+  **The four questions it was built to be looked at for are at the top of the
+  source**, with the constant that moves each one named beside it. A fifth
+  arrived unbidden on the first drive and is recorded, not patched: plane.js
+  draws a lattice rung only above 40px spacing, so **tenths exist only above
+  ~400px per unit**, and at that zoom a stroke from the origin reaches x ≈ 2 on
+  an iPad. The walk's own illustration, 6.3 × 2, needs ~2 500px of run and is
+  unreachable on any targeted screen — reach and refinement pull opposite ways,
+  and the walk's step 3 already says it is *division*, not multiplication, that
+  puts tiles between the lines. Standalone otherwise; deliberately not deployed
+  into `active/` and not linked from the main index.
 - **`strobe-and-stars.html`** — bench: a loudspeaker edge-on under a strobe. The cone is one
   bar between `{` and `}`; the strobe runs at the bottom note, so that note freezes and is the
   reference. A voice at `n/d` visits exactly **d** phases and the flashes joined in order draw

@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-09-01 (Housekeeping — the blocked commit is cleared. The 24 Aug panel build of Glass Multiplication is frozen unshipped at `prototypes/glass-panel-build-aug24.html` and `active/` is restored to the deployed 13 Aug lab; nothing new deployed. Nine days of vault docs land with it — the three tool specs, the panel prompt, the first story set, the 26 Aug review and walk, the reader-prototype brief, the Frankenstein-11816 constellation and the chladni bench seed. No code changed. Earlier: Frankenstein-11816 constellation seeded into 02-CONSTELLATIONS — sixteen nodes, twenty-four claim edges, parked warm with a `threads` facet decision owed; see Parked — warm. Earlier: 26 Aug evening — Glass ruled onto the plane and the walk run through Make a square — see thread 1 and 01-ACTIVE/Walk-Glass-Aug26.md. Earlier same day: reviewed — see thread 1, 26 Aug entry; the 24 Aug build is diagnosed, not fixed. Earlier: 25 Aug — Six Against Five revised and redeployed after a listening pass: three asserted claims disproved, a ringing traced to a click truncated at the loop seam and fixed, piano strip and click-pitch knob added, the long reading rewritten. One listen owed — 3:2 at full brightness. Glass Multiplication's panel architecture from 24 Aug was **uncommitted and undeployed** on Michael's instruction — as of 1 Sep it is frozen as a prototype, see the lead: the mode bar dissolved, the **Building Numbers** rail and panel in, the first set — Multiply, Divide, Make a square, Explore — wired to the specs; three Multiply questions left as hooks; Build and Properties are code without a word)
+updated: 2026-09-01 (Multiply has a bench — `cw-deploys/experiments/multiply-bench.html`, step 3 of the review's order of work: one tool on `plane.js` alone, no table code, four questions left standing in the source. It found a fifth nobody asked for — tenths only exist above ~400px per unit, so the walk's own 6.3 × 2 cannot be drawn on an iPad; recorded, not patched. See thread 1. Earlier same day: Housekeeping — the blocked commit is cleared. The 24 Aug panel build of Glass Multiplication is frozen unshipped at `prototypes/glass-panel-build-aug24.html` and `active/` is restored to the deployed 13 Aug lab; nothing new deployed. Nine days of vault docs land with it — the three tool specs, the panel prompt, the first story set, the 26 Aug review and walk, the reader-prototype brief, the Frankenstein-11816 constellation and the chladni bench seed. No code changed. Earlier: Frankenstein-11816 constellation seeded into 02-CONSTELLATIONS — sixteen nodes, twenty-four claim edges, parked warm with a `threads` facet decision owed; see Parked — warm. Earlier: 26 Aug evening — Glass ruled onto the plane and the walk run through Make a square — see thread 1 and 01-ACTIVE/Walk-Glass-Aug26.md. Earlier same day: reviewed — see thread 1, 26 Aug entry; the 24 Aug build is diagnosed, not fixed. Earlier: 25 Aug — Six Against Five revised and redeployed after a listening pass: three asserted claims disproved, a ringing traced to a click truncated at the loop seam and fixed, piano strip and click-pitch knob added, the long reading rewritten. One listen owed — 3:2 at full brightness. Glass Multiplication's panel architecture from 24 Aug was **uncommitted and undeployed** on Michael's instruction — as of 1 Sep it is frozen as a prototype, see the lead: the mode bar dissolved, the **Building Numbers** rail and panel in, the first set — Multiply, Divide, Make a square, Explore — wired to the specs; three Multiply questions left as hooks; Build and Properties are code without a word)
 ---
 
 # The Board
@@ -359,7 +359,45 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   work that had never been in git. This completes step 2 of `Review-Glass-Aug26.md`'s
   order of work; step 3 (one bench per tool, on `plane.js` alone) is next, gated on the
   walk below.
-- **Next action:** the walk resumes at **Primes** (colour's arrival; the 24 Aug
+- **Multiply benched, 1 Sep** — `cw-deploys/experiments/multiply-bench.html`, the
+  first of the review's step 3. One tool, `plane.js` and nothing else, **no table
+  code**: the plane, one white unit tile at the origin with its numeral, and a
+  panel holding Show/Hide duplicates and Undo. Touch the 1 and drag to multiply;
+  touch elsewhere to pan; pinch or wheel to zoom; tap a tile is reserved and does
+  nothing. The twin rides across the diagonal fainter with its numbers exchanged;
+  the live width and height sit on their own sides inside both rectangles; no
+  product during the drag. Release leaves only the far-corner tile, unity glass,
+  product written at the moment of placing. Undo goes to empty, then the word
+  fades. No grain control — the finger takes whatever rung of the 1–5–10 ladder
+  is on screen, and products are exact integers over a power of ten. Registered
+  in `MANIFEST.md` and `experiments/index.html`. Zero console errors; driven
+  through builds, twins, squares, hide/show, undo-to-empty and a tenths build at
+  desktop, tablet and phone sizes.
+- **What the first drive showed.** Two of the four questions half-answer
+  themselves on screen: build 1×2, 2×3, 3×4, 4×5 and 2×2, 3×3, 4×4 and the
+  squares run up the crease with the pronics paired either side of it — a map,
+  not scatter — and the product numeral is comfortable at the greeting zoom.
+  **And one question nobody asked arrived:** plane.js draws a lattice rung only
+  while its lines clear 40px, so **tenths exist only above ~400px per unit**, and
+  at that zoom a stroke from the origin reaches about x = 2 on an iPad. The
+  walk's own illustration — 6.3 × 2 = 12.6 — needs roughly 2 500px of run and
+  **cannot be drawn on any screen this project targets**. 1.3 × 2 builds and
+  reads 2.6, exactly; 6.3 × 2 is unreachable rather than wrong. Nothing was
+  invented to cover it (no edge auto-pan, no second anchor, no grain knob) —
+  each is a decision the walk has not made. Note the walk's step 3 already says
+  it is *division* that puts tiles between the lines. **Also visible:** a tile
+  keeps the cell size of the lattice that minted it, so decimal tiles are
+  unreadable specks once she zooms back out to whole numbers — which is the
+  walk's own step 4 bench question (*unit tile scaled to grain, or small pane?*)
+  arriving with a picture attached.
+- **Left open in the bench, on purpose:** redrawing a rectangle that already has
+  a tile places nothing (the walk's two candidates — toggle off, or replace —
+  are both still live); tap-to-replay is wired to a hit test and a named no-op,
+  because replay wants the operation log and the bench has none.
+- **Next action:** Michael looks at the Multiply bench and rules on its four
+  questions plus the reach-versus-refinement finding — that one gates whether
+  Multiply owns decimals at all. Then the next two benches, Divide and Squares,
+  on the same terms. In parallel the walk resumes at **Primes** (colour's arrival; the 24 Aug
   prime-button entries are decided but unbenched — read them cold first), then
   Properties, the table viewing, fractions-as-triangles, and Divide's open modes
   question. Benches before any lab build. Still standing from the 24 Aug report:
