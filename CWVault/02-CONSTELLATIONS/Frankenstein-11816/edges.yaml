@@ -1,0 +1,203 @@
+# Claim edges for the Frankenstein-11816 constellation.
+# Schema: 20-SPECS/Spec-Timeline-Graph.md §5.
+#   type: caused | enabled | responded-to | knew | taught | published | depicted | contradicted | funded
+#   strength: strong | likely | contested
+# Same-year kinships are NOT listed here — they are facet edges, derived from `era`.
+# Density check (spec §11, ≥2 claim edges per node), run 30 Aug 2026: 14 of 16 pass.
+# drais-running-machine and turner-skies have ONE each. Left short rather than padded —
+# their natural second edges (Drais → the bicycle; Turner → the Perception Lab) are outside
+# this constellation. Said out loud, as the spec asks.
+
+- from: tambora
+  to: year-without-a-summer
+  type: caused
+  strength: strong
+  explanation: Sulphate haze in the stratosphere dimmed the northern hemisphere's summer for more than a year.
+
+- from: year-without-a-summer
+  to: villa-diodati
+  type: caused
+  strength: strong
+  explanation: Incessant rain and cold kept the party indoors; Mary Shelley says so in the 1831 preface.
+
+- from: villa-diodati
+  to: frankenstein
+  type: caused
+  strength: strong
+  explanation: Byron's proposal that each write a ghost story; the book began there within days.
+
+- from: villa-diodati
+  to: byron-darkness
+  type: caused
+  strength: strong
+  explanation: Written at Diodati in July 1816, in the dim summer.
+
+- from: year-without-a-summer
+  to: byron-darkness
+  type: depicted
+  strength: likely
+  explanation: The poem's extinguished sun reads as the weather of that summer; Byron did not know the cause.
+
+- from: galvani
+  to: volta
+  type: contradicted
+  strength: strong
+  explanation: Volta repeated the frog experiments and argued the metals, not the animal, were the source.
+
+- from: galvani
+  to: aldini-london
+  type: taught
+  strength: strong
+  explanation: Aldini was Galvani's nephew and pupil, touring to defend animal electricity.
+
+- from: volta
+  to: aldini-london
+  type: enabled
+  strength: strong
+  explanation: Aldini used voltaic piles — his uncle's rival's invention — for the Newgate demonstration.
+
+- from: aldini-london
+  to: frankenstein
+  type: enabled
+  strength: likely
+  explanation: The most famous galvanic demonstration, in Mary's city, in her childhood; she names galvanism, not Aldini.
+
+- from: galvani
+  to: frankenstein
+  type: enabled
+  strength: likely
+  explanation: The 1831 preface names galvanism as the Diodati talk that preceded the idea.
+
+- from: franklin-kite
+  to: galvani
+  type: enabled
+  strength: strong
+  explanation: Established that atmospheric and laboratory electricity were one thing; Galvani's machine-and-scalpel observation depends on it.
+
+- from: franklin-kite
+  to: frankenstein
+  type: depicted
+  strength: contested
+  explanation: Victor's boyhood memory of lightning splitting an oak is the book's only lightning; the creation-by-lightning belongs to the 1931 film.
+
+- from: volta
+  to: faraday-induction
+  type: enabled
+  strength: strong
+  explanation: Faraday's coil was driven by a voltaic battery; the pile made continuous current available at all.
+
+- from: erasmus-darwin
+  to: frankenstein
+  type: enabled
+  strength: strong
+  explanation: Named in the 1831 preface as part of the Diodati talk (the vermicelli story).
+
+- from: erasmus-darwin
+  to: villa-diodati
+  type: knew
+  strength: strong
+  explanation: His speculations on spontaneous life were discussed there, garbled, per Mary's account.
+
+- from: year-without-a-summer
+  to: drais-running-machine
+  type: caused
+  strength: likely
+  explanation: Horses starved or were sold after the failed oat harvest; Drais's machine appears the next summer. Historians accept it as part of the story, not the whole.
+
+- from: year-without-a-summer
+  to: typhus-ireland
+  type: caused
+  strength: strong
+  explanation: Failed potato harvest → migration and crowding → louse-borne typhus, 1817–19.
+
+- from: tambora
+  to: turner-skies
+  type: caused
+  strength: contested
+  explanation: Volcanic aerosols redden sunsets; whether Turner's canvases record it is argued (Zerefos 2007 vs. art-historical critics).
+
+- from: tambora
+  to: arctic-ice-11817
+  type: caused
+  strength: contested
+  explanation: Haze-shifted winds likely moved pack ice south out of the Greenland Sea; mechanism still debated.
+
+- from: arctic-ice-11817
+  to: how-we-know-tambora
+  type: enabled
+  strength: likely
+  explanation: The 1817 anomaly is one of the datasets reconstructions use to test what the haze did to circulation.
+
+- from: how-we-know-tambora
+  to: tambora
+  type: published
+  strength: strong
+  explanation: Ice-core sulphate layers in both hemispheres are the evidence that finally attributed 1816 to Tambora.
+
+- from: how-we-know-tambora
+  to: year-without-a-summer
+  type: published
+  strength: strong
+  explanation: Tree-ring frost damage in 1816 across North America and Europe corroborates the cold summer.
+
+- from: faraday-induction
+  to: how-we-know-tambora
+  type: enabled
+  strength: likely
+  explanation: Speed-of-information thread only — telegraph and cable descend from induction; the contrast with Tambora's months-long news is the point. Weak as a causal claim; consider demoting to a facet.
+
+- from: typhus-ireland
+  to: how-we-know-tambora
+  type: enabled
+  strength: contested
+  explanation: Placeholder to satisfy the ≥2-edge rule; the real second edge for typhus is forward to cholera / John Snow, which is outside this constellation. Replace when the epidemics thread has a node here.
+
+# --- Added 30 Aug 2026, second pass: Germain, Ada, Chladni, the "I think" diagram ---
+
+- from: chladni-plates
+  to: sophie-germain
+  type: caused
+  strength: strong
+  explanation: The Academy's prize for explaining the figures, set after Chladni's 1808 Paris demonstration, is the problem she spent five years on.
+
+- from: sophie-germain
+  to: chladni-plates
+  type: published
+  strength: strong
+  explanation: Her 1816 prize memoir was the first serious mathematics of the vibrating plate.
+
+- from: villa-diodati
+  to: ada-lovelace
+  type: caused
+  strength: likely
+  explanation: Byron left England for the Diodati summer months after Ada's birth and never returned; her mother's mathematical upbringing was built in reaction to him.
+
+- from: ada-lovelace
+  to: faraday-induction
+  type: knew
+  strength: strong
+  explanation: Ada corresponded with Faraday and moved in the same London scientific circles.
+
+- from: erasmus-darwin
+  to: darwin-i-think
+  type: enabled
+  strength: strong
+  explanation: Zoonomia's "one living filament" was the family's guess; the grandson's sketch gave the guess a structure.
+
+- from: frankenstein
+  to: ada-lovelace
+  type: depicted
+  strength: contested
+  explanation: Placeholder for the tempting but weak claim that the novel and the Notes are the era's two answers to "what can a made thing do." Facet edges (hidden-names thread) may be all this deserves.
+
+- from: jane-marcet
+  to: faraday-induction
+  type: taught
+  strength: strong
+  explanation: Faraday, a bookbinder's apprentice, read Conversations on Chemistry while binding it and named it his education; later her editions were updated from his discoveries.
+
+- from: volta
+  to: jane-marcet
+  type: enabled
+  strength: strong
+  explanation: The Conversations' electrochemistry — Davy's decompositions — is voltaic-pile science, current to the year she wrote.

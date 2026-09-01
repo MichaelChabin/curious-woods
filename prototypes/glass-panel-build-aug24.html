@@ -1,0 +1,2097 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Glass Multiplication · Curious Woods</title>
+  <style>
+    /* Phase 4 port (Aug 2026): the map renders on canvas, standing on the
+       shared plane (../js/plane.js). The instrument column stays DOM. The
+       earlier append-only style batches described the DOM grid and went with
+       it; this sheet is written clean for the port. */
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:#f4f1e8;color:#3d3d3a;font-family:Georgia,serif}
+    body{padding:18px 14px 28px}
+    button,output{font:inherit;color:inherit}
+    button{touch-action:manipulation}
+    [hidden]{display:none!important}
+    .cw-page{width:min(1040px,100%);margin:auto}
+    .cw-home{display:inline-block;margin:0 0 12px;color:#546a80;font-size:12px;text-decoration:none;letter-spacing:.03em}
+    .btn{appearance:none;border:0;border-bottom:1px solid transparent;padding:4px 3px;background:transparent;color:#546a80;cursor:pointer;transition:opacity 400ms ease-in-out}
+    /* Conditional presence: a word is there only when tapping it would do
+       something; it fades, never greys. */
+    .btn.absent{opacity:0;pointer-events:none}
+    .btn:hover,.btn:focus-visible{color:#292a28;border-bottom-color:#bcae93;outline:none}
+    .btn[aria-pressed=true],.btn.active{color:#252623;border-bottom-color:#546a80}
+    .text-small{font-size:11px;color:#98917f;text-align:center}
+
+    /* No letterbox: the canvas spans the whole stage and the instrument
+       column floats over it as membrane — the world continues behind the
+       tools, showing through translucently while the contents win
+       (Interface Standard, principle 2). Narrow screens keep the stacked
+       layout, where there is no left tool region to continue behind. */
+    #glass-map .stage{position:relative}
+    @media(min-width:711px){
+      #glass-map .instrument{position:absolute;top:0;left:0;bottom:0;width:190px;z-index:10;
+        padding:17px 12px 14px;overflow-y:auto;overscroll-behavior:contain;
+        background:rgba(244,241,232,0.9);border-right:0.5px solid rgba(200,184,154,0.55)}
+    }
+    #glass-map .globals{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px;margin:0 0 10px;padding-bottom:9px;border-bottom:1px solid rgba(84,106,128,.15)}
+    #glass-map .globals .btn{padding:2px 1px;font-size:15px}
+    #glass-map .product{display:flex;min-height:68px;height:68px;flex-direction:column;justify-content:flex-start;align-items:flex-start;margin:0 0 2px;font-variant-numeric:tabular-nums;text-align:left}
+    #glass-map .product-number{font-size:40px;line-height:1.05;color:#31322f;overflow-wrap:anywhere}
+    #glass-map .product-factors{min-height:1.4em;margin-top:2px;color:#546a80;font-size:19px;line-height:1.25}
+    #glass-map .product.miss .product-number,#glass-map .product.miss .product-factors{color:#999283}
+    #glass-map .readout{min-height:2.2em;margin:2px 0 6px;color:#546a80;font-size:14px;line-height:1.45}
+    #glass-map .decoder{display:flex;flex-direction:row;flex-wrap:wrap;gap:12px;justify-content:flex-start;margin-top:10px}
+    #glass-map .prime-key{padding:0}
+    #glass-map .swatch{position:relative;display:block;width:46px;height:46px;flex:0 0 46px;border:2px solid #6c6b62;box-shadow:inset 0 0 10px rgb(0 0 0/.26)}
+    #glass-map .chip-num{position:absolute;top:2px;right:5px;color:rgb(255 252 229/.96);font-size:16px;line-height:1;text-shadow:0 1px 3px rgb(0 0 0/.85),0 0 7px rgb(255 244 190/.5)}
+    /* 1 reads whole and white — quietly crystalline, a slight bluish tint.
+       The tint is what separates it from clear leaded glass, which means
+       "prime beyond this workshop". */
+    #glass-map .swatch.p1{background:radial-gradient(circle at 44% 38%,#ffffff,#e9eef5 62%,#cfd6e0)}
+    #glass-map .unity-key .chip-num{color:#4a463c;text-shadow:0 1px 2px rgb(255 255 255/.55)}
+    #glass-map .tally{margin:7px 0 0;color:#546a80;font-size:14px;font-variant-numeric:tabular-nums;min-height:1.3em}
+    #glass-map .viewing-strip{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:12px;padding-top:8px;border-top:1px solid rgba(84,106,128,.15)}
+    #glass-map .viewing-strip .btn{font-size:13px;font-style:italic;padding:2px 1px}
+    #glass-map .panel{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-top:15px;padding-top:10px;border-top:1px solid rgba(84,106,128,.17)}
+    #glass-map .build-tools .btn,#glass-map .property-tools .btn{text-align:left;font-size:14px}
+
+    /* --- The left rail ------------------------------------------------------
+       The mode bar is dissolved — the four words across the top were
+       arbitrary (Decisions-Walk-Multiplication-Aug13). What replaces it is
+       Geometry's rail: a heading, and entries that summon a tool panel. Built
+       from a data array, so adding an entry is one line. */
+    #glass-map .rail{margin:0 0 11px;padding-bottom:10px;border-bottom:1px solid rgba(84,106,128,.15)}
+    #glass-map .rail-heading{display:block;font-size:14px;color:#546a80;line-height:1}
+    #glass-map .rail-list{margin:7px 0 0;padding:0;list-style:none}
+    #glass-map .rail-item{display:block;position:relative;margin-top:8px;padding-left:12px;
+      font-size:13px;color:#546a80;line-height:1.2;cursor:default;transition:color 80ms}
+    #glass-map .rail-item::before{content:'\2022';position:absolute;left:0}
+    #glass-map .rail-item:hover,#glass-map .rail-item.open{color:#3d3d3a}
+
+    /* --- Panel windows ------------------------------------------------------
+       Geometry's parchment window, with two additions these two panels need
+       and the shared component does not have: a resize grip, and a body that
+       scrolls. cw-panel.js is used unchanged by both labs and is left alone;
+       this page carries its own copy, the same choice the PNG patcher below
+       records. Draggable by the title bar (Geometry's save-note pattern),
+       closeable by the close word — every canvas window, no exceptions. */
+    .cw-window{position:fixed;z-index:600;display:none;flex-direction:column;
+      background:rgba(244,241,232,0.96);border:0.5px solid #c8b89a;border-radius:6px;
+      padding:9px 14px 12px;box-shadow:0 2px 12px rgba(42,38,32,0.1);
+      font-family:Georgia,serif;user-select:none;-webkit-user-select:none;
+      overflow:hidden;resize:both;opacity:0;transition:opacity 200ms ease-in}
+    .cw-window-bar{display:flex;justify-content:space-between;align-items:baseline;
+      gap:14px;margin-bottom:5px;flex:0 0 auto;cursor:grab;touch-action:none}
+    .cw-window-bar:active{cursor:grabbing}
+    .cw-window-title{font-size:13px;color:#546a80;opacity:.75}
+    .cw-window-close{font-size:11px;color:#b0a090;cursor:default;transition:color 80ms}
+    .cw-window-close:hover{color:#546a80}
+    .cw-window-body{font:13px/1.55 Georgia,serif;color:#546a80;overflow-y:auto;
+      overscroll-behavior:contain;flex:1 1 auto;min-height:0}
+    .cw-window-body p{margin:0 0 11px}
+    .cw-window-body p:last-child{margin-bottom:0}
+
+    /* --- Building Numbers ---------------------------------------------------
+       The lede, the just-in-time prompt line, then the tools. The prompt fades
+       once she has begun, and on its own a little later if she has not —
+       Geometry's competence fade (2.5s ease-out), one pattern, not two. */
+    .bn-lede{margin:0 0 9px;color:#31322f}
+    .bn-prompt{min-height:1.5em;margin:0 0 13px;font-style:italic;color:#546a80;
+      opacity:0;transition:opacity 200ms ease-in}
+    .bn-prompt.on{opacity:1}
+    .bn-prompt.fading{transition:opacity 2500ms ease-out;opacity:0}
+    .bn-tool{display:inline-block;margin:0;padding-bottom:1px;font-size:14px;color:#546a80;
+      border-bottom:1px solid transparent;cursor:default;transition:color 80ms}
+    .bn-tool:hover{color:#3d3d3a}
+    .bn-tool.active{color:#252623;border-bottom-color:#546a80}
+    .bn-story{display:inline-block;margin:1px 0 0 18px;font-size:12px;font-style:italic;
+      color:#546a80;opacity:.7;cursor:default;transition:color 80ms,opacity 80ms}
+    .bn-story:hover{color:#3d3d3a;opacity:1}
+    .bn-row{margin:0 0 11px}
+    .bn-row:last-child{margin-bottom:0}
+    .cw-info-panel p{margin:0 0 6px}
+    .cw-info-panel strong{font-weight:normal;color:#292a28}
+    #glass-map .map-wrap{min-width:0}
+    #glass-map canvas{display:block;width:100%;background:#f4f1e8;touch-action:none;
+      /* The plane's container owns these — without them a rectangle-drag can
+         select and paint the document in Safari. */
+      user-select:none;-webkit-user-select:none;cursor:default}
+    #glass-map canvas:focus-visible{outline:3px solid #546a80;outline-offset:-3px}
+    #glass-map .rebuild{margin-top:2px;font-size:11px;display:block;margin-inline:auto}
+    @media(max-width:710px){
+      #glass-map .stage{display:grid;grid-template-columns:1fr;gap:7px}
+      #glass-map .instrument{padding-top:0;display:grid;grid-template-columns:minmax(135px,1fr) minmax(0,2fr);gap:4px 12px;align-items:start}
+      #glass-map .globals,#glass-map .product,#glass-map .readout,#glass-map .panel,#glass-map .viewing-strip{grid-column:1}
+      #glass-map .decoder{grid-column:2;grid-row:1/span 5;gap:10px;margin-top:0}
+      #glass-map .swatch{width:38px;height:38px;flex:0 0 38px}
+    }
+    @media(max-width:520px){
+      body{padding:10px 6px 20px}
+      #glass-map .globals .btn,#glass-map .build-tools .btn,#glass-map .property-tools .btn{font-size:13px}
+    }
+  </style>
+</head>
+<body>
+<main class="cw-page">
+  <a class="cw-home" href="../index.html">The Curious Woods</a>
+  <section id="glass-map">
+    <div class="stage">
+      <aside class="instrument">
+        <!-- The rail. Geometry's How this works, one entry for now; the list
+             is built from RAIL in script, so a second entry is one line. -->
+        <nav class="rail" id="rail" aria-label="How this works">
+          <span class="rail-heading">How this works:</span>
+          <ul class="rail-list" id="rail-list"></ul>
+        </nav>
+
+        <div class="globals" id="globals" aria-label="The whole table">
+          <button class="btn" id="fill-map">Fill</button>
+          <button class="btn" id="fill-continue" hidden>Continue?</button>
+          <button class="btn" id="clear-map">Clear</button>
+          <button class="btn" id="numbers" aria-pressed="false">Show numbers</button>
+          <!-- Conditional presence (controls build, 13 Aug): Save is present
+               only when there is something on the glass to save. -->
+          <button class="btn absent" id="save-map" style="display:none">Save</button>
+        </div>
+
+        <output class="product" id="product" aria-live="polite">
+          <span class="product-number"></span>
+          <span class="product-factors"></span>
+        </output>
+        <div class="readout" id="readout" aria-live="polite">Choose two numbers. Glass builds their product on the Map.</div>
+
+        <div class="decoder" aria-label="Prime glass">
+          <button class="btn prime-key unity-key" data-prime="1"><i class="swatch p1"><span class="chip-num">1</span></i></button>
+          <button class="btn prime-key" data-prime="2"><i class="swatch" data-swatch="2"><span class="chip-num">2</span></i></button>
+          <button class="btn prime-key" data-prime="3"><i class="swatch" data-swatch="3"><span class="chip-num">3</span></i></button>
+          <button class="btn prime-key" data-prime="5"><i class="swatch" data-swatch="5"><span class="chip-num">5</span></i></button>
+          <button class="btn prime-key" data-prime="7"><i class="swatch" data-swatch="7"><span class="chip-num">7</span></i></button>
+        </div>
+        <div class="tally" id="tally" aria-live="polite" hidden></div>
+
+        <!-- Interim layout, provisional ahead of the controls pass: the tool
+             words sit directly below the chips (on iPad they fell below the
+             fold), the number description lives in a floating info panel on
+             Geometry's window pattern, and the viewing strip closes the
+             column. -->
+        <div class="build-tools panel" id="build-tools" hidden>
+          <button class="btn build-sub" data-build="primes" aria-pressed="true">Build with primes</button>
+          <button class="btn build-sub" data-build="select" aria-pressed="false">Build by selecting</button>
+          <button class="btn build-sub" data-build="axes" aria-pressed="false">Rows &amp; columns</button>
+          <button class="btn build-sub" data-build="multiples" aria-pressed="false">Multiples</button>
+          <button class="btn build-sub" data-build="diagup" aria-pressed="false">Diagonals ↗</button>
+          <button class="btn build-sub" data-build="diagdown" aria-pressed="false">Diagonals ↘</button>
+        </div>
+
+        <div class="property-tools panel" id="property-tools" hidden>
+          <button class="btn property-key" data-property="squares">Squares</button>
+          <button class="btn property-key" data-property="pronics">Pronics</button>
+          <button class="btn property-key" data-property="powers2">Powers of 2</button>
+          <button class="btn property-key" data-property="powers3">Powers of 3</button>
+          <button class="btn property-key" data-property="triangular">Triangular numbers</button>
+          <button class="btn property-key" data-property="nearlysquare">Nearly square</button>
+        </div>
+
+        <!-- The viewing's control strip — the Numbers control's permanent home.
+             This viewing defaults to map (Phase 3 ledger) and cycles map · off. -->
+        <div class="viewing-strip" id="viewing-strip" aria-label="The map itself">
+          <button class="btn" id="numbers-cycle">Numbers &middot; map</button>
+          <button class="btn" id="lattice-tie">grid follows zoom</button>
+          <button class="btn" id="axes-toggle">axes &middot; shown</button>
+        </div>
+      </aside>
+
+      <div class="map-wrap">
+        <canvas id="map" tabindex="0" role="application"
+                aria-label="Glass multiplication map. Arrow keys move between panes; Enter reveals a number."></canvas>
+      </div>
+    </div>
+    <p class="text-small">A small window onto a multiplication map that continues beyond the glass.</p>
+    <button class="btn rebuild" id="rebuild">rebuild</button>
+  </section>
+</main>
+
+<script src="../js/plane.js?v=2026-08-13"></script>
+<script src="../js/cw-panel.js?v=2026-08-13"></script>
+<script>
+var CW_VERSION = '2026-08-24 e4cd030'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+(() => {
+  'use strict';
+
+  // ==== the viewing ==========================================================
+  // Decision 7 made formal: the viewing supplies meaning. (3,5) is 15 because
+  // area. The numbers default is per-viewing — this one greets the child as a
+  // map (Phase 3 ledger); Geometry rests at points. There are no construction
+  // points here, so this viewing's cycle is map · off.
+  const viewing = {
+    id: 'multiplication',
+    numbersDefault: 'map',
+    numbersCycle: { map: 'off', off: 'map' },
+    name: (column, row) => column * row,
+    axesVisible: true
+  };
+
+  // ==== the workshop =========================================================
+  // First workshop in the schema of 20-SPECS/Spec-Workshop-Palette-Schema.md.
+  // `declared` is the authored six; `rule` is how resting and lit derive in
+  // OKLCH; `primes` is the signed-off result — approved output, not cache, so
+  // the two lit values that left sRGB at 125% (3 and 13) stand as declared
+  // directly. Colour is the sole prime indicator (design review, 8 Aug): a
+  // workshop must declare six distinguishable prime colours.
+  const WORKSHOP = {
+    id: 'aslab', name: 'As the lab ships',
+    rule: { rest: { chroma: 92, lightness: 6 }, lit: { chroma: 125, lightness: 7 } },
+    declared: { 2:'#1a4a9a', 3:'#c8a800', 5:'#a83018', 7:'#4a8a30', 11:'#6b2ea8', 13:'#c26a10' },
+    primes: {
+      2:  { rest:'#305da7', lit:'#1b5bc4' },
+      3:  { rest:'#d9bc43', lit:'#e7bd00' },
+      5:  { rest:'#b74a34', lit:'#d0300b' },
+      7:  { rest:'#609b4a', lit:'#50a429' },
+      11: { rest:'#7a47b5', lit:'#8531d4' },
+      13: { rest:'#d27f3a', lit:'#e87600' }
+    }
+  };
+
+  // ---- colour: OKLCH, lifted verbatim from experiments/fills-and-light.html —
+  // these functions produced what was seen and approved at the bench.
+  const s2l=v=>v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4);
+  const l2s=v=>v<=0.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-0.055;
+  const hex2rgb=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+  const clc=v=>Math.max(0,Math.min(255,Math.round(v)));
+  const rgb2hex=a=>'#'+a.map(v=>clc(v).toString(16).padStart(2,'0')).join('');
+  function hex2oklch(hex){
+    let [r,g,b]=hex2rgb(hex).map(v=>s2l(v/255));
+    const l=Math.cbrt(0.4122214708*r+0.5363325363*g+0.0514459929*b);
+    const m=Math.cbrt(0.2119034982*r+0.6806995451*g+0.1073969566*b);
+    const s=Math.cbrt(0.0883024619*r+0.2817188376*g+0.6299787005*b);
+    const L=0.2104542553*l+0.7936177850*m-0.0040720468*s;
+    const A=1.9779984951*l-2.4285922050*m+0.4505937099*s;
+    const B=0.0259040371*l+0.7827717662*m-0.8086757660*s;
+    return { L, C:Math.hypot(A,B), h:Math.atan2(B,A) };
+  }
+  function oklch2raw({L,C,h}){
+    const A=C*Math.cos(h), B=C*Math.sin(h);
+    const l=Math.pow(L+0.3963377774*A+0.2158037573*B,3);
+    const m=Math.pow(L-0.1055613458*A-0.0638541728*B,3);
+    const s=Math.pow(L-0.0894841775*A-1.2914855480*B,3);
+    return [ l2s( 4.0767416621*l-3.3077115913*m+0.2309699292*s)*255,
+             l2s(-1.2684380046*l+2.6097574011*m-0.3413193965*s)*255,
+             l2s(-0.0041960863*l-0.7034186147*m+1.7076147010*s)*255 ];
+  }
+  function derive(hex, chromaPct, lightShift){
+    const c=hex2oklch(hex);
+    const raw=oklch2raw({ L:Math.max(0,Math.min(1,c.L+lightShift/100)),
+                          C:c.C*chromaPct/100, h:c.h });
+    return { hex:rgb2hex(raw), clipped:raw.some(v=>v<-0.6||v>255.6) };
+  }
+  // The stored primes are approved output. Check the rule still produces them
+  // and report drift rather than fixing it — a value chosen by eye should not
+  // be silently recomputed by a library revision (schema spec).
+  Object.keys(WORKSHOP.declared).forEach(p=>{
+    const r=derive(WORKSHOP.declared[p],WORKSHOP.rule.rest.chroma,WORKSHOP.rule.rest.lightness);
+    if(!r.clipped&&r.hex!==WORKSHOP.primes[p].rest)
+      console.warn(`workshop drift: prime ${p} resting derives ${r.hex}, stored ${WORKSHOP.primes[p].rest}`);
+  });
+
+  // Per-piece lightness variation — required, not decorative: a flat fill with
+  // zero variance reads as dead. Lightness only; hue and chroma hold, so the
+  // prime is never in doubt. 10% range, in buckets so colours cache.
+  const VARIANTS=8;
+  const colorCache=new Map();
+  const CLEAR_REST={L:0.86,C:0.018,h:1.85}, CLEAR_LIT={L:0.92,C:0.022,h:1.85};
+  function pieceFill(p,variant,lit){
+    const key=p+':'+variant+':'+(lit?1:0);
+    if(colorCache.has(key))return colorCache.get(key);
+    const shift=((variant/(VARIANTS-1))-0.5)*0.10;
+    let base;
+    const entry=WORKSHOP.primes[p];
+    if(entry)base=hex2oklch(lit?entry.lit:entry.rest);
+    else base=lit?CLEAR_LIT:CLEAR_REST;   // beyond the workshop: clear glass, still cut and leaded
+    const hex=rgb2hex(oklch2raw({L:Math.max(0,Math.min(1,base.L+shift)),C:base.C,h:base.h}));
+    colorCache.set(key,hex);return hex;
+  }
+
+  // ==== the plane ============================================================
+  const U=200;   // world units per unit interval — the same scale Geometry declares
+  const canvas=document.getElementById('map');
+  const ctx=canvas.getContext('2d');
+  // The instrument column overlays the canvas's left edge on wide screens;
+  // the greeting window centres in the glass to its right, and the map
+  // continues behind the tools.
+  const MEMBRANE_W=190;
+  const membraneWide=window.matchMedia('(min-width:711px)');
+  const plane=CW.createPlane({
+    defaultView:(w,h)=>{
+      const m=membraneWide.matches?MEMBRANE_W:0;
+      const vis=Math.max(120,w-m);
+      const zoom=Math.min(vis,h)/(12.5*U);
+      return { x:5.5*U-(m/2)/zoom, y:5.5*U, zoom };
+    }
+  });
+  plane.setUnitFrame(0,0,U);
+
+  // Until the child's first gesture, every layout change recomputes the
+  // greeting view: embedded and slow-settling contexts can report a
+  // transient tiny layout at load, and a view latched from it would greet
+  // her zoomed to the wrong window. After she pans, zooms, or walks the
+  // cursor, the view is hers and layout changes leave it alone.
+  let viewSettled=false;
+  function resizeCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    let r=canvas.getBoundingClientRect();
+    // Embedded contexts can report 0×0 at load; retry until layout exists.
+    if(!r.width){requestAnimationFrame(resizeCanvas);return}
+    // The canvas spans the stage; its height keeps the map area beside the
+    // membrane square, as the old two-column layout did (190px column + 17px gap).
+    const targetH=Math.max(220,Math.round(membraneWide.matches?r.width-207:r.width));
+    if(Math.round(r.height)!==targetH){canvas.style.height=targetH+'px';r=canvas.getBoundingClientRect()}
+    canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);
+    ctx.setTransform(1,0,0,1,0,0);ctx.scale(dpr,dpr);
+    plane.setViewport(r.width,r.height);
+    if(!viewSettled||plane.zoom()===0)plane.resetView();
+  }
+  window.addEventListener('resize',resizeCanvas);
+  resizeCanvas();
+
+  let numbersMode=viewing.numbersDefault;   // 'map' | 'off'
+  let axesVisible=viewing.axesVisible;
+  let showNumerals=false;
+
+  // ==== DOM ==================================================================
+  const root=document.getElementById('glass-map');
+  const readout=root.querySelector('#readout');
+  const productBox=root.querySelector('#product'), productNumber=productBox.querySelector('.product-number'), productFactors=productBox.querySelector('.product-factors');
+  const numbersButton=root.querySelector('#numbers'), fillButton=root.querySelector('#fill-map'), fillContinueButton=root.querySelector('#fill-continue'), clearButton=root.querySelector('#clear-map');
+  const tally=root.querySelector('#tally');
+  const buildTools=root.querySelector('#build-tools'), buildSubButtons=[...root.querySelectorAll('[data-build]')];
+  const propertyTools=root.querySelector('#property-tools'), propertyButtons=[...root.querySelectorAll('[data-property]')];
+  const modeButtons=[...root.querySelectorAll('[data-mode]')];
+
+  // The number's description lives in a floating info panel on Geometry's
+  // window pattern (shared component, ../js/cw-panel.js): movable, closable,
+  // fading. Interim, provisional ahead of the controls pass. It reopens on
+  // each reveal and keeps wherever the child dragged it.
+  const infoPanel=CW.createInfoPanel({width:240,ariaLive:'polite'});
+  const panelMessage=document.createElement('div');
+  panelMessage.style.cssText='margin:0 0 6px;color:#31322f;';
+  const propertyCopy=document.createElement('div');
+  infoPanel.body.appendChild(panelMessage);
+  infoPanel.body.appendChild(propertyCopy);
+  function showInfo(message){
+    if(message!==undefined)panelMessage.textContent=message;
+    if(!infoPanel.userMoved()){
+      const r=canvas.getBoundingClientRect();
+      infoPanel.setPosition(Math.round(r.right-260),Math.round(r.top+16));
+    }
+    infoPanel.show();
+  }
+  function clearInfo(){
+    panelMessage.textContent='';propertyCopy.innerHTML='';infoPanel.hide();
+  }
+
+  // ==== the rail, the panel, the stories ====================================
+  // The mode bar across the top is gone. Its replacement is Geometry's rail:
+  // a heading, and entries that summon a panel. One entry for now; RAIL is a
+  // list, so a second is one line.
+
+  // A parchment window on Geometry's pattern, with the two things the shared
+  // component does not carry and these panels need: a resize grip and a body
+  // that scrolls. cw-panel.js is shared with Geometry and is left untouched.
+  function createWindow(opts){
+    opts=opts||{};
+    const el=document.createElement('div');
+    el.className='cw-window';
+    el.style.width=(opts.width||300)+'px';
+    el.style.height=(opts.height||320)+'px';
+    el.style.minWidth='200px';el.style.minHeight='110px';
+    el.style.maxWidth='min(92vw,640px)';el.style.maxHeight='86vh';
+    const bar=document.createElement('div');bar.className='cw-window-bar';
+    const title=document.createElement('span');title.className='cw-window-title';
+    title.textContent=opts.title||'';
+    const close=document.createElement('span');close.className='cw-window-close';
+    close.textContent='close';close.setAttribute('role','button');close.tabIndex=0;
+    bar.appendChild(title);bar.appendChild(close);
+    const body=document.createElement('div');body.className='cw-window-body';
+    el.appendChild(bar);el.appendChild(body);
+    document.body.appendChild(el);
+
+    let shown=false,placed=false,moved=false;
+    let dragging=false,sx=0,sy=0,ox=0,oy=0;
+    bar.addEventListener('pointerdown',ev=>{
+      if(ev.target===close)return;
+      ev.preventDefault();
+      dragging=true;sx=ev.clientX;sy=ev.clientY;
+      ox=parseInt(el.style.left)||0;oy=parseInt(el.style.top)||0;
+      bar.setPointerCapture(ev.pointerId);
+    });
+    bar.addEventListener('pointermove',ev=>{
+      if(!dragging)return;
+      moved=true;
+      el.style.left=Math.round(ox+ev.clientX-sx)+'px';
+      el.style.top=Math.round(oy+ev.clientY-sy)+'px';
+    });
+    const stopDrag=()=>{dragging=false};
+    bar.addEventListener('pointerup',stopDrag);
+    bar.addEventListener('pointercancel',stopDrag);
+
+    const api={
+      el,body,
+      visible:()=>shown,
+      moved:()=>moved,
+      placed:()=>placed,
+      setTitle:t=>{title.textContent=t||''},
+      place(x,y){
+        const w=parseInt(el.style.width)||300,h=parseInt(el.style.height)||320;
+        el.style.left=Math.round(clamp(x,8,Math.max(8,window.innerWidth-w-8)))+'px';
+        el.style.top =Math.round(clamp(y,8,Math.max(8,window.innerHeight-h-8)))+'px';
+        placed=true;
+      },
+      show(){shown=true;el.style.display='flex';requestAnimationFrame(()=>{el.style.opacity='1'})},
+      hide(){shown=false;el.style.opacity='0';
+        setTimeout(()=>{if(el.style.opacity==='0')el.style.display='none'},220);
+        if(opts.onClose)opts.onClose();}
+    };
+    const doClose=()=>api.hide();
+    close.addEventListener('click',doClose);
+    close.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();doClose()}});
+    return api;
+  }
+
+  // Where a window opens: down the left of the map, clear of the instrument
+  // column, which is itself the left edge of the screen on wide layouts.
+  function mapLeft(){
+    const r=canvas.getBoundingClientRect();
+    return r.left+(membraneWide.matches?MEMBRANE_W+14:12);
+  }
+
+  // The stories. Authored once, always true; about the tool, never a report
+  // on what she just did. Verbatim from 01-ACTIVE/Stories-First-Set-Aug24.md —
+  // not rewritten, tightened, expanded, or headed. Requested, never pushed.
+  const STORIES={
+    multiply:[
+      "Pick a spot on the edge and slide. A line follows your finger, and a number goes with it — 5, 6, 7. Stop wherever you like.",
+      "Now move out onto the plane. A rectangle grows behind you, as wide as the line you left and as tall as you've gone. Let go.",
+      "The rectangle fills in, one row at a time, and counts itself as it goes. That's the number that lives at that spot.",
+      "Here's the part worth sitting with. You didn't multiply anything. You drew a shape and then found out how much was inside it. The multiplying was the shape all along.",
+      "Every number on this plane got there the same way. 12 is at the spot where a 3-wide, 4-tall rectangle lands. It's also at the spot where a 4-wide, 3-tall one lands, which is a different spot and exactly the same amount of tile. You can watch that if you want — the rectangle will turn over and walk across to its other home.",
+      "Some numbers have a lot of homes. 24 has eight. Some have exactly two, and those turn out to be the interesting ones, and there's more to say about them later.",
+      "And the ones sitting on the diagonal have only one home, because turning them over doesn't take them anywhere.",
+    ],
+    divide:[
+      "Pick a number. It turns into a rectangle, and then falls apart into square tiles — that many of them, sitting there.",
+      "Now slide the bar. It's asking how wide you want to stack them. The number under your finger changes as you go: 3, 4, 5. Pick one.",
+      "The tiles march over and stack up. Rows fill in one at a time, and a number counts them as they land. When the tiles run out, however tall the stack got is your answer.",
+      "Sometimes it comes out flat and finished. 20 tiles stacked 4 wide makes 5 rows exactly, nothing left over.",
+      "Sometimes it doesn't. 20 tiles stacked 3 wide gives you 6 rows and 2 tiles standing there with nowhere to go.",
+      "You get to decide what happens to those two.",
+      "You can leave them. Six rows and two tiles. That's true, and it's finished.",
+      "You can cut them into thirds — three, because there are three stacks waiting — and every stack takes two slices. Now the top is flat. Six and two thirds.",
+      "Or you can cut them into tenths, which is what most people mean when they say \"the answer\". The odd thing about tenths is that nothing asked for them. Nothing about three stacks suggests cutting into ten. Sometimes it works out flat anyway. Sometimes you can keep slicing forever and never get a flat top.",
+    ],
+    square:[
+      "Pick a number. Say 18. It comes apart into 18 tiles.",
+      "One tile goes to the corner. Then three more wrap around it in an L, and now it's a 2 by 2 square. Then five more wrap around that, and it's 3 by 3.",
+      "1, 3, 5, 7. You can probably see where this is going, and you're right. It keeps working, and it keeps working for any number you pick.",
+      "Seven more gets you to 4 by 4. That's used up 16 tiles, and you have 2 left.",
+      "Stop and look at that. Four is too small. Five is too big — five would need 25. There is no whole number that squares to 18. Not a hard one, not an ugly one. There isn't one.",
+      "You can cut the last two tiles up if you want. Each one slices into a hundred smaller ones, and the wrapping starts again: 81, then 83. Still odd numbers. Still going up by two. The rule didn't care that the tiles got smaller.",
+      "That gets you to 4.2, with 36 small tiles left over.",
+      "Do it again and you're at 4.24. Again and it's 4.242. The tiles get too small to see long before the number decides to stop — and it never does decide to stop.",
+      "So the side of that square gets written √18, which means exactly the length you've been chasing. It's about 4.24.",
+    ],
+  };
+
+  const TOOLS=[
+    {id:'multiply',label:'Multiply',      story:'multiply',
+     prompt:'Choose two numbers. Glass builds their product on the Map.'},
+    {id:'divide',  label:'Divide',        story:'divide',
+     prompt:'Choose a number, then choose what to divide it by.'},
+    {id:'square',  label:'Make a square', story:'square',
+     prompt:'Choose a number. Glass makes a square that big.'},
+    // Explore has no story yet, so it has no story line. A missing word is
+    // honest; a word holding the wrong voice is not.
+    {id:'explore', label:'Explore',       story:null,
+     prompt:"Click any number you've built."}
+  ];
+
+  const storyWindow=createWindow({width:370,height:430});
+  function openStory(t){
+    storyWindow.body.innerHTML='';
+    (STORIES[t.story]||[]).forEach(text=>{
+      const par=document.createElement('p');par.textContent=text;
+      storyWindow.body.appendChild(par);
+    });
+    storyWindow.body.scrollTop=0;
+    storyWindow.setTitle(t.label);
+    if(!storyWindow.moved()){
+      const r=canvas.getBoundingClientRect();
+      storyWindow.place(mapLeft()+330,r.top+30);
+    }
+    storyWindow.show();
+  }
+
+  // Just-in-time help. Geometry's competence fade, one pattern and not two:
+  // the line appears when the tool becomes active, fades over 2.5s once she
+  // has begun using it, and fades on its own a little later if she has not.
+  const PROMPT_WAIT=20000;   // chosen here, not specified
+  let promptLine=null,promptTimer=null,promptFadeTimer=null,promptTool=null,promptUsed=false;
+  function showPrompt(text,toolId){
+    clearTimeout(promptTimer);clearTimeout(promptFadeTimer);
+    promptTool=toolId;promptUsed=false;
+    if(!promptLine)return;
+    promptLine.classList.remove('fading');
+    promptLine.textContent=text||'';
+    if(!text){promptLine.classList.remove('on');return}
+    requestAnimationFrame(()=>promptLine.classList.add('on'));
+    promptTimer=setTimeout(fadePrompt,PROMPT_WAIT);
+  }
+  function fadePrompt(){
+    clearTimeout(promptTimer);
+    if(!promptLine||!promptLine.textContent)return;
+    promptLine.classList.add('fading');
+    promptFadeTimer=setTimeout(()=>{
+      promptLine.classList.remove('on','fading');promptLine.textContent='';
+    },2600);
+  }
+  function toolBegun(id){
+    if(promptTool!==id||promptUsed)return;
+    promptUsed=true;fadePrompt();
+  }
+
+  const bnPanel=createWindow({
+    title:'Building Numbers',width:308,height:340,
+    onClose:()=>{const li=document.querySelector('[data-rail="building-numbers"]');if(li)li.classList.remove('open')}
+  });
+  (function buildBuildingNumbers(){
+    const lede=document.createElement('p');
+    lede.className='bn-lede';
+    lede.textContent='Use these tools to build numbers on the Map';
+    promptLine=document.createElement('p');
+    promptLine.className='bn-prompt';
+    promptLine.setAttribute('aria-live','polite');
+    bnPanel.body.appendChild(lede);
+    bnPanel.body.appendChild(promptLine);
+    TOOLS.forEach(t=>{
+      const row=document.createElement('div');row.className='bn-row';
+      const word=document.createElement('span');
+      word.className='bn-tool';word.textContent=t.label;word.dataset.tool=t.id;
+      word.setAttribute('role','button');word.tabIndex=0;
+      const pick=()=>setTool(t.id,{fromPanel:true});
+      word.addEventListener('click',pick);
+      word.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();pick()}});
+      row.appendChild(word);
+      if(t.story){
+        row.appendChild(document.createElement('br'));
+        const st=document.createElement('span');
+        st.className='bn-story';st.textContent='the story';
+        st.setAttribute('role','button');st.tabIndex=0;
+        const open=()=>openStory(t);
+        st.addEventListener('click',open);
+        st.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();open()}});
+        row.appendChild(st);
+      }
+      bnPanel.body.appendChild(row);
+    });
+  })();
+  function toggleBuildingNumbers(){
+    const li=document.querySelector('[data-rail="building-numbers"]');
+    if(bnPanel.visible()){bnPanel.hide();return}
+    if(!bnPanel.moved()){
+      // The left of the map, about halfway down; it stays where she puts it.
+      bnPanel.place(mapLeft(),window.innerHeight*0.44-90);
+    }
+    bnPanel.show();
+    if(li)li.classList.add('open');
+  }
+
+  const RAIL=[
+    {id:'building-numbers',label:'Building Numbers',open:toggleBuildingNumbers}
+  ];
+  (function buildRail(){
+    const list=document.getElementById('rail-list');
+    RAIL.forEach(entry=>{
+      const li=document.createElement('li');
+      li.className='rail-item';li.textContent=entry.label;li.dataset.rail=entry.id;
+      li.setAttribute('role','button');li.tabIndex=0;
+      li.addEventListener('click',entry.open);
+      li.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();entry.open()}});
+      list.appendChild(li);
+    });
+  })();
+
+  // Chip swatches take the workshop's resting colours — the workshop knows
+  // what 2 looks like; the child never assigns colours to numbers.
+  root.querySelectorAll('[data-swatch]').forEach(el=>{
+    el.style.background=WORKSHOP.primes[+el.dataset.swatch].rest;
+  });
+
+  // ==== state ================================================================
+  const built=new Set([1]);   // numbers on the glass; unity is always there
+  let mode='multiply', buildTool='primes', composition=[];
+  let fxTimers=[], seqTimers=[], expressionTimer=null;
+  let pendingColumn=null, pendingRow=null;
+  let audio=null;
+
+  // Transient visual state (the canvas equivalent of the old classes).
+  // "One visual language for this-one": everything here renders as the lit
+  // palette; the old glow/outline/saturate system is gone.
+  const litPanes=new Map();    // 'c,r' -> until (ms epoch; Infinity = until clearFx)
+  const litPieces=new Map();   // 'c,r,i' -> until
+  const revealedNums=new Map();// n -> until (numeral shows regardless of toggle)
+  let rects=[];                // {w,h,until} — origin-anchored, unit coords
+  let rebuildAnim=null;        // {t0} — the construction re-draws itself
+
+  // ==== helpers ==============================================================
+  const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+  const fx=(fn,ms)=>fxTimers.push(setTimeout(fn,ms));
+  const seq=(fn,ms)=>seqTimers.push(setTimeout(fn,ms));
+  const factorize=value=>{const out=[];let n=value;for(let p=2;p*p<=n;p++){while(n%p===0){out.push(p);n/=p}}if(n>1)out.push(n);return out};
+  const superscript=n=>String(n).split('').map(d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(d)]).join('');
+  const powerText=factors=>{
+    if(!factors.length)return'unity';
+    return[...new Set(factors)].sort((a,b)=>a-b)
+      .map(p=>{const c=factors.filter(v=>v===p).length;return`${p}${c>1?superscript(c):''}`}).join(' × ');
+  };
+  const frequency=midi=>440*Math.pow(2,(midi-69)/12);
+
+  // Sound reaches 19 and no further — 11, 13, 17, 19 take C, E, G, B an octave
+  // above 2, 3, 5, 7 (the settled octave answer continued once), same pan as
+  // their octave partners. Primes beyond 19 are silent: sound has a ceiling.
+  const primeInfo={
+    2:{midi:48,note:'C',pan:-.32}, 3:{midi:52,note:'E',pan:-.1},
+    5:{midi:55,note:'G',pan:.12},  7:{midi:59,note:'B',pan:.34},
+    11:{midi:60,note:'C′',pan:-.32},13:{midi:64,note:'E′',pan:-.1},
+    17:{midi:67,note:'G′',pan:.12},19:{midi:71,note:'B′',pan:.34}
+  };
+  const arc=[0,4,7,12,12,7,4,0];  // rise to the octave, hold, fall back to the tonic
+  const notesFor=factors=>{const count={};return factors.filter(p=>primeInfo[p]).map(p=>{const k=count[p]||0;count[p]=k+1;return{midi:primeInfo[p].midi+arc[k%arc.length],pan:primeInfo[p].pan}})};
+
+  // ---- the visible window (the plane pans and zooms; these are the panes on screen)
+  function visibleBounds(){
+    const tl=plane.screenToWorld(0,0), br=plane.screenToWorld(plane.viewportWidth(),plane.viewportHeight());
+    const minX=Math.min(tl.x,br.x),maxX=Math.max(tl.x,br.x),minY=Math.min(tl.y,br.y),maxY=Math.max(tl.y,br.y);
+    return { cMin:Math.max(1,Math.floor(minX/U)+1), cMax:Math.max(0,Math.ceil(maxX/U)),
+             rMin:Math.max(1,Math.floor(minY/U)+1), rMax:Math.max(0,Math.ceil(maxY/U)) };
+  }
+  function productCells(n){
+    const vb=visibleBounds(),out=[];
+    for(let c=Math.max(1,vb.cMin);c<=vb.cMax;c++){
+      if(n%c)continue;const r=n/c;
+      if(r>=vb.rMin&&r<=vb.rMax)out.push([c,r]);
+    }
+    return out;
+  }
+  function allProducts(){
+    const vb=visibleBounds(),set=new Set();
+    for(let c=vb.cMin;c<=vb.cMax;c++)for(let r=vb.rMin;r<=vb.rMax;r++)set.add(c*r);
+    return[...set].sort((a,b)=>a-b);
+  }
+  function visiblePairs(n){
+    const vb=visibleBounds(),pairs=[];
+    for(let a=1;a*a<=n;a++){
+      if(n%a)continue;const b=n/a;
+      if((a<=vb.cMax&&b<=vb.rMax)||(b<=vb.cMax&&a<=vb.rMax))pairs.push([a,b]);
+    }
+    return pairs;
+  }
+
+  // ==== sound (unchanged from the DOM build, apart from the lit targets) =====
+  // Safari (macOS and iPad) only lets an AudioContext start inside a user
+  // gesture, and most of this lab's sounds fire from timers staged after the
+  // gesture is over. Geometry's answer, adopted here: unlock on every
+  // pointerdown — create, resume (Safari also parks contexts 'interrupted'),
+  // and push one silent sample through, all while the gesture is live.
+  let audioUnlocked=false;
+  function unlockAudio(){
+    const e=createAudio();if(!e)return;
+    if(e.ctx.state==='suspended'||e.ctx.state==='interrupted')e.ctx.resume();
+    if(!audioUnlocked){
+      const b=e.ctx.createBuffer(1,1,22050),s=e.ctx.createBufferSource();
+      s.buffer=b;s.connect(e.ctx.destination);s.start(0);audioUnlocked=true;
+    }
+  }
+  function createAudio(){
+    if(audio)return audio;
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC){readout.textContent='This browser does not support interactive audio.';return null}
+    const actx=new AC(), compressor=actx.createDynamicsCompressor(), dry=actx.createGain(), wet=actx.createGain(), convolver=actx.createConvolver();
+    compressor.threshold.value=-18;compressor.knee.value=18;compressor.ratio.value=3;dry.gain.value=.72;wet.gain.value=.22;
+    const length=Math.floor(actx.sampleRate*2.4), impulse=actx.createBuffer(2,length,actx.sampleRate);
+    for(let c=0;c<2;c++){const data=impulse.getChannelData(c);for(let i=0;i<length;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/length,2.7)}
+    convolver.buffer=impulse;dry.connect(compressor);convolver.connect(wet);wet.connect(compressor);compressor.connect(actx.destination);
+    return audio={ctx:actx,dry,convolver};
+  }
+  function pianoNote(note,when,duration=3.5,velocity=.3){
+    const e=createAudio();if(!e)return;const voice=e.ctx.createGain(),pan=e.ctx.createStereoPanner();pan.pan.value=note.pan||0;
+    voice.gain.setValueAtTime(.0001,when);voice.gain.exponentialRampToValueAtTime(velocity,when+.009);voice.gain.exponentialRampToValueAtTime(velocity*.34,when+.22);voice.gain.exponentialRampToValueAtTime(.0001,when+duration);
+    voice.connect(pan);pan.connect(e.dry);pan.connect(e.convolver);
+    [[1,1],[2,.23],[3,.11],[4,.045],[5,.018]].forEach(([m,l],i)=>{const o=e.ctx.createOscillator(),g=e.ctx.createGain();o.type='sine';o.frequency.value=frequency(note.midi)*m;o.detune.value=i%2?-.8:.55;g.gain.value=l;o.connect(g);g.connect(voice);o.start(when);o.stop(when+duration+.08)});
+  }
+  async function softMiss(){
+    const e=createAudio();if(!e)return;await e.ctx.resume();const now=e.ctx.currentTime+.02,o=e.ctx.createOscillator(),g=e.ctx.createGain();
+    o.type='sine';o.frequency.setValueAtTime(170,now);o.frequency.exponentialRampToValueAtTime(92,now+.7);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.08,now+.025);g.gain.exponentialRampToValueAtTime(.0001,now+.85);o.connect(g);g.connect(e.dry);g.connect(e.convolver);o.start(now);o.stop(now+.9);
+  }
+  // One tone per prime factor. No finale chord — the chord anchor below is a
+  // timing marker for the visual highlight only. Do not sound it.
+  async function playFactors(factors,targets=[],duration=2000){
+    const e=createAudio();if(!e)return;await e.ctx.resume();
+    const notes=factors.length?notesFor(factors):[{midi:36,pan:0}],start=e.ctx.currentTime+.04,spacing=.18;
+    notes.forEach((note,i)=>{
+      pianoNote(note,start+i*spacing,2.6,.24);
+      fx(()=>targets.forEach(([c,r])=>litPieces.set(`${c},${r},${i}`,Date.now()+340)),i*spacing*1000);
+    });
+    const chord=start+notes.length*spacing+.18;
+    const delay=(chord-e.ctx.currentTime)*1000;
+    fx(()=>targets.forEach(([c,r])=>litPanes.set(`${c},${r}`,Date.now()+1100)),delay);
+    fx(()=>targets.forEach(([c,r])=>{const n=viewing.name(c,r);revealedNums.set(n,Date.now()+duration)}),delay);
+  }
+
+  // ==== transient visuals ====================================================
+  function clearFx(){
+    fxTimers.forEach(clearTimeout);fxTimers=[];
+    litPanes.clear();litPieces.clear();revealedNums.clear();rects=[];
+  }
+  function cancelSequence(){seqTimers.forEach(clearTimeout);seqTimers=[]}
+  function setProduct(n,factors=[],miss=false){
+    clearTimeout(expressionTimer);productBox.classList.toggle('miss',miss);
+    if(n==null){productNumber.textContent='';productFactors.textContent='';return}
+    productNumber.textContent=n;productFactors.textContent=powerText(factors);
+  }
+  function frame(width,height,until){
+    rects.push({w:width,h:height,until:until||Infinity});
+  }
+  function showAllRectangles(n){
+    const noteCount=Math.max(1,factorize(n).length);
+    const until=Date.now()+(noteCount*180)+2200;
+    visiblePairs(n).forEach(([a,b])=>{frame(a,b,until);if(a!==b)frame(b,a,until)});
+  }
+
+  // ==== Reveal — the atomic action ==========================================
+  function revealNumber(n,{rectangles=true,sound=true,message}={}){
+    const targets=productCells(n);if(!targets.length)return false;
+    clearFx();
+    built.add(n);
+    setProduct(n,factorize(n));numberProperties(n);
+    if(rectangles)showAllRectangles(n);
+    if(sound)playFactors(factorize(n),targets);
+    showInfo(message!==undefined?message:(targets.length===1?`${n} has found its place.`:`${n} appears in ${targets.length} places.`));
+    return true;
+  }
+  function revealRun(list,label,closing){
+    cancelSequence();clearFx();
+    const groups=new Map();
+    list.forEach(([c,r])=>{const n=viewing.name(c,r);if(!groups.has(n))groups.set(n,[]);groups.get(n).push([c,r])});
+    const entries=[...groups.entries()];
+    if(!entries.length)return;
+    const step=clamp(Math.round(7000/entries.length),140,560);
+    entries.forEach(([n,group],i)=>seq(()=>{
+      clearFx();
+      built.add(n);
+      setProduct(n,factorize(n));numberProperties(n);
+      playFactors(factorize(n),group);
+      showInfo(label);
+    },i*step));
+    const numbers=entries.map(([n])=>n);
+    seq(()=>{showInfo(closing||`${label} — ${numbers.join(', ')}`)},entries.length*step+320);
+  }
+
+  // ==== number properties panel =============================================
+  function divisorClass(n){
+    if(n===1)return'neither abundant nor deficient';
+    let sum=1;for(let i=2;i<=Math.sqrt(n);i++)if(n%i===0){sum+=i;if(i!==n/i)sum+=n/i}
+    return sum===n?'perfect':sum>n?'abundant':'deficient';
+  }
+  function numberProperties(n){
+    if(n===1){propertyCopy.innerHTML='<p><strong>1</strong> — sets the scale for all other numbers.</p>';return}
+    const factors=factorize(n),pairs=visiblePairs(n),sqrt=Math.sqrt(n),square=Number.isInteger(sqrt);
+    const pk=Math.floor((Math.sqrt(1+4*n)-1)/2),pronic=pk*(pk+1)===n;
+    const tk=Math.floor((Math.sqrt(1+8*n)-1)/2),triangular=tk*(tk+1)/2===n;
+    const labels=[];
+    if(square)labels.push(`a square: ${sqrt} × ${sqrt}`);
+    if(pronic)labels.push(`a pronic: ${pk} × ${pk+1}, two neighboring sides`);
+    if(triangular)labels.push(`triangular: 1 + 2 + … + ${tk}`);
+    if(factors.length>1&&new Set(factors).size===1)labels.push(`a power of ${factors[0]}`);
+    if(factors.length===2)labels.push('semiprime: the product of two primes');
+    labels.push(divisorClass(n));
+    const below=Math.floor(sqrt)**2,above=Math.ceil(sqrt)**2;
+    if(!square&&n-below<=2)labels.push(`${n-below} more than the square ${below}`);
+    else if(!square&&above-n<=2)labels.push(`${above-n} short of the square ${above}`);
+    const pairText=pairs.length?pairs.map(([a,b])=>`${a} × ${b}`).join(', '):'no complete rectangle in this window';
+    propertyCopy.innerHTML=`<p><strong>${n} = ${powerText(factors)}</strong></p><p>Visible rectangles: ${pairText}</p>${labels.map(x=>`<p>${x}</p>`).join('')}`;
+  }
+
+  // ==== the whole table =====================================================
+  function clearTable(){
+    cancelSequence();clearFx();
+    built.clear();built.add(1);
+    fillCorner=0;updateFillWord();
+    composition=[];updateTally();pendingColumn=pendingRow=null;setProduct();clearInfo();
+  }
+  // Fill has a shape independent of the viewport, which the no-window layout
+  // requires: it fills the entire square below-left of a power-of-two corner,
+  // pausing at 16² and at every power of two after. The single word Continue?
+  // resumes toward the next corner. Still silent — the one reveal that makes
+  // no sound.
+  let fillCorner=0;                       // last completed corner; 0 = no fill run
+  const FILL_FIRST=16, FILL_LAST=1024;    // sanity ceiling on the doubling
+  function updateFillWord(){fillContinueButton.hidden=!(fillCorner&&fillCorner<FILL_LAST)}
+  function fillSquare(k){
+    cancelSequence();clearFx();
+    const nums=new Set();
+    for(let c=1;c<=k;c++)for(let r=1;r<=k;r++)nums.add(c*r);
+    const products=[...nums].filter(n=>!built.has(n)).sort((a,b)=>a-b);
+    // Large squares reveal in chunks so the sweep stays ~2.5s and the timer
+    // count stays bounded.
+    const chunk=Math.max(1,Math.ceil(products.length/140));
+    const ticks=Math.ceil(products.length/chunk);
+    const step=clamp(Math.round(2500/Math.max(1,ticks)),4,22);
+    for(let i=0;i<ticks;i++){
+      const slice=products.slice(i*chunk,(i+1)*chunk);
+      seq(()=>slice.forEach(n=>built.add(n)),i*step);
+    }
+    seq(()=>{
+      fillCorner=k;updateFillWord();
+      setProduct();say(toolPrompt());
+    },ticks*step+240);
+  }
+  function fillTable(){fillSquare(fillCorner?Math.min(fillCorner*2,FILL_LAST):FILL_FIRST)}
+
+  // ==== cell sets ===========================================================
+  const columnCells=c=>{const vb=visibleBounds(),out=[];for(let r=vb.rMin;r<=vb.rMax;r++)out.push([c,r]);return out};
+  const rowCells=r=>{const vb=visibleBounds(),out=[];for(let c=vb.cMin;c<=vb.cMax;c++)out.push([c,r]);return out};
+  function multipleCells(v){
+    const out=[];allProducts().filter(n=>n%v===0).forEach(n=>out.push(...productCells(n)));return out;
+  }
+  function diagonalCells(kind,value){
+    const vb=visibleBounds(),out=[];
+    for(let c=vb.cMin;c<=vb.cMax;c++)for(let r=vb.rMin;r<=vb.rMax;r++){
+      if(kind==='difference'?r-c===value:r+c===value)out.push([c,r]);
+    }
+    return out;
+  }
+
+  // ==== Properties ==========================================================
+  const isSquare=n=>{const r=Math.round(Math.sqrt(n));return r*r===n};
+  const isPronic=n=>{const k=Math.floor((Math.sqrt(1+4*n)-1)/2);return k>=1&&k*(k+1)===n};
+  const isTriangular=n=>{const k=Math.floor((Math.sqrt(8*n+1)-1)/2);return k*(k+1)/2===n};
+  const isPowerOf=(n,p)=>{let v=1;while(v<n)v*=p;return v===n};
+  const isNearSquare=n=>n>1&&!isSquare(n)&&(isSquare(n-1)||isSquare(n+1));
+  const propertyLabels={squares:'Squares',pronics:'Pronics',powers2:'Powers of 2',powers3:'Powers of 3',triangular:'Triangular numbers',nearlysquare:'Nearly square'};
+  const propertyTests={squares:isSquare,pronics:isPronic,powers2:n=>isPowerOf(n,2),powers3:n=>isPowerOf(n,3),triangular:isTriangular,nearlysquare:isNearSquare};
+  function revealProperty(name){
+    propertyButtons.forEach(b=>b.classList.toggle('active',b.dataset.property===name));
+    const numbers=allProducts().filter(propertyTests[name]);
+    const list=[];numbers.forEach(n=>list.push(...productCells(n)));
+    revealRun(list,propertyLabels[name],`${propertyLabels[name]} — ${numbers.join(', ')}`);
+  }
+
+  // ==== the tile world ======================================================
+  // Multiply, Divide and Make a Square share one vocabulary — rectangle,
+  // width, height — and one substance: pieces. Everything here is anchored at
+  // the origin and measured in units, so it stands on the same plane as the
+  // panes and needs no coordinate system of its own.
+  //
+  // A piece is one unit wide, always. What changes when she refines is its
+  // thickness, so a row of a stack always holds `w` pieces. That is what makes
+  // 20/7 come out at 2.85 rather than at some other arrangement of tenths.
+
+  function unitRect(x0,y0,w,h){
+    const tl=plane.worldToScreen(x0*U,(y0+h)*U), br=plane.worldToScreen((x0+w)*U,y0*U);
+    return {x:tl.x,y:tl.y,w:br.x-tl.x,h:br.y-tl.y};
+  }
+  // A field of pieces. The glass is unity glass — a piece is a 1, and 1 is
+  // what this viewing already draws white and crystalline. No new colour is
+  // declared: inside this viewing colour is prime identity and nothing else.
+  function drawTileField(x0,y0,w,h,pw,ph,alpha){
+    if(!(w>0)||!(h>0))return;
+    const R=unitRect(x0,y0,w,h);
+    if(R.w<0.5||R.h<0.5)return;
+    ctx.save();
+    ctx.globalAlpha=alpha===undefined?1:alpha;
+    const g=ctx.createRadialGradient(R.x+R.w*0.44,R.y+R.h*0.38,0,R.x+R.w*0.44,R.y+R.h*0.38,Math.max(R.w,R.h)*0.75);
+    g.addColorStop(0,'#ffffff');g.addColorStop(0.62,'#e9eef5');g.addColorStop(1,'#cfd6e0');
+    ctx.fillStyle=g;ctx.fillRect(R.x,R.y,R.w,R.h);
+    // Piece cames, drawn only while a piece is still a piece on screen.
+    const z=plane.zoom(), sw=pw*U*z, sh=ph*U*z;
+    if(sw>=4&&sh>=4){
+      ctx.strokeStyle=INNER_CAME;ctx.lineWidth=1;ctx.beginPath();
+      for(let x=pw;x<w-1e-9;x+=pw){const sx=CW.snap(R.x+(x/w)*R.w);ctx.moveTo(sx,R.y);ctx.lineTo(sx,R.y+R.h)}
+      for(let y=ph;y<h-1e-9;y+=ph){const sy=CW.snap(R.y+R.h-(y/h)*R.h);ctx.moveTo(R.x,sy);ctx.lineTo(R.x+R.w,sy)}
+      ctx.stroke();
+    }
+    ctx.strokeStyle=FRAME_CAME;ctx.lineWidth=1.5;
+    ctx.strokeRect(R.x,R.y,R.w,R.h);
+    ctx.restore();
+  }
+  // Text on the map itself: a label sitting on an object she has built.
+  function drawMapLabel(text,ux,uy,align,baseline){
+    const s0=plane.worldToScreen(ux*U,uy*U);
+    ctx.save();
+    ctx.font='13px Georgia, serif';
+    ctx.textAlign=align||'left';ctx.textBaseline=baseline||'bottom';
+    ctx.fillStyle='rgba(49,50,47,0.9)';
+    ctx.shadowColor='rgba(244,241,232,0.9)';ctx.shadowBlur=4;
+    ctx.fillText(text,s0.x,s0.y);
+    ctx.restore();
+  }
+  // The measuring bar: a line standing on the axis, with an arrow at its left
+  // pointing toward it (Divide spec). Multiply's planted bar is the same
+  // instrument, which is the point — width first, in both tools.
+  function drawBar(v,axis){
+    const W=plane.viewportWidth(),H=plane.viewportHeight();
+    const o=plane.worldToScreen(0,0);
+    ctx.save();
+    ctx.strokeStyle='#546a80';ctx.lineWidth=2;ctx.beginPath();
+    if(axis==='y'){
+      const y=CW.snap(plane.worldToScreen(0,v*U).y);
+      ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
+      ctx.fillStyle='#546a80';
+      const ax=clamp(o.x+44,16,W-16);
+      ctx.beginPath();ctx.moveTo(ax,y+2);ctx.lineTo(ax-5,y+13);ctx.lineTo(ax+5,y+13);ctx.closePath();ctx.fill();
+    } else {
+      const x=CW.snap(plane.worldToScreen(v*U,0).x);
+      ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();
+      ctx.fillStyle='#546a80';
+      const ay=clamp(o.y-44,16,H-16);
+      ctx.beginPath();ctx.moveTo(x-2,ay);ctx.lineTo(x-13,ay-5);ctx.lineTo(x-13,ay+5);ctx.closePath();ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // ==== the readout =========================================================
+  // The cross-tool rule (00-DECISIONS, 24 Aug): the live number floats above
+  // the finger, on the side the drag came from; a second fixed copy sits in a
+  // constant corner, the same corner in every tool. The floating copy is for
+  // reading while moving; the fixed copy is the one that still works when her
+  // hand is in the way. The corner is the map's bottom right, above the pixel
+  // floor line — chosen here; the decision names a constant corner, not which.
+  let mapText='', liveText=null;   // liveText: {text, sx, sy, side}
+  function setMapText(text){mapText=text||''}
+  function setLive(text,sx,sy,side){liveText=text?{text,sx,sy,side}:null}
+  function say(text){readout.textContent=text||''}
+  function drawReadouts(){
+    const W=plane.viewportWidth(),H=plane.viewportHeight();
+    if(mapText){
+      ctx.save();
+      ctx.font='14px Georgia, serif';ctx.fillStyle='#546a80';
+      ctx.textAlign='right';ctx.textBaseline='bottom';
+      ctx.fillText(mapText,W-10,H-24);
+      ctx.restore();
+    }
+    if(liveText){
+      ctx.save();
+      ctx.font='16px Georgia, serif';ctx.textBaseline='alphabetic';
+      const tw=ctx.measureText(liveText.text).width;
+      const onLeft=liveText.side==='left';
+      const x=clamp(liveText.sx+(onLeft?-16:16),10+(onLeft?tw:0),W-10-(onLeft?0:tw));
+      const y=clamp(liveText.sy-30,26,H-10);
+      const bx=onLeft?x-tw-6:x-6;
+      ctx.fillStyle='rgba(244,241,232,0.9)';
+      ctx.fillRect(bx,y-16,tw+12,22);
+      ctx.fillStyle='#31322f';
+      ctx.textAlign=onLeft?'right':'left';
+      ctx.fillText(liveText.text,x,y);
+      ctx.restore();
+    }
+  }
+
+  // ==== Multiply ============================================================
+  // 01-ACTIVE/Multiply-Spec-Aug24.md. One continuous stroke: down on the axis,
+  // the bar follows and the display reads the width alone; up into the field
+  // and the rectangle grows as an outline behind the finger; release and it
+  // fills, row by row, the product counting up as each row lands.
+  //
+  // Sides are chosen; area is discovered. The fill is a separate event after
+  // release so the two never blur into one gesture.
+  let multiply=null;          // {x,y,rows,t0,step,done}
+  let pending=null;           // {axis:'x'|'y', v} — the planted bar
+  let dragBar=null;           // the bar under a live stroke, before release
+  const multiplyReps=new Map();
+
+  // (1,1) sits on both axes. With nothing planted it is the x axis — the first
+  // number is x. With something planted it closes on the other one.
+  function axisOf(c,r){
+    if(c===1&&r===1)return pending==null?'x':(pending.axis==='x'?'y':'x');
+    return r===1?'x':'y';
+  }
+  function fillStep(rows,reps){
+    const base=clamp(Math.round(2400/Math.max(1,rows)),40,300);
+    return Math.max(22,Math.round(base/(1+0.9*reps)));   // per repeated shape, not global
+  }
+  function tapAxis(axis,v){
+    if(pending==null){
+      multiply=null;clearFx();
+      pending={axis,v};
+      litPanes.set(axis==='x'?`${v},1`:`1,${v}`,Infinity);
+      setMapText(String(v));say(String(v));
+      return;
+    }
+    let x,y;
+    if(pending.axis===axis){x=pending.v;y=v}        // same axis: the first is x
+    else if(pending.axis==='x'){x=pending.v;y=v}
+    else {x=v;y=pending.v}
+    pending=null;
+    multiplyBuild(x,y);
+  }
+  function multiplyBuild(x,y){
+    cancelSequence();clearFx();
+    const key=x+'x'+y, reps=multiplyReps.get(key)||0;
+    multiplyReps.set(key,reps+1);
+    multiply={x,y,rows:0,t0:Date.now(),step:fillStep(y,reps),done:false};
+    setMapText(`${x} × ${y}`);say(`${x} × ${y}`);
+  }
+  function multiplyAdvance(){
+    const m=multiply;if(!m||m.done)return;
+    const rows=Math.min(m.y,Math.floor((Date.now()-m.t0)/m.step));
+    if(rows!==m.rows){
+      m.rows=rows;
+      setMapText(`${m.x} × ${m.y} = ${rows*m.x}`);
+    }
+    if(rows>=m.y){
+      m.done=true;
+      const n=m.x*m.y;
+      built.add(n);
+      litPanes.set(`${m.x},${m.y}`,Infinity);   // its own spot, lit until the next act
+      setProduct(n,factorize(n));
+      playFactors(factorize(n),[[m.x,m.y]]);
+      setMapText(`${m.x} × ${m.y} = ${n}`);say(`${m.x} × ${m.y} = ${n}`);
+    }
+  }
+  function drawMultiply(){
+    if(pending)drawBar(pending.v,pending.axis);
+    if(dragBar)drawBar(dragBar.v,dragBar.axis);
+    const m=multiply;if(!m)return;
+    if(m.rows>0)drawTileField(0,0,m.x,m.rows,1,1,1);
+    const R=unitRect(0,0,m.x,m.y);
+    ctx.save();
+    ctx.strokeStyle='rgba(255,255,255,0.95)';ctx.lineWidth=3;
+    ctx.shadowColor='rgba(255,255,255,0.6)';ctx.shadowBlur=9;
+    ctx.strokeRect(R.x,R.y,R.w,R.h);
+    ctx.restore();
+  }
+
+  // ==== Build ===============================================================
+  const compositionTotal=()=>composition.reduce((a,b)=>a*b,1);
+  function compositionText(){
+    return composition.length?`1 × ${composition.join(' × ')} = ${compositionTotal()}`:'1';
+  }
+  function updateTally(){
+    const on=mode==='build'&&buildTool==='primes';
+    tally.hidden=!on;if(on)tally.textContent=compositionText();
+  }
+  function resetComposition(){clearTimeout(expressionTimer);composition=[];updateTally()}
+  function addPrime(prime){
+    clearTimeout(expressionTimer);
+    const n=compositionTotal()*prime;
+    // Refuse a tap that would leave the window; the composition stays as it was.
+    // softMiss is a shrug, not an error tone — nothing else marks this.
+    if(!productCells(n).length){readout.textContent='That number continues beyond this window.';softMiss();return}
+    composition.push(prime);updateTally();
+    cancelSequence();revealNumber(n);
+  }
+  function buildTap(column,row){
+    const n=viewing.name(column,row);
+    if(buildTool==='primes'){
+      if(n===1){resetComposition();setProduct();revealNumber(1,{message:'Back to 1. Every number starts here.'});return}
+      readout.textContent='Tap a prime below to multiply it in.';return;
+    }
+    if(buildTool==='select'){cancelSequence();revealNumber(n);return}
+    if(buildTool==='axes'){
+      if(row===1)revealRun(columnCells(column),`Column ${column}`);
+      else if(column===1)revealRun(rowCells(row),`Row ${row}`);
+      else readout.textContent='Tap a pane along the bottom for its column, or up the left side for its row.';
+      return;
+    }
+    if(buildTool==='multiples'){
+      if(row===1||column===1){const v=row===1?column:row;revealRun(multipleCells(v),`Multiples of ${v}`)}
+      else readout.textContent='Tap a number along the bottom or up the left side.';
+      return;
+    }
+    if(buildTool==='diagup'){revealRun(diagonalCells('difference',row-column),`↗ same difference · ${Math.abs(row-column)}`);return}
+    if(buildTool==='diagdown'){revealRun(diagonalCells('sum',row+column),`↘ same sum · ${row+column}`)}
+  }
+
+  // ==== the leftover choice =================================================
+  // Divide offers three; Make a Square offers two and nothing occupies the
+  // gap — no greyed-out word, no explanation, no tooltip. If the two tools
+  // look deliberately alike, the missing word is the difference between
+  // rational and irrational, sitting where she can find it.
+  const leftoverPanel=CW.createChoicePanel();
+
+  // ==== Divide ==============================================================
+  // 01-ACTIVE/Divide-Spec-Aug23.md. She picks a number, sweeps a bar to choose
+  // a width, and the number restacks into that many stacks. The answer is a
+  // height, never a printed result — which is what keeps division and
+  // multiplication in one world.
+  let divide=null;
+  const divideReps=new Map();    // divisor -> times used; acceleration is per
+                                 // repeated divisor, not on a global counter
+  const divideOpen=new Set();    // divisors seen not to close in decimals
+
+  // The bar snaps to whole units. Every place it can stop produces something
+  // legible; continuous has no floor. The spec unlocks tenths by zooming far
+  // enough that whole units are wide on screen, and leaves the fractional
+  // divisor itself under Open — so the unlock is a hook here, not a feature.
+  function barWidthAt(sx){
+    const w=plane.screenToWorld(sx,0).x/U;
+    return Math.max(0,Math.round(w));
+  }
+  function rowStep(rows,reps){
+    const base=clamp(Math.round(2400/Math.max(1,rows)),40,300);
+    return Math.max(22,Math.round(base/(1+0.9*reps)));
+  }
+  function divideStart(c,r){
+    cancelSequence();clearFx();leftoverPanel.close();
+    const n=viewing.name(c,r);
+    built.add(n);
+    setProduct(n,factorize(n));
+    divide={n,c,r,srcW:c,srcH:r,w:null,bar:null,phase:'sweep',layers:[],
+            baseRows:0,rem:0,ph:1,k:0,t0:0,mode:null,settled:true,srcAlpha:1};
+    setMapText(`${n}/`);say(`${n}/`);
+  }
+  function divideSet(w){
+    const d=divide;if(!d||d.phase!=='sweep')return;
+    d.w=w;d.bar=w;d.t0=Date.now();
+    if(w<=0){
+      // The bar has zero width, so there is nowhere to put the tiles. Handled
+      // by the geometry, not by a rule anyone wrote: rectangle intact.
+      d.phase='stuck';setMapText(`${d.n}/0`);say(`${d.n}/0`);return;
+    }
+    const reps=divideReps.get(w)||0;divideReps.set(w,reps+1);
+    const rows=Math.floor(d.n/w);
+    d.baseRows=rows;d.rem=d.n-rows*w;d.ph=1;d.k=0;
+    d.layers=[{rows,ph:1,shown:0,t0:Date.now(),step:rowStep(Math.max(1,rows),reps)}];
+    d.phase='restack';d.settled=false;
+  }
+  function divideHeight(d){
+    let h=0;d.layers.forEach(L=>{h+=Math.min(L.rows,L.shown)*L.ph});return h;
+  }
+  function divideAdvance(){
+    const d=divide;if(!d)return;
+    if(d.phase==='stuck'||!d.layers.length)return;
+    const now=Date.now();
+    d.srcAlpha=clamp(1-(now-d.t0)/700,0,1);
+    let done=true;
+    for(const L of d.layers){
+      const sh=Math.min(L.rows,Math.floor((now-L.t0)/L.step));
+      if(sh!==L.shown)L.shown=sh;
+      if(sh<L.rows){done=false;break}
+    }
+    if(!done){
+      if(!d.mode){
+        const shown=Math.min(d.layers[0].rows,d.layers[0].shown);
+        setMapText(d.rem?`${shown} + ${d.rem}/${d.w}`:`${shown}`);
+      }
+      return;
+    }
+    if(d.settled)return;
+    d.settled=true;
+    if(d.mode==='fraction'){
+      setMapText(`${d.n} ÷ ${d.w} = ${d.baseRows} + ${d.fracRem}/${d.w}`);
+      say(`${d.n} ÷ ${d.w} = ${d.baseRows} + ${d.fracRem}/${d.w}`);
+      d.phase='done';return;
+    }
+    if(d.mode==='remainder'){
+      setMapText(`${d.n} ÷ ${d.w} = ${d.baseRows} remainder ${d.rem}`);
+      say(`${d.n} ÷ ${d.w} = ${d.baseRows} remainder ${d.rem}`);
+      d.phase='done';return;
+    }
+    if(d.k>0){
+      const h=divideHeight(d).toFixed(d.k);
+      if(d.rem===0){
+        setMapText(`${d.n} ÷ ${d.w} = ${h}`);say(`${d.n} ÷ ${d.w} = ${h}`);
+        d.phase='done';return;
+      }
+      if(grainVisible(d.ph/10)){
+        setMapText(`${d.n} ÷ ${d.w} = ${h}`);say(`${d.n} ÷ ${d.w} = ${h}`);
+        d.phase='choose';openDivideChoices();return;
+      }
+      // It will not close, and the slices have run out of screen. The report
+      // arrives after the fact — never as a warning before she chose.
+      divideOpen.add(d.w);
+      setMapText(`${d.n} ÷ ${d.w} ≈ ${h}…`);
+      say(`these slices are too thin to show on your screen, so ${d.n}/${d.w} = ~${h}…`);
+      d.phase='done';return;
+    }
+    // The base stack has finished.
+    if(d.rem===0){
+      setMapText(`${d.n} ÷ ${d.w} = ${d.baseRows}`);say(`${d.n} ÷ ${d.w} = ${d.baseRows}`);
+      // She is standing on a cell of the multiplication map. Highlight it and
+      // say nothing.
+      if(d.baseRows>=1){built.add(d.n);litPanes.set(`${d.w},${d.baseRows}`,Infinity)}
+      d.phase='done';return;
+    }
+    setMapText(`${d.baseRows} + ${d.rem}/${d.w}`);
+    say(`${d.baseRows} + ${d.rem}/${d.w}`);
+    d.phase='choose';openDivideChoices();
+  }
+  function openDivideChoices(){
+    const d=divide;if(!d)return;
+    leftoverPanel.open({choices:[
+      {word:'Remainder',line:'the tiles stay as they are',action:()=>{
+        d.mode='remainder';d.settled=false;d.phase='restack';
+      }},
+      {word:'Fractions',line:'cut each tile by the number of stacks',action:()=>{
+        // The divisor is the denominator. The shape she already built dictates
+        // the cut: nothing to select, nothing to explain. Exact, and flush.
+        const rem=d.rem;
+        d.fracRem=rem;d.mode='fraction';
+        d.layers.push({rows:rem,ph:1/d.w,shown:0,t0:Date.now(),
+                       step:rowStep(Math.max(1,rem),divideReps.get(d.w)-1||0)});
+        d.rem=0;d.ph=1/d.w;d.settled=false;d.phase='restack';
+      }},
+      // The mark arrives only after a divisor has been seen not to close, and
+      // only ever afterwards.
+      {word:'Decimals'+(divideOpen.has(d.w)?' …':''),line:'cut each tile into tenths',action:()=>{
+        const pieces=d.rem*10, ph=d.ph/10;
+        const rows=Math.floor(pieces/d.w);
+        d.rem=pieces-rows*d.w;d.ph=ph;d.k+=1;d.mode='decimal';
+        d.layers.push({rows,ph,shown:0,t0:Date.now(),
+                       step:rowStep(Math.max(1,rows),divideReps.get(d.w)-1||0)});
+        d.settled=false;d.phase='restack';
+      }}
+    ]});
+  }
+  function drawDivide(){
+    const d=divide;if(!d)return;
+    if(d.srcAlpha>0)drawTileField(0,0,d.srcW,d.srcH,1,1,d.srcAlpha);
+    if(d.phase==='sweep'){if(d.bar!=null)drawBar(d.bar,'x');return}
+    if(d.phase==='stuck'){drawBar(0,'x');return}
+    let y=0;
+    d.layers.forEach(L=>{
+      const sh=Math.min(L.rows,L.shown);
+      if(sh>0)drawTileField(0,y,d.w,sh*L.ph,1,L.ph,1);
+      y+=sh*L.ph;
+    });
+    // The leftovers, sitting on top of the completed rows.
+    if(d.rem>0&&d.phase!=='restack')drawTileField(0,y,d.rem,d.ph,1,d.ph,1);
+    drawBar(d.w,'x');
+    if(y>0){
+      const label=d.mode==='fraction'?`${d.baseRows} + ${d.fracRem}/${d.w}`:fmtNum(y,d.k);
+      drawMapLabel(label,d.w+0.15,y,'left','middle');
+    }
+  }
+
+  // ==== Make a Square =======================================================
+  // 01-ACTIVE/Make-This-Square-Spec-Aug23.md. The number rebuilds itself into
+  // the largest square it can make, one L-ring at a time, and then stops.
+  // Four is too small, five is too big, and there is no whole number in
+  // between: that pause is the tool, so nothing proceeds automatically.
+  let square=null;
+  const squareReps=new Map();
+  function grainVisible(g){return g*U*plane.zoom()>=0.25}
+  function fmtNum(v,k){return k>0?v.toFixed(k):String(Math.round(v))}
+  function ringStep(count,reps){
+    const base=clamp(Math.round(2800/Math.max(1,count)),150,700);
+    return Math.max(60,Math.round(base/(1+0.8*reps)));
+  }
+  function squareStart(c,r){
+    cancelSequence();clearFx();leftoverPanel.close();
+    const n=viewing.name(c,r);
+    built.add(n);
+    setProduct(n,factorize(n));
+    const reps=squareReps.get(n)||0;squareReps.set(n,reps+1);
+    const target=Math.floor(Math.sqrt(n));
+    const rings=[];for(let s=1;s<=target;s++)rings.push(2*s-1);
+    square={n,c,r,k:0,baseSide:0,side:target,rings,shown:0,
+            t0:Date.now(),step:ringStep(rings.length,reps),
+            left:n-target*target,phase:'build',settled:false,reps,
+            srcW:c,srcH:r,srcT0:Date.now(),srcAlpha:1};
+    setMapText(`${n}`);say(`${n}`);
+  }
+  function squareRefine(){
+    const q=square;if(!q)return;
+    q.k+=1;
+    const N=Math.round(q.n*Math.pow(100,q.k));
+    const base=q.side*10, target=Math.floor(Math.sqrt(N));
+    const rings=[];for(let s=base+1;s<=target;s++)rings.push(2*s-1);
+    q.baseSide=base;q.side=target;q.rings=rings;q.shown=0;
+    q.t0=Date.now();q.step=ringStep(Math.max(1,rings.length),q.reps);
+    q.left=N-target*target;q.phase='build';q.settled=false;
+  }
+  function squareSide(q){return (q.baseSide+Math.min(q.rings.length,q.shown))*Math.pow(10,-q.k)}
+  function squareAdvance(){
+    const q=square;if(!q||q.phase==='done')return;
+    const shown=Math.min(q.rings.length,Math.floor((Date.now()-q.t0)/q.step));
+    if(shown!==q.shown){
+      q.shown=shown;
+      const side=squareSide(q), g=Math.pow(10,-q.k);
+      const used=Math.round(side/g)*Math.round(side/g);
+      const leftArea=q.n-used*g*g;
+      setMapText(leftArea>1e-9
+        ? `${q.n} = ${fmtNum(side,q.k)} × ${fmtNum(side,q.k)} + ${fmtNum(leftArea,2*q.k)}`
+        : `${q.n} = ${fmtNum(side,q.k)} × ${fmtNum(side,q.k)}`);
+    }
+    if(shown<q.rings.length||q.settled)return;
+    q.settled=true;
+    const side=squareSide(q), g=Math.pow(10,-q.k);
+    if(q.left===0){
+      // Perfect squares announce themselves by finishing. No choice offered.
+      setMapText(`√${q.n} = ${fmtNum(side,q.k)}`);say(`√${q.n} = ${fmtNum(side,q.k)}`);
+      q.phase='done';return;
+    }
+    if(!grainVisible(g/10)){
+      setMapText(`√${q.n} ≈ ${fmtNum(side,q.k)}…   ·   ${q.n} ≈ ${fmtNum(side,q.k)}²`);
+      say('this can go on as long as you like, but the tiles will be too small to see.');
+      q.phase='done';return;
+    }
+    q.phase='choose';
+    say(`${q.n} = ${fmtNum(side,q.k)} × ${fmtNum(side,q.k)} + ${fmtNum(q.left*g*g,2*q.k)}`);
+    leftoverPanel.open({choices:[
+      {word:'Leave it',line:'the square, and what did not fit',action:()=>{
+        q.phase='done';
+        setMapText(`${q.n} = ${fmtNum(side,q.k)} × ${fmtNum(side,q.k)} + ${fmtNum(q.left*g*g,2*q.k)}`);
+      }},
+      {word:'Decimals',line:'each leftover tile slices into a hundred smaller ones',
+       action:()=>squareRefine()}
+      // Nothing occupies the third place. There is no fraction that squares
+      // to 18 — not a hard one, not an ugly one. None.
+    ]});
+  }
+  function drawSquare(){
+    const q=square;if(!q)return;
+    if(q.srcAlpha>0){
+      q.srcAlpha=clamp(1-(Date.now()-q.srcT0)/700,0,1);
+      drawTileField(0,0,q.srcW,q.srcH,1,1,q.srcAlpha);
+    }
+    const g=Math.pow(10,-q.k);
+    const sidePieces=q.baseSide+Math.min(q.rings.length,q.shown);
+    const side=sidePieces*g;
+    if(side>0)drawTileField(0,0,side,side,g,g,1);
+    // The rings stay visibly L-shaped: the odd count should be something she
+    // can see rather than read.
+    ctx.save();
+    ctx.strokeStyle='rgba(84,106,128,0.75)';ctx.lineWidth=1.5;
+    for(let i=0;i<Math.min(q.rings.length,q.shown);i++){
+      const sp=(q.baseSide+i+1)*g;
+      const a=plane.worldToScreen(sp*U,0), b=plane.worldToScreen(sp*U,sp*U), c2=plane.worldToScreen(0,sp*U);
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineTo(c2.x,c2.y);ctx.stroke();
+    }
+    ctx.restore();
+    // The ring labels — 1, 3, 5, 7 — sitting on the rings themselves. Drawn
+    // only while a ring is thick enough to carry one; otherwise the last.
+    const shown=Math.min(q.rings.length,q.shown);
+    if(shown>0){
+      const wide=g*U*plane.zoom()>=11;
+      const from=wide?0:shown-1;
+      for(let i=from;i<shown;i++){
+        const sp=(q.baseSide+i+1)*g;
+        drawMapLabel(String(q.rings[i]),sp+0.06,sp,'left','middle');
+      }
+    }
+    // What did not fit, sitting beside the square.
+    if(q.left>0&&q.shown>=q.rings.length)drawTileField(side,0,q.left*g,g,g,g,1);
+  }
+
+  // ==== Explore =============================================================
+  // The asking gesture. She reviews what is on the map: the numbers are
+  // visible, nothing is filled in for her, and tapping any of them shows it
+  // with its prime colours and tones — Build by Selecting, as it behaves in
+  // this file today.
+  function explore(column,row){
+    cancelSequence();
+    revealNumber(viewing.name(column,row));
+  }
+
+  // ==== the tools ===========================================================
+  // Modes are abolished (00-DECISIONS, The shelf). What is left is four tools
+  // living in one panel: choosing one makes it active and replaces the prompt.
+  // A second choice never opens a second panel.
+  const buildPrompts={
+    primes:'Tap a prime to multiply it into the number.',
+    select:'Tap any pane to reveal that number, everywhere it lives.',
+    axes:'Tap along the bottom for a column, up the left side for a row.',
+    multiples:'Tap a number along the bottom or the left side to find its multiples.',
+    diagup:'Tap any pane to run the ↗ diagonal through it — same difference.',
+    diagdown:'Tap any pane to run the ↘ diagonal through it — same sum.'
+  };
+  function toolPrompt(){
+    const t=TOOLS.find(x=>x.id===mode);
+    return t?t.prompt:'';
+  }
+  const selecting=()=>mode==='multiply';
+  function setBuildTool(tool){   // Build has no word on the surface yet; kept whole
+    buildTool=tool;
+    buildSubButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.build===tool)));
+    cancelSequence();clearFx();composition=[];updateTally();
+    readout.textContent=buildPrompts[tool];
+  }
+  // Switching tools puts down what the last one was holding. It does not clear
+  // the glass: she built that, and an asking gesture must not unmake it.
+  function clearToolWork(){
+    cancelSequence();clearFx();leftoverPanel.close();
+    multiply=null;divide=null;square=null;pending=null;
+    setMapText('');setLive(null);
+    composition=[];updateTally();
+    setProduct();clearInfo();
+  }
+  function syncNumbersWord(){
+    numbersButton.setAttribute('aria-pressed',String(showNumerals));
+    numbersButton.textContent=showNumerals?'Hide numbers':'Show numbers';
+  }
+  function setTool(next,opts){
+    opts=opts||{};
+    mode=next;
+    clearToolWork();
+    document.querySelectorAll('.bn-tool').forEach(el=>
+      el.classList.toggle('active',el.dataset.tool===next));
+    // Divide, Make a square and Explore all begin by picking a number off the
+    // map, so the numbers have to be there to pick.
+    if(next!=='multiply'&&!showNumerals){showNumerals=true;syncNumbersWord()}
+    // The prompt line is empty until she chooses a tool in the panel; Multiply
+    // is the tool the lab rests in, so the map works before she opens anything.
+    if(opts.fromPanel)showPrompt(toolPrompt(),next);
+    say(toolPrompt());
+  }
+
+  // ==== rendering ============================================================
+  const seedOf=(c,r,i,s)=>(c*37+r*19+i*23+s)%100;
+  const INNER_CAME='rgb(145,145,145)', FRAME_CAME='rgb(98,98,98)';
+
+  function paneScreenRect(c,r){
+    // Pane (c,r) covers world [(c-1)U, cU] × [(r-1)U, rU]; y is up, so the
+    // pane's top edge is world y = rU.
+    const tl=plane.worldToScreen((c-1)*U,r*U), br=plane.worldToScreen(c*U,(r-1)*U);
+    return {x:tl.x,y:tl.y,w:br.x-tl.x,h:br.y-tl.y};
+  }
+
+  function drawPiece(x,y,w,h,p,variant,lit,tier,c,r,i){
+    ctx.fillStyle=pieceFill(p,variant,lit);
+    ctx.fillRect(x,y,w,h);
+    // The catch decision is seeded per pane position and piece, not per
+    // colour bucket — otherwise every piece of one colour decides together
+    // and far fewer than 20% of the glass ever sparkles. (Found on the
+    // iPad: taps read barely lit next to the bench.) Highlights also draw
+    // on the middle detail tier, not only the largest panes.
+    const wantHighlight=lit&&tier>=1&&seedOf(c,r,i,83)<20;
+    if(tier<2&&!wantHighlight)return;
+    ctx.save();
+    ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
+    if(tier===2){
+      // Striations: directional, chosen per piece — a glazier cuts from a
+      // sheet and not every piece comes off it the same way round. 70%
+      // across the stack (vertical, crossing the horizontal boundaries).
+      const across=seedOf(c,r,i,29)<70;
+      for(let k=0;k<2;k++){
+        const off=(seedOf(c,r,i*2+k,37)/100);
+        ctx.strokeStyle=k?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.07)';
+        ctx.lineWidth=1;
+        ctx.beginPath();
+        if(across){const sx=CW.snap(x+off*w);ctx.moveTo(sx,y);ctx.lineTo(sx,y+h)}
+        else{const sy=CW.snap(y+off*h);ctx.moveTo(x,sy);ctx.lineTo(x+w,sy)}
+        ctx.stroke();
+      }
+      // Seeds: tiny bubbles in the glass
+      for(let k=0;k<2;k++){
+        const bx=x+(seedOf(c,r,i*2+k,53)/100)*w, by=y+(seedOf(c,r,i*2+k,71)/100)*h;
+        ctx.fillStyle=k?'rgba(255,255,255,0.16)':'rgba(0,0,0,0.12)';
+        ctx.fillRect(bx,by,1.5,1.5);
+      }
+    }
+    // Specular highlight — light reflecting off the glass, only when lit,
+    // only on the pieces whose angle happens to be right (20%), elliptical,
+    // and smaller burns brighter (intensity scales on area).
+    if(wantHighlight){
+      const area=w*h, ref=60*60;
+      const strength=0.89*clamp(Math.sqrt(ref/Math.max(1,area)),0.55,2.0);
+      const hx=x+w*(0.3+0.4*(seedOf(c,r,i,11)/100)), hy=y+h*0.3;
+      const rx=Math.min(w,h)*0.42, ry=rx/2.03;   // 203% elongation
+      ctx.save();
+      ctx.translate(hx,hy);ctx.rotate(-0.35);
+      const g=ctx.createRadialGradient(0,0,0,0,0,rx);
+      g.addColorStop(0,`rgba(255,252,240,${clamp(strength*0.55,0,0.9)})`);
+      g.addColorStop(1,'rgba(255,252,240,0)');
+      ctx.scale(1,ry/rx);
+      ctx.fillStyle=g;
+      ctx.beginPath();ctx.arc(0,0,rx,0,Math.PI*2);ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  function drawUnityPane(rect){
+    // Whole and white — quietly crystalline, a slight bluish tint. No prime
+    // pieces: the empty product. The tint separates it from clear leaded
+    // glass, which means "prime beyond this workshop".
+    const g=ctx.createRadialGradient(rect.x+rect.w*0.44,rect.y+rect.h*0.38,0,rect.x+rect.w*0.44,rect.y+rect.h*0.38,rect.w*0.75);
+    g.addColorStop(0,'#ffffff');g.addColorStop(0.62,'#e9eef5');g.addColorStop(1,'#cfd6e0');
+    ctx.fillStyle=g;ctx.fillRect(rect.x,rect.y,rect.w,rect.h);
+  }
+
+  function drawPane(c,r,n){
+    const rect=paneScreenRect(c,r);
+    const size=Math.min(rect.w,rect.h);
+    const now=Date.now();
+    const paneLit=(litPanes.get(`${c},${r}`)||0)>now;
+    const tier=size>=48?2:size>=18?1:0;
+    if(n===1){drawUnityPane(rect)}
+    else{
+      const factors=factorize(n);   // ascending: smallest prime first, at the top,
+                                    // identically everywhere — no mirrored panes
+      const k=factors.length;
+      if(tier===0){
+        drawPiece(rect.x,rect.y,rect.w,rect.h,factors[0],seedOf(c,r,0,7)%VARIANTS,paneLit,0,c,r,0);
+      } else {
+        for(let i=0;i<k;i++){
+          const py=rect.y+(rect.h*i/k), ph=rect.h/k;
+          const lit=paneLit||((litPieces.get(`${c},${r},${i}`)||0)>now);
+          drawPiece(rect.x,py,rect.w,ph,factors[i],seedOf(c,r,i,7)%VARIANTS,lit,tier,c,r,i);
+        }
+        // Inner cames: every piece is leaded, not just every pane — without
+        // them, adjacent pieces of the same prime merge into a solid block.
+        if(k>1){
+          ctx.strokeStyle=INNER_CAME;ctx.lineWidth=1;ctx.beginPath();
+          for(let i=1;i<k;i++){
+            const sy=CW.snap(rect.y+rect.h*i/k);
+            ctx.moveTo(rect.x,sy);ctx.lineTo(rect.x+rect.w,sy);
+          }
+          ctx.stroke();
+        }
+      }
+    }
+    // The pane frame sits over the inner cames, as real leaded glass does.
+    ctx.strokeStyle=FRAME_CAME;ctx.lineWidth=1.5;
+    ctx.strokeRect(rect.x,rect.y,rect.w,rect.h);
+  }
+
+  function drawNumeral(c,r,n){
+    const rect=paneScreenRect(c,r);
+    if(Math.min(rect.w,rect.h)<22)return;
+    const size=clamp(rect.w*0.22,10,18);
+    ctx.font=size+'px Georgia, serif';
+    ctx.textAlign='right';ctx.textBaseline='top';
+    if(built.has(n)){
+      ctx.fillStyle='rgba(255,252,229,0.96)';
+      ctx.shadowColor='rgba(0,0,0,0.9)';ctx.shadowBlur=3;ctx.shadowOffsetY=1;
+    } else {
+      ctx.fillStyle='rgba(77,78,74,0.84)';
+    }
+    ctx.fillText(String(n),rect.x+rect.w*0.93,rect.y+rect.h*0.05);
+    ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+  }
+
+  function drawRects(){
+    const now=Date.now();
+    rects=rects.filter(rc=>rc.until>now);
+    rects.forEach(rc=>{
+      const tl=plane.worldToScreen(0,rc.h*U), br=plane.worldToScreen(rc.w*U,0);
+      ctx.save();
+      ctx.strokeStyle='rgba(255,255,255,0.95)';
+      ctx.lineWidth=3;
+      ctx.shadowColor='rgba(255,255,255,0.6)';ctx.shadowBlur=9;
+      ctx.strokeRect(tl.x,tl.y,br.x-tl.x,br.y-tl.y);
+      ctx.restore();
+    });
+  }
+
+  // The viewing's axis furniture: origin dot and compass letters. The map has
+  // directions even with one quadrant drawn — W and S point into territory
+  // that exists and is not drawn; that is the point. Clamped to the viewport
+  // edge like the lattice labels: the window is small, the map is not.
+  function drawAxes(){
+    const o=plane.worldToScreen(0,0);
+    const W=plane.viewportWidth(),H=plane.viewportHeight();
+    if(numbersMode!=='map'){
+      // With the lattice off the axes still need their lines to anchor to.
+      ctx.save();
+      ctx.strokeStyle='#546A80';ctx.globalAlpha=0.3;ctx.lineWidth=1;
+      ctx.beginPath();
+      const ax=CW.snap(o.x),ay=CW.snap(o.y);
+      ctx.moveTo(ax,0);ctx.lineTo(ax,H);ctx.moveTo(0,ay);ctx.lineTo(W,ay);
+      ctx.stroke();ctx.restore();
+    }
+    ctx.save();
+    ctx.fillStyle='#434b50';
+    ctx.beginPath();ctx.arc(o.x,o.y,2.6,0,Math.PI*2);ctx.fill();
+    ctx.font='italic 11px Georgia, serif';
+    ctx.fillStyle='rgba(104,106,98,0.6)';
+    const ry=clamp(o.y-9,12,H-6), cx=clamp(o.x+12,12,W-12);
+    ctx.textAlign='right';ctx.fillText('E',W-6,ry);
+    ctx.textAlign='left'; ctx.fillText('W',6,ry);
+    ctx.fillText('N',cx,12);
+    ctx.fillText('S',cx,H-6);
+    ctx.restore();
+  }
+
+  // The rebuild animation: the numbering circles step off each integer along
+  // both axes, then the glass returns — the construction the map is the
+  // residue of, drawn from the plane's frame rather than DOM rectangles.
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const REBUILD_CIRCLES=(()=>{const a=[];for(let k=1;k<=10;k++)a.push([k*U,0]);for(let k=1;k<=10;k++)a.push([0,k*U]);return a})();
+  function rebuildTiming(){const step=0.09,sweep=0.5;return{step,sweep,total:0.26+REBUILD_CIRCLES.length*step+sweep}}
+  function drawRebuild(){
+    if(!rebuildAnim)return 1;
+    const t=(Date.now()-rebuildAnim.t0)/1000;
+    const {step,sweep,total}=rebuildTiming();
+    if(t>total+1.4){rebuildAnim=null;return 1}
+    ctx.save();
+    ctx.strokeStyle='rgba(84,106,128,0.55)';ctx.lineWidth=1;
+    const fade=t>total+0.32?clamp(1-(t-total-0.32)/1,0,1):1;
+    ctx.globalAlpha=fade;
+    REBUILD_CIRCLES.forEach(([wx,wy],i)=>{
+      const frac=clamp((t-0.26-i*step)/sweep,0,1);
+      if(frac<=0)return;
+      const s=plane.worldToScreen(wx,wy);
+      ctx.beginPath();ctx.arc(s.x,s.y,U*plane.zoom(),-Math.PI/2,-Math.PI/2+frac*2*Math.PI);ctx.stroke();
+    });
+    ctx.restore();
+    return t>total?clamp((t-total)/0.9,0,1):0;   // pane alpha
+  }
+
+  function drawPixelFloorReadout(){
+    const v=1/(plane.zoom()*plane.unitLength());
+    const sig=x=>parseFloat(x.toPrecision(1));
+    let n,txt;
+    if(v>=1){n=sig(v);txt='about '+n+(n===1?' unit':' units')}
+    else if(v>=0.1){n=sig(v*10);txt='about '+n+(n===1?' tenth':' tenths')+' of a unit'}
+    else if(v>=0.01){n=sig(v*100);txt='about '+n+(n===1?' hundredth':' hundredths')+' of a unit'}
+    else if(v>=0.001){n=sig(v*1000);txt='about '+n+(n===1?' thousandth':' thousandths')+' of a unit'}
+    else{n=sig(v*1e6);txt='about '+n+(n===1?' millionth':' millionths')+' of a unit'}
+    ctx.save();
+    ctx.font='10px Georgia, serif';ctx.fillStyle='#546A80';ctx.globalAlpha=0.45;
+    ctx.textAlign='right';ctx.textBaseline='bottom';
+    ctx.fillText('one pixel is '+txt,plane.viewportWidth()-10,plane.viewportHeight()-8);
+    ctx.restore();
+  }
+
+  function render(){
+    const W=plane.viewportWidth(),H=plane.viewportHeight();
+    ctx.fillStyle='#f4f1e8';ctx.fillRect(0,0,W,H);
+    if(numbersMode==='map')plane.drawLattice(ctx);
+    if(axesVisible)drawAxes();
+
+    const paneAlpha=drawRebuild();
+    if(paneAlpha>0){
+      ctx.save();
+      ctx.globalAlpha=paneAlpha;
+      const vb=visibleBounds();
+      const sel=selecting();
+      // In Multiply the axis numbers stand unshaded on the drawn lattice —
+      // no table-style backgrounds behind the edge panes; first paint is the
+      // lattice used everywhere else. The Build tools that ask for a row or
+      // column keep their shaded hint.
+      const shade=sel&&mode!=='multiply';
+      const cellCount=(vb.cMax-vb.cMin+1)*(vb.rMax-vb.rMin+1);
+      if(cellCount<25000){
+        for(let c=vb.cMin;c<=vb.cMax;c++)for(let r=vb.rMin;r<=vb.rMax;r++){
+          const n=viewing.name(c,r);
+          if(built.has(n)){drawPane(c,r,n);continue}
+          if(shade&&(c===1||r===1)){
+            const rect=paneScreenRect(c,r);
+            ctx.fillStyle='rgba(141,122,84,0.13)';
+            ctx.fillRect(rect.x,rect.y,rect.w,rect.h);
+            ctx.strokeStyle=FRAME_CAME;ctx.lineWidth=1;ctx.globalAlpha=paneAlpha*0.35;
+            ctx.strokeRect(rect.x,rect.y,rect.w,rect.h);
+            ctx.globalAlpha=paneAlpha;
+          }
+        }
+        const now=Date.now();
+        for(let c=vb.cMin;c<=vb.cMax;c++)for(let r=vb.rMin;r<=vb.rMax;r++){
+          const n=viewing.name(c,r);
+          const show=showNumerals||(revealedNums.get(n)||0)>now||(sel&&(c===1||r===1));
+          if(show)drawNumeral(c,r,n);
+        }
+      }
+      ctx.restore();
+    }
+
+    // The tile world sits over the panes: pieces are what the number is made
+    // of, and the panes are still underneath, untouched.
+    drawMultiply();drawDivide();drawSquare();
+    drawRects();
+    drawCursor();
+    drawReadouts();
+    if(numbersMode==='map')drawPixelFloorReadout();
+  }
+  function animate(){
+    multiplyAdvance();divideAdvance();squareAdvance();
+    render();syncSaveWord();requestAnimationFrame(animate);
+  }
+
+  // ==== virtual cursor (keyboard access) =====================================
+  // The panes were buttons with aria-labels; on canvas that disappears, so the
+  // canvas is the one tabbable element and a pane cursor takes over: arrows
+  // move, Enter reveals, the aria-live readout announces. The cursor pans the
+  // view when it walks off the visible window.
+  let cursor=null;   // {c,r} or null
+  // The outline is the keyboard affordance only. A tap still moves the
+  // cursor's position (so the arrows resume from the tapped pane) but must
+  // not leave a heavy outline behind — the lit palette is the one visual
+  // language for "this one" (the port's rule; Review Lane 1).
+  let cursorFromKeys=false;
+  function drawCursor(){
+    if(cursor===null||!cursorFromKeys||document.activeElement!==canvas)return;
+    const rect=paneScreenRect(cursor.c,cursor.r);
+    ctx.save();
+    ctx.strokeStyle='#546a80';ctx.lineWidth=3;
+    ctx.strokeRect(rect.x+1.5,rect.y+1.5,rect.w-3,rect.h-3);
+    ctx.restore();
+  }
+  function announceCursor(){
+    const n=viewing.name(cursor.c,cursor.r);
+    readout.textContent=`${cursor.r} times ${cursor.c} equals ${n}`+(built.has(n)?'':' — not yet on the glass');
+  }
+  function keepCursorInView(){
+    const vb=visibleBounds();
+    let dx=0,dy=0;
+    if(cursor.c<vb.cMin)dx=(cursor.c-vb.cMin)*U;
+    if(cursor.c>vb.cMax-1)dx=(cursor.c-(vb.cMax-1))*U;
+    if(cursor.r<vb.rMin)dy=(cursor.r-vb.rMin)*U;
+    if(cursor.r>vb.rMax-1)dy=(cursor.r-(vb.rMax-1))*U;
+    if(dx||dy){const p=plane.pan();plane.setPan(p.x+dx,p.y+dy)}
+  }
+  // One dispatch for a tap on a pane, whether it came from a finger or from
+  // the arrow keys. The gesture and the place it starts decide what happens.
+  function tapPane(c,r){
+    toolBegun(mode);
+    if(mode==='multiply'){
+      if(c===1||r===1)tapAxis(axisOf(c,r),axisOf(c,r)==='x'?c:r);
+      // The tap-a-number branch is undesigned (Multiply spec, Open). Nothing
+      // is invented here: the making gesture starts on the axis.
+      else say('Start from a pane along the bottom or up the left side.');
+      return;
+    }
+    if(mode==='divide'){
+      if(divide&&divide.phase==='sweep')divideSet(c);
+      else divideStart(c,r);
+      return;
+    }
+    if(mode==='square'){squareStart(c,r);return}
+    if(mode==='explore'){explore(c,r);return}
+    if(mode==='build'){buildTap(c,r);return}
+    cancelSequence();revealNumber(viewing.name(c,r));
+  }
+  function activateCursor(){tapPane(cursor.c,cursor.r)}
+  canvas.addEventListener('keydown',ev=>{
+    const moves={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,1],ArrowDown:[0,-1]};
+    if(moves[ev.key]){
+      ev.preventDefault();
+      cursorFromKeys=true;viewSettled=true;
+      if(cursor===null)cursor={c:1,r:1};
+      else{cursor.c=Math.max(1,cursor.c+moves[ev.key][0]);cursor.r=Math.max(1,cursor.r+moves[ev.key][1])}
+      keepCursorInView();announceCursor();
+    } else if(ev.key==='Enter'||ev.key===' '){
+      ev.preventDefault();
+      cursorFromKeys=true;
+      unlockAudio();
+      if(cursor===null)cursor={c:1,r:1};
+      activateCursor();
+    }
+  });
+  canvas.addEventListener('focus',()=>{if(cursor===null)cursor={c:1,r:1}});
+
+  // ==== pointer gestures =====================================================
+  // A drag from an edge pane is the rectangle gesture, exactly as before; a
+  // drag from anywhere else pans; wheel and pinch zoom through the plane's one
+  // clamp. Taps dispatch per mode.
+  let pointer=null;   // {sx, sy, pan, kind:'pan'|'rect', c, r, moved, col, rw}
+  const activeTouches=new Map();
+  let pinchBaseDist=null,pinchBaseZoom=null;
+  function paneAt(sx,sy){
+    const w=plane.screenToWorld(sx,sy);
+    if(w.x<0||w.y<0)return null;
+    return {c:Math.floor(w.x/U)+1,r:Math.floor(w.y/U)+1};
+  }
+  canvas.addEventListener('pointerdown',ev=>{
+    ev.preventDefault();
+    cursorFromKeys=false;viewSettled=true;
+    unlockAudio();
+    canvas.focus({preventScroll:true});   // preventDefault suppresses click-to-focus; restore it
+    canvas.setPointerCapture(ev.pointerId);
+    activeTouches.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});
+    if(activeTouches.size===2){
+      const pts=[...activeTouches.values()];
+      pinchBaseDist=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y);
+      pinchBaseZoom=plane.zoom();
+      pointer=null;return;
+    }
+    if(activeTouches.size>2)return;
+    const box=canvas.getBoundingClientRect();
+    const sx=ev.clientX-box.left,sy=ev.clientY-box.top;
+    const pane=paneAt(sx,sy);
+    const isEdge=pane&&(pane.c===1||pane.r===1);
+    let kind='pan';
+    if(mode==='multiply'&&isEdge)kind='rect';
+    else if(mode==='divide'&&divide&&divide.phase==='sweep')kind='bar';
+    pointer={sx,sy,pan:plane.pan(),moved:false,kind,
+             c:pane?pane.c:null,r:pane?pane.r:null,
+             axis:pane?axisOf(pane.c,pane.r):'x',col:null,rw:null};
+    if(kind==='rect')pointer.bar=pointer.axis==='x'?pointer.c:pointer.r;
+    if(kind==='bar'){divide.bar=barWidthAt(sx);setLive(`${divide.n}/${divide.bar}`,sx,sy,'left')}
+  });
+  canvas.addEventListener('pointermove',ev=>{
+    if(activeTouches.has(ev.pointerId))activeTouches.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});
+    if(activeTouches.size===2&&pinchBaseDist){
+      const pts=[...activeTouches.values()];
+      plane.setZoom(pinchBaseZoom*(Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y)/pinchBaseDist));
+      return;
+    }
+    const box0=canvas.getBoundingClientRect();
+    // On a mouse the bar follows the cursor; on touch the drag is the hover,
+    // and this branch never fires because a finger is always down.
+    if(!pointer&&mode==='divide'&&divide&&divide.phase==='sweep'){
+      const hx=ev.clientX-box0.left,hy=ev.clientY-box0.top;
+      divide.bar=barWidthAt(hx);
+      setMapText(`${divide.n}/${divide.bar}`);
+      setLive(`${divide.n}/${divide.bar}`,hx,hy,'left');
+      return;
+    }
+    if(!pointer)return;
+    const box=box0;
+    const sx=ev.clientX-box.left,sy=ev.clientY-box.top;
+    if(pointer.kind==='bar'){
+      divide.bar=barWidthAt(sx);
+      setMapText(`${divide.n}/${divide.bar}`);
+      setLive(`${divide.n}/${divide.bar}`,sx,sy,sx>=pointer.sx?'left':'right');
+      pointer.moved=true;
+      return;
+    }
+    if(!pointer.moved&&Math.hypot(sx-pointer.sx,sy-pointer.sy)<9)return;
+    if(!pointer.moved){pointer.moved=true;if(pointer.kind==='rect'){cancelSequence();clearFx();toolBegun(mode)}}
+    if(pointer.kind==='rect'){
+      // One continuous stroke. While the finger is still on the axis it
+      // started from, the bar follows it and the display reads the width
+      // alone — there is nothing to multiply by yet. Once she moves into the
+      // field, that number stands and the second one is live.
+      const w=plane.screenToWorld(sx,sy),vb=visibleBounds();
+      const col=clamp(Math.ceil(w.x/U),1,vb.cMax), rw=clamp(Math.ceil(w.y/U),1,vb.rMax);
+      const onAxis=pointer.axis==='x'?(rw<=1):(col<=1);
+      const side=sx>=pointer.sx?'left':'right';
+      if(onAxis){
+        pointer.bar=pointer.axis==='x'?col:rw;
+        pointer.col=pointer.rw=null;
+        rects=[];multiply=null;
+        dragBar={axis:pointer.axis,v:pointer.bar};
+        setMapText(String(pointer.bar));setLive(String(pointer.bar),sx,sy,side);
+      } else {
+        if(pointer.bar==null)pointer.bar=pointer.axis==='x'?pointer.c:pointer.r;
+        pointer.col=pointer.axis==='x'?pointer.bar:col;
+        pointer.rw =pointer.axis==='x'?rw:pointer.bar;
+        dragBar=null;
+        rects=[];frame(pointer.col,pointer.rw,Infinity);   // anchored at the origin — area is the product
+        const label=`${pointer.col} × ${pointer.rw}`;
+        setProduct(pointer.col*pointer.rw,factorize(pointer.col*pointer.rw));
+        setMapText(label);setLive(label,sx,sy,side);
+      }
+    } else {
+      // y is up: dragging down carries the pan point up in world terms
+      plane.setPan(pointer.pan.x-(sx-pointer.sx)/plane.zoom(),
+                   pointer.pan.y+(sy-pointer.sy)/plane.zoom());
+    }
+  });
+  function pointerEnd(ev){
+    activeTouches.delete(ev.pointerId);
+    if(pinchBaseDist&&activeTouches.size<2){pinchBaseDist=null;pinchBaseZoom=null;return}
+    const p=pointer;pointer=null;if(!p)return;
+    setLive(null);dragBar=null;
+    if(p.kind==='bar'){
+      toolBegun(mode);
+      divideSet(divide?divide.bar:0);
+      return;
+    }
+    if(p.kind==='rect'){
+      rects=[];
+      // A stray release snaps to the nearest legal spot rather than
+      // cancelling: fluent users make fewer mistakes, so cancelling would put
+      // the cost on beginners.
+      if(p.col&&p.rw){pending=null;multiplyBuild(p.col,p.rw)}
+      else if(p.bar!=null&&p.moved){pending=null;tapAxis(p.axis,p.bar)}
+      else if(p.c!=null){cursor={c:p.c,r:p.r};tapPane(p.c,p.r)}
+      return;
+    }
+    if(!p.moved&&p.c!=null&&p.c>=1&&p.r>=1){
+      cursor={c:p.c,r:p.r};
+      tapPane(p.c,p.r);
+    }
+  }
+  canvas.addEventListener('pointerup',pointerEnd);
+  canvas.addEventListener('pointercancel',pointerEnd);
+  canvas.addEventListener('wheel',ev=>{
+    ev.preventDefault();
+    viewSettled=true;
+    plane.setZoom(plane.zoom()*(ev.deltaY>0?0.9:1.1));
+  },{passive:false});
+  canvas.addEventListener('contextmenu',ev=>ev.preventDefault());
+
+  // ==== controls =============================================================
+  root.querySelectorAll('[data-prime]').forEach(button=>button.addEventListener('click',async()=>{
+    unlockAudio();
+    const p=+button.dataset.prime,e=createAudio();if(!e)return;await e.ctx.resume();
+    cancelSequence();clearFx();
+    // The unity chip is where every build starts, and the way back to it.
+    if(p===1){resetComposition();setProduct();revealNumber(1,{message:'Back to 1. Every number starts here.'});return}
+    if(mode==='build'&&buildTool==='primes'){addPrime(p);return}
+    // The prime lights wherever it appears — set membership is a reason to be
+    // lit, the same language as selection.
+    const vb=visibleBounds();
+    let count=0;
+    for(let c=vb.cMin;c<=vb.cMax;c++)for(let r=vb.rMin;r<=vb.rMax;r++){
+      const n=viewing.name(c,r);
+      if(!built.has(n))continue;
+      factorize(n).forEach((q,i)=>{if(q===p){litPieces.set(`${c},${r},${i}`,Date.now()+1800);count++}});
+    }
+    pianoNote(notesFor([p])[0],e.ctx.currentTime+.03,4,.36);
+    readout.textContent=`Prime ${p} · ${primeInfo[p].note} · lit wherever it appears.`;
+  }));
+  buildSubButtons.forEach(b=>b.addEventListener('click',()=>setBuildTool(b.dataset.build)));
+  propertyButtons.forEach(b=>b.addEventListener('click',()=>revealProperty(b.dataset.property)));
+  numbersButton.addEventListener('click',()=>{showNumerals=!showNumerals;syncNumbersWord()});
+  fillButton.addEventListener('click',()=>fillTable());
+  fillContinueButton.addEventListener('click',()=>fillTable());
+  clearButton.addEventListener('click',()=>{clearToolWork();clearTable();say(toolPrompt())});
+
+  // The viewing strip — the Numbers control's permanent home.
+  const numbersWord=document.getElementById('numbers-cycle');
+  const tieWord=document.getElementById('lattice-tie');
+  const axesWord=document.getElementById('axes-toggle');
+  function updateViewingStrip(){
+    // One destination-named pair, the same grammar as Geometry (controls
+    // build, 13 Aug — ledger §10). The tie stays: here it is honest,
+    // resolution is the subject (§11).
+    numbersWord.textContent=numbersMode==='map'?'Hide map':'Show map';
+    tieWord.hidden=numbersMode!=='map';
+    tieWord.textContent=plane.latticeTied()?'grid follows zoom':'grid keeps its step';
+    axesWord.innerHTML='axes &middot; '+(axesVisible?'shown':'hidden');
+  }
+  numbersWord.addEventListener('click',()=>{numbersMode=viewing.numbersCycle[numbersMode]||viewing.numbersDefault;updateViewingStrip()});
+  tieWord.addEventListener('click',()=>{plane.setLatticeTied(!plane.latticeTied());updateViewingStrip()});
+  axesWord.addEventListener('click',()=>{axesVisible=!axesVisible;updateViewingStrip()});
+  updateViewingStrip();
+
+  // ==== Save (controls build, 13 Aug) ========================================
+  // The Save word opens the choice panel (ledger §§2, 12, 14): Postcard is
+  // the sent picture and IS the share action; Full sheet is the kept picture,
+  // the 300dpi print render. There is no Share word. "Save construction" —
+  // the record — is NOT here: this lab keeps no operation log and has no
+  // open path (Phase 4's explicit no-persistence choice), so the record has
+  // nothing to record yet; reported at review rather than faked.
+  const savePanel=CW.createChoicePanel();
+  const saveWord=root.querySelector('#save-map');
+
+  // PNG pHYs patcher and its CRC, as in Geometry — single-file pages carry
+  // their own copies by design; only plane.js and cw-panel.js are shared.
+  let _crc32Table=null;
+  function crc32(data){
+    if(!_crc32Table){
+      _crc32Table=new Uint32Array(256);
+      for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);_crc32Table[n]=c}
+    }
+    let crc=0xFFFFFFFF;
+    for(let i=0;i<data.length;i++)crc=_crc32Table[(crc^data[i])&0xFF]^(crc>>>8);
+    return (crc^0xFFFFFFFF)>>>0;
+  }
+  function patchPngDpi(blob,dpi,callback){
+    const ppm=Math.round(dpi/0.0254);
+    const reader=new FileReader();
+    reader.onload=function(){
+      const buf=new Uint8Array(reader.result);
+      let pos=8;
+      while(pos<buf.length){
+        const len=(buf[pos]<<24)|(buf[pos+1]<<16)|(buf[pos+2]<<8)|buf[pos+3];
+        const type=String.fromCharCode(buf[pos+4],buf[pos+5],buf[pos+6],buf[pos+7]);
+        if(type==='IDAT'){
+          const phys=new Uint8Array(21);
+          phys[0]=0;phys[1]=0;phys[2]=0;phys[3]=9;
+          phys[4]=0x70;phys[5]=0x48;phys[6]=0x59;phys[7]=0x73;
+          phys[8]=(ppm>>24)&0xff;phys[9]=(ppm>>16)&0xff;phys[10]=(ppm>>8)&0xff;phys[11]=ppm&0xff;
+          phys[12]=(ppm>>24)&0xff;phys[13]=(ppm>>16)&0xff;phys[14]=(ppm>>8)&0xff;phys[15]=ppm&0xff;
+          phys[16]=1;
+          const crc=crc32(phys.subarray(4,17));
+          phys[17]=(crc>>24)&0xff;phys[18]=(crc>>16)&0xff;phys[19]=(crc>>8)&0xff;phys[20]=crc&0xff;
+          const result=new Uint8Array(buf.length+21);
+          result.set(buf.subarray(0,pos),0);result.set(phys,pos);result.set(buf.subarray(pos),pos+21);
+          callback(new Blob([result],{type:'image/png'}));return;
+        }
+        pos+=12+len;
+      }
+      callback(blob);
+    };
+    reader.readAsArrayBuffer(blob);
+  }
+
+  // The export is a picture of the window: the live canvas (the map as she
+  // sees it, membrane region cropped) matted like Geometry's postcard.
+  function composeMapExport(spec){
+    const dpr=window.devicePixelRatio||1;
+    const cropX=membraneWide.matches?Math.round(MEMBRANE_W*dpr):0;
+    const sw=canvas.width-cropX, sh=canvas.height;
+    const off=document.createElement('canvas');off.width=spec.w;off.height=spec.h;
+    const c2=off.getContext('2d');
+    c2.fillStyle='#2a2620';c2.fillRect(0,0,spec.w,spec.h);
+    c2.strokeStyle='#c8b89a';c2.lineWidth=2;
+    c2.strokeRect(spec.mat-1,spec.mat-1,spec.w-2*spec.mat+2,spec.h-2*spec.mat+2);
+    c2.fillStyle='#f4f1e8';c2.fillRect(spec.mat,spec.mat,spec.w-2*spec.mat,spec.h-2*spec.mat);
+    const artW=spec.w-2*spec.mat,artH=spec.h-2*spec.mat;
+    const s=Math.min(artW/Math.max(1,sw),artH/Math.max(1,sh)),dw=sw*s,dh=sh*s;
+    c2.imageSmoothingEnabled=true;c2.imageSmoothingQuality='high';
+    c2.drawImage(canvas,cropX,0,sw,sh,spec.mat+(artW-dw)/2,spec.mat+(artH-dh)/2,dw,dh);
+    return off;
+  }
+  function exportMap(kind){
+    const spec=kind==='postcard'
+      ?{w:1200,h:800,mat:40,dpi:null}      // the sent version: screen-sized, retina-doubled
+      :{w:3000,h:2400,mat:60,dpi:300};     // the kept version: the 300dpi print render
+    const off=composeMapExport(spec);
+    const filename='glass-multiplication-'+new Date().toISOString().slice(0,10)+'.png';
+    const download=blob=>{
+      const u=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=u;a.download=filename;a.click();
+      URL.revokeObjectURL(u);
+    };
+    if(kind==='postcard'){
+      // Synchronous render and blob so the share sheet opens inside the
+      // child's tap (Safari requires the gesture to still be live).
+      const bin=atob(off.toDataURL('image/png').split(',')[1]);
+      const bytes=new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+      const blob=new Blob([bytes],{type:'image/png'});
+      let file=null;try{file=new File([blob],filename,{type:'image/png'})}catch(e){}
+      if(file&&navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+        navigator.share({title:'Glass Multiplication',files:[file]}).catch(err=>{
+          if(!err||err.name!=='AbortError')download(blob);  // declined ≠ cancelled
+        });
+      }else{
+        download(blob);
+        readout.textContent='Sharing not available on this browser — image downloaded instead';
+      }
+    }else{
+      off.toBlob(blob=>patchPngDpi(blob,spec.dpi,download),'image/png');
+    }
+  }
+  saveWord.addEventListener('click',()=>{
+    savePanel.open({choices:[
+      {word:'Postcard',line:'a picture to send',action:()=>exportMap('postcard')},
+      {word:'Full sheet',line:'a picture to keep',action:()=>exportMap('fullsheet')}
+    ]});
+  });
+  // Present only when there is something on the glass beyond 1; fades in
+  // and out, and once faded releases its place in the row.
+  let saveWordPresent=false;
+  function syncSaveWord(){
+    const on=built.size>1;
+    if(on===saveWordPresent)return;
+    saveWordPresent=on;
+    if(on){
+      if(saveWord.style.display==='none'){saveWord.style.display='';requestAnimationFrame(()=>saveWord.classList.remove('absent'))}
+      else saveWord.classList.remove('absent');
+    }else{
+      saveWord.classList.add('absent');
+      setTimeout(()=>{if(saveWord.classList.contains('absent'))saveWord.style.display='none'},420);
+    }
+  }
+
+  document.getElementById('rebuild').addEventListener('click',()=>{
+    if(reduceMotion)return;
+    rebuildAnim={t0:Date.now()};
+  });
+
+  setTool('multiply');
+  syncNumbersWord();
+  animate();
+})();
+</script>
+</body>
+</html>

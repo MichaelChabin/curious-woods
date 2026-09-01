@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-08-25 (Six Against Five revised and redeployed after a listening pass. Three claims the page asserted are disproved — the fraction is not the sound, consonance is not fusion, roughness lives in the partials — and a ringing Michael heard turned out to be a click truncated at the loop seam, now fixed. Piano strip and click-pitch knob added; the long reading rewritten to match. One listen owed: 3:2 at full brightness)
+updated: 2026-09-01 (Housekeeping — the blocked commit is cleared. The 24 Aug panel build of Glass Multiplication is frozen unshipped at `prototypes/glass-panel-build-aug24.html` and `active/` is restored to the deployed 13 Aug lab; nothing new deployed. Nine days of vault docs land with it — the three tool specs, the panel prompt, the first story set, the 26 Aug review and walk, the reader-prototype brief, the Frankenstein-11816 constellation and the chladni bench seed. No code changed. Earlier: Frankenstein-11816 constellation seeded into 02-CONSTELLATIONS — sixteen nodes, twenty-four claim edges, parked warm with a `threads` facet decision owed; see Parked — warm. Earlier: 26 Aug evening — Glass ruled onto the plane and the walk run through Make a square — see thread 1 and 01-ACTIVE/Walk-Glass-Aug26.md. Earlier same day: reviewed — see thread 1, 26 Aug entry; the 24 Aug build is diagnosed, not fixed. Earlier: 25 Aug — Six Against Five revised and redeployed after a listening pass: three asserted claims disproved, a ringing traced to a click truncated at the loop seam and fixed, piano strip and click-pitch knob added, the long reading rewritten. One listen owed — 3:2 at full brightness. Glass Multiplication's panel architecture from 24 Aug was **uncommitted and undeployed** on Michael's instruction — as of 1 Sep it is frozen as a prototype, see the lead: the mode bar dissolved, the **Building Numbers** rail and panel in, the first set — Multiply, Divide, Make a square, Explore — wired to the specs; three Multiply questions left as hooks; Build and Properties are code without a word)
 ---
 
 # The Board
@@ -287,12 +287,88 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   by side, and the readout never speaking more precision than the act showed.
   Startup correction: axis panes are panes — honest gaps, no pre-instantiation.
   New child-facing strings (the guard pair); voice gate applies.
-- **Next action:** resume the walk at the ledger's open questions (overlap vs
-  union vs difference in Rectangles only; Restack's remainder picture; Make
-  Square's tenths-vs-hundredths cut), then the brief's unwalked sections (§3
-  chips, §5 viewing strip, §6 readout, §7 odds and ends), then Build and
-  Properties as mode panels. Also owed: Claude Code commits the version stamps
-  (prompt already with Michael); Michael's iPad pass; the map-reveal bench when
+- **Panel architecture built, 24 Aug** — `cw-deploys/active/glass-multiplication.html`
+  only; Geometry untouched, `js/cw-panel.js` untouched. The mode bar is gone.
+  A **left rail** on Geometry's *How this works* pattern (data-driven; a second
+  entry is one line) carries one word, **Building Numbers**, summoning a
+  movable / resizable / closeable panel: a lede, a just-in-time prompt line on
+  Geometry's competence fade, and four tools — **Multiply, Divide, Make a
+  square, Explore** — each with *the story* beneath it, opening that tool's
+  story in its own scrolling window. Explore has no story line. Story text is
+  **verbatim** from `01-ACTIVE/Stories-First-Set-Aug24.md`.
+  Multiply is now the continuous stroke of `Multiply-Spec-Aug24.md` (bar on the
+  axis reading the width alone, outline into the field, row-by-row fill on
+  release with the product counting up, per-shape acceleration, same-axis pairs
+  allowed, first-is-x). Divide and Make a square are built to their specs and
+  verified against their computed tables: 20÷8 closes at 2.5, 20÷3 stops at
+  ~6.66…, 20÷0 leaves the rectangle intact, 3÷5 is the remainder step;
+  18 → 4 × 4 + 2 → 4.2 → 4.24 (last ring 847), 2 → 1.4 → 1.41, 16 finishes
+  clean with no choice offered. Divide's leftover panel has three words and
+  Make a square's has two, with nothing in the gap. Zero console errors.
+  **Never deployed; frozen 1 Sep** as `prototypes/glass-panel-build-aug24.html` —
+  the child-facing string print is in the session review and the voice gate still
+  applies to anything that ports out of it.
+- **Left unwired, reported not invented:** Multiply's **tap-a-number branch**
+  (a tap in the field still says *start from a pane along the bottom or up the
+  left side*); **where the product appears** (the instrument column's product
+  box and the map's corner readout both carry it — placeholder); **what a
+  rectangle does after it exists** (it stands until the next act — the file's
+  existing "lit until the next act" idiom, not an answer); **the flip**, which
+  the spec calls a gesture she chooses but never names, and which the Multiply
+  story promises in words; Divide's **fractional divisor** (the bar snaps to
+  whole units, the zoom unlock is a hook). **Build's five sub-tools and
+  Properties' six are intact in code and have no word on the surface** — the
+  fourth dormant path this thread has produced, and deliberate: the rail holds
+  the one entry the prompt named.
+- **Reviewed 26 Aug (Cowork design session):** `01-ACTIVE/Review-Glass-Aug26.md`.
+  Both builds driven headless and screenshotted. Finding: the 24 Aug build put the
+  plane tools (Multiply/Divide/Make a square, tiles from the origin) on top of the
+  Phase 4 table rendering (panes keyed by number, revealed everywhere) with no ruling
+  on which one the lab stands on — two kinds of glass, three numberings, three
+  readouts, panels over the origin, modes abolished on paper and alive in code. The
+  specs are not wrong; the bench step was skipped. Proposal: rule *plane, table as a
+  viewing*; freeze the 24 Aug file as a prototype; one bench per tool on `plane.js`
+  alone; then a new lab file that starts empty. Awaits Michael's ruling.
+- **Ruled and walked, 26 Aug (evening):** plane, not table — Michael: the founding
+  question is what a thin slice of spacetime can show; the table is a viewing. The
+  walk restarted and settled Multiply, Divide and Make a square in one session:
+  `01-ACTIVE/Walk-Glass-Aug26.md` is the ledger. Its spine: she drags the 1 and the
+  unit stretches into the rectangle (the bar is gone); the twin rides fainter with
+  its numbers exchanged; release leaves only the corner tile, product written on it
+  — numerals earned at the moment of making; tiles always read the place, answers
+  are heights and live on the axis named by their route; division puts tiles between
+  the lines; squares mark the diagonal with a line at height √N labelled N; **the
+  mark is the memory — tapping any mark replays its making** (the reserved tap);
+  resolution is zoom, no control; undo goes all the way back, which brings the
+  operation log and answers the parked record question; the Make-a-square pause and
+  the Leave it / Decimals gap stand. Clean slate: Fill/Clear/Show numbers/Hide
+  map/tie/axes words all gone; one membrane list (Multiply · Divide · Make a square
+  · Primes · Properties · Fill/Clear), panels open below it, never over the map.
+- **Frozen and cleared, 1 Sep.** The week-old uncommitted state is gone. The 24 Aug
+  build is saved whole at `prototypes/glass-panel-build-aug24.html` (not served —
+  `prototypes/` sits outside `cw-deploys/`), and `active/glass-multiplication.html` is
+  restored to the deployed 13 Aug lab, `CW_VERSION 2026-08-13 b32d541`. **Nothing new
+  deployed and no code changed**; the 13 Aug lab stays live through the rebuild, per the
+  review's recommendation. What ports forward out of the frozen file — the **Building
+  Numbers** rail, the window component, the story windows with the verbatim
+  `Stories-First-Set-Aug24.md` text, the choice panel, Divide's and Make a square's
+  leftover grammar — is listed in `cw-deploys/MANIFEST.md`; the file as a whole does not,
+  because it stands on both substrates and the ruling is plane. Landed in the same commit:
+  the three tool specs, the panel prompt, the story set, the review, the walk, the reader
+  brief, the Frankenstein-11816 constellation and the chladni seed — nine days of vault
+  work that had never been in git. This completes step 2 of `Review-Glass-Aug26.md`'s
+  order of work; step 3 (one bench per tool, on `plane.js` alone) is next, gated on the
+  walk below.
+- **Next action:** the walk resumes at **Primes** (colour's arrival; the 24 Aug
+  prime-button entries are decided but unbenched — read them cold first), then
+  Properties, the table viewing, fractions-as-triangles, and Divide's open modes
+  question. Benches before any lab build. Still standing from the 24 Aug report:
+  the string print and four judgement calls (the *Make a square* prompt string against its own spec;
+  Explore not clearing the glass; the story window's title; the rail entry
+  toggling). Then the three Multiply Opens, which gate most of the catalog.
+  Then a word for Build and Properties, or a decision that they go.
+  Also still owed: the walk's unwalked sections (§3 chips, §5 viewing strip,
+  §6 readout, §7 odds and ends); Michael's iPad pass; the map-reveal bench when
   Michael has knob-time. Standing owed: 16th workshop, inner-came value.
 
 ### 2. Perception Lab — the child's own instrument
@@ -340,6 +416,37 @@ deliberately **not** archived — it still holds unmigrated live threads.
 ---
 
 ## Parked — warm
+
+**Frankenstein-11816 constellation — the Timeline's first patch (30 Aug, from an iPad
+chat; nothing built).** Twenty-one nodes and thirty-two claim edges (second pass 30 Aug added Sophie Germain, Ada Lovelace, Chladni's plates, Darwin's "I think" diagram, Jane Marcet, and a proposed `hidden-names` thread — Mary anonymous, Germain as LeBlanc, Ada as A.A.L.; plus `03-SEEDS/chladni-bench.md`, Eileen's simulation idea, buildable) in
+`02-CONSTELLATIONS/Frankenstein-11816/`, written to the node schema in
+`20-SPECS/Spec-Timeline-Graph.md` §4–5 and carrying the seed facets, so each file is a
+seed and a node at once. Tambora → year without a summer → Diodati → the wager →
+*Frankenstein*, with Galvani, Volta and Aldini arriving from the electrical side;
+Erasmus Darwin is the door to the biomorph sims, the ice-core node the door to Numbers.
+Same-year kinships are deliberately unwritten — they are facet edges and fall out of
+`era`. Design decisions from the same chat, not yet in `00-DECISIONS.md`: the dashboard
+opens on ~six story icons chosen to cast a wide net, and **a child must find something
+she likes within three clicks**; stories declare what they *touch*, never what they
+teach; the child's trail is disposable and her made things are what is kept — no server
+ledger, no recovery scheme; the story format is markdown files in the repo, and the graph
+is whatever falls out of their headers. Added 31 Aug: a **visited-nodes list the child
+can always reach** (candidate: permanent in the left column, near Remember) — knowing
+she can get back to Frankenstein makes her likelier to risk the click on Gauss, and it
+softens the wiped-disk/new-machine case with no server state at all: the graph is the
+same for everyone, so remembering one name puts her back at the center of a network she
+has seen. Implies **search**, which is also how a story travels between friends.
+
+- **Authority:** `02-CONSTELLATIONS/Frankenstein-11816/Frankenstein-11816.md` (hub) ·
+  `edges.yaml` · `nodes/*.md`.
+- **Wants Michael's decision:** `threads` as a new facet (proposed in every node; **not**
+  in `Facet-Vocabulary.md`, and not to be added silently). Whether Beethoven enters at all
+  (left out — the Tambora link is thin).
+- **Next action:** Michael reads the hub, `sophie-germain`, `aldini-london`,
+  `how-we-know-tambora`, and `01-ACTIVE/Brief-Reader-Prototype-Aug31.md` (the reader
+  prototype brief — visited trail, my list, search, asides) and says whether the grain
+  is right. Then either the Timeline gets its first data or the
+  dashboard's six icons do.
 
 **Map tools — the number map and what can be done to it (19–22 Aug).** A thread this
 board has never carried a line for, because it happened entirely inside a Claude Project

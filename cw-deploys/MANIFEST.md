@@ -89,6 +89,11 @@ to test yesterday's work.
   `CWVault/01-ACTIVE/Decisions-Phase4-Aug08.md`,
   `…ControlsBuild-Aug13.md`; Michael's sorted post-Phase-4 review:
   `CWVault/01-ACTIVE/Review-GlassMult-Aug09.md`.
+  **What `active/` carries is the 13 Aug build** (`CW_VERSION 2026-08-13 b32d541`),
+  restored 1 Sep after the 24 Aug panel build was frozen unshipped to
+  `../prototypes/glass-panel-build-aug24.html` — see the prototypes note at the foot
+  of this file. Nothing deployed changed. The rebuild runs bench-first on the plane
+  (`CWVault/01-ACTIVE/Walk-Glass-Aug26.md`), and this lab stays live throughout.
 
 ### experiments/
 - **`strobe-and-stars.html`** — bench: a loudspeaker edge-on under a strobe. The cone is one
@@ -221,3 +226,17 @@ chosen and marked) and `janko-midi.html` (the same lattice lit by Web MIDI,
 Chrome only). Built 8 Aug, deliberately **not publicly reachable** until the
 Series decides its opening; both are self-contained. Design and reasoning:
 `CWVault/01-ACTIVE/Sound-Series-Aug08.md`.
+
+`glass-panel-build-aug24.html` (frozen 1 Sep 2026) — the 24 Aug panel build of
+Glass Multiplication, `CW_VERSION 2026-08-24 e4cd030`, which sat uncommitted in
+`active/` for a week and was never deployed. Frozen here rather than shipped:
+`CWVault/01-ACTIVE/Review-Glass-Aug26.md` found it standing on two substrates at
+once — the plane's tools (Multiply, Divide, Make a square, tiles from the origin)
+on top of Phase 4's table rendering — and the 26 Aug ruling is **plane, table as a
+viewing**, so the file as a whole does not port. What does port, and is the reason
+to keep it: the **Building Numbers** rail on Geometry's *How this works* pattern,
+the movable/resizable/closeable window component, the story windows with the
+verbatim text of `01-ACTIVE/Stories-First-Set-Aug24.md`, the choice panel, and the
+leftover grammar of Divide and Make a square. **It is not served** — `prototypes/`
+sits outside `cw-deploys/`. Read it with `01-ACTIVE/Walk-Glass-Aug26.md` beside it,
+which is what replaces it.
