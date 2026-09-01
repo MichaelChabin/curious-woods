@@ -140,8 +140,18 @@ to test yesterday's work.
   things the pass did not foresee are left standing rather than patched: with
   duplicates hidden, tapping a mirrored mark shows a rectangle she never drew
   (changes 1 and 6 meeting), and Clear takes the undo ledger with it, so it is
-  the one act here with no way back. Standalone otherwise; deliberately not
-  deployed into `active/` and not linked from the main index.
+  the one act here with no way back.
+  **Third pass, 1 Sep** — Michael found a coarse-grain tile swallowing the taps
+  of the fine tiles inside it, and only their numerals showing through, not
+  their outlines. Both were the same cause: paint order and hit test were keyed
+  to *when* a tile was made, when what she can see and aim at is decided by
+  *how big it is*. **One comparator now drives both — largest first, and among
+  equals newest first, so the smallest and the oldest finish on top** — which
+  keeps his newest-under-oldest rule where it applies (equal-size numerals
+  crowding at zoom-out) and extends it to nesting. Glass and came travel
+  together, so a buried tile keeps its cell and not only its name. Standalone
+  otherwise; deliberately not deployed into `active/` and not linked from the
+  main index.
 - **`strobe-and-stars.html`** — bench: a loudspeaker edge-on under a strobe. The cone is one
   bar between `{` and `}`; the strobe runs at the bottom note, so that note freezes and is the
   reference. A voice at `n/d` visits exactly **d** phases and the flashes joined in order draw

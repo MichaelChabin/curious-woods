@@ -253,9 +253,10 @@ function decStr(num, d) {
 // font (walk, step 2, fourth pass). It is the opening state, not a build, so
 // undo can never reach it.
 const tiles = new Map();
+let seq = 0;                  // order of making, for the paint order below
 const ONE_KEY = canon(1, 0) + '|' + canon(1, 0);
 tiles.set(ONE_KEY, { w: 1, h: 1, wNum: 1, hNum: 1, d: 0, cell: 1,
-                     pNum: 1, pD: 0, seed: true });
+                     pNum: 1, pD: 0, seq: seq++, seed: true });
 
 const builds = [];            // [[key, …]] — undo's ledger, one entry per build
 let showDup = true;
@@ -265,7 +266,7 @@ function addTile(wNum, hNum, d, cell, created) {
   const key = canon(wNum, d) + '|' + canon(hNum, d);
   if (tiles.has(key)) return;                 // a place gets a tile once
   tiles.set(key, { w: val(wNum, d), h: val(hNum, d), wNum: wNum, hNum: hNum, d: d,
-                   cell: cell, pNum: wNum * hNum, pD: 2 * d });
+                   cell: cell, pNum: wNum * hNum, pD: 2 * d, seq: seq++ });
   created.push(key);
 }
 
@@ -413,13 +414,26 @@ function draw() {
   ctx.fillStyle = '#f4f1e8'; ctx.fillRect(0, 0, W, H);
   plane.drawLattice(ctx);                     // the lattice, its axes, its ladder labels
 
+  // THE PAINT ORDER — largest first, and among tiles of one size the newest
+  // first, so what finishes on top is the SMALLEST and, among equals, the
+  // OLDEST. Michael's rule was "new numerals under old, so building large never
+  // buries what she already made"; sorting by size first keeps that promise in
+  // the case that broke it (3rd pass, 1 Sep — a coarse-grain tile laid over
+  // fine ones she had already made). Ordering by making alone was not enough:
+  // it only held while the big tile happened to be the newer one. Size is also
+  // the thing she can see, which is why the hit test in tileAt() sorts the same
+  // way — the tap must agree with the picture, and one comparator makes that
+  // true by construction rather than by luck.
   const shown = [];
-  tiles.forEach(t => { if (visible(t)) shown.push(t); });   // Map order: oldest first
+  tiles.forEach(t => { if (visible(t)) shown.push(t); });
+  shown.sort((a, b) => (b.cell - a.cell) || (b.seq - a.seq));
+
+  // Glass and came together, so a buried tile keeps its outline and not only
+  // its name — the mismatch Michael found, where a numeral floated on a big
+  // tile with no cell under it.
   shown.forEach(drawGlass);
-  // Numerals, newest laid down first so the oldest end up on top: building
-  // large never buries what she already made (2nd pass, 1 Sep). Glass is all
-  // behind them, so a new tile cannot cover an old name either.
-  for (let i = shown.length - 1; i >= 0; i--) drawNumeral(shown[i]);
+  // Then every numeral, above every piece of glass, in the same order.
+  shown.forEach(drawNumeral);
 
   // The tap's answer: the rectangle that minted this tile, in the drag's own
   // style. The still form of tap-the-mark; the animated replay waits for the
@@ -467,12 +481,17 @@ function snapUnits(x, y) {
   const ny = Math.max(1, Math.round(p.y / U / g.step));
   return { wNum: nx * g.k, hNum: ny * g.k, d: g.d, cell: g.step };
 }
+// The topmost tile under the finger, by the same comparator draw() paints with:
+// smallest wins, and among equals the oldest. She aims at what she can see, so
+// a small tile sitting on a big one takes the tap — before this, the newest
+// tile took it and a large one swallowed every small numeral inside it.
 function tileAt(x, y) {
   let hit = null;
   tiles.forEach(t => {
     if (!visible(t)) return;
     const r = tileRect(t);
-    if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) hit = t;
+    if (x < r.x || x > r.x + r.w || y < r.y || y > r.y + r.h) return;
+    if (!hit || t.cell < hit.cell || (t.cell === hit.cell && t.seq < hit.seq)) hit = t;
   });
   return hit;
 }

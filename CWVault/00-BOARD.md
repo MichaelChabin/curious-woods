@@ -413,6 +413,21 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   (sweeps her composition — the Primes sense of the word, not the global Clear
   step 2 abolished), and numerals drawn in their own pass newest-first so the
   oldest end on top.
+- **Third pass, same evening — one comparator for the picture and the tap.**
+  Michael sent a screenshot: a coarse-grain tile laid over fine ones showed only
+  their **numerals** through it, not their **outlines**, and tapping one of those
+  numerals gave the big tile's rectangle instead. Both are the same cause — the
+  paint order and the hit test were both keyed to *when* a tile was made, and
+  what she can see and aim at is decided by *how big it is*. Fixed with a single
+  rule used in both places: **largest first, and among equals newest first, so
+  the smallest and the oldest finish on top.** That keeps his newest-under-oldest
+  promise exactly where it applies (equal-size numerals crowding at zoom-out) and
+  extends it to the nesting case that broke it; ordering by making alone only
+  held while the big tile happened to be the newer one. Glass and came now travel
+  together, so a buried tile keeps its whole cell rather than a floating name.
+  **General lesson worth carrying to the other benches:** when a hit test and a
+  paint order are written separately they agree by luck; one comparator makes
+  them agree by construction.
 - **Two things the second pass did not foresee, left standing:**
   **(a) Changes 1 and 6 collide.** With duplicates hidden, the surviving mark
   is the mirror, and tapping it shows *its own* rectangle — stroke 2 × 6 and
