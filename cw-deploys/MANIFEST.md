@@ -114,7 +114,12 @@ to test yesterday's work.
   both sides over one denominator, and a proper fraction has no whole part to
   lift out. Its second bench question narrowed with that change — the sides are
   written now, so what is left to watch is whether the picture is still consulted
-  or the panel carries her alone. Split
+  or the panel carries her alone. The fractions are set on **the math axis** —
+  the line is a flex row with `align-items:center`, so every term's box centre,
+  and a fraction's bar, land on one line; `vertical-align` on a two-line stack
+  cannot do it, because it aligns the numerator's baseline and the bar falls
+  wherever the leading leaves it. Measured at spread 0.00px. The technique is
+  worth reusing: Divide's spec wants stacked fractions too. Split
   rulings make a piece worth the product of the two grains: x in fifths and y in
   halves, and 3/5 × 1/2 is one stroke reading `3 pieces × ¹⁄₁₀ = ³⁄₁₀`. **The
   drag snaps to the ruling, not to the zoom** — which is the whole difference

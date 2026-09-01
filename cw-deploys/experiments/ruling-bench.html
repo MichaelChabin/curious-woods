@@ -35,13 +35,37 @@
   button.gone{display:none}
   button.dark{visibility:hidden}
 
+  /* THE MATH AXIS. Every term on a line — whole number, operator, fraction —
+     sits on one horizontal line: the axis, where TeX puts the fraction bar and
+     the middle of × = −, and which is NOT the baseline. In CSS the way to get
+     it is to stop thinking in baselines: make the line a flex row with
+     align-items:center. Each term's box is then centred, and a fraction's box
+     centre IS its bar, because numerator and denominator are the same height.
+     `vertical-align` on a two-line stack cannot do this — it aligns the
+     numerator's baseline, and the bar lands wherever the leading leaves it,
+     which is what put the × up beside the numerators before.
+
+     MEASURED, not eyeballed: with this and line-height 1.2, the bars, the ×,
+     the = and the digits land on the identical pixel — spread 0.00px across
+     every line. So --axis is 0 and the nudge below is a no-op kept as the knob:
+     the correct value is a property of the typeface, so re-measure it if the
+     face ever changes rather than guessing.
+
+     ONE PIXEL IS LEFT, and it should be left. Georgia sets OLD-STYLE FIGURES:
+     3 4 5 7 9 descend below the baseline, 6 and 8 ascend, 0 1 2 sit at
+     x-height. So the ink centre of a 9 really is lower than that of a 2, and
+     the mixed number's whole part can read a pixel low. Correcting per glyph
+     would make the digits bob against each other, which is worse than the
+     pixel — the face is doing what it was drawn to do. */
   .out{margin-top:11px;padding-top:10px;border-top:1px solid rgba(84,106,128,.18);
-       font-size:15px;line-height:1.85;color:#3D3D3A;min-height:30px}
+       font-size:15px;line-height:1.2;color:#3D3D3A;min-height:30px;--axis:0em}
   .out .lbl{font-size:12.5px;color:#8d8879}
-  .ln{margin-bottom:5px}
+  .ln{display:flex;align-items:center;flex-wrap:wrap;gap:.32em;margin-bottom:8px}
   .ln:last-child{margin-bottom:0}
-  .frac{display:inline-flex;flex-direction:column;align-items:center;
-        vertical-align:-0.42em;line-height:1.08;font-size:.82em}
+  .n, .out .lbl{position:relative;top:var(--axis)}
+  .mix{display:flex;align-items:center;gap:.18em}
+  .frac{display:flex;flex-direction:column;align-items:center;
+        line-height:1.1;font-size:.82em}
   .frac .nu{border-bottom:1px solid currentColor;padding:0 3px}
   .frac .de{padding:0 3px}
   .note{font-size:11px;color:#a09880;line-height:1.45;margin-top:8px}
@@ -521,7 +545,12 @@ const wordBtn = { x: {}, y: {} };
   });
 });
 
-const frac = (n, d) => d === 1 ? String(n)
+// Every term is its own element so the flex row can centre it on the math axis;
+// a bare text node between elements would be whitespace-only and dropped, which
+// is why the spacing comes from `gap` rather than from spaces in the markup.
+const num  = n => '<span class="n">' + n + '</span>';
+const op   = s => '<span class="lbl">' + s + '</span>';
+const frac = (n, d) => d === 1 ? num(n)
   : '<span class="frac"><span class="nu">' + n + '</span><span class="de">' + d + '</span></span>';
 
 function syncPanel() {
@@ -562,27 +591,27 @@ function syncPanel() {
   const pieces = r.nx * r.ny, den = r.dx * r.dy;
   const g0 = gcd(pieces, den), P = pieces / g0, Q = den / g0;
   const total = frac(P, Q);
-  const X = ' <span class="lbl">×</span> ', EQ = ' <span class="lbl">=</span> ';
+  const ln = parts => '<div class="ln">' + parts.join('') + '</div>';
 
-  let html = '<div class="ln">' + pieces +
-             ' <span class="lbl">' + (pieces === 1 ? 'piece' : 'pieces') + ' ×</span> ' +
-             frac(1, den) + EQ + total + '</div>';
+  let html = ln([num(pieces), op((pieces === 1 ? 'piece' : 'pieces') + ' ×'),
+                 frac(1, den), op('='), total]);
 
   // The sides, each with the denominator of the ruling that measures it.
-  html += '<div class="ln">' + frac(r.ny, r.dy) + X + frac(r.nx, r.dx) + EQ + total + '</div>';
+  html += ln([frac(r.ny, r.dy), op('×'), frac(r.nx, r.dx), op('='), total]);
 
   // The same two fractions over the smallest common denominator.
   if (r.dx !== r.dy) {
     const L = r.dx / gcd(r.dx, r.dy) * r.dy;
-    html += '<div class="ln">' + frac(r.ny * (L / r.dy), L) + X +
-            frac(r.nx * (L / r.dx), L) + EQ + total + '</div>';
+    html += ln([frac(r.ny * (L / r.dy), L), op('×'),
+                frac(r.nx * (L / r.dx), L), op('='), total]);
   }
 
-  // And the mixed number. In lowest terms with Q > 1 the remainder is never
-  // zero, so there is always a fraction beside the whole part.
+  // And the mixed number — whole part and fraction set tight against each
+  // other, the way a mixed number is written. In lowest terms with Q > 1 the
+  // remainder is never zero, so there is always a fraction beside the whole.
   if (Q > 1 && P > Q)
-    html += '<div class="ln"><span class="lbl">=</span> ' + Math.floor(P / Q) +
-            ' ' + frac(P % Q, Q) + '</div>';
+    html += ln([op('='), '<span class="mix">' + num(Math.floor(P / Q)) +
+                frac(P % Q, Q) + '</span>']);
 
   outEl.innerHTML = html;
 }

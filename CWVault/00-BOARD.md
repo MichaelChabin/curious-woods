@@ -493,6 +493,22 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   ask that was taken and should be confirmed: *"the height over the width"* as
   each side written numerator-over-denominator, height first, not height ÷ width;
   *"times each other"* is what settles it.
+- **Fractions on the math axis, 2 Sep — reusable, and worth not rediscovering.**
+  Michael: the × and = did not line up with the middle of the fractions, and he
+  has the same trouble in LaTeX. The thing to align on is the **math axis** — a
+  fixed height above the baseline where the fraction bar and the middles of
+  × = − all sit. TeX does it for you; CSS does not, and `vertical-align` on a
+  two-line stack cannot, because it aligns the *numerator's baseline* and the
+  bar lands wherever the leading leaves it. The fix is to stop working in
+  baselines: make the line a flex row with `align-items:center`, so every box
+  centre — and a fraction's bar, numerator and denominator being equal height —
+  falls on one line. **Measured at spread 0.00px** across every line; the
+  `--axis` nudge is kept as a documented knob at 0, since the right value is a
+  property of the typeface. One pixel is deliberately left: **Georgia sets
+  old-style figures** — 3 4 5 7 9 descend, 6 and 8 ascend, 0 1 2 sit at
+  x-height — so a 9's ink centre really is lower, and correcting per glyph would
+  make digits bob against each other. Carry this to Divide, whose spec also
+  wants properly stacked fractions.
 - **What the ruling bench found that nobody designed.** Re-ruling and fractional
   sides collide: 3/5 is not a whole number of halves, so *the rectangle never
   moves* and *any word may be chosen* cannot both hold. Resolved in favour of the
