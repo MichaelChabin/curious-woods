@@ -19,6 +19,7 @@
   h1{font-size:15px;font-weight:normal;color:#546A80;margin-bottom:3px}
   .sub{font-size:11px;color:#a09880;margin-bottom:11px;line-height:1.45}
   .row{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;align-items:baseline}
+  .row + .row{margin-top:5px;min-height:18px}
   button{font:inherit;font-size:13px;color:#546A80;background:none;border:0;
          border-bottom:1px solid transparent;cursor:pointer;padding:1px 1px}
   button:hover{color:#3D3D3A;border-bottom-color:#c8b89a}
@@ -31,8 +32,15 @@
 <div class="panel">
   <h1>Multiply</h1>
   <div class="sub">Bench — the stroke, the twin, the tile.<br>Touch the 1 and drag.</div>
+  <!-- Two rows on purpose rather than by wrapping: what she is looking at,
+       then what she has done. Four words do not fit on one line at this width
+       and an accidental break is not a grouping. -->
   <div class="row">
     <button id="dup">Hide duplicates</button>
+    <button id="home" class="gone">Home</button>
+  </div>
+  <div class="row">
+    <button id="clear" class="gone">Clear</button>
     <button id="undo" class="gone">Undo</button>
   </div>
 </div>
@@ -51,6 +59,29 @@ var CW_VERSION = '2026-09-01 5cfd045'; try { console.log('Curious Woods · ' + d
 //   CWVault/01-ACTIVE/Walk-Glass-Aug26.md   steps 1, 2 (all four passes), 6
 //   CWVault/01-ACTIVE/Review-Glass-Aug26.md "The order of work", step 4
 //   CWVault/00-DECISIONS.md
+//
+// SECOND PASS, 1 Sep, from Michael's own pass at the bench. Six changes, three
+// of which reverse something written earlier. Recorded here because the vault
+// has not caught up yet:
+//   • Hide duplicates now keeps the LOWER tile — width ≥ height — whichever
+//     rectangle her stroke drew. Reverses the first pass, where hiding kept
+//     the one she drew. Accepted consequence, his: a stroke above the diagonal
+//     leaves its mark mirrored below it.
+//   • Tiles are no longer all one white. Squares keep the unity white; every
+//     other tile is grey. Reverses the first pass's "all tiles unity glass",
+//     and narrows the walk's "colour says built by her" to a finer declaration:
+//     on the crease, or off it. Colour still means exactly one thing.
+//   • The reserved tap has a body: it shows the rectangle that minted the tile.
+//     Reverses this bench's own no-op, and delivers the still half of walk
+//     step 6. The animated replay still waits for the operation log.
+//   • Added: Home, Clear, and numerals drawn newest-under-oldest.
+//
+// One gloss in that pass is worth flagging rather than repeating. Hiding
+// duplicates leaves one tile per unordered pair of sides — 55 in a 10×10, and
+// 55 is triangular, both true. They are NOT 55 unique products: 12 lives at
+// (12,1), (6,2) and (4,3), and a 10×10 holds 42 distinct products against its
+// 55 rectangles. That exact slip is already in 00-DECISIONS' Corrections, dated
+// 19 Aug, caught the same way. The behaviour asked for is unaffected.
 //
 // Note on the 24 Aug gesture-grammar entries in 00-DECISIONS: the bar on the
 // axis and the floating-readout-plus-fixed-corner-copy are both superseded by
@@ -111,14 +142,14 @@ var CW_VERSION = '2026-09-01 5cfd045'; try { console.log('Curious Woods · ' + d
 //    a tenths tile stays a tenths tile when you zoom back out. The tile
 //    records the resolution of its own making. The second candidate — every
 //    mark a unit pane wherever it lands — is the thing to compare against.
-//  • Tap on a placed tile is RESERVED (walk step 6: the mark is the memory;
-//    tapping a mark replays its making). Deliberately a no-op here. The hit
-//    test is wired and tapMark() is the seam; nothing is built behind it,
-//    because replay wants the operation log and the log is not this bench.
+//  • Whether Clear should be recoverable. It sweeps the tiles and the undo
+//    ledger together, so it is the one act here with no way back. Making it
+//    undoable is one line; see clearAll().
 //
 // Not in this bench, on purpose: no table, no modes, no Build, no Properties,
 // no Fill, no prime colour, no sound, no keyboard cursor, no operation log,
-// no save. Colour says one thing here and it is "built by her".
+// no save, and no animated replay — the tap shows a still rectangle, not a
+// making in motion. Colour says one thing here: on the crease, or off it.
 // ============================================================================
 (() => {
 'use strict';
@@ -139,21 +170,38 @@ const NUMERAL_FIT  = 0.62;  // Q3 — numeral width as a share of tile width
 const NUMERAL_FLOOR= 7;     // Q3 — px below which the numeral stops shrinking…
 const NUMERAL_CAP  = 26;    // Q3 — …and above which it stops growing
 const TILE_MUTE    = 6;     // Q3 — px of tile below which no numeral is drawn at all
-const INK          = '#2b2a26';  // the numeral, black against the white glass
+const INK          = '#2b2a26';  // the numeral, black against both glasses
 const LATTICE      = '#546A80';  // plane.js's own line colour; the came borrows it
+
+// Two glasses, and the only thing colour says here is which side of the crease
+// a tile is on (2nd pass, 1 Sep). Squares — width equal to height at any grain,
+// 6×6 or 1.1×1.1 — keep the unity white, cool and faintly blue, the 1's own
+// glass. Everything else is grey. Michael declared the grey's base, #DCDCDC;
+// the highlight and the edge are derived from it at the same lightness spread
+// the white glass uses, and neutral where the white is blue — so the two read
+// as two glasses rather than one glass lit twice.
+const GLASS_WHITE  = ['#ffffff', '#e9eef5', '#cfd6e0'];
+const GLASS_GREY   = ['#f2f2f2', '#DCDCDC', '#c3c3c3'];
 
 // ---- the plane ------------------------------------------------------------
 // The greeting: origin low and left, the north-east quadrant filling the glass,
 // zoom held where plane.js's ambient ladder draws whole units. Nothing here
 // declares a grain — resolution is zoom, and the lattice says what it is.
-const plane = CW.createPlane({
-  defaultView: (w, h) => {
-    const ppu = Math.max(PPU_MIN, Math.min(PPU_MAX, Math.min(w, h) / 11));
-    const zoom = ppu / U;
-    return { x: (w / 2 - ORIGIN_PAD) / zoom, y: (h / 2 - ORIGIN_PAD) / zoom, zoom };
-  }
-});
+// Named rather than inline because Home returns to it and the word fades when
+// she is already standing there.
+function greetingView(w, h) {
+  const ppu = Math.max(PPU_MIN, Math.min(PPU_MAX, Math.min(w, h) / 11));
+  const zoom = ppu / U;
+  return { x: (w / 2 - ORIGIN_PAD) / zoom, y: (h / 2 - ORIGIN_PAD) / zoom, zoom };
+}
+const plane = CW.createPlane({ defaultView: greetingView });
 plane.setUnitFrame(0, 0, U);
+
+function atGreeting() {
+  const v = plane.view(), g = greetingView(plane.viewportWidth(), plane.viewportHeight());
+  return Math.abs(v.zoom - g.zoom) < 1e-9 &&
+         Math.abs(v.x - g.x) < 1e-6 && Math.abs(v.y - g.y) < 1e-6;
+}
 
 let viewSettled = false;
 function resize() {
@@ -206,49 +254,62 @@ function decStr(num, d) {
 // undo can never reach it.
 const tiles = new Map();
 const ONE_KEY = canon(1, 0) + '|' + canon(1, 0);
-tiles.set(ONE_KEY, { w: 1, h: 1, cell: 1, pNum: 1, pD: 0, primary: true, seed: true });
+tiles.set(ONE_KEY, { w: 1, h: 1, wNum: 1, hNum: 1, d: 0, cell: 1,
+                     pNum: 1, pD: 0, seed: true });
 
-const builds = [];            // [{created:[key], promoted:[key]}] — undo's ledger
+const builds = [];            // [[key, …]] — undo's ledger, one entry per build
 let showDup = true;
+let shownRect = null;         // the tile whose making is being shown (the tap)
 
-function addTile(wNum, hNum, d, cell, primary, created, promoted) {
+function addTile(wNum, hNum, d, cell, created) {
   const key = canon(wNum, d) + '|' + canon(hNum, d);
-  const have = tiles.get(key);
-  if (!have) {
-    tiles.set(key, { w: val(wNum, d), h: val(hNum, d), cell: cell,
-                     pNum: wNum * hNum, pD: 2 * d, primary: primary });
-    created.push(key);
-  } else if (primary && !have.primary) {
-    // A place first reached as a twin, now reached directly. That is a real
-    // change — it is what Hide duplicates stops hiding — so undo must reverse it.
-    have.primary = true;
-    promoted.push(key);
-  }
+  if (tiles.has(key)) return;                 // a place gets a tile once
+  tiles.set(key, { w: val(wNum, d), h: val(hNum, d), wNum: wNum, hNum: hNum, d: d,
+                   cell: cell, pNum: wNum * hNum, pD: 2 * d });
+  created.push(key);
 }
 
 function place(b) {
-  const created = [], promoted = [];
-  addTile(b.wNum, b.hNum, b.d, b.cell, true, created, promoted);
-  if (b.wNum !== b.hNum) addTile(b.hNum, b.wNum, b.d, b.cell, false, created, promoted);
+  const created = [];
+  addTile(b.wNum, b.hNum, b.d, b.cell, created);
+  if (b.wNum !== b.hNum) addTile(b.hNum, b.wNum, b.d, b.cell, created);
   // A build that changed nothing is not recorded, so Undo always takes
   // something visible away rather than spending a press on a redraw.
-  if (created.length || promoted.length) builds.push({ created, promoted });
-  syncPanel();
+  if (created.length) builds.push(created);
 }
 
 function undo() {
   const b = builds.pop();
   if (!b) return;
-  b.created.forEach(k => tiles.delete(k));
-  b.promoted.forEach(k => { const t = tiles.get(k); if (t) t.primary = false; });
-  syncPanel(); draw();
+  b.forEach(k => { if (tiles.get(k) === shownRect) shownRect = null; tiles.delete(k); });
+  draw();
 }
 
-// Hiding is a viewing, not an unmaking: the twin's tile is still placed and
-// still there, it is simply not shown. Otherwise Show duplicates would have to
-// invent history it never had. A tile that has ever been reached directly is
-// hers outright and shows either way.
-const visible = t => showDup || t.primary;
+// Clear sweeps; Undo steps (2nd pass, 1 Sep). Clear is local to her
+// composition — the Primes step's sense of the word, not the old lab's global
+// Clear, which step 2 of the walk abolished. It takes the ledger with it,
+// because the builds it recorded no longer have tiles to step back through.
+// NOTE, owed a ruling: that makes Clear the one act in this bench with no way
+// back. Undo-able Clear is one line (push the swept keys as a build); it is
+// not written because the prompt drew Clear and Undo as a contrast.
+function clearAll() {
+  tiles.forEach((t, k) => { if (!t.seed) tiles.delete(k); });
+  builds.length = 0; shownRect = null;
+  draw();
+}
+
+// Hide duplicates keeps the LOWER tile (2nd pass, 1 Sep — this reverses the
+// first pass, where hiding kept whichever one her stroke drew). On or below the
+// crease means width ≥ height, so what is left is one tile per unordered pair
+// of sides: the 55 rectangles of a 10×10, a triangular number. Accepted
+// consequence, Michael's: a stroke drawn above the diagonal leaves its mark
+// mirrored below it.
+//
+// Read as a viewing, not as a change to what gets placed: both tiles are always
+// minted and hiding only decides which is shown. The alternative — mint one
+// tile while hidden — would make Show duplicates reveal pairs for some builds
+// and singletons for others, which is a viewing word editing history.
+const visible = t => showDup || t.w >= t.h;
 
 // ---- drawing --------------------------------------------------------------
 // Unity glass, the lab's own recipe: whole and white with a slight bluish tint,
@@ -256,17 +317,23 @@ const visible = t => showDup || t.primary;
 // product. Cached by size and filled through a translate, so a long session
 // does not build a CanvasGradient per tile per frame (canvas-panes' warning).
 const glassCache = new Map();
-function unityGlass(w, h) {
-  const key = Math.round(w) + 'x' + Math.round(h);
+function tileGlass(square, w, h) {
+  const key = (square ? 'w' : 'g') + Math.round(w) + 'x' + Math.round(h);
   let g = glassCache.get(key);
   if (!g) {
-    g = ctx.createRadialGradient(w * 0.44, h * 0.38, 0, w * 0.44, h * 0.38, w * 0.75);
-    g.addColorStop(0, '#ffffff'); g.addColorStop(0.62, '#e9eef5'); g.addColorStop(1, '#cfd6e0');
+    const stops = square ? GLASS_WHITE : GLASS_GREY;
+    g = ctx.createRadialGradient(w * 0.44, h * 0.38, 0, w * 0.44, h * 0.38, Math.max(1, w * 0.75));
+    g.addColorStop(0, stops[0]); g.addColorStop(0.62, stops[1]); g.addColorStop(1, stops[2]);
     if (glassCache.size > 400) glassCache.clear();
     glassCache.set(key, g);
   }
   return g;
 }
+// Squareness is read from the minting rectangle, not from the numeral — and
+// since a place is its own rectangle, that is the same as asking whether the
+// tile sits on the crease. 36 built as 4×9 is grey at (4,9); built as 6×6 it is
+// white on the diagonal. The 1 is white because 1 × 1 is a square.
+const isSquare = t => t.w === t.h;
 
 function tileRect(t) {
   const a = plane.worldToScreen((t.w - t.cell) * U, t.h * U);
@@ -281,13 +348,15 @@ function numeralSize(text, r) {
   return Math.max(NUMERAL_FLOOR, Math.min(NUMERAL_CAP, bySide, r.h * 0.66));
 }
 
-function drawTile(t) {
+const onScreen = r => !(r.x > plane.viewportWidth() || r.y > plane.viewportHeight() ||
+                        r.x + r.w < 0 || r.y + r.h < 0);
+
+function drawGlass(t) {
   const r = tileRect(t);
-  if (r.x > plane.viewportWidth() || r.y > plane.viewportHeight() ||
-      r.x + r.w < 0 || r.y + r.h < 0) return;
+  if (!onScreen(r)) return;
   ctx.save();
   ctx.translate(r.x, r.y);
-  ctx.fillStyle = unityGlass(r.w, r.h);
+  ctx.fillStyle = tileGlass(isSquare(t), r.w, r.h);
   ctx.fillRect(0, 0, r.w, r.h);
   ctx.restore();
   // The came. Not a frame of its own invention — the lattice's line, at the
@@ -296,9 +365,14 @@ function drawTile(t) {
   ctx.globalAlpha = CAME_ALPHA; ctx.strokeStyle = LATTICE; ctx.lineWidth = 1;
   ctx.strokeRect(CW.snap(r.x), CW.snap(r.y), Math.round(r.w), Math.round(r.h));
   ctx.restore();
-  // The numeral, written at the moment of placement and never since — numerals
-  // are earned. Q3 lives in the next four lines.
-  if (Math.min(r.w, r.h) < TILE_MUTE) return;
+}
+
+// The numeral, written at the moment of placement and never since — numerals
+// are earned. Q3 lives in these few lines. Drawn in its own pass, after every
+// piece of glass, so a large new tile can never bury an older tile's name.
+function drawNumeral(t) {
+  const r = tileRect(t);
+  if (!onScreen(r) || Math.min(r.w, r.h) < TILE_MUTE) return;
   const text = decStr(t.pNum, t.pD);
   const size = numeralSize(text, r);
   ctx.save();
@@ -338,7 +412,20 @@ function draw() {
   const W = plane.viewportWidth(), H = plane.viewportHeight();
   ctx.fillStyle = '#f4f1e8'; ctx.fillRect(0, 0, W, H);
   plane.drawLattice(ctx);                     // the lattice, its axes, its ladder labels
-  tiles.forEach(t => { if (visible(t)) drawTile(t); });
+
+  const shown = [];
+  tiles.forEach(t => { if (visible(t)) shown.push(t); });   // Map order: oldest first
+  shown.forEach(drawGlass);
+  // Numerals, newest laid down first so the oldest end up on top: building
+  // large never buries what she already made (2nd pass, 1 Sep). Glass is all
+  // behind them, so a new tile cannot cover an old name either.
+  for (let i = shown.length - 1; i >= 0; i--) drawNumeral(shown[i]);
+
+  // The tap's answer: the rectangle that minted this tile, in the drag's own
+  // style. The still form of tap-the-mark; the animated replay waits for the
+  // operation log (walk, step 6).
+  if (shownRect) drawDragRect(shownRect.wNum, shownRect.hNum, shownRect.d, 1);
+
   if (build && build.moved) {
     // The twin first, so the one she is drawing sits over it where they
     // overlap. On the diagonal they coincide and only one is drawn: a square
@@ -347,6 +434,7 @@ function draw() {
       drawDragRect(build.hNum, build.wNum, build.d, TWIN_FAINT);
     drawDragRect(build.wNum, build.hNum, build.d, 1);
   }
+  syncPanel();
 }
 
 // ---- the grammar ----------------------------------------------------------
@@ -388,10 +476,13 @@ function tileAt(x, y) {
   });
   return hit;
 }
-// RESERVED. Walk step 6: the mark is the memory, and tapping a mark replays
-// its making. Not built here — replay wants the operation log, and this bench
-// has no log. The seam is kept open so the bench cannot foreclose it.
-function tapMark(t) { /* no-op in this bench */ }
+// The reserved tap, given its first body (2nd pass, 1 Sep). Walk step 6: the
+// mark is the memory, and tapping a mark replays its making. What is built here
+// is the STILL form — the rectangle that minted this tile, outlined in the
+// drag's style with its two side numerals. The animated replay still waits for
+// the operation log. Same gesture the other tools will use to ask a number what
+// it is. Tapping again, or doing anything else at all, puts it away.
+function tapMark(t, wasShown) { shownRect = (wasShown === t) ? null : t; }
 
 function zoomAbout(sx, sy, factor) {
   const before = plane.screenToWorld(sx, sy);
@@ -405,6 +496,9 @@ function zoomAbout(sx, sy, factor) {
 canvas.addEventListener('pointerdown', e => {
   canvas.setPointerCapture(e.pointerId);
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  // Anything at all puts a shown making away. The tap that re-shows the same
+  // tile needs to know what was up when it started, so it is carried along.
+  const wasShown = shownRect; shownRect = null;
   if (pointers.size === 2) {
     const p = [...pointers.values()];
     mode = 'pinch'; build = null; panLast = null;
@@ -416,7 +510,8 @@ canvas.addEventListener('pointerdown', e => {
       build = Object.assign({ sx: e.clientX, sy: e.clientY, moved: false },
                             snapUnits(e.clientX, e.clientY));
     } else {
-      mode = 'pan'; panLast = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false };
+      mode = 'pan'; panLast = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY,
+                                moved: false, wasShown: wasShown };
       canvas.classList.add('dragging');
     }
   }
@@ -461,7 +556,7 @@ function endPointer(e) {
   } else if (mode === 'pan' && panLast) {
     if (!panLast.moved) {
       const t = tileAt(panLast.sx, panLast.sy);
-      if (t) tapMark(t);                       // reserved; nothing happens here
+      if (t) tapMark(t, panLast.wasShown);     // show its making, or put it away
     }
     panLast = null; mode = null;
     canvas.classList.remove('dragging');
@@ -479,20 +574,38 @@ canvas.addEventListener('pointercancel', endPointer);
 
 canvas.addEventListener('wheel', e => {
   e.preventDefault();
+  shownRect = null;
   zoomAbout(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0015));
   draw();
 }, { passive: false });
 
-// ---- the panel: two words, and one of them fades when it has nothing to do -
-const dupBtn = document.getElementById('dup'), undoBtn = document.getElementById('undo');
+// ---- the panel ------------------------------------------------------------
+// Four words, each of which fades out when it has nothing to do — the standing
+// rule is options fade, never grey out. Duplicates is always live because it is
+// a viewing and the map behind it is always a map. Home fades when she is
+// already standing at the greeting; Clear and Undo fade on an empty glass.
+const dupBtn   = document.getElementById('dup'),
+      homeBtn  = document.getElementById('home'),
+      clearBtn = document.getElementById('clear'),
+      undoBtn  = document.getElementById('undo');
+let lastDupLabel = null;
 function syncPanel() {
-  dupBtn.textContent = showDup ? 'Hide duplicates' : 'Show duplicates';
-  undoBtn.classList.toggle('gone', builds.length === 0);   // no greyed-out states
+  const label = showDup ? 'Hide duplicates' : 'Show duplicates';
+  if (label !== lastDupLabel) { dupBtn.textContent = label; lastDupLabel = label; }
+  homeBtn.classList.toggle('gone', atGreeting());
+  clearBtn.classList.toggle('gone', tiles.size <= 1);
+  undoBtn.classList.toggle('gone', builds.length === 0);
 }
-dupBtn.addEventListener('click', () => { showDup = !showDup; syncPanel(); draw(); });
-undoBtn.addEventListener('click', undo);
+// Home returns the view to the greeting — origin low and left, the north-east
+// quadrant filling the glass. It hands the view back to the plane, so a later
+// resize re-greets rather than keeping a pan she has not made since.
+function home() { plane.resetView(); viewSettled = false; shownRect = null; draw(); }
 
-syncPanel();
+dupBtn.addEventListener('click',   () => { showDup = !showDup; shownRect = null; draw(); });
+homeBtn.addEventListener('click',  home);
+clearBtn.addEventListener('click', clearAll);
+undoBtn.addEventListener('click',  () => { shownRect = null; undo(); });
+
 resize();
 })();
 </script>
