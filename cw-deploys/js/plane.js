@@ -58,14 +58,17 @@ CW.createPlane = function(opts) {
     var ZOOM_MIN = 0.05, ZOOM_MAX = 10;
 
     // Tick label: positive in all four directions (map convention) is the
-    // caller's job; this handles digits. Integers group thousands with a
-    // thin space; sub-unit steps show as trimmed decimals.
+    // caller's job; this handles digits — and since 2 Sep it does not handle
+    // them itself. CW.num is the one place a number is written (js/cw-number.js,
+    // loaded before this file); these rules were the seed of that standard and
+    // now come back from it, so a tick label and a tile numeral cannot drift.
+    // One thing changed in the move, and it is a fix: sub-unit steps used to
+    // skip thousands grouping, so at a step of 0.5 the label at 1000 read
+    // "1000" while at a step of 1 it read "1 000". Both now group.
     function latticeLabelText(v, step) {
-        if (step >= 1) {
-            return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-        }
+        if (step >= 1) return CW.num.count(Math.round(v));
         var dec = Math.max(0, -Math.floor(Math.log10(step) + 1e-9));
-        return v.toFixed(dec).replace(/0+$/, '').replace(/\.$/, '');
+        return CW.num.decimal(Math.round(v * Math.pow(10, dec)), dec);
     }
 
     return {

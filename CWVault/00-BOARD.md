@@ -509,6 +509,39 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   x-height — so a 9's ink centre really is lower, and correcting per glyph would
   make digits bob against each other. Carry this to Divide, whose spec also
   wants properly stacked fractions.
+- **`js/cw-number.js` — the number standard, 2 Sep.** Michael: *make the way you
+  display numbers standard, so all the number benches and labs do the same.*
+  That is the architectural justification the ruling bench's header was waiting
+  for — CLAUDE.md forbids a new shared module without one, and a third consumer
+  asked for by name is one. **The third shared file, and the first added since
+  Phase 4.** It ends four dialects: plane.js grouped thousands for tick labels,
+  the Multiply bench had its own decimal trimmer derived from that, the Ruling
+  bench its own stacked fractions, and Glass Multiplication wrote `String(n)` on
+  a pane with no grouping at all. The rules are not invented — they are gathered
+  from where they were settled and cited in the file: stacked fractions never
+  slashes (walk step 3), never more precision than the act showed
+  (Controls-Aug12 §6), trimmed and grouped (plane.js), and the math axis. It
+  serves the DOM and canvas alike, and injects its own stylesheet so the markup
+  cannot be adopted without the alignment. **Adopted by both benches, plane.js,
+  and Glass Multiplication's pane numerals** — so both labs inherit it through
+  the floor they already stand on. Loads before `plane.js`.
+- **Verified rather than asserted: adopting it re-rendered nothing**, across
+  480 000 tick-label values, except one fix that was the point of looking —
+  sub-unit lattice steps used to skip thousands grouping, so at a step of 0.5
+  the label at 1000 read `1000` while at a step of 1 it read `1 000`. Both group
+  now. **This touched the two deployed labs** (a script tag each, one call in
+  Glass Multiplication); both were driven in the browser afterwards and render
+  as before, zero console errors.
+- **The ruling bench writes its sides on the rectangle, 2 Sep** — width centred
+  on the top edge, height on the right, bold, each a stacked fraction in the
+  terms of the ruling that measures it (8/3 tall by 7/2 wide, never 2.67 by
+  3.5). Placed as the Multiply bench places its sides, that file staying the
+  authority for anything the two share. **This retires the bench's second
+  question by answering it**: it asked whether the readout was carrying her, and
+  the first pass withheld the sides on purpose. What replaces it: the sides and
+  the piece count now say the same thing twice in different terms — 8/3 on the
+  edge, 56 pieces in the corner — so does the second saying help, or does the eye
+  stop at whichever it meets first?
 - **What the ruling bench found that nobody designed.** Re-ruling and fractional
   sides collide: 3/5 is not a whole number of halves, so *the rectangle never
   moves* and *any word may be chosen* cannot both hold. Resolved in favour of the

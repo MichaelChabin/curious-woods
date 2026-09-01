@@ -160,6 +160,7 @@
   </section>
 </main>
 
+<script src="../js/cw-number.js?v=2026-09-02"></script>
 <script src="../js/plane.js?v=2026-08-13"></script>
 <script src="../js/cw-panel.js?v=2026-08-13"></script>
 <script>
@@ -847,7 +848,7 @@ var CW_VERSION = '2026-08-13 b32d541'; try { console.log('Curious Woods · ' + d
     } else {
       ctx.fillStyle='rgba(77,78,74,0.84)';
     }
-    ctx.fillText(String(n),rect.x+rect.w*0.93,rect.y+rect.h*0.05);
+    ctx.fillText(CW.num.count(n),rect.x+rect.w*0.93,rect.y+rect.h*0.05);  // CW.num: one way to write a number
     ctx.shadowBlur=0;ctx.shadowOffsetY=0;
   }
 

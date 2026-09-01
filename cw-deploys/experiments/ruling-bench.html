@@ -35,39 +35,15 @@
   button.gone{display:none}
   button.dark{visibility:hidden}
 
-  /* THE MATH AXIS. Every term on a line — whole number, operator, fraction —
-     sits on one horizontal line: the axis, where TeX puts the fraction bar and
-     the middle of × = −, and which is NOT the baseline. In CSS the way to get
-     it is to stop thinking in baselines: make the line a flex row with
-     align-items:center. Each term's box is then centred, and a fraction's box
-     centre IS its bar, because numerator and denominator are the same height.
-     `vertical-align` on a two-line stack cannot do this — it aligns the
-     numerator's baseline, and the bar lands wherever the leading leaves it,
-     which is what put the × up beside the numerators before.
-
-     MEASURED, not eyeballed: with this and line-height 1.2, the bars, the ×,
-     the = and the digits land on the identical pixel — spread 0.00px across
-     every line. So --axis is 0 and the nudge below is a no-op kept as the knob:
-     the correct value is a property of the typeface, so re-measure it if the
-     face ever changes rather than guessing.
-
-     ONE PIXEL IS LEFT, and it should be left. Georgia sets OLD-STYLE FIGURES:
-     3 4 5 7 9 descend below the baseline, 6 and 8 ascend, 0 1 2 sit at
-     x-height. So the ink centre of a 9 really is lower than that of a 2, and
-     the mixed number's whole part can read a pixel low. Correcting per glyph
-     would make the digits bob against each other, which is worse than the
-     pixel — the face is doing what it was drawn to do. */
+  /* The stacked fractions, and the math axis they sit on, are CW.num's rather
+     than this page's — js/cw-number.js carries the rules and injects `.cw-line`,
+     `.cw-frac` and the rest, so this readout and the labs cannot drift apart.
+     What is left here is only this readout's own colour and rhythm. */
   .out{margin-top:11px;padding-top:10px;border-top:1px solid rgba(84,106,128,.18);
-       font-size:15px;line-height:1.2;color:#3D3D3A;min-height:30px;--axis:0em}
-  .out .lbl{font-size:12.5px;color:#8d8879}
-  .ln{display:flex;align-items:center;flex-wrap:wrap;gap:.32em;margin-bottom:8px}
-  .ln:last-child{margin-bottom:0}
-  .n, .out .lbl{position:relative;top:var(--axis)}
-  .mix{display:flex;align-items:center;gap:.18em}
-  .frac{display:flex;flex-direction:column;align-items:center;
-        line-height:1.1;font-size:.82em}
-  .frac .nu{border-bottom:1px solid currentColor;padding:0 3px}
-  .frac .de{padding:0 3px}
+       font-size:15px;color:#3D3D3A;min-height:30px}
+  .out .cw-op{font-size:12.5px;color:#8d8879}
+  .cw-line{margin-bottom:8px}
+  .cw-line:last-child{margin-bottom:0}
   .note{font-size:11px;color:#a09880;line-height:1.45;margin-top:8px}
 </style>
 </head>
@@ -90,6 +66,7 @@
   <div class="out" id="out"></div>
 </div>
 
+<script src="../js/cw-number.js?v=2026-09-02"></script>
 <script src="../js/plane.js?v=2026-08-13"></script>
 <script>
 var CW_VERSION = '2026-09-02 dd7d71f'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
@@ -137,16 +114,17 @@ var CW_VERSION = '2026-09-02 dd7d71f'; try { console.log('Curious Woods · ' + d
 //      does the readout do all the work? Cover the panel with a hand and step
 //      Units → Halves → Thirds → Tenths. Is anything still being said?
 //
-//  Q2. At split rulings, does `3 pieces × 1/10` become readable as 3/5 × 1/2,
-//      or is the readout carrying her? CHANGED 2 Sep, and the change is the
-//      answer rather than the question now: Michael asked for the two sides to
-//      be written out, so the readout says `1/2 × 3/5 = 3/10` on its own line
-//      and then again over a common denominator. The first pass deliberately
-//      withheld them — printing the sides answers the question instead of
-//      asking it — so what is left to look at is narrower and sharper: with the
-//      sides written down, is the LINE STILL EARNED BY THE PICTURE? Does she
-//      ever look at the rectangle to check them, or only at the panel? The
-//      sides are still not on the glass, only in the corner.
+//  Q2. RETIRED, 2 Sep, by being answered rather than by being settled. It
+//      asked whether `3 pieces × 1/10` becomes readable as 3/5 × 1/2 or whether
+//      the readout was carrying her — and the first pass withheld the sides on
+//      purpose, on the reasoning that printing them answers the question rather
+//      than asking it. Michael has now asked for them twice: written out in the
+//      readout, and written on the rectangle itself in their fractional forms.
+//      So they are on the glass, and the question as posed is gone. What
+//      replaces it is narrower and better: THE SIDES AND THE PIECE COUNT NOW
+//      SAY THE SAME THING TWICE, in different terms — 8/3 on the edge, 56
+//      pieces in the corner. Does the second saying help, or does the eye stop
+//      at whichever it meets first and never cross-check the other?
 //
 //  Q3. Rule both axes in Thirds and lay gnomons around a square by hand: the
 //      counts are the same odd numbers — 2k+1 pieces — each worth 1/9. Does the
@@ -368,6 +346,37 @@ function drawRect(r) {
   ctx.globalAlpha = 0.62; ctx.lineWidth = 1.5;
   ctx.strokeRect(CW.snap(s.x), CW.snap(s.y), Math.round(s.w), Math.round(s.h));
   ctx.restore();
+
+  drawSides(r, s);
+}
+
+// THE TWO SIDES, ON THE RECTANGLE (2 Sep, Michael's ask), each as a proper
+// stacked fraction in the terms of the ruling that measures it — 8/3 tall by
+// 7/2 wide, not 2.67 by 3.5, because thirds have no decimal and the ruling is
+// what she chose. Placed as the Multiply bench places them, that file being the
+// authority for anything the two benches share: width centred on the TOP side,
+// height centred on the RIGHT side, inside, bold. They were on the bottom and
+// left there until they were found to sit against the plane's own axis labels
+// and be read as those.
+//
+// The size is taken from the rectangle rather than from a corner cell — there
+// is no product written on the glass here to match — and it is held down to
+// whatever the shorter side can hold two of without them meeting.
+function drawSides(r, s) {
+  const wide = { n: r.nx, d: r.dx }, tall = { n: r.ny, d: r.dy };
+  const room = Math.min(s.w, s.h);
+  if (room < 34) return;                       // too small to say anything legibly
+  const size = Math.max(11, Math.min(26, room * 0.17, s.h / 5.2));
+  const o = { size: size, weight: 'bold', color: INK };
+  const pad = size * 0.62;
+  ctx.save();
+  ctx.globalAlpha = 0.95;
+  // Width on the top side; height on the right. y is the math axis in both, so
+  // a fraction hangs from its bar rather than from a baseline.
+  CW.num.draw(ctx, wide.n, wide.d, s.x + s.w / 2, s.y + pad + size * 0.35, o);
+  CW.num.draw(ctx, tall.n, tall.d, s.x + s.w - pad, s.y + s.h / 2,
+              Object.assign({ align: 'right' }, o));
+  ctx.restore();
 }
 
 // The 1. With nothing on the glass it is a filled white tile with its numeral —
@@ -548,10 +557,8 @@ const wordBtn = { x: {}, y: {} };
 // Every term is its own element so the flex row can centre it on the math axis;
 // a bare text node between elements would be whitespace-only and dropped, which
 // is why the spacing comes from `gap` rather than from spaces in the markup.
-const num  = n => '<span class="n">' + n + '</span>';
-const op   = s => '<span class="lbl">' + s + '</span>';
-const frac = (n, d) => d === 1 ? num(n)
-  : '<span class="frac"><span class="nu">' + n + '</span><span class="de">' + d + '</span></span>';
+const frac = (n, d, o) => CW.num.html(n, d, o);
+const op   = s => CW.num.op(s);
 
 function syncPanel() {
   const r = build && build.moved ? build : rect;
@@ -591,9 +598,9 @@ function syncPanel() {
   const pieces = r.nx * r.ny, den = r.dx * r.dy;
   const g0 = gcd(pieces, den), P = pieces / g0, Q = den / g0;
   const total = frac(P, Q);
-  const ln = parts => '<div class="ln">' + parts.join('') + '</div>';
+  const ln = parts => '<div class="cw-line">' + parts.join('') + '</div>';
 
-  let html = ln([num(pieces), op((pieces === 1 ? 'piece' : 'pieces') + ' ×'),
+  let html = ln([frac(pieces, 1), op((pieces === 1 ? 'piece' : 'pieces') + ' ×'),
                  frac(1, den), op('='), total]);
 
   // The sides, each with the denominator of the ruling that measures it.
@@ -609,9 +616,7 @@ function syncPanel() {
   // And the mixed number — whole part and fraction set tight against each
   // other, the way a mixed number is written. In lowest terms with Q > 1 the
   // remainder is never zero, so there is always a fraction beside the whole.
-  if (Q > 1 && P > Q)
-    html += ln([op('='), '<span class="mix">' + num(Math.floor(P / Q)) +
-                frac(P % Q, Q) + '</span>']);
+  if (Q > 1 && P > Q) html += ln([op('='), frac(P, Q, { mixed: true })]);
 
   outEl.innerHTML = html;
 }

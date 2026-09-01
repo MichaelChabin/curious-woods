@@ -45,6 +45,7 @@
   </div>
 </div>
 
+<script src="../js/cw-number.js?v=2026-09-02"></script>
 <script src="../js/plane.js?v=2026-08-13"></script>
 <script>
 var CW_VERSION = '2026-09-01 7872830'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
@@ -234,17 +235,9 @@ function canon(num, d) {                                  // one place, one name
   while (d > 0 && num % 10 === 0) { num /= 10; d--; }
   return num + 'e' + d;
 }
-function decStr(num, d) {
-  let s = String(num);
-  if (d > 0) {
-    while (s.length <= d) s = '0' + s;
-    const ip = s.slice(0, s.length - d), fp = s.slice(s.length - d).replace(/0+$/, '');
-    s = fp ? ip + '.' + fp : ip;
-  }
-  const dot = s.indexOf('.');
-  const ip = dot < 0 ? s : s.slice(0, dot), rest = dot < 0 ? '' : s.slice(dot);
-  return ip.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + rest;  // grouped as plane.js groups
-}
+// Trimming, grouping and the exactness live in CW.num now (js/cw-number.js) —
+// this bench's own trimmer was the seed of that standard and comes back from it.
+const decStr = (num, d) => CW.num.decimal(num, d);
 
 // ---- what is on the glass -------------------------------------------------
 // tiles: keyed by place. A tile carries the numbers it was made from, the
@@ -388,11 +381,8 @@ function drawNumeral(t) {
   if (!onScreen(r) || Math.min(r.w, r.h) < TILE_MUTE) return;
   const text = decStr(t.pNum, t.pD);
   const size = numeralSize(text, r);
-  ctx.save();
-  ctx.font = size + 'px Georgia, serif';
-  ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(text, r.x + r.w / 2, r.y + r.h / 2 + size * 0.04);
-  ctx.restore();
+  // y is the math axis, not a baseline — CW.num centres on it.
+  CW.num.drawText(ctx, text, r.x + r.w / 2, r.y + r.h / 2, { size: size, color: INK });
 }
 
 // The drag: the 1's glass stretched. Same outline, transparent fill — so what
@@ -429,13 +419,12 @@ function drawDragRect(wNum, hNum, d, cell, faint) {
   // ever trips this; every taller one keeps the product's size exactly.
   const size = Math.max(NUMERAL_FLOOR,
                         Math.min(numeralSize(decStr(wNum * hNum, 2 * d), corner), r.h / 5));
-  ctx.font = 'bold ' + size + 'px Georgia, serif';
-  ctx.fillStyle = INK; ctx.globalAlpha = faint * 0.92;
+  ctx.globalAlpha = faint * 0.92;
   const pad = size * 0.42;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  ctx.fillText(decStr(wNum, d), r.x + r.w / 2, r.y + pad);            // width, on the top side
-  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-  ctx.fillText(decStr(hNum, d), r.x + r.w - pad, r.y + r.h / 2);      // height, on the right side
+  const o = { size: size, weight: 'bold', color: INK };
+  CW.num.drawText(ctx, decStr(wNum, d), r.x + r.w / 2, r.y + pad + size / 2, o);
+  CW.num.drawText(ctx, decStr(hNum, d), r.x + r.w - pad, r.y + r.h / 2,
+                  Object.assign({ align: 'right' }, o));
   ctx.restore();
 }
 

@@ -17,9 +17,28 @@ allowed here.
 Superseded versions, kept as the archive record.
 
 **`js/`** — shared code, at the root of this folder. Classic scripts, no
-build step. `plane.js` — the coordinate space both labs stand on (view state,
+build step. **`cw-number.js` — how a number is written, everywhere** (extracted
+2 Sep 2026 on Michael's instruction that the benches and labs all write numbers
+the same way; the third shared file, and the first added since Phase 4). Until
+it existed there were four dialects: plane.js grouped thousands for tick labels,
+the Multiply bench had its own decimal trimmer derived from that, the Ruling
+bench had its own stacked fractions, and Glass Multiplication wrote `String(n)`
+on a pane with no grouping at all. It gathers the rules already settled
+elsewhere and cites them — stacked fractions never slashes (walk step 3), never
+more precision than the act showed (Controls-Aug12 §6), trimmed and grouped
+(plane.js's own labels), and **the math axis**: every term on a line sits on the
+line where a fraction bar and the middles of × = − live, which is not the
+baseline. It serves both the DOM (`CW.num.html`, and a stylesheet it injects
+itself so markup cannot be adopted without the alignment) and canvas
+(`CW.num.draw` / `drawText` / `measure`, where the y passed is always the axis).
+**Load it before `plane.js`**, which uses it. Adopting it re-rendered nothing
+except one fix, verified across 480 000 label values: sub-unit lattice steps
+used to skip thousands grouping, so at a step of 0.5 the label at 1000 read
+`1000` while at a step of 1 it read `1 000`; both group now.
+`plane.js` — the coordinate space both labs stand on (view state,
 transforms, one zoom clamp, the ambient lattice, the pixel floor); extracted
-in Phase 4 so the labs cannot drift apart. `cw-panel.js` — the canvas panels
+in Phase 4 so the labs cannot drift apart. Its tick labels were the seed of
+`cw-number.js` and now come back from it. `cw-panel.js` — the canvas panels
 as components: the info window (draggable, closable, fading — Geometry's
 tip-window pattern; used by Multiplication's number description) and, since
 the controls build (13 Aug), the **choice panel** — an occasional act's
@@ -119,7 +138,14 @@ to test yesterday's work.
   and a fraction's bar, land on one line; `vertical-align` on a two-line stack
   cannot do it, because it aligns the numerator's baseline and the bar falls
   wherever the leading leaves it. Measured at spread 0.00px. The technique is
-  worth reusing: Divide's spec wants stacked fractions too. Split
+  worth reusing, and since 2 Sep it is not a technique but a file: the readout is
+  written in `CW.num`'s terms, and so are the Multiply bench, plane.js's tick
+  labels and Glass Multiplication's pane numerals. **The two sides are also
+  written on the rectangle itself** (2 Sep) — width centred on the top edge,
+  height on the right, bold, each a stacked fraction in the terms of the ruling
+  that measures it: 8/3 tall by 7/2 wide, never 2.67 by 3.5, because thirds have
+  no decimal and the ruling is what she chose. That closes the bench's second
+  question by answering it; what replaced it is in the file header. Split
   rulings make a piece worth the product of the two grains: x in fifths and y in
   halves, and 3/5 × 1/2 is one stroke reading `3 pieces × ¹⁄₁₀ = ³⁄₁₀`. **The
   drag snaps to the ruling, not to the zoom** — which is the whole difference
