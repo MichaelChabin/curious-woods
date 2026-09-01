@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-09-01 (Multiply has a bench — `cw-deploys/experiments/multiply-bench.html`, step 3 of the review's order of work: one tool on `plane.js` alone, no table code, four questions left standing in the source. It found a fifth nobody asked for — tenths only exist above ~400px per unit, so the walk's own 6.3 × 2 cannot be drawn on an iPad; recorded, not patched. See thread 1. Earlier same day: Housekeeping — the blocked commit is cleared. The 24 Aug panel build of Glass Multiplication is frozen unshipped at `prototypes/glass-panel-build-aug24.html` and `active/` is restored to the deployed 13 Aug lab; nothing new deployed. Nine days of vault docs land with it — the three tool specs, the panel prompt, the first story set, the 26 Aug review and walk, the reader-prototype brief, the Frankenstein-11816 constellation and the chladni bench seed. No code changed. Earlier: Frankenstein-11816 constellation seeded into 02-CONSTELLATIONS — sixteen nodes, twenty-four claim edges, parked warm with a `threads` facet decision owed; see Parked — warm. Earlier: 26 Aug evening — Glass ruled onto the plane and the walk run through Make a square — see thread 1 and 01-ACTIVE/Walk-Glass-Aug26.md. Earlier same day: reviewed — see thread 1, 26 Aug entry; the 24 Aug build is diagnosed, not fixed. Earlier: 25 Aug — Six Against Five revised and redeployed after a listening pass: three asserted claims disproved, a ringing traced to a click truncated at the loop seam and fixed, piano strip and click-pitch knob added, the long reading rewritten. One listen owed — 3:2 at full brightness. Glass Multiplication's panel architecture from 24 Aug was **uncommitted and undeployed** on Michael's instruction — as of 1 Sep it is frozen as a prototype, see the lead: the mode bar dissolved, the **Building Numbers** rail and panel in, the first set — Multiply, Divide, Make a square, Explore — wired to the specs; three Multiply questions left as hooks; Build and Properties are code without a word)
+updated: 2026-09-01 (evening) (Michael ran the Multiply bench himself and sent six changes; all six are in. Three are reversals — hiding duplicates now keeps the **lower** tile, tiles split **white on the crease / grey off it**, and the reserved tap has a body: it shows the rectangle a tile was made from. Added: Home, Clear, and numerals drawn newest-under-oldest. Two things the pass did not foresee are left standing rather than patched, and one gloss is flagged against the 19 Aug correction. See thread 1. Earlier today: Multiply has a bench — `cw-deploys/experiments/multiply-bench.html`, step 3 of the review's order of work: one tool on `plane.js` alone, no table code, four questions left standing in the source. It found a fifth nobody asked for — tenths only exist above ~400px per unit, so the walk's own 6.3 × 2 cannot be drawn on an iPad; recorded, not patched. See thread 1. Earlier same day: Housekeeping — the blocked commit is cleared. The 24 Aug panel build of Glass Multiplication is frozen unshipped at `prototypes/glass-panel-build-aug24.html` and `active/` is restored to the deployed 13 Aug lab; nothing new deployed. Nine days of vault docs land with it — the three tool specs, the panel prompt, the first story set, the 26 Aug review and walk, the reader-prototype brief, the Frankenstein-11816 constellation and the chladni bench seed. No code changed. Earlier: Frankenstein-11816 constellation seeded into 02-CONSTELLATIONS — sixteen nodes, twenty-four claim edges, parked warm with a `threads` facet decision owed; see Parked — warm. Earlier: 26 Aug evening — Glass ruled onto the plane and the walk run through Make a square — see thread 1 and 01-ACTIVE/Walk-Glass-Aug26.md. Earlier same day: reviewed — see thread 1, 26 Aug entry; the 24 Aug build is diagnosed, not fixed. Earlier: 25 Aug — Six Against Five revised and redeployed after a listening pass: three asserted claims disproved, a ringing traced to a click truncated at the loop seam and fixed, piano strip and click-pitch knob added, the long reading rewritten. One listen owed — 3:2 at full brightness. Glass Multiplication's panel architecture from 24 Aug was **uncommitted and undeployed** on Michael's instruction — as of 1 Sep it is frozen as a prototype, see the lead: the mode bar dissolved, the **Building Numbers** rail and panel in, the first set — Multiply, Divide, Make a square, Explore — wired to the specs; three Multiply questions left as hooks; Build and Properties are code without a word)
 ---
 
 # The Board
@@ -394,10 +394,48 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   a tile places nothing (the walk's two candidates — toggle off, or replace —
   are both still live); tap-to-replay is wired to a hit test and a named no-op,
   because replay wants the operation log and the bench has none.
-- **Next action:** Michael looks at the Multiply bench and rules on its four
-  questions plus the reach-versus-refinement finding — that one gates whether
-  Multiply owns decimals at all. Then the next two benches, Divide and Squares,
-  on the same terms. In parallel the walk resumes at **Primes** (colour's arrival; the 24 Aug
+- **Second pass, 1 Sep evening — Michael's own bench pass, six changes, all in**
+  (`c29439c`). **Three reverse earlier writing and the vault has not caught up:**
+  (i) **Hide duplicates keeps the lower tile** — width ≥ height, whichever
+  rectangle her stroke drew — so what remains is one tile per unordered pair of
+  sides, and a stroke above the diagonal leaves its mark mirrored below it
+  (his accepted consequence). Built as a *viewing*: both tiles are always
+  minted, hiding only chooses which shows, so Show duplicates can never reveal
+  pairs for some builds and singletons for others. (ii) **Squares keep the
+  white; everything else is grey**, base `#DCDCDC` as he declared it. This
+  narrows the walk's *colour says built by her* to a finer single declaration —
+  **on the crease, or off it** — and it is the strongest thing on screen: the
+  diagonal reads as a bright line through the map without a word.
+  (iii) **The reserved tap has a body** — tapping a tile shows the rectangle
+  that minted it, outlined in the drag's style with its two side numerals. That
+  is the still half of walk step 6; the animated replay still waits for the log.
+  **Added:** Home (returns to the greeting, fades when she is there), Clear
+  (sweeps her composition — the Primes sense of the word, not the global Clear
+  step 2 abolished), and numerals drawn in their own pass newest-first so the
+  oldest end on top.
+- **Two things the second pass did not foresee, left standing:**
+  **(a) Changes 1 and 6 collide.** With duplicates hidden, the surviving mark
+  is the mirror, and tapping it shows *its own* rectangle — stroke 2 × 6 and
+  the mark at (6,2) replays as 6 × 2, a rectangle she never drew. Coherent with
+  tiles-read-the-place; but *the mark is the memory* reads differently when the
+  memory is of the reflection. The alternative — a mirrored tile remembering
+  the stroke that caused it — makes two tiles at one place disagree about their
+  own sides. Owed a ruling. **(b) Clear takes the undo ledger with it**, so it
+  is the one act in the bench with no way back. Making it undoable is one line
+  and deliberately not written, because the prompt drew Clear and Undo as a
+  contrast. Owed a ruling.
+- **One gloss flagged, not repeated.** The pass called the hidden-duplicates set
+  *the unique products of the table: 55 in a 10×10*. The count and its
+  triangularity are right; they are 55 **rectangles**, not products — 12 lives
+  at (12,1), (6,2) and (4,3), and a 10×10 holds **42** distinct products. That
+  exact slip is already in `00-DECISIONS`' Corrections, dated 19 Aug, caught the
+  same way. Nothing in the behaviour depends on it. Recorded here because the
+  ledger exists so it is not asserted a third time.
+- **Next action:** four rulings owed on the bench, in this order — the
+  reach-versus-refinement finding (it gates whether Multiply owns decimals at
+  all), the mirrored making, whether Clear is recoverable, and the two still-open
+  items from the first pass (redraw, and the decimal speck). Then the next two
+  benches, Divide and Squares, on the same terms. In parallel the walk resumes at **Primes** (colour's arrival; the 24 Aug
   prime-button entries are decided but unbenched — read them cold first), then
   Properties, the table viewing, fractions-as-triangles, and Divide's open modes
   question. Benches before any lab build. Still standing from the 24 Aug report:

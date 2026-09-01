@@ -482,6 +482,17 @@ function tileAt(x, y) {
 // drag's style with its two side numerals. The animated replay still waits for
 // the operation log. Same gesture the other tools will use to ask a number what
 // it is. Tapping again, or doing anything else at all, puts it away.
+//
+// WHERE CHANGES 1 AND 6 MEET, unforeseen and left as it fell: what is shown is
+// the tile's OWN rectangle, which with duplicates hidden is not always the one
+// her hand drew. Stroke 2 wide and 6 tall, and the mark lands mirrored at (6,2);
+// tap it and a 6 × 2 rectangle appears — a rectangle she never made. Coherent
+// with tiles-read-the-place, and it is what "the rectangle that minted it"
+// literally means once the mirror is the tile that survives. But "the mark is
+// the memory" reads differently if the memory is of the reflection. Not
+// resolved here; the alternative is for a mirrored tile to remember the stroke
+// that caused it, which would make two tiles at one place disagree about their
+// own sides.
 function tapMark(t, wasShown) { shownRect = (wasShown === t) ? null : t; }
 
 function zoomAbout(sx, sy, factor) {

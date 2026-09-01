@@ -103,16 +103,23 @@ to test yesterday's work.
   no sound, no log. The opening state is the plane as Geometry draws it plus one
   white unit tile at the origin, the 1, with its numeral. The grammar is the
   walk's (`01-ACTIVE/Walk-Glass-Aug26.md`, steps 1, 2 and 6): touch the 1 and
-  drag to multiply, touch anywhere else to pan, pinch or wheel to zoom, tap a
-  placed tile is **reserved** and does nothing here. During the drag the 1's
-  glass stretches — outline and transparent fill — with the twin riding across
-  the diagonal at `TWIN_FAINT`, the live width and height centred on their own
-  sides inside both rectangles so the twin reads the same two numbers exchanged,
-  and no product anywhere. On release only the far-corner tile of each rectangle
-  remains, unity glass, with the product written on it at the moment of placing:
-  one tile on the diagonal, two off it. Tiles persist; a place gets a tile once;
-  Undo steps back one build at a time to empty and then fades. Colour says one
-  thing, *built by her*. Resolution is zoom and there is **no grain control** —
+  drag to multiply, touch anywhere else to pan, pinch or wheel to zoom, and
+  **tap a placed tile to see the rectangle that minted it** — the still half of
+  *the mark is the memory*; the animated replay waits for the operation log.
+  During the drag the 1's glass stretches — outline and transparent fill — with
+  the twin riding across the diagonal at `TWIN_FAINT`, the live width and height
+  centred on their own sides inside both rectangles so the twin reads the same
+  two numbers exchanged, and no product anywhere. On release only the far-corner
+  tile of each rectangle remains, with the product written on it at the moment
+  of placing: one tile on the diagonal, two off it. Tiles persist; a place gets
+  a tile once; **Undo steps and Clear sweeps**, and **Home** returns the view to
+  the greeting; each word fades when it has nothing to do. **Hide duplicates
+  keeps the lower tile** — width ≥ height, whichever rectangle her stroke drew —
+  so what is left is one tile per unordered pair of sides, 55 of them in a
+  10×10, and a stroke above the diagonal leaves its mark mirrored below it.
+  Colour says one thing and it is **which side of the crease**: squares keep the
+  unity white, everything else is grey on the declared base `#DCDCDC`.
+  Resolution is zoom and there is **no grain control** —
   the finger snaps to whatever rung of plane.js's 1–5–10 ladder is on screen,
   and products are carried as exact integer-over-power-of-ten, so 1.3 × 2 reads
   2.6 and never 2.6000000000000005.
@@ -124,8 +131,17 @@ to test yesterday's work.
   an iPad. The walk's own illustration, 6.3 × 2, needs ~2 500px of run and is
   unreachable on any targeted screen — reach and refinement pull opposite ways,
   and the walk's step 3 already says it is *division*, not multiplication, that
-  puts tiles between the lines. Standalone otherwise; deliberately not deployed
-  into `active/` and not linked from the main index.
+  puts tiles between the lines.
+  **Second pass, 1 Sep, from Michael's own bench pass** — six changes, three of
+  them reversals, all recorded in the file's header and in that commit: hiding
+  duplicates now keeps the lower tile rather than the one she drew; the tiles
+  split into white on the crease and grey off it; the reserved tap gained its
+  still body; and Home, Clear and newest-numeral-under-oldest arrived. Two
+  things the pass did not foresee are left standing rather than patched: with
+  duplicates hidden, tapping a mirrored mark shows a rectangle she never drew
+  (changes 1 and 6 meeting), and Clear takes the undo ledger with it, so it is
+  the one act here with no way back. Standalone otherwise; deliberately not
+  deployed into `active/` and not linked from the main index.
 - **`strobe-and-stars.html`** — bench: a loudspeaker edge-on under a strobe. The cone is one
   bar between `{` and `}`; the strobe runs at the bottom note, so that note freezes and is the
   reference. A voice at `n/d` visits exactly **d** phases and the flashes joined in order draw
