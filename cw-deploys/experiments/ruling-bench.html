@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Ruling — a bench</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{background:#f4f1e8;font-family:Georgia,serif;color:#3D3D3A;overflow:hidden;
+       user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+  canvas{display:block;position:fixed;inset:0;touch-action:none;cursor:grab}
+  canvas.dragging{cursor:grabbing}
+  canvas.overone{cursor:crosshair}
+
+  .panel{position:fixed;left:16px;top:16px;z-index:10;width:298px;
+         background:rgba(244,241,232,.94);border:.5px solid #c8b89a;border-radius:6px;
+         padding:13px 15px 13px;box-shadow:0 2px 12px rgba(42,38,32,.08)}
+  h1{font-size:15px;font-weight:normal;color:#546A80;margin-bottom:3px}
+  .sub{font-size:11px;color:#a09880;margin-bottom:11px;line-height:1.45}
+
+  .rule{display:flex;align-items:baseline;gap:9px;margin-bottom:3px;min-height:19px}
+  .ax{font-size:10.5px;color:#8d8879;letter-spacing:.07em;text-transform:uppercase;width:9px}
+  .ws{display:flex;gap:10px;flex-wrap:wrap}
+  .row{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;align-items:baseline;
+       margin-top:8px;min-height:18px}
+
+  button{font:inherit;font-size:13px;color:#546A80;background:none;border:0;
+         border-bottom:1px solid transparent;cursor:pointer;padding:1px 1px}
+  button:hover{color:#3D3D3A;border-bottom-color:#c8b89a}
+  button[aria-pressed=true]{color:#252623;border-bottom-color:#546A80}
+  /* Options fade when irrelevant, never grey out. The ruling words keep their
+     place while they are gone, because a row of five that reflows every time
+     she drags is harder to read than one with a hole in it. */
+  button.gone{display:none}
+  button.dark{visibility:hidden}
+
+  .out{margin-top:11px;padding-top:10px;border-top:1px solid rgba(84,106,128,.18);
+       font-size:15px;line-height:1.9;color:#3D3D3A;min-height:30px}
+  .out .lbl{font-size:12.5px;color:#8d8879}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;
+        vertical-align:-0.42em;line-height:1.08;font-size:.82em}
+  .frac .nu{border-bottom:1px solid currentColor;padding:0 3px}
+  .frac .de{padding:0 3px}
+  .note{font-size:11px;color:#a09880;line-height:1.45;margin-top:8px}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="panel">
+  <h1>Ruling</h1>
+  <div class="sub">Bench — does multiplication care how the grid is ruled?<br>Drag from the 1 to make another rectangle.</div>
+
+  <div class="rule"><span class="ax">x</span><span class="ws" id="wx"></span></div>
+  <div class="rule"><span class="ax">y</span><span class="ws" id="wy"></span></div>
+
+  <div class="row">
+    <button id="link">Split</button>
+    <button id="home" class="gone">Home</button>
+    <button id="clear" class="gone">Clear</button>
+  </div>
+
+  <div class="out" id="out"></div>
+</div>
+
+<script src="../js/plane.js?v=2026-08-13"></script>
+<script>
+var CW_VERSION = '2026-09-01 pending'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+// ============================================================================
+// RULING — A BENCH
+//
+// The second of the review's step-3 benches. One question on screen: DOES
+// MULTIPLICATION CARE HOW THE GRID IS RULED? A rectangle, and five ways to rule
+// the plane under it. The rectangle never moves. Only the came does.
+//
+//   2 × 3 at Units   →   6 pieces  × 1     = 6
+//             Halves →  24 pieces  × 1/4   = 6
+//             Thirds →  54 pieces  × 1/9   = 6
+//             Fifths → 150 pieces  × 1/25  = 6
+//             Tenths → 600 pieces  × 1/100 = 6
+//
+// Companion to experiments/multiply-bench.html, and its junior: for every
+// behaviour the two share — drag-the-1, panning, zoom, pinch, Home, Clear, the
+// panel idiom, the glass, the came — THAT FILE AS IT STANDS is the authority,
+// not the walk and not the prompt that asked for this one. Every fix it has had
+// is carried here: the smallest-tile-wins hit comparator driving both the paint
+// order and the tap, the zero-length drag falling through instead of being
+// swallowed by the 1's grab box, the pinch that resumes panning on the finger
+// that is left, the words that fade rather than grey.
+//
+// They stay two files. Nothing is shared but plane.js. WORTH EXTRACTING when a
+// third bench wants it, and not before: the plane greeting and atGreeting(), the
+// pointer block (pan / pinch / drag-the-1 with GRAB_MIN and MOVE_SLOP), the
+// glass gradient cache, and the panel's fade-when-irrelevant sync. That is
+// roughly 120 lines duplicated here on purpose — the benches are meant to be
+// readable end to end and to diverge without breaking each other.
+//
+// ---------------------------------------------------------------------------
+// WHY THIS BENCH EXISTS, beyond its own question. The Multiply bench found that
+// grain is tied to zoom, so DECIMALS COST REACH: plane.js draws a lattice rung
+// only above 40px spacing, so tenths need ~400px per unit and 6.3 is off every
+// screen at that zoom. Here, ruling is an act rather than a consequence of
+// zoom — rule x in Tenths and 6.3 × 2 is one stroke at the greeting. Reach is
+// the argument for the ruling act, and this bench is where that gets looked at.
+//
+// ---------------------------------------------------------------------------
+// WHAT TO LOOK AT — the four questions, none answered here by fiat.
+//
+//  Q1. Does "the count changed, the rectangle didn't" arrive by LOOKING, or
+//      does the readout do all the work? Cover the panel with a hand and step
+//      Units → Halves → Thirds → Tenths. Is anything still being said?
+//
+//  Q2. At split rulings, does `3 pieces × 1/10` become readable as 3/5 × 1/2,
+//      or is the readout carrying her? Note that the two SIDES are deliberately
+//      not written anywhere — the Multiply bench puts them on the rectangle, and
+//      that is dropped here on purpose. Printing "3/5" and "1/2" would answer
+//      this question rather than ask it. Counting came lines is the only route.
+//
+//  Q3. Rule both axes in Thirds and lay gnomons around a square by hand: the
+//      counts are the same odd numbers — 2k+1 pieces — each worth 1/9. Does the
+//      pattern's survival read as the point?
+//
+//  Q4. With split rulings the diagonal's mirror of a legal rectangle can be
+//      ILLEGAL — 3/5 × 1/2 has no mirror while x is in fifths and y in halves,
+//      because 1/2 is not a whole number of fifths. The twin symmetry is a
+//      casualty of mixed terms. Visible and honest, or just confusing? There is
+//      no twin drawn in this bench, so the casualty shows up as the ruling words
+//      going dark rather than as a missing rectangle — see below.
+//
+// ---------------------------------------------------------------------------
+// THE ONE THING THE PROMPT DID NOT COVER, and the decision taken. Re-ruling and
+// fractional sides collide. A side of 3/5 is not a whole number of halves, so
+// "the rectangle never moves, never resizes, never changes" and "any word may be
+// chosen" cannot both hold. Resolved in favour of the rectangle: A RULING WORD
+// IS OFFERED ONLY WHILE IT CAN MEASURE THE CURRENT SIDE, and goes dark when it
+// cannot. Nothing ever snaps or jumps.
+//
+// That is divisibility arriving in the interface rather than in a sentence: at
+// x = 3/5 only Fifths and Tenths are lit, because 5 divides only those. It is
+// not a dead end — the drag snaps to the live grain, and a whole number of
+// pieces is always reachable (5 fifths make 1), so the coarse words come back
+// the moment the side is whole again. Clear resets to Units, linked.
+//
+// Same rule for Link: it is offered only while some single ruling can measure
+// both sides. Build 1/3 × 1/2 and it goes dark — x wants a multiple of 3, y a
+// multiple of 2, and neither 6 nor 15 is on the row. THAT IS A REAL FINDING and
+// not a bug to route around: there is no common ruling for those two sides among
+// the five offered. It is Q4 in its sharpest form.
+//
+// Not in this bench, on purpose: no twin, no persisting tiles, no products
+// written on the glass, no Undo (one rectangle at a time — Clear is the whole
+// ledger), no side numerals, no prime colour, no sound, no operation log.
+// ============================================================================
+(() => {
+'use strict';
+
+const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+
+// ---- the dials ------------------------------------------------------------
+const U            = 200;   // world units per unit interval — as both labs declare it
+const PPU_MIN      = 46;    // px per unit at the greeting, as the Multiply bench pins it
+const PPU_MAX      = 78;
+const ORIGIN_PAD   = 56;
+const GRAB_MIN     = 22;    // px: the 1's grab box never shrinks below this
+const MOVE_SLOP    = 5;     // px before a touch on the 1 counts as a drag at all
+const CAME_ALPHA   = 0.30;  // the ruling's lead, at the weight plane.js gives its axes
+const PIECE_GLASS  = 22;    // px below which pieces stop carrying their own highlight
+const CAME_FLOOR   = 3;     // px below which a came line stops resolving (plane.js's rule)
+const INK          = '#2b2a26';
+const LATTICE      = '#546A80';
+const GLASS_WHITE  = ['#ffffff', '#e9eef5', '#cfd6e0'];
+
+// The five rulings, by the denominator of their grain. Words, not a slider:
+// an act she chooses, never a setting (00-DECISIONS, the shelf, 24 Aug).
+const DENOMS = [1, 2, 3, 5, 10];
+const NAME   = { 1: 'Units', 2: 'Halves', 3: 'Thirds', 5: 'Fifths', 10: 'Tenths' };
+
+// ---- the plane ------------------------------------------------------------
+function greetingView(w, h) {
+  const ppu = Math.max(PPU_MIN, Math.min(PPU_MAX, Math.min(w, h) / 11));
+  const zoom = ppu / U;
+  return { x: (w / 2 - ORIGIN_PAD) / zoom, y: (h / 2 - ORIGIN_PAD) / zoom, zoom };
+}
+const plane = CW.createPlane({ defaultView: greetingView });
+plane.setUnitFrame(0, 0, U);
+
+function atGreeting() {
+  const v = plane.view(), g = greetingView(plane.viewportWidth(), plane.viewportHeight());
+  return Math.abs(v.zoom - g.zoom) < 1e-9 &&
+         Math.abs(v.x - g.x) < 1e-6 && Math.abs(v.y - g.y) < 1e-6;
+}
+
+let viewSettled = false;
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = window.innerWidth, h = window.innerHeight;
+  canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+  canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  plane.setViewport(w, h);
+  if (!viewSettled) plane.resetView();
+  draw();
+}
+window.addEventListener('resize', resize);
+
+// ---- exact numbers --------------------------------------------------------
+// Rationals here, not the Multiply bench's decimals-over-powers-of-ten: a side
+// is a whole number of pieces of the grain that rules its axis, so it carries
+// as (count, denominator) meaning count/denominator. Every number the readout
+// speaks is an integer ratio and nothing is ever rounded — 3/5 is 3/5 and not
+// 0.6000000000000001, and thirds exist at all, which they do not in base ten.
+function gcd(a, b) { while (b) { const t = a % b; a = b; b = t; } return a; }
+
+// A side of n/d is a whole number of pieces of 1/D exactly when D·n is a
+// multiple of d. This one line is the whole of the ruling's legality.
+const canRule = (n, d, D) => (n * D) % d === 0;
+const reRule  = (n, d, D) => (n * D) / d;
+
+let rect = null;              // {nx, dx, ny, dy} — nx pieces of 1/dx by ny of 1/dy
+let dx = 1, dy = 1;           // the live ruling on each axis
+let linked = true;
+
+// The opening rectangle. The prompt allows a fixed 2 × 3 starter, and it earns
+// its place: the bench's question is answered by one press of Halves, and with
+// an empty plane she would have to guess the gesture first.
+function reset() {
+  dx = 1; dy = 1; linked = true;
+  rect = { nx: 2, dx: 1, ny: 3, dy: 1 };
+  draw();
+}
+
+// Whether a word may be pressed at all: on its own axis while split, on both at
+// once while linked. Asked before anything moves, so a linked press can never
+// half-apply — re-rule x, find y will not take it, and leave the two axes in a
+// state neither word describes.
+function ruleOffered(axis, D) {
+  if (!rect) return true;
+  const okX = canRule(rect.nx, rect.dx, D), okY = canRule(rect.ny, rect.dy, D);
+  if (linked) return okX && okY;
+  return axis === 'x' ? okX : okY;
+}
+
+function setRule(axis, D) {
+  if (!ruleOffered(axis, D)) return;
+  if (axis === 'x' || linked) {
+    if (rect) { rect.nx = reRule(rect.nx, rect.dx, D); rect.dx = D; }
+    dx = D;
+  }
+  if (axis === 'y' || linked) {
+    if (rect) { rect.ny = reRule(rect.ny, rect.dy, D); rect.dy = D; }
+    dy = D;
+  }
+  draw();
+}
+
+// Link is offered only while ONE ruling can measure both sides — see the header:
+// build 1/3 × 1/2 and there is none among the five, which is the bench's fourth
+// question in its sharpest form. Prefers the ruling x already has.
+function commonRule() {
+  if (!rect) return dx;
+  const ok = D => canRule(rect.nx, rect.dx, D) && canRule(rect.ny, rect.dy, D);
+  if (ok(dx)) return dx;
+  for (const D of DENOMS) if (ok(D)) return D;
+  return null;
+}
+function toggleLink() {
+  if (linked) { linked = false; draw(); return; }
+  const D = commonRule();
+  if (D === null) return;
+  linked = true;
+  setRule('x', D);                                  // linked, so this rules both
+}
+
+// ---- drawing --------------------------------------------------------------
+const glassCache = new Map();
+function unityGlass(w, h) {
+  const key = Math.round(w) + 'x' + Math.round(h);
+  let g = glassCache.get(key);
+  if (!g) {
+    g = ctx.createRadialGradient(w * 0.44, h * 0.38, 0, w * 0.44, h * 0.38, Math.max(1, w * 0.75));
+    g.addColorStop(0, GLASS_WHITE[0]); g.addColorStop(0.62, GLASS_WHITE[1]);
+    g.addColorStop(1, GLASS_WHITE[2]);
+    if (glassCache.size > 400) glassCache.clear();
+    glassCache.set(key, g);
+  }
+  return g;
+}
+
+function rectScreen(r) {
+  const a = plane.worldToScreen(0, (r.ny / r.dy) * U);
+  const b = plane.worldToScreen((r.nx / r.dx) * U, 0);
+  return { x: a.x, y: a.y, w: b.x - a.x, h: b.y - a.y };
+}
+
+// The rectangle, ruled. Pieces carry their own glass while they are big enough
+// to hold a highlight; below that the whole rectangle is one flat pour and the
+// came alone says how it is divided — which is the honest degradation, because
+// six hundred separate highlights is noise, not glass.
+function drawRect(r) {
+  const s = rectScreen(r);
+  const pw = s.w / r.nx, ph = s.h / r.ny;
+
+  if (Math.min(pw, ph) >= PIECE_GLASS) {
+    for (let i = 0; i < r.nx; i++) for (let j = 0; j < r.ny; j++) {
+      const x = s.x + i * pw, y = s.y + j * ph;
+      if (x > plane.viewportWidth() || y > plane.viewportHeight() || x + pw < 0 || y + ph < 0) continue;
+      ctx.save(); ctx.translate(x, y);
+      ctx.fillStyle = unityGlass(pw, ph);
+      ctx.fillRect(0, 0, pw, ph);
+      ctx.restore();
+    }
+  } else {
+    ctx.save(); ctx.translate(s.x, s.y);
+    ctx.fillStyle = unityGlass(s.w, s.h);
+    ctx.fillRect(0, 0, s.w, s.h);
+    ctx.restore();
+  }
+
+  // The came: the ruling made visible. Inner lines only where they still
+  // resolve — below three pixels the lead stops being a line and starts being
+  // a grey wash, which is the pixel floor speaking and not a thing to fake.
+  ctx.save();
+  ctx.strokeStyle = LATTICE; ctx.lineWidth = 1;
+  ctx.globalAlpha = CAME_ALPHA;
+  if (pw >= CAME_FLOOR || ph >= CAME_FLOOR) {
+    ctx.beginPath();
+    if (pw >= CAME_FLOOR) for (let i = 1; i < r.nx; i++) {
+      const x = CW.snap(s.x + i * pw); ctx.moveTo(x, s.y); ctx.lineTo(x, s.y + s.h);
+    }
+    if (ph >= CAME_FLOOR) for (let j = 1; j < r.ny; j++) {
+      const y = CW.snap(s.y + j * ph); ctx.moveTo(s.x, y); ctx.lineTo(s.x + s.w, y);
+    }
+    ctx.stroke();
+  }
+  // The rectangle's own edge, one step up in presence: the pieces are inside it.
+  ctx.globalAlpha = 0.62; ctx.lineWidth = 1.5;
+  ctx.strokeRect(CW.snap(s.x), CW.snap(s.y), Math.round(s.w), Math.round(s.h));
+  ctx.restore();
+}
+
+// The 1. With nothing on the glass it is a filled white tile with its numeral —
+// the handle, exactly as in the Multiply bench. With a rectangle over it, only
+// its outline is drawn, so it becomes a scale mark instead: the unit square,
+// with the pieces showing through. That is the argument in one object — rule in
+// Thirds and there are visibly nine pieces inside the 1.
+function drawOne() {
+  const a = plane.worldToScreen(0, U), b = plane.worldToScreen(U, 0);
+  const r = { x: a.x, y: a.y, w: b.x - a.x, h: b.y - a.y };
+  ctx.save();
+  if (!rect) {
+    ctx.save();
+    ctx.translate(r.x, r.y);
+    ctx.fillStyle = unityGlass(r.w, r.h);
+    ctx.fillRect(0, 0, r.w, r.h);
+    ctx.restore();
+    ctx.strokeStyle = LATTICE; ctx.globalAlpha = CAME_ALPHA; ctx.lineWidth = 1;
+    ctx.strokeRect(CW.snap(r.x), CW.snap(r.y), Math.round(r.w), Math.round(r.h));
+    ctx.globalAlpha = 1;
+    const size = Math.max(9, Math.min(26, r.w * 0.34));
+    ctx.font = size + 'px Georgia, serif';
+    ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('1', r.x + r.w / 2, r.y + r.h / 2 + size * 0.04);
+  } else {
+    ctx.strokeStyle = LATTICE; ctx.globalAlpha = 0.5; ctx.lineWidth = 2;
+    ctx.strokeRect(CW.snap(r.x), CW.snap(r.y), Math.round(r.w), Math.round(r.h));
+  }
+  ctx.restore();
+}
+
+function draw() {
+  const W = plane.viewportWidth(), H = plane.viewportHeight();
+  ctx.fillStyle = '#f4f1e8'; ctx.fillRect(0, 0, W, H);
+  plane.drawLattice(ctx);          // the plane's own unit lattice, axes and ladder labels
+  const live = build || rect;      // the drag replaces the standing rectangle while it runs
+  if (live) drawRect(live);
+  drawOne();
+  syncPanel();
+}
+
+// ---- the grammar ----------------------------------------------------------
+// Touch the 1 and drag: make a rectangle, snapped to the live ruling on each
+// axis. Touch anywhere else and drag: pan. Pinch or wheel: zoom. A tap on the 1
+// is a drag of zero length and nothing happens. The tap on the glass stays
+// RESERVED, as it was in the Multiply bench before the operation log: there are
+// no marks here to ask about.
+const pointers = new Map();
+let mode = null, build = null, panLast = null, pinch = null;
+
+function oneRect() {
+  const a = plane.worldToScreen(0, U), b = plane.worldToScreen(U, 0);
+  return { x: a.x, y: a.y, w: b.x - a.x, h: b.y - a.y };
+}
+function overOne(x, y) {
+  const r = oneRect(), cx = r.x + r.w / 2, cy = r.y + r.h / 2;
+  const hw = Math.max(r.w / 2, GRAB_MIN / 2), hh = Math.max(r.h / 2, GRAB_MIN / 2);
+  return Math.abs(x - cx) <= hw && Math.abs(y - cy) <= hh;
+}
+// Snapping is to the RULING, not to whatever rung the zoom has plane.js drawing.
+// That is the whole difference between this bench and the last one: rule x in
+// Tenths and 6.3 is one stroke at the greeting zoom, where the Multiply bench
+// needs 400px per unit to reach a tenth and then cannot reach 6.
+function snapPieces(x, y) {
+  const p = plane.screenToWorld(x, y);
+  return { nx: Math.max(1, Math.round(p.x / U * dx)), dx: dx,
+           ny: Math.max(1, Math.round(p.y / U * dy)), dy: dy };
+}
+
+function zoomAbout(sx, sy, factor) {
+  const before = plane.screenToWorld(sx, sy);
+  plane.setZoom(plane.zoom() * factor);
+  const after = plane.screenToWorld(sx, sy);
+  const p = plane.pan();
+  plane.setPan(p.x + (before.x - after.x), p.y + (before.y - after.y));
+  viewSettled = true;
+}
+
+canvas.addEventListener('pointerdown', e => {
+  canvas.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 2) {
+    const p = [...pointers.values()];
+    mode = 'pinch'; build = null; panLast = null;
+    pinch = { d: Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y),
+              mx: (p[0].x + p[1].x) / 2, my: (p[0].y + p[1].y) / 2 };
+  } else if (pointers.size === 1) {
+    if (overOne(e.clientX, e.clientY)) {
+      mode = 'build';
+      build = Object.assign({ sx: e.clientX, sy: e.clientY, moved: false },
+                            snapPieces(e.clientX, e.clientY));
+    } else {
+      mode = 'pan';
+      panLast = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false };
+      canvas.classList.add('dragging');
+    }
+  }
+  draw();
+});
+
+canvas.addEventListener('pointermove', e => {
+  if (!pointers.has(e.pointerId)) {
+    canvas.classList.toggle('overone', overOne(e.clientX, e.clientY));
+    return;
+  }
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (mode === 'pinch' && pointers.size >= 2) {
+    const p = [...pointers.values()];
+    const d = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+    const mx = (p[0].x + p[1].x) / 2, my = (p[0].y + p[1].y) / 2;
+    if (pinch.d > 0) zoomAbout(mx, my, d / pinch.d);
+    const pan = plane.pan();
+    plane.setPan(pan.x - (mx - pinch.mx) / plane.zoom(), pan.y + (my - pinch.my) / plane.zoom());
+    pinch = { d, mx, my };
+  } else if (mode === 'build' && build) {
+    if (!build.moved && Math.hypot(e.clientX - build.sx, e.clientY - build.sy) > MOVE_SLOP)
+      build.moved = true;
+    Object.assign(build, snapPieces(e.clientX, e.clientY));
+  } else if (mode === 'pan' && panLast) {
+    const dxp = e.clientX - panLast.x, dyp = e.clientY - panLast.y;
+    const pan = plane.pan();
+    plane.setPan(pan.x - dxp / plane.zoom(), pan.y + dyp / plane.zoom());
+    if (Math.hypot(e.clientX - panLast.sx, e.clientY - panLast.sy) > MOVE_SLOP) panLast.moved = true;
+    panLast.x = e.clientX; panLast.y = e.clientY;
+    viewSettled = true;
+  } else return;
+  draw();
+});
+
+function endPointer(e) {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.delete(e.pointerId);
+  if (mode === 'build' && build) {
+    // A zero-length drag on the 1 leaves everything as it was — carried from the
+    // Multiply bench, where the 1's grab box was swallowing taps meant for what
+    // lay under it. Nothing lies under it here, so the tap simply does nothing.
+    if (build.moved) rect = { nx: build.nx, dx: build.dx, ny: build.ny, dy: build.dy };
+    build = null; mode = null;
+  } else if (mode === 'pan' && panLast) {
+    panLast = null; mode = null;
+    canvas.classList.remove('dragging');
+  } else if (mode === 'pinch') {
+    if (pointers.size === 1) {                 // one finger left: carry on panning
+      const p = [...pointers.values()][0];
+      mode = 'pan'; panLast = { x: p.x, y: p.y, sx: p.x, sy: p.y, moved: true };
+    } else { mode = null; pinch = null; }
+  }
+  if (pointers.size === 0) { mode = null; pinch = null; canvas.classList.remove('dragging'); }
+  draw();
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoomAbout(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0015));
+  draw();
+}, { passive: false });
+
+// ---- the panel ------------------------------------------------------------
+const outEl = document.getElementById('out');
+const linkBtn = document.getElementById('link'),
+      homeBtn = document.getElementById('home'),
+      clearBtn = document.getElementById('clear');
+const wordBtn = { x: {}, y: {} };
+
+['x', 'y'].forEach(axis => {
+  const host = document.getElementById(axis === 'x' ? 'wx' : 'wy');
+  DENOMS.forEach(D => {
+    const b = document.createElement('button');
+    b.textContent = NAME[D];
+    b.addEventListener('click', () => setRule(axis, D));
+    host.appendChild(b);
+    wordBtn[axis][D] = b;
+  });
+});
+
+const frac = (n, d) => d === 1 ? String(n)
+  : '<span class="frac"><span class="nu">' + n + '</span><span class="de">' + d + '</span></span>';
+
+function syncPanel() {
+  const r = build && build.moved ? build : rect;
+  ['x', 'y'].forEach(axis => {
+    const live = axis === 'x' ? dx : dy;
+    DENOMS.forEach(D => {
+      const b = wordBtn[axis][D];
+      b.setAttribute('aria-pressed', String(D === live));
+      // Dark exactly when pressing it would do nothing — which while the rows
+      // are linked means either side refusing the ruling, not just this one.
+      b.classList.toggle('dark', !ruleOffered(axis, D));
+    });
+  });
+  linkBtn.textContent = linked ? 'Split' : 'Link';
+  linkBtn.classList.toggle('dark', !linked && commonRule() === null);
+  homeBtn.classList.toggle('gone', atGreeting());
+  clearBtn.classList.toggle('gone', !rect);
+
+  // count · worth of one piece · total. The total is the same on every ruling,
+  // which is the sentence the bench exists to make. The two sides are not here
+  // on purpose — see Q2.
+  if (!r) { outEl.innerHTML = ''; return; }
+  const pieces = r.nx * r.ny, den = r.dx * r.dy;
+  const g = gcd(pieces, den);
+  outEl.innerHTML = '<span class="lbl">' + pieces + (pieces === 1 ? ' piece' : ' pieces') +
+                    ' ×</span> ' + frac(1, den) +
+                    ' <span class="lbl">=</span> ' + frac(pieces / g, den / g);
+}
+
+linkBtn.addEventListener('click', toggleLink);
+homeBtn.addEventListener('click', () => { plane.resetView(); viewSettled = false; draw(); });
+clearBtn.addEventListener('click', () => { rect = null; dx = 1; dy = 1; linked = true; draw(); });
+
+reset();
+resize();
+})();
+</script>
+</body>
+</html>

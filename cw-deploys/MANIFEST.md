@@ -96,6 +96,33 @@ to test yesterday's work.
   (`CWVault/01-ACTIVE/Walk-Glass-Aug26.md`), and this lab stays live throughout.
 
 ### experiments/
+- **`ruling-bench.html`** — bench: **does multiplication care how the grid is
+  ruled?** The second of the review's step-3 benches, and the companion to
+  `multiply-bench.html`. A rectangle (2 × 3 to open) on the shared plane, and
+  five rulings per axis as **words** — Units · Halves · Thirds · Fifths ·
+  Tenths — with **Split** to unlink the two rows. The rectangle never moves,
+  never resizes; only the came does. 6 pieces × 1 = 6 · 24 × ¹⁄₄ = 6 · 54 × ¹⁄₉
+  = 6 · 150 × ¹⁄₂₅ = 6 · 600 × ¹⁄₁₀₀ = 6, the total identical on every ruling
+  and read off a fixed corner readout in properly stacked fractions. Split
+  rulings make a piece worth the product of the two grains: x in fifths and y in
+  halves, and 3/5 × 1/2 is one stroke reading `3 pieces × ¹⁄₁₀ = ³⁄₁₀`. **The
+  drag snaps to the ruling, not to the zoom** — which is the whole difference
+  from the Multiply bench, and the answer to what that one found: there grain is
+  tied to zoom, tenths need ~400px per unit, and 6.3 is off every screen at that
+  zoom; here 6.3 × 2 is one stroke at the greeting. Reach is the argument for
+  the ruling act. All arithmetic is integer ratios — thirds exist here, which
+  they do not in base ten. The **1 keeps its outline** under the rectangle as a
+  scale mark, so at Thirds there are visibly nine pieces inside it.
+  **Not designed, and left standing:** a ruling word goes dark while it cannot
+  measure the side it would rule — at 3/5 only Fifths and Tenths are lit — and
+  with x = 1/3 and y = 1/2 there is no single ruling among the five that measures
+  both, so **Link** goes dark as well. Divisibility arriving in the panel; it is
+  the bench's fourth question in its sharpest form. Never a dead end: the drag
+  snaps to the live grain and a whole number of pieces is always reachable, so
+  the coarse words come back. Its four questions are at the top of the source.
+  Stands on `js/plane.js` and nothing else; shares no code with the Multiply
+  bench, and the header names the four blocks worth extracting when a third
+  bench wants them.
 - **`multiply-bench.html`** — bench: Multiply, alone, on the plane. Step 3 of
   `CWVault/01-ACTIVE/Review-Glass-Aug26.md`'s order of work — one file per tool,
   standing on `js/plane.js` and nothing else, with **no table code**: no panes

@@ -1,7 +1,7 @@
 ---
 status: Live — the single place threads are parked
 role: The board. One line per thread. Read first, written last.
-updated: 2026-09-01 (evening) (Michael ran the Multiply bench himself and sent six changes; all six are in. Three are reversals — hiding duplicates now keeps the **lower** tile, tiles split **white on the crease / grey off it**, and the reserved tap has a body: it shows the rectangle a tile was made from. Added: Home, Clear, and numerals drawn newest-under-oldest. Two things the pass did not foresee are left standing rather than patched, and one gloss is flagged against the 19 Aug correction. See thread 1. Earlier today: Multiply has a bench — `cw-deploys/experiments/multiply-bench.html`, step 3 of the review's order of work: one tool on `plane.js` alone, no table code, four questions left standing in the source. It found a fifth nobody asked for — tenths only exist above ~400px per unit, so the walk's own 6.3 × 2 cannot be drawn on an iPad; recorded, not patched. See thread 1. Earlier same day: Housekeeping — the blocked commit is cleared. The 24 Aug panel build of Glass Multiplication is frozen unshipped at `prototypes/glass-panel-build-aug24.html` and `active/` is restored to the deployed 13 Aug lab; nothing new deployed. Nine days of vault docs land with it — the three tool specs, the panel prompt, the first story set, the 26 Aug review and walk, the reader-prototype brief, the Frankenstein-11816 constellation and the chladni bench seed. No code changed. Earlier: Frankenstein-11816 constellation seeded into 02-CONSTELLATIONS — sixteen nodes, twenty-four claim edges, parked warm with a `threads` facet decision owed; see Parked — warm. Earlier: 26 Aug evening — Glass ruled onto the plane and the walk run through Make a square — see thread 1 and 01-ACTIVE/Walk-Glass-Aug26.md. Earlier same day: reviewed — see thread 1, 26 Aug entry; the 24 Aug build is diagnosed, not fixed. Earlier: 25 Aug — Six Against Five revised and redeployed after a listening pass: three asserted claims disproved, a ringing traced to a click truncated at the loop seam and fixed, piano strip and click-pitch knob added, the long reading rewritten. One listen owed — 3:2 at full brightness. Glass Multiplication's panel architecture from 24 Aug was **uncommitted and undeployed** on Michael's instruction — as of 1 Sep it is frozen as a prototype, see the lead: the mode bar dissolved, the **Building Numbers** rail and panel in, the first set — Multiply, Divide, Make a square, Explore — wired to the specs; three Multiply questions left as hooks; Build and Properties are code without a word)
+updated: 2026-09-01 (late) (The **Ruling bench** is built — `experiments/ruling-bench.html`, the second of the review's step-3 benches: a rectangle, five rulings per axis as words, Split to unlink them. The rectangle never moves; only the came does, and the total is 6 on every ruling. It answers the Multiply bench's reach finding — ruling is an act, so 6.3 × 2 is one stroke at the greeting. Both benches now push to Netlify. One thing nobody designed: ruling words go dark while they cannot measure the side, and for 1/3 × 1/2 no single ruling measures both. Earlier: Michael ran the Multiply bench himself and sent six changes; all six are in. Three are reversals — hiding duplicates now keeps the **lower** tile, tiles split **white on the crease / grey off it**, and the reserved tap has a body: it shows the rectangle a tile was made from. Added: Home, Clear, and numerals drawn newest-under-oldest. Two things the pass did not foresee are left standing rather than patched, and one gloss is flagged against the 19 Aug correction. See thread 1. Earlier today: Multiply has a bench — `cw-deploys/experiments/multiply-bench.html`, step 3 of the review's order of work: one tool on `plane.js` alone, no table code, four questions left standing in the source. It found a fifth nobody asked for — tenths only exist above ~400px per unit, so the walk's own 6.3 × 2 cannot be drawn on an iPad; recorded, not patched. See thread 1. Earlier same day: Housekeeping — the blocked commit is cleared. The 24 Aug panel build of Glass Multiplication is frozen unshipped at `prototypes/glass-panel-build-aug24.html` and `active/` is restored to the deployed 13 Aug lab; nothing new deployed. Nine days of vault docs land with it — the three tool specs, the panel prompt, the first story set, the 26 Aug review and walk, the reader-prototype brief, the Frankenstein-11816 constellation and the chladni bench seed. No code changed. Earlier: Frankenstein-11816 constellation seeded into 02-CONSTELLATIONS — sixteen nodes, twenty-four claim edges, parked warm with a `threads` facet decision owed; see Parked — warm. Earlier: 26 Aug evening — Glass ruled onto the plane and the walk run through Make a square — see thread 1 and 01-ACTIVE/Walk-Glass-Aug26.md. Earlier same day: reviewed — see thread 1, 26 Aug entry; the 24 Aug build is diagnosed, not fixed. Earlier: 25 Aug — Six Against Five revised and redeployed after a listening pass: three asserted claims disproved, a ringing traced to a click truncated at the loop seam and fixed, piano strip and click-pitch knob added, the long reading rewritten. One listen owed — 3:2 at full brightness. Glass Multiplication's panel architecture from 24 Aug was **uncommitted and undeployed** on Michael's instruction — as of 1 Sep it is frozen as a prototype, see the lead: the mode bar dissolved, the **Building Numbers** rail and panel in, the first set — Multiply, Divide, Make a square, Explore — wired to the specs; three Multiply questions left as hooks; Build and Properties are code without a word)
 ---
 
 # The Board
@@ -462,11 +462,52 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   exact slip is already in `00-DECISIONS`' Corrections, dated 19 Aug, caught the
   same way. Nothing in the behaviour depends on it. Recorded here because the
   ledger exists so it is not asserted a third time.
-- **Next action:** four rulings owed on the bench, in this order — the
-  reach-versus-refinement finding (it gates whether Multiply owns decimals at
-  all), the mirrored making, whether Clear is recoverable, and the two still-open
-  items from the first pass (redraw, and the decimal speck). Then the next two
-  benches, Divide and Squares, on the same terms. In parallel the walk resumes at **Primes** (colour's arrival; the 24 Aug
+- **Ruling bench built and pushed, 1 Sep late** — `cw-deploys/experiments/ruling-bench.html`,
+  the second of the review's step 3. One question on screen: *does multiplication
+  care how the grid is ruled?* A rectangle on the shared plane and five rulings
+  per axis as **words** — Units · Halves · Thirds · Fifths · Tenths — with
+  **Split** to unlink the rows. The rectangle never moves, never resizes; only
+  the came does. 6 × 1, 24 × ¹⁄₄, 54 × ¹⁄₉, 150 × ¹⁄₂₅, 600 × ¹⁄₁₀₀ — every one
+  of them 6, verified against the readout. Split rulings make a piece worth the
+  two grains multiplied: x in fifths, y in halves, and 3/5 × 1/2 reads
+  `3 pieces × ¹⁄₁₀ = ³⁄₁₀`. **The drag snaps to the ruling, not to the zoom** —
+  which is the answer to the Multiply bench's reach finding: 6.3 × 2 is one
+  stroke at the greeting here, where the other bench cannot reach it at any zoom
+  that shows tenths. **Reach is the argument for the ruling act**, and that is
+  now benched rather than argued. Arithmetic is integer ratios throughout, so
+  thirds exist — they do not in the Multiply bench's base ten. Registered in
+  `MANIFEST.md` and `experiments/index.html`; **pushed, so both benches are on
+  Netlify** and Michael can drive them on the iPad.
+- **What the ruling bench found that nobody designed.** Re-ruling and fractional
+  sides collide: 3/5 is not a whole number of halves, so *the rectangle never
+  moves* and *any word may be chosen* cannot both hold. Resolved in favour of the
+  rectangle — **a ruling word is offered only while it can measure the current
+  side, and goes dark when it cannot; nothing ever snaps or jumps.** At x = 3/5
+  only Fifths and Tenths are lit. Not a dead end: the drag snaps to the live
+  grain and a whole number of pieces is always reachable, so the coarse words
+  come back — verified. **And the sharp case:** build 1/3 × 1/2 and **Link goes
+  dark too**, because no single ruling among the five measures both sides. That
+  is the bench's fourth question — *the twin symmetry is a casualty of mixed
+  terms* — arriving on the panel rather than in an argument. **Owed a ruling
+  from Michael**, along with whether the fade is the right treatment at all.
+- **Deferred by the prompt, and noted:** the two benches share no code. Roughly
+  120 lines are duplicated on purpose — the plane greeting and `atGreeting()`,
+  the pointer block (pan / pinch / drag-the-1 with GRAB_MIN and MOVE_SLOP), the
+  glass gradient cache, and the panel's fade-when-irrelevant sync. Named in the
+  ruling bench's header as what to extract **when a third bench wants it, and
+  not before**. That is the first real candidate for a shared file beyond
+  `plane.js` and `cw-panel.js`, and CLAUDE.md says not to add one without
+  architectural justification — a third bench would be it.
+- **Next action:** **Michael drives both benches on the iPad** — they are live,
+  and pinch-zoom has still never met real fingers. Then the rulings owed, in this
+  order: the reach-versus-refinement finding (it gates whether Multiply owns
+  decimals at all, and the ruling bench is the alternative answer to it); the
+  ruling bench's dark-word rule and the no-common-ruling case; the mirrored
+  making; whether Clear is recoverable; and the two still-open items from the
+  first pass (redraw, and the decimal speck). The Aug 19 note that different
+  units on x and y were "correctly deferred" is **un-deferred by this bench** and
+  its reversal belongs in `00-DECISIONS.md` once Michael confirms it. Then Divide
+  and Squares, on the same terms. In parallel the walk resumes at **Primes** (colour's arrival; the 24 Aug
   prime-button entries are decided but unbenched — read them cold first), then
   Properties, the table viewing, fractions-as-triangles, and Divide's open modes
   question. Benches before any lab build. Still standing from the 24 Aug report:
