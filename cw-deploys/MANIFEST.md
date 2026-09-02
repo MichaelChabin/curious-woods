@@ -13,6 +13,10 @@ No version numbers or dates in filenames here: the file at
 `experiments/index.html`, never from the main index. Version numbers are
 allowed here.
 
+**`_redirects`** — root of this folder, alongside `_headers`. Netlify reads it. Holds the
+301s left behind when a live page moves; a page that has been published keeps its old URL
+working, for the same reason retired files are never deleted.
+
 **`../outdated-files/`** — outside this folder, so Netlify never serves it.
 Superseded versions, kept as the archive record.
 
@@ -227,6 +231,66 @@ to test yesterday's work.
   because on the bottom and left they sat against the plane's own axis labels
   and were read as those. Standalone otherwise; deliberately not deployed into
   `active/` and not linked from the main index.
+
+- **`number-theory-v1.html`** — multiplication and division as rectangles on a
+  pannable number plane. **The behavioural reference for the extracted plane** — y-up,
+  `viewW/viewH` caching, and a single `labelStep()` driving both labels and grid lines,
+  which is why its texture stays coherent under zoom.
+- **`canvas-panes.html`** — bench: can canvas carry leaded panes of layered glass while
+  panning and zooming? Pane counts 10/16/24/32, glass detail full / flat / came-only,
+  auto-stress. **Passed** — 32×32 is 1024 panes and 3840 pieces at 2.4 ms p95, 14% of
+  the frame budget. It reports *draw time against the budget*, not frame rate: frame
+  rate is vsync-clamped and reads 60fps until it reads 30, so it cannot fail and is
+  useless as a gate. Any future performance bench should measure the same way.
+- **`fills-and-light.html`** — bench: two declared palettes, a resting one and a lit one,
+  rather than one degraded. Both derived from the workshop's declared colour in OKLCH so
+  hue never moves, with out-of-gamut results flagged rather than silently clipped. All
+  fifteen palettes from `../art/palettes.json` are imported, plus the colours the lab
+  ships today. Showing a set — or selecting a pane — moves those panes to the lit palette;
+  nothing is dimmed. Glass is flat with directional striations and seeds; inner cames and
+  the pane frame carry separate colour and weight; highlights are elliptical, brighter
+  when smaller, and only some pieces catch them. Results in
+  `CWVault/01-ACTIVE/Decisions-Fills-Aug06.md`.
+- **`prime-glass.html`** — bench: prime colours across four workshops with ordered
+  stripes and a monochrome toggle. With colour off and order the only channel, 6, 10 and
+  14 render identical — so colour currently carries information rather than delight, and
+  a second channel is required. Two candidates are in the bench. In progress.
+- **`map-reveal.html`** — bench: the map reveal. The grid of the visible window
+  constructed by compass and straightedge — full circles only, the lab's own
+  vocabulary — with knobs for duration, legible opening and acceleration, tap-skip,
+  and a deep-zoom mode where the tenths construct themselves. Settles the reveal's
+  tempo by looking (`CWVault/01-ACTIVE/Decisions-Controls-Aug12.md` §8, §11, §15:
+  content is never compressed, only time). Standalone; does not stand on the plane.
+- **`fog-map.html`** — sketch: every pane shaded by the rank of its largest prime
+  factor, white at 2, saturating at the 256th, panning to a million. A *magnitude*
+  viewing rather than a factor-reading one — it asks how big, not which. Standalone: it
+  does not stand on the plane and is not the port. Listed in `experiments/index.html`.
+  Seed: `CWVault/03-SEEDS/smoothness-fog.md`; ruling it provoked:
+  `CWVault/01-ACTIVE/Decisions-Fog-Aug12.md`.
+- **`pi-beads.html`** — how many beads fit around a circle; circumference ÷
+  diameter, with past measurements kept.
+- **`prime-tones.html`** — listening bench for the primes 11 and 13: four candidate
+  schemes played against the four the lab already has. Settled the octave question
+  (`CWVault/01-ACTIVE/Decisions-GlassMult-Aug03.md`). Whether it belongs to the Sound
+  Series or stays interface work is open.
+- **`clinks-triangular.html`** — triangular numbers as people arriving, leaving,
+  and clinking glasses.
+- **`necker-brain-map.html`** — the path a Necker cube flip takes through the
+  brain, drawn as a station map. Uses
+  `../stories/necker-cube/brain-watercolor.jpeg`.
+- **`sound-workbench.html`** — bench for auditioning gesture sounds, feedback
+  sounds, pitch and ratios.
+- **`cursor-modes.html`** — what the pointer becomes for each gesture.
+
+#### experiments/sound-benches/
+
+The Sound Series, kept together since 31 Aug: three benches on one idea — that a note
+is a fast rhythm — sharing a vocabulary, each correcting the one before it. Listed from
+`experiments/sound-benches/index.html`, which the main experiments index links as a
+single entry. **A bench belongs here** if it stands on that idea and shares the
+vocabulary; anything else stays a level up. The three moved with `git mv` from
+`experiments/`, where they had been live, so `_redirects` keeps the old URLs working.
+
 - **`strobe-and-stars.html`** — bench: a loudspeaker edge-on under a strobe. The cone is one
   bar between `{` and `}`; the strobe runs at the bottom note, so that note freezes and is the
   reference. A voice at `n/d` visits exactly **d** phases and the flashes joined in order draw
@@ -289,55 +353,6 @@ to test yesterday's work.
   `CWVault/01-ACTIVE/Sound-Counting-Bench-Aug25.md`, `…/Sound-Rhythm-Roll-Aug21.md`,
   `…/Sound-Series-Aug08.md`.
   Open: no tapping, and whether 3:2 stays clean at full brightness on the fixed build.
-- **`number-theory-v1.html`** — multiplication and division as rectangles on a
-  pannable number plane. **The behavioural reference for the extracted plane** — y-up,
-  `viewW/viewH` caching, and a single `labelStep()` driving both labels and grid lines,
-  which is why its texture stays coherent under zoom.
-- **`canvas-panes.html`** — bench: can canvas carry leaded panes of layered glass while
-  panning and zooming? Pane counts 10/16/24/32, glass detail full / flat / came-only,
-  auto-stress. **Passed** — 32×32 is 1024 panes and 3840 pieces at 2.4 ms p95, 14% of
-  the frame budget. It reports *draw time against the budget*, not frame rate: frame
-  rate is vsync-clamped and reads 60fps until it reads 30, so it cannot fail and is
-  useless as a gate. Any future performance bench should measure the same way.
-- **`fills-and-light.html`** — bench: two declared palettes, a resting one and a lit one,
-  rather than one degraded. Both derived from the workshop's declared colour in OKLCH so
-  hue never moves, with out-of-gamut results flagged rather than silently clipped. All
-  fifteen palettes from `../art/palettes.json` are imported, plus the colours the lab
-  ships today. Showing a set — or selecting a pane — moves those panes to the lit palette;
-  nothing is dimmed. Glass is flat with directional striations and seeds; inner cames and
-  the pane frame carry separate colour and weight; highlights are elliptical, brighter
-  when smaller, and only some pieces catch them. Results in
-  `CWVault/01-ACTIVE/Decisions-Fills-Aug06.md`.
-- **`prime-glass.html`** — bench: prime colours across four workshops with ordered
-  stripes and a monochrome toggle. With colour off and order the only channel, 6, 10 and
-  14 render identical — so colour currently carries information rather than delight, and
-  a second channel is required. Two candidates are in the bench. In progress.
-- **`map-reveal.html`** — bench: the map reveal. The grid of the visible window
-  constructed by compass and straightedge — full circles only, the lab's own
-  vocabulary — with knobs for duration, legible opening and acceleration, tap-skip,
-  and a deep-zoom mode where the tenths construct themselves. Settles the reveal's
-  tempo by looking (`CWVault/01-ACTIVE/Decisions-Controls-Aug12.md` §8, §11, §15:
-  content is never compressed, only time). Standalone; does not stand on the plane.
-- **`fog-map.html`** — sketch: every pane shaded by the rank of its largest prime
-  factor, white at 2, saturating at the 256th, panning to a million. A *magnitude*
-  viewing rather than a factor-reading one — it asks how big, not which. Standalone: it
-  does not stand on the plane and is not the port. Listed in `experiments/index.html`.
-  Seed: `CWVault/03-SEEDS/smoothness-fog.md`; ruling it provoked:
-  `CWVault/01-ACTIVE/Decisions-Fog-Aug12.md`.
-- **`pi-beads.html`** — how many beads fit around a circle; circumference ÷
-  diameter, with past measurements kept.
-- **`prime-tones.html`** — listening bench for the primes 11 and 13: four candidate
-  schemes played against the four the lab already has. Settled the octave question
-  (`CWVault/01-ACTIVE/Decisions-GlassMult-Aug03.md`). Whether it belongs to the Sound
-  Series or stays interface work is open.
-- **`clinks-triangular.html`** — triangular numbers as people arriving, leaving,
-  and clinking glasses.
-- **`necker-brain-map.html`** — the path a Necker cube flip takes through the
-  brain, drawn as a station map. Uses
-  `../stories/necker-cube/brain-watercolor.jpeg`.
-- **`sound-workbench.html`** — bench for auditioning gesture sounds, feedback
-  sounds, pitch and ratios.
-- **`cursor-modes.html`** — what the pointer becomes for each gesture.
 
 ## When a page is superseded
 

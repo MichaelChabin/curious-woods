@@ -1,0 +1,5 @@
+# Sound benches moved into their own folder, 31 Aug 2026.
+# The old paths were live, so they keep working.
+/experiments/six-against-five.html      /experiments/sound-benches/six-against-five.html      301
+/experiments/scale-from-a-rhythm.html   /experiments/sound-benches/scale-from-a-rhythm.html   301
+/experiments/strobe-and-stars.html      /experiments/sound-benches/strobe-and-stars.html      301
