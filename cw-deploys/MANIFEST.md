@@ -120,55 +120,45 @@ to test yesterday's work.
 
 ### experiments/
 - **`ruling-bench.html`** — bench: **does multiplication care how the grid is
-  ruled?** The second of the review's step-3 benches, and the companion to
-  `multiply-bench.html`. A rectangle (2 × 3 to open) on the shared plane, and
-  five rulings per axis as **words** — Units · Halves · Thirds · Fifths ·
-  Tenths — with **Split** to unlink the two rows. The rectangle never moves,
-  never resizes; only the came does. 6 pieces × 1 = 6 · 24 × ¹⁄₄ = 6 · 54 × ¹⁄₉
-  = 6 · 150 × ¹⁄₂₅ = 6 · 600 × ¹⁄₁₀₀ = 6, the total identical on every ruling
-  and read off a fixed corner readout in properly stacked fractions. **The
-  readout runs four lines deep** (2 Sep, Michael's ask), and the right-hand side
-  is the same number on every one: the count and the worth of a piece; then the
-  two sides as fractions, **the height first, each with the denominator of the
-  ruling that measures it** — 3 × 2, then 6/2 × 4/2, then 9/3 × 6/3, then
-  30/10 × 20/10, all of them 6; then the same two over the **smallest common
-  denominator**; then the **mixed number** we would normally write. The last two
-  lines are drawn only when they say something — a linked ruling has already put
-  both sides over one denominator, and a proper fraction has no whole part to
-  lift out. Its second bench question narrowed with that change — the sides are
-  written now, so what is left to watch is whether the picture is still consulted
-  or the panel carries her alone. The fractions are set on **the math axis** —
-  the line is a flex row with `align-items:center`, so every term's box centre,
-  and a fraction's bar, land on one line; `vertical-align` on a two-line stack
-  cannot do it, because it aligns the numerator's baseline and the bar falls
-  wherever the leading leaves it. Measured at spread 0.00px. The technique is
-  worth reusing, and since 2 Sep it is not a technique but a file: the readout is
-  written in `CW.num`'s terms, and so are the Multiply bench, plane.js's tick
-  labels and Glass Multiplication's pane numerals. **The two sides are also
-  written on the rectangle itself** (2 Sep) — width centred on the top edge,
-  height on the right, bold, each a stacked fraction in the terms of the ruling
-  that measures it: 8/3 tall by 7/2 wide, never 2.67 by 3.5, because thirds have
-  no decimal and the ruling is what she chose. That closes the bench's second
-  question by answering it; what replaced it is in the file header. Split
-  rulings make a piece worth the product of the two grains: x in fifths and y in
-  halves, and 3/5 × 1/2 is one stroke reading `3 pieces × ¹⁄₁₀ = ³⁄₁₀`. **The
-  drag snaps to the ruling, not to the zoom** — which is the whole difference
-  from the Multiply bench, and the answer to what that one found: there grain is
-  tied to zoom, tenths need ~400px per unit, and 6.3 is off every screen at that
-  zoom; here 6.3 × 2 is one stroke at the greeting. Reach is the argument for
-  the ruling act. All arithmetic is integer ratios — thirds exist here, which
-  they do not in base ten. The **1 keeps its outline** under the rectangle as a
-  scale mark, so at Thirds there are visibly nine pieces inside it.
-  **Not designed, and left standing:** a ruling word goes dark while it cannot
-  measure the side it would rule — at 3/5 only Fifths and Tenths are lit — and
-  with x = 1/3 and y = 1/2 there is no single ruling among the five that measures
-  both, so **Link** goes dark as well. Divisibility arriving in the panel; it is
-  the bench's fourth question in its sharpest form. Never a dead end: the drag
-  snaps to the live grain and a whole number of pieces is always reachable, so
-  the coarse words come back. Its four questions are at the top of the source.
-  Stands on `js/plane.js` and nothing else; shares no code with the Multiply
-  bench, and the header names the four blocks worth extracting when a third
-  bench wants them.
+  ruled?** The second of the review's step-3 benches, companion to
+  `multiply-bench.html`, which stays the authority for everything the two share.
+  A rectangle on the shared plane and, under it, a ruling she **steps**: each
+  axis shows one word with a step to either side — ‹ Thirds › — walking Units,
+  Halves, Thirds, Fourths, Fifths and on without end, the words becoming 11ths,
+  12ths past Tenths. **Nothing is special about ten**, which was the last place
+  base ten was privileged here. **Split** unlinks the axes; the finer step
+  stands down at the pixel floor, which moves with the zoom, so the answer is
+  always *zoom in and there is more*.
+  **The rectangle is a true size, not a count of pieces** — two exact rationals
+  that do not change when the ruling does. That separation is the whole design:
+  the ruling is a lens laid over a thing rather than the terms the thing is made
+  of, which is what lets a ruling fail to measure it. **Any ruling is settable
+  and the fit is something she sees**: when the ruling does not measure a side,
+  the pieces at the far edge are **cut short — real glass cut at the boundary,
+  filled and leaded, never a thin line** — and the count along that side does not
+  come out whole. Nothing is disabled, nothing announced.
+  **The readout is one line, on release:** `8/3 × 7/5 = 56/15`, the sides as
+  their rulings counted them, unreduced. It is absent while a finger is down and
+  absent while the ruling cannot count both sides — there is no whole-number
+  multiplication to state and a rounded one would break *never more precision
+  than the act showed*.
+  **The restack is division as regrouping.** Stack ↑ and Stack → re-pour the
+  pieces into a channel one unit wide or one unit tall, animated a row at a time
+  (about half a second apiece at small counts, accelerating when the same shape
+  is asked again). Every dx·dy pieces closes a whole square, visibly, with a
+  unit seam; the leftover keeps its seam too, so its missing pieces are plainly
+  absent. Only when the regrouping finishes does the second line appear —
+  `56/15 = 3 11/15` — and it performs no arithmetic: it names what the glass has
+  already counted out. **Both directions land on the same answer**, which is the
+  point of there being two. The arrows stand down when the ruling does not fit
+  (a cut piece cannot become part of a whole square) and past 600 pieces
+  (the animation is the counting, and nobody counts six hundred of anything).
+  Dragging from the 1 at any time starts over.
+  Numbers throughout are `CW.num`'s. Its six bench questions are at the top of
+  the source, along with the three readings the prompt left to the build.
+  Stands on `js/plane.js` and `js/cw-number.js`; shares no other code with the
+  Multiply bench, and the header names what to extract when a third bench wants
+  it.
 - **`multiply-bench.html`** — bench: Multiply, alone, on the plane. Step 3 of
   `CWVault/01-ACTIVE/Review-Glass-Aug26.md`'s order of work — one file per tool,
   standing on `js/plane.js` and nothing else, with **no table code**: no panes
