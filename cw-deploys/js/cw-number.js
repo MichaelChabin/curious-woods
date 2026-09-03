@@ -118,6 +118,7 @@ CW.num = {
         opts = opts || {};
         d = d || 1;
         if (d === 1) return '<span class="cw-n">' + group(String(n)) + '</span>';
+        if (opts.mixed && n % d === 0) return CW.num.html(n / d, 1);   // 60/12 is 5, not 5 and no twelfths
         if (opts.mixed && Math.abs(n) > d) {
             var w = (n < 0 ? -1 : 1) * Math.floor(Math.abs(n) / d), r = Math.abs(n) % d;
             return '<span class="cw-mix"><span class="cw-n">' + group(String(w)) +

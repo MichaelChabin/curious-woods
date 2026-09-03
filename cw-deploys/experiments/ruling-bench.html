@@ -77,7 +77,7 @@
   </div>
 </div>
 
-<script src="../js/cw-number.js?v=2026-09-02"></script>
+<script src="../js/cw-number.js?v=2026-09-03"></script>
 <script src="../js/plane.js?v=2026-08-13"></script>
 <script>
 var CW_VERSION = '2026-09-03 4d541ed'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
@@ -119,31 +119,53 @@ var CW_VERSION = '2026-09-03 4d541ed'; try { console.log('Curious Woods · ' + d
 //     numbers, which is where it belonged.
 //
 // ---------------------------------------------------------------------------
+// FOURTH PASS, 3 Sep — the restack happens in place, and x comes first.
+//
+//   • THE TRAIN IS RETIRED. The third pass tore the whole rectangle apart and
+//     rebuilt every square from scratch, which made the wholes look
+//     manufactured. THEY WERE ALREADY THERE: ⌊w⌋ × ⌊h⌋ unit squares stand
+//     grid-aligned from the origin inside any rectangle. Now they outline in
+//     place, one seam a beat, and NOTHING MOVES — then only the leftovers
+//     travel. Finding beats making.
+//
+//   • WIDTH BEFORE HEIGHT. The 2 Sep height-first ruling is reversed: the line
+//     reads x × y, matching the pane address (column, row) and the walk's own
+//     examples. 10/3 × 6/4 = 60/12.
+//
+// The count is exact by construction rather than by arithmetic: for every
+// rectangle ⌊w⌋⌊h⌋ + ⌊leftover/Q⌋ is ⌊area⌋, and what is left over is the
+// fraction. That is why no line of the readout ever multiplies or divides —
+// the glass has already done it, twice, and the same both ways.
+//
+// ---------------------------------------------------------------------------
 // WHAT TO LOOK AT — six questions, none answered here by fiat.
 //
-//  Q1. Step x's ruling under a side of 1/3: it fits at every third press.
-//      Under 1/2, every second. Linked, both fit together first at Sixths, then
+//  Q1. Does outlining-in-place read as FINDING wholes that were already there,
+//      rather than making them? The seams arrive over a rectangle that has not
+//      moved a pixel, which is the whole of the claim.
+//
+//  Q2. Is the gathering legible when pieces arrive from two strips and a corner
+//      at once? 10/3 × 6/4 sends 18 from the top strip, 4 from the right and 2
+//      from the corner into two squares. The only thing steering it is the
+//      order they are taken in — top, right, corner — and that is one line.
+//
+//  Q3. Does the camera's follow–mark–return feel like completion, or like being
+//      yanked home? An iPad question; a screenshot cannot answer it.
+//
+//  Q4. Step x's ruling under a side of 1/3: it fits at every third press. Under
+//      1/2, every second. Linked, both fit together first at Sixths, then
 //      Twelfths. Does the rhythm arrive by LOOKING, or only by being told?
 //
-//  Q2. The common term arrives without anyone asking for it: split rulings mint
+//  Q5. The common term arrives without anyone asking: split rulings mint
 //      identical pieces, and the cross-hatched 1 shows their worth. Does she
 //      read the piece against the 1 unprompted?
 //
-//  Q3. Does the moment a square closes read as "a whole 1", and does the
-//      partial read as 11-of-15 without being told? The partial keeps its full
-//      unit seam so the missing 4 are plainly absent rather than merely not
-//      there.
-//
-//  Q4. Do Stack ↑ and Stack → register as the same fact twice, or as two
-//      different operations? They must land on the same answer; that is the
-//      point of there being two.
-//
-//  Q5. A rectangle smaller than the 1 — 1/3 × 1/2 — restacks to a lone partial
-//      square, and the second line adds nothing new: it reads 1/6 = 1/6. Do the
-//      arrows still make sense there, or should they sit quiet below area 1?
-//
 //  Q6. Is the stepper fast enough for the hunt, or does walking from Units to
 //      Twelfths one press at a time kill the wanting to?
+//
+//  LEFT UNREDUCED ON PURPOSE: a leftover can land as 6 twelfths rather than a
+//  half. Reduction is itself a regrouping and waits for Primes; naming it here
+//  would be arithmetic the glass has not shown.
 //
 // ---------------------------------------------------------------------------
 // THREE READINGS THE PROMPT LEFT TO THE BUILD, each one line to change:
@@ -185,9 +207,12 @@ const CAME_ALPHA   = 0.30;  // a piece's lead, at the weight plane.js gives its 
 const SEAM_ALPHA   = 0.72;  // a closed unit square's seam, a step up from that
 const PIECE_GLASS  = 22;    // px below which pieces stop carrying their own highlight
 const CAME_FLOOR   = 3;     // px below which a came line stops resolving (plane.js's rule)
-const ROW_MS_MAX   = 500;   // a row of the restack, at small counts: about half a second
-const ROW_MS_MIN   = 110;
-const ROW_MS_BUDGET= 2500;  // …and the whole thing aims to land inside this
+const BEAT_MS_MAX  = 500;   // a square of the restack, at small counts: a beat apiece
+const BEAT_MS_MIN  = 120;
+const BEAT_BUDGET  = 3000;  // …and the whole thing aims to land inside this
+const HOLD_MS      = 1700;  // the answer marked at the composition, long enough to read
+const RETURN_MS    = 900;   // …and then the camera goes home
+const CAM_MARGIN   = 0.80;  // share of the viewport a followed composition may fill
 const STACK_MAX    = 600;   // pieces past which the restack stands down (see reading 3)
 const INK          = '#2b2a26';
 const LATTICE      = '#546A80';
@@ -261,56 +286,128 @@ function setRule(axis, D) {
 // "zoom in and there is more" rather than "that is all there is".
 const canRefine = D => ppu() / (D + 1) >= CAME_FLOOR;
 
-// ---- the restack ----------------------------------------------------------
-// Division as regrouping. The pieces are re-poured into a channel one unit wide
-// (↑) or one unit tall (→); every dx·dy of them closes a whole square, and what
-// is left over is the remainder, sitting inside a seam with its absences
-// visible. No arithmetic is performed on numerals anywhere in here: the second
-// line of the readout only names what the glass has finished showing.
-let stack = null;           // {dir, t0, px, py, rows, rowMs, dur, done}
+// ---- the restack, in place ------------------------------------------------
+// Division as regrouping — and the wholes are ALREADY STANDING in the rectangle,
+// so the restack finds them rather than rebuilding them (4th pass, 3 Sep; this
+// retires the third pass, which tore the whole rectangle into a train and made
+// the wholes look manufactured).
+//
+//   1. The ⌊w⌋ × ⌊h⌋ whole unit squares, grid-aligned from the origin, outline
+//      in place — one seam a beat. NOTHING MOVES.
+//   2. Then only the leftovers move: the top strip, the right strip and the
+//      corner gather and pack into new squares laid along the top edge for ↑ and
+//      the right edge for →, each closing as its pieces complete it, plus a
+//      partial holding any remainder with its missing pieces plainly absent.
+//   3. The second line names what the glass has finished counting.
+//
+// 10/3 × 6/4: three wholes stand in the bottom row; 18 pieces of top strip, 4 of
+// right strip and 2 of corner — 24 in all — close two more along the top; the
+// line reads 60/12 = 5. The count is exact by construction rather than by
+// arithmetic: ⌊w⌋⌊h⌋ + ⌊leftover/Q⌋ is ⌊area⌋ for every rectangle, and what is
+// left over is the fraction.
+let stack = null;
 let lastKey = '', reps = 0;
 
 function beginStack(dir) {
   if (!fits()) return;
-  const px = spanX().full, py = spanY().full;
+  const px = spanX().full, py = spanY().full, Q = dx * dy;
   if (px * py === 0 || px * py > STACK_MAX) return;
-  const lanes = dir === 'up' ? Math.ceil(px * py / dx) : Math.ceil(px * py / dy);
-  // House pattern: the same shape asked for again moves quicker each time.
+  const fw = Math.floor(px / dx), fh = Math.floor(py / dy);   // wholes already standing
+  const WX = fw * dx, HY = fh * dy;                           // …in piece coordinates
+
+  const found = [];
+  for (let R = 0; R < fh; R++) for (let C = 0; C < fw; C++) found.push({ C: C, R: R });
+
+  // The leftovers, in one order: top strip, then right strip, then the corner.
+  // They arrive at a new square together, which is what makes the gathering
+  // legible or not (Q2) — the order is the only thing steering it.
+  const spare = [];
+  for (let r = HY; r < py; r++) for (let c = 0; c < WX; c++) spare.push({ c: c, r: r });
+  for (let r = 0; r < HY; r++) for (let c = WX; c < px; c++) spare.push({ c: c, r: r });
+  for (let r = HY; r < py; r++) for (let c = WX; c < px; c++) spare.push({ c: c, r: r });
+
+  // New squares run along the top edge for ↑ and the right edge for →, carrying
+  // on past the found block in the direction the arrow names.
+  const lane = dir === 'up' ? Math.max(1, fw) : Math.max(1, fh);
+  const posOf = k => dir === 'up'
+    ? { C: k % lane, R: fh + Math.floor(k / lane) }
+    : { C: fw + Math.floor(k / lane), R: k % lane };
+
+  const news = [];
+  for (let i = 0; i < spare.length; i++) {
+    const k = Math.floor(i / Q), j = i % Q;
+    if (!news[k]) news[k] = Object.assign(posOf(k), { pairs: [], full: false });
+    const sq = news[k];
+    sq.pairs.push({ s: spare[i],
+                    d: { c: sq.C * dx + (j % dx), r: sq.R * dy + Math.floor(j / dx) } });
+    sq.full = sq.pairs.length === Q;
+  }
+
+  const beats = found.length + news.length;
   const key = [dir, px, py, dx, dy].join(':');
   reps = key === lastKey ? reps + 1 : 0; lastKey = key;
-  const rowMs = Math.max(ROW_MS_MIN,
-                  Math.min(ROW_MS_MAX, ROW_MS_BUDGET / lanes) / (1 + 0.7 * reps));
-  stack = { dir: dir, t0: performance.now(), px: px, py: py,
-            lanes: lanes, rowMs: rowMs, dur: rowMs * 1.35, done: false };
+  const beat = Math.max(BEAT_MS_MIN,
+                 Math.min(BEAT_MS_MAX, BEAT_BUDGET / Math.max(1, beats)) / (1 + 0.7 * reps));
+
+  // Where every leftover piece is going, by its source cell.
+  const going = new Map();
+  news.forEach((sq, k) => sq.pairs.forEach((pr, j) =>
+    going.set(pr.s.c + ',' + pr.s.r, { d: pr.d, beat: found.length + k, j: j, n: sq.pairs.length })));
+
+  stack = { dir: dir, t0: performance.now(), px: px, py: py, fw: fw, fh: fh, following: false,
+            WX: WX, HY: HY, found: found, news: news, going: going,
+            beats: beats, beat: beat, done: false, markT0: 0, homeT0: 0 };
+  camBase = plane.view();
   tick();
 }
 
-// Where piece i sits before, and where it is going. Both are in piece units —
-// a piece is 1/dx by 1/dy either way, which is why the pieces never change
-// shape while they move. Only their company changes.
-const srcOf = (i, px) => ({ c: i % px, r: Math.floor(i / px) });
-const dstOf = (i, dir) => dir === 'up'
-  ? { c: i % dx, r: Math.floor(i / dx) }
-  : { c: Math.floor(i / dy), r: i % dy };
-// A piece's lane is the row (↑) or column (→) it lands in; lanes fill in order,
-// so the squares close in counting order rather than all at once.
-const laneOf = (i, dir) => dir === 'up' ? Math.floor(i / dx) : Math.floor(i / dy);
-
-function stackProgress(i, now) {
-  const t = now - stack.t0 - laneOf(i, stack.dir) * stack.rowMs;
+// A piece's flight inside its beat, eased so it arrives rather than stops.
+function flight(g, now) {
+  const s = stack.t0 + g.beat * stack.beat + (g.j / g.n) * stack.beat * 0.25;
+  const t = (now - s) / (stack.beat * 0.8);
   if (t <= 0) return 0;
-  if (t >= stack.dur) return 1;
-  const p = t / stack.dur;                   // ease, so a piece arrives rather than stops
-  return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+  if (t >= 1) return 1;
+  return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 }
-function stackEnds() { return stack.t0 + (stack.lanes - 1) * stack.rowMs + stack.dur; }
+const beatNow = now => Math.floor((now - stack.t0) / stack.beat);
+const stackEnds = () => stack.t0 + stack.beats * stack.beat;
 
-// How many pieces square k holds, and whether all of them have landed.
-function squaresOf() {
-  const n = stack.px * stack.py, per = dx * dy;
-  const out = [];
-  for (let k = 0; k * per < n; k++) out.push({ k: k, n: Math.min(per, n - k * per) });
-  return out;
+// ---- the camera -----------------------------------------------------------
+// It follows only when it has to: a composition that already fits is left
+// alone. On completion the answer is marked at the composition, held, and then
+// the view goes Home — no restack ever finishes off screen. Her own hand
+// outranks it: a touch anywhere cancels the follow, and the restack carries on
+// without a camera.
+let camBase = null, camHome = null;
+
+function compositionBounds() {
+  let mx = rect ? rect.wn / rect.wd : 1, my = rect ? rect.hn / rect.hd : 1;
+  if (stack) stack.news.forEach(sq => { mx = Math.max(mx, sq.C + 1); my = Math.max(my, sq.R + 1); });
+  return { mx: mx, my: my };
+}
+// It moves ONLY when the composition has outgrown the view. A composition that
+// already fits is left exactly where she put it — a camera that recentres a
+// picture already in front of her is the "yanked home" failure Q3 is watching
+// for, and it is not worth spending to solve a problem nobody has. Once it has
+// had to move, it keeps following, because the composition is still growing.
+function outgrown(b) {
+  const tl = plane.worldToScreen(0, b.my * U), br = plane.worldToScreen(b.mx * U, 0);
+  const W = plane.viewportWidth(), H = plane.viewportHeight(), m = 10;
+  return tl.x < m || tl.y < m || br.x > W - m || br.y > H - m;
+}
+function follow() {
+  if (!camBase || !stack) return;
+  const b = compositionBounds();
+  if (!stack.following && !outgrown(b)) return;
+  stack.following = true;
+  const W = plane.viewportWidth(), H = plane.viewportHeight();
+  const fit = Math.min(W * CAM_MARGIN / (b.mx * U), H * CAM_MARGIN / (b.my * U));
+  ease({ zoom: Math.min(camBase.zoom, fit), x: b.mx * U / 2, y: b.my * U / 2 }, 0.14);
+}
+function ease(to, k) {
+  const v = plane.view();
+  plane.setZoom(v.zoom + (to.zoom - v.zoom) * k);
+  plane.setPan(v.x + (to.x - v.x) * k, v.y + (to.y - v.y) * k);
 }
 
 let raf = null;
@@ -320,9 +417,27 @@ function tick() {
     raf = null;
     if (!stack) return;
     const now = performance.now();
-    if (!stack.done && now >= stackEnds()) { stack.done = true; syncPanel(); }
+    if (!stack.done && now >= stackEnds()) { stack.done = true; stack.markT0 = now; syncPanel(); }
+    if (!stack.done) follow();
+    else if (now < stack.markT0 + HOLD_MS) follow();
+    else {
+      if (!stack.homeT0) {
+        stack.homeT0 = now;
+        camHome = stack.following
+          ? greetingView(plane.viewportWidth(), plane.viewportHeight()) : null;
+      }
+      if (camBase && camHome) {
+        ease(camHome, 0.13);
+        const v = plane.view();
+        if (Math.abs(v.zoom - camHome.zoom) < 1e-4 && Math.abs(v.x - camHome.x) < 0.5) {
+          plane.setView(camHome); viewSettled = false; camBase = null;
+        }
+      }
+    }
     draw();
-    if (!stack.done) { raf = requestAnimationFrame(step); }
+    const resting = stack.done && stack.homeT0 &&
+                    (!camBase || !camHome || now > stack.homeT0 + RETURN_MS * 1.6);
+    if (!resting) raf = requestAnimationFrame(step);
   };
   raf = requestAnimationFrame(step);
 }
@@ -408,34 +523,86 @@ function drawSides(r, s) {
 
 // The restack, mid-flight and at rest. Each piece slides from where it lay to
 // where it lands; a square gets its seam the moment its last piece arrives.
+// The restack. Every piece is drawn where it is: the ones that were already
+// inside a whole square never move at all, and only the leftovers travel. Seams
+// arrive a beat at a time — outlined first for the wholes that were standing,
+// then closing as each new square fills. A partial keeps its seam too, so what
+// it is missing is plainly absent rather than merely not there.
 function drawStack() {
-  const n = stack.px * stack.py, now = performance.now(), per = dx * dy;
-  const landed = [];
-  for (let k = 0; k * per < n; k++) landed.push(true);
-  for (let i = 0; i < n; i++) {
-    const p = stackProgress(i, now);
-    if (p < 1) landed[Math.floor(i / per)] = false;
-    const a = srcOf(i, stack.px), b = dstOf(i, stack.dir);
-    const c = a.c + (b.c - a.c) * p, rr = a.r + (b.r - a.r) * p;
-    pane(box(c / dx, rr / dy, (c + 1) / dx, (rr + 1) / dy), true);
+  const now = performance.now(), b = beatNow(now);
+  for (let r = 0; r < stack.py; r++) for (let c = 0; c < stack.px; c++) {
+    const g = stack.going.get(c + ',' + r);
+    let cc = c, rr = r;
+    if (g) { const p = flight(g, now); cc = c + (g.d.c - c) * p; rr = r + (g.d.r - r) * p; }
+    pane(box(cc / dx, rr / dy, (cc + 1) / dx, (rr + 1) / dy), true);
   }
-  // A closed square is a whole 1 again: one seam round it, and the came inside
-  // it still says what it is made of. The partial keeps its seam too, so the
-  // pieces it is missing are plainly absent rather than merely not there.
   ctx.save();
-  ctx.globalAlpha = SEAM_ALPHA; ctx.strokeStyle = LATTICE; ctx.lineWidth = 2;
-  squaresOf().forEach(sq => {
-    if (!landed[sq.k]) return;
-    const s = stack.dir === 'up' ? box(0, sq.k, 1, sq.k + 1) : box(sq.k, 0, sq.k + 1, 1);
+  ctx.strokeStyle = LATTICE; ctx.lineWidth = 2;
+  // The wholes that were already there: found, not made.
+  stack.found.forEach((sq, i) => {
+    if (b < i) return;
+    ctx.globalAlpha = SEAM_ALPHA;
+    const s = box(sq.C, sq.R, sq.C + 1, sq.R + 1);
     ctx.strokeRect(CW.snap(s.x), CW.snap(s.y), Math.round(s.w), Math.round(s.h));
   });
+  // The ones the leftovers close, and the partial that holds the remainder.
+  stack.news.forEach((sq, k) => {
+    if (b < stack.found.length + k + 1) return;
+    ctx.globalAlpha = SEAM_ALPHA;
+    const s = box(sq.C, sq.R, sq.C + 1, sq.R + 1);
+    ctx.strokeRect(CW.snap(s.x), CW.snap(s.y), Math.round(s.w), Math.round(s.h));
+  });
+  ctx.restore();
+  // While nothing has moved, the rectangle is still the rectangle.
+  if (b < stack.found.length && rect) {
+    const s = box(0, 0, rect.wn / rect.wd, rect.hn / rect.hd);
+    ctx.save(); ctx.globalAlpha = 0.62; ctx.strokeStyle = LATTICE; ctx.lineWidth = 1.5;
+    ctx.strokeRect(CW.snap(s.x), CW.snap(s.y), Math.round(s.w), Math.round(s.h));
+    ctx.restore();
+    drawSides(rect, s);
+  }
+  if (stack.done) drawMark(now);
+}
+
+// The answer, marked at the composition and held long enough to read, then
+// fading as the camera goes home. It names what the glass has counted; it does
+// no arithmetic the squares have not already done.
+function drawMark(now) {
+  const P = stack.px * stack.py, Q = dx * dy;
+  const b = compositionBounds();
+  let a = 1;
+  if (stack.homeT0) a = Math.max(0, 1 - (now - stack.homeT0) / (RETURN_MS * 0.8));
+  if (a <= 0) return;
+  const s = box(0, 0, b.mx, b.my);
+  const size = Math.max(20, Math.min(76, Math.min(s.w, s.h) * 0.30));
+  ctx.save();
+  ctx.globalAlpha = a;
+  const whole = Math.floor(P / Q), rem = P % Q;
+  // ABOVE the composition, not across it. Centred on the glass it covered the
+  // partial square — the one piece of the picture that shows where the fraction
+  // comes from — so the answer hid its own evidence. Clamped into the viewport,
+  // because the rule is that no restack finishes off screen and that goes for
+  // the number as much as the squares.
+  const cx = s.x + s.w / 2;
+  const cy = Math.max(size * 0.9, s.y - size * 0.85);
+  if (rem === 0) CW.num.drawText(ctx, CW.num.count(whole), cx, cy, { size: size, weight: 'bold', color: INK });
+  else {
+    const wTxt = whole > 0 ? CW.num.count(whole) + ' ' : '';
+    ctx.font = 'bold ' + size + 'px Georgia, serif';
+    const ww = ctx.measureText(wTxt).width;
+    const fw2 = CW.num.measure(ctx, rem, Q, { size: size, weight: 'bold' }).w;
+    const x0 = cx - (ww + fw2) / 2;
+    if (whole > 0) CW.num.drawText(ctx, CW.num.count(whole), x0, cy,
+                                   { size: size, weight: 'bold', color: INK, align: 'left' });
+    CW.num.draw(ctx, rem, Q, x0 + ww, cy, { size: size, weight: 'bold', color: INK, align: 'left' });
+  }
   ctx.restore();
 }
 
 // The 1. Empty plane: a filled white tile with its numeral, the handle. With
 // anything on the glass: its outline only, so it becomes the scale mark — and
 // under split rulings the came cross-hatches it, which is where the worth of a
-// piece can be read off without anyone saying it (Q2).
+// piece can be read off without anyone saying it (Q5).
 function drawOne() {
   const r = box(0, 0, 1, 1);
   ctx.save();
@@ -495,6 +662,7 @@ function zoomAbout(sx, sy, factor) {
 canvas.addEventListener('pointerdown', e => {
   canvas.setPointerCapture(e.pointerId);
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  camBase = null;                        // she has taken the wheel; the follow stops
   if (pointers.size === 2) {
     const p = [...pointers.values()];
     mode = 'pinch'; build = null; panLast = null;
@@ -532,6 +700,7 @@ canvas.addEventListener('pointermove', e => {
     if (!build.moved && Math.hypot(e.clientX - build.sx, e.clientY - build.sy) > MOVE_SLOP) {
       build.moved = true;
       stack = null; rect = null;         // starting over: the old restack clears
+      camBase = null; camHome = null;
     }
     Object.assign(build, snapPieces(e.clientX, e.clientY));
   } else if (mode === 'pan' && panLast) {
@@ -616,8 +785,10 @@ function syncPanel() {
 
   if (!live) { outEl.innerHTML = ''; return; }
   const px = spanX().full, py = spanY().full, P = px * py, Q = dx * dy;
-  let html = '<div class="cw-line">' + CW.num.html(py, dy) + CW.num.op('×') +
-             CW.num.html(px, dx) + CW.num.op('=') + CW.num.html(P, Q) + '</div>';
+  // WIDTH FIRST (4th pass, 3 Sep — reverses the 2 Sep height-first ruling).
+  // x then y, matching the pane address (column, row) and the walk's examples.
+  let html = '<div class="cw-line">' + CW.num.html(px, dx) + CW.num.op('×') +
+             CW.num.html(py, dy) + CW.num.op('=') + CW.num.html(P, Q) + '</div>';
   // The second line waits for the glass. It performs no arithmetic — it names
   // what the closed squares and the partial have already counted out.
   if (stack && stack.done)

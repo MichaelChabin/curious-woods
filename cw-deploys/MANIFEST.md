@@ -137,20 +137,29 @@ to test yesterday's work.
   the pieces at the far edge are **cut short — real glass cut at the boundary,
   filled and leaded, never a thin line** — and the count along that side does not
   come out whole. Nothing is disabled, nothing announced.
-  **The readout is one line, on release:** `8/3 × 7/5 = 56/15`, the sides as
-  their rulings counted them, unreduced. It is absent while a finger is down and
+  **The readout is one line, on release:** `10/3 × 6/4 = 60/12` — **x before y**,
+  matching the pane address (column, row); the sides as their rulings counted
+  them, unreduced. It is absent while a finger is down and
   absent while the ruling cannot count both sides — there is no whole-number
   multiplication to state and a rounded one would break *never more precision
   than the act showed*.
-  **The restack is division as regrouping.** Stack ↑ and Stack → re-pour the
-  pieces into a channel one unit wide or one unit tall, animated a row at a time
-  (about half a second apiece at small counts, accelerating when the same shape
-  is asked again). Every dx·dy pieces closes a whole square, visibly, with a
-  unit seam; the leftover keeps its seam too, so its missing pieces are plainly
-  absent. Only when the regrouping finishes does the second line appear —
-  `56/15 = 3 11/15` — and it performs no arithmetic: it names what the glass has
-  already counted out. **Both directions land on the same answer**, which is the
-  point of there being two. The arrows stand down when the ruling does not fit
+  **The restack is division as regrouping, and it happens IN PLACE.** The wholes
+  are already standing in the rectangle, so it finds them rather than rebuilding
+  them: the ⌊w⌋ × ⌊h⌋ unit squares grid-aligned from the origin outline where
+  they are, one seam a beat, **nothing moving**. Only then do the leftovers
+  travel — the top strip, the right strip and the corner gather and pack into
+  new squares laid along the top edge for ↑ and the right edge for →, each
+  closing as its pieces complete it, plus a partial whose seam stays so its
+  missing pieces are plainly absent. `10/3 × 6/4`: three wholes stand in the
+  bottom row, 18 + 4 + 2 leftover pieces close two more along the top, and the
+  line reads `60/12 = 5`. Only when the regrouping finishes does the second line
+  appear, and it performs no arithmetic — the count is exact by construction,
+  since ⌊w⌋⌊h⌋ + ⌊leftover/Q⌋ is ⌊area⌋ for every rectangle. **Both directions
+  land on the same answer**, which is the point of there being two.
+  **The camera** follows only when the composition outgrows the view — a picture
+  already in front of her is left where she put it — marks the answer above the
+  composition, holds it long enough to read, and then goes Home. No restack
+  finishes off screen. Her hand outranks it: a touch stops the follow. The arrows stand down when the ruling does not fit
   (a cut piece cannot become part of a whole square) and past 600 pieces
   (the animation is the counting, and nobody counts six hundred of anything).
   Dragging from the 1 at any time starts over.
