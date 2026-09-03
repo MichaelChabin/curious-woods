@@ -624,6 +624,16 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   what she can already see is the *yanked home* failure Q3 is watching for. It
   marks the answer **above** the composition rather than across it, holds it, and
   returns Home. Her hand outranks it: a touch stops the follow.
+  **Corrected on Michael's look:** the answer was sized against the composition,
+  so a bigger picture got a bigger numeral for no reason — at four units across,
+  `11 4/6` came out roughly twice the width of the 1 it was counting. It is now
+  **sized against the unit square**, which is what everything else on this plane
+  is measured against, and set in the plain face rather than bold. Mixed answers
+  land at exactly 1.00 unit wide (checked across `3 11/15`, `11 4/6`,
+  `137 23/45` at four zooms); a lone whole number caps instead, because
+  stretching one digit to a full unit wants a 180px face. Width is the right
+  invariant for a fraction and the wrong one for a single digit, and the cap is
+  where that changes over.
   Verified: `10/3 × 6/4` gives three wholes standing in the bottom row, two more
   closed along the top from 18 + 4 + 2 leftover pieces, and `60/12 = 5` —
   Michael's worked example exactly. `7/5 × 8/3` gives `3 11/15` both ways.

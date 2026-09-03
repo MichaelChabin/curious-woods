@@ -210,6 +210,9 @@ const CAME_FLOOR   = 3;     // px below which a came line stops resolving (plane
 const BEAT_MS_MAX  = 500;   // a square of the restack, at small counts: a beat apiece
 const BEAT_MS_MIN  = 120;
 const BEAT_BUDGET  = 3000;  // …and the whole thing aims to land inside this
+const MARK_SHARE   = 1.0;   // the answer, about as wide as one unit square
+const MARK_MIN     = 13;    // …within reason at either end
+const MARK_MAX     = 64;
 const HOLD_MS      = 1700;  // the answer marked at the composition, long enough to read
 const RETURN_MS    = 900;   // …and then the camera goes home
 const CAM_MARGIN   = 0.80;  // share of the viewport a followed composition may fill
@@ -574,27 +577,48 @@ function drawMark(now) {
   if (stack.homeT0) a = Math.max(0, 1 - (now - stack.homeT0) / (RETURN_MS * 0.8));
   if (a <= 0) return;
   const s = box(0, 0, b.mx, b.my);
-  const size = Math.max(20, Math.min(76, Math.min(s.w, s.h) * 0.30));
+  const whole = Math.floor(P / Q), rem = P % Q;
+  const wTxt = rem === 0 ? CW.num.count(whole)
+                         : (whole > 0 ? CW.num.count(whole) + ' ' : '');
+
+  // SIZED AGAINST THE UNIT SQUARE, not against the composition (4th pass,
+  // corrected 3 Sep). Keying it to the composition meant a bigger picture got a
+  // bigger numeral for no reason — at four units across, "11 4/6" came out twice
+  // the width of the 1 it is counting. The unit is what everything else on this
+  // plane is measured against, so the answer is measured against it too: the
+  // whole mark, whole part and fraction together, comes out about one unit
+  // square wide at any zoom. Measured at a reference size and scaled, because
+  // the width depends on how many digits the answer happens to have.
+  // MARK_MAX is what stops a SHORT answer from being enormous: a lone "5" made
+  // one unit wide wants a 180px face, so it caps instead and lands at about
+  // four tenths of a unit. Width is the right invariant for 11 4/6 and the
+  // wrong one for 5; the cap is where that changes over.
+  const markWidth = size => {
+    ctx.font = size + 'px Georgia, serif';
+    let w = ctx.measureText(wTxt).width;
+    if (rem !== 0) w += CW.num.measure(ctx, rem, Q, { size: size }).w;
+    return w;
+  };
+  const ref = markWidth(100) || 100;
+  const size = Math.max(MARK_MIN, Math.min(MARK_MAX, 100 * ppu() * MARK_SHARE / ref));
+
   ctx.save();
   ctx.globalAlpha = a;
-  const whole = Math.floor(P / Q), rem = P % Q;
   // ABOVE the composition, not across it. Centred on the glass it covered the
   // partial square — the one piece of the picture that shows where the fraction
   // comes from — so the answer hid its own evidence. Clamped into the viewport,
   // because the rule is that no restack finishes off screen and that goes for
   // the number as much as the squares.
   const cx = s.x + s.w / 2;
-  const cy = Math.max(size * 0.9, s.y - size * 0.85);
-  if (rem === 0) CW.num.drawText(ctx, CW.num.count(whole), cx, cy, { size: size, weight: 'bold', color: INK });
+  const cy = Math.max(size * 0.9, s.y - size * 0.9);
+  if (rem === 0) CW.num.drawText(ctx, wTxt, cx, cy, { size: size, color: INK });
   else {
-    const wTxt = whole > 0 ? CW.num.count(whole) + ' ' : '';
-    ctx.font = 'bold ' + size + 'px Georgia, serif';
+    ctx.font = size + 'px Georgia, serif';
     const ww = ctx.measureText(wTxt).width;
-    const fw2 = CW.num.measure(ctx, rem, Q, { size: size, weight: 'bold' }).w;
+    const fw2 = CW.num.measure(ctx, rem, Q, { size: size }).w;
     const x0 = cx - (ww + fw2) / 2;
-    if (whole > 0) CW.num.drawText(ctx, CW.num.count(whole), x0, cy,
-                                   { size: size, weight: 'bold', color: INK, align: 'left' });
-    CW.num.draw(ctx, rem, Q, x0 + ww, cy, { size: size, weight: 'bold', color: INK, align: 'left' });
+    if (whole > 0) CW.num.drawText(ctx, wTxt, x0, cy, { size: size, color: INK, align: 'left' });
+    CW.num.draw(ctx, rem, Q, x0 + ww, cy, { size: size, color: INK, align: 'left' });
   }
   ctx.restore();
 }

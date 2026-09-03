@@ -158,7 +158,11 @@ to test yesterday's work.
   land on the same answer**, which is the point of there being two.
   **The camera** follows only when the composition outgrows the view — a picture
   already in front of her is left where she put it — marks the answer above the
-  composition, holds it long enough to read, and then goes Home. No restack
+  composition, holds it long enough to read, and then goes Home. The mark is
+  **sized against the unit square, not the composition** — a mixed answer comes
+  out almost exactly one unit wide at any zoom, in the plain face rather than
+  bold; a short answer caps instead, since stretching a lone digit to a full unit
+  would want a 180px face. No restack
   finishes off screen. Her hand outranks it: a touch stops the follow. The arrows stand down when the ruling does not fit
   (a cut piece cannot become part of a whole square) and past 600 pieces
   (the animation is the counting, and nobody counts six hundred of anything).
