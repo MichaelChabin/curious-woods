@@ -136,7 +136,7 @@ to test yesterday's work.
   and the story graph are to be one database. Dates written `11 752 after the ice (1752)`
   with commas for now — the March date convention and `Spec-Timeline-Graph.md` §2 disagree
   and the spec reports it; adopt `js/cw-number.js` before this leaves experiments.
-  `CW_VERSION` reads `2026-09-08 uncommitted` until its first commit. Spec:
+  `CW_VERSION 2026-09-08 433c148` (first commit 8 Sep; stamped per the standing method). Spec:
   `CWVault/20-SPECS/Spec-Timeline-Intro.md`. Stands on nothing shared; standalone.
 - **`ruling-bench.html`** — bench: **does multiplication care how the grid is
   ruled?** The second of the review's step-3 benches, companion to
