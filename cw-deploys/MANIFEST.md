@@ -53,6 +53,10 @@ both labs for Save, and by Geometry for the WIP guard and replay Cancel.
 Pages in `active/` and `experiments/` reach them with `../` —
 `../art/palettes.json`, `../models/logs/geo_hexagon_triangle.json`.
 A page that moves between folders must have those paths checked.
+`stories/events.json` — the Timeline Intro's event pool (8 Sep 2026): 65 world
+events and five story lead-ups, CW years, schema noted inside the file and aligned
+with `Spec-Timeline-Graph.md` §4 where fields overlap. Data the page merely reads;
+blurbs are unsourced first drafts, images unfilled.
 `models/constructions.json` — the construction library's manifest (controls
 build, 13 Aug): Geometry's picker reads it at load, so library growth is a
 log file plus a line here, no code. An entry may carry `speed` (seconds) to
@@ -119,6 +123,21 @@ to test yesterday's work.
   (`CWVault/01-ACTIVE/Walk-Glass-Aug26.md`), and this lab stays live throughout.
 
 ### experiments/
+- **`timeline-bench.html`** — bench: **the Timeline Intro.** Every dated story's title
+  card: a copper dot leaves year 0 ("after the ice", 10 000 BCE) and rolls up to the
+  story's year in about ten seconds, leaving events behind it. Three tiers — a fixed
+  full-span line that never rescales, with an odometer above it; a road drawn in
+  perspective in four passes whose year-scales are computed from the destination
+  (8:4:2:1) and which take as many events as they have room for; and the story's own
+  lead-up strip, drawn after the landing. Tap the road to pause, tap any event for its
+  paragraph (beside the far passes on a wide screen), *run it again* for a fresh draw,
+  *your line so far* for everything it has ever shown her (localStorage). Five
+  destinations. **Reads `../stories/events.json` — the page holds no events**; the pool
+  and the story graph are to be one database. Dates written `11 752 after the ice (1752)`
+  with commas for now — the March date convention and `Spec-Timeline-Graph.md` §2 disagree
+  and the spec reports it; adopt `js/cw-number.js` before this leaves experiments.
+  `CW_VERSION` reads `2026-09-08 uncommitted` until its first commit. Spec:
+  `CWVault/20-SPECS/Spec-Timeline-Intro.md`. Stands on nothing shared; standalone.
 - **`ruling-bench.html`** — bench: **does multiplication care how the grid is
   ruled?** The second of the review's step-3 benches, companion to
   `multiply-bench.html`, which stays the authority for everything the two share.

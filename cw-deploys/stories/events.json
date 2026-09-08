@@ -1,0 +1,1762 @@
+{
+  "_about": "Event pool for the Timeline Intro (experiments/timeline-bench.html). Data only; the page reads it. Schema follows CWVault/20-SPECS/Spec-Timeline-Graph.md §4 where the fields overlap (id, type, label, start, era, precision, place, blurb, image, sources), plus: hook (the one-line full label), region (closed: west-asia east-asia south-asia europe africa americas pacific world), glyph (which drawn icon the page uses — glyph, not kind, because kind is a closed facet), story ({id,title} when a CW story exists for the event). Dates are CW years, year 0 = 10 000 BCE. Sources and images are unfilled in this first pass: every blurb is a draft from general knowledge and must be checked before a child sees it.",
+  "version": "2026-09-08",
+  "year0": "10000 BCE",
+  "now": 12026,
+  "destinations": [
+    "frank",
+    "starry",
+    "montp",
+    "socrates",
+    "nineveh"
+  ],
+  "events": [
+    {
+      "id": "ice",
+      "type": "event",
+      "label": "the ice lets go",
+      "hook": "The warmth comes to stay. The ice begins its long retreat from Scotland, Scandinavia, and the Great Lakes.",
+      "start": 0,
+      "era": 0,
+      "precision": "century",
+      "region": "world",
+      "place": "the whole world",
+      "glyph": "ice",
+      "blurb": "For most of the last hundred thousand years the world was cold, and the cold came and went. About twelve thousand years ago it warmed for good. That is where this line starts. Everything you have ever heard of, from farms to phones, fits on it.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "jomon",
+      "type": "event",
+      "label": "Jōmon pots, already old",
+      "hook": "In Japan, people are already firing clay pots, and have been for 4,000 years.",
+      "start": 100,
+      "era": 100,
+      "precision": "century",
+      "region": "east-asia",
+      "place": "East Asia",
+      "glyph": "pot",
+      "blurb": "The Jōmon people of Japan made pottery long before the ice let go, some of the oldest pots anywhere. History does not begin at the left edge of this line. The line is just where the world got warm enough for everything else to start happening quickly.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "figs",
+      "type": "event",
+      "label": "figs planted on purpose",
+      "hook": "Figs planted on purpose in the Jordan valley.",
+      "start": 600,
+      "era": 600,
+      "precision": "century",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "seed",
+      "blurb": "At a place called Gilgal, near Jericho, people were growing a kind of fig that cannot spread its own seeds. Somebody had to plant it. That makes it one of the first crops we know of, older than wheat.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "gobekli",
+      "type": "event",
+      "label": "pillars at Göbekli Tepe",
+      "hook": "Carved stone pillars, taller than a person, raised at Göbekli Tepe.",
+      "start": 500,
+      "era": 500,
+      "precision": "century",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "stone",
+      "blurb": "On a hilltop in what is now Turkey, people who had no farms and no towns carved foxes, snakes, and scorpions into pillars and set them in rings. Nobody knows why. They did it before anyone nearby had learned to grow grain.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "jericho",
+      "type": "event",
+      "label": "the tower of Jericho",
+      "hook": "A stone tower, eight metres high, goes up at Jericho.",
+      "start": 2000,
+      "era": 2000,
+      "precision": "century",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "wall",
+      "blurb": "Jericho had a wall and a tower with a staircase inside it thousands of years before anyone else built anything so large. It may have been for floods rather than enemies. It is still there.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "squash",
+      "type": "event",
+      "label": "squash grown in Oaxaca",
+      "hook": "Squash grown in a cave-mouth garden in Oaxaca, Mexico.",
+      "start": 2000,
+      "era": 2000,
+      "precision": "century",
+      "region": "americas",
+      "place": "the Americas",
+      "glyph": "seed",
+      "blurb": "Seeds found in the Guilá Naquitz cave are bigger than wild squash seeds. Somebody was choosing the best ones and planting them again. Farming was being invented in the Americas at about the same time as in the Middle East, by people who had never heard of each other.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "mazama",
+      "type": "event",
+      "label": "Mazama becomes Crater Lake",
+      "hook": "Mount Mazama, in Oregon, blows itself apart. The hole fills with rain and becomes Crater Lake.",
+      "start": 4300,
+      "era": 4300,
+      "precision": "century",
+      "region": "americas",
+      "place": "the Americas",
+      "glyph": "fire",
+      "blurb": "The mountain lost its top two kilometres in a few days. Ash fell as far as Alberta. The Klamath people have a story about a battle between two spirits that ends with the mountain falling in, and they have been telling it, as far as anyone can tell, since it happened.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "agassiz",
+      "type": "event",
+      "label": "a lake drains, the world cools",
+      "hook": "Lake Agassiz, bigger than all the Great Lakes together, drains into the sea. The whole world cools for a century.",
+      "start": 3800,
+      "era": 3800,
+      "precision": "century",
+      "region": "world",
+      "place": "the whole world",
+      "glyph": "water",
+      "blurb": "The melting ice had left a lake across Canada. When its ice dam broke, the water went into the Atlantic and slowed the ocean currents. Greenland ice shows the cold. Farmers in the Middle East abandoned villages.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "rice",
+      "type": "event",
+      "label": "rice tended on the Yangtze",
+      "hook": "Rice tended in the wet ground along the Yangtze.",
+      "start": 2500,
+      "era": 2500,
+      "precision": "century",
+      "region": "east-asia",
+      "place": "East Asia",
+      "glyph": "seed",
+      "blurb": "Wild rice drops its grains as soon as they ripen. People along the Yangtze kept the plants that held on to their grain, and slowly the plant changed. Half the world now eats the result every day.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "catal",
+      "type": "event",
+      "label": "Çatalhöyük, doors in the roofs",
+      "hook": "Thousands live wall to wall at Çatalhöyük, entering their houses through the roof.",
+      "start": 2900,
+      "era": 2900,
+      "precision": "century",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "wall",
+      "blurb": "There were no streets. Houses were packed against each other and people walked across the rooftops and climbed down ladders into their homes. They buried their dead under the floors and painted the walls with bulls and vultures.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "maize",
+      "type": "event",
+      "label": "a grass becomes maize",
+      "hook": "In the Balsas valley of Mexico, a grass called teosinte is on its way to becoming maize.",
+      "start": 3000,
+      "era": 3000,
+      "precision": "century",
+      "region": "americas",
+      "place": "the Americas",
+      "glyph": "seed",
+      "blurb": "Teosinte has a dozen hard little kernels. Maize has hundreds of soft ones. It took thousands of years of people choosing which seeds to keep. It is one of the biggest things human beings have ever made, and it is a plant.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "cattle",
+      "type": "event",
+      "label": "cattle in a green Sahara",
+      "hook": "Herders paint their cattle on rock walls in a green Sahara.",
+      "start": 4000,
+      "era": 4000,
+      "precision": "century",
+      "region": "africa",
+      "place": "Africa",
+      "glyph": "animal",
+      "blurb": "The Sahara was grassland then, with lakes and rivers. People kept cattle and painted them, thousands of them, on the rocks at Tassili n’Ajjer. The desert came later.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "copper",
+      "type": "event",
+      "label": "copper melted from rock",
+      "hook": "At Belovode in Serbia, someone melts copper out of green rock.",
+      "start": 5000,
+      "era": 5000,
+      "precision": "century",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "metal",
+      "blurb": "Copper is the first metal people learned to pull out of stone with fire. The green rock is malachite. Get it hot enough, with charcoal, and shiny beads of metal run out. It must have looked like magic.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "silk",
+      "type": "event",
+      "label": "silk unwound from cocoons",
+      "hook": "Silk thread unwound from cocoons in China.",
+      "start": 6400,
+      "era": 6400,
+      "precision": "century",
+      "region": "east-asia",
+      "place": "East Asia",
+      "glyph": "cloth",
+      "blurb": "A silkworm cocoon is a single thread almost a kilometre long. Somebody discovered that if you soak it in hot water you can unwind it. For thousands of years nobody outside China knew how it was done.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "uruk",
+      "type": "event",
+      "label": "Uruk, the first city",
+      "hook": "Uruk, on the Euphrates, becomes the first place we would call a city.",
+      "start": 6200,
+      "era": 6200,
+      "precision": "century",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "city",
+      "blurb": "Tens of thousands of people, temples, walls, and more work than anyone could keep track of in their head. That last problem is the one that matters for what came next.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "wheel",
+      "type": "event",
+      "label": "first picture of a wheel",
+      "hook": "A clay pot in Poland carries the earliest picture of a cart with wheels.",
+      "start": 6500,
+      "era": 6500,
+      "precision": "century",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "wheel",
+      "blurb": "The Bronocice pot is decorated with a little drawing: a box with four circles under it. Wheels seem to have appeared in several places at about the same time, and nobody is sure who was first.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "writing",
+      "type": "event",
+      "label": "writing: grain and beer",
+      "hook": "The earliest writing we have: clay tablets at Uruk, counting grain and beer.",
+      "start": 6700,
+      "era": 6700,
+      "precision": "century",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "tablet",
+      "blurb": "The first writing was not stories. It was accounts. Marks pressed into wet clay with a reed, recording how much barley went where. Stories came along a few centuries later, once the marks could say anything.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "bronze",
+      "type": "event",
+      "label": "copper and tin: bronze",
+      "hook": "Copper mixed with a little tin makes bronze, which is much harder.",
+      "start": 6700,
+      "era": 6700,
+      "precision": "century",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "metal",
+      "blurb": "Pure copper is soft. Add about one part tin in ten and you get bronze, hard enough for tools that keep an edge. Tin is rare, so bronze meant trade over long distances, and trade meant ships and roads.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "otzi",
+      "type": "event",
+      "label": "a man kept in the ice",
+      "hook": "A man dies crossing the Alps with a copper axe. The ice keeps him for 5,000 years.",
+      "start": 6700,
+      "era": 6700,
+      "precision": "century",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "ice",
+      "blurb": "He was found in 1991 by hikers. He carried a copper axe, a bow, a fire-making kit, and dried mushrooms as medicine. He had sixty-one tattoos. We know what he ate for his last meal.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "caral",
+      "type": "event",
+      "label": "Caral: pyramids and flutes",
+      "hook": "At Caral, in Peru, pyramids are built and flutes are carved from pelican bones.",
+      "start": 7400,
+      "era": 7400,
+      "precision": "century",
+      "region": "americas",
+      "place": "the Americas",
+      "glyph": "music",
+      "blurb": "Caral is as old as the pyramids of Egypt, and its people built without pottery and without writing. They left thirty-two flutes made from bird bones, and fishing nets made of cotton.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "pyramid",
+      "type": "event",
+      "label": "the Great Pyramid",
+      "hook": "The Great Pyramid at Giza. Two and a half million blocks.",
+      "start": 7440,
+      "era": 7440,
+      "precision": "century",
+      "region": "africa",
+      "place": "Africa",
+      "glyph": "stone",
+      "blurb": "It was the tallest building in the world for nearly four thousand years. The workers were fed bread, beer, and a great deal of beef, and they lived in a town built for them beside the site.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "mohenjo",
+      "type": "event",
+      "label": "Mohenjo-daro has drains",
+      "hook": "Mohenjo-daro, on the Indus, has bathrooms in the houses and drains under the streets.",
+      "start": 7500,
+      "era": 7500,
+      "precision": "century",
+      "region": "south-asia",
+      "place": "South Asia",
+      "glyph": "city",
+      "blurb": "Straight streets, brick houses, a great bath, and covered drains carrying waste out of town. Its writing has never been read. We do not know the name of a single person who lived there.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "stonehenge",
+      "type": "event",
+      "label": "the big stones at Stonehenge",
+      "hook": "The big stones are raised at Stonehenge.",
+      "start": 7500,
+      "era": 7500,
+      "precision": "century",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "stone",
+      "blurb": "The largest weigh as much as five elephants and came from about 25 kilometres away. The smaller bluestones came from Wales, 250 kilometres. On midsummer morning the sun rises over a particular stone.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "enhed",
+      "type": "event",
+      "label": "Enheduanna signs her poems",
+      "hook": "Enheduanna, a priestess at Ur, writes hymns and puts her name on them. She is the first author we know by name.",
+      "start": 7720,
+      "era": 7720,
+      "precision": "century",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "book",
+      "blurb": "Her poems were copied for centuries after her death. She wrote about being thrown out of her temple and getting it back. It is the oldest writing anywhere that says: I made this.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "thera",
+      "type": "event",
+      "label": "Thera explodes",
+      "hook": "The island of Thera explodes. The town of Akrotiri is buried under ash.",
+      "start": 8400,
+      "era": 8400,
+      "precision": "century",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "fire",
+      "blurb": "A whole town, with paintings still on the walls, was sealed under metres of ash. The wave from the eruption reached Crete. Ash from it has been found in Greenland ice.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "alphabet",
+      "type": "event",
+      "label": "the first alphabet",
+      "hook": "Miners in Sinai write with about two dozen signs. It is the first alphabet.",
+      "start": 8200,
+      "era": 8200,
+      "precision": "century",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "tablet",
+      "blurb": "Egyptian writing used hundreds of pictures. Somebody in the turquoise mines borrowed a few of them and used each one for a sound instead. Every alphabet you have ever seen, including this one, descends from that idea.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "oracle",
+      "type": "event",
+      "label": "questions on turtle shells",
+      "hook": "At Anyang, questions are scratched on turtle shells and cracked with heat to read the answer.",
+      "start": 8800,
+      "era": 8800,
+      "precision": "century",
+      "region": "east-asia",
+      "place": "East Asia",
+      "glyph": "tablet",
+      "blurb": "The questions were things like: will it rain? will the harvest be good? The writing is the ancestor of the Chinese characters used today. Farmers ground the bones up as medicine for centuries before anyone noticed the writing.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "iron",
+      "type": "event",
+      "label": "iron, which is everywhere",
+      "hook": "Smiths in Anatolia learn to work iron, which is everywhere, unlike tin.",
+      "start": 8800,
+      "era": 8800,
+      "precision": "century",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "metal",
+      "blurb": "Iron ore is common. The trick is the heat: you need a much hotter fire than for copper. Once the trick spread, hard tools stopped being for the rich.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "olmec",
+      "type": "event",
+      "label": "Olmec stone heads",
+      "hook": "The Olmec carve stone heads three metres tall on the Gulf coast of Mexico.",
+      "start": 8800,
+      "era": 8800,
+      "precision": "century",
+      "region": "americas",
+      "place": "the Americas",
+      "glyph": "stone",
+      "blurb": "Seventeen colossal heads have been found, each a different face, each carved from a single boulder brought from mountains far away. Nobody knows whose faces they are.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "lapita",
+      "type": "event",
+      "label": "canoes reach Tonga",
+      "hook": "Lapita sailors reach Tonga and Fiji in double canoes, across open ocean.",
+      "start": 9100,
+      "era": 9100,
+      "precision": "decade",
+      "region": "pacific",
+      "place": "the Pacific",
+      "glyph": "boat",
+      "blurb": "They carried pigs, chickens, taro, and their pottery, and found islands nobody had ever seen. Their descendants went on to reach Hawaii and New Zealand, the last large lands on Earth to be settled.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "homer",
+      "type": "event",
+      "label": "Homer written down",
+      "hook": "The Iliad and the Odyssey are written down, after generations of being sung.",
+      "start": 9250,
+      "era": 9250,
+      "precision": "decade",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "book",
+      "blurb": "For a long time these poems lived only in memory, sung by people who could recite for hours. Writing them down froze them. It is why we have them at all.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "nineveh",
+      "type": "event",
+      "label": "Ashurbanipal’s library",
+      "hook": "Ashurbanipal gathers 30,000 clay tablets at Nineveh, the first great library.",
+      "start": 9350,
+      "era": 9350,
+      "precision": "decade",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "book",
+      "blurb": "He sent agents across his empire to copy or seize every text they could find: star charts, medicine, spells, the story of Gilgamesh. When the city burned, the fire baked the clay harder. The library survived by being destroyed.",
+      "story": {
+        "title": "Ashurbanipal’s library",
+        "id": "nineveh"
+      },
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "coins",
+      "type": "event",
+      "label": "the first coins",
+      "hook": "The first coins, lumps of gold and silver stamped with a lion, in Lydia.",
+      "start": 9400,
+      "era": 9400,
+      "precision": "decade",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "number",
+      "blurb": "Before coins, you weighed your metal every time. A stamp meant you could trust the weight without a scale. Within a century the idea had spread across the Greek world.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "thales",
+      "type": "event",
+      "label": "Thales predicts an eclipse",
+      "hook": "Thales of Miletus says the sun will go dark, and it does.",
+      "start": 9415,
+      "era": 9415,
+      "precision": "decade",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "star",
+      "blurb": "Nobody is sure how he did it. He may have used Babylonian records of earlier eclipses. Two armies fighting that day stopped and made peace. He also noticed that rubbed amber picks up straw, and the Greek word for amber is elektron.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "confucius",
+      "type": "event",
+      "label": "Confucius teaching in Lu",
+      "hook": "Confucius is teaching in the state of Lu, and his students are writing it down.",
+      "start": 9500,
+      "era": 9500,
+      "precision": "decade",
+      "region": "east-asia",
+      "place": "East Asia",
+      "glyph": "book",
+      "blurb": "He wrote nothing himself. What we have are his students’ notes: sayings, answers to questions, arguments. They shaped how a quarter of the world thought for two thousand years.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "socrates",
+      "type": "event",
+      "label": "Socrates is born",
+      "hook": "Socrates is born in Athens.",
+      "start": 9530,
+      "era": 9530,
+      "precision": "decade",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "eye",
+      "blurb": "He wrote nothing either. He walked around asking people questions until they realised they did not know what they thought they knew. His student Plato wrote it down. On this line he is born about 9,530 years after the ice, and dies about 9,600. Born first, then died. On the old calendar it is the other way round.",
+      "story": {
+        "title": "Socrates",
+        "id": "socrates"
+      },
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "eratos",
+      "type": "event",
+      "label": "Eratosthenes measures the Earth",
+      "hook": "Eratosthenes measures the size of the Earth, using two shadows and a well.",
+      "start": 9760,
+      "era": 9760,
+      "precision": "decade",
+      "region": "africa",
+      "place": "Africa",
+      "glyph": "lens",
+      "blurb": "At noon on midsummer day the sun shone straight down a well at Syene. At Alexandria, at the same moment, a stick cast a small shadow. From the angle and the distance between the two towns he worked out the whole circumference. He was close.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "antikythera",
+      "type": "event",
+      "label": "a machine of gears sinks",
+      "hook": "Someone builds a bronze machine of gears that predicts eclipses. It sinks in a shipwreck.",
+      "start": 9900,
+      "era": 9900,
+      "precision": "decade",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "wheel",
+      "blurb": "The Antikythera mechanism was found by sponge divers in 1901. It has at least thirty gears. Nothing as complicated survives from the next thousand years.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "vesuvius",
+      "type": "event",
+      "label": "Vesuvius buries Pompeii",
+      "hook": "Vesuvius buries Pompeii. Pliny, seventeen years old, watches from across the bay.",
+      "start": 10079,
+      "era": 10079,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "fire",
+      "blurb": "His uncle sailed toward the eruption to rescue people and died. Pliny wrote the whole thing down in two letters. It is the first eyewitness account of a volcano, and it is still accurate.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "paper",
+      "type": "event",
+      "label": "paper, from rags and nets",
+      "hook": "Cai Lun presents paper to the Chinese court, made from bark, rags, and old fishing nets.",
+      "start": 10105,
+      "era": 10105,
+      "precision": "year",
+      "region": "east-asia",
+      "place": "East Asia",
+      "glyph": "book",
+      "blurb": "It took a thousand years to reach Europe. Before paper, books were written on animal skin, and a single Bible took a whole flock of sheep.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "teoti",
+      "type": "event",
+      "label": "Teotihuacan, 100,000 people",
+      "hook": "Teotihuacan, in Mexico, holds 100,000 people on a grid of streets.",
+      "start": 10200,
+      "era": 10200,
+      "precision": "year",
+      "region": "americas",
+      "place": "the Americas",
+      "glyph": "city",
+      "blurb": "It was one of the largest cities in the world. Its central avenue is two kilometres long. We do not know what language its people spoke or what they called their city. The Aztecs, who came a thousand years later, gave it its name.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "zero",
+      "type": "event",
+      "label": "rules for zero",
+      "hook": "Brahmagupta writes down rules for zero as a number you can add and multiply.",
+      "start": 10628,
+      "era": 10628,
+      "precision": "year",
+      "region": "south-asia",
+      "place": "South Asia",
+      "glyph": "number",
+      "blurb": "People had used a blank to mean nothing for a long time. Brahmagupta treated it as a number: what happens when you add it, subtract it, multiply by it. He got division by zero wrong, and so did everyone for a thousand years after.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "baghdad",
+      "type": "event",
+      "label": "al-Khwarizmi’s algebra",
+      "hook": "In Baghdad, al-Khwarizmi writes the book that gives us the word algebra.",
+      "start": 10830,
+      "era": 10830,
+      "precision": "year",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "book",
+      "blurb": "His book was about solving practical problems, inheritance and land, by balancing both sides. The Latin spelling of his name gave us another word: algorithm.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "hawaii",
+      "type": "event",
+      "label": "navigators reach Hawaii",
+      "hook": "Polynesian navigators reach Hawaii, steering by stars and the shapes of waves.",
+      "start": 11000,
+      "era": 11000,
+      "precision": "year",
+      "region": "pacific",
+      "place": "the Pacific",
+      "glyph": "boat",
+      "blurb": "They had no instruments. They read the stars, the swell, the birds, and the colour of the water. Hawaii is 3,000 kilometres from the nearest inhabited island. They found it, and then found their way back.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "supernova",
+      "type": "event",
+      "label": "a new star, seen by day",
+      "hook": "A new star appears in the sky, bright enough to see in daylight for three weeks. Astronomers in Kaifeng write it down.",
+      "start": 11054,
+      "era": 11054,
+      "precision": "year",
+      "region": "east-asia",
+      "place": "East Asia",
+      "glyph": "star",
+      "blurb": "It was a star exploding 6,500 light-years away. The light had left it about 4,500 years after the ice, when Uruk was becoming a city, and it took all of written history to arrive. What is left of it is called the Crab Nebula.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "compass",
+      "type": "event",
+      "label": "a needle that points south",
+      "hook": "Shen Kuo describes a magnetised needle floating in water, pointing south.",
+      "start": 11040,
+      "era": 11040,
+      "precision": "year",
+      "region": "east-asia",
+      "place": "East Asia",
+      "glyph": "star",
+      "blurb": "He also noticed that it did not point exactly south, and said so. Compasses reached Europe about a century later and made ocean crossings possible.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "alhazen",
+      "type": "event",
+      "label": "light comes into the eye",
+      "hook": "Ibn al-Haytham shows that we see because light comes into the eye, not out of it.",
+      "start": 11020,
+      "era": 11020,
+      "precision": "year",
+      "region": "west-asia",
+      "place": "West Asia",
+      "glyph": "eye",
+      "blurb": "For a thousand years people had argued that the eye sends out rays. He tested it with dark rooms and pinholes, and insisted that you should try things rather than argue about them. He wrote it up in seven volumes.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "chartres",
+      "type": "event",
+      "label": "the blue glass at Chartres",
+      "hook": "The glass goes into the windows at Chartres. The blue has never been matched.",
+      "start": 11200,
+      "era": 11200,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "eye",
+      "blurb": "The colour comes from cobalt, melted into the glass. The workers did not know what cobalt was. The recipe was lost and rediscovered more than once.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "fibonacci",
+      "type": "event",
+      "label": "the figures 0 to 9 reach Europe",
+      "hook": "Fibonacci publishes the numerals 0 to 9 for Europe, learned from Arab merchants.",
+      "start": 11202,
+      "era": 11202,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "number",
+      "blurb": "Europeans were still doing arithmetic with Roman numerals and counting boards. His book showed the nine Indian figures and the sign 0, and how to multiply with them. It also had the rabbits.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "zimbabwe",
+      "type": "event",
+      "label": "Great Zimbabwe’s walls",
+      "hook": "The great stone walls of Great Zimbabwe rise, without mortar, eleven metres high.",
+      "start": 11300,
+      "era": 11300,
+      "precision": "year",
+      "region": "africa",
+      "place": "Africa",
+      "glyph": "wall",
+      "blurb": "A city of perhaps 18,000 people traded gold and ivory as far as China. The walls are made of cut granite blocks fitted so well they needed nothing to hold them together.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "aotearoa",
+      "type": "event",
+      "label": "the last big land is found",
+      "hook": "Polynesian voyagers reach Aotearoa, New Zealand, the last large land on Earth to be settled.",
+      "start": 11300,
+      "era": 11300,
+      "precision": "year",
+      "region": "pacific",
+      "place": "the Pacific",
+      "glyph": "boat",
+      "blurb": "By the time they arrived, Chartres had its windows and Fibonacci had his numbers. People had been living everywhere else for thousands of years.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "gutenberg",
+      "type": "event",
+      "label": "Gutenberg’s press",
+      "hook": "Gutenberg’s press in Mainz: movable metal type, oil-based ink, a screw from a wine press.",
+      "start": 11450,
+      "era": 11450,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "book",
+      "blurb": "Bi Sheng had made movable type from clay in China four hundred years earlier. Gutenberg’s version used metal letters that could be cast by the thousand. Within fifty years there were more books in Europe than in all the centuries before.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "galileo",
+      "type": "event",
+      "label": "mountains on the Moon",
+      "hook": "Galileo points a telescope at the Moon and sees mountains.",
+      "start": 11609,
+      "era": 11609,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "lens",
+      "blurb": "The telescope was a Dutch invention of the year before. He ground his own lenses to make a better one. He saw that Jupiter had moons of its own, and that the Milky Way was made of stars.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "decimal",
+      "type": "event",
+      "label": "the decimal point",
+      "hook": "John Napier uses a point to separate whole numbers from fractions. The decimal point.",
+      "start": 11614,
+      "era": 11614,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "number",
+      "blurb": "Before this, fractions were written in all sorts of ways. A single dot between 3 and 14159 made calculation much faster. It arrived only four hundred years ago, which is surprisingly recent for something that looks so obvious.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "laki",
+      "type": "event",
+      "label": "Laki poisons the summer",
+      "hook": "Laki, in Iceland, pours out lava for eight months. A dry fog hangs over Europe all summer.",
+      "start": 11783,
+      "era": 11783,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "fire",
+      "blurb": "Benjamin Franklin, in Paris, noticed the sun was too weak to light a fire through a lens and guessed a volcano was to blame. He was right. The winter that followed was one of the coldest ever recorded.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "tambora",
+      "type": "event",
+      "label": "Tambora: no summer next year",
+      "hook": "Tambora, in Indonesia, explodes. The next year has no summer.",
+      "start": 11815,
+      "era": 11815,
+      "precision": "year",
+      "region": "pacific",
+      "place": "the Pacific",
+      "glyph": "fire",
+      "blurb": "It was the largest eruption in recorded history. The ash circled the world, and 1816 was cold and wet everywhere. In Switzerland, kept indoors by the rain, a group of friends told each other ghost stories.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "frank",
+      "type": "event",
+      "label": "Mary Shelley begins Frankenstein",
+      "hook": "Mary Shelley, eighteen, begins Frankenstein by Lake Geneva in the year without a summer.",
+      "start": 11816,
+      "era": 11816,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "book",
+      "blurb": "The story came to her after a night of talk about whether electricity could bring dead tissue to life. She finished the book in less than a year.",
+      "story": {
+        "title": "Frankenstein",
+        "id": "frank"
+      },
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "faraday",
+      "type": "event",
+      "label": "a magnet, a coil, a current",
+      "hook": "Faraday moves a magnet through a coil of wire and finds a current.",
+      "start": 11831,
+      "era": 11831,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "spark",
+      "blurb": "He had almost no schooling and learned science by binding books and reading them. Every generator and every electric motor on Earth works on what he found that day.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "darwin",
+      "type": "event",
+      "label": "Darwin draws a tree: I think",
+      "hook": "Darwin draws a branching tree in a notebook and writes above it: I think.",
+      "start": 11837,
+      "era": 11837,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "leaf",
+      "blurb": "It is a rough sketch, a few lines. It was the first time anyone had drawn all living things as branches of one tree. He waited twenty-two years to publish.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "photo",
+      "type": "event",
+      "label": "the first photograph",
+      "hook": "Niépce makes the first photograph, a view from a window, in an eight-hour exposure.",
+      "start": 11826,
+      "era": 11826,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "eye",
+      "blurb": "The plate was coated with bitumen, which hardens in light. The picture is of rooftops. It is dim and blurry and it exists.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "starry",
+      "type": "event",
+      "label": "The Starry Night",
+      "hook": "Van Gogh paints The Starry Night from a window in Saint-Rémy.",
+      "start": 11889,
+      "era": 11889,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "star",
+      "blurb": "He painted it from memory and imagination, in the daytime, in a room where he was not allowed to paint at night. The village is invented. The sky is not.",
+      "story": {
+        "title": "The Starry Night",
+        "id": "starry"
+      },
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "montp",
+      "type": "event",
+      "label": "a train through the wall",
+      "hook": "A train fails to stop at Montparnasse station and comes out through the wall.",
+      "start": 11895,
+      "era": 11895,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "train",
+      "blurb": "The train came in too fast, ran through the buffers, crossed the concourse, and went out the window into the street below. The photograph of it hanging nose-down is one of the most famous ever taken.",
+      "story": {
+        "title": "The train through the wall",
+        "id": "montp"
+      },
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "curie",
+      "type": "event",
+      "label": "Marie Curie finds radium",
+      "hook": "Marie Curie finds two new elements in tons of black ore and names one after Poland.",
+      "start": 11898,
+      "era": 11898,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "star",
+      "blurb": "She boiled down tons of pitchblende in a leaky shed to get a speck of radium. Her notebooks are still radioactive and are kept in a lead box.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "moon",
+      "type": "event",
+      "label": "two people on the Moon",
+      "hook": "Two people walk on the Moon. Six hundred million watch.",
+      "start": 11969,
+      "era": 11969,
+      "precision": "year",
+      "region": "world",
+      "place": "the whole world",
+      "glyph": "moon",
+      "blurb": "The computer that guided them had less memory than a greeting card that plays a tune. They were on the surface for about two hours.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    },
+    {
+      "id": "web",
+      "type": "event",
+      "label": "the first web page",
+      "hook": "Tim Berners-Lee writes the first web page, at a physics lab near Geneva.",
+      "start": 11990,
+      "era": 11990,
+      "precision": "year",
+      "region": "europe",
+      "place": "Europe",
+      "glyph": "tablet",
+      "blurb": "It explained what the web was. He gave the idea away for free. The page is still online.",
+      "story": null,
+      "image": {
+        "file": null,
+        "source": null,
+        "license": null
+      },
+      "sources": []
+    }
+  ],
+  "leadups": {
+    "frank": {
+      "label": "the sixty years before",
+      "from": 11750,
+      "events": [
+        {
+          "id": "lead-frank-0",
+          "type": "event",
+          "label": "Franklin flies a kite into a storm",
+          "start": 11752,
+          "era": 11752,
+          "precision": "year",
+          "glyph": "kite",
+          "blurb": "Lightning ran down the wet string to a key and made a spark. He was lucky not to die. A man who tried the same thing in Russia the next year did.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-frank-1",
+          "type": "event",
+          "label": "Galvani’s frog legs twitch",
+          "start": 11780,
+          "era": 11780,
+          "precision": "year",
+          "glyph": "frog",
+          "blurb": "A dead frog’s leg kicked when a metal blade touched its nerve. Galvani thought animals held their own electricity. Everyone in Europe argued about it for years.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-frank-2",
+          "type": "event",
+          "label": "Volta stacks a battery",
+          "start": 11800,
+          "era": 11800,
+          "precision": "year",
+          "glyph": "spark",
+          "blurb": "Discs of copper and zinc with salt-soaked cloth between them. The first steady electric current. Napoleon gave him a medal.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-frank-3",
+          "type": "event",
+          "label": "Aldini electrifies a corpse in London",
+          "start": 11803,
+          "era": 11803,
+          "precision": "year",
+          "glyph": "spark",
+          "blurb": "Galvani’s nephew wired up the body of a hanged man in front of an audience. The jaw moved, an eye opened, a hand clenched. The newspapers said he had nearly brought it to life.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-frank-4",
+          "type": "event",
+          "label": "Tambora explodes",
+          "start": 11815,
+          "era": 11815,
+          "precision": "year",
+          "glyph": "fire",
+          "blurb": "The ash blocked enough sunlight that the next summer failed across Europe and America. It rained in Switzerland for weeks.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-frank-5",
+          "type": "event",
+          "label": "ghost stories by the lake",
+          "start": 11816,
+          "era": 11816,
+          "precision": "year",
+          "glyph": "book",
+          "blurb": "Kept indoors by the rain at a villa on Lake Geneva, Byron proposed that each of them write a ghost story. Mary Godwin, eighteen, was the only one who finished.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        }
+      ]
+    },
+    "starry": {
+      "label": "the fifty years before",
+      "from": 11839,
+      "events": [
+        {
+          "id": "lead-starry-0",
+          "type": "event",
+          "label": "photographs go public",
+          "start": 11839,
+          "era": 11839,
+          "precision": "year",
+          "glyph": "eye",
+          "blurb": "Daguerre’s process was announced in Paris and given away free. Within a decade painters were asking what painting was for, if a machine could copy the world.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-starry-1",
+          "type": "event",
+          "label": "paint in metal tubes",
+          "start": 11841,
+          "era": 11841,
+          "precision": "year",
+          "glyph": "brush",
+          "blurb": "Before tubes, paint was mixed daily and kept in pigs’ bladders. Tubes meant you could carry colour outdoors and paint what you saw, where you saw it.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-starry-2",
+          "type": "event",
+          "label": "Japanese prints flood Paris",
+          "start": 11867,
+          "era": 11867,
+          "precision": "year",
+          "glyph": "cloth",
+          "blurb": "Flat colour, bold outlines, strange angles. Van Gogh collected hundreds and copied several. The swirling sky owes something to Hokusai’s wave.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-starry-3",
+          "type": "event",
+          "label": "Impression, Sunrise",
+          "start": 11874,
+          "era": 11874,
+          "precision": "year",
+          "glyph": "brush",
+          "blurb": "Monet’s painting of a harbour at dawn was mocked by a critic as a mere impression. The painters took the insult as their name.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-starry-4",
+          "type": "event",
+          "label": "Van Gogh arrives in Arles",
+          "start": 11888,
+          "era": 11888,
+          "precision": "year",
+          "glyph": "star",
+          "blurb": "He came south for the light and painted almost a picture a day. He wrote to his brother that the night was more richly coloured than the day.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        }
+      ]
+    },
+    "montp": {
+      "label": "the thirty years before",
+      "from": 11865,
+      "events": [
+        {
+          "id": "lead-montp-0",
+          "type": "event",
+          "label": "Westinghouse’s air brake",
+          "start": 11869,
+          "era": 11869,
+          "precision": "year",
+          "glyph": "train",
+          "blurb": "Brakes on every carriage, all applied at once by compressed air. If the pipe broke, the brakes went on by themselves. The Montparnasse train had one. It was not enough.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-montp-1",
+          "type": "event",
+          "label": "Muybridge photographs a galloping horse",
+          "start": 11878,
+          "era": 11878,
+          "precision": "year",
+          "glyph": "horse",
+          "blurb": "Twelve cameras along a track, triggered by the horse itself. For the first time anyone could see what a running animal actually did. All four feet did leave the ground.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-montp-2",
+          "type": "event",
+          "label": "the Eiffel Tower goes up",
+          "start": 11889,
+          "era": 11889,
+          "precision": "year",
+          "glyph": "tower",
+          "blurb": "Built in two years for a fair, meant to come down after twenty. It was the tallest thing people had ever made. Paris was the city of iron and speed.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-montp-3",
+          "type": "event",
+          "label": "the Lumières show a moving picture",
+          "start": 11895,
+          "era": 11895,
+          "precision": "year",
+          "glyph": "film",
+          "blurb": "In March, in Lyon, workers walked out of a factory gate on a screen. In December, in Paris, a train pulled into a station and people in the front row flinched.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        }
+      ]
+    },
+    "socrates": {
+      "label": "the hundred years before",
+      "from": 9430,
+      "events": [
+        {
+          "id": "lead-socrates-0",
+          "type": "event",
+          "label": "Pythagoras settles at Croton",
+          "start": 9470,
+          "era": 9470,
+          "precision": "year",
+          "glyph": "number",
+          "blurb": "He and his followers believed the world was made of number. They found that a plucked string half as long sounds an octave higher. Music was arithmetic you could hear.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-socrates-1",
+          "type": "event",
+          "label": "Athens starts voting",
+          "start": 9492,
+          "era": 9492,
+          "precision": "year",
+          "glyph": "vote",
+          "blurb": "Cleisthenes rearranged the city so that decisions were made by assemblies of citizens. It was new, and messy, and Socrates would spend his life arguing with the people it produced.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-socrates-2",
+          "type": "event",
+          "label": "Heraclitus: everything flows",
+          "start": 9500,
+          "era": 9500,
+          "precision": "year",
+          "glyph": "water",
+          "blurb": "You cannot step in the same river twice, he said, because the water has moved on. He wrote in riddles and was known as the Obscure.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-socrates-3",
+          "type": "event",
+          "label": "Aeschylus enters the play contest",
+          "start": 9501,
+          "era": 9501,
+          "precision": "year",
+          "glyph": "mask",
+          "blurb": "Athens held competitions for new plays at a spring festival. Aeschylus added a second actor, so that characters could speak to each other. Theatre had begun.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-socrates-4",
+          "type": "event",
+          "label": "Anaxagoras says the sun is a hot stone",
+          "start": 9520,
+          "era": 9520,
+          "precision": "year",
+          "glyph": "star",
+          "blurb": "He came to Athens and taught that the sun was a burning rock bigger than the Peloponnese, and the moon shone with borrowed light. He was later charged with impiety for it.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        }
+      ]
+    },
+    "nineveh": {
+      "label": "the two hundred years before",
+      "from": 9150,
+      "events": [
+        {
+          "id": "lead-nineveh-0",
+          "type": "event",
+          "label": "Greeks borrow the alphabet",
+          "start": 9200,
+          "era": 9200,
+          "precision": "year",
+          "glyph": "tablet",
+          "blurb": "Greek traders took the Phoenician letters and added something new: signs for vowels. It is the alphabet you are reading, one step removed.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-nineveh-1",
+          "type": "event",
+          "label": "an eclipse, written on clay",
+          "start": 9237,
+          "era": 9237,
+          "precision": "year",
+          "glyph": "star",
+          "blurb": "Assyrian scribes recorded a total eclipse of the sun in the month of Simanu. Astronomers today can date it to the fifteenth of June. It anchors the whole chronology of the ancient Near East.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-nineveh-2",
+          "type": "event",
+          "label": "Homer written down",
+          "start": 9250,
+          "era": 9250,
+          "precision": "year",
+          "glyph": "book",
+          "blurb": "The songs of Troy, after generations in memory, were fixed in the new letters. Ashurbanipal would collect Gilgamesh the same way, from older tongues.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-nineveh-3",
+          "type": "event",
+          "label": "an aqueduct of stone to Nineveh",
+          "start": 9310,
+          "era": 9310,
+          "precision": "year",
+          "glyph": "water",
+          "blurb": "Sennacherib brought water fifty kilometres over a bridge of stone arches, the oldest aqueduct known. He planted gardens with it that some think were the real Hanging Gardens.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        },
+        {
+          "id": "lead-nineveh-4",
+          "type": "event",
+          "label": "a prince learns to read",
+          "start": 9330,
+          "era": 9330,
+          "precision": "year",
+          "glyph": "tablet",
+          "blurb": "Ashurbanipal was not expected to be king, so he was taught like a scribe. He could read Sumerian, a language already dead for a thousand years. He boasted about it on clay for the rest of his life.",
+          "image": {
+            "file": null,
+            "source": null,
+            "license": null
+          },
+          "sources": []
+        }
+      ]
+    }
+  }
+}

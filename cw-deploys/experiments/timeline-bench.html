@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  timeline-bench.html — bench: the Timeline Intro. Three tiers: a fixed full-span line
+  (to scale), a road in perspective from the ice to the story's year (four passes,
+  8:4:2:1 of the years, computed from the destination), and the story's own lead-up.
+  Spec: CWVault/20-SPECS/Spec-Timeline-Intro.md. Data: ../stories/events.json.
+  Questions this bench exists to answer are in the spec, §Open.
+-->
+<title>After the Ice — Timeline Intro</title>
+<style>
+  :root {
+    --ground: #f4f1e8;
+    --ground-deep: #e9e3d3;
+    --road: #e3dccb;
+    --road-edge: #cfc6b1;
+    --ink: #2a2620;
+    --ink-soft: #6b625a;
+    --line: #3C5C83;
+    --line-faint: #b9c3d0;
+    --inset: rgba(60,92,131,.10);
+    --copper: #b87333;
+    --copper-glow: rgba(184,115,51,.35);
+    --word: #546A80;
+    --word-hot: #3C5C83;
+    --rule: #c8b89a;
+    --card: #f8f5ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #1f1b15; --ground-deep: #27221b; --road: #2e2820; --road-edge: #4a4132;
+      --ink: #ebe4d3; --ink-soft: #a89d8c; --line: #8fa6c2; --line-faint: #4a5563;
+      --inset: rgba(143,166,194,.14); --copper: #d38a49; --copper-glow: rgba(211,138,73,.35);
+      --word: #9db0c4; --word-hot: #c5d3e2; --rule: #5a4f3c; --card: #2a251d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #1f1b15; --ground-deep: #27221b; --road: #2e2820; --road-edge: #4a4132;
+    --ink: #ebe4d3; --ink-soft: #a89d8c; --line: #8fa6c2; --line-faint: #4a5563;
+    --inset: rgba(143,166,194,.14); --copper: #d38a49; --copper-glow: rgba(211,138,73,.35);
+    --word: #9db0c4; --word-hot: #c5d3e2; --rule: #5a4f3c; --card: #2a251d;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: Georgia, "Times New Roman", Times, serif; font-size: 16px; line-height: 1.4;
+    min-height: 100vh;
+  }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+  button:focus-visible { outline: 1.5px solid var(--word); outline-offset: 3px; border-radius: 2px; }
+
+  .stage { max-width: 1180px; margin: 0 auto; padding: 28px 40px 60px; user-select: none; }
+  .masthead {
+    display: flex; justify-content: space-between; align-items: baseline;
+    color: var(--ink-soft); font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  }
+  .masthead .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  .masthead .page-title { margin: 6px 0 0; font-size: 34px; font-weight: normal; letter-spacing: 0; text-transform: none; color: var(--ink); line-height: 1.1; }
+  .masthead .hint { text-transform: none; letter-spacing: 0; font-style: italic; font-size: 13px; opacity: .8; }
+  .tier-label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 6px; }
+
+  /* ---------- tier 1: the fixed line ---------- */
+  .line-wrap { position: relative; margin-top: 96px; height: 66px; cursor: pointer; }
+  .odo { position: absolute; top: -100px; left: 0; transform: translateX(-50%); text-align: center; pointer-events: none; white-space: nowrap; }
+  .odo .digits { display: inline-flex; align-items: flex-end; height: 60px; overflow: hidden; font-size: 52px; font-weight: bold; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .odo .digits .comma { align-self: flex-end; padding-bottom: 6px; width: .3em; text-align: center; }
+  .odo .col { position: relative; width: .62em; height: 60px; overflow: hidden; }
+  .odo .col .strip { position: absolute; left: 0; top: 0; width: 100%; will-change: transform; }
+  .odo .col .strip span { display: block; height: 60px; line-height: 60px; text-align: center; }
+  .odo .unit { font-size: 14px; color: var(--ink-soft); font-style: italic; margin-top: 2px; }
+  .odo.ghost { opacity: .35; }
+
+  .rail { position: absolute; left: 0; right: 0; top: 30px; height: 2px; background: var(--line); }
+  .inset { position: absolute; top: 18px; height: 26px; background: var(--inset); border-radius: 2px; transition: left .35s ease, width .35s ease; pointer-events: none; }
+  .tick { position: absolute; top: 24px; width: 1px; height: 14px; background: var(--line-faint); transform: translateX(-.5px); }
+  .tick.k { height: 8px; top: 27px; }
+  .tick-label { position: absolute; top: 44px; transform: translateX(-50%); font-size: 11px; color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .endcap { position: absolute; top: 44px; font-size: 13px; color: var(--ink-soft); white-space: nowrap; }
+  .endcap.left { left: 0; } .endcap.right { right: 0; font-style: italic; }
+
+  .diamond { position: absolute; top: 31px; width: 9px; height: 9px; background: var(--line); transform: translate(-50%,-50%) rotate(45deg); transition: transform .25s ease, background .25s ease, opacity .6s ease; opacity: 0; cursor: pointer; }
+  .diamond.on { opacity: 1; }
+  .diamond.hot, .diamond:hover { transform: translate(-50%,-50%) rotate(45deg) scale(1.6); background: var(--copper); }
+  .diamond.dest { background: var(--copper); width: 11px; height: 11px; }
+
+  .dot { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: var(--copper); transform: translate(-50%,-50%); box-shadow: 0 0 0 6px var(--copper-glow), 0 0 22px 4px var(--copper-glow); transition: box-shadow .4s ease; z-index: 3; }
+  .line-wrap .dot { top: 31px; left: 0; }
+  .dot.resting { box-shadow: 0 0 0 4px var(--copper-glow); }
+  .dot.paused { animation: breathe 1.6s ease-in-out infinite; }
+  @keyframes breathe { 50% { box-shadow: 0 0 0 10px var(--copper-glow), 0 0 26px 6px var(--copper-glow); } }
+
+  /* ---------- tier 2: the road ---------- */
+  .road-outer { margin-top: 0; overflow-x: auto; }
+  .road { position: relative; min-width: 700px; height: 480px; cursor: pointer; }
+  .road > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .road .horizon { stroke: var(--rule); stroke-width: .5; }
+  .road .band { fill: var(--road); stroke: var(--road-edge); stroke-width: .75; }
+  .road .centre { fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 5; opacity: .5; }
+  .road .goal { fill: none; stroke: var(--copper); stroke-width: 1.5; }
+  .road .dot { top: 0; left: 0; }
+
+  .road .side { position: absolute; left: 0; top: 0; width: 330px; max-height: 250px; overflow-y: auto; padding: 4px 8px 4px 0; font-size: 14px; line-height: 1.4; z-index: 4; opacity: 0; transition: opacity .3s ease-in; text-align: left; user-select: text; }
+  .road .side.on { opacity: 1; }
+  .road .side h3 { margin: 0 0 4px; font-size: 16px; font-weight: normal; }
+  .road .side h3 .when { display: block; color: var(--ink-soft); font-style: italic; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .road .side p { margin: 0 0 8px; }
+  .road .side .caveat { font-size: 12px; color: var(--ink-soft); font-style: italic; }
+  .road .side .words { margin-top: 4px; font-size: 13px; }
+  .ev { position: absolute; transform: translate(-50%, -100%); display: flex; flex-direction: column; align-items: center; gap: 1px; opacity: 0; transition: opacity .35s ease-in, transform .35s ease-out; cursor: pointer; white-space: nowrap; z-index: 2; }
+  .ev.on { opacity: 1; }
+  .ev .glyph { color: var(--line); display: block; }
+  .ev .glyph svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .ev .short { color: var(--ink); line-height: 1.15; text-align: center; white-space: normal; max-width: 118px; text-wrap: balance; }
+  .ev .yr { color: var(--ink-soft); font-style: italic; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .ev.hot .glyph, .ev:hover .glyph, .ev.dest .glyph { color: var(--copper); }
+  .ev.hot .short, .ev:hover .short { color: var(--copper); }
+  .ev .stem { width: 1px; background: var(--line-faint); margin-top: 2px; }
+
+  /* ---------- tier 3: the lead-up ---------- */
+  .leadup { position: relative; margin-top: 22px; height: 0; overflow: hidden; transition: height .5s ease; }
+  .leadup.open { height: 250px; }
+  .leadup .rail2 { position: absolute; left: 0; right: 0; top: 40px; height: 1.5px; background: var(--line); transform-origin: left; transform: scaleX(0); transition: transform 3s linear; }
+  .leadup.drawn .rail2 { transform: scaleX(1); }
+  .leadup .cap { position: absolute; top: 48px; font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .leadup .cap.r { right: 0; }
+  .leadup .dot { top: 41px; left: 0; width: 10px; height: 10px; }
+  .lcard { position: absolute; top: 66px; width: 200px; display: grid; grid-template-columns: 26px 1fr; gap: 0 8px; align-items: start; padding: 6px 8px 6px 6px; background: var(--card); border-left: 2px solid var(--line-faint); opacity: 0; transform: translateY(6px); transition: opacity .3s ease-in, transform .3s ease-out; cursor: pointer; }
+  .lcard.on { opacity: 1; transform: none; }
+  .lcard:hover, .lcard.hot { border-left-color: var(--copper); }
+  .lcard .glyph { width: 26px; height: 26px; color: var(--line); grid-row: 1 / span 2; }
+  .lcard .glyph svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .lcard .short { font-size: 13px; line-height: 1.2; }
+  .lcard .yr { font-size: 11px; color: var(--ink-soft); font-style: italic; font-variant-numeric: tabular-nums; }
+  .lcard .pin { position: absolute; left: -1px; top: -26px; width: 1px; height: 26px; background: var(--line-faint); }
+
+  /* ---------- landing, detail, words ---------- */
+  .landing { margin-top: 26px; opacity: 0; transition: opacity .6s ease-in; text-wrap: balance; }
+  .landing.on { opacity: 1; }
+  .landing .big { font-size: 30px; line-height: 1.15; }
+  .landing .big b { color: var(--copper); font-variant-numeric: tabular-nums; }
+  .landing .small { font-size: 17px; color: var(--ink-soft); font-style: italic; margin-top: 4px; }
+  .landing .title { font-size: 22px; margin-top: 14px; }
+
+  .cards { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-top: 24px; }
+  .card { display: grid; grid-template-columns: 30px 1fr; gap: 0 10px; align-items: center; padding: 8px 12px 8px 8px; background: var(--card); border-left: 2px solid var(--line-faint); max-width: 290px; cursor: pointer; }
+  .card:hover, .card.hot { border-left-color: var(--copper); }
+  .card .glyph { width: 30px; height: 30px; grid-row: 1 / span 2; color: var(--line); }
+  .card .glyph svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .card .label { font-size: 14px; line-height: 1.25; }
+  .card .when { font-size: 12px; color: var(--ink-soft); font-style: italic; font-variant-numeric: tabular-nums; }
+
+  .detail { margin-top: 26px; max-width: 680px; padding: 18px 0 6px; border-top: .5px solid var(--rule); font-size: 18px; line-height: 1.45; opacity: 0; transition: opacity .3s ease-in; }
+  .detail.on { opacity: 1; }
+  .detail h3 { margin: 0 0 6px; font-size: 20px; font-weight: normal; }
+  .detail h3 .when { color: var(--ink-soft); font-style: italic; font-size: 15px; margin-left: 8px; font-variant-numeric: tabular-nums; }
+  .detail p { margin: 0 0 12px; }
+  .detail .caveat { font-size: 13px; color: var(--ink-soft); font-style: italic; }
+
+  .words { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 14px; color: var(--word); }
+  .words button { color: var(--word); opacity: 0; transition: opacity .2s ease-in, color .15s ease; padding: 4px 0; }
+  .words button.on { opacity: 1; }
+  .words button:hover { color: var(--word-hot); }
+  .words .group { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; }
+  .words .lead { color: var(--ink-soft); font-style: italic; }
+
+  @media (max-width: 640px) {
+    .stage { padding: 20px 18px 40px; }
+    .odo .digits { font-size: 40px; height: 48px; } .odo .col { height: 48px; } .odo .col .strip span { height: 48px; line-height: 48px; }
+    .line-wrap { margin-top: 96px; } .odo { top: -86px; }
+    .landing .big { font-size: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ev, .lcard, .landing, .detail, .words button, .diamond, .inset, .leadup, .leadup .rail2 { transition: none; }
+    .dot.paused { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<main class="stage">
+  <header class="masthead">
+    <div><div class="eyebrow">Curious Woods · placing things in time</div><h1 class="page-title" id="pageTitle">Frankenstein</h1></div>
+    <span class="hint" id="hint">tap the road to pause</span>
+  </header>
+
+  <section class="line-wrap" id="lineWrap" aria-label="Twelve thousand years, to scale">
+    <div class="odo" id="odo"><div class="digits" id="digits"></div><div class="unit">years after the ice</div></div>
+    <div class="rail"></div>
+    <div class="inset" id="inset"></div>
+    <div id="ticks"></div>
+    <div id="diamonds"></div>
+    <div class="dot" id="dot"></div>
+    <span class="endcap left">the ice lets go</span>
+    <span class="endcap right">now</span>
+  </section>
+
+  <div class="road-outer">
+    <section class="road" id="road" aria-label="The road to this story">
+      <svg id="roadSvg"></svg>
+      <div id="events"></div>
+      <aside class="side" id="side" hidden></aside>
+      <div class="dot" id="roadDot"></div>
+    </section>
+  </div>
+
+  <section class="leadup" id="leadup">
+    <div class="tier-label" id="leadLabel"></div>
+    <div class="rail2"></div>
+    <span class="cap l" id="capL"></span><span class="cap r" id="capR"></span>
+    <div id="lcards"></div>
+    <div class="dot" id="leadDot"></div>
+  </section>
+
+  <section class="landing" id="landing"></section>
+  <section class="cards" id="cards"></section>
+  <aside class="detail" id="detail" hidden></aside>
+  <nav class="words" id="words"></nav>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = '2026-09-08 uncommitted';   // date + short commit hash; bump in the same commit as any change
+  console.log('timeline-bench', CW_VERSION);
+
+  const NOW = 12026;
+  const ce  = y => 10000 + y;
+  const bce = y => 10000 - y;
+
+  const G = {
+    ice:'<svg viewBox="0 0 24 24"><path d="M3 15h18M6 15l2-4 3 3 3-6 2 4 2-2 1 5"/></svg>',
+    seed:'<svg viewBox="0 0 24 24"><path d="M12 21V9M12 9c-5 0-7-4-7-6 4 0 7 2 7 6zM12 12c0-4 3-6 7-6 0 2-2 6-7 6z"/></svg>',
+    wall:'<svg viewBox="0 0 24 24"><path d="M3 20h18M4 20V9l8-5 8 5v11M9 20v-5h6v5M4 13h16"/></svg>',
+    stone:'<svg viewBox="0 0 24 24"><path d="M8 21V6l4-3 4 3v15M8 21h8M8 11h8M8 16h8"/></svg>',
+    pot:'<svg viewBox="0 0 24 24"><path d="M8 4h8M9 4c0 3-4 4-4 9s3 8 7 8 7-3 7-8-4-6-4-9M6 12h12"/></svg>',
+    metal:'<svg viewBox="0 0 24 24"><path d="M4 18l6-6M10 12l2-2 4 4-2 2zM14 8l3-3 2 2-3 3M3 21l2-2"/></svg>',
+    tablet:'<svg viewBox="0 0 24 24"><path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h4"/></svg>',
+    boat:'<svg viewBox="0 0 24 24"><path d="M3 15l2 4h14l2-4zM12 4v11M12 4c4 1 6 4 7 9M4 20c2 1 4 1 6 0s4-1 6 0 2 1 4 0"/></svg>',
+    star:'<svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18M12 12h.01"/></svg>',
+    fire:'<svg viewBox="0 0 24 24"><path d="M4 21h16M6 21l5-11 2 4 1-2 4 9M11 6c0-2 2-3 2-5 1 2 3 3 3 5"/></svg>',
+    wheel:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.5"/><path d="M12 4v16M4 12h16M6.3 6.3l11.4 11.4M17.7 6.3L6.3 17.7"/></svg>',
+    book:'<svg viewBox="0 0 24 24"><path d="M12 6c-2-2-5-2-8-1v14c3-1 6-1 8 1M12 6c2-2 5-2 8-1v14c-3-1-6-1-8 1M12 6v14"/></svg>',
+    lens:'<svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L21 21M8 10h4M10 8v4"/></svg>',
+    leaf:'<svg viewBox="0 0 24 24"><path d="M4 20C6 10 12 5 20 4c-1 8-6 14-16 16zM4 20l10-10"/></svg>',
+    cloth:'<svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM8 5v14M12 5v14M16 5v14M4 9h16M4 13h16"/></svg>',
+    number:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 5v14M5 12h14"/></svg>',
+    music:'<svg viewBox="0 0 24 24"><path d="M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM9 18V6l12-3v13"/></svg>',
+    animal:'<svg viewBox="0 0 24 24"><path d="M4 18v-6c0-3 2-5 5-5h6c3 0 5 2 5 5v6M8 18v-4M16 18v-4M15 7V4l3 1M9 7V4L6 5"/></svg>',
+    city:'<svg viewBox="0 0 24 24"><path d="M2 21h20M4 21V10h5v11M9 21V5h6v16M15 21v-8h5v8M11 8h2M11 12h2M11 16h2"/></svg>',
+    eye:'<svg viewBox="0 0 24 24"><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+    train:'<svg viewBox="0 0 24 24"><path d="M5 4h14v12H5zM5 10h14M8 4v6M16 4v6M7 16l-2 4M17 16l2 4M8 20h8"/><circle cx="8.5" cy="13" r="1"/><circle cx="15.5" cy="13" r="1"/></svg>',
+    moon:'<svg viewBox="0 0 24 24"><path d="M20 15A8 8 0 1 1 9 4a6.5 6.5 0 0 0 11 11z"/></svg>',
+    spark:'<svg viewBox="0 0 24 24"><path d="M13 2L6 13h5l-1 9 8-12h-5z"/></svg>',
+    frog:'<svg viewBox="0 0 24 24"><path d="M4 14c0-4 3-6 8-6s8 2 8 6-3 6-8 6-8-2-8-6zM3 20l4-3M21 20l-4-3"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/></svg>',
+    kite:'<svg viewBox="0 0 24 24"><path d="M12 2l7 8-7 8-7-8zM12 2v16M5 10h14M12 18c-1 2-3 3-5 4"/></svg>',
+    tower:'<svg viewBox="0 0 24 24"><path d="M12 2l5 20H7zM9 12h6M8 17h8M12 2v6"/></svg>',
+    brush:'<svg viewBox="0 0 24 24"><path d="M20 4L9 15M9 15c-3 0-5 2-5 5 3 0 5-2 5-5z"/></svg>',
+    horse:'<svg viewBox="0 0 24 24"><path d="M4 20V11l4-4h6l5 3v10M8 20v-5M14 20v-5M14 7l3-4"/></svg>',
+    film:'<svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zM3 9h18M3 15h18M7 5v4M12 5v4M17 5v4M7 15v4M12 15v4M17 15v4"/></svg>',
+    vote:'<svg viewBox="0 0 24 24"><path d="M4 10h16v11H4zM12 3v7M9 6l3-3 3 3"/></svg>',
+    mask:'<svg viewBox="0 0 24 24"><path d="M4 5c3 2 13 2 16 0v8c0 5-4 8-8 8s-8-3-8-8zM8 11h3M13 11h3M9 16c2 1 4 1 6 0"/></svg>',
+    water:'<svg viewBox="0 0 24 24"><path d="M3 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 13c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 18c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg>',
+  };
+
+  // The event pool is data, not code: ../stories/events.json (schema note inside it).
+  let EVENTS = [], LEADUPS = {}, DESTINATIONS = [], byId = {};
+  function adopt(doc) {
+    EVENTS = doc.events.map(e => ({ id: e.id, y: e.start, k: e.glyph, r: e.region, s: e.label, label: e.hook || e.label, blurb: e.blurb, story: !!e.story, title: e.story ? e.story.title : undefined }));
+    DESTINATIONS = doc.destinations;
+    LEADUPS = {};
+    for (const k of Object.keys(doc.leadups || {})) {
+      const v = doc.leadups[k];
+      LEADUPS[k] = { label: v.label, from: v.from, events: v.events.map(e => ({ id: e.id, y: e.start, k: e.glyph, s: e.label, label: e.label, blurb: e.blurb })) };
+    }
+    byId = Object.fromEntries(EVENTS.map(e => [e.id, e]));
+  }
+
+  // ---------- geometry of the road ----------
+  const ROWS = 4;
+  const SCALES = [0.36, 0.56, 0.78, 1.0];         // apparent size of each pass: far to near
+  const WEIGHTS = [8, 4, 2, 1];                     // share of years per pass: far passes carry more
+  let W = 0, H = 0;                                 // road box
+  let road = null;                                  // { pts: [{x,y,yr,s}], rows: [{a,b,x0,x1,y,s,dir}], dest }
+
+  function buildRoad(dest) {
+    const span = dest.y;
+    const wsum = WEIGHTS.reduce((a, b) => a + b, 0);
+    const bendYears = span * 0.012;
+    const horizon = 30, h0 = H - 76, cx = W / 2, margin = 40;
+    const rows = [];
+    let yr = 0;
+    for (let k = 0; k < ROWS; k++) {
+      const s = SCALES[k];
+      const half = (W / 2 - margin) * s;
+      const dir = k % 2 === 0 ? 1 : -1;
+      const a = yr + (k === 0 ? 0 : bendYears);
+      yr += span * WEIGHTS[k] / wsum;
+      const b = yr - (k === ROWS - 1 ? 0 : bendYears);
+      rows.push({ k, a, b, s, dir, y: horizon + h0 * s, x0: cx - dir * half, x1: cx + dir * half });
+    }
+    const pts = [];
+    const push = (x, y, yrv, s) => pts.push({ x, y, yr: yrv, s });
+    for (let k = 0; k < ROWS; k++) {
+      const r = rows[k];
+      const n = 40;
+      for (let i = 0; i <= n; i++) {
+        const t = i / n;
+        push(r.x0 + (r.x1 - r.x0) * t, r.y, r.a + (r.b - r.a) * t, r.s);
+      }
+      if (k < ROWS - 1) {
+        const q = rows[k + 1];
+        const R0 = 90 * r.s, R1 = 90 * q.s;
+        const p0 = { x: r.x1, y: r.y }, c0 = { x: r.x1 + r.dir * R0, y: r.y };
+        const c1 = { x: q.x0 - q.dir * R1, y: q.y }, p1 = { x: q.x0, y: q.y };
+        const m = 24;
+        for (let i = 1; i < m; i++) {
+          const t = i / m, u = 1 - t;
+          const x = u*u*u*p0.x + 3*u*u*t*c0.x + 3*u*t*t*c1.x + t*t*t*p1.x;
+          const y = u*u*u*p0.y + 3*u*u*t*c0.y + 3*u*t*t*c1.y + t*t*t*p1.y;
+          push(x, y, r.b + (q.a - r.b) * t, r.s + (q.s - r.s) * t);
+        }
+      }
+    }
+    road = { pts, rows, dest, horizon };
+  }
+
+  function posAt(yr) {
+    const p = road.pts;
+    if (yr <= 0) return p[0];
+    if (yr >= p[p.length - 1].yr) return p[p.length - 1];
+    let lo = 0, hi = p.length - 1;
+    while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (p[mid].yr <= yr) lo = mid; else hi = mid; }
+    const a = p[lo], b = p[hi], t = (yr - a.yr) / ((b.yr - a.yr) || 1);
+    return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, s: a.s + (b.s - a.s) * t, yr };
+  }
+  function rowOf(yr) { return road.rows.find(r => yr >= r.a - 1 && yr <= r.b + 1) || road.rows.find(r => yr < r.a) || road.rows[ROWS - 1]; }
+
+  function drawRoad() {
+    const svg = document.getElementById('roadSvg');
+    const p = road.pts;
+    const widthAt = s => 6 + 20 * s;
+    const L = [], R = [];
+    for (let i = 0; i < p.length; i++) {
+      const a = p[Math.max(0, i - 1)], b = p[Math.min(p.length - 1, i + 1)];
+      let nx = -(b.y - a.y), ny = (b.x - a.x);
+      const len = Math.hypot(nx, ny) || 1; nx /= len; ny /= len;
+      const w = widthAt(p[i].s) / 2;
+      L.push([p[i].x + nx * w, p[i].y + ny * w]);
+      R.push([p[i].x - nx * w, p[i].y - ny * w]);
+    }
+    const poly = L.concat(R.reverse()).map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ');
+    const centre = p.map((q, i) => (i ? 'L' : 'M') + q.x.toFixed(1) + ',' + q.y.toFixed(1)).join(' ');
+    const end = p[p.length - 1];
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.innerHTML =
+      '<polygon class="band" points="' + poly + '"/>' +
+      '<path class="centre" d="' + centre + '"/>' +
+      '<circle class="goal" cx="' + end.x.toFixed(1) + '" cy="' + end.y.toFixed(1) + '" r="9"/>';
+  }
+
+  // ---------- picking a run: capacity per pass, from the pass's own length on screen ----------
+  function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+  function pickRun(dest) {
+    const chosen = [byId.ice, dest];
+    const pool = shuffle(EVENTS.filter(e => e.id !== 'ice' && e.id !== dest.id && e.y < dest.y));
+    for (const r of road.rows) {
+      const px = Math.abs(r.x1 - r.x0);
+      const gapPx = 118 * (0.8 + 0.2 * r.s);
+      const gapYears = (r.b - r.a) * gapPx / px;
+      const okGap = e => chosen.every(c => Math.abs(c.y - e.y) >= gapYears);
+      const cands = pool.filter(e => e.y >= r.a && e.y <= r.b);
+      const capacity = Math.max(1, Math.floor(px / gapPx) - 1);
+      let got = 0;
+      // first pass: a different region each time; second pass: whatever fits
+      for (const pass of [0, 1]) {
+        for (const e of cands) {
+          if (got >= capacity) break;
+          if (chosen.includes(e) || !okGap(e)) continue;
+          if (pass === 0 && chosen.some(c => c.r === e.r && c.y >= r.a && c.y <= r.b)) continue;
+          chosen.push(e); got++;
+        }
+      }
+    }
+    return chosen.sort((a, b) => a.y - b.y);
+  }
+
+  // ---------- memory: her line ----------
+  const KEY = 'cw-after-the-ice';
+  function loadSeen() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; } }
+  function saveSeen(ids) { try { localStorage.setItem(KEY, JSON.stringify(ids)); } catch (e) {} }
+  function remember(ids) { const s = new Set(loadSeen()); ids.forEach(i => s.add(i)); saveSeen([...s]); }
+
+  // ---------- DOM ----------
+  const $ = id => document.getElementById(id);
+  const lineWrap = $('lineWrap'), odo = $('odo'), digitsEl = $('digits'), dot = $('dot'), inset = $('inset');
+  const ticksEl = $('ticks'), diamondsEl = $('diamonds');
+  const roadEl = $('road'), eventsEl = $('events'), roadDot = $('roadDot');
+  const leadup = $('leadup'), leadLabel = $('leadLabel'), capL = $('capL'), capR = $('capR'), lcards = $('lcards'), leadDot = $('leadDot');
+  const landing = $('landing'), cardsEl = $('cards'), detail = $('detail'), words = $('words'), hint = $('hint');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const DURATION = 10000;
+  let lineW = 0;
+  const xOf = y => (y / NOW) * lineW;
+
+  function layoutTicks() {
+    ticksEl.innerHTML = '';
+    for (let y = 0; y <= NOW; y += 1000) {
+      const t = document.createElement('div'); t.className = 'tick' + (y % 5000 ? ' k' : ''); t.style.left = xOf(y) + 'px'; ticksEl.appendChild(t);
+      if (y === 5000 || y === 10000) { const l = document.createElement('div'); l.className = 'tick-label'; l.textContent = y.toLocaleString('en-US'); l.style.left = xOf(y) + 'px'; ticksEl.appendChild(l); }
+    }
+  }
+
+  const cols = [];
+  function buildOdometer() {
+    digitsEl.innerHTML = ''; cols.length = 0;
+    [4, 3, 2, 1, 0].forEach(p => {
+      const col = document.createElement('div'); col.className = 'col';
+      const strip = document.createElement('div'); strip.className = 'strip';
+      for (let d = 0; d <= 10; d++) { const s = document.createElement('span'); s.textContent = d % 10; strip.appendChild(s); }
+      col.appendChild(strip); digitsEl.appendChild(col); cols.push({ p, col, strip });
+      if (p === 3) { const c = document.createElement('div'); c.className = 'comma'; c.textContent = ','; digitsEl.appendChild(c); }
+    });
+  }
+  function setOdometer(v) {
+    const h = cols[0].col.offsetHeight || 60;
+    let leading = true;
+    for (const c of cols) {
+      const unit = Math.pow(10, c.p);
+      const digit = Math.floor(v / unit) % 10;
+      const lower = (v % unit) / unit;
+      const carry = lower > 0.9 ? (lower - 0.9) * 10 : 0;
+      c.strip.style.transform = 'translateY(' + (-(digit + carry) * h) + 'px)';
+      const hide = leading && c.p > 0 && Math.floor(v / unit) === 0;
+      c.col.style.opacity = hide ? '0' : '1'; c.col.style.width = hide ? '0' : '';
+      if (!hide) leading = false;
+    }
+    const comma = digitsEl.querySelector('.comma'); if (comma) comma.style.display = v >= 1000 ? '' : 'none';
+  }
+
+  let currentRow = -1;
+  function placeDots(y) {
+    const x = xOf(y);
+    dot.style.left = x + 'px';
+    const half = odo.offsetWidth / 2;
+    odo.style.left = Math.min(Math.max(x, half), lineW - half) + 'px';
+    const p = posAt(y);
+    roadDot.style.left = p.x + 'px'; roadDot.style.top = p.y + 'px';
+    const sc = 0.55 + 0.45 * p.s;
+    roadDot.style.transform = 'translate(-50%,-50%) scale(' + sc.toFixed(2) + ')';
+    const r = rowOf(y);
+    if (r && r.k !== currentRow) {
+      currentRow = r.k;
+      inset.style.left = xOf(r.a) + 'px';
+      inset.style.width = Math.max(4, xOf(r.b) - xOf(r.a)) + 'px';
+    }
+  }
+
+  const glyph = k => G[k] || G.star;
+  const fmt = y => y.toLocaleString('en-US');
+  const about = y => 'about ' + fmt(y);
+  const cal = y => y >= 10000 ? ((y - 10000) < 1000 ? 'AD ' : '') + (y - 10000) : (10000 - y) + ' BC';
+  const both = (y, exact) => (exact ? fmt(y) : about(y)) + ' (' + cal(y) + ')';
+
+  function hot(id, on) { document.querySelectorAll('[data-id="' + id + '"]').forEach(el => el.classList.toggle('hot', on)); }
+  function wire(el, e) {
+    el.dataset.id = e.id;
+    el.addEventListener('click', ev => { ev.stopPropagation(); openDetail(e); });
+    el.addEventListener('mouseenter', () => hot(e.id, true));
+    el.addEventListener('mouseleave', () => hot(e.id, false));
+  }
+
+  function makeDiamond(e, isDest) {
+    const d = document.createElement('button'); d.className = 'diamond' + (isDest ? ' dest' : '');
+    d.style.left = xOf(e.y) + 'px'; d.setAttribute('aria-label', e.label); wire(d, e); diamondsEl.appendChild(d); return d;
+  }
+  function makeRoadEvent(e, isDest) {
+    const p = posAt(e.y);
+    const el = document.createElement('button'); el.className = 'ev' + (isDest ? ' dest' : '');
+    const g = 13 + 11 * p.s, f = 9.5 + 3.5 * p.s, stem = 4 + 7 * p.s;
+    el.innerHTML = '<span class="glyph" style="width:' + g + 'px;height:' + g + 'px">' + glyph(e.k) + '</span>' +
+                   '<span class="short" style="font-size:' + f.toFixed(1) + 'px"></span>' +
+                   '<span class="yr" style="font-size:' + (f - 2).toFixed(1) + 'px"></span>' +
+                   '<span class="stem" style="height:' + stem + 'px"></span>';
+    el.querySelector('.short').textContent = e.s;
+    el.querySelector('.yr').textContent = e.y === 0 ? '' : both(e.y);
+    el.style.left = Math.min(Math.max(p.x, 62), W - 62) + 'px'; el.style.top = (p.y - (3 + 10 * p.s)) + 'px';
+    el.style.opacity = ''; wire(el, e); eventsEl.appendChild(el); return el;
+  }
+  function makeCard(e, isDest) {
+    const c = document.createElement('button'); c.className = 'card' + (isDest ? ' dest' : '');
+    c.innerHTML = '<span class="glyph">' + glyph(e.k) + '</span><span class="label"></span><span class="when"></span>';
+    c.querySelector('.label').textContent = e.label; c.querySelector('.when').textContent = e.y === 0 ? 'year 0' : both(e.y);
+    wire(c, e); cardsEl.appendChild(c); return c;
+  }
+
+  // ---------- a run ----------
+  let run = null, raf = 0;
+
+  function clearStage() {
+    diamondsEl.innerHTML = ''; eventsEl.innerHTML = ''; cardsEl.innerHTML = ''; lcards.innerHTML = '';
+    landing.classList.remove('on'); landing.innerHTML = '';
+    leadup.classList.remove('open', 'drawn'); leadDot.style.left = '0px';
+    closeDetail(); words.innerHTML = '';
+    dot.classList.remove('resting', 'paused'); roadDot.classList.remove('resting', 'paused'); odo.classList.remove('ghost');
+    roadEl.style.display = ''; currentRow = -1;
+  }
+
+  function startRun(destId) {
+    cancelAnimationFrame(raf);
+    clearStage();
+    const dest = byId[destId];
+    measure(); buildRoad(dest); drawRoad();
+    const events = pickRun(dest);
+    run = { dest, events, start: performance.now(), paused: false, pausedAt: 0, done: false, shown: new Set() };
+    events.forEach(e => makeDiamond(e, e.id === dest.id));
+    hint.textContent = 'tap the road to pause';
+    document.getElementById('pageTitle').textContent = dest.title || dest.s;
+    placeDots(0); setOdometer(0);
+    if (reduced) { finish(); return; }
+    raf = requestAnimationFrame(frame);
+  }
+
+  function yearAt(t) {
+    const span = run.dest.y, knee = 0.86, linearPart = 0.93;
+    if (t <= knee) return span * linearPart * (t / knee);
+    const u = (t - knee) / (1 - knee);
+    return span * (linearPart + (1 - linearPart) * (1 - Math.pow(1 - u, 2.2)));
+  }
+  function frame(now) {
+    if (!run || run.paused) return;
+    const t = Math.min(1, (now - run.start) / DURATION);
+    const y = yearAt(t);
+    placeDots(y); setOdometer(y); reveal(y);
+    if (t < 1) raf = requestAnimationFrame(frame); else finish();
+  }
+  function reveal(y) {
+    for (const e of run.events) {
+      if (e.y <= y && !run.shown.has(e.id)) {
+        run.shown.add(e.id);
+        const d = diamondsEl.querySelector('[data-id="' + e.id + '"]'); if (d) d.classList.add('on');
+        const el = makeRoadEvent(e, e.id === run.dest.id);
+        requestAnimationFrame(() => el.classList.add('on'));
+      }
+    }
+  }
+
+  function finish() {
+    run.done = true;
+    const y = run.dest.y;
+    placeDots(y); setOdometer(y); reveal(y + 1);
+    document.querySelectorAll('.ev').forEach(el => el.classList.add('on'));
+    dot.classList.add('resting'); roadDot.classList.add('resting');
+    remember(run.events.map(e => e.id));
+    hint.textContent = 'tap anything on the road';
+    const lead = LEADUPS[run.dest.id];
+    if (lead) setTimeout(() => playLeadup(lead), reduced ? 0 : 500);
+    else { showLanding(run.dest); setTimeout(showWords, 500); }
+  }
+
+  // ---------- the lead-up: a straight, generous strip ----------
+  function playLeadup(lead) {
+    const from = lead.from, to = run.dest.y;
+    leadLabel.textContent = lead.label;
+    capL.textContent = fmt(from); capR.textContent = fmt(to);
+    lcards.innerHTML = '';
+    const w = leadup.clientWidth;
+    const x = yr => ((yr - from) / (to - from)) * (w - 200);
+    const lanes = [];
+    const placed = lead.events.map(e => {
+      const px = x(e.y);
+      let lane = 0;
+      while (lanes[lane] !== undefined && px - lanes[lane] < 212) lane++;
+      lanes[lane] = px;
+      const c = document.createElement('button'); c.className = 'lcard';
+      c.innerHTML = '<span class="pin"></span><span class="glyph">' + glyph(e.k) + '</span><span class="short"></span><span class="yr"></span>';
+      c.querySelector('.short').textContent = e.s; c.querySelector('.yr').textContent = both(e.y, true);
+      c.style.left = px + 'px'; c.style.top = (66 + lane * 58) + 'px';
+      c.querySelector('.pin').style.height = (26 + lane * 58) + 'px'; c.querySelector('.pin').style.top = -(26 + lane * 58) + 'px';
+      wire(c, e); lcards.appendChild(c);
+      return { e, c, px };
+    });
+    leadup.style.setProperty('--lanes', lanes.length);
+    leadup.classList.add('open');
+    leadup.style.height = (70 + lanes.length * 58 + 20) + 'px';
+    const LD = reduced ? 0 : 3000;
+    setTimeout(() => {
+      leadup.classList.add('drawn');
+      const t0 = performance.now();
+      const step = now => {
+        const t = LD ? Math.min(1, (now - t0) / LD) : 1;
+        const cx = t * (w - 200) + 100;
+        leadDot.style.left = (t * (w - 200)) + 'px';
+        placed.forEach(p => { if (p.px <= t * (w - 200) + 1) p.c.classList.add('on'); });
+        if (t < 1) requestAnimationFrame(step);
+        else { leadDot.classList.add('resting'); showLanding(run.dest); setTimeout(showWords, 500); }
+      };
+      requestAnimationFrame(step);
+    }, 350);
+  }
+
+  function showLanding(dest) {
+    const yr = dest.y;
+    const cal = yr >= 10000 ? (yr - 10000) : (10000 - yr);
+    const note = yr >= 10000 ? 'the year we call ' + cal : 'the year the old calendar calls ' + cal + ' BC, counting backwards';
+    landing.innerHTML = '<div class="big"><b>' + fmt(yr) + '</b> years after the ice</div><div class="small">' + note + '</div>';
+    requestAnimationFrame(() => landing.classList.add('on'));
+  }
+
+  function word(text, fn, delay) {
+    const b = document.createElement('button'); b.textContent = text;
+    b.addEventListener('click', ev => { ev.stopPropagation(); fn(); });
+    setTimeout(() => b.classList.add('on'), delay || 0); return b;
+  }
+  function showWords() {
+    words.innerHTML = ''; let d = 0;
+    words.appendChild(word('run it again', () => startRun(run.dest.id), d += 120));
+    const g = document.createElement('span'); g.className = 'group';
+    const lead = document.createElement('span'); lead.className = 'lead'; lead.textContent = 'or take the road to'; g.appendChild(lead);
+    DESTINATIONS.filter(id => id !== run.dest.id).forEach(id => g.appendChild(word(byId[id].title, () => startRun(id), d += 120)));
+    words.appendChild(g);
+    const seen = loadSeen();
+    if (seen.length > run.events.length) words.appendChild(word('your line so far (' + seen.length + ' things)', showYourLine, d += 120));
+  }
+
+  function showYourLine() {
+    cancelAnimationFrame(raf); clearStage();
+    roadEl.style.display = 'none';
+    const ids = loadSeen();
+    const events = ids.map(id => byId[id]).filter(Boolean).sort((a, b) => a.y - b.y);
+    run = { dest: byId.ice, events, done: true, shown: new Set(ids), paused: false };
+    inset.style.width = '0px';
+    events.forEach(e => { makeDiamond(e, false).classList.add('on'); makeCard(e, false); });
+    dot.style.left = xOf(NOW) + 'px'; odo.style.left = (lineW - odo.offsetWidth / 2) + 'px'; setOdometer(NOW);
+    dot.classList.add('resting'); odo.classList.add('ghost');
+    document.getElementById('pageTitle').textContent = 'Your line so far';
+    landing.innerHTML = '<div class="big">Everything so far</div><div class="small">everything the road has shown you, in order. It grows each time it runs.</div>';
+    requestAnimationFrame(() => landing.classList.add('on'));
+    hint.textContent = 'tap anything on the line';
+    words.appendChild(word('take the road again', () => startRun('frank'), 150));
+  }
+
+  // ---------- pausing and detail ----------
+  function togglePause() {
+    if (!run || run.done) return;
+    if (!run.paused) { run.paused = true; run.pausedAt = performance.now(); dot.classList.add('paused'); roadDot.classList.add('paused'); hint.textContent = 'tap the road to go on'; }
+    else { run.paused = false; run.start += performance.now() - run.pausedAt; dot.classList.remove('paused'); roadDot.classList.remove('paused'); hint.textContent = 'tap the road to pause'; raf = requestAnimationFrame(frame); }
+  }
+  lineWrap.addEventListener('click', ev => { if (ev.target.classList.contains('diamond')) return; togglePause(); });
+  roadEl.addEventListener('click', ev => { if (ev.target.closest('.ev')) return; togglePause(); });
+
+  function openDetail(e) {
+    if (run && !run.done && !run.paused) togglePause();
+    closeDetail();
+    const side = document.getElementById('side');
+    const roomLeft = road ? (road.rows[0].x0 - 24) : 0;
+    const useSide = roadEl.style.display !== 'none' && roomLeft >= 280;
+    const box = useSide ? side : detail;
+    if (useSide) side.style.width = Math.min(360, roomLeft) + 'px';
+    box.hidden = false;
+    box.innerHTML = '<h3></h3><p></p><p class="caveat"></p><div class="words" style="margin-top:8px"></div>';
+    const h = box.querySelector('h3'); h.textContent = e.label;
+    const w = document.createElement('span'); w.className = 'when';
+    w.textContent = e.y === 0 ? 'year 0' : (e.id.startsWith('lead-') ? fmt(e.y) : about(e.y)) + ' after the ice (' + cal(e.y) + ')'; h.appendChild(w);
+    box.querySelector('p').textContent = e.blurb;
+    box.querySelector('.caveat').textContent = e.story ? 'There is a story about this here.' : 'Nobody has written this story yet.';
+    const wl = box.querySelector('.words');
+    if (e.story) { wl.appendChild(word('go to the story', () => {}, 100)); wl.appendChild(word('put it on my list', () => {}, 180)); }
+    wl.appendChild(word('back', closeDetail, 260));
+    requestAnimationFrame(() => box.classList.add('on'));
+    hot(e.id, true);
+    if (!useSide) detail.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+  }
+  function closeDetail() {
+    document.querySelectorAll('.hot').forEach(el => el.classList.remove('hot'));
+    [detail, document.getElementById('side')].forEach(b => { b.classList.remove('on'); b.hidden = true; b.innerHTML = ''; });
+  }
+
+  // ---------- sizing ----------
+  function measure() { lineW = lineWrap.clientWidth; W = roadEl.clientWidth; H = roadEl.clientHeight; }
+  function relayout() {
+    measure(); layoutTicks();
+    if (!run || !road || run.dest.id === 'ice') return;
+    buildRoad(run.dest); drawRoad();
+    diamondsEl.querySelectorAll('.diamond').forEach(d => { d.style.left = xOf(byId[d.dataset.id].y) + 'px'; });
+    eventsEl.innerHTML = '';
+    run.events.forEach(e => { if (run.shown.has(e.id)) makeRoadEvent(e, e.id === run.dest.id).classList.add('on'); });
+    currentRow = -1;
+    const y = run.done ? run.dest.y : yearAt(Math.min(1, ((run.paused ? run.pausedAt : performance.now()) - run.start) / DURATION));
+    placeDots(y);
+  }
+  window.addEventListener('resize', relayout);
+
+  buildOdometer();
+  relayout();
+  fetch('../stories/events.json', { cache: 'no-cache' })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(doc => { adopt(doc); startRun(DESTINATIONS[0]); })
+    .catch(err => {
+      hint.textContent = 'could not load ../stories/events.json (' + err.message + ') — this page needs to be served, not opened as a file';
+      console.error(err);
+    });
+})();
+</script>
+</body>
+</html>
