@@ -152,8 +152,8 @@ to test yesterday's work.
   **not yet run with a finger on an iPad** (the building session had no device); every
   road, mirror and rule verified by synthetic pointer drives in Chrome, including the
   reveal, the copper series and the hollow point. Track width unchanged at 6%.
-  Standalone; does not stand on the plane. `CW_VERSION 2026-09-11 uncommitted` until its
-  first commit.
+  Standalone; does not stand on the plane. `CW_VERSION 2026-09-11 51d9bb0` (first
+  commit 11 Sep; stamped per the standing method).
 - **`story-learned-without-knowing.html`** — story: **The Man Who Learned Without
   Knowing** (text: `CWVault/claude/Story-The-Man-Who-Learned-Without-Knowing.md`), the
   first story page in the deploy and the first caller of Trace's story door: the star in
@@ -163,7 +163,7 @@ to test yesterday's work.
   (built 11 Sep by a chat session; never committed, never served). The Brain block is the
   prototype's inline drawing — the outside painting as base64, most of the file's 369 KB —
   until the Brain bench (`Spec-Brain-Bench.md`) replaces it with `CW.brain` calls.
-  Narrative unchanged. `CW_VERSION 2026-09-11 uncommitted` until its first commit.
+  Narrative unchanged. `CW_VERSION 2026-09-11 51d9bb0`.
 - **`timeline-bench.html`** — bench: **the Timeline Intro.** Every dated story's title
   card: a copper dot leaves year 0 ("after the ice", 10 000 BCE) and rolls up to the
   story's year in about ten seconds, leaving events behind it. Three tiers — a fixed
