@@ -123,6 +123,47 @@ to test yesterday's work.
   (`CWVault/01-ACTIVE/Walk-Glass-Aug26.md`), and this lab stays live throughout.
 
 ### experiments/
+- **`trace.html`** — bench: **Trace.** A road on parchment, a copper dot that follows her
+  hand through a transform, a rule for what counts as a mistake, and a counter that says
+  nothing until asked (`CWVault/20-SPECS/Spec-Trace-Bench.md`; v0 of it, 11 Sep 2026).
+  One file, two doors. **Lab door** (`trace.html`): words in the left panel by the
+  Marauder's Map rule — road (square · Z · O · H · star), rule (channel · path), mirror
+  (off · left-right · up-down · both), trails on/off, clear (only while there are trails),
+  graph (only once there is an attempt), again (only from the graph). **Story door**
+  (`trace.html?door=story`, or a page holding the file in a frame and calling
+  `frame.contentWindow.CW.trace.open({road, rule, mirror, attempts, words, line,
+  onattempt, onreveal})`): no panel, the set counted as "trip 3 of 10", graphs hidden
+  until the set is done, then only the words the story exposes; the page posts its height
+  to the parent so the frame fits. An HTML file can be included by another page no other
+  way; the alternative — the engine as `js/cw-trace.js` — is Michael's call and is not
+  taken. Roads are data in a unit square mapped onto the prototype's 316 px star, on a
+  380 css px stage kept exactly so the prototype's finger evidence carries. An outline
+  road's channel is the band between two inward-offset outlines (Milner's star; the
+  square); a path road's is a band about its strokes (Z, O, H). Closed roads finish when
+  80% of the length is travelled and the dot is back at the start (the prototype's rule);
+  open roads (Z, H) when every sample of the road has been passed within a track width —
+  a rule the spec does not give and this build chose. One collision per excursion. Trails
+  in Chartres glass colours, one per attempt. Three graphs — bumps, seconds, length in
+  roads — blue line, copper points, a copper series for attempts under a different
+  transform, a hollow point at 0 for the last attempt of another day. Record
+  `cw.trace.v1.<road>` in localStorage, `{date, attempts:[{collisions, ms, length,
+  mirror, rule}]}`; the prototype's `cw.mirror-star.v1` is translated once if found.
+  Calibration numbers, and what has and has not been tested, are in the header comment:
+  **not yet run with a finger on an iPad** (the building session had no device); every
+  road, mirror and rule verified by synthetic pointer drives in Chrome, including the
+  reveal, the copper series and the hollow point. Track width unchanged at 6%.
+  Standalone; does not stand on the plane. `CW_VERSION 2026-09-11 uncommitted` until its
+  first commit.
+- **`story-learned-without-knowing.html`** — story: **The Man Who Learned Without
+  Knowing** (text: `CWVault/claude/Story-The-Man-Who-Learned-Without-Knowing.md`), the
+  first story page in the deploy and the first caller of Trace's story door: the star in
+  a frame in the left panel, ten trips, then *again* / *without the mirror* / *show the
+  star*, and the word *Brain* arriving only after the reveal. Ported 11 Sep from the star
+  prototype, which is retired to `../outdated-files/trace-prototype-star-story-20260911.html`
+  (built 11 Sep by a chat session; never committed, never served). The Brain block is the
+  prototype's inline drawing — the outside painting as base64, most of the file's 369 KB —
+  until the Brain bench (`Spec-Brain-Bench.md`) replaces it with `CW.brain` calls.
+  Narrative unchanged. `CW_VERSION 2026-09-11 uncommitted` until its first commit.
 - **`timeline-bench.html`** — bench: **the Timeline Intro.** Every dated story's title
   card: a copper dot leaves year 0 ("after the ice", 10 000 BCE) and rolls up to the
   story's year in about ten seconds, leaving events behind it. Three tiers — a fixed

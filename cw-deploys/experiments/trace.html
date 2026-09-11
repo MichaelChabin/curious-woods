@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  trace.html — bench: Trace. A road on parchment, a copper dot that follows her hand
+  through a transform, a rule that says what counts as a mistake, and a counter that
+  says nothing until asked. Spec: CWVault/20-SPECS/Spec-Trace-Bench.md (v0 of it).
+  Descended from the star prototype (trace-prototype-star-story.html, 11 Sep 2026),
+  whose star geometry, inward-offset track, mirror transform, one-per-excursion
+  counting, hidden-until-done reveal and "tomorrow" record are reused unchanged.
+
+  TWO DOORS, ONE FILE
+    Lab door    trace.html                     — every knob in the left panel.
+    Story door  trace.html?door=story          — no panel; the story page holds this
+                file in an <iframe> and calls  frame.contentWindow.CW.trace.open({...})
+                (or sets everything in the URL: ?door=story&road=star&rule=channel
+                &mirror=lr&attempts=10). An HTML file can be included by another page
+                only as a frame; if that ever chafes, the engine below is one script
+                block and could move to js/cw-trace.js — a decision for Michael, not
+                taken here. In the story door the page posts its own height to the
+                parent ({cw:'trace', height}) so the frame can be sized to its content.
+
+  CALIBRATION (the two numbers that decide whether first attempts land in 15–40)
+    Stage 380 css px, star width 316 px (60% of a 380 stage's shorter side, as the
+    prototype); channel track 6% of the star's width = 19 px ≈ 3.6 mm on an iPad.
+    Path tolerance: 24 px radius under a finger, 12 px under a pointer (mouse/pen).
+    Evidence so far, all on the prototype at this exact geometry, finger on iPad:
+      Michael, first trip 31 bumps, tenth 4 (story text, 10 Sep). Eileen: settled
+      sooner; numbers not recorded.
+    This build has NOT yet been run with a finger on an iPad or with a pointer by its
+    builder (11 Sep, a Claude Code session without a device). Record both here when it
+    has. The stage size is deliberately the prototype's, so its evidence carries.
+
+  TOMORROW (the mechanism the star prototype introduced; keep it identical across benches)
+    One record per road in localStorage, key cw.trace.v1.<road>:
+      { "date": "YYYY-MM-DD", "attempts": [ {collisions, ms, length, mirror, rule}, … ] }
+    where length is the trip's path length as a multiple of the road's own length.
+    Saved after every attempt, overwriting. On load, if the record is from another day
+    and has attempts, its last attempt with the current transform becomes "yesterday"
+    and is plotted hollow at attempt 0. Plain JSON a child could read; nothing leaves
+    the device. The prototype's cw.mirror-star.v1 record is read once and translated
+    if no star record exists yet.
+
+  NOT HERE (v1 per the spec): once only, in order, no lifting, rotation, delay, gain,
+  blind, draw your own, the spiral, Königsberg, the character. Roads are data (ROADS
+  below); rules are small functions (RULES); transforms are one mapping on pointer
+  coordinates (MIRRORS). A new road is a new entry, never a new program.
+-->
+<title>Trace</title>
+<style>
+  :root {
+    --cw-parchment: #f4f1e8;
+    --cw-parchment-deep: #ece7da;
+    --cw-separator: #c8b89a;
+    --cw-ink: #2a2620;
+    --cw-word: #546A80;
+    --cw-word-hover: #3d5266;
+    --cw-word-quiet: #7a8a9a;
+    --cw-blue: #2E5090;
+    --cw-copper: #b87333;
+    --cw-remember-blue: #3C5C83;
+  }
+  html, body { background: var(--cw-parchment); color: var(--cw-ink); }
+  [hidden] { display: none !important; }
+  body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
+  .page { display: flex; min-height: 100vh; }
+
+  /* the left panel: a context membrane, sized by what it holds */
+  .membrane {
+    background: var(--cw-parchment-deep);
+    border-right: 0.5px solid var(--cw-separator);
+    padding: 24px 16px 24px 16px;
+    display: flex; flex-direction: column; gap: 18px;
+    flex: 0 0 auto; min-width: 150px;
+    position: sticky; top: 0; height: 100vh; box-sizing: border-box;
+    overflow: hidden;
+    transition: min-width 400ms ease-in-out;
+  }
+  .word { font-size: 14px; color: var(--cw-word); cursor: pointer; padding-left: 16px; user-select: none; -webkit-user-select: none;
+          transition: color 120ms, opacity 200ms ease-in; line-height: 1.6; }
+  .word:hover, .word:focus-visible { color: var(--cw-word-hover); outline: none; }
+  .word.quiet { cursor: default; color: var(--cw-word-quiet); }
+  .word.chosen { cursor: default; color: var(--cw-ink); }
+  .words { display: flex; flex-direction: column; gap: 4px; }
+  .options { display: flex; flex-direction: column; gap: 2px; padding-left: 16px; }
+  .spacer { flex: 1 1 auto; }
+  #remember { padding-left: 16px; padding-bottom: 24px; line-height: 1.25; user-select: none; -webkit-user-select: none; }
+  #remember .plain { display: block; color: var(--cw-remember-blue); font-size: 17px; }
+  #remember .big { display: block; color: var(--cw-copper); font-size: 20px; }
+
+  /* the right panel: the road */
+  .field { flex: 1 1 auto; display: flex; justify-content: center; align-items: flex-start; padding: 40px 24px; box-sizing: border-box; }
+  .col { display: flex; flex-direction: column; gap: 10px; width: 380px; max-width: 100%; }
+  .stage { position: relative; width: 380px; max-width: 100%; }
+  canvas#road { display: block; width: 100%; height: auto; touch-action: none; cursor: crosshair; border-radius: 2px; }
+  .fade { transition: opacity 400ms ease-out; }
+  .graphs { display: flex; flex-direction: column; gap: 4px; }
+  .graphs svg { width: 100%; height: auto; display: block; }
+  .graphs .line { font-size: 20px; padding-left: 16px; margin-top: 8px; }
+  .graphs .line:empty { display: none; }
+
+  /* the story door: only the column, on the story's own deep parchment */
+  html.story, html.story body { background: var(--cw-parchment-deep); }
+  body.story .membrane { display: none; }
+  body.story .field { padding: 0; justify-content: flex-start; }
+  body.story .page { min-height: 0; }
+
+  @media (max-width: 700px) {
+    .page { flex-direction: column; }
+    .membrane { position: relative; height: auto; border-right: none; border-bottom: 0.5px solid var(--cw-separator); }
+    .field { padding: 24px 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .fade, .word, .membrane { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="page" id="page">
+  <aside class="membrane" id="membrane">
+    <div class="words" id="lab-words">
+      <span class="word quiet">Tools</span>
+
+      <span class="word" id="h-road" tabindex="0">road</span>
+      <div class="options" id="o-road" hidden></div>
+
+      <span class="word" id="h-rule" tabindex="0">rule</span>
+      <div class="options" id="o-rule" hidden></div>
+
+      <span class="word" id="h-mirror" tabindex="0">mirror</span>
+      <div class="options" id="o-mirror" hidden></div>
+
+      <span class="word" id="w-trails" tabindex="0">trails</span>
+      <span class="word" id="w-clear" tabindex="0" hidden>clear</span>
+      <span class="word" id="w-graph" tabindex="0" hidden>graph</span>
+      <span class="word" id="w-lab-again" tabindex="0" hidden>again</span>
+    </div>
+
+    <div class="spacer"></div>
+    <div id="remember" aria-label="I want to remember this">
+      <span class="plain">I want to</span>
+      <span class="big">Remember</span>
+      <span class="plain">this</span>
+    </div>
+  </aside>
+
+  <main class="field">
+    <div class="col" id="col">
+      <div class="stage fade" id="stage">
+        <canvas id="road" width="380" height="380" aria-label="A road drawn on parchment. Trace it with your finger; the dot may not go where your hand goes."></canvas>
+      </div>
+      <span class="word quiet" id="w-trip"></span>
+
+      <div class="graphs fade" id="graphs" hidden>
+        <svg id="g-collisions" viewBox="0 0 380 120" role="img" aria-label="Bumps per trip"></svg>
+        <svg id="g-seconds" viewBox="0 0 380 120" role="img" aria-label="Seconds per trip"></svg>
+        <svg id="g-length" viewBox="0 0 380 120" role="img" aria-label="Length per trip"></svg>
+        <div class="line" id="g-line"></div>
+      </div>
+
+      <div class="words" id="story-words" hidden>
+        <span class="word" id="w-again" hidden tabindex="0">again</span>
+        <span class="word" id="w-nomirror" hidden tabindex="0">without the mirror</span>
+        <span class="word" id="w-showroad" hidden tabindex="0">show the road</span>
+        <span class="word" id="w-showgraphs" hidden tabindex="0">the graphs</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+var CW_VERSION = '2026-09-11 uncommitted'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+(function () {
+  'use strict';
+  window.CW = window.CW || {};
+
+  // ---------- constants ----------
+  var BLUE = '#2E5090', COPPER = '#b87333', INK = '#2a2620', PARCH = '#ece7da';
+  var SIZE = 380;                                   // the stage, in css px: the calibrated size (see the header)
+  var CX = SIZE / 2, CY = SIZE / 2;                 // the mirrors' axes
+  var UNIT = 316, OX = 32, OY = 38;                 // roads are data in a unit square; it maps onto 316 px, where the prototype's star stood
+  var TRACK = 0.06;                                 // channel track: 6% of the unit (the star's width) — the calibration number
+  var TOL_TOUCH = 24, TOL_POINTER = 12;             // path rule: radius in px a dot may stray before it has left the line
+  var SNAP = 20;                                    // px to the start dot
+  var SAMPLE = 6;                                   // px between coverage samples on open roads
+  var STORE = 'cw.trace.v1.';                       // + road id
+  var CHARTRES = ['#1a3a8c', '#8b1a1a', '#c8780a', '#4a1a8c', '#1a6a2a', '#8a8a7a', '#d4a878', '#c8c0a8', '#c84878'];   // ../art/palettes.json, chartres_glass
+
+  // ---------- roads as data ----------
+  // Unit coordinates, y down, in [0,1]. kind 'outline': a closed polygon; the channel is the band between the
+  // polygon offset inward by w/2 and by 3w/2 — i.e. two outlines, like Milner's star, centreline offset inward
+  // by w. kind 'path': strokes (polylines and arcs) with the channel a band of width w about them.
+  function starPoints(cx, cy, R) {                  // regular pentagram outline, point up
+    var r = R * 0.381966, pts = [];
+    for (var i = 0; i < 10; i++) {
+      var a = -Math.PI / 2 + i * Math.PI / 5, rad = (i % 2 === 0) ? R : r;
+      pts.push([cx + rad * Math.cos(a), cy + rad * Math.sin(a)]);
+    }
+    return pts;
+  }
+  var ROADS = [
+    { id: 'square', name: 'square', kind: 'outline', width: TRACK, closed: true, start: 0,
+      points: [[0.1, 0.1], [0.9, 0.1], [0.9, 0.9], [0.1, 0.9]] },
+    { id: 'z', name: 'Z', kind: 'path', width: TRACK, closed: false,
+      strokes: [{ line: [[0.15, 0.15], [0.85, 0.15], [0.15, 0.85], [0.85, 0.85]] }], start: [0.15, 0.15] },
+    { id: 'o', name: 'O', kind: 'path', width: TRACK, closed: true,
+      strokes: [{ arc: { c: [0.5, 0.5], r: 0.4, a0: -Math.PI / 2, a1: 3 * Math.PI / 2 } }], start: [0.5, 0.1] },
+    { id: 'h', name: 'H', kind: 'path', width: TRACK, closed: false,
+      strokes: [{ line: [[0.2, 0.1], [0.2, 0.9]] }, { line: [[0.2, 0.5], [0.8, 0.5]] }, { line: [[0.8, 0.1], [0.8, 0.9]] }], start: [0.2, 0.1] },
+    { id: 'star', name: 'star', kind: 'outline', width: TRACK, closed: true, start: 0,
+      points: starPoints(0.5, 0.5, 0.5) }
+  ];
+  var MIRRORS = [
+    { id: 'off',  name: 'off',        f: function (x, y) { return [x, y]; } },
+    { id: 'lr',   name: 'left-right', f: function (x, y) { return [2 * CX - x, y]; } },
+    { id: 'ud',   name: 'up-down',    f: function (x, y) { return [x, 2 * CY - y]; } },
+    { id: 'both', name: 'both',       f: function (x, y) { return [2 * CX - x, 2 * CY - y]; } }
+  ];
+  var RULES = [
+    { id: 'channel', name: 'channel', ok: function (p, road) { return road.onBand(p); } },
+    { id: 'path',    name: 'path',    ok: function (p, road) { return road.distMid(p) <= tolerance; } }
+  ];
+
+  // ---------- geometry ----------
+  function offsetPolygon(pts, d, cx, cy) {           // true inward offset by d (miter corners), toward (cx, cy)
+    var n = pts.length, lines = [];
+    for (var i = 0; i < n; i++) {
+      var a = pts[i], b = pts[(i + 1) % n];
+      var dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy);
+      var nx = -dy / len, ny = dx / len;
+      var mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+      if ((cx - mx) * nx + (cy - my) * ny < 0) { nx = -nx; ny = -ny; }
+      lines.push({ p: [a[0] + nx * d, a[1] + ny * d], d: [dx, dy] });
+    }
+    var out = [];
+    for (var j = 0; j < n; j++) {
+      var L1 = lines[(j - 1 + n) % n], L2 = lines[j];
+      var x1 = L1.p[0], y1 = L1.p[1], dx1 = L1.d[0], dy1 = L1.d[1];
+      var x2 = L2.p[0], y2 = L2.p[1], dx2 = L2.d[0], dy2 = L2.d[1];
+      var den = dx1 * dy2 - dy1 * dx2;
+      var t = ((x2 - x1) * dy2 - (y2 - y1) * dx2) / den;
+      out.push([x1 + dx1 * t, y1 + dy1 * t]);
+    }
+    return out;
+  }
+  function inside(pt, poly) {                        // even-odd
+    var x = pt[0], y = pt[1], c = false;
+    for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      var xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+      if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) c = !c;
+    }
+    return c;
+  }
+  function perimeter(poly) {
+    var s = 0;
+    for (var i = 0; i < poly.length; i++) { var a = poly[i], b = poly[(i + 1) % poly.length]; s += Math.hypot(b[0] - a[0], b[1] - a[1]); }
+    return s;
+  }
+  function distSeg(p, a, b) {
+    var dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy;
+    var t = l2 ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2)) : 0;
+    return Math.hypot(p[0] - (a[0] + t * dx), p[1] - (a[1] + t * dy));
+  }
+  function distPolyline(p, pts, closed) {
+    var d = Infinity, n = pts.length;
+    for (var i = 0; i < (closed ? n : n - 1); i++) d = Math.min(d, distSeg(p, pts[i], pts[(i + 1) % n]));
+    return d;
+  }
+  function distArc(p, arc) {                          // arc: {c, r, a0, a1} in px and radians, a1 > a0
+    var dx = p[0] - arc.c[0], dy = p[1] - arc.c[1], span = arc.a1 - arc.a0, TAU = 2 * Math.PI;
+    if (span >= TAU - 1e-9) return Math.abs(Math.hypot(dx, dy) - arc.r);
+    var t = ((Math.atan2(dy, dx) - arc.a0) % TAU + TAU) % TAU;
+    if (t <= span) return Math.abs(Math.hypot(dx, dy) - arc.r);
+    var e0 = [arc.c[0] + arc.r * Math.cos(arc.a0), arc.c[1] + arc.r * Math.sin(arc.a0)];
+    var e1 = [arc.c[0] + arc.r * Math.cos(arc.a1), arc.c[1] + arc.r * Math.sin(arc.a1)];
+    return Math.min(Math.hypot(p[0] - e0[0], p[1] - e0[1]), Math.hypot(p[0] - e1[0], p[1] - e1[1]));
+  }
+  function near(a, b, d) { return Math.hypot(a[0] - b[0], a[1] - b[1]) <= d; }
+  function toPx(u) { return [OX + u[0] * UNIT, OY + u[1] * UNIT]; }
+
+  // A road compiled to the stage: everything the rules, the drawing and the trip need, in px.
+  function build(road) {
+    var R = { id: road.id, name: road.name, kind: road.kind, closed: road.closed, W: road.width * UNIT };
+    if (road.kind === 'outline') {
+      var pts = road.points.map(toPx), c = [0, 0];
+      pts.forEach(function (p) { c[0] += p[0] / pts.length; c[1] += p[1] / pts.length; });
+      R.outer = pts; R.inner = offsetPolygon(pts, R.W, c[0], c[1]); R.mid = offsetPolygon(pts, R.W / 2, c[0], c[1]);
+      R.start = R.mid[road.start]; R.length = perimeter(R.mid);
+      R.onBand = function (p) { return inside(p, R.outer) && !inside(p, R.inner); };
+      R.distMid = function (p) { return distPolyline(p, R.mid, true); };
+      R.samples = [];
+    } else {
+      R.strokes = road.strokes.map(function (s) {
+        if (s.line) return { line: s.line.map(toPx) };
+        return { arc: { c: toPx(s.arc.c), r: s.arc.r * UNIT, a0: s.arc.a0, a1: s.arc.a1 } };
+      });
+      R.start = toPx(road.start);
+      R.length = 0; R.samples = [];
+      R.strokes.forEach(function (s) {
+        if (s.line) {
+          for (var i = 0; i < s.line.length - 1; i++) {
+            var a = s.line[i], b = s.line[i + 1], len = Math.hypot(b[0] - a[0], b[1] - a[1]), n = Math.max(1, Math.round(len / SAMPLE));
+            R.length += len;
+            for (var k = 0; k <= n; k++) R.samples.push([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]);
+          }
+        } else {
+          var arc = s.arc, len2 = arc.r * (arc.a1 - arc.a0), m = Math.max(1, Math.round(len2 / SAMPLE));
+          R.length += len2;
+          for (var j = 0; j <= m; j++) { var t = arc.a0 + (arc.a1 - arc.a0) * j / m; R.samples.push([arc.c[0] + arc.r * Math.cos(t), arc.c[1] + arc.r * Math.sin(t)]); }
+        }
+      });
+      R.distMid = function (p) {
+        var d = Infinity;
+        R.strokes.forEach(function (s) { d = Math.min(d, s.line ? distPolyline(p, s.line, false) : distArc(p, s.arc)); });
+        return d;
+      };
+      R.onBand = function (p) { return R.distMid(p) <= R.W / 2; };
+    }
+    return R;
+  }
+
+  // ---------- state ----------
+  var canvas = document.getElementById('road'), ctx = canvas.getContext('2d');
+  var dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+  canvas.width = SIZE * dpr; canvas.height = SIZE * dpr; ctx.scale(dpr, dpr);
+
+  var door = 'lab';
+  var roadDef = ROADS[4], road = build(roadDef);        // the star, to begin with
+  var mirror = MIRRORS[0], rule = RULES[0];
+  var tolerance = TOL_TOUCH;
+  var attempts = [];                                    // this road, today: {collisions, ms, length, mirror, rule}
+  var trails = [], showTrails = true;                   // [{pts, color}]
+  var yesterday = null;
+  var firstMirror = null;                               // the series in blue; anything else is copper
+  // the trip in progress
+  var armed = false, tracing = false, cur = null, travelled = 0, collisions = 0, off = false, t0 = 0, trace = [], covered = null;
+  // the story door's set
+  var story = { n: 0, target: 0, left: 0, restoreMirror: null, words: {}, line: '', onattempt: null, onreveal: null };
+
+  // ---------- drawing ----------
+  function polyPath(p) { ctx.beginPath(); ctx.moveTo(p[0][0], p[0][1]); for (var i = 1; i < p.length; i++) ctx.lineTo(p[i][0], p[i][1]); ctx.closePath(); }
+  function strokesPath(strokes) {
+    ctx.beginPath();
+    strokes.forEach(function (s) {
+      if (s.line) { ctx.moveTo(s.line[0][0], s.line[0][1]); for (var i = 1; i < s.line.length; i++) ctx.lineTo(s.line[i][0], s.line[i][1]); }
+      else ctx.arc(s.arc.c[0], s.arc.c[1], s.arc.r, s.arc.a0, s.arc.a1);
+    });
+  }
+  function dot(p, r, color) { ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill(); }
+  function trail(pts, color, alpha, width) {
+    if (pts.length < 2) return;
+    ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    ctx.strokeStyle = color; ctx.globalAlpha = alpha; ctx.lineWidth = width; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  function draw() {
+    ctx.clearRect(0, 0, SIZE, SIZE);
+    ctx.fillStyle = PARCH; ctx.fillRect(0, 0, SIZE, SIZE);
+    ctx.strokeStyle = BLUE; ctx.lineWidth = 1.5;
+    if (rule.id === 'path') {                            // the road is a line
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      if (road.kind === 'outline') { polyPath(road.mid); ctx.stroke(); }
+      else { strokesPath(road.strokes); ctx.stroke(); }
+    } else if (road.kind === 'outline') {                // the road is a band between two outlines
+      ctx.lineJoin = 'miter';
+      polyPath(road.outer); ctx.stroke(); polyPath(road.inner); ctx.stroke();
+    } else {                                             // a band about the strokes: paint it, then paint its middle out
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      strokesPath(road.strokes); ctx.lineWidth = road.W + 1.5; ctx.stroke();
+      strokesPath(road.strokes); ctx.lineWidth = road.W - 1.5; ctx.strokeStyle = PARCH; ctx.stroke();
+    }
+    if (showTrails) trails.forEach(function (t) { trail(t.pts, t.color, 0.55, 1.5); });
+    if (trace.length > 1) trail(trace, nextColor(), 0.35, 1);
+    dot(road.start, 5, COPPER);
+    if (cur) dot(cur, 4, COPPER);
+  }
+  function nextColor() { return CHARTRES[attempts.length % CHARTRES.length]; }
+
+  // ---------- pointer ----------
+  function toCanvas(ev) {
+    var b = canvas.getBoundingClientRect();
+    var x = (ev.clientX - b.left) * SIZE / b.width, y = (ev.clientY - b.top) * SIZE / b.height;
+    return mirror.f(x, y);                               // the transform: one mapping on pointer coordinates
+  }
+  function begin(p) {
+    tracing = true; cur = p; travelled = 0; collisions = 0; off = !rule.ok(p, road); t0 = performance.now(); trace = [p];
+    covered = road.closed ? null : road.samples.map(function () { return false; });
+    if (covered) cover(p);
+  }
+  function cover(p) {                                     // open roads end when every sample has been passed
+    var r = Math.max(road.W, rule.id === 'path' ? tolerance : 0);
+    for (var i = 0; i < road.samples.length; i++) if (!covered[i] && near(p, road.samples[i], r)) covered[i] = true;
+  }
+  function allCovered() { for (var i = 0; i < covered.length; i++) if (!covered[i]) return false; return true; }
+
+  canvas.addEventListener('pointerdown', function (ev) {
+    if (document.getElementById('stage').hidden) return;
+    tolerance = ev.pointerType === 'touch' ? TOL_TOUCH : TOL_POINTER;
+    try { canvas.setPointerCapture(ev.pointerId); } catch (e) { /* a synthetic or already-lifted pointer */ }
+    var p = toCanvas(ev);
+    armed = true; cur = p;                               // the dot shows where her hand lands, through the mirror
+    if (near(p, road.start, SNAP)) begin(p);
+    draw();
+    ev.preventDefault();
+  });
+  canvas.addEventListener('pointermove', function (ev) {
+    if (!armed) return;
+    var p = toCanvas(ev);
+    if (!tracing) { cur = p; if (near(p, road.start, SNAP)) begin(p); draw(); ev.preventDefault(); return; }
+    travelled += Math.hypot(p[0] - cur[0], p[1] - cur[1]);
+    cur = p; trace.push(p);
+    var ok = rule.ok(p, road);
+    if (!ok && !off) { off = true; collisions += 1; }   // one excursion, one bump
+    if (ok) off = false;
+    var done = road.closed ? (travelled >= 0.8 * road.length && near(p, road.start, SNAP))
+                           : (cover(p), allCovered());
+    if (done) finish();
+    draw();
+    ev.preventDefault();
+  });
+  function abandon() { armed = false; if (tracing) { tracing = false; trace = []; } cur = null; draw(); }
+  canvas.addEventListener('pointerup', abandon);
+  canvas.addEventListener('pointercancel', abandon);
+
+  // ---------- attempts ----------
+  function finish() {
+    tracing = false; armed = false;                      // she must lift before the next trip can begin
+    var a = { collisions: collisions, ms: Math.round(performance.now() - t0), length: Math.round(100 * travelled / road.length) / 100, mirror: mirror.id, rule: rule.id };
+    if (firstMirror === null) firstMirror = mirror.id;
+    attempts.push(a);
+    trails.push({ pts: trace, color: CHARTRES[(attempts.length - 1) % CHARTRES.length] });
+    trace = []; cur = null;
+    save();
+    if (story.onattempt) { try { story.onattempt(a, attempts.slice()); } catch (e) {} }
+    if (door === 'story' && story.left > 0) {
+      story.left -= 1;
+      if (story.left === 0) {
+        if (story.restoreMirror) { mirror = story.restoreMirror; story.restoreMirror = null; }
+        reveal(); return;
+      }
+    }
+    tripWord(); labWords();
+  }
+  function tripWord() {
+    var w = document.getElementById('w-trip');
+    if (door === 'story') {
+      if (story.left <= 0) { w.textContent = ''; return; }
+      var n = story.target - story.left + 1;
+      w.textContent = (story.restoreMirror ? 'no mirror · ' : 'trip ') + n + ' of ' + story.target;
+    } else {
+      w.textContent = 'trip ' + (attempts.length + 1);
+    }
+  }
+
+  // ---------- the reveal (story door) and the graph (both doors) ----------
+  function show(id, on) { document.getElementById(id).hidden = !on; }
+  function fadeIn(id) { var el = document.getElementById(id); el.style.opacity = 0; show(id, true); requestAnimationFrame(function () { el.style.opacity = 1; }); }
+  function showGraphs() {
+    show('stage', false); show('w-trip', false);
+    drawGraphs(); fadeIn('graphs'); postHeight();
+  }
+  function showRoad() {
+    show('graphs', false);
+    fadeIn('stage'); show('w-trip', true); tripWord(); draw(); postHeight();
+  }
+  function reveal() {
+    var stage = document.getElementById('stage');
+    stage.style.opacity = 0;
+    setTimeout(function () {
+      showGraphs();
+      show('w-again', !!story.words.again); show('w-nomirror', !!story.words.nomirror && mirror.id !== 'off');
+      show('w-showroad', !!story.words.show); show('w-showgraphs', false);
+      postHeight();
+      if (story.onreveal) { try { story.onreveal(attempts.slice()); } catch (e) {} }
+      post({ event: 'reveal', attempts: attempts.slice() });
+    }, 420);
+  }
+  function fmt(v) { return v >= 10 ? String(Math.round(v)) : String(Math.round(v * 10) / 10); }
+  function chart(svgId, key, label, scale, unit) {
+    var svg = document.getElementById(svgId);
+    var vals = attempts.map(function (a) { return a[key] * scale; });
+    var all = vals.slice(); if (yesterday) all.push(yesterday[key] * scale);
+    var ymax = Math.max(key === 'collisions' ? 4 : 1, Math.max.apply(null, all) * 1.1);
+    if (key === 'collisions') ymax = Math.ceil(ymax);
+    var n = Math.max(attempts.length, story.target || 0, 10);
+    var L = 34, Rr = 12, T = 12, B = 26, Wd = 380, H = 120;
+    var xs = function (i) { return L + (i / n) * (Wd - L - Rr); };
+    var ys = function (v) { return T + (1 - v / ymax) * (H - T - B); };
+    var s = '';
+    s += '<line x1="' + L + '" y1="' + ys(0) + '" x2="' + (Wd - Rr) + '" y2="' + ys(0) + '" stroke="' + INK + '" stroke-opacity=".5" stroke-width="1"/>';
+    s += '<line x1="' + L + '" y1="' + T + '" x2="' + L + '" y2="' + ys(0) + '" stroke="' + INK + '" stroke-opacity=".5" stroke-width="1"/>';
+    s += '<text x="' + (L - 6) + '" y="' + (ys(0) + 4) + '" text-anchor="end" font-family="Georgia" font-size="12" fill="' + INK + '">0</text>';
+    s += '<text x="' + (L - 6) + '" y="' + (T + 4) + '" text-anchor="end" font-family="Georgia" font-size="12" fill="' + INK + '">' + fmt(ymax) + unit + '</text>';
+    s += '<text x="' + L + '" y="' + (H - 8) + '" font-family="Georgia" font-size="13" fill="' + INK + '">' + label + '</text>';
+    var second = attempts.filter(function (a) { return a.mirror !== firstMirror; });
+    var right = 'trip ' + Math.max(attempts.length, 1);
+    if (second.length) { var m = MIRRORS.filter(function (x) { return x.id === second[second.length - 1].mirror; })[0]; right += ' · copper: mirror ' + m.name; }
+    s += '<text x="' + (Wd - Rr) + '" y="' + (H - 8) + '" text-anchor="end" font-family="Georgia" font-size="12" fill="' + INK + '">' + right + '</text>';
+    if (yesterday) s += '<circle cx="' + xs(0) + '" cy="' + ys(yesterday[key] * scale) + '" r="4" fill="' + PARCH + '" stroke="' + COPPER + '" stroke-width="1.5"/>';
+    // runs of one series draw as one line; a change of transform starts the other colour
+    var runs = [], run = null;
+    attempts.forEach(function (a, i) {
+      var color = a.mirror === firstMirror ? BLUE : COPPER;
+      if (!run || run.color !== color) { run = { color: color, pts: [] }; runs.push(run); }
+      run.pts.push([xs(i + 1), ys(vals[i])]);
+    });
+    runs.forEach(function (r) {
+      s += '<path d="' + r.pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0] + ' ' + p[1]; }).join(' ') + '" fill="none" stroke="' + r.color + '" stroke-width="1.5"/>';
+    });
+    vals.forEach(function (v, i) { s += '<circle cx="' + xs(i + 1) + '" cy="' + ys(v) + '" r="3.5" fill="' + COPPER + '"/>'; });
+    svg.innerHTML = s;
+  }
+  function drawGraphs() {
+    chart('g-collisions', 'collisions', 'bumps', 1, '');
+    chart('g-seconds', 'ms', 'seconds', 0.001, '');
+    chart('g-length', 'length', 'length, in roads', 1, '×');
+    document.getElementById('g-line').textContent = story.line || '';
+  }
+
+  // ---------- words ----------
+  function word(id, fn) {
+    var el = document.getElementById(id);
+    el.addEventListener('click', function () { if (!el.classList.contains('quiet') && !el.classList.contains('chosen')) fn(); });
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } });
+  }
+  // a choice group: the head names the setting; tapping it opens the options; choosing one closes them
+  var open = null;
+  function group(head, box, list, current, choose) {
+    var h = document.getElementById(head), b = document.getElementById(box);
+    function render() {
+      h.textContent = h.dataset.name + ' · ' + current().name;
+      b.innerHTML = '';
+      list.forEach(function (item) {
+        var w = document.createElement('span');
+        w.className = 'word' + (item.id === current().id ? ' chosen' : ''); w.tabIndex = 0; w.textContent = item.name;
+        var pick = function () { if (item.id === current().id) return; choose(item); close(); render(); };
+        w.addEventListener('click', pick);
+        w.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+        b.appendChild(w);
+      });
+    }
+    function close() { b.hidden = true; if (open === box) open = null; }
+    h.dataset.name = h.textContent;
+    h.addEventListener('click', function () {
+      if (open && open !== box) document.getElementById(open).hidden = true;
+      b.hidden = !b.hidden; open = b.hidden ? null : box; render();
+    });
+    h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); h.click(); } });
+    render();
+    return render;
+  }
+  var renderRoad, renderRule, renderMirror;
+  function labWords() {
+    if (door !== 'lab') return;
+    var graphsUp = !document.getElementById('graphs').hidden;
+    show('w-clear', trails.length > 0 && !graphsUp);
+    show('w-graph', attempts.length > 0 && !graphsUp);
+    show('w-lab-again', graphsUp);
+    document.getElementById('w-trails').textContent = 'trails · ' + (showTrails ? 'on' : 'off');
+    tripWord();
+  }
+  function leaveGraph() { if (door === 'lab' && !document.getElementById('graphs').hidden) showRoad(); }
+  function setRoad(def) {
+    abandon(); leaveGraph();
+    roadDef = def; road = build(def);
+    attempts = []; trails = []; yesterday = null; firstMirror = null;
+    load(); tripWord(); draw(); labWords();
+  }
+  function setMirror(m) { abandon(); leaveGraph(); mirror = m; draw(); labWords(); }
+  function setRule(r) { abandon(); leaveGraph(); rule = r; draw(); labWords(); }
+
+  renderRoad = group('h-road', 'o-road', ROADS, function () { return roadDef; }, setRoad);
+  renderRule = group('h-rule', 'o-rule', RULES, function () { return rule; }, setRule);
+  renderMirror = group('h-mirror', 'o-mirror', MIRRORS, function () { return mirror; }, setMirror);
+  word('w-trails', function () { showTrails = !showTrails; draw(); labWords(); });
+  word('w-clear', function () { trails = []; draw(); labWords(); });
+  word('w-graph', function () { abandon(); showGraphs(); labWords(); });
+  word('w-lab-again', function () { showRoad(); labWords(); });
+
+  word('w-again', function () { story.target = story.n; story.left = story.n; show('w-again', false); show('w-nomirror', false); show('w-showroad', false); showRoad(); });
+  word('w-nomirror', function () { story.restoreMirror = mirror; mirror = MIRRORS[0]; story.target = 3; story.left = 3; show('w-again', false); show('w-nomirror', false); show('w-showroad', false); showRoad(); });
+  word('w-showroad', function () { story.left = 0; show('graphs', false); show('w-showroad', false); show('w-showgraphs', true); fadeIn('stage'); draw(); postHeight(); });
+  word('w-showgraphs', function () { show('stage', false); show('w-showgraphs', false); show('w-showroad', !!story.words.show); drawGraphs(); fadeIn('graphs'); postHeight(); });
+
+  // ---------- tomorrow ----------
+  function today() { return new Date().toISOString().slice(0, 10); }
+  function save() {
+    try { localStorage.setItem(STORE + road.id, JSON.stringify({ date: today(), attempts: attempts })); } catch (e) { /* storage may be unavailable; the road still works */ }
+  }
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORE + road.id);
+      if (!raw && road.id === 'star') {                  // the prototype's record, translated once
+        var old = localStorage.getItem('cw.mirror-star.v1');
+        if (old) {
+          var o = JSON.parse(old);
+          raw = JSON.stringify({ date: o.date, attempts: (o.trips || []).map(function (t) { return { collisions: t.errors, ms: t.ms, length: null, mirror: t.mirror ? 'lr' : 'off', rule: 'channel' }; }) });
+          localStorage.setItem(STORE + road.id, raw);
+        }
+      }
+      if (!raw) return;
+      var rec = JSON.parse(raw);
+      if (rec.date !== today() && rec.attempts && rec.attempts.length) {
+        var same = rec.attempts.filter(function (a) { return a.mirror === mirror.id; });
+        yesterday = (same.length ? same : rec.attempts).slice(-1)[0];   // her last trip, another day: a hollow point at 0
+        if (yesterday.length == null) yesterday = Object.assign({}, yesterday, { length: 0 });
+      }
+    } catch (e) { /* nothing stored, or storage refused; that's fine */ }
+  }
+
+  // ---------- the story door ----------
+  function post(msg) {
+    if (window.parent === window) return;
+    try { window.parent.postMessage(Object.assign({ cw: 'trace' }, msg), '*'); } catch (e) {}
+  }
+  var sizer = null;                                     // kept, so the observer is not collected
+  function postHeight() { if (door === 'story') post({ height: document.getElementById('col').getBoundingClientRect().height }); }
+  function byId(list, id, fallback) { return list.filter(function (x) { return x.id === id; })[0] || fallback; }
+  function openDoor(cfg) {
+    cfg = cfg || {};
+    door = cfg.door || door;
+    document.body.classList.toggle('story', door === 'story'); document.documentElement.classList.toggle('story', door === 'story');
+    show('lab-words', door === 'lab'); show('story-words', door === 'story');
+    var m = byId(MIRRORS, cfg.mirror, mirror), r = byId(RULES, cfg.rule, rule), d = byId(ROADS, cfg.road, roadDef);
+    mirror = m; rule = r; setRoad(d);
+    if (door === 'story') {
+      story.n = cfg.attempts | 0; story.target = story.n; story.left = story.n; story.restoreMirror = null;
+      story.words = cfg.words || {}; story.line = cfg.line || '';
+      story.onattempt = cfg.onattempt || null; story.onreveal = cfg.onreveal || null;
+      if (story.words.show) document.getElementById('w-showroad').textContent = typeof story.words.show === 'string' ? story.words.show : 'show the road';
+      if (window.ResizeObserver && !sizer) { sizer = new ResizeObserver(function () { postHeight(); }); sizer.observe(document.getElementById('col')); }
+      window.addEventListener('resize', postHeight);
+      postHeight();
+    }
+    renderRoad(); renderRule(); renderMirror(); labWords(); tripWord(); draw();
+  }
+  window.CW.trace = {
+    open: openDoor,
+    attempts: function () { return attempts.slice(); },
+    roads: function () { return ROADS.map(function (r) { return r.id; }); },
+    road: function () { return road; },                // the compiled road, for benches and tests
+    height: function () { return document.getElementById('col').getBoundingClientRect().height; }
+  };
+
+  // settings may also arrive in the URL: ?door=story&road=star&rule=channel&mirror=lr&attempts=10&words=again,nomirror,show&line=...
+  var q = {}; location.search.slice(1).split('&').forEach(function (kv) { if (!kv) return; var p = kv.split('='); q[decodeURIComponent(p[0])] = decodeURIComponent((p[1] || '').replace(/\+/g, ' ')); });
+  var words = {}; (q.words || '').split(',').forEach(function (w) { if (w) words[w] = true; });
+  openDoor({ door: q.door === 'story' ? 'story' : 'lab', road: q.road, rule: q.rule, mirror: q.mirror, attempts: q.attempts, words: words, line: q.line });
+})();
+</script>
+</body>
+</html>

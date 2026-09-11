@@ -2,6 +2,9 @@
 
 ## Read This First
 
+**Read `CWVault/00-WHAT-CW-IS.md` first of all.** One page: what Curious Woods is as of
+September 2026. The board says what is moving; that page says what it is moving toward.
+
 **Before changing anything, read `CWVault/00-BOARD.md`.** It is the single statement of
 what is moving, what is parked, and what each thread's next action is. It is written at
 the end of every session and read at the start of the next. If this file and the board
