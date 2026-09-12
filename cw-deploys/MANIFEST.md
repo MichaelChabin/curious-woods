@@ -134,9 +134,8 @@ to test yesterday's work.
   the main index beside the two labs on Michael's instruction, 12 Sep 2026, moved here
   from `experiments/` unchanged. **Self-contained**: both paintings are inline base64
   (4.1 MB, most of the file), no shared scripts, no `../` paths — nothing to check on the
-  move. **Carries no `CW_VERSION` stamp**: the file was moved with an instruction not to
-  change anything inside it, so the standing method is not applied to it; adding the
-  stamp is a one-line edit whenever Michael says so. Never listed in `experiments/index.html`
+  move. Stamped per the standing method on Michael's word the same day, the one line
+  inside it that is not the atlas's own. Never listed in `experiments/index.html`
   and never committed there, so no redirect is owed. Its source material — the two
   paintings, the overlay SVG, the check renders and `make_overlay.py` — still sits at
   `experiments/brain/`, public by folder but linked from nowhere; see the note there.
