@@ -121,6 +121,25 @@ to test yesterday's work.
   `../prototypes/glass-panel-build-aug24.html` — see the prototypes note at the foot
   of this file. Nothing deployed changed. The rebuild runs bench-first on the plane
   (`CWVault/01-ACTIVE/Walk-Glass-Aug26.md`), and this lab stays live throughout.
+- **`brain-atlas.html`** — **A Small Brain Atlas.** A short reading (neurons, eighty-six
+  billion of them, a hundred trillion connections) and then a map: Michael's two brain
+  watercolours — the outside view and the inside view, reached by the words *inside* /
+  *outside* — with twelve named places (*conscious thought*, *where seeing starts*, *how
+  many*, …, each with one sentence when tapped; *all of them* lights the lot), and under
+  them **Six Things It Does** — seeing three triangles, reading a word, hearing a beat,
+  tracing the star, remembering, touching something hot — each a signal travelling the
+  brain as a comet along a road, with *step*, *real speed*, a slow-to-real slider and a
+  counter of brain-time in ms. Region ids and coordinates match `Spec-Brain-Bench.md`;
+  this is the atlas, not the bench (no *earn*, no deposits, nothing stored). Placed on
+  the main index beside the two labs on Michael's instruction, 12 Sep 2026, moved here
+  from `experiments/` unchanged. **Self-contained**: both paintings are inline base64
+  (4.1 MB, most of the file), no shared scripts, no `../` paths — nothing to check on the
+  move. **Carries no `CW_VERSION` stamp**: the file was moved with an instruction not to
+  change anything inside it, so the standing method is not applied to it; adding the
+  stamp is a one-line edit whenever Michael says so. Never listed in `experiments/index.html`
+  and never committed there, so no redirect is owed. Its source material — the two
+  paintings, the overlay SVG, the check renders and `make_overlay.py` — still sits at
+  `experiments/brain/`, public by folder but linked from nowhere; see the note there.
 
 ### experiments/
 - **`trace.html`** — bench: **Trace.** A road on parchment, a copper dot that follows her
@@ -416,6 +435,13 @@ vocabulary; anything else stays a level up. The three moved with `git mv` from
   `CWVault/01-ACTIVE/Sound-Counting-Bench-Aug25.md`, `…/Sound-Rhythm-Roll-Aug21.md`,
   `…/Sound-Series-Aug08.md`.
   Open: no tapping, and whether 3:2 stays clean at full brightness on the fixed build.
+- **`brain/`** (folder, not a page) — the atlas's workbench: `brain-outside.jpg` and
+  `brain-inside.png` (Michael's two watercolours), `brain-views.svg` (the overlay the
+  atlas embeds), `check-outside.png` / `check-inside.png` (the render checks), and
+  `make_overlay.py` (edit the REGIONS tables and re-run to move a region). Nothing serves
+  or links to it; it is here, not in `../prototypes/`, only because that is where the
+  atlas was built. The atlas itself moved to `active/brain-atlas.html` on 12 Sep 2026.
+  Whether this folder follows it out of the publish directory is Michael's call.
 
 ## When a page is superseded
 
