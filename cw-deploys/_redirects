@@ -3,3 +3,7 @@
 /experiments/six-against-five.html      /experiments/sound-benches/six-against-five.html      301
 /experiments/scale-from-a-rhythm.html   /experiments/sound-benches/scale-from-a-rhythm.html   301
 /experiments/strobe-and-stars.html      /experiments/sound-benches/strobe-and-stars.html      301
+
+# The Brain Atlas took its real name on 13 Sep 2026. The old URL was live for a day.
+/active/brain-atlas.html                /active/about-your-brain.html                 301
+/active/brain-atlas                     /active/about-your-brain.html                 301

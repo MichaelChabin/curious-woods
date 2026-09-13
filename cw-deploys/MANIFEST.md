@@ -57,6 +57,11 @@ A page that moves between folders must have those paths checked.
 events and five story lead-ups, CW years, schema noted inside the file and aligned
 with `Spec-Timeline-Graph.md` §4 where fields overlap. Data the page merely reads;
 blurbs are unsourced first drafts, images unfilled.
+`art/brain-icon-256.png` — the watercolour brain at 256 px (13 Sep 2026), the main
+index's icon for About Your Brain; the first icon-as-link on the site. The page's own tab
+icon is the same painting, embedded in the page as a data URI — which Safari on iPad
+ignores (tested 13 Sep); pointing the page's `<link rel="icon">` here instead is the fix
+that worked in the test.
 `models/constructions.json` — the construction library's manifest (controls
 build, 13 Aug): Geometry's picker reads it at load, so library growth is a
 log file plus a line here, no code. An entry may carry `speed` (seconds) to
@@ -121,24 +126,37 @@ to test yesterday's work.
   `../prototypes/glass-panel-build-aug24.html` — see the prototypes note at the foot
   of this file. Nothing deployed changed. The rebuild runs bench-first on the plane
   (`CWVault/01-ACTIVE/Walk-Glass-Aug26.md`), and this lab stays live throughout.
-- **`brain-atlas.html`** — **A Small Brain Atlas.** A short reading (neurons, eighty-six
-  billion of them, a hundred trillion connections) and then a map: Michael's two brain
-  watercolours — the outside view and the inside view, reached by the words *inside* /
-  *outside* — with twelve named places (*conscious thought*, *where seeing starts*, *how
-  many*, …, each with one sentence when tapped; *all of them* lights the lot), and under
-  them **Six Things It Does** — seeing three triangles, reading a word, hearing a beat,
-  tracing the star, remembering, touching something hot — each a signal travelling the
-  brain as a comet along a road, with *step*, *real speed*, a slow-to-real slider and a
-  counter of brain-time in ms. Region ids and coordinates match `Spec-Brain-Bench.md`;
-  this is the atlas, not the bench (no *earn*, no deposits, nothing stored). Placed on
-  the main index beside the two labs on Michael's instruction, 12 Sep 2026, moved here
-  from `experiments/` unchanged. **Self-contained**: both paintings are inline base64
-  (4.1 MB, most of the file), no shared scripts, no `../` paths — nothing to check on the
-  move. Stamped per the standing method on Michael's word the same day, the one line
-  inside it that is not the atlas's own. Never listed in `experiments/index.html`
-  and never committed there, so no redirect is owed. Its source material — the two
-  paintings, the overlay SVG, the check renders and `make_overlay.py` — still sits at
-  `experiments/brain/`, public by folder but linked from nowhere; see the note there.
+- **`about-your-brain.html`** — **About Your Brain.** An official app beside the two labs
+  (Michael's ruling, 13 Sep 2026), and **the first card on the main index to link by icon**:
+  the watercolour brain at `../art/brain-icon-256.png`, icon and title one link. A short
+  reading (neurons, eighty-six billion of them, a hundred trillion connections, a brain
+  the weight of a large cantaloupe) and then a map: Michael's two brain watercolours —
+  the outside view and the inside view, reached by the words *inside* / *outside* — with
+  twelve named places (*conscious thought*, *where seeing starts*, *how many*, …, each
+  with a sentence when tapped; *all of them* lights the lot), and beside them **Ten
+  Things It Does** — seeing three triangles, reading a word, hearing a beat, tracing a
+  star in a mirror, remembering, touching something hot, playing ping-pong, seeing a
+  chess position, hearing an old song, drawing a friend's face — each a signal
+  travelling the brain as a comet along a road, with *step*, *real speed*, a slow-to-real
+  slider and a counter of brain-time in ms; starting one stops the one before. Region ids
+  and coordinates match `Spec-Brain-Bench.md`; this is the atlas, not the bench (no
+  *earn*, no deposits, nothing stored). **Self-contained**: both paintings and its own
+  tab icon (`<link rel="icon">` and `apple-touch-icon`, both inline PNG) are base64 in
+  the file (4.2 MB), no shared scripts, no `../` paths. **The inline tab icon does not
+  show in Safari on iPad** — tested 13 Sep on the iPad (10th generation) simulator, iOS
+  18.2: the tab shows a placeholder letter, and a two-page control on the same Safari
+  proved it is the `data:` URI, not the page — the same PNG as a file (`../art/brain-icon-256.png`)
+  showed the brain at once. Safari ignores data-URI favicons; Chrome honours them. The
+  fix is one line in the file's head pointing the icon at the art copy, and the file is
+  not to be touched without Michael's word. **Carries no `CW_VERSION`
+  stamp**: this revision arrived 13 Sep with the instruction to change nothing inside
+  it; the 12 Sep build had been stamped on Michael's word, so the line is expected and is
+  one edit away. History: built as `experiments/brain-atlas.html` (never listed in
+  `experiments/index.html`), moved to `active/brain-atlas.html` as *A Small Brain Atlas*
+  and pushed as a demo on 12 Sep (`CW_VERSION 2026-09-12 82033fa`, now
+  `../outdated-files/brain-atlas-20260912.html`); renamed here with the ten-pathway
+  revision on 13 Sep, `_redirects` keeping the day-old URL alive. Its workbench is
+  `experiments/brain/`; see the note there.
 
 ### experiments/
 - **`trace.html`** — bench: **Trace.** A road on parchment, a copper dot that follows her
@@ -434,13 +452,14 @@ vocabulary; anything else stays a level up. The three moved with `git mv` from
   `CWVault/01-ACTIVE/Sound-Counting-Bench-Aug25.md`, `…/Sound-Rhythm-Roll-Aug21.md`,
   `…/Sound-Series-Aug08.md`.
   Open: no tapping, and whether 3:2 stays clean at full brightness on the fixed build.
-- **`brain/`** (folder, not a page) — the atlas's workbench: `brain-outside.jpg` and
-  `brain-inside.png` (Michael's two watercolours), `brain-views.svg` (the overlay the
+- **`brain/`** (folder, not a page) — About Your Brain's workbench: `brain-outside.jpg`
+  and `brain-inside.png` (Michael's two watercolours), `brain-views.svg` (the overlay the
   atlas embeds), `check-outside.png` / `check-inside.png` (the render checks), and
   `make_overlay.py` (edit the REGIONS tables and re-run to move a region). Nothing serves
   or links to it; it is here, not in `../prototypes/`, only because that is where the
-  atlas was built. The atlas itself moved to `active/brain-atlas.html` on 12 Sep 2026.
-  Whether this folder follows it out of the publish directory is Michael's call.
+  atlas was built. The atlas itself moved to `active/` on 12 Sep 2026 and its icon to
+  `art/brain-icon-256.png` on 13 Sep. Whether this folder follows them out of the
+  publish directory is Michael's call.
 
 ## When a page is superseded
 

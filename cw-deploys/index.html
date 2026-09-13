@@ -57,6 +57,20 @@
       align-items: center;
     }
 
+    /* a card whose whole face is the link: icon above the title, one target */
+    a.item.card { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    a.item.card .icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      transition: transform 120ms ease;
+    }
+    a.item.card:hover .icon { transform: scale(1.04); }
+    a.item.card .title { font-size: 16px; }
+    a.item.card .label { margin-top: 0; }
+
     /* the one item that opens a room rather than a lab */
     .item.aside { margin-top: 12px; }
     .item.aside a { font-size: 14px; color: #a09880; }
@@ -87,10 +101,11 @@
       <div class="label">prime factors in color, light, and sound</div>
     </div>
 
-    <div class="item">
-      <a href="active/brain-atlas.html">A Small Brain Atlas</a>
-      <div class="label">where things happen in the brain, and how fast</div>
-    </div>
+    <a class="item card" href="active/about-your-brain.html">
+      <img class="icon" src="art/brain-icon-256.png" alt="" width="72" height="72">
+      <span class="title">About Your Brain</span>
+      <span class="label">where things happen in the brain, and how fast</span>
+    </a>
 
     <div class="item aside">
       <a href="experiments/index.html">Experiments</a>
@@ -101,6 +116,6 @@
 
   <footer>curious woods — development preview</footer>
 
-<script>var CW_VERSION = '2026-09-12 c3e2c1f'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
+<script>var CW_VERSION = '2026-09-13 uncommitted'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
 </body>
 </html>
