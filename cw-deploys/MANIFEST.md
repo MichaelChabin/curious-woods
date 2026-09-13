@@ -59,9 +59,8 @@ with `Spec-Timeline-Graph.md` §4 where fields overlap. Data the page merely rea
 blurbs are unsourced first drafts, images unfilled.
 `art/brain-icon-256.png` — the watercolour brain at 256 px (13 Sep 2026), the main
 index's icon for About Your Brain; the first icon-as-link on the site. The page's own tab
-icon is the same painting, embedded in the page as a data URI — which Safari on iPad
-ignores (tested 13 Sep); pointing the page's `<link rel="icon">` here instead is the fix
-that worked in the test.
+icon reads the same file (Safari on iPad ignores data-URI favicons, tested 13 Sep, so
+the page points here rather than carrying the icon inline).
 `models/constructions.json` — the construction library's manifest (controls
 build, 13 Aug): Geometry's picker reads it at load, so library growth is a
 log file plus a line here, no code. An entry may carry `speed` (seconds) to
@@ -140,23 +139,22 @@ to test yesterday's work.
   travelling the brain as a comet along a road, with *step*, *real speed*, a slow-to-real
   slider and a counter of brain-time in ms; starting one stops the one before. Region ids
   and coordinates match `Spec-Brain-Bench.md`; this is the atlas, not the bench (no
-  *earn*, no deposits, nothing stored). **Self-contained**: both paintings and its own
-  tab icon (`<link rel="icon">` and `apple-touch-icon`, both inline PNG) are base64 in
-  the file (4.2 MB), no shared scripts, no `../` paths. **The inline tab icon does not
-  show in Safari on iPad** — tested 13 Sep on the iPad (10th generation) simulator, iOS
-  18.2: the tab shows a placeholder letter, and a two-page control on the same Safari
-  proved it is the `data:` URI, not the page — the same PNG as a file (`../art/brain-icon-256.png`)
-  showed the brain at once. Safari ignores data-URI favicons; Chrome honours them. The
-  fix is one line in the file's head pointing the icon at the art copy, and the file is
-  not to be touched without Michael's word. **Carries no `CW_VERSION`
-  stamp**: this revision arrived 13 Sep with the instruction to change nothing inside
-  it; the 12 Sep build had been stamped on Michael's word, so the line is expected and is
-  one edit away. History: built as `experiments/brain-atlas.html` (never listed in
+  *earn*, no deposits, nothing stored). **Self-contained but for its icon**: both
+  paintings are base64 in the file (4.1 MB), no shared scripts; the one `../` path is
+  the tab icon, `<link rel="icon">` and `apple-touch-icon` both pointing at
+  `../art/brain-icon-256.png`. The revision arrived with the icon inline as a `data:`
+  URI, and **Safari on iPad ignores data-URI favicons** — tested 13 Sep on the iPad
+  (10th generation) simulator, iOS 18.2: a placeholder letter in the tab, while a
+  two-page control on the same Safari showed the identical PNG as a file at once
+  (Chrome honours both). Repointed to the file on Michael's word the same day, and the
+  brain shows in the tab. Stamped the same day, per the standing method. A page that
+  moves must have that one path checked. History: built as `experiments/brain-atlas.html` (never listed in
   `experiments/index.html`), moved to `active/brain-atlas.html` as *A Small Brain Atlas*
   and pushed as a demo on 12 Sep (`CW_VERSION 2026-09-12 82033fa`, now
   `../outdated-files/brain-atlas-20260912.html`); renamed here with the ten-pathway
-  revision on 13 Sep, `_redirects` keeping the day-old URL alive. Its workbench is
-  `experiments/brain/`; see the note there.
+  revision on 13 Sep, `_redirects` keeping the day-old URL alive. Its workbench —
+  the paintings, the overlay, the checks, `make_overlay.py` — is `../prototypes/brain/`,
+  moved out of the publish directory the same day; see the prototypes note at the foot.
 
 ### experiments/
 - **`trace.html`** — bench: **Trace.** A road on parchment, a copper dot that follows her
@@ -452,14 +450,6 @@ vocabulary; anything else stays a level up. The three moved with `git mv` from
   `CWVault/01-ACTIVE/Sound-Counting-Bench-Aug25.md`, `…/Sound-Rhythm-Roll-Aug21.md`,
   `…/Sound-Series-Aug08.md`.
   Open: no tapping, and whether 3:2 stays clean at full brightness on the fixed build.
-- **`brain/`** (folder, not a page) — About Your Brain's workbench: `brain-outside.jpg`
-  and `brain-inside.png` (Michael's two watercolours), `brain-views.svg` (the overlay the
-  atlas embeds), `check-outside.png` / `check-inside.png` (the render checks), and
-  `make_overlay.py` (edit the REGIONS tables and re-run to move a region). Nothing serves
-  or links to it; it is here, not in `../prototypes/`, only because that is where the
-  atlas was built. The atlas itself moved to `active/` on 12 Sep 2026 and its icon to
-  `art/brain-icon-256.png` on 13 Sep. Whether this folder follows them out of the
-  publish directory is Michael's call.
 
 ## When a page is superseded
 
@@ -479,6 +469,13 @@ chosen and marked) and `janko-midi.html` (the same lattice lit by Web MIDI,
 Chrome only). Built 8 Aug, deliberately **not publicly reachable** until the
 Series decides its opening; both are self-contained. Design and reasoning:
 `CWVault/01-ACTIVE/Sound-Series-Aug08.md`.
+
+`brain/` (moved here 13 Sep 2026, from `experiments/brain/`) — About Your Brain's
+workbench: `brain-outside.jpg` and `brain-inside.png` (Michael's two watercolours),
+`brain-views.svg` (the overlay the atlas embeds), `check-outside.png` /
+`check-inside.png` (the render checks), and `make_overlay.py` (edit the REGIONS tables
+and re-run to move a region). Source material for a shipping app, so it lives outside
+the publish directory; the icon it produced is `cw-deploys/art/brain-icon-256.png`.
 
 `glass-panel-build-aug24.html` (frozen 1 Sep 2026) — the 24 Aug panel build of
 Glass Multiplication, `CW_VERSION 2026-08-24 e4cd030`, which sat uncommitted in
