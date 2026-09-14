@@ -61,6 +61,8 @@ blurbs are unsourced first drafts, images unfilled.
 index's icon for About Your Brain; the first icon-as-link on the site. The page's own tab
 icon reads the same file (Safari on iPad ignores data-URI favicons, tested 13 Sep, so
 the page points here rather than carrying the icon inline).
+`art/star-icon-256.svg` — the star with a copper dot (14 Sep 2026), the main index's
+icon for The Man Who Learned Without Knowing; the second icon-as-link.
 `models/constructions.json` — the construction library's manifest (controls
 build, 13 Aug): Geometry's picker reads it at load, so library growth is a
 log file plus a line here, no code. An entry may carry `speed` (seconds) to
@@ -156,6 +158,36 @@ to test yesterday's work.
   the paintings, the overlay, the checks, `make_overlay.py` — is `../prototypes/brain/`,
   moved out of the publish directory the same day; see the prototypes note at the foot.
 
+- **`the-man-who-learned-without-knowing.html`** — story: **The Man Who Learned Without
+  Knowing** (text: `CWVault/claude/Story-The-Man-Who-Learned-Without-Knowing.md`), on the
+  home page beside About Your Brain since 14 Sep 2026, linked by its icon
+  (`../art/star-icon-256.svg`, the star with a copper dot). The finished story page,
+  self-contained: the two-panel layout of UI-Language §1 — the narrative on the right,
+  the **context membrane** on the left carrying the star, then the brain, then the
+  inscription. The star (380 px stage, mirrored left-right, the road 6% of the star's
+  width, one bump per excursion, a trip counts when 80% of the road is travelled and the
+  dot is back at the start; lifting the finger abandons the trip) runs ten trips, then
+  *again* / *without the mirror* / *show the star* / *the graphs*. Scrolling to *Henry*
+  brings the outside brain in, with *tap the brain to see what the surgeon removed* —
+  the word or the picture turns it to the inside view and marks the hippocampus,
+  *removed, 1953*. Scrolling to *Two memories* brings the brain back with *your brain,
+  tracing the star* and *Henry's brain, tracing the star*, each a signal along the
+  atlas's roads with step, again, clear and a slow-to-real slider. The inscription puts
+  `mirror-star` in `cw.practice.queue`; trips live in `cw.mirror-star.v2`. **Nothing
+  else on the site reads either key yet.** Both paintings are inline base64 (4.1 MB of
+  the file). **Tested 14 Sep on the iPad (10th generation) simulator, iOS 18.2**: a finger
+  drives the dot round the whole road; Henry brings the brain and both tap targets
+  reveal the surgery; Two memories brings the second brain with both words. Copied from
+  `experiments/trace-prototype-star-story.html` byte for byte on Michael's instruction
+  to change nothing inside it; **three things it lacks, reported to Michael, each one
+  line at the top of the file:** no `<!doctype html>` and no `<meta charset="utf-8">`
+  (it opens with `<title>`; its em-dashes are raw UTF-8, so it depends on the server's
+  charset header — Netlify sends one, the local python server does not and shows
+  mojibake), no `<link rel="icon">` (Safari's tab shows a letter), and no
+  `CW_VERSION` stamp. Not the story-door route: `experiments/story-learned-without-knowing.html`
+  (11 Sep, calling `trace.html`) stays as the record of that route; this page carries
+  its own star engine and its own brain.
+
 ### experiments/
 - **`trace.html`** — bench: **Trace.** A road on parchment, a copper dot that follows her
   hand through a transform, a rule for what counts as a mistake, and a counter that says
@@ -189,8 +221,10 @@ to test yesterday's work.
   Standalone; does not stand on the plane. `CW_VERSION 2026-09-11 51d9bb0` (first
   commit 11 Sep; stamped per the standing method).
 - **`story-learned-without-knowing.html`** — story: **The Man Who Learned Without
-  Knowing** (text: `CWVault/claude/Story-The-Man-Who-Learned-Without-Knowing.md`), the
-  first story page in the deploy and the first caller of Trace's story door: the star in
+  Knowing**, the story-door route (text: `CWVault/claude/Story-The-Man-Who-Learned-Without-Knowing.md`).
+  **Superseded on the home page 14 Sep** by `active/the-man-who-learned-without-knowing.html`,
+  which carries its own star and brain; kept here, noted on the experiments index. Was
+  the first story page in the deploy and the first caller of Trace's story door: the star in
   a frame in the left panel, ten trips, then *again* / *without the mirror* / *show the
   star*, and the word *Brain* arriving only after the reveal. Ported 11 Sep from the star
   prototype, which is retired to `../outdated-files/trace-prototype-star-story-20260911.html`

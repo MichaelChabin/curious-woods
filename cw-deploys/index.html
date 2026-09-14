@@ -68,8 +68,11 @@
       transition: transform 120ms ease;
     }
     a.item.card:hover .icon { transform: scale(1.04); }
-    a.item.card .title { font-size: 16px; }
+    a.item.card .title { font-size: 16px; text-align: center; max-width: 13em; text-wrap: balance; line-height: 1.3; }
     a.item.card .label { margin-top: 0; }
+
+    /* icon tiles sit side by side; they fall into a column when the screen is narrow */
+    .tiles { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 20px 56px; }
 
     /* the one item that opens a room rather than a lab */
     .item.aside { margin-top: 12px; }
@@ -101,11 +104,20 @@
       <div class="label">prime factors in color, light, and sound</div>
     </div>
 
-    <a class="item card" href="active/about-your-brain.html">
-      <img class="icon" src="art/brain-icon-256.png" alt="" width="72" height="72">
-      <span class="title">About Your Brain</span>
-      <span class="label">where things happen in the brain, and how fast</span>
-    </a>
+    <div class="tiles">
+
+      <a class="item card" href="active/about-your-brain.html">
+        <img class="icon" src="art/brain-icon-256.png" alt="" width="72" height="72">
+        <span class="title">About Your Brain</span>
+        <span class="label">where things happen in the brain, and how fast</span>
+      </a>
+
+      <a class="item card" href="active/the-man-who-learned-without-knowing.html">
+        <img class="icon" src="art/star-icon-256.svg" alt="" width="72" height="72">
+        <span class="title">The Man Who Learned Without Knowing</span>
+      </a>
+
+    </div>
 
     <div class="item aside">
       <a href="experiments/index.html">Experiments</a>
@@ -116,6 +128,6 @@
 
   <footer>curious woods — development preview</footer>
 
-<script>var CW_VERSION = '2026-09-13 a35b802'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
+<script>var CW_VERSION = '2026-09-14 uncommitted'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
 </body>
 </html>
