@@ -755,8 +755,11 @@ arrival and both surgery tap targets behave.
   queues `mirror-star` for one.
 - **The publish directory is clean (15 Sep, on Michael's word):** the story's source
   copy and a stray re-export of the atlas, both duplicates of committed files, are
-  removed; the check reports no untracked files. It does report one old page without a
-  stamp, `stories/necker-cube/index.html`, untouched here.
+  removed; the check reports no untracked files. The one old page it found without a
+  stamp, `stories/necker-cube/index.html` — the first story, April, public but linked
+  from nowhere — is stamped, registered in MANIFEST and listed at the foot of the
+  experiments index (on Michael's word, 15 Sep). **The whole publish directory now
+  meets the standard**; the only warnings left are the two Glass labs' tab icons.
 - **Tension, reported:** this page and `experiments/story-learned-without-knowing.html`
   are two builds of one story — this one self-contained, that one through Trace's story
   door. The Trace thread's next action still says the Brain bench replaces the story's

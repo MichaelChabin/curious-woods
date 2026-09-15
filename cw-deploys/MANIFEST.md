@@ -65,6 +65,14 @@ the page points here rather than carrying the icon inline).
 icon for The Man Who Learned Without Knowing; the second icon-as-link.
 `art/star-icon-256.png` — the same star rasterized (15 Sep), the story's tab and
 home-screen icon, because Safari wants a PNG there.
+`stories/necker-cube/` — **The Necker Cube**, the first story (28 Apr 2026, commit
+`bec6b4f`), a single-file page at `index.html`: the cube on a canvas that flips as you
+look, narrative paragraphs from `narrative.json` beside it, Web Audio, the watercolour
+brain `brain-watercolor.jpeg` (also read by `experiments/necker-brain-map.html`). Public
+since April but linked from nowhere until 15 Sep, when the page standard's check found
+it as the one page without a stamp; stamped that day and listed at the foot of
+`experiments/index.html` as the record of the first story. Folder also holds the
+plan and narrative drafts it was built from, and a stray `.DS_Store`.
 `models/constructions.json` — the construction library's manifest (controls
 build, 13 Aug): Geometry's picker reads it at load, so library growth is a
 log file plus a line here, no code. An entry may carry `speed` (seconds) to
