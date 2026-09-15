@@ -218,6 +218,7 @@
     #ghost-layer { position: fixed; inset: 0; z-index: 591; pointer-events: none; display: none; overflow: hidden; }
     #ghost-layer img { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: 0.22; max-width: none; user-select: none; width: 340px; height: 340px; }
   </style>
+<script src="../js/cw-flags.js?v=2026-09-15"></script>
 </head>
 <body>
 
@@ -346,7 +347,7 @@
 <script src="../js/plane.js?v=2026-08-13"></script>
 <script src="../js/cw-panel.js?v=2026-08-13"></script>
 <script>
-var CW_VERSION = '2026-08-13 b32d541'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-09-15 uncommitted'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 document.addEventListener('DOMContentLoaded', function() {
 'use strict';
 
@@ -1054,7 +1055,7 @@ function showUniquenessObservation() {
 
     // Line 3: the clincher
     var p3 = document.createElement('p'); p3.className = 'htw-para';
-    p3.textContent = 'The one you just made \u2014 no one has made that before.';
+    p3.textContent = 'The one you just made is one of billions that could be made. Most of them have never been seen.';
     bodyEl.appendChild(p3);
     htwActiveStageIdx = -1;
     var el = document.getElementById('htw-canvas');

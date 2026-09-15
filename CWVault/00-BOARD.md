@@ -765,6 +765,7 @@ arrival and both surgery tap targets behave.
   door. The Trace thread's next action still says the Brain bench replaces the story's
   inline drawing; this page has its own. Which route the story series takes is Michael's
   call.
+- **The Maya flag exists (15 Sep):** `js/cw-flags.js`, `CW.flags.maya = false`, loaded first on every `active/` page; Remember obeys it on this page per 00-WHAT-CW-IS (always visible with Maya; without her, invisible until the `.remember-ref` paragraph nears the middle of the window, fading in over 300 px and staying once shown) — About Your Brain has no Remember block; what the rule means for the two labs' Remember, which no text refers to, is **open for Michael**.
 - **Next action:** Michael's call on the stacked layout below 800 points. Then a
   practice area for Star in a Mirror; then icons for the two Glass cards (the check
   warns about them on every run).

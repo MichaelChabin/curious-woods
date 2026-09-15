@@ -73,6 +73,8 @@
   #remember .note { display: block; font-size: 13px; color: #7a8a9a; margin-top: 6px; }
   #remember .plain { display: block; color: var(--cw-remember-blue); font-size: 17px; }
   #remember .big { display: block; color: var(--cw-copper); font-size: 20px; }
+  /* Remember follows the Maya flag (00-WHAT-CW-IS): without Maya it is invisible until the text refers to it */
+  #remember.pending { opacity: 0; pointer-events: none; }
   /* the right panel: pure narrative */
   .narrative { flex: 1 1 auto; display: flex; justify-content: center; }
   article { max-width: 700px; padding: 40px 40px 80px 40px; box-sizing: border-box; }
@@ -90,6 +92,7 @@
   }
   @media (prefers-reduced-motion: reduce) { .fade, .word { transition: none; } }
 </style>
+<script src="../js/cw-flags.js?v=2026-09-15"></script>
 </head>
 <body>
 
@@ -151,6 +154,7 @@
       <span class="plain">this</span>
       <span class="note" id="remember-note" hidden>in your practice list</span>
     </div>
+    <script>if (!(window.CW && CW.flags && CW.flags.maya)) { var r = document.getElementById('remember'); r.className = 'pending'; r.tabIndex = -1; r.setAttribute('aria-hidden', 'true'); }</script>
     <div class="spacer"></div>
   </aside>
 
@@ -168,7 +172,7 @@
 
       <p id="p-still">Still, babies do learn to use their hands, and just about anyone can learn to solve this puzzle.</p>
 
-      <p>If you'd like to play with the puzzle some more, click <em>I want to Remember this</em> on the left, and we'll put it in your practice list.</p>
+      <p class="remember-ref">If you'd like to play with the puzzle some more, click <em>I want to Remember this</em> on the left, and we'll put it in your practice list.</p>
 
       <p id="p-start">Now that you understand the puzzle, I can start the story.</p>
 
@@ -245,7 +249,7 @@
 </div>
 
 <script>
-var CW_VERSION = '2026-09-15 5c24a86'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-09-15 uncommitted'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 (function () {
   'use strict';
   // ---------- constants ----------
@@ -469,6 +473,25 @@ var CW_VERSION = '2026-09-15 5c24a86'; try { console.log('Curious Woods · ' + d
       render();
     });
     render();
+    // Remember follows the Maya flag (00-WHAT-CW-IS): with Maya it is visible all the time; without, it
+    // is invisible until the text refers to it (the .remember-ref paragraph), fades in over the last 300 px
+    // of that paragraph's climb to the middle of the window, and once fully shown stays shown for the visit.
+    (function () {
+      var maya = !!(window.CW && CW.flags && CW.flags.maya), rem = document.getElementById('remember'), ref = document.querySelector('.remember-ref');
+      if (maya || !rem || !ref) return;
+      var REACH = 300, shown = false, queued = false;
+      function measure() {
+        queued = false;
+        if (shown) return;
+        var b = ref.getBoundingClientRect(), d = (b.top + b.height / 2) - window.innerHeight / 2;   // px still to climb
+        var p = d <= 0 ? 1 : d >= REACH ? 0 : 1 - d / REACH;
+        rem.style.opacity = p;
+        if (p >= 1) { shown = true; rem.className = ''; rem.style.opacity = ''; rem.tabIndex = 0; rem.removeAttribute('aria-hidden'); }
+      }
+      function onMove() { if (!queued) { queued = true; requestAnimationFrame(measure); } }
+      document.addEventListener('scroll', onMove, true); window.addEventListener('resize', onMove);
+      measure();
+    })();
     // sit beside the paragraph that invites it, when the page is at the top
     function align() {
       var para = document.getElementById('p-still'), rem = document.getElementById('remember'); if (!para || !rem) return;

@@ -21,7 +21,7 @@ working, for the same reason retired files are never deleted.
 Superseded versions, kept as the archive record.
 
 **`js/`** — shared code, at the root of this folder. Classic scripts, no
-build step. **`cw-number.js` — how a number is written, everywhere** (extracted
+build step. `cw-flags.js` (15 Sep 2026) — feature flags, `CW.flags = { maya: false }`, loaded first on every `active/` page with a version query; the Maya flag is all it holds, because nothing else about Maya exists yet, and Remember on story pages reads it (visible always with Maya; fades in as the text's reference nears without her). **`cw-number.js` — how a number is written, everywhere** (extracted
 2 Sep 2026 on Michael's instruction that the benches and labs all write numbers
 the same way; the third shared file, and the first added since Phase 4). Until
 it existed there were four dialects: plane.js grouped thousands for tick labels,
