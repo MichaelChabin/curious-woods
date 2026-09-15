@@ -218,7 +218,9 @@ backstop for the Claude Code session that lands the file.
   below 800 css px, which could never fire while Safari laid it out at 980 — now an
   iPad narrower than 800 points in portrait (mini; the 2017-era 768-point iPads) shows
   the star *above* the story, where the text says *on the left*. The 10th-generation
-  iPad (820) keeps two columns. Not the story-door route: `experiments/story-learned-without-knowing.html`
+  iPad (820) keeps two columns. The source copy in `experiments/` and a stray re-export
+  of the atlas were removed 15 Sep on Michael's word; the story's original bytes are
+  commit `fa56905`. Not the story-door route: `experiments/story-learned-without-knowing.html`
   (11 Sep, calling `trace.html`) stays as the record of that route; this page carries
   its own star engine and its own brain.
 
@@ -537,6 +539,13 @@ chosen and marked) and `janko-midi.html` (the same lattice lit by Web MIDI,
 Chrome only). Built 8 Aug, deliberately **not publicly reachable** until the
 Series decides its opening; both are self-contained. Design and reasoning:
 `CWVault/01-ACTIVE/Sound-Series-Aug08.md`.
+
+`star-in-a-mirror.html` (moved here 15 Sep 2026, from `experiments/`, where it sat
+untracked) — **Star in a Mirror**, the practice version of the story's puzzle: the star at
+480 px, mirror left-right or up-down as words, a *turn* slider, trips and the two graphs.
+Waiting for a practice area; the story's inscription already queues `mirror-star` for
+one. Not served. Carries doctype, charset and viewport; no stamp and no icon yet — the
+check will say so when it moves into `cw-deploys/`.
 
 `brain/` (moved here 13 Sep 2026, from `experiments/brain/`) — About Your Brain's
 workbench: `brain-outside.jpg` and `brain-inside.png` (Michael's two watercolours),
