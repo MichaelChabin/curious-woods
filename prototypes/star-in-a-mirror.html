@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Star in a Mirror</title>
+<style>
+  :root { --cw-parchment:#f4f1e8; --cw-parchment-deep:#ece7da; --cw-separator:#c8b89a; --cw-ink:#2a2620; --cw-word:#546A80; --cw-word-hover:#3d5266; --cw-blue:#2E5090; --cw-copper:#b87333; }
+  html, body { background: var(--cw-parchment); color: var(--cw-ink); }
+  [hidden] { display:none !important; }
+  body { margin:0; font-family: Georgia, "Times New Roman", serif; font-size: 20px; line-height: 1.4; }
+  .page { min-height: 100vh; display:flex; flex-direction:column; align-items:center; padding: 24px 16px 40px; box-sizing:border-box; gap: 14px; }
+  .top { width: 100%; max-width: 560px; display:flex; justify-content: space-between; align-items: baseline; }
+  h1 { font-size: 22px; font-weight: bold; margin: 0; }
+  .word { font-size: 14px; color: var(--cw-word); cursor:pointer; user-select:none; transition: color 120ms; padding: 4px 0; }
+  .word:hover, .word:focus-visible { color: var(--cw-word-hover); outline:none; }
+  .word.on { color: var(--cw-copper); }
+  .word.quiet { cursor:default; color:#7a8a9a; }
+  canvas { display:block; width: min(80vw, 480px); height: auto; touch-action: none; cursor: crosshair; }
+  .row { display:flex; gap: 22px; align-items:center; flex-wrap: wrap; justify-content:center; }
+  .slider { display:flex; align-items:center; gap: 10px; }
+  .slider input { width: 200px; accent-color: var(--cw-copper); }
+  .slider span { font-size: 13px; color:#7a8a9a; font-variant-numeric: tabular-nums; }
+  .graphs { width: min(80vw, 480px); display:flex; flex-direction:column; gap: 6px; }
+  .graphs svg { width:100%; height:auto; display:block; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="top"><h1>Star in a Mirror</h1><span class="word" id="w-close" tabindex="0">close</span></div>
+  <canvas id="star" width="480" height="480" aria-label="A star drawn twice, with a road between the outlines. Trace the road; your hand may be mirrored."></canvas>
+  <div class="row">
+    <span class="word on" id="w-mh" tabindex="0">mirror left–right</span>
+    <span class="word" id="w-mv" tabindex="0">mirror up–down</span>
+    <span class="word quiet" id="w-trip">trip 1</span>
+    <span class="word" id="w-graphs" tabindex="0" hidden>the graphs</span>
+    <span class="word" id="w-star" tabindex="0" hidden>the star</span>
+  </div>
+  <div class="slider"><span>turn</span><input type="range" id="turn" min="0" max="72" step="1" value="18" aria-label="turn the star"><span id="turn-val">18°</span></div>
+  <div class="graphs" id="graphs" hidden>
+    <svg id="g-bumps" viewBox="0 0 480 160" role="img" aria-label="Bumps per trip"></svg>
+    <svg id="g-secs" viewBox="0 0 480 160" role="img" aria-label="Seconds per trip"></svg>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var BLUE = '#2E5090', COPPER = '#b87333', INK = '#2a2620', PARCH = '#f4f1e8';
+  var SIZE = 480, CX = 240, CY = 246, R = 200, W = Math.round(2 * R * 0.06), SNAP = 24;
+  var canvas = document.getElementById('star'), ctx = canvas.getContext('2d');
+  var mirrorH = true, mirrorV = false, tilt = 18 * Math.PI / 180;
+  var OUTER, INNER, MID, START, TRACK_LEN;
+  var trips = [], tracing = false, cur = null, travelled = 0, errors = 0, off = false, t0 = 0, trace = [];
+
+  function starPoints() { var r = R * 0.381966, pts = []; for (var i = 0; i < 10; i++) { var a = -Math.PI / 2 + tilt + i * Math.PI / 5, rad = i % 2 ? r : R; pts.push([CX + rad * Math.cos(a), CY + rad * Math.sin(a)]); } return pts; }
+  function offsetPolygon(pts, d) {
+    var n = pts.length, lines = [], out = [];
+    for (var i = 0; i < n; i++) { var a = pts[i], b = pts[(i + 1) % n], dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy), nx = -dy / len, ny = dx / len, mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2; if ((CX - mx) * nx + (CY - my) * ny < 0) { nx = -nx; ny = -ny; } lines.push({ p: [a[0] + nx * d, a[1] + ny * d], d: [dx, dy] }); }
+    for (var j = 0; j < n; j++) { var L1 = lines[(j - 1 + n) % n], L2 = lines[j], den = L1.d[0] * L2.d[1] - L1.d[1] * L2.d[0], t = ((L2.p[0] - L1.p[0]) * L2.d[1] - (L2.p[1] - L1.p[1]) * L2.d[0]) / den; out.push([L1.p[0] + L1.d[0] * t, L1.p[1] + L1.d[1] * t]); }
+    return out;
+  }
+  function inside(pt, poly) { var x = pt[0], y = pt[1], c = false; for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) { var xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1]; if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) c = !c; } return c; }
+  function perimeter(poly) { var s = 0; for (var i = 0; i < poly.length; i++) { var a = poly[i], b = poly[(i + 1) % poly.length]; s += Math.hypot(b[0] - a[0], b[1] - a[1]); } return s; }
+  // the start sits where the road crosses the centre lines, so the dot and its reflection coincide under either mirror
+  function startPoint(poly) {
+    var best = null, bestD = Infinity;
+    for (var i = 0; i < poly.length; i++) {
+      var a = poly[i], b = poly[(i + 1) % poly.length];
+      for (var t = 0; t <= 1; t += 0.01) { var x = a[0] + (b[0] - a[0]) * t, y = a[1] + (b[1] - a[1]) * t;
+        var d = (mirrorH ? Math.abs(x - CX) : 0) + (mirrorV ? Math.abs(y - CY) : 0) + (!mirrorH && !mirrorV ? Math.abs(x - CX) : 0);
+        if (d < bestD || (Math.abs(d - bestD) < 0.5 && y < best[1])) { bestD = d; best = [x, y]; } }
+    }
+    return best;
+  }
+  function rebuild() { OUTER = starPoints(); INNER = offsetPolygon(OUTER, W); MID = offsetPolygon(OUTER, W / 2); START = startPoint(MID); TRACK_LEN = perimeter(MID); cur = null; trace = []; tracing = false; draw(); }
+  function onTrack(p) { return inside(p, OUTER) && !inside(p, INNER); }
+
+  function poly(p) { ctx.beginPath(); ctx.moveTo(p[0][0], p[0][1]); for (var i = 1; i < p.length; i++) ctx.lineTo(p[i][0], p[i][1]); ctx.closePath(); }
+  function dot(p, r, c) { ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI * 2); ctx.fillStyle = c; ctx.fill(); }
+  function draw() {
+    ctx.clearRect(0, 0, SIZE, SIZE); ctx.fillStyle = PARCH; ctx.fillRect(0, 0, SIZE, SIZE);
+    ctx.lineWidth = 1.5; ctx.strokeStyle = BLUE; poly(OUTER); ctx.stroke(); poly(INNER); ctx.stroke();
+    if (trace.length > 1) { ctx.beginPath(); ctx.moveTo(trace[0][0], trace[0][1]); for (var i = 1; i < trace.length; i++) ctx.lineTo(trace[i][0], trace[i][1]); ctx.strokeStyle = 'rgba(46,80,144,0.3)'; ctx.lineWidth = 1; ctx.stroke(); }
+    dot(START, 6, COPPER);
+    var hand = [mirrorH ? 2 * CX - START[0] : START[0], mirrorV ? 2 * CY - START[1] : START[1]];
+    if (Math.hypot(hand[0] - START[0], hand[1] - START[1]) > 2) { ctx.beginPath(); ctx.arc(hand[0], hand[1], 8, 0, Math.PI * 2); ctx.strokeStyle = COPPER; ctx.lineWidth = 1.5; ctx.stroke(); }
+    if (cur) dot(cur, 5, COPPER);
+  }
+  function toCanvas(ev) { var b = canvas.getBoundingClientRect(), x = (ev.clientX - b.left) * SIZE / b.width, y = (ev.clientY - b.top) * SIZE / b.height; if (mirrorH) x = 2 * CX - x; if (mirrorV) y = 2 * CY - y; return [x, y]; }
+  function near(a, b, d) { return Math.hypot(a[0] - b[0], a[1] - b[1]) <= d; }
+  canvas.addEventListener('pointerdown', function (ev) { var p = toCanvas(ev); if (!near(p, START, SNAP)) return; canvas.setPointerCapture(ev.pointerId); tracing = true; cur = p; travelled = 0; errors = 0; off = !onTrack(p); t0 = performance.now(); trace = [p]; draw(); ev.preventDefault(); });
+  canvas.addEventListener('pointermove', function (ev) { if (!tracing) return; var p = toCanvas(ev); travelled += Math.hypot(p[0] - cur[0], p[1] - cur[1]); cur = p; trace.push(p); var ok = onTrack(p); if (!ok && !off) { off = true; errors += 1; } if (ok) off = false; if (travelled >= 0.8 * TRACK_LEN && near(p, START, SNAP)) finish(); draw(); ev.preventDefault(); });
+  function abandon() { if (!tracing) return; tracing = false; cur = null; trace = []; draw(); }
+  canvas.addEventListener('pointerup', abandon); canvas.addEventListener('pointercancel', abandon);
+  function finish() { tracing = false; cur = null; trips.push({ errors: errors, ms: Math.round(performance.now() - t0), mh: mirrorH, mv: mirrorV, turn: Math.round(tilt * 180 / Math.PI) }); save(); document.getElementById('w-trip').textContent = 'trip ' + (trips.length + 1); document.getElementById('w-graphs').hidden = false; }
+
+  function chart(id, key, label, scale) {
+    var svg = document.getElementById(id), vals = trips.map(function (t) { return t[key] * scale; }), n = Math.max(vals.length, 5);
+    var ymax = Math.max(4, Math.ceil(Math.max.apply(null, vals.concat([0])) * 1.1)), L = 36, Rr = 12, T = 14, B = 30, Wd = 480, H = 160;
+    var xs = function (i) { return L + (i / n) * (Wd - L - Rr); }, ys = function (v) { return T + (1 - v / ymax) * (H - T - B); }, s = '';
+    s += '<line x1="' + L + '" y1="' + ys(0) + '" x2="' + (Wd - Rr) + '" y2="' + ys(0) + '" stroke="' + INK + '" stroke-opacity=".5"/><line x1="' + L + '" y1="' + T + '" x2="' + L + '" y2="' + ys(0) + '" stroke="' + INK + '" stroke-opacity=".5"/>';
+    s += '<text x="' + (L - 6) + '" y="' + (ys(0) + 4) + '" text-anchor="end" font-family="Georgia" font-size="12" fill="' + INK + '">0</text><text x="' + (L - 6) + '" y="' + (T + 4) + '" text-anchor="end" font-family="Georgia" font-size="12" fill="' + INK + '">' + ymax + '</text>';
+    s += '<text x="' + L + '" y="' + (H - 8) + '" font-family="Georgia" font-size="13" fill="' + INK + '">' + label + '</text>';
+    s += '<path d="' + vals.map(function (v, i) { return (i ? 'L' : 'M') + xs(i + 1) + ' ' + ys(v); }).join(' ') + '" fill="none" stroke="' + BLUE + '" stroke-width="1.5"/>';
+    vals.forEach(function (v, i) { s += '<circle cx="' + xs(i + 1) + '" cy="' + ys(v) + '" r="3.5" fill="' + COPPER + '"/>'; });
+    svg.innerHTML = s;
+  }
+  function word(id, fn) { var el = document.getElementById(id); el.addEventListener('click', fn); el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } }); }
+  word('w-mh', function () { mirrorH = !mirrorH; document.getElementById('w-mh').classList.toggle('on', mirrorH); rebuild(); });
+  word('w-mv', function () { mirrorV = !mirrorV; document.getElementById('w-mv').classList.toggle('on', mirrorV); rebuild(); });
+  word('w-graphs', function () { chart('g-bumps', 'errors', 'bumps', 1); chart('g-secs', 'ms', 'seconds', 0.001); document.getElementById('graphs').hidden = false; canvas.hidden = true; document.getElementById('w-graphs').hidden = true; document.getElementById('w-star').hidden = false; });
+  word('w-star', function () { document.getElementById('graphs').hidden = true; canvas.hidden = false; document.getElementById('w-graphs').hidden = false; document.getElementById('w-star').hidden = true; draw(); });
+  word('w-close', function () { if (history.length > 1) history.back(); else location.href = '../index.html'; });
+  document.getElementById('turn').addEventListener('input', function (e) { tilt = +e.target.value * Math.PI / 180; document.getElementById('turn-val').textContent = e.target.value + '°'; rebuild(); });
+
+  var KEY = 'cw.star-in-a-mirror.v1';
+  function save() { try { localStorage.setItem(KEY, JSON.stringify({ date: new Date().toISOString().slice(0, 10), trips: trips })); } catch (e) {} }
+  function load() { try { var r = localStorage.getItem(KEY); if (r) { var rec = JSON.parse(r); if (rec.trips) trips = rec.trips; } } catch (e) {} if (trips.length) { document.getElementById('w-trip').textContent = 'trip ' + (trips.length + 1); document.getElementById('w-graphs').hidden = false; } }
+  load(); rebuild();
+})();
+</script>
+
+</body>
+</html>
