@@ -1,0 +1,6 @@
+#!/bin/sh
+# Pre-commit: run the page standard over the staged pages under cw-deploys/.
+# Enabled per clone with:  git config core.hooksPath .githooks
+staged=$(git diff --cached --name-only --diff-filter=AM | grep '^cw-deploys/.*\.html$')
+[ -z "$staged" ] && exit 0
+tools/check-deploys.sh $staged || { echo; echo "pre-commit: a staged page fails the page standard (see MANIFEST.md, Page standard). Fix it, or commit with --no-verify and say why in the message."; exit 1; }

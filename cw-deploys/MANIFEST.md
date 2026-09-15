@@ -63,18 +63,48 @@ icon reads the same file (Safari on iPad ignores data-URI favicons, tested 13 Se
 the page points here rather than carrying the icon inline).
 `art/star-icon-256.svg` — the star with a copper dot (14 Sep 2026), the main index's
 icon for The Man Who Learned Without Knowing; the second icon-as-link.
+`art/star-icon-256.png` — the same star rasterized (15 Sep), the story's tab and
+home-screen icon, because Safari wants a PNG there.
 `models/constructions.json` — the construction library's manifest (controls
 build, 13 Aug): Geometry's picker reads it at load, so library growth is a
 log file plus a line here, no code. An entry may carry `speed` (seconds) to
 open at a chosen playback duration.
 
-## Version stamps (standing method, 13 Aug 2026)
+## Page standard (standing method, 15 Sep 2026; the version stamp since 13 Aug)
 
-Every page here carries a `CW_VERSION` constant (date + short commit hash) logged to
-the console on load — updated in the same commit as the change, like this file.
-Shared scripts are referenced with a version query (`plane.js?v=...`), bumped when
-the script changes. `_headers` makes HTML revalidate on every load. It does not help
-to test yesterday's work.
+Every `.html` file under this folder opens with the same five lines, whatever else it
+is, because a page that arrives without them ships broken in ways nobody notices until
+an iPad shows it — the story page of 14 Sep arrived with none of them:
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/<its-icon>.png">
+```
+
+- **Doctype and charset**, or the em-dashes depend on the server's header and a local
+  server shows mojibake.
+- **Viewport**, or Safari lays the page out 980 px wide and shrinks it — and the page's
+  own `@media` rules can never fire on an iPad.
+- **A tab icon that is a file in `art/`, never a `data:` URI** — Safari ignores inline
+  icons (proved 13 Sep), and wants a PNG. The same file serves `apple-touch-icon`. The
+  home page tile may use an SVG; the tab may not.
+- **A `CW_VERSION` constant** (date + short commit hash) logged to the console on load,
+  as the first line of the page's main script — updated in the same commit as the
+  change, like this file. Shared scripts are referenced with a version query
+  (`plane.js?v=...`), bumped when the script changes. `_headers` makes HTML revalidate
+  on every load. It does not help to test yesterday's work.
+
+**The check:** `tools/check-deploys.sh` reads every page here (or the ones named on its
+command line) for the five lines, errors on a data-URI icon, warns on an `active/` page
+with no icon, and lists untracked files under `cw-deploys/` — public if ever added.
+`.githooks/pre-commit` runs it over the staged pages; enabled once per clone with
+`git config core.hooksPath .githooks`. A page that fails does not commit. A chat session
+that builds a page cannot run the hook, so the five lines are its brief; the hook is the
+backstop for the Claude Code session that lands the file.
 
 ## Pages
 
@@ -178,13 +208,17 @@ to test yesterday's work.
   the file). **Tested 14 Sep on the iPad (10th generation) simulator, iOS 18.2**: a finger
   drives the dot round the whole road; Henry brings the brain and both tap targets
   reveal the surgery; Two memories brings the second brain with both words. Copied from
-  `experiments/trace-prototype-star-story.html` byte for byte on Michael's instruction
-  to change nothing inside it; **three things it lacks, reported to Michael, each one
-  line at the top of the file:** no `<!doctype html>` and no `<meta charset="utf-8">`
-  (it opens with `<title>`; its em-dashes are raw UTF-8, so it depends on the server's
-  charset header — Netlify sends one, the local python server does not and shows
-  mojibake), no `<link rel="icon">` (Safari's tab shows a letter), and no
-  `CW_VERSION` stamp. Not the story-door route: `experiments/story-learned-without-knowing.html`
+  `experiments/trace-prototype-star-story.html` byte for byte on 14 Sep; **the page
+  standard added on Michael's word, 15 Sep** — the file had arrived opening with
+  `<title>`: no doctype, no charset (its em-dashes are raw UTF-8 and showed as mojibake
+  on a local server), no viewport, no icon, no stamp. Now: the five lines, the icon as
+  `../art/star-icon-256.png` (rasterized from the SVG, because Safari wants a PNG), and
+  `</body></html>` at the foot; the narrative and script are untouched. **One
+  consequence of the viewport line, reported:** the page's own rule stacks the panels
+  below 800 css px, which could never fire while Safari laid it out at 980 — now an
+  iPad narrower than 800 points in portrait (mini; the 2017-era 768-point iPads) shows
+  the star *above* the story, where the text says *on the left*. The 10th-generation
+  iPad (820) keeps two columns. Not the story-door route: `experiments/story-learned-without-knowing.html`
   (11 Sep, calling `trace.html`) stays as the record of that route; this page carries
   its own star engine and its own brain.
 

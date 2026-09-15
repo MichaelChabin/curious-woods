@@ -27,6 +27,14 @@ Three rules for every chat working on this project:
    built from a folder listing while `01-ACTIVE/Plan-Plane-Extraction.md` sat unopened in
    that same listing, and the resulting advice contradicted the active plan. If a file is
    in `01-ACTIVE/`, open it.
+6. **Every page under `cw-deploys/` opens with the page standard** — doctype, charset,
+   viewport, a tab icon that is a file in `art/` (never a data URI; Safari ignores
+   those), and a `CW_VERSION` stamp. The standard and its reasons are in
+   `cw-deploys/MANIFEST.md` under *Page standard*. `tools/check-deploys.sh` checks it;
+   `.githooks/pre-commit` runs the check on staged pages (enable once per clone with
+   `git config core.hooksPath .githooks`). A page built in a chat session arrives
+   without the hook, so the Claude Code session that lands it runs the check before
+   the commit, and reports what it added.
 
 A note on staleness, learned the hard way: this project accumulated three documents all
 claiming to describe current state, all five months old, one pointing at a directory that
