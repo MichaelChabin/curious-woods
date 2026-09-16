@@ -28,23 +28,26 @@
     border-right: 0.5px solid var(--cw-separator);
     padding: 24px 16px 24px 16px;
     display: flex; flex-direction: column; gap: 18px;
-    flex: 0 0 auto;
-    position: sticky; top: 0; height: 100vh; box-sizing: border-box;
-    overflow-y: auto;
+    flex: 0 0 412px;
+    position: relative; box-sizing: border-box; width: 412px;
   }
+  .exp { position: absolute; left: 16px; width: 380px; max-width: calc(100% - 32px); display: flex; flex-direction: column; gap: 14px; }
+  .membrane.narrow { display: none; }
+  article .exp { position: static; max-width: 100%; margin: 0.4em 0 1.8em 0; }
+  .words .word.off { display: none; }
   .word { font-size: 14px; color: var(--cw-word); cursor: pointer; padding-left: 16px; transition: color 120ms; user-select: none; }
   .word:hover, .word:focus-visible { color: var(--cw-word-hover); outline: none; }
   .word[hidden] { display: none !important; }
   .words { display: flex; flex-direction: column; gap: 6px; }
   .side { display: flex; flex-direction: column; gap: 18px; }
   .stage { position: relative; width: 380px; max-width: 100%; }
-  .stage-title { font-size: 17px; font-weight: bold; color: var(--cw-ink); text-align: center; width: 380px; max-width: 100%; margin-bottom: -14px; }
+  .stage-title { font-size: 17px; font-weight: bold; color: var(--cw-ink); text-align: center; width: 380px; max-width: 100%; margin-bottom: -6px; }
   .ready { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--cw-ink); pointer-events: none; user-select: none; }
   canvas.reveal { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
   canvas.reveal.fading { opacity: 0; transition: opacity 600ms ease-out; }
   .words-grid { display: grid; grid-template-columns: max-content max-content; column-gap: 28px; row-gap: 6px; }
   .words-grid .word.off { visibility: hidden; }
-  canvas#field { display: block; width: 100%; height: auto; border-radius: 2px; }
+  .stage canvas.field { display: block; width: 100%; height: auto; border-radius: 2px; }
   .fade { transition: opacity 400ms ease-out; }
   .graphs { width: 380px; max-width: 100%; display: flex; flex-direction: column; gap: 6px; }
   .graphs svg { width: 100%; height: auto; display: block; }
@@ -59,7 +62,7 @@
   .spot { mix-blend-mode: screen; }
   @keyframes shimmer { 0% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 0; } }
   .spot circle { animation: shimmer var(--d) ease-in-out var(--delay) infinite; }
-  #remember { padding-left: 16px; padding-bottom: 24px; line-height: 1.25; user-select: none; cursor: pointer; margin-top: 12px; }
+  #remember { position: absolute; left: 0; bottom: 24px; padding-left: 16px; padding-bottom: 24px; line-height: 1.25; user-select: none; cursor: pointer; margin-top: 12px; }
   #remember .note { display: block; font-size: 13px; color: #7a8a9a; margin-top: 6px; }
   #remember .plain { display: block; color: var(--cw-remember-blue); font-size: 17px; }
   #remember .big { display: block; color: var(--cw-copper); font-size: 20px; }
@@ -88,33 +91,7 @@
 <div class="page">
   <aside class="membrane" id="membrane">
 
-    <div class="side fade" id="side-flash">
-      <div class="stage-title">Three at a Glance</div>
-      <div class="stage" id="stage">
-        <canvas id="field" width="380" height="380" aria-label="After the word Ready, a group of dots appears for a moment, and a little later the same dots come back and fade. Tap anywhere when the group is the number you are looking for."></canvas>
-        <canvas id="reveal" class="reveal" width="380" height="380" aria-hidden="true"></canvas>
-        <div class="ready" id="ready" hidden>Ready</div>
-      </div>
-      <div class="graphs fade" id="graphs" hidden></div>
-      <div class="words" id="words-list">
-        <span class="word" id="w-n3" hidden tabindex="0">tap on 3</span>
-        <span class="word" id="w-preview" hidden tabindex="0">preview</span>
-        <span class="word" id="w-graphs" hidden tabindex="0">the graphs</span>
-        <span class="word" id="w-colours" hidden tabindex="0">two colours</span>
-        <span class="word" id="w-red" hidden tabindex="0">a red one</span>
-        <span class="word" id="w-triangle" hidden tabindex="0">a triangle</span>
-        <span class="word" id="w-again" hidden tabindex="0">again</span>
-        <span class="word" id="w-stop" hidden tabindex="0">stop</span>
-      </div>
-      <div class="words-grid" id="words-grid" hidden>
-        <span class="word" id="g-graphs" tabindex="0">the graphs</span><span class="word" id="g-stop" tabindex="0">stop</span>
-        <span class="word" id="g-n2" tabindex="0">tap on 2</span><span class="word" id="g-n3" tabindex="0">tap on 3</span>
-        <span class="word" id="g-n4" tabindex="0">tap on 4</span><span class="word" id="g-n5" tabindex="0">tap on 5</span>
-        <span class="word" id="g-n6" tabindex="0">tap on 6</span><span class="word" id="g-n7" tabindex="0">tap on 7</span>
-      </div>
-    </div>
-
-    <div class="bench fade" id="bench" hidden>
+    <div class="bench exp" id="bench">
       <svg id="bmap" viewBox="-130 0 1016 960" role="img" aria-label="A brain, from the side">
         <defs>
           <radialGradient id="bg"><stop offset="0%" stop-color="#f2d58a" stop-opacity="1"/><stop offset="55%" stop-color="#f2d58a" stop-opacity=".45"/><stop offset="100%" stop-color="#f2d58a" stop-opacity="0"/></radialGradient>
@@ -143,7 +120,7 @@
     <article>
       <h1>Three at a Glance</h1>
 
-      <p>There's an experiment on the left, and I'd like you to try it before I tell you what it's for. It takes about a minute.</p>
+      <p id="p-e1">There's an experiment on the left, and I'd like you to try it before I tell you what it's for. It takes about a minute.</p>
 
       <p>You'll see the word "Ready." One second later a group of dots will appear. There might be any number of them from 2 to 7. They won't stay long. They'll vanish very quickly, in about the time you need to blink. The question is, can you tell when there are three of them?</p>
 
@@ -165,7 +142,7 @@
 
       <p>If you had been counting, you'd have missed most of the threes, and the ones you caught, you'd have caught late. Look at the graph. You caught the threes, and you caught them fast, and a two or a four hardly ever fooled you. You weren't counting. There wasn't time. You saw three the way you see red: all at once, without working anything out.</p>
 
-      <p>This is a different version of the experiment. It lets you try with any number you like up to 7. Most people find that as the numbers get larger, recognizing them takes more time and they are more likely to make mistakes.</p>
+      <p id="p-e2">This is a different version of the experiment. It lets you try with any number you like up to 7. Most people find that as the numbers get larger, recognizing them takes more time and they are more likely to make mistakes.</p>
 
       <p>Under the graphs there's a knob that makes the flash last longer. Turn it up until you can catch the larger numbers reliably. Then look at your times. The taps come later now, and the reason is that you're counting, and counting takes time. It takes about a quarter of a second for each dot. So you've just measured how fast you count, which is something almost nobody knows about themselves.</p>
 
@@ -175,7 +152,7 @@
 
       <p>One more experiment with six, and this one is surprising.</p>
 
-      <p>Tap <em>two colours.</em> The screen flashes six dots again, at the fast speed, but now three of the dots are red and three are blue. Tap when you see six.</p>
+      <p id="p-e3">Tap <em>two colours.</em> The screen flashes six dots again, at the fast speed, but now three of the dots are red and three are blue. Tap when you see six.</p>
 
       <p>You'll catch them. A minute ago six was too many to see. Now it isn't. The colour splits the six into two threes. You can see three, so you see three-and-three, and that's six. You never counted. Two glances, both instant.</p>
 
@@ -185,7 +162,7 @@
 
       <p>Colour did something in that last experiment, so now let's try colour by itself.</p>
 
-      <p>Tap <em>a red one.</em> Dots flash, all blue, except that sometimes one of them is red. Tap when you see a red one. The screen will change how many dots there are, from four up to forty. Watch your times.</p>
+      <p id="p-e4">Tap <em>a red one.</em> Dots flash, all blue, except that sometimes one of them is red. Tap when you see a red one. The screen will change how many dots there are, from four up to forty. Watch your times.</p>
 
       <p>It takes you no longer to find the red dot among forty than among four. The red one doesn't have to be found; it's simply there, the way a light is there in a dark room. Whatever finds red isn't looking through the dots one at a time. It sees the whole screen at once.</p>
 
@@ -195,7 +172,7 @@
 
       <h2 id="h-where">Where it's done</h2>
 
-      <p>Tap the brain on the left. Three places light up.</p>
+      <p id="p-brain">Tap the brain on the left. Three places light up.</p>
 
       <p>One is a fold near the top of the brain, above your ears and a little toward the back, called the intraparietal sulcus. Say "intra-pa-RYE-etal," or just say IPS. It answers <em>how many</em>, fast, without counting. Another is a patch low down at the back, which answers <em>what colour</em>. The third is a strip along the very back, where seeing starts; it draws the edges that make a triangle a triangle.</p>
 
@@ -238,10 +215,8 @@
 </div>
 
 <script>
-var CW_VERSION = '2026-09-16 9bc235d'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
-// ---------- the Flash bench: settings from Story-Three-at-a-Glance.md, "The Flash bench, settings this story calls",
-//            as changed by Michael on 16 Sep: Ready, the dots, a wait, the reveal and its fade; one dot size;
-//            Payne's grey; preview and stop; tap on 2 to 7 in place of tap on six; 12 rounds ----------
+var CW_VERSION = '2026-09-16 f5f7736'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+// ---------- the Flash bench, as four experiments that sit beside their own text (Michael, 16 Sep) ----------
 (function () {
   'use strict';
   var GREY = '#536878', BLUE = '#2E5090', COPPER = '#b87333', RED = '#c0392b', FIELD = '#f4f1e8', PARCH = '#ece7da', SEP = '#c8b89a', INK = '#2a2620';
@@ -287,7 +262,7 @@ var CW_VERSION = '2026-09-16 9bc235d'; try { console.log('Curious Woods · ' + d
     }
     return shuffle(out);
   }
-  // every dot the same size (Michael, 16 Sep: halfway between the old largest and smallest); scatter randomised; nothing overlaps
+  // every dot the same size; scatter randomised; nothing overlaps; nothing over the word Ready
   function layout(tr, S) {
     var n = tr.x, search = S.kind === 'search';
     var r = search ? 8.5 : 14, spread = search ? 1.6 : 1, reach = r * spread, items = [];   // squares and triangles reach past their equal-area radius
@@ -315,13 +290,6 @@ var CW_VERSION = '2026-09-16 9bc235d'; try { console.log('Curious Woods · ' + d
     }
     return items;
   }
-
-  // ---------- the field, and the reveal laid over it ----------
-  var dpr = Math.min(3, window.devicePixelRatio || 1);
-  function setup(id) { var c = document.getElementById(id), x = c.getContext('2d'); c.width = SIZE * dpr; c.height = SIZE * dpr; x.scale(dpr, dpr); return { c: c, x: x }; }
-  var field = setup('field'), veil = setup('reveal');
-  function clearField() { field.x.fillStyle = FIELD; field.x.fillRect(0, 0, SIZE, SIZE); }
-  function clearReveal() { veil.x.clearRect(0, 0, SIZE, SIZE); veil.c.classList.remove('fading'); }
   function drawItems(ctx, items) {
     items.forEach(function (o) {
       ctx.fillStyle = o.color; ctx.beginPath();
@@ -333,80 +301,14 @@ var CW_VERSION = '2026-09-16 9bc235d'; try { console.log('Curious Woods · ' + d
     });
   }
 
-  // ---------- a run, or a preview ----------
-  var runs = { colours: [], red: [], triangle: [] };                     // this visit only: nothing is stored unless she asks to Remember it
+  // ---------- results: this visit only; nothing is stored unless she asks to Remember it ----------
+  var runs = { colours: [], red: [], triangle: [] };
   NS.forEach(function (n) { runs['n' + n] = []; });
-  var order = [];                                                        // keys, most recent run last
-  var run = null, knobMs = FAST, wanted = 'three', graphsOn = false;
-
-  function begin(key, preview) {
-    stopRun();
-    var S = SETTINGS[key], trials = makeTrials(S);
-    if (preview) {                                                       // three rounds, one of them the number she'll look for
-      var t = trials.filter(function (q) { return q.target; }), o = trials.filter(function (q) { return !q.target; });
-      trials = shuffle([t[0]].concat(o.slice(0, PREVIEW_ROUNDS - 1)));
-    }
-    run = { key: key, S: S, preview: !!preview, flash: S.kind === 'count' ? knobMs : FAST, trials: trials, i: -1 };
-    graphsOn = false; show('graphs', false); show('stage', true); clearField(); clearReveal(); renderWords();
-    run.timer = setTimeout(nextTrial, LEAD_IN);
-  }
-  function stopRun() {
-    if (!run) return;
-    clearTimeout(run.timer); run.dead = true; run = null;                // an unfinished run is dropped
-    clearField(); clearReveal(); show('ready', false);
-  }
-  function stop() { stopRun(); renderWords(); }
-  function nextTrial() {
-    var R = run; if (!R || R.dead) return;
-    R.i += 1;
-    if (R.i >= R.trials.length) { finish(); return; }
-    var tr = R.trials[R.i]; tr.items = layout(tr, R.S);
-    show('ready', true);                                                // 1. Ready
-    R.timer = setTimeout(function () { requestAnimationFrame(flashNow); }, READY);   // 2. one second
-    function flashNow(ts) {
-      if (R.dead) return;
-      clearField(); drawItems(field.x, tr.items); tr.onset = ts;       // 3. the dots, from this frame
-      var off = false;
-      function end() {
-        if (R.dead || off) return; off = true;
-        clearField(); show('ready', false);
-        R.timer = setTimeout(reveal, WAIT);                             // 4. two seconds
-      }
-      setTimeout(end, R.flash);                                         // a backstop, so a slow frame rate can't lengthen the flash
-      (function hide(now) {
-        if (R.dead || off) return;
-        if (now - tr.onset >= R.flash - 8) { end(); return; }
-        requestAnimationFrame(hide);
-      })(ts);
-    }
-    function reveal() {                                                 // 5. the dots as they were, then the fade
-      if (R.dead) return;
-      tr.closed = true;
-      clearReveal(); drawItems(veil.x, tr.items);
-      R.timer = setTimeout(function () {
-        veil.c.classList.add('fading');
-        R.timer = setTimeout(function () { clearReveal(); nextTrial(); }, FADE);
-      }, REVEAL);
-    }
-  }
-  function tap() {
-    if (!run || run.preview || run.i < 0 || run.i >= run.trials.length) return;
-    var tr = run.trials[run.i];
-    if (tr.onset === undefined || tr.closed || tr.tapped) return;        // one tap a round, from the dots until the reveal
-    tr.tapped = true; tr.ms = performance.now() - tr.onset;
-  }
-  function finish() {
-    var R = run; run = null;
-    if (!R.preview) {
-      runs[R.key].push({ flash: R.flash, trials: R.trials.map(function (t) { return { x: t.x, target: t.target, tapped: !!t.tapped, ms: t.ms }; }) });
-      order = order.filter(function (k) { return k !== R.key; }); order.push(R.key);
-    }
-    clearField(); clearReveal(); renderWords();
-  }
-  // "tap the screen or click the mouse": while a run is going, any press counts, except on a word (stop)
-  function onWord(e) { return e.target && e.target.closest && e.target.closest('.word'); }
-  document.addEventListener('pointerdown', function (e) { if (run && !onWord(e)) { tap(); e.preventDefault(); } }, true);
-  document.addEventListener('keydown', function (e) { if (run && !onWord(e) && (e.key === ' ' || e.key === 'Enter')) { tap(); e.preventDefault(); } }, true);
+  var order = [];
+  var run = null, knobMs = FAST;
+  function done(key) { return runs[key].length > 0; }
+  function anyNumbers() { return NS.some(function (n) { return done('n' + n); }); }
+  function latest(keys) { for (var i = order.length - 1; i >= 0; i--) if (keys.indexOf(order[i]) >= 0) return order[i]; return null; }
 
   // ---------- graphs: only when she asks. No score, no rank, no praise. ----------
   var L = 34, Rr = 12, T = 22, W = 380, H = 160, B = 40;
@@ -452,8 +354,8 @@ var CW_VERSION = '2026-09-16 9bc235d'; try { console.log('Curious Woods · ' + d
     tapped.forEach(function (q, i) { var cx = A.X(q.x) + ((i * 7) % 11 - 5), cy = A.Y(q.ms / 1000); s += q.target ? solid(cx, cy) : hollow(cx, cy); });
     return s;
   }
-  // tap on 2 to 7 (Michael, 16 Sep): above each number she looked for, a copper dot for each tap on that number and a
-  // circle, drawn beneath the copper, for each tap on another; height is the time. Misses have no time and are not shown.
+  // tap on 2 to 7: above each number she looked for, a copper dot for each tap when it was that number and a circle,
+  // drawn beneath the copper, for each tap when it wasn't; height is the time. Misses have no time and are not shown.
   function numbersChart() {
     var latestRun = {}, all = [];
     NS.forEach(function (n) { var l = runs['n' + n]; if (l.length) { latestRun[n] = l[l.length - 1]; latestRun[n].trials.forEach(function (q) { if (q.tapped) all.push(q.ms / 1000); }); } });
@@ -477,115 +379,160 @@ var CW_VERSION = '2026-09-16 9bc235d'; try { console.log('Curious Woods · ' + d
   }
   function numbersSet(withKnob) {
     var html = '<div class="set">' + svg(numbersChart(), 'seconds after the dots, by the number you looked for');
-    if (withKnob) html += '<div class="slider-row"><span class="val">a blink</span><input type="range" id="knob" min="' + KNOB_MIN + '" max="' + KNOB_MAX + '" step="100" value="' + knobMs + '" aria-label="how long the dots stay"><span class="val">long enough to count</span></div>';
+    if (withKnob) html += '<div class="slider-row"><span class="val">a blink</span><input type="range" class="knob" min="' + KNOB_MIN + '" max="' + KNOB_MAX + '" step="100" value="' + knobMs + '" aria-label="how long the dots stay"><span class="val">long enough to count</span></div>';
     return html + '</div>';
   }
 
-  // ---------- words, per stretch of text ----------
-  var STRETCH = {
-    three:   { run: ['n3'], preview: 'n3', graphs: ['n3'] },
-    six:     { grid: true, graphs: 'numbers' },
-    colours: { run: ['colours'], graphs: ['colours'], again: true },
-    search:  { run: ['red', 'triangle'], graphs: ['red', 'triangle'], again: true },
-    jevons:  { run: [], graphs: 'numbers' }
-  };
-  var LIST = { n3: 'w-n3', colours: 'w-colours', red: 'w-red', triangle: 'w-triangle' };
-  function show(id, on) { document.getElementById(id).hidden = !on; }
-  function slot(id, on) { document.getElementById(id).classList.toggle('off', !on); }   // grid words keep their places
-  function done(key) { return runs[key].length > 0; }
-  function anyNumbers() { return NS.some(function (n) { return done('n' + n); }); }
-  function latest(keys) { for (var i = order.length - 1; i >= 0; i--) if (keys.indexOf(order[i]) >= 0) return order[i]; return null; }
-  // the text's stretch, except that tap on 3 holds until it has been run once (Michael, 16 Sep)
-  function effective(name) { return name === 'six' && !done('n3') ? 'three' : name; }
-  function current() { return effective(wanted); }
-  function hasGraphs(st) { return st.graphs === 'numbers' ? anyNumbers() : !!latest(st.graphs); }
-  function renderWords() {
-    var name = current(), st = STRETCH[name], busy = !!run;
-    show('words-list', !st.grid); show('words-grid', !!st.grid);
-    if (st.grid) {
-      slot('g-graphs', !busy && !graphsOn && hasGraphs(st)); slot('g-stop', busy);
-      NS.forEach(function (n) { slot('g-n' + n, !busy); });
-      return;
-    }
-    var runWords = st.run.slice();
-    if (name === 'jevons' && !anyNumbers()) runWords = ['n3'];
-    Object.keys(LIST).forEach(function (k) { show(LIST[k], !busy && runWords.indexOf(k) >= 0); });
-    show('w-preview', !busy && !!st.preview);
-    show('w-graphs', !busy && !graphsOn && hasGraphs(st));
-    show('w-again', !busy && !!st.again && !!latest(st.run));
-    show('w-stop', busy);
+  // ---------- the experiments ----------
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
+  function wordEl(label, fn, always) {
+    var w = el('span', 'word', label); w.tabIndex = 0;
+    w.addEventListener('click', function () { if (always || !w.classList.contains('off')) fn(); });
+    w.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (always || !w.classList.contains('off')) fn(); } });
+    return w;
   }
-  function showGraphs() {
-    var name = current(), st = STRETCH[name], g = document.getElementById('graphs');
-    if (!hasGraphs(st)) return;
-    g.innerHTML = st.graphs === 'numbers' ? numbersSet(name === 'six') : graphSet(latest(st.graphs));
-    var knob = document.getElementById('knob');
-    if (knob) knob.addEventListener('input', function () { knobMs = +knob.value; });
-    graphsOn = true; show('stage', false); g.style.opacity = 0; show('graphs', true);
-    requestAnimationFrame(function () { g.style.opacity = 1; });
-    renderWords();
-  }
-  function word(id, fn, always) {
-    var el = document.getElementById(id);
-    el.addEventListener('click', function () { if (always || !run) fn(); });
-    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (always || !run) fn(); } });
-  }
-  Object.keys(LIST).forEach(function (k) { word(LIST[k], function () { begin(k); }); });
-  NS.forEach(function (n) { word('g-n' + n, function () { begin('n' + n); }); });
-  word('w-preview', function () { begin(STRETCH[current()].preview, true); });
-  word('w-graphs', showGraphs); word('g-graphs', showGraphs);
-  word('w-stop', stop, true); word('g-stop', stop, true);
-  word('w-again', function () { var k = latest(STRETCH[current()].run); if (k) begin(k); });
-
-  function enter(name) { return function () { wanted = name; graphsOn = false; show('graphs', false); show('stage', true); clearField(); renderWords(); }; }
-  function leave() { stopRun(); graphsOn = false; show('graphs', false); }
-  function follow(name) { wanted = name; if (!run) renderWords(); }   // same words, no reset: a run in progress carries on
-  clearField();
-  window.CWFlash = { enter: enter, leave: leave, effective: effective, follow: follow };
-
-  // ---------- Remember ----------
-  (function () {
-    var KEY = 'cw.practice.queue', ID = 'three-at-a-glance', note = document.getElementById('remember-note');
-    function has() { try { return (JSON.parse(localStorage.getItem(KEY) || '[]')).indexOf(ID) >= 0; } catch (e) { return false; } }
-    function render() { note.hidden = !has(); }
-    word('remember', function () {
-      try { var q = JSON.parse(localStorage.getItem(KEY) || '[]'); if (q.indexOf(ID) < 0) q.push(ID); localStorage.setItem(KEY, JSON.stringify(q)); } catch (e) {}
-      render();
+  var EXPERIMENTS = [
+    { n: 1, anchor: 'p-e1', words: [['tap on 3', 'n3'], ['preview', 'preview:n3'], ['the graphs', 'graphs'], ['stop', 'stop']], graphs: function () { return done('n3') ? graphSet('n3') : ''; } },
+    { n: 2, anchor: 'p-e2', grid: true, words: [['the graphs', 'graphs'], ['stop', 'stop']].concat(NS.map(function (k) { return ['tap on ' + k, 'n' + k]; })),
+      graphs: function () { return anyNumbers() ? numbersSet(true) : ''; } },
+    { n: 3, anchor: 'p-e3', words: [['two colours', 'colours'], ['the graphs', 'graphs'], ['again', 'again'], ['stop', 'stop']], keys: ['colours'],
+      graphs: function () { return done('colours') ? graphSet('colours') : ''; } },
+    { n: 4, anchor: 'p-e4', words: [['a red one', 'red'], ['a triangle', 'triangle'], ['the graphs', 'graphs'], ['again', 'again'], ['stop', 'stop']], keys: ['red', 'triangle'],
+      graphs: function () { var k = latest(['red', 'triangle']); return k ? graphSet(k) : ''; } }
+  ];
+  var blocks = [];
+  EXPERIMENTS.forEach(function (E) {
+    var b = { E: E, el: el('div', 'exp'), words: {}, graphsOn: false };
+    b.el.appendChild(el('div', 'stage-title', 'Experiment ' + E.n));
+    b.stage = el('div', 'stage'); b.el.appendChild(b.stage);
+    b.fieldC = el('canvas', 'field'); b.veilC = el('canvas', 'reveal'); b.ready = el('div', 'ready', 'Ready'); b.ready.hidden = true;
+    b.fieldC.setAttribute('aria-label', 'After the word Ready, a group appears for a moment, and a little later the same group comes back and fades. Tap anywhere when it is the one you are looking for.');
+    b.stage.appendChild(b.fieldC); b.stage.appendChild(b.veilC); b.stage.appendChild(b.ready);
+    b.graphsEl = el('div', 'graphs fade'); b.graphsEl.hidden = true; b.el.appendChild(b.graphsEl);
+    var box = el('div', E.grid ? 'words-grid' : 'words'); b.el.appendChild(box);
+    E.words.forEach(function (w) {
+      var act = w[1], fn;
+      if (act === 'graphs') fn = function () { showGraphs(b); };
+      else if (act === 'stop') fn = function () { stopRun(); };
+      else if (act === 'again') fn = function () { var k = latest(E.keys); if (k) begin(b, k); };
+      else if (act.indexOf('preview:') === 0) fn = function () { begin(b, act.slice(8), true); };
+      else fn = function () { begin(b, act); };
+      b.words[act] = wordEl(w[0], fn, act === 'stop'); box.appendChild(b.words[act]);
     });
-    render();
-    // Remember follows the Maya flag (00-WHAT-CW-IS): with Maya it is visible all the time; without, it is
-    // invisible until the text refers to it (a .remember-ref paragraph). This story has no such paragraph yet,
-    // so without Maya it stays invisible.
-    (function () {
-      var maya = !!(window.CW && CW.flags && CW.flags.maya), rem = document.getElementById('remember'), ref = document.querySelector('.remember-ref');
-      if (maya || !rem || !ref) return;
-      var REACH = 300, shown = false, queued = false;
-      function measure() {
-        queued = false;
-        if (shown) return;
-        var b = ref.getBoundingClientRect(), d = (b.top + b.height / 2) - window.innerHeight / 2;
-        var p = d <= 0 ? 1 : d >= REACH ? 0 : 1 - d / REACH;
-        rem.style.opacity = p;
-        if (p >= 1) { shown = true; rem.className = ''; rem.style.opacity = ''; rem.tabIndex = 0; rem.removeAttribute('aria-hidden'); }
-      }
-      function onMove() { if (!queued) { queued = true; requestAnimationFrame(measure); } }
-      document.addEventListener('scroll', onMove, true); window.addEventListener('resize', onMove);
-      measure();
-    })();
-  })();
-})();
+    var dpr = Math.min(3, window.devicePixelRatio || 1);
+    [b.fieldC, b.veilC].forEach(function (c) { c.width = SIZE * dpr; c.height = SIZE * dpr; c.getContext('2d').scale(dpr, dpr); });
+    b.field = b.fieldC.getContext('2d'); b.veil = b.veilC.getContext('2d');
+    b.anchor = document.getElementById(E.anchor);
+    blocks.push(b); clearField(b);
+  });
+  function clearField(b) { b.field.fillStyle = FIELD; b.field.fillRect(0, 0, SIZE, SIZE); }
+  function clearReveal(b) { b.veil.clearRect(0, 0, SIZE, SIZE); b.veilC.classList.remove('fading'); }
+  function setWord(b, act, on) { if (b.words[act]) b.words[act].classList.toggle('off', !on); }
+  function render(b) {
+    var busy = !!(run && run.block === b), E = b.E;
+    Object.keys(b.words).forEach(function (act) {
+      var on;
+      if (act === 'stop') on = busy;
+      else if (act === 'graphs') on = !busy && !b.graphsOn && !!E.graphs();
+      else if (act === 'again') on = !busy && !!latest(E.keys);
+      else on = !busy;
+      setWord(b, act, on);
+    });
+  }
+  function renderAll() { blocks.forEach(render); renderLast(); window.CWLayout && CWLayout.place(); }
+  function showGraphs(b) {
+    var html = b.E.graphs(); if (!html) return;
+    b.graphsEl.innerHTML = html;
+    var knob = b.graphsEl.querySelector('.knob');
+    if (knob) knob.addEventListener('input', function () { knobMs = +knob.value; });
+    b.graphsOn = true; b.stage.hidden = true; b.graphsEl.style.opacity = 0; b.graphsEl.hidden = false;
+    requestAnimationFrame(function () { b.graphsEl.style.opacity = 1; });
+    renderAll();
+  }
+  function hideGraphs(b) { b.graphsOn = false; b.graphsEl.hidden = true; b.stage.hidden = false; }
 
-// ---------- the brain: one call, outside view, three regions lit together; "again" only ----------
-(function () {
-  'use strict';
-  var svg = document.getElementById('bmap'), spots = document.getElementById('bspots');
+  // ---------- a run, or a preview; one at a time on the page ----------
+  function begin(b, key, preview) {
+    stopRun();
+    var S = SETTINGS[key], trials = makeTrials(S);
+    if (preview) {                                                       // three rounds, one of them the number she'll look for
+      var tg = trials.filter(function (q) { return q.target; }), o = trials.filter(function (q) { return !q.target; });
+      trials = shuffle([tg[0]].concat(o.slice(0, PREVIEW_ROUNDS - 1)));
+    }
+    run = { block: b, key: key, S: S, preview: !!preview, flash: S.kind === 'count' ? knobMs : FAST, trials: trials, i: -1 };
+    hideGraphs(b); clearField(b); clearReveal(b); renderAll();
+    run.timer = setTimeout(nextTrial, LEAD_IN);
+  }
+  function stopRun() {
+    if (!run) return;
+    var b = run.block;
+    clearTimeout(run.timer); run.dead = true; run = null;                // an unfinished run is dropped
+    clearField(b); clearReveal(b); b.ready.hidden = true; renderAll();
+  }
+  function nextTrial() {
+    var R = run; if (!R || R.dead) return;
+    var b = R.block;
+    R.i += 1;
+    if (R.i >= R.trials.length) { finish(); return; }
+    var tr = R.trials[R.i]; tr.items = layout(tr, R.S);
+    b.ready.hidden = false;                                             // 1. Ready
+    R.timer = setTimeout(function () { requestAnimationFrame(flashNow); }, READY);   // 2. one second
+    function flashNow(ts) {
+      if (R.dead) return;
+      clearField(b); drawItems(b.field, tr.items); tr.onset = ts;       // 3. the dots, from this frame
+      var off = false;
+      function end() {
+        if (R.dead || off) return; off = true;
+        clearField(b); b.ready.hidden = true;
+        R.timer = setTimeout(reveal, WAIT);                             // 4. two seconds
+      }
+      setTimeout(end, R.flash);                                         // a backstop, so a slow frame rate can't lengthen the flash
+      (function hide(now) {
+        if (R.dead || off) return;
+        if (now - tr.onset >= R.flash - 8) { end(); return; }
+        requestAnimationFrame(hide);
+      })(ts);
+    }
+    function reveal() {                                                 // 5. the dots as they were, then the fade
+      if (R.dead) return;
+      tr.closed = true;
+      clearReveal(b); drawItems(b.veil, tr.items);
+      R.timer = setTimeout(function () {
+        b.veilC.classList.add('fading');
+        R.timer = setTimeout(function () { clearReveal(b); nextTrial(); }, FADE);
+      }, REVEAL);
+    }
+  }
+  function tap() {
+    if (!run || run.preview || run.i < 0 || run.i >= run.trials.length) return;
+    var tr = run.trials[run.i];
+    if (tr.onset === undefined || tr.closed || tr.tapped) return;        // one tap a round, from the dots until the reveal
+    tr.tapped = true; tr.ms = performance.now() - tr.onset;
+  }
+  function finish() {
+    var R = run; run = null;
+    if (!R.preview) {
+      runs[R.key].push({ flash: R.flash, trials: R.trials.map(function (q) { return { x: q.x, target: q.target, tapped: !!q.tapped, ms: q.ms }; }) });
+      order = order.filter(function (k) { return k !== R.key; }); order.push(R.key);
+    }
+    clearField(R.block); clearReveal(R.block); renderAll();
+  }
+  // "tap the screen or click the mouse": while a run is going, any press counts, except on a word (stop)
+  function onWord(e) { return e.target && e.target.closest && e.target.closest('.word, input'); }
+  document.addEventListener('pointerdown', function (e) { if (run && !onWord(e)) { tap(); e.preventDefault(); } }, true);
+  document.addEventListener('keydown', function (e) { if (run && !onWord(e) && (e.key === ' ' || e.key === 'Enter')) { tap(); e.preventDefault(); } }, true);
+
+  // ---------- Experiment 2's graph, again, beside "The graphs on the left tell you what the most is for you" ----------
+  var last = { el: el('div', 'exp'), anchor: document.getElementById('p-jevons-end') };
+  last.el.appendChild(el('div', 'stage-title', 'Experiment 2'));
+  last.body = el('div', 'graphs'); last.el.appendChild(last.body);
+  function renderLast() { var on = anyNumbers(); last.el.hidden = !on; if (on) last.body.innerHTML = numbersSet(false); }
+
+  // ---------- the brain, one call: three regions lit together; "again" only ----------
+  var bsvg = document.getElementById('bmap'), spots = document.getElementById('bspots');
   // [cx, cy, rx, ry, rot] in the outside painting's space. ips and v1 are About Your Brain's; colour is placed by eye
   // on the lower back of the painting (ventral occipito-temporal), a region the atlas does not have.
-  var OUT = { ips: [620, 235, 95, 60, -10], colour: [700, 530, 65, 28, -10], v1: [800, 430, 55, 95, 0] };
-  var lit = false;
-  function show(id, on) { document.getElementById(id).hidden = !on; }
-  function word(id, fn) { var el = document.getElementById(id); el.addEventListener('click', fn); el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } }); }
-  function rand(a, b) { return a + Math.random() * (b - a); }
+  var OUT = { ips: [620, 235, 95, 60, -10], colour: [700, 530, 65, 28, -10], v1: [800, 430, 55, 95, 0] }, lit = false;
   function spotsFor(id) {
     var g = OUT[id], cx = g[0], cy = g[1], rx = g[2], ry = g[3], rot = g[4] * Math.PI / 180;
     var n = Math.round(rand(9, 14) * 1.6), s = '<g class="spot" filter="url(#bblur)">';
@@ -596,57 +543,61 @@ var CW_VERSION = '2026-09-16 9bc235d'; try { console.log('Curious Woods · ' + d
     }
     return s + '</g>';
   }
-  function light() { lit = true; spots.innerHTML = ['ips', 'colour', 'v1'].map(spotsFor).join(''); svg.style.cursor = ''; show('b-tap', false); show('b-again', true); }
-  function reset() { lit = false; spots.innerHTML = ''; svg.style.cursor = 'pointer'; show('b-tap', true); show('b-again', false); }
-  word('b-tap', light);
-  svg.addEventListener('click', function () { if (!lit) light(); });   // the brain itself is the tap target too
-  word('b-again', function () { spots.innerHTML = ''; setTimeout(light, 250); });
+  var bTap = document.getElementById('b-tap'), bAgain = document.getElementById('b-again');
+  function light() { lit = true; spots.innerHTML = ['ips', 'colour', 'v1'].map(spotsFor).join(''); bsvg.style.cursor = ''; bTap.hidden = true; bAgain.hidden = false; }
+  [[bTap, light], [bAgain, function () { spots.innerHTML = ''; setTimeout(light, 250); }]].forEach(function (p) {
+    p[0].addEventListener('click', p[1]);
+    p[0].addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); p[1](); } });
+  });
+  bsvg.style.cursor = 'pointer';
+  bsvg.addEventListener('click', function () { if (!lit) light(); });   // the brain itself is the tap target too
+  var brain = { el: document.getElementById('bench'), anchor: document.getElementById('p-brain') };
 
-  // ---- the story-image rule: each picture belongs to a stretch of text. It is visible while that
-  //      stretch is on screen; when two stretches are on screen, the one nearer the middle wins.
-  //      When its text moves off, the picture resets; her results stay for the visit, as the star's trips do.
-  var F = window.CWFlash, flash = document.getElementById('side-flash'), bench = document.getElementById('bench');
-  function $(id) { return document.getElementById(id); }
-  var article = document.querySelector('article'), current = -1, pending = false;
-  var PICTURES = [
-    { el: flash, stretch: 'three', enter: F.enter('three'),   leave: F.leave, from: article.querySelector('h1'), to: $('p-done') },
-    { el: flash, stretch: 'six', enter: F.enter('six'),     leave: F.leave, from: $('h-for'),                  to: $('p-clock') },
-    { el: flash, stretch: 'colours', enter: F.enter('colours'), leave: F.leave, from: $('h-colours'),              to: $('p-dice') },
-    { el: flash, stretch: 'search', enter: F.enter('search'),  leave: F.leave, from: $('h-red'),                  to: $('p-hunt') },
-    { el: bench, enter: reset,              leave: reset,   from: $('h-where'),                to: $('p-address') },
-    { el: flash, stretch: 'jevons', enter: F.enter('jevons'),  leave: F.leave, from: $('p-jevons-end'),           to: $('p-jevons-end') }
-  ];
-  PICTURES.forEach(function (p) { p.el.style.opacity = 0; p.el.hidden = true; });          // one element can serve several stretches
-  PICTURES[0].el.style.opacity = 1; PICTURES[0].el.hidden = false;
-  current = 0; PICTURES[0].enter();
-  function choose() {
-    pending = false;
-    // the reading line is the middle of the window, except near the top of the page, where it starts at the top edge
-    // and reaches the middle after half a window of scrolling: on a tall window the opening stretch is short, and
-    // the next heading would otherwise be nearer the middle before she has read a word
-    var vh = window.innerHeight, mid = Math.min(vh / 2, window.scrollY || document.documentElement.scrollTop || 0), best = -1, bestD = Infinity;
-    PICTURES.forEach(function (p, i) {
-      var top = p.from.getBoundingClientRect().top, bot = p.to.getBoundingClientRect().bottom;
-      if (bot < 0 || top > vh) return;
-      var d = top > mid ? top - mid : bot < mid ? mid - bot : 0;
-      if (d < bestD) { bestD = d; best = i; }
+  // ---------- layout: each experiment sits beside the text that names it ----------
+  // Wide: the left column scrolls with the story; each block's top is level with its paragraph, pushed down only
+  // if the block above would overlap it. Narrow: each block goes into the story, just before its paragraph.
+  var membrane = document.getElementById('membrane'), all = blocks.slice(0, 3).concat([brain]).concat(blocks.slice(3));
+  all.sort(function (p, q) { return p.anchor.compareDocumentPosition(q.anchor) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; });
+  all.push(last);
+  var GAP = 28, queued = false;
+  function place() {
+    queued = false;
+    var narrow = window.innerWidth <= 800;
+    all.forEach(function (b) {
+      if (narrow) { if (b.anchor.previousElementSibling !== b.el) b.anchor.parentNode.insertBefore(b.el, b.anchor); b.el.style.top = ''; }
+      else if (b.el.parentNode !== membrane) membrane.appendChild(b.el);
     });
-    if (best === current) return;
-    var old = current;
-    if (old >= 0 && best >= 0 && PICTURES[old].stretch && PICTURES[best].stretch &&
-        F.effective(PICTURES[old].stretch) === F.effective(PICTURES[best].stretch)) { current = best; F.follow(PICTURES[best].stretch); return; }
-    current = best;
-    if (old >= 0) PICTURES[old].el.style.opacity = 0;
-    setTimeout(function () {
-      if (current !== best) return;
-      if (old >= 0) { if (PICTURES[old].leave) PICTURES[old].leave(); PICTURES[old].el.hidden = true; }
-      if (best >= 0) { var P = PICTURES[best]; if (P.enter) P.enter(); P.el.hidden = false; requestAnimationFrame(function () { P.el.style.opacity = 1; }); }
-    }, old >= 0 ? 400 : 0);
+    membrane.classList.toggle('narrow', narrow);
+    if (narrow) return;
+    var base = membrane.getBoundingClientRect().top, prev = -Infinity, bottom = 0;
+    all.forEach(function (b) {
+      if (b.el.hidden) return;
+      var top = Math.max(b.anchor.getBoundingClientRect().top - base, prev + GAP);
+      b.el.style.top = top + 'px'; prev = top + b.el.offsetHeight; bottom = prev;
+    });
+    membrane.style.minHeight = (bottom + 80) + 'px';
   }
-  function onScroll() { if (!pending) { pending = true; requestAnimationFrame(choose); } }
-  document.addEventListener('scroll', onScroll, true);
-  window.addEventListener('resize', onScroll);
-  choose();
+  function queue() { if (!queued) { queued = true; requestAnimationFrame(place); } }
+  window.CWLayout = { place: queue };
+  window.addEventListener('resize', queue);
+  window.addEventListener('load', queue);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(queue);
+  if (window.ResizeObserver) { var ro = new ResizeObserver(queue); ro.observe(document.querySelector('article')); all.forEach(function (b) { ro.observe(b.el); }); }
+  renderAll(); place();
+
+  // ---------- Remember ----------
+  (function () {
+    var KEY = 'cw.practice.queue', ID = 'three-at-a-glance', rem = document.getElementById('remember'), note = document.getElementById('remember-note');
+    function has() { try { return (JSON.parse(localStorage.getItem(KEY) || '[]')).indexOf(ID) >= 0; } catch (e) { return false; } }
+    function mark() { note.hidden = !has(); }
+    rem.addEventListener('click', function () {
+      try { var q = JSON.parse(localStorage.getItem(KEY) || '[]'); if (q.indexOf(ID) < 0) q.push(ID); localStorage.setItem(KEY, JSON.stringify(q)); } catch (e) {}
+      mark();
+    });
+    mark();
+    // Remember follows the Maya flag (00-WHAT-CW-IS): with Maya it is visible all the time; without, it is invisible
+    // until the text refers to it. This story's text never does, so without Maya it stays invisible.
+  })();
 })();
 </script>
 </body>
