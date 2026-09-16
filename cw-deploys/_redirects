@@ -7,3 +7,7 @@
 # The Brain Atlas took its real name on 13 Sep 2026. The old URL was live for a day.
 /active/brain-atlas.html                /active/about-your-brain.html                 301
 /active/brain-atlas                     /active/about-your-brain.html                 301
+
+# Three at a Glance was read at its experiments address, then hung on the home page, 16 Sep 2026.
+/experiments/Three_at_Glance.html       /active/three-at-a-glance.html                301
+/experiments/Three_at_Glance            /active/three-at-a-glance.html                301
