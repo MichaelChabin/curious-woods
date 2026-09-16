@@ -18,13 +18,11 @@ You'll see the word "Ready." One second later a group of dots will appear. There
 
 If there are exactly three dots, tap the screen or click the mouse. Otherwise do nothing.
 
-It helps if you focus on the center of the square and let yourself just notice how many dots there are.
+If you'd like to see what this looks like before trying it, click *preview* on the left. You can press *stop* at any time. Also, it helps if you focus on the center of the square and let yourself just notice how many dots there are.
 
-If you'd like to see what this looks like, click *preview* on the left. You can press *stop* at any time.
+When you are ready, press *tap on 3*.
 
-When you are ready to try the experiment, press *tap on 3*.
-
-Done? Then tap *the graphs*, and I'll tell you what they show.
+Done? Then tap *the graphs*, and you'll see how well the experiment worked. On the top graph, the copper colored dots show the number of times you picked three correctly. The bottom graph shows how long you took to do it.
 
 ## What the experiment was for
 

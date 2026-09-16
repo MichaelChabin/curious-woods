@@ -126,13 +126,11 @@
 
       <p>If there are exactly three dots, tap the screen or click the mouse. Otherwise do nothing.</p>
 
-      <p>It helps if you focus on the center of the square and let yourself just notice how many dots there are.</p>
+      <p>If you'd like to see what this looks like before trying it, click <em>preview</em> on the left. You can press <em>stop</em> at any time. Also, it helps if you focus on the center of the square and let yourself just notice how many dots there are.</p>
 
-      <p>If you'd like to see what this looks like, click <em>preview</em> on the left. You can press <em>stop</em> at any time.</p>
+      <p>When you are ready, press <em>tap on 3</em>.</p>
 
-      <p>When you are ready to try the experiment, press <em>tap on 3</em>.</p>
-
-      <p id="p-done">Done? Then tap <em>the graphs</em>, and I'll tell you what they show.</p>
+      <p id="p-done">Done? Then tap <em>the graphs</em>, and you'll see how well the experiment worked. On the top graph, the copper colored dots show the number of times you picked three correctly. The bottom graph shows how long you took to do it.</p>
 
       <h2 id="h-for">What the experiment was for</h2>
 
@@ -237,11 +235,13 @@ var CW_VERSION = '2026-09-16 f5f7736'; try { console.log('Curious Woods · ' + d
     red:      { kind: 'search',  xs: [4, 10, 20, 40], odd: 'red',      trials: 16, xlabel: 'dots on the screen', legend: ['a red one was there', 'no red one'] },
     triangle: { kind: 'search',  xs: [4, 10, 20, 40], odd: 'triangle', trials: 16, xlabel: 'shapes on the screen', legend: ['a triangle was there', 'no triangle'] }
   };
+  // Experiment 1 is its own record, though its setting is tap on 3's: Experiment 2's chart shows only Experiment 2
   NS.forEach(function (n) {
     SETTINGS['n' + n] = { kind: 'count', xs: NS, target: n, trials: 12, targets: 4, xlabel: 'dots', legend: ['taps on ' + n, 'taps on the others'] };
   });
+  SETTINGS.e1 = SETTINGS.n3;
   function caption(key) {
-    if (key === 'n3') return 'You caught them.';
+    if (key === 'e1') return 'You caught them.';
     if (key === 'colours') return 'Three and three.';
     if (key === 'red') return 'Forty is no slower than four.';
     return '';                                                       // a triangle: no caption; the graph is the answer
@@ -302,7 +302,7 @@ var CW_VERSION = '2026-09-16 f5f7736'; try { console.log('Curious Woods · ' + d
   }
 
   // ---------- results: this visit only; nothing is stored unless she asks to Remember it ----------
-  var runs = { colours: [], red: [], triangle: [] };
+  var runs = { e1: [], colours: [], red: [], triangle: [] };
   NS.forEach(function (n) { runs['n' + n] = []; });
   var order = [];
   var run = null, knobMs = FAST;
@@ -392,7 +392,7 @@ var CW_VERSION = '2026-09-16 f5f7736'; try { console.log('Curious Woods · ' + d
     return w;
   }
   var EXPERIMENTS = [
-    { n: 1, anchor: 'p-e1', words: [['tap on 3', 'n3'], ['preview', 'preview:n3'], ['the graphs', 'graphs'], ['stop', 'stop']], graphs: function () { return done('n3') ? graphSet('n3') : ''; } },
+    { n: 1, anchor: 'p-e1', words: [['tap on 3', 'e1'], ['preview', 'preview:e1'], ['the graphs', 'graphs'], ['stop', 'stop']], graphs: function () { return done('e1') ? graphSet('e1') : ''; } },
     { n: 2, anchor: 'p-e2', grid: true, words: [['the graphs', 'graphs'], ['stop', 'stop']].concat(NS.map(function (k) { return ['tap on ' + k, 'n' + k]; })),
       graphs: function () { return anyNumbers() ? numbersSet(true) : ''; } },
     { n: 3, anchor: 'p-e3', words: [['two colours', 'colours'], ['the graphs', 'graphs'], ['again', 'again'], ['stop', 'stop']], keys: ['colours'],

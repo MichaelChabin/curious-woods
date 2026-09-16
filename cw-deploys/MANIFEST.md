@@ -254,7 +254,9 @@ backstop for the Claude Code session that lands the file.
   paragraph. Every experiment is available from the start; one runs at a time, and starting
   one stops another. Blocks are built by the script; placement reruns on resize, font load
   and any block's change of size (ResizeObserver). At 800 css px or less each block moves into
-  the story just before its paragraph.
+  the story just before its paragraph. Experiment 1 keeps its own record: its *tap on 3* runs
+  never appear on Experiment 2's chart or the closing graph (fixed 16 Sep, after Michael saw
+  the closing graph appear without Experiment 2 having been run).
   **Each round** (the Flash bench, inline; the story's notes are its spec): *Ready* at the
   field's left edge, halfway down → 1 s → the dots, about 200 ms, *Ready* going with them → 2 s
   blank → **the reveal**, the same dots on a canvas over the field for 2 s → a 600 ms fade, the
