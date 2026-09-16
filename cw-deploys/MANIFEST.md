@@ -252,13 +252,13 @@ backstop for the Claude Code session that lands the file.
   graphs* · *stop*, *tap on 2* to *tap on 7*, the flash knob under its graph) beside "This is
   a different version"; **Experiment 3** (*two colours*) beside "Tap two colours"; **Experiment
   4** (*a red one*, *a triangle*) beside "Tap a red one"; the brain beside "Tap the brain on
-  the left"; and Experiment 2's graph again, once there are results, beside the last Jevons
-  paragraph. Every experiment is available from the start; one runs at a time, and starting
+  the left". (The repeat of Experiment 2's graph beside the last Jevons paragraph was removed
+  16 Sep with that paragraph's new ending.) Every experiment is available from the start; one runs at a time, and starting
   one stops another. Blocks are built by the script; placement reruns on resize, font load
   and any block's change of size (ResizeObserver). At 800 css px or less each block moves into
   the story just before its paragraph. Experiment 1 keeps its own record: its *tap on 3* runs
-  never appear on Experiment 2's chart or the closing graph (fixed 16 Sep, after Michael saw
-  the closing graph appear without Experiment 2 having been run).
+  never appear on Experiment 2's chart. The text names Experiments 2 to 4 where it sends her to
+  them (16 Sep, Michael's yes).
   **Each round** (the Flash bench, inline; the story's notes are its spec): *Ready* at the
   field's left edge, halfway down → 1 s → the dots, about 200 ms, *Ready* going with them → 2 s
   blank → **the reveal**, the same dots on a canvas over the field for 2 s → a 600 ms fade, the

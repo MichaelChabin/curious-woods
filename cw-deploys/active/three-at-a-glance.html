@@ -136,23 +136,23 @@
 
       <p>The experiment was designed to find out one thing: when you saw three dots, were you counting them, or just seeing them?</p>
 
-      <p>Here's how it was set up. The flash was short, about a fifth of a second, which is not long enough to count three things. The groups of three came mixed in with twos, fours and fives, in no pattern, so you couldn't guess when the next three was coming. And the screen wrote down not only whether you tapped, but how long after each flash you tapped, to the thousandth of a second.</p>
+      <p>Here's how it was set up. The flash was short, about a fifth of a second, which is not long enough to count three things. The groups of three came mixed in with groups of two, four, five, six and seven, in no pattern, so you couldn't guess when the next three was coming. And the screen wrote down not only whether you tapped, but how long after each flash you tapped, to the thousandth of a second.</p>
 
-      <p>If you had been counting, you'd have missed most of the threes, and the ones you caught, you'd have caught late. Look at the graph. You caught the threes, and you caught them fast, and a two or a four hardly ever fooled you. You weren't counting. There wasn't time. You saw three the way you see red: all at once, without working anything out.</p>
+      <p>If you had been counting, you'd have missed most of the threes, and the ones you caught, you'd have caught late. Look at the graphs. You caught the threes, and you caught them fast, and a two or a four hardly ever fooled you. You weren't counting. There wasn't time. You saw three the way you see red: all at once, without working anything out.</p>
 
-      <p id="p-e2">This is a different version of the experiment. It lets you try with any number you like up to 7. Most people find that as the numbers get larger, recognizing them takes more time and they are more likely to make mistakes.</p>
+      <p id="p-e2">Experiment 2 is a different version of the experiment. It lets you try with any number you like up to 7. Most people find that as the numbers get larger, recognizing them takes more time and they are more likely to make mistakes.</p>
 
-      <p>Under the graphs there's a knob that makes the flash last longer. Turn it up until you can catch the larger numbers reliably. Then look at your times. The taps come later now, and the reason is that you're counting, and counting takes time. It takes about a quarter of a second for each dot. So you've just measured how fast you count, which is something almost nobody knows about themselves.</p>
+      <p>Under the graph for Experiment 2 there's a knob that makes the dots stay longer. Turn it up until you can catch the larger numbers every time. Then look at your times. The taps come later now, and the reason is that you're counting, and counting takes time. It takes about a quarter of a second for each dot. So you've just measured how fast you count, which is something almost nobody knows about themselves.</p>
 
       <p id="p-clock">So your brain has two different ways of finding out how many. One is instant, and it works up to about four. The other is counting: it takes time, and it works for any number. They feel like the same thing. The clock shows they aren't.</p>
 
       <h2 id="h-colours">Six, in two colours</h2>
 
-      <p>One more experiment with six, and this one is surprising.</p>
+      <p>Experiment 3 uses six again, and this one is surprising.</p>
 
-      <p id="p-e3">Tap <em>two colours.</em> The screen flashes six dots again, at the fast speed, but now three of the dots are red and three are blue. Tap when you see six.</p>
+      <p id="p-e3">Tap <em>two colours.</em> The dots flash for the same short moment, but now some are red and some are blue. When there are six, three are red and three are blue. Tap when you see six.</p>
 
-      <p>You'll catch them. A minute ago six was too many to see. Now it isn't. The colour splits the six into two threes. You can see three, so you see three-and-three, and that's six. You never counted. Two glances, both instant.</p>
+      <p>You'll catch them. In a single heap, six is too many to see at a glance. In two colours, it isn't. The colour splits the six into two threes. You can see three, so you see three-and-three, and that's six. You never counted. Two glances, both instant.</p>
 
       <p id="p-dice">This is why the six on a die is two rows of three, and the five is a four with a dot in the middle. Six dots in a heap have to be counted. Six dots as three and three, you see at once. Whoever first arranged the spots on dice that way, thousands of years ago, had noticed that a heap of six is hard to see and a row of three is easy, and built the die around it. Nobody knows who it was. Dice are older than writing.</p>
 
@@ -160,7 +160,7 @@
 
       <p>Colour did something in that last experiment, so now let's try colour by itself.</p>
 
-      <p id="p-e4">Tap <em>a red one.</em> Dots flash, all blue, except that sometimes one of them is red. Tap when you see a red one. The screen will change how many dots there are, from four up to forty. Watch your times.</p>
+      <p id="p-e4">In Experiment 4, tap <em>a red one.</em> Dots flash, all blue, except that sometimes one of them is red. Tap when you see a red one. The screen will change how many dots there are, from four up to forty. Watch your times.</p>
 
       <p>It takes you no longer to find the red dot among forty than among four. The red one doesn't have to be found; it's simply there, the way a light is there in a dark room. Whatever finds red isn't looking through the dots one at a time. It sees the whole screen at once.</p>
 
@@ -198,7 +198,7 @@
 
       <p>His experiment was fair for the same reasons yours was. He didn't know the number before he looked. He glanced once and didn't let himself look again. And he wrote down every throw, the misses along with the hits. That is what makes an experiment fair: you set it up so you can't fool yourself, and then you believe what it shows you.</p>
 
-      <p id="p-jevons-end">He needed 1,027 throws and a whole afternoon. You did it in a minute, with a clock he didn't have. The most he could see at a glance was four. The graphs on the left tell you what the most is for you.</p>
+      <p>He needed 1,027 throws and a whole afternoon. You did it in a minute, with a clock he didn't have. The most he could see at a glance was four. That seems to be true of just about all of us.</p>
 
       <div class="more">
         <p><em>More:</em></p>
@@ -439,7 +439,7 @@ var CW_VERSION = '2026-09-16 f57e72f'; try { console.log('Curious Woods · ' + d
       setWord(b, act, on);
     });
   }
-  function renderAll() { blocks.forEach(render); renderLast(); window.CWLayout && CWLayout.place(); }
+  function renderAll() { blocks.forEach(render); window.CWLayout && CWLayout.place(); }
   function showGraphs(b) {
     var html = b.E.graphs(); if (!html) return;
     b.graphsEl.innerHTML = html;
@@ -522,11 +522,6 @@ var CW_VERSION = '2026-09-16 f57e72f'; try { console.log('Curious Woods · ' + d
   document.addEventListener('pointerdown', function (e) { if (run && !onWord(e)) { tap(); e.preventDefault(); } }, true);
   document.addEventListener('keydown', function (e) { if (run && !onWord(e) && (e.key === ' ' || e.key === 'Enter')) { tap(); e.preventDefault(); } }, true);
 
-  // ---------- Experiment 2's graph, again, beside "The graphs on the left tell you what the most is for you" ----------
-  var last = { el: el('div', 'exp'), anchor: document.getElementById('p-jevons-end') };
-  last.el.appendChild(el('div', 'stage-title', 'Experiment 2'));
-  last.body = el('div', 'graphs'); last.el.appendChild(last.body);
-  function renderLast() { var on = anyNumbers(); last.el.hidden = !on; if (on) last.body.innerHTML = numbersSet(false); }
 
   // ---------- the brain, one call: three regions lit together; "again" only ----------
   var bsvg = document.getElementById('bmap'), spots = document.getElementById('bspots');
@@ -558,7 +553,6 @@ var CW_VERSION = '2026-09-16 f57e72f'; try { console.log('Curious Woods · ' + d
   // if the block above would overlap it. Narrow: each block goes into the story, just before its paragraph.
   var membrane = document.getElementById('membrane'), all = blocks.slice(0, 3).concat([brain]).concat(blocks.slice(3));
   all.sort(function (p, q) { return p.anchor.compareDocumentPosition(q.anchor) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; });
-  all.push(last);
   var GAP = 28, queued = false;
   function place() {
     queued = false;

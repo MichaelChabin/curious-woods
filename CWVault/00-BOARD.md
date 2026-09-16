@@ -726,8 +726,7 @@ reveal and fade after, one dot size in Payne's grey, *preview* and *stop*, *tap 
 on 7*; and the experiments beside their own text as Experiment 1 to 4, all present at once
 (the Pictures ruling amended for this page). **Next action: none required; open questions
 wait for Michael.** Detail in MANIFEST under `active/`. Open, and named in the story's notes:
-text in *What the experiment was for* and *Six, in two colours* that still assumes the old
-experiments; the knob sentence's wording; equal dots making total grey a cue for number; "on
+equal dots making total grey a cue for number; "on
 the left" on narrow screens; no References section; the colour patch placed by eye; the 200 ms
 flash in Experiment 4. Which picture rule is the default for new stories is not yet ruled.
 

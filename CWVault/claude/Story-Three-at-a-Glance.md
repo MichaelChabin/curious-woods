@@ -28,23 +28,23 @@ Done? Then tap *the graphs*, and you'll see how well the experiment worked. On t
 
 The experiment was designed to find out one thing: when you saw three dots, were you counting them, or just seeing them?
 
-Here's how it was set up. The flash was short, about a fifth of a second, which is not long enough to count three things. The groups of three came mixed in with twos, fours and fives, in no pattern, so you couldn't guess when the next three was coming. And the screen wrote down not only whether you tapped, but how long after each flash you tapped, to the thousandth of a second.
+Here's how it was set up. The flash was short, about a fifth of a second, which is not long enough to count three things. The groups of three came mixed in with groups of two, four, five, six and seven, in no pattern, so you couldn't guess when the next three was coming. And the screen wrote down not only whether you tapped, but how long after each flash you tapped, to the thousandth of a second.
 
-If you had been counting, you'd have missed most of the threes, and the ones you caught, you'd have caught late. Look at the graph. You caught the threes, and you caught them fast, and a two or a four hardly ever fooled you. You weren't counting. There wasn't time. You saw three the way you see red: all at once, without working anything out.
+If you had been counting, you'd have missed most of the threes, and the ones you caught, you'd have caught late. Look at the graphs. You caught the threes, and you caught them fast, and a two or a four hardly ever fooled you. You weren't counting. There wasn't time. You saw three the way you see red: all at once, without working anything out.
 
-This is a different version of the experiment. It lets you try with any number you like up to 7. Most people find that as the numbers get larger, recognizing them takes more time and they are more likely to make mistakes.
+Experiment 2 is a different version of the experiment. It lets you try with any number you like up to 7. Most people find that as the numbers get larger, recognizing them takes more time and they are more likely to make mistakes.
 
-Under the graphs there's a knob that makes the flash last longer. Turn it up until you can catch the larger numbers reliably. Then look at your times. The taps come later now, and the reason is that you're counting, and counting takes time. It takes about a quarter of a second for each dot. So you've just measured how fast you count, which is something almost nobody knows about themselves.
+Under the graph for Experiment 2 there's a knob that makes the dots stay longer. Turn it up until you can catch the larger numbers every time. Then look at your times. The taps come later now, and the reason is that you're counting, and counting takes time. It takes about a quarter of a second for each dot. So you've just measured how fast you count, which is something almost nobody knows about themselves.
 
 So your brain has two different ways of finding out how many. One is instant, and it works up to about four. The other is counting: it takes time, and it works for any number. They feel like the same thing. The clock shows they aren't.
 
 ## Six, in two colours
 
-One more experiment with six, and this one is surprising.
+Experiment 3 uses six again, and this one is surprising.
 
-Tap *two colours.* The screen flashes six dots again, at the fast speed, but now three of the dots are red and three are blue. Tap when you see six.
+Tap *two colours.* The dots flash for the same short moment, but now some are red and some are blue. When there are six, three are red and three are blue. Tap when you see six.
 
-You'll catch them. A minute ago six was too many to see. Now it isn't. The colour splits the six into two threes. You can see three, so you see three-and-three, and that's six. You never counted. Two glances, both instant.
+You'll catch them. In a single heap, six is too many to see at a glance. In two colours, it isn't. The colour splits the six into two threes. You can see three, so you see three-and-three, and that's six. You never counted. Two glances, both instant.
 
 This is why the six on a die is two rows of three, and the five is a four with a dot in the middle. Six dots in a heap have to be counted. Six dots as three and three, you see at once. Whoever first arranged the spots on dice that way, thousands of years ago, had noticed that a heap of six is hard to see and a row of three is easy, and built the die around it. Nobody knows who it was. Dice are older than writing.
 
@@ -52,7 +52,7 @@ This is why the six on a die is two rows of three, and the five is a four with a
 
 Colour did something in that last experiment, so now let's try colour by itself.
 
-Tap *a red one.* Dots flash, all blue, except that sometimes one of them is red. Tap when you see a red one. The screen will change how many dots there are, from four up to forty. Watch your times.
+In Experiment 4, tap *a red one.* Dots flash, all blue, except that sometimes one of them is red. Tap when you see a red one. The screen will change how many dots there are, from four up to forty. Watch your times.
 
 It takes you no longer to find the red dot among forty than among four. The red one doesn't have to be found; it's simply there, the way a light is there in a dark room. Whatever finds red isn't looking through the dots one at a time. It sees the whole screen at once.
 
@@ -90,7 +90,7 @@ He was right every time at three and four. At five he was wrong about one throw 
 
 His experiment was fair for the same reasons yours was. He didn't know the number before he looked. He glanced once and didn't let himself look again. And he wrote down every throw, the misses along with the hits. That is what makes an experiment fair: you set it up so you can't fool yourself, and then you believe what it shows you.
 
-He needed 1,027 throws and a whole afternoon. You did it in a minute, with a clock he didn't have. The most he could see at a glance was four. The graphs on the left tell you what the most is for you.
+He needed 1,027 throws and a whole afternoon. You did it in a minute, with a clock he didn't have. The most he could see at a glance was four. That seems to be true of just about all of us.
 
 ---
 
@@ -117,8 +117,8 @@ Graph captions, one line each, appearing only when she asks for the graphs: for 
 ## Notes for us (not the child)
 
 **Changes, 16 Sept (Michael, after reading the built page). These supersede the left-panel words and the Flash settings below where they differ.** Some children will feel anxious with a bare flash, and the experiment must not count against tentative or uncertain children, who will meet many of these. *The sequence:* Ready → one second → the dots (about 200 ms; Ready goes with them) → two seconds of blank → the reveal (the same dots, as they were, for two seconds) → a fade, which ends the round. A tap counts from the dots until the reveal. *Dots:* Payne's grey (#536878) where they were ink; red and blue stay where colour is the experiment; every dot the same size (radius 14 px counting, 8.5 px in the red and triangle searches). *Rounds:* 12 per run (4 targets) for the counting and two-colour experiments, 16 for red and triangle, so a run stays about a minute. *Words:* *tap on 3* (groups of 2 to 7) and *preview* (three rounds, nothing recorded) first; *stop* whenever something is running, and a stopped run is dropped. *Tap on 3* holds until it has been run once. The six section's words, in two columns: *the graphs* · *stop* / *tap on 2* · *tap on 3* / *tap on 4* · *tap on 5* / *tap on 6* · *tap on 7*; every *tap on n* uses groups of 2 to 7; the knob stays under the graph. *That graph:* above each number she looked for, a copper dot for each tap when it was that number, and a circle beneath the copper for each tap when it wasn't; height is seconds after the dots; misses are not shown. The tap-on-3 graphs in the first section stay as they were (taps and seconds by how many dots).
-**Layout, 16 Sept (Michael).** The experiments sit in the left column beside the text that names them, all present at once, titled *Experiment 1* (tap on 3, preview), *Experiment 2* (tap on 2 to 7, the knob), *Experiment 3* (two colours), *Experiment 4* (a red one, a triangle); the brain beside its paragraph; Experiment 2's graph again beside "The graphs on the left tell you what the most is for you." This replaces the title *Three at a Glance* over the bench and the one-picture-at-a-time rule for this story (Rulings, amended). Nothing waits on anything else.
-**Open after these changes.** Equal dots let total grey stand in for number (the Field note below randomised size to prevent that). "What the experiment was for" still says the groups of three "came mixed in with twos, fours and fives," and that "a two or a four hardly ever fooled you" (the graph in that section is now the by-number graph, which can't show that). "Six, in two colours" still says "A minute ago six was too many to see." The knob sentence's "the larger numbers" replaces "the sixes" and is Claude Code's minimal wording, for Michael to confirm. The six-specific graph captions (*Six slipped past*, *The extra time is the counting*) are gone with tap on six.
+**Layout, 16 Sept (Michael).** The experiments sit in the left column beside the text that names them, all present at once, titled *Experiment 1* (tap on 3, preview), *Experiment 2* (tap on 2 to 7, the knob), *Experiment 3* (two colours), *Experiment 4* (a red one, a triangle); the brain beside its paragraph; Experiment 2's graph is not repeated at the end: the Jevons ending now reads "That seems to be true of just about all of us" (Michael, 16 Sept). This replaces the title *Three at a Glance* over the bench and the one-picture-at-a-time rule for this story (Rulings, amended). Nothing waits on anything else.
+**Text brought in line, 16 Sept (Michael's yes to Claude Code's proposals):** the mixed-in numbers, "Look at the graphs," Experiments 2 to 4 named in the text, the knob under Experiment 2's graph, two colours without "the fast speed" or "a minute ago," and the Jevons ending. **Still open:** equal dots let total grey stand in for number (the Field note below randomised size to prevent that). The six-specific graph captions (*Six slipped past*, *The extra time is the counting*) are gone with tap on six.
 
 **Rulings applied in this draft (Michael, 15 Sept).** "Experiment," never "test." First person narrates; subjective reactions are impersonal ("this one is surprising," not "this one surprised me"). Clarity before elegance: any sentence a ten-year-old can't take in at once is wrong, however good it sounds. A section title that asks a question is answered in plain words in its first sentence.
 
