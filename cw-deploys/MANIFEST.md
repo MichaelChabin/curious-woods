@@ -65,6 +65,10 @@ the page points here rather than carrying the icon inline).
 icon for The Man Who Learned Without Knowing; the second icon-as-link.
 `art/star-icon-256.png` — the same star rasterized (15 Sep), the story's tab and
 home-screen icon, because Safari wants a PNG there.
+`art/three-dots-icon-256.png` — three ink dots in a loose scatter on cream, one copper
+(16 Sep 2026), from *Three at a Glance*'s frontmatter; the story's tab and home-screen icon.
+`art/three-dots-icon-256.svg` is the same mark as vector, kept for the gallery tile when
+the story is hung (the star's pattern). Neither is on any index yet.
 `stories/necker-cube/` — **The Necker Cube**, the first story (28 Apr 2026, commit
 `bec6b4f`), a single-file page at `index.html`: the cube on a canvas that flips as you
 look, narrative paragraphs from `narrative.json` beside it, Web Audio, the watercolour
@@ -233,6 +237,45 @@ backstop for the Claude Code session that lands the file.
   its own star engine and its own brain.
 
 ### experiments/
+- **`Three_at_Glance.html`** — story: **Three at a Glance** (text:
+  `CWVault/claude/Story-Three-at-a-Glance.md`, Draft 5, which matches the page), built 16 Sep
+  2026 on the model of `active/the-man-who-learned-without-knowing.html` — stage 2 of
+  `00-PUBLISHING-A-STORY.md`, then changed the same day on Michael's read. **Hung nowhere**:
+  not in the gallery, not on `experiments/index.html`. The story's text through *More*; the
+  notes are not rendered. Left column: **the Flash bench, inline** (no separate bench file;
+  the story's notes are its spec). Each round: *Ready* at the field's left edge, halfway down
+  → 1 s → the dots, about 200 ms, *Ready* going with them → 2 s blank → **the reveal**, the
+  same dots on a canvas laid over the field for 2 s → a 600 ms fade, which ends the round. A
+  press anywhere but on a word counts (Space or Enter too), one a round, from the dots until
+  the reveal. Dots Payne's grey (#536878), all one size (r 14 counting, 8.5 in the searches,
+  squares and triangles of equal area), never over the word *Ready*, never overlapping.
+  Words by stretch: *tap on 3* and *preview* (three rounds, nothing recorded) — held until
+  *tap on 3* has been run once; then, in two columns, *the graphs* · *stop* and *tap on 2*
+  to *tap on 7*, groups of 2 to 7 for every n, with the flash knob (*a blink* to *long enough
+  to count*, 200–2,500 ms) under the graph; *two colours*; *a red one* and *a triangle*.
+  *Stop* shows whenever something runs, and drops the run. Grid words keep their places
+  (visibility, not display). Rounds: 12 (4 targets) counting and two colours, 16 in the
+  searches. Graphs only when asked: for *tap on 3* and the other experiments, taps by n (or
+  set size) against the chances there were, and seconds after the dots with each tap a dot
+  and the median a line, with the story's captions; for *tap on 2–7*, one chart above the
+  number she looked for — copper for a tap when it was that number, a circle beneath for a
+  tap when it wasn't, height the time, misses not shown (latest run per number). Then
+  **the brain**, one call: the outside painting (inline, 354 KB of the file), three regions
+  lit together — IPS and V1 at About Your Brain's coordinates, the colour patch placed by eye
+  — *tap the brain*, then *again*. Pictures follow the story-image rule by stretch (three,
+  the tap-on-n section, two colours, red/triangle, the brain, the last Jevons paragraph with
+  the by-number chart), with one departure: near the top of the page the reading line starts
+  at the window's top edge and reaches the middle after half a window of scrolling, because a
+  tall window otherwise opened on the second stretch. A stretch that leaves resets its
+  picture and drops an unfinished run; finished runs stay for the visit. **Nothing is
+  stored.** Remember obeys the Maya flag and, since the text never refers to it, stays
+  invisible while `maya` is false. **No References section**: the story has none yet. Reads
+  `../js/cw-flags.js` and `../art/three-dots-icon-256.png`. `CW_VERSION 2026-09-16 9bc235d`.
+  Tested in Chrome (desktop app pane): the round's timing measured (Ready → dots 1.009 s,
+  dots 0.20 s, reveal 2.01 s later, fade 2.01 s after that, 0.61 s fade), preview and stop,
+  a full *tap on 3* run (12 rounds, 4 threes, groups 2–7), the grid words and stop-only
+  while running, a *tap on 5* run and the by-number chart, the knob, the brain. **Not
+  tested on an iPad.**
 - **`trace.html`** — bench: **Trace.** A road on parchment, a copper dot that follows her
   hand through a transform, a rule for what counts as a mistake, and a counter that says
   nothing until asked (`CWVault/20-SPECS/Spec-Trace-Bench.md`; v0 of it, 11 Sep 2026).
