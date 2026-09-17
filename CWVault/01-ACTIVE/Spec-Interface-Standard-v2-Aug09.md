@@ -31,6 +31,14 @@ document sits above both.
    symbols between words unless they mean something the words don't. Nothing
    greyed out, ever; options appear when possible and fade when they don't
    apply.
+   *Amended 17 Sept 2026 (Michael, from watching a child use Three at a
+   Glance):* a control-word is **bold, and begins with a capital** — *Tap on
+   3*, *Preview*, *Graphs*, *Stop*. Payne's gray and 14px Georgia stand; only
+   the weight and the capital are new, and they were the difference between
+   words a child read and words a child skipped. A control-word also names the
+   thing it does plainly enough to stand alone in a list: *One red dot*, not
+   *A red one*. Where the story's text sends her to a control, it uses the
+   control's own name. This amends UI-Language §3's typography line.
 4. **Nothing speaks like a teacher.** Flat and factual survives; enthusiasm
    and assessment don't. Biomorphs is the calibration reference. Every commit
    that changes child-facing text prints the full string list at review.

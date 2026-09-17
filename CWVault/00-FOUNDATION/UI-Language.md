@@ -65,7 +65,7 @@ Controls appear when they become possible. They recede when they don't apply. Th
 
 **Controls are words, not buttons.** A border, background, and shadow say "I am a thing you press." A word that appears when something becomes possible says the same thing more honestly and more quietly. Once a child understands that words in the left panel are actionable, no button convention is needed.
 
-**Typography for actionable words:** Payne's gray `#546A80`, 14px Georgia, left-padded 16px. On hover, a subtle warmth — not an underline, not a background change, just a very slight deepening of the color confirming the child's intention before the click.
+**Typography for actionable words:** Payne's gray `#546A80`, 14px Georgia, left-padded 16px — **bold, and beginning with a capital**, per the Interface Standard's amendment of 17 Sept 2026 (a child read the bold words and skipped the light ones). On hover, a subtle warmth — not an underline, not a background change, just a very slight deepening of the color confirming the child's intention before the click.
 
 **Appearance and disappearance:** Options fade in over 200ms ease-in when they become available. They fade out over 150ms ease-out when they no longer apply. Fast enough to feel responsive, slow enough to feel intentional rather than mechanical.
 

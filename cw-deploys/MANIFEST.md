@@ -69,6 +69,10 @@ home-screen icon, because Safari wants a PNG there.
 (16 Sep 2026), from *Three at a Glance*'s frontmatter; the story's tab and home-screen icon.
 `art/three-dots-icon-256.svg` is the same mark as vector, the main index's tile for the story
 since it was hung on 16 Sep (the star's pattern).
+`art/jevons-1877.jpg` — the engraved portrait of William Stanley Jevons from *Popular Science
+Monthly* volume 11, 1877 (Wikimedia Commons, `PSM V11 D660 William Stanley Jevons.jpg`, public
+domain, author unknown), greyscale, resized to 760 px wide, 184 KB. Read by
+`active/three-at-a-glance.html` beside the paragraph that introduces him; nothing else uses it.
 `stories/necker-cube/` — **The Necker Cube**, the first story (28 Apr 2026, commit
 `bec6b4f`), a single-file page at `index.html`: the cube on a canvas that flips as you
 look, narrative paragraphs from `narrative.json` beside it, Web Audio, the watercolour
@@ -260,23 +264,36 @@ backstop for the Claude Code session that lands the file.
   never appear on Experiment 2's chart. The text names Experiments 2 to 4 where it sends her to
   them (16 Sep, Michael's yes).
   **Each round** (the Flash bench, inline; the story's notes are its spec): *Ready* at the
-  field's left edge, halfway down → 1 s → the dots, about 200 ms, *Ready* going with them → 2 s
-  blank → **the reveal**, the same dots on a canvas over the field for 2 s → a 600 ms fade, the
-  end of the round. A press anywhere but on a word counts (Space or Enter too), one a round,
+  field's left edge, halfway down, the moment she presses the word → 1 s → the dots, about
+  200 ms, *Ready* going with them → 2 s blank → **the reveal**, the same dots on a canvas over
+  the field for 600 ms → a 400 ms fade, the end of the round (17 Sep: the lead-in went and the
+  reveal came down to a second, because a run felt too long). A press anywhere but on a word counts (Space or Enter too), one a round,
   from the dots until the reveal. Dots Payne's grey (#536878), all one size (r 14 counting, 8.5
   in Experiment 4, squares and triangles of equal area), never over *Ready*, never
   overlapping. *Preview*: three rounds, nothing recorded. *Stop* shows only on the running
-  experiment and drops the run. Rounds: 12 (4 targets) in Experiments 1–3, 16 in Experiment 4;
+  experiment and, since 17 Sep, **counts as finishing**: the rounds already seen are recorded,
+  so a run stopped in its first round still has graphs. Rounds: 12 (4 targets) in Experiments 1–3, 12 in Experiment 4, whose set sizes are 4, 10 and
+  20 since 17 Sep, drawn at radius 11;
   every *tap on n* uses groups of 2 to 7. Graphs only when asked: taps by n (or set size)
   against the chances there were, and seconds after the dots with each tap a dot and the
   median a line, with the story's captions; for Experiment 2 one chart above the number she
   looked for — copper for a tap when it was that number, a circle beneath for a tap when it
-  wasn't, height the time, misses not shown (latest run per number). The brain: the outside
-  painting (inline, 354 KB of the file), IPS and V1 at About Your Brain's coordinates, the
-  colour patch placed by eye; *tap the brain*, then *again*. **Nothing is stored.** Remember
+  wasn't, height the time, misses not shown (latest run per number). **The brain** (rebuilt 17 Sep): the
+  outside painting (inline, 354 KB of the file) and five words — *The regions* (IPS, the colour
+  patch and V1 lit together, as before), *Recognising 3*, *Counting*, *Noticing red*,
+  *Recognising shapes* — each a signal travelling roads drawn as splines, a comet along each leg
+  at a twelfth of life's speed, a line of words as each leg lands, and *Again*. The engine, the
+  region coordinates and the *Recognising 3* pathway are About Your Brain's; the other three
+  pathways are written for this story and their times are set out in the story's notes for
+  Michael to check. Beside the Jevons paragraph, the engraving `../art/jevons-1877.jpg`.
+  **Words** are bold and capitalised, and headings in the story are bold and half a line closer
+  to their text (17 Sep); each experiment carries a 0.5 px border. **Graph labels** follow one
+  convention: the vertical label rotated beside its axis and centred (*taps*, *time in
+  seconds*), the horizontal label centred under it (*number of dots*, *number of shapes*,
+  *number you looked for*), and the legend only on the upper graph of a pair. **Nothing is stored.** Remember
   obeys the Maya flag and, since the text never refers to it, stays invisible while `maya` is
   false. **No References section**: the story has none yet. Reads `../js/cw-flags.js` and
-  `../art/three-dots-icon-256.png`. `CW_VERSION 2026-09-16 f57e72f`.
+  `../art/three-dots-icon-256.png`. `CW_VERSION 2026-09-17 bf0397a`.
   Tested in Chrome (desktop app pane): round timing measured (Ready → dots 1.009 s, dots
   0.20 s, reveal 2.01 s later, fade 2.01 s after that, 0.61 s fade); preview and stop; full
   runs of *tap on 3* and *tap on 4*; every block level with its paragraph at 1280 wide, none

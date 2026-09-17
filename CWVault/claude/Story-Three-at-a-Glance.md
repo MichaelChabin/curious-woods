@@ -18,11 +18,11 @@ You'll see the word "Ready." One second later a group of dots will appear. There
 
 If there are exactly three dots, tap the screen or click the mouse. Otherwise do nothing.
 
-If you'd like to see what this looks like before trying it, click *preview* on the left. You can press *stop* at any time. Also, it helps if you focus on the center of the square and let yourself just notice how many dots there are.
+If you'd like to see what this looks like before trying it, click *Preview* on the left. You can press *Stop* at any time. Also, it helps if you focus on the center of the square and let yourself just notice how many dots there are.
 
-When you are ready, press *tap on 3*.
+When you are ready, press *Tap on 3*.
 
-Done? Then tap *the graphs*, and you'll see how well the experiment worked. On the top graph, the copper colored dots show the number of times you picked three correctly. The bottom graph shows how long you took to do it.
+Done? Then tap *Graphs*, and you'll see how well the experiment worked. On the top graph, the copper colored dots show the number of times you picked three correctly. The bottom graph shows how long you took to do it.
 
 ## What the experiment was for
 
@@ -42,7 +42,7 @@ So your brain has two different ways of finding out how many. One is instant, an
 
 Experiment 3 uses six again, and this one is surprising.
 
-Tap *two colours.* The dots flash for the same short moment, but now some are red and some are blue. When there are six, three are red and three are blue. Tap when you see six.
+Tap *Two colours.* The dots flash for the same short moment, but now some are red and some are blue. When there are six, three are red and three are blue. Tap when you see six.
 
 You'll catch them. In a single heap, six is too many to see at a glance. In two colours, it isn't. The colour splits the six into two threes. You can see three, so you see three-and-three, and that's six. You never counted. Two glances, both instant.
 
@@ -52,13 +52,13 @@ This is why the six on a die is two rows of three, and the five is a four with a
 
 Colour did something in that last experiment, so now let's try colour by itself.
 
-In Experiment 4, tap *a red one.* Dots flash, all blue, except that sometimes one of them is red. Tap when you see a red one. The screen will change how many dots there are, from four up to forty. Watch your times.
+In Experiment 4, tap *One red dot.* Dots flash, all blue, except that sometimes one of them is red. Tap when you see a red one. The screen will change how many dots there are, from four up to twenty. Watch your times.
 
-It takes you no longer to find the red dot among forty than among four. The red one doesn't have to be found; it's simply there, the way a light is there in a dark room. Whatever finds red isn't looking through the dots one at a time. It sees the whole screen at once.
+It takes you no longer to find the red dot among twenty than among four. The red one doesn't have to be found; it's simply there, the way a light is there in a dark room. Whatever finds red isn't looking through the dots one at a time. It sees the whole screen at once.
 
-Tap *a triangle.* Same experiment, but now the dots are all squares, and sometimes one of them is a triangle. Tap when you see a triangle.
+Tap *One triangle among squares.* Same experiment, but now the dots are all squares, and sometimes one of them is a triangle. Tap when you see a triangle.
 
-Nobody can tell you what will happen this time, because it depends on the shapes, and on you. Some shapes jump out the way red does. Some have to be hunted for, and then forty take longer than four. Whether a triangle among squares jumps out is a question you can answer and I can't. The graph will say. If forty squares take you longer than four, that extra time is the hunting, and you've measured it.
+Nobody can tell you what will happen this time, because it depends on the shapes, and on you. Some shapes jump out the way red does. Some have to be hunted for, and then twenty take longer than four. Whether a triangle among squares jumps out is a question you can answer and I can't. The graph will say. If twenty squares take you longer than four, that extra time is the hunting, and you've measured it.
 
 ## Where it's done
 
@@ -82,11 +82,11 @@ So seeing three is older than counting, and older than words. Counting is a tric
 
 ## The man who counted beans
 
-In 1871, an Englishman named William Stanley Jevons wanted to know how many beans he could see at a glance, without counting. He put a small box on a black tray, took a handful of beans, and threw some into the box without looking at how many. Then he glanced at the box, guessed the number, and counted the beans out properly to check.
+In 1871 the English logician and economist, William Stanley Jevons was curious about how many objects he could see at a glance — without counting. So he put a small box on a black tray, took a handful of beans, and threw some into the box without looking at how many. Then he glanced at the box, guessed the number, and counted the beans out properly to check.
 
 He did this 1,027 times.
 
-He was right every time at three and four. At five he was wrong about one throw in twenty. At ten he was wrong half the time. He wrote it up for a science magazine, on one page, and it may be the first experiment anyone ever did on their own brain by throwing things at it.
+He was right every time at three and four. At five he was wrong about one throw in twenty. At ten he was wrong half the time. He wrote it up for a science magazine, on one page, and it may be the first experiment anyone ever did to study their own brain by throwing beans in a box.
 
 His experiment was fair for the same reasons yours was. He didn't know the number before he looked. He glanced once and didn't let himself look again. And he wrote down every throw, the misses along with the hits. That is what makes an experiment fair: you set it up so you can't fool yourself, and then you believe what it shows you.
 
@@ -110,7 +110,7 @@ If you want to see the rest of the brain, *About Your Brain* is in your gallery.
 
 Title over the bench: *Three at a Glance.* The words that appear, in order: *tap on three* · *the graphs* · *tap on six* · a knob under the graphs from *a blink* to *long enough to count* · *two colours* · *a red one* · *a triangle* · *again* · *tap the brain*. The brain call is one picture with three regions and no controls but *again*.
 
-Graph captions, one line each, appearing only when she asks for the graphs: for tap-on-three, *You caught them.* For tap-on-six at the fast speed, *Six slipped past.* For tap-on-six with the flash lengthened, *The extra time is the counting.* For two colours, *Three and three.* For a red one, *Forty is no slower than four.* For a triangle, no caption; the graph is the answer.
+Graph captions, one line each, appearing only when she asks for the graphs: for tap-on-three, *You caught them.* For tap-on-six at the fast speed, *Six slipped past.* For tap-on-six with the flash lengthened, *The extra time is the counting.* For two colours, *Three and three.* For a red one, *Twenty is no slower than four.* For a triangle, no caption; the graph is the answer.
 
 ---
 
@@ -118,7 +118,22 @@ Graph captions, one line each, appearing only when she asks for the graphs: for 
 
 **Changes, 16 Sept (Michael, after reading the built page). These supersede the left-panel words and the Flash settings below where they differ.** Some children will feel anxious with a bare flash, and the experiment must not count against tentative or uncertain children, who will meet many of these. *The sequence:* Ready → one second → the dots (about 200 ms; Ready goes with them) → two seconds of blank → the reveal (the same dots, as they were, for two seconds) → a fade, which ends the round. A tap counts from the dots until the reveal. *Dots:* Payne's grey (#536878) where they were ink; red and blue stay where colour is the experiment; every dot the same size (radius 14 px counting, 8.5 px in the red and triangle searches). *Rounds:* 12 per run (4 targets) for the counting and two-colour experiments, 16 for red and triangle, so a run stays about a minute. *Words:* *tap on 3* (groups of 2 to 7) and *preview* (three rounds, nothing recorded) first; *stop* whenever something is running, and a stopped run is dropped. *Tap on 3* holds until it has been run once. The six section's words, in two columns: *the graphs* · *stop* / *tap on 2* · *tap on 3* / *tap on 4* · *tap on 5* / *tap on 6* · *tap on 7*; every *tap on n* uses groups of 2 to 7; the knob stays under the graph. *That graph:* above each number she looked for, a copper dot for each tap when it was that number, and a circle beneath the copper for each tap when it wasn't; height is seconds after the dots; misses are not shown. The tap-on-3 graphs in the first section stay as they were (taps and seconds by how many dots).
 **Layout, 16 Sept (Michael).** The experiments sit in the left column beside the text that names them, all present at once, titled *Experiment 1* (tap on 3, preview), *Experiment 2* (tap on 2 to 7, the knob), *Experiment 3* (two colours), *Experiment 4* (a red one, a triangle); the brain beside its paragraph; Experiment 2's graph is not repeated at the end: the Jevons ending now reads "That seems to be true of just about all of us" (Michael, 16 Sept). This replaces the title *Three at a Glance* over the bench and the one-picture-at-a-time rule for this story (Rulings, amended). Nothing waits on anything else.
-**Text brought in line, 16 Sept (Michael's yes to Claude Code's proposals):** the mixed-in numbers, "Look at the graphs," Experiments 2 to 4 named in the text, the knob under Experiment 2's graph, two colours without "the fast speed" or "a minute ago," and the Jevons ending. **Still open:** equal dots let total grey stand in for number (the Field note below randomised size to prevent that). The six-specific graph captions (*Six slipped past*, *The extra time is the counting*) are gone with tap on six.
+**Text brought in line, 16 Sept (Michael's yes to Claude Code's proposals):** the mixed-in numbers, "Look at the graphs," Experiments 2 to 4 named in the text, the knob under Experiment 2's graph, two colours without "the fast speed" or "a minute ago," and the Jevons ending. **Changes, 17 Sept (Michael, from watching someone else use it). These supersede the notes above where they differ.**
+*The page:* a narrow border round each experiment; headings bold and half a line closer to their text; the words bold, capitalised, and *the graphs* shortened to *Graphs*.
+*Timing:* *Ready* appears the moment she presses the word, and the reveal lasts one second, fade included. The blank she answers in is 1.5 s (it was 2 s), and a tap ends it: the reveal follows a quarter of a second later, so she never waits out a round she has already answered. A round is 3.7 s when she doesn't tap and about 3.1 s when she does; a run of twelve, 40 to 45 s. A tap counts for 1.7 s after the dots appear — people answer "is it three?" in about half a second, and a hesitant answer is in by about 1.2 s — so a later tap than that is not recorded.
+*Words:* *A red one* and *A triangle* became *One red dot* and *One triangle among squares* (Michael: the old names read oddly as controls).
+*Stop:* pressing it is the same as finishing. The rounds she has already seen are kept, so *Graphs* is there even if she stops in the first round; before, a stopped first run left her nothing.
+*Graphs:* the legend appears once, on the top graph only. One axis convention everywhere — the vertical label rotated beside its axis and centred (*taps*, *time in seconds*), the horizontal label centred under its axis (*number of dots*, *number of shapes*, *number you looked for*).
+*Experiment 4:* at most twenty shapes (4, 10, 20), drawn larger for it. The text's "forty" becomes "twenty" in three places and in the caption.
+*The brain:* five words instead of one — *The regions* (what was there), *Recognising 3*, *Counting*, *Noticing red*, *Recognising shapes* — each a signal travelling the painting as a comet at a twelfth of life's speed, leaving a line of words per step, with *Again*. The engine and the region coordinates are About Your Brain's.
+*Jevons:* his paragraph is rewritten (Michael's words), and the 1877 *Popular Science Monthly* engraving of him sits beside it.
+
+**The four pathways, and where their numbers come from.** *Recognising 3* is About Your Brain's "seeing three triangles" pathway unchanged: 35 ms eye to thalamus, 60 ms to V1, 140 ms the IPS has "three", 220 ms conscious thought. The other three are written for this story and want Michael's eye:
+*Counting* — the same first three legs, then about a quarter of a second per dot around the parietal–frontal loop (390, 640, 890 ms for one, two, three), from the 200–350 ms per item in Trick & Pylyshyn 1994 and Piazza et al. 2002, cited below.
+*Noticing red* — V1 at 60 ms, the colour patch at 100 ms, conscious thought at 180 ms, with the claim that colour is answered for the whole screen at once (Treisman & Gelade 1980, the flat search slope cited below). The 40 ms V1-to-colour step is a plausible round figure, not a measured one.
+*Recognising shapes* — V1 at 60 ms, the parietal cortex reading the layout at 120 ms (as in About Your Brain's chess pathway), conscious thought at 200 ms if the triangle pops out, and attention visiting the shapes one at a time from 400 ms if it doesn't. The story claims neither; the pathway says both, as the text does.
+
+**Still open:** equal dots let total grey stand in for number (the Field note below randomised size to prevent that). The six-specific graph captions (*Six slipped past*, *The extra time is the counting*) are gone with tap on six.
 
 **Rulings applied in this draft (Michael, 15 Sept).** "Experiment," never "test." First person narrates; subjective reactions are impersonal ("this one is surprising," not "this one surprised me"). Clarity before elegance: any sentence a ten-year-old can't take in at once is wrong, however good it sounds. A section title that asks a question is answered in plain words in its first sentence.
 
