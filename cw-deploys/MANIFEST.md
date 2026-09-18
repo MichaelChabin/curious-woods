@@ -73,6 +73,30 @@ since it was hung on 16 Sep (the star's pattern).
 Monthly* volume 11, 1877 (Wikimedia Commons, `PSM V11 D660 William Stanley Jevons.jpg`, public
 domain, author unknown), greyscale, resized to 760 px wide, 184 KB. Read by
 `active/three-at-a-glance.html` beside the paragraph that introduces him; nothing else uses it.
+`art/map-icon-256.png` — the map bench's tab icon (18 Sep 2026): a square of the world
+picture, 30°W to 30°E and 25°N to 85°N, cut from `art/maps/world.webp` and quantised to 96
+colours, 30 KB. Nothing drawn; the earth is the icon.
+`art/maps/` — **the base pictures for maps** (18 Sep 2026; `CWVault/claude/Spec-Maps.md`):
+one earth, many crops, rendered once by `experiments/maps/render.py` from ETOPO 2022 (NOAA
+NCEI, ice surface, public domain) and never touched at runtime. Per region three files:
+`<region>.webp` (2000 px wide, quality 85, colour is height and ice and nothing else — the
+map's own ground ramps (Spec-Maps, *The ground colours*; the colour ruling of 18 Sep), a
+faint north-west shade on the land and the ice, nothing drawn on it); `<region>.json`
+(name, the four corners, the standard parallel, pixel width and height, the picture's
+filename — what `map.js` reads); and `<region>-height.png` (the same crop 512 px wide,
+height in metres plus 11 000 as a 16-bit value, high byte red, low byte green; **nothing
+reads it** — it is the sea-level slider's food, written and left). Regions so far: `world`
+(180°W–180°E, 90°S–90°N, standard parallel 0, 2000 × 1000, 143 KB, from the 60 arc-second
+grids) and `western-europe` (11°W–20°E, 42°N–58°N — the prompt's 40°–60° trimmed by two
+degrees each side so the picture runs landscape in a column instead of square; standard
+parallel 50°, 2000 × 1606, 154 KB, from the 30 arc-second grids). A new region is one line:
+`python3 experiments/maps/render.py <name> <west> <south> <east> <north>`, about fifteen
+seconds. **Ice is its own layer** (second pass, 18 Sep): each resolution needs two source
+grids, ice surface and bedrock; the script checks they share one registration and refuses
+otherwise; thickness is surface minus bedrock, and where it is above zero the ice ramp
+paints the pixel. The four source grids (4.4 GB) live in `cw-deploys/_data/`, which
+`.gitignore` excludes; they are downloaded once from NOAA's THREDDS server and must never
+be committed.
 `stories/necker-cube/` — **The Necker Cube**, the first story (28 Apr 2026, commit
 `bec6b4f`), a single-file page at `index.html`: the cube on a canvas that flips as you
 look, narrative paragraphs from `narrative.json` beside it, Web Audio, the watercolour
@@ -302,6 +326,67 @@ backstop for the Claude Code session that lands the file.
   tested on an iPad, or in Safari by this session.**
 
 ### experiments/
+- **`bead-string.html`** — bench: **Pull a Bead** (18 Sep 2026), the first bench of the
+  Bead Lab (`CWVault/claude/Bead-Lab-Ideas.md`). One file, no dependencies. A string of
+  beads pinned at both ends; each bead is joined to its two neighbours by a spring and
+  follows one rule. Drag, release, pin by tapping. Controls: tension (×¼ to ×4, an octave
+  each way), friction, bead count (3 to 40 — length and total weight stay fixed, so more
+  beads means a truer string, not a lower note), slow motion, the pulls as arrows, a trace
+  of the released bead, gravity (a hanging chain). **Listen** runs the same model in the
+  audio thread, 158 to 1 261 times faster, and sends one bead's motion to the speaker;
+  Pitch snaps to 110/220/440/880 Hz; friction is the only thing that fades the sound.
+  Step count in the audio loop is chosen from the stiffness so the worst case (40 beads,
+  ×4, 880 Hz) stays stable. Pitch checked against the beaded-string formula in a script
+  (110 Hz at 12 beads; 220 at 40 beads ×4). Origin: a projected piece in the Denver Art
+  Museum children's area; footage and a timestamped catalogue in `_CW/Beads Analysis/`
+  (outside the deploy). Tab icon `art/beads-icon-256.png`. Not yet heard on an iPad.
+- **`maps/`** — bench: **Maps** (18 Sep 2026; `CWVault/claude/Spec-Maps.md`, the bench of
+  its build prompt). A map is a still picture of the ground with the story's marks on it,
+  and nothing else. Three files. **`render.py`** makes one base picture into `art/maps/`
+  (see the entry there): equirectangular with the standard parallel at the region's
+  mid-latitude, three colour families as named constants at the top, none red and none
+  green, warm at the bottom and cool at the top (the second pass of 18 Sep; the first was
+  Hokusai's ramp, which painted Greenland the colour of desert and hid the vermilion in the
+  mountains) — **land** `#e6dfcb` at the shore (one step under the page's `#f4f1e8`),
+  `#d8cdaa` at 250 m, `#c3ab80` at 800, `#a89a80` at 1 600, `#8f8d90` at 2 400, `#aeb0b8`
+  at 3 200, `#e8ecee` at 4 800, `#f2f5f6` at 6 000 (the spec's 4 200 and 5 400 lifted by
+  600 m, because at 4 200 the whole Tibetan plateau came out white and read as an ice
+  sheet); **ice**, by surface height, `#dfe7ec` at 0, `#eaf1f4` at 1 200, `#f6fafb` at
+  3 000; **sea**, Hokusai with the floor lifted, `#2a4a6a` at −9 000, `#2e6a9e` at −4 000,
+  `#5a9ab8` at −800, `#a8c8dc` at −150, `#c8dce8` at the shore — so the shelf round Britain
+  reads as a pale halo and plains stay buff; hillshade from 315° at 45°, multiplied at
+  `HILLSHADE_STRENGTH = 0.35`, flat ground left exactly its colour, land and ice only
+  (`SHADE_SEA = False`, so the sea stays a clean wash). Needs numpy, scipy, h5py and
+  Pillow; reads the netCDF through h5py so the whole grid never sits in memory. **`map.js`** — `cwMap(container, region, marks)` puts
+  the WebP in the box and an SVG over it; the SVG's viewBox is kept equal to the box's
+  rendered size (a ResizeObserver redraws), so dots are 4 px and names 13 px Georgia
+  whatever the picture's width, with a 2 px halo in paper. Four marks and no others:
+  `place`, `path`, `region` (a wash at 18 %, `wash: 'grows'` green `#33663f` or `wash:
+  'made'` violet `#5a4a8c`, no third; green if the mark does not say), `note`; everything
+  else drawn is `#c84830`. A place
+  with text toggles a paper-ground block on tap; with a story, navigates; with neither,
+  nothing — no cursor change, no hover, no animation. `reset()` hides the blocks.
+  `cwMapWindow(region, marks)` opens the same map at 380 px (the story stage width) in
+  Glass Geometry's picker window copied line for line — invisible backdrop that closes it,
+  the drag handle with *close* at its right, the 200 ms fade — except that the handle
+  listens to pointer events so a finger can drag it too. `cwMap.load(url)` fetches a
+  region's JSON and resolves the picture beside it. **`map-bench.html`** — the three cases:
+  the world in the flow with Tambora, western Europe in the flow with London, Lake Geneva
+  and the road between (by Dover and Strasbourg), and the name Tambora in a sentence
+  opening the window. Tested in the built-in browser at 700 and 375 wide: text blocks
+  toggle, the window drags and closes, no console errors. **Not tested on an iPad.**
+  Decisions the spec left to the session, taken and named: a tap target of 14 px round
+  each dot that has something to give (a 4 px dot is not a finger's target); a path's
+  waypoint that is not a marked place is written as a `[lat, lon]` pair (the gazetteer
+  belongs to the story build); the caption line under a flow map is the page's prose,
+  not `map.js`'s; `map.js` stays beside the bench until a story calls it, when whether it
+  moves to `js/` is Michael's call. Consequences of the source, not fixed: lakes are land
+  (the grid carries their surface height, so Lake Geneva is a dot on paper, not water —
+  Natural Earth would draw it, per the spec's *if we ever want them*); the Ross and Ronne
+  shelves are white over water, which is what they are; Greenland's coast is speckled
+  where 20 km pixels average ice-free fjord mountains with the sheet; the Tibetan plateau
+  is pale grey-white at 4 500 m even with the white stops lifted, because it is as high as
+  an Alpine summit and the ramp says so.
 - **`trace.html`** — bench: **Trace.** A road on parchment, a copper dot that follows her
   hand through a transform, a rule for what counts as a mistake, and a counter that says
   nothing until asked (`CWVault/20-SPECS/Spec-Trace-Bench.md`; v0 of it, 11 Sep 2026).

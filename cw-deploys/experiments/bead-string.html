@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/beads-icon-256.png">
+<link rel="apple-touch-icon" href="../art/beads-icon-256.png">
+<title>Curious Woods — Pull a Bead</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; background: #f4f1e8; color: #3D3D3A; font-family: Georgia, serif; }
+body { padding: 28px 16px 48px; }
+.wrap { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+h1 { font-weight: normal; font-size: 22px; letter-spacing: 0.04em; color: #546A80; margin: 0; }
+.lede { color: #6d665a; margin: 0; max-width: 62ch; line-height: 1.5; font-size: 16px; }
+.stage { position: relative; width: 100%; aspect-ratio: 5/3; background: #f8f6ef; border: 0.5px solid #c8b89a; border-radius: 6px; overflow: hidden; touch-action: none; }
+canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+canvas.drag { cursor: grabbing; }
+.status { position: absolute; left: 12px; bottom: 10px; font-size: 14px; color: #a09880; font-variant-numeric: tabular-nums; pointer-events: none; }
+.heard { position: absolute; right: 12px; bottom: 10px; font-size: 14px; color: #b5752f; font-variant-numeric: tabular-nums; pointer-events: none; text-align: right; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; font-size: 15px; }
+.ctl { display: flex; align-items: center; gap: 8px; color: #6d665a; }
+.ctl output { color: #3D3D3A; min-width: 4.5ch; font-variant-numeric: tabular-nums; }
+.ctl.listen { color: #3D3D3A; }
+input[type=range] { accent-color: #546A80; width: 130px; }
+input[type=checkbox] { accent-color: #546A80; width: 16px; height: 16px; }
+button { font-family: inherit; font-size: 15px; border-radius: 4px; padding: 7px 14px; cursor: pointer; background: transparent; color: #3D3D3A; border: 0.5px solid #c8b89a; }
+button:focus-visible, input:focus-visible { outline: 2px solid #546A80; outline-offset: 2px; }
+.rule { border-top: 0.5px solid #c8b89a; padding-top: 12px; color: #6d665a; line-height: 1.55; max-width: 62ch; margin: 0; }
+.rule b { color: #3D3D3A; font-weight: normal; font-style: italic; }
+.back { font-size: 13px; color: #a09880; text-decoration: none; }
+.back:hover { color: #546A80; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">&larr; experiments</a>
+  <h1>Pull a bead</h1>
+  <p class="lede">Drag any bead and let go. Tap a bead without dragging to pin it or set it free. The copper rings are pins.</p>
+
+  <div class="stage">
+    <canvas id="cv"></canvas>
+    <div class="status" id="status"></div>
+    <div class="heard" id="heard" hidden></div>
+  </div>
+
+  <div class="controls">
+    <label class="ctl" for="tension">Tension <input id="tension" type="range" min="0" max="100" value="50"><output id="tOut">×1.00</output></label>
+    <label class="ctl" for="friction">Friction <input id="friction" type="range" min="0" max="100" value="0"><output id="fOut">none</output></label>
+    <label class="ctl" for="count">Beads <input id="count" type="range" min="3" max="40" value="12"><output id="cOut">12</output></label>
+    <label class="ctl listen" for="listen"><input id="listen" type="checkbox"> Listen</label>
+    <label class="ctl" for="pitch">Pitch <input id="pitch" type="range" min="0" max="300" value="0" list="octaves"><output id="pOut">110 Hz</output></label>
+    <datalist id="octaves"><option value="0"></option><option value="100"></option><option value="200"></option><option value="300"></option></datalist>
+    <label class="ctl" for="slow"><input id="slow" type="checkbox"> Slow motion</label>
+    <label class="ctl" for="pulls"><input id="pulls" type="checkbox"> Show the pulls</label>
+    <label class="ctl" for="trace"><input id="trace" type="checkbox" checked> Trace</label>
+    <label class="ctl" for="gravity"><input id="gravity" type="checkbox"> Gravity</label>
+    <button id="reset">Start again</button>
+  </div>
+
+  <p class="rule"><b>The rule.</b> Each bead is joined to the beads on either side by a spring. A stretched spring pulls its two beads toward each other. A bead adds up the two pulls and speeds up in that direction. That is all. Nothing else in the picture knows about anything but its neighbors.</p>
+  <p class="rule"><b>Listening.</b> The string you see is far too slow to hear. When Listen is on, the same beads follow the same rule, run many times faster, and the up-and-down motion of one bead near the left end goes straight to the speaker. The Pitch slider chooses how much faster: run it twice as fast and you hear it one octave up. Nothing is recorded. You hear the string.</p>
+</div>
+
+<script>
+var CW_VERSION = '2026-09-18 6939bd0'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+(()=>{
+const W=1000,H=600,X0=120,X1=W-120,SPAN=X1-X0;
+const T0=16400;                 // tension at ×1
+const G=260;
+const $=id=>document.getElementById(id);
+const cv=$('cv'),ctx=cv.getContext('2d'),statusEl=$('status'),heardEl=$('heard');
+const C={ground:'#f8f6ef',string:'#546A80',bead:'#fffdf7',edge:'#3D3D3A',copper:'#b5752f',pull:'#2f7f9a'};
+
+// ---------- the string: one model, used twice (eyes and ears)
+function makeString(n){
+  const s=SPAN/(n-1);
+  const S={n,s,L:0.8*s,m:11/(n-1),
+    x:new Float64Array(n),y:new Float64Array(n),vx:new Float64Array(n),vy:new Float64Array(n),
+    fx:new Float64Array(n),fy:new Float64Array(n),pin:new Uint8Array(n),held:-1};
+  for(let i=0;i<n;i++){S.x[i]=X0+i*s;S.y[i]=H/2;}
+  S.pin[0]=1;S.pin[n-1]=1;
+  return S;
+}
+function forces(S,p){
+  const k=T0*p.tension/(S.s-S.L); const g=p.gravity?G*S.m:0;
+  const {n,x,y,fx,fy,L}=S;
+  for(let i=0;i<n;i++){fx[i]=0;fy[i]=g;}
+  for(let i=0;i<n-1;i++){
+    const dx=x[i+1]-x[i],dy=y[i+1]-y[i],d=Math.hypot(dx,dy)||1e-9;
+    const f=k*(d-L)/d;
+    fx[i]+=f*dx;fy[i]+=f*dy;fx[i+1]-=f*dx;fy[i+1]-=f*dy;
+  }
+}
+function step(S,p,dt,damp){
+  forces(S,p);
+  const {n,x,y,vx,vy,fx,fy,pin,m}=S;
+  for(let i=0;i<n;i++){
+    if(pin[i]||i===S.held){vx[i]=vy[i]=0;continue;}
+    vx[i]=(vx[i]+fx[i]/m*dt)*damp; vy[i]=(vy[i]+fy[i]/m*dt)*damp;
+    x[i]+=vx[i]*dt; y[i]+=vy[i]*dt;
+  }
+}
+// lowest pitch of a beaded string pinned at both ends, in cycles per second
+function fundamental(n,tension){
+  const s=SPAN/(n-1),m=11/(n-1);
+  return 2*Math.sqrt(T0*tension/(m*s))*Math.sin(Math.PI/(2*(n-1)))/(2*Math.PI);
+}
+// the Pitch slider: 0..300 is three octaves above 110 Hz, snapping to 110, 220, 440, 880
+function basePitch(){
+  let v=+$('pitch').value; const near=Math.round(v/100)*100;
+  if(Math.abs(v-near)<=10){v=near; $('pitch').value=v;}
+  return 110*Math.pow(2,v/100);
+}
+const speedup=()=>basePitch()/fundamental(12,1);
+
+// ---------- state
+let S, trail=[], tracked=-1, moved=false, downAt=null, movingFor=0, settledAt=null;
+const params=()=>({tension:Math.pow(4,(+$('tension').value-50)/50),gravity:$('gravity').checked});
+const friction=()=>+$('friction').value/100*3;   // per second
+
+function build(){
+  S=makeString(+$('count').value);
+  trail=[];tracked=-1;movingFor=0;settledAt=null;
+  if(audio)audio.S=null;
+}
+
+// ---------- sound
+let audio=null;
+function startAudio(){
+  if(audio){audio.ctx.resume();return;}
+  const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return;
+  const ac=new AC(), node=ac.createScriptProcessor(1024,0,1);
+  audio={ctx:ac,node,S:null,dc:0};
+  node.onaudioprocess=e=>{
+    const out=e.outputBuffer.getChannelData(0);
+    const A=audio.S;
+    if(!A||!$('listen').checked){out.fill(0);return;}
+    const p=params(), sr=ac.sampleRate, speed=speedup();
+    const {n,x,y,vx,vy,fx,fy,pin,L,m}=A;
+    const km=T0*p.tension/(A.s-L)/m, g=p.gravity?G:0;
+    // small enough steps that the stiffest wiggle stays stable
+    const subs=Math.max(1,Math.ceil(2*Math.sqrt(km)*speed/sr));
+    const dt=speed/sr/subs;
+    // friction fades the sound per second you hear; with friction at none, it rings on
+    const damp=Math.exp(-friction()*1.5/sr/subs);
+    const pick=Math.max(1,Math.round((n-1)/5));
+    for(let j=0;j<out.length;j++){
+      for(let q=0;q<subs;q++){
+        for(let i=0;i<n;i++){fx[i]=0;fy[i]=g;}
+        for(let i=0;i<n-1;i++){
+          const dx=x[i+1]-x[i],dy=y[i+1]-y[i],d=Math.sqrt(dx*dx+dy*dy)||1e-9,f=km*(d-L)/d,ax=f*dx,ay=f*dy;
+          fx[i]+=ax;fy[i]+=ay;fx[i+1]-=ax;fy[i+1]-=ay;
+        }
+        for(let i=0;i<n;i++){
+          if(pin[i])continue;
+          vx[i]=(vx[i]+fx[i]*dt)*damp;vy[i]=(vy[i]+fy[i]*dt)*damp;x[i]+=vx[i]*dt;y[i]+=vy[i]*dt;
+        }
+      }
+      const v=(y[pick]-H/2)/160;
+      audio.dc+=(v-audio.dc)*0.0005;          // remove the slow sag from gravity, keep the vibration
+      out[j]=Math.tanh((v-audio.dc)*1.4)*0.5;
+    }
+  };
+  node.connect(ac.destination);
+}
+function pluckSound(){
+  if(!audio||!$('listen').checked)return;
+  const A=makeString(S.n);
+  A.x.set(S.x);A.y.set(S.y);A.pin.set(S.pin);
+  audio.dc=0;
+  audio.S=A;
+}
+
+// ---------- drawing
+function resize(){const r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d);}
+function draw(){
+  const sc=cv.width/W, px=(window.devicePixelRatio||1)/sc;
+  ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle=C.ground;ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.setTransform(sc,0,0,sc,0,0);
+  const {n,x,y,pin}=S, R=Math.max(5,Math.min(11,180/n));
+
+  if($('trace').checked&&trail.length>1){
+    ctx.lineWidth=1.6*px;
+    for(let i=1;i<trail.length;i++){
+      ctx.strokeStyle=`rgba(181,117,47,${i/trail.length*0.6})`;
+      ctx.beginPath();ctx.moveTo(trail[i-1][0],trail[i-1][1]);ctx.lineTo(trail[i][0],trail[i][1]);ctx.stroke();
+    }
+  }
+  ctx.strokeStyle=C.string;ctx.lineWidth=1.8*px;ctx.beginPath();
+  for(let i=0;i<n;i++)i?ctx.lineTo(x[i],y[i]):ctx.moveTo(x[i],y[i]);ctx.stroke();
+
+  if($('pulls').checked){
+    forces(S,params());
+    ctx.strokeStyle=ctx.fillStyle=C.pull;ctx.lineWidth=2*px;
+    for(let i=0;i<n;i++){
+      if(pin[i])continue;
+      const fx=S.fx[i],fy=S.fy[i],mag=Math.hypot(fx,fy); if(mag<20*S.m)continue;
+      const len=Math.min(90,mag/S.m*0.012),ux=fx/mag,uy=fy/mag;
+      const ex=x[i]+ux*(len+R),ey=y[i]+uy*(len+R);
+      ctx.beginPath();ctx.moveTo(x[i]+ux*R,y[i]+uy*R);ctx.lineTo(ex,ey);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex-ux*8-uy*4,ey-uy*8+ux*4);ctx.lineTo(ex-ux*8+uy*4,ey-uy*8-ux*4);ctx.closePath();ctx.fill();
+    }
+  }
+  for(let i=0;i<n;i++){
+    ctx.beginPath();ctx.arc(x[i],y[i],R,0,Math.PI*2);
+    ctx.fillStyle=i===S.held?C.copper:C.bead;ctx.fill();
+    ctx.strokeStyle=C.edge;ctx.lineWidth=1.2*px;ctx.stroke();
+    if(pin[i]){ctx.strokeStyle=C.copper;ctx.lineWidth=2.5*px;ctx.beginPath();ctx.arc(x[i],y[i],R+5,0,Math.PI*2);ctx.stroke();}
+  }
+}
+
+// ---------- pointer
+function toWorld(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};}
+cv.addEventListener('pointerdown',e=>{
+  const p=toWorld(e);let best=-1,bd=40;
+  for(let i=0;i<S.n;i++){const d=Math.hypot(S.x[i]-p.x,S.y[i]-p.y);if(d<bd){bd=d;best=i;}}
+  if(best<0)return;
+  S.held=best;downAt=p;moved=false;tracked=best;trail=[];settledAt=null;movingFor=0;
+  cv.setPointerCapture(e.pointerId);cv.classList.add('drag');
+});
+cv.addEventListener('pointermove',e=>{
+  if(S.held<0)return;const p=toWorld(e);
+  if(Math.hypot(p.x-downAt.x,p.y-downAt.y)>6)moved=true;
+  if(moved){S.x[S.held]=Math.max(0,Math.min(W,p.x));S.y[S.held]=Math.max(0,Math.min(H,p.y));}
+});
+function up(){
+  if(S.held<0)return;
+  const i=S.held;
+  if(!moved)S.pin[i]=S.pin[i]?0:1;
+  S.vx[i]=S.vy[i]=0;S.held=-1;cv.classList.remove('drag');
+  if(moved)pluckSound();
+}
+cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+
+// ---------- controls
+function updateHeard(){
+  const on=$('listen').checked; heardEl.hidden=!on;
+  if(on){
+    const sp=speedup(), f=fundamental(S.n,params().tension)*sp;
+    heardEl.textContent=`about ${Math.round(f)} Hz · run ${Math.round(sp)} times faster`;
+  }
+}
+$('pitch').addEventListener('input',()=>{$('pOut').textContent=Math.round(basePitch())+' Hz';updateHeard();});
+$('tension').addEventListener('input',()=>{$('tOut').textContent='×'+params().tension.toFixed(2);updateHeard();});
+$('friction').addEventListener('input',()=>{const v=+$('friction').value;$('fOut').textContent=v===0?'none':v<35?'a little':v<70?'some':'lots';settledAt=null;movingFor=0;});
+$('count').addEventListener('input',()=>{$('cOut').textContent=$('count').value;build();updateHeard();});
+$('reset').addEventListener('click',()=>{build();updateHeard();});
+$('gravity').addEventListener('change',()=>{settledAt=null;movingFor=0;});
+$('listen').addEventListener('change',()=>{ if($('listen').checked){startAudio();pluckSound();} updateHeard(); });
+
+// ---------- loop
+let prev=performance.now();
+function frame(now){
+  let dt=Math.min(0.05,(now-prev)/1000);prev=now;
+  if($('slow').checked)dt*=0.2;
+  const p=params(),SUB=24,h=dt/SUB,damp=Math.exp(-friction()*h);
+  for(let i=0;i<SUB;i++)step(S,p,h,damp);
+  if(tracked>=0&&S.held<0){trail.push([S.x[tracked],S.y[tracked]]);if(trail.length>900)trail.shift();}
+  let e=0;for(let i=0;i<S.n;i++)if(!S.pin[i]&&i!==S.held)e+=S.vx[i]**2+S.vy[i]**2;
+  if(S.held>=0)statusEl.textContent='pulling';
+  else if(e>1){movingFor+=dt;settledAt=null;statusEl.textContent=movingFor>0.3?`moving for ${movingFor.toFixed(1)} s`:'';}
+  else{if(movingFor>0.3&&settledAt===null)settledAt=movingFor;statusEl.textContent=settledAt!==null?`settled after ${settledAt.toFixed(1)} s`:'at rest';}
+  draw();requestAnimationFrame(frame);
+}
+new ResizeObserver(()=>{resize();draw();}).observe(cv);
+build();resize();
+const m=Math.floor(S.n/3);S.y[m]-=150;tracked=m;   // opens already plucked
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
