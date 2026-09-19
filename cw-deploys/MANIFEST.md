@@ -132,6 +132,12 @@ an iPad shows it — the story page of 14 Sep arrived with none of them:
 - **A tab icon that is a file in `art/`, never a `data:` URI** — Safari ignores inline
   icons (proved 13 Sep), and wants a PNG. The same file serves `apple-touch-icon`. The
   home page tile may use an SVG; the tab may not.
+- **Centred, at every width.** A page's content centres in the window — the reading
+  column at 700 px, and anything wider than it (a map, a bench) centred under it, the
+  notes centred below. Nothing hangs from the left edge of a wide window. Not a line
+  the check can read; it is a thing to look at once in a window wider than the content
+  (About Your Brain shipped for six days with its map pulled left by an unclosed div,
+  found by Michael on 19 Sep).
 - **A `CW_VERSION` constant** (date + short commit hash) logged to the console on load,
   as the first line of the page's main script — updated in the same commit as the
   change, like this file. Shared scripts are referenced with a version query
@@ -214,7 +220,11 @@ backstop for the Claude Code session that lands the file.
   *earn*, no deposits, nothing stored). **Self-contained but for its icon**: both
   paintings are base64 in the file (4.1 MB), no shared scripts; the one `../` path is
   the tab icon, `<link rel="icon">` and `apple-touch-icon` both pointing at
-  `../art/brain-icon-256.png`. The revision arrived with the icon inline as a `data:`
+  `../art/brain-icon-256.png`. **19 Sep:** one `</div>` added to close the map row —
+  it had been open since the 13 Sep revision, so the footnote sat in the row as a fourth
+  column and the brain and its word columns hung left in a wide window; now the row and
+  the note centre under the reading column at every width. Nothing else changed. The
+  revision arrived with the icon inline as a `data:`
   URI, and **Safari on iPad ignores data-URI favicons** — tested 13 Sep on the iPad
   (10th generation) simulator, iOS 18.2: a placeholder letter in the tab, while a
   two-page control on the same Safari showed the identical PNG as a file at once
