@@ -844,6 +844,9 @@ the home page, not this thread's.
   the brain and its word columns left; closed, and the row and note now centre under
   the reading column. Michael's rule, written into the page standard: content centres
   in the window at every width. Links are going out for comment; so far positive.
+  Same day, second report: in a narrow window the lists had stacked above and below the
+  brain; now below 1048 px the brain comes first and the two lists sit side by side
+  beneath it, Michael's suggestion, one media rule.
 - **Authority:** `cw-deploys/active/about-your-brain.html` · `20-SPECS/Spec-Brain-Bench.md`
   (the region vocabulary) · `claude/Brain-Series-Map.md` (the stories the pathways come
   from) · `cw-deploys/_redirects` (the 12 Sep URL, kept alive).

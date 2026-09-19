@@ -24,7 +24,12 @@
   .title-word { font-family: Georgia, serif; font-size: 17px; font-weight: bold; color: var(--cw-ink); padding-left: 16px; }
   .group.things { }
   .side.left { align-items: flex-start; }
-  @media (max-width: 1000px) { .side.left, .side.right { min-width: 45%; } }
+  /* when the three pieces no longer fit in one row, the brain goes first and the two word lists sit side by side beneath it */
+  @media (max-width: 1048px) {
+    .wrap .stage { order: -1; flex: 0 0 100%; max-width: none; }          /* the box takes the whole line, so the lists fall beneath it */
+    .wrap .stage > svg, .wrap .stage > .panel { width: 100%; max-width: 560px; margin-left: auto; margin-right: auto; }   /* the picture stays 560 wide, centred */
+    .wrap .side.left, .wrap .side.right { flex: 1 1 0; min-width: 0; max-width: 280px; }
+  }
   .ctl { padding-left: 40px !important; }
   .label { font-size: 11px; color:#8a8378; padding-left:16px; letter-spacing:.04em; text-transform: uppercase; }
   .stage { width: 560px; max-width: 100%; display:flex; flex-direction:column; gap: 10px; }
@@ -136,7 +141,7 @@
 </div>
 
 <script>
-var CW_VERSION = '2026-09-19 837df82'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-09-19 uncommitted'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 (function () {
   'use strict';
   // region geometry: hidden shapes that say where activity may appear. [cx, cy, rx, ry, rot, deep]

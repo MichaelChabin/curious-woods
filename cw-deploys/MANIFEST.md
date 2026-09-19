@@ -223,7 +223,10 @@ backstop for the Claude Code session that lands the file.
   `../art/brain-icon-256.png`. **19 Sep:** one `</div>` added to close the map row —
   it had been open since the 13 Sep revision, so the footnote sat in the row as a fourth
   column and the brain and its word columns hung left in a wide window; now the row and
-  the note centre under the reading column at every width. Nothing else changed. The
+  the note centre under the reading column at every width. Later the same day, on Michael's second report: below
+  1048 px, where the three pieces no longer fit in one row, the brain now comes first and
+  the two word lists sit side by side beneath it (one media rule; before, the lists
+  stacked above and below the brain). Nothing else changed. The
   revision arrived with the icon inline as a `data:`
   URI, and **Safari on iPad ignores data-URI favicons** — tested 13 Sep on the iPad
   (10th generation) simulator, iOS 18.2: a placeholder letter in the tab, while a
