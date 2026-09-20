@@ -21,7 +21,7 @@ So the earth is a file in our repo. No key, no server, nothing at runtime that c
 
 **1. Base pictures.** Made ahead of time by a script, from public-domain elevation data. Each is one image file in `art/maps/` plus four numbers — the corners of the piece of world it shows — plus its contours (below). A base picture is a *place*, not a zoom level: `world`, `western-europe`, `britain`, `indonesia`, `nile`, `andes`. Making a new one means running the script with four numbers, which takes about a minute.
 
-**2. The overlay.** One small file, `map.js`. It takes a base picture, its corners, its contours and a list of marks, and draws them on top. It knows four kinds of mark and no more:
+**2. The overlay.** One small file, `map.js` — shared, at `cw-deploys/js/map.js`, since 20 September 2026, when the Hokusai story called it (Michael's call). It takes a base picture, its corners, its contours and a list of marks, and draws them on top. It knows four kinds of mark and no more:
 
 - **place** — a dot and a name
 - **path** — a line from place to place

@@ -34,5 +34,14 @@
     "frame": "#2b3f6b",
     "frameWidth": 14,
     "size": "large"
+  },
+  {
+    "slug": "hokusai-the-great-wave",
+    "title": "Hokusai: The Great Wave",
+    "href": "active/hokusai-the-great-wave.html",
+    "icon": "art/hokusai-icon-256.png",
+    "frame": "#2e4a63",
+    "frameWidth": 12,
+    "size": "medium"
   }
 ]

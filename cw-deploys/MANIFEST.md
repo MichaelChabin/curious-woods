@@ -22,7 +22,11 @@ working, for the same reason retired files are never deleted.
 Superseded versions, kept as the archive record.
 
 **`js/`** — shared code, at the root of this folder. Classic scripts, no
-build step. `cw-flags.js` (15 Sep 2026) — feature flags, `CW.flags = { maya: false }`, loaded first on every `active/` page with a version query; the Maya flag is all it holds, because nothing else about Maya exists yet, and Remember on story pages reads it (visible always with Maya; fades in as the text's reference nears without her). **`cw-number.js` — how a number is written, everywhere** (extracted
+build step. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael's call, when
+the Hokusai story called it)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
+the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
+`experiments/maps/`, beside `render.py`, which makes the pictures it draws on. Loaded with a
+version query by `active/hokusai-the-great-wave.html` and `experiments/maps/map-bench.html`. `cw-flags.js` (15 Sep 2026) — feature flags, `CW.flags = { maya: false }`, loaded first on every `active/` page with a version query; the Maya flag is all it holds, because nothing else about Maya exists yet, and Remember on story pages reads it (visible always with Maya; fades in as the text's reference nears without her). **`cw-number.js` — how a number is written, everywhere** (extracted
 2 Sep 2026 on Michael's instruction that the benches and labs all write numbers
 the same way; the third shared file, and the first added since Phase 4). Until
 it existed there were four dialects: plane.js grouped thousands for tick labels,
@@ -97,7 +101,7 @@ domain, author unknown), greyscale, resized to 760 px wide, 184 KB. Read by
 1830 (19 Sep 2026). The Metropolitan Museum of Art, accession JP1847, image DP141063, open
 access / CC0; the museum's 3 863 px scan resized to 1 800 px wide at quality 85, 452 KB. A
 strong impression with its paper margins, so the unprinted paper is part of what can be
-sampled. Read by `experiments/hokusai-the-great-wave.html` and by nothing else; the colour
+sampled. Read by `active/hokusai-the-great-wave.html` and by nothing else; the colour
 sampler reads its pixels off a canvas, which is why it must be served same-origin.
 `art/hokusai-icon-256.png` — the story's tab and home-screen icon (19 Sep 2026): the crest
 and its claws, cut from the print at 330,150–930,750 and resized to 256 px, per the Rulings'
@@ -235,6 +239,52 @@ backstop for the Claude Code session that lands the file.
   Michael). Back link to the gallery.
 
 ### active/
+- **`hokusai-the-great-wave.html`** — story: **Hokusai: The Great Wave** (19–20 Sep 2026;
+  `CWVault/claude/Story-Hokusai-The-Great-Wave.md`), the first of the paintings series.
+  **Hung 20 Sep 2026** (Publishing-a-Story stage 4): moved here from `experiments/`, where
+  Michael read it, with `_redirects` keeping that address, and given its line in
+  `stories/gallery.json` — the crest-and-claws icon, frame `#2e4a63` (the deepest blue in the
+  print), 12 px, medium, on the off-white mat a photographic crop takes.
+  `placement: across` **with a left margin** (the 20 Sep ruling): reading column 700 px, a
+  300 px margin to its left with a 28 px gap, 1028 px shell, and everything wider than the
+  column centred on that shell rather than on the column — which is the one sum to get right,
+  because a breakout centred on the reading column hangs off the right of the screen.
+  Below 1068 px the margin collapses and its pictures drop into the flow. Three things in it.
+  **One timeline**, static, at the head of the page: 1815 to 1855, nine events and the print's
+  own marker in copper at 1830 (the long 12 000-year line was built on 19 Sep and cut on 20 Sep
+  on Michael's word — it distracted from the story). Labels hang below the rail on thin leaders
+  and pack into as many rows as they need, lowest row that does not touch a neighbour, each row
+  as tall as its tallest label, so the arrangement survives any event list. **Three maps**
+  through `../js/map.js`: `japan` and `western-europe` in the margin, `world` full-shell after
+  *More*. The marks name the places the story names, with the one the story is about `lit` —
+  Nagasaki on Japan, Berlin on the other two — and a `side` hint on each. **A note on the
+  record (20 Sep, hanging session):** an earlier version of this entry said the marks had been
+  reworked to the third pass's `minor` and `water` labels with every `side` hint dropped; the
+  file on disk when it was hung carried fourteen `side` hints and none of the new words, so
+  that rework was described and not done. The page still gets the third pass's lines, halos
+  and placement, because those are `map.js`'s; the lesser places and water names are a later
+  edit to the story's map blocks. **The print**, with a
+  magnifier and a zoom. Tap it anywhere and a 148 px circle sits there showing the print at
+  four times the size, with a crosshair; drag the circle, or tap elsewhere to move it; *Put the
+  magnifier away* removes it. Pinch (two pointers, or ctrl-wheel and `gesturechange` on a Mac
+  trackpad) zooms the print in place to 6×; once zoomed, one finger pans and `touch-action`
+  goes to `none`, with *The whole print* to get out. **The magnifier is the colour sampler**:
+  before *Sample a colour* it only magnifies, and after it the print moves down the page, widens
+  to the shell, and the same circle also reports the colour under its crosshair — a 5 × 5 pixel
+  average, its hex and `rgb()`, and the nearest of nine pigment anchors with a sentence of
+  chemistry. The anchors are measured off this scan, not taken from a swatch book, because the
+  sheet has faded; match is nearest neighbour in CIE Lab, and where two anchors of **different
+  materials** fall within ΔE 4.5 the tool names both and says the colour alone cannot separate
+  them — which is what happens across most of the sky. Two things worth keeping: the print must
+  carry `draggable="false"` and `-webkit-user-drag: none`, because a native image drag fires
+  `pointercancel` and kills a pan one move in (found on the bench, 20 Sep); and the ctrl-wheel
+  delta is clamped to ±40 so one flick of a trackpad does not jump straight to 6×. Reads
+  `../art/hokusai-great-wave.jpg`, `../art/hokusai-icon-256.png` and `../art/maps/`. The sampler
+  needs the image same-origin, so the page must be served, not opened from disk. No Remember:
+  Maya is absent and the practice queue does not exist. Checked at 1440, 1100, 834 and 390 px —
+  no horizontal scroll, no console errors. **`maps/map.js` must move to `js/` before this page
+  is hung in `active/`**, which is the call Spec-Maps reserved for Michael; the relative path
+  breaks on the move. **Not yet read on an iPad.**
 - **`glass-geometry.html`** — compass-and-straightedge construction environment;
   constructions become stained glass. **Hangs in the gallery since 20 Sep 2026** by
   `art/geometry-icon-256.png`, a cut from one of its own postcards, which is also its tab
@@ -432,41 +482,6 @@ backstop for the Claude Code session that lands the file.
   and `home-mock-scatter.html` (15 Sep, the two hangs it was chosen over; given viewport,
   icon and a `2026-09-15 mock` stamp on 20 Sep so the check passes). Linked from the
   experiments index's Old Home Page entry.
-- **`hokusai-the-great-wave.html`** — story: **Hokusai: The Great Wave** (19–20 Sep 2026;
-  `CWVault/claude/Story-Hokusai-The-Great-Wave.md`), the first of the paintings series.
-  `placement: across` **with a left margin** (the 20 Sep ruling): reading column 700 px, a
-  300 px margin to its left with a 28 px gap, 1028 px shell, and everything wider than the
-  column centred on that shell rather than on the column — which is the one sum to get right,
-  because a breakout centred on the reading column hangs off the right of the screen.
-  Below 1068 px the margin collapses and its pictures drop into the flow. Three things in it.
-  **One timeline**, static, at the head of the page: 1815 to 1855, nine events and the print's
-  own marker in copper at 1830 (the long 12 000-year line was built on 19 Sep and cut on 20 Sep
-  on Michael's word — it distracted from the story). Labels hang below the rail on thin leaders
-  and pack into as many rows as they need, lowest row that does not touch a neighbour, each row
-  as tall as its tallest label, so the arrangement survives any event list. **Three maps**
-  through `maps/map.js`: `japan` and `western-europe` in the margin, `world` full-shell after
-  *More*; Nagasaki and Berlin drawn `lit`, the new copper facet. **The print**, with a
-  magnifier and a zoom. Tap it anywhere and a 148 px circle sits there showing the print at
-  four times the size, with a crosshair; drag the circle, or tap elsewhere to move it; *Put the
-  magnifier away* removes it. Pinch (two pointers, or ctrl-wheel and `gesturechange` on a Mac
-  trackpad) zooms the print in place to 6×; once zoomed, one finger pans and `touch-action`
-  goes to `none`, with *The whole print* to get out. **The magnifier is the colour sampler**:
-  before *Sample a colour* it only magnifies, and after it the print moves down the page, widens
-  to the shell, and the same circle also reports the colour under its crosshair — a 5 × 5 pixel
-  average, its hex and `rgb()`, and the nearest of nine pigment anchors with a sentence of
-  chemistry. The anchors are measured off this scan, not taken from a swatch book, because the
-  sheet has faded; match is nearest neighbour in CIE Lab, and where two anchors of **different
-  materials** fall within ΔE 4.5 the tool names both and says the colour alone cannot separate
-  them — which is what happens across most of the sky. Two things worth keeping: the print must
-  carry `draggable="false"` and `-webkit-user-drag: none`, because a native image drag fires
-  `pointercancel` and kills a pan one move in (found on the bench, 20 Sep); and the ctrl-wheel
-  delta is clamped to ±40 so one flick of a trackpad does not jump straight to 6×. Reads
-  `../art/hokusai-great-wave.jpg`, `../art/hokusai-icon-256.png` and `../art/maps/`. The sampler
-  needs the image same-origin, so the page must be served, not opened from disk. No Remember:
-  Maya is absent and the practice queue does not exist. Checked at 1440, 1100, 834 and 390 px —
-  no horizontal scroll, no console errors. **`maps/map.js` must move to `js/` before this page
-  is hung in `active/`**, which is the call Spec-Maps reserved for Michael; the relative path
-  breaks on the move. **Not yet read on an iPad.**
 - **`bead-string.html`** — bench: **Pull a Bead** (18 Sep 2026), the first bench of the
   Bead Lab (`CWVault/claude/Bead-Lab-Ideas.md`). One file, no dependencies. A string of
   beads pinned at both ends; each bead is joined to its two neighbours by a spring and
@@ -483,7 +498,8 @@ backstop for the Claude Code session that lands the file.
   (outside the deploy). Tab icon `art/beads-icon-256.png`. Not yet heard on an iPad.
 - **`maps/`** — bench: **Maps** (18 Sep 2026; `CWVault/claude/Spec-Maps.md`, the bench of
   its build prompt). A map is a still picture of the ground with the story's marks on it,
-  and nothing else. Three files. **`render.py`** makes one base picture into `art/maps/`
+  and nothing else. Two files here since 20 Sep, when `map.js` moved to `js/` (below, under
+  *Folders*) because the Hokusai story called it — Michael's call, made that day. **`render.py`** makes one base picture into `art/maps/`
   (see the entry there): equirectangular with the standard parallel at the region's
   mid-latitude, three colour families as named constants at the top, none red and none
   green, warm at the bottom and cool at the top (the second pass of 18 Sep; the first was
@@ -503,7 +519,7 @@ backstop for the Claude Code session that lands the file.
   longitude/latitude-to-pixel conversion is one named pair, `to_pixel` and `to_lonlat`, the
   seam a map lab with a globe would replace; `map.js` carries the same pair as
   `cwMap.toPixel` and `cwMap.toLonLat`. Needs numpy, scipy, h5py, Pillow and contourpy;
-  reads the netCDF through h5py so the whole grid never sits in memory. **`map.js`** — `cwMap(container, region, marks)` puts
+  reads the netCDF through h5py so the whole grid never sits in memory. **`../../js/map.js`** (was beside the bench until 20 Sep) — `cwMap(container, region, marks)` puts
   the WebP in the box and an SVG over it; the SVG's viewBox is kept equal to the box's
   rendered size (a ResizeObserver redraws), so everything drawn is in screen pixels
   whatever the picture's width. **The lines** (third pass, 20 Sep): the region's contours
@@ -547,8 +563,8 @@ backstop for the Claude Code session that lands the file.
   each dot that has something to give (a 4 px dot is not a finger's target); a path's
   waypoint that is not a marked place is written as a `[lat, lon]` pair (the gazetteer
   belongs to the story build); the caption line under a flow map is the page's prose,
-  not `map.js`'s; `map.js` stays beside the bench until a story calls it, when whether it
-  moves to `js/` is Michael's call. Consequences of the source, not fixed: lakes are land
+  not `map.js`'s; `map.js` stayed beside the bench until a story called it, and moved to
+  `js/` on 20 Sep on Michael's call. Consequences of the source, not fixed: lakes are land
   (the grid carries their surface height, so Lake Geneva is a dot on paper, not water —
   Natural Earth would draw it, per the spec's *if we ever want them*); the Ross and Ronne
   shelves are white over water, which is what they are; Greenland's coast is speckled

@@ -15,3 +15,7 @@
 # The gallery replaced the home page, 20 Sep 2026. The old home page is kept at
 # /experiments/index-old.html; its URL (/) is the gallery's, so no rule sends anyone there.
 # Nothing else moved: saved.html and labs.html are new, and the labs keep their addresses.
+
+# Hokusai: The Great Wave was read at its experiments address, then hung on 20 Sep 2026.
+/experiments/hokusai-the-great-wave.html   /active/hokusai-the-great-wave.html   301
+/experiments/hokusai-the-great-wave        /active/hokusai-the-great-wave.html   301
