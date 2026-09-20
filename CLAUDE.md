@@ -2,8 +2,12 @@
 
 ## Read This First
 
-**Read `CWVault/00-WHAT-CW-IS.md` first of all.** One page: what Curious Woods is as of
-September 2026. The board says what is moving; that page says what it is moving toward.
+**Read these four first, in this order, every session:** `CWVault/00-WHAT-CW-IS.md` (what
+Curious Woods is), `CWVault/claude/Story-Voice.md` (how a story is written), `CWVault/claude/Rulings-Sept-2026.md`
+(what has been settled: dates, pictures in a story and their placement, the Maya flag, the
+gallery), and `CWVault/00-PUBLISHING-A-STORY.md` (how a finished story reaches the site).
+They override anything older in this file or the vault. The board says what is moving;
+those pages say what it is moving toward. If any of them contradicts another, stop and say so.
 
 **Before changing anything, read `CWVault/00-BOARD.md`.** It is the single statement of
 what is moving, what is parked, and what each thread's next action is. It is written at

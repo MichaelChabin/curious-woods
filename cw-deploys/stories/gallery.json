@@ -25,5 +25,14 @@
     "frame": "#8a8378",
     "frameWidth": 8,
     "size": "medium"
+  },
+  {
+    "slug": "glass-geometry",
+    "title": "Glass Geometry",
+    "href": "active/glass-geometry.html",
+    "icon": "art/geometry-icon-256.png",
+    "frame": "#2b3f6b",
+    "frameWidth": 14,
+    "size": "large"
   }
 ]

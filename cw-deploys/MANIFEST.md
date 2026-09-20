@@ -60,10 +60,11 @@ and icons relative to the site root. `index.html` and `saved.html` read it; noth
 Adding a story to the gallery is adding its line here (Publishing-a-Story, stage 4), no other
 edit. Three works today: The Man Who Learned Without Knowing (the star SVG, copper, medium),
 Three at a Glance (the three dots SVG, near-black, small), About Your Brain (the watercolour
-PNG, warm grey, medium). Frame colours are the salon mock's; no story frontmatter declared one.
-**Left out for want of an icon:** Glass Geometry, Glass Multiplication (the two labs have never
-had one; the check has warned since 15 Sep) and The Necker Cube. The labs are reachable from
-`labs.html`; the Necker Cube from the experiments index.
+PNG, warm grey, medium), and since later the same day Glass Geometry (`art/geometry-icon-256.png`,
+deep blue frame 14 px, large — the labs hang large). Frame colours are the salon mock's; no story
+frontmatter declared one. **Left out for want of an icon:** Glass Multiplication (no icon yet;
+the check has warned since 15 Sep) and The Necker Cube. The lab is reachable from `labs.html`;
+the Necker Cube from the experiments index.
 `stories/events.json` — the Timeline Intro's event pool (8 Sep 2026): 65 world
 events and five story lead-ups, CW years, schema noted inside the file and aligned
 with `Spec-Timeline-Graph.md` §4 where fields overlap. Data the page merely reads;
@@ -80,6 +81,14 @@ home-screen icon, because Safari wants a PNG there.
 (16 Sep 2026), from *Three at a Glance*'s frontmatter; the story's tab and home-screen icon.
 `art/three-dots-icon-256.svg` is the same mark as vector, the main index's tile for the story
 since it was hung on 16 Sep (the star's pattern).
+`art/geometry-icon-256.png` — **Glass Geometry's icon** (20 Sep 2026): a square cut from
+Michael's postcard *Abstraction 1* (a Glass Geometry construction: a blue lens, a red sliver,
+a green and a blue triangle meeting at a point), the 900 px square at 575,170 of the 1800 × 1200
+render, resized to 256; no text, all four pieces. The lab's tab icon and its picture on the wall.
+`art/enso-icon-256.png` — **Practice's picture, for now** (20 Sep 2026): a square from
+Michael's photograph of a brushed ensō on a sunlit wall, the circle centred and the stone
+left out, resized to 256. Temporary on his word; the copper ensō drawn in the salon mock is
+the mark the spec describes and is what this stands in for.
 `art/jevons-1877.jpg` — the engraved portrait of William Stanley Jevons from *Popular Science
 Monthly* volume 11, 1877 (Wikimedia Commons, `PSM V11 D660 William Stanley Jevons.jpg`, public
 domain, author unknown), greyscale, resized to 760 px wide, 184 KB. Read by
@@ -107,16 +116,32 @@ NCEI, ice surface, public domain) and never touched at runtime. Per region three
 `<region>.webp` (2000 px wide, quality 85, colour is height and ice and nothing else — the
 map's own ground ramps (Spec-Maps, *The ground colours*; the colour ruling of 18 Sep), a
 faint north-west shade on the land and the ice, nothing drawn on it); `<region>.json`
-(name, the four corners, the standard parallel, pixel width and height, the picture's
-filename — what `map.js` reads); and `<region>-height.png` (the same crop 512 px wide,
+(name, the four corners, the standard parallel, pixel width and height, the vertical
+exaggeration, the picture's filename, and **the contours** — what `map.js` reads); and `<region>-height.png` (the same crop 512 px wide,
 height in metres plus 11 000 as a 16-bit value, high byte red, low byte green; **nothing
 reads it** — it is the sea-level slider's food, written and left). Regions so far: `world`
-(180°W–180°E, 90°S–90°N, standard parallel 0, 2000 × 1000, 143 KB, from the 60 arc-second
-grids) and `western-europe` (11°W–20°E, 42°N–58°N — the prompt's 40°–60° trimmed by two
+(180°W–180°E, 90°S–90°N, standard parallel 0, 2000 × 1000, 153 KB, from the 60 arc-second
+grids, exaggeration 3), `western-europe` (11°W–20°E, 42°N–58°N — the prompt's 40°–60° trimmed by two
 degrees each side so the picture runs landscape in a column instead of square; standard
-parallel 50°, 2000 × 1606, 154 KB, from the 30 arc-second grids). A new region is one line:
-`python3 experiments/maps/render.py <name> <west> <south> <east> <north>`, about fifteen
-seconds. **Ice is its own layer** (second pass, 18 Sep): each resolution needs two source
+parallel 50°, 2000 × 1606, 193 KB, from the 30 arc-second grids, exaggeration 1) and `japan`
+(above; 176 KB, exaggeration 1). A new region is one line:
+`python3 experiments/maps/render.py <name> <west> <south> <east> <north> [--exaggeration 1] [--levels 0,-200]`,
+about fifteen seconds. **Contours, as vectors** (third pass, 20 Sep): the coast (0 m) and the
+shelf edge (−200 m) are traced from the sampled height grid with contourpy (marching squares,
+the engine matplotlib uses), simplified with Douglas–Peucker to half a pixel, rings shorter
+than six pixels dropped, converted to longitude and latitude rounded to a tenth of a pixel's
+worth of degrees, and written into the region's JSON as `"contours": {"0": [...], "-200": [...]}`,
+one line per polyline. They made the JSONs the largest files of the set: `world` 189 KB
+(252 coast lines, 6 975 points from 36 795; 232 shelf lines, 5 749 points), `western-europe`
+231 KB (473 coast lines, 11 856 points from 53 240; 24 shelf lines, 1 363 points), `japan`
+210 KB (333 coast lines, 8 087 points; 118 shelf lines, 3 418 points). Netlify serves JSON
+compressed, so the wire cost is roughly a third of that; if the size matters later, a
+coarser rounding or a higher ring floor are the two knobs. Other heights are `--levels`;
+nothing renders them yet. The sea is `#22415f` at −9 000, `#33699a` at −4 000, `#5793b4` at
+−800, `#7fb0cc` at −150, `#93bed7` at the shore (the spec's *the sea stops short of paper*:
+the second pass ran almost to white at the shoreline and met the paper-coloured beach; Japan
+showed it). Shading is 0.35 over land and ice and half that over water, the heights
+multiplied by the region's exaggeration before the slope is taken. **Ice is its own layer** (second pass, 18 Sep): each resolution needs two source
 grids, ice surface and bedrock; the script checks they share one registration and refuses
 otherwise; thickness is surface minus bedrock, and where it is above zero the ice ramp
 paints the pixel. The four source grids (4.4 GB) live in `cw-deploys/_data/`, which
@@ -191,9 +216,10 @@ backstop for the Claude Code session that lands the file.
   columns in hang order** rather than letting CSS multi-column balance them, because with
   three works balancing left a column empty and the wall left-heavy, against the page
   standard's *centred at every width*; the columns are re-dealt only when their count
-  changes on resize. Below a hairline: **Practice** centred, the copper ensō in a copper
+  changes on resize. Below a hairline: **Practice** centred, an ensō in a copper
   frame at 140 px with no visible title (the mark is the name; "Practice" is there for a
-  screen reader), linking to `experiments/trace.html` until the practice queue exists; at
+  screen reader) — since later on 20 Sep the photograph `art/enso-icon-256.png`, temporarily,
+  in place of the mock's drawn copper mark, linking to `experiments/trace.html` until the practice queue exists; at
   the right three plaques of one size, Saved Stories (`saved.html`), Labs (`labs.html`),
   Experiments (`experiments/index.html`), no pictures. **What comes and goes:** a slug in
   `localStorage` `cw.gallery.finished` comes down unless it is also in `cw.gallery.kept`;
@@ -210,7 +236,9 @@ backstop for the Claude Code session that lands the file.
 
 ### active/
 - **`glass-geometry.html`** — compass-and-straightedge construction environment;
-  constructions become stained glass. Reads `../text/geometry-v1.json` for its
+  constructions become stained glass. **Hangs in the gallery since 20 Sep 2026** by
+  `art/geometry-icon-256.png`, a cut from one of its own postcards, which is also its tab
+  icon (the first it has had; stamp bumped the same day, nothing else in the file changed). Reads `../text/geometry-v1.json` for its
   copy, `../art/palettes.json` for palettes, and `../models/` for the built-in
   constructions. **Stands on the shared plane** (`../js/plane.js`, Phases 1–4):
   view state behind the plane's API, world y up, one zoom clamp, the emergent
@@ -465,18 +493,40 @@ backstop for the Claude Code session that lands the file.
   at 3 200, `#e8ecee` at 4 800, `#f2f5f6` at 6 000 (the spec's 4 200 and 5 400 lifted by
   600 m, because at 4 200 the whole Tibetan plateau came out white and read as an ice
   sheet); **ice**, by surface height, `#dfe7ec` at 0, `#eaf1f4` at 1 200, `#f6fafb` at
-  3 000; **sea**, Hokusai with the floor lifted, `#2a4a6a` at −9 000, `#2e6a9e` at −4 000,
-  `#5a9ab8` at −800, `#a8c8dc` at −150, `#c8dce8` at the shore — so the shelf round Britain
-  reads as a pale halo and plains stay buff; hillshade from 315° at 45°, multiplied at
-  `HILLSHADE_STRENGTH = 0.35`, flat ground left exactly its colour, land and ice only
-  (`SHADE_SEA = False`, so the sea stays a clean wash). Needs numpy, scipy, h5py and
-  Pillow; reads the netCDF through h5py so the whole grid never sits in memory. **`map.js`** — `cwMap(container, region, marks)` puts
+  3 000; **sea**, Hokusai with the floor lifted and, since the third pass (20 Sep), stopping short
+  of paper: `#22415f` at −9 000, `#33699a` at −4 000, `#5793b4` at −800, `#7fb0cc` at −150,
+  `#93bed7` at the shore; hillshade from 315° at 45°, multiplied at
+  `HILLSHADE_STRENGTH = 0.35` over land and ice and half that over water, flat ground left
+  exactly its colour, heights times the region's `--exaggeration` before the slope (3 for
+  `world`, 1 otherwise; recorded in the JSON). Contours at `--levels` (0 and −200 by default)
+  traced with contourpy, simplified, and written into the JSON — see `art/maps/`. The
+  longitude/latitude-to-pixel conversion is one named pair, `to_pixel` and `to_lonlat`, the
+  seam a map lab with a globe would replace; `map.js` carries the same pair as
+  `cwMap.toPixel` and `cwMap.toLonLat`. Needs numpy, scipy, h5py, Pillow and contourpy;
+  reads the netCDF through h5py so the whole grid never sits in memory. **`map.js`** — `cwMap(container, region, marks)` puts
   the WebP in the box and an SVG over it; the SVG's viewBox is kept equal to the box's
-  rendered size (a ResizeObserver redraws), so dots are 4 px and names 13 px Georgia
-  whatever the picture's width, with a 2 px halo in paper. Four marks and no others:
+  rendered size (a ResizeObserver redraws), so everything drawn is in screen pixels
+  whatever the picture's width. **The lines** (third pass, 20 Sep): the region's contours
+  are drawn on every map, under the marks and over the picture, the coast `#4a4336` at
+  55 % and the shelf edge `#2f5c78` at 30 %, one pixel with `vector-effect:
+  non-scaling-stroke`, so a window map at 380 px has the same crisp coast as the flow map
+  at 700. Not an option; the earth's, not the story's. **The labels** (same pass): ink
+  `#2a241c` everywhere; under every label a translucent halo, `#f4f1ea` at 70 %, three
+  pixels, round join — built as a separate layer of stroked text under all the glyphs, not
+  an opaque stroke, so one label's halo never fogs its neighbour and it reads as air, not a
+  slab. 15 px for a place the story names (4 px vermilion dot), 13 px for a lesser one
+  (`minor: true`; 3 px `#8a8378` dot), 15 px italic for water (a `note` with `water: true`);
+  `lit` keeps the copper dot. **Placement:** each label tries eight positions round its dot
+  (a note nine, centre first), throws out any that overlap a placed label or the map's edge,
+  and of the rest takes the calmest ground — the standard deviation of the picture's
+  luminance under the box, read once from a 400 px canvas copy — with crowding by other dots
+  and the preferred order as tie-breaks; a mark's own `side` wins whenever it fits (the
+  story chose it), and a label that fits nowhere is dropped rather than overlapped (Lake
+  Biwa beside Kyoto, in the session's test). Places the story names are placed before
+  lesser ones. Four marks and no others:
   `place`, `path`, `region` (a wash at 18 %, `wash: 'grows'` green `#33663f` or `wash:
-  'made'` violet `#5a4a8c`, no third; green if the mark does not say), `note`; everything
-  else drawn is `#c84830`. A place
+  'made'` violet `#5a4a8c`, no third; green if the mark does not say), `note`; a path is
+  `#c84830`. A place
   with text toggles a paper-ground block on tap; with a story, navigates; with neither,
   nothing — no cursor change, no hover, no animation. `reset()` hides the blocks.
   `cwMapWindow(region, marks)` opens the same map at 380 px (the story stage width) in
@@ -488,6 +538,11 @@ backstop for the Claude Code session that lands the file.
   and the road between (by Dover and Strasbourg), and the name Tambora in a sentence
   opening the window. Tested in the built-in browser at 700 and 375 wide: text blocks
   toggle, the window drags and closes, no console errors. **Not tested on an iPad.**
+  The third pass was looked at on all three regions at 700 px, in the window at 380, and on
+  the Hokusai story's own Japan map: the coast is visible at both sizes; the shelf line on
+  the world map reads as the drowned edge of each continent rather than a mess, though it
+  is busiest round the Arctic shelves and the Sunda shelf, where it is also true; every
+  label read over land and water; Japan's coast reads against its shelf.
   Decisions the spec left to the session, taken and named: a tap target of 14 px round
   each dot that has something to give (a 4 px dot is not a finger's target); a path's
   waypoint that is not a marked place is written as a `[lat, lon]` pair (the gazetteer

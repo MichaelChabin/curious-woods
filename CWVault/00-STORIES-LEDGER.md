@@ -21,6 +21,8 @@ Stages, from Publishing-a-Story: **written** (Michael has said yes) → **built*
 *Have You Thought of a Story?* — Frankenstein hub story, 1816. **Draft 1**, 15 Sept. Open: one sentence near the end, a prose anchor for the year, which icon.
 *The Compass Counts to Six* — the rosette; door to Glass Geometry. **Draft 1**, 15 Sept; Michael called it good. Needs the yes, and its icon (his rosette screenshot).
 
+*Hokusai: The Great Wave* — story, paintings series (the first). **Built** and sitting at `experiments/hokusai-the-great-wave.html`, unhung. Michael read it 20 Sept: the words are good, and his revisions are in. Three tools in it: the timeline (1815–1855), the magnifier that doubles as the colour sampler, and three maps in the new left margin. Not yet read on an iPad. Open: whether the margin should carry the context membrane's deeper tone.
+
 ## Benches (interactives that exist but hang nowhere yet)
 
 After the Ice (timeline-bench, with events.json) · Star in a Mirror / Trace bench · Multiply bench · Ruling bench · Sound benches (Jankó, translator, Six Against Five, rhythm roll) · Prime glass, prime tones, pi beads · Necker brain map · Number-theory benches from chat (Ahmes, balance, shapes, subtraction-by-adding).

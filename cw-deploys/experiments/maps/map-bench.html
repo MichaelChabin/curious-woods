@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../../art/map-icon-256.png">
+<link rel="apple-touch-icon" href="../../art/map-icon-256.png">
+<!--
+  map-bench.html — bench: a map in a story. Three cases on one page, so both sizes can
+  be judged together: the world in the flow with Tambora on it; western Europe in the
+  flow with London, Lake Geneva and the road between; and a name in ordinary prose that
+  opens the Tambora map in a window. Base pictures from render.py, in ../../art/maps/;
+  the overlay is map.js beside this file. Spec: CWVault/claude/Spec-Maps.md.
+-->
+<title>Maps — bench</title>
+<style>
+  :root {
+    --cw-parchment: #f4f1e8;
+    --cw-separator: #c8b89a;
+    --cw-ink: #2a2620;
+    --cw-word: #546A80;
+    --cw-copper: #b87333;
+  }
+  html, body { background: var(--cw-parchment); color: var(--cw-ink); }
+  body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
+  article { max-width: 700px; margin: 0 auto; padding: 40px 40px 80px 40px; box-sizing: border-box; }
+  article h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0 0 1.4em 0; }
+  article p { margin: 0 0 1em 0; }
+  .map { margin: 0.4em 0 0.5em 0; }
+  .caption { font-size: 14px; color: #7a6e60; margin: 0 0 2.2em 0; }
+  .place { color: var(--cw-word); cursor: default; }
+  .note { font-size: 14px; color: #7a6e60; border-top: 0.5px solid var(--cw-separator); margin-top: 3em; padding-top: 1.2em; }
+  @media (max-width: 800px) {
+    article { padding: 24px 16px 60px 16px; }
+    body { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<article>
+  <h1>Maps</h1>
+
+  <p>Below is the whole earth. The one dot on it is Tambora.</p>
+  <div class="map" id="map-world"></div>
+  <p class="caption">April 1815.</p>
+
+  <p>The map below is the road to Lake Geneva.</p>
+  <div class="map" id="map-europe"></div>
+  <p class="caption">The summer of 1816.</p>
+
+  <p>Nobody at the lake that summer had heard of <span class="place" id="word-tambora">Tambora</span>, and nobody knew that the cold rain keeping them indoors had come from the far side of the world.</p>
+
+  <p class="note">A bench, not a story. Tap London or Lake Geneva for a line of text; tap the name Tambora in the last sentence for the map in a window.</p>
+</article>
+
+<script src="map.js?v=2026-09-20"></script>
+<script>
+var CW_VERSION = '2026-09-20 417c012'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+
+var TAMBORA = [
+  { type: 'place', lat: -8.25, lon: 118.0, name: 'Tambora', side: 'below',
+    text: 'A mountain on Sumbawa, in what is now Indonesia. In April 1815 it blew its top off.' }
+];
+var EUROPE = [
+  { type: 'place', lat: 51.51, lon: -0.13, name: 'London', text: 'Mary Godwin was eighteen when she left.' },
+  { type: 'place', lat: 46.45, lon: 6.55, name: 'Lake Geneva', side: 'below', text: 'She wrote it here, in a wet summer.' },
+  { type: 'path', places: ['London', [51.13, 1.31], [48.58, 7.75], 'Lake Geneva'] }   /* by Dover and Strasbourg */
+];
+
+Promise.all([cwMap.load('../../art/maps/world.json'), cwMap.load('../../art/maps/western-europe.json')]).then(function (regions) {
+  var world = regions[0], europe = regions[1];
+  window.mapWorld = cwMap(document.getElementById('map-world'), world, TAMBORA);
+  window.mapEurope = cwMap(document.getElementById('map-europe'), europe, EUROPE);
+  document.getElementById('word-tambora').addEventListener('click', function () {
+    cwMapWindow(world, [{ type: 'place', lat: -8.25, lon: 118.0, name: 'Tambora', side: 'below' },
+                        { type: 'place', lat: 46.45, lon: 6.55, name: 'Lake Geneva', side: 'upper-left' }]);
+  });
+}).catch(function (err) { console.error(err); });
+</script>
+</body>
+</html>
