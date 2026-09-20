@@ -11,3 +11,7 @@
 # Three at a Glance was read at its experiments address, then hung on the home page, 16 Sep 2026.
 /experiments/Three_at_Glance.html       /active/three-at-a-glance.html                301
 /experiments/Three_at_Glance            /active/three-at-a-glance.html                301
+
+# The gallery replaced the home page, 20 Sep 2026. The old home page is kept at
+# /experiments/index-old.html; its URL (/) is the gallery's, so no rule sends anyone there.
+# Nothing else moved: saved.html and labs.html are new, and the labs keep their addresses.

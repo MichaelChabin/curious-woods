@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../art/star-icon-256.png">
+  <title>The Curious Woods — the old home page</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #f4f1e8;
+      font-family: Georgia, serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #3D3D3A;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: normal;
+      letter-spacing: 0.04em;
+      color: #546A80;
+      margin-bottom: 48px;
+    }
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    a {
+      font-size: 16px;
+      color: #546A80;
+      text-decoration: none;
+      transition: color 80ms ease;
+    }
+
+    a:hover {
+      color: #3D3D3A;
+    }
+
+    .label {
+      font-size: 12px;
+      color: #a09880;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* a card whose whole face is the link: icon above the title, one target */
+    a.item.card { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    a.item.card .icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      transition: transform 120ms ease;
+    }
+    a.item.card:hover .icon { transform: scale(1.04); }
+    a.item.card .title { font-size: 16px; text-align: center; max-width: 13em; text-wrap: balance; line-height: 1.3; }
+    a.item.card .label { margin-top: 0; }
+
+    /* icon tiles sit side by side; they fall into a column when the screen is narrow */
+    .tiles { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 20px 56px; }
+
+    /* the one item that opens a room rather than a lab */
+    .item.aside { margin-top: 12px; }
+    .item.aside a { font-size: 14px; color: #a09880; }
+    .item.aside a:hover { color: #b87333; }
+
+    footer {
+      position: fixed;
+      bottom: 32px;
+      font-size: 11px;
+      color: #c8b89a;
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>The Curious Woods</h1>
+
+  <nav>
+
+    <div class="item">
+      <a href="../active/glass-geometry.html">Glass Geometry</a>
+      <div class="label">stained glass construction tool</div>
+    </div>
+
+    <div class="item">
+      <a href="../active/glass-multiplication.html">Glass Multiplication</a>
+      <div class="label">prime factors in color, light, and sound</div>
+    </div>
+
+    <div class="tiles">
+
+      <a class="item card" href="../active/about-your-brain.html">
+        <img class="icon" src="../art/brain-icon-256.png" alt="" width="72" height="72">
+        <span class="title">About Your Brain</span>
+        <span class="label">where things happen in the brain, and how fast</span>
+      </a>
+
+      <a class="item card" href="../active/the-man-who-learned-without-knowing.html">
+        <img class="icon" src="../art/star-icon-256.svg" alt="" width="72" height="72">
+        <span class="title">The Man Who Learned Without Knowing</span>
+      </a>
+
+      <a class="item card" href="../active/three-at-a-glance.html">
+        <img class="icon" src="../art/three-dots-icon-256.svg" alt="" width="72" height="72">
+        <span class="title">Three at a Glance</span>
+      </a>
+
+    </div>
+
+    <div class="item aside">
+      <a href="index.html">Experiments</a>
+      <div class="label">sketches and unfinished things</div>
+    </div>
+
+  </nav>
+
+  <footer>curious woods — the home page from 13 to 20 september 2026, kept as the record; the gallery replaced it — <a href="../index.html">the gallery</a></footer>
+
+<script>var CW_VERSION = '2026-09-20 1bfbea6'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
+</body>
+</html>

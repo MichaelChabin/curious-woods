@@ -1,0 +1,29 @@
+[
+  {
+    "slug": "the-man-who-learned-without-knowing",
+    "title": "The Man Who Learned Without Knowing",
+    "href": "active/the-man-who-learned-without-knowing.html",
+    "icon": "art/star-icon-256.svg",
+    "frame": "#b87333",
+    "frameWidth": 10,
+    "size": "medium"
+  },
+  {
+    "slug": "three-at-a-glance",
+    "title": "Three at a Glance",
+    "href": "active/three-at-a-glance.html",
+    "icon": "art/three-dots-icon-256.svg",
+    "frame": "#2a2620",
+    "frameWidth": 7,
+    "size": "small"
+  },
+  {
+    "slug": "about-your-brain",
+    "title": "About Your Brain",
+    "href": "active/about-your-brain.html",
+    "icon": "art/brain-icon-256.png",
+    "frame": "#8a8378",
+    "frameWidth": 8,
+    "size": "medium"
+  }
+]

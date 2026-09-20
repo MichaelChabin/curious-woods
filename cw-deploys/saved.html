@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="art/star-icon-256.png">
+<link rel="apple-touch-icon" href="art/star-icon-256.png">
+<title>Saved Stories</title>
+<style>
+  /* Saved Stories (20 Sept 2026; Spec-Gallery.md, the fixed row). The stories she has kept,
+     as a plain list. Kept is a slug in localStorage under cw.gallery.kept, written by
+     "keep this" on a story page or here — a later step; today nothing writes it. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f4f1e8; font-family: Georgia, serif; color: #3D3D3A; }
+  body { min-height: 100vh; padding: 60px 24px 80px; }
+  .container { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: normal; letter-spacing: 0.04em; color: #546A80; text-align: center; margin-bottom: 48px; }
+  a { color: #546A80; text-decoration: none; transition: color 80ms ease; }
+  a:hover { color: #3D3D3A; }
+  ul { list-style: none; }
+  li { margin-bottom: 20px; text-align: center; font-size: 16px; }
+  .empty { text-align: center; font-size: 14px; color: #a09880; }
+  .back { display: block; margin-top: 56px; text-align: center; font-size: 13px; color: #a09880; letter-spacing: 0.03em; }
+  .back:hover { color: #b87333; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Saved Stories</h1>
+  <ul id="list"></ul>
+  <p class="empty" id="empty" hidden>Nothing here yet.</p>
+  <a class="back" href="index.html">← the gallery</a>
+</div>
+<script>
+var CW_VERSION = '2026-09-20 1bfbea6'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+(function () {
+  var KEPT = 'cw.gallery.kept';
+  var kept = [];
+  try { var v = JSON.parse(localStorage.getItem(KEPT) || '[]'); if (Array.isArray(v)) kept = v; } catch (e) {}
+  var list = document.getElementById('list'), empty = document.getElementById('empty');
+  function show(works) {
+    var mine = works.filter(function (w) { return kept.indexOf(w.slug) >= 0; });
+    if (!mine.length) { empty.hidden = false; return; }
+    mine.forEach(function (w) {
+      var li = document.createElement('li'), a = document.createElement('a');
+      a.href = w.href; a.textContent = w.title; li.appendChild(a); list.appendChild(li);
+    });
+  }
+  if (!kept.length) { empty.hidden = false; return; }
+  fetch('stories/gallery.json', { cache: 'no-cache' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(show)
+    .catch(function (e) { empty.hidden = false; try { console.warn('gallery.json did not load', e); } catch (x) {} });
+})();
+</script>
+</body>
+</html>

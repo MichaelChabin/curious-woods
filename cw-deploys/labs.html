@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="art/star-icon-256.png">
+<link rel="apple-touch-icon" href="art/star-icon-256.png">
+<title>Labs</title>
+<style>
+  /* Labs (20 Sept 2026; Spec-Gallery.md, the fixed row). The labs, listed; no pictures. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f4f1e8; font-family: Georgia, serif; color: #3D3D3A; }
+  body { min-height: 100vh; padding: 60px 24px 80px; }
+  .container { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: normal; letter-spacing: 0.04em; color: #546A80; text-align: center; margin-bottom: 48px; }
+  a { color: #546A80; text-decoration: none; transition: color 80ms ease; }
+  a:hover { color: #3D3D3A; }
+  .item { display: flex; flex-direction: column; align-items: center; margin-bottom: 28px; }
+  .item a { font-size: 16px; }
+  .label { font-size: 12px; color: #a09880; margin-top: 4px; text-align: center; }
+  .back { display: block; margin-top: 56px; text-align: center; font-size: 13px; color: #a09880; letter-spacing: 0.03em; }
+  .back:hover { color: #b87333; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Labs</h1>
+
+  <div class="item">
+    <a href="active/glass-geometry.html">Glass Geometry</a>
+    <div class="label">stained glass construction tool</div>
+  </div>
+
+  <div class="item">
+    <a href="active/glass-multiplication.html">Glass Multiplication</a>
+    <div class="label">prime factors in color, light, and sound</div>
+  </div>
+
+  <a class="back" href="index.html">← the gallery</a>
+</div>
+<script>var CW_VERSION = '2026-09-20 1bfbea6'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
+</body>
+</html>

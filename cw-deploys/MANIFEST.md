@@ -5,7 +5,8 @@ Netlify publishes this folder and nothing above it. Anything outside
 
 ## Folders
 
-**`active/`** — current, shipping. Linked from the main index.
+**`active/`** — current, shipping. Hung in the gallery (`index.html`, by a line in
+`stories/gallery.json`) or listed on `labs.html`.
 No version numbers or dates in filenames here: the file at
 `active/glass-geometry.html` is *the* Glass Geometry, always.
 
@@ -53,6 +54,16 @@ both labs for Save, and by Geometry for the WIP guard and replay Cancel.
 Pages in `active/` and `experiments/` reach them with `../` —
 `../art/palettes.json`, `../models/logs/geo_hexagon_triangle.json`.
 A page that moves between folders must have those paths checked.
+`stories/gallery.json` — **what hangs in the gallery** (20 Sep 2026; `CWVault/20-SPECS/Spec-Gallery.md`):
+a plain array, one entry per work, `{slug, title, href, icon, frame, frameWidth, size}`, hrefs
+and icons relative to the site root. `index.html` and `saved.html` read it; nothing else does.
+Adding a story to the gallery is adding its line here (Publishing-a-Story, stage 4), no other
+edit. Three works today: The Man Who Learned Without Knowing (the star SVG, copper, medium),
+Three at a Glance (the three dots SVG, near-black, small), About Your Brain (the watercolour
+PNG, warm grey, medium). Frame colours are the salon mock's; no story frontmatter declared one.
+**Left out for want of an icon:** Glass Geometry, Glass Multiplication (the two labs have never
+had one; the check has warned since 15 Sep) and The Necker Cube. The labs are reachable from
+`labs.html`; the Necker Cube from the experiments index.
 `stories/events.json` — the Timeline Intro's event pool (8 Sep 2026): 65 world
 events and five story lead-ups, CW years, schema noted inside the file and aligned
 with `Spec-Timeline-Graph.md` §4 where fields overlap. Data the page merely reads;
@@ -73,6 +84,20 @@ since it was hung on 16 Sep (the star's pattern).
 Monthly* volume 11, 1877 (Wikimedia Commons, `PSM V11 D660 William Stanley Jevons.jpg`, public
 domain, author unknown), greyscale, resized to 760 px wide, 184 KB. Read by
 `active/three-at-a-glance.html` beside the paragraph that introduces him; nothing else uses it.
+`art/hokusai-great-wave.jpg` — Katsushika Hokusai, *Under the Wave off Kanagawa*, about
+1830 (19 Sep 2026). The Metropolitan Museum of Art, accession JP1847, image DP141063, open
+access / CC0; the museum's 3 863 px scan resized to 1 800 px wide at quality 85, 452 KB. A
+strong impression with its paper margins, so the unprinted paper is part of what can be
+sampled. Read by `experiments/hokusai-the-great-wave.html` and by nothing else; the colour
+sampler reads its pixels off a canvas, which is why it must be served same-origin.
+`art/hokusai-icon-256.png` — the story's tab and home-screen icon (19 Sep 2026): the crest
+and its claws, cut from the print at 330,150–930,750 and resized to 256 px, per the Rulings'
+"a story's icon is a detail of the story itself".
+`art/maps/japan.webp` — Japan, 123°E–147°E, 29°N–46°N, standard parallel 37.5, 2000 × 1786, 150 KB
+(20 Sep 2026, for the Hokusai story), with `japan.json` and the unused `japan-height.png` beside
+it as the other regions have. Cropped west as far as the Chinese coast for two reasons: so
+Nagasaki's name is not against the picture's edge at 300 px, and so the mainland the Chinese
+ships came from is on the map.
 `art/map-icon-256.png` — the map bench's tab icon (18 Sep 2026): a square of the world
 picture, 30°W to 30°E and 25°N to 85°N, cut from `art/maps/world.webp` and quantised to 96
 colours, 30 KB. Nothing drawn; the earth is the icon.
@@ -153,6 +178,35 @@ that builds a page cannot run the hook, so the five lines are its brief; the hoo
 backstop for the Claude Code session that lands the file.
 
 ## Pages
+
+### the root
+- **`index.html`** — **the gallery**, the child's home page (20 Sep 2026; `Spec-Gallery.md`,
+  the Rulings' *The gallery*; built from `experiments/gallery/home-mock-salon.html`, not
+  redesigned). Reads `stories/gallery.json`, shuffles it (Fisher–Yates, a new hang every
+  visit), and hangs up to nine works: each a link holding a coloured frame (`frame`,
+  `frameWidth`; 10 px default), an 8 px mat (off-white, or the wall colour when the icon is
+  an SVG, i.e. a drawn mark), the picture, and the title centred below, 15 px Georgia, one
+  type for all. `size` sets the width in its column: large 100 %, medium 80 %, small 56 %.
+  The wall is four columns wide, two below 900 px; **the script deals the works into the
+  columns in hang order** rather than letting CSS multi-column balance them, because with
+  three works balancing left a column empty and the wall left-heavy, against the page
+  standard's *centred at every width*; the columns are re-dealt only when their count
+  changes on resize. Below a hairline: **Practice** centred, the copper ensō in a copper
+  frame at 140 px with no visible title (the mark is the name; "Practice" is there for a
+  screen reader), linking to `experiments/trace.html` until the practice queue exists; at
+  the right three plaques of one size, Saved Stories (`saved.html`), Labs (`labs.html`),
+  Experiments (`experiments/index.html`), no pictures. **What comes and goes:** a slug in
+  `localStorage` `cw.gallery.finished` comes down unless it is also in `cw.gallery.kept`;
+  the gallery reads both and writes neither. Today no page writes either key, so nothing
+  comes down; the story page's end-of-text record and the *keep this* control are later
+  steps. Tab icon: the star PNG, because the site has no mark of its own yet.
+- **`saved.html`** — **Saved Stories**: the works whose slugs are in `cw.gallery.kept`, as a
+  plain centred list of titles from `gallery.json`; "Nothing here yet." when there are none
+  (no promise of how to keep one, since the control does not exist). Back link to the gallery.
+- **`labs.html`** — **Labs**: Glass Geometry and Glass Multiplication as words with their
+  one-line labels from the old home page; no pictures. About Your Brain is an official app
+  beside the labs but hangs on the wall as a work, so it is not listed here (open for
+  Michael). Back link to the gallery.
 
 ### active/
 - **`glass-geometry.html`** — compass-and-straightedge construction environment;
@@ -339,6 +393,52 @@ backstop for the Claude Code session that lands the file.
   tested on an iPad, or in Safari by this session.**
 
 ### experiments/
+- **`index-old.html`** — the home page as it stood from 13 to 20 Sep 2026 (two labs as
+  words, three round icons, Experiments as a line), retired when the gallery took
+  `index.html`. Recovered from git with its links rebased one folder up, given a tab icon
+  and a fresh stamp, its footer saying what it is and linking to the gallery. Listed on the
+  experiments index. No redirect: its old URL is the gallery's.
+- **`gallery/`** — the three home-page mocks from the 15–20 Sep chat sessions:
+  `home-mock-salon.html` (19–20 Sep, the salon hang Michael approved and the gallery was
+  built from; sixteen paintings from `art/` with placeholder titles), `home-mock-gallery.html`
+  and `home-mock-scatter.html` (15 Sep, the two hangs it was chosen over; given viewport,
+  icon and a `2026-09-15 mock` stamp on 20 Sep so the check passes). Linked from the
+  experiments index's Old Home Page entry.
+- **`hokusai-the-great-wave.html`** — story: **Hokusai: The Great Wave** (19–20 Sep 2026;
+  `CWVault/claude/Story-Hokusai-The-Great-Wave.md`), the first of the paintings series.
+  `placement: across` **with a left margin** (the 20 Sep ruling): reading column 700 px, a
+  300 px margin to its left with a 28 px gap, 1028 px shell, and everything wider than the
+  column centred on that shell rather than on the column — which is the one sum to get right,
+  because a breakout centred on the reading column hangs off the right of the screen.
+  Below 1068 px the margin collapses and its pictures drop into the flow. Three things in it.
+  **One timeline**, static, at the head of the page: 1815 to 1855, nine events and the print's
+  own marker in copper at 1830 (the long 12 000-year line was built on 19 Sep and cut on 20 Sep
+  on Michael's word — it distracted from the story). Labels hang below the rail on thin leaders
+  and pack into as many rows as they need, lowest row that does not touch a neighbour, each row
+  as tall as its tallest label, so the arrangement survives any event list. **Three maps**
+  through `maps/map.js`: `japan` and `western-europe` in the margin, `world` full-shell after
+  *More*; Nagasaki and Berlin drawn `lit`, the new copper facet. **The print**, with a
+  magnifier and a zoom. Tap it anywhere and a 148 px circle sits there showing the print at
+  four times the size, with a crosshair; drag the circle, or tap elsewhere to move it; *Put the
+  magnifier away* removes it. Pinch (two pointers, or ctrl-wheel and `gesturechange` on a Mac
+  trackpad) zooms the print in place to 6×; once zoomed, one finger pans and `touch-action`
+  goes to `none`, with *The whole print* to get out. **The magnifier is the colour sampler**:
+  before *Sample a colour* it only magnifies, and after it the print moves down the page, widens
+  to the shell, and the same circle also reports the colour under its crosshair — a 5 × 5 pixel
+  average, its hex and `rgb()`, and the nearest of nine pigment anchors with a sentence of
+  chemistry. The anchors are measured off this scan, not taken from a swatch book, because the
+  sheet has faded; match is nearest neighbour in CIE Lab, and where two anchors of **different
+  materials** fall within ΔE 4.5 the tool names both and says the colour alone cannot separate
+  them — which is what happens across most of the sky. Two things worth keeping: the print must
+  carry `draggable="false"` and `-webkit-user-drag: none`, because a native image drag fires
+  `pointercancel` and kills a pan one move in (found on the bench, 20 Sep); and the ctrl-wheel
+  delta is clamped to ±40 so one flick of a trackpad does not jump straight to 6×. Reads
+  `../art/hokusai-great-wave.jpg`, `../art/hokusai-icon-256.png` and `../art/maps/`. The sampler
+  needs the image same-origin, so the page must be served, not opened from disk. No Remember:
+  Maya is absent and the practice queue does not exist. Checked at 1440, 1100, 834 and 390 px —
+  no horizontal scroll, no console errors. **`maps/map.js` must move to `js/` before this page
+  is hung in `active/`**, which is the call Spec-Maps reserved for Michael; the relative path
+  breaks on the move. **Not yet read on an iPad.**
 - **`bead-string.html`** — bench: **Pull a Bead** (18 Sep 2026), the first bench of the
   Bead Lab (`CWVault/claude/Bead-Lab-Ideas.md`). One file, no dependencies. A string of
   beads pinned at both ends; each bead is joined to its two neighbours by a spring and
