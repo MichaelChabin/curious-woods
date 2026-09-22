@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/vermeer-icon-256.png">
+<link rel="apple-touch-icon" href="../art/vermeer-icon-256.png">
+<!--
+  vermeer-girl-with-a-pearl-earring.html — story: Vermeer, Girl with a Pearl Earring.
+  Second of the paintings series (21 Sep 2026). placement: across, with a left margin.
+  Built to Spec-Timeline-and-Map (21 Sep): a date line at the head (the subtitle), no
+  timeline in the story; "Vermeer's World" is written as data in the story file and
+  arrives when the timeline component does. The magnifier and the colour sampler are
+  ../js/sampler.js, shared with the Hokusai page once it is converted.
+  Story text: CWVault/claude/Story-Vermeer-Girl-with-a-Pearl-Earring.md
+  Painting: ../art/vermeer-girl-pearl-earring.jpg — Mauritshuis, The Hague, inv. 670;
+  the museum's scan as published on Wikimedia Commons, public domain; 1400 px wide.
+  Maps: ../js/map.js and ../art/maps/{netherlands,lapis-road,north-sea-and-paris,world}.
+  Hung in active/ on 22 Sep 2026 (Publishing-a-Story, stage 4); the experiments address redirects.
+-->
+<title>Vermeer: Girl with a Pearl Earring — Curious Woods</title>
+<style>
+  :root {
+    --cw-parchment: #f4f1e8;
+    --cw-parchment-deep: #ece7da;
+    --cw-separator: #c8b89a;
+    --cw-ink: #2a2620;
+    --cw-ink-soft: #6b625a;
+    --cw-word: #546A80;
+    --cw-word-hover: #3d5266;
+    --cw-card: #f8f5ee;
+    --text-w: 700px;
+    --rail-w: 300px;
+    --rail-gap: 28px;
+    --shell: 1028px;
+    --aspect: calc(1400 / 1658);   /* the painting's own shape */
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--cw-parchment); color: var(--cw-ink); }
+  body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
+  [hidden] { display: none !important; }
+
+  .page { display: flex; flex-direction: column; align-items: center; padding: 30px 20px 90px; }
+  .shell { width: min(var(--shell), 100%); display: flex; justify-content: flex-end; }
+  article { width: var(--text-w); max-width: 100%; position: relative; }
+
+  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--cw-ink-soft); }
+  h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0; text-wrap: balance; }
+  .subtitle { font-size: 18px; color: var(--cw-ink-soft); font-style: italic; margin: 6px 0 0; font-variant-numeric: tabular-nums; }
+  .titleblock { margin: 10px 0 1.6em; }
+
+  article h2 { font-size: 22px; font-weight: bold; margin: 1.8em 0 .35em; }
+  article p { margin: 0 0 1.4em; }
+  article figure { margin: 0 0 1.4em; }
+  article figcaption { font-size: 13px; color: var(--cw-ink-soft); line-height: 1.35; margin-top: 8px; }
+  article .more { border-top: .5px solid var(--cw-separator); margin-top: 2.4em; padding-top: 1.4em; font-size: 17px; }
+  article .more h2, article .refs h2 { font-size: 17px; margin-top: 1.4em; }
+  article .refs { font-size: 15px; color: var(--cw-ink-soft); margin-top: 1.6em; }
+  article .refs p { margin-bottom: .7em; line-height: 1.35; }
+  .formula { white-space: nowrap; }
+  article .world { margin-top: 2.6em; }
+  article .world h2 { font-size: 24px; font-weight: normal; margin: 0 0 8px; }
+
+  .word { display: inline-block; font-size: 15px; font-weight: bold; color: var(--cw-word);
+          cursor: pointer; user-select: none; background: none; border: 0; padding: 0; font-family: inherit;
+          transition: color 120ms; }
+  .word:hover, .word:focus-visible { color: var(--cw-word-hover); outline: none; }
+
+  /* a picture in the margin (Rulings, 20 Sep) */
+  figure.margin { float: left; width: var(--rail-w); margin: .3em 0 1.2em calc(-1 * (var(--rail-w) + var(--rail-gap)));
+                  font-size: 13px; line-height: 1.35; color: var(--cw-ink-soft); clear: left; }
+  figure.margin img { display: block; width: 100%; height: auto; }
+  figure.margin .map { width: 100%; }
+  figure.margin figcaption { margin-top: 7px; }
+
+  /* the painting: its own shape, never taller than the window */
+  #plateHome { margin: 0 0 1.6em; }
+  #plateHome.folded { display: none; }
+  #plateStage { margin: .4em 0 1.6em; }
+  figure#plate { margin: 0; }
+  #plate .frame { aspect-ratio: 1400 / 1658; width: min(100%, calc(78vh * var(--aspect))); margin: 0 auto;
+                  background: var(--cw-parchment-deep); }
+  #plateStage.open #plate .frame { width: min(100%, calc(88vh * var(--aspect))); }
+  #plate figcaption { text-align: center; }
+
+  .breakout, #plateStage.open {
+    position: relative;
+    left: calc(50% - (var(--rail-w) + var(--rail-gap)) / 2);
+    transform: translateX(-50%);
+    width: min(var(--shell), calc(100vw - 40px));
+  }
+
+  .toolwords { margin: 10px auto 0; display: flex; gap: 26px; flex-wrap: wrap; justify-content: center; }
+
+  /* the tools live in the left column, as in Glass Geometry */
+  .tools { float: left; clear: left; width: var(--rail-w); margin: .35em 0 1em calc(-1 * (var(--rail-w) + var(--rail-gap)));
+           display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  #plateStage.open, .reveal { clear: left; }
+
+  /* View of Delft and the town plan, full width, when she taps the Delft map */
+  figure.margin.tappable .map { cursor: pointer; }
+  .pic .frame { margin: 0 auto; background: var(--cw-parchment-deep); }
+  #viewFrame { aspect-ratio: 1920 / 1601; width: min(100%, calc(84vh * 1920 / 1601)); }
+  #planFrame { aspect-ratio: 2400 / 1887; width: min(100%, calc(88vh * 2400 / 1887)); }
+  .pic figcaption { max-width: 760px; margin: 8px auto 0; }
+
+  .readout { display: grid; grid-template-columns: 86px 1fr; gap: 0 16px; align-items: start;
+             margin: 14px auto 0; padding: 14px 16px; background: var(--cw-card);
+             border-left: 2px solid #b9c3d0; max-width: 760px; }
+  .readout .swatch { width: 86px; height: 86px; border: .5px solid var(--cw-separator); background: transparent; }
+  .readout .nums { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px;
+                   color: var(--cw-ink-soft); margin: 0 0 6px; letter-spacing: .02em; }
+  .readout .what { font-size: 17px; margin: 0 0 4px; }
+  .readout .chem { font-size: 14px; line-height: 1.35; margin: 0 0 4px; color: var(--cw-ink); }
+  .readout .hedge { font-size: 13px; line-height: 1.35; color: var(--cw-ink-soft); font-style: italic; margin: 0; }
+  .readout.idle .what { color: var(--cw-ink-soft); font-style: italic; }
+
+  @media (max-width: 1067px) {
+    figure.margin { float: none; width: 100%; margin: 0 0 1.4em; }
+    .tools { float: none; width: auto; margin: 0 0 12px; flex-direction: row; flex-wrap: wrap; gap: 10px 26px; justify-content: center; }
+    .shell { justify-content: center; }
+    .breakout, #plateStage.open { left: 50%; }
+  }
+  @media (max-width: 760px) {
+    body { font-size: 18px; }
+    .page { padding: 20px 14px 60px; }
+    h1 { font-size: 28px; }
+    #plateStage.open, .breakout { position: static; left: auto; transform: none; width: 100%; }
+    .readout { grid-template-columns: 60px 1fr; gap: 0 12px; }
+    .readout .swatch { width: 60px; height: 60px; }
+  }
+</style>
+</head>
+<body>
+
+<main class="page">
+  <div class="shell">
+  <article>
+
+    <div class="titleblock">
+      <div class="eyebrow">Curious Woods</div>
+      <h1>Vermeer: Girl with a Pearl Earring</h1>
+      <p class="subtitle">~11,665 after the ice, or about 1665.</p>
+    </div>
+
+    <h2>Look at the pearl</h2>
+
+    <div id="plateHome">
+      <div class="tools" id="toolwords">
+        <button class="word" id="dropLoupe" type="button" hidden>Put the magnifier away</button>
+        <button class="word" id="fit" type="button" hidden>The whole picture</button>
+        <button class="word" id="putBack" type="button" hidden>Put it back</button>
+      </div>
+      <figure id="plate">
+        <div class="frame" id="frame">
+          <img id="plateImg" src="../art/vermeer-girl-pearl-earring.jpg"
+               alt="Vermeer's painting of a girl looking over her shoulder, in a blue and yellow turban, with a large pearl at her ear, against a dark background.">
+        </div>
+        <figcaption>Johannes Vermeer, <i>Girl with a Pearl Earring</i>, about 1665. Oil on canvas, 44.5 &times; 39 cm. Mauritshuis, The Hague.</figcaption>
+      </figure>
+      <div class="readout idle" id="readout" hidden>
+        <div class="swatch" id="swatch"></div>
+        <div>
+          <p class="nums" id="nums">&nbsp;</p>
+          <p class="what" id="what">Tap anywhere on the picture.</p>
+          <p class="chem" id="chem"></p>
+          <p class="hedge" id="hedge"></p>
+        </div>
+      </div>
+    </div>
+
+    <p>Tap the pearl, and a magnifier appears there. You can drag the magnifier about, and pinch the picture to make the whole of it bigger.</p>
+
+    <p>Now look at how the pearl hangs from her ear.</p>
+
+    <p>It doesn't. There is no hook, no loop, no wire. The pearl is one bright touch of white paint at the top, a softer grey-white shape underneath where it catches the light from her collar, and nothing joining it to her at all. Your eye does the rest.</p>
+
+    <p>The painting is not big. It is 44.5 centimetres tall and 39 across.</p>
+
+    <p>With the magnifier you can see fine cracks all over her. They are called craquelure — say "krak-LOOR." Oil paint dries very slowly into a hard, thin skin. The canvas underneath swells in damp weather and shrinks in dry, and after three hundred and fifty years of that, the paint cannot bend with it. So it cracks.</p>
+
+    <h2>Who she was</h2>
+
+    <p>Nobody knows.</p>
+
+    <p>She is not a portrait of anyone. Dutch painters of the time made pictures they called <i>tronies</i> — say "tro-NEEZ" — which were faces in costume: an old man, a soldier, a girl in a turban. The turban is part of the costume, the kind of foreign-looking dress Dutch painters liked to put on a model.</p>
+
+    <p>In 2020 the Mauritshuis, the museum in The Hague where she hangs, published what it had found after looking at her with microscopes, X-rays, and scanners that map the chemical elements in the paint. Some of it nobody had seen in three hundred and fifty years. One thing was her eyelashes. Vermeer painted them, tiny hairs around both eyes, too fine to see without a microscope.</p>
+
+    <h2>The painter</h2>
+
+    <p>Johannes Vermeer was born in Delft, a town in Holland, in October 1632, and baptised in its New Church on the last day of that month. Four days later, in the same church, the same thing was done for a baby called Antonie van Leeuwenhoek. Leeuwenhoek grew up to make the best microscopes in the world, and to be the first person to see living things far too small for any eye: tiny animals swimming in a drop of water.</p>
+
+    <p>Vermeer became a painter. When he was twenty-one he joined the painters' guild of Delft, and he could not pay the whole fee. He paid a quarter of it, and the rest three years later. He ran his family's inn on the market square. He married, and he and his wife had a houseful of children.</p>
+
+    <p>He painted slowly. Only about thirty-five paintings by him survive.</p>
+
+    <p>He died in 1675, when he was forty-three, owing money all over town. The next month his widow gave the baker two of his paintings to settle a bill for bread. The bill was for 617 guilders, which was about three years of bread.</p>
+
+    <figure class="margin tappable" id="hollandFig">
+      <div class="map" id="mapHolland"></div>
+      <figcaption>Delft, where he was born, painted, and died. The Hague, where the painting hangs now, is so close it would sit on top of Delft at this size. <span id="hollandHint">Tap the map to see the town.</span></figcaption>
+    </figure>
+
+    <h2>Delft</h2>
+
+    <p>Delft was a town of canals. Beer was brewed there, and cloth was woven, and while Vermeer was growing up something new began to be made there: blue-and-white plates.</p>
+
+    <p>Dutch ships sailed to Asia for pepper and silk, and for porcelain from China — thin, hard, white, and painted in blue. Everybody who could afford it wanted some. Then, in the 1640s, China fell into a war, and the porcelain stopped coming. The potters of Delft could not make real porcelain; they did not have the right clay. So they made a copy. They covered ordinary clay in a glaze made white with tin, and painted it blue with cobalt, in patterns borrowed from the Chinese. In 1647 there were four potteries in Delft. By 1661 there were more than twenty. The plates are still called Delft Blue.</p>
+
+    <div class="reveal" id="delftPictures" hidden>
+      <figure class="breakout pic">
+        <div class="frame" id="viewFrame">
+          <img src="../art/vermeer-view-of-delft.jpg" width="1920" height="1601" loading="lazy"
+               alt="Vermeer's painting of Delft seen across the water: a long row of brick walls, gates and roofs under a big cloudy sky, with one church tower lit by the sun.">
+        </div>
+        <div class="toolwords">
+          <button class="word" data-drop type="button" hidden>Put the magnifier away</button>
+          <button class="word" data-fit type="button" hidden>The whole picture</button>
+        </div>
+        <figcaption>Johannes Vermeer, <i>View of Delft</i>, about 1660–61. Oil on canvas, 96.5 &times; 115.7 cm. Mauritshuis, The Hague. He painted it from across the harbour, on the south side of the town. The tower in the sunlight is the New Church, where he was baptised.</figcaption>
+      </figure>
+      <figure class="breakout pic">
+        <div class="frame" id="planFrame">
+          <img src="../art/delft-plan-blaeu-1649.jpg" width="2400" height="1887" loading="lazy"
+               alt="A coloured plan of Delft from above: red-roofed blocks and green gardens inside a moat, canals running through, ships in a harbour at the right.">
+        </div>
+        <div class="toolwords">
+          <button class="word" data-drop type="button" hidden>Put the magnifier away</button>
+          <button class="word" data-fit type="button" hidden>The whole picture</button>
+        </div>
+        <figcaption>Delft from above, from Joan Blaeu's book of Dutch town plans, 1649. East is at the top. The long open space near the middle is the market square, with the New Church at its top end and the Town Hall at the other; his family's inn was on it. The harbour he painted is on the right, where the ships are. Tap to use the magnifier, or pinch to zoom.</figcaption>
+      </figure>
+    </div>
+
+    <p>One morning in October 1654, when Vermeer was twenty-one, the town's gunpowder store blew up. There were about forty thousand kilograms of powder in it: forty tonnes. More than two hundred houses were flattened. A painter called Carel Fabritius, who lived nearby and had studied with Rembrandt, was killed at his easel.</p>
+
+    <h2>The blue</h2>
+
+    <p>The blue of her turban is called ultramarine. The word means "beyond the sea," because that is where it came from.</p>
+
+    <p>It is a stone, ground to powder: lapis lazuli, a deep blue rock with specks of gold-coloured pyrite in it. In Vermeer's time nearly all of it came from one set of mines high in the mountains of northern Afghanistan. It travelled from there by land and sea to Venice, and from Venice north to painters all over Europe. The map below shows the whole way.</p>
+
+    <figure class="breakout">
+      <div class="map" id="mapLapis"></div>
+      <figcaption>The lapis mines, in copper; Aleppo; Venice, where the stone came into Europe; and Delft. The dashed line is one likely way, not a recorded one. Tap a name.</figcaption>
+    </figure>
+
+    <p>Nobody wrote down the journey of any one stone, so the dashed line is a guess. It goes by camel and mule west across Persia to Aleppo, a great market town in Syria where the caravans met European merchants; by ship across the Mediterranean to Venice; over the Alps by mule; and down the river Rhine by boat. A caravan covered about thirty kilometres a day. Count only the days of travelling and the trip takes about eight months. But nothing went straight through. Caravans waited to fill up, ships waited for the wind, the mountain passes closed for the snow, and the stone was bought and sold along the way. A year or two is a fair guess.</p>
+
+    <p>Grinding it is not enough. Crushed lapis is a dull grey-blue, because most of the stone is not blue. To get the blue out, painters used a recipe written down in Italy around 1400: grind the stone fine, knead the powder into a dough of wax and pine resin and oil, and then knead the dough under water. The blue crystals slip out into the water and sink. The grey stays in the dough. The first washing gives the deepest blue; each one after it is paler, and cheaper.</p>
+
+    <p>The scientists found one more step. Vermeer's lapis had been heated, to somewhere around six hundred degrees, before it was ground. Nobody is sure why. It may have made the stone easier to crush.</p>
+
+    <p>What makes it blue is sulfur. Inside each blue crystal are tiny cages of atoms, and in some of the cages sit three sulfur atoms together, holding one extra electron. That little group of three soaks up orange and yellow light. What comes back to your eye is blue.</p>
+
+    <p>It was the most expensive colour a painter could buy. The best ultramarine cost more than gold. Vermeer, who died owing the baker for three years of bread, used it lavishly. He used it on the turban. He used it — this is what the scientists found — mixed into the shadows of her yellow jacket, where nobody would think to look for blue. There is even a trace of it in her skin.</p>
+
+    <h2>What the colours are made of</h2>
+
+    <div class="tools" id="toolSlot">
+      <button class="word" id="summon" type="button">Sample colours</button>
+    </div>
+
+    <p>You can look for them yourself. Tap <i>Sample colours</i>, and the picture will move down here and get bigger. The magnifier works as it did, and now it also tells you what is under it: the colour, the three numbers your screen uses to make that colour, and what that part of the painting is made of.</p>
+
+    <div id="plateStage"></div>
+
+    <p>The names of the paints are not guesses. The Mauritshuis took samples of this painting, some smaller than a grain of sand, and found out what each part of it is made of. What the magnifier has to guess is which part you are pointing at, from its colour alone — and a dark shadow in the turban and a dark shadow in the jacket can come out close. Where it cannot tell two things apart, it says so.</p>
+
+    <p>Try the dark behind her.</p>
+
+    <h2>The curtain</h2>
+
+    <p>The dark behind her is not black. It was a green curtain.</p>
+
+    <p>The scanners found its folds in the top right corner, and the chemistry found how it was painted: a dark layer first, and over it a thin glaze of yellow from a plant called weld and blue from indigo, which together make green. Colours made from plants fade in the light. Over three and a half centuries the green went, and the dark underneath is what shows.</p>
+
+    <h2>Afterwards</h2>
+
+    <p>For two hundred years after he died, hardly anybody remembered Vermeer's name.</p>
+
+    <p>In 1881 this painting came up at an auction in The Hague, so dirty that it was hard to see what it was. A man who knew what he was looking at, Victor de Stuers, told his neighbour Arnoldus des Tombe to buy it, and did not bid against him. Des Tombe paid two guilders and thirty cents, which is about thirty euros in today's money. When he died he left it to the Mauritshuis, a few kilometres from Delft, where it hangs today.</p>
+
+    <p>Today the painting is one of the most famous in the world. It is priceless.</p>
+
+    <section class="more">
+      <h2>More</h2>
+
+      <p><b>Is it a pearl?</b> Nobody knows that either. A Dutch astrophysicist, Vincent Icke, pointed out in 2014 that a real pearl that big would have been almost unheard of, and that the way it shines is more like a mirror than a pearl. He thought it might be polished tin or silver. The painting only shows a highlight and a reflection, so it cannot settle the question.</p>
+
+      <p><b>The white.</b> The white in her collar and in the pearl is lead white. The lead it was made from was dug out of the ground in England. The scientists could tell by the mix of lead atoms in it, which differs from one mine to another.</p>
+
+      <p><b>Her lips</b> are red lake: a dye made from cochineal, small insects that live on cactus in Mexico, fixed onto a white powder so that it can be used as paint.</p>
+
+      <figure class="margin">
+        <img src="../art/leeuwenhoek-flea.jpg" width="900" height="709" loading="lazy"
+             alt="An engraving of a flea lying on its back, huge and hairy, its six jointed legs in the air, each ending in hooked claws.">
+        <figcaption>A flea, lying on its back, drawn for Leeuwenhoek from what he saw through one of his microscopes.</figcaption>
+      </figure>
+
+      <p><b>Leeuwenhoek again.</b> He was building some of the first useful microscopes. Each one was a single bead of glass, smaller than a pea, set in a little metal plate that you held right up to your eye. The year after Vermeer died, the town put Leeuwenhoek in charge of sorting out what was left of his money and debts. Whether the two men were friends, nobody knows. That same year, 1676, Leeuwenhoek wrote to the Royal Society in London about the tiny animals he had seen in water with pepper in it.</p>
+
+      <p><b>Newton.</b> Vermeer and Isaac Newton lived at the same time. In fact, while Vermeer was painting <i>Girl with a Pearl Earring</i>, Isaac Newton was in England, splitting sunlight into colours with a glass prism, and working out that white light is all the colours at once.</p>
+
+      <p><b>Molière</b> — say "mol-YAIR" — lived at the same time as Vermeer, in Paris, and his plays are still performed. One of the most popular is <i>The Bourgeois Gentleman</i>, from 1670. In it a pretentious man called Monsieur Jourdain pays teachers to turn him into a gentleman, and is delighted to discover that he has been speaking prose all his life. Prose is just ordinary talk: anything that is not poetry.</p>
+
+      <figure class="margin">
+        <img src="../art/rembrandt-night-watch.jpg" width="1200" height="1006" loading="lazy"
+             alt="Rembrandt's huge painting of a company of guards with muskets and a banner, stepping out of shadow into light.">
+        <figcaption>Rembrandt, <i>The Night Watch</i>, 1642. Rijksmuseum, Amsterdam.</figcaption>
+      </figure>
+
+      <p><b>Rembrandt.</b> While Vermeer was painting in Delft, Rembrandt van Rijn was painting in Amsterdam, about sixty kilometres away. He was twenty-six years older than Vermeer, and much more famous. In 1642, when Vermeer was nine, Rembrandt finished his biggest painting: a company of the city's guards stepping out with their muskets and their banner. It is more than four metres wide. Nobody called it <i>The Night Watch</i> until long afterwards. Its varnish went dark over the years, and people took it for a scene at night. Carel Fabritius, the painter killed when the gunpowder blew up, had been one of Rembrandt's pupils. Rembrandt, too, ran out of money, and he died poor in 1669.</p>
+
+      <p><b>The company.</b> The Dutch East India Company, which brought the porcelain, had an office in Delft. The same company ran Dejima, the tiny island in Japan in <i>Hokusai: The Great Wave</i>, for nearly a hundred and sixty years.</p>
+    </section>
+
+    <section class="world breakout">
+      <h2>Johannes Vermeer&rsquo;s World</h2>
+      <div id="vermeerWorld"></div>
+    </section>
+
+    <section class="refs">
+      <h2>References</h2>
+      <p>Abbie Vandivere, Jørgen Wadum and Emilien Leonhardt, "The Girl in the Spotlight: Vermeer at work, his materials and techniques in <i>Girl with a Pearl Earring</i>", <i>Heritage Science</i> 8, 20 (2020). Open access. What every part of the painting is made of, the eyelashes, the curtain.</p>
+      <p>Annelies van Loon and others, "Out of the blue: Vermeer's use of ultramarine in <i>Girl with a Pearl Earring</i>", <i>Heritage Science</i> 8, 25 (2020). Open access. The ultramarine: where it is, where it came from, the heating.</p>
+      <p>Monica Ganio and others, "From lapis lazuli to ultramarine blue: investigating Cennino Cennini's recipe", <i>Pure and Applied Chemistry</i> 90 (2018). The recipe, and the sulfur that makes the blue.</p>
+      <p>Mauritshuis, <i>Girl with a Pearl Earring</i>, inventory 670, and "How much is the Girl worth?" on the museum's site. The 1881 sale.</p>
+      <p>Rijksmuseum, Amsterdam, <i>The Night Watch</i>, SK-C-5. The picture is the museum's photograph as published on Wikimedia Commons, public domain.</p>
+      <p>Antoni van Leeuwenhoek, the development of the flea, figure 7 (a plate from the Latin edition of his letters). Photograph: Wellcome Collection M0016633, CC BY 4.0.</p>
+      <p>Johannes Vermeer, <i>View of Delft</i>, Mauritshuis, inventory 92. The museum's photograph as published on Wikimedia Commons, public domain.</p>
+      <p>Joan Blaeu, <i>Toonneel der steden van de Vereenighde Nederlanden</i> (Amsterdam, 1649), the plan of Delft. The Atlas Van Loon copy, via Wikimedia Commons, public domain.</p>
+      <p>L. Mitchell, "Delft Neighbors — Vermeer and van Leeuwenhoek", <i>Emerging Infectious Diseases</i> 32, 6 (2026).</p>
+    </section>
+
+  </article>
+  </div>
+</main>
+
+<script src="../js/cw-flags.js?v=2026-09-21"></script>
+<script src="../js/map.js?v=2026-09-22"></script>
+<script src="../js/sampler.js?v=2026-09-21"></script>
+<script src="../js/timeline.js?v=2026-09-21b"></script>
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = '2026-09-22 dd793c4';   // date + short commit hash; bump in the same commit as any change
+  console.log('vermeer-girl-with-a-pearl-earring', CW_VERSION);
+  window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
+
+  // ==========================================================================
+  // THE DATA
+  // ==========================================================================
+
+  // Each anchor is a colour measured off THIS scan, at a place where the 2020 study
+  // (Vandivere, Wadum and Leonhardt; van Loon and others) identified the paint.
+  // Same `m` = the same paint at two strengths; the sampler never offers those as a choice.
+  const ANCHORS = [
+    { rgb: [61, 110, 146],  m: 'ultramarine', name: 'ultramarine',
+      chem: 'Lapis lazuli from Afghanistan, ground and washed. The blue is sulfur: three atoms held in a cage inside each crystal, soaking up orange and yellow light. In the shadows it is mixed with chalk, about half and half.' },
+    { rgb: [172, 185, 197], m: 'ultramarine', name: 'ultramarine with lead white',
+      chem: 'The same stone, lightened with white where the light falls on the turban.' },
+    { rgb: [19, 35, 46],    m: 'deepblue',    name: 'ultramarine, laid on dark',
+      chem: 'The deepest folds of the turban. Ultramarine again, over indigo, a blue made from a plant.' },
+    { rgb: [214, 192, 154], m: 'turbanyellow', name: 'the yellow of the turban',
+      chem: 'Earth yellow and lead white. Vermeer glazed a plant yellow over it; most of that has faded.' },
+    { rgb: [191, 154, 102], m: 'turbanyellow', name: 'the yellow of the turban, in shadow',
+      chem: 'Earth yellow and lead white, darker. Vermeer glazed a plant yellow over it; most of that has faded.' },
+    { rgb: [204, 160, 96],  m: 'jacket',      name: 'the yellow of her jacket',
+      chem: 'Lead-tin yellow, made in a furnace from lead and tin, with yellow ochre — an earth coloured by iron.' },
+    { rgb: [105, 87, 36],   m: 'jacketshade', name: 'the shadow of her jacket',
+      chem: 'Yellow ochre, darkened with ultramarine. The most expensive blue in Europe, used where you would never see it.' },
+    { rgb: [242, 206, 190], m: 'skin',        name: 'her skin, in the light',
+      chem: 'Lead white warmed with vermilion — mercury and sulfur — and a little red lake. The scientists found a trace of ultramarine even here.' },
+    { rgb: [202, 168, 139], m: 'skin',        name: 'her skin, in shadow',
+      chem: 'Lead white, vermilion and red lake, with earth colours to darken it.' },
+    { rgb: [142, 110, 87],  m: 'skin',        name: 'her skin, in deep shadow',
+      chem: 'Less white and more earth colour: the same paints, with the light taken out.' },
+    { rgb: [193, 93, 75],   m: 'lips',        name: 'her lips',
+      chem: 'Red lake — a dye from cochineal, insects that live on cactus in Mexico — with lead white.' },
+    { rgb: [241, 239, 227], m: 'white',       name: 'lead white',
+      chem: 'The collar, and the shine on the pearl. Made by letting vinegar fumes eat strips of lead; this lead was dug in England.' },
+    { rgb: [154, 147, 134], m: 'thinwhite',   name: 'lead white, laid thin over the dark',
+      chem: 'So thin that the dark underneath shows through and turns it grey. That is most of the pearl: a thin grey, one bright touch of white on top, and nothing holding it to her ear.' },
+    { rgb: [41, 38, 28],    m: 'curtain',     name: 'the dark behind her — once a green curtain',
+      chem: 'A dark layer of charcoal black, and over it a glaze of weld, a yellow from a plant, and indigo, a blue from a plant. Together they made green. Plant colours fade; the green has gone.' },
+    { rgb: [35, 26, 15],    m: 'curtain',     name: 'the dark behind her — once a green curtain',
+      chem: 'A dark layer of charcoal black, and over it a glaze of weld, a yellow from a plant, and indigo, a blue from a plant. Together they made green. Plant colours fade; the green has gone.' }
+  ];
+
+  const MAPS = [
+    { host: 'mapHolland', region: '../art/maps/netherlands.json', marks: [
+      { type: 'place', lat: 52.01, lon: 4.36, name: 'Delft', lit: true },
+      { type: 'place', lat: 52.37, lon: 4.90, name: 'Amsterdam', minor: true },
+      { type: 'note',  lat: 52.75, lon: 3.40, text: 'the North Sea', water: true }
+    ]},
+    { host: 'mapLapis', region: '../art/maps/lapis-road.json', marks: [
+      { type: 'place', lat: 36.20, lon: 70.80, name: 'the lapis mines', lit: true,
+        text: 'High in the mountains of northern Afghanistan. People have dug lapis here for thousands of years.' },
+      { type: 'place', lat: 36.20, lon: 37.16, name: 'Aleppo',
+        text: 'A great market town. Caravans from Persia met European merchants here.' },
+      { type: 'place', lat: 45.44, lon: 12.33, name: 'Venice',
+        text: 'Where the stone came into Europe. Colour-sellers here sold it to painters everywhere.' },
+      { type: 'place', lat: 52.01, lon: 4.36,  name: 'Delft',
+        text: 'Where some of it ended up: in a turban.' },
+      // How long each stretch might take, worked out from caravan and sailing speeds; they
+      // add up to the "about eight months" in the text.
+      { type: 'note', lat: 30.6, lon: 57.5, text: 'by caravan, about five months' },
+      { type: 'note', lat: 33.2, lon: 29.5, text: 'by ship, one to two months' },
+      { type: 'note', lat: 48.6, lon: 14.0, text: 'over the Alps and down the Rhine, about six weeks' },
+      // One likely way, not a recorded one: across Persia by caravan, Aleppo, the port at
+      // Alexandretta, by sea south of Cyprus and Crete and up the Adriatic, over the Brenner,
+      // down the Rhine. About 3,400 km, 2,800 km and 1,100 km in straight legs.
+      { type: 'path', possible: true, places: [
+        [36.20, 70.80], [36.76, 66.90], [34.35, 62.20], [32.65, 51.67], [33.31, 44.37], [35.30, 40.10],
+        [36.20, 37.16], [36.59, 36.17], [35.90, 35.60], [34.40, 34.00], [34.30, 32.00], [35.20, 28.00],
+        [34.70, 26.00], [34.60, 24.00], [35.80, 22.00], [37.50, 20.50], [39.50, 19.30], [40.40, 18.90],
+        [42.00, 16.80], [43.80, 13.80], [45.10, 12.60], [45.44, 12.33], [45.44, 10.99], [46.07, 11.12],
+        [47.00, 11.50], [47.27, 11.39], [48.37, 10.90], [50.00, 8.27], [50.94, 6.96], [51.84, 5.86],
+        [52.01, 4.36] ] },
+      { type: 'note',  lat: 35.00, lon: 18.00, text: 'the Mediterranean', water: true }
+    ]}
+  ];
+
+  // Johannes Vermeer's World (Spec-Timeline-and-Map). The span follows the ruling: from the
+  // year the man and the town begin together (1632) to the year his world closes (1676),
+  // with the line running to round years either side.
+  const WORLD = {
+    from: 1630, to: 1680,
+    region: '../art/maps/north-sea-and-paris.json',
+    world: '../art/maps/world.json',
+    places: {
+      delft:       { name: 'Delft',       lat: 52.01, lon: 4.36,  side: 'person' },
+      amsterdam:   { name: 'Amsterdam',   lat: 52.37, lon: 4.90,  side: 'world' },
+      paris:       { name: 'Paris',       lat: 48.86, lon: 2.35,  side: 'world' },
+      london:      { name: 'London',      lat: 51.51, lon: -0.13, side: 'world' },
+      woolsthorpe: { name: 'Woolsthorpe', lat: 52.81, lon: -0.63, side: 'world' },
+      utrecht:     { name: 'Utrecht',     lat: 52.09, lon: 5.12,  side: 'world' },
+      jingdezhen:  { name: 'Jingdezhen',  lat: 29.27, lon: 117.18, side: 'world', card: 'east', cardTop: 38,
+                     far: 'About 8,900 km to the east, in China',
+                     bearing: [{ name: 'Delft', lat: 52.01, lon: 4.36 }] },
+      // Italy is south-east: the card sits on the east edge, low, which is as near as a card gets.
+      arcetri:     { name: 'Arcetri, near Florence', lat: 43.75, lon: 11.25, side: 'world', card: 'east', cardTop: 68,
+                     far: 'About 1,050 km to the south-east, in Italy',
+                     bearing: [{ name: 'Delft', lat: 52.01, lon: 4.36 }] }
+    },
+    routes: { letter: [[52.01, 4.36], [51.51, -0.13]] },
+    events: [
+      { id: 'born', year: 1632.83, side: 'person', label: 'Born', place: 'delft',
+        when: '1632 · Delft', title: 'Baptised in the New Church',
+        text: 'On the last day of October 1632. Four days later the same church baptised another baby, Antonie van Leeuwenhoek.' },
+      { id: 'leeuwenhoek', year: 1632.84, side: 'world', label: 'Leeuwenhoek born', place: 'delft',
+        when: '1632 · Delft', title: 'The boy who would see the invisible',
+        text: 'Baptised four days after Vermeer, in the same church. He grew up to make the best microscopes of his time, and to see tiny animals swimming in a drop of water.' },
+      { id: 'galileo', year: 1642.02, side: 'world', label: 'Galileo dies', place: 'arcetri',
+        when: '1642 · Arcetri, near Florence', title: 'Galileo dies, and Newton is born',
+        text: 'Galileo Galilei died in January 1642, in his house in the hills outside Florence. He had been one of the first to turn a telescope on the sky, and he saw mountains on the Moon. For saying that the Earth goes round the Sun, the Church had kept him shut up there for the last eight and a half years of his life. Isaac Newton was born the same year.' },
+      { id: 'nightwatch', year: 1642, side: 'world', label: 'Rembrandt paints The Night Watch', place: 'amsterdam',
+        when: '1642 · Amsterdam', title: 'The Night Watch',
+        text: 'Rembrandt’s biggest painting: a company of Amsterdam’s guards stepping out with their muskets and their banner, more than four metres wide. Vermeer was nine.' },
+      { id: 'newtonborn', year: 1642.98, side: 'world', label: 'Newton born', place: 'woolsthorpe',
+        when: '1642 · Woolsthorpe', title: 'Isaac Newton is born',
+        text: 'On Christmas Day 1642, on a farm at Woolsthorpe in England. In the course of his lifetime he would work out the laws of motion, the law of gravity, and calculus.' },
+      { id: 'ming', year: 1644, side: 'world', label: 'Chinese porcelain stops', place: 'jingdezhen',
+        when: '1644 · China', title: 'A war in China',
+        text: 'The Ming dynasty fell, and the blue-and-white porcelain the Dutch had been buying, much of it made in the kiln town of Jingdezhen, stopped coming. The potters of Delft saw their chance.' },
+      { id: 'potters', year: 1647, side: 'world', label: 'Delft potters copy it', place: 'delft',
+        when: '1647 · Delft', title: 'Four potteries, then twenty',
+        text: 'Ordinary clay under a glaze made white with tin, painted with cobalt blue in Chinese patterns. Four potteries in 1647; more than twenty by 1661.' },
+      { id: 'guild', year: 1653.99, side: 'person', label: "Joins the painters' guild", place: 'delft',
+        when: '1653 · Delft', title: 'A quarter of the fee',
+        text: 'He was twenty-one, and could pay only a quarter of the fee to join. He paid the rest three years later.' },
+      { id: 'thunderclap', year: 1654.78, side: 'world', label: 'The gunpowder store explodes', place: 'delft',
+        when: '1654 · Delft', title: 'The Delft Thunderclap',
+        text: 'About forty thousand kilograms of gunpowder. More than two hundred houses flattened. The painter Carel Fabritius, who had studied with Rembrandt, died at his easel.' },
+      { id: 'girl', year: 1665, side: 'person', focus: true, label: 'Girl with a Pearl Earring', place: 'delft',
+        when: 'about 1665 · Delft', title: 'The girl who was nobody',
+        text: 'A face in costume, not a portrait. A pearl with no hook, and a turban painted in a blue that cost more than gold.' },
+      { id: 'plague', year: 1665.5, side: 'world', label: 'Plague in London', place: 'london',
+        when: '1665 · London', title: 'The Great Plague',
+        text: 'Plague killed about a hundred thousand people in London, something like one in four. Cambridge University shut its doors, and a young Isaac Newton went home to the farm where he was born.' },
+      { id: 'newton', year: 1666, side: 'world', label: "Newton's prism", place: 'woolsthorpe',
+        when: '1666 · Woolsthorpe', title: 'White light is all the colours',
+        text: 'While Vermeer was painting, Newton was splitting sunlight into colours with a glass prism, and working out that white light is all of them at once.' },
+      { id: 'moliere', year: 1670.8, side: 'world', label: 'Molière’s The Bourgeois Gentleman', place: 'paris',
+        when: '1670 · Paris', title: 'Speaking prose all his life',
+        text: 'Molière’s play was first performed for the King of France in October 1670, and then in Paris. In it Monsieur Jourdain is delighted to discover that he has been speaking prose all his life.' },
+      { id: 'disaster', year: 1672.5, side: 'world', label: 'France invades', place: 'utrecht',
+        when: '1672 · the Dutch Republic', title: 'The disaster year',
+        text: 'The armies of the King of France marched into the Republic and took Utrecht. Nobody was buying paintings, and Vermeer’s debts began to pile up.' },
+      { id: 'dies', year: 1675.96, side: 'person', label: 'Dies, aged 43', place: 'delft',
+        when: '1675 · Delft', title: 'Owing money all over town',
+        text: 'December 1675. He was buried in the Old Church.' },
+      { id: 'baker', year: 1676.07, side: 'person', label: 'The baker is paid', place: 'delft',
+        when: '1676 · Delft', title: 'Two paintings for three years of bread',
+        text: 'His widow gave the baker two of his paintings to settle a bill for bread of 617 guilders.' },
+      { id: 'letter', year: 1676.77, side: 'world', label: 'Tiny animals in pepper water', place: 'delft', route: 'letter',
+        when: '1676 · Delft to London', title: 'Leeuwenhoek writes to London',
+        text: 'The same year the town made him trustee of what Vermeer left, Leeuwenhoek wrote to the Royal Society in London about tiny animals swimming in water that had pepper in it.' }
+    ]
+  };
+  if (typeof cwWorld === 'function') cwWorld(document.getElementById('vermeerWorld'), WORLD);
+
+  // ==========================================================================
+  // THE MAPS
+  // ==========================================================================
+  if (typeof cwMap === 'function') {
+    for (const m of MAPS) {
+      const host = document.getElementById(m.host);
+      if (!host) continue;
+      cwMap.load(m.region).then(r => cwMap(host, r, m.marks))
+        .catch(err => { console.warn('map', m.host, err); host.closest('figure').remove(); });
+    }
+  }
+
+  // ==========================================================================
+  // DELFT: tap the margin map and the town appears, full width
+  // ==========================================================================
+  const hollandFig = document.getElementById('hollandFig');
+  const delftPics = document.getElementById('delftPictures');
+  const hollandHint = document.getElementById('hollandHint');
+  const picTools = [];
+  hollandFig.querySelector('.map').addEventListener('click', () => {
+    const open = delftPics.hidden;
+    delftPics.hidden = !open;
+    hollandHint.textContent = open ? 'Tap the map again to put the pictures away.' : 'Tap the map to see the town.';
+    if (open) {
+      if (!picTools.length) {
+        delftPics.querySelectorAll('figure.pic').forEach(fig => {
+          const f = fig.querySelector('.frame');
+          const d = fig.querySelector('[data-drop]'), z = fig.querySelector('[data-fit]');
+          const t = cwSampler(f, [], { onState: s => { d.hidden = !s.loupe; z.hidden = !s.zoomed; } });
+          d.addEventListener('click', () => t.drop()); z.addEventListener('click', () => t.fit());
+          picTools.push(t);
+        });
+      }
+      requestAnimationFrame(() => delftPics.scrollIntoView({ block: 'start', behavior: 'smooth' }));
+    } else {
+      picTools.forEach(t => { t.drop(); t.fit(); });
+    }
+  });
+
+  // ==========================================================================
+  // THE PAINTING: magnifier, zoom, colours
+  // ==========================================================================
+  const plate = document.getElementById('plate');
+  const frame = document.getElementById('frame');
+  const home = document.getElementById('plateHome');
+  const stage = document.getElementById('plateStage');
+  const readout = document.getElementById('readout');
+  const toolwords = document.getElementById('toolwords');
+  const el = id => document.getElementById(id);
+  const wDrop = el('dropLoupe'), wFit = el('fit'), wBack = el('putBack'), wSummon = el('summon');
+  const toolSlot = el('toolSlot');
+
+  const tool = cwSampler(frame, ANCHORS, {
+    onState: s => { wDrop.hidden = !s.loupe; wFit.hidden = !s.zoomed; },
+    onSample: s => {
+      if (s.error) { el('what').textContent = 'The browser will not let the page read this picture.';
+                     el('chem').textContent = 'Open the page from the site rather than from a file on disk.';
+                     el('hedge').textContent = ''; return; }
+      readout.classList.remove('idle');
+      el('swatch').style.background = s.hex;
+      el('nums').textContent = s.hex + '   rgb(' + s.rgb.join(', ') + ')';
+      el('what').textContent = s.what; el('chem').textContent = s.chem; el('hedge').textContent = s.hedge;
+    }
+  });
+  wDrop.addEventListener('click', () => tool.drop());
+  wFit.addEventListener('click', () => tool.fit());
+
+  wSummon.addEventListener('click', () => {
+    toolSlot.appendChild(wFit); toolSlot.appendChild(wDrop); toolSlot.appendChild(wBack);   // the tool's words follow it, still in the left column
+    stage.appendChild(plate); stage.appendChild(readout);
+    stage.classList.add('open'); home.classList.add('folded');
+    readout.hidden = false; wBack.hidden = false; wSummon.hidden = true;
+    readout.classList.add('idle');
+    el('what').textContent = 'Tap anywhere on the picture.';
+    el('chem').textContent = ''; el('hedge').textContent = ''; el('nums').innerHTML = '&nbsp;';
+    el('swatch').style.background = 'transparent';
+    tool.arm(true); tool.repaint();
+  });
+  wBack.addEventListener('click', () => {
+    stage.classList.remove('open'); home.classList.remove('folded');
+    toolwords.appendChild(wDrop); toolwords.appendChild(wFit); toolwords.appendChild(wBack);
+    home.appendChild(plate); home.appendChild(readout);
+    readout.hidden = true; wBack.hidden = true; wSummon.hidden = false;
+    tool.arm(false); tool.repaint();
+    requestAnimationFrame(() => plate.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+  });
+})();
+</script>
+</body>
+</html>

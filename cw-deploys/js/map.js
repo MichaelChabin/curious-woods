@@ -8,11 +8,15 @@
 
    `region` is the JSON render.py writes: corners, standard parallel, pixel size, image,
    and the contours. `marks` is an array of four kinds and no others:
-     { type:'place',  lat, lon, name, text?, story?, side?, lit?, minor? }  a dot and a name
-     { type:'path',   places:[ name | [lat, lon], ... ] }       straight segments
+     { type:'place',  lat, lon, name, text?, story?, side?, lit?, minor?, world?, on?, onTap? }  a dot and a name
+     { type:'path',   places:[ name | [lat, lon], ... ], possible? }  straight segments; `possible` dashes them
      { type:'region', points:[ [lat, lon], ... ], wash }        a wash, no outline: 'grows' (green) or 'made' (violet)
      { type:'note',   lat, lon, text, side?, water? }           words at a point, no dot
    Latitude and longitude come in; pixels come out.
+
+   A place's text opens in a small block beside its dot. One block is open at a time, and
+   any other action — a tap anywhere else on the page, a key — closes it (21 Sep 2026).
+   Tapping the same dot again closes it too.
 
    The lines (third pass, 20 Sep 2026). The coast (the contour at 0 m) and the shelf edge
    (−200 m) come with the region and are drawn on every map, under the marks and over the
@@ -29,6 +33,12 @@
    crowded by other labels and on the most even ground; a label that would overlap another
    is dropped rather than drawn. A mark's own `side` is honoured when it fits.
 
+   For a timeline over a map (Spec-Timeline-and-Map, 21 Sep 2026): `world` draws the dot in
+   slate, the colour of the world's events, where a place the person belongs to stays
+   vermilion; `on` marks the place of the selected event, a larger vermilion dot with a
+   glow and a bold name; `onTap(mark)` is called when the place is tapped, and the tap goes
+   no further, so a page can clear its selection on a tap that lands on empty ground.
+
    Nothing responds to hover. Classic script, no dependencies. */
 (function () {
   'use strict';
@@ -40,6 +50,7 @@
   var HALO_ALPHA = 0.7;
   var HALO_PX = 3;
   var GREY = '#8a8378';                   // a lesser place's dot
+  var SLATE = '#3f5a78';                  // a place that belongs to the world's events, not the person's
   var PAPER = '#f0ece0';                  // the ground of a text block
   var DOT = 4;                            // screen pixels, whatever the picture's size
   var DOT_MINOR = 3;
@@ -62,6 +73,7 @@
     '.cw-map svg text{font-family:' + FONT + ';font-size:' + SIZE + 'px;fill:' + INK + ';pointer-events:none;user-select:none;-webkit-user-select:none;}',
     '.cw-map svg text.cw-minor{font-size:' + SIZE_MINOR + 'px;}',
     '.cw-map svg text.cw-water{font-style:italic;}',
+    '.cw-map svg text.cw-on{font-weight:bold;}',
     '.cw-map svg g.cw-halos text{fill:none;stroke:' + HALO + ';stroke-width:' + (2 * HALO_PX) + 'px;stroke-linejoin:round;stroke-linecap:round;}',
     '.cw-map svg g.cw-halos{opacity:' + HALO_ALPHA + ';}',
     '.cw-map .cw-map-text{position:absolute;font-family:' + FONT + ';font-size:' + SIZE_TEXT + 'px;line-height:1.35;color:' + INK + ';background:' + PAPER + ';padding:5px 8px;max-width:220px;pointer-events:none;user-select:none;-webkit-user-select:none;}',
@@ -242,7 +254,7 @@
 
       var placed = [], dots = [];
       marks.forEach(function (m) {
-        if (m.type === 'place') { var q = toPixel(region, m.lon, m.lat, w, h); dots.push({ x: q.x, y: q.y, r: m.minor ? DOT_MINOR : (m.lit ? DOT + 1.5 : DOT) }); }
+        if (m.type === 'place') { var q = toPixel(region, m.lon, m.lat, w, h); dots.push({ x: q.x, y: q.y, r: m.on ? DOT + 2.5 : (m.minor ? DOT_MINOR : (m.lit ? DOT + 1.5 : DOT)) }); }
       });
       var order = ['region', 'path', 'place', 'note'];
       order.forEach(function (kind) {
@@ -292,28 +304,36 @@
           var r = toPixel(region, lon, lat, w, h);
           seg.push(r.x + ',' + r.y);
         });
-        layer.appendChild(el('polyline', { points: seg.join(' '), fill: 'none', stroke: VERMILION, 'stroke-width': 1.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', 'vector-effect': 'non-scaling-stroke' }));
+        var line = { points: seg.join(' '), fill: 'none', stroke: VERMILION, 'stroke-width': 1.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', 'vector-effect': 'non-scaling-stroke' };
+        if (m.possible) line['stroke-dasharray'] = '5 4';
+        layer.appendChild(el('polyline', line));
       } else if (m.type === 'note') {
         p = toPixel(region, m.lon, m.lat, w, h);
         box = place(p, m.text || '', SIZE, !!m.water, 0, m.side, placed, dots, w, h);
         if (box) { placed.push(box); label(m.text || '', box, m.water ? 'cw-water' : null, halosLayer, glyphLayer); }
       } else if (m.type === 'place') {
         p = toPixel(region, m.lon, m.lat, w, h);
-        var r = m.minor ? DOT_MINOR : (m.lit ? DOT + 1.5 : DOT);
+        var r = m.on ? DOT + 2.5 : (m.minor ? DOT_MINOR : (m.lit ? DOT + 1.5 : DOT));
         var g = el('g', {});
-        if (m.text || m.story) {
+        if (m.text || m.story || m.onTap) {
           g.appendChild(el('circle', { cx: p.x, cy: p.y, r: TAP, fill: 'transparent', stroke: 'none' }));
         }
-        g.appendChild(el('circle', { cx: p.x, cy: p.y, r: r, fill: m.minor ? GREY : (m.lit ? COPPER : VERMILION), stroke: 'none' }));
-        if (m.story) {
+        if (m.on) g.appendChild(el('circle', { cx: p.x, cy: p.y, r: 12, fill: VERMILION, 'fill-opacity': 0.18, stroke: 'none' }));
+        g.appendChild(el('circle', { cx: p.x, cy: p.y, r: r, fill: m.on ? VERMILION : m.minor ? GREY : (m.lit ? COPPER : (m.world ? SLATE : VERMILION)), stroke: 'none' }));
+        if (m.onTap) {
+          g.style.cursor = 'pointer';
+          g.addEventListener('click', function (ev) { ev.stopPropagation(); m.onTap(m); });
+        } else if (m.story) {
           g.addEventListener('click', function () { window.location.href = m.story; });
         } else if (m.text) {
+          g.__cwMark = m;
           g.addEventListener('click', function () { toggleText(m, p); });
         }
         layer.appendChild(g);
         var size = m.minor ? SIZE_MINOR : SIZE;
         box = place(p, m.name || '', size, false, r, m.side, placed, dots, w, h);
-        if (box) { placed.push(box); label(m.name || '', box, m.minor ? 'cw-minor' : null, halosLayer, glyphLayer); }
+        var cls = [m.minor ? 'cw-minor' : '', m.on ? 'cw-on' : ''].join(' ').trim() || null;
+        if (box) { placed.push(box); label(m.name || '', box, cls, halosLayer, glyphLayer); }
       }
     }
 
@@ -321,6 +341,7 @@
       for (var i = 0; i < shown.length; i++) {
         if (shown[i].mark === m) { container.removeChild(shown[i].div); shown.splice(i, 1); return; }
       }
+      reset();                                   // one block open at a time
       var div = document.createElement('div');
       div.className = 'cw-map-text';
       div.textContent = m.text;
@@ -345,6 +366,18 @@
       shown.forEach(function (s) { if (s.div.parentNode) s.div.parentNode.removeChild(s.div); });
       shown = [];
     }
+
+    // Any other action closes an open block: a press anywhere but on the dot that opened
+    // it (that dot's own click closes it), or a key. Capture phase, so nothing can swallow it.
+    document.addEventListener('pointerdown', function (ev) {
+      if (!shown.length) return;
+      var t = ev.target;
+      for (var n = t; n; n = n.parentNode) {
+        if (n.__cwMark) { for (var i = 0; i < shown.length; i++) if (shown[i].mark === n.__cwMark) return; break; }
+      }
+      reset();
+    }, true);
+    document.addEventListener('keydown', function () { if (shown.length) reset(); }, true);
 
     if (typeof ResizeObserver !== 'undefined') {
       new ResizeObserver(function () { draw(); }).observe(container);

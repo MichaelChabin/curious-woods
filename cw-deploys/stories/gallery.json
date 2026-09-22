@@ -43,5 +43,14 @@
     "frame": "#2e4a63",
     "frameWidth": 12,
     "size": "large"
+  },
+  {
+    "slug": "vermeer-girl-with-a-pearl-earring",
+    "title": "Vermeer: Girl with a Pearl Earring",
+    "href": "active/vermeer-girl-with-a-pearl-earring.html",
+    "picture": "art/vermeer-girl-with-a-pearl-earring-gallery.jpg",
+    "frame": "#3d6e92",
+    "frameWidth": 12,
+    "size": "medium"
   }
 ]

@@ -22,6 +22,7 @@ Stages, from Publishing-a-Story: **written** (Michael has said yes) → **built*
 *The Compass Counts to Six* — the rosette; door to Glass Geometry. **Draft 1**, 15 Sept; Michael called it good. Needs the yes, and its icon (his rosette screenshot).
 
 *Hokusai: The Great Wave* — story, paintings series (the first). **Hung** 20 Sept at `active/hokusai-the-great-wave.html` (the experiments address redirects), in the gallery by its crest-and-claws icon in the print's deepest blue. Michael read it 20 Sept: the words are good, and his revisions are in. Three tools in it: the timeline (1815–1855), the magnifier that doubles as the colour sampler, and three maps in the new left margin. Not yet read on an iPad. Open: whether the margin should carry the context membrane's deeper tone.
+*Vermeer: Girl with a Pearl Earring* — story, paintings series (the second). **Live** 22 Sept at `active/vermeer-girl-with-a-pearl-earring.html` (the experiments address redirects), in the gallery whole and tall in the turban's ultramarine; Michael saw it 21 Sept ("This is beautiful"), the words not yet read on an iPad. First built to Spec-Timeline-and-Map; *Vermeer's World* is data in the story file, waiting on the timeline component. Uses the new `js/sampler.js`.
 
 ## Benches (interactives that exist but hang nowhere yet)
 
