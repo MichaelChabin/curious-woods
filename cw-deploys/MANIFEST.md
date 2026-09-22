@@ -26,7 +26,7 @@ build step. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael
 the Hokusai story called it)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
 the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
 `experiments/maps/`, beside `render.py`, which makes the pictures it draws on. Loaded with a
-version query by `active/hokusai-the-great-wave.html` and `experiments/maps/map-bench.html`. `cw-flags.js` (15 Sep 2026) — feature flags, `CW.flags = { maya: false }`, loaded first on every `active/` page with a version query; the Maya flag is all it holds, because nothing else about Maya exists yet, and Remember on story pages reads it (visible always with Maya; fades in as the text's reference nears without her). **`cw-number.js` — how a number is written, everywhere** (extracted
+version query by `active/hokusai-the-great-wave.html`, `experiments/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. **`sampler.js` (21 Sep 2026)** — the magnifier and the colour sampler for any picture, `cwSampler(frame, anchors, opts)` → `{ arm, fit, drop, repaint }`; the Colour and Pixels shelf's first tool (Ruling-Labs-and-the-Plane, proposed). Pulled out of the Hokusai page, which still carries its own inline copy until it is converted to *Hokusai's World*. The page gives it the picture's own colour anchors (`{rgb, m, name, chem}`, measured off that scan) and wires its own words and readout; the script owns the gestures — tap puts the magnifier there wherever the tap lands (on the magnifier or off it), a drag that starts on the magnifier slides it (the circle alone is `touch-action: none`, so a finger elsewhere still scrolls the page), pinch or ctrl-wheel zooms to 6×, one finger pans once zoomed. Two anchors of one material are never offered as a choice; two of different materials within ΔE 4.5 are named together. Loaded with a version query by `experiments/vermeer-girl-with-a-pearl-earring.html`. **`timeline.js` (21 Sep 2026)** — a timeline over a map, *‹Name›'s World*, per `CWVault/claude/Spec-Timeline-and-Map.md`: `cwTimeline(svg, o)` for the two-sided line alone and `cwWorld(host, data)` for the whole pair — the line, the map (through `map.js`, not a second map engine), far-away cards and the panel. The person's events above the line in ink, the world's below in slate, the focus in copper, the selection in vermilion on both; labels pack into the nearest free row; nearest-mark picking at 20 px for a mouse and 32 for a finger, a label scoring ten worse than a dot; tapping a place lists all its events, oldest first; tapping what is selected or empty ground clears; a route draws only while its own event alone is selected; a far place is a card on the side where it lies (under the map on a phone, where over it the card hid the places that matter), and tapping it opens the world map in `cwMapWindow`. Widths come from `getBoundingClientRect`, per the spec's warning. The spec named `experiments/maps/timeline.js`; it is in `js/` beside `map.js` so a story can be hung without its path breaking. First used by `experiments/vermeer-girl-with-a-pearl-earring.html`; the Frankenstein bench and the Hokusai conversion are still to come. `cw-flags.js` (15 Sep 2026) — feature flags, `CW.flags = { maya: false }`, loaded first on every `active/` page with a version query; the Maya flag is all it holds, because nothing else about Maya exists yet, and Remember on story pages reads it (visible always with Maya; fades in as the text's reference nears without her). **`cw-number.js` — how a number is written, everywhere** (extracted
 2 Sep 2026 on Michael's instruction that the benches and labs all write numbers
 the same way; the third shared file, and the first added since Phase 4). Until
 it existed there were four dialects: plane.js grouped thousands for tick labels,
@@ -59,13 +59,18 @@ Pages in `active/` and `experiments/` reach them with `../` —
 `../art/palettes.json`, `../models/logs/geo_hexagon_triangle.json`.
 A page that moves between folders must have those paths checked.
 `stories/gallery.json` — **what hangs in the gallery** (20 Sep 2026; `CWVault/20-SPECS/Spec-Gallery.md`):
-a plain array, one entry per work, `{slug, title, href, icon, frame, frameWidth, size}`, hrefs
-and icons relative to the site root. `index.html` and `saved.html` read it; nothing else does.
+a plain array, one entry per work, `{slug, title, href, picture, frame, frameWidth, size}`
+(`icon` was the field's name until 21 Sep and the page still reads it), hrefs and pictures
+relative to the site root. **A picture hangs whole, at its own proportions** (21 Sep): the two
+paintings point at their `-gallery.jpg` files, large; the three drawn marks are square and hang
+as they are. `index.html` and `saved.html` read it; nothing else does.
 Adding a story to the gallery is adding its line here (Publishing-a-Story, stage 4), no other
 edit. Three works today: The Man Who Learned Without Knowing (the star SVG, copper, medium),
 Three at a Glance (the three dots SVG, near-black, small), About Your Brain (the watercolour
-PNG, warm grey, medium), and since later the same day Glass Geometry (`art/geometry-icon-256.png`,
-deep blue frame 14 px, large — the labs hang large). Frame colours are the salon mock's; no story
+PNG, warm grey, medium), and since later the same day Glass Geometry, **titled *Stained Glass* on the wall since 22 Sep**
+(deep blue frame 14 px, large — the labs hang large; `art/glass-geometry-gallery.jpg`, since
+22 Sep one of its own constructions, whole), then Hokusai: The Great Wave (20 Sep; since 21 Sep the whole print
+`art/hokusai-the-great-wave-gallery.jpg`, large, in the print's deepest blue `#2e4a63`). Frame colours are the salon mock's; no story
 frontmatter declared one. **Left out for want of an icon:** Glass Multiplication (no icon yet;
 the check has warned since 15 Sep) and The Necker Cube. The lab is reachable from `labs.html`;
 the Necker Cube from the experiments index.
@@ -85,10 +90,19 @@ home-screen icon, because Safari wants a PNG there.
 (16 Sep 2026), from *Three at a Glance*'s frontmatter; the story's tab and home-screen icon.
 `art/three-dots-icon-256.svg` is the same mark as vector, the main index's tile for the story
 since it was hung on 16 Sep (the star's pattern).
-`art/geometry-icon-256.png` — **Glass Geometry's icon** (20 Sep 2026): a square cut from
-Michael's postcard *Abstraction 1* (a Glass Geometry construction: a blue lens, a red sliver,
-a green and a blue triangle meeting at a point), the 900 px square at 575,170 of the 1800 × 1200
-render, resized to 256; no text, all four pieces. The lab's tab icon and its picture on the wall.
+`art/geometry-icon-256.png` — **Glass Geometry's tab icon** (20 Sep 2026; recut 22 Sep): the
+central 1158 px square of the same construction that hangs as `glass-geometry-gallery.jpg`,
+resized to 256, so the tab and the wall show one work. The 20 Sep cut was from the
+Abstraction 1 postcard.
+`art/hokusai-the-great-wave-gallery.jpg` — **the Great Wave, whole, for the gallery** (21 Sep
+2026; Spec-Gallery's *A work on the wall* as changed that day: a painting or print hangs whole,
+never cropped): the Met's scan `art/hokusai-great-wave.jpg` resized to 600 × 414, quality 88,
+76 KB. The gallery's picture for the story; the tab icon stays the square crest crop.
+`art/glass-geometry-gallery.jpg` — **Glass Geometry's picture on the wall, hung as *Stained
+Glass*** (22 Sep 2026): a construction Michael made in the lab — five circles, the vesica
+in rust, the petals in blue, green and olive on the paper — whole, 600 × 515, quality 88,
+19 KB, from the 1350 × 1158 render he handed over that day (not in `art/`). It replaced the
+Abstraction 1 postcard of 21 Sep, which had hung with its own mount and printed title.
 `art/enso-icon-256.png` — **Practice's picture, for now** (20 Sep 2026): a square from
 Michael's photograph of a brushed ensō on a sunlit wall, the circle centred and the stone
 left out, resized to 256. Temporary on his word; the copper ensō drawn in the salon mock is
@@ -111,6 +125,30 @@ and its claws, cut from the print at 330,150–930,750 and resized to 256 px, pe
 it as the other regions have. Cropped west as far as the Chinese coast for two reasons: so
 Nagasaki's name is not against the picture's edge at 300 px, and so the mainland the Chinese
 ships came from is on the map.
+`art/vermeer-girl-pearl-earring.jpg` — Johannes Vermeer, *Girl with a Pearl Earring*, about 1665
+(21 Sep 2026). Mauritshuis, The Hague, inventory 670: the museum's own scan as published on
+Wikimedia Commons (public domain), taken from Commons' 1920 px rendition — Commons now serves
+only its standard thumbnail widths, and 2400 px returned an error page — and resized to
+1400 × 1658 at quality 86, 640 KB. The post-2018 cleaned state. Read by
+`experiments/vermeer-girl-with-a-pearl-earring.html`; the sampler reads its pixels, so the page
+must be served same-origin. The Mauritshuis's own download terms ask for non-commercial use and
+the credit *Mauritshuis, The Hague*; the caption carries it.
+`art/vermeer-icon-256.png` — the story's icon (21 Sep 2026): eyes, lips, the blue and the pearl,
+cut at 440,500–1000,1060. A crop of the pearl alone was tried first and read as a white blob
+at 256 px.
+`art/maps/netherlands.*` — 2.5°E–7.5°E, 50.7°N–53.7°N (21 Sep 2026, the Vermeer story's margin map).
+`art/maps/lapis-road.*` — 2°W–76°E, 24°N–56°N, exaggeration 2 (21 Sep 2026): the Channel to the
+Hindu Kush, so Delft, Venice and the Afghan lapis mines fit one picture. Full width in the story;
+it was tried in the margin first and was a sliver.
+`art/maps/north-sea.*` — 4°W–10°E, 50°N–55°N (21 Sep 2026): the first map under *Johannes Vermeer's World*;
+replaced the same day by `north-sea-and-paris` and no longer used by any page.
+`art/maps/north-sea-and-paris.*` — 3°W–12°E, 48.3°N–54.6°N (21 Sep 2026): the map under
+*Johannes Vermeer's World* — London, Woolsthorpe, Delft, Amsterdam, Utrecht and Paris.
+`art/rembrandt-night-watch.jpg` — Rembrandt, *The Night Watch*, 1642, Rijksmuseum SK-C-5; public
+domain, via Wikimedia Commons, 1200 px wide. Margin picture in the Vermeer story's *More*.
+`art/leeuwenhoek-mouth-bacteria.jpg` — figures A–D from the plate facing p. 337 of Leeuwenhoek's
+*Arcana naturae detecta* (1695); Wellcome Collection M0010661, CC BY 4.0 (credit in the page's
+References), cropped, 800 px. Margin picture in the Vermeer story's *More*.
 `art/map-icon-256.png` — the map bench's tab icon (18 Sep 2026): a square of the world
 picture, 30°W to 30°E and 25°N to 85°N, cut from `art/maps/world.webp` and quantised to 96
 colours, 30 KB. Nothing drawn; the earth is the icon.
@@ -213,8 +251,10 @@ backstop for the Claude Code session that lands the file.
   the Rulings' *The gallery*; built from `experiments/gallery/home-mock-salon.html`, not
   redesigned). Reads `stories/gallery.json`, shuffles it (Fisher–Yates, a new hang every
   visit), and hangs up to nine works: each a link holding a coloured frame (`frame`,
-  `frameWidth`; 10 px default), an 8 px mat (off-white, or the wall colour when the icon is
-  an SVG, i.e. a drawn mark), the picture, and the title centred below, 15 px Georgia, one
+  `frameWidth`; 10 px default), an 8 px mat (off-white, or the wall colour when the picture is
+  an SVG, i.e. a drawn mark), the picture **whole, at its own proportions** (21 Sep: no
+  height, ratio or crop is set on it; a print hangs wide, a portrait tall, and the frame
+  follows), and the title centred below, 15 px Georgia, one
   type for all. `size` sets the width in its column: large 100 %, medium 80 %, small 56 %.
   The wall is four columns wide, two below 900 px; **the script deals the works into the
   columns in hang order** rather than letting CSS multi-column balance them, because with
@@ -233,7 +273,8 @@ backstop for the Claude Code session that lands the file.
 - **`saved.html`** — **Saved Stories**: the works whose slugs are in `cw.gallery.kept`, as a
   plain centred list of titles from `gallery.json`; "Nothing here yet." when there are none
   (no promise of how to keep one, since the control does not exist). Back link to the gallery.
-- **`labs.html`** — **Labs**: Glass Geometry and Glass Multiplication as words with their
+- **`labs.html`** — **Labs**: Stained Glass (the word for Glass Geometry since 22 Sep, on
+  Michael's word; the file, its URL and its page title are unchanged) and Glass Multiplication as words with their
   one-line labels from the old home page; no pictures. About Your Brain is an official app
   beside the labs but hangs on the wall as a work, so it is not listed here (open for
   Michael). Back link to the gallery.
@@ -471,6 +512,23 @@ backstop for the Claude Code session that lands the file.
   tested on an iPad, or in Safari by this session.**
 
 ### experiments/
+- **`vermeer-girl-with-a-pearl-earring.html`** — story: **Vermeer: Girl with a Pearl Earring**
+  (21 Sep 2026; `CWVault/claude/Story-Vermeer-Girl-with-a-Pearl-Earring.md`), the second of the
+  paintings series and the first built to `Spec-Timeline-and-Map`: a date line at the head (the
+  subtitle, as Hokusai's), no timeline in the story, and *Vermeer's World* written as data in the
+  story file for when the timeline component exists. `placement: across` with the left margin.
+  The painting at its own shape, never taller than 78 % of the window at rest and 88 % in the
+  tool. The magnifier and sampler are `../js/sampler.js`, with fifteen anchors measured off this
+  scan at places where the 2020 Mauritshuis study named the paint — so the names are the study's,
+  and only *which part she tapped* is inferred from colour. The pearl has its own anchor (lead
+  white laid thin over the dark); without it the story's first tap came back wrong. Maps through
+  `../js/map.js`: `netherlands` in the margin (Delft `lit`), `lapis-road` full width in the flow,
+  named by the text. **Johannes Vermeer's World** after *More*, through `../js/timeline.js` on
+  the `north-sea-and-paris` map, sixteen events, 1630–1680, China as a card. Revised 21 Sep: a
+  dashed possible route for the lapis (`map.js` path `possible`), Rembrandt, Newton born and
+  Molière added to the World and to *More*, two margin pictures in *More*. Checked at 1440, 1100, 834 and
+  390 px — no horizontal scroll, no clipped labels, no console errors. Seen by Michael 21 Sep; **not
+  yet read on an iPad.**
 - **`index-old.html`** — the home page as it stood from 13 to 20 Sep 2026 (two labs as
   words, three round icons, Experiments as a line), retired when the gallery took
   `index.html`. Recovered from git with its links rebased one folder up, given a tab icon

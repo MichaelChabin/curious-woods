@@ -98,10 +98,12 @@
 <footer>curious woods</footer>
 
 <script>
-var CW_VERSION = '2026-09-20 417c012'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-09-21 3082a45'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
-// The wall reads stories/gallery.json — one line per work: slug, title, href, icon, frame,
-// frameWidth, size. Adding a story to the gallery is adding its line there (Publishing-a-Story,
+// The wall reads stories/gallery.json — one line per work: slug, title, href, picture, frame,
+// frameWidth, size (`icon` is read as the older name for `picture`). A picture hangs whole, at
+// its own proportions — a print wide, a portrait tall; only the drawn marks are square — so
+// nothing here sets a height, a ratio or a crop. Adding a story to the gallery is adding its line there (Publishing-a-Story,
 // stage 4). Nothing here knows the works by name.
 (function () {
   var WALL_SIZE = 9;                        // about nine works at a time on a wide screen
@@ -146,9 +148,10 @@ var CW_VERSION = '2026-09-20 417c012'; try { console.log('Curious Woods · ' + d
       frame.className = 'frame' + (size === 'small' ? ' small' : '');
       frame.style.setProperty('--f', w.frame || '#6b5a45');
       if (w.frameWidth) frame.style.setProperty('--fw', w.frameWidth + 'px');
-      if (/\.svg$/i.test(w.icon || '')) frame.style.setProperty('--mat', '#f4f1e8');   // a drawn mark sits on the wall colour
+      var picture = w.picture || w.icon || '';
+      if (/\.svg$/i.test(picture)) frame.style.setProperty('--mat', '#f4f1e8');   // a drawn mark sits on the wall colour
       var img = document.createElement('img');
-      img.src = w.icon; img.alt = '';
+      img.src = picture; img.alt = '';
       frame.appendChild(img);
       var title = document.createElement('div');
       title.className = 'title'; title.textContent = w.title;

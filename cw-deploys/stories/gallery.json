@@ -3,7 +3,7 @@
     "slug": "the-man-who-learned-without-knowing",
     "title": "The Man Who Learned Without Knowing",
     "href": "active/the-man-who-learned-without-knowing.html",
-    "icon": "art/star-icon-256.svg",
+    "picture": "art/star-icon-256.svg",
     "frame": "#b87333",
     "frameWidth": 10,
     "size": "medium"
@@ -12,7 +12,7 @@
     "slug": "three-at-a-glance",
     "title": "Three at a Glance",
     "href": "active/three-at-a-glance.html",
-    "icon": "art/three-dots-icon-256.svg",
+    "picture": "art/three-dots-icon-256.svg",
     "frame": "#2a2620",
     "frameWidth": 7,
     "size": "small"
@@ -21,16 +21,16 @@
     "slug": "about-your-brain",
     "title": "About Your Brain",
     "href": "active/about-your-brain.html",
-    "icon": "art/brain-icon-256.png",
+    "picture": "art/brain-icon-256.png",
     "frame": "#8a8378",
     "frameWidth": 8,
     "size": "medium"
   },
   {
     "slug": "glass-geometry",
-    "title": "Glass Geometry",
+    "title": "Stained Glass",
     "href": "active/glass-geometry.html",
-    "icon": "art/geometry-icon-256.png",
+    "picture": "art/glass-geometry-gallery.jpg",
     "frame": "#2b3f6b",
     "frameWidth": 14,
     "size": "large"
@@ -39,9 +39,9 @@
     "slug": "hokusai-the-great-wave",
     "title": "Hokusai: The Great Wave",
     "href": "active/hokusai-the-great-wave.html",
-    "icon": "art/hokusai-icon-256.png",
+    "picture": "art/hokusai-the-great-wave-gallery.jpg",
     "frame": "#2e4a63",
     "frameWidth": 12,
-    "size": "medium"
+    "size": "large"
   }
 ]
