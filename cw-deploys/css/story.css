@@ -1,0 +1,137 @@
+/* story.css — Curious Woods: how a story page looks. One file for every story page, so a
+   change to the look is made once. Written 22 Sep 2026 from the Vermeer page, when Hokusai
+   was brought into line (CWVault/claude/Story-Pattern.md).
+
+   A page sets two things of its own on :root and nothing else unless it must:
+     --aspect   the main picture's shape, as calc(width / height)
+   and, on each full-width picture's frame, style="--pic: calc(w / h)".
+
+   The layout: a 1028 px shell; the 700 px reading column at its right; a 300 px left
+   column with a 28 px gap. The left column holds margin pictures (a glance, never named by
+   the text) and the tools' words (as in Glass Geometry). Below 1068 px the column folds
+   into the text; below 760 px everything is one column. */
+
+:root {
+  --cw-parchment: #f4f1e8;
+  --cw-parchment-deep: #ece7da;
+  --cw-separator: #c8b89a;
+  --cw-ink: #2a2620;
+  --cw-ink-soft: #6b625a;
+  --cw-word: #546A80;
+  --cw-word-hover: #3d5266;
+  --cw-card: #f8f5ee;
+  --text-w: 700px;
+  --rail-w: 300px;
+  --rail-gap: 28px;
+  --shell: 1028px;
+  --aspect: 1;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--cw-parchment); color: var(--cw-ink); }
+body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
+[hidden] { display: none !important; }
+
+.page { display: flex; flex-direction: column; align-items: center; padding: 30px 20px 90px; }
+.shell { width: min(var(--shell), 100%); display: flex; justify-content: flex-end; }
+article { width: var(--text-w); max-width: 100%; position: relative; }
+
+/* the title and its date line */
+.eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--cw-ink-soft); }
+h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0; text-wrap: balance; }
+.subtitle { font-size: 18px; color: var(--cw-ink-soft); font-style: italic; margin: 6px 0 0; font-variant-numeric: tabular-nums; }
+.titleblock { margin: 10px 0 1.6em; }
+
+/* the text */
+article h2 { font-size: 22px; font-weight: bold; margin: 1.8em 0 .35em; }
+article p { margin: 0 0 1.4em; }
+article figure { margin: 0 0 1.4em; }
+article figcaption { font-size: 13px; color: var(--cw-ink-soft); line-height: 1.35; margin-top: 8px; }
+article .more { border-top: .5px solid var(--cw-separator); margin-top: 2.4em; padding-top: 1.4em; font-size: 17px; }
+article .more h2, article .refs h2 { font-size: 17px; margin-top: 1.4em; }
+article .refs { font-size: 15px; color: var(--cw-ink-soft); margin-top: 1.6em; }
+article .refs p { margin-bottom: .7em; line-height: 1.35; }
+.formula { white-space: nowrap; }
+article .world { margin-top: 2.6em; clear: left; }
+article .world h2 { font-size: 24px; font-weight: normal; margin: 0 0 8px; }
+
+/* a word she taps */
+.word { display: inline-block; font-size: 15px; font-weight: bold; color: var(--cw-word);
+        cursor: pointer; user-select: none; background: none; border: 0; padding: 0; font-family: inherit;
+        transition: color 120ms; }
+.word:hover, .word:focus-visible { color: var(--cw-word-hover); outline: none; }
+
+/* the left column: a picture to glance at, or a tool's words */
+figure.margin { float: left; clear: left; width: var(--rail-w); margin: .3em 0 1.2em calc(-1 * (var(--rail-w) + var(--rail-gap)));
+                font-size: 13px; line-height: 1.35; color: var(--cw-ink-soft); }
+figure.margin img { display: block; width: 100%; height: auto; }
+figure.margin .map { width: 100%; }
+figure.margin figcaption { margin-top: 7px; }
+figure.margin.tappable .map { cursor: pointer; }
+.tools { float: left; clear: left; width: var(--rail-w); margin: .35em 0 1em calc(-1 * (var(--rail-w) + var(--rail-gap)));
+         display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+
+/* across the whole shell, from inside the reading column: the column sits right of the
+   left column, so the centre to aim at is half the left column back */
+.breakout, #plateStage.open {
+  position: relative;
+  left: calc(50% - (var(--rail-w) + var(--rail-gap)) / 2);
+  transform: translateX(-50%);
+  width: min(var(--shell), calc(100vw - 40px));
+}
+#plateStage.open, .reveal, figure.breakout { clear: left; }
+
+/* the main picture, at its own shape, never taller than the window */
+#plateHome { margin: 0 0 1.6em; }
+#plateHome.folded { display: none; }
+#plateStage { margin: .4em 0 1.6em; }
+figure#plate { margin: 0; }
+#plate .frame { aspect-ratio: var(--aspect); width: min(100%, calc(78vh * var(--aspect))); margin: 0 auto;
+                background: var(--cw-parchment-deep); }
+#plateStage.open #plate .frame { width: min(100%, calc(88vh * var(--aspect))); }
+#plate figcaption { text-align: center; }
+
+/* a full-width picture with the magnifier (View of Delft, the town plan) */
+.pic .frame { aspect-ratio: var(--pic); width: min(100%, calc(86vh * var(--pic))); margin: 0 auto;
+              background: var(--cw-parchment-deep); }
+.pic figcaption { max-width: 760px; margin: 8px auto 0; }
+.toolwords { margin: 10px auto 0; display: flex; gap: 26px; flex-wrap: wrap; justify-content: center; }
+
+/* marks on a picture that is a map: a dot where something stood, and its name beside it.
+   They sit on the picture, not in it, so they go while she is zoomed in (the picture moves
+   under them and they would lie). */
+.marks { position: absolute; inset: 0; pointer-events: none; }
+.marks.away { opacity: 0; transition: opacity 120ms; }
+.marks b { position: absolute; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%;
+           background: #23355c; box-shadow: 0 0 0 1.5px rgba(255,255,255,.95), 0 0 0 2.5px rgba(42,38,32,.35); }
+.marks i { position: absolute; font-style: normal; font-size: 13px; line-height: 1; color: #2a2620;
+           white-space: nowrap; transform: translateY(-50%);
+           text-shadow: 0 0 3px #f4f1e8, 0 0 3px #f4f1e8, 0 0 3px #f4f1e8, 0 0 3px #f4f1e8; }
+.marks i.left { transform: translate(-100%, -50%); }
+@media (max-width: 760px) { .marks i { font-size: 11px; } }
+
+/* what the colour sampler says */
+.readout { display: grid; grid-template-columns: 86px 1fr; gap: 0 16px; align-items: start;
+           margin: 14px auto 0; padding: 14px 16px; background: var(--cw-card);
+           border-left: 2px solid #b9c3d0; max-width: 760px; }
+.readout .swatch { width: 86px; height: 86px; border: .5px solid var(--cw-separator); background: transparent; }
+.readout .nums { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px;
+                 color: var(--cw-ink-soft); margin: 0 0 6px; letter-spacing: .02em; }
+.readout .what { font-size: 17px; margin: 0 0 4px; }
+.readout .chem { font-size: 14px; line-height: 1.35; margin: 0 0 4px; color: var(--cw-ink); }
+.readout .hedge { font-size: 13px; line-height: 1.35; color: var(--cw-ink-soft); font-style: italic; margin: 0; }
+.readout.idle .what { color: var(--cw-ink-soft); font-style: italic; }
+
+@media (max-width: 1067px) {
+  figure.margin { float: none; width: 100%; margin: 0 0 1.4em; }
+  .tools { float: none; width: auto; margin: 0 0 12px; flex-direction: row; flex-wrap: wrap; gap: 10px 26px; justify-content: center; }
+  .shell { justify-content: center; }
+  .breakout, #plateStage.open { left: 50%; }
+}
+@media (max-width: 760px) {
+  body { font-size: 18px; }
+  .page { padding: 20px 14px 60px; }
+  h1 { font-size: 28px; }
+  #plateStage.open, .breakout { position: static; left: auto; transform: none; width: 100%; }
+  .readout { grid-template-columns: 60px 1fr; gap: 0 12px; }
+  .readout .swatch { width: 60px; height: 60px; }
+}

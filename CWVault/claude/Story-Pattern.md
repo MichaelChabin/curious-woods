@@ -7,8 +7,8 @@ related: Story-Voice.md, Publishing-a-Story.md, Rulings-Sept-2026.md, Spec-Timel
 # The story page, as it has settled
 
 Two pages in, a way of making a story has appeared that nobody designed ahead of time. This
-file writes it down. The Vermeer page is the model; Hokusai is the first draft of it and will
-be brought into line.
+file writes it down. The Vermeer page is the model; Hokusai, the first draft of it, was brought
+into line on 22 Sept.
 
 ## What the page is for
 
@@ -35,7 +35,14 @@ does not point them out.
 4. **Tools arrive when the text calls them.** A word in the left column (*Sample colours*),
    and the text says "Tap *Sample colours*". The tool opens where the text is. It does not
    open at the top of the page, and it does not open in a pop-up.
-5. **Pictures in two sizes.** A margin picture is a glance: it has its own caption, and the
+5. **A picture may be a stack** (`js/stack.js`, 22 Sept, Michael's idea). One slot, several
+   pictures, in a loop she can always come round: the stone, the powder washed out of it, the
+   turban it was painted on. A bold word under the caption names where she is going — *Next:
+   the powder*, and *Back to the stone* at the end. The word moves it, never a tap on the
+   picture, because a picture may already have taps of its own (the magnifier, a place on a
+   map) and a tap meaning two things is a trap. A step whose picture is missing is dropped and
+   the loop closes over what is left.
+6. **Pictures in two sizes.** A margin picture is a glance: it has its own caption, and the
    text never mentions it. A full-width picture is something to study, and the text names it
    or a caption invites the tap that opens it (the Delft map opens *View of Delft* and
    Blaeu's plan).
@@ -44,7 +51,9 @@ does not point them out.
 7. **More.** Side doors, one bold lead each. Mostly these are people and things alive at the
    same time in other trades: Leeuwenhoek, Newton, Molière, Rembrandt. A margin picture may
    sit beside one of them.
-8. **‹Name›'s World.** The timeline over the map (below).
+8. **‹Name›'s World.** The line, then the panel, then the map (below). The panel is in the
+   middle so that whichever end she taps, the words are near it, and the map is cropped wide
+   and shallow, about 560 px tall at full width, for the same reason.
 9. **References.** Real ones, with what each one was used for.
 
 ## The World: where the disciplines meet
@@ -115,10 +124,16 @@ The tools share one set of habits, borrowed from Glass Geometry:
   watches. The World is small and mostly shared.
 - **Starry Night and the north rose** follow the Vermeer page as it stands.
 
+## Done since this was first written (22 Sept)
+
+- The look is one file, `css/story.css`. Both paintings use it; a page sets only its main
+  picture's shape.
+- Hokusai is on the pattern: *Hokusai's World*, the shared sampler, tools on the left, a
+  dashed route for the blue.
+
 ## Still open
 
 - The shared event list: its shape, and who writes to it.
-- Hokusai brought into line: *Hokusai's World*, the shared sampler, tools on the left.
 - Two events on the same day draw as one dot on the timeline (Galileo and the *Night Watch*,
   1642). Worth a rule when it happens again.
 - Feedback from children. The gallery has too little on it yet to tell us anything.

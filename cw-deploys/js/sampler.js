@@ -23,6 +23,8 @@
                but only while armed
      onState   called with { zoomed, loupe } whenever either changes, so the page can
                show or hide its words
+     hedge     the page's own words for the doubts, any of { tie, far, fair, close };
+               a faded print says "faded", a painting does not
 
    Gestures, per Glass Geometry (Rulings, "Gestures across tools"): tap puts the magnifier
    down there, or moves it there; drag the magnifier to slide it; pinch zooms the picture
@@ -73,7 +75,7 @@
   function cwSampler(frame, anchors, opts) {
     opts = opts || {};
     var POWER = opts.power || 4, MAX_ZOOM = opts.maxZoom || 6;
-    var TIE = opts.tie || 4.5, FAR = opts.far || 22;
+    var TIE = opts.tie || 4.5, FAR = opts.far || 22, H = opts.hedge || {};
     var img = frame.querySelector('img');
     img.draggable = false;
     frame.classList.add('cw-sampler');
@@ -106,14 +108,14 @@
       if (next && next.d - best.d < TIE && next.a.m !== best.a.m) {
         return { what: 'either ' + best.a.name + ', or ' + next.a.name,
                  chem: best.a.chem + ' — ' + next.a.chem,
-                 hedge: 'In this picture those two come out the same colour, near enough, so the colour on its own cannot tell them apart. Where they sit in the picture can.' };
+                 hedge: H.tie || 'In this picture those two come out the same colour, near enough, so the colour on its own cannot tell them apart. Where they sit in the picture can.' };
       }
       if (best.d > FAR) {
         return { what: best.a.name + ', mixed with something', chem: best.a.chem,
-                 hedge: 'This is some way off any single colour in the picture — probably two paints laid over each other, or an edge where two meet.' };
+                 hedge: H.far || 'This is some way off any single colour in the picture — probably two paints laid over each other, or an edge where two meet.' };
       }
       return { what: best.a.name, chem: best.a.chem,
-               hedge: best.d > 11 ? 'A fair match. Paint is not evenly coloured, so nothing here is exact.' : 'A close match.' };
+               hedge: best.d > 11 ? (H.fair || 'A fair match. Paint is not evenly coloured, so nothing here is exact.') : (H.close || 'A close match.') };
     }
 
     function clampPan() {

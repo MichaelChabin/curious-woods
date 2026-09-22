@@ -19,116 +19,9 @@
   Hung in active/ on 22 Sep 2026 (Publishing-a-Story, stage 4); the experiments address redirects.
 -->
 <title>Vermeer: Girl with a Pearl Earring — Curious Woods</title>
+<link rel="stylesheet" href="../css/story.css?v=2026-09-22">
 <style>
-  :root {
-    --cw-parchment: #f4f1e8;
-    --cw-parchment-deep: #ece7da;
-    --cw-separator: #c8b89a;
-    --cw-ink: #2a2620;
-    --cw-ink-soft: #6b625a;
-    --cw-word: #546A80;
-    --cw-word-hover: #3d5266;
-    --cw-card: #f8f5ee;
-    --text-w: 700px;
-    --rail-w: 300px;
-    --rail-gap: 28px;
-    --shell: 1028px;
-    --aspect: calc(1400 / 1658);   /* the painting's own shape */
-  }
-  * { box-sizing: border-box; }
-  html, body { background: var(--cw-parchment); color: var(--cw-ink); }
-  body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
-  [hidden] { display: none !important; }
-
-  .page { display: flex; flex-direction: column; align-items: center; padding: 30px 20px 90px; }
-  .shell { width: min(var(--shell), 100%); display: flex; justify-content: flex-end; }
-  article { width: var(--text-w); max-width: 100%; position: relative; }
-
-  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--cw-ink-soft); }
-  h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0; text-wrap: balance; }
-  .subtitle { font-size: 18px; color: var(--cw-ink-soft); font-style: italic; margin: 6px 0 0; font-variant-numeric: tabular-nums; }
-  .titleblock { margin: 10px 0 1.6em; }
-
-  article h2 { font-size: 22px; font-weight: bold; margin: 1.8em 0 .35em; }
-  article p { margin: 0 0 1.4em; }
-  article figure { margin: 0 0 1.4em; }
-  article figcaption { font-size: 13px; color: var(--cw-ink-soft); line-height: 1.35; margin-top: 8px; }
-  article .more { border-top: .5px solid var(--cw-separator); margin-top: 2.4em; padding-top: 1.4em; font-size: 17px; }
-  article .more h2, article .refs h2 { font-size: 17px; margin-top: 1.4em; }
-  article .refs { font-size: 15px; color: var(--cw-ink-soft); margin-top: 1.6em; }
-  article .refs p { margin-bottom: .7em; line-height: 1.35; }
-  .formula { white-space: nowrap; }
-  article .world { margin-top: 2.6em; }
-  article .world h2 { font-size: 24px; font-weight: normal; margin: 0 0 8px; }
-
-  .word { display: inline-block; font-size: 15px; font-weight: bold; color: var(--cw-word);
-          cursor: pointer; user-select: none; background: none; border: 0; padding: 0; font-family: inherit;
-          transition: color 120ms; }
-  .word:hover, .word:focus-visible { color: var(--cw-word-hover); outline: none; }
-
-  /* a picture in the margin (Rulings, 20 Sep) */
-  figure.margin { float: left; width: var(--rail-w); margin: .3em 0 1.2em calc(-1 * (var(--rail-w) + var(--rail-gap)));
-                  font-size: 13px; line-height: 1.35; color: var(--cw-ink-soft); clear: left; }
-  figure.margin img { display: block; width: 100%; height: auto; }
-  figure.margin .map { width: 100%; }
-  figure.margin figcaption { margin-top: 7px; }
-
-  /* the painting: its own shape, never taller than the window */
-  #plateHome { margin: 0 0 1.6em; }
-  #plateHome.folded { display: none; }
-  #plateStage { margin: .4em 0 1.6em; }
-  figure#plate { margin: 0; }
-  #plate .frame { aspect-ratio: 1400 / 1658; width: min(100%, calc(78vh * var(--aspect))); margin: 0 auto;
-                  background: var(--cw-parchment-deep); }
-  #plateStage.open #plate .frame { width: min(100%, calc(88vh * var(--aspect))); }
-  #plate figcaption { text-align: center; }
-
-  .breakout, #plateStage.open {
-    position: relative;
-    left: calc(50% - (var(--rail-w) + var(--rail-gap)) / 2);
-    transform: translateX(-50%);
-    width: min(var(--shell), calc(100vw - 40px));
-  }
-
-  .toolwords { margin: 10px auto 0; display: flex; gap: 26px; flex-wrap: wrap; justify-content: center; }
-
-  /* the tools live in the left column, as in Glass Geometry */
-  .tools { float: left; clear: left; width: var(--rail-w); margin: .35em 0 1em calc(-1 * (var(--rail-w) + var(--rail-gap)));
-           display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-  #plateStage.open, .reveal { clear: left; }
-
-  /* View of Delft and the town plan, full width, when she taps the Delft map */
-  figure.margin.tappable .map { cursor: pointer; }
-  .pic .frame { margin: 0 auto; background: var(--cw-parchment-deep); }
-  #viewFrame { aspect-ratio: 1920 / 1601; width: min(100%, calc(84vh * 1920 / 1601)); }
-  #planFrame { aspect-ratio: 2400 / 1887; width: min(100%, calc(88vh * 2400 / 1887)); }
-  .pic figcaption { max-width: 760px; margin: 8px auto 0; }
-
-  .readout { display: grid; grid-template-columns: 86px 1fr; gap: 0 16px; align-items: start;
-             margin: 14px auto 0; padding: 14px 16px; background: var(--cw-card);
-             border-left: 2px solid #b9c3d0; max-width: 760px; }
-  .readout .swatch { width: 86px; height: 86px; border: .5px solid var(--cw-separator); background: transparent; }
-  .readout .nums { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px;
-                   color: var(--cw-ink-soft); margin: 0 0 6px; letter-spacing: .02em; }
-  .readout .what { font-size: 17px; margin: 0 0 4px; }
-  .readout .chem { font-size: 14px; line-height: 1.35; margin: 0 0 4px; color: var(--cw-ink); }
-  .readout .hedge { font-size: 13px; line-height: 1.35; color: var(--cw-ink-soft); font-style: italic; margin: 0; }
-  .readout.idle .what { color: var(--cw-ink-soft); font-style: italic; }
-
-  @media (max-width: 1067px) {
-    figure.margin { float: none; width: 100%; margin: 0 0 1.4em; }
-    .tools { float: none; width: auto; margin: 0 0 12px; flex-direction: row; flex-wrap: wrap; gap: 10px 26px; justify-content: center; }
-    .shell { justify-content: center; }
-    .breakout, #plateStage.open { left: 50%; }
-  }
-  @media (max-width: 760px) {
-    body { font-size: 18px; }
-    .page { padding: 20px 14px 60px; }
-    h1 { font-size: 28px; }
-    #plateStage.open, .breakout { position: static; left: auto; transform: none; width: 100%; }
-    .readout { grid-template-columns: 60px 1fr; gap: 0 12px; }
-    .readout .swatch { width: 60px; height: 60px; }
-  }
+  :root { --aspect: calc(1400 / 1658); }   /* the painting's own shape; everything else is ../css/story.css */
 </style>
 </head>
 <body>
@@ -197,9 +90,9 @@
 
     <p>He died in 1675, when he was forty-three, owing money all over town. The next month his widow gave the baker two of his paintings to settle a bill for bread. The bill was for 617 guilders, which was about three years of bread.</p>
 
-    <figure class="margin tappable" id="hollandFig">
+    <figure class="margin">
       <div class="map" id="mapHolland"></div>
-      <figcaption>Delft, where he was born, painted, and died. The Hague, where the painting hangs now, is so close it would sit on top of Delft at this size. <span id="hollandHint">Tap the map to see the town.</span></figcaption>
+      <figcaption>Delft. The Hague, where the painting hangs now, is so close it would sit on top of Delft at this size. Tap a name.</figcaption>
     </figure>
 
     <h2>Delft</h2>
@@ -208,32 +101,28 @@
 
     <p>Dutch ships sailed to Asia for pepper and silk, and for porcelain from China — thin, hard, white, and painted in blue. Everybody who could afford it wanted some. Then, in the 1640s, China fell into a war, and the porcelain stopped coming. The potters of Delft could not make real porcelain; they did not have the right clay. So they made a copy. They covered ordinary clay in a glaze made white with tin, and painted it blue with cobalt, in patterns borrowed from the Chinese. In 1647 there were four potteries in Delft. By 1661 there were more than twenty. The plates are still called Delft Blue.</p>
 
-    <div class="reveal" id="delftPictures" hidden>
-      <figure class="breakout pic">
-        <div class="frame" id="viewFrame">
-          <img src="../art/vermeer-view-of-delft.jpg" width="1920" height="1601" loading="lazy"
-               alt="Vermeer's painting of Delft seen across the water: a long row of brick walls, gates and roofs under a big cloudy sky, with one church tower lit by the sun.">
-        </div>
-        <div class="toolwords">
-          <button class="word" data-drop type="button" hidden>Put the magnifier away</button>
-          <button class="word" data-fit type="button" hidden>The whole picture</button>
-        </div>
-        <figcaption>Johannes Vermeer, <i>View of Delft</i>, about 1660–61. Oil on canvas, 96.5 &times; 115.7 cm. Mauritshuis, The Hague. He painted it from across the harbour, on the south side of the town. The tower in the sunlight is the New Church, where he was baptised.</figcaption>
-      </figure>
-      <figure class="breakout pic">
-        <div class="frame" id="planFrame">
-          <img src="../art/delft-plan-blaeu-1649.jpg" width="2400" height="1887" loading="lazy"
-               alt="A coloured plan of Delft from above: red-roofed blocks and green gardens inside a moat, canals running through, ships in a harbour at the right.">
-        </div>
-        <div class="toolwords">
-          <button class="word" data-drop type="button" hidden>Put the magnifier away</button>
-          <button class="word" data-fit type="button" hidden>The whole picture</button>
-        </div>
-        <figcaption>Delft from above, from Joan Blaeu's book of Dutch town plans, 1649. East is at the top. The long open space near the middle is the market square, with the New Church at its top end and the Town Hall at the other; his family's inn was on it. The harbour he painted is on the right, where the ships are. Tap to use the magnifier, or pinch to zoom.</figcaption>
-      </figure>
-    </div>
+    <p>This is what Delft looked like to Vermeer. He painted it when he was about twenty-eight.</p>
+
+    <figure class="breakout pic" id="delftPic" style="--pic: calc(1920 / 1601)">
+      <div class="frame" id="delftFrame">
+        <img src="../art/vermeer-view-of-delft.jpg" width="1920" height="1601" loading="lazy"
+             alt="Vermeer's painting of Delft seen across the water: a long row of brick walls, gates and roofs under a big cloudy sky, with one church tower lit by the sun.">
+      </div>
+      <div class="toolwords">
+        <button class="word" id="picDrop" type="button" hidden>Put the magnifier away</button>
+        <button class="word" id="picFit" type="button" hidden>The whole picture</button>
+      </div>
+      <figcaption>Johannes Vermeer, <i>View of Delft</i>, about 1660&ndash;61. Oil on canvas, 96.5 &times; 115.7 cm. Mauritshuis, The Hague. He painted it from across the harbour, on the south side of the town. The tower in the sunlight is the New Church, where he was baptised.</figcaption>
+    </figure>
+
+    <p>Dutch ships sailed to Asia for pepper and silk, and for porcelain from China — thin, hard, white, and painted in blue. Everybody who could afford it wanted some. Then, in the 1640s, China fell into a war, and the porcelain stopped coming. The potters of Delft could not make real porcelain; they did not have the right clay. So they made a copy. They covered ordinary clay in a glaze made white with tin, and painted it blue with cobalt, in patterns borrowed from the Chinese. In 1647 there were four potteries in Delft. By 1661 there were more than twenty. The plates are still called Delft Blue.</p>
 
     <p>One morning in October 1654, when Vermeer was twenty-one, the town's gunpowder store blew up. There were about forty thousand kilograms of powder in it: forty tonnes. More than two hundred houses were flattened. A painter called Carel Fabritius, who lived nearby and had studied with Rembrandt, was killed at his easel.</p>
+
+    <figure class="margin" id="blueStack">
+      <img src="../art/lapis-stone.jpg" width="900" height="1107" loading="lazy" alt="">
+      <figcaption>Lapis lazuli from the mines at Sar-e-Sang, in northern Afghanistan. This is a good piece; most of what comes out of the mine carries far more grey.</figcaption>
+    </figure>
 
     <h2>The blue</h2>
 
@@ -340,12 +229,13 @@
 
 <script src="../js/cw-flags.js?v=2026-09-21"></script>
 <script src="../js/map.js?v=2026-09-22"></script>
-<script src="../js/sampler.js?v=2026-09-21"></script>
-<script src="../js/timeline.js?v=2026-09-21b"></script>
+<script src="../js/sampler.js?v=2026-09-22"></script>
+<script src="../js/timeline.js?v=2026-09-22"></script>
+<script src="../js/stack.js?v=2026-09-22"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-22 dd793c4';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-22 700c812';   // date + short commit hash; bump in the same commit as any change
   console.log('vermeer-girl-with-a-pearl-earring', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
@@ -391,7 +281,8 @@
 
   const MAPS = [
     { host: 'mapHolland', region: '../art/maps/netherlands.json', marks: [
-      { type: 'place', lat: 52.01, lon: 4.36, name: 'Delft', lit: true },
+      { type: 'place', lat: 52.01, lon: 4.36, name: 'Delft', lit: true,
+        text: 'Vermeer was born here, painted here, and died here. He almost never left.' },
       { type: 'place', lat: 52.37, lon: 4.90, name: 'Amsterdam', minor: true },
       { type: 'note',  lat: 52.75, lon: 3.40, text: 'the North Sea', water: true }
     ]},
@@ -514,32 +405,79 @@
     }
   }
 
+  // Six places on Blaeu's plan, as fractions of the picture. The churches, the market and
+  // the harbour are drawn on the plan and can be pointed at exactly; the two houses are only
+  // as good as the street, and say so.
+  const PLAN_MARKS = [
+    { x: 0.4925, y: 0.4240, name: 'the New Church' },
+    { x: 0.4917, y: 0.4955, name: 'the market square' },
+    { x: 0.5354, y: 0.4504, name: 'Vermeer’s house, about here' },
+    { x: 0.3950, y: 0.6041, name: 'the Old Church', side: 'left' },
+    { x: 0.4167, y: 0.5936, name: 'Leeuwenhoek’s house, about here' },
+    { x: 0.8458, y: 0.7208, name: 'he painted the town from about here', side: 'left' }
+  ];
+
   // ==========================================================================
-  // DELFT: tap the margin map and the town appears, full width
+  // THE BLUE, IN THREE PICTURES (js/stack.js): the stone, the powder washed out of it,
+  // and the turban it was painted on. The word moves it; the picture keeps its own taps.
   // ==========================================================================
-  const hollandFig = document.getElementById('hollandFig');
-  const delftPics = document.getElementById('delftPictures');
-  const hollandHint = document.getElementById('hollandHint');
-  const picTools = [];
-  hollandFig.querySelector('.map').addEventListener('click', () => {
-    const open = delftPics.hidden;
-    delftPics.hidden = !open;
-    hollandHint.textContent = open ? 'Tap the map again to put the pictures away.' : 'Tap the map to see the town.';
-    if (open) {
-      if (!picTools.length) {
-        delftPics.querySelectorAll('figure.pic').forEach(fig => {
-          const f = fig.querySelector('.frame');
-          const d = fig.querySelector('[data-drop]'), z = fig.querySelector('[data-fit]');
-          const t = cwSampler(f, [], { onState: s => { d.hidden = !s.loupe; z.hidden = !s.zoomed; } });
-          d.addEventListener('click', () => t.drop()); z.addEventListener('click', () => t.fit());
-          picTools.push(t);
-        });
-      }
-      requestAnimationFrame(() => delftPics.scrollIntoView({ block: 'start', behavior: 'smooth' }));
-    } else {
-      picTools.forEach(t => { t.drop(); t.fit(); });
-    }
+  if (typeof cwStack === 'function') {
+    cwStack(document.getElementById('blueStack'), [
+      { src: '../art/lapis-stone.jpg', w: 900, h: 1107,
+        alt: 'A rough lump of deep blue rock, its broken face glittering with tiny gold specks.',
+        caption: 'Lapis lazuli from the mines at Sar-e-Sang, in northern Afghanistan. This is a good piece; most of what comes out of the mine carries far more grey. The gold specks are pyrite.',
+        name: 'the stone' },
+      { src: '../art/ultramarine-powder.jpg', w: 450, h: 375,
+        alt: 'A small heap of deep blue powder.',
+        caption: 'Ultramarine: the blue washed out of the stone, ground fine. It took days of work, and most of the stone was thrown away.',
+        name: 'the powder' },
+      { src: '../art/vermeer-turban-detail.jpg', w: 840, h: 580,
+        alt: 'A close view of the blue cloth of the turban, with the brush marks and fine cracks showing.',
+        caption: 'And here it is on her head, close up. The cracks came later.',
+        name: 'the turban' }
+    ]);
+  }
+
+  // ==========================================================================
+  // DELFT: one slot, two pictures — his painting of the town, and the town from above
+  // (js/stack.js). The marks belong to the plan, so they come and go with it, and they
+  // fade while she is zoomed in, because the picture moves under them.
+  // ==========================================================================
+  const delftPic = document.getElementById('delftPic');
+  const delftFrame = document.getElementById('delftFrame');
+  const marks = document.createElement('div');
+  marks.className = 'marks'; marks.hidden = true;
+  for (const m of PLAN_MARKS) {
+    const dot = document.createElement('b');
+    dot.style.left = (m.x * 100) + '%'; dot.style.top = (m.y * 100) + '%';
+    const lab = document.createElement('i');
+    lab.textContent = m.name;
+    lab.style.left = 'calc(' + (m.x * 100) + '% ' + (m.side === 'left' ? '- 9px' : '+ 9px') + ')';
+    lab.style.top = (m.y * 100) + '%';
+    if (m.side === 'left') lab.classList.add('left');
+    marks.appendChild(dot); marks.appendChild(lab);
+  }
+  delftFrame.appendChild(marks);
+
+  const picDrop = document.getElementById('picDrop'), picFit = document.getElementById('picFit');
+  const picTool = cwSampler(delftFrame, [], {
+    onState: s => { picDrop.hidden = !s.loupe; picFit.hidden = !s.zoomed; marks.classList.toggle('away', s.zoomed); }
   });
+  picDrop.addEventListener('click', () => picTool.drop());
+  picFit.addEventListener('click', () => picTool.fit());
+
+  if (typeof cwStack === 'function') {
+    cwStack(delftPic, [
+      { src: '../art/vermeer-view-of-delft.jpg', w: 1920, h: 1601, ratio: 'calc(1920 / 1601)',
+        alt: 'Vermeer’s painting of Delft seen across the water: a long row of brick walls, gates and roofs under a big cloudy sky, with one church tower lit by the sun.',
+        caption: 'Johannes Vermeer, <i>View of Delft</i>, about 1660–61. Oil on canvas, 96.5 × 115.7 cm. Mauritshuis, The Hague. He painted it from across the harbour, on the south side of the town. The tower in the sunlight is the New Church, where he was baptised.',
+        name: 'the painting' },
+      { src: '../art/delft-plan-blaeu-1649.jpg', w: 2400, h: 1887, ratio: 'calc(2400 / 1887)',
+        alt: 'A coloured plan of Delft from above: red-roofed blocks and green gardens inside a moat, canals running through, ships in a harbour at the right.',
+        caption: 'Delft from above, from Joan Blaeu’s book of town plans, 1649, five years before the gunpowder store blew up. East is at the top. Six places are marked; the houses are only right to the street, so those say <i>about here</i>. Tap the plan to use the magnifier, or pinch to zoom.',
+        name: 'a map of the town' }
+    ], (step, i) => { marks.hidden = i !== 1; picTool.drop(); picTool.fit(); });
+  }
 
   // ==========================================================================
   // THE PAINTING: magnifier, zoom, colours

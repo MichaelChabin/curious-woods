@@ -233,6 +233,27 @@ here: his whole life happened in one town.
 
 ## Notes for us
 
+**Delft, in the flow (22 Sept, Michael).** *View of Delft* is no longer behind a tap on the
+margin map. It sits in the story, full width, right after "Delft was a town of canals…", under
+a new line: "This is what Delft looked like to Vermeer. He painted it when he was about
+twenty-eight." Its caption ends **Next: a map of the town**, and the picture becomes Blaeu's
+plan in the same slot (`js/stack.js`, which now carries each step's `ratio`, since the two
+pictures are not the same shape, and calls back so the plan's marks come and go with it). The
+margin map is a plain map again, with Delft's own note back on its dot. The marks are dark blue
+(#23355c): copper and vermilion were too near the colour of the roofs (Michael).
+
+**The blue in three pictures, and six places on the plan (22 Sept).** The margin figure beside
+*The blue* is a **stack** (`js/stack.js`): the stone from Sar-e-Sang, the powder washed out of
+it, and a close crop of the turban from our own scan. A bold word at the end of the caption
+names the next one and comes round to the first. Blaeu's plan now carries six marks: the New
+Church (baptised), the market square, Vermeer's house, the Old Church (buried), Leeuwenhoek's
+house, and where he stood to paint *View of Delft*. The churches, the market and the harbour
+are drawn on the plan and can be pointed at; the two houses are only as good as the street, so
+they say *about here*, and the caption says so too. The marks fade while she pinches, because
+the picture moves under them and they would lie. **The gunpowder store is not marked:** the
+1649 plan does not label the convent it was kept in, and a dot placed by memory would be wrong
+by a couple of hundred metres.
+
 **Revisions of 22 Sept (Michael's list).** The gunpowder is "about forty thousand kilograms:
 forty tonnes" (80–90,000 lb; the Dutch pound of the day was within a percent of the English).
 A line on craquelure after the painting's size. *Sample colours* (renamed from *Sample a

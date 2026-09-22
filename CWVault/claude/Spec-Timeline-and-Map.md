@@ -5,6 +5,11 @@ related: Spec-Maps.md (the map underneath), Spec-Map-Lab.md (where this pattern 
 reference: cw-deploys/experiments/maps/prototype-frankenstein.html — self-contained, open it in a browser. Behaviour and look are settled there; the code is a sketch.
 ---
 
+**The panel sits between the line and the map** (22 Sept, Michael: tapping a date on the line
+put the words off the bottom of the screen). Whichever end she taps, the words are a few lines
+away. Both stories' maps were re-cropped wider and shallower at the same time — about 560 px at
+full width instead of 700 to 730 — which is as much of the fix as the move is.
+
 # A timeline over a map
 
 One list of events, read two ways. The timeline uses each event's date and ignores its place; the map uses its place and ignores its date. Tap an event on either and it lights on both, and a panel below says what happened and what it has to do with the story.

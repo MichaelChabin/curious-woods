@@ -7,172 +7,24 @@
 <link rel="apple-touch-icon" href="../art/hokusai-icon-256.png">
 <!--
   hokusai-the-great-wave.html — story: Hokusai, The Great Wave.
-  First of the paintings series. placement: across, with a left margin (20 Sep 2026):
-  the reading column stays 700 px; small reference pictures hang in a 300 px margin
-  beside the text they belong to, and drop into the flow below 1068 px.
-  Rulings-Sept-2026: plain years in prose; instructions name the gesture and the word
-  on screen; Remember is not summoned here because the practice queue does not exist.
+  First of the paintings series; hung 20 Sep 2026. Brought into line with the Vermeer page
+  on 22 Sep 2026 (CWVault/claude/Story-Pattern.md): the forty-year line at the head became
+  Hokusai's World after More (../js/timeline.js, 1760–1855, his life above the line); the
+  magnifier and sampler are ../js/sampler.js; the tools' words live in the left column; the
+  look is ../css/story.css. placement: across, with a left margin.
   Story text: CWVault/claude/Story-Hokusai-The-Great-Wave.md
   Print: ../art/hokusai-great-wave.jpg — Metropolitan Museum of Art, JP1847, open access.
-  Maps: ../js/map.js (shared since 20 Sep 2026, Michael's call) and
-  ../art/maps/{japan,western-europe,world}. Hung in active/ on 20 Sep 2026.
+  Maps: ../js/map.js and ../art/maps/{japan,western-europe,world,japan-and-china}.
 -->
 <title>Hokusai: The Great Wave — Curious Woods</title>
+<link rel="stylesheet" href="../css/story.css?v=2026-09-22">
 <style>
-  :root {
-    --cw-parchment: #f4f1e8;
-    --cw-parchment-deep: #ece7da;
-    --cw-separator: #c8b89a;
-    --cw-ink: #2a2620;
-    --cw-ink-soft: #6b625a;
-    --cw-word: #546A80;
-    --cw-word-hover: #3d5266;
-    --cw-line: #3C5C83;
-    --cw-line-faint: #b9c3d0;
-    --cw-copper: #b87333;
-    --cw-copper-glow: rgba(184,115,51,.30);
-    --cw-card: #f8f5ee;
-    --text-w: 700px;
-    --rail-w: 300px;
-    --rail-gap: 28px;
-    --shell: 1028px;              /* rail + gap + text */
-  }
-  * { box-sizing: border-box; }
-  html, body { background: var(--cw-parchment); color: var(--cw-ink); }
-  body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
-  [hidden] { display: none !important; }
-
-  .page { display: flex; flex-direction: column; align-items: center; padding: 30px 20px 90px; }
-  .wide  { width: min(var(--shell), 100%); }
-
-  /* the shell holds the reading column at its right; the margin is the space at its left */
-  .shell { width: min(var(--shell), 100%); display: flex; justify-content: flex-end; }
-  article { width: var(--text-w); max-width: 100%; position: relative; }
-
-  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--cw-ink-soft); }
-  h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0; text-wrap: balance; }
-  .subtitle { font-size: 18px; color: var(--cw-ink-soft); font-style: italic; margin: 6px 0 0; font-variant-numeric: tabular-nums; }
-  .titleblock { margin: 34px 0 1.6em; }
-
-  article h2 { font-size: 22px; font-weight: bold; margin: 1.8em 0 .35em; clear: none; }
-  article p { margin: 0 0 1.4em; }
-  article figure { margin: 0 0 1.4em; }
-  article figcaption { font-size: 13px; color: var(--cw-ink-soft); line-height: 1.35; margin-top: 8px; }
-
-  /* a picture that needs the whole shell, from inside the reading column.
-     The column sits to the right of the margin, so the centre to aim at is
-     half the margin's width back to the left. */
-  .breakout, #plateStage.open {
-    position: relative;
-    left: calc(50% - (var(--rail-w) + var(--rail-gap)) / 2);
-    transform: translateX(-50%);
-    width: min(var(--shell), calc(100vw - 40px));
-  }
-  article .more { border-top: .5px solid var(--cw-separator); margin-top: 2.4em; padding-top: 1.4em; font-size: 17px; }
-  article .more h2, article .refs h2 { font-size: 17px; margin-top: 1.4em; }
-  article .refs { font-size: 15px; color: var(--cw-ink-soft); margin-top: 1.6em; }
-  article .refs p { margin-bottom: .7em; line-height: 1.35; }
-  .formula { font-variant-numeric: normal; white-space: nowrap; }
-
-  .word { display: inline-block; font-size: 15px; font-weight: bold; color: var(--cw-word);
-          cursor: pointer; user-select: none; background: none; border: 0; padding: 0; font-family: inherit;
-          transition: color 120ms; }
-  .word:hover, .word:focus-visible { color: var(--cw-word-hover); outline: none; }
-
-  /* ---------- a picture in the margin ---------- */
-  figure.margin { float: left; width: var(--rail-w); margin: .3em 0 1.2em calc(-1 * (var(--rail-w) + var(--rail-gap)));
-                  font-size: 13px; line-height: 1.35; color: var(--cw-ink-soft); }
-  figure.margin .map { width: 100%; }
-  figure.margin figcaption { margin-top: 7px; }
-
-  /* ---------- the timeline ---------- */
-  .tl { position: relative; margin: 6px 0 4px; }
-  .tl .rail { position: absolute; left: 0; right: 0; height: 2px; background: var(--cw-line); }
-  .tl .tick { position: absolute; width: 1px; background: var(--cw-line-faint); z-index: 0; }
-  .tl .dia { position: absolute; width: 8px; height: 8px; background: var(--cw-line);
-             transform: translate(-50%,-50%) rotate(45deg); }
-  .tl .dia.dest { width: 12px; height: 12px; background: var(--cw-copper);
-                  box-shadow: 0 0 0 5px var(--cw-copper-glow); }
-  .tl .lead { position: absolute; width: 1px; background: var(--cw-line-faint); z-index: 0; }
-  .tl .lead.dest { background: var(--cw-copper); opacity: .7; }
-  .tl .lab { position: absolute; transform: translateX(-50%); width: 122px; text-align: center;
-             font-size: 11.5px; line-height: 1.15; color: var(--cw-ink); text-wrap: balance;
-             background: var(--cw-parchment); padding: 1px 0 2px; z-index: 2; }
-  .tl .lab .yr { display: block; color: var(--cw-ink-soft); font-style: italic; font-variant-numeric: tabular-nums; font-size: 10.5px; margin-top: 1px; }
-  .tl .lab.dest { color: var(--cw-copper); font-size: 15px; width: 160px; }
-  .tl .lab.dest .yr { color: var(--cw-copper); font-size: 12.5px; }
-  .tl .endcap { position: absolute; font-size: 12px; color: var(--cw-ink-soft);
-                white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .tl .endcap.l { left: 0; } .tl .endcap.r { right: 0; }
-  .tl-note { font-size: 12.5px; color: var(--cw-ink-soft); font-style: italic; text-align: center; margin: 8px 0 0; }
-
-  /* ---------- the print ---------- */
-  #plateHome { margin: 0 0 1.6em; }
-  #plateHome.folded { display: none; }
-  #plateStage { margin: .4em 0 1.6em; }
-
-  figure#plate { margin: 0; width: 100%; }
-  #plate .frame { position: relative; overflow: hidden; line-height: 0; touch-action: pan-y;
-                  cursor: zoom-in; background: var(--cw-parchment-deep); }
-  #plate .frame.zoomed { touch-action: none; cursor: grab; }
-  #plate .frame.zoomed.dragging { cursor: grabbing; }
-  #plate img { width: 100%; height: auto; display: block; aspect-ratio: 1800 / 1243;
-               transform-origin: 0 0; will-change: transform;
-               user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
-               -webkit-user-drag: none; }   /* a native image drag cancels the pointer stream mid-pan */
-  #plate figcaption { font-size: 13px; color: var(--cw-ink-soft); line-height: 1.35; margin-top: 8px; }
-
-  /* the magnifier: one circle, the print again at four times the size */
-  #loupe { position: absolute; width: 148px; height: 148px; margin: -74px 0 0 -74px; border-radius: 50%;
-           background-repeat: no-repeat; pointer-events: none; display: none;
-           box-shadow: 0 0 0 1.5px rgba(255,255,255,.9), 0 0 0 3px rgba(42,38,32,.55), 0 6px 18px rgba(42,38,32,.28); }
-  #loupe.on { display: block; }
-  #loupe::after { content: ""; position: absolute; left: 50%; top: 50%; width: 11px; height: 11px;
-                  margin: -5.5px 0 0 -5.5px; border-radius: 50%;
-                  border: 1px solid rgba(255,255,255,.95); box-shadow: 0 0 0 1px rgba(42,38,32,.6); }
-  @media (max-width: 760px) { #loupe { width: 116px; height: 116px; margin: -58px 0 0 -58px; } }
-
-  .toolwords { margin-top: 10px; display: flex; gap: 26px; flex-wrap: wrap; align-items: baseline; }
-
-  .readout { display: grid; grid-template-columns: 86px 1fr; gap: 0 16px; align-items: start;
-             margin-top: 14px; padding: 14px 16px; background: var(--cw-card);
-             border-left: 2px solid var(--cw-line-faint); max-width: 800px; }
-  .readout .swatch { width: 86px; height: 86px; border: .5px solid var(--cw-separator); background: transparent; }
-  .readout .nums { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px;
-                   color: var(--cw-ink-soft); margin: 0 0 6px; letter-spacing: .02em; }
-  .readout .what { font-size: 17px; margin: 0 0 4px; }
-  .readout .chem { font-size: 14px; line-height: 1.35; margin: 0 0 4px; color: var(--cw-ink); }
-  .readout .hedge { font-size: 13px; line-height: 1.35; color: var(--cw-ink-soft); font-style: italic; margin: 0; }
-  .readout.idle .what { color: var(--cw-ink-soft); font-style: italic; }
-
-  /* below the shell there is no margin to hang anything in: one column */
-  @media (max-width: 1067px) {
-    figure.margin { float: none; width: 100%; margin: 0 0 1.4em; }
-    .shell { justify-content: center; }
-    .breakout, #plateStage.open { left: 50%; }   /* no margin to offset against */
-  }
-  @media (max-width: 760px) {
-    body { font-size: 18px; }
-    .page { padding: 20px 14px 60px; }
-    h1 { font-size: 28px; }
-    #plateStage.open, .breakout { position: static; left: auto; transform: none; width: 100%; }
-    .tl .lab { width: 96px; font-size: 10.5px; }
-    .readout { grid-template-columns: 60px 1fr; gap: 0 12px; }
-    .readout .swatch { width: 60px; height: 60px; }
-  }
+  :root { --aspect: calc(1800 / 1243); }   /* the print's own shape; everything else is ../css/story.css */
 </style>
 </head>
 <body>
 
 <main class="page">
-
-  <!-- ============ the timeline ============ -->
-  <section class="wide" aria-label="The forty years around the print">
-    <div class="tl" id="tl"></div>
-    <p class="tl-note">The forty years around this print.</p>
-  </section>
-
-  <!-- ============ the story ============ -->
   <div class="shell">
   <article>
 
@@ -185,19 +37,18 @@
     <h2>Count the boats</h2>
 
     <div id="plateHome">
-      <figure id="plate">
-        <div class="frame" id="frame">
-          <img id="plateImg" draggable="false" src="../art/hokusai-great-wave.jpg"
-               alt="Hokusai's woodblock print: a great wave with clawed foam rising over three long boats, with Mount Fuji small in the distance.">
-          <div id="loupe"></div>
-        </div>
-        <figcaption>Katsushika Hokusai, <i>Under the Wave off Kanagawa</i>, about 1830. Woodblock print, 24.4 &times; 35.7 cm. The Metropolitan Museum of Art, New York (JP1847), open access.</figcaption>
-      </figure>
-      <div class="toolwords" id="toolwords">
+      <div class="tools" id="toolwords">
         <button class="word" id="dropLoupe" type="button" hidden>Put the magnifier away</button>
         <button class="word" id="fit" type="button" hidden>The whole print</button>
         <button class="word" id="putBack" type="button" hidden>Put it back</button>
       </div>
+      <figure id="plate">
+        <div class="frame" id="frame">
+          <img id="plateImg" src="../art/hokusai-great-wave.jpg"
+               alt="Hokusai's woodblock print: a great wave with clawed foam rising over three long boats, with Mount Fuji small in the distance.">
+        </div>
+        <figcaption>Katsushika Hokusai, <i>Under the Wave off Kanagawa</i>, about 1830. Woodblock print, 24.4 &times; 35.7 cm. The Metropolitan Museum of Art, New York (JP1847), open access.</figcaption>
+      </figure>
       <div class="readout idle" id="readout" hidden>
         <div class="swatch" id="swatch"></div>
         <div>
@@ -271,13 +122,34 @@
 
     <p>What he had made, with no way at all of knowing it, was a lattice of iron atoms held apart by pairs of carbon and nitrogen — cyanide. It is written <span class="formula">Fe<sub>4</sub>[Fe(CN)<sub>6</sub>]<sub>3</sub></span>. Two kinds of iron sit in that lattice. One of them is missing two of its electrons; the other is missing three of them. Because of this, red light can knock an electron from one kind of iron atom to the other. When that happens, the red light is used up. Red goes in and does not come out, and most of what is left is blue.</p>
 
+    <figure class="margin">
+      <img src="../art/egyptian-blue.jpg" width="456" height="380" loading="lazy"
+           alt="A small heap of soft, bright blue powder on white paper.">
+      <figcaption>Egyptian blue, ground to a powder: copper, calcium, silicon and oxygen, cooked together in a furnace. Under a camera that sees infrared light it glows, which is how scientists find the faintest traces of it on ancient statues.</figcaption>
+    </figure>
+
+    <p><b>Is it poison?</b> Cyanide is a famous poison, and this is real cyanide. But it is locked to the iron so tightly that it cannot get loose, and the blue is harmless. It is so harmless that doctors use it as a medicine: swallow certain radioactive metals by accident and you will be given Prussian blue to swallow after them, and it carries the metal out of you. The colours around it were the deadly ones. The yellow of these boats may be orpiment, which is arsenic. Red often meant mercury, and white meant lead. Painters ground these colours with their hands, and some of them licked their brushes to a point.</p>
+
     <p>People had made a blue in a furnace before — the Egyptians did it, by heating sand and copper and soda together, three thousand years earlier — but the recipe had been lost for well over a thousand years. Every blue in use in 1706 was dug up, grown, or ground from a stone. Prussian blue is the first one anybody made on purpose in a workshop.</p>
 
-    <p>It reached Japan through Dejima. It was expensive, and painters used a little of it. Then, around 1829, cheap Prussian blue began arriving in quantity on Chinese ships, and within a year or two it was all over the print shops in Edo. Hokusai's Fuji series is one of the first places it went.</p>
+    <p>For eighteen years the people who made it kept quiet about how. Then in 1724 the recipe was printed in London, in a journal anyone could read, and the secret was over. After that the blue could be made by anybody with iron, potash and boiled blood, and it was — in England, in Holland, in Germany, in barrels. A colour that began as one man's ruined batch of red became something you could order by the pound.</p>
+
+    <p>It reached Japan through Dejima. It was expensive, and painters used a little of it. Then, around 1829, cheap Prussian blue began arriving in quantity on Chinese ships, and within a year or two it was all over the print shops in Edo. Hokusai's Fuji series is one of the first places it went. The map below shows the two ways it came.</p>
+
+    <figure class="breakout">
+      <div class="map" id="mapBlue"></div>
+      <figcaption>Berlin, in copper, where the blue was first made. The dashed lines are two likely ways it reached Edo, not recorded ones: the Dutch way, round Africa, and the Chinese way, from Canton and Zhapu. Tap a name.</figcaption>
+    </figure>
+
+    <p>Nobody wrote down the journey of any one packet of blue, so the dashed lines are guesses. The expensive blue came the Dutch way. A ship from Amsterdam took five or six months to sail round the bottom of Africa to Batavia, the Dutch town that is now Jakarta, and from there one or two Dutch ships a year were let into Nagasaki. The cheap blue came the Chinese way, on junks from Zhapu, a crossing of a week or two. From Nagasaki to Edo was a month or so, by road and boat.</p>
 
     <h2>What the colours are made of</h2>
 
-    <p>You can look at them one at a time. Tap <button class="word" id="summon" type="button">Sample a colour</button>, and the print will move down here and get bigger. The magnifier works as it did, but now it also tells you what is under it: the colour, the three numbers your screen is using to make that colour, and its best guess at what that colour was made of.</p>
+    <div class="tools" id="toolSlot">
+      <button class="word" id="summon" type="button">Sample colours</button>
+    </div>
+
+    <p>You can look at them one at a time. Tap <i>Sample colours</i>, and the print will move down here and get bigger. The magnifier works as it did, but now it also tells you what is under it: the colour, the three numbers your screen is using to make that colour, and its best guess at what that colour was made of.</p>
 
     <div id="plateStage"></div>
 
@@ -306,14 +178,14 @@
 
       <p><b>Hokusai kept going.</b> He wrote, at about seventy-five, that nothing he had done before he was seventy was worth anything. He died in 1849, aged eighty-eight, and is said to have asked for another five years, which would have made him a real painter.</p>
 
-      <p><b>Twenty-three years later</b>, American warships came into Edo Bay under steam, and the door came open. You can find that at the right-hand end of the timeline.</p>
+      <p><b>Twenty-three years later</b>, American warships came into Edo Bay under steam, and the door came open. You can find that at the right-hand end of the line in <i>Hokusai's World</i>, below.</p>
 
       <p><b>Two other blues.</b> The glass at Chartres, six hundred years earlier, got its blue from cobalt melted into the glass itself. <i>The Starry Night</i>, sixty years later, has Prussian blue in it too — and Van Gogh owned a stack of Japanese prints.</p>
+    </section>
 
-      <figure class="breakout">
-        <div class="map" id="mapWorld"></div>
-        <figcaption>Berlin, where the blue was made. Canton, where Europe's goods came into China. Zhapu, where the junks for Nagasaki sailed from. Nagasaki, the one door. Edo, where the print was made and sold. Tap a name.</figcaption>
-      </figure>
+    <section class="world breakout">
+      <h2>Hokusai&rsquo;s World</h2>
+      <div id="hokusaiWorld"></div>
     </section>
 
     <section class="refs">
@@ -322,6 +194,9 @@
       <p>Henry D. Smith II, "Hokusai and the Blue Revolution in Edo Prints", in <i>Hokusai and His Age</i>, ed. John T. Carpenter, Hotei Publishing, 2005. How Prussian blue reached the print shops.</p>
       <p>Julyan H. E. Cartwright and Hisami Nakamura, "What kind of a wave is Hokusai's <i>Great wave off Kanagawa</i>?", <i>Notes and Records of the Royal Society</i>, 2009.</p>
       <p>The Metropolitan Museum of Art, <i>Under the Wave off Kanagawa</i>, accession JP1847. The sheet reproduced here.</p>
+      <p>John Woodward, "Praeparatio caerulei Prussiaci", <i>Philosophical Transactions of the Royal Society</i> 33 (1724). The recipe, printed for anyone to read, eighteen years after the accident.</p>
+      <p>Prussian blue as a medicine: the United States Food and Drug Administration's approval of Prussian blue (Radiogardase) in 2003, for people who have swallowed or breathed in radioactive caesium or thallium.</p>
+      <p>Egyptian blue: the photograph is from Wikimedia Commons, public domain. Its infrared glow: Giovanni Verri, "The spatially resolved characterisation of Egyptian blue, Han blue and Han purple by photo-induced luminescence digital imaging", <i>Analytical and Bioanalytical Chemistry</i> 394 (2009).</p>
       <p>"The Ukiyo-e Woodblock Printing Process", Asian Art Museum, San Francisco. The blocks, the <i>kentō</i>, the <i>baren</i>, and how many sheets a set of blocks would give.</p>
     </section>
 
@@ -331,35 +206,19 @@
 
 <script src="../js/cw-flags.js?v=2026-09-20"></script>
 <script src="../js/map.js?v=2026-09-22"></script>
+<script src="../js/sampler.js?v=2026-09-22"></script>
+<script src="../js/timeline.js?v=2026-09-22"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-22 dd793c4';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-22 700c812';   // date + short commit hash; bump in the same commit as any change
   console.log('hokusai-the-great-wave', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
   // ==========================================================================
-  // 1. THE DATA.  Everything the next painting story changes is in this block.
+  // THE DATA
   // ==========================================================================
 
-  const FROM = 1815, TO = 1855, DEST = 1830, DEST_LABEL = 'The Great Wave';
-
-  // The span is the story's to choose: from the earliest thing that explains the
-  // picture to the latest thing the picture explains. Here, Tambora to Perry.
-  const EVENTS = [
-    { y: 1815, s: 'Tambora explodes; no summer the next year' },
-    { y: 1820, s: 'Prussian blue reaches Japan from Holland, expensive' },
-    { y: 1825, s: 'Japan orders foreign ships driven away' },
-    { y: 1829, s: 'cheap Prussian blue arrives from China' },
-    { y: 1831, s: 'Faraday gets electricity from a magnet' },
-    { y: 1833, s: "Hiroshige's road to Kyoto" },
-    { y: 1839, s: 'photography is announced in Paris' },
-    { y: 1849, s: 'Hokusai dies, aged 88' },
-    { y: 1853, s: 'US warships in Edo Bay' }
-  ];
-
-  // Nine anchors, each measured off THIS scan rather than taken from a swatch book,
-  // because the sheet has faded and the honest question is what the photograph holds.
   const ANCHORS = [
     { rgb: [52, 80, 105],   m: 'prussian', name: 'Prussian blue',
       chem: 'Iron atoms held apart by pairs of carbon and nitrogen, Fe₄[Fe(CN)₆]₃. The darkest places took two passes of the block, and the ink for the black outlines had indigo in it as well.' },
@@ -381,381 +240,243 @@
       chem: 'Mulberry bark and nothing else. The margin spent two hundred years covered up, so this is close to the colour the paper started out.' }
   ];
 
-  // The three maps. Places the story names, and nothing else.
+  // The maps in the text. Places the story names, and nothing else.
   const MAPS = [
     { host: 'mapJapan', region: '../art/maps/japan.json', marks: [
-      { type: 'place', lat: 35.68, lon: 139.77, name: 'Edo', side: 'upper-right',
+      { type: 'place', lat: 35.68, lon: 139.77, name: 'Edo',
         text: 'More than a million people. Where the print was cut, printed and sold.' },
-      { type: 'place', lat: 32.74, lon: 129.87, name: 'Nagasaki', side: 'left', lit: true,
-        text: 'The one gap. Dutch traders lived on Dejima, a fan-shaped island built in this harbour, about 120 metres long. Chinese ships came here too.' }
+      { type: 'place', lat: 32.74, lon: 129.87, name: 'Nagasaki', lit: true,
+        text: 'The one gap. Dutch traders lived on Dejima, a fan-shaped island built in this harbour, about 120 metres long. Chinese ships came here too.' },
+      { type: 'place', lat: 35.01, lon: 135.77, name: 'Kyoto', minor: true },
+      { type: 'note',  lat: 31.50, lon: 140.00, text: 'the Pacific', water: true }
     ]},
     { host: 'mapEurope', region: '../art/maps/western-europe.json', marks: [
-      { type: 'place', lat: 51.51, lon: -0.13, name: 'London', side: 'left' },
-      { type: 'place', lat: 48.86, lon: 2.35,  name: 'Paris',  side: 'below' },
-      { type: 'place', lat: 52.52, lon: 13.40, name: 'Berlin', side: 'upper-right', lit: true,
+      { type: 'place', lat: 51.51, lon: -0.13, name: 'London', minor: true },
+      { type: 'place', lat: 48.86, lon: 2.35,  name: 'Paris', minor: true },
+      { type: 'place', lat: 52.37, lon: 4.90,  name: 'Amsterdam', minor: true },
+      { type: 'place', lat: 52.52, lon: 13.40, name: 'Berlin', lit: true,
         text: "Diesbach's workshop, about 1706. He was trying to make red." }
     ]},
-    { host: 'mapWorld', region: '../art/maps/world.json', marks: [
-      { type: 'place', lat: 51.51, lon: -0.13,   name: 'London',        side: 'upper-left' },
-      { type: 'place', lat: 48.86, lon: 2.35,    name: 'Paris',         side: 'below' },
-      { type: 'place', lat: 52.52, lon: 13.40,   name: 'Berlin',        side: 'upper-right', lit: true,
-        text: 'Where Prussian blue was made by accident, around 1706.' },
-      { type: 'place', lat: 40.71, lon: -74.01,  name: 'New York',      side: 'left' },
-      { type: 'place', lat: 37.77, lon: -122.42, name: 'San Francisco', side: 'left' },
-      { type: 'place', lat: 23.13, lon: 113.26,  name: 'Canton',        side: 'left',
+    // The two ways the blue came. Nobody recorded any one packet's journey: both lines are
+    // `possible` (dashed), and the caption and the text say so.
+    { host: 'mapBlue', region: '../art/maps/world.json', marks: [
+      { type: 'place', lat: 52.52, lon: 13.40,  name: 'Berlin', lit: true,
+        text: 'Where Prussian blue was first made, by accident, around 1706.' },
+      { type: 'place', lat: 52.37, lon: 4.90,   name: 'Amsterdam',
+        text: 'Dutch ships sailed from here for Asia.' },
+      { type: 'place', lat: 51.51, lon: -0.13,  name: 'London', minor: true },
+      { type: 'place', lat: -6.13, lon: 106.83, name: 'Batavia',
+        text: 'Now Jakarta. The Dutch town in Asia. One or two ships a year went on from here to Nagasaki.' },
+      { type: 'place', lat: 23.13, lon: 113.26, name: 'Canton',
         text: 'Guangzhou. Where European goods came into China.' },
-      { type: 'place', lat: 30.60, lon: 121.10,  name: 'Zhapu',         side: 'below',
+      { type: 'place', lat: 30.60, lon: 121.10, name: 'Zhapu',
         text: 'The Zhapu merchants held the trade with Japan. Junks sailed from here for Nagasaki.' },
-      { type: 'place', lat: 32.74, lon: 129.87,  name: 'Nagasaki',      side: 'left' },
-      { type: 'place', lat: 35.68, lon: 139.77,  name: 'Edo',           side: 'upper-right' }
+      { type: 'place', lat: 32.74, lon: 129.87, name: 'Nagasaki',
+        text: 'The one gap in the closed door.' },
+      { type: 'place', lat: 35.68, lon: 139.77, name: 'Edo',
+        text: 'Where the print was made and sold.' },
+      { type: 'note', lat: -38, lon: 45, text: 'by Dutch ship round Africa, five or six months' },
+      { type: 'note', lat: 27, lon: 143, side: 'right', text: 'by junk from Zhapu, a week or two' },
+      { type: 'path', possible: true, places: [
+        [52.52, 13.40], [52.37, 4.90], [51.0, 1.6], [49.8, -3.0], [46.0, -9.0], [38.0, -14.0], [28.0, -17.0],
+        [15.0, -22.0], [5.0, -20.0], [-5.0, -15.0], [-20.0, -8.0], [-32.0, 5.0], [-35.5, 18.5], [-38.0, 30.0],
+        [-38.0, 60.0], [-35.0, 90.0], [-20.0, 104.0], [-6.5, 105.5], [-6.13, 106.83], [-3.0, 108.5], [5.0, 109.0],
+        [12.0, 112.0], [20.0, 117.0], [24.5, 119.6], [27.5, 122.5], [31.0, 127.0], [32.74, 129.87] ] },
+      { type: 'path', possible: true, places: [
+        [23.13, 113.26], [22.3, 114.3], [23.5, 117.3], [25.0, 119.8], [27.5, 121.3], [30.0, 122.3], [30.60, 121.10],
+        [30.8, 122.5], [31.8, 126.0], [32.74, 129.87] ] },
+      { type: 'path', possible: true, places: [
+        [32.74, 129.87], [33.9, 130.9], [34.3, 133.5], [34.65, 135.2], [35.0, 135.8], [34.97, 138.38], [35.68, 139.77] ] }
     ]}
   ];
 
+  // Hokusai's World (Spec-Timeline-and-Map). The span follows the ruling: from his birth,
+  // the earliest thing that explains the picture, to the American warships, the latest thing
+  // the picture explains. His life above the line; the world's below.
+  const WORLD = {
+    from: 1760, to: 1855,
+    region: '../art/maps/japan-and-china.json',
+    world: '../art/maps/world.json',
+    places: {
+      edo:      { name: 'Edo',      lat: 35.68, lon: 139.77, side: 'person' },
+      nagoya:   { name: 'Nagoya',   lat: 35.18, lon: 136.91, side: 'person' },
+      nagasaki: { name: 'Nagasaki', lat: 32.74, lon: 129.87, side: 'world' },
+      yaeyama:  { name: 'the Yaeyama Islands', lat: 24.35, lon: 124.15, side: 'world' },
+      asama:    { name: 'Mount Asama', lat: 36.40, lon: 138.52, side: 'world' },
+      beijing:  { name: 'Beijing', lat: 39.90, lon: 116.40, side: 'world' },
+      zhapu:    { name: 'Zhapu',    lat: 30.60, lon: 121.10, side: 'world' },
+      kyoto:    { name: 'Kyoto',    lat: 35.01, lon: 135.77, side: 'minor' },
+      // Six events in five European towns. One card stands for them all, and its window
+      // shows the towns themselves rather than a dot called 'Europe'.
+      europe:   { name: 'Europe',   lat: 48.50, lon: 6.00, side: 'world', card: 'west', cardTop: 20, spread: true,
+                  far: 'About 9,500 km to the west',
+                  bearing: [{ name: 'Bath', lat: 51.38, lon: -2.36, lit: true },
+                            { name: 'London', lat: 51.51, lon: -0.13, lit: true },
+                            { name: 'Paris', lat: 48.86, lon: 2.35, lit: true },
+                            { name: 'Geneva', lat: 46.20, lon: 6.14, lit: true },
+                            { name: 'Vienna', lat: 48.21, lon: 16.37, lit: true },
+                            { name: 'Köping', lat: 59.51, lon: 15.99, lit: true },
+                            { name: 'Edo', lat: 35.68, lon: 139.77 }] },
+      tambora:  { name: 'Tambora',  lat: -8.25, lon: 118.00, side: 'world', card: 'west', cardTop: 62,
+                  far: 'About 5,400 km to the south-west, in Indonesia', bearing: [{ name: 'Edo', lat: 35.68, lon: 139.77 }] }
+    },
+    routes: {
+      tokaido: [[35.68, 139.77], [35.26, 139.15], [34.97, 138.38], [34.71, 137.73], [35.12, 136.91],
+                [35.07, 136.68], [35.00, 135.87], [35.01, 135.77]]
+    },
+    events: [
+      { id: 'born', year: 1760.8, side: 'person', label: 'Born', place: 'edo',
+        when: '1760 · Edo', title: 'A boy called Tokitarō',
+        text: 'Born in the autumn of 1760 in Katsushika, a district on the edge of Edo. As a boy he was called Tokitarō. Later he took the district’s name for his own: Katsushika Hokusai.' },
+      { id: 'shunro', year: 1779, side: 'person', label: 'First prints, as Shunrō', place: 'edo',
+        when: '1779 · Edo', title: 'His first name as an artist',
+        text: 'At about eighteen he joined the studio of Katsukawa Shunshō, who made prints of actors, and his first prints came out under the name Shunrō.' },
+      { id: 'hokusai', year: 1798, side: 'person', label: 'Takes the name Hokusai', place: 'edo',
+        when: 'about 1798 · Edo', title: 'North Studio',
+        text: 'Around 1798 he began signing himself Hokusai. It means something like “north studio”, after the North Star, which he prayed to. He changed his name about thirty times, and came back to this one again and again.' },
+      { id: 'harunobu', year: 1765, side: 'world', label: 'The first full-colour prints', place: 'edo',
+        when: '1765 · Edo', title: 'Colour, block by block',
+        text: 'Suzuki Harunobu and his cutters worked out how to line up many blocks exactly, one for each colour. Before that a print was black lines with a wash or two. The Great Wave is that invention, sixty-five years on.' },
+      { id: 'meiwa', year: 1771.3, side: 'world', label: 'The Meiwa tsunami', place: 'yaeyama',
+        when: '1771 · the Yaeyama Islands', title: 'A wave that really came',
+        text: 'An earthquake sent a wave over the islands in the far south-west of Japan. In places it ran thirty metres up the hills, and about a third of the people living there were killed. Hokusai was ten.' },
+      { id: 'kaitai', year: 1774, side: 'world', label: 'A Dutch anatomy book in Japanese', place: 'edo',
+        when: '1774 · Edo', title: 'Kaitai Shinsho',
+        text: 'Three Japanese doctors watched a dissection with a Dutch anatomy book open beside them, saw that the Dutch book was right and their own books were wrong, and spent three years turning it into Japanese — though they could barely read Dutch. It came through the same door as the blue.' },
+      { id: 'elekiter', year: 1776, side: 'world', label: 'Gennai’s electric machine', place: 'edo',
+        when: '1776 · Edo', title: 'The elekiter',
+        text: 'Hiraga Gennai repaired a broken Dutch machine that made sparks by rubbing glass, and showed it off in Edo. Fifty-five years later, further along this line, Faraday got electricity out of a magnet instead.' },
+      { id: 'scheele', year: 1775.5, side: 'world', label: 'Scheele’s green', place: 'europe',
+        when: '1775 · Köping, Sweden', title: 'A beautiful green made of arsenic',
+        text: 'Carl Wilhelm Scheele mixed copper with arsenic and got a green brighter than any other. It went into wallpaper, cloth, artificial flowers and, sometimes, sweets, and it went on quietly poisoning people for a hundred years.' },
+      { id: 'uranus', year: 1781.2, side: 'world', label: 'Uranus is found', place: 'europe',
+        when: '1781 · Bath, England', title: 'A new planet',
+        text: 'William Herschel, looking through a telescope he had built himself, found a small green dot that moved. It was a planet, the first anybody had found since ancient times, and it put the edge of the Sun’s family twice as far out as it had been.' },
+      { id: 'asama', year: 1783.6, side: 'world', label: 'Asama erupts; then the famine', place: 'asama',
+        when: '1783 · Mount Asama', title: 'The sky dims and the rice fails',
+        text: 'The mountain buried the farms below it in ash, and a volcano in Iceland was erupting the same year. Cold summers followed, the rice failed again and again, and hundreds of thousands of people died in what is called the Tenmei famine. Thirty-two years later Tambora did the same thing on a bigger scale.' },
+      { id: 'kokan', year: 1783.4, side: 'world', label: 'Shiba Kōkan’s copperplate', place: 'edo',
+        when: '1783 · Edo', title: 'Depth on a flat sheet',
+        text: 'Shiba Kōkan made the first copperplate etching in Japan, and took from Dutch books the trick of drawing things smaller as they go further away. Hokusai uses it here: Fuji is small because it is far off, not because it is little.' },
+      { id: 'figaro', year: 1786.4, side: 'world', label: 'Mozart’s Marriage of Figaro', place: 'europe',
+        when: '1786 · Vienna', title: 'A servant outwits his master',
+        text: 'Mozart’s new opera opened in Vienna. It is about a servant who is cleverer than the count he works for, and it is still performed everywhere.' },
+      { id: 'revolution', year: 1789.5, side: 'world', label: 'The French Revolution begins', place: 'europe',
+        when: '1789 · Paris', title: 'The Bastille falls',
+        text: 'A crowd in Paris took the Bastille, the king’s prison, and France began pulling down its kings. Napoleon’s wars came out of it, and most of the dates in European history for the next thirty years.' },
+      { id: 'redchamber', year: 1791, side: 'world', label: 'Dream of the Red Chamber is printed', place: 'beijing',
+        when: '1791 · Beijing', title: 'The great Chinese novel',
+        text: 'A long novel about a rich family’s rise and fall, written thirty years earlier and passed around in hand-made copies, was printed at last. Chinese readers have been arguing about its ending ever since.' },
+      { id: 'phaeton', year: 1808.8, side: 'world', label: 'A British warship forces its way in', place: 'nagasaki',
+        when: '1808 · Nagasaki', title: 'The Phaeton',
+        text: 'A British warship sailed into Nagasaki flying a Dutch flag, seized two Dutch traders, and would not leave until it was given food and water. Japan was humiliated, and it is one reason the door shut tighter.' },
+      { id: 'manga', year: 1814, side: 'person', label: 'The first Manga', place: 'nagoya',
+        when: '1814 · Nagoya', title: 'Sketches for anybody',
+        text: 'The first volume of his Manga came out in Nagoya: a book of quick drawings of people, animals, ghosts and waves, for other artists to copy from. Fifteen volumes followed, the last of them after he died.' },
+      { id: 'tambora', year: 1815.3, side: 'world', label: 'Tambora explodes', place: 'tambora',
+        when: '1815 · Tambora, Indonesia', title: 'The biggest eruption in recorded history',
+        text: 'The volcano Tambora, on an island in what is now Indonesia, blew apart in April 1815. Its ash went round the world, and the next year Europe and North America had no summer.' },
+      { id: 'frankenstein', year: 1816.5, side: 'world', label: 'Mary Shelley begins Frankenstein', place: 'europe',
+        when: '1816 · Lake Geneva', title: 'A summer with no summer in it',
+        text: 'The summer after Tambora was so cold and wet that a group of friends staying by Lake Geneva were kept indoors, and told each other ghost stories. One of them, Mary Shelley, who was eighteen, began Frankenstein.' },
+      { id: 'expensive', year: 1820, side: 'world', label: 'Prussian blue in Japan, still dear', place: 'nagasaki',
+        when: 'around 1820 · Nagasaki', title: 'A little of the Berlin blue',
+        text: 'Dutch ships had been bringing small amounts of the blue through Dejima for years. Painters used a little of it. It cost far too much for prints.' },
+      { id: 'order', year: 1825, side: 'world', label: 'Japan orders foreign ships driven away', place: 'edo',
+        when: '1825 · Edo', title: 'Drive them off',
+        text: 'After more foreign ships came near the coast, the shogun’s government ordered that any of them be driven off, with cannon if need be.' },
+      { id: 'cheap', year: 1829, side: 'world', label: 'Cheap Prussian blue arrives from China', place: 'zhapu',
+        when: 'around 1829 · Zhapu to Nagasaki', title: 'The blue gets cheap',
+        text: 'Chinese makers were now making the blue themselves, and cheaply. It began arriving at Nagasaki on junks from Zhapu, and within a year or two it was all over the print shops of Edo.' },
+      { id: 'wave', year: 1830.5, side: 'person', focus: true, label: 'The Great Wave', place: 'edo',
+        when: 'about 1830 · Edo', title: 'Under the Wave off Kanagawa',
+        text: 'One of his Thirty-six Views of Mount Fuji, and one of the first prints made in the new blue. He was about seventy.' },
+      { id: 'faraday', year: 1831.7, side: 'world', label: 'Faraday gets electricity from a magnet', place: 'europe',
+        when: '1831 · London', title: 'A magnet and a coil of wire',
+        text: 'Michael Faraday pushed a magnet into a coil of wire and made electricity flow in it. Nearly every power station in the world works that way now.' },
+      { id: 'hiroshige', year: 1833.5, side: 'world', label: 'Hiroshige’s road to Kyoto', place: 'edo', route: 'tokaido',
+        when: '1833 · Edo to Kyoto', title: 'Fifty-three stations',
+        text: 'Utagawa Hiroshige, thirty-seven years younger than Hokusai, published prints of the fifty-three stopping places on the great road from Edo to Kyoto. They were a great success.' },
+      { id: 'seventy', year: 1834.5, side: 'person', label: '“Nothing before seventy”', place: 'edo',
+        when: '1834 · Edo', title: 'Every dot alive',
+        text: 'In a book of a hundred views of Fuji he wrote that nothing he had drawn before he was seventy was worth noticing, and that by the time he was a hundred and ten, every dot and every line would be alive.' },
+      { id: 'photo', year: 1839.05, side: 'world', label: 'Photography is announced in Paris', place: 'europe',
+        when: '1839 · Paris', title: 'A picture nobody drew',
+        text: 'In January 1839 Louis Daguerre’s way of fixing a picture made by light was announced in Paris. For the first time a picture could be made without anybody drawing it.' },
+      { id: 'dies', year: 1849.3, side: 'person', label: 'Dies, aged 88', place: 'edo',
+        when: '1849 · Edo', title: 'Five more years',
+        text: 'He died in Edo in the spring of 1849. He is said to have asked for five more years, which would have made him a real painter.' },
+      { id: 'perry', year: 1853.5, side: 'world', label: 'US warships in Edo Bay', place: 'edo',
+        when: '1853 · Edo Bay', title: 'The door comes open',
+        text: 'In July 1853 four American warships, two of them driven by steam, anchored at the mouth of Edo Bay and would not leave. The next year Japan signed a treaty with the United States, and the door began to open.' }
+    ]
+  };
+  if (typeof cwWorld === 'function') cwWorld(document.getElementById('hokusaiWorld'), WORLD);
+
   // ==========================================================================
-  // 2. THE TIMELINE
+  // THE MAPS
   // ==========================================================================
-
-  const tl = document.getElementById('tl');
-
-  function build() {
-    tl.innerHTML = '';
-    const railTop = 30;
-    const pct = y => ((y - FROM) / (TO - FROM)) * 100;
-
-    const rail = document.createElement('div');
-    rail.className = 'rail'; rail.style.top = railTop + 'px';
-    tl.appendChild(rail);
-
-    for (let y = FROM; y <= TO; y += 5) {
-      const t = document.createElement('div');
-      t.className = 'tick';
-      t.style.left = pct(y) + '%'; t.style.top = (railTop - 4) + 'px'; t.style.height = '10px';
-      tl.appendChild(t);
-    }
-
-    const items = EVENTS.concat([{ y: DEST, s: DEST_LABEL, dest: true }]).sort((a, b) => a.y - b.y);
-    const labs = [];
-    for (const e of items) {
-      const d = document.createElement('div');
-      d.className = 'dia' + (e.dest ? ' dest' : '');
-      d.style.left = pct(e.y) + '%'; d.style.top = (railTop + 1) + 'px';
-      tl.appendChild(d);
-
-      const lead = document.createElement('div');
-      lead.className = 'lead' + (e.dest ? ' dest' : '');
-      lead.style.left = pct(e.y) + '%'; lead.style.top = (railTop + 7) + 'px';
-      tl.appendChild(lead);
-
-      const lab = document.createElement('div');
-      lab.className = 'lab' + (e.dest ? ' dest' : '');
-      lab.innerHTML = '<span>' + e.s + '</span><span class="yr">' + e.y + '</span>';
-      lab.style.left = pct(e.y) + '%';
-      tl.appendChild(lab);
-
-      labs.push({ lab, lead, dest: !!e.dest });
-    }
-
-    const capL = document.createElement('span');
-    capL.className = 'endcap l'; capL.textContent = FROM; capL.style.top = (railTop - 20) + 'px';
-    tl.appendChild(capL);
-    const capR = document.createElement('span');
-    capR.className = 'endcap r'; capR.textContent = TO; capR.style.top = (railTop - 20) + 'px';
-    tl.appendChild(capR);
-
-    // Each label goes in the lowest row where it does not touch a neighbour, and a
-    // leader runs down to it. Rows are as tall as their tallest label.
-    const gap = 7, rowGap = 9, top0 = railTop + 14, W = tl.clientWidth;
-    const rows = [];
-    const order = labs.slice().sort((a, b) => (b.dest ? 1 : 0) - (a.dest ? 1 : 0));
-    for (const it of order) {
-      const w = it.lab.offsetWidth, h = it.lab.offsetHeight;
-      const centre = (parseFloat(it.lab.style.left) / 100) * W;
-      let l = centre - w / 2, r = centre + w / 2;
-      if (l < 4) { l = 4; r = 4 + w; it.lab.style.transform = 'none'; it.lab.style.left = '4px'; }
-      if (r > W - 4) { r = W - 4; l = W - 4 - w; it.lab.style.transform = 'none'; it.lab.style.left = l + 'px'; }
-      for (let row = 0; row < 14; row++) {
-        const R = rows[row] || (rows[row] = { spans: [], items: [], h: 0 });
-        if (R.spans.every(s => r < s[0] - gap || l > s[1] + gap)) {
-          R.spans.push([l, r]); R.items.push(it); R.h = Math.max(R.h, h); break;
-        }
-      }
-    }
-    let y = top0;
-    for (const R of rows) {
-      for (const it of R.items) {
-        it.lab.style.top = y + 'px';
-        it.lead.style.height = Math.max(0, y - (railTop + 7)) + 'px';
-      }
-      y += R.h + rowGap;
-    }
-    tl.style.height = (y + 4) + 'px';
-  }
-  build();
-  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 120); });
-
-  // ==========================================================================
-  // 3. THE MAPS
-  // ==========================================================================
-
   if (typeof cwMap === 'function') {
     for (const m of MAPS) {
       const host = document.getElementById(m.host);
       if (!host) continue;
-      cwMap.load(m.region)
-        .then(region => cwMap(host, region, m.marks))
-        .catch(err => { console.warn('map', m.host, err); host.remove(); });
+      cwMap.load(m.region).then(r => cwMap(host, r, m.marks))
+        .catch(err => { console.warn('map', m.host, err); host.closest('figure').remove(); });
     }
   }
 
   // ==========================================================================
-  // 4. THE PRINT: the magnifier, the zoom, and the colour it is sitting on
+  // THE PRINT: the magnifier, the zoom, and the colour it is sitting on
   // ==========================================================================
-
   const plate = document.getElementById('plate');
   const frame = document.getElementById('frame');
-  const img = document.getElementById('plateImg');
-  const loupe = document.getElementById('loupe');
   const home = document.getElementById('plateHome');
   const stage = document.getElementById('plateStage');
   const readout = document.getElementById('readout');
   const toolwords = document.getElementById('toolwords');
-  const elNums = document.getElementById('nums'), elWhat = document.getElementById('what');
-  const elChem = document.getElementById('chem'), elHedge = document.getElementById('hedge');
-  const elSwatch = document.getElementById('swatch');
-  const wDrop = document.getElementById('dropLoupe'), wFit = document.getElementById('fit');
-  const wBack = document.getElementById('putBack'), wSummon = document.getElementById('summon');
+  const toolSlot = document.getElementById('toolSlot');
+  const el = id => document.getElementById(id);
+  const wDrop = el('dropLoupe'), wFit = el('fit'), wBack = el('putBack'), wSummon = el('summon');
 
-  const LOUPE_POWER = 4;          // how much bigger the print is inside the circle
-  const MAX_ZOOM = 6;
-  let zoom = 1, ox = 0, oy = 0;   // ox, oy in CSS pixels of the frame, at the current zoom
-  let armed = false;              // the colour readings are showing
-  let spot = null;                // where the magnifier sits, in fractions of the image
-
-  // --- the sheet, read at its own resolution ---
-  let cvs = null, ctx = null;
-  function sheet() {
-    if (cvs) return true;
-    if (!img.naturalWidth) return false;
-    cvs = document.createElement('canvas');
-    cvs.width = img.naturalWidth; cvs.height = img.naturalHeight;
-    ctx = cvs.getContext('2d', { willReadFrequently: true });
-    try { ctx.drawImage(img, 0, 0); } catch (e) { cvs = null; return false; }
-    return true;
-  }
-
-  function lab(rgb) {
-    const f = c => { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
-    const r = f(rgb[0]), g = f(rgb[1]), b = f(rgb[2]);
-    const X = (r * 0.4124564 + g * 0.3575761 + b * 0.1804375) / 0.95047;
-    const Y = (r * 0.2126729 + g * 0.7151522 + b * 0.0721750);
-    const Z = (r * 0.0193339 + g * 0.1191920 + b * 0.9503041) / 1.08883;
-    const t = v => v > 0.008856 ? Math.cbrt(v) : 7.787 * v + 16 / 116;
-    const fx = t(X), fy = t(Y), fz = t(Z);
-    return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
-  }
-  const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
-  const ANCHOR_LAB = ANCHORS.map(a => lab(a.rgb));
-  const hex = rgb => '#' + rgb.map(v => v.toString(16).padStart(2, '0')).join('');
-
-  function identify(rgb) {
-    const L = lab(rgb);
-    const ranked = ANCHORS.map((a, i) => ({ a, d: dist(L, ANCHOR_LAB[i]) })).sort((p, q) => p.d - q.d);
-    const best = ranked[0], next = ranked[1];
-    if (next.d - best.d < 4.5 && next.a.m !== best.a.m) {
-      return { what: 'either ' + best.a.name + ', or ' + next.a.name,
-               chem: best.a.chem + ' — ' + next.a.chem,
-               hedge: 'In this sheet those two have faded to the same colour, near enough, so the colour on its own cannot tell them apart. Where they sit in the picture can.' };
-    }
-    if (best.d > 22) {
-      return { what: best.a.name + ', mixed with something', chem: best.a.chem,
-               hedge: 'This is some way off any single colour in the print — probably two blocks overlapping, or an edge where two colours meet.' };
-    }
-    return { what: best.a.name, chem: best.a.chem,
-             hedge: best.d > 11 ? 'A fair match. The sheet is not evenly coloured, so nothing here is exact.' : 'A close match.' };
-  }
-
-  // --- drawing ---
-  function clampPan() {
-    const r = frame.getBoundingClientRect();
-    const lim = (zoom - 1) * r.width;
-    const limY = (zoom - 1) * r.height;
-    ox = Math.min(0, Math.max(-lim, ox));
-    oy = Math.min(0, Math.max(-limY, oy));
-  }
-  function paint() {
-    clampPan();
-    img.style.transform = 'translate(' + ox + 'px,' + oy + 'px) scale(' + zoom + ')';
-    frame.classList.toggle('zoomed', zoom > 1.001);
-    wFit.hidden = zoom <= 1.001;
-    placeLoupe();
-  }
-
-  // spot is in image fractions, so it survives zooming and the move down the page
-  function placeLoupe() {
-    if (!spot) { loupe.classList.remove('on'); wDrop.hidden = true; return; }
-    const r = frame.getBoundingClientRect();
-    const px = spot.u * r.width * zoom + ox;
-    const py = spot.v * r.height * zoom + oy;
-    loupe.style.left = px + 'px';
-    loupe.style.top = py + 'px';
-    const bw = r.width * zoom * LOUPE_POWER;
-    const bh = r.height * zoom * LOUPE_POWER;
-    const size = loupe.offsetWidth || 148;
-    loupe.style.backgroundImage = 'url("' + img.getAttribute('src') + '")';
-    loupe.style.backgroundSize = bw + 'px ' + bh + 'px';
-    loupe.style.backgroundPosition = (size / 2 - spot.u * bw) + 'px ' + (size / 2 - spot.v * bh) + 'px';
-    loupe.classList.add('on');
-    wDrop.hidden = false;
-  }
-
-  function readAt(u, v) {
-    if (!armed) return;
-    if (!sheet()) return;
-    const sx = Math.round(u * cvs.width), sy = Math.round(v * cvs.height);
-    const n = 5, half = 2;
-    let d;
-    try { d = ctx.getImageData(Math.max(0, sx - half), Math.max(0, sy - half), n, n).data; }
-    catch (err) {
-      elWhat.textContent = 'The browser will not let the page read this image.';
-      elChem.textContent = 'Open the page from the site rather than from a file on disk.';
-      elHedge.textContent = ''; return;
-    }
-    let R = 0, G = 0, B = 0;
-    for (let i = 0; i < d.length; i += 4) { R += d[i]; G += d[i + 1]; B += d[i + 2]; }
-    const k = d.length / 4;
-    const rgb = [Math.round(R / k), Math.round(G / k), Math.round(B / k)];
-    elSwatch.style.background = hex(rgb);
-    elNums.textContent = hex(rgb) + '   rgb(' + rgb.join(', ') + ')';
-    const id = identify(rgb);
-    readout.classList.remove('idle');
-    elWhat.textContent = id.what; elChem.textContent = id.chem; elHedge.textContent = id.hedge;
-  }
-
-  function setSpotFromClient(cx, cy) {
-    const r = frame.getBoundingClientRect();
-    const u = ((cx - r.left) - ox) / (r.width * zoom);
-    const v = ((cy - r.top) - oy) / (r.height * zoom);
-    if (u < 0 || v < 0 || u > 1 || v > 1) return;
-    spot = { u, v };
-    placeLoupe();
-    readAt(u, v);
-  }
-
-  // --- pointers: tap places the magnifier, drag pans once zoomed, two fingers pinch ---
-  const pts = new Map();
-  let startDist = 0, startZoom = 1, startMid = null, moved = 0, panning = false, last = null;
-
-  frame.addEventListener('pointerdown', ev => {
-    pts.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
-    moved = 0;
-    if (pts.size === 1) {
-      last = { x: ev.clientX, y: ev.clientY };
-      panning = zoom > 1.001;
-      if (panning) { frame.setPointerCapture(ev.pointerId); frame.classList.add('dragging'); }
-    } else if (pts.size === 2) {
-      const [a, b] = [...pts.values()];
-      startDist = Math.hypot(a.x - b.x, a.y - b.y);
-      startZoom = zoom;
-      const r = frame.getBoundingClientRect();
-      startMid = { x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top };
-      panning = false;
+  const tool = cwSampler(frame, ANCHORS, {
+    hedge: {
+      tie: 'In this sheet those two have faded to the same colour, near enough, so the colour on its own cannot tell them apart. Where they sit in the picture can.',
+      far: 'This is some way off any single colour in the print — probably two blocks overlapping, or an edge where two colours meet.',
+      fair: 'A fair match. The sheet is not evenly coloured, so nothing here is exact.'
+    },
+    onState: s => { wDrop.hidden = !s.loupe; wFit.hidden = !s.zoomed; },
+    onSample: s => {
+      if (s.error) { el('what').textContent = 'The browser will not let the page read this image.';
+                     el('chem').textContent = 'Open the page from the site rather than from a file on disk.';
+                     el('hedge').textContent = ''; return; }
+      readout.classList.remove('idle');
+      el('swatch').style.background = s.hex;
+      el('nums').textContent = s.hex + '   rgb(' + s.rgb.join(', ') + ')';
+      el('what').textContent = s.what; el('chem').textContent = s.chem; el('hedge').textContent = s.hedge;
     }
   });
+  wDrop.addEventListener('click', () => tool.drop());
+  wFit.addEventListener('click', () => tool.fit());
 
-  frame.addEventListener('pointermove', ev => {
-    if (!pts.has(ev.pointerId)) return;
-    pts.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
-    if (pts.size === 2) {
-      const [a, b] = [...pts.values()];
-      const d = Math.hypot(a.x - b.x, a.y - b.y);
-      if (startDist > 0) { zoomTo(startZoom * (d / startDist), startMid); moved = 99; }
-      ev.preventDefault();
-      return;
-    }
-    if (panning && last) {
-      const dx = ev.clientX - last.x, dy = ev.clientY - last.y;
-      ox += dx; oy += dy; moved += Math.abs(dx) + Math.abs(dy);
-      last = { x: ev.clientX, y: ev.clientY };
-      paint();
-      ev.preventDefault();
-    }
-  });
-
-  function endPointer(ev) {
-    const had = pts.size;
-    pts.delete(ev.pointerId);
-    if (frame.hasPointerCapture && frame.hasPointerCapture(ev.pointerId)) frame.releasePointerCapture(ev.pointerId);
-    frame.classList.remove('dragging');
-    if (had === 1 && moved < 7) setSpotFromClient(ev.clientX, ev.clientY);
-    if (pts.size < 2) { startDist = 0; }
-    panning = pts.size === 1 && zoom > 1.001;
-    last = pts.size === 1 ? [...pts.values()][0] : null;
-  }
-  frame.addEventListener('pointerup', endPointer);
-  frame.addEventListener('pointercancel', ev => { pts.delete(ev.pointerId); frame.classList.remove('dragging'); });
-
-  function zoomTo(z, at) {
-    const r = frame.getBoundingClientRect();
-    const p = at || { x: r.width / 2, y: r.height / 2 };
-    const nz = Math.min(MAX_ZOOM, Math.max(1, z));
-    const k = nz / zoom;
-    ox = p.x - (p.x - ox) * k;
-    oy = p.y - (p.y - oy) * k;
-    zoom = nz;
-    if (zoom <= 1.001) { zoom = 1; ox = 0; oy = 0; }
-    paint();
-  }
-
-  // trackpad pinch on a Mac arrives as a wheel with ctrlKey, and as gesture events in Safari
-  frame.addEventListener('wheel', ev => {
-    if (!ev.ctrlKey) return;
-    ev.preventDefault();
-    const r = frame.getBoundingClientRect();
-    const d = Math.max(-40, Math.min(40, ev.deltaY));   // one flick must not jump to the limit
-    zoomTo(zoom * Math.pow(0.99, d), { x: ev.clientX - r.left, y: ev.clientY - r.top });
-  }, { passive: false });
-  let gz = 1;
-  frame.addEventListener('gesturestart', ev => { ev.preventDefault(); gz = zoom; });
-  frame.addEventListener('gesturechange', ev => {
-    ev.preventDefault();
-    const r = frame.getBoundingClientRect();
-    zoomTo(gz * ev.scale, { x: ev.clientX - r.left, y: ev.clientY - r.top });
-  });
-
-  wFit.addEventListener('click', () => { zoom = 1; ox = 0; oy = 0; paint(); });
-  wDrop.addEventListener('click', () => { spot = null; placeLoupe(); });
-
-  // --- the print moves down and the readings arrive ---
-  function arm() {
-    stage.appendChild(plate); stage.appendChild(toolwords); stage.appendChild(readout);
-    stage.classList.add('open');
-    home.classList.add('folded');
-    armed = true;
-    readout.hidden = false;
-    wBack.hidden = false;
-    wSummon.hidden = true;
+  wSummon.addEventListener('click', () => {
+    toolSlot.appendChild(wFit); toolSlot.appendChild(wDrop); toolSlot.appendChild(wBack);   // the tool's words follow it, still in the left column
+    stage.appendChild(plate); stage.appendChild(readout);
+    stage.classList.add('open'); home.classList.add('folded');
+    readout.hidden = false; wBack.hidden = false; wSummon.hidden = true;
     readout.classList.add('idle');
-    elWhat.textContent = 'Tap anywhere on the print.';
-    elChem.textContent = ''; elHedge.textContent = ''; elNums.innerHTML = '&nbsp;';
-    elSwatch.style.background = 'transparent';
-    sheet();
-    requestAnimationFrame(() => { paint(); if (spot) readAt(spot.u, spot.v); });
-  }
-  function disarm() {
-    stage.classList.remove('open');
-    home.classList.remove('folded');
-    home.appendChild(plate); home.appendChild(toolwords); home.appendChild(readout);
-    armed = false;
-    readout.hidden = true;
-    wBack.hidden = true;
-    wSummon.hidden = false;
-    requestAnimationFrame(() => { paint(); plate.scrollIntoView({ block: 'center', behavior: 'smooth' }); });
-  }
-  wSummon.addEventListener('click', arm);
-  wBack.addEventListener('click', disarm);
-
-  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(paint, 120); });
-  if (img.complete) sheet(); else img.addEventListener('load', sheet);
+    el('what').textContent = 'Tap anywhere on the print.';
+    el('chem').textContent = ''; el('hedge').textContent = ''; el('nums').innerHTML = '&nbsp;';
+    el('swatch').style.background = 'transparent';
+    tool.arm(true); tool.repaint();
+  });
+  wBack.addEventListener('click', () => {
+    stage.classList.remove('open'); home.classList.remove('folded');
+    toolwords.appendChild(wDrop); toolwords.appendChild(wFit); toolwords.appendChild(wBack);
+    home.appendChild(plate); home.appendChild(readout);
+    readout.hidden = true; wBack.hidden = true; wSummon.hidden = false;
+    tool.arm(false); tool.repaint();
+    requestAnimationFrame(() => plate.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+  });
 })();
 </script>
 </body>

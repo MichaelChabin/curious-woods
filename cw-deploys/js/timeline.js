@@ -8,14 +8,19 @@
 
    One list of events, read two ways. The timeline uses each event's date and ignores its
    place; the map uses its place and ignores its date. Tap an event on either and it lights
-   on both, and the panel below says what happened and what it has to do with the story.
+   on both, and the panel says what happened and what it has to do with the story.
+
+   The panel sits between the line and the map (22 Sep 2026, Michael: tapping a date put the
+   words off the bottom of the screen). Whichever she taps, the words are a few lines away.
 
    data = {
      from, to,                           years at the ends of the line
      region: '../art/maps/<r>.json',     the story's regional base picture (map.js)
      world:  '../art/maps/world.json',   for the far-away cards' window
      places: { id: { name, lat, lon, side:'person'|'world'|'minor', card?:'east'|'west',
-                     far?: 'About 8,900 km to the east, in China' } },
+                     far?: 'About 8,900 km to the east, in China',
+                     spread?: true } },          a card standing for several places (Europe):
+                                                 its window shows the places in `bearing`, not a dot of its own
      routes: { id: [ [lat, lon], ... ] },
      events: [ { id, year, side:'person'|'world', focus?, label, place, route?,
                  when, title, text } ],
@@ -41,7 +46,7 @@
     '.cw-world .cw-tl{display:block;width:100%;touch-action:manipulation;user-select:none;-webkit-user-select:none;}',
     '.cw-world .cw-tl text{font-family:Georgia,"Times New Roman",serif;}',
     '.cw-world .cw-tl .cw-tl-lbl{paint-order:stroke;stroke:rgba(244,241,234,.8);stroke-width:3px;stroke-linejoin:round;}',
-    '.cw-world .cw-wmap{position:relative;margin-top:4px;}',
+    '.cw-world .cw-wmap{position:relative;margin-top:14px;}',
     '.cw-world .cw-card{position:absolute;width:176px;padding:10px 12px;background:rgba(244,241,234,.94);',
     '  border:1px solid #d9d4c8;border-radius:3px;text-align:left;font:inherit;color:inherit;cursor:pointer;line-height:1.3;}',
     '.cw-world .cw-card .n{font-size:15px;display:flex;align-items:center;gap:8px;}',
@@ -51,11 +56,11 @@
     '.cw-world .cw-card.on{border-color:' + VERMILION + ';}',
     '.cw-world .cw-card.east{right:12px;}',
     '.cw-world .cw-card.west{left:12px;}',
-    '.cw-world .cw-panel{min-height:190px;margin-top:18px;padding-top:14px;border-top:.5px solid #c8b89a;}',
+    '.cw-world .cw-panel{min-height:150px;margin-top:10px;padding-top:12px;border-top:.5px solid #c8b89a;}',
     '.cw-world .cw-panel .hint{color:#7d7a72;font-size:15px;}',
     '.cw-world .cw-panel .when{font-size:13px;color:#7d7a72;letter-spacing:.02em;}',
     '.cw-world .cw-panel h3{font-weight:normal;font-size:20px;margin:2px 0 6px;}',
-    '.cw-world .cw-panel p{font-size:17px;line-height:1.5;margin:0 0 16px;max-width:44em;}',
+    '.cw-world .cw-panel p{font-size:17px;line-height:1.5;margin:0 0 12px;max-width:44em;}',
     /* on a phone a card over the map would cover the places that matter, so it sits under
        the map instead, still on the side where the place really lies */
     '@media (max-width:760px){.cw-world .cw-card{position:static;display:block;width:200px;padding:8px 10px;margin-top:8px;}',
@@ -123,8 +128,12 @@
         el('line', { x1: x(y), x2: x(y), y1: railY, y2: railY + 4, stroke: RAIL }, svg);
       }
       // the years just under the line: every ten, plus both ends, anchored inward
+      // Every ten years, or every twenty when ten would crowd (a long line on a phone); a
+      // decade too close to an end year gives way to it.
+      var step = (x(o.from + 10) - x(o.from)) < 36 ? 20 : 10, room = 32;
       var years = [o.from];
-      for (var yy = Math.ceil((o.from + 1) / 10) * 10; yy < o.to; yy += 10) if (yy - o.from >= 4 && o.to - yy >= 4) years.push(yy);
+      for (var yy = Math.ceil((o.from + 1) / step) * step; yy < o.to; yy += step)
+        if (x(yy) - x(o.from) >= room && x(o.to) - x(yy) >= room) years.push(yy);
       years.push(o.to);
       years.forEach(function (yv) {
         var t = el('text', { x: x(yv), y: railY + 16, 'text-anchor': yv === o.from ? 'start' : (yv === o.to ? 'end' : 'middle'),
@@ -189,10 +198,10 @@
     host.classList.add('cw-world');
     host.innerHTML = '';
     var svg = el('svg', { 'class': 'cw-tl' }, host);
-    var mapWrap = document.createElement('div'); mapWrap.className = 'cw-wmap'; host.appendChild(mapWrap);
-    var mapBox = document.createElement('div'); mapWrap.appendChild(mapBox);
     var panel = document.createElement('section'); panel.className = 'cw-panel';
     panel.setAttribute('aria-live', 'polite'); host.appendChild(panel);
+    var mapWrap = document.createElement('div'); mapWrap.className = 'cw-wmap'; host.appendChild(mapWrap);
+    var mapBox = document.createElement('div'); mapWrap.appendChild(mapBox);
 
     var hint = data.hint || 'Tap a date or a place.';
     var byId = {}; data.events.forEach(function (e) { byId[e.id] = e; });
@@ -226,11 +235,11 @@
       b.style.top = (p.cardTop || 50) + '%';
       b.addEventListener('click', function (ev) {
         ev.stopPropagation();
-        if (evs.length) { if (!(sel.ids.length === 1 && sel.ids[0] === evs[0].id)) selectEvent(evs[0].id); }
+        if (evs.length) fromMap(pid);
         if (data.world && typeof cwMap === 'function') {
           cwMap.load(data.world).then(function (w) {
-            var marksW = [{ type: 'place', lat: p.lat, lon: p.lon, name: p.name, lit: true }];
-            (p.bearing || []).forEach(function (q) { marksW.push({ type: 'place', lat: q.lat, lon: q.lon, name: q.name, minor: true }); });
+            var marksW = p.spread ? [] : [{ type: 'place', lat: p.lat, lon: p.lon, name: p.name, lit: true }];
+            (p.bearing || []).forEach(function (q) { marksW.push({ type: 'place', lat: q.lat, lon: q.lon, name: q.name, minor: !p.spread && !q.lit, lit: !!q.lit }); });
             cwMapWindow(w, marksW);
           });
         }
