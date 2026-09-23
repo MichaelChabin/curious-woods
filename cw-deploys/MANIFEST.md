@@ -120,8 +120,14 @@ pixels, so it must be served same-origin.
 `art/van-gogh-starry-night-gallery.jpg` — the same painting whole for the gallery, 600 × 475.
 `art/van-gogh-icon-256.png` — the story's tab icon, a square detail of the painting.
 `art/hiroshige-sudden-shower.jpg` — Utagawa Hiroshige, *Sudden Shower over Shin-Ōhashi Bridge
-and Atake*, 1857, public domain, 900 × 1364. Margin picture in the Van Gogh story, for the
-prints he copied.
+and Atake*, 1857, public domain; recut 23 Sep at 1000 × 1515 (was 900 × 1364). First picture of
+the Van Gogh story's stack of the prints he copied (`js/stack.js`), with these three:
+`art/van-gogh-bridge-in-the-rain.jpg` — Van Gogh, *Bridge in the Rain (after Hiroshige)*, 1887,
+1000 × 1376; `art/hiroshige-plum-park.jpg` — Hiroshige, *Plum Park in Kameido*, 1857, 1000 × 1470;
+`art/van-gogh-flowering-plum.jpg` — Van Gogh, *Flowering Plum Orchard (after Hiroshige)*, 1887,
+1000 × 1192. All four public domain; the page's References credit the Van Gogh Museum's and the
+Rijksmuseum's photographs. Added 23 Sep with the stack; a step whose file will not load is
+dropped, so the site would have shown a shorter stack, not a broken page, had they been left out.
 `art/maps/france-and-the-low-countries.*`, `art/maps/france-to-the-north-sea.*` — two regions
 rendered 23 Sep 2026 for the Van Gogh story, the usual three files each (picture, JSON with
 contours, height grid), from `experiments/maps/render.py`.
@@ -1029,3 +1035,20 @@ verbatim text of `01-ACTIVE/Stories-First-Set-Aug24.md`, the choice panel, and t
 leftover grammar of Divide and Make a square. **It is not served** — `prototypes/`
 sits outside `cw-deploys/`. Read it with `01-ACTIVE/Walk-Glass-Aug26.md` beside it,
 which is what replaces it.
+
+## The story template and its check (23 Sept 2026)
+
+`template-story.html` is a CW story page with the words taken out: the shape, with comments
+saying what to type and `DELETE` markers on everything to replace. Copy it to
+`active/<slug>.html` and fill it in. Do not edit it in place, and do not build a story page
+from scratch — formatting is meant to be inherited, not described. `Story-Pattern.md` says
+why each part is the way it is; the template says what to type.
+
+`tools/check-story.sh` checks the story standard, as `tools/check-deploys.sh` checks the
+head standard. With no arguments it checks every page in `active/` that links
+`css/story.css`; name a file to check one. It fails on: no `story.css` or no `--aspect`,
+more than one `<style>` block, a missing title block, date line, opening picture, left-column
+block or References, References before More, the left-column block not level with the
+caption, a tool's word not immediately before the paragraph that names it, a shelf copied
+into the page, a World that does not use the shared event list, a picture or map file that
+does not exist, and anything left over from the template.

@@ -19,7 +19,7 @@
   Written straight into active/, so it never had an experiments address and needs no redirect.
 -->
 <title>Van Gogh: Starry Night — Curious Woods</title>
-<link rel="stylesheet" href="../css/story.css?v=2026-09-23">
+<link rel="stylesheet" href="../css/story.css?v=2026-09-23b">
 <style>
   :root { --aspect: calc(1800 / 1425); }   /* the painting's own shape; everything else is ../css/story.css */
 </style>
@@ -39,18 +39,21 @@
     <h2>Look at the big star</h2>
 
     <div id="plateHome">
-      <div class="tools" id="toolwords">
-        <button class="word" id="dropLoupe" type="button" hidden>Put the magnifier away</button>
-        <button class="word" id="fit" type="button" hidden>The whole picture</button>
-        <button class="word" id="putBack" type="button" hidden>Put it back</button>
-      </div>
       <figure id="plate">
         <div class="frame" id="frame">
           <img id="plateImg" src="../art/van-gogh-starry-night.jpg"
                alt="A night sky rolling in great curls of blue over a sleeping village, with eleven blazing stars and a crescent moon, and a dark cypress tree standing up the left-hand side.">
         </div>
         <div class="toolwords" id="plateWords"></div>
-        <figcaption>Vincent van Gogh, <i>The Starry Night</i>, June 1889. Oil on canvas, 73.7 &times; 92.1 cm. The Museum of Modern Art, New York. Tap the big star to the right of the tree.</figcaption>
+        <div class="tools" id="toolwords">
+          <p class="note">You can zoom this image to see it in detail. Once you've zoomed in, you can
+             drag it to see any part you are curious about. You can also tap it to see a magnifier,
+             which you can also drag.</p>
+          <button class="word" id="dropLoupe" type="button" hidden>Magnifier off</button>
+          <button class="word" id="fit" type="button" hidden>Reset</button>
+          <button class="word" id="putBack" type="button" hidden>Put it back</button>
+        </div>
+        <figcaption>Vincent van Gogh, <i>The Starry Night</i>, June 1889. Oil on canvas, 73.7 &times; 92.1 cm. The Museum of Modern Art, New York.</figcaption>
       </figure>
       <div class="readout idle" id="readout" hidden>
         <div class="swatch" id="swatch"></div>
@@ -63,11 +66,11 @@
       </div>
     </div>
 
-    <p>Tap it, and a magnifier appears there. You can drag the magnifier about, and pinch the picture to make the whole of it bigger.</p>
+    <p>If you tap the bright star, to the right of the tallest tree, a magnifier will appear and you can see it in detail.</p>
 
-    <p>That one is not a star.</p>
+    <p>The thing to know about that star is this: it isn't a star at all. It is the planet Venus, and in June of 1889 it came up in the east about two hours before the sun did. Anyone awake could see it.</p>
 
-    <p>It is the planet Venus, and in June of 1889 it came up in the east about two hours before the sun did. Anyone awake could see it. He was awake.</p>
+    <p>Vincent van Gogh was awake.</p>
 
     <h2>The window</h2>
 
@@ -149,15 +152,16 @@
 
       <p><b>Theo.</b> Four years younger than Vincent, and an art dealer in Paris. He sent his brother money nearly every month for ten years and never saw a return on it. Almost every letter we have is one Vincent wrote to Theo, because Theo kept them.</p>
 
-      <figure class="margin">
-        <img src="../art/hiroshige-sudden-shower.jpg" width="900" height="1364" loading="lazy"
-             alt="A Japanese woodblock print: rain falling in fine straight lines on a wooden bridge, where people hurry across under umbrellas and a straw cape, with a dark river below.">
-        <figcaption>Utagawa Hiroshige, <i>Sudden Shower over Shin-&#332;hashi Bridge and Atake</i>, 1857. Van Gogh copied this one in oil paint in 1887.</figcaption>
+      <p><b>The asylum.</b> Saint-Paul-de-Mausole was a monastery nine hundred years ago and an asylum from 1807. It is still a psychiatric hospital. His room is kept the way it was, and you can stand at the window and look east.</p>
+
+
+      <p><b>Japan.</b> Two years before this painting, in Paris, Vincent and Theo bought Japanese prints by the hundred, cheap, from a dealer's back room. Vincent hung them on the walls and put on an exhibition of them in a caf&eacute;. He also copied three of them in oil paint. Two were prints by Hiroshige that he owned. The third he traced off the cover of a French magazine and painted much larger than the original. When he moved south to Arles he told Theo the countryside there reminded him of Japan.</p>
+
+
+      <figure class="still" id="japanPrints">
+        <img src="../art/hiroshige-sudden-shower.jpg" width="1000" height="1515" loading="lazy" alt="">
+        <figcaption></figcaption>
       </figure>
-
-      <p><b>Japan.</b> Two years before this painting, in Paris, Vincent and Theo bought Japanese prints by the hundred, cheap, from a dealer's back room. Vincent hung them on the walls, put on an exhibition of them in a caf&eacute;, and copied three of them in oil &mdash; two by Hiroshige. When he moved south to Arles he told Theo the countryside there reminded him of Japan.</p>
-
-      <p><b>The building.</b> Saint-Paul-de-Mausole was a monastery nine hundred years ago and an asylum from 1807. It is still a psychiatric hospital. His room is kept the way it was, and you can stand at the window and look east.</p>
     </section>
 
     <section class="world breakout">
@@ -171,7 +175,7 @@
       <p>Van Gogh Museum and Huygens Institute, <i>Vincent van Gogh &mdash; The Letters</i>, vangoghletters.org. Letter 760, to Theo, Arles, 21 April 1889; letter 777, to Theo, Saint-R&eacute;my, early June 1889; and the letter to &Eacute;mile Bernard of late November 1889. The two quotations are from that edition.</p>
       <p>ColourLex, "Van Gogh, The Starry Night", on the pigment maps made from multispectral imaging by the Rochester Institute of Technology and MoMA. The paints named in the tool come from that work.</p>
       <p>Van Gogh Museum, on Johanna van Gogh-Bonger and how the family collection became a museum.</p>
-      <p>The painting is the Google Art Project photograph as published on Wikimedia Commons, public domain. The Hiroshige is the Van Gogh Museum's photograph, also public domain.</p>
+      <p>The painting is the Google Art Project photograph as published on Wikimedia Commons, public domain. The two prints he copied and his two copies of them are the Van Gogh Museum's and the Rijksmuseum's photographs, also public domain: Hiroshige's <i>Sudden Shower over Shin-&#332;hashi Bridge and Atake</i> and <i>Plum Park in Kameido</i>, both 1857, from <i>One Hundred Famous Views of Edo</i>; and Van Gogh's <i>Bridge in the Rain</i> (s0114V1962) and <i>Flowering Plum Orchard</i> (s0115V1962), both 1887.</p>
     </section>
 
   </article>
@@ -186,7 +190,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-23 e7778e4';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-23 f5d9008';   // date + short commit hash; bump in the same commit as any change
   console.log('van-gogh-starry-night', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
@@ -333,6 +337,32 @@
       cwMap.load(m.region).then(r => cwMap(host, r, m.marks))
         .catch(err => { console.warn('map', m.host, err); host.closest('figure').remove(); });
     }
+  }
+
+  // ==========================================================================
+  // THE PRINTS HE COPIED (js/stack.js): a Hiroshige, then Van Gogh's version of it,
+  // then the second pair. Four pictures at one width, so the change between them is
+  // the picture and not the size.
+  // ==========================================================================
+  if (typeof cwStack === 'function') {
+    cwStack(document.getElementById('japanPrints'), [
+      { src: '../art/hiroshige-sudden-shower.jpg', w: 1000, h: 1515, ratio: 'calc(1000 / 1515)',
+        alt: 'A Japanese woodblock print: rain falling in fine straight lines on a wooden bridge, where people hurry across under umbrellas and a straw cape, with a dark river below.',
+        caption: 'Utagawa Hiroshige, <i>Sudden Shower over Shin-\u014Chashi Bridge and Atake</i>, 1857. Van Gogh owned this print.',
+        name: 'the first print' },
+      { src: '../art/van-gogh-bridge-in-the-rain.jpg', w: 1000, h: 1376, ratio: 'calc(1000 / 1376)',
+        alt: 'Van Gogh\u2019s oil painting of the same bridge in the rain, in stronger blues and greens, inside a wide orange border covered in Japanese characters.',
+        caption: 'Vincent van Gogh, <i>Bridge in the Rain (after Hiroshige)</i>, 1887. He painted it in oil, changed the colours, and put a border round it copied from characters he could not read.',
+        name: 'what Van Gogh made of it' },
+      { src: '../art/hiroshige-plum-park.jpg', w: 1000, h: 1470, ratio: 'calc(1000 / 1470)',
+        alt: 'A Japanese woodblock print: the black trunk of a plum tree right across the front of the picture, white blossom on its branches, and a green orchard and red sky behind.',
+        caption: 'Utagawa Hiroshige, <i>Plum Park in Kameido</i>, 1857. The tree in front is so close that you look past it rather than at it.',
+        name: 'the second print' },
+      { src: '../art/van-gogh-flowering-plum.jpg', w: 1000, h: 1192, ratio: 'calc(1000 / 1192)',
+        alt: 'Van Gogh\u2019s oil painting of the same plum tree, the trunk black across the front, the sky a flat red, with a border of Japanese characters down each side.',
+        caption: 'Vincent van Gogh, <i>Flowering Plum Orchard (after Hiroshige)</i>, 1887. Two years later he put a cypress across the front of <i>Starry Night</i> the same way.',
+        name: 'what he made of that one' }
+    ]);
   }
 
   // ==========================================================================

@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/SLUG-icon-256.png">
+<link rel="apple-touch-icon" href="../art/SLUG-icon-256.png">
+<!--
+  TEMPLATE — copy this file, do not edit it in place.
+
+  It is a CW story page with the words taken out. Everything here is the shape the three
+  painting stories settled on; CWVault/claude/Story-Pattern.md says WHY each part is the
+  way it is, and this file says WHAT to type. Read the pattern first, then fill this in.
+
+  Copy to cw-deploys/active/<slug>.html and replace, in order:
+    SLUG         the file's own name, used for the icon
+    TITLE        the page title, "Name: Thing"
+    YEAR         the plain year, and YEAR+10000 for the after-the-ice count
+    ART          the main picture's file name, W and H its pixel size
+  Then delete every comment marked DELETE once you have done what it says.
+
+  Nothing on this page is styled here. The look is ../css/story.css. A page sets exactly
+  one thing of its own: --aspect, the main picture's shape.
+-->
+<title>TITLE — Curious Woods</title>
+<link rel="stylesheet" href="../css/story.css?v=2026-09-23b">
+<style>
+  :root { --aspect: calc(W / H); }   /* the picture's own shape; everything else is ../css/story.css */
+</style>
+</head>
+<body>
+
+<main class="page">
+  <div class="shell">
+  <article>
+
+    <!-- 1. TITLE AND A DATE LINE. No timeline at the top. The count is the year + 10,000. -->
+    <div class="titleblock">
+      <div class="eyebrow">Curious Woods</div>
+      <h1>TITLE</h1>
+      <p class="subtitle">~1YEAR after the ice, or YEAR.</p>
+    </div>
+
+    <!-- 2. THE THING ITSELF, FIRST, WITH SOMETHING TO DO.
+         The heading is an instruction, not a topic: "Look at the pearl", "Look at the big star".
+         The left-column block sits INSIDE the figure, after #plateWords and before the caption,
+         so it lands level with the caption. Do not move it above the picture. -->
+    <h2>Look at THE THING</h2>
+
+    <div id="plateHome">
+      <figure id="plate">
+        <div class="frame" id="frame">
+          <img id="plateImg" src="../art/ART"
+               alt="DELETE: describe the picture for someone who cannot see it. Plain, concrete, no interpretation.">
+        </div>
+        <div class="toolwords" id="plateWords"></div>
+        <div class="tools" id="toolwords">
+          <p class="note">You can zoom this image to see it in detail. Once you've zoomed in, you can
+             drag it to see any part you are curious about. You can also tap it to see a magnifier,
+             which you can also drag.</p>
+          <button class="word" id="dropLoupe" type="button" hidden>Magnifier off</button>
+          <button class="word" id="fit" type="button" hidden>Reset</button>
+          <button class="word" id="putBack" type="button" hidden>Put it back</button>
+        </div>
+        <figcaption>DELETE: maker, <i>Title</i>, date. Medium, size. Where it is now. No instruction here — the text gives that.</figcaption>
+      </figure>
+      <div class="readout idle" id="readout" hidden>
+        <div class="swatch" id="swatch"></div>
+        <div>
+          <p class="nums" id="nums">&nbsp;</p>
+          <p class="what" id="what">Tap anywhere on the picture.</p>
+          <p class="chem" id="chem"></p>
+          <p class="hedge" id="hedge"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- The first paragraph tells her the one thing to do. The second gives her the surprise.
+         Never explain the surprise before she has had it. -->
+    <p>DELETE: "If you tap …, a magnifier will appear and you can see it in detail."</p>
+
+    <p>DELETE: the fact that turns the picture over. Open on the fact, not on a thesis.</p>
+
+    <!-- 3. THE BODY. Short sections, short plain headings, each opening on a fact.
+         Written for an adult reader who happens to be ten, using nothing CW has not
+         already given her. Years are plain. Nothing is called interesting or fun. -->
+    <h2>A SHORT PLAIN HEADING</h2>
+
+    <p>DELETE: text.</p>
+
+    <!-- A QUOTATION IS SET APART. Their own words, with the name and date under them. -->
+    <blockquote>
+      <p>DELETE: the quotation, exactly as the source has it.</p>
+      <p class="cite">DELETE: who wrote it, to whom, and when</p>
+    </blockquote>
+
+    <!-- A MARGIN PICTURE is a glance. It has its own caption and the text NEVER mentions it.
+         Keep it around 900 px wide. -->
+    <figure class="margin">
+      <img src="../art/SOMETHING.jpg" width="900" height="000" loading="lazy" alt="DELETE">
+      <figcaption>DELETE: what it is, in one or two sentences.</figcaption>
+    </figure>
+
+    <!-- A MARGIN MAP is the same shape. The region file comes from
+         experiments/maps/render.py <name> <W> <S> <E> <N>. A margin map may be portrait.
+         A World map may not: crop it wide and shallow, about 560 px tall at full width. -->
+    <figure class="margin">
+      <div class="map" id="mapSOMETHING"></div>
+      <figcaption>DELETE: what the map shows. End with "Tap a name." if it has places to tap.</figcaption>
+    </figure>
+
+    <!-- 4. A TOOL ARRIVES WHEN THE TEXT CALLS IT.
+         The .tools block goes IMMEDIATELY BEFORE the paragraph that names the word, never
+         before the heading, so the word lands level with that paragraph's first line. -->
+    <h2>A HEADING THAT CALLS THE TOOL</h2>
+
+    <div class="tools" id="toolSlot">
+      <button class="word" id="summon" type="button">Sample colours</button>
+    </div>
+
+    <p>Tap <i>Sample colours</i>, then tap anywhere in the picture.</p>
+
+    <div id="plateStage"></div>
+
+    <p>DELETE: what the tool will tell her, in prose. Say what is not known as plainly as
+       what is.</p>
+
+    <!-- A FULL-WIDTH PICTURE is something to study. Give its frame its own --pic ratio.
+         It may be a stack (see the script below). -->
+    <figure class="breakout pic" id="picSOMETHING" style="--pic: calc(W / H)">
+      <div class="frame" id="frameSOMETHING">
+        <img src="../art/SOMETHING.jpg" width="0000" height="0000" loading="lazy" alt="DELETE">
+      </div>
+      <div class="toolwords">
+        <button class="word" id="picDrop" type="button" hidden>Magnifier off</button>
+        <button class="word" id="picFit" type="button" hidden>Reset</button>
+      </div>
+      <figcaption>DELETE.</figcaption>
+    </figure>
+
+    <!-- 5. AFTERWARDS. What happened to the thing. End on a plain short sentence. -->
+    <h2>Afterwards</h2>
+
+    <p>DELETE.</p>
+
+    <!-- 6. MORE. Side doors, one bold lead each. Mostly people and things alive at the same
+         time in other trades. A margin picture may sit beside one of them. -->
+    <section class="more">
+      <h2>More</h2>
+
+      <p><b>A LEAD.</b> DELETE.</p>
+    </section>
+
+    <!-- 7. ‹NAME›'S WORLD. The component draws the line, then the panel, then the map.
+         The data is in the script below. -->
+    <section class="world breakout">
+      <h2>NAME&rsquo;s World</h2>
+      <div id="theWorld"></div>
+    </section>
+
+    <!-- 8. REFERENCES. Real ones, with what each was used for. Not a bibliography. -->
+    <section class="refs">
+      <h2>References</h2>
+      <p>DELETE: source, and what it was used for.</p>
+      <p>DELETE: where the pictures came from, and their licence.</p>
+    </section>
+
+  </article>
+  </div>
+</main>
+
+<!-- THE SHELVES. Tools live here, not inside pages. Drop any line you do not use. -->
+<script src="../js/cw-flags.js?v=2026-09-21"></script>
+<script src="../js/map.js?v=2026-09-22"></script>
+<script src="../js/sampler.js?v=2026-09-22"></script>
+<script src="../js/timeline.js?v=2026-09-22b"></script>
+<script src="../js/stack.js?v=2026-09-22"></script>
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = 'DATE HASH';   // date + short commit hash; bump in the same commit as any change
+  console.log('SLUG', CW_VERSION);
+  window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
+
+  // ==========================================================================
+  // THE DATA
+  // ==========================================================================
+
+  // ANCHORS — each one a colour MEASURED OFF THIS SCAN, never guessed, at a place a real
+  // study identifies. Same `m` = the same paint at two strengths; the sampler never offers
+  // those as a choice. If a paint cannot be pinned on the scan with confidence, LEAVE IT
+  // OUT and name it in the prose instead. A tool that guesses is worse than one that is quiet.
+  const ANCHORS = [
+    { rgb: [0, 0, 0], m: 'GROUP', name: 'what she has tapped, in plain words',
+      chem: 'What it is made of, and anything surprising about that.' }
+  ];
+
+  // MAPS — one entry per map on the page. Mark kinds: place, path, region, note.
+  // A path with `possible: true` draws dashed: that is how a guess is drawn as a guess.
+  const MAPS = [
+    { host: 'mapSOMETHING', region: '../art/maps/NAME.json', marks: [
+      { type: 'place', lat: 0, lon: 0, name: 'A PLACE', lit: true, text: 'What happened here.' },
+      { type: 'place', lat: 0, lon: 0, name: 'ANOTHER', minor: true },
+      { type: 'note',  lat: 0, lon: 0, text: 'a sea', water: true }
+    ]}
+  ];
+
+  // THE WORLD — one list of events read two ways: the line uses the dates, the map the places.
+  // `pool` and `placebook` are the shared files. A story PICKS from them with `ref` and adds
+  // `why`: one sentence, in this story's voice, tying the event to this picture. It never
+  // rewrites the shared words. Its own events — the ones about its person — live here.
+  // Labels are short and name the thing; the panel explains it.
+  const WORLD = {
+    from: 0, to: 0,
+    region: '../art/maps/NAME.json',
+    world: '../art/maps/world.json',
+    pool: '../stories/world-events.json',
+    placebook: '../stories/places.json',
+    places: {
+      SOMEWHERE: { side: 'person' },
+      ELSEWHERE: { side: 'world' },
+      FARAWAY:   { side: 'world', card: 'east', cardTop: 30,
+                   far: 'About 0,000 km to the east, in SOMEWHERE',
+                   bearing: [{ name: 'SOMEWHERE', lat: 0, lon: 0 }] }
+    },
+    events: [
+      { id: 'born', year: 0, side: 'person', label: 'Born', place: 'SOMEWHERE',
+        when: 'YEAR &middot; PLACE', title: 'A SHORT TITLE',
+        text: 'Two or three plain sentences.' },
+      { id: 'thething', year: 0, side: 'person', focus: true, label: 'THE THING', place: 'SOMEWHERE',
+        when: 'YEAR &middot; PLACE', title: 'A SHORT TITLE', text: 'Two or three plain sentences.' },
+      { ref: 'AN-ID-FROM-THE-SHARED-LIST', side: 'world',
+        why: 'One sentence tying it to this picture.' }
+    ]
+  };
+  if (typeof cwWorld === 'function') cwWorld(document.getElementById('theWorld'), WORLD);
+
+  // ==========================================================================
+  // THE MAPS
+  // ==========================================================================
+  if (typeof cwMap === 'function') {
+    for (const m of MAPS) {
+      const host = document.getElementById(m.host);
+      if (!host) continue;
+      cwMap.load(m.region).then(r => cwMap(host, r, m.marks))
+        .catch(err => { console.warn('map', m.host, err); host.closest('figure').remove(); });
+    }
+  }
+
+  // ==========================================================================
+  // A STACK: one slot, several pictures, in a loop she can always come round.
+  // The bold word under the caption moves it — never a tap on the picture, because a
+  // picture may already have taps of its own and a tap meaning two things is a trap.
+  // ==========================================================================
+  if (typeof cwStack === 'function') {
+    cwStack(document.getElementById('picSOMETHING'), [
+      { src: '../art/ONE.jpg', w: 0, h: 0, ratio: 'calc(0 / 0)', alt: 'DELETE',
+        caption: 'DELETE.', name: 'the first thing' },
+      { src: '../art/TWO.jpg', w: 0, h: 0, ratio: 'calc(0 / 0)', alt: 'DELETE',
+        caption: 'DELETE.', name: 'the second thing' }
+    ]);
+  }
+
+  // ==========================================================================
+  // THE PICTURE: magnifier, zoom, colours. Leave this block alone; only the hedge
+  // words below are the page's own.
+  // ==========================================================================
+  const plate = document.getElementById('plate');
+  const frame = document.getElementById('frame');
+  const home = document.getElementById('plateHome');
+  const stage = document.getElementById('plateStage');
+  const readout = document.getElementById('readout');
+  const toolwords = document.getElementById('toolwords');
+  const el = id => document.getElementById(id);
+  const wDrop = el('dropLoupe'), wFit = el('fit'), wBack = el('putBack'), wSummon = el('summon');
+  const toolSlot = el('toolSlot');
+  const plateWords = el('plateWords');
+
+  const tool = cwSampler(frame, ANCHORS, {
+    hedge: {
+      tie: 'Those two come out the same colour here, near enough, so the colour on its own cannot tell them apart. Where they sit in the picture can.',
+      far: 'This is some way off any single colour in the picture — probably two paints laid over each other, or the edge of a brushstroke.',
+      fair: 'A fair match. DELETE: why this picture is not evenly coloured.'
+    },
+    onState: s => { wDrop.hidden = !s.loupe; wFit.hidden = !s.zoomed; },
+    onSample: s => {
+      if (s.error) { el('what').textContent = 'The browser will not let the page read this picture.';
+                     el('chem').textContent = 'Open the page from the site rather than from a file on disk.';
+                     el('hedge').textContent = ''; return; }
+      readout.classList.remove('idle');
+      el('swatch').style.background = s.hex;
+      el('nums').textContent = s.hex + '   rgb(' + s.rgb.join(', ') + ')';
+      el('what').textContent = s.what; el('chem').innerHTML = s.chem; el('hedge').innerHTML = s.hedge;
+    }
+  });
+  wDrop.addEventListener('click', () => tool.drop());
+  wFit.addEventListener('click', () => tool.fit());
+
+  wSummon.addEventListener('click', () => {
+    plateWords.appendChild(wFit); plateWords.appendChild(wDrop); plateWords.appendChild(wBack);   // the words go under the picture, where she is already looking
+    stage.appendChild(plate); stage.appendChild(readout);
+    stage.classList.add('open'); home.classList.add('folded');
+    readout.hidden = false; wBack.hidden = false; wSummon.hidden = true;
+    readout.classList.add('idle');
+    el('what').textContent = 'Tap anywhere on the picture.';
+    el('chem').textContent = ''; el('hedge').textContent = ''; el('nums').innerHTML = '&nbsp;';
+    el('swatch').style.background = 'transparent';
+    tool.arm(true); tool.repaint();
+  });
+  wBack.addEventListener('click', () => {
+    stage.classList.remove('open'); home.classList.remove('folded');
+    toolwords.appendChild(wDrop); toolwords.appendChild(wFit); toolwords.appendChild(wBack);
+    home.appendChild(plate); home.appendChild(readout);
+    readout.hidden = true; wBack.hidden = true; wSummon.hidden = false;
+    tool.arm(false); tool.repaint();
+    requestAnimationFrame(() => plate.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+  });
+})();
+</script>
+</body>
+</html>

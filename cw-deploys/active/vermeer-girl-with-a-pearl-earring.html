@@ -19,7 +19,7 @@
   Hung in active/ on 22 Sep 2026 (Publishing-a-Story, stage 4); the experiments address redirects.
 -->
 <title>Vermeer: Girl with a Pearl Earring — Curious Woods</title>
-<link rel="stylesheet" href="../css/story.css?v=2026-09-23">
+<link rel="stylesheet" href="../css/story.css?v=2026-09-23b">
 <style>
   :root { --aspect: calc(1400 / 1658); }   /* the painting's own shape; everything else is ../css/story.css */
 </style>
@@ -39,17 +39,20 @@
     <h2>Look at the pearl</h2>
 
     <div id="plateHome">
-      <div class="tools" id="toolwords">
-        <button class="word" id="dropLoupe" type="button" hidden>Put the magnifier away</button>
-        <button class="word" id="fit" type="button" hidden>The whole picture</button>
-        <button class="word" id="putBack" type="button" hidden>Put it back</button>
-      </div>
       <figure id="plate">
         <div class="frame" id="frame">
           <img id="plateImg" src="../art/vermeer-girl-pearl-earring.jpg"
                alt="Vermeer's painting of a girl looking over her shoulder, in a blue and yellow turban, with a large pearl at her ear, against a dark background.">
         </div>
         <div class="toolwords" id="plateWords"></div>
+        <div class="tools" id="toolwords">
+          <p class="note">You can zoom this image to see it in detail. Once you've zoomed in, you can
+             drag it to see any part you are curious about. You can also tap it to see a magnifier,
+             which you can also drag.</p>
+          <button class="word" id="dropLoupe" type="button" hidden>Magnifier off</button>
+          <button class="word" id="fit" type="button" hidden>Reset</button>
+          <button class="word" id="putBack" type="button" hidden>Put it back</button>
+        </div>
         <figcaption>Johannes Vermeer, <i>Girl with a Pearl Earring</i>, about 1665. Oil on canvas, 44.5 &times; 39 cm. Mauritshuis, The Hague.</figcaption>
       </figure>
       <div class="readout idle" id="readout" hidden>
@@ -63,7 +66,7 @@
       </div>
     </div>
 
-    <p>Tap the pearl, and a magnifier appears there. You can drag the magnifier about, and pinch the picture to make the whole of it bigger.</p>
+    <p>Tap the pearl, and a magnifier appears there.</p>
 
     <p>Now look at how the pearl hangs from her ear.</p>
 
@@ -234,7 +237,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-23 e7778e4';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-23 f5d9008';   // date + short commit hash; bump in the same commit as any change
   console.log('vermeer-girl-with-a-pearl-earring', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 

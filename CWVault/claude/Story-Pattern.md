@@ -1,14 +1,15 @@
 ---
-status: Draft synthesis, 22 Sept 2026. Written from the Hokusai and Vermeer pages; Michael to read and correct.
+status: Working synthesis, 23 Sept 2026. Written from the three painting pages; Michael has corrected it as it went.
 role: What a CW story page has become, so the next one (Mary Shelley, the Necker cube, the rest of the paintings) starts from here instead of from nothing.
 related: Story-Voice.md, Publishing-a-Story.md, Rulings-Sept-2026.md, Spec-Timeline-and-Map.md, Spec-Maps.md, Ruling-Labs-and-the-Plane.md, Story-Vermeer-Girl-with-a-Pearl-Earring.md (the model)
 ---
 
 # The story page, as it has settled
 
-Two pages in, a way of making a story has appeared that nobody designed ahead of time. This
+Three pages in, a way of making a story has appeared that nobody designed ahead of time. This
 file writes it down. The Vermeer page is the model; Hokusai, the first draft of it, was brought
-into line on 22 Sept.
+into line on 22 Sept; Starry Night was built straight onto it on 23 Sept and needed no new
+machinery at all.
 
 ## What the page is for
 
@@ -35,6 +36,14 @@ does not point them out.
 4. **Tools arrive when the text calls them.** A word in the left column (*Sample colours*),
    and the text says "Tap *Sample colours*". The tool opens where the text is. It does not
    open at the top of the page, and it does not open in a pop-up.
+   - **The word sits level with the paragraph that names it** (23 Sept, Michael). So the
+     `.tools` block goes immediately before that paragraph, never before its heading. The
+     `.35em` top margin in `css/story.css` is what drops a 15 px bold word onto a
+     20 px/1.4 first baseline; it is a rule, not a nudge.
+   - **Once the picture opens, the tool's own control words move under it** (23 Sept,
+     Michael) — *The whole picture*, *Put the magnifier away*, *Put it back* — because a
+     child looking at a picture that has just filled the page will not look back at the
+     margin. Only the summoning word stays on the left.
 5. **A picture may be a stack** (`js/stack.js`, 22 Sept, Michael's idea). One slot, several
    pictures, in a loop she can always come round: the stone, the powder washed out of it, the
    turban it was painted on. A bold word under the caption names where she is going — *Next:
@@ -46,15 +55,20 @@ does not point them out.
    text never mentions it. A full-width picture is something to study, and the text names it
    or a caption invites the tap that opens it (the Delft map opens *View of Delft* and
    Blaeu's plan).
-6. **Afterwards.** What happened to the thing. It ends on a plain sentence ("It is
+7. **Afterwards.** What happened to the thing. It ends on a plain sentence ("It is
    priceless").
-7. **More.** Side doors, one bold lead each. Mostly these are people and things alive at the
+8. **More.** Side doors, one bold lead each. Mostly these are people and things alive at the
    same time in other trades: Leeuwenhoek, Newton, Molière, Rembrandt. A margin picture may
    sit beside one of them.
-8. **‹Name›'s World.** The line, then the panel, then the map (below). The panel is in the
+9. **‹Name›'s World.** The line, then the panel, then the map (below). The panel is in the
    middle so that whichever end she taps, the words are near it, and the map is cropped wide
    and shallow, about 560 px tall at full width, for the same reason.
-9. **References.** Real ones, with what each one was used for.
+10. **References.** Real ones, with what each one was used for.
+
+**A quotation is set apart** (23 Sept, Michael): indented, with the name and date under it
+in italics. "Set apart they are more noticeable, they tell the child 'this is what he
+said'." The rule lives in `css/story.css` as `blockquote` and `.cite`, so it belongs to
+every story, not to the one that needed it first.
 
 ## The World: where the disciplines meet
 
@@ -70,13 +84,16 @@ theatre, trade, other painters.
 - **Far places** are cards on the side where they really lie, and a tap opens the world map.
 - **Each event's panel** is written in the story's voice. It says what the event has to do
   with the picture, or with the other events.
+- **A label is short and names the thing; the panel explains it** (23 Sept, Michael).
+  *Faraday's generator*, not "Faraday gets electricity from a magnet". *Origin of Species*,
+  not "Darwin publishes". *Eiffel Tower*, not "The Eiffel Tower opens".
 
 **The world's events are shared (built 22 Sept).** Two files hold what the world owns:
 
-- `stories/world-events.json` — one record per event: what happened, when, where. Thirty-two
-  to begin with, from the two painting stories.
+- `stories/world-events.json` — one record per event: what happened, when, where. Thirty-six
+  as of 23 Sept.
 - `stories/places.json` — where things happened, so two stories never disagree about where
-  Zhapu is.
+  Zhapu is. Twenty-four as of 23 Sept.
 
 A story names both files and then picks: `{ ref: 'tambora-1815', side: 'world', why: '…' }`.
 The shared record says **what happened**; the story says which side of its line the event sits
@@ -111,13 +128,18 @@ Each new story should lean on the ones before it. It does that in three ways.
 This has become part of the style, and children will trust the page for it.
 
 - "Nobody knows" appears whenever it is true: who she was, whether the pearl is a pearl,
-  whether the two men were friends.
+  whether the two men were friends, whether a cypress really stood where Van Gogh put one.
 - A guess is drawn as a guess. The lapis route is a dashed line, its caption says it is one
   likely way, and the time is "a fair guess" with the working shown.
 - A tool says what it cannot tell. The sampler names two paints when their colours are too
-  close to separate.
+  close to separate, and says outright that lead white and zinc white are the same colour to
+  look at.
+- **A tool that cannot be sure stays out of the tool.** The emerald green around Van Gogh's
+  moon is named in the prose but is not a sampler anchor, because it could not be pinned on
+  the scan with confidence. A tool that guesses is worse than one that is quiet.
 - Labels are checked, not simply taken as written. Faraday's 1831 experiment, not his motor.
-  The shogunate, not the Emperor. The law of gravity, singular.
+  The shogunate, not the Emperor. The law of gravity, singular. Two of Van Gogh's three
+  Japanese copies came from prints he owned; the third he traced off a magazine cover.
 
 ## How the tools behave
 
@@ -135,9 +157,26 @@ The tools share one set of habits, borrowed from Glass Geometry:
   becomes a page like Vermeer's: the object first (a page of the manuscript?), then 1816,
   Tambora, Geneva, galvanism, the electric pile. Mostly shared events.
 - **The Necker cube.** Necker drew it in 1832, a year after Faraday's magnet and within two
-  years of the Great Wave. The object first is the cube itself, which flips while she
-  watches. The World is small and mostly shared.
-- **Starry Night and the north rose** follow the Vermeer page as it stands.
+  years of the Great Wave. The object first is the cube itself. Nothing on the page may
+  move: the picture does not change, the seeing does, and an animated cube would destroy
+  the story. The World is small and mostly shared.
+- **The north rose at Notre-Dame** follows the Vermeer page as it stands. The cleaning is
+  the beat, and the tool has to say what it cannot know about transmitted light from one
+  photograph.
+- **Why you've heard of Van Gogh** — the Johanna story. A painter nobody bought, a widow who
+  read seven hundred letters, and a fame that was made on purpose by somebody whose name is
+  not on it.
+- **Daumier's *Gargantua*** — December 1831, six months in prison for drawing the king as a
+  giant being fed by the poor. The same year as the Great Wave and Faraday's magnet.
+
+## Done since this was first written (23 Sept)
+
+- The third painting, *Starry Night*, is built on this pattern and needed no new
+  machinery at all. Vermeer spent three tools; Hokusai spent none; this one spent none.
+- Timeline labels are short.
+- The shared event list is settled and in use by all three pages: 36 events, 24 places.
+- Set-apart quotations, the left-column baseline rule, and the control words moving under
+  the picture are all in `css/story.css` and on all three pages.
 
 ## Done since this was first written (22 Sept)
 
@@ -148,7 +187,11 @@ The tools share one set of habits, borrowed from Glass Geometry:
 
 ## Still open
 
-- The shared event list: its shape, and who writes to it.
+- Who writes to the shared event list. Its shape is settled; the Librarian pass has not
+  happened, and nobody has yet had to resolve two stories wanting different words for the
+  same event.
 - Two events on the same day draw as one dot on the timeline (Galileo and the *Night Watch*,
   1642). Worth a rule when it happens again.
+- A live map that swaps its marks, so one frame can show two paths (Van Gogh's life, then
+  the painting's travels) under a stack word. Wanted, not built.
 - Feedback from children. The gallery has too little on it yet to tell us anything.

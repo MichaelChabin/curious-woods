@@ -17,7 +17,7 @@
   Maps: ../js/map.js and ../art/maps/{japan,western-europe,world,japan-and-china}.
 -->
 <title>Hokusai: The Great Wave — Curious Woods</title>
-<link rel="stylesheet" href="../css/story.css?v=2026-09-23">
+<link rel="stylesheet" href="../css/story.css?v=2026-09-23b">
 <style>
   :root { --aspect: calc(1800 / 1243); }   /* the print's own shape; everything else is ../css/story.css */
 </style>
@@ -37,17 +37,20 @@
     <h2>Count the boats</h2>
 
     <div id="plateHome">
-      <div class="tools" id="toolwords">
-        <button class="word" id="dropLoupe" type="button" hidden>Put the magnifier away</button>
-        <button class="word" id="fit" type="button" hidden>The whole print</button>
-        <button class="word" id="putBack" type="button" hidden>Put it back</button>
-      </div>
       <figure id="plate">
         <div class="frame" id="frame">
           <img id="plateImg" src="../art/hokusai-great-wave.jpg"
                alt="Hokusai's woodblock print: a great wave with clawed foam rising over three long boats, with Mount Fuji small in the distance.">
         </div>
         <div class="toolwords" id="plateWords"></div>
+        <div class="tools" id="toolwords">
+          <p class="note">You can zoom this image to see it in detail. Once you've zoomed in, you can
+             drag it to see any part you are curious about. You can also tap it to see a magnifier,
+             which you can also drag.</p>
+          <button class="word" id="dropLoupe" type="button" hidden>Magnifier off</button>
+          <button class="word" id="fit" type="button" hidden>Reset</button>
+          <button class="word" id="putBack" type="button" hidden>Put it back</button>
+        </div>
         <figcaption>Katsushika Hokusai, <i>Under the Wave off Kanagawa</i>, about 1830. Woodblock print, 24.4 &times; 35.7 cm. The Metropolitan Museum of Art, New York (JP1847), open access.</figcaption>
       </figure>
       <div class="readout idle" id="readout" hidden>
@@ -61,7 +64,7 @@
       </div>
     </div>
 
-    <p>There are three boats in the picture, and they are easy to miss. Tap anywhere on the print and a magnifier appears there; drag it about to look. If you want the whole thing bigger, pinch it, and drag to move around inside it.</p>
+    <p>There are three boats in the picture, and they are easy to miss. Tap anywhere on the print and a magnifier appears there.</p>
 
     <p>One boat is under the claws of the wave on the left. One is crossing the middle. One is climbing the swell on the right. Each one holds eight rowers lying flat along their oars, with two more people crouched in the bow. Thirty people, about to be somewhere nobody wants to be.</p>
 
@@ -212,7 +215,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-23 e7778e4';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-23 f5d9008';   // date + short commit hash; bump in the same commit as any change
   console.log('hokusai-the-great-wave', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
