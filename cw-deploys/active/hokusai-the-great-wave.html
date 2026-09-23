@@ -17,7 +17,7 @@
   Maps: ../js/map.js and ../art/maps/{japan,western-europe,world,japan-and-china}.
 -->
 <title>Hokusai: The Great Wave — Curious Woods</title>
-<link rel="stylesheet" href="../css/story.css?v=2026-09-22">
+<link rel="stylesheet" href="../css/story.css?v=2026-09-23">
 <style>
   :root { --aspect: calc(1800 / 1243); }   /* the print's own shape; everything else is ../css/story.css */
 </style>
@@ -47,6 +47,7 @@
           <img id="plateImg" src="../art/hokusai-great-wave.jpg"
                alt="Hokusai's woodblock print: a great wave with clawed foam rising over three long boats, with Mount Fuji small in the distance.">
         </div>
+        <div class="toolwords" id="plateWords"></div>
         <figcaption>Katsushika Hokusai, <i>Under the Wave off Kanagawa</i>, about 1830. Woodblock print, 24.4 &times; 35.7 cm. The Metropolitan Museum of Art, New York (JP1847), open access.</figcaption>
       </figure>
       <div class="readout idle" id="readout" hidden>
@@ -207,11 +208,11 @@
 <script src="../js/cw-flags.js?v=2026-09-20"></script>
 <script src="../js/map.js?v=2026-09-22"></script>
 <script src="../js/sampler.js?v=2026-09-22"></script>
-<script src="../js/timeline.js?v=2026-09-22"></script>
+<script src="../js/timeline.js?v=2026-09-22b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-22 700c812';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-23 e7778e4';   // date + short commit hash; bump in the same commit as any change
   console.log('hokusai-the-great-wave', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
@@ -297,28 +298,23 @@
     from: 1760, to: 1855,
     region: '../art/maps/japan-and-china.json',
     world: '../art/maps/world.json',
+    pool: '../stories/world-events.json',        // what the world owns, shared by every story
+    placebook: '../stories/places.json',
     places: {
-      edo:      { name: 'Edo',      lat: 35.68, lon: 139.77, side: 'person' },
-      nagoya:   { name: 'Nagoya',   lat: 35.18, lon: 136.91, side: 'person' },
-      nagasaki: { name: 'Nagasaki', lat: 32.74, lon: 129.87, side: 'world' },
-      yaeyama:  { name: 'the Yaeyama Islands', lat: 24.35, lon: 124.15, side: 'world' },
-      asama:    { name: 'Mount Asama', lat: 36.40, lon: 138.52, side: 'world' },
-      beijing:  { name: 'Beijing', lat: 39.90, lon: 116.40, side: 'world' },
-      zhapu:    { name: 'Zhapu',    lat: 30.60, lon: 121.10, side: 'world' },
-      kyoto:    { name: 'Kyoto',    lat: 35.01, lon: 135.77, side: 'minor' },
-      // Six events in five European towns. One card stands for them all, and its window
-      // shows the towns themselves rather than a dot called 'Europe'.
-      europe:   { name: 'Europe',   lat: 48.50, lon: 6.00, side: 'world', card: 'west', cardTop: 20, spread: true,
-                  far: 'About 9,500 km to the west',
-                  bearing: [{ name: 'Bath', lat: 51.38, lon: -2.36, lit: true },
-                            { name: 'London', lat: 51.51, lon: -0.13, lit: true },
-                            { name: 'Paris', lat: 48.86, lon: 2.35, lit: true },
-                            { name: 'Geneva', lat: 46.20, lon: 6.14, lit: true },
-                            { name: 'Vienna', lat: 48.21, lon: 16.37, lit: true },
-                            { name: 'Köping', lat: 59.51, lon: 15.99, lit: true },
-                            { name: 'Edo', lat: 35.68, lon: 139.77 }] },
-      tambora:  { name: 'Tambora',  lat: -8.25, lon: 118.00, side: 'world', card: 'west', cardTop: 62,
-                  far: 'About 5,400 km to the south-west, in Indonesia', bearing: [{ name: 'Edo', lat: 35.68, lon: 139.77 }] }
+      edo: { side: 'person' },
+      nagoya: { side: 'person' },
+      nagasaki: { side: 'world' },
+      yaeyama: { side: 'world' },
+      asama: { side: 'world' },
+      beijing: { side: 'world' },
+      zhapu: { side: 'world' },
+      kyoto: { side: 'minor' },
+      europe: { name: 'Europe', lat: 48.5, lon: 6, side: 'world', card: 'west', cardTop: 20, spread: true,
+        far: 'About 9,500 km to the west',
+        bearing: [{name: 'Bath',lat: 51.38,lon: -2.36,lit: true},{name: 'London',lat: 51.51,lon: -0.13,lit: true},{name: 'Paris',lat: 48.86,lon: 2.35,lit: true},{name: 'Geneva',lat: 46.2,lon: 6.14,lit: true},{name: 'Vienna',lat: 48.21,lon: 16.37,lit: true},{name: 'Köping',lat: 59.51,lon: 15.99,lit: true},{name: 'Edo',lat: 35.68,lon: 139.77}] },
+      tambora: { side: 'world', card: 'west', cardTop: 62,
+        far: 'About 5,400 km to the south-west, in Indonesia',
+        bearing: [{name: 'Edo',lat: 35.68,lon: 139.77}] }
     },
     routes: {
       tokaido: [[35.68, 139.77], [35.26, 139.15], [34.97, 138.38], [34.71, 137.73], [35.12, 136.91],
@@ -334,83 +330,45 @@
       { id: 'hokusai', year: 1798, side: 'person', label: 'Takes the name Hokusai', place: 'edo',
         when: 'about 1798 · Edo', title: 'North Studio',
         text: 'Around 1798 he began signing himself Hokusai. It means something like “north studio”, after the North Star, which he prayed to. He changed his name about thirty times, and came back to this one again and again.' },
-      { id: 'harunobu', year: 1765, side: 'world', label: 'The first full-colour prints', place: 'edo',
-        when: '1765 · Edo', title: 'Colour, block by block',
-        text: 'Suzuki Harunobu and his cutters worked out how to line up many blocks exactly, one for each colour. Before that a print was black lines with a wash or two. The Great Wave is that invention, sixty-five years on.' },
-      { id: 'meiwa', year: 1771.3, side: 'world', label: 'The Meiwa tsunami', place: 'yaeyama',
-        when: '1771 · the Yaeyama Islands', title: 'A wave that really came',
-        text: 'An earthquake sent a wave over the islands in the far south-west of Japan. In places it ran thirty metres up the hills, and about a third of the people living there were killed. Hokusai was ten.' },
-      { id: 'kaitai', year: 1774, side: 'world', label: 'A Dutch anatomy book in Japanese', place: 'edo',
-        when: '1774 · Edo', title: 'Kaitai Shinsho',
-        text: 'Three Japanese doctors watched a dissection with a Dutch anatomy book open beside them, saw that the Dutch book was right and their own books were wrong, and spent three years turning it into Japanese — though they could barely read Dutch. It came through the same door as the blue.' },
-      { id: 'elekiter', year: 1776, side: 'world', label: 'Gennai’s electric machine', place: 'edo',
-        when: '1776 · Edo', title: 'The elekiter',
-        text: 'Hiraga Gennai repaired a broken Dutch machine that made sparks by rubbing glass, and showed it off in Edo. Fifty-five years later, further along this line, Faraday got electricity out of a magnet instead.' },
-      { id: 'scheele', year: 1775.5, side: 'world', label: 'Scheele’s green', place: 'europe',
-        when: '1775 · Köping, Sweden', title: 'A beautiful green made of arsenic',
-        text: 'Carl Wilhelm Scheele mixed copper with arsenic and got a green brighter than any other. It went into wallpaper, cloth, artificial flowers and, sometimes, sweets, and it went on quietly poisoning people for a hundred years.' },
-      { id: 'uranus', year: 1781.2, side: 'world', label: 'Uranus is found', place: 'europe',
-        when: '1781 · Bath, England', title: 'A new planet',
-        text: 'William Herschel, looking through a telescope he had built himself, found a small green dot that moved. It was a planet, the first anybody had found since ancient times, and it put the edge of the Sun’s family twice as far out as it had been.' },
-      { id: 'asama', year: 1783.6, side: 'world', label: 'Asama erupts; then the famine', place: 'asama',
-        when: '1783 · Mount Asama', title: 'The sky dims and the rice fails',
-        text: 'The mountain buried the farms below it in ash, and a volcano in Iceland was erupting the same year. Cold summers followed, the rice failed again and again, and hundreds of thousands of people died in what is called the Tenmei famine. Thirty-two years later Tambora did the same thing on a bigger scale.' },
-      { id: 'kokan', year: 1783.4, side: 'world', label: 'Shiba Kōkan’s copperplate', place: 'edo',
-        when: '1783 · Edo', title: 'Depth on a flat sheet',
-        text: 'Shiba Kōkan made the first copperplate etching in Japan, and took from Dutch books the trick of drawing things smaller as they go further away. Hokusai uses it here: Fuji is small because it is far off, not because it is little.' },
-      { id: 'figaro', year: 1786.4, side: 'world', label: 'Mozart’s Marriage of Figaro', place: 'europe',
-        when: '1786 · Vienna', title: 'A servant outwits his master',
-        text: 'Mozart’s new opera opened in Vienna. It is about a servant who is cleverer than the count he works for, and it is still performed everywhere.' },
-      { id: 'revolution', year: 1789.5, side: 'world', label: 'The French Revolution begins', place: 'europe',
-        when: '1789 · Paris', title: 'The Bastille falls',
-        text: 'A crowd in Paris took the Bastille, the king’s prison, and France began pulling down its kings. Napoleon’s wars came out of it, and most of the dates in European history for the next thirty years.' },
-      { id: 'redchamber', year: 1791, side: 'world', label: 'Dream of the Red Chamber is printed', place: 'beijing',
-        when: '1791 · Beijing', title: 'The great Chinese novel',
-        text: 'A long novel about a rich family’s rise and fall, written thirty years earlier and passed around in hand-made copies, was printed at last. Chinese readers have been arguing about its ending ever since.' },
-      { id: 'phaeton', year: 1808.8, side: 'world', label: 'A British warship forces its way in', place: 'nagasaki',
-        when: '1808 · Nagasaki', title: 'The Phaeton',
-        text: 'A British warship sailed into Nagasaki flying a Dutch flag, seized two Dutch traders, and would not leave until it was given food and water. Japan was humiliated, and it is one reason the door shut tighter.' },
+      { ref: 'colour-prints-1765', side: 'world',
+        why: 'The Great Wave is that invention, sixty-five years on.' },
+      { ref: 'meiwa-tsunami-1771', side: 'world',
+        why: 'Hokusai was ten.' },
+      { ref: 'kaitai-shinsho-1774', side: 'world' },
+      { ref: 'elekiter-1776', side: 'world' },
+      { ref: 'scheeles-green-1775', side: 'world' },
+      { ref: 'uranus-1781', side: 'world' },
+      { ref: 'asama-tenmei-1783', side: 'world' },
+      { ref: 'kokan-copperplate-1783', side: 'world',
+        why: 'Hokusai uses it here: Fuji is small because it is far off, not because it is little.' },
+      { ref: 'figaro-1786', side: 'world' },
+      { ref: 'french-revolution-1789', side: 'world' },
+      { ref: 'red-chamber-1791', side: 'world' },
+      { ref: 'phaeton-1808', side: 'world' },
       { id: 'manga', year: 1814, side: 'person', label: 'The first Manga', place: 'nagoya',
         when: '1814 · Nagoya', title: 'Sketches for anybody',
         text: 'The first volume of his Manga came out in Nagoya: a book of quick drawings of people, animals, ghosts and waves, for other artists to copy from. Fifteen volumes followed, the last of them after he died.' },
-      { id: 'tambora', year: 1815.3, side: 'world', label: 'Tambora explodes', place: 'tambora',
-        when: '1815 · Tambora, Indonesia', title: 'The biggest eruption in recorded history',
-        text: 'The volcano Tambora, on an island in what is now Indonesia, blew apart in April 1815. Its ash went round the world, and the next year Europe and North America had no summer.' },
-      { id: 'frankenstein', year: 1816.5, side: 'world', label: 'Mary Shelley begins Frankenstein', place: 'europe',
-        when: '1816 · Lake Geneva', title: 'A summer with no summer in it',
-        text: 'The summer after Tambora was so cold and wet that a group of friends staying by Lake Geneva were kept indoors, and told each other ghost stories. One of them, Mary Shelley, who was eighteen, began Frankenstein.' },
-      { id: 'expensive', year: 1820, side: 'world', label: 'Prussian blue in Japan, still dear', place: 'nagasaki',
-        when: 'around 1820 · Nagasaki', title: 'A little of the Berlin blue',
-        text: 'Dutch ships had been bringing small amounts of the blue through Dejima for years. Painters used a little of it. It cost far too much for prints.' },
-      { id: 'order', year: 1825, side: 'world', label: 'Japan orders foreign ships driven away', place: 'edo',
-        when: '1825 · Edo', title: 'Drive them off',
-        text: 'After more foreign ships came near the coast, the shogun’s government ordered that any of them be driven off, with cannon if need be.' },
-      { id: 'cheap', year: 1829, side: 'world', label: 'Cheap Prussian blue arrives from China', place: 'zhapu',
-        when: 'around 1829 · Zhapu to Nagasaki', title: 'The blue gets cheap',
-        text: 'Chinese makers were now making the blue themselves, and cheaply. It began arriving at Nagasaki on junks from Zhapu, and within a year or two it was all over the print shops of Edo.' },
+      { ref: 'tambora-1815', side: 'world' },
+      { ref: 'frankenstein-1816', side: 'world' },
+      { ref: 'prussian-blue-japan-1820', side: 'world' },
+      { ref: 'japan-drives-ships-1825', side: 'world' },
+      { ref: 'cheap-prussian-blue-1829', side: 'world' },
       { id: 'wave', year: 1830.5, side: 'person', focus: true, label: 'The Great Wave', place: 'edo',
         when: 'about 1830 · Edo', title: 'Under the Wave off Kanagawa',
         text: 'One of his Thirty-six Views of Mount Fuji, and one of the first prints made in the new blue. He was about seventy.' },
-      { id: 'faraday', year: 1831.7, side: 'world', label: 'Faraday gets electricity from a magnet', place: 'europe',
-        when: '1831 · London', title: 'A magnet and a coil of wire',
-        text: 'Michael Faraday pushed a magnet into a coil of wire and made electricity flow in it. Nearly every power station in the world works that way now.' },
-      { id: 'hiroshige', year: 1833.5, side: 'world', label: 'Hiroshige’s road to Kyoto', place: 'edo', route: 'tokaido',
-        when: '1833 · Edo to Kyoto', title: 'Fifty-three stations',
-        text: 'Utagawa Hiroshige, thirty-seven years younger than Hokusai, published prints of the fifty-three stopping places on the great road from Edo to Kyoto. They were a great success.' },
+      { ref: 'faraday-1831', side: 'world' },
+      { ref: 'hiroshige-tokaido-1833', side: 'world', route: 'tokaido',
+        why: 'He was thirty-seven years younger than Hokusai.' },
       { id: 'seventy', year: 1834.5, side: 'person', label: '“Nothing before seventy”', place: 'edo',
         when: '1834 · Edo', title: 'Every dot alive',
         text: 'In a book of a hundred views of Fuji he wrote that nothing he had drawn before he was seventy was worth noticing, and that by the time he was a hundred and ten, every dot and every line would be alive.' },
-      { id: 'photo', year: 1839.05, side: 'world', label: 'Photography is announced in Paris', place: 'europe',
-        when: '1839 · Paris', title: 'A picture nobody drew',
-        text: 'In January 1839 Louis Daguerre’s way of fixing a picture made by light was announced in Paris. For the first time a picture could be made without anybody drawing it.' },
+      { ref: 'photography-1839', side: 'world' },
       { id: 'dies', year: 1849.3, side: 'person', label: 'Dies, aged 88', place: 'edo',
         when: '1849 · Edo', title: 'Five more years',
         text: 'He died in Edo in the spring of 1849. He is said to have asked for five more years, which would have made him a real painter.' },
-      { id: 'perry', year: 1853.5, side: 'world', label: 'US warships in Edo Bay', place: 'edo',
-        when: '1853 · Edo Bay', title: 'The door comes open',
-        text: 'In July 1853 four American warships, two of them driven by steam, anchored at the mouth of Edo Bay and would not leave. The next year Japan signed a treaty with the United States, and the door began to open.' }
+      { ref: 'perry-1853', side: 'world' }
     ]
-  };
+  };;
   if (typeof cwWorld === 'function') cwWorld(document.getElementById('hokusaiWorld'), WORLD);
 
   // ==========================================================================
@@ -435,6 +393,7 @@
   const readout = document.getElementById('readout');
   const toolwords = document.getElementById('toolwords');
   const toolSlot = document.getElementById('toolSlot');
+  const plateWords = document.getElementById('plateWords');
   const el = id => document.getElementById(id);
   const wDrop = el('dropLoupe'), wFit = el('fit'), wBack = el('putBack'), wSummon = el('summon');
 
@@ -459,7 +418,7 @@
   wFit.addEventListener('click', () => tool.fit());
 
   wSummon.addEventListener('click', () => {
-    toolSlot.appendChild(wFit); toolSlot.appendChild(wDrop); toolSlot.appendChild(wBack);   // the tool's words follow it, still in the left column
+    plateWords.appendChild(wFit); plateWords.appendChild(wDrop); plateWords.appendChild(wBack);   // the tool's words go under the painting, where she is already looking
     stage.appendChild(plate); stage.appendChild(readout);
     stage.classList.add('open'); home.classList.add('folded');
     readout.hidden = false; wBack.hidden = false; wSummon.hidden = true;

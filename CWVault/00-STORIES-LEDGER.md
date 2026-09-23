@@ -23,6 +23,7 @@ Stages, from Publishing-a-Story: **written** (Michael has said yes) → **built*
 
 *Hokusai: The Great Wave* — story, paintings series (the first). **Hung** 20 Sept at `active/hokusai-the-great-wave.html` (the experiments address redirects), in the gallery by its crest-and-claws icon in the print's deepest blue. Michael read it 20 Sept: the words are good, and his revisions are in. Three tools in it: the timeline (1815–1855), the magnifier that doubles as the colour sampler, and three maps in the new left margin. Not yet read on an iPad. Open: whether the margin should carry the context membrane's deeper tone.
 *Vermeer: Girl with a Pearl Earring* — story, paintings series (the second). **Live** 22 Sept at `active/vermeer-girl-with-a-pearl-earring.html` (the experiments address redirects), in the gallery whole and tall in the turban's ultramarine; Michael saw it 21 Sept ("This is beautiful"), the words not yet read on an iPad. First built to Spec-Timeline-and-Map; *Vermeer's World* is data in the story file, waiting on the timeline component. Uses the new `js/sampler.js`.
+*Van Gogh: Starry Night* — story, paintings series (the third). **Live** 23 Sept at `active/van-gogh-starry-night.html`, written straight into `active/` on Michael's reading (no experiments address), in the gallery whole and large in the sky's blue `#2a4192`. Not yet read on an iPad.
 
 ## Benches (interactives that exist but hang nowhere yet)
 

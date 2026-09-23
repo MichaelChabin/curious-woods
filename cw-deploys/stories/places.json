@@ -1,0 +1,126 @@
+{
+  "_about": "Where things happened, shared by every story, so two stories never disagree about where Zhapu is. A story names a place id and adds only what is its own: which side of the line it belongs to, whether it is a card at the map's edge, and so on.",
+  "version": "2026-09-23",
+  "places": {
+    "delft": {
+      "name": "Delft",
+      "lat": 52.01,
+      "lon": 4.36
+    },
+    "amsterdam": {
+      "name": "Amsterdam",
+      "lat": 52.37,
+      "lon": 4.9
+    },
+    "paris": {
+      "name": "Paris",
+      "lat": 48.86,
+      "lon": 2.35
+    },
+    "london": {
+      "name": "London",
+      "lat": 51.51,
+      "lon": -0.13
+    },
+    "woolsthorpe": {
+      "name": "Woolsthorpe",
+      "lat": 52.81,
+      "lon": -0.63
+    },
+    "utrecht": {
+      "name": "Utrecht",
+      "lat": 52.09,
+      "lon": 5.12
+    },
+    "jingdezhen": {
+      "name": "Jingdezhen",
+      "lat": 29.27,
+      "lon": 117.18
+    },
+    "arcetri": {
+      "name": "Arcetri, near Florence",
+      "lat": 43.75,
+      "lon": 11.25
+    },
+    "edo": {
+      "name": "Edo",
+      "lat": 35.68,
+      "lon": 139.77
+    },
+    "nagoya": {
+      "name": "Nagoya",
+      "lat": 35.18,
+      "lon": 136.91
+    },
+    "nagasaki": {
+      "name": "Nagasaki",
+      "lat": 32.74,
+      "lon": 129.87
+    },
+    "yaeyama": {
+      "name": "the Yaeyama Islands",
+      "lat": 24.35,
+      "lon": 124.15
+    },
+    "asama": {
+      "name": "Mount Asama",
+      "lat": 36.4,
+      "lon": 138.52
+    },
+    "beijing": {
+      "name": "Beijing",
+      "lat": 39.9,
+      "lon": 116.4
+    },
+    "zhapu": {
+      "name": "Zhapu",
+      "lat": 30.6,
+      "lon": 121.1
+    },
+    "kyoto": {
+      "name": "Kyoto",
+      "lat": 35.01,
+      "lon": 135.77
+    },
+    "tambora": {
+      "name": "Tambora",
+      "lat": -8.25,
+      "lon": 118
+    },
+    "saint-remy": {
+      "name": "Saint-Rémy",
+      "lat": 43.79,
+      "lon": 4.83
+    },
+    "arles": {
+      "name": "Arles",
+      "lat": 43.68,
+      "lon": 4.63
+    },
+    "auvers": {
+      "name": "Auvers",
+      "lat": 49.07,
+      "lon": 2.17
+    },
+    "zundert": {
+      "name": "Zundert",
+      "lat": 51.47,
+      "lon": 4.66
+    },
+    "rotterdam": {
+      "name": "Rotterdam",
+      "lat": 51.92,
+      "lon": 4.48
+    },
+    "new-york": {
+      "name": "New York",
+      "lat": 40.71,
+      "lon": -74.01
+    },
+    "menlo-park": {
+      "name": "Menlo Park",
+      "lat": 40.54,
+      "lon": -74.46
+    }
+  }
+}

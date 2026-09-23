@@ -26,7 +26,13 @@ build step. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael
 the Hokusai story called it)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
 the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
 `experiments/maps/`, beside `render.py`, which makes the pictures it draws on. Loaded with a
-version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. **`stack.js` (22 Sep 2026)** — one picture slot, several pictures, in a loop: `cwStack(figure, steps)`,
+version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. **`stories/world-events.json` and `stories/places.json` (22 Sep 2026)** — what the world owns,
+shared by every story: one record per event (year, when, place, label, title, text) and one per
+place (name, lat, lon). A story gives `timeline.js` a `pool` and a `placebook`, then picks events
+by `ref`, sets each one's side, and may add `why` — its own last sentence. It never rewrites the
+shared words. Seeded with 32 events and 17 places from the two painting stories. Separate from
+`stories/events.json`, the deep-time pool for the Timeline Intro; they may merge later.
+**`stack.js` (22 Sep 2026)** — one picture slot, several pictures, in a loop: `cwStack(figure, steps)`,
 each step `{ src, w, h, alt, caption, name }`. A bold word under the caption names the next picture
 ("Next: the powder", "Back to the stone" on the last); the word moves the stack, never a tap on the
 picture, since a picture may already have taps of its own. A step whose file will not load is dropped.
@@ -107,6 +113,18 @@ since it was hung on 16 Sep (the star's pattern).
 central 1158 px square of the same construction that hangs as `glass-geometry-gallery.jpg`,
 resized to 256, so the tab and the wall show one work. The 20 Sep cut was from the
 Abstraction 1 postcard.
+`art/van-gogh-starry-night.jpg` — Vincent van Gogh, *The Starry Night*, 1889 (23 Sep 2026).
+MoMA, New York, 472.1941; the Google Art Project scan as published on Wikimedia Commons, public
+domain; 1800 × 1425. The painting on `active/van-gogh-starry-night.html`; the sampler reads its
+pixels, so it must be served same-origin.
+`art/van-gogh-starry-night-gallery.jpg` — the same painting whole for the gallery, 600 × 475.
+`art/van-gogh-icon-256.png` — the story's tab icon, a square detail of the painting.
+`art/hiroshige-sudden-shower.jpg` — Utagawa Hiroshige, *Sudden Shower over Shin-Ōhashi Bridge
+and Atake*, 1857, public domain, 900 × 1364. Margin picture in the Van Gogh story, for the
+prints he copied.
+`art/maps/france-and-the-low-countries.*`, `art/maps/france-to-the-north-sea.*` — two regions
+rendered 23 Sep 2026 for the Van Gogh story, the usual three files each (picture, JSON with
+contours, height grid), from `experiments/maps/render.py`.
 `art/hokusai-the-great-wave-gallery.jpg` — **the Great Wave, whole, for the gallery** (21 Sep
 2026; Spec-Gallery's *A work on the wall* as changed that day: a painting or print hangs whole,
 never cropped): the Met's scan `art/hokusai-great-wave.jpg` resized to 600 × 414, quality 88,
@@ -301,6 +319,21 @@ backstop for the Claude Code session that lands the file.
   Michael). Back link to the gallery.
 
 ### active/
+- **`van-gogh-starry-night.html`** — story: **Van Gogh: Starry Night** (23 Sep 2026;
+  `CWVault/claude/Story-Van-Gogh-Starry-Night.md`), the third of the paintings series, built
+  on the Vermeer page and Story-Pattern. Michael's ruling on the page: plainly, in his own
+  terms, no drama — no diagnosis, no myth, no ear; three letters set apart carry it. Written
+  straight into `active/` on his reading, so it had no experiments address and needs no
+  redirect; **hung 23 Sep** with its line in `stories/gallery.json` (the whole painting
+  `art/van-gogh-starry-night-gallery.jpg`, 600 × 475, frame `#2a4192`, 12 px, large).
+  `placement: across` with the left margin, on `../css/story.css`. The painting
+  `art/van-gogh-starry-night.jpg` with the magnifier and colour sampler from `../js/sampler.js`,
+  anchors measured off this scan where the MoMA / RIT pigment maps name the paint. Maps through
+  `../js/map.js`: `france-and-the-low-countries`, `france-to-the-north-sea` and `world`.
+  Its timeline through `../js/timeline.js` on the shared `stories/world-events.json` and
+  `stories/places.json`. One margin picture, Hiroshige's *Sudden Shower*, for the Japanese
+  prints he copied. Stamped `2026-09-23 e7778e4` when hung; the stylesheet's version query
+  bumped to `2026-09-23` on all three painting pages because `story.css` changed the same day.
 - **`vermeer-girl-with-a-pearl-earring.html`** — story: **Vermeer: Girl with a Pearl Earring**
   (21 Sep 2026; `CWVault/claude/Story-Vermeer-Girl-with-a-Pearl-Earring.md`), the second of the
   paintings series. **Hung 22 Sep 2026** (Publishing-a-Story stage 4): moved here from

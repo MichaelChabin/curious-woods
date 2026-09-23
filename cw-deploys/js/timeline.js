@@ -13,6 +13,17 @@
    The panel sits between the line and the map (22 Sep 2026, Michael: tapping a date put the
    words off the bottom of the screen). Whichever she taps, the words are a few lines away.
 
+   Two files hold what the world owns, and every story shares them (22 Sep 2026):
+     stories/world-events.json   { events: { 'tambora-1815': { year, when, place, label, title, text } } }
+     stories/places.json         { places: { edo: { name, lat, lon } } }
+   A story names them with `pool` and `placebook`, then picks what it wants:
+     events: [ { ref: 'tambora-1815', side: 'world', why: 'the last line, in this story’s voice' },
+               { id: 'wave', year: 1830.5, side: 'person', ... } ]     an event of its own
+     places: { edo: { side: 'person' }, europe: { name, lat, lon, card: 'west', ... } }
+   The shared record says what happened; the story adds `why` — the sentence that ties it to
+   this picture — and decides which side of the line it sits on. A story never rewrites the
+   shared words: one set of facts, many endings.
+
    data = {
      from, to,                           years at the ends of the line
      region: '../art/maps/<r>.json',     the story's regional base picture (map.js)
@@ -194,7 +205,46 @@
   }
 
   // ---------------------------------------------------------------- the pair
+  // Fetch the shared files, if the story names them, and fold them into its own lists.
   function cwWorld(host, data) {
+    if (!data.pool && !data.placebook) return build(host, data);
+    var want = [data.pool, data.placebook].filter(Boolean);
+    var got = {};
+    var box = { select: function () {}, clear: function () {} };
+    Promise.all(want.map(function (u) {
+      return fetch(u).then(function (r) { return r.json(); })
+                     .then(function (j) { got[u] = j; })
+                     .catch(function (e) { console.warn('world data', u, e); got[u] = {}; });
+    })).then(function () {
+      var pool = (got[data.pool] || {}).events || {};
+      var book = (got[data.placebook] || {}).places || {};
+      var merged = {}, k;
+      for (k in data.places) if (data.places.hasOwnProperty(k)) {
+        var p = {}, key;
+        if (book[k]) for (key in book[k]) p[key] = book[k][key];
+        for (key in data.places[k]) p[key] = data.places[k][key];
+        merged[k] = p;
+      }
+      var events = data.events.map(function (e) {
+        if (!e.ref) return e;
+        var w = pool[e.ref];
+        if (!w) { console.warn('no such event', e.ref); return null; }
+        var out = { id: e.ref }, key2;
+        for (key2 in w) out[key2] = w[key2];
+        for (key2 in e) if (key2 !== 'ref' && key2 !== 'why') out[key2] = e[key2];
+        if (e.why) out.text = w.text + ' ' + e.why;
+        return out;
+      }).filter(Boolean);
+      var full = {}, key3;
+      for (key3 in data) full[key3] = data[key3];
+      full.places = merged; full.events = events;
+      var live = build(host, full);
+      box.select = live.select; box.clear = live.clear;
+    });
+    return box;
+  }
+
+  function build(host, data) {
     host.classList.add('cw-world');
     host.innerHTML = '';
     var svg = el('svg', { 'class': 'cw-tl' }, host);

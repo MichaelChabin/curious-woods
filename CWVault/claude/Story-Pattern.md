@@ -71,13 +71,28 @@ theatre, trade, other painters.
 - **Each event's panel** is written in the story's voice. It says what the event has to do
   with the picture, or with the other events.
 
-**This is the part that should grow across stories.** Today each page carries its own event
-list. The next step is one shared list of the world's events (`stories/events.json` already
-exists for the Timeline Intro), with each story picking the ones in its span. Then Tambora in
-1815 is written once. It turns up in *Hokusai's World*, and in Mary Shelley's, where it is the
-reason for the cold summer of 1816. Galileo's death in 1642 turns up in any World that covers
-that year. The connections then happen by themselves: a child who has met an event in one
-story sees it again in the next.
+**The world's events are shared (built 22 Sept).** Two files hold what the world owns:
+
+- `stories/world-events.json` — one record per event: what happened, when, where. Thirty-two
+  to begin with, from the two painting stories.
+- `stories/places.json` — where things happened, so two stories never disagree about where
+  Zhapu is.
+
+A story names both files and then picks: `{ ref: 'tambora-1815', side: 'world', why: '…' }`.
+The shared record says **what happened**; the story says which side of its line the event sits
+on, and adds **`why`** — one sentence, in its own voice, tying it to this picture. Tambora ends
+"…and the next year Europe had no summer" in Hokusai; in Mary Shelley's it will end with the
+rain at Lake Geneva. Same facts, checked once; different last line.
+
+A story never rewrites the shared words. Its own events — the ones about its person — stay in
+the story file.
+
+Michael's reason for it (22 Sept): this list is where the liberal arts come from. So it needs
+deliberate room for what our stories don't naturally reach — a law, a banned book, an argument
+about God, a piece of music, somebody wrong for three hundred years — and it should keep the
+habit of not being all Europe. And the coverage view (what has any story touched, when, where)
+is **ours, not hers**: the moment a child sees a list of what she has covered it becomes a
+syllabus with ticks, and she will smell it.
 
 ## Building on what came before
 

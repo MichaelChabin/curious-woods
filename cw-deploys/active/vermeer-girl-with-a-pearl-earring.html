@@ -19,7 +19,7 @@
   Hung in active/ on 22 Sep 2026 (Publishing-a-Story, stage 4); the experiments address redirects.
 -->
 <title>Vermeer: Girl with a Pearl Earring — Curious Woods</title>
-<link rel="stylesheet" href="../css/story.css?v=2026-09-22">
+<link rel="stylesheet" href="../css/story.css?v=2026-09-23">
 <style>
   :root { --aspect: calc(1400 / 1658); }   /* the painting's own shape; everything else is ../css/story.css */
 </style>
@@ -49,6 +49,7 @@
           <img id="plateImg" src="../art/vermeer-girl-pearl-earring.jpg"
                alt="Vermeer's painting of a girl looking over her shoulder, in a blue and yellow turban, with a large pearl at her ear, against a dark background.">
         </div>
+        <div class="toolwords" id="plateWords"></div>
         <figcaption>Johannes Vermeer, <i>Girl with a Pearl Earring</i>, about 1665. Oil on canvas, 44.5 &times; 39 cm. Mauritshuis, The Hague.</figcaption>
       </figure>
       <div class="readout idle" id="readout" hidden>
@@ -114,8 +115,6 @@
       </div>
       <figcaption>Johannes Vermeer, <i>View of Delft</i>, about 1660&ndash;61. Oil on canvas, 96.5 &times; 115.7 cm. Mauritshuis, The Hague. He painted it from across the harbour, on the south side of the town. The tower in the sunlight is the New Church, where he was baptised.</figcaption>
     </figure>
-
-    <p>Dutch ships sailed to Asia for pepper and silk, and for porcelain from China — thin, hard, white, and painted in blue. Everybody who could afford it wanted some. Then, in the 1640s, China fell into a war, and the porcelain stopped coming. The potters of Delft could not make real porcelain; they did not have the right clay. So they made a copy. They covered ordinary clay in a glaze made white with tin, and painted it blue with cobalt, in patterns borrowed from the Chinese. In 1647 there were four potteries in Delft. By 1661 there were more than twenty. The plates are still called Delft Blue.</p>
 
     <p>One morning in October 1654, when Vermeer was twenty-one, the town's gunpowder store blew up. There were about forty thousand kilograms of powder in it: forty tonnes. More than two hundred houses were flattened. A painter called Carel Fabritius, who lived nearby and had studied with Rembrandt, was killed at his easel.</p>
 
@@ -230,12 +229,12 @@
 <script src="../js/cw-flags.js?v=2026-09-21"></script>
 <script src="../js/map.js?v=2026-09-22"></script>
 <script src="../js/sampler.js?v=2026-09-22"></script>
-<script src="../js/timeline.js?v=2026-09-22"></script>
+<script src="../js/timeline.js?v=2026-09-22b"></script>
 <script src="../js/stack.js?v=2026-09-22"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-22 700c812';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-23 e7778e4';   // date + short commit hash; bump in the same commit as any change
   console.log('vermeer-girl-with-a-pearl-earring', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
@@ -321,65 +320,48 @@
     from: 1630, to: 1680,
     region: '../art/maps/north-sea-and-paris.json',
     world: '../art/maps/world.json',
-    places: {
-      delft:       { name: 'Delft',       lat: 52.01, lon: 4.36,  side: 'person' },
-      amsterdam:   { name: 'Amsterdam',   lat: 52.37, lon: 4.90,  side: 'world' },
-      paris:       { name: 'Paris',       lat: 48.86, lon: 2.35,  side: 'world' },
-      london:      { name: 'London',      lat: 51.51, lon: -0.13, side: 'world' },
-      woolsthorpe: { name: 'Woolsthorpe', lat: 52.81, lon: -0.63, side: 'world' },
-      utrecht:     { name: 'Utrecht',     lat: 52.09, lon: 5.12,  side: 'world' },
-      jingdezhen:  { name: 'Jingdezhen',  lat: 29.27, lon: 117.18, side: 'world', card: 'east', cardTop: 38,
-                     far: 'About 8,900 km to the east, in China',
-                     bearing: [{ name: 'Delft', lat: 52.01, lon: 4.36 }] },
-      // Italy is south-east: the card sits on the east edge, low, which is as near as a card gets.
-      arcetri:     { name: 'Arcetri, near Florence', lat: 43.75, lon: 11.25, side: 'world', card: 'east', cardTop: 68,
-                     far: 'About 1,050 km to the south-east, in Italy',
-                     bearing: [{ name: 'Delft', lat: 52.01, lon: 4.36 }] }
-    },
+    pool: '../stories/world-events.json',        // what the world owns, shared by every story
+    placebook: '../stories/places.json',
     routes: { letter: [[52.01, 4.36], [51.51, -0.13]] },
+    places: {
+      delft: { side: 'person' },
+      amsterdam: { side: 'world' },
+      paris: { side: 'world' },
+      london: { side: 'world' },
+      woolsthorpe: { side: 'world' },
+      utrecht: { side: 'world' },
+      jingdezhen: { side: 'world', card: 'east', cardTop: 38,
+        far: 'About 8,900 km to the east, in China',
+        bearing: [{name: 'Delft',lat: 52.01,lon: 4.36}] },
+      arcetri: { side: 'world', card: 'east', cardTop: 68,
+        far: 'About 1,050 km to the south-east, in Italy',
+        bearing: [{name: 'Delft',lat: 52.01,lon: 4.36}] }
+    },
     events: [
       { id: 'born', year: 1632.83, side: 'person', label: 'Born', place: 'delft',
         when: '1632 · Delft', title: 'Baptised in the New Church',
         text: 'On the last day of October 1632. Four days later the same church baptised another baby, Antonie van Leeuwenhoek.' },
-      { id: 'leeuwenhoek', year: 1632.84, side: 'world', label: 'Leeuwenhoek born', place: 'delft',
-        when: '1632 · Delft', title: 'The boy who would see the invisible',
-        text: 'Baptised four days after Vermeer, in the same church. He grew up to make the best microscopes of his time, and to see tiny animals swimming in a drop of water.' },
-      { id: 'galileo', year: 1642.02, side: 'world', label: 'Galileo dies', place: 'arcetri',
-        when: '1642 · Arcetri, near Florence', title: 'Galileo dies, and Newton is born',
-        text: 'Galileo Galilei died in January 1642, in his house in the hills outside Florence. He had been one of the first to turn a telescope on the sky, and he saw mountains on the Moon. For saying that the Earth goes round the Sun, the Church had kept him shut up there for the last eight and a half years of his life. Isaac Newton was born the same year.' },
-      { id: 'nightwatch', year: 1642, side: 'world', label: 'Rembrandt paints The Night Watch', place: 'amsterdam',
-        when: '1642 · Amsterdam', title: 'The Night Watch',
-        text: 'Rembrandt’s biggest painting: a company of Amsterdam’s guards stepping out with their muskets and their banner, more than four metres wide. Vermeer was nine.' },
-      { id: 'newtonborn', year: 1642.98, side: 'world', label: 'Newton born', place: 'woolsthorpe',
-        when: '1642 · Woolsthorpe', title: 'Isaac Newton is born',
-        text: 'On Christmas Day 1642, on a farm at Woolsthorpe in England. In the course of his lifetime he would work out the laws of motion, the law of gravity, and calculus.' },
-      { id: 'ming', year: 1644, side: 'world', label: 'Chinese porcelain stops', place: 'jingdezhen',
-        when: '1644 · China', title: 'A war in China',
-        text: 'The Ming dynasty fell, and the blue-and-white porcelain the Dutch had been buying, much of it made in the kiln town of Jingdezhen, stopped coming. The potters of Delft saw their chance.' },
-      { id: 'potters', year: 1647, side: 'world', label: 'Delft potters copy it', place: 'delft',
-        when: '1647 · Delft', title: 'Four potteries, then twenty',
-        text: 'Ordinary clay under a glaze made white with tin, painted with cobalt blue in Chinese patterns. Four potteries in 1647; more than twenty by 1661.' },
-      { id: 'guild', year: 1653.99, side: 'person', label: "Joins the painters' guild", place: 'delft',
+      { ref: 'leeuwenhoek-born-1632', side: 'world' },
+      { ref: 'galileo-dies-1642', side: 'world' },
+      { ref: 'night-watch-1642', side: 'world',
+        why: 'Vermeer was nine.' },
+      { ref: 'newton-born-1642', side: 'world' },
+      { ref: 'ming-falls-1644', side: 'world',
+        why: 'The potters of Delft saw their chance.' },
+      { ref: 'delft-potteries-1647', side: 'world' },
+      { id: 'guild', year: 1653.99, side: 'person', label: 'Joins the painters\' guild', place: 'delft',
         when: '1653 · Delft', title: 'A quarter of the fee',
         text: 'He was twenty-one, and could pay only a quarter of the fee to join. He paid the rest three years later.' },
-      { id: 'thunderclap', year: 1654.78, side: 'world', label: 'The gunpowder store explodes', place: 'delft',
-        when: '1654 · Delft', title: 'The Delft Thunderclap',
-        text: 'About forty thousand kilograms of gunpowder. More than two hundred houses flattened. The painter Carel Fabritius, who had studied with Rembrandt, died at his easel.' },
+      { ref: 'delft-thunderclap-1654', side: 'world' },
       { id: 'girl', year: 1665, side: 'person', focus: true, label: 'Girl with a Pearl Earring', place: 'delft',
         when: 'about 1665 · Delft', title: 'The girl who was nobody',
         text: 'A face in costume, not a portrait. A pearl with no hook, and a turban painted in a blue that cost more than gold.' },
-      { id: 'plague', year: 1665.5, side: 'world', label: 'Plague in London', place: 'london',
-        when: '1665 · London', title: 'The Great Plague',
-        text: 'Plague killed about a hundred thousand people in London, something like one in four. Cambridge University shut its doors, and a young Isaac Newton went home to the farm where he was born.' },
-      { id: 'newton', year: 1666, side: 'world', label: "Newton's prism", place: 'woolsthorpe',
-        when: '1666 · Woolsthorpe', title: 'White light is all the colours',
-        text: 'While Vermeer was painting, Newton was splitting sunlight into colours with a glass prism, and working out that white light is all of them at once.' },
-      { id: 'moliere', year: 1670.8, side: 'world', label: 'Molière’s The Bourgeois Gentleman', place: 'paris',
-        when: '1670 · Paris', title: 'Speaking prose all his life',
-        text: 'Molière’s play was first performed for the King of France in October 1670, and then in Paris. In it Monsieur Jourdain is delighted to discover that he has been speaking prose all his life.' },
-      { id: 'disaster', year: 1672.5, side: 'world', label: 'France invades', place: 'utrecht',
-        when: '1672 · the Dutch Republic', title: 'The disaster year',
-        text: 'The armies of the King of France marched into the Republic and took Utrecht. Nobody was buying paintings, and Vermeer’s debts began to pile up.' },
+      { ref: 'london-plague-1665', side: 'world' },
+      { ref: 'newton-prism-1666', side: 'world',
+        why: 'Vermeer was painting the girl in those same years.' },
+      { ref: 'bourgeois-gentleman-1670', side: 'world' },
+      { ref: 'france-invades-1672', side: 'world',
+        why: 'Nobody was buying paintings, and Vermeer’s debts began to pile up.' },
       { id: 'dies', year: 1675.96, side: 'person', label: 'Dies, aged 43', place: 'delft',
         when: '1675 · Delft', title: 'Owing money all over town',
         text: 'December 1675. He was buried in the Old Church.' },
@@ -390,7 +372,7 @@
         when: '1676 · Delft to London', title: 'Leeuwenhoek writes to London',
         text: 'The same year the town made him trustee of what Vermeer left, Leeuwenhoek wrote to the Royal Society in London about tiny animals swimming in water that had pepper in it.' }
     ]
-  };
+  };;
   if (typeof cwWorld === 'function') cwWorld(document.getElementById('vermeerWorld'), WORLD);
 
   // ==========================================================================
@@ -491,6 +473,7 @@
   const el = id => document.getElementById(id);
   const wDrop = el('dropLoupe'), wFit = el('fit'), wBack = el('putBack'), wSummon = el('summon');
   const toolSlot = el('toolSlot');
+  const plateWords = el('plateWords');
 
   const tool = cwSampler(frame, ANCHORS, {
     onState: s => { wDrop.hidden = !s.loupe; wFit.hidden = !s.zoomed; },
@@ -508,7 +491,7 @@
   wFit.addEventListener('click', () => tool.fit());
 
   wSummon.addEventListener('click', () => {
-    toolSlot.appendChild(wFit); toolSlot.appendChild(wDrop); toolSlot.appendChild(wBack);   // the tool's words follow it, still in the left column
+    plateWords.appendChild(wFit); plateWords.appendChild(wDrop); plateWords.appendChild(wBack);   // the tool's words go under the painting, where she is already looking
     stage.appendChild(plate); stage.appendChild(readout);
     stage.classList.add('open'); home.classList.add('folded');
     readout.hidden = false; wBack.hidden = false; wSummon.hidden = true;

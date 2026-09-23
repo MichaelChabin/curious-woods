@@ -52,5 +52,14 @@
     "frame": "#3d6e92",
     "frameWidth": 12,
     "size": "medium"
+  },
+  {
+    "slug": "van-gogh-starry-night",
+    "title": "Van Gogh: Starry Night",
+    "href": "active/van-gogh-starry-night.html",
+    "picture": "art/van-gogh-starry-night-gallery.jpg",
+    "frame": "#2a4192",
+    "frameWidth": 12,
+    "size": "large"
   }
 ]

@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/van-gogh-icon-256.png">
+<link rel="apple-touch-icon" href="../art/van-gogh-icon-256.png">
+<!--
+  van-gogh-starry-night.html — story: Van Gogh, Starry Night.
+  Third of the paintings series (23 Sep 2026), built on the Vermeer page.
+  Story text and Michael's rulings: CWVault/claude/Story-Van-Gogh-Starry-Night.md
+  Ruling: "Plainly, in his own terms, no drama." No diagnosis, no myth, no ear.
+  Painting: ../art/van-gogh-starry-night.jpg — MoMA, New York, 472.1941; the Google Art
+  Project scan as published on Wikimedia Commons, public domain; 1800 px wide.
+  Colours: anchors measured off THIS scan at places the MoMA / Rochester Institute of
+  Technology pigment maps identify. The sampler and magnifier are ../js/sampler.js.
+  Maps: ../js/map.js and ../art/maps/{france-and-the-low-countries,world}.
+  Hung in active/ on 23 Sep 2026 after Michael read it (Publishing-a-Story, stages 4 and 5).
+  Written straight into active/, so it never had an experiments address and needs no redirect.
+-->
+<title>Van Gogh: Starry Night — Curious Woods</title>
+<link rel="stylesheet" href="../css/story.css?v=2026-09-23">
+<style>
+  :root { --aspect: calc(1800 / 1425); }   /* the painting's own shape; everything else is ../css/story.css */
+</style>
+</head>
+<body>
+
+<main class="page">
+  <div class="shell">
+  <article>
+
+    <div class="titleblock">
+      <div class="eyebrow">Curious Woods</div>
+      <h1>Van Gogh: Starry Night</h1>
+      <p class="subtitle">~11,889 after the ice, or 1889.</p>
+    </div>
+
+    <h2>Look at the big star</h2>
+
+    <div id="plateHome">
+      <div class="tools" id="toolwords">
+        <button class="word" id="dropLoupe" type="button" hidden>Put the magnifier away</button>
+        <button class="word" id="fit" type="button" hidden>The whole picture</button>
+        <button class="word" id="putBack" type="button" hidden>Put it back</button>
+      </div>
+      <figure id="plate">
+        <div class="frame" id="frame">
+          <img id="plateImg" src="../art/van-gogh-starry-night.jpg"
+               alt="A night sky rolling in great curls of blue over a sleeping village, with eleven blazing stars and a crescent moon, and a dark cypress tree standing up the left-hand side.">
+        </div>
+        <div class="toolwords" id="plateWords"></div>
+        <figcaption>Vincent van Gogh, <i>The Starry Night</i>, June 1889. Oil on canvas, 73.7 &times; 92.1 cm. The Museum of Modern Art, New York. Tap the big star to the right of the tree.</figcaption>
+      </figure>
+      <div class="readout idle" id="readout" hidden>
+        <div class="swatch" id="swatch"></div>
+        <div>
+          <p class="nums" id="nums">&nbsp;</p>
+          <p class="what" id="what">Tap anywhere on the picture.</p>
+          <p class="chem" id="chem"></p>
+          <p class="hedge" id="hedge"></p>
+        </div>
+      </div>
+    </div>
+
+    <p>Tap it, and a magnifier appears there. You can drag the magnifier about, and pinch the picture to make the whole of it bigger.</p>
+
+    <p>That one is not a star.</p>
+
+    <p>It is the planet Venus, and in June of 1889 it came up in the east about two hours before the sun did. Anyone awake could see it. He was awake.</p>
+
+    <h2>The window</h2>
+
+    <p>He was living in an asylum at Saint-R&eacute;my, in southern France, in an upstairs room with a barred window facing east. He had gone there himself.</p>
+
+    <p>Three weeks before he went in he wrote to his brother Theo to explain why. He could not face taking a studio and living in it alone. He was afraid of losing the ability to work, which had only just come back to him. And:</p>
+
+    <blockquote>
+      <p>I wish to remain confined, as much for my own tranquillity as for that of others.</p>
+      <p class="cite">Vincent to Theo, 21 April 1889</p>
+    </blockquote>
+
+    <p>He had spells when he lost hold of things &mdash; days he could not account for afterwards and could not see coming. They frightened him. Between them he was himself and he wanted to work. The asylum agreed to it and gave him a second room downstairs to paint in. He stayed a year.</p>
+
+    <p>In the first days of June he wrote to Theo again.</p>
+
+    <blockquote>
+      <p>This morning I saw the countryside from my window a long time before sunrise with nothing but the morning star, which looked very big.</p>
+      <p class="cite">Vincent to Theo, early June 1889</p>
+    </blockquote>
+
+    <p>He painted this about two weeks later.</p>
+
+    <h2>What was out there</h2>
+
+    <p>The sky was out there, and the sky is the part that can be checked. Venus was where he put it. The one thing in the sky he changed is the moon: that June it was fat and lopsided, past full, and he painted a thin one.</p>
+
+    <p>The tree was out there, though not the way it is here. Cypresses grew in the fields beyond the wall. In the painting one of them stands closer to you than anything else and runs straight off the top of the canvas, taller than the mountains behind it. Whether a cypress really stood in that spot, nobody knows.</p>
+
+    <p>The village was not out there at all. There is no village in that view. And the church has a tall thin spire of a kind you find in Holland and not in southern France. He had been gone from Holland four years by then, and he never went back.</p>
+
+    <h2>What the sky is made of</h2>
+
+    <div class="tools" id="toolSlot">
+      <button class="word" id="summon" type="button">Sample colours</button>
+    </div>
+
+    <p>Tap <i>Sample colours</i>, then tap anywhere in the picture.</p>
+
+    <div id="plateStage"></div>
+
+    <p>The deep blue between the stars is ultramarine. If you have read about the girl with the pearl earring, that is the same blue &mdash; and Vermeer's came out of a mountain in Afghanistan, travelled for a year on the backs of animals, and was worth more than its weight in gold.</p>
+
+    <p>Van Gogh's came out of a tube. In 1828 a French chemist named Jean-Baptiste Guimet worked out how to make that exact colour in an oven, out of china clay, soda, sulphur and charcoal. He won a prize for it. Six years later he was making it by the barrel in a factory on a river north of Lyon. The most expensive colour in the world became one of the cheap ones, which is why the sky in this painting can be laid on half a centimetre thick.</p>
+
+    <p>The brighter blue in the swirls, and the ring around the moon, is a different blue: cobalt. The two are close. Sample one and then the other and the tool will hedge, because in places the difference is too small to call.</p>
+
+    <p>The moon and the stars are yellow, and there is more than one yellow in them. One is zinc yellow. Another appears to be indian yellow, which has the strangest story of any colour here. It was said to be made in Bengal, from the urine of cows fed on nothing but mango leaves. That was written down once, in 1883, by a man who said he had been to see it done. Nobody has confirmed it since. Nobody has disproved it either.</p>
+
+    <p>There is a little green around the moon, and it is emerald green, which is made with arsenic.</p>
+
+    <p>And the cypress. The brown of the branches is burnt umber. The dark green over it is probably Prussian blue mixed with a yellow &mdash; <i>probably</i>, because even the people who have measured it will not say for certain. If it is, then the darkest thing in this painting was made with the same blue as the great wave, fifty-eight years earlier and nearly ten thousand kilometres away.</p>
+
+    <figure class="margin">
+      <div class="map" id="mapJourney"></div>
+      <figcaption>Where the painting went after he died. Tap a name.</figcaption>
+    </figure>
+
+    <h2>Afterwards</h2>
+
+    <p>He did not think much of it.</p>
+
+    <p>In September he made a list of the paintings he was sending to Theo and left this one off, to save the postage. He called it a night study. In November he wrote to his friend &Eacute;mile Bernard that he had let himself go again, "reaching for stars that are too big &mdash; another failure."</p>
+
+    <p>He died the following July. Theo died six months after that, and everything came to Theo's widow, Johanna.</p>
+
+    <p>Then the painting went travelling. Amsterdam for ten years. Paris, for two months, with a man who swapped it away. Paris again. Back to Amsterdam, because Johanna bought it back. Then a house in Rotterdam, where it stayed for thirty-two years. Then Paris once more, with a dealer who got out of France ahead of the Germans. In 1941 it crossed the Atlantic for good.</p>
+
+    <p>It is in New York now, and people queue to stand in front of it.</p>
+
+    <section class="more">
+      <h2>More</h2>
+
+      <p><b>Johanna.</b> Theo married Johanna Bonger in April 1889, the month before Vincent went into the asylum. They had a son the following January and named him Vincent. Vincent the painter died that July. Theo died the January after that, aged thirty-three. Johanna was twenty-eight, with a baby, about two hundred paintings nobody wanted, and seven hundred letters.</p>
+
+      <p>She could have sold the lot cheap and been done with it. Instead she learned the trade. She lent paintings to exhibitions, argued with dealers, sold slowly and turned down the wrong offers, and spent years reading the letters in order and copying them out. She published them in 1914. The reason you can read what Vincent wrote to his brother about the morning star is that his brother's widow sat down and did the work.</p>
+
+      <p>She died in 1925. Her son &mdash; Vincent, the baby &mdash; became an engineer, and kept the collection together for another forty years. He gave it to a foundation in 1962, and in 1973 it opened as a museum in Amsterdam, where most of it is today.</p>
+
+      <p><b>Theo.</b> Four years younger than Vincent, and an art dealer in Paris. He sent his brother money nearly every month for ten years and never saw a return on it. Almost every letter we have is one Vincent wrote to Theo, because Theo kept them.</p>
+
+      <figure class="margin">
+        <img src="../art/hiroshige-sudden-shower.jpg" width="900" height="1364" loading="lazy"
+             alt="A Japanese woodblock print: rain falling in fine straight lines on a wooden bridge, where people hurry across under umbrellas and a straw cape, with a dark river below.">
+        <figcaption>Utagawa Hiroshige, <i>Sudden Shower over Shin-&#332;hashi Bridge and Atake</i>, 1857. Van Gogh copied this one in oil paint in 1887.</figcaption>
+      </figure>
+
+      <p><b>Japan.</b> Two years before this painting, in Paris, Vincent and Theo bought Japanese prints by the hundred, cheap, from a dealer's back room. Vincent hung them on the walls, put on an exhibition of them in a caf&eacute;, and copied three of them in oil &mdash; two by Hiroshige. When he moved south to Arles he told Theo the countryside there reminded him of Japan.</p>
+
+      <p><b>The building.</b> Saint-Paul-de-Mausole was a monastery nine hundred years ago and an asylum from 1807. It is still a psychiatric hospital. His room is kept the way it was, and you can stand at the window and look east.</p>
+    </section>
+
+    <section class="world breakout">
+      <h2>Vincent van Gogh&rsquo;s World</h2>
+      <div id="vanGoghWorld"></div>
+    </section>
+
+    <section class="refs">
+      <h2>References</h2>
+      <p>The Museum of Modern Art, New York, <i>The Starry Night</i>, 472.1941. The catalogue entry, the credit line and the provenance &mdash; every owner between Theo van Gogh and the museum.</p>
+      <p>Van Gogh Museum and Huygens Institute, <i>Vincent van Gogh &mdash; The Letters</i>, vangoghletters.org. Letter 760, to Theo, Arles, 21 April 1889; letter 777, to Theo, Saint-R&eacute;my, early June 1889; and the letter to &Eacute;mile Bernard of late November 1889. The two quotations are from that edition.</p>
+      <p>ColourLex, "Van Gogh, The Starry Night", on the pigment maps made from multispectral imaging by the Rochester Institute of Technology and MoMA. The paints named in the tool come from that work.</p>
+      <p>Van Gogh Museum, on Johanna van Gogh-Bonger and how the family collection became a museum.</p>
+      <p>The painting is the Google Art Project photograph as published on Wikimedia Commons, public domain. The Hiroshige is the Van Gogh Museum's photograph, also public domain.</p>
+    </section>
+
+  </article>
+  </div>
+</main>
+
+<script src="../js/cw-flags.js?v=2026-09-21"></script>
+<script src="../js/map.js?v=2026-09-22"></script>
+<script src="../js/sampler.js?v=2026-09-22"></script>
+<script src="../js/timeline.js?v=2026-09-22b"></script>
+<script src="../js/stack.js?v=2026-09-22"></script>
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = '2026-09-23 e7778e4';   // date + short commit hash; bump in the same commit as any change
+  console.log('van-gogh-starry-night', CW_VERSION);
+  window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
+
+  // ==========================================================================
+  // THE DATA
+  // ==========================================================================
+
+  // Each anchor is a colour measured off THIS scan, at a place where the pigment maps
+  // (Rochester Institute of Technology with MoMA, multispectral imaging) identify the
+  // paint. Same `m` = the same paint at two strengths; the sampler never offers those
+  // as a choice.
+  const ANCHORS = [
+    { rgb: [42, 65, 146],   m: 'ultramarine', name: 'ultramarine',
+      chem: 'The deep blue between the stars. Not the stone this time: this blue was made in an oven out of china clay, soda, sulphur and charcoal. The colour itself is sulphur, caught in a cage inside each crystal.' },
+    { rgb: [55, 84, 170],   m: 'ultramarine', name: 'ultramarine, at its deepest',
+      chem: 'The same paint, laid on thick and hardly let down with white.' },
+    { rgb: [89, 125, 185],  m: 'cobalt',      name: 'cobalt blue',
+      chem: 'A different blue, roasted out of cobalt ore. It was new in his lifetime, not quite ninety years old, and it cost a great deal more than the ultramarine beside it.' },
+    { rgb: [99, 117, 149],  m: 'cobalt',      name: 'cobalt blue, let down with white',
+      chem: 'The paler bands that make the sky roll over.' },
+    { rgb: [140, 162, 156], m: 'skyglow',     name: 'the pale sky around the moon',
+      chem: 'White with a little blue and a little yellow stirred into it, so that it reads as light rather than as paint.' },
+    { rgb: [192, 169, 47],  m: 'moon',        name: 'the yellow of the moon',
+      chem: 'Two yellows at least: zinc yellow, and what looks like indian yellow. Zinc yellow goes brown with age, so the moon was probably brighter than this once.' },
+    { rgb: [199, 174, 35],  m: 'moon',        name: 'the yellow of the moon',
+      chem: 'Two yellows at least: zinc yellow, and what looks like indian yellow. Zinc yellow goes brown with age, so the moon was probably brighter than this once.' },
+    { rgb: [197, 197, 125], m: 'moonedge',    name: 'the moon, paler at its edge',
+      chem: 'The yellows again with white in them, dragged outwards in short strokes.' },
+    { rgb: [178, 172, 92],  m: 'star',        name: 'the yellow of a star',
+      chem: 'The same yellows as the moon. Each star is a knot of them with a ring of pale blue wound round it.' },
+    { rgb: [198, 204, 206], m: 'white',       name: 'white',
+      chem: 'Lead white, zinc white, or both. They are the same colour to look at, so this tool cannot tell you which; only a laboratory can.' },
+    { rgb: [15, 17, 16],    m: 'cypress',     name: 'the cypress, almost black',
+      chem: 'Burnt umber &mdash; an earth roasted in a fire &mdash; with a dark green over it that is probably Prussian blue mixed with a yellow. Probably: even the people who have measured it will not say for certain.' },
+    { rgb: [40, 33, 26],    m: 'cypress',     name: 'the cypress',
+      chem: 'Burnt umber and a dark green, laid on in strokes that run the way a flame runs.' },
+    { rgb: [54, 78, 134],   m: 'hills',       name: 'the hills',
+      chem: 'The blues again, darkened. The range he could see from the window is called the Alpilles.' },
+    { rgb: [24, 27, 52],    m: 'village',     name: 'the dark of the village',
+      chem: 'Blue and black. Almost every roof in the village is painted in the colour of the night above it.' },
+    { rgb: [140, 128, 30],  m: 'window',      name: 'a lit window',
+      chem: 'The same yellow as the stars, in a square a few millimetres across. There was no electric light in that valley; this is a lamp or a fire.' },
+    { rgb: [93, 105, 32],   m: 'scrub',       name: 'the scrub in the foreground',
+      chem: 'Yellow and blue laid side by side rather than mixed, so that the green happens in your eye and not on the palette.' }
+  ];
+
+  // Where the painting went after he died (MoMA's provenance). New York is off the
+  // edge of this map, so it is a note rather than a place.
+  const MAPS = [
+    { host: 'mapJourney', region: '../art/maps/france-and-the-low-countries.json', marks: [
+      { type: 'place', lat: 43.79, lon: 4.83, name: 'Saint-Rémy', lit: true,
+        text: 'Painted here in June 1889, in a room at the asylum.' },
+      { type: 'place', lat: 48.86, lon: 2.35, name: 'Paris',
+        text: 'Sent to Theo in September 1889. It came back twice more: sold here in 1900, and bought by a dealer here in 1938.' },
+      { type: 'place', lat: 52.37, lon: 4.90, name: 'Amsterdam',
+        text: 'Johanna kept it here for ten years, sold it, and bought it back.' },
+      { type: 'place', lat: 51.92, lon: 4.48, name: 'Rotterdam',
+        text: 'A house here held it for thirty-two years, longer than anywhere else it has been.' },
+      { type: 'path', places: [
+        [43.79, 4.83], [48.86, 2.35], [52.37, 4.90], [48.86, 2.35], [52.37, 4.90],
+        [51.92, 4.48], [48.86, 2.35] ] },
+      { type: 'note', lat: 47.2, lon: -3.6, text: 'and then New York, 5,800 km west' }
+    ]}
+  ];
+
+  // Vincent van Gogh's World. The span runs from the events that explain the picture to
+  // the ones the picture outlived: 1830 to 1950, because this is the one story so far in
+  // which the thing goes on travelling for fifty years after the man has stopped.
+  const WORLD = {
+    from: 1830, to: 1950,
+    region: '../art/maps/france-to-the-north-sea.json',
+    world: '../art/maps/world.json',
+    pool: '../stories/world-events.json',        // what the world owns, shared by every story
+    placebook: '../stories/places.json',
+    places: {
+      'saint-remy': { side: 'person' },
+      zundert:      { side: 'person' },
+      arles:        { side: 'person' },
+      auvers:       { side: 'person' },
+      paris:        { side: 'world' },
+      london:       { side: 'world' },
+      amsterdam:    { side: 'world' },
+      rotterdam:    { side: 'world' },
+      'new-york':   { side: 'world', card: 'west', cardTop: 30,
+        far: 'About 5,800 km to the west, in America',
+        bearing: [{ name: 'Saint-Rémy', lat: 43.79, lon: 4.83 }] },
+      'menlo-park': { side: 'world', card: 'west', cardTop: 62,
+        far: 'About 6,000 km to the west, in New Jersey',
+        bearing: [{ name: 'Paris', lat: 48.86, lon: 2.35 }] },
+      edo:          { side: 'world', card: 'east', cardTop: 30,
+        far: 'About 9,700 km to the east, in Japan',
+        bearing: [{ name: 'Paris', lat: 48.86, lon: 2.35 }] }
+    },
+    events: [
+      { ref: 'faraday-1831', side: 'world' },
+      { ref: 'daumier-gargantua-1831', side: 'world',
+        why: 'Fifty-eight years before this picture, and in the same country.' },
+      { ref: 'photography-1839', side: 'world' },
+      { id: 'born', year: 1853.23, side: 'person', label: 'Born', place: 'zundert',
+        when: '1853 &middot; Zundert', title: 'A village near the Belgian border',
+        text: 'The first Vincent van Gogh, his brother, had been born dead exactly a year before, and is buried in the churchyard there.' },
+      { ref: 'perry-1853', side: 'world',
+        why: 'Within thirty years Japanese prints were for sale by the armful in Paris, and he bought them.' },
+      { ref: 'origin-of-species-1859', side: 'world' },
+      { ref: 'edison-lamp-1879', side: 'world',
+        why: 'There was still no electric light in the valley where he painted this.' },
+      { id: 'paris', year: 1886.2, side: 'person', label: 'Paris', place: 'paris',
+        when: '1886 &middot; Paris', title: 'Two years with Theo',
+        text: 'He moved in with his brother, met the painters who were changing what paint was for, and bought Japanese prints by the hundred.' },
+      { id: 'arles', year: 1888.15, side: 'person', label: 'Arles', place: 'arles',
+        when: '1888 &middot; Arles', title: 'South, for the light',
+        text: 'He went south in February and painted more in fifteen months than most painters do in ten years.' },
+      { id: 'asylum', year: 1889.35, side: 'person', label: 'Into the asylum', place: 'saint-remy',
+        when: 'May 1889 &middot; Saint-Rémy', title: 'He asked to go',
+        text: 'He signed himself in on the eighth of May and stayed a year. The asylum let him paint, and gave him a second room to do it in.' },
+      { ref: 'eiffel-tower-1889', side: 'world',
+        why: 'It opened to the public the week Van Gogh entered the asylum. His brother was in that city.' },
+      { id: 'starry', year: 1889.46, side: 'person', focus: true, label: 'Starry Night', place: 'saint-remy',
+        when: 'June 1889 &middot; Saint-Rémy', title: 'The morning star, two weeks later',
+        text: 'A sky he had watched from the window before dawn, a cypress brought too close, and a village that was not there.' },
+      { id: 'auvers', year: 1890.55, side: 'person', label: 'Dies, aged 37', place: 'auvers',
+        when: 'July 1890 &middot; Auvers-sur-Oise', title: 'Seventy days north of Paris',
+        text: 'He left the asylum in May, went to a village near his brother, painted about seventy more pictures, and died at the end of July.' },
+      { id: 'theo', year: 1891.07, side: 'person', label: 'Theo dies', place: 'amsterdam',
+        when: 'January 1891 &middot; Utrecht', title: 'Six months later',
+        text: 'Theo was thirty-three. Everything &mdash; the paintings, and about seven hundred letters &mdash; went to his widow, Johanna.' },
+      { id: 'letters', year: 1914, side: 'world', label: 'Johanna publishes Van Gogh\'s letters', place: 'amsterdam',
+        when: '1914 &middot; Amsterdam', title: 'Twenty-three years of work',
+        text: 'She had read them in order, dated them, copied them out and translated them. Almost everything anybody knows about Vincent van Gogh comes from this book.' },
+      { id: 'moma', year: 1941, side: 'world', label: 'Starry Night in New York', place: 'new-york',
+        when: '1941 &middot; New York', title: 'It crosses the Atlantic',
+        text: 'The Museum of Modern Art took it from a dealer who had got out of France ahead of the Germans. It has not left New York since.' }
+    ]
+  };
+  if (typeof cwWorld === 'function') cwWorld(document.getElementById('vanGoghWorld'), WORLD);
+
+  // ==========================================================================
+  // THE MAPS
+  // ==========================================================================
+  if (typeof cwMap === 'function') {
+    for (const m of MAPS) {
+      const host = document.getElementById(m.host);
+      if (!host) continue;
+      cwMap.load(m.region).then(r => cwMap(host, r, m.marks))
+        .catch(err => { console.warn('map', m.host, err); host.closest('figure').remove(); });
+    }
+  }
+
+  // ==========================================================================
+  // THE PAINTING: magnifier, zoom, colours
+  // ==========================================================================
+  const plate = document.getElementById('plate');
+  const frame = document.getElementById('frame');
+  const home = document.getElementById('plateHome');
+  const stage = document.getElementById('plateStage');
+  const readout = document.getElementById('readout');
+  const toolwords = document.getElementById('toolwords');
+  const el = id => document.getElementById(id);
+  const wDrop = el('dropLoupe'), wFit = el('fit'), wBack = el('putBack'), wSummon = el('summon');
+  const toolSlot = el('toolSlot');
+  const plateWords = el('plateWords');
+
+  const tool = cwSampler(frame, ANCHORS, {
+    hedge: {
+      tie: 'Those two come out the same colour here, near enough, so the colour on its own cannot tell them apart. Where they sit in the picture can.',
+      far: 'This is some way off any single colour in the painting &mdash; probably two paints laid over each other, or the edge of a brushstroke.',
+      fair: 'A fair match. The paint stands half a centimetre off the canvas in places, and casts its own shadows, so nothing here is exact.'
+    },
+    onState: s => { wDrop.hidden = !s.loupe; wFit.hidden = !s.zoomed; },
+    onSample: s => {
+      if (s.error) { el('what').textContent = 'The browser will not let the page read this picture.';
+                     el('chem').textContent = 'Open the page from the site rather than from a file on disk.';
+                     el('hedge').textContent = ''; return; }
+      readout.classList.remove('idle');
+      el('swatch').style.background = s.hex;
+      el('nums').textContent = s.hex + '   rgb(' + s.rgb.join(', ') + ')';
+      el('what').textContent = s.what; el('chem').innerHTML = s.chem; el('hedge').innerHTML = s.hedge;
+    }
+  });
+  wDrop.addEventListener('click', () => tool.drop());
+  wFit.addEventListener('click', () => tool.fit());
+
+  wSummon.addEventListener('click', () => {
+    plateWords.appendChild(wFit); plateWords.appendChild(wDrop); plateWords.appendChild(wBack);   // the tool's words go under the painting, where she is already looking
+    stage.appendChild(plate); stage.appendChild(readout);
+    stage.classList.add('open'); home.classList.add('folded');
+    readout.hidden = false; wBack.hidden = false; wSummon.hidden = true;
+    readout.classList.add('idle');
+    el('what').textContent = 'Tap anywhere on the picture.';
+    el('chem').textContent = ''; el('hedge').textContent = ''; el('nums').innerHTML = '&nbsp;';
+    el('swatch').style.background = 'transparent';
+    tool.arm(true); tool.repaint();
+  });
+  wBack.addEventListener('click', () => {
+    stage.classList.remove('open'); home.classList.remove('folded');
+    toolwords.appendChild(wDrop); toolwords.appendChild(wFit); toolwords.appendChild(wBack);
+    home.appendChild(plate); home.appendChild(readout);
+    readout.hidden = true; wBack.hidden = true; wSummon.hidden = false;
+    tool.arm(false); tool.repaint();
+    requestAnimationFrame(() => plate.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+  });
+})();
+</script>
+</body>
+</html>

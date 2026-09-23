@@ -1,0 +1,294 @@
+{
+  "_about": "The world's events, shared by every story. One record per event: what happened, when, and where — checked once, used everywhere. A story picks the ones inside its span (js/timeline.js, `pool`), says which side of its line each one sits on, and may add `why`: the last sentence, in that story's voice, tying it to that picture. A story never rewrites these words. Places are ids from stories/places.json. Years are plain years; a fraction places an event inside its year (1815.3 is April). Spec: CWVault/claude/Story-Pattern.md.",
+  "version": "2026-09-23b",
+  "events": {
+    "leeuwenhoek-born-1632": {
+      "year": 1632.84,
+      "when": "1632 · Delft",
+      "place": "delft",
+      "label": "Leeuwenhoek born",
+      "title": "The boy who would see the invisible",
+      "text": "Antonie van Leeuwenhoek was baptised in the New Church at Delft four days after Johannes Vermeer. He grew up to make the best microscopes of his time, and to see tiny animals swimming in a drop of water."
+    },
+    "night-watch-1642": {
+      "year": 1642,
+      "when": "1642 · Amsterdam",
+      "place": "amsterdam",
+      "label": "Rembrandt paints The Night Watch",
+      "title": "The Night Watch",
+      "text": "Rembrandt’s biggest painting: a company of Amsterdam’s guards stepping out with their muskets and their banner, more than four metres wide."
+    },
+    "galileo-dies-1642": {
+      "year": 1642.02,
+      "when": "1642 · Arcetri, near Florence",
+      "place": "arcetri",
+      "label": "Galileo dies",
+      "title": "Galileo dies, and Newton is born",
+      "text": "Galileo Galilei died in January 1642, in his house in the hills outside Florence. He had been one of the first to turn a telescope on the sky, and he saw mountains on the Moon. For saying that the Earth goes round the Sun, the Church had kept him shut up there for the last eight and a half years of his life. Isaac Newton was born the same year."
+    },
+    "newton-born-1642": {
+      "year": 1642.98,
+      "when": "1642 · Woolsthorpe",
+      "place": "woolsthorpe",
+      "label": "Newton born",
+      "title": "Isaac Newton is born",
+      "text": "On Christmas Day 1642, on a farm at Woolsthorpe in England. In the course of his lifetime he would work out the laws of motion, the law of gravity, and calculus."
+    },
+    "ming-falls-1644": {
+      "year": 1644,
+      "when": "1644 · China",
+      "place": "jingdezhen",
+      "label": "Chinese porcelain stops",
+      "title": "A war in China",
+      "text": "The Ming dynasty fell, and the blue-and-white porcelain the Dutch had been buying, much of it made in the kiln town of Jingdezhen, stopped coming."
+    },
+    "delft-potteries-1647": {
+      "year": 1647,
+      "when": "1647 · Delft",
+      "place": "delft",
+      "label": "Delft potters copy it",
+      "title": "Four potteries, then twenty",
+      "text": "Ordinary clay under a glaze made white with tin, painted with cobalt blue in Chinese patterns. Four potteries in 1647; more than twenty by 1661."
+    },
+    "delft-thunderclap-1654": {
+      "year": 1654.78,
+      "when": "1654 · Delft",
+      "place": "delft",
+      "label": "The gunpowder store explodes",
+      "title": "The Delft Thunderclap",
+      "text": "About forty thousand kilograms of gunpowder. More than two hundred houses flattened. The painter Carel Fabritius, who had studied with Rembrandt, died at his easel."
+    },
+    "london-plague-1665": {
+      "year": 1665.5,
+      "when": "1665 · London",
+      "place": "london",
+      "label": "Plague in London",
+      "title": "The Great Plague",
+      "text": "Plague killed about a hundred thousand people in London, something like one in four. Cambridge University shut its doors, and a young Isaac Newton went home to the farm where he was born."
+    },
+    "newton-prism-1666": {
+      "year": 1666,
+      "when": "1666 · Woolsthorpe",
+      "place": "woolsthorpe",
+      "label": "Newton's prism",
+      "title": "White light is all the colours",
+      "text": "Newton was splitting sunlight into colours with a glass prism, and working out that white light is all of them at once."
+    },
+    "bourgeois-gentleman-1670": {
+      "year": 1670.8,
+      "when": "1670 · Paris",
+      "place": "paris",
+      "label": "Molière’s The Bourgeois Gentleman",
+      "title": "Speaking prose all his life",
+      "text": "Molière’s play was first performed for the King of France in October 1670, and then in Paris. In it Monsieur Jourdain is delighted to discover that he has been speaking prose all his life."
+    },
+    "france-invades-1672": {
+      "year": 1672.5,
+      "when": "1672 · the Dutch Republic",
+      "place": "utrecht",
+      "label": "France invades",
+      "title": "The disaster year",
+      "text": "The armies of the King of France marched into the Republic and took Utrecht."
+    },
+    "colour-prints-1765": {
+      "year": 1765,
+      "when": "1765 · Edo",
+      "place": "edo",
+      "label": "The first full-colour prints",
+      "title": "Colour, block by block",
+      "text": "Suzuki Harunobu and his cutters worked out how to line up many blocks exactly, one for each colour. Before that a print was black lines with a wash or two."
+    },
+    "meiwa-tsunami-1771": {
+      "year": 1771.3,
+      "when": "1771 · the Yaeyama Islands",
+      "place": "yaeyama",
+      "label": "The Meiwa tsunami",
+      "title": "A wave that really came",
+      "text": "An earthquake sent a wave over the islands in the far south-west of Japan. In places it ran thirty metres up the hills, and about a third of the people living there were killed."
+    },
+    "kaitai-shinsho-1774": {
+      "year": 1774,
+      "when": "1774 · Edo",
+      "place": "edo",
+      "label": "A Dutch anatomy book in Japanese",
+      "title": "Kaitai Shinsho",
+      "text": "Three Japanese doctors watched a dissection with a Dutch anatomy book open beside them, saw that the Dutch book was right and their own books were wrong, and spent three years turning it into Japanese — though they could barely read Dutch. It came through the same door as the blue."
+    },
+    "scheeles-green-1775": {
+      "year": 1775.5,
+      "when": "1775 · Köping, Sweden",
+      "place": "europe",
+      "label": "Scheele’s green",
+      "title": "A beautiful green made of arsenic",
+      "text": "Carl Wilhelm Scheele mixed copper with arsenic and got a green brighter than any other. It went into wallpaper, cloth, artificial flowers and, sometimes, sweets, and it went on quietly poisoning people for a hundred years."
+    },
+    "elekiter-1776": {
+      "year": 1776,
+      "when": "1776 · Edo",
+      "place": "edo",
+      "label": "Gennai’s electric machine",
+      "title": "The elekiter",
+      "text": "Hiraga Gennai repaired a broken Dutch machine that made sparks by rubbing glass, and showed it off in Edo. Fifty-five years later Faraday got electricity out of a magnet instead."
+    },
+    "uranus-1781": {
+      "year": 1781.2,
+      "when": "1781 · Bath, England",
+      "place": "europe",
+      "label": "Uranus is found",
+      "title": "A new planet",
+      "text": "William Herschel, looking through a telescope he had built himself, found a small green dot that moved. It was a planet, the first anybody had found since ancient times, and it put the edge of the Sun’s family twice as far out as it had been."
+    },
+    "kokan-copperplate-1783": {
+      "year": 1783.4,
+      "when": "1783 · Edo",
+      "place": "edo",
+      "label": "Shiba Kōkan’s copperplate",
+      "title": "Depth on a flat sheet",
+      "text": "Shiba Kōkan made the first copperplate etching in Japan, and took from Dutch books the trick of drawing things smaller as they go further away."
+    },
+    "asama-tenmei-1783": {
+      "year": 1783.6,
+      "when": "1783 · Mount Asama",
+      "place": "asama",
+      "label": "Asama erupts; then the famine",
+      "title": "The sky dims and the rice fails",
+      "text": "The mountain buried the farms below it in ash, and a volcano in Iceland was erupting the same year. Cold summers followed, the rice failed again and again, and hundreds of thousands of people died in what is called the Tenmei famine. Thirty-two years later Tambora did the same thing on a bigger scale."
+    },
+    "figaro-1786": {
+      "year": 1786.4,
+      "when": "1786 · Vienna",
+      "place": "europe",
+      "label": "Mozart’s Marriage of Figaro",
+      "title": "A servant outwits his master",
+      "text": "Mozart’s new opera opened in Vienna. It is about a servant who is cleverer than the count he works for, and it is still performed everywhere."
+    },
+    "french-revolution-1789": {
+      "year": 1789.5,
+      "when": "1789 · Paris",
+      "place": "europe",
+      "label": "The French Revolution begins",
+      "title": "The Bastille falls",
+      "text": "A crowd in Paris took the Bastille, the king’s prison, and France began pulling down its kings. Napoleon’s wars came out of it, and most of the dates in European history for the next thirty years."
+    },
+    "red-chamber-1791": {
+      "year": 1791,
+      "when": "1791 · Beijing",
+      "place": "beijing",
+      "label": "Dream of the Red Chamber is printed",
+      "title": "The great Chinese novel",
+      "text": "A long novel about a rich family’s rise and fall, written thirty years earlier and passed around in hand-made copies, was printed at last. Chinese readers have been arguing about its ending ever since."
+    },
+    "phaeton-1808": {
+      "year": 1808.8,
+      "when": "1808 · Nagasaki",
+      "place": "nagasaki",
+      "label": "A British warship forces its way in",
+      "title": "The Phaeton",
+      "text": "A British warship sailed into Nagasaki flying a Dutch flag, seized two Dutch traders, and would not leave until it was given food and water. Japan was humiliated, and it is one reason the door shut tighter."
+    },
+    "tambora-1815": {
+      "year": 1815.3,
+      "when": "1815 · Tambora, Indonesia",
+      "place": "tambora",
+      "label": "Tambora explodes",
+      "title": "The biggest eruption in recorded history",
+      "text": "The volcano Tambora, on an island in what is now Indonesia, blew apart in April 1815. Its ash went round the world, and the next year Europe and North America had no summer."
+    },
+    "frankenstein-1816": {
+      "year": 1816.5,
+      "when": "1816 · Lake Geneva",
+      "place": "europe",
+      "label": "Mary Shelley begins Frankenstein",
+      "title": "A summer with no summer in it",
+      "text": "The summer after Tambora was so cold and wet that a group of friends staying by Lake Geneva were kept indoors, and told each other ghost stories. One of them, Mary Shelley, who was eighteen, began Frankenstein."
+    },
+    "prussian-blue-japan-1820": {
+      "year": 1820,
+      "when": "around 1820 · Nagasaki",
+      "place": "nagasaki",
+      "label": "Prussian blue in Japan, still dear",
+      "title": "A little of the Berlin blue",
+      "text": "Dutch ships had been bringing small amounts of the blue through Dejima for years. Painters used a little of it. It cost far too much for prints."
+    },
+    "japan-drives-ships-1825": {
+      "year": 1825,
+      "when": "1825 · Edo",
+      "place": "edo",
+      "label": "Japan orders foreign ships driven away",
+      "title": "Drive them off",
+      "text": "After more foreign ships came near the coast, the shogun’s government ordered that any of them be driven off, with cannon if need be."
+    },
+    "cheap-prussian-blue-1829": {
+      "year": 1829,
+      "when": "around 1829 · Zhapu to Nagasaki",
+      "place": "zhapu",
+      "label": "Cheap Prussian blue arrives from China",
+      "title": "The blue gets cheap",
+      "text": "Chinese makers were now making the blue themselves, and cheaply. It began arriving at Nagasaki on junks from Zhapu, and within a year or two it was all over the print shops of Edo."
+    },
+    "faraday-1831": {
+      "year": 1831.7,
+      "when": "1831 · London",
+      "place": "europe",
+      "label": "Faraday's generator",
+      "title": "A magnet and a coil of wire",
+      "text": "Michael Faraday pushed a magnet into a coil of wire and made electricity flow in it. Nearly every power station in the world works that way now."
+    },
+    "daumier-gargantua-1831": {
+      "year": 1831.95,
+      "when": "1831 · Paris",
+      "place": "paris",
+      "label": "Daumier draws the king",
+      "title": "Six months for a drawing",
+      "text": "In December 1831 Honoré Daumier published a drawing of the king of France as a giant on a throne, being fed baskets of money carried up a plank by the poor. He was fined and sentenced to six months in prison."
+    },
+    "hiroshige-tokaido-1833": {
+      "year": 1833.5,
+      "when": "1833 · Edo to Kyoto",
+      "place": "edo",
+      "label": "Hiroshige’s road to Kyoto",
+      "title": "Fifty-three stations",
+      "text": "Utagawa Hiroshige published prints of the fifty-three stopping places on the great road from Edo to Kyoto. They were a great success."
+    },
+    "photography-1839": {
+      "year": 1839.05,
+      "when": "1839 · Paris",
+      "place": "europe",
+      "label": "First photos",
+      "title": "A picture nobody drew",
+      "text": "In January 1839 Louis Daguerre’s way of fixing a picture made by light was announced in Paris. For the first time a picture could be made without anybody drawing it."
+    },
+    "perry-1853": {
+      "year": 1853.5,
+      "when": "1853 · Edo Bay",
+      "place": "edo",
+      "label": "US warships in Edo Bay",
+      "title": "The door comes open",
+      "text": "In July 1853 four American warships, two of them driven by steam, anchored at the mouth of Edo Bay and would not leave. The next year Japan signed a treaty with the United States, and the door began to open."
+    },
+    "origin-of-species-1859": {
+      "year": 1859.9,
+      "when": "1859 · London",
+      "place": "london",
+      "label": "Origin of Species",
+      "title": "Twenty years of putting it off",
+      "text": "Charles Darwin published On the Origin of Species in London in November 1859, twenty years after he first wrote the idea down for himself. Booksellers took the whole first printing on the day it appeared."
+    },
+    "edison-lamp-1879": {
+      "year": 1879.8,
+      "when": "1879 · Menlo Park, New Jersey",
+      "place": "menlo-park",
+      "label": "Edison's lightbulb",
+      "title": "Light without fire",
+      "text": "In October 1879 Thomas Edison's workshop ran a glass bulb with a thread of carbon inside it for more than half a day. Within three years there were streets lit by electricity in New York and London."
+    },
+    "eiffel-tower-1889": {
+      "year": 1889.37,
+      "when": "1889 · Paris",
+      "place": "paris",
+      "label": "Eiffel Tower",
+      "title": "The tallest thing anyone had built",
+      "text": "Three hundred metres of iron went up in Paris in two years and opened to the public on 15 May 1889, in the middle of a world's fair. At night ten thousand gas lamps picked out its shape, and a beacon burned under a glass dome at the top."
+    }
+  }
+}

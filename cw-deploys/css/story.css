@@ -50,6 +50,11 @@ article .more { border-top: .5px solid var(--cw-separator); margin-top: 2.4em; p
 article .more h2, article .refs h2 { font-size: 17px; margin-top: 1.4em; }
 article .refs { font-size: 15px; color: var(--cw-ink-soft); margin-top: 1.6em; }
 article .refs p { margin-bottom: .7em; line-height: 1.35; }
+
+/* a quotation set apart: his own words, so she can see they are his (23 Sep 2026) */
+article blockquote { margin: 0 0 1.4em; padding: 0 0 0 20px; border-left: 2px solid var(--cw-separator); }
+article blockquote p { margin: 0 0 .35em; }
+article blockquote .cite { font-size: 14px; font-style: italic; color: var(--cw-ink-soft); margin: 0; }
 .formula { white-space: nowrap; }
 article .world { margin-top: 2.6em; clear: left; }
 article .world h2 { font-size: 24px; font-weight: normal; margin: 0 0 8px; }
