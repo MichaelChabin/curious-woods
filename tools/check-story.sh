@@ -31,7 +31,10 @@ for p in $files; do
   grep -q 'class="titleblock"' "$p" || bad="$bad no-titleblock"
   grep -q 'class="subtitle"' "$p" || bad="$bad no-date-line"
   grep -q 'id="plate"' "$p" || bad="$bad no-opening-picture"
-  grep -q 'id="toolwords"' "$p" || bad="$bad no-left-column-block"
+  # An opening that is a drawing, not a painting (data-opening="drawn", first on Professor
+  # Necker's Drawing, 25 Sep 2026), has no magnifier and so no left-column block to check.
+  drawn=""; grep -q 'id="plate"[^>]*data-opening="drawn"' "$p" && drawn=1
+  [ -n "$drawn" ] || grep -q 'id="toolwords"' "$p" || bad="$bad no-left-column-block"
   grep -q 'class="refs"' "$p" || bad="$bad no-References"
 
   # References comes after More, and both come after the body
@@ -44,7 +47,7 @@ for p in $files; do
   fi
 
   # --- the opening picture's left-column block sits inside the figure, level with the caption
-  if grep -q 'id="plate"' "$p"; then
+  if grep -q 'id="plate"' "$p" && [ -z "$drawn" ]; then
     t=$(grep -n 'id="toolwords"' "$p" | head -1 | cut -d: -f1)
     c=$(grep -n '<figcaption' "$p" | head -1 | cut -d: -f1)
     f=$(grep -n '</figure>' "$p" | head -1 | cut -d: -f1)

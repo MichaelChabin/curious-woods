@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/necker-cube-icon-256.png">
+<link rel="apple-touch-icon" href="../art/necker-cube-icon-256.png">
+<!--
+  professor-neckers-drawing.html — story: Professor Necker's Drawing (1832).
+  Built 25 Sep 2026 from cw-deploys/template-story.html (Publishing-a-Story, stage 2).
+  placement: beside — every picture in the left column, level with the paragraph that
+  names it, scrolling with the text; nothing swaps.
+  Story text: CWVault/claude/Story-Professor-Neckers-Drawing.md (Draft 2.3).
+  The drawings: ../js/necker.js (new, 25 Sep; on the shelf for the next story). Nothing
+  on this page moves on its own: the drawing does not change, the seeing does.
+  The letter: ../art/necker-letter-1832-pp336-337.png, Michael's scan, opened in the
+  picker window (cwWindow in ../js/map.js).
+  The brain: the cutaway painting from About Your Brain, as ../art/brain-cutaway.jpg; the
+  hippocampus is the atlas's; the VTA is placed by eye (the atlas has no VTA).
+  Maps: ../art/maps/switzerland and britain-and-geneva, rendered 25 Sep with
+  experiments/maps/render.py.
+  Remember: js/remember.js; with Maya absent it fades in beside the paragraph that names it,
+  and puts this cube in the practice list (../practice.html).
+-->
+<title>Professor Necker&rsquo;s Drawing — Curious Woods</title>
+<link rel="stylesheet" href="../css/story.css?v=2026-09-23b">
+<style>
+  :root { --aspect: calc(240 / 240); }   /* the opening drawing's own shape; everything else is ../css/story.css */
+</style>
+</head>
+<body>
+
+<main class="page">
+  <div class="shell">
+  <article>
+
+    <div class="titleblock">
+      <div class="eyebrow">Curious Woods</div>
+      <h1>Professor Necker&rsquo;s Drawing</h1>
+      <p class="subtitle">~11,832 after the ice, or 1832.</p>
+    </div>
+
+    <!-- Picture 1: Necker's box, the one finger-sized figure. No controls. -->
+    <figure class="margin">
+      <div id="plate" data-opening="drawn"></div>
+    </figure>
+
+    <p>In 1832, a professor in Geneva was looking at a drawing like this one when it turned inside out.</p>
+
+    <p>Look at it for a moment and it will do the same for you. Let your eyes rest on the middle of the drawing and relax. The drawing is a box, pushed sideways, with one corner nearest you. Wait, and that corner will be at the back, and a different corner will be nearest you.</p>
+
+    <p>Nothing in the drawing moved. Wait a little longer and the box turns back.</p>
+
+    <h2>What a crystallographer did</h2>
+
+    <p>The professor was Louis Albert Necker, and his job was crystals. He had been professor of minerals and rocks at the Academy of Geneva since he was twenty-four.</p>
+
+    <p>A crystal is a solid with flat faces and sharp corners. Salt is one. So is a diamond. The faces are flat because a large crystal is built from smaller ones, and those are built from still smaller ones. So you can think of a crystal as a collection of tiny identical bricks, stacked in rows in every direction. The shape of those bricks decides the shape of the whole.</p>
+
+    <p>Professor Necker knew that crystals were made of bricks. Nobody could say what the smallest brick looked like. It would be another eighty years before anyone could work that out, and when they did, the first crystal they worked out was salt.</p>
+
+    <figure class="margin">
+      <div class="map" id="mapGeneva"></div>
+      <figcaption>Geneva, where Professor Necker lived, and Mont Blanc, about seventy kilometres away.</figcaption>
+    </figure>
+
+    <p>In 1832 Professor Necker had drawers full of crystals. He studied them with a magnifying glass, and with a brass instrument that measured the angle between two faces of a crystal. The angles mattered, because two crystals with the same angles are almost certainly the same mineral, whatever their size or colour. So Professor Necker measured his crystals, and he drew what he measured, as careful outlines.</p>
+
+    <p>There were microscopes, and had been for a hundred and fifty years, but nobody used them for crystals. A crystal was a thing you turned in your fingers.</p>
+
+    <h2>What he noticed</h2>
+
+    <p>There was something very strange about some of those drawings. A drawing would seem to turn inside out, on its own. One moment the shape in the drawing would seem to be facing one way. The next moment the same shape would seem to be facing another.</p>
+
+    <p>Nothing moved. The drawing didn&rsquo;t change. It just looked different.</p>
+
+    <!-- The crystals: a stack, drawing above photograph; the bold word moves it. -->
+    <figure class="margin" id="crystals">
+      <div id="crystalDrawing"></div>
+      <img src="../art/crystal-salt.jpg" width="1200" height="800" alt="">
+      <figcaption></figcaption>
+    </figure>
+
+    <p>It happened with his own drawings, and it happened with the engraved drawings in other people&rsquo;s books. It happened with all sorts of crystals. The pictures show five of them, each drawn in bare lines and then as the real thing. Salt is a cube. Alum is two pyramids joined at their bases. Diamond is the same shape as alum, though alum is a soft white crystal you can grow in a jar and diamond is the hardest thing there is. Calcite is a box pushed sideways, which is the shape Professor Necker drew. Sugar is a slanted block. Every one of the drawings turns.</p>
+
+    <p>This annoyed him. It also interested him. He began to pay attention to the moment when a drawing changed, and he noticed three things. There was a particular feeling in his eye at that moment. The change came whether he looked with one eye or with both. And it seemed to have something to do with where on the drawing his eye happened to be resting.</p>
+
+    <h2>A letter about the colour of a mountain</h2>
+
+    <p>In May 1832 Professor Necker wrote a letter to David Brewster, a Scottish physicist he knew from his student days in Edinburgh.</p>
+
+    <p>Most of the letter was about Mont Blanc. He had watched the snow on the mountain at sunset. First the snow turns orange. Then, as the sun goes, the snow turns a bluish grey that he called deadly. Then, for a few minutes, a faint orange comes back. He had worked out that the colours were not in the snow. They came from the light around the snow, and from the eye looking at it. He wrote all of that down for Brewster.</p>
+
+    <p>Then, near the end of the letter, he added the other thing he had been meaning to mention: his drawings.</p>
+
+    <div class="tools" id="toolSlot">
+      <button class="word" id="seeLetter" type="button">See the letter</button>
+    </div>
+
+    <p>Tap <i>See the letter</i>. Professor Necker&rsquo;s drawing is at the bottom of the left-hand page, with letters on the corners so that he could talk about them. The drawing at the top of this story is the same box without the letters. Everything he says about it fits on one page and a half.</p>
+
+    <!-- Picture 4a: his drawing, with his letters. -->
+    <figure class="margin">
+      <div id="boxLettered"></div>
+      <figcaption>His drawing, with his letters.</figcaption>
+    </figure>
+
+    <p>He told Brewster the three things he had noticed. Then he told him how he had proved to himself that the change depended on where his eye was resting. He had done it three ways, and to talk about them he used the letters on his drawing. The two corners that matter are the two in the middle, where three lines meet. He wrote an A beside one of them and an X beside the other.</p>
+
+    <p>First, he found that if he looked steadily at the corner closest to A, that corner came to the front. If he looked steadily at the corner closest to X, the drawing turned, and the corner closest to X came to the front. He could make the drawing turn whenever he chose.</p>
+
+    <p>Second, he looked steadily at the corner closest to A, and slid a lens between his eye and the page, without moving his eye or the page. The lens shifted the picture a little, so that the corner closest to X slid to where the other corner had been, under his gaze. The drawing turned by itself.</p>
+
+    <p>Third, he looked at the drawing through a pinhole in a card, held so that the corner closest to A was hidden. The drawing stopped turning, with the corner closest to X in front. When he hid the corner closest to X instead, the other corner stayed in front. There was no way to see the drawing any other way.</p>
+
+    <p>He ended: &ldquo;You may do what you think most proper with all these observations.&rdquo; Brewster printed the letter in the <i>London and Edinburgh Philosophical Magazine</i>, which he edited. That was how a discovery travelled in 1832: you wrote to a friend, and the friend printed the letter.</p>
+
+    <h2>Why it turns</h2>
+
+    <p>Here is what Professor Necker had found, in the words we would use now.</p>
+
+    <p>The drawing doesn&rsquo;t show one box. It shows two. The lines you would see looking at the box from slightly above are exactly the lines you would see looking at the same box from slightly below. So the drawing fits both boxes, and nothing in the drawing says which box it is.</p>
+
+    <p>Two corners of the drawing land in the middle of it, close together, each where three lines meet. One of those corners is the nearest corner of the first box. The other is the nearest corner of the second box. Your eye rests on one of the two corners, and that corner&rsquo;s box comes to the front.</p>
+
+    <p>Hide either corner, and that corner&rsquo;s box is gone. Professor Necker did that with a pinhole. You can do it with a finger. Put a fingertip over one of the two middle corners of the drawing at the top of this story, either one, and keep looking. The drawing stops. Take your finger away and it starts again.</p>
+
+    <!-- Picture 5: the filled box. Tap cycles front, back, bare; at once, not animated. -->
+    <figure class="margin">
+      <div id="boxFilled"></div>
+      <figcaption>Tap the filled drawing.</figcaption>
+    </figure>
+
+    <p>A filled face does the same thing. Only one of the two boxes has that face in front, so the drawing settles. Tap the filled drawing, and the other face fills instead, and the box seems to turn. Tap again, and both faces are empty, and the box starts turning on its own.</p>
+
+    <h2>The Necker cube</h2>
+
+    <!-- Picture 6: the Necker cube, plain. -->
+    <figure class="margin">
+      <div id="cube"></div>
+    </figure>
+
+    <p>Today we usually draw a plainer shape, which makes the effect easier to see. Instead of a slanted box, a cube: two squares, one a little above and to the right of the other, with their corners joined. Twelve lines. It turns for exactly the reason Professor Necker&rsquo;s box did. It is called the Necker cube, though he never drew a cube.</p>
+
+    <p>It works with almost any solid drawn in bare lines, as the crystal pictures show. It works best when the nearest corner and the farthest corner both land inside the outline of the drawing, so that either one can be read as the front.</p>
+
+    <h2>What was going on</h2>
+
+    <p>Professor Necker thought the feeling he noticed was in his eye. He thought his eye was changing its focus from one corner to the other, and that the change of focus was what turned the drawing. He was half right.</p>
+
+    <p>The eye doesn&rsquo;t change its focus. Where the eye rests is what tips the choice, as he found. But the choosing is not done in the eye. Your brain&rsquo;s job is to show you the world in the way that makes the most sense. Here there are two ways, and nothing to choose between them, so your brain shows you one box, and then the other. Where your eye rests is the small push that decides which box comes first.</p>
+
+    <p>The feeling is real. When the drawing turns, something clicks into place. It is the same feeling you get half a second after you understand a joke. Professor Necker felt it in 1832 and wrote it down, and nobody then had any way to look inside a head. There is a little more about where that feeling comes from at the end of this story.</p>
+
+    <h2>What Professor Necker could do, you can do</h2>
+
+    <p>He could make the drawing turn whenever he chose, by looking at one corner or the other. It took him a while to learn. Here is how.</p>
+
+    <p>Before you begin, take a moment to relax. This isn&rsquo;t something you <i>make</i> happen. It is something you <i>let</i> happen.</p>
+
+    <!-- Picture 7: the cube with a copper dot on each middle corner. No controls. -->
+    <figure class="margin">
+      <div id="cubeDots"></div>
+    </figure>
+
+    <p>The cube has a copper dot at each of the two middle corners. Rest your eyes on one of the dots. Don&rsquo;t try. You don&rsquo;t even have to focus. Just watch the dot.</p>
+
+    <p>In a few seconds the cube will turn.</p>
+
+    <p>When that happens, you may notice something: a small, quiet <i>there</i>. It&rsquo;s the feeling Professor Necker noticed. It is a nice feeling.</p>
+
+    <p>Let your eyes rest on the dot for a moment, then move them to the other dot, and wait again.</p>
+
+    <p>The cube will turn again. When it does, you&rsquo;ll have that nice feeling of <i>there</i>. Enjoy it, then slowly move your eyes back to the first dot.</p>
+
+    <p>After a few times, you may notice that the turns come sooner. You wait less. You are not doing anything more than you did at the start, and it works better. You may even notice that you can cause the cube to change. It won&rsquo;t be obvious how you are doing it. Still, you may find that the cube changes when you want it to.</p>
+
+    <p>You are learning to tell your brain how to see the cube. That is what Professor Necker learned in Geneva, with a card and a pin.</p>
+
+    <!-- Remember, with Maya absent: invisible until the paragraph that names it comes near,
+         then fades in beside it; it puts this cube in the practice list (js/remember.js). -->
+    <div class="tools">
+      <button class="word" id="remember" type="button">I want to Remember this</button>
+    </div>
+
+    <p id="rememberRef">If you like, tap <i>I want to Remember this</i>, and this cube goes in your practice list.</p>
+
+    <section class="more">
+      <h2>More</h2>
+
+      <p><b>The colour of Mont Blanc.</b> The first part of the letter is a story of its own. The snow turns orange at sunset because the sun has already set for the valley but not for the peaks, and the light that reaches them has come a long way through the air, which takes the blue out of it. The deadly grey and the faint second orange come from what is lit and what is not, and from the eye comparing them. Professor Necker&rsquo;s word for it was contrast, and he was right about that too. There is a cousin of this at sea, a green flash at the last second of sunset, that astronomers hunt for; that is another story.</p>
+
+      <!-- The brain: one call, the cutaway, the VTA and the hippocampus lit with the
+           connection drawn; "again" is its only control. Nothing is lit before she taps. -->
+      <figure class="margin" id="brainFig">
+        <div id="brain"></div>
+        <figcaption><button class="word" id="brainAgain" type="button" hidden>again</button></figcaption>
+      </figure>
+
+      <p><b>The small pleasure.</b> Tap the brain. Two places are lit. The small one, deep in the middle and low down, is about the size of a pea and makes a chemical called dopamine (say &ldquo;DOPE-uh-meen&rdquo;) when something turns out well. The larger one is the hippocampus, the librarian that keeps track of what you have just done so you can do it again. If you read <i>The Man Who Learned Without Knowing</i>, you have met it. The two work as a loop: when the hippocampus notices something new, the dopamine answers, and the answer says: keep this one. That much has been measured, mostly in animals. It is the best account anyone has of the <i>there</i>, and of why the cube gets easier.</p>
+
+      <!-- Other drawings: a stack; the bold word moves it. -->
+      <figure class="margin" id="others">
+        <img src="../art/duck-rabbit-1899.png" width="918" height="570" alt="">
+        <figcaption></figcaption>
+      </figure>
+
+      <p><b>Other drawings do this too.</b> There&rsquo;s a staircase that runs along the ceiling when you look at it the second way, drawn by a German scientist named Schr&ouml;der in 1858, and a drawing that is a duck or a rabbit depending on the moment, and a vase that turns into two faces looking at each other. There&rsquo;s one made of three lines meeting at a point, which is a corner coming toward you or going away, and it may be the simplest illusion there is. Any picture that two different solid things could have cast will do it.</p>
+
+      <figure class="margin">
+        <img src="../art/crystal-alum.jpg" width="1200" height="797" loading="lazy"
+             alt="Two clear, colourless crystals of alum on dark cloth, each shaped like two four-sided pyramids joined at their bases.">
+        <figcaption>Two crystals of alum, grown at home in about three months.</figcaption>
+      </figure>
+
+      <p><b>Alum.</b> A white crystal, sold in shops for pickling and for stopping small cuts from bleeding. You can grow one yourself: dissolve as much as will dissolve in warm water, hang a thread in the jar, and wait a few days. Alum was used for a thousand years to fix dyes in cloth, so the colour would not wash out.</p>
+
+      <p><b>The atoms in salt.</b> They were seen at last in 1913. A father and son named Bragg, in England, shone X-rays through a crystal and worked out, from the pattern that came out, where the atoms had to be. The first crystal they solved was salt: a cube with an atom at each corner, four sodium and four chlorine. That is Necker&rsquo;s brick.</p>
+
+      <p><b>The Isle of Skye.</b> Necker spent the end of his life there, off the west coast of Scotland, a long way from Geneva and from crystal drawing. He had loved Scotland since he was a student; at twenty-two he drew the first geological map of the whole country. When his mother died in 1841 he moved to Portree, on Skye, and stayed. He died there in 1861.</p>
+
+      <p><b>If the cube keeps turning.</b> If it goes on turning for you no matter what you do, that&rsquo;s worth knowing rather than worth fixing. How much control people have over the cube varies from person to person, and always has. It isn&rsquo;t a measure of anything.</p>
+    </section>
+
+    <section class="world breakout">
+      <h2>Necker&rsquo;s World</h2>
+      <div id="theWorld"></div>
+    </section>
+
+    <section class="refs">
+      <h2>References</h2>
+      <p>Necker&rsquo;s letter, the story&rsquo;s main source, for the drawing, the three things he noticed, the three proofs and Mont Blanc: L. A. Necker, &ldquo;Observations on Some Remarkable Optical Ph&aelig;nomena Seen in Switzerland; and on an Optical Ph&aelig;nomenon Which Occurs on Viewing a Figure of a Crystal or Geometrical Solid,&rdquo; <i>The London and Edinburgh Philosophical Magazine and Journal of Science</i>, third series, vol. 1, no. 5, November 1832, pages 329&ndash;337. The drawing is on page 336. It is online, and it is short.</p>
+      <p>Choosing which way the cube faces, and how much of that a person can do on purpose: Thomas Toppino, &ldquo;Reversible-Figure Perception: Mechanisms of Intentional Control,&rdquo; <i>Perception &amp; Psychophysics</i>, 2003.</p>
+      <p>Dopamine, the hippocampus, and how the two work as a loop: John Lisman and Anthony Grace, &ldquo;The Hippocampal-VTA Loop: Controlling the Entry of Information into Long-Term Memory,&rdquo; <i>Neuron</i>, 2005.</p>
+      <p>Where the atoms sit in salt: W. H. Bragg and W. L. Bragg, &ldquo;The Structure of Some Crystals as Indicated by Their Diffraction of X-rays,&rdquo; <i>Proceedings of the Royal Society A</i>, 1913.</p>
+      <p>Necker&rsquo;s life: the entry for Necker de Saussure in the <i>Dictionary of Scientific Biography</i>.</p>
+      <p>The pictures. The letter, the calcite and the drawings are Curious Woods&rsquo; own. From Wikimedia Commons: the salt, Hans-Joachim Engelhardt, CC BY-SA 4.0; the alum, Maxim Bilovitskiy, CC BY-SA 3.0; the diamond, James St. John, CC BY 2.0; the sugar, Nachovfranco, CC BY-SA 4.0; the duck and the rabbit, from <i>Popular Science Monthly</i>, 1899, public domain; the vase, after Ian Remsen, CC0. The maps are drawn from ETOPO 2022 (NOAA), public domain; the brain is the painting from <i>About Your Brain</i>.</p>
+    </section>
+
+  </article>
+  </div>
+</main>
+
+<!-- THE SHELVES. Tools live here, not inside pages. -->
+<script src="../js/cw-flags.js?v=2026-09-21"></script>
+<script src="../js/map.js?v=2026-09-25"></script>
+<script src="../js/timeline.js?v=2026-09-22b"></script>
+<script src="../js/stack.js?v=2026-09-22"></script>
+<script src="../js/necker.js?v=2026-09-25"></script>
+<script src="../js/remember.js?v=2026-09-25"></script>
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = '2026-09-25 31619e6';   // date + short commit hash; bump in the same commit as any change
+  console.log('professor-neckers-drawing', CW_VERSION);
+  window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
+  const el = id => document.getElementById(id);
+
+  // ==========================================================================
+  // THE DRAWINGS — each says, for someone who cannot see it, what its two readings are.
+  // ==========================================================================
+  const BOX = 'Professor Necker’s box: a box pushed sideways, drawn in twelve plain lines. ';
+  const TWO = 'It can be seen two ways: with the upper of its two middle corners nearest you, or with the lower one nearest you.';
+
+  cwNecker(el('plate'), { shape: 'box', size: 225, label: BOX + TWO });
+
+  cwNecker(el('boxLettered'), { shape: 'box', size: 135, letters: true,
+    label: BOX + 'A copper A stands just above the upper middle corner, and a copper X just below the lower one. ' +
+           'It can be seen with the corner closest to A in front, or with the corner closest to X in front.' });
+
+  cwNecker(el('boxFilled'), { shape: 'box', size: 135, fill: 'front', cycle: true, label: {
+    front: 'The same box with its front face filled in, which hides the lower middle corner. Now it can be seen only one way, with the filled face nearest you. Tap to fill the other face.',
+    back:  'The same box with its back face filled in, which hides the upper middle corner. Now it can be seen only one way, with the filled face nearest you. Tap to empty both faces.',
+    bare:  'The same box with no face filled. It can be seen two ways again, with either middle corner nearest you. Tap to fill the front face.' } });
+
+  const CUBE = 'The Necker cube: two squares, one a little above and to the right of the other, with their corners joined, in twelve plain lines. ';
+  cwNecker(el('cube'), { shape: 'cube', size: 135,
+    label: CUBE + 'It can be seen with the lower-left square in front, or with the upper-right square in front.' });
+
+  cwNecker(el('cubeDots'), { shape: 'cube', size: 135, dots: true,
+    label: CUBE + 'A copper dot sits on each of the two middle corners. It can be seen with either dotted corner nearest you.' });
+
+  // ==========================================================================
+  // THE CRYSTALS — a stack: the drawing above the photograph, and round again.
+  // A step whose photograph will not load is dropped by the stack.
+  // ==========================================================================
+  const OCTA = 'drawn in plain lines as two four-sided pyramids joined at their bases, which can be seen with the middle square tipped toward you from above, or from below.';
+  const CRYSTALS = [
+    { shape: 'cube', name: 'salt', src: '../art/crystal-salt.jpg', w: 1200, h: 800,
+      caption: 'Salt. A cube. Sodium and chlorine.',
+      label: 'Salt, drawn in plain lines as a cube, which can be seen with either square in front.',
+      alt: 'A clear cube of rock salt on a dark ground, three of its faces showing.' },
+    { shape: 'octahedron', name: 'alum', src: '../art/crystal-alum.jpg', w: 1200, h: 797,
+      caption: 'Alum. Two pyramids joined at their bases. Potassium, aluminium, sulphur, oxygen and water.',
+      label: 'Alum, ' + OCTA,
+      alt: 'Two clear, colourless crystals of alum on dark cloth, each shaped like two pyramids joined at their bases.' },
+    { shape: 'octahedron', name: 'diamond', src: '../art/crystal-diamond.jpg', w: 1168, h: 712,
+      caption: 'Diamond. The same shape as alum. Pure carbon.',
+      label: 'Diamond, ' + OCTA,
+      alt: 'A rough grey diamond on a pale ground, shaped like two pyramids joined at their bases, straight from the ground in Siberia.' },
+    { shape: 'box', name: 'calcite', src: '../art/crystal-calcite.jpg', w: 1200, h: 1076,
+      caption: 'Calcite. A box pushed sideways, the shape Professor Necker drew. Calcium, carbon and oxygen.',
+      label: 'Calcite, drawn in plain lines as a box pushed sideways, which can be seen with either middle corner nearest you.',
+      alt: 'A pale yellow, see-through block of calcite, its faces slanted, on a dark ground.' },
+    { shape: 'sugar', name: 'sugar', src: '../art/crystal-sugar.jpg', w: 1200, h: 772,
+      caption: 'Sugar. A slanted block. Carbon, hydrogen and oxygen.',
+      label: 'Sugar, drawn in plain lines as an upright block with a slanted depth, which can be seen with either end nearest you.',
+      alt: 'A cluster of clear sugar crystals, each about a centimetre long, with flat slanted faces, on black.' }
+  ];
+  const crystalHost = el('crystalDrawing');
+  cwStack(el('crystals'), CRYSTALS, step => {
+    crystalHost.innerHTML = '';
+    cwNecker(crystalHost, { shape: step.shape, size: 135, label: step.label });
+  });
+
+  // ==========================================================================
+  // OTHER DRAWINGS — a stack of four; the bold word moves it.
+  // ==========================================================================
+  cwStack(el('others'), [
+    { src: cwNecker.url('staircase'), w: 412, h: 256, name: 'the staircase',
+      caption: 'Schröder’s staircase, 1858.',
+      alt: 'Schröder’s staircase in plain lines: a flight of steps seen from above, or the same flight hanging from a ceiling, seen from below.' },
+    { src: '../art/duck-rabbit-1899.png', w: 918, h: 570, name: 'the duck',
+      caption: 'A duck, or a rabbit. From a magazine of 1899.',
+      alt: 'An old engraving of an animal’s head: a duck facing left, whose long beak is also a rabbit’s ears, for a rabbit facing right.' },
+    { src: '../art/rubin-vase.svg', w: 640, h: 480, name: 'the vase',
+      caption: 'A vase, or two faces.',
+      alt: 'A pale vase between two dark shapes, or two dark faces in profile looking at each other.' },
+    { src: cwNecker.url('corner'), w: 412, h: 256, name: 'the corner',
+      caption: 'Three lines meeting at a point.',
+      alt: 'Three lines meeting at a point: the corner of a box coming toward you, or the inside corner of a room going away.' }
+  ]);
+
+  // ==========================================================================
+  // THE LETTER — a picture in a window (Rulings, 18 Sep): Glass Geometry's picker, at the
+  // column's width. Any other action closes it.
+  // ==========================================================================
+  el('seeLetter').addEventListener('click', () => {
+    const fig = document.createElement('figure');
+    const img = document.createElement('img');
+    img.src = '../art/necker-letter-1832-pp336-337.png'; img.width = 2578; img.height = 2258;
+    img.alt = 'Two pages of an old printed magazine. Near the foot of the left-hand page is Professor Necker’s drawing of a box pushed sideways, with letters on its corners.';
+    const cap = document.createElement('figcaption');
+    cap.innerHTML = '<i>The London and Edinburgh Philosophical Magazine</i>, November 1832, pages 336 and 337.';
+    fig.appendChild(img); fig.appendChild(cap);
+    cwWindow(fig, { anything: true });
+  });
+
+  // ==========================================================================
+  // THE MAPS — Geneva in the margin; it opens nothing.
+  // ==========================================================================
+  const MAPS = [
+    { host: 'mapGeneva', region: '../art/maps/switzerland.json', marks: [
+      { type: 'place', lat: 46.20, lon: 6.14, name: 'Geneva', lit: true },
+      { type: 'place', lat: 45.83, lon: 6.86, name: 'Mont Blanc', minor: true }
+    ]}
+  ];
+  if (typeof cwMap === 'function') {
+    for (const m of MAPS) {
+      const host = el(m.host);
+      if (!host) continue;
+      cwMap.load(m.region).then(r => cwMap(host, r, m.marks))
+        .catch(err => { console.warn('map', m.host, err); host.closest('figure').remove(); });
+    }
+  }
+
+  // ==========================================================================
+  // NECKER'S WORLD — his side above the line, the world below. The world's events are the
+  // shared list's; a `place` given here only pins a shared event that the list files under
+  // 'europe' (a card for stories set far away) to the town it happened in, on this map.
+  // ==========================================================================
+  const WORLD = {
+    from: 1812, to: 1852,
+    region: '../art/maps/britain-and-geneva.json',
+    world: '../art/maps/world.json',
+    pool: '../stories/world-events.json',
+    placebook: '../stories/places.json',
+    places: {
+      geneva:    { side: 'person' },
+      edinburgh: { side: 'person' },
+      paris:     { side: 'person' },
+      portree:   { side: 'person' },
+      london:    { side: 'world' },
+      plymouth:  { side: 'world' },
+      edo:       { side: 'world', card: 'east', cardTop: 22,
+                   far: 'About 9,800 km to the east, in Japan',
+                   bearing: [{ name: 'Geneva', lat: 46.20, lon: 6.14 }] },
+      tambora:   { side: 'world', card: 'east', cardTop: 56,
+                   far: 'About 12,300 km to the south-east, in Indonesia',
+                   bearing: [{ name: 'Geneva', lat: 46.20, lon: 6.14 }] }
+    },
+    events: [
+      { ref: 'tambora-1815', side: 'world' },
+      { ref: 'frankenstein-1816', side: 'world', place: 'geneva',
+        why: 'Professor Necker was thirty, and living in Geneva, that summer.' },
+      { ref: 'kaleidoscope-1817', side: 'world',
+        why: 'Fifteen years later the same David Brewster printed Professor Necker’s letter.' },
+      { id: 'scotland', year: 1821, side: 'person', label: 'Travels in Scotland', place: 'geneva',
+        when: '1821 &middot; Geneva', title: 'Voyage en Écosse',
+        text: 'His book about his travels in Scotland and the Hebrides, the islands off its west coast, was published in Geneva. He had studied in Edinburgh from 1806 to 1808.' },
+      { ref: 'great-wave-1830', side: 'world',
+        why: 'On the other side of the world, within two years of the letter.' },
+      { ref: 'faraday-1831', side: 'world', place: 'london' },
+      { ref: 'beagle-1831', side: 'world' },
+      { id: 'letter', year: 1832.39, side: 'person', focus: true, label: 'The letter', place: 'geneva',
+        when: 'May 1832 &middot; Geneva', title: 'A letter to Brewster',
+        text: 'Mostly about Mont Blanc at sunset. The drawing was the last thing in it.' },
+      { id: 'clinometer', year: 1832.7, side: 'person', label: 'His clinometer', place: 'edinburgh',
+        when: '1832 &middot; Edinburgh', title: 'A compass for tilted rock',
+        text: 'He gave the Royal Society of Edinburgh a compass of his own design, for measuring quickly how steeply the layers of a rock are tilted.' },
+      { id: 'regne', year: 1835, side: 'person', label: 'Le règne minéral', place: 'paris',
+        when: '1835 &middot; Paris', title: 'The mineral kingdom',
+        text: 'His book on sorting minerals the way naturalists sorted plants and animals. It was published in Paris.' },
+      { ref: 'stereoscope-1838', side: 'world' },
+      { ref: 'photography-1839', side: 'world', place: 'paris' },
+      { id: 'skye', year: 1841, side: 'person', label: 'Moves to Skye', place: 'portree',
+        when: '1841 &middot; Portree', title: 'Portree',
+        text: 'After his mother died he left Geneva and settled at Portree, on the Isle of Skye. He died there in 1861.' }
+    ]
+  };
+  if (typeof cwWorld === 'function') cwWorld(el('theWorld'), WORLD);
+
+  // ==========================================================================
+  // REMEMBER — this cube goes in the practice list.
+  // ==========================================================================
+  cwRemember(el('remember'),
+    { id: 'necker-cube', title: 'The Necker cube', from: 'Professor Necker’s Drawing',
+      href: 'experiments/professor-neckers-drawing.html' },
+    { ref: el('rememberRef'), list: '../practice.html' });
+
+  // ==========================================================================
+  // THE BRAIN — the cutaway from About Your Brain, cut down to this story: two places lit
+  // and the road between them, a signal going out from the hippocampus and the answer
+  // coming back. "again" is the only control. Nothing is lit before she taps.
+  // Coordinates are in the painting's own 1254-pixel space. The hippocampus is the atlas's
+  // (IN.hippocampus); the VTA is placed by eye on the midbrain just above the pons, since
+  // the atlas has no VTA.
+  // ==========================================================================
+  (function brain() {
+    const NS = 'http://www.w3.org/2000/svg';
+    const TINT = '#f2d58a';
+    const HIPPO = [480, 745, 110, 40, 10], VTA = [625, 680, 24, 18, 0];
+    const ROAD = 'M 480 745 C 530 770, 600 735, 625 680';
+    const host = el('brain'), again = el('brainAgain');
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 1254 1254');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'A painting of the brain cut down the middle, seen from the side. Tap it to light two places.');
+    svg.setAttribute('width', '225'); svg.setAttribute('height', '225');   // the opening box's size: a glance, not a study
+    svg.style.display = 'block'; svg.style.cursor = 'pointer';
+    svg.innerHTML =
+      '<defs><radialGradient id="nb-g"><stop offset="0%" stop-color="' + TINT + '" stop-opacity="1"/>' +
+      '<stop offset="55%" stop-color="' + TINT + '" stop-opacity=".45"/><stop offset="100%" stop-color="' + TINT + '" stop-opacity="0"/></radialGradient>' +
+      '<filter id="nb-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10"/></filter></defs>' +
+      '<image href="../art/brain-cutaway.jpg" x="0" y="0" width="1254" height="1254"/>' +
+      '<g id="nb-lit"></g><path id="nb-road" d="' + ROAD + '" fill="none" stroke="' + TINT + '" stroke-width="16" stroke-linecap="round" opacity="0"/>' +
+      '<g id="nb-comet"></g>';
+    host.appendChild(svg);
+    const lit = svg.querySelector('#nb-lit'), road = svg.querySelector('#nb-road'), comet = svg.querySelector('#nb-comet');
+    const rand = (a, b) => a + Math.random() * (b - a);
+
+    function spots(g, n, rMin, rMax, op) {
+      const [cx, cy, rx, ry, deg] = g, rot = deg * Math.PI / 180;
+      let s = '<g filter="url(#nb-blur)" opacity="' + op + '">';
+      for (let i = 0; i < n; i++) {
+        const u = Math.sqrt(Math.random()) * 0.85, th = rand(0, 2 * Math.PI);
+        const ex = u * rx * Math.cos(th), ey = u * ry * Math.sin(th);
+        const x = cx + ex * Math.cos(rot) - ey * Math.sin(rot), y = cy + ex * Math.sin(rot) + ey * Math.cos(rot);
+        s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + rand(rMin, rMax).toFixed(1) + '" fill="url(#nb-g)"/>';
+      }
+      return s + '</g>';
+    }
+
+    let raf = 0;
+    function run() {
+      cancelAnimationFrame(raf);
+      lit.innerHTML = spots(HIPPO, 14, 34, 56, 0.9) + spots(VTA, 6, 26, 38, 1);
+      road.setAttribute('opacity', '0.75');
+      svg.setAttribute('aria-label', 'A painting of the brain cut down the middle. Two places are lit: the hippocampus, low in the middle, and a pea-sized place deep in the middle just above the brainstem, which makes dopamine. A road joins them, and a signal runs from the hippocampus to the small place and back.');
+      const len = road.getTotalLength(), t0 = performance.now(), LEG = 900;
+      function frame(now) {
+        const t = (now - t0) / LEG;
+        if (t >= 2) { comet.innerHTML = ''; return; }
+        const f = t < 1 ? t : 2 - t;                       // out along the road, then back
+        const p = road.getPointAtLength(f * len);
+        comet.innerHTML = '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="48" fill="url(#nb-g)" filter="url(#nb-blur)"/>' +
+                          '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="16" fill="#fff8e0"/>';
+        raf = requestAnimationFrame(frame);
+      }
+      raf = requestAnimationFrame(frame);
+      again.hidden = false;
+    }
+    svg.addEventListener('click', () => { if (again.hidden) run(); });
+    again.addEventListener('click', run);
+  })();
+})();
+</script>
+</body>
+</html>

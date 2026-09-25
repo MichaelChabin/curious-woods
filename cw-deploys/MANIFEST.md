@@ -37,6 +37,37 @@ each step `{ src, w, h, alt, caption, name }`. A bold word under the caption nam
 ("Next: the powder", "Back to the stone" on the last); the word moves the stack, never a tap on the
 picture, since a picture may already have taps of its own. A step whose file will not load is dropped.
 First used by the Vermeer story for the blue: stone, powder, turban.
+**`necker.js` (25 Sep 2026)** — solids drawn in bare lines, the kind that turn inside out:
+`cwNecker(host, { shape, size, letters, dots, fill, cycle, label })` and `cwNecker.url(shape)`,
+the same drawing as a 412 × 256 image for a stack. Shapes: Necker's `box` (his rhomboid), the
+`cube`, the `octahedron` in the cube's oblique view, `sugar` (an upright block, slanted depth),
+Schröder's `staircase`, the three-line `corner`. One even line weight in story.css's `--cw-ink`,
+no dotted hidden edges; `letters` sets Necker's A and X in copper at 22 CSS px whatever the
+size; `cycle` makes a tap fill the front face, then the back, then neither, at once. Nothing
+animates, nothing is recorded, nothing counted: the drawing does not change, the seeing does.
+Each figure carries a description saying what its two readings are. First used by
+`experiments/professor-neckers-drawing.html`. **`map.js`, 25 Sep 2026:** the picker window is
+now `cwWindow(content, opts)`, which `cwMapWindow` stands on unchanged; with `anything: true`
+any other action (a tap on the content, a key, a scroll) closes it. Built for the letter in the
+Necker story (a picture in a window, per the Rulings). The Necker page loads `map.js?v=2026-09-25`;
+the painting pages still ask for `?v=2026-09-22`, and nothing they call changed.
+**`remember.js` (25 Sep 2026, on Michael's yes)** — "I want to Remember this" and the practice
+list it fills: `cwRemember(word, item, { ref, list })`, `cwRemember.all()`, `cwRemember.remove(id)`.
+An item is `{ id, title, from, href }` (href from the site's root). Stored on her device only, in
+`localStorage` under `cw.practice.queue`, the key the star story and *Three at a Glance* already
+write; their bare ids (`mirror-star`, `three-at-a-glance`) are read and given titles, so nothing
+kept is lost. With Maya absent the word is invisible until `ref`, the paragraph naming it, comes
+near, fades in over its last 300 px of climb, and then stays (the star story's behaviour); with
+Maya present it is always there. A note under it, "In your practice list", links to the list.
+It asks `navigator.storage.persist()`; Safari mostly ignores that and may clear the list after
+about seven days without a visit unless the site is on the home screen. No dates, no counts.
+First used by `experiments/professor-neckers-drawing.html`; the two older stories still carry
+their own inline copies.
+**`stories/world-events.json` and `places.json`, 25 Sep 2026:** four events added for *Necker's
+World* — `kaleidoscope-1817`, `great-wave-1830`, `beagle-1831`, `stereoscope-1838` (40 in all) —
+and four places, `geneva`, `edinburgh`, `plymouth`, `portree` (28). Three older events are filed
+under `europe`, a card for stories set far away; the Necker page pins them to their towns on its
+own map (`place: 'geneva'`, `'london'`, `'paris'` in its picks) and leaves the shared record alone.
 `art/lapis-stone.jpg`, `art/ultramarine-powder.jpg`, `art/vermeer-turban-detail.jpg` — that stack's
 three pictures (the stone from Sar-e-Sang, James St. John, CC BY 2.0; the powder, Commons, public
 domain; the turban cropped from our own scan).
@@ -128,6 +159,22 @@ the Van Gogh story's stack of the prints he copied (`js/stack.js`), with these t
 1000 × 1192. All four public domain; the page's References credit the Van Gogh Museum's and the
 Rijksmuseum's photographs. Added 23 Sep with the stack; a step whose file will not load is
 dropped, so the site would have shown a shorter stack, not a broken page, had they been left out.
+**Professor Necker's Drawing (25 Sep 2026)** — `art/necker-cube-icon-256.png`, the tab icon, and
+`art/necker-cube-gallery.png`, 600 × 600, the gallery picture: the Necker cube drawn as a mark,
+twelve ink lines on parchment, one middle corner in copper. `art/necker-letter-1832-pp336-337.png`
+— Michael's scan of the letter, pp. 336–337 of the *Philosophical Magazine*, November 1832,
+opened in a window. `art/crystal-calcite.jpg` and `art/crystal-fluorite.jpg` — Michael's
+photographs (fluorite is not on the page). From Wikimedia Commons, 1200 px on the long side,
+JPEG 85: `art/crystal-salt.jpg` (Hans-Joachim Engelhardt, CC BY-SA 4.0),
+`art/crystal-alum.jpg` (Maxim Bilovitskiy, CC BY-SA 3.0 EE), `art/crystal-diamond.jpg`
+(James St. John, CC BY 2.0; 1168 px, its original size), `art/crystal-sugar.jpg`
+(Nachovfranco, CC BY-SA 4.0). `art/duck-rabbit-1899.png` — Jastrow's duck and rabbit from
+*Popular Science Monthly*, 1899, public domain, recoloured to ink on transparent.
+`art/rubin-vase.svg` — a vase-or-faces after Ian Remsen's CC0 drawing, filled in the story ink.
+`art/brain-cutaway.jpg` — About Your Brain's cutaway painting, saved as a file (1254 px) so a
+story can show it without carrying the base64. Maps: `art/maps/switzerland.*`
+(5.6°E–10.8°E, 45.6°N–48°N) and `art/maps/britain-and-geneva.*` (8°W–12°E, 44°N–59°N),
+rendered with `experiments/maps/render.py`. Full sources in the story's `images:` frontmatter.
 `art/maps/france-and-the-low-countries.*`, `art/maps/france-to-the-north-sea.*` — two regions
 rendered 23 Sep 2026 for the Van Gogh story, the usual three files each (picture, JSON with
 contours, height grid), from `experiments/maps/render.py`.
@@ -318,6 +365,11 @@ backstop for the Claude Code session that lands the file.
 - **`saved.html`** — **Saved Stories**: the works whose slugs are in `cw.gallery.kept`, as a
   plain centred list of titles from `gallery.json`; "Nothing here yet." when there are none
   (no promise of how to keep one, since the control does not exist). Back link to the gallery.
+- **`practice.html`** — **Practice**: what she has asked to remember, as a plain list in the
+  shape of Saved Stories (25 Sep 2026), read through `js/remember.js`. Each line leads back to
+  the story it came from, with "take it off the list" under it. The practice itself (the tapping)
+  comes later. The gallery's ensō opens it (25 Sep, Michael; it went to Trace before), and so does
+  the note under a story's Remember word. Tab icon `art/enso-icon-256.png`.
 - **`labs.html`** — **Labs**: Stained Glass (the word for Glass Geometry since 22 Sep, on
   Michael's word; the file, its URL and its page title are unchanged) and Glass Multiplication as words with their
   one-line labels from the old home page; no pictures. About Your Brain is an official app
@@ -593,6 +645,22 @@ backstop for the Claude Code session that lands the file.
   tested on an iPad, or in Safari by this session.**
 
 ### experiments/
+- **`professor-neckers-drawing.html`** — story: **Professor Necker's Drawing** (25 Sep 2026;
+  text: `CWVault/claude/Story-Professor-Neckers-Drawing.md`, Draft 2.3). Stage 2, built: at its
+  own address, hung nowhere, not in `gallery.json`, waiting for Michael's read. From
+  `template-story.html`, on `css/story.css`, `placement: beside`: every picture in the left
+  column level with the paragraph that names it. The drawings are `js/necker.js` (new): his box
+  at 225 px beside the opening, the lettered box, the filled box (tap cycles), the cube, the
+  cube with two copper dots. The crystals are a stack (`js/stack.js`), drawing above photograph,
+  salt, alum, diamond, calcite, sugar. *See the letter* opens Michael's scan in `cwWindow`. A
+  margin map of Switzerland, Geneva in copper. In *More*: the brain (the cutaway, the VTA and
+  hippocampus lit, a signal along the road between them, *again* only — the VTA placed by eye,
+  since the atlas has none), a stack of four other drawings, the alum photograph. *Necker's
+  World*, 1812–1852, through `js/timeline.js` on the shared lists, on `britain-and-geneva`, Edo
+  and Tambora as cards. Remember (`js/remember.js`) fades in beside the last paragraph and puts
+  the cube in the practice list (`practice.html`). Its opening
+  is a drawing, not a painting, so it marks `#plate` with `data-opening="drawn"`, which
+  `tools/check-story.sh` now reads as "no magnifier block to check".
 - **`index-old.html`** — the home page as it stood from 13 to 20 Sep 2026 (two labs as
   words, three round icons, Experiments as a line), retired when the gallery took
   `index.html`. Recovered from git with its links rebased one folder up, given a tab icon
@@ -1052,3 +1120,8 @@ block or References, References before More, the left-column block not level wit
 caption, a tool's word not immediately before the paragraph that names it, a shelf copied
 into the page, a World that does not use the shared event list, a picture or map file that
 does not exist, and anything left over from the template.
+
+25 Sep 2026: an opening that is a drawing rather than a painting (`data-opening="drawn"` on
+`#plate`, first on Professor Necker's Drawing) has no magnifier, so the left-column block,
+the note and the *Reset* / *Magnifier off* words are not asked for. A page without a sampler
+still gets the `no-sampler` warning, which is true and harmless.

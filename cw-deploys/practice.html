@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="art/enso-icon-256.png">
+<link rel="apple-touch-icon" href="art/enso-icon-256.png">
+<title>Practice</title>
+<style>
+  /* Practice (25 Sept 2026): what she has asked to remember, as a plain list — the things a
+     story's "I want to Remember this" put here (js/remember.js; localStorage, this device
+     only). The shape of Saved Stories. The practice itself, the tapping, comes later; until
+     then each line leads back to where it came from. No dates, no counts. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f4f1e8; font-family: Georgia, serif; color: #3D3D3A; }
+  body { min-height: 100vh; padding: 60px 24px 80px; }
+  .container { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: normal; letter-spacing: 0.04em; color: #546A80; text-align: center; margin-bottom: 48px; }
+  a { color: #546A80; text-decoration: none; transition: color 80ms ease; }
+  a:hover { color: #3D3D3A; }
+  ul { list-style: none; }
+  li { margin-bottom: 24px; text-align: center; font-size: 16px; line-height: 1.4; }
+  li .from { display: block; font-size: 13px; color: #a09880; }
+  li .off { display: block; margin-left: auto; margin-right: auto; font: inherit; font-size: 12px; color: #b0a090; background: none; border: 0; padding: 0; cursor: pointer; margin-top: 4px; }
+  li .off:hover { color: #b87333; }
+  .empty { text-align: center; font-size: 14px; color: #a09880; }
+  .back { display: block; margin-top: 56px; text-align: center; font-size: 13px; color: #a09880; letter-spacing: 0.03em; }
+  .back:hover { color: #b87333; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Practice</h1>
+  <ul id="list"></ul>
+  <p class="empty" id="empty" hidden>Nothing here yet.</p>
+  <a class="back" href="index.html">← the gallery</a>
+</div>
+<script src="js/remember.js?v=2026-09-25"></script>
+<script>
+var CW_VERSION = '2026-09-25 31619e6'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+(function () {
+  var list = document.getElementById('list'), empty = document.getElementById('empty');
+  function draw() {
+    list.innerHTML = '';
+    var items = cwRemember.all();
+    empty.hidden = items.length > 0;
+    items.forEach(function (it) {
+      var li = document.createElement('li');
+      var a = document.createElement(it.href ? 'a' : 'span');
+      if (it.href) a.href = it.href;
+      a.textContent = it.title;
+      li.appendChild(a);
+      if (it.from && it.from !== it.title) {
+        var f = document.createElement('span'); f.className = 'from'; f.textContent = 'from ' + it.from; li.appendChild(f);
+      }
+      var off = document.createElement('button'); off.type = 'button'; off.className = 'off'; off.textContent = 'take it off the list';
+      off.addEventListener('click', function () { cwRemember.remove(it.id); draw(); });
+      li.appendChild(off);
+      list.appendChild(li);
+    });
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

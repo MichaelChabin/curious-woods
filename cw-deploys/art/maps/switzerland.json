@@ -1,0 +1,25 @@
+{
+  "name": "switzerland",
+  "west": 5.6,
+  "south": 45.6,
+  "east": 10.8,
+  "north": 48.0,
+  "standard_parallel": 46.8,
+  "width": 2000,
+  "height": 1348,
+  "exaggeration": 1.0,
+  "image": "switzerland.webp",
+  "height_grid": "switzerland-height.png",
+  "height_grid_width": 512,
+  "height_grid_height": 345,
+  "height_offset": 11000,
+  "source": "ETOPO 2022 v1 30s ice surface and bedrock, NOAA NCEI",
+  "contours": {
+    "0": [
+      
+    ],
+    "-200": [
+      
+    ]
+  }
+}

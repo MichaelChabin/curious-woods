@@ -1,6 +1,6 @@
 {
   "_about": "The world's events, shared by every story. One record per event: what happened, when, and where — checked once, used everywhere. A story picks the ones inside its span (js/timeline.js, `pool`), says which side of its line each one sits on, and may add `why`: the last sentence, in that story's voice, tying it to that picture. A story never rewrites these words. Places are ids from stories/places.json. Years are plain years; a fraction places an event inside its year (1815.3 is April). Spec: CWVault/claude/Story-Pattern.md.",
-  "version": "2026-09-23b",
+  "version": "2026-09-25",
   "events": {
     "leeuwenhoek-born-1632": {
       "year": 1632.84,
@@ -202,6 +202,14 @@
       "title": "A summer with no summer in it",
       "text": "The summer after Tambora was so cold and wet that a group of friends staying by Lake Geneva were kept indoors, and told each other ghost stories. One of them, Mary Shelley, who was eighteen, began Frankenstein."
     },
+    "kaleidoscope-1817": {
+      "year": 1817.5,
+      "when": "1817 · Edinburgh",
+      "place": "edinburgh",
+      "label": "Brewster’s kaleidoscope",
+      "title": "Two mirrors in a tube",
+      "text": "David Brewster, a physicist in Edinburgh, patented the kaleidoscope: two mirrors in a tube, and loose bits of coloured glass at the end. Turn it and the pattern changes. It was copied so quickly that he made very little from it."
+    },
     "prussian-blue-japan-1820": {
       "year": 1820,
       "when": "around 1820 · Nagasaki",
@@ -226,6 +234,14 @@
       "title": "The blue gets cheap",
       "text": "Chinese makers were now making the blue themselves, and cheaply. It began arriving at Nagasaki on junks from Zhapu, and within a year or two it was all over the print shops of Edo."
     },
+    "great-wave-1830": {
+      "year": 1830.5,
+      "when": "about 1830 · Edo",
+      "place": "edo",
+      "label": "The Great Wave",
+      "title": "Under the Wave off Kanagawa",
+      "text": "Hokusai’s print of a wave about to fall on three boats, with Mount Fuji small in the distance. It was one of the first prints made in the new, cheap Prussian blue."
+    },
     "faraday-1831": {
       "year": 1831.7,
       "when": "1831 · London",
@@ -242,6 +258,14 @@
       "title": "Six months for a drawing",
       "text": "In December 1831 Honoré Daumier published a drawing of the king of France as a giant on a throne, being fed baskets of money carried up a plank by the poor. He was fined and sentenced to six months in prison."
     },
+    "beagle-1831": {
+      "year": 1831.99,
+      "when": "1831 · Plymouth",
+      "place": "plymouth",
+      "label": "The Beagle sails",
+      "title": "Five years round the world",
+      "text": "HMS Beagle left Plymouth at the end of December 1831 to chart the coasts of South America, with a young Charles Darwin on board. It came home nearly five years later."
+    },
     "hiroshige-tokaido-1833": {
       "year": 1833.5,
       "when": "1833 · Edo to Kyoto",
@@ -249,6 +273,14 @@
       "label": "Hiroshige’s road to Kyoto",
       "title": "Fifty-three stations",
       "text": "Utagawa Hiroshige published prints of the fifty-three stopping places on the great road from Edo to Kyoto. They were a great success."
+    },
+    "stereoscope-1838": {
+      "year": 1838.47,
+      "when": "1838 · London",
+      "place": "london",
+      "label": "Wheatstone’s stereoscope",
+      "title": "Two flat drawings, one solid",
+      "text": "Charles Wheatstone showed that each eye sees a slightly different picture. Give each eye its own flat drawing, through a pair of mirrors, and the two become one solid thing standing in front of you."
     },
     "photography-1839": {
       "year": 1839.05,

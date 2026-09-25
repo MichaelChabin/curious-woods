@@ -3,6 +3,7 @@
 
    cwMap(container, region, marks)   the base picture in the box, the story's marks over it
    cwMapWindow(region, marks)        the same map in the picker window from Glass Geometry
+   cwWindow(content, opts)           that window, holding anything (a picture); see below
    cwMap.load(url)                   fetch a region's JSON and resolve its picture beside it
    cwMap.toPixel / cwMap.toLonLat    the projection pair (below)
 
@@ -85,7 +86,11 @@
     '.cw-map-drag:active{cursor:grabbing;}',
     '.cw-map-close{font-family:Georgia,serif;font-size:11px;color:#b0a090;cursor:default;transition:color 80ms;pointer-events:all;line-height:14px;}',
     '.cw-map-close:hover{color:#546A80;}',
-    '.cw-map-window .cw-map{margin-top:14px;width:' + WINDOW_MAP_WIDTH + 'px;max-width:100%;}'
+    '.cw-map-window .cw-map{margin-top:14px;width:' + WINDOW_MAP_WIDTH + 'px;max-width:100%;}',
+    /* a picture in the window (cwWindow): at the reading column's width, its caption under it */
+    '.cw-map-window figure{margin:14px 0 0;}',
+    '.cw-map-window figure img{display:block;width:700px;max-width:100%;height:auto;}',
+    '.cw-map-window figcaption{font-family:Georgia,serif;font-size:13px;line-height:1.35;color:#6b625a;margin-top:8px;max-width:700px;}'
   ].join('\n');
   var style = document.createElement('style');
   style.textContent = css;
@@ -406,7 +411,13 @@
   // a drag handle along the top with the word close at its right, a 200 ms fade.
   // The picker drags with mouse events; this handle listens to pointer events so the
   // same drag works under a finger. Nothing else differs.
-  function cwMapWindow(region, marks) {
+  //
+  // cwWindow(content, opts) puts any element in it (25 Sep 2026, for the letter in
+  // Professor Necker's Drawing: a picture in a window, per the Rulings, is this window).
+  // opts.anything: any other action closes it too — a tap on the content, a key, a scroll
+  // of the page. The drag handle is the one thing that does not.
+  function cwWindow(content, opts) {
+    opts = opts || {};
     var backdrop = document.createElement('div');
     backdrop.className = 'cw-map-backdrop';
     var win = document.createElement('div');
@@ -418,12 +429,9 @@
     close.textContent = 'close';
     handle.appendChild(close);
     win.appendChild(handle);
-    var box = document.createElement('div');
-    win.appendChild(box);
+    win.appendChild(content);
     document.body.appendChild(backdrop);
     document.body.appendChild(win);
-
-    var map = cwMap(box, region, marks);
 
     function position() {
       var r = win.getBoundingClientRect();
@@ -438,13 +446,23 @@
       if (closed) return;
       closed = true;
       win.classList.remove('visible');
+      if (opts.anything) {
+        document.removeEventListener('keydown', closeWindow, true);
+        window.removeEventListener('scroll', closeWindow, true);
+      }
       setTimeout(function () {
         if (win.parentNode) win.parentNode.removeChild(win);
         if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
       }, 200);
+      if (opts.onClose) opts.onClose();
     }
     backdrop.addEventListener('click', closeWindow);
     close.addEventListener('click', function (e) { e.stopPropagation(); closeWindow(); });
+    if (opts.anything) {
+      content.addEventListener('click', closeWindow);
+      document.addEventListener('keydown', closeWindow, true);
+      window.addEventListener('scroll', closeWindow, true);
+    }
 
     var dragging = false, sx, sy, ox, oy;
     handle.addEventListener('pointerdown', function (e) {
@@ -463,9 +481,18 @@
     handle.addEventListener('pointerup', function () { dragging = false; });
     handle.addEventListener('pointercancel', function () { dragging = false; });
 
-    return { close: closeWindow, map: map };
+    return { close: closeWindow, window: win, position: position };
+  }
+
+  function cwMapWindow(region, marks) {
+    var box = document.createElement('div');
+    var w = cwWindow(box);
+    var map = cwMap(box, region, marks);
+    w.position();
+    return { close: w.close, map: map };
   }
 
   window.cwMap = cwMap;
   window.cwMapWindow = cwMapWindow;
+  window.cwWindow = cwWindow;
 })();
