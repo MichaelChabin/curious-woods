@@ -46,7 +46,7 @@ no dotted hidden edges; `letters` sets Necker's A and X in copper at 22 CSS px w
 size; `cycle` makes a tap fill the front face, then the back, then neither, at once. Nothing
 animates, nothing is recorded, nothing counted: the drawing does not change, the seeing does.
 Each figure carries a description saying what its two readings are. First used by
-`experiments/professor-neckers-drawing.html`. **`map.js`, 25 Sep 2026:** the picker window is
+`active/professor-neckers-drawing.html`. **`map.js`, 25 Sep 2026:** the picker window is
 now `cwWindow(content, opts)`, which `cwMapWindow` stands on unchanged; with `anything: true`
 any other action (a tap on the content, a key, a scroll) closes it. Built for the letter in the
 Necker story (a picture in a window, per the Rulings). The Necker page loads `map.js?v=2026-09-25`;
@@ -61,7 +61,7 @@ near, fades in over its last 300 px of climb, and then stays (the star story's b
 Maya present it is always there. A note under it, "In your practice list", links to the list.
 It asks `navigator.storage.persist()`; Safari mostly ignores that and may clear the list after
 about seven days without a visit unless the site is on the home screen. No dates, no counts.
-First used by `experiments/professor-neckers-drawing.html`; the two older stories still carry
+First used by `active/professor-neckers-drawing.html`; the two older stories still carry
 their own inline copies.
 **`stories/world-events.json` and `places.json`, 25 Sep 2026:** four events added for *Necker's
 World* — `kaleidoscope-1817`, `great-wave-1830`, `beagle-1831`, `stereoscope-1838` (40 in all) —
@@ -377,6 +377,25 @@ backstop for the Claude Code session that lands the file.
   Michael). Back link to the gallery.
 
 ### active/
+- **`professor-neckers-drawing.html`** — story: **Professor Necker's Drawing** (25 Sep 2026;
+  text: `CWVault/claude/Story-Professor-Neckers-Drawing.md`, Draft 2.3). Built and read at
+  `experiments/`, **hung 25 Sep 2026** on Michael's word (stage 4): moved to `active/`, the old
+  address redirected in `_redirects`, in `gallery.json` with the cube mark
+  (`art/necker-cube-gallery.png`), a slate frame `#4a5866` (the story asked for "a grey-blue,
+  close to the ink"; Claude's hex, Michael's yes), width 10, medium. From
+  `template-story.html`, on `css/story.css`, `placement: beside`: every picture in the left
+  column level with the paragraph that names it. The drawings are `js/necker.js` (new): his box
+  at 225 px beside the opening, the lettered box, the filled box (tap cycles), the cube, the
+  cube with two copper dots. The crystals are a stack (`js/stack.js`), drawing above photograph,
+  salt, alum, diamond, calcite, sugar. *See the letter* opens Michael's scan in `cwWindow`. A
+  margin map of Switzerland, Geneva in copper. In *More*: the brain (the cutaway, the VTA and
+  hippocampus lit, a signal along the road between them, *again* only — the VTA placed by eye,
+  since the atlas has none), a stack of four other drawings, the alum photograph. *Necker's
+  World*, 1812–1852, through `js/timeline.js` on the shared lists, on `britain-and-geneva`, Edo
+  and Tambora as cards. Remember (`js/remember.js`) fades in beside the last paragraph and puts
+  the cube in the practice list (`practice.html`). Its opening
+  is a drawing, not a painting, so it marks `#plate` with `data-opening="drawn"`, which
+  `tools/check-story.sh` now reads as "no magnifier block to check".
 - **`van-gogh-starry-night.html`** — story: **Van Gogh: Starry Night** (23 Sep 2026;
   `CWVault/claude/Story-Van-Gogh-Starry-Night.md`), the third of the paintings series, built
   on the Vermeer page and Story-Pattern. Michael's ruling on the page: plainly, in his own
@@ -645,22 +664,6 @@ backstop for the Claude Code session that lands the file.
   tested on an iPad, or in Safari by this session.**
 
 ### experiments/
-- **`professor-neckers-drawing.html`** — story: **Professor Necker's Drawing** (25 Sep 2026;
-  text: `CWVault/claude/Story-Professor-Neckers-Drawing.md`, Draft 2.3). Stage 2, built: at its
-  own address, hung nowhere, not in `gallery.json`, waiting for Michael's read. From
-  `template-story.html`, on `css/story.css`, `placement: beside`: every picture in the left
-  column level with the paragraph that names it. The drawings are `js/necker.js` (new): his box
-  at 225 px beside the opening, the lettered box, the filled box (tap cycles), the cube, the
-  cube with two copper dots. The crystals are a stack (`js/stack.js`), drawing above photograph,
-  salt, alum, diamond, calcite, sugar. *See the letter* opens Michael's scan in `cwWindow`. A
-  margin map of Switzerland, Geneva in copper. In *More*: the brain (the cutaway, the VTA and
-  hippocampus lit, a signal along the road between them, *again* only — the VTA placed by eye,
-  since the atlas has none), a stack of four other drawings, the alum photograph. *Necker's
-  World*, 1812–1852, through `js/timeline.js` on the shared lists, on `britain-and-geneva`, Edo
-  and Tambora as cards. Remember (`js/remember.js`) fades in beside the last paragraph and puts
-  the cube in the practice list (`practice.html`). Its opening
-  is a drawing, not a painting, so it marks `#plate` with `data-opening="drawn"`, which
-  `tools/check-story.sh` now reads as "no magnifier block to check".
 - **`index-old.html`** — the home page as it stood from 13 to 20 Sep 2026 (two labs as
   words, three round icons, Experiments as a line), retired when the gallery took
   `index.html`. Recovered from git with its links rebased one folder up, given a tab icon

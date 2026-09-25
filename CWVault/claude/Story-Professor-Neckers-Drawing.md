@@ -18,7 +18,8 @@ icon:
   drawn: "The Necker cube in ink, twelve lines, one middle corner marked by a copper dot."   # Michael, 25 Sept: the cube is the gallery icon
   file: art/necker-cube-icon-256.png
 picture: art/necker-cube-gallery.png   # the gallery picture: the cube drawn as a mark, square, 600 px (built 25 Sept)
-frame: "a grey-blue, close to the ink"
+frame: "#4a5866"   # "a grey-blue, close to the ink"; the hex chosen at hanging, 25 Sept (Michael's yes)
+frame-width: 10
 size: medium
 images:   # every photograph on the page; source, author, licence (build, 25 Sept)
   - file: art/necker-letter-1832-pp336-337.png

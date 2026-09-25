@@ -7,7 +7,8 @@
 <link rel="apple-touch-icon" href="../art/necker-cube-icon-256.png">
 <!--
   professor-neckers-drawing.html — story: Professor Necker's Drawing (1832).
-  Built 25 Sep 2026 from cw-deploys/template-story.html (Publishing-a-Story, stage 2).
+  Built 25 Sep 2026 from cw-deploys/template-story.html (Publishing-a-Story, stage 2);
+  hung the same day on Michael's word (stage 4): moved from experiments/, which redirects here.
   placement: beside — every picture in the left column, level with the paragraph that
   names it, scrolling with the text; nothing swaps.
   Story text: CWVault/claude/Story-Professor-Neckers-Drawing.md (Draft 2.3).
@@ -251,7 +252,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-25 31619e6';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-25 319ccb9';   // date + short commit hash; bump in the same commit as any change
   console.log('professor-neckers-drawing', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
   const el = id => document.getElementById(id);
@@ -425,7 +426,7 @@
   // ==========================================================================
   cwRemember(el('remember'),
     { id: 'necker-cube', title: 'The Necker cube', from: 'Professor Necker’s Drawing',
-      href: 'experiments/professor-neckers-drawing.html' },
+      href: 'active/professor-neckers-drawing.html' },
     { ref: el('rememberRef'), list: '../practice.html' });
 
   // ==========================================================================

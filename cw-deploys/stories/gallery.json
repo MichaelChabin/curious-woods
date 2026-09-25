@@ -61,5 +61,14 @@
     "frame": "#2a4192",
     "frameWidth": 12,
     "size": "large"
+  },
+  {
+    "slug": "professor-neckers-drawing",
+    "title": "Professor Necker’s Drawing",
+    "href": "active/professor-neckers-drawing.html",
+    "picture": "art/necker-cube-gallery.png",
+    "frame": "#4a5866",
+    "frameWidth": 10,
+    "size": "medium"
   }
 ]

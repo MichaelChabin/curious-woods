@@ -23,3 +23,7 @@
 # Vermeer: Girl with a Pearl Earring was read at its experiments address, then hung on 22 Sep 2026.
 /experiments/vermeer-girl-with-a-pearl-earring.html   /active/vermeer-girl-with-a-pearl-earring.html   301
 /experiments/vermeer-girl-with-a-pearl-earring        /active/vermeer-girl-with-a-pearl-earring.html   301
+
+# Professor Necker's Drawing was read at its experiments address, then hung on 25 Sep 2026.
+/experiments/professor-neckers-drawing.html   /active/professor-neckers-drawing.html   301
+/experiments/professor-neckers-drawing        /active/professor-neckers-drawing.html   301
