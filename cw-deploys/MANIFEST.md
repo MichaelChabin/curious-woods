@@ -46,7 +46,14 @@ no dotted hidden edges; `letters` sets Necker's A and X in copper at 22 CSS px w
 size; `cycle` makes a tap fill the front face, then the back, then neither, at once. Nothing
 animates, nothing is recorded, nothing counted: the drawing does not change, the seeing does.
 Each figure carries a description saying what its two readings are. First used by
-`active/professor-neckers-drawing.html`. **`map.js`, 25 Sep 2026:** the picker window is
+`active/professor-neckers-drawing.html`. **`map.js`, 26 Sep 2026 — layers** (Spec-Maps, *The ground has layers*): `cwMap(container,
+region, marks, opts)` and `cwMapWindow(region, marks, opts)` take an optional fourth
+argument; `opts.layers` (`{ vegetation: false }`) turns a region's layers on or off by name
+and everything unnamed takes the region's default; each layer that is on is an
+`img.cw-layer` over the base and under the SVG with its blend, never a pointer target, and
+label placement reads the ground with the layers composited in. No caller changed; the six
+pages that load `map.js` had their version query bumped to 2026-09-26 (and their stamps),
+so a cached copy does not show Greenland as bare high ground. **`map.js`, 25 Sep 2026:** the picker window is
 now `cwWindow(content, opts)`, which `cwMapWindow` stands on unchanged; with `anything: true`
 any other action (a tap on the content, a key, a scroll) closes it. Built for the letter in the
 Necker story (a picture in a window, per the Rulings). The Necker page loads `map.js?v=2026-09-25`;
@@ -247,9 +254,20 @@ colours, 30 KB. Nothing drawn; the earth is the icon.
 `art/maps/` — **the base pictures for maps** (18 Sep 2026; `CWVault/claude/Spec-Maps.md`):
 one earth, many crops, rendered once by `experiments/maps/render.py` from ETOPO 2022 (NOAA
 NCEI, ice surface, public domain) and never touched at runtime. Per region three files:
-`<region>.webp` (2000 px wide, quality 85, colour is height and ice and nothing else — the
-map's own ground ramps (Spec-Maps, *The ground colours*; the colour ruling of 18 Sep), a
-faint north-west shade on the land and the ice, nothing drawn on it); `<region>.json`
+`<region>.webp` (2000 px wide, quality 85, colour is height and nothing else — the map's
+own ground ramps (Spec-Maps, *The ground colours*; the colour ruling of 18 Sep), a faint
+north-west shade on the land, nothing drawn on it); **the layers** (26 Sep 2026, Spec-Maps
+*The ground has layers*): `<region>-ice.webp`, half the picture's width, RGBA lossless, the
+ice ramp by surface height with the base's relief, opaque where ice thickness (ETOPO
+surface minus bedrock) is above zero and transparent elsewhere, written only where there
+is ice (today: `world`, 19 KB); `<region>-vegetation.webp`, half width, RGB lossy, one quiet
+green `#66905a` mixed toward white by tree cover so that multiplied over the base white is
+nothing and full cover is the green at 55 % — from the Copernicus Global Land Cover 100 m
+tree-cover fraction for 2019 (Zenodo 3939050, public, 5.65 GB in `_data/`, read in a window
+through rasterio), 21 KB for the world and 32 to 158 KB for a region (Switzerland is the
+heaviest: woods and fields at 1 km are fine texture). The JSON's `layers` list names each
+with its file, blend (`normal` for ice, `multiply` for vegetation) and whether it is on by
+default (both are); `map.js` stacks them and a story can leave either off. `<region>.json`
 (name, the four corners, the standard parallel, pixel width and height, the vertical
 exaggeration, the picture's filename, and **the contours** — what `map.js` reads); and `<region>-height.png` (the same crop 512 px wide,
 height in metres plus 11 000 as a 16-bit value, high byte red, low byte green; **nothing
@@ -275,12 +293,14 @@ nothing renders them yet. The sea is `#22415f` at −9 000, `#33699a` at −4 00
 −800, `#7fb0cc` at −150, `#93bed7` at the shore (the spec's *the sea stops short of paper*:
 the second pass ran almost to white at the shoreline and met the paper-coloured beach; Japan
 showed it). Shading is 0.35 over land and ice and half that over water, the heights
-multiplied by the region's exaggeration before the slope is taken. **Ice is its own layer** (second pass, 18 Sep): each resolution needs two source
-grids, ice surface and bedrock; the script checks they share one registration and refuses
-otherwise; thickness is surface minus bedrock, and where it is above zero the ice ramp
-paints the pixel. The four source grids (4.4 GB) live in `cw-deploys/_data/`, which
-`.gitignore` excludes; they are downloaded once from NOAA's THREDDS server and must never
-be committed.
+multiplied by the region's exaggeration before the slope is taken. **Ice is its own layer** (second pass, 18 Sep, painted into the base; a file beside it
+since 26 Sep): each resolution needs two source grids, ice surface and bedrock; the script
+checks they share one registration and refuses otherwise. `python3 render.py --all`
+re-renders every region from its own JSON. The five source grids (10 GB with the tree
+cover) live in `cw-deploys/_data/`, which `.gitignore` excludes; they are downloaded once
+and must never be committed. ETOPO's bedrock differs from its surface only under the two
+ice sheets, so Alpine glaciers do not appear as ice; and the tree-cover grid stops at 80°N
+and 60°S, which costs nothing because nothing grows past either.
 `stories/necker-cube/` — **The Necker Cube**, the first story (28 Apr 2026, commit
 `bec6b4f`), a single-file page at `index.html`: the cube on a canvas that flips as you
 look, narrative paragraphs from `narrative.json` beside it, Web Audio, the watercolour

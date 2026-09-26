@@ -11,16 +11,30 @@
 Reads ETOPO 2022 (NOAA NCEI; public domain) from cw-deploys/_data/ — the 60 arc-second
 grids for `world`, the 30 arc-second grids for everything else, and for each resolution
 both the ice-surface grid and the bedrock grid — crops the box, projects it, colours it by
-height and by ice and nothing else, shades it faintly, and writes three files into
+height and nothing else, shades it faintly, and writes these files into
 cw-deploys/art/maps/:
 
-    <region>.webp         the picture, quality 85, `--width` pixels wide
-    <region>.json         name, the four corners, the standard parallel, pixel size,
-                          the vertical exaggeration, and the contours (below)
-    <region>-height.png   the same crop at 512 px wide; (ice-surface height in metres
-                          + 11000) as a 16-bit value, high byte in red, low byte in green,
-                          blue empty. Nothing reads it today. It is the sea-level
-                          slider's food.
+    <region>.webp             the picture, quality 85, `--width` pixels wide: height alone
+    <region>.json             name, the four corners, the standard parallel, pixel size,
+                              the vertical exaggeration, the layers, and the contours
+    <region>-ice.webp         a layer, half the picture's width, RGBA lossless: the ice
+                              ramp by surface height with the base's own relief, opaque
+                              where ice thickness is above zero, transparent elsewhere
+    <region>-vegetation.webp  a layer, half width, RGB: one quiet green mixed toward
+                              white by tree cover, so that multiplied over the base white
+                              is nothing and full cover is the green at its strength;
+                              written only when the land-cover grid is in _data/
+    <region>-height.png       the same crop at 512 px wide; (ice-surface height in metres
+                              + 11000) as a 16-bit value, high byte in red, low byte in
+                              green, blue empty. Nothing reads it today. It is the
+                              sea-level slider's food.
+
+    python3 render.py --all   re-renders every region in art/maps/ from its own JSON
+
+The ground has layers (Spec-Maps, 26 Sep 2026): height is the base and always present;
+ice, vegetation and later sea level are files beside the picture that map.js draws over
+it and a story can leave off or swap. So the base ignores the ice entirely, and the ice
+is its own picture.
 
 Projection: equirectangular with the standard parallel at the region's mid-latitude
 (0 for `world`). That fixes only the picture's height-to-width ratio; inside the box
@@ -47,12 +61,17 @@ to_lonlat, and nowhere else. A map lab with a globe in it would swap that pair f
 projection; nothing else here would change.
 
 Ice is not a height. Ice thickness is ice surface minus bedrock; where it is above zero
-the colour comes from the ice ramp instead of the land ramp, so Greenland is white
-because it is white. The two grids must share one registration for the subtraction to
-mean anything; the script checks and refuses if they do not.
+the ice layer is opaque and takes the ice ramp, so Greenland is white because it is
+white. The two grids must share one registration for the subtraction to mean anything;
+the script checks and refuses if they do not.
+
+Vegetation is tree cover, from the Copernicus Global Land Cover 100 m tree-cover fraction
+for 2019 (Zenodo record 3939050, public), read in a window through rasterio and
+block-averaged onto the layer's pixels. Sea and no-data are transparent.
 
 Nothing else goes on the image: no coastline stroke, no labels, no graticule, no border.
-Spec: CWVault/claude/Spec-Maps.md. Needs numpy, scipy, h5py, Pillow (with WebP), contourpy.
+Spec: CWVault/claude/Spec-Maps.md. Needs numpy, scipy, h5py, Pillow (with WebP),
+contourpy; rasterio for the vegetation layer.
 """
 
 import json
@@ -109,6 +128,18 @@ SEA_STOPS = [
 # Ice thickness above this, in metres, is painted as ice. Zero means any ice at all.
 ICE_MIN_THICKNESS = 0.0
 
+# The layers sit beside the picture at this width (half the picture's, at the default).
+LAYER_WIDTH = 1000
+# Vegetation: one green, multiplied over the base with alpha proportional to tree
+# cover. Quiet on purpose — the wash green (#33663f, a named thing) is a different mark
+# and must stay distinguishable, and the ochre and the vermilion must survive the layer.
+# Full tree cover reaches VEGETATION_STRENGTH of the green; a multiply at that alpha
+# leaves the relief and the ramp showing through.
+VEGETATION_GREEN = '#66905a'
+VEGETATION_STRENGTH = 0.55
+VEGETATION_SOURCE = 'PROBAV_LC100_global_v3.0.1_2019-nrt_Tree-CoverFraction-layer_EPSG-4326.tif'
+VEGETATION_NODATA = 255
+
 # Hillshade: sun from the north-west, 45° up, multiplied into the colour at this
 # strength. 0 is a flat print; 1 is a grey relief model. Flat ground is left exactly its
 # own colour; only slopes brighten or darken. The sea gets half the land's strength.
@@ -149,21 +180,54 @@ def hex_to_rgb(h):
     return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
 
 
-def ramp(z, ice):
-    """Height in metres and an ice mask -> float RGB in [0, 1], piecewise linear
-    between the stops of the family each pixel belongs to."""
+def interp_stops(z, stops):
+    """Piecewise-linear colour, float RGB in [0, 1], along one family's stops."""
+    xs = np.array([s[0] for s in stops], np.float32)
+    cols = np.array([hex_to_rgb(s[1]) for s in stops], np.float32) / 255.0
     out = np.empty(z.shape + (3,), np.float32)
-    sea = (z < 0) & ~ice
-    land = (z >= 0) & ~ice
-    for stops, mask in ((SEA_STOPS, sea), (LAND_STOPS, land), (ICE_STOPS, ice)):
-        if not mask.any():
-            continue
-        xs = np.array([s[0] for s in stops], np.float32)
-        cols = np.array([hex_to_rgb(s[1]) for s in stops], np.float32) / 255.0
-        zz = z[mask]
-        for c in range(3):
-            out[..., c][mask] = np.interp(zz, xs, cols[:, c])
+    for c in range(3):
+        out[..., c] = np.interp(z, xs, cols[:, c])
     return out
+
+
+def ramp(z):
+    """Height in metres -> float RGB in [0, 1]: the sea ramp below zero, the land ramp
+    above. The base knows nothing of ice."""
+    out = np.empty(z.shape + (3,), np.float32)
+    sea = z < 0
+    if sea.any():
+        out[sea] = interp_stops(z[sea], SEA_STOPS)
+    if (~sea).any():
+        out[~sea] = interp_stops(z[~sea], LAND_STOPS)
+    return out
+
+
+def shade_factor(z, dx_m, dy_m, exaggeration):
+    """The multiplier the relief applies to a colour: land at full strength, sea at half."""
+    sh = hillshade(z, dx_m, dy_m, exaggeration)
+    strength = np.where(z < 0, HILLSHADE_STRENGTH_SEA, HILLSHADE_STRENGTH)
+    return (1.0 - strength) + strength * sh
+
+
+def tree_cover(box, w, h):
+    """Tree-cover fraction 0..1 on a w×h grid over the box, block-averaged by GDAL from
+    the Copernicus 100 m grid; None where the source is absent. Sea and no-data are 0."""
+    path = os.path.join(DATA, VEGETATION_SOURCE)
+    if not os.path.exists(path):
+        return None
+    import rasterio
+    from rasterio.windows import from_bounds
+    from rasterio.enums import Resampling
+    west, south, east, north = box
+    try:
+        with rasterio.open(path) as ds:
+            win = from_bounds(west, south, east, north, ds.transform)
+            data = ds.read(1, window=win, out_shape=(h, w), resampling=Resampling.average, boundless=True, fill_value=VEGETATION_NODATA)
+            nodata = ds.nodata if ds.nodata is not None else VEGETATION_NODATA
+    except Exception:           # a download still in progress, or a broken file: no layer
+        return None
+    frac = np.where(data == nodata, 0, data).astype(np.float32) / 100.0
+    return np.clip(frac, 0.0, 1.0)
 
 
 def hillshade(z, dx_m, dy_m, exaggeration):
@@ -335,19 +399,51 @@ def render(name, west, south, east, north, width, exaggeration=None, levels=None
     thickness = z - bed.sample(W, H)
     ice = thickness > ICE_MIN_THICKNESS
 
-    # Colour, then shade: the land and the ice at full strength, the sea at half.
-    rgb = ramp(z, ice)
+    # The base: height alone, coloured then shaded. Ice is not here.
     dy_m = (north - south) / H * 111320.0
     dx_m = (east - west) / W * 111320.0 * math.cos(math.radians(phi0))
-    sh = hillshade(z, dx_m, dy_m, exaggeration)
-    strength = np.where((z < 0) & ~ice, HILLSHADE_STRENGTH_SEA, HILLSHADE_STRENGTH)
-    factor = (1.0 - strength) + strength * sh
-    rgb = np.clip(rgb * factor[..., None], 0.0, 1.0)
+    rgb = np.clip(ramp(z) * shade_factor(z, dx_m, dy_m, exaggeration)[..., None], 0.0, 1.0)
     img = Image.fromarray((rgb * 255.0 + 0.5).astype(np.uint8), 'RGB')
 
     os.makedirs(OUT, exist_ok=True)
     webp = os.path.join(OUT, name + '.webp')
     img.save(webp, 'WEBP', quality=WEBP_QUALITY, method=6)
+
+    # The layers, at LAYER_WIDTH. Ice: the ice ramp by surface height with the base's
+    # relief, alpha from the full-resolution mask block-averaged down so the edge is
+    # anti-aliased. Vegetation: one green, alpha by tree cover.
+    lw = LAYER_WIDTH
+    lh = int(round(lw * aspect))
+    layers = []
+    fz = surface.sample(lw, lh)
+    ice_rgb = interp_stops(np.maximum(fz, 0.0), ICE_STOPS)
+    ice_rgb = np.clip(ice_rgb * shade_factor(np.maximum(fz, 0.0), dx_m * W / lw, dy_m * H / lh, exaggeration)[..., None], 0.0, 1.0)
+    fy, fx = int(round(H / lh)), int(round(W / lw))
+    alpha = ice[:lh * fy, :lw * fx].reshape(lh, fy, lw, fx).mean(axis=(1, 3)) if (fy >= 1 and fx >= 1 and lh * fy <= H and lw * fx <= W) else np.asarray(Image.fromarray(ice.astype(np.uint8) * 255).resize((lw, lh), Image.BOX), np.float32) / 255.0
+    for stale in ('-ice.png', '-vegetation.png', '-ice.webp', '-vegetation.webp'):
+        if os.path.exists(os.path.join(OUT, name + stale)):
+            os.remove(os.path.join(OUT, name + stale))
+    if alpha.max() > 0:
+        ice_png = np.zeros((lh, lw, 4), np.uint8)
+        ice_png[..., :3] = (ice_rgb * 255.0 + 0.5).astype(np.uint8)
+        ice_png[..., 3] = (alpha * 255.0 + 0.5).astype(np.uint8)
+        ice_path = os.path.join(OUT, name + '-ice.webp')
+        Image.fromarray(ice_png, 'RGBA').save(ice_path, 'WEBP', lossless=True, method=6)
+        layers.append({'name': 'ice', 'image': name + '-ice.webp', 'blend': 'normal', 'default': True})
+    else:
+        ice_path = None
+
+    cover = tree_cover((west, south, east, north), lw, lh)
+    if cover is not None:
+        cover = np.where(fz < 0, 0.0, cover)
+        a = np.clip(cover * VEGETATION_STRENGTH, 0.0, 1.0)[..., None]
+        green = np.array(hex_to_rgb(VEGETATION_GREEN), np.float32) / 255.0
+        veg_rgb = 1.0 - a * (1.0 - green)          # white where nothing grows; multiply leaves the base alone there
+        veg_path = os.path.join(OUT, name + '-vegetation.webp')
+        Image.fromarray((veg_rgb * 255.0 + 0.5).astype(np.uint8), 'RGB').save(veg_path, 'WEBP', quality=WEBP_QUALITY, method=6)
+        layers.append({'name': 'vegetation', 'image': name + '-vegetation.webp', 'blend': 'multiply', 'default': True})
+    else:
+        veg_path = None
 
     # The height grid: 512 wide, same crop, metres + 11000 across red and green.
     hw = HEIGHT_GRID_WIDTH
@@ -371,7 +467,8 @@ def render(name, west, south, east, north, width, exaggeration=None, levels=None
         'image': name + '.webp',
         'height_grid': name + '-height.png',
         'height_grid_width': hw, 'height_grid_height': hh, 'height_offset': HEIGHT_OFFSET,
-        'source': 'ETOPO 2022 v1 %s ice surface and bedrock, NOAA NCEI' % res,
+        'source': 'ETOPO 2022 v1 %s ice surface and bedrock, NOAA NCEI' % res + ('; Copernicus Global Land Cover 100 m tree cover 2019' if veg_path else ''),
+        'layers': layers,
         'contours': lines,
     }
     json_path = os.path.join(OUT, name + '.json')
@@ -392,6 +489,12 @@ def render(name, west, south, east, north, width, exaggeration=None, levels=None
     floating = 100.0 * (ice & (z < 0.15 * thickness)).sum() / max(1, ice.sum())
     print('%s: %d x %d px, standard parallel %.2f, reduced by %d from the %s grids, exaggeration %g' % (name, W, H, phi0, surface.factor, res, exaggeration))
     print('  %s  %.0f KB' % (os.path.relpath(webp, DEPLOYS), kb(webp)))
+    if ice_path:
+        print('  %s  %.0f KB' % (os.path.relpath(ice_path, DEPLOYS), kb(ice_path)))
+    if veg_path:
+        print('  %s  %.0f KB  (tree cover: mean %.1f%% of land)' % (os.path.relpath(veg_path, DEPLOYS), kb(veg_path), 100.0 * cover[fz >= 0].mean() if (fz >= 0).any() else 0.0))
+    else:
+        print('  no vegetation layer (the tree-cover grid %s is not in _data/, or is unreadable)' % VEGETATION_SOURCE)
     print('  %s  %.0f KB' % (os.path.relpath(height_path, DEPLOYS), kb(height_path)))
     print('  %s  %.0f KB' % (os.path.relpath(json_path, DEPLOYS), kb(json_path)))
     for key in lines:
@@ -400,7 +503,21 @@ def render(name, west, south, east, north, width, exaggeration=None, levels=None
     print('  height range in the picture: %.0f to %.0f m; ice on %.1f%% of pixels, %.1f%% of that afloat' % (z.min(), z.max(), ice_share, floating))
 
 
+def render_all():
+    """Every region in art/maps/, again, from its own JSON: corners, width, exaggeration
+    and contour levels as recorded there."""
+    names = sorted(f[:-5] for f in os.listdir(OUT) if f.endswith('.json'))
+    for name in names:
+        with open(os.path.join(OUT, name + '.json')) as fh:
+            d = json.load(fh)
+        levels = [float(k) for k in d.get('contours', {}).keys()] or None
+        render(d['name'], d['west'], d['south'], d['east'], d['north'], d['width'], d.get('exaggeration'), levels)
+
+
 def main(argv):
+    if argv == ['--all']:
+        render_all()
+        return
     opts = {'width': '2000', 'exaggeration': None, 'levels': None}
     args = []
     i = 0

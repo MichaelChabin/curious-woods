@@ -1,5 +1,5 @@
 ---
-status: 20 Sept 2026. Third pass landed the same day — contours, labels, the placer. This revision settles three things the Hokusai build raised: what a tap opens, how big a target has to be, and the map and the timeline as one list. Hit areas not yet built.
+status: 20 Sept 2026. Third pass landed the same day — contours, labels, the placer. This revision settles three things the Hokusai build raised: what a tap opens, how big a target has to be, and the map and the timeline as one list. Hit areas not yet built. Amended 26 Sept (Michael): the ground has layers — ice, vegetation and later sea level are files beside the picture a story can leave off or swap. Built the same day, uncommitted: the ice out of the base, a vegetation layer from Copernicus tree cover for every region, `map.js` stacking them.
 role: How a story shows where something happened. One shared map, many crops, a four-line block in the story.
 related: Rulings-Sept-2026.md (colour; pictures in a story; margin maps; how wide a timeline is; gestures), Spec-Map-Lab.md (the same engine, everything on), Publishing-a-Story.md
 note: The other Map-* documents in this vault (Fog-Map, Map-Tools, Map-Tool-Catalog, Voice-Samples-Map) are about number maps. Nothing here touches them.
@@ -153,9 +153,21 @@ Same component in all three. `cwMap` does not know what box it is in.
 
 **ETOPO 2022** (NOAA), land and sea floor in one grid, ice-surface and bedrock versions both. Public domain. **Natural Earth** for country outlines and rivers. Public domain. Downloaded once, rendered once, never touched at runtime. Source grids live in `_CW/_data/`, outside the deploy tree.
 
-**Ice is not a height.** Ice surface minus bedrock is thickness; where there is ice the colour comes from the ice ramp. Greenland is white because it is white.
+**Ice is not a height.** Ice surface minus bedrock is thickness; where there is ice the colour comes from the ice ramp. Greenland is white because it is white. Today the ice is painted into the base picture; under the ruling below it becomes a layer.
 
 **Sea level** is designed for and not built: a low-resolution height grid ships beside each picture, and with the contour extractor in place a different sea level is a contour at a different number plus a recolour.
+
+## The ground has layers
+
+*Ruled 26 September, after Switzerland came out the colour of Venus.* The base picture means height and nothing else, and that stands. But height is not the only fact about the ground, and the earlier text never said where the other facts live. Now it does.
+
+**Height is the base and is always present. Everything else the ground can show is a layer, and a story can leave any layer off.** Ice, what grows, and later the sea level. A layer is a small file beside the picture, rendered once from public data like the picture itself, and drawn over the base by `map.js`. The map block names its layers or takes the region's defaults.
+
+Because a layer is a file, a different outline is just a different file, and the same mechanism carries the past: the ice as it is, the ice at the last glacial maximum, the Sahara green. Nothing in the base changes; a story picks the layers that were true in its year. This is the ice-age work and the green Sahara arriving for nothing, and it is why the base must stay clean.
+
+**What a layer is.** An image at the height grid's resolution or half the picture's, blank where the layer is absent and the layer's colour where present, multiplied over the base at the layer's own strength. Vegetation comes from a public land-cover grid (ESA WorldCover or Copernicus), and its green is kept quiet so the ochre and the vermilion survive it; the green wash for a named thing is a different mark and keeps its own colour. Ice comes from the thickness subtraction `render.py` already makes, and moves out of the base when this is built.
+
+Built 26 September from the prompt below. The layers are WebP rather than PNG — the ice lossless with alpha, the vegetation lossy RGB with white for nothing, since a multiply layer needs no alpha — which took the world's two layers to 19 and 21 KB. The green settled at `#66905a`, 55 % at full cover. Two limits of the sources, not of the design: ETOPO's bedrock differs from its surface only under the two ice sheets, so Alpine glaciers are not in the ice layer; and the tree-cover grid ends at 80°N and 60°S.
 
 ## Pillar and intuitions
 
@@ -177,8 +189,20 @@ Small and worth doing before anything else, because every map already on the sit
 >
 > Then check it on the three maps in the Hokusai page, with a mouse and with a finger, at full width and in a window. Report what threshold felt right rather than what the spec said, if they differ. Stop before committing.
 
+## The prompt for the layers
+
+Follows from *The ground has layers*. It changes what the base picture holds, what sits beside it, and how `map.js` stacks them. Nothing about the marks, the labels, the lines, the taps or the window changes.
+
+> Read `CWVault/claude/Spec-Maps.md`, the sections *The ground colours*, *Where the ground comes from* and *The ground has layers*. This moves the ice out of the base picture and adds a vegetation layer; `map.js` learns to stack layers. Marks, labels, lines, taps and the window are untouched.
+>
+> **1. `render.py`.** The base picture is height alone: the land ramp everywhere above sea level, the sea ramp below, the ice ignored. Beside it, at half the picture's width, two RGBA PNGs, transparent where the layer is absent: `<region>-ice.png`, the ice ramp by surface height with the same relief shading the base has, alpha 1 where ice thickness is above zero, the edge anti-aliased from the full-resolution mask; and `<region>-vegetation.png`, one quiet green with alpha proportional to tree cover, meant to be multiplied over the base. Tree cover comes from the Copernicus Global Land Cover 100 m tree-cover fraction (2019, Zenodo, public), downloaded once into `_data/` and read in windows, never committed. Colour and strength are named constants at the top; the green must not be the wash green, and the ochre and the vermilion must survive it. The region's JSON lists its layers: name, file, blend (`normal` for ice, `multiply` for vegetation) and whether it is on by default. Add `--all`, which re-renders every region in `art/maps/` from its own JSON, and run it.
+>
+> **2. `map.js`.** `cwMap(container, region, marks, opts)` and `cwMapWindow(region, marks, opts)` take an optional fourth argument; `opts.layers` names layers to turn on or off, and everything else takes the region's defaults. Each layer that is on is an image over the base and under the SVG, with its blend, never a pointer target. Label placement reads the ground with the layers composited in. No existing caller changes.
+>
+> **3. Look before reporting.** Greenland and Antarctica, with the ice on and with it off. Switzerland and the world with vegetation on: the ochre still there under the green, the vermilion still the loudest thing, at full width and in the window. Report the green and strength you settled on, the file sizes per region, and anything that fought you. Stop before committing.
+
 ## Not yet decided
 
 Whether the paired timeline holds only events with both a date and a place, or repeats the story's whole timeline — recommended above, needs Michael's yes.
 
-Whether the shelf line belongs on the world map or only on regional ones. Whether a region's ramp should stretch to its own range, so every map uses the full scale at the cost of a colour meaning different heights on different maps. Whether a country wash needs a thin edge to read as a country. Whether a map ever hangs in the gallery on its own. Whether a path should draw itself when the text reaches it.
+Which layers a region shows by default — vegetation on everywhere, or only where a story asks. The vegetation source and its exact green. Whether past outlines (the glaciers, a green Sahara) come from published reconstructions or are drawn by the story as washes. Whether the shelf line belongs on the world map or only on regional ones. Whether a region's ramp should stretch to its own range, so every map uses the full scale at the cost of a colour meaning different heights on different maps. Whether a country wash needs a thin edge to read as a country. Whether a map ever hangs in the gallery on its own. Whether a path should draw itself when the text reaches it.

@@ -13,7 +13,15 @@
   "height_grid_width": 512,
   "height_grid_height": 526,
   "height_offset": 11000,
-  "source": "ETOPO 2022 v1 30s ice surface and bedrock, NOAA NCEI",
+  "source": "ETOPO 2022 v1 30s ice surface and bedrock, NOAA NCEI; Copernicus Global Land Cover 100 m tree cover 2019",
+  "layers": [
+    {
+      "name": "vegetation",
+      "image": "france-and-the-low-countries-vegetation.webp",
+      "blend": "multiply",
+      "default": true
+    }
+  ],
   "contours": {
     "0": [
       [[-0.9396,53.4973],[-0.908,53.4883],[-0.9021,53.4973]],

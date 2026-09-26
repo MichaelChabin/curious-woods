@@ -13,7 +13,15 @@
   "height_grid_width": 512,
   "height_grid_height": 411,
   "height_offset": 11000,
-  "source": "ETOPO 2022 v1 30s ice surface and bedrock, NOAA NCEI",
+  "source": "ETOPO 2022 v1 30s ice surface and bedrock, NOAA NCEI; Copernicus Global Land Cover 100 m tree cover 2019",
+  "layers": [
+    {
+      "name": "vegetation",
+      "image": "western-europe-vegetation.webp",
+      "blend": "multiply",
+      "default": true
+    }
+  ],
   "contours": {
     "0": [
       [[-6.7142,57.9871],[-6.7196,57.9651],[-6.6987,57.9488],[-6.7142,57.9871]],

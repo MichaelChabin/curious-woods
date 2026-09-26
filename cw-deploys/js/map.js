@@ -1,8 +1,8 @@
 /* map.js — Curious Woods maps. One earth, many crops.
    Spec: CWVault/claude/Spec-Maps.md.
 
-   cwMap(container, region, marks)   the base picture in the box, the story's marks over it
-   cwMapWindow(region, marks)        the same map in the picker window from Glass Geometry
+   cwMap(container, region, marks, opts)   the base picture in the box, its layers, the story's marks over it
+   cwMapWindow(region, marks, opts)        the same map in the picker window from Glass Geometry
    cwWindow(content, opts)           that window, holding anything (a picture); see below
    cwMap.load(url)                   fetch a region's JSON and resolve its picture beside it
    cwMap.toPixel / cwMap.toLonLat    the projection pair (below)
@@ -14,6 +14,14 @@
      { type:'region', points:[ [lat, lon], ... ], wash }        a wash, no outline: 'grows' (green) or 'made' (violet)
      { type:'note',   lat, lon, text, side?, water? }           words at a point, no dot
    Latitude and longitude come in; pixels come out.
+
+   The ground has layers (26 Sep 2026). The base picture is height alone. The region's
+   JSON lists its layers — ice, vegetation, later sea level — each a half-width RGBA
+   picture beside the base with a blend (`normal` for ice, `multiply` for vegetation)
+   and whether it is on by default. A layer that is on is an image over the base and
+   under the SVG, never a pointer target. `opts.layers` turns layers on or off by name,
+   `{ vegetation: false }`; everything unnamed takes the region's default. Label
+   placement reads the ground with the layers composited in.
 
    A place's text opens in a small block beside its dot. One block is open at a time, and
    any other action — a tap anywhere else on the page, a key — closes it (21 Sep 2026).
@@ -67,6 +75,7 @@
   var SVG = 'http://www.w3.org/2000/svg';
 
   var css = [
+    '.cw-map img.cw-layer{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     '.cw-map{position:relative;line-height:0;}',
     '.cw-map img{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}',
     '.cw-map svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;cursor:default;}',
@@ -144,17 +153,37 @@
     return measurer.measureText(text).width;
   }
 
-  function cwMap(container, region, marks) {
+  function cwMap(container, region, marks, opts) {
     marks = marks || [];
+    opts = opts || {};
     container.classList.add('cw-map');
     container.innerHTML = '';
+
+    function resolve(file) { return region.url ? new URL(file, region.url).href : file; }
 
     var img = document.createElement('img');
     img.alt = '';
     img.draggable = false;
     img.style.aspectRatio = region.width + ' / ' + region.height;   // holds the space before the picture arrives
-    img.src = region.url ? new URL(region.image, region.url).href : region.image;
+    img.src = resolve(region.image);
     container.appendChild(img);
+
+    // The layers that are on: the region's defaults, overridden by name in opts.layers.
+    var layerImgs = [];
+    var wanted = opts.layers || {};
+    (region.layers || []).forEach(function (L) {
+      var on = wanted.hasOwnProperty(L.name) ? !!wanted[L.name] : !!L['default'];
+      if (!on) return;
+      var li = document.createElement('img');
+      li.className = 'cw-layer';
+      li.alt = '';
+      li.draggable = false;
+      li.src = resolve(L.image);
+      if (L.blend && L.blend !== 'normal') li.style.mixBlendMode = L.blend;
+      li.__cwBlend = L.blend || 'normal';
+      container.appendChild(li);
+      layerImgs.push(li);
+    });
 
     var svg = el('svg', { viewBox: '0 0 1 1', preserveAspectRatio: 'none' });
     container.appendChild(svg);
@@ -177,6 +206,12 @@
         var c = document.createElement('canvas'); c.width = gw; c.height = gh;
         var ctx = c.getContext('2d');
         ctx.drawImage(img, 0, 0, gw, gh);
+        layerImgs.forEach(function (li) {
+          if (!(li.complete && li.naturalWidth)) return;
+          ctx.globalCompositeOperation = li.__cwBlend === 'normal' ? 'source-over' : li.__cwBlend;
+          ctx.drawImage(li, 0, 0, gw, gh);
+        });
+        ctx.globalCompositeOperation = 'source-over';
         var d = ctx.getImageData(0, 0, gw, gh).data;
         var lum = new Float32Array(gw * gh);
         for (var i = 0, j = 0; i < lum.length; i++, j += 4) lum[i] = (0.299 * d[j] + 0.587 * d[j + 1] + 0.114 * d[j + 2]) / 255;
@@ -389,8 +424,15 @@
     } else {
       window.addEventListener('resize', draw);
     }
-    function onLoad() { readGround(); draw(); }
-    if (img.complete && img.naturalWidth) onLoad(); else img.addEventListener('load', onLoad);
+    // The ground is read once every picture — the base and its layers — has arrived.
+    var pending = 1 + layerImgs.length;
+    function arrived() { pending--; if (pending <= 0) { readGround(); draw(); } }
+    function watch(im) {
+      if (im.complete && im.naturalWidth) arrived();
+      else { im.addEventListener('load', arrived); im.addEventListener('error', arrived); }
+    }
+    watch(img);
+    layerImgs.forEach(watch);
     draw();
 
     return { reset: reset, redraw: draw };
@@ -484,10 +526,10 @@
     return { close: closeWindow, window: win, position: position };
   }
 
-  function cwMapWindow(region, marks) {
+  function cwMapWindow(region, marks, opts) {
     var box = document.createElement('div');
     var w = cwWindow(box);
-    var map = cwMap(box, region, marks);
+    var map = cwMap(box, region, marks, opts);
     w.position();
     return { close: w.close, map: map };
   }

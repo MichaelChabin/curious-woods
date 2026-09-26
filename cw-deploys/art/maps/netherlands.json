@@ -13,7 +13,15 @@
   "height_grid_width": 512,
   "height_grid_height": 501,
   "height_offset": 11000,
-  "source": "ETOPO 2022 v1 30s ice surface and bedrock, NOAA NCEI",
+  "source": "ETOPO 2022 v1 30s ice surface and bedrock, NOAA NCEI; Copernicus Global Land Cover 100 m tree cover 2019",
+  "layers": [
+    {
+      "name": "vegetation",
+      "image": "netherlands-vegetation.webp",
+      "blend": "multiply",
+      "default": true
+    }
+  ],
   "contours": {
     "0": [
       [[7.1658,53.6992],[7.1612,53.6976],[7.151,53.6992]],
