@@ -1,6 +1,6 @@
 {
   "_about": "The world's events, shared by every story. One record per event: what happened, when, and where — checked once, used everywhere. A story picks the ones inside its span (js/timeline.js, `pool`), says which side of its line each one sits on, and may add `why`: the last sentence, in that story's voice, tying it to that picture. A story never rewrites these words. Places are ids from stories/places.json. Years are plain years; a fraction places an event inside its year (1815.3 is April). Spec: CWVault/claude/Story-Pattern.md.",
-  "version": "2026-09-25",
+  "version": "2026-09-26",
   "events": {
     "leeuwenhoek-born-1632": {
       "year": 1632.84,
@@ -178,6 +178,30 @@
       "title": "The great Chinese novel",
       "text": "A long novel about a rich family’s rise and fall, written thirty years earlier and passed around in hand-made copies, was printed at last. Chinese readers have been arguing about its ending ever since."
     },
+    "galvani-frogs-1791": {
+      "year": 1791.8,
+      "when": "1791 · Bologna",
+      "place": "bologna",
+      "label": "Galvani’s frogs",
+      "title": "The frog that kicked",
+      "text": "Luigi Galvani touched a dead frog’s legs with two metals and the legs kicked. He thought he had found the electricity of life. The argument ran for thirty years."
+    },
+    "volta-pile-1800": {
+      "year": 1800.2,
+      "when": "1800 · Como",
+      "place": "como",
+      "label": "Volta’s pile",
+      "title": "The first battery",
+      "text": "Alessandro Volta, who did not believe Galvani, stacked discs of two metals with wet card between them and made the first steady electric current. He had won the argument about the frog and started a bigger one."
+    },
+    "aldini-newgate-1803": {
+      "year": 1803.05,
+      "when": "1803 · London",
+      "place": "london",
+      "label": "Aldini at Newgate",
+      "title": "The hanged man’s eye opened",
+      "text": "Giovanni Aldini, Galvani’s nephew, ran current through the body of a hanged man in front of a crowd. The jaw moved, an eye opened, a hand clenched."
+    },
     "phaeton-1808": {
       "year": 1808.8,
       "when": "1808 · Nagasaki",
@@ -194,13 +218,45 @@
       "title": "The biggest eruption in recorded history",
       "text": "The volcano Tambora, on an island in what is now Indonesia, blew apart in April 1815. Its ash went round the world, and the next year Europe and North America had no summer."
     },
+    "waterloo-1815": {
+      "year": 1815.46,
+      "when": "1815 · Belgium",
+      "place": "waterloo",
+      "label": "Waterloo",
+      "title": "The war ends",
+      "text": "Napoleon lost his last battle, and after twenty years the roads of Europe were open to English travellers again."
+    },
+    "ada-born-1815": {
+      "year": 1815.94,
+      "when": "1815 · London",
+      "place": "london",
+      "label": "Ada born",
+      "title": "Byron’s daughter",
+      "text": "Byron left England when she was four months old and never saw her again. Her mother had her taught mathematics, on purpose, so that she would not turn out a poet."
+    },
     "frankenstein-1816": {
       "year": 1816.5,
       "when": "1816 · Lake Geneva",
-      "place": "europe",
+      "place": "geneva",
       "label": "Mary Shelley begins Frankenstein",
       "title": "A summer with no summer in it",
       "text": "The summer after Tambora was so cold and wet that a group of friends staying by Lake Geneva were kept indoors, and told each other ghost stories. One of them, Mary Shelley, who was eighteen, began Frankenstein."
+    },
+    "darkness-1816": {
+      "year": 1816.55,
+      "when": "July 1816 · Cologny",
+      "place": "geneva",
+      "label": "Byron’s “Darkness”",
+      "title": "A poem about the sun going out",
+      "text": "Lord Byron wrote it by Lake Geneva in the summer without a summer. “The bright sun was extinguish’d.”"
+    },
+    "running-machine-1817": {
+      "year": 1817.45,
+      "when": "1817 · Mannheim",
+      "place": "mannheim",
+      "label": "The running machine",
+      "title": "A bicycle with no pedals",
+      "text": "With the harvest failed, horses were too dear to feed. Karl Drais built a two-wheeled machine you sat on and pushed along with your feet. It is the bicycle’s grandfather."
     },
     "kaleidoscope-1817": {
       "year": 1817.5,
@@ -210,6 +266,14 @@
       "title": "Two mirrors in a tube",
       "text": "David Brewster, a physicist in Edinburgh, patented the kaleidoscope: two mirrors in a tube, and loose bits of coloured glass at the end. Turn it and the pattern changes. It was copied so quickly that he made very little from it."
     },
+    "vampyre-1819": {
+      "year": 1819.25,
+      "when": "1819 · London",
+      "place": "london",
+      "label": "The Vampyre",
+      "title": "The first vampire story in English",
+      "text": "John Polidori’s, made from pages Lord Byron had abandoned. It was printed under Byron’s name by mistake."
+    },
     "prussian-blue-japan-1820": {
       "year": 1820,
       "when": "around 1820 · Nagasaki",
@@ -217,6 +281,14 @@
       "label": "Prussian blue in Japan, still dear",
       "title": "A little of the Berlin blue",
       "text": "Dutch ships had been bringing small amounts of the blue through Dejima for years. Painters used a little of it. It cost far too much for prints."
+    },
+    "frankenstein-stage-1823": {
+      "year": 1823.56,
+      "when": "1823 · London",
+      "place": "london",
+      "label": "Frankenstein on stage",
+      "title": "The creature walks on",
+      "text": "Presumption; or, the Fate of Frankenstein, at the English Opera House. The creature has not been off a stage or a screen since."
     },
     "japan-drives-ships-1825": {
       "year": 1825,

@@ -26,7 +26,7 @@ build step. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael
 the Hokusai story called it)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
 the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
 `experiments/maps/`, beside `render.py`, which makes the pictures it draws on. Loaded with a
-version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. **`stories/world-events.json` and `stories/places.json` (22 Sep 2026)** — what the world owns,
+version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. 26 Sep 2026 (`?v=2026-09-26c` on all seven pages that load it): the window's drag strip sticks on the window's top edge, not 18 px below it, so a tall scrolling window (the Darkness poem) no longer shows its words through a slit above the strip; the words fade under it. **`stories/world-events.json` and `stories/places.json` (22 Sep 2026)** — what the world owns,
 shared by every story: one record per event (year, when, place, label, title, text) and one per
 place (name, lat, lon). A story gives `timeline.js` a `pool` and a `placebook`, then picks events
 by `ref`, sets each one's side, and may add `why` — its own last sentence. It never rewrites the
@@ -78,6 +78,13 @@ World* — `kaleidoscope-1817`, `great-wave-1830`, `beagle-1831`, `stereoscope-1
 and four places, `geneva`, `edinburgh`, `plymouth`, `portree` (28). Three older events are filed
 under `europe`, a card for stories set far away; the Necker page pins them to their towns on its
 own map (`place: 'geneva'`, `'london'`, `'paris'` in its picks) and leaves the shared record alone.
+**The same files, 26 Sep 2026:** nine events added for *Mary's World* — `galvani-frogs-1791`,
+`volta-pile-1800`, `aldini-newgate-1803`, `waterloo-1815`, `ada-born-1815`, `darkness-1816`,
+`running-machine-1817`, `vampyre-1819`, `frankenstein-stage-1823` (49 in all) — and four places,
+`bologna`, `como`, `waterloo`, `mannheim` (32). Where the story's panel text ended on a line of
+its own ("Mary was five and lived in the city"), that line stayed on the page as `why` and the
+shared record kept what happened. `frankenstein-1816` now sits at `geneva`, not `europe`; Hokusai,
+whose map has Europe as a card, pins it back with `place: 'europe'` in its pick.
 `art/stories/vermeer/lapis-stone.jpg`, `art/stories/vermeer/ultramarine-powder.jpg`, `art/stories/vermeer/vermeer-turban-detail.jpg` — that stack's
 three pictures (the stone from Sar-e-Sang, James St. John, CC BY 2.0; the powder, Commons, public
 domain; the turban cropped from our own scan).
@@ -214,6 +221,11 @@ rendered with `experiments/maps/render.py`. Full sources in the story's `images:
 `art/maps/france-and-the-low-countries.*`, `art/maps/france-to-the-north-sea.*` — two regions
 rendered 23 Sep 2026 for the Van Gogh story, the usual three files each (picture, JSON with
 contours, height grid), from `experiments/maps/render.py`.
+`art/maps/london-to-bologna.*` — 14°W–27°E, 43.7°N–52.4°N, 2000 × 635 (26 Sep 2026, *Mary's World*):
+cropped wide and shallow on purpose, about 3.15 to 1, so that on an iPad the timeline, the panel
+under it and most of the map fit on one screen (67% of the map on a 1024 × 768 iPad in landscape,
+79% at 1180 × 820, all of it in portrait). The picture, the vegetation layer, the JSON with
+contours and the height grid; no ice at this scale.
 `art/gallery/hokusai-the-great-wave-gallery.jpg` — **the Great Wave, whole, for the gallery** (21 Sep
 2026; Spec-Gallery's *A work on the wall* as changed that day: a painting or print hangs whole,
 never cropped): the Met's scan `art/stories/hokusai/hokusai-great-wave.jpg` resized to 600 × 414, quality 88,
@@ -716,6 +728,32 @@ backstop for the Claude Code session that lands the file.
   tested on an iPad, or in Safari by this session.**
 
 ### experiments/
+- **`have-you-thought-of-a-story.html`** — **story: Have You Thought of a Story?** (26 Sep
+  2026; stage 2, Built; hung nowhere, for Michael to read at its own address). Mary Shelley
+  and the night she saw Frankenstein, from `CWVault/claude/Story-Have-You-Thought-of-a-Story.md`,
+  copied from `template-story.html` onto the Vermeer arrangement (across, with a left
+  margin) with no new machinery. The object first: `art/stories/frankenstein/frankenstein-draft-21r.jpg`
+  (Bodleian, MS. Abinger c. 56, fol. 21r, CC BY-NC 4.0, credit in the caption), with the
+  magnifier and pinch from `../js/sampler.js` and no colour reading (the Delft pictures'
+  mode), control words *Magnifier off* and *The whole picture* under it. Four margin
+  pictures from the same folder: Finden's Diodati, Galvani's Tav. 3 and Aldini's Pl. 4 as a
+  stack in one slot (`../js/stack.js`, because one paragraph names both), the 1818 title page (sources in `_CW/art-originals/frankenstein/SOURCES.md`). *Mary's World*
+  on `../art/maps/london-to-bologna` (made for it, wide and shallow for the iPad), 1790–1832,
+  Tambora a card at the east edge; nine new shared
+  events went into `stories/world-events.json` and four places into `stories/places.json`
+  the same day. Tab icon `art/icons/frankenstein-icon-256.png`: a 700 px square of the full
+  scan at line 22, Mary's *Handsome* struck and Percy's *Beautiful* above it. Gallery
+  picture ready at `art/gallery/frankenstein-draft-21r-gallery.jpg`, frame `#453d34`
+  (the ink, measured), 10 px, medium; not in `gallery.json`. When it hangs, its title on the wall
+  is **The Birth of Frankenstein**, not the page's (Michael, 26 Sep: the story takes a while to
+  reach the night, and the name says it is worth it). No Remember (`maya: none`).
+  **Later, 26 Sep, on Michael's read:** *Darkness* is its own More entry, and *Read the poem*
+  opens Byron's poem in the window Necker's letter uses (`cwWindow`), the text of the first
+  printing (*The Prisoner of Chillon, and Other Poems*, 1816), checked line by line against
+  the Duke University copy's page images on the Internet Archive and kept in a `<template>` in
+  the page. The line lost six events (Leaves for France, Waterloo, "Darkness", Marries Shelley,
+  The book is finished, The Vampyre) and is 181 px tall on an iPad instead of 307, so the
+  whole map shows under the line and the panel even at 1024 × 768.
 - **`index-old.html`** — the home page as it stood from 13 to 20 Sep 2026 (two labs as
   words, three round icons, Experiments as a line), retired when the gallery took
   `index.html`. Recovered from git with its links rebased one folder up, given a tab icon

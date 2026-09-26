@@ -91,8 +91,13 @@
     '.cw-map-backdrop{position:fixed;inset:0;z-index:600;}',
     '.cw-map-window{position:fixed;z-index:601;background:#f0ede4;border:0.5px solid #c8b89a;border-radius:8px;padding:18px;box-shadow:0 4px 24px rgba(42,38,32,0.18);opacity:0;transition:opacity 200ms ease-in;pointer-events:none;max-height:85vh;overflow-y:auto;box-sizing:border-box;max-width:calc(100vw - 16px);}',
     '.cw-map-window.visible{opacity:1;pointer-events:all;}',
-    '.cw-map-drag{height:14px;margin:-18px -18px 0 -18px;border-radius:8px 8px 0 0;cursor:grab;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;position:sticky;top:0;z-index:1;background:#f0ede4;touch-action:none;}',
+    '.cw-map-drag{height:14px;margin:-18px -18px 0 -18px;border-radius:8px 8px 0 0;cursor:grab;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;position:sticky;top:-18px;z-index:1;background:#f0ede4;touch-action:none;}',
     '.cw-map-drag:active{cursor:grabbing;}',
+    /* the strip stays put while a tall window scrolls (a poem, a letter). It sticks at -18px, the
+       window's padding, so it sits on the window's top edge: at top:0 it stuck 18px down and the
+       words showed through the slit above it before vanishing under it, which read as a glitch.
+       The words fade under it rather than meeting a hard edge (26 Sep 2026, Michael) */
+    '.cw-map-drag::after{content:"";position:absolute;left:0;right:0;top:100%;height:12px;pointer-events:none;background:linear-gradient(#f0ede4,rgba(240,237,228,0));}',
     '.cw-map-close{font-family:Georgia,serif;font-size:11px;color:#b0a090;cursor:default;transition:color 80ms;pointer-events:all;line-height:14px;}',
     '.cw-map-close:hover{color:#546A80;}',
     '.cw-map-window .cw-map{margin-top:14px;width:' + WINDOW_MAP_WIDTH + 'px;max-width:100%;}',

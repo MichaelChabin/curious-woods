@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/icons/frankenstein-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/frankenstein-icon-256.png">
+<!--
+  have-you-thought-of-a-story.html — story: Mary Shelley, the night she saw Frankenstein.
+  Built 26 Sep 2026 from the template, on the Vermeer page's arrangement (placement: across,
+  with a left margin). No new machinery: the magnifier is ../js/sampler.js with no colours
+  (the Delft pictures' mode), the World is ../js/timeline.js over ../art/maps/london-to-bologna. Galvani and
+  Aldini share one margin slot through ../js/stack.js, because one paragraph names both.
+  Story text: CWVault/claude/Story-Have-You-Thought-of-a-Story.md
+  Object: ../art/stories/frankenstein/frankenstein-draft-21r.jpg — Bodleian Libraries,
+  MS. Abinger c. 56, fol. 21r, CC BY-NC 4.0; 1400 px wide. The four margin pictures and
+  their sources: _CW/art-originals/frankenstein/SOURCES.md (outside the deploy).
+  Stage 2, Built: in experiments/, hung nowhere, for Michael to read at its own address.
+-->
+<title>Have You Thought of a Story? — Curious Woods</title>
+<link rel="stylesheet" href="../css/story.css?v=2026-09-23b">
+<style>
+  :root { --aspect: calc(3847 / 5342); }   /* the notebook page's own shape; everything else is ../css/story.css */
+</style>
+</head>
+<body>
+
+<main class="page">
+  <div class="shell">
+  <article>
+
+    <div class="titleblock">
+      <div class="eyebrow">Curious Woods</div>
+      <h1>Have You Thought of a Story?</h1>
+      <p class="subtitle">~11,816 after the ice, or 1816.</p>
+    </div>
+
+    <div id="plateHome">
+      <figure id="plate">
+        <div class="frame" id="frame">
+          <img id="plateImg" src="../art/stories/frankenstein/frankenstein-draft-21r.jpg"
+               alt="A page of handwriting in brown ink on pale paper, headed Chapter 7th. Some words are crossed out, and others are written above them and in the margin in a second, smaller hand.">
+        </div>
+        <div class="toolwords" id="plateWords">
+          <button class="word" id="dropLoupe" type="button" hidden>Magnifier off</button>
+          <button class="word" id="fit" type="button" hidden>The whole picture</button>
+        </div>
+        <div class="tools" id="toolwords">
+          <p class="note">You can zoom this image to see it in detail. Once you've zoomed in, you can
+             drag it to see any part you are curious about. You can also tap it to see a magnifier,
+             which you can also drag.</p>
+        </div>
+        <figcaption>A page of Mary's notebook, 1816. MS. Abinger c. 56, fol. 21r. Image: <a href="https://digital.bodleian.ox.ac.uk/">Bodleian Libraries, University of Oxford</a>.</figcaption>
+      </figure>
+    </div>
+
+    <p>Tap the page, and a magnifier appears there.</p>
+
+    <h2>The page</h2>
+
+    <p>This is a page from a notebook. The paper is more than two hundred years old, and the ink has gone brown. Two people have written on it. One of them wrote the lines. The other went over them afterwards, in a smaller, quicker hand, crossing out a word here and there and writing another above it.</p>
+
+    <p>At the top, in the first hand, it says <i>Chapter 7th</i>, and under that: <i>It was on a dreary night of November that I beheld my man completed.</i> Look at <i>completed</i>. She spelled it <i>compleated</i> first, and fixed it herself by writing over the letters.</p>
+
+    <p>Now go down about twenty lines, to where the student says what he had chosen for his creature's features. The first hand wrote <i>handsome</i>. The second hand has crossed it out and written <i>Beautiful</i> above it, and done it again in the margin to make sure. That is the word in the book today.</p>
+
+    <p>The first hand is Mary Godwin's. She was eighteen. The second is Percy Shelley's, the poet she was living with, who read her pages as she wrote them and changed a word where he thought he could better it. The book is <i>Frankenstein</i>, and the sentence at the top of the page was the first sentence of it she wrote. Everything before it in the book, she wrote afterwards.</p>
+
+    <p>This story is about the night before she wrote it.</p>
+
+    <h2>The rain</h2>
+
+    <figure class="margin">
+      <img src="../art/stories/frankenstein/villa-diodati-finden.jpg" width="600" height="502" loading="lazy"
+           alt="An engraving of a tall square house with a row of columns along its front, on a garden slope above a lake, with trees on either side and a woman sitting on the grass.">
+      <figcaption>Diodati, the house on the hill. Drawn by William Purser, engraved by Edward Finden, 1833.</figcaption>
+    </figure>
+
+    <p>In the summer of 1816 the poet Lord Byron rented a house on a hill above Lake Geneva, in Switzerland. Byron was twenty-eight and the most famous poet in Europe, and he had just left England, where a good many people were glad to see him go. With him was his physician, John Polidori, who was twenty and had been a physician for less than a year.</p>
+
+    <p>Ten minutes' walk down the hill, in a smaller house by the water, were three more English people. Percy Shelley was a poet too, twenty-three, not yet famous. Claire Clairmont was eighteen. And Claire's stepsister, Mary Godwin, was eighteen as well. Mary had grown up in London in a house where writers came to dinner. Her father was a famous one, and her mother, who died when Mary was eleven days old, was more famous still. The three of them walked up the hill to Byron's house in the rain nearly every day.</p>
+
+    <p>It should have been a summer of boats and walks. Instead it rained. It rained for days at a time, cold rain, in June, and the lake went grey and the mountains disappeared. Nobody in that house knew why. Nobody in Europe knew why. The reason was a volcano on the far side of the world, which had blown up the year before and thrown so much dust into the high air that the dust dimmed the sun for a year. That is its own story. Here it is enough to know that it rained, and five people were shut indoors with the candles lit in the afternoon.</p>
+
+    <h2>The dare</h2>
+
+    <p>To pass the time they read to each other. Someone had a book of ghost stories, German ones translated into French, and they read the stories aloud in the evenings with the rain on the windows. One night Byron said: we will each write a ghost story.</p>
+
+    <p>Everybody agreed. Then almost nobody did it. Byron wrote a few pages about a man who dies strangely in a graveyard in Turkey, and lost interest. Shelley started something about his own childhood and dropped it. Polidori had an idea about a lady with a skull for a head, who had been punished that way for looking through a keyhole, and he could not think what to do with her.</p>
+
+    <p>Mary had nothing.</p>
+
+    <h2>Nothing</h2>
+
+    <p>She wanted a story that would make the reader afraid to look behind her. She thought about it all day. Nothing came. She thought harder, and less came. She said later that it is the worst feeling a writer has: you ask, and nothing answers.</p>
+
+    <p>And each morning somebody asked, "Have you thought of a story?" and each morning, she wrote, she "was forced to reply with a mortifying negative." Mortifying is the kind of embarrassed that makes you want to leave the room.</p>
+
+    <h2>The talk</h2>
+
+    <p>What happened next did not happen while she was trying.</p>
+
+    <p>Byron and Shelley talked. They talked for hours, late into the night, about everything, and Mary sat and listened and said almost nothing. One night the talk was about life: what life is, whether anyone would ever find out what makes a body alive, and whether a dead body could be made to move again.</p>
+
+    <p>Shelley had heard that an English physician named Erasmus Darwin had kept a piece of vermicelli in a glass case until the vermicelli began to move by itself. Darwin hadn't, quite. The real story was about tiny animals in water, and the story had been garbled on its way across Europe. Mary knew that. When she wrote the talk down, she was careful to say she was reporting what people said Darwin had done, not what he did.</p>
+
+    <figure class="margin" id="talkStack">
+      <img src="../art/stories/frankenstein/galvani-1791-frogs.jpg" width="600" height="435" loading="lazy"
+           alt="An engraving of a table with dead frogs laid out on boards, their legs stretched out, and hands holding curved metal arcs that touch them.">
+      <figcaption>Galvani's frogs on the bench, with the metal arcs that made the legs kick. From his book of 1791.</figcaption>
+    </figure>
+
+    <p>And there was electricity. Thirty years earlier an Italian named Luigi Galvani had made the legs of a dead frog kick by touching the legs with two metals, and ever since, people had argued about whether electricity was the thing that made living things alive. When Mary was five, in London, a man named Aldini had run electricity through the body of a hanged man in front of a crowd. The jaw moved. One eye opened. A hand clenched. The whole city talked about it, and Mary grew up in that city.</p>
+
+    <p>So perhaps a corpse could be brought back. Perhaps the parts of a creature could be put together and given warmth. That was the talk. It went past midnight.</p>
+
+    <h2>The night</h2>
+
+    <p>She went to bed and could not sleep. She lay with her eyes shut. Then she saw something.</p>
+
+    <p>It was not a dream. She was awake, and she said so.</p>
+
+    <p>She saw a student kneeling beside a thing he had put together. The thing was stretched out on the floor. It had the shape of a man. Then some engine was worked, and the thing stirred.</p>
+
+    <p>The student, sick at what he had made, ran from the room. He hoped the thing would die on its own. He slept. He opened his eyes, and the thing was standing by his bed, looking at him.</p>
+
+    <p>Mary opened her own eyes, frightened, and tried to get the real room back: the dark, the shutters, the lake she knew was out there beyond them. The picture would not go.</p>
+
+    <p>And then she saw what she had. What had frightened her would frighten anyone. She only had to write down what she had seen.</p>
+
+    <p>In the morning, when the question came, she said yes.</p>
+
+    <h2>What she wrote</h2>
+
+    <p>She began that day, with the sentence at the top of the page: <i>It was on a dreary night of November</i>. Everything in the book before that sentence was written afterwards, to lead up to it. A few lines down the same page, the student's candle is nearly burnt out and rain is pattering on the window. She had been listening to that rain all month.</p>
+
+    <p>She thought the story would be a few pages. Shelley told her it could be a whole book, and it took her most of a year. That is the notebook you are looking at: she wrote the book in it, in Geneva and then in England, and Shelley went over the pages as she went. By the time she finished she had married him and was Mary Shelley, which is the name people know her by now.</p>
+
+    <h2>Afterwards</h2>
+
+    <figure class="margin">
+      <img src="../art/stories/frankenstein/frankenstein-1818-title-page.jpg" width="600" height="1067" loading="lazy"
+           alt="A printed title page: Frankenstein; or, The Modern Prometheus. In three volumes. Four lines from Paradise Lost. Vol. I. London, printed for Lackington, Hughes, Harding, Mavor and Jones, 1818.">
+      <figcaption>The title page of the first edition, 1818. There is no author's name on it.</figcaption>
+    </figure>
+
+    <p>The book came out on New Year's Day 1818. There was no name on it at all. She was twenty. Nearly everyone who guessed guessed Shelley.</p>
+
+    <p>Within five years the book was a play in London, and the creature has not been off a stage or a screen since. The notebook stayed in the family for more than a hundred and fifty years. It is in a library in Oxford now, and anyone can look at every page of it online, with the two hands marked in two colours.</p>
+
+    <section class="more">
+      <h2>More</h2>
+
+      <p><b>The name.</b> The student is Victor Frankenstein. The thing he makes has no name; in the book it is the creature, or the wretch, or the monster. Nearly everyone now calls the monster Frankenstein, which is the maker's name, not the made thing's.</p>
+
+      <p><b>No lightning.</b> Mary never says how the student does it; he refuses to tell, which is what makes the book a story about science and not a story about magic. The lightning, the bolts in the neck, and the flat head all belong to a film made in 1931.</p>
+
+      <p><b>The volcano</b> was Tambora, in what is now Indonesia, and its story is the loudest sound in recorded history. The summer it spoiled is <i>The Year Without a Summer</i>.</p>
+
+      <div class="tools" id="poemSlot">
+        <button class="word" id="readPoem" type="button">Read the poem</button>
+      </div>
+
+      <p><b>Darkness.</b> Byron sat in the same dim house that July and wrote a poem called "Darkness," about the sun going out. Tap <i>Read the poem</i>.</p>
+
+      <p><b>Polidori</b> did not waste the summer either. He took Byron's abandoned pages, the man who dies strangely, and turned them into <i>The Vampyre</i>, the first vampire story in English. It was published in 1819 under Byron's name by mistake, which annoyed them both.</p>
+
+      <p><b>Ada.</b> Byron had a daughter, six months old, whom he left behind in England that spring and never saw again. Her name was Ada. She has her own story, and it is about a machine.</p>
+
+      <p><b>Two accounts, and they don't agree.</b> Mary told all this in 1831, when the book was fifteen years old and the publisher asked her how a girl of eighteen had come to write it. Polidori kept a diary that summer, and the two do not quite match. His diary says the ghost stories were begun "by all but me" on June 17; her account has her sitting blank for days. Most historians think the whole thing took a few days, not weeks, and that Mary, remembering fifteen years later, remembered the misery as longer than it was. Nobody can settle it. The diary is short, and hers is the only account of the night.</p>
+
+      <p><b>Two books.</b> The book she wrote in 1816 and the book she revised in 1831 are not the same. The 1818 one is the stranger and the better, and it is the one to read.</p>
+
+      <p><b>Whose words?</b> Percy changed a good many of Mary's words in that notebook: about three thousand in all, out of about seventy thousand. Some people have argued from this that he half wrote the book. The notebook says otherwise: the story, the scenes, and nearly all the sentences are in her hand, and his changes are the kind a reader makes in the margin. She was the one who saw the student kneeling. One change nobody can credit: by the time the book was printed, <i>my man completed</i> had become <i>the accomplishment of my toils</i>. The page where that happened was in a later, cleaner copy, and that page is lost.</p>
+    </section>
+
+    <template id="darkness">
+      <figure>
+        <p>I had a dream, which was not all a dream.<br>
+           The bright sun was extinguish’d, and the stars<br>
+           Did wander darkling in the eternal space,<br>
+           Rayless, and pathless, and the icy earth<br>
+           Swung blind and blackening in the moonless air;<br>
+           Morn came, and went—and came, and brought no day,<br>
+           And men forgot their passions in the dread<br>
+           Of this their desolation; and all hearts<br>
+           Were chill’d into a selfish prayer for light:<br>
+           And they did live by watchfires—and the thrones,<br>
+           The palaces of crowned kings—the huts,<br>
+           The habitations of all things which dwell,<br>
+           Were burnt for beacons; cities were consumed,<br>
+           And men were gathered round their blazing homes<br>
+           To look once more into each other’s face;<br>
+           Happy were those who dwelt within the eye<br>
+           Of the volcanos, and their mountain-torch:<br>
+           A fearful hope was all the world contain’d;<br>
+           Forests were set on fire—but hour by hour<br>
+           They fell and faded—and the crackling trunks<br>
+           Extinguish’d with a crash—and all was black.<br>
+           The brows of men by the despairing light<br>
+           Wore an unearthly aspect, as by fits<br>
+           The flashes fell upon them; some lay down<br>
+           And hid their eyes and wept; and some did rest<br>
+           Their chins upon their clenched hands, and smiled;<br>
+           And others hurried to and fro, and fed<br>
+           Their funeral piles with fuel, and looked up<br>
+           With mad disquietude on the dull sky,<br>
+           The pall of a past world; and then again<br>
+           With curses cast them down upon the dust,<br>
+           And gnash’d their teeth and howl’d: the wild birds shriek’d,<br>
+           And, terrified, did flutter on the ground,<br>
+           And flap their useless wings; the wildest brutes<br>
+           Came tame and tremulous; and vipers crawl’d<br>
+           And twined themselves among the multitude,<br>
+           Hissing, but stingless—they were slain for food:<br>
+           And War, which for a moment was no more,<br>
+           Did glut himself again;—a meal was bought<br>
+           With blood, and each sate sullenly apart<br>
+           Gorging himself in gloom: no love was left;<br>
+           All earth was but one thought—and that was death,<br>
+           Immediate and inglorious; and the pang<br>
+           Of famine fed upon all entrails—men<br>
+           Died, and their bones were tombless as their flesh;<br>
+           The meagre by the meagre were devoured,<br>
+           Even dogs assail’d their masters, all save one,<br>
+           And he was faithful to a corse, and kept<br>
+           The birds and beasts and famish’d men at bay,<br>
+           Till hunger clung them, or the dropping dead<br>
+           Lured their lank jaws; himself sought out no food,<br>
+           But with a piteous and perpetual moan<br>
+           And a quick desolate cry, licking the hand<br>
+           Which answered not with a caress—he died.<br>
+           The crowd was famish’d by degrees; but two<br>
+           Of an enormous city did survive,<br>
+           And they were enemies; they met beside<br>
+           The dying embers of an altar-place<br>
+           Where had been heap’d a mass of holy things<br>
+           For an unholy usage; they raked up,<br>
+           And shivering scraped with their cold skeleton hands<br>
+           The feeble ashes, and their feeble breath<br>
+           Blew for a little life, and made a flame<br>
+           Which was a mockery; then they lifted up<br>
+           Their eyes as it grew lighter, and beheld<br>
+           Each other’s aspects—saw, and shriek’d, and died—<br>
+           Even of their mutual hideousness they died,<br>
+           Unknowing who he was upon whose brow<br>
+           Famine had written Fiend. The world was void,<br>
+           The populous and the powerful was a lump,<br>
+           Seasonless, herbless, treeless, manless, lifeless—<br>
+           A lump of death—a chaos of hard clay.<br>
+           The rivers, lakes, and ocean all stood still,<br>
+           And nothing stirred within their silent depths;<br>
+           Ships sailorless lay rotting on the sea,<br>
+           And their masts fell down piecemeal; as they dropp’d<br>
+           They slept on the abyss without a surge—<br>
+           The waves were dead; the tides were in their grave,<br>
+           The moon their mistress had expired before;<br>
+           The winds were withered in the stagnant air,<br>
+           And the clouds perish’d; Darkness had no need<br>
+           Of aid from them—She was the universe.</p>
+        <figcaption>Lord Byron, &ldquo;Darkness,&rdquo; written by Lake Geneva in the summer of 1816, as printed in London later that year in <i>The Prisoner of Chillon, and Other Poems</i>.</figcaption>
+      </figure>
+    </template>
+
+    <section class="world breakout">
+      <h2>Mary&rsquo;s World</h2>
+      <div id="theWorld"></div>
+    </section>
+
+    <section class="refs">
+      <h2>References</h2>
+      <p>Mary Shelley, <i>Frankenstein; or, The Modern Prometheus</i> (1818), and her Author's Introduction to the edition of 1831. Both texts are free at Project Gutenberg (#41445 and #84). The Introduction is where the rain, the dare, the talk, and the night come from.</p>
+      <p>The Frankenstein draft notebooks, Bodleian Libraries, Oxford, MS. Abinger c.56 and c.57, with every page and both hands online at the Shelley-Godwin Archive (shelleygodwinarchive.org). The page at the top of this story is from Notebook A.</p>
+      <p>Charles E. Robinson (ed.), <i>The Original Frankenstein</i> (Bodleian Library, 2008; Vintage, 2009): Mary's text and Percy's changes printed side by side, with the count of his words.</p>
+      <p>John Polidori, <i>The Diary of Dr. John William Polidori, 1816</i>, ed. W. M. Rossetti (1911), on the Internet Archive. The entries for 17 and 18 June are the other account of the dare.</p>
+      <p>Giovanni Aldini, <i>An Account of the Late Improvements in Galvanism</i> (London, 1803), for the demonstration at Newgate; and Marco Piccolino and Marco Bresadola, <i>Shocking Frogs: Galvani, Volta, and the Electric Origins of Neuroscience</i> (Oxford, 2013), for the argument the men were having.</p>
+      <p>Gillen D'Arcy Wood, <i>Tambora: The Eruption That Changed the World</i> (Princeton, 2014), for the rain.</p>
+    </section>
+
+  </article>
+  </div>
+</main>
+
+<script src="../js/cw-flags.js?v=2026-09-21"></script>
+<script src="../js/map.js?v=2026-09-26c"></script>
+<script src="../js/sampler.js?v=2026-09-22"></script>
+<script src="../js/timeline.js?v=2026-09-22b"></script>
+<script src="../js/stack.js?v=2026-09-22"></script>
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = '2026-09-26 9c45e79';   // date + short commit hash; bump in the same commit as any change
+  console.log('have-you-thought-of-a-story', CW_VERSION);
+  window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
+  const el = id => document.getElementById(id);
+
+  // ==========================================================================
+  // MARY'S WORLD — her side above the line, the world's below. The span runs from
+  // Galvani's frogs (1791), the earliest thing the talk depended on, to the end of 1831,
+  // when her account of the night was two months old and the Beagle sailed; the line starts
+  // at a round year, as Vermeer's does, so its first year is not cut off. The world's
+  // events are the shared list's; her own stay here. The shared record "Mary Shelley
+  // begins Frankenstein" is not drawn: this page's own `night` is that event.
+  // ==========================================================================
+  const WORLD = {
+    from: 1790, to: 1832,
+    region: '../art/maps/london-to-bologna.json',   // wide and shallow, so an iPad shows the line, the panel and most of the map at once
+    world: '../art/maps/world.json',
+    pool: '../stories/world-events.json',
+    placebook: '../stories/places.json',
+    places: {
+      london:   { side: 'person' },
+      geneva:   { side: 'person' },
+      bologna:  { side: 'world' },
+      como:     { side: 'world' },
+      mannheim: { side: 'world' },
+      plymouth: { side: 'world' },
+      tambora:  { side: 'world', card: 'east', cardTop: 45,
+                  far: 'About 12,300 km to the south-east, in Indonesia',
+                  bearing: [{ name: 'Geneva', lat: 46.20, lon: 6.14 }] }
+    },
+    events: [
+      { ref: 'galvani-frogs-1791', side: 'world',
+        why: 'It was the talk at Lake Geneva.' },
+      { id: 'born', year: 1797.66, side: 'person', label: 'Born', place: 'london',
+        when: '1797 · London', title: 'Eleven days',
+        text: '30 August 1797. Her mother, Mary Wollstonecraft, died eleven days later. Her father was William Godwin. Both were famous writers, and the house was full of them.' },
+      { ref: 'volta-pile-1800', side: 'world' },
+      { ref: 'aldini-newgate-1803', side: 'world',
+        why: 'Mary was five and lived in the city.' },
+      { ref: 'tambora-1815', side: 'world',
+        why: 'The dust dimmed the sun for a year, and the next June it rained without stopping at Lake Geneva.' },
+      { ref: 'ada-born-1815', side: 'world' },
+      { id: 'geneva', year: 1816.38, side: 'person', label: 'To Geneva', place: 'geneva',
+        when: 'May 1816 · Geneva', title: 'Ten days by coach',
+        text: 'Mary, Shelley and Claire crossed to France and went on to Geneva by coach. Byron arrived a fortnight later and took the house on the hill.' },
+      { id: 'night', year: 1816.46, side: 'person', focus: true, label: 'The ghost story', place: 'geneva',
+        when: 'June 1816 · Cologny', title: '“Have you thought of a story?”',
+        text: 'Byron’s dare, days of nothing, a night of talk about electricity and life, and then the picture that would not go away. She began the next day.' },
+      { ref: 'running-machine-1817', side: 'world' },
+      { id: 'published', year: 1818.0, side: 'person', label: 'Frankenstein', place: 'london',
+        when: '1 January 1818 · London', title: 'No name on it',
+        text: 'Mary’s first draft was done in April 1817 and the fair copy in May. Shelley wrote to publishers. Five hundred copies. A preface by Shelley, a dedication to her father, and no author’s name. Most readers guessed Shelley.' },
+      { ref: 'frankenstein-stage-1823', side: 'world' },
+      { id: 'intro', year: 1831.8, side: 'person', label: 'Her account of the night', place: 'london',
+        when: 'October 1831 · London', title: 'How it happened',
+        text: 'A new edition, with her name on it at last, and an introduction telling the story of the rain, the dare, the talk, and the night. It is where nearly all of this comes from.' },
+      { ref: 'faraday-1831', side: 'world', place: 'london',
+        why: 'The electricity the men argued about at Lake Geneva became, that autumn, something a magnet could make on demand.' },
+      { ref: 'beagle-1831', side: 'world',
+        why: 'Erasmus Darwin’s grandson Charles was aboard. The vermicelli story was about his grandfather.' }
+    ]
+  };
+  if (typeof cwWorld === 'function') cwWorld(el('theWorld'), WORLD);
+
+  // ==========================================================================
+  // THE TALK: Galvani and Aldini are named in one paragraph, and the margin holds one
+  // picture at a time, so they share a slot (js/stack.js). The word moves it on.
+  // ==========================================================================
+  if (typeof cwStack === 'function') {
+    cwStack(el('talkStack'), [
+      { src: '../art/stories/frankenstein/galvani-1791-frogs.jpg', w: 600, h: 435,
+        alt: 'An engraving of a table with dead frogs laid out on boards, their legs stretched out, and hands holding curved metal arcs that touch them.',
+        caption: 'Galvani’s frogs on the bench, with the metal arcs that made the legs kick. From his book of 1791.',
+        name: 'Galvani’s frogs' },
+      { src: '../art/stories/frankenstein/aldini-1804-plate.jpg', w: 600, h: 457,
+        alt: 'An engraving of two men at two tables working on dead bodies. On a shelf above, more bodies and two heads are joined by wires to tall columns.',
+        caption: 'Aldini’s experiments, drawn for his book of 1804. The bodies are wired to Volta’s piles. Wellcome Collection.',
+        name: 'Aldini’s experiments' }
+    ]);
+  }
+
+  // ==========================================================================
+  // THE POEM — words in a window (Rulings, 18 Sep): the window Professor Necker's letter
+  // opens in. The text is the first printing's, 1816, kept in a <template> in the page.
+  // ==========================================================================
+  el('readPoem').addEventListener('click', () => {
+    cwWindow(el('darkness').content.firstElementChild.cloneNode(true));
+  });
+
+  // ==========================================================================
+  // THE PAGE: magnifier and pinch, no colour reading (the Delft pictures' mode).
+  // Whatever she has done with it stays while she reads on.
+  // ==========================================================================
+  const wDrop = el('dropLoupe'), wFit = el('fit');
+  const tool = cwSampler(el('frame'), [], {
+    onState: s => { wDrop.hidden = !s.loupe; wFit.hidden = !s.zoomed; }
+  });
+  wDrop.addEventListener('click', () => tool.drop());
+  wFit.addEventListener('click', () => tool.fit());
+})();
+</script>
+</body>
+</html>
