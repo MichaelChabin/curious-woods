@@ -388,7 +388,8 @@ backstop for the Claude Code session that lands the file.
 ## Pages
 
 ### the root
-- **`index.html`** — **the gallery**, the child's home page (20 Sep 2026; `Spec-Gallery.md`,
+- **`index.html`** — **the gallery**, the child's home page (20 Sep 2026; since 26 Sep with a
+  subtitle under the title, *for tomorrow's best minds*, centred, lowercase, italic, on Michael's word; `Spec-Gallery.md`,
   the Rulings' *The gallery*; built from `experiments/gallery/home-mock-salon.html`, not
   redesigned). Reads `stories/gallery.json`, shuffles it (Fisher–Yates, a new hang every
   visit), and hangs up to nine works: each a link holding a coloured frame (`frame`,
