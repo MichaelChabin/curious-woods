@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" href="../art/hokusai-icon-256.png">
-<link rel="apple-touch-icon" href="../art/hokusai-icon-256.png">
+<link rel="icon" type="image/png" href="../art/icons/hokusai-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/hokusai-icon-256.png">
 <!--
   hokusai-the-great-wave.html — story: Hokusai, The Great Wave.
   First of the paintings series; hung 20 Sep 2026. Brought into line with the Vermeer page
@@ -13,7 +13,7 @@
   magnifier and sampler are ../js/sampler.js; the tools' words live in the left column; the
   look is ../css/story.css. placement: across, with a left margin.
   Story text: CWVault/claude/Story-Hokusai-The-Great-Wave.md
-  Print: ../art/hokusai-great-wave.jpg — Metropolitan Museum of Art, JP1847, open access.
+  Print: ../art/stories/hokusai/hokusai-great-wave.jpg — Metropolitan Museum of Art, JP1847, open access.
   Maps: ../js/map.js and ../art/maps/{japan,western-europe,world,japan-and-china}.
 -->
 <title>Hokusai: The Great Wave — Curious Woods</title>
@@ -39,7 +39,7 @@
     <div id="plateHome">
       <figure id="plate">
         <div class="frame" id="frame">
-          <img id="plateImg" src="../art/hokusai-great-wave.jpg"
+          <img id="plateImg" src="../art/stories/hokusai/hokusai-great-wave.jpg"
                alt="Hokusai's woodblock print: a great wave with clawed foam rising over three long boats, with Mount Fuji small in the distance.">
         </div>
         <div class="toolwords" id="plateWords"></div>
@@ -127,7 +127,7 @@
     <p>What he had made, with no way at all of knowing it, was a lattice of iron atoms held apart by pairs of carbon and nitrogen — cyanide. It is written <span class="formula">Fe<sub>4</sub>[Fe(CN)<sub>6</sub>]<sub>3</sub></span>. Two kinds of iron sit in that lattice. One of them is missing two of its electrons; the other is missing three of them. Because of this, red light can knock an electron from one kind of iron atom to the other. When that happens, the red light is used up. Red goes in and does not come out, and most of what is left is blue.</p>
 
     <figure class="margin">
-      <img src="../art/egyptian-blue.jpg" width="456" height="380" loading="lazy"
+      <img src="../art/stories/hokusai/egyptian-blue.jpg" width="456" height="380" loading="lazy"
            alt="A small heap of soft, bright blue powder on white paper.">
       <figcaption>Egyptian blue, ground to a powder: copper, calcium, silicon and oxygen, cooked together in a furnace. Under a camera that sees infrared light it glows, which is how scientists find the faintest traces of it on ancient statues.</figcaption>
     </figure>
@@ -215,7 +215,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-26 c13f710';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-26 26bd0f8';   // date + short commit hash; bump in the same commit as any change
   console.log('hokusai-the-great-wave', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 

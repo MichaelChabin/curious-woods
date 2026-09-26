@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" href="../art/vermeer-icon-256.png">
-<link rel="apple-touch-icon" href="../art/vermeer-icon-256.png">
+<link rel="icon" type="image/png" href="../art/icons/vermeer-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/vermeer-icon-256.png">
 <!--
   vermeer-girl-with-a-pearl-earring.html — story: Vermeer, Girl with a Pearl Earring.
   Second of the paintings series (21 Sep 2026). placement: across, with a left margin.
@@ -13,7 +13,7 @@
   arrives when the timeline component does. The magnifier and the colour sampler are
   ../js/sampler.js, shared with the Hokusai page once it is converted.
   Story text: CWVault/claude/Story-Vermeer-Girl-with-a-Pearl-Earring.md
-  Painting: ../art/vermeer-girl-pearl-earring.jpg — Mauritshuis, The Hague, inv. 670;
+  Painting: ../art/stories/vermeer/vermeer-girl-pearl-earring.jpg — Mauritshuis, The Hague, inv. 670;
   the museum's scan as published on Wikimedia Commons, public domain; 1400 px wide.
   Maps: ../js/map.js and ../art/maps/{netherlands,lapis-road,north-sea-and-paris,world}.
   Hung in active/ on 22 Sep 2026 (Publishing-a-Story, stage 4); the experiments address redirects.
@@ -41,7 +41,7 @@
     <div id="plateHome">
       <figure id="plate">
         <div class="frame" id="frame">
-          <img id="plateImg" src="../art/vermeer-girl-pearl-earring.jpg"
+          <img id="plateImg" src="../art/stories/vermeer/vermeer-girl-pearl-earring.jpg"
                alt="Vermeer's painting of a girl looking over her shoulder, in a blue and yellow turban, with a large pearl at her ear, against a dark background.">
         </div>
         <div class="toolwords" id="plateWords"></div>
@@ -109,7 +109,7 @@
 
     <figure class="breakout pic" id="delftPic" style="--pic: calc(1920 / 1601)">
       <div class="frame" id="delftFrame">
-        <img src="../art/vermeer-view-of-delft.jpg" width="1920" height="1601" loading="lazy"
+        <img src="../art/stories/vermeer/vermeer-view-of-delft.jpg" width="1920" height="1601" loading="lazy"
              alt="Vermeer's painting of Delft seen across the water: a long row of brick walls, gates and roofs under a big cloudy sky, with one church tower lit by the sun.">
       </div>
       <div class="toolwords">
@@ -122,7 +122,7 @@
     <p>One morning in October 1654, when Vermeer was twenty-one, the town's gunpowder store blew up. There were about forty thousand kilograms of powder in it: forty tonnes. More than two hundred houses were flattened. A painter called Carel Fabritius, who lived nearby and had studied with Rembrandt, was killed at his easel.</p>
 
     <figure class="margin" id="blueStack">
-      <img src="../art/lapis-stone.jpg" width="900" height="1107" loading="lazy" alt="">
+      <img src="../art/stories/vermeer/lapis-stone.jpg" width="900" height="1107" loading="lazy" alt="">
       <figcaption>Lapis lazuli from the mines at Sar-e-Sang, in northern Afghanistan. This is a good piece; most of what comes out of the mine carries far more grey.</figcaption>
     </figure>
 
@@ -185,7 +185,7 @@
       <p><b>Her lips</b> are red lake: a dye made from cochineal, small insects that live on cactus in Mexico, fixed onto a white powder so that it can be used as paint.</p>
 
       <figure class="margin">
-        <img src="../art/leeuwenhoek-flea.jpg" width="900" height="709" loading="lazy"
+        <img src="../art/stories/vermeer/leeuwenhoek-flea.jpg" width="900" height="709" loading="lazy"
              alt="An engraving of a flea lying on its back, huge and hairy, its six jointed legs in the air, each ending in hooked claws.">
         <figcaption>A flea, lying on its back, drawn for Leeuwenhoek from what he saw through one of his microscopes.</figcaption>
       </figure>
@@ -197,7 +197,7 @@
       <p><b>Molière</b> — say "mol-YAIR" — lived at the same time as Vermeer, in Paris, and his plays are still performed. One of the most popular is <i>The Bourgeois Gentleman</i>, from 1670. In it a pretentious man called Monsieur Jourdain pays teachers to turn him into a gentleman, and is delighted to discover that he has been speaking prose all his life. Prose is just ordinary talk: anything that is not poetry.</p>
 
       <figure class="margin">
-        <img src="../art/rembrandt-night-watch.jpg" width="1200" height="1006" loading="lazy"
+        <img src="../art/stories/vermeer/rembrandt-night-watch.jpg" width="1200" height="1006" loading="lazy"
              alt="Rembrandt's huge painting of a company of guards with muskets and a banner, stepping out of shadow into light.">
         <figcaption>Rembrandt, <i>The Night Watch</i>, 1642. Rijksmuseum, Amsterdam.</figcaption>
       </figure>
@@ -237,7 +237,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-26 c13f710';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-26 26bd0f8';   // date + short commit hash; bump in the same commit as any change
   console.log('vermeer-girl-with-a-pearl-earring', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
@@ -408,15 +408,15 @@
   // ==========================================================================
   if (typeof cwStack === 'function') {
     cwStack(document.getElementById('blueStack'), [
-      { src: '../art/lapis-stone.jpg', w: 900, h: 1107,
+      { src: '../art/stories/vermeer/lapis-stone.jpg', w: 900, h: 1107,
         alt: 'A rough lump of deep blue rock, its broken face glittering with tiny gold specks.',
         caption: 'Lapis lazuli from the mines at Sar-e-Sang, in northern Afghanistan. This is a good piece; most of what comes out of the mine carries far more grey. The gold specks are pyrite.',
         name: 'the stone' },
-      { src: '../art/ultramarine-powder.jpg', w: 450, h: 375,
+      { src: '../art/stories/vermeer/ultramarine-powder.jpg', w: 450, h: 375,
         alt: 'A small heap of deep blue powder.',
         caption: 'Ultramarine: the blue washed out of the stone, ground fine. It took days of work, and most of the stone was thrown away.',
         name: 'the powder' },
-      { src: '../art/vermeer-turban-detail.jpg', w: 840, h: 580,
+      { src: '../art/stories/vermeer/vermeer-turban-detail.jpg', w: 840, h: 580,
         alt: 'A close view of the blue cloth of the turban, with the brush marks and fine cracks showing.',
         caption: 'And here it is on her head, close up. The cracks came later.',
         name: 'the turban' }
@@ -453,11 +453,11 @@
 
   if (typeof cwStack === 'function') {
     cwStack(delftPic, [
-      { src: '../art/vermeer-view-of-delft.jpg', w: 1920, h: 1601, ratio: 'calc(1920 / 1601)',
+      { src: '../art/stories/vermeer/vermeer-view-of-delft.jpg', w: 1920, h: 1601, ratio: 'calc(1920 / 1601)',
         alt: 'Vermeer’s painting of Delft seen across the water: a long row of brick walls, gates and roofs under a big cloudy sky, with one church tower lit by the sun.',
         caption: 'Johannes Vermeer, <i>View of Delft</i>, about 1660–61. Oil on canvas, 96.5 × 115.7 cm. Mauritshuis, The Hague. He painted it from across the harbour, on the south side of the town. The tower in the sunlight is the New Church, where he was baptised.',
         name: 'the painting' },
-      { src: '../art/delft-plan-blaeu-1649.jpg', w: 2400, h: 1887, ratio: 'calc(2400 / 1887)',
+      { src: '../art/stories/vermeer/delft-plan-blaeu-1649.jpg', w: 2400, h: 1887, ratio: 'calc(2400 / 1887)',
         alt: 'A coloured plan of Delft from above: red-roofed blocks and green gardens inside a moat, canals running through, ships in a harbour at the right.',
         caption: 'Delft from above, from Joan Blaeu’s book of town plans, 1649, five years before the gunpowder store blew up. East is at the top. Six places are marked; the houses are only right to the street, so those say <i>about here</i>. Tap the plan to use the magnifier, or pinch to zoom.',
         name: 'a map of the town' }

@@ -122,6 +122,9 @@ Each new story should lean on the ones before it. It does that in three ways.
   not inside pages. A new story adds at most one new piece of machinery, and that piece goes
   on a shelf for the next story to use. Vermeer added three because it was the first.
   Frankenstein should need none.
+- **In the pictures.** A story's pictures live in `art/stories/<slug>/`, its icon in
+  `art/icons/`, its gallery picture in `art/gallery/`; a picture two stories use moves to
+  `art/shared/` (the folders since 26 Sept 2026, `MANIFEST.md` under *Folders*).
 
 ## Saying what nobody knows
 

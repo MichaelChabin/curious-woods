@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" href="../art/van-gogh-icon-256.png">
-<link rel="apple-touch-icon" href="../art/van-gogh-icon-256.png">
+<link rel="icon" type="image/png" href="../art/icons/van-gogh-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/van-gogh-icon-256.png">
 <!--
   van-gogh-starry-night.html — story: Van Gogh, Starry Night.
   Third of the paintings series (23 Sep 2026), built on the Vermeer page.
   Story text and Michael's rulings: CWVault/claude/Story-Van-Gogh-Starry-Night.md
   Ruling: "Plainly, in his own terms, no drama." No diagnosis, no myth, no ear.
-  Painting: ../art/van-gogh-starry-night.jpg — MoMA, New York, 472.1941; the Google Art
+  Painting: ../art/stories/van-gogh/van-gogh-starry-night.jpg — MoMA, New York, 472.1941; the Google Art
   Project scan as published on Wikimedia Commons, public domain; 1800 px wide.
   Colours: anchors measured off THIS scan at places the MoMA / Rochester Institute of
   Technology pigment maps identify. The sampler and magnifier are ../js/sampler.js.
@@ -41,7 +41,7 @@
     <div id="plateHome">
       <figure id="plate">
         <div class="frame" id="frame">
-          <img id="plateImg" src="../art/van-gogh-starry-night.jpg"
+          <img id="plateImg" src="../art/stories/van-gogh/van-gogh-starry-night.jpg"
                alt="A night sky rolling in great curls of blue over a sleeping village, with eleven blazing stars and a crescent moon, and a dark cypress tree standing up the left-hand side.">
         </div>
         <div class="toolwords" id="plateWords"></div>
@@ -159,7 +159,7 @@
 
 
       <figure class="still" id="japanPrints">
-        <img src="../art/hiroshige-sudden-shower.jpg" width="1000" height="1515" loading="lazy" alt="">
+        <img src="../art/stories/van-gogh/hiroshige-sudden-shower.jpg" width="1000" height="1515" loading="lazy" alt="">
         <figcaption></figcaption>
       </figure>
     </section>
@@ -190,7 +190,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-26 c13f710';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-26 26bd0f8';   // date + short commit hash; bump in the same commit as any change
   console.log('van-gogh-starry-night', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
@@ -346,19 +346,19 @@
   // ==========================================================================
   if (typeof cwStack === 'function') {
     cwStack(document.getElementById('japanPrints'), [
-      { src: '../art/hiroshige-sudden-shower.jpg', w: 1000, h: 1515, ratio: 'calc(1000 / 1515)',
+      { src: '../art/stories/van-gogh/hiroshige-sudden-shower.jpg', w: 1000, h: 1515, ratio: 'calc(1000 / 1515)',
         alt: 'A Japanese woodblock print: rain falling in fine straight lines on a wooden bridge, where people hurry across under umbrellas and a straw cape, with a dark river below.',
         caption: 'Utagawa Hiroshige, <i>Sudden Shower over Shin-\u014Chashi Bridge and Atake</i>, 1857. Van Gogh owned this print.',
         name: 'the first print' },
-      { src: '../art/van-gogh-bridge-in-the-rain.jpg', w: 1000, h: 1376, ratio: 'calc(1000 / 1376)',
+      { src: '../art/stories/van-gogh/van-gogh-bridge-in-the-rain.jpg', w: 1000, h: 1376, ratio: 'calc(1000 / 1376)',
         alt: 'Van Gogh\u2019s oil painting of the same bridge in the rain, in stronger blues and greens, inside a wide orange border covered in Japanese characters.',
         caption: 'Vincent van Gogh, <i>Bridge in the Rain (after Hiroshige)</i>, 1887. He painted it in oil, changed the colours, and put a border round it copied from characters he could not read.',
         name: 'what Van Gogh made of it' },
-      { src: '../art/hiroshige-plum-park.jpg', w: 1000, h: 1470, ratio: 'calc(1000 / 1470)',
+      { src: '../art/stories/van-gogh/hiroshige-plum-park.jpg', w: 1000, h: 1470, ratio: 'calc(1000 / 1470)',
         alt: 'A Japanese woodblock print: the black trunk of a plum tree right across the front of the picture, white blossom on its branches, and a green orchard and red sky behind.',
         caption: 'Utagawa Hiroshige, <i>Plum Park in Kameido</i>, 1857. The tree in front is so close that you look past it rather than at it.',
         name: 'the second print' },
-      { src: '../art/van-gogh-flowering-plum.jpg', w: 1000, h: 1192, ratio: 'calc(1000 / 1192)',
+      { src: '../art/stories/van-gogh/van-gogh-flowering-plum.jpg', w: 1000, h: 1192, ratio: 'calc(1000 / 1192)',
         alt: 'Van Gogh\u2019s oil painting of the same plum tree, the trunk black across the front, the sky a flat red, with a border of Japanese characters down each side.',
         caption: 'Vincent van Gogh, <i>Flowering Plum Orchard (after Hiroshige)</i>, 1887. Two years later he put a cypress across the front of <i>Starry Night</i> the same way.',
         name: 'what he made of that one' }

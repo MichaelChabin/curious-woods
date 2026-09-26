@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" href="../art/SLUG-icon-256.png">
-<link rel="apple-touch-icon" href="../art/SLUG-icon-256.png">
+<link rel="icon" type="image/png" href="../art/icons/SLUG-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/SLUG-icon-256.png">
 <!--
   TEMPLATE — copy this file, do not edit it in place.
 
@@ -13,11 +13,16 @@
   way it is, and this file says WHAT to type. Read the pattern first, then fill this in.
 
   Copy to cw-deploys/active/<slug>.html and replace, in order:
-    SLUG         the file's own name, used for the icon
+    SLUG         the file's own name, used for the icon (art/icons/SLUG-icon-256.png)
     TITLE        the page title, "Name: Thing"
     YEAR         the plain year, and YEAR+10000 for the after-the-ice count
     ART          the main picture's file name, W and H its pixel size
+    STORY        the short folder name for this story's pictures (vermeer, hokusai, van-gogh)
   Then delete every comment marked DELETE once you have done what it says.
+
+  Where the pictures go (26 Sept 2026; MANIFEST.md, Folders): the tab icon in art/icons/,
+  the story's own pictures in art/stories/STORY/, the gallery picture in art/gallery/, a
+  picture another story already uses in art/shared/. Maps stay in art/maps/.
 
   Nothing on this page is styled here. The look is ../css/story.css. A page sets exactly
   one thing of its own: --aspect, the main picture's shape.
@@ -50,7 +55,7 @@
     <div id="plateHome">
       <figure id="plate">
         <div class="frame" id="frame">
-          <img id="plateImg" src="../art/ART"
+          <img id="plateImg" src="../art/stories/STORY/ART"
                alt="DELETE: describe the picture for someone who cannot see it. Plain, concrete, no interpretation.">
         </div>
         <div class="toolwords" id="plateWords"></div>
@@ -97,7 +102,7 @@
     <!-- A MARGIN PICTURE is a glance. It has its own caption and the text NEVER mentions it.
          Keep it around 900 px wide. -->
     <figure class="margin">
-      <img src="../art/SOMETHING.jpg" width="900" height="000" loading="lazy" alt="DELETE">
+      <img src="../art/stories/STORY/SOMETHING.jpg" width="900" height="000" loading="lazy" alt="DELETE">
       <figcaption>DELETE: what it is, in one or two sentences.</figcaption>
     </figure>
 
@@ -129,7 +134,7 @@
          It may be a stack (see the script below). -->
     <figure class="breakout pic" id="picSOMETHING" style="--pic: calc(W / H)">
       <div class="frame" id="frameSOMETHING">
-        <img src="../art/SOMETHING.jpg" width="0000" height="0000" loading="lazy" alt="DELETE">
+        <img src="../art/stories/STORY/SOMETHING.jpg" width="0000" height="0000" loading="lazy" alt="DELETE">
       </div>
       <div class="toolwords">
         <button class="word" id="picDrop" type="button" hidden>Magnifier off</button>
@@ -254,9 +259,9 @@
   // ==========================================================================
   if (typeof cwStack === 'function') {
     cwStack(document.getElementById('picSOMETHING'), [
-      { src: '../art/ONE.jpg', w: 0, h: 0, ratio: 'calc(0 / 0)', alt: 'DELETE',
+      { src: '../art/stories/STORY/ONE.jpg', w: 0, h: 0, ratio: 'calc(0 / 0)', alt: 'DELETE',
         caption: 'DELETE.', name: 'the first thing' },
-      { src: '../art/TWO.jpg', w: 0, h: 0, ratio: 'calc(0 / 0)', alt: 'DELETE',
+      { src: '../art/stories/STORY/TWO.jpg', w: 0, h: 0, ratio: 'calc(0 / 0)', alt: 'DELETE',
         caption: 'DELETE.', name: 'the second thing' }
     ]);
   }

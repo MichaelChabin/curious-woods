@@ -153,7 +153,7 @@
 </div>
 
 <script>
-var CW_VERSION = '2026-08-13 b32d541'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-09-26 26bd0f8'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 (() => {
   const canvas=document.getElementById('c'), ctx=canvas.getContext('2d');
   let viewW=0,viewH=0;
@@ -209,7 +209,7 @@ var CW_VERSION = '2026-08-13 b32d541'; try { console.log('Curious Woods · ' + d
   }
 
   // ---- palettes ----
-  // The real ones from ../art/palettes.json, embedded so the bench still works from
+  // The real ones from ../art/palette/palettes.json, embedded so the bench still works from
   // file://, and re-fetched at load so it tracks the file if it changes. They declare
   // glass colours, not prime assignments, so primes are chosen from each palette by
   // hue separation (see assignPrimes).
@@ -560,9 +560,9 @@ var CW_VERSION = '2026-08-13 b32d541'; try { console.log('Curious Woods · ' + d
     rot++; buildShops(); renderShops(); strip(); draw();
   });
 
-  // Track ../art/palettes.json when it is reachable; fall back to the embedded copy
+  // Track ../art/palette/palettes.json when it is reachable; fall back to the embedded copy
   // so the bench still works opened straight off disk.
-  fetch('../art/palettes.json').then(r=>r.json()).then(j=>{
+  fetch('../art/palette/palettes.json').then(r=>r.json()).then(j=>{
     if (!j || !Array.isArray(j.palettes)) return;
     PALETTES = j.palettes.map(p=>({ id:p.id, name:p.name,
       colors:(p.colors||[]).map(c=>c && c.hex).filter(Boolean) }))

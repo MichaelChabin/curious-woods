@@ -16,18 +16,18 @@ maps:
   - region: britain-and-geneva   # Necker's World, after More
 icon:
   drawn: "The Necker cube in ink, twelve lines, nothing else."   # Michael, 25 Sept: the cube is the gallery icon; 26 Sept: no copper dot, simply the cube
-  file: art/necker-cube-icon-256.png
-picture: art/necker-cube-gallery.png   # the gallery picture: the cube drawn as a mark, square, 600 px (built 25 Sept)
+  file: art/icons/necker-cube-icon-256.png
+picture: art/gallery/necker-cube-gallery.png   # the gallery picture: the cube drawn as a mark, square, 600 px (built 25 Sept)
 frame: "#4a5866"   # "a grey-blue, close to the ink"; the hex chosen at hanging, 25 Sept (Michael's yes)
 frame-width: 10
 size: medium
 images:   # every photograph on the page; source, author, licence (build, 25 Sept)
-  - file: art/necker-letter-1832-pp336-337.png
+  - file: art/stories/necker/necker-letter-1832-pp336-337.png
     what: "The letter, pp. 336–337 of the Philosophical Magazine, November 1832"
     source: "Michael's scan"
     author: "Michael Chabin, 2026"
     licence: "Michael's own; the printed pages are 1832 and public domain"
-  - file: art/crystal-calcite.jpg
+  - file: art/stories/necker/crystal-calcite.jpg
     source: "Michael's photograph"
     author: "Michael Chabin, 2026"
     licence: "Michael's own"
@@ -36,34 +36,34 @@ images:   # every photograph on the page; source, author, licence (build, 25 Sep
     author: "Michael Chabin, 2026"
     licence: "Michael's own"
     note: "In art/ but not on the page: the story's five crystals do not include fluorite"
-  - file: art/crystal-salt.jpg
+  - file: art/stories/necker/crystal-salt.jpg
     source: "Wikimedia Commons, File:Halit Natriumchlorid.jpg"
     author: "Hans-Joachim Engelhardt"
     licence: "CC BY-SA 4.0"
-  - file: art/crystal-alum.jpg
+  - file: art/stories/necker/crystal-alum.jpg
     source: "Wikimedia Commons, File:Kaaliumi maarjase monikristallid2.JPG (two potassium alum crystals, grown at home in about three months)"
     author: "Maxim Bilovitskiy"
     licence: "CC BY-SA 3.0 EE"
     note: "The suggested File:Potassium_alum_octahedral_crystal.jpg (Ude, CC BY-SA 3.0) is photographed face-on and reads as a hexagon, not an octahedron"
-  - file: art/crystal-diamond.jpg
+  - file: art/stories/necker/crystal-diamond.jpg
     source: "Wikimedia Commons, File:Octahedral diamond (Mir Kimberlite; Mirnyy, Siberia, Russia) 1 (25177430258).jpg"
     author: "James St. John"
     licence: "CC BY 2.0"
     note: "The suggested File:Rough_Diamond.jpg (CC0) is a fragment, not an octahedron"
-  - file: art/crystal-sugar.jpg
+  - file: art/stories/necker/crystal-sugar.jpg
     source: "Wikimedia Commons, File:Sucrose crystals.JPG (table sugar crystals, about 1 cm)"
     author: "Nachovfranco"
     licence: "CC BY-SA 4.0"
   # Not photographs, but on the page and from outside:
-  - file: art/duck-rabbit-1899.png
+  - file: art/stories/necker/duck-rabbit-1899.png
     source: "Wikimedia Commons, File:PSM V54 D328 Optical illusion of a duck or a rabbit head (cropped).png — Popular Science Monthly vol. 54, 1899 (Jastrow); recoloured to the story ink"
     author: "Unknown"
     licence: "Public domain"
-  - file: art/rubin-vase.svg
+  - file: art/stories/necker/rubin-vase.svg
     source: "Wikimedia Commons, File:Two silhouette profile or a white vase.svg; recoloured to the story ink"
     author: "Ian Remsen"
     licence: "CC0"
-  - file: art/brain-cutaway.jpg
+  - file: art/stories/necker/brain-cutaway.jpg
     source: "The cutaway painting from active/about-your-brain.html, saved as a file"
     author: "Curious Woods"
     licence: "CW's own"

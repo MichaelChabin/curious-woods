@@ -12,16 +12,16 @@ maya: none            # Remember is not summoned: the practice queue does not ex
 status: live, hung 22 Sept; Michael has seen it ("This is beautiful", 21 Sept); Johannes Vermeer's World added the same day
 built: cw-deploys/active/vermeer-girl-with-a-pearl-earring.html   # hung 22 Sept; the experiments address redirects
 icon:
-  from: art/vermeer-girl-pearl-earring.jpg
+  from: art/stories/vermeer/vermeer-girl-pearl-earring.jpg
   crop: [440, 500, 1000, 1060]      # eyes, lips, the blue, and the pearl
-  file: art/vermeer-icon-256.png
+  file: art/icons/vermeer-icon-256.png
 gallery:                           # for stories/gallery.json, when hung
-  picture: art/vermeer-girl-with-a-pearl-earring-gallery.jpg   # the whole painting, 600 px wide (22 Sept)
+  picture: art/gallery/vermeer-girl-with-a-pearl-earring-gallery.jpg   # the whole painting, 600 px wide (22 Sept)
   frame: "#3d6e92"                 # the ultramarine itself, measured off the turban
   frameWidth: 12
   size: medium
 image:
-  file: art/vermeer-girl-pearl-earring.jpg
+  file: art/stories/vermeer/vermeer-girl-pearl-earring.jpg
   source: "Mauritshuis, The Hague, inventory 670 — the museum's own scan as published on Wikimedia Commons (1665_Girl_with_a_Pearl_Earring.jpg, 12285 × 14550)"
   license: "Public domain (the painting and a faithful reproduction of it). The Mauritshuis's own download terms ask for non-commercial use and the credit 'Mauritshuis, The Hague'; CW is both, and the caption credits it."
   note: "Taken from Commons' 1920 px rendition and resized to 1400 × 1658, quality 86, 640 KB. The post-2018 cleaned state."

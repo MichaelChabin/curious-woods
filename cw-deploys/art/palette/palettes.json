@@ -8,7 +8,7 @@
     {
       "id": "chartres_glass",
       "name": "Chartres",
-      "source": "Glass Chartres.jpg",
+      "source": "glass-chartres.jpg",
       "description": "Medieval cathedral glass, 12th–13th century",
       "colors": [
         { "hex": "#1a3a8c", "recipe": "cobalt oxide", "uncertain": false },
@@ -26,7 +26,7 @@
     {
       "id": "gaudi_glass",
       "name": "Gaudí",
-      "source": "Glass Gaudi.jpg",
+      "source": "glass-gaudi.jpg",
       "description": "Antoni Gaudí, Sagrada Família and Park Güell glass",
       "colors": [
         { "hex": "#c8a800", "recipe": "silver stain", "uncertain": false },
@@ -43,7 +43,7 @@
     {
       "id": "alhambra_tiles",
       "name": "Alhambra",
-      "source": "Alahambra.jpg",
+      "source": "alhambra.jpg",
       "description": "Nasrid dynasty tile patterns, Granada, 13th–14th century",
       "colors": [
         { "hex": "#1a3a8a", "recipe": "cobalt oxide", "uncertain": false },
@@ -61,7 +61,7 @@
     {
       "id": "hokusai_wave",
       "name": "Hokusai — The Great Wave",
-      "source": "Hokusai Great Wave.jpg",
+      "source": "hokusai-great-wave.jpg",
       "description": "Katsushika Hokusai, Under the Wave off Kanagawa, c. 1831",
       "colors": [
         { "hex": "#1a3a5c", "recipe": "iron, cyanide", "uncertain": false },
@@ -78,7 +78,7 @@
     {
       "id": "hiroshige_rain",
       "name": "Hiroshige — Sudden Shower",
-      "source": "Hiroshige Rain on Bridge.jpg",
+      "source": "hiroshige-rain-on-bridge.jpg",
       "description": "Utagawa Hiroshige, Sudden Shower over Shin-Ohashi Bridge, 1857",
       "colors": [
         { "hex": "#1a2a3a", "recipe": "iron, cyanide", "uncertain": false },
@@ -95,7 +95,7 @@
     {
       "id": "vangogh_starrynight",
       "name": "Van Gogh — Starry Night",
-      "source": "Van Gogh Stary Night.jpg",
+      "source": "van-gogh-starry-night.jpg",
       "description": "Vincent van Gogh, The Starry Night, 1889",
       "colors": [
         { "hex": "#1a2a6c", "recipe": "cobalt blue", "uncertain": false },
@@ -112,7 +112,7 @@
     {
       "id": "matisse_redroom",
       "name": "Matisse — The Red Room",
-      "source": "Matisse The Red Room.jpg",
+      "source": "matisse-the-red-room.jpg",
       "description": "Henri Matisse, The Dessert: Harmony in Red, 1908",
       "colors": [
         { "hex": "#c01830", "recipe": "cadmium red", "uncertain": false },
@@ -129,7 +129,7 @@
     {
       "id": "vermeer_pearl",
       "name": "Vermeer — Girl with a Pearl Earring",
-      "source": "Vermeer Girl with Perl Earring.jpeg",
+      "source": "vermeer-girl-with-a-pearl-earring.jpg",
       "description": "Johannes Vermeer, Girl with a Pearl Earring, c. 1665",
       "colors": [
         { "hex": "#0a0a0e", "recipe": "bone black", "uncertain": false },
@@ -146,7 +146,7 @@
     {
       "id": "manet_piper",
       "name": "Manet — The Piper",
-      "source": "Manet The Piper.jpeg",
+      "source": "manet-the-piper.jpg",
       "description": "Édouard Manet, The Fifer, 1866",
       "colors": [
         { "hex": "#a8b098", "recipe": "lead white, carbon black", "uncertain": true },
@@ -163,7 +163,7 @@
     {
       "id": "sargent_carnation",
       "name": "Sargent — Carnation, Lily, Lily, Rose",
-      "source": "Sargent Lilly and Rose.jpeg",
+      "source": "sargent-carnation-lily-lily-rose.jpg",
       "description": "John Singer Sargent, Carnation, Lily, Lily, Rose, 1885–86",
       "colors": [
         { "hex": "#2a3a30", "recipe": "viridian, carbon black", "uncertain": false },
@@ -180,7 +180,7 @@
     {
       "id": "earth_bluemarble",
       "name": "Earth — Blue Marble",
-      "source": "Earth.jpeg",
+      "source": "earth.jpg",
       "description": "NASA Blue Marble, composite satellite image, 2002",
       "colors": [
         { "hex": "#050508", "recipe": "no light, vacuum", "uncertain": false },
@@ -197,7 +197,7 @@
     {
       "id": "sun_granulation",
       "name": "Sun — Solar Surface",
-      "source": "Sun surface closup.jpg",
+      "source": "sun-surface-close-up.jpg",
       "description": "Inouye Solar Telescope, solar granulation, Maui, 2020",
       "colors": [
         { "hex": "#2a1a08", "recipe": "plasma, ~3000°C", "uncertain": false },
@@ -212,7 +212,7 @@
     {
       "id": "vangogh_cafeterrace",
       "name": "Van Gogh — Café Terrace",
-      "source": "Van Gogh Cafe Terrace.jpeg",
+      "source": "van-gogh-cafe-terrace.jpg",
       "description": "Vincent van Gogh, Café Terrace at Night, 1888",
       "colors": [
         { "hex": "#0a0a1a", "recipe": "carbon black, ultramarine", "uncertain": false },
@@ -229,7 +229,7 @@
     {
       "id": "degas_guitarist",
       "name": "Degas — The Guitarist",
-      "source": "Degas Guitarist.jpeg",
+      "source": "degas-the-guitarist.jpg",
       "description": "Edgar Degas, Lorenzo Pagans and Auguste De Gas, c. 1871–72",
       "colors": [
         { "hex": "#1a1208", "recipe": "carbon black, umber", "uncertain": false },
@@ -246,7 +246,7 @@
     {
       "id": "chinese_porcelain",
       "name": "Chinese Blue and White",
-      "source": "Chinese Porcelan.jpeg",
+      "source": "chinese-porcelain.jpg",
       "description": "Chinese blue and white porcelain, Qing dynasty",
       "colors": [
         { "hex": "#1a3070", "recipe": "cobalt oxide", "uncertain": false },

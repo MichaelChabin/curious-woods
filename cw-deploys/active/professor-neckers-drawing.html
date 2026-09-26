@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" href="../art/necker-cube-icon-256.png">
-<link rel="apple-touch-icon" href="../art/necker-cube-icon-256.png">
+<link rel="icon" type="image/png" href="../art/icons/necker-cube-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/necker-cube-icon-256.png">
 <!--
   professor-neckers-drawing.html — story: Professor Necker's Drawing (1832).
   Built 25 Sep 2026 from cw-deploys/template-story.html (Publishing-a-Story, stage 2);
@@ -14,9 +14,9 @@
   Story text: CWVault/claude/Story-Professor-Neckers-Drawing.md (Draft 2.3).
   The drawings: ../js/necker.js (new, 25 Sep; on the shelf for the next story). Nothing
   on this page moves on its own: the drawing does not change, the seeing does.
-  The letter: ../art/necker-letter-1832-pp336-337.png, Michael's scan, opened in the
+  The letter: ../art/stories/necker/necker-letter-1832-pp336-337.png, Michael's scan, opened in the
   picker window (cwWindow in ../js/map.js).
-  The brain: the cutaway painting from About Your Brain, as ../art/brain-cutaway.jpg; the
+  The brain: the cutaway painting from About Your Brain, as ../art/stories/necker/brain-cutaway.jpg; the
   hippocampus is the atlas's; the VTA is placed by eye (the atlas has no VTA).
   Maps: ../art/maps/switzerland and britain-and-geneva, rendered 25 Sep with
   experiments/maps/render.py.
@@ -79,7 +79,7 @@
     <!-- The crystals: a stack, drawing above photograph; the bold word moves it. -->
     <figure class="margin" id="crystals">
       <div id="crystalDrawing"></div>
-      <img src="../art/crystal-salt.jpg" width="1200" height="800" alt="">
+      <img src="../art/stories/necker/crystal-salt.jpg" width="1200" height="800" alt="">
       <figcaption></figcaption>
     </figure>
 
@@ -199,14 +199,14 @@
 
       <!-- Other drawings: a stack; the bold word moves it. -->
       <figure class="margin" id="others">
-        <img src="../art/duck-rabbit-1899.png" width="918" height="570" alt="">
+        <img src="../art/stories/necker/duck-rabbit-1899.png" width="918" height="570" alt="">
         <figcaption></figcaption>
       </figure>
 
       <p><b>Other drawings do this too.</b> There&rsquo;s a staircase that runs along the ceiling when you look at it the second way, drawn by a German scientist named Schr&ouml;der in 1858, and a drawing that is a duck or a rabbit depending on the moment, and a vase that turns into two faces looking at each other. There&rsquo;s one made of three lines meeting at a point, which is a corner coming toward you or going away, and it may be the simplest illusion there is. Any picture that two different solid things could have cast will do it.</p>
 
       <figure class="margin">
-        <img src="../art/crystal-alum.jpg" width="1200" height="797" loading="lazy"
+        <img src="../art/stories/necker/crystal-alum.jpg" width="1200" height="797" loading="lazy"
              alt="Two clear, colourless crystals of alum on dark cloth, each shaped like two four-sided pyramids joined at their bases.">
         <figcaption>Two crystals of alum, grown at home in about three months.</figcaption>
       </figure>
@@ -249,7 +249,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-26 9bac4e1';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-26 26bd0f8';   // date + short commit hash; bump in the same commit as any change
   console.log('professor-neckers-drawing', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
   const el = id => document.getElementById(id);
@@ -281,23 +281,23 @@
   // ==========================================================================
   const OCTA = 'drawn in plain lines as two four-sided pyramids joined at their bases, which can be seen with the middle square tipped toward you from above, or from below.';
   const CRYSTALS = [
-    { shape: 'cube', name: 'salt', src: '../art/crystal-salt.jpg', w: 1200, h: 800,
+    { shape: 'cube', name: 'salt', src: '../art/stories/necker/crystal-salt.jpg', w: 1200, h: 800,
       caption: 'Salt. A cube. Sodium and chlorine.',
       label: 'Salt, drawn in plain lines as a cube, which can be seen with either square in front.',
       alt: 'A clear cube of rock salt on a dark ground, three of its faces showing.' },
-    { shape: 'octahedron', name: 'alum', src: '../art/crystal-alum.jpg', w: 1200, h: 797,
+    { shape: 'octahedron', name: 'alum', src: '../art/stories/necker/crystal-alum.jpg', w: 1200, h: 797,
       caption: 'Alum. Two pyramids joined at their bases. Potassium, aluminium, sulphur, oxygen and water.',
       label: 'Alum, ' + OCTA,
       alt: 'Two clear, colourless crystals of alum on dark cloth, each shaped like two pyramids joined at their bases.' },
-    { shape: 'octahedron', name: 'diamond', src: '../art/crystal-diamond.jpg', w: 1168, h: 712,
+    { shape: 'octahedron', name: 'diamond', src: '../art/stories/necker/crystal-diamond.jpg', w: 1168, h: 712,
       caption: 'Diamond. The same shape as alum. Pure carbon.',
       label: 'Diamond, ' + OCTA,
       alt: 'A rough grey diamond on a pale ground, shaped like two pyramids joined at their bases, straight from the ground in Siberia.' },
-    { shape: 'box', name: 'calcite', src: '../art/crystal-calcite.jpg', w: 1200, h: 1076,
+    { shape: 'box', name: 'calcite', src: '../art/stories/necker/crystal-calcite.jpg', w: 1200, h: 1076,
       caption: 'Calcite. A box pushed sideways, the shape Professor Necker drew. Calcium, carbon and oxygen.',
       label: 'Calcite, drawn in plain lines as a box pushed sideways, which can be seen with either middle corner nearest you.',
       alt: 'A pale yellow, see-through block of calcite, its faces slanted, on a dark ground.' },
-    { shape: 'sugar', name: 'sugar', src: '../art/crystal-sugar.jpg', w: 1200, h: 772,
+    { shape: 'sugar', name: 'sugar', src: '../art/stories/necker/crystal-sugar.jpg', w: 1200, h: 772,
       caption: 'Sugar. A slanted block. Carbon, hydrogen and oxygen.',
       label: 'Sugar, drawn in plain lines as an upright block with a slanted depth, which can be seen with either end nearest you.',
       alt: 'A cluster of clear sugar crystals, each about a centimetre long, with flat slanted faces, on black.' }
@@ -315,10 +315,10 @@
     { src: cwNecker.url('staircase'), w: 412, h: 256, name: 'the staircase',
       caption: 'Schröder’s staircase, 1858.',
       alt: 'Schröder’s staircase in plain lines: a flight of steps seen from above, or the same flight hanging from a ceiling, seen from below.' },
-    { src: '../art/duck-rabbit-1899.png', w: 918, h: 570, name: 'the duck',
+    { src: '../art/stories/necker/duck-rabbit-1899.png', w: 918, h: 570, name: 'the duck',
       caption: 'A duck, or a rabbit. From a magazine of 1899.',
       alt: 'An old engraving of an animal’s head: a duck facing left, whose long beak is also a rabbit’s ears, for a rabbit facing right.' },
-    { src: '../art/rubin-vase.svg', w: 640, h: 480, name: 'the vase',
+    { src: '../art/stories/necker/rubin-vase.svg', w: 640, h: 480, name: 'the vase',
       caption: 'A vase, or two faces.',
       alt: 'A pale vase between two dark shapes, or two dark faces in profile looking at each other.' },
     { src: cwNecker.url('corner'), w: 412, h: 256, name: 'the corner',
@@ -333,7 +333,7 @@
   el('seeLetter').addEventListener('click', () => {
     const fig = document.createElement('figure');
     const img = document.createElement('img');
-    img.src = '../art/necker-letter-1832-pp336-337.png'; img.width = 2578; img.height = 2258;
+    img.src = '../art/stories/necker/necker-letter-1832-pp336-337.png'; img.width = 2578; img.height = 2258;
     img.alt = 'Two pages of an old printed magazine. Near the foot of the left-hand page is Professor Necker’s drawing of a box pushed sideways, with letters on its corners.';
     const cap = document.createElement('figcaption');
     cap.innerHTML = '<i>The London and Edinburgh Philosophical Magazine</i>, November 1832, pages 336 and 337.';
@@ -457,12 +457,12 @@
       '<defs><radialGradient id="nb-g"><stop offset="0%" stop-color="' + TINT + '" stop-opacity="1"/>' +
       '<stop offset="55%" stop-color="' + TINT + '" stop-opacity=".45"/><stop offset="100%" stop-color="' + TINT + '" stop-opacity="0"/></radialGradient>' +
       '<filter id="nb-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10"/></filter></defs>' +
-      '<image href="../art/brain-cutaway.jpg" x="0" y="0" width="1254" height="1254"/>' +
+      '<image href="../art/stories/necker/brain-cutaway.jpg" x="0" y="0" width="1254" height="1254"/>' +
       '<g id="nb-lit"></g>' +
       '<path id="nb-out" d="' + OUT_ROAD + '" fill="none" stroke="' + TINT + '" stroke-width="12" stroke-linecap="round" opacity="0"/>' +
       '<path id="nb-back" d="' + BACK_ROAD + '" fill="none" stroke="' + TINT + '" stroke-width="12" stroke-linecap="round" opacity="0"/>' +
       '<g id="nb-comet"></g>' +
-      '<image id="nb-whole" href="../art/brain-outside.jpg" x="0" y="0" width="1254" height="1254" style="transition:opacity 700ms"/>';
+      '<image id="nb-whole" href="../art/stories/necker/brain-outside.jpg" x="0" y="0" width="1254" height="1254" style="transition:opacity 700ms"/>';
     host.appendChild(svg);
     const q = s => svg.querySelector(s);
     const lit = q('#nb-lit'), outRoad = q('#nb-out'), backRoad = q('#nb-back'), comet = q('#nb-comet'), whole = q('#nb-whole');

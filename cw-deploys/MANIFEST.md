@@ -78,7 +78,7 @@ World* — `kaleidoscope-1817`, `great-wave-1830`, `beagle-1831`, `stereoscope-1
 and four places, `geneva`, `edinburgh`, `plymouth`, `portree` (28). Three older events are filed
 under `europe`, a card for stories set far away; the Necker page pins them to their towns on its
 own map (`place: 'geneva'`, `'london'`, `'paris'` in its picks) and leaves the shared record alone.
-`art/lapis-stone.jpg`, `art/ultramarine-powder.jpg`, `art/vermeer-turban-detail.jpg` — that stack's
+`art/stories/vermeer/lapis-stone.jpg`, `art/stories/vermeer/ultramarine-powder.jpg`, `art/stories/vermeer/vermeer-turban-detail.jpg` — that stack's
 three pictures (the stone from Sar-e-Sang, James St. John, CC BY 2.0; the powder, Commons, public
 domain; the turban cropped from our own scan).
 **`css/story.css` (22 Sep 2026)** — how every story page looks: the shell, the reading
@@ -116,8 +116,32 @@ both labs for Save, and by Geometry for the WIP guard and replay Cancel.
 
 **`art/` `models/` `stories/` `text/`** — assets, at the root of this folder.
 Pages in `active/` and `experiments/` reach them with `../` —
-`../art/palettes.json`, `../models/logs/geo_hexagon_triangle.json`.
+`../art/palette/palettes.json`, `../models/logs/geo_hexagon_triangle.json`.
 A page that moves between folders must have those paths checked.
+
+**The shape of `art/` (26 Sep 2026).** It was one flat folder of about seventy files until
+the Frankenstein pictures arrived; `tools/reorganise-art.py` moved it into folders by kind
+and by story and rewrote every reference (the script prints its plan without `--apply`).
+
+```
+art/
+  icons/            every *-icon-256.png and *-icon-256.svg (the browser-tab icons)
+  gallery/          every *-gallery.jpg and *-gallery.png (the pictures hung on the wall)
+  maps/             the base pictures for maps, as before
+  palette/          the sixteen paintings from March that palettes.json was made from, and palettes.json
+  stories/<slug>/   everything else, by the story page that names it
+  shared/           a picture named by more than one story (none yet)
+```
+
+Story folders: `vermeer`, `hokusai`, `van-gogh`, `necker`, `three-at-a-glance`, `frankenstein`
+(its pictures arrived before its page). Which story a picture belongs to is decided by
+which page names it, not by its name: `brain-cutaway.jpg` and `brain-outside.jpg` are in
+`stories/necker/` because Professor Necker's Drawing is the page that shows them. The
+palette paintings took plain names as they moved (`Vermeer Girl with Perl Earring.jpeg` is
+`palette/vermeer-girl-with-a-pearl-earring.jpg`); Glass Geometry's palette picker builds
+their path from `palettes.json`'s `source` as `../art/palette/<source>`. One file is still
+loose at the top: `crystal-fluorite.jpg`, which the Necker story names in its frontmatter
+but its page does not show. `art/_incoming/` is an empty drop folder.
 `stories/gallery.json` — **what hangs in the gallery** (20 Sep 2026; `CWVault/20-SPECS/Spec-Gallery.md`):
 a plain array, one entry per work, `{slug, title, href, picture, frame, frameWidth, size}`
 (`icon` was the field's name until 21 Sep and the page still reads it), hrefs and pictures
@@ -128,9 +152,9 @@ Adding a story to the gallery is adding its line here (Publishing-a-Story, stage
 edit. Three works today: The Man Who Learned Without Knowing (the star SVG, copper, medium),
 Three at a Glance (the three dots SVG, near-black, small), About Your Brain (the watercolour
 PNG, warm grey, medium), and since later the same day Glass Geometry, **titled *Stained Glass* on the wall since 22 Sep**
-(deep blue frame 14 px, large — the labs hang large; `art/glass-geometry-gallery.jpg`, since
+(deep blue frame 14 px, large — the labs hang large; `art/gallery/glass-geometry-gallery.jpg`, since
 22 Sep one of its own constructions, whole), then Hokusai: The Great Wave (20 Sep; since 21 Sep the whole print
-`art/hokusai-the-great-wave-gallery.jpg`, large, in the print's deepest blue `#2e4a63`). Frame colours are the salon mock's; no story
+`art/gallery/hokusai-the-great-wave-gallery.jpg`, large, in the print's deepest blue `#2e4a63`). Frame colours are the salon mock's; no story
 frontmatter declared one. **Left out for want of an icon:** Glass Multiplication (no icon yet;
 the check has warned since 15 Sep) and The Necker Cube. The lab is reachable from `labs.html`;
 the Necker Cube from the experiments index.
@@ -138,51 +162,51 @@ the Necker Cube from the experiments index.
 events and five story lead-ups, CW years, schema noted inside the file and aligned
 with `Spec-Timeline-Graph.md` §4 where fields overlap. Data the page merely reads;
 blurbs are unsourced first drafts, images unfilled.
-`art/brain-icon-256.png` — the watercolour brain at 256 px (13 Sep 2026), the main
+`art/icons/brain-icon-256.png` — the watercolour brain at 256 px (13 Sep 2026), the main
 index's icon for About Your Brain; the first icon-as-link on the site. The page's own tab
 icon reads the same file (Safari on iPad ignores data-URI favicons, tested 13 Sep, so
 the page points here rather than carrying the icon inline).
-`art/star-icon-256.svg` — the star with a copper dot (14 Sep 2026), the main index's
+`art/icons/star-icon-256.svg` — the star with a copper dot (14 Sep 2026), the main index's
 icon for The Man Who Learned Without Knowing; the second icon-as-link.
-`art/star-icon-256.png` — the same star rasterized (15 Sep), the story's tab and
+`art/icons/star-icon-256.png` — the same star rasterized (15 Sep), the story's tab and
 home-screen icon, because Safari wants a PNG there.
-`art/three-dots-icon-256.png` — three ink dots in a loose scatter on cream, one copper
+`art/icons/three-dots-icon-256.png` — three ink dots in a loose scatter on cream, one copper
 (16 Sep 2026), from *Three at a Glance*'s frontmatter; the story's tab and home-screen icon.
-`art/three-dots-icon-256.svg` is the same mark as vector, the main index's tile for the story
+`art/icons/three-dots-icon-256.svg` is the same mark as vector, the main index's tile for the story
 since it was hung on 16 Sep (the star's pattern).
-`art/geometry-icon-256.png` — **Glass Geometry's tab icon** (20 Sep 2026; recut 22 Sep): the
+`art/icons/geometry-icon-256.png` — **Glass Geometry's tab icon** (20 Sep 2026; recut 22 Sep): the
 central 1158 px square of the same construction that hangs as `glass-geometry-gallery.jpg`,
 resized to 256, so the tab and the wall show one work. The 20 Sep cut was from the
 Abstraction 1 postcard.
-`art/van-gogh-starry-night.jpg` — Vincent van Gogh, *The Starry Night*, 1889 (23 Sep 2026).
+`art/stories/van-gogh/van-gogh-starry-night.jpg` — Vincent van Gogh, *The Starry Night*, 1889 (23 Sep 2026).
 MoMA, New York, 472.1941; the Google Art Project scan as published on Wikimedia Commons, public
 domain; 1800 × 1425. The painting on `active/van-gogh-starry-night.html`; the sampler reads its
 pixels, so it must be served same-origin.
-`art/van-gogh-starry-night-gallery.jpg` — the same painting whole for the gallery, 600 × 475.
-`art/van-gogh-icon-256.png` — the story's tab icon, a square detail of the painting.
-`art/hiroshige-sudden-shower.jpg` — Utagawa Hiroshige, *Sudden Shower over Shin-Ōhashi Bridge
+`art/gallery/van-gogh-starry-night-gallery.jpg` — the same painting whole for the gallery, 600 × 475.
+`art/icons/van-gogh-icon-256.png` — the story's tab icon, a square detail of the painting.
+`art/stories/van-gogh/hiroshige-sudden-shower.jpg` — Utagawa Hiroshige, *Sudden Shower over Shin-Ōhashi Bridge
 and Atake*, 1857, public domain; recut 23 Sep at 1000 × 1515 (was 900 × 1364). First picture of
 the Van Gogh story's stack of the prints he copied (`js/stack.js`), with these three:
-`art/van-gogh-bridge-in-the-rain.jpg` — Van Gogh, *Bridge in the Rain (after Hiroshige)*, 1887,
-1000 × 1376; `art/hiroshige-plum-park.jpg` — Hiroshige, *Plum Park in Kameido*, 1857, 1000 × 1470;
-`art/van-gogh-flowering-plum.jpg` — Van Gogh, *Flowering Plum Orchard (after Hiroshige)*, 1887,
+`art/stories/van-gogh/van-gogh-bridge-in-the-rain.jpg` — Van Gogh, *Bridge in the Rain (after Hiroshige)*, 1887,
+1000 × 1376; `art/stories/van-gogh/hiroshige-plum-park.jpg` — Hiroshige, *Plum Park in Kameido*, 1857, 1000 × 1470;
+`art/stories/van-gogh/van-gogh-flowering-plum.jpg` — Van Gogh, *Flowering Plum Orchard (after Hiroshige)*, 1887,
 1000 × 1192. All four public domain; the page's References credit the Van Gogh Museum's and the
 Rijksmuseum's photographs. Added 23 Sep with the stack; a step whose file will not load is
 dropped, so the site would have shown a shorter stack, not a broken page, had they been left out.
-**Professor Necker's Drawing (25 Sep 2026)** — `art/necker-cube-icon-256.png`, the tab icon, and
-`art/necker-cube-gallery.png`, 600 × 600, the gallery picture: the Necker cube drawn as a mark,
-twelve ink lines on parchment (the copper dot on one corner taken off 26 Sep, Michael: simply the cube). `art/necker-letter-1832-pp336-337.png`
+**Professor Necker's Drawing (25 Sep 2026)** — `art/icons/necker-cube-icon-256.png`, the tab icon, and
+`art/gallery/necker-cube-gallery.png`, 600 × 600, the gallery picture: the Necker cube drawn as a mark,
+twelve ink lines on parchment (the copper dot on one corner taken off 26 Sep, Michael: simply the cube). `art/stories/necker/necker-letter-1832-pp336-337.png`
 — Michael's scan of the letter, pp. 336–337 of the *Philosophical Magazine*, November 1832,
-opened in a window. `art/crystal-calcite.jpg` and `art/crystal-fluorite.jpg` — Michael's
+opened in a window. `art/stories/necker/crystal-calcite.jpg` and `art/crystal-fluorite.jpg` — Michael's
 photographs (fluorite is not on the page). From Wikimedia Commons, 1200 px on the long side,
-JPEG 85: `art/crystal-salt.jpg` (Hans-Joachim Engelhardt, CC BY-SA 4.0),
-`art/crystal-alum.jpg` (Maxim Bilovitskiy, CC BY-SA 3.0 EE), `art/crystal-diamond.jpg`
-(James St. John, CC BY 2.0; 1168 px, its original size), `art/crystal-sugar.jpg`
-(Nachovfranco, CC BY-SA 4.0). `art/duck-rabbit-1899.png` — Jastrow's duck and rabbit from
+JPEG 85: `art/stories/necker/crystal-salt.jpg` (Hans-Joachim Engelhardt, CC BY-SA 4.0),
+`art/stories/necker/crystal-alum.jpg` (Maxim Bilovitskiy, CC BY-SA 3.0 EE), `art/stories/necker/crystal-diamond.jpg`
+(James St. John, CC BY 2.0; 1168 px, its original size), `art/stories/necker/crystal-sugar.jpg`
+(Nachovfranco, CC BY-SA 4.0). `art/stories/necker/duck-rabbit-1899.png` — Jastrow's duck and rabbit from
 *Popular Science Monthly*, 1899, public domain, recoloured to ink on transparent.
-`art/rubin-vase.svg` — a vase-or-faces after Ian Remsen's CC0 drawing, filled in the story ink.
-`art/brain-cutaway.jpg` — About Your Brain's cutaway painting, saved as a file (1254 px) so a
-story can show it without carrying the base64; `art/brain-outside.jpg` (26 Sep), its outside
+`art/stories/necker/rubin-vase.svg` — a vase-or-faces after Ian Remsen's CC0 drawing, filled in the story ink.
+`art/stories/necker/brain-cutaway.jpg` — About Your Brain's cutaway painting, saved as a file (1254 px) so a
+story can show it without carrying the base64; `art/stories/necker/brain-outside.jpg` (26 Sep), its outside
 painting the same way (886 px), for the whole brain a story shows first. Maps: `art/maps/switzerland.*`
 (5.6°E–10.8°E, 45.6°N–48°N) and `art/maps/britain-and-geneva.*` (19°W–20°E, 45.2°N–58.4°N since 26 Sep, wide and shallow; it was
 8°W–12°E, 44°N–59°N, portrait, and about twice too tall on an iPad),
@@ -190,30 +214,30 @@ rendered with `experiments/maps/render.py`. Full sources in the story's `images:
 `art/maps/france-and-the-low-countries.*`, `art/maps/france-to-the-north-sea.*` — two regions
 rendered 23 Sep 2026 for the Van Gogh story, the usual three files each (picture, JSON with
 contours, height grid), from `experiments/maps/render.py`.
-`art/hokusai-the-great-wave-gallery.jpg` — **the Great Wave, whole, for the gallery** (21 Sep
+`art/gallery/hokusai-the-great-wave-gallery.jpg` — **the Great Wave, whole, for the gallery** (21 Sep
 2026; Spec-Gallery's *A work on the wall* as changed that day: a painting or print hangs whole,
-never cropped): the Met's scan `art/hokusai-great-wave.jpg` resized to 600 × 414, quality 88,
+never cropped): the Met's scan `art/stories/hokusai/hokusai-great-wave.jpg` resized to 600 × 414, quality 88,
 76 KB. The gallery's picture for the story; the tab icon stays the square crest crop.
-`art/glass-geometry-gallery.jpg` — **Glass Geometry's picture on the wall, hung as *Stained
+`art/gallery/glass-geometry-gallery.jpg` — **Glass Geometry's picture on the wall, hung as *Stained
 Glass*** (22 Sep 2026): a construction Michael made in the lab — five circles, the vesica
 in rust, the petals in blue, green and olive on the paper — whole, 600 × 515, quality 88,
 19 KB, from the 1350 × 1158 render he handed over that day (not in `art/`). It replaced the
 Abstraction 1 postcard of 21 Sep, which had hung with its own mount and printed title.
-`art/enso-icon-256.png` — **Practice's picture, for now** (20 Sep 2026): a square from
+`art/icons/enso-icon-256.png` — **Practice's picture, for now** (20 Sep 2026): a square from
 Michael's photograph of a brushed ensō on a sunlit wall, the circle centred and the stone
 left out, resized to 256. Temporary on his word; the copper ensō drawn in the salon mock is
 the mark the spec describes and is what this stands in for.
-`art/jevons-1877.jpg` — the engraved portrait of William Stanley Jevons from *Popular Science
+`art/stories/three-at-a-glance/jevons-1877.jpg` — the engraved portrait of William Stanley Jevons from *Popular Science
 Monthly* volume 11, 1877 (Wikimedia Commons, `PSM V11 D660 William Stanley Jevons.jpg`, public
 domain, author unknown), greyscale, resized to 760 px wide, 184 KB. Read by
 `active/three-at-a-glance.html` beside the paragraph that introduces him; nothing else uses it.
-`art/hokusai-great-wave.jpg` — Katsushika Hokusai, *Under the Wave off Kanagawa*, about
+`art/stories/hokusai/hokusai-great-wave.jpg` — Katsushika Hokusai, *Under the Wave off Kanagawa*, about
 1830 (19 Sep 2026). The Metropolitan Museum of Art, accession JP1847, image DP141063, open
 access / CC0; the museum's 3 863 px scan resized to 1 800 px wide at quality 85, 452 KB. A
 strong impression with its paper margins, so the unprinted paper is part of what can be
 sampled. Read by `active/hokusai-the-great-wave.html` and by nothing else; the colour
 sampler reads its pixels off a canvas, which is why it must be served same-origin.
-`art/hokusai-icon-256.png` — the story's tab and home-screen icon (19 Sep 2026): the crest
+`art/icons/hokusai-icon-256.png` — the story's tab and home-screen icon (19 Sep 2026): the crest
 and its claws, cut from the print at 330,150–930,750 and resized to 256 px, per the Rulings'
 "a story's icon is a detail of the story itself".
 `art/maps/japan.webp` — Japan, 123°E–147°E, 29°N–46°N, standard parallel 37.5, 2000 × 1786, 150 KB
@@ -221,7 +245,7 @@ and its claws, cut from the print at 330,150–930,750 and resized to 256 px, pe
 it as the other regions have. Cropped west as far as the Chinese coast for two reasons: so
 Nagasaki's name is not against the picture's edge at 300 px, and so the mainland the Chinese
 ships came from is on the map.
-`art/vermeer-girl-pearl-earring.jpg` — Johannes Vermeer, *Girl with a Pearl Earring*, about 1665
+`art/stories/vermeer/vermeer-girl-pearl-earring.jpg` — Johannes Vermeer, *Girl with a Pearl Earring*, about 1665
 (21 Sep 2026). Mauritshuis, The Hague, inventory 670: the museum's own scan as published on
 Wikimedia Commons (public domain), taken from Commons' 1920 px rendition — Commons now serves
 only its standard thumbnail widths, and 2400 px returned an error page — and resized to
@@ -229,7 +253,7 @@ only its standard thumbnail widths, and 2400 px returned an error page — and r
 `active/vermeer-girl-with-a-pearl-earring.html`; the sampler reads its pixels, so the page
 must be served same-origin. The Mauritshuis's own download terms ask for non-commercial use and
 the credit *Mauritshuis, The Hague*; the caption carries it.
-`art/vermeer-icon-256.png` — the story's icon (21 Sep 2026): eyes, lips, the blue and the pearl,
+`art/icons/vermeer-icon-256.png` — the story's icon (21 Sep 2026): eyes, lips, the blue and the pearl,
 cut at 440,500–1000,1060. A crop of the pearl alone was tried first and read as a white blob
 at 256 px.
 `art/maps/netherlands.*` — 2.5°E–7.5°E, 50.7°N–53.7°N (21 Sep 2026, the Vermeer story's margin map).
@@ -240,20 +264,20 @@ it was tried in the margin first and was a sliver.
 replaced the same day by `north-sea-and-paris` and no longer used by any page.
 `art/maps/japan-and-china.*` — 110°E–146°E, 20°N–42°N (22 Sep 2026): the map under *Hokusai's World* —
 Edo, Nagoya, Kyoto, Nagasaki and Zhapu; the far places are cards.
-`art/egyptian-blue.jpg` — a heap of Egyptian blue powder, Wikimedia Commons ("Egyptian blue.jpg"),
+`art/stories/hokusai/egyptian-blue.jpg` — a heap of Egyptian blue powder, Wikimedia Commons ("Egyptian blue.jpg"),
 public domain, 456 px. Margin picture in *Hokusai: The Great Wave*, beside the Egyptian paragraph.
 `art/maps/north-sea-and-paris.*` — 3°W–12°E, 48.3°N–54.6°N (21 Sep 2026): the map under
 *Johannes Vermeer's World* — London, Woolsthorpe, Delft, Amsterdam, Utrecht and Paris.
-`art/rembrandt-night-watch.jpg` — Rembrandt, *The Night Watch*, 1642, Rijksmuseum SK-C-5; public
+`art/stories/vermeer/rembrandt-night-watch.jpg` — Rembrandt, *The Night Watch*, 1642, Rijksmuseum SK-C-5; public
 domain, via Wikimedia Commons, 1200 px wide. Margin picture in the Vermeer story's *More*.
-`art/leeuwenhoek-flea.jpg` — Leeuwenhoek's flea, figure 7 of the plate Wellcome Collection
+`art/stories/vermeer/leeuwenhoek-flea.jpg` — Leeuwenhoek's flea, figure 7 of the plate Wellcome Collection
 M0016633 (CC BY 4.0, credit in the page's References), cropped, 900 px. Margin picture in the
 Vermeer story's *More*; replaced the bacteria figures of 21 Sep, which read as too bare.
-`art/vermeer-view-of-delft.jpg` — Vermeer, *View of Delft*, Mauritshuis inv. 92, public domain,
+`art/stories/vermeer/vermeer-view-of-delft.jpg` — Vermeer, *View of Delft*, Mauritshuis inv. 92, public domain,
 1920 px. Opens full width in the Vermeer story when the Delft map is tapped.
-`art/delft-plan-blaeu-1649.jpg` — Blaeu's plan of Delft from the *Toonneel der steden*, 1649,
+`art/stories/vermeer/delft-plan-blaeu-1649.jpg` — Blaeu's plan of Delft from the *Toonneel der steden*, 1649,
 Atlas Van Loon copy via Commons, public domain, 2400 px (for the magnifier). With the above.
-`art/map-icon-256.png` — the map bench's tab icon (18 Sep 2026): a square of the world
+`art/icons/map-icon-256.png` — the map bench's tab icon (18 Sep 2026): a square of the world
 picture, 30°W to 30°E and 25°N to 85°N, cut from `art/maps/world.webp` and quantised to 96
 colours, 30 KB. Nothing drawn; the earth is the icon.
 `art/maps/` — **the base pictures for maps** (18 Sep 2026; `CWVault/claude/Spec-Maps.md`):
@@ -331,14 +355,14 @@ an iPad shows it — the story page of 14 Sep arrived with none of them:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" href="../art/<its-icon>.png">
+<link rel="icon" type="image/png" href="../art/icons/<its-icon>.png">
 ```
 
 - **Doctype and charset**, or the em-dashes depend on the server's header and a local
   server shows mojibake.
 - **Viewport**, or Safari lays the page out 980 px wide and shrinks it — and the page's
   own `@media` rules can never fire on an iPad.
-- **A tab icon that is a file in `art/`, never a `data:` URI** — Safari ignores inline
+- **A tab icon that is a file in `art/icons/`, never a `data:` URI** — Safari ignores inline
   icons (proved 13 Sep), and wants a PNG. The same file serves `apple-touch-icon`. The
   home page tile may use an SVG; the tab may not.
 - **Centred, at every width.** A page's content centres in the window — the reading
@@ -379,7 +403,7 @@ backstop for the Claude Code session that lands the file.
   standard's *centred at every width*; the columns are re-dealt only when their count
   changes on resize. Below a hairline: **Practice** centred, an ensō in a copper
   frame at 140 px with no visible title (the mark is the name; "Practice" is there for a
-  screen reader) — since later on 20 Sep the photograph `art/enso-icon-256.png`, temporarily,
+  screen reader) — since later on 20 Sep the photograph `art/icons/enso-icon-256.png`, temporarily,
   in place of the mock's drawn copper mark, linking to `experiments/trace.html` until the practice queue exists; at
   the right three plaques of one size, Saved Stories (`saved.html`), Labs (`labs.html`),
   Experiments (`experiments/index.html`), no pictures. **What comes and goes:** a slug in
@@ -394,7 +418,7 @@ backstop for the Claude Code session that lands the file.
   shape of Saved Stories (25 Sep 2026), read through `js/remember.js`. Each line leads back to
   the story it came from, with "take it off the list" under it. The practice itself (the tapping)
   comes later. The gallery's ensō opens it (25 Sep, Michael; it went to Trace before), and so does
-  the note under a story's Remember word. Tab icon `art/enso-icon-256.png`.
+  the note under a story's Remember word. Tab icon `art/icons/enso-icon-256.png`.
 - **`labs.html`** — **Labs**: Stained Glass (the word for Glass Geometry since 22 Sep, on
   Michael's word; the file, its URL and its page title are unchanged) and Glass Multiplication as words with their
   one-line labels from the old home page; no pictures. About Your Brain is an official app
@@ -406,7 +430,7 @@ backstop for the Claude Code session that lands the file.
   text: `CWVault/claude/Story-Professor-Neckers-Drawing.md`, Draft 2.3). Built and read at
   `experiments/`, **hung 25 Sep 2026** on Michael's word (stage 4): moved to `active/`, the old
   address redirected in `_redirects`, in `gallery.json` with the cube mark
-  (`art/necker-cube-gallery.png`), a slate frame `#4a5866` (the story asked for "a grey-blue,
+  (`art/gallery/necker-cube-gallery.png`), a slate frame `#4a5866` (the story asked for "a grey-blue,
   close to the ink"; Claude's hex, Michael's yes), width 10, medium. From
   `template-story.html`, on `css/story.css`, `placement: beside`: every picture in the left
   column level with the paragraph that names it. The drawings are `js/necker.js` (new): the cube
@@ -429,9 +453,9 @@ backstop for the Claude Code session that lands the file.
   terms, no drama — no diagnosis, no myth, no ear; three letters set apart carry it. Written
   straight into `active/` on his reading, so it had no experiments address and needs no
   redirect; **hung 23 Sep** with its line in `stories/gallery.json` (the whole painting
-  `art/van-gogh-starry-night-gallery.jpg`, 600 × 475, frame `#2a4192`, 12 px, large).
+  `art/gallery/van-gogh-starry-night-gallery.jpg`, 600 × 475, frame `#2a4192`, 12 px, large).
   `placement: across` with the left margin, on `../css/story.css`. The painting
-  `art/van-gogh-starry-night.jpg` with the magnifier and colour sampler from `../js/sampler.js`,
+  `art/stories/van-gogh/van-gogh-starry-night.jpg` with the magnifier and colour sampler from `../js/sampler.js`,
   anchors measured off this scan where the MoMA / RIT pigment maps name the paint. Maps through
   `../js/map.js`: `france-and-the-low-countries`, `france-to-the-north-sea` and `world`.
   Its timeline through `../js/timeline.js` on the shared `stories/world-events.json` and
@@ -442,7 +466,7 @@ backstop for the Claude Code session that lands the file.
   (21 Sep 2026; `CWVault/claude/Story-Vermeer-Girl-with-a-Pearl-Earring.md`), the second of the
   paintings series. **Hung 22 Sep 2026** (Publishing-a-Story stage 4): moved here from
   `experiments/`, `_redirects` keeping that address, and given its line in `stories/gallery.json`
-  from the story's `gallery:` block — the whole painting `art/vermeer-girl-with-a-pearl-earring-gallery.jpg`
+  from the story's `gallery:` block — the whole painting `art/gallery/vermeer-girl-with-a-pearl-earring-gallery.jpg`
   (600 × 711, tall), frame `#3d6e92` (the ultramarine off the turban), 12 px, medium. The first
   built to `Spec-Timeline-and-Map`: a date line at the head (the
   subtitle, as Hokusai's), no timeline in the story, and *Vermeer's World* written as data in the
@@ -499,7 +523,7 @@ backstop for the Claude Code session that lands the file.
   carry `draggable="false"` and `-webkit-user-drag: none`, because a native image drag fires
   `pointercancel` and kills a pan one move in (found on the bench, 20 Sep); and the ctrl-wheel
   delta is clamped to ±40 so one flick of a trackpad does not jump straight to 6×. Reads
-  `../art/hokusai-great-wave.jpg`, `../art/hokusai-icon-256.png` and `../art/maps/`. The sampler
+  `../art/stories/hokusai/hokusai-great-wave.jpg`, `../art/icons/hokusai-icon-256.png` and `../art/maps/`. The sampler
   needs the image same-origin, so the page must be served, not opened from disk. No Remember:
   Maya is absent and the practice queue does not exist. Checked at 1440, 1100, 834 and 390 px —
   no horizontal scroll, no console errors. **`maps/map.js` must move to `js/` before this page
@@ -507,9 +531,9 @@ backstop for the Claude Code session that lands the file.
   breaks on the move. **Not yet read on an iPad.**
 - **`glass-geometry.html`** — compass-and-straightedge construction environment;
   constructions become stained glass. **Hangs in the gallery since 20 Sep 2026** by
-  `art/geometry-icon-256.png`, a cut from one of its own postcards, which is also its tab
+  `art/icons/geometry-icon-256.png`, a cut from one of its own postcards, which is also its tab
   icon (the first it has had; stamp bumped the same day, nothing else in the file changed). Reads `../text/geometry-v1.json` for its
-  copy, `../art/palettes.json` for palettes, and `../models/` for the built-in
+  copy, `../art/palette/palettes.json` for palettes, and `../models/` for the built-in
   constructions. **Stands on the shared plane** (`../js/plane.js`, Phases 1–4):
   view state behind the plane's API, world y up, one zoom clamp, the emergent
   numbering's unit declared to the plane, the ambient lattice behind a Numbers
@@ -557,7 +581,7 @@ backstop for the Claude Code session that lands the file.
   (`CWVault/01-ACTIVE/Walk-Glass-Aug26.md`), and this lab stays live throughout.
 - **`about-your-brain.html`** — **About Your Brain.** An official app beside the two labs
   (Michael's ruling, 13 Sep 2026), and **the first card on the main index to link by icon**:
-  the watercolour brain at `../art/brain-icon-256.png`, icon and title one link. A short
+  the watercolour brain at `../art/icons/brain-icon-256.png`, icon and title one link. A short
   reading (neurons, eighty-six billion of them, a hundred trillion connections, a brain
   the weight of a large cantaloupe) and then a map: Michael's two brain watercolours —
   the outside view and the inside view, reached by the words *inside* / *outside* — with
@@ -572,7 +596,7 @@ backstop for the Claude Code session that lands the file.
   *earn*, no deposits, nothing stored). **Self-contained but for its icon**: both
   paintings are base64 in the file (4.1 MB), no shared scripts; the one `../` path is
   the tab icon, `<link rel="icon">` and `apple-touch-icon` both pointing at
-  `../art/brain-icon-256.png`. **19 Sep:** one `</div>` added to close the map row —
+  `../art/icons/brain-icon-256.png`. **19 Sep:** one `</div>` added to close the map row —
   it had been open since the 13 Sep revision, so the footnote sat in the row as a fourth
   column and the brain and its word columns hung left in a wide window; now the row and
   the note centre under the reading column at every width. Later the same day, on Michael's second report: below
@@ -596,7 +620,7 @@ backstop for the Claude Code session that lands the file.
 - **`the-man-who-learned-without-knowing.html`** — story: **The Man Who Learned Without
   Knowing** (text: `CWVault/claude/Story-The-Man-Who-Learned-Without-Knowing.md`), on the
   home page beside About Your Brain since 14 Sep 2026, linked by its icon
-  (`../art/star-icon-256.svg`, the star with a copper dot). The finished story page,
+  (`../art/icons/star-icon-256.svg`, the star with a copper dot). The finished story page,
   self-contained: the two-panel layout of UI-Language §1 — the narrative on the right,
   the **context membrane** on the left carrying the star, then the brain, then the
   inscription. The star (380 px stage, mirrored left-right, the road 6% of the star's
@@ -617,7 +641,7 @@ backstop for the Claude Code session that lands the file.
   standard added on Michael's word, 15 Sep** — the file had arrived opening with
   `<title>`: no doctype, no charset (its em-dashes are raw UTF-8 and showed as mojibake
   on a local server), no viewport, no icon, no stamp. Now: the five lines, the icon as
-  `../art/star-icon-256.png` (rasterized from the SVG, because Safari wants a PNG), and
+  `../art/icons/star-icon-256.png` (rasterized from the SVG, because Safari wants a PNG), and
   `</body></html>` at the foot; the narrative and script are untouched. **One
   consequence of the viewport line, reported:** the page's own rule stacks the panels
   below 800 css px, which could never fire while Safari laid it out at 980 — now an
@@ -635,7 +659,7 @@ backstop for the Claude Code session that lands the file.
   `00-PUBLISHING-A-STORY.md` — then changed the same day on Michael's reads, read by him on
   the Mac and the iPad, and **hung on the home page 16 Sep** (stage 4): moved from
   `experiments/Three_at_Glance.html`, which `_redirects` sends here, and given the third icon
-  tile beside the star, `../art/three-dots-icon-256.svg` with its title and no subtitle, as the
+  tile beside the star, `../art/icons/three-dots-icon-256.svg` with its title and no subtitle, as the
   story's frontmatter says. The story's text through
   *More*; the notes are not rendered.
   **Layout (Michael, 16 Sep; amends the Pictures-in-a-story ruling for this page):** the left
@@ -674,7 +698,7 @@ backstop for the Claude Code session that lands the file.
   at a twelfth of life's speed, a line of words as each leg lands, and *Again*. The engine, the
   region coordinates and the *Recognising 3* pathway are About Your Brain's; the other three
   pathways are written for this story and their times are set out in the story's notes for
-  Michael to check. Beside the Jevons paragraph, the engraving `../art/jevons-1877.jpg`.
+  Michael to check. Beside the Jevons paragraph, the engraving `../art/stories/three-at-a-glance/jevons-1877.jpg`.
   **Words** are bold and capitalised, and headings in the story are bold and half a line closer
   to their text (17 Sep); each experiment carries a 0.5 px border. **Graph labels** follow one
   convention: the vertical label rotated beside its axis and centred (*taps*, *time in
@@ -682,7 +706,7 @@ backstop for the Claude Code session that lands the file.
   *number you looked for*), and the legend only on the upper graph of a pair. **Nothing is stored.** Remember
   obeys the Maya flag and, since the text never refers to it, stays invisible while `maya` is
   false. **No References section**: the story has none yet. Reads `../js/cw-flags.js` and
-  `../art/three-dots-icon-256.png`. `CW_VERSION 2026-09-17 bf0397a`.
+  `../art/icons/three-dots-icon-256.png`. `CW_VERSION 2026-09-17 bf0397a`.
   Tested in Chrome (desktop app pane): round timing measured (Ready → dots 1.009 s, dots
   0.20 s, reveal 2.01 s later, fade 2.01 s after that, 0.61 s fade); preview and stop; full
   runs of *tap on 3* and *tap on 4*; every block level with its paragraph at 1280 wide, none
@@ -698,7 +722,7 @@ backstop for the Claude Code session that lands the file.
   experiments index. No redirect: its old URL is the gallery's.
 - **`gallery/`** — the three home-page mocks from the 15–20 Sep chat sessions:
   `home-mock-salon.html` (19–20 Sep, the salon hang Michael approved and the gallery was
-  built from; sixteen paintings from `art/` with placeholder titles), `home-mock-gallery.html`
+  built from; sixteen paintings from `art/palette/` with placeholder titles), `home-mock-gallery.html`
   and `home-mock-scatter.html` (15 Sep, the two hangs it was chosen over; given viewport,
   icon and a `2026-09-15 mock` stamp on 20 Sep so the check passes). Linked from the
   experiments index's Old Home Page entry.
@@ -715,7 +739,7 @@ backstop for the Claude Code session that lands the file.
   ×4, 880 Hz) stays stable. Pitch checked against the beaded-string formula in a script
   (110 Hz at 12 beads; 220 at 40 beads ×4). Origin: a projected piece in the Denver Art
   Museum children's area; footage and a timestamped catalogue in `_CW/Beads Analysis/`
-  (outside the deploy). Tab icon `art/beads-icon-256.png`. Not yet heard on an iPad.
+  (outside the deploy). Tab icon `art/icons/beads-icon-256.png`. Not yet heard on an iPad.
 - **`maps/`** — bench: **Maps** (18 Sep 2026; `CWVault/claude/Spec-Maps.md`, the bench of
   its build prompt). A map is a still picture of the ground with the story's marks on it,
   and nothing else. Two files here since 20 Sep, when `map.js` moved to `js/` (below, under
@@ -978,7 +1002,7 @@ backstop for the Claude Code session that lands the file.
 - **`fills-and-light.html`** — bench: two declared palettes, a resting one and a lit one,
   rather than one degraded. Both derived from the workshop's declared colour in OKLCH so
   hue never moves, with out-of-gamut results flagged rather than silently clipped. All
-  fifteen palettes from `../art/palettes.json` are imported, plus the colours the lab
+  fifteen palettes from `../art/palette/palettes.json` are imported, plus the colours the lab
   ships today. Showing a set — or selecting a pane — moves those panes to the lit palette;
   nothing is dimmed. Glass is flat with directional striations and seeds; inner cames and
   the pane frame carry separate colour and weight; highlights are elliptical, brighter
@@ -1118,7 +1142,7 @@ workbench: `brain-outside.jpg` and `brain-inside.png` (Michael's two watercolour
 `brain-views.svg` (the overlay the atlas embeds), `check-outside.png` /
 `check-inside.png` (the render checks), and `make_overlay.py` (edit the REGIONS tables
 and re-run to move a region). Source material for a shipping app, so it lives outside
-the publish directory; the icon it produced is `cw-deploys/art/brain-icon-256.png`.
+the publish directory; the icon it produced is `cw-deploys/art/icons/brain-icon-256.png`.
 
 `glass-panel-build-aug24.html` (frozen 1 Sep 2026) — the 24 Aug panel build of
 Glass Multiplication, `CW_VERSION 2026-08-24 e4cd030`, which sat uncommitted in

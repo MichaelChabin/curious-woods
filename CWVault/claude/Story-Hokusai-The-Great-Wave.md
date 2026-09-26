@@ -10,16 +10,16 @@ tools: [painting-timeline, colour-sampler, maps]
 maya: none            # Remember is not summoned: the practice queue does not exist yet
 status: built, unhung; words read once by Michael and revised (20 Sept)
 built: cw-deploys/active/hokusai-the-great-wave.html   # hung 20 Sept
-picture: art/hokusai-the-great-wave-gallery.jpg   # the whole print, 600 px wide, never cropped (Spec-Gallery, 21 Sept)
+picture: art/gallery/hokusai-the-great-wave-gallery.jpg   # the whole print, 600 px wide, never cropped (Spec-Gallery, 21 Sept)
 frame: "#2e4a63"                                  # the deepest blue in the print
 frame-width: 12
 size: large
 icon:                                             # the tab icon, square, per the Page standard; not the gallery picture
-  from: art/hokusai-great-wave.jpg
+  from: art/stories/hokusai/hokusai-great-wave.jpg
   crop: [330, 150, 930, 750]        # the crest and its claws
-  file: art/hokusai-icon-256.png
+  file: art/icons/hokusai-icon-256.png
 image:
-  file: art/hokusai-great-wave.jpg
+  file: art/stories/hokusai/hokusai-great-wave.jpg
   source: "The Metropolitan Museum of Art, New York, accession JP1847 (DP141063), open access"
   license: "CC0 / public domain"
   note: "Resized to 1800 px wide, quality 85, from the museum's 3863 px original. A strong, unfaded-blue impression with its paper margins."

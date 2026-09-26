@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="../art/geometry-icon-256.png">
-  <link rel="apple-touch-icon" href="../art/geometry-icon-256.png">
+  <link rel="icon" type="image/png" href="../art/icons/geometry-icon-256.png">
+  <link rel="apple-touch-icon" href="../art/icons/geometry-icon-256.png">
   <title>Curious Woods -- Geometry Workspace</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -349,7 +349,7 @@
 <script src="../js/plane.js?v=2026-08-13"></script>
 <script src="../js/cw-panel.js?v=2026-08-13"></script>
 <script>
-var CW_VERSION = '2026-09-20 417c012'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-09-26 26bd0f8'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 document.addEventListener('DOMContentLoaded', function() {
 'use strict';
 
@@ -3245,12 +3245,12 @@ canvas.addEventListener('drop', function(e) {
 
 // ============================================================
 // PALETTE DATA
-// What:    Loads art/palettes.json at startup and stores palette
+// What:    Loads art/palette/palettes.json at startup and stores palette
 //          definitions in PALETTES_DATA keyed by id. Provides
 //          fallback inline data if the fetch fails (Chartres, Gaudi).
 //          CRAFT_SWATCHES holds the special-material row (empty,
 //          clear glass, lead).
-// Depends: fetch() for art/palettes.json
+// Depends: fetch() for art/palette/palettes.json
 // Exposes: PALETTES_DATA (object), CRAFT_SWATCHES (array),
 //          CRAFT_FALLBACK (array), loadPalettesJSON()
 // ============================================================
@@ -3282,7 +3282,7 @@ function loadContentJSON() {
 }
 
 function loadPalettesJSON() {
-    fetch('../art/palettes.json')
+    fetch('../art/palette/palettes.json')
         .then(function(resp) { return resp.json(); })
         .then(function(json) {
             json.palettes.forEach(function(p) { PALETTES_DATA[p.id]=p; });
@@ -4467,7 +4467,7 @@ function buildPickerPalettes() {
         if (pal.id===state.palette.current) thumb.classList.add('selected');
         if (pal.source) {
             var img=document.createElement('img');
-            img.src='../art/'+encodeURIComponent(pal.source); img.alt=pal.name;
+            img.src='../art/palette/'+encodeURIComponent(pal.source); img.alt=pal.name;
             img.style.cssText='width:184px;height:184px;object-fit:contain;pointer-events:none;border-radius:2px;';
             img.onerror=function(){ buildSwatchFallback(thumb, pal); };
             thumb.appendChild(img);

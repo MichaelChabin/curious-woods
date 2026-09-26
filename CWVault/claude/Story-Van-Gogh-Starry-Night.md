@@ -5,7 +5,7 @@ related: Story-Pattern.md, Story-Vermeer-Girl-with-a-Pearl-Earring.md, Story-Hok
 placement: across, with a left margin
 page: cw-deploys/active/van-gogh-starry-night.html
 gallery: { slug: van-gogh-starry-night, title: "Van Gogh: Starry Night",
-  picture: art/van-gogh-starry-night-gallery.jpg, frame: "#2a4192", frameWidth: 12, size: large }
+  picture: art/gallery/van-gogh-starry-night-gallery.jpg, frame: "#2a4192", frameWidth: 12, size: large }
 ---
 
 # Starry Night
@@ -65,9 +65,9 @@ its spire is Dutch.
 
 ## What was built, 23 Sept
 
-**Art.** `art/van-gogh-starry-night.jpg`, 1800 × 1425, 738 KB — the Google Art Project
+**Art.** `art/stories/van-gogh/van-gogh-starry-night.jpg`, 1800 × 1425, 738 KB — the Google Art Project
 scan from Wikimedia Commons, public domain. A 600-px gallery copy, and a tab icon cut
-from the moon. `art/hiroshige-sudden-shower.jpg`, 900 × 1364, for the Japan door.
+from the moon. `art/stories/van-gogh/hiroshige-sudden-shower.jpg`, 900 × 1364, for the Japan door.
 Van Gogh's own copy of that print is still to fetch; it would make that margin picture a
 two-step stack — the print he owned, then the copy he made.
 
