@@ -9,7 +9,7 @@ touches: [Mary Shelley, Frankenstein, the Villa Diodati, the year without a summ
 links: [tambora, year-without-a-summer, byron-darkness, galvani, aldini-london, erasmus-darwin, ada-lovelace, faraday-induction, polidori-vampyre (not yet written)]
 tools: [magnifier, maps, timeline]              # js/sampler.js (magnifier only, no colour reading), js/map.js, js/timeline.js
 maya: none                                    # Remember is not summoned
-built: cw-deploys/experiments/have-you-thought-of-a-story.html   # stage 2, built 26 Sept; hung nowhere yet
+built: cw-deploys/active/have-you-thought-of-a-story.html   # hung 26 Sept as The Birth of Frankenstein; the experiments address redirects
 status: Draft 2 — 26 Sept 2026, on the Story-Pattern (object first, Mary's World, References). Replaces draft 1 of 15 Sept and the seed nodes frankenstein.md and villa-diodati.md. Michael's yes on the words, 26 Sept; the three open choices ruled the same day. Stage 1 done; build prompt is Prompt-Build-Have-You-Thought-of-a-Story.md.
 pillar: Stories (Frankenstein-11816 constellation; the hub story)
 intuitions: "#13 (what else was happening, and did it know), #17 (the sources disagree), #12, #16"

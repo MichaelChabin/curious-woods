@@ -439,6 +439,33 @@ backstop for the Claude Code session that lands the file.
   Michael). Back link to the gallery.
 
 ### active/
+- **`have-you-thought-of-a-story.html`** — **story: Have You Thought of a Story?** (26 Sep
+  2026). Built and read at `experiments/`, **hung 26 Sep 2026** on Michael's word (stage 4): moved
+  to `active/`, the old address redirected in `_redirects`, in `gallery.json` as **The Birth of
+  Frankenstein** with the notebook page, frame `#453d34`, 10, medium. Mary Shelley
+  and the night she saw Frankenstein, from `CWVault/claude/Story-Have-You-Thought-of-a-Story.md`,
+  copied from `template-story.html` onto the Vermeer arrangement (across, with a left
+  margin) with no new machinery. The object first: `art/stories/frankenstein/frankenstein-draft-21r.jpg`
+  (Bodleian, MS. Abinger c. 56, fol. 21r, CC BY-NC 4.0, credit in the caption), with the
+  magnifier and pinch from `../js/sampler.js` and no colour reading (the Delft pictures'
+  mode), control words *Magnifier off* and *The whole picture* under it. Four margin
+  pictures from the same folder: Finden's Diodati, Galvani's Tav. 3 and Aldini's Pl. 4 as a
+  stack in one slot (`../js/stack.js`, because one paragraph names both), the 1818 title page (sources in `_CW/art-originals/frankenstein/SOURCES.md`). *Mary's World*
+  on `../art/maps/london-to-bologna` (made for it, wide and shallow for the iPad), 1790–1832,
+  Tambora a card at the east edge; nine new shared
+  events went into `stories/world-events.json` and four places into `stories/places.json`
+  the same day. Tab icon `art/icons/frankenstein-icon-256.png`: a 700 px square of the full
+  scan at line 22, Mary's *Handsome* struck and Percy's *Beautiful* above it. Gallery
+  picture ready at `art/gallery/frankenstein-draft-21r-gallery.jpg`, frame `#453d34`
+  (the ink, measured), 10 px, medium; titled on the wall **The Birth of Frankenstein**, not the page's (Michael, 26 Sep: the story takes a while to
+  reach the night, and the name says it is worth it). No Remember (`maya: none`).
+  **Later, 26 Sep, on Michael's read:** *Darkness* is its own More entry, and *Read the poem*
+  opens Byron's poem in the window Necker's letter uses (`cwWindow`), the text of the first
+  printing (*The Prisoner of Chillon, and Other Poems*, 1816), checked line by line against
+  the Duke University copy's page images on the Internet Archive and kept in a `<template>` in
+  the page. The line lost six events (Leaves for France, Waterloo, "Darkness", Marries Shelley,
+  The book is finished, The Vampyre) and is 181 px tall on an iPad instead of 307, so the
+  whole map shows under the line and the panel even at 1024 × 768.
 - **`professor-neckers-drawing.html`** — story: **Professor Necker's Drawing** (25 Sep 2026;
   text: `CWVault/claude/Story-Professor-Neckers-Drawing.md`, Draft 2.3). Built and read at
   `experiments/`, **hung 25 Sep 2026** on Michael's word (stage 4): moved to `active/`, the old
@@ -728,32 +755,6 @@ backstop for the Claude Code session that lands the file.
   tested on an iPad, or in Safari by this session.**
 
 ### experiments/
-- **`have-you-thought-of-a-story.html`** — **story: Have You Thought of a Story?** (26 Sep
-  2026; stage 2, Built; hung nowhere, for Michael to read at its own address). Mary Shelley
-  and the night she saw Frankenstein, from `CWVault/claude/Story-Have-You-Thought-of-a-Story.md`,
-  copied from `template-story.html` onto the Vermeer arrangement (across, with a left
-  margin) with no new machinery. The object first: `art/stories/frankenstein/frankenstein-draft-21r.jpg`
-  (Bodleian, MS. Abinger c. 56, fol. 21r, CC BY-NC 4.0, credit in the caption), with the
-  magnifier and pinch from `../js/sampler.js` and no colour reading (the Delft pictures'
-  mode), control words *Magnifier off* and *The whole picture* under it. Four margin
-  pictures from the same folder: Finden's Diodati, Galvani's Tav. 3 and Aldini's Pl. 4 as a
-  stack in one slot (`../js/stack.js`, because one paragraph names both), the 1818 title page (sources in `_CW/art-originals/frankenstein/SOURCES.md`). *Mary's World*
-  on `../art/maps/london-to-bologna` (made for it, wide and shallow for the iPad), 1790–1832,
-  Tambora a card at the east edge; nine new shared
-  events went into `stories/world-events.json` and four places into `stories/places.json`
-  the same day. Tab icon `art/icons/frankenstein-icon-256.png`: a 700 px square of the full
-  scan at line 22, Mary's *Handsome* struck and Percy's *Beautiful* above it. Gallery
-  picture ready at `art/gallery/frankenstein-draft-21r-gallery.jpg`, frame `#453d34`
-  (the ink, measured), 10 px, medium; not in `gallery.json`. When it hangs, its title on the wall
-  is **The Birth of Frankenstein**, not the page's (Michael, 26 Sep: the story takes a while to
-  reach the night, and the name says it is worth it). No Remember (`maya: none`).
-  **Later, 26 Sep, on Michael's read:** *Darkness* is its own More entry, and *Read the poem*
-  opens Byron's poem in the window Necker's letter uses (`cwWindow`), the text of the first
-  printing (*The Prisoner of Chillon, and Other Poems*, 1816), checked line by line against
-  the Duke University copy's page images on the Internet Archive and kept in a `<template>` in
-  the page. The line lost six events (Leaves for France, Waterloo, "Darkness", Marries Shelley,
-  The book is finished, The Vampyre) and is 181 px tall on an iPad instead of 307, so the
-  whole map shows under the line and the panel even at 1024 × 768.
 - **`index-old.html`** — the home page as it stood from 13 to 20 Sep 2026 (two labs as
   words, three round icons, Experiments as a line), retired when the gallery took
   `index.html`. Recovered from git with its links rebased one folder up, given a tab icon

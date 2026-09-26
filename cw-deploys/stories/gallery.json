@@ -70,5 +70,14 @@
     "frame": "#4a5866",
     "frameWidth": 10,
     "size": "medium"
+  },
+  {
+    "slug": "have-you-thought-of-a-story",
+    "title": "The Birth of Frankenstein",
+    "href": "active/have-you-thought-of-a-story.html",
+    "picture": "art/gallery/frankenstein-draft-21r-gallery.jpg",
+    "frame": "#453d34",
+    "frameWidth": 10,
+    "size": "medium"
   }
 ]
