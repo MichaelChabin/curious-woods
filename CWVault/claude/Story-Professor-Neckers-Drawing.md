@@ -15,7 +15,7 @@ maps:
   - region: switzerland          # margin, beside the lab section; opens nothing
   - region: britain-and-geneva   # Necker's World, after More
 icon:
-  drawn: "The Necker cube in ink, twelve lines, one middle corner marked by a copper dot."   # Michael, 25 Sept: the cube is the gallery icon
+  drawn: "The Necker cube in ink, twelve lines, nothing else."   # Michael, 25 Sept: the cube is the gallery icon; 26 Sept: no copper dot, simply the cube
   file: art/necker-cube-icon-256.png
 picture: art/necker-cube-gallery.png   # the gallery picture: the cube drawn as a mark, square, 600 px (built 25 Sept)
 frame: "#4a5866"   # "a grey-blue, close to the ink"; the hex chosen at hanging, 25 Sept (Michael's yes)
@@ -76,7 +76,7 @@ status: Draft 2.3 — 25 Sept 2026. "The corner closest to A"; copper letters. D
 
 In 1832, a professor in Geneva was looking at a drawing like this one when it turned inside out.
 
-Look at it for a moment and it will do the same for you. Let your eyes rest on the middle of the drawing and relax. The drawing is a box, pushed sideways, with one corner nearest you. Wait, and that corner will be at the back, and a different corner will be nearest you.
+Look at it for a moment and it will do the same for you. Let your eyes rest on the middle of the drawing and relax. The drawing is a box, with one corner nearest you. Wait, and that corner will be at the back, and a different corner will be nearest you.
 
 Nothing in the drawing moved. Wait a little longer and the box turns back.
 
@@ -110,7 +110,7 @@ Most of the letter was about Mont Blanc. He had watched the snow on the mountain
 
 Then, near the end of the letter, he added the other thing he had been meaning to mention: his drawings.
 
-Tap *See the letter*. Professor Necker's drawing is at the bottom of the left-hand page, with letters on the corners so that he could talk about them. The drawing at the top of this story is the same box without the letters. Everything he says about it fits on one page and a half.
+Tap *See the letter*. Professor Necker's drawing is at the bottom of the left-hand page, with letters on the corners so that he could talk about them. The drawing at the top of this story is a plainer version of it. Everything he says about it fits on one page and a half.
 
 He told Brewster the three things he had noticed. Then he told him how he had proved to himself that the change depended on where his eye was resting. He had done it three ways, and to talk about them he used the letters on his drawing. The two corners that matter are the two in the middle, where three lines meet. He wrote an A beside one of them and an X beside the other.
 
@@ -214,25 +214,25 @@ Unchanged from *A Very Strange Cube*, Draft 4.4: 1812 to 1852, his side above th
 
 Pictures sit level with the paragraph that names them, never above their heading, and scroll with the text. The text never says where a picture is. Down the page:
 
-1. **Professor Necker's box**, beside the opening. His rhomboid, redrawn in our ink as bare lines of even weight, no letters, no dotted edges (Michael, 25 Sept: the lettered original is hard to turn; the text says this is the same box without the letters). Big enough for a finger (the finger experiment comes later, on this same figure or on the cube; see 5). About 225 px.
+1. **The Necker cube**, beside the opening, about 225 px, no controls. (Michael, 26 Sept: the cube, not his box, because the turn is easier to see in it, and the text says "a drawing like this one". Was: his rhomboid, redrawn.)
 2. **The map** (Switzerland, Geneva in copper), beside *What a crystallographer did*. Own caption; opens nothing.
 3. **The crystals**, a stack (`js/stack.js`) beside "It happened with all sorts of crystals." Ten steps: salt drawn, salt real; alum drawn, alum real; diamond drawn, diamond real; calcite drawn, calcite real; sugar drawn, sugar real. Each drawing bare lines in the cube's ink; each photograph public domain or CC, licence in frontmatter when found. The bold word moves it (*Next: real salt*, *Next: alum*...). Caption names the crystal and what it is made of.
 4. **The letter**, the word *See the letter* in the column beside "Tap *See the letter*." Hidden until tapped; then the scan of pp. 336–337 opens in the picker window at full column width and shuts the same way. Michael's scan, 25 Sept.
-4a. **His drawing, with his letters**, beside "He told Brewster the three things he had noticed" and the three proofs. The same box as picture 1, column size, with A just above the front middle corner and X just below the back middle corner, the letters bold, a little larger than the text, and in the copper the dots use (Michael, 25 Sept); the text says "the corner closest to A", since a letter is never on its corner (Michael, 25 Sept: reading the proofs, you want to see the labels). No controls.
-5. **The filled box**, beside "A filled face does the same thing." Three states, tapping cycles: A, the front face filled opaque, hiding the back middle corner; B, the back face filled, hiding the front middle corner; C, bare. Column size, about 135 px. Whether this is the rhomboid or the cube: the rhomboid, because the cube has not been introduced yet.
-6. **The Necker cube**, beside *The Necker cube*. Twelve lines, plain. Column size.
+4a. **His drawing, with his letters**, beside "He told Brewster the three things he had noticed" and the three proofs. The same box as picture 1, column size, with A just above the front middle corner and X just below the back middle corner, the letters bold, a little larger than the text, and in the copper the dots use (Michael, 25 Sept); the text says "the corner closest to A", since a letter is never on its corner (Michael, 25 Sept: reading the proofs, you want to see the labels). No controls. 26 Sept, Michael: the bold letters hid the corners; now regular weight, drawn behind the lines, a little away from each corner.
+5. **The filled cube**, beside "A filled face does the same thing." Three states, tapping cycles: A, the front square filled opaque, hiding the back square's middle corner; B, the back square filled, hiding the front one's; C, bare. Column size. (Michael, 26 Sept: the standard cube, which also stands for picture 6. Was: the rhomboid.)
+6. *(Removed 26 Sept, Michael: the filled cube just above it does the job.)*
 7. **The cube with two copper dots**, beside "The cube has a copper dot at each of the two middle corners." Column size. No controls.
 8. **I want to Remember this**, beside the last paragraph, fading in as it comes near.
-9. **The brain**, beside *The small pleasure* in More. Cutaway, VTA and hippocampus lit, the connection drawn, *again* only.
+9. **The brain**, beside *The small pleasure* in More. First the whole brain from outside; a tap takes the near half away (Michael, 26 Sept) and shows the cutaway with the VTA and the hippocampus lit and the loop drawn between them (Lisman and Grace: out from the hippocampus by way of the nucleus accumbens to the VTA, dopamine straight back); *again* only. Regions re-placed 26 Sept on Michael's question: the atlas's hippocampus was too far forward and tilted down at the back; it now runs under the thalamus and rises toward the back end of the corpus callosum.
 10. **Other drawings**, a stack beside *Other drawings do this too*. As before.
 11. **An alum crystal**, photograph, beside *Alum*. Already in the crystals stack; repeat here only if the stack photo is small.
-12. **Necker's World**, after More, full width.
+12. **Necker's World**, after More, full width. Map crop `britain-and-geneva` re-cut 26 Sept to 19°W–20°E, 45.2°N–58.4°N, wide and shallow (Michael: the portrait crop was about twice too tall to see on an iPad).
 
 **The drawings.** The box must be drawn so that the depth direction is clearly different from the slant of its front face; if the two are nearly parallel the faces lie on top of each other and the figure goes flat, with only two faces showing and no middle corners to look at (the first mock-up did this; Michael, 25 Sept). The mock-up's working figure: front face BL (14,220) BR (114,220) TR (142,112) TL (42,112) in a 240 box, back face offset (+82,−48). The two middle corners are then about 76 units apart, which at 225 px is about 71 px, enough for a fingertip.
 
 **More, format.** Each entry is one paragraph opening with a bold lead that ends in a full stop and says what the entry is about (*The colour of Mont Blanc.*, *The small pleasure.*), per Story-Pattern. Bold, not italic. The mock-up's first build lost the bold; fixed.
 
-The finger experiment is put to her on Necker's box (picture 1), so picture 1 is the one that must be finger-sized. Everything else is column-sized.
+The finger experiment is put to her on picture 1, so picture 1 is the one that must be finger-sized. Everything else is column-sized.
 
 ---
 

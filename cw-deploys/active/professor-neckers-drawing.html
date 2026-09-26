@@ -41,14 +41,15 @@
       <p class="subtitle">~11,832 after the ice, or 1832.</p>
     </div>
 
-    <!-- Picture 1: Necker's box, the one finger-sized figure. No controls. -->
+    <!-- Picture 1: the Necker cube, the one finger-sized figure (Michael, 26 Sep: the cube, not
+         his box, because the turn is easier to see in it). No controls. -->
     <figure class="margin">
       <div id="plate" data-opening="drawn"></div>
     </figure>
 
     <p>In 1832, a professor in Geneva was looking at a drawing like this one when it turned inside out.</p>
 
-    <p>Look at it for a moment and it will do the same for you. Let your eyes rest on the middle of the drawing and relax. The drawing is a box, pushed sideways, with one corner nearest you. Wait, and that corner will be at the back, and a different corner will be nearest you.</p>
+    <p>Look at it for a moment and it will do the same for you. Let your eyes rest on the middle of the drawing and relax. The drawing is a box, with one corner nearest you. Wait, and that corner will be at the back, and a different corner will be nearest you.</p>
 
     <p>Nothing in the drawing moved. Wait a little longer and the box turns back.</p>
 
@@ -98,7 +99,7 @@
       <button class="word" id="seeLetter" type="button">See the letter</button>
     </div>
 
-    <p>Tap <i>See the letter</i>. Professor Necker&rsquo;s drawing is at the bottom of the left-hand page, with letters on the corners so that he could talk about them. The drawing at the top of this story is the same box without the letters. Everything he says about it fits on one page and a half.</p>
+    <p>Tap <i>See the letter</i>. Professor Necker&rsquo;s drawing is at the bottom of the left-hand page, with letters on the corners so that he could talk about them. The drawing at the top of this story is a plainer version of it. Everything he says about it fits on one page and a half.</p>
 
     <!-- Picture 4a: his drawing, with his letters. -->
     <figure class="margin">
@@ -126,7 +127,8 @@
 
     <p>Hide either corner, and that corner&rsquo;s box is gone. Professor Necker did that with a pinhole. You can do it with a finger. Put a fingertip over one of the two middle corners of the drawing at the top of this story, either one, and keep looking. The drawing stops. Take your finger away and it starts again.</p>
 
-    <!-- Picture 5: the filled box. Tap cycles front, back, bare; at once, not animated. -->
+    <!-- Picture 5: the filled cube (Michael, 26 Sep; it was the box). Tap cycles front, back,
+         bare; at once, not animated. -->
     <figure class="margin">
       <div id="boxFilled"></div>
       <figcaption>Tap the filled drawing.</figcaption>
@@ -135,11 +137,6 @@
     <p>A filled face does the same thing. Only one of the two boxes has that face in front, so the drawing settles. Tap the filled drawing, and the other face fills instead, and the box seems to turn. Tap again, and both faces are empty, and the box starts turning on its own.</p>
 
     <h2>The Necker cube</h2>
-
-    <!-- Picture 6: the Necker cube, plain. -->
-    <figure class="margin">
-      <div id="cube"></div>
-    </figure>
 
     <p>Today we usually draw a plainer shape, which makes the effect easier to see. Instead of a slanted box, a cube: two squares, one a little above and to the right of the other, with their corners joined. Twelve lines. It turns for exactly the reason Professor Necker&rsquo;s box did. It is called the Necker cube, though he never drew a cube.</p>
 
@@ -244,15 +241,15 @@
 
 <!-- THE SHELVES. Tools live here, not inside pages. -->
 <script src="../js/cw-flags.js?v=2026-09-21"></script>
-<script src="../js/map.js?v=2026-09-26"></script>
+<script src="../js/map.js?v=2026-09-26b"></script>
 <script src="../js/timeline.js?v=2026-09-22b"></script>
 <script src="../js/stack.js?v=2026-09-22"></script>
-<script src="../js/necker.js?v=2026-09-25"></script>
+<script src="../js/necker.js?v=2026-09-26"></script>
 <script src="../js/remember.js?v=2026-09-25"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-26 c13f710';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-26 9bac4e1';   // date + short commit hash; bump in the same commit as any change
   console.log('professor-neckers-drawing', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
   const el = id => document.getElementById(id);
@@ -261,25 +258,22 @@
   // THE DRAWINGS — each says, for someone who cannot see it, what its two readings are.
   // ==========================================================================
   const BOX = 'Professor Necker’s box: a box pushed sideways, drawn in twelve plain lines. ';
-  const TWO = 'It can be seen two ways: with the upper of its two middle corners nearest you, or with the lower one nearest you.';
 
-  cwNecker(el('plate'), { shape: 'box', size: 225, label: BOX + TWO });
-
-  cwNecker(el('boxLettered'), { shape: 'box', size: 135, letters: true,
-    label: BOX + 'A copper A stands just above the upper middle corner, and a copper X just below the lower one. ' +
-           'It can be seen with the corner closest to A in front, or with the corner closest to X in front.' });
-
-  cwNecker(el('boxFilled'), { shape: 'box', size: 135, fill: 'front', cycle: true, label: {
-    front: 'The same box with its front face filled in, which hides the lower middle corner. Now it can be seen only one way, with the filled face nearest you. Tap to fill the other face.',
-    back:  'The same box with its back face filled in, which hides the upper middle corner. Now it can be seen only one way, with the filled face nearest you. Tap to empty both faces.',
-    bare:  'The same box with no face filled. It can be seen two ways again, with either middle corner nearest you. Tap to fill the front face.' } });
-
-  const CUBE = 'The Necker cube: two squares, one a little above and to the right of the other, with their corners joined, in twelve plain lines. ';
-  cwNecker(el('cube'), { shape: 'cube', size: 135,
+  const CUBE = 'A cube: two squares, one a little above and to the right of the other, with their corners joined, in twelve plain lines. ';
+  cwNecker(el('plate'), { shape: 'cube', size: 225,
     label: CUBE + 'It can be seen with the lower-left square in front, or with the upper-right square in front.' });
 
+  cwNecker(el('boxLettered'), { shape: 'box', size: 135, letters: true,
+    label: BOX + 'A copper A stands a little above the upper middle corner, and a copper X a little below the lower one. ' +
+           'It can be seen with the corner closest to A in front, or with the corner closest to X in front.' });
+
+  cwNecker(el('boxFilled'), { shape: 'cube', size: 135, fill: 'front', cycle: true, label: {
+    front: 'The cube with its lower-left square filled in, which hides the corner of the other square behind it. Now it can be seen only one way, with the filled square nearest you. Tap to fill the other square.',
+    back:  'The cube with its upper-right square filled in, which hides the corner of the other square behind it. Now it can be seen only one way, with the filled square nearest you. Tap to empty both.',
+    bare:  'The cube with neither square filled. It can be seen two ways again, with either square in front. Tap to fill the lower-left square.' } });
+
   cwNecker(el('cubeDots'), { shape: 'cube', size: 135, dots: true,
-    label: CUBE + 'A copper dot sits on each of the two middle corners. It can be seen with either dotted corner nearest you.' });
+    label: 'The Necker cube, in twelve plain lines. ' + 'A copper dot sits on each of the two middle corners. It can be seen with either dotted corner nearest you.' });
 
   // ==========================================================================
   // THE CRYSTALS — a stack: the drawing above the photograph, and round again.
@@ -344,7 +338,7 @@
     const cap = document.createElement('figcaption');
     cap.innerHTML = '<i>The London and Edinburgh Philosophical Magazine</i>, November 1832, pages 336 and 337.';
     fig.appendChild(img); fig.appendChild(cap);
-    cwWindow(fig, { anything: true });
+    cwWindow(fig, { anything: true, zoom: img });
   });
 
   // ==========================================================================
@@ -398,7 +392,7 @@
         why: 'Fifteen years later the same David Brewster printed Professor Necker’s letter.' },
       { id: 'scotland', year: 1821, side: 'person', label: 'Travels in Scotland', place: 'geneva',
         when: '1821 &middot; Geneva', title: 'Voyage en Écosse',
-        text: 'His book about his travels in Scotland and the Hebrides, the islands off its west coast, was published in Geneva. He had studied in Edinburgh from 1806 to 1808.' },
+        text: 'Professor Necker’s book about his travels in Scotland and the Hebrides, the islands off its west coast, was published in Geneva. He had studied in Edinburgh from 1806 to 1808.' },
       { ref: 'great-wave-1830', side: 'world',
         why: 'On the other side of the world, within two years of the letter.' },
       { ref: 'faraday-1831', side: 'world', place: 'london' },
@@ -408,15 +402,15 @@
         text: 'Mostly about Mont Blanc at sunset. The drawing was the last thing in it.' },
       { id: 'clinometer', year: 1832.7, side: 'person', label: 'His clinometer', place: 'edinburgh',
         when: '1832 &middot; Edinburgh', title: 'A compass for tilted rock',
-        text: 'He gave the Royal Society of Edinburgh a compass of his own design, for measuring quickly how steeply the layers of a rock are tilted.' },
+        text: 'Professor Necker gave the Royal Society of Edinburgh a compass of his own design, for measuring quickly how steeply the layers of a rock are tilted.' },
       { id: 'regne', year: 1835, side: 'person', label: 'Le règne minéral', place: 'paris',
         when: '1835 &middot; Paris', title: 'The mineral kingdom',
-        text: 'His book on sorting minerals the way naturalists sorted plants and animals. It was published in Paris.' },
+        text: 'Professor Necker’s book on sorting minerals the way naturalists sorted plants and animals. It was published in Paris.' },
       { ref: 'stereoscope-1838', side: 'world' },
       { ref: 'photography-1839', side: 'world', place: 'paris' },
       { id: 'skye', year: 1841, side: 'person', label: 'Moves to Skye', place: 'portree',
         when: '1841 &middot; Portree', title: 'Portree',
-        text: 'After his mother died he left Geneva and settled at Portree, on the Isle of Skye. He died there in 1861.' }
+        text: 'After his mother died, Professor Necker left Geneva and settled at Portree, on the Isle of Skye. He died there in 1861.' }
     ]
   };
   if (typeof cwWorld === 'function') cwWorld(el('theWorld'), WORLD);
@@ -430,34 +424,48 @@
     { ref: el('rememberRef'), list: '../practice.html' });
 
   // ==========================================================================
-  // THE BRAIN — the cutaway from About Your Brain, cut down to this story: two places lit
-  // and the road between them, a signal going out from the hippocampus and the answer
-  // coming back. "again" is the only control. Nothing is lit before she taps.
-  // Coordinates are in the painting's own 1254-pixel space. The hippocampus is the atlas's
-  // (IN.hippocampus); the VTA is placed by eye on the midbrain just above the pons, since
-  // the atlas has no VTA.
+  // THE BRAIN — About Your Brain's two paintings, cut down to this story. First the whole
+  // brain; a tap takes the near half away (Michael, 26 Sep) and shows the cutaway with two
+  // places lit: the VTA and the hippocampus, and the loop between them, a signal going out
+  // from the hippocampus and the answer coming back. "again" is the only control.
+  //
+  // Where the two places are, in the cutaway painting's own 1254-pixel space, placed by eye
+  // from the painted landmarks (26 Sep, rechecked on Michael's question; the atlas's own
+  // hippocampus sat too far forward and tilted the wrong way):
+  //   the hippocampus is not in the cut face; it lies deep in the temporal lobe, seen through.
+  //   Its head is low and forward, beside the top of the brainstem; its body runs back under
+  //   the thalamus; its tail rises behind the thalamus toward the back end of the corpus
+  //   callosum. So it tilts UP toward the back.
+  //   The VTA is a small patch at the front of the midbrain, just above the pons.
+  //   The loop is Lisman and Grace's (2005): the hippocampus's signal goes forward and down,
+  //   by way of the nucleus accumbens, to the VTA; the VTA's dopamine comes straight back.
   // ==========================================================================
   (function brain() {
     const NS = 'http://www.w3.org/2000/svg';
     const TINT = '#f2d58a';
-    const HIPPO = [480, 745, 110, 40, 10], VTA = [625, 680, 24, 18, 0];
-    const ROAD = 'M 480 745 C 530 770, 600 735, 625 680';
+    const HIPPO = [690, 665, 130, 30, -31], VTA = [618, 688, 24, 18, 0];
+    const OUT_ROAD = 'M 690 665 C 600 600, 480 610, 470 650 C 470 690, 560 700, 618 688';   // via the accumbens
+    const BACK_ROAD = 'M 618 688 C 640 700, 670 690, 690 665';                                // dopamine, straight back
     const host = el('brain'), again = el('brainAgain');
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', '0 0 1254 1254');
+    svg.setAttribute('width', '225'); svg.setAttribute('height', '225');   // the opening drawing's size: a glance, not a study
     svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label', 'A painting of the brain cut down the middle, seen from the side. Tap it to light two places.');
-    svg.setAttribute('width', '225'); svg.setAttribute('height', '225');   // the opening box's size: a glance, not a study
+    svg.setAttribute('aria-label', 'A painting of a brain, seen from the side. Tap it to take away the near half.');
     svg.style.display = 'block'; svg.style.cursor = 'pointer';
     svg.innerHTML =
       '<defs><radialGradient id="nb-g"><stop offset="0%" stop-color="' + TINT + '" stop-opacity="1"/>' +
       '<stop offset="55%" stop-color="' + TINT + '" stop-opacity=".45"/><stop offset="100%" stop-color="' + TINT + '" stop-opacity="0"/></radialGradient>' +
       '<filter id="nb-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10"/></filter></defs>' +
       '<image href="../art/brain-cutaway.jpg" x="0" y="0" width="1254" height="1254"/>' +
-      '<g id="nb-lit"></g><path id="nb-road" d="' + ROAD + '" fill="none" stroke="' + TINT + '" stroke-width="16" stroke-linecap="round" opacity="0"/>' +
-      '<g id="nb-comet"></g>';
+      '<g id="nb-lit"></g>' +
+      '<path id="nb-out" d="' + OUT_ROAD + '" fill="none" stroke="' + TINT + '" stroke-width="12" stroke-linecap="round" opacity="0"/>' +
+      '<path id="nb-back" d="' + BACK_ROAD + '" fill="none" stroke="' + TINT + '" stroke-width="12" stroke-linecap="round" opacity="0"/>' +
+      '<g id="nb-comet"></g>' +
+      '<image id="nb-whole" href="../art/brain-outside.jpg" x="0" y="0" width="1254" height="1254" style="transition:opacity 700ms"/>';
     host.appendChild(svg);
-    const lit = svg.querySelector('#nb-lit'), road = svg.querySelector('#nb-road'), comet = svg.querySelector('#nb-comet');
+    const q = s => svg.querySelector(s);
+    const lit = q('#nb-lit'), outRoad = q('#nb-out'), backRoad = q('#nb-back'), comet = q('#nb-comet'), whole = q('#nb-whole');
     const rand = (a, b) => a + Math.random() * (b - a);
 
     function spots(g, n, rMin, rMax, op) {
@@ -473,26 +481,31 @@
     }
 
     let raf = 0;
-    function run() {
+    function light() {
       cancelAnimationFrame(raf);
-      lit.innerHTML = spots(HIPPO, 14, 34, 56, 0.9) + spots(VTA, 6, 26, 38, 1);
-      road.setAttribute('opacity', '0.75');
-      svg.setAttribute('aria-label', 'A painting of the brain cut down the middle. Two places are lit: the hippocampus, low in the middle, and a pea-sized place deep in the middle just above the brainstem, which makes dopamine. A road joins them, and a signal runs from the hippocampus to the small place and back.');
-      const len = road.getTotalLength(), t0 = performance.now(), LEG = 900;
+      lit.innerHTML = spots(HIPPO, 16, 30, 50, 0.9) + spots(VTA, 6, 24, 36, 1);
+      outRoad.setAttribute('opacity', '0.6'); backRoad.setAttribute('opacity', '0.6');
+      svg.setAttribute('aria-label', 'The brain with its near half taken away, cut down the middle. Two places are lit: the hippocampus, deep inside, running back under the middle of the brain and rising toward the back; and a pea-sized place at the front of the brainstem, which makes dopamine. A signal runs forward from the hippocampus and round to the small place, and the answer comes straight back.');
+      const legs = [outRoad, backRoad], LEG = [1400, 700], t0 = performance.now();
       function frame(now) {
-        const t = (now - t0) / LEG;
-        if (t >= 2) { comet.innerHTML = ''; return; }
-        const f = t < 1 ? t : 2 - t;                       // out along the road, then back
-        const p = road.getPointAtLength(f * len);
-        comet.innerHTML = '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="48" fill="url(#nb-g)" filter="url(#nb-blur)"/>' +
-                          '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="16" fill="#fff8e0"/>';
+        let t = now - t0, i = 0;
+        while (i < legs.length && t > LEG[i]) { t -= LEG[i]; i++; }
+        if (i >= legs.length) { comet.innerHTML = ''; return; }
+        const p = legs[i].getPointAtLength(t / LEG[i] * legs[i].getTotalLength());
+        comet.innerHTML = '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="40" fill="url(#nb-g)" filter="url(#nb-blur)"/>' +
+                          '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="14" fill="#fff8e0"/>';
         raf = requestAnimationFrame(frame);
       }
       raf = requestAnimationFrame(frame);
       again.hidden = false;
     }
-    svg.addEventListener('click', () => { if (again.hidden) run(); });
-    again.addEventListener('click', run);
+    function open() {
+      svg.style.cursor = 'default';
+      whole.style.opacity = '0';                       // the near half goes away
+      setTimeout(() => { whole.remove(); light(); }, 750);
+    }
+    svg.addEventListener('click', () => { if (whole.isConnected && whole.style.opacity !== '0') open(); });
+    again.addEventListener('click', light);
   })();
 })();
 </script>

@@ -42,8 +42,8 @@ First used by the Vermeer story for the blue: stone, powder, turban.
 the same drawing as a 412 × 256 image for a stack. Shapes: Necker's `box` (his rhomboid), the
 `cube`, the `octahedron` in the cube's oblique view, `sugar` (an upright block, slanted depth),
 Schröder's `staircase`, the three-line `corner`. One even line weight in story.css's `--cw-ink`,
-no dotted hidden edges; `letters` sets Necker's A and X in copper at 22 CSS px whatever the
-size; `cycle` makes a tap fill the front face, then the back, then neither, at once. Nothing
+no dotted hidden edges; `letters` sets Necker's A and X in copper at body-text size, regular weight,
+drawn behind the lines and a little away from their corners (26 Sep; bold ones hid the corners); `cycle` makes a tap fill the front face, then the back, then neither, at once. Nothing
 animates, nothing is recorded, nothing counted: the drawing does not change, the seeing does.
 Each figure carries a description saying what its two readings are. First used by
 `active/professor-neckers-drawing.html`. **`map.js`, 26 Sep 2026 — layers** (Spec-Maps, *The ground has layers*): `cwMap(container,
@@ -55,7 +55,10 @@ label placement reads the ground with the layers composited in. No caller change
 pages that load `map.js` had their version query bumped to 2026-09-26 (and their stamps),
 so a cached copy does not show Greenland as bare high ground. **`map.js`, 25 Sep 2026:** the picker window is
 now `cwWindow(content, opts)`, which `cwMapWindow` stands on unchanged; with `anything: true`
-any other action (a tap on the content, a key, a scroll) closes it. Built for the letter in the
+any other action (a tap on the content, a key, a scroll of the page) closes it. 26 Sep:
+`opts.zoom` names a picture in the window that she can zoom and pan with the sampler's
+gestures (pinch or ctrl-wheel to 6×, drag or wheel to pan, double tap, a *Reset* word);
+touching that picture never closes the window. The Necker page asks for `map.js?v=2026-09-26b`. Built for the letter in the
 Necker story (a picture in a window, per the Rulings). The Necker page loads `map.js?v=2026-09-25`;
 the painting pages still ask for `?v=2026-09-22`, and nothing they call changed.
 **`remember.js` (25 Sep 2026, on Michael's yes)** — "I want to Remember this" and the practice
@@ -168,7 +171,7 @@ Rijksmuseum's photographs. Added 23 Sep with the stack; a step whose file will n
 dropped, so the site would have shown a shorter stack, not a broken page, had they been left out.
 **Professor Necker's Drawing (25 Sep 2026)** — `art/necker-cube-icon-256.png`, the tab icon, and
 `art/necker-cube-gallery.png`, 600 × 600, the gallery picture: the Necker cube drawn as a mark,
-twelve ink lines on parchment, one middle corner in copper. `art/necker-letter-1832-pp336-337.png`
+twelve ink lines on parchment (the copper dot on one corner taken off 26 Sep, Michael: simply the cube). `art/necker-letter-1832-pp336-337.png`
 — Michael's scan of the letter, pp. 336–337 of the *Philosophical Magazine*, November 1832,
 opened in a window. `art/crystal-calcite.jpg` and `art/crystal-fluorite.jpg` — Michael's
 photographs (fluorite is not on the page). From Wikimedia Commons, 1200 px on the long side,
@@ -179,8 +182,10 @@ JPEG 85: `art/crystal-salt.jpg` (Hans-Joachim Engelhardt, CC BY-SA 4.0),
 *Popular Science Monthly*, 1899, public domain, recoloured to ink on transparent.
 `art/rubin-vase.svg` — a vase-or-faces after Ian Remsen's CC0 drawing, filled in the story ink.
 `art/brain-cutaway.jpg` — About Your Brain's cutaway painting, saved as a file (1254 px) so a
-story can show it without carrying the base64. Maps: `art/maps/switzerland.*`
-(5.6°E–10.8°E, 45.6°N–48°N) and `art/maps/britain-and-geneva.*` (8°W–12°E, 44°N–59°N),
+story can show it without carrying the base64; `art/brain-outside.jpg` (26 Sep), its outside
+painting the same way (886 px), for the whole brain a story shows first. Maps: `art/maps/switzerland.*`
+(5.6°E–10.8°E, 45.6°N–48°N) and `art/maps/britain-and-geneva.*` (19°W–20°E, 45.2°N–58.4°N since 26 Sep, wide and shallow; it was
+8°W–12°E, 44°N–59°N, portrait, and about twice too tall on an iPad),
 rendered with `experiments/maps/render.py`. Full sources in the story's `images:` frontmatter.
 `art/maps/france-and-the-low-countries.*`, `art/maps/france-to-the-north-sea.*` — two regions
 rendered 23 Sep 2026 for the Van Gogh story, the usual three files each (picture, JSON with
@@ -404,13 +409,15 @@ backstop for the Claude Code session that lands the file.
   (`art/necker-cube-gallery.png`), a slate frame `#4a5866` (the story asked for "a grey-blue,
   close to the ink"; Claude's hex, Michael's yes), width 10, medium. From
   `template-story.html`, on `css/story.css`, `placement: beside`: every picture in the left
-  column level with the paragraph that names it. The drawings are `js/necker.js` (new): his box
-  at 225 px beside the opening, the lettered box, the filled box (tap cycles), the cube, the
-  cube with two copper dots. The crystals are a stack (`js/stack.js`), drawing above photograph,
-  salt, alum, diamond, calcite, sugar. *See the letter* opens Michael's scan in `cwWindow`. A
-  margin map of Switzerland, Geneva in copper. In *More*: the brain (the cutaway, the VTA and
-  hippocampus lit, a signal along the road between them, *again* only — the VTA placed by eye,
-  since the atlas has none), a stack of four other drawings, the alum photograph. *Necker's
+  column level with the paragraph that names it. The drawings are `js/necker.js` (new): the cube
+  at 225 px beside the opening (his box until 26 Sep), his lettered box, the filled cube (tap
+  cycles; it was the box, and the plain cube beside *The Necker cube* went with that change),
+  the cube with two copper dots. The crystals are a stack (`js/stack.js`), drawing above photograph,
+  salt, alum, diamond, calcite, sugar. *See the letter* opens Michael's scan in `cwWindow`, which she can zoom and pan (26 Sep). A
+  margin map of Switzerland, Geneva in copper. In *More*: the brain (26 Sep: the whole brain first; a tap takes the near half away and
+  lights the VTA and hippocampus, with Lisman and Grace's loop between them, *again* only; both
+  placed by eye on the painting — the atlas has no VTA, and its hippocampus sat too far forward
+  and tilted the wrong way), a stack of four other drawings, the alum photograph. *Necker's
   World*, 1812–1852, through `js/timeline.js` on the shared lists, on `britain-and-geneva`, Edo
   and Tambora as cards. Remember (`js/remember.js`) fades in beside the last paragraph and puts
   the cube in the practice list (`practice.html`). Its opening

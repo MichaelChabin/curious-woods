@@ -3,7 +3,7 @@
 
    cwMap(container, region, marks, opts)   the base picture in the box, its layers, the story's marks over it
    cwMapWindow(region, marks, opts)        the same map in the picker window from Glass Geometry
-   cwWindow(content, opts)           that window, holding anything (a picture); see below
+   cwWindow(content, opts)           that window, holding anything (a picture, zoomable); see below
    cwMap.load(url)                   fetch a region's JSON and resolve its picture beside it
    cwMap.toPixel / cwMap.toLonLat    the projection pair (below)
 
@@ -99,7 +99,13 @@
     /* a picture in the window (cwWindow): at the reading column's width, its caption under it */
     '.cw-map-window figure{margin:14px 0 0;}',
     '.cw-map-window figure img{display:block;width:700px;max-width:100%;height:auto;}',
-    '.cw-map-window figcaption{font-family:Georgia,serif;font-size:13px;line-height:1.35;color:#6b625a;margin-top:8px;max-width:700px;}'
+    '.cw-map-window figcaption{font-family:Georgia,serif;font-size:13px;line-height:1.35;color:#6b625a;margin-top:8px;max-width:700px;}',
+    /* a picture she can zoom and pan (cwWindow with opts.zoom): the sampler's gestures */
+    '.cw-zoom{position:relative;overflow:hidden;touch-action:none;cursor:zoom-in;user-select:none;-webkit-user-select:none;}',
+    '.cw-zoom.zoomed{cursor:grab;}',
+    '.cw-zoom img{transform-origin:0 0;-webkit-user-drag:none;user-select:none;}',
+    '.cw-zoom-reset{display:block;margin:8px 0 0;font-family:Georgia,serif;font-size:15px;font-weight:bold;color:#546A80;background:none;border:0;padding:0;cursor:pointer;}',
+    '.cw-zoom-reset:hover{color:#3d5266;}'
   ].join('\n');
   var style = document.createElement('style');
   style.textContent = css;
@@ -458,8 +464,14 @@
   // Professor Necker's Drawing: a picture in a window, per the Rulings, is this window).
   // opts.anything: any other action closes it too — a tap on the content, a key, a scroll
   // of the page. The drag handle is the one thing that does not.
+  // opts.zoom: an <img> inside the content that she can zoom and pan (26 Sep 2026, Michael,
+  // for the letter), with the sampler's gestures: pinch or ctrl-wheel (a trackpad pinch)
+  // zooms to 6x, one finger or a drag pans once zoomed, the wheel pans, a double tap zooms
+  // in or back out, and the word Reset appears while zoomed. Touching the picture never
+  // closes the window.
   function cwWindow(content, opts) {
     opts = opts || {};
+    var zoomBox = opts.zoom ? zoomable(opts.zoom) : null;
     var backdrop = document.createElement('div');
     backdrop.className = 'cw-map-backdrop';
     var win = document.createElement('div');
@@ -490,7 +502,7 @@
       win.classList.remove('visible');
       if (opts.anything) {
         document.removeEventListener('keydown', closeWindow, true);
-        window.removeEventListener('scroll', closeWindow, true);
+        window.removeEventListener('scroll', onPageScroll, true);
       }
       setTimeout(function () {
         if (win.parentNode) win.parentNode.removeChild(win);
@@ -500,10 +512,15 @@
     }
     backdrop.addEventListener('click', closeWindow);
     close.addEventListener('click', function (e) { e.stopPropagation(); closeWindow(); });
+    // the page scrolling closes it; the window's own contents scrolling does not
+    function onPageScroll(e) { if (e.target === document || e.target === document.documentElement) closeWindow(); }
     if (opts.anything) {
-      content.addEventListener('click', closeWindow);
+      content.addEventListener('click', function (e) {
+        if (zoomBox && (zoomBox.box.contains(e.target) || e.target === zoomBox.reset)) return;
+        closeWindow();
+      });
       document.addEventListener('keydown', closeWindow, true);
-      window.addEventListener('scroll', closeWindow, true);
+      window.addEventListener('scroll', onPageScroll, true);
     }
 
     var dragging = false, sx, sy, ox, oy;
@@ -524,6 +541,67 @@
     handle.addEventListener('pointercancel', function () { dragging = false; });
 
     return { close: closeWindow, window: win, position: position };
+  }
+
+  // Zoom and pan for one picture: the picture is wrapped in a box that clips it and moved
+  // with a transform, so the window keeps its size. Nothing is remembered once it closes.
+  function zoomable(img) {
+    var box = document.createElement('div'); box.className = 'cw-zoom';
+    img.parentNode.insertBefore(box, img); box.appendChild(img);
+    var reset = document.createElement('button'); reset.type = 'button'; reset.className = 'cw-zoom-reset';
+    reset.textContent = 'Reset'; reset.hidden = true;
+    box.parentNode.insertBefore(reset, box.nextSibling);
+    var s = 1, tx = 0, ty = 0, MAX = 6;
+    function apply() {
+      var w = box.clientWidth, h = box.clientHeight;
+      s = Math.min(MAX, Math.max(1, s));
+      if (s <= 1.001) { s = 1; tx = 0; ty = 0; }
+      tx = Math.min(0, Math.max(w - w * s, tx)); ty = Math.min(0, Math.max(h - h * s, ty));
+      img.style.transform = s > 1 ? 'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ')' : '';
+      reset.hidden = s === 1; box.classList.toggle('zoomed', s > 1);
+    }
+    function at(e) { var r = box.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+    function zoomAt(f, p) {
+      var ns = Math.min(MAX, Math.max(1, s * f)); f = ns / s;
+      tx = p[0] - (p[0] - tx) * f; ty = p[1] - (p[1] - ty) * f; s = ns; apply();
+    }
+    var pts = {}, pinch = null, last = null, lastTap = 0;
+    function two() { var k = Object.keys(pts); return k.length === 2 ? [pts[k[0]], pts[k[1]]] : null; }
+    box.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      try { box.setPointerCapture(e.pointerId); } catch (x) {}
+      pts[e.pointerId] = at(e);
+      var t = two();
+      if (t) { pinch = { d: Math.hypot(t[0][0] - t[1][0], t[0][1] - t[1][1]), m: [(t[0][0] + t[1][0]) / 2, (t[0][1] + t[1][1]) / 2] }; last = null; lastTap = 0; }
+      else {
+        last = pts[e.pointerId];
+        var now = Date.now();
+        if (now - lastTap < 300) { if (s > 1) { s = 1; apply(); } else zoomAt(2.5, last); lastTap = 0; }
+        else lastTap = now;
+      }
+    });
+    box.addEventListener('pointermove', function (e) {
+      if (!pts[e.pointerId]) return;
+      pts[e.pointerId] = at(e);
+      var t = two();
+      if (t && pinch) {
+        var d = Math.hypot(t[0][0] - t[1][0], t[0][1] - t[1][1]);
+        var m = [(t[0][0] + t[1][0]) / 2, (t[0][1] + t[1][1]) / 2];
+        tx += m[0] - pinch.m[0]; ty += m[1] - pinch.m[1];
+        zoomAt(d / pinch.d, m); pinch = { d: d, m: m };
+      } else if (last && s > 1) {
+        var p = pts[e.pointerId]; tx += p[0] - last[0]; ty += p[1] - last[1]; last = p; apply(); lastTap = 0;
+      }
+    });
+    function up(e) { delete pts[e.pointerId]; pinch = null; var k = Object.keys(pts); last = k.length ? pts[k[0]] : null; }
+    box.addEventListener('pointerup', up); box.addEventListener('pointercancel', up);
+    box.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      if (e.ctrlKey) zoomAt(Math.exp(-e.deltaY * 0.01), at(e));
+      else if (s > 1) { tx -= e.deltaX; ty -= e.deltaY; apply(); }
+    }, { passive: false });
+    reset.addEventListener('click', function (e) { e.stopPropagation(); s = 1; apply(); });
+    return { box: box, reset: reset };
   }
 
   function cwMapWindow(region, marks, opts) {

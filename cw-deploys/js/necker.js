@@ -9,7 +9,8 @@
    o = {
      shape:   'box' | 'cube' | 'octahedron' | 'sugar' | 'staircase' | 'corner',
      size:    CSS pixels, square                       (the figure's box is 240 units a side)
-     letters: true      Necker's A and X, in copper: A above the front middle corner, X below the back one
+     letters: true      Necker's A and X, in copper, body-text size, behind the lines: A a little above the
+                        front middle corner, X a little below the back one
      dots:    true      a copper dot on each of the two middle corners
      fill:    'front' | 'back' | null                  a face filled, which settles the drawing
      cycle:   true      a tap moves the fill front → back → bare → front, at once, not animated
@@ -135,13 +136,14 @@
     lines(g, L, colour);
   }
 
-  // A letter a size larger than body text, whatever the figure's size: 22 CSS px, in units.
+  // A letter at body-text size, whatever the figure's size: 20 CSS px, in units. Regular
+  // weight, no halo, and drawn BEHIND the lines, so where a letter and a line meet the line
+  // wins (Michael, 26 Sep: the bold letters hid the two corners that matter).
+  var LETTER_PX = 20, CAP = 0.7;                // Georgia's capitals stand about 0.7 em
   function letter(g, text, x, baseline, size) {
-    var fs = 22 * UNITS / size;
+    var fs = LETTER_PX * UNITS / size;
     var t = el('text', { x: x, y: baseline, 'text-anchor': 'middle', 'font-family': 'Georgia, "Times New Roman", serif',
-                         'font-size': fs.toFixed(1), 'font-weight': 'bold', fill: COPPER,
-                         stroke: paper(), 'stroke-width': (4 * UNITS / size).toFixed(1), 'paint-order': 'stroke',
-                         'stroke-linejoin': 'round' }, g);
+                         'font-size': fs.toFixed(1), fill: COPPER }, g);
     t.textContent = text;
     return fs;
   }
@@ -149,19 +151,19 @@
   function paint(svg, o, state) {
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     var S = SHAPES[o.shape], colour = ink();
+    if (o.letters && S.near) {
+      // A above the front middle corner and X below the back one, each a little away from its
+      // corner (GAP units clear), so the corner itself stays bare.
+      var fs = LETTER_PX * UNITS / o.size, GAP = 12;
+      letter(svg, 'A', S.near[0], S.near[1] - GAP, o.size);
+      letter(svg, 'X', S.far[0], S.far[1] + GAP + CAP * fs, o.size);
+    }
     lines(svg, S.lines, colour);
     if (state === 'front' && S.front) face(svg, S.front, colour);
     if (state === 'back' && S.back) face(svg, S.back, colour);
     if (o.dots && S.near) {
       el('circle', { cx: S.near[0], cy: S.near[1], r: 7, fill: COPPER }, svg);
       el('circle', { cx: S.far[0], cy: S.far[1], r: 7, fill: COPPER }, svg);
-    }
-    if (o.letters && S.near) {
-      // A directly above the front middle corner, its feet on the lines; X directly below the
-      // back middle corner, its top nearly touching. Georgia's capitals stand about 0.7 em.
-      letter(svg, 'A', S.near[0], S.near[1] - 2, o.size);
-      var fs = 22 * UNITS / o.size;
-      letter(svg, 'X', S.far[0], S.far[1] + 4 + 0.7 * fs, o.size);
     }
   }
 
