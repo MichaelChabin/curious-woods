@@ -102,6 +102,8 @@
        (rgba(200,184,154,.25)) so it reads as a thing to take hold of, not as the page */
     '.cw-map .cw-strip{height:16px;border-radius:0 0 8px 8px;cursor:ns-resize;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;background:rgba(200,184,154,0.28);touch-action:none;user-select:none;-webkit-user-select:none;line-height:16px;}',
     '.cw-map .cw-strip span{font-family:Georgia,serif;font-size:13px;font-weight:bold;color:#b0a090;cursor:default;transition:color 80ms;}',
+    '.cw-map .cw-strip-left{position:absolute;left:-18px;top:0;width:16px;border-radius:8px 0 0 8px;cursor:ew-resize;background:rgba(200,184,154,0.28);touch-action:none;user-select:none;-webkit-user-select:none;}',
+    'html.cw-map-gesture, html.cw-map-gesture *{user-select:none !important;-webkit-user-select:none !important;}',
     '.cw-map .cw-strip span:hover{color:#546A80;}',
     '.cw-map{position:relative;line-height:0;}',
     '.cw-map img{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}',
@@ -205,7 +207,7 @@
     function layerOn(L) { return wanted.hasOwnProperty(L.name) ? !!wanted[L.name] : !!L['default']; }
 
     var img = null, layerImgs = [];
-    var stage = null, strip = null, tileLayers = [], view = null, home = null, frozen = false;
+    var stage = null, strip = null, leftBar = null, tileLayers = [], view = null, home = null, frozen = false;
 
     if (!pyr) {
       img = document.createElement('img');
@@ -260,48 +262,95 @@
     var svg = el('svg', { viewBox: '0 0 1 1', preserveAspectRatio: 'none' });
     box.appendChild(svg);
 
-    // ---- the view (the pyramid only): centre and pixels per degree of latitude ----
+    // ---- the view (the pyramid only) ----
+    // A centre and a scale. The scale S is pixels per degree of longitude, uniform across
+    // the view. Vertically the map is Mercator — the same stretch web maps use, so that a
+    // shape holds while she pans north or south — blended toward plain equirectangular as
+    // the view widens (Mercator at a 20° span, gone by 120°), because a Mercator world lies
+    // about Greenland and the spec will not have that. Every drawn thing — tiles, marks,
+    // lines — goes through one pair of functions, so they always agree; a tile row is
+    // stretched linearly between its own two latitudes, and marks use the same knots.
     var PPD0 = pyr ? region.tile * region.levels[0].rows / 180.0 : 0;      // level 0's own scale
     var LEVELS = pyr ? region.levels.length : 0;
-    var PPD_MIN = PPD0 * 0.5, PPD_MAX = PPD0 * Math.pow(2, LEVELS - 1) * 2;  // half of level 0; twice the finest
-    // The horizontal scale follows the cosine of the centre's latitude, so a region keeps
-    // its shape — but only while the view is regional. As it widens toward the whole world
-    // the correction fades out (gone by a 120° span), or the world itself would be squashed.
-    function cosc() {
+    var S_MIN = PPD0 * 0.5, S_MAX = PPD0 * Math.pow(2, LEVELS - 1) * 2;      // half of level 0; twice the finest
+    var LAT_CAP = 85;                                                       // Mercator's edge
+    var D2R = Math.PI / 180, R2D = 180 / Math.PI;
+    function merc(lat) { var f = Math.max(-LAT_CAP, Math.min(LAT_CAP, lat)) * D2R; return R2D * Math.log(Math.tan(Math.PI / 4 + f / 2)); }
+    function kOf() {                                                        // how Mercator the view is, 0..1
       var h = box.clientHeight || 1;
-      var span = h / view.ppd;
-      var k = Math.max(0, Math.min(1, (120 - span) / 100));
-      return Math.max(0.1, 1 + (Math.cos(view.lat * Math.PI / 180) - 1) * k);
+      var span = h / (view.S * Math.max(0.2, (1 - (view.k || 0)) + (view.k || 0) / Math.cos(Math.max(-LAT_CAP, Math.min(LAT_CAP, view.lat)) * D2R)));
+      return Math.max(0, Math.min(1, (120 - span) / 100));
+    }
+    function yw(lat) { var k = view.k; return (1 - k) * lat + k * merc(lat); }          // world y, in degree-like units, growing north
+    function ywInv(y) {                                                                  // its inverse, by bisection
+      var lo = -90, hi = 90, i;
+      for (i = 0; i < 40; i++) { var mid = (lo + hi) / 2; if (yw(mid) < y) lo = mid; else hi = mid; }
+      return (lo + hi) / 2;
+    }
+    // The knots: the current tile level's row boundaries. Between two knots y is linear
+    // in latitude, which is exactly how a tile row is drawn, so marks sit on the tiles.
+    var knots = null;
+    function setKnots() {
+      var L = region.levels[levelFor()], rows = L.rows, i;
+      knots = { lat: new Array(rows + 1), y: new Array(rows + 1) };
+      for (i = 0; i <= rows; i++) { knots.lat[i] = 90 - i * 180 / rows; knots.y[i] = yw(knots.lat[i]); }
+    }
+    function ywPL(lat) {
+      if (!knots) return yw(lat);
+      var rows = knots.lat.length - 1, r = Math.floor((90 - lat) / (180 / rows));
+      r = Math.max(0, Math.min(rows - 1, r));
+      var t = (knots.lat[r] - lat) / (knots.lat[r] - knots.lat[r + 1]);
+      return knots.y[r] + (knots.y[r + 1] - knots.y[r]) * t;
+    }
+    function ywPLInv(y) {
+      if (!knots) return ywInv(y);
+      var rows = knots.lat.length - 1, r;
+      for (r = 0; r < rows; r++) if (y >= knots.y[r + 1]) break;      // knots.y falls with r (north to south)
+      r = Math.max(0, Math.min(rows - 1, r));
+      var t = (y - knots.y[r]) / (knots.y[r + 1] - knots.y[r]);
+      return knots.lat[r] + (knots.lat[r + 1] - knots.lat[r]) * t;
     }
     function viewToPixel(lon, lat, w, h) {
-      return { x: w / 2 + (lon - view.lon) * view.ppd * cosc(), y: h / 2 - (lat - view.lat) * view.ppd };
+      return { x: w / 2 + (lon - view.lon) * view.S, y: h / 2 - (ywPL(lat) - ywPL(view.lat)) * view.S };
     }
     function viewToLonLat(x, y, w, h) {
-      return { lon: view.lon + (x - w / 2) / (view.ppd * cosc()), lat: view.lat - (y - h / 2) / view.ppd };
+      return { lon: view.lon + (x - w / 2) / view.S, lat: ywPLInv(ywPL(view.lat) - (y - h / 2) / view.S) };
     }
     function P(lon, lat, w, h) { return pyr ? viewToPixel(lon, lat, w, h) : toPixel(region, lon, lat, w, h); }
-    // The map never leaves the frame: it may not zoom out past covering the frame, and it
-    // may not pan so that an edge of the world comes inside it. Latitude first, then the
-    // horizontal factor that depends on it, then longitude.
+    // pixels per degree of latitude at the centre — what the tile level is chosen by
+    function ppdCentre() { var k = view.k; return view.S * ((1 - k) + k / Math.cos(Math.max(-LAT_CAP, Math.min(LAT_CAP, view.lat)) * D2R)); }
+    function levelFor() {
+      var z = Math.ceil(Math.log(ppdCentre() / PPD0) / Math.LN2 - 0.25);
+      return Math.max(0, Math.min(LEVELS - 1, z));
+    }
+    // The map never leaves the frame: it may not zoom out past covering the frame, and no
+    // edge of the world may come inside it. Order: the blend, then scale, then latitude,
+    // then longitude, then the knots that everything is drawn with.
     function clampView(v) {
       var w = box.clientWidth || 1, h = box.clientHeight || 1;
       var saved = view; view = v;
-      v.ppd = Math.max(PPD_MIN, Math.min(PPD_MAX, v.ppd));
-      v.lat = Math.max(-90, Math.min(90, v.lat));
-      var cover = Math.max(h / 180, w / (360 * cosc()));
-      if (v.ppd < cover) v.ppd = cover;
-      var halfLat = h / (2 * v.ppd);
-      v.lat = Math.max(-90 + halfLat, Math.min(90 - halfLat, v.lat));
-      var halfLon = w / (2 * v.ppd * cosc());
-      if (halfLon >= 180) v.lon = 0; else v.lon = Math.max(-180 + halfLon, Math.min(180 - halfLon, v.lon));
+      if (v.k === undefined) v.k = 0;
+      v.S = Math.max(S_MIN, Math.min(S_MAX, v.S));
+      v.k = kOf();
+      var top = yw(90), bottom = yw(-90);                                  // at k = 1 these are the ±85° edges
+      var cover = Math.max(w / 360, h / (top - bottom));
+      if (v.S < cover) v.S = cover;
+      var halfY = h / (2 * v.S);
+      var yc = Math.max(bottom + halfY, Math.min(top - halfY, yw(v.lat)));
+      v.lat = ywInv(yc);
+      var halfLon = w / (2 * v.S);
+      v.lon = halfLon >= 180 ? 0 : Math.max(-180 + halfLon, Math.min(180 - halfLon, v.lon));
+      setKnots();
       view = saved;
       return v;
     }
     function viewForBox(b, w, h) {
       var lat = (b.south + b.north) / 2, lon = (b.west + b.east) / 2;
-      var c = Math.max(0.1, Math.cos(lat * Math.PI / 180));
-      var ppd = Math.min(h / (b.north - b.south), w / ((b.east - b.west) * c));
-      return clampView({ lat: lat, lon: lon, ppd: ppd });
+      var v = { lat: lat, lon: lon, S: 1, k: Math.max(0, Math.min(1, (120 - (b.north - b.south)) / 100)) };
+      var saved = view; view = v;
+      v.S = Math.min(w / (b.east - b.west), h / (yw(b.north) - yw(b.south)));
+      view = saved;
+      return clampView(v);
     }
     function stageMax() { return Math.round(window.innerHeight * STAGE_MAX_FRACTION); }
     if (pyr) {
@@ -311,29 +360,33 @@
       var h0 = opts.height || Math.round(w0 * (fitBox.north - fitBox.south) / ((fitBox.east - fitBox.west) * c0));
       h0 = Math.max(STAGE_MIN, Math.min(stageMax(), h0));
       stage.style.height = h0 + 'px';
+      view = { lat: 0, lon: 0, S: PPD0, k: 0 };
       view = viewForBox(fitBox, w0, h0);
-      home = { view: { lat: view.lat, lon: view.lon, ppd: view.ppd }, height: h0 };
+      home = { view: { lat: view.lat, lon: view.lon, S: view.S, k: view.k }, height: h0, widen: 0 };
+      // the left bar: drag it left and the map widens into the margins on both sides, not far
+      leftBar = document.createElement('div');
+      leftBar.className = 'cw-strip-left';
+      leftBar.style.height = h0 + 'px';
+      container.appendChild(leftBar);          // on the container, not the stage: the stage clips its overflow
     }
 
     // ---- tiles (the pyramid only) ----
-    function levelFor(ppd) {
-      var z = Math.ceil(Math.log(ppd / PPD0) / Math.LN2 - 0.25);
-      return Math.max(0, Math.min(LEVELS - 1, z));
-    }
     function tileRect(z, tx, ty, w, h) {
       var L = region.levels[z];
       var dlon = 360 / L.cols, dlat = 180 / L.rows;
-      var tl = viewToPixel(-180 + tx * dlon, 90 - ty * dlat, w, h);
-      return { x: tl.x, y: tl.y, w: dlon * view.ppd * cosc(), h: dlat * view.ppd };
+      var n = 90 - ty * dlat, sth = n - dlat;
+      var top = h / 2 - (yw(n) - ywPL(view.lat)) * view.S, bottom = h / 2 - (yw(sth) - ywPL(view.lat)) * view.S;
+      return { x: w / 2 + (-180 + tx * dlon - view.lon) * view.S, y: top, w: dlon * view.S, h: Math.max(0.5, bottom - top) };
     }
     function placeTiles() {
       var w = box.clientWidth, h = box.clientHeight;
       if (!w || !h) return;
-      var z = levelFor(view.ppd), L = region.levels[z];
+      var z = levelFor(), L = region.levels[z];
       var dlon = 360 / L.cols, dlat = 180 / L.rows;
       var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
       var tx0 = Math.max(0, Math.floor((nw.lon + 180) / dlon) - 1), tx1 = Math.min(L.cols - 1, Math.floor((se.lon + 180) / dlon) + 1);
       var ty0 = Math.max(0, Math.floor((90 - nw.lat) / dlat) - 1), ty1 = Math.min(L.rows - 1, Math.floor((90 - se.lat) / dlat) + 1);
+      if (nw.lat >= LAT_CAP - 0.01) ty0 = 0; if (se.lat <= -LAT_CAP + 0.01) ty1 = L.rows - 1;
       var baseDiv = tileLayers[0].div;
       function baseLoaded(key) { var b = baseDiv.querySelector('img[data-key="' + key + '"]'); return !!(b && b.complete && b.naturalWidth); }
       tileLayers.forEach(function (T) {
@@ -526,7 +579,7 @@
 
     var contourCache = {};      // z -> { lines: {level: [ {pts, bbox} ]}, ready }
     function contourLevel() {
-      var z = levelFor(view.ppd), keys = Object.keys(region.contours || {}).map(Number).sort(function (a, b) { return a - b; });
+      var z = levelFor(), keys = Object.keys(region.contours || {}).map(Number).sort(function (a, b) { return a - b; });
       var best = -1;
       keys.forEach(function (k) { if (k <= z) best = k; });
       if (best < 0 && keys.length) best = keys[0];
@@ -702,25 +755,34 @@
     var api = { reset: reset, redraw: draw };
     if (pyr) {
       var pointers = {}, nPointers = 0, dragging = false, down = null, pinch = null, suppressClick = false, settleTimer = null;
-      function beginGesture() { if (!frozen) { frozen = true; stage.classList.add('dragging'); } clearTimeout(settleTimer); }
+      function beginGesture() {
+        if (!frozen) { frozen = true; stage.classList.add('dragging'); document.documentElement.classList.add('cw-map-gesture'); }
+        clearTimeout(settleTimer);
+      }
       function endGesture() {
         clearTimeout(settleTimer);
         settleTimer = setTimeout(function () {
-          frozen = false; stage.classList.remove('dragging');
+          frozen = false; stage.classList.remove('dragging'); document.documentElement.classList.remove('cw-map-gesture');
+          try { var sel = window.getSelection(); if (sel && sel.rangeCount) sel.removeAllRanges(); } catch (err) {}
           clampView(view); placeTiles(); readGround(); draw();
         }, 120);
       }
       function fast() { clampView(view); placeTiles(); draw(); }
+      function anchor(at, px, py, w, h) {
+        view.lon = at.lon - (px - w / 2) / view.S;
+        view.lat = ywPLInv(ywPL(at.lat) + (py - h / 2) / view.S);
+      }
       stage.addEventListener('pointerdown', function (e) {
         if (e.button && e.button !== 0) return;
+        e.preventDefault();          // no text selection may start on a press on the map (a click still follows)
         if (e.isPrimary) { pointers = {}; nPointers = 0; pinch = null; dragging = false; }   // a fresh press forgets any release that went astray
         pointers[e.pointerId] = { x: e.clientX, y: e.clientY }; nPointers++;
-        if (nPointers === 1) { down = { x: e.clientX, y: e.clientY, lat: view.lat, lon: view.lon }; dragging = false; }
+        if (nPointers === 1) { down = { x: e.clientX, y: e.clientY, y0: ywPL(view.lat), lon: view.lon }; dragging = false; }
         if (nPointers === 2) {
           var ids = Object.keys(pointers), a = pointers[ids[0]], b = pointers[ids[1]];
           var r = stage.getBoundingClientRect();
           var mid = { x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top };
-          pinch = { d0: Math.hypot(a.x - b.x, a.y - b.y), ppd0: view.ppd, at: viewToLonLat(mid.x, mid.y, box.clientWidth, box.clientHeight), mid: mid };
+          pinch = { d0: Math.hypot(a.x - b.x, a.y - b.y), S0: view.S, at: viewToLonLat(mid.x, mid.y, box.clientWidth, box.clientHeight), mid: mid };
           dragging = true; beginGesture();
           try { stage.setPointerCapture(e.pointerId); } catch (err) {}
         }
@@ -732,12 +794,11 @@
         if (nPointers >= 2 && pinch) {
           var ids = Object.keys(pointers), a = pointers[ids[0]], b = pointers[ids[1]];
           var d = Math.hypot(a.x - b.x, a.y - b.y);
-          view.ppd = Math.max(PPD_MIN, Math.min(PPD_MAX, pinch.ppd0 * d / pinch.d0));
+          view.S = Math.max(S_MIN, Math.min(S_MAX, pinch.S0 * d / pinch.d0));
           // keep the ground under the fingers' midpoint where it was
           var r = stage.getBoundingClientRect();
           var mid = { x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top };
-          view.lon = pinch.at.lon - (mid.x - w / 2) / (view.ppd * cosc());
-          view.lat = pinch.at.lat + (mid.y - h / 2) / view.ppd;
+          anchor(pinch.at, mid.x, mid.y, w, h);
           fast();
           return;
         }
@@ -748,8 +809,8 @@
             dragging = true; beginGesture();
             try { stage.setPointerCapture(e.pointerId); } catch (err) {}
           }
-          view.lon = down.lon - dx / (view.ppd * cosc());
-          view.lat = down.lat + dy / view.ppd;
+          view.lon = down.lon - dx / view.S;
+          view.lat = ywPLInv(down.y0 + dy / view.S);
           fast();
         }
       });
@@ -757,7 +818,7 @@
         if (!pointers[e.pointerId]) return;
         delete pointers[e.pointerId]; nPointers--;
         if (nPointers < 2) pinch = null;
-        if (nPointers === 1) { var id = Object.keys(pointers)[0]; down = { x: pointers[id].x, y: pointers[id].y, lat: view.lat, lon: view.lon }; }
+        if (nPointers === 1) { var id = Object.keys(pointers)[0]; down = { x: pointers[id].x, y: pointers[id].y, y0: ywPL(view.lat), lon: view.lon }; }
         if (nPointers === 0) {
           if (dragging) { suppressClick = true; setTimeout(function () { suppressClick = false; }, 0); endGesture(); }
           dragging = false; down = null;
@@ -772,9 +833,8 @@
         var w = box.clientWidth, h = box.clientHeight, r = stage.getBoundingClientRect();
         var at = viewToLonLat(e.clientX - r.left, e.clientY - r.top, w, h);
         beginGesture();
-        view.ppd = Math.max(PPD_MIN, Math.min(PPD_MAX, view.ppd * (e.deltaY > 0 ? 0.9 : 1.1)));
-        view.lon = at.lon - (e.clientX - r.left - w / 2) / (view.ppd * cosc());
-        view.lat = at.lat + (e.clientY - r.top - h / 2) / view.ppd;
+        view.S = Math.max(S_MIN, Math.min(S_MAX, view.S * (e.deltaY > 0 ? 0.9 : 1.1)));
+        anchor(at, e.clientX - r.left, e.clientY - r.top, w, h);
         fast(); endGesture();
       }, { passive: false });
 
@@ -790,18 +850,37 @@
       strip.addEventListener('pointermove', function (e) {
         if (!rs) return;
         var nh = Math.max(STAGE_MIN, Math.min(stageMax(), rs.h + (e.clientY - rs.y)));
-        stage.style.height = nh + 'px';
+        stage.style.height = nh + 'px'; leftBar.style.height = nh + 'px';
         fast();
       });
       function rsUp() { if (rs) { rs = null; endGesture(); } }
       strip.addEventListener('pointerup', rsUp);
       strip.addEventListener('pointercancel', rsUp);
+      // the left bar: drag left to widen into both margins, drag right to come back
+      var widen = 0, lb = null;
+      function widenMax() { var col = container.parentNode ? container.parentNode.clientWidth : container.clientWidth; return Math.max(0, Math.min(240, Math.floor((window.innerWidth - col) / 2) - 24)); }
+      function setWiden(x) {
+        widen = Math.max(0, Math.min(widenMax(), Math.round(x)));
+        container.style.marginLeft = (-widen) + 'px'; container.style.marginRight = (-widen) + 'px';
+      }
+      leftBar.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        lb = { x: e.clientX, w: widen };
+        try { leftBar.setPointerCapture(e.pointerId); } catch (err) {}
+        beginGesture();
+      });
+      leftBar.addEventListener('pointermove', function (e) { if (!lb) return; setWiden(lb.w + (lb.x - e.clientX)); fast(); });
+      function lbUp() { if (lb) { lb = null; endGesture(); } }
+      leftBar.addEventListener('pointerup', lbUp);
+      leftBar.addEventListener('pointercancel', lbUp);
+      leftBar.addEventListener('click', function (e) { e.stopPropagation(); });
 
       // the slides: centre() at her scale, fit() for a route; home() for the word
       var sliding = null;
       function slideTo(target, ms) {
         if (sliding) cancelAnimationFrame(sliding);
-        var from = { lat: view.lat, lon: view.lon, ppd: view.ppd }, t0 = null;
+        var from = { lat: view.lat, lon: view.lon, S: view.S }, t0 = null;
+        if (target.k === undefined) target.k = view.k;
         clampView(target);
         beginGesture();
         function step(ts) {
@@ -809,25 +888,26 @@
           var u = Math.min(1, (ts - t0) / ms); u = 1 - (1 - u) * (1 - u);     // ease out
           view.lat = from.lat + (target.lat - from.lat) * u;
           view.lon = from.lon + (target.lon - from.lon) * u;
-          view.ppd = from.ppd * Math.pow(target.ppd / from.ppd, u);
+          view.S = from.S * Math.pow(target.S / from.S, u);
           fast();
           if (u < 1) sliding = requestAnimationFrame(step); else { sliding = null; endGesture(); }
         }
         sliding = requestAnimationFrame(step);
       }
       function goHome() {
-        stage.style.height = home.height + 'px';
-        view.lat = home.view.lat; view.lon = home.view.lon; view.ppd = home.view.ppd;
-        frozen = false; placeTiles(); readGround(); draw();
+        stage.style.height = home.height + 'px'; leftBar.style.height = home.height + 'px';
+        setWiden(home.widen);
+        view.lat = home.view.lat; view.lon = home.view.lon; view.S = home.view.S; view.k = home.view.k;
+        frozen = false; clampView(view); placeTiles(); readGround(); draw();
       }
-      api.centre = function (lat, lon) { slideTo({ lat: lat, lon: lon, ppd: view.ppd }, SLIDE_MS); };
+      api.centre = function (lat, lon) { slideTo({ lat: lat, lon: lon, S: view.S }, SLIDE_MS); };
       api.fit = function (b) {
         var w = box.clientWidth, h = box.clientHeight, pad = 0.12;
         var span = { west: b.west - (b.east - b.west) * pad, east: b.east + (b.east - b.west) * pad, south: b.south - (b.north - b.south) * pad, north: b.north + (b.north - b.south) * pad };
         slideTo(viewForBox(span, w, h), SLIDE_MS);
       };
       api.home = goHome;
-      api.view = function () { return { lat: view.lat, lon: view.lon, ppd: view.ppd }; };
+      api.view = function () { return { lat: view.lat, lon: view.lon, S: view.S, k: view.k }; };
     }
     return api;
   }

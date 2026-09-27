@@ -48,7 +48,11 @@ animates, nothing is recorded, nothing counted: the drawing does not change, the
 Each figure carries a description saying what its two readings are. First used by
 `active/professor-neckers-drawing.html`. **`map.js`, 27 Sep 2026 — the world that moves** (Spec-Maps, *The world that moves*): given
 `world-pyramid.json` as its region, `cwMap` is a view rather than a box — a centre and a
-scale, the horizontal scale following the cosine of the centre's latitude, tiles arriving
+scale (since Michael's second look the same day: **Mercator at regional spans, fading to
+equirectangular by a 120° span**, one pair of functions that tiles, marks and lines all go
+through, a tile row stretched linearly between its own two latitudes and the marks using
+the same knots, so they always agree; the first build scaled only the horizontal by the
+cosine of the centre's latitude and a drag north changed the map's proportions), tiles arriving
 for what is in view and dropped when it leaves (an older level's tiles stay under the new
 ones until those have loaded, so the map never goes blank). Drag pans; pinch and the wheel
 zoom by tenths, as Glass Geometry's do, but about the point under the fingers or the cursor
@@ -72,7 +76,11 @@ a layer tile is hidden until its base tile has arrived, because the vegetation m
 over bare stage background was a grey-blue wash, seen on the live site where tiles come
 slowly; a fresh press forgets any release that went astray and releases are heard on the
 window, for a drag that died after a few zooms; the strip carries the picker handle's tint
-so it reads as a handle, and its word is bold at 13 px. First used by
+so it reads as a handle, and its word is bold at 13 px. **Michael's second look, same
+day:** the projection above; a bar down the left edge, outside the map, that widens it into
+both margins at once (up to 240 px a side, never past the window) and back; and no text
+selection anywhere on the page while a gesture lasts, since Safari selected the prose when
+a drag ran off the map's bottom. First used by
 `experiments/maps/moving-bench.html`; no story uses it. The
 six pages that load `map.js` had their version query bumped again (27b) after a bug in
 this pass briefly made every still map recurse until its stack overflowed, caught by the
