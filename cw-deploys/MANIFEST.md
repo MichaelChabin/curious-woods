@@ -64,7 +64,16 @@ marks; a drag never ends in a click. **Weight** (1 to 3, 1 if unsaid) orders pla
 every map, still or moving: heavier first, so the heavier survives a collision. Wired to
 `timeline.js` with `moving: true`: no far-away cards, a tap centres the map on the place,
 a route fits itself, clearing moves nothing. The label placer reads the ground from the
-visible tiles. First used by `experiments/maps/moving-bench.html`; no story uses it. The
+visible tiles. **Michael's first look, 27 Sep, same day:** the horizontal correction fades
+out as the view widens (full at a 20° span, gone by 120°), or the whole world came out
+squashed; the view is clamped so the map always covers the frame and no edge of the world
+comes inside it, which is also what stops a drag toward the pole from squashing the map;
+a layer tile is hidden until its base tile has arrived, because the vegetation multiplied
+over bare stage background was a grey-blue wash, seen on the live site where tiles come
+slowly; a fresh press forgets any release that went astray and releases are heard on the
+window, for a drag that died after a few zooms; the strip carries the picker handle's tint
+so it reads as a handle, and its word is bold at 13 px. First used by
+`experiments/maps/moving-bench.html`; no story uses it. The
 six pages that load `map.js` had their version query bumped again (27b) after a bug in
 this pass briefly made every still map recurse until its stack overflowed, caught by the
 test that every story page still draws its maps. **`map.js`, 26 Sep 2026 — layers** (Spec-Maps, *The ground has layers*): `cwMap(container,

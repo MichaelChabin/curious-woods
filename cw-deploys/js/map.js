@@ -98,8 +98,10 @@
     '.cw-map .cw-stage.dragging{cursor:grabbing;}',
     '.cw-map .cw-tiles{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     '.cw-map .cw-tiles img{position:absolute;display:block;width:auto;height:auto;max-width:none;pointer-events:none;}',
-    '.cw-map .cw-strip{height:14px;border-radius:0 0 8px 8px;cursor:ns-resize;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;background:#f0ede4;touch-action:none;user-select:none;-webkit-user-select:none;line-height:14px;}',
-    '.cw-map .cw-strip span{font-family:Georgia,serif;font-size:11px;color:#b0a090;cursor:default;transition:color 80ms;}',
+    /* the strip is the picker's drag handle turned to this use, with the handle's own tint
+       (rgba(200,184,154,.25)) so it reads as a thing to take hold of, not as the page */
+    '.cw-map .cw-strip{height:16px;border-radius:0 0 8px 8px;cursor:ns-resize;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;background:rgba(200,184,154,0.28);touch-action:none;user-select:none;-webkit-user-select:none;line-height:16px;}',
+    '.cw-map .cw-strip span{font-family:Georgia,serif;font-size:13px;font-weight:bold;color:#b0a090;cursor:default;transition:color 80ms;}',
     '.cw-map .cw-strip span:hover{color:#546A80;}',
     '.cw-map{position:relative;line-height:0;}',
     '.cw-map img{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}',
@@ -262,7 +264,15 @@
     var PPD0 = pyr ? region.tile * region.levels[0].rows / 180.0 : 0;      // level 0's own scale
     var LEVELS = pyr ? region.levels.length : 0;
     var PPD_MIN = PPD0 * 0.5, PPD_MAX = PPD0 * Math.pow(2, LEVELS - 1) * 2;  // half of level 0; twice the finest
-    function cosc() { return Math.max(0.1, Math.cos(view.lat * Math.PI / 180)); }
+    // The horizontal scale follows the cosine of the centre's latitude, so a region keeps
+    // its shape — but only while the view is regional. As it widens toward the whole world
+    // the correction fades out (gone by a 120° span), or the world itself would be squashed.
+    function cosc() {
+      var h = box.clientHeight || 1;
+      var span = h / view.ppd;
+      var k = Math.max(0, Math.min(1, (120 - span) / 100));
+      return Math.max(0.1, 1 + (Math.cos(view.lat * Math.PI / 180) - 1) * k);
+    }
     function viewToPixel(lon, lat, w, h) {
       return { x: w / 2 + (lon - view.lon) * view.ppd * cosc(), y: h / 2 - (lat - view.lat) * view.ppd };
     }
@@ -270,10 +280,21 @@
       return { lon: view.lon + (x - w / 2) / (view.ppd * cosc()), lat: view.lat - (y - h / 2) / view.ppd };
     }
     function P(lon, lat, w, h) { return pyr ? viewToPixel(lon, lat, w, h) : toPixel(region, lon, lat, w, h); }
+    // The map never leaves the frame: it may not zoom out past covering the frame, and it
+    // may not pan so that an edge of the world comes inside it. Latitude first, then the
+    // horizontal factor that depends on it, then longitude.
     function clampView(v) {
+      var w = box.clientWidth || 1, h = box.clientHeight || 1;
+      var saved = view; view = v;
       v.ppd = Math.max(PPD_MIN, Math.min(PPD_MAX, v.ppd));
-      v.lat = Math.max(-84, Math.min(84, v.lat));
-      v.lon = Math.max(-180, Math.min(180, v.lon));
+      v.lat = Math.max(-90, Math.min(90, v.lat));
+      var cover = Math.max(h / 180, w / (360 * cosc()));
+      if (v.ppd < cover) v.ppd = cover;
+      var halfLat = h / (2 * v.ppd);
+      v.lat = Math.max(-90 + halfLat, Math.min(90 - halfLat, v.lat));
+      var halfLon = w / (2 * v.ppd * cosc());
+      if (halfLon >= 180) v.lon = 0; else v.lon = Math.max(-180 + halfLon, Math.min(180 - halfLon, v.lon));
+      view = saved;
       return v;
     }
     function viewForBox(b, w, h) {
@@ -313,6 +334,8 @@
       var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
       var tx0 = Math.max(0, Math.floor((nw.lon + 180) / dlon) - 1), tx1 = Math.min(L.cols - 1, Math.floor((se.lon + 180) / dlon) + 1);
       var ty0 = Math.max(0, Math.floor((90 - nw.lat) / dlat) - 1), ty1 = Math.min(L.rows - 1, Math.floor((90 - se.lat) / dlat) + 1);
+      var baseDiv = tileLayers[0].div;
+      function baseLoaded(key) { var b = baseDiv.querySelector('img[data-key="' + key + '"]'); return !!(b && b.complete && b.naturalWidth); }
       tileLayers.forEach(function (T) {
         var keep = {}, allLoaded = true, tx, ty, key, im;
         for (ty = ty0; ty <= ty1; ty++) for (tx = tx0; tx <= tx1; tx++) {
@@ -340,6 +363,8 @@
           var r = tileRect(tz, +t.getAttribute('data-x'), +t.getAttribute('data-y'), w, h);
           t.style.left = r.x + 'px'; t.style.top = r.y + 'px';
           t.style.width = (r.w + 0.7) + 'px'; t.style.height = (r.h + 0.7) + 'px';
+          // a layer tile shows only once its base tile is there, or the layer washes bare ground
+          if (T !== tileLayers[0]) t.style.visibility = baseLoaded(t.getAttribute('data-key')) ? '' : 'hidden';
         });
       });
     }
@@ -688,6 +713,7 @@
       function fast() { clampView(view); placeTiles(); draw(); }
       stage.addEventListener('pointerdown', function (e) {
         if (e.button && e.button !== 0) return;
+        if (e.isPrimary) { pointers = {}; nPointers = 0; pinch = null; dragging = false; }   // a fresh press forgets any release that went astray
         pointers[e.pointerId] = { x: e.clientX, y: e.clientY }; nPointers++;
         if (nPointers === 1) { down = { x: e.clientX, y: e.clientY, lat: view.lat, lon: view.lon }; dragging = false; }
         if (nPointers === 2) {
@@ -737,8 +763,8 @@
           dragging = false; down = null;
         }
       }
-      stage.addEventListener('pointerup', up);
-      stage.addEventListener('pointercancel', up);
+      window.addEventListener('pointerup', up, true);
+      window.addEventListener('pointercancel', up, true);
       stage.addEventListener('click', function (e) { if (suppressClick) { e.stopPropagation(); e.preventDefault(); } }, true);
       // The wheel zooms by tenths, as Glass Geometry's does, about the point under the cursor.
       stage.addEventListener('wheel', function (e) {
