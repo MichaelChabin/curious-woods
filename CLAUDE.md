@@ -138,8 +138,12 @@ non-public staging is `prototypes/`. There is no third state.
 
 ## Deployment
 
-- **Deploy target:** `cw-deploys/` folder → Netlify (curiouswoods.netlify.app)
-- **Workflow:** Edit files → `git commit` → `git push` → Netlify auto-deploys (~30 seconds)
+- **The site is `https://curiouswoods.org`** (Michael, 27 Sep 2026). Netlify serves it under
+  that domain; `curiouswoods.netlify.app` is the same deploy but is not the address — never
+  give it to Michael or write it into a page or a document.
+- **Deploy target:** `cw-deploys/` folder → Netlify → curiouswoods.org
+- **Workflow:** Edit files → `git commit` → `git push` → Netlify auto-deploys (~30 seconds;
+  a few minutes when a commit carries thousands of files)
 - **Git remote:** `https://github.com/MichaelChabin/curious-woods.git`
 - **Netlify publish directory:** `cw-deploys` (no build command)
 
