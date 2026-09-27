@@ -51,12 +51,17 @@ for p in $files; do
     t=$(grep -n 'id="toolwords"' "$p" | head -1 | cut -d: -f1)
     c=$(grep -n '<figcaption' "$p" | head -1 | cut -d: -f1)
     f=$(grep -n '</figure>' "$p" | head -1 | cut -d: -f1)
-    if [ -n "$t" ] && [ -n "$c" ] && [ -n "$f" ]; then
+    # A tall picture (class="tall", 27 Sep 2026) carries its caption INSIDE the left-column block,
+    # which is the figure's figcaption and sits at the middle of the picture's height.
+    tall=""; grep -q '<figcaption class="tools" id="toolwords"' "$p" && grep -q 'id="plate" class="tall"' "$p" && tall=1
+    if [ -z "$tall" ] && [ -n "$t" ] && [ -n "$c" ] && [ -n "$f" ]; then
       { [ "$t" -lt "$c" ] && [ "$t" -lt "$f" ] && [ "$t" -gt 0 ]; } || bad="$bad left-column-block-not-beside-the-caption"
     fi
     grep -q 'class="note"' "$p" || warn="$warn no-note-above-the-controls"
     grep -q '>Reset<' "$p" || warn="$warn control-word-is-not-Reset"
-    grep -q '>Magnifier off<' "$p" || warn="$warn control-word-is-not-Magnifier-off"
+    # the magnifier's word: the shared Magnifier off, or a tall picture's one word that turns into
+    # Put the magnifier away (set by the page's script)
+    grep -q '>Magnifier off<' "$p" || grep -q "Put the magnifier away" "$p" || warn="$warn control-word-is-not-Magnifier-off"
   fi
 
   # --- a tool's word sits level with the paragraph that names it, so .tools comes

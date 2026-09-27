@@ -1,6 +1,6 @@
 {
   "_about": "Where things happened, shared by every story, so two stories never disagree about where Zhapu is. A story names a place id and adds only what is its own: which side of the line it belongs to, whether it is a card at the map's edge, and so on.",
-  "version": "2026-09-26",
+  "version": "2026-09-27",
   "places": {
     "delft": {
       "name": "Delft",
@@ -151,11 +151,6 @@
       "name": "Como",
       "lat": 45.81,
       "lon": 9.09
-    },
-    "waterloo": {
-      "name": "Waterloo",
-      "lat": 50.68,
-      "lon": 4.41
     },
     "mannheim": {
       "name": "Mannheim",

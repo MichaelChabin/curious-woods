@@ -49,7 +49,15 @@
     <!-- 2. THE THING ITSELF, FIRST, WITH SOMETHING TO DO.
          The heading is an instruction, not a topic: "Look at the pearl", "Look at the big star".
          The left-column block sits INSIDE the figure, after #plateWords and before the caption,
-         so it lands level with the caption. Do not move it above the picture. -->
+         so it lands level with the caption. Do not move it above the picture.
+         A PORTRAIT PICTURE (taller than wide) is the standard exception (27 Sept 2026, Michael:
+         "it is easier to see what the caption refers to when it is at the middle"): give the
+         figure class="tall" and make the left-column block its figcaption, holding the note, the
+         caption and the word, so the block sits at the middle of the picture's height:
+           <figure id="plate" class="tall"> ... frame ... <div class="toolwords" id="plateWords">
+           <figcaption class="tools" id="toolwords"><p class="note">…</p><p>the caption</p>
+           <button class="word">…</button></figcaption></figure>
+         The Birth of Frankenstein (active/have-you-thought-of-a-story.html) is the working example. -->
     <h2>Look at THE THING</h2>
 
     <div id="plateHome">
@@ -176,7 +184,7 @@
 
 <!-- THE SHELVES. Tools live here, not inside pages. Drop any line you do not use. -->
 <script src="../js/cw-flags.js?v=2026-09-21"></script>
-<script src="../js/map.js?v=2026-09-26c"></script>
+<script src="../js/map.js?v=2026-09-27"></script>
 <script src="../js/sampler.js?v=2026-09-22"></script>
 <script src="../js/timeline.js?v=2026-09-22b"></script>
 <script src="../js/stack.js?v=2026-09-22"></script>

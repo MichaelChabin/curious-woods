@@ -30,6 +30,11 @@ does not point them out.
    year. No timeline at the top.
 2. **The thing itself, first, with something to do.** "Tap the pearl." She is looking before
    she is reading. The magnifier and pinch work from the first moment.
+   - **A portrait picture's caption sits at the middle of its height** (27 Sept, Michael: "it is
+     easier to see what the caption refers to when it is at the middle"). Under a tall picture the
+     caption was far below where her eye is. The left-column block (the note, the caption, the
+     word) is the figure's figcaption and is centred on the picture's height: `figure.tall` in
+     `css/story.css`, first on *The Birth of Frankenstein*. On a phone it sits under the picture.
 3. **The body.** Short sections under short plain headings. Each one opens on a fact
    and not on a thesis. Years are plain. Everything is written for an adult reader who
    happens to be ten, and uses nothing CW has not already given her.

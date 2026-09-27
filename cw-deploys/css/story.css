@@ -71,6 +71,10 @@ figure.margin { float: left; clear: left; width: var(--rail-w); margin: .3em 0 1
 figure.margin img { display: block; width: 100%; height: auto; }
 figure.margin .map { width: 100%; }
 figure.margin figcaption { margin-top: 7px; }
+/* a margin picture at half the width of the column it is in, whichever that is, centred
+   (27 Sep 2026, the 1818 title page: half the left column on a wide screen, half the text column
+   where the left column folds) */
+figure.margin.half img { width: 50%; margin: 0 auto; }
 figure.margin.tappable .map { cursor: pointer; }
 /* A tool's word sits in the left column ON THE SAME LINE as the paragraph that names it,
    so put the .tools block immediately before that paragraph, never before its heading.
@@ -100,6 +104,27 @@ figure#plate { margin: 0; }
                 background: var(--cw-parchment-deep); }
 #plateStage.open #plate .frame { width: min(100%, calc(88vh * var(--aspect))); }
 #plate figcaption { text-align: center; }
+
+/* A tall picture (a portrait page, first on Have You Thought of a Story?, 27 Sep 2026, Michael):
+   under a tall picture the caption sits far below where she is looking, so the left-column
+   block (the note, the caption, the word) is the figure's figcaption and sits at the middle of
+   the picture's height instead of at its foot. A page opts in with class="tall" on the figure
+   and <figcaption class="tools" id="toolwords">. The height is the #plate frame's own:
+   the column's width over the picture's shape, never taller than 78vh. */
+figure.tall { position: relative; }
+figure.tall > figcaption.tools { position: absolute; top: 0; left: calc(-1 * (var(--rail-w) + var(--rail-gap)));
+  float: none; margin: 0; height: min(calc(var(--text-w) / var(--aspect)), 78vh);
+  justify-content: center; text-align: left; }
+figure.tall > figcaption.tools p { margin: 0; text-align: left; }   /* #plate figcaption centres; this block is left-set */
+/* a word that is an instruction until there is something to do: bold like any word, no hand */
+.word.say { cursor: default; }
+
+/* A poem in a window (cwWindow): the size of the More text, each line its own line, a wrapped
+   line indented under itself; the window as narrow as the longest line (27 Sep 2026, Michael). */
+figure.poem { width: max-content; max-width: 100%; }
+figure.poem p { font-size: 17px; line-height: 1.5; margin: 0; }
+figure.poem .l { display: block; padding-left: 1.2em; text-indent: -1.2em; }
+figure.poem figcaption { width: 0; min-width: 100%; }
 
 /* a full-width picture with the magnifier (View of Delft, the town plan) */
 .pic .frame { aspect-ratio: var(--pic); width: min(100%, calc(86vh * var(--pic))); margin: 0 auto;
@@ -142,6 +167,16 @@ figure.still figcaption { max-width: 760px; margin: 8px auto 0; text-align: cent
   .tools { float: none; width: auto; margin: 0 0 12px; flex-direction: row; flex-wrap: wrap; gap: 10px 26px; justify-content: center; }
   .shell { justify-content: center; }
   .breakout, #plateStage.open { left: 50%; }
+  figure.tall > figcaption.tools { position: static; height: auto; margin: 10px auto 0; max-width: 760px;
+                                   flex-direction: column; align-items: center; text-align: center; }
+  figure.tall > figcaption.tools p { text-align: center; }
+}
+/* Where the left column has folded but the page still has a margin wide enough for a short word
+   (an iPad on its side), a word marked .hang stays to the left of its paragraph, in the margin,
+   instead of moving above it (27 Sep 2026, Michael, for Read Darkness). */
+@media (min-width: 990px) and (max-width: 1067px) {
+  .tools.hang { float: left; clear: left; width: 120px; margin: .35em 0 0 -136px;
+                flex-direction: column; align-items: flex-end; text-align: right; }
 }
 @media (max-width: 760px) {
   body { font-size: 18px; }

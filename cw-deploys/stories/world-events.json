@@ -1,6 +1,6 @@
 {
   "_about": "The world's events, shared by every story. One record per event: what happened, when, and where — checked once, used everywhere. A story picks the ones inside its span (js/timeline.js, `pool`), says which side of its line each one sits on, and may add `why`: the last sentence, in that story's voice, tying it to that picture. A story never rewrites these words. Places are ids from stories/places.json. Years are plain years; a fraction places an event inside its year (1815.3 is April). Spec: CWVault/claude/Story-Pattern.md.",
-  "version": "2026-09-26",
+  "version": "2026-09-27",
   "events": {
     "leeuwenhoek-born-1632": {
       "year": 1632.84,
@@ -217,14 +217,6 @@
       "label": "Tambora explodes",
       "title": "The biggest eruption in recorded history",
       "text": "The volcano Tambora, on an island in what is now Indonesia, blew apart in April 1815. Its ash went round the world, and the next year Europe and North America had no summer."
-    },
-    "waterloo-1815": {
-      "year": 1815.46,
-      "when": "1815 · Belgium",
-      "place": "waterloo",
-      "label": "Waterloo",
-      "title": "The war ends",
-      "text": "Napoleon lost his last battle, and after twenty years the roads of Europe were open to English travellers again."
     },
     "ada-born-1815": {
       "year": 1815.94,

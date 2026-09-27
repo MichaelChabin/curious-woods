@@ -98,7 +98,7 @@
        words showed through the slit above it before vanishing under it, which read as a glitch.
        The words fade under it rather than meeting a hard edge (26 Sep 2026, Michael) */
     '.cw-map-drag::after{content:"";position:absolute;left:0;right:0;top:100%;height:12px;pointer-events:none;background:linear-gradient(#f0ede4,rgba(240,237,228,0));}',
-    '.cw-map-close{font-family:Georgia,serif;font-size:11px;color:#b0a090;cursor:default;transition:color 80ms;pointer-events:all;line-height:14px;}',
+    '.cw-map-close{font-family:Georgia,serif;font-size:13px;font-weight:bold;color:#b0a090;cursor:default;transition:color 80ms;pointer-events:all;line-height:14px;}',
     '.cw-map-close:hover{color:#546A80;}',
     '.cw-map-window .cw-map{margin-top:14px;width:' + WINDOW_MAP_WIDTH + 'px;max-width:100%;}',
     /* a picture in the window (cwWindow): at the reading column's width, its caption under it */

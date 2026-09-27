@@ -26,7 +26,7 @@ build step. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael
 the Hokusai story called it)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
 the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
 `experiments/maps/`, beside `render.py`, which makes the pictures it draws on. Loaded with a
-version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. 26 Sep 2026 (`?v=2026-09-26c` on all seven pages that load it): the window's drag strip sticks on the window's top edge, not 18 px below it, so a tall scrolling window (the Darkness poem) no longer shows its words through a slit above the strip; the words fade under it. **`stories/world-events.json` and `stories/places.json` (22 Sep 2026)** — what the world owns,
+version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. 26 Sep 2026 (`?v=2026-09-26c` on all seven pages that load it): (27 Sep, `?v=2026-09-27`: the window's *close* is 13 px bold, was 11 px) the window's drag strip sticks on the window's top edge, not 18 px below it, so a tall scrolling window (the Darkness poem) no longer shows its words through a slit above the strip; the words fade under it. **`stories/world-events.json` and `stories/places.json` (22 Sep 2026)** — what the world owns,
 shared by every story: one record per event (year, when, place, label, title, text) and one per
 place (name, lat, lon). A story gives `timeline.js` a `pool` and a `placebook`, then picks events
 by `ref`, sets each one's side, and may add `why` — its own last sentence. It never rewrites the
@@ -80,7 +80,7 @@ under `europe`, a card for stories set far away; the Necker page pins them to th
 own map (`place: 'geneva'`, `'london'`, `'paris'` in its picks) and leaves the shared record alone.
 **The same files, 26 Sep 2026:** nine events added for *Mary's World* — `galvani-frogs-1791`,
 `volta-pile-1800`, `aldini-newgate-1803`, `waterloo-1815`, `ada-born-1815`, `darkness-1816`,
-`running-machine-1817`, `vampyre-1819`, `frankenstein-stage-1823` (49 in all) — and four places,
+`running-machine-1817`, `vampyre-1819`, `frankenstein-stage-1823` (49 in all; `waterloo-1815` and its place taken out again 27 Sep, when Waterloo came off Mary's World and no page used it: 48 and 31) — and four places,
 `bologna`, `como`, `waterloo`, `mannheim` (32). Where the story's panel text ended on a line of
 its own ("Mary was five and lived in the city"), that line stayed on the page as `why` and the
 shared record kept what happened. `frankenstein-1816` now sits at `geneva`, not `europe`; Hokusai,
@@ -93,6 +93,16 @@ column, the left column (margin pictures and the tools' words), full-width pictu
 readout, the phone and tablet rules. A page sets only `--aspect` (its main picture's shape) and
 `--pic` on any full-width picture's frame. Pulled out of the Vermeer page when Hokusai was brought
 into line, so a change to the look is made once. Loaded with a version query by both paintings.
+**27 Sep 2026: a tall picture** (`?v=2026-09-27`, on *Have You Thought of a Story?*; the other pages keep
+their older query, since nothing they use changed): `figure.tall` with `<figcaption class="tools"
+id="toolwords">` puts the left-column block (note, caption, word) at the middle of the picture's
+height instead of its foot, and under the picture where the column folds. `.word.say` is a word that
+is an instruction until there is something to do: bold, no pointer. Whether the middle-of-the-height
+rule becomes the Pattern's for every portrait picture: **yes, Michael, 27 Sep** — it is now the standard
+for a portrait picture (Story-Pattern, the template's comment). Also 27 Sep: `figure.poem` (a poem in a
+window at the More text's 17 px, the window as narrow as its longest line, a wrapped line indented) and
+.tools.hang (between 990 and 1067 px, where the column has folded but the page has a margin, a short word
+stays to the left of its paragraph instead of moving above it).
 **`sampler.js` (21 Sep 2026)** — the magnifier and the colour sampler for any picture, `cwSampler(frame, anchors, opts)` → `{ arm, fit, drop, repaint }`; the Colour and Pixels shelf's first tool (Ruling-Labs-and-the-Plane, proposed). Pulled out of the Hokusai page, which still carries its own inline copy until it is converted to *Hokusai's World*. The page gives it the picture's own colour anchors (`{rgb, m, name, chem}`, measured off that scan) and wires its own words and readout; the script owns the gestures — tap puts the magnifier there wherever the tap lands (on the magnifier or off it), a drag that starts on the magnifier slides it (the circle alone is `touch-action: none`, so a finger elsewhere still scrolls the page), pinch or ctrl-wheel zooms to 6×, one finger pans once zoomed. Two anchors of one material are never offered as a choice; two of different materials within ΔE 4.5 are named together. Loaded with a version query by `experiments/vermeer-girl-with-a-pearl-earring.html`. **`timeline.js` (21 Sep 2026)** — a timeline over a map, *‹Name›'s World*, per `CWVault/claude/Spec-Timeline-and-Map.md`: `cwTimeline(svg, o)` for the two-sided line alone and `cwWorld(host, data)` for the whole pair — the line, the map (through `map.js`, not a second map engine), far-away cards and the panel. The person's events above the line in ink, the world's below in slate, the focus in copper, the selection in vermilion on both; labels pack into the nearest free row; nearest-mark picking at 20 px for a mouse and 32 for a finger, a label scoring ten worse than a dot; tapping a place lists all its events, oldest first; tapping what is selected or empty ground clears; a route draws only while its own event alone is selected; a far place is a card on the side where it lies (under the map on a phone, where over it the card hid the places that matter), and tapping it opens the world map in `cwMapWindow`. 22 Sep 2026: a `spread` place is one card standing for several towns (Europe in *Hokusai's World*) — its window shows the towns rather than a dot of its own, and tapping the card lists all its events; year labels thin to every twenty when ten would crowd; two dots that would sit on top of each other part, the person's above the line and the world's below. Widths come from `getBoundingClientRect`, per the spec's warning. The spec named `experiments/maps/timeline.js`; it is in `js/` beside `map.js` so a story can be hung without its path breaking. First used by `experiments/vermeer-girl-with-a-pearl-earring.html`; the Frankenstein bench and the Hokusai conversion are still to come. `cw-flags.js` (15 Sep 2026) — feature flags, `CW.flags = { maya: false }`, loaded first on every `active/` page with a version query; the Maya flag is all it holds, because nothing else about Maya exists yet, and Remember on story pages reads it (visible always with Maya; fades in as the text's reference nears without her). **`cw-number.js` — how a number is written, everywhere** (extracted
 2 Sep 2026 on Michael's instruction that the benches and labs all write numbers
 the same way; the third shared file, and the first added since Phase 4). Until
@@ -466,6 +476,14 @@ backstop for the Claude Code session that lands the file.
   the page. The line lost six events (Leaves for France, Waterloo, "Darkness", Marries Shelley,
   The book is finished, The Vampyre) and is 181 px tall on an iPad instead of 307, so the
   whole map shows under the line and the panel even at 1024 × 768.
+  **27 Sep, revisions (Draft 2.3):** the opening picture is `figure.tall`: its caption and one word,
+  *Tap the page to see a magnifier* / *Put the magnifier away*, sit in the left column at the middle
+  of the page's height (under it on a phone); *Magnifier off*, the tap sentence and the heading
+  *The page* are gone. More reordered and reworded from the story; *Darkness* after *Ada*, its word
+  *Read Darkness* (renamed on Michael's word so it fits in the margin of an iPad on its side),
+  level with its paragraph; the poem at the More text's size, in a window as narrow as its lines.
+  The 1818 title page is a half-size margin picture (`figure.margin.half` in `css/story.css`: half
+  the width of whatever column it is in, centred). Michael's opening (Draft 2.1: "The book Mary wrote began with a student…", three paragraphs) now sits between the date line and the notebook page; the body takes Draft 2.1's wording (twelve paragraphs, the readers' edits), so page and story match word for word, on Michael's word.
 - **`professor-neckers-drawing.html`** — story: **Professor Necker's Drawing** (25 Sep 2026;
   text: `CWVault/claude/Story-Professor-Neckers-Drawing.md`, Draft 2.3). Built and read at
   `experiments/`, **hung 25 Sep 2026** on Michael's word (stage 4): moved to `active/`, the old
@@ -1211,7 +1229,7 @@ head standard. With no arguments it checks every page in `active/` that links
 `css/story.css`; name a file to check one. It fails on: no `story.css` or no `--aspect`,
 more than one `<style>` block, a missing title block, date line, opening picture, left-column
 block or References, References before More, the left-column block not level with the
-caption, a tool's word not immediately before the paragraph that names it, a shelf copied
+caption (a `tall` figure's block holds its caption, 27 Sep 2026), a tool's word not immediately before the paragraph that names it, a shelf copied
 into the page, a World that does not use the shared event list, a picture or map file that
 does not exist, and anything left over from the template.
 
