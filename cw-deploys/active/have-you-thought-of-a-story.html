@@ -285,14 +285,14 @@
 </main>
 
 <script src="../js/cw-flags.js?v=2026-09-21"></script>
-<script src="../js/map.js?v=2026-09-27"></script>
+<script src="../js/map.js?v=2026-09-27i"></script>
 <script src="../js/sampler.js?v=2026-09-22"></script>
-<script src="../js/timeline.js?v=2026-09-22b"></script>
+<script src="../js/timeline.js?v=2026-09-27i"></script>
 <script src="../js/stack.js?v=2026-09-22"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-27 4390735';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-27 fd9e38b';   // date + short commit hash; bump in the same commit as any change
   console.log('have-you-thought-of-a-story', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
   const el = id => document.getElementById(id);
@@ -307,20 +307,20 @@
   // ==========================================================================
   const WORLD = {
     from: 1790, to: 1832,
-    region: '../art/maps/london-to-bologna.json',   // wide and shallow, so an iPad shows the line, the panel and most of the map at once
+    region: '../art/maps/world-pyramid.json',   // the moving world (Spec-Maps, The world that moves), opening on the corners london-to-bologna once had
+    moving: true, reset: 'reset',
+    fit: { west: -14, south: 43.7, east: 27, north: 52.4 },
     world: '../art/maps/world.json',
     pool: '../stories/world-events.json',
     placebook: '../stories/places.json',
     places: {
-      london:   { side: 'person' },
-      geneva:   { side: 'person' },
-      bologna:  { side: 'world' },
-      como:     { side: 'world' },
-      mannheim: { side: 'world' },
-      plymouth: { side: 'world' },
-      tambora:  { side: 'world', card: 'east', cardTop: 45,
-                  far: 'About 12,300 km to the south-east, in Indonesia',
-                  bearing: [{ name: 'Geneva', lat: 46.20, lon: 6.14 }] }
+      london:   { side: 'person', weight: 3 },
+      geneva:   { side: 'person', weight: 3 },
+      bologna:  { side: 'world', weight: 2 },
+      como:     { side: 'world', weight: 1 },
+      mannheim: { side: 'world', weight: 1 },
+      plymouth: { side: 'world', weight: 1 },
+      tambora: { side: 'world', weight: 3 }
     },
     events: [
       { ref: 'galvani-frogs-1791', side: 'world',

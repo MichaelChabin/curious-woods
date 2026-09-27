@@ -184,9 +184,9 @@
 
 <!-- THE SHELVES. Tools live here, not inside pages. Drop any line you do not use. -->
 <script src="../js/cw-flags.js?v=2026-09-21"></script>
-<script src="../js/map.js?v=2026-09-27b"></script>
+<script src="../js/map.js?v=2026-09-27i"></script>
 <script src="../js/sampler.js?v=2026-09-22"></script>
-<script src="../js/timeline.js?v=2026-09-27b"></script>
+<script src="../js/timeline.js?v=2026-09-27i"></script>
 <script src="../js/stack.js?v=2026-09-22"></script>
 <script>
 (function () {
@@ -225,16 +225,16 @@
   // Labels are short and name the thing; the panel explains it.
   const WORLD = {
     from: 0, to: 0,
-    region: '../art/maps/NAME.json',
+    region: '../art/maps/world-pyramid.json',   // the moving world: every story's world section, since 27 Sep 2026
+    moving: true, reset: 'reset',
+    fit: { west: 0, south: 0, east: 0, north: 0 },   // the corners the map opens on — the crop this story would have used
     world: '../art/maps/world.json',
     pool: '../stories/world-events.json',
     placebook: '../stories/places.json',
     places: {
-      SOMEWHERE: { side: 'person' },
-      ELSEWHERE: { side: 'world' },
-      FARAWAY:   { side: 'world', card: 'east', cardTop: 30,
-                   far: 'About 0,000 km to the east, in SOMEWHERE',
-                   bearing: [{ name: 'SOMEWHERE', lat: 0, lon: 0 }] }
+      SOMEWHERE: { side: 'person', weight: 3 },
+      ELSEWHERE: { side: 'world', weight: 1 },
+      FARAWAY:   { side: 'world', weight: 3 }     // nothing is far away on a map that pans; weight 3 matters at the whole-world scale
     },
     events: [
       { id: 'born', year: 0, side: 'person', label: 'Born', place: 'SOMEWHERE',

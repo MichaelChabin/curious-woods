@@ -1,161 +1,210 @@
 {
-  "_about": "Where things happened, shared by every story, so two stories never disagree about where Zhapu is. A story names a place id and adds only what is its own: which side of the line it belongs to, whether it is a card at the map's edge, and so on.",
+  "_about": "Where things happened, shared by every story, so two stories never disagree about where Zhapu is. A story names a place id and adds only what is its own: which side of the line it belongs to, whether it is a card at the map's edge, and so on. `weight` (27 Sep 2026, Spec-Maps *The world that moves*): 1 to 3, how much the place matters at the whole-world scale — 3 is shown first and survives a collision; a place that says nothing counts as 1. On a map that pans nothing is far away, so cards are no longer a place's business.",
   "version": "2026-09-27",
   "places": {
     "delft": {
       "name": "Delft",
       "lat": 52.01,
-      "lon": 4.36
+      "lon": 4.36,
+      "weight": 3
     },
     "amsterdam": {
       "name": "Amsterdam",
       "lat": 52.37,
-      "lon": 4.9
+      "lon": 4.9,
+      "weight": 2
     },
     "paris": {
       "name": "Paris",
       "lat": 48.86,
-      "lon": 2.35
+      "lon": 2.35,
+      "weight": 3
     },
     "london": {
       "name": "London",
       "lat": 51.51,
-      "lon": -0.13
+      "lon": -0.13,
+      "weight": 3
     },
     "woolsthorpe": {
       "name": "Woolsthorpe",
       "lat": 52.81,
-      "lon": -0.63
+      "lon": -0.63,
+      "weight": 1
     },
     "utrecht": {
       "name": "Utrecht",
       "lat": 52.09,
-      "lon": 5.12
+      "lon": 5.12,
+      "weight": 2
     },
     "jingdezhen": {
       "name": "Jingdezhen",
       "lat": 29.27,
-      "lon": 117.18
+      "lon": 117.18,
+      "weight": 2
     },
     "arcetri": {
       "name": "Arcetri, near Florence",
       "lat": 43.75,
-      "lon": 11.25
+      "lon": 11.25,
+      "weight": 2
     },
     "edo": {
       "name": "Edo",
       "lat": 35.68,
-      "lon": 139.77
+      "lon": 139.77,
+      "weight": 3
     },
     "nagoya": {
       "name": "Nagoya",
       "lat": 35.18,
-      "lon": 136.91
+      "lon": 136.91,
+      "weight": 1
     },
     "nagasaki": {
       "name": "Nagasaki",
       "lat": 32.74,
-      "lon": 129.87
+      "lon": 129.87,
+      "weight": 2
     },
     "yaeyama": {
       "name": "the Yaeyama Islands",
       "lat": 24.35,
-      "lon": 124.15
+      "lon": 124.15,
+      "weight": 1
     },
     "asama": {
       "name": "Mount Asama",
       "lat": 36.4,
-      "lon": 138.52
+      "lon": 138.52,
+      "weight": 1
     },
     "beijing": {
       "name": "Beijing",
       "lat": 39.9,
-      "lon": 116.4
+      "lon": 116.4,
+      "weight": 3
     },
     "zhapu": {
       "name": "Zhapu",
       "lat": 30.6,
-      "lon": 121.1
+      "lon": 121.1,
+      "weight": 1
     },
     "kyoto": {
       "name": "Kyoto",
       "lat": 35.01,
-      "lon": 135.77
+      "lon": 135.77,
+      "weight": 2
     },
     "tambora": {
       "name": "Tambora",
       "lat": -8.25,
-      "lon": 118
+      "lon": 118,
+      "weight": 3
     },
     "saint-remy": {
       "name": "Saint-Rémy",
       "lat": 43.79,
-      "lon": 4.83
+      "lon": 4.83,
+      "weight": 2
     },
     "arles": {
       "name": "Arles",
       "lat": 43.68,
-      "lon": 4.63
+      "lon": 4.63,
+      "weight": 2
     },
     "auvers": {
       "name": "Auvers",
       "lat": 49.07,
-      "lon": 2.17
+      "lon": 2.17,
+      "weight": 1
     },
     "zundert": {
       "name": "Zundert",
       "lat": 51.47,
-      "lon": 4.66
+      "lon": 4.66,
+      "weight": 1
     },
     "rotterdam": {
       "name": "Rotterdam",
       "lat": 51.92,
-      "lon": 4.48
+      "lon": 4.48,
+      "weight": 2
     },
     "new-york": {
       "name": "New York",
       "lat": 40.71,
-      "lon": -74.01
+      "lon": -74.01,
+      "weight": 3
     },
     "menlo-park": {
       "name": "Menlo Park",
       "lat": 40.54,
-      "lon": -74.46
+      "lon": -74.46,
+      "weight": 1
     },
     "geneva": {
       "name": "Geneva",
       "lat": 46.2,
-      "lon": 6.14
+      "lon": 6.14,
+      "weight": 3
     },
     "edinburgh": {
       "name": "Edinburgh",
       "lat": 55.95,
-      "lon": -3.19
+      "lon": -3.19,
+      "weight": 2
     },
     "plymouth": {
       "name": "Plymouth",
       "lat": 50.37,
-      "lon": -4.14
+      "lon": -4.14,
+      "weight": 2
     },
     "portree": {
       "name": "Portree, Skye",
       "lat": 57.41,
-      "lon": -6.19
+      "lon": -6.19,
+      "weight": 1
     },
     "bologna": {
       "name": "Bologna",
       "lat": 44.49,
-      "lon": 11.34
+      "lon": 11.34,
+      "weight": 2
     },
     "como": {
       "name": "Como",
       "lat": 45.81,
-      "lon": 9.09
+      "lon": 9.09,
+      "weight": 2
     },
     "mannheim": {
       "name": "Mannheim",
       "lat": 49.49,
-      "lon": 8.47
+      "lon": 8.47,
+      "weight": 1
+    },
+    "vienna": {
+      "name": "Vienna",
+      "lat": 48.21,
+      "lon": 16.37,
+      "weight": 2
+    },
+    "bath": {
+      "name": "Bath",
+      "lat": 51.38,
+      "lon": -2.36,
+      "weight": 1
+    },
+    "koping": {
+      "name": "Köping",
+      "lat": 59.51,
+      "lon": 15.99,
+      "weight": 1
     }
   }
 }

@@ -209,13 +209,13 @@
 </main>
 
 <script src="../js/cw-flags.js?v=2026-09-20"></script>
-<script src="../js/map.js?v=2026-09-27b"></script>
+<script src="../js/map.js?v=2026-09-27i"></script>
 <script src="../js/sampler.js?v=2026-09-22"></script>
-<script src="../js/timeline.js?v=2026-09-27b"></script>
+<script src="../js/timeline.js?v=2026-09-27i"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-27 2cecf02';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-27 fd9e38b';   // date + short commit hash; bump in the same commit as any change
   console.log('hokusai-the-great-wave', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
@@ -299,25 +299,28 @@
   // the picture explains. His life above the line; the world's below.
   const WORLD = {
     from: 1760, to: 1855,
-    region: '../art/maps/japan-and-china.json',
+    region: '../art/maps/world-pyramid.json',   // the moving world (Spec-Maps, The world that moves), opening on the corners japan-and-china once had
+    moving: true, reset: 'reset',
+    fit: { west: 105, south: 21, east: 150, north: 42 },
     world: '../art/maps/world.json',
     pool: '../stories/world-events.json',        // what the world owns, shared by every story
     placebook: '../stories/places.json',
     places: {
-      edo: { side: 'person' },
-      nagoya: { side: 'person' },
-      nagasaki: { side: 'world' },
-      yaeyama: { side: 'world' },
-      asama: { side: 'world' },
-      beijing: { side: 'world' },
-      zhapu: { side: 'world' },
-      kyoto: { side: 'minor' },
-      europe: { name: 'Europe', lat: 48.5, lon: 6, side: 'world', card: 'west', cardTop: 20, spread: true,
-        far: 'About 9,500 km to the west',
-        bearing: [{name: 'Bath',lat: 51.38,lon: -2.36,lit: true},{name: 'London',lat: 51.51,lon: -0.13,lit: true},{name: 'Paris',lat: 48.86,lon: 2.35,lit: true},{name: 'Geneva',lat: 46.2,lon: 6.14,lit: true},{name: 'Vienna',lat: 48.21,lon: 16.37,lit: true},{name: 'Köping',lat: 59.51,lon: 15.99,lit: true},{name: 'Edo',lat: 35.68,lon: 139.77}] },
-      tambora: { side: 'world', card: 'west', cardTop: 62,
-        far: 'About 5,400 km to the south-west, in Indonesia',
-        bearing: [{name: 'Edo',lat: 35.68,lon: 139.77}] }
+      edo: { side: 'person', weight: 3 },
+      nagoya: { side: 'person', weight: 1 },
+      nagasaki: { side: 'world', weight: 2 },
+      yaeyama: { side: 'world', weight: 1 },
+      asama: { side: 'world', weight: 1 },
+      beijing: { side: 'world', weight: 2 },
+      zhapu: { side: 'world', weight: 1 },
+      kyoto: { side: 'minor', weight: 1 },
+      london: { side: 'world', weight: 2 },
+      paris: { side: 'world', weight: 2 },
+      vienna: { side: 'world', weight: 1 },
+      bath: { side: 'world', weight: 1 },
+      koping: { side: 'world', weight: 1 },
+      geneva: { side: 'world', weight: 1 },
+      tambora: { side: 'world', weight: 3 }
     },
     routes: {
       tokaido: [[35.68, 139.77], [35.26, 139.15], [34.97, 138.38], [34.71, 137.73], [35.12, 136.91],
@@ -352,7 +355,7 @@
         when: '1814 · Nagoya', title: 'Sketches for anybody',
         text: 'The first volume of his Manga came out in Nagoya: a book of quick drawings of people, animals, ghosts and waves, for other artists to copy from. Fifteen volumes followed, the last of them after he died.' },
       { ref: 'tambora-1815', side: 'world' },
-      { ref: 'frankenstein-1816', side: 'world', place: 'europe' },   // the shared record is at Geneva; on this map Europe is a card
+      { ref: 'frankenstein-1816', side: 'world' },
       { ref: 'prussian-blue-japan-1820', side: 'world' },
       { ref: 'japan-drives-ships-1825', side: 'world' },
       { ref: 'cheap-prussian-blue-1829', side: 'world' },

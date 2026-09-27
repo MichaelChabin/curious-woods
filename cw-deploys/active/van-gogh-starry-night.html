@@ -183,14 +183,14 @@
 </main>
 
 <script src="../js/cw-flags.js?v=2026-09-21"></script>
-<script src="../js/map.js?v=2026-09-27b"></script>
+<script src="../js/map.js?v=2026-09-27i"></script>
 <script src="../js/sampler.js?v=2026-09-22"></script>
-<script src="../js/timeline.js?v=2026-09-27b"></script>
+<script src="../js/timeline.js?v=2026-09-27i"></script>
 <script src="../js/stack.js?v=2026-09-22"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-27 2cecf02';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-27 fd9e38b';   // date + short commit hash; bump in the same commit as any change
   console.log('van-gogh-starry-night', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
@@ -261,28 +261,24 @@
   // which the thing goes on travelling for fifty years after the man has stopped.
   const WORLD = {
     from: 1830, to: 1950,
-    region: '../art/maps/france-to-the-north-sea.json',
+    region: '../art/maps/world-pyramid.json',   // the moving world (Spec-Maps, The world that moves), opening on the corners france-to-the-north-sea once had
+    moving: true, reset: 'reset',
+    fit: { west: -10, south: 41.5, east: 20, north: 53.5 },
     world: '../art/maps/world.json',
     pool: '../stories/world-events.json',        // what the world owns, shared by every story
     placebook: '../stories/places.json',
     places: {
-      'saint-remy': { side: 'person' },
-      zundert:      { side: 'person' },
-      arles:        { side: 'person' },
-      auvers:       { side: 'person' },
-      paris:        { side: 'world' },
-      london:       { side: 'world' },
-      amsterdam:    { side: 'world' },
-      rotterdam:    { side: 'world' },
-      'new-york':   { side: 'world', card: 'west', cardTop: 30,
-        far: 'About 5,800 km to the west, in America',
-        bearing: [{ name: 'Saint-Rémy', lat: 43.79, lon: 4.83 }] },
-      'menlo-park': { side: 'world', card: 'west', cardTop: 62,
-        far: 'About 6,000 km to the west, in New Jersey',
-        bearing: [{ name: 'Paris', lat: 48.86, lon: 2.35 }] },
-      edo:          { side: 'world', card: 'east', cardTop: 30,
-        far: 'About 9,700 km to the east, in Japan',
-        bearing: [{ name: 'Paris', lat: 48.86, lon: 2.35 }] }
+      'saint-remy': { side: 'person', weight: 3 },
+      zundert:      { side: 'person', weight: 1 },
+      arles:        { side: 'person', weight: 2 },
+      auvers:       { side: 'person', weight: 1 },
+      paris:        { side: 'world', weight: 2 },
+      london:       { side: 'world', weight: 2 },
+      amsterdam:    { side: 'world', weight: 2 },
+      rotterdam:    { side: 'world', weight: 1 },
+      'new-york': { side: 'world', weight: 3 },
+      'menlo-park': { side: 'world', weight: 1 },
+      edo: { side: 'world', weight: 2 }
     },
     events: [
       { ref: 'faraday-1831', side: 'world' },

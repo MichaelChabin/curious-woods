@@ -1,5 +1,5 @@
 {
-  "_about": "The world's events, shared by every story. One record per event: what happened, when, and where — checked once, used everywhere. A story picks the ones inside its span (js/timeline.js, `pool`), says which side of its line each one sits on, and may add `why`: the last sentence, in that story's voice, tying it to that picture. A story never rewrites these words. Places are ids from stories/places.json. Years are plain years; a fraction places an event inside its year (1815.3 is April). Spec: CWVault/claude/Story-Pattern.md.",
+  "_about": "The world's events, shared by every story. One record per event: what happened, when, and where — checked once, used everywhere. A story picks the ones inside its span (js/timeline.js, `pool`), says which side of its line each one sits on, and may add `why`: the last sentence, in that story's voice, tying it to that picture. A story never rewrites these words. Places are ids from stories/places.json. Years are plain years; a fraction places an event inside its year (1815.3 is April). Spec: CWVault/claude/Story-Pattern.md. `weight` (27 Sep 2026, Spec-Maps *The world that moves*): 1 to 3, how much the event matters at the whole-world scale — 3 is shown first when a timeline or a map is crowded; an event that says nothing counts as 1. Six events that sat at a place called `europe` (a card on one story's map, never a place in places.json) sit in their towns since 27 Sep: Köping, Bath, Vienna, Paris, London, Paris.",
   "version": "2026-09-27",
   "events": {
     "leeuwenhoek-born-1632": {
@@ -8,7 +8,8 @@
       "place": "delft",
       "label": "Leeuwenhoek born",
       "title": "The boy who would see the invisible",
-      "text": "Antonie van Leeuwenhoek was baptised in the New Church at Delft four days after Johannes Vermeer. He grew up to make the best microscopes of his time, and to see tiny animals swimming in a drop of water."
+      "text": "Antonie van Leeuwenhoek was baptised in the New Church at Delft four days after Johannes Vermeer. He grew up to make the best microscopes of his time, and to see tiny animals swimming in a drop of water.",
+      "weight": 2
     },
     "night-watch-1642": {
       "year": 1642,
@@ -16,7 +17,8 @@
       "place": "amsterdam",
       "label": "Rembrandt paints The Night Watch",
       "title": "The Night Watch",
-      "text": "Rembrandt’s biggest painting: a company of Amsterdam’s guards stepping out with their muskets and their banner, more than four metres wide."
+      "text": "Rembrandt’s biggest painting: a company of Amsterdam’s guards stepping out with their muskets and their banner, more than four metres wide.",
+      "weight": 2
     },
     "galileo-dies-1642": {
       "year": 1642.02,
@@ -24,7 +26,8 @@
       "place": "arcetri",
       "label": "Galileo dies",
       "title": "Galileo dies, and Newton is born",
-      "text": "Galileo Galilei died in January 1642, in his house in the hills outside Florence. He had been one of the first to turn a telescope on the sky, and he saw mountains on the Moon. For saying that the Earth goes round the Sun, the Church had kept him shut up there for the last eight and a half years of his life. Isaac Newton was born the same year."
+      "text": "Galileo Galilei died in January 1642, in his house in the hills outside Florence. He had been one of the first to turn a telescope on the sky, and he saw mountains on the Moon. For saying that the Earth goes round the Sun, the Church had kept him shut up there for the last eight and a half years of his life. Isaac Newton was born the same year.",
+      "weight": 3
     },
     "newton-born-1642": {
       "year": 1642.98,
@@ -32,7 +35,8 @@
       "place": "woolsthorpe",
       "label": "Newton born",
       "title": "Isaac Newton is born",
-      "text": "On Christmas Day 1642, on a farm at Woolsthorpe in England. In the course of his lifetime he would work out the laws of motion, the law of gravity, and calculus."
+      "text": "On Christmas Day 1642, on a farm at Woolsthorpe in England. In the course of his lifetime he would work out the laws of motion, the law of gravity, and calculus.",
+      "weight": 2
     },
     "ming-falls-1644": {
       "year": 1644,
@@ -40,7 +44,8 @@
       "place": "jingdezhen",
       "label": "Chinese porcelain stops",
       "title": "A war in China",
-      "text": "The Ming dynasty fell, and the blue-and-white porcelain the Dutch had been buying, much of it made in the kiln town of Jingdezhen, stopped coming."
+      "text": "The Ming dynasty fell, and the blue-and-white porcelain the Dutch had been buying, much of it made in the kiln town of Jingdezhen, stopped coming.",
+      "weight": 3
     },
     "delft-potteries-1647": {
       "year": 1647,
@@ -48,7 +53,8 @@
       "place": "delft",
       "label": "Delft potters copy it",
       "title": "Four potteries, then twenty",
-      "text": "Ordinary clay under a glaze made white with tin, painted with cobalt blue in Chinese patterns. Four potteries in 1647; more than twenty by 1661."
+      "text": "Ordinary clay under a glaze made white with tin, painted with cobalt blue in Chinese patterns. Four potteries in 1647; more than twenty by 1661.",
+      "weight": 1
     },
     "delft-thunderclap-1654": {
       "year": 1654.78,
@@ -56,7 +62,8 @@
       "place": "delft",
       "label": "The gunpowder store explodes",
       "title": "The Delft Thunderclap",
-      "text": "About forty thousand kilograms of gunpowder. More than two hundred houses flattened. The painter Carel Fabritius, who had studied with Rembrandt, died at his easel."
+      "text": "About forty thousand kilograms of gunpowder. More than two hundred houses flattened. The painter Carel Fabritius, who had studied with Rembrandt, died at his easel.",
+      "weight": 2
     },
     "london-plague-1665": {
       "year": 1665.5,
@@ -64,7 +71,8 @@
       "place": "london",
       "label": "Plague in London",
       "title": "The Great Plague",
-      "text": "Plague killed about a hundred thousand people in London, something like one in four. Cambridge University shut its doors, and a young Isaac Newton went home to the farm where he was born."
+      "text": "Plague killed about a hundred thousand people in London, something like one in four. Cambridge University shut its doors, and a young Isaac Newton went home to the farm where he was born.",
+      "weight": 2
     },
     "newton-prism-1666": {
       "year": 1666,
@@ -72,7 +80,8 @@
       "place": "woolsthorpe",
       "label": "Newton's prism",
       "title": "White light is all the colours",
-      "text": "Newton was splitting sunlight into colours with a glass prism, and working out that white light is all of them at once."
+      "text": "Newton was splitting sunlight into colours with a glass prism, and working out that white light is all of them at once.",
+      "weight": 3
     },
     "bourgeois-gentleman-1670": {
       "year": 1670.8,
@@ -80,7 +89,8 @@
       "place": "paris",
       "label": "Molière’s The Bourgeois Gentleman",
       "title": "Speaking prose all his life",
-      "text": "Molière’s play was first performed for the King of France in October 1670, and then in Paris. In it Monsieur Jourdain is delighted to discover that he has been speaking prose all his life."
+      "text": "Molière’s play was first performed for the King of France in October 1670, and then in Paris. In it Monsieur Jourdain is delighted to discover that he has been speaking prose all his life.",
+      "weight": 2
     },
     "france-invades-1672": {
       "year": 1672.5,
@@ -88,7 +98,8 @@
       "place": "utrecht",
       "label": "France invades",
       "title": "The disaster year",
-      "text": "The armies of the King of France marched into the Republic and took Utrecht."
+      "text": "The armies of the King of France marched into the Republic and took Utrecht.",
+      "weight": 2
     },
     "colour-prints-1765": {
       "year": 1765,
@@ -96,7 +107,8 @@
       "place": "edo",
       "label": "The first full-colour prints",
       "title": "Colour, block by block",
-      "text": "Suzuki Harunobu and his cutters worked out how to line up many blocks exactly, one for each colour. Before that a print was black lines with a wash or two."
+      "text": "Suzuki Harunobu and his cutters worked out how to line up many blocks exactly, one for each colour. Before that a print was black lines with a wash or two.",
+      "weight": 2
     },
     "meiwa-tsunami-1771": {
       "year": 1771.3,
@@ -104,7 +116,8 @@
       "place": "yaeyama",
       "label": "The Meiwa tsunami",
       "title": "A wave that really came",
-      "text": "An earthquake sent a wave over the islands in the far south-west of Japan. In places it ran thirty metres up the hills, and about a third of the people living there were killed."
+      "text": "An earthquake sent a wave over the islands in the far south-west of Japan. In places it ran thirty metres up the hills, and about a third of the people living there were killed.",
+      "weight": 1
     },
     "kaitai-shinsho-1774": {
       "year": 1774,
@@ -112,15 +125,17 @@
       "place": "edo",
       "label": "A Dutch anatomy book in Japanese",
       "title": "Kaitai Shinsho",
-      "text": "Three Japanese doctors watched a dissection with a Dutch anatomy book open beside them, saw that the Dutch book was right and their own books were wrong, and spent three years turning it into Japanese — though they could barely read Dutch. It came through the same door as the blue."
+      "text": "Three Japanese doctors watched a dissection with a Dutch anatomy book open beside them, saw that the Dutch book was right and their own books were wrong, and spent three years turning it into Japanese — though they could barely read Dutch. It came through the same door as the blue.",
+      "weight": 1
     },
     "scheeles-green-1775": {
       "year": 1775.5,
       "when": "1775 · Köping, Sweden",
-      "place": "europe",
+      "place": "koping",
       "label": "Scheele’s green",
       "title": "A beautiful green made of arsenic",
-      "text": "Carl Wilhelm Scheele mixed copper with arsenic and got a green brighter than any other. It went into wallpaper, cloth, artificial flowers and, sometimes, sweets, and it went on quietly poisoning people for a hundred years."
+      "text": "Carl Wilhelm Scheele mixed copper with arsenic and got a green brighter than any other. It went into wallpaper, cloth, artificial flowers and, sometimes, sweets, and it went on quietly poisoning people for a hundred years.",
+      "weight": 1
     },
     "elekiter-1776": {
       "year": 1776,
@@ -128,15 +143,17 @@
       "place": "edo",
       "label": "Gennai’s electric machine",
       "title": "The elekiter",
-      "text": "Hiraga Gennai repaired a broken Dutch machine that made sparks by rubbing glass, and showed it off in Edo. Fifty-five years later Faraday got electricity out of a magnet instead."
+      "text": "Hiraga Gennai repaired a broken Dutch machine that made sparks by rubbing glass, and showed it off in Edo. Fifty-five years later Faraday got electricity out of a magnet instead.",
+      "weight": 1
     },
     "uranus-1781": {
       "year": 1781.2,
       "when": "1781 · Bath, England",
-      "place": "europe",
+      "place": "bath",
       "label": "Uranus is found",
       "title": "A new planet",
-      "text": "William Herschel, looking through a telescope he had built himself, found a small green dot that moved. It was a planet, the first anybody had found since ancient times, and it put the edge of the Sun’s family twice as far out as it had been."
+      "text": "William Herschel, looking through a telescope he had built himself, found a small green dot that moved. It was a planet, the first anybody had found since ancient times, and it put the edge of the Sun’s family twice as far out as it had been.",
+      "weight": 2
     },
     "kokan-copperplate-1783": {
       "year": 1783.4,
@@ -144,7 +161,8 @@
       "place": "edo",
       "label": "Shiba Kōkan’s copperplate",
       "title": "Depth on a flat sheet",
-      "text": "Shiba Kōkan made the first copperplate etching in Japan, and took from Dutch books the trick of drawing things smaller as they go further away."
+      "text": "Shiba Kōkan made the first copperplate etching in Japan, and took from Dutch books the trick of drawing things smaller as they go further away.",
+      "weight": 1
     },
     "asama-tenmei-1783": {
       "year": 1783.6,
@@ -152,23 +170,26 @@
       "place": "asama",
       "label": "Asama erupts; then the famine",
       "title": "The sky dims and the rice fails",
-      "text": "The mountain buried the farms below it in ash, and a volcano in Iceland was erupting the same year. Cold summers followed, the rice failed again and again, and hundreds of thousands of people died in what is called the Tenmei famine. Thirty-two years later Tambora did the same thing on a bigger scale."
+      "text": "The mountain buried the farms below it in ash, and a volcano in Iceland was erupting the same year. Cold summers followed, the rice failed again and again, and hundreds of thousands of people died in what is called the Tenmei famine. Thirty-two years later Tambora did the same thing on a bigger scale.",
+      "weight": 2
     },
     "figaro-1786": {
       "year": 1786.4,
       "when": "1786 · Vienna",
-      "place": "europe",
+      "place": "vienna",
       "label": "Mozart’s Marriage of Figaro",
       "title": "A servant outwits his master",
-      "text": "Mozart’s new opera opened in Vienna. It is about a servant who is cleverer than the count he works for, and it is still performed everywhere."
+      "text": "Mozart’s new opera opened in Vienna. It is about a servant who is cleverer than the count he works for, and it is still performed everywhere.",
+      "weight": 2
     },
     "french-revolution-1789": {
       "year": 1789.5,
       "when": "1789 · Paris",
-      "place": "europe",
+      "place": "paris",
       "label": "The French Revolution begins",
       "title": "The Bastille falls",
-      "text": "A crowd in Paris took the Bastille, the king’s prison, and France began pulling down its kings. Napoleon’s wars came out of it, and most of the dates in European history for the next thirty years."
+      "text": "A crowd in Paris took the Bastille, the king’s prison, and France began pulling down its kings. Napoleon’s wars came out of it, and most of the dates in European history for the next thirty years.",
+      "weight": 3
     },
     "red-chamber-1791": {
       "year": 1791,
@@ -176,7 +197,8 @@
       "place": "beijing",
       "label": "Dream of the Red Chamber is printed",
       "title": "The great Chinese novel",
-      "text": "A long novel about a rich family’s rise and fall, written thirty years earlier and passed around in hand-made copies, was printed at last. Chinese readers have been arguing about its ending ever since."
+      "text": "A long novel about a rich family’s rise and fall, written thirty years earlier and passed around in hand-made copies, was printed at last. Chinese readers have been arguing about its ending ever since.",
+      "weight": 2
     },
     "galvani-frogs-1791": {
       "year": 1791.8,
@@ -184,7 +206,8 @@
       "place": "bologna",
       "label": "Galvani’s frogs",
       "title": "The frog that kicked",
-      "text": "Luigi Galvani touched a dead frog’s legs with two metals and the legs kicked. He thought he had found the electricity of life. The argument ran for thirty years."
+      "text": "Luigi Galvani touched a dead frog’s legs with two metals and the legs kicked. He thought he had found the electricity of life. The argument ran for thirty years.",
+      "weight": 2
     },
     "volta-pile-1800": {
       "year": 1800.2,
@@ -192,7 +215,8 @@
       "place": "como",
       "label": "Volta’s pile",
       "title": "The first battery",
-      "text": "Alessandro Volta, who did not believe Galvani, stacked discs of two metals with wet card between them and made the first steady electric current. He had won the argument about the frog and started a bigger one."
+      "text": "Alessandro Volta, who did not believe Galvani, stacked discs of two metals with wet card between them and made the first steady electric current. He had won the argument about the frog and started a bigger one.",
+      "weight": 2
     },
     "aldini-newgate-1803": {
       "year": 1803.05,
@@ -200,7 +224,8 @@
       "place": "london",
       "label": "Aldini at Newgate",
       "title": "The hanged man’s eye opened",
-      "text": "Giovanni Aldini, Galvani’s nephew, ran current through the body of a hanged man in front of a crowd. The jaw moved, an eye opened, a hand clenched."
+      "text": "Giovanni Aldini, Galvani’s nephew, ran current through the body of a hanged man in front of a crowd. The jaw moved, an eye opened, a hand clenched.",
+      "weight": 1
     },
     "phaeton-1808": {
       "year": 1808.8,
@@ -208,7 +233,8 @@
       "place": "nagasaki",
       "label": "A British warship forces its way in",
       "title": "The Phaeton",
-      "text": "A British warship sailed into Nagasaki flying a Dutch flag, seized two Dutch traders, and would not leave until it was given food and water. Japan was humiliated, and it is one reason the door shut tighter."
+      "text": "A British warship sailed into Nagasaki flying a Dutch flag, seized two Dutch traders, and would not leave until it was given food and water. Japan was humiliated, and it is one reason the door shut tighter.",
+      "weight": 1
     },
     "tambora-1815": {
       "year": 1815.3,
@@ -216,7 +242,8 @@
       "place": "tambora",
       "label": "Tambora explodes",
       "title": "The biggest eruption in recorded history",
-      "text": "The volcano Tambora, on an island in what is now Indonesia, blew apart in April 1815. Its ash went round the world, and the next year Europe and North America had no summer."
+      "text": "The volcano Tambora, on an island in what is now Indonesia, blew apart in April 1815. Its ash went round the world, and the next year Europe and North America had no summer.",
+      "weight": 3
     },
     "ada-born-1815": {
       "year": 1815.94,
@@ -224,7 +251,8 @@
       "place": "london",
       "label": "Ada born",
       "title": "Byron’s daughter",
-      "text": "Byron left England when she was four months old and never saw her again. Her mother had her taught mathematics, on purpose, so that she would not turn out a poet."
+      "text": "Byron left England when she was four months old and never saw her again. Her mother had her taught mathematics, on purpose, so that she would not turn out a poet.",
+      "weight": 2
     },
     "frankenstein-1816": {
       "year": 1816.5,
@@ -232,7 +260,8 @@
       "place": "geneva",
       "label": "Mary Shelley begins Frankenstein",
       "title": "A summer with no summer in it",
-      "text": "The summer after Tambora was so cold and wet that a group of friends staying by Lake Geneva were kept indoors, and told each other ghost stories. One of them, Mary Shelley, who was eighteen, began Frankenstein."
+      "text": "The summer after Tambora was so cold and wet that a group of friends staying by Lake Geneva were kept indoors, and told each other ghost stories. One of them, Mary Shelley, who was eighteen, began Frankenstein.",
+      "weight": 3
     },
     "darkness-1816": {
       "year": 1816.55,
@@ -240,7 +269,8 @@
       "place": "geneva",
       "label": "Byron’s “Darkness”",
       "title": "A poem about the sun going out",
-      "text": "Lord Byron wrote it by Lake Geneva in the summer without a summer. “The bright sun was extinguish’d.”"
+      "text": "Lord Byron wrote it by Lake Geneva in the summer without a summer. “The bright sun was extinguish’d.”",
+      "weight": 1
     },
     "running-machine-1817": {
       "year": 1817.45,
@@ -248,7 +278,8 @@
       "place": "mannheim",
       "label": "The running machine",
       "title": "A bicycle with no pedals",
-      "text": "With the harvest failed, horses were too dear to feed. Karl Drais built a two-wheeled machine you sat on and pushed along with your feet. It is the bicycle’s grandfather."
+      "text": "With the harvest failed, horses were too dear to feed. Karl Drais built a two-wheeled machine you sat on and pushed along with your feet. It is the bicycle’s grandfather.",
+      "weight": 2
     },
     "kaleidoscope-1817": {
       "year": 1817.5,
@@ -256,7 +287,8 @@
       "place": "edinburgh",
       "label": "Brewster’s kaleidoscope",
       "title": "Two mirrors in a tube",
-      "text": "David Brewster, a physicist in Edinburgh, patented the kaleidoscope: two mirrors in a tube, and loose bits of coloured glass at the end. Turn it and the pattern changes. It was copied so quickly that he made very little from it."
+      "text": "David Brewster, a physicist in Edinburgh, patented the kaleidoscope: two mirrors in a tube, and loose bits of coloured glass at the end. Turn it and the pattern changes. It was copied so quickly that he made very little from it.",
+      "weight": 2
     },
     "vampyre-1819": {
       "year": 1819.25,
@@ -264,7 +296,8 @@
       "place": "london",
       "label": "The Vampyre",
       "title": "The first vampire story in English",
-      "text": "John Polidori’s, made from pages Lord Byron had abandoned. It was printed under Byron’s name by mistake."
+      "text": "John Polidori’s, made from pages Lord Byron had abandoned. It was printed under Byron’s name by mistake.",
+      "weight": 2
     },
     "prussian-blue-japan-1820": {
       "year": 1820,
@@ -272,7 +305,8 @@
       "place": "nagasaki",
       "label": "Prussian blue in Japan, still dear",
       "title": "A little of the Berlin blue",
-      "text": "Dutch ships had been bringing small amounts of the blue through Dejima for years. Painters used a little of it. It cost far too much for prints."
+      "text": "Dutch ships had been bringing small amounts of the blue through Dejima for years. Painters used a little of it. It cost far too much for prints.",
+      "weight": 2
     },
     "frankenstein-stage-1823": {
       "year": 1823.56,
@@ -280,7 +314,8 @@
       "place": "london",
       "label": "Frankenstein on stage",
       "title": "The creature walks on",
-      "text": "Presumption; or, the Fate of Frankenstein, at the English Opera House. The creature has not been off a stage or a screen since."
+      "text": "Presumption; or, the Fate of Frankenstein, at the English Opera House. The creature has not been off a stage or a screen since.",
+      "weight": 1
     },
     "japan-drives-ships-1825": {
       "year": 1825,
@@ -288,7 +323,8 @@
       "place": "edo",
       "label": "Japan orders foreign ships driven away",
       "title": "Drive them off",
-      "text": "After more foreign ships came near the coast, the shogun’s government ordered that any of them be driven off, with cannon if need be."
+      "text": "After more foreign ships came near the coast, the shogun’s government ordered that any of them be driven off, with cannon if need be.",
+      "weight": 2
     },
     "cheap-prussian-blue-1829": {
       "year": 1829,
@@ -296,7 +332,8 @@
       "place": "zhapu",
       "label": "Cheap Prussian blue arrives from China",
       "title": "The blue gets cheap",
-      "text": "Chinese makers were now making the blue themselves, and cheaply. It began arriving at Nagasaki on junks from Zhapu, and within a year or two it was all over the print shops of Edo."
+      "text": "Chinese makers were now making the blue themselves, and cheaply. It began arriving at Nagasaki on junks from Zhapu, and within a year or two it was all over the print shops of Edo.",
+      "weight": 2
     },
     "great-wave-1830": {
       "year": 1830.5,
@@ -304,15 +341,17 @@
       "place": "edo",
       "label": "The Great Wave",
       "title": "Under the Wave off Kanagawa",
-      "text": "Hokusai’s print of a wave about to fall on three boats, with Mount Fuji small in the distance. It was one of the first prints made in the new, cheap Prussian blue."
+      "text": "Hokusai’s print of a wave about to fall on three boats, with Mount Fuji small in the distance. It was one of the first prints made in the new, cheap Prussian blue.",
+      "weight": 3
     },
     "faraday-1831": {
       "year": 1831.7,
       "when": "1831 · London",
-      "place": "europe",
+      "place": "london",
       "label": "Faraday's generator",
       "title": "A magnet and a coil of wire",
-      "text": "Michael Faraday pushed a magnet into a coil of wire and made electricity flow in it. Nearly every power station in the world works that way now."
+      "text": "Michael Faraday pushed a magnet into a coil of wire and made electricity flow in it. Nearly every power station in the world works that way now.",
+      "weight": 3
     },
     "daumier-gargantua-1831": {
       "year": 1831.95,
@@ -320,7 +359,8 @@
       "place": "paris",
       "label": "Daumier draws the king",
       "title": "Six months for a drawing",
-      "text": "In December 1831 Honoré Daumier published a drawing of the king of France as a giant on a throne, being fed baskets of money carried up a plank by the poor. He was fined and sentenced to six months in prison."
+      "text": "In December 1831 Honoré Daumier published a drawing of the king of France as a giant on a throne, being fed baskets of money carried up a plank by the poor. He was fined and sentenced to six months in prison.",
+      "weight": 2
     },
     "beagle-1831": {
       "year": 1831.99,
@@ -328,7 +368,8 @@
       "place": "plymouth",
       "label": "The Beagle sails",
       "title": "Five years round the world",
-      "text": "HMS Beagle left Plymouth at the end of December 1831 to chart the coasts of South America, with a young Charles Darwin on board. It came home nearly five years later."
+      "text": "HMS Beagle left Plymouth at the end of December 1831 to chart the coasts of South America, with a young Charles Darwin on board. It came home nearly five years later.",
+      "weight": 2
     },
     "hiroshige-tokaido-1833": {
       "year": 1833.5,
@@ -336,7 +377,8 @@
       "place": "edo",
       "label": "Hiroshige’s road to Kyoto",
       "title": "Fifty-three stations",
-      "text": "Utagawa Hiroshige published prints of the fifty-three stopping places on the great road from Edo to Kyoto. They were a great success."
+      "text": "Utagawa Hiroshige published prints of the fifty-three stopping places on the great road from Edo to Kyoto. They were a great success.",
+      "weight": 2
     },
     "stereoscope-1838": {
       "year": 1838.47,
@@ -344,15 +386,17 @@
       "place": "london",
       "label": "Wheatstone’s stereoscope",
       "title": "Two flat drawings, one solid",
-      "text": "Charles Wheatstone showed that each eye sees a slightly different picture. Give each eye its own flat drawing, through a pair of mirrors, and the two become one solid thing standing in front of you."
+      "text": "Charles Wheatstone showed that each eye sees a slightly different picture. Give each eye its own flat drawing, through a pair of mirrors, and the two become one solid thing standing in front of you.",
+      "weight": 2
     },
     "photography-1839": {
       "year": 1839.05,
       "when": "1839 · Paris",
-      "place": "europe",
+      "place": "paris",
       "label": "First photos",
       "title": "A picture nobody drew",
-      "text": "In January 1839 Louis Daguerre’s way of fixing a picture made by light was announced in Paris. For the first time a picture could be made without anybody drawing it."
+      "text": "In January 1839 Louis Daguerre’s way of fixing a picture made by light was announced in Paris. For the first time a picture could be made without anybody drawing it.",
+      "weight": 3
     },
     "perry-1853": {
       "year": 1853.5,
@@ -360,7 +404,8 @@
       "place": "edo",
       "label": "US warships in Edo Bay",
       "title": "The door comes open",
-      "text": "In July 1853 four American warships, two of them driven by steam, anchored at the mouth of Edo Bay and would not leave. The next year Japan signed a treaty with the United States, and the door began to open."
+      "text": "In July 1853 four American warships, two of them driven by steam, anchored at the mouth of Edo Bay and would not leave. The next year Japan signed a treaty with the United States, and the door began to open.",
+      "weight": 3
     },
     "origin-of-species-1859": {
       "year": 1859.9,
@@ -368,7 +413,8 @@
       "place": "london",
       "label": "Origin of Species",
       "title": "Twenty years of putting it off",
-      "text": "Charles Darwin published On the Origin of Species in London in November 1859, twenty years after he first wrote the idea down for himself. Booksellers took the whole first printing on the day it appeared."
+      "text": "Charles Darwin published On the Origin of Species in London in November 1859, twenty years after he first wrote the idea down for himself. Booksellers took the whole first printing on the day it appeared.",
+      "weight": 3
     },
     "edison-lamp-1879": {
       "year": 1879.8,
@@ -376,7 +422,8 @@
       "place": "menlo-park",
       "label": "Edison's lightbulb",
       "title": "Light without fire",
-      "text": "In October 1879 Thomas Edison's workshop ran a glass bulb with a thread of carbon inside it for more than half a day. Within three years there were streets lit by electricity in New York and London."
+      "text": "In October 1879 Thomas Edison's workshop ran a glass bulb with a thread of carbon inside it for more than half a day. Within three years there were streets lit by electricity in New York and London.",
+      "weight": 3
     },
     "eiffel-tower-1889": {
       "year": 1889.37,
@@ -384,7 +431,8 @@
       "place": "paris",
       "label": "Eiffel Tower",
       "title": "The tallest thing anyone had built",
-      "text": "Three hundred metres of iron went up in Paris in two years and opened to the public on 15 May 1889, in the middle of a world's fair. At night ten thousand gas lamps picked out its shape, and a beacon burned under a glass dome at the top."
+      "text": "Three hundred metres of iron went up in Paris in two years and opened to the public on 15 May 1889, in the middle of a world's fair. At night ten thousand gas lamps picked out its shape, and a beacon burned under a glass dome at the top.",
+      "weight": 3
     }
   }
 }

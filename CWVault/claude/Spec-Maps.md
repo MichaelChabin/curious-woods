@@ -243,7 +243,7 @@ Follows from *The world that moves*. One session: the pyramid, the viewing, weig
 
 ## The prompt for the stories on the moving world
 
-Follows the bench and Michael's iPad (27 September: it works, and he wants it everywhere). Five stories have a world section, and the template. One session. Paste it whole.
+Follows the bench and Michael's iPad (27 September: it works, and he wants it everywhere). Five stories have a world section, and the template. One session. Paste it whole. *Run the same evening in the session that wrote it; the stories are converted and uncommitted.*
 
 > Read `CWVault/claude/Spec-Maps.md`, the sections *The world that moves*, *Two ways a map arrives* and *The prompt for the world that moves*; `CWVault/claude/Spec-Timeline-and-Map.md`, the section *The map* and its amendment; then `cw-deploys/MANIFEST.md` under `js/` for what `map.js` and `timeline.js` do when a story says `moving: true`; then open `cw-deploys/experiments/maps/moving-bench.html` and use it. Where this prompt and the spec disagree, the spec wins.
 >

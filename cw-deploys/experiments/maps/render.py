@@ -31,6 +31,7 @@ cw-deploys/art/maps/:
 
     python3 render.py --all   re-renders every region in art/maps/ from its own JSON
     python3 render.py --pyramid   the whole earth as tiles, for the map that moves (below)
+    python3 render.py --contours  the finer levels' coastlines again, cut per tile column
 
 The ground has layers (Spec-Maps, 26 Sep 2026): height is the base and always present;
 ice, vegetation and later sea level are files beside the picture that map.js draws over
@@ -652,6 +653,63 @@ def render_pyramid():
     print('pyramid: %d base tiles, %.1f MB in all, %.0f s' % (sum(s['counts']['base'] for s in sizes.values()), total / 1e6, time.time() - t0))
 
 
+PYRAMID_COLUMN_LEVELS = [3, 4, 5]   # levels whose coastlines ship per tile column, not per level
+
+
+def render_contours(levels=None):
+    """The finer levels' coastlines, cut per tile column: world-tiles/contours-<z>-<x>.json,
+    each holding every line that touches that column (a line crossing columns is in each).
+    A whole level's file was over the megabyte cap at these levels; a column's is small,
+    and the map fetches only the columns in view. Rewrites the pyramid JSON's `contours`."""
+    import time
+    t0 = time.time()
+    levels = levels or PYRAMID_COLUMN_LEVELS
+    out_dir = os.path.join(OUT, PYRAMID_DIR)
+    surface_file, bed_file = SOURCES['30s']
+    meta_path = os.path.join(OUT, 'world-pyramid.json')
+    with open(meta_path) as fh:
+        meta = json.load(fh)
+    for z in levels:
+        cols, rows = 2 ** (z + 1), 2 ** z
+        W = cols * TILE
+        per_col = [dict() for _ in range(cols)]
+        n_lines = 0
+        for ty in range(rows):
+            north = 90.0 - ty * 180.0 / rows
+            south = north - 180.0 / rows
+            surface = Grid(os.path.join(DATA, surface_file), -180.0, south, 180.0, north, W, TILE)
+            z_band = surface.sample(W, TILE)
+            band_lines, _ = contours(z_band, DEFAULT_LEVELS, (-180.0, south, 180.0, north), W, TILE)
+            for key in band_lines:
+                for line in band_lines[key]:
+                    lons = [q[0] for q in line]
+                    x0 = max(0, int((min(lons) + 180.0) / (360.0 / cols)))
+                    x1 = min(cols - 1, int((max(lons) + 180.0) / (360.0 / cols)))
+                    for x in range(x0, x1 + 1):
+                        per_col[x].setdefault(key, []).append(line)
+                    n_lines += 1
+            print('  contours level %d band %d/%d  %.0f s' % (z, ty + 1, rows, time.time() - t0), flush=True)
+        total = 0
+        biggest = 0
+        for x in range(cols):
+            parts = []
+            for key in per_col[x]:
+                parts.append('  %s: [\n    %s\n  ]' % (json.dumps(key), ',\n    '.join(json.dumps(l, separators=(',', ':')) for l in per_col[x][key])))
+            text = '{\n' + ',\n'.join(parts) + '\n}\n'
+            with open(os.path.join(out_dir, 'contours-%d-%d.json' % (z, x)), 'w') as fh:
+                fh.write(text)
+            b = len(text.encode('utf-8')); total += b; biggest = max(biggest, b)
+        old = os.path.join(out_dir, 'contours-%d.json' % z)
+        if os.path.exists(old):
+            os.remove(old)
+        meta['contours'][str(z)] = {'perColumn': '%s/contours-%d-{x}.json' % (PYRAMID_DIR, z), 'cols': cols}
+        print('level %d: %d lines, %d column files, %.1f MB in all, the biggest %.0f KB' % (z, n_lines, cols, total / 1e6, biggest / 1024.0), flush=True)
+    with open(meta_path, 'w') as fh:
+        json.dump(meta, fh, indent=1)
+        fh.write('\n')
+    print('contours: %.0f s' % (time.time() - t0))
+
+
 def render_all():
     """Every region in art/maps/, again, from its own JSON: corners, width, exaggeration
     and contour levels as recorded there."""
@@ -669,6 +727,9 @@ def main(argv):
         return
     if argv == ['--pyramid']:
         render_pyramid()
+        return
+    if argv == ['--contours']:
+        render_contours()
         return
     opts = {'width': '2000', 'exaggeration': None, 'levels': None}
     args = []

@@ -27,8 +27,8 @@ the Hokusai story called it)** — the map overlay: `cwMap`, `cwMapWindow`, `cwM
 the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
 `experiments/maps/`, beside `render.py`, which makes the pictures it draws on. Loaded with a
 version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. 26 Sep 2026 (`?v=2026-09-26c` on all seven pages that load it): (27 Sep, `?v=2026-09-27`: the window's *close* is 13 px bold, was 11 px) the window's drag strip sticks on the window's top edge, not 18 px below it, so a tall scrolling window (the Darkness poem) no longer shows its words through a slit above the strip; the words fade under it. **`stories/world-events.json` and `stories/places.json` (22 Sep 2026)** — what the world owns,
-shared by every story: one record per event (year, when, place, label, title, text) and one per
-place (name, lat, lon). A story gives `timeline.js` a `pool` and a `placebook`, then picks events
+shared by every story: one record per event (year, when, place, label, title, text, and since
+27 Sep `weight`, 1 to 3) and one per place (name, lat, lon, `weight`). A story gives `timeline.js` a `pool` and a `placebook`, then picks events
 by `ref`, sets each one's side, and may add `why` — its own last sentence. It never rewrites the
 shared words. Seeded with 32 events and 17 places from the two painting stories. Separate from
 `stories/events.json`, the deep-time pool for the Timeline Intro; they may merge later.
@@ -80,8 +80,17 @@ so it reads as a handle, and its word is bold at 13 px. **Michael's second look,
 day:** the projection above; a bar down the left edge, outside the map, that widens it into
 both margins at once (up to 240 px a side, never past the window) and back; and no text
 selection anywhere on the page while a gesture lasts, since Safari selected the prose when
-a drag ran off the map's bottom. First used by
-`experiments/maps/moving-bench.html`; no story uses it. The
+a drag ran off the map's bottom. **The stories, 27 Sep, same day, on Michael's word after his iPad:** every world
+section moves — Hokusai, Vermeer, Van Gogh, Necker, Have You Thought of a Story — each
+opening on the corners its regional crop had, its far-away cards turned into places on the
+map; `template-story.html` is born with it. Hokusai's *Europe* card, a spread of six towns
+standing for six events at a place called `europe` that never existed in `places.json`,
+is gone: the six events sit in their towns in the shared file (Köping, Bath, Vienna,
+Paris, London, Paris), which gains Vienna, Bath and Köping. **`weight`** is in both shared
+files' schemas, every event and place given a provisional 1 to 3 for Michael to change.
+The coast at the finest levels comes per tile column (see `art/maps/`). Region and
+coastline fetches revalidate (`cache: 'no-cache'`) so a stale region JSON cannot hide a
+new column file. First used by `experiments/maps/moving-bench.html`. The
 six pages that load `map.js` had their version query bumped again (27b) after a bug in
 this pass briefly made every still map recurse until its stack overflowed, caught by the
 test that every story page still draws its maps. **`map.js`, 26 Sep 2026 — layers** (Spec-Maps, *The ground has layers*): `cwMap(container,
@@ -379,9 +388,13 @@ equirectangular, height alone, the exaggeration stepping down from 3 at level 0 
 256 px; the JSON lists which tiles have each layer. 2 730 base tiles, 19.9 MB; 472 ice tiles,
 4.7 MB; 1 146 vegetation tiles, 5.3 MB; 29.7 MB in all, 4 348 files. Per level the base is 0.1,
 0.2, 0.5, 1.4, 4.5 and 13.2 MB. The coast and the shelf edge as vectors, `world-tiles/contours-<z>.json`,
-exist for levels 0, 1 and 2 (76, 188 and 532 KB); level 3's would be 1.3 MB, level 4's 3.4 MB and
-level 5's 8 MB, so they are not shipped, and a map zoomed past level 2 draws level 2's lines,
-which at level 5 sit a pixel or two off the tiles' own coast. Rendered by `render.py --pyramid`
+exist for levels 0, 1 and 2 as one file each (76, 188 and 532 KB) and for levels 3, 4 and 5
+**per tile column** (since the stories' conversion, 27 Sep): `contours-<z>-<x>.json`, each
+holding every line that touches its column — 16, 32 and 64 files, 2.7, 7.3 and 18.4 MB in
+all, the biggest 305, 524 and 667 KB — and the map fetches only the columns in view, so a
+level-5 coast is the tiles' own coast. `render.py --contours` makes them (16 minutes). The
+JSON names a level's contours either as a file or as `{ perColumn, cols }`. The folder is
+65 MB on disk with the coastlines. Rendered by `render.py --pyramid`
 in 41 minutes, one tile row at a time so no level sits whole in memory, the tree cover read
 once at the finest level and averaged down. Made for the map that moves; no still map uses it.
 **Contours, as vectors** (third pass, 20 Sep): the coast (0 m) and the

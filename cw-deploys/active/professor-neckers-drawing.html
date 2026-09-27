@@ -241,15 +241,15 @@
 
 <!-- THE SHELVES. Tools live here, not inside pages. -->
 <script src="../js/cw-flags.js?v=2026-09-21"></script>
-<script src="../js/map.js?v=2026-09-27b"></script>
-<script src="../js/timeline.js?v=2026-09-27b"></script>
+<script src="../js/map.js?v=2026-09-27i"></script>
+<script src="../js/timeline.js?v=2026-09-27i"></script>
 <script src="../js/stack.js?v=2026-09-22"></script>
 <script src="../js/necker.js?v=2026-09-26"></script>
 <script src="../js/remember.js?v=2026-09-25"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-27 2cecf02';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-27 fd9e38b';   // date + short commit hash; bump in the same commit as any change
   console.log('professor-neckers-drawing', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
   const el = id => document.getElementById(id);
@@ -366,23 +366,21 @@
   // ==========================================================================
   const WORLD = {
     from: 1812, to: 1852,
-    region: '../art/maps/britain-and-geneva.json',
+    region: '../art/maps/world-pyramid.json',   // the moving world (Spec-Maps, The world that moves), opening on the corners britain-and-geneva once had
+    moving: true, reset: 'reset',
+    fit: { west: -19, south: 45.2, east: 20, north: 58.4 },
     world: '../art/maps/world.json',
     pool: '../stories/world-events.json',
     placebook: '../stories/places.json',
     places: {
-      geneva:    { side: 'person' },
-      edinburgh: { side: 'person' },
-      paris:     { side: 'person' },
-      portree:   { side: 'person' },
-      london:    { side: 'world' },
-      plymouth:  { side: 'world' },
-      edo:       { side: 'world', card: 'east', cardTop: 22,
-                   far: 'About 9,800 km to the east, in Japan',
-                   bearing: [{ name: 'Geneva', lat: 46.20, lon: 6.14 }] },
-      tambora:   { side: 'world', card: 'east', cardTop: 56,
-                   far: 'About 12,300 km to the south-east, in Indonesia',
-                   bearing: [{ name: 'Geneva', lat: 46.20, lon: 6.14 }] }
+      geneva:    { side: 'person', weight: 3 },
+      edinburgh: { side: 'person', weight: 2 },
+      paris:     { side: 'person', weight: 2 },
+      portree:   { side: 'person', weight: 1 },
+      london:    { side: 'world', weight: 2 },
+      plymouth:  { side: 'world', weight: 1 },
+      edo: { side: 'world', weight: 2 },
+      tambora: { side: 'world', weight: 3 }
     },
     events: [
       { ref: 'tambora-1815', side: 'world' },

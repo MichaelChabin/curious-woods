@@ -230,14 +230,14 @@
 </main>
 
 <script src="../js/cw-flags.js?v=2026-09-21"></script>
-<script src="../js/map.js?v=2026-09-27b"></script>
+<script src="../js/map.js?v=2026-09-27i"></script>
 <script src="../js/sampler.js?v=2026-09-22"></script>
-<script src="../js/timeline.js?v=2026-09-27b"></script>
+<script src="../js/timeline.js?v=2026-09-27i"></script>
 <script src="../js/stack.js?v=2026-09-22"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-27 2cecf02';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-27 fd9e38b';   // date + short commit hash; bump in the same commit as any change
   console.log('vermeer-girl-with-a-pearl-earring', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
@@ -321,24 +321,22 @@
   // with the line running to round years either side.
   const WORLD = {
     from: 1630, to: 1680,
-    region: '../art/maps/north-sea-and-paris.json',
+    region: '../art/maps/world-pyramid.json',   // the moving world (Spec-Maps, The world that moves), opening on the corners north-sea-and-paris once had
+    moving: true, reset: 'reset',
+    fit: { west: -5, south: 48.3, east: 14, north: 54.6 },
     world: '../art/maps/world.json',
     pool: '../stories/world-events.json',        // what the world owns, shared by every story
     placebook: '../stories/places.json',
     routes: { letter: [[52.01, 4.36], [51.51, -0.13]] },
     places: {
-      delft: { side: 'person' },
-      amsterdam: { side: 'world' },
-      paris: { side: 'world' },
-      london: { side: 'world' },
-      woolsthorpe: { side: 'world' },
-      utrecht: { side: 'world' },
-      jingdezhen: { side: 'world', card: 'east', cardTop: 38,
-        far: 'About 8,900 km to the east, in China',
-        bearing: [{name: 'Delft',lat: 52.01,lon: 4.36}] },
-      arcetri: { side: 'world', card: 'east', cardTop: 68,
-        far: 'About 1,050 km to the south-east, in Italy',
-        bearing: [{name: 'Delft',lat: 52.01,lon: 4.36}] }
+      delft: { side: 'person', weight: 3 },
+      amsterdam: { side: 'world', weight: 2 },
+      paris: { side: 'world', weight: 2 },
+      london: { side: 'world', weight: 2 },
+      woolsthorpe: { side: 'world', weight: 1 },
+      utrecht: { side: 'world', weight: 1 },
+      jingdezhen: { side: 'world', weight: 2 },
+      arcetri: { side: 'world', weight: 2 }
     },
     events: [
       { id: 'born', year: 1632.83, side: 'person', label: 'Born', place: 'delft',

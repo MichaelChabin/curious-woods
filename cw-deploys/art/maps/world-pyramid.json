@@ -1726,7 +1726,19 @@
  "contours": {
   "0": "world-tiles/contours-0.json",
   "1": "world-tiles/contours-1.json",
-  "2": "world-tiles/contours-2.json"
+  "2": "world-tiles/contours-2.json",
+  "3": {
+   "perColumn": "world-tiles/contours-3-{x}.json",
+   "cols": 16
+  },
+  "4": {
+   "perColumn": "world-tiles/contours-4-{x}.json",
+   "cols": 32
+  },
+  "5": {
+   "perColumn": "world-tiles/contours-5-{x}.json",
+   "cols": 64
+  }
  },
  "source": "ETOPO 2022 v1 30s ice surface and bedrock, NOAA NCEI; Copernicus Global Land Cover 100 m tree cover 2019"
 }

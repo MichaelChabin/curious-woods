@@ -577,7 +577,9 @@
       shown.forEach(function (s) { positionText(s, w, h); });
     }
 
-    var contourCache = {};      // z -> { lines: {level: [ {pts, bbox} ]}, ready }
+    // The earth's lines on the moving map come per level, and at the finer levels per
+    // tile column (`{ perColumn, cols }` in the region's JSON), fetched as the view needs them.
+    var contourCache = {};      // z -> { lines } for a whole level; z + '/' + x -> { lines } for a column
     function contourLevel() {
       var z = levelFor(), keys = Object.keys(region.contours || {}).map(Number).sort(function (a, b) { return a - b; });
       var best = -1;
@@ -585,39 +587,57 @@
       if (best < 0 && keys.length) best = keys[0];
       return best;
     }
-    function loadContours(z) {
-      if (contourCache[z]) return;
-      contourCache[z] = { ready: false, lines: {} };
-      fetch(resolve(region.contours[z])).then(function (r) { return r.json(); }).then(function (j) {
-        var out = {};
-        Object.keys(j).forEach(function (level) {
-          out[level] = j[level].map(function (line) {
-            var bb = [Infinity, Infinity, -Infinity, -Infinity];
-            for (var i = 0; i < line.length; i++) { var q = line[i]; if (q[0] < bb[0]) bb[0] = q[0]; if (q[1] < bb[1]) bb[1] = q[1]; if (q[0] > bb[2]) bb[2] = q[0]; if (q[1] > bb[3]) bb[3] = q[1]; }
-            return { pts: line, bbox: bb };
-          });
+    function indexLines(j) {
+      var out = {};
+      Object.keys(j).forEach(function (level) {
+        out[level] = j[level].map(function (line) {
+          var bb = [Infinity, Infinity, -Infinity, -Infinity];
+          for (var i = 0; i < line.length; i++) { var q = line[i]; if (q[0] < bb[0]) bb[0] = q[0]; if (q[1] < bb[1]) bb[1] = q[1]; if (q[0] > bb[2]) bb[2] = q[0]; if (q[1] > bb[3]) bb[3] = q[1]; }
+          return { pts: line, bbox: bb };
         });
-        contourCache[z].lines = out; contourCache[z].ready = true;
+      });
+      return out;
+    }
+    function loadContourFile(key, url) {
+      if (contourCache[key]) return contourCache[key];
+      var entry = { ready: false, lines: {} };
+      contourCache[key] = entry;
+      fetch(resolve(url), { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (j) {
+        entry.lines = indexLines(j); entry.ready = true;
         if (!frozen) draw();
       }).catch(function () {});
+      return entry;
+    }
+    // The line sets that cover the view at the chosen level: one entry, or one per column in view.
+    function contourSets(w, h) {
+      var zc = contourLevel();
+      if (zc < 0) return [];
+      var spec = region.contours[zc];
+      if (typeof spec === 'string') return [loadContourFile(String(zc), spec)];
+      var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
+      var dlon = 360 / spec.cols;
+      var x0 = Math.max(0, Math.floor((nw.lon + 180) / dlon)), x1 = Math.min(spec.cols - 1, Math.floor((se.lon + 180) / dlon));
+      var sets = [];
+      for (var x = x0; x <= x1; x++) sets.push(loadContourFile(zc + '/' + x, spec.perColumn.replace('{x}', x)));
+      return sets;
     }
     function drawLines(layer, w, h) {
       var c = region.contours;
       if (!c) return;
       if (pyr) {
-        var zc = contourLevel();
-        if (zc < 0) return;
-        loadContours(zc);
-        var cc = contourCache[zc];
-        if (!cc.ready) return;
+        var sets = contourSets(w, h);
         var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
         for (var lv in LINES) {
-          if (!cc.lines.hasOwnProperty(lv)) continue;
-          var dd = [];
-          cc.lines[lv].forEach(function (L) {
-            var b = L.bbox;
-            if (b[2] < nw.lon || b[0] > se.lon || b[3] < se.lat || b[1] > nw.lat) return;
-            for (var j = 0; j < L.pts.length; j++) { var q = viewToPixel(L.pts[j][0], L.pts[j][1], w, h); dd.push((j ? 'L' : 'M') + q.x.toFixed(1) + ' ' + q.y.toFixed(1)); }
+          var dd = [], seen = {};
+          sets.forEach(function (cc) {
+            if (!cc.ready || !cc.lines.hasOwnProperty(lv)) return;
+            cc.lines[lv].forEach(function (L) {
+              var b = L.bbox;
+              if (b[2] < nw.lon || b[0] > se.lon || b[3] < se.lat || b[1] > nw.lat) return;
+              var id = b.join(',') + ':' + L.pts.length;        // a line in two columns is drawn once
+              if (seen[id]) return; seen[id] = true;
+              for (var j = 0; j < L.pts.length; j++) { var q = viewToPixel(L.pts[j][0], L.pts[j][1], w, h); dd.push((j ? 'L' : 'M') + q.x.toFixed(1) + ' ' + q.y.toFixed(1)); }
+            });
           });
           if (dd.length) layer.appendChild(el('path', { 'class': 'cw-line', d: dd.join(''), stroke: LINES[lv].stroke, 'stroke-opacity': LINES[lv].opacity }));
         }
@@ -917,7 +937,8 @@
 
   cwMap.load = function (url) {
     var abs = new URL(url, window.location.href).href;
-    return fetch(abs).then(function (r) {
+    // revalidated, never trusted from the cache: a region's JSON changes when its pictures do
+    return fetch(abs, { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error('map region ' + url + ': ' + r.status);
       return r.json();
     }).then(function (region) { region.url = abs; return region; });
