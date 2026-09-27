@@ -71,9 +71,8 @@ figure.margin { float: left; clear: left; width: var(--rail-w); margin: .3em 0 1
 figure.margin img { display: block; width: 100%; height: auto; }
 figure.margin .map { width: 100%; }
 figure.margin figcaption { margin-top: 7px; }
-/* a margin picture at half the width of the column it is in, whichever that is, centred
-   (27 Sep 2026, the 1818 title page: half the left column on a wide screen, half the text column
-   where the left column folds) */
+/* a margin picture at half the width of the column it is in, centred (27 Sep 2026; made for the
+   1818 title page, which went back to full size once margin pictures stopped growing; none uses it now) */
 figure.margin.half img { width: 50%; margin: 0 auto; }
 figure.margin.tappable .map { cursor: pointer; }
 /* A tool's word sits in the left column ON THE SAME LINE as the paragraph that names it,
@@ -115,7 +114,12 @@ figure.tall { position: relative; }
 figure.tall > figcaption.tools { position: absolute; top: 0; left: calc(-1 * (var(--rail-w) + var(--rail-gap)));
   float: none; margin: 0; height: min(calc(var(--text-w) / var(--aspect)), 78vh);
   justify-content: center; text-align: left; }
-figure.tall > figcaption.tools p { margin: 0; text-align: left; }   /* #plate figcaption centres; this block is left-set */
+figure.tall > figcaption.tools p { margin: 0; text-align: left; }
+/* when the picture moves down for a tool (Vermeer's Sample colours), it is breakout-wide and there
+   is no left column beside it: the block goes under the picture */
+#plateStage.open figure.tall > figcaption.tools { position: static; height: auto; margin: 10px auto 0;
+  max-width: 760px; align-items: center; }
+#plateStage.open figure.tall > figcaption.tools p { text-align: center; }   /* #plate figcaption centres; this block is left-set */
 /* a word that is an instruction until there is something to do: bold like any word, no hand */
 .word.say { cursor: default; }
 
@@ -163,7 +167,9 @@ figure.still figcaption { max-width: 760px; margin: 8px auto 0; text-align: cent
 .readout.idle .what { color: var(--cw-ink-soft); font-style: italic; }
 
 @media (max-width: 1067px) {
-  figure.margin { float: none; width: 100%; margin: 0 0 1.4em; }
+  /* the left column has folded: a margin picture keeps its left-column width, centred above its
+     paragraph, rather than growing to the text's width (27 Sep 2026, Michael) */
+  figure.margin { float: none; width: min(var(--rail-w), 100%); margin: 0 auto 1.4em; }
   .tools { float: none; width: auto; margin: 0 0 12px; flex-direction: row; flex-wrap: wrap; gap: 10px 26px; justify-content: center; }
   .shell { justify-content: center; }
   .breakout, #plateStage.open { left: 50%; }

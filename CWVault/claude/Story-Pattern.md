@@ -57,7 +57,12 @@ does not point them out.
    map) and a tap meaning two things is a trap. A step whose picture is missing is dropped and
    the loop closes over what is left.
 6. **Pictures in two sizes.** A margin picture is a glance: it has its own caption, and the
-   text never mentions it. A full-width picture is something to study, and the text names it
+   text never mentions it.
+   **A story does not set sizes** (27 Sept, Michael). A margin picture is the left column's
+   width, 300 px, at every window size, centred above its paragraph where the column folds and
+   smaller only on a phone narrower than that; the opening picture and full-width pictures grow
+   and shrink with the window, because she studies them. A story names only an exception: a
+   margin picture at half size (`figure.margin.half`; none uses it now). A full-width picture is something to study, and the text names it
    or a caption invites the tap that opens it (the Delft map opens *View of Delft* and
    Blaeu's plan).
 7. **Afterwards.** What happened to the thing. It ends on a plain sentence ("It is

@@ -19,7 +19,7 @@
   Hung in active/ on 22 Sep 2026 (Publishing-a-Story, stage 4); the experiments address redirects.
 -->
 <title>Vermeer: Girl with a Pearl Earring — Curious Woods</title>
-<link rel="stylesheet" href="../css/story.css?v=2026-09-23b">
+<link rel="stylesheet" href="../css/story.css?v=2026-09-27b">
 <style>
   :root { --aspect: calc(1400 / 1658); }   /* the painting's own shape; everything else is ../css/story.css */
 </style>
@@ -39,21 +39,21 @@
     <h2>Look at the pearl</h2>
 
     <div id="plateHome">
-      <figure id="plate">
+      <figure id="plate" class="tall">
         <div class="frame" id="frame">
           <img id="plateImg" src="../art/stories/vermeer/vermeer-girl-pearl-earring.jpg"
                alt="Vermeer's painting of a girl looking over her shoulder, in a blue and yellow turban, with a large pearl at her ear, against a dark background.">
         </div>
         <div class="toolwords" id="plateWords"></div>
-        <div class="tools" id="toolwords">
+        <figcaption class="tools" id="toolwords">
           <p class="note">You can zoom this image to see it in detail. Once you've zoomed in, you can
              drag it to see any part you are curious about. You can also tap it to see a magnifier,
              which you can also drag.</p>
+          <p>Johannes Vermeer, <i>Girl with a Pearl Earring</i>, about 1665. Oil on canvas, 44.5 &times; 39 cm. Mauritshuis, The Hague.</p>
           <button class="word" id="dropLoupe" type="button" hidden>Magnifier off</button>
           <button class="word" id="fit" type="button" hidden>Reset</button>
           <button class="word" id="putBack" type="button" hidden>Put it back</button>
-        </div>
-        <figcaption>Johannes Vermeer, <i>Girl with a Pearl Earring</i>, about 1665. Oil on canvas, 44.5 &times; 39 cm. Mauritshuis, The Hague.</figcaption>
+        </figcaption>
       </figure>
       <div class="readout idle" id="readout" hidden>
         <div class="swatch" id="swatch"></div>
@@ -237,7 +237,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-27 fe02336';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-27 4390735';   // date + short commit hash; bump in the same commit as any change
   console.log('vermeer-girl-with-a-pearl-earring', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
