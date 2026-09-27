@@ -1,7 +1,7 @@
 ---
-status: Proposed — 20 Sept 2026, from Michael's idea the same day. Not yet built, and it waits on the map's third pass. Name not settled.
-role: The Lab about maps themselves — the place where map tools accumulate, and where a child finds out what happens when you flatten a round thing.
-related: Spec-Maps.md (the same engine), Rulings-Sept-2026.md (the brain; gestures across tools), The-Intuitions.md
+status: Proposed — 20 Sept 2026; widened 21 Sept to Maps and Timelines. 27 Sept: the engine's first piece, the world that moves, is ruled in Spec-Maps and comes to the stories first. Not yet built. Name not settled.
+role: The Lab of maps and timelines — where map and timeline tools accumulate for every story to call, and where a child can wander in when and where at once.
+related: Spec-Maps.md (the same engine), Spec-Timeline-and-Map.md (its first instrument), Rulings-Sept-2026.md (the brain; gestures across tools), The-Intuitions.md
 ---
 
 # Flattening the World
@@ -12,6 +12,20 @@ That is the whole lab in one sentence, and everything else in it is a consequenc
 
 Draw the straight line from London to Tokyo on the flat map and watch it sag south on the globe. Draw the short way on the globe and watch it bow up over the ice on the flat one. Nobody has to say the word distortion, and nobody should.
 
+## Maps and Timelines (21 Sept 2026)
+
+Michael widened this lab on 21 September: it is **a lab of maps and timelines**, not of maps alone. The Frankenstein prototype showed why. A child who can see where and when at once can see things neither shows alone, and some children will spend longer in that than in the story.
+
+So the lab has three instruments to begin with, not two: **the timeline over the map** (`Spec-Timeline-and-Map.md`, already the standard for stories), **the globe beside the flat map**, and **dragging a country**. The rule above holds for all three: nothing here that a story could not call.
+
+A session is owed to working out everything the two together can make obvious. A starting list, to be argued with, not built:
+
+- **Elsewhere at the same time** — the pair itself.
+- **How long news took.** Tambora in April 1815, a cold wet Europe in 1816; Ørsted's discovery in Copenhagen and Faraday's motor in London a year later. Distance on the map, delay on the timeline.
+- **Who could have met whom.** Lifespans as bars; where two overlap in time and come close on the map, they might have crossed paths.
+- **A journey in both.** A route drawn on the map while the timeline runs along it, so she sees how slow a thousand kilometres used to be — and then the railway arrives.
+- **The size of time.** The same events on a timeline that can be stretched and squeezed, the way the map can be zoomed.
+
 ## One engine, two views
 
 This is the brain's arrangement and it is the reason the lab is worth building at all.
@@ -21,6 +35,12 @@ This is the brain's arrangement and it is the reason the lab is worth building a
 That is what makes a lab an accumulator rather than a side project. A tool built here — a way of measuring a route, a sea-level slider, a second projection — is immediately available to any story that asks for it, because there is only one thing. Two codebases would mean every tool gets built twice and the second copy rots.
 
 So the rule for this lab, and for any lab like it: **nothing is built here that a story could not call.**
+
+## The engine comes to the stories first (27 Sept 2026)
+
+Michael's ruling, written in full in `Spec-Maps.md` under *The world that moves*: the world map under a story's timeline pans, zooms, resizes, centres on a timeline tap and resets; it is one equirectangular pyramid of the earth to about a kilometre a pixel; and **zoom is a tool** — every event and place carries a weight, and at each scale the marks that earn the room are the ones shown, by the placer's own rule. The timeline is the same rule in one dimension on the plane's 1–5–10 ladder. Both are viewings of the plane.
+
+That engine is this lab's, and it is built under a story first, then given to the timeline, then to *After the Ice*, before the lab opens. The lab does not wait for less; it waits for the engine to exist where it has a job. The globe and the country-drag are unchanged by this and still come after.
 
 ## What is in it at the start
 
@@ -112,7 +132,8 @@ This is a Lab, which is a much larger thing than the map resource, and Michael h
 
 1. The second pass is built and **not yet pushed**. Nothing else matters until that is live and Michael has looked at it.
 2. The third pass — coastlines, labels, shading — is specified and not built. It also puts in the projection seam this lab needs.
-3. Then this, as a bench in `experiments/`, with two tools and nothing else.
+3. The world that moves (Spec-Maps, 27 Sept) — the pyramid and the zoomable viewing, under a story's timeline; then the timeline's own zoom; then After the Ice on both.
+4. Then this, as a bench in `experiments/`, with two tools and nothing else.
 
 Each of the two tools is a session. If the pair is not delightful within one session, that is the signal to stop rather than to push on.
 
@@ -142,7 +163,7 @@ Each of the two tools is a session. If the pair is not delightful within one ses
 
 ## Not yet decided
 
-The name. *Flattening the World* is what this document calls it; *The World Won't Lie Flat* is the other candidate and is closer to the fact underneath.
+The name. *Flattening the World* fits the globe and no longer fits the whole lab; *Maps and Timelines* is Michael's working name and may simply be the name.
 
 Whether the globe and the flat map should be the same size on screen or whether the globe should be smaller, as an inset.
 
