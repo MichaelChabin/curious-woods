@@ -7,7 +7,9 @@
   timeline-bench.html — bench: the Timeline Intro. Three tiers: a fixed full-span line
   (to scale), a road in perspective from the ice to the story's year (four passes,
   8:4:2:1 of the years, computed from the destination), and the story's own lead-up.
-  Spec: CWVault/20-SPECS/Spec-Timeline-Intro.md. Data: ../stories/events.json.
+  Spec: CWVault/20-SPECS/Spec-Timeline-Intro.md. Data: ../stories/after-the-ice-events.json
+  (since 27 Sep 2026; it replaced stories/events.json and writes astronomer's years, so this
+  page adds ICE back to every year it reads).
   Questions this bench exists to answer are in the spec, §Open.
 -->
 <title>After the Ice — Timeline Intro</title>
@@ -224,7 +226,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-08 433c148';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-27 ati-data';   // date + short commit hash; bump in the same commit as any change
   console.log('timeline-bench', CW_VERSION);
 
   const NOW = 12026;
@@ -266,15 +268,18 @@
     water:'<svg viewBox="0 0 24 24"><path d="M3 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 13c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 18c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg>',
   };
 
-  // The event pool is data, not code: ../stories/events.json (schema note inside it).
+  // The event pool is data, not code: ../stories/after-the-ice-events.json (schema note inside
+  // it). The file writes the astronomer's year; this page counts after the ice, so it adds ICE.
+  // Records tagged `leadup` are a destination's lead-up; the rest are the world pool.
+  const ICE = 10000;
   let EVENTS = [], LEADUPS = {}, DESTINATIONS = [], byId = {};
   function adopt(doc) {
-    EVENTS = doc.events.map(e => ({ id: e.id, y: e.start, k: e.glyph, r: e.region, s: e.label, label: e.hook || e.label, blurb: e.blurb, story: !!e.story, title: e.story ? e.story.title : undefined }));
+    EVENTS = doc.events.filter(e => !e.leadup).map(e => ({ id: e.id, y: e.year + ICE, k: e.glyph, r: e.region, s: e.label, label: e.hook || e.label, blurb: e.blurb, story: !!e.story, title: e.story ? e.story.title : undefined }));
     DESTINATIONS = doc.destinations;
     LEADUPS = {};
     for (const k of Object.keys(doc.leadups || {})) {
       const v = doc.leadups[k];
-      LEADUPS[k] = { label: v.label, from: v.from, events: v.events.map(e => ({ id: e.id, y: e.start, k: e.glyph, s: e.label, label: e.label, blurb: e.blurb })) };
+      LEADUPS[k] = { label: v.label, from: v.from + ICE, events: doc.events.filter(e => e.leadup === k).map(e => ({ id: e.id, y: e.year + ICE, k: e.glyph, s: e.label, label: e.label, blurb: e.blurb })) };
     }
     byId = Object.fromEntries(EVENTS.map(e => [e.id, e]));
   }
@@ -698,11 +703,11 @@
 
   buildOdometer();
   relayout();
-  fetch('../stories/events.json', { cache: 'no-cache' })
+  fetch('../stories/after-the-ice-events.json', { cache: 'no-cache' })
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(doc => { adopt(doc); startRun(DESTINATIONS[0]); })
     .catch(err => {
-      hint.textContent = 'could not load ../stories/events.json (' + err.message + ') — this page needs to be served, not opened as a file';
+      hint.textContent = 'could not load ../stories/after-the-ice-events.json (' + err.message + ') — this page needs to be served, not opened as a file';
       console.error(err);
     });
 })();

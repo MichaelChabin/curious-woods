@@ -142,6 +142,13 @@
     </div>
 
     <div class="item">
+      <a class="title" href="after-the-ice.html">After the Ice, on the moving world</a>
+      <div class="desc">Twelve thousand years and the whole earth on one page, with nothing to read. The copper dot runs up the years first; then a pale band appears over the whole line, and that band is the zoom: drag it, or drag either end, and the road and the line underneath redraw to what it covers, and the map under them shows where those things happened. The odometer reads the band&rsquo;s left edge. Tap a date or a place. <b>What I&rsquo;ve seen</b> shows only the things you have tapped here or been shown on the old road.</div>
+      <div class="note">A bench for Spec-Maps, <i>After the Ice, on the moving world</i>. The line and the map are the same code as every story&rsquo;s world section; the events are the September bench&rsquo;s, in their own file (<code>../stories/after-the-ice-events.json</code>), merged at load with the shared list, which it never writes. No ice-age layer yet: the map shows today&rsquo;s ground at every year.</div>
+      <div class="meta">added 2026-09-27</div>
+    </div>
+
+    <div class="item">
       <a class="title" href="maps/map-bench.html">Maps</a>
       <div class="desc">A still picture of the ground with a story&rsquo;s own marks on it, and nothing else: no borders, no names but the ones the story gave, no green. Colour is height and nothing but height, so the shelf round Britain shows on its own. Three cases on one page &mdash; the whole earth with Tambora on it, western Europe with the road from London to Lake Geneva, and a name in a sentence that opens the same map in a window.</div>
       <div class="note">Bench for <code>CWVault/claude/Spec-Maps.md</code>. The pictures are rendered once from ETOPO 2022 by <code>maps/render.py</code> and live in <code>art/maps/</code>; the overlay is <code>maps/map.js</code>. Lakes are land here (the grid carries their surface height), so Lake Geneva is a dot, not water.</div>
@@ -165,7 +172,7 @@
     <div class="item">
       <a class="title" href="timeline-bench.html">After the Ice</a>
       <div class="desc">Every dated story&rsquo;s title card. A copper dot leaves year 0 &mdash; when the ice let go, about twelve thousand years ago &mdash; and rolls up to the story&rsquo;s year in ten seconds, leaving events behind it: figs planted on purpose, a tower at Jericho, the first alphabet, a new star seen by day. A line at the top never changes scale, so four-fifths of it stays nearly empty; a road below it winds toward you in perspective, with room to read; and when the dot lands, the story&rsquo;s own neighbourhood draws itself underneath. Tap the road to stop. Tap anything to read. Run it again and it draws a different set. <b>Your line so far</b> keeps everything it has ever shown you.</div>
-      <div class="note">Bench, not a lab, and not the Timeline Graph &mdash; this is the Graph&rsquo;s front door. The events live in <code>../stories/events.json</code>, not in the page; the pool and the story graph are to be one database. Sixty-five events and five lead-ups, all unsourced first drafts. Nine open questions in the spec, the first of them whether labels should thin to icons after the landing.</div>
+      <div class="note">Bench, not a lab, and not the Timeline Graph &mdash; this is the Graph&rsquo;s front door. The events live in <code>../stories/after-the-ice-events.json</code> (since 27 September; it was <code>events.json</code>), not in the page; the pool and the story graph are to be one database. Sixty-five events and five lead-ups, all unsourced first drafts. Nine open questions in the spec, the first of them whether labels should thin to icons after the landing.</div>
       <div class="meta">added 2026-09-08</div>
     </div>
 
@@ -272,6 +279,6 @@
 
   </div>
 
-<script>var CW_VERSION = '2026-09-22 dd793c4'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
+<script>var CW_VERSION = '2026-09-27 42f532b'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}</script>
 </body>
 </html>

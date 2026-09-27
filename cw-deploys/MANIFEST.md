@@ -31,7 +31,9 @@ shared by every story: one record per event (year, when, place, label, title, te
 27 Sep `weight`, 1 to 3) and one per place (name, lat, lon, `weight`). A story gives `timeline.js` a `pool` and a `placebook`, then picks events
 by `ref`, sets each one's side, and may add `why` — its own last sentence. It never rewrites the
 shared words. Seeded with 32 events and 17 places from the two painting stories. Separate from
-`stories/events.json`, the deep-time pool for the Timeline Intro; they may merge later.
+`stories/after-the-ice-events.json` (27 Sep; it replaced `stories/events.json`), After the Ice's own
+events, which `experiments/after-the-ice.html` merges with these two at load without writing to
+them; its survivors join this list by copying, later.
 **`stack.js` (22 Sep 2026)** — one picture slot, several pictures, in a loop: `cwStack(figure, steps)`,
 each step `{ src, w, h, alt, caption, name }`. A bold word under the caption names the next picture
 ("Next: the powder", "Back to the stone" on the last); the word moves the stack, never a tap on the
@@ -154,7 +156,7 @@ Also 27 Sep (`?v=2026-09-27b`, all story pages restamped): where the left column
 picture keeps its 300 px width, centred, instead of growing to the text's width (Michael: they "go to
 the middle column and get bigger"); Vermeer's opening painting is `figure.tall`, its caption at the
 middle of the painting's height, and under it when *Sample colours* moves the painting down.
-**`sampler.js` (21 Sep 2026)** — the magnifier and the colour sampler for any picture, `cwSampler(frame, anchors, opts)` → `{ arm, fit, drop, repaint }`; the Colour and Pixels shelf's first tool (Ruling-Labs-and-the-Plane, proposed). Pulled out of the Hokusai page, which still carries its own inline copy until it is converted to *Hokusai's World*. The page gives it the picture's own colour anchors (`{rgb, m, name, chem}`, measured off that scan) and wires its own words and readout; the script owns the gestures — tap puts the magnifier there wherever the tap lands (on the magnifier or off it), a drag that starts on the magnifier slides it (the circle alone is `touch-action: none`, so a finger elsewhere still scrolls the page), pinch or ctrl-wheel zooms to 6×, one finger pans once zoomed. Two anchors of one material are never offered as a choice; two of different materials within ΔE 4.5 are named together. Loaded with a version query by `experiments/vermeer-girl-with-a-pearl-earring.html`. **`timeline.js` (21 Sep 2026)** — a timeline over a map, *‹Name›'s World*, per `CWVault/claude/Spec-Timeline-and-Map.md`: `cwTimeline(svg, o)` for the two-sided line alone and `cwWorld(host, data)` for the whole pair — the line, the map (through `map.js`, not a second map engine), far-away cards and the panel. The person's events above the line in ink, the world's below in slate, the focus in copper, the selection in vermilion on both; labels pack into the nearest free row; nearest-mark picking at 20 px for a mouse and 32 for a finger, a label scoring ten worse than a dot; tapping a place lists all its events, oldest first; tapping what is selected or empty ground clears; a route draws only while its own event alone is selected; a far place is a card on the side where it lies (under the map on a phone, where over it the card hid the places that matter), and tapping it opens the world map in `cwMapWindow`. 22 Sep 2026: a `spread` place is one card standing for several towns (Europe in *Hokusai's World*) — its window shows the towns rather than a dot of its own, and tapping the card lists all its events; year labels thin to every twenty when ten would crowd; two dots that would sit on top of each other part, the person's above the line and the world's below. Widths come from `getBoundingClientRect`, per the spec's warning. The spec named `experiments/maps/timeline.js`; it is in `js/` beside `map.js` so a story can be hung without its path breaking. First used by `experiments/vermeer-girl-with-a-pearl-earring.html`; the Frankenstein bench and the Hokusai conversion are still to come. `cw-flags.js` (15 Sep 2026) — feature flags, `CW.flags = { maya: false }`, loaded first on every `active/` page with a version query; the Maya flag is all it holds, because nothing else about Maya exists yet, and Remember on story pages reads it (visible always with Maya; fades in as the text's reference nears without her). **`cw-number.js` — how a number is written, everywhere** (extracted
+**`sampler.js` (21 Sep 2026)** — the magnifier and the colour sampler for any picture, `cwSampler(frame, anchors, opts)` → `{ arm, fit, drop, repaint }`; the Colour and Pixels shelf's first tool (Ruling-Labs-and-the-Plane, proposed). Pulled out of the Hokusai page, which still carries its own inline copy until it is converted to *Hokusai's World*. The page gives it the picture's own colour anchors (`{rgb, m, name, chem}`, measured off that scan) and wires its own words and readout; the script owns the gestures — tap puts the magnifier there wherever the tap lands (on the magnifier or off it), a drag that starts on the magnifier slides it (the circle alone is `touch-action: none`, so a finger elsewhere still scrolls the page), pinch or ctrl-wheel zooms to 6×, one finger pans once zoomed. Two anchors of one material are never offered as a choice; two of different materials within ΔE 4.5 are named together. Loaded with a version query by `experiments/vermeer-girl-with-a-pearl-earring.html`. **`timeline.js` (21 Sep 2026)** — a timeline over a map, *‹Name›'s World*, per `CWVault/claude/Spec-Timeline-and-Map.md`: `cwTimeline(svg, o)` for the two-sided line alone and `cwWorld(host, data)` for the whole pair — the line, the map (through `map.js`, not a second map engine), far-away cards and the panel. The person's events above the line in ink, the world's below in slate, the focus in copper, the selection in vermilion on both; labels pack into the nearest free row; nearest-mark picking at 20 px for a mouse and 32 for a finger, a label scoring ten worse than a dot; tapping a place lists all its events, oldest first; tapping what is selected or empty ground clears; a route draws only while its own event alone is selected; a far place is a card on the side where it lies (under the map on a phone, where over it the card hid the places that matter), and tapping it opens the world map in `cwMapWindow`. 22 Sep 2026: a `spread` place is one card standing for several towns (Europe in *Hokusai's World*) — its window shows the towns rather than a dot of its own, and tapping the card lists all its events; year labels thin to every twenty when ten would crowd; two dots that would sit on top of each other part, the person's above the line and the world's below. Widths come from `getBoundingClientRect`, per the spec's warning. The spec named `experiments/maps/timeline.js`; it is in `js/` beside `map.js` so a story can be hung without its path breaking. First used by `experiments/vermeer-girl-with-a-pearl-earring.html`; the Frankenstein bench and the Hokusai conversion are still to come. **27 Sep 2026, After the Ice** (`?v=2026-09-27-ati` on `experiments/after-the-ice.html` only; the story pages keep their query and draw byte-identical timelines, checked): all opt-in, so a story that says none of it is unchanged — `line: { rows, ladder, yearText, stretch }` caps the label rows a side (a label with no room is dropped and its dot stays tappable; heavier `weight` first, then the `kind` scarcest among labels already placed, the selection always labelled), puts ticks and year labels on the plane's 1–5–10 ladder so they relabel as the span changes, and draws an uncertain date (`precision` decade, century, millennium) as a soft stretch under its dot; `windowed: true` keeps only events inside `from..to` on the line and the map, a place standing on the map while one of its events is on the line and weighing what its heaviest there weighs; `onPick(id)` hears every selection; `cwWorld` returns `span(from, to)` and `only(ids | null)`, the second a filter held until cleared, and an event that leaves the line is let go. `cw-flags.js` (15 Sep 2026) — feature flags, `CW.flags = { maya: false }`, loaded first on every `active/` page with a version query; the Maya flag is all it holds, because nothing else about Maya exists yet, and Remember on story pages reads it (visible always with Maya; fades in as the text's reference nears without her). **`cw-number.js` — how a number is written, everywhere** (extracted
 2 Sep 2026 on Michael's instruction that the benches and labs all write numbers
 the same way; the third shared file, and the first added since Phase 4). Until
 it existed there were four dialects: plane.js grouped thousands for tick labels,
@@ -226,10 +228,19 @@ PNG, warm grey, medium), and since later the same day Glass Geometry, **titled *
 frontmatter declared one. **Left out for want of an icon:** Glass Multiplication (no icon yet;
 the check has warned since 15 Sep) and The Necker Cube. The lab is reachable from `labs.html`;
 the Necker Cube from the experiments index.
-`stories/events.json` — the Timeline Intro's event pool (8 Sep 2026): 65 world
-events and five story lead-ups, CW years, schema noted inside the file and aligned
-with `Spec-Timeline-Graph.md` §4 where fields overlap. Data the page merely reads;
-blurbs are unsourced first drafts, images unfilled.
+`stories/after-the-ice-events.json` — After the Ice's own events and places (27 Sep 2026),
+written from the September `stories/events.json`, which it replaced (removed the same day; its
+only reader, `experiments/timeline-bench.html`, was repointed). The same 65 world events and
+25 lead-up events (each tagged `leadup` with the destination it came from), `year` now the
+astronomer's year — the September after-the-ice year minus 10 000, exactly, so every BC year is
+one earlier than the true astronomer's year (the file's `_about` says so; Michael to rule) —
+plus `precision` (exact, year, decade, century, millennium), `kind` (closed: sky, earth, crop,
+craft, object, place, person, text), a provisional `weight`, `place` as an id, `same` on the 11
+records that are one happening with another (8 with the shared list: Tambora, Frankenstein,
+Faraday, Galvani, Volta, Aldini, photography, the Eiffel Tower; 3 within the file), and
+`guessed` naming the fields that are judgements. Its own 60 places in a `places` block, not in
+`places.json`. A holding place: the survivors join the shared list by copying, and it goes.
+Blurbs are still unsourced first drafts; images unfilled.
 `art/icons/brain-icon-256.png` — the watercolour brain at 256 px (13 Sep 2026), the main
 index's icon for About Your Brain; the first icon-as-link on the site. The page's own tab
 icon reads the same file (Safari on iPad ignores data-URI favicons, tested 13 Sep, so
@@ -1005,12 +1016,37 @@ backstop for the Claude Code session that lands the file.
   lead-up strip, drawn after the landing. Tap the road to pause, tap any event for its
   paragraph (beside the far passes on a wide screen), *run it again* for a fresh draw,
   *your line so far* for everything it has ever shown her (localStorage). Five
-  destinations. **Reads `../stories/events.json` — the page holds no events**; the pool
+  destinations. **Reads `../stories/after-the-ice-events.json` (since 27 Sep; it was
+  `stories/events.json`) and adds 10 000 back to its astronomer's years — the page holds no
+  events**; `CW_VERSION 2026-09-27 42f532b`. Retired except for the run, the odometer and
+  the road, which `after-the-ice.html` took over; the pool
   and the story graph are to be one database. Dates written `11 752 after the ice (1752)`
   with commas for now — the March date convention and `Spec-Timeline-Graph.md` §2 disagree
   and the spec reports it; adopt `js/cw-number.js` before this leaves experiments.
-  `CW_VERSION 2026-09-08 433c148` (first commit 8 Sep; stamped per the standing method). Spec:
+  First commit 8 Sep (`433c148`). Spec:
   `CWVault/20-SPECS/Spec-Timeline-Intro.md`. Stands on nothing shared; standalone.
+- **`after-the-ice.html`** (27 Sep 2026) — bench: **After the Ice on the moving world.**
+  Twelve thousand years and the whole earth, no story text. Three lines and the map, per
+  `CWVault/claude/Spec-Maps.md` *After the Ice, on the moving world*: the top line is the
+  whole span, never rescaled, with a **window** on it — a pale band she drags, or drags by
+  either end (a pointer gesture on that line only; nothing else there answers) — and the
+  September odometer above it reading the window's left edge, a plain year beside it in grey
+  once the window is 1 000 years or narrower; the September road redrawn to the window's
+  span, a picture and not a control, each pass taking as many events as it has room for,
+  heavier first and then the scarcest kind; the World line from `js/timeline.js` with the
+  world pyramid from `js/map.js` under it, span bound to the window, opening on the whole
+  world, every event in the store (127 after merging), at most three label rows. Opens with
+  the September run (ten seconds, tap to stop), then the window appears over the whole span.
+  The other two openings are words in the page's data, unused. `ICE = 10000` is the line's
+  zero, one named constant. Reads `stories/after-the-ice-events.json`,
+  `stories/world-events.json` and `stories/places.json`, merged at load, writes none; a
+  shared record with no `precision` counts as `year`, and a record marked `same` stands aside
+  for the one it names. Her line: the September bench's `cw-after-the-ice` ids plus every
+  event she taps here; *what I've seen* filters the World line and map to them and back.
+  Layers by year: no last-glacial-maximum layer exists in `art/maps/` yet (the pyramid has
+  today's ice and vegetation), so the map keeps today's ground; the page looks for a layer
+  named `ice-lgm` and notes its absence in the console. Tab icon `art/icons/map-icon-256.png`.
+  `CW_VERSION 2026-09-27 42f532b`. Hung nowhere; listed only in `experiments/index.html`.
 - **`ruling-bench.html`** — bench: **does multiplication care how the grid is
   ruled?** The second of the review's step-3 benches, companion to
   `multiply-bench.html`, which stays the authority for everything the two share.

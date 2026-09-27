@@ -44,6 +44,23 @@
      hint:   'Tap a date or a place.'
    }
 
+   A line whose span moves (27 Sep 2026, After the Ice; Spec-Maps *After the Ice, on the moving
+   world*). All opt-in; a story that says none of it draws exactly as before.
+     line: { rows: 3,                    at most this many label rows a side; a label that finds
+                                         no room is dropped and its dot stays, tappable. Heavier
+                                         events place first (`weight`, 1 if unsaid); among equals
+                                         the one whose `kind` is scarcest among labels already
+                                         placed; the selected event always keeps its label
+             ladder: true,               ticks and year labels on the plane's 1–5–10 ladder,
+                                         relabelling themselves as the span changes, not every 5
+             yearText: function (y) {},  how a tick's year is written (default: the number)
+             stretch: true }             an event whose `precision` is decade, century or
+                                         millennium draws a soft stretch that wide under its dot
+     windowed: true                      only events inside from..to are on the line and the map
+     onPick: function (id) {}            told of every event she selects, from the line or the map
+   and cwWorld's result gains span(from, to) and only(ids | null), the second a filter
+   (her own line) that holds until it is called with null.
+
    The side means something. The person's events sit above the line in the house ink; the
    world's below in slate. The story's focus event is copper. A selected event is vermilion,
    on the line and on the map. Labels above the line drop the person's name: the side says
@@ -116,8 +133,10 @@
     var selected = {}, targets = [];
 
     // Labels pack away from the line, each into the nearest row where it touches nothing.
+    // With o.line.rows, at most that many rows, and the order is by importance, not by year.
     function pack(evs, x, W) {
       var rows = [], placed = [];
+      if (o.line && o.line.rows) return packLimited(evs, x, W, o.line.rows);
       evs.forEach(function (e) {
         var w = tw(e.label, LABEL, true) + 6, cx = x(e.year);
         var left = Math.max(2, Math.min(W - w - 2, cx - w / 2)), r = 0;
@@ -127,6 +146,36 @@
       });
       return { rows: rows.length, placed: placed };
     }
+    function weightOf(e) { return e.weight ? +e.weight : 1; }
+    function packLimited(evs, x, W, maxRows) {
+      var rows = [], placed = [], kinds = {}, left = evs.slice();
+      left.sort(function (a, b) { return ((selected[b.id] ? 1 : 0) - (selected[a.id] ? 1 : 0)) || (weightOf(b) - weightOf(a)); });
+      while (left.length) {
+        // among the heaviest left, the one whose kind is scarcest among labels placed so far
+        var top = left[0], best = 0;
+        for (var i = 1; i < left.length; i++) {
+          var c = left[i];
+          if (!!selected[c.id] !== !!selected[top.id] || weightOf(c) !== weightOf(top)) break;
+          if ((kinds[c.kind] || 0) < (kinds[left[best].kind] || 0)) best = i;
+        }
+        var e = left.splice(best, 1)[0];
+        var w = tw(e.label, LABEL, true) + 6, cx = x(e.year);
+        var lft = Math.max(2, Math.min(W - w - 2, cx - w / 2)), r = 0;
+        while (r < maxRows && (rows[r] || []).some(function (s) { return !(lft + w + 8 < s.a || lft > s.b + 8); })) r++;
+        if (r < maxRows) {
+          (rows[r] = rows[r] || []).push({ a: lft, b: lft + w });
+          kinds[e.kind] = (kinds[e.kind] || 0) + 1;
+          placed.push({ e: e, cx: cx, left: lft, w: w, r: r });
+        } else {
+          placed.push({ e: e, cx: cx, r: -1 });          // no room: the dot without its label
+        }
+      }
+      return { rows: rows.length, placed: placed };
+    }
+    // The plane's 1–5–10 ladder: the finest rung whose labels stand this far apart.
+    var LADDER = [1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000];
+    function rung(px, gap) { for (var i = 0; i < LADDER.length; i++) if (LADDER[i] * px >= gap) return i; return LADDER.length - 1; }
+    var HALF = { decade: 5, century: 50, millennium: 500 };
 
     function draw() {
       var W = svg.getBoundingClientRect().width;   // not a parent's clientWidth: the prototype clipped its last year that way
@@ -140,6 +189,26 @@
       var railY = 8 + Math.max(1, up.rows) * ROW + 18;
 
       el('line', { x1: PAD, x2: W - PAD, y1: railY, y2: railY, stroke: RAIL, 'stroke-width': 1 }, svg);
+      if (o.line && o.line.stretch) {
+        sorted.forEach(function (e) {
+          var hw = HALF[e.precision]; if (!hw) return;
+          var a = Math.max(PAD, x(e.year - hw)), b = Math.min(W - PAD, x(e.year + hw));
+          if (b - a < 3) return;
+          el('rect', { x: a, y: railY - 3, width: b - a, height: 6, rx: 3, fill: e.side === 'person' ? INK : SLATE, opacity: 0.1 }, svg);
+        });
+      }
+      if (o.line && o.line.ladder) {
+        var pxy = (W - 2 * PAD) / (o.to - o.from), ri = rung(pxy, 72);
+        var major = LADDER[ri], minor = ri > 0 && LADDER[ri - 1] * pxy >= 6 ? LADDER[ri - 1] : major;
+        for (var ty = Math.ceil(o.from / minor) * minor; ty <= o.to; ty += minor) {
+          el('line', { x1: x(ty), x2: x(ty), y1: railY, y2: railY + (ty % major ? 3 : 5), stroke: RAIL }, svg);
+        }
+        for (var ly2 = Math.ceil(o.from / major) * major; ly2 <= o.to; ly2 += major) {
+          var lx = x(ly2), lt = el('text', { x: lx, y: railY + 16, 'font-size': 11, fill: YEAR,
+                     'text-anchor': lx - PAD < 20 ? 'start' : (W - PAD - lx < 20 ? 'end' : 'middle') }, svg);
+          lt.textContent = o.line.yearText ? o.line.yearText(ly2) : ly2;
+        }
+      } else {
       var first = Math.ceil(o.from / 5) * 5;
       for (var y = first; y <= o.to; y += 5) {
         el('line', { x1: x(y), x2: x(y), y1: railY, y2: railY + 4, stroke: RAIL }, svg);
@@ -157,11 +226,17 @@
                              'font-size': 11, fill: YEAR }, svg);
         t.textContent = yv;
       });
+      }
 
       var labels = [], dots = [];
       function lay(set, above) {
         set.placed.forEach(function (p) {
           var e = p.e, on = !!selected[e.id], person = e.side === 'person';
+          if (p.r < 0) {
+            dots.push({ x: p.cx, y: railY, on: on, person: person, r: e.focus ? 6 : (person ? 5 : 4), fill: e.focus ? COPPER : (person ? INK : SLATE), id: e.id });
+            targets.push({ id: e.id, x: p.cx, y: railY });
+            return;
+          }
           var ly = above ? railY - 18 - p.r * ROW : railY + 40 + p.r * ROW;
           var lead = above ? [railY - 5, ly + 5] : [railY + 5, ly - 13];
           el('line', { x1: p.cx, x2: p.cx, y1: lead[0], y2: lead[1], stroke: on ? VERMILION : (person ? LEAD_P : LEAD_W), 'stroke-width': 1 }, svg);
@@ -206,7 +281,8 @@
 
     return {
       draw: draw,
-      select: function (ids) { selected = {}; (ids || []).forEach(function (id) { selected[id] = true; }); draw(); }
+      select: function (ids) { selected = {}; (ids || []).forEach(function (id) { selected[id] = true; }); draw(); },
+      span: function (from, to, events) { o.from = from; o.to = to; if (events) o.events = events; draw(); }
     };
   }
 
@@ -245,7 +321,7 @@
       for (key3 in data) full[key3] = data[key3];
       full.places = merged; full.events = events;
       var live = build(host, full);
-      box.select = live.select; box.clear = live.clear;
+      box.select = live.select; box.clear = live.clear; box.span = live.span; box.only = live.only;
     });
     return box;
   }
@@ -263,8 +339,18 @@
     var byId = {}; data.events.forEach(function (e) { byId[e.id] = e; });
     var sel = { ids: [], place: null };
 
+    // What is on the line: every event, or with `windowed` those inside the span, and with
+    // only() those she has seen. A story that says neither has every event, as before.
+    var onlyIds = null, shown = data.events;
+    function visible() {
+      if (!data.windowed && !onlyIds) return data.events;
+      return data.events.filter(function (e) {
+        return (!data.windowed || (e.year >= data.from && e.year <= data.to)) && (!onlyIds || onlyIds[e.id]);
+      });
+    }
+    shown = visible();
     function eventsAt(pid) {
-      return data.events.filter(function (e) { return e.place === pid; }).sort(function (a, b) { return a.year - b.year; });
+      return shown.filter(function (e) { return e.place === pid; }).sort(function (a, b) { return a.year - b.year; });
     }
 
     // the map's marks: one per place that is on the map, and a route while its event is selected
@@ -276,9 +362,24 @@
       if (p.spread) return;
       var m = { type: 'place', lat: p.lat, lon: p.lon, name: p.name, weight: p.weight,
                 world: p.side === 'world', minor: p.side === 'minor' };
-      if (p.side !== 'minor' && eventsAt(pid).length) m.onTap = function () { fromMap(pid); };
+      if (p.side !== 'minor' && (data.windowed || eventsAt(pid).length)) m.onTap = function () { fromMap(pid); };
       placeMark[pid] = m; marks.push(m);
     });
+    // On a windowed line a place is on the map while one of its events is on the line, and
+    // weighs what its heaviest event there weighs.
+    function placesFollow() {
+      if (!data.windowed && !onlyIds) return false;
+      var changed = false;
+      Object.keys(placeMark).forEach(function (pid) {
+        var m = placeMark[pid], evs = eventsAt(pid), i = marks.indexOf(m);
+        var w = evs.reduce(function (a, e) { return Math.max(a, e.weight ? +e.weight : 1); }, 0);
+        if (evs.length && m.weight !== w) { m.weight = w; changed = true; }
+        if (evs.length && i < 0) { marks.push(m); changed = true; }
+        if (!evs.length && i >= 0) { marks.splice(i, 1); changed = true; }
+      });
+      return changed;
+    }
+    placesFollow();
 
     // cards for places too far away for the map, on the side where they really lie
     var cards = {};
@@ -305,7 +406,7 @@
       mapWrap.appendChild(b); cards[pid] = b;
     });
 
-    var tl = cwTimeline(svg, { from: data.from, to: data.to, events: data.events,
+    var tl = cwTimeline(svg, { from: data.from, to: data.to, events: shown, line: data.line,
                                onPick: function (id) { selectEvent(id); }, onEmpty: clear });
 
     function render() {
@@ -347,12 +448,14 @@
     function selectEvent(id) {
       if (sel.ids.length === 1 && sel.ids[0] === id) { clear(); return; }   // tapping what is selected clears it
       sel.ids = [id]; sel.place = byId[id].place; render(); showPanel([byId[id]]);
+      if (data.onPick) data.onPick(id);
     }
     function selectPlace(pid) {
       var evs = eventsAt(pid);
       if (!evs.length) return;
       if (sel.place === pid && sel.ids.length === evs.length) { clear(); return; }
       sel.ids = evs.map(function (e) { return e.id; }); sel.place = pid; render(); showPanel(evs);
+      if (data.onPick) evs.forEach(function (e) { data.onPick(e.id); });
     }
     function fromMap(pid) { var evs = eventsAt(pid); if (evs.length === 1) selectEvent(evs[0].id); else selectPlace(pid); }
     function clear() { sel.ids = []; sel.place = null; render(); panel.innerHTML = '<div class="hint">' + hint + '</div>'; }
@@ -367,7 +470,24 @@
     }
     var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { tl.draw(); }, 120); });
 
-    return { select: selectEvent, clear: clear };
+    // The span and the filter change what is on the line; an event that leaves it is let go.
+    function refresh() {
+      shown = visible();
+      var keep = sel.ids.filter(function (id) { return shown.indexOf(byId[id]) >= 0; });
+      var mapChanged = placesFollow();
+      if (keep.length !== sel.ids.length) { clear(); }
+      tl.span(data.from, data.to, shown);
+      if (map && mapChanged) map.redraw();
+    }
+
+    return {
+      select: selectEvent, clear: clear,
+      span: function (from, to) { data.from = from; data.to = to; refresh(); },
+      only: function (ids) {
+        if (ids) { onlyIds = {}; ids.forEach(function (id) { onlyIds[id] = true; }); } else onlyIds = null;
+        refresh();
+      }
+    };
   }
 
   window.cwTimeline = cwTimeline;
