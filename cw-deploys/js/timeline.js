@@ -26,7 +26,13 @@
 
    data = {
      from, to,                           years at the ends of the line
-     region: '../art/maps/<r>.json',     the story's regional base picture (map.js)
+     region: '../art/maps/<r>.json',     the story's regional base picture (map.js) — or
+                                         '../art/maps/world-pyramid.json' with moving: true,
+                                         the world that moves (27 Sep 2026): then `fit` is the
+                                         box it opens on, `reset` the word on its strip, a tap
+                                         centres the map on the place at her scale, a route
+                                         fits itself, and there are no far-away cards
+     fit:    { west, south, east, north }, reset: 'reset',
      world:  '../art/maps/world.json',   for the far-away cards' window
      places: { id: { name, lat, lon, side:'person'|'world'|'minor', card?:'east'|'west',
                      far?: 'About 8,900 km to the east, in China',
@@ -263,10 +269,12 @@
 
     // the map's marks: one per place that is on the map, and a route while its event is selected
     var marks = [], placeMark = {}, routeMark = null, map = null;
+    var moving = !!data.moving;          // the world that moves: no cards, and the map follows a tap
     Object.keys(data.places).forEach(function (pid) {
       var p = data.places[pid];
-      if (p.card) return;
-      var m = { type: 'place', lat: p.lat, lon: p.lon, name: p.name,
+      if (p.card && !moving) return;
+      if (p.spread) return;
+      var m = { type: 'place', lat: p.lat, lon: p.lon, name: p.name, weight: p.weight,
                 world: p.side === 'world', minor: p.side === 'minor' };
       if (p.side !== 'minor' && eventsAt(pid).length) m.onTap = function () { fromMap(pid); };
       placeMark[pid] = m; marks.push(m);
@@ -276,7 +284,7 @@
     var cards = {};
     Object.keys(data.places).forEach(function (pid) {
       var p = data.places[pid];
-      if (!p.card) return;
+      if (!p.card || moving) return;
       var evs = eventsAt(pid);
       var b = document.createElement('button'); b.type = 'button'; b.className = 'cw-card ' + p.card;
       b.innerHTML = '<div class="n"><i></i>' + p.name + '</div>' +
@@ -315,6 +323,21 @@
       }
       if (map) map.redraw();
       Object.keys(cards).forEach(function (pid) { cards[pid].classList.toggle('on', sel.place === pid); });
+      // The moving map follows her tap: a route fits itself into view; a place slides to
+      // the centre at her scale. Clearing moves nothing.
+      if (moving && map && map.centre && sel.place) {
+        if (routeMark) {
+          var bb = { west: Infinity, south: Infinity, east: -Infinity, north: -Infinity };
+          routeMark.places.forEach(function (q) {
+            var lat = q[0], lon = q[1];
+            if (typeof q === 'string') { var pl = data.places[q]; if (!pl) return; lat = pl.lat; lon = pl.lon; }
+            if (lon < bb.west) bb.west = lon; if (lon > bb.east) bb.east = lon; if (lat < bb.south) bb.south = lat; if (lat > bb.north) bb.north = lat;
+          });
+          if (bb.west <= bb.east) map.fit(bb);
+        } else if (data.places[sel.place]) {
+          map.centre(data.places[sel.place].lat, data.places[sel.place].lon);
+        }
+      }
     }
     function showPanel(evs) {
       panel.innerHTML = evs.map(function (e) {
@@ -339,7 +362,7 @@
     panel.innerHTML = '<div class="hint">' + hint + '</div>';
     tl.draw();
     if (typeof cwMap === 'function') {
-      cwMap.load(data.region).then(function (r) { map = cwMap(mapBox, r, marks); render(); })
+      cwMap.load(data.region).then(function (r) { map = cwMap(mapBox, r, marks, moving ? { fit: data.fit, reset: data.reset } : undefined); render(); })
         .catch(function (err) { console.warn('world map', err); });
     }
     var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { tl.draw(); }, 120); });

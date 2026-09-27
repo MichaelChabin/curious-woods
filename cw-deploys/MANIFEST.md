@@ -46,7 +46,28 @@ no dotted hidden edges; `letters` sets Necker's A and X in copper at body-text s
 drawn behind the lines and a little away from their corners (26 Sep; bold ones hid the corners); `cycle` makes a tap fill the front face, then the back, then neither, at once. Nothing
 animates, nothing is recorded, nothing counted: the drawing does not change, the seeing does.
 Each figure carries a description saying what its two readings are. First used by
-`active/professor-neckers-drawing.html`. **`map.js`, 26 Sep 2026 — layers** (Spec-Maps, *The ground has layers*): `cwMap(container,
+`active/professor-neckers-drawing.html`. **`map.js`, 27 Sep 2026 — the world that moves** (Spec-Maps, *The world that moves*): given
+`world-pyramid.json` as its region, `cwMap` is a view rather than a box — a centre and a
+scale, the horizontal scale following the cosine of the centre's latitude, tiles arriving
+for what is in view and dropped when it leaves (an older level's tiles stay under the new
+ones until those have loaded, so the map never goes blank). Drag pans; pinch and the wheel
+zoom by tenths, as Glass Geometry's do, but about the point under the fingers or the cursor
+rather than the view's centre, because a map that zooms about its centre runs away from
+what she is pinching. Labels keep the side they were given while a gesture lasts and are
+placed afresh 120 ms after it ends. A strip along the bottom edge, the window's drag
+handle turned to this use, resizes the height between 220 px and 85 % of the window; the
+word at its right (`reset`, or `opts.reset`) returns view and size to what the story set.
+`opts.fit` is that opening box; `map.centre(lat, lon)` slides there at her scale in 250 ms;
+`map.fit(box)` fits a route with a twelfth of margin; `map.home()` is the word's own act;
+`reset()` keeps its old meaning. A press that moves less than 6 px is a tap and reaches the
+marks; a drag never ends in a click. **Weight** (1 to 3, 1 if unsaid) orders placement on
+every map, still or moving: heavier first, so the heavier survives a collision. Wired to
+`timeline.js` with `moving: true`: no far-away cards, a tap centres the map on the place,
+a route fits itself, clearing moves nothing. The label placer reads the ground from the
+visible tiles. First used by `experiments/maps/moving-bench.html`; no story uses it. The
+six pages that load `map.js` had their version query bumped again (27b) after a bug in
+this pass briefly made every still map recurse until its stack overflowed, caught by the
+test that every story page still draws its maps. **`map.js`, 26 Sep 2026 — layers** (Spec-Maps, *The ground has layers*): `cwMap(container,
 region, marks, opts)` and `cwMapWindow(region, marks, opts)` take an optional fourth
 argument; `opts.layers` (`{ vegetation: false }`) turns a region's layers on or off by name
 and everything unnamed takes the region's default; each layer that is on is an
@@ -333,7 +354,20 @@ degrees each side so the picture runs landscape in a column instead of square; s
 parallel 50°, 2000 × 1606, 193 KB, from the 30 arc-second grids, exaggeration 1) and `japan`
 (above; 176 KB, exaggeration 1). A new region is one line:
 `python3 experiments/maps/render.py <name> <west> <south> <east> <north> [--exaggeration 1] [--levels 0,-200]`,
-about fifteen seconds. **Contours, as vectors** (third pass, 20 Sep): the coast (0 m) and the
+about fifteen seconds. **`world-pyramid.json` and `world-tiles/`** (27 Sep 2026, Spec-Maps *The
+world that moves*): the whole earth as 512-pixel tiles at six scales, `world-tiles/<z>/<x>/<y>.webp`,
+level 0 two tiles and level 5 sixty-four by thirty-two, about 1.2 km a pixel at the equator —
+equirectangular, height alone, the exaggeration stepping down from 3 at level 0 to 1 at level 5
+(3, 2.5, 2, 1.6, 1.3, 1). Beside each tile that has any, `<y>-ice.webp` and `<y>-vegetation.webp` at
+256 px; the JSON lists which tiles have each layer. 2 730 base tiles, 19.9 MB; 472 ice tiles,
+4.7 MB; 1 146 vegetation tiles, 5.3 MB; 29.7 MB in all, 4 348 files. Per level the base is 0.1,
+0.2, 0.5, 1.4, 4.5 and 13.2 MB. The coast and the shelf edge as vectors, `world-tiles/contours-<z>.json`,
+exist for levels 0, 1 and 2 (76, 188 and 532 KB); level 3's would be 1.3 MB, level 4's 3.4 MB and
+level 5's 8 MB, so they are not shipped, and a map zoomed past level 2 draws level 2's lines,
+which at level 5 sit a pixel or two off the tiles' own coast. Rendered by `render.py --pyramid`
+in 41 minutes, one tile row at a time so no level sits whole in memory, the tree cover read
+once at the finest level and averaged down. Made for the map that moves; no still map uses it.
+**Contours, as vectors** (third pass, 20 Sep): the coast (0 m) and the
 shelf edge (−200 m) are traced from the sampled height grid with contourpy (marching squares,
 the engine matplotlib uses), simplified with Douglas–Peucker to half a pixel, rings shorter
 than six pixels dropped, converted to longitude and latitude rounded to a tenth of a pixel's
@@ -801,6 +835,19 @@ backstop for the Claude Code session that lands the file.
   (110 Hz at 12 beads; 220 at 40 beads ×4). Origin: a projected piece in the Denver Art
   Museum children's area; footage and a timestamped catalogue in `_CW/Beads Analysis/`
   (outside the deploy). Tab icon `art/icons/beads-icon-256.png`. Not yet heard on an iPad.
+- **`maps/moving-bench.html`** — bench: **The world that moves** (27 Sep 2026; Spec-Maps
+  *The world that moves*, the bench its prompt asked for). Six of Hokusai's events, hand-
+  written with places and weights, on a `timeline.js` timeline over the world pyramid,
+  opening on the corners of `japan-and-china`; a tap on the line slides the map to the
+  place, the road to Kyoto fits itself, the strip resizes, the word resets. Nothing else on
+  the page. Tested on the Mac in the built-in browser: pan, wheel zoom, resize, reset, the
+  slide and the fit, tiles arriving without a blank, labels holding still during a pan,
+  a zoom to level 5, and every story page still drawing its still maps. **Not tested on an
+  iPad:** the simulator would not take injected touches this session, before or after a
+  reboot — a tap on Safari's own new-tab button did nothing either — so the one-finger drag
+  against the page scroll, the risk the prompt named first, is untested and waits on
+  Michael's own iPad. The bench's marks carry their weights; the shared events and places
+  files are untouched.
 - **`maps/`** — bench: **Maps** (18 Sep 2026; `CWVault/claude/Spec-Maps.md`, the bench of
   its build prompt). A map is a still picture of the ground with the story's marks on it,
   and nothing else. Two files here since 20 Sep, when `map.js` moved to `js/` (below, under

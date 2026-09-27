@@ -15,6 +15,20 @@
      { type:'note',   lat, lon, text, side?, water? }           words at a point, no dot
    Latitude and longitude come in; pixels come out.
 
+   The world that moves (27 Sep 2026, Spec-Maps "The world that moves"). Given the pyramid
+   (`world-pyramid.json`: tiles at six scales) as its region, the map is a view rather than
+   a box: a centre and a scale, the horizontal scale following the cosine of the centre's
+   latitude, tiles arriving for what is in view and dropped when it leaves. Drag pans;
+   pinch and the wheel zoom (by tenths, as Glass Geometry's do), clamped to the pyramid;
+   labels keep the side they were given while a gesture lasts and are placed afresh when it
+   ends, so nothing jitters under her finger. A strip along the bottom edge — the window's
+   drag handle, turned to this use — resizes the height; the word at its right (`reset`,
+   or opts.reset) returns view and size to what the story set. `opts.fit` is that opening
+   box; `map.centre(lat, lon)` slides there at her scale in 250 ms; `map.fit(box)` fits a
+   route; `map.home()` is the word's own act. Weight: a mark's `weight` (1 to 3, 1 if
+   unsaid) places it before lighter marks, so the heavier survives a collision — on every
+   map, since it is one placer.
+
    The ground has layers (26 Sep 2026). The base picture is height alone. The region's
    JSON lists its layers — ice, vegetation, later sea level — each a half-width RGBA
    picture beside the base with a blend (`normal` for ice, `multiply` for vegetation)
@@ -72,10 +86,21 @@
                 '-200': { stroke: '#2f5c78', opacity: 0.30 } };  // the shelf edge
   var WINDOW_MAP_WIDTH = 380;             // the story page's stage width; a map in a window is this wide
   var SAMPLE_WIDTH = 400;                 // the picture is read at this width for label placement
+  var STAGE_MIN = 220, STAGE_MAX_FRACTION = 0.85;   // a moving map's height: at least this, at most this much of the window
+  var SLIDE_MS = 250;                     // centre() and fit(): one short slide, never a flight
+  var TAP_PX = 6;                         // a press that moves less than this is a tap, not a drag
   var SVG = 'http://www.w3.org/2000/svg';
 
   var css = [
     '.cw-map img.cw-layer{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
+    /* the map that moves */
+    '.cw-map .cw-stage{position:relative;overflow:hidden;width:100%;touch-action:none;cursor:grab;background:#93bed7;}',
+    '.cw-map .cw-stage.dragging{cursor:grabbing;}',
+    '.cw-map .cw-tiles{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
+    '.cw-map .cw-tiles img{position:absolute;display:block;width:auto;height:auto;max-width:none;pointer-events:none;}',
+    '.cw-map .cw-strip{height:14px;border-radius:0 0 8px 8px;cursor:ns-resize;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;background:#f0ede4;touch-action:none;user-select:none;-webkit-user-select:none;line-height:14px;}',
+    '.cw-map .cw-strip span{font-family:Georgia,serif;font-size:11px;color:#b0a090;cursor:default;transition:color 80ms;}',
+    '.cw-map .cw-strip span:hover{color:#546A80;}',
     '.cw-map{position:relative;line-height:0;}',
     '.cw-map img{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}',
     '.cw-map svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;cursor:default;}',
@@ -172,32 +197,158 @@
 
     function resolve(file) { return region.url ? new URL(file, region.url).href : file; }
 
-    var img = document.createElement('img');
-    img.alt = '';
-    img.draggable = false;
-    img.style.aspectRatio = region.width + ' / ' + region.height;   // holds the space before the picture arrives
-    img.src = resolve(region.image);
-    container.appendChild(img);
-
-    // The layers that are on: the region's defaults, overridden by name in opts.layers.
-    var layerImgs = [];
+    var pyr = !!region.tiles;              // the pyramid: a map that moves
+    var box = container;                   // where the picture, the SVG and the text blocks live
     var wanted = opts.layers || {};
-    (region.layers || []).forEach(function (L) {
-      var on = wanted.hasOwnProperty(L.name) ? !!wanted[L.name] : !!L['default'];
-      if (!on) return;
-      var li = document.createElement('img');
-      li.className = 'cw-layer';
-      li.alt = '';
-      li.draggable = false;
-      li.src = resolve(L.image);
-      if (L.blend && L.blend !== 'normal') li.style.mixBlendMode = L.blend;
-      li.__cwBlend = L.blend || 'normal';
-      container.appendChild(li);
-      layerImgs.push(li);
-    });
+    function layerOn(L) { return wanted.hasOwnProperty(L.name) ? !!wanted[L.name] : !!L['default']; }
+
+    var img = null, layerImgs = [];
+    var stage = null, strip = null, tileLayers = [], view = null, home = null, frozen = false;
+
+    if (!pyr) {
+      img = document.createElement('img');
+      img.alt = '';
+      img.draggable = false;
+      img.style.aspectRatio = region.width + ' / ' + region.height;   // holds the space before the picture arrives
+      img.src = resolve(region.image);
+      container.appendChild(img);
+
+      // The layers that are on: the region's defaults, overridden by name in opts.layers.
+      (region.layers || []).forEach(function (L) {
+        if (!layerOn(L)) return;
+        var li = document.createElement('img');
+        li.className = 'cw-layer';
+        li.alt = '';
+        li.draggable = false;
+        li.src = resolve(L.image);
+        if (L.blend && L.blend !== 'normal') li.style.mixBlendMode = L.blend;
+        li.__cwBlend = L.blend || 'normal';
+        container.appendChild(li);
+        layerImgs.push(li);
+      });
+    } else {
+      stage = document.createElement('div');
+      stage.className = 'cw-stage';
+      container.appendChild(stage);
+      box = stage;
+      // one tile holder for the base and one per layer that is on, in that order
+      tileLayers.push({ name: 'base', suffix: '.webp', blend: 'normal', div: document.createElement('div'), have: null });
+      (region.layers || []).forEach(function (L) {
+        if (!layerOn(L)) return;
+        var have = {};
+        Object.keys(L.tiles || {}).forEach(function (z) { have[z] = {}; L.tiles[z].forEach(function (k) { have[z][k] = true; }); });
+        tileLayers.push({ name: L.name, suffix: L.suffix, blend: L.blend || 'normal', div: document.createElement('div'), have: have });
+      });
+      tileLayers.forEach(function (T) {
+        T.div.className = 'cw-tiles';
+        if (T.blend !== 'normal') T.div.style.mixBlendMode = T.blend;
+        stage.appendChild(T.div);
+      });
+      strip = document.createElement('div');
+      strip.className = 'cw-strip';
+      var word = document.createElement('span');
+      word.textContent = opts.reset || 'reset';
+      strip.appendChild(word);
+      container.appendChild(strip);
+      word.addEventListener('click', function (e) { e.stopPropagation(); if (api.home) api.home(); });
+      // the strip is a handle, not ground: its clicks never reach the page (a drag on it ends in one)
+      strip.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
 
     var svg = el('svg', { viewBox: '0 0 1 1', preserveAspectRatio: 'none' });
-    container.appendChild(svg);
+    box.appendChild(svg);
+
+    // ---- the view (the pyramid only): centre and pixels per degree of latitude ----
+    var PPD0 = pyr ? region.tile * region.levels[0].rows / 180.0 : 0;      // level 0's own scale
+    var LEVELS = pyr ? region.levels.length : 0;
+    var PPD_MIN = PPD0 * 0.5, PPD_MAX = PPD0 * Math.pow(2, LEVELS - 1) * 2;  // half of level 0; twice the finest
+    function cosc() { return Math.max(0.1, Math.cos(view.lat * Math.PI / 180)); }
+    function viewToPixel(lon, lat, w, h) {
+      return { x: w / 2 + (lon - view.lon) * view.ppd * cosc(), y: h / 2 - (lat - view.lat) * view.ppd };
+    }
+    function viewToLonLat(x, y, w, h) {
+      return { lon: view.lon + (x - w / 2) / (view.ppd * cosc()), lat: view.lat - (y - h / 2) / view.ppd };
+    }
+    function P(lon, lat, w, h) { return pyr ? viewToPixel(lon, lat, w, h) : toPixel(region, lon, lat, w, h); }
+    function clampView(v) {
+      v.ppd = Math.max(PPD_MIN, Math.min(PPD_MAX, v.ppd));
+      v.lat = Math.max(-84, Math.min(84, v.lat));
+      v.lon = Math.max(-180, Math.min(180, v.lon));
+      return v;
+    }
+    function viewForBox(b, w, h) {
+      var lat = (b.south + b.north) / 2, lon = (b.west + b.east) / 2;
+      var c = Math.max(0.1, Math.cos(lat * Math.PI / 180));
+      var ppd = Math.min(h / (b.north - b.south), w / ((b.east - b.west) * c));
+      return clampView({ lat: lat, lon: lon, ppd: ppd });
+    }
+    function stageMax() { return Math.round(window.innerHeight * STAGE_MAX_FRACTION); }
+    if (pyr) {
+      var fitBox = opts.fit || { west: region.west, south: region.south, east: region.east, north: region.north };
+      var w0 = container.clientWidth || 700;
+      var c0 = Math.max(0.1, Math.cos((fitBox.south + fitBox.north) / 2 * Math.PI / 180));
+      var h0 = opts.height || Math.round(w0 * (fitBox.north - fitBox.south) / ((fitBox.east - fitBox.west) * c0));
+      h0 = Math.max(STAGE_MIN, Math.min(stageMax(), h0));
+      stage.style.height = h0 + 'px';
+      view = viewForBox(fitBox, w0, h0);
+      home = { view: { lat: view.lat, lon: view.lon, ppd: view.ppd }, height: h0 };
+    }
+
+    // ---- tiles (the pyramid only) ----
+    function levelFor(ppd) {
+      var z = Math.ceil(Math.log(ppd / PPD0) / Math.LN2 - 0.25);
+      return Math.max(0, Math.min(LEVELS - 1, z));
+    }
+    function tileRect(z, tx, ty, w, h) {
+      var L = region.levels[z];
+      var dlon = 360 / L.cols, dlat = 180 / L.rows;
+      var tl = viewToPixel(-180 + tx * dlon, 90 - ty * dlat, w, h);
+      return { x: tl.x, y: tl.y, w: dlon * view.ppd * cosc(), h: dlat * view.ppd };
+    }
+    function placeTiles() {
+      var w = box.clientWidth, h = box.clientHeight;
+      if (!w || !h) return;
+      var z = levelFor(view.ppd), L = region.levels[z];
+      var dlon = 360 / L.cols, dlat = 180 / L.rows;
+      var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
+      var tx0 = Math.max(0, Math.floor((nw.lon + 180) / dlon) - 1), tx1 = Math.min(L.cols - 1, Math.floor((se.lon + 180) / dlon) + 1);
+      var ty0 = Math.max(0, Math.floor((90 - nw.lat) / dlat) - 1), ty1 = Math.min(L.rows - 1, Math.floor((90 - se.lat) / dlat) + 1);
+      tileLayers.forEach(function (T) {
+        var keep = {}, allLoaded = true, tx, ty, key, im;
+        for (ty = ty0; ty <= ty1; ty++) for (tx = tx0; tx <= tx1; tx++) {
+          if (T.have && !(T.have[z] && T.have[z][tx + '/' + ty])) continue;
+          key = z + '/' + tx + '/' + ty;
+          keep[key] = true;
+          im = T.div.querySelector('img[data-key="' + key + '"]');
+          if (!im) {
+            im = document.createElement('img');
+            im.alt = ''; im.draggable = false;
+            im.setAttribute('data-key', key); im.setAttribute('data-z', z); im.setAttribute('data-x', tx); im.setAttribute('data-y', ty);
+            im.src = resolve(region.tiles + '/' + z + '/' + tx + '/' + ty + T.suffix);
+            im.addEventListener('load', tileArrived);
+            T.div.appendChild(im);
+          }
+          if (!(im.complete && im.naturalWidth)) allLoaded = false;
+        }
+        // position every tile still held, and drop what is no longer wanted: this level's
+        // tiles outside the view, and older levels' tiles once this level has arrived
+        Array.prototype.slice.call(T.div.querySelectorAll('img')).forEach(function (t) {
+          var tz = +t.getAttribute('data-z');
+          if (tz === z) {
+            if (!keep[t.getAttribute('data-key')]) { T.div.removeChild(t); return; }
+          } else if (allLoaded) { T.div.removeChild(t); return; }
+          var r = tileRect(tz, +t.getAttribute('data-x'), +t.getAttribute('data-y'), w, h);
+          t.style.left = r.x + 'px'; t.style.top = r.y + 'px';
+          t.style.width = (r.w + 0.7) + 'px'; t.style.height = (r.h + 0.7) + 'px';
+        });
+      });
+    }
+    var arriveTimer = null;
+    function tileArrived() {
+      if (frozen) return;
+      clearTimeout(arriveTimer);
+      arriveTimer = setTimeout(function () { placeTiles(); readGround(); draw(); }, 60);
+    }
 
     var shown = [];        // the text blocks currently open: { mark, div }
     var ground = null;     // the picture's luminance at SAMPLE_WIDTH, for label placement
@@ -213,16 +364,34 @@
     // taints the canvas); then placement judges crowding only.
     function readGround() {
       try {
-        var gw = SAMPLE_WIDTH, gh = Math.max(1, Math.round(gw * region.height / region.width));
-        var c = document.createElement('canvas'); c.width = gw; c.height = gh;
-        var ctx = c.getContext('2d');
-        ctx.drawImage(img, 0, 0, gw, gh);
-        layerImgs.forEach(function (li) {
-          if (!(li.complete && li.naturalWidth)) return;
-          ctx.globalCompositeOperation = li.__cwBlend === 'normal' ? 'source-over' : li.__cwBlend;
-          ctx.drawImage(li, 0, 0, gw, gh);
-        });
-        ctx.globalCompositeOperation = 'source-over';
+        var gw = SAMPLE_WIDTH, gh, c, ctx;
+        if (pyr) {
+          var bw = box.clientWidth, bh = box.clientHeight;
+          if (!bw || !bh) { ground = null; return; }
+          gh = Math.max(1, Math.round(gw * bh / bw));
+          c = document.createElement('canvas'); c.width = gw; c.height = gh;
+          ctx = c.getContext('2d');
+          var k = gw / bw;
+          tileLayers.forEach(function (T) {
+            ctx.globalCompositeOperation = T.blend === 'normal' ? 'source-over' : T.blend;
+            Array.prototype.slice.call(T.div.querySelectorAll('img')).forEach(function (t) {
+              if (!(t.complete && t.naturalWidth)) return;
+              ctx.drawImage(t, parseFloat(t.style.left) * k, parseFloat(t.style.top) * k, parseFloat(t.style.width) * k, parseFloat(t.style.height) * k);
+            });
+          });
+          ctx.globalCompositeOperation = 'source-over';
+        } else {
+          gh = Math.max(1, Math.round(gw * region.height / region.width));
+          c = document.createElement('canvas'); c.width = gw; c.height = gh;
+          ctx = c.getContext('2d');
+          ctx.drawImage(img, 0, 0, gw, gh);
+          layerImgs.forEach(function (li) {
+            if (!(li.complete && li.naturalWidth)) return;
+            ctx.globalCompositeOperation = li.__cwBlend === 'normal' ? 'source-over' : li.__cwBlend;
+            ctx.drawImage(li, 0, 0, gw, gh);
+          });
+          ctx.globalCompositeOperation = 'source-over';
+        }
         var d = ctx.getImageData(0, 0, gw, gh).data;
         var lum = new Float32Array(gw * gh);
         for (var i = 0, j = 0; i < lum.length; i++, j += 4) lum[i] = (0.299 * d[j] + 0.587 * d[j + 1] + 0.114 * d[j + 2]) / 255;
@@ -260,14 +429,21 @@
       var x = p.x + dx, y = p.y + dy;
       var left = s.anchor === 'start' ? x : s.anchor === 'end' ? x - width : x - width / 2;
       var pad = HALO_PX;
-      return { x: left - pad, y: y - size * 0.8 - pad, w: width + 2 * pad, h: size * 1.05 + 2 * pad, tx: x, ty: y, anchor: s.anchor };
+      return { x: left - pad, y: y - size * 0.8 - pad, w: width + 2 * pad, h: size * 1.05 + 2 * pad, tx: x, ty: y, anchor: s.anchor, side: side };
     }
 
     // Placement: try every side, throw out the ones that overlap a placed label, a dot,
     // or the edge; of the rest take the calmest ground, with the mark's own side and the
     // preferred order breaking ties. Returns the box, or null to drop the label.
-    function place(p, text, size, italic, r, side, placed, dots, w, h) {
+    var sideCache = (typeof Map !== 'undefined') ? new Map() : null;   // mark -> the side it was given
+    function place(p, text, size, italic, r, side, placed, dots, w, h, mark) {
       var width = textWidth(text, size, italic);
+      // While a gesture lasts, a label keeps the side it had, or nothing moves but the map.
+      if (frozen && sideCache && mark) {
+        var kept = sideCache.get(mark);
+        if (kept === null) return null;
+        if (kept) { var kb = labelBox(p, kept, width, size, r); return (kb.x + kb.w < 0 || kb.y + kb.h < 0 || kb.x > w || kb.y > h) ? null : kb; }
+      }
       var sides = ORDER.slice();
       if (r === 0) sides.unshift('centre');
       var best = null, bestScore = Infinity;
@@ -287,12 +463,15 @@
         var score = unevenness(box, w, h) * 10 + crowd * 0.05 + i * 0.02 + (side && sides[i] === side ? -100 : 0);
         if (score < bestScore) { bestScore = score; best = box; }
       }
+      if (sideCache && mark) sideCache.set(mark, best ? best.side : null);
       return best;
     }
 
+    function weightOf(m) { return m.weight ? +m.weight : 1; }
     function draw() {
-      var w = container.clientWidth, h = container.clientHeight;
+      var w = box.clientWidth, h = box.clientHeight;
       if (!w || !h) return;
+      if (pyr) placeTiles();
       svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
       while (svg.firstChild) svg.removeChild(svg.firstChild);
 
@@ -305,28 +484,74 @@
 
       var placed = [], dots = [];
       marks.forEach(function (m) {
-        if (m.type === 'place') { var q = toPixel(region, m.lon, m.lat, w, h); dots.push({ x: q.x, y: q.y, r: m.on ? DOT + 2.5 : (m.minor ? DOT_MINOR : (m.lit ? DOT + 1.5 : DOT)) }); }
+        if (m.type === 'place') { var q = P(m.lon, m.lat, w, h); dots.push({ x: q.x, y: q.y, r: m.on ? DOT + 2.5 : (m.minor ? DOT_MINOR : (m.lit ? DOT + 1.5 : DOT)) }); }
       });
       var order = ['region', 'path', 'place', 'note'];
       order.forEach(function (kind) {
-        // Places the story names are placed before lesser ones, so the lesser give way.
-        var these = marks.filter(function (m) { return m.type === kind; });
-        if (kind === 'place') these.sort(function (a, b) { return (a.minor ? 1 : 0) - (b.minor ? 1 : 0); });
-        these.forEach(function (m) { drawMark(m, w, h, marksLayer, halos, glyphs, placed, dots); });
+        // Heavier marks are placed first, so the heavier survives a collision; among equals,
+        // places the story names go before lesser ones, so the lesser give way. A stable order.
+        var these = marks.filter(function (m) { return m.type === kind; }).map(function (m, i) { return { m: m, i: i }; });
+        if (kind === 'place' || kind === 'note') {
+          these.sort(function (a, b) { return (weightOf(b.m) - weightOf(a.m)) || ((a.m.minor ? 1 : 0) - (b.m.minor ? 1 : 0)) || (a.i - b.i); });
+        }
+        these.forEach(function (x) { drawMark(x.m, w, h, marksLayer, halos, glyphs, placed, dots); });
       });
       shown.forEach(function (s) { positionText(s, w, h); });
     }
 
+    var contourCache = {};      // z -> { lines: {level: [ {pts, bbox} ]}, ready }
+    function contourLevel() {
+      var z = levelFor(view.ppd), keys = Object.keys(region.contours || {}).map(Number).sort(function (a, b) { return a - b; });
+      var best = -1;
+      keys.forEach(function (k) { if (k <= z) best = k; });
+      if (best < 0 && keys.length) best = keys[0];
+      return best;
+    }
+    function loadContours(z) {
+      if (contourCache[z]) return;
+      contourCache[z] = { ready: false, lines: {} };
+      fetch(resolve(region.contours[z])).then(function (r) { return r.json(); }).then(function (j) {
+        var out = {};
+        Object.keys(j).forEach(function (level) {
+          out[level] = j[level].map(function (line) {
+            var bb = [Infinity, Infinity, -Infinity, -Infinity];
+            for (var i = 0; i < line.length; i++) { var q = line[i]; if (q[0] < bb[0]) bb[0] = q[0]; if (q[1] < bb[1]) bb[1] = q[1]; if (q[0] > bb[2]) bb[2] = q[0]; if (q[1] > bb[3]) bb[3] = q[1]; }
+            return { pts: line, bbox: bb };
+          });
+        });
+        contourCache[z].lines = out; contourCache[z].ready = true;
+        if (!frozen) draw();
+      }).catch(function () {});
+    }
     function drawLines(layer, w, h) {
       var c = region.contours;
       if (!c) return;
+      if (pyr) {
+        var zc = contourLevel();
+        if (zc < 0) return;
+        loadContours(zc);
+        var cc = contourCache[zc];
+        if (!cc.ready) return;
+        var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
+        for (var lv in LINES) {
+          if (!cc.lines.hasOwnProperty(lv)) continue;
+          var dd = [];
+          cc.lines[lv].forEach(function (L) {
+            var b = L.bbox;
+            if (b[2] < nw.lon || b[0] > se.lon || b[3] < se.lat || b[1] > nw.lat) return;
+            for (var j = 0; j < L.pts.length; j++) { var q = viewToPixel(L.pts[j][0], L.pts[j][1], w, h); dd.push((j ? 'L' : 'M') + q.x.toFixed(1) + ' ' + q.y.toFixed(1)); }
+          });
+          if (dd.length) layer.appendChild(el('path', { 'class': 'cw-line', d: dd.join(''), stroke: LINES[lv].stroke, 'stroke-opacity': LINES[lv].opacity }));
+        }
+        return;
+      }
       for (var level in LINES) {
         if (!c.hasOwnProperty(level)) continue;
         var d = [];
         for (var i = 0; i < c[level].length; i++) {
           var line = c[level][i];
           for (var j = 0; j < line.length; j++) {
-            var q = toPixel(region, line[j][0], line[j][1], w, h);
+            var q = P(line[j][0], line[j][1], w, h);
             d.push((j ? 'L' : 'M') + q.x.toFixed(1) + ' ' + q.y.toFixed(1));
           }
         }
@@ -344,7 +569,7 @@
     function drawMark(m, w, h, layer, halosLayer, glyphLayer, placed, dots) {
       var p, box;
       if (m.type === 'region') {
-        var pts = (m.points || []).map(function (q) { var r = toPixel(region, q[1], q[0], w, h); return r.x + ',' + r.y; });
+        var pts = (m.points || []).map(function (q) { var r = P(q[1], q[0], w, h); return r.x + ',' + r.y; });
         layer.appendChild(el('polygon', { points: pts.join(' '), fill: WASHES[m.wash] || WASHES.grows, 'fill-opacity': WASH, stroke: 'none' }));
       } else if (m.type === 'path') {
         var seg = [];
@@ -352,18 +577,18 @@
           var lat, lon;
           if (typeof q === 'string') { var pl = placeByName(q); if (!pl) return; lat = pl.lat; lon = pl.lon; }
           else { lat = q[0]; lon = q[1]; }
-          var r = toPixel(region, lon, lat, w, h);
+          var r = P(lon, lat, w, h);
           seg.push(r.x + ',' + r.y);
         });
         var line = { points: seg.join(' '), fill: 'none', stroke: VERMILION, 'stroke-width': 1.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', 'vector-effect': 'non-scaling-stroke' };
         if (m.possible) line['stroke-dasharray'] = '5 4';
         layer.appendChild(el('polyline', line));
       } else if (m.type === 'note') {
-        p = toPixel(region, m.lon, m.lat, w, h);
-        box = place(p, m.text || '', SIZE, !!m.water, 0, m.side, placed, dots, w, h);
+        p = P(m.lon, m.lat, w, h);
+        box = place(p, m.text || '', SIZE, !!m.water, 0, m.side, placed, dots, w, h, m);
         if (box) { placed.push(box); label(m.text || '', box, m.water ? 'cw-water' : null, halosLayer, glyphLayer); }
       } else if (m.type === 'place') {
-        p = toPixel(region, m.lon, m.lat, w, h);
+        p = P(m.lon, m.lat, w, h);
         var r = m.on ? DOT + 2.5 : (m.minor ? DOT_MINOR : (m.lit ? DOT + 1.5 : DOT));
         var g = el('g', {});
         if (m.text || m.story || m.onTap) {
@@ -382,7 +607,7 @@
         }
         layer.appendChild(g);
         var size = m.minor ? SIZE_MINOR : SIZE;
-        box = place(p, m.name || '', size, false, r, m.side, placed, dots, w, h);
+        box = place(p, m.name || '', size, false, r, m.side, placed, dots, w, h, m);
         var cls = [m.minor ? 'cw-minor' : '', m.on ? 'cw-on' : ''].join(' ').trim() || null;
         if (box) { placed.push(box); label(m.name || '', box, cls, halosLayer, glyphLayer); }
       }
@@ -390,21 +615,21 @@
 
     function toggleText(m, p) {
       for (var i = 0; i < shown.length; i++) {
-        if (shown[i].mark === m) { container.removeChild(shown[i].div); shown.splice(i, 1); return; }
+        if (shown[i].mark === m) { box.removeChild(shown[i].div); shown.splice(i, 1); return; }
       }
       reset();                                   // one block open at a time
       var div = document.createElement('div');
       div.className = 'cw-map-text';
       div.textContent = m.text;
-      container.appendChild(div);
+      box.appendChild(div);
       var s = { mark: m, div: div };
       shown.push(s);
-      positionText(s, container.clientWidth, container.clientHeight);
+      positionText(s, box.clientWidth, box.clientHeight);
     }
 
     // Below and to the right of the dot; flipped left or up when the box would run out.
     function positionText(s, w, h) {
-      var p = toPixel(region, s.mark.lon, s.mark.lat, w, h);
+      var p = P(s.mark.lon, s.mark.lat, w, h);
       var d = s.div;
       d.style.left = (p.x + 10) + 'px';
       d.style.top = (p.y + 8) + 'px';
@@ -431,22 +656,154 @@
     document.addEventListener('keydown', function () { if (shown.length) reset(); }, true);
 
     if (typeof ResizeObserver !== 'undefined') {
-      new ResizeObserver(function () { draw(); }).observe(container);
+      new ResizeObserver(function () { if (pyr && frozen) { placeTiles(); draw(); } else { draw(); } }).observe(box);
     } else {
       window.addEventListener('resize', draw);
     }
-    // The ground is read once every picture — the base and its layers — has arrived.
-    var pending = 1 + layerImgs.length;
-    function arrived() { pending--; if (pending <= 0) { readGround(); draw(); } }
-    function watch(im) {
-      if (im.complete && im.naturalWidth) arrived();
-      else { im.addEventListener('load', arrived); im.addEventListener('error', arrived); }
+    if (!pyr) {
+      // The ground is read once every picture — the base and its layers — has arrived.
+      var pending = 1 + layerImgs.length;
+      var arrived = function () { pending--; if (pending <= 0) { readGround(); draw(); } };
+      var watch = function (im) {
+        if (im.complete && im.naturalWidth) arrived();
+        else { im.addEventListener('load', arrived); im.addEventListener('error', arrived); }
+      };
+      watch(img);
+      layerImgs.forEach(watch);
     }
-    watch(img);
-    layerImgs.forEach(watch);
     draw();
 
-    return { reset: reset, redraw: draw };
+    // ---- moving: gestures, the strip, the slides ----
+    var api = { reset: reset, redraw: draw };
+    if (pyr) {
+      var pointers = {}, nPointers = 0, dragging = false, down = null, pinch = null, suppressClick = false, settleTimer = null;
+      function beginGesture() { if (!frozen) { frozen = true; stage.classList.add('dragging'); } clearTimeout(settleTimer); }
+      function endGesture() {
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(function () {
+          frozen = false; stage.classList.remove('dragging');
+          clampView(view); placeTiles(); readGround(); draw();
+        }, 120);
+      }
+      function fast() { clampView(view); placeTiles(); draw(); }
+      stage.addEventListener('pointerdown', function (e) {
+        if (e.button && e.button !== 0) return;
+        pointers[e.pointerId] = { x: e.clientX, y: e.clientY }; nPointers++;
+        if (nPointers === 1) { down = { x: e.clientX, y: e.clientY, lat: view.lat, lon: view.lon }; dragging = false; }
+        if (nPointers === 2) {
+          var ids = Object.keys(pointers), a = pointers[ids[0]], b = pointers[ids[1]];
+          var r = stage.getBoundingClientRect();
+          var mid = { x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top };
+          pinch = { d0: Math.hypot(a.x - b.x, a.y - b.y), ppd0: view.ppd, at: viewToLonLat(mid.x, mid.y, box.clientWidth, box.clientHeight), mid: mid };
+          dragging = true; beginGesture();
+          try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+        }
+      });
+      stage.addEventListener('pointermove', function (e) {
+        if (!pointers[e.pointerId]) return;
+        pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+        var w = box.clientWidth, h = box.clientHeight;
+        if (nPointers >= 2 && pinch) {
+          var ids = Object.keys(pointers), a = pointers[ids[0]], b = pointers[ids[1]];
+          var d = Math.hypot(a.x - b.x, a.y - b.y);
+          view.ppd = Math.max(PPD_MIN, Math.min(PPD_MAX, pinch.ppd0 * d / pinch.d0));
+          // keep the ground under the fingers' midpoint where it was
+          var r = stage.getBoundingClientRect();
+          var mid = { x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top };
+          view.lon = pinch.at.lon - (mid.x - w / 2) / (view.ppd * cosc());
+          view.lat = pinch.at.lat + (mid.y - h / 2) / view.ppd;
+          fast();
+          return;
+        }
+        if (nPointers === 1 && down) {
+          var dx = e.clientX - down.x, dy = e.clientY - down.y;
+          if (!dragging) {
+            if (Math.hypot(dx, dy) < TAP_PX) return;
+            dragging = true; beginGesture();
+            try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+          }
+          view.lon = down.lon - dx / (view.ppd * cosc());
+          view.lat = down.lat + dy / view.ppd;
+          fast();
+        }
+      });
+      function up(e) {
+        if (!pointers[e.pointerId]) return;
+        delete pointers[e.pointerId]; nPointers--;
+        if (nPointers < 2) pinch = null;
+        if (nPointers === 1) { var id = Object.keys(pointers)[0]; down = { x: pointers[id].x, y: pointers[id].y, lat: view.lat, lon: view.lon }; }
+        if (nPointers === 0) {
+          if (dragging) { suppressClick = true; setTimeout(function () { suppressClick = false; }, 0); endGesture(); }
+          dragging = false; down = null;
+        }
+      }
+      stage.addEventListener('pointerup', up);
+      stage.addEventListener('pointercancel', up);
+      stage.addEventListener('click', function (e) { if (suppressClick) { e.stopPropagation(); e.preventDefault(); } }, true);
+      // The wheel zooms by tenths, as Glass Geometry's does, about the point under the cursor.
+      stage.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        var w = box.clientWidth, h = box.clientHeight, r = stage.getBoundingClientRect();
+        var at = viewToLonLat(e.clientX - r.left, e.clientY - r.top, w, h);
+        beginGesture();
+        view.ppd = Math.max(PPD_MIN, Math.min(PPD_MAX, view.ppd * (e.deltaY > 0 ? 0.9 : 1.1)));
+        view.lon = at.lon - (e.clientX - r.left - w / 2) / (view.ppd * cosc());
+        view.lat = at.lat + (e.clientY - r.top - h / 2) / view.ppd;
+        fast(); endGesture();
+      }, { passive: false });
+
+      // the strip: drag to resize the height
+      var rs = null;
+      strip.addEventListener('pointerdown', function (e) {
+        if (e.target.tagName === 'SPAN') return;
+        e.preventDefault(); e.stopPropagation();
+        rs = { y: e.clientY, h: stage.clientHeight };
+        try { strip.setPointerCapture(e.pointerId); } catch (err) {}
+        beginGesture();
+      });
+      strip.addEventListener('pointermove', function (e) {
+        if (!rs) return;
+        var nh = Math.max(STAGE_MIN, Math.min(stageMax(), rs.h + (e.clientY - rs.y)));
+        stage.style.height = nh + 'px';
+        fast();
+      });
+      function rsUp() { if (rs) { rs = null; endGesture(); } }
+      strip.addEventListener('pointerup', rsUp);
+      strip.addEventListener('pointercancel', rsUp);
+
+      // the slides: centre() at her scale, fit() for a route; home() for the word
+      var sliding = null;
+      function slideTo(target, ms) {
+        if (sliding) cancelAnimationFrame(sliding);
+        var from = { lat: view.lat, lon: view.lon, ppd: view.ppd }, t0 = null;
+        clampView(target);
+        beginGesture();
+        function step(ts) {
+          if (t0 === null) t0 = ts;
+          var u = Math.min(1, (ts - t0) / ms); u = 1 - (1 - u) * (1 - u);     // ease out
+          view.lat = from.lat + (target.lat - from.lat) * u;
+          view.lon = from.lon + (target.lon - from.lon) * u;
+          view.ppd = from.ppd * Math.pow(target.ppd / from.ppd, u);
+          fast();
+          if (u < 1) sliding = requestAnimationFrame(step); else { sliding = null; endGesture(); }
+        }
+        sliding = requestAnimationFrame(step);
+      }
+      function goHome() {
+        stage.style.height = home.height + 'px';
+        view.lat = home.view.lat; view.lon = home.view.lon; view.ppd = home.view.ppd;
+        frozen = false; placeTiles(); readGround(); draw();
+      }
+      api.centre = function (lat, lon) { slideTo({ lat: lat, lon: lon, ppd: view.ppd }, SLIDE_MS); };
+      api.fit = function (b) {
+        var w = box.clientWidth, h = box.clientHeight, pad = 0.12;
+        var span = { west: b.west - (b.east - b.west) * pad, east: b.east + (b.east - b.west) * pad, south: b.south - (b.north - b.south) * pad, north: b.north + (b.north - b.south) * pad };
+        slideTo(viewForBox(span, w, h), SLIDE_MS);
+      };
+      api.home = goHome;
+      api.view = function () { return { lat: view.lat, lon: view.lon, ppd: view.ppd }; };
+    }
+    return api;
   }
 
   cwMap.toPixel = toPixel;

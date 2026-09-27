@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../../art/map-icon-256.png">
+<link rel="apple-touch-icon" href="../../art/map-icon-256.png">
+<!--
+  moving-bench.html — bench: the world that moves. One timeline of six of Hokusai's events
+  over the world pyramid, opening on the corners of japan-and-china: drag to pan, pinch or
+  wheel to zoom, the strip along the bottom to resize, the word at its right to reset; a
+  tap on the line or the map centres the map, and the one route fits itself. Nothing else
+  on the page. Spec: CWVault/claude/Spec-Maps.md, "The world that moves"; the timeline per
+  Spec-Timeline-and-Map.md. No story uses this yet; the story pages keep their still maps.
+-->
+<title>The world that moves — bench</title>
+<style>
+  :root { --cw-parchment: #f4f1e8; --cw-separator: #c8b89a; --cw-ink: #2a2620; --cw-word: #546A80; }
+  html, body { background: var(--cw-parchment); color: var(--cw-ink); }
+  body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
+  article { max-width: 700px; margin: 0 auto; padding: 40px 40px 80px 40px; box-sizing: border-box; }
+  article h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0 0 1.4em 0; }
+  article p { margin: 0 0 1em 0; }
+  .note { font-size: 14px; color: #7a6e60; border-top: 0.5px solid var(--cw-separator); margin-top: 3em; padding-top: 1.2em; }
+  @media (max-width: 800px) { article { padding: 24px 16px 60px 16px; } body { font-size: 18px; } }
+</style>
+</head>
+<body>
+<article>
+  <h1>Hokusai's World</h1>
+  <p>Below is the world as it was in Hokusai's lifetime, and the few places in it this story needs. Tap a date, or a place.</p>
+  <div id="world"></div>
+  <p class="note">A bench, not a story. Drag the map to move it, pinch or scroll to zoom, drag the strip under it to make it taller, and the word at the strip's right puts it back. Every other map on the site is still a picture.</p>
+</article>
+
+<script src="../../js/map.js?v=2026-09-27b"></script>
+<script src="../../js/timeline.js?v=2026-09-27b"></script>
+<script>
+var CW_VERSION = '2026-09-27 2cecf02'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+
+// Six of Hokusai's events, hand-written, with places and weights (Spec-Timeline-and-Map,
+// "Converting Hokusai"). Weight 3 matters at the whole-world scale; 1 is local.
+var WORLD = {
+  from: 1810, to: 1855,
+  region: '../../art/maps/world-pyramid.json',
+  moving: true,
+  fit: { west: 105, south: 21, east: 150, north: 42 },      // the corners of japan-and-china
+  reset: 'reset',
+  places: {
+    edo:      { name: 'Edo',      lat: 35.68, lon: 139.77, side: 'person', weight: 3 },
+    nagasaki: { name: 'Nagasaki', lat: 32.75, lon: 129.87, side: 'world',  weight: 2 },
+    kyoto:    { name: 'Kyoto',    lat: 35.01, lon: 135.77, side: 'person', weight: 1 },
+    sumbawa:  { name: 'Tambora',  lat: -8.25, lon: 118.0,  side: 'world',  weight: 3 },
+    london:   { name: 'London',   lat: 51.51, lon: -0.13,  side: 'world',  weight: 3 }
+  },
+  routes: {
+    tokaido: [[35.68, 139.77], [35.26, 139.15], [34.97, 138.38], [34.71, 137.73], [35.12, 136.91],
+              [35.07, 136.68], [35.00, 135.87], [35.01, 135.77]]
+  },
+  events: [
+    { id: 'tambora', year: 1815.3, side: 'world', label: 'Tambora erupts', place: 'sumbawa',
+      when: '1815 · Sumbawa', title: 'The biggest eruption in ten thousand years',
+      text: 'On the far side of the world from Edo, and about 5,400 kilometres to the south-west, a mountain blew its top off. The next summer was cold everywhere.' },
+    { id: 'blue', year: 1820, side: 'person', label: 'Prussian blue arrives', place: 'nagasaki',
+      when: '1820 · Nagasaki', title: 'A blue from Berlin',
+      text: 'The Dutch ships at Nagasaki brought a new blue, made in Berlin from iron and blood. It was expensive, and it did not fade.' },
+    { id: 'cheap', year: 1829, side: 'person', label: 'Cheap blue from China', place: 'nagasaki',
+      when: '1829 · Nagasaki', title: 'Now everyone could have it',
+      text: 'Chinese ships brought the same blue at a fraction of the price, and the printers of Edo could finally afford a sky.' },
+    { id: 'wave', year: 1830.5, side: 'person', focus: true, label: 'The Great Wave', place: 'edo',
+      when: 'about 1830 · Edo', title: 'Under the Wave off Kanagawa',
+      text: 'One of his Thirty-six Views of Mount Fuji, and one of the first prints made in the new blue. He was about seventy.' },
+    { id: 'faraday', year: 1831.7, side: 'world', label: 'Faraday’s motor', place: 'london',
+      when: '1831 · London', title: 'Electricity from a magnet',
+      text: 'In the year of the Wave, Michael Faraday moved a magnet through a coil of wire in London and made a current. It is about 9,500 kilometres from Edo.' },
+    { id: 'tokaido', year: 1833, side: 'person', label: 'Hiroshige’s road to Kyoto', place: 'edo', route: 'tokaido',
+      when: '1833 · Edo to Kyoto', title: 'Fifty-three stations',
+      text: 'Hiroshige, thirty-seven years younger than Hokusai, walked the Tōkaidō road from Edo to Kyoto and made a print of every station on it.' }
+  ],
+  hint: 'Tap a date or a place.'
+};
+if (typeof cwWorld === 'function') cwWorld(document.getElementById('world'), WORLD);
+</script>
+</body>
+</html>

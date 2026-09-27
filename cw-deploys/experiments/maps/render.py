@@ -30,6 +30,7 @@ cw-deploys/art/maps/:
                               sea-level slider's food.
 
     python3 render.py --all   re-renders every region in art/maps/ from its own JSON
+    python3 render.py --pyramid   the whole earth as tiles, for the map that moves (below)
 
 The ground has layers (Spec-Maps, 26 Sep 2026): height is the base and always present;
 ice, vegetation and later sea level are files beside the picture that map.js draws over
@@ -249,7 +250,7 @@ def read_reduced(z, r0, r1, c0, c1, f):
     are dropped (at most f-1 source cells)."""
     H, W = (r1 - r0) // f, (c1 - c0) // f
     out = np.empty((H, W), np.float32)
-    chunk = 512 * f
+    chunk = 64 * f          # rows per read: at f = 42 (a level-0 band) 512·f rows would be 3.7 GB
     for a in range(0, H * f, chunk):
         b = min(a + chunk, H * f)
         blk = np.asarray(z[r0 + a:r0 + b, c0:c0 + W * f], np.float32)
@@ -503,6 +504,154 @@ def render(name, west, south, east, north, width, exaggeration=None, levels=None
     print('  height range in the picture: %.0f to %.0f m; ice on %.1f%% of pixels, %.1f%% of that afloat' % (z.min(), z.max(), ice_share, floating))
 
 
+# ---------------------------------------------------------------------------------
+# The pyramid (27 Sep 2026, Spec-Maps "The world that moves"): the whole earth as
+# 512-pixel tiles, equirectangular, level z being 2^(z+1) by 2^z tiles — two tiles at
+# level 0, 64 by 32 at level 5, about 1.2 km a pixel at the equator, which is as fine
+# as the 30 arc-second grid goes. Written to art/maps/world-tiles/<z>/<x>/<y>.webp with
+# the layers beside each tile at half size, <y>-ice.webp and <y>-vegetation.webp, only
+# where the tile has any; and art/maps/world-pyramid.json naming it all. Each level is
+# rendered in bands of one tile row, so no level ever sits whole in memory. Tree cover
+# is read once, at the finest level's half resolution, and averaged down for the rest.
+#
+# Relief: the exaggeration steps down as the pixels get finer, because a world at 20 km
+# a pixel shows nothing at 1 and Switzerland at 1 km is a caricature at 3.
+PYRAMID_LEVELS = 6                 # levels 0..5
+TILE = 512
+LAYER_TILE = 256
+PYRAMID_EXAGGERATION = {0: 3.0, 1: 2.5, 2: 2.0, 3: 1.6, 4: 1.3, 5: 1.0}
+PYRAMID_DIR = 'world-tiles'
+PYRAMID_CONTOUR_MAX_KB = 1024      # a level's contour file above this is not written, and said so
+PYRAMID_LAYER_MAX_LEVEL = None     # None: every level; the report says what the layers cost
+
+
+def render_pyramid():
+    import time
+    t0 = time.time()
+    out_dir = os.path.join(OUT, PYRAMID_DIR)
+    os.makedirs(out_dir, exist_ok=True)
+    surface_file, bed_file = SOURCES['30s']
+
+    # Tree cover once, at level-5 half resolution over the whole earth (the grid ends at
+    # 80°N and 60°S; outside it is nodata, which is no trees).
+    finest_w = TILE * 2 ** PYRAMID_LEVELS                    # level 5 width in px
+    cover_full = tree_cover((-180.0, -90.0, 180.0, 90.0), finest_w // 2, finest_w // 4)
+    if cover_full is None:
+        print('  no vegetation layer (the tree-cover grid is not in _data/, or is unreadable)')
+    print('  tree cover read: %.0f s' % (time.time() - t0))
+
+    levels_meta, layer_tiles, contour_files, sizes = [], {'ice': {}, 'vegetation': {}}, {}, {}
+    for z in range(PYRAMID_LEVELS):
+        cols, rows = 2 ** (z + 1), 2 ** z
+        W, H = cols * TILE, rows * TILE
+        deg_px = 360.0 / W
+        ex = PYRAMID_EXAGGERATION[z]
+        do_layers = PYRAMID_LAYER_MAX_LEVEL is None or z <= PYRAMID_LAYER_MAX_LEVEL
+        level_bytes = {'base': 0, 'ice': 0, 'vegetation': 0}
+        counts = {'base': 0, 'ice': 0, 'vegetation': 0}
+        lines_all = {}
+        # tree cover at this level's layer resolution
+        cover_z = None
+        if cover_full is not None and do_layers:
+            f = (finest_w // 2) // (cols * LAYER_TILE)
+            cover_z = cover_full.reshape(rows * LAYER_TILE, f, cols * LAYER_TILE, f).mean(axis=(1, 3)) if f > 1 else cover_full
+        for ty in range(rows):
+            north = 90.0 - ty * 180.0 / rows
+            south = north - 180.0 / rows
+            band = (-180.0, south, 180.0, north)
+            surface = Grid(os.path.join(DATA, surface_file), -180.0, south, 180.0, north, W, TILE)
+            bed = Grid(os.path.join(DATA, bed_file), -180.0, south, 180.0, north, W, TILE, expect=surface)
+            z_band = surface.sample(W, TILE)
+            thickness = z_band - bed.sample(W, TILE)
+            ice = thickness > ICE_MIN_THICKNESS
+            phi = math.radians((north + south) / 2.0)
+            dy_m = deg_px * 111320.0
+            dx_m = deg_px * 111320.0 * max(0.05, math.cos(phi))
+            rgb = np.clip(ramp(z_band) * shade_factor(z_band, dx_m, dy_m, ex)[..., None], 0.0, 1.0)
+            base8 = (rgb * 255.0 + 0.5).astype(np.uint8)
+            # ice at half resolution: colour from the ramp, alpha from the full mask averaged
+            if do_layers and ice.any():
+                fz = z_band[::2, ::2]
+                ice_rgb = interp_stops(np.maximum(fz, 0.0), ICE_STOPS)
+                ice_rgb = np.clip(ice_rgb * shade_factor(np.maximum(fz, 0.0), dx_m * 2, dy_m * 2, ex)[..., None], 0.0, 1.0)
+                alpha = ice.reshape(TILE // 2, 2, W // 2, 2).mean(axis=(1, 3))
+                ice8 = np.zeros((TILE // 2, W // 2, 4), np.uint8)
+                ice8[..., :3] = (ice_rgb * 255.0 + 0.5).astype(np.uint8)
+                ice8[..., 3] = (alpha * 255.0 + 0.5).astype(np.uint8)
+            else:
+                ice8 = None
+            veg8 = None
+            if cover_z is not None:
+                cb = cover_z[ty * LAYER_TILE:(ty + 1) * LAYER_TILE]
+                cb = np.where(z_band[::2, ::2] < 0, 0.0, cb)
+                if cb.max() > 0:
+                    a = np.clip(cb * VEGETATION_STRENGTH, 0.0, 1.0)[..., None]
+                    green = np.array(hex_to_rgb(VEGETATION_GREEN), np.float32) / 255.0
+                    veg8 = ((1.0 - a * (1.0 - green)) * 255.0 + 0.5).astype(np.uint8)
+                    veg_any = cb
+            for tx in range(cols):
+                d = os.path.join(out_dir, str(z), str(tx))
+                os.makedirs(d, exist_ok=True)
+                x0 = tx * TILE
+                p = os.path.join(d, '%d.webp' % ty)
+                Image.fromarray(base8[:, x0:x0 + TILE], 'RGB').save(p, 'WEBP', quality=WEBP_QUALITY, method=4)
+                level_bytes['base'] += os.path.getsize(p); counts['base'] += 1
+                hx0 = tx * LAYER_TILE
+                if ice8 is not None and ice8[:, hx0:hx0 + LAYER_TILE, 3].max() > 0:
+                    p = os.path.join(d, '%d-ice.webp' % ty)
+                    Image.fromarray(ice8[:, hx0:hx0 + LAYER_TILE], 'RGBA').save(p, 'WEBP', lossless=True, method=4)
+                    level_bytes['ice'] += os.path.getsize(p); counts['ice'] += 1
+                    layer_tiles['ice'].setdefault(str(z), []).append('%d/%d' % (tx, ty))
+                if veg8 is not None and veg_any[:, hx0:hx0 + LAYER_TILE].max() > 0.005:
+                    p = os.path.join(d, '%d-vegetation.webp' % ty)
+                    Image.fromarray(veg8[:, hx0:hx0 + LAYER_TILE], 'RGB').save(p, 'WEBP', quality=WEBP_QUALITY, method=4)
+                    level_bytes['vegetation'] += os.path.getsize(p); counts['vegetation'] += 1
+                    layer_tiles['vegetation'].setdefault(str(z), []).append('%d/%d' % (tx, ty))
+            # contours for this band, in lon/lat; rings are cut at band edges and simply abut
+            band_lines, _ = contours(z_band, DEFAULT_LEVELS, band, W, TILE)
+            for key in band_lines:
+                lines_all.setdefault(key, []).extend(band_lines[key])
+            print('  level %d band %d/%d  %.0f s' % (z, ty + 1, rows, time.time() - t0), flush=True)
+        # the level's contour file, if it is small enough to ship
+        cpath = os.path.join(out_dir, 'contours-%d.json' % z)
+        parts = []
+        for key in lines_all:
+            parts.append('  %s: [\n    %s\n  ]' % (json.dumps(key), ',\n    '.join(json.dumps(l, separators=(',', ':')) for l in lines_all[key])))
+        text = '{\n' + ',\n'.join(parts) + '\n}\n'
+        ckb = len(text.encode('utf-8')) / 1024.0
+        if ckb <= PYRAMID_CONTOUR_MAX_KB:
+            with open(cpath, 'w') as fh:
+                fh.write(text)
+            contour_files[str(z)] = '%s/contours-%d.json' % (PYRAMID_DIR, z)
+        elif os.path.exists(cpath):
+            os.remove(cpath)
+        n_lines = sum(len(v) for v in lines_all.values())
+        sizes[z] = dict(level_bytes, contour_kb=ckb, contour_lines=n_lines, shipped=ckb <= PYRAMID_CONTOUR_MAX_KB, counts=counts)
+        levels_meta.append({'z': z, 'cols': cols, 'rows': rows, 'width': W, 'height': H,
+                            'metres_per_pixel_equator': round(40075000.0 / W), 'exaggeration': ex})
+        print('level %d: %d tiles, base %.1f MB, ice %d tiles %.1f MB, vegetation %d tiles %.1f MB, contours %d lines %.0f KB%s' % (
+            z, counts['base'], level_bytes['base'] / 1e6, counts['ice'], level_bytes['ice'] / 1e6,
+            counts['vegetation'], level_bytes['vegetation'] / 1e6, n_lines, ckb, '' if sizes[z]['shipped'] else ' (NOT shipped)'), flush=True)
+
+    meta = {
+        'name': 'world-pyramid',
+        'west': -180.0, 'south': -90.0, 'east': 180.0, 'north': 90.0,
+        'tiles': PYRAMID_DIR, 'tile': TILE, 'layer_tile': LAYER_TILE,
+        'levels': levels_meta,
+        'layers': [
+            {'name': 'ice', 'suffix': '-ice.webp', 'blend': 'normal', 'default': True, 'tiles': layer_tiles['ice']},
+            {'name': 'vegetation', 'suffix': '-vegetation.webp', 'blend': 'multiply', 'default': True, 'tiles': layer_tiles['vegetation']},
+        ],
+        'contours': contour_files,
+        'source': 'ETOPO 2022 v1 30s ice surface and bedrock, NOAA NCEI; Copernicus Global Land Cover 100 m tree cover 2019',
+    }
+    with open(os.path.join(OUT, 'world-pyramid.json'), 'w') as fh:
+        json.dump(meta, fh, indent=1)
+        fh.write('\n')
+    total = sum(s['base'] + s['ice'] + s['vegetation'] for s in sizes.values())
+    print('pyramid: %d base tiles, %.1f MB in all, %.0f s' % (sum(s['counts']['base'] for s in sizes.values()), total / 1e6, time.time() - t0))
+
+
 def render_all():
     """Every region in art/maps/, again, from its own JSON: corners, width, exaggeration
     and contour levels as recorded there."""
@@ -517,6 +666,9 @@ def render_all():
 def main(argv):
     if argv == ['--all']:
         render_all()
+        return
+    if argv == ['--pyramid']:
+        render_pyramid()
         return
     opts = {'width': '2000', 'exaggeration': None, 'levels': None}
     args = []
