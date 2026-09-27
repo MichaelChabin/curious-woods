@@ -239,6 +239,18 @@ Follows from *The world that moves*. One session: the pyramid, the viewing, weig
 >
 > Register everything in `MANIFEST.md`, add the line to `00-BOARD.md`, run `tools/check-deploys.sh`. Anything the spec leaves open, leave open and name it. Stop and report before committing.
 
+## The prompt for the first story on the moving world
+
+Follows the bench (built and revised 27 September, `experiments/maps/moving-bench.html`). One story, Hokusai, whose world section already has the events and the places; nothing else changes. Paste it whole.
+
+> Read `CWVault/claude/Spec-Maps.md`, the sections *The world that moves* and *The prompt for the world that moves*, then `cw-deploys/MANIFEST.md` under `js/` for what `map.js` and `timeline.js` do when a story says `moving: true`, then open `cw-deploys/experiments/maps/moving-bench.html` and use it. Where this prompt and the spec disagree, the spec wins.
+>
+> Wire *Hokusai's World* to the moving map. In `active/hokusai-the-great-wave.html`, the `WORLD` block's `region` becomes `../art/maps/world-pyramid.json`, with `moving: true`, `fit` set to the corners of `japan-and-china` (105, 21, 150, 42) so it opens exactly as it does today, and `reset: 'reset'`. The two far-away cards, Europe and Tambora, go: on a map that pans nothing is far away, so their places become ordinary places on the map — Tambora at Sumbawa with `side: 'world'`, and Europe's `spread` becomes the towns it stood for, each a `minor` place, since the story names none of them. Give every place a `weight`: Edo 3, Nagasaki 2, Tambora 3, the European towns 1, the rest 1 or 2 by your judgment, and list them in the report.
+>
+> **Weights in the shared files.** This is the first story to ask, so the field arrives now: add `weight` to the schemas in `stories/world-events.json` and `stories/places.json`, document it in each file's `_about`, and give every existing event and place a provisional weight from 1 to 3, where 3 means it matters at the whole-world scale. List every weight in the report so Michael can change them. No story page's words change.
+>
+> Check the page's three still maps are untouched, that the world section opens on Japan and China as before, that a tap on the line slides the map and the road to Kyoto fits itself, that Tambora and London can be reached by dragging, and that the other three story pages still draw their maps with no console errors. Bump the page's stamp and its script versions. Register the change in `MANIFEST.md`, add the line to `00-BOARD.md`, run `tools/check-deploys.sh`. Stop and report before committing.
+
 ## Not yet decided
 
 Whether the paired timeline holds only events with both a date and a place, or repeats the story's whole timeline — recommended above, needs Michael's yes.
