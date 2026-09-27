@@ -1,5 +1,5 @@
 ---
-status: Standard — 21 Sept 2026, from the Frankenstein prototype, six versions in one sitting with Michael. Not yet a component; the prototype is the reference.
+status: Standard — 21 Sept 2026, from the Frankenstein prototype, six versions in one sitting with Michael. Built as `js/timeline.js`. Amended 27 Sept: the map under the line is the moving world (Spec-Maps, *The world that moves*); cards retired.
 role: The pattern for showing a story's events in time and in space at once. Every story that has a "<Name>'s World" section uses it.
 related: Spec-Maps.md (the map underneath), Spec-Map-Lab.md (where this pattern grows), Rulings-Sept-2026.md (how wide a timeline is; gestures)
 reference: cw-deploys/experiments/maps/prototype-frankenstein.html — self-contained, open it in a browser. Behaviour and look are settled there; the code is a sketch.
@@ -36,13 +36,15 @@ After *More*, under the heading **"<Name>'s World"** — *Mary Shelley's World*,
 
 ## The map
 
+*Ruled 27 September 2026 (Michael, after using the bench on his iPad): the map under a timeline is **the moving world** — `Spec-Maps.md`, *The world that moves*. It opens on the story's own crop, exactly as the still picture did, and she can pan, zoom, widen and resize it, and reset it with a word. A tap on the line slides it to the place; a route fits itself. The far-away cards are retired: nothing is far away on a map that pans, so their places become ordinary places. Margin maps, flow maps and windows stay still pictures. The paragraphs below describe the still map this section had before; what they say about sides, colours and routes still holds.*
+
 The story's regional base picture, full colour, per `Spec-Maps.md`. The person's places get vermilion dots; the world's get slate dots, matching the timeline. A place for bearing only is a small grey dot and cannot be tapped.
 
 **Routes** draw only while their event is selected — the 1814 elopement, the 1816 road to Geneva.
 
 **Countries appear when the story is about who held what**, as outlines, and one may be filled when the story needs it picked out. They are that year's countries, not today's: the Frankenstein map shows France without Savoy and Nice, which belonged to the Kingdom of Sardinia until 1860. A country filled with colour avoids the earth's colours and the dot colours — Switzerland is plum `#7a3a6a` at 30%.
 
-**A place too far away for the map gets a card at the map's edge, on the side where it really lies**, with its name, date and distance: Tambora on the right, 12,300 km east; Jefferson and Adams on the left, 6,000 km west. Tapping the card selects the event and opens the world map in a window with the place and one familiar place for bearing. The side is information; never put a card on the wrong side for looks.
+**A place too far away for the map gets a card at the map's edge, on the side where it really lies** *(the still map only; the moving world has no cards)*, with its name, date and distance: Tambora on the right, 12,300 km east; Jefferson and Adams on the left, 6,000 km west. Tapping the card selects the event and opens the world map in a window with the place and one familiar place for bearing. The side is information; never put a card on the wrong side for looks.
 
 ## Tapping
 

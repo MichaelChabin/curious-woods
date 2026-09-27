@@ -1,5 +1,5 @@
 ---
-status: 20 Sept 2026. Third pass landed the same day — contours, labels, the placer. This revision settles three things the Hokusai build raised: what a tap opens, how big a target has to be, and the map and the timeline as one list. Hit areas not yet built. Amended 26 Sept (Michael): the ground has layers — ice, vegetation and later sea level are files beside the picture a story can leave off or swap. Built the same day, committed 9bac4e1. Amended 27 Sept (Michael): the world that moves — the world map under a timeline pans, zooms, resizes, centres on a timeline tap and resets; one pyramid, weights on events and places, zoom as a tool; build prompt written the same day; not built.
+status: 20 Sept 2026. Third pass landed the same day — contours, labels, the placer. This revision settles three things the Hokusai build raised: what a tap opens, how big a target has to be, and the map and the timeline as one list. Hit areas not yet built. Amended 26 Sept (Michael): the ground has layers — ice, vegetation and later sea level are files beside the picture a story can leave off or swap. Built the same day, committed 9bac4e1. Amended 27 Sept (Michael): the world that moves — the world map under a timeline pans, zooms, resizes, centres on a timeline tap and resets; one pyramid, weights on events and places, zoom as a tool. Bench built, revised twice on Michael's looks, and it works on his iPad; ruled the standard for every story's world section the same day; the prompt that converts the stories is below.
 role: How a story shows where something happened. One shared map, many crops, a four-line block in the story.
 related: Rulings-Sept-2026.md (colour; pictures in a story; margin maps; how wide a timeline is; gestures), Spec-Map-Lab.md (the same engine, everything on), Publishing-a-Story.md
 note: The other Map-* documents in this vault (Fog-Map, Map-Tools, Map-Tool-Catalog, Voice-Samples-Map) are about number maps. Nothing here touches them.
@@ -145,6 +145,8 @@ A city needs nothing new. A city is a `place`.
 
 **In the margin.** It carries its own caption and the prose never mentions it. Per the 20 September ruling, that is the difference between a picture the story stops for and a picture that answers a question she may not have asked.
 
+**Under a timeline.** The moving world (*The world that moves*, below), and since 27 September the standard for every story's world section: it opens on the story's crop and she wanders from there. The only map that moves.
+
 **In a window.** She taps a name and a small map opens over the page, answers *where is that*, and shuts. It holds less: one dot, sometimes a second for bearing, no path and no caption. The window is Glass Geometry's picker window, not a new invention.
 
 Same component in all three. `cwMap` does not know what box it is in.
@@ -239,17 +241,21 @@ Follows from *The world that moves*. One session: the pyramid, the viewing, weig
 >
 > Register everything in `MANIFEST.md`, add the line to `00-BOARD.md`, run `tools/check-deploys.sh`. Anything the spec leaves open, leave open and name it. Stop and report before committing.
 
-## The prompt for the first story on the moving world
+## The prompt for the stories on the moving world
 
-Follows the bench (built and revised 27 September, `experiments/maps/moving-bench.html`). One story, Hokusai, whose world section already has the events and the places; nothing else changes. Paste it whole.
+Follows the bench and Michael's iPad (27 September: it works, and he wants it everywhere). Five stories have a world section, and the template. One session. Paste it whole.
 
-> Read `CWVault/claude/Spec-Maps.md`, the sections *The world that moves* and *The prompt for the world that moves*, then `cw-deploys/MANIFEST.md` under `js/` for what `map.js` and `timeline.js` do when a story says `moving: true`, then open `cw-deploys/experiments/maps/moving-bench.html` and use it. Where this prompt and the spec disagree, the spec wins.
+> Read `CWVault/claude/Spec-Maps.md`, the sections *The world that moves*, *Two ways a map arrives* and *The prompt for the world that moves*; `CWVault/claude/Spec-Timeline-and-Map.md`, the section *The map* and its amendment; then `cw-deploys/MANIFEST.md` under `js/` for what `map.js` and `timeline.js` do when a story says `moving: true`; then open `cw-deploys/experiments/maps/moving-bench.html` and use it. Where this prompt and the spec disagree, the spec wins.
 >
-> Wire *Hokusai's World* to the moving map. In `active/hokusai-the-great-wave.html`, the `WORLD` block's `region` becomes `../art/maps/world-pyramid.json`, with `moving: true`, `fit` set to the corners of `japan-and-china` (105, 21, 150, 42) so it opens exactly as it does today, and `reset: 'reset'`. The two far-away cards, Europe and Tambora, go: on a map that pans nothing is far away, so their places become ordinary places on the map — Tambora at Sumbawa with `side: 'world'`, and Europe's `spread` becomes the towns it stood for, each a `minor` place, since the story names none of them. Give every place a `weight`: Edo 3, Nagasaki 2, Tambora 3, the European towns 1, the rest 1 or 2 by your judgment, and list them in the report.
+> **1. Every world section moves.** In each of `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html`, `active/van-gogh-starry-night.html`, `active/professor-neckers-drawing.html` and `active/have-you-thought-of-a-story.html`, the `WORLD` block's `region` becomes `../art/maps/world-pyramid.json`, with `moving: true`, `reset: 'reset'`, and `fit` set to the corners of the regional crop that block uses today, read from that region's JSON, so every story opens exactly as it does now. Every far-away card goes: its place becomes an ordinary place on the map with its own `side`; a `spread` place becomes the towns it stood for, each `minor`. The story's still maps — margin, flow, windows — are untouched, and no story's words change. Give every place a `weight` (1 to 3; 3 matters at the whole-world scale) and list them in the report. Do the same in `template-story.html`, so a new story is born with the moving world.
 >
-> **Weights in the shared files.** This is the first story to ask, so the field arrives now: add `weight` to the schemas in `stories/world-events.json` and `stories/places.json`, document it in each file's `_about`, and give every existing event and place a provisional weight from 1 to 3, where 3 means it matters at the whole-world scale. List every weight in the report so Michael can change them. No story page's words change.
+> **2. Weights in the shared files.** Add `weight` to the schemas in `stories/world-events.json` and `stories/places.json`, document it in each file's `_about`, and give every existing event and place a provisional weight from 1 to 3. List every weight in the report so Michael can change them.
 >
-> Check the page's three still maps are untouched, that the world section opens on Japan and China as before, that a tap on the line slides the map and the road to Kyoto fits itself, that Tambora and London can be reached by dragging, and that the other three story pages still draw their maps with no console errors. Bump the page's stamp and its script versions. Register the change in `MANIFEST.md`, add the line to `00-BOARD.md`, run `tools/check-deploys.sh`. Stop and report before committing.
+> **3. The coastline at the finest scales.** `render.py --pyramid` writes contour files per level, and levels 3 to 5 were over the megabyte cap, so a map zoomed past level 2 draws level 2's lines, a pixel or two off the tiles' own coast. Cut the finer levels' lines per tile column instead — `world-tiles/contours-<z>-<x>.json`, each holding the lines that touch that column — and have `map.js` fetch only the columns in view. Report the sizes.
+>
+> **4. Country washes on the moving map.** The `region` mark draws a polygon through the projection pair, so it already follows the view; check it with one wash on the bench and report if it does not.
+>
+> Check every converted page: the world section opens on its old crop, a tap on the line slides the map, routes fit, every former card's place can be reached by dragging, the reset word restores the opening, and the page's still maps and text are unchanged. Check the bench and the template page. Check on the Mac and, if the simulator takes touches this time, on the iPad; if it does not, say so and leave the finger to Michael. Bump each page's stamp and script versions. Register everything in `MANIFEST.md`, add the line to `00-BOARD.md`, run `tools/check-deploys.sh`. Anything the spec leaves open, leave open and name it. Stop and report before committing.
 
 ## Not yet decided
 
