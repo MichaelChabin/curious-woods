@@ -19,6 +19,7 @@
   Her device only: five keys in localStorage (cw.wordplay.*), every call wrapped, nothing sent.
   My list opens in the picker window (cwWindow in ../js/map.js). The postcard is kept in the
   page: Geometry's renderPostcardPNG draws a construction and can't be used as it is.
+  Hung in active/ on 28 Sep 2026 (Publishing-a-Story, stage 4); the experiments address redirects.
 -->
 <title>Wordplay — Curious Woods</title>
 <style>
@@ -200,7 +201,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-28 ffd1c54';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-28 7561c4c';   // date + short commit hash; bump in the same commit as any change
   console.log('wordplay', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
   // Remember is not summoned on this page (maya: none), so the flag changes nothing here.
