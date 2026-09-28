@@ -79,5 +79,14 @@
     "frame": "#453d34",
     "frameWidth": 10,
     "size": "medium"
+  },
+  {
+    "slug": "wordplay",
+    "title": "Wordplay",
+    "href": "active/wordplay.html",
+    "picture": "art/gallery/wordplay-gallery.svg",
+    "frame": "#5a4632",
+    "frameWidth": 8,
+    "size": "small"
   }
 ]
