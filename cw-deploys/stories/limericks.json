@@ -1,0 +1,524 @@
+{
+ "about": "Wordplay's pool (experiments/wordplay.html). One record per limerick: id, lines (five), credit (*…* is a title, set roman in the italic credit), ease (easy, middle, hard), and where the spec gives them title, intro, swap (the two line numbers, counting from 1, that may change places) and picture (from the site root). Every word from CWVault/claude/Limericks-Puzzle.md. Add a record to add a limerick; the page reads this file.",
+ "limericks": [
+  {
+   "id": "niger",
+   "lines": [
+    "There was a young lady of Niger",
+    "Who smiled as she rode on a tiger;",
+    "They returned from the ride",
+    "With the lady inside,",
+    "And the smile on the face of the tiger."
+   ],
+   "credit": "Cosmo Monkhouse, before 1901",
+   "ease": "easy",
+   "intro": "Niger is a country in West Africa, most of it desert, named after the great river that runs through it. France ruled it until 1960, and people there say its name the French way: nee-ZHAIR. To make the limerick work, it was changed to rhyme with tiger. There are no tigers in Africa. She must have brought her own.",
+   "swap": [
+    3,
+    4
+   ]
+  },
+  {
+   "id": "hall",
+   "lines": [
+    "There was a young fellow named Hall,",
+    "Who fell in the spring in the fall;",
+    "’Twould have been a sad thing",
+    "If he’d died in the spring,",
+    "But he didn’t — he died in the fall."
+   ],
+   "credit": "Anonymous; date unknown",
+   "ease": "middle"
+  },
+  {
+   "id": "bright",
+   "lines": [
+    "There was a young lady named Bright",
+    "Whose speed was far faster than light;",
+    "She set out one day",
+    "In a relative way",
+    "And returned on the previous night."
+   ],
+   "credit": "A.H. Reginald Buller; first printed unsigned in *Punch*, 19 December 1923",
+   "ease": "hard",
+   "swap": [
+    3,
+    4
+   ]
+  },
+  {
+   "id": "pelican",
+   "lines": [
+    "A gorgeous bird is the pelican,",
+    "Whose beak will hold more than his bellican.",
+    "He can put in his beak",
+    "Food enough for a week,",
+    "But I’m darned if I see how the helican."
+   ],
+   "credit": "Anonymous, first printed 1913; often wrongly credited to Dixon Lanier Merritt",
+   "ease": "middle",
+   "intro": "Writers often invent new words to make their poems work. It only works when the reader knows at once what the word means.",
+   "swap": [
+    3,
+    4
+   ]
+  },
+  {
+   "id": "flue",
+   "lines": [
+    "A flea and a fly in a flue",
+    "Were imprisoned, so what could they do?",
+    "Said the fly, “Let us flee!”",
+    "“Let us fly!” said the flea.",
+    "So they flew through a flaw in the flue."
+   ],
+   "credit": "Anonymous, printed by 1905; not Ogden Nash",
+   "ease": "hard",
+   "swap": [
+    3,
+    4
+   ]
+  },
+  {
+   "id": "tutor",
+   "lines": [
+    "A Tutor who tooted the flute",
+    "Tried to teach two young tooters to toot;",
+    "Said the two to the Tutor,",
+    "“Is it harder to toot, or",
+    "To tutor two tooters to toot?”"
+   ],
+   "credit": "Carolyn Wells, *The Jingle Book*, 1899",
+   "ease": "hard"
+  },
+  {
+   "id": "canner",
+   "lines": [
+    "A canner, exceedingly canny,",
+    "One morning remarked to his granny,",
+    "“A canner can can",
+    "Anything that he can;",
+    "But a canner can’t can a can, can he?”"
+   ],
+   "credit": "Attributed to Carolyn Wells; date unknown",
+   "ease": "hard"
+  },
+  {
+   "id": "japan",
+   "lines": [
+    "There was a young man of Japan",
+    "Whose limericks never would scan.",
+    "When they said it was so,",
+    "He replied, “Yes, I know,",
+    "But I always try to get as many words into the last line as I possibly can.”"
+   ],
+   "credit": "Anonymous, traditional",
+   "ease": "middle"
+  },
+  {
+   "id": "peru",
+   "lines": [
+    "There was an old man of Peru",
+    "Who dreamed he was eating his shoe.",
+    "He woke in the night",
+    "In a terrible fright",
+    "And found it was perfectly true."
+   ],
+   "credit": "Anonymous, traditional",
+   "ease": "easy",
+   "swap": [
+    3,
+    4
+   ]
+  },
+  {
+   "id": "crewe",
+   "lines": [
+    "An epicure dining at Crewe",
+    "Found a rather large mouse in his stew.",
+    "Cried the waiter, “Don’t shout",
+    "And wave it about,",
+    "Or the rest will be wanting one too!”"
+   ],
+   "credit": "Anonymous, traditional",
+   "ease": "middle"
+  },
+  {
+   "id": "lynn",
+   "lines": [
+    "There was a young lady of Lynn",
+    "Who was so uncommonly thin",
+    "That when she essayed",
+    "To drink lemonade",
+    "She slipped through the straw and fell in."
+   ],
+   "credit": "Anonymous, traditional",
+   "ease": "middle"
+  },
+  {
+   "id": "bush",
+   "lines": [
+    "There was an Old Man who said, “Hush!",
+    "I perceive a young bird in this bush!”",
+    "When they said, “Is it small?”",
+    "He replied, “Not at all!",
+    "It is four times as big as the bush!”"
+   ],
+   "credit": "Edward Lear, *A Book of Nonsense*, 1846",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-old-man-who-said-hush.png"
+  },
+  {
+   "id": "bonnet",
+   "lines": [
+    "There was a Young Lady whose bonnet",
+    "Came untied when the birds sat upon it;",
+    "But she said, “I don’t care!",
+    "All the birds in the air",
+    "Are welcome to sit on my bonnet!”"
+   ],
+   "credit": "Edward Lear, *A Book of Nonsense*",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-young-lady-whose-bonnet.png"
+  },
+  {
+   "id": "tree",
+   "lines": [
+    "There was an Old Man in a tree,",
+    "Who was horribly bored by a bee;",
+    "When they said, “Does it buzz?”",
+    "He replied, “Yes, it does!",
+    "It’s a regular brute of a bee!”"
+   ],
+   "credit": "Edward Lear, *A Book of Nonsense*",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-old-man-in-a-tree.png"
+  },
+  {
+   "id": "chin",
+   "lines": [
+    "There was a Young Lady whose chin",
+    "Resembled the point of a pin;",
+    "So she had it made sharp,",
+    "And purchased a harp,",
+    "And played several tunes with her chin."
+   ],
+   "credit": "Edward Lear, *A Book of Nonsense*",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-young-lady-whose-chin.png"
+  },
+  {
+   "id": "boat",
+   "lines": [
+    "There was an Old Man in a boat,",
+    "Who said, “I’m afloat! I’m afloat!”",
+    "When they said, “No, you ain’t!”",
+    "He was ready to faint,",
+    "That unhappy Old Man in a boat."
+   ],
+   "credit": "Edward Lear, *A Book of Nonsense*",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-old-man-in-a-boat.png"
+  },
+  {
+   "id": "west",
+   "lines": [
+    "There was an Old Man of the West,",
+    "Who wore a pale plum-coloured vest;",
+    "When they said, “Does it fit?”",
+    "He replied, “Not a bit!”",
+    "That uneasy Old Man of the West."
+   ],
+   "credit": "Edward Lear, *A Book of Nonsense*",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-old-man-of-the-west.png"
+  },
+  {
+   "id": "norway",
+   "lines": [
+    "There was a Young Lady of Norway,",
+    "Who casually sat in a doorway;",
+    "When the door squeezed her flat,",
+    "She exclaimed, “What of that?”",
+    "This courageous Young Lady of Norway."
+   ],
+   "credit": "Edward Lear, *A Book of Nonsense*",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-young-lady-of-norway.png"
+  },
+  {
+   "id": "nose",
+   "lines": [
+    "There was an Old Man on whose nose,",
+    "Most birds of the air could repose;",
+    "But they all flew away",
+    "At the closing of day,",
+    "Which relieved that Old Man and his nose."
+   ],
+   "credit": "Edward Lear, *A Book of Nonsense*",
+   "ease": "middle",
+   "picture": "art/stories/limericks/lear-old-man-on-whose-nose.png"
+  },
+  {
+   "id": "burton",
+   "lines": [
+    "There was an Old Person of Burton,",
+    "Whose answers were rather uncertain;",
+    "When they said, “How d’ye do?”",
+    "He replied, “Who are you?”",
+    "That distressing Old Person of Burton."
+   ],
+   "credit": "Edward Lear, *A Book of Nonsense*",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-old-person-of-burton.png"
+  },
+  {
+   "id": "sestri",
+   "lines": [
+    "There was an old person of Sestri,",
+    "Who sate himself down in the vestry,",
+    "When they said “You are wrong!”—",
+    "He merely said “Bong!”",
+    "That repulsive old person of Sestri."
+   ],
+   "credit": "Edward Lear, *More Nonsense*, 1872",
+   "ease": "middle",
+   "picture": "art/stories/limericks/lear-old-person-of-sestri.png"
+  },
+  {
+   "id": "border",
+   "lines": [
+    "There was an old man on the Border,",
+    "Who lived in the utmost disorder;",
+    "He danced with the cat,",
+    "And made tea in his hat,",
+    "Which vexed all the folks on the Border."
+   ],
+   "credit": "Edward Lear, *More Nonsense*, 1872",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-old-man-on-the-border.png"
+  },
+  {
+   "id": "dumpet",
+   "lines": [
+    "There was an old man of West Dumpet,",
+    "Who possessed a large nose like a trumpet;",
+    "When he blew it aloud,",
+    "It astonished the crowd,",
+    "And was heard through the whole of West Dumpet."
+   ],
+   "credit": "Edward Lear, *More Nonsense*, 1872",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-old-man-of-west-dumpet.png"
+  },
+  {
+   "id": "blackheath",
+   "lines": [
+    "There was an old man of Blackheath,",
+    "Whose head was adorned with a wreath,",
+    "Of lobsters and spice,",
+    "Pickled onions and mice,",
+    "That uncommon old man of Blackheath."
+   ],
+   "credit": "Edward Lear, *More Nonsense*, 1872",
+   "ease": "middle",
+   "picture": "art/stories/limericks/lear-old-man-of-blackheath.png"
+  },
+  {
+   "id": "ware",
+   "lines": [
+    "There was an old person of Ware,",
+    "Who rode on the back of a bear:",
+    "When they ask’d, “Does it trot?”",
+    "He said, “Certainly not!",
+    "He’s a Moppsikon Floppsikon bear!”"
+   ],
+   "credit": "Edward Lear, *More Nonsense*, 1872",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-old-person-of-ware.png"
+  },
+  {
+   "id": "marsh",
+   "lines": [
+    "There was an old man in a Marsh,",
+    "Whose manners were futile and harsh;",
+    "He sate on a log,",
+    "And sang songs to a frog,",
+    "That instructive old man in a Marsh."
+   ],
+   "credit": "Edward Lear, *More Nonsense*, 1872",
+   "ease": "middle",
+   "picture": "art/stories/limericks/lear-old-man-in-a-marsh.png"
+  },
+  {
+   "id": "dumbree",
+   "lines": [
+    "There was an old man of Dumbree,",
+    "Who taught little owls to drink tea;",
+    "For he said, “To eat mice,",
+    "Is not proper or nice,”",
+    "That amiable man of Dumbree."
+   ],
+   "credit": "Edward Lear, *More Nonsense*, 1872",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-old-man-of-dumbree.png"
+  },
+  {
+   "id": "france",
+   "lines": [
+    "There was an old lady of France,",
+    "Who taught little ducklings to dance;",
+    "When she said, “Tick-a-tack!”—",
+    "They only said, “Quack!”",
+    "Which grieved that old lady of France."
+   ],
+   "credit": "Edward Lear, *More Nonsense*, 1872",
+   "ease": "easy",
+   "picture": "art/stories/limericks/lear-old-lady-of-france.png"
+  },
+  {
+   "id": "nantucket",
+   "lines": [
+    "There was once a man from Nantucket",
+    "Who kept all his cash in a bucket,",
+    "But his daughter, named Nan,",
+    "Ran away with a man,",
+    "And as for the bucket, Nantucket."
+   ],
+   "credit": "Anonymous, *The Princeton Tiger*, 1902",
+   "ease": "middle"
+  },
+  {
+   "id": "bear",
+   "lines": [
+    "A cheerful old bear at the Zoo",
+    "Could always find something to do.",
+    "When it bored him, you know,",
+    "To walk to and fro,",
+    "He reversed it and walked fro and to."
+   ],
+   "credit": "Anonymous, printed by 1924",
+   "ease": "easy"
+  },
+  {
+   "id": "tring",
+   "lines": [
+    "There was an old person of Tring",
+    "Who, when somebody asked her to sing,",
+    "Replied, “Isn’t it odd?",
+    "I can never tell God",
+    "Save the Weasel from Pop goes the King!”"
+   ],
+   "credit": "Anonymous, printed by 1924",
+   "ease": "hard"
+  },
+  {
+   "id": "bagdad",
+   "lines": [
+    "There once was a lad of Bagdad,",
+    "An inquisitive sort of a lad,",
+    "Who said, “I will see",
+    "If a sting has a bee.”",
+    "And he very soon found that it had!"
+   ],
+   "credit": "Anonymous, printed by 1924",
+   "ease": "middle"
+  },
+  {
+   "id": "montrose",
+   "lines": [
+    "Said a funny old man of Montrose,",
+    "“I ought not to wear my best clothes;",
+    "But what can I do?",
+    "I only have two,",
+    "And these are no better than those.”"
+   ],
+   "credit": "Anonymous, printed by 1924",
+   "ease": "middle"
+  },
+  {
+   "id": "emu",
+   "lines": [
+    "At the Zoo I remarked to an emu,",
+    "“I cannot pretend I esteem you.",
+    "You’re a greedy old bird,",
+    "And your walk is absurd,",
+    "But your curious feathers redeem you.”"
+   ],
+   "credit": "Anonymous, printed by 1924",
+   "ease": "middle"
+  },
+  {
+   "id": "eye",
+   "lines": [
+    "There was a young maid who said, “Why",
+    "Can’t I look in my ear with my eye?",
+    "If I give my mind to it,",
+    "I’m sure I can do it,",
+    "You never can tell till you try.”"
+   ],
+   "credit": "Anonymous, printed by 1902",
+   "ease": "easy"
+  },
+  {
+   "id": "twoandtwo",
+   "lines": [
+    "There was an old man who said, “Do",
+    "Tell me how I’m to add two and two?",
+    "I’m not very sure",
+    "That it doesn’t make four—",
+    "But I fear that is almost too few.”"
+   ],
+   "credit": "Anonymous, printed 1864",
+   "ease": "middle"
+  },
+  {
+   "id": "cow",
+   "lines": [
+    "There once was a man who said, “How",
+    "Shall I manage to carry my cow?",
+    "For if I should ask it",
+    "To get in my basket,",
+    "’Twould make such a terrible row.”"
+   ],
+   "credit": "Anonymous, printed 1864",
+   "ease": "easy"
+  },
+  {
+   "id": "tarentum",
+   "lines": [
+    "There was an old man of Tarentum,",
+    "Who gnashed his false teeth till he bent ’em.",
+    "When they asked him the cost",
+    "Of what he had lost,",
+    "He said, “They weren’t mine, I was lent ’em.”"
+   ],
+   "credit": "Anonymous, printed by 1924",
+   "ease": "middle"
+  },
+  {
+   "id": "perth",
+   "lines": [
+    "There was a young fellow of Perth,",
+    "Who was born on the day of his birth.",
+    "He was married, they say,",
+    "On his wife’s wedding-day,",
+    "And he died—when he quitted the earth."
+   ],
+   "credit": "Anonymous, printed by 1924",
+   "ease": "middle"
+  },
+  {
+   "id": "eden",
+   "lines": [
+    "There was a dear lady of Eden,",
+    "Who on apples was quite fond of feedin’;",
+    "She gave one to Adam,",
+    "Who said, “Thank you, Madam,”",
+    "And then both skedaddled from Eden."
+   ],
+   "credit": "Anonymous, printed 1864",
+   "ease": "middle"
+  }
+ ]
+}

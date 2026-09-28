@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limericks</title>
+<style>
+  :root {
+    --desk: #d8ccb4; --sheet: #f3e7c9; --ink: #33261a; --pencil: #5e4c38;
+    --faded: #7d6a52; --rule: rgba(120, 90, 50, .10); --word: #5b3f22;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--desk); color: var(--ink);
+         font-family: Georgia, "Iowan Old Style", serif; }
+  main { max-width: 680px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 12px; min-height: 1.6em; }
+  .backarrow { font-size: 1.6rem; line-height: 1; color: var(--word); text-decoration: none; padding: 2px 8px 2px 0; }
+  .backarrow:hover { color: var(--ink); }
+
+  /* the parchment */
+  .sheet {
+    position: relative; padding: 44px 44px 32px; border-radius: 3px;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(255,250,235,.55), rgba(255,250,235,0) 70%),
+      radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 60%, rgba(140,100,50,.22) 100%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .33  0 0 0 0 .18  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='2'/><feColorMatrix values='0 0 0 0 .55  0 0 0 0 .40  0 0 0 0 .20  0 0 0 .10 0'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>"),
+      var(--sheet);
+    box-shadow: 0 1px 2px rgba(60,40,20,.25), 0 10px 30px rgba(60,40,20,.18);
+  }
+  @media (max-width: 520px) { .sheet { padding: 30px 20px 26px; } }
+
+  .intro { font-size: 1.05rem; line-height: 1.55; margin: 0 0 18px; }
+  .intro p { margin: 0 0 14px; }
+  .intro blockquote { margin: 6px 0 16px 28px; line-height: 1.5; }
+  .intro blockquote .ind { padding-left: 1.6em; display: block; }
+  .drawing { margin: 4px 0 14px; padding: 26px 12px; text-align: center; color: var(--faded);
+             font-style: italic; font-size: .9rem; border: 1px dashed rgba(120,90,50,.35); }
+  .rule-off { border: 0; height: 1px; background: rgba(120,90,50,.25); margin: 26px 0 22px; }
+  .bg { color: var(--faded); font-size: 1rem; line-height: 1.5; margin: 0 0 26px; }
+  .title { font-size: 1.4rem; font-weight: bold; min-height: 1.9rem; line-height: 1.9rem; margin: 0 0 14px; transition: opacity .8s; }
+  .title.typing::after { content: ""; display: inline-block; width: 2px; height: 1.05em; margin-left: 2px;
+          vertical-align: -0.15em; background: var(--ink); animation: blink .9s steps(1) infinite; }
+  .title .ask { font: inherit; font-size: 1rem; font-weight: bold; color: var(--word); background: none; border: 0; padding: 0; cursor: pointer; }
+  .title .ask:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .title-input { font: inherit; font-size: 1.4rem; font-weight: bold; color: var(--ink); width: 100%;
+          background: transparent; border: 0; border-bottom: 1px dashed transparent; padding: 0; outline: none; }
+  .title-input::placeholder { color: var(--word); font-weight: bold; font-size: 1rem; opacity: .9; }
+  .title-input:focus { border-bottom-color: rgba(120,90,50,.35); }
+
+  /* the poem being written */
+  .slot { font-size: 1.28rem; line-height: 1.55; min-height: 1.55em; white-space: nowrap; transition: padding-left .35s ease; }
+  .slot.short { padding-left: 1.6em; }
+  .slot.typing::after, .slot.waiting::after { content: ""; display: inline-block; width: 2px; height: 1.05em; margin-left: 2px;
+          vertical-align: -0.15em; background: var(--ink); animation: blink .9s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (max-width: 520px) { .slot { font-size: 1.05rem; white-space: normal; line-height: 1.45; padding-bottom: 4px; } }
+
+  .credit { margin-top: 14px; color: var(--faded); font-style: italic; opacity: 0; transition: opacity .8s; }
+  .done .credit { opacity: 1; }
+  .swapnote { margin: 16px 0 0; font-size: 1rem; line-height: 1.5; color: var(--ink); display: none; }
+  .swapnote .orig { display: block; margin: 8px 0 8px 24px; font-style: italic; color: var(--faded); }
+  .swapnote.show { display: block; animation: fadein .8s; }
+  @keyframes fadein { from { opacity: 0; } }
+
+  /* the ideas: raw material, bottom right */
+  .ideas-area { margin-top: 26px; border-top: 1px solid rgba(120,90,50,.18); padding-top: 14px;
+                display: flex; justify-content: flex-end; }
+  .ideas { width: min(62%, 380px); }
+  @media (max-width: 520px) { .ideas { width: 100%; } }
+  .ideas-label { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--faded); margin: 0 0 6px; }
+  .idea { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 6px 0;
+          font: inherit; font-style: italic; font-size: .98rem; line-height: 1.35; color: var(--pencil);
+          cursor: pointer; transition: opacity .35s, transform .35s; }
+  .idea:hover { color: var(--ink); }
+  .idea.gone { opacity: 0; transform: translateY(-6px); pointer-events: none; }
+  .ideas .word { margin-top: 8px; }
+  .ideas-area.empty { display: none; }
+
+  .words { display: flex; justify-content: space-between; align-items: baseline; margin-top: 22px; gap: 16px; flex-wrap: wrap; }
+  .word { font: inherit; font-weight: bold; font-size: 1rem; color: var(--word); background: none; border: 0;
+          padding: 4px 0; cursor: pointer; }
+  .word:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .word[hidden] { display: none; }
+  .finish-row { display: flex; justify-content: center; gap: 36px; flex-wrap: wrap; margin-top: 18px; min-height: 1.6em; }
+
+  /* windows */
+  .back { position: fixed; inset: 0; background: rgba(40,28,16,.45); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
+  .back.open { display: flex; }
+  .card { background: var(--sheet); max-width: 560px; width: 100%; max-height: 92vh; overflow: auto; padding: 22px; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+  .card h2 { font-weight: normal; font-size: 1.3rem; margin: 0 0 6px; }
+  .card label { display: block; font-weight: bold; color: var(--word); margin: 0 0 6px; }
+  .card textarea { width: 100%; min-height: 80px; font: inherit; font-size: 1rem; font-style: italic; color: var(--ink);
+          background: rgba(255,255,255,.35); border: 1px solid rgba(120,90,50,.3); border-radius: 3px; padding: 10px; resize: vertical; }
+  .card img { width: 100%; display: block; margin: 16px 0 6px; box-shadow: 0 2px 8px rgba(60,40,20,.25); }
+  .card .words { margin-top: 12px; }
+  .mylist-item { display: block; width: 100%; text-align: left; font: inherit; font-size: 1.05rem; color: var(--ink);
+          background: none; border: 0; border-bottom: 1px solid rgba(120,90,50,.18); padding: 12px 0; cursor: pointer; }
+  .mylist-item span { display: block; color: var(--faded); font-style: italic; font-size: .9rem; margin-top: 2px; }
+  .mylist-item:hover { color: var(--word); }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <a class="backarrow" id="goBack" href="../index.html" aria-label="Back">&larr;</a>
+    <button class="word" id="myList" hidden>My list</button>
+  </div>
+  <div class="sheet" id="sheet">
+    <div class="intro" id="intro">
+      <p>In 1832 a young painter named Edward Lear went to stay at a big house near Liverpool. The Earl of Derby kept a private zoo there, and Lear, who was twenty, had been hired to paint the animals.</p>
+      <p>There were children in the house, and they liked him. Someone showed Lear a short, silly poem about &ldquo;a sick man of Tobago,&rdquo; and he began making up poems like it for the children, with a drawing for each one. This is one of them:</p>
+      <div class="drawing">Lear&rsquo;s drawing of the Old Man with a beard goes here</div>
+      <blockquote>
+        There was an Old Man with a beard,<br>
+        Who said, &ldquo;It is just as I feared!&mdash;<br>
+        <span class="ind">Two Owls and a Hen,</span>
+        <span class="ind">Four Larks and a Wren,</span>
+        Have all built their nests in my beard!&rdquo;
+      </blockquote>
+      <p>In 1846 he put them in a book called <em>A Book of Nonsense</em>. He didn&rsquo;t use his own name. He signed it &ldquo;Derry Down Derry.&rdquo;</p>
+      <p>Lear never called his poems limericks. Nobody did until fifty years later, and nobody knows for sure where the name came from. The best guess is an old party song. People took turns making up a verse, and then everyone sang the chorus: &ldquo;Will you come up to Limerick?&rdquo; Limerick is a city in Ireland.</p>
+      <hr class="rule-off">
+    </div>
+
+    <p class="bg" id="bg"></p>
+    <div class="title" id="title"></div>
+    <div id="poem"></div>
+    <div class="credit" id="credit"></div>
+    <div class="swapnote" id="swapnote"></div>
+
+    <div class="ideas-area" id="ideasArea">
+      <div class="ideas">
+        <div class="ideas-label">Ideas</div>
+        <div id="ideaList"></div>
+        <button class="word" id="nextLine">Next line, please</button>
+      </div>
+    </div>
+
+    <div class="words">
+      <button class="word" id="scramble" hidden>Write it again</button>
+      <span></span>
+      <button class="word" id="another">Another one</button>
+    </div>
+    <div class="finish-row">
+      <button class="word" id="postcard" hidden>Share Postcard</button>
+      <button class="word" id="keep" hidden>Keep on my list</button>
+    </div>
+  </div>
+</main>
+
+<div class="back" id="listBack">
+  <div class="card">
+    <h2>My list</h2>
+    <div id="listItems"></div>
+    <div class="words"><span></span><button class="word" id="listClose">Close</button></div>
+  </div>
+</div>
+
+<div class="back" id="back">
+  <div class="card">
+    <label for="note">Your note</label>
+    <textarea id="note"></textarea>
+    <div class="words" style="margin-top:10px">
+      <button class="word" id="addPic">Add the picture</button>
+      <button class="word" id="dropPic" hidden>Take the picture off</button>
+    </div>
+    <img id="preview" alt="Your postcard">
+    <div class="words">
+      <button class="word" id="send">Send</button>
+      <button class="word" id="close">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const POEMS = [
+  { intro: "Niger is a country in West Africa, most of it desert, named after the great river that runs through it. France ruled it until 1960, and people there say its name the French way: nee-ZHAIR. To make the limerick work, it was changed to rhyme with tiger. There are no tigers in Africa. She must have brought her own.",
+    credit: "Cosmo Monkhouse, before 1901",
+    pic: "A map of Niger goes here",
+    swap: [2, 3],
+    lines: ["There was a young lady of Niger","Who smiled as she rode on a tiger;","They returned from the ride","With the lady inside,","And the smile on the face of the tiger."] },
+  { credit: "Anonymous",
+    lines: ["There was a young fellow named Hall,","Who fell in the spring in the fall;","’Twould have been a sad thing","If he’d died in the spring,","But he didn’t — he died in the fall."] },
+  { credit: "A.H. Reginald Buller, 1923",
+    swap: [2, 3],
+    lines: ["There was a young lady named Bright","Whose speed was far faster than light;","She set out one day","In a relative way","And returned on the previous night."] },
+  { credit: "Anonymous, 1913",
+    intro: "Writers often invent new words to make their poems work. It only works when the reader knows at once what the word means.",
+    swap: [2, 3],
+    lines: ["A gorgeous bird is the pelican,","Whose beak will hold more than his bellican.","He can put in his beak","Food enough for a week,","But I’m darned if I see how the helican."] },
+  { credit: "Anonymous, by 1905",
+    swap: [2, 3],
+    lines: ["A flea and a fly in a flue","Were imprisoned, so what could they do?","Said the fly, “Let us flee!”","“Let us fly!” said the flea.","So they flew through a flaw in the flue."] },
+  { credit: "Carolyn Wells, 1899",
+    lines: ["A Tutor who tooted the flute","Tried to teach two young tooters to toot;","Said the two to the Tutor,","“Is it harder to toot, or","To tutor two tooters to toot?”"] },
+  { credit: "Attributed to Carolyn Wells",
+    lines: ["A canner, exceedingly canny,","One morning remarked to his granny,","“A canner can can","Anything that he can;","But a canner can’t can a can, can he?”"] },
+  { credit: "Anonymous",
+    lines: ["There was a young man of Japan","Whose limericks never would scan.","When they said it was so,","He replied, “Yes, I know,","But I always try to get as many words into the last line as I possibly can.”"] },
+  { credit: "Anonymous",
+    swap: [2, 3],
+    lines: ["There was an old man of Peru","Who dreamed he was eating his shoe.","He woke in the night","In a terrible fright","And found it was perfectly true."] },
+  { credit: "Anonymous",
+    lines: ["An epicure dining at Crewe","Found a rather large mouse in his stew.","Cried the waiter, “Don’t shout","And wave it about,","Or the rest will be wanting one too!”"] },
+  { credit: "Anonymous",
+    lines: ["There was a young lady of Lynn","Who was so uncommonly thin","That when she essayed","To drink lemonade","She slipped through the straw and fell in."] },
+  { credit: "Edward Lear, 1846",
+    pic: "Lear\u2019s drawing of the Old Man in the bush goes here",
+    lines: ["There was an Old Man who said, “Hush!","I perceive a young bird in this bush!”","When they said, “Is it small?”","He replied, “Not at all!","It is four times as big as the bush!”"] },
+];
+
+
+const $ = id => document.getElementById(id);
+const poemEl = $("poem"), sheet = $("sheet"), titleEl = $("title");
+const herTitles = {};   // titles she gave, by poem (the build keeps these on her device)
+let current = 0, filled = [], done = false, firstShown = false;
+
+/* ---- sounds: the bell and the keys ---- */
+let audio, noise;
+function wakeAudio() {
+  if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+  if (audio && audio.state === "suspended") audio.resume();
+}
+function ding() {
+  if (!audio) return;
+  const t = audio.currentTime;
+  [[1318, .5, 1.6], [2637, .18, .9], [3636, .08, .5]].forEach(([f, g, d]) => {
+    const o = audio.createOscillator(), v = audio.createGain();
+    o.type = "sine"; o.frequency.value = f;
+    v.gain.setValueAtTime(0.0001, t);
+    v.gain.exponentialRampToValueAtTime(g, t + 0.01);
+    v.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(v).connect(audio.destination); o.start(t); o.stop(t + d);
+  });
+}
+function key(soft) {
+  if (!audio) return;
+  if (!noise) {
+    noise = audio.createBuffer(1, audio.sampleRate * 0.5, audio.sampleRate);
+    const d = noise.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  const t = audio.currentTime, amp = soft ? 0.08 : 0.16;
+  const src = audio.createBufferSource(); src.buffer = noise;
+  const bp = audio.createBiquadFilter(); bp.type = "bandpass";
+  bp.frequency.value = 1800 + Math.random() * 1600; bp.Q.value = 1.2;
+  const g = audio.createGain();
+  g.gain.setValueAtTime(amp, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.035);
+  src.connect(bp).connect(g).connect(audio.destination);
+  src.start(t, Math.random() * 0.4, 0.05);
+  const o = audio.createOscillator(), og = audio.createGain();
+  o.type = "triangle"; o.frequency.value = 110 + Math.random() * 40;
+  og.gain.setValueAtTime(amp * 0.6, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+  o.connect(og).connect(audio.destination); o.start(t); o.stop(t + 0.06);
+}
+
+/* ---- typing, one line at a time ---- */
+const queue = []; let active = null, timer = null;
+function typeInto(slot, text) { queue.push({ slot, text }); if (!active) nextInQueue(); }
+function nextInQueue() {
+  active = queue.shift() || null;
+  showCursor();
+  if (!active) { finishIfDone(); return; }
+  const { slot, text } = active;
+  slot.classList.remove("waiting"); slot.classList.add("typing"); slot.textContent = "";
+  let i = 0;
+  const step = () => {
+    if (i >= text.length) { slot.classList.remove("typing"); active = null; nextInQueue(); return; }
+    const ch = text[i++];
+    slot.textContent += ch;
+    if (ch !== " ") key(/[,.;:!?“”’—-]/.test(ch));
+    timer = setTimeout(step, ch === " " ? 70 : /[,;.!?]/.test(ch) ? 140 : 38 + Math.random() * 45);
+  };
+  timer = setTimeout(step, 250);
+}
+// the cursor waits on the next empty line while nothing is being typed
+function showCursor() {
+  [...poemEl.children].forEach(s => s.classList.remove("waiting"));
+  if (active || queue.length || done) return;
+  const next = poemEl.children[filled.length];
+  if (next) next.classList.add("waiting");
+}
+
+function shuffled(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+function load(n, whole) {
+  clearTimeout(timer); queue.length = 0; active = null;
+  current = n; filled = []; done = false;
+  const p = POEMS[n];
+  $("intro").style.display = (n === 0 && !firstShown) ? "" : "none";
+  $("bg").textContent = p.intro || ""; $("bg").style.display = p.intro ? "" : "none";
+  titleEl.textContent = ""; titleEl.className = "title";
+  $("credit").textContent = p.credit;
+  $("swapnote").className = "swapnote"; $("swapnote").innerHTML = "";
+  $("postcard").hidden = true; $("keep").hidden = true; $("scramble").hidden = true; $("nextLine").hidden = false;
+  sheet.classList.remove("done");
+  poemEl.innerHTML = "";
+  for (let i = 0; i < 5; i++) {
+    const s = document.createElement("div");
+    s.className = "slot" + ((i === 2 || i === 3) ? " short" : "");
+    poemEl.appendChild(s);
+  }
+  const list = $("ideaList"); list.innerHTML = "";
+  if (whole) {
+    p.lines.forEach((t, i) => { poemEl.children[i].textContent = t; filled.push(i); });
+    $("ideasArea").classList.add("empty");
+    done = true; showFinished(); showTitle(); return;
+  }
+  $("ideasArea").classList.remove("empty");
+  shuffled(p.lines.map((t, i) => i)).forEach(j => {
+    const b = document.createElement("button");
+    b.className = "idea"; b.textContent = p.lines[j]; b.dataset.j = j;
+    b.addEventListener("click", () => pick(b));
+    list.appendChild(b);
+  });
+  showCursor();
+}
+
+/* ---- picking an idea: it has to be the next line (or one that works just as well there) ---- */
+function fits(j, k) {
+  if (j === k) return true;
+  const sw = POEMS[current].swap;
+  return !!(sw && sw.includes(j) && sw.includes(k));
+}
+function pick(b) {
+  wakeAudio();
+  const j = +b.dataset.j, k = filled.length;
+  if (done || k >= 5 || !fits(j, k)) return;          // not this line: nothing happens
+  filled.push(j);
+  b.classList.add("gone");
+  setTimeout(() => b.remove(), 380);
+  typeInto(poemEl.children[k], POEMS[current].lines[j]);
+  if (filled.length === 5) { done = true; $("nextLine").hidden = true; }
+}
+$("nextLine").addEventListener("click", () => {
+  wakeAudio();
+  const k = filled.length; if (k >= 5) return;
+  // the line the original has here, unless it's already been used in a swapped place
+  let j = k;
+  if (filled.includes(j)) j = POEMS[current].swap.find(x => !filled.includes(x));
+  const b = [...document.querySelectorAll(".idea")].find(e => +e.dataset.j === j && !e.classList.contains("gone"));
+  if (b) pick(b);
+});
+
+function finishIfDone() {
+  if (!done || sheet.classList.contains("done")) return;
+  $("ideasArea").classList.add("empty");
+  showFinished();
+  showTitle();
+  ding();
+  // if she put two lines the other way round from the original, say so
+  const sw = POEMS[current].swap;
+  if (sw && filled[sw[0]] === sw[1]) {
+    const L = POEMS[current].lines, w = ["first", "second", "third", "fourth", "fifth"];
+    $("swapnote").innerHTML =
+      "In the original, the " + w[sw[0]] + " and " + w[sw[1]] + " lines are the other way round:" +
+      "<span class='orig'>" + L[sw[0]] + "<br>" + L[sw[1]] + "</span>" +
+      "But your arrangement works every bit as well.";
+    $("swapnote").classList.add("show");
+  }
+}
+
+/* ---- the title: the poem's own at the end, or one she gives it ---- */
+function showTitle() {
+  const p = POEMS[current];
+  titleEl.innerHTML = "";
+  if (p.title) { titleEl.textContent = p.title; return; }
+  const inp = document.createElement("input");
+  inp.className = "title-input"; inp.placeholder = "Give it a title";
+  inp.autocapitalize = "sentences"; inp.spellcheck = false; inp.maxLength = 60;
+  inp.value = herTitles[current] || "";
+  inp.addEventListener("input", () => {            // kept as she types, so the postcard always has it
+    const t = inp.value.trim();
+    if (t) herTitles[current] = t; else delete herTitles[current];
+  });
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") inp.blur(); });
+  titleEl.appendChild(inp);
+}
+function closeKbd() {}
+
+/* ---- her list (the build keeps it on her device) ---- */
+const kept = new Set();
+function showFinished() {
+  sheet.classList.add("done");
+  $("postcard").hidden = false; $("keep").hidden = false; $("scramble").hidden = false;
+  $("keep").textContent = kept.has(current) ? "Take it off my list" : "Keep on my list";
+}
+$("keep").addEventListener("click", () => {
+  if (kept.has(current)) kept.delete(current); else kept.add(current);
+  $("keep").textContent = kept.has(current) ? "Take it off my list" : "Keep on my list";
+  $("myList").hidden = kept.size === 0;
+});
+$("myList").addEventListener("click", () => {
+  const box = $("listItems"); box.innerHTML = "";
+  [...kept].forEach(n => {
+    const b = document.createElement("button");
+    b.className = "mylist-item";
+    b.innerHTML = (POEMS[n].title || herTitles[n] || POEMS[n].lines[0].replace(/[,;]$/, "")) + "<span>" + POEMS[n].credit + "</span>";
+    b.addEventListener("click", () => { $("listBack").classList.remove("open"); firstShown = true; load(n, true); });
+    box.appendChild(b);
+  });
+  $("listBack").classList.add("open");
+});
+$("listClose").addEventListener("click", () => $("listBack").classList.remove("open"));
+$("scramble").addEventListener("click", () => { wakeAudio(); load(current); });
+$("another").addEventListener("click", () => { wakeAudio(); firstShown = true; load((current + 1) % POEMS.length); });
+$("goBack").addEventListener("click", e => { if (history.length > 1) { e.preventDefault(); history.back(); } });
+
+/* ---- Share Postcard: her note, the picture if she adds it, then the poem as she wrote it ---- */
+let pic = null;
+function wrap(ctx, text, maxW) {
+  const out = [];
+  text.split("\n").forEach(par => {
+    let line = "";
+    par.split(" ").forEach(w => {
+      const t = line ? line + " " + w : w;
+      if (ctx.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t;
+    });
+    out.push(line);
+  });
+  return out;
+}
+function drawCard() {
+  const W = 1200, pad = 90, inner = W - pad * 2;
+  const c = document.createElement("canvas"), x = c.getContext("2d");
+  const p = POEMS[current], note = $("note").value.trim();
+  x.font = "italic 36px Georgia";
+  const noteLines = note ? wrap(x, note, inner) : [];
+  x.font = "44px Georgia";
+  const poemLines = [];
+  filled.forEach((j, i) => {
+    const ind = (i === 2 || i === 3) ? 60 : 0;
+    wrap(x, p.lines[j], inner - ind).forEach(s => poemLines.push({ s, ind }));
+  });
+  const picH = pic ? Math.min(560, inner * pic.height / pic.width) : 0;
+  const title = p.title || herTitles[current] || "";
+  const H = pad + (noteLines.length ? noteLines.length * 48 + 50 : 0) + (pic ? picH + 60 : 0) + (title ? 80 : 0)
+          + poemLines.length * 64 + 20 + 40 + pad;
+  c.width = W; c.height = H;
+  x.fillStyle = "#f3e7c9"; x.fillRect(0, 0, W, H);
+  for (let i = 0; i < 9000; i++) {
+    x.fillStyle = `rgba(120,85,40,${Math.random() * .05})`;
+    x.fillRect(Math.random() * W, Math.random() * H, 2, 2);
+  }
+  const g = x.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .35, W / 2, H / 2, Math.max(W, H) * .75);
+  g.addColorStop(0, "rgba(140,100,50,0)"); g.addColorStop(1, "rgba(140,100,50,.28)");
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.textBaseline = "top";
+  let y = pad;
+  if (noteLines.length) {
+    x.fillStyle = "#33261a"; x.font = "italic 36px Georgia";
+    noteLines.forEach(s => { x.fillText(s, pad, y); y += 48; });
+    y += 50;
+  }
+  if (pic) {
+    const w = picH * pic.width / pic.height;
+    x.drawImage(pic, (W - w) / 2, y, w, picH); y += picH + 60;
+  }
+  if (title) { x.fillStyle = "#33261a"; x.font = "bold 50px Georgia"; x.fillText(title, pad, y); y += 80; }
+  x.fillStyle = "#33261a"; x.font = "44px Georgia";
+  poemLines.forEach(l => { x.fillText(l.s, pad + l.ind, y); y += 64; });
+  y += 20;
+  x.fillStyle = "#7d6a52"; x.font = "italic 30px Georgia"; x.fillText(p.credit, pad, y);
+  return c;
+}
+function refresh() { $("preview").src = drawCard().toDataURL("image/png"); }
+function placeholder(label) {  // stand-in for the poem's own picture until the real ones are fetched
+  const c = document.createElement("canvas"); c.width = 1000; c.height = 560;
+  const x = c.getContext("2d");
+  x.fillStyle = "#eadbb6"; x.fillRect(0, 0, 1000, 560);
+  x.strokeStyle = "rgba(120,90,50,.45)"; x.setLineDash([10, 8]); x.lineWidth = 3; x.strokeRect(10, 10, 980, 540);
+  x.fillStyle = "#7d6a52"; x.font = "italic 34px Georgia"; x.textAlign = "center"; x.textBaseline = "middle";
+  x.fillText(label, 500, 280);
+  return c;
+}
+$("postcard").addEventListener("click", () => {
+  pic = null; $("dropPic").hidden = true; $("addPic").hidden = !POEMS[current].pic;
+  $("back").classList.add("open"); refresh();
+});
+$("close").addEventListener("click", () => $("back").classList.remove("open"));
+$("note").addEventListener("input", refresh);
+$("addPic").addEventListener("click", () => {
+  const img = new Image();
+  img.onload = () => { pic = img; $("dropPic").hidden = false; $("addPic").hidden = true; refresh(); };
+  img.src = placeholder(POEMS[current].pic).toDataURL();
+});
+$("dropPic").addEventListener("click", () => { pic = null; $("dropPic").hidden = true; $("addPic").hidden = false; refresh(); });
+$("send").addEventListener("click", () => {
+  drawCard().toBlob(async blob => {
+    const file = new File([blob], "limerick.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file] }); return; } catch (e) { if (e.name === "AbortError") return; }
+    }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "limerick.png"; a.click();
+  }, "image/png");
+});
+
+load(0);
+</script>
+</body>
+</html>

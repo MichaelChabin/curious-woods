@@ -298,6 +298,22 @@ cropped wide and shallow on purpose, about 3.15 to 1, so that on an iPad the tim
 under it and most of the map fit on one screen (67% of the map on a 1024 × 768 iPad in landscape,
 79% at 1180 × 820, all of it in portrait). The picture, the vegetation layer, the JSON with
 contours and the height grid; no ice at this scale.
+**Wordplay (27–28 Sep 2026)** — `art/stories/limericks/`: eighteen of Edward Lear's own drawings, public
+domain, each the drawing only (verse left off), greyscale, levels set so the paper is white, at most 1200 px
+wide; the page and the postcard multiply them onto the parchment. `lear-old-man-with-a-beard.png` is the
+Opening's; the other seventeen are named in `stories/limericks.json` under `picture`. Ten are from the NYPL
+copy of a Warne printing of *A Book of Nonsense* (Internet Archive `bookofnonsense00lear`), eight from the
+first edition of *More Nonsense*, 1872 (University of California copy, `morenonsensepict00learrich`).
+Originals and sources, page by page, in `_CW/art-originals/limericks/` (`SOURCES.md`), outside git.
+`art/gallery/wordplay-gallery.svg` — the gallery picture, a drawn mark, 400 × 400: five lines of Lear's
+beard limerick (the Opening's, not one of the puzzles) in Georgia on parchment in the limerick's shape (long,
+long, short and indented, short and indented, long), the last half typed with the cursor; chosen over plain
+strokes, which read as Morse at wall size. `art/icons/wordplay-icon-256.png` — the same mark at 256 px,
+drawn with PIL from the system Georgia. (Made 27 Sep as `limericks-*`; renamed with the page, never committed.)
+`stories/limericks.json` — **Wordplay's pool** (28 Sep 2026): forty limericks, one record each (`id`, `lines`,
+`credit`, `ease`, and where the spec gives them `intro`, `swap` as two line numbers counting from 1, `picture`
+from the site root). Every word from `CWVault/claude/Limericks-Puzzle.md`, where 13 to 40 are under *The next
+28*. A limerick is added by adding a record; the page needs no change.
 `art/gallery/hokusai-the-great-wave-gallery.jpg` — **the Great Wave, whole, for the gallery** (21 Sep
 2026; Spec-Gallery's *A work on the wall* as changed that day: a painting or print hangs whole,
 never cropped): the Met's scan `art/stories/hokusai/hokusai-great-wave.jpg` resized to 600 × 414, quality 88,
@@ -851,6 +867,37 @@ backstop for the Claude Code session that lands the file.
   tested on an iPad, or in Safari by this session.**
 
 ### experiments/
+- **`wordplay.html`** — **puzzle: Wordplay** (28 Sep 2026, stage 2, built, not hung; Claude Code, from
+  `CWVault/claude/Prompt-Build-Limerick-Puzzle.md`). A gallery puzzle, not a story page: no
+  `template-story.html`, no `check-story.sh`. Built from the composing mockup Michael used and said yes to
+  (`CWVault/claude/mockups/limerick-compose-mockup.html`), matching its behaviour and words; replaces the
+  dragging build of 27 Sep (`limericks.html`, never committed, deleted). Reads `../stories/limericks.json`.
+  **The Opening**, a page of its own the first time on a device: the Lear text as the spec gives it, his
+  beard drawing, the beard limerick, the line about *Ideas*, and *Next* at the bottom right, which brings
+  Niger. **Each limerick:** its `intro` at the top in the faded type, a line kept for the title, the poem,
+  the credit; the five lines shuffled under IDEAS at the bottom right, smaller and italic, with
+  "(tap the line you think comes next)" beside the label for her first three. She taps the next line; it
+  fades and is typed into its place with the cursor and synthesized keys, one line at a time, lines 3 and 4
+  indented. A wrong tap does nothing (`wrongTap()` is the empty place for Michael's possible shake); a
+  `swap` pair goes in either order, and if she reverses it the mockup's note says so. *Next line, please*
+  taps the next line for her. Whole: the bell after the last line is typed, the credit fades in, the
+  title (the poem's, or *Give it a title*, a plain field saved as she types), then *Write it again* /
+  *Another one* and *Share Postcard* / *Keep on my list*. **Order:** after the Opening and Niger, a fresh
+  shuffle each visit with the six she saw last at the back, never the same twice in a row; while she has
+  finished fewer than five, the next one is an easy one three times in four. Nothing gated. **Postcard:**
+  Geometry's model (share sheet, download where there is none or it is refused, quiet on cancel), kept in the
+  page; the card from the top: her note, the limerick's picture if she added it (only a record with a
+  `picture` offers *Add the picture*), the title, the poem as she composed it, its credit; drawn before
+  *Send* so Safari opens the sheet. No upload. **Her list:** *Keep on my list* / *Take it off my list*; *My
+  list*, top right once the list has anything, opens the picker window (`cwWindow` from `../js/map.js`,
+  loaded for that alone), each kept limerick by title (hers or its own) or else its first line, credit
+  under; tapping one opens it whole, with *Write it again*. **The ← at top left** goes back when she came
+  from a page on this site, else to the gallery; the first back arrow on any page. **Her device:** five
+  `localStorage` keys, `cw.wordplay.openingSeen`, `.done`, `.recent`, `.kept`, `.titles`, every call
+  wrapped; with storage blocked the page works and remembers for the visit only (tested). Words that do
+  things are Payne's grey `#546A80`, hover `#3d5266`. No Remember (`maya: none`), no on-page keyboard, no
+  *Say it*, no trick notes beyond the two intros. Tab icon `art/icons/wordplay-icon-256.png`; gallery
+  picture `art/gallery/wordplay-gallery.svg`, frame `#5a4632`, 8, small, not yet in `gallery.json`.
 - **`index-old.html`** — the home page as it stood from 13 to 20 Sep 2026 (two labs as
   words, three round icons, Experiments as a line), retired when the gallery took
   `index.html`. Recovered from git with its links rebased one folder up, given a tab icon

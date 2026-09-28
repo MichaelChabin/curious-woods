@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+<!-- Wordplay: the gallery mark. Five lines on parchment in the limerick's shape, the last half typed,
+     the cursor showing. The words are Lear's Old Man with a beard, the Opening, not one of the puzzles. 27 Sep 2026. -->
+<defs>
+<radialGradient id="glow" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#fffaeb" stop-opacity=".55"/><stop offset="1" stop-color="#fffaeb" stop-opacity="0"/></radialGradient>
+<radialGradient id="edge" cx="50%" cy="50%" r="72%"><stop offset=".6" stop-color="#8c6432" stop-opacity="0"/><stop offset="1" stop-color="#8c6432" stop-opacity=".22"/></radialGradient>
+</defs>
+<rect width="400" height="400" fill="#f3e7c9"/>
+<rect width="400" height="400" fill="url(#glow)"/>
+<rect width="400" height="400" fill="url(#edge)"/>
+<g stroke="#785a32" stroke-opacity=".16" stroke-width="1.5">
+<line x1="36" y1="118" x2="364" y2="118"/><line x1="36" y1="174" x2="364" y2="174"/><line x1="36" y1="230" x2="364" y2="230"/><line x1="36" y1="286" x2="364" y2="286"/><line x1="36" y1="342" x2="364" y2="342"/>
+</g>
+<g font-family="Georgia, 'Times New Roman', serif" font-size="19.5" fill="#33261a">
+<text x="48" y="111">There was an Old Man with a beard,</text><text x="48" y="167">Who said, “It is just as I feared!—</text><text x="88" y="223">Two Owls and a Hen,</text><text x="88" y="279">Four Larks and a Wren,</text><text x="48" y="335">Have all built their</text>
+</g>
+<rect x="212.2" y="317" width="2.5" height="22" fill="#33261a"/>
+</svg>

@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/icons/wordplay-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/wordplay-icon-256.png">
+<!--
+  wordplay.html — puzzle: Wordplay. A limerick's five lines wait, shuffled, under Ideas; she
+  composes the poem by tapping them in order, and each is typed into its place. Built 28 Sep 2026
+  from the mockup Michael used and said yes to (CWVault/claude/mockups/limerick-compose-mockup.html),
+  matching its behaviour and its words; the build prompt is CWVault/claude/Prompt-Build-Limerick-Puzzle.md
+  and the spec CWVault/claude/Limericks-Puzzle.md.
+  The pool is ../stories/limericks.json (forty limericks, one record each); add a record to add
+  a limerick. The Lear beard limerick is not in it: it lives in the Opening, on this page.
+  Not a story page: no template-story.html, no check-story.sh. No Remember (maya: none).
+  Pictures: ../art/stories/limericks/, Lear's own drawings from Internet Archive scans of A Book
+  of Nonsense and More Nonsense (1872), public domain; sources in _CW/art-originals/limericks/SOURCES.md.
+  Her device only: five keys in localStorage (cw.wordplay.*), every call wrapped, nothing sent.
+  My list opens in the picker window (cwWindow in ../js/map.js). The postcard is kept in the
+  page: Geometry's renderPostcardPNG draws a construction and can't be used as it is.
+-->
+<title>Wordplay — Curious Woods</title>
+<style>
+  :root {
+    --desk: #d8ccb4; --sheet: #f3e7c9; --ink: #33261a; --pencil: #5e4c38;
+    --faded: #7d6a52; --rule: rgba(120, 90, 50, .10);
+    --word: #546A80; --word-hover: #3d5266;   /* Payne's grey: the words that do things */
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--desk); color: var(--ink);
+         font-family: Georgia, "Iowan Old Style", serif; }
+  main { max-width: 680px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 12px; min-height: 1.6em; }
+  .backarrow { font-size: 1.6rem; line-height: 1; color: var(--word); text-decoration: none; padding: 2px 8px 2px 0; }
+  .backarrow:hover { color: var(--word-hover); }
+
+  /* the parchment */
+  .sheet {
+    position: relative; padding: 44px 44px 32px; border-radius: 3px;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(255,250,235,.55), rgba(255,250,235,0) 70%),
+      radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 60%, rgba(140,100,50,.22) 100%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .33  0 0 0 0 .18  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='2'/><feColorMatrix values='0 0 0 0 .55  0 0 0 0 .40  0 0 0 0 .20  0 0 0 .10 0'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>"),
+      var(--sheet);
+    box-shadow: 0 1px 2px rgba(60,40,20,.25), 0 10px 30px rgba(60,40,20,.18);
+  }
+  @media (max-width: 520px) { .sheet { padding: 30px 20px 26px; } }
+
+  /* the Opening, a page of its own */
+  .intro { font-size: 1.05rem; line-height: 1.55; margin: 0; }
+  .intro p { margin: 0 0 14px; }
+  .intro blockquote { margin: 6px 0 16px 28px; line-height: 1.5; }
+  .intro blockquote .ind { padding-left: 1.6em; display: block; }
+  /* Lear's drawing, whole, at its own proportions; the scan's paper is levelled to white and
+     multiplied, so the parchment shows where the paper was */
+  .drawing { margin: 6px 0 14px; }
+  .drawing img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
+  .bg { color: var(--faded); font-size: 1rem; line-height: 1.5; margin: 0 0 26px; }
+  .title { font-size: 1.4rem; font-weight: bold; min-height: 1.9rem; line-height: 1.9rem; margin: 0 0 14px; }
+  .title-input { font: inherit; font-size: 1.4rem; font-weight: bold; color: var(--ink); width: 100%;
+          background: transparent; border: 0; border-bottom: 1px dashed transparent; border-radius: 0; padding: 0; outline: none; }
+  .title-input::placeholder { color: var(--word); font-weight: bold; font-size: 1rem; opacity: 1; }
+  .title-input:focus { border-bottom-color: rgba(120,90,50,.35); }
+
+  /* the poem being written. A line too long for the sheet (Japan's last) wraps. */
+  .slot { font-size: 1.28rem; line-height: 1.55; min-height: 1.55em; transition: padding-left .35s ease; }
+  .slot.short { padding-left: 1.6em; }
+  .slot.typing::after, .slot.waiting::after { content: ""; display: inline-block; width: 2px; height: 1.05em; margin-left: 2px;
+          vertical-align: -0.15em; background: var(--ink); animation: blink .9s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (max-width: 520px) { .slot { font-size: 1.05rem; line-height: 1.45; padding-bottom: 4px; } }
+
+  .credit { margin-top: 14px; color: var(--faded); font-style: italic; opacity: 0; transition: opacity .8s; }
+  .credit i { font-style: normal; }
+  .done .credit { opacity: 1; }
+  .swapnote { margin: 16px 0 0; font-size: 1rem; line-height: 1.5; color: var(--ink); display: none; }
+  .swapnote .orig { display: block; margin: 8px 0 8px 24px; font-style: italic; color: var(--faded); }
+  .swapnote.show { display: block; animation: fadein .8s; }
+  @keyframes fadein { from { opacity: 0; } }
+
+  /* the ideas: raw material, bottom right */
+  .ideas-area { margin-top: 26px; border-top: 1px solid rgba(120,90,50,.18); padding-top: 14px;
+                display: flex; justify-content: flex-end; }
+  .ideas { width: min(62%, 380px); }
+  @media (max-width: 520px) { .ideas { width: 100%; } }
+  .ideas-label { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--faded); margin: 0 0 6px; }
+  .ideas-label .hint { text-transform: none; letter-spacing: 0; font-style: italic; font-size: .85rem; margin-left: 6px; }
+  .idea { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 6px 0;
+          font: inherit; font-style: italic; font-size: .98rem; line-height: 1.35; color: var(--pencil);
+          cursor: pointer; transition: opacity .35s, transform .35s; }
+  .idea:hover { color: var(--ink); }
+  .idea.gone { opacity: 0; transform: translateY(-6px); pointer-events: none; }
+  .ideas .word { margin-top: 8px; }
+  .ideas-area.empty { display: none; }
+
+  .words { display: flex; justify-content: space-between; align-items: baseline; margin-top: 22px; gap: 16px; flex-wrap: wrap; }
+  .word { font: inherit; font-weight: bold; font-size: 1rem; color: var(--word); background: none; border: 0;
+          padding: 4px 0; cursor: pointer; }
+  .word:hover { color: var(--word-hover); text-decoration: underline; text-underline-offset: 4px; }
+  .word[hidden] { display: none; }
+  .finish-row { display: flex; justify-content: center; gap: 36px; flex-wrap: wrap; margin-top: 18px; min-height: 1.6em; }
+  .quiet { color: var(--faded); font-style: italic; }
+
+  /* the postcard window */
+  .back { position: fixed; inset: 0; background: rgba(40,28,16,.45); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
+  .back.open { display: flex; }
+  .card { background: var(--sheet); max-width: 560px; width: 100%; max-height: 92vh; overflow: auto; padding: 22px; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+  .card label { display: block; font-weight: bold; color: var(--word); margin: 0 0 6px; }
+  .card textarea { width: 100%; min-height: 80px; font: inherit; font-size: 1rem; font-style: italic; color: var(--ink);
+          background: rgba(255,255,255,.35); border: 1px solid rgba(120,90,50,.3); border-radius: 3px; padding: 10px; resize: vertical; }
+  .card img { width: 100%; display: block; margin: 16px 0 6px; box-shadow: 0 2px 8px rgba(60,40,20,.25); }
+  .card .words { margin-top: 12px; }
+
+  /* My list, in the picker window */
+  .mylist { width: 460px; max-width: 100%; font-family: Georgia, serif; }
+  .mylist h2 { font-weight: normal; font-size: 1.3rem; margin: 12px 0 6px; color: var(--ink); }
+  .mylist-item { display: block; width: 100%; text-align: left; font: inherit; font-size: 1.05rem; color: var(--ink);
+          background: none; border: 0; border-bottom: 1px solid rgba(120,90,50,.18); padding: 12px 0; cursor: pointer; }
+  .mylist-item span { display: block; color: var(--faded); font-style: italic; font-size: .9rem; margin-top: 2px; }
+  .mylist-item span i { font-style: normal; }
+  .mylist-item:hover { color: var(--word); }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <a class="backarrow" id="goBack" href="../index.html" aria-label="Back">&larr;</a>
+    <button class="word" id="myList" hidden>My list</button>
+  </div>
+  <div class="sheet" id="sheet">
+
+    <div class="intro" id="opening" hidden>
+      <p>In 1832 a young painter named Edward Lear went to stay at a big house near Liverpool. The Earl of Derby kept a private zoo there, and Lear, who was twenty, had been hired to paint the animals.</p>
+      <p>There were children in the house, and they liked him. Someone showed Lear a short, silly poem about &ldquo;a sick man of Tobago,&rdquo; and he began making up poems like it for the children, with a drawing for each one. This is one of them:</p>
+      <figure class="drawing"><img src="../art/stories/limericks/lear-old-man-with-a-beard.png" width="1200" height="610" alt="Edward Lear&rsquo;s drawing of the Old Man with a beard: a long, bushy beard with two owls, a hen and four little birds nesting in it."></figure>
+      <blockquote>
+        There was an Old Man with a beard,<br>
+        Who said, &ldquo;It is just as I feared!&mdash;<br>
+        <span class="ind">Two Owls and a Hen,</span>
+        <span class="ind">Four Larks and a Wren,</span>
+        Have all built their nests in my beard!&rdquo;
+      </blockquote>
+      <p>In 1846 he put them in a book called <em>A Book of Nonsense</em>. He didn&rsquo;t use his own name. He signed it &ldquo;Derry Down Derry.&rdquo;</p>
+      <p>Lear never called his poems limericks. Nobody did until fifty years later, and nobody knows for sure where the name came from. The best guess is an old party song. People took turns making up a verse, and then everyone sang the chorus: &ldquo;Will you come up to Limerick?&rdquo; Limerick is a city in Ireland.</p>
+      <p>In what follows, the lines of the limerick will appear in a stack under <em>Ideas</em>. Your job is to compose the limerick by tapping the ideas in the right order.</p>
+      <div class="words"><span></span><button class="word" id="openingNext">Next</button></div>
+    </div>
+
+    <div id="puzzle" hidden>
+      <p class="bg" id="bg"></p>
+      <div class="title" id="title"></div>
+      <div id="poem"></div>
+      <div class="credit" id="credit"></div>
+      <div class="swapnote" id="swapnote"></div>
+
+      <div class="ideas-area" id="ideasArea">
+        <div class="ideas">
+          <div class="ideas-label">Ideas<span class="hint" id="hint" hidden>(tap the line you think comes next)</span></div>
+          <div id="ideaList"></div>
+          <button class="word" id="nextLine">Next line, please</button>
+        </div>
+      </div>
+
+      <div class="words">
+        <button class="word" id="scramble" hidden>Write it again</button>
+        <span></span>
+        <button class="word" id="another">Another one</button>
+      </div>
+      <div class="finish-row">
+        <button class="word" id="postcard" hidden>Share Postcard</button>
+        <button class="word" id="keep" hidden>Keep on my list</button>
+      </div>
+    </div>
+
+    <p class="quiet" id="failed" hidden>The limericks didn&rsquo;t load. Try again in a moment.</p>
+  </div>
+</main>
+
+<div class="back" id="back">
+  <div class="card">
+    <label for="note">Your note</label>
+    <textarea id="note"></textarea>
+    <div class="words" style="margin-top:10px">
+      <button class="word" id="addPic">Add the picture</button>
+      <button class="word" id="dropPic" hidden>Take the picture off</button>
+    </div>
+    <img id="preview" alt="Your postcard">
+    <div class="words">
+      <button class="word" id="send">Send</button>
+      <button class="word" id="close">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/cw-flags.js?v=2026-09-21"></script>
+<script src="../js/map.js?v=2026-09-27i"></script>
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = '2026-09-28 ffd1c54';   // date + short commit hash; bump in the same commit as any change
+  console.log('wordplay', CW_VERSION);
+  window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
+  // Remember is not summoned on this page (maya: none), so the flag changes nothing here.
+
+  const $ = id => document.getElementById(id);
+  const poemEl = $("poem"), sheet = $("sheet"), titleEl = $("title");
+
+  /* ---- her device, and nothing else. Five keys; every call wrapped, so the page works without
+     storage (she then sees the Opening each visit and her list lasts only the visit). ---- */
+  const KEY = { opening: "cw.wordplay.openingSeen", done: "cw.wordplay.done", recent: "cw.wordplay.recent",
+                kept: "cw.wordplay.kept", titles: "cw.wordplay.titles" };
+  const mem = {};   // stands in when storage is blocked
+  function load_(k, fallback) {
+    try { const v = localStorage.getItem(k); if (v !== null) return JSON.parse(v); } catch (e) {}
+    return k in mem ? mem[k] : fallback;
+  }
+  function save_(k, v) {
+    mem[k] = v;
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+  }
+  let doneCount = +load_(KEY.done, 0) || 0;          // how many she has finished (for the reminder, the leaning)
+  let recent = load_(KEY.recent, []);                // the last few she saw (for the order)
+  let kept = load_(KEY.kept, []);                    // her list, by id
+  let herTitles = load_(KEY.titles, {});             // titles she gave, by id
+  if (!Array.isArray(recent)) recent = [];
+  if (!Array.isArray(kept)) kept = [];
+  if (!herTitles || typeof herTitles !== "object") herTitles = {};
+
+  const HINT_FOR = 3;        // the reminder beside IDEAS for her first three limericks
+  const EASY_FOR = 5;        // the order leans toward easy ones for her first five
+  const EASY_LEAN = 0.75;    // how hard it leans: the chance the next one is an easy one, while it leans
+  const RECENT = 6;          // how many she saw last that go to the back of a new visit's order
+
+  let POEMS = [], byId = {};
+  let cur = null, filled = [], done = false;
+
+  /* ---- sounds: the bell and the keys ---- */
+  let audio, noise;
+  function wakeAudio() {
+    if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (audio && audio.state === "suspended") audio.resume();
+  }
+  function ding() {
+    if (!audio) return;
+    const t = audio.currentTime;
+    [[1318, .5, 1.6], [2637, .18, .9], [3636, .08, .5]].forEach(([f, g, d]) => {
+      const o = audio.createOscillator(), v = audio.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      v.gain.setValueAtTime(0.0001, t);
+      v.gain.exponentialRampToValueAtTime(g, t + 0.01);
+      v.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(v).connect(audio.destination); o.start(t); o.stop(t + d);
+    });
+  }
+  function key(soft) {
+    if (!audio) return;
+    if (!noise) {
+      noise = audio.createBuffer(1, audio.sampleRate * 0.5, audio.sampleRate);
+      const d = noise.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    const t = audio.currentTime, amp = soft ? 0.08 : 0.16;
+    const src = audio.createBufferSource(); src.buffer = noise;
+    const bp = audio.createBiquadFilter(); bp.type = "bandpass";
+    bp.frequency.value = 1800 + Math.random() * 1600; bp.Q.value = 1.2;
+    const g = audio.createGain();
+    g.gain.setValueAtTime(amp, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.035);
+    src.connect(bp).connect(g).connect(audio.destination);
+    src.start(t, Math.random() * 0.4, 0.05);
+    const o = audio.createOscillator(), og = audio.createGain();
+    o.type = "triangle"; o.frequency.value = 110 + Math.random() * 40;
+    og.gain.setValueAtTime(amp * 0.6, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+    o.connect(og).connect(audio.destination); o.start(t); o.stop(t + 0.06);
+  }
+
+  /* ---- typing, one line at a time ---- */
+  const queue = []; let active = null, timer = null;
+  function typeInto(slot, text) { queue.push({ slot, text }); if (!active) nextInQueue(); }
+  function nextInQueue() {
+    active = queue.shift() || null;
+    showCursor();
+    if (!active) { finishIfDone(); return; }
+    const { slot, text } = active;
+    slot.classList.remove("waiting"); slot.classList.add("typing"); slot.textContent = "";
+    let i = 0;
+    const step = () => {
+      if (i >= text.length) { slot.classList.remove("typing"); active = null; nextInQueue(); return; }
+      const ch = text[i++];
+      slot.textContent += ch;
+      if (ch !== " ") key(/[,.;:!?“”’—-]/.test(ch));
+      timer = setTimeout(step, ch === " " ? 70 : /[,;.!?]/.test(ch) ? 140 : 38 + Math.random() * 45);
+    };
+    timer = setTimeout(step, 250);
+  }
+  // the cursor waits on the next empty line while nothing is being typed
+  function showCursor() {
+    [...poemEl.children].forEach(s => s.classList.remove("waiting"));
+    if (active || queue.length || done) return;
+    const next = poemEl.children[filled.length];
+    if (next) next.classList.add("waiting");
+  }
+
+  function shuffled(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function creditHTML(s) { return esc(s).replace(/\*(.+?)\*/g, "<i>$1</i>"); }
+
+  /* ---- order: after the Opening and Niger, a fresh random order each visit, never the same one
+     twice in a row; the ones she saw last go to the back; leaning toward easy ones at first.
+     Nothing is gated: every limerick is in every deck. ---- */
+  let deck = [];
+  function newDeck() {
+    const ids = shuffled(POEMS.map(p => p.id));
+    const back = recent.filter(id => byId[id]);
+    deck = ids.filter(id => !back.includes(id)).concat(back.slice().reverse());   // longest ago first
+    if (cur && deck[0] === cur.id) deck.push(deck.shift());
+  }
+  function nextPoem() {
+    if (!deck.length) newDeck();
+    let k = 0;
+    if (doneCount < EASY_FOR && Math.random() < EASY_LEAN) {
+      const e = deck.findIndex(id => byId[id].ease === "easy" && (!cur || id !== cur.id));
+      if (e >= 0) k = e;
+    }
+    if (cur && deck[k] === cur.id && deck.length > 1) k = (k + 1) % deck.length;
+    return byId[deck.splice(k, 1)[0]];
+  }
+  function sawIt(id) {
+    recent = [id].concat(recent.filter(x => x !== id)).slice(0, RECENT);
+    save_(KEY.recent, recent);
+  }
+
+  function load(p, whole) {
+    clearTimeout(timer); queue.length = 0; active = null;
+    cur = p; filled = []; done = false;
+    sawIt(p.id);
+    $("bg").textContent = p.intro || ""; $("bg").hidden = !p.intro;
+    titleEl.textContent = ""; titleEl.className = "title";
+    $("credit").innerHTML = creditHTML(p.credit);
+    $("swapnote").className = "swapnote"; $("swapnote").innerHTML = "";
+    $("postcard").hidden = true; $("keep").hidden = true; $("scramble").hidden = true; $("nextLine").hidden = false;
+    $("hint").hidden = doneCount >= HINT_FOR;
+    sheet.classList.remove("done");
+    poemEl.innerHTML = "";
+    for (let i = 0; i < 5; i++) {
+      const s = document.createElement("div");
+      s.className = "slot" + ((i === 2 || i === 3) ? " short" : "");
+      poemEl.appendChild(s);
+    }
+    const list = $("ideaList"); list.innerHTML = "";
+    if (whole) {
+      p.lines.forEach((t, i) => { poemEl.children[i].textContent = t; filled.push(i); });
+      $("ideasArea").classList.add("empty");
+      done = true; showFinished(); showTitle(); return;
+    }
+    $("ideasArea").classList.remove("empty");
+    shuffled(p.lines.map((t, i) => i)).forEach(j => {
+      const b = document.createElement("button");
+      b.className = "idea"; b.textContent = p.lines[j]; b.dataset.j = j;
+      b.addEventListener("click", () => pick(b));
+      list.appendChild(b);
+    });
+    showCursor();
+  }
+
+  /* ---- picking an idea: it has to be the next line (or one that works just as well there) ---- */
+  function swapOf(p) { return p.swap ? p.swap.map(n => n - 1) : null; }   // the record counts lines from 1
+  function fits(j, k) {
+    if (j === k) return true;
+    const sw = swapOf(cur);
+    return !!(sw && sw.includes(j) && sw.includes(k));
+  }
+  // A wrong tap does nothing. Michael may later want a small shake: this is its place.
+  function wrongTap(b) {}
+  function pick(b) {
+    wakeAudio();
+    const j = +b.dataset.j, k = filled.length;
+    if (done || k >= 5) return;
+    if (!fits(j, k)) { wrongTap(b); return; }
+    filled.push(j);
+    b.classList.add("gone");
+    setTimeout(() => b.remove(), 380);
+    typeInto(poemEl.children[k], cur.lines[j]);
+    if (filled.length === 5) { done = true; $("nextLine").hidden = true; }
+  }
+  $("nextLine").addEventListener("click", () => {
+    wakeAudio();
+    const k = filled.length; if (k >= 5 || done) return;
+    // the line the original has here, unless it's already been used in a swapped place
+    let j = k;
+    if (filled.includes(j)) j = swapOf(cur).find(x => !filled.includes(x));
+    const b = [...document.querySelectorAll(".idea")].find(e => +e.dataset.j === j && !e.classList.contains("gone"));
+    if (b) pick(b);
+  });
+
+  function finishIfDone() {
+    if (!done || sheet.classList.contains("done")) return;
+    $("ideasArea").classList.add("empty");
+    doneCount++; save_(KEY.done, doneCount);
+    showFinished();
+    showTitle();
+    ding();
+    // if she put two lines the other way round from the original, say so
+    const sw = swapOf(cur);
+    if (sw && filled[sw[0]] === sw[1]) {
+      const L = cur.lines, w = ["first", "second", "third", "fourth", "fifth"];
+      $("swapnote").innerHTML =
+        "In the original, the " + w[sw[0]] + " and " + w[sw[1]] + " lines are the other way round:" +
+        "<span class='orig'>" + esc(L[sw[0]]) + "<br>" + esc(L[sw[1]]) + "</span>" +
+        "But your arrangement works every bit as well.";
+      $("swapnote").classList.add("show");
+    }
+  }
+
+  /* ---- the title: the poem's own, or one she gives it, kept as she types ---- */
+  function showTitle() {
+    const p = cur;
+    titleEl.innerHTML = "";
+    if (p.title) { titleEl.textContent = p.title; return; }
+    const inp = document.createElement("input");
+    inp.className = "title-input"; inp.placeholder = "Give it a title";
+    inp.setAttribute("aria-label", "Give it a title");
+    inp.autocapitalize = "sentences"; inp.spellcheck = false; inp.maxLength = 60;
+    inp.value = herTitles[p.id] || "";
+    inp.addEventListener("input", () => {
+      const t = inp.value.trim();
+      if (t) herTitles[p.id] = t; else delete herTitles[p.id];
+      save_(KEY.titles, herTitles);
+    });
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") inp.blur(); });
+    titleEl.appendChild(inp);
+  }
+  function titleOf(p) { return p.title || herTitles[p.id] || ""; }
+
+  /* ---- her list ---- */
+  function isKept(p) { return kept.includes(p.id); }
+  function showFinished() {
+    sheet.classList.add("done");
+    $("postcard").hidden = false; $("keep").hidden = false; $("scramble").hidden = false;
+    $("keep").textContent = isKept(cur) ? "Take it off my list" : "Keep on my list";
+  }
+  function showListWord() { $("myList").hidden = !kept.some(id => byId[id]); }
+  $("keep").addEventListener("click", () => {
+    if (isKept(cur)) kept = kept.filter(id => id !== cur.id); else kept = kept.concat(cur.id);
+    save_(KEY.kept, kept);
+    $("keep").textContent = isKept(cur) ? "Take it off my list" : "Keep on my list";
+    showListWord();
+  });
+  $("myList").addEventListener("click", () => {
+    const box = document.createElement("div"); box.className = "mylist";
+    const h = document.createElement("h2"); h.textContent = "My list"; box.appendChild(h);
+    let win = null;
+    kept.filter(id => byId[id]).forEach(id => {
+      const p = byId[id];
+      const b = document.createElement("button");
+      b.className = "mylist-item";
+      b.innerHTML = esc(titleOf(p) || p.lines[0].replace(/[,;:]$/, "")) + "<span>" + creditHTML(p.credit) + "</span>";
+      b.addEventListener("click", () => { if (win) win.close(); show("puzzle"); load(p, true); window.scrollTo(0, 0); });
+      box.appendChild(b);
+    });
+    win = cwWindow(box);
+  });
+  $("scramble").addEventListener("click", () => { wakeAudio(); load(cur); });
+  $("another").addEventListener("click", () => { wakeAudio(); load(nextPoem()); });
+
+  // back to the page she came from, or the gallery if there is none
+  $("goBack").addEventListener("click", e => {
+    let same = false;
+    try { same = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (err) {}
+    if (same && history.length > 1) { e.preventDefault(); history.back(); }
+  });
+
+  /* ---- Share Postcard: her note, the picture if she adds it, the title, the poem as she wrote
+     it, its credit. Glass Geometry's Postcard is the model: the share sheet where the browser has
+     one, a download where it doesn't. ---- */
+  let pic = null, cardBlob = null, cardGen = 0;
+  function wrapWords(ctx, words, maxW, fontOf) {
+    // words: [{ w, it, glue }] — lines of words, each measured in its own font
+    const lines = []; let line = [], width = 0;
+    const space = () => { ctx.font = fontOf(false); return ctx.measureText(" ").width; };
+    words.forEach(word => {
+      ctx.font = fontOf(word.it); const ww = ctx.measureText(word.w).width;
+      const add = line.length && !word.glue ? space() + ww : ww;
+      if (line.length && width + add > maxW) { lines.push(line); line = [word]; width = ww; }
+      else { line.push(word); width += add; }
+    });
+    if (line.length) lines.push(line);
+    return lines;
+  }
+  function drawWords(ctx, line, x, y, fontOf) {
+    line.forEach((word, k) => {
+      if (k && !word.glue) { ctx.font = fontOf(false); x += ctx.measureText(" ").width; }
+      ctx.font = fontOf(word.it);
+      ctx.fillText(word.w, x, y); x += ctx.measureText(word.w).width;
+    });
+  }
+  function plainWords(s) { return s.split(/\s+/).filter(Boolean).map(w => ({ w, it: false })); }
+  function creditWords(s) {
+    // the credit is italic; a *title* inside it is roman; a word that follows a title with no
+    // space between (its comma) stays glued to it
+    const out = []; let prev = "";
+    s.split(/(\*[^*]+\*)/).forEach(part => {
+      if (!part) return;
+      const roman = part[0] === "*", text = part.replace(/\*/g, "");
+      const glued = out.length > 0 && !/\s$/.test(prev) && !/^\s/.test(text);
+      text.split(/\s+/).forEach((w, k) => { if (w) out.push({ w, it: !roman, glue: k === 0 && glued }); });
+      prev = text;
+    });
+    return out;
+  }
+  function seeded(seed) { return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
+
+  function drawCard() {
+    const W = 1200, pad = 90, inner = W - pad * 2;
+    const c = document.createElement("canvas"), x = c.getContext("2d");
+    const p = cur, note = $("note").value.trim(), title = titleOf(p);
+    const noteFont = () => "italic 36px Georgia";
+    const titleFont = () => "bold 50px Georgia";
+    const poemFont = () => "44px Georgia";
+    const creditFont = it => (it ? "italic " : "") + "30px Georgia";
+    const noteRows = [];
+    if (note) note.split("\n").forEach(par => {
+      const w = plainWords(par);
+      if (w.length) wrapWords(x, w, inner, noteFont).forEach(l => noteRows.push(l)); else noteRows.push([]);
+    });
+    const titleRows = title ? wrapWords(x, plainWords(title), inner, titleFont) : [];
+    const poemRows = [];
+    filled.forEach((j, i) => {
+      const ind = (i === 2 || i === 3) ? 60 : 0;
+      wrapWords(x, plainWords(p.lines[j]), inner - ind, poemFont).forEach(l => poemRows.push({ l, ind }));
+    });
+    const creditRows = wrapWords(x, creditWords(p.credit), inner, creditFont);
+    const picH = pic ? Math.min(560, inner * pic.naturalHeight / pic.naturalWidth) : 0;
+    const H = pad + (noteRows.length ? noteRows.length * 48 + 50 : 0) + (pic ? picH + 60 : 0)
+            + (titleRows.length ? titleRows.length * 62 + 18 : 0)
+            + poemRows.length * 64 + 20 + creditRows.length * 40 + pad;
+    c.width = W; c.height = H;
+    // parchment (the same grain every time, so the preview doesn't flicker as she types)
+    const rnd = seeded(7);
+    x.fillStyle = "#f3e7c9"; x.fillRect(0, 0, W, H);
+    for (let i = 0; i < 9000; i++) {
+      x.fillStyle = `rgba(120,85,40,${rnd() * .05})`;
+      x.fillRect(rnd() * W, rnd() * H, 2, 2);
+    }
+    const g = x.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .35, W / 2, H / 2, Math.max(W, H) * .75);
+    g.addColorStop(0, "rgba(140,100,50,0)"); g.addColorStop(1, "rgba(140,100,50,.28)");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    x.textBaseline = "top";
+    let y = pad;
+    if (noteRows.length) {
+      x.fillStyle = "#33261a";
+      noteRows.forEach(l => { drawWords(x, l, pad, y, noteFont); y += 48; });
+      y += 50;
+    }
+    if (pic) {
+      const w = picH * pic.naturalWidth / pic.naturalHeight;
+      x.globalCompositeOperation = "multiply";
+      x.drawImage(pic, (W - w) / 2, y, w, picH);
+      x.globalCompositeOperation = "source-over";
+      y += picH + 60;
+    }
+    x.fillStyle = "#33261a";
+    if (titleRows.length) { titleRows.forEach(l => { drawWords(x, l, pad, y, titleFont); y += 62; }); y += 18; }
+    poemRows.forEach(r => { drawWords(x, r.l, pad + r.ind, y, poemFont); y += 64; });
+    y += 20;
+    x.fillStyle = "#7d6a52";
+    creditRows.forEach(l => { drawWords(x, l, pad, y, creditFont); y += 40; });
+    return c;
+  }
+  // The card is drawn ahead of Send, so the share sheet opens inside her tap (Safari will not
+  // open it after a wait).
+  function refresh() {
+    const c = drawCard(), gen = ++cardGen;
+    $("preview").src = c.toDataURL("image/png");
+    cardBlob = null;
+    c.toBlob(b => { if (gen === cardGen) cardBlob = b; }, "image/png");
+  }
+  $("postcard").addEventListener("click", () => {
+    pic = null; $("dropPic").hidden = true; $("addPic").hidden = !cur.picture;
+    $("back").classList.add("open"); refresh();
+  });
+  $("close").addEventListener("click", () => $("back").classList.remove("open"));
+  $("note").addEventListener("input", refresh);
+  $("addPic").addEventListener("click", () => {
+    if (!cur.picture) return;
+    const img = new Image();
+    img.onload = () => { pic = img; $("dropPic").hidden = false; $("addPic").hidden = true; refresh(); };
+    img.src = "../" + cur.picture;
+  });
+  $("dropPic").addEventListener("click", () => { pic = null; $("dropPic").hidden = true; $("addPic").hidden = false; refresh(); });
+  function download(blob) {
+    const url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = "limerick.png"; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+  function send(blob) {
+    let file = null;
+    try { file = new File([blob], "limerick.png", { type: "image/png" }); } catch (e) {}
+    if (file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ title: titleOf(cur) || "Wordplay", files: [file] }).catch(err => {
+        // Declined by the platform → download instead; a cancelled sheet is her no and stays quiet.
+        if (!err || err.name !== "AbortError") download(blob);
+      });
+    } else {
+      download(blob);
+    }
+  }
+  $("send").addEventListener("click", () => {
+    if (cardBlob) send(cardBlob);
+    else drawCard().toBlob(send, "image/png");
+  });
+
+  /* ---- start ---- */
+  function show(which) {
+    $("opening").hidden = which !== "opening";
+    $("puzzle").hidden = which !== "puzzle";
+  }
+  $("openingNext").addEventListener("click", () => {
+    wakeAudio();
+    save_(KEY.opening, true);
+    show("puzzle");
+    const niger = byId.niger || POEMS[0];
+    newDeck(); deck = deck.filter(id => id !== niger.id);
+    load(niger);
+    window.scrollTo(0, 0);
+  });
+
+  fetch("../stories/limericks.json?v=2026-09-28")
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(doc => {
+      POEMS = (doc.limericks || []).filter(p => p && p.id && Array.isArray(p.lines) && p.lines.length === 5);
+      POEMS.forEach(p => { byId[p.id] = p; });
+      if (!POEMS.length) throw new Error("empty");
+      showListWord();
+      if (!load_(KEY.opening, false)) { show("opening"); }
+      else { show("puzzle"); load(nextPoem()); }
+    })
+    .catch(() => { $("failed").hidden = false; });
+})();
+</script>
+</body>
+</html>
