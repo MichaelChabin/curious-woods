@@ -226,7 +226,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-27 ati-data';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-28 ffd1c54';   // date + short commit hash; bump in the same commit as any change
   console.log('timeline-bench', CW_VERSION);
 
   const NOW = 12026;
@@ -469,7 +469,8 @@
   const glyph = k => G[k] || G.star;
   const fmt = y => y.toLocaleString('en-US');
   const about = y => 'about ' + fmt(y);
-  const cal = y => y >= 10000 ? ((y - 10000) < 1000 ? 'AD ' : '') + (y - 10000) : (10000 - y) + ' BC';
+  // astronomer's years since 28 Sep (500 BC is -499), so a BC year is 10 001 less the year after the ice
+  const cal = y => y >= 10001 ? ((y - 10000) < 1000 ? 'AD ' : '') + (y - 10000) : (10001 - y) + ' BC';
   const both = (y, exact) => (exact ? fmt(y) : about(y)) + ' (' + cal(y) + ')';
 
   function hot(id, on) { document.querySelectorAll('[data-id="' + id + '"]').forEach(el => el.classList.toggle('hot', on)); }
@@ -611,8 +612,8 @@
 
   function showLanding(dest) {
     const yr = dest.y;
-    const cal = yr >= 10000 ? (yr - 10000) : (10000 - yr);
-    const note = yr >= 10000 ? 'the year we call ' + cal : 'the year the old calendar calls ' + cal + ' BC, counting backwards';
+    const cal = yr >= 10001 ? (yr - 10000) : (10001 - yr);
+    const note = yr >= 10001 ? 'the year we call ' + cal : 'the year the old calendar calls ' + cal + ' BC, counting backwards';
     landing.innerHTML = '<div class="big"><b>' + fmt(yr) + '</b> years after the ice</div><div class="small">' + note + '</div>';
     requestAnimationFrame(() => landing.classList.add('on'));
   }

@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" href="../art/icons/map-icon-256.png">
-<link rel="apple-touch-icon" href="../art/icons/map-icon-256.png">
+<link rel="icon" type="image/png" href="../art/icons/after-the-ice-icon-a-256.png">
+<link rel="apple-touch-icon" href="../art/icons/after-the-ice-icon-a-256.png">
 <!--
   after-the-ice.html — bench: After the Ice on the moving world. Twelve thousand years and the
-  whole earth, three lines and the map, nothing to read. Spec: CWVault/claude/Spec-Maps.md,
+  whole earth, three lines and the map, under a short introduction (CWVault/claude/
+  Story-After-the-Ice.md, Michael's words of 28 Sep). Spec: CWVault/claude/Spec-Maps.md,
   "After the Ice, on the moving world" (27 Sep 2026); the run, the odometer and the road are
   the September bench's (experiments/timeline-bench.html, Spec-Timeline-Intro.md).
 
@@ -23,7 +24,7 @@
   merged at load. Her line: the ids the September bench keeps in localStorage under
   cw-after-the-ice, plus every event she taps here.
 -->
-<title>After the Ice — bench</title>
+<title>After the Ice</title>
 <style>
   :root {
     --ground: #f4f1e8; --road: #e3dccb; --road-edge: #cfc6b1;
@@ -39,20 +40,23 @@
   button:focus-visible { outline: 1.5px solid var(--word); outline-offset: 3px; border-radius: 2px; }
 
   .stage { max-width: 1180px; margin: 0 auto; padding: 24px 40px 60px; }
-  .masthead { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
-  .masthead .eyebrow { color: var(--ink-soft); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
-  .masthead h1 { margin: 6px 0 0; font-size: 34px; font-weight: normal; line-height: 1.1; }
-  .masthead .hint { color: var(--ink-soft); font-style: italic; font-size: 13px; transition: opacity .3s ease; }
+  /* the title and the introduction: story text, in the 700 px reading column, centred */
+  .intro { max-width: 700px; margin: 0 auto; font-size: 20px; line-height: 1.4; }
+  .intro .eyebrow { color: var(--ink-soft); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  .intro h1 { margin: 6px 0 .8em; font-size: 34px; font-weight: normal; line-height: 1.1; }
+  .intro p { margin: 0 0 1em; }
+  .hint { max-width: 700px; margin: 0 auto; min-height: 18px; text-align: right; color: var(--ink-soft); font-style: italic; font-size: 13px; }
 
   /* ---------- the top line: the whole span, and the window ---------- */
-  .top { position: relative; margin-top: 104px; height: 66px; touch-action: none; user-select: none; -webkit-user-select: none; }
-  .odo { position: absolute; top: -104px; left: 0; transform: translateX(-50%); text-align: center; pointer-events: none; white-space: nowrap; }
-  .odo .digits { display: inline-flex; align-items: flex-end; height: 60px; overflow: hidden; font-size: 52px; font-weight: bold; line-height: 1; font-variant-numeric: tabular-nums; }
-  .odo .digits .comma { align-self: flex-end; padding-bottom: 6px; width: .3em; text-align: center; }
-  .odo .col { position: relative; width: .62em; height: 60px; overflow: hidden; }
+  .top { position: relative; margin-top: 40px; height: 62px; touch-action: none; user-select: none; -webkit-user-select: none; }
+  /* the count: bold but plainly smaller than the title, on one line with its words */
+  .odo { position: absolute; top: -32px; left: 0; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 7px; pointer-events: none; white-space: nowrap; }
+  .odo .digits { display: inline-flex; align-items: flex-end; height: 26px; overflow: hidden; font-size: 22px; font-weight: bold; line-height: 1; font-variant-numeric: tabular-nums; }
+  .odo .digits .comma { align-self: flex-end; padding-bottom: 3px; width: .3em; text-align: center; line-height: 1; }
+  .odo .col { position: relative; width: .62em; height: 26px; overflow: hidden; }
   .odo .col .strip { position: absolute; left: 0; top: 0; width: 100%; will-change: transform; }
-  .odo .col .strip span { display: block; height: 60px; line-height: 60px; text-align: center; }
-  .odo .unit { font-size: 14px; color: var(--ink-soft); font-style: italic; margin-top: 2px; }
+  .odo .col .strip span { display: block; height: 26px; line-height: 26px; text-align: center; }
+  .odo .unit { font-size: 15px; line-height: 20px; color: var(--ink-soft); font-style: italic; }
   .odo .plain { color: var(--ink-soft); font-style: normal; margin-left: 6px; opacity: 0; transition: opacity .3s ease; }
   .odo .plain.on { opacity: 1; }
 
@@ -71,10 +75,14 @@
   .window { position: absolute; top: 14px; height: 34px; background: var(--window); border-left: 2px solid var(--window-edge); border-right: 2px solid var(--window-edge); border-radius: 2px; opacity: 0; transition: opacity .5s ease; pointer-events: none; cursor: grab; }
   .window.on { opacity: 1; }
   .top.live { cursor: default; }
+  /* each end of the window has its own hold, reaching past the window's edge and past the
+     line's end, so an end at the line's edge can still be taken */
+  .grip { position: absolute; top: 4px; height: 54px; cursor: ew-resize; touch-action: none; display: none; }
+  .top.live .grip { display: block; }
   .top.dragging, .top.dragging * { cursor: grabbing !important; }
 
   /* ---------- the road: a picture of the window, not a control ---------- */
-  .road { position: relative; height: 300px; margin-top: 6px; pointer-events: none; user-select: none; -webkit-user-select: none; }
+  .road { position: relative; height: 232px; margin-top: 0; pointer-events: none; user-select: none; -webkit-user-select: none; }
   .road > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .road .band { fill: var(--road); stroke: var(--road-edge); stroke-width: .75; }
   .road .centre { fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 5; opacity: .5; }
@@ -87,20 +95,19 @@
   .ev .stem { width: 1px; background: var(--line-faint); margin-top: 2px; }
   .road .dot { top: 0; left: 0; }
 
-  /* ---------- her word, and the World line with its map ---------- */
-  .words { display: flex; justify-content: flex-end; min-height: 26px; margin-top: 8px; font-size: 14px; }
-  .words button { color: var(--word); opacity: 0; pointer-events: none; transition: opacity .2s ease-in, color .15s ease; padding: 4px 0; }
-  .words button.on { opacity: 1; pointer-events: auto; }
-  .words button:hover { color: var(--word-hot); }
-  .words button.active { color: var(--copper); }
+  /* ---------- the World line with its map, and her word at the end of the panel's date line ---------- */
+  #world .cw-panel .when, #world .cw-panel .hint { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  #world .cw-panel h3:empty { display: none; }
+  .seen { color: var(--word); font-size: 13px; font-style: normal; letter-spacing: 0; cursor: pointer; white-space: nowrap; user-select: none; -webkit-user-select: none; transition: color .15s ease; }
+  .seen:hover { color: var(--word-hot); }
+  .seen.active { color: var(--copper); }
   .world { transition: opacity .6s ease; }
   .world.waiting { opacity: .25; pointer-events: none; }
 
   @media (max-width: 640px) {
     .stage { padding: 20px 16px 40px; }
-    .odo .digits { font-size: 40px; height: 48px; } .odo .col { height: 48px; } .odo .col .strip span { height: 48px; line-height: 48px; }
-    .top { margin-top: 92px; } .odo { top: -90px; }
-    .road { height: 240px; }
+    .intro { font-size: 18px; }
+    .road { height: 200px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .ev, .diamond, .window, .dot, .world, .odo .plain { transition: none; }
@@ -110,10 +117,17 @@
 <body>
 
 <main class="stage">
-  <header class="masthead">
-    <div><div class="eyebrow">Curious Woods · a bench</div><h1>After the Ice</h1></div>
-    <span class="hint" id="hint">tap to stop</span>
-  </header>
+  <article class="intro">
+    <div class="eyebrow">Curious Woods</div>
+    <h1>After the Ice</h1>
+    <p>About twelve thousand years ago, the ice that covered the north began to melt, and it did not come back in the winter. This page counts years from then. Everything people have made since then fits on the line at the top: farms, cities, writing, ships, all of it.</p>
+    <p>The line at the top is the whole twelve thousand years. The pale blue window on that line is the part you are looking at now. Drag the window to move through time. Drag either end of the window to make it wider or narrower.</p>
+    <p>The line at the bottom shows what happened inside the window. Tap a dot on the bottom line, and the map moves to the place where that thing happened. Tap a place on the map, and its dot lights up on the bottom line. The words between the line and the map say what happened there.</p>
+    <p>The map moves too. Drag it to travel. Pinch it, or scroll, to come closer.</p>
+    <p>The road in the middle is the same years again, drawn so that the years nearest to you get the most room.</p>
+    <p><i>What I’ve seen</i> shows only the things you have already tapped.</p>
+  </article>
+  <div class="hint" id="hint">tap to stop</div>
 
   <section class="top" id="top" aria-label="Twelve thousand years, to scale">
     <div class="odo" id="odo"><div class="digits" id="digits"></div><div class="unit">years after the ice<span class="plain" id="plain"></span></div></div>
@@ -121,6 +135,8 @@
     <div id="ticks"></div>
     <div id="diamonds"></div>
     <div class="window" id="window"></div>
+    <div class="grip" id="gripFrom" data-end="from"></div>
+    <div class="grip" id="gripTo" data-end="to"></div>
     <div class="dot" id="dot"></div>
     <span class="endcap left">the ice lets go</span>
     <span class="endcap right">now</span>
@@ -132,7 +148,6 @@
     <div class="dot" id="roadDot"></div>
   </section>
 
-  <nav class="words"><button type="button" id="seenWord">what I’ve seen</button></nav>
   <div class="world waiting" id="world"></div>
 </main>
 
@@ -141,7 +156,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-27 42f532b';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-28 ffd1c54';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // This timeline's zero. The store writes the astronomer's year (negative for BC); this line
@@ -208,17 +223,22 @@
 
   // ---------- numbers and years ----------
   const fmt = y => Math.round(y).toLocaleString('en-US');
-  // The plain year for a line year. The store's BC years came from the September file, which
-  // wrote 10 000 minus the BC year, so a BC year is minus the store's year (Thales: -585, 585 BC).
-  // See the file's _about; the true astronomer's year would be one later.
-  function plain(lineYear) {
-    const y = Math.floor(lineYear - ICE);
-    return y >= 1 ? (y < 1000 ? 'AD ' : '') + y : (-y) + ' BC';
+  // The plain year for a line year. The store writes the astronomer's year, so 1 BC is 0 and
+  // 500 BC is -499 (Michael, 28 Sep 2026). A date known only to a decade, a century or a
+  // millennium is written round to that, so the ice is about 10000 BC, not 10001.
+  const ROUND = { decade: 10, century: 100, millennium: 1000 };
+  function plain(lineYear, precision) {
+    const y = Math.floor(lineYear - ICE), step = ROUND[precision] || 1;
+    const n = y >= 1 ? y : 1 - y, r = Math.round(n / step) * step || n;
+    return y >= 1 ? (r < 1000 ? 'AD ' : '') + r : r + ' BC';
   }
   const ABOUT = { decade: true, century: true, millennium: true };
+  const roundTo = (y, precision) => Math.round(y / (ROUND[precision] || 1)) * (ROUND[precision] || 1);
   function when(e, placeName) {
-    return (ABOUT[e.precision] ? 'about ' : '') + fmt(e.year) + ' ' + NAME + ' (' + plain(e.year) + ')' + (placeName ? ' · ' + placeName : '');
+    return (ABOUT[e.precision] ? 'about ' : '') + fmt(roundTo(e.year, e.precision)) + ' ' + NAME + ' (' + plain(e.year, e.precision) + ')' + (placeName ? ' · ' + placeName : '');
   }
+  // The panel has no heading: the label is the first sentence, and the text follows on its line.
+  function sentence(label) { const t = cap(label.trim()); return /[.!?]$/.test(t) ? t : t + '.'; }
   const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 
   // ---------- the store: both lists, merged at load ----------
@@ -234,7 +254,7 @@
       const e = { id, year: w.year + ICE, precision: w.precision || 'year', kind: w.kind, weight: w.weight || 1,
                   place: w.place, label: w.label, side: 'world' };
       e.when = when(e, PLACES[w.place] && PLACES[w.place].name);
-      e.title = w.title || w.label; e.text = w.text || '';
+      e.title = ''; e.text = sentence(w.label) + ' ' + (w.text || '');
       out.push(e);
     });
     // this bench's own: a record that is the `same` happening as another stands aside for it
@@ -244,8 +264,8 @@
       const e = { id: r.id, year: r.year + ICE, precision: r.precision || 'year', kind: r.kind, weight: r.weight || 1,
                   place: r.place, label: r.label, glyph: r.glyph, side: 'world' };
       e.when = when(e, r.place && PLACES[r.place] && PLACES[r.place].name);
-      e.title = cap(r.label);
-      e.text = r.blurb + ' <i>' + (r.story ? 'There is a story about this.' : 'Nobody has written this story yet.') + '</i>';
+      e.title = '';
+      e.text = sentence(r.label) + ' ' + r.blurb + ' <i>' + (r.story ? 'There is a story about this.' : 'Nobody has written this story yet.') + '</i>';
       out.push(e);
     });
     LINE = out.filter(e => e.year >= 0 && e.year <= NOW).sort((a, b) => a.year - b.year);
@@ -264,7 +284,7 @@
   const top = $('top'), odo = $('odo'), digitsEl = $('digits'), plainEl = $('plain'), dot = $('dot'), win = $('window');
   const ticksEl = $('ticks'), diamondsEl = $('diamonds'), hint = $('hint');
   const roadEl = $('road'), roadSvg = $('roadSvg'), roadEvents = $('roadEvents'), roadDot = $('roadDot');
-  const seenWord = $('seenWord'), worldHost = $('world');
+  const worldHost = $('world'), gripFrom = $('gripFrom'), gripTo = $('gripTo');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let lineW = 0;
@@ -322,7 +342,7 @@
   let W = 0, H = 0, road = null;
   function buildRoad(a, b) {
     const span = b - a, ssum = SHARES.reduce((p, q) => p + q, 0), bend = span * 0.012;
-    const horizon = 24, h0 = H - 58, cx = W / 2, margin = 40;
+    const horizon = 14, h0 = H - 40, cx = W / 2, margin = 40;
     const rows = []; let yr = a;
     for (let k = 0; k < ROWS; k++) {
       const s = SCALES[k], half = (W / 2 - margin) * s, dir = k % 2 === 0 ? 1 : -1;
@@ -398,7 +418,7 @@
                    '<span class="yr" style="font-size:' + (f - 2).toFixed(1) + 'px"></span>' +
                    '<span class="stem" style="height:' + stem + 'px"></span>';
     el.querySelector('.short').textContent = e.label;
-    el.querySelector('.yr').textContent = (ABOUT[e.precision] ? 'about ' : '') + fmt(e.year) + ' (' + plain(e.year) + ')';
+    el.querySelector('.yr').textContent = (ABOUT[e.precision] ? 'about ' : '') + fmt(roundTo(e.year, e.precision)) + ' (' + plain(e.year, e.precision) + ')';
     el.style.left = Math.min(Math.max(p.x, 62), W - 62) + 'px'; el.style.top = (p.y - (3 + 10 * p.s)) + 'px';
     roadEvents.appendChild(el); return el;
   }
@@ -411,9 +431,20 @@
   // ---------- the window ----------
   const view = { from: 0, to: NOW };
   let live = false, world = null, pending = 0, pastIce = false, pastIceSaid = false;
+  // Where the window answers: its middle moves it; each end has a hold of its own that reaches
+  // OUT past the window's edge (and past the line's end) and up to IN inside it, leaving at
+  // least 12 px of middle however narrow the window is.
+  const OUT = 16;
+  function zones() {
+    const a = xOf(view.from), b = xOf(view.to), w = b - a, c = (a + b) / 2;
+    const IN = Math.min(16, w / 3), mid = Math.max(w - 2 * IN, 12), m0 = c - mid / 2, m1 = c + mid / 2;
+    return { a, b, m0, m1, from: [Math.min(a, m0) - OUT, m0], to: [m1, Math.max(b, m1) + OUT] };
+  }
   function drawWindow() {
-    const a = xOf(view.from), b = xOf(view.to);
-    win.style.left = a + 'px'; win.style.width = Math.max(2, b - a) + 'px';
+    const z = zones();
+    win.style.left = z.a + 'px'; win.style.width = Math.max(2, z.b - z.a) + 'px';
+    gripFrom.style.left = z.from[0] + 'px'; gripFrom.style.width = (z.from[1] - z.from[0]) + 'px';
+    gripTo.style.left = z.to[0] + 'px'; gripTo.style.width = (z.to[1] - z.to[0]) + 'px';
   }
   function apply() {
     pending = 0;
@@ -437,17 +468,12 @@
   }
 
   // The window's gesture: a pointer on the top line only. Press inside the band to move it;
-  // press at either end to move that end. Nothing else on the line answers.
+  // press on either end's hold to move that end. Nothing else on the line answers.
   let drag = null;
   function hitWindow(x, ev) {
-    const T = ev.pointerType === 'mouse' ? 8 : 18;
-    const a = xOf(view.from), b = xOf(view.to), w = b - a, c = (a + b) / 2;
-    const mid = Math.max(w - 2 * Math.min(T, w / 3), 12);
-    const m0 = c - mid / 2, m1 = c + mid / 2;
-    if (x >= m0 && x <= m1) return 'move';
-    if (x < m0 && x >= Math.min(a, m0) - T) return 'from';
-    if (x > m1 && x <= Math.max(b, m1) + T) return 'to';
-    return null;
+    if (ev.target === gripFrom || ev.target === gripTo) return ev.target.dataset.end;
+    const z = zones();
+    return x >= z.m0 && x <= z.m1 ? 'move' : null;
   }
   top.addEventListener('pointerdown', ev => {
     if (!live) return;
@@ -476,15 +502,29 @@
   top.addEventListener('pointerup', release);
   top.addEventListener('pointercancel', release);
 
-  // ---------- her word ----------
-  let onlySeen = false;
-  function showWord() { seenWord.classList.toggle('on', live && seenOnLine().length > 0); }
-  seenWord.addEventListener('click', ev => {
+  // ---------- her word: at the right-hand end of the panel's date line ----------
+  // timeline.js rewrites the panel on every tap; the word is put back each time, at the end of
+  // the first date line, or of the hint while nothing is selected. It is there once she has
+  // seen something.
+  let onlySeen = false, panel = null;
+  const seenWord = document.createElement('span');
+  seenWord.className = 'seen'; seenWord.textContent = 'What I\u2019ve seen';
+  seenWord.setAttribute('role', 'button'); seenWord.tabIndex = 0;
+  function toggleSeen(ev) {
     ev.stopPropagation();
     onlySeen = !onlySeen;
     seenWord.classList.toggle('active', onlySeen);
     if (world && world.only) world.only(onlySeen ? seenOnLine() : null);
-  });
+  }
+  seenWord.addEventListener('click', toggleSeen);
+  seenWord.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggleSeen(ev); } });
+  function showWord() {
+    if (!panel) return;
+    const want = live && (onlySeen || seenOnLine().length > 0);
+    const line = panel.querySelector('.when') || panel.querySelector('.hint');
+    if (!want || !line) { if (seenWord.parentNode) seenWord.remove(); return; }
+    if (seenWord.parentNode !== line) line.appendChild(seenWord);
+  }
 
   // ---------- the run ----------
   let run = null, raf = 0;
@@ -529,7 +569,7 @@
     view.from = 0; view.to = NOW; live = true;
     top.classList.add('live'); win.classList.add('on');
     worldHost.classList.remove('waiting');
-    hint.textContent = 'drag the band, or either end of it';
+    hint.textContent = '';                  // the introduction says what to do
     apply(); showWord();
   }
 
@@ -560,6 +600,8 @@
         hint: 'Tap a date or a place.',
         onPick: id => { addSeen(id); showWord(); }
       });
+      panel = worldHost.querySelector('.cw-panel');
+      if (panel) new MutationObserver(showWord).observe(panel, { childList: true });
       get(PYRAMID).then(j => { pastIce = (j.layers || []).some(L => L.name === PAST_ICE); }).catch(() => {});
       if (OPENING === 'run') startRun(); else finishRun();
     })

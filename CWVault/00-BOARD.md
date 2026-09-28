@@ -1033,9 +1033,14 @@ are read, never written.
   labels crowd the far passes); snapping of the window's ends (it slides freely).
 - **Not yet possible:** the ice at its last-glacial-maximum outline — no such layer in
   `art/maps/`, and `map.js` cannot swap layers on a live map; the page looks for `ice-lgm`.
-- **Next action:** Michael runs it on the iPad with a finger — the window's drag and the map's
-  pan were kept apart by construction and by mouse and synthetic-touch tests on the Mac, never
-  under a real finger — then says yes and it commits.
+- **28 Sep:** committed 27 Sep (`ffd1c54`); Michael's first-use notes built the same day —
+  the introduction as story text, the top compressed, a hold for each end of the window, the
+  word on the panel's date line, the label as the panel's first sentence, two icon candidates
+  (a, the copper dot, wired) — and his ruling on BC years: the true astronomer's year, 500 BC
+  is −499.
+- **Next action:** Michael looks at it on curiouswoods.org, on the iPad with a finger, and
+  chooses icon (a) or (b). Open: on a 1024 × 768 screen the introduction pushes the lines
+  below the fold, so the run plays out of sight unless she scrolls.
 
 **Timeline Intro — After the Ice (7–8 Sep, two Cowork sessions; built as a bench).**
 Every dated story opens on a ten-second run: a copper dot leaves year 0 ("after the

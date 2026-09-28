@@ -239,8 +239,14 @@ craft, object, place, person, text), a provisional `weight`, `place` as an id, `
 records that are one happening with another (8 with the shared list: Tambora, Frankenstein,
 Faraday, Galvani, Volta, Aldini, photography, the Eiffel Tower; 3 within the file), and
 `guessed` naming the fields that are judgements. Its own 60 places in a `places` block, not in
-`places.json`. A holding place: the survivors join the shared list by copying, and it goes.
+`places.json`. **28 Sep (Michael): the true astronomer's year** — 500 BC is −499 — so the 47 BC
+records moved one year later (Socrates −469, Thales −584); the ice stays at −10 000, After the
+Ice's year 0 by definition. A holding place: the survivors join the shared list by copying, and it goes.
 Blurbs are still unsourced first drafts; images unfilled.
+`art/icons/after-the-ice-icon-a-256.png` and `-b-256.png` (28 Sep 2026) — two candidates for After the
+Ice, SVG beside each PNG, drawn in the house line on parchment: (a) the line in Payne's grey with a
+copper dot on it, (b) the line with the pale blue window on it. (a) is the page's tab icon; Michael
+chooses. PNGs drawn with PIL at four times the size and reduced, since no SVG renderer is installed.
 `art/icons/brain-icon-256.png` — the watercolour brain at 256 px (13 Sep 2026), the main
 index's icon for About Your Brain; the first icon-as-link on the site. The page's own tab
 icon reads the same file (Safari on iPad ignores data-URI favicons, tested 13 Sep, so
@@ -1065,7 +1071,8 @@ backstop for the Claude Code session that lands the file.
   *your line so far* for everything it has ever shown her (localStorage). Five
   destinations. **Reads `../stories/after-the-ice-events.json` (since 27 Sep; it was
   `stories/events.json`) and adds 10 000 back to its astronomer's years — the page holds no
-  events**; `CW_VERSION 2026-09-27 42f532b`. Retired except for the run, the odometer and
+  events**; since 28 Sep a BC year is 10 001 less the year after the ice. `CW_VERSION
+  2026-09-28 ffd1c54` (the 27 Sep commit carried a placeholder stamp, `ati-data`). Retired except for the run, the odometer and
   the road, which `after-the-ice.html` took over; the pool
   and the story graph are to be one database. Dates written `11 752 after the ice (1752)`
   with commas for now — the March date convention and `Spec-Timeline-Graph.md` §2 disagree
@@ -1092,8 +1099,20 @@ backstop for the Claude Code session that lands the file.
   event she taps here; *what I've seen* filters the World line and map to them and back.
   Layers by year: no last-glacial-maximum layer exists in `art/maps/` yet (the pyramid has
   today's ice and vegetation), so the map keeps today's ground; the page looks for a layer
-  named `ice-lgm` and notes its absence in the console. Tab icon `art/icons/map-icon-256.png`.
-  `CW_VERSION 2026-09-27 42f532b`. Hung nowhere; listed only in `experiments/index.html`.
+  named `ice-lgm` and notes its absence in the console.
+  **28 Sep, Michael's first use:** called *After the Ice* (title and index); the introduction
+  from `CWVault/claude/Story-After-the-Ice.md` above the lines as story text, in the 700 px
+  column ("mark" is written *dot*, what the bottom line draws; "between the line and the map"
+  kept, since the panel sits there); the count 22 px bold on one line with *years after the
+  ice*, and the gaps above and below the road closed up (road 232 px); each end of the window
+  has its own hold reaching 16 px past the window's edge and past the line's end, so the right
+  end can be taken with the window at full span, and at least 12 px of middle moves it however
+  narrow; *What I've seen* is a word at the right-hand end of the panel's date line (or of the
+  hint while nothing is selected), put back each time `timeline.js` rewrites the panel; the
+  panel has no heading, the label is its first sentence; dates known to a decade, century or
+  millennium are written round on both sides (*about 3,000 (7000 BC)*). Tab icon
+  `art/icons/after-the-ice-icon-a-256.png`. `CW_VERSION 2026-09-28 ffd1c54`. Hung nowhere;
+  listed only in `experiments/index.html`.
 - **`ruling-bench.html`** — bench: **does multiplication care how the grid is
   ruled?** The second of the review's step-3 benches, companion to
   `multiply-bench.html`, which stays the authority for everything the two share.
