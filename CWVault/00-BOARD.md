@@ -1038,8 +1038,9 @@ are read, never written.
   word on the panel's date line, the label as the panel's first sentence, two icon candidates
   (a, the copper dot, wired) — and his ruling on BC years: the true astronomer's year, 500 BC
   is −499.
-- **Next action:** Michael looks at it on curiouswoods.org, on the iPad with a finger, and
-  chooses icon (a) or (b). Open: on a 1024 × 768 screen the introduction pushes the lines
+- **Hung 28 Sep** on Michael's word: `active/after-the-ice.html`, in `stories/gallery.json` with icon (a), the copper
+  dot, as its drawn mark (frame `#3C5C83`, Claude's choice), `_redirects` from the experiments address.
+- **Next action:** Michael looks at it on the wall and on the iPad with a finger. Open: on a 1024 × 768 screen the introduction pushes the lines
   below the fold, so the run plays out of sight unless she scrolls.
 
 **Timeline Intro — After the Ice (7–8 Sep, two Cowork sessions; built as a bench).**

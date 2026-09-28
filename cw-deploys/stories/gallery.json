@@ -88,5 +88,14 @@
     "frame": "#5a4632",
     "frameWidth": 8,
     "size": "small"
+  },
+  {
+    "slug": "after-the-ice",
+    "title": "After the Ice",
+    "href": "active/after-the-ice.html",
+    "picture": "art/icons/after-the-ice-icon-a-256.svg",
+    "frame": "#3C5C83",
+    "frameWidth": 8,
+    "size": "medium"
   }
 ]

@@ -245,8 +245,7 @@ Ice's year 0 by definition. A holding place: the survivors join the shared list 
 Blurbs are still unsourced first drafts; images unfilled.
 `art/icons/after-the-ice-icon-a-256.png` and `-b-256.png` (28 Sep 2026) — two candidates for After the
 Ice, SVG beside each PNG, drawn in the house line on parchment: (a) the line in Payne's grey with a
-copper dot on it, (b) the line with the pale blue window on it. (a) is the page's tab icon; Michael
-chooses. PNGs drawn with PIL at four times the size and reduced, since no SVG renderer is installed.
+copper dot on it, (b) the line with the pale blue window on it. (a) is the page's tab icon and, since 28 Sep, its gallery picture (Michael: pick one, hang it). PNGs drawn with PIL at four times the size and reduced, since no SVG renderer is installed.
 `art/icons/brain-icon-256.png` — the watercolour brain at 256 px (13 Sep 2026), the main
 index's icon for About Your Brain; the first icon-as-link on the site. The page's own tab
 icon reads the same file (Safari on iPad ignores data-URI favicons, tested 13 Sep, so
@@ -1080,7 +1079,7 @@ backstop for the Claude Code session that lands the file.
   and the spec reports it; adopt `js/cw-number.js` before this leaves experiments.
   First commit 8 Sep (`433c148`). Spec:
   `CWVault/20-SPECS/Spec-Timeline-Intro.md`. Stands on nothing shared; standalone.
-- **`after-the-ice.html`** (27 Sep 2026) — bench: **After the Ice on the moving world.**
+- **`after-the-ice.html`** (27 Sep 2026) — bench: **After the Ice on the moving world.** **Hung 28 Sep 2026 on Michael's word: now `active/after-the-ice.html`**, with a `_redirects` pair from this address and a line in `stories/gallery.json` (the drawn mark `art/icons/after-the-ice-icon-a-256.svg`, frame Payne's grey `#3C5C83`, width 8, medium; the frame colour is Claude's choice, the Story's frontmatter left it TBD); `CW_VERSION 2026-09-28 8cf4513`. The entry stays here with the other benches' record.
   Twelve thousand years and the whole earth, no story text. Three lines and the map, per
   `CWVault/claude/Spec-Maps.md` *After the Ice, on the moving world*: the top line is the
   whole span, never rescaled, with a **window** on it — a pale band she drags, or drags by
@@ -1112,8 +1111,8 @@ backstop for the Claude Code session that lands the file.
   hint while nothing is selected), put back each time `timeline.js` rewrites the panel; the
   panel has no heading, the label is its first sentence; dates known to a decade, century or
   millennium are written round on both sides (*about 3,000 (7000 BC)*). Tab icon
-  `art/icons/after-the-ice-icon-a-256.png`. `CW_VERSION 2026-09-28 ffd1c54`. Hung nowhere;
-  listed only in `experiments/index.html`.
+  `art/icons/after-the-ice-icon-a-256.png`. `CW_VERSION 2026-09-28 ffd1c54`. Listed in
+  `experiments/index.html`, pointing at its `active/` address since it was hung.
 - **`ruling-bench.html`** — bench: **does multiplication care how the grid is
   ruled?** The second of the review's step-3 benches, companion to
   `multiply-bench.html`, which stays the authority for everything the two share.

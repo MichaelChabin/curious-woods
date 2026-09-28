@@ -35,3 +35,7 @@
 # Wordplay (the limerick puzzle) was read at its experiments address, then hung on 28 Sep 2026.
 /experiments/wordplay.html   /active/wordplay.html   301
 /experiments/wordplay        /active/wordplay.html   301
+
+# After the Ice was read at its experiments address, then hung on 28 Sep 2026.
+/experiments/after-the-ice.html   /active/after-the-ice.html   301
+/experiments/after-the-ice        /active/after-the-ice.html   301
