@@ -1,6 +1,8 @@
 // ============================================================
 // CW.createInfoPanel — the canvas info window, as a shared piece.
 // CW.createChoicePanel — the choice panel (controls pass, Aug 13).
+// CW.setWordPresent    — a column word present only when it can act
+//                        (lifted from Glass Geometry, 29 Sep 2026; Wordplay uses it too).
 //
 // Extracted from Glass Geometry's tip-window pattern (Phase 4
 // follow-up): a parchment window that floats over the canvas,
@@ -175,6 +177,22 @@ CW.createChoicePanel = function(opts) {
 
     document.body.appendChild(el);
     return api;
+};
+
+// A word is present only when tapping it would do something; it fades in
+// and out (Marauder's Map), and once faded it releases its space. The words
+// carry .absent from ../css/htw.css (opacity 0, no pointer).
+CW.setWordPresent = function(el, present) {
+    if (!el) return;
+    if (present) {
+        if (el.style.display === 'none') {
+            el.style.display = '';
+            requestAnimationFrame(function() { el.classList.remove('absent'); });
+        } else el.classList.remove('absent');
+    } else if (!el.classList.contains('absent')) {
+        el.classList.add('absent');
+        setTimeout(function() { if (el.classList.contains('absent')) el.style.display = 'none'; }, 420);
+    }
 };
 
 })();

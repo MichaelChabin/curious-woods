@@ -9,33 +9,60 @@
   wordplay.html — puzzle: Wordplay. A limerick's five lines wait, shuffled, under Ideas; she
   composes the poem by tapping them in order, and each is typed into its place. Built 28 Sep 2026
   from the mockup Michael used and said yes to (CWVault/claude/mockups/limerick-compose-mockup.html),
-  matching its behaviour and its words; the build prompt is CWVault/claude/Prompt-Build-Limerick-Puzzle.md
-  and the spec CWVault/claude/Limericks-Puzzle.md.
+  matching its behaviour and its words; the spec is CWVault/claude/Limericks-Puzzle.md.
+  29 Sep 2026: the controls moved into Glass Geometry's left column (The column and her poems):
+  How this works, Compose, Save and Share, and the commands Share, Add to my list, Show my
+  poems, Go to previous; her poems, with notes; a trail of this visit; no idea starts in its place.
+  The column's words are ../css/htw.css and fade through CW.setWordPresent; the two panels are
+  CW.createInfoPanel; both in ../js/cw-panel.js, shared with Glass Geometry so the two can't drift.
   The pool is ../stories/limericks.json (forty limericks, one record each); add a record to add
   a limerick. The Lear beard limerick is not in it: it lives in the Opening, on this page.
   Not a story page: no template-story.html, no check-story.sh. No Remember (maya: none).
   Pictures: ../art/stories/limericks/, Lear's own drawings from Internet Archive scans of A Book
   of Nonsense and More Nonsense (1872), public domain; sources in _CW/art-originals/limericks/SOURCES.md.
-  Her device only: five keys in localStorage (cw.wordplay.*), every call wrapped, nothing sent.
-  My list opens in the picker window (cwWindow in ../js/map.js). The postcard is kept in the
-  page: Geometry's renderPostcardPNG draws a construction and can't be used as it is.
+  Her device only: five keys in localStorage (cw.wordplay.*), every call wrapped, nothing sent;
+  the trail of this visit is never stored. The postcard is kept in the page: Geometry's
+  renderPostcardPNG draws a construction and can't be used as it is.
   Hung in active/ on 28 Sep 2026 (Publishing-a-Story, stage 4); the experiments address redirects.
 -->
 <title>Wordplay — Curious Woods</title>
+<link rel="stylesheet" href="../css/htw.css?v=2026-09-29">
 <style>
   :root {
     --desk: #d8ccb4; --sheet: #f3e7c9; --ink: #33261a; --pencil: #5e4c38;
     --faded: #7d6a52; --rule: rgba(120, 90, 50, .10);
     --word: #546A80; --word-hover: #3d5266;   /* Payne's grey: the words that do things */
+    --col: 200px;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--desk); color: var(--ink);
          font-family: Georgia, "Iowan Old Style", serif; }
-  main { max-width: 680px; margin: 0 auto; padding: 20px 16px 60px; }
+  main { max-width: calc(700px + var(--col)); margin: 0 auto; padding: 28px 16px 60px calc(28px + var(--col)); }
 
-  .topbar { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 12px; min-height: 1.6em; }
-  .backarrow { font-size: 1.6rem; line-height: 1; color: var(--word); text-decoration: none; padding: 2px 8px 2px 0; }
-  .backarrow:hover { color: var(--word-hover); }
+  /* the column: a pale strip down the left edge, its words Glass Geometry's (../css/htw.css) */
+  #htw-panel { position: fixed; left: 0; top: 0; bottom: 0; width: var(--col); padding: 22px 16px; z-index: 20;
+               user-select: none; -webkit-user-select: none; background: #f7f4ec; border-right: 0.5px solid #d6c9ad; }
+  #htw-panel .cwhome { display: block; font-family: Georgia, serif; font-size: 15px; font-weight: bold; color: #546A80;
+                       text-decoration: none; margin: 0 0 22px; transition: color 80ms; }
+  #htw-panel .cwhome:hover { color: #3D3D3A; }
+  #htw-panel-list { margin: 6px 0 0; padding: 0; list-style: none; }
+  #htw-panel .htw-item, #htw-panel .htw-action-word { cursor: pointer; }
+  #htw-panel .htw-item[data-panel="save"] { margin-bottom: 16px; }   /* the commands sit a little apart from the items */
+  /* a row whose word has faded out gives its space back (CW.setWordPresent sets display: none) */
+  #htw-panel .htw-action-row:has(> .htw-action-word[style*="none"]) { display: none; }
+  /* Add to my list, once the poem is on it: "On my list", greyed (Michael, 29 Sep). The one grey
+     word in the column; Geometry's words never grey. */
+  #htw-panel .htw-action-word.quiet { color: #a39a8c; pointer-events: none; }
+  @media (max-width: 760px) {
+    :root { --col: 0px; }
+    #htw-panel { position: static; width: auto; padding: 14px 16px 12px; border-right: 0; border-bottom: 0.5px solid #d6c9ad; }
+    #htw-panel .cwhome { margin: 0 0 10px; }
+    #htw-panel-list { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+    #htw-panel .htw-item, #htw-panel .htw-action-row { margin-top: 6px; }
+    #htw-panel .htw-item[data-panel="save"] { margin-bottom: 0; }
+    #htw-panel .htw-action-row { padding-left: 0; }
+    main { padding: 16px 16px 60px; }
+  }
 
   /* the parchment */
   .sheet {
@@ -61,10 +88,13 @@
   .drawing img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
   .bg { color: var(--faded); font-size: 1rem; line-height: 1.5; margin: 0 0 26px; }
   .title { font-size: 1.4rem; font-weight: bold; min-height: 1.9rem; line-height: 1.9rem; margin: 0 0 14px; }
+  /* Give it a title gets out of the way: tapped, the words go and only the cursor and the
+     faint line are left; tapped away with nothing typed, the words come back */
   .title-input { font: inherit; font-size: 1.4rem; font-weight: bold; color: var(--ink); width: 100%;
           background: transparent; border: 0; border-bottom: 1px dashed transparent; border-radius: 0; padding: 0; outline: none; }
   .title-input::placeholder { color: var(--word); font-weight: bold; font-size: 1rem; opacity: 1; }
-  .title-input:focus { border-bottom-color: rgba(120,90,50,.35); }
+  .title-input:focus { border-bottom-color: rgba(120,90,50,.35); caret-color: var(--ink); }
+  .title-input:focus::placeholder { color: transparent; }
 
   /* the poem being written. A line too long for the sheet (Japan's last) wraps. */
   .slot { font-size: 1.28rem; line-height: 1.55; min-height: 1.55em; transition: padding-left .35s ease; }
@@ -94,19 +124,26 @@
           cursor: pointer; transition: opacity .35s, transform .35s; }
   .idea:hover { color: var(--ink); }
   .idea.gone { opacity: 0; transform: translateY(-6px); pointer-events: none; }
-  .ideas .word { margin-top: 8px; }
   .ideas-area.empty { display: none; }
+
+  /* her poems: no ideas; Notes and Remove from my list under the credit */
+  .mine-area { display: none; margin-top: 22px; }
+  .mine .mine-area { display: block; }
+  .mine .ideas-area { display: none !important; }
+  .mine-area label { display: block; font-size: .9rem; color: var(--faded); margin: 0 0 6px; }
+  .mine-area textarea { width: 100%; min-height: 90px; font: inherit; font-size: 1rem; color: var(--ink); background: rgba(255,255,255,.3);
+          border: 1px solid rgba(120,90,50,.25); border-radius: 3px; padding: 10px; resize: vertical; }
+  .mine-area .word { margin-top: 10px; }
 
   .words { display: flex; justify-content: space-between; align-items: baseline; margin-top: 22px; gap: 16px; flex-wrap: wrap; }
   .word { font: inherit; font-weight: bold; font-size: 1rem; color: var(--word); background: none; border: 0;
           padding: 4px 0; cursor: pointer; }
   .word:hover { color: var(--word-hover); text-decoration: underline; text-underline-offset: 4px; }
   .word[hidden] { display: none; }
-  .finish-row { display: flex; justify-content: center; gap: 36px; flex-wrap: wrap; margin-top: 18px; min-height: 1.6em; }
   .quiet { color: var(--faded); font-style: italic; }
 
   /* the postcard window */
-  .back { position: fixed; inset: 0; background: rgba(40,28,16,.45); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
+  .back { position: fixed; inset: 0; background: rgba(40,28,16,.45); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 600; }
   .back.open { display: flex; }
   .card { background: var(--sheet); max-width: 560px; width: 100%; max-height: 92vh; overflow: auto; padding: 22px; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
   .card label { display: block; font-weight: bold; color: var(--word); margin: 0 0 6px; }
@@ -114,23 +151,23 @@
           background: rgba(255,255,255,.35); border: 1px solid rgba(120,90,50,.3); border-radius: 3px; padding: 10px; resize: vertical; }
   .card img { width: 100%; display: block; margin: 16px 0 6px; box-shadow: 0 2px 8px rgba(60,40,20,.25); }
   .card .words { margin-top: 12px; }
-
-  /* My list, in the picker window */
-  .mylist { width: 460px; max-width: 100%; font-family: Georgia, serif; }
-  .mylist h2 { font-weight: normal; font-size: 1.3rem; margin: 12px 0 6px; color: var(--ink); }
-  .mylist-item { display: block; width: 100%; text-align: left; font: inherit; font-size: 1.05rem; color: var(--ink);
-          background: none; border: 0; border-bottom: 1px solid rgba(120,90,50,.18); padding: 12px 0; cursor: pointer; }
-  .mylist-item span { display: block; color: var(--faded); font-style: italic; font-size: .9rem; margin-top: 2px; }
-  .mylist-item span i { font-style: normal; }
-  .mylist-item:hover { color: var(--word); }
 </style>
 </head>
 <body>
+<nav id="htw-panel">
+  <a class="cwhome" href="../index.html">The Curious Woods</a>
+  <span id="htw-panel-heading">How this works</span>
+  <ul id="htw-panel-list">
+    <li class="htw-item" data-panel="compose">Compose</li>
+    <li class="htw-item" data-panel="save">Save and Share</li>
+    <li class="htw-action-row"><span class="htw-action-word absent" id="cmdShare" style="display:none">Share</span></li>
+    <li class="htw-action-row"><span class="htw-action-word absent" id="cmdAdd" style="display:none">Add to my list</span></li>
+    <li class="htw-action-row"><span class="htw-action-word absent" id="cmdMine" style="display:none">Show my poems</span></li>
+    <li class="htw-action-row"><span class="htw-action-word absent" id="cmdPrev" style="display:none">Go to previous</span></li>
+  </ul>
+</nav>
+
 <main>
-  <div class="topbar">
-    <a class="backarrow" id="goBack" href="../index.html" aria-label="Back">&larr;</a>
-    <button class="word" id="myList" hidden>My list</button>
-  </div>
   <div class="sheet" id="sheet">
 
     <div class="intro" id="opening" hidden>
@@ -161,19 +198,16 @@
         <div class="ideas">
           <div class="ideas-label">Ideas<span class="hint" id="hint" hidden>(tap the line you think comes next)</span></div>
           <div id="ideaList"></div>
-          <button class="word" id="nextLine">Next line, please</button>
         </div>
       </div>
 
-      <div class="words">
-        <button class="word" id="scramble" hidden>Write it again</button>
-        <span></span>
-        <button class="word" id="another">Another one</button>
+      <div class="mine-area">
+        <label for="notes">Notes:</label>
+        <textarea id="notes"></textarea>
+        <button class="word" id="remove">Remove from my list</button>
       </div>
-      <div class="finish-row">
-        <button class="word" id="postcard" hidden>Share Postcard</button>
-        <button class="word" id="keep" hidden>Keep on my list</button>
-      </div>
+
+      <div class="words"><span></span><button class="word" id="next">Next</button></div>
     </div>
 
     <p class="quiet" id="failed" hidden>The limericks didn&rsquo;t load. Try again in a moment.</p>
@@ -197,11 +231,11 @@
 </div>
 
 <script src="../js/cw-flags.js?v=2026-09-21"></script>
-<script src="../js/map.js?v=2026-09-27i"></script>
+<script src="../js/cw-panel.js?v=2026-09-29"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-28 7561c4c';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-29 6cc2863';   // date + short commit hash; bump in the same commit as any change
   console.log('wordplay', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
   // Remember is not summoned on this page (maya: none), so the flag changes nothing here.
@@ -210,7 +244,7 @@
   const poemEl = $("poem"), sheet = $("sheet"), titleEl = $("title");
 
   /* ---- her device, and nothing else. Five keys; every call wrapped, so the page works without
-     storage (she then sees the Opening each visit and her list lasts only the visit). ---- */
+     storage (she then sees the Opening each visit and her poems last only the visit). ---- */
   const KEY = { opening: "cw.wordplay.openingSeen", done: "cw.wordplay.done", recent: "cw.wordplay.recent",
                 kept: "cw.wordplay.kept", titles: "cw.wordplay.titles" };
   const mem = {};   // stands in when storage is blocked
@@ -224,11 +258,15 @@
   }
   let doneCount = +load_(KEY.done, 0) || 0;          // how many she has finished (for the reminder, the leaning)
   let recent = load_(KEY.recent, []);                // the last few she saw (for the order)
-  let kept = load_(KEY.kept, []);                    // her list, by id
   let herTitles = load_(KEY.titles, {});             // titles she gave, by id
+  // Her poems: { id, order (the five line numbers as she placed them), notes }. On 28 Sep the
+  // list held bare ids; those come back in the poem's own order with no notes.
+  let kept = load_(KEY.kept, []);
   if (!Array.isArray(recent)) recent = [];
-  if (!Array.isArray(kept)) kept = [];
   if (!herTitles || typeof herTitles !== "object") herTitles = {};
+  if (!Array.isArray(kept)) kept = [];
+  kept = kept.map(k => typeof k === "string" ? { id: k, order: [0, 1, 2, 3, 4], notes: "" } : k)
+             .filter(k => k && typeof k.id === "string" && Array.isArray(k.order) && k.order.length === 5);
 
   const HINT_FOR = 3;        // the reminder beside IDEAS for her first three limericks
   const EASY_FOR = 5;        // the order leans toward easy ones for her first five
@@ -237,6 +275,8 @@
 
   let POEMS = [], byId = {};
   let cur = null, filled = [], done = false;
+  let view = "opening";      // "opening" or "poem"
+  let mode = "new";          // "new": composing new poems; "mine": looking at her own
 
   /* ---- sounds: the bell and the keys ---- */
   let audio, noise;
@@ -309,6 +349,15 @@
     for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
     return a;
   }
+  // No idea starts in its own place: no line sits in the stack at the position it takes in the
+  // poem, and neither line of a swap pair sits at either of the pair's positions. 44 of the 120
+  // orders of five lines qualify; 24 with a swap pair. Reshuffle until the order does.
+  function deranged(swap) {
+    const idx = [0, 1, 2, 3, 4];
+    let a;
+    do { a = shuffled(idx); } while (a.some((j, i) => j === i || (swap && swap.includes(i) && swap.includes(j))));
+    return a;
+  }
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function creditHTML(s) { return esc(s).replace(/\*(.+?)\*/g, "<i>$1</i>"); }
 
@@ -337,15 +386,24 @@
     save_(KEY.recent, recent);
   }
 
-  function load(p, whole) {
+  function show(which) {
+    view = which;
+    $("opening").hidden = which !== "opening";
+    $("puzzle").hidden = which !== "poem";
+    commands();
+  }
+
+  // Load a limerick. `order`, when given, shows it whole in that arrangement (a finished poem
+  // coming back, or one of hers); without it the ideas are dealt and she composes.
+  function load(p, order) {
     clearTimeout(timer); queue.length = 0; active = null;
     cur = p; filled = []; done = false;
     sawIt(p.id);
+    sheet.classList.toggle("mine", mode === "mine");
     $("bg").textContent = p.intro || ""; $("bg").hidden = !p.intro;
     titleEl.textContent = ""; titleEl.className = "title";
     $("credit").innerHTML = creditHTML(p.credit);
     $("swapnote").className = "swapnote"; $("swapnote").innerHTML = "";
-    $("postcard").hidden = true; $("keep").hidden = true; $("scramble").hidden = true; $("nextLine").hidden = false;
     $("hint").hidden = doneCount >= HINT_FOR;
     sheet.classList.remove("done");
     poemEl.innerHTML = "";
@@ -355,19 +413,23 @@
       poemEl.appendChild(s);
     }
     const list = $("ideaList"); list.innerHTML = "";
-    if (whole) {
-      p.lines.forEach((t, i) => { poemEl.children[i].textContent = t; filled.push(i); });
+    show("poem");
+    if (order) {
+      order.forEach((j, i) => { poemEl.children[i].textContent = p.lines[j]; filled.push(j); });
       $("ideasArea").classList.add("empty");
-      done = true; showFinished(); showTitle(); return;
+      done = true; sheet.classList.add("done"); showTitle();
+      if (mode === "mine") $("notes").value = (keptItem(p.id) || {}).notes || "";
+      commands(); return;
     }
     $("ideasArea").classList.remove("empty");
-    shuffled(p.lines.map((t, i) => i)).forEach(j => {
+    deranged(swapOf(p)).forEach(j => {
       const b = document.createElement("button");
       b.className = "idea"; b.textContent = p.lines[j]; b.dataset.j = j;
       b.addEventListener("click", () => pick(b));
       list.appendChild(b);
     });
     showCursor();
+    commands();
   }
 
   /* ---- picking an idea: it has to be the next line (or one that works just as well there) ---- */
@@ -388,24 +450,16 @@
     b.classList.add("gone");
     setTimeout(() => b.remove(), 380);
     typeInto(poemEl.children[k], cur.lines[j]);
-    if (filled.length === 5) { done = true; $("nextLine").hidden = true; }
+    if (filled.length === 5) done = true;
   }
-  $("nextLine").addEventListener("click", () => {
-    wakeAudio();
-    const k = filled.length; if (k >= 5 || done) return;
-    // the line the original has here, unless it's already been used in a swapped place
-    let j = k;
-    if (filled.includes(j)) j = swapOf(cur).find(x => !filled.includes(x));
-    const b = [...document.querySelectorAll(".idea")].find(e => +e.dataset.j === j && !e.classList.contains("gone"));
-    if (b) pick(b);
-  });
 
   function finishIfDone() {
     if (!done || sheet.classList.contains("done")) return;
     $("ideasArea").classList.add("empty");
     doneCount++; save_(KEY.done, doneCount);
-    showFinished();
+    sheet.classList.add("done");
     showTitle();
+    commands();
     ding();
     // if she put two lines the other way round from the original, say so
     const sw = swapOf(cur);
@@ -439,47 +493,104 @@
   }
   function titleOf(p) { return p.title || herTitles[p.id] || ""; }
 
-  /* ---- her list ---- */
-  function isKept(p) { return kept.includes(p.id); }
-  function showFinished() {
-    sheet.classList.add("done");
-    $("postcard").hidden = false; $("keep").hidden = false; $("scramble").hidden = false;
-    $("keep").textContent = isKept(cur) ? "Take it off my list" : "Keep on my list";
+  /* ---- the column's commands: present only when they can do something, fading in and out
+     as Glass Geometry's words do (CW.setWordPresent) ---- */
+  function keptItem(id) { return kept.find(k => k.id === id); }
+  function commands() {
+    const poem = view === "poem" && cur;
+    const finished = poem && sheet.classList.contains("done");
+    CW.setWordPresent($("cmdShare"), !!finished);
+    const onList = !!(cur && keptItem(cur.id));
+    CW.setWordPresent($("cmdAdd"), !!(finished && mode === "new"));
+    $("cmdAdd").textContent = onList ? "On my list" : "Add to my list";
+    $("cmdAdd").classList.toggle("quiet", onList);
+    CW.setWordPresent($("cmdMine"), kept.length > 0);
+    $("cmdMine").textContent = mode === "mine" ? "Show new poems" : "Show my poems";
+    CW.setWordPresent($("cmdPrev"), trail.length > 0);
   }
-  function showListWord() { $("myList").hidden = !kept.some(id => byId[id]); }
-  $("keep").addEventListener("click", () => {
-    if (isKept(cur)) kept = kept.filter(id => id !== cur.id); else kept = kept.concat(cur.id);
+  $("cmdShare").addEventListener("click", openPostcard);
+  $("cmdAdd").addEventListener("click", () => {
+    if (!cur || !done || keptItem(cur.id)) return;
+    kept = kept.concat({ id: cur.id, order: filled.slice(), notes: "" });   // as she composed it
     save_(KEY.kept, kept);
-    $("keep").textContent = isKept(cur) ? "Take it off my list" : "Keep on my list";
-    showListWord();
+    commands();
   });
-  $("myList").addEventListener("click", () => {
-    const box = document.createElement("div"); box.className = "mylist";
-    const h = document.createElement("h2"); h.textContent = "My list"; box.appendChild(h);
-    let win = null;
-    kept.filter(id => byId[id]).forEach(id => {
-      const p = byId[id];
-      const b = document.createElement("button");
-      b.className = "mylist-item";
-      b.innerHTML = esc(titleOf(p) || p.lines[0].replace(/[,;:]$/, "")) + "<span>" + creditHTML(p.credit) + "</span>";
-      b.addEventListener("click", () => { if (win) win.close(); show("puzzle"); load(p, true); window.scrollTo(0, 0); });
-      box.appendChild(b);
-    });
-    win = cwWindow(box);
-  });
-  $("scramble").addEventListener("click", () => { wakeAudio(); load(cur); });
-  $("another").addEventListener("click", () => { wakeAudio(); load(nextPoem()); });
-
-  // back to the page she came from, or the gallery if there is none
-  $("goBack").addEventListener("click", e => {
-    let same = false;
-    try { same = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (err) {}
-    if (same && history.length > 1) { e.preventDefault(); history.back(); }
+  $("cmdMine").addEventListener("click", () => {
+    wakeAudio();
+    leave();
+    if (mode === "new" && kept.length) { mode = "mine"; showMine(kept[0].id); }
+    else { mode = "new"; load(nextPoem()); }
+    window.scrollTo(0, 0);
   });
 
-  /* ---- Share Postcard: her note, the picture if she adds it, the title, the poem as she wrote
-     it, its credit. Glass Geometry's Postcard is the model: the share sheet where the browser has
-     one, a download where it doesn't. ---- */
+  /* ---- her poems, one at a time: whole, as she composed them, with her title (which she can
+     change) and her notes ---- */
+  function showMine(id) {
+    const k = keptItem(id); if (!k || !byId[id]) return;
+    mode = "mine";
+    load(byId[id], k.order);
+  }
+  $("notes").addEventListener("input", () => {
+    const k = cur && keptItem(cur.id); if (!k) return;
+    k.notes = $("notes").value; save_(KEY.kept, kept);
+  });
+  $("remove").addEventListener("click", () => {
+    const at = kept.findIndex(k => k.id === cur.id); if (at < 0) return;
+    kept = kept.filter(k => k.id !== cur.id); save_(KEY.kept, kept);
+    if (!kept.length) { mode = "new"; load(nextPoem()); }
+    else showMine(kept[at % kept.length].id);
+    window.scrollTo(0, 0);
+  });
+
+  /* ---- Next: a new poem, or her next one ---- */
+  $("next").addEventListener("click", () => {
+    wakeAudio(); leave();
+    if (mode === "mine") {
+      const at = kept.findIndex(k => k.id === cur.id);
+      showMine(kept[(at + 1) % kept.length].id);
+    } else load(nextPoem());
+    window.scrollTo(0, 0);
+  });
+
+  /* ---- Go to previous: the trail of this visit, never stored. A finished limerick comes back
+     whole, as she composed it; an unfinished one comes back freshly scrambled. ---- */
+  const trail = [];
+  function leave() {
+    if (view === "opening") trail.push({ opening: true });
+    else if (cur) trail.push({ id: cur.id, mode, order: done ? filled.slice() : null });
+  }
+  $("cmdPrev").addEventListener("click", () => {
+    wakeAudio();
+    const v = trail.pop(); if (!v) return;
+    if (v.opening) { mode = "new"; sheet.classList.remove("mine"); show("opening"); }
+    else if (v.mode === "mine" && keptItem(v.id)) showMine(v.id);
+    else { mode = "new"; load(byId[v.id], v.order || undefined); }
+    window.scrollTo(0, 0);
+  });
+
+  /* ---- How this works: two small panels she can drag and close (Glass Geometry's tip
+     window, CW.createInfoPanel in ../js/cw-panel.js) ---- */
+  const PANELS = {
+    compose: ["The lines of your poem are in a jumbled stack below the word IDEAS. Find the first line and tap it. It will be typed on the sheet. Do the same with the next line and each line that follows.",
+              "When it is complete, you can give it a title."],
+    save: ["To add this poem to your list of favorites, tap <em>Add to my list</em>.",
+           "You can see your list by tapping <em>Show my poems</em>.",
+           "To share your poem as a postcard, tap <em>Share</em>."],
+  };
+  const tip = CW.createInfoPanel({ width: 230 });
+  document.querySelectorAll("#htw-panel .htw-item").forEach(li => li.addEventListener("click", () => {
+    tip.body.innerHTML = PANELS[li.dataset.panel].map(t => "<p style='margin:0 0 9px'>" + t + "</p>").join("");
+    if (!tip.userMoved() || !tip.visible()) {
+      const r = li.getBoundingClientRect();
+      if (innerWidth > 760) tip.setPosition(Math.min(r.right + 16, innerWidth - 246), Math.max(12, r.top - 10));
+      else tip.setPosition(Math.max(8, (innerWidth - 230) / 2), r.bottom + 12);
+    }
+    tip.show();
+  }));
+
+  /* ---- Share: the postcard. Her note, the picture if she adds it, the title, the poem as she
+     wrote it, its credit. Glass Geometry's Postcard is the model: the share sheet where the
+     browser has one, a download where it doesn't. ---- */
   let pic = null, cardBlob = null, cardGen = 0;
   function wrapWords(ctx, words, maxW, fontOf) {
     // words: [{ w, it, glue }] — lines of words, each measured in its own font
@@ -582,10 +693,11 @@
     cardBlob = null;
     c.toBlob(b => { if (gen === cardGen) cardBlob = b; }, "image/png");
   }
-  $("postcard").addEventListener("click", () => {
+  function openPostcard() {
+    if (!cur || !done) return;
     pic = null; $("dropPic").hidden = true; $("addPic").hidden = !cur.picture;
     $("back").classList.add("open"); refresh();
-  });
+  }
   $("close").addEventListener("click", () => $("back").classList.remove("open"));
   $("note").addEventListener("input", refresh);
   $("addPic").addEventListener("click", () => {
@@ -618,14 +730,11 @@
   });
 
   /* ---- start ---- */
-  function show(which) {
-    $("opening").hidden = which !== "opening";
-    $("puzzle").hidden = which !== "puzzle";
-  }
   $("openingNext").addEventListener("click", () => {
     wakeAudio();
     save_(KEY.opening, true);
-    show("puzzle");
+    leave();
+    mode = "new";
     const niger = byId.niger || POEMS[0];
     newDeck(); deck = deck.filter(id => id !== niger.id);
     load(niger);
@@ -638,9 +747,9 @@
       POEMS = (doc.limericks || []).filter(p => p && p.id && Array.isArray(p.lines) && p.lines.length === 5);
       POEMS.forEach(p => { byId[p.id] = p; });
       if (!POEMS.length) throw new Error("empty");
-      showListWord();
-      if (!load_(KEY.opening, false)) { show("opening"); }
-      else { show("puzzle"); load(nextPoem()); }
+      kept = kept.filter(k => byId[k.id]);
+      if (!load_(KEY.opening, false)) show("opening");
+      else load(nextPoem());
     })
     .catch(() => { $("failed").hidden = false; });
 })();

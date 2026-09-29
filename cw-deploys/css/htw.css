@@ -1,0 +1,15 @@
+/* htw.css — the left column's words, as Glass Geometry draws them: the How this works heading,
+   the bulleted items, and the italic action words that fade in and out. Lifted verbatim from
+   active/glass-geometry.html on 29 Sep 2026 so Wordplay's column is Geometry's and the two can't
+   drift; both pages load it. Where the column sits is each page's own business. */
+#htw-panel-heading { display: block; font-family: Georgia, serif; font-size: 14px; color: #546A80; font-weight: normal; cursor: default; transition: color 80ms; line-height: 1; }
+#htw-panel-heading:hover { color: #3D3D3A; }
+.htw-item { display: block; font-family: Georgia, serif; font-size: 13px; color: #546A80; padding-left: 12px; cursor: default; transition: color 80ms; line-height: 1; margin-top: 8px; position: relative; }
+.htw-item::before { content: '\2022'; position: absolute; left: 0; }
+.htw-item:hover { color: #3D3D3A; }
+.htw-action-row { display: flex; gap: 14px; margin-top: 8px; padding-left: 12px; }
+.htw-action-word { font-family: Georgia, serif; font-size: 13px; font-style: italic; color: #546A80; cursor: default; transition: color 80ms, opacity 400ms ease-in-out; }
+.htw-action-word:hover { color: #3D3D3A; }
+/* Conditional presence (ledger §14): a word is present only when tapping
+   it would do something; it fades in and out, never greys. */
+.htw-action-word.absent { opacity: 0; pointer-events: none; }

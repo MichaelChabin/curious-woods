@@ -137,6 +137,10 @@ whose map has Europe as a card, pins it back with `place: 'europe'` in its pick.
 `art/stories/vermeer/lapis-stone.jpg`, `art/stories/vermeer/ultramarine-powder.jpg`, `art/stories/vermeer/vermeer-turban-detail.jpg` — that stack's
 three pictures (the stone from Sar-e-Sang, James St. John, CC BY 2.0; the powder, Commons, public
 domain; the turban cropped from our own scan).
+**`css/htw.css` (29 Sep 2026)** — the left column's words as Glass Geometry draws them: the *How
+this works* heading, the bulleted items, the italic action words and their `.absent` fade. Lifted
+verbatim out of `active/glass-geometry.html`'s inline style so Wordplay's column is Geometry's and
+the two cannot drift; both pages load it. Where the column sits stays each page's own rule.
 **`css/story.css` (22 Sep 2026)** — how every story page looks: the shell, the reading
 column, the left column (margin pictures and the tools' words), full-width pictures, the colour
 readout, the phone and tablet rules. A page sets only `--aspect` (its main picture's shape) and
@@ -182,7 +186,11 @@ as components: the info window (draggable, closable, fading — Geometry's
 tip-window pattern; used by Multiplication's number description) and, since
 the controls build (13 Aug), the **choice panel** — an occasional act's
 outcomes as words with recipe lines, taking one choice and fading; used by
-both labs for Save, and by Geometry for the WIP guard and replay Cancel.
+both labs for Save, and by Geometry for the WIP guard and replay Cancel. Since 29 Sep 2026 it also holds
+`CW.setWordPresent` — a column word present only when it can act, fading in and out and giving
+its space back — lifted verbatim from Geometry so Wordplay's commands behave as Geometry's do;
+Geometry's own `setWordPresent` now calls it. Both labs load it at `?v=2026-09-29`; Wordplay too, for
+the info window (its Compose and Save and Share panels) and the fading words.
 
 **`art/` `models/` `stories/` `text/`** — assets, at the root of this folder.
 Pages in `active/` and `experiments/` reach them with `../` —
@@ -550,37 +558,48 @@ backstop for the Claude Code session that lands the file.
 
 ### active/
 - **`wordplay.html`** — **puzzle: Wordplay** (28 Sep 2026; Claude Code, from
-  `CWVault/claude/Prompt-Build-Limerick-Puzzle.md`). Read at its experiments address and **hung 28 Sep 2026** on Michael's word (stage 4): moved to `active/`,
-  the old address redirected in `_redirects`, in `gallery.json` as **Wordplay**. A gallery puzzle, not a story page: no
-  `template-story.html`, no `check-story.sh`. Built from the composing mockup Michael used and said yes to
-  (`CWVault/claude/mockups/limerick-compose-mockup.html`), matching its behaviour and words; replaces the
-  dragging build of 27 Sep (`limericks.html`, never committed, deleted). Reads `../stories/limericks.json`.
-  **The Opening**, a page of its own the first time on a device: the Lear text as the spec gives it, his
-  beard drawing, the beard limerick, the line about *Ideas*, and *Next* at the bottom right, which brings
-  Niger. **Each limerick:** its `intro` at the top in the faded type, a line kept for the title, the poem,
-  the credit; the five lines shuffled under IDEAS at the bottom right, smaller and italic, with
-  "(tap the line you think comes next)" beside the label for her first three. She taps the next line; it
-  fades and is typed into its place with the cursor and synthesized keys, one line at a time, lines 3 and 4
-  indented. A wrong tap does nothing (`wrongTap()` is the empty place for Michael's possible shake); a
-  `swap` pair goes in either order, and if she reverses it the mockup's note says so. *Next line, please*
-  taps the next line for her. Whole: the bell after the last line is typed, the credit fades in, the
-  title (the poem's, or *Give it a title*, a plain field saved as she types), then *Write it again* /
-  *Another one* and *Share Postcard* / *Keep on my list*. **Order:** after the Opening and Niger, a fresh
-  shuffle each visit with the six she saw last at the back, never the same twice in a row; while she has
-  finished fewer than five, the next one is an easy one three times in four. Nothing gated. **Postcard:**
-  Geometry's model (share sheet, download where there is none or it is refused, quiet on cancel), kept in the
-  page; the card from the top: her note, the limerick's picture if she added it (only a record with a
-  `picture` offers *Add the picture*), the title, the poem as she composed it, its credit; drawn before
-  *Send* so Safari opens the sheet. No upload. **Her list:** *Keep on my list* / *Take it off my list*; *My
-  list*, top right once the list has anything, opens the picker window (`cwWindow` from `../js/map.js`,
-  loaded for that alone), each kept limerick by title (hers or its own) or else its first line, credit
-  under; tapping one opens it whole, with *Write it again*. **The ← at top left** goes back when she came
-  from a page on this site, else to the gallery; the first back arrow on any page. **Her device:** five
-  `localStorage` keys, `cw.wordplay.openingSeen`, `.done`, `.recent`, `.kept`, `.titles`, every call
-  wrapped; with storage blocked the page works and remembers for the visit only (tested). Words that do
-  things are Payne's grey `#546A80`, hover `#3d5266`. No Remember (`maya: none`), no on-page keyboard, no
-  *Say it*, no trick notes beyond the two intros. Tab icon `art/icons/wordplay-icon-256.png`; gallery
-  picture `art/gallery/wordplay-gallery.svg`, frame `#5a4632`, 8, small, on the wall.
+  `CWVault/claude/Prompt-Build-Limerick-Puzzle.md`). Read at its experiments address and **hung 28 Sep 2026**
+  on Michael's word (stage 4): moved to `active/`, the old address redirected in `_redirects`, in
+  `gallery.json` as **Wordplay**. A gallery puzzle, not a story page: no `template-story.html`, no
+  `check-story.sh`. Built from the composing mockup Michael used and said yes to
+  (`CWVault/claude/mockups/limerick-compose-mockup.html`). Reads `../stories/limericks.json`.
+  **The Opening**, a page of its own the first time on a device: the Lear text as the spec gives it,
+  his beard drawing, the beard limerick, the line about *Ideas*, and *Next*, which brings Niger.
+  **Each limerick:** its `intro` at the top in the faded type, a line kept for the title, the poem,
+  the credit; the five lines under IDEAS at the bottom right, smaller and italic, dealt so that no
+  line starts at its own place and neither line of a swap pair at either of the pair's places (44
+  of the 120 orders; 24 with a swap pair), with "(tap the line you think comes next)" beside the
+  label for her first three. She taps the next line; it fades and is typed in with the cursor and
+  synthesized keys, one line at a time, lines 3 and 4 indented. A wrong tap does nothing
+  (`wrongTap()` is the empty place for a possible shake); a `swap` pair goes in either order, and a
+  reversed pair gets the mockup's note. Whole: the bell after the last line is typed, the credit,
+  the title (the poem's, or *Give it a title*, a plain field saved as she types, whose words vanish
+  when she taps it and come back if she leaves it empty). *Next* at the bottom right.
+  **The column (29 Sep 2026, *The column and her poems*):** a pale strip down the left edge
+  (`#f7f4ec`, hairline `#d6c9ad`), a band across the top on a phone: **The Curious Woods** (bold, to
+  the gallery), *How this works*, the items **Compose** and **Save and Share** (each opens Geometry's
+  tip window, `CW.createInfoPanel`, with Michael's text; drag and close), and the commands *Share*,
+  *Add to my list*, *Show my poems*, *Go to previous*, each present only when it can act
+  (`CW.setWordPresent`), in Geometry's look (`../css/htw.css`). *Add to my list* keeps the poem as
+  she composed it and then reads *On my list*, greyed (the one grey word; Michael's choice).
+  **Her poems:** *Show my poems* becomes *Show new poems* and the page shows only her poems, whole,
+  as composed, with her title (editable), no ideas, **Notes:** and a box kept with the poem, and
+  *Remove from my list*; the last removed returns to new poems. *Next* there is her next poem.
+  **Go to previous** walks back through this visit's trail (the Opening, and each limerick with her
+  arrangement if she finished it): a finished one comes back whole with her title, an unfinished one
+  freshly scrambled. The trail is never stored. Gone on 29 Sep: the ← arrow, *My list* and its window,
+  *Keep on my list*, *Share Postcard*, *Write it again*, *Another one*, *Next line, please*.
+  **Order:** after the Opening and Niger, a fresh shuffle each visit with the six she saw last at the
+  back, never the same twice in a row; while she has finished fewer than five, the next is an easy one
+  three times in four. **Share** is the postcard: Geometry's model (share sheet, download where there
+  is none or it is refused, quiet on cancel), kept in the page; the card from the top: her note, the
+  limerick's picture if she added it (only a record with a `picture` offers *Add the picture*), the
+  title, the poem as she composed it, its credit. **Her device:** five `localStorage` keys,
+  `cw.wordplay.openingSeen`, `.done`, `.recent`, `.kept` (her poems: id, order, notes; the bare ids of
+  28 Sep are read as the poem's own order), `.titles`, every call wrapped; with storage blocked it
+  works and remembers for the visit only (tested). No Remember (`maya: none`), no on-page keyboard,
+  no *Say it*. Tab icon `art/icons/wordplay-icon-256.png`; gallery picture
+  `art/gallery/wordplay-gallery.svg`, frame `#5a4632`, 8, small, on the wall.
 - **`have-you-thought-of-a-story.html`** — **story: Have You Thought of a Story?** (26 Sep
   2026). Built and read at `experiments/`, **hung 26 Sep 2026** on Michael's word (stage 4): moved
   to `active/`, the old address redirected in `_redirects`, in `gallery.json` as **The Birth of
