@@ -1,5 +1,5 @@
 ---
-status: 15 Sept 2026. A prompt for any chat that writes or revises a CW story. Paste it whole, after What-CW-Is.md. Written from what worked in The Man Who Learned Without Knowing and Three at a Glance, and from what the fresh-eyes read caught.
+status: 15 Sept 2026; amended 25 Sept (Room). A prompt for any chat that writes or revises a CW story. Paste it whole, after What-CW-Is.md. Written from what worked in The Man Who Learned Without Knowing and Three at a Glance, and from what the fresh-eyes read caught.
 role: The voice, as instructions. Rulings live in Rulings-Sept-2026.md; this page is how to write once you know them. How a finished story reaches the site is in Publishing-a-Story.md.
 ---
 
@@ -30,6 +30,18 @@ A story set in the past carries its time in small, exact things, not in explanat
 The rule for using an answer: it goes inside the sentence where something happens, never as an aside. "They walked up the hill to Byron's house in the rain" tells her there was no other way up. "Travel was slow in those days" tells her nothing. One or two such details per story; a third is a list, and lists are for More. When a detail is interesting enough to want a paragraph, it isn't texture, it's a story, and it goes on the wanted list ("How Mary got to Geneva," "Candles").
 
 This is encouraged, not required. A story that has no room for it loses nothing.
+
+## Room (25 Sept 2026)
+
+Write as if she is in the room, not as if she is reading. Michael's edits of the Necker story showed the difference, and these four habits are what it comes to.
+
+Show the reasoning where she has to build a picture in her head; state the fact where she is only being told what happened. "A large crystal is built from smaller ones, and those from still smaller ones, so you can think of a crystal as tiny bricks" is a ladder she can climb. "A crystal is built from tiny bricks" is the top rung. Where the pace is the point (three proofs in a row, a journey), the top rung is right.
+
+Give the strange moment room. Several short sentences, not one, before it is explained: "One moment the shape would seem to be facing one way. The next moment it would face another. Nothing moved. The drawing didn't change. It just looked different." Let her sit in it.
+
+Repeat the noun rather than trust a pronoun. "Professor Necker measured his crystals, and he drew what he measured." Every *it*, *one*, *this*, *that*, *they* points at exactly one thing; where it might not, say the noun again. What is obvious to us is not obvious to a child who is new to the material.
+
+Hedge where the truth is hedged. "Almost certainly the same mineral." Neat and slightly less true loses to plain and true.
 
 ## Words
 
@@ -69,7 +81,7 @@ Sources are primary or peer-reviewed, and for anything about the brain, neurosci
 
 ## The interactive
 
-Any picture or tool the story uses is named in the text at the moment she needs it: "Tap the brain on the left." It appears with that text and goes away when the text does.
+Any picture or tool the story uses is named in the text at the moment she needs it: "Tap the brain." It appears with that text and goes away when the text does. The text never says where a picture is (24 Sept, Michael): she can see it. It sits level with the paragraph that names it.
 
 Instructions for using it are the fewest words that work, and they say where to tap: "tap anywhere on the screen."
 
@@ -77,8 +89,8 @@ Nothing is scored, ranked, or congratulated. Counts and graphs appear when she a
 
 ## Before you hand it over
 
-Read it once as her. Mark every sentence you had to read twice, and rewrite it. Mark every sentence that faces her instead of the subject, and cut it. Check that each section's first sentence says what the section is about. Check the ending: fact, image, or her result.
+Read it once as her. Mark every sentence you had to read twice, and rewrite it. Mark every sentence that faces her instead of the subject, and cut it. Mark every pronoun that could point at two things, and replace it with the noun. Check that each section's first sentence says what the section is about. Check the ending: fact, image, or her result.
 
 Then write the notes for us, below a rule: what the beat is, what to cut first, what changed and why, the sources, and the honesty checks, one per claim that could be challenged.
 
-Then fill in the frontmatter the pipeline needs: title, year (if any), `placement` (panel, beside, or across, per the Rulings; say why in the notes if it isn't a left column), the one-line explanation for when she taps the story on a timeline, what it touches, links, what tools it calls, sources, the icon (a square crop of the hook image, or a drawn mark), a frame colour that suits it, and a size (large, medium, small) for the gallery wall. A story without its frontmatter isn't finished.
+Then fill in the frontmatter the pipeline needs: title, year (if any), `placement` (panel, beside, or across, per the Rulings; say why in the notes if it isn't a left column), the one-line explanation for when she taps the story on a timeline, what it touches, links, what tools it calls, sources, the gallery picture (the hook image whole, at its own proportions, never cropped square; or the story's own drawn mark), a frame colour that suits it, and a size (large, medium, small) for the gallery wall. The tab icon is a separate square PNG and is the build's job. A story without its frontmatter isn't finished.

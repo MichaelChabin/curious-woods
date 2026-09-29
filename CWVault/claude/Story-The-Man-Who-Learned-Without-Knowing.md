@@ -1,5 +1,5 @@
 ---
-status: Draft 3 — 15 Sept 2026. Taken word for word from the page (v10), which is now the master. If the page and this doc disagree, the page is right; fix this doc.
+status: Draft 3.1 — 20 Sept 2026. The hippocampus is now the librarian, per the ruling of that day (Rulings-Sept-2026.md, *The brain*). Five passages changed, three in the story and two in the panel narration; the page rebuild is pending (claude/Prompt-Librarian.md). Once it has run, the page is the master again and this doc matches it word for word. Draft 3 (15 Sept) was taken from the page, v10.
 pillar: Stories (the "your brain, tested by you" set; story 2 in Brain-Series-Map.md)
 touches: two kinds of memory, the hippocampus, mirror-drawing, Henry Molaison, Brenda Milner, beginner's mind
 calls: the mirror star (one setting of the Trace bench, Spec-Trace-Bench.md); the brain panel (Spec-Brain-Bench.md); About Your Brain
@@ -7,6 +7,10 @@ links: Three at a Glance, Sleep on It, Leave It Alone, Rhythmic Practice, The Br
 intuitions: #17 (the feeling of not learning is not evidence), #9 (how do you know?), #10 (run it and look)
 page: cw-deploys/active/the-man-who-learned-without-knowing.html (deployed); source cw-deploys/experiments/brain/src/hm-page.template.html + build.py
 one-liner: Henry lost the ability to remember anything new. His hand kept learning anyway.
+picture: art/icons/star-icon-256.svg   # the story's own drawn mark, the tilted star with a copper dot; square, as drawn marks are (tab icon: art/icons/star-icon-256.png)
+frame: "#b87333"
+frame-width: 10
+size: medium
 ---
 
 # The Man Who Learned Without Knowing
@@ -33,7 +37,7 @@ The seizures got better. And Henry stopped being able to remember anything new.
 
 Not everything. He remembered his childhood. He knew his name, his parents, the streets of Hartford. He could talk with you, joke with you, do a crossword. But if you left the room and came back ten minutes later, he'd greet you as a stranger. He met the same doctors every week for fifty years and never once recognized them. He read the same magazines over and over. Every morning, the news was news.
 
-The hippocampus, it turned out, is where the brain writes down *what happened.* Say it "hippo-CAMP-us"; it's named after a seahorse, because it's curled like one. You have two, one on each side, deep in the middle of the head, about level with your ears. Henry's were gone, so nothing new got written down. The pen was missing.
+The hippocampus, it turned out, is the brain's librarian. Say it "hippo-CAMP-us"; it's named after a seahorse, because it's curled like one. You have two, one on each side, deep in the middle of the head, about level with your ears. When something happens to you, neurons — the brain's working cells — fire together all over your brain, and the hippocampus keeps track of which ones, so they can fire together again later. That is what remembering is. Henry's were gone, so nothing new could be found again. The librarian was missing.
 
 ## Brenda and the star
 
@@ -41,7 +45,7 @@ A neuropsychologist named Brenda Milner came down from Montreal to study Henry. 
 
 In 1962 she gave him the star. The same one you just tried: two outlines, a mirror, a pencil, trace the road. He bumped the edges about thirty times. She had him do it ten times that day, ten the next day, ten the day after.
 
-Each morning he said he'd never seen it before. Each morning he was right, as far as he knew; the hippocampus writes down *what happened,* and his couldn't.
+Each morning he said he'd never seen it before. Each morning he was right, as far as he knew; the hippocampus keeps track of *what happened,* and his was gone.
 
 And each morning he was better at it. By the third day he went round the star almost clean, like someone who'd practiced for weeks, which he had. Then he looked at what he'd done and said something Milner never forgot:
 
@@ -111,7 +115,7 @@ These are the only words the child sees outside the story column. They are part 
 
 **The run, leg by leg.** Heading: *Your brain, tracing the star.* / *Henry's brain, tracing the star.*
 
-- Before (yours): *Before you begin: experience sends conscious thought the last trip, the bumps and the feeling. You already expect this to be hard.*
+- Before (yours): *Before you begin: conscious thought asks the librarian for the last trip, the bumps and the feeling. You already expect this to be hard.*
 - Before (Henry's): *Before he begins: nothing. Henry has no last trip to remember. The star is new, and he is cheerful about it.*
 - *35 ms: the eye sends where the dot is.*
 - *60 ms: the dot arrives where seeing starts.*
@@ -120,8 +124,8 @@ These are the only words the child sees outside the story column. They are part 
 - *180 ms: a copy goes to the cerebellum, which compares the order with what the hand did last time.*
 - *200 ms: the cerebellum sends back a correction. This is the part that learns, and it works the same in both brains.*
 - *300 ms: the corrected order reaches the hand.*
-- After (yours): *Afterwards: the trip is sent to experience and written down, bumps and all. Tomorrow you will remember that it was hard.*
-- After (Henry's): *Afterwards: the trip is sent to be written down. It reaches the place where experience was. Nothing is there, and the signal goes out. Tomorrow the star will be new again. His hand will still know it.*
+- After (yours): *Afterwards: the librarian keeps track of this trip, bumps and all, so it can be found again. Tomorrow you will remember that it was hard.*
+- After (Henry's): *Afterwards: the trip is sent to be filed. It reaches the place where the librarian was. Nothing is there, and the signal goes out. Tomorrow the star will be new again. His hand will still know it.*
 
 ---
 
@@ -137,6 +141,6 @@ These are the only words the child sees outside the story column. They are part 
 
 **Sources (all peer-reviewed or primary, none from education).** Scoville & Milner 1957, *J. Neurol. Neurosurg. Psychiatry* 20:11–21 (the surgery and the amnesia). Milner 1962, in *Physiologie de l'hippocampe*, Paris: CNRS (the mirror-drawing result; the quotation is as Milner has reported it in interviews and in Squire 2009, *Neuron* 61:6–9). Corkin 2013, *Permanent Present Tense* (Henry's life; the name, the magazines, the crosswords, his cheerfulness). Annese et al. 2014, *Nature Communications* 5:3122 (the 2,401 slices). Milner, Squire & Kandel 1998, *Neuron* 20:445–468 (the two-systems picture). Doyon & Benali 2005, *Current Opinion in Neurobiology* 15:161–167 (basal ganglia and cerebellum in skill learning). The leg timings on the brain panel are round numbers in the right order of magnitude, not measurements; they are labelled in ms so a child can see the order, and the slider says "how much slower than life."
 
-**Honesty checks.** "Both sides" — Scoville removed the medial temporal lobes bilaterally, including most of the hippocampus and the amygdala; "took out the hippocampus" is the fair short version. Henry kept a small, slow ability to learn new facts over years; "nothing new got written down" is the standard summary and the story hedges with "as far as he knew." "About thirty" bumps is Milner's figure for Henry's first trips. "Mostly in… and in…" for basal ganglia and cerebellum is deliberately loose because it depends on the task. "Still alive as I write this" needs checking at publication (Milner born 15 July 1918). "The cutting was shown live on the internet" — the 2009 slicing was webcast by the Brain Observatory at UCSD.
+**Honesty checks.** "Both sides" — Scoville removed the medial temporal lobes bilaterally, including most of the hippocampus and the amygdala; "took out the hippocampus" is the fair short version. Henry kept a small, slow ability to learn new facts over years; "nothing new could be found again" is the standard summary, now in the librarian's terms, and the story hedges with "as far as he knew." The librarian (the hippocampus keeps track of what fires together so it can fire together again; the cortex holds the pattern) is the index picture of the hippocampus, stated at a child's depth. "About thirty" bumps is Milner's figure for Henry's first trips. "Mostly in… and in…" for basal ganglia and cerebellum is deliberately loose because it depends on the task. "Still alive as I write this" needs checking at publication (Milner born 15 July 1918). "The cutting was shown live on the internet" — the 2009 slicing was webcast by the Brain Observatory at UCSD.
 
 **Open.** Milner's 1962 data as a graph beside the child's (handoff item 5). Whether "Practice for a few minutes every day, save the results and, after a week, compare" wants a hook into the practice list that does the comparing for her — that's the Sleep on It link.

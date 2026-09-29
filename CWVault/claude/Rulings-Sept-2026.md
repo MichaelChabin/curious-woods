@@ -1,5 +1,5 @@
 ---
-status: Rulings — 14 Sept 2026, from the brain-series sessions; amended 15 Sept (dates), 16 Sept (picture placement; instructions to the child; the Maya flag and Remember; gestures across tools; images as evidence), 18 Sept (colour; a picture in a window; the three conflicts reconciled), 19–20 Sept (the gallery: what comes and goes; the paintings as stories; Spec-Gallery). Canonical until Michael says otherwise; where this contradicts CW-System-Foundation.md, ask. Where it contradicts UI-Language.md or other earlier design documents, this wins. One copy lives in the project and one in the vault; the manager chat keeps them identical. If they differ, tell the manager chat and don't guess.
+status: Rulings — 14 Sept 2026, from the brain-series sessions; amended 15 Sept (dates), 16 Sept (picture placement; instructions to the child; the Maya flag and Remember; gestures across tools; images as evidence), 18 Sept (colour; a picture in a window; the three conflicts reconciled), 19–20 Sept (the gallery: what comes and goes; the paintings as stories; Spec-Gallery), 25 Sept (the practice list exists; the home screen). Canonical until Michael says otherwise; where this contradicts CW-System-Foundation.md, ask. Where it contradicts UI-Language.md or other earlier design documents, this wins. One copy lives in the project and one in the vault; the manager chat keeps them identical. If they differ, tell the manager chat and don't guess.
 role: The decisions that came out of building The Man Who Learned Without Knowing, Three at a Glance and About Your Brain, written down so no later session relitigates them.
 ---
 
@@ -20,54 +20,6 @@ What holds everywhere is the weaker rule. Whatever a page uses must sit comforta
 
 The first case was the map palette. Hokusai gave a beautiful ocean and then painted Greenland the colour of desert, because iron oxide is what the ramp reaches at altitude, and the same iron oxide is a near-twin of the vermilion a story marks its places with, so the marks disappeared into the mountains. The map got its own ground colours. See `Spec-Maps.md`.
 
-## A margin, in an across story (20 Sept 2026)
-
-**`across` gains a left margin.** The 16 Sept text said an across story has no side panel at
-all. That was right about the picture the text stops for and wrong about everything else. A
-story may want a small picture that is *reference* rather than subject — a map answering
-*where is that*, a portrait, a diagram of a thing named in passing. Michael, on the Hokusai
-story: "Actually a margin — the left column should be in the UI docs." It is: `UI-Language.md`
-§1–§2, the context membrane.
-
-So: the reading column stays 700 px and stays where it is. To its left sits a margin 300 px
-wide with a 28 px gap — 1028 px in all, and that shell is what a full-width picture spans. A
-margin picture sits beside the text it belongs to and scrolls with it. Below 1068 px there is
-no room for a margin, and every margin picture drops into the flow above its text.
-
-**A margin picture is not named by the text.** This is the difference that matters. A picture
-the text stops for must be named, because the child is being asked to look at it now. A margin
-picture answers a question she may not have asked; it carries a caption of its own and the
-prose never mentions it. A story that finds itself writing "the map on the left" has put the
-picture in the wrong place.
-
-**What still belongs across the full width:** anything she works in, anything with a tool
-attached, and anything she is meant to study rather than glance at.
-
-## How wide a timeline is (20 Sept 2026)
-
-Michael, on the Hokusai story: "We need some kind of guideline that permits that kind of
-choice." The choice was widening a timeline past the twenty or thirty years asked for, to
-reach Perry's ships in 1853.
-
-**The rule: a story's timeline runs from the earliest event that explains the picture to the
-latest event the picture explains.** Nothing outside that is on it. For the Great Wave that is
-Tambora in 1815, which put the strange skies in everyone's eyes, to the American warships in
-1853, which ended the closed country the print was made inside. Forty years, and every marker
-on it earns its place from one end or the other.
-
-The span is the story's to choose and it is stated in the story's notes, with the two events
-that fix the ends. A timeline that has been widened for symmetry, or to make a nice round
-number, has been widened for the wrong reason.
-
-## Copper on a map (20 Sept 2026)
-
-`Spec-Maps` says everything a story draws is vermilion, with two wash colours and no third.
-That holds, with one addition: **a place the story is actually about is drawn in copper**, a
-little larger than the rest. Michael: "I think it is a good idea to be consistent for kids."
-Copper already means *this is the one* on a timeline; it now means the same thing on a map, so
-the meaning travels with her instead of being relearned. One place per map at most. In
-`map.js` it is `lit: true` on a `place`.
-
 ## The Maya flag, and "I want to Remember this" (16 Sept 2026)
 
 Maya is an implementation of Claude that ships later. **Everything we build carries a Maya flag**, one global switch saying whether she is present, and behavior may legitimately differ on each side of it. Build both sides from the start; don't retrofit.
@@ -80,7 +32,7 @@ The first thing that hangs off the flag is the Remember inscription.
 
 Two consequences. First, the `#remember` element in Glass Geometry is a placeholder with no handler, so today it should not be on screen at all; it is not "permanent but broken," it is "not yet summoned." Second, with Maya absent the inscription arrives inline where the text calls it, which a single column handles naturally. Where it lives in one column *with* Maya present is still open.
 
-Nothing may promise the practice queue until the practice queue exists.
+The practice list exists (25 Sept: `practice.html`, filled by `js/remember.js`, on her device only). Remember may promise it. The practice itself, the tapping, does not exist yet, and nothing may promise that.
 
 ## The brain
 One painting, two views (outside, cutaway), one set of region tables. It lives in two places and must stay one thing:
@@ -97,7 +49,7 @@ One painting, two views (outside, cutaway), one set of region tables. It lives i
 
 *Beside* (16 Sept, Michael, on Three at a Glance) is also two columns, but nothing swaps: every picture is present, sitting beside the text that names it and scrolling with the story. Michael preferred it for a story with several experiments: no experiment waits on another, and it is plain that they are separate experiments, titled *Experiment 1*, *Experiment 2*, and so on. Three at a Glance is built this way.
 
-*Across* (16 Sept) is for a picture that needs width: a construction, a grid, a bench the child works in. It runs the full width of the text column and the story continues underneath. There is no side panel in this arrangement for *that* picture — but see "A margin, in an across story" (20 Sept), which gives across a left margin for small reference pictures; the page is one column. Anything the picture needs (a palette, tool words) belongs to the picture and sits where the picture puts it. Supporting images sit in the flow of the text, at full column width. Michael's reason: geometry doesn't fit in a side panel.
+*Across* (16 Sept) is for a picture that needs width: a construction, a grid, a bench the child works in. It runs the full width of the text column and the story continues underneath. There is no side panel in this arrangement at all; the page is one column. Anything the picture needs (a palette, tool words) belongs to the picture and sits where the picture puts it. Supporting images sit in the flow of the text, at full column width. Michael's reason: geometry doesn't fit in a side panel.
 
 What made the original rule good is preserved in all three: the reading eye never has to negotiate with an image.
 
@@ -117,7 +69,7 @@ The child's home page is her *gallery*, not a dashboard. Works hang like paintin
 
 **What comes and goes (19 Sept).** The wall is rehung each visit, always appealing and never the same. A story she has finished comes down next visit unless she has kept it, and another goes up. Kept stories live in Saved Stories; what she wants to remember goes to Practice; her trail is disposable. All of it on her device, nowhere else.
 
-**A story's icon is a detail of the story itself**: a square crop of its hook image (Turner's cloud, Holst's fleeing student), or the story's own interactive drawn as a mark (the star story's tilted star with a copper dot). What it is never is artwork made only to be an icon. The story's frontmatter names the icon, the frame colour, an optional frame width, and a size; the build hangs it. *(Reconciled 18 Sept: the earlier "never separate artwork" and "the tilted star" were both right and are the same rule.)*
+**A story's gallery picture is a detail of the story itself**: its hook image, hung whole at its own proportions (a painting or print is never cropped; the Great Wave is the Great Wave), or the story's own interactive drawn as a mark (the star story's tilted star with a copper dot). Only the drawn marks are square. What it is never is artwork made only to be an icon, and it is not the tab icon, which is a separate square PNG for the browser. The story's frontmatter names the picture, the frame colour, an optional frame width, and a size; the build hangs it. *(21 Sept: "square crop" in earlier texts was wrong and caused the first gallery build to crop the Wave; corrected everywhere.)*
 
 **The paintings are stories too (19 Sept).** Any picture that hangs earns a story of its own: who made it, how (a woodcut), the pigments, or a brief introduction to a famous or appealing work ("this is not a pipe").
 
@@ -133,8 +85,18 @@ Narrative may be elegant. Instructions must be literal. Where a story tells her 
 ## Gestures across tools (16 Sept 2026)
 When a new tool or bench needs a gesture, or two gestures collide, **Glass Geometry decides first; if it has no answer, the multiplication lab (Glass) decides.** Only if neither has an answer is a new gesture invented, and then it is named and brought to Michael, not slipped in. The effect is that a gesture she has learned in one tool means the same thing in the next.
 
+## Practice, her list, and the home screen (25 Sept 2026)
+
+**The list.** "I want to Remember this" puts an item on her practice list: title, the story it came from, a link back. The list is a plain page, `practice.html`, opened by the ensō in the gallery and by the note under any Remember word. Each line has "take it off the list" under it. No dates, no counts, nothing scored. It lives in her browser's storage on her device and nowhere else, which is the privacy rule doing its job.
+
+**The catch.** Safari on iPhone and iPad may clear a site's storage after about seven days without a visit, unless the site has been added to the home screen. A home-screen copy keeps its own storage, separate from Safari's, so anything kept in Safari before adding is not in the home-screen copy. Chrome and desktop browsers don't do this.
+
+**What follows.** The site declares itself as an app (a manifest, a name, the ensō or star as its icon, the wall colour), so that when she adds it to the home screen it opens full-screen with its own icon. And there is one quiet invitation, in Safari on iPhone and iPad only, only when the site isn't on the home screen yet, dismissable, never shown again once added: "To keep this list, add Curious Woods to your home screen: tap Share, then Add to Home Screen." Literal instruction, per the Instructions ruling.
+
+**Where the invitation appears is open** (see below). Two candidates: on the gallery on her first visit, before she has kept anything (so nothing is stranded in Safari's storage); or at the moment she first taps Remember, under the note "In your practice list" (so the invitation arrives when it means something, at the cost of one item that may need re-keeping). The manager chat recommends the second: it is the earned-interface rule, and one item is a small price.
+
 ## Benches
 Three skeletons cover most brain-series interactives: Flash, Creep, Trace (Spec-Trace-Bench.md). A new puzzle is a new road or rule, never a new program. Nothing is scored, ranked, or congratulated; counts appear only when she asks for the graph.
 
 ## What still needs a ruling
-The default picture placement for new stories. Whether gallery size means anything, and whether the hang is fixed or shuffles. Whether the two-brain comparison should ever be side by side. Where the Remember inscription lives in a one-column story when Maya *is* present. Where After the Ice hangs and how it starts. Draft 3 of the star story document, to match the page.
+Where the home-screen invitation appears (gallery on first visit, or at first Remember). The default picture placement for new stories. Whether gallery size means anything, and whether the hang is fixed or shuffles. Whether the two-brain comparison should ever be side by side. Where the Remember inscription lives in a one-column story when Maya *is* present. Where After the Ice hangs and how it starts. Draft 3 of the star story document, to match the page.

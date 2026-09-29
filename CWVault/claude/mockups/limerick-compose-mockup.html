@@ -7,14 +7,16 @@
 <style>
   :root {
     --desk: #d8ccb4; --sheet: #f3e7c9; --ink: #33261a; --pencil: #5e4c38;
-    --faded: #7d6a52; --rule: rgba(120, 90, 50, .10); --word: #5b3f22;
+    --faded: #7d6a52; --rule: rgba(120, 90, 50, .10); --word: #546A80; --word-hover: #3d5266;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--desk); color: var(--ink);
          font-family: Georgia, "Iowan Old Style", serif; }
   main { max-width: 680px; margin: 0 auto; padding: 20px 16px 60px; }
 
-  .topbar { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 12px; min-height: 1.6em; }
+  .topbar { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 0 12px; min-height: 1.6em; }
+  .cwhome { text-decoration: none; margin-right: auto; }
+  .topbar #myList { margin-left: auto; }
   .backarrow { font-size: 1.6rem; line-height: 1; color: var(--word); text-decoration: none; padding: 2px 8px 2px 0; }
   .backarrow:hover { color: var(--ink); }
 
@@ -47,7 +49,8 @@
   .title-input { font: inherit; font-size: 1.4rem; font-weight: bold; color: var(--ink); width: 100%;
           background: transparent; border: 0; border-bottom: 1px dashed transparent; padding: 0; outline: none; }
   .title-input::placeholder { color: var(--word); font-weight: bold; font-size: 1rem; opacity: .9; }
-  .title-input:focus { border-bottom-color: rgba(120,90,50,.35); }
+  .title-input:focus { border-bottom-color: rgba(120,90,50,.35); caret-color: var(--ink); }
+  .title-input:focus::placeholder { color: transparent; }
 
   /* the poem being written */
   .slot { font-size: 1.28rem; line-height: 1.55; min-height: 1.55em; white-space: nowrap; transition: padding-left .35s ease; }
@@ -70,6 +73,8 @@
   .ideas { width: min(62%, 380px); }
   @media (max-width: 520px) { .ideas { width: 100%; } }
   .ideas-label { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--faded); margin: 0 0 6px; }
+  .ideas-label .hint { text-transform: none; letter-spacing: 0; font-style: italic; font-size: .92rem; margin-left: 8px; }
+  .opening .puzzle { display: none; }
   .idea { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 6px 0;
           font: inherit; font-style: italic; font-size: .98rem; line-height: 1.35; color: var(--pencil);
           cursor: pointer; transition: opacity .35s, transform .35s; }
@@ -81,7 +86,7 @@
   .words { display: flex; justify-content: space-between; align-items: baseline; margin-top: 22px; gap: 16px; flex-wrap: wrap; }
   .word { font: inherit; font-weight: bold; font-size: 1rem; color: var(--word); background: none; border: 0;
           padding: 4px 0; cursor: pointer; }
-  .word:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .word:hover { color: var(--word-hover); text-decoration: underline; text-underline-offset: 4px; }
   .word[hidden] { display: none; }
   .finish-row { display: flex; justify-content: center; gap: 36px; flex-wrap: wrap; margin-top: 18px; min-height: 1.6em; }
 
@@ -99,14 +104,73 @@
           background: none; border: 0; border-bottom: 1px solid rgba(120,90,50,.18); padding: 12px 0; cursor: pointer; }
   .mylist-item span { display: block; color: var(--faded); font-style: italic; font-size: .9rem; margin-top: 2px; }
   .mylist-item:hover { color: var(--word); }
+
+  /* the column, as in Glass Geometry */
+  body { --col: 200px; }
+  main { padding-left: calc(28px + var(--col)); padding-top: 28px; max-width: calc(700px + var(--col)); }
+  #htw { position: fixed; left: 0; top: 0; bottom: 0; width: var(--col); padding: 22px 16px; z-index: 20; user-select: none;
+         background: #f7f4ec; border-right: 0.5px solid #d6c9ad; }
+  #htw .cwhome { display: block; font-size: 15px; font-weight: bold; color: #546A80; text-decoration: none; margin: 0 0 22px; }
+  #htw .cwhome:hover { color: #3D3D3A; }
+  #htw-heading { display: block; font-size: 14px; color: #546A80; line-height: 1; }
+  #htw ul { margin: 6px 0 0; padding: 0; list-style: none; }
+  .htw-item { display: block; font-size: 13px; color: #546A80; padding-left: 12px; cursor: pointer; line-height: 1; margin-top: 8px; position: relative; }
+  .htw-item::before { content: '\2022'; position: absolute; left: 0; }
+  .htw-item:hover, .htw-cmd:hover { color: #3D3D3A; }
+  .htw-cmd { display: block; font-size: 13px; font-style: italic; color: #546A80; padding-left: 12px; cursor: pointer; line-height: 1;
+             margin-top: 10px; transition: opacity 400ms ease-in-out, color 80ms; }
+  .htw-cmd.first { margin-top: 18px; }
+  .htw-cmd.absent { opacity: 0; pointer-events: none; }
+  .htw-cmd.quiet { color: #a39a8c; pointer-events: none; }
+  .htw-panel { position: fixed; z-index: 30; width: 230px; background: rgba(244,241,232,0.96); border: 0.5px solid #c8b89a;
+               border-radius: 6px; padding: 10px 14px 14px; box-shadow: 0 2px 12px rgba(42,38,32,0.08);
+               touch-action: none; cursor: grab; display: none; }
+  .htw-panel.open { display: block; }
+  .htw-panel-head { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 8px; }
+  .htw-panel-title { font-size: 14px; color: #546A80; }
+  .htw-panel-close { font-size: 11px; color: #b0a090; cursor: pointer; }
+  .htw-panel-close:hover { color: #546A80; }
+  .htw-panel-body { font: 13px/1.55 Georgia, serif; color: #546A80; }
+  .htw-panel-body p { margin: 0 0 9px; }
+  @media (max-width: 760px) {
+    body { --col: 0px; }
+    #htw { position: static; width: auto; margin: 0; padding: 14px 16px 12px; border-right: 0; border-bottom: 0.5px solid #d6c9ad; }
+    #htw .cwhome { margin: 0 0 10px; }
+    main { padding-left: 16px; padding-top: 16px; }
+    .htw-cmd.absent { display: none; }
+    #htw ul { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+    .htw-item, .htw-cmd, .htw-cmd.first { margin-top: 6px; }
+  }
+
+  /* her poems: notes */
+  .mine-area { display: none; margin-top: 22px; }
+  .mine .mine-area { display: block; }
+  .mine .ideas-area { display: none !important; }
+  .mine-area label { display: block; font-size: .9rem; color: var(--faded); margin: 0 0 6px; }
+  .mine-area textarea { width: 100%; min-height: 90px; font: inherit; font-size: 1rem; color: var(--ink); background: rgba(255,255,255,.3);
+          border: 1px solid rgba(120,90,50,.25); border-radius: 3px; padding: 10px; resize: vertical; }
+  .mine-area .word { margin-top: 10px; }
 </style>
 </head>
 <body>
+<nav id="htw">
+  <a class="cwhome" href="../index.html">The Curious Woods</a>
+  <span id="htw-heading">How this works</span>
+  <ul>
+    <li class="htw-item" data-panel="compose">Compose</li>
+    <li class="htw-item" data-panel="save">Save and Share</li>
+    <li class="htw-cmd first absent" id="cmdShare">Share</li>
+    <li class="htw-cmd absent" id="cmdAdd">Add to my list</li>
+    <li class="htw-cmd absent" id="cmdMine">Show my poems</li>
+    <li class="htw-cmd absent" id="cmdPrev">Go to previous</li>
+  </ul>
+</nav>
+<div class="htw-panel" id="htwPanel">
+  <div class="htw-panel-head"><span class="htw-panel-title" id="htwTitle"></span><span class="htw-panel-close" id="htwClose">close</span></div>
+  <div class="htw-panel-body" id="htwBody"></div>
+</div>
+
 <main>
-  <div class="topbar">
-    <a class="backarrow" id="goBack" href="../index.html" aria-label="Back">&larr;</a>
-    <button class="word" id="myList" hidden>My list</button>
-  </div>
   <div class="sheet" id="sheet">
     <div class="intro" id="intro">
       <p>In 1832 a young painter named Edward Lear went to stay at a big house near Liverpool. The Earl of Derby kept a private zoo there, and Lear, who was twenty, had been hired to paint the animals.</p>
@@ -121,9 +185,11 @@
       </blockquote>
       <p>In 1846 he put them in a book called <em>A Book of Nonsense</em>. He didn&rsquo;t use his own name. He signed it &ldquo;Derry Down Derry.&rdquo;</p>
       <p>Lear never called his poems limericks. Nobody did until fifty years later, and nobody knows for sure where the name came from. The best guess is an old party song. People took turns making up a verse, and then everyone sang the chorus: &ldquo;Will you come up to Limerick?&rdquo; Limerick is a city in Ireland.</p>
-      <hr class="rule-off">
+      <p>In what follows, the lines of the limerick will appear in a stack under <em>Ideas</em>. Your job is to compose the limerick by tapping the ideas in the right order.</p>
+      <div class="words"><span></span><button class="word" id="openNext">Next</button></div>
     </div>
 
+    <div class="puzzle">
     <p class="bg" id="bg"></p>
     <div class="title" id="title"></div>
     <div id="poem"></div>
@@ -132,31 +198,25 @@
 
     <div class="ideas-area" id="ideasArea">
       <div class="ideas">
-        <div class="ideas-label">Ideas</div>
+        <div class="ideas-label">Ideas <span class="hint" id="hint">(tap the line you think comes next)</span></div>
         <div id="ideaList"></div>
-        <button class="word" id="nextLine">Next line, please</button>
       </div>
     </div>
 
-    <div class="words">
-      <button class="word" id="scramble" hidden>Write it again</button>
-      <span></span>
-      <button class="word" id="another">Another one</button>
+    <div class="mine-area">
+      <label for="notes">Notes:</label>
+      <textarea id="notes"></textarea>
+      <button class="word" id="remove">Remove from my list</button>
     </div>
-    <div class="finish-row">
-      <button class="word" id="postcard" hidden>Share Postcard</button>
-      <button class="word" id="keep" hidden>Keep on my list</button>
+
+    <div class="words">
+      <span></span>
+      <button class="word" id="another">Next</button>
+    </div>
     </div>
   </div>
 </main>
 
-<div class="back" id="listBack">
-  <div class="card">
-    <h2>My list</h2>
-    <div id="listItems"></div>
-    <div class="words"><span></span><button class="word" id="listClose">Close</button></div>
-  </div>
-</div>
 
 <div class="back" id="back">
   <div class="card">
@@ -215,7 +275,7 @@ const POEMS = [
 const $ = id => document.getElementById(id);
 const poemEl = $("poem"), sheet = $("sheet"), titleEl = $("title");
 const herTitles = {};   // titles she gave, by poem (the build keeps these on her device)
-let current = 0, filled = [], done = false, firstShown = false;
+let current = 0, filled = [], done = false, firstShown = false, seen = 0;
 
 /* ---- sounds: the bell and the keys ---- */
 let audio, noise;
@@ -288,18 +348,27 @@ function shuffled(arr) {
   for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
   return a;
 }
+// no idea sits in the stack at the place its line takes in the poem (44 of the 120 orders qualify)
+function deranged(n, swap) {
+  const idx = [...Array(n).keys()];
+  let a;
+  do { a = shuffled(idx); } while (a.some((j, i) => j === i || (swap && swap.includes(i) && swap.includes(j))));
+  return a;
+}
 
-function load(n, whole) {
+function load(n, whole, order) {
   clearTimeout(timer); queue.length = 0; active = null;
   current = n; filled = []; done = false;
   const p = POEMS[n];
-  $("intro").style.display = (n === 0 && !firstShown) ? "" : "none";
+  sheet.classList.remove("opening"); $("intro").style.display = "none";
+  if (!whole) seen++;
+  $("hint").style.display = seen <= 3 ? "" : "none";   // the reminder, for her first few
   $("bg").textContent = p.intro || ""; $("bg").style.display = p.intro ? "" : "none";
   titleEl.textContent = ""; titleEl.className = "title";
   $("credit").textContent = p.credit;
   $("swapnote").className = "swapnote"; $("swapnote").innerHTML = "";
-  $("postcard").hidden = true; $("keep").hidden = true; $("scramble").hidden = true; $("nextLine").hidden = false;
   sheet.classList.remove("done");
+  commands();
   poemEl.innerHTML = "";
   for (let i = 0; i < 5; i++) {
     const s = document.createElement("div");
@@ -308,12 +377,12 @@ function load(n, whole) {
   }
   const list = $("ideaList"); list.innerHTML = "";
   if (whole) {
-    p.lines.forEach((t, i) => { poemEl.children[i].textContent = t; filled.push(i); });
+    (order || [0, 1, 2, 3, 4]).forEach((j, i) => { poemEl.children[i].textContent = p.lines[j]; filled.push(j); });
     $("ideasArea").classList.add("empty");
     done = true; showFinished(); showTitle(); return;
   }
   $("ideasArea").classList.remove("empty");
-  shuffled(p.lines.map((t, i) => i)).forEach(j => {
+  deranged(5, p.swap).forEach(j => {
     const b = document.createElement("button");
     b.className = "idea"; b.textContent = p.lines[j]; b.dataset.j = j;
     b.addEventListener("click", () => pick(b));
@@ -336,17 +405,9 @@ function pick(b) {
   b.classList.add("gone");
   setTimeout(() => b.remove(), 380);
   typeInto(poemEl.children[k], POEMS[current].lines[j]);
-  if (filled.length === 5) { done = true; $("nextLine").hidden = true; }
+  if (filled.length === 5) { done = true; }
 }
-$("nextLine").addEventListener("click", () => {
-  wakeAudio();
-  const k = filled.length; if (k >= 5) return;
-  // the line the original has here, unless it's already been used in a swapped place
-  let j = k;
-  if (filled.includes(j)) j = POEMS[current].swap.find(x => !filled.includes(x));
-  const b = [...document.querySelectorAll(".idea")].find(e => +e.dataset.j === j && !e.classList.contains("gone"));
-  if (b) pick(b);
-});
+// (Next line, please was removed, 29 Sept)
 
 function finishIfDone() {
   if (!done || sheet.classList.contains("done")) return;
@@ -384,33 +445,98 @@ function showTitle() {
 }
 function closeKbd() {}
 
-/* ---- her list (the build keeps it on her device) ---- */
-const kept = new Set();
-function showFinished() {
-  sheet.classList.add("done");
-  $("postcard").hidden = false; $("keep").hidden = false; $("scramble").hidden = false;
-  $("keep").textContent = kept.has(current) ? "Take it off my list" : "Keep on my list";
+/* ---- her poems (the build keeps these on her device): the poem as she composed it, her title, her notes ---- */
+const kept = new Map();      // poem number -> her arrangement
+const notes = {};
+let mode = "new";            // "new": composing new poems; "mine": looking at her own
+function showFinished() { sheet.classList.add("done"); commands(); }
+
+/* the command words appear only when they can do something */
+function commands() {
+  const set = (id, on) => $(id).classList.toggle("absent", !on);
+  const finished = done && !sheet.classList.contains("opening");
+  set("cmdShare", finished && sheet.classList.contains("done"));
+  set("cmdAdd", mode === "new" && finished && sheet.classList.contains("done"));
+  $("cmdAdd").textContent = kept.has(current) ? "On my list" : "Add to my list";
+  $("cmdAdd").classList.toggle("quiet", kept.has(current));
+  set("cmdMine", kept.size > 0 || mode === "mine");
+  $("cmdMine").textContent = mode === "mine" ? "Show new poems" : "Show my poems";
+  set("cmdPrev", trail.length > 0);
 }
-$("keep").addEventListener("click", () => {
-  if (kept.has(current)) kept.delete(current); else kept.add(current);
-  $("keep").textContent = kept.has(current) ? "Take it off my list" : "Keep on my list";
-  $("myList").hidden = kept.size === 0;
+$("cmdShare").addEventListener("click", openPostcard);
+$("cmdAdd").addEventListener("click", () => { if (!kept.has(current)) kept.set(current, filled.slice()); commands(); });
+$("cmdMine").addEventListener("click", () => {
+  leave();
+  if (mode === "new") { mode = "mine"; showMine([...kept.keys()][0]); }
+  else { mode = "new"; sheet.classList.remove("mine"); load(nextNew()); }
+  commands(); window.scrollTo(0, 0);
 });
-$("myList").addEventListener("click", () => {
-  const box = $("listItems"); box.innerHTML = "";
-  [...kept].forEach(n => {
-    const b = document.createElement("button");
-    b.className = "mylist-item";
-    b.innerHTML = (POEMS[n].title || herTitles[n] || POEMS[n].lines[0].replace(/[,;]$/, "")) + "<span>" + POEMS[n].credit + "</span>";
-    b.addEventListener("click", () => { $("listBack").classList.remove("open"); firstShown = true; load(n, true); });
-    box.appendChild(b);
-  });
-  $("listBack").classList.add("open");
+
+/* her poems, one at a time: whole, with her title (which she can change), and her notes */
+function showMine(n) {
+  sheet.classList.add("mine");
+  load(n, true, kept.get(n));
+  $("notes").value = notes[n] || "";
+  commands();
+}
+$("notes").addEventListener("input", () => { notes[current] = $("notes").value; });
+$("remove").addEventListener("click", () => {
+  const ids = [...kept.keys()], at = ids.indexOf(current);
+  kept.delete(current);
+  if (!kept.size) { mode = "new"; sheet.classList.remove("mine"); trail.length = 0; load(nextNew()); }
+  else showMine([...kept.keys()][Math.min(at, kept.size - 1)]);
+  commands();
 });
-$("listClose").addEventListener("click", () => $("listBack").classList.remove("open"));
-$("scramble").addEventListener("click", () => { wakeAudio(); load(current); });
-$("another").addEventListener("click", () => { wakeAudio(); firstShown = true; load((current + 1) % POEMS.length); });
-$("goBack").addEventListener("click", e => { if (history.length > 1) { e.preventDefault(); history.back(); } });
+
+/* Next: a new poem, or her next poem */
+let lastNew = 0;
+function nextNew() { lastNew = (lastNew + 1) % POEMS.length; return lastNew; }
+$("another").addEventListener("click", () => {
+  wakeAudio(); leave(); firstShown = true;
+  if (mode === "mine") { const ids = [...kept.keys()]; showMine(ids[(ids.indexOf(current) + 1) % ids.length]); }
+  else load(nextNew());
+  commands(); window.scrollTo(0, 0);
+});
+
+/* Go to previous: the trail of this visit */
+const trail = [];
+function leave() {
+  if (sheet.classList.contains("opening")) trail.push({ opening: true });
+  else trail.push({ n: current, mode, order: done ? filled.slice() : null });
+}
+function showOpening() { sheet.classList.add("opening"); $("intro").style.display = ""; window.scrollTo(0, 0); }
+$("cmdPrev").addEventListener("click", () => {
+  if (!trail.length) return;
+  const v = trail.pop();
+  if (v.opening) { mode = "new"; sheet.classList.remove("mine"); showOpening(); }
+  else if (v.mode === "mine" && kept.has(v.n)) { mode = "mine"; showMine(v.n); }
+  else { mode = "new"; sheet.classList.remove("mine"); if (v.order) load(v.n, true, v.order); else load(v.n); }
+  commands(); window.scrollTo(0, 0);
+});
+
+/* ---- How this works: small panels she can move and close ---- */
+const PANELS = {
+  compose: ["Compose", "<p>The lines of your poem are in a jumbled stack below the word IDEAS. Find the first line and tap it. It will be typed on the sheet. Do the same with the next line and each line that follows.</p><p>When it is complete, you can give it a title.</p>"],
+  save: ["Save and Share", "<p>To add this poem to your list of favorites, tap <em>Add to my list</em>.</p><p>You can see your list by tapping <em>Show my poems</em>.</p><p>To share your poem as a postcard, tap <em>Share</em>.</p>"],
+};
+const panel = $("htwPanel");
+document.querySelectorAll(".htw-item").forEach(li => li.addEventListener("click", () => {
+  const [t, body] = PANELS[li.dataset.panel];
+  $("htwTitle").textContent = t; $("htwBody").innerHTML = body;
+  const r = li.getBoundingClientRect();
+  panel.style.left = Math.min(r.right + 16, innerWidth - 246) + "px";
+  panel.style.top = Math.max(12, r.top - 10) + "px";
+  panel.classList.add("open");
+}));
+$("htwClose").addEventListener("click", () => panel.classList.remove("open"));
+let pd = null;   // drag the panel anywhere but its close word
+panel.addEventListener("pointerdown", e => {
+  if (e.target.id === "htwClose") return;
+  const r = panel.getBoundingClientRect(); pd = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+  panel.setPointerCapture(e.pointerId);
+});
+panel.addEventListener("pointermove", e => { if (!pd) return; panel.style.left = (e.clientX - pd.dx) + "px"; panel.style.top = (e.clientY - pd.dy) + "px"; });
+panel.addEventListener("pointerup", () => { pd = null; });
 
 /* ---- Share Postcard: her note, the picture if she adds it, then the poem as she wrote it ---- */
 let pic = null;
@@ -479,10 +605,10 @@ function placeholder(label) {  // stand-in for the poem's own picture until the 
   x.fillText(label, 500, 280);
   return c;
 }
-$("postcard").addEventListener("click", () => {
+function openPostcard() {
   pic = null; $("dropPic").hidden = true; $("addPic").hidden = !POEMS[current].pic;
   $("back").classList.add("open"); refresh();
-});
+}
 $("close").addEventListener("click", () => $("back").classList.remove("open"));
 $("note").addEventListener("input", refresh);
 $("addPic").addEventListener("click", () => {
@@ -502,7 +628,9 @@ $("send").addEventListener("click", () => {
   }, "image/png");
 });
 
-load(0);
+// the Opening comes first, on its own; Next brings the first limerick
+sheet.classList.add("opening");
+$("openNext").addEventListener("click", () => { wakeAudio(); leave(); firstShown = true; load(0); commands(); window.scrollTo(0, 0); });
 </script>
 </body>
 </html>

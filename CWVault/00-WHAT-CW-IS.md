@@ -13,7 +13,7 @@ Her home is a gallery. Stories and tools hang there like paintings in a show: ea
 
 *After the Ice* hangs in the gallery too: a copper dot leaves year 0, when the ice let go, and rolls up the years, leaving events behind it, including the stories on the wall. She can watch it if she likes, stop it, tap anything, and open a story from it or from its icon. It does not run in front of every story; that risked losing her. Her copy accumulates every event she has ever been shown, and zooms. That is her map of history. (Where exactly it hangs and how it starts is still open.)
 
-The story itself is a story, told straight through, in the form of *The Man Who Learned Without Knowing*: the interactives sit with the text that calls them (in a left panel, beside each passage, or across the page; the story says which, per the Rulings), links go anywhere (Mary Shelley to Tambora to Faraday), and a "More:" at the end holds the depth. A name she doesn't know (Archimedes) gets two sentences in place and a button to add him to her list. When a story needs a tool, the tool appears: Glass for multiplication, Geometry for constructions, Sound, the brain. When she wants to keep something, Practice appears. The interface is earned, never ad hoc.
+The story itself is a story, told straight through, in the form of *The Man Who Learned Without Knowing*: the interactives sit with the text that calls them (in a left panel, beside each passage, or across the page; the story says which, per the Rulings), links go anywhere (Mary Shelley to Tambora to Faraday), and a "More:" at the end holds the depth. A name she doesn't know (Archimedes) gets two sentences in place and a button to add him to her list. When a story needs a tool, the tool appears: Glass for multiplication, Geometry for constructions, Sound, the brain. When she wants to keep something, Remember appears, and what she keeps goes on her practice list. The interface is earned, never ad hoc.
 
 "I want to remember this" follows the Maya flag. With Maya enabled it is visible all the time. Without Maya it is invisible until the text refers to it, and fades in as that reference comes near.
 
@@ -33,7 +33,7 @@ Math and science are not privileged. They arrive because they're interesting and
 
 *Tools on the plane.* Glass (multiplication), Glass Geometry, Sound, and whatever the plane can carry next. Every perceptual question gets a bench in `experiments/` before anyone argues.
 
-*Practice.* Rhythmic tapping for what she wants to keep long-term. Its icon should suggest something peaceful and meditative, never a drill.
+*Practice.* Her list of what she has asked to remember exists (the ensō opens it); the practice itself, rhythmic tapping for keeping things long-term, is still to build. The list lives on her device; on an iPad it survives best when the site is on her home screen, and the site invites that once, quietly.
 
 *The brain.* One painting, two views, one set of names: standalone as *About Your Brain*, and inside stories with only the controls the story needs. Stories and the map together give her a sense of her own brain: magnitude, speed, why three at a glance, why negative numbers are hard.
 

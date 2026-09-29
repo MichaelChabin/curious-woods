@@ -1,5 +1,5 @@
 ---
-status: Live — 20 Sept 2026. The manager chat keeps it; Michael reads it. Never more than five items.
+status: Live — refreshed 25 Sept 2026. The manager chat keeps it; Michael reads it. Never more than five items.
 role: The things only Michael can do, in order. Everything else is Claude's and waits in the Stories Ledger.
 ---
 
@@ -7,15 +7,15 @@ role: The things only Michael can do, in order. Everything else is Claude's and 
 
 Read top to bottom. Do the first one. Tell the manager chat. It rewrites the list.
 
-1. **Rule the default picture placement.** Left column (panel or beside) unless a picture needs the width? Yes or no. Then the Hokusai story's `placement:` line follows, and Claude Code rebuilds it.
+1. **Professor Necker's Drawing.** Read it at `experiments/professor-neckers-drawing.html`. Say the word, and Claude Code commits it; then it's hung.
 
-2. **Say yes to the words of three stories**, one at a time, in any order: *Have You Thought of a Story?*, *The Compass Counts to Six*, *Three at a Glance*. A yes means "build it so I can see it," not "it's finished." Each yes gets a build prompt from the manager chat.
+2. **The home-screen invitation.** Where does it appear: on the gallery on first visit, or at the moment she first taps Remember? The manager chat recommends the second. Say which, and the prompt in `01-ACTIVE/Prompt-Home-Screen-Sept25.md` goes to Claude Code.
 
-3. **Say yes to the vault clean-up.** August ledgers move to `99-ARCHIVE/2026-08/`, the fifteen orphan files to `outdated-files/`, the board's opening paragraph cut to this week. Moves only, nothing deleted.
+3. **Rule the default picture placement.** Left column (panel or beside) unless a picture needs the width? Yes or no.
 
-4. **Paste the gallery prompt** (end of `Spec-Gallery.md`) into Claude Code. It stops before committing.
+4. **Say yes to the words of two stories**, in either order: *Have You Thought of a Story?* and *The Compass Counts to Six*. Each yes gets a build prompt.
 
-5. **Practice icon.** The copper ensō is on the wall in the mock. Keep it, or say what's wrong with it.
+5. **Say yes to the vault clean-up.** August ledgers to `99-ARCHIVE/2026-08/`, orphan files to `outdated-files/`, the board's opening paragraph cut to this week. Moves only, nothing deleted.
 
 ---
 

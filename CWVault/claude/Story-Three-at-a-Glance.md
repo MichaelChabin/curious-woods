@@ -7,7 +7,10 @@ links: The Man Who Learned Without Knowing, About Your Brain, About How Many (th
 intuitions: #9 (how do you know?), #10 (run it and look), #5 (about how many?)
 year: 1871 (Jevons's beans)
 one-liner: You can see three without counting. So could you the day you were born.
-icon: three ink dots in a loose scatter on cream, one of them copper. Title below, no subtitle. (Decided 15 Sept.)
+picture: art/icons/three-dots-icon-256.svg   # the story's own drawn mark: three ink dots in a loose scatter on cream, one of them copper; square, as drawn marks are. Title below, no subtitle. (Decided 15 Sept; the mark is also the tab icon, art/three-dots-icon-256.png.)
+frame: "#2a2620"
+frame-width: 7
+size: small
 ---
 
 # Three at a Glance
