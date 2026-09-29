@@ -40,7 +40,7 @@
 
 <script src="../../js/map.js?v=2026-09-29b"></script>
 <script>
-var CW_VERSION = '2026-09-29 42f532b'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-09-29 1681d32'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
 var slider = document.getElementById('years'), when = document.getElementById('when');
 // The slider runs from 20,000 years ago at the left to today at the right.
@@ -59,23 +59,37 @@ function say(ago, m) {
   if (m > -1) return years + ' · the sea about where it is today';
   return years + ' · the sea about ' + Math.round(-m) + ' metres lower than today';
 }
-Promise.all([
-  cwMap.load('../../art/maps/world-pyramid.json'),
-  fetch('../../stories/sea-level.json', { cache: 'no-cache' }).then(function (r) { return r.json(); })
-]).then(function (got) {
-  var world = got[0], curve = got[1].points;
-  var marks = [
-    { type: 'place', lat: 51.51, lon: -0.13, name: 'London', minor: true },
-    { type: 'place', lat: 52.37, lon: 4.9, name: 'Amsterdam', minor: true },
-    { type: 'place', lat: 55.68, lon: 12.57, name: 'Copenhagen', minor: true },
-    { type: 'note', lat: 54.7, lon: 2.5, text: 'Dogger Bank', water: true }
-  ];
-  var start = levelAt(curve, yearsAgo());
-  var map = cwMap(document.getElementById('map'), world, marks, { fit: { west: -12, south: 47, east: 22, north: 61 }, seaLevel: start });
-  function update() { var ago = yearsAgo(), m = levelAt(curve, ago); map.setSeaLevel(m); when.textContent = say(ago, m); }
-  slider.addEventListener('input', update);
+// The map draws as soon as the world is here; the curve arrives after and wakes the slider.
+// If either fails, the page says so rather than showing an empty space.
+var marks = [
+  { type: 'place', lat: 51.51, lon: -0.13, name: 'London', minor: true },
+  { type: 'place', lat: 52.37, lon: 4.9, name: 'Amsterdam', minor: true },
+  { type: 'place', lat: 55.68, lon: 12.57, name: 'Copenhagen', minor: true },
+  { type: 'note', lat: 54.7, lon: 2.5, text: 'Dogger Bank', water: true }
+];
+var map = null, curve = null;
+function update() {
+  var ago = yearsAgo();
+  if (!curve) { when.textContent = ''; return; }
+  var m = levelAt(curve, ago);
+  if (map) map.setSeaLevel(m);
+  when.textContent = say(ago, m);
+}
+slider.addEventListener('input', update);
+cwMap.load('../../art/maps/world-pyramid.json').then(function (world) {
+  map = cwMap(document.getElementById('map'), world, marks, { fit: { west: -12, south: 47, east: 22, north: 61 } });
   update();
-}).catch(function (e) { console.error(e); });
+}).catch(function (e) {
+  console.error(e);
+  document.getElementById('map').textContent = 'The map did not load. Reloading the page usually brings it back.';
+});
+fetch('../../stories/sea-level.json', { cache: 'no-cache' }).then(function (r) {
+  if (!r.ok) throw new Error('sea-level.json ' + r.status);
+  return r.json();
+}).then(function (j) { curve = j.points; update(); }).catch(function (e) {
+  console.error(e);
+  when.textContent = 'The sea levels did not load. Reloading the page usually brings them back.';
+});
 </script>
 </body>
 </html>

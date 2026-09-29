@@ -971,7 +971,10 @@ backstop for the Claude Code session that lands the file.
   years ago to today; one line says how far down the sea was, from `stories/sea-level.json`.
   At 12,000 years ago Doggerland joins Britain to the continent; at 20,000 the North Sea is
   dry but for the Norwegian Trench. The ice is not on it yet, so ground that lay under the
-  ice sheets at the low shows as bare land. Tested on the Mac; not on an iPad.
+  ice sheets at the low shows as bare land. Tested on the Mac and in the iPad simulator's
+  Safari. Since Michael saw no map the same day: the map draws as soon as the world has
+  loaded and the curve wakes the slider after, and a failure of either says so in words
+  instead of leaving an empty space.
 - **`maps/moving-bench.html`** — bench: **The world that moves** (27 Sep 2026; Spec-Maps
   *The world that moves*, the bench its prompt asked for). Six of Hokusai's events, hand-
   written with places and weights, on a `timeline.js` timeline over the world pyramid,
