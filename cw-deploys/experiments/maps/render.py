@@ -32,6 +32,7 @@ cw-deploys/art/maps/:
     python3 render.py --all   re-renders every region in art/maps/ from its own JSON
     python3 render.py --pyramid   the whole earth as tiles, for the map that moves (below)
     python3 render.py --contours  the finer levels' coastlines again, cut per tile column
+    python3 render.py --shelf     the shallow-sea layer, for a lower sea (Time on the map)
 
 The ground has layers (Spec-Maps, 26 Sep 2026): height is the base and always present;
 ice, vegetation and later sea level are files beside the picture that map.js draws over
@@ -710,6 +711,76 @@ def render_contours(levels=None):
     print('contours: %.0f s' % (time.time() - t0))
 
 
+SHELF_LEVELS = [0, 1, 2, 3, 4, 5]   # the shallow-sea layer's levels, 256 px a tile, so level 5 is 2.4 km a pixel
+SHELF_DEPTH = 130                  # metres: the lowest the sea has been since the last ice age, near enough
+
+
+def ocean_mask():
+    """The world ocean on the 60 arc-second grid: the largest connected body of ground
+    below sea level. The Caspian, the Dead Sea and every other depression on land are
+    separate bodies and are left out, so a lower sea never drains them."""
+    from scipy.ndimage import label
+    with h5py.File(os.path.join(DATA, SOURCES['60s'][0]), 'r') as f:
+        lat = np.asarray(f['lat'], np.float64)
+        lon = np.asarray(f['lon'], np.float64)
+        below = np.zeros(f['z'].shape, bool)
+        for a in range(0, below.shape[0], 1080):
+            below[a:a + 1080] = np.asarray(f['z'][a:a + 1080], np.float32) < 0
+    lab, n = label(below)
+    sizes = np.bincount(lab.ravel()); sizes[0] = 0
+    ocean = lab == int(np.argmax(sizes))
+    return ocean, lat, lon
+
+
+def render_shelf():
+    """The shallow-sea layer for the map that moves (Spec-Maps, *Time on the map*): for
+    every pyramid tile at levels 0 to 4 with continental shelf in it, a 256-pixel
+    greyscale PNG, `<y>-shelf.png` beside the tile: 0 for land and for water not joined to
+    the ocean, the depth in metres (1 to 130) for ocean up to 130 m deep, 255 for deeper
+    ocean. The browser paints what a lower sea exposes. Adds `shelf` to the pyramid JSON."""
+    import time
+    t0 = time.time()
+    ocean, olat, olon = ocean_mask()
+    print('  ocean mask: %.0f s' % (time.time() - t0), flush=True)
+    out_dir = os.path.join(OUT, PYRAMID_DIR)
+    meta_path = os.path.join(OUT, 'world-pyramid.json')
+    with open(meta_path) as fh:
+        meta = json.load(fh)
+    listed = {}
+    total = 0
+    for z in SHELF_LEVELS:
+        cols, rows = 2 ** (z + 1), 2 ** z
+        W = cols * LAYER_TILE
+        src = SOURCES['60s' if z <= 2 else '30s'][0]
+        n = 0
+        for ty in range(rows):
+            north = 90.0 - ty * 180.0 / rows
+            south = north - 180.0 / rows
+            g = Grid(os.path.join(DATA, src), -180.0, south, 180.0, north, W, LAYER_TILE)
+            zb = g.sample(W, LAYER_TILE)
+            # the ocean mask at these pixels, nearest cell
+            lat_t = north - (np.arange(LAYER_TILE) + 0.5) * (north - south) / LAYER_TILE
+            lon_t = -180.0 + (np.arange(W) + 0.5) * 360.0 / W
+            ri = np.clip(np.round((lat_t - olat[0]) / (olat[1] - olat[0])).astype(int), 0, len(olat) - 1)
+            ci = np.clip(np.round((lon_t - olon[0]) / (olon[1] - olon[0])).astype(int), 0, len(olon) - 1)
+            oc = ocean[np.ix_(ri, ci)]
+            v = np.where(~oc | (zb >= 0), 0, np.where(zb < -SHELF_DEPTH, 255, np.clip(np.round(-zb), 1, SHELF_DEPTH))).astype(np.uint8)
+            for tx in range(cols):
+                t = v[:, tx * LAYER_TILE:(tx + 1) * LAYER_TILE]
+                if not ((t > 0) & (t <= SHELF_DEPTH)).any():
+                    continue
+                p = os.path.join(out_dir, str(z), str(tx), '%d-shelf.png' % ty)
+                Image.fromarray(t, 'L').save(p, 'PNG', optimize=True)
+                total += os.path.getsize(p); n += 1
+                listed.setdefault(str(z), []).append('%d/%d' % (tx, ty))
+        print('level %d: %d shelf tiles  %.0f s' % (z, n, time.time() - t0), flush=True)
+    meta['shelf'] = {'suffix': '-shelf.png', 'tile': LAYER_TILE, 'depth': SHELF_DEPTH, 'levels': SHELF_LEVELS, 'tiles': listed}
+    with open(meta_path, 'w') as fh:
+        json.dump(meta, fh, indent=1)
+        fh.write('\n')
+    print('shelf: %d tiles, %.1f MB, %.0f s' % (sum(len(v) for v in listed.values()), total / 1e6, time.time() - t0))
+
+
 def render_all():
     """Every region in art/maps/, again, from its own JSON: corners, width, exaggeration
     and contour levels as recorded there."""
@@ -730,6 +801,9 @@ def main(argv):
         return
     if argv == ['--contours']:
         render_contours()
+        return
+    if argv == ['--shelf']:
+        render_shelf()
         return
     opts = {'width': '2000', 'exaggeration': None, 'levels': None}
     args = []

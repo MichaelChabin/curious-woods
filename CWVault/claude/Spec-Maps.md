@@ -248,6 +248,16 @@ The sixty-five events of `stories/events.json`, written for the September bench 
 >
 > Register the page and the new data file in `MANIFEST.md`, list the page in `experiments/index.html`, and add its line to `00-BOARD.md`. Run `tools/check-deploys.sh`. Do not hang it. Confirm that every story page still opens unchanged. Stop and report before committing, and say plainly which data values you guessed and whether the window's drag and the map's pan stayed apart under a finger.
 
+## Time on the map
+
+*Ruled 29 September 2026 (Michael): a new capability the maps can call on when a story wants it.* The ground's layers can change with a year. A story, or the timeline's rolling dot, says *when*, and the map shows the world as it was: the sea lower, the ice further south, the Sahara green. It is the layers ruling carried through time — a past outline is a different file, or a different number — and nothing in the base picture changes.
+
+**The sea first,** because it needs no outside data and it is the most dramatic. Global sea level was about 130 m lower at the height of the last ice age and about 60 m lower twelve thousand years ago, and reached roughly today's level around seven thousand years ago. The pyramid carries a shallow-sea layer: for every tile with continental shelf in it, a greyscale image of depth to 130 m. Only sea joined to the world ocean counts, so the Caspian and the Dead Sea, which lie below sea level on land, do not drain. `map.setSeaLevel(metres)` paints what that sea level exposes in the land colour, by its height above the new shore, with the new shoreline drawn as a line; today's coast stays drawn over it, so Britain's outline sits on Doggerland. The curve — metres by years ago — is shared data, `stories/sea-level.json`, read from a published reconstruction (Lambeck et al., 2014) and approximate. It is a single global figure: the land also rose where the ice left, most of all in Scandinavia and around Hudson Bay, and the map does not show that.
+
+**Then, when the timeline drives it:** `map.setTime(year)` sets the sea level from the curve, blends between the two nearest ice outlines (ICE-6G or GLAC-1D, after a licence check), and sets the strength of a green-Sahara wash (the African Humid Period, roughly 14,500 to 5,500 years ago, drawn as a wash because the evidence is coarse). Others the same machinery gives: Lake Agassiz and its drainage, Britain becoming an island, the Persian Gulf flooding, forests following the ice north; and nearer our time, measured rather than reconstructed, the Aral Sea and Lake Chad shrinking.
+
+**The first bench** (built 29 September in the session that wrote this): `experiments/maps/sea-level-bench.html`, the moving map on the North Sea with a slider from 20,000 years ago to today and one line saying how far down the sea was.
+
 ## Pillar and intuitions
 
 Maps belong to no pillar; they are picture furniture, like the brain. **#13, historical sweep** — *elsewhere at the same time*, the half a timeline alone cannot give. **#5, order-of-magnitude sense** — Tambora is about 12,300 km from Lake Geneva, and the sky over Geneva changed anyway. And with the pairing above, **#3**.

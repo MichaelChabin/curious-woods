@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../../art/map-icon-256.png">
+<link rel="apple-touch-icon" href="../../art/map-icon-256.png">
+<!--
+  sea-level-bench.html — bench: time on the map, the sea first. The moving world on the
+  North Sea, a slider from 20,000 years ago to today, and one line saying how far down the
+  sea was. The sea level comes from ../../stories/sea-level.json (Lambeck et al. 2014,
+  approximate); map.js paints what it exposes from the pyramid's shallow-sea layer.
+  Spec: CWVault/claude/Spec-Maps.md, "Time on the map".
+-->
+<title>The sea, lower — bench</title>
+<style>
+  :root { --cw-parchment: #f4f1e8; --cw-separator: #c8b89a; --cw-ink: #2a2620; --cw-copper: #b87333; }
+  html, body { background: var(--cw-parchment); color: var(--cw-ink); }
+  body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
+  article { max-width: 700px; margin: 0 auto; padding: 40px 40px 80px 40px; box-sizing: border-box; }
+  article h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0 0 1.4em 0; }
+  article p { margin: 0 0 1em 0; }
+  .when { font-size: 18px; margin: 1.2em 0 0.4em 0; min-height: 1.4em; }
+  .years { width: 100%; accent-color: var(--cw-copper); margin: 0; }
+  .ends { display: flex; justify-content: space-between; font-size: 13px; color: #7a6e60; margin-top: 2px; }
+  .note { font-size: 14px; color: #7a6e60; border-top: 0.5px solid var(--cw-separator); margin-top: 3em; padding-top: 1.2em; }
+  @media (max-width: 800px) { article { padding: 24px 16px 60px 16px; } body { font-size: 18px; } }
+</style>
+</head>
+<body>
+<article>
+  <h1>The sea, lower</h1>
+  <p>Below is the North Sea. Move the slider back in time and watch where the sea was.</p>
+  <div id="map"></div>
+  <div class="when" id="when"></div>
+  <input class="years" id="years" type="range" min="0" max="20000" step="100" value="12000" aria-label="years ago">
+  <div class="ends"><span>20,000 years ago</span><span>today</span></div>
+  <p class="note">A bench, not a story. The sea level is one global figure from a published reconstruction, and approximate; the land also rose where the ice left, and this does not show that. The ice itself is not on this map yet.</p>
+</article>
+
+<script src="../../js/map.js?v=2026-09-29b"></script>
+<script>
+var CW_VERSION = '2026-09-29 42f532b'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+
+var slider = document.getElementById('years'), when = document.getElementById('when');
+// The slider runs from 20,000 years ago at the left to today at the right.
+slider.value = 20000 - 12000;
+function yearsAgo() { return 20000 - (+slider.value); }
+function levelAt(points, ago) {
+  for (var i = 0; i < points.length - 1; i++) {
+    var a = points[i], b = points[i + 1];                 // points run from long ago to today
+    if (ago <= a[0] && ago >= b[0]) return a[1] + (b[1] - a[1]) * (a[0] - ago) / (a[0] - b[0]);
+  }
+  return ago > points[0][0] ? points[0][1] : 0;
+}
+function say(ago, m) {
+  if (ago === 0) return 'Today.';
+  var years = ago.toLocaleString('en-GB') + ' years ago';
+  if (m > -1) return years + ' · the sea about where it is today';
+  return years + ' · the sea about ' + Math.round(-m) + ' metres lower than today';
+}
+Promise.all([
+  cwMap.load('../../art/maps/world-pyramid.json'),
+  fetch('../../stories/sea-level.json', { cache: 'no-cache' }).then(function (r) { return r.json(); })
+]).then(function (got) {
+  var world = got[0], curve = got[1].points;
+  var marks = [
+    { type: 'place', lat: 51.51, lon: -0.13, name: 'London', minor: true },
+    { type: 'place', lat: 52.37, lon: 4.9, name: 'Amsterdam', minor: true },
+    { type: 'place', lat: 55.68, lon: 12.57, name: 'Copenhagen', minor: true },
+    { type: 'note', lat: 54.7, lon: 2.5, text: 'Dogger Bank', water: true }
+  ];
+  var start = levelAt(curve, yearsAgo());
+  var map = cwMap(document.getElementById('map'), world, marks, { fit: { west: -12, south: 47, east: 22, north: 61 }, seaLevel: start });
+  function update() { var ago = yearsAgo(), m = levelAt(curve, ago); map.setSeaLevel(m); when.textContent = say(ago, m); }
+  slider.addEventListener('input', update);
+  update();
+}).catch(function (e) { console.error(e); });
+</script>
+</body>
+</html>

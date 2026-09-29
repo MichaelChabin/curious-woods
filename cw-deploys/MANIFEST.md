@@ -28,7 +28,10 @@ the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
 `experiments/maps/`, beside `render.py`, which makes the pictures it draws on. Loaded with a
 version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. 26 Sep 2026 (`?v=2026-09-26c` on all seven pages that load it): (27 Sep, `?v=2026-09-27`: the window's *close* is 13 px bold, was 11 px) the window's drag strip sticks on the window's top edge, not 18 px below it, so a tall scrolling window (the Darkness poem) no longer shows its words through a slit above the strip; the words fade under it. **`stories/world-events.json` and `stories/places.json` (22 Sep 2026)** — what the world owns,
 shared by every story: one record per event (year, when, place, label, title, text, and since
-27 Sep `weight`, 1 to 3) and one per place (name, lat, lon, `weight`). A story gives `timeline.js` a `pool` and a `placebook`, then picks events
+27 Sep `weight`, 1 to 3) and one per place (name, lat, lon, `weight`). **`stories/sea-level.json`
+(29 Sep 2026)** — global sea level in metres by years ago, 20,000 to today, read from Lambeck et
+al. 2014 (PNAS 111:15296) and rounded, approximate, for maps that show time; its notes say to
+check the paper's table before a story leans on a number. A story gives `timeline.js` a `pool` and a `placebook`, then picks events
 by `ref`, sets each one's side, and may add `why` — its own last sentence. It never rewrites the
 shared words. Seeded with 32 events and 17 places from the two painting stories. Separate from
 `stories/after-the-ice-events.json` (27 Sep; it replaced `stories/events.json`), After the Ice's own
@@ -48,7 +51,13 @@ no dotted hidden edges; `letters` sets Necker's A and X in copper at body-text s
 drawn behind the lines and a little away from their corners (26 Sep; bold ones hid the corners); `cycle` makes a tap fill the front face, then the back, then neither, at once. Nothing
 animates, nothing is recorded, nothing counted: the drawing does not change, the seeing does.
 Each figure carries a description saying what its two readings are. First used by
-`active/professor-neckers-drawing.html`. **`map.js`, 27 Sep 2026 — the world that moves** (Spec-Maps, *The world that moves*): given
+`active/professor-neckers-drawing.html`. **`map.js`, 29 Sep 2026 — time on the map, the sea first** (Spec-Maps, *Time on the map*):
+`map.setSeaLevel(metres)` and `opts.seaLevel` paint what a lower sea exposes, from the
+pyramid's shallow-sea layer, on a canvas over the tiles and under the marks — the land
+colour by height above the new shore, a hint of the old sea floor through it, the new
+shoreline in the coast's own ink, today's coast still drawn over it. Full resolution, the
+depth smoothed so the shore is a curve; about 9 ms a frame, so it follows a pan or a zoom
+live. Zero is today and paints nothing. **`map.js`, 27 Sep 2026 — the world that moves** (Spec-Maps, *The world that moves*): given
 `world-pyramid.json` as its region, `cwMap` is a view rather than a box — a centre and a
 scale (since Michael's second look the same day: **Mercator at regional spans, fading to
 equirectangular by a 120° span**, one pair of functions that tiles, marks and lines all go
@@ -434,7 +443,14 @@ holding every line that touches its column — 16, 32 and 64 files, 2.7, 7.3 and
 all, the biggest 305, 524 and 667 KB — and the map fetches only the columns in view, so a
 level-5 coast is the tiles' own coast. `render.py --contours` makes them (16 minutes). The
 JSON names a level's contours either as a file or as `{ perColumn, cols }`. The folder is
-65 MB on disk with the coastlines. Rendered by `render.py --pyramid`
+65 MB on disk with the coastlines. **The shallow-sea layer** (29 Sep 2026, Spec-Maps *Time
+on the map*): `<z>/<x>/<y>-shelf.png` beside every tile at levels 0 to 5 that has continental
+shelf in it, 256 px greyscale — 0 for land and for water not joined to the world ocean, the
+depth in metres (1 to 130) for ocean up to 130 m deep, 255 for deeper — 1 306 tiles, 5.0 MB,
+listed in the pyramid JSON's `shelf`. Made by `render.py --shelf` (9 minutes); the ocean is
+the largest connected body below sea level on the 60 arc-second grid, so the Caspian and the
+Dead Sea never drain, and the Black Sea, whose strait is narrower than a cell, counts as a
+lake — as it roughly was at the ice-age low. Rendered by `render.py --pyramid`
 in 41 minutes, one tile row at a time so no level sits whole in memory, the tree cover read
 once at the finest level and averaged down. Made for the map that moves; no still map uses it.
 **Contours, as vectors** (third pass, 20 Sep): the coast (0 m) and the
@@ -950,6 +966,12 @@ backstop for the Claude Code session that lands the file.
   (110 Hz at 12 beads; 220 at 40 beads ×4). Origin: a projected piece in the Denver Art
   Museum children's area; footage and a timestamped catalogue in `_CW/Beads Analysis/`
   (outside the deploy). Tab icon `art/icons/beads-icon-256.png`. Not yet heard on an iPad.
+- **`maps/sea-level-bench.html`** — bench: **The sea, lower** (29 Sep 2026; Spec-Maps *Time on
+  the map*, the first bench of it). The moving map on the North Sea and a slider from 20,000
+  years ago to today; one line says how far down the sea was, from `stories/sea-level.json`.
+  At 12,000 years ago Doggerland joins Britain to the continent; at 20,000 the North Sea is
+  dry but for the Norwegian Trench. The ice is not on it yet, so ground that lay under the
+  ice sheets at the low shows as bare land. Tested on the Mac; not on an iPad.
 - **`maps/moving-bench.html`** — bench: **The world that moves** (27 Sep 2026; Spec-Maps
   *The world that moves*, the bench its prompt asked for). Six of Hokusai's events, hand-
   written with places and weights, on a `timeline.js` timeline over the world pyramid,

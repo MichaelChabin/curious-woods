@@ -29,6 +29,12 @@
    unsaid) places it before lighter marks, so the heavier survives a collision — on every
    map, since it is one placer.
 
+   Time on the map (29 Sep 2026, Spec-Maps "Time on the map"). With the pyramid's shallow-sea
+   layer (`shelf` in its JSON: depth to 130 m in greyscale tiles, ocean only),
+   `map.setSeaLevel(metres)` paints what a lower sea exposes, in the land colour by height
+   above the new shore, with the new shoreline as a line; today's coast stays drawn over it.
+   `opts.seaLevel` is the opening level; 0 is today and paints nothing.
+
    The ground has layers (26 Sep 2026). The base picture is height alone. The region's
    JSON lists its layers — ice, vegetation, later sea level — each a half-width RGBA
    picture beside the base with a blend (`normal` for ice, `multiply` for vegetation)
@@ -98,6 +104,7 @@
     '.cw-map .cw-stage.dragging{cursor:grabbing;}',
     '.cw-map .cw-tiles{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     '.cw-map .cw-tiles img{position:absolute;display:block;width:auto;height:auto;max-width:none;pointer-events:none;}',
+    '.cw-map canvas.cw-sea{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     /* the strip is the picker's drag handle turned to this use, with the handle's own tint
        (rgba(200,184,154,.25)) so it reads as a thing to take hold of, not as the page */
     '.cw-map .cw-strip{height:16px;border-radius:0 0 8px 8px;cursor:ns-resize;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;background:rgba(200,184,154,0.28);touch-action:none;user-select:none;-webkit-user-select:none;line-height:16px;}',
@@ -261,6 +268,73 @@
 
     var svg = el('svg', { viewBox: '0 0 1 1', preserveAspectRatio: 'none' });
     box.appendChild(svg);
+
+    // ---- time on the map: the sea level (the pyramid only) ----
+    var seaLevel = opts.seaLevel || 0;
+    var seaCanvas = null, shelfImgs = {}, shelfHave = null;
+    var SEA_LAND = [[0, [230, 223, 203]], [250, [216, 205, 170]]];   // the land ramp's first stops (#e6dfcb, #d8cdaa)
+    var SEA_EDGE = [74, 67, 54];                                    // the coast's own ink, #4a4336
+    if (pyr && region.shelf) {
+      seaCanvas = document.createElement('canvas');
+      seaCanvas.className = 'cw-sea';
+      stage.insertBefore(seaCanvas, svg);
+      shelfHave = {};
+      Object.keys(region.shelf.tiles || {}).forEach(function (z) { shelfHave[z] = {}; region.shelf.tiles[z].forEach(function (k) { shelfHave[z][k] = true; }); });
+    }
+    function shelfImg(z, x, y) {
+      var key = z + '/' + x + '/' + y;
+      if (!(shelfHave[z] && shelfHave[z][x + '/' + y])) return null;
+      if (!shelfImgs[key]) {
+        var im = new Image();
+        im.onload = function () { drawSea(); };
+        im.src = resolve(region.tiles + '/' + key + region.shelf.suffix);
+        shelfImgs[key] = im;
+      }
+      return shelfImgs[key];
+    }
+    function drawSea() {
+      if (!seaCanvas) return;
+      if (seaLevel >= 0) { seaCanvas.style.display = 'none'; return; }
+      seaCanvas.style.display = '';
+      var w = box.clientWidth, h = box.clientHeight;
+      if (!w || !h) return;
+      var k = 1, cw = Math.ceil(w * k), ch = Math.ceil(h * k);             // full resolution, smoothed: the depth is interpolated, so the new shore is a curve
+      if (seaCanvas.width !== cw || seaCanvas.height !== ch) { seaCanvas.width = cw; seaCanvas.height = ch; }
+      var ctx = seaCanvas.getContext('2d');
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.imageSmoothingEnabled = true;
+      if ('imageSmoothingQuality' in ctx) ctx.imageSmoothingQuality = 'high';
+      var levels = region.shelf.levels, zs = Math.min(levelFor(), levels[levels.length - 1]);
+      var L = region.levels[zs], dlon = 360 / L.cols, dlat = 180 / L.rows;
+      var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
+      var tx0 = Math.max(0, Math.floor((nw.lon + 180) / dlon)), tx1 = Math.min(L.cols - 1, Math.floor((se.lon + 180) / dlon));
+      var ty0 = Math.max(0, Math.floor((90 - nw.lat) / dlat)), ty1 = Math.min(L.rows - 1, Math.floor((90 - se.lat) / dlat));
+      var drew = false, tx, ty;
+      for (ty = ty0; ty <= ty1; ty++) for (tx = tx0; tx <= tx1; tx++) {
+        var im = shelfImg(zs, tx, ty);
+        if (!im || !(im.complete && im.naturalWidth)) continue;
+        var r = tileRect(zs, tx, ty, w, h);
+        ctx.drawImage(im, r.x * k, r.y * k, r.w * k + 1, r.h * k + 1);
+        drew = true;
+      }
+      if (!drew) return;
+      var img = ctx.getImageData(0, 0, cw, ch), d = img.data, depth = -seaLevel, n = cw * ch, i, v;
+      var exposed = new Uint8Array(n);
+      for (i = 0; i < n; i++) { v = d[i * 4]; exposed[i] = (d[i * 4 + 3] > 0 && v > 0 && v < 255 && v <= depth) ? 1 : 0; }
+      for (i = 0; i < n; i++) {
+        var j = i * 4;
+        if (!exposed[i]) { d[j + 3] = 0; continue; }
+        var x = i % cw, y = (i / cw) | 0;
+        var edge = (x > 0 && !exposed[i - 1] && d[j - 4] > depth) || (x < cw - 1 && !exposed[i + 1] && d[j + 4] > depth) ||
+                   (y > 0 && !exposed[i - cw] && d[j - cw * 4] > depth) || (y < ch - 1 && !exposed[i + cw] && d[j + cw * 4] > depth);
+        if (edge) { d[j] = SEA_EDGE[0]; d[j + 1] = SEA_EDGE[1]; d[j + 2] = SEA_EDGE[2]; d[j + 3] = 170; continue; }
+        var above = depth - d[j];                                    // metres above the new shore
+        var t = Math.min(1, above / 250), c0 = SEA_LAND[0][1], c1 = SEA_LAND[1][1];
+        d[j] = c0[0] + (c1[0] - c0[0]) * t; d[j + 1] = c0[1] + (c1[1] - c0[1]) * t; d[j + 2] = c0[2] + (c1[2] - c0[2]) * t;
+        d[j + 3] = 232;                                              // a hint of the old sea floor shows through
+      }
+      ctx.putImageData(img, 0, 0);
+    }
 
     // ---- the view (the pyramid only) ----
     // A centre and a scale. The scale S is pixels per degree of longitude, uniform across
@@ -575,6 +649,7 @@
         these.forEach(function (x) { drawMark(x.m, w, h, marksLayer, halos, glyphs, placed, dots); });
       });
       shown.forEach(function (s) { positionText(s, w, h); });
+      if (pyr) drawSea();
     }
 
     // The earth's lines on the moving map come per level, and at the finer levels per
@@ -927,6 +1002,8 @@
         slideTo(viewForBox(span, w, h), SLIDE_MS);
       };
       api.home = goHome;
+      api.setSeaLevel = function (m) { seaLevel = Math.min(0, +m || 0); drawSea(); };
+      api.seaLevel = function () { return seaLevel; };
       api.view = function () { return { lat: view.lat, lon: view.lon, S: view.S, k: view.k }; };
     }
     return api;
