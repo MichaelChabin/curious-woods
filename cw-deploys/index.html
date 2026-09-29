@@ -100,7 +100,7 @@
 <footer>curious woods</footer>
 
 <script>
-var CW_VERSION = '2026-09-26 0def494'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-09-29 ecb6348'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
 // The wall reads stories/gallery.json — one line per work: slug, title, href, picture, frame,
 // frameWidth, size (`icon` is read as the older name for `picture`). A picture hangs whole, at
@@ -108,7 +108,9 @@ var CW_VERSION = '2026-09-26 0def494'; try { console.log('Curious Woods · ' + d
 // nothing here sets a height, a ratio or a crop. Adding a story to the gallery is adding its line there (Publishing-a-Story,
 // stage 4). Nothing here knows the works by name.
 (function () {
-  var WALL_SIZE = 9;                        // about nine works at a time on a wide screen
+  // The spec's wall holds about nine at a time; lifted 29 Sep 2026 on Michael's word while he tests
+  // and demos the site, so every work in the pool hangs. Put 9 back to restore the curated wall.
+  var WALL_SIZE = Infinity;
   var FINISHED = 'cw.gallery.finished';     // slugs whose story text she reached the end of (the story page writes it)
   var KEPT = 'cw.gallery.kept';             // slugs she chose "keep this" for (a later step; nothing writes it yet)
 

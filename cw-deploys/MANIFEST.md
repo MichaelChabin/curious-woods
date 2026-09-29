@@ -522,7 +522,8 @@ backstop for the Claude Code session that lands the file.
   subtitle under the title, *for tomorrow's best minds*, centred, lowercase, italic, on Michael's word; `Spec-Gallery.md`,
   the Rulings' *The gallery*; built from `experiments/gallery/home-mock-salon.html`, not
   redesigned). Reads `stories/gallery.json`, shuffles it (Fisher–Yates, a new hang every
-  visit), and hangs up to nine works: each a link holding a coloured frame (`frame`,
+  visit), and hangs every work in the pool (the spec's *about nine* was the cap until 29 Sep 2026,
+  lifted on Michael's word for testing and demos; `WALL_SIZE` in the script, set back to 9 to restore it): each a link holding a coloured frame (`frame`,
   `frameWidth`; 10 px default), an 8 px mat (off-white, or the wall colour when the picture is
   an SVG, i.e. a drawn mark), the picture **whole, at its own proportions** (21 Sep: no
   height, ratio or crop is set on it; a print hangs wide, a portrait tall, and the frame
