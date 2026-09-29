@@ -1,5 +1,5 @@
 ---
-status: 27 Sept 2026. Michael's yes on the design and the words; ready to build and hang. The mockup is CWVault/claude/mockups/limerick-puzzle-mockup.html, and it is the behaviour to match.
+status: 29 Sept 2026. Built and hung as Wordplay (active/wordplay.html). The texts live in stories/limericks.json only. The mockup is CWVault/claude/mockups/limerick-puzzle-mockup.html, and it is the behaviour to match.
 role: Spec, texts and credits for the limerick puzzle. The build prompt is Prompt-Build-Limerick-Puzzle.md.
 ---
 
@@ -48,331 +48,100 @@ Lear never called his poems limericks. Nobody did until fifty years later, and n
 
 Checks: Knowsley Hall, the Earl of Derby's menagerie; the Tobago poem is from *Anecdotes and Adventures of Fifteen Gentlemen* (1822). Accounts differ on whether a friend showed it to Lear or he found the book at Knowsley, so we say "someone showed." The word "limerick" is first recorded in 1896 (Aubrey Beardsley).
 
-## The puzzles
+## The limericks: where they live (29 Sept, Michael)
 
-**1. Niger** (Cosmo Monkhouse, before 1901)
-There was a young lady of Niger
-Who smiled as she rode on a tiger;
-They returned from the ride
-With the lady inside,
-And the smile on the face of the tiger.
+**The texts live in `cw-deploys/stories/limericks.json`, and only there.** The page reads that file; adding a limerick means adding one record to it. This spec no longer carries the poems' words, so the two can't drift apart. What stays here: the decisions, the sources, the checks, and the notes on particular poems.
 
-Background line (Michael's wording): "Niger is a country in West Africa, most of it desert, named after the great river that runs through it. France ruled it until 1960, and people there say its name the French way: nee-ZHAIR. To make the limerick work, it was changed to rhyme with tiger. There are no tigers in Africa. She must have brought her own." A map later.
+Each record holds `id`, `lines` (five), `credit`, `ease` (easy, middle, hard), and where needed `title`, `intro`, `swap` (the two line numbers, counting from 1, that may change places) and `picture`.
 
-Checks: French was the official language until 2025, when Hausa, which most people speak, replaced it. French is still used in government and business. NYE-jer was the ordinary English way of saying the river's name, so "changed" is loose; an alternative is "In the limerick it's said NYE-jer, to rhyme with tiger."
+### What is live (40, as built 28 Sept)
 
-**2. Hall** (Anonymous; date unknown)
-There was a young fellow named Hall,
-Who fell in the spring in the fall;
-'Twould have been a sad thing
-If he'd died in the spring,
-But he didn't — he died in the fall.
+| id | first line | credit | ease |
+|---|---|---|---|
+| niger | There was a young lady of Niger | Cosmo Monkhouse, before 1901 | easy |
+| hall | There was a young fellow named Hall | Anonymous; date unknown | middle |
+| bright | There was a young lady named Bright | A.H. Reginald Buller; first printed unsigned in *Punch*, 19 December 1923 | hard |
+| pelican | A gorgeous bird is the pelican | Anonymous, first printed 1913; often wrongly credited to Dixon Lanier Merritt | middle |
+| flue | A flea and a fly in a flue | Anonymous, printed by 1905; not Ogden Nash | hard |
+| tutor | A Tutor who tooted the flute | Carolyn Wells, *The Jingle Book*, 1899 | hard |
+| canner | A canner, exceedingly canny | Attributed to Carolyn Wells; date unknown | hard |
+| japan | There was a young man of Japan | Anonymous, traditional | middle |
+| peru | There was an old man of Peru | Anonymous, traditional | easy |
+| crewe | An epicure dining at Crewe | Anonymous, traditional | middle |
+| lynn | There was a young lady of Lynn | Anonymous, traditional | middle |
+| bush | There was an Old Man who said, “Hush! | Edward Lear, *A Book of Nonsense*, 1846 | easy |
+| bonnet | There was a Young Lady whose bonnet | Edward Lear, *A Book of Nonsense* | easy |
+| tree | There was an Old Man in a tree | Edward Lear, *A Book of Nonsense* | easy |
+| chin | There was a Young Lady whose chin | Edward Lear, *A Book of Nonsense* | easy |
+| boat | There was an Old Man in a boat | Edward Lear, *A Book of Nonsense* | easy |
+| west | There was an Old Man of the West | Edward Lear, *A Book of Nonsense* | easy |
+| norway | There was a Young Lady of Norway | Edward Lear, *A Book of Nonsense* | easy |
+| nose | There was an Old Man on whose nose | Edward Lear, *A Book of Nonsense* | middle |
+| burton | There was an Old Person of Burton | Edward Lear, *A Book of Nonsense* | easy |
+| sestri | There was an old person of Sestri | Edward Lear, *More Nonsense*, 1872 | middle |
+| border | There was an old man on the Border | Edward Lear, *More Nonsense*, 1872 | easy |
+| dumpet | There was an old man of West Dumpet | Edward Lear, *More Nonsense*, 1872 | easy |
+| blackheath | There was an old man of Blackheath | Edward Lear, *More Nonsense*, 1872 | middle |
+| ware | There was an old person of Ware | Edward Lear, *More Nonsense*, 1872 | easy |
+| marsh | There was an old man in a Marsh | Edward Lear, *More Nonsense*, 1872 | middle |
+| dumbree | There was an old man of Dumbree | Edward Lear, *More Nonsense*, 1872 | easy |
+| france | There was an old lady of France | Edward Lear, *More Nonsense*, 1872 | easy |
+| nantucket | There was once a man from Nantucket | Anonymous, *The Princeton Tiger*, 1902 | middle |
+| bear | A cheerful old bear at the Zoo | Anonymous, printed by 1924 | easy |
+| tring | There was an old person of Tring | Anonymous, printed by 1924 | hard |
+| bagdad | There once was a lad of Bagdad | Anonymous, printed by 1924 | middle |
+| montrose | Said a funny old man of Montrose | Anonymous, printed by 1924 | middle |
+| emu | At the Zoo I remarked to an emu | Anonymous, printed by 1924 | middle |
+| eye | There was a young maid who said, “Why | Anonymous, printed by 1902 | easy |
+| twoandtwo | There was an old man who said, “Do | Anonymous, printed 1864 | middle |
+| cow | There once was a man who said, “How | Anonymous, printed 1864 | easy |
+| tarentum | There was an old man of Tarentum | Anonymous, printed by 1924 | middle |
+| perth | There was a young fellow of Perth | Anonymous, printed by 1924 | middle |
+| eden | There was a dear lady of Eden | Anonymous, printed 1864 | middle |
 
-**3. Bright** (A.H. Reginald Buller; first printed unsigned in *Punch*, 19 December 1923)
-There was a young lady named Bright
-Whose speed was far faster than light;
-She set out one day
-In a relative way
-And returned on the previous night.
+### What changed at the build (28 Sept)
 
-**4. The pelican** (Anonymous, first printed 1913; often wrongly credited to Dixon Lanier Merritt)
-A gorgeous bird is the pelican,
-Whose beak will hold more than his bellican.
-He can put in his beak
-Food enough for a week,
-But I'm darned if I see how the helican.
+The pool that went live differs from the 28 proposed here on 28 Sept. **Nothing was dropped by a check:** the build was made before that list reached the vault, so it chose its own newcomers, checked each against a printing before 1931, and never saw the proposed ones. Michael has not yet read the sixteen that came in. (Claude Code's findings, 29 Sept.)
 
-Note: The 1913 last line reads "But I'm d—— if I see how in hellecan." We've softened it.
+**Came in at the build**, with where each was found:
 
-**5. The flue** (Anonymous, printed by 1905; not Ogden Nash)
-A flea and a fly in a flue
-Were imprisoned, so what could they do?
-Said the fly, "Let us flee!"
-"Let us fly!" said the flea.
-So they flew through a flaw in the flue.
+- Old Man of the West: Lear, *A Book of Nonsense*, Warne printing, Internet Archive `bookofnonsense00lear`, leaf n42, with his drawing.
+- Old Person of Burton: the same printing, leaf n122.
+- Sestri: Lear, *More Nonsense*, first edition 1872, Internet Archive `morenonsensepict00learrich`, leaf n134, with his drawing.
+- The Border: *More Nonsense* 1872, leaf n144.
+- West Dumpet: *More Nonsense* 1872, leaf n168.
+- The Marsh: *More Nonsense* 1872, leaf n240.
+- Dumbree: *More Nonsense* 1872, leaf n244.
+- The old lady of France: *More Nonsense* 1872, leaf n288.
+- Tring: Langford Reed, *The Complete Limerick Book* (Putnam 1925; preface December 1924), p. 148, "Some Old Favourites", unsigned.
+- Perth: Reed, p. 149, same chapter, unsigned.
+- Montrose: Reed, p. 155, unsigned.
+- The emu: Reed, p. 166, unsigned.
+- The maid who looks in her ear: Carolyn Wells, *A Nonsense Anthology* (1902), signed "Anonymous". Gutenberg's text has no page numbers.
+- Adding two and two: Wells 1902, "Anonymous", in a group Wells credits to books printed for the 1864 New York Sanitary Commission fair.
+- Carrying the cow ("There once was a man who said, 'How…'"): Wells 1902, the same 1864 group.
+- Eden: Wells 1902, the same 1864 group.
 
-**6. The tutor** (Carolyn Wells, *The Jingle Book*, 1899)
-A Tutor who tooted the flute
-Tried to teach two young tooters to toot;
-Said the two to the Tutor,
-"Is it harder to toot, or
-To tutor two tooters to toot?"
+**Went out** (never checked, simply not used): Lear's "who supposed", "with a nose", Kilkenny, the cow ("How / Shall I flee"), Portugal, Whitehaven, Thermopylae and Dean; the anonymous gas man, Perkins, Devizes, Asturias, Millicent, Darjeeling, the city and the Amazon. One fact from Reed, p. 117: **Devizes is signed Archibald Marshall**, so it isn't anonymous. They remain candidates for the next batch.
 
-**7. The canner** (attributed to Carolyn Wells; date unknown)
-A canner, exceedingly canny,
-One morning remarked to his granny,
-"A canner can can
-Anything that he can;
-But a canner can't can a can, can he?"
+**Checked, and in both lists:** Nantucket is Reed p. 99, credited to the *Princeton Tiger* with no year. Tarentum is Reed p. 159, the bear Reed p. 166, and Bagdad Reed p. 181, in "Some New Ones", unsigned. The Lear ones in both lists are all from the same two scans, with drawings.
 
-**8. Japan** (Anonymous, traditional)
-There was a young man of Japan
-Whose limericks never would scan.
-When they said it was so,
-He replied, "Yes, I know,
-But I always try to get as many words into the last line as I possibly can."
+**For Michael to look at when he reads the newcomers:** Tring depends on knowing the tunes "God Save the King" and "Pop Goes the Weasel", which a ten-year-old in the US may not. Eden is a joke about Adam and Eve. Neither is wrong; both are his call.
 
-**9. Peru** (Anonymous, traditional)
-There was an old man of Peru
-Who dreamed he was eating his shoe.
-He woke in the night
-In a terrible fright
-And found it was perfectly true.
+### Notes on particular poems (these are kept whatever happens to the texts)
 
-**10. Crewe** (Anonymous, traditional)
-An epicure dining at Crewe
-Found a rather large mouse in his stew.
-Cried the waiter, "Don't shout
-And wave it about,
-Or the rest will be wanting one too!"
+- **Niger:** the intro in the file is Michael's wording. French was the official language until 2025, when Hausa, which most people speak, replaced it; French is still used in government and business. NYE-jer was the ordinary English way of saying the river's name, so "changed" is loose; an alternative is "In the limerick it's said NYE-jer, to rhyme with tiger."
+- **Hall:** Michael: "Put him in. It is funny."
+- **The pelican:** the 1913 last line reads "But I'm d—— if I see how in hellecan." We softened it. First printed 1913; often wrongly credited to Dixon Lanier Merritt, who said he didn't write it.
+- **The flue:** printed by 1905, so not Ogden Nash (born 1902).
+- **Bright:** first printed unsigned in *Punch*, 19 December 1923; Buller claimed it in 1937.
+- **The tutor:** Carolyn Wells, *The Jingle Book*, 1899, in her wording.
+- **Nantucket:** kept although rude limericks borrowed its first line (Michael, 28 Sept).
+- **The beard** (Lear) is not in the pool; it is the example in the Opening.
+- Lear printed lines 3 and 4 as one line; we break them in two.
 
-**11. Lynn** (Anonymous, traditional)
-There was a young lady of Lynn
-Who was so uncommonly thin
-That when she essayed
-To drink lemonade
-She slipped through the straw and fell in.
-
-**12. The bush** (Edward Lear, *A Book of Nonsense*, 1846)
-There was an Old Man who said, "Hush!
-I perceive a young bird in this bush!"
-When they said, "Is it small?"
-He replied, "Not at all!
-It is four times as big as the bush!"
-
-Lear's "beard" is not a puzzle. It is the example in the introduction.
-
-## The next 28 (28 Sept; chosen by Claude on Michael's instruction, awaiting his yes on the words)
-
-The build prompt named a section of this title that did not exist yet, and Michael asked Claude Code to find them (28 Sept). Sixteen are Lear, each with his own drawing (13 to 28); twelve are anonymous (29 to 40), each found in a printing before 1931, in the printed wording. None had to come out, so no Lear replacement was needed. Left out on purpose: Lear limericks where someone is smashed, drowned, burnt or killed, one that mocks blindness (the Old Man of th' Abruzzi, first chosen, then dropped), one with a racist line (Jamaica), and anonymous ones that need a grown-up joke or a word she can't know (the curate of Kew's Greek *mu*, the *beadle* of Cheadle, the *fur thing* of Worthing).
-
-Lear's third and fourth lines are one printed line in his early editions and in *More Nonsense*; they are split at the inner rhyme, as the later five-line printings set them. The picture file is named after each.
-
-**13. Bonnet** (Edward Lear, *A Book of Nonsense*) — ease: easy; picture: `lear-young-lady-whose-bonnet.png`
-There was a Young Lady whose bonnet
-Came untied when the birds sat upon it;
-But she said, "I don't care!
-All the birds in the air
-Are welcome to sit on my bonnet!"
-Found: *A Book of Nonsense*, Warne printing (NYPL copy, Internet Archive `bookofnonsense00lear`), page n20; matches Gutenberg #13646.
-
-**14. Tree** (Edward Lear, *A Book of Nonsense*) — ease: easy; picture: `lear-old-man-in-a-tree.png`
-There was an Old Man in a tree,
-Who was horribly bored by a bee;
-When they said, "Does it buzz?"
-He replied, "Yes, it does!
-It's a regular brute of a bee!"
-Found: same printing, n25; Gutenberg #13646 capitalises Bee, this printing doesn't.
-
-**15. Chin** (Edward Lear, *A Book of Nonsense*) — ease: easy; picture: `lear-young-lady-whose-chin.png`
-There was a Young Lady whose chin
-Resembled the point of a pin;
-So she had it made sharp,
-And purchased a harp,
-And played several tunes with her chin.
-Found: same printing, n27.
-
-**16. Boat** (Edward Lear, *A Book of Nonsense*) — ease: easy; picture: `lear-old-man-in-a-boat.png`
-There was an Old Man in a boat,
-Who said, "I'm afloat! I'm afloat!"
-When they said, "No, you ain't!"
-He was ready to faint,
-That unhappy Old Man in a boat.
-Found: same printing, n30.
-
-**17. West** (Edward Lear, *A Book of Nonsense*) — ease: easy; picture: `lear-old-man-of-the-west.png`
-There was an Old Man of the West,
-Who wore a pale plum-coloured vest;
-When they said, "Does it fit?"
-He replied, "Not a bit!"
-That uneasy Old Man of the West.
-Found: same printing, n42.
-
-**18. Norway** (Edward Lear, *A Book of Nonsense*) — ease: easy; picture: `lear-young-lady-of-norway.png`
-There was a Young Lady of Norway,
-Who casually sat in a doorway;
-When the door squeezed her flat,
-She exclaimed, "What of that?"
-This courageous Young Lady of Norway.
-Found: same printing, n45. A door squeezes her flat and she shrugs it off; slapstick, not cruelty.
-
-**19. Nose** (Edward Lear, *A Book of Nonsense*) — ease: middle; picture: `lear-old-man-on-whose-nose.png`
-There was an Old Man on whose nose,
-Most birds of the air could repose;
-But they all flew away
-At the closing of day,
-Which relieved that Old Man and his nose.
-Found: same printing, n120.
-
-**20. Burton** (Edward Lear, *A Book of Nonsense*) — ease: easy; picture: `lear-old-person-of-burton.png`
-There was an Old Person of Burton,
-Whose answers were rather uncertain;
-When they said, "How d'ye do?"
-He replied, "Who are you?"
-That distressing Old Person of Burton.
-Found: same printing, n122.
-
-**21. Sestri** (Edward Lear, *More Nonsense*, 1872) — ease: middle; picture: `lear-old-person-of-sestri.png`
-There was an old person of Sestri,
-Who sate himself down in the vestry,
-When they said "You are wrong!"—
-He merely said "Bong!"
-That repulsive old person of Sestri.
-Found: *More Nonsense*, first edition, London: R. J. Bush, 1872 (University of California copy, Internet Archive `morenonsensepict00learrich`), n134. Printed as four lines; split at the inner rhyme, and the fourth line given a capital, as the five-line printings of Lear do.
-
-**22. Border** (Edward Lear, *More Nonsense*, 1872) — ease: easy; picture: `lear-old-man-on-the-border.png`
-There was an old man on the Border,
-Who lived in the utmost disorder;
-He danced with the cat,
-And made tea in his hat,
-Which vexed all the folks on the Border.
-Found: same edition, n144; split likewise.
-
-**23. Dumpet** (Edward Lear, *More Nonsense*, 1872) — ease: easy; picture: `lear-old-man-of-west-dumpet.png`
-There was an old man of West Dumpet,
-Who possessed a large nose like a trumpet;
-When he blew it aloud,
-It astonished the crowd,
-And was heard through the whole of West Dumpet.
-Found: same edition, n168; split likewise.
-
-**24. Blackheath** (Edward Lear, *More Nonsense*, 1872) — ease: middle; picture: `lear-old-man-of-blackheath.png`
-There was an old man of Blackheath,
-Whose head was adorned with a wreath,
-Of lobsters and spice,
-Pickled onions and mice,
-That uncommon old man of Blackheath.
-Found: same edition, n200; split likewise. The scan's last stop is broken and could be a comma; set as a full stop, as Gutenberg #13648 has it.
-
-**25. Ware** (Edward Lear, *More Nonsense*, 1872) — ease: easy; picture: `lear-old-person-of-ware.png`
-There was an old person of Ware,
-Who rode on the back of a bear:
-When they ask'd, "Does it trot?"
-He said, "Certainly not!
-He's a Moppsikon Floppsikon bear!"
-Found: same edition, n216; split likewise. The 1872 page drops two closing quotation marks; restored as Gutenberg #13648 has them, keeping 1872's *ask'd*.
-
-**26. Marsh** (Edward Lear, *More Nonsense*, 1872) — ease: middle; picture: `lear-old-man-in-a-marsh.png`
-There was an old man in a Marsh,
-Whose manners were futile and harsh;
-He sate on a log,
-And sang songs to a frog,
-That instructive old man in a Marsh.
-Found: same edition, n240; split likewise.
-
-**27. Dumbree** (Edward Lear, *More Nonsense*, 1872) — ease: easy; picture: `lear-old-man-of-dumbree.png`
-There was an old man of Dumbree,
-Who taught little owls to drink tea;
-For he said, "To eat mice,
-Is not proper or nice,"
-That amiable man of Dumbree.
-Found: same edition, n244; split likewise.
-
-**28. France** (Edward Lear, *More Nonsense*, 1872) — ease: easy; picture: `lear-old-lady-of-france.png`
-There was an old lady of France,
-Who taught little ducklings to dance;
-When she said, "Tick-a-tack!"—
-They only said, "Quack!"
-Which grieved that old lady of France.
-Found: same edition, n288; split likewise.
-
-**29. Nantucket** (Anonymous, *The Princeton Tiger*, 1902) — ease: middle
-There was once a man from Nantucket
-Who kept all his cash in a bucket,
-But his daughter, named Nan,
-Ran away with a man,
-And as for the bucket, Nantucket.
-Found: Langford Reed, *The Complete Limerick Book* (Putnam, 1925; preface December 1924), p. 99, printed "(Princeton Tiger)", with a note that an unknown Princeton student began it in the college journal. Reed gives no year; 1902 is Michael's (28 Sept) and not checked against the *Tiger* itself. Reed's wording is "There was once a man", not "There once was".
-
-**30. Bear** (Anonymous, printed by 1924) — ease: easy
-A cheerful old bear at the Zoo
-Could always find something to do.
-When it bored him, you know,
-To walk to and fro,
-He reversed it and walked fro and to.
-Found: Reed 1924, unsigned.
-
-**31. Tring** (Anonymous, printed by 1924) — ease: hard
-There was an old person of Tring
-Who, when somebody asked her to sing,
-Replied, "Isn't it odd?
-I can never tell God
-Save the Weasel from Pop goes the King!"
-Found: Reed 1924, unsigned.
-
-**32. Bagdad** (Anonymous, printed by 1924) — ease: middle
-There once was a lad of Bagdad,
-An inquisitive sort of a lad,
-Who said, "I will see
-If a sting has a bee."
-And he very soon found that it had!
-Found: Reed 1924, unsigned.
-
-**33. Montrose** (Anonymous, printed by 1924) — ease: middle
-Said a funny old man of Montrose,
-"I ought not to wear my best clothes;
-But what can I do?
-I only have two,
-And these are no better than those."
-Found: Reed 1924, unsigned.
-
-**34. Emu** (Anonymous, printed by 1924) — ease: middle
-At the Zoo I remarked to an emu,
-"I cannot pretend I esteem you.
-You're a greedy old bird,
-And your walk is absurd,
-But your curious feathers redeem you."
-Found: Reed 1924, unsigned.
-
-**35. Eye** (Anonymous, printed by 1902) — ease: easy
-There was a young maid who said, "Why
-Can't I look in my ear with my eye?
-If I give my mind to it,
-I'm sure I can do it,
-You never can tell till you try."
-Found: Carolyn Wells, *A Nonsense Anthology* (1902, Project Gutenberg #9380), signed *Anonymous*.
-
-**36. Twoandtwo** (Anonymous, printed 1864) — ease: middle
-There was an old man who said, "Do
-Tell me how I'm to add two and two?
-I'm not very sure
-That it doesn't make four—
-But I fear that is almost too few."
-Found: Wells 1902, *Anonymous*, in a group Wells gives as "From books printed for the benefit of the New York Fair in aid of the Sanitary Commission, 1864".
-
-**37. Cow** (Anonymous, printed 1864) — ease: easy
-There once was a man who said, "How
-Shall I manage to carry my cow?
-For if I should ask it
-To get in my basket,
-'Twould make such a terrible row."
-Found: Wells 1902, the same 1864 group.
-
-**38. Tarentum** (Anonymous, printed by 1924) — ease: middle
-There was an old man of Tarentum,
-Who gnashed his false teeth till he bent 'em.
-When they asked him the cost
-Of what he had lost,
-He said, "They weren't mine, I was lent 'em."
-Found: Reed 1924, unsigned.
-
-**39. Perth** (Anonymous, printed by 1924) — ease: middle
-There was a young fellow of Perth,
-Who was born on the day of his birth.
-He was married, they say,
-On his wife's wedding-day,
-And he died—when he quitted the earth.
-Found: Reed 1924, unsigned.
-
-**40. Eden** (Anonymous, printed 1864) — ease: middle
-There was a dear lady of Eden,
-Who on apples was quite fond of feedin';
-She gave one to Adam,
-Who said, "Thank you, Madam,"
-And then both skedaddled from Eden.
-Found: Wells 1902, the same 1864 group.
-
-**Ease for 1 to 12** (Claude's first marks, 28 Sept, for Michael): Niger easy; Hall middle; Bright hard; Pelican middle; Flue hard; Tutor hard; Canner hard; Japan middle; Peru easy; Crewe middle; Lynn middle; Bush easy. Easy means the rhymes and the story make the order plain; hard means the lines sound alike (the flue, the tutor, the canner) or need something she may not know yet (Bright, Tring). **Swap** is the five the composing layout names (Niger, Bright, the pelican, the flue, Peru), lines 3 and 4; no new ones were marked.
+### Still wanted
+Introductions for the ones that need them (the places: Tarentum, Bagdad, Perth, Montrose, Sestri, Blackheath; a quadrille where one turns up). A map for Niger.
 
 ## Composing layout (28 Sept, Michael; mockup, not yet in the build prompt)
 
@@ -384,7 +153,18 @@ Found: Wells 1902, the same 1864 group.
 - **Making sure she knows what to do (28 Sept, Michael).** The Opening is its own page. After the "Lear never called his poems limericks" paragraph it says: "In what follows, the lines of the limerick will appear in a stack under *Ideas*. Your job is to compose the limerick by tapping the ideas in the right order." *Next*, bottom right, brings the first limerick. For her first three limericks, beside IDEAS in lower-case italics: "(tap the line you think comes next)". (Michael wrote "click"; the Rulings make *tap* the verb for mouse and finger both.)
 - **Words that do things are Payne's grey,** #546A80, the colour the Remember note already uses for its link, so they read as words that act.
 - **Name:** Michael suggests *Wordplay*. Open.
+- **Fixes from testing (29 Sept, Michael):** ← goes back one page inside Wordplay (the trail of this visit), not to the gallery; a word *The Curious Woods* beside it goes to the gallery; no idea starts in its own place (a derangement: 44 of the 120 orders of five lines, 24 when a swap pair is excluded too); tapping *Give it a title* clears the words and leaves the cursor and the faint line.
 - A small gap between title and poem; the poem single-spaced but not tight; no ruled lines.
+
+## The column and her poems (29 Sept, Michael)
+
+The controls move into Glass Geometry's left column: *How this works*, then **Compose** and **Save and Share** (each opens a small panel she can drag and close), then the italic commands *Share*, *Add to my list*, *Show my poems*, *Go to previous*. Commands appear only when they can do something (Michael's choice). *Next*, bottom right of the poem area, replaces *Another one*. The ← arrow goes (*Go to previous* does its job); *The Curious Woods* stays at the top.
+
+Panel texts. Compose: "The lines of your poem are in a jumbled stack below the word IDEAS. Find the first line and tap it. It will be typed on the sheet. Do the same with the next line and each line that follows. When it is complete, you can give it a title." Save and Share: "To add this poem to your list of favorites, tap *Add to my list*. You can see your list by tapping *Show my poems*. To share your poem as a postcard, tap *Share*." (Michael's words; the first line recast to name the command, per the Instructions ruling.)
+
+*Add to my list* adds the poem as she composed it, with her title (Michael's choice). *Show my poems* turns into *Show new poems* and shows only her poems, whole, with her titles, which she can edit there (Michael's choice); no ideas; **Notes:** under each; *Remove from my list* under the notes, at the left. Removing the last returns to new poems.
+
+Amended 29 Sept (Michael): *Next line, please* removed. *The Curious Woods* at the top of the column. The column is a pale strip (`#f7f4ec`) down the left, for contrast with its words.
 
 ## Openings (28 Sept, Michael)
 

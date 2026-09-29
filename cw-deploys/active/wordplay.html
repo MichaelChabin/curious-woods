@@ -15,8 +15,9 @@
   poems, Go to previous; her poems, with notes; a trail of this visit; no idea starts in its place.
   The column's words are ../css/htw.css and fade through CW.setWordPresent; the two panels are
   CW.createInfoPanel; both in ../js/cw-panel.js, shared with Glass Geometry so the two can't drift.
-  The pool is ../stories/limericks.json (forty limericks, one record each); add a record to add
-  a limerick. The Lear beard limerick is not in it: it lives in the Opening, on this page.
+  The limericks live in one place, ../stories/limericks.json (forty, one record each; add a record
+  to add one); CWVault/claude/Limericks-Puzzle.md keeps the decisions, sources and checks, not the
+  words. The Lear beard limerick is not in the pool: it lives in the Opening, on this page.
   Not a story page: no template-story.html, no check-story.sh. No Remember (maya: none).
   Pictures: ../art/stories/limericks/, Lear's own drawings from Internet Archive scans of A Book
   of Nonsense and More Nonsense (1872), public domain; sources in _CW/art-originals/limericks/SOURCES.md.
@@ -235,7 +236,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-29 6cc2863';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-09-29 baf6f1c';   // date + short commit hash; bump in the same commit as any change
   console.log('wordplay', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
   // Remember is not summoned on this page (maya: none), so the flag changes nothing here.

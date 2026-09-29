@@ -324,9 +324,9 @@ long, short and indented, short and indented, long), the last half typed with th
 strokes, which read as Morse at wall size. `art/icons/wordplay-icon-256.png` — the same mark at 256 px,
 drawn with PIL from the system Georgia. (Made 27 Sep as `limericks-*`; renamed with the page, never committed.)
 `stories/limericks.json` — **Wordplay's pool** (28 Sep 2026): forty limericks, one record each (`id`, `lines`,
-`credit`, `ease`, and where the spec gives them `intro`, `swap` as two line numbers counting from 1, `picture`
-from the site root). Every word from `CWVault/claude/Limericks-Puzzle.md`, where 13 to 40 are under *The next
-28*. A limerick is added by adding a record; the page needs no change.
+`credit`, `ease`, and where given `intro`, `swap` as two line numbers counting from 1, `picture`
+from the site root). The only home of the texts: a limerick is added by adding a record, and the page
+needs no change. `CWVault/claude/Limericks-Puzzle.md` keeps the decisions, sources and checks, not the words.
 `art/gallery/hokusai-the-great-wave-gallery.jpg` — **the Great Wave, whole, for the gallery** (21 Sep
 2026; Spec-Gallery's *A work on the wall* as changed that day: a painting or print hangs whole,
 never cropped): the Met's scan `art/stories/hokusai/hokusai-great-wave.jpg` resized to 600 × 414, quality 88,
@@ -562,7 +562,8 @@ backstop for the Claude Code session that lands the file.
   on Michael's word (stage 4): moved to `active/`, the old address redirected in `_redirects`, in
   `gallery.json` as **Wordplay**. A gallery puzzle, not a story page: no `template-story.html`, no
   `check-story.sh`. Built from the composing mockup Michael used and said yes to
-  (`CWVault/claude/mockups/limerick-compose-mockup.html`). Reads `../stories/limericks.json`.
+  (`CWVault/claude/mockups/limerick-compose-mockup.html`). Reads `../stories/limericks.json`, the one
+  home of the limericks' texts (add a record to add one); the spec keeps decisions, sources and checks, not the words.
   **The Opening**, a page of its own the first time on a device: the Lear text as the spec gives it,
   his beard drawing, the beard limerick, the line about *Ideas*, and *Next*, which brings Niger.
   **Each limerick:** its `intro` at the top in the faded type, a line kept for the title, the poem,

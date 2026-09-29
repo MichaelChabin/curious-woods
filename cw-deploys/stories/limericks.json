@@ -1,5 +1,5 @@
 {
- "about": "Wordplay's pool (experiments/wordplay.html). One record per limerick: id, lines (five), credit (*…* is a title, set roman in the italic credit), ease (easy, middle, hard), and where the spec gives them title, intro, swap (the two line numbers, counting from 1, that may change places) and picture (from the site root). Every word from CWVault/claude/Limericks-Puzzle.md. Add a record to add a limerick; the page reads this file.",
+ "about": "Wordplay's pool, and the only home of the limericks' texts (active/wordplay.html reads it). One record per limerick: id, lines (five), credit (*…* is a title, set roman in the italic credit), ease (easy, middle, hard), and where given title, intro, swap (the two line numbers, counting from 1, that may change places) and picture (from the site root). Add a record to add a limerick; the page needs no change. CWVault/claude/Limericks-Puzzle.md keeps the decisions, sources and checks, not the words.",
  "limericks": [
   {
    "id": "niger",
