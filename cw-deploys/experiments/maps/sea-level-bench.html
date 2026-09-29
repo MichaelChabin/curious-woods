@@ -40,7 +40,7 @@
 
 <script src="../../js/map.js?v=2026-09-29b"></script>
 <script>
-var CW_VERSION = '2026-09-29 1681d32'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-09-29 de44a44d'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
 var slider = document.getElementById('years'), when = document.getElementById('when');
 // The slider runs from 20,000 years ago at the left to today at the right.
@@ -68,6 +68,9 @@ var marks = [
   { type: 'note', lat: 54.7, lon: 2.5, text: 'Dogger Bank', water: true }
 ];
 var map = null, curve = null;
+// A page opened from the disk (file://) may not fetch other files, so nothing here would load.
+var FROM_DISK = location.protocol === 'file:';
+var AGAIN = FROM_DISK ? 'This page was opened from the file on disk; open it from curiouswoods.org instead.' : 'Reloading the page usually brings it back.';
 function update() {
   var ago = yearsAgo();
   if (!curve) { when.textContent = ''; return; }
@@ -81,14 +84,14 @@ cwMap.load('../../art/maps/world-pyramid.json').then(function (world) {
   update();
 }).catch(function (e) {
   console.error(e);
-  document.getElementById('map').textContent = 'The map did not load. Reloading the page usually brings it back.';
+  document.getElementById('map').textContent = 'The map did not load. ' + AGAIN;
 });
 fetch('../../stories/sea-level.json', { cache: 'no-cache' }).then(function (r) {
   if (!r.ok) throw new Error('sea-level.json ' + r.status);
   return r.json();
 }).then(function (j) { curve = j.points; update(); }).catch(function (e) {
   console.error(e);
-  when.textContent = 'The sea levels did not load. Reloading the page usually brings them back.';
+  when.textContent = FROM_DISK ? '' : 'The sea levels did not load. Reloading the page usually brings them back.';
 });
 </script>
 </body>
