@@ -1,5 +1,5 @@
 ---
-status: Proposed — 20 Sept 2026; widened 21 Sept to Maps and Timelines. 27 Sept: the engine's first piece, the world that moves, is ruled in Spec-Maps and comes to the stories first. Not yet built. Name not settled.
+status: Proposed — 20 Sept 2026; widened 21 Sept to Maps and Timelines. 27 Sept: the engine's first piece, the world that moves, is ruled in Spec-Maps and comes to the stories first. Not yet built. Name not settled. 30 Sept (Michael): the timeline and the maps are one thread (Board, *Time and the map*); the lab is where the capabilities accumulate and every story borrows them, opening on the world at its own year.
 role: The Lab of maps and timelines — where map and timeline tools accumulate for every story to call, and where a child can wander in when and where at once.
 related: Spec-Maps.md (the same engine), Spec-Timeline-and-Map.md (its first instrument), Rulings-Sept-2026.md (the brain; gestures across tools), The-Intuitions.md
 ---

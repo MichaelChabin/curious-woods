@@ -1,5 +1,5 @@
 ---
-status: Standard — 21 Sept 2026, from the Frankenstein prototype, six versions in one sitting with Michael. Built as `js/timeline.js`. Amended 27 Sept: the map under the line is the moving world (Spec-Maps, *The world that moves*); cards retired.
+status: Standard — 21 Sept 2026, from the Frankenstein prototype, six versions in one sitting with Michael. Built as `js/timeline.js`. Amended 27 Sept: the map under the line is the moving world (Spec-Maps, *The world that moves*); cards retired. Amended 30 Sept: the map opens on the world at the story's year.
 role: The pattern for showing a story's events in time and in space at once. Every story that has a "<Name>'s World" section uses it.
 related: Spec-Maps.md (the map underneath), Spec-Map-Lab.md (where this pattern grows), Rulings-Sept-2026.md (how wide a timeline is; gestures)
 reference: cw-deploys/experiments/maps/prototype-frankenstein.html — self-contained, open it in a browser. Behaviour and look are settled there; the code is a sketch.
@@ -37,6 +37,8 @@ After *More*, under the heading **"<Name>'s World"** — *Mary Shelley's World*,
 ## The map
 
 *Ruled 27 September 2026 (Michael, after using the bench on his iPad): the map under a timeline is **the moving world** — `Spec-Maps.md`, *The world that moves*. It opens on the story's own crop, exactly as the still picture did, and she can pan, zoom, widen and resize it, and reset it with a word. A tap on the line slides it to the place; a route fits itself. The far-away cards are retired: nothing is far away on a map that pans, so their places become ordinary places. Margin maps, flow maps and windows stay still pictures. The paragraphs below describe the still map this section had before; what they say about sides, colours and routes still holds.*
+
+*Ruled 30 September 2026 (Michael): the map opens on the world at the story's own year.* The moving world's layers change with a year (`Spec-Maps.md`, *Time on the map*); a World section names its story's year and gets that world — today's sea for Van Gogh, Doggerland for a story set eight thousand years ago — without asking. A story that spans a change lets the timeline drive it. The capability lives in the engine and the story borrows it; a story never builds its own.
 
 The story's regional base picture, full colour, per `Spec-Maps.md`. The person's places get vermilion dots; the world's get slate dots, matching the timeline. A place for bearing only is a small grey dot and cannot be tapped.
 

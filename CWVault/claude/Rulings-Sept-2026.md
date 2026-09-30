@@ -1,5 +1,5 @@
 ---
-status: Rulings — 14 Sept 2026, from the brain-series sessions; amended 15 Sept (dates), 16 Sept (picture placement; instructions to the child; the Maya flag and Remember; gestures across tools; images as evidence), 18 Sept (colour; a picture in a window; the three conflicts reconciled), 19–20 Sept (the gallery: what comes and goes; the paintings as stories; Spec-Gallery), 25 Sept (the practice list exists; the home screen). Canonical until Michael says otherwise; where this contradicts CW-System-Foundation.md, ask. Where it contradicts UI-Language.md or other earlier design documents, this wins. One copy lives in the project and one in the vault; the manager chat keeps them identical. If they differ, tell the manager chat and don't guess.
+status: Rulings — 14 Sept 2026, from the brain-series sessions; amended 15 Sept (dates), 16 Sept (picture placement; instructions to the child; the Maya flag and Remember; gestures across tools; images as evidence), 18 Sept (colour; a picture in a window; the three conflicts reconciled), 19–20 Sept (the gallery: what comes and goes; the paintings as stories; Spec-Gallery), 25 Sept (the practice list exists; the home screen). Canonical until Michael says otherwise; where this contradicts CW-System-Foundation.md, ask. Where it contradicts UI-Language.md or other earlier design documents, this wins. One copy lives in the project and one in the vault; the manager chat keeps them identical. If they differ, tell the manager chat and don't guess., 30 Sept (the map at the story's year)
 role: The decisions that came out of building The Man Who Learned Without Knowing, Three at a Glance and About Your Brain, written down so no later session relitigates them.
 ---
 
@@ -97,6 +97,9 @@ When a new tool or bench needs a gesture, or two gestures collide, **Glass Geome
 
 ## Benches
 Three skeletons cover most brain-series interactives: Flash, Creep, Trace (Spec-Trace-Bench.md). A new puzzle is a new road or rule, never a new program. Nothing is scored, ranked, or congratulated; counts appear only when she asks for the graph.
+
+## The map at the story's year (30 Sept 2026)
+A story's World section opens on the world as it was in the story's own year. The layers that change with time — the sea, the ice, the Sahara (Spec-Maps, *Time on the map*) — belong to the map engine, and a story borrows them by naming its year; Van Gogh's World shows today's sea, a story set eight thousand years ago shows Doggerland. A story that spans a change lets the timeline drive it. Michael's reason: the goal is one capable map-and-time lab whose capabilities any story can call, so what the lab can show, the story shows. The timeline and the maps are one thread from this date.
 
 ## What still needs a ruling
 Where the home-screen invitation appears (gallery on first visit, or at first Remember). The default picture placement for new stories. Whether gallery size means anything, and whether the hang is fixed or shuffles. Whether the two-brain comparison should ever be side by side. Where the Remember inscription lives in a one-column story when Maya *is* present. Where After the Ice hangs and how it starts. Draft 3 of the star story document, to match the page.

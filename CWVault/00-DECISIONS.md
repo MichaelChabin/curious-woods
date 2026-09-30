@@ -85,6 +85,23 @@ else. `CWVault/claude/` is registered on the board alone. — Widening MANIFEST
 makes it a second board, and two files disagreeing about what exists is the
 problem this session exists to fix. [M]
 
+2026-09-30 — A story's World section opens on the world at the story's own
+year: today's sea for Van Gogh, Doggerland for a story set eight thousand years
+ago, and a story that spans a change lets the timeline drive the layers. — The
+goal is one capable map-and-time lab whose capabilities any story borrows; what
+the lab can show at a year, every story at that year shows, and nothing is
+built inside a story that belongs in the engine. [M]
+
+2026-09-30 — The Timeline and the Maps efforts are one thread, worked in one
+session. — The specs had already merged them (20 and 27 Sept: one list, read
+two ways; the moving world under every timeline); the next piece,
+`map.setTime(year)`, needs the year from one side and the layers from the
+other. Two sessions would each build half. [M]
+
+2026-09-30 — Draining the ocean to the floor, and plate tectonics on Scotese's
+maps, are seeds, not spec. — Nothing about either is decided, and the rule is
+that ideas go to `03-SEEDS/` as faceted notes. [C]
+
 ---
 
 ### The shelf — settled 24 Aug
