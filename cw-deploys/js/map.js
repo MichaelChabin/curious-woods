@@ -34,6 +34,10 @@
    `map.setSeaLevel(metres)` paints what a lower sea exposes, in the land colour by height
    above the new shore, with the new shoreline as a line; today's coast stays drawn over it.
    `opts.seaLevel` is the opening level; 0 is today and paints nothing.
+   `map.setIce(outlines, yearsAgo)` draws the ice that existed then and not now: `outlines` is
+   `{ ages: [...], outlines: { '<years>': [ring, ...] } }`, rings of [lon, lat] filled even-odd;
+   between two time steps the two outlines cross-fade. Drawn soft, in the ice colour, over
+   the ground and the lowered sea and under today's coast and the marks. Works on any map.
 
    The ground has layers (26 Sep 2026). The base picture is height alone. The region's
    JSON lists its layers — ice, vegetation, later sea level — each a half-width RGBA
@@ -630,8 +634,10 @@
       // Layers, bottom to top: the earth's lines; the story's regions, paths and dots;
       // every halo; every label. Halos in one layer under all the glyphs, so one label's
       // halo never fogs its neighbour.
+      var iceLayer = el('g', { 'class': 'cw-ice' });
       var lines = el('g', { 'class': 'cw-lines' }), marksLayer = el('g', {}), halos = el('g', { 'class': 'cw-halos' }), glyphs = el('g', {});
-      svg.appendChild(lines); svg.appendChild(marksLayer); svg.appendChild(halos); svg.appendChild(glyphs);
+      svg.appendChild(iceLayer); svg.appendChild(lines); svg.appendChild(marksLayer); svg.appendChild(halos); svg.appendChild(glyphs);
+      drawIce(iceLayer, w, h);
       drawLines(lines, w, h);
 
       var placed = [], dots = [];
@@ -695,6 +701,38 @@
       var sets = [];
       for (var x = x0; x <= x1; x++) sets.push(loadContourFile(zc + '/' + x, spec.perColumn.replace('{x}', x)));
       return sets;
+    }
+    // ---- time on the map: the ice (any map) ----
+    var iceData = null, iceAgo = 0;
+    var ICE_FILL = '#eaf1f4', ICE_EDGE = '#c9d6de';
+    function iceRingsPath(rings, w, h) {
+      var d = [];
+      for (var i = 0; i < rings.length; i++) {
+        var r = rings[i];
+        for (var j = 0; j < r.length; j++) { var q = P(r[j][0], r[j][1], w, h); d.push((j ? 'L' : 'M') + q.x.toFixed(1) + ' ' + q.y.toFixed(1)); }
+        d.push('Z');
+      }
+      return d.join('');
+    }
+    function drawIce(layer, w, h) {
+      if (!iceData || !iceAgo) return;
+      var ages = iceData.ages, a = null, b = null, i;
+      for (i = 0; i < ages.length; i++) { if (ages[i] <= iceAgo) a = ages[i]; if (ages[i] >= iceAgo && b === null) b = ages[i]; }
+      if (a === null) a = ages[0]; if (b === null) b = ages[ages.length - 1];
+      var t = (b === a) ? 1 : (iceAgo - a) / (b - a);
+      // the soft edge: one blur, defined once per svg
+      if (!svg.querySelector('#cw-ice-soft')) {
+        var defs = el('defs', {}), f = el('filter', { id: 'cw-ice-soft', x: '-5%', y: '-5%', width: '110%', height: '110%' });
+        f.appendChild(el('feGaussianBlur', { stdDeviation: '1.6' }));
+        defs.appendChild(f); svg.insertBefore(defs, svg.firstChild);
+      }
+      [[a, 1 - t], [b, t]].forEach(function (pair) {
+        if (pair[1] <= 0.01) return;
+        var rings = iceData.outlines[String(pair[0])];
+        if (!rings || !rings.length) return;
+        layer.appendChild(el('path', { d: iceRingsPath(rings, w, h), fill: ICE_FILL, 'fill-rule': 'evenodd', 'fill-opacity': (0.94 * pair[1]).toFixed(3),
+                                        stroke: ICE_EDGE, 'stroke-width': 1, 'stroke-opacity': (0.8 * pair[1]).toFixed(3), 'vector-effect': 'non-scaling-stroke', filter: 'url(#cw-ice-soft)' }));
+      });
     }
     function drawLines(layer, w, h) {
       var c = region.contours;
@@ -848,6 +886,7 @@
 
     // ---- moving: gestures, the strip, the slides ----
     var api = { reset: reset, redraw: draw };
+    api.setIce = function (data, yearsAgo) { iceData = data; iceAgo = Math.max(0, +yearsAgo || 0); draw(); };
     if (pyr) {
       var pointers = {}, nPointers = 0, dragging = false, down = null, pinch = null, suppressClick = false, settleTimer = null;
       function beginGesture() {

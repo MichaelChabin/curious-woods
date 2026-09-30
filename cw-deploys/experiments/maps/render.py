@@ -33,6 +33,7 @@ cw-deploys/art/maps/:
     python3 render.py --pyramid   the whole earth as tiles, for the map that moves (below)
     python3 render.py --contours  the finer levels' coastlines again, cut per tile column
     python3 render.py --shelf     the shallow-sea layer, for a lower sea (Time on the map)
+    python3 render.py --ice       ice outlines through time from ICE-6G_C, to prototypes/ice/ (not served)
 
 The ground has layers (Spec-Maps, 26 Sep 2026): height is the base and always present;
 ice, vegetation and later sea level are files beside the picture that map.js draws over
@@ -781,6 +782,92 @@ def render_shelf():
     print('shelf: %d tiles, %.1f MB, %.0f s' % (sum(len(v) for v in listed.values()), total / 1e6, time.time() - t0))
 
 
+ICE6G_DIR = os.path.join(DATA, 'ice6g')           # I6_C.VM5a_1deg.<ka>.nc, downloaded from Peltier's data page
+ICE_OUT_DEFAULT = os.path.abspath(os.path.join(DEPLOYS, '..', 'prototypes', 'ice'))   # NOT served
+ICE_UPSAMPLE = 10                                  # the 1-degree grid is smoothed onto a 0.1-degree one before tracing
+ICE_SIMPLIFY_DEG = 0.04
+
+
+def render_ice(out_dir=None):
+    """Ice outlines through time from ICE-6G_C (VM5a) (Peltier, Argus and Drummond 2015;
+    Argus et al. 2014), for maps that show time (Spec-Maps, *Time on the map*). For each time
+    step, the ice that existed then and does not now — the ice-area fraction then, less
+    today's — smoothed from its one-degree grid and traced at one half, as filled rings in
+    longitude and latitude. Today's ice sheets are the pyramid's own ice layer and are left
+    to it. Written to prototypes/ice/ by default, which is never served: nothing derived from
+    ICE-6G is published until its authors have said yes."""
+    import glob
+    from scipy.io import netcdf_file
+    from scipy.ndimage import zoom, gaussian_filter
+    out_dir = out_dir or ICE_OUT_DEFAULT
+    os.makedirs(out_dir, exist_ok=True)
+    files = {}
+    for f in glob.glob(os.path.join(ICE6G_DIR, 'I6_C.VM5a_1deg.*.nc')):
+        ka = float(os.path.basename(f)[len('I6_C.VM5a_1deg.'):-3])
+        files[ka] = f
+    def frac(ka):
+        nc = netcdf_file(files[ka], 'r', mmap=False)
+        lat = np.array(nc.variables['lat'][:], np.float64)
+        lon = np.array(nc.variables['lon'][:], np.float64)
+        g = np.array(nc.variables['sftgif'][:], np.float64)
+        nc.close()
+        if lat[0] > lat[-1]:                 # make latitude run north to south, row 0 at the top
+            pass
+        else:
+            g = g[::-1]; lat = lat[::-1]
+        shift = int(np.searchsorted(lon, 180.0))     # longitudes 0.5..359.5 -> -179.5..179.5
+        g = np.roll(g, -shift, axis=1)
+        return g, lat
+    today, lat = frac(0.0)
+    ages = sorted(files)
+    out = {}
+    for ka in ages:
+        if ka == 0.0:
+            out['0'] = []
+            continue
+        g, _ = frac(ka)
+        extra = np.clip(g - today, 0.0, 100.0)
+        # pad one column each side so rings close across the date line, then smooth and upsample
+        padded = np.concatenate([extra[:, -1:], extra, extra[:, :1]], axis=1)
+        fine = zoom(gaussian_filter(padded, 0.6), ICE_UPSAMPLE, order=3)
+        fine = np.clip(fine, 0.0, 100.0)
+        H, W = fine.shape
+        gen = contourpy.contour_generator(z=fine, name='serial', fill_type=contourpy.FillType.OuterOffset)
+        rings = []
+        polys = gen.filled(50.0, 1000.0)
+        pts_list, offs_list = polys
+        for pts, offs in zip(pts_list, offs_list):
+            for a, b in zip(offs[:-1], offs[1:]):
+                ring = np.asarray(pts[a:b], np.float64)
+                # fine grid index -> source cell -> degrees. zoom() aligns the corner cells, so a
+                # fine index k is source cell k * (n_src - 1) / (n_fine - 1). Padded source column 0
+                # is longitude -180.5 (today's 179.5, wrapped); source row 0 is latitude lat[0].
+                src_c = ring[:, 0] * (padded.shape[1] - 1) / (W - 1)
+                src_r = ring[:, 1] * (padded.shape[0] - 1) / (H - 1)
+                lon_d = -180.5 + src_c
+                lat_d = lat[0] - src_r
+                deg = np.stack([lon_d, lat_d], axis=1)
+                deg = simplify(deg, ICE_SIMPLIFY_DEG)
+                if len(deg) < 4:
+                    continue
+                deg[:, 0] = np.clip(deg[:, 0], -180.0, 180.0)
+                rings.append([[round(float(x), 3), round(float(y), 3)] for x, y in deg])
+        out['%g' % (ka * 1000)] = rings
+        print('  %5.1f ka: %d rings, %d points' % (ka, len(rings), sum(len(r) for r in rings)), flush=True)
+    meta = {
+        '_about': 'Ice that existed then and not now, by years ago, as filled rings of [lon, lat] (even-odd fill). '
+                  'From ICE-6G_C (VM5a): Peltier, Argus and Drummond (2015), J. Geophys. Res. Solid Earth 120, 450-487; '
+                  'Argus, Peltier, Drummond and Moore (2014), Geophys. J. Int. 198, 537-563. The one-degree ice-area '
+                  'fraction, less today\'s, smoothed and traced at one half. NOT FOR PUBLICATION until the authors have said yes.',
+        'ages': sorted(int(k) for k in out),
+        'outlines': out,
+    }
+    path = os.path.join(out_dir, 'ice-outlines.json')
+    with open(path, 'w') as fh:
+        json.dump(meta, fh, separators=(',', ':'))
+    print('ice: %d time steps, %.0f KB -> %s' % (len(out), os.path.getsize(path) / 1024.0, path))
+
+
 def render_all():
     """Every region in art/maps/, again, from its own JSON: corners, width, exaggeration
     and contour levels as recorded there."""
@@ -804,6 +891,9 @@ def main(argv):
         return
     if argv == ['--shelf']:
         render_shelf()
+        return
+    if argv == ['--ice']:
+        render_ice()
         return
     opts = {'width': '2000', 'exaggeration': None, 'levels': None}
     args = []

@@ -51,7 +51,14 @@ no dotted hidden edges; `letters` sets Necker's A and X in copper at body-text s
 drawn behind the lines and a little away from their corners (26 Sep; bold ones hid the corners); `cycle` makes a tap fill the front face, then the back, then neither, at once. Nothing
 animates, nothing is recorded, nothing counted: the drawing does not change, the seeing does.
 Each figure carries a description saying what its two readings are. First used by
-`active/professor-neckers-drawing.html`. **`map.js`, 29 Sep 2026 — time on the map, the sea first** (Spec-Maps, *Time on the map*):
+`active/professor-neckers-drawing.html`. **`map.js`, 29 Sep 2026 — the ice:** `map.setIce(outlines, yearsAgo)` draws the ice that
+existed then and not now, as soft filled outlines in the ice colour, cross-faded between the
+two nearest time steps, over the ground and the lowered sea and under today's coast and the
+marks; on any map. The outlines themselves — from ICE-6G_C, made by `render.py --ice` — are
+**not** in this folder: they live in `../prototypes/ice/`, ignored by git, until Peltier's
+group says yes to publishing them (Michael's email, 29 Sep). The prototype page that uses
+them is `../prototypes/ice-bench.html`, run from the whole-folder server at
+`http://localhost:8766/prototypes/ice-bench.html`. **`map.js`, 29 Sep 2026 — time on the map, the sea first** (Spec-Maps, *Time on the map*):
 `map.setSeaLevel(metres)` and `opts.seaLevel` paint what a lower sea exposes, from the
 pyramid's shallow-sea layer, on a canvas over the tiles and under the marks — the land
 colour by height above the new shore, a hint of the old sea floor through it, the new
