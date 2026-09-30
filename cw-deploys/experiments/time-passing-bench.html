@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/icons/time-machine-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/time-machine-icon-256.png">
+<!--
+  time-passing-bench.html — bench: Time-passing, in operation (30 Sep 2026). A simulation of
+  Naomi Devil's Idő-töltés (2016), the cybernetic sculpture built round Nicolas Schöffer's
+  hourglass for the Hungarikon collection: a motor turns laser-engraved acrylic discs whose
+  radial stripes make a moiré, and the hourglass turns with them so its sand never finishes.
+  No film of the real thing was found; this is the mechanism the artist's own description
+  gives, drawn: two radial gratings over a light, one turning, with a few more spokes than the
+  other, and the hourglass on the turning mount. Michael asked to see it in operation
+  (30 Sep 2026) and is wondering about a page for it.
+
+  Photograph: Darabos György, uploaded by Naomi Devil to Wikimedia Commons, CC BY-SA 4.0; the
+  tab icon is a crop of it and carries the same licence. The sculpture itself is the artist's.
+-->
+<title>Time-passing</title>
+<style>
+  :root { --parch: #f4f1e8; --ink: #2a241c; --ink-soft: #6b625a; --payne: #546A80; --copper: #b5652b; --sep: #c8b89a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--parch); color: var(--ink); font-family: Georgia, "Times New Roman", Times, serif; }
+  body { font-size: 18px; line-height: 1.45; }
+  main { max-width: 700px; margin: 0 auto; padding: 36px 24px 60px; }
+  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+  h1 { font-weight: normal; font-size: 32px; line-height: 1.1; margin: 6px 0 14px; }
+  p { margin: 0 0 1em; }
+  .stage { position: relative; width: 100%; aspect-ratio: 1 / 1; background: #2a2a2e; border-radius: 4px; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+  canvas { display: block; width: 100%; height: 100%; }
+  .words { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 12px 0 0; font-size: 15px; color: var(--payne); }
+  .words span { cursor: pointer; font-style: italic; user-select: none; -webkit-user-select: none; }
+  .words span:hover { color: #3D3D3A; }
+  .words span.on { font-style: normal; color: var(--ink); }
+  .words .group { display: flex; gap: 10px; align-items: baseline; }
+  .words .label { font-style: normal; color: var(--ink-soft); cursor: default; }
+  .note { font-size: 14px; color: var(--ink-soft); border-top: .5px solid var(--sep); margin-top: 2.4em; padding-top: 1em; line-height: 1.5; }
+  .note a { color: var(--payne); }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Bench</div>
+  <h1>Time-passing, in operation</h1>
+  <p>Two clear discs, each cut with spokes, one behind the other over a light. A motor turns one of them, slowly. Where the spokes of one cross the spokes of the other, a third pattern appears that neither disc has on it, and it turns much faster than the motor does. In the middle, on the turning mount, an hourglass goes round with it, so the sand never has time to finish.</p>
+
+  <div class="stage" id="stage"><canvas id="c"></canvas></div>
+  <div class="words">
+    <span id="run" class="on">Turning</span>
+    <div class="group"><span class="label">spokes</span><span data-n="48" class="pick">48</span><span data-n="60" class="pick on">60</span><span data-n="90" class="pick">90</span></div>
+    <div class="group"><span class="label">the other disc has</span><span data-d="0" class="pickd">the same</span><span data-d="1" class="pickd">one more</span><span data-d="2" class="pickd on">two more</span><span data-d="3" class="pickd">three more</span></div>
+    <div class="group"><span class="label">motor</span><span data-s="0.5" class="picks">slow</span><span data-s="1" class="picks on">medium</span><span data-s="3" class="picks">fast</span></div>
+    <span id="one">Just one disc</span>
+  </div>
+  <p style="margin-top:14px;font-size:15px;color:var(--ink-soft)">Drag the picture to turn the disc yourself.</p>
+
+  <p class="note">A simulation of <i>Idő-töltés</i> (<i>Time-passing</i>), Naomi Devil, 2016, a cybernetic sculpture built round Nicolas Schöffer’s hourglass for the Hungarikon collection. The artist describes laser-engraved acrylic discs turned by a motor, lit by LEDs, whose moiré recalls the infinity sign, and an hourglass whose sand flows in endless circulation. This page draws that mechanism; the real discs may differ in their count of spokes and their speed. Photograph of the work: Darabos György, on <a href="https://commons.wikimedia.org/wiki/File:Naomi_Devil,_Id%C5%91-t%C3%B6lt%C3%A9s,_Nicolas_Sch%C3%B6ffer_homok%C3%B3r%C3%A1j%C3%A1b%C3%B3l_k%C3%A9sz%C3%BClt_kibernetikus_szobor_a_Hungarikon-gy%C5%B1jtem%C3%A9ny_sz%C3%A1m%C3%A1ra.jpg">Wikimedia Commons</a>, CC BY-SA 4.0; the tab icon is a crop of it under the same licence.</p>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = '2026-09-30 2080373';   // date + short commit hash; bump in the same commit as any change
+  try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+
+  const canvas = document.getElementById('c'), stage = document.getElementById('stage');
+  const ctx = canvas.getContext('2d');
+  // the two plates: white spokes and clear ones, over a blue-violet light. Where both plates are
+  // clear the light comes through; a white spoke on either hides it. Drawn as multiply.
+  const LIGHT = '#6b6fd0', WHITE = '#f2f2f6';
+  const state = { N: 60, d: 2, speed: 1, run: true, one: false, theta: 0, mount: 0 };
+  const MOTOR_RPM = 0.08;                  // the turning disc, turns per second at speed 1
+  const MOUNT_RPM = 0.02;                  // the hourglass's mount, turns per second
+  let W = 0, H = 0, dpr = 1, discA = null, discB = null;
+
+  function size() {
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    const r = stage.getBoundingClientRect();
+    W = Math.round(r.width * dpr); H = Math.round(r.height * dpr);
+    canvas.width = W; canvas.height = H;
+    discA = disc(state.N); discB = disc(state.N + state.d);
+  }
+  // one plate, drawn once: n white spokes over a clear ground
+  function disc(n) {
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const g = c.getContext('2d'), cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.47;
+    g.fillStyle = WHITE;
+    for (let i = 0; i < n; i++) {
+      const a0 = (i / n) * Math.PI * 2, a1 = ((i + 0.5) / n) * Math.PI * 2;
+      g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, R, a0, a1); g.closePath(); g.fill();
+    }
+    return c;
+  }
+  function draw() {
+    const cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.47;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = '#2a2a2e'; ctx.fillRect(0, 0, W, H);
+    // the light behind the discs
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.clip();
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+    grad.addColorStop(0, '#9a9de8'); grad.addColorStop(1, LIGHT);
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
+    // the fixed plate, then the turning one. A white spoke hides the light behind it, so the
+    // light shows only where both plates are clear: where the two gratings fall in step the
+    // disc stays striped blue and white, where they fall out of step every gap is covered and
+    // the disc goes solid white. Those are the moiré's lobes, and they turn N/d times faster
+    // than the motor. Opaque white, plainly drawn, is the physics.
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    ctx.drawImage(discA, 0, 0);
+    if (!state.one) {
+      ctx.translate(cx, cy); ctx.rotate(state.theta); ctx.translate(-cx, -cy);
+      ctx.drawImage(discB, 0, 0);
+    }
+    ctx.restore();
+    // the rim
+    ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+    ctx.lineWidth = 3 * dpr; ctx.strokeStyle = '#c9c9d6'; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
+    hourglass(cx, cy, R * 0.34, state.mount);
+  }
+  // the hourglass on its mount: a frame turning slowly; the sand runs into whichever bulb is lower
+  function hourglass(cx, cy, h, ang) {
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(ang);
+    const w = h * 0.42, neck = h * 0.06;
+    // the mount: a square plate on four studs
+    ctx.strokeStyle = 'rgba(235,225,190,0.9)'; ctx.lineWidth = 1.5 * dpr;
+    ctx.strokeRect(-w * 1.5, -h * 1.05, w * 3, h * 2.1);
+    ctx.fillStyle = '#3a3630';
+    [[-w * 1.5, -h * 1.05], [w * 1.5, -h * 1.05], [-w * 1.5, h * 1.05], [w * 1.5, h * 1.05]].forEach(p => { ctx.beginPath(); ctx.arc(p[0], p[1], 3.5 * dpr, 0, Math.PI * 2); ctx.fill(); });
+    // which end is down, in the page's frame: the bulb whose centre has the larger page y
+    const down = Math.cos(ang) >= 0 ? 1 : -1;      // +1: the bottom bulb (local +y) is lower
+    // the sand: how full the lower bulb is, running from the upper one at a steady rate
+    const fill = state.sand;                       // 0..1 in the lower bulb
+    function bulb(sign) {
+      ctx.beginPath();
+      ctx.moveTo(0, sign * neck);
+      ctx.bezierCurveTo(w * 0.2, sign * h * 0.25, w, sign * h * 0.55, w, sign * h * 0.8);
+      ctx.quadraticCurveTo(w, sign * h, 0, sign * h);
+      ctx.quadraticCurveTo(-w, sign * h, -w, sign * h * 0.8);
+      ctx.bezierCurveTo(-w, sign * h * 0.55, -w * 0.2, sign * h * 0.25, 0, sign * neck);
+      ctx.closePath();
+    }
+    // glass: a tint the spokes show through, and an outline dark enough to read over white
+    [1, -1].forEach(s => { bulb(s); ctx.fillStyle = 'rgba(200,205,230,0.45)'; ctx.fill(); ctx.strokeStyle = 'rgba(58,54,48,0.85)'; ctx.lineWidth = 2 * dpr; ctx.stroke(); });
+    // sand in the lower bulb (a level surface in the page's frame), the rest in the upper
+    function sandIn(sign, amount) {
+      if (amount <= 0.01) return;
+      ctx.save(); bulb(sign); ctx.clip();
+      // the level: in page coordinates, so undo the rotation for the surface
+      ctx.rotate(-ang);
+      // the bulb's far end, in page y: how far the glass reaches below its centre at this tilt
+      const yFar = h * Math.abs(Math.cos(ang)) + w * Math.abs(Math.sin(ang)) * 0.9;
+      const yLevel = yFar - amount * yFar * 0.92;
+      ctx.fillStyle = '#d9bf85';
+      ctx.fillRect(-h * 2, yLevel, h * 4, h * 3);
+      ctx.restore();
+    }
+    sandIn(down, fill);
+    sandIn(-down, 1 - fill);
+    // the falling thread
+    if (fill > 0.01 && fill < 0.99) { ctx.strokeStyle = '#d9bf85'; ctx.lineWidth = 1.5 * dpr; ctx.beginPath(); ctx.moveTo(0, -down * neck); ctx.lineTo(0, down * h * 0.9); ctx.stroke(); }
+    ctx.restore();
+  }
+
+  // ---- time ----
+  state.sand = 0.5; let lastDown = 1;
+  let last = null, raf = 0;
+  function step(t) {
+    if (last === null) last = t;
+    const dt = Math.min(0.1, (t - last) / 1000); last = t;
+    if (state.run) {
+      state.theta += dt * MOTOR_RPM * state.speed * Math.PI * 2;
+      state.mount += dt * MOUNT_RPM * Math.PI * 2;
+    }
+    const down = Math.cos(state.mount) >= 0 ? 1 : -1;
+    if (down !== lastDown) { state.sand = 1 - state.sand; lastDown = down; }   // the glass has turned over: what was full is now the upper bulb
+    state.sand = Math.min(1, state.sand + dt * 0.04);                          // the sand runs down
+    draw();
+    raf = requestAnimationFrame(step);
+  }
+
+  // ---- her hand: drag to turn the disc ----
+  let drag = null;
+  stage.addEventListener('pointerdown', e => {
+    const r = stage.getBoundingClientRect();
+    drag = { a0: Math.atan2(e.clientY - r.top - r.height / 2, e.clientX - r.left - r.width / 2), t0: state.theta, id: e.pointerId };
+    try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+    e.preventDefault();
+  });
+  stage.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const r = stage.getBoundingClientRect();
+    const a = Math.atan2(e.clientY - r.top - r.height / 2, e.clientX - r.left - r.width / 2);
+    state.theta = drag.t0 + (a - drag.a0);
+    if (!state.run) draw();
+  });
+  const up = e => { if (drag && e.pointerId === drag.id) drag = null; };
+  stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
+
+  // ---- the words ----
+  const runWord = document.getElementById('run'), oneWord = document.getElementById('one');
+  runWord.addEventListener('click', () => { state.run = !state.run; runWord.classList.toggle('on', state.run); runWord.textContent = state.run ? 'Turning' : 'Turn'; });
+  oneWord.addEventListener('click', () => { state.one = !state.one; oneWord.classList.toggle('on', state.one); oneWord.textContent = state.one ? 'Both discs' : 'Just one disc'; });
+  function pickers(cls, key, parse) {
+    document.querySelectorAll('.' + cls).forEach(el => el.addEventListener('click', () => {
+      document.querySelectorAll('.' + cls).forEach(x => x.classList.remove('on')); el.classList.add('on');
+      state[key] = parse(el.dataset[key === 'N' ? 'n' : key === 'd' ? 'd' : 's']);
+      discA = disc(state.N); discB = disc(state.N + state.d);
+    }));
+  }
+  pickers('pick', 'N', Number); pickers('pickd', 'd', Number); pickers('picks', 'speed', Number);
+
+  size();
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(size, 100); });
+  raf = requestAnimationFrame(step);
+})();
+</script>
+</body>
+</html>
