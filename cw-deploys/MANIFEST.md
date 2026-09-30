@@ -36,7 +36,23 @@ by `ref`, sets each one's side, and may add `why` — its own last sentence. It 
 shared words. Seeded with 32 events and 17 places from the two painting stories. Separate from
 `stories/after-the-ice-events.json` (27 Sep; it replaced `stories/events.json`), After the Ice's own
 events, which `experiments/after-the-ice.html` merges with these two at load without writing to
-them; its survivors join this list by copying, later.
+them; its survivors join this list by copying, later. **`stories/timeline-events.json` (30 Sep 2026)** — GENERATED, never
+edited by hand: `tools/events-from-vault.py` (outside this folder, in `_CW/tools/`) reads
+`CWVault/claude/Events-Batch-01.md`, `Events-Batch-02.md` (arrived 30 Sep, 13:42: 21 events, 1500 to
+now, outside Europe) and `Timeline-Samples.md` and writes the 43 events written to
+`Timeline-Stories.md`: id, label, `year` (astronomers'), `precision`, `kind` (the closed list;
+Eratosthenes's and Leavitt's `idea` is outside it and marked), `place` (name, `short` for the map
+label — where the source names a stand-in after a colon, as the Moon landing names Kennedy Space
+Center, the stand-in is the label — lat, lon; the eclipse has no coordinates in its source and says
+so), the summary without its
+trailing More, the More as paragraphs with its date line as parts (count, ordinary date, years
+ago, each with `about`), references, the Pictures wanted line as data, and a `weight` (1 to 3)
+proposed by the tool and marked `proposed`. Notes for us never enter it. Read by
+`experiments/time-machine.html`. **`stories/curves/` (30 Sep 2026)** — curves a timeline draws
+along its span, points in astronomers' years with the source, the licence and how sure the
+numbers are: `people.json` (world population, Our World in Data's long-run series — HYDE 3.3,
+Gapminder, UN WPP — thinned to 73 points, CC BY 4.0) and `sea-level.json` (the readings of
+`stories/sea-level.json`, Lambeck et al. 2014, converted from years ago to the store's year).
 **`stack.js` (22 Sep 2026)** — one picture slot, several pictures, in a loop: `cwStack(figure, steps)`,
 each step `{ src, w, h, alt, caption, name }`. A bold word under the caption names the next picture
 ("Next: the powder", "Back to the stone" on the last); the word moves the stack, never a tap on the
@@ -51,7 +67,12 @@ no dotted hidden edges; `letters` sets Necker's A and X in copper at body-text s
 drawn behind the lines and a little away from their corners (26 Sep; bold ones hid the corners); `cycle` makes a tap fill the front face, then the back, then neither, at once. Nothing
 animates, nothing is recorded, nothing counted: the drawing does not change, the seeing does.
 Each figure carries a description saying what its two readings are. First used by
-`active/professor-neckers-drawing.html`. **`map.js`, 29 Sep 2026 — the ice:** `map.setIce(outlines, yearsAgo)` draws the ice that
+`active/professor-neckers-drawing.html`. **`map.js`, 30 Sep 2026 — one year in** (`?v=2026-09-30` on
+`experiments/time-machine.html`; the other pages keep their query): `map.setTime(year)` takes the
+store's astronomer's year and turns on the layers that are true for it from what the page hands
+it in `opts.time` — `{ seaLevel: [[year, metres], ...] }` sets the sea from the curve, `{ ice }`
+blends the outlines as `setIce` does; a layer not given, or not rendered, stays as today's.
+`map.time()` is the year last given. **`map.js`, 29 Sep 2026 — the ice:** `map.setIce(outlines, yearsAgo)` draws the ice that
 existed then and not now, as soft filled outlines in the ice colour, cross-faded between the
 two nearest time steps, over the ground and the lowered sea and under today's coast and the
 marks; on any map. The outlines themselves — from ICE-6G_C, made by `render.py --ice` — are
@@ -948,6 +969,75 @@ backstop for the Claude Code session that lands the file.
   tested on an iPad, or in Safari by this session.**
 
 ### experiments/
+- **`time-passing-bench.html`** — bench: **Time-passing, in operation** (30 Sep 2026; Michael asked to
+  see Naomi Devil's *Idő-töltés* work and is wondering about a page). A simulation of the
+  sculpture's mechanism from the artist's own description (no film was found): two radial
+  gratings over a blue-violet light, drawn once each to an offscreen canvas and composited
+  with `screen`, one turning at a motor's pace, with a few more spokes than the other — the
+  difference in spoke count is the number of lobes in the moiré, so *two more* gives the figure
+  of eight the artist calls the infinity sign; the moiré turns N/d times faster than the disc.
+  Schöffer's hourglass sits on a square mount that turns once every fifty seconds, its sand
+  running into whichever bulb is lower and turning over with it. Words, not buttons: Turning /
+  Turn, the spoke count (48, 60, 90), the other disc's surplus (the same, one, two, three more),
+  the motor (slow, medium, fast), *Just one disc*; a drag on the picture turns the disc by hand.
+  Credit and licence in the page's note. **Pictures:** `art/icons/time-passing-icon-256.png`
+  (the tab icon, Michael's crop of the photograph, squared on the disc) and
+  `art/stories/time-passing/devil-time-passing-2016.jpg` (the crop as he sent it, in a folder by story like the others), both from Darabos György's
+  photograph on Wikimedia Commons, CC BY-SA 4.0, uploaded by the artist; the crops carry the same
+  licence and credit. The sculpture is the artist's copyright; the simulation draws the
+  mechanism, not the work. Seed: `CWVault/03-SEEDS/time-passing-moire.md`. Tested on the Mac in
+  the built-in browser. Not hung.
+- **`time-machine.html` → `active/time-machine.html`** — **Time Machine**, the new After the Ice (30 Sep 2026; built here as a bench and **hung the same day on Michael's word, beside After the Ice**, which stays on the wall for now: `stories/gallery.json` slug `time-machine`, picture `art/gallery/time-machine-gallery.jpg` (800 px), frame `#4a4e9e` (the stripes' blue-violet, Claude's choice), width 8, medium; `_redirects` from the experiments address. The picture and the tab icon `art/icons/time-machine-icon-256.png` (shared with `experiments/time-passing-bench.html`) are Michael's crop of Darabos György's photograph of Naomi Devil's *Idő-töltés*, Wikimedia Commons, CC BY-SA 4.0, uploaded by the artist; the crops carry the licence, and the introduction page carries the credit. The original crop is `art/stories/time-passing/devil-time-passing-2016.jpg`. Built from the Time
+  Machine mockup in `CWVault/claude/mockups/` and the prompt of 30 Sep; the worknote the prompt
+  names, `Worknote-Time-Machine.md`, was not on disk when this was built, and the mockup and the
+  prompt were the brief). An introduction page (kicker, title, the first paragraph of
+  `Story-After-the-Ice.md`, *Next*), then two lines and the map. **Main** is the whole span and
+  never rescales; the **Focus window** on it (drag the band, drag either end, tap the line to
+  jump) sets the span of **Detail**, two-thirds of Main's width and centred, lines running from
+  the window's ends to Detail's ends, the years after 0 and the years ago in bold at each end.
+  Detail is `js/timeline.js` (its packing, at most `DETAIL_ROWS` = 4 label rows and the lightest
+  lose their label, not their mark; the soft stretch of an uncertain date; the shared picking;
+  the plane's 1–5–10 ladder for its ticks, unlabelled — the ends say the years). The copper
+  **Year handle** lives on Detail: tap empty Detail to move it, drag it, tap a mark to select
+  and move it there; the Focus window carries it along. Under Main at the left, the handle's
+  year in after-the-ice years, and a copper tick on Main. The **summary block** under Detail,
+  Detail's width, reserved space: the label in bold, the summary, *More*; More opens the
+  stepped date line (CSS, `Timeline-Stories.md`), the paragraphs and the references in
+  `cwWindow`, Glass Geometry's window as `map.js` carries it. The **map** is the world pyramid
+  on the whole earth, the timeline's width to start, one line under the summary block, nothing
+  below it; bars at its left and right edges (the page's, in place of `map.js`'s left bar) and
+  `map.js`'s own strip at the bottom stretch it, the left bar over the column to the page's
+  edge; *reset* puts it back. A tap on an event centres the map at her zoom; a tap on a place
+  selects its event (several at one place: the one in the window nearest the handle). The map
+  takes the handle's year through `map.setTime(year)` (new in `js/map.js`, 30 Sep): the sea
+  follows `stories/curves/sea-level.json`; **no past ice or vegetation layer is rendered in
+  `art/maps/`** (the pyramid has today's `ice` and `vegetation`, and the shallow-sea layer), so
+  those show today's ground and say nothing; the console says so once. The **column** is
+  `#htw-panel` in `../css/htw.css` (Glass Geometry's, shared with Wordplay since 29 Sep — no new
+  shelf file was needed): *How this works*, Timeline and Map (each a `CW.createInfoPanel`
+  with the mockup's words, over the stage or the map, one at a time), *What I've seen* (filters
+  to the events she has tapped, stored under `cw-after-the-ice` as After the Ice does; the word
+  is present once she has seen something and turns copper while on), the curve words *People*
+  and *Sea level* (one at a time; tap again to hide), and *When were there a billion people?*
+  **Curves:** a soft filled silhouette above Detail along its span, no axes, one number at the
+  handle said with "about"; People scales to the largest value in the Focus window, Sea level
+  keeps one scale for the whole span. **The recorded question** replays three steps from data
+  in the page (`QUESTIONS`: a list of actions with durations and a line each — the bench's own
+  shape; Glass Geometry records an operation log with one speed, not steps): open the window
+  to the whole span, show People, drag the handle to a billion; then it says what was found
+  (about 1805). A tap anywhere stops it, and the arrival run (the Focus window sweeps from the
+  ice to now, then settles on 4 000–7 500). **Data:** `../stories/after-the-ice-events.json`
+  and `../stories/timeline-events.json`, merged at load — where a new event covers the same
+  thing as a September one the September one is dropped (`SAME` in the page, 15 pairs — the
+  fifteenth, the Moon landing, from batch 2 — in neither file); a September record that stands aside for the shared list (`same`) is kept,
+  since this page does not read the shared list; `../stories/places.json` is read for the
+  coordinates the September file names by id; `../stories/curves/`. An old event shows its
+  September blurb, with its plain year in front, and has no More. Tested on the Mac in the
+  built-in browser at 1024 × 768: the run and its stop, the Focus drag and both ends, the jump,
+  the handle by knob, by empty Detail and by a mark, the More window, both curves over the
+  whole span and a narrow window, the replay, What I've seen, the bars, the panels; every story
+  page and After the Ice open unchanged with no console errors. iPad: see the board. Tab icon
+  `art/icons/time-machine-icon-256.png`. Hung 30 Sep.
 - **`index-old.html`** — the home page as it stood from 13 to 20 Sep 2026 (two labs as
   words, three round icons, Experiments as a line), retired when the gallery took
   `index.html`. Recovered from git with its links rebased one folder up, given a tab icon

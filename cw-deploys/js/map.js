@@ -38,6 +38,12 @@
    `{ ages: [...], outlines: { '<years>': [ring, ...] } }`, rings of [lon, lat] filled even-odd;
    between two time steps the two outlines cross-fade. Drawn soft, in the ice colour, over
    the ground and the lowered sea and under today's coast and the marks. Works on any map.
+   `map.setTime(year)` (30 Sep 2026, for Time Machine) takes one year — the store's astronomer's
+   year — and turns on the layers that are true for it, from what the page hands it in
+   `opts.time`: `{ seaLevel: [[year, metres], ...] }` (stories/curves/sea-level.json) sets the
+   sea level from the curve; `{ ice: outlines }` (as setIce takes) blends the ice for that year.
+   A layer the page does not hand it, or that is not rendered, stays as today's: the map
+   shows today's ground and says nothing. `map.time()` is the year it was last given.
 
    The ground has layers (26 Sep 2026). The base picture is height alone. The region's
    JSON lists its layers — ice, vegetation, later sea level — each a half-width RGBA
@@ -1043,6 +1049,23 @@
       api.home = goHome;
       api.setSeaLevel = function (m) { seaLevel = Math.min(0, +m || 0); drawSea(); };
       api.seaLevel = function () { return seaLevel; };
+      // Time on the map, by the year: the sea from the curve the page gave, the ice from its
+      // outlines; each only if given and rendered. The store's year in; today's world for a
+      // year past the curve's end.
+      var timeYear = null, T = opts.time || {};
+      function curveAt(pts, y) {
+        if (!pts || !pts.length) return null;
+        if (y <= pts[0][0]) return pts[0][1];
+        for (var i = 1; i < pts.length; i++) if (y <= pts[i][0]) { var a = pts[i - 1], b = pts[i]; return a[1] + (b[1] - a[1]) * (y - a[0]) / (b[0] - a[0] || 1); }
+        return pts[pts.length - 1][1];
+      }
+      api.setTime = function (year) {
+        timeYear = +year;
+        var m = curveAt(T.seaLevel, timeYear);
+        if (m !== null && seaCanvas) { var nm = Math.min(0, Math.round(m * 2) / 2); if (nm !== seaLevel) { seaLevel = nm; drawSea(); } }
+        if (T.ice) { var ago = new Date().getFullYear() - timeYear; iceData = T.ice; iceAgo = Math.max(0, ago); draw(); }
+      };
+      api.time = function () { return timeYear; };
       api.view = function () { return { lat: view.lat, lon: view.lon, S: view.S, k: view.k }; };
     }
     return api;

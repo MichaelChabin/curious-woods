@@ -2,7 +2,7 @@
 title: After the Ice
 kind: tool introduction
 status: Words approved by Michael 28 Sept 2026 (his edits: "in the winter", "pale blue")
-page: cw-deploys/active/after-the-ice.html   # hung 28 Sep 2026
+page: cw-deploys/active/after-the-ice.html   # hung 28 Sep 2026; its new version, Time Machine (active/time-machine.html), hangs beside it since 30 Sep
 placement: across
 timeline-line: Twelve thousand years and the whole world, and your hand moving between them.
 touches: [historical sweep, order of magnitude, one thing two pictures]

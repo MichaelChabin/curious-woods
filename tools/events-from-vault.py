@@ -1,0 +1,344 @@
+#!/usr/bin/env python3
+"""events-from-vault.py — the timeline events, from the vault to the site.
+
+Reads the event batches written to Timeline-Stories.md (CWVault/claude/Events-Batch-01.md and
+the two worked samples in Timeline-Samples.md) and writes cw-deploys/stories/timeline-events.json
+for the Time Machine bench (experiments/time-machine.html). The markdown is the source; the JSON
+is generated and never edited by hand.
+
+    python3 tools/events-from-vault.py            writes the file and reports
+    python3 tools/events-from-vault.py --check    parses and reports, writes nothing
+
+What each record holds (Timeline-Stories.md, "What an event record holds"): an id; the year
+(astronomers' year) and its precision; the place, with name and latitude and longitude; the
+kind; the label; the summary (without its trailing More); the More, as paragraphs, with its
+date line stored as its parts (the after-the-ice count, the ordinary date, years ago, and whether
+each is "about"), not as one string; its references; and the "Pictures wanted" line kept as data.
+"Notes for us" never enters the file. A proposed weight (1 to 3) is added to each, marked as
+proposed: weights are editorial and Michael's to change (Spec-Maps, "Zoom is a tool").
+
+A record that fails to parse is reported, with why, and the run stops: nothing is guessed.
+"""
+import json
+import os
+import re
+import sys
+import unicodedata
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+SOURCES = [
+    ('CWVault/claude/Events-Batch-01.md', 'batch-01'),
+    ('CWVault/claude/Events-Batch-02.md', 'batch-02'),
+    ('CWVault/claude/Timeline-Samples.md', 'samples'),
+]
+OUT = 'cw-deploys/stories/timeline-events.json'
+
+# The closed list of kinds (Spec-Maps, After the Ice: "Kind"); the batch writes them in words.
+KINDS = {
+    'sky event': 'sky', 'sky': 'sky',
+    'earth event': 'earth', 'earth': 'earth',
+    'crop or animal': 'crop', 'crop': 'crop',
+    'craft or invention': 'craft', 'craft': 'craft',
+    'object': 'object', 'place': 'place', 'person': 'person',
+    'text': 'text', 'text (music)': 'text',
+}
+PRECISIONS = {'exact', 'year', 'decade', 'century', 'millennium'}
+
+# Proposed weights, 1 to 3, by record id. Editorial, marked proposed in the file. The reasoning:
+# 3 for a thing she will meet again all over Curious Woods (maize, writing, Pompeii, Homer,
+# Eratosthenes, Göbekli Tepe); 2 for a strong single story; 1 for a fine thing that is local
+# or small on the map.
+WEIGHTS = {
+    'maize': 3, 'storegga-slide': 2, 'writing-at-uruk': 3, 'otzi': 2, 'drains-of-mohenjo-daro': 2,
+    'campo-del-cielo': 1, 'thera-erupts': 2, 'oldest-written-song': 2, 'rhind-papyrus': 2,
+    'lapita-voyagers': 2, 'nok-heads': 1, 'homer-written-down': 3, 'kalinga-war': 2,
+    'eratosthenes-measures-the-earth': 3, 'antikythera-mechanism': 2, 'vesuvius-buries-pompeii': 3,
+    'zhang-hengs-earthquake-jar': 1, 'diamond-sutra': 2, 'a-new-star': 2, 'great-zimbabwe': 2,
+    'stone-pillars-at-gobekli-tepe': 3, 'eclipse-stops-a-battle': 2,
+    # batch 2 (1500 to now, outside Europe)
+    'chillies-reach-asia': 2, 'timbuktus-books': 2, 'the-silver-mountain-at-potosi': 2, 'florentine-codex': 2,
+    'huaynaputina-erupts': 1, 'taj-mahal': 3, 'the-last-dodo': 2, 'sangaku': 2, 'jantar-mantar': 2,
+    'tupaias-map': 2, 'haiti-becomes-free': 3, 'suez-canal': 2, 'krakatoa': 3, 'tunguska': 2,
+    'ramanujans-letter': 2, 'leavitts-rule': 2, 'andromeda-is-another-galaxy': 3, 'the-biggest-earthquake': 2,
+    'footprints-on-the-moon': 3, 'the-last-case-of-smallpox': 3, 'the-green-belt': 2,
+}
+
+
+class ParseError(Exception):
+    pass
+
+
+def slug(text):
+    t = unicodedata.normalize('NFKD', text)
+    t = ''.join(c for c in t if not unicodedata.combining(c))
+    t = t.lower().replace('’', '').replace("'", '')
+    t = re.sub(r'[^a-z0-9]+', '-', t).strip('-')
+    return t
+
+
+def num(s):
+    """'3,000' -> 3000; '−584.6' -> -584.6 (the batch writes a true minus sign)."""
+    s = s.replace(',', '').replace('−', '-').strip()
+    return float(s) if '.' in s else int(s)
+
+
+def parse_year(line, where):
+    m = re.match(r"\*\*Year:\*\*\s*(about\s+)?([−\-]?[\d.,]+)\s*(?:\(([^)]*)\))?\s*·\s*precision:\s*(\w+)\s*(?:\(([^)]*)\))?\s*·\s*kind:\s*(.+?)\s*$", line)
+    if not m:
+        raise ParseError('%s: the Year line does not parse: %r' % (where, line))
+    about, year, year_note, precision, prec_note, kind_raw = m.groups()
+    if precision not in PRECISIONS:
+        raise ParseError('%s: precision %r is not one of %s' % (where, precision, sorted(PRECISIONS)))
+    rec = {'year': num(year), 'yearAbout': bool(about), 'precision': precision, 'kindRaw': kind_raw.strip()}
+    date = None
+    for note in (year_note, prec_note):
+        if note and re.search(r'\d', note) and 'astronomers' not in note:
+            date = note.strip()
+        elif note and ';' in note:
+            date = note.split(';', 1)[1].strip()
+    if date:
+        rec['exactDate'] = date
+    k = kind_raw.strip().lower()
+    if k in KINDS:
+        rec['kind'] = KINDS[k]
+    else:
+        rec['kind'] = k
+        rec['kindNote'] = 'not in the closed list (sky, earth, crop, craft, object, place, person, text); kept as written'
+    return rec
+
+
+def parse_place(line, where):
+    text = re.sub(r'^\*\*Place:\*\*\s*', '', line).strip()
+    # "(37.22 N, 38.92 E)", or "(38.0 N, 23.7 E marks Athens, where ...)" — words after the
+    # coordinates inside the bracket are a note about them, kept as place.note
+    m = re.search(r'\((\d+(?:\.\d+)?)\s*([NS]),\s*(\d+(?:\.\d+)?)\s*([EW])([^)]*)\)', text)
+    place = {'name': text}
+    if m:
+        lat = float(m.group(1)) * (1 if m.group(2) == 'N' else -1)
+        lon = float(m.group(3)) * (1 if m.group(4) == 'E' else -1)
+        place['lat'] = lat
+        place['lon'] = lon
+        if m.group(5).strip():
+            place['note'] = m.group(5).strip()          # e.g. 'marks Athens, where a written version is later reported'
+        before = text[:m.start()].strip().rstrip(',;')
+    else:
+        place['lat'] = None
+        place['lon'] = None
+        place['note'] = 'no coordinates in the source'
+        before = text
+    # a short name for the map: the first comma-separated part, without "found in"/"recorded at";
+    # where the source names a stand-in after a colon ("On the map, the launch site stands in
+    # for it: Kennedy Space Center, Florida"), the stand-in is the name
+    if ':' in before:
+        before = before.split(':')[-1]
+    short = before.split(',')[0].split(';')[0].strip()
+    short = re.sub(r'^(found in|recorded at|near)\s+', '', short)
+    short = re.sub(r'\s*\([^)]*\)', '', short).strip()
+    short = re.sub(r'\.$', '', short)
+    place['short'] = short
+    return place
+
+
+def parse_date_line(lines, where):
+    parts = {}
+    for raw in lines:
+        s = raw.strip().rstrip('.').rstrip(',').strip()
+        if not s:
+            continue
+        low = s.lower()
+        if 'after the ice' in low:
+            m = re.match(r'(about\s+)?([\d,]+)\s+years after the ice', low)
+            if not m:
+                raise ParseError('%s: date line %r does not parse (after the ice)' % (where, raw))
+            parts['count'] = {'value': num(m.group(2)), 'about': bool(m.group(1))}
+        elif low.endswith('years ago'):
+            m = re.match(r'(?:or\s+)?(about\s+)?([\d,]+)\s+years ago', low)
+            if not m:
+                raise ParseError('%s: date line %r does not parse (years ago)' % (where, raw))
+            parts['ago'] = {'value': num(m.group(2)), 'about': bool(m.group(1))}
+        else:
+            m = re.match(r'(?:or\s+)?(about\s+)?(.+)$', s, re.I)
+            if not m:
+                raise ParseError('%s: date line %r does not parse (ordinary date)' % (where, raw))
+            parts['ordinary'] = {'text': m.group(2).strip(), 'about': bool(m.group(1))}
+    if 'count' not in parts or 'ordinary' not in parts:
+        raise ParseError('%s: the date line lacks the count or the ordinary date: %r' % (where, lines))
+    return parts
+
+
+def parse_event(block, source, where):
+    lines = block.split('\n')
+    heading = lines[0]
+    m = re.match(r'##\s*(?:\d+\.\s*)?(.+?)\s*$', heading)
+    if not m:
+        raise ParseError('%s: no heading' % where)
+    rec = {'id': slug(m.group(1)), 'source': {'file': source, 'section': heading.lstrip('# ').strip()}}
+
+    def one(field):
+        for ln in lines:
+            if ln.startswith('**%s' % field):
+                return ln
+        raise ParseError('%s: no %s line' % (where, field))
+
+    rec['label'] = re.sub(r'^\*\*Label:\*\*\s*', '', one('Label:')).strip()
+    rec.update(parse_year(one('Year:'), where))
+    rec['place'] = parse_place(one('Place:'), where)
+
+    # the summary: the line after the Summary header, its trailing *More* removed
+    for i, ln in enumerate(lines):
+        if ln.startswith('**Summary'):
+            j = i + 1
+            while j < len(lines) and not lines[j].strip():
+                j += 1
+            summary = lines[j].strip()
+            break
+    else:
+        raise ParseError('%s: no Summary' % where)
+    m = re.match(r'^(.*?)\s*\*More\*\s*$', summary)
+    if not m:
+        raise ParseError('%s: the summary does not end with *More*: %r' % (where, summary[-40:]))
+    rec['summary'] = m.group(1).strip()
+
+    # the More: a code block holding the date line, then paragraphs until Pictures wanted
+    try:
+        mi = next(i for i, ln in enumerate(lines) if ln.startswith('**More'))
+    except StopIteration:
+        raise ParseError('%s: no More' % where)
+    mw = re.search(r'\((\d+) words', lines[mi])
+    j = mi + 1
+    while j < len(lines) and lines[j].strip() != '```':
+        if lines[j].strip():
+            raise ParseError('%s: expected the date line code block after More, found %r' % (where, lines[j]))
+        j += 1
+    j += 1
+    date_lines = []
+    while j < len(lines) and lines[j].strip() != '```':
+        date_lines.append(lines[j])
+        j += 1
+    j += 1
+    paras, cur = [], []
+    while j < len(lines) and not lines[j].startswith('**Pictures wanted'):
+        if lines[j].strip():
+            cur.append(lines[j].strip())
+        elif cur:
+            paras.append(' '.join(cur)); cur = []
+        j += 1
+    if cur:
+        paras.append(' '.join(cur))
+    if j >= len(lines):
+        raise ParseError('%s: no Pictures wanted line after the More' % where)
+    rec['more'] = {'dateLine': parse_date_line(date_lines, where), 'paragraphs': paras,
+                   'words': int(mw.group(1)) if mw else None}
+    rec['picturesWanted'] = re.sub(r'^\*\*Pictures wanted:\*\*\s*', '', lines[j]).strip()
+
+    # references: the list items after the References header
+    try:
+        ri = next(i for i, ln in enumerate(lines) if ln.startswith('**References'))
+    except StopIteration:
+        raise ParseError('%s: no References' % where)
+    refs = []
+    k = ri + 1
+    while k < len(lines) and not lines[k].startswith('**Notes for us'):
+        s = lines[k].strip()
+        if s.startswith('- '):
+            refs.append(s[2:].strip())
+        elif s and refs:
+            refs[-1] += ' ' + s
+        k += 1
+    if not refs:
+        raise ParseError('%s: the References list is empty' % where)
+    rec['references'] = refs
+    # Notes for us: read only to be sure it exists, never copied
+    if not any(ln.startswith('**Notes for us') for ln in lines):
+        raise ParseError('%s: no Notes for us (the checks are missing)' % where)
+
+    # the proposed weight
+    if rec['id'] not in WEIGHTS:
+        raise ParseError('%s: no proposed weight in WEIGHTS for id %r; add one' % (where, rec['id']))
+    rec['weight'] = WEIGHTS[rec['id']]
+    rec['weightStatus'] = 'proposed'
+
+    # the after-the-ice count must agree with the year (the standard: the store's year + 10 000)
+    count = rec['more']['dateLine']['count']['value']
+    expect = rec['year'] + 10000
+    if abs(count - expect) > (500 if rec['precision'] == 'millennium' else 60 if rec['precision'] == 'century' else 6):
+        raise ParseError('%s: the date line says %s after the ice but the year %s gives %s' % (where, count, rec['year'], expect))
+    return rec
+
+
+def split_events(text):
+    """The '## N. Name' sections; the samples file uses '## 1. Name' too."""
+    blocks, cur = [], None
+    for ln in text.split('\n'):
+        if ln.startswith('## '):
+            if cur:
+                blocks.append('\n'.join(cur))
+            cur = [ln]
+        elif cur is not None:
+            cur.append(ln)
+    if cur:
+        blocks.append('\n'.join(cur))
+    return blocks
+
+
+def main():
+    check = '--check' in sys.argv
+    events, seen, problems = [], {}, []
+    for rel, short in SOURCES:
+        path = os.path.join(ROOT, rel)
+        with open(path, encoding='utf-8') as f:
+            text = f.read()
+        for block in split_events(text):
+            where = '%s § %s' % (rel, block.split('\n')[0].lstrip('# '))
+            try:
+                rec = parse_event(block, rel, where)
+            except ParseError as e:
+                problems.append(str(e))
+                continue
+            if rec['id'] in seen:
+                problems.append('%s: id %r already used by %s' % (where, rec['id'], seen[rec['id']]))
+                continue
+            seen[rec['id']] = where
+            events.append(rec)
+    for p in problems:
+        print('FAILED', p, file=sys.stderr)
+    if problems:
+        print('%d record(s) failed to parse; nothing written.' % len(problems), file=sys.stderr)
+        sys.exit(1)
+    events.sort(key=lambda e: e['year'])
+    out = {
+        '_about': 'GENERATED by tools/events-from-vault.py from ' + ' and '.join(r for r, _ in SOURCES) +
+                  ' — do not edit by hand; edit the markdown and run the tool. The timeline events '
+                  'written to Timeline-Stories.md: label, summary (its trailing More removed; the page adds the word), '
+                  'the More as paragraphs with its date line as parts (count after the ice, the ordinary date, years ago, '
+                  'each with whether it is "about"), references, and the Pictures wanted line as data. YEAR is the '
+                  'astronomer\'s year (negative for BC), PRECISION one of exact, year, decade, century, millennium. '
+                  'KIND is the closed list (sky, earth, crop, craft, object, place, person, text); a kind outside it is '
+                  'kept as written and marked with kindNote. WEIGHT (1 to 3) is proposed by the tool and marked '
+                  'proposed: editorial, Michael\'s to change. place.short is derived for the map label; place.name is '
+                  'the source\'s words. Notes for us never enter this file. Read by experiments/time-machine.html.',
+        'version': '2026-09-30',
+        'sources': [r for r, _ in SOURCES],
+        'count': len(events),
+        'events': events,
+    }
+    for e in events:
+        flags = []
+        if e['place']['lat'] is None:
+            flags.append('no coordinates')
+        if 'kindNote' in e:
+            flags.append('kind %r outside the closed list' % e['kind'])
+        print('%-34s %9s %-10s %-7s w%d  %s%s' % (e['id'], e['year'], e['precision'], e['kind'], e['weight'],
+                                                 e['place']['short'], ('  [' + '; '.join(flags) + ']') if flags else ''))
+    if check:
+        print('%d events parsed; --check, nothing written.' % len(events))
+        return
+    outp = os.path.join(ROOT, OUT)
+    with open(outp, 'w', encoding='utf-8') as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
+        f.write('\n')
+    print('%d events written to %s (%d KB)' % (len(events), OUT, os.path.getsize(outp) // 1024))
+
+
+if __name__ == '__main__':
+    main()
