@@ -41,8 +41,13 @@ edited by hand: `tools/events-from-vault.py` (outside this folder, in `_CW/tools
 `CWVault/claude/Events-Batch-01.md`, `Events-Batch-02.md` (arrived 30 Sep, 13:42: 21 events, 1500 to
 now, outside Europe), `Events-Batch-03.md` (1 Oct: 15 events from the ice to the Great Pyramid, each
 upgraded from a September record and naming it in a `Replaces` field — `replaces` in the JSON — which
-the page retires, keeping the old id as an alias so her line still finds it) and `Timeline-Samples.md`
-and writes the 58 events written to `Timeline-Stories.md`: id, label, `year` (astronomers'), `precision`, `kind` (the closed list;
+the page retires, keeping the old id as an alias so her line still finds it), `Events-Batch-04.md`
+(1 Oct: 15 events, Stonehenge to Aeschylus, retiring sixteen September ids — Nineveh's library
+retires two; `iron` moves to Tell Hammeh, about 900 BC, the new record's year and place) and
+`Timeline-Samples.md` and writes the 73 events written to `Timeline-Stories.md`. Labels in batches
+1 to 3 shortened 1 Oct (Michael: a word or two). A paragraph of a More that is a set-apart
+quotation (a line beginning `> `) is `{"quote": text}` and the page draws it as
+`css/story.css`'s blockquote: id, label, `year` (astronomers'), `precision`, `kind` (the closed list;
 Eratosthenes's and Leavitt's `idea` is outside it and marked), `place` (name, `short` for the map
 label — where the source names a stand-in after a colon, as the Moon landing names Kennedy Space
 Center, the stand-in is the label — lat, lon; the eclipse has no coordinates in its source and says
@@ -1037,7 +1042,7 @@ backstop for the Claude Code session that lands the file.
   and `../stories/timeline-events.json`, merged at load — where a new event covers the same
   thing as a September one the September one is dropped (`SAME` in the page, 15 pairs — the
   fifteenth, the Moon landing, from batch 2 — in neither file; from batch 3 on, the record's own
-  `replaces` field does this, 15 more); a September record that stands aside for the shared list (`same`) is kept,
+  `replaces` field does this, 31 more by batch 4); a September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the

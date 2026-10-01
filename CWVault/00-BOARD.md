@@ -915,6 +915,21 @@ undecided and seeded, not specced: draining the ocean to the floor
   `tale` into `Prompt-Generate-Timeline-Events.md` and `tools/events-from-vault.py` (checked
   against the closed lists, failing loudly), and `tale` is appended to the kind list with the date
   and the reason.
+- **1 Oct, night — batch 4 (Claude Code, from Michael's prompt; built and checked, awaiting his yes
+  to commit).** `claude/Events-Batch-04.md`: 15 events, Stonehenge to Aeschylus, retiring sixteen
+  September ids (Nineveh's library retires two; `iron` moves to Tell Hammeh, about 900 BC). The
+  converter now reads all four batches and the samples (73 events), handles a `Replaces` line
+  naming several ids, and keeps a set-apart quotation (`> `) as its own paragraph, which the page
+  draws as the story stylesheet's blockquote. The shortened labels of batches 1–3 came through.
+  Checked on the page: the fifteen show with short labels, none of the sixteen retired ids shows
+  (116 events on the line), aliases resolve, the three Mores read right (quotation, the characters
+  卜 and 册, pronunciations, stepped dates). With the window wide open, 18 labels fit in Detail's
+  four rows against about 10 before: the short labels help, and the long ones left are September's.
+  **Open:** the worknote the prompts name still is not on disk; `idea` is now the kind of three
+  records (Eratosthenes, Leavitt, Athens votes) and is outside the closed list; the tree holds
+  changes Claude Code did not make (`Rulings-Sept-2026.md`, `Story-Voice.md`,
+  `Timeline-Stories.md`, `active/glass-geometry.html`, two new prompts, `Events-To-Upgrade.md`),
+  left for Michael.
 - **Next action: one session, not two.** (0) Michael opens `active/time-machine.html` on
   the Mac and the iPad and rules on the list above, and on whether After the Ice comes off the wall. (1) Michael looks at
   http://localhost:8766/prototypes/ice-bench.html and rules whether a cited test page may go

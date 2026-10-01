@@ -115,6 +115,8 @@
   .tm-more .stepped div:nth-child(2) { padding-left: 1.5em; }
   .tm-more .stepped div:nth-child(3) { padding-left: 3em; }
   .tm-more p { margin: 0 0 .9em; }
+  .tm-more blockquote { margin: 0 0 1.4em; padding: 0 0 0 20px; border-left: 2px solid var(--sep); }   /* css/story.css's blockquote */
+  .tm-more blockquote p { margin: 0 0 .35em; }
   .tm-more .refs { font-size: 12px; line-height: 1.45; color: var(--ink-soft); border-top: .5px solid var(--sep); margin-top: 16px; padding-top: 8px; }
   .tm-more .refs div { margin: 0 0 5px; }
   /* the panels' words */
@@ -174,7 +176,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-01 1cc0d7b';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-01 ba11615';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -280,6 +282,7 @@
                  place: p ? { name: p.name, lat: p.lat, lon: p.lon } : null, fresh: false });
     });
     EVENTS = out.filter(e => e.year >= 0 && e.year <= NOW).sort((a, b) => a.year - b.year);
+    window.__timeMachine = { events: EVENTS, alias, select: id => select(id) };   // for checking from the console; nothing on the page uses it
     byId = {}; EVENTS.forEach(e => { byId[e.id] = e; });
     groups = {}; EVENTS.forEach(e => { if (e.place) { const k = e.place.lat.toFixed(2) + ',' + e.place.lon.toFixed(2); (groups[k] = groups[k] || []).push(e); } });
   }
@@ -494,7 +497,7 @@
   function openMore(e) {
     const box = document.createElement('div'); box.className = 'tm-more';
     let h = '<h3>' + esc(e.label) + '</h3><div class="stepped">' + dateLines(e.more.dateLine).map(l => '<div>' + esc(l) + '</div>').join('') + '</div>';
-    h += e.more.paragraphs.map(p => '<p>' + esc(p) + '</p>').join('');
+    h += e.more.paragraphs.map(p => p && p.quote ? '<blockquote><p>' + esc(p.quote) + '</p></blockquote>' : '<p>' + esc(p) + '</p>').join('');
     if (e.refs.length) h += '<div class="refs">' + e.refs.map(r => '<div>' + esc(r) + '</div>').join('') + '</div>';
     box.innerHTML = h;
     cwWindow(box, {});

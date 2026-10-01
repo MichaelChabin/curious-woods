@@ -30,6 +30,7 @@ SOURCES = [
     ('CWVault/claude/Events-Batch-01.md', 'batch-01'),
     ('CWVault/claude/Events-Batch-02.md', 'batch-02'),
     ('CWVault/claude/Events-Batch-03.md', 'batch-03'),
+    ('CWVault/claude/Events-Batch-04.md', 'batch-04'),
     ('CWVault/claude/Timeline-Samples.md', 'samples'),
 ]
 OUT = 'cw-deploys/stories/timeline-events.json'
@@ -67,6 +68,10 @@ WEIGHTS = {
     'rice-on-the-yangtze': 2, 'catalhoyuk': 2, 'a-lake-drains-the-world-cools': 2, 'mount-mazama-becomes-crater-lake': 1,
     'cattle-in-a-green-sahara': 2, 'copper-from-stone': 2, 'silk-unwound': 2, 'a-wagon-on-a-pot': 2,
     'the-uluburun-ship': 2, 'caral': 2, 'the-great-pyramid': 3,
+    # batch 4 (Stonehenge to Aeschylus, upgraded from the September records)
+    'stonehenge': 3, 'enheduanna': 2, 'first-alphabet': 3, 'oracle-bones': 2, 'iron': 2, 'olmec-heads': 2,
+    'greek-alphabet': 2, 'assyrian-eclipse': 1, 'jerwan-aqueduct': 1, 'ninevehs-library': 2, 'first-coins': 2,
+    'pythagoras': 3, 'athens-votes': 3, 'confucius': 3, 'aeschylus': 2,
 }
 
 
@@ -229,15 +234,26 @@ def parse_event(block, source, where):
         date_lines.append(lines[j])
         j += 1
     j += 1
-    paras, cur = [], []
+    paras, cur, quoting = [], [], False
+    def flush():
+        if cur:
+            text = ' '.join(cur)
+            paras.append({'quote': text} if quoting else text)
     while j < len(lines) and not lines[j].startswith('**Pictures wanted'):
-        if lines[j].strip():
-            cur.append(lines[j].strip())
+        ln = lines[j].strip()
+        if ln.startswith('>'):                      # a set-apart quotation (blockquote in css/story.css)
+            if cur and not quoting:
+                flush(); cur = []
+            quoting = True
+            cur.append(ln.lstrip('>').strip())
+        elif ln:
+            if cur and quoting:
+                flush(); cur = []; quoting = False
+            cur.append(ln)
         elif cur:
-            paras.append(' '.join(cur)); cur = []
+            flush(); cur = []; quoting = False
         j += 1
-    if cur:
-        paras.append(' '.join(cur))
+    flush()
     if j >= len(lines):
         raise ParseError('%s: no Pictures wanted line after the More' % where)
     rec['more'] = {'dateLine': parse_date_line(date_lines, where), 'paragraphs': paras,
@@ -324,7 +340,8 @@ def main():
                   ' — do not edit by hand; edit the markdown and run the tool. The timeline events '
                   'written to Timeline-Stories.md: label, summary (its trailing More removed; the page adds the word), '
                   'the More as paragraphs with its date line as parts (count after the ice, the ordinary date, years ago, '
-                  'each with whether it is "about"), references, and the Pictures wanted line as data. YEAR is the '
+                  'each with whether it is "about"; a paragraph that is a set-apart quotation is {"quote": text}), '
+                  'references, and the Pictures wanted line as data. YEAR is the '
                   'astronomer\'s year (negative for BC), PRECISION one of exact, year, decade, century, millennium. '
                   'KIND is the closed list (sky, earth, crop, craft, object, place, person, text); a kind outside it is '
                   'kept as written and marked with kindNote. WEIGHT (1 to 3) is proposed by the tool and marked '
@@ -346,6 +363,8 @@ def main():
             flags.append('kind %r outside the closed list' % e['kind'])
         if e.get('replaces'):
             flags.append('replaces ' + ', '.join(e['replaces']))
+        if any(isinstance(q, dict) for q in e['more']['paragraphs']):
+            flags.append('%d quotation(s)' % sum(1 for q in e['more']['paragraphs'] if isinstance(q, dict)))
         print('%-34s %9s %-10s %-7s w%d  %s%s' % (e['id'], e['year'], e['precision'], e['kind'], e['weight'],
                                                  e['place']['short'], ('  [' + '; '.join(flags) + ']') if flags else ''))
     if check:

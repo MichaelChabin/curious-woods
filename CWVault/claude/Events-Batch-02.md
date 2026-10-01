@@ -1,5 +1,5 @@
 ---
-status: Batch 2, 30 Sept 2026. Twenty-one events, 1500 to now, outside Europe. Chosen by Claude; Michael kept all twenty and asked for Hubble to be split into two (Leavitt's rule, and the VAR! plate). Checked by four independent fact-checkers, whose changes are applied. Awaiting Michael's reading.
+status: Batch 2, 30 Sept 2026. Twenty-one events, 1500 to now, outside Europe. Chosen by Claude; Michael kept all twenty and asked for Hubble to be split into two (Leavitt's rule, and the VAR! plate). Checked by four independent fact-checkers, whose changes are applied. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
 role: The second batch of generated timeline events, for the Time Machine bench and, later, the shared list.
 ---
 
@@ -9,7 +9,7 @@ Written in round 2 of Prompt-Generate-Timeline-Events.md and checked in round 3.
 
 ## 1. Chillies reach Asia
 
-**Label:** Chillies reach Asia
+**Label:** Chillies
 **Year:** about 1540 · precision: decade · kind: crop or animal
 **Place:** Goa, on the west coast of India (15.50 N, 73.83 E)
 
@@ -104,7 +104,7 @@ Nobody knows exactly how many books there are. Many families still keep theirs p
 
 ## 3. The silver mountain at Potosí
 
-**Label:** Silver mountain at Potosí
+**Label:** Potosí
 **Year:** 1545 · precision: year · kind: place
 **Place:** Potosí, Bolivia (19.59 S, 65.75 W)
 
@@ -199,7 +199,7 @@ In 2023 the whole book was put online, free for anyone to read.
 
 ## 5. Huaynaputina erupts
 
-**Label:** Huaynaputina erupts
+**Label:** Huaynaputina
 **Year:** 1600.13 · precision: exact (19 February 1600) · kind: earth event
 **Place:** Huaynaputina, southern Peru (16.61 S, 70.85 W)
 
@@ -291,7 +291,7 @@ He was buried beside her. In the whole building, his tomb is the only thing that
 
 ## 7. The last dodo
 
-**Label:** The last dodo
+**Label:** Last dodo
 **Year:** 1662 · precision: year · kind: crop or animal
 **Place:** Mauritius, in the Indian Ocean (20.20 S, 57.50 E)
 
@@ -340,7 +340,7 @@ That head and foot hold the only dodo skin left in the world.
 
 ## 8. Sangaku
 
-**Label:** Sangaku, geometry for the shrines
+**Label:** Sangaku
 **Year:** about 1683 · precision: decade · kind: object
 **Place:** Japan; the oldest surviving tablet is in Tochigi Prefecture (36.57 N, 139.88 E)
 
@@ -390,7 +390,7 @@ Some are still hanging where they were first put up.
 
 ## 9. Jantar Mantar
 
-**Label:** Jantar Mantar at Jaipur
+**Label:** Jantar Mantar
 **Year:** about 1734 · precision: decade · kind: object
 **Place:** Jaipur, India (26.92 N, 75.82 E)
 
@@ -490,7 +490,7 @@ The copy made on the ship is in the British Library. If the new reading is right
 
 ## 11. Haiti becomes free
 
-**Label:** Haiti becomes free
+**Label:** Haitian Revolution
 **Year:** 1804.0 · precision: exact (1 January 1804) · kind: place
 **Place:** Gonaïves, Haiti, where independence was declared (19.45 N, 72.69 W)
 
@@ -537,7 +537,7 @@ In 1825, France demanded that Haiti pay for the plantations it had lost, as the 
 
 ## 12. Suez Canal
 
-**Label:** Suez Canal opens
+**Label:** Suez Canal
 **Year:** 1869.88 · precision: exact (17 November 1869) · kind: craft or invention
 **Place:** Ismailia, midway along the canal, Egypt (30.60 N, 32.27 E)
 
@@ -589,7 +589,7 @@ The canal has no locks. The two seas are at almost the same height, so the water
 
 ## 13. Krakatoa
 
-**Label:** Krakatoa explodes
+**Label:** Krakatoa
 **Year:** 1883.65 · precision: exact (27 August 1883) · kind: earth event
 **Place:** Krakatoa, between Java and Sumatra, Indonesia (6.10 S, 105.42 E)
 
@@ -637,7 +637,7 @@ Most of the island was gone. In 1927, a new island rose out of the sea where it 
 
 ## 14. Tunguska
 
-**Label:** Tunguska explosion
+**Label:** Tunguska
 **Year:** 1908.49 · precision: exact (30 June 1908) · kind: sky event
 **Place:** near the Podkamennaya Tunguska River, Siberia, Russia (60.89 N, 101.89 E)
 
@@ -735,7 +735,7 @@ Hardy liked to tell one story. He once visited Ramanujan in hospital and said th
 
 ## 16. Leavitt's rule
 
-**Label:** Leavitt's rule for the stars
+**Label:** Leavitt's rule
 **Year:** 1912 · precision: year · kind: idea
 **Place:** Harvard College Observatory, Cambridge, Massachusetts, USA (42.38 N, 71.13 W)
 
@@ -785,7 +785,7 @@ She died in 1921. In 1925, a Swedish mathematician wrote to her, wanting to put 
 
 ## 17. Andromeda is another galaxy
 
-**Label:** "VAR!": Andromeda is another galaxy
+**Label:** Andromeda
 **Year:** 1923.76 · precision: exact (6 October 1923) · kind: sky event
 **Place:** Mount Wilson Observatory, California, USA (34.23 N, 118.06 W)
 
@@ -838,7 +838,7 @@ The glass plate is kept at the Carnegie Observatories in Pasadena. The "VAR!" is
 
 ## 18. The biggest earthquake
 
-**Label:** Great Chilean earthquake
+**Label:** Chile earthquake
 **Year:** 1960.39 · precision: exact (22 May 1960) · kind: earth event
 **Place:** near Valdivia, Chile (39.8 S, 73.2 W)
 
@@ -887,7 +887,7 @@ The dead trees are still standing in the marsh.
 
 ## 19. Footprints on the Moon
 
-**Label:** Footprints on the Moon
+**Label:** Moon landing
 **Year:** 1969.55 · precision: exact (20 July 1969) · kind: craft or invention
 **Place:** the Sea of Tranquility, on the Moon. On the map, the launch site stands in for it: Kennedy Space Center, Florida, USA (28.61 N, 80.60 W)
 
@@ -937,7 +937,7 @@ The footprints are still there. Nobody has walked on the Moon since.
 
 ## 20. The last case of smallpox
 
-**Label:** The last case of smallpox
+**Label:** Last smallpox
 **Year:** 1977.82 · precision: exact (26 October 1977) · kind: person
 **Place:** Merca, Somalia (1.71 N, 44.77 E)
 
@@ -987,7 +987,7 @@ Ali Maow Maalin spent his later years working to vaccinate children in Somalia a
 
 ## 21. The Green Belt
 
-**Label:** The Green Belt Movement
+**Label:** Green Belt
 **Year:** 1977 · precision: year · kind: person
 **Place:** Nairobi, Kenya (1.29 S, 36.82 E)
 

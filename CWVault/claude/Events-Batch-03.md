@@ -1,5 +1,5 @@
 ---
-status: Batch 3, 1 Oct 2026. Fifteen events from the worklist (Events-To-Upgrade.md), the first fifteen keeps in date order, from the ice letting go to the Great Pyramid. Upgraded from the September blurbs, which were used as starting points only. Researched by three agents, written in one pass, checked by four independent fact-checkers whose changes are applied. The checkers' web searches ran out partway, so each event says what was confirmed by the checker, what only by the research pass, and what by neither. Awaiting Michael's reading.
+status: Batch 3, 1 Oct 2026. Fifteen events from the worklist (Events-To-Upgrade.md), the first fifteen keeps in date order, from the ice letting go to the Great Pyramid. Upgraded from the September blurbs, which were used as starting points only. Researched by three agents, written in one pass, checked by four independent fact-checkers whose changes are applied. The checkers' web searches ran out partway, so each event says what was confirmed by the checker, what only by the research pass, and what by neither. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
 role: The third batch of timeline events, and the first upgraded from the September Time Machine. Each event names the old record it replaces.
 ---
 
@@ -9,7 +9,7 @@ Written in round 2 of Prompt-Upgrade-Timeline-Events.md and checked in round 3. 
 
 ## 1. The ice lets go
 
-**Label:** The ice lets go
+**Label:** Ice lets go
 **Year:** about −10000 · precision: century · kind: earth event
 **Place:** the NorthGRIP drill site, central Greenland (75.10 N, 42.32 W), where the ice that records the change was drilled
 **Replaces:** `ice`
@@ -61,7 +61,7 @@ Farms, cities, writing and everything else on this line happened in the warm.
 
 ## 2. Figs at Gilgal
 
-**Label:** Figs at Gilgal
+**Label:** Figs
 **Year:** about −9400 · precision: century · kind: crop or animal
 **Place:** Gilgal I, Lower Jordan Valley, about 13 km north of Jericho, West Bank (32.03 N, 35.48 E)
 **Replaces:** `figs`
@@ -117,7 +117,7 @@ Either way, someone stored the figs, and perhaps dried them first. They are stil
 
 ## 3. The tower of Jericho
 
-**Label:** Tower of Jericho
+**Label:** Jericho tower
 **Year:** about −8300 · precision: century · kind: object
 **Place:** Tell es-Sultan, Jericho, West Bank (31.87 N, 35.44 E)
 **Replaces:** `jericho`
@@ -169,7 +169,7 @@ A metal grate now covers the top of the stairs.
 
 ## 4. Squash in a Mexican cave
 
-**Label:** Squash at Guilá Naquitz
+**Label:** Squash
 **Year:** about −8000 · precision: millennium · kind: crop or animal
 **Place:** Guilá Naquitz cave, near Mitla, Oaxaca, Mexico (16.98 N, 96.31 W)
 **Replaces:** `squash`
@@ -220,7 +220,7 @@ Many pumpkins, courgettes and acorn squash belong to the same kind of plant as t
 
 ## 5. Rice on the Yangtze
 
-**Label:** Rice on the Yangtze
+**Label:** Rice
 **Year:** about −7500 · precision: millennium · kind: crop or animal
 **Place:** Shangshan, Pujiang County, Zhejiang, China (29.46 N, 119.97 E)
 **Replaces:** `rice`
@@ -274,7 +274,7 @@ Today rice is the main food of more than half the people in the world.
 
 ## 6. Çatalhöyük
 
-**Label:** Çatalhöyük, doors in the roofs
+**Label:** Çatalhöyük
 **Year:** about −7100 · precision: century · kind: place
 **Place:** Çatalhöyük, Konya Plain, central Turkey (37.67 N, 32.83 E)
 **Replaces:** `catal`
@@ -326,7 +326,7 @@ Most of the hill has still not been dug.
 
 ## 7. A lake drains, the world cools
 
-**Label:** Lake Agassiz drains
+**Label:** Lake Agassiz
 **Year:** about −6200 · precision: century · kind: earth event
 **Place:** Hudson Bay, Canada, the lake's way out to the sea (58 N, 85 W, approximate). The lake itself lay over Manitoba, Ontario and Minnesota.
 **Replaces:** `agassiz`
@@ -385,7 +385,7 @@ The land around Winnipeg is still flat.
 
 ## 8. Mount Mazama becomes Crater Lake
 
-**Label:** Mazama becomes Crater Lake
+**Label:** Crater Lake
 **Year:** about −5700 · precision: century · kind: earth event
 **Place:** Crater Lake, Oregon, USA (42.94 N, 122.10 W)
 **Replaces:** `mazama`
@@ -442,7 +442,7 @@ But someone was almost certainly there.
 
 ## 9. Cattle in a green Sahara
 
-**Label:** Cattle in a green Sahara
+**Label:** Green Sahara
 **Year:** about −5000 · precision: millennium · kind: crop or animal
 **Place:** Tassili n'Ajjer, southeast Algeria (25.50 N, 9.00 E); the milk was found at Takarkori, in the Acacus Mountains just across the border in Libya
 **Replaces:** `cattle`
@@ -495,7 +495,7 @@ The paintings stayed where they were.
 
 ## 10. Copper from stone
 
-**Label:** Copper smelted at Belovode
+**Label:** Copper
 **Year:** about −5000 · precision: century · kind: craft or invention
 **Place:** Belovode, near Veliko Laole, eastern Serbia (44.32 N, 21.43 E, approximate)
 **Replaces:** `copper`
@@ -549,7 +549,7 @@ At Belovode, the fire was lit on purpose.
 
 ## 11. Silk unwound
 
-**Label:** Silk unwound from cocoons
+**Label:** Silk
 **Year:** about −3500 · precision: century · kind: craft or invention
 **Place:** Qingtai, Xingyang, Henan, China (34.8 N, 113.4 E, approximate)
 **Replaces:** `silk`
@@ -601,7 +601,7 @@ Every silkworm moth that people raise depends on them. Not one of them can fly a
 
 ## 12. A wagon on a pot
 
-**Label:** A wagon drawn on a pot
+**Label:** Wheel
 **Year:** about −3500 · precision: century · kind: craft or invention
 **Place:** Bronocice, near Kraków, southern Poland (50.33 N, 20.33 E, approximate)
 **Replaces:** `wheel`
@@ -653,7 +653,7 @@ The wheel from the marsh is in a museum in Ljubljana. It is more than 5,000 year
 
 ## 13. The Uluburun ship
 
-**Label:** Copper and tin on the Uluburun ship
+**Label:** Uluburun ship
 **Year:** about −1320 · precision: decade · kind: object
 **Place:** Uluburun, near Kaş, southern Turkey (36.13 N, 29.68 E)
 **Replaces:** `bronze`
@@ -707,7 +707,7 @@ The copper and the tin are in a museum in Bodrum, farther west along the same co
 
 ## 14. Caral
 
-**Label:** Caral, a city with flutes
+**Label:** Caral
 **Year:** about −2600 · precision: century · kind: place
 **Place:** Caral, Supe Valley, Peru (10.89 S, 77.52 W)
 **Replaces:** `caral`
@@ -759,7 +759,7 @@ Someone carved the flutes and played them. Nobody knows what music they made.
 
 ## 15. The Great Pyramid
 
-**Label:** The Great Pyramid
+**Label:** Great Pyramid
 **Year:** about −2560 · precision: decade · kind: object
 **Place:** Giza, near Cairo, Egypt (29.98 N, 31.13 E)
 **Replaces:** `pyramid`

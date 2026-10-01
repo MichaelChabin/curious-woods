@@ -1,5 +1,5 @@
 ---
-status: Batch 1, 30 Sept 2026. Twenty events, all before 1500, chosen by Claude and kept whole by Michael. Written to Timeline-Stories.md and the two samples; checked by four independent fact-checkers, whose changes are applied. Awaiting Michael's reading.
+status: Batch 1, 30 Sept 2026. Twenty events, all before 1500, chosen by Claude and kept whole by Michael. Written to Timeline-Stories.md and the two samples; checked by four independent fact-checkers, whose changes are applied. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
 role: The first batch of generated timeline events, for the After the Ice bench and, later, the shared list.
 ---
 
@@ -151,7 +151,7 @@ It started with beer and barley.
 
 ## 4. Ötzi
 
-**Label:** Ötzi, the man in the ice
+**Label:** Ötzi
 **Year:** about −3300 · precision: century · kind: person
 **Place:** the Tisenjoch pass, Ötztal Alps, on the border of Italy and Austria (46.78 N, 10.84 E)
 
@@ -200,7 +200,7 @@ For ten years, everyone thought he had died of cold. Then, in 2001, an X-ray sho
 
 ## 5. Drains of Mohenjo-daro
 
-**Label:** Drains of Mohenjo-daro
+**Label:** Mohenjo-daro
 **Year:** about −2500 · precision: century · kind: place
 **Place:** Mohenjo-daro, Sindh, Pakistan (27.33 N, 68.14 E)
 
@@ -249,7 +249,7 @@ The seals are small enough to hold in your hand.
 
 ## 6. Campo del Cielo
 
-**Label:** Campo del Cielo meteorites
+**Label:** Campo del Cielo
 **Year:** about −2500 · precision: millennium · kind: sky event
 **Place:** Campo del Cielo, Chaco and Santiago del Estero provinces, Argentina (27.47 S, 60.58 W)
 
@@ -297,7 +297,7 @@ The great irons still lie on the plain, and people can touch them.
 
 ## 7. Thera erupts
 
-**Label:** Thera erupts
+**Label:** Thera
 **Year:** about −1600 · precision: century · kind: earth event
 **Place:** Thera (Santorini), in the Aegean Sea, Greece (36.40 N, 25.40 E)
 
@@ -346,7 +346,7 @@ The ships anchor where the middle of the island used to be.
 
 ## 8. Oldest written song
 
-**Label:** Oldest written song
+**Label:** Oldest song
 **Year:** about −1400 · precision: century · kind: text (music)
 **Place:** Ugarit (Ras Shamra), on the coast of Syria (35.60 N, 35.78 E)
 
@@ -446,7 +446,7 @@ It is in the British Museum. At the very start of the scroll, the scribe's name 
 
 ## 10. Lapita voyagers
 
-**Label:** Lapita voyagers reach Tonga
+**Label:** Lapita voyagers
 **Year:** about −850 · precision: century · kind: craft or invention
 **Place:** Nukuleka, Tongatapu, Tonga (21.13 S, 175.15 W)
 
@@ -492,7 +492,7 @@ Their descendants kept sailing. Over the next two thousand years, they reached H
 
 ## 11. Nok heads
 
-**Label:** Nok clay heads
+**Label:** Nok heads
 **Year:** about −900 · precision: century · kind: object
 **Place:** the Nok region, Kaduna State, central Nigeria (9.50 N, 8.00 E)
 
@@ -588,7 +588,7 @@ It is in a library in Venice.
 
 ## 13. Kalinga war
 
-**Label:** Ashoka and the Kalinga war
+**Label:** Kalinga war
 **Year:** −261 · precision: year · kind: person
 **Place:** Kalinga (now Odisha), eastern India; Dhauli, near Bhubaneswar, marks it (20.19 N, 85.84 E)
 
@@ -638,7 +638,7 @@ The rocks inside Kalinga itself carry Ashoka's messages too. On them, the passag
 
 ## 14. Eratosthenes measures the Earth
 
-**Label:** Eratosthenes measures the Earth
+**Label:** Eratosthenes
 **Year:** about −240 · precision: decade · kind: idea
 **Place:** Alexandria, Egypt (31.20 N, 29.92 E), with Syene (Aswan) to the south
 
@@ -686,7 +686,7 @@ His own book is lost. We know his method from a writer named Cleomedes, who desc
 
 ## 15. Antikythera mechanism
 
-**Label:** Antikythera mechanism
+**Label:** Antikythera
 **Year:** about −100 · precision: century · kind: object
 **Place:** the Antikythera wreck, off the island of Antikythera, Greece (35.89 N, 23.30 E)
 
@@ -731,7 +731,7 @@ No machine with gears this fine is known again for more than a thousand years.
 
 ## 16. Vesuvius buries Pompeii
 
-**Label:** Vesuvius buries Pompeii
+**Label:** Pompeii
 **Year:** 79 · precision: year · kind: earth event
 **Place:** Pompeii, near Naples, Italy (40.75 N, 14.49 E)
 
@@ -780,7 +780,7 @@ Volcanologists still call a tall eruption like this one "Plinian," after the you
 
 ## 17. Zhang Heng's earthquake jar
 
-**Label:** Zhang Heng's earthquake jar
+**Label:** Earthquake jar
 **Year:** 132 · precision: year · kind: craft or invention
 **Place:** Luoyang, China (34.62 N, 112.45 E)
 
@@ -832,7 +832,7 @@ All that is left of the jar is one paragraph.
 
 ## 18. Diamond Sutra
 
-**Label:** Diamond Sutra, the oldest dated printed book
+**Label:** Diamond Sutra
 **Year:** 868 · precision: exact (11 May 868) · kind: object
 **Place:** found in the Mogao Caves, Dunhuang, China (40.04 N, 94.81 E)
 
@@ -884,7 +884,7 @@ Wang Jie made it to be given away, for his mother and father.
 
 ## 19. A new star
 
-**Label:** The guest star of 1054
+**Label:** Guest star
 **Year:** 1054.5 · precision: exact (4 July 1054) · kind: sky event
 **Place:** recorded at Kaifeng, China (34.80 N, 114.35 E); the star itself is in the constellation Taurus
 
