@@ -95,6 +95,36 @@ When a new tool or bench needs a gesture, or two gestures collide, **Glass Geome
 
 **Where the invitation appears is open** (see below). Two candidates: on the gallery on her first visit, before she has kept anything (so nothing is stranded in Safari's storage); or at the moment she first taps Remember, under the note "In your practice list" (so the invitation arrives when it means something, at the cost of one item that may need re-keeping). The manager chat recommends the second: it is the earned-interface rule, and one item is a small price.
 
+## The default picture placement (ruled 1 Oct 2026)
+
+A story's picture goes in the **left column** — `panel` or `beside` — unless the picture needs the width, and then `across`. Michael's yes, 1 Oct. Open since 22 Sept; every story written in between had to guess.
+
+Which of the two left-column forms: *panel* when one or two pictures arrive at different moments and can swap; *beside* when several are present at once and each sits by the text that names it.
+
+## A lab is a place, and she adjusts to one new thing (ruled 1 Oct 2026)
+
+A lab is the constant; a story is the variable. When a child opens a lab she should recognise it instantly, whichever door she came through, and find **one new thing** in front of her and nothing else moved. Michael's reason: that is the whole value of coming back to something she already knows how to use.
+
+Two things follow.
+
+**A lab must be complete standing alone.** Stained Glass hangs in the gallery as a work in its own right, and a child may walk into it having read no story. So everything she needs when nobody sent her belongs to the lab, not to the page that called it: the picker window, *How this works*, *New*, *Save* and its choices, the palette, the tool words. A story does not hand her tools. It tells her what is already in the room.
+
+**A lab is served to stories as a shelf module, never embedded as an application.** One home per capability, as the spine has one door per capability (`Geometry-Spine.md`). If each story solved embedding for itself, six stories would end up with six slightly different tables, which is the fragmentation the spine exists to prevent — the same failure, one level down, in the code.
+
+*The first case:* Stained Glass is still a 240 kB standalone page, and no story page has ever framed another page. Extracting it into a shelf module is the step-one investment the geometry series rests on, and it is owed before the second geometry story, not after.
+
+## Capability levels: one lab, powers withheld (ruled 1 Oct 2026)
+
+Circles-only geometry is **not a tool and not a property of a story**. It is a named **level** of the one lab — a set of powers the lab knows how to withhold — and any story asks for the level it needs by name.
+
+Michael's question was whether *The Glass Rose* (a story) and circles-only geometry (a capability) are two things. They are, and conflating them is why the Labs Ledger carried a tool called *Making a Rose* that was never a tool. But a separate `geometry-1-circles` file is the wrong fix: it forks the app, against the shelf-module ruling above, and it breaks *a lab is a place* — meeting a circles tool and later a lines tool is meeting two rooms, not one room gaining a power.
+
+**The level names are the spine's steps** (`Geometry-Spine.md`). A story asks for `circles`, `lines`, `both`, `grid`, and so on. So the spine is not only an editorial outline; it is a parameter the lab takes. A later story on the same step — the hexagram, say — asks for `circles` and inherits everything the rose established without re-specifying anything.
+
+**Withholding needs no explanation**, per the Marauder's Map rule: a control that is not possible is simply not there, never greyed out. At level `circles` the straightedge gesture does not exist, and nothing says so.
+
+**A level is a floor, not a ceiling.** She gets at least what the story needs, plus any power she has already earned elsewhere; the lab never takes a power away. Taking one back is "she adjusts to one new thing" running backwards. The cost is that a child who has done Wright could short-cut the rose — which is fine, because she would be solving it another way, and the story's point survives.
+
 ## Benches
 Three skeletons cover most brain-series interactives: Flash, Creep, Trace (Spec-Trace-Bench.md). A new puzzle is a new road or rule, never a new program. Nothing is scored, ranked, or congratulated; counts appear only when she asks for the graph.
 
@@ -102,4 +132,4 @@ Three skeletons cover most brain-series interactives: Flash, Creep, Trace (Spec-
 A story's World section opens on the world as it was in the story's own year. The layers that change with time — the sea, the ice, the Sahara (Spec-Maps, *Time on the map*) — belong to the map engine, and a story borrows them by naming its year; Van Gogh's World shows today's sea, a story set eight thousand years ago shows Doggerland. A story that spans a change lets the timeline drive it. Michael's reason: the goal is one capable map-and-time lab whose capabilities any story can call, so what the lab can show, the story shows. The timeline and the maps are one thread from this date.
 
 ## What still needs a ruling
-Where the home-screen invitation appears (gallery on first visit, or at first Remember). The default picture placement for new stories. Whether gallery size means anything, and whether the hang is fixed or shuffles. Whether the two-brain comparison should ever be side by side. Where the Remember inscription lives in a one-column story when Maya *is* present. Where After the Ice hangs and how it starts. Draft 3 of the star story document, to match the page.
+Where the home-screen invitation appears (gallery on first visit, or at first Remember). Whether gallery size means anything, and whether the hang is fixed or shuffles. Whether the two-brain comparison should ever be side by side. Where the Remember inscription lives in a one-column story when Maya *is* present. Where After the Ice hangs and how it starts. Draft 3 of the star story document, to match the page.

@@ -1,5 +1,5 @@
 ---
-status: DRAFT 30 Sept 2026, from Michael's rulings in chat; his four answers, his rulings on wars and religion (religion clarified the same day), the stepped date line (an experiment), and the six writing habits from his edit of Göbekli Tepe folded in. Awaiting his approval of the whole page. Worked examples in Timeline-Samples.md.
+status: DRAFT 30 Sept 2026, from Michael's rulings in chat; his four answers, his rulings on wars and religion (religion clarified the same day), the stepped date line (an experiment), and the six writing habits from his edit of Göbekli Tepe folded in. Awaiting his approval of the whole page. Worked examples in Timeline-Samples.md. Amended 1 Oct 2026: labels a word or two; prose that runs; traps the checkers keep catching.
 role: The primary source for timeline and map events: what an event is, the three kinds of prose it carries, how its date is written, and who writes it. Where an older document disagrees on these points, this one wins.
 supersedes: Rulings-Sept-2026.md "Dates" (in part); Story-Pattern.md "The World" (labels, panels); Spec-Timeline-and-Map.md "The panel"; Spec-Maps.md "More than two lines per event" (lengths).
 ---
@@ -38,6 +38,34 @@ A More follows Story-Voice.md. These habits come from Michael's rewrites of the 
 
 **A More may end on what is still to be found.** "Most of the hill has not been explored" is a fact and an honest invitation. This stretches Story-Voice.md's "end on a fact or an image" for Mores only: an open question is allowed as the ending when it is true.
 
+## Prose that runs (1 Oct 2026, from Michael's edit of Pythagoras)
+
+Plain is not the same as choppy. A More reads as good prose written for adults, with nothing assumed. Michael read the first draft of batch 4 and found it choppy: too many short sentences in a row, too many one-line paragraphs. His rewrite of *Pythagoras* (Events-Batch-04.md) is the model. What it does:
+
+- **Short words, sentences that run.** Related facts go in one sentence, joined by *and*, *but*, *so*, *because*, *which*, *when*. A string of five-word sentences reads like a list read aloud.
+- **The hedge goes first, once.** "We think Pythagoras was born on Samos about 570 BCE, and that when he was about forty he moved to Croton." The facts then flow without a hedge on each.
+- **A one-line paragraph is seasoning.** One or two in a More, where a question turns the story or a line sums it up. Not one per section.
+- **Give the mechanism when it can be given honestly.** He explained the strings in a paragraph: half as long, twice as fast, an octave; two thirds and three quarters blend too. Something she can try in her head is worth a paragraph. (The half-explanation rule still holds: if it can't be done honestly in the space, leave it out.)
+- **Pronunciation in brackets after the name:** Pythagoras ("pih-THAG-or-us").
+
+Clarity still comes first. Every pronoun points at one thing; where a joined sentence makes a pronoun ambiguous, repeat the noun.
+
+## Traps the checkers keep catching (batches 1 to 4)
+
+Four batches in, the fact-checkers keep finding the same kinds of mistake. Look for them while writing, not only while checking.
+
+- **Legends told as fact.** Wang Yirong finding oracle bones in his malaria medicine (a 1931 newspaper story); George Smith undressing over the flood tablet (told by Budge, who joined the museum eleven years later); Pythagoras and the blacksmith's hammers (physically impossible as told); the Hittites' iron secret; scholars laughing at Zhang Heng's jar. A good anecdote needs a source written by someone who was there, or it is told as a story someone told later.
+- **Old figures that newer work has cut.** Two million stones at Jerwan (recounted in 2014: about 443,520); 80 million trees at Tunguska; ten thousand people at Çatalhöyük (now 600 to 800 in a typical year). Search for the latest figure, not the most quoted one.
+- **Overclaims.** "Anchors the whole chronology of the ancient Near East" (it anchors the Assyrian years); "the oldest aqueduct"; "the first writing that says I made this"; "shaped a quarter of the world"; "most archaeologists think" without a source that says most. Prefer "one of the oldest," "many," and the exact span the source supports.
+- **Objects described from memory.** Which face of the oracle bone carries the cracks; whether the sphinx's marks are on the shoulder or the base too; whether a god is shown on Enheduanna's disc. Describe an object only from a museum record or a photograph.
+- **Opening scenes placed at the wrong time.** The theatre of 499 BCE was probably not on the slope below the Acropolis; the assembly of 508 may not yet have met on the Pnyx. A scene set at the date is a claim like any other.
+- **Inferences the source doesn't make.** All 93 coins "made in Lydia" (some came from Greek cities); "the longest canal"; "fields, orchards and gardens" (the inscription says meadows).
+- **Striking new results already disputed.** The Uluburun tin from Central Asia (2022, rejected in 2023); the Altar Stone from Scotland (2024, questioned in 2026). When a result is under five years old, search for a reply before using it, and say so if there is one.
+- **Quotations.** Quote a named translation word for word (Eno, Watson, ETCSL, Butcher) and cite it. If translations differ and none is named, paraphrase without quotation marks.
+- **References.** Authors, titles and volumes go wrong more often than facts: check each one exists as cited, and say which part of a multi-volume edition holds the passage.
+
+The years-ago line ignores the missing year 0 (see Dates). Checkers will flag it as off by one; it is the house rule, and it stands.
+
 ## Wars and religion (30 Sept 2026, Michael)
 
 **Wars are tragic.** Some cannot be left out; Alexander is one. When a war appears, the event says what happened, what it cost in lives, money and effort, and what changed as a result. Where nobody recorded the cost, the event says so. It never tells a war as an adventure.
@@ -50,7 +78,7 @@ Religious words still follow the honesty rule. Where calling something a temple 
 
 ## The three kinds of prose
 
-**1. The label.** The words on the timeline or map. The label says what the event is about, as briefly as it can while still being clear. Where possible it is unique, so that no two events share a label. *Chicxulub impact*, *Eclipse stops a battle*, *Faraday's generator*.
+**1. The label.** The words on the timeline or map: a word or two, three at most (1 Oct 2026, Michael: long labels make the timeline hard to use). It names the thing the way you would in conversation, and leaves the explaining to the summary. Where possible it is unique, so that no two events share a label. *Stonehenge*, *Oracle bones*, *Iron*, *Chicxulub impact*. Not *The big stones at Stonehenge*.
 
 **2. The summary.** It appears when she taps the event's mark on a timeline or its place on a map. It is 20 to 40 words. It includes the date, as a plain year. It says plainly what happened, so that she knows which event this is without having read anything else. It ends with the word *More*.
 

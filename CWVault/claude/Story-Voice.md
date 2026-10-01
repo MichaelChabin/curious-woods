@@ -1,5 +1,5 @@
 ---
-status: 15 Sept 2026; amended 25 Sept (Room). A prompt for any chat that writes or revises a CW story. Paste it whole, after What-CW-Is.md. Written from what worked in The Man Who Learned Without Knowing and Three at a Glance, and from what the fresh-eyes read caught.
+status: 15 Sept 2026; amended 25 Sept (Room), 1 Oct (Who is reading). A prompt for any chat that writes or revises a CW story. Paste it whole, after What-CW-Is.md. Written from what worked in The Man Who Learned Without Knowing and Three at a Glance, and from what the fresh-eyes read caught.
 role: The voice, as instructions. Rulings live in Rulings-Sept-2026.md; this page is how to write once you know them. How a finished story reaches the site is in Publishing-a-Story.md.
 ---
 
@@ -42,6 +42,12 @@ Give the strange moment room. Several short sentences, not one, before it is exp
 Repeat the noun rather than trust a pronoun. "Professor Necker measured his crystals, and he drew what he measured." Every *it*, *one*, *this*, *that*, *they* points at exactly one thing; where it might not, say the noun again. What is obvious to us is not obvious to a child who is new to the material.
 
 Hedge where the truth is hedged. "Almost certainly the same mineral." Neat and slightly less true loses to plain and true.
+
+## Who is reading (1 Oct 2026)
+
+A child who lives in the place the story mentions is reading it. Write so that she comes away pleased with who she is. Not by flattering her; she would smell that too. By getting it right: the names people there use for themselves and their places; what was done there as something people did, not something that happened to them; the place as a centre with its own reasons, never the edge of somebody else's map. "The earliest writing we have records of was in Ur" pleases a child in Iraq because it is exact. "Civilization began in the Middle East" pleases nobody. Watch the words that assume a reader elsewhere: "discovered" for a place where people already lived, "remote," "exotic," "primitive," "the West" as the default. When a story has two sides, give each its own reasons.
+
+This holds for every piece of prose: stories, timeline events, gallery captions, the two sentences for a tapped name. It costs nothing but attention, and it is the difference between a child reading about her own city and a child reading about herself.
 
 ## Words
 

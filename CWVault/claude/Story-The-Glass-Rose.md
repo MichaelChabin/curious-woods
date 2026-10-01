@@ -1,5 +1,5 @@
 ---
-status: Draft 8 — 25 Sept 2026. WORKING COPY. Edit this file; the project copy is updated from it.
+status: Draft 9 — 1 Oct 2026. **The walk is gone.** Rewritten in the register of the painting pages: two instructions in the whole story instead of fifteen, the grammar said once, the copper dots doing the guiding, and the six arriving as a remark rather than a destination. New beat: the shape came out of the instrument, not out of anybody's head. Earlier: Draft 8 — 25 Sept 2026. WORKING COPY. Edit this file; the project copy is updated from it.
 Draft 8 carries Michael's rulings of 25 Sept: the first-person line returns, recast so it gives no evidence; MANIFEST wins on *Save construction*; all five images accepted; the paintings' left column adopted; Theophilus gets a date line and a World.
 Draft 7: Michael's walked version kept, and "Now you" folded into it (it had become a repeat). The lab no longer opens by playing the rose — she builds it, and *again* is there if she would rather watch. Prose fixes. A rose window added at the end.
 Draft 5 corrected the central idea: the lab's compass is Euclidean and collapsing — a circle is made from two marks already on the table, nothing is dropped, and no width is carried. The circle is what remembers.
@@ -17,89 +17,89 @@ one-liner: Nobody told the compass to count to six. It does anyway.
 
 *~11,120 after the ice, or 1120*
 
-About nine hundred years ago, a man who called himself Theophilus wrote a book about how to make things. It explains how to make paint, and the brushes to paint with. It tells how church bells are cast and how to build organ pipes. Most important for our story, it tells how to make windows of stained glass, which was the newest and most expensive thing you could put in a wall.
+**[the table, full width]**
+*Two locations, 0 and 1, and nothing else. Touch 0, hold for a moment, and drag out to 1.*
 
-He wrote down the whole process, and the first step wasn't glass. The first step was a table.
+A circle appears, with its middle at 0 and its edge running through 1.
 
-Take a flat wooden board, he said, wide enough for the window. Wet it, rub chalk into it until it's white all over, and let it dry. Now you have a surface you can draw on with a piece of lead sharpened like a pencil, and wipe off, and draw on again. Paper existed, but not in sheets the size of a window. Sheets that size could not be had at any price. So the window was drawn full size on a whitewashed board, and the glass was cut to fit the lines, and when the window was finished, the board was wiped clean for the next one.
+Drag an empty part of the table to move it about. Pinch to make it bigger. If you draw something you didn't want, tap an empty part and it goes.
 
-That means every window from that time began as a drawing on a white table, by someone holding a compass.
+That is the only thing this tool does. And for four hundred years it was how every coloured window in Europe got drawn.
 
+## The table
 
-## Building the Rose
+About nine hundred years ago a man who called himself Theophilus wrote down how to make things. Paint, and the brushes to paint with. How to cast a church bell. How to build an organ pipe. And how to make a window out of coloured glass, which was the newest and most expensive thing you could put in a wall.
 
-The table has two marked locations: 0 and 1. That is all. To use other locations, and you'll need a lot of them, you have to find them yourself.
+He starts not with glass but with furniture. Take a flat board, he says, as wide as the window is going to be. Wet it, rub chalk into it until it is white all over, let it dry. Now you can draw on it with a sharpened piece of lead, and rub the drawing out, and draw again.
 
-Circles are very good for that.
+Then he has you draw the whole window on it, full size. Every piece. The glass is cut to the lines on the board, and when the window is finished the board is wiped clean and the next window is drawn on top.
 
-You can make one by tapping 0, holding for a moment, and dragging the edge out to 1. Try it. You have made a circle whose center is at 0 and whose edge passes through the location at 1.
+Paper existed. Not in sheets a metre across, and not at a price anyone would pay. So the table was the paper — which means that of all the drawing done for all those windows, almost nothing is left.
 
-If you ever make a circle you did not want, tap an empty part of the table and it goes away.
+**[the floor at York — a stack: the photograph, then Harvey's drawing of the lines]**
 
-Now try tapping on 1 and dragging to 0. That gives you another circle. This one has its center at 1, and its edge passes through 0. 
+Almost. In York, in the north of England, they used a plaster floor in an upstairs room instead of a board, and plaster does not wipe clean. The scratches are still there, six hundred years of them, circles over circles, each new window drawn on top of the last until the floor is a thicket. The second picture is somebody's patient tracing of what is in the first one.
 
-But something else happened. Each place your new circle passed through the old one, a new location was found. There are two of them, and there is something remarkable about both. 
+## What you can do
 
-Each of the new locations is exactly the same distance from 0 as it is from 1. They have to be. They were made by identical circles.
+Theophilus had a compass, a straightedge, and no ruler with numbers on it. You have less than that: a compass, and no straightedge at all.
 
-More important, you can use them to make new circles. Try the copper colored dot indicating the location where the two circles meet above 0 and 1. Tap it and drag the circle so its edge goes through 0 and 1.
+Here are all the rules there are. A circle is made from two locations you already have — touch one, drag to the other. Wherever two circles cross, a new location appears, marked with a copper dot, and you can use that one too.
 
-Now you have a new circle.
+You never put a location down. You find one, and then you build on it.
 
-You have also found two new locations, each marked by a copper dot. Try the one above and to the left of 0. Tap it and drag a circle till its edge goes through 0.
+## What the compass does by itself
 
-Once again, two things happened at once. You made a new kind of enclosed space, shaped a little like a flower petal, rooted at 0. But you've also found a new location, at exactly the level of 0 and 1.
+Keep going. Put a circle on a new location, and another on the location that makes, and work your way round.
 
-Try making a circle with that as its center. If you do, you'll make a second petal and a new location below the one you just used.
+You come back to where you started. It takes six.
 
-That's the whole method. That is all there is to it. Keep finding those new locations and making new circles, and petals. When you come back to where you started you will have made exactly six petals, and you will have divided the first circle into six equal parts using nothing but circles.
+Not five, not seven. Nobody chose six and nothing was set to six. There is only one distance in the whole picture — the one between the first two locations — and six is what the table hands back. Most people who see it the first time do it again to check.
 
-Most people who see this for the first time do it again to check.
+Look at the middle circle. The other six have cut it into six leaf shapes that meet at the centre and fill it exactly.
 
-But why 6? Why not 6.1543 or 7 or even 9? Well that is a very good question. Actually, it is a profound question, one you can understand and even answer after a lot of thought and exploring. We'll keep it on the open list.
+**[a rose window, full width]**
 
-But six it is, like the number of points on a snowflake. And the result is beautiful.
+That shape is a rose, and the big round windows built out of it are called rose windows. You will find it in floor tiles too, and in a honeycomb, and in the ice on a cold window.
 
-Drag an empty part of the table to move it around; it is much bigger than the screen. Pinch to zoom in and out, or scroll if you are using a mouse. And if you would rather watch the whole thing drawn for you, tap *again*. It costs you nothing you have made.
+Why six and not some other number is a real question, and a deep one. It is on the open list.
 
-Look at the middle circle. The six petals meet at the center and fill it exactly. That shape is a rose. The big round windows built out of it are called rose windows, and now you know why. You will find it in floor tiles too, and in a honeycomb, and in the ice on a cold window.
 ## Lead, then glass
 
-Glass doesn't hold itself up. In a window, every piece sits in a strip of lead, soft and gray, with a groove down each side for the glass to slide into. The dark lines you see in an old window are the lead. Theophilus wrote down how to cast it. 
+Glass does not hold itself up. In a window every piece sits in a strip of lead, soft and grey, with a groove down each side for the glass to slide into. The dark lines in an old window are the lead. Theophilus wrote down how to cast it.
 
-On his table, the drawing was the plan for the lead, and the glass came after.
+On his table the drawing was the plan for the lead, and the glass came afterwards. It works that way here too. Tap the two curves around one petal. Each tap lays lead along that curve, and when the second one closes the loop the petal fills with pale green.
 
-It works the same way here. Pick one petal and tap the two curves around it. Each tap lays lead along that curve. When the second tap closes the loop, the petal fills with pale green. That's plain glass, sand melted with nothing added; green is the color glass is when nobody does anything to it. And a row of colors appears beside it.
+That green is plain glass — sand melted with nothing added. Green is the colour glass is when nobody does anything to it, because there is a little iron in almost all sand and a little iron is enough. Getting the green *out* turned out to be harder than putting any colour in, and for a long time clear glass cost more than coloured.
 
-Tap a color, then tap the glass. The blue is what you get from a pinch of cobalt in the pot, the red from an even smaller pinch of gold, the yellow from silver. Theophilus didn't know why. Nobody did for another seven hundred years. But the pots were there, and the pinches, and he wrote down which pinch gave which color.
-### Play
-This is your window. You can make as many petals as you like. Color some of them, or all of them. You can add more circles too, bigger ones and they'll let you add smaller ones. If you make a mistake tap any empty space to undo it. 
+A row of colours appears beside the glass. Tap a colour, then tap the piece. The blue comes from a pinch of cobalt in the pot, the red from a smaller pinch of gold, the yellow from silver. Theophilus did not know why any of that worked. Nobody did for another seven hundred years. But the pots were there, and the pinches, and he wrote down which pinch gave which colour.
 
-And when you're ready to see it without all the lines, tap *Just the glass*.
+## This is your window
 
-This is your design, and you can save it. Tap *Save*, then choose:
+Make as many petals as you like, and colour them or leave them plain. Bigger circles reach further and cross in new places, and the new crossings are finer than the old ones.
 
-- *Save construction*, which lets you open it again later and watch how you made it
-- *Postcard*, which you can send in an email or a message
-- *Full sheet*, which is big enough to print and hang on your wall
+When you want to see it without the drawing underneath, tap *Just the glass*.
 
-And if you want to start another one, tap *New*.
+Then tap *Save*, and choose. *Save construction* keeps it so you can open it again and watch how it was made. *Postcard* is for sending. *Full sheet* is big enough to print and put on a wall. *New* starts another one.
 
 ---
 
 *More:*
 
-Your compass forgets. Theophilus's didn't — a real pair of dividers stays open until you close them, and a glazier could carry one width around a window all day. The rule you just worked under, that every circle has to be made from two marks already on the table, is Euclid's rule, and a compass like that is sometimes called a collapsing compass. The second thing Euclid ever proves is a way of moving a distance from one place to another using nothing but circles that forget. He gave himself the harder tool, and then showed it could do the job anyway.
+Your compass forgets. Theophilus's did not — a real pair of dividers stays open until you close them, and a glazier could carry one width around a window all day. The rule you worked under, that every circle has to be made from two locations already on the table, is Euclid's rule, and a compass like that is called a collapsing compass. The second thing Euclid ever proves is a way of carrying a distance from one place to another using nothing but circles that forget. He gave himself the harder tool and then showed it could do the job anyway.
 
-Theophilus was probably a monk named Roger, who lived in what is now Germany and made things in metal for a living. He wrote in Latin, and the book is called *On Divers Arts*. We don't know why he used a made-up name.
+Theophilus was probably a monk named Roger, who lived in what is now Germany and made things out of metal for a living. He wrote in Latin, and the book is called *On Divers Arts*. Nobody knows why he used a made-up name.
 
-In York, in the north of England, the people who designed the big windows didn't use a board. They spread plaster on a floor in an upstairs room and scratched their designs into it with a compass and a straightedge. The floor is still there, and so are the scratches: circles over circles, six hundred years old, layered where each new window was drawn on top of the last.
+Join up the six outer crossings and you have a hexagon. Every one of its sides is exactly as long as the distance you started with, which is why six of them fit and no more. Euclid proved that. He also drew two crossing circles as the very first thing in his book, for a different reason, and that is a story too.
 
-Plain glass is green because of iron. There's a little iron in almost all sand, and it's enough. Getting the green *out* was harder than putting any color in, and for a long time clear glass cost more than colored.
+Cobalt is blue in glass because of the way its atoms hold their electrons. *Why Cobalt Is Blue* is the story, when you want it.
 
-Cobalt is blue in glass for reasons that have to do with how its atoms hold their electrons. *Why Cobalt Is Blue* is the story, when you want it.
+## References
 
-Join up the six outer crossings and you have a hexagon. Every one of its sides is exactly as long as the distance you started with, which is why six of them fit and no more. Euclid proved that. He also drew two crossing circles as the very first thing in his book, for a different reason, and that's a story too.
+- Theophilus, *On Divers Arts* (*De diversis artibus*), about 1120. Book II is the glass book; chapter 17 is the whitewashed board. Translated by John G. Hawthorne and Cyril Stanley Smith, and in print cheaply.
+- The Masons' Loft tracing floor, York Minster — the University of York's archaeology pages, which carry the photographs and John Harvey's drawing of the lines.
+- Euclid, *Elements*, Book I proposition 1 (the two crossing circles) and Book IV proposition 15 (the hexagon). David Joyce's edition is online and free.
+- Georg Mohr, *Euclides Danicus*, 1672, and Lorenzo Mascheroni, *La geometria del compasso*, 1797 — the two proofs that the compass alone is enough.
 
 ---
 
@@ -166,6 +166,8 @@ Still unchecked there: Abelard, the Chartres roses, Cahokia's peak.
 ## Notes for us (not the child)
 
 **The beat.** One: with only one distance to work with, six comes out by itself. If it needs cutting, cut from *More*, not from the walk around the circle.
+
+**Draft 9: why the walk went.** The old middle told her to do something about fifteen times, and named locations ("the one above and to the left of 0") that are only there if she went round that way — the page has no idea what she drew. The painting pages give two instructions in a whole story and then talk about the painting while she plays. The lab can do the walking: every usable location already wears a copper dot, so the grammar collapses to one paragraph. What is lost is the hand-holding, and the net under it is the copper dots and *again*. The beat moved with it: not "a distance repeated makes six" (a fact about geometry) but "the shape came out of the tool, not out of his head" — which is this story's version of what he saw, what he moved, and what he brought with him.
 
 **Draft 7: what changed.** Michael rewrote the middle as a walk — she builds the rose a circle at a time while she reads, rather than watching and then repeating. "Now you" was cut because it had become a second copy of the same instructions; its housekeeping was split, with undo landing at the first moment she can make a mistake and pan, zoom and *again* arriving once the rose is done, and its rose-window sentence became the end of *Building the Rose*. The consequence for the build is good news: the lab no longer needs to open with a construction already playing, which was the hardest of the three things the story asked for.
 
