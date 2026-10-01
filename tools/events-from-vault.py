@@ -29,6 +29,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 SOURCES = [
     ('CWVault/claude/Events-Batch-01.md', 'batch-01'),
     ('CWVault/claude/Events-Batch-02.md', 'batch-02'),
+    ('CWVault/claude/Events-Batch-03.md', 'batch-03'),
     ('CWVault/claude/Timeline-Samples.md', 'samples'),
 ]
 OUT = 'cw-deploys/stories/timeline-events.json'
@@ -61,6 +62,11 @@ WEIGHTS = {
     'tupaias-map': 2, 'haiti-becomes-free': 3, 'suez-canal': 2, 'krakatoa': 3, 'tunguska': 2,
     'ramanujans-letter': 2, 'leavitts-rule': 2, 'andromeda-is-another-galaxy': 3, 'the-biggest-earthquake': 2,
     'footprints-on-the-moon': 3, 'the-last-case-of-smallpox': 3, 'the-green-belt': 2,
+    # batch 3 (the ice to the Great Pyramid, upgraded from the September records)
+    'the-ice-lets-go': 3, 'figs-at-gilgal': 1, 'the-tower-of-jericho': 2, 'squash-in-a-mexican-cave': 1,
+    'rice-on-the-yangtze': 2, 'catalhoyuk': 2, 'a-lake-drains-the-world-cools': 2, 'mount-mazama-becomes-crater-lake': 1,
+    'cattle-in-a-green-sahara': 2, 'copper-from-stone': 2, 'silk-unwound': 2, 'a-wagon-on-a-pot': 2,
+    'the-uluburun-ship': 2, 'caral': 2, 'the-great-pyramid': 3,
 }
 
 
@@ -118,8 +124,8 @@ def parse_place(line, where):
         lon = float(m.group(3)) * (1 if m.group(4) == 'E' else -1)
         place['lat'] = lat
         place['lon'] = lon
-        if m.group(5).strip():
-            place['note'] = m.group(5).strip()          # e.g. 'marks Athens, where a written version is later reported'
+        if m.group(5).strip(' ,;'):
+            place['note'] = m.group(5).strip(' ,;')          # e.g. 'marks Athens, where a written version is later reported'
         before = text[:m.start()].strip().rstrip(',;')
     else:
         place['lat'] = None
@@ -147,7 +153,8 @@ def parse_date_line(lines, where):
             continue
         low = s.lower()
         if 'after the ice' in low:
-            m = re.match(r'(about\s+)?([\d,]+)\s+years after the ice', low)
+            # "About 3,000 years after the ice", or batch 3's "Year 0 after the ice" for the ice itself
+            m = re.match(r'(about\s+)?(?:year\s+)?([\d,]+)\s+(?:years\s+)?after the ice', low)
             if not m:
                 raise ParseError('%s: date line %r does not parse (after the ice)' % (where, raw))
             parts['count'] = {'value': num(m.group(2)), 'about': bool(m.group(1))}
@@ -183,6 +190,12 @@ def parse_event(block, source, where):
     rec['label'] = re.sub(r'^\*\*Label:\*\*\s*', '', one('Label:')).strip()
     rec.update(parse_year(one('Year:'), where))
     rec['place'] = parse_place(one('Place:'), where)
+    for ln in lines:
+        if ln.startswith('**Replaces:**'):
+            ids = re.findall(r'`([^`]+)`', ln) or [t.strip() for t in re.sub(r'^\*\*Replaces:\*\*', '', ln).split(',') if t.strip()]
+            if not ids:
+                raise ParseError('%s: the Replaces line names no id: %r' % (where, ln))
+            rec['replaces'] = ids
 
     # the summary: the line after the Summary header, its trailing *More* removed
     for i, ln in enumerate(lines):
@@ -316,7 +329,10 @@ def main():
                   'KIND is the closed list (sky, earth, crop, craft, object, place, person, text); a kind outside it is '
                   'kept as written and marked with kindNote. WEIGHT (1 to 3) is proposed by the tool and marked '
                   'proposed: editorial, Michael\'s to change. place.short is derived for the map label; place.name is '
-                  'the source\'s words. Notes for us never enter this file. Read by experiments/time-machine.html.',
+                  'the source\'s words. REPLACES (batch 3 onward) names the September ids in '
+                  'stories/after-the-ice-events.json that this record retires; the page drops those and keeps their '
+                  'ids as aliases, so her line still finds them. Notes for us never enter this file. Read by '
+                  'active/time-machine.html.',
         'version': '2026-09-30',
         'sources': [r for r, _ in SOURCES],
         'count': len(events),
@@ -328,6 +344,8 @@ def main():
             flags.append('no coordinates')
         if 'kindNote' in e:
             flags.append('kind %r outside the closed list' % e['kind'])
+        if e.get('replaces'):
+            flags.append('replaces ' + ', '.join(e['replaces']))
         print('%-34s %9s %-10s %-7s w%d  %s%s' % (e['id'], e['year'], e['precision'], e['kind'], e['weight'],
                                                  e['place']['short'], ('  [' + '; '.join(flags) + ']') if flags else ''))
     if check:

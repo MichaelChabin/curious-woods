@@ -893,6 +893,13 @@ undecided and seeded, not specced: draining the ocean to the floor
   in the page (`VIEWINGS`); the first case Michael named. **Wants Michael's decision:** the zeros
   and names (the Xia at 2070 BC, "after the Xia began"; the Sahara at 5500 BC, "after the Sahara
   began to dry") and whether viewings move out of the page into a file.
+- **1 Oct, later — batch 3 (Claude Code, on Michael's word).** `claude/Events-Batch-03.md`: 15 events
+  from the ice to the Great Pyramid, each upgraded from a September record and naming it in a
+  `Replaces` field. The tool reads the field (`replaces` in the JSON) and the page retires those
+  ids from the data, keeping each as an alias; 58 events in `stories/timeline-events.json`; 30
+  September records now give way (15 by `SAME` in the page, 15 by the data). Weights proposed
+  for the fifteen, marked so. Michael: "we need to talk about how to differentiate events" —
+  open, for the next session.
 - **Next action: one session, not two.** (0) Michael opens `active/time-machine.html` on
   the Mac and the iPad and rules on the list above, and on whether After the Ice comes off the wall. (1) Michael looks at
   http://localhost:8766/prototypes/ice-bench.html and rules whether a cited test page may go

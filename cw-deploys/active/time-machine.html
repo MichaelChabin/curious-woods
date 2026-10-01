@@ -174,7 +174,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-01 394d2a1';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-01 1cc0d7b';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -265,11 +265,15 @@
                  label: r.label, side: 'world', summary: r.summary, more: r.more, refs: r.references || [], place: p, fresh: true });
     });
     const have = {}; out.forEach(e => { have[e.id] = true; });
+    // a new record's `replaces` (batch 3 onward) retires the September ids it names, as SAME does
+    // for the first two batches; the retired id stays as an alias, so her line still finds it
+    const retired = Object.assign({}, SAME);
+    (fresh.events || []).forEach(r => (r.replaces || []).forEach(id => { retired[id] = r.id; }));
     alias = {};
-    (old.events || []).forEach(r => { if (SAME[r.id]) alias[r.id] = SAME[r.id]; else if (r.same) alias[r.id] = r.same; });
+    (old.events || []).forEach(r => { if (retired[r.id]) alias[r.id] = retired[r.id]; else if (r.same) alias[r.id] = r.same; });
     (old.events || []).forEach(r => {
-      if (SAME[r.id]) return;                                          // a new event covers it
-      if (r.same && (have[r.same] || SAME[r.same])) return;            // it stands aside for a record that is here
+      if (retired[r.id]) return;                                       // a new event covers it
+      if (r.same && (have[r.same] || retired[r.same])) return;         // it stands aside for a record that is here
       const p = r.place && places[r.place];                            // (a `same` that names the shared list, not read here, stays)
       out.push({ id: r.id, year: r.year + ICE, astro: r.year, precision: r.precision || 'year', kind: r.kind, weight: r.weight || 1,
                  label: r.label, side: 'world', summary: plain(r.year, r.precision) + '. ' + (r.blurb || ''), more: null, refs: [],
