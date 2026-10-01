@@ -937,8 +937,8 @@ undecided and seeded, not specced: draining the ocean to the floor
   place) and committed. Michael's extraction prompt analysed against the disk and rewritten as
   `claude/Prompt-Extract-Glass-Module.md`: four paths fixed, the mount line brought to the shelves'
   form, two stages named, the fixed-position decision taken, the rose log (not in the library) and
-  the saved constructions added. **Still missing before it is pasted: `claude/Geometry-Spine.md`
-  and `claude/Labs-Ledger.md`, which exist only in Michael's chat.**
+  the saved constructions added. `claude/Geometry-Spine.md` arrived 11:37 and is committed; the ledger was in the vault all
+  along as `00-LABS-LEDGER.md` and the prompt points there. **The prompt is ready to paste.**
 - **Next action: one session, not two.** (0) Michael opens `active/time-machine.html` on
   the Mac and the iPad and rules on the list above, and on whether After the Ice comes off the wall. (1) Michael looks at
   http://localhost:8766/prototypes/ice-bench.html and rules whether a cited test page may go

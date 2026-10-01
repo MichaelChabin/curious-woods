@@ -6,11 +6,11 @@ how to use: Paste the prompt below whole into a Claude Code session in `_CW/`. O
 
 # Extracting Glass Geometry into a shelf module
 
-**Before pasting, in this order:** the vault's rulings of 1 Oct are committed (done); the palette-as-window change to `active/glass-geometry.html` is checked and committed (see the board); `CWVault/claude/Geometry-Spine.md` and `CWVault/claude/Labs-Ledger.md` are saved from the chat into the vault (Michael). The prompt names both and the builder will stop if they are missing.
+**Before pasting, in this order:** the vault's rulings of 1 Oct are committed (done); the palette-as-window change to `active/glass-geometry.html` is checked and committed (see the board); `CWVault/claude/Geometry-Spine.md` is saved into the vault and `CWVault/00-LABS-LEDGER.md` is current (both done, 1 Oct). The prompt names both and the builder will stop if they are missing.
 
 ## The prompt
 
-> Read, in this order: `CWVault/00-WHAT-CW-IS.md`; `CWVault/claude/Rulings-Sept-2026.md`, in particular *A lab is a place, and she adjusts to one new thing*, *Capability levels*, and *Gestures across tools*; `CWVault/claude/Labs-Ledger.md`; `CWVault/claude/Geometry-Spine.md`; `cw-deploys/MANIFEST.md` (Page standard, and the `js/` entries); and `CWVault/claude/Story-Pattern.md` for how the existing shelves (`js/map.js`, `js/sampler.js`, `js/timeline.js`, `js/stack.js`) are mounted by a story page.
+> Read, in this order: `CWVault/00-WHAT-CW-IS.md`; `CWVault/claude/Rulings-Sept-2026.md`, in particular *A lab is a place, and she adjusts to one new thing*, *Capability levels*, and *Gestures across tools*; `CWVault/00-LABS-LEDGER.md`; `CWVault/claude/Geometry-Spine.md`; `cw-deploys/MANIFEST.md` (Page standard, and the `js/` entries); and `CWVault/claude/Story-Pattern.md` for how the existing shelves (`js/map.js`, `js/sampler.js`, `js/timeline.js`, `js/stack.js`) are mounted by a story page.
 >
 > Then read the lab itself: `cw-deploys/active/glass-geometry.html`, about 4,990 lines. It is well sectioned; the section headers (`// CONSTANTS`, `// ACTION LAYER`, `// INTERACTION STATE MACHINE`, `// CONSTRUCTIONS`, `// PICKER WINDOW`, `// STARTUP` and the rest) tell you what each block does. It already stands on `js/plane.js` (the coordinate space), `js/cw-panel.js` (the info and choice panels), `js/cw-flags.js` and `js/cw-number.js`; those stay as they are.
 >
@@ -53,7 +53,7 @@ how to use: Paste the prompt below whole into a Claude Code session in `_CW/`. O
 >
 > Do not redesign anything else while you are in there. No new gestures, no new words, no tidying of behaviour you think is odd. Report what looked wrong and leave it.
 >
-> **Finishing.** Bump `CW_VERSION` on every page touched and the version query on every page that loads a changed script. Run `tools/check-deploys.sh`. Register `js/glass.js` and the bench in `MANIFEST.md` and add the line to `00-BOARD.md`. Update the Geometry: Glass section of `CWVault/claude/Labs-Ledger.md` to say the lab is a shelf module and which levels exist.
+> **Finishing.** Bump `CW_VERSION` on every page touched and the version query on every page that loads a changed script. Run `tools/check-deploys.sh`. Register `js/glass.js` and the bench in `MANIFEST.md` and add the line to `00-BOARD.md`. Update the Geometry: Glass section of `CWVault/00-LABS-LEDGER.md` to say the lab is a shelf module and which levels exist.
 >
 > Test headless at 1440 × 1100 and 390 × 844: no console errors, no failed requests, no horizontal scroll, and on the standalone page every one of draw, undo, lead, fill, colour, save, picker, How this works, New, replay and opening a construction saved before the change still works.
 >
