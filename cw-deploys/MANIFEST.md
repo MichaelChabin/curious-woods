@@ -881,7 +881,7 @@ backstop for the Claude Code session that lands the file.
   `../outdated-files/brain-atlas-20260912.html`); renamed here with the ten-pathway
   revision on 13 Sep, `_redirects` keeping the day-old URL alive. Its workbench —
   the paintings, the overlay, the checks, `make_overlay.py` — is `../prototypes/brain/`,
-  moved out of the publish directory the same day; see the prototypes note at the foot.
+  moved out of the publish directory the same day; see the prototypes note at the foot. **1 Oct 2026 — the palette is a workspace window** (a chat session's change, checked and committed by Claude Code the same day): the colour palette no longer sits in the column's tool stack; *Color* opens it over the workspace at the top right, it drags by its header with pointer events (a finger on an iPad as well as a mouse), closes by its word, and reopens where the child last left it; the swatch grid keeps its width. Checked in the built-in browser at 1024 × 768: open, drag, close, reopen in place, no console errors. `?v=2026-10-01`.
 
 - **`the-man-who-learned-without-knowing.html`** — story: **The Man Who Learned Without
   Knowing** (text: `CWVault/claude/Story-The-Man-Who-Learned-Without-Knowing.md`), on the

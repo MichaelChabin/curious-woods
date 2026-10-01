@@ -930,6 +930,15 @@ undecided and seeded, not specced: draining the ocean to the floor
   changes Claude Code did not make (`Rulings-Sept-2026.md`, `Story-Voice.md`,
   `Timeline-Stories.md`, `active/glass-geometry.html`, two new prompts, `Events-To-Upgrade.md`),
   left for Michael.
+- **1 Oct — before the Glass Geometry extraction (Claude Code, on Michael's word).** The day's vault
+  documents committed (the rulings — a lab is a place, capability levels, picture placement — Who is
+  reading, prose that runs, the Glass Rose draft 9, the upgrade worklist and prompts). The
+  palette-as-window change to `active/glass-geometry.html` checked (open, drag, close, reopen in
+  place) and committed. Michael's extraction prompt analysed against the disk and rewritten as
+  `claude/Prompt-Extract-Glass-Module.md`: four paths fixed, the mount line brought to the shelves'
+  form, two stages named, the fixed-position decision taken, the rose log (not in the library) and
+  the saved constructions added. **Still missing before it is pasted: `claude/Geometry-Spine.md`
+  and `claude/Labs-Ledger.md`, which exist only in Michael's chat.**
 - **Next action: one session, not two.** (0) Michael opens `active/time-machine.html` on
   the Mac and the iPad and rules on the list above, and on whether After the Ice comes off the wall. (1) Michael looks at
   http://localhost:8766/prototypes/ice-bench.html and rules whether a cited test page may go

@@ -116,6 +116,12 @@
     input[type=range].cw-slider::-webkit-slider-thumb { appearance: none; width: 10px; height: 15px; background: #546A80; border-radius: 2px; cursor: pointer; }
 
     /* --- Palette tool --- */
+    /* A workspace window since 1 Oct 2026: it opens over the workspace, outside
+       the column, and moves and closes as the tip window does. 216 = the column
+       tool's old 188 px plus the window's padding (border-box), so the swatch
+       grid is exactly as wide as it was. */
+    #tool-palette { width: 216px; opacity: 0; transition: opacity 200ms ease-in; }
+    #tool-palette.visible { opacity: 1; }
     /* The palette title is a fact, not a control (ledger §13) — no hover. */
     #tool-palette .palette-name { font-family: Georgia, serif; font-size: 14px; color: #546A80; cursor: default; user-select: none; line-height: 1; }
     .palette-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; }
@@ -142,7 +148,7 @@
 
     /* --- Workspace pinned tools --- */
     .workspace-tool { position: fixed; z-index: 500; background: rgba(244,241,232,0.96); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 14px 14px; pointer-events: all; box-shadow: 0 2px 12px rgba(42,38,32,0.08); min-width: 188px; }
-    .workspace-tool-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; cursor: grab; }
+    .workspace-tool-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; cursor: grab; touch-action: none; }
     .workspace-tool-header:active { cursor: grabbing; }
     .workspace-tool-title { font-family: Georgia, serif; font-size: 14px; color: #546A80; }
     .workspace-tool-close { font-family: Georgia, serif; font-size: 11px; color: #b0a090; cursor: default; transition: color 80ms; }
@@ -294,12 +300,14 @@
   <img id="export-preview-img" draggable="false">
 </div>
 
-<div id="tool-palette" class="panel-tool" style="display:none;">
-  <div class="panel-tool-header" id="palette-drag-handle">
+<div id="tool-palette" class="workspace-tool" style="display:none;">
+  <div class="workspace-tool-header" id="palette-drag-handle">
     <!-- The title is a fact, not a control (ledger §13); the panel is a
-         tool panel now — summoned by Color, closed by the child (§3). -->
-    <span class="panel-tool-title palette-name" id="palette-name-btn">Chartres</span>
-    <span class="panel-tool-close" id="palette-close">close</span>
+         tool panel — summoned by Color, closed by the child (§3). Since
+         1 Oct 2026 it opens over the workspace, outside the column, a
+         movable window like the tip window: dragged by this header. -->
+    <span class="workspace-tool-title palette-name" id="palette-name-btn">Chartres</span>
+    <span class="workspace-tool-close" id="palette-close">close</span>
   </div>
   <div class="palette-grid" id="palette-grid"></div>
   <div class="craft-row" id="craft-row"></div>
@@ -341,7 +349,7 @@
 <script src="../js/plane.js?v=2026-08-13"></script>
 <script src="../js/cw-panel.js?v=2026-09-29"></script>
 <script>
-var CW_VERSION = '2026-09-29 6cc2863'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-10-01 394d2a1'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 document.addEventListener('DOMContentLoaded', function() {
 'use strict';
 
@@ -3427,14 +3435,16 @@ function exportImage() {
 
 // ============================================================
 // PANEL TOOL SYSTEM
-// What:    Manages the left-panel tool stack (max 2 open at once).
+// What:    Manages the left-panel tool stack (max 2 open at once;
+//          since 1 Oct 2026 only the model tool lives here — the
+//          palette is a workspace window, see PALETTE TOOL).
 //          openPanelTool() shows a tool, closePanelTool() fades it out.
 //          layoutPanelTools() repositions all open tools below the
 //          menu and pushes Remember down to avoid overlap.
 //          Drag-past-threshold on a panel tool header pins it as a
 //          free-floating workspace tool (pinToWorkspace).
 // Depends: state.panelTools, state.workspaceTools, state.rememberManual,
-//          leftPanel, remember, toolPalette, toolModel,
+//          leftPanel, remember, toolModel,
 //          PANEL_BASE_WIDTH, PANEL_WIDE_WIDTH, TOOLS_PANEL_GAP, etc.
 // Exposes: openPanelTool(id), closePanelTool(id),
 //          layoutPanelTools(), getPanelToolEl(id),
@@ -3470,7 +3480,6 @@ function layoutPanelTools() {
 }
 
 function getPanelToolEl(id) {
-    if (id==='palette')       return toolPalette;
     if (id==='model')         return toolModel;
     return null;
 }
@@ -3532,15 +3541,17 @@ function pinToWorkspace(id, dropX, dropY) {
 }
 
 function makeWorkspaceDraggable(el, id) {
-    var header = el.querySelector('.workspace-tool-header'); if (!header) return;
+    var header = el.querySelector('.workspace-tool-header'); if (!header || header._dragBound) return; header._dragBound=true;
+    // Pointer events with capture, as the tip window and the shared info panel
+    // drag (1 Oct 2026): a mouse or a finger on an iPad moves it alike.
     var dragging=false,sx,sy,ox,oy;
-    header.addEventListener('mousedown', function(e) { if (e.target.classList.contains('workspace-tool-close')) return; e.preventDefault(); dragging=true; sx=e.clientX; sy=e.clientY; ox=parseInt(el.style.left); oy=parseInt(el.style.top); });
-    document.addEventListener('mousemove', function(e) { if (!dragging) return; el.style.left=(ox+e.clientX-sx)+'px'; el.style.top=(oy+e.clientY-sy)+'px'; });
-    document.addEventListener('mouseup', function() { dragging=false; });
+    header.addEventListener('pointerdown', function(e) { if (e.target.classList.contains('workspace-tool-close')) return; e.preventDefault(); dragging=true; sx=e.clientX; sy=e.clientY; ox=parseInt(el.style.left)||0; oy=parseInt(el.style.top)||0; header.setPointerCapture(e.pointerId); });
+    header.addEventListener('pointermove', function(e) { if (!dragging) return; el.style.left=(ox+e.clientX-sx)+'px'; el.style.top=(oy+e.clientY-sy)+'px'; });
+    header.addEventListener('pointerup', function() { dragging=false; });
+    header.addEventListener('pointercancel', function() { dragging=false; });
 }
 
 function buildWorkspaceTool(id) {
-    if (id==='palette') return buildWorkspacePalette();
     if (id==='model')   return buildWorkspaceModel();
     return null;
 }
@@ -3559,16 +3570,20 @@ function pulseWorkspaceTool(id) {
 //          color swatches (from PALETTES_DATA),
 //          craft row (empty / clear glass / lead),
 //          recipe tooltip on hover.
-//          State lives in state.palette {current, selected,
-//          selected}. Can render in both the panel
-//          position and as a dragged-off workspace tool.
+//          State lives in state.palette {current, selected}.
+//          Since 1 Oct 2026 the palette is a workspace window
+//          (#tool-palette, class workspace-tool): it opens over
+//          the workspace outside the column, is dragged by its
+//          header, closed by its close word, and reopens where
+//          the child last left it. It never sits in the column
+//          stack; the dragged-off clone is gone.
 // Depends: PALETTES_DATA, CRAFT_SWATCHES, state.palette,
-//          openPanelTool(), closePanelTool(), openPickerWindow(),
+//          state.workspaceTools, makeWorkspaceDraggable(),
+//          pulseWorkspaceTool(), openPickerWindow(),
 //          DOM: #tool-palette, #palette-grid, #craft-row, etc.
 // Exposes: openColorTool(), openPaletteTool(paletteId),
-//          buildPaletteSwatches(paletteId, gridEl),
-//          buildCraftRow(rowEl), applyLeadState(),
-//          buildWorkspacePalette()
+//          closePaletteTool(), buildPaletteSwatches(paletteId, gridEl),
+//          buildCraftRow(rowEl)
 // ============================================================
 
 function openColorTool() {
@@ -3581,33 +3596,43 @@ function openColorTool() {
     openPaletteTool(id);
 }
 
+var paletteLastPos = null;   // where the child left it this session, as the tip window remembers
+
 function openPaletteTool(paletteId) {
     state.palette.current = paletteId;
     var pal = PALETTES_DATA[paletteId];
     if (!pal) { console.warn('Palette not found:',paletteId); return; }
     var nameBtn = document.getElementById('palette-name-btn');
     if (nameBtn) nameBtn.textContent = pal.name;
-    if (state.panelTools.includes('palette')) { buildPaletteSwatches(paletteId,document.getElementById('palette-grid')); buildCraftRow(document.getElementById('craft-row')); return; }
-    if (state.workspaceTools['palette']) {
-        var wt=state.workspaceTools['palette'];
-        wt.querySelector('.workspace-tool-title').textContent=pal.name;
-        buildPaletteSwatches(paletteId,wt.querySelector('.palette-grid'));
-        buildCraftRow(wt.querySelector('.craft-row'));
-        pulseWorkspaceTool('palette'); return;
-    }
-    openPanelTool('palette');
-    // Build swatches immediately (not deferred) so the panel has its full height
-    // when layoutPanelTools reads offsetHeight to position Remember.
     buildPaletteSwatches(paletteId,document.getElementById('palette-grid'));
     buildCraftRow(document.getElementById('craft-row'));
+    if (state.workspaceTools['palette']) { pulseWorkspaceTool('palette'); return; }
+    // Open over the workspace at its top right, or where the child last left it.
+    // The right side because the Color tip window hangs to the left of the
+    // construction, and on an iPad in landscape the two would otherwise overlap.
+    toolPalette.style.display = 'block';
+    if (paletteLastPos) { toolPalette.style.left = paletteLastPos.left; toolPalette.style.top = paletteLastPos.top; }
+    else {
+        toolPalette.style.left = Math.max(window.innerWidth - toolPalette.offsetWidth - TOOLS_PANEL_GAP, PANEL_BASE_WIDTH + TOOLS_PANEL_GAP) + 'px';
+        toolPalette.style.top  = TOOLS_TOP + 'px';
+    }
+    state.workspaceTools['palette'] = toolPalette;
+    makeWorkspaceDraggable(toolPalette, 'palette');
+    requestAnimationFrame(function() { toolPalette.classList.add('visible'); });
+}
+
+function closePaletteTool() {
+    if (!state.workspaceTools['palette']) return;
+    delete state.workspaceTools['palette'];
+    paletteLastPos = { left: toolPalette.style.left, top: toolPalette.style.top };
+    toolPalette.classList.remove('visible');
+    setTimeout(function() { if (!state.workspaceTools['palette']) toolPalette.style.display = 'none'; }, 220);
 }
 
 // The palette title is a fact — the name of what is loaded (ledger §13).
 // "Choose new colors" is the one way to the picker. The panel is a tool
 // panel: summoned by Color, closed by the child, never fading (§3).
-document.getElementById('palette-close').addEventListener('click', function() {
-    closePanelTool('palette');
-});
+document.getElementById('palette-close').addEventListener('click', closePaletteTool);
 
 function setRecipe(text) { var el=document.getElementById('palette-recipe'); if (el) el.textContent=text||'\u00a0'; }
 
@@ -3663,16 +3688,6 @@ function updateLeadSlider() {
 }
 leadSlider.addEventListener('input', updateLeadSlider);
 updateLeadSlider();
-
-function buildWorkspacePalette() {
-    var pal=PALETTES_DATA[state.palette.current]||{ name:'--' };
-    var el=document.createElement('div'); el.className='workspace-tool';
-    el.innerHTML='<div class="workspace-tool-header"><span class="workspace-tool-title">'+pal.name+'</span><span class="workspace-tool-close">close</span></div><div class="palette-grid"></div><div class="craft-row"></div><div class="palette-recipe">&nbsp;</div>';
-    buildPaletteSwatches(state.palette.current, el.querySelector('.palette-grid'));
-    buildCraftRow(el.querySelector('.craft-row'));
-    el.querySelector('.workspace-tool-close').addEventListener('click', function() { el.remove(); delete state.workspaceTools['palette']; });
-    return el;
-}
 
 // ============================================================
 // CONSTRUCTIONS
