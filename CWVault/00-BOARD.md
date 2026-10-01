@@ -900,6 +900,21 @@ undecided and seeded, not specced: draining the ocean to the floor
   September records now give way (15 by `SAME` in the page, 15 by the data). Weights proposed
   for the fifteen, marked so. Michael: "we need to talk about how to differentiate events" —
   open, for the next session.
+- **1 Oct — differentiating events (talked through, nothing written into the specs yet).**
+  Proposed to Michael and liked: an event carries four facets that are facts about it — when,
+  where, what it is (`kind`), what it belongs to (`domain`, the seeds' closed list, shared with
+  the stories) — and a viewing is a query over them (Japan is a region on the map, mathematics
+  is a domain), with at most a short list of ids included by hand in the viewing. Nothing for
+  themes, lessons, audiences or importance; weight stays the one editorial number. Proposed, for
+  the amendment procedure: a ninth kind, **`tale`** — a told thing (joke, folk tale, legend,
+  anecdote) dated by its telling, placed without any claim that it happened, so pacing a line
+  with something light is a query, not a tag. Practical limits on the count: hundreds now,
+  thousands once the Mores load on tap and the map thins dots by weight; both already ruled in
+  principle. **Michael is gathering a list of tale candidates to run past Claude.** When he
+  approves: the classification section goes into `claude/Timeline-Stories.md`, `domain` and
+  `tale` into `Prompt-Generate-Timeline-Events.md` and `tools/events-from-vault.py` (checked
+  against the closed lists, failing loudly), and `tale` is appended to the kind list with the date
+  and the reason.
 - **Next action: one session, not two.** (0) Michael opens `active/time-machine.html` on
   the Mac and the iPad and rules on the list above, and on whether After the Ice comes off the wall. (1) Michael looks at
   http://localhost:8766/prototypes/ice-bench.html and rules whether a cited test page may go
