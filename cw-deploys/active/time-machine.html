@@ -53,6 +53,11 @@
   #intro { max-width: 700px; margin: 0 auto; padding: 56px 24px 120px; position: relative; min-height: 100vh; }
   #intro .kicker { font-size: 12px; letter-spacing: .12em; color: var(--ink-soft); text-transform: uppercase; }
   #intro h1 { font-weight: normal; font-size: 36px; line-height: 1.1; margin: 6px 0 22px; }
+  #intro .how { font-size: 17px; color: var(--ink-soft); }
+  #intro .open { font-size: 16px; color: var(--ink-soft); margin-top: 1.6em; line-height: 1.7; }
+  #intro .viewing { font-style: italic; color: var(--payne); cursor: pointer; }
+  #intro .viewing:hover { color: #3D3D3A; }
+  #intro .viewing.on { font-style: normal; color: var(--ink); }
   #intro p { font-size: 20px; line-height: 1.45; margin: 0 0 1em; }
   #intro .next { position: absolute; right: 24px; bottom: 56px; font-size: 20px; }
   #intro .credit { position: absolute; left: 24px; bottom: 56px; max-width: 60%; font-size: 12px; line-height: 1.4; color: var(--grey); }
@@ -129,8 +134,10 @@
 
 <section id="intro">
   <div class="kicker">Time Machine</div>
-  <h1>After the Ice</h1>
-  <p>About twelve thousand years ago, the ice that covered the north began to melt, and it did not come back in the winter. This page counts years from then. Everything people have made since then fits on the line at the top: farms, cities, writing, ships, all of it.</p>
+  <h1 id="introTitle">After the Ice</h1>
+  <p id="introText">About twelve thousand years ago, the ice that covered the north began to melt, and it did not come back in the winter. This page counts years from then. Everything people have made since then fits on the line at the top: farms, cities, writing, ships, all of it.</p>
+  <p class="how">The line at the top is the whole stretch of years. The pale window on it is the part you are looking at: drag it along, or drag either end. The line below spreads out the years inside the window. The copper handle is the year you are in. Drag it, or tap the line, and the map shows the world in that year, with the sea lower where it was lower. Tap a mark to read what happened there, and <i>More</i> for the story. <i>People</i> and <i>Sea level</i> draw a curve over the years. <i>What I’ve seen</i> shows only what you have tapped.</p>
+  <p class="open">Open on <span class="viewing on" data-v="after-the-ice">After the Ice</span> · <span class="viewing" data-v="china">China, with the Song in the window</span> · <span class="viewing" data-v="egypt">Egypt, from the Sahara to Cleopatra</span></p>
   <div class="credit">The picture on the wall: Naomi Devil, <i>Idő-töltés</i> (2016), a cybernetic sculpture with Nicolas Schöffer’s hourglass. Photograph by Darabos György, <a href="https://commons.wikimedia.org/wiki/File:Naomi_Devil,_Id%C5%91-t%C3%B6lt%C3%A9s,_Nicolas_Sch%C3%B6ffer_homok%C3%B3r%C3%A1j%C3%A1b%C3%B3l_k%C3%A9sz%C3%BClt_kibernetikus_szobor_a_Hungarikon-gy%C5%B1jtem%C3%A9ny_sz%C3%A1m%C3%A1ra.jpg">Wikimedia Commons</a>, CC BY-SA 4.0, cropped.</div>
   <span class="cmd next" id="next" role="button" tabindex="0">Next</span>
 </section>
@@ -167,16 +174,35 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-09-30 2080373';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-01 394d2a1';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
-  const ICE = 10000, NAME = 'after the ice';                 // the store's year + ICE is a line year
-  const NOW = new Date().getFullYear() + ICE;                // the right end of Main
+  // A viewing is a zero, a name, a span and a focus (Time-Machine-Shape.md). The store writes the
+  // astronomer's year; a line adds its own zero (ICE) so that its years are positive and counted
+  // from a thing. ICE, NAME, NOW are the chosen viewing's; TODAY is this year on that line.
+  // A story names one with ?view=<id> in the address, or she chooses one on the first page.
+  const THIS_YEAR = new Date().getFullYear();
+  const VIEWINGS = {
+    'after-the-ice': { title: 'After the Ice', zero: -10000, name: 'after the ice', end: THIS_YEAR, endName: 'now', focus: [4000, 7500],
+      text: 'About twelve thousand years ago, the ice that covered the north began to melt, and it did not come back in the winter. This page counts years from then. Everything people have made since then fits on the line at the top: farms, cities, writing, ships, all of it.' },
+    china:   { title: 'China', zero: -2069, name: 'after the Xia began', end: THIS_YEAR, endName: 'now', focus: [960 + 2069, 1279 + 2069],
+      text: 'Chinese history is usually counted from the Xia, a dynasty of about four thousand years ago that the old histories describe and archaeologists are still looking for. This line starts there, and the window opens on the Song, three centuries when China had paper money, printed books and the compass.' },
+    egypt:   { title: 'Egypt', zero: -5499, name: 'after the Sahara began to dry', end: -29, endName: 'Cleopatra', focus: [5499 - 2700, 5499 - 2100],
+      text: 'About seven and a half thousand years ago the Sahara, which had been grassland with lakes and cattle, began to dry, and people moved to the Nile. This line starts there and ends with Cleopatra. The window opens on the centuries of the great pyramids, nearer to the start of the line than to its end.' }
+  };
+  let VIEW = VIEWINGS['after-the-ice'], ICE = 10000, NAME = 'after the ice', NOW = THIS_YEAR + ICE, TODAY = NOW;
+  function applyViewing(id) {
+    VIEW = VIEWINGS[id] || VIEWINGS['after-the-ice'];
+    ICE = -VIEW.zero; NAME = VIEW.name; NOW = VIEW.end + ICE; TODAY = THIS_YEAR + ICE;
+    focus.a = VIEW.focus[0]; focus.b = VIEW.focus[1]; handle = (focus.a + focus.b) / 2;
+    $('introTitle').textContent = VIEW.title; $('introText').textContent = VIEW.text;
+    document.querySelectorAll('#intro .viewing').forEach(w => w.classList.toggle('on', w.dataset.v === id));
+  }
   const DETAIL_ROWS = 4;        // at most this many label rows under Detail; the lightest lose their label, not their mark
   const FOCUS_MIN = 50;         // the narrowest Focus window, in years
   const SWEEP_SPAN = 900, SWEEP_MS = 3000, SETTLE_MS = 1200; // the arrival run: the window sweeps from the ice to now...
-  const SETTLE = [4000, 7500];                               // ...then settles here (the mockup's window)
+  // ...then settles on the viewing's focus (the mockup's 4 000–7 500 for After the Ice)
   const KEY = 'cw-after-the-ice';                            // her line, shared with active/after-the-ice.html
   const PYRAMID = '../art/maps/world-pyramid.json';
   const FIT = { west: -180, south: -58, east: 180, north: 78 };   // the whole world, as After the Ice opens
@@ -282,8 +308,8 @@
   function saySea(v) { return v > -0.75 ? 'the sea about where it is today' : 'the sea about ' + Math.round(-v) + ' m lower than today'; }
 
   // ---------- state ----------
-  const focus = { a: SETTLE[0], b: SETTLE[1] };
-  let handle = (SETTLE[0] + SETTLE[1]) / 2, sel = null, seenOnly = false, curve = null, live = false;
+  const focus = { a: 4000, b: 7500 };
+  let handle = 5750, sel = null, seenOnly = false, curve = null, live = false;
   const $ = id => document.getElementById(id);
   const over = $('over'), detailSvg = $('detail'), summary = $('summary'), lines = $('lines'), stage = $('stage');
   const NS = 'http://www.w3.org/2000/svg';
@@ -314,7 +340,7 @@
     const { mx, dL, dR, dx } = geom;
     // Main: the whole span, a tick every thousand years, now at the right
     el('line', { x1: PADX, y1: MAIN_Y, x2: W - PADX, y2: MAIN_Y, stroke: 'var(--line)', 'stroke-width': 1.5 });
-    for (let y = 0; y <= 12000; y += 1000) el('line', { x1: mx(y), y1: MAIN_Y - 4, x2: mx(y), y2: MAIN_Y + 4, stroke: '#b9b3a6' });
+    for (let y = 0; y <= NOW; y += 1000) el('line', { x1: mx(y), y1: MAIN_Y - 4, x2: mx(y), y2: MAIN_Y + 4, stroke: '#b9b3a6' });
     // the Focus window, and the lines from its ends to Detail's ends
     const fa = mx(focus.a), fb = mx(focus.b);
     el('path', { d: `M${fa},${MAIN_Y + 7} L${fb},${MAIN_Y + 7} L${dR},${DET_Y} L${dL},${DET_Y} Z`, fill: 'var(--focus)', opacity: .16 });
@@ -328,7 +354,7 @@
     const t = el('text', { x: PADX, y: MAIN_Y + 28, 'font-size': 13, fill: 'var(--ink-soft)', class: 'halo' });
     el('tspan', { 'font-weight': 'bold', 'font-size': 15, fill: 'var(--ink)' }, t, fmt(handle));
     el('tspan', { 'font-style': 'italic' }, t, ' years ' + NAME);
-    el('text', { x: W - PADX, y: MAIN_Y + 28, 'font-size': 12, 'font-style': 'italic', fill: 'var(--grey)', 'text-anchor': 'end', class: 'halo' }, null, 'now');
+    el('text', { x: W - PADX, y: MAIN_Y + 28, 'font-size': 12, 'font-style': 'italic', fill: 'var(--grey)', 'text-anchor': 'end', class: 'halo' }, null, VIEW.endName);
     // the curve, a soft silhouette above Detail along its span, one number at the handle
     if (curve && CURVES[curve]) {
       const c = CURVES[curve], N = 160, ys = [];
@@ -348,7 +374,7 @@
       const a = el('text', { x, y: DET_Y - 9, 'font-size': 11, fill: 'var(--ink-soft)', 'text-anchor': 'middle', class: 'halo' });
       el('tspan', { 'font-weight': 'bold', 'font-size': 13, fill: 'var(--ink)' }, a, fmt(y)); el('tspan', {}, a, ' years after 0');
       const b = el('text', { x, y: DET_Y + 19, 'font-size': 11, fill: 'var(--ink-soft)', 'text-anchor': 'middle', class: 'halo' });
-      el('tspan', { 'font-weight': 'bold', 'font-size': 13, fill: 'var(--ink)' }, b, fmt(NOW - y)); el('tspan', {}, b, ' years ago');
+      el('tspan', { 'font-weight': 'bold', 'font-size': 13, fill: 'var(--ink)' }, b, fmt(TODAY - y)); el('tspan', {}, b, ' years ago');
     });
     // the Year handle, on Detail
     const hx = dx(handle), g = el('g', { class: 'knob' });
@@ -553,7 +579,7 @@
     summary.innerHTML = '<span class="hint">tap to stop</span>';
     tween(SWEEP_MS, (e, k) => { const a = k * (NOW - SWEEP_SPAN); handle = a + SWEEP_SPAN / 2; setFocus(a, a + SWEEP_SPAN); }, () => {
       const a0 = focus.a, b0 = focus.b;
-      tween(SETTLE_MS, e => { const a = a0 + (SETTLE[0] - a0) * e, b = b0 + (SETTLE[1] - b0) * e; handle = (a + b) / 2; setFocus(a, b); }, () => { stopAnim(); });
+      tween(SETTLE_MS, e => { const a = a0 + (VIEW.focus[0] - a0) * e, b = b0 + (VIEW.focus[1] - b0) * e; handle = (a + b) / 2; setFocus(a, b); }, () => { stopAnim(); });
     });
   }
   function askBillion() {
@@ -567,7 +593,7 @@
       else if (s.do === 'curve') { setTimeout(() => { if (!stopHook) return; setCurve(s.name); next(); }, reduced ? 0 : s.ms); }
       else if (s.do === 'handle') { const c = CURVES[s.to.curve], h1 = handle, target = yearWhere(c, s.to.value); tween(s.ms, e => setHandle(h1 + (target - h1) * e), next); }
       else if (s.do === 'say') {
-        const c = CURVES.people, y = Math.round(yearWhere(c, 1e9)), times = Math.round(curveAt(c, NOW) / 1e9);
+        const c = CURVES.people, y = Math.round(yearWhere(c, 1e9)), times = Math.round(curveAt(c, TODAY) / 1e9);
         summary.innerHTML = '<b>About ' + (y - ICE) + '.</b> For almost all of the twelve thousand years there were fewer than half a billion people. Then the count reached a billion around ' + (y - ICE) + ', and it has grown about ' + ['', '', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][times] + ' times since.';
         const h = stopHook; stopHook = null; if (h) { const keep = summary.innerHTML; h(); summary.innerHTML = keep; }
         next();
@@ -578,15 +604,35 @@
   $('wBillion').addEventListener('click', ev => { ev.stopPropagation(); askBillion(); });
 
   // ---------- the pages ----------
-  let pending = null;   // the pyramid and the sea curve, until the bench is shown and the map can measure itself
+  let raw = null, wanted = false;   // the files, once loaded; whether Next was pressed before they were
   function showBench() {
+    if (!raw) { wanted = true; summary.innerHTML = '<span class="hint">loading…</span>'; return; }
     $('intro').style.display = 'none'; $('bench').style.display = 'block';
-    if (pending) { buildMap(pending.pyramid, pending.sea); pending = null; }   // built here, not while hidden: a hidden box has no width to fit the world to
+    // everything is built here, in the chosen viewing's years, and the map while visible: a
+    // hidden box has no width to fit the world to
+    merge(raw.old, raw.fresh, raw.book);
+    CURVES.people = { pts: raw.people.points.map(p => [p[0] + ICE, p[1]]), fixed: false, say: sayPeople, fill: '#c9b48e' };
+    const seaPts = raw.sea.points.map(p => [p[0] + ICE, p[1]]);
+    CURVES.sea = { pts: seaPts, fixed: true, lo: Math.min(...seaPts.filter(p => p[0] >= 0 && p[0] <= NOW).map(p => p[1]), curveAt({ pts: seaPts }, 0)), hi: 0, say: saySea, fill: '#9fbcd6' };
+    detail = cwTimeline(detailSvg, {
+      from: focus.a, to: focus.b, events: windowEvents(),
+      // the plane's 1–5–10 ladder gives Detail its ticks, relabelling as the span changes; the
+      // years themselves are said once, in bold, at Detail's two ends (the mockup), so the
+      // ladder's own labels are left blank — the story line's every-twenty-years labels would
+      // be a hundred and sixty grey numbers at a 3 500-year span
+      line: { rows: DETAIL_ROWS, stretch: true, ladder: true, yearText: () => '' },
+      onPick: id => { emptyTap = false; select(id); },
+      onEmpty: () => { emptyTap = true; }
+    });
+    wireDetail();
+    buildMap(raw.pyramid, raw.sea.points);
     live = true; measure(); drawDetail(); draw(); markMap(); timeToMap(); showWord();
-    if (reduced) { setFocus(SETTLE[0], SETTLE[1]); return; }
+    if (reduced) { setFocus(VIEW.focus[0], VIEW.focus[1]); return; }
     sweep();
   }
   $('next').addEventListener('click', showBench);
+  document.querySelectorAll('#intro .viewing').forEach(w => w.addEventListener('click', () => applyViewing(w.dataset.v)));
+  applyViewing(new URLSearchParams(location.search).get('view') || 'after-the-ice');
   $('next').addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); showBench(); } });
   let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!live) return; measure(); drawDetail(); draw(); }, 120); });
 
@@ -595,23 +641,8 @@
   Promise.all([get('../stories/after-the-ice-events.json'), get('../stories/timeline-events.json'), get('../stories/places.json'),
                get('../stories/curves/people.json'), get('../stories/curves/sea-level.json'), cwMap.load(PYRAMID)])
     .then(([old, fresh, book, people, sea, pyramid]) => {
-      merge(old, fresh, book);
-      CURVES.people = { pts: people.points.map(p => [p[0] + ICE, p[1]]), fixed: false, say: sayPeople, fill: '#c9b48e' };
-      const seaPts = sea.points.map(p => [p[0] + ICE, p[1]]);
-      CURVES.sea = { pts: seaPts, fixed: true, lo: Math.min(...seaPts.filter(p => p[0] >= 0 && p[0] <= NOW).map(p => p[1]), curveAt({ pts: seaPts }, 0)), hi: 0, say: saySea, fill: '#9fbcd6' };
-      detail = cwTimeline(detailSvg, {
-        from: focus.a, to: focus.b, events: windowEvents(),
-        // the plane's 1–5–10 ladder gives Detail its ticks, relabelling as the span changes; the
-        // years themselves are said once, in bold, at Detail's two ends (the mockup), so the
-        // ladder's own labels are left blank — the story line's every-twenty-years labels would
-        // be a hundred and sixty grey numbers at a 3 500-year span
-        line: { rows: DETAIL_ROWS, stretch: true, ladder: true, yearText: () => '' },
-        onPick: id => { emptyTap = false; select(id); },
-        onEmpty: () => { emptyTap = true; }
-      });
-      wireDetail();
-      pending = { pyramid, sea: sea.points };
-      if ($('bench').style.display === 'block') { buildMap(pyramid, sea.points); pending = null; markMap(); timeToMap(); }
+      raw = { old, fresh, book, people, sea, pyramid };
+      if (wanted) showBench();
       // which past layers the pyramid carries, said once in the console (Spec-Maps, Time on the map)
       const names = (pyramid.layers || []).map(L => L.name);
       console.info('Time Machine: pyramid layers ' + JSON.stringify(names) + (pyramid.shelf ? ', a shallow-sea layer to ' + pyramid.shelf.depth + ' m (the sea follows the year)' : '') +

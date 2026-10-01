@@ -806,7 +806,12 @@ backstop for the Claude Code session that lands the file.
   (empty canvas shows only Open); the color panel is summoned by Color and
   closable; Numbers became Show map ↔ Hide map (old logs migrate at replay);
   the lattice tie is gone (grid keeps its step); Just the glass ↔ Show the
-  making wires the `show_glass` viewing op. Ledgers:
+  making wires the `show_glass` viewing op. **The colour palette is a workspace
+  window (1 Oct 2026):** Color opens it over the workspace at the top right, outside
+  the column, dragged by its header (pointer events, so a finger on an iPad moves it)
+  and closed by its close word, reopening where the child last left it; its contents,
+  recipe line and swatch choice are unchanged, and the dragged-off clone it used to
+  grow is gone. The model tool still stacks in the column. Stamp `2026-10-01 394d2a1`. Ledgers:
   `CWVault/01-ACTIVE/Decisions-Phase{1,2,3}-Aug07.md`, `…Phase4-Aug08.md`,
   `…ControlsBuild-Aug13.md`.
 - **`glass-multiplication.html`** — the times table as a window onto the number
@@ -1037,7 +1042,16 @@ backstop for the Claude Code session that lands the file.
   the handle by knob, by empty Detail and by a mark, the More window, both curves over the
   whole span and a narrow window, the replay, What I've seen, the bars, the panels; every story
   page and After the Ice open unchanged with no console errors. iPad: see the board. Tab icon
-  `art/icons/time-machine-icon-256.png`. Hung 30 Sep.
+  `art/icons/time-machine-icon-256.png`. Hung 30 Sep. **1 Oct 2026 — the first page, and viewings
+  (Michael):** the introduction page now says what the thing does, briefly and for now, and
+  carries the words that choose a **viewing** — a zero, a name, a span and a focus
+  (`CWVault/claude/Time-Machine-Shape.md`), held as data in the page (`VIEWINGS`): *After the
+  Ice* (zero −10 000, to now, the window on 4 000–7 500), *China, with the Song in the window*
+  (zero 2070 BC, the traditional Xia, to now; the window on 960–1279), *Egypt, from the Sahara to
+  Cleopatra* (zero 5500 BC, to 30 BC; the window on the pyramid centuries, 2700–2100 BC). A story
+  names one with `?view=<id>` in the address. Main runs the viewing's span, its right end carries
+  the viewing's end name, the count under Main says the viewing's name, and *years ago* counts
+  from today whatever the end. The zeros and names are Claude's choices, to be ruled on.
 - **`index-old.html`** — the home page as it stood from 13 to 20 Sep 2026 (two labs as
   words, three round icons, Experiments as a line), retired when the gallery took
   `index.html`. Recovered from git with its links rebased one folder up, given a tab icon
