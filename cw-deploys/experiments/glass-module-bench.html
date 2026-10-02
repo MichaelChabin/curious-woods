@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="../art/icons/geometry-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/geometry-icon-256.png">
+<title>Glass module — a bench</title>
+<!--
+  The bench that proves the extraction (claude/Prompt-Extract-Glass-Module.md, 1 Oct 2026):
+  js/glass.js mounted twice on one page, in boxes of ordinary size rather than the whole
+  window — once at level `circles`, once at `both`. What it exists to show: that two
+  instances do not interfere (separate canvases, logs, undo, panels), that the lab's
+  windows stay inside their box, that the page's own type and colour are untouched, and
+  that `open: 'rose'` has the rose ready behind a word. Nothing here is a lab's surface;
+  the words in the captions are the bench's.
+-->
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f4f1e8; font-family: Georgia, serif; color: #3D3D3A; }
+  .page { max-width: 1340px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 18px; font-weight: normal; color: #546A80; margin: 0 0 4px; }
+  .sub { font-size: 13px; color: #a09880; line-height: 1.5; margin: 0 0 18px; max-width: 700px; }
+  .row { display: flex; flex-wrap: wrap; gap: 20px; }
+  .box { width: 640px; max-width: 100%; }
+  .lab { width: 100%; height: 480px; border: 0.5px solid #c8b89a; border-radius: 6px; }
+  .cap { font-size: 13px; line-height: 1.5; color: #546A80; margin: 8px 2px 0; }
+  .cap b { font-weight: normal; color: #3D3D3A; }
+  .cap button { font: inherit; color: #546A80; background: none; border: 0; border-bottom: 1px solid transparent; cursor: pointer; padding: 1px 1px; }
+  .cap button:hover { color: #3D3D3A; border-bottom-color: #c8b89a; }
+  .notes { font-size: 13px; line-height: 1.55; color: #6b625a; max-width: 700px; margin-top: 28px; }
+  .notes p { margin: 0 0 9px; }
+  @media (max-width: 700px) { .lab { height: 420px; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Glass, as a module</h1>
+  <p class="sub">The same lab twice, in two boxes. The left one is at level <i>circles</i> — Glass 1: Circles, as Michael named it on 1 Oct: a tap on a location does nothing, and nothing says so; its column holds Circles, Color, New Open Save and Just the glass. The right one is at <i>both</i>, which is the lab as it hangs in the gallery. Draw in one, then the other; undo in one must not touch the other.</p>
+
+  <div class="row">
+    <div class="box">
+      <div class="lab" id="labCircles"></div>
+      <p class="cap"><b>Glass 1: Circles</b> · opened with the rose ready · <button type="button" id="again">Play the rose</button></p>
+    </div>
+    <div class="box">
+      <div class="lab" id="labBoth"></div>
+      <p class="cap"><b>both</b> · the Gaudí palette asked for</p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <p>What to look for: the tip window, the picker, the colour window and the replay panel stay inside their own box (Remember is not on screen until Maya is); a drag that leaves the box still moves the thing being dragged; Cmd-O opens the picker only in the box last touched; both boxes read the same saved library, because it is hers.</p>
+    <p>Below the boxes this paragraph is in the page's own Georgia and colour, which the module must not have changed.</p>
+  </div>
+</div>
+
+<script src="../js/cw-flags.js?v=2026-09-15"></script>
+<script src="../js/cw-number.js?v=2026-09-03"></script>
+<script src="../js/plane.js?v=2026-08-13"></script>
+<script src="../js/cw-panel.js?v=2026-10-01b"></script>
+<script src="../js/glass.js?v=2026-10-02d"></script>
+<script>
+var CW_VERSION = '2026-10-02 3d3b607'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+document.addEventListener('DOMContentLoaded', function () {
+  var a = cwGlass(document.getElementById('labCircles'), { level: 'circles', open: 'rose', palette: 'chartres' });
+  var b = cwGlass(document.getElementById('labBoth'), { level: 'both', palette: 'gaudi' });
+  document.getElementById('again').addEventListener('click', function () { a.replay(); });
+  window.cwBench = { a: a, b: b };   // for a look from the console
+});
+</script>
+</body>
+</html>

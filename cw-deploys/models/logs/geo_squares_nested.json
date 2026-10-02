@@ -1,18 +1,162 @@
 {
   "version": 1,
-  "name": "Nested Squares",
-  "description": "A square whose vertices are the midpoints of a larger square. Start with two lines through the seed points, then circles to find the corners.",
+  "name": "Square",
+  "description": "Elements I.46: a right angle at each end of the seed side (I.11, by the big circles), the side carried up each one by the first two circles, and the top joined. Lead round it and the square turns to glass.",
   "operations": [
-    { "op": "init", "seed0": { "x": -100, "y": 0 }, "seed1": { "x": 100, "y": 0 } },
-    { "op": "circle", "centerId": "seed:0", "edgeId": "seed:1" },
-    { "op": "circle", "centerId": "seed:1", "edgeId": "seed:0" },
-    { "op": "line", "p1Id": "seed:0", "p2Id": "seed:1" },
-    { "op": "line", "p1Id": "cc:1:2:0", "p2Id": "cc:1:2:1" },
-    { "op": "circle", "centerId": "cc:1:2:0", "edgeId": "seed:0" },
-    { "op": "circle", "centerId": "cc:1:2:1", "edgeId": "seed:0" },
-    { "op": "line", "p1Id": "seed:0", "p2Id": "cc:1:2:0" },
-    { "op": "line", "p1Id": "seed:1", "p2Id": "cc:1:2:0" },
-    { "op": "line", "p1Id": "seed:0", "p2Id": "cc:1:2:1" },
-    { "op": "line", "p1Id": "seed:1", "p2Id": "cc:1:2:1" }
+    {
+      "op": "init",
+      "seed0": {
+        "x": -100,
+        "y": 0
+      },
+      "seed1": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "seed:0",
+      "p2Id": "seed:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "lc:3:1:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:3:1:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:4:5:1",
+      "p2Id": "cc:4:5:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:0",
+      "edgeId": "lc:3:2:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:3:2:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:7:8:0",
+      "p2Id": "cc:7:8:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "lc:6:1:0",
+      "p2Id": "lc:9:2:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "3:seed:0:seed:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "9:lc:9:2:0:seed:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "10:lc:10:5:1:lc:9:2:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "10:lc:10:8:0:lc:10:5:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "10:lc:6:1:0:lc:10:8:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "6:lc:6:1:0:seed:0"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1",
+      "vertices": [
+        "lc:6:1:0",
+        "seed:0",
+        "seed:1",
+        "lc:9:2:0",
+        "lc:10:5:1",
+        "lc:10:8:0"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "lc:6:1:0",
+          "b": "seed:0"
+        },
+        {
+          "type": "seg",
+          "a": "seed:0",
+          "b": "seed:1"
+        },
+        {
+          "type": "seg",
+          "a": "seed:1",
+          "b": "lc:9:2:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:9:2:0",
+          "b": "lc:10:5:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:10:5:1",
+          "b": "lc:10:8:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:10:8:0",
+          "b": "lc:6:1:0"
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "deemphasize",
+      "key": "6:lc:6:1:0:seed:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "3:seed:0:seed:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "9:lc:9:2:0:seed:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "10:lc:6:1:0:lc:10:8:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "10:lc:10:8:0:lc:10:5:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "10:lc:10:5:1:lc:9:2:0"
+    }
   ]
 }

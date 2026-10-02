@@ -49,22 +49,31 @@ CW.createInfoPanel = function(opts) {
     el.appendChild(bar);
     el.appendChild(body);
 
-    var dragging = false, sx, sy, ox, oy, moved = false;
+    // Draggable by its whole surface — but a press is not yet a drag. Taking pointer
+    // capture on pointerdown made every click inside the panel land on the panel and
+    // never on the word under the finger (Play, the arrows, Start over: found 1 Oct
+    // 2026, on the committed Glass Geometry too). So capture waits for the pointer to
+    // move, a slider keeps its own pointer, and nothing is prevented: the panel's
+    // user-select and touch-action already stop selection and scrolling.
+    var dragging = false, captured = false, sx, sy, ox, oy, moved = false;
     el.addEventListener('pointerdown', function(e) {
-        if (e.target === close) return;
-        e.preventDefault();
-        dragging = true; sx = e.clientX; sy = e.clientY;
+        if (e.target === close || e.target.tagName === 'INPUT') return;
+        dragging = true; captured = false; sx = e.clientX; sy = e.clientY;
         ox = parseInt(el.style.left) || 0; oy = parseInt(el.style.top) || 0;
-        el.style.cursor = 'grabbing';
-        el.setPointerCapture(e.pointerId);
     });
     el.addEventListener('pointermove', function(e) {
         if (!dragging) return;
+        if (!captured) {
+            if (Math.abs(e.clientX - sx) < 4 && Math.abs(e.clientY - sy) < 4) return;
+            captured = true; el.style.cursor = 'grabbing';
+            try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        }
         el.style.left = (ox + e.clientX - sx) + 'px';
         el.style.top  = (oy + e.clientY - sy) + 'px';
         moved = true;
     });
-    el.addEventListener('pointerup', function() { dragging = false; el.style.cursor = 'grab'; });
+    el.addEventListener('pointerup', function() { dragging = false; captured = false; el.style.cursor = 'grab'; });
+    el.addEventListener('pointercancel', function() { dragging = false; captured = false; el.style.cursor = 'grab'; });
 
     var api = {
         el: el,
@@ -114,21 +123,25 @@ CW.createChoicePanel = function(opts) {
 
     // Movable like any panel; the choice rows and the close word are not
     // drag handles, everything else is.
-    var dragging = false, sx, sy, ox, oy;
+    // The same deferred capture as the info panel (1 Oct 2026), for one rule in one file.
+    var dragging = false, captured = false, sx, sy, ox, oy;
     el.addEventListener('pointerdown', function(e) {
         if (e.target === close || e.target.dataset.choiceRow || (e.target.parentNode && e.target.parentNode.dataset && e.target.parentNode.dataset.choiceRow)) return;
-        e.preventDefault();
-        dragging = true; sx = e.clientX; sy = e.clientY;
+        dragging = true; captured = false; sx = e.clientX; sy = e.clientY;
         ox = parseInt(el.style.left) || 0; oy = parseInt(el.style.top) || 0;
-        el.style.cursor = 'grabbing';
-        el.setPointerCapture(e.pointerId);
     });
     el.addEventListener('pointermove', function(e) {
         if (!dragging) return;
+        if (!captured) {
+            if (Math.abs(e.clientX - sx) < 4 && Math.abs(e.clientY - sy) < 4) return;
+            captured = true; el.style.cursor = 'grabbing';
+            try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        }
         el.style.left = (ox + e.clientX - sx) + 'px';
         el.style.top  = (oy + e.clientY - sy) + 'px';
     });
-    el.addEventListener('pointerup', function() { dragging = false; el.style.cursor = 'grab'; });
+    el.addEventListener('pointerup', function() { dragging = false; captured = false; el.style.cursor = 'grab'; });
+    el.addEventListener('pointercancel', function() { dragging = false; captured = false; el.style.cursor = 'grab'; });
 
     function fadeOut() {
         el.style.opacity = '0';

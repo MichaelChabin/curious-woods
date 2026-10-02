@@ -1,7 +1,8 @@
 ---
-status: Ready to paste — 1 Oct 2026. Michael's prompt of 1 Oct, corrected by Claude Code after an analysis against the disk: four paths fixed, the mount line brought to the shelves' convention, the two-stage shape named, the fixed-position decision named, the rose log and the saved library added. Needs `Geometry-Spine.md` and `Labs-Ledger.md` on disk before it is pasted.
+status: Ready to paste — 1 Oct 2026. Michael's prompt of 1 Oct, corrected by Claude Code after an analysis against the disk: four paths fixed, the mount line brought to the shelves' convention, the two-stage shape named, the fixed-position decision named, the rose log and the saved library added. **Unblocked 1 Oct:** `claude/Geometry-Spine.md` is on disk and `00-LABS-LEDGER.md` is current; the prompt's three references to `claude/Labs-Ledger.md` were corrected to the ledger's real home at the vault root.
 role: The prompt that makes Glass Geometry a shelf module (`js/glass.js`) served to stories, as the map and the sampler are. The step-one investment the geometry series rests on (Rulings-Sept-2026, "A lab is a place").
 how to use: Paste the prompt below whole into a Claude Code session in `_CW/`. One session may stop after stage 1 with a clean standalone page; that is an acceptable report.
+executed: 1 Oct 2026, by Claude Code — both stages; the report is in that session and its summary on the board (1 Oct, night). Awaiting Michael's look before it commits.
 ---
 
 # Extracting Glass Geometry into a shelf module

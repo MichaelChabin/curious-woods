@@ -1,0 +1,337 @@
+{
+  "version": 1,
+  "name": "Pentagon",
+  "description": "Elements IV.11, the way Richmond drew it: a radius straight up, its middle, the circle on that middle through 1 crossing the radius line below — and from 1 to that crossing is the side. Step it round the circle, join the corners, lead, and the pentagon turns to glass.",
+  "operations": [
+    {
+      "op": "init",
+      "seed0": {
+        "x": -100,
+        "y": 0
+      },
+      "seed1": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "seed:0",
+      "p2Id": "seed:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "lc:3:1:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:3:1:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:4:5:1",
+      "p2Id": "cc:4:5:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:6:1:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:7:1",
+      "p2Id": "cc:1:7:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "ll:6:8",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "lc:6:9:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:10:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:10:1",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "seed:1",
+      "p2Id": "cc:1:10:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:10:0",
+      "p2Id": "cc:1:11:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:11:0",
+      "p2Id": "cc:1:12:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:12:1",
+      "p2Id": "cc:1:10:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:10:1",
+      "p2Id": "seed:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "13:seed:1:lc:13:7:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "13:lc:13:7:0:ll:8:13"
+    },
+    {
+      "op": "emphasize",
+      "key": "13:ll:8:13:lc:13:2:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "13:lc:13:2:1:cc:1:10:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "14:cc:1:10:0:ll:6:14"
+    },
+    {
+      "op": "emphasize",
+      "key": "14:ll:6:14:cc:1:11:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "15:cc:1:11:0:ll:8:15"
+    },
+    {
+      "op": "emphasize",
+      "key": "15:ll:8:15:lc:15:7:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "15:lc:15:7:1:ll:3:15"
+    },
+    {
+      "op": "emphasize",
+      "key": "15:ll:3:15:lc:15:9:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "15:lc:15:9:1:cc:1:12:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "16:cc:1:12:1:ll:6:16"
+    },
+    {
+      "op": "emphasize",
+      "key": "16:ll:6:16:cc:1:10:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "17:cc:1:10:1:lc:17:2:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "17:lc:17:2:0:lc:17:9:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "17:lc:17:9:0:seed:1"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1",
+      "vertices": [
+        "seed:1",
+        "lc:13:7:0",
+        "ll:8:13",
+        "lc:13:2:1",
+        "cc:1:10:0",
+        "ll:6:14",
+        "cc:1:11:0",
+        "ll:8:15",
+        "lc:15:7:1",
+        "ll:3:15",
+        "lc:15:9:1",
+        "cc:1:12:1",
+        "ll:6:16",
+        "cc:1:10:1",
+        "lc:17:2:0",
+        "lc:17:9:0"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "seed:1",
+          "b": "lc:13:7:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:13:7:0",
+          "b": "ll:8:13"
+        },
+        {
+          "type": "seg",
+          "a": "ll:8:13",
+          "b": "lc:13:2:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:13:2:1",
+          "b": "cc:1:10:0"
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:10:0",
+          "b": "ll:6:14"
+        },
+        {
+          "type": "seg",
+          "a": "ll:6:14",
+          "b": "cc:1:11:0"
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:11:0",
+          "b": "ll:8:15"
+        },
+        {
+          "type": "seg",
+          "a": "ll:8:15",
+          "b": "lc:15:7:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:15:7:1",
+          "b": "ll:3:15"
+        },
+        {
+          "type": "seg",
+          "a": "ll:3:15",
+          "b": "lc:15:9:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:15:9:1",
+          "b": "cc:1:12:1"
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:12:1",
+          "b": "ll:6:16"
+        },
+        {
+          "type": "seg",
+          "a": "ll:6:16",
+          "b": "cc:1:10:1"
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:10:1",
+          "b": "lc:17:2:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:17:2:0",
+          "b": "lc:17:9:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:17:9:0",
+          "b": "seed:1"
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "deemphasize",
+      "key": "13:seed:1:lc:13:7:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "13:lc:13:7:0:ll:8:13"
+    },
+    {
+      "op": "deemphasize",
+      "key": "13:ll:8:13:lc:13:2:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "13:lc:13:2:1:cc:1:10:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "16:cc:1:12:1:ll:6:16"
+    },
+    {
+      "op": "deemphasize",
+      "key": "16:ll:6:16:cc:1:10:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "14:cc:1:10:0:ll:6:14"
+    },
+    {
+      "op": "deemphasize",
+      "key": "14:ll:6:14:cc:1:11:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "15:cc:1:11:0:ll:8:15"
+    },
+    {
+      "op": "deemphasize",
+      "key": "15:ll:8:15:lc:15:7:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "15:lc:15:7:1:ll:3:15"
+    },
+    {
+      "op": "deemphasize",
+      "key": "15:ll:3:15:lc:15:9:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "15:lc:15:9:1:cc:1:12:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "17:cc:1:10:1:lc:17:2:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "17:lc:17:2:0:lc:17:9:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "17:lc:17:9:0:seed:1"
+    }
+  ]
+}

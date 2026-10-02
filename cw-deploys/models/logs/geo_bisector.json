@@ -1,0 +1,262 @@
+{
+  "version": 1,
+  "name": "Perpendicular Bisector",
+  "description": "Elements I.10: the two circles cross above and below; the line through the crossings cuts the seed line in half at a right angle. The vesica falls into four pieces of glass.",
+  "operations": [
+    {
+      "op": "init",
+      "seed0": {
+        "x": -100,
+        "y": 0
+      },
+      "seed1": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "seed:0",
+      "p2Id": "seed:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:2:0",
+      "p2Id": "cc:1:2:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "1:seed:1:cc:1:2:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "3:ll:3:4:seed:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:cc:1:2:0:ll:3:4"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1",
+      "vertices": [
+        "ll:3:4",
+        "seed:1",
+        "cc:1:2:0"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "ll:3:4",
+          "b": "seed:1"
+        },
+        {
+          "type": "arc",
+          "a": "seed:1",
+          "b": "cc:1:2:0",
+          "circIdx": 1,
+          "angleA": 0,
+          "angleB": 1.0471975511965976,
+          "sweep": 1.0471975511965974
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:2:0",
+          "b": "ll:3:4"
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "deemphasize",
+      "key": "3:ll:3:4:seed:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:cc:1:2:0:ll:3:4"
+    },
+    {
+      "op": "deemphasize",
+      "key": "1:seed:1:cc:1:2:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:cc:1:2:0:seed:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "3:seed:0:ll:3:4"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:cc:1:2:0:ll:3:4"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:2",
+      "vertices": [
+        "seed:0",
+        "ll:3:4",
+        "cc:1:2:0"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "seed:0",
+          "b": "ll:3:4"
+        },
+        {
+          "type": "seg",
+          "a": "ll:3:4",
+          "b": "cc:1:2:0"
+        },
+        {
+          "type": "arc",
+          "a": "cc:1:2:0",
+          "b": "seed:0",
+          "circIdx": 2,
+          "angleA": 2.0943951023931957,
+          "angleB": 3.141592653589793,
+          "sweep": 1.0471975511965974
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "deemphasize",
+      "key": "3:seed:0:ll:3:4"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:cc:1:2:0:ll:3:4"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:cc:1:2:0:seed:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "1:cc:1:2:1:seed:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "3:ll:3:4:seed:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:ll:3:4:cc:1:2:1"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:3",
+      "vertices": [
+        "ll:3:4",
+        "seed:1",
+        "cc:1:2:1"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "ll:3:4",
+          "b": "seed:1"
+        },
+        {
+          "type": "arc",
+          "a": "seed:1",
+          "b": "cc:1:2:1",
+          "circIdx": 1,
+          "angleA": 0,
+          "angleB": 0,
+          "sweep": -1.0471975511965974
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:2:1",
+          "b": "ll:3:4"
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "deemphasize",
+      "key": "3:ll:3:4:seed:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:ll:3:4:cc:1:2:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "1:cc:1:2:1:seed:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:seed:0:cc:1:2:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "3:seed:0:ll:3:4"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:ll:3:4:cc:1:2:1"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:4",
+      "vertices": [
+        "seed:0",
+        "ll:3:4",
+        "cc:1:2:1"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "seed:0",
+          "b": "ll:3:4"
+        },
+        {
+          "type": "seg",
+          "a": "ll:3:4",
+          "b": "cc:1:2:1"
+        },
+        {
+          "type": "arc",
+          "a": "cc:1:2:1",
+          "b": "seed:0",
+          "circIdx": 2,
+          "angleA": -2.0943951023931957,
+          "angleB": -2.0943951023931957,
+          "sweep": -1.0471975511965974
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "deemphasize",
+      "key": "3:seed:0:ll:3:4"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:ll:3:4:cc:1:2:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:seed:0:cc:1:2:1"
+    }
+  ]
+}

@@ -1,0 +1,935 @@
+{
+  "version": 1,
+  "name": "Pythagoras",
+  "description": "Elements I.47, without the letters. A triangle in a half-circle has a right angle at the top (Thales). Build a square on each side, lead round all four shapes, and the glass on the two short sides is exactly the glass on the long one. The inner grids of the picture are left out; the shapes say it.",
+  "operations": [
+    {
+      "op": "init",
+      "seed0": {
+        "x": -100,
+        "y": 0
+      },
+      "seed1": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "seed:1",
+      "p2Id": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "lc:2:1:0",
+      "p2Id": "cc:1:3:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:3:1",
+      "p2Id": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "lc:2:3:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:2:3:1",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:6:7:1",
+      "p2Id": "cc:6:7:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:2:1:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "lc:2:6:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:2:6:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:6:11:0",
+      "p2Id": "cc:6:11:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:0",
+      "edgeId": "lc:2:1:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:2:1:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "lc:8:13:1",
+      "p2Id": "lc:12:14:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:0",
+      "edgeId": "cc:1:3:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:3:1",
+      "edgeId": "lc:5:3:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:5:3:1",
+      "edgeId": "cc:1:3:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:17:18:1",
+      "p2Id": "cc:1:9:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:3:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "lc:19:3:0",
+      "p2Id": "lc:4:20:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:2:1:0",
+      "edgeId": "cc:1:3:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:3:1",
+      "edgeId": "lc:4:22:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:4:22:0",
+      "edgeId": "cc:1:3:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:23:24:0",
+      "p2Id": "cc:18:23:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:3:1",
+      "edgeId": "lc:2:1:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "lc:25:22:0",
+      "p2Id": "lc:5:26:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:lc:2:1:0:lc:2:18:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:lc:2:18:0:seed:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:seed:1:lc:2:22:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:lc:2:22:1:lc:2:24:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:lc:2:24:1:seed:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "5:cc:1:3:1:seed:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:lc:4:7:0:cc:1:3:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:lc:4:11:1:lc:4:7:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:lc:4:9:1:lc:4:11:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:lc:4:20:0:lc:4:9:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:lc:2:1:0:lc:4:20:0"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1",
+      "vertices": [
+        "lc:2:1:0",
+        "lc:4:20:0",
+        "lc:4:9:1",
+        "lc:4:11:1",
+        "lc:4:7:0",
+        "cc:1:3:1",
+        "seed:0",
+        "lc:2:24:1",
+        "lc:2:22:1",
+        "seed:1",
+        "lc:2:18:0"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "lc:2:1:0",
+          "b": "lc:4:20:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:4:20:0",
+          "b": "lc:4:9:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:4:9:1",
+          "b": "lc:4:11:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:4:11:1",
+          "b": "lc:4:7:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:4:7:0",
+          "b": "cc:1:3:1"
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:3:1",
+          "b": "seed:0"
+        },
+        {
+          "type": "seg",
+          "a": "seed:0",
+          "b": "lc:2:24:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:2:24:1",
+          "b": "lc:2:22:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:2:22:1",
+          "b": "seed:1"
+        },
+        {
+          "type": "seg",
+          "a": "seed:1",
+          "b": "lc:2:18:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:2:18:0",
+          "b": "lc:2:1:0"
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:lc:2:1:0:lc:4:20:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:lc:4:20:0:lc:4:9:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:lc:4:9:1:lc:4:11:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:lc:4:11:1:lc:4:7:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:lc:4:7:0:cc:1:3:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "5:cc:1:3:1:seed:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:lc:2:1:0:lc:2:18:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:lc:2:18:0:seed:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:seed:1:lc:2:22:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:lc:2:22:1:lc:2:24:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:lc:2:24:1:seed:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:lc:2:1:0:lc:2:18:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:lc:2:18:0:seed:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:seed:1:lc:2:22:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:lc:2:22:1:lc:2:24:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "2:lc:2:24:1:seed:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "8:seed:0:lc:8:26:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "8:lc:8:26:1:lc:8:3:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "8:lc:8:3:1:lc:8:17:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "8:lc:8:17:1:cc:6:7:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "8:cc:6:7:0:lc:8:13:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "15:lc:8:13:1:lc:15:24:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "15:lc:15:24:0:ll:15:25"
+    },
+    {
+      "op": "emphasize",
+      "key": "15:ll:15:25:lc:15:6:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "15:lc:15:6:0:lc:15:18:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "15:lc:15:18:1:lc:12:14:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "12:cc:6:11:1:lc:12:14:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "12:ll:12:19:cc:6:11:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "12:lc:12:9:1:ll:12:19"
+    },
+    {
+      "op": "emphasize",
+      "key": "12:lc:12:17:1:lc:12:9:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "12:lc:2:1:0:lc:12:17:1"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:2",
+      "vertices": [
+        "lc:2:1:0",
+        "lc:12:17:1",
+        "lc:12:9:1",
+        "ll:12:19",
+        "cc:6:11:1",
+        "lc:12:14:1",
+        "lc:15:18:1",
+        "lc:15:6:0",
+        "ll:15:25",
+        "lc:15:24:0",
+        "lc:8:13:1",
+        "cc:6:7:0",
+        "lc:8:17:1",
+        "lc:8:3:1",
+        "lc:8:26:1",
+        "seed:0",
+        "lc:2:24:1",
+        "lc:2:22:1",
+        "seed:1",
+        "lc:2:18:0"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "lc:2:1:0",
+          "b": "lc:12:17:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:12:17:1",
+          "b": "lc:12:9:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:12:9:1",
+          "b": "ll:12:19"
+        },
+        {
+          "type": "seg",
+          "a": "ll:12:19",
+          "b": "cc:6:11:1"
+        },
+        {
+          "type": "seg",
+          "a": "cc:6:11:1",
+          "b": "lc:12:14:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:12:14:1",
+          "b": "lc:15:18:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:15:18:1",
+          "b": "lc:15:6:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:15:6:0",
+          "b": "ll:15:25"
+        },
+        {
+          "type": "seg",
+          "a": "ll:15:25",
+          "b": "lc:15:24:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:15:24:0",
+          "b": "lc:8:13:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:8:13:1",
+          "b": "cc:6:7:0"
+        },
+        {
+          "type": "seg",
+          "a": "cc:6:7:0",
+          "b": "lc:8:17:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:8:17:1",
+          "b": "lc:8:3:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:8:3:1",
+          "b": "lc:8:26:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:8:26:1",
+          "b": "seed:0"
+        },
+        {
+          "type": "seg",
+          "a": "seed:0",
+          "b": "lc:2:24:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:2:24:1",
+          "b": "lc:2:22:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:2:22:1",
+          "b": "seed:1"
+        },
+        {
+          "type": "seg",
+          "a": "seed:1",
+          "b": "lc:2:18:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:2:18:0",
+          "b": "lc:2:1:0"
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "deemphasize",
+      "key": "12:lc:2:1:0:lc:12:17:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "12:lc:12:17:1:lc:12:9:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "12:lc:12:9:1:ll:12:19"
+    },
+    {
+      "op": "deemphasize",
+      "key": "12:ll:12:19:cc:6:11:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "12:cc:6:11:1:lc:12:14:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:lc:2:1:0:lc:2:18:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:lc:2:18:0:seed:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:seed:1:lc:2:22:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:lc:2:22:1:lc:2:24:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "2:lc:2:24:1:seed:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "8:seed:0:lc:8:26:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "8:lc:8:26:1:lc:8:3:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "8:lc:8:3:1:lc:8:17:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "8:lc:8:17:1:cc:6:7:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "8:cc:6:7:0:lc:8:13:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "15:lc:8:13:1:lc:15:24:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "15:lc:15:24:0:ll:15:25"
+    },
+    {
+      "op": "deemphasize",
+      "key": "15:ll:15:25:lc:15:6:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "15:lc:15:6:0:lc:15:18:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "15:lc:15:18:1:lc:12:14:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "19:lc:19:3:0:seed:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "21:lc:19:3:0:lc:21:18:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "21:lc:21:18:1:lc:4:20:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:ll:4:8:lc:4:20:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:lc:4:14:1:ll:4:8"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:cc:1:3:1:lc:4:14:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "5:cc:1:3:1:seed:0"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:3",
+      "vertices": [
+        "cc:1:3:1",
+        "lc:4:14:1",
+        "ll:4:8",
+        "lc:4:20:1",
+        "lc:21:18:1",
+        "lc:19:3:0",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "cc:1:3:1",
+          "b": "lc:4:14:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:4:14:1",
+          "b": "ll:4:8"
+        },
+        {
+          "type": "seg",
+          "a": "ll:4:8",
+          "b": "lc:4:20:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:4:20:1",
+          "b": "lc:21:18:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:21:18:1",
+          "b": "lc:19:3:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:19:3:0",
+          "b": "seed:0"
+        },
+        {
+          "type": "seg",
+          "a": "seed:0",
+          "b": "cc:1:3:1"
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:cc:1:3:1:lc:4:14:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:lc:4:14:1:ll:4:8"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:ll:4:8:lc:4:20:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "5:cc:1:3:1:seed:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "19:lc:19:3:0:seed:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "21:lc:19:3:0:lc:21:18:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "21:lc:21:18:1:lc:4:20:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:lc:2:1:0:lc:4:20:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:lc:4:20:0:lc:4:9:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:lc:4:9:1:lc:4:11:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:lc:4:11:1:lc:4:7:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "4:lc:4:7:0:cc:1:3:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "5:lc:5:7:0:cc:1:3:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "5:lc:5:13:0:lc:5:7:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "5:lc:5:6:0:lc:5:13:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "5:lc:5:26:0:lc:5:6:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "27:lc:27:24:1:lc:5:26:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "27:lc:12:14:0:lc:27:24:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "27:lc:25:22:0:lc:12:14:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "25:lc:25:22:0:lc:25:6:0"
+    },
+    {
+      "op": "emphasize",
+      "key": "25:lc:25:6:0:cc:9:17:1"
+    },
+    {
+      "op": "emphasize",
+      "key": "25:cc:9:17:1:lc:2:1:0"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:4",
+      "vertices": [
+        "lc:2:1:0",
+        "lc:4:20:0",
+        "lc:4:9:1",
+        "lc:4:11:1",
+        "lc:4:7:0",
+        "cc:1:3:1",
+        "lc:5:7:0",
+        "lc:5:13:0",
+        "lc:5:6:0",
+        "lc:5:26:0",
+        "lc:27:24:1",
+        "lc:12:14:0",
+        "lc:25:22:0",
+        "lc:25:6:0",
+        "cc:9:17:1"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "lc:2:1:0",
+          "b": "lc:4:20:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:4:20:0",
+          "b": "lc:4:9:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:4:9:1",
+          "b": "lc:4:11:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:4:11:1",
+          "b": "lc:4:7:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:4:7:0",
+          "b": "cc:1:3:1"
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:3:1",
+          "b": "lc:5:7:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:5:7:0",
+          "b": "lc:5:13:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:5:13:0",
+          "b": "lc:5:6:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:5:6:0",
+          "b": "lc:5:26:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:5:26:0",
+          "b": "lc:27:24:1"
+        },
+        {
+          "type": "seg",
+          "a": "lc:27:24:1",
+          "b": "lc:12:14:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:12:14:0",
+          "b": "lc:25:22:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:25:22:0",
+          "b": "lc:25:6:0"
+        },
+        {
+          "type": "seg",
+          "a": "lc:25:6:0",
+          "b": "cc:9:17:1"
+        },
+        {
+          "type": "seg",
+          "a": "cc:9:17:1",
+          "b": "lc:2:1:0"
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:lc:2:1:0:lc:4:20:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:lc:4:20:0:lc:4:9:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:lc:4:9:1:lc:4:11:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:lc:4:11:1:lc:4:7:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "4:lc:4:7:0:cc:1:3:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "25:lc:25:22:0:lc:25:6:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "25:lc:25:6:0:cc:9:17:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "25:cc:9:17:1:lc:2:1:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "5:lc:5:26:0:lc:5:6:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "5:lc:5:6:0:lc:5:13:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "5:lc:5:13:0:lc:5:7:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "5:lc:5:7:0:cc:1:3:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "27:lc:25:22:0:lc:12:14:0"
+    },
+    {
+      "op": "deemphasize",
+      "key": "27:lc:12:14:0:lc:27:24:1"
+    },
+    {
+      "op": "deemphasize",
+      "key": "27:lc:27:24:1:lc:5:26:0"
+    }
+  ]
+}

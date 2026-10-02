@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "name": "Rose",
+  "description": "The six-petal rose from The Glass Rose: a circle from 0 through 1, a circle on 1 back through 0, then round the crossings, each new circle centred on the last crossing and drawn back to the middle, until the sixth petal closes the walk. Seven circles, no lines: the compass alone, in walking order. The lead and the glass are hers.",
+  "operations": [
+    {
+      "op": "init",
+      "seed0": {
+        "x": -100,
+        "y": 0
+      },
+      "seed1": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:2:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:3:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:4:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:5:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:2:1",
+      "edgeId": "seed:0"
+    }
+  ]
+}
