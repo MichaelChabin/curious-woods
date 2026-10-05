@@ -1,0 +1,486 @@
+<title>About Your Brain</title>
+<style>
+  :root { --cw-parchment:#f4f1e8; --cw-parchment-deep:#ece7da; --cw-separator:#c8b89a; --cw-ink:#2a2620; --cw-word:#546A80; --cw-word-hover:#3d5266; --cw-copper:#b87333; }
+  html, body { background: var(--cw-parchment); color: var(--cw-ink); }
+  [hidden] { display: none !important; }
+  body { margin:0; font-family: Georgia, "Times New Roman", serif; font-size: 20px; line-height: 1.4; }
+  .wrap { display:flex; gap: 28px; padding: 24px 16px; align-items: flex-start; flex-wrap: wrap; }
+  .side { display:flex; flex-direction: column; gap: 10px; min-width: 200px; }
+  .word { font-size:14px; color: var(--cw-word); cursor:pointer; padding-left:16px; user-select:none; transition: color 120ms; }
+  .word:hover, .word:focus-visible { color: var(--cw-word-hover); outline:none; }
+  .word.on { color: var(--cw-copper); }
+  .word.quiet { cursor: default; color:#7a8a9a; }
+  .group { display:flex; flex-direction:column; gap:6px; }
+  .slider-row { display:flex; align-items:center; gap:10px; padding-left:16px; }
+  .slider-row input { width: 140px; accent-color: var(--cw-copper); }
+  .slider-row .val { font-size: 13px; color:#7a8a9a; font-variant-numeric: tabular-nums; }
+  .title-word { font-family: Georgia, serif; font-size: 17px; font-weight: bold; color: var(--cw-ink); padding-left: 16px; }
+  .group.things { }
+  .side.left { align-items: flex-start; }
+  @media (max-width: 1000px) { .side.left, .side.right { min-width: 45%; } }
+  .ctl { padding-left: 40px !important; }
+  .label { font-size: 11px; color:#8a8378; padding-left:16px; letter-spacing:.04em; text-transform: uppercase; }
+  .stage { width: 560px; max-width: 100%; display:flex; flex-direction:column; gap: 10px; }
+  .stage svg { width:100%; height:auto; display:block; }
+  .panel { position: relative; background: var(--cw-parchment-deep); border-top: 0.5px solid var(--cw-separator); padding: 14px 16px 16px 16px; font-size: 17px; line-height: 1.4; }
+  .panel .close { position:absolute; top: 10px; right: 14px; font-size: 14px; color: var(--cw-word); cursor:pointer; }
+  .panel[hidden] { display:none; }
+  #panel-lines { display:flex; flex-direction:column; gap:4px; margin-top: 6px; }
+  #panel-lines .line { font-size: 16px; color: var(--cw-word); cursor:pointer; user-select:none; line-height:1.35; }
+  #panel-lines .line:hover, #panel-lines .line.on { color: var(--cw-copper); }
+  .spot { mix-blend-mode: screen; }
+  .normal .spot { mix-blend-mode: normal; }
+  @keyframes shimmer { 0% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 0; } }
+  .spot circle { animation: shimmer var(--d) ease-in-out var(--delay) infinite; transform-origin: center; }
+  .mark { fill:none; stroke:#2E5090; stroke-width:2.5; }
+  .mark-label { font-family: Georgia, serif; font-size: 15px; fill:#2a2620; }
+  .road { fill:none; stroke:#f2d58a; stroke-width:5; stroke-linecap:round; stroke-linejoin:round; mix-blend-mode:screen; opacity:0; transition: opacity 1200ms ease-out; }
+  .road.deep { filter:url(#blur-deep); stroke-width:7; }
+  .road.faint { opacity:.35; }
+  .comet { mix-blend-mode:screen; }
+  .counter { font-size: 14px; color:#7a8a9a; padding-left:16px; font-variant-numeric: tabular-nums; }
+  .counter b { font-weight: normal; color:#2a2620; font-size: 18px; }
+  .stim { opacity:0; transition: opacity 200ms; }
+  .stim.on { opacity:1; }
+  @media (prefers-reduced-motion: reduce) { .spot circle { animation: none; opacity: .8; } }
+</style>
+
+<style>
+  .intro { max-width: 700px; padding: 40px 16px 8px; margin: 0 auto; box-sizing: border-box; }
+  .intro h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0 0 .8em; text-wrap: balance; }
+  .intro p { margin: 0 0 1.4em; }
+  .intro .small { font-size: 15px; color: #5a5348; }
+  .section { max-width: 700px; margin: 0 auto; padding: 8px 16px 0; box-sizing: border-box; }
+  .section h2 { font-size: 22px; font-weight: normal; margin: 1.2em 0 .5em; }
+  .section p { margin: 0 0 1.2em; }
+  .wrap { justify-content: center; }
+  .foot { max-width: 700px; margin: 0 auto; padding: 24px 16px 60px; font-size: 15px; color: #5a5348; box-sizing: border-box; }
+</style>
+<div class="intro">
+  <h1>About Your Brain</h1>
+  <p>The brain cells you think with are called neurons. They work by collecting information, transforming it, and passing it along. They can connect to sensory cells, like those in your eyes and ears, they can connect to each other, and they can connect to nerves that control muscles.</p>
+  <p>Altogether, you have about 86 billion neurons. That is a lot. A stack of eighty-six billion dimes would reach a third of the way to the Moon. But that is just the beginning, because each neuron is linked to thousands of others, which gives you more than a hundred trillion connections, more than the number of stars in a thousand galaxies.</p>
+  <p>All those neurons with all their connections are arranged in a vast, layered network that is constantly adjusting and reorganizing itself to meet the challenge of being you in your world. They are doing that now. That is why you can read these words.</p>
+  <p>The whole thing weighs about as much as a large cantaloupe, 1.4 kilograms in an adult, and it is about that size and shape too. By the age of ten yours is nearly full size. It runs on about 20 watts, less than an old light bulb, which is a fifth of everything your body burns while resting. In a small child it is closer to half. Signals travel through it at anywhere from walking pace to highway speed, and a thought from eye to hand takes about a third of a second.</p>
+  <p class="small">Below is a map. Tap a name and the part of the brain that does that lights up, with a sentence about it. Deeper parts turn the brain over so you can see them on the cut. Under the names are ten things your brain does; tap one and watch the signal travel, as slowly as you like or at the speed it really happens.</p>
+</div>
+<div class="wrap">
+  <div class="side left">
+    <div class="group">
+      <span class="title-word">Brain Locations</span>
+      <span class="word view" id="w-inside" tabindex="0">inside</span>
+      <span class="word view" id="w-outside" tabindex="0" hidden>outside</span>
+    </div>
+    <div class="group" id="names"></div>
+    <div class="group">
+      <span class="word" id="all" tabindex="0">all of them</span>
+    </div>
+  </div>
+
+  <div class="stage">
+    <svg id="brain" viewBox="-130 0 1016 960" role="img" aria-label="Your brain">
+      <defs>
+        <radialGradient id="g"><stop offset="0%" stop-color="#fff" stop-opacity="1"/><stop offset="55%" stop-color="#fff" stop-opacity=".45"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+        <filter id="blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+        <filter id="blur-deep" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10"/></filter>
+      </defs>
+      <g id="view-outside"><image href="data:image/jpeg;base64,__OUT__" width="886" height="886"/></g>
+      <g id="view-inside" style="display:none"><image href="data:image/png;base64,__IN__" width="1254" height="1254"/></g>
+      <g id="marks"></g>
+      <g id="roads"></g>
+      <g id="spots"></g>
+      <g id="comet" class="comet"></g>
+      <g id="stim" class="stim"></g>
+    </svg>
+    <div class="panel" id="panel" hidden>
+      <span class="close" id="close" tabindex="0" hidden>close</span>
+      <div id="panel-text"></div>
+      <div id="panel-lines"></div>
+    </div>
+  </div>
+
+  <div class="side right">
+    <div class="group things">
+      <div class="title-word">Ten Things It Does</div>
+      <span class="word pw" data-pw="three" tabindex="0">seeing three triangles</span>
+      <span class="word pw" data-pw="read" tabindex="0">reading a word</span>
+      <span class="word pw" data-pw="beat" tabindex="0">hearing a beat</span>
+      <span class="word pw" data-pw="star" tabindex="0">tracing a star in a mirror</span>
+      <span class="word pw" data-pw="remember" tabindex="0">remembering</span>
+      <span class="word pw" data-pw="hot" tabindex="0">touching something hot</span>
+      <span class="word pw" data-pw="pingpong" tabindex="0">playing ping-pong</span>
+      <span class="word pw" data-pw="chess" tabindex="0">seeing a chess position</span>
+      <span class="word pw" data-pw="song" tabindex="0">hearing an old song</span>
+      <span class="word pw" data-pw="face" tabindex="0">drawing a friend's face</span>
+      <span class="word ctl" id="p-again" tabindex="0" hidden>again</span>
+      <span class="word ctl" id="p-step" tabindex="0" hidden>step</span>
+      <span class="word ctl" id="p-real" tabindex="0" hidden>real speed</span>
+      <span class="word ctl" id="p-clear" tabindex="0" hidden>clear</span>
+      <div class="slider-row ctl" id="speed-row" hidden><span class="val">slow</span><input type="range" id="speed" min="1" max="40" step="1" value="15" aria-label="how much slower than life"><span class="val">real</span></div>
+      <div class="counter ctl" id="counter" hidden><b>0</b> ms of brain time</div>
+    </div>
+</div>
+<div class="foot">
+  <p>Made for Curious Woods. The paintings are ours; the regions are placed by eye; the routes are drawn where the anatomy is well known and sketched where it isn't. The times come from the neuroscience literature and are rounded: the eye reaches the switchboard in about 35 ms, the back of the head about 25 ms later, and a simple decision reaches the hand at about a third of a second. The shimmer stands for electrical activity; its pace is a picture, not a measurement. Nothing here scores anyone or leaves the device.</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  // region geometry: hidden shapes that say where activity may appear. [cx, cy, rx, ry, rot, deep]
+  var OUT = {
+    prefrontal:[165,300,115,150,0,false], motor:[400,200,40,145,-12,false], somatosensory:[470,205,40,145,-14,false],
+    ips:[620,235,95,60,-10,false], v1:[800,430,55,95,0,false], auditory:[430,440,120,38,-18,false],
+    letterbox:[600,505,60,30,0,false], cerebellum:[610,650,160,100,0,false], hippocampus:[430,520,85,35,-8,true], 'basal-ganglia':[420,385,70,55,0,true],
+    thalamus:[455,365,45,32,0,true],
+    words:[540,385,95,45,-15,false]
+  };
+  var IN = {
+    prefrontal:[230,420,150,200,0,false], motor:[555,170,60,95,0,false], somatosensory:[690,175,60,95,0,false],
+    v1:[1070,560,90,120,0,false], cerebellum:[950,880,190,175,0,false], hippocampus:[480,745,110,40,10,true], 'basal-ganglia':[520,500,110,75,0,true],
+    thalamus:[615,545,85,55,0,false]
+  };
+  var NAMES = [
+    ['prefrontal', 'conscious thought', 'When you decide to do something, weigh two choices, or hold a plan in mind while you carry it out, this is where it happens. It is the part of you that you are aware of. It is called the prefrontal cortex, the front of the brain just behind your forehead, and it is the last part to finish growing, in your twenties. It is large, about a third of the whole cortex, with a few billion neurons, and it is where the trick of thinking about your own thinking lives.'],
+    ['v1', 'where seeing starts', 'Everything your eyes send arrives here first, at the very back of your head, as edges, lines, and patches of light and dark. It does not yet know what it is looking at; it only knows where each edge is. It is called V1, or the primary visual cortex. It holds a map of what is in front of you, point for point, with roughly a quarter of a billion neurons packed more tightly than almost anywhere else in the brain. Close your eyes and imagine a face, and it lights up again.'],
+    ['ips', 'how many', 'If you see three marbles on a table, you know there are three without counting, instantly. If you see a heap of 45 marbles and a heap of 60 nearby, you know which heap is bigger, without counting, instantly. You can do that because of the neurons in this fold. It is called the intraparietal sulcus, or IPS, and it probably holds a few hundred million neurons. Babies have it before they can talk, and so do crows and fish. Counting is a trick people invented later, to reach past what the IPS can see.'],
+    ['auditory', 'hearing', 'Sound from your ears is sorted here, along the top of the temporal lobe, with low notes at one end and high notes at the other, like a keyboard laid across the brain. A voice, a door closing, and a violin all arrive as the same kind of signal and are told apart here. It is called the auditory cortex, and it holds a hundred million or so neurons. It works faster than seeing: a sound reaches it in about 25 ms, a sight takes 60.'],
+    ['motor', 'moving', 'This strip sends the orders to your muscles. It is a map of your body, but drawn wrong on purpose: the part for your hands is bigger than the part for your whole back, and your lips get more room than your legs, because hands and lips do the fine work. It is called the motor cortex, and it holds a few hundred million neurons. An order leaving here reaches your hand about a tenth of a second later.'],
+    ['somatosensory', 'touch', 'This strip receives touch from every part of your skin, and also where your limbs are, so you can find your nose with your eyes shut. It is the twin of the moving strip, just behind it, with the same distorted body map: fingertips huge, back tiny. It is called the somatosensory cortex, and it holds a few hundred million neurons. It is why two pinpoints feel like two on a fingertip and like one on your back.'],
+    ['letterbox', 'reading', 'Written words are recognized here, on the underside of the brain, in a patch that was doing something else before you learned to read. Every reader in the world, in every alphabet, uses the same patch, which is odd, because writing is only five thousand years old and the brain did not evolve for it. Neuroscientists call it the visual word form area; we call it the letterbox. It holds a few tens of millions of neurons, and it can recognize a word in about a sixth of a second.'],
+    ['hippocampus', 'experience', 'This is where the brain writes down what happens to you, so you can remember it later: where you left your shoes, what your friend said yesterday. It also holds your map of every place you know. It is called the hippocampus, after a seahorse, because it is curled like one, and you have two, one on each side, each about the size of your little finger, with something like forty million neurons apiece. In London taxi drivers, who must learn every street, it grows measurably larger.'],
+    ['basal-ganglia', 'getting better at things', 'This knot of structures deep in the middle of the brain learns skills without telling you: riding a bicycle, tying a knot, tapping a rhythm, tracing a star in a mirror. It is called the basal ganglia. It holds a few hundred million neurons, and it works by keeping the moves that went well and quietly dropping the ones that did not. You cannot feel it learning. You only notice, one day, that your hands know.'],
+    ['words', 'the words you know', 'Spoken and written words are understood here, along the top of the temporal lobe, mostly on the left side. When you hear a sentence, the sounds arrive at hearing, but the meaning arrives here. Neuroscientists call parts of it Wernicke\'s area, after the doctor who noticed in 1874 that people with damage here could speak fluently but not make sense. It holds a few hundred million neurons, and by the age of ten it knows tens of thousands of words.'],
+    ['thalamus', 'the switchboard', 'Almost everything your senses send passes through here on its way to the rest of the brain, and it decides what gets through. When you are asleep, it closes most of the gates, which is why a quiet room stays quiet inside your head. It is called the thalamus, a pair of egg-shaped lumps at the very centre of the brain, about the size of a walnut, with something like twenty million neurons each. Smell is the one sense that goes around it.'],
+    ['cerebellum', 'smoothness and balance', 'This keeps your movements smooth and your balance steady, and it is quietly fixing your aim all day, comparing what you meant to do with what your body actually did. It is called the cerebellum, which means little brain, and it is the surprise of the whole picture: it is a tenth of the brain by weight but holds four out of every five neurons you own, about sixty-nine billion. When it is damaged, people can still move, but every movement wobbles.']
+  ];
+  var svg = document.getElementById('brain'), spots = document.getElementById('spots');
+  var view = 'outside', tint = '#f2d58a', sizeMode = 1, lit = [], bright = 1.7;
+
+  function setView(v) {
+    view = v;
+    document.getElementById('view-outside').style.display = v === 'outside' ? '' : 'none';
+    document.getElementById('view-inside').style.display = v === 'inside' ? '' : 'none';
+    svg.setAttribute('viewBox', v === 'outside' ? '-130 0 1016 960' : '-160 0 1414 1330');
+    drawMarks();
+    document.getElementById('w-inside').hidden = v !== 'outside';
+    document.getElementById('w-outside').hidden = v !== 'inside';
+    draw();
+  }
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  function spotsFor(id) {
+    var geo = (view === 'outside' ? OUT : IN)[id]; if (!geo) return '';
+    var cx = geo[0], cy = geo[1], rx = geo[2], ry = geo[3], rot = geo[4] * Math.PI / 180, deep = geo[5];
+    var scale = view === 'outside' ? 1 : 1254 / 886;
+    var n = Math.round((sizeMode === 1 ? rand(9, 14) : rand(4, 6)) * Math.min(1.6, Math.max(0.6, bright)));
+    var op = Math.min(1, (deep ? .55 : .9) * bright);
+    var s = '<g class="spot" data-region="' + id + '" filter="url(#' + (deep ? 'blur-deep' : 'blur') + ')" opacity="' + op.toFixed(2) + '">';
+    for (var i = 0; i < n; i++) {
+      var u = Math.sqrt(Math.random()) * 0.85, th = rand(0, Math.PI * 2);        // uniform inside the hidden ellipse
+      var ex = u * rx * Math.cos(th), ey = u * ry * Math.sin(th);
+      var x = cx + ex * Math.cos(rot) - ey * Math.sin(rot), y = cy + ex * Math.sin(rot) + ey * Math.cos(rot);
+      var r = (sizeMode === 1 ? rand(9, 20) : rand(22, 40)) * scale * (0.85 + 0.25 * Math.min(2, bright));
+      var passes = bright > 1.4 ? 2 : 1;                                   // above 1.4, draw each spot twice: light adds
+      var d = rand(1.2, 3.2).toFixed(2), dl = rand(0, 3).toFixed(2);
+      for (var k = 0; k < passes; k++) s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + r.toFixed(1) + '" fill="url(#g)" style="--d:' + d + 's;--delay:-' + dl + 's"/>';
+    }
+    return s + '</g>';
+  }
+  function draw() {
+    spots.innerHTML = lit.map(spotsFor).join('');
+    document.getElementById('g').querySelectorAll('stop').forEach(function (st) { st.setAttribute('stop-color', tint); });
+  }
+  function bestView(id) {                      // where should the brain turn to show this region?
+    var o = OUT[id], i = IN[id];
+    if (o && !o[5]) return 'outside';          // on the surface outside: stay or go there
+    if (i && !i[5]) return 'inside';           // on the surface of the cut: turn it over
+    if (i) return 'inside';                    // beneath on both: the cut is closer
+    return o ? 'outside' : view;
+  }
+  function stopPathway() {
+    if (!run) return;
+    run.done = true; run = null;
+    document.getElementById('roads').innerHTML = ''; document.getElementById('comet').innerHTML = '';
+    document.getElementById('stim').classList.remove('on'); document.getElementById('stim').innerHTML = '';
+    document.getElementById('panel-lines').innerHTML = '';
+    ['p-again','p-step','p-real','p-clear','speed-row','counter'].forEach(function (id) { document.getElementById(id).hidden = true; });
+    document.querySelectorAll('.pw').forEach(function (x) { x.classList.remove('on'); });
+  }
+  function select(id, replace) {
+    if (replace !== false) stopPathway();
+    if (replace !== false) lit = [id]; else if (lit.indexOf(id) < 0) lit.push(id);
+    var best = bestView(id);
+    if (best !== view && replace !== false) { setView(best); } else draw();
+    document.querySelectorAll('.name').forEach(function (w) { w.classList.toggle('on', lit.indexOf(w.dataset.id) >= 0); });
+    var entry = NAMES.filter(function (n) { return n[0] === id; })[0];
+    if (entry && replace !== false) { document.getElementById('panel-text').textContent = entry[2]; document.getElementById('panel').hidden = false; }
+  }
+  function closePanel() { lit = []; draw(); document.getElementById('panel').hidden = true; document.getElementById('panel-lines').innerHTML = ''; document.querySelectorAll('.name').forEach(function (w) { w.classList.remove('on'); }); }
+
+  function word(el, fn) { if (!el) return; el.addEventListener('click', fn); el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } }); }
+  var names = document.getElementById('names');
+  NAMES.forEach(function (n) {
+    var w = document.createElement('span'); w.className = 'word name'; w.dataset.id = n[0]; w.textContent = n[1]; w.tabIndex = 0;
+    word(w, function () { select(n[0]); }); names.appendChild(w);
+  });
+  document.querySelectorAll('.tint').forEach(function (w) { word(w, function () { tint = w.dataset.tint; document.querySelectorAll('.tint').forEach(function (x) { x.classList.toggle('on', x === w); }); draw(); }); });
+  document.querySelectorAll('.blend').forEach(function (w) { word(w, function () { document.body.classList.toggle('normal', w.dataset.blend === 'normal'); document.querySelectorAll('.blend').forEach(function (x) { x.classList.toggle('on', x === w); }); }); });
+  document.querySelectorAll('.size').forEach(function (w) { word(w, function () { sizeMode = +w.dataset.size; document.querySelectorAll('.size').forEach(function (x) { x.classList.toggle('on', x === w); }); draw(); }); });
+  word(document.getElementById('close'), closePanel);
+  word(document.getElementById('w-inside'), function () { setView('inside'); });
+  word(document.getElementById('w-outside'), function () { setView('outside'); });
+  word(document.getElementById('all'), function () {
+    lit = Object.keys(view === 'outside' ? OUT : IN); draw();
+    document.getElementById('panel').hidden = true;
+    document.querySelectorAll('.name').forEach(function (w) { w.classList.toggle('on', lit.indexOf(w.dataset.id) >= 0); });
+  });
+
+  // ---------- marks: eye, ear, hand, small and labelled ----------
+  var MARKS = {
+    outside: { eye:[-70,420], ear:[300,690], hand:[590,905], spine:[515,850] },
+    inside:  { eye:[-95,590], ear:[430,1010], hand:[860,1290], spine:[780,1240] }
+  };
+  function drawMarks() {
+    var m = MARKS[view], k = view === 'outside' ? 1 : 1.4, g = document.getElementById('marks'), out = '';
+    var e = m.eye; out += '<circle class="mark" cx="' + e[0] + '" cy="' + e[1] + '" r="' + 16*k + '"/><circle cx="' + e[0] + '" cy="' + e[1] + '" r="' + 6*k + '" fill="#2E5090"/><text class="mark-label" x="' + e[0] + '" y="' + (e[1] + 36*k) + '" text-anchor="middle">eye</text>';
+    var a = m.ear; out += '<path class="mark" d="M' + (a[0]-10*k) + ' ' + (a[1]-16*k) + ' a' + 16*k + ' ' + 16*k + ' 0 1 1 ' + 20*k + ' 0 q0 ' + 14*k + ' -10 ' + 22*k + '"/><text class="mark-label" x="' + a[0] + '" y="' + (a[1] + 36*k) + '" text-anchor="middle">ear</text>';
+    var h = m.hand; out += '<path class="mark" d="M' + (h[0]-14*k) + ' ' + (h[1]+8*k) + ' v-' + 20*k + ' m7 0 v-' + 8*k + ' m7 ' + 8*k + ' v-' + 12*k + ' m7 ' + 12*k + ' v-' + 6*k + ' m0 ' + 6*k + ' q0 ' + 22*k + ' -14 ' + 22*k + ' h-' + 14*k + ' q-14 0 -14 -' + 22*k + '"/><text class="mark-label" x="' + h[0] + '" y="' + (h[1] + 44*k) + '" text-anchor="middle">hand</text>';
+    var sp = m.spine; out += '<text class="mark-label" x="' + (sp[0] - 22*k) + '" y="' + (sp[1] + 4) + '" text-anchor="end">spinal cord</text>';
+    g.innerHTML = out;
+  }
+
+  // ---------- pathways as data ----------
+  // each leg: from, to (region id or mark), ms, deep, route (waypoints in outside-view image space), line for step mode
+  var PATHWAYS = {
+    three: { name:'seeing three triangles', view:'outside', stim:'triangles',
+      start:'Three triangles. The eye turns them into signals.',
+      legs:[
+        { to:'thalamus', ms:35, deep:true,  route:[[-70,420],[80,470],[300,430],[455,365]], line:'35 ms: the eye has sent the picture to the switchboard.' },
+        { to:'v1', ms:25, deep:true,        route:[[455,365],[600,420],[720,450],[800,430]], line:'60 ms: the switchboard passes it to the back of the head, where seeing starts.' },
+        { to:'ips', ms:80, deep:false,      route:[[800,430],[740,320],[620,235]], line:'140 ms: "how many" has its answer: three. Nobody counted.' },
+        { to:'prefrontal', ms:80, deep:false, route:[[620,235],[420,110],[230,170],[165,300]], line:'220 ms: the answer reaches conscious thought. Now you know it.' },
+        { to:'motor', ms:50, deep:false,    route:[[165,300],[290,220],[400,200]], line:'270 ms: conscious thought tells the moving strip: say three, or tap it.' },
+        { to:'hand', ms:100, deep:true,     route:[[400,200],[450,420],[500,650],[515,850],[590,905]], line:'370 ms: the order reaches your hand.' }
+      ] },
+    read: { name:'reading a word', view:'outside', stim:'word',
+      start:'A word on a page. It starts as a shape.',
+      legs:[
+        { to:'thalamus', ms:35, deep:true,  route:[[-70,420],[80,470],[300,430],[455,365]], line:'35 ms: the eye has sent the shape to the switchboard.' },
+        { to:'v1', ms:25, deep:true,        route:[[455,365],[600,420],[720,450],[800,430]], line:'60 ms: it arrives where seeing starts, as lines and curves.' },
+        { to:'letterbox', ms:110, deep:false, route:[[800,430],[720,520],[600,505]], line:'170 ms: the letterbox recognizes it as a word you have seen before. Before you learned to read, this patch did something else.' },
+        { to:'words', ms:80, deep:false,    route:[[600,505],[570,450],[540,385]], line:'250 ms: the words you know supply its meaning.' },
+        { to:'prefrontal', ms:100, deep:false, route:[[540,385],[400,300],[260,260],[165,300]], line:'350 ms: conscious thought has the word. You are reading.' }
+      ] },
+    beat: { name:'hearing a beat', view:'outside', stim:'beat',
+      start:'A drum, keeping time.',
+      legs:[
+        { to:'thalamus', ms:10, deep:true,  route:[[300,690],[380,560],[455,365]], line:'10 ms: the ear has sent the beat to the switchboard. Hearing is fast.' },
+        { to:'auditory', ms:15, deep:true,  route:[[455,365],[440,410],[430,440]], line:'25 ms: the beat arrives at hearing.' },
+        { to:'motor', ms:40, deep:false,    route:[[430,440],[400,330],[400,200]], line:'65 ms: hearing tells the moving strip. The moving strip starts predicting when the next beat will come.' },
+        { to:'auditory', ms:40, deep:false, route:[[400,200],[360,320],[430,440]], line:'105 ms: the prediction goes back to hearing, so the next beat is expected before it arrives. You are already dancing, even sitting still.' },
+        { to:'hand', ms:100, deep:true,     route:[[430,440],[470,600],[515,850],[590,905]], line:'205 ms: if you tap along, the tap lands on the beat because it was sent early.' }
+      ] },
+    star: { name:'tracing a star in a mirror', view:'outside', stim:'star',
+      start:'A star drawn on paper, with a road around it. You must trace the road while seeing your hand only in a mirror, so every left is a right.',
+      legs:[
+        { to:'thalamus', ms:35, deep:true,  route:[[-70,420],[80,470],[300,430],[455,365]], line:'35 ms: the eye sends where the dot is.' },
+        { to:'v1', ms:25, deep:true,        route:[[455,365],[600,420],[720,450],[800,430]], line:'60 ms: the dot arrives where seeing starts.' },
+        { to:'ips', ms:60, deep:false,      route:[[800,430],[740,320],[620,235]], line:'120 ms: the parietal cortex works out where your hand must be, mirror and all.' },
+        { to:'motor', ms:40, deep:false,    route:[[620,235],[510,180],[400,200]], line:'160 ms: the moving strip sends the order.' },
+        { to:'cerebellum', ms:20, deep:true, route:[[400,200],[480,420],[610,650]], line:'180 ms: a copy goes to the cerebellum, which compares the order with what the hand actually did last time.' },
+        { to:'motor', ms:20, deep:true,     route:[[610,650],[520,420],[400,200]], line:'200 ms: the cerebellum sends back a correction. This is the part that learns, trip after trip, without telling you.' },
+        { to:'hand', ms:100, deep:true,     route:[[400,200],[450,420],[500,650],[515,850],[590,905]], line:'300 ms: the corrected order reaches your hand.' }
+      ] },
+    remember: { name:'remembering', view:'inside', stim:'none',
+      start:'You try to remember where you left your shoes.',
+      legs:[
+        { to:'hippocampus', ms:150, deep:true, route:[[230,420],[360,600],[480,745]], line:'150 ms: conscious thought asks experience, the part that wrote down what happened.' },
+        { to:'v1', ms:150, deep:true,       route:[[480,745],[760,700],[1070,560]], line:'300 ms: experience replays the scene to the back of the head, where seeing starts. You see the shoes by the door, faintly, with your eyes open.' },
+        { to:'prefrontal', ms:150, deep:false, route:[[1070,560],[800,200],[450,150],[230,420]], line:'450 ms: the picture reaches conscious thought. You remember.' }
+      ] },
+    hot: { name:'touching something hot', view:'outside', stim:'hot',
+      start:'Your finger touches a hot pan.',
+      legs:[
+        { to:'spine', ms:20, deep:true,     route:[[590,905],[540,880],[515,850]], line:'20 ms: the signal from your skin reaches the spinal cord.' },
+        { to:'hand', ms:20, deep:true,      route:[[515,850],[560,900],[590,905]], line:'40 ms: the spinal cord orders the hand away, on its own. The brain has not heard yet.' },
+        { to:'thalamus', ms:60, deep:true,  route:[[515,850],[500,650],[470,480],[455,365]], line:'100 ms: the news reaches the switchboard.' },
+        { to:'somatosensory', ms:40, deep:true, route:[[455,365],[465,290],[470,205]], line:'140 ms: touch receives it. Now it hurts.' },
+        { to:'prefrontal', ms:120, deep:false, route:[[470,205],[330,180],[200,230],[165,300]], line:'260 ms: conscious thought finds out. By now the hand has been safe for a fifth of a second.' }
+      ] },
+    pingpong: { name:'playing ping-pong', view:'outside', stim:'ball',
+      start:'A ping-pong ball, coming at you. It will cross the table in about a third of a second.',
+      legs:[
+        { to:'thalamus', ms:35, deep:true,  route:[[-70,420],[80,470],[300,430],[455,365]], line:'35 ms: the eye sends where the ball is.' },
+        { to:'v1', ms:25, deep:true,        route:[[455,365],[600,420],[720,450],[800,430]], line:'60 ms: the ball arrives where seeing starts. But it has already moved.' },
+        { to:'ips', ms:40, deep:false,      route:[[800,430],[740,320],[620,235]], line:'100 ms: the parietal cortex works out not where the ball is, but where it will be. You always swing at the future.' },
+        { to:'motor', ms:30, deep:false,    route:[[620,235],[510,180],[400,200]], line:'130 ms: the moving strip sends the swing.' },
+        { to:'cerebellum', ms:20, deep:true, route:[[400,200],[480,420],[610,650]], line:'150 ms: the cerebellum checks the swing against the last thousand swings and trims it.' },
+        { to:'hand', ms:100, deep:true,     route:[[610,650],[560,760],[515,850],[590,905]], line:'250 ms: the paddle meets the ball, in a place the eye never saw it.' }
+      ] },
+    chess: { name:'seeing a chess position', view:'outside', stim:'chess',
+      start:'A chessboard, mid-game. A beginner sees thirty-two pieces. A master sees four or five shapes.',
+      legs:[
+        { to:'thalamus', ms:35, deep:true,  route:[[-70,420],[80,470],[300,430],[455,365]], line:'35 ms: the eye sends the board to the switchboard.' },
+        { to:'v1', ms:25, deep:true,        route:[[455,365],[600,420],[720,450],[800,430]], line:'60 ms: it arrives where seeing starts, as squares and shapes.' },
+        { to:'ips', ms:60, deep:false,      route:[[800,430],[740,320],[620,235]], line:'120 ms: the parietal cortex reads the layout: what is where.' },
+        { to:'hippocampus', ms:80, deep:true, route:[[620,235],[520,400],[430,520]], line:'200 ms: experience compares it with every position this brain has seen. For a master that is tens of thousands, and one of them matches.' },
+        { to:'prefrontal', ms:100, deep:true, route:[[430,520],[300,420],[165,300]], line:'300 ms: conscious thought receives the match, with the move that goes with it. For the rest of us, this is where the slow thinking begins.' },
+        { to:'motor', ms:50, deep:false,    route:[[165,300],[290,220],[400,200]], line:'350 ms: the moving strip is told which piece.' },
+        { to:'hand', ms:100, deep:true,     route:[[400,200],[450,420],[500,650],[515,850],[590,905]], line:'450 ms: the hand reaches for it.' }
+      ] },
+    song: { name:'hearing an old song', view:'outside', stim:'notes',
+      start:'Three notes from a song you knew years ago.',
+      legs:[
+        { to:'thalamus', ms:10, deep:true,  route:[[300,690],[380,560],[455,365]], line:'10 ms: the ear sends the notes to the switchboard.' },
+        { to:'auditory', ms:15, deep:true,  route:[[455,365],[440,410],[430,440]], line:'25 ms: hearing sorts them: which pitch, in which order.' },
+        { to:'hippocampus', ms:100, deep:true, route:[[430,440],[440,480],[430,520]], line:'125 ms: experience recognizes the pattern. Three notes were enough.' },
+        { to:'words', ms:100, deep:false,   route:[[430,520],[500,470],[540,385]], line:'225 ms: the words you know supply the lyrics, which you did not know you still had.' },
+        { to:'auditory', ms:80, deep:false, route:[[540,385],[480,420],[430,440]], line:'305 ms: the rest of the song plays in hearing, with no sound in the room. This is why a tune can get stuck.' }
+      ] },
+    face: { name:'drawing a friend\'s face', view:'outside', stim:'none',
+      start:'A blank page. You want to draw a friend who is not in the room.',
+      legs:[
+        { to:'hippocampus', ms:150, deep:true, route:[[165,300],[300,420],[430,520]], line:'150 ms: conscious thought asks experience for the face.' },
+        { to:'v1', ms:150, deep:true,       route:[[430,520],[620,520],[800,430]], line:'300 ms: experience replays it to where seeing starts. You see the face faintly, with your eyes open. This is imagining.' },
+        { to:'ips', ms:60, deep:false,      route:[[800,430],[740,320],[620,235]], line:'360 ms: the parietal cortex works out where each feature goes on the page.' },
+        { to:'motor', ms:40, deep:false,    route:[[620,235],[510,180],[400,200]], line:'400 ms: the moving strip sends the first stroke.' },
+        { to:'cerebellum', ms:20, deep:true, route:[[400,200],[480,420],[610,650]], line:'420 ms: the cerebellum steadies the hand.' },
+        { to:'hand', ms:100, deep:true,     route:[[610,650],[560,760],[515,850],[590,905]], line:'520 ms: the pencil moves. Every line after this is the same loop, run again: look at the page, compare with the face inside, correct.' }
+      ] }
+  };
+
+  // catmull-rom through waypoints -> dense polyline with cumulative lengths
+  function spline(pts) {
+    var out = [], n = pts.length;
+    for (var i = 0; i < n - 1; i++) {
+      var p0 = pts[Math.max(0, i-1)], p1 = pts[i], p2 = pts[i+1], p3 = pts[Math.min(n-1, i+2)];
+      for (var t = 0; t < 1; t += 0.04) {
+        var t2 = t*t, t3 = t2*t;
+        out.push([0.5*((2*p1[0]) + (-p0[0]+p2[0])*t + (2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*t2 + (-p0[0]+3*p1[0]-3*p2[0]+p3[0])*t3),
+                  0.5*((2*p1[1]) + (-p0[1]+p2[1])*t + (2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*t2 + (-p0[1]+3*p1[1]-3*p2[1]+p3[1])*t3)]);
+      }
+    }
+    out.push(pts[n-1]);
+    var L = [0]; for (var j = 1; j < out.length; j++) L.push(L[j-1] + Math.hypot(out[j][0]-out[j-1][0], out[j][1]-out[j-1][1]));
+    return { pts: out, L: L, len: L[L.length-1] };
+  }
+  function at(sp, f) {
+    var d = f * sp.len, i = 1; while (i < sp.L.length && sp.L[i] < d) i++;
+    if (i >= sp.L.length) return sp.pts[sp.pts.length-1];
+    var a = sp.pts[i-1], b = sp.pts[i], u = (d - sp.L[i-1]) / ((sp.L[i]-sp.L[i-1]) || 1);
+    return [a[0] + (b[0]-a[0])*u, a[1] + (b[1]-a[1])*u];
+  }
+  function pathD(sp) { return sp.pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' '); }
+
+  var run = null, current = 'three';
+  var speedFactor = 15;
+  function prepare(pw) {
+    if (view !== pw.view) setView(pw.view);
+    lit = []; draw(); document.getElementById('panel').hidden = true; document.getElementById('panel-lines').innerHTML = '';
+    document.querySelectorAll('.name').forEach(function (w) { w.classList.remove('on'); });
+    var roads = document.getElementById('roads'); roads.innerHTML = '';
+    var legs = pw.legs.map(function (leg) {
+      var sp = spline(leg.route);
+      var el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      el.setAttribute('class', 'road' + (leg.deep ? ' deep' : '')); el.setAttribute('d', pathD(sp));
+      el.style.strokeDasharray = sp.len + ' ' + sp.len; el.style.strokeDashoffset = sp.len;   // revealed as the comet passes
+      roads.appendChild(el);
+      return { leg: leg, sp: sp, el: el };
+    });
+    document.getElementById('stim').innerHTML = stimulus(pw.stim);
+    return legs;
+  }
+  function stimulus(kind) {
+    var m = MARKS[view], k = view === 'outside' ? 1 : 1.4, e = m.eye, out = '';
+    if (kind === 'triangles') for (var i = 0; i < 3; i++) { var x = e[0] - 40*k + i*26*k, y = e[1] - 70*k; out += '<path d="M' + x + ' ' + (y+16*k) + ' l' + 9*k + ' -16 l' + 9*k + ' 16 z" fill="none" stroke="#2E5090" stroke-width="2"/>'; }
+    if (kind === 'word') out += '<text x="' + e[0] + '" y="' + (e[1] - 58*k) + '" text-anchor="middle" font-family="Georgia" font-size="' + 22*k + '" fill="#2E5090">moon</text>';
+    if (kind === 'star') { var cx = e[0], cy = e[1] - 66*k, R = 20*k, r = R*0.382, d = ''; for (var j = 0; j < 10; j++) { var a = -Math.PI/2 + j*Math.PI/5, rad = j%2 ? r : R; d += (j ? 'L' : 'M') + (cx + rad*Math.cos(a)) + ' ' + (cy + rad*Math.sin(a)); } out += '<path d="' + d + 'Z" fill="none" stroke="#2E5090" stroke-width="2"/>'; }
+    if (kind === 'beat') { var a2 = m.ear; out += '<text x="' + (a2[0] - 40*k) + '" y="' + (a2[1] + 6) + '" text-anchor="end" font-family="Georgia" font-size="' + 22*k + '" fill="#2E5090">tak · tak · tak</text>'; }
+    if (kind === 'ball') out += '<circle cx="' + (e[0] - 4*k) + '" cy="' + (e[1] - 66*k) + '" r="' + 9*k + '" fill="none" stroke="#2E5090" stroke-width="2"/><path d="M' + (e[0] - 40*k) + ' ' + (e[1] - 66*k) + ' h' + 22*k + '" stroke="#2E5090" stroke-width="1.5" stroke-dasharray="3 3"/>';
+    if (kind === 'chess') { for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) if ((r + c) % 2) out += '<rect x="' + (e[0] - 32*k + c*16*k) + '" y="' + (e[1] - 100*k + r*16*k) + '" width="' + 16*k + '" height="' + 16*k + '" fill="#2E5090" opacity=".8"/>'; out += '<rect x="' + (e[0] - 32*k) + '" y="' + (e[1] - 100*k) + '" width="' + 64*k + '" height="' + 64*k + '" fill="none" stroke="#2E5090" stroke-width="1.5"/>'; }
+    if (kind === 'notes') { var a3 = m.ear; out += '<text x="' + (a3[0] - 40*k) + '" y="' + (a3[1] + 8) + '" text-anchor="end" font-family="Georgia" font-size="' + 26*k + '" fill="#2E5090">\u266a \u266a \u266a</text>'; }
+    if (kind === 'hot') { var h = m.hand; out += '<path d="M' + (h[0] + 34*k) + ' ' + (h[1] + 6) + ' q6 -14 0 -26 q-6 -12 0 -24" fill="none" stroke="#b87333" stroke-width="2"/><path d="M' + (h[0] + 46*k) + ' ' + (h[1] + 6) + ' q6 -14 0 -26 q-6 -12 0 -24" fill="none" stroke="#b87333" stroke-width="2"/>'; }
+    return out;
+  }
+  function showText(t) { document.getElementById('panel-text').textContent = t; document.getElementById('panel').hidden = false; }
+  function addLine(i, t) {                       // a narration line that stays, and replays its leg when tapped
+    var box = document.getElementById('panel-lines');
+    if (box.querySelector('[data-leg="' + i + '"]')) return;
+    var d = document.createElement('div'); d.className = 'line'; d.dataset.leg = i; d.textContent = t; d.tabIndex = 0;
+    word(d, function () { replayLeg(i); }); box.appendChild(d);
+  }
+  function replayLeg(i) {
+    if (!run) return;
+    var L = run.legs[i];
+    lit = OUT[L.leg.to] || IN[L.leg.to] ? [L.leg.to] : []; draw();
+    run.legs.forEach(function (x, k) { x.el.classList.toggle('faint', k === i); if (k === i) x.el.style.strokeDashoffset = 0; });
+    document.querySelectorAll('#panel-lines .line').forEach(function (el) { el.classList.toggle('on', +el.dataset.leg === i); });
+    var acc = 0; for (var k = 0; k <= i; k++) acc += run.legs[k].leg.ms; setCounter(acc);
+    document.getElementById('panel-text').textContent = run.pw.start;
+  }
+  function light(id) { if (OUT[id] || IN[id]) { if (lit.indexOf(id) < 0) { lit.push(id); draw(); } } }
+  function setCounter(ms) { document.getElementById('counter').querySelector('b').textContent = Math.round(ms); document.getElementById('counter').hidden = false; }
+
+  function startPathway(key, stepping) {
+    var pw = PATHWAYS[key], legs = prepare(pw);
+    run = { pw: pw, legs: legs, leg: 0, t0: null, elapsedMs: 0, stepping: !!stepping, done: false };
+    document.getElementById('stim').classList.add('on');
+    showText(pw.start); setCounter(0);
+    ['p-again','p-step','p-real','p-clear','speed-row'].forEach(function (id) { document.getElementById(id).hidden = false; });
+    if (!stepping) { run.t0 = performance.now(); requestAnimationFrame(tick); }
+  }
+  function tick(now) {
+    if (!run || run.done || run.stepping) return;
+    var brainMs = run.elapsedMs + (now - run.t0) / speedFactor;   // brain time elapsed in this run
+    var acc = 0, comet = document.getElementById('comet'), html = '';
+    for (var i = 0; i < run.legs.length; i++) {
+      var L = run.legs[i], f = Math.min(1, Math.max(0, (brainMs - acc) / L.leg.ms));
+      if (f > 0) { L.el.style.strokeDashoffset = L.sp.len * (1 - f); L.el.classList.add('faint'); }
+      if (f >= 1 && !L.arrived) { L.arrived = true; light(L.leg.to); addLine(i, L.leg.line); }
+      if (f > 0 && f < 1) {
+        var p = at(L.sp, f);
+        for (var k = 8; k >= 0; k--) { var q = at(L.sp, Math.max(0, f - k*0.02)); html += '<circle cx="' + q[0].toFixed(1) + '" cy="' + q[1].toFixed(1) + '" r="' + (14 - k) + '" fill="url(#g)" opacity="' + (1 - k/9).toFixed(2) + '"' + (L.leg.deep ? ' filter="url(#blur)"' : '') + '/>'; }
+      }
+      acc += L.leg.ms;
+    }
+    comet.innerHTML = html;
+    setCounter(Math.min(brainMs, acc));
+    if (brainMs >= acc) { run.done = true; comet.innerHTML = ''; return; }
+    requestAnimationFrame(tick);
+  }
+  function stepOnce() {
+    if (!run) { startPathway(current, true); return; }
+    if (run.leg >= run.legs.length) { startPathway(current, true); return; }
+    var L = run.legs[run.leg]; L.el.style.strokeDashoffset = 0; L.el.classList.add('faint');
+    light(L.leg.to); addLine(run.leg, L.leg.line);
+    var acc = 0; for (var i = 0; i <= run.leg; i++) acc += run.legs[i].leg.ms; setCounter(acc);
+    run.leg += 1; run.stepping = true;
+  }
+  document.querySelectorAll('.pw').forEach(function (w) { word(w, function () {
+    current = w.dataset.pw; speedFactor = readSpeed();
+    document.querySelectorAll('.pw').forEach(function (x) { x.classList.toggle('on', x === w); });
+    startPathway(current, false);
+  }); });
+  word(document.getElementById('p-again'), function () { speedFactor = readSpeed(); startPathway(current, false); });
+  word(document.getElementById('p-step'), function () { if (!run || !run.stepping) startPathway(current, true); else stepOnce(); });
+  function clearPathway() {
+    if (!run) return;
+    var order = run.legs.map(function (L) { return L.leg.to; }).filter(function (id) { return lit.indexOf(id) >= 0; });
+    var step = 350, i = 0;
+    (function next() {
+      if (i < order.length) { lit = lit.filter(function (id) { return id !== order[i]; }); draw(); i += 1; setTimeout(next, step); return; }
+      run.legs.forEach(function (L) { L.el.classList.remove('faint'); });        // the road fades last (1.2 s transition)
+      document.getElementById('stim').classList.remove('on');
+      document.getElementById('comet').innerHTML = '';
+      document.querySelectorAll('#panel-lines .line').forEach(function (el) { el.classList.remove('on'); });
+      setCounter(0);
+    })();
+  }
+  word(document.getElementById('p-clear'), clearPathway);
+  word(document.getElementById('p-real'), function () { document.getElementById('speed').value = 40; speedFactor = 1; startPathway(current, false); });
+  // the slider reads "slow" on the left, "real" on the right: invert so left = slowest
+  function readSpeed() { return 41 - +document.getElementById('speed').value; }   // slider reads slow on the left, real on the right
+  (function () { var sl = document.getElementById('speed'); sl.min = 1; sl.max = 40; sl.value = 26; sl.addEventListener('input', function () { speedFactor = readSpeed(); }); speedFactor = 15; })();
+  setView('outside');
+})();
+</script>

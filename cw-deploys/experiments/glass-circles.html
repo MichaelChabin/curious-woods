@@ -5,15 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="../art/icons/geometry-icon-256.png">
   <link rel="apple-touch-icon" href="../art/icons/geometry-icon-256.png">
-  <title>Curious Woods -- Geometry Workspace</title>
+  <title>Glass 1: Circles</title>
   <!--
-    Glass Geometry, standing alone. Since 1 Oct 2026 the lab is the shelf module
-    ../js/glass.js, served to stories the way the map and the sampler are; this page is
-    the thin standalone over it, hung in the gallery as Stained Glass, and mounts the
-    module at the fullest level in a host that fills the viewport. Everything the lab
-    is — the plane, the gestures, lead and glass, the palette, the log, undo, replay,
-    the picker, How this works, New, Save, Postcard, Remember — lives in the module.
-    Her library in the browser keeps its keys, so what she saved before opens after.
+    Glass 1: Circles — an experiment (2 Oct 2026). The one lab, ../js/glass.js, mounted at level
+    circles with two powers the module serves but no level owns yet: a shape takes colour by a
+    tap inside it (fill: 'tap'), and a circle is measured while it is drawn (measure: true).
+    Nothing is copied; active/glass-geometry.html, the bench and The Glass Rose are unchanged.
+    Michael's name for the level is the title.
   -->
   <style>
     html, body { height: 100%; overflow: hidden; margin: 0; background: #f4f1e8; }
@@ -32,8 +30,7 @@
 <script>
 var CW_VERSION = '2026-10-03 cf25ae5'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 document.addEventListener('DOMContentLoaded', function() {
-  var glass = cwGlass(document.getElementById('lab'), { level: 'both' });
-  // Alone on the page, the lab has the keys from the start (Cmd-S, Cmd-O), as it always did.
+  var glass = cwGlass(document.getElementById('lab'), { level: 'circles', fill: 'tap', measure: true });
   glass.focus();
 });
 </script>

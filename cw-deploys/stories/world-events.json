@@ -433,6 +433,96 @@
       "title": "The tallest thing anyone had built",
       "text": "Three hundred metres of iron went up in Paris in two years and opened to the public on 15 May 1889, in the middle of a world's fair. At night ten thousand gas lamps picked out its shape, and a beacon burned under a glass dome at the top.",
       "weight": 3
+    },
+    "khayyam-calendar-1079": {
+      "year": 1079.2,
+      "when": "1079 · Isfahan",
+      "place": "isfahan",
+      "label": "Khayyam's calendar",
+      "title": "The length of a year",
+      "text": "At the observatory in Isfahan, Omar Khayyam and the astronomers working with him measured the year as 365.24219858 days. The figure used today is 365.24219. Their calendar began in 1079, and the calendar used in Iran today grew out of it.",
+      "weight": 2
+    },
+    "domesday-1086": {
+      "year": 1086,
+      "when": "1086 · Winchester",
+      "place": "winchester",
+      "label": "Domesday Book",
+      "title": "A country written down",
+      "text": "William, the king of England, sent men to every part of the country to write down who held what land, and how many ploughs, pigs and mills there were on it. The survey was made in 1086, and the book was kept at Winchester.",
+      "weight": 1
+    },
+    "shen-kuo-needle-1088": {
+      "year": 1088,
+      "when": "1088 · Zhenjiang",
+      "place": "zhenjiang",
+      "label": "Shen Kuo's needle",
+      "title": "A needle that points south",
+      "text": "In his Dream Pool Essays, written at his garden in Zhenjiang, Shen Kuo described a needle, rubbed on a lodestone, that points south, and he noticed that it does not point quite true. He said nothing about using it at sea.",
+      "weight": 2
+    },
+    "cahokia-1100": {
+      "year": 1100,
+      "when": "about 1100 · Cahokia",
+      "place": "cahokia",
+      "label": "Cahokia",
+      "title": "A city of earth",
+      "text": "Beside the Mississippi, where St Louis is now, Cahokia was at its largest around 1100, with somewhere between six thousand and forty thousand people. Its biggest mound, built by hand out of earth, is thirty metres high. It was the largest city north of Mexico.",
+      "weight": 3
+    },
+    "abelard-1115": {
+      "year": 1115,
+      "when": "about 1115 · Paris",
+      "place": "paris",
+      "label": "Abelard",
+      "title": "Crowds for an argument",
+      "text": "Around 1115 Peter Abelard became master of the cathedral school of Notre-Dame in Paris. Students came from all over Europe to hear him argue; the old accounts say thousands.",
+      "weight": 1
+    },
+    "zhu-yu-1119": {
+      "year": 1119,
+      "when": "1119 · Guangzhou",
+      "place": "guangzhou",
+      "label": "Steering by needle",
+      "title": "In dark weather",
+      "text": "Zhu Yu's father ran the port of Guangzhou, and Zhu Yu wrote down, among many other things, how its ships found their way. His book, published in 1119, says: \"In dark weather they look at the south-pointing needle.\" It is the first book anywhere to say that sailors steered by the compass.",
+      "weight": 2
+    },
+    "angkor-wat-1122": {
+      "year": 1122,
+      "when": "1122 · Angkor",
+      "place": "angkor",
+      "label": "Angkor Wat",
+      "title": "The largest temple",
+      "text": "The Khmer king Suryavarman II began Angkor Wat, near what is now Siem Reap in Cambodia, in 1122, and it was finished about 1150. It is the largest religious building in the world.",
+      "weight": 3
+    },
+    "adelard-euclid": {
+      "year": 1126,
+      "when": "about 1126 · Bath",
+      "place": "bath",
+      "label": "Euclid in Latin",
+      "title": "Euclid comes back",
+      "text": "Adelard of Bath travelled for seven years, to Salerno, to Sicily and as far as Syria, and was home in Bath by 1130. He translated Euclid's Elements from Arabic into Latin, perhaps around 1126, though it may have been after 1133. Scholars in Baghdad had translated Euclid from Greek into Arabic more than three hundred years before, and kept it.",
+      "weight": 2
+    },
+    "xativa-paper": {
+      "year": 1150,
+      "when": "about 1150 · Xàtiva",
+      "place": "xativa",
+      "label": "Xàtiva paper",
+      "title": "The best paper in the world",
+      "text": "Around 1150 the geographer al-Idrisi wrote that the town of Xàtiva, in al-Andalus, made paper \"such as cannot be found anywhere else in the civilized world,\" and sent it east and west. North of the Alps, paper stayed scarce for another two hundred years: the first paper mill there was built at Nuremberg in 1390.",
+      "weight": 2
+    },
+    "blue-and-white": {
+      "year": 1351,
+      "when": "1330s to 1351 · Jingdezhen",
+      "place": "jingdezhen",
+      "label": "Blue-and-white",
+      "title": "The same blue, far away",
+      "text": "In the 1330s potters at Jingdezhen, in China, began painting porcelain with cobalt brought from Persia, under a clear glaze. The earliest pieces with a date written on them are a pair of temple vases from 1351.",
+      "weight": 2
     }
   }
 }

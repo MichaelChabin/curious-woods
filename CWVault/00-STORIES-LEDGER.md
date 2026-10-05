@@ -28,7 +28,7 @@ Stages, from Publishing-a-Story: **written** (Michael has said yes to the words)
 
 *Have You Thought of a Story?* — Frankenstein hub story, 1816. Draft 1, 15 Sept. Open: one sentence near the end, a prose anchor for the year, which picture.
 *The Compass Counts to Six* — the rosette; door to Stained Glass. Draft 1, 15 Sept; Michael called it good. Needs the yes; the picture is his rosette screenshot.
-*The Glass Rose* · *The God Who Would Not Move* · *A Very Strange Cube* — drafts in the project; state to confirm with their chats.
+*The Glass Rose* — **Built** (2 Oct 2026, stage 2): `experiments/the-glass-rose.html`, Draft 10 word for word, the table `js/glass.js` at level `circles`; awaiting Michael's read (stage 3). *The God Who Would Not Move* · *A Very Strange Cube* — drafts in the project; state to confirm with their chats.
 
 ## Shared parts that exist
 

@@ -1,5 +1,5 @@
 ---
-status: Checked 25 Sept 2026, against the sources named at the foot. Two errors found in the 25 Sept proposal and corrected here. Michael to read; then these records go into `stories/world-events.json`.
+status: Superseded 2 Oct 2026 by the section *Theophilus's World* in Story-The-Glass-Rose.md, which carries the events in the spec's shape. Kept for its notes on the two errors. Earlier: Checked 25 Sept 2026, against the sources named at the foot. Two errors found in the 25 Sept proposal and corrected here. Michael to read; then these records go into `stories/world-events.json`.
 role: The World for *The Glass Rose* — Theophilus at the middle of the line, and where his materials came from. Held as its own file because most of these events are shared: the story picks from them and adds its own `why`.
 related: claude/Story-The-Glass-Rose.md, claude/Story-Pattern.md, claude/Story-Vermeer-Girl-with-a-Pearl-Earring.md, claude/Spec-Timeline-and-Map.md
 ---

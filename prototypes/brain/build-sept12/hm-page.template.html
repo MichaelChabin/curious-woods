@@ -1,0 +1,658 @@
+<title>The Man Who Learned Without Knowing</title>
+<style>
+  :root {
+    --cw-parchment: #f4f1e8;
+    --cw-parchment-deep: #ece7da;
+    --cw-separator: #c8b89a;
+    --cw-ink: #2a2620;
+    --cw-word: #546A80;
+    --cw-word-hover: #3d5266;
+    --cw-blue: #2E5090;
+    --cw-copper: #b87333;
+    --cw-remember-blue: #3C5C83;
+  }
+  html, body { background: var(--cw-parchment); color: var(--cw-ink); }
+  [hidden] { display: none !important; }
+  body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
+  .page { display: flex; min-height: 100vh; }
+  /* the left panel: a context membrane, sized by what it holds */
+  .membrane {
+    background: var(--cw-parchment-deep);
+    border-right: 0.5px solid var(--cw-separator);
+    padding: 24px 16px 24px 16px;
+    display: flex; flex-direction: column; gap: 18px;
+    flex: 0 0 auto;
+    position: sticky; top: 0; height: 100vh; box-sizing: border-box;
+    overflow: hidden;
+  }
+  .word { font-size: 14px; color: var(--cw-word); cursor: pointer; padding-left: 16px; transition: color 120ms; user-select: none; }
+  .word:hover, .word:focus-visible { color: var(--cw-word-hover); outline: none; }
+  .word.quiet { cursor: default; color: #7a8a9a; }
+  .word[hidden] { display: none !important; }
+  .words { display: flex; flex-direction: column; gap: 6px; }
+  .side { display: flex; flex-direction: column; gap: 18px; }
+  .stage { position: relative; width: 380px; max-width: 100%; }
+  .stage-title { font-size: 17px; font-weight: bold; color: var(--cw-ink); text-align: center; width: 380px; max-width: 100%; margin-bottom: -14px; }
+  canvas#star { display: block; width: 100%; height: auto; touch-action: none; cursor: crosshair; border-radius: 2px; }
+  .fade { transition: opacity 400ms ease-out; }
+  .graphs { width: 380px; max-width: 100%; display: flex; flex-direction: column; gap: 6px; }
+  .graphs svg { width: 100%; height: auto; display: block; }
+  .graphs .line { font-size: 20px; padding-left: 16px; margin-top: 8px; }
+  .spacer { flex: 1 1 auto; }
+  .bench { width: 380px; max-width: 100%; display:flex; flex-direction:column; gap: 8px; }
+  .bench svg { width: 100%; height: auto; display: block; }
+  .ctl { padding-left: 36px !important; }
+  .slider-row { display:flex; align-items:center; gap:8px; }
+  .slider-row input { width: 120px; accent-color: var(--cw-copper); }
+  .slider-row .val { font-size: 12px; color:#7a8a9a; }
+  .lines { display:flex; flex-direction:column; gap: 4px; padding-left: 16px; }
+  .lines .line { font-size: 14px; color: var(--cw-word); cursor:pointer; user-select:none; line-height: 1.35; }
+  .lines .line:hover, .lines .line.on { color: var(--cw-copper); }
+  .lines .start { font-size: 14px; color: var(--cw-ink); }
+  .spot { mix-blend-mode: screen; }
+  @keyframes shimmer { 0% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 0; } }
+  .spot circle { animation: shimmer var(--d) ease-in-out var(--delay) infinite; }
+  .road { fill:none; stroke:#f2d58a; stroke-width:5; stroke-linecap:round; stroke-linejoin:round; mix-blend-mode:screen; opacity:0; transition: opacity 1200ms ease-out; }
+  .road.deep { filter:url(#bblur-deep); stroke-width:7; }
+  .road.faint { opacity:.35; }
+  .comet { mix-blend-mode:screen; }
+  .mark { fill:none; stroke:#2E5090; stroke-width:2.5; }
+  .mark-label { font-family: Georgia, serif; font-size: 15px; fill:#2a2620; }
+  .hole-fill { fill:#f4f1e8; opacity:.85; }
+  .hole-edge { fill:none; stroke:#2E5090; stroke-width:3.5; stroke-dasharray: 10 8; opacity:.9; }
+  .hole-label { font-family: Georgia, serif; fill:#2a2620; paint-order: stroke; stroke:#f4f1e8; stroke-width:8px; stroke-linejoin:round; }
+  .membrane { overflow-y: auto; }
+  #remember { padding-left: 16px; padding-bottom: 24px; line-height: 1.25; user-select: none; cursor: pointer; margin-top: 12px; }
+  #remember .note { display: block; font-size: 13px; color: #7a8a9a; margin-top: 6px; }
+  #remember .plain { display: block; color: var(--cw-remember-blue); font-size: 17px; }
+  #remember .big { display: block; color: var(--cw-copper); font-size: 20px; }
+  /* the right panel: pure narrative */
+  .narrative { flex: 1 1 auto; display: flex; justify-content: center; }
+  article { max-width: 700px; padding: 40px 40px 80px 40px; box-sizing: border-box; }
+  article h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0 0 1.4em 0; text-wrap: balance; }
+  article h2 { font-size: 22px; font-weight: normal; margin: 1.6em 0 0.6em 0; }
+  article p { margin: 0 0 1.4em 0; }
+  article .more { border-top: 0.5px solid var(--cw-separator); margin-top: 2em; padding-top: 1.4em; font-size: 17px; }
+  article .more p { margin-bottom: 1em; }
+  article .quote { font-style: italic; margin-left: 1.5em; }
+  @media (max-width: 800px) {
+    .page { flex-direction: column; }
+    .membrane { position: relative; height: auto; border-right: none; border-bottom: 0.5px solid var(--cw-separator); align-items: flex-start; }
+    article { padding: 24px 16px 60px 16px; }
+    body { font-size: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .fade, .word { transition: none; } }
+</style>
+
+<div class="page">
+  <aside class="membrane" id="membrane">
+
+    <div class="side fade" id="side-star">
+    <div class="stage-title">Star Reflected in a Mirror</div>
+    <div class="stage fade" id="stage">
+      <canvas id="star" width="380" height="380" aria-label="A star drawn twice, with a narrow road between the outlines. Trace the road; your hand is mirrored."></canvas>
+    </div>
+    <span class="word quiet" id="w-trip" hidden>trip 1</span>
+
+    <div class="graphs fade" id="graphs" hidden>
+      <svg id="g-bumps" viewBox="0 0 380 150" role="img" aria-label="Bumps per trip"></svg>
+      <svg id="g-secs" viewBox="0 0 380 150" role="img" aria-label="Seconds per trip"></svg>
+      <div class="line" id="g-line">Your hand learned the mirror.</div>
+    </div>
+
+    <div class="words">
+      <span class="word" id="w-again" hidden tabindex="0">again</span>
+      <span class="word" id="w-nomirror" hidden tabindex="0">without the mirror</span>
+      <span class="word" id="w-showstar" hidden tabindex="0">show the star</span>
+      <span class="word" id="w-showgraphs" hidden tabindex="0">the graphs</span>
+    </div>
+    </div>
+
+
+    <div class="bench fade" id="bench" hidden>
+      <svg id="bmap" viewBox="-130 0 1016 960" role="img" aria-label="A brain">
+        <defs>
+          <radialGradient id="bg"><stop offset="0%" stop-color="#f2d58a" stop-opacity="1"/><stop offset="55%" stop-color="#f2d58a" stop-opacity=".45"/><stop offset="100%" stop-color="#f2d58a" stop-opacity="0"/></radialGradient>
+          <filter id="bblur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+          <filter id="bblur-deep" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10"/></filter>
+        </defs>
+        <g id="bv-outside"><image href="data:image/jpeg;base64,__OUT__" width="886" height="886"/></g>
+        <g id="bv-inside" style="display:none"><image href="data:image/png;base64,__IN__" width="1254" height="1254"/></g>
+        <g id="bhole"></g>
+        <g id="bmarks"></g>
+        <g id="broads"></g>
+        <g id="bspots"></g>
+        <g id="bcomet" class="comet"></g>
+      </svg>
+      <div class="words">
+        <span class="word" id="b-tap" tabindex="0">tap the brain to see what the surgeon removed</span>
+        <span class="word" id="b-yours" hidden tabindex="0">your brain, tracing the star</span>
+        <span class="word" id="b-henry" hidden tabindex="0">Henry's brain, tracing the star</span>
+        <span class="word ctl" id="b-again" hidden tabindex="0">again</span>
+        <span class="word ctl" id="b-step" hidden tabindex="0">step</span>
+        <span class="word ctl" id="b-clear" hidden tabindex="0">clear</span>
+        <div class="slider-row ctl" id="b-speed-row" hidden><span class="val">slow</span><input type="range" id="b-speed" min="1" max="40" step="1" value="26" aria-label="how much slower than life"><span class="val">real</span></div>
+      </div>
+      <div class="lines" id="b-lines"></div>
+    </div>
+
+    <div id="remember" aria-label="I want to remember this" tabindex="0">
+      <span class="plain">I want to</span>
+      <span class="big">Remember</span>
+      <span class="plain">this</span>
+      <span class="note" id="remember-note" hidden>in your practice list</span>
+    </div>
+    <div class="spacer"></div>
+  </aside>
+
+  <main class="narrative">
+    <article>
+      <h1>The Man Who Learned Without Knowing</h1>
+
+      <p>This story depends on a puzzle. You can see it on the left. To solve it, touch the copper dot and drag it along the road between the two stars without touching either.</p>
+
+      <p>Of course, there is a catch. The puzzle is reflected in a mirror. You'll find you can move the dot up and down as you normally would, but left and right are reversed, and that makes all the difference.</p>
+
+      <p>Give it a try. Everyone finds it frustrating, but if you try a few times, you'll begin to see how you could learn to solve it.</p>
+
+      <p>If you've tried it a few times, you probably felt very clumsy. Most people do. I have a feeling this is a little bit of what babies feel when they are first learning to use their hands.</p>
+
+      <p id="p-still">Still, babies do learn to use their hands, and just about anyone can learn to solve this puzzle.</p>
+
+      <p>If you'd like to play with the puzzle some more, click <em>I want to Remember this</em> on the left, and we'll put it in your practice list.</p>
+
+      <p id="p-start">Now that you understand the puzzle, I can start the story.</p>
+
+      <h2 id="h-henry">Henry</h2>
+
+      <p>In 1953, a young man in Connecticut named Henry Molaison had an operation on his brain. He was twenty-seven. He'd had seizures since he was a boy — storms of electricity in the brain that knock you down — and they'd gotten so bad he couldn't hold a job. The neurosurgeon, William Scoville, thought the storms started in a part of the brain called the hippocampus, and he took it out. Both sides. Tap the brain on the left and I'll show you what he took.</p>
+
+      <p>The seizures got better. And Henry stopped being able to remember anything new.</p>
+
+      <p>Not everything. He remembered his childhood. He knew his name, his parents, the streets of Hartford. He could talk with you, joke with you, do a crossword. But if you left the room and came back ten minutes later, he'd greet you as a stranger. He met the same doctors every week for fifty years and never once recognized them. He read the same magazines over and over. Every morning, the news was news.</p>
+
+      <p>The hippocampus, it turned out, is where the brain writes down <em>what happened.</em> Say it "hippo-CAMP-us"; it's named after a seahorse, because it's curled like one. You have two, one on each side, deep in the middle of the head, about level with your ears. Henry's were gone, so nothing new got written down. The pen was missing.</p>
+
+      <h2>Brenda and the star</h2>
+
+      <p>A neuropsychologist named Brenda Milner came down from Montreal to study Henry. She came for years. He never remembered her.</p>
+
+      <p>In 1962 she gave him the star. The same one you just tried: two outlines, a mirror, a pencil, trace the road. He bumped the edges about thirty times. She had him do it ten times that day, ten the next day, ten the day after.</p>
+
+      <p>Each morning he said he'd never seen it before. Each morning he was right, as far as he knew; the hippocampus writes down <em>what happened,</em> and his couldn't.</p>
+
+      <p>And each morning he was better at it. By the third day he went round the star almost clean, like someone who'd practiced for weeks, which he had. Then he looked at what he'd done and said something Milner never forgot:</p>
+
+      <p class="quote">"Huh. This is strange. I thought that would be difficult, but it seems as though I've done it quite well."</p>
+
+      <p id="p-brenda-end">He had learned the mirror. He had no memory of learning it. Both of those were true at once.</p>
+
+      <h2 id="h-two">Two memories</h2>
+
+      <p>So there are two of them. Two different kinds of remembering, kept in different places, and you can lose one and keep the other.</p>
+
+      <p>One is <em>what happened.</em> Where you were yesterday, who said what, this story. That one runs through the hippocampus, and it's the one you can feel: you know when you remember something, and you know when you don't.</p>
+
+      <p>The other is <em>getting better at things.</em> Riding a bicycle, tying a knot, tracing a star in a mirror, playing a tune. That one lives somewhere else — mostly in a knot of structures under the cortex called the basal ganglia, and in the cerebellum at the back, the wrinkled thing that keeps your movements smooth. Henry kept all of it. And here's the part that matters to you: <em>you can't feel this one working.</em> There's no "aha." There's no moment you notice it. There's just, one day, your hand knowing.</p>
+
+      <p id="p-run">You can watch the difference. On the left, run the star through your brain, and then through Henry's.</p>
+
+      <p>Henry had one advantage over you, and it's worth knowing about. He didn't remember being frustrated. Every morning the star puzzle was new. Every morning he sat down to it the way you'd sit down to a game you'd never played or a puzzle you'd never seen before. He was curious. The puzzle was new and might be fun.</p>
+
+      <p>Think what that would feel like. If it was always the first time you saw the puzzle, you couldn't remember being bored or discouraged, because as far as you were concerned, you hadn't even started.</p>
+
+      <p>You'd have what Zen masters call "beginner's mind."</p>
+
+      <p>Most of us have to work to develop beginner's mind. When we come back to the star, we remember the last time we tried and how it felt. That memory whispers, <em>this is hard.</em> If that whisper gets loud enough, we may give up.</p>
+
+      <p>But Henry taught us something remarkable about that whisper. It can be wrong. We know that because Henry got better at the star puzzle. His brain learned how to do it even though Henry couldn't remember practicing it.</p>
+
+      <p>That means learning can happen without feeling like learning.</p>
+
+      <p>When you learn to draw, dance, play the piano, throw a curve ball, or ride a unicycle, several different systems in your brain are changing. Some of those changes happen quietly. You don't necessarily feel them happening, and your memory of yesterday's practice isn't a reliable measurement of them.</p>
+
+      <p>So the part of you that says <em>I'm not getting any better</em> doesn't necessarily know whether you're getting better.</p>
+
+      <p>There's an easy way to find out if you are learning anything. Practice for a few minutes every day, save the results and, after a week, compare what you can do now with what you could do then.</p>
+
+      <p>Don't ask your frustration whether you are learning. Ask the evidence.</p>
+
+      <p>People who knew Henry were struck by how positive and cheerfully persistent he was. In a way, he had no choice. Yesterday's failures couldn't tell him to stop trying today. He couldn't remember them.</p>
+
+      <p>Henry paid a terrible price for that. But he also gave us an immense gift. He showed us that you can be learning even when you don't know you're learning.</p>
+
+      <p id="p-end">Most of us can remember yesterday. Henry couldn't. He taught us that, if we can remember yesterday without letting yesterday decide what we can learn today... if we can do that, we can master anything.</p>
+
+
+      <div class="more">
+        <p><em>More:</em></p>
+        <p>If you do put this on your practice list, you'll find that each time you come back you start about where you left off, not where you began. Sleep does something with what your hand learned; that's another story.</p>
+        <p>Henry Molaison lived to be eighty-two. For most of his life the world knew him only as "H.M.", to protect him, and his name was made public only after he died in 2008. He agreed, while alive, that his brain could be studied afterward. It was cut into 2,401 thin slices, and the cutting was shown live on the internet so that anyone could watch. He is probably the most studied single person in the history of the brain, and he never knew it.</p>
+        <p>Brenda Milner is still alive as I write this. She was born in Manchester in 1918 and was still working at McGill past her hundredth birthday.</p>
+        <p>If you want to see the rest of the brain, where seeing starts and where words live, <em>About Your Brain</em> is in your gallery.</p>
+      </div>
+    </article>
+  </main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  // ---------- constants ----------
+  var BLUE = '#2E5090', COPPER = '#b87333', INK = '#2a2620', PARCH = '#ece7da';
+  var SIZE = 380, CX = 190, CY = 196, R = 158;               // outer star radius, in canvas px
+  var W = Math.round(2 * R * 0.06);                           // track width: 6% of the star's width
+  var SNAP = 20;                                               // px to the start dot
+  var TRIPS_PER_SET = 10;
+  var STORE_KEY = 'cw.mirror-star.v2';
+
+  // ---------- geometry ----------
+  var TILT = 18 * Math.PI / 180;                                // tilted, so the mirror image is a different star and there is no 'other side' to follow
+  function starPoints(cx, cy, R) {                            // regular pentagram outline, tilted
+    var r = R * 0.381966, pts = [];
+    for (var i = 0; i < 10; i++) {
+      var a = -Math.PI / 2 + TILT + i * Math.PI / 5, rad = (i % 2 === 0) ? R : r;
+      pts.push([cx + rad * Math.cos(a), cy + rad * Math.sin(a)]);
+    }
+    return pts;
+  }
+  function offsetPolygon(pts, d) {                            // true inward offset by d
+    var n = pts.length, lines = [];
+    for (var i = 0; i < n; i++) {
+      var a = pts[i], b = pts[(i + 1) % n];
+      var dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy);
+      var nx = -dy / len, ny = dx / len;                       // a normal
+      var mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+      if ((CX - mx) * nx + (CY - my) * ny < 0) { nx = -nx; ny = -ny; }   // point it toward the centre
+      lines.push({ p: [a[0] + nx * d, a[1] + ny * d], d: [dx, dy] });
+    }
+    var out = [];
+    for (var j = 0; j < n; j++) {
+      var L1 = lines[(j - 1 + n) % n], L2 = lines[j];
+      var x1 = L1.p[0], y1 = L1.p[1], dx1 = L1.d[0], dy1 = L1.d[1];
+      var x2 = L2.p[0], y2 = L2.p[1], dx2 = L2.d[0], dy2 = L2.d[1];
+      var den = dx1 * dy2 - dy1 * dx2;
+      var t = ((x2 - x1) * dy2 - (y2 - y1) * dx2) / den;
+      out.push([x1 + dx1 * t, y1 + dy1 * t]);
+    }
+    return out;
+  }
+  function inside(pt, poly) {                                  // even-odd
+    var x = pt[0], y = pt[1], c = false;
+    for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      var xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+      if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) c = !c;
+    }
+    return c;
+  }
+  function perimeter(poly) {
+    var s = 0;
+    for (var i = 0; i < poly.length; i++) { var a = poly[i], b = poly[(i + 1) % poly.length]; s += Math.hypot(b[0] - a[0], b[1] - a[1]); }
+    return s;
+  }
+  var OUTER = starPoints(CX, CY, R), INNER = offsetPolygon(OUTER, W), MID = offsetPolygon(OUTER, W / 2);
+  // the start must lie on the mirror line (x = CX), so the copper dot and its reflection are the same point:
+  // take the highest place where the road's centreline crosses that line
+  function startOnAxis(poly) {
+    var best = null;
+    for (var i = 0; i < poly.length; i++) {
+      var a = poly[i], b = poly[(i + 1) % poly.length];
+      if ((a[0] - CX) * (b[0] - CX) <= 0 && a[0] !== b[0]) {
+        var t = (CX - a[0]) / (b[0] - a[0]), y = a[1] + (b[1] - a[1]) * t;
+        if (best === null || y < best[1]) best = [CX, y];
+      }
+    }
+    return best || poly[0];
+  }
+  var START = startOnAxis(MID), TRACK_LEN = perimeter(MID);
+  function onTrack(p) { return inside(p, OUTER) && !inside(p, INNER); }
+
+  // ---------- state ----------
+  var canvas = document.getElementById('star'), ctx = canvas.getContext('2d');
+  var trips = [];                 // {errors, ms, mirror}
+  var mirror = true;
+  var tracing = false, cur = null, travelled = 0, errors = 0, off = false, t0 = 0, trace = [];
+  var setTarget = TRIPS_PER_SET;  // trips needed before the reveal
+  var yesterday = null;
+  var noMirrorLeft = 0;
+
+  // ---------- drawing ----------
+  function poly(p) { ctx.beginPath(); ctx.moveTo(p[0][0], p[0][1]); for (var i = 1; i < p.length; i++) ctx.lineTo(p[i][0], p[i][1]); ctx.closePath(); }
+  function dot(p, r, color) { ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill(); }
+  function draw() {
+    ctx.clearRect(0, 0, SIZE, SIZE);
+    ctx.fillStyle = PARCH; ctx.fillRect(0, 0, SIZE, SIZE);
+    ctx.lineWidth = 1.5; ctx.strokeStyle = BLUE; ctx.lineJoin = 'miter';
+    poly(OUTER); ctx.stroke(); poly(INNER); ctx.stroke();
+    if (trace.length > 1) {
+      ctx.beginPath(); ctx.moveTo(trace[0][0], trace[0][1]);
+      for (var i = 1; i < trace.length; i++) ctx.lineTo(trace[i][0], trace[i][1]);
+      ctx.strokeStyle = 'rgba(46,80,144,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+    }
+    dot(START, 5, COPPER);
+    if (cur) dot(cur, 4, COPPER);
+  }
+
+  // ---------- pointer ----------
+  function toCanvas(ev) {
+    var b = canvas.getBoundingClientRect();
+    var x = (ev.clientX - b.left) * SIZE / b.width, y = (ev.clientY - b.top) * SIZE / b.height;
+    if (mirror) x = 2 * CX - x;                                // the mirror: left is right
+    return [x, y];
+  }
+  function near(a, b, d) { return Math.hypot(a[0] - b[0], a[1] - b[1]) <= d; }
+
+  canvas.addEventListener('pointerdown', function (ev) {
+    if (document.getElementById('stage').hidden) return;
+    var p = toCanvas(ev);
+    if (!near(p, START, SNAP)) return;
+    canvas.setPointerCapture(ev.pointerId);
+    tracing = true; cur = p; travelled = 0; errors = 0; off = !onTrack(p); t0 = performance.now(); trace = [p];
+    draw();
+    ev.preventDefault();
+  });
+  canvas.addEventListener('pointermove', function (ev) {
+    if (!tracing) return;
+    var p = toCanvas(ev);
+    travelled += Math.hypot(p[0] - cur[0], p[1] - cur[1]);
+    cur = p; trace.push(p);
+    var ok = onTrack(p);
+    if (!ok && !off) { off = true; errors += 1; }              // one excursion, one bump
+    if (ok) off = false;
+    if (travelled >= 0.8 * TRACK_LEN && near(p, START, SNAP)) finishTrip();
+    draw();
+    ev.preventDefault();
+  });
+  function abandon() { if (!tracing) return; tracing = false; cur = null; trace = []; draw(); }
+  canvas.addEventListener('pointerup', abandon);
+  canvas.addEventListener('pointercancel', abandon);
+
+  // ---------- trips ----------
+  function finishTrip() {
+    tracing = false;
+    trips.push({ errors: errors, ms: Math.round(performance.now() - t0), mirror: mirror });
+    cur = null;
+    save();
+    if (!mirror) { noMirrorLeft -= 1; if (noMirrorLeft <= 0) { mirror = true; reveal(); return; } }
+    if (mirror && trips.filter(function (t) { return t.mirror; }).length >= setTarget) { reveal(); return; }
+    tripWord();
+  }
+  function tripWord() {
+    var w = document.getElementById('w-trip');
+    if (!mirror) { w.textContent = 'no mirror · ' + (4 - noMirrorLeft) + ' of 3'; return; }
+    var done = trips.filter(function (t) { return t.mirror; }).length;
+    w.textContent = 'trip ' + (done + 1);
+  }
+
+  // ---------- the reveal ----------
+  function show(id, on) { var el = document.getElementById(id); el.hidden = !on; }
+  function reveal() {
+    var stage = document.getElementById('stage');
+    stage.style.opacity = 0;
+    setTimeout(function () {
+      show('stage', false); show('w-trip', false);
+      drawGraphs();
+      var g = document.getElementById('graphs'); g.style.opacity = 0; show('graphs', true);
+      requestAnimationFrame(function () { g.style.opacity = 1; });
+      show('w-again', true); show('w-nomirror', true); show('w-showstar', true); show('w-showgraphs', false);
+    }, 420);
+  }
+  function chart(svgId, key, label, scale) {
+    var svg = document.getElementById(svgId);
+    var ms = trips.filter(function (t) { return t.mirror; }), nm = trips.filter(function (t) { return !t.mirror; });
+    var n = Math.max(ms.length, TRIPS_PER_SET), vals = ms.map(function (t) { return t[key] * scale; });
+    var extra = nm.map(function (t) { return t[key] * scale; });
+    var all = vals.concat(extra); if (yesterday) all.push(yesterday[key] * scale);
+    var ymax = Math.max(4, Math.ceil(Math.max.apply(null, all) * 1.1));
+    var L = 34, Rr = 12, T = 14, B = 30, Wd = 380, H = 150;
+    var xs = function (i) { return L + (i / Math.max(1, n + extra.length)) * (Wd - L - Rr); };
+    var ys = function (v) { return T + (1 - v / ymax) * (H - T - B); };
+    var s = '';
+    s += '<line x1="' + L + '" y1="' + ys(0) + '" x2="' + (Wd - Rr) + '" y2="' + ys(0) + '" stroke="' + INK + '" stroke-opacity=".5" stroke-width="1"/>';
+    s += '<line x1="' + L + '" y1="' + T + '" x2="' + L + '" y2="' + ys(0) + '" stroke="' + INK + '" stroke-opacity=".5" stroke-width="1"/>';
+    s += '<text x="' + (L - 6) + '" y="' + (ys(0) + 4) + '" text-anchor="end" font-family="Georgia" font-size="12" fill="' + INK + '">0</text>';
+    s += '<text x="' + (L - 6) + '" y="' + (T + 4) + '" text-anchor="end" font-family="Georgia" font-size="12" fill="' + INK + '">' + ymax + '</text>';
+    s += '<text x="' + L + '" y="' + (H - 8) + '" font-family="Georgia" font-size="13" fill="' + INK + '">' + label + '</text>';
+    s += '<text x="' + (Wd - Rr) + '" y="' + (H - 8) + '" text-anchor="end" font-family="Georgia" font-size="12" fill="' + INK + '">trip ' + n + (extra.length ? ' · no mirror' : '') + '</text>';
+    if (yesterday) s += '<circle cx="' + xs(0) + '" cy="' + ys(yesterday[key] * scale) + '" r="4" fill="' + PARCH + '" stroke="' + COPPER + '" stroke-width="1.5"/>';
+    var path = vals.map(function (v, i) { return (i ? 'L' : 'M') + xs(i + 1) + ' ' + ys(v); }).join(' ');
+    s += '<path d="' + path + '" fill="none" stroke="' + BLUE + '" stroke-width="1.5"/>';
+    vals.forEach(function (v, i) { s += '<circle cx="' + xs(i + 1) + '" cy="' + ys(v) + '" r="3.5" fill="' + COPPER + '"/>'; });
+    if (extra.length) {
+      var p2 = extra.map(function (v, i) { return (i ? 'L' : 'M') + xs(vals.length + i + 1) + ' ' + ys(v); }).join(' ');
+      s += '<path d="' + p2 + '" fill="none" stroke="' + COPPER + '" stroke-width="1.5"/>';
+      extra.forEach(function (v, i) { s += '<circle cx="' + xs(vals.length + i + 1) + '" cy="' + ys(v) + '" r="3.5" fill="' + COPPER + '"/>'; });
+    }
+    svg.innerHTML = s;
+  }
+  function drawGraphs() {
+    chart('g-bumps', 'errors', 'bumps', 1);
+    chart('g-secs', 'ms', 'seconds', 0.001);
+  }
+
+  // ---------- words ----------
+  function word(id, fn) {
+    var el = document.getElementById(id);
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } });
+  }
+  function backToStar() {
+    show('graphs', false); show('w-again', false); show('w-nomirror', false); show('w-showstar', false);
+    var st = document.getElementById('stage'); st.style.opacity = 0; show('stage', true); show('w-trip', true);
+    requestAnimationFrame(function () { st.style.opacity = 1; });
+    tripWord(); draw();
+  }
+  word('w-again', function () { mirror = true; setTarget = trips.filter(function (t) { return t.mirror; }).length + TRIPS_PER_SET; backToStar(); });
+  word('w-nomirror', function () { mirror = false; noMirrorLeft = 3; backToStar(); });
+  word('w-showstar', function () {
+    show('graphs', false); show('w-showgraphs', true);
+    var st = document.getElementById('stage'); st.style.opacity = 0; show('stage', true);
+    requestAnimationFrame(function () { st.style.opacity = 1; }); draw();
+  });
+  word('w-showgraphs', function () { show('stage', false); show('w-showgraphs', false); drawGraphs(); show('graphs', true); document.getElementById('graphs').style.opacity = 1; });
+  (function () {
+    var KEY = 'cw.practice.queue', note = document.getElementById('remember-note');
+    function has() { try { return (JSON.parse(localStorage.getItem(KEY) || '[]')).indexOf('mirror-star') >= 0; } catch (e) { return false; } }
+    function render() { note.hidden = !has(); }
+    word('remember', function () {
+      try { var q = JSON.parse(localStorage.getItem(KEY) || '[]'); if (q.indexOf('mirror-star') < 0) q.push('mirror-star'); localStorage.setItem(KEY, JSON.stringify(q)); } catch (e) {}
+      render();
+    });
+    render();
+    // sit beside the paragraph that invites it, when the page is at the top
+    function align() {
+      var para = document.getElementById('p-still'), rem = document.getElementById('remember'); if (!para || !rem) return;
+      var want = para.getBoundingClientRect().top + window.scrollY, have = rem.getBoundingClientRect().top + window.scrollY - parseFloat(getComputedStyle(rem).marginTop || 0);
+      rem.style.marginTop = Math.max(12, want - have + 12) + 'px';
+    }
+    if (window.innerWidth > 800) { align(); window.addEventListener('resize', align); }
+  })();
+
+  // ---------- tomorrow ----------
+  function today() { return new Date().toISOString().slice(0, 10); }
+  function save() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ date: today(), trips: trips })); } catch (e) { /* storage may be unavailable; the star still works */ }
+  }
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY); if (!raw) return;
+      var rec = JSON.parse(raw);
+      if (rec.date !== today() && rec.trips && rec.trips.length) {
+        var m = rec.trips.filter(function (t) { return t.mirror; });
+        if (m.length) yesterday = m[m.length - 1];             // her last trip, another day: a hollow point at trip 0
+      }
+    } catch (e) { /* nothing stored, or storage refused; that's fine */ }
+  }
+
+  load(); tripWord(); draw();
+})();
+
+// ---------- the brain bench: two views, the hole, and the star run through two brains ----------
+(function () {
+  'use strict';
+  var svg = document.getElementById('bmap'), spots = document.getElementById('bspots');
+  var OUT = { prefrontal:[165,300,115,150,0,false], motor:[400,200,40,145,-12,false], ips:[620,235,95,60,-10,false], v1:[800,430,55,95,0,false],
+              cerebellum:[610,650,160,100,0,false], hippocampus:[430,520,85,35,-8,true], thalamus:[455,365,45,32,0,true] };
+  var IN  = { prefrontal:[230,420,150,200,0,false], motor:[555,170,60,95,0,false], v1:[1070,560,90,120,0,false], cerebellum:[950,880,190,175,0,false],
+              hippocampus:[480,745,110,40,10,true], thalamus:[615,545,85,55,0,false] };
+  var view = 'outside', lit = [], henry = false, hole = false;
+  function show(id, on) { document.getElementById(id).hidden = !on; }
+  function word(id, fn) { var el = document.getElementById(id); el.addEventListener('click', fn); el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } }); }
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  function setView(v) {
+    view = v;
+    document.getElementById('bv-outside').style.display = v === 'outside' ? '' : 'none';
+    document.getElementById('bv-inside').style.display = v === 'inside' ? '' : 'none';
+    svg.setAttribute('viewBox', v === 'outside' ? '-130 0 1016 960' : '-160 0 1414 1330');
+    drawMarks(); drawHole(); draw();
+  }
+  function spotsFor(id) {
+    var geo = (view === 'outside' ? OUT : IN)[id]; if (!geo) return '';
+    if (henry && hole && id === 'hippocampus') return '';
+    var cx = geo[0], cy = geo[1], rx = geo[2], ry = geo[3], rot = geo[4] * Math.PI / 180, deep = geo[5], scale = view === 'outside' ? 1 : 1254 / 886;
+    var n = Math.round(rand(9, 14) * 1.6), s = '<g class="spot" filter="url(#' + (deep ? 'bblur-deep' : 'bblur') + ')" opacity="' + (deep ? .94 : 1) + '">';
+    for (var i = 0; i < n; i++) { var u = Math.sqrt(Math.random()) * 0.85, th = rand(0, Math.PI * 2), ex = u * rx * Math.cos(th), ey = u * ry * Math.sin(th);
+      var x = cx + ex * Math.cos(rot) - ey * Math.sin(rot), y = cy + ex * Math.sin(rot) + ey * Math.cos(rot), r = rand(9, 20) * scale * 1.27, d = rand(1.2, 3.2).toFixed(2), dl = rand(0, 3).toFixed(2);
+      for (var k = 0; k < 2; k++) s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + r.toFixed(1) + '" fill="url(#bg)" style="--d:' + d + 's;--delay:-' + dl + 's"/>'; }
+    return s + '</g>';
+  }
+  function draw() { spots.innerHTML = lit.map(spotsFor).join(''); }
+  function light(id) { if ((OUT[id] || IN[id]) && lit.indexOf(id) < 0) { lit.push(id); draw(); } }
+
+  var MARKS = { outside: { eye:[-70,420], hand:[590,905] }, inside: { eye:[-95,590], hand:[860,1290] } };
+  function drawMarks() {
+    var m = MARKS[view], k = view === 'outside' ? 1 : 1.4, out = '', e = m.eye, h = m.hand;
+    out += '<circle class="mark" cx="' + e[0] + '" cy="' + e[1] + '" r="' + 16*k + '"/><circle cx="' + e[0] + '" cy="' + e[1] + '" r="' + 6*k + '" fill="#2E5090"/><text class="mark-label" x="' + e[0] + '" y="' + (e[1] + 36*k) + '" text-anchor="middle">eye</text>';
+    out += '<path class="mark" d="M' + (h[0]-14*k) + ' ' + (h[1]+8*k) + ' v-' + 20*k + ' m7 0 v-' + 8*k + ' m7 ' + 8*k + ' v-' + 12*k + ' m7 ' + 12*k + ' v-' + 6*k + ' m0 ' + 6*k + ' q0 ' + 22*k + ' -14 ' + 22*k + ' h-' + 14*k + ' q-14 0 -14 -' + 22*k + '"/><text class="mark-label" x="' + h[0] + '" y="' + (h[1] + 44*k) + '" text-anchor="middle">hand</text>';
+    document.getElementById('bmarks').innerHTML = out;
+  }
+  function drawHole() {
+    var g = document.getElementById('bhole'); if (!hole) { g.innerHTML = ''; return; }
+    var geo = (view === 'outside' ? OUT : IN).hippocampus, k = view === 'outside' ? 1 : 1.4;
+    var t = 'transform="rotate(' + geo[4] + ' ' + geo[0] + ' ' + geo[1] + ')"';
+    g.innerHTML = '<ellipse class="hole-fill" cx="' + geo[0] + '" cy="' + geo[1] + '" rx="' + geo[2] + '" ry="' + geo[3] + '" ' + t + (view === 'outside' ? ' style="opacity:.55"' : '') + '/>' +
+                  '<ellipse class="hole-edge" cx="' + geo[0] + '" cy="' + geo[1] + '" rx="' + geo[2] + '" ry="' + geo[3] + '" ' + t + '/>' +
+                  '<text class="hole-label" x="' + (geo[0] - geo[2] - 10*k) + '" y="' + (geo[1] + geo[3] + 48*k) + '" text-anchor="start" style="font-size:' + 44*k + 'px">removed, 1953</text>';
+  }
+
+  // ---- the tap: turn the brain over, shimmer, then the hole ----
+  function reveal() {
+    if (hole || document.getElementById('b-tap').hidden) return;
+    show('b-tap', false); svg.style.cursor = ''; setView('inside'); lit = ['hippocampus']; draw();
+    setTimeout(function () { lit = []; hole = true; drawHole(); draw(); }, 1800);
+  }
+  word('b-tap', reveal);
+  svg.addEventListener('click', reveal); svg.style.cursor = 'pointer';   // the brain itself is the tap target too
+
+  // ---- pathways ----
+  function spline(pts) { var out = [], n = pts.length; for (var i = 0; i < n - 1; i++) { var p0 = pts[Math.max(0, i-1)], p1 = pts[i], p2 = pts[i+1], p3 = pts[Math.min(n-1, i+2)]; for (var t = 0; t < 1; t += 0.04) { var t2 = t*t, t3 = t2*t; out.push([0.5*((2*p1[0]) + (-p0[0]+p2[0])*t + (2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*t2 + (-p0[0]+3*p1[0]-3*p2[0]+p3[0])*t3), 0.5*((2*p1[1]) + (-p0[1]+p2[1])*t + (2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*t2 + (-p0[1]+3*p1[1]-3*p2[1]+p3[1])*t3)]); } } out.push(pts[n-1]); var L = [0]; for (var j = 1; j < out.length; j++) L.push(L[j-1] + Math.hypot(out[j][0]-out[j-1][0], out[j][1]-out[j-1][1])); return { pts: out, L: L, len: L[L.length-1] }; }
+  function at(sp, f) { var d = f * sp.len, i = 1; while (i < sp.L.length && sp.L[i] < d) i++; if (i >= sp.L.length) return sp.pts[sp.pts.length-1]; var a = sp.pts[i-1], b = sp.pts[i], u = (d - sp.L[i-1]) / ((sp.L[i]-sp.L[i-1]) || 1); return [a[0] + (b[0]-a[0])*u, a[1] + (b[1]-a[1])*u]; }
+  function pathD(sp) { return sp.pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' '); }
+
+  var STAR = [
+    { to:'prefrontal', from:'hippocampus', ms:150, deep:true, memory:true, route:[[430,520],[300,420],[165,300]],
+      you:'Before you begin: experience sends conscious thought the last trip, the bumps and the feeling. You already expect this to be hard.',
+      henry:'Before he begins: nothing. Henry has no last trip to remember. The star is new, and he is cheerful about it.' },
+    { to:'thalamus', ms:35, deep:true, route:[[-70,420],[80,470],[300,430],[455,365]], line:'35 ms: the eye sends where the dot is.' },
+    { to:'v1', ms:25, deep:true, route:[[455,365],[600,420],[720,450],[800,430]], line:'60 ms: the dot arrives where seeing starts.' },
+    { to:'ips', ms:60, deep:false, route:[[800,430],[740,320],[620,235]], line:'120 ms: the parietal cortex works out where the hand must be, mirror and all.' },
+    { to:'motor', ms:40, deep:false, route:[[620,235],[510,180],[400,200]], line:'160 ms: the moving strip sends the order.' },
+    { to:'cerebellum', ms:20, deep:true, route:[[400,200],[480,420],[610,650]], line:'180 ms: a copy goes to the cerebellum, which compares the order with what the hand did last time.' },
+    { to:'motor', ms:20, deep:true, route:[[610,650],[520,420],[400,200]], line:'200 ms: the cerebellum sends back a correction. This is the part that learns, and it works the same in both brains.' },
+    { to:'hand', ms:100, deep:true, route:[[400,200],[450,420],[500,650],[515,850],[590,905]], line:'300 ms: the corrected order reaches the hand.' },
+    { to:'hippocampus', from:'ips', ms:120, deep:true, memory:true, route:[[620,235],[520,400],[430,520]],
+      you:'Afterwards: the trip is sent to experience and written down, bumps and all. Tomorrow you will remember that it was hard.',
+      henry:'Afterwards: the trip is sent to be written down. It reaches the place where experience was. Nothing is there, and the signal goes out. Tomorrow the star will be new again. His hand will still know it.' }
+  ];
+  var run = null, speedFactor = 15;
+  function readSpeed() { return 41 - +document.getElementById('b-speed').value; }
+  function prepare() {
+    setView('outside'); lit = []; draw(); document.getElementById('b-lines').innerHTML = '';
+    var roads = document.getElementById('broads'); roads.innerHTML = '';
+    var legs = STAR.map(function (leg) {
+      var skip = henry && leg.memory && leg.from === 'hippocampus';          // Henry has nothing to remember
+      var dies = henry && leg.memory && leg.to === 'hippocampus';            // and nowhere to write it down
+      var sp = spline(leg.route), el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      el.setAttribute('class', 'road' + (leg.deep ? ' deep' : '')); el.setAttribute('d', pathD(sp)); el.style.strokeDasharray = sp.len + ' ' + sp.len; el.style.strokeDashoffset = sp.len; roads.appendChild(el);
+      return { leg: leg, sp: sp, el: el, skip: skip, dies: dies, text: leg.memory ? (henry ? leg.henry : leg.you) : leg.line };
+    });
+    var st = document.createElement('div'); st.className = 'start'; st.textContent = henry ? "Henry's brain, tracing the star." : 'Your brain, tracing the star.'; document.getElementById('b-lines').appendChild(st);
+    ['b-again','b-step','b-clear','b-speed-row'].forEach(function (id) { show(id, true); });
+    document.getElementById('b-yours').classList.toggle('on', !henry); document.getElementById('b-henry').classList.toggle('on', henry);
+    return legs;
+  }
+  function addLine(i, t) { var box = document.getElementById('b-lines'); if (box.querySelector('[data-leg="' + i + '"]')) return; var d = document.createElement('div'); d.className = 'line'; d.dataset.leg = i; d.textContent = t; d.tabIndex = 0; d.addEventListener('click', function () { replayLeg(i); }); box.appendChild(d); }
+  function replayLeg(i) { if (!run) return; var L = run.legs[i]; lit = (L.skip || L.dies) ? [] : [L.leg.to]; draw(); run.legs.forEach(function (x, k) { x.el.classList.toggle('faint', k === i && !x.skip); if (k === i) x.el.style.strokeDashoffset = x.dies ? x.sp.len * 0.15 : 0; }); document.querySelectorAll('#b-lines .line').forEach(function (el) { el.classList.toggle('on', +el.dataset.leg === i); }); }
+  function start(stepping) {
+    var legs = prepare(); run = { legs: legs, leg: 0, t0: performance.now(), elapsed: 0, stepping: !!stepping, done: false };
+    if (stepping) return; requestAnimationFrame(tick);
+  }
+  function tick(now) {
+    if (!run || run.done || run.stepping) return;
+    var brainMs = (now - run.t0) / speedFactor, acc = 0, html = '';
+    for (var i = 0; i < run.legs.length; i++) {
+      var L = run.legs[i];
+      if (L.skip) { if (brainMs >= acc && !L.arrived) { L.arrived = true; addLine(i, L.text); } continue; }
+      var f = Math.min(1, Math.max(0, (brainMs - acc) / L.leg.ms)), fmax = L.dies ? 0.85 : 1;
+      if (f > 0) { L.el.style.strokeDashoffset = L.sp.len * (1 - Math.min(f, fmax)); L.el.classList.add('faint'); }
+      if (f >= 1 && !L.arrived) { L.arrived = true; if (!L.dies) light(L.leg.to); addLine(i, L.text); }
+      if (f > 0 && f < 1) { var fade = L.dies && f > 0.6 ? Math.max(0, 1 - (f - 0.6) / 0.25) : 1; for (var k = 8; k >= 0; k--) { var q = at(L.sp, Math.min(fmax, Math.max(0, f - k*0.02))); html += '<circle cx="' + q[0].toFixed(1) + '" cy="' + q[1].toFixed(1) + '" r="' + (14 - k) + '" fill="url(#bg)" opacity="' + ((1 - k/9) * fade).toFixed(2) + '"' + (L.leg.deep ? ' filter="url(#bblur)"' : '') + '/>'; } }
+      acc += L.leg.ms;
+    }
+    document.getElementById('bcomet').innerHTML = html;
+    if (brainMs >= acc) { run.done = true; document.getElementById('bcomet').innerHTML = ''; return; }
+    requestAnimationFrame(tick);
+  }
+  function stepOnce() {
+    if (!run || !run.stepping || run.leg >= run.legs.length) { start(true); return; }
+    var L = run.legs[run.leg];
+    if (!L.skip) { L.el.style.strokeDashoffset = L.dies ? L.sp.len * 0.15 : 0; L.el.classList.add('faint'); if (!L.dies) light(L.leg.to); }
+    addLine(run.leg, L.text); run.leg += 1;
+  }
+  function stopRun() { run = null; lit = []; draw(); document.getElementById('broads').innerHTML = ''; document.getElementById('bcomet').innerHTML = ''; document.getElementById('b-lines').innerHTML = ''; ['b-again','b-step','b-clear','b-speed-row'].forEach(function (id) { show(id, false); }); ['b-yours','b-henry'].forEach(function (id) { document.getElementById(id).classList.remove('on'); }); }
+  function clearRun() { if (!run) return; var order = run.legs.map(function (L) { return L.leg.to; }); var i = 0; (function next() { if (!run) return; if (i < order.length) { lit = lit.filter(function (id) { return id !== order[i]; }); draw(); i += 1; setTimeout(next, 300); return; } run.legs.forEach(function (L) { L.el.classList.remove('faint'); }); document.getElementById('bcomet').innerHTML = ''; document.querySelectorAll('#b-lines .line').forEach(function (el) { el.classList.remove('on'); }); })(); }
+  word('b-yours', function () { henry = false; speedFactor = readSpeed(); start(false); });
+  word('b-henry', function () { henry = true; speedFactor = readSpeed(); start(false); });
+  word('b-again', function () { speedFactor = readSpeed(); start(false); });
+  word('b-step', function () { if (!run || !run.stepping) start(true); else stepOnce(); });
+  word('b-clear', clearRun);
+  document.getElementById('b-speed').addEventListener('input', function () { speedFactor = readSpeed(); });
+
+  // ---- the story-image rule: each picture belongs to a stretch of text. It is visible while that
+  //      stretch is on screen; when two stretches are on screen, the one nearer the middle wins.
+  var article = document.querySelector('article'), bench = document.getElementById('bench'), current = -1, pending = false;
+  function surgeryEnter() { hole = false; henry = false; svg.style.cursor = 'pointer'; show('b-tap', true); show('b-yours', false); show('b-henry', false); setView('outside'); }
+  function compareEnter() { hole = true; henry = false; svg.style.cursor = ''; show('b-tap', false); show('b-yours', true); show('b-henry', true); setView('outside'); }
+  var PICTURES = [
+    { el: document.getElementById('side-star'), from: article.querySelector('h1'),           to: document.getElementById('p-start') },
+    { el: bench, enter: surgeryEnter, leave: stopRun, from: document.getElementById('h-henry'),   to: document.getElementById('p-brenda-end') },
+    { el: bench, enter: compareEnter, leave: stopRun, from: document.getElementById('h-two'),     to: document.getElementById('p-end') }
+  ];
+  PICTURES.forEach(function (p, i) { p.el.classList.add('fade'); p.el.style.opacity = i === 0 ? 1 : 0; p.el.hidden = i !== 0; });
+  current = 0;
+  function choose() {
+    pending = false;
+    var vh = window.innerHeight, mid = vh / 2, best = -1, bestD = Infinity;
+    PICTURES.forEach(function (p, i) {
+      var top = p.from.getBoundingClientRect().top, bot = p.to.getBoundingClientRect().bottom;
+      if (bot < 0 || top > vh) return;                                   // none of this stretch is on screen
+      var d = top > mid ? top - mid : bot < mid ? mid - bot : 0;         // distance from the middle of the screen
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    if (best === current) return;
+    var old = current; current = best;
+    if (old >= 0) PICTURES[old].el.style.opacity = 0;
+    setTimeout(function () {
+      if (current !== best) return;
+      if (old >= 0) { if (PICTURES[old].leave) PICTURES[old].leave(); PICTURES[old].el.hidden = true; }
+      if (best >= 0) { var P = PICTURES[best]; if (P.enter) P.enter(); P.el.hidden = false; requestAnimationFrame(function () { P.el.style.opacity = 1; }); }
+    }, old >= 0 ? 400 : 0);
+  }
+  function onScroll() { if (!pending) { pending = true; requestAnimationFrame(choose); } }
+  document.addEventListener('scroll', onScroll, true);                   // catches the window and any scrolling wrapper
+  window.addEventListener('resize', onScroll);
+  choose();
+  setView('outside');
+})();
+</script>

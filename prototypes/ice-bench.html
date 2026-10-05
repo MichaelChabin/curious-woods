@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../cw-deploys/art/map-icon-256.png">
+<link rel="apple-touch-icon" href="../cw-deploys/art/map-icon-256.png">
+<!--
+  ice-bench.html — PROTOTYPE, not served: the sea-level bench with the ice from ICE-6G_C.
+  Kept out of cw-deploys/ until Peltier's group says yes to publishing ICE-6G-derived
+  outlines (email sent by Michael, 29 Sep 2026). Run from the _CW root server
+  (http://localhost:8766/prototypes/ice-bench.html). Was: sea-level-bench.html — bench: time on the map, the sea first. The moving world on the
+  North Sea, a slider from 20,000 years ago to today, and one line saying how far down the
+  sea was. The sea level comes from ../../stories/sea-level.json (Lambeck et al. 2014,
+  approximate); map.js paints what it exposes from the pyramid's shallow-sea layer.
+  Spec: CWVault/claude/Spec-Maps.md, "Time on the map".
+-->
+<title>The ice and the sea — prototype</title>
+<style>
+  :root { --cw-parchment: #f4f1e8; --cw-separator: #c8b89a; --cw-ink: #2a2620; --cw-copper: #b87333; }
+  html, body { background: var(--cw-parchment); color: var(--cw-ink); }
+  body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
+  article { max-width: 700px; margin: 0 auto; padding: 40px 40px 80px 40px; box-sizing: border-box; }
+  article h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0 0 1.4em 0; }
+  article p { margin: 0 0 1em 0; }
+  .when { font-size: 18px; margin: 1.2em 0 0.4em 0; min-height: 1.4em; }
+  .years { width: 100%; accent-color: var(--cw-copper); margin: 0; }
+  .ends { display: flex; justify-content: space-between; font-size: 13px; color: #7a6e60; margin-top: 2px; }
+  .note { font-size: 14px; color: #7a6e60; border-top: 0.5px solid var(--cw-separator); margin-top: 3em; padding-top: 1.2em; }
+  @media (max-width: 800px) { article { padding: 24px 16px 60px 16px; } body { font-size: 18px; } }
+</style>
+</head>
+<body>
+<article>
+  <h1>The ice and the sea</h1>
+  <p>Below is Europe and the North Atlantic. Move the slider back in time and watch the ice come south and the sea go down.</p>
+  <div id="map"></div>
+  <div class="when" id="when"></div>
+  <input class="years" id="years" type="range" min="0" max="20000" step="100" value="12000" aria-label="years ago">
+  <div class="ends"><span>20,000 years ago</span><span>today</span></div>
+  <p class="note">A bench, not a story. The sea level is one global figure from a published reconstruction, and approximate; the land also rose where the ice left, and this does not show that. The ice is the ice that existed then and not now, from ICE-6G_C (VM5a): Peltier, Argus and Drummond (2015); Argus et al. (2014). Its grid is one degree, so its edges are drawn soft.</p>
+</article>
+
+<script src="../cw-deploys/js/map.js?v=2026-09-29c"></script>
+<script>
+var CW_VERSION = '2026-09-29 c94177d'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+
+var slider = document.getElementById('years'), when = document.getElementById('when');
+// The slider runs from 20,000 years ago at the left to today at the right.
+slider.value = 20000 - 12000;
+function yearsAgo() { return 20000 - (+slider.value); }
+function levelAt(points, ago) {
+  for (var i = 0; i < points.length - 1; i++) {
+    var a = points[i], b = points[i + 1];                 // points run from long ago to today
+    if (ago <= a[0] && ago >= b[0]) return a[1] + (b[1] - a[1]) * (a[0] - ago) / (a[0] - b[0]);
+  }
+  return ago > points[0][0] ? points[0][1] : 0;
+}
+function say(ago, m) {
+  if (ago === 0) return 'Today.';
+  var years = ago.toLocaleString('en-GB') + ' years ago';
+  if (m > -1) return years + ' · the sea about where it is today';
+  return years + ' · the sea about ' + Math.round(-m) + ' metres lower than today';
+}
+// The map draws as soon as the world is here; the curve arrives after and wakes the slider.
+// If either fails, the page says so rather than showing an empty space.
+var marks = [
+  { type: 'place', lat: 51.51, lon: -0.13, name: 'London', minor: true },
+  { type: 'place', lat: 52.37, lon: 4.9, name: 'Amsterdam', minor: true },
+  { type: 'place', lat: 55.68, lon: 12.57, name: 'Copenhagen', minor: true },
+  { type: 'note', lat: 54.7, lon: 2.5, text: 'Dogger Bank', water: true }
+];
+var map = null, curve = null, ice = null;
+// A page opened from the disk (file://) may not fetch other files, so nothing here would load.
+var FROM_DISK = location.protocol === 'file:';
+var AGAIN = FROM_DISK ? 'This page was opened from the file on disk; open it from curiouswoods.org instead.' : 'Reloading the page usually brings it back.';
+function update() {
+  var ago = yearsAgo();
+  if (!curve) { when.textContent = ''; return; }
+  var m = levelAt(curve, ago);
+  if (map) { map.setSeaLevel(m); if (ice) map.setIce(ice, ago); }
+  when.textContent = say(ago, m);
+}
+slider.addEventListener('input', update);
+cwMap.load('../cw-deploys/art/maps/world-pyramid.json').then(function (world) {
+  map = cwMap(document.getElementById('map'), world, marks, { fit: { west: -30, south: 42, east: 40, north: 72 } });
+  update();
+}).catch(function (e) {
+  console.error(e);
+  document.getElementById('map').textContent = 'The map did not load. ' + AGAIN;
+});
+fetch('ice/ice-outlines.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (j) { ice = j; update(); })
+  .catch(function (e) { console.error('ice', e); });
+fetch('../cw-deploys/stories/sea-level.json', { cache: 'no-cache' }).then(function (r) {
+  if (!r.ok) throw new Error('sea-level.json ' + r.status);
+  return r.json();
+}).then(function (j) { curve = j.points; update(); }).catch(function (e) {
+  console.error(e);
+  when.textContent = FROM_DISK ? '' : 'The sea levels did not load. Reloading the page usually brings them back.';
+});
+</script>
+</body>
+</html>

@@ -67,7 +67,8 @@ function create(opts) {
     return { ops: function () { return operationLog; }, set: function (l) { operationLog = l; replayLog(false); },
              init: initLog, append: appendOp, points: points, lines: lines, circles: circles,
              segs: logicalSegments, arcs: logicalArcs, fills: fills, checkAndFill: checkAndFill,
-             dist: dist, getAngle: getAngle, angleBetween: angleBetween };`;
+             dist: dist, getAngle: getAngle, angleBetween: angleBetween,
+             face: (typeof findFaceAround === 'function') ? findFaceAround : null };`;
   const lab = new Function(...names, body)(...names.map(n => stubs[n]));
   lab.init();
 

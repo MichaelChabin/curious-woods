@@ -421,8 +421,11 @@
     // htw: the How-this-works items served; map: whether Show map is there; madeWord: the
     // word that brings the making back from Just the glass (Michael, 1 Oct 2026: at
     // circles the column is Circles, Color, New Open Save, Just the glass / Show lines).
-    circles: { circle: true, line: false, htw: ['circles', 'color'], map: false, madeWord: 'Show lines' },
-    both:    { circle: true, line: true, htw: ['construction', 'shapes', 'color', 'eraser'], map: true, madeWord: 'Show the making' },
+    // fill: how a shape takes colour — 'edge' (lead its edges and they close) or 'tap' (tap inside it
+    // with a colour chosen); measure: a circle measured while it is drawn. Both off on every level
+    // (2 Oct 2026, Glass 1: Circles asks for them per mount); a level may own them later.
+    circles: { circle: true, line: false, htw: ['circles', 'color'], map: false, madeWord: 'Show lines', fill: 'edge', measure: false },
+    both:    { circle: true, line: true, htw: ['construction', 'shapes', 'color', 'eraser'], map: true, madeWord: 'Show the making', fill: 'edge', measure: false },
     // Named, not built: the spine's steps, arriving in this order.
     lines: null, grid: null, rectangles: null, regions: null, plots: null
   };
@@ -437,6 +440,11 @@ var levelName = opts.level || 'both';
 if (!LEVELS.hasOwnProperty(levelName)) { console.warn('glass: no level named "' + levelName + '"; serving both'); levelName = 'both'; }
 else if (!LEVELS[levelName]) { console.warn('glass: level "' + levelName + '" is named but not built yet; serving both'); levelName = 'both'; }
 var POWERS = LEVELS[levelName];
+var FILL_MODE = (opts.fill === 'tap' || opts.fill === 'edge') ? opts.fill : (POWERS.fill || 'edge');
+var MEASURE = (opts.measure !== undefined) ? !!opts.measure : !!POWERS.measure;
+// On a pointer device, tap-to-fill with a colour chosen shows a small ring (a PNG: Safari takes
+// no SVG cursor), falling back to the crosshair. On touch there is no cursor.
+var RING_CURSOR = 'url("' + BASE + 'art/icons/ring-cursor.png") 8 8, crosshair';
 
 root.classList.add('cw-glass');
 if (!root.hasAttribute('tabindex')) root.tabIndex = 0;
@@ -2140,6 +2148,149 @@ function findClosedRegionEdges() {
     return orderedEdges.length === adj.size ? orderedEdges : null;
 }
 
+// ── The shape under a tap (2 Oct 2026, tap to fill at Glass 1: Circles) ──────────────
+// The module has no notion of a face: findClosedRegionEdges only checks that the edges
+// already leaded form one cycle. This finds the enclosed shape around a world point from
+// the arrangement itself. The half-edges are every logical arc both ways and every logical
+// segment both ways; vertices are point ids. From the point, go to the nearest edge; walk
+// the boundary keeping the shape on the left (an arc anticlockwise when the point is
+// inside its circle, clockwise when outside; a segment with the point on its left), and
+// at every vertex take the next half-edge clockwise from the one we arrived by — the
+// edges at a vertex ordered by their tangent direction there, two with the same tangent
+// (circles touching at the vertex) ordered by curvature. A walk that closes with the
+// shape on its left has a positive signed area and holds the point; one that traced the
+// outside of something has a negative area and is abandoned for the next-nearest edge.
+// A circle nothing crosses has no arcs in the graph; it is a candidate on its own, one
+// arc of sweep 2π. Of every candidate that holds the point, the smallest wins, so a
+// circle inside a shape fills itself and not the shape round it. Two circles that do not
+// cross leave a ring: the walk finds the outer boundary and the fill covers the inner
+// disc; the smallest-on-top order hides that, as it hides overlapping fills today — the
+// same temporary fix, not region subtraction. The record it returns is exactly what
+// checkAndFill writes, so nothing downstream knows the difference.
+function findFaceAround(wx, wy) {
+    var TAU = 2 * Math.PI;
+    var E = [];
+    logicalArcs.forEach(function(arc, key) {
+        var ci = circles.get(arc.circIdx), ce = ci && points.get(ci.centerId); if (!ci || !ce) return;
+        var pA = points.get(arc.pointAId), pB = points.get(arc.pointBId); if (!pA || !pB) return;
+        var aA = getAngle(pA.x, pA.y, ce), aB = getAngle(pB.x, pB.y, ce), sweep = normA(aB - aA);
+        if (sweep < 1e-9) sweep = TAU;
+        E.push({ type:'arc', key:key, a:arc.pointAId, b:arc.pointBId, circIdx:arc.circIdx, ce:ce, r:ci.radius, aA:aA, aB:aB, sweep:sweep, pA:pA, pB:pB });
+    });
+    logicalSegments.forEach(function(seg, key) {
+        var A = points.get(seg.pointAId), B = points.get(seg.pointBId); if (!A || !B) return;
+        E.push({ type:'seg', key:key, a:seg.pointAId, b:seg.pointBId, pA:A, pB:B });
+    });
+    // distance from the point to the piece of edge, and which side of it the point is
+    function edgeDist(e) {
+        if (e.type === 'arc') {
+            var t = getAngle(wx, wy, e.ce);
+            if (e.sweep >= TAU - 1e-9 || angleBetween(t, e.aA, e.aB)) return Math.abs(dist(wx, wy, e.ce.x, e.ce.y) - e.r);
+            return Math.min(dist(wx, wy, e.pA.x, e.pA.y), dist(wx, wy, e.pB.x, e.pB.y));
+        }
+        var cx = e.pB.x - e.pA.x, cy = e.pB.y - e.pA.y, lq = cx*cx + cy*cy; if (!lq) return Infinity;
+        var tv = Math.max(0, Math.min(1, ((wx - e.pA.x)*cx + (wy - e.pA.y)*cy) / lq));
+        return dist(wx, wy, e.pA.x + tv*cx, e.pA.y + tv*cy);
+    }
+    // the direction a half-edge leaves its start, and its curvature there (+ turning left)
+    function start(h) { return h.dir > 0 ? h.e.a : h.e.b; }
+    function end(h)   { return h.dir > 0 ? h.e.b : h.e.a; }
+    function leaving(h) {
+        var e = h.e;
+        if (e.type === 'seg') { var P = h.dir > 0 ? e.pA : e.pB, Q = h.dir > 0 ? e.pB : e.pA; return { ang: Math.atan2(Q.y - P.y, Q.x - P.x), k: 0 }; }
+        if (h.dir > 0) return { ang: e.aA + Math.PI / 2, k: 1 / e.r };
+        return { ang: e.aB - Math.PI / 2, k: -1 / e.r };
+    }
+    function arriving(h) {   // the direction of travel on reaching the end
+        var e = h.e;
+        if (e.type === 'seg') return leaving(h).ang;
+        return h.dir > 0 ? e.aB + Math.PI / 2 : e.aA - Math.PI / 2;
+    }
+    // every half-edge, indexed by its start vertex
+    var H = [], at = {};
+    E.forEach(function(e) {
+        [1, -1].forEach(function(dir) { var h = { e:e, dir:dir }; H.push(h); var v = start(h); (at[v] = at[v] || []).push(h); });
+    });
+    function sameHalf(h, g) { return h.e === g.e && h.dir === g.dir; }
+    // at a vertex: the half-edges in anticlockwise order, same tangent ordered by curvature
+    function ordered(v) {
+        var list = (at[v] || []).map(function(h) { var l = leaving(h); return { h:h, ang:normA(l.ang), k:l.k }; });
+        list.sort(function(p, q) {
+            var d = p.ang - q.ang;
+            if (Math.abs(d) < 1e-6 || Math.abs(Math.abs(d) - TAU) < 1e-6) return p.k - q.k;
+            return d;
+        });
+        return list;
+    }
+    function nextAfter(h) {
+        var v = end(h), list = ordered(v);
+        var twinIdx = -1;
+        for (var i = 0; i < list.length; i++) if (list[i].h.e === h.e && list[i].h.dir === -h.dir) { twinIdx = i; break; }
+        if (twinIdx < 0) return null;
+        if (list.length === 1) return list[0].h;             // a dead end: turn back
+        return list[(twinIdx - 1 + list.length) % list.length].h;
+    }
+    function walk(h0) {
+        var cycle = [h0], h = h0, guard = H.length + 2;
+        while (guard-- > 0) {
+            var n = nextAfter(h); if (!n) return null;
+            if (sameHalf(n, h0)) return cycle;
+            cycle.push(n); h = n;
+        }
+        return null;
+    }
+    function record(cycle) {
+        var edges = cycle.map(function(h) {
+            var e = h.e;
+            if (e.type === 'seg') return { type:'seg', a:start(h), b:end(h) };
+            return h.dir > 0 ? { type:'arc', a:e.a, b:e.b, circIdx:e.circIdx, angleA:e.aA, angleB:e.aB, sweep:e.sweep }
+                             : { type:'arc', a:e.b, b:e.a, circIdx:e.circIdx, angleA:e.aB, angleB:e.aA, sweep:-e.sweep };
+        });
+        var poly = expandFillToPolygon({ edges: edges });
+        if (poly.length < 3) return null;
+        var signed = 0;
+        for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) signed += (poly[j].x + poly[i].x) * (poly[j].y - poly[i].y);
+        signed = -signed / 2;   // positive when the boundary runs anticlockwise in world coordinates
+        if (signed <= 0 || !pip(wx, wy, poly)) return null;
+        return { edges: edges, vertices: edges.map(function(d) { return d.a; }), area: signed };
+    }
+    var best = null;
+    // the arrangement: nearest edges first, each walked once with the shape on the left
+    var byDist = E.map(function(e) { return { e:e, d:edgeDist(e) }; }).sort(function(p, q) { return p.d - q.d; });
+    var tried = {};
+    for (var i = 0; i < byDist.length && i < 24; i++) {
+        var e = byDist[i].e, dir;
+        if (e.type === 'arc') dir = dist(wx, wy, e.ce.x, e.ce.y) < e.r ? 1 : -1;
+        else dir = ((e.pB.x - e.pA.x) * (wy - e.pA.y) - (e.pB.y - e.pA.y) * (wx - e.pA.x)) > 0 ? 1 : -1;
+        var h0 = { e:e, dir:dir }, k = e.key + ':' + dir; if (tried[k]) continue; tried[k] = true;
+        var cycle = walk(h0); if (!cycle) continue;
+        cycle.forEach(function(h) { tried[h.e.key + ':' + h.dir] = true; });
+        var face = record(cycle);
+        if (face) { best = face; break; }
+    }
+    // circles nothing crosses: one arc, the whole way round
+    circles.forEach(function(ci, idx) {
+        if (ci.pointsOnCircle.length >= 2) return;
+        var ce = points.get(ci.centerId); if (!ce) return;
+        if (dist(wx, wy, ce.x, ce.y) >= ci.radius) return;
+        var area = Math.PI * ci.radius * ci.radius;
+        if (best && best.area <= area) return;
+        var pid = ci.pointsOnCircle[0] || ci.edgeId, pt = points.get(pid);
+        var a0 = pt ? getAngle(pt.x, pt.y, ce) : 0;
+        best = { edges: [{ type:'arc', a:pid, b:pid, circIdx:idx, angleA:a0, angleB:a0, sweep:TAU }], vertices: [pid], area: area };
+    });
+    return best;
+}
+
+// Tap to fill: the shape under the tap takes the chosen colour, lead round it, as one
+// fill op in the record checkAndFill writes. No lead is laid and nothing is lifted.
+function fillFaceAt(wx, wy) {
+    var face = findFaceAround(wx, wy); if (!face) return false;
+    appendOp({ op:'fill', fillId:'fill:'+Date.now(), vertices:face.vertices, edges:face.edges, color:(state.palette.selected || FOREST_GLASS), opacity:1.0 });
+    playSound('fill');
+    return true;
+}
+
 function checkAndFill() {
     var edges = findClosedRegionEdges(); if (!edges) return;
     var fillId = 'fill:'+Date.now();
@@ -2424,6 +2575,7 @@ function render() {
         var sc=w2s(ghostCircle.center.x,ghostCircle.center.y);
         ctx.strokeStyle=COLORS.border; ctx.globalAlpha=0.4; ctx.lineWidth=PARAMS.circleWidth;
         ctx.beginPath(); ctx.arc(sc.x,sc.y,ghostCircle.radius*plane.zoom(),0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1;
+        if (MEASURE) drawMeasure(ghostCircle, sc);
     }
     if (snapTarget) {
         var s=w2s(snapTarget.x,snapTarget.y),pulse=0.7+0.3*Math.sin(Date.now()/200);
@@ -2438,7 +2590,8 @@ function render() {
         canvas.style.cursor = 'none';
         drawEraserCursor(mouseScreenPos.x, mouseScreenPos.y, eraserAngle);
     } else {
-        canvas.style.cursor = '';
+        // (state is declared below the render loop's first frame; hence the guard)
+        canvas.style.cursor = (FILL_MODE === 'tap' && typeof state === 'object' && state && state.workspaceTools['palette'] && state.palette.selected !== null) ? RING_CURSOR : '';
     }
 
     // Just the glass (ledger §9): the finished window shows glass, lead and
@@ -2630,6 +2783,44 @@ function drawAxisLabels() {
 }
 
 var alive = true, rafId = 0;
+// The circle measured as it is drawn (2 Oct 2026, measure: true): a thin radius from
+// the centre to the point on the ghost in the direction of the hand — the cursor while
+// free, the snap point once snapped — with its length beside it, and the area inside
+// the circle near its bottom. Units are the plane's, where 0 to 1 is one. A render hint
+// like the ghost itself: not in the log, not in replay, gone on release. The only
+// rounding is at the ≈, two places; a whole number of units reads as one.
+function measureText(word, v) {
+    var n = Math.round(v);
+    if (Math.abs(v - n) < 1e-9) return word + ': ' + CW.num.count(n);
+    return word + ' ≈ ' + CW.num.decimal(Math.round(v * 100), 2);
+}
+function drawMeasure(g, sc) {
+    var unit = plane.unitLength(); if (!(unit > 0)) return;
+    var hand = snapTarget ? { x: snapTarget.x, y: snapTarget.y } : s2w(mouseScreenPos.x, mouseScreenPos.y);
+    var dx = hand.x - g.center.x, dy = hand.y - g.center.y, len = Math.sqrt(dx*dx + dy*dy); if (!len) return;
+    var ex = g.center.x + dx / len * g.radius, ey = g.center.y + dy / len * g.radius;
+    var se = w2s(ex, ey);
+    ctx.save();
+    ctx.strokeStyle = COLORS.border; ctx.lineWidth = PARAMS.lineWidth; ctx.globalAlpha = 0.7;
+    ctx.beginPath(); ctx.moveTo(snap(sc.x), snap(sc.y)); ctx.lineTo(snap(se.x), snap(se.y)); ctx.stroke();
+    ctx.font = '11px Georgia, serif'; ctx.fillStyle = '#546A80'; ctx.globalAlpha = 0.85;
+    // the radius label off the line, on the side away from the hand: beside the line's
+    // nearer half, offset to whichever perpendicular points up the screen
+    var vx = se.x - sc.x, vy = se.y - sc.y, vl = Math.sqrt(vx*vx + vy*vy) || 1;
+    var px = -vy / vl, py = vx / vl; if (py > 0) { px = -px; py = -py; }
+    var lx = sc.x + vx * 0.4 + px * 12, ly = sc.y + vy * 0.4 + py * 12;
+    ctx.textAlign = (px < 0) ? 'right' : 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(measureText('radius', g.radius / unit), lx, ly);
+    // the area near the bottom of the circle, centred, only where there is room for it
+    var sr = g.radius * plane.zoom(), ay = sc.y + sr - 16;
+    if (sr > 48 && ay > 12 && ay < canvas.clientHeight - 6 && sc.x > 40 && sc.x < canvas.clientWidth - 40) {
+        var ru = g.radius / unit;
+        ctx.textAlign = 'center';
+        ctx.fillText(measureText('area', Math.PI * ru * ru), sc.x, ay);
+    }
+    ctx.restore();
+}
+
 function animate() { if (!alive) return; render(); rafId = requestAnimationFrame(animate); }
 animate();
 
@@ -2962,6 +3153,9 @@ function onDown(e) {
     // These are selectable (single click) and fadeable (double click).
     var hl=hitLC(world.x,world.y);
     if (hl && (hl.type==='segment' || hl.type==='arc')) {
+        // Tap to fill (2 Oct 2026): an edge belongs to two shapes, so a tap on it lays no
+        // lead and starts nothing; the shape is tapped inside.
+        if (FILL_MODE === 'tap') { lastTapTarget=null; return; }
         // Check for double-click on the same segment — could be fade or sweep start
         var isSameAsLast = false;
         if (lastTapTarget && lastTapTarget.type===hl.type && now-lastTapTime<THRESHOLDS.doubleClickTime) {
@@ -2994,6 +3188,7 @@ function onDown(e) {
     var bareHit = hitForEraser(world.x, world.y);
     var bareIdx = (bareHit && !bareHit.isCircle) ? bareHit.idx : -1;
     if (bareIdx >= 0) {
+        if (FILL_MODE === 'tap') { lastTapTarget=null; return; }
         var bareLast = lastTapTarget && lastTapTarget.type==='bare' && lastTapTarget.obj===bareIdx;
         if (bareLast && now-lastTapTime<THRESHOLDS.doubleClickTime) {
             eraserCandidate = { lineIdx: bareIdx, hit: null };
@@ -3298,6 +3493,9 @@ function onUp(e) {
             if (showGlass) { tryPaletteAction(world.x, world.y); return; }   // the finished window: colour, or nothing
             if (tryPaletteAction(world.x, world.y)) return;
             if (hitAnyLine(world.x,world.y)) return;
+            // Tap to fill (2 Oct 2026): with a colour chosen, a tap inside a closed shape
+            // colours it; in open ground it falls through to what a tap does today — undo.
+            if (FILL_MODE === 'tap' && state.palette.selected !== null && fillFaceAt(world.x, world.y)) return;
             // Rule and record meet at the click (decision 5): with the map
             // showing, a tap on a lattice intersection creates a recorded
             // point — the moment possibility becomes history. Inside the
@@ -3384,8 +3582,22 @@ canvas.addEventListener('pointerdown',  onDown);
 canvas.addEventListener('pointermove',  onMove);
 canvas.addEventListener('pointerup',    onUp);
 canvas.addEventListener('pointercancel', onUp);
+// A trackpad pinch in Safari is its own gesture event, and a page that does not claim it
+// gets zoomed whole, plane and window together (Michael, 3 Oct 2026). Claimed here and
+// turned into the plane's zoom by the gesture's scale, as the sampler does for a painting;
+// the wheel events Safari sends alongside it are ignored while the gesture lasts.
+var gestureBase = null;
+canvas.addEventListener('gesturestart', function(e) { e.preventDefault(); gestureBase = plane.zoom(); }, { passive:false });
+canvas.addEventListener('gesturechange', function(e) {
+    e.preventDefault();
+    if (gestureBase === null) gestureBase = plane.zoom();
+    plane.setZoom(gestureBase * e.scale);
+    syncCanvasNoteDOMs();
+}, { passive:false });
+canvas.addEventListener('gestureend', function(e) { e.preventDefault(); gestureBase = null; }, { passive:false });
 canvas.addEventListener('wheel', function(e) {
     e.preventDefault();
+    if (gestureBase !== null) return;
     plane.setZoom(plane.zoom()*(e.deltaY>0?0.9:1.1));
     syncCanvasNoteDOMs();
 }, { passive:false });
@@ -3432,6 +3644,7 @@ function loadContentJSON() {
                     stage.content = CONTENT.htw[stage.id].body.map(function(line) { return { text: line }; });
                 }
             });
+            if (typeof applyTipWords === 'function') applyTipWords();
         })
         .catch(function() { /* fallback to hardcoded defaults */ });
 }
@@ -3938,6 +4151,8 @@ function cxGenerateBuiltinPreviews() {
             .then(function(r){ return r.json(); })
             .then(function(data) {
                 if (!data.operations) return;
+                // What the log draws with, so a level can offer only what it can make (2 Oct).
+                cx.usesLines = data.operations.some(function(o) { return o.op === 'line'; });
                 var previewKey = 'cw-cx-builtin-png-v3-'+cx.key+'-'+data.operations.length;
                 var cached = null;
                 try { cached = localStorage.getItem(previewKey); } catch(e) {}
@@ -4537,7 +4752,14 @@ function buildPickerConstructions() {
     // set under another — the built-ins, which cannot be deleted or replaced. A heading
     // is present only when its set has something in it.
     var mine = cxGetAllEntries();
-    var standard = CX_BUILTINS.filter(function(cx) { return !mine.some(function(e) { return e.key === cx.key; }); });
+    // The standard set shows only what this level can make (Michael, 2 Oct 2026): at
+    // circles, a construction drawn with lines is not offered, so no replay draws a line
+    // before a story has given her lines. Her own constructions are hers whatever they hold.
+    var standard = CX_BUILTINS.filter(function(cx) {
+        if (mine.some(function(e) { return e.key === cx.key; })) return false;
+        if (!POWERS.line && cx.usesLines) return false;
+        return true;
+    });
     function heading(text) {
         var h = document.createElement('div'); h.className = 'picker-heading'; h.textContent = text;
         pickerGrid.appendChild(h);
@@ -4843,6 +5065,19 @@ var HTW_STAGES = [
 ];
 // The level decides which stages exist; the rest are simply absent, triggers included.
 HTW_STAGES = HTW_STAGES.filter(function(s) { return POWERS.htw.indexOf(s.id) >= 0; });
+// At tap-to-fill the two tips say so (2 Oct 2026; candidate words, for the voice pass).
+// Applied here and again when text/geometry-v1.json arrives, which rewrites the color tip.
+function applyTipWords() {
+    if (FILL_MODE !== 'tap') return;
+    HTW_STAGES.forEach(function(st) {
+        if (st.id === 'circles' && !st.content.some(function(c) { return /colour a shape/.test(c.text); })) {
+            var i = st.content.findIndex(function(c) { return /more circles/.test(c.text); });
+            st.content.splice(i < 0 ? st.content.length : i + 1, 0, { text: 'To colour a shape, tap Color, choose a colour, then tap inside the shape.' });
+        }
+        if (st.id === 'color') st.content[0] = { text: 'To colour a shape, tap a colour, then tap inside it.' };
+    });
+}
+applyTipWords();
 
 // Map from htw-item data-stage to actions
 var HTW_ACTIONS = {

@@ -205,6 +205,78 @@
       "lat": 59.51,
       "lon": 15.99,
       "weight": 1
+    },
+    "winchester": {
+      "name": "Winchester",
+      "lat": 51.06,
+      "lon": -1.31,
+      "weight": 1
+    },
+    "xativa": {
+      "name": "Xàtiva",
+      "lat": 38.99,
+      "lon": -0.52,
+      "weight": 1
+    },
+    "isfahan": {
+      "name": "Isfahan",
+      "lat": 32.65,
+      "lon": 51.67,
+      "weight": 3
+    },
+    "zhenjiang": {
+      "name": "Zhenjiang",
+      "lat": 32.19,
+      "lon": 119.42,
+      "weight": 1
+    },
+    "guangzhou": {
+      "name": "Guangzhou",
+      "lat": 23.13,
+      "lon": 113.26,
+      "weight": 3
+    },
+    "angkor": {
+      "name": "Angkor Wat",
+      "lat": 13.41,
+      "lon": 103.87,
+      "weight": 3
+    },
+    "cahokia": {
+      "name": "Cahokia",
+      "lat": 38.65,
+      "lon": -90.06,
+      "weight": 2
+    },
+    "tours": {
+      "name": "Tours",
+      "lat": 47.39,
+      "lon": 0.69,
+      "weight": 1
+    },
+    "salerno": {
+      "name": "Salerno",
+      "lat": 40.68,
+      "lon": 14.77,
+      "weight": 1
+    },
+    "palermo": {
+      "name": "Palermo",
+      "lat": 38.12,
+      "lon": 13.36,
+      "weight": 1
+    },
+    "tarsus": {
+      "name": "Tarsus",
+      "lat": 36.92,
+      "lon": 34.89,
+      "weight": 1
+    },
+    "antioch": {
+      "name": "Antioch",
+      "lat": 36.2,
+      "lon": 36.16,
+      "weight": 1
     }
   }
 }

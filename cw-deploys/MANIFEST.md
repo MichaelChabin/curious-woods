@@ -26,7 +26,7 @@ build step. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael
 the Hokusai story called it)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
 the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
 `experiments/maps/`, beside `render.py`, which makes the pictures it draws on. Loaded with a
-version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. 26 Sep 2026 (`?v=2026-09-26c` on all seven pages that load it): (27 Sep, `?v=2026-09-27`: the window's *close* is 13 px bold, was 11 px) the window's drag strip sticks on the window's top edge, not 18 px below it, so a tall scrolling window (the Darkness poem) no longer shows its words through a slit above the strip; the words fade under it. **`stories/world-events.json` and `stories/places.json` (22 Sep 2026)** — what the world owns,
+version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. 26 Sep 2026 (`?v=2026-09-26c` on all seven pages that load it): (27 Sep, `?v=2026-09-27`: the window's *close* is 13 px bold, was 11 px) the window's drag strip sticks on the window's top edge, not 18 px below it, so a tall scrolling window (the Darkness poem) no longer shows its words through a slit above the strip; the words fade under it. **`stories/world-events.json` and `stories/places.json` (22 Sep 2026; 2 Oct 2026: ten events and twelve places from The Glass Rose, 1079 to 1351 — Khayyam's calendar, Domesday, Shen Kuo, Cahokia, Abelard, Zhu Yu, Angkor Wat, Adelard, Xàtiva paper, blue-and-white; Isfahan to Cahokia, and five towns on Adelard's route)** — what the world owns,
 shared by every story: one record per event (year, when, place, label, title, text, and since
 27 Sep `weight`, 1 to 3) and one per place (name, lat, lon, `weight`). **`stories/sea-level.json`
 (29 Sep 2026)** — global sea level in metres by years ago, 20,000 to today, read from Lambeck et
@@ -1422,6 +1422,51 @@ backstop for the Claude Code session that lands the file.
   stripes and a monochrome toggle. With colour off and order the only channel, 6, 10 and
   14 render identical — so colour currently carries information rather than delight, and
   a second channel is required. Two candidates are in the bench. In progress.
+- **`the-glass-rose.html`** — **story: The Glass Rose** (built 2 Oct 2026 from `template-story.html`, per
+  `CWVault/claude/Prompt-Build-The-Glass-Rose.md`; Publishing-a-Story stage 2, at its own address and hung
+  nowhere). The first story of the geometry series and the door to the circles level of Glass Geometry
+  (`Geometry-Spine.md`, step 1). `placement: across`: the table is `js/glass.js` mounted at level `circles`
+  with the rose ready (`open: 'Rose'`, Chartres palette), in a host at the shell's width and three-quarters of the
+  window's height (full height was asked, but the lab takes the wheel and the finger, and with the table
+  filling the window the page could not be scrolled at all), directly under the date line; the lab's own column and words are the lab's and the page adds
+  none; no left column on the page. The words are Draft 10's, word for word (the Save paragraph still
+  names *Postcard*, which left the Save panel the same day — reported, not changed). Pictures, each with its
+  source beside it in the page: the north rose of Notre-Dame at full width as a `still` (Wikimedia Commons,
+  Ibex73, CC BY 4.0, 1920 wide, 742 KB; the caption says it is not sixfold), Villard de Honnecourt's geometry
+  page as a margin picture (BnF, public domain, 1280 wide), the Five Sisters window as a margin picture
+  (Wikimedia Commons, Stch2022, CC0, 900 wide). The York floor stack is left out for want of a licensed
+  file and named in a comment where it would go; the story's sentence about it stands. *Theophilus's World*
+  on the moving world, 1079 to 1365, the craft above the line and the world below, no far-away cards;
+  Adelard's route draws solid, because `timeline.js` has no dashed route. Pictures in
+  `art/stories/glass-rose/`; the gallery mark `art/gallery/the-glass-rose-gallery.png` and the tab icon
+  `art/icons/the-glass-rose-icon-256.png` are the rose drawn as a mark (seven circles, copper dots), not
+  in `gallery.json`. Stamp `2026-10-02 cf25ae5`.
+- **`glass-circles.html`** — experiment: **Glass 1: Circles** (2 Oct 2026, from the prompt Michael's chat wrote;
+  awaiting his look). The one `js/glass.js`, mounted at level `circles` with two powers no level owns yet:
+  `fill: 'tap'` and `measure: true`. **Tap to fill:** with Color open and a colour chosen, a tap inside a
+  closed shape colours it, lead round it, as one `fill` op in exactly the record `checkAndFill` writes, so
+  the renderer, replay, save, the picker and the harness read it unchanged; no lead is laid and nothing
+  lifted. A tap inside a pane recolours it; a tap in open ground undoes, as it always did, so a wrong pane is
+  one tap away from gone; a tap on an arc at this page lays no lead and starts nothing (an arc belongs to two
+  shapes); a tap on a point starts a circle. The shape under the tap is found by `findFaceAround`, beside
+  `findClosedRegionEdges`: a walk of the arrangement's arcs and segments keeping the shape on the left, the
+  edges at a vertex in tangent order with curvature breaking a tie, the nearest edges tried in turn; a
+  circle nothing crosses is its own candidate (one arc, sweep 2π); the smallest shape holding the point wins.
+  Checked in Node through the harness (`tools/glass-face-tests.js`): the rose's six petals and six curved
+  triangles, a tap just off the centre with its twelve arc ends, a lone circle, open ground, the vesica, two
+  touching circles, a ring and a square of segments. A ring's fill covers the inner disc and the smallest-on-
+  top order hides it, the same temporary fix as overlapping fills; no region subtraction. On a pointer
+  device with a colour chosen the cursor is `art/icons/ring-cursor.png` (17 px, hotspot 8 8), falling back to
+  the crosshair. **The circle measured as it is drawn:** a thin radius from the centre towards the hand, the
+  snap point once snapped, with *radius ≈ 0.87* beside it (*radius: 1* for a whole number of units) and
+  *area ≈ 2.36* inside near the bottom when there is room; units are the plane's; numbers through `CW.num`,
+  rounded only at the ≈; render hints like the ghost, gone on release, never in the log. The two tips say
+  so (candidate words, voice pass): Circles gains *To colour a shape, tap Color, choose a colour, then tap
+  inside the shape.*; Color's first line is *To colour a shape, tap a colour, then tap inside it.*
+  Opening Color chooses no colour, so the tip says choose. `?v=2026-10-03` on the four pages that load the
+  module; `?v=2026-10-03b` the same day: a trackpad pinch in Safari arrives as a gesture event and zoomed the
+  page whole, plane and window together (Michael's look; the committed lab did the same) — the canvas now
+  claims it and zooms the plane by its scale, ignoring the wheel while the gesture lasts. Stamp `2026-10-03 cf25ae5`.
 - **`glass-module-bench.html`** — bench: **Glass Geometry as a module, mounted twice** (1 Oct 2026; the
   extraction prompt's proof). Two boxes of ordinary size on one page, `js/glass.js` in each: the left at
   level `circles` with the rose ready behind a word of the bench's own (*Play the rose*), the right at
@@ -1562,6 +1607,9 @@ workbench: `brain-outside.jpg` and `brain-inside.png` (Michael's two watercolour
 `check-inside.png` (the render checks), and `make_overlay.py` (edit the REGIONS tables
 and re-run to move a region). Source material for a shipping app, so it lives outside
 the publish directory; the icon it produced is `cw-deploys/art/icons/brain-icon-256.png`.
+`build-sept12/` holds the 12 Sep cloud build scratch (`build.py`, the two page
+templates) found 5 Oct still sitting public and untracked in `experiments/brain/src/`
+— the 13 Sep move missed it; moved here, superseded by the shipped pages.
 
 `glass-panel-build-aug24.html` (frozen 1 Sep 2026) — the 24 Aug panel build of
 Glass Multiplication, `CW_VERSION 2026-08-24 e4cd030`, which sat uncommitted in
