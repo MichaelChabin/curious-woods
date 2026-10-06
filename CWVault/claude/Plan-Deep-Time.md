@@ -168,9 +168,8 @@ layout width, not its drawn width, or the scaled-up arrival makes it too big for
 host and the map's base both wanted the class name `cw-deep`, and the map's is now `cw-deep-base`;
 and the sea-level curve stops at 20,000 years, so this side of the seam but before the curve the map
 clamps to the ice-age low (130 m down) — honest-ish for the ice ages, but Stage 5 should give the sea
-a curve across them, or the map should say nothing. **Open:** the seam is not yet *felt* on a device;
-whether the globe should first show the pyramid's region as a window before pulling away (the plan's
-risk) is for Michael's eye.
+a curve across them, or the map should say nothing. *Michael, on the iPad, 6 Oct: "It works beautifully."* The seam is not felt; the globe does not need to
+show the pyramid's region as a window first, and the risk named above is closed. Stage 4 is done.
 `map.setTime(year)` reaches past the ice curve: a year older than the seam shows the globe
 with every piece of continent turned to where it was in that year, so dragging the marker
 moves them; a year younger shows the pyramid with the sea and the ice. Zoom in time is zoom in space: the
