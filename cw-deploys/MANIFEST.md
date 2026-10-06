@@ -60,6 +60,20 @@ along its span, points in astronomers' years with the source, the licence and ho
 numbers are: `people.json` (world population, Our World in Data's long-run series — HYDE 3.3,
 Gapminder, UN WPP — thinned to 73 points, CC BY 4.0) and `sea-level.json` (the readings of
 `stories/sea-level.json`, Lambeck et al. 2014, converted from years ago to the store's year).
+**`stories/plates/continents.json` (6 Oct 2026)** — GENERATED, never edited by hand: the continents
+in motion, for the deep-time Time Machine (`CWVault/claude/Plan-Deep-Time.md`, Stage 1).
+`tools/plates-from-gplates.py` (outside this folder, in `_CW/tools/`; needs `pip install pygplates
+plate-model-manager`, and fetches the model once into `~/Library/Caches/cw-plate-models/`) reads
+EarthByte's Merdith et al. 2021 model (a billion years, paleomagnetic frame, CC BY 4.0; citation and
+licence in the file) and writes `pieces` — 795 outlines of continent as they are today, simplified to
+three-quarters of a degree, each with its plate and the span of years it exists — and `plates` — each
+of 416 plates' finite rotation (pole lat, lon, angle) from today to every sampled age, every 5 million
+years to 540 and every 10 to 1000, kept only while the plate has a living piece — with `ages` and
+`grades` (how sure the positions are: crisp to 200 million years, latitude only to 540, a guess
+beyond, with the reason). A page turns each living piece by its plate's rotation at the year,
+interpolated as a rotation, and draws it: true motion, not stills (Michael, 6 Oct). 0.96 MB, 0.25 MB
+gzipped. The tool checks its own file against pyGPlates (0.0065° worst) and draws proof pictures
+with `--png`. Not yet read by any page; Stage 3 (the globe) will.
 **`stack.js` (22 Sep 2026)** — one picture slot, several pictures, in a loop: `cwStack(figure, steps)`,
 each step `{ src, w, h, alt, caption, name }`. A bold word under the caption names the next picture
 ("Next: the powder", "Back to the stone" on the last); the word moves the stack, never a tap on the

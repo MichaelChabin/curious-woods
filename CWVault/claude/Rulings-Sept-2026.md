@@ -133,3 +133,10 @@ A story's World section opens on the world as it was in the story's own year. Th
 
 ## What still needs a ruling
 Where the home-screen invitation appears (gallery on first visit, or at first Remember). Whether gallery size means anything, and whether the hang is fixed or shuffles. Whether the two-brain comparison should ever be side by side. Where the Remember inscription lives in a one-column story when Maya *is* present. Where After the Ice hangs and how it starts. Draft 3 of the star story document, to match the page.
+
+## Deep time (6 Oct 2026)
+Michael's rulings for the deep-time Time Machine, given as `claude/Plan-Deep-Time.md` Stage 0 wrote them ("the rulings as the plan has them"):
+1. **The tree, and six chunks.** The chunk tree is a file, `stories/deep-time.json`. Its cuts fall where the evidence changes kind (zircons alone to 4.4 billion, surviving rock from 4.0, undisputed fossils from 3.5, rock that records the air from 2.4, things hard enough to keep from 539 million, seafloor stripes from 200 million, ice cores at the end), and every bar carries one line saying what it is known from. The fifth chunk splits at 539: *the end of boredom* stops there, and a sixth, the visible world, runs from 539 to now.
+2. **How a deep line counts.** Deep lines say *ago* only, in billions, millions and thousands of years. The ordinary (BCE) reading is absent. *Years after zero* appears only on After the Ice and the lines below it. This settles the line CW-Date-Convention.md deferred.
+3. **The globe gesture.** Drag turns the globe, tilting for north and south and turning about the pole for east and west. Drawing happens only with a drawing tool chosen. This answers the question Spec-Map-Lab.md left open.
+And, earlier the same day: **the continents move for real** — pieces with plate identities and sampled rotations, each turned to its year — never a crossfade of stills.

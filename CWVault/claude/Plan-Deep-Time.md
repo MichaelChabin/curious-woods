@@ -43,6 +43,8 @@ except one thing.
 
 ## Stage 0 — three rulings, before any code
 
+*Ruled 6 Oct 2026, Michael: "the rulings as the plan has them." Recorded in Rulings-Sept-2026.md, *Deep time*.*
+
 1. **The tree, and six chunks.** The chunk tree becomes a file, `stories/deep-time.json`:
    each chunk a name, a start and an end in the store's year, one *known from* line, a
    colour, its children, and its events by id into the store. Michael rules the cuts against
@@ -68,6 +70,15 @@ Each stage is a bench under `experiments/` that proves one thing, checked at 144
 and 390 × 844 as the Glass benches are. The data is the long pole and starts first.
 
 **Stage 1 — The plate data, with the motion in it. Start now; licence-gated.**
+*Done 6 Oct 2026, the same day, built and checked, not committed:* `tools/plates-from-gplates.py` and
+`stories/plates/continents.json` (0.96 MB, 0.25 MB on the wire). 795 pieces at three-quarters of a degree,
+416 plates, rotations every 5 million years to 540 and every 10 to 1000, kept only while a plate has a
+living piece. The file's own arithmetic reproduces pyGPlates to 0.0065 degrees over 2,000 piece-ages;
+India at 70 million years lands at 28° south; the drawn set at 200 million years is Pangaea with the
+Atlantic closed. The licence needed no wait: the model is CC BY 4.0 and the citation is in the file.
+Two things learned: the model's pieces overlap heavily (terranes inside continents), so on the globe
+they are drawn as one fill, not outlined one by one; and the proof pictures' slivers at the poles and
+the date line are the flat drawing's, not the data's — the globe has no seam.
 `tools/plates-from-gplates.py`: with pyGPlates and the EarthByte model of Merdith et al.
 2021 (open, CC-BY, to a billion years), write `stories/plates/continents.json` with two
 parts and no stills:

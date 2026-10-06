@@ -133,19 +133,19 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** Convection is certain; plates with edges and subduction are not, and their start is dated anywhere from 4.0 to 2.5 billion. The animation must keep the two apart or it teaches a guess as a fact.
 **Source.** Michael, chat of 5 Oct. *(Merged from the holding pen, 6 Oct.)*
 
-### Cuts where the evidence changes kind   · 6 Oct 2026 · candidate
+### Cuts where the evidence changes kind   · 6 Oct 2026 · ruled
 **Idea.** A chunk of the deep-time bar is a stretch of time known from one kind of evidence, and the cuts fall where the evidence changes kind: zircon grains alone until 4.4 billion, surviving rock from 4.0, undisputed fossils from 3.5, rock that records the air from 2.4, things hard enough to keep from 539 million, seafloor stripes from 200 million, ice cores at the end. Every bar carries one line saying what it is known from.
 **Where it sits.** The nested bar and the fog line; the principle under both.
 **Opens.** The chunks are defensible rather than tasteful. The fog thins at every pull-down, felt without being told. The known-from line is the uncertainty marker Michael asked for, and no icon is needed.
 **Costs.** Where a story's natural break and the evidence's break disagree, the evidence wins and the story moves. The cuts in the 5 Oct notes were made by story and should be checked against this.
-**Source.** Michael's "chunks for which there is data to support", 6 Oct; the statement of the principle Claude's.
+**Source.** Michael's "chunks for which there is data to support", 6 Oct; the statement of the principle Claude's. *Ruled 6 Oct 2026, Rulings-Sept-2026.md, Deep time.*
 
-### Six chunks, not five   · 6 Oct 2026 · loose
+### Six chunks, not five   · 6 Oct 2026 · ruled
 **Idea.** The fifth chunk, snowball and after, runs from 800 million years to now, so the Ediacarans get seven sub-bars while the dinosaurs and all of us sit inside it at one line each. The end of boredom should stop at 539, and a sixth chunk, the visible world (working name), run from 539 to now, pulling down through the dinosaurs, the mammals, the ice ages and After the Ice.
 **Where it sits.** The nested bar, top level.
 **Opens.** The top bar shows the stretch the map can actually draw as its own chunk.
 **Costs.** Nothing known; a sixth chunk is about twelve percent of the bar.
-**Source.** Claude, 6 Oct, reading Michael's notes of 5 Oct.
+**Source.** Claude, 6 Oct, reading Michael's notes of 5 Oct. *Ruled 6 Oct 2026, Rulings-Sept-2026.md, Deep time.*
 
 ### Hazen's colours are the bar   · 6 Oct 2026 · loose
 **Idea.** Black earth, blue earth, gray earth, the rusting red, the snowball white, the green of land plants: Hazen's chapter colours are the colours of the top bar's chunks, so the child reads the planet's history as a strip of colour before reading a word.
@@ -161,12 +161,12 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** The globe is a second base picture under the map's layers, the one engine change this whole thread needs. Spec-Map-Lab already plans the globe by inverse projection; the outline-only globe deep time needs is cheaper than that.
 **Source.** Claude's suggestion, 5 Oct; Michael, 6 Oct: "I like it."
 
-### Turn and tilt the globe   · 6 Oct 2026 · loose
+### Turn and tilt the globe   · 6 Oct 2026 · ruled
 **Idea.** On a globe, pan goes north and south by tilting, and east and west by turning about the pole. Drag turns it; drawing happens only with a drawing tool chosen.
 **Where it sits.** The globe; Spec-Map-Lab's open question on the globe gesture.
 **Opens.** The deep-time ghosts can be turned to; the gesture question gets its answer.
 **Costs.** The ruling that drag turns rather than draws is still Michael's to give; Spec-Map-Lab asked for it by name.
-**Source.** Michael, 6 Oct, for the pan; the drag ruling is Spec-Map-Lab's proposal.
+**Source.** Michael, 6 Oct, for the pan; the drag ruling is Spec-Map-Lab's proposal. *Ruled 6 Oct 2026, Rulings-Sept-2026.md, Deep time.*
 
 ### Measuring the fog   · 6 Oct 2026 · loose
 **Idea.** Two legitimate measures of how uncertain a continent's position is. A paleomagnetic pole comes with a published confidence circle, a few degrees of latitude, and gives no longitude at all before the seafloor record at 200 million years. And the open reconstructions disagree with one another; overlaying two draws the disagreement. For dates, the store's precision becomes a number of years, proportional in deep time, rather than a word.
