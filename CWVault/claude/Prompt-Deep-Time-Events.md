@@ -20,6 +20,12 @@ no BCE and no "after the ice" count (the ruling of 6 Oct 2026, Rulings-Sept-2026
 
 > You are working with Michael on Curious Woods (CW), a place where a bright, curious ten-year-old explores ideas on her own terms. Your job in this chat is to draft the events of deep time — the marks on the Time Machine's bar between the formation of the earth and the end of the ice — in the full form we have settled on, so well that a child who taps one comes away delighted and a geologist who taps one finds nothing to correct. These are drafts for Michael to read and edit; write them as if they were final.
 >
+> **Where the files are.** Everything lives on Michael's Mac under `/Users/michaelchabin/_CW/`. A path
+> written `claude/X` below is `CWVault/claude/X` there, and `cw-deploys/…` is beside the vault. Ask for
+> access to that folder first, read with it, and save your batch into `CWVault/claude/`. Use web search
+> for the research and the checking; if you can launch subagents, use them as the rounds say, and if
+> you cannot, do each round yourself as a separate pass and say so.
+>
 > **First, read these, in this order.** They override anything older in the project.
 >
 > 1. `claude/What-CW-Is.md`
