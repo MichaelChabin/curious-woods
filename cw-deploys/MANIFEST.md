@@ -1019,7 +1019,9 @@ backstop for the Claude Code session that lands the file.
   lat)`, `grade()`, `destroy()`. Driven here by `../js/deep-time.js` (`onYear`). Measured on the Mac
   in the desktop app's pane at 520 px: a draw averages 6 ms, worst 25, and a sweep of the year
   runs at the display's frame rate; **not yet seen on an iPad**. Reads `../art/icons/time-machine-icon-256.png`.
-  `CW_VERSION 2026-10-06 fa0f282`.
+  `CW_VERSION 2026-10-06 fa0f282`. Short addresses while Michael tests on the iPad, in `_redirects`
+  (302, not a move): `/experiments/deep-time` and `/experiments/deepTime` open this bench,
+  `/experiments/deep-time-bar` the bar alone.
 - **`deep-time-bench.html` (6 Oct 2026)** — *Deep time, in sections*: the nested bar alone, Stage 2
   of `CWVault/claude/Plan-Deep-Time.md`. **`../js/deep-time.js`** (new that day) — `cwDeepTime(host,
   opts)`, a shelf module mounted into an element as `glass.js` and `map.js` are: one SVG; the top
