@@ -43,3 +43,9 @@
 # Time Machine was built at its experiments address and hung the same day, 30 Sep 2026.
 /experiments/time-machine.html   /active/time-machine.html   301
 /experiments/time-machine        /active/time-machine.html   301
+
+# Deep time: a short address for the globe bench while Michael tests it on the iPad, 6 Oct 2026.
+# Not a move: the bench stays at experiments/globe-bench.html, and the bar alone at deep-time-bench.html.
+/experiments/deep-time       /experiments/globe-bench.html   302
+/experiments/deepTime        /experiments/globe-bench.html   302
+/experiments/deep-time-bar   /experiments/deep-time-bench.html   302

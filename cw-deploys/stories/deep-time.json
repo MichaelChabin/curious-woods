@@ -1,0 +1,127 @@
+{
+ "_about": "The chunk tree of the deep-time Time Machine (CWVault/claude/Plan-Deep-Time.md; the ruling of 6 Oct 2026: six chunks, cut where the evidence changes kind). Times are millions of years ago (ma); 'from' is the older end. Every bar carries 'knownFrom', one line saying what that stretch is known from — the fog line's words. 'colour' is Hazen's colour for that earth. 'marks' are SKETCHES for the bench, from Michael's notes of 5 Oct: the store (stories/timeline-events.json) is the home of events and Stage 6 moves them there with their tails; a 'tail' is the age the thing probably began by, older than the oldest evidence. 'line' names the Time Machine viewing that takes over at the bottom rung.",
+ "name": "Earth", "from": 4567, "to": 0, "knownFrom": "everything below, each stretch from what survived of it",
+ "chunks": [
+  { "name": "Making a planet", "short": "A planet", "from": 4567, "to": 4400, "colour": "#2a2521",
+    "knownFrom": "a few zircon grains, some moon rocks and meteorites; nothing else survived",
+    "marks": [
+      { "ma": 4567, "label": "A cloud lights up", "text": "Dust and gas collapse and the sun lights. The dust holds about a dozen kinds of mineral: the whole mineral kingdom to start with." },
+      { "ma": 4540, "label": "Gathering", "text": "Grains to pebbles to planetesimals to a planet in a few tens of millions of years, hot enough to melt. Iron sinks to the centre, which is why there is a core and a magnetic field." },
+      { "ma": 4500, "label": "The big thwack", "text": "A body the size of Mars hits. The splash becomes the moon, fifteen times closer than now, filling a huge piece of the sky, and the day is five or six hours long." },
+      { "ma": 4450, "label": "Black Earth", "text": "The magma ocean skins over with basalt. Volcanoes breathe out steam, carbon dioxide and nitrogen: the first air." },
+      { "ma": 4400, "label": "Blue Earth", "text": "Cool enough for the steam to fall and stay. The evidence for all of this is a few zircon grains, some moon rocks and meteorites, so this is the thickest fog on the whole bar." }
+    ] },
+  { "name": "Rock, water, first life", "short": "Rock, water, life", "from": 4400, "to": 3500, "colour": "#4f7fa6",
+    "knownFrom": "the oldest surviving rock, four billion years old, and the moon's craters",
+    "marks": [
+      { "ma": 4000, "tail": 4400, "label": "Gray Earth", "text": "Basalt melts and remelts into granite, which floats, and the first land sticks up out of a world ocean. The oldest surviving rock is 4.0 billion years old; granite was probably forming well before." },
+      { "ma": 3950, "tail": 4100, "label": "The oceans nearly lost", "text": "The late bombardment, read off the moon's craters: hits big enough to boil an ocean, maybe more than once. Even this is argued over." },
+      { "ma": 3500, "tail": 3800, "label": "Life, probably", "text": "Carbon in rocks at 3.8 billion that looks like life's leftovers, disputed. Layered mounds built by microbes at 3.5 billion, not disputed." }
+    ] },
+  { "name": "The rusting of the world", "short": "The rusting", "from": 3500, "to": 1800, "colour": "#a0522d",
+    "knownFrom": "rocks that record the air and the sea: iron that stayed dissolved, then iron that fell as rust",
+    "chunks": [
+      { "name": "The long wait", "from": 3500, "to": 2500, "colour": "#a0522d",
+        "knownFrom": "rock and iron that show no oxygen yet, and the first big continents",
+        "marks": [
+          { "ma": 2700, "tail": 3000, "label": "Water split", "text": "Cyanobacteria learn to split water for its hydrogen and throw the oxygen away. Nobody agrees when. Then nothing shows for hundreds of millions of years, because iron in the sea, volcanic gas and rock eat the oxygen as fast as it is made." },
+          { "ma": 2700, "label": "Kenorland", "text": "The first big continent assembles. The day is about eighteen hours." }
+        ] },
+      { "name": "The rusting", "from": 2500, "to": 1800, "colour": "#b8603a",
+        "knownFrom": "banded iron and red beds: rock that records oxygen arriving",
+        "marks": [
+          { "ma": 2400, "label": "Oxygen in the air", "text": "The iron in the oceans runs out, oxygen reaches the air, and it destroys the methane that kept the planet warm. Earth freezes, probably for the first time." },
+          { "ma": 2200, "label": "Banded iron", "text": "The iron in the sea falls as rust in layers: most of the world's iron ore, including the iron in a bicycle. The places are findable now: Hamersley, Minnesota, Michigan." },
+          { "ma": 2000, "label": "Red rocks", "text": "Red rocks on land. The world rusts in the open. Oxygen makes about two thirds of all mineral kinds; the count jumps past four thousand." }
+        ] }
+    ] },
+  { "name": "The Boring Billion", "short": "Boring Billion", "from": 1800, "to": 800, "colour": "#7d7a62",
+    "knownFrom": "a few fossils of single cells, and rocks that say little changed",
+    "marks": [
+      { "ma": 1600, "tail": 2000, "label": "A cell with a nucleus", "text": "The first fossil you can confidently call a cell with a nucleus. Somewhere in here a cell swallowed a bacterium and kept it: every animal still runs on it." },
+      { "ma": 1050, "label": "Bangiomorpha", "text": "A red seaweed: the oldest fossil with clear sexes and a body of many cells. The important inventions were made in the boring part." },
+      { "ma": 800, "label": "Rodinia breaks", "text": "The supercontinent splits, new coasts weather fast, oxygen begins to climb. The end of boredom." }
+    ] },
+  { "name": "The end of boredom", "short": "End of boredom", "from": 800, "to": 539, "colour": "#e8e6df",
+    "knownFrom": "glacial rubble in rocks that sat at the equator, then the first fossils of bodies",
+    "chunks": [
+      { "name": "Rodinia and the snowballs", "short": "Snowballs", "from": 800, "to": 635, "colour": "#e8e6df",
+        "knownFrom": "glacial rubble in rocks that were at the equator, and the limestone laid on top of it",
+        "marks": [
+          { "ma": 717, "label": "Snowball one", "text": "Ice reaches the equator and stays for nearly sixty million years. The best evidence is glacial rubble in rocks that sat at the equator at the time, which is why nobody believed it until the 1990s." },
+          { "ma": 660, "label": "The thaw", "text": "Volcanoes keep breathing carbon dioxide into air that cannot get rid of it under the ice, until the greenhouse wins all at once. Ice to hothouse in a few thousand years." },
+          { "ma": 650, "label": "Snowball two", "text": "Shorter, and the same thaw after it. A smaller one at 580." }
+        ] },
+      { "name": "The Ediacarans", "from": 635, "to": 539, "colour": "#d9d4c4",
+        "knownFrom": "the first fossils of bodies, soft ones, kept where volcanic ash buried them",
+        "marks": [
+          { "ma": 600, "label": "Little balls", "text": "Thousands of tiny fossils in China that look like animal embryos, cells dividing. Or something else. The argument has run thirty years." },
+          { "ma": 570, "label": "Fronds in the dark", "text": "Deep, lightless seafloor covered in fractal fronds with no mouths and no guts, buried by ash where they lived. Charnia was found in a quarry in 1957 by a schoolboy; a girl had found it the year before and was told such rocks have no fossils." },
+          { "ma": 558, "tail": 640, "label": "Dickinsonia", "text": "A flat ribbed oval up to a metre long. In 2018 somebody found cholesterol in one, which only animals make, settling a forty-year argument with a smell." },
+          { "ma": 550, "label": "Bites and shells", "text": "The first burrows, so something had a front and a back. The first shells, Cloudina. Holes bored in some of them: the first predators." }
+        ] }
+    ] },
+  { "name": "The visible world", "short": "Visible world", "from": 539, "to": 0, "colour": "#5e7d46",
+    "knownFrom": "fossils hard enough to keep; from 200 million years the seafloor's magnetic stripes; at the end, ice that counts the years",
+    "chunks": [
+      { "name": "Shells, eyes, and the move to land", "short": "Shells, eyes, land", "from": 539, "to": 252, "colour": "#5e7d46",
+        "knownFrom": "fossils with hard parts, and rock magnetism for how far north the land was, never how far east",
+        "chunks": [
+          { "name": "The explosion", "from": 539, "to": 485, "colour": "#6b8a52",
+            "knownFrom": "the first fossils hard enough to keep, and a few muds that kept the soft parts too",
+            "marks": [
+              { "ma": 539, "tail": 640, "label": "Animals, kept", "text": "Within twenty million years nearly every body plan animals have ever had shows up: eyes, legs, shells, guts, hunters. Shells are life making rock. The oldest shelled fossils are 539; animals were around well before, soft and unfossilised." },
+              { "ma": 518, "label": "Chengjiang", "text": "Chengjiang, and ten million years later the Burgess Shale: whole communities kept in mud, soft parts and all. Anomalocaris, the first big hunter." },
+              { "ma": 500, "label": "The map clears", "text": "The map comes out of the fog. Most of the land is clumped in the south as Gondwana; warm shallow seas flood the rest." }
+            ] },
+          { "name": "The move to land", "from": 485, "to": 359, "colour": "#78955e",
+            "knownFrom": "fossils of plants and animals in rock laid down on land",
+            "marks": [
+              { "ma": 470, "tail": 500, "label": "Plants ashore", "text": "Mosses and liverworts on wet rock, turning rock into soil and clay: the mineral count's last rise." },
+              { "ma": 445, "label": "A short, sharp ice age", "text": "It kills most of what lives in the sea. First of the big five dyings." },
+              { "ma": 420, "tail": 450, "label": "Animals ashore", "text": "Millipedes, then scorpion-like things, into plants that now have stems. Fish get jaws." },
+              { "ma": 375, "label": "A fish with wrists", "text": "Tiktaalik. Real forests at 385. The first four-legged animals, still mostly in water." }
+            ] },
+          { "name": "Coal swamps and the Great Dying", "short": "Coal, and the Dying", "from": 359, "to": 252, "colour": "#86a06c",
+            "knownFrom": "coal, and the rock above it that has almost nothing in it",
+            "marks": [
+              { "ma": 312, "label": "The egg with a shell", "text": "So animals could finally leave the water for good." },
+              { "ma": 310, "label": "Coal", "text": "Forests nobody could rot yet, so they became coal. Oxygen at 35 percent: dragonflies with two-foot wings, millipedes the length of a car." },
+              { "ma": 252, "label": "The Great Dying", "text": "Pangaea in one piece, then a million years of Siberian volcanoes, and nine in ten species gone. The worst thing that ever happened." }
+            ] }
+        ] },
+      { "name": "The dinosaurs' world", "short": "Dinosaurs", "from": 252, "to": 66, "colour": "#7a9a5c",
+        "knownFrom": "fossils, and from 200 million years the seafloor's magnetic stripes, so the map is crisp",
+        "marks": [
+          { "ma": 230, "label": "Dinosaurs", "text": "Small at first, in a world recovering from the Great Dying." },
+          { "ma": 200, "label": "Pangaea splits", "text": "The seafloor from here on still carries its magnetic stripes, so the map is crisp from now on." },
+          { "ma": 130, "tail": 160, "label": "Flowers", "text": "Flowers." },
+          { "ma": 66, "label": "The asteroid", "text": "The asteroid." }
+        ] },
+      { "name": "Our world", "from": 66, "to": 0, "colour": "#93ae78",
+        "knownFrom": "fossils, then ice cores and sea-floor mud that count the years",
+        "chunks": [
+          { "name": "The mammals take the empty seats", "short": "The mammals", "from": 66, "to": 2.6, "colour": "#93ae78",
+            "knownFrom": "fossils, and the seafloor's stripes for where everything was",
+            "marks": [
+              { "ma": 55, "label": "A hot spike", "text": "Horses the size of dogs." },
+              { "ma": 20, "tail": 35, "label": "Grasslands", "text": "Grasslands spread, and with them grazers and the animals that chase them." },
+              { "ma": 6, "tail": 7.5, "label": "Walking upright", "text": "Somewhere in Africa." }
+            ] },
+          { "name": "The ice ages", "from": 2.6, "to": 0.0117, "colour": "#c9d4bf",
+            "knownFrom": "ice cores, sea-floor mud, and the sea's old shorelines",
+            "marks": [
+              { "ma": 2.6, "label": "The ice comes and goes", "text": "Every hundred thousand years or so. Sea level rises and falls with it; this is where the sea-level layer earns its keep." },
+              { "ma": 0.3, "tail": 0.35, "label": "Homo sapiens", "text": "The oldest bones are 300,000 years old; they were 200,000 until a Moroccan site was redated." },
+              { "ma": 0.02, "label": "The last glacial maximum", "text": "Ice over Chicago and Dublin; sea level 120 metres lower; a land bridge to Alaska." }
+            ] },
+          { "name": "After the ice", "from": 0.0117, "to": 0, "colour": "#e3e9d8", "line": "after-the-ice",
+            "knownFrom": "ice cores by the year, tree rings, and what people wrote",
+            "marks": [
+              { "ma": 0.0117, "label": "The ice lets go", "text": "The Time Machine's own line starts here." },
+              { "ma": 0.0053, "tail": 0.006, "label": "Writing", "text": "The oldest tablets are from Uruk; writing itself is older, on things that rotted." }
+            ] }
+        ] }
+    ] }
+ ]
+}

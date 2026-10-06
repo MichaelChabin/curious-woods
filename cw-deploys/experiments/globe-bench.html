@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/icons/time-machine-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/time-machine-icon-256.png">
+<!--
+  globe-bench.html — the earth from space with the continents where they were, a bench for
+  js/globe.js driven by js/deep-time.js (6 Oct 2026). Plan: CWVault/claude/Plan-Deep-Time.md, Stage 3.
+  What it proves: the frame rate while turning and while the year runs; that the fog grades read;
+  that the words per grade are enough. The nested bar above drives the globe's year.
+-->
+<title>The earth from space</title>
+<style>
+  :root { --parch: #f4f1e8; --ink: #2a241c; --ink-soft: #6b655a; --payne: #546A80; --copper: #b5652b; --grey: #9a958b; --sep: #c8b89a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--parch); color: var(--ink); font-family: Georgia, "Times New Roman", Times, serif; }
+  body { font-size: 16px; line-height: 1.45; }
+  main { max-width: 1100px; margin: 0 auto; padding: 28px 16px 60px; }
+  .kicker { font-size: 12px; letter-spacing: .12em; color: var(--ink-soft); text-transform: uppercase; }
+  h1 { font-weight: normal; font-size: 30px; line-height: 1.1; margin: 6px 0 14px; }
+  p.how { color: var(--ink-soft); max-width: 700px; margin: 0 0 22px; }
+  #bar { width: 100%; }
+  #below { display: grid; grid-template-columns: minmax(0, 520px) minmax(0, 1fr); gap: 28px; align-items: start; justify-content: center; margin-top: 26px; }
+  @media (max-width: 760px) { #below { grid-template-columns: 1fr; } }
+  #globe { width: 100%; max-width: 520px; margin: 0 auto; }
+  #words { padding-top: 10px; }
+  #words .when { font-weight: bold; font-size: 20px; margin: 0 0 4px; }
+  #words .grade { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 10px; }
+  #words p { margin: 0 0 10px; }
+  #words .ms { font-size: 12px; color: var(--grey); margin-top: 16px; }
+  #panel { border-top: .5px solid var(--sep); margin-top: 18px; padding-top: 10px; min-height: 5em; }
+  #panel h2 { font-weight: normal; font-size: 19px; margin: 0 0 4px; }
+  #panel .hint { color: var(--grey); font-style: italic; }
+  #panel .known { font-size: 14px; color: var(--ink-soft); margin-top: 8px; }
+  .foot { font-size: 12px; color: var(--grey); max-width: 700px; margin: 40px auto 0; }
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Time Machine · bench</div>
+  <h1>The earth from space</h1>
+  <p class="how">Pull the sections down and drag the copper marker: the continents move to where they were in that year. Drag the globe to turn it, east and west about the pole, north and south by tilting. The globe says how sure it is: crisp where the seafloor still carries its stripes, smeared east and west where only rock magnetism and fossils say how far north a piece was, a ghost before that.</p>
+  <div id="bar"></div>
+  <div id="below">
+    <div id="globe"></div>
+    <div id="words">
+      <div class="when" id="when">now</div>
+      <div class="grade" id="grade"></div>
+      <p id="why"></p>
+      <div id="panel"><span class="hint">Tap a dot on a bar for what happened.</span></div>
+      <div class="ms" id="ms"></div>
+    </div>
+  </div>
+  <p class="foot">Continents from the EarthByte model of Merdith and others (2021), CC BY 4.0, turned by their plates' rotations for the year; today's coast from the world pyramid's contours. A piece of continent is a block of crust, not a shoreline: the sea's edge in any year is a later layer.</p>
+</main>
+<script src="../js/deep-time.js?v=2026-10-06"></script>
+<script src="../js/globe.js?v=2026-10-06"></script>
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = '2026-10-06 fa0f282';   // date + short commit hash; bump in the same commit as any change
+  try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+  const $ = id => document.getElementById(id);
+  function esc(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+  const GRADE_WORDS = { crisp: 'crisp', latitude: 'north and south firm, east and west smeared', ghost: 'a ghost', beyond: 'past the model', none: 'no map' };
+  let msSum = 0, msN = 0, msMax = 0;
+  const globe = cwGlobe($('globe'), {
+    ma: 0,
+    onDraw: ms => { msSum += ms; msN++; msMax = Math.max(msMax, ms); if (msN % 10 === 0) $('ms').textContent = 'draw: ' + (msSum / msN).toFixed(1) + ' ms average, ' + msMax.toFixed(1) + ' ms worst, over ' + msN + ' draws'; },
+    onGrade: (g, why) => { $('grade').textContent = GRADE_WORDS[g] || g; $('why').textContent = why || ''; }
+  });
+  let bar = null;
+  bar = cwDeepTime($('bar'), {
+    data: '../stories/deep-time.json',
+    year: 0,
+    onYear: ma => { globe.setTime(ma); $('when').textContent = bar ? bar.fmt(ma) : ''; },
+    onBar: (b, path) => { $('panel').innerHTML = '<h2>' + esc(b.name) + '</h2><div class="known">Known from ' + esc(b.knownFrom || '') + '.</div>'; },
+    onMark: (mk, b) => { $('panel').innerHTML = '<h2>' + esc(mk.label) + '</h2><p>' + esc(mk.text || '') + '</p><div class="known">Known from ' + esc(b.knownFrom || '') + '.</div>'; }
+  });
+  window.__globe = globe; window.__bar = bar;
+})();
+</script>
+</body>
+</html>

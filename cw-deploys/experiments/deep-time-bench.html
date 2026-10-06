@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/icons/time-machine-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/time-machine-icon-256.png">
+<!--
+  deep-time-bench.html — the nested bar of deep time, a bench for js/deep-time.js (6 Oct 2026).
+  Plan: CWVault/claude/Plan-Deep-Time.md, Stage 2. What it proves: the pull-down gesture on a phone
+  and a Mac, the first chunk's minimum width, the readout across seven orders of magnitude, the
+  marker, the twitch of a bar that cannot open, the dot and tail. The hand-over to the Time
+  Machine's own line at the bottom rung is an event here (the panel says so); the mounting into
+  active/time-machine.html is Stage 7.
+-->
+<title>Deep time, in sections</title>
+<style>
+  :root { --parch: #f4f1e8; --ink: #2a241c; --ink-soft: #6b655a; --payne: #546A80; --copper: #b5652b; --grey: #9a958b; --sep: #c8b89a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--parch); color: var(--ink); font-family: Georgia, "Times New Roman", Times, serif; }
+  body { font-size: 16px; line-height: 1.45; }
+  main { max-width: 1100px; margin: 0 auto; padding: 28px 16px 60px; }
+  .kicker { font-size: 12px; letter-spacing: .12em; color: var(--ink-soft); text-transform: uppercase; }
+  h1 { font-weight: normal; font-size: 30px; line-height: 1.1; margin: 6px 0 14px; }
+  p.how { color: var(--ink-soft); max-width: 700px; margin: 0 0 22px; }
+  #bar { width: 100%; }
+  #panel { max-width: 700px; margin: 18px auto 0; min-height: 6em; border-top: .5px solid var(--sep); padding-top: 12px; }
+  #panel h2 { font-weight: normal; font-size: 20px; margin: 0 0 6px; }
+  #panel .when { font-style: italic; color: var(--payne); font-size: 14px; }
+  #panel .hint { color: var(--grey); font-style: italic; }
+  #panel .known { font-size: 14px; color: var(--ink-soft); margin-top: 10px; }
+  .foot { font-size: 12px; color: var(--grey); max-width: 700px; margin: 40px auto 0; }
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Time Machine · bench</div>
+  <h1>Earth, 4.6 billion years, in sections</h1>
+  <p class="how">The top bar is the whole of it. Tap a section and it comes down as a bar of its own; tap again and it goes back up. A bar that only twitches has nothing more underneath, and that is the point. Drag the copper marker, or tap a dot, for the year. The faint tail behind a dot is where the thing probably began, before the oldest evidence of it.</p>
+  <div id="bar"></div>
+  <div id="panel"><span class="hint">Pull a section down, then tap a dot.</span></div>
+  <p class="foot">The sections are cut where the evidence changes kind, and each bar says what it is known from. The marks are sketches from the notes of 5 October; the store will hold them. Hazen's <i>The Story of Earth</i> for the colours and the chunks.</p>
+</main>
+<script src="../js/deep-time.js?v=2026-10-06"></script>
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = '2026-10-06 fa0f282';   // date + short commit hash; bump in the same commit as any change
+  try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+  const panel = document.getElementById('panel');
+  let bar = null, currentBar = null;
+  function esc(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+  bar = cwDeepTime(document.getElementById('bar'), {
+    data: '../stories/deep-time.json',
+    year: 4567,
+    onBar: (b, path) => {
+      currentBar = b;
+      if (b.line) panel.innerHTML = '<h2>' + esc(b.name) + '</h2><p>Here the Time Machine’s own line takes over: twelve thousand years with the Focus window, the map and the sea. (In the lab, Stage 7; on this bench, this sentence.)</p><div class="known">Known from ' + esc(b.knownFrom || '') + '.</div>';
+      else panel.innerHTML = '<h2>' + esc(b.name) + '</h2><p class="when">' + esc(bar ? bar.fmt(b.from).replace(' ago', '') : '') + ' to ' + (b.to <= 0 ? 'now' : esc(bar.fmt(b.to).replace(' ago', ''))) + (path.length ? ' · ' + esc(path.join(' › ')) : '') + '</p><div class="known">Known from ' + esc(b.knownFrom || '') + '.</div>';
+    },
+    onMark: (mk, b) => {
+      panel.innerHTML = '<h2>' + esc(mk.label) + '</h2><p class="when">' + esc(bar.fmt(mk.ma)) + (mk.tail ? ', and probably began by ' + esc(bar.fmt(mk.tail).replace(' ago', '')) : '') + '</p><p>' + esc(mk.text || '') + '</p><div class="known">Known from ' + esc(b.knownFrom || '') + '.</div>';
+    }
+  });
+  window.__bar = bar;
+})();
+</script>
+</body>
+</html>

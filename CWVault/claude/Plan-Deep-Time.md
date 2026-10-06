@@ -106,6 +106,13 @@ at 200 million years closes the Atlantic. *Fallback:* if pyGPlates will not inst
 GPlates desktop application exports the same polygons and resolved rotations.
 
 **Stage 2 — The nested bar, as a shelf module.**
+*Done 6 Oct 2026, built and checked, not committed:* `js/deep-time.js` and `stories/deep-time.json`,
+`experiments/deep-time-bench.html`. The six chunks with the ruling's cuts and a known-from line each;
+the pull-down as the Focus window repeated; the twitch; the dot and tail; the marker with its ticks on
+the bars above; the readout in *ago* across seven orders. Checked in the desktop pane and at 375 px:
+on a phone the chunk names mostly vanish and the colours carry the bar, which is what the Hazen-colours
+idea predicted. The hand-over at the bottom rung is an event (`onBar` with `line`); mounting into the
+Time Machine page is Stage 7, so the page that ships was not touched.
 `js/deep-time.js`, mounted into an element as `glass.js` and `map.js` are, fed by
 `stories/deep-time.json`. Bars; the pull-down at three-quarter width with the two lines to
 the gap it left; uneven nesting with the twitch; the marker that is the handle; dot-and-tail
@@ -117,6 +124,13 @@ the same handle.
 the readout across seven orders without muddle; the hand-over to the existing line.
 
 **Stage 3 — The globe, outlines only.**
+*Done 6 Oct 2026, built and checked, not committed:* `js/globe.js`, `experiments/globe-bench.html`,
+the bar driving the globe. The pieces turned by their rotations and drawn as one fill; the fog grades
+from the data — crisp, latitude (seven copies shifted in longitude), ghost, beyond the model, no map;
+today's coast as a line for the last five million years; drag turns and tilts. Measured on the Mac at
+520 px: 6 ms a draw on average, 25 worst, and the year sweeps at the display's frame rate. **Not yet
+seen on an iPad**, which the plan says decides it. One lesson: a point behind the globe pushed to the
+limb and joined by a chord fills a wedge across the disc; the path must walk the limb's arc.
 The orthographic projection of rings on a canvas or an SVG: today's coastline from Natural
 Earth first, then the pieces of Stage 1 turned by their rotations; turn and tilt by drag; the fog grades by year — nothing to draw above 4.4
 billion (a dark red ball), ghosts between 540 million and 4.4 billion, latitude firm and

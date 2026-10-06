@@ -1000,6 +1000,45 @@ backstop for the Claude Code session that lands the file.
   tested on an iPad, or in Safari by this session.**
 
 ### experiments/
+
+- **`globe-bench.html` (6 Oct 2026)** — *The earth from space*: the nested bar of deep time over a
+  globe, Stage 3 of `CWVault/claude/Plan-Deep-Time.md`. **`../js/globe.js`** (new that day) —
+  `cwGlobe(host, opts)`: a canvas disc, orthographic; reads `../stories/plates/continents.json`
+  and, for a year, turns every living piece of continent by its plate's rotation (slerped between
+  the file's samples, precomputed to a 3×3 per plate per draw) and draws them as one fill, never
+  the pieces outlined one by one (the model's terranes would show as lines), with a thin stroke
+  in the land colour closing the hairline gaps between neighbours. The fog grades are the data's
+  (`grades`): *crisp* below 200 million years; *latitude* to 540 — the land drawn seven times
+  shifted in longitude at low alpha, firm north–south and smeared east–west; *ghost* beyond, a
+  wider smear; *beyond* past the model's reach (an empty globe and the sentence); *none* above
+  4.4 billion years (a dark red ball). Today's coast (the world pyramid's `contours-0.json`) is
+  drawn as a line for the last five million years, fading. A point behind the globe goes to the
+  limb, and between two hidden points the path walks the limb's arc, not a chord (a chord filled
+  wedges across the disc). **Drag turns the globe**, east–west about the pole and north–south by
+  tilting (the ruling of 6 Oct); drawing on it waits for a drawing tool. `setTime(ma)`, `turn(lon,
+  lat)`, `grade()`, `destroy()`. Driven here by `../js/deep-time.js` (`onYear`). Measured on the Mac
+  in the desktop app's pane at 520 px: a draw averages 6 ms, worst 25, and a sweep of the year
+  runs at the display's frame rate; **not yet seen on an iPad**. Reads `../art/icons/time-machine-icon-256.png`.
+  `CW_VERSION 2026-10-06 fa0f282`.
+- **`deep-time-bench.html` (6 Oct 2026)** — *Deep time, in sections*: the nested bar alone, Stage 2
+  of `CWVault/claude/Plan-Deep-Time.md`. **`../js/deep-time.js`** (new that day) — `cwDeepTime(host,
+  opts)`, a shelf module mounted into an element as `glass.js` and `map.js` are: one SVG; the top
+  bar is the whole of Earth from `../stories/deep-time.json`; tap a chunk and it comes down as a
+  bar of its own at three-quarters width, attached by two lines and a pale trapezoid to the gap it
+  left (the Time Machine's Focus window, repeated); tap it again and it goes back up; a chunk with
+  nothing underneath comes down as a leaf bar and its body twitches when tapped. A chunk narrower
+  than six percent of its bar is widened to that, the width taken from the widest, and the bar's
+  time scale runs piecewise through the boxes so marks stay inside their chunks. Chunk names fit
+  or fall back to `short` or to nothing (the colour carries it; on a phone most do). Every bar has
+  its name and span above it; the deepest bar's `knownFrom` line sits under the readout, cut to
+  fit by words. Marks: a dot at the oldest evidence, a faint gradient tail older for `tail`, labels
+  in two rows dropped where they collide; tap one and the marker goes there (`onMark`). The copper
+  marker lives on the deepest bar, a knob to drag and a strip under the bar to tap, and shows as a
+  tick on every bar above; the readout counts *ago* only — billions, millions, thousands of years
+  (the ruling of 6 Oct). `onYear(ma, storeYear)`, `onBar(bar, path)`, `setYear`, `open(names)`,
+  `destroy()`. Checked at desktop width and at 375 px. The hand-over to the Time Machine's own line
+  at the bottom rung is an event here, the mounting into `active/time-machine.html` is Stage 7.
+  Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-06 fa0f282`.
 - **`time-passing-bench.html`** — bench: **Time-passing, in operation** (30 Sep 2026; Michael asked to
   see Naomi Devil's *Idő-töltés* work and is wondering about a page). A simulation of the
   sculpture's mechanism from the artist's own description (no film was found): two radial
