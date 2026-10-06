@@ -225,6 +225,20 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Source.** Michael, 7 Oct: "it is also not honest to show the oceans without any." The seam, the style and the drift Claude's.
 *Amended the same day, Michael:* label the blobs as guesses, not fog; they carry information — there were continents, part of them above water, and we have no idea where. And it continues the talk of Gondwana and its predecessors, with accuracy declining as we look back. Claude's refinement: the decline is in steps, and the steps are words a child can hold — *measured* (the seafloor stripes), *inferred* (rock magnetism), *fitted* (Rodinia, Nuna: real pieces, argued fits), *guessed* (the Archean: the real cratons, which still exist and the model's file carries with their true ages, placed at random from a seed), *invented* (before the oldest rock, from the amount curve). So the blobs are the cratons wherever cratons exist, and random shapes only before 4 billion years.
 
+### Globe, map, or both, across the whole span   · 7 Oct 2026 · candidate
+**Idea.** The child chooses *Globe*, *Map* or *Both*, and the choice holds through all of time: crossing the seam changes what is drawn, never which instrument she holds. With *Both*, the two side by side, the same world in each, as Spec-Map-Lab drew them.
+**Where it sits.** The map engine's deep base and the globe; Spec-Map-Lab's globe-beside-the-flat-map, which this gives a job.
+**Opens.** One module, two projections: everything the deep side draws is rings of longitude and latitude, so the flat map draws the same pieces, grades and guesses on a 2:1 canvas. The near side's globe gets the coast, the shelf edge and the ice as lines now, the height picture when the per-pixel globe exists.
+**Costs.** The flat deep map has no ground picture, and the near-side globe has none yet: "that is the lesson" (Michael), but a child may read an empty globe as a broken one until the words say otherwise. Three words in the column, and a layout for *Both* on a phone.
+**Source.** Michael, 7 Oct, recalling the September talk of both at once.
+
+### The climate of the pieces   · 7 Oct 2026 · loose
+**Idea.** A wash on the pieces by age: a desert in the middle of Pangaea because that is likely, green to the poles in the warm times. The vegetation layer the map has for today, carried back as far as the rocks allow and thinning to nothing, which is itself the lesson.
+**Where it sits.** A layer, in the shape page's sense, over the deep-time pieces; after the join.
+**Opens.** The ground gets a climate, and the map says something about life on land in each stretch without a word.
+**Costs.** It must come from the climate-sensitive rocks (coal, salt, dune sandstone, glacial rubble: Boucot's atlas, Scotese's climate maps), drawn per piece per age, never from a painter's sense of what looks right; and it is one more thing to keep honest as the model's grades fall.
+**Source.** Michael, 7 Oct; the rock atlases Claude's.
+
 ## Stories
 
 ### The edge of knowing (working name)   · 5 Oct 2026 · candidate
