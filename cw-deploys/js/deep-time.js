@@ -48,7 +48,7 @@
 
   var SVG = 'http://www.w3.org/2000/svg';
   var INK = '#2a241c', INK_SOFT = '#6b655a', GREY = '#9a958b', COPPER = '#b5652b', LINE = '#46597a', PARCH = '#f4f1e8', FOCUS_EDGE = '#8fb0d2', FOCUS = '#bcd3ea';
-  var BAR_H = 26, TIER_H = 96, TOP = 70, PAD = 12, MIN_FRAC = 0.06, LABEL_ROWS = 2;
+  var BAR_H = 26, TIER_H = 96, TOP = 70, PAD = 12, MIN_PX = 3, HIT_PX = 28, LABEL_ROWS = 2;   // widths are honest (6 Oct, Michael): a hairline is the lesson; a thin chunk gets a finger-sized hit area
   var THIS_YEAR = new Date().getFullYear();
 
   function el(tag, attrs, parent, text) {
@@ -102,7 +102,7 @@
       var g = { node: node, xL: xL, xR: xR, y: y, chunks: [] };
       if (node.chunks && node.chunks.length) {
         var span = node.from - node.to, w = node.chunks.map(function (c) { return width * (c.from - c.to) / span; });
-        var min = width * MIN_FRAC;
+        var min = MIN_PX;   // so a chunk is at least visible; what it takes from the widest is nothing
         for (var i = 0; i < w.length; i++) if (w[i] < min) {
           var d = min - w[i]; w[i] = min;
           var j = 0; for (var k = 1; k < w.length; k++) if (w[k] > w[j]) j = k;
@@ -180,6 +180,16 @@
             el('title', {}, cg, cn.name + ' · ' + spanText(cn.from, cn.to));
             cg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
             cg.addEventListener('click', function (ev) { ev.stopPropagation(); toggle(d, cn); });
+          });
+          // a chunk thinner than a finger gets a wider invisible hit area over its neighbours, the thinnest on top
+          g.chunks.slice().sort(function (a, b) { return (b.x1 - b.x0) - (a.x1 - a.x0); }).forEach(function (c) {
+            var wv = c.x1 - c.x0; if (wv >= HIT_PX) return;
+            var cn = c.node, hx = (c.x0 + c.x1) / 2 - HIT_PX / 2;
+            var hg = el('g', { 'class': 'chunk' }, grp);
+            el('rect', { x: Math.max(g.xL, hx), y: g.y - 4, width: HIT_PX, height: BAR_H + 8, fill: 'transparent' }, hg);
+            el('title', {}, hg, cn.name + ' · ' + spanText(cn.from, cn.to));
+            hg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
+            hg.addEventListener('click', function (ev) { ev.stopPropagation(); toggle(d, cn); });
           });
         } else {
           var body = el('rect', { 'class': 'leaf-body', x: g.xL, y: g.y, width: g.xR - g.xL, height: BAR_H, rx: 3, fill: n.colour || '#e6dcc8', stroke: luminance(n.colour) > 0.8 ? '#c8b89a' : PARCH, 'stroke-width': 1.5 }, grp);

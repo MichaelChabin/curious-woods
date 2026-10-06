@@ -166,7 +166,7 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Where it sits.** The globe; Spec-Map-Lab's open question on the globe gesture.
 **Opens.** The deep-time ghosts can be turned to; the gesture question gets its answer.
 **Costs.** The ruling that drag turns rather than draws is still Michael's to give; Spec-Map-Lab asked for it by name.
-**Source.** Michael, 6 Oct, for the pan; the drag ruling is Spec-Map-Lab's proposal. *Ruled 6 Oct 2026, Rulings-Sept-2026.md, Deep time.*
+**Source.** Michael, 6 Oct, for the pan; the drag ruling is Spec-Map-Lab's proposal. *Ruled 6 Oct 2026, Rulings-Sept-2026.md, Deep time.* *Amended the same evening, Michael's standard view: poles as limits, east–west unlimited, a right drag moves the surface east whatever the tilt. Rulings-Sept-2026.md, Deep time, item 3.*
 
 ### Measuring the fog   · 6 Oct 2026 · loose
 **Idea.** Two legitimate measures of how uncertain a continent's position is. A paleomagnetic pole comes with a published confidence circle, a few degrees of latitude, and gives no longitude at all before the seafloor record at 200 million years. And the open reconstructions disagree with one another; overlaying two draws the disagreement. For dates, the store's precision becomes a number of years, proportional in deep time, rather than a word.
@@ -195,6 +195,27 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** Drift as a thing seen, which was the point of going back this far; and a piece of continent that can be followed by eye.
 **Costs.** The data carries plate identities and sampled rotations, not outlines per age; a rotation interpolated per piece per frame on a 2017 iPad; a reference frame to choose and name. About two sessions more than the crossfade.
 **Source.** Claude laid out the choice; Michael, 6 Oct: "put the true motion in." Ruled in Plan-Deep-Time.md, status line, and on the board.
+
+### A hairline is the lesson   · 6 Oct 2026 · ruled
+**Idea.** The bars draw honest widths. The mockup widened any chunk under six percent of its bar, so the ice ages and After the Ice came out the same size; Michael asked whether the scaling was right. It was not. Now a chunk is as wide as its years, down to three pixels, and a chunk thinner than a finger gets an invisible finger-sized hit area over its neighbours.
+**Where it sits.** The nested bar.
+**Opens.** The ledger's own promise, in *Nested deep-time bar*: each descent narrows until the 12,000 years are a hairline. The lines fanning out from a hairline to a full bar are the picture of the proportion.
+**Costs.** A hairline has no name on it; its name appears when it is opened. Two thin chunks side by side share a crowded hit area, the thinner on top.
+**Source.** Michael, iPad test of 6 Oct: "the last 12k years is the same size as the last 2.3m." Fixed the same evening.
+
+### Black Earth textures   · 6 Oct 2026 · loose
+**Idea.** Michael can make or find texture maps for the early earths — the magma ocean, the basalt skin — for the globe to wear in the stretches where there is nothing to draw.
+**Where it sits.** The globe, the *none* grade (above 4.4 billion years) and perhaps each Hazen earth.
+**Opens.** The red ball becomes a surface with a story; and a texture is the first use of the per-pixel globe Spec-Map-Lab planned.
+**Costs.** A texture that turns with the globe needs the inverse projection (for each pixel of the disc, find its latitude and longitude and sample the picture), which is the per-pixel work the plan deferred for the iPad's sake; a texture that does not turn is a picture, not a globe. About thirty lines, and an iPad test.
+**Source.** Michael, 6 Oct, after the iPad test.
+
+### The atmosphere, if she likes   · 6 Oct 2026 · loose
+**Idea.** The air should be visible when she wants it. Boring most of the time, but there are years when it matters: the methane haze before the oxygen came, the oxygen arriving at 2.4 billion.
+**Where it sits.** The globe, as a layer she turns on; the curves (Stage 5) for what the air was made of.
+**Opens.** A rim of colour round the globe that changes with the year is cheap, honest, and says the rusting of the world without a word; the oxygen curve gives it its colour.
+**Costs.** What colour an atmosphere "is" at a given age is an inference; the rim must not pretend to be a photograph.
+**Source.** Michael, 6 Oct, after the iPad test; the rim-by-curve Claude's.
 
 ## Stories
 

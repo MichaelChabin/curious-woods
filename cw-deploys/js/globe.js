@@ -37,7 +37,7 @@
     if (!document.getElementById('cw-globe-css')) { var st = document.createElement('style'); st.id = 'cw-globe-css'; st.textContent = CSS; document.head.appendChild(st); }
     host.classList.add('cw-globe');
     var canvas = document.createElement('canvas'); host.appendChild(canvas);
-    var ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext('2d'), CTX = ctx;
     var ma = opts.ma || 0, lon0 = opts.lon != null ? opts.lon : 20, lat0 = opts.lat != null ? opts.lat : 15;
     var data = null, coast = null, pieces = [], plates = {}, ages = [], grades = [], lastGrade = null, destroyed = false, raf = 0, ro = null;
     var D = 0, dpr = 1;
@@ -64,12 +64,15 @@
       return m;
     }
     function rotZ(deg) { var r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [c, -s, 0, s, c, 0, 0, 0, 1]; }
-    // the view: turn the world so (lon0, lat0) faces us; screen x east, y north, z toward the eye
+    // the view: turn the world so (lon0, lat0) faces us; screen x east, y north, z toward the eye.
+    // Michael's standard view (6 Oct 2026): north up at rest, the poles are the limits of the tilt,
+    // and a drag to the right moves the surface east whatever the tilt. Two angles do that exactly;
+    // the plates' rotations, which compose, are the quaternions.
     function viewMatrix() {
-      var lo = -lon0 * Math.PI / 180, la = -lat0 * Math.PI / 180;
+      var lo = -lon0 * Math.PI / 180, la = lat0 * Math.PI / 180;
       var cz = Math.cos(lo), sz = Math.sin(lo), cy = Math.cos(la), sy = Math.sin(la);
-      var Rz = [cz, -sz, 0, sz, cz, 0, 0, 0, 1];                 // bring lon0 to the x axis
-      var Ry = [cy, 0, sy, 0, 1, 0, -sy, 0, cy];                 // tilt lat0 down to the equator (rotation about y)
+      var Rz = [cz, -sz, 0, sz, cz, 0, 0, 0, 1];                 // turn about the pole: lon0 to the x axis
+      var Ry = [cy, 0, sy, 0, 1, 0, -sy, 0, cy];                 // tilt: the point at lat0 on that meridian down to the equator
       var M = mmul(Ry, Rz);
       // now the facing point is +x; we want it toward the eye (+z): swap axes so screen = (y, z, x)
       return [M[3], M[4], M[5], M[6], M[7], M[8], M[0], M[1], M[2]];
@@ -132,7 +135,8 @@
     // and between two hidden points the path walks the limb's shorter arc rather than cutting a
     // chord across the disc (the chord filled a wedge across the globe at 539 Ma, 6 Oct)
     var ARC_STEP = 0.12;   // radians between limb points
-    function tracePath(arr, M, cx, cy, r) {
+    function tracePath(arr, M, cx, cy, r, into) {
+      var ctx = into || CTX;   // a Path2D, or the canvas
       var n = arr.length / 3, anyFront = false, first = true, prevHidden = false, prevAng = 0;
       for (var i = 0; i < n; i++) {
         var x = arr[3 * i], y = arr[3 * i + 1], z = arr[3 * i + 2];
@@ -156,22 +160,27 @@
     }
     function drawLand(V, age, shift, alpha) {
       var Vs = shift ? mmul(V, rotZ(shift)) : V, mats = {};
-      ctx.beginPath();
-      var any = false;
+      // every ring is traced into its own path and joins the land only if a point of it faces us:
+      // a ring wholly behind the globe would otherwise walk the limb as a full loop and wind the
+      // whole disc, turning the fill inside out (the sea-and-land swap Michael saw on 6 Oct)
+      var land = new Path2D(), any = false;
       for (var i = 0; i < pieces.length; i++) {
         var p = pieces[i];
         if (age > p.from || age < p.to) continue;
         var M = mats[p.plate];
         if (M === undefined) { var R = plateMatrix(p.plate, age); M = R ? mmul(Vs, R) : null; mats[p.plate] = M; }
         if (!M) continue;
-        for (var k = 0; k < p.rings.length; k++) if (tracePath(p.rings[k], M, 0, 0, 1)) any = true;
+        for (var k = 0; k < p.rings.length; k++) {
+          var ring = new Path2D();
+          if (tracePath(p.rings[k], M, 0, 0, 1, ring)) { land.addPath(ring); any = true; }
+        }
       }
       if (!any) return;
       ctx.globalAlpha = alpha;
-      ctx.fillStyle = LAND; ctx.fill('nonzero');
+      ctx.fillStyle = LAND; ctx.fill(land, 'nonzero');
       // one fill, never the pieces outlined one by one (the model's terranes would show as lines):
       // a thin stroke in the land colour closes the hairline gaps between neighbouring pieces
-      ctx.strokeStyle = LAND; ctx.lineWidth = 1.6 / (D / 2 - 4); ctx.stroke();
+      ctx.strokeStyle = LAND; ctx.lineWidth = 1.6 / (D / 2 - 4); ctx.stroke(land);
       ctx.globalAlpha = 1;
     }
     function draw() {
@@ -201,7 +210,7 @@
       // today's coast, for the last few million years, fading out by five
       if (coast && ma < 5) {
         ctx.save(); ctx.translate(cx, cy); ctx.scale(r, r); ctx.lineWidth = 1.1 / r; ctx.strokeStyle = COAST; ctx.globalAlpha = 0.6 * (1 - ma / 5);
-        ctx.beginPath(); for (var i = 0; i < coast.length; i++) tracePath(coast[i], V, 0, 0, 1); ctx.stroke(); ctx.restore();
+        var cp = new Path2D(); for (var i = 0; i < coast.length; i++) { var cr = new Path2D(); if (tracePath(coast[i], V, 0, 0, 1, cr)) cp.addPath(cr); } ctx.stroke(cp); ctx.restore();
       }
       // the graticule, faint, every 30 degrees
       ctx.save(); ctx.translate(cx, cy); ctx.scale(r, r); ctx.lineWidth = 1 / r; ctx.strokeStyle = GRAT; ctx.beginPath();
@@ -227,8 +236,8 @@
     canvas.addEventListener('pointermove', function (ev) {
       if (!drag || ev.pointerId !== drag.id) return;
       var k = 180 / (D || 400);   // a drag across the disc turns it half way round
-      lon0 = drag.lon - (ev.clientX - drag.x) * k;
-      lat0 = Math.max(-89, Math.min(89, drag.lat + (ev.clientY - drag.y) * k));
+      lon0 = drag.lon - (ev.clientX - drag.x) * k;                               // right: the surface goes east
+      lat0 = Math.max(-90, Math.min(90, drag.lat + (ev.clientY - drag.y) * k));  // down: the surface comes south; the poles stop it
       schedule();
     });
     function release(ev) { if (drag && ev.pointerId === drag.id) { drag = null; host.classList.remove('dragging'); } }
@@ -243,7 +252,7 @@
       setTime: function (m) { ma = Math.max(0, m); schedule(); },
       time: function () { return ma; },
       view: function () { return { lon: lon0, lat: lat0 }; },
-      turn: function (lon, lat) { if (lon != null) lon0 = lon; if (lat != null) lat0 = Math.max(-89, Math.min(89, lat)); schedule(); },
+      turn: function (lon, lat) { if (lon != null) lon0 = lon; if (lat != null) lat0 = Math.max(-90, Math.min(90, lat)); schedule(); },
       grade: function () { return gradeFor(ma); },
       destroy: function () { destroyed = true; cancelAnimationFrame(raf); if (ro) ro.disconnect(); host.innerHTML = ''; host.classList.remove('cw-globe'); }
     };

@@ -131,6 +131,17 @@ today's coast as a line for the last five million years; drag turns and tilts. M
 520 px: 6 ms a draw on average, 25 worst, and the year sweeps at the display's frame rate. **Not yet
 seen on an iPad**, which the plan says decides it. One lesson: a point behind the globe pushed to the
 limb and joined by a chord fills a wedge across the disc; the path must walk the limb's arc.
+*Michael's iPad test, the same evening:* it ran, and two things were wrong, both now fixed and pushed.
+The tilt had a sign error (the latitude negated in the tilt matrix), so dragging went backwards and
+twice as far, past the pole, where the fill turned inside out and showed the sea and land swapped with
+the pieces' outlines. The deeper cause of the swap: a ring wholly behind the globe was still traced as
+a loop around the limb and wound the whole disc; now each ring is its own path and joins the land
+only if a point of it faces us. Michael's standard view is the rule (Rulings, *Deep time* 3, amended):
+north up at rest, the poles are the tilt's limits, a right drag moves the surface east whatever the
+tilt, no limit east–west. And the bars drew the ice ages and After the Ice the same width because of
+the mockup's six-percent floor; widths are honest now, down to three pixels, with a finger-sized hit
+area for a thin chunk — a hairline is the lesson (ledger). Wants logged: Black Earth textures (the
+per-pixel globe's first job), the atmosphere as a rim she can turn on.
 The orthographic projection of rings on a canvas or an SVG: today's coastline from Natural
 Earth first, then the pieces of Stage 1 turned by their rotations; turn and tilt by drag; the fog grades by year — nothing to draw above 4.4
 billion (a dark red ball), ghosts between 540 million and 4.4 billion, latitude firm and

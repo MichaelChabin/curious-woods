@@ -1014,12 +1014,15 @@ backstop for the Claude Code session that lands the file.
   4.4 billion years (a dark red ball). Today's coast (the world pyramid's `contours-0.json`) is
   drawn as a line for the last five million years, fading. A point behind the globe goes to the
   limb, and between two hidden points the path walks the limb's arc, not a chord (a chord filled
-  wedges across the disc). **Drag turns the globe**, east–west about the pole and north–south by
-  tilting (the ruling of 6 Oct); drawing on it waits for a drawing tool. `setTime(ma)`, `turn(lon,
+  wedges across the disc); a ring with no point facing us is left out altogether (traced, it looped
+  the limb and wound the whole disc inside out — the sea-and-land swap of Michael's iPad test).
+  **Drag turns the globe** in Michael's standard view (the ruling of 6 Oct, amended that evening):
+  north up at rest, east–west about the pole without limit, north–south by tilting until a pole faces
+  us, a right drag moving the surface east whatever the tilt; drawing on it waits for a drawing tool. `setTime(ma)`, `turn(lon,
   lat)`, `grade()`, `destroy()`. Driven here by `../js/deep-time.js` (`onYear`). Measured on the Mac
   in the desktop app's pane at 520 px: a draw averages 6 ms, worst 25, and a sweep of the year
   runs at the display's frame rate; **not yet seen on an iPad**. Reads `../art/icons/time-machine-icon-256.png`.
-  `CW_VERSION 2026-10-06 fa0f282`. Short addresses while Michael tests on the iPad, in `_redirects`
+  `CW_VERSION 2026-10-06 9bcebe4`. Short addresses while Michael tests on the iPad, in `_redirects`
   (302, not a move): `/experiments/deep-time` and `/experiments/deepTime` open this bench,
   `/experiments/deep-time-bar` the bar alone.
 - **`deep-time-bench.html` (6 Oct 2026)** — *Deep time, in sections*: the nested bar alone, Stage 2
@@ -1028,9 +1031,11 @@ backstop for the Claude Code session that lands the file.
   bar is the whole of Earth from `../stories/deep-time.json`; tap a chunk and it comes down as a
   bar of its own at three-quarters width, attached by two lines and a pale trapezoid to the gap it
   left (the Time Machine's Focus window, repeated); tap it again and it goes back up; a chunk with
-  nothing underneath comes down as a leaf bar and its body twitches when tapped. A chunk narrower
-  than six percent of its bar is widened to that, the width taken from the widest, and the bar's
-  time scale runs piecewise through the boxes so marks stay inside their chunks. Chunk names fit
+  nothing underneath comes down as a leaf bar and its body twitches when tapped. Widths are honest
+  (6 Oct, evening, after Michael found the ice ages and After the Ice drawn alike): a chunk is as wide
+  as its years down to a three-pixel floor, so After the Ice is a hairline and the lines fan out from
+  it; a chunk thinner than a finger gets an invisible 28 px hit area over its neighbours, the thinnest
+  on top; the bar's time scale runs piecewise through the boxes so marks stay inside their chunks. Chunk names fit
   or fall back to `short` or to nothing (the colour carries it; on a phone most do). Every bar has
   its name and span above it; the deepest bar's `knownFrom` line sits under the readout, cut to
   fit by words. Marks: a dot at the oldest evidence, a faint gradient tail older for `tail`, labels
@@ -1040,7 +1045,7 @@ backstop for the Claude Code session that lands the file.
   (the ruling of 6 Oct). `onYear(ma, storeYear)`, `onBar(bar, path)`, `setYear`, `open(names)`,
   `destroy()`. Checked at desktop width and at 375 px. The hand-over to the Time Machine's own line
   at the bottom rung is an event here, the mounting into `active/time-machine.html` is Stage 7.
-  Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-06 fa0f282`.
+  Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-06 9bcebe4`.
 - **`time-passing-bench.html`** — bench: **Time-passing, in operation** (30 Sep 2026; Michael asked to
   see Naomi Devil's *Idő-töltés* work and is wondering about a page). A simulation of the
   sculpture's mechanism from the artist's own description (no film was found): two radial
