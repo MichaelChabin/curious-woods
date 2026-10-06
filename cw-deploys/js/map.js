@@ -38,6 +38,14 @@
    `{ ages: [...], outlines: { '<years>': [ring, ...] } }`, rings of [lon, lat] filled even-odd;
    between two time steps the two outlines cross-fade. Drawn soft, in the ice colour, over
    the ground and the lowered sea and under today's coast and the marks. Works on any map.
+   Deep time (6 Oct 2026, Plan-Deep-Time Stage 4). Past a seam in years ago (2.6 million unless
+   `opts.time.deep.seam` says otherwise), the map's base is the globe — js/globe.js, which the page
+   loads — with the continents where they were in that year; this side of it, the pyramid with the
+   sea and the ice. `opts.time.deep = { seam?, plates?, coast?, onChange?(on, grade, why) }`, the
+   middle two what cwGlobe takes. The globe opens centred where the map was looking and arrives
+   pulling away from the ground (a scale and a fade); crossing back it comes down to it. Zoom in
+   time is zoom in space. Over it nothing of the map responds: no marks, no pan, no zoom; its own
+   drag turns it. `map.deep()` says whether it is on and how sure the positions are.
    `map.setTime(year)` (30 Sep 2026, for Time Machine) takes one year — the store's astronomer's
    year — and turns on the layers that are true for it, from what the page hands it in
    `opts.time`: `{ seaLevel: [[year, metres], ...] }` (stories/curves/sea-level.json) sets the
@@ -115,6 +123,11 @@
     '.cw-map .cw-tiles{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     '.cw-map .cw-tiles img{position:absolute;display:block;width:auto;height:auto;max-width:none;pointer-events:none;}',
     '.cw-map canvas.cw-sea{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
+    /* deep time (6 Oct 2026): past the seam the globe is the base, over the tiles, the sea and the marks;
+       it arrives pulling away from the ground and leaves coming down to it — a scale and a fade, never a cut */
+    '.cw-map .cw-deep-base{position:absolute;left:0;top:0;width:100%;height:100%;background:#f4f1e8;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(2.4);transition:opacity .5s ease,transform .5s ease;pointer-events:none;line-height:0;}',
+    '.cw-map .cw-deep-base.on{opacity:1;transform:scale(1);pointer-events:auto;}',
+    '@media (prefers-reduced-motion:reduce){.cw-map .cw-deep-base{transition:opacity .2s ease;transform:none;}}',
     /* the strip is the picker's drag handle turned to this use, with the handle's own tint
        (rgba(200,184,154,.25)) so it reads as a thing to take hold of, not as the page */
     '.cw-map .cw-strip{height:16px;border-radius:0 0 8px 8px;cursor:ns-resize;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;background:rgba(200,184,154,0.28);touch-action:none;user-select:none;-webkit-user-select:none;line-height:16px;}',
@@ -1059,8 +1072,39 @@
         for (var i = 1; i < pts.length; i++) if (y <= pts[i][0]) { var a = pts[i - 1], b = pts[i]; return a[1] + (b[1] - a[1]) * (y - a[0]) / (b[0] - a[0] || 1); }
         return pts[pts.length - 1][1];
       }
+      // deep time: the globe as the base past the seam (see the header)
+      var deepHost = null, deepGlobe = null, deepOn = false;
+      function deepSize() {
+        if (!deepHost) return;
+        var d = Math.max(120, Math.min(stage.clientWidth, stage.clientHeight) - 16), g = deepHost.firstChild;
+        g.style.width = d + 'px'; g.style.height = d + 'px';
+      }
+      function ensureDeep() {
+        if (deepGlobe) return true;
+        if (!window.cwGlobe) { console.warn('map.js: a deep-time year was asked for, but js/globe.js is not loaded; the map shows today'); return false; }
+        deepHost = document.createElement('div'); deepHost.className = 'cw-deep-base';
+        var g = document.createElement('div'); deepHost.appendChild(g);
+        stage.appendChild(deepHost);
+        ['pointerdown', 'wheel', 'click', 'dblclick'].forEach(function (t) { deepHost.addEventListener(t, function (e) { e.stopPropagation(); }); });
+        deepSize();
+        deepGlobe = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, ma: 0, lon: view.lon, lat: view.lat,
+          onGrade: function (grade, why) { if (deepOn && T.deep.onChange) T.deep.onChange(true, grade, why); } });
+        if (window.ResizeObserver) new ResizeObserver(deepSize).observe(stage);
+        return true;
+      }
+      function setDeep(on) {
+        if (on === deepOn) return;
+        deepOn = on;
+        if (on) { deepGlobe.turn(view.lon, view.lat); void deepHost.offsetWidth; deepHost.classList.add('on'); }   // the reflow so the arrival is a transition, not a jump, the first time
+        else deepHost.classList.remove('on');
+        if (T.deep.onChange) { var g = deepGlobe.grade(); T.deep.onChange(on, on ? g.grade : 'ground', on ? g.why : ''); }
+      }
+      api.deep = function () { return { on: deepOn, grade: deepGlobe ? deepGlobe.grade() : null }; };
       api.setTime = function (year) {
         timeYear = +year;
+        var ago = new Date().getFullYear() - timeYear;
+        if (T.deep && ago > (T.deep.seam || 2.6e6) && ensureDeep()) { deepGlobe.setTime(ago / 1e6); setDeep(true); return; }
+        if (deepGlobe) setDeep(false);
         var m = curveAt(T.seaLevel, timeYear);
         if (m !== null && seaCanvas) { var nm = Math.min(0, Math.round(m * 2) / 2); if (nm !== seaLevel) { seaLevel = nm; drawSea(); } }
         if (T.ice) { var ago = new Date().getFullYear() - timeYear; iceData = T.ice; iceAgo = Math.max(0, ago); draw(); }

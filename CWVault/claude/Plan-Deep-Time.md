@@ -157,6 +157,20 @@ the per-pixel globe Spec-Map-Lab worried about, which is a later and different j
 the fog grades read; that the words per grade are enough.
 
 **Stage 4 — The join.**
+*Done 6 Oct 2026, night, built and checked, not yet committed at the time of writing:* the engine change,
+in `js/map.js` — `opts.time.deep = { seam, plates, coast, onChange }`; past the seam `map.setTime` shows
+the globe in the map's box over the tiles, the sea and the marks, centred where the map was looking,
+arriving as a scale and a fade (pulling away from the ground) and leaving the same way (coming down to
+it); this side of it the pyramid with the sea and the ice as before; over the globe nothing of the map
+responds. `experiments/join-bench.html` proves it: the bar drives the map across the seam and back.
+Checked in the desktop pane; not yet on the iPad. Three lessons: the globe must measure its host's
+layout width, not its drawn width, or the scaled-up arrival makes it too big for the box; the bar's
+host and the map's base both wanted the class name `cw-deep`, and the map's is now `cw-deep-base`;
+and the sea-level curve stops at 20,000 years, so this side of the seam but before the curve the map
+clamps to the ice-age low (130 m down) — honest-ish for the ice ages, but Stage 5 should give the sea
+a curve across them, or the map should say nothing. **Open:** the seam is not yet *felt* on a device;
+whether the globe should first show the pyramid's region as a window before pulling away (the plan's
+risk) is for Michael's eye.
 `map.setTime(year)` reaches past the ice curve: a year older than the seam shows the globe
 with every piece of continent turned to where it was in that year, so dragging the marker
 moves them; a year younger shows the pyramid with the sea and the ice. Zoom in time is zoom in space: the

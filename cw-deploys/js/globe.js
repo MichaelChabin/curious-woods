@@ -126,7 +126,9 @@
 
     // ---- drawing ----
     function size() {
-      var w = host.getBoundingClientRect().width || 400;
+      // the layout width, not the drawn one: inside map.js's deep base the host is scaled up while
+      // the globe arrives, and measuring the drawn width there made the globe too big for its box
+      var w = host.clientWidth || host.getBoundingClientRect().width || 400;
       D = Math.round(opts.size || Math.min(w, 560));
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = D * dpr; canvas.height = D * dpr; canvas.style.width = D + 'px'; canvas.style.height = D + 'px';

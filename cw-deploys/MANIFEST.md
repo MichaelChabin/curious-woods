@@ -23,7 +23,8 @@ Superseded versions, kept as the archive record.
 
 **`js/`** — shared code, at the root of this folder. Classic scripts, no
 build step. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael's call, when
-the Hokusai story called it)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
+the Hokusai story called it; a second base, the globe past the deep-time seam, 6 Oct 2026 — see
+`experiments/join-bench.html`)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
 the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
 `experiments/maps/`, beside `render.py`, which makes the pictures it draws on. Loaded with a
 version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. 26 Sep 2026 (`?v=2026-09-26c` on all seven pages that load it): (27 Sep, `?v=2026-09-27`: the window's *close* is 13 px bold, was 11 px) the window's drag strip sticks on the window's top edge, not 18 px below it, so a tall scrolling window (the Darkness poem) no longer shows its words through a slit above the strip; the words fade under it. **`stories/world-events.json` and `stories/places.json` (22 Sep 2026; 2 Oct 2026: ten events and twelve places from The Glass Rose, 1079 to 1351 — Khayyam's calendar, Domesday, Shen Kuo, Cahokia, Abelard, Zhu Yu, Angkor Wat, Adelard, Xàtiva paper, blue-and-white; Isfahan to Cahokia, and five towns on Adelard's route)** — what the world owns,
@@ -1001,6 +1002,22 @@ backstop for the Claude Code session that lands the file.
 
 ### experiments/
 
+- **`join-bench.html` (6 Oct 2026)** — *The join*: the nested bar driving the Time Machine's map,
+  Stage 4 of `CWVault/claude/Plan-Deep-Time.md`, and the one engine change the thread needs. **In
+  `../js/map.js` (that day): a second base.** `opts.time.deep = { seam, plates, coast, onChange }`;
+  past the seam in years ago (2.6 million unless said) `map.setTime(year)` shows the globe
+  (`../js/globe.js`, which the page loads; absent, the map says so on the console and shows today)
+  in the stage over the tiles, the sea and the marks — a `.cw-deep-base` host, parchment, the globe
+  centred and sized to the stage's shorter side — and this side of it the pyramid with the sea and
+  the ice as before. The globe opens centred where the map was looking; it arrives pulling away
+  from the ground (opacity and a scale from 2.4 to 1 over half a second; reduced motion, a fade)
+  and leaves coming down to it. Over it nothing of the map responds: its host stops pointer, wheel
+  and click; its own drag turns it. `map.deep()` says whether it is on and how sure the positions
+  are; `onChange(on, grade, why)` tells the page. The bench: the bar, the words (the year, the
+  grade, its sentence), the map with the Time Machine's opening box and the sea-level curve.
+  Lesson: the globe must measure its host's layout width, not its drawn width, or it sizes itself
+  to the scaled-up arrival. Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-06 e6824f1`.
+
 - **`globe-bench.html` (6 Oct 2026)** — *The earth from space*: the nested bar of deep time over a
   globe, Stage 3 of `CWVault/claude/Plan-Deep-Time.md`. **`../js/globe.js`** (new that day) —
   `cwGlobe(host, opts)`: a canvas disc, orthographic; reads `../stories/plates/continents.json`
@@ -1024,7 +1041,7 @@ backstop for the Claude Code session that lands the file.
   runs at the display's frame rate; **not yet seen on an iPad**. Reads `../art/icons/time-machine-icon-256.png`.
   `CW_VERSION 2026-10-06 9bcebe4`. Short addresses while Michael tests on the iPad, in `_redirects`
   (302, not a move): `/experiments/deep-time` and `/experiments/deepTime` open this bench,
-  `/experiments/deep-time-bar` the bar alone.
+  `/experiments/deep-time-bar` the bar alone, `/experiments/deep-time-join` the join.
 - **`deep-time-bench.html` (6 Oct 2026)** — *Deep time, in sections*: the nested bar alone, Stage 2
   of `CWVault/claude/Plan-Deep-Time.md`. **`../js/deep-time.js`** (new that day) — `cwDeepTime(host,
   opts)`, a shelf module mounted into an element as `glass.js` and `map.js` are: one SVG; the top
