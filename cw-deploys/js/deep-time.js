@@ -15,6 +15,13 @@
    of a thing; a faint tail stretches older for "probably began by here" (the dot and tail). Every
    bar carries one line saying what it is known from — the fog, in words.
 
+   A curve under the bar (Stage 5, 6 Oct 2026): setCurve(curve | null) draws a curve file from
+   stories/curves/ — { points: [[year, value, low, high], ...], scale: 'linear' | 'log', unit, say,
+   second?: { name, say, points } } — along the deepest bar's span, as a band (low to high, soft) with
+   the value as a line, a second series if there is one, and the value at the marker written out
+   from `say` ('{v}' the number, '{dir}' above/below for a signed metre). The band is the point: a
+   wide band says little is known, and the words at the marker say 'about'.
+
    opts:
      data     the tree, or the URL of its JSON (default '../stories/deep-time.json')
      year     the marker's opening age, in millions of years ago (default: the root's start)
@@ -48,7 +55,9 @@
 
   var SVG = 'http://www.w3.org/2000/svg';
   var INK = '#2a241c', INK_SOFT = '#6b655a', GREY = '#9a958b', COPPER = '#b5652b', LINE = '#46597a', PARCH = '#f4f1e8', FOCUS_EDGE = '#8fb0d2', FOCUS = '#bcd3ea';
-  var BAR_H = 26, TIER_H = 96, TOP = 70, PAD = 12, MIN_PX = 3, HIT_PX = 28, LABEL_ROWS = 2;   // widths are honest (6 Oct, Michael): a hairline is the lesson; a thin chunk gets a finger-sized hit area
+  var BAR_H = 26, TIER_H = 96, TOP = 70, PAD = 12, MIN_PX = 3, HIT_PX = 28, LABEL_ROWS = 2;
+  var CURVE_H = 84, CURVE_GAP = 70;   // the band's height under the deepest bar, and the room above it for the bar's two label rows
+  var CURVE_FILL = '#8fb0d2', CURVE_LINE = '#46597a', CURVE_FILL_2 = '#d9a066', CURVE_LINE_2 = '#b5652b';   // widths are honest (6 Oct, Michael): a hairline is the lesson; a thin chunk gets a finger-sized hit area
   var THIS_YEAR = new Date().getFullYear();
 
   function el(tag, attrs, parent, text) {
@@ -222,6 +231,9 @@
           if (g !== deep) el('line', { x1: hx, y1: g.y - 3, x2: hx, y2: g.y + BAR_H + 3, stroke: COPPER, 'stroke-width': 2, opacity: 0.85 }, grp);
         }
       });
+      // the curve under the deepest bar: the band, the line, the second series, the words at the marker
+      var curveH = 0;
+      if (curve) curveH = drawCurve(deep);
       // the deepest bar's marker and hit area, last so they sit on top
       var hx2 = Math.max(deep.xL, Math.min(deep.xR, deep.x(ma)));
       var hit = el('rect', { x: deep.xL, y: deep.y + BAR_H, width: deep.xR - deep.xL, height: 20, fill: 'transparent', 'class': 'knob' }, svg);   // the strip under the bar: tap to jump, drag the knob
@@ -230,8 +242,72 @@
       el('circle', { cx: hx2, cy: deep.y + BAR_H + 8.5, r: 14, fill: 'transparent' }, kg);
       el('circle', { cx: hx2, cy: deep.y + BAR_H + 8.5, r: 7, fill: COPPER, stroke: PARCH, 'stroke-width': 2 }, kg);
       [hit, kg].forEach(function (h) { h.addEventListener('pointerdown', startDrag); });
-      var H = TOP + tierGeom.length * TIER_H - 20;
+      var H = TOP + tierGeom.length * TIER_H - 20 + curveH;
       svg.setAttribute('height', H); svg.style.height = H + 'px';
+    }
+    var curve = null;
+    function curveAt(pts, y, k) {   // the value (k = 1), low (2) or high (3) at a store year, by straight lines between points
+      if (!pts || !pts.length) return null;
+      if (y <= pts[0][0]) return pts[0][k];
+      for (var i = 1; i < pts.length; i++) if (y <= pts[i][0]) { var a = pts[i - 1], b = pts[i], t = (y - a[0]) / ((b[0] - a[0]) || 1); return a[k] + (b[k] - a[k]) * t; }
+      return pts[pts.length - 1][k];
+    }
+    function sayValue(tmpl, v, unit) {
+      var n = Math.abs(v), txt;
+      if (n === 0) txt = '0';
+      else if (n >= 100) txt = withCommas(Math.round(n));
+      else if (n >= 10) txt = (Math.round(n * 10) / 10).toString();
+      else if (n >= 0.01) txt = (Math.round(n * 100) / 100).toString();
+      else { var e = Math.floor(Math.log10(n)), lead = Math.round(n / Math.pow(10, e)); txt = (lead === 1 ? 'a ' : lead + ' ') + ({ '-3': 'thousandth', '-4': 'ten-thousandth', '-5': 'hundred-thousandth', '-6': 'millionth', '-7': 'ten-millionth', '-8': 'hundred-millionth' }[String(e)] || ('10^' + e)) + (lead === 1 ? '' : 's'); }
+      return (tmpl || '{v} ' + (unit || '')).replace('{v}', txt).replace('{dir}', v < 0 ? 'below' : 'above');
+    }
+    function drawCurve(deep) {
+      var c = curve, n = deep.node, y0 = deep.y + BAR_H + CURVE_GAP, y1 = y0 + CURVE_H, xL = deep.xL, xR = deep.xR;
+      var series = [{ pts: c.points, fill: CURVE_FILL, line: CURVE_LINE, say: c.say, name: c.name || '' }];
+      if (c.second && c.second.points) series.push({ pts: c.second.points, fill: CURVE_FILL_2, line: CURVE_LINE_2, say: c.second.say, name: c.second.name || '' });
+      var log = c.scale === 'log', N = 160, lo = Infinity, hi = -Infinity, samples = [];
+      for (var i = 0; i <= N; i++) { var m = n.from + (n.to - n.from) * i / N; samples.push({ ma: m, year: storeYear(m) }); }
+      series.forEach(function (S) { samples.forEach(function (sm) { var a = curveAt(S.pts, sm.year, 2), b = curveAt(S.pts, sm.year, 3); if (a != null) { lo = Math.min(lo, a); hi = Math.max(hi, b); } }); });
+      if (!(hi > lo)) { lo = lo - 1; hi = hi + 1; }
+      var tf = log ? function (v) { return Math.log10(Math.max(v, 1e-12)); } : function (v) { return v; };
+      var tlo = tf(lo), thi = tf(hi);
+      // the axis never zooms into a sliver: a band that is tight on this span stays a thin band, not a wedge
+      // filling the box — at least 8 % of the larger value on a linear axis, a third of a decade on a log one
+      var minRange = log ? 0.33 : Math.max(Math.abs(hi), Math.abs(lo)) * 0.08;
+      if (thi - tlo < minRange) { var mid = (thi + tlo) / 2; tlo = mid - minRange / 2; thi = mid + minRange / 2; }
+      var pad = (thi - tlo) * 0.06; tlo -= pad; thi += pad;
+      var vy = function (v) { return y1 - (y1 - y0) * (tf(v) - tlo) / ((thi - tlo) || 1); };
+      var grp = el('g', { 'class': 'curve' }, svg);
+      el('rect', { x: xL, y: y0, width: xR - xL, height: CURVE_H, fill: 'rgba(42,36,28,0.035)' }, grp);
+      el('line', { x1: xL, y1: y1, x2: xR, y2: y1, stroke: GREY, 'stroke-width': 0.75 }, grp);
+      series.forEach(function (S) {
+        var up = '', down = '', mid = '';
+        samples.forEach(function (sm, i) {
+          var x = deep.x(sm.ma).toFixed(1), h = curveAt(S.pts, sm.year, 3), l = curveAt(S.pts, sm.year, 2), v = curveAt(S.pts, sm.year, 1);
+          if (v == null) return;
+          up += (i ? 'L' : 'M') + x + ',' + vy(h).toFixed(1) + ' ';
+          down = 'L' + x + ',' + vy(l).toFixed(1) + ' ' + down;
+          mid += (mid ? 'L' : 'M') + x + ',' + vy(v).toFixed(1) + ' ';
+        });
+        if (!up) return;
+        el('path', { d: up + down + 'Z', fill: S.fill, opacity: 0.32 }, grp);
+        el('path', { d: mid, fill: 'none', stroke: S.line, 'stroke-width': 1.5 }, grp);
+      });
+      // the axis words: the unit at the left, how sure at the right, both small
+      el('text', { x: xL, y: y0 - 6, 'font-size': 11, fill: INK_SOFT, 'class': 'halo' }, grp, (c.name || '') + (c.unit ? ' \u00b7 ' + c.unit : '') + (log ? ' \u00b7 log scale' : ''));
+      var hs = el('text', { x: xR, y: y0 - 6, 'font-size': 11, 'font-style': 'italic', fill: INK_SOFT, 'text-anchor': 'end', 'class': 'halo' }, grp);
+      var words = (c.howSureShort || (c.howSure || '').split('.')[0]).split(' '); hs.textContent = words.join(' ');
+      while (words.length > 2 && !fitText(hs, (xR - xL) * 0.55)) { words.pop(); hs.textContent = words.join(' ') + '\u2026'; }
+      // the marker's value, each series: a dot on its line and the words above the band
+      var mx = Math.max(xL, Math.min(xR, deep.x(ma))), yr = storeYear(ma), row = 0;
+      series.forEach(function (S) {
+        var v = curveAt(S.pts, yr, 1); if (v == null) return;
+        el('circle', { cx: mx, cy: vy(v), r: 3.5, fill: S.line, stroke: PARCH, 'stroke-width': 1.5 }, grp);
+        var tx = Math.max(xL + 90, Math.min(xR - 90, mx));
+        el('text', { x: tx, y: y1 + 16 + row * 14, 'font-size': 12, 'font-style': 'italic', fill: S.line, 'text-anchor': 'middle', 'class': 'halo' }, grp, sayValue(S.say, v, c.unit));
+        row++;
+      });
+      return CURVE_GAP + CURVE_H + 8 + row * 14;
     }
     function fitText(t, maxW) {
       try { if (t.getComputedTextLength() <= maxW) return true; } catch (e) { return true; }
@@ -297,6 +373,8 @@
     return {
       year: function () { return ma; },
       setYear: setYear,
+      setCurve: function (c) { curve = c || null; draw(); },
+      curve: function () { return curve; },
       open: open,
       path: path,
       fmt: fmt,

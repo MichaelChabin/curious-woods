@@ -24,6 +24,11 @@
   h1 { font-weight: normal; font-size: 30px; line-height: 1.1; margin: 6px 0 14px; }
   p.how { color: var(--ink-soft); max-width: 700px; margin: 0 0 22px; }
   #bar { width: 100%; }
+  .curves { max-width: 1100px; margin: 4px 0 0 12px; font-size: 15px; color: var(--ink-soft); }
+  .curves .lead { font-style: italic; color: var(--grey); margin-right: 6px; }
+  .curves .cw { font-style: italic; color: var(--payne); cursor: pointer; margin-right: 14px; user-select: none; -webkit-user-select: none; }
+  .curves .cw:hover { color: #3D3D3A; }
+  .curves .cw.on { font-style: normal; color: var(--copper); }
   #panel { max-width: 700px; margin: 18px auto 0; min-height: 6em; border-top: .5px solid var(--sep); padding-top: 12px; }
   #panel h2 { font-weight: normal; font-size: 20px; margin: 0 0 6px; }
   #panel .when { font-style: italic; color: var(--payne); font-size: 14px; }
@@ -38,14 +43,15 @@
   <h1>Earth, 4.6 billion years, in sections</h1>
   <p class="how">The top bar is the whole of it. Tap a section and it comes down as a bar of its own; tap again and it goes back up. A bar that only twitches has nothing more underneath, and that is the point. Drag the copper marker, or tap a dot, for the year. The faint tail behind a dot is where the thing probably began, before the oldest evidence of it.</p>
   <div id="bar"></div>
+  <div class="curves" id="curves"><span class="lead">Curves:</span> <span class="cw" data-c="sea-level-ice-ages">Sea level</span> <span class="cw" data-c="oxygen">Oxygen</span> <span class="cw" data-c="day-length">Day length</span> <span class="cw" data-c="minerals">Minerals</span> <span class="cw" data-c="sun-and-inside">Sun and inside</span></div>
   <div id="panel"><span class="hint">Pull a section down, then tap a dot.</span></div>
   <p class="foot">The sections are cut where the evidence changes kind, and each bar says what it is known from. The marks are sketches from the notes of 5 October; the store will hold them. Hazen's <i>The Story of Earth</i> for the colours and the chunks.</p>
 </main>
-<script src="../js/deep-time.js?v=2026-10-06b"></script>
+<script src="../js/deep-time.js?v=2026-10-06c"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-06 9bcebe4';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-06 24f9b15';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
   const panel = document.getElementById('panel');
   let bar = null, currentBar = null;
@@ -63,6 +69,19 @@
     }
   });
   window.__bar = bar;
+  // the curves under the bar: one at a time, a word on, tap again for none (Stage 5)
+  const CURVE_NAMES = { 'sea-level-ice-ages': 'Sea level', oxygen: 'Oxygen', 'day-length': 'Day length', minerals: 'Minerals', 'sun-and-inside': 'The sun, and from inside' };
+  const curveCache = {};
+  document.querySelectorAll('#curves .cw').forEach(w => w.addEventListener('click', () => {
+    const was = w.classList.contains('on');
+    document.querySelectorAll('#curves .cw').forEach(x => x.classList.remove('on'));
+    if (was) { bar.setCurve(null); return; }
+    const key = w.dataset.c;
+    const show = c => { if (!w.classList.contains('on')) { w.classList.add('on'); c.name = CURVE_NAMES[key] || key; bar.setCurve(c); } };
+    w.classList.add('on');
+    if (curveCache[key]) { curveCache[key].name = CURVE_NAMES[key] || key; bar.setCurve(curveCache[key]); return; }
+    fetch('../stories/curves/' + key + '.json', { cache: 'no-cache' }).then(r => r.json()).then(c => { curveCache[key] = c; if (w.classList.contains('on')) { c.name = CURVE_NAMES[key] || key; bar.setCurve(c); } });
+  }));
 })();
 </script>
 </body>

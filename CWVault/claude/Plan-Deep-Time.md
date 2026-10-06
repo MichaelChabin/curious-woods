@@ -181,6 +181,19 @@ open in it); the fog works inside the last chunk, where the data reaches 540 ins
 *snowball and after*.
 
 **Stage 5 — Curves with a band.**
+*Done 6 Oct 2026, late, built and checked, not yet committed at the time of writing:* the curve file
+gained `low` and `high` beside the value, `scale`, `say` and `howSure`; `tools/curves-deep-time.py` writes
+five files — the sea across the ice ages (two published stacks from NOAA's archive, the first with its
+own 95 % bounds), oxygen (the Lyons 2014 envelope, a sketch read off the figure), the length of the day,
+the mineral count, and the sun and the inside heat as two series on one log axis; `js/deep-time.js`
+draws a band under the deepest bar with the value at the marker in words; the join bench's map reads
+the ice-age sea, so the clamp of Stage 4 is gone. *Proved:* the band reads at a glance on the log axis,
+and the sun-versus-inside crossing sits in the first chunk, as the notes said. Three lessons: Bintanja's
+file gives the drop in sea level, positive when the sea was lower, so it is negated; every curve file
+runs by ascending year, because every reader assumes it (the sea came out sorted the other way and drew
+flat); and a band that is tight on a short span would fill the box as a wedge if the axis zoomed to it,
+so the axis has a floor. Not yet seen on an iPad. The lab page's own curve drawing (After the Ice)
+still draws a line, not a band: Stage 7.
 The curve file gains a low and a high beside the value. Oxygen (Lyons and others, 2014,
 whose envelope is orders of magnitude wide across the Boring Billion), the length of the
 day, the mineral count (Hazen), the sun's brightness, the heat from inside. The Time
