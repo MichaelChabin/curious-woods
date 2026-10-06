@@ -39,3 +39,33 @@ not where it was.
 
 Related: `claude/Spec-Maps.md`, `claude/Spec-Map-Lab.md`,
 `03-SEEDS/draining-the-ocean.md`, Board *Time and the map* and *M12*.
+
+## 6 Oct 2026 — the thinking of 5–6 Oct, and what it settled
+
+The deep-time Time Machine was thought through in two chats (5 Oct on the Desktop, 6 Oct in
+Claude Code). The ideas are in `claude/Ideas-Ledger.md` under *Other labs* (from *Nested
+deep-time bar* to *Thousand-year blocks*) and *Stories* (*The edge of knowing*). The way to
+build it is `claude/Plan-Deep-Time.md`. What this seed held as undecided now reads:
+
+- **Lab capability or story?** Both, in the ruled order: the lab first (Time-Machine-Shape:
+  every capability on), stories as fixed viewings of it. *The edge of knowing* is the story
+  that wants it first.
+- **A place that is not where it was.** For most deep-time events the place is where the
+  evidence is, today (Jack Hills, Acasta, Hamersley, Mistaken Point), and the mark means
+  *where we found out*. Only an event about a position needs a plate, and the plate
+  data carries that.
+- **The data.** EarthByte's open models (Merdith et al. 2021, to a billion years; CC-BY)
+  are the first source, exported through GPlates as coastline rings per age in the shape the
+  ice outlines already use. PALEOMAP's licence is still to be checked; a second model is
+  wanted anyway, because the disagreement between two is one of the two honest measures of
+  the fog (ledger, *Measuring the fog*).
+- **The map is the change, not the timeline.** The pyramid is today's ground, so before a
+  few million years there is nothing to lay a layer on. The globe is a second base picture,
+  outlines only, and the one engine change the thread needs (ledger, *Zoom in time is zoom
+  in space*).
+- **A working mockup exists:** the artifact *Deep time, nested* (5 Oct), with the chunk
+  tree as data, the pull-down, the twitch for a bar that cannot open, dot-and-tail marks and
+  a fog-graded globe stand-in. It is a sketch to read, not code to keep.
+- **The motion is real (Michael, 6 Oct, later).** Not a crossfade of stills: the data is
+  pieces with plate identities and sampled rotations, and the page turns each piece to its
+  year. Plan-Deep-Time.md Stage 1 says how.

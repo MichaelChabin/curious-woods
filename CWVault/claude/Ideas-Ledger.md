@@ -10,7 +10,7 @@ Status words: **loose** (came up, not weighed) · **candidate** (worth pursuing,
 
 Michael adds by hand in the same form. Nothing is deleted; it is marked dropped.
 
-The entries below are from the chat of 3 Oct 2026 and are real.
+The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 5 Oct entries marked *merged from the holding pen* came from Desktop chats and were merged on 6 Oct; the pen was emptied.
 
 ## Circles
 
@@ -43,6 +43,13 @@ The entries below are from the chat of 3 Oct 2026 and are real.
 **Opens.** Shows lines' strength and their hole together: the net reaches everywhere but cannot find a middle, which is why the circle is needed. Sets up level `both`.
 **Costs.** Needs a decision on how many points the lines level opens with (three lets her feel the stall; four, as in Wright's frame, means the engine was there all along).
 **Source.** Michael, chat of 3 Oct; counting corrected (six lines, not sixteen).
+
+### Drag for lines, not for circles, never once there is glass   · 4 Oct 2026 · ruled
+**Idea.** Points can be dragged, and everything built from them follows, but only at the lines level and only while the construction is uncoloured. Circles are excluded. Once the first pane is filled, nothing moves.
+**Where it sits.** Lines level, as its own door (the second lines story). Returns at the rectangles level, where corners are free points and dragging is cheap.
+**Opens.** The four-point net: drag any point and the whole net moves and stays the same net; the midpoint does not survive, which is why the circle is needed next. A natural order of work: drag until it looks right, then colour.
+**Costs.** Two reasons dragging stops where it does. Two circles meet in two places, and under a drag the chosen crossing slides, swaps or vanishes; lines never do that. Moving edges merges and splits faces, and nobody can say which half keeps the yellow. The glazier gives the rule: once the glass is in, the lead is set.
+**Source.** Michael and Claude, chat of 4 Oct. Michael: it would not have been found until tried and failed. *(Merged from the holding pen, 6 Oct.)*
 
 ## Between levels
 
@@ -77,7 +84,126 @@ The entries below are from the chat of 3 Oct 2026 and are real.
 **Costs.** One shelf of palettes that belongs to her, not to a lab, so it must be stored. Not for places where colour carries meaning (maps, plots, the three lamps) — consistent with the 18 Sept colour ruling. Her own pictures stay on her device; only the colours travel when she shares (copyright and privacy). Average a small patch, not one pixel, or the picks come out muddy. Existing `palettes.json` palettes run six to eight colours, so the count needs settling.
 **Source.** Michael, chat of 4 Oct.
 
+### Nested deep-time bar   · 5 Oct 2026 · candidate
+**Idea.** One bar for 4.6 billion years, cut into about five chunks at natural breaks, not geological names, with Hazen's *Story of Earth* as the reference: making a planet (4.57 to 4.4), rock, water and first life (to 3.5), the rusting of the world (to 1.8), the Boring Billion (to 0.8), snowball and after (to now). Click a chunk and it slides down at three-quarters width, with lines attaching it to the gap it left. Chunks nest the same way, down to After the Ice.
+**Where it sits.** Timelines, feeding the world map. The attach-at-scale rule is already ruled (Sept 8); the chunking and the slide-down are new.
+**Opens.** A felt scale of time with no numbers: each descent shows the child's slice narrowing until the 12,000 years are a hairline. The bar's drag marker becomes the map's time control for all of time, not just the last 12,000 years.
+**Costs.** The first chunk is 4% of the bar and needs a minimum on-screen width. The marker's readout has to switch between years ago and millions of years ago without muddle. The map's plate motion starts 500 million years back, inside the last chunk, so the fog has to work within a bar, not only between bars.
+**Source.** Michael, chats of 4 and 5 Oct; the chunk dates worked out with Claude. A working mockup from the 5 Oct chat: the artifact *Deep time, nested*. *(Merged from the holding pen, 6 Oct.)*
+
+### Fog line on the map   · 5 Oct 2026 · candidate
+**Idea.** As the map runs back in time it says how sure it is. Crisp to about 200 million years (the seafloor still carries its magnetic stripes). From there to about 540 million, latitude firm and longitude smeared: we know how far north India was, not how far east. Before that, ghost outlines with Michael's plain comment: there were probably continents, this is one guess. Switch from flat map to a slowly turning globe at the fog line, because a globe has no edges, so ghosts drifting on it read as somewhere on here rather than left blank.
+**Where it sits.** The world map, after plate motions are in.
+**Opens.** Honesty as content rather than a caption; the map teaches how knowledge is built as it fades.
+**Costs.** Needs the plate model first. Blur is easy to miss; the sentences do the work, so each stage needs its words.
+**Source.** Michael's comment idea; the three stages and the globe reasoning Claude's. *(Merged from the holding pen, 6 Oct.)*
+
+### Dot and tail marker   · 5 Oct 2026 · loose
+**Idea.** Every first on the timeline is really the oldest sample found so far. So each such marker is a solid dot for the oldest sample and a faint tail stretching earlier for probably began somewhere back here. Same mark at the Uruk tablets as at the first fossils.
+**Where it sits.** Timelines, every level.
+**Opens.** Teaches that oldest known is a moving target by repetition, without a word of explanation.
+**Costs.** Each tail's length is a judgment, and somebody has to make it per event. *Added 6 Oct:* the tail ends at a prior bound when one exists (the oldest cities, for writing) and fades without an end when none does. The stretch the line draws today for an uncertain date is symmetric; this is one-sided, so it is a change to that mechanism, not a new one.
+**Source.** Michael's point that we know the oldest writing we have, not when writing started; the marker is Claude's. *(Merged from the holding pen, 6 Oct.)*
+
+### Uneven nesting   · 5 Oct 2026 · loose
+**Idea.** Chunks of the deep-time bar nest only as far as the evidence goes. The last chunk drops three or four levels; the rusting drops one; the first chunk and the Boring Billion pull down but not apart, and if a child tries, the bar twitches and springs back.
+**Where it sits.** Timelines, the nested bar.
+**Opens.** How little we know about the beginning is learned by the hands, with no sentence spent on it.
+**Costs.** The spring-back has to read as a rule, not a bug.
+**Source.** Michael asked whether the first chunk knew enough to pull apart; the gesture is Claude's. *(Merged from the holding pen, 6 Oct.)*
+
+### Foggy chunks find the modern map   · 5 Oct 2026 · loose
+**Idea.** Where the ancient map is fog, point at today's: the iron in a child's bicycle fell as rust in a sea 2.4 billion years ago, and the places are findable now (Hamersley, Minnesota, Michigan). Same for the Jack Hills zircons and the Acasta rock.
+**Where it sits.** The world map, in chunks before 540 million years.
+**Opens.** Keeps the map useful during the billions of years it cannot draw. *Added 6 Oct:* it also answers what a place is in deep time for most events. The place is where the evidence is, today, and the mark means *where we found out*; only an event that is about a position still needs a plate.
+**Costs.** Nothing known.
+**Source.** Claude, chat of 5 Oct. *(Merged from the holding pen, 6 Oct.)*
+
+### Curves under the bar   · 5 Oct 2026 · candidate
+**Idea.** Plot things along the whole 4.6 billion years beneath the bar: what the air and the sea are made of, and a guessed count of mineral kinds, with the point that minerals set what can be made. Candidates: oxygen, carbon dioxide, the mineral count, the length of the day, the sun's brightness, a biomass step, and the heat from Earth's interior (Michael's: well modelled, falls steadily, and crosses the rising sun). Uncertainty drawn as the width of the band.
+**Where it sits.** Timelines, under the nested bar; the plots level of the geometry spine, which it would give a reason for.
+**Opens.** Something to show during the billions of years the map cannot draw. The mineral curve runs straight into After the Ice: stone, copper, bronze, iron, clay for pots, each possible only because of an event further up the bar.
+**Costs.** Every curve is a guess with a width; the widths must be honest and the kid must be able to read a band. Needs the plots level, or a plain enough drawing that she can read it without it.
+**Source.** Michael, chat of 5 Oct; the day-length curve and the link to the metal ages Claude's. *(Merged from the holding pen, 6 Oct.)*
+
+### Convection from the first   · 5 Oct 2026 · loose
+**Idea.** Show the mantle convecting from the moment there is basalt: a hot, thin skin that forms, thickens, cracks and founders, small and fast enough to watch. Drift and subduction as the slow, large late form of something a child first sees as skin on porridge. "What it would be like" from a transparent bubble is the lens for the whole bar.
+**Where it sits.** Timelines, chunk one and two; a candidate interactive.
+**Opens.** Plate tectonics arrives as an old habit of the planet, not a Cambrian surprise. One mechanism explains the fog of chunk one (the skin kept sinking) and the map of chunk five.
+**Costs.** Convection is certain; plates with edges and subduction are not, and their start is dated anywhere from 4.0 to 2.5 billion. The animation must keep the two apart or it teaches a guess as a fact.
+**Source.** Michael, chat of 5 Oct. *(Merged from the holding pen, 6 Oct.)*
+
+### Cuts where the evidence changes kind   · 6 Oct 2026 · candidate
+**Idea.** A chunk of the deep-time bar is a stretch of time known from one kind of evidence, and the cuts fall where the evidence changes kind: zircon grains alone until 4.4 billion, surviving rock from 4.0, undisputed fossils from 3.5, rock that records the air from 2.4, things hard enough to keep from 539 million, seafloor stripes from 200 million, ice cores at the end. Every bar carries one line saying what it is known from.
+**Where it sits.** The nested bar and the fog line; the principle under both.
+**Opens.** The chunks are defensible rather than tasteful. The fog thins at every pull-down, felt without being told. The known-from line is the uncertainty marker Michael asked for, and no icon is needed.
+**Costs.** Where a story's natural break and the evidence's break disagree, the evidence wins and the story moves. The cuts in the 5 Oct notes were made by story and should be checked against this.
+**Source.** Michael's "chunks for which there is data to support", 6 Oct; the statement of the principle Claude's.
+
+### Six chunks, not five   · 6 Oct 2026 · loose
+**Idea.** The fifth chunk, snowball and after, runs from 800 million years to now, so the Ediacarans get seven sub-bars while the dinosaurs and all of us sit inside it at one line each. The end of boredom should stop at 539, and a sixth chunk, the visible world (working name), run from 539 to now, pulling down through the dinosaurs, the mammals, the ice ages and After the Ice.
+**Where it sits.** The nested bar, top level.
+**Opens.** The top bar shows the stretch the map can actually draw as its own chunk.
+**Costs.** Nothing known; a sixth chunk is about twelve percent of the bar.
+**Source.** Claude, 6 Oct, reading Michael's notes of 5 Oct.
+
+### Hazen's colours are the bar   · 6 Oct 2026 · loose
+**Idea.** Black earth, blue earth, gray earth, the rusting red, the snowball white, the green of land plants: Hazen's chapter colours are the colours of the top bar's chunks, so the child reads the planet's history as a strip of colour before reading a word.
+**Where it sits.** The nested bar.
+**Opens.** The colours are what the ground looked like, not decoration, and the strip carries the structure by itself.
+**Costs.** The colour ruling: a thing must do its own job first, so the strip must not fight the marks and the Focus window on it. The Boring Billion has no Hazen colour; a dull sulphur sea is the honest one.
+**Source.** Claude, 6 Oct, from the chapter names in Michael's notes.
+
+### Zoom in time is zoom in space   · 6 Oct 2026 · candidate
+**Idea.** In deep time the earth is seen from space, a globe; moving toward now, the view comes down to the ground, the pyramid of today's land. One continuous motion, not a switch.
+**Where it sits.** The world map and the globe, and the seam between them.
+**Opens.** Settles where the pyramid stops being honest: it is only needed near now, and the ice ages chunk, a few million years, is the natural seam. The globe never needs the pyramid.
+**Costs.** The globe is a second base picture under the map's layers, the one engine change this whole thread needs. Spec-Map-Lab already plans the globe by inverse projection; the outline-only globe deep time needs is cheaper than that.
+**Source.** Claude's suggestion, 5 Oct; Michael, 6 Oct: "I like it."
+
+### Turn and tilt the globe   · 6 Oct 2026 · loose
+**Idea.** On a globe, pan goes north and south by tilting, and east and west by turning about the pole. Drag turns it; drawing happens only with a drawing tool chosen.
+**Where it sits.** The globe; Spec-Map-Lab's open question on the globe gesture.
+**Opens.** The deep-time ghosts can be turned to; the gesture question gets its answer.
+**Costs.** The ruling that drag turns rather than draws is still Michael's to give; Spec-Map-Lab asked for it by name.
+**Source.** Michael, 6 Oct, for the pan; the drag ruling is Spec-Map-Lab's proposal.
+
+### Measuring the fog   · 6 Oct 2026 · loose
+**Idea.** Two legitimate measures of how uncertain a continent's position is. A paleomagnetic pole comes with a published confidence circle, a few degrees of latitude, and gives no longitude at all before the seafloor record at 200 million years. And the open reconstructions disagree with one another; overlaying two draws the disagreement. For dates, the store's precision becomes a number of years, proportional in deep time, rather than a word.
+**Where it sits.** The fog line; the store's precision field and the stretch it draws.
+**Opens.** Uncertainty read off the data rather than captioned; the oxygen curve's envelope is the same thing for a curve.
+**Costs.** Two plate models to process instead of one. Changing precision from a word to a number touches the stretch that the line draws today.
+**Source.** Michael asked whether there is a legitimate way to measure it, 6 Oct; the measures Claude's.
+
+### The descent as the arrival run   · 6 Oct 2026 · candidate
+**Idea.** Michael: an introduction that animates the slices of time needed to get from the universe, or the solar system, down to one year. The arrival run already exists (the Focus window sweeps and settles before she touches anything); extend it, each slice pulled down in turn until it lands on the story's year, then stop with the bar hers.
+**Where it sits.** The nested bar; Spec-Timeline-Intro's run.
+**Opens.** The first-visit rule is kept: nothing is shown that she cannot then do herself, because the run is the gesture.
+**Costs.** The universe to one year is about ten pull-downs, long on the tenth story. A story should start a rung or two above its year; only the lab, or a story whose point is the descent, runs the whole way.
+**Source.** Michael, 6 Oct; the limits Claude's.
+
+### Thousand-year blocks   · 6 Oct 2026 · loose
+**Idea.** Treat the recent past in thousand-year blocks for comparison: what happened between 1000 and today, between 0 and 1000, and so on back. How fast is change?
+**Where it sits.** The recent line; a lens on the store.
+**Opens.** The question of acceleration asked by a picture, with no word spent on it.
+**Costs.** A count per block measures what has been written into the store, not what happened, and the page has to say so or it lies.
+**Source.** Michael, 6 Oct.
+
+### True motion, not a crossfade   · 6 Oct 2026 · ruled
+**Idea.** The continents on the globe move: every piece of continent is turned by its plate's rotation for the year and drawn there, so a drag of the marker opens the Atlantic. Not a crossfade between stills at ten-million-year steps, which gives ghosts dissolving from place to place.
+**Where it sits.** The plate data and the globe; Stages 1, 3 and 4 of Plan-Deep-Time.md.
+**Opens.** Drift as a thing seen, which was the point of going back this far; and a piece of continent that can be followed by eye.
+**Costs.** The data carries plate identities and sampled rotations, not outlines per age; a rotation interpolated per piece per frame on a 2017 iPad; a reference frame to choose and name. About two sessions more than the crossfade.
+**Source.** Claude laid out the choice; Michael, 6 Oct: "put the true motion in." Ruled in Plan-Deep-Time.md, status line, and on the board.
+
 ## Stories
+
+### The edge of knowing (working name)   · 5 Oct 2026 · candidate
+**Idea.** A thread that follows the map back and stops each time the evidence changes character: Wegener, sure for forty years and right for a reason he never knew, with the seafloor stripes that proved him; fossils and rock magnetism in the middle; the Jack Hills zircons, grains you could lose in your pocket, that tell us there was an ocean at 4.4 billion. The same shape runs into history: writing is older than its oldest tablet, Homo sapiens got 100,000 years older when Jebel Irhoud was redated.
+**Where it sits.** Stories, timeline strand, tied to the fog line on the map.
+**Opens.** How we know as story; gives the fog line and the dot-and-tail marker their reason.
+**Costs.** Nothing known.
+**Source.** Michael: exploit the uncertainty with a story, as a thread; Wegener and the zircons Claude's suggestions. *(Merged from the holding pen, 6 Oct.)*
 
 ## Practice and Maya
 
@@ -96,3 +222,10 @@ The entries below are from the chat of 3 Oct 2026 and are real.
 **Opens.** A question to put to every new bench: what does doing it make her notice?
 **Costs.** Ruined by a follow-up question ("what did you notice?"). The made thing (the palette, the finished poem) is the only follow-up.
 **Source.** Michael, chat of 4 Oct, comparing the palette maker to the limerick puzzle.
+
+### Levels accumulate   · 4 Oct 2026 · candidate
+**Idea.** A new version of the geometry lab, built beside the current one, as one core and a sequence of levels: circles, lines, lines with movable points, lines with one circle, lines and circles, the grid, rectangles and triangles, resolution, multiplication, plots, random walks, negatives, functions. Each level is the one before plus one thing, so a story at any level has every earlier tool. Michael's guess: accumulate, not gate.
+**Where it sits.** Across the geometry spine. Replaces edge selection with fill by face from the start.
+**Opens.** The level becomes a point in time: one control in the lab lets her slide along the levels and watch the tools appear. The column of words folds by level, earlier ones collapsed; folding is easy because the capabilities and her experience of them are already there.
+**Costs.** Once a level's door opens, its words and gestures are frozen, or every earlier story breaks. The core must be built for the hard levels from day one: faces with curved edges in exact arithmetic, a construction log that can be replayed for dragging, and two kinds of point once the grid arrives. Rough size, twenty to thirty Claude Code sessions, the first ten decisive.
+**Source.** Michael, chat of 4 Oct, with Claude's sizing. *(Merged from the holding pen, 6 Oct.)*
