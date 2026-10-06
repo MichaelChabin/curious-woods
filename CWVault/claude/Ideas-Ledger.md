@@ -217,6 +217,13 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** What colour an atmosphere "is" at a given age is an inference; the rim must not pretend to be a photograph.
 **Source.** Michael, 6 Oct, after the iPad test; the rim-by-curve Claude's.
 
+### Invented land, honest about it   · 7 Oct 2026 · candidate
+**Idea.** Past the model's reach the globe shows oceans with no land, which is itself a claim and a false one. Instead, random continents whose total area matches what probably existed, drawn alike and labelled as invented: no one knows; every visit shows different guesses; a word, *another guess*, rearranges them. Height maps the same way if wanted, with the same words.
+**Where it sits.** The globe, the stretch between a billion and 4.4 billion years; a sixth curve under the bar, the amount of continental crust, with the widest band of all.
+**Opens.** The uncertainty taught by the hands, as the twitch teaches it: she taps, the land moves, and she knows. The amount is the one honest thing and it is shown; the shape and the place are shown to be guesses by changing.
+**Costs.** The invention must look unlike the model's ghost (outlined and stippled against a smeared solid) or she cannot tell an inference from an invention. The amount curve is argued by a factor of four, and how much stood above the sea by more; the band says so. The seed must hold while she drags the marker, or the land reshuffles under her hand. At the model's edge the areas must match, or the join jumps.
+**Source.** Michael, 7 Oct: "it is also not honest to show the oceans without any." The seam, the style and the drift Claude's.
+
 ## Stories
 
 ### The edge of knowing (working name)   · 5 Oct 2026 · candidate
