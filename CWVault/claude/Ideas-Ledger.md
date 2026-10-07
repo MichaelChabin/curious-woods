@@ -239,6 +239,35 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** It must come from the climate-sensitive rocks (coal, salt, dune sandstone, glacial rubble: Boucot's atlas, Scotese's climate maps), drawn per piece per age, never from a painter's sense of what looks right; and it is one more thing to keep honest as the model's grades fall.
 **Source.** Michael, 7 Oct; the rock atlases Claude's.
 
+### Deep events seldom touch the map   · 6 Oct 2026 · candidate
+**Idea.** Michael: "Things in deep time almost never go on the map because we have no map to put them on." Each deep event still records *place now* (where the evidence is today), but it may be *none*, and nothing obliges a mark on the globe. And: "Uncertainty is part of the point here. It is a feature. We are conveying the need for more research."
+**Where it sits.** Timelines and the world map; the deep-time event store.
+**Opens.** Events that are pure fog (Black Earth, the bombardment) earn their place on the bar by saying what nobody knows; the map is spared marks it cannot honestly place.
+**Costs.** Softens *Foggy chunks find the modern map* above: place now becomes a field to read, not a pin to draw. Could go into Rulings, *Deep time*, if Michael wants it fixed.
+**Source.** Michael, chat of 6 Oct (Events-Deep-01, round 1).
+
+### Patterson dates the Earth   · 6 Oct 2026 · candidate
+**Idea.** An After the Ice event for 1953: Clair Patterson works out the age of the Earth from lead in a piece of the meteorite that made Meteor Crater, Arizona. Kept apart from the deep event *Gathering*, because the two sit on very different timelines.
+**Where it sits.** After the Ice events; links to *Gathering* on the earth line.
+**Opens.** The same fact seen twice: the planet gathering, and the person who measured when. A door to his later fight over lead in petrol, which would be its own story.
+**Costs.** Nothing known.
+**Source.** Michael, chat of 6 Oct: "Keep both."
+
+### The day at 2.46 billion   · 6 Oct 2026 · loose
+**Idea.** A deep event for the length of the day, about 17 hours 2.46 billion years ago, read from banded iron at Joffre Gorge, Karijini (Lantink and others 2022). It replaces the unsupported "18-hour day" that the sketch gave Kenorland.
+**Where it sits.** Deep time, the rusting chunk; the day-length curve under the bar.
+**Opens.** A real place and a real measurement behind one point on the curve; a Pilbara child can stand in the gorge.
+**Costs.** Mechanism (Milankovitch cycles in rock) needs care to tell honestly in 300 words.
+**Source.** Claude, from the round 2 research, 6 Oct.
+
+### A kind for living things   · 6 Oct 2026 · loose
+**Idea.** The event store's closed list of kinds has *crop or animal* but nothing for microbes, seaweed or a frond nobody can classify. Cyanobacteria had to go in as "crop or animal".
+**Where it sits.** The event store (Spec-Maps kinds); every deep batch from here on.
+**Opens.** The Boring Billion and the Ediacarans file cleanly.
+**Costs.** A schema change for the build; a word to choose (*life*, *living thing*).
+**Source.** Claude, writing Events-Deep-01, 6 Oct.
+
+
 ## Stories
 
 ### The edge of knowing (working name)   · 5 Oct 2026 · candidate
@@ -247,6 +276,7 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** How we know as story; gives the fog line and the dot-and-tail marker their reason.
 **Costs.** Nothing known.
 **Source.** Michael: exploit the uncertainty with a story, as a thread; Wegener and the zircons Claude's suggestions. *(Merged from the holding pen, 6 Oct.)*
+*Added 7 Oct, end of deep-time batch 6.* Michael: "one of the main things to learn about this is uncertainty… there are significant and interesting stories around that… These become unmistakably obvious when on a time line, if it goes back far enough." Not ready to try yet. Batch 6 gave fresh cases of the same shape: Lascaux older by 4,000 years and Lebombo by 8,000 as methods improved; radiocarbon years that run short of ordinary years (Brassempouy's 25,000 is really about 30,000); the oldest painting moving from Europe to Sulawesi, then to Muna, with its method now challenged; Neanderthal painters argued both ways; a dating crust that gives only the least a painting can be. Michael also let the events end on "nobody knows" (7 Oct).
 
 ## Practice and Maya
 

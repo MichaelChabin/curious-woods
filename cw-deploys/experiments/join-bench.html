@@ -23,6 +23,20 @@
   h1 { font-weight: normal; font-size: 30px; line-height: 1.1; margin: 6px 0 14px; }
   p.how { color: var(--ink-soft); max-width: 700px; margin: 0 0 22px; }
   #bar { width: 100%; }
+  /* the More: the Time Machine page's window contents */
+  .tm-more { width: 460px; max-width: 100%; font-size: 16px; line-height: 1.45; color: var(--ink); padding-top: 6px; }
+  .tm-more h3 { font-weight: normal; font-size: 21px; margin: 0 0 10px; line-height: 1.2; }
+  .tm-more .stepped { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; line-height: 1.5; }
+  .tm-more .stepped div:nth-child(2) { padding-left: 1.5em; }
+  .tm-more .stepped div:nth-child(3) { padding-left: 3em; }
+  .tm-more p { margin: 0 0 .9em; }
+  .tm-more blockquote { margin: 0 0 1.4em; padding: 0 0 0 20px; border-left: 2px solid var(--sep); }
+  .tm-more blockquote p { margin: 0 0 .35em; }
+  .tm-more .known { font-size: 14px; color: var(--ink-soft); }
+  .tm-more .refs { font-size: 12px; line-height: 1.45; color: var(--ink-soft); border-top: .5px solid var(--sep); margin-top: 16px; padding-top: 8px; }
+  .tm-more .refs div { margin: 0 0 5px; }
+  #summary .more { font-style: italic; color: var(--payne); cursor: pointer; }
+  #summary .more:hover { color: #3D3D3A; }
   .curves { max-width: 1100px; margin: 4px 0 0 12px; font-size: 15px; color: var(--ink-soft); }
   .curves .lead { font-style: italic; color: var(--grey); margin-right: 6px; }
   .curves .cw { font-style: italic; color: var(--payne); cursor: pointer; margin-right: 14px; user-select: none; -webkit-user-select: none; }
@@ -43,19 +57,20 @@
   <p class="how">The bar drives the map. This side of the ice ages the map is the ground: today’s land, the sea lower where it was lower. Past them it is the earth from space, the continents where they were. The change is the globe pulling away from the ground, or coming down to it. Drag the copper marker across the seam and back.</p>
   <div id="bar"></div>
   <div class="curves" id="curves"><span class="lead">Curves:</span> <span class="cw" data-c="sea-level-ice-ages">Sea level</span> <span class="cw" data-c="oxygen">Oxygen</span> <span class="cw" data-c="day-length">Day length</span> <span class="cw" data-c="minerals">Minerals</span> <span class="cw" data-c="sun-and-inside">Sun and inside</span></div>
-  <div id="words"><div class="when" id="when">now</div><div class="grade" id="grade">the ground</div><p id="why"></p></div>
+  <div id="words"><div class="when" id="when">now</div><div class="grade" id="grade">the ground</div><p id="why"></p><p id="summary"></p></div>
   <div class="mapwrap"><div id="map"></div></div>
   <p class="foot">The seam is the ice ages, 2.6 million years ago: the ground of today is honest through the whole ice-age cycle and roughly to a few million years. Continents from the EarthByte model of Merdith and others (2021), CC BY 4.0; sea level from Spratt and Lisiecki (2016) to 800,000 years and Bintanja and van de Wal (2008) to three million.</p>
 </main>
 <script src="../js/map.js?v=2026-10-06-deep"></script>
 <script src="../js/globe.js?v=2026-10-06c"></script>
-<script src="../js/deep-time.js?v=2026-10-06c"></script>
+<script src="../js/deep-time.js?v=2026-10-07"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-06 24f9b15';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-07 fa086a0';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
   const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   const FIT = { west: -180, south: -58, east: 180, north: 78 };   // the whole world, as the Time Machine opens
   const GRADE_WORDS = { ground: 'the ground', crisp: 'from space, crisp', latitude: 'from space: north and south firm, east and west smeared', ghost: 'from space: a ghost', beyond: 'from space: past the model', none: 'no map' };
   const get = u => fetch(u, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
@@ -68,8 +83,13 @@
               onChange: (on, grade, why) => { $('grade').textContent = GRADE_WORDS[grade] || grade; $('why').textContent = on ? (why || '') : ''; } }
     } });
     bar = cwDeepTime($('bar'), {
-      data: '../stories/deep-time.json', year: 0,
-      onYear: (ma, storeYear) => { $('when').textContent = bar ? bar.fmt(ma) : ''; map.setTime(storeYear); }
+      data: '../stories/deep-time.json', events: '../stories/deep-time-events.json', year: 0,
+      onYear: (ma, storeYear) => { $('when').textContent = bar ? bar.fmt(ma) : ''; map.setTime(storeYear); },
+      onMark: (mk, b) => {
+        const rec = mk.rec; if (!rec) return;
+        $('summary').innerHTML = '<b>' + esc(rec.label) + '.</b> ' + cwDeepTime.prose(rec.summary) + ' <span class="more" role="button" tabindex="0">More</span>';
+        $('summary').querySelector('.more').addEventListener('click', () => { const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec); cwWindow(box, {}); });
+      }
     });
     window.__map = map; window.__bar = bar;
   // the curves under the bar: one at a time, a word on, tap again for none (Stage 5)

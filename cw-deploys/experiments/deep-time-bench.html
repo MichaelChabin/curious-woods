@@ -24,6 +24,20 @@
   h1 { font-weight: normal; font-size: 30px; line-height: 1.1; margin: 6px 0 14px; }
   p.how { color: var(--ink-soft); max-width: 700px; margin: 0 0 22px; }
   #bar { width: 100%; }
+  /* the More: the Time Machine page's window contents */
+  .tm-more { width: 460px; max-width: 100%; font-size: 16px; line-height: 1.45; color: var(--ink); padding-top: 6px; }
+  .tm-more h3 { font-weight: normal; font-size: 21px; margin: 0 0 10px; line-height: 1.2; }
+  .tm-more .stepped { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; line-height: 1.5; }
+  .tm-more .stepped div:nth-child(2) { padding-left: 1.5em; }
+  .tm-more .stepped div:nth-child(3) { padding-left: 3em; }
+  .tm-more p { margin: 0 0 .9em; }
+  .tm-more blockquote { margin: 0 0 1.4em; padding: 0 0 0 20px; border-left: 2px solid var(--sep); }
+  .tm-more blockquote p { margin: 0 0 .35em; }
+  .tm-more .known { font-size: 14px; color: var(--ink-soft); }
+  .tm-more .refs { font-size: 12px; line-height: 1.45; color: var(--ink-soft); border-top: .5px solid var(--sep); margin-top: 16px; padding-top: 8px; }
+  .tm-more .refs div { margin: 0 0 5px; }
+  #panel .more { font-style: italic; color: var(--payne); cursor: pointer; }
+  #panel .more:hover { color: #3D3D3A; }
   .curves { max-width: 1100px; margin: 4px 0 0 12px; font-size: 15px; color: var(--ink-soft); }
   .curves .lead { font-style: italic; color: var(--grey); margin-right: 6px; }
   .curves .cw { font-style: italic; color: var(--payne); cursor: pointer; margin-right: 14px; user-select: none; -webkit-user-select: none; }
@@ -45,19 +59,20 @@
   <div id="bar"></div>
   <div class="curves" id="curves"><span class="lead">Curves:</span> <span class="cw" data-c="sea-level-ice-ages">Sea level</span> <span class="cw" data-c="oxygen">Oxygen</span> <span class="cw" data-c="day-length">Day length</span> <span class="cw" data-c="minerals">Minerals</span> <span class="cw" data-c="sun-and-inside">Sun and inside</span></div>
   <div id="panel"><span class="hint">Pull a section down, then tap a dot.</span></div>
-  <p class="foot">The sections are cut where the evidence changes kind, and each bar says what it is known from. The marks are sketches from the notes of 5 October; the store will hold them. Hazen's <i>The Story of Earth</i> for the colours and the chunks.</p>
+  <p class="foot">The sections are cut where the evidence changes kind, and each bar says what it is known from. The marks are the deep-time events (<code>../stories/deep-time-events.json</code>, seventy of them, written and checked in October); tap one, then <i>More</i>. Hazen's <i>The Story of Earth</i> for the colours and the chunks.</p>
 </main>
-<script src="../js/deep-time.js?v=2026-10-06c"></script>
+<script src="../js/deep-time.js?v=2026-10-07"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-06 24f9b15';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-07 fa086a0';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
   const panel = document.getElementById('panel');
   let bar = null, currentBar = null;
   function esc(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
   bar = cwDeepTime(document.getElementById('bar'), {
     data: '../stories/deep-time.json',
+    events: '../stories/deep-time-events.json',   // the marks from the store (Stage 6); the tree's sketches are ignored
     year: 4567,
     onBar: (b, path) => {
       currentBar = b;
@@ -65,7 +80,10 @@
       else panel.innerHTML = '<h2>' + esc(b.name) + '</h2><p class="when">' + esc(bar ? bar.fmt(b.from).replace(' ago', '') : '') + ' to ' + (b.to <= 0 ? 'now' : esc(bar.fmt(b.to).replace(' ago', ''))) + (path.length ? ' · ' + esc(path.join(' › ')) : '') + '</p><div class="known">Known from ' + esc(b.knownFrom || '') + '.</div>';
     },
     onMark: (mk, b) => {
-      panel.innerHTML = '<h2>' + esc(mk.label) + '</h2><p class="when">' + esc(bar.fmt(mk.ma)) + (mk.tail ? ', and probably began by ' + esc(bar.fmt(mk.tail).replace(' ago', '')) : '') + '</p><p>' + esc(mk.text || '') + '</p><div class="known">Known from ' + esc(b.knownFrom || '') + '.</div>';
+      const rec = mk.rec;
+      panel.innerHTML = '<h2>' + esc(mk.label) + '</h2><p class="when">' + esc(bar.fmt(mk.ma)) + (mk.tail ? ', and probably began by ' + esc(bar.fmt(mk.tail).replace(' ago', '')) : '') + '</p><p>' + cwDeepTime.prose(mk.text || '') + (rec ? ' <span class="more" role="button" tabindex="0">More</span>' : '') + '</p><div class="known">Known from ' + esc((rec && rec.knownFrom) || b.knownFrom || '') + '.</div>';
+      const w = panel.querySelector('.more');
+      if (w) w.addEventListener('click', () => { const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec); panel.appendChild(box); w.remove(); });
     }
   });
   window.__bar = bar;

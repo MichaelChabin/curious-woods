@@ -202,6 +202,19 @@ Machine's curve drawing gains the band.
 crossing where the notes say they do.
 
 **Stage 6 — Events.**
+*The writing half, 6–7 Oct 2026:* a Cowork chat on Opus, to `Prompt-Deep-Time-Events.md`, wrote seven
+batches, seventy events, with agents researching and four checkers each — more than the tree's
+thirty-six marks, with the beads, paint and flutes of the ice ages added. *The build half, 7 Oct, built
+and checked:* `tools/deep-events-from-vault.py` reads the five deep fields and writes
+`stories/deep-time-events.json` (69 events; batch 7's revised *Archaeopteryx* wins over batch 5's); the
+bar reads its marks from the store, labels placed heavier first, and the tree's sketches are retired;
+the More opens in the map's window on the join and inline on the bar bench; `js/timeline.js` draws the
+one-sided tail. Not done here: the pictures (a round of its own: a place in the record for pictures with
+source and licence, the More drawing them, and a fetch pass for the Commons and NASA ones), the
+place-now marks on today's map, and the merge into the shipping store (Stage 7). Flags the generator
+raised for Michael: ten events with no uncertainty on their Age line (a minimum, a span, or none
+stated), four with no place now (the planet itself), and the 'crop or animal' kind stretched to cover
+every living thing, which wants a word of its own in the closed list — *life*.
 A vault batch, *Events-Batch-04 — Deep time*, from the 5 Oct notes, in Timeline-Stories
 form. `tools/events-from-vault.py` and the store gain `evidence: earliest`, a `tail` year,
 `knownFrom`, and `placeNow` (where the evidence is today); precision becomes a number of

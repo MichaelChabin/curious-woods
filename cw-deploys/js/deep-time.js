@@ -22,7 +22,15 @@
    from `say` ('{v}' the number, '{dir}' above/below for a signed metre). The band is the point: a
    wide band says little is known, and the words at the marker say 'about'.
 
+   The marks from the store (Stage 6, 7 Oct 2026): given `events`, the records of
+   stories/deep-time-events.json (tools/deep-events-from-vault.py), a bar's marks are the events
+   whose age falls in its span — a dot at the oldest evidence, the tail from the record's `tail`,
+   labels placed heavier first — and the tree's own `marks` are ignored (they were the sketches).
+   onMark then hands over the mark with its record at `mark.rec`; cwDeepTime.moreHTML(rec) renders
+   the More as the Time Machine page does (the date line stepped, the paragraphs, the references).
+
    opts:
+     events   the deep-time events, or the URL of their JSON; absent, the tree's sketches are drawn
      data     the tree, or the URL of its JSON (default '../stories/deep-time.json')
      year     the marker's opening age, in millions of years ago (default: the root's start)
      onYear   function (ma, storeYear) — every time the marker moves; storeYear is the store's
@@ -204,9 +212,14 @@
           var body = el('rect', { 'class': 'leaf-body', x: g.xL, y: g.y, width: g.xR - g.xL, height: BAR_H, rx: 3, fill: n.colour || '#e6dcc8', stroke: luminance(n.colour) > 0.8 ? '#c8b89a' : PARCH, 'stroke-width': 1.5 }, grp);
           body.addEventListener('click', function () { twitch(grp); });
         }
+        // the deepest bar's tap strip (jump the marker), under its marks so a dot is still a dot
+        if (g === deep) {
+          var strip = el('rect', { x: g.xL, y: g.y + BAR_H, width: g.xR - g.xL, height: 20, fill: 'transparent', 'class': 'knob' }, grp);
+          strip.addEventListener('pointerdown', startDrag);
+        }
         // the marks: tail, dot, label (two rows, dropped where they would collide)
         var rows = [[], []];
-        (n.marks || []).slice().sort(function (a, b) { return b.ma - a.ma; }).forEach(function (mk) {
+        marksFor(n).forEach(function (mk) {
           var mx = g.x(mk.ma);
           if (mk.tail && mk.tail > mk.ma) {
             var tx = g.x(Math.min(mk.tail, n.from));
@@ -236,14 +249,24 @@
       if (curve) curveH = drawCurve(deep);
       // the deepest bar's marker and hit area, last so they sit on top
       var hx2 = Math.max(deep.xL, Math.min(deep.xR, deep.x(ma)));
-      var hit = el('rect', { x: deep.xL, y: deep.y + BAR_H, width: deep.xR - deep.xL, height: 20, fill: 'transparent', 'class': 'knob' }, svg);   // the strip under the bar: tap to jump, drag the knob
       var kg = el('g', { 'class': 'knob' }, svg);
       el('line', { x1: hx2, y1: deep.y - 6, x2: hx2, y2: deep.y + BAR_H + 6, stroke: COPPER, 'stroke-width': 2 }, kg);
       el('circle', { cx: hx2, cy: deep.y + BAR_H + 8.5, r: 14, fill: 'transparent' }, kg);
       el('circle', { cx: hx2, cy: deep.y + BAR_H + 8.5, r: 7, fill: COPPER, stroke: PARCH, 'stroke-width': 2 }, kg);
-      [hit, kg].forEach(function (h) { h.addEventListener('pointerdown', startDrag); });
+      kg.addEventListener('pointerdown', startDrag);
       var H = TOP + tierGeom.length * TIER_H - 20 + curveH;
       svg.setAttribute('height', H); svg.style.height = H + 'px';
+    }
+    var store = null;   // the deep-time events, once loaded
+    function marksFor(n) {
+      var list;
+      if (store) {
+        list = store.filter(function (e) { return e.ma <= n.from && e.ma >= n.to; }).map(function (e) {
+          return { ma: e.ma, label: e.label, tail: e.tail ? e.tail.ma : null, text: e.summary, weight: e.weight || 1, rec: e };
+        });
+      } else list = (n.marks || []).slice();
+      // heavier first, so a heavy event's label is placed before a light one's; then oldest first
+      return list.sort(function (a, b) { return (b.weight || 1) - (a.weight || 1) || b.ma - a.ma; });
     }
     var curve = null;
     function curveAt(pts, y, k) {   // the value (k = 1), low (2) or high (3) at a store year, by straight lines between points
@@ -363,6 +386,10 @@
       draw(); tellYear();
       if (opts.onBar) opts.onBar(root, []);
     }
+    if (opts.events) {
+      if (typeof opts.events === 'string') fetch(opts.events).then(function (r) { return r.json(); }).then(function (d) { store = d.events || d; if (root) draw(); }).catch(function (e) { console.error('deep-time.js: the events did not load', e); });
+      else store = opts.events.events || opts.events;
+    }
     var src = opts.data || '../stories/deep-time.json';
     if (typeof src === 'string') {
       fetch(src).then(function (r) { return r.json(); }).then(start).catch(function (e) { console.error('deep-time.js: the tree did not load', e); });
@@ -382,5 +409,21 @@
     };
   }
   cwDeepTime.fmt = fmt;
+  function escapeHTML(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  /* the batches write a species name in asterisks (*Archaeopteryx*); on the page that is italic, never a star */
+  function prose(t) { return escapeHTML(t).replace(/\*([^*\n]+)\*/g, '<i>$1</i>'); }
+  cwDeepTime.prose = prose;
+  /* the More, as the Time Machine page draws it: the label, the date line stepped, the paragraphs
+     (a {quote} as a blockquote), the references; the page gives the element the class tm-more */
+  cwDeepTime.moreHTML = function (rec) {
+    var dl = rec.more.dateLine, lines = [dl.ago];
+    if (dl.tail) lines.push(dl.tail);
+    if (dl.sure) lines.push(dl.sure);
+    var h = '<h3>' + escapeHTML(rec.label) + '</h3><div class="stepped">' + lines.map(function (l) { return '<div>' + escapeHTML(l) + '</div>'; }).join('') + '</div>';
+    h += rec.more.paragraphs.map(function (p) { return p && p.quote ? '<blockquote><p>' + prose(p.quote) + '</p></blockquote>' : '<p>' + prose(p) + '</p>'; }).join('');
+    if (rec.knownFrom) h += '<p class="known"><i>Known from</i> ' + escapeHTML(rec.knownFrom) + '.' + (rec.placeNow ? ' <i>The evidence is at</i> ' + escapeHTML(rec.placeNow.name) + '.' : '') + '</p>';
+    if (rec.references && rec.references.length) h += '<div class="refs">' + rec.references.map(function (r) { return '<div>' + prose(r) + '</div>'; }).join('') + '</div>';
+    return h;
+  };
   window.cwDeepTime = cwDeepTime;
 })();

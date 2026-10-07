@@ -55,7 +55,9 @@
                                          relabelling themselves as the span changes, not every 5
              yearText: function (y) {},  how a tick's year is written (default: the number)
              stretch: true }             an event whose `precision` is decade, century or
-                                         millennium draws a soft stretch that wide under its dot
+                                         millennium draws a soft stretch that wide under its dot;
+                                         an event with `tail` (a year older than its own) draws
+                                         a one-sided fade from the tail to the dot instead (6 Oct)
      windowed: true                      only events inside from..to are on the line and the map
      onPick: function (id) {}            told of every event she selects, from the line or the map
    and cwWorld's result gains span(from, to) and only(ids | null), the second a filter
@@ -191,6 +193,20 @@
       el('line', { x1: PAD, x2: W - PAD, y1: railY, y2: railY, stroke: RAIL, 'stroke-width': 1 }, svg);
       if (o.line && o.line.stretch) {
         sorted.forEach(function (e) {
+          // the dot and tail (6 Oct 2026, Plan-Deep-Time Stage 6): an event whose `tail` is a year older
+          // than its own draws a one-sided fade from the tail to the dot — the oldest evidence, and
+          // where the thing probably began. No event on the twelve-thousand-year line carries one yet.
+          if (e.tail != null && +e.tail < e.year) {
+            var ta = Math.max(PAD, x(+e.tail)), tb = Math.min(W - PAD, x(e.year));
+            if (tb - ta >= 3) {
+              if (!svg.querySelector('#cw-tl-tail')) {
+                var defs = el('defs', {}, svg), g = el('linearGradient', { id: 'cw-tl-tail', x1: 0, x2: 1, y1: 0, y2: 0 }, defs);
+                el('stop', { offset: 0, 'stop-color': INK, 'stop-opacity': 0 }, g); el('stop', { offset: 1, 'stop-color': INK, 'stop-opacity': 0.3 }, g);
+              }
+              el('rect', { x: ta, y: railY - 2, width: tb - ta, height: 4, fill: 'url(#cw-tl-tail)' }, svg);
+            }
+            return;
+          }
           var hw = HALF[e.precision]; if (!hw) return;
           var a = Math.max(PAD, x(e.year - hw)), b = Math.min(W - PAD, x(e.year + hw));
           if (b - a < 3) return;

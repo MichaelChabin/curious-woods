@@ -26,7 +26,10 @@ build step. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael
 the Hokusai story called it; a second base, the globe past the deep-time seam, 6 Oct 2026 — see
 `experiments/join-bench.html`)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
 the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
-`experiments/maps/`, beside `render.py`, which makes the pictures it draws on. Loaded with a
+`experiments/maps/`, beside `render.py`, which makes the pictures it draws on. **`timeline.js`** gained the
+dot and tail on 7 Oct 2026 (Plan-Deep-Time Stage 6): an event with `tail`, a year older than its own,
+draws a one-sided fade from the tail to the dot instead of the symmetric stretch; no event on the
+twelve-thousand-year line carries one yet. Loaded with a
 version query by `active/hokusai-the-great-wave.html`, `active/vermeer-girl-with-a-pearl-earring.html` and `experiments/maps/map-bench.html`. 21 Sep 2026: one text block open at a time, and any other action — a press anywhere else, a key — closes it (Spec-Maps, *What a tap opens*); a path with `possible` draws dashed. 26 Sep 2026 (`?v=2026-09-26c` on all seven pages that load it): (27 Sep, `?v=2026-09-27`: the window's *close* is 13 px bold, was 11 px) the window's drag strip sticks on the window's top edge, not 18 px below it, so a tall scrolling window (the Darkness poem) no longer shows its words through a slit above the strip; the words fade under it. **`stories/world-events.json` and `stories/places.json` (22 Sep 2026; 2 Oct 2026: ten events and twelve places from The Glass Rose, 1079 to 1351 — Khayyam's calendar, Domesday, Shen Kuo, Cahokia, Abelard, Zhu Yu, Angkor Wat, Adelard, Xàtiva paper, blue-and-white; Isfahan to Cahokia, and five towns on Adelard's route)** — what the world owns,
 shared by every story: one record per event (year, when, place, label, title, text, and since
 27 Sep `weight`, 1 to 3) and one per place (name, lat, lon, `weight`). **`stories/sea-level.json`
@@ -77,6 +80,25 @@ al. 2008's stages, kept on the 2008 scale), **`sun-and-inside.json`** (two serie
 W/m² of surface — the sun absorbed, from Gough 1981's brightening, and the heat from inside, a sketch
 from Davies & Davies 2010, Korenaga 2008 and Zahnle et al. 2007 — so the crossing in the first stretch
 can be seen; `second: { name, say, points }`). Drawn by `js/deep-time.js`'s `setCurve`.
+**`stories/deep-time.json` (6 Oct 2026)** — the chunk tree of the deep-time Time Machine, edited by hand:
+Earth's 4.567 billion years as six chunks cut where the evidence changes kind (the ruling of 6 Oct,
+Rulings-Sept-2026.md *Deep time*), each chunk with its children, its `knownFrom` line (the fog in words),
+Hazen's `colour`, and `marks` — sketches from the notes of 5 Oct, retired on 7 Oct when the store below
+took over, kept so the generator can say which were replaced. Times in millions of years ago; the
+bottom rung carries `line: 'after-the-ice'`. Read by `js/deep-time.js`.
+**`stories/deep-time-events.json` (7 Oct 2026)** — GENERATED, never edited by hand: the deep-time events,
+written by a Cowork chat on Opus to `CWVault/claude/Prompt-Deep-Time-Events.md` in seven batches
+(`CWVault/claude/Events-Deep-01.md` to `-07.md`, 6–7 Oct; researched by agents, checked by four
+independent checkers each) and read by `tools/deep-events-from-vault.py` (outside this folder, in
+`_CW/tools/`): 69 events from the oldest grains in a meteorite to the last glacial maximum, and the
+beads, paint and flutes of the ice ages. The same record shape as `timeline-events.json` plus the deep
+fields — `ma`, `uncertaintyMa` and `precisionYears` (null where the Age line gave none), `ageHow`,
+`tail` with its reason and `evidence` (earliest or dated), `knownFrom`, `placeNow` (where the evidence is
+today), `replacesSketch`, `chunk`, the date line as `{ ago, tail, sure? }` (deep lines count ago only) —
+with a weight proposed by rule. A store of its own for now: the shipping Time Machine page draws a
+speck for every event it loads, and these would land off its line; Stage 7 merges them. A later batch
+revising an earlier event (batch 7's *Archaeopteryx*) wins. Read by `js/deep-time.js` on the deep-time
+and join benches; the More opens in the map's window on the join and inline on the bar bench.
 **`stories/plates/continents.json` (6 Oct 2026)** — GENERATED, never edited by hand: the continents
 in motion, for the deep-time Time Machine (`CWVault/claude/Plan-Deep-Time.md`, Stage 1).
 `tools/plates-from-gplates.py` (outside this folder, in `_CW/tools/`; needs `pip install pygplates
@@ -1033,7 +1055,7 @@ backstop for the Claude Code session that lands the file.
   grade, its sentence), the map with the Time Machine's opening box and, since Stage 5, the ice-age sea-level curve
   (`stories/curves/sea-level-ice-ages.json`) and the curve words under the bar.
   Lesson: the globe must measure its host's layout width, not its drawn width, or it sizes itself
-  to the scaled-up arrival. Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-06 24f9b15`.
+  to the scaled-up arrival. Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-07 fa086a0`.
 
 - **`globe-bench.html` (6 Oct 2026)** — *The earth from space*: the nested bar of deep time over a
   globe, Stage 3 of `CWVault/claude/Plan-Deep-Time.md`. **`../js/globe.js`** (new that day) —
@@ -1056,7 +1078,7 @@ backstop for the Claude Code session that lands the file.
   lat)`, `grade()`, `destroy()`. Driven here by `../js/deep-time.js` (`onYear`). Measured on the Mac
   in the desktop app's pane at 520 px: a draw averages 6 ms, worst 25, and a sweep of the year
   runs at the display's frame rate; **not yet seen on an iPad**. Reads `../art/icons/time-machine-icon-256.png`.
-  `CW_VERSION 2026-10-06 24f9b15`. Short addresses while Michael tests on the iPad, in `_redirects`
+  `CW_VERSION 2026-10-07 fa086a0`. Short addresses while Michael tests on the iPad, in `_redirects`
   (302, not a move): `/experiments/deep-time` and `/experiments/deepTime` open this bench,
   `/experiments/deep-time-bar` the bar alone, `/experiments/deep-time-join` the join.
 - **`deep-time-bench.html` (6 Oct 2026)** — *Deep time, in sections*: the nested bar alone, Stage 2
@@ -1083,9 +1105,12 @@ backstop for the Claude Code session that lands the file.
   the value at the marker in words (`say`; a tiny fraction becomes 'a millionth'); the axis never zooms
   into a sliver, so a tight band stays thin rather than filling the box. The words under the bar on
   this bench and the join's — *Sea level, Oxygen, Day length, Minerals, Sun and inside* — turn one on
-  at a time. Checked at desktop width and at 375 px. The hand-over to the Time Machine's own line
+  at a time. Checked at desktop width and at 375 px. **The marks from the store (Stage 6, 7 Oct):** given `events`, a bar's marks are the
+  store's events whose age falls in its span, labels placed heavier first; `onMark` hands over the
+  record; `cwDeepTime.moreHTML(rec)` renders the More as the Time Machine page does, with a
+  known-from line and the place of the evidence. The hand-over to the Time Machine's own line
   at the bottom rung is an event here, the mounting into `active/time-machine.html` is Stage 7.
-  Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-06 24f9b15`.
+  Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-07 fa086a0`.
 - **`time-passing-bench.html`** — bench: **Time-passing, in operation** (30 Sep 2026; Michael asked to
   see Naomi Devil's *Idő-töltés* work and is wondering about a page). A simulation of the
   sculpture's mechanism from the artist's own description (no film was found): two radial

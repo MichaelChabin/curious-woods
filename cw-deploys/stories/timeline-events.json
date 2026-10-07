@@ -77,7 +77,7 @@
     "file": "CWVault/claude/Timeline-Samples.md",
     "section": "1. Stone pillars at Göbekli Tepe"
    },
-   "label": "Stone pillars at Göbekli Tepe",
+   "label": "Göbekli Tepe",
    "year": -9500,
    "yearAbout": true,
    "precision": "millennium",
@@ -2336,7 +2336,7 @@
     "file": "CWVault/claude/Timeline-Samples.md",
     "section": "2. Eclipse stops a battle"
    },
-   "label": "Eclipse stops a battle",
+   "label": "Eclipse battle",
    "year": -584.6,
    "yearAbout": false,
    "precision": "exact",

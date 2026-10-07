@@ -1,5 +1,5 @@
 ---
-status: Samples 1 and 2, 30 Sept 2026. Michael liked both, and especially how the war and Thales were handled; he is now reading the text in detail. Göbekli Tepe's More replaced by Michael's own rewrite, with small fixes; his edit is the model for the style rules in Timeline-Stories.md. Eclipse More replaced by Michael's rewrite, with small fixes. Date lines set on stepped lines (an experiment). Written to Timeline-Stories.md. Not yet approved word by word.
+status: Samples 1 and 2, 30 Sept 2026. Michael liked both, and especially how the war and Thales were handled; he is now reading the text in detail. Göbekli Tepe's More replaced by Michael's own rewrite, with small fixes; his edit is the model for the style rules in Timeline-Stories.md. Eclipse More replaced by Michael's rewrite, with small fixes. Date lines set on stepped lines (an experiment). Written to Timeline-Stories.md. Not yet approved word by word. Labels shortened 6 Oct 2026 (Michael: a word or two).
 role: The worked examples for timeline events. Once approved, these become the examples inside the prompt that generates events in quantity.
 ---
 
@@ -7,7 +7,7 @@ role: The worked examples for timeline events. Once approved, these become the e
 
 ## 1. Stone pillars at Göbekli Tepe
 
-**Label:** Stone pillars at Göbekli Tepe
+**Label:** Göbekli Tepe
 **Year:** about −9500 (astronomers' year) · precision: millennium · kind: place
 **Place:** Göbekli Tepe, near Şanlıurfa, southeast Turkey (37.22 N, 38.92 E)
 
@@ -59,7 +59,7 @@ For now, we know the pillars with arms have no faces. Maybe someday we'll know w
 
 ## 2. Eclipse stops a battle
 
-**Label:** Eclipse stops a battle
+**Label:** Eclipse battle
 **Year:** −584.6 (astronomers' year; 28 May 585 BCE) · precision: exact · kind: sky event
 **Place:** the Halys river (now the Kızılırmak), central Turkey. The battlefield itself is not known.
 
