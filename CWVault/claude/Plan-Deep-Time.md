@@ -152,8 +152,14 @@ held across the whole span in the map's deep base, the two views sharing one see
 seam the globe shows today's coast and the shelf's edge as lines. Michael's rulings of 7 Oct: the
 blobs are guesses, not fog, and they carry information. Lessons: the data files must be fetched
 revalidated (a cached plate file drew nothing at two billion years); a dashed edge must belong to the
-union, stroked wide under an opaque fill, or every terrane shows. Still deferred: the height picture
-on the sphere; the exposed-land island inside each guessed piece; the climate wash.
+union, stroked wide under an opaque fill, or every terrane shows. *The same evening, on Michael's word:* the exposed-land island inside each guessed and invented piece
+(the land series over the crust series, the ring shrunk toward its centre by that share), and the
+climate wash — a model, said so on the page: green everywhere, dry in the belts either side of the
+tropics and in the middle of a big continent (a coarse raster of the land eroded until only the deep
+interior is left), ice at the poles in the cold ages, white all over in the snowballs. The rock
+atlases (coal, salt, dune sandstone, glacial rubble; Boucot, Scotese) can replace the rules later,
+which is the ledger's own cost for *The climate of the pieces*. Still deferred: the height picture on
+the sphere.
 The orthographic projection of rings on a canvas or an SVG: today's coastline from Natural
 Earth first, then the pieces of Stage 1 turned by their rotations; turn and tilt by drag; the fog grades by year — nothing to draw above 4.4
 billion (a dark red ball), ghosts between 540 million and 4.4 billion, latitude firm and

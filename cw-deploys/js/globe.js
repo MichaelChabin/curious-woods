@@ -22,8 +22,16 @@
    picture itself being the map's (the picture on a sphere is later). The seed holds while the marker
    moves; `reguess()` draws a new seed (the word *another guess*), and every visit begins with its own.
 
+   The island (7 Oct, Michael): inside each guessed or invented piece, the part that probably stood
+   above the sea — the land series of the crust-and-land curve over the crust series — drawn in the
+   land colour inside the pale drowned crust. The climate wash (7 Oct, Michael: "a desert in the
+   middle of Pangaea because that is likely, green even to the poles"): a MODEL, not yet the rocks —
+   dry in the belts either side of the tropics and in the middle of a big continent (far from the
+   sea), green elsewhere, ice at the poles in the cold ages, white all over in the snowballs. The
+   rock atlases (coal, salt, dune sandstone, glacial rubble) can replace the rules later.
+
    cwGlobe(host, opts) → { setTime(ma), time(), view(), turn(lon, lat), grade(), reguess(),
-                           setProjection(p), projection(), destroy() }
+                           setProjection(p), projection(), setClimate(on), climate(), destroy() }
    opts:
      plates, coast, crust   the three files, or their URLs (defaults under ../stories and ../art/maps)
      ma, lon, lat           the opening age (millions of years ago) and view
@@ -32,6 +40,7 @@
      size                   the disc's diameter, or the flat map's width, in CSS px (default: the host's width)
      seam                   millions of years; younger than it the grade is `ground` (default 2.6)
      seed                   the first seed (default: this visit's)
+     climate                the wash on at the start (default off)
      onDraw(ms), onGrade(grade, sentence)
    Classic script, no dependencies. */
 (function () {
@@ -44,13 +53,17 @@
   ].join('\n');
   var SEA = '#93bed7', SEA_DEEP = '#7fa9c4', LAND = '#8c8366', LAND_PALE = '#c3bba5', COAST = '#4a4336', SHELF = '#2f5c78', GRAT = 'rgba(42,36,28,0.10)', MAGMA = '#6e2410', MAGMA_GLOW = '#b8471c';
   var OLDEST_ROCK = 4000, NO_MAP = 4400, DRIFT_DEG_PER_MA = 0.45;   // a plate's few centimetres a year, as degrees of arc
+  var WASH_GREEN = '#5e8a46', WASH_DRY = '#d9b36a', WASH_ICE = '#f4f6f8';
+  // the cold ages, in millions of years ago, and how far from the poles the ice reached (degrees of latitude from the equator)
+  var ICEHOUSES = [[2400, 2100, 55], [717, 635, 0], [460, 430, 60], [360, 260, 50], [34, 2.6, 66], [2.6, 0, 58]];
+  var CLIMATE_WORDS = 'The colours are a model, not the rocks: dry in the belts either side of the tropics and in the middle of a big continent, green elsewhere, ice at the poles in the cold ages. The rocks that record climate — coal, salt, dune sand, glacial rubble — can replace the rules later.';
   var GRADE_WORDS = {
     ground:   'This side of the ice ages the ground is the map’s. The globe shows today’s coast and the edge of the shelf; the picture of the ground on a sphere is still to come.',
     measured: 'The seafloor still carries its magnetic stripes, so the plates can be run backwards and measured.',
     inferred: 'Rock magnetism and fossils say how far north each piece was, not how far east. North and south are firm; east and west are one best estimate.',
     fitted:   'These pieces of crust are real and still exist. How they fitted together is argued from scattered evidence, and the models disagree. This is one fit.',
-    guessed:  'These pieces of crust are real; you can stand on them today. Where they were, nobody knows. This is a guess; tap another guess, and next time it will be different.',
-    invented: 'No rock survives from this time. There was probably some continent, and this much is the rocks’ guess at the amount. The shapes and the places are made up.',
+    guessed:  'These pieces of crust are real; you can stand on them today. Where they were, nobody knows. This is a guess; tap another guess, and next time it will be different. The darker part of each is about how much stood above the sea; the pale is drowned.',
+    invented: 'No rock survives from this time. There was probably some continent, and this much is the rocks’ guess at the amount. The shapes and the places are made up; the darker part is about how much stood above the sea.',
     none:     'No map. A ball of melted rock with a skin that keeps sinking; nothing to draw, and nothing survived.'
   };
 
@@ -65,6 +78,7 @@
     var data = null, coast = null, shelf = null, crust = null, pieces = [], plates = {}, ages = [], grades = [], reach = 1000, lastGrade = null, destroyed = false, raf = 0, ro = null;
     var W = 0, H = 0, dpr = 1;
     var seed = opts.seed != null ? opts.seed : ((Date.now() % 1000003) + Math.floor(Math.random() * 1000)), guesses = {}, blobs = null, blobsKey = null;
+    var climateOn = !!opts.climate, interiorCache = {};
 
     // ---- geometry ----
     function xyz(lon, lat) { var la = lat * Math.PI / 180, lo = lon * Math.PI / 180; return [Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la)]; }
@@ -129,6 +143,18 @@
       return mmul(drift, base);
     }
     // invented land: blobs whose total area is the crust curve's amount at this age, shapes and places from the seed
+    function curveValue(pts, age) {
+      var y = (new Date().getFullYear()) - age * 1e6;
+      if (y <= pts[0][0]) return pts[0][1];
+      for (var i = 1; i < pts.length; i++) if (y <= pts[i][0]) { var a = pts[i - 1], b = pts[i]; return a[1] + (b[1] - a[1]) * (y - a[0]) / ((b[0] - a[0]) || 1); }
+      return pts[pts.length - 1][1];
+    }
+    // the part of the crust that stood above the sea, as a share of the crust: the island's share
+    function exposedShare(age) {
+      if (!crust || !crust.second) return 0.3;
+      var c = curveValue(crust.points, age), l = curveValue(crust.second.points, age);
+      return c > 0 ? Math.max(0.02, Math.min(0.9, l / c)) : 0;
+    }
     function crustFraction(age) {
       if (!crust) return 0.02;
       var pts = crust.points, y = (new Date().getFullYear()) - age * 1e6;
@@ -155,6 +181,19 @@
         out.push(ring);
       }
       blobs = out; blobsKey = key; return out;
+    }
+
+    // a ring shrunk toward its own centre on the sphere by a share k of area (the square root in length): the island
+    function shrunk(arr, k) {
+      var n = arr.length / 3, cx = 0, cy = 0, cz = 0, i;
+      for (i = 0; i < n; i++) { cx += arr[3 * i]; cy += arr[3 * i + 1]; cz += arr[3 * i + 2]; }
+      var L = Math.hypot(cx, cy, cz) || 1; cx /= L; cy /= L; cz /= L;
+      var f = Math.sqrt(k), out = new Float64Array(n * 3);
+      for (i = 0; i < n; i++) {
+        var x = cx + f * (arr[3 * i] - cx), y = cy + f * (arr[3 * i + 1] - cy), z = cz + f * (arr[3 * i + 2] - cz), m = Math.hypot(x, y, z) || 1;
+        out[3 * i] = x / m; out[3 * i + 1] = y / m; out[3 * i + 2] = z / m;
+      }
+      return out;
     }
 
     // ---- the data ----
@@ -252,20 +291,26 @@
       return true;
     }
     var trace = function (arr, M, into) { return proj === 'flat' ? traceFlat(arr, M, into) : traceGlobe(arr, M, into); };
+    var lastLand = null, lastIslands = null;   // the last unshifted land and islands drawn, for the wash and the islands
     function landPath(V, age, shift, how) {
-      var Vs = shift ? mmul(V, rotZ(shift)) : V, mats = {}, land = new Path2D(), any = false;
-      if (how === 'invented') {
-        makeBlobs(age).forEach(function (ring) { var p = new Path2D(); if (trace(ring, Vs, p)) { land.addPath(p); any = true; } });
-        return any ? land : null;
+      var Vs = shift ? mmul(V, rotZ(shift)) : V, mats = {}, land = new Path2D(), islands = new Path2D(), any = false;
+      var share = (how === 'guessed' || how === 'invented') ? exposedShare(age) : 0;
+      function add(ring, M) {
+        var p = new Path2D();
+        if (!trace(ring, M, p)) return;
+        land.addPath(p); any = true;
+        if (share > 0) { var q = new Path2D(); if (trace(shrunk(ring, share), M, q)) islands.addPath(q); }
       }
-      for (var i = 0; i < pieces.length; i++) {
+      if (how === 'invented') makeBlobs(age).forEach(function (ring) { add(ring, Vs); });
+      else for (var i = 0; i < pieces.length; i++) {
         var p = pieces[i];
         if (age > p.from || age < p.to) continue;
         var M = mats[p.plate];
         if (M === undefined) { var R = how === 'guessed' ? guessedMatrix(p.plate, age) : plateMatrixAt(p.plate, age); M = R ? mmul(Vs, R) : null; mats[p.plate] = M; }
         if (!M) continue;
-        for (var k = 0; k < p.rings.length; k++) { var ring = new Path2D(); if (trace(p.rings[k], M, ring)) { land.addPath(ring); any = true; } }
+        for (var k = 0; k < p.rings.length; k++) add(p.rings[k], M);
       }
+      if (!shift) { lastLand = any ? land : null; lastIslands = share > 0 && any ? islands : null; }
       return any ? land : null;
     }
     function fillLand(path, colour, alpha, edge) {
@@ -275,7 +320,76 @@
       if (edge) { ctx.globalAlpha = 0.85; ctx.strokeStyle = COAST; ctx.lineWidth = 3 * unit(); ctx.setLineDash(edge === 'dashed' ? [5 * unit(), 4 * unit()] : [1.5 * unit(), 3.5 * unit()]); ctx.stroke(path); ctx.setLineDash([]); alpha = 1; }
       ctx.globalAlpha = alpha; ctx.fillStyle = colour; ctx.fill(path, 'nonzero');
       ctx.strokeStyle = colour; ctx.lineWidth = 1.6 * unit(); ctx.stroke(path);   // closes the hairline gaps between pieces, and covers the dashes' inner half
+      if (edge && lastIslands) { ctx.fillStyle = LAND; ctx.fill(lastIslands, 'nonzero'); ctx.strokeStyle = LAND; ctx.lineWidth = 1.2 * unit(); ctx.stroke(lastIslands); }   // the part above the sea
       ctx.globalAlpha = 1;
+    }
+    // ---- the climate wash: a model by latitude, by distance from the sea, and by the cold ages ----
+    function iceReach(age) {   // the latitude the ice reaches down to, or null when the world was warm
+      for (var i = 0; i < ICEHOUSES.length; i++) if (age <= ICEHOUSES[i][0] && age >= ICEHOUSES[i][1]) return ICEHOUSES[i][2];
+      return null;
+    }
+    function bandRing(latA, latB) {   // a ring round the band between two latitudes: east along one, west along the other
+      var pts = [], lo, v;
+      for (lo = -180; lo <= 180; lo += 4) { v = xyz(lo, latA); pts.push(v[0], v[1], v[2]); }
+      for (lo = 180; lo >= -180; lo -= 4) { v = xyz(lo, latB); pts.push(v[0], v[1], v[2]); }
+      return new Float64Array(pts);
+    }
+    var BANDS = null;
+    function bands() {
+      if (BANDS) return BANDS;
+      BANDS = { green: bandRing(-89.9, 89.9), dryN: bandRing(15, 35), dryS: bandRing(-35, -15) };
+      return BANDS;
+    }
+    // the middle of a big continent: the land drawn flat into a coarse raster, eroded until only the deep interior is left
+    function interiorPoints(age, how) {
+      var key = how + ':' + (how === 'guessed' || how === 'invented' ? seed + ':' : '') + Math.round(age / 10);
+      if (interiorCache[key]) return interiorCache[key];
+      var cw = 180, ch = 90, off = document.createElement('canvas'); off.width = cw; off.height = ch;
+      var oc = off.getContext('2d', { willReadFrequently: true }), saveProj = proj, saveCtx = ctx, saveLand = lastLand, saveIslands = lastIslands;
+      proj = 'flat'; ctx = oc; oc.setTransform(cw, 0, 0, ch, 0, 0); oc.fillStyle = '#000'; oc.fillRect(0, 0, 1, 1);
+      var path = landPath(rotZ(0), age, 0, how);
+      if (path) { oc.fillStyle = '#fff'; oc.fill(path, 'nonzero'); }
+      proj = saveProj; ctx = saveCtx; lastLand = saveLand; lastIslands = saveIslands;
+      var img = oc.getImageData(0, 0, cw, ch).data, mask = new Uint8Array(cw * ch), i, x, y, pass;
+      for (i = 0; i < cw * ch; i++) mask[i] = img[4 * i] > 128 ? 1 : 0;
+      var STEPS = 5;   // five erosions of two degrees each: about ten degrees of arc from the sea, a thousand kilometres
+      for (pass = 0; pass < STEPS; pass++) {
+        var next = new Uint8Array(cw * ch);
+        for (y = 1; y < ch - 1; y++) for (x = 0; x < cw; x++) {
+          i = y * cw + x;
+          next[i] = mask[i] && mask[i - cw] && mask[i + cw] && mask[y * cw + (x + 1) % cw] && mask[y * cw + (x + cw - 1) % cw] ? 1 : 0;
+        }
+        mask = next;
+      }
+      var pts = [];
+      for (y = 0; y < ch; y++) for (x = 0; x < cw; x++) if (mask[y * cw + x]) pts.push([(x + 0.5) / cw * 360 - 180, 90 - (y + 0.5) / ch * 180]);
+      interiorCache[key] = pts; return pts;
+    }
+    function drawClimate(V, age, how) {
+      if (!lastLand) return;
+      ctx.save(); ctx.clip(lastLand, 'nonzero');
+      var B = bands(), fillBand = function (ring, colour, alpha) { var p = new Path2D(); if (trace(ring, V, p)) { ctx.globalAlpha = alpha; ctx.fillStyle = colour; ctx.fill(p, 'evenodd'); } };
+      if (age <= 717 && age >= 635) { fillBand(B.green, WASH_ICE, 0.85); ctx.restore(); ctx.globalAlpha = 1; return; }   // a snowball: white all over
+      fillBand(B.green, WASH_GREEN, 0.3);
+      fillBand(B.dryN, WASH_DRY, 0.55); fillBand(B.dryS, WASH_DRY, 0.55);
+      // the interior, dry: a dot of dryness at every point of the coarse grid far from the sea, traced through the view
+      var interior = interiorPoints(age, how), r = 1.9 * Math.PI / 180;   // wider than the grid's two degrees, so the dots merge into a blotch
+      if (interior.length) {
+        var dp = new Path2D();
+        interior.forEach(function (ll) {
+          var la = ll[1] * Math.PI / 180, lo = ll[0] * Math.PI / 180, c = xyz(ll[0], ll[1]);
+          var u = [-Math.sin(lo), Math.cos(lo), 0], v = [-Math.sin(la) * Math.cos(lo), -Math.sin(la) * Math.sin(lo), Math.cos(la)], ring = [];
+          for (var t = 0; t < 6; t++) { var a = t * Math.PI / 3; ring.push(c[0] + r * (u[0] * Math.cos(a) + v[0] * Math.sin(a)), c[1] + r * (u[1] * Math.cos(a) + v[1] * Math.sin(a)), c[2] + r * (u[2] * Math.cos(a) + v[2] * Math.sin(a))); }
+          var q = new Path2D(); if (trace(new Float64Array(ring), V, q)) dp.addPath(q);
+        });
+        ctx.globalAlpha = 0.42; ctx.fillStyle = WASH_DRY; ctx.fill(dp, 'nonzero');
+      }
+      var reach = iceReach(age);
+      if (reach !== null) {
+        if (!(age <= 34 && age > 2.6)) fillBand(bandRing(reach, 89.9), WASH_ICE, 0.8);   // the Antarctic ice came first; the north's from 2.6
+        fillBand(bandRing(-89.9, -reach), WASH_ICE, 0.8);
+      }
+      ctx.restore(); ctx.globalAlpha = 1;
     }
     var unitPx = 1;
     function unit() { return unitPx; }   // one screen pixel in the current unit transform
@@ -303,10 +417,11 @@
       enterUnit(r, cx, cy);
       if (data && g !== 'none') {
         if (g === 'measured' || g === 'ground') fillLand(landPath(V, Math.max(ma, 0), 0, 'model'), LAND, g === 'ground' ? 0.45 : 1, null);
-        else if (g === 'inferred') [-12, -8, -4, 0, 4, 8, 12].forEach(function (s) { fillLand(landPath(V, ma, s, 'model'), LAND, 0.2, null); });
-        else if (g === 'fitted') [-27, -18, -9, 0, 9, 18, 27].forEach(function (s) { fillLand(landPath(V, ma, s, 'model'), LAND, 0.14, null); });
+        else if (g === 'inferred') [-12, -8, -4, 4, 8, 12, 0].forEach(function (s) { fillLand(landPath(V, ma, s, 'model'), LAND, 0.2, null); });   // the unshifted last, so the wash clips to it
+        else if (g === 'fitted') [-27, -18, -9, 9, 18, 27, 0].forEach(function (s) { fillLand(landPath(V, ma, s, 'model'), LAND, 0.14, null); });
         else if (g === 'guessed') fillLand(landPath(V, ma, 0, 'guessed'), LAND_PALE, 0.7, 'dashed');
         else if (g === 'invented') fillLand(landPath(V, ma, 0, 'invented'), LAND_PALE, 0.5, 'dotted');
+        if (climateOn && g !== 'ground') drawClimate(V, ma, g === 'guessed' || g === 'invented' ? g : 'model');
       }
       // today's coast and the shelf's edge, this side of the seam and fading out by five million years
       if (coast && ma < 5) {
@@ -364,14 +479,17 @@
       view: function () { return { lon: lon0, lat: lat0 }; },
       turn: function (lon, lat) { if (lon != null) lon0 = lon; if (lat != null) lat0 = Math.max(-90, Math.min(90, lat)); schedule(); },
       grade: function () { return gradeFor(ma); },
-      reguess: function () { seed = (seed * 1103515245 + 12345 + Date.now()) % 2147483647; guesses = {}; blobsKey = null; schedule(); return seed; },
+      reguess: function () { seed = (seed * 1103515245 + 12345 + Date.now()) % 2147483647; guesses = {}; blobsKey = null; interiorCache = {}; schedule(); return seed; },
       seed: function () { return seed; },
-      setSeed: function (s) { seed = s; guesses = {}; blobsKey = null; schedule(); },   // two views of one world share a seed
+      setSeed: function (s) { seed = s; guesses = {}; blobsKey = null; interiorCache = {}; schedule(); },   // two views of one world share a seed
       setProjection: function (p) { proj = p === 'flat' ? 'flat' : 'globe'; size(); schedule(); },
+      setClimate: function (on) { climateOn = !!on; schedule(); },
+      climate: function () { return climateOn; },
       projection: function () { return proj; },
       destroy: function () { destroyed = true; cancelAnimationFrame(raf); if (ro) ro.disconnect(); host.innerHTML = ''; host.classList.remove('cw-globe'); }
     };
   }
   cwGlobe.GRADE_WORDS = GRADE_WORDS;
+  cwGlobe.CLIMATE_WORDS = CLIMATE_WORDS;
   window.cwGlobe = cwGlobe;
 })();

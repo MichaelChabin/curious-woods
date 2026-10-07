@@ -1060,12 +1060,12 @@ backstop for the Claude Code session that lands the file.
   held across the whole span — past the seam the host shows the chosen view(s) of the pieces, two
   instances side by side for *both* sharing one seed; this side of it *map* is the pyramid alone,
   *globe* the globe with today's coast over the pyramid, *both* the globe in the right half beside the
-  pyramid (`.half`). `map.deepReguess()` is the word *another guess*. The bench's words *See it as:
-  Globe · Map · Both*. The bench: the bar, the words (the year, the
+  pyramid (`.half`). `map.deepReguess()` is the word *another guess*; `map.deepClimate(on)` the word *Climate*, on both
+  views. The bench's words *See it as: Globe · Map · Both · Climate*. The bench: the bar, the words (the year, the
   grade, its sentence), the map with the Time Machine's opening box and, since Stage 5, the ice-age sea-level curve
   (`stories/curves/sea-level-ice-ages.json`) and the curve words under the bar.
   Lesson: the globe must measure its host's layout width, not its drawn width, or it sizes itself
-  to the scaled-up arrival. Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-07 ed0a3c9`.
+  to the scaled-up arrival. Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-07 2bfb1fc`.
 
 - **`globe-bench.html` (6 Oct 2026)** — *The earth from space*: the nested bar of deep time over a
   globe, Stage 3 of `CWVault/claude/Plan-Deep-Time.md`. **`../js/globe.js`** (new that day) —
@@ -1088,7 +1088,16 @@ backstop for the Claude Code session that lands the file.
   invented grades) and every visit begins with its own. `setProjection('flat')` draws the same rings
   equirectangular on a 2:1 canvas, each ring unwrapped and drawn three times a world apart so one
   across the seam shows whole, a drag panning east–west; the bench's words *Globe* and *Map*. Each
-  grade has its sentence (`cwGlobe.GRADE_WORDS`). Today's coast (the world pyramid's `contours-0.json`) is
+  grade has its sentence (`cwGlobe.GRADE_WORDS`). **The island and the climate (7 Oct, later):** inside
+  each guessed or invented piece, the part that probably stood above the sea — the land series of
+  `crust-and-land.json` over its crust series, the ring shrunk toward its centre by that share — in
+  the land colour inside the pale drowned crust. `setClimate(on)` (the word *Climate*) washes the land
+  by a MODEL, said so in `cwGlobe.CLIMATE_WORDS`: green everywhere, dry in the belts 15° to 35° either
+  side of the equator and in the middle of a big continent (the land drawn flat into a 180 × 90
+  raster and eroded five times, two degrees each, the survivors washed dry), white at the poles down
+  to a latitude in the cold ages (the Huronian, the Ordovician, the late Palaeozoic, the Cenozoic from
+  34 million years in the south and 2.6 in the north) and white all over in the snowballs. Not yet the
+  rocks: the climate atlases can replace the rules later. Today's coast (the world pyramid's `contours-0.json`) is
   drawn as a line for the last five million years, fading. A point behind the globe goes to the
   limb, and between two hidden points the path walks the limb's arc, not a chord (a chord filled
   wedges across the disc); a ring with no point facing us is left out altogether (traced, it looped
@@ -1099,7 +1108,7 @@ backstop for the Claude Code session that lands the file.
   lat)`, `grade()`, `destroy()`. Driven here by `../js/deep-time.js` (`onYear`). Measured on the Mac
   in the desktop app's pane at 520 px: a draw averages 6 ms, worst 25, and a sweep of the year
   runs at the display's frame rate; **not yet seen on an iPad**. Reads `../art/icons/time-machine-icon-256.png`.
-  `CW_VERSION 2026-10-07 ed0a3c9`. Short addresses while Michael tests on the iPad, in `_redirects`
+  `CW_VERSION 2026-10-07 2bfb1fc`. Short addresses while Michael tests on the iPad, in `_redirects`
   (302, not a move): `/experiments/deep-time` and `/experiments/deepTime` open this bench,
   `/experiments/deep-time-bar` the bar alone, `/experiments/deep-time-join` the join.
 - **`deep-time-bench.html` (6 Oct 2026)** — *Deep time, in sections*: the nested bar alone, Stage 2
@@ -1131,7 +1140,7 @@ backstop for the Claude Code session that lands the file.
   record; `cwDeepTime.moreHTML(rec)` renders the More as the Time Machine page does, with a
   known-from line and the place of the evidence. The hand-over to the Time Machine's own line
   at the bottom rung is an event here, the mounting into `active/time-machine.html` is Stage 7.
-  Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-07 ed0a3c9`.
+  Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-07 2bfb1fc`.
 - **`time-passing-bench.html`** — bench: **Time-passing, in operation** (30 Sep 2026; Michael asked to
   see Naomi Devil's *Idő-töltés* work and is wondering about a page). A simulation of the
   sculpture's mechanism from the artist's own description (no film was found): two radial

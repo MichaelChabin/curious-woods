@@ -1079,6 +1079,7 @@
       // past the seam the host shows the chosen view(s) of the pieces; this side of it 'map' is the
       // pyramid alone, 'globe' the globe with today's coast over the pyramid, 'both' the globe in the
       // right half beside the pyramid. The two views share one seed, so a guess is the same in each.
+      var deepClimate = !!(T.deep && T.deep.climate);
       var deepHost = null, deepGlobe = null, deepFlat = null, deepOn = false, deepView = (T.deep && T.deep.view) || 'globe', deepAgeNow = false, deepGradeNow = null;
       function deepSize() {
         if (!deepHost) return;
@@ -1093,7 +1094,7 @@
       }
       function makeView(projection) {
         var g = document.createElement('div'); deepHost.appendChild(g);
-        var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, ma: 0, lon: view.lon, lat: view.lat, projection: projection,
+        var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, ma: 0, lon: view.lon, lat: view.lat, projection: projection, climate: deepClimate,
           seam: (T.deep.seam || 2.6e6) / 1e6, seed: deepGlobe ? deepGlobe.seed() : undefined,
           onGrade: function (grade, why) { if (projection === 'globe' || !deepGlobe) tellDeep(); } });
         inst._host = g;
@@ -1134,6 +1135,7 @@
       }
       api.deep = function () { return { on: deepOn, view: deepView, grade: deepGlobe ? deepGlobe.grade() : (deepFlat ? deepFlat.grade() : null) }; };
       api.deepView = function (v) { if (v === 'globe' || v === 'map' || v === 'both') { deepView = v; if (timeYear !== null) api.setTime(timeYear); } return deepView; };
+      api.deepClimate = function (on) { if (on !== undefined) deepClimate = !!on; if (deepGlobe) deepGlobe.setClimate(deepClimate); if (deepFlat) deepFlat.setClimate(deepClimate); return deepClimate; };
       api.deepReguess = function () { if (!deepGlobe && !deepFlat) return; var s = (deepGlobe || deepFlat).reguess(); if (deepGlobe && deepFlat) (deepGlobe === (deepGlobe || deepFlat) ? deepFlat : deepGlobe).setSeed(s); };
       api.setTime = function (year) {
         timeYear = +year;

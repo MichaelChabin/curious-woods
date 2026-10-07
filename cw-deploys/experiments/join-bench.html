@@ -51,6 +51,9 @@
   #words .vw, #words .guess { font-style: italic; color: var(--payne); cursor: pointer; margin-right: 14px; user-select: none; -webkit-user-select: none; }
   #words .vw.on { font-style: normal; color: var(--ink); }
   #words .guess { color: var(--copper); }
+  #words .climate { font-style: italic; color: var(--payne); cursor: pointer; margin-right: 14px; user-select: none; -webkit-user-select: none; }
+  #words .climate.on { font-style: normal; color: var(--ink); }
+  #words .model { font-size: 13px; color: var(--ink-soft); margin-top: 6px; display: none; }
   .mapwrap { position: relative; margin-top: 8px; }
   .foot { font-size: 12px; color: var(--grey); max-width: 700px; margin: 40px auto 0; }
 </style>
@@ -62,17 +65,18 @@
   <p class="how">The bar drives the map. This side of the ice ages the map is the ground: today’s land, the sea lower where it was lower. Past them it is the earth from space, the continents where they were. The change is the globe pulling away from the ground, or coming down to it. Drag the copper marker across the seam and back.</p>
   <div id="bar"></div>
   <div class="curves" id="curves"><span class="lead">Curves:</span> <span class="cw" data-c="sea-level-ice-ages">Sea level</span> <span class="cw" data-c="oxygen">Oxygen</span> <span class="cw" data-c="day-length">Day length</span> <span class="cw" data-c="minerals">Minerals</span> <span class="cw" data-c="sun-and-inside">Sun and inside</span></div>
-  <div id="words"><div class="when" id="when">now</div><div class="grade" id="grade">the ground</div><p id="why"></p><p id="summary"></p><p class="views"><span class="lead">See it as:</span> <span class="vw on" data-v="globe">Globe</span> <span class="vw" data-v="map">Map</span> <span class="vw" data-v="both">Both</span> <span class="guess" id="guess" style="display:none">another guess</span></p></div>
+  <div id="words"><div class="when" id="when">now</div><div class="grade" id="grade">the ground</div><p id="why"></p><p id="summary"></p><p class="views"><span class="lead">See it as:</span> <span class="vw on" data-v="globe">Globe</span> <span class="vw" data-v="map">Map</span> <span class="vw" data-v="both">Both</span> <span class="climate" id="climate">Climate</span> <span class="guess" id="guess" style="display:none">another guess</span></p>
+      <p class="model" id="model"></p></div>
   <div class="mapwrap"><div id="map"></div></div>
   <p class="foot">The seam is the ice ages, 2.6 million years ago: the ground of today is honest through the whole ice-age cycle and roughly to a few million years. Continents from the EarthByte model of Merdith and others (2021), CC BY 4.0; sea level from Spratt and Lisiecki (2016) to 800,000 years and Bintanja and van de Wal (2008) to three million.</p>
 </main>
-<script src="../js/map.js?v=2026-10-07"></script>
-<script src="../js/globe.js?v=2026-10-07b"></script>
+<script src="../js/map.js?v=2026-10-07b"></script>
+<script src="../js/globe.js?v=2026-10-07c"></script>
 <script src="../js/deep-time.js?v=2026-10-07b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-07 ed0a3c9';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-07 2bfb1fc';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -97,8 +101,10 @@
       }
     });
     window.__map = map; window.__bar = bar;
+    $('model').textContent = cwGlobe.CLIMATE_WORDS;
     // the view, held across the whole span, and the word that draws another guess
     document.querySelectorAll('#words .vw').forEach(w => w.addEventListener('click', () => { document.querySelectorAll('#words .vw').forEach(x => x.classList.remove('on')); w.classList.add('on'); map.deepView(w.dataset.v); }));
+    $('climate').addEventListener('click', () => { const w = $('climate'); w.classList.toggle('on'); map.deepClimate(w.classList.contains('on')); $('model').style.display = w.classList.contains('on') ? 'block' : 'none'; });
     $('guess').addEventListener('click', () => map.deepReguess());
   // the curves under the bar: one at a time, a word on, tap again for none (Stage 5)
     const CURVE_NAMES = { 'sea-level-ice-ages': 'Sea level', oxygen: 'Oxygen', 'day-length': 'Day length', minerals: 'Minerals', 'sun-and-inside': 'The sun, and from inside' };

@@ -237,7 +237,7 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Where it sits.** A layer, in the shape page's sense, over the deep-time pieces; after the join.
 **Opens.** The ground gets a climate, and the map says something about life on land in each stretch without a word.
 **Costs.** It must come from the climate-sensitive rocks (coal, salt, dune sandstone, glacial rubble: Boucot's atlas, Scotese's climate maps), drawn per piece per age, never from a painter's sense of what looks right; and it is one more thing to keep honest as the model's grades fall.
-**Source.** Michael, 7 Oct; the rock atlases Claude's.
+**Source.** Michael, 7 Oct; the rock atlases Claude's. *Built 7 Oct 2026 as a model by latitude, interior and the cold ages, labelled as such on the page (Michael: "a desert in the middle of Pangaea because that is likely"); the rocks still to come.*
 
 ### Deep events seldom touch the map   · 6 Oct 2026 · ruled
 **Idea.** Michael: "Things in deep time almost never go on the map because we have no map to put them on." Each deep event still records *place now* (where the evidence is today), but it may be *none*, and nothing obliges a mark on the globe. And: "Uncertainty is part of the point here. It is a feature. We are conveying the need for more research."
