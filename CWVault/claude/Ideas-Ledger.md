@@ -222,7 +222,7 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Where it sits.** The globe, the stretch between a billion and 4.4 billion years; a sixth curve under the bar, the amount of continental crust, with the widest band of all.
 **Opens.** The uncertainty taught by the hands, as the twitch teaches it: she taps, the land moves, and she knows. The amount is the one honest thing and it is shown; the shape and the place are shown to be guesses by changing.
 **Costs.** The invention must look unlike the model's ghost (outlined and stippled against a smeared solid) or she cannot tell an inference from an invention. The amount curve is argued by a factor of four, and how much stood above the sea by more; the band says so. The seed must hold while she drags the marker, or the land reshuffles under her hand. At the model's edge the areas must match, or the join jumps.
-**Source.** Michael, 7 Oct: "it is also not honest to show the oceans without any." The seam, the style and the drift Claude's.
+**Source.** Michael, 7 Oct: "it is also not honest to show the oceans without any." The seam, the style and the drift Claude's. *Built 7 Oct 2026 as late additions to Stage 3 (Plan-Deep-Time.md); on the benches.*
 *Amended the same day, Michael:* label the blobs as guesses, not fog; they carry information — there were continents, part of them above water, and we have no idea where. And it continues the talk of Gondwana and its predecessors, with accuracy declining as we look back. Claude's refinement: the decline is in steps, and the steps are words a child can hold — *measured* (the seafloor stripes), *inferred* (rock magnetism), *fitted* (Rodinia, Nuna: real pieces, argued fits), *guessed* (the Archean: the real cratons, which still exist and the model's file carries with their true ages, placed at random from a seed), *invented* (before the oldest rock, from the amount curve). So the blobs are the cratons wherever cratons exist, and random shapes only before 4 billion years.
 
 ### Globe, map, or both, across the whole span   · 7 Oct 2026 · candidate
@@ -230,7 +230,7 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Where it sits.** The map engine's deep base and the globe; Spec-Map-Lab's globe-beside-the-flat-map, which this gives a job.
 **Opens.** One module, two projections: everything the deep side draws is rings of longitude and latitude, so the flat map draws the same pieces, grades and guesses on a 2:1 canvas. The near side's globe gets the coast, the shelf edge and the ice as lines now, the height picture when the per-pixel globe exists.
 **Costs.** The flat deep map has no ground picture, and the near-side globe has none yet: "that is the lesson" (Michael), but a child may read an empty globe as a broken one until the words say otherwise. Three words in the column, and a layout for *Both* on a phone.
-**Source.** Michael, 7 Oct, recalling the September talk of both at once.
+**Source.** Michael, 7 Oct, recalling the September talk of both at once. *Built 7 Oct 2026 as late additions to Stage 3 (Plan-Deep-Time.md); on the benches.*
 
 ### The climate of the pieces   · 7 Oct 2026 · loose
 **Idea.** A wash on the pieces by age: a desert in the middle of Pangaea because that is likely, green to the poles in the warm times. The vegetation layer the map has for today, carried back as far as the rocks allow and thinning to nothing, which is itself the lesson.
@@ -239,12 +239,12 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** It must come from the climate-sensitive rocks (coal, salt, dune sandstone, glacial rubble: Boucot's atlas, Scotese's climate maps), drawn per piece per age, never from a painter's sense of what looks right; and it is one more thing to keep honest as the model's grades fall.
 **Source.** Michael, 7 Oct; the rock atlases Claude's.
 
-### Deep events seldom touch the map   · 6 Oct 2026 · candidate
+### Deep events seldom touch the map   · 6 Oct 2026 · ruled
 **Idea.** Michael: "Things in deep time almost never go on the map because we have no map to put them on." Each deep event still records *place now* (where the evidence is today), but it may be *none*, and nothing obliges a mark on the globe. And: "Uncertainty is part of the point here. It is a feature. We are conveying the need for more research."
 **Where it sits.** Timelines and the world map; the deep-time event store.
 **Opens.** Events that are pure fog (Black Earth, the bombardment) earn their place on the bar by saying what nobody knows; the map is spared marks it cannot honestly place.
 **Costs.** Softens *Foggy chunks find the modern map* above: place now becomes a field to read, not a pin to draw. Could go into Rulings, *Deep time*, if Michael wants it fixed.
-**Source.** Michael, chat of 6 Oct (Events-Deep-01, round 1).
+**Source.** Michael, chat of 6 Oct (Events-Deep-01, round 1). *Ruled 7 Oct 2026, Michael: "this makes sense if there is no honest way to show a location." Rulings-Sept-2026.md, Deep time 4.*
 
 ### Patterson dates the Earth   · 6 Oct 2026 · candidate
 **Idea.** An After the Ice event for 1953: Clair Patterson works out the age of the Earth from lead in a piece of the meteorite that made Meteor Crater, Arizona. Kept apart from the deep event *Gathering*, because the two sit on very different timelines.
@@ -260,13 +260,20 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** Mechanism (Milankovitch cycles in rock) needs care to tell honestly in 300 words.
 **Source.** Claude, from the round 2 research, 6 Oct.
 
-### A kind for living things   · 6 Oct 2026 · loose
+### A kind for living things   · 6 Oct 2026 · ruled
 **Idea.** The event store's closed list of kinds has *crop or animal* but nothing for microbes, seaweed or a frond nobody can classify. Cyanobacteria had to go in as "crop or animal".
 **Where it sits.** The event store (Spec-Maps kinds); every deep batch from here on.
 **Opens.** The Boring Billion and the Ediacarans file cleanly.
 **Costs.** A schema change for the build; a word to choose (*life*, *living thing*).
-**Source.** Claude, writing Events-Deep-01, 6 Oct.
+**Source.** Claude, writing Events-Deep-01, 6 Oct. *Ruled 7 Oct 2026, Michael: "Life is a good choice. We may want more." Rulings-Sept-2026.md, Deep time 4; both generators know it.*
 
+
+### A span is a thing to show   · 7 Oct 2026 · loose
+**Idea.** Ten of the first seventy deep events have no single uncertainty, because the source gives a span (walking upright, 8 to 6 million years; the last glacial maximum, 26,500 to 19,000) or a minimum. For now a plain dot; but a span is information, and the bar could draw it as a stretch between its ends, as the Time Machine's line draws a century.
+**Where it sits.** The nested bar's marks; the store's `maSpanTo`, which the generator already keeps.
+**Opens.** The difference between "we do not know when" and "it took this long" drawn, not said.
+**Costs.** A third mark shape beside the dot and the dot-and-tail; a minimum is a one-sided thing in the other direction, which wants its own mark.
+**Source.** Michael, 7 Oct: "spans in particular may be something we want to display."
 
 ## Stories
 

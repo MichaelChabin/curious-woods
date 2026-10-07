@@ -145,6 +145,7 @@ def parse_event(block, source, where):
     rec['knownFrom'] = field(lines, 'Known from', where)
     rec['placeNow'] = parse_place_now(field(lines, 'Place now', where))
     kind = field(lines, 'Kind', where); k = re.sub(r'\s*\(.*\)\s*$', '', kind.strip().lower())   # 'crop or animal (a living thing; …)' → the word
+    if 'living thing' in kind.lower(): k = 'life'   # Michael, 7 Oct: *life* is a kind; the batches reached for it before it existed
     rec['kindRaw'] = kind; rec['kind'] = KINDS.get(k, k)
     if k not in KINDS:
         rec['kindNote'] = 'not in the closed list; kept as written'

@@ -43,6 +43,7 @@ KINDS = {
     'craft or invention': 'craft', 'craft': 'craft',
     'object': 'object', 'place': 'place', 'person': 'person',
     'text': 'text', 'text (music)': 'text',
+    'life': 'life', 'living thing': 'life',   # 7 Oct 2026, Michael: a kind for living things that are neither crop nor animal
 }
 PRECISIONS = {'exact', 'year', 'decade', 'century', 'millennium'}
 

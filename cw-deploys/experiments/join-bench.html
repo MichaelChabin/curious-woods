@@ -46,6 +46,11 @@
   #words .when { font-weight: bold; font-size: 20px; }
   #words .grade { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin: 2px 0 6px; }
   #words p { margin: 0; }
+  #words .views { margin-top: 10px; font-size: 15px; color: var(--ink-soft); }
+  #words .views .lead { font-style: italic; color: var(--grey); margin-right: 6px; }
+  #words .vw, #words .guess { font-style: italic; color: var(--payne); cursor: pointer; margin-right: 14px; user-select: none; -webkit-user-select: none; }
+  #words .vw.on { font-style: normal; color: var(--ink); }
+  #words .guess { color: var(--copper); }
   .mapwrap { position: relative; margin-top: 8px; }
   .foot { font-size: 12px; color: var(--grey); max-width: 700px; margin: 40px auto 0; }
 </style>
@@ -57,22 +62,22 @@
   <p class="how">The bar drives the map. This side of the ice ages the map is the ground: today’s land, the sea lower where it was lower. Past them it is the earth from space, the continents where they were. The change is the globe pulling away from the ground, or coming down to it. Drag the copper marker across the seam and back.</p>
   <div id="bar"></div>
   <div class="curves" id="curves"><span class="lead">Curves:</span> <span class="cw" data-c="sea-level-ice-ages">Sea level</span> <span class="cw" data-c="oxygen">Oxygen</span> <span class="cw" data-c="day-length">Day length</span> <span class="cw" data-c="minerals">Minerals</span> <span class="cw" data-c="sun-and-inside">Sun and inside</span></div>
-  <div id="words"><div class="when" id="when">now</div><div class="grade" id="grade">the ground</div><p id="why"></p><p id="summary"></p></div>
+  <div id="words"><div class="when" id="when">now</div><div class="grade" id="grade">the ground</div><p id="why"></p><p id="summary"></p><p class="views"><span class="lead">See it as:</span> <span class="vw on" data-v="globe">Globe</span> <span class="vw" data-v="map">Map</span> <span class="vw" data-v="both">Both</span> <span class="guess" id="guess" style="display:none">another guess</span></p></div>
   <div class="mapwrap"><div id="map"></div></div>
   <p class="foot">The seam is the ice ages, 2.6 million years ago: the ground of today is honest through the whole ice-age cycle and roughly to a few million years. Continents from the EarthByte model of Merdith and others (2021), CC BY 4.0; sea level from Spratt and Lisiecki (2016) to 800,000 years and Bintanja and van de Wal (2008) to three million.</p>
 </main>
-<script src="../js/map.js?v=2026-10-06-deep"></script>
-<script src="../js/globe.js?v=2026-10-06c"></script>
-<script src="../js/deep-time.js?v=2026-10-07"></script>
+<script src="../js/map.js?v=2026-10-07"></script>
+<script src="../js/globe.js?v=2026-10-07b"></script>
+<script src="../js/deep-time.js?v=2026-10-07b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-07 fa086a0';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-07 ed0a3c9';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   const FIT = { west: -180, south: -58, east: 180, north: 78 };   // the whole world, as the Time Machine opens
-  const GRADE_WORDS = { ground: 'the ground', crisp: 'from space, crisp', latitude: 'from space: north and south firm, east and west smeared', ghost: 'from space: a ghost', beyond: 'from space: past the model', none: 'no map' };
+  const GRADE_WORDS = { ground: 'the ground', measured: 'measured', inferred: 'inferred', fitted: 'fitted', guessed: 'guessed', invented: 'invented', none: 'no map' };
   const get = u => fetch(u, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
   let map = null, bar = null;
   // the sea from the ice-age stack (Stage 5), 3 million years, so the map never clamps to the 20,000-year curve's first reading
@@ -80,7 +85,7 @@
     map = cwMap($('map'), pyramid, [], { fit: FIT, reset: 'reset', time: {
       seaLevel: sea.points,
       deep: { seam: 2.6e6, plates: '../stories/plates/continents.json', coast: '../art/maps/world-tiles/contours-0.json',
-              onChange: (on, grade, why) => { $('grade').textContent = GRADE_WORDS[grade] || grade; $('why').textContent = on ? (why || '') : ''; } }
+              onChange: (on, grade, why) => { $('grade').textContent = GRADE_WORDS[grade] || grade; $('why').textContent = on ? (why || '') : ''; $('guess').style.display = (grade === 'guessed' || grade === 'invented') ? '' : 'none'; } }
     } });
     bar = cwDeepTime($('bar'), {
       data: '../stories/deep-time.json', events: '../stories/deep-time-events.json', year: 0,
@@ -92,6 +97,9 @@
       }
     });
     window.__map = map; window.__bar = bar;
+    // the view, held across the whole span, and the word that draws another guess
+    document.querySelectorAll('#words .vw').forEach(w => w.addEventListener('click', () => { document.querySelectorAll('#words .vw').forEach(x => x.classList.remove('on')); w.classList.add('on'); map.deepView(w.dataset.v); }));
+    $('guess').addEventListener('click', () => map.deepReguess());
   // the curves under the bar: one at a time, a word on, tap again for none (Stage 5)
     const CURVE_NAMES = { 'sea-level-ice-ages': 'Sea level', oxygen: 'Oxygen', 'day-length': 'Day length', minerals: 'Minerals', 'sun-and-inside': 'The sun, and from inside' };
     const curveCache = {};

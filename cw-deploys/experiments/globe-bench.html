@@ -30,6 +30,11 @@
   #words .grade { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 10px; }
   #words p { margin: 0 0 10px; }
   #words .ms { font-size: 12px; color: var(--grey); margin-top: 16px; }
+  #words .views { margin-top: 12px; font-size: 15px; color: var(--ink-soft); }
+  #words .views .lead { font-style: italic; color: var(--grey); margin-right: 6px; }
+  #words .vw, #words .guess { font-style: italic; color: var(--payne); cursor: pointer; margin-right: 14px; user-select: none; -webkit-user-select: none; }
+  #words .vw.on { font-style: normal; color: var(--ink); }
+  #words .guess { color: var(--copper); }
   #panel { border-top: .5px solid var(--sep); margin-top: 18px; padding-top: 10px; min-height: 5em; }
   #panel h2 { font-weight: normal; font-size: 19px; margin: 0 0 4px; }
   #panel .hint { color: var(--grey); font-style: italic; }
@@ -41,7 +46,7 @@
 <main>
   <div class="kicker">Time Machine · bench</div>
   <h1>The earth from space</h1>
-  <p class="how">Pull the sections down and drag the copper marker: the continents move to where they were in that year. Drag the globe to turn it, east and west about the pole, north and south by tilting. The globe says how sure it is: crisp where the seafloor still carries its stripes, smeared east and west where only rock magnetism and fossils say how far north a piece was, a ghost before that.</p>
+  <p class="how">Pull the sections down and drag the copper marker: the continents move to where they were in that year. Drag the globe to turn it, east and west about the pole, north and south by tilting. The globe says how sure it is, in one of five words: measured where the seafloor still carries its stripes; inferred where only rock magnetism says how far north a piece was; fitted where the pieces are real and the fits argued; guessed where the pieces are real and nobody knows where they were; invented before the oldest rock, where only the amount comes from the rocks.</p>
   <div id="bar"></div>
   <div id="below">
     <div id="globe"></div>
@@ -50,26 +55,27 @@
       <div class="grade" id="grade"></div>
       <p id="why"></p>
       <div id="panel"><span class="hint">Tap a dot on a bar for what happened.</span></div>
+      <p class="views"><span class="lead">See it as:</span> <span class="vw on" data-v="globe">Globe</span> <span class="vw" data-v="flat">Map</span> <span class="guess" id="guess" style="display:none">another guess</span></p>
       <div class="ms" id="ms"></div>
     </div>
   </div>
   <p class="foot">Continents from the EarthByte model of Merdith and others (2021), CC BY 4.0, turned by their plates' rotations for the year; today's coast from the world pyramid's contours. A piece of continent is a block of crust, not a shoreline: the sea's edge in any year is a later layer.</p>
 </main>
-<script src="../js/deep-time.js?v=2026-10-07"></script>
-<script src="../js/globe.js?v=2026-10-06c"></script>
+<script src="../js/deep-time.js?v=2026-10-07b"></script>
+<script src="../js/globe.js?v=2026-10-07b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-07 fa086a0';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-07 ed0a3c9';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
   const $ = id => document.getElementById(id);
   function esc(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
-  const GRADE_WORDS = { crisp: 'crisp', latitude: 'north and south firm, east and west smeared', ghost: 'a ghost', beyond: 'past the model', none: 'no map' };
+  const GRADE_WORDS = { ground: 'the ground', measured: 'measured', inferred: 'inferred', fitted: 'fitted', guessed: 'guessed', invented: 'invented', none: 'no map' };
   let msSum = 0, msN = 0, msMax = 0;
   const globe = cwGlobe($('globe'), {
     ma: 0,
     onDraw: ms => { msSum += ms; msN++; msMax = Math.max(msMax, ms); if (msN % 10 === 0) $('ms').textContent = 'draw: ' + (msSum / msN).toFixed(1) + ' ms average, ' + msMax.toFixed(1) + ' ms worst, over ' + msN + ' draws'; },
-    onGrade: (g, why) => { $('grade').textContent = GRADE_WORDS[g] || g; $('why').textContent = why || ''; }
+    onGrade: (g, why) => { $('grade').textContent = GRADE_WORDS[g] || g; $('why').textContent = why || ''; $('guess').style.display = (g === 'guessed' || g === 'invented') ? '' : 'none'; }
   });
   let bar = null;
   bar = cwDeepTime($('bar'), {
@@ -80,6 +86,8 @@
     onMark: (mk, b) => { $('panel').innerHTML = '<h2>' + esc(mk.label) + '</h2><p>' + esc(mk.text || '') + '</p><div class="known">Known from ' + esc(b.knownFrom || '') + '.</div>'; }
   });
   window.__globe = globe; window.__bar = bar;
+  document.querySelectorAll('#words .vw').forEach(w => w.addEventListener('click', () => { document.querySelectorAll('#words .vw').forEach(x => x.classList.remove('on')); w.classList.add('on'); globe.setProjection(w.dataset.v); }));
+  $('guess').addEventListener('click', () => globe.reguess());
 })();
 </script>
 </body>

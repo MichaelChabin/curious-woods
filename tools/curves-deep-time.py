@@ -123,5 +123,24 @@ def main():
         'W/m²', 'log', 'the sun at about {v} W/m²',
         sun, second=('from inside', 'the inside at about {v} W/m²', inside))
 
+    # the amount of continent, two series on one axis, both as fractions of the earth's surface: the crust
+    # that existed (today about 0.40 of the surface, counting the shelves) and the land that stood above the
+    # sea (today 0.29). The gap is the drowned continents. The guesses on the globe take their area from the
+    # first series past the model's reach. A sketch from the reviews; the bands are the argument.
+    crust = [[4567, 0, 0, 0.002], [4500, 0.004, 0, 0.02], [4400, 0.012, 0, 0.04], [4000, 0.05, 0.012, 0.14], [3500, 0.12, 0.04, 0.24], [3000, 0.2, 0.08, 0.32],
+             [2500, 0.28, 0.18, 0.36], [2000, 0.32, 0.24, 0.38], [1000, 0.36, 0.32, 0.4], [540, 0.38, 0.35, 0.4], [0, 0.4, 0.4, 0.4]]
+    land = [[4567, 0, 0, 0], [4400, 0.002, 0, 0.01], [4000, 0.005, 0, 0.02], [3500, 0.01, 0.003, 0.04], [3000, 0.03, 0.01, 0.08], [2500, 0.08, 0.03, 0.15],
+            [2000, 0.15, 0.08, 0.22], [1000, 0.22, 0.15, 0.28], [540, 0.25, 0.2, 0.29], [0, 0.29, 0.29, 0.29]]
+    table('crust-and-land.json',
+        'How much continent there was, as a fraction of the earth\'s surface: the crust that existed, and the land that stood above the sea. The gap between the lines is the drowned continents, wide for two billion years. The guesses on the globe past the model\'s reach take their amount from the crust series.',
+        [{'citation': 'Hawkesworth, C.J., Cawood, P.A. & Dhuime, B. (2020), The evolution of the continental crust and the onset of plate tectonics, Frontiers in Earth Science 8, 326 — the growth curves compared'},
+         {'citation': 'Dhuime, B., Hawkesworth, C.J., Cawood, P.A. & Storey, C.D. (2012), A change in the geodynamics of continental growth 3 billion years ago, Science 335, 1334–1336 — about two thirds of the crust by 3 billion years, one of the fast curves'},
+         {'citation': 'Flament, N., Coltice, N. & Rey, P.F. (2008), A case for late-Archaean continental emergence from thermal evolution models and hypsometry, Earth and Planetary Science Letters 275, 326–336 — little land above the sea before 2.5 billion years'},
+         {'citation': 'Bindeman, I.N. et al. (2018), Rapid emergence of subaerial landmasses and onset of a modern hydrologic cycle 2.5 billion years ago, Nature 557, 545–548'},
+         {'citation': 'Korenaga, J., Planavsky, N.J. & Evans, D.A.D. (2017), Global water cycle and the coevolution of the Earth\'s interior and surface environment, Philosophical Transactions of the Royal Society A 375, 20150393'}],
+        'A sketch, to be checked. The crust curves disagree by a factor of three or four at 3 billion years, and that disagreement is the band. How much stood above the sea is argued more: a few percent of the surface in the Archean by most estimates, rising around 2.5 billion years. Today\'s two numbers are measured.',
+        'of the surface', 'linear', 'continent over about {v} of the surface',
+        crust, second=('land above the sea', 'land over about {v} of the surface', land))
+
 if __name__ == '__main__':
     main()

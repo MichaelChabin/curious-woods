@@ -127,6 +127,8 @@
        it arrives pulling away from the ground and leaves coming down to it — a scale and a fade, never a cut */
     '.cw-map .cw-deep-base{position:absolute;left:0;top:0;width:100%;height:100%;background:#f4f1e8;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(2.4);transition:opacity .5s ease,transform .5s ease;pointer-events:none;line-height:0;}',
     '.cw-map .cw-deep-base.on{opacity:1;transform:scale(1);pointer-events:auto;}',
+    '.cw-map .cw-deep-base.half{left:50%;width:50%;background:rgba(244,241,232,0.92);}',
+    '.cw-map .cw-deep-base>div{margin:0 6px;}',
     '@media (prefers-reduced-motion:reduce){.cw-map .cw-deep-base{transition:opacity .2s ease;transform:none;}}',
     /* the strip is the picker's drag handle turned to this use, with the handle's own tint
        (rgba(200,184,154,.25)) so it reads as a thing to take hold of, not as the page */
@@ -1072,39 +1074,80 @@
         for (var i = 1; i < pts.length; i++) if (y <= pts[i][0]) { var a = pts[i - 1], b = pts[i]; return a[1] + (b[1] - a[1]) * (y - a[0]) / (b[0] - a[0] || 1); }
         return pts[pts.length - 1][1];
       }
-      // deep time: the globe as the base past the seam (see the header)
-      var deepHost = null, deepGlobe = null, deepOn = false;
+      // deep time: the globe as the base past the seam (see the header), and since 7 Oct 2026 the
+      // choice of view — 'globe', 'map' (the same world flat) or 'both' — held across the whole span:
+      // past the seam the host shows the chosen view(s) of the pieces; this side of it 'map' is the
+      // pyramid alone, 'globe' the globe with today's coast over the pyramid, 'both' the globe in the
+      // right half beside the pyramid. The two views share one seed, so a guess is the same in each.
+      var deepHost = null, deepGlobe = null, deepFlat = null, deepOn = false, deepView = (T.deep && T.deep.view) || 'globe', deepAgeNow = false, deepGradeNow = null;
       function deepSize() {
         if (!deepHost) return;
-        var d = Math.max(120, Math.min(stage.clientWidth, stage.clientHeight) - 16), g = deepHost.firstChild;
-        g.style.width = d + 'px'; g.style.height = d + 'px';
+        var hw = deepHost.clientWidth, hh = deepHost.clientHeight, kids = [];
+        if (deepGlobe) kids.push(deepGlobe._host); if (deepFlat) kids.push(deepFlat._host);
+        var shown = kids.filter(function (k) { return k.style.display !== 'none'; }), n = shown.length || 1, cw = hw / n;
+        shown.forEach(function (k) {
+          var flat = k === (deepFlat && deepFlat._host), d;
+          if (flat) { d = Math.max(160, Math.min(cw, 2 * hh) - 16); k.style.width = d + 'px'; k.style.height = (d / 2) + 'px'; }
+          else { d = Math.max(120, Math.min(cw, hh) - 16); k.style.width = d + 'px'; k.style.height = d + 'px'; }
+        });
+      }
+      function makeView(projection) {
+        var g = document.createElement('div'); deepHost.appendChild(g);
+        var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, ma: 0, lon: view.lon, lat: view.lat, projection: projection,
+          seam: (T.deep.seam || 2.6e6) / 1e6, seed: deepGlobe ? deepGlobe.seed() : undefined,
+          onGrade: function (grade, why) { if (projection === 'globe' || !deepGlobe) tellDeep(); } });
+        inst._host = g;
+        return inst;
       }
       function ensureDeep() {
-        if (deepGlobe) return true;
+        if (deepHost) return true;
         if (!window.cwGlobe) { console.warn('map.js: a deep-time year was asked for, but js/globe.js is not loaded; the map shows today'); return false; }
         deepHost = document.createElement('div'); deepHost.className = 'cw-deep-base';
-        var g = document.createElement('div'); deepHost.appendChild(g);
         stage.appendChild(deepHost);
         ['pointerdown', 'wheel', 'click', 'dblclick'].forEach(function (t) { deepHost.addEventListener(t, function (e) { e.stopPropagation(); }); });
-        deepSize();
-        deepGlobe = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, ma: 0, lon: view.lon, lat: view.lat,
-          onGrade: function (grade, why) { if (deepOn && T.deep.onChange) T.deep.onChange(true, grade, why); } });
         if (window.ResizeObserver) new ResizeObserver(deepSize).observe(stage);
         return true;
       }
-      function setDeep(on) {
-        if (on === deepOn) return;
-        deepOn = on;
-        if (on) { deepGlobe.turn(view.lon, view.lat); void deepHost.offsetWidth; deepHost.classList.add('on'); }   // the reflow so the arrival is a transition, not a jump, the first time
-        else deepHost.classList.remove('on');
-        if (T.deep.onChange) { var g = deepGlobe.grade(); T.deep.onChange(on, on ? g.grade : 'ground', on ? g.why : ''); }
+      function applyView() {
+        if (!deepHost) return;
+        var wantGlobe = deepView !== 'map', wantFlat = deepAgeNow && deepView !== 'globe';
+        if (wantGlobe && !deepGlobe) deepGlobe = makeView('globe');
+        if (wantFlat && !deepFlat) deepFlat = makeView('flat');
+        if (deepGlobe) deepGlobe._host.style.display = wantGlobe ? '' : 'none';
+        if (deepFlat) deepFlat._host.style.display = wantFlat ? '' : 'none';
+        deepHost.classList.toggle('half', !deepAgeNow && deepView === 'both');
+        deepSize();
       }
-      api.deep = function () { return { on: deepOn, grade: deepGlobe ? deepGlobe.grade() : null }; };
+      function tellDeep() {
+        if (!T.deep.onChange) return;
+        var g = deepOn ? (deepGlobe || deepFlat).grade() : null, name = deepOn ? g.grade : 'ground', key = name + (deepOn ? '+' : '-');
+        if (key === deepGradeNow) return;
+        deepGradeNow = key;
+        T.deep.onChange(deepOn, name, deepOn ? g.why : '');
+      }
+      function setDeep(on) {
+        if (on === deepOn) { tellDeep(); return; }
+        deepOn = on;
+        if (on) { if (deepGlobe) deepGlobe.turn(view.lon, view.lat); void deepHost.offsetWidth; deepHost.classList.add('on'); }
+        else deepHost.classList.remove('on');
+        tellDeep();
+      }
+      api.deep = function () { return { on: deepOn, view: deepView, grade: deepGlobe ? deepGlobe.grade() : (deepFlat ? deepFlat.grade() : null) }; };
+      api.deepView = function (v) { if (v === 'globe' || v === 'map' || v === 'both') { deepView = v; if (timeYear !== null) api.setTime(timeYear); } return deepView; };
+      api.deepReguess = function () { if (!deepGlobe && !deepFlat) return; var s = (deepGlobe || deepFlat).reguess(); if (deepGlobe && deepFlat) (deepGlobe === (deepGlobe || deepFlat) ? deepFlat : deepGlobe).setSeed(s); };
       api.setTime = function (year) {
         timeYear = +year;
         var ago = new Date().getFullYear() - timeYear;
-        if (T.deep && ago > (T.deep.seam || 2.6e6) && ensureDeep()) { deepGlobe.setTime(ago / 1e6); setDeep(true); return; }
-        if (deepGlobe) setDeep(false);
+        if (T.deep) {
+          deepAgeNow = ago > (T.deep.seam || 2.6e6);
+          var want = deepAgeNow || deepView !== 'map';
+          if (want && ensureDeep()) {
+            applyView();
+            if (deepGlobe) deepGlobe.setTime(ago / 1e6); if (deepFlat) deepFlat.setTime(ago / 1e6);
+            setDeep(true);
+            if (deepAgeNow) return;
+          } else if (deepHost) setDeep(false);
+        }
         var m = curveAt(T.seaLevel, timeYear);
         if (m !== null && seaCanvas) { var nm = Math.min(0, Math.round(m * 2) / 2); if (nm !== seaLevel) { seaLevel = nm; drawSea(); } }
         if (T.ice) { var ago = new Date().getFullYear() - timeYear; iceData = T.ice; iceAgo = Math.max(0, ago); draw(); }

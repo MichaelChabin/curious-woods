@@ -79,7 +79,10 @@ ice cores), **`day-length.json`** (hours: Williams 2000, Meyers & Malinverno 201
 al. 2008's stages, kept on the 2008 scale), **`sun-and-inside.json`** (two series on one log axis in
 W/m² of surface — the sun absorbed, from Gough 1981's brightening, and the heat from inside, a sketch
 from Davies & Davies 2010, Korenaga 2008 and Zahnle et al. 2007 — so the crossing in the first stretch
-can be seen; `second: { name, say, points }`). Drawn by `js/deep-time.js`'s `setCurve`.
+can be seen; `second: { name, say, points }`), **`crust-and-land.json`** (7 Oct: the amount of continent, two
+series as fractions of the earth's surface — the crust that existed, today 0.40, and the land above the
+sea, today 0.29 — a sketch from the reviews with the disagreement as the band; the globe's invented land
+takes its area from the first). Drawn by `js/deep-time.js`'s `setCurve`.
 **`stories/deep-time.json` (6 Oct 2026)** — the chunk tree of the deep-time Time Machine, edited by hand:
 Earth's 4.567 billion years as six chunks cut where the evidence changes kind (the ruling of 6 Oct,
 Rulings-Sept-2026.md *Deep time*), each chunk with its children, its `knownFrom` line (the fog in words),
@@ -105,11 +108,13 @@ in motion, for the deep-time Time Machine (`CWVault/claude/Plan-Deep-Time.md`, S
 plate-model-manager`, and fetches the model once into `~/Library/Caches/cw-plate-models/`) reads
 EarthByte's Merdith et al. 2021 model (a billion years, paleomagnetic frame, CC BY 4.0; citation and
 licence in the file) and writes `pieces` — 795 outlines of continent as they are today, simplified to
-three-quarters of a degree, each with its plate and the span of years it exists — and `plates` — each
+three-quarters of a degree, each with its plate and the span of years it exists, its real birth age even
+past the model's reach (7 Oct; a craton born at 2.6 billion years is drawn, placed at random, when the
+year is older than the model) — `reach` (1000) — and `plates` — each
 of 416 plates' finite rotation (pole lat, lon, angle) from today to every sampled age, every 5 million
 years to 540 and every 10 to 1000, kept only while the plate has a living piece — with `ages` and
-`grades` (how sure the positions are: crisp to 200 million years, latitude only to 540, a guess
-beyond, with the reason). A page turns each living piece by its plate's rotation at the year,
+`grades` (how sure the positions are, in the words of knowing: measured to 200 million years, inferred
+to 540, fitted to the reach, with the reason; the page adds guessed, invented and none). A page turns each living piece by its plate's rotation at the year,
 interpolated as a rotation, and draws it: true motion, not stills (Michael, 6 Oct). 0.96 MB, 0.25 MB
 gzipped. The tool checks its own file against pyGPlates (0.0065° worst) and draws proof pictures
 with `--png`. Not yet read by any page; Stage 3 (the globe) will.
@@ -1051,11 +1056,16 @@ backstop for the Claude Code session that lands the file.
   from the ground (opacity and a scale from 2.4 to 1 over half a second; reduced motion, a fade)
   and leaves coming down to it. Over it nothing of the map responds: its host stops pointer, wheel
   and click; its own drag turns it. `map.deep()` says whether it is on and how sure the positions
-  are; `onChange(on, grade, why)` tells the page. The bench: the bar, the words (the year, the
+  are; `onChange(on, grade, why)` tells the page. **Globe, map or both (7 Oct):** `opts.time.deep.view` and `map.deepView(v)`,
+  held across the whole span — past the seam the host shows the chosen view(s) of the pieces, two
+  instances side by side for *both* sharing one seed; this side of it *map* is the pyramid alone,
+  *globe* the globe with today's coast over the pyramid, *both* the globe in the right half beside the
+  pyramid (`.half`). `map.deepReguess()` is the word *another guess*. The bench's words *See it as:
+  Globe · Map · Both*. The bench: the bar, the words (the year, the
   grade, its sentence), the map with the Time Machine's opening box and, since Stage 5, the ice-age sea-level curve
   (`stories/curves/sea-level-ice-ages.json`) and the curve words under the bar.
   Lesson: the globe must measure its host's layout width, not its drawn width, or it sizes itself
-  to the scaled-up arrival. Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-07 fa086a0`.
+  to the scaled-up arrival. Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-07 ed0a3c9`.
 
 - **`globe-bench.html` (6 Oct 2026)** — *The earth from space*: the nested bar of deep time over a
   globe, Stage 3 of `CWVault/claude/Plan-Deep-Time.md`. **`../js/globe.js`** (new that day) —
@@ -1063,11 +1073,22 @@ backstop for the Claude Code session that lands the file.
   and, for a year, turns every living piece of continent by its plate's rotation (slerped between
   the file's samples, precomputed to a 3×3 per plate per draw) and draws them as one fill, never
   the pieces outlined one by one (the model's terranes would show as lines), with a thin stroke
-  in the land colour closing the hairline gaps between neighbours. The fog grades are the data's
-  (`grades`): *crisp* below 200 million years; *latitude* to 540 — the land drawn seven times
-  shifted in longitude at low alpha, firm north–south and smeared east–west; *ghost* beyond, a
-  wider smear; *beyond* past the model's reach (an empty globe and the sentence); *none* above
-  4.4 billion years (a dark red ball). Today's coast (the world pyramid's `contours-0.json`) is
+  in the land colour closing the hairline gaps between neighbours. **The five words of knowing (7 Oct 2026; Ideas-Ledger *Invented land,
+  honest about it*)**, by age: *measured* below 200 million years, drawn solid; *inferred* to 540,
+  the land drawn seven times shifted in longitude at low alpha, firm north–south and smeared
+  east–west; *fitted* to the model's reach (a billion years), a wider smear; *guessed* past the reach
+  while cratons exist, to 4 billion — the pieces' real birth ages are in the file now, and each is
+  placed by the model's last position plus a random slow drift from a seed (about half a degree per
+  million years), so that going back the accuracy falls to chance; drawn pale with a dashed edge
+  round the union; *invented* before the oldest rock, to 4.4 billion — random blobs whose total area
+  is the crust series of `stories/curves/crust-and-land.json`, shapes and places from the seed, drawn
+  paler with a dotted edge; *none* above 4.4 billion, a dark red ball; and this side of the seam
+  *ground*, today's coast and the shelf's edge as lines over pale land. The seed holds while the
+  marker moves; `reguess()` draws a new one (the word *another guess*, present in the guessed and
+  invented grades) and every visit begins with its own. `setProjection('flat')` draws the same rings
+  equirectangular on a 2:1 canvas, each ring unwrapped and drawn three times a world apart so one
+  across the seam shows whole, a drag panning east–west; the bench's words *Globe* and *Map*. Each
+  grade has its sentence (`cwGlobe.GRADE_WORDS`). Today's coast (the world pyramid's `contours-0.json`) is
   drawn as a line for the last five million years, fading. A point behind the globe goes to the
   limb, and between two hidden points the path walks the limb's arc, not a chord (a chord filled
   wedges across the disc); a ring with no point facing us is left out altogether (traced, it looped
@@ -1078,7 +1099,7 @@ backstop for the Claude Code session that lands the file.
   lat)`, `grade()`, `destroy()`. Driven here by `../js/deep-time.js` (`onYear`). Measured on the Mac
   in the desktop app's pane at 520 px: a draw averages 6 ms, worst 25, and a sweep of the year
   runs at the display's frame rate; **not yet seen on an iPad**. Reads `../art/icons/time-machine-icon-256.png`.
-  `CW_VERSION 2026-10-07 fa086a0`. Short addresses while Michael tests on the iPad, in `_redirects`
+  `CW_VERSION 2026-10-07 ed0a3c9`. Short addresses while Michael tests on the iPad, in `_redirects`
   (302, not a move): `/experiments/deep-time` and `/experiments/deepTime` open this bench,
   `/experiments/deep-time-bar` the bar alone, `/experiments/deep-time-join` the join.
 - **`deep-time-bench.html` (6 Oct 2026)** — *Deep time, in sections*: the nested bar alone, Stage 2
@@ -1110,7 +1131,7 @@ backstop for the Claude Code session that lands the file.
   record; `cwDeepTime.moreHTML(rec)` renders the More as the Time Machine page does, with a
   known-from line and the place of the evidence. The hand-over to the Time Machine's own line
   at the bottom rung is an event here, the mounting into `active/time-machine.html` is Stage 7.
-  Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-07 fa086a0`.
+  Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-07 ed0a3c9`.
 - **`time-passing-bench.html`** — bench: **Time-passing, in operation** (30 Sep 2026; Michael asked to
   see Naomi Devil's *Idő-töltés* work and is wondering about a page). A simulation of the
   sculpture's mechanism from the artist's own description (no film was found): two radial

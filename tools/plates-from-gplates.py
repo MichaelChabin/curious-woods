@@ -66,7 +66,7 @@ def main():
     pieces, fids, raw_pts, kept_pts = [], [], 0, 0
     for f in feats:
         b, e = f.get_valid_time()
-        frm = big if math.isinf(b) else min(b, big)
+        frm = 4567.0 if math.isinf(b) else b    # the piece's real birth age, past the model's reach too (7 Oct): a craton born at 2.6 Ga is drawn, placed at random, when the year is older than the model
         to = 0.0 if (math.isinf(e) or e < 0) else e
         if frm <= to: continue
         rings = []
@@ -106,10 +106,13 @@ def main():
         n_rot += len(rows)
     print(f'plates {len(plates)}, rotation samples {n_rot}')
 
+    # the five words of knowing (Michael and Claude, 7 Oct 2026): measured, inferred, fitted, guessed, invented;
+    # the first three are the model's, by age; the page adds guessed (the real cratons placed at random past
+    # the model's reach), invented (random land from the amount curve before the oldest rock) and none
     grades = [
-        {'to': 200,  'grade': 'crisp',    'why': 'the seafloor still carries its magnetic stripes, so the plates can be run backwards with confidence'},
-        {'to': 540,  'grade': 'latitude', 'why': 'rock magnetism and fossils give how far north each piece was, not how far east; the east-west positions are one best estimate'},
-        {'to': big,  'grade': 'ghost',    'why': 'the supercontinents of this age are reconstructed from scattered evidence and the models disagree; this is one guess'},
+        {'to': 200,  'grade': 'measured', 'why': 'the seafloor still carries its magnetic stripes, so the plates can be run backwards and measured'},
+        {'to': 540,  'grade': 'inferred', 'why': 'rock magnetism and fossils give how far north each piece was, not how far east; the east-west positions are one best estimate'},
+        {'to': big,  'grade': 'fitted',   'why': 'the pieces are real and still exist; how they fitted together is argued from scattered evidence, and the models disagree'},
     ]
     out = {
         '_about': 'The continents in motion, for the Time Machine (CWVault/claude/Plan-Deep-Time.md, Stage 1). '
@@ -119,9 +122,9 @@ def main():
         'source': {'model': a.model, 'citation': 'Merdith, A.S. et al. (2021), Extending full-plate tectonic models into deep time: Linking the Neoproterozoic and the Phanerozoic, Earth-Science Reviews 214, 103477',
                    'url': 'https://doi.org/10.5281/zenodo.10346399', 'licence': 'CC BY 4.0 (EarthByte)',
                    'frame': 'paleomagnetic: latitude is meaningful, longitude is unconstrained before the seafloor record', 'generated': time.strftime('%Y-%m-%d')},
-        'howSure': 'see grades; positions crisp to 200 Ma, latitude only to 540, a guess beyond',
+        'howSure': 'see grades; positions measured to 200 Ma, inferred (latitude only) to 540, fitted to the model\'s reach; beyond it the page guesses, and before the oldest rock it invents',
         'units': {'ages': 'millions of years ago', 'rings': 'lon, lat in degrees, flat pairs', 'rot': 'pole lat, pole lon, angle, degrees'},
-        'ages': ages, 'grades': grades, 'pieces': pieces, 'plates': plates,
+        'reach': big, 'ages': ages, 'grades': grades, 'pieces': pieces, 'plates': plates,
     }
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     with open(a.out, 'w') as fh: json.dump(out, fh, separators=(',', ':'))

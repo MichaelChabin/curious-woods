@@ -387,12 +387,12 @@
       if (opts.onBar) opts.onBar(root, []);
     }
     if (opts.events) {
-      if (typeof opts.events === 'string') fetch(opts.events).then(function (r) { return r.json(); }).then(function (d) { store = d.events || d; if (root) draw(); }).catch(function (e) { console.error('deep-time.js: the events did not load', e); });
+      if (typeof opts.events === 'string') fetch(opts.events, { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (d) { store = d.events || d; if (root) draw(); }).catch(function (e) { console.error('deep-time.js: the events did not load', e); });
       else store = opts.events.events || opts.events;
     }
     var src = opts.data || '../stories/deep-time.json';
     if (typeof src === 'string') {
-      fetch(src).then(function (r) { return r.json(); }).then(start).catch(function (e) { console.error('deep-time.js: the tree did not load', e); });
+      fetch(src, { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(start).catch(function (e) { console.error('deep-time.js: the tree did not load', e); });
     } else start(src);
 
     if (window.ResizeObserver) { ro = new ResizeObserver(function () { if (root) draw(); }); ro.observe(host); }

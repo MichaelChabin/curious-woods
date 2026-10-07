@@ -142,6 +142,18 @@ tilt, no limit east–west. And the bars drew the ice ages and After the Ice the
 the mockup's six-percent floor; widths are honest now, down to three pixels, with a finger-sized hit
 area for a thin chunk — a hairline is the lesson (ledger). Wants logged: Black Earth textures (the
 per-pixel globe's first job), the atmosphere as a rim she can turn on.
+*The late additions, 7 Oct 2026, built and checked:* the five words of knowing — measured, inferred,
+fitted, guessed, invented — with *none* and *ground*; the pieces' real birth ages kept by the pipeline;
+past the model's reach the real cratons placed by the model's last position plus a random slow drift
+from a seed, so the join is seamless and the accuracy falls to chance going back; before the oldest
+rock, invented land from the crust-and-land curve; the seed holds while the marker moves, *another
+guess* draws a new one, every visit begins with its own; the flat projection, and *Globe, Map, Both*
+held across the whole span in the map's deep base, the two views sharing one seed; this side of the
+seam the globe shows today's coast and the shelf's edge as lines. Michael's rulings of 7 Oct: the
+blobs are guesses, not fog, and they carry information. Lessons: the data files must be fetched
+revalidated (a cached plate file drew nothing at two billion years); a dashed edge must belong to the
+union, stroked wide under an opaque fill, or every terrane shows. Still deferred: the height picture
+on the sphere; the exposed-land island inside each guessed piece; the climate wash.
 The orthographic projection of rings on a canvas or an SVG: today's coastline from Natural
 Earth first, then the pieces of Stage 1 turned by their rotations; turn and tilt by drag; the fog grades by year — nothing to draw above 4.4
 billion (a dark red ball), ghosts between 540 million and 4.4 billion, latitude firm and

@@ -581,7 +581,7 @@
     "note": null
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [
     "Water split"
    ],
@@ -1016,7 +1016,7 @@
     "note": "no coordinates in the source"
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [
     "A cell with a nucleus"
    ],
@@ -1082,7 +1082,7 @@
     "note": "the island's middle"
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [
     "Bangiomorpha"
    ],
@@ -1639,7 +1639,7 @@
     "note": "the village"
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [
     "Dickinsonia"
    ],
@@ -1700,7 +1700,7 @@
     "note": "the range's highest point"
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [
     "Bites and shells"
    ],
@@ -1766,7 +1766,7 @@
     "note": null
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [
     "Animals, kept"
    ],
@@ -2021,7 +2021,7 @@
     "note": "no coordinates in the source"
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [
     "Plants ashore"
    ],
@@ -2782,7 +2782,7 @@
     "note": null
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [],
    "summary": "About 149 million years ago. *Archaeopteryx*, an animal with feathered wings, teeth and a long bony tail, lived on islands in a warm sea in what is now Bavaria. Dinosaurs with feathers are older still.",
    "more": {
@@ -2846,7 +2846,7 @@
     "note": "no coordinates in the source"
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [
     "Flowers"
    ],
@@ -3102,7 +3102,7 @@
     "note": "no coordinates in the source"
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [
     "Grasslands"
    ],
@@ -3170,7 +3170,7 @@
     "note": null
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [],
    "summary": "About 8 to 6 million years ago. Grasses that grow best in hot, bright, dry places spread over much of the warmer part of the world. The teeth of the animals that ate them show when.",
    "more": {
@@ -3231,7 +3231,7 @@
     "note": null
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [
     "Walking upright"
    ],
@@ -3488,7 +3488,7 @@
     "note": null
    },
    "kindRaw": "crop or animal (a living thing; the list has no better word)",
-   "kind": "crop",
+   "kind": "life",
    "replacesSketch": [
     "Homo sapiens"
    ],
