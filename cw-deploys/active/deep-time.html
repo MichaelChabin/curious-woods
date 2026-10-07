@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/icons/time-machine-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/time-machine-icon-256.png">
+<!--
+  deep-time.html — Deep Time: the Time Machine's deep page (built as experiments/join-bench.html, the
+  join of Plan-Deep-Time.md Stage 4, and hung 7 Oct 2026 on Michael's word, beside the Time Machine
+  in the gallery, with the earth from space at 150 million years as its picture). The nested bar of
+  Earth's 4.6 billion years (js/deep-time.js, stories/deep-time.json) drives the map (js/map.js),
+  which this side of the ice ages is the ground and past them the globe (js/globe.js): the continents
+  where they were, in the five words of knowing. The events are stories/deep-time-events.json; the
+  curves under the bar are stories/curves/. The plan: CWVault/claude/Plan-Deep-Time.md.
+-->
+<title>Deep Time</title>
+<style>
+  :root { --parch: #f4f1e8; --ink: #2a241c; --ink-soft: #6b655a; --payne: #546A80; --copper: #b5652b; --grey: #9a958b; --sep: #c8b89a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--parch); color: var(--ink); font-family: Georgia, "Times New Roman", Times, serif; }
+  body { font-size: 16px; line-height: 1.45; }
+  main { max-width: 1100px; margin: 0 auto; padding: 28px 16px 60px; }
+  .kicker { font-size: 12px; letter-spacing: .12em; color: var(--ink-soft); text-transform: uppercase; }
+  h1 { font-weight: normal; font-size: 30px; line-height: 1.1; margin: 6px 0 14px; }
+  p.how { color: var(--ink-soft); max-width: 700px; margin: 0 0 22px; }
+  #bar { width: 100%; }
+  /* the More: the Time Machine page's window contents */
+  .tm-more { width: 460px; max-width: 100%; font-size: 16px; line-height: 1.45; color: var(--ink); padding-top: 6px; }
+  .tm-more h3 { font-weight: normal; font-size: 21px; margin: 0 0 10px; line-height: 1.2; }
+  .tm-more .stepped { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; line-height: 1.5; }
+  .tm-more .stepped div:nth-child(2) { padding-left: 1.5em; }
+  .tm-more .stepped div:nth-child(3) { padding-left: 3em; }
+  .tm-more p { margin: 0 0 .9em; }
+  .tm-more blockquote { margin: 0 0 1.4em; padding: 0 0 0 20px; border-left: 2px solid var(--sep); }
+  .tm-more blockquote p { margin: 0 0 .35em; }
+  .tm-more .known { font-size: 14px; color: var(--ink-soft); }
+  .tm-more .refs { font-size: 12px; line-height: 1.45; color: var(--ink-soft); border-top: .5px solid var(--sep); margin-top: 16px; padding-top: 8px; }
+  .tm-more .refs div { margin: 0 0 5px; }
+  #summary .more { font-style: italic; color: var(--payne); cursor: pointer; }
+  #summary .more:hover { color: #3D3D3A; }
+  .curves { max-width: 1100px; margin: 4px 0 0 12px; font-size: 15px; color: var(--ink-soft); }
+  .curves .lead { font-style: italic; color: var(--grey); margin-right: 6px; }
+  .curves .cw { font-style: italic; color: var(--payne); cursor: pointer; margin-right: 14px; user-select: none; -webkit-user-select: none; }
+  .curves .cw:hover { color: #3D3D3A; }
+  .curves .cw.on { font-style: normal; color: var(--copper); }
+  #words { max-width: 700px; margin: 22px auto 10px; min-height: 4.6em; }
+  #words .when { font-weight: bold; font-size: 20px; }
+  #words .grade { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin: 2px 0 6px; }
+  #words p { margin: 0; }
+  #words .views { margin-top: 10px; font-size: 15px; color: var(--ink-soft); }
+  #words .views .lead { font-style: italic; color: var(--grey); margin-right: 6px; }
+  #words .vw, #words .guess { font-style: italic; color: var(--payne); cursor: pointer; margin-right: 14px; user-select: none; -webkit-user-select: none; }
+  #words .vw.on { font-style: normal; color: var(--ink); }
+  #words .guess { color: var(--copper); }
+  #words .climate { font-style: italic; color: var(--payne); cursor: pointer; margin-right: 14px; user-select: none; -webkit-user-select: none; }
+  #words .climate.on { font-style: normal; color: var(--ink); }
+  #words .model { font-size: 13px; color: var(--ink-soft); margin-top: 6px; display: none; }
+  .mapwrap { position: relative; margin-top: 8px; }
+  .foot { font-size: 12px; color: var(--grey); max-width: 700px; margin: 40px auto 0; }
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Time Machine</div>
+  <h1>Deep Time</h1>
+  <p class="how">The bar at the top is the whole of the Earth’s time, four and a half billion years, cut into sections where what we know changes. Tap a section and it comes down as a bar of its own; tap it again and it goes back up. A bar that only twitches has nothing more underneath, and that is the point. The copper marker is the year you are in: drag it, or tap a dot. Every dot is the oldest evidence of a thing, and the faint tail behind it is where the thing probably began.</p>
+  <p class="how">The map follows the marker. This side of the ice ages it is the ground, today’s land with the sea lower where it was lower. Past them it is the earth from space, with the continents where they were, and a word under it says how sure that is, from <i>measured</i> down to <i>invented</i>. Drag the globe to turn it. Where the word is <i>guessed</i>, tap <i>another guess</i>.</p>
+  <div id="bar"></div>
+  <div class="curves" id="curves"><span class="lead">Curves:</span> <span class="cw" data-c="sea-level-ice-ages">Sea level</span> <span class="cw" data-c="oxygen">Oxygen</span> <span class="cw" data-c="day-length">Day length</span> <span class="cw" data-c="minerals">Minerals</span> <span class="cw" data-c="sun-and-inside">Sun and inside</span></div>
+  <div id="words"><div class="when" id="when">now</div><div class="grade" id="grade">the ground</div><p id="why"></p><p id="summary"></p><p class="views"><span class="lead">See it as:</span> <span class="vw on" data-v="globe">Globe</span> <span class="vw" data-v="map">Map</span> <span class="vw" data-v="both">Both</span> <span class="climate" id="climate">Climate</span> <span class="guess" id="guess" style="display:none">another guess</span></p>
+      <p class="model" id="model"></p></div>
+  <div class="mapwrap"><div id="map"></div></div>
+  <p class="foot">Continents from the plate model of Merdith and others (2021), EarthByte, CC BY 4.0, turned by their plates’ rotations for the year; today’s ground from the world pyramid; sea level from Spratt and Lisiecki (2016) to 800,000 years and Bintanja and van de Wal (2008) to three million; the sections after Robert Hazen’s <i>The Story of Earth</i>. The events were written and checked in October 2026 and name their sources in each <i>More</i>. Where the globe says <i>guessed</i> or <i>invented</i>, it means it.</p>
+</main>
+<script src="../js/map.js?v=2026-10-07b"></script>
+<script src="../js/globe.js?v=2026-10-07c"></script>
+<script src="../js/deep-time.js?v=2026-10-07b"></script>
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = '2026-10-07 0042379';   // date + short commit hash; bump in the same commit as any change
+  try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  const FIT = { west: -180, south: -58, east: 180, north: 78 };   // the whole world, as the Time Machine opens
+  const GRADE_WORDS = { ground: 'the ground', measured: 'measured', inferred: 'inferred', fitted: 'fitted', guessed: 'guessed', invented: 'invented', none: 'no map' };
+  const get = u => fetch(u, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
+  let map = null, bar = null;
+  // the sea from the ice-age stack (Stage 5), 3 million years, so the map never clamps to the 20,000-year curve's first reading
+  Promise.all([cwMap.load('../art/maps/world-pyramid.json'), get('../stories/curves/sea-level-ice-ages.json')]).then(([pyramid, sea]) => {
+    map = cwMap($('map'), pyramid, [], { fit: FIT, reset: 'reset', time: {
+      seaLevel: sea.points,
+      deep: { seam: 2.6e6, plates: '../stories/plates/continents.json', coast: '../art/maps/world-tiles/contours-0.json',
+              onChange: (on, grade, why) => { $('grade').textContent = GRADE_WORDS[grade] || grade; $('why').textContent = on ? (why || '') : ''; $('guess').style.display = (grade === 'guessed' || grade === 'invented') ? '' : 'none'; } }
+    } });
+    bar = cwDeepTime($('bar'), {
+      data: '../stories/deep-time.json', events: '../stories/deep-time-events.json', year: 0,
+      onYear: (ma, storeYear) => { $('when').textContent = bar ? bar.fmt(ma) : ''; map.setTime(storeYear); },
+      onMark: (mk, b) => {
+        const rec = mk.rec; if (!rec) return;
+        $('summary').innerHTML = '<b>' + esc(rec.label) + '.</b> ' + cwDeepTime.prose(rec.summary) + ' <span class="more" role="button" tabindex="0">More</span>';
+        $('summary').querySelector('.more').addEventListener('click', () => { const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec); cwWindow(box, {}); });
+      }
+    });
+    window.__map = map; window.__bar = bar;
+    $('model').textContent = cwGlobe.CLIMATE_WORDS;
+    // the view, held across the whole span, and the word that draws another guess
+    document.querySelectorAll('#words .vw').forEach(w => w.addEventListener('click', () => { document.querySelectorAll('#words .vw').forEach(x => x.classList.remove('on')); w.classList.add('on'); map.deepView(w.dataset.v); }));
+    $('climate').addEventListener('click', () => { const w = $('climate'); w.classList.toggle('on'); map.deepClimate(w.classList.contains('on')); $('model').style.display = w.classList.contains('on') ? 'block' : 'none'; });
+    $('guess').addEventListener('click', () => map.deepReguess());
+  // the curves under the bar: one at a time, a word on, tap again for none (Stage 5)
+    const CURVE_NAMES = { 'sea-level-ice-ages': 'Sea level', oxygen: 'Oxygen', 'day-length': 'Day length', minerals: 'Minerals', 'sun-and-inside': 'The sun, and from inside' };
+    const curveCache = {};
+    document.querySelectorAll('#curves .cw').forEach(w => w.addEventListener('click', () => {
+      const was = w.classList.contains('on');
+      document.querySelectorAll('#curves .cw').forEach(x => x.classList.remove('on'));
+      if (was) { bar.setCurve(null); return; }
+      const key = w.dataset.c;
+      const show = c => { if (!w.classList.contains('on')) { w.classList.add('on'); c.name = CURVE_NAMES[key] || key; bar.setCurve(c); } };
+      w.classList.add('on');
+      if (curveCache[key]) { curveCache[key].name = CURVE_NAMES[key] || key; bar.setCurve(curveCache[key]); return; }
+      fetch('../stories/curves/' + key + '.json', { cache: 'no-cache' }).then(r => r.json()).then(c => { curveCache[key] = c; if (w.classList.contains('on')) { c.name = CURVE_NAMES[key] || key; bar.setCurve(c); } });
+    }));
+  }).catch(err => { $('why').textContent = 'could not load: ' + err.message; });
+})();
+</script>
+</body>
+</html>

@@ -241,6 +241,10 @@ years. `js/timeline.js`'s stretch gains the one-sided form.
 with their tail, as the first fossils have theirs.
 
 **Stage 7 — The lab, and the descent.**
+*7 Oct 2026, a first step:* the join hung as **Deep Time**, `active/deep-time.html`, beside the Time
+Machine in the gallery, with its own words and the earth from space at 150 million years as its picture.
+It is the deep page, not yet the lab of this stage: the Time Machine page still opens on After the Ice
+with its own line, the descent is not built, and the deep events are in their own store. Those remain.
 The Time Machine lab opens on the earth line, and the arrival run descends rung by rung to
 the viewing's focus and stops, the bar hers. A story's viewing starts a rung or two above
 its year, fixed, as the 1 Oct ruling says. Then *The edge of knowing* (ledger, Stories) as

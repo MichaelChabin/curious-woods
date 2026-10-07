@@ -433,6 +433,10 @@ needs no change. `CWVault/claude/Limericks-Puzzle.md` keeps the decisions, sourc
 2026; Spec-Gallery's *A work on the wall* as changed that day: a painting or print hangs whole,
 never cropped): the Met's scan `art/stories/hokusai/hokusai-great-wave.jpg` resized to 600 × 414, quality 88,
 76 KB. The gallery's picture for the story; the tab icon stays the square crest crop.
+`art/gallery/deep-time-gallery.png` — **Deep Time's picture on the wall (7 Oct 2026):** the earth from
+space at 150 million years, Pangaea splitting, rendered from `stories/plates/continents.json` by the
+file's own arithmetic (a scratch script in the session, the plate pipeline's rotation code) at 1400 px,
+the globe's own colours and graticule. Not a photograph of anything; the page says what it is.
 `art/gallery/glass-geometry-gallery.jpg` — **Glass Geometry's picture on the wall, hung as *Stained
 Glass*** (22 Sep 2026): a construction Michael made in the lab — five circles, the vesica
 in rust, the petals in blue, green and olive on the paper — whole, 600 × 515, quality 88,
@@ -667,6 +671,9 @@ backstop for the Claude Code session that lands the file.
   Michael). Back link to the gallery.
 
 ### active/
+- **`deep-time.html` (hung 7 Oct 2026)** — **Deep Time**, the Time Machine's deep page: see the entry
+  under `experiments/` for `join-bench.html → active/deep-time.html`, where it was built and is described.
+  `CW_VERSION 2026-10-07 0042379`.
 - **`wordplay.html`** — **puzzle: Wordplay** (28 Sep 2026; Claude Code, from
   `CWVault/claude/Prompt-Build-Limerick-Puzzle.md`). Read at its experiments address and **hung 28 Sep 2026**
   on Michael's word (stage 4): moved to `active/`, the old address redirected in `_redirects`, in
@@ -1045,7 +1052,12 @@ backstop for the Claude Code session that lands the file.
 
 ### experiments/
 
-- **`join-bench.html` (6 Oct 2026)** — *The join*: the nested bar driving the Time Machine's map,
+- **`join-bench.html` → `active/deep-time.html`** — *The join*, built 6 Oct 2026 and **hung 7 Oct on
+  Michael's word as Deep Time**, beside the Time Machine in the gallery (`stories/gallery.json`, slug
+  `deep-time`, picture `art/gallery/deep-time-gallery.png`, a slate frame), the bench retired to
+  `../../outdated-files/join-bench-2026-10-07.html` and its addresses redirected in `_redirects`
+  (`/experiments/join-bench.html`, `/experiments/join-bench`, `/experiments/deep-time-join` → the page).
+  The page's own words replace the bench's; everything below still describes it. The nested bar driving the Time Machine's map,
   Stage 4 of `CWVault/claude/Plan-Deep-Time.md`, and the one engine change the thread needs. **In
   `../js/map.js` (that day): a second base.** `opts.time.deep = { seam, plates, coast, onChange }`;
   past the seam in years ago (2.6 million unless said) `map.setTime(year)` shows the globe

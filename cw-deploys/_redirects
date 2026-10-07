@@ -49,4 +49,8 @@
 /experiments/deep-time       /experiments/globe-bench.html   302
 /experiments/deepTime        /experiments/globe-bench.html   302
 /experiments/deep-time-bar   /experiments/deep-time-bench.html   302
-/experiments/deep-time-join  /experiments/join-bench.html   302
+
+# Deep Time was built at its experiments address as the join, then hung on 7 Oct 2026.
+/experiments/join-bench.html   /active/deep-time.html   301
+/experiments/join-bench        /active/deep-time.html   301
+/experiments/deep-time-join    /active/deep-time.html   301
