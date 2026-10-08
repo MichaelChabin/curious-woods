@@ -1083,8 +1083,13 @@ undecided and seeded, not specced: draining the ocean to the floor
   (renamed from `glass-rose/` on his word), the gallery picture in `art/gallery/`. Michael is looking for
   art for the left column (medieval copies of Theophilus's book, a stack) and has saved constructions for
   the demos; they reach the disk by Save → *Share the file* (Safari or the iPad), then into `_CW`. **Open:** `claude/Story-The-Glass-Rose.md` still carries Draft 10;
-  the story file should become the 8 Oct draft under the new name. **Next action: the fix and the art-folder rename are committed, not pushed (Michael's word, 8 Oct); he
-  looks for left-column art and sends his saved constructions; then push.**
+  the story file should become the 8 Oct draft under the new name. **8 Oct, later — the left column built, uncommitted:** two stacks (the book itself: five manuscript pages
+  from Vienna, Wolfenbüttel and London, with what each page says; his three windows made on the board), and
+  his bird photograph as the lead picture in place of the Five Sisters; captions are drafts for his voice pass;
+  the came close-up fetched on his yes (Canterbury 012 on Commons, public domain) and stacked over the bird.
+  The World's eighteen events, none with a story, written out with their full texts for the Cowork chat in
+  `claude/Events-Theophilus-World-To-Write.md`. **Next action: Michael reads the captions and the stacks;
+  sends his saved constructions for the demos; then commit and push.**
 - **7 Oct — The Glass Rose rewritten as a story about making windows, on a window profile of the lab
   (Claude Code, from Michael's chat's prompt and his new draft; built and checked, uncommitted).** The prompt
   asked for a new file built from the lab; built instead as `app: 'window'` in `js/glass.js`, so the main lab

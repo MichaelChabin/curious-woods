@@ -28,6 +28,19 @@
 <link rel="stylesheet" href="../css/story.css?v=2026-09-27b">
 <style>
   :root { --aspect: calc(1 / 1); }   /* the board has no picture shape of its own; everything else is ../css/story.css */
+  /* A stack of manuscript pages in the left column (Michael, 8 Oct 2026): five pages of Theophilus's
+     book from three copies, piled as pages are, the top one readable, the ones beneath showing their
+     edges. A tap sends the top page to the bottom and the caption changes with it. */
+  figure.margin.stack .pile { position: relative; aspect-ratio: var(--pile, 480 / 900); cursor: pointer; user-select: none; -webkit-user-select: none; outline: none; }
+  figure.margin.stack .pile img { position: absolute; left: 7%; top: 0; width: 86%; height: 100%; object-fit: contain; object-position: 50% 0;
+    filter: drop-shadow(0 1px 3px rgba(42,38,32,0.3)); transition: transform 420ms ease; transform-origin: 50% 60%; }
+  figure.margin.stack .pile img.p0 { z-index: 5; transform: none; }
+  figure.margin.stack .pile img.p1 { z-index: 4; transform: translate(-7px, 6px) rotate(-2.5deg); }
+  figure.margin.stack .pile img.p2 { z-index: 3; transform: translate(8px, 10px) rotate(2deg); }
+  figure.margin.stack .pile img.p3 { z-index: 2; transform: translate(-12px, 14px) rotate(-4deg); }
+  figure.margin.stack .pile img.p4 { z-index: 1; transform: translate(12px, 18px) rotate(3.5deg); }
+  figure.margin.stack .pile:focus-visible img.p0 { outline: 2px solid var(--cw-word); }
+  figure.margin.stack figcaption .turn { display: block; margin-top: 5px; font-style: italic; }
 </style>
 </head>
 <body>
@@ -46,6 +59,29 @@
     <!-- The words are Michael's draft of 8 Oct 2026, a story about making windows; the board is the
          lab's window profile (js/glass.js, app: 'window'), mounted where the draft puts the interactive,
          after "Give it a try." Slips of the pen corrected and listed in the report; nothing else changed. -->
+    <!-- THE STACK, on the left: five pages of the book itself, from the three oldest copies, by Michael's
+         request of 8 Oct 2026. The scans are the Bibliotheca Augustana's (tha.de/~harsch, Ulrich Harsch's
+         library of Latin texts), 480 px wide, of pages 900 years old; the manuscripts are Wien, ÖNB Cod.
+         2527 (about 1130, the copy whose first line calls the author "Theophilus, who is also Roger");
+         Wolfenbüttel, HAB Cod. Guelf. 69 Gud. lat. 2° (about 1130); London, British Library Harley MS
+         3915 (about 1200). What each page says is read off its red headings against the Latin text
+         (Bibliotheca Augustana's edition, Book I: the prologue, chapters 18–19, 21–24, 39–40). -->
+    <figure class="margin stack" id="theophilusStack" style="--pile: 300 / 475;">
+      <div class="pile" role="button" tabindex="0" aria-label="A stack of five pages from Theophilus's book. Tap for the next page.">
+        <img class="p0" src="../art/stories/geo-1-glass-circles/theophilus-wien-2527-f1r.jpg" width="480" height="837" alt="A manuscript page in brown ink with a red heading, the first page of Theophilus's book in the Vienna copy."
+             data-caption="The first page of the oldest copy, about 1130. The red line at the top says the book is by Theophilus, &ldquo;who is also Roger.&rdquo; Vienna.">
+        <img class="p1" src="../art/stories/geo-1-glass-circles/theophilus-wolfenbuettel-69-gud-lat-f86r.jpg" width="480" height="739" alt="A manuscript page in two columns with a large decorated initial T, the start of Theophilus's book in the Wolfenbüttel copy."
+             data-caption="The book begins: &ldquo;Theophilus, a humble priest, servant of the servants of God.&rdquo; He says he is writing down what he knows for anyone who would rather make things than sit idle. Wolfenbüttel, about 1130.">
+        <img class="p2" src="../art/stories/geo-1-glass-circles/theophilus-wolfenbuettel-69-gud-lat-f89v.jpg" width="480" height="739" alt="A manuscript page in two columns with red chapter headings, from the Wolfenbüttel copy of Theophilus's book."
+             data-caption="Four recipes: a varnish made from linseed oil, how to paint a saddle, and how to beat and lay gold leaf. Wolfenbüttel, about 1130.">
+        <img class="p3" src="../art/stories/geo-1-glass-circles/theophilus-harley-3915-f9v.jpg" width="480" height="688" alt="A manuscript page in a single column with two red chapter headings, from the London copy of Theophilus's book."
+             data-caption="How to make glue by simmering scraps of hide and stag horn, and how to whiten wood with gypsum. The page before this one is the cheese glue. London, about 1200.">
+        <img class="p4" src="../art/stories/geo-1-glass-circles/theophilus-harley-3915-f19r.jpg" width="480" height="621" alt="A manuscript page in a single column with red chapter headings and a page number 19, from the London copy of Theophilus's book."
+             data-caption="How to make white paint by leaving sheets of lead over warm vinegar for a month, and red paint by heating that white until it turns. Then a recipe for ink. London, about 1200.">
+      </div>
+      <figcaption><span class="cap"></span><span class="turn">Tap the pages to turn them.</span></figcaption>
+    </figure>
+
     <p>About nine hundred years ago a man who called himself Theophilus wrote a book on how to make almost anything. The book explained how to make paint, and the brushes to paint with, how to cast a church bell, how to make glue out of cheese, and how to build an organ pipe out of a sheet of copper so thin that a fingernail mark on one side would be seen on the other.</p>
 
     <p>He also described how to make a stained glass window.</p>
@@ -68,16 +104,40 @@
 
     <p>These strips are called &ldquo;came.&rdquo; They are about a centimeter in diameter and have a groove down each side so if you cut one the end would be shaped roughly like the letter &ldquo;H&rdquo;. The edges of each piece of glass fit in those grooves.</p>
 
-    <!-- A margin picture, on the left, where the draft says "image of leaded glass on the left". The Five
-         Sisters window at York Minster: pattern glass held in lead, no pictures. Wikimedia Commons, "Five
-         Sisters Window - of the York Minster", photograph by Stch2022, CC0; 3456 × 4608, served at 900 wide. -->
-    <figure class="margin">
-      <img src="../art/stories/geo-1-glass-circles/five-sisters-york.jpg" width="900" height="1200" loading="lazy"
-           alt="Five tall narrow windows side by side, filled with grey-green glass in small pieces, the pattern made by the dark lines of lead between them, and no figures.">
-      <figcaption>Leaded glass: the Five Sisters at York Minster, about 1250. Every piece of glass sits in a strip of lead, and the dark lines are the lead. Photograph by Stch2022, Wikimedia Commons, CC0.</figcaption>
+    <!-- THE LEAD, on the left, where the draft says "image of leaded glass on the left": a stack of two.
+         On top, real came: a panel at Canterbury Cathedral of the 1200s, lit from behind with flash so the
+         lead cames and their soldered joints show (Wikimedia Commons, "Canterbury Cathedral 012 window
+         showing leading and support", photographed 2005 by TTaylor, public domain; 1200 × 1600, served at
+         900 wide). Under it, Michael's photograph of a stained-glass bird, 8 Oct 2026 (Claude outputs/Geo-1-Art/
+         Bird with lead.jpeg, cropped to the bird, 900 wide): copper foil and solder, the modern way, said so.
+         The Five Sisters was too far away to show a join; its file stays in the folder. -->
+    <figure class="margin stack" style="--pile: 300 / 420;">
+      <div class="pile" role="button" tabindex="0" aria-label="Two pictures of glass held in metal. Tap for the next one.">
+        <img class="p0" src="../art/stories/geo-1-glass-circles/canterbury-came-1200s.jpg" width="900" height="1200" loading="lazy"
+             alt="A close view of an old stained-glass panel lit from behind, a haloed figure in grey and dark glass, every piece held by a grid of grey lead strips with bright soldered joins."
+             data-caption="Came, doing its job: a window at Canterbury Cathedral from the 1200s, photographed from inside with a flash so the lead shows. The bright dots are where the strips were joined with solder; the black bars are iron rods that hold the panel against the wind. Photograph by TTaylor, Wikimedia Commons, public domain.">
+        <img class="p1" src="../art/stories/geo-1-glass-circles/bird-copper-foil-and-solder.jpg" width="900" height="806" loading="lazy"
+             alt="A small stained-glass bird in flight, its pieces of white, blue and pale blue glass joined by bright silver lines of solder."
+             data-caption="A newer way to do the same job: this bird's pieces are wrapped in copper foil and the joins run with solder, the way small glass is made today.">
+      </div>
+      <figcaption><span class="cap"></span><span class="turn">Tap to see the other.</span></figcaption>
     </figure>
 
     <p>You can see what that looks like.</p>
+
+    <!-- THE EXAMPLES, on the left: three windows Michael made on this board (Claude outputs/Geo-1-Art,
+         8 Oct 2026, the lab's postcards cropped to the glass, 600 px). The Candle borrowed a straight edge. -->
+    <figure class="margin stack" style="--pile: 580 / 660;">
+      <div class="pile" role="button" tabindex="0" aria-label="A stack of three windows made on this board. Tap for the next one.">
+        <img class="p0" src="../art/stories/geo-1-glass-circles/made-rose-ii.png" width="580" height="600" loading="lazy" alt="A six-petalled rose window of orange, red, blue and pale green glass."
+             data-caption="Rose II. Seven circles, and glass chosen for the shapes between them. Michael made it on this board.">
+        <img class="p1" src="../art/stories/geo-1-glass-circles/made-bird.png" width="580" height="600" loading="lazy" alt="A bird made of blue and orange glass shapes, every edge a curve."
+             data-caption="Bird. Circles only; every edge is the edge of a circle.">
+        <img class="p2" src="../art/stories/geo-1-glass-circles/made-candle.png" width="580" height="600" loading="lazy" alt="A candle of blue glass with an orange flame and a pale tip, the sides curving inward."
+             data-caption="Candle. This one borrowed a straight edge for the flame; the rest is circles.">
+      </div>
+      <figcaption><span class="cap"></span><span class="turn">Tap to see the next one.</span></figcaption>
+    </figure>
 
     <p>For your design, all you need are circles. That may sound like a handicap but it isn't. Circles are powerful tools. You can make amazing things with them.</p>
 
@@ -140,6 +200,22 @@
   // shape colours it; the demos in the column. It opens with 0 and 1 and nothing else.
   // ==========================================================================
   if (typeof cwGlass === 'function') cwGlass(document.getElementById('table'), { app: 'window', palette: 'chartres' });
+
+  // ==========================================================================
+  // THE STACK: a tap sends the top page to the bottom; the caption follows the top page.
+  // ==========================================================================
+  Array.prototype.forEach.call(document.querySelectorAll('figure.stack'), function (fig) {
+    var pile = fig.querySelector('.pile'), cap = fig.querySelector('.cap');
+    var pages = Array.prototype.slice.call(pile.querySelectorAll('img'));
+    function lay() {
+      pages.forEach(function (img, i) { img.className = 'p' + i; });
+      cap.innerHTML = pages[0].getAttribute('data-caption');
+    }
+    function turn() { pages.push(pages.shift()); lay(); }
+    pile.addEventListener('click', turn);
+    pile.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); turn(); } });
+    lay();
+  });
 
   // THEOPHILUS'S WORLD. One list of events read two ways. Above the line: Theophilus and the
   // craft (Michael, 2 Oct). Below: the world, picked from the shared list by ref, each with

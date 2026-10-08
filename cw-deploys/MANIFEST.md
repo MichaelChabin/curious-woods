@@ -1605,7 +1605,23 @@ backstop for the Claude Code session that lands the file.
   the counts, the 2 Oct build's data unchanged, because he says a timeline and map come below; a *More*
   on each event is not built (`timeline.js` has no More; the Time Machine's is its own page's). The
   board's new rules are the module's (the `js/glass.js` entry, 8 Oct). Theophilus's World's event texts
-  are the 2 Oct build's, not his. **Rewritten 7 Oct 2026 to Michael's new draft**, a story about making windows and not about
+  are the 2 Oct build's, not his. **8 Oct, later — the left column (Michael's asks of 8 Oct; built, uncommitted):**
+  two picture stacks (`figure.margin.stack`: pages piled with their edges showing, a tap sending the top one to
+  the bottom, the caption following the top; the pile's shape per stack in `--pile`; one script serves every
+  stack). *The book itself*, beside the first paragraph: five pages from the three oldest copies, read off
+  their red headings against the Latin (Bibliotheca Augustana's text) — Wien ÖNB Cod. 2527 f. 1r (the
+  "Theophilus, who is also Roger" line; the Augsburg scan, 480 wide, the codex not digitised), Wolfenbüttel HAB
+  Cod. Guelf. 69 Gud. lat. 2° ff. 86r and 89v (the library's own scans, Public Domain Mark, 1024 wide, cropped
+  to the page: images 00179 and 00186), London BL Harley 3915 ff. 9v and 19r (the Augsburg scans; the BL's
+  images offline since 2023). *Examples*, beside "For your design, all you need are circles": Michael's three
+  windows made on the board (`made-rose-ii.png`, `made-bird.png`, `made-candle.png`, his postcards cropped to
+  600 px). *The lead*, a stack of two: real came on top (`canterbury-came-1200s.jpg`, a Canterbury Cathedral panel of
+  the 1200s lit from inside with flash so the cames, the soldered joints and the iron rods show; Wikimedia
+  Commons "Canterbury Cathedral 012 window showing leading and support", TTaylor 2005, public domain; 1200 ×
+  1600 served at 900), and under it his photograph of a stained-glass bird (`bird-copper-foil-and-solder.jpg`,
+  copper foil and solder, said so in the caption). The Five Sisters was too far away to show a join; its file
+  stays. The captions are drafts for Michael's voice pass. The World's eighteen events are listed with their
+  full texts for the story-writing chat in `CWVault/claude/Events-Theophilus-World-To-Write.md`. **Rewritten 7 Oct 2026 to Michael's new draft**, a story about making windows and not about
   geometry: the board is the module's window profile (`app: 'window'`) where the story says "Your board is
   below", three-quarters of the window's height; one margin picture, leaded glass (the Five Sisters); no
   More and no World in this draft, so the Notre-Dame rose and Villard's page are not on the page (the files
