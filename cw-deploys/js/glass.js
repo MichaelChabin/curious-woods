@@ -634,6 +634,10 @@ function replayLog(animateNew) {
     canvasNotes.forEach(function(cn) { if (cn.editing) prevEditing[cn.noteId] = true; });
     points.clear(); lines.clear(); circles.clear();
     logicalSegments.clear(); logicalArcs.clear(); fills.clear(); pointAnimations.clear(); canvasNotes.clear();
+    // The viewing starts from its default and the log says the rest (window profile, 8 Oct 2026):
+    // Glass only carried over from the last log into New and into a demo, hiding 0 and 1 on an
+    // empty board and the Rose as it played. The main lab keeps its habit until Michael rules.
+    if (APP) showGlass = false;
     for (var i = 0; i < operationLog.length; i++) {
         var op = operationLog[i];
         if (op.op === 'init') {

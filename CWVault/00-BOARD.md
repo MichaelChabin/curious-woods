@@ -1077,9 +1077,14 @@ undecided and seeded, not specced: draining the ocean to the floor
   gesture starting only inside it, the column and a right-hand strip scrolling the page under a finger;
   the palette's header a strip tall enough to hold; arcs dead to a tap (a release on one laid lead until
   now, on the circles bench too). Checked in the pane: the lens, the crescent, the cut pane, Glass only,
-  the World; not checked on the iPad. **Open:** `claude/Story-The-Glass-Rose.md` still carries Draft 10;
-  the story file should become the 8 Oct draft under the new name. **Next action: Michael reads the page
-  and tries the board on the iPad; then commit, one commit, on his word.**
+  the World; not checked on the iPad. **Committed and pushed (ebef43a). Then his first try:** Save, New, and
+  0 and 1 gone, the Rose playing unseen — a replay never reset *Glass only*; fixed for the profile
+  (`?v=2026-10-08b`), the main lab's same habit left for his ruling. Art for this story: `art/stories/geo-1-glass-circles/`
+  (renamed from `glass-rose/` on his word), the gallery picture in `art/gallery/`. Michael is looking for
+  art for the left column (medieval copies of Theophilus's book, a stack) and has saved constructions for
+  the demos; they reach the disk by Save → *Share the file* (Safari or the iPad), then into `_CW`. **Open:** `claude/Story-The-Glass-Rose.md` still carries Draft 10;
+  the story file should become the 8 Oct draft under the new name. **Next action: the fix and the art-folder rename are committed, not pushed (Michael's word, 8 Oct); he
+  looks for left-column art and sends his saved constructions; then push.**
 - **7 Oct — The Glass Rose rewritten as a story about making windows, on a window profile of the lab
   (Claude Code, from Michael's chat's prompt and his new draft; built and checked, uncommitted).** The prompt
   asked for a new file built from the lab; built instead as `app: 'window'` in `js/glass.js`, so the main lab
