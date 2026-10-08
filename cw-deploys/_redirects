@@ -54,3 +54,7 @@
 /experiments/join-bench.html   /active/deep-time.html   301
 /experiments/join-bench        /active/deep-time.html   301
 /experiments/deep-time-join    /active/deep-time.html   301
+
+# The Glass Rose took its series name, Geo-1-Glass-Circles, on 8 Oct 2026 (Michael). The old address was live for six days.
+/experiments/the-glass-rose.html        /experiments/geo-1-glass-circles.html         301
+/experiments/the-glass-rose             /experiments/geo-1-glass-circles.html         301

@@ -75,6 +75,12 @@
     "      transition: width 400ms ease-in-out, min-width 400ms ease-in-out;",
     "      overflow: visible; z-index: 10;",
     "    }",
+    "    /* The window profile (8 Oct 2026): the column keeps its own touches, so a drag that starts over",
+    "       it draws nothing and a finger there scrolls the page; the palette window's header is a strip",
+    "       tall enough to take hold of; a margin at the right of the drawing area where a finger scrolls. */",
+    "    .cw-glass.g-app .g-left-panel { pointer-events: auto; touch-action: pan-y; }",
+    "    .cw-glass.g-app .workspace-tool-header { margin: -12px -14px 10px; padding: 14px 14px 10px; min-height: 42px; background: rgba(200,184,154,0.22); border-radius: 6px 6px 0 0; }",
+    "    .cw-glass.g-app .g-scroll-margin { position: absolute; top: 0; right: 0; bottom: 0; z-index: 1; pointer-events: auto; touch-action: pan-y; }",
     "    .cw-glass .g-left-panel::after {",
     "      content: ''; position: absolute;",
     "      top: 0; right: 0; bottom: 0; width: 0.5px;",
@@ -442,11 +448,34 @@ else if (!LEVELS[levelName]) { console.warn('glass: level "' + levelName + '" is
 var POWERS = LEVELS[levelName];
 var FILL_MODE = (opts.fill === 'tap' || opts.fill === 'edge') ? opts.fill : (POWERS.fill || 'edge');
 var MEASURE = (opts.measure !== undefined) ? !!opts.measure : !!POWERS.measure;
+// The window profile (7 Oct 2026, The Glass Rose rewritten as a story about making windows):
+// the lab seen entirely as a tool for stained-glass designs made of circles. Circles only, a
+// tap inside a shape colours it (pale green with no colour chosen), the column reordered —
+// Glass only · Undo, New Open Save, Share, Reset view, and a Demo list — Save keeping her
+// own file, Open listing only her designs, the remove chip taking a pane away. The main
+// lab is untouched: all of it is this flag.
+var APP = opts.app === 'window';
+if (APP) { levelName = 'circles'; POWERS = LEVELS.circles; FILL_MODE = 'tap'; MEASURE = false; }
+var REMOVE = 'remove';            // the palette's sentinel for the chip that takes colour away (window profile)
+var currentKey = null, fromDemo = false, currentDemo = null;   // what Save would overwrite (window profile)
 // On a pointer device, tap-to-fill with a colour chosen shows a small ring (a PNG: Safari takes
 // no SVG cursor), falling back to the crosshair. On touch there is no cursor.
 var RING_CURSOR = 'url("' + BASE + 'art/icons/ring-cursor.png") 8 8, crosshair';
+// The drawing area (window profile, Michael, 8 Oct 2026): a box inside the workspace, drawn with the
+// column's own line, with a margin at the right where a finger scrolls the page. A gesture starts
+// only inside it; one that has started may leave it.
+var BOX_INSET = 12, BOX_MARGIN_RIGHT = 32;
+function drawingBox() {
+    return { x: 160 + BOX_INSET, y: BOX_INSET, w: hostW() - 160 - BOX_INSET - BOX_MARGIN_RIGHT, h: hostH() - 2 * BOX_INSET };
+}
+function inDrawingBox(pos) {
+    if (!APP) return true;
+    var b = drawingBox();
+    return pos.x >= b.x && pos.x <= b.x + b.w && pos.y >= b.y && pos.y <= b.y + b.h;
+}
 
 root.classList.add('cw-glass');
+if (APP) root.classList.add('g-app');   // the window profile's own rules in the CSS above
 if (!root.hasAttribute('tabindex')) root.tabIndex = 0;
 root.innerHTML = MARKUP;
 function $(name) { return root.querySelector('.g-' + name); }
@@ -1018,6 +1047,7 @@ function closeCanvasNote(noteId) {
     appendOp({ op: 'note_close', noteId: noteId });
 }
 function newConstruction() {
+    currentKey = null; fromDemo = false; currentDemo = null;
     operationLog = [{ op:'init', seed0:{x:-100,y:0}, seed1:{x:100,y:0} }];
     replayLog(false);
     plane.resetView();
@@ -1358,8 +1388,17 @@ function sharePostcard() {
     _imageSize = 'postcard';
     showExportPreview('postcard');
 }
+// The window profile: Save keeps her own file. The first save asks for a name; after that
+// it quietly overwrites. A demo, or anything started from one, always asks for a new name.
+function saveHers() {
+    if (!logHasMarks()) return;
+    if (currentKey && !fromDemo) { var e = null; try { e = JSON.parse(localStorage.getItem(currentKey)); } catch (err) {}
+        if (e) { doSaveConstruction(e.name, e.note || '', currentKey); return; } }
+    showSaveNoteBox('construction');
+}
 function openSavePanel() {
     if (!logHasMarks()) return;
+    if (APP) { saveHers(); return; }
     choicePanel.open({ choices: [
         { word: 'Save construction', line: 'a file you can open and keep working on', action: function() {
             showSaveNoteBox('construction');
@@ -1440,13 +1479,13 @@ function executeSave() {
     }
 }
 
-function doSaveConstruction(name, note) {
+function doSaveConstruction(name, note, existingKey) {
     // Use the snapshot if one was taken (save-before-discard), else the live log.
     var log = _pendingSaveLog || operationLog.slice();
     _pendingSaveLog = null;
     captureConstructionPNG(note, function(png) {
         name = name || ('construction ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-        var key = 'cw-cx-' + Date.now();
+        var key = existingKey || ('cw-cx-' + Date.now());
         var noteBox = $('save-note-box');
         var notePos = { left: parseInt(noteBox.style.left) || 0, top: parseInt(noteBox.style.top) || 0 };
         // No viewport block: load never restored it (a construction always
@@ -1456,7 +1495,7 @@ function doSaveConstruction(name, note) {
         try {
             localStorage.setItem(key, JSON.stringify(entry));
             var index = cxGetStorageIndex();
-            index.push({ key: key, name: name, created: entry.created });
+            if (!existingKey) index.push({ key: key, name: name, created: entry.created });
             localStorage.setItem('cw-cx-index', JSON.stringify(index));
         } catch (e) {
             console.warn('localStorage save failed:', e);
@@ -1473,6 +1512,9 @@ function doSaveConstruction(name, note) {
         var jfile = null;
         try { jfile = new File([blob], fname, { type: 'application/json' }); } catch (e) {}
         toast('saved');
+        currentKey = key; fromDemo = false;
+        updateViewingWords();   // Open is present once she has a design to open (window profile)
+        if (existingKey) { if (points.size >= 10) setTimeout(showUniquenessObservation, 800); return; }   // quietly, as the profile asks
         // Saved; then the offer (Michael, 2 Oct 2026): the sheet used to open on its own
         // with no word about what it was for. Where there is no sheet, no offer.
         if (jfile && navigator.share && navigator.canShare && navigator.canShare({ files: [jfile] })) {
@@ -2434,6 +2476,14 @@ function render() {
     ctx.fillStyle = COLORS.background;
     ctx.fillRect(0,0,canvas.clientWidth,canvas.clientHeight);
 
+    // The drawing area's box (window profile), under everything the child has made
+    if (APP) {
+        var bx = drawingBox();
+        ctx.strokeStyle = '#c8b89a'; ctx.lineWidth = 1; ctx.globalAlpha = 0.9;
+        ctx.strokeRect(snap(bx.x) + 0.5, snap(bx.y) + 0.5, Math.round(bx.w), Math.round(bx.h));
+        ctx.globalAlpha = 1;
+    }
+
     // The ambient lattice, under everything the child has made
     if (mapShown && !showGlass) plane.drawLattice(ctx);
 
@@ -2821,7 +2871,15 @@ function drawMeasure(g, sc) {
     ctx.restore();
 }
 
-function animate() { if (!alive) return; render(); rafId = requestAnimationFrame(animate); }
+// Reset view (window profile) is present only while the view is away from its home.
+var resetShown = false;
+function watchView() {
+    if (!APP) return;
+    var v = plane.view(), home = Math.min(canvas.clientWidth, canvas.clientHeight) / 900;
+    var away = Math.abs(v.x) > 0.5 || Math.abs(v.y) > 0.5 || Math.abs(v.zoom - home) > 1e-6;
+    if (away !== resetShown) { resetShown = away; setWordPresent($('reset-view'), away); }
+}
+function animate() { if (!alive) return; render(); watchView(); rafId = requestAnimationFrame(animate); }
 animate();
 
 // ============================================================
@@ -3042,6 +3100,38 @@ function tryAutoComplete(clickedKey) {
 // Exposes: tryPaletteAction(wx, wy) → boolean
 // ============================================================
 
+// The window profile's tap (Michael, 8 Oct 2026): colour always goes to the smallest shape enclosing
+// the tap, whatever was coloured before — a circle drawn across a coloured pane changes the pane's
+// shape. Remove takes glass away the same way, to the edges of the shape. A shape that already has
+// its own glass is repainted or dissolved; a shape inside older glass gets glass of its own, or,
+// for Remove, a pane of the board's own colour so the glass under it is gone to the shape's edges.
+function fillWithFace(face) {
+    var want = face.vertices.slice().sort().join(','), found = null;
+    fills.forEach(function(f) {
+        if (found || f.dissolved) return;
+        if (f.vertices.slice().sort().join(',') !== want) return;
+        var a = shoelaceArea(expandFillToPolygon(f));
+        if (Math.abs(a - face.area) <= 1e-6 * Math.max(1, face.area)) found = f;
+    });
+    return found;
+}
+function windowTap(wx, wy) {
+    var face = findFaceAround(wx, wy); if (!face) return false;
+    var own = fillWithFace(face);
+    if (state.palette.selected === REMOVE) {
+        if (!own && !hitFilledRegion(wx, wy)) return false;   // nothing under the tap to take away
+        if (isStepThroughActive()) forkStepThrough();
+        if (own) dissolveRegion(own.fillId);
+        else appendOp({ op:'fill', fillId:'fill:'+Date.now(), vertices:face.vertices, edges:face.edges, color:COLORS.background, opacity:1.0 });
+        playSound('repaint'); return true;
+    }
+    if (isStepThroughActive()) forkStepThrough();             // her first mark ends the demo there
+    var colour = state.palette.selected || FOREST_GLASS;
+    if (own) { recolorRegion(own.fillId, colour, 1.0); playSound('repaint'); return true; }
+    appendOp({ op:'fill', fillId:'fill:'+Date.now(), vertices:face.vertices, edges:face.edges, color:colour, opacity:1.0 });
+    playSound('fill'); return true;
+}
+
 function tryPaletteAction(wx, wy) {
     var hf = hitFilledRegion(wx, wy);
     if (!hf) return false;
@@ -3104,6 +3194,7 @@ function getPos(e) {
 
 function onDown(e) {
     if (e.target !== canvas) return;
+    if (!inDrawingBox(getPos(e))) return;   // outside the drawing area nothing starts (window profile)
     e.preventDefault(); unlockAudio();
     if (document.activeElement !== root && !root.contains(document.activeElement)) { try { root.focus({ preventScroll: true }); } catch (err) { root.focus(); } }
     // A tap during play skips to the end and closes the panel (ledger §15)
@@ -3490,12 +3581,19 @@ function onUp(e) {
     if (isPanning) {
         isPanning=false; panStart=null;
         if (isTap) {
-            if (showGlass) { tryPaletteAction(world.x, world.y); return; }   // the finished window: colour, or nothing
-            if (tryPaletteAction(world.x, world.y)) return;
-            if (hitAnyLine(world.x,world.y)) return;
-            // Tap to fill (2 Oct 2026): with a colour chosen, a tap inside a closed shape
-            // colours it; in open ground it falls through to what a tap does today — undo.
-            if (FILL_MODE === 'tap' && state.palette.selected !== null && fillFaceAt(world.x, world.y)) return;
+            if (APP) {
+                // The window profile: the shape under the tap takes the colour, or loses its
+                // glass; in open ground a tap undoes, as the Circles words say.
+                if (windowTap(world.x, world.y)) return;
+                if (showGlass || state.palette.selected === REMOVE) return;   // nothing to take away: nothing happens
+            } else {
+                if (showGlass) { tryPaletteAction(world.x, world.y); return; }   // the finished window: colour, or nothing
+                if (tryPaletteAction(world.x, world.y)) return;
+                if (hitAnyLine(world.x,world.y)) return;
+                // Tap to fill (2 Oct 2026): with a colour chosen, a tap inside a closed shape
+                // colours it; in open ground it falls through to what a tap does today — undo.
+                if (FILL_MODE === 'tap' && state.palette.selected !== null && fillFaceAt(world.x, world.y)) return;
+            }
             // Rule and record meet at the click (decision 5): with the map
             // showing, a tap on a lattice intersection creates a recorded
             // point — the moment possibility becomes history. Inside the
@@ -3526,7 +3624,9 @@ function onUp(e) {
     }
 
     // ── Segment / arc tap: single = emphasize, none needed here (double handled above) ─
-    if (isTap && interactionState==='IDLE' && !hitPt(world.x,world.y)) {
+    // At tap-to-fill an edge belongs to two shapes and a tap on it does nothing (2 Oct; the
+    // release still laid lead here until 8 Oct, Michael's "segments should not respond").
+    if (FILL_MODE !== 'tap' && isTap && interactionState==='IDLE' && !hitPt(world.x,world.y)) {
         // Palette action on fills — only if no segment nearby
         if (!hitLC(world.x,world.y) && tryPaletteAction(world.x, world.y)) return;
 
@@ -4041,11 +4141,12 @@ function buildCraftRow(row) {
         sw.addEventListener('mouseenter', function() { setRecipe(c.recipe); });
         sw.addEventListener('mouseleave', function() { setRecipe(''); });
         sw.addEventListener('click', function() {
-            state.palette.selected=c.hex;
+            // In the window profile the first chip takes a pane's colour away, lead and all.
+            state.palette.selected=(APP && c.border) ? REMOVE : c.hex;
             root.querySelectorAll('.g-palette-grid .palette-swatch, .g-craft-row .palette-swatch').forEach(function(s) { s.classList.remove('selected'); });
             sw.classList.add('selected'); setRecipe(c.recipe);
         });
-        if (state.palette.selected===c.hex) sw.classList.add('selected');
+        if (state.palette.selected===c.hex || (APP && c.border && state.palette.selected===REMOVE)) sw.classList.add('selected');
         row.appendChild(sw);
     });
 }
@@ -4153,6 +4254,7 @@ function cxGenerateBuiltinPreviews() {
                 if (!data.operations) return;
                 // What the log draws with, so a level can offer only what it can make (2 Oct).
                 cx.usesLines = data.operations.some(function(o) { return o.op === 'line'; });
+                if (APP) buildDemoList();
                 var previewKey = 'cw-cx-builtin-png-v3-'+cx.key+'-'+data.operations.length;
                 var cached = null;
                 try { cached = localStorage.getItem(previewKey); } catch(e) {}
@@ -4619,15 +4721,19 @@ function dismissLoadedNote() {
     if (el) el.remove();
 }
 
-function loadConstructionEntry(entry) {
+function loadConstructionEntry(entry, then) {
     function doLoad(ops, speed) {
         // No WIP check here — the Open flow already handled it before showing the picker
         newConstruction();
+        // Hers, or a demo: Save overwrites the one and asks a new name for the other.
+        currentKey = (entry.key && entry.key.indexOf('_builtin_') !== 0) ? entry.key : null;
+        fromDemo = !currentKey;
         // A construction saved with a speed reopens at that speed; the
         // child's own last-used duration stays the local default.
         if (typeof speed === 'number' && isFinite(speed)) setReplayDuration(speed, false);
         startStepThrough(ops);
         if (entry.note) showLoadedNote(entry);
+        if (then) then();
     }
     if (entry.operations) {
         doLoad(entry.operations.slice(), entry.speed);
@@ -4755,7 +4861,7 @@ function buildPickerConstructions() {
     // The standard set shows only what this level can make (Michael, 2 Oct 2026): at
     // circles, a construction drawn with lines is not offered, so no replay draws a line
     // before a story has given her lines. Her own constructions are hers whatever they hold.
-    var standard = CX_BUILTINS.filter(function(cx) {
+    var standard = APP ? [] : CX_BUILTINS.filter(function(cx) {
         if (mine.some(function(e) { return e.key === cx.key; })) return false;
         if (!POWERS.line && cx.usesLines) return false;
         return true;
@@ -5263,6 +5369,22 @@ function pulsePanelBullet(stageId) {
     setTimeout(function() { item.classList.remove('htw-pulse'); }, 2500);
 }
 
+// The Demo list (window profile): the standard set this level can make, up to eight, two
+// columns. A tap loads the construction and plays it; the same name again plays it from the
+// start. Her first mark during a demo ends the demo there (the fork), and what has played is hers.
+function buildDemoList() {
+    var box = $('demo-list'); if (!box) return;
+    box.innerHTML = '';
+    CX_BUILTINS.filter(function(cx) { return cx.usesLines === false; }).slice(0, 8).forEach(function(cx) {
+        var w = document.createElement('span'); w.className = 'htw-action-word'; w.textContent = cx.name;
+        w.addEventListener('click', function() {
+            if (currentDemo === cx && isStepThroughActive()) { stopReplayPlay(); stepFirst(); startReplayPlay(); return; }
+            checkWipThen(function() { loadConstructionEntry(cx, function() { currentDemo = cx; startReplayPlay(); }); });
+        });
+        box.appendChild(w);
+    });
+}
+
 function initHowThisWorks() {
     if (HTW_DEBUG_RESET) { localStorage.removeItem(HTW_KEY); HTW_STAGES.forEach(function(s) { localStorage.removeItem(HTW_KEY + '-' + s.id); }); }
 
@@ -5284,6 +5406,35 @@ function initHowThisWorks() {
         });
         if (!POWERS.map) { var mw = $('map-toggle'); if (mw && mw.parentNode) mw.parentNode.remove(); }
     })();
+
+    // The window profile's column (7 Oct 2026): Glass only · Undo, then New Open Save, then
+    // Share, then a small right-set Reset view with its space always reserved, then Demo.
+    if (APP) {
+        var strip = document.createElement('div'); strip.className = 'g-scroll-margin'; strip.style.width = BOX_MARGIN_RIGHT + 'px';
+        root.appendChild(strip);
+        var list2 = $('htw-panel-list');
+        list2.style.maxHeight = '640px';
+        var rowAct = $('htw-action-new').parentNode, rowGlass = $('glass-toggle').parentNode;
+        var undo = document.createElement('span'); undo.className = 'htw-action-word g-undo'; undo.textContent = 'Undo';
+        undo.addEventListener('click', function() { if (isStepThroughActive()) forkStepThrough(); undoOp(); });
+        rowGlass.appendChild(undo); rowGlass.style.marginTop = '12px';
+        list2.insertBefore(rowGlass, rowAct);
+        var rowReset = document.createElement('li'); rowReset.className = 'htw-action-row';
+        rowReset.style.cssText = 'justify-content:flex-end;min-height:16px;margin-top:20px;padding-right:4px;';
+        var reset = document.createElement('span'); reset.className = 'htw-action-word g-reset-view absent'; reset.textContent = 'Reset view';
+        reset.style.cssText = 'font-size:11px;opacity:0.7;display:none;';
+        reset.addEventListener('click', function() { plane.resetView(); syncCanvasNoteDOMs(); });
+        rowReset.appendChild(reset); list2.appendChild(rowReset);
+        var rowDemo = document.createElement('li'); rowDemo.className = 'htw-action-row'; rowDemo.style.cssText = 'margin-top:14px;padding-left:0;';
+        var dh = document.createElement('span'); dh.className = 'g-demo-heading'; dh.textContent = 'Demo';
+        dh.style.cssText = 'font-family:Georgia,serif;font-size:14px;color:#546A80;line-height:1;cursor:default;';
+        rowDemo.appendChild(dh); list2.appendChild(rowDemo);
+        var demos = document.createElement('li'); demos.className = 'g-demo-list';
+        demos.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-top:8px;padding-left:12px;';
+        list2.appendChild(demos);
+        buildDemoList();
+        updateViewingWords();   // the words just made take their presence from the board as it is
+    }
 
     // Wire each htw-item to its action
     root.querySelectorAll('.htw-item').forEach(function(el) {
@@ -5356,7 +5507,7 @@ function updateViewingWords() {
     var mapWord = $('map-toggle');
     if (mapWord) mapWord.textContent = mapShown ? 'Hide map' : 'Show map';
     var glassWord = $('glass-toggle');
-    if (glassWord) glassWord.textContent = showGlass ? POWERS.madeWord : 'Just the glass';
+    if (glassWord) glassWord.textContent = showGlass ? (APP ? 'Show circles' : POWERS.madeWord) : (APP ? 'Glass only' : 'Just the glass');
     // Conditional presence (ledger §14): an empty canvas shows only Open —
     // New is irrelevant and Save has nothing to save. Marks count; viewing
     // changes alone do not.
@@ -5364,6 +5515,7 @@ function updateViewingWords() {
     setWordPresent($('htw-action-new'), hasWork);
     setWordPresent($('htw-action-save'), hasWork);
     setWordPresent($('share'), hasWork);
+    if (APP) { setWordPresent($('undo'), hasWork); setWordPresent($('htw-action-open'), cxGetStorageIndex().length > 0); }
     layoutPanelTools();
 }
 
