@@ -18,6 +18,15 @@ Done on `active/deep-time.html` the same morning, from Michael's five points: th
 
 ## Lane B — the line in the Time Machine's form
 
+*Built 9 Oct 2026, evening, on Michael's "start lane B"; checked, committed and pushed on his word.* All five points below, with
+these calls made in the building, his to overturn: segments carry a quiet tint of Hazen's colour (his open question
+on colours); the lines stack (his open question on two at a time); period names as his table has them; the
+twitch is gone, since with an envelope any span opens — a leaf period opens as a line of its events alone; a
+crowded line thins its marks by pixel spacing until lane E's landmarks; the 5 % rule demoted nothing but would
+have demoted the ice ages (3.9 % of After the dinosaurs), which ride inside Humans (6 million years, where our line
+splits), and After the ice (3.9 % of Our kind) stays as the door. One phrase for the ends: **0** over the years ago
+at the left, the duration over the years ago (or *now*) at the right; the Time Machine's own ends change in lane C.
+
 1. **The envelope replaces the filled bars.** `js/deep-time.js` draws each level as the Time Machine draws Main: a line, the periods as segments on it (quiet colour or none), the blue envelope over the chosen span with its funnel down to the next level's line. The marker, the *known from* line, the marks and their labels stay. The twitch stays for a period with nothing beneath.
 2. **Detents.** Dragging an end of the envelope near a period boundary clicks it into place; it stays freely movable. Snapped, the envelope is blue and the funnel's space shows the period's name; free, it turns white and shows the span ("about 340 million years"). Try the colour running down the funnel's edges; Michael looks.
 3. **One phrase for the line's ends.** Each line's left edge reads 0 and *years ago* together; the right edge reads as a duration. The Time Machine's "years after 0" and "years after the ice" become one wording, chosen with Michael.

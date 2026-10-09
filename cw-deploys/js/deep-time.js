@@ -4,16 +4,21 @@
    deep lines count "ago" only. The ideas: Ideas-Ledger.md, Other labs, 5–6 Oct (the nested bar, uneven
    nesting, the dot and tail, Hazen's colours, the descent). The chunk tree: stories/deep-time.json.
 
-   cwDeepTime(host, opts)  → { year(), setYear(ma), open(names), path(), destroy() }
+   cwDeepTime(host, opts)  → { year(), setYear(ma), open(names), focus(a, b), path(), span(), events(), destroy() }
 
-   `host` is an element the page has given a width; the bars draw inside it, one SVG, and the
-   host grows in height as bars are pulled down. The top bar is the whole of Earth; tap a chunk and
-   it comes down as a bar of its own, attached by two lines to the gap it left — the Time Machine's
-   Focus window, repeated. A bar whose chunk has nothing underneath pulls down but not apart: tap
-   its body and it twitches. The copper marker is the year; it lives on the deepest open bar, shows
-   as a tick on every bar above, and is dragged or tapped into place. A mark is the oldest evidence
-   of a thing; a faint tail stretches older for "probably began by here" (the dot and tail). Every
-   bar carries one line saying what it is known from — the fog, in words.
+   Lane B of the one timeline (9 Oct 2026; CWVault/claude/Prompt-Build-One-Timeline.md, on Michael's
+   rulings of the same day): every level is a line in the Time Machine's own form. The top line is
+   the whole of Earth; its periods are quiet tinted segments on it. Tap a period and the blue
+   envelope settles on it and the period opens as a line of its own beneath, joined by the funnel —
+   the Time Machine's Focus window, repeated at every level. Drag the envelope's ends (or its body)
+   and the line below follows; near a period's edge an end clicks into place (a detent). Snapped to
+   a period the envelope is blue and the funnel says the period's name; free, it is white and the
+   funnel says the span. Tap the open period again and it closes. The copper marker is the year; it
+   lives on the deepest line, shows as a tick on every line above, and is dragged or tapped into
+   place. A mark is a short bar under the line at the oldest evidence of a thing; a faint tail runs
+   older for "probably began by here". Each line's left end reads 0 and the years ago, its right
+   end the duration and the years ago (or now). Every line carries one line saying what it is known
+   from — the fog, in words. The filled bars of 6 Oct are gone (Michael, 8–9 Oct).
 
    A curve under the bar (Stage 5, 6 Oct 2026): setCurve(curve | null) draws a curve file from
    stories/curves/ — { points: [[year, value, low, high], ...], scale: 'linear' | 'log', unit, say,
@@ -53,23 +58,19 @@
     '.cw-deep{position:relative;font-family:Georgia,"Times New Roman",serif;color:#2a241c;user-select:none;-webkit-user-select:none;}',
     '.cw-deep svg{display:block;width:100%;overflow:visible;touch-action:none;}',
     '.cw-deep text{font-family:Georgia,serif;}',
-    '.cw-deep .chunk{cursor:pointer;}',
-    '.cw-deep .chunk rect{transition:filter .15s;}',
-    '.cw-deep .chunk:hover rect.face{filter:brightness(1.08);}',
-    '.cw-deep .leaf-body{cursor:default;}',
     '.cw-deep .knob{cursor:grab;}',
     '.cw-deep.dragging,.cw-deep.dragging .knob{cursor:grabbing;}',
     '.cw-deep .mark{cursor:pointer;}',
     '.cw-deep .halo{paint-order:stroke;stroke:#f4f1e8;stroke-width:4px;stroke-linejoin:round;}',
-    '.cw-deep .bar.twitch{animation:cw-deep-twitch .32s ease;}',
-    '@keyframes cw-deep-twitch{0%{transform:translateY(0)}45%{transform:translateY(9px)}100%{transform:translateY(0)}}',
-    '@media (prefers-reduced-motion:reduce){.cw-deep .bar.twitch{animation:none;}}'
+    '.cw-deep .env{cursor:grab;}',
+    '.cw-deep .seg{cursor:pointer;}',
+    '.cw-deep .seg:hover rect.tint{opacity:.42;}'
   ].join('\n');
 
   var SVG = 'http://www.w3.org/2000/svg';
   var INK = '#2a241c', INK_SOFT = '#6b655a', GREY = '#9a958b', COPPER = '#b5652b', LINE = '#46597a', PARCH = '#f4f1e8', FOCUS_EDGE = '#8fb0d2', FOCUS = '#bcd3ea';
-  var BAR_H = 26, TIER_H = 96, TOP = 70, PAD = 12, MIN_PX = 3, HIT_PX = 28, LABEL_ROWS = 2;
-  var CURVE_H = 84, CURVE_GAP = 70;   // the band's height under the deepest bar, and the room above it for the bar's two label rows
+  var TIER_H = 118, TOP = 92, PAD = 12, HIT_PX = 28, LABEL_ROWS = 2, ENV_H = 14, DETENT_PX = 9, MIN_SPAN_PX = 6;
+  var CURVE_H = 84, CURVE_GAP = 74;   // the band's height under the deepest line, and the room above it for the line's two label rows
   var CURVE_FILL = '#8fb0d2', CURVE_LINE = '#46597a', CURVE_FILL_2 = '#d9a066', CURVE_LINE_2 = '#b5652b';   // widths are honest (6 Oct, Michael): a hairline is the lesson; a thin chunk gets a finger-sized hit area
   var THIS_YEAR = new Date().getFullYear();
 
@@ -97,6 +98,7 @@
     return withCommas(Math.round(y)) + ' years ago';
   }
   function spanText(from, to) { return fmt(from).replace(' ago', '') + ' to ' + (to <= 0 ? 'now' : fmt(to).replace(' ago', '')); }
+  function durText(span) { return fmt(span).replace(' ago', ''); }   // a length of time: '570 million years'
 
   function cwDeepTime(host, opts) {
     opts = opts || {};
@@ -108,48 +110,40 @@
     el('stop', { offset: 0, 'stop-color': INK, 'stop-opacity': 0 }, grad);
     el('stop', { offset: 1, 'stop-color': INK, 'stop-opacity': 0.32 }, grad);
 
-    var root = null, tiers = [], ma = 0, W = 0, drag = null, destroyed = false, ro = null;
-    var tierGeom = [];   // per tier: { node, xL, xR, y, x(ma), chunks:[{node, x0, x1}] }
+    var root = null, ma = 0, W = 0, drag = null, destroyed = false, ro = null, store = null;
+    // the open envelopes: line 0 is the root; env[i] = { a, b, child } is the envelope on line i (a the
+    // older end, b the younger, in ma; child the period it is snapped to, or null when free), and line
+    // i + 1 is that envelope's span. The deepest line has no envelope.
+    var env = [];
+    var tierGeom = [];   // per line: { node, from, to, snapped, xL, xR, y, x(ma), m(px), segs: [{ node, from, to, x0, x1, whole }] }
 
-    function deepest() { return tiers.length ? tiers[tiers.length - 1] : root; }
-    function path() { return tiers.map(function (t) { return t.name; }); }
+    function lineOf(i) {
+      if (i === 0) return { node: root, from: root.from, to: root.to, snapped: root, parent: null };
+      var e = env[i - 1], up = lineOf(i - 1);
+      return { node: e.child || up.node, from: e.a, to: e.b, snapped: e.child, parent: up.node };
+    }
+    function deepest() { return lineOf(env.length); }
+    function path() { return env.map(function (e) { return e.child ? e.child.name : 'about ' + durText(e.a - e.b); }); }
     function storeYear(m) { return Math.round(THIS_YEAR - m * 1e6); }
-
-    /* a bar's time scale: linear, or piecewise through its chunks' boxes so a stretched chunk
-       keeps its marks inside it */
-    function layout(node, depth) {
+    /* the segments of a line: the periods inside its node, clipped to the line's span (a free envelope
+       shows parts of periods); a segment is whole when the line holds all of it */
+    function segsOf(L) {
+      return (L.node.chunks || []).filter(function (c) { return c.from > L.to && c.to < L.from; }).map(function (c) {
+        var f = Math.min(c.from, L.from), t = Math.max(c.to, L.to);
+        return { node: c, from: f, to: t, whole: f === c.from && t === c.to };
+      });
+    }
+    /* a line's geometry: the top line full width, every line below three-quarters and centred; the
+       scale is linear — widths are honest, a hairline is a hairline (6 Oct), and a thin segment gets a
+       finger-sized hit area */
+    function layout(L, depth) {
       var full = W - 2 * PAD, xL, xR;
       if (depth === 0) { xL = PAD; xR = W - PAD; } else { xL = PAD + full / 8; xR = W - PAD - full / 8; }
-      var width = xR - xL, y = TOP + depth * TIER_H;
-      var g = { node: node, xL: xL, xR: xR, y: y, chunks: [] };
-      if (node.chunks && node.chunks.length) {
-        var span = node.from - node.to, w = node.chunks.map(function (c) { return width * (c.from - c.to) / span; });
-        var min = MIN_PX;   // so a chunk is at least visible; what it takes from the widest is nothing
-        for (var i = 0; i < w.length; i++) if (w[i] < min) {
-          var d = min - w[i]; w[i] = min;
-          var j = 0; for (var k = 1; k < w.length; k++) if (w[k] > w[j]) j = k;
-          if (j !== i) w[j] -= d;
-        }
-        var x = xL;
-        node.chunks.forEach(function (c, i2) { g.chunks.push({ node: c, x0: x, x1: x + w[i2] }); x += w[i2]; });
-        g.x = function (m) {
-          for (var q = 0; q < g.chunks.length; q++) {
-            var c = g.chunks[q], n = c.node;
-            if (m <= n.from && m >= n.to) return c.x0 + (c.x1 - c.x0) * (n.from - m) / ((n.from - n.to) || 1);
-          }
-          return m > node.from ? xL : xR;
-        };
-        g.m = function (px) {
-          for (var q = 0; q < g.chunks.length; q++) {
-            var c = g.chunks[q], n = c.node;
-            if (px >= c.x0 && px <= c.x1) return n.from - (n.from - n.to) * (px - c.x0) / ((c.x1 - c.x0) || 1);
-          }
-          return px < xL ? node.from : node.to;
-        };
-      } else {
-        g.x = function (m) { return xL + width * (node.from - m) / ((node.from - node.to) || 1); };
-        g.m = function (px) { return node.from - (node.from - node.to) * (px - xL) / (width || 1); };
-      }
+      var width = xR - xL, y = TOP + depth * TIER_H, span = (L.from - L.to) || 1;
+      var g = { line: L, node: L.node, from: L.from, to: L.to, snapped: L.snapped, xL: xL, xR: xR, y: y, segs: [] };
+      g.x = function (m) { return xL + width * (L.from - m) / span; };
+      g.m = function (px) { return L.from - span * (px - xL) / width; };
+      segsOf(L).forEach(function (sg) { sg.x0 = g.x(sg.from); sg.x1 = g.x(sg.to); g.segs.push(sg); });
       return g;
     }
 
@@ -158,121 +152,129 @@
       W = host.getBoundingClientRect().width || 600;
       while (svg.lastChild && svg.lastChild !== defs) svg.removeChild(svg.lastChild);
       tierGeom = [];
-      var nodes = [root].concat(tiers);
-      nodes.forEach(function (n, d) { tierGeom.push(layout(n, d)); });
-      var deep = tierGeom[tierGeom.length - 1];
+      for (var i = 0; i <= env.length; i++) tierGeom.push(layout(lineOf(i), i));
+      var deep = tierGeom[tierGeom.length - 1], small = W < 520;
 
-      // the readout, top left: the marker's year, bold, ago
+      // the readout, top left: the marker's year, bold, ago; under it what this line is known from
       var rt = el('text', { x: PAD, y: 18, 'font-size': 13, fill: INK_SOFT, 'class': 'halo' }, svg);
       el('tspan', { 'font-weight': 'bold', 'font-size': 16, fill: INK }, rt, fmt(ma));
-      if (deep.node.knownFrom) {   // under the readout, on its own line, cut to fit by words
+      if (deep.node.knownFrom) {
         var kf = el('text', { x: PAD, y: 36, 'font-size': 12, 'font-style': 'italic', fill: INK_SOFT, 'class': 'halo' }, svg);
         var words = ('known from ' + deep.node.knownFrom).split(' ');
         kf.textContent = words.join(' ');
-        while (words.length > 2 && !fitText(kf, W - 2 * PAD)) { words.pop(); kf.textContent = words.join(' ') + '\u2026'; }
+        while (words.length > 2 && !fitText(kf, W - 2 * PAD)) { words.pop(); kf.textContent = words.join(' ') + '…'; }
       }
 
       tierGeom.forEach(function (g, d) {
-        var n = g.node, grp = el('g', { 'class': 'bar', 'data-depth': d }, svg);
-        // the connector from the opened chunk above to this bar: the Focus window's trapezoid
-        if (d > 0) {
-          var pg = tierGeom[d - 1], pc = null;
-          pg.chunks.forEach(function (c) { if (c.node === n) pc = c; });
-          if (pc) {
-            var yTop = pg.y + BAR_H + 2;
-            el('path', { d: 'M' + pc.x0 + ',' + yTop + ' L' + pc.x1 + ',' + yTop + ' L' + g.xR + ',' + g.y + ' L' + g.xL + ',' + g.y + ' Z', fill: FOCUS, opacity: 0.16 }, grp);
-            el('line', { x1: pc.x0, y1: yTop, x2: g.xL, y2: g.y, stroke: FOCUS_EDGE }, grp);
-            el('line', { x1: pc.x1, y1: yTop, x2: g.xR, y2: g.y, stroke: FOCUS_EDGE }, grp);
-          }
+        var L = g.line, grp = el('g', { 'class': 'bar', 'data-depth': d }, svg), e = env[d];
+        // the funnel from this line's envelope down to the next line, and its label
+        if (e) {
+          var ng = tierGeom[d + 1], fa = g.x(e.a), fb = g.x(e.b), snapped = !!e.child, edge = snapped ? FOCUS_EDGE : '#c9c3b6';
+          el('path', { d: 'M' + fa + ',' + (g.y + ENV_H / 2) + ' L' + fb + ',' + (g.y + ENV_H / 2) + ' L' + ng.xR + ',' + ng.y + ' L' + ng.xL + ',' + ng.y + ' Z', fill: snapped ? FOCUS : '#ffffff', opacity: snapped ? 0.16 : 0.4 }, grp);
+          el('line', { x1: fa, y1: g.y + ENV_H / 2, x2: ng.xL, y2: ng.y, stroke: edge }, grp);
+          el('line', { x1: fb, y1: g.y + ENV_H / 2, x2: ng.xR, y2: ng.y, stroke: edge }, grp);
+          var k = 0.6, cx0 = (fa + fb) / 2, cx1 = (ng.xL + ng.xR) / 2;
+          el('text', { x: cx0 + (cx1 - cx0) * k, y: g.y + TIER_H * k + 4, 'font-size': 12, 'font-style': snapped ? 'normal' : 'italic', fill: snapped ? LINE : INK_SOFT, 'text-anchor': 'middle', 'class': 'halo' }, grp,
+             snapped ? e.child.name : 'about ' + durText(e.a - e.b));
         }
-        // the bar's name and span, above it at the left
-        var nt = el('text', { x: g.xL, y: g.y - 7, 'font-size': 12, fill: INK_SOFT, 'class': 'halo' }, grp);
-        el('tspan', { fill: INK }, nt, n.name);
-        el('tspan', {}, nt, ' · ' + spanText(n.from, n.to));
-        // the bar itself
-        if (g.chunks.length) {
-          g.chunks.forEach(function (c, i) {
-            var cn = c.node, open = (tiers[d] === cn), fill = cn.colour || '#cdbfa3', dark = luminance(fill) < 0.5;
-            var cg = el('g', { 'class': 'chunk' }, grp);
-            el('rect', { 'class': 'face', x: c.x0, y: g.y, width: Math.max(1, c.x1 - c.x0), height: BAR_H, fill: fill, stroke: open ? COPPER : (luminance(fill) > 0.8 ? '#c8b89a' : PARCH), 'stroke-width': open ? 2 : 1.5,
-                         rx: i === 0 || i === g.chunks.length - 1 ? 3 : 0 }, cg);
-            var t = el('text', { x: c.x0 + 5, y: g.y + BAR_H / 2 + 4, 'font-size': W < 520 ? 11 : 12, fill: dark ? '#f4f1e8' : INK }, cg);
-            t.textContent = cn.name;
-            if (!fitText(t, c.x1 - c.x0 - 10)) { t.textContent = cn.short || ''; if (!fitText(t, c.x1 - c.x0 - 10)) t.textContent = ''; }
-            el('title', {}, cg, cn.name + ' · ' + spanText(cn.from, cn.to));
-            cg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
-            cg.addEventListener('click', function (ev) { ev.stopPropagation(); toggle(d, cn); });
-          });
-          // a chunk thinner than a finger gets a wider invisible hit area over its neighbours, the thinnest on top
-          g.chunks.slice().sort(function (a, b) { return (b.x1 - b.x0) - (a.x1 - a.x0); }).forEach(function (c) {
-            var wv = c.x1 - c.x0; if (wv >= HIT_PX) return;
-            var cn = c.node, hx = (c.x0 + c.x1) / 2 - HIT_PX / 2;
-            var hg = el('g', { 'class': 'chunk' }, grp);
-            el('rect', { x: Math.max(g.xL, hx), y: g.y - 4, width: HIT_PX, height: BAR_H + 8, fill: 'transparent' }, hg);
-            el('title', {}, hg, cn.name + ' · ' + spanText(cn.from, cn.to));
-            hg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
-            hg.addEventListener('click', function (ev) { ev.stopPropagation(); toggle(d, cn); });
-          });
-        } else {
-          var body = el('rect', { 'class': 'leaf-body', x: g.xL, y: g.y, width: g.xR - g.xL, height: BAR_H, rx: 3, fill: n.colour || '#e6dcc8', stroke: luminance(n.colour) > 0.8 ? '#c8b89a' : PARCH, 'stroke-width': 1.5 }, grp);
-          body.addEventListener('click', function () { twitch(grp); });
+        // the line's name above at the left; its ends: 0 and the duration in bold, the years ago under them
+        var nm = L.snapped ? L.node.name : 'part of ' + L.node.name;
+        el('text', { x: g.xL, y: g.y - 36, 'font-size': 12, fill: INK, 'class': 'halo' }, grp, nm);
+        [[g.xL, '0', fmt(L.from), 'start'], [g.xR, durText(L.from - L.to), L.to <= 0 ? 'now' : fmt(L.to), 'end']].forEach(function (end) {
+          var a = el('text', { x: end[0], y: g.y - 21, 'font-size': 11, fill: INK_SOFT, 'text-anchor': end[3], 'class': 'halo' }, grp);
+          el('tspan', { 'font-weight': 'bold', 'font-size': 13, fill: INK }, a, end[1]);
+          el('text', { x: end[0], y: g.y - 9, 'font-size': 11, fill: INK_SOFT, 'text-anchor': end[3], 'class': 'halo' }, grp, end[2]);
+        });
+        // the line, and its periods as quiet tinted segments with their edges ticked and their names on them
+        el('line', { x1: g.xL, y1: g.y, x2: g.xR, y2: g.y, stroke: LINE, 'stroke-width': 1.5 }, grp);
+        g.segs.forEach(function (sg) {
+          var cn = sg.node, open = !!(e && e.child === cn), sgp = el('g', { 'class': 'seg' }, grp);
+          el('rect', { 'class': 'tint', x: sg.x0, y: g.y - ENV_H / 2, width: Math.max(1, sg.x1 - sg.x0), height: ENV_H, fill: cn.colour || '#cdbfa3', opacity: 0.26 }, sgp);
+          [sg.x0, sg.x1].forEach(function (tx) { el('line', { x1: tx, y1: g.y - ENV_H / 2, x2: tx, y2: g.y + ENV_H / 2, stroke: '#9a958b', 'stroke-width': 1 }, sgp); });
+          var t = el('text', { x: (sg.x0 + sg.x1) / 2, y: g.y + 4, 'font-size': small ? 10 : 11, fill: open ? LINE : INK_SOFT, 'text-anchor': 'middle', 'class': 'halo' }, sgp);
+          t.textContent = cn.name;
+          if (!fitText(t, sg.x1 - sg.x0 - 8)) { t.textContent = cn.short || ''; if (!fitText(t, sg.x1 - sg.x0 - 8)) t.textContent = ''; }
+          el('title', {}, sgp, cn.name + ' · ' + spanText(cn.from, cn.to));
+          el('rect', { x: sg.x0, y: g.y - ENV_H / 2 - 6, width: Math.max(1, sg.x1 - sg.x0), height: ENV_H + 6, fill: 'transparent' }, sgp);
+          sgp.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
+          sgp.addEventListener('click', function (ev) { ev.stopPropagation(); tapSeg(d, sg); });
+        });
+        // a segment thinner than a finger gets a wider invisible hit area over its neighbours, the thinnest on top
+        g.segs.slice().sort(function (p, q) { return (q.x1 - q.x0) - (p.x1 - p.x0); }).forEach(function (sg) {
+          var wv = sg.x1 - sg.x0; if (wv >= HIT_PX) return;
+          var hx = (sg.x0 + sg.x1) / 2 - HIT_PX / 2, hg = el('g', { 'class': 'seg' }, grp);
+          el('rect', { x: Math.max(g.xL, hx), y: g.y - ENV_H / 2 - 6, width: HIT_PX, height: ENV_H + 6, fill: 'transparent' }, hg);
+          el('title', {}, hg, sg.node.name + ' · ' + spanText(sg.node.from, sg.node.to));
+          hg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
+          hg.addEventListener('click', function (ev) { ev.stopPropagation(); tapSeg(d, sg); });
+        });
+        // the envelope: blue when snapped to a period, white when free; its ends and body drag
+        if (e) {
+          var ea = g.x(e.a), eb = g.x(e.b), sn = !!e.child, eg = el('g', { 'class': 'env' }, grp);
+          el('rect', { x: ea, y: g.y - ENV_H / 2, width: Math.max(3, eb - ea), height: ENV_H, rx: 3, fill: sn ? FOCUS : '#ffffff', 'fill-opacity': sn ? 0.55 : 0.62, stroke: sn ? FOCUS_EDGE : '#9a958b', 'stroke-width': sn ? 1 : 1.25 }, eg);
+          el('rect', { x: ea - 10, y: g.y - ENV_H / 2 - 6, width: Math.max(20, eb - ea + 20), height: ENV_H + 12, rx: 4, fill: 'transparent' }, eg);
+          eg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); startEnvDrag(ev, d, g); });
         }
-        // the deepest bar's tap strip (jump the marker), under its marks so a dot is still a dot
+        // the marker's tap strip under the deepest line (jump the marker), beneath its marks
         if (g === deep) {
-          var strip = el('rect', { x: g.xL, y: g.y + BAR_H, width: g.xR - g.xL, height: 20, fill: 'transparent', 'class': 'knob' }, grp);
+          var strip = el('rect', { x: g.xL, y: g.y + ENV_H / 2, width: g.xR - g.xL, height: 20, fill: 'transparent', 'class': 'knob' }, grp);
           strip.addEventListener('pointerdown', startDrag);
         }
-        // the marks: a short vertical bar under the body at the oldest evidence (Michael, 9 Oct: bars, not
-        // dots), the tail running older from it; the label in two rows, dropped where it would collide
-        var rows = [[], []];
-        marksFor(n).forEach(function (mk) {
+        // the marks: a short vertical bar under the line at the oldest evidence, the tail running older
+        // from it; the label in two rows, dropped where it would collide
+        // a crowded line thins: heavier first, a mark is drawn only where no mark already sits within a
+        // few pixels; the rest are still there, and show on the line that has room for them (until the
+        // landmarks of lane E say which events show at every level)
+        var rows = [[], []], drawn = [];
+        marksFor(g).forEach(function (mk) {
           var mx = g.x(mk.ma);
+          if (drawn.some(function (dx) { return Math.abs(dx - mx) < 3; })) return;
+          drawn.push(mx);
           if (mk.tail && mk.tail > mk.ma) {
-            var tx = g.x(Math.min(mk.tail, n.from));
-            el('rect', { x: tx, y: g.y + BAR_H + 7.5, width: Math.max(2, mx - tx), height: 2, fill: 'url(#cw-deep-tail)' }, grp);
+            var tx = g.x(Math.min(mk.tail, L.from));
+            el('rect', { x: tx, y: g.y + 12.5, width: Math.max(2, mx - tx), height: 2, fill: 'url(#cw-deep-tail)' }, grp);
           }
           var mg = el('g', { 'class': 'mark' }, grp);
-          el('rect', { x: mx - 9, y: g.y + BAR_H, width: 18, height: 17, fill: 'transparent' }, mg);
-          el('rect', { x: mx - 1.25, y: g.y + BAR_H + 2, width: 2.5, height: 13, rx: 1, fill: INK }, mg);
+          el('rect', { x: mx - 9, y: g.y + 5, width: 18, height: 17, fill: 'transparent' }, mg);
+          el('rect', { x: mx - 1.25, y: g.y + 7, width: 2.5, height: 13, rx: 1, fill: INK }, mg);
           var placed = false;
           for (var r = 0; r < LABEL_ROWS && !placed; r++) {
             var lw = mk.label.length * 5.6 + 6, lx0 = mx - lw / 2, lx1 = mx + lw / 2;
-            var clash = rows[r].some(function (s) { return !(lx1 < s[0] || lx0 > s[1]); });
-            if (!clash) { rows[r].push([lx0, lx1]); el('text', { x: mx, y: g.y + BAR_H + 24 + r * 13, 'font-size': 11, fill: INK_SOFT, 'text-anchor': 'middle', 'class': 'halo' }, mg, mk.label); placed = true; }
+            var clash = rows[r].some(function (sp) { return !(lx1 < sp[0] || lx0 > sp[1]); });
+            if (!clash) { rows[r].push([lx0, lx1]); el('text', { x: mx, y: g.y + 32 + r * 13, 'font-size': 11, fill: INK_SOFT, 'text-anchor': 'middle', 'class': 'halo' }, mg, mk.label); placed = true; }
           }
           el('title', {}, mg, mk.label + ' · ' + fmt(mk.ma) + (mk.tail ? ' (probably began by ' + fmt(mk.tail).replace(' ago', '') + ')' : ''));
           mg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
-          mg.addEventListener('click', function (ev) { ev.stopPropagation(); setYear(mk.ma); if (opts.onMark) opts.onMark(mk, n); });
+          mg.addEventListener('click', function (ev) { ev.stopPropagation(); setYear(mk.ma); if (opts.onMark) opts.onMark(mk, L.node); });
         });
-        // the marker: a copper tick on every bar above, the knob on the deepest
-        if (ma <= n.from && ma >= n.to) {
+        // the marker: a copper tick on every line above the deepest
+        if (g !== deep && ma <= L.from && ma >= L.to) {
           var hx = g.x(ma);
-          if (g !== deep) el('line', { x1: hx, y1: g.y - 3, x2: hx, y2: g.y + BAR_H + 3, stroke: COPPER, 'stroke-width': 2, opacity: 0.85 }, grp);
+          el('line', { x1: hx, y1: g.y - 9, x2: hx, y2: g.y + 9, stroke: COPPER, 'stroke-width': 2, opacity: 0.85 }, grp);
         }
       });
-      // the curve under the deepest bar: the band, the line, the second series, the words at the marker
+      // the curve under the deepest line: the band, the line, the second series, the words at the marker
       var curveH = 0;
       if (curve) curveH = drawCurve(deep);
-      // the deepest bar's marker and hit area, last so they sit on top
+      // the deepest line's marker and hit area, last so they sit on top
       var hx2 = Math.max(deep.xL, Math.min(deep.xR, deep.x(ma)));
       var kg = el('g', { 'class': 'knob' }, svg);
-      el('line', { x1: hx2, y1: deep.y - 6, x2: hx2, y2: deep.y + BAR_H + 6, stroke: COPPER, 'stroke-width': 2 }, kg);
-      el('circle', { cx: hx2, cy: deep.y + BAR_H + 8.5, r: 14, fill: 'transparent' }, kg);
-      el('circle', { cx: hx2, cy: deep.y + BAR_H + 8.5, r: 7, fill: COPPER, stroke: PARCH, 'stroke-width': 2 }, kg);
+      el('line', { x1: hx2, y1: deep.y - 11, x2: hx2, y2: deep.y + 14, stroke: COPPER, 'stroke-width': 2 }, kg);
+      el('circle', { cx: hx2, cy: deep.y + 13.5, r: 14, fill: 'transparent' }, kg);
+      el('circle', { cx: hx2, cy: deep.y + 13.5, r: 7, fill: COPPER, stroke: PARCH, 'stroke-width': 2 }, kg);
       kg.addEventListener('pointerdown', startDrag);
-      var H = TOP + tierGeom.length * TIER_H - 20 + curveH;
+      var H = TOP + tierGeom.length * TIER_H - 50 + curveH;
       svg.setAttribute('height', H); svg.style.height = H + 'px';
     }
-    var store = null;   // the deep-time events, once loaded
-    function marksFor(n) {
+    function marksFor(g) {
       var list;
       if (store) {
-        list = store.filter(function (e) { return e.ma <= n.from && e.ma >= n.to; }).map(function (e) {
-          return { ma: e.ma, label: e.label, tail: e.tail ? e.tail.ma : null, text: e.summary, weight: e.weight || 1, rec: e };
+        list = store.filter(function (ev) { return ev.ma <= g.from && ev.ma >= g.to; }).map(function (ev) {
+          return { ma: ev.ma, label: ev.label, tail: ev.tail ? ev.tail.ma : null, text: ev.summary, weight: ev.weight || 1, rec: ev };
         });
-      } else list = (n.marks || []).slice();
+      } else list = [];
       // heavier first, so a heavy event's label is placed before a light one's; then oldest first
-      return list.sort(function (a, b) { return (b.weight || 1) - (a.weight || 1) || b.ma - a.ma; });
+      return list.sort(function (p, q) { return (q.weight || 1) - (p.weight || 1) || q.ma - p.ma; });
     }
     var curve = null;
     function curveAt(pts, y, k) {   // the value (k = 1), low (2) or high (3) at a store year, by straight lines between points
@@ -291,7 +293,7 @@
       return (tmpl || '{v} ' + (unit || '')).replace('{v}', txt).replace('{dir}', v < 0 ? 'below' : 'above');
     }
     function drawCurve(deep) {
-      var c = curve, n = deep.node, y0 = deep.y + BAR_H + CURVE_GAP, y1 = y0 + CURVE_H, xL = deep.xL, xR = deep.xR;
+      var c = curve, n = deep, y0 = deep.y + CURVE_GAP, y1 = y0 + CURVE_H, xL = deep.xL, xR = deep.xR;
       var series = [{ pts: c.points, fill: CURVE_FILL, line: CURVE_LINE, say: c.say, name: c.name || '' }];
       if (c.second && c.second.points) series.push({ pts: c.second.points, fill: CURVE_FILL_2, line: CURVE_LINE_2, say: c.second.say, name: c.second.name || '' });
       var log = c.scale === 'log', N = 160, lo = Infinity, hi = -Infinity, samples = [];
@@ -342,18 +344,78 @@
       try { if (t.getComputedTextLength() <= maxW) return true; } catch (e) { return true; }
       return false;
     }
-    function twitch(grp) { grp.classList.remove('twitch'); void grp.getBoundingClientRect(); grp.classList.add('twitch'); }
-
-    function toggle(depth, chunk) {
-      if (tiers[depth] === chunk) tiers = tiers.slice(0, depth);   // tapped again: close it
-      else tiers = tiers.slice(0, depth).concat([chunk]);
+    function settled() {
       var d = deepest();
-      if (ma > d.from || ma < d.to) ma = Math.max(d.to, Math.min(d.from, ma)), tellYear();
+      if (ma > d.from || ma < d.to) { ma = Math.max(d.to, Math.min(d.from, ma)); tellYear(); }
       draw();
-      if (opts.onBar) opts.onBar(d, path());
+      if (opts.onBar) opts.onBar(d.node, path());
+    }
+    /* a tap on a segment: the envelope settles on it and it opens as the line below; tapped again
+       while open, it closes. A clipped segment (a free envelope above shows only part of it) opens as
+       a free span, since the line cannot hold all of it. */
+    function tapSeg(depth, sg) {
+      var e = env[depth];
+      if (e && e.child === sg.node) env = env.slice(0, depth);
+      else env = env.slice(0, depth).concat([{ a: sg.from, b: sg.to, child: sg.whole ? sg.node : null }]);
+      settled();
+    }
+    /* the envelope: drag an end to take in more or less, the body to move it; near a period's edge
+       an end clicks into place (a detent), and the envelope is snapped when both ends sit on one
+       period's edges. Dragging closes any line deeper than the one below. A press that never moves
+       is a tap on the segment under it. */
+    var envDrag = null;
+    function startEnvDrag(ev, depth, g) {
+      var e = env[depth]; if (!e) return;
+      ev.preventDefault();
+      var px = pos(ev), fa = g.x(e.a), fb = g.x(e.b), kind;
+      if (Math.abs(px - fa) < 10 && Math.abs(px - fa) <= Math.abs(px - fb)) kind = 'a';
+      else if (Math.abs(px - fb) < 10) kind = 'b';
+      else kind = 'm';
+      envDrag = { id: ev.pointerId, depth: depth, kind: kind, x0: px, off: g.m(px) - e.a, moved: false, span: e.a - e.b };
+      try { svg.setPointerCapture(ev.pointerId); } catch (err) {}
+      host.classList.add('dragging');
+    }
+    function detent(g, m, px) {
+      var best = null, stops = [g.from, g.to];
+      g.segs.forEach(function (sg) { stops.push(sg.node.from, sg.node.to); });
+      stops.forEach(function (v) { if (v <= g.from && v >= g.to) { var dpx = Math.abs(g.x(v) - px); if (dpx < DETENT_PX && (best === null || dpx < best.d)) best = { v: v, d: dpx }; } });
+      return best ? best.v : m;
+    }
+    function moveEnv(ev) {
+      var dd = envDrag, g = tierGeom[dd.depth], e = env[dd.depth]; if (!g || !e) return;
+      var px = pos(ev);
+      if (!dd.moved && Math.abs(px - dd.x0) < 3) return;
+      if (!dd.moved) { dd.moved = true; env = env.slice(0, dd.depth + 1); }
+      var minSpan = (g.from - g.to) * MIN_SPAN_PX / ((g.xR - g.xL) || 1);
+      var m = Math.max(g.to, Math.min(g.from, g.m(px)));
+      if (dd.kind === 'a') e.a = Math.max(e.b + minSpan, detent(g, m, px));
+      else if (dd.kind === 'b') e.b = Math.min(e.a - minSpan, detent(g, m, px));
+      else {
+        var a = Math.max(g.to + dd.span, Math.min(g.from, m - dd.off));
+        var a2 = detent(g, a, g.x(a)), b2 = detent(g, a - dd.span, g.x(a - dd.span));
+        if (a2 !== a) a = a2; else if (b2 !== a - dd.span) a = b2 + dd.span;
+        e.a = a; e.b = a - dd.span;
+      }
+      e.child = null;
+      g.segs.forEach(function (sg) { if (sg.whole && sg.node.from === e.a && sg.node.to === e.b) e.child = sg.node; });
+      var d = deepest(); ma = Math.max(d.to, Math.min(d.from, ma));
+      cancelAnimationFrame(raf); raf = requestAnimationFrame(draw);
+    }
+    function endEnv(ev) {
+      var dd = envDrag; if (!dd || ev.pointerId !== dd.id) return;
+      envDrag = null; host.classList.remove('dragging');
+      var g = tierGeom[dd.depth];
+      if (!dd.moved) {   // a tap: the segment under the pointer
+        var px = pos(ev), hit = null;
+        if (g) g.segs.forEach(function (sg) { if (px >= sg.x0 && px <= sg.x1) hit = sg; });
+        if (hit) tapSeg(dd.depth, hit);
+        return;
+      }
+      tellYear(); draw();
+      if (opts.onBar) opts.onBar(deepest().node, path());
     }
 
-    // the marker: drag it, or tap the deepest bar to jump there
+    // the marker: drag it, or tap the deepest line's strip to jump there
     function pos(ev) { var r = svg.getBoundingClientRect(); return ev.clientX - r.left; }
     function startDrag(ev) {
       var deep = tierGeom[tierGeom.length - 1];
@@ -364,8 +426,11 @@
       moveTo(pos(ev), deep);
     }
     function moveTo(px, deep) { setYear(deep.m(Math.max(deep.xL, Math.min(deep.xR, px)))); }
-    svg.addEventListener('pointermove', function (ev) { if (drag && ev.pointerId === drag.id) moveTo(pos(ev), tierGeom[tierGeom.length - 1]); });
-    function release(ev) { if (drag && ev.pointerId === drag.id) { drag = null; host.classList.remove('dragging'); } }
+    svg.addEventListener('pointermove', function (ev) {
+      if (drag && ev.pointerId === drag.id) moveTo(pos(ev), tierGeom[tierGeom.length - 1]);
+      else if (envDrag && ev.pointerId === envDrag.id) moveEnv(ev);
+    });
+    function release(ev) { if (drag && ev.pointerId === drag.id) { drag = null; host.classList.remove('dragging'); } else endEnv(ev); }
     svg.addEventListener('pointerup', release); svg.addEventListener('pointercancel', release);
 
     var raf = 0;
@@ -376,14 +441,22 @@
       tellYear();
       cancelAnimationFrame(raf); raf = requestAnimationFrame(draw);
     }
+    /* open(names): snap the envelope to each named period in turn, from the root down */
     function open(names) {
-      tiers = []; var n = root;
+      env = []; var n = root;
       (names || []).forEach(function (nm) {
         var c = (n.chunks || []).filter(function (x) { return x.name === nm; })[0];
-        if (c) { tiers.push(c); n = c; }
+        if (c) { env.push({ a: c.from, b: c.to, child: c }); n = c; }
       });
-      var d = deepest(); ma = Math.max(d.to, Math.min(d.from, ma)); draw();
-      if (opts.onBar) opts.onBar(d, path());
+      settled();
+    }
+    /* focus(a, b): set the deepest envelope to a span (older end first, in ma); a line opens below if none is open */
+    function focus(a, b) {
+      var d = env.length ? env.length - 1 : 0, g = lineOf(d);
+      if (!env.length) env.push({ a: a, b: b, child: null }); else env[d] = { a: a, b: b, child: null };
+      var e = env[d]; e.a = Math.min(g.from, Math.max(g.to, e.a)); e.b = Math.max(g.to, Math.min(g.from, e.b));
+      (g.node.chunks || []).forEach(function (c) { if (c.from === e.a && c.to === e.b) e.child = c; });
+      settled();
     }
 
     function start(tree) {
@@ -406,13 +479,14 @@
     return {
       year: function () { return ma; },
       setYear: setYear,
-      events: function () { return store; },     // the store's records, once loaded (null before); the page's passing line reads it
-      span: function () { var d = deepest(); return { from: d.from, to: d.to, name: d.name }; },   // the deepest open bar's span
       setCurve: function (c) { curve = c || null; draw(); },
       curve: function () { return curve; },
       open: open,
+      focus: focus,
       path: path,
       fmt: fmt,
+      events: function () { return store; },     // the store's records, once loaded (null before); the page's passing line reads it
+      span: function () { var d = deepest(); return { from: d.from, to: d.to, name: d.node.name }; },   // the deepest open line's span
       destroy: function () { destroyed = true; if (ro) ro.disconnect(); cancelAnimationFrame(raf); host.innerHTML = ''; host.classList.remove('cw-deep'); }
     };
   }

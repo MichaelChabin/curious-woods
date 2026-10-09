@@ -241,6 +241,10 @@ years. `js/timeline.js`'s stretch gains the one-sided form.
 with their tail, as the first fossils have theirs.
 
 **Stage 7 — The lab, and the descent.**
+*9 Oct 2026:* Michael's rulings on the one timeline (Rulings-Sept-2026.md, *The one timeline*) and the brief
+`Prompt-Build-One-Timeline.md` restate this stage in five lanes; lane A (the page as it was) and lane B (every level
+a line in the Time Machine's form, the envelope with detents, his five periods in `stories/deep-time.json`) are
+built; the descent is deferred by his word.
 *7 Oct 2026, a first step:* the join hung as **Deep Time**, `active/deep-time.html`, beside the Time
 Machine in the gallery, with its own words and the earth from space at 150 million years as its picture.
 It is the deep page, not yet the lab of this stage: the Time Machine page still opens on After the Ice
