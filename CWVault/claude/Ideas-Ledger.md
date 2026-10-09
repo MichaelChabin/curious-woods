@@ -275,6 +275,48 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** A third mark shape beside the dot and the dot-and-tail; a minimum is a one-sided thing in the other direction, which wants its own mark.
 **Source.** Michael, 7 Oct: "spans in particular may be something we want to display."
 
+### One timeline, from the Big Bang to now   · 8 Oct 2026 · candidate
+**Idea.** Michael: one zoomable timeline; Deep Time and the Time Machine become one continuous zoom, and the last 12,000 years is simply the deepest drop-down. It is a lab; stories borrow it rather than carrying lines of their own. Its format is the Time Machine's (a line with the blue envelope and the funnel), and Deep Time's filled rectangles are retired.
+**Where it sits.** The Time Machine and Deep Time; Plan-Deep-Time.md Stage 7, which this restates in format terms.
+**Opens.** One instrument the whole way; the proportion felt by the funnel at every level; stories open the lab zoomed to their span and she can zoom out to the Big Bang.
+**Costs.** Retires the filled bars and with them *Hazen's colours are the bar* (loose); adds a rung above the Earth, against the plan's "not the universe"; the ruled six chunks become the periods of the format page, cut in different places (his table has five). The hand-over at the bottom rung is the same work as Stage 7.
+**Source.** Michael's chat of 8 Oct, filed as `claude/Timeline-Format-Thinking-Oct08.md`; current thinking, not rulings.
+
+### The envelope snaps to periods   · 8 Oct 2026 · candidate
+**Idea.** The blue envelope keeps its free drag but clicks into place near a period boundary (a detent). Snapped, it is blue and the funnel's space shows the period's name; dragged off, it turns white and shows the span ("about 340 million years"). The colour may run down the funnel's edges.
+**Where it sits.** The Time Machine's Focus window, at every level of the one timeline.
+**Opens.** A period is a thing she can grab without aiming; the name appears when she has it and the duration when she has not.
+**Costs.** A blue envelope over a blue segment must not vanish, so segment colours stay quiet or the envelope gets a strong edge. Line labels want one phrase throughout (the Time Machine mixes "years after the ice" and "years after 0").
+**Source.** Michael's chat of 8 Oct, `claude/Timeline-Format-Thinking-Oct08.md`.
+
+### The 5 % rule: a period or an event   · 8 Oct 2026 · candidate
+**Idea.** The timeline holds periods (segments; tap one and it drops down into its own line) and events (points, or spans by the dot and tail). A segment narrower than about five percent of its bar (a 44-point tap target on the iPad) is not a period: it becomes an event or rides inside a larger period. One data pool holds every period and event; each knows its parent.
+**Where it sits.** The chunk tree and the event store; the hairline ruling (`A hairline is the lesson`), which this sharpens into a rule for what gets a bar at all.
+**Opens.** The uneven nesting decided by one number; the tree and the store become one pool.
+**Costs.** The ruled cuts (6 Oct) make After the ice a hairline on its parent, which this rule would demote to an event unless it rides inside a larger period; the number wants an iPad pass.
+**Source.** Michael's chat of 8 Oct, `claude/Timeline-Format-Thinking-Oct08.md`.
+
+### Zero at the left edge, or pinned to an event   · 8 Oct 2026 · candidate
+**Idea.** Each line's left edge reads both 0 and *years ago*, so the right edge reads as a duration with no subtraction. A dropped-down line resets zero to its own left edge; a story can pin zero to any event (zero at the impact, so later events read "years after the impact").
+**Where it sits.** The readout of every line; the shape page's "name a zero", applied inside the lab; a family of "how long after" stories (the impact to a full ecosystem, the ice's retreat to the last mammoths, the first grass to grass everywhere).
+**Opens.** Recovery and spread as stories a child can read off the line.
+**Costs.** The deep ruling says deep lines count *ago* only; this adds a count from the left edge beside it. The date line of a More (Timeline-Stories, Dates) would gain a pinned-zero form.
+**Source.** Michael's chat of 8 Oct, `claude/Timeline-Format-Thinking-Oct08.md`.
+
+### Landmarks on every line   · 8 Oct 2026 · candidate
+**Idea.** A small set of landmark events appears on every line where it falls, at every level — some to remember a period by (the oceans form, the meteor strike, the Siberian volcanoes), some great milestones (photosynthesis) — so that, absorbed, they give her a sense of scale she carries with her. Nineteen candidates from the Big Bang to the end of the ice, the strongest starred, on the format page. A pile-up rule is needed: from the meteor on, everything falls in the last 1.5 % of the full line, so a crowded stretch shows only the most important and the rest appear as she zooms.
+**Where it sits.** The event store (a field on a record) and the bar's label packing; the chunk tree's old sketches were the first draft of this.
+**Opens.** The scale of time as a handful of remembered marks, the thing the nested bar was for.
+**Costs.** A field the record does not have; the pile-up rule is the Time Machine's label packing done by importance across levels. Short list (about eight) or long and thinned is open.
+**Source.** Michael's chat of 8 Oct, `claude/Timeline-Format-Thinking-Oct08.md`.
+
+### Periods named plainly, five of them, and Before the Earth   · 8 Oct 2026 · loose
+**Idea.** Period names say what happened, plain and useful, never cute; Hazen is the reference for content, his names unused. Five periods on the Earth bar (the young Earth, First life, Oxygen arrives, Ancestors, Animals) with Animals dropping down to the sea, the land, the dinosaurs and after; and above the Earth, *Before the Earth* (13.8 to 4.57 billion years) with first stars, galaxies and the Sun.
+**Where it sits.** `stories/deep-time.json`; the six-chunk ruling of 6 Oct, which this would amend.
+**Opens.** A tree a child can say; the universe as one rung above, which the plan deferred until a story wanted it.
+**Costs.** The ruled cuts fall where the evidence changes kind; these fall where the story changes. Whether names say what happened or what the Earth was like, and whether Hazen's colour sequence colours the segments, are his open questions.
+**Source.** Michael's chat of 8 Oct, `claude/Timeline-Format-Thinking-Oct08.md`.
+
 ## Stories
 
 ### The edge of knowing (working name)   · 5 Oct 2026 · candidate
@@ -284,6 +326,13 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** Nothing known.
 **Source.** Michael: exploit the uncertainty with a story, as a thread; Wegener and the zircons Claude's suggestions. *(Merged from the holding pen, 6 Oct.)*
 *Added 7 Oct, end of deep-time batch 6.* Michael: "one of the main things to learn about this is uncertainty… there are significant and interesting stories around that… These become unmistakably obvious when on a time line, if it goes back far enough." Not ready to try yet. Batch 6 gave fresh cases of the same shape: Lascaux older by 4,000 years and Lebombo by 8,000 as methods improved; radiocarbon years that run short of ordinary years (Brassempouy's 25,000 is really about 30,000); the oldest painting moving from Europe to Sulawesi, then to Muna, with its method now challenged; Neanderthal painters argued both ways; a dating crust that gives only the least a painting can be. Michael also let the events end on "nobody knows" (7 Oct).
+
+### A story opens the lab, and a marker is the way back   · 8 Oct 2026 · candidate
+**Idea.** A story calls the timeline with a few settings — where to start, which events to feature, whether the map is on (Van Gogh opens it on 1853–1890 with the envelope on his lifetime). As she zooms out the envelope shrinks to a small marker that never disappears, the "you are here" dot on a mall map; one tap snaps her back to the story's span. Once she wanders she has left the story; the marker and her visited list are the way back, and no story state is held in the background.
+**Where it sits.** Every story's World section; the shape page's ruling that a story's timeline is fixed and only the lab adjustable, which this keeps by making the story a door into the lab.
+**Opens.** Stories stop carrying lines of their own; the lab is the one timeline.
+**Costs.** The World section as built (a fixed viewing on the page) becomes a call into the lab with settings; the marker and the snap-back are new to the Time Machine.
+**Source.** Michael's chat of 8 Oct, `claude/Timeline-Format-Thinking-Oct08.md`.
 
 ## Practice and Maya
 

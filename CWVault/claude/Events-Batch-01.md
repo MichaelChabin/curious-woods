@@ -12,6 +12,7 @@ Written in round 2 of Prompt-Generate-Timeline-Events.md and checked in round 3.
 **Label:** Maize
 **Year:** about −7000 · precision: millennium · kind: crop or animal
 **Place:** the Balsas River valley, Guerrero, southwest Mexico (18.3 N, 99.8 W). The exact spot is unknown.
+**Replaces:** `maize`
 
 **Summary (35 words)**
 About 7000 BCE. In the hills of southwest Mexico, people began choosing seeds from a wild grass called teosinte. Over thousands of years it became maize, the corn that now feeds much of the world. *More*
@@ -106,6 +107,7 @@ Fishing boats still pull up bones and stone tools from the bottom of the North S
 **Label:** Writing at Uruk
 **Year:** about −3300 · precision: century · kind: text
 **Place:** Uruk (now Warka), southern Iraq (31.32 N, 45.64 E)
+**Replaces:** `writing`, `uruk`
 
 **Summary (38 words)**
 About 3300 BCE. In Uruk, in what is now Iraq, people began pressing signs into wet clay to keep track of barley, beer and sheep. It is one of the two oldest kinds of writing we know of. *More*
@@ -154,6 +156,7 @@ It started with beer and barley.
 **Label:** Ötzi
 **Year:** about −3300 · precision: century · kind: person
 **Place:** the Tisenjoch pass, Ötztal Alps, on the border of Italy and Austria (46.78 N, 10.84 E)
+**Replaces:** `otzi`
 
 **Summary (32 words)**
 About 3300 BCE. A man died high in the Alps between what are now Italy and Austria. The ice kept his body, clothes and tools until two hikers found him in 1991. *More*
@@ -203,6 +206,7 @@ For ten years, everyone thought he had died of cold. Then, in 2001, an X-ray sho
 **Label:** Mohenjo-daro
 **Year:** about −2500 · precision: century · kind: place
 **Place:** Mohenjo-daro, Sindh, Pakistan (27.33 N, 68.14 E)
+**Replaces:** `mohenjo`
 
 **Summary (33 words)**
 About 2500 BCE. In the valley of the Indus River, in what is now Pakistan, people built a city of brick with covered drains under its streets. Their writing has never been read. *More*
@@ -300,6 +304,7 @@ The great irons still lie on the plain, and people can touch them.
 **Label:** Thera
 **Year:** about −1600 · precision: century · kind: earth event
 **Place:** Thera (Santorini), in the Aegean Sea, Greece (36.40 N, 25.40 E)
+**Replaces:** `thera`
 
 **Summary (32 words)**
 About 1600 BCE. The volcanic island of Thera, in the Aegean Sea, blew apart in one of the largest eruptions of the last ten thousand years. Its ash and waves reached Crete. *More*
@@ -449,6 +454,7 @@ It is in the British Museum. At the very start of the scroll, the scribe's name 
 **Label:** Lapita voyagers
 **Year:** about −850 · precision: century · kind: craft or invention
 **Place:** Nukuleka, Tongatapu, Tonga (21.13 S, 175.15 W)
+**Replaces:** `lapita`
 
 **Summary (31 words)**
 About 850 BCE. Sailors from the islands near New Guinea, whose pottery is called Lapita, reached Tonga, in the middle of the Pacific. No human had ever set foot there before. *More*
@@ -544,6 +550,7 @@ Nobody knows what the people who made them called themselves.
 **Label:** Homer written down
 **Year:** about −700 · precision: century · kind: text
 **Place:** Greece; the exact place is unknown (38.0 N, 23.7 E marks Athens, where a written version is later reported)
+**Replaces:** `homer`, `lead-nineveh-2`
 
 **Summary (29 words)**
 700s or 600s BCE. Homer is thought to have been a travelling poet who recited stories about the Trojan War. Around this time, his stories were first written down. *More*
@@ -641,6 +648,7 @@ The rocks inside Kalinga itself carry Ashoka's messages too. On them, the passag
 **Label:** Eratosthenes
 **Year:** about −240 · precision: decade · kind: idea
 **Place:** Alexandria, Egypt (31.20 N, 29.92 E), with Syene (Aswan) to the south
+**Replaces:** `eratos`
 
 **Summary (31 words)**
 About 240 BCE. In Alexandria, in Egypt, a scholar named Eratosthenes worked out the size of the whole Earth from the length of a shadow and the distance between two cities. *More*
@@ -689,6 +697,7 @@ His own book is lost. We know his method from a writer named Cleomedes, who desc
 **Label:** Antikythera
 **Year:** about −100 · precision: century · kind: object
 **Place:** the Antikythera wreck, off the island of Antikythera, Greece (35.89 N, 23.30 E)
+**Replaces:** `antikythera`
 
 **Summary (36 words)**
 About 100 BCE. A Greek ship sank carrying a box of bronze gears that showed the movements of the Sun and Moon and predicted eclipses. Nothing like it is known again for over a thousand years. *More*
@@ -734,6 +743,7 @@ No machine with gears this fine is known again for more than a thousand years.
 **Label:** Pompeii
 **Year:** 79 · precision: year · kind: earth event
 **Place:** Pompeii, near Naples, Italy (40.75 N, 14.49 E)
+**Replaces:** `vesuvius`
 
 **Summary (33 words)**
 79 CE. The volcano Vesuvius, near Naples in Italy, erupted and buried the town of Pompeii under ash and stone. A seventeen-year-old named Pliny watched from across the bay and later described it. *More*
@@ -887,6 +897,7 @@ Wang Jie made it to be given away, for his mother and father.
 **Label:** Guest star
 **Year:** 1054.5 · precision: exact (4 July 1054) · kind: sky event
 **Place:** recorded at Kaifeng, China (34.80 N, 114.35 E); the star itself is in the constellation Taurus
+**Replaces:** `supernova`
 
 **Summary (30 words)**
 4 July 1054. Astronomers in China recorded a new star, bright enough to see in daylight for more than three weeks. What is left of it is the Crab Nebula. *More*
@@ -939,6 +950,7 @@ The cloud is still growing, by more than a thousand kilometres every second.
 **Label:** Great Zimbabwe
 **Year:** about 1300 · precision: century · kind: place
 **Place:** Great Zimbabwe, near Masvingo, Zimbabwe (20.27 S, 30.93 E)
+**Replaces:** `zimbabwe`
 
 **Summary (31 words)**
 About 1300. In southern Africa, the builders of Great Zimbabwe raised walls of fitted granite as high as eleven metres, without mortar. Later, outsiders claimed Africans could not have built them. *More*

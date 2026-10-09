@@ -890,6 +890,7 @@ The dead trees are still standing in the marsh.
 **Label:** Moon landing
 **Year:** 1969.55 · precision: exact (20 July 1969) · kind: craft or invention
 **Place:** the Sea of Tranquility, on the Moon. On the map, the launch site stands in for it: Kennedy Space Center, Florida, USA (28.61 N, 80.60 W)
+**Replaces:** `moon`
 
 **Summary (30 words)**
 20 July 1969. Two American astronauts, Neil Armstrong and Buzz Aldrin, landed on the Moon and walked on it. They were the first people ever to stand on another world. *More*

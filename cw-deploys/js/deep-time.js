@@ -28,6 +28,10 @@
    labels placed heavier first — and the tree's own `marks` are ignored (they were the sketches).
    onMark then hands over the mark with its record at `mark.rec`; cwDeepTime.moreHTML(rec) renders
    the More as the Time Machine page does (the date line stepped, the paragraphs, the references).
+   Since 9 Oct 2026 the store is the one store, every event deep and after the ice (Stage 7's first
+   step): an after-the-ice record's date line is its parts { count, ordinary, ago } and is stepped
+   as the Time Machine steps it; a September survivor has no More (rec.more is null), so the page
+   offers the word only when there is one.
 
    opts:
      events   the deep-time events, or the URL of their JSON; absent, the tree's sketches are drawn
@@ -415,10 +419,20 @@
   cwDeepTime.prose = prose;
   /* the More, as the Time Machine page draws it: the label, the date line stepped, the paragraphs
      (a {quote} as a blockquote), the references; the page gives the element the class tm-more */
+  function withCommasStr(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  /* the date line of an after-the-ice record, as active/time-machine.html steps it: the count after
+     the ice, the ordinary date, the years ago, each with its "about" */
+  function timelineDateLines(dl) {
+    var c = dl.count, o = dl.ordinary, g = dl.ago, L = [];
+    L.push((c.about ? 'About ' : '') + withCommasStr(c.value) + ' years after the ice' + (g ? '' : ','));
+    L.push('or ' + (o.about ? 'about ' : '') + o.text + (g ? '' : '.'));
+    if (g) L.push('or ' + (g.about ? 'about ' : '') + withCommasStr(g.value) + ' years ago.');
+    return L;
+  }
   cwDeepTime.moreHTML = function (rec) {
-    var dl = rec.more.dateLine, lines = [dl.ago];
-    if (dl.tail) lines.push(dl.tail);
-    if (dl.sure) lines.push(dl.sure);
+    var dl = rec.more.dateLine, lines;
+    if (dl.count && dl.ordinary) lines = timelineDateLines(dl);
+    else { lines = [dl.ago]; if (dl.tail) lines.push(dl.tail); if (dl.sure) lines.push(dl.sure); }
     var h = '<h3>' + escapeHTML(rec.label) + '</h3><div class="stepped">' + lines.map(function (l) { return '<div>' + escapeHTML(l) + '</div>'; }).join('') + '</div>';
     h += rec.more.paragraphs.map(function (p) { return p && p.quote ? '<blockquote><p>' + prose(p.quote) + '</p></blockquote>' : '<p>' + prose(p) + '</p>'; }).join('');
     if (rec.knownFrom) h += '<p class="known"><i>Known from</i> ' + escapeHTML(rec.knownFrom) + '.' + (rec.placeNow ? ' <i>The evidence is at</i> ' + escapeHTML(rec.placeNow.name) + '.' : '') + '</p>';

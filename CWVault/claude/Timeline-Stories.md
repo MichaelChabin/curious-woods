@@ -1,5 +1,5 @@
 ---
-status: DRAFT 30 Sept 2026, from Michael's rulings in chat; his four answers, his rulings on wars and religion (religion clarified the same day), the stepped date line (an experiment), and the six writing habits from his edit of Göbekli Tepe folded in. Awaiting his approval of the whole page. Worked examples in Timeline-Samples.md. Amended 1 Oct 2026: labels a word or two; prose that runs; traps the checkers keep catching.
+status: DRAFT 30 Sept 2026, from Michael's rulings in chat; his four answers, his rulings on wars and religion (religion clarified the same day), the stepped date line (an experiment), and the six writing habits from his edit of Göbekli Tepe folded in. Awaiting his approval of the whole page. Worked examples in Timeline-Samples.md. Amended 1 Oct 2026: labels a word or two; prose that runs; traps the checkers keep catching. Amended 8 Oct 2026: uncertainty is part of the story. Amended 9 Oct 2026: uncertainty is not controversy.
 role: The primary source for timeline and map events: what an event is, the three kinds of prose it carries, how its date is written, and who writes it. Where an older document disagrees on these points, this one wins.
 supersedes: Rulings-Sept-2026.md "Dates" (in part); Story-Pattern.md "The World" (labels, panels); Spec-Timeline-and-Map.md "The panel"; Spec-Maps.md "More than two lines per event" (lengths).
 ---
@@ -65,6 +65,14 @@ Four batches in, the fact-checkers keep finding the same kinds of mistake. Look 
 - **References.** Authors, titles and volumes go wrong more often than facts: check each one exists as cited, and say which part of a multi-volume edition holds the passage.
 
 The years-ago line ignores the missing year 0 (see Dates). Checkers will flag it as off by one; it is the house rule, and it stands.
+
+## Uncertainty is part of the story (8 Oct 2026, Michael)
+
+Michael, on reading batch 5's plan: "with history, one of the great lessons is uncertainty." So never hesitate to say "nobody knows," and never give an exact date unless there really is one. Write "about," or give the span the sources give ("sometime between about 950 and 1250"), and say whose guess a guess is. Thera is the warning: a volcano with every kind of evidence for its date, and people are still arguing about it.
+
+An argument about a date can be the story, not a footnote to it. Batch 5's *Hawaiʻi* ends on three studies with three answers.
+
+**Uncertainty is not controversy** (9 Oct 2026, Michael). Where the evidence is thin, or the people who know the subject best disagree among themselves, "nobody knows" is the true answer and can be the story. Where nearly everyone who has looked at the evidence agrees, the event states the consensus as fact. A lone contrarian, or one expert's untested suggestion, does not get a sentence just because it exists: giving it one makes a settled question look open. A legend the evidence contradicts (the bet, the candle hat, the fleeing audience) is different, and saying so is siding with the consensus.
 
 ## Wars and religion (30 Sept 2026, Michael)
 

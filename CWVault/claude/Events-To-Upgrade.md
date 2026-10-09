@@ -9,7 +9,7 @@ Each entry: the old id (which the new record must name as `replaces`), the year 
 
 **Status** is one of: *to decide* (curation not done), *keep*, *cut*, *merge into <id>*, *link to story*, *later*, *done (batch NN)*.
 
-**Curation done 1 Oct 2026** (Michael's rulings): 67 keep (including Issun-bōshi, added at the end), 1 cut, 6 merged, 1 linked to a story (Starry Night, the only one already in the gallery), 1 saved for later. Rule: an event links to a story only once that story hangs in the gallery. The keeps go roughly fifteen per chat. Batch 03 (1 Oct) did the first fifteen; batch 04 (1 Oct) the next fifteen, Stonehenge to Aeschylus. Next up: Anaxagoras.
+**Curation done 1 Oct 2026** (Michael's rulings): 67 keep (including Issun-bōshi, added at the end), 1 cut, 6 merged, 1 linked to a story (Starry Night, the only one already in the gallery), 1 saved for later. Rule: an event links to a story only once that story hangs in the gallery. The keeps go roughly fifteen per chat. Batch 03 (1 Oct) did the first fifteen; batch 04 (1 Oct) the next fifteen, Stonehenge to Aeschylus; batch 05 (8 Oct) the next thirteen, Anaxagoras to Gutenberg. Batch 06 (8 Oct) did the next eleven, Galileo to Darwin; Aldini cut (Michael, 8 Oct). Batch 07 (8 Oct) did the last twelve, Issun-bōshi to the first web page. No keeps remain; only `starry` (linked to its story) and `jomon` (deep time) are left undone. **Loaded 9 Oct 2026 (Claude Code):** batches 05 to 07 are on the Time Machine, the 38 ids they name retired, the 2 cuts removed; the merges of 1 Oct (`uruk`, `lead-nineveh-2`) and the fifteen `SAME` pairs are Replaces lines in batches 01, 02 and the samples now. `jomon` and `starry` are the two September records left standing; both are in the one store of Deep Time, `jomon` on the ice-ages bar.
 
 Possible duplicates already noticed: `tambora` and `lead-frank-4` (both Tambora, 1815); `frank` and `lead-frank-5` (both Mary Shelley at Lake Geneva, 1816); `lead-nineveh-2` (Homer written down) is already covered by batch 1's *Homer written down*.
 
@@ -250,7 +250,7 @@ Year -499 · decade · person · place `ephesus` · lead-up to story socrates
 
 > You cannot step in the same river twice, he said, because the water has moved on. He wrote in riddles and was known as the Obscure.
 
-**Status:** cut. Heraclitus is a saying, not an event.
+**Status:** cut. Heraclitus is a saying, not an event. Removed from the Time Machine 9 Oct 2026 (`CUT` in the page; `cut` in the one store), no alias.
 
 ## `lead-socrates-3`: Aeschylus enters the play contest
 Year -498 · year · person · place `athens` · date guessed; lead-up to story socrates
@@ -264,238 +264,238 @@ Year -479 · decade · person · place `athens` · lead-up to story socrates
 
 > He came to Athens and taught that the sun was a burning rock bigger than the Peloponnese, and the moon shone with borrowed light. He was later charged with impiety for it.
 
-**Status:** keep.
+**Status:** done (batch 05, as *Anaxagoras*; awaiting Michael's reading).
 
 ## `socrates`: Socrates is born
 Year -469 · decade · person · place `athens` · opens existing story: Socrates
 
 > He wrote nothing either. He walked around asking people questions until they realised they did not know what they thought they knew. His student Plato wrote it down. On this line he is born about 9,530 years after the ice, and dies about 9,600. Born first, then died. On the old calendar it is the other way round.
 
-**Status:** keep. There is no Socrates story (Michael, 1 Oct), so this gets an ordinary More. Drop the blurb's calendar line.
+**Status:** done (batch 05, as *Socrates*; awaiting Michael's reading). Moved from his birth to his trial, 399 BCE.
 
 ## `paper`: paper, from rags and nets
 Year 105 · year · craft · place `luoyang`
 
 > It took a thousand years to reach Europe. Before paper, books were written on animal skin, and a single Bible took a whole flock of sheep.
 
-**Status:** keep. Paper is older than Cai Lun's date; that is the story.
+**Status:** done (batch 05, as *Paper*; awaiting Michael's reading).
 
 ## `teoti`: Teotihuacan, 100,000 people
 Year 200 · century · place · place `teotihuacan`
 
 > It was one of the largest cities in the world. Its central avenue is two kilometres long. We do not know what language its people spoke or what they called their city. The Aztecs, who came a thousand years later, gave it its name.
 
-**Status:** keep.
+**Status:** done (batch 05, as *Teotihuacan*; awaiting Michael's reading). Moved from 200 to about 400 CE.
 
 ## `zero`: rules for zero
 Year 628 · year · text · place `bhinmal`
 
 > People had used a blank to mean nothing for a long time. Brahmagupta treated it as a number: what happens when you add it, subtract it, multiply by it. He got division by zero wrong, and so did everyone for a thousand years after.
 
-**Status:** keep.
+**Status:** done (batch 05, as *Zero*; awaiting Michael's reading).
 
 ## `baghdad`: al-Khwarizmi’s algebra
 Year 830 · decade · text · place `baghdad`
 
 > His book was about solving practical problems, inheritance and land, by balancing both sides. The Latin spelling of his name gave us another word: algorithm.
 
-**Status:** keep.
+**Status:** done (batch 05, as *Algebra*; awaiting Michael's reading).
 
 ## `hawaii`: navigators reach Hawaii
 Year 1000 · century · place · place `hawaii`
 
 > They had no instruments. They read the stars, the swell, the birds, and the colour of the water. Hawaii is 3,000 kilometres from the nearest inhabited island. They found it, and then found their way back.
 
-**Status:** keep. Overlaps Lapita and Tupaia a little.
+**Status:** done (batch 05, as *Hawaiʻi*; awaiting Michael's reading).
 
 ## `alhazen`: light comes into the eye
 Year 1020 · decade · text · place `cairo` · date guessed
 
 > For a thousand years people had argued that the eye sends out rays. He tested it with dark rooms and pinholes, and insisted that you should try things rather than argue about them. He wrote it up in seven volumes.
 
-**Status:** keep.
+**Status:** done (batch 05, as *Ibn al-Haytham*; awaiting Michael's reading). Moved from 1020 to about 1030.
 
 ## `compass`: a needle that points south
 Year 1040 · decade · craft · place `kaifeng` · date guessed
 
 > He also noticed that it did not point exactly south, and said so. Compasses reached Europe about a century later and made ocean crossings possible.
 
-**Status:** keep. The "he" is Shen Kuo, about 1088; fix the date.
+**Status:** done (batch 05, as *Compass*; awaiting Michael's reading). Moved from 1040 to about 1088 (Shen Kuo).
 
 ## `chartres`: the blue glass at Chartres
 Year 1200 · decade · object · place `chartres` · date guessed
 
 > The colour comes from cobalt, melted into the glass. The workers did not know what cobalt was. The recipe was lost and rediscovered more than once.
 
-**Status:** keep.
+**Status:** done (batch 05, as *Chartres blue*; awaiting Michael's reading).
 
 ## `fibonacci`: the figures 0 to 9 reach Europe
 Year 1202 · year · text · place `pisa`
 
 > Europeans were still doing arithmetic with Roman numerals and counting boards. His book showed the nine Indian figures and the sign 0, and how to multiply with them. It also had the rabbits.
 
-**Status:** keep.
+**Status:** done (batch 05, as *Fibonacci*; awaiting Michael's reading).
 
 ## `aotearoa`: the last big land is found
 Year 1300 · century · place · place `wairau-bar` · date guessed
 
 > By the time they arrived, Chartres had its windows and Fibonacci had his numbers. People had been living everywhere else for thousands of years.
 
-**Status:** keep.
+**Status:** done (batch 05, as *Aotearoa*; awaiting Michael's reading).
 
 ## `gutenberg`: Gutenberg’s press
 Year 1450 · decade · craft · place `mainz`
 
 > Bi Sheng had made movable type from clay in China four hundred years earlier. Gutenberg’s version used metal letters that could be cast by the thousand. Within fifty years there were more books in Europe than in all the centuries before.
 
-**Status:** keep.
+**Status:** done (batch 05, as *Gutenberg*; awaiting Michael's reading).
 
 ## `galileo`: mountains on the Moon
 Year 1609 · year · sky · place `padua`
 
 > The telescope was a Dutch invention of the year before. He ground his own lenses to make a better one. He saw that Jupiter had moons of its own, and that the Milky Way was made of stars.
 
-**Status:** keep.
+**Status:** done (batch 06, as *Galileo's telescope*; awaiting Michael's reading).
 
 ## `decimal`: the decimal point
 Year 1614 · year · craft · place `edinburgh` · date guessed
 
 > Before this, fractions were written in all sorts of ways. A single dot between 3 and 14159 made calculation much faster. It arrived only four hundred years ago, which is surprisingly recent for something that looks so obvious.
 
-**Status:** keep. Credit argued: Stevin, Pitiscus, Napier.
+**Status:** done (batch 06, as *Decimal fractions*; awaiting Michael's reading).
 
 ## `lead-frank-0`: Franklin flies a kite into a storm
 Year 1752 · year · craft · place `philadelphia` · lead-up to story frank
 
 > Lightning ran down the wet string to a key and made a spark. He was lucky not to die. A man who tried the same thing in Russia the next year did.
 
-**Status:** keep.
+**Status:** done (batch 06, as *Franklin's kite*; awaiting Michael's reading).
 
 ## `lead-frank-1`: Galvani’s frog legs twitch
 Year 1780 · year · craft · place `bologna` · lead-up to story frank; same as shared-list record galvani-frogs-1791
 
 > A dead frog’s leg kicked when a metal blade touched its nerve. Galvani thought animals held their own electricity. Everyone in Europe argued about it for years.
 
-**Status:** keep. Stored 1780, shared record 1791; fix one.
+**Status:** done (batch 06, as *Galvani's frogs*; awaiting Michael's reading).
 
 ## `laki`: Laki poisons the summer
 Year 1783 · exact · earth · place `laki`
 
 > Benjamin Franklin, in Paris, noticed the sun was too weak to light a fire through a lens and guessed a volcano was to blame. He was right. The winter that followed was one of the coldest ever recorded.
 
-**Status:** keep.
+**Status:** done (batch 06, as *Laki*; awaiting Michael's reading).
 
 ## `lead-frank-2`: Volta stacks a battery
 Year 1800 · year · craft · place `como` · lead-up to story frank; same as shared-list record volta-pile-1800
 
 > Discs of copper and zinc with salt-soaked cloth between them. The first steady electric current. Napoleon gave him a medal.
 
-**Status:** keep.
+**Status:** done (batch 06, as *Volta's pile*; awaiting Michael's reading).
 
 ## `lead-frank-3`: Aldini electrifies a corpse in London
 Year 1803 · year · craft · place `london` · lead-up to story frank; same as shared-list record aldini-newgate-1803
 
 > Galvani’s nephew wired up the body of a hanged man in front of an audience. The jaw moved, an eye opened, a hand clenched. The newspapers said he had nearly brought it to life.
 
-**Status:** keep.
+**Status:** cut (Michael, 8 Oct 2026: uneasy about it for a child; Aldini stays in the Frankenstein story). Removed from the Time Machine 9 Oct 2026 (`CUT` in the page; `cut` in the one store), no alias.
 
 ## `tambora`: Tambora: no summer next year
 Year 1815 · exact · earth · place `tambora` · same as shared-list record tambora-1815
 
 > It was the largest eruption in recorded history. The ash circled the world, and 1816 was cold and wet everywhere. In Switzerland, kept indoors by the rain, a group of friends told each other ghost stories.
 
-**Status:** keep.
+**Status:** done (batch 06, as *Tambora*; awaiting Michael's reading).
 
 ## `lead-frank-4`: Tambora explodes
 Year 1815 · exact · earth · place `tambora` · lead-up to story frank; same as shared-list record tambora-1815
 
 > The ash blocked enough sunlight that the next summer failed across Europe and America. It rained in Switzerland for weeks.
 
-**Status:** merge into tambora. Duplicate.
+**Status:** merge into tambora. Duplicate. Done: batch 06 *Tambora* names it in `replaces`.
 
 ## `frank`: Mary Shelley begins Frankenstein
 Year 1816 · year · text · place `geneva` · opens existing story: Frankenstein; same as shared-list record frankenstein-1816
 
 > The story came to her after a night of talk about whether electricity could bring dead tissue to life. She finished the book in less than a year.
 
-**Status:** keep. Write an ordinary More; link to Have You Thought of a Story? once it hangs in the gallery (Michael, 1 Oct: no linking until a story is in the gallery).
+**Status:** done (batch 06, as *Frankenstein*; awaiting Michael's reading).
 
 ## `lead-frank-5`: ghost stories by the lake
 Year 1816 · year · text · place `geneva` · lead-up to story frank; same as shared-list record frankenstein-1816
 
 > Kept indoors by the rain at a villa on Lake Geneva, Byron proposed that each of them write a ghost story. Mary Godwin, eighteen, was the only one who finished.
 
-**Status:** merge into frank. Duplicate.
+**Status:** merge into frank. Duplicate. Done: batch 06 *Frankenstein* names it in `replaces`.
 
 ## `photo`: the first photograph
 Year 1826 · year · craft · place `le-gras`
 
 > The plate was coated with bitumen, which hardens in light. The picture is of rooftops. It is dim and blurry and it exists.
 
-**Status:** keep.
+**Status:** done (batch 06, as *First photograph*; awaiting Michael's reading).
 
 ## `faraday`: a magnet, a coil, a current
 Year 1831 · exact · craft · place `london` · same as shared-list record faraday-1831
 
 > He had almost no schooling and learned science by binding books and reading them. Every generator and every electric motor on Earth works on what he found that day.
 
-**Status:** keep.
+**Status:** done (batch 06, as *Faraday's ring*; awaiting Michael's reading).
 
 ## `darwin`: Darwin draws a tree: I think
 Year 1837 · year · text · place `london`
 
 > It is a rough sketch, a few lines. It was the first time anyone had drawn all living things as branches of one tree. He waited twenty-two years to publish.
 
-**Status:** keep.
+**Status:** done (batch 06, as *Darwin's tree*; awaiting Michael's reading).
 
 ## `lead-starry-0`: photographs go public
 Year 1839 · year · craft · place `paris` · lead-up to story starry; same as shared-list record photography-1839
 
 > Daguerre’s process was announced in Paris and given away free. Within a decade painters were asking what painting was for, if a machine could copy the world.
 
-**Status:** keep.
+**Status:** done (batch 07, as *Daguerreotype*; checked, awaiting Michael's reading).
 
 ## `lead-starry-1`: paint in metal tubes
 Year 1841 · year · craft · place `london` · lead-up to story starry
 
 > Before tubes, paint was mixed daily and kept in pigs’ bladders. Tubes meant you could carry colour outdoors and paint what you saw, where you saw it.
 
-**Status:** keep.
+**Status:** done (batch 07, as *Paint tubes*; checked, awaiting Michael's reading).
 
 ## `lead-starry-2`: Japanese prints flood Paris
 Year 1867 · year · object · place `paris` · lead-up to story starry
 
 > Flat colour, bold outlines, strange angles. Van Gogh collected hundreds and copied several. The swirling sky owes something to Hokusai’s wave.
 
-**Status:** keep. Check or cut the Hokusai-sky claim.
+**Status:** done (batch 07, as *Japanese prints*; checked, awaiting Michael's reading).
 
 ## `lead-montp-0`: Westinghouse’s air brake
 Year 1869 · year · craft · place `pittsburgh` · lead-up to story montp
 
 > Brakes on every carriage, all applied at once by compressed air. If the pipe broke, the brakes went on by themselves. The Montparnasse train had one. It was not enough.
 
-**Status:** merge into montp. The air brake only matters inside the train story.
+**Status:** merge into montp. The air brake only matters inside the train story. Done: batch 07 *Montparnasse train* names it in `replaces`.
 
 ## `lead-starry-3`: Impression, Sunrise
 Year 1874 · year · object · place `le-havre` · lead-up to story starry
 
 > Monet’s painting of a harbour at dawn was mocked by a critic as a mere impression. The painters took the insult as their name.
 
-**Status:** keep.
+**Status:** done (batch 07, as *Impression, Sunrise*; checked, awaiting Michael's reading).
 
 ## `lead-montp-1`: Muybridge photographs a galloping horse
 Year 1878 · exact · craft · place `palo-alto` · lead-up to story montp
 
 > Twelve cameras along a track, triggered by the horse itself. For the first time anyone could see what a running animal actually did. All four feet did leave the ground.
 
-**Status:** keep.
+**Status:** done (batch 07, as *Galloping horse*; checked, awaiting Michael's reading).
 
 ## `lead-starry-4`: Van Gogh arrives in Arles
 Year 1888 · exact · person · place `arles` · lead-up to story starry
 
 > He came south for the light and painted almost a picture a day. He wrote to his brother that the night was more richly coloured than the day.
 
-**Status:** keep.
+**Status:** done (batch 07, as *Van Gogh in Arles*; checked, awaiting Michael's reading).
 
 ## `starry`: The Starry Night
 Year 1889 · year · object · place `saint-remy` · opens existing story: The Starry Night
@@ -509,39 +509,39 @@ Year 1889 · year · object · place `paris` · lead-up to story montp; same as 
 
 > Built in two years for a fair, meant to come down after twenty. It was the tallest thing people had ever made. Paris was the city of iron and speed.
 
-**Status:** keep.
+**Status:** done (batch 07, as *Eiffel Tower*; checked, awaiting Michael's reading).
 
 ## `montp`: a train through the wall
 Year 1895 · exact · craft · place `paris` · date guessed; opens existing story: The train through the wall
 
 > The train came in too fast, ran through the buffers, crossed the concourse, and went out the window into the street below. The photograph of it hanging nose-down is one of the most famous ever taken.
 
-**Status:** keep. Write an ordinary More; link to the Montparnasse gallery story once it exists (Michael, 1 Oct).
+**Status:** done (batch 07, as *Montparnasse train*; checked, awaiting Michael's reading).
 
 ## `lead-montp-3`: the Lumières show a moving picture
 Year 1895 · exact · craft · place `paris` · lead-up to story montp
 
 > In March, in Lyon, workers walked out of a factory gate on a screen. In December, in Paris, a train pulled into a station and people in the front row flinched.
 
-**Status:** keep. The flinching front row is a legend; the train film was not in the first Paris show.
+**Status:** done (batch 07, as *Lumière show*; checked, awaiting Michael's reading).
 
 ## `curie`: Marie Curie finds radium
 Year 1898 · year · person · place `paris`
 
 > She boiled down tons of pitchblende in a leaky shed to get a speck of radium. Her notebooks are still radioactive and are kept in a lead box.
 
-**Status:** keep. Blurb mixes 1898 (found) and 1902 (a speck made pure).
+**Status:** done (batch 07, as *Radium*; checked, awaiting Michael's reading).
 
 ## `web`: the first web page
 Year 1990 · year · craft · place `cern`
 
 > It explained what the web was. He gave the idea away for free. The page is still online.
 
-**Status:** keep. "Still online" is a later copy.
+**Status:** done (batch 07, as *First web page*; checked, awaiting Michael's reading).
 
 ## `issun-boshi` (new, no old record): Issun-bōshi, the one-inch boy
 Year to find · precision to find · text · place to find · added 1 Oct 2026 by Michael; opens a gallery story still to be written
 
 > No blurb. A Japanese tale of a boy no taller than a thumb who sets out in a rice bowl, with a needle for a sword. The event's date is when the tale was first written down or printed, which is still to be checked.
 
-**Status:** keep. Write an ordinary More; link to the gallery story once it exists. New record, so no `replaces`.
+**Status:** done (batch 07, as *Issun-bōshi*; checked, awaiting Michael's reading).

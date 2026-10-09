@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
-"""deep-events-from-vault.py — the deep-time events, from the vault to the site (Plan-Deep-Time, Stage 6).
+"""deep-events-from-vault.py — every event, from the vault to the one store of Deep Time (Plan-Deep-Time,
+Stage 6; the one store, a first step of Stage 7, 9 Oct 2026).
 
-Reads CWVault/claude/Events-Deep-NN.md (written to Prompt-Deep-Time-Events.md) and writes
-cw-deploys/stories/deep-time-events.json: the same record shape as stories/timeline-events.json
-with the fields deep time adds. The markdown is the source; the JSON is generated and never
-edited by hand. A store of its own for now: the shipping Time Machine page draws a speck for
-every event it loads, and these would land off its line; Stage 7 merges them.
+Reads CWVault/claude/Events-Deep-NN.md (written to Prompt-Deep-Time-Events.md), then the timeline
+batches through tools/events-from-vault.py's own parser (Events-Batch-01.md to -07.md and the samples),
+then the September survivors of cw-deploys/stories/after-the-ice-events.json that no record replaces,
+and writes cw-deploys/stories/deep-time-events.json: one list, oldest first, each record with `ma`
+and `chunk`, and `line` saying whether it is a deep record or an after-the-ice one. The markdown is
+the source; the JSON is generated and never edited by hand. Where a new record and an old one
+conflict the new one wins: a Replaces line retires the September id (kept in `aliases`), a deep
+record's Replaces retires a sketch of the tree, and the two records Michael cut are in CUT.
 
     python3 tools/deep-events-from-vault.py            writes the file and reports
     python3 tools/deep-events-from-vault.py --check    parses and reports, writes nothing
@@ -232,6 +236,40 @@ def chunk_of(tree, ma):
     walk(tree, [])
     return best[0][1:] if best else []
 
+# The September records cut with no replacement (Michael, 1 and 8 Oct 2026): dropped, no alias.
+CUT = {'lead-socrates-2': 'Heraclitus: a saying, not an event (1 Oct)', 'lead-frank-3': 'Aldini: uneasy about it for a child; he stays in the Frankenstein story (8 Oct)'}
+# Two timeline records cover the sketches the deep tree's bottom rung carried (After the ice: 'The ice lets go', 'Writing').
+SKETCHES_BY_ID = {'the-ice-lets-go': ['The ice lets go'], 'writing-at-uruk': ['Writing']}
+OLD = 'cw-deploys/stories/after-the-ice-events.json'
+PLACES = 'cw-deploys/stories/places.json'
+
+ROUND = {'decade': 10, 'century': 100, 'millennium': 1000}
+def plain(astro, precision):
+    """The plain year for a store year, as active/time-machine.html writes it: 1 BC is 0, 500 BC is -499."""
+    import math
+    step = ROUND.get(precision, 1); y = math.floor(astro)
+    n = y if y >= 1 else 1 - y; r = int(round(n / step) * step) or n
+    return ('About ' if precision in ROUND else '') + ((str(r) + ' CE' if r < 1000 else str(r)) if y >= 1 else str(r) + ' BCE')
+
+def from_timeline(rec):
+    """A timeline record (events-from-vault.py) as the one store holds it: the record as written, plus ma and chunk."""
+    r = dict(rec)
+    r['ma'] = (THIS_YEAR - r['year']) / 1e6
+    r['tail'] = None; r['evidence'] = 'dated'; r['line'] = 'after-the-ice'
+    if r['id'] in SKETCHES_BY_ID: r['replacesSketch'] = SKETCHES_BY_ID[r['id']]
+    return r
+
+def from_september(rec, places):
+    """A September survivor (after-the-ice-events.json): the blurb, after its plain year, as the summary; no More."""
+    p = rec.get('place') and places.get(rec['place'])
+    return {'id': rec['id'], 'source': {'file': OLD, 'section': rec['id']}, 'label': rec['label'],
+            'year': rec['year'], 'ma': (THIS_YEAR - rec['year']) / 1e6, 'precision': rec.get('precision') or 'year',
+            'kind': rec.get('kind'), 'weight': rec.get('weight') or 1, 'weightStatus': 'provisional',
+            'place': {'name': p['name'], 'short': p['name'], 'lat': p['lat'], 'lon': p['lon']} if p else {'name': None, 'short': None, 'lat': None, 'lon': None},
+            'summary': plain(rec['year'], rec.get('precision')) + '. ' + (rec.get('blurb') or ''), 'more': None, 'references': [],
+            'tail': None, 'evidence': 'dated', 'line': 'after-the-ice', 'legacy': 'September 2026: a blurb from general knowledge, unsourced; no More',
+            'story': rec.get('story')}
+
 def main():
     check = '--check' in sys.argv
     files = sorted(glob.glob(os.path.join(ROOT, 'CWVault/claude/Events-Deep-*.md')))
@@ -246,47 +284,91 @@ def main():
                 rec = parse_event(block, rel, where)
             except ParseError as e:
                 problems.append(str(e)); continue
-            rec['chunk'] = chunk_of(tree, rec['ma'])
+            rec['line'] = 'deep'
             if rec['id'] in seen:
                 # a later batch may revise an earlier event (batch 7's Archaeopteryx): the later file wins
                 replaced.append('%s revises %s' % (where, seen[rec['id']]))
                 events = [e for e in events if e['id'] != rec['id']]
             seen[rec['id']] = where
             events.append(rec)
+    # the timeline batches, through the timeline converter's own parser (the same markdown, the same checks)
+    n_deep = len(events)
+    for rel, short in base.SOURCES:
+        text = open(os.path.join(ROOT, rel), encoding='utf-8').read()
+        for block in split_events(text):
+            where = '%s § %s' % (rel, block.split('\n')[0].lstrip('# '))
+            try:
+                rec = base.parse_event(block, rel, where)
+            except base.ParseError as e:
+                problems.append(str(e)); continue
+            if rec['id'] in seen:
+                problems.append('%s: id %r already used by %s' % (where, rec['id'], seen[rec['id']])); continue
+            seen[rec['id']] = where
+            events.append(from_timeline(rec))
     for p in problems:
         print('FAILED', p, file=sys.stderr)
     if problems:
         print('%d record(s) failed to parse; nothing written.' % len(problems), file=sys.stderr); sys.exit(1)
+    # the September records: retired by a Replaces line, cut, or standing aside for a record that is here; the rest survive
+    old = json.load(open(os.path.join(ROOT, OLD), encoding='utf-8'))
+    book = json.load(open(os.path.join(ROOT, PLACES), encoding='utf-8'))
+    places = dict(book.get('places') or {}); places.update(old.get('places') or {})
+    aliases = {}
+    for e in events:
+        for oid in e.get('replaces') or []: aliases[oid] = e['id']
+    have = set(seen); survivors = []
+    for r in old.get('events') or []:
+        if r['id'] in aliases or r['id'] in CUT: continue
+        if r.get('same') and (r['same'] in have or r['same'] in aliases):
+            aliases[r['id']] = r['same']; continue
+        survivors.append(r['id']); events.append(from_september(r, places))
+    for e in events:
+        e['chunk'] = chunk_of(tree, e['ma'])
     events.sort(key=lambda e: -e['ma'])
     for r in replaced: print('note:', r)
-    print('%d events from %d files' % (len(events), len(files)))
-    sketches = sorted(set(l for e in events for l in e['replacesSketch']))
+    print('%d deep events from %d files; %d timeline events from %d files; %d September survivor(s): %s; %d aliases; %d cut' %
+          (n_deep, len(files), len(events) - n_deep - len(survivors), len(base.SOURCES), len(survivors), ', '.join(survivors) or 'none', len(aliases), len(CUT)))
+    sketches = sorted(set(l for e in events for l in e.get('replacesSketch') or []))
     tree_marks = [mk['label'] for c in tree['chunks'] for mk in walk_marks(c)]
     missing = [l for l in sketches if l not in tree_marks]
     unreplaced = [l for l in tree_marks if l not in sketches]
     print('sketches replaced: %d of the tree\'s %d; named but not in the tree: %s; tree marks not replaced: %s' % (len(sketches), len(tree_marks), missing or 'none', unreplaced or 'none'))
     for e in events:
         flags = []
-        if e['uncertaintyMa'] is None: flags.append('no uncertainty on the Age line (%s)' % (e['ageNote'] or 'none stated'))
-        if e['placeNow'] is None: flags.append('no place now')
-        if 'kindNote' in e: flags.append('kind %r outside the list' % e['kindRaw'])
-        if not e['checked']: flags.append('no Checked section')
-        if e['more']['words'] and not (240 <= e['more']['words'] <= 360): flags.append('More %d words' % e['more']['words'])
-        if flags: print('  %-28s %s' % (e['id'], '; '.join(flags)))
+        if e['line'] == 'deep':
+            if e['uncertaintyMa'] is None: flags.append('no uncertainty on the Age line (%s)' % (e['ageNote'] or 'none stated'))
+            if e['placeNow'] is None: flags.append('no place now')
+            if not e['checked']: flags.append('no Checked section')
+        else:
+            if e.get('place', {}).get('lat') is None: flags.append('no coordinates')
+            if e.get('legacy'): flags.append('September record, no More')
+        if 'kindNote' in e: flags.append('kind %r outside the list' % e.get('kindRaw', e['kind']))
+        if e.get('more') and e['more'].get('words') and not (240 <= e['more']['words'] <= 360): flags.append('More %d words' % e['more']['words'])
+        if flags: print('  %-32s %s' % (e['id'], '; '.join(flags)))
     if check:
         print('check only; nothing written'); return
     out = {
-        '_about': 'GENERATED by tools/deep-events-from-vault.py from CWVault/claude/Events-Deep-*.md — do not edit by hand; edit the markdown and run the tool. '
-                  'The deep-time events (Prompt-Deep-Time-Events.md), the same record shape as timeline-events.json plus the deep fields: '
-                  'ma (millions of years ago), year (the store\'s astronomer\'s year), uncertaintyMa and precisionYears (null when the Age line gives none), '
-                  'ageHow (the method, as written), tail ({ ma, year, reason } or null) with evidence "earliest" or "dated", knownFrom, placeNow '
-                  '({ name, short, lat, lon } or null: where the evidence is today), replacesSketch (the labels of the marks in deep-time.json this '
-                  'record replaces), chunk (the path of chunk names holding its age), more.dateLine as { ago, tail } (deep lines count ago only), '
-                  'weight proposed by rule (3 replaces a tree mark, 2 otherwise). Notes for us never enter this file. Read by js/deep-time.js.',
-        'version': time.strftime('%Y-%m-%d'), 'sources': [os.path.relpath(f, ROOT) for f in files], 'count': len(events), 'events': events,
+        '_about': 'GENERATED by tools/deep-events-from-vault.py — do not edit by hand; edit the markdown and run the tool. The one store of '
+                  'Deep Time (active/deep-time.html; Plan-Deep-Time.md Stage 7, first step, 9 Oct 2026): every event, deep and after the ice. '
+                  'LINE says which: "deep" records are the deep-time events (CWVault/claude/Events-Deep-*.md, Prompt-Deep-Time-Events.md) with the '
+                  'deep fields — ma (millions of years ago), uncertaintyMa and precisionYears (null when the Age line gives none), ageHow, '
+                  'tail ({ ma, year, reason } or null) with evidence "earliest" or "dated", knownFrom, placeNow ({ name, short, lat, lon } or null), '
+                  'replacesSketch (the labels of the marks in deep-time.json this record replaces), more.dateLine as { ago, tail, sure? } (deep lines '
+                  'count ago only); "after-the-ice" records are the timeline events (Events-Batch-01.md to -07.md and Timeline-Samples.md, parsed by '
+                  'tools/events-from-vault.py, the same records as stories/timeline-events.json) with ma added — year (the astronomer\'s year), '
+                  'precision (exact, year, decade, century, millennium), place { name, short, lat, lon }, more.dateLine as its parts { count, ordinary, ago }, '
+                  'replaces (the September ids this record retires) — plus the September survivors of stories/after-the-ice-events.json that no '
+                  'record replaces (marked legacy: a blurb as the summary, no More). YEAR is the astronomer\'s year throughout; every record has ma and '
+                  'chunk (the path of chunk names in deep-time.json holding its age). WEIGHT is proposed (deep: 3 replaces a tree mark, 2 otherwise; '
+                  'timeline: the converter\'s table), Michael\'s to change. ALIASES maps every retired September id to the record that stands for it, '
+                  'so her line still finds them; CUT names the two dropped with no replacement. Notes for us and the Checked paragraph never enter this file.',
+        'version': time.strftime('%Y-%m-%d'),
+        'sources': [os.path.relpath(f, ROOT) for f in files] + [r for r, _ in base.SOURCES] + [OLD],
+        'count': len(events), 'aliases': aliases, 'cut': CUT, 'events': events,
     }
     with open(os.path.join(ROOT, OUT), 'w', encoding='utf-8') as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
+        f.write('\n')
     print('wrote %s: %d events, %.0f kB' % (OUT, len(events), os.path.getsize(os.path.join(ROOT, OUT)) / 1000))
 
 def walk_marks(node):

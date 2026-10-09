@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """events-from-vault.py — the timeline events, from the vault to the site.
 
-Reads the event batches written to Timeline-Stories.md (CWVault/claude/Events-Batch-01.md and
-the two worked samples in Timeline-Samples.md) and writes cw-deploys/stories/timeline-events.json
-for the Time Machine bench (experiments/time-machine.html). The markdown is the source; the JSON
+Reads the event batches written to Timeline-Stories.md (CWVault/claude/Events-Batch-01.md to -07.md
+and the two worked samples in Timeline-Samples.md) and writes cw-deploys/stories/timeline-events.json
+for the Time Machine (active/time-machine.html). tools/deep-events-from-vault.py imports this file's
+parser and folds the same records into stories/deep-time-events.json, the one store of Deep Time
+(9 Oct 2026). The markdown is the source; the JSON
 is generated and never edited by hand.
 
     python3 tools/events-from-vault.py            writes the file and reports
@@ -31,6 +33,9 @@ SOURCES = [
     ('CWVault/claude/Events-Batch-02.md', 'batch-02'),
     ('CWVault/claude/Events-Batch-03.md', 'batch-03'),
     ('CWVault/claude/Events-Batch-04.md', 'batch-04'),
+    ('CWVault/claude/Events-Batch-05.md', 'batch-05'),
+    ('CWVault/claude/Events-Batch-06.md', 'batch-06'),
+    ('CWVault/claude/Events-Batch-07.md', 'batch-07'),
     ('CWVault/claude/Timeline-Samples.md', 'samples'),
 ]
 OUT = 'cw-deploys/stories/timeline-events.json'
@@ -73,6 +78,16 @@ WEIGHTS = {
     'stonehenge': 3, 'enheduanna': 2, 'first-alphabet': 3, 'oracle-bones': 2, 'iron': 2, 'olmec-heads': 2,
     'greek-alphabet': 2, 'assyrian-eclipse': 1, 'jerwan-aqueduct': 1, 'ninevehs-library': 2, 'first-coins': 2,
     'pythagoras': 3, 'athens-votes': 3, 'confucius': 3, 'aeschylus': 2,
+    # batch 5 (Anaxagoras to Gutenberg, upgraded from the September records; 8 Oct)
+    'anaxagoras': 2, 'socrates': 3, 'paper': 3, 'teotihuacan': 2, 'zero': 3, 'algebra': 2, 'hawaii': 2,
+    'ibn-al-haytham': 2, 'compass': 2, 'chartres-blue': 2, 'fibonacci': 2, 'aotearoa': 2, 'gutenberg': 3,
+    # batch 6 (Galileo to Darwin; 8 Oct)
+    'galileos-telescope': 3, 'decimal-fractions': 2, 'franklins-kite': 2, 'galvanis-frogs': 2, 'laki': 2,
+    'voltas-pile': 2, 'tambora': 3, 'frankenstein': 3, 'first-photograph': 2, 'faradays-ring': 2, 'darwins-tree': 3,
+    # batch 7 (Issun-bōshi to the first web page; 8 Oct)
+    'issun-boshi': 1, 'daguerreotype': 2, 'paint-tubes': 1, 'japanese-prints': 2, 'impression-sunrise': 2,
+    'galloping-horse': 2, 'van-gogh-in-arles': 2, 'eiffel-tower': 2, 'montparnasse-train': 2, 'lumiere-show': 2,
+    'radium': 2, 'first-web-page': 3,
 }
 
 
@@ -83,7 +98,7 @@ class ParseError(Exception):
 def slug(text):
     t = unicodedata.normalize('NFKD', text)
     t = ''.join(c for c in t if not unicodedata.combining(c))
-    t = t.lower().replace('’', '').replace("'", '')
+    t = t.lower().replace('’', '').replace("'", '').replace('ʻ', '')   # the ʻokina of Hawaiʻi: the id is hawaii
     t = re.sub(r'[^a-z0-9]+', '-', t).strip('-')
     return t
 
@@ -102,14 +117,18 @@ def parse_year(line, where):
     if precision not in PRECISIONS:
         raise ParseError('%s: precision %r is not one of %s' % (where, precision, sorted(PRECISIONS)))
     rec = {'year': num(year), 'yearAbout': bool(about), 'precision': precision, 'kindRaw': kind_raw.strip()}
-    date = None
-    for note in (year_note, prec_note):
-        if note and re.search(r'\d', note) and 'astronomers' not in note:
-            date = note.strip()
-        elif note and ';' in note:
-            date = note.split(';', 1)[1].strip()
-    if date:
-        rec['exactDate'] = date
+    # a note in brackets after the year ("−398 (399 BCE)") or after the precision word ("exact (19 August
+    # 1839)", "decade (the Kanbun era, 1661–1673)", "year (January to March)"): the word before the bracket
+    # is the precision; the note is for us. An exact precision's note is the date itself (exactDate);
+    # any other note is kept as precisionNote, and the year's as yearNote. Nothing on the page reads them.
+    if year_note:
+        rec['yearNote'] = year_note.strip()
+    if prec_note:
+        note = prec_note.strip()
+        if precision == 'exact' and re.search(r'\d', note):
+            rec['exactDate'] = note
+        else:
+            rec['precisionNote'] = note
     k = kind_raw.strip().lower()
     if k in KINDS:
         rec['kind'] = KINDS[k]
@@ -198,10 +217,18 @@ def parse_event(block, source, where):
     rec['place'] = parse_place(one('Place:'), where)
     for ln in lines:
         if ln.startswith('**Replaces:**'):
-            ids = re.findall(r'`([^`]+)`', ln) or [t.strip() for t in re.sub(r'^\*\*Replaces:\*\*', '', ln).split(',') if t.strip()]
-            if not ids:
+            # ids in backticks, one or several ("`tambora`, `lead-frank-4`"; "`x` and `y`"); or the word
+            # none ("none (new record)", batch 7's Issun-bōshi), which names no id
+            rest = re.sub(r'^\*\*Replaces:\*\*', '', ln).strip()
+            ids = re.findall(r'`([^`]+)`', ln)
+            if not ids and rest.lower().startswith('none'):
+                ids = []
+            elif not ids:
+                ids = [t.strip() for t in re.split(r',|\band\b', rest) if t.strip()]
+            if not ids and not rest.lower().startswith('none'):
                 raise ParseError('%s: the Replaces line names no id: %r' % (where, ln))
-            rec['replaces'] = ids
+            if ids:
+                rec['replaces'] = ids
 
     # the summary: the line after the Summary header, its trailing *More* removed
     for i, ln in enumerate(lines):
@@ -268,7 +295,7 @@ def parse_event(block, source, where):
         raise ParseError('%s: no References' % where)
     refs = []
     k = ri + 1
-    while k < len(lines) and not lines[k].startswith('**Notes for us'):
+    while k < len(lines) and not lines[k].startswith('**'):      # the list ends at the next header: Notes for us, or Checked
         s = lines[k].strip()
         if s.startswith('- '):
             refs.append(s[2:].strip())
@@ -349,9 +376,10 @@ def main():
                   'proposed: editorial, Michael\'s to change. place.short is derived for the map label; place.name is '
                   'the source\'s words. REPLACES (batch 3 onward) names the September ids in '
                   'stories/after-the-ice-events.json that this record retires; the page drops those and keeps their '
-                  'ids as aliases, so her line still finds them. Notes for us never enter this file. Read by '
-                  'active/time-machine.html.',
-        'version': '2026-09-30',
+                  'ids as aliases, so her line still finds them (since 9 Oct 2026 batches 1 and 2 carry Replaces lines too, '
+                  'for the pairs the page once held in SAME). Notes for us and the Checked paragraph never enter this file. Read by '
+                  'active/time-machine.html; folded into stories/deep-time-events.json by tools/deep-events-from-vault.py.',
+        'version': '2026-10-09',
         'sources': [r for r, _ in SOURCES],
         'count': len(events),
         'events': events,

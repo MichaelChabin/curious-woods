@@ -10,6 +10,7 @@ role: The worked examples for timeline events. Once approved, these become the e
 **Label:** Göbekli Tepe
 **Year:** about −9500 (astronomers' year) · precision: millennium · kind: place
 **Place:** Göbekli Tepe, near Şanlıurfa, southeast Turkey (37.22 N, 38.92 E)
+**Replaces:** `gobekli`
 
 **Summary (35 words)**
 About 9500 BCE. On a hill in what is now southeast Turkey, people who hunted and gathered their food carved stone pillars as tall as a house and stood them in rings. Nobody knows why. *More*
@@ -62,6 +63,7 @@ For now, we know the pillars with arms have no faces. Maybe someday we'll know w
 **Label:** Eclipse battle
 **Year:** −584.6 (astronomers' year; 28 May 585 BCE) · precision: exact · kind: sky event
 **Place:** the Halys river (now the Kızılırmak), central Turkey. The battlefield itself is not known.
+**Replaces:** `thales`
 
 **Summary (34 words)**
 28 May 585 BCE. During a battle between two kings in what is now Turkey, the Moon covered the Sun and the day went dark. The armies stopped fighting, and the kings made peace. *More*

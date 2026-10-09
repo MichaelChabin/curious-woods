@@ -61,11 +61,11 @@
   <div id="panel"><span class="hint">Pull a section down, then tap a dot.</span></div>
   <p class="foot">The sections are cut where the evidence changes kind, and each bar says what it is known from. The marks are the deep-time events (<code>../stories/deep-time-events.json</code>, seventy of them, written and checked in October); tap one, then <i>More</i>. Hazen's <i>The Story of Earth</i> for the colours and the chunks.</p>
 </main>
-<script src="../js/deep-time.js?v=2026-10-07b"></script>
+<script src="../js/deep-time.js?v=2026-10-09"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-07 2bfb1fc';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-09 20ce31e';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
   const panel = document.getElementById('panel');
   let bar = null, currentBar = null;
@@ -81,7 +81,7 @@
     },
     onMark: (mk, b) => {
       const rec = mk.rec;
-      panel.innerHTML = '<h2>' + esc(mk.label) + '</h2><p class="when">' + esc(bar.fmt(mk.ma)) + (mk.tail ? ', and probably began by ' + esc(bar.fmt(mk.tail).replace(' ago', '')) : '') + '</p><p>' + cwDeepTime.prose(mk.text || '') + (rec ? ' <span class="more" role="button" tabindex="0">More</span>' : '') + '</p><div class="known">Known from ' + esc((rec && rec.knownFrom) || b.knownFrom || '') + '.</div>';
+      panel.innerHTML = '<h2>' + esc(mk.label) + '</h2><p class="when">' + esc(bar.fmt(mk.ma)) + (mk.tail ? ', and probably began by ' + esc(bar.fmt(mk.tail).replace(' ago', '')) : '') + '</p><p>' + cwDeepTime.prose(mk.text || '') + (rec && rec.more ? ' <span class="more" role="button" tabindex="0">More</span>' : '') + '</p><div class="known">Known from ' + esc((rec && rec.knownFrom) || b.knownFrom || '') + '.</div>';
       const w = panel.querySelector('.more');
       if (w) w.addEventListener('click', () => { const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec); panel.appendChild(box); w.remove(); });
     }

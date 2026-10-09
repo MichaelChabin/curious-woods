@@ -11,8 +11,11 @@
   in the gallery, with the earth from space at 150 million years as its picture). The nested bar of
   Earth's 4.6 billion years (js/deep-time.js, stories/deep-time.json) drives the map (js/map.js),
   which this side of the ice ages is the ground and past them the globe (js/globe.js): the continents
-  where they were, in the five words of knowing. The events are stories/deep-time-events.json; the
-  curves under the bar are stories/curves/. The plan: CWVault/claude/Plan-Deep-Time.md.
+  where they were, in the five words of knowing. The events are stories/deep-time-events.json — since
+  9 Oct 2026 the one store, every event deep and after the ice (the seven deep batches, the seven
+  timeline batches and the samples, and the two September survivors), the first step of Stage 7; a
+  September survivor has no More. The curves under the bar are stories/curves/. The plan:
+  CWVault/claude/Plan-Deep-Time.md.
 -->
 <title>Deep Time</title>
 <style>
@@ -75,11 +78,11 @@
 </main>
 <script src="../js/map.js?v=2026-10-07b"></script>
 <script src="../js/globe.js?v=2026-10-07c"></script>
-<script src="../js/deep-time.js?v=2026-10-07b"></script>
+<script src="../js/deep-time.js?v=2026-10-09"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-07 0042379';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-09 20ce31e';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -99,8 +102,9 @@
       onYear: (ma, storeYear) => { $('when').textContent = bar ? bar.fmt(ma) : ''; map.setTime(storeYear); },
       onMark: (mk, b) => {
         const rec = mk.rec; if (!rec) return;
-        $('summary').innerHTML = '<b>' + esc(rec.label) + '.</b> ' + cwDeepTime.prose(rec.summary) + ' <span class="more" role="button" tabindex="0">More</span>';
-        $('summary').querySelector('.more').addEventListener('click', () => { const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec); cwWindow(box, {}); });
+        $('summary').innerHTML = '<b>' + esc(rec.label) + '.</b> ' + cwDeepTime.prose(rec.summary) + (rec.more ? ' <span class="more" role="button" tabindex="0">More</span>' : '');
+        const more = $('summary').querySelector('.more');   // a September survivor has no More
+        if (more) more.addEventListener('click', () => { const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec); cwWindow(box, {}); });
       }
     });
     window.__map = map; window.__bar = bar;

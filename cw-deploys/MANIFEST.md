@@ -47,8 +47,20 @@ now, outside Europe), `Events-Batch-03.md` (1 Oct: 15 events from the ice to the
 upgraded from a September record and naming it in a `Replaces` field — `replaces` in the JSON — which
 the page retires, keeping the old id as an alias so her line still finds it), `Events-Batch-04.md`
 (1 Oct: 15 events, Stonehenge to Aeschylus, retiring sixteen September ids — Nineveh's library
-retires two; `iron` moves to Tell Hammeh, about 900 BC, the new record's year and place) and
-`Timeline-Samples.md` and writes the 73 events written to `Timeline-Stories.md`. Labels in batches
+retires two; `iron` moves to Tell Hammeh, about 900 BC, the new record's year and place),
+`Events-Batch-05.md`, `-06.md` and `-07.md` (8 Oct, loaded 9 Oct: 36 events, Anaxagoras to the first web
+page, retiring 38 September ids — Tambora, Frankenstein and the Montparnasse train retire two each;
+Issun-bōshi replaces none; nine moved in year or place to the new record's — Socrates to his trial,
+399 BCE; Teotihuacan to about 400; Ibn al-Haytham to about 1030; the compass to about 1088 at
+Zhenjiang; Galileo's telescope to 1610; decimal fractions to Stevin, Leiden, 1585; Galvani's frogs
+to 1791; the first photograph to 1827; Impression, Sunrise to Paris) and
+`Timeline-Samples.md` and writes the 109 events written to `Timeline-Stories.md`. Since 9 Oct
+batches 1 and 2 and the samples carry Replaces lines too (the fifteen pairs the Time Machine page
+held as `SAME`, and the worklist's two merges, `uruk` into Writing at Uruk and `lead-nineveh-2` into
+Homer written down), so every retirement is in the markdown. A precision word's bracketed note
+("exact (19 August 1839)", "decade (the Kanbun era, 1661–1673)") is `exactDate` for an exact
+precision and `precisionNote` otherwise; a year's note ("−398 (399 BCE)") is `yearNote`; nothing on
+a page reads them. Labels in batches
 1 to 3 shortened 1 Oct (Michael: a word or two). A paragraph of a More that is a set-apart
 quotation (a line beginning `> `) is `{"quote": text}` and the page draws it as
 `css/story.css`'s blockquote: id, label, `year` (astronomers'), `precision`, `kind` (the closed list;
@@ -58,8 +70,9 @@ Center, the stand-in is the label — lat, lon; the eclipse has no coordinates i
 so), the summary without its
 trailing More, the More as paragraphs with its date line as parts (count, ordinary date, years
 ago, each with `about`), references, the Pictures wanted line as data, and a `weight` (1 to 3)
-proposed by the tool and marked `proposed`. Notes for us never enter it. Read by
-`experiments/time-machine.html`. **`stories/curves/` (30 Sep 2026)** — curves a timeline draws
+proposed by the tool and marked `proposed`. Notes for us and the Checked paragraph never enter it. Read by
+`active/time-machine.html`; folded whole into `stories/deep-time-events.json` by `tools/deep-events-from-vault.py`
+(9 Oct). **`stories/curves/` (30 Sep 2026)** — curves a timeline draws
 along its span, points in astronomers' years with the source, the licence and how sure the
 numbers are: `people.json` (world population, Our World in Data's long-run series — HYDE 3.3,
 Gapminder, UN WPP — thinned to 73 points, CC BY 4.0) and `sea-level.json` (the readings of
@@ -89,7 +102,22 @@ Rulings-Sept-2026.md *Deep time*), each chunk with its children, its `knownFrom`
 Hazen's `colour`, and `marks` — sketches from the notes of 5 Oct, retired on 7 Oct when the store below
 took over, kept so the generator can say which were replaced. Times in millions of years ago; the
 bottom rung carries `line: 'after-the-ice'`. Read by `js/deep-time.js`.
-**`stories/deep-time-events.json` (7 Oct 2026)** — GENERATED, never edited by hand: the deep-time events,
+**`stories/deep-time-events.json` (7 Oct 2026; the one store since 9 Oct)** — GENERATED, never edited by hand.
+**Since 9 Oct 2026 it is the one store of Deep Time, every event deep and after the ice** (Plan-Deep-Time
+Stage 7's first step; Michael, 9 Oct: deep time supersedes the timeline, and the two sets of batches
+merge into the events it uses, the new names and labels winning over old ones): 180 records, oldest
+first, each with `ma` and `chunk` and a `line` saying which it is — 69 `deep` records as below; 109
+`after-the-ice` records, the timeline batches 1 to 7 and the samples parsed by `tools/events-from-vault.py`'s
+own parser (the same records as `timeline-events.json`, with `ma` added; their date line stays as its
+parts and `js/deep-time.js` steps it as the Time Machine does); and the 2 September survivors of
+`after-the-ice-events.json` that no record replaces (`jomon`, which Michael saved for deep time and
+now sits on the ice-ages bar at 11,925 years ago, and `starry`, which links to its story), marked
+`legacy`, their blurb after its plain year as the summary, no More. `aliases` maps all 86 retired
+September ids to the record that stands for them; `cut` names the two dropped with no replacement
+(`lead-socrates-2` Heraclitus, `lead-frank-3` Aldini). The tree's last two sketches (*The ice lets go*,
+*Writing*) are replaced by the timeline's own records, so every sketch in `deep-time.json` is now
+retired. One deep record, the oldest grains at 4567.3 Ma, lies 0.3 million years past the tree's root
+(4567) and has no chunk, so no bar draws it — as before this change; open. **The deep records (7 Oct):**
 written by a Cowork chat on Opus to `CWVault/claude/Prompt-Deep-Time-Events.md` in seven batches
 (`CWVault/claude/Events-Deep-01.md` to `-07.md`, 6–7 Oct; researched by agents, checked by four
 independent checkers each) and read by `tools/deep-events-from-vault.py` (outside this folder, in
@@ -98,10 +126,11 @@ beads, paint and flutes of the ice ages. The same record shape as `timeline-even
 fields — `ma`, `uncertaintyMa` and `precisionYears` (null where the Age line gave none), `ageHow`,
 `tail` with its reason and `evidence` (earliest or dated), `knownFrom`, `placeNow` (where the evidence is
 today), `replacesSketch`, `chunk`, the date line as `{ ago, tail, sure? }` (deep lines count ago only) —
-with a weight proposed by rule. A store of its own for now: the shipping Time Machine page draws a
-speck for every event it loads, and these would land off its line; Stage 7 merges them. A later batch
-revising an earlier event (batch 7's *Archaeopteryx*) wins. Read by `js/deep-time.js` on the deep-time
-and join benches; the More opens in the map's window on the join and inline on the bar bench.
+with a weight proposed by rule. A later batch
+revising an earlier event (batch 7's *Archaeopteryx*) wins. Read by `js/deep-time.js` on
+`active/deep-time.html` and the two benches; the More opens in the map's window on the page and inline on
+the bar bench. The Time Machine page still reads `timeline-events.json` and the September file, its own
+two, until it opens on the earth line (the rest of Stage 7).
 **`stories/plates/continents.json` (6 Oct 2026)** — GENERATED, never edited by hand: the continents
 in motion, for the deep-time Time Machine (`CWVault/claude/Plan-Deep-Time.md`, Stage 1).
 `tools/plates-from-gplates.py` (outside this folder, in `_CW/tools/`; needs `pip install pygplates
@@ -1077,7 +1106,12 @@ backstop for the Claude Code session that lands the file.
   grade, its sentence), the map with the Time Machine's opening box and, since Stage 5, the ice-age sea-level curve
   (`stories/curves/sea-level-ice-ages.json`) and the curve words under the bar.
   Lesson: the globe must measure its host's layout width, not its drawn width, or it sizes itself
-  to the scaled-up arrival. Reads `../art/icons/time-machine-icon-256.png`. `CW_VERSION 2026-10-07 2bfb1fc`.
+  to the scaled-up arrival. Reads `../art/icons/time-machine-icon-256.png`. **9 Oct 2026 — the one
+  store:** the page's events file now holds every event, deep and after the ice (see
+  `stories/deep-time-events.json`); the After the ice bar draws the 109 timeline records as its marks,
+  labels heavier first, and a tap on one opens its More with the stepped three-line date (the
+  Time Machine's), a September survivor's summary without the word More. `js/deep-time.js?v=2026-10-09`
+  on this page and both benches (`globe-bench.html`, `deep-time-bench.html`, restamped). `CW_VERSION 2026-10-09 20ce31e`.
 
 - **`globe-bench.html` (6 Oct 2026)** — *The earth from space*: the nested bar of deep time over a
   globe, Stage 3 of `CWVault/claude/Plan-Deep-Time.md`. **`../js/globe.js`** (new that day) —
@@ -1212,9 +1246,13 @@ backstop for the Claude Code session that lands the file.
   (about 1805). A tap anywhere stops it, and the arrival run (the Focus window sweeps from the
   ice to now, then settles on 4 000–7 500). **Data:** `../stories/after-the-ice-events.json`
   and `../stories/timeline-events.json`, merged at load — where a new event covers the same
-  thing as a September one the September one is dropped (`SAME` in the page, 15 pairs — the
-  fifteenth, the Moon landing, from batch 2 — in neither file; from batch 3 on, the record's own
-  `replaces` field does this, 31 more by batch 4); a September record that stands aside for the shared list (`same`) is kept,
+  thing as a September one the September one is dropped: the record's own `replaces` field names
+  it (30 Sep to 9 Oct the page held 15 pairs as `SAME`, in neither file; since 9 Oct those are
+  Replaces lines in batches 1 and 2 and the samples, and `SAME` is gone — every retirement is in
+  the data, 86 ids by batch 7), and `CUT` in the page drops the two September records Michael cut
+  with no replacement (`lead-socrates-2` Heraclitus, 1 Oct; `lead-frank-3` Aldini, 8 Oct), no alias.
+  **9 Oct 2026, batches 5 to 7 loaded:** 111 events on the line (109 from the batches, plus `jomon` and
+  `starry`, the last September records standing); `CW_VERSION 2026-10-09 20ce31e`. A September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the
