@@ -241,7 +241,7 @@
     // ---- drawing ----
     function size() {
       var w = host.clientWidth || host.getBoundingClientRect().width || 400;
-      var D = Math.round(opts.size || Math.min(w, 560));
+      var D = Math.round(opts.size || (proj === 'flat' ? w : Math.min(w, 560)));   // the flat map takes its host's whole width (9 Oct); the disc is capped
       W = D; H = proj === 'flat' ? Math.round(D / 2) : D;
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + 'px'; canvas.style.height = H + 'px';

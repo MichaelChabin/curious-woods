@@ -29,7 +29,8 @@
    onMark then hands over the mark with its record at `mark.rec`; cwDeepTime.moreHTML(rec) renders
    the More as the Time Machine page does (the date line stepped, the paragraphs, the references).
    Since 9 Oct 2026 the store is the one store, every event deep and after the ice (Stage 7's first
-   step): an after-the-ice record's date line is its parts { count, ordinary, ago } and is stepped
+   step); a mark is a short vertical bar, not a dot, and events() and span() let the page say which
+   event the marker has just passed: an after-the-ice record's date line is its parts { count, ordinary, ago } and is stepped
    as the Time Machine steps it; a September survivor has no More (rec.more is null), so the page
    offers the word only when there is one.
 
@@ -221,17 +222,18 @@
           var strip = el('rect', { x: g.xL, y: g.y + BAR_H, width: g.xR - g.xL, height: 20, fill: 'transparent', 'class': 'knob' }, grp);
           strip.addEventListener('pointerdown', startDrag);
         }
-        // the marks: tail, dot, label (two rows, dropped where they would collide)
+        // the marks: a short vertical bar under the body at the oldest evidence (Michael, 9 Oct: bars, not
+        // dots), the tail running older from it; the label in two rows, dropped where it would collide
         var rows = [[], []];
         marksFor(n).forEach(function (mk) {
           var mx = g.x(mk.ma);
           if (mk.tail && mk.tail > mk.ma) {
             var tx = g.x(Math.min(mk.tail, n.from));
-            el('rect', { x: tx, y: g.y + BAR_H + 7, width: Math.max(2, mx - tx), height: 3, fill: 'url(#cw-deep-tail)' }, grp);
+            el('rect', { x: tx, y: g.y + BAR_H + 7.5, width: Math.max(2, mx - tx), height: 2, fill: 'url(#cw-deep-tail)' }, grp);
           }
           var mg = el('g', { 'class': 'mark' }, grp);
-          el('circle', { cx: mx, cy: g.y + BAR_H + 8.5, r: 9, fill: 'transparent' }, mg);
-          el('circle', { cx: mx, cy: g.y + BAR_H + 8.5, r: 3.6, fill: INK }, mg);
+          el('rect', { x: mx - 9, y: g.y + BAR_H, width: 18, height: 17, fill: 'transparent' }, mg);
+          el('rect', { x: mx - 1.25, y: g.y + BAR_H + 2, width: 2.5, height: 13, rx: 1, fill: INK }, mg);
           var placed = false;
           for (var r = 0; r < LABEL_ROWS && !placed; r++) {
             var lw = mk.label.length * 5.6 + 6, lx0 = mx - lw / 2, lx1 = mx + lw / 2;
@@ -404,6 +406,8 @@
     return {
       year: function () { return ma; },
       setYear: setYear,
+      events: function () { return store; },     // the store's records, once loaded (null before); the page's passing line reads it
+      span: function () { var d = deepest(); return { from: d.from, to: d.to, name: d.name }; },   // the deepest open bar's span
       setCurve: function (c) { curve = c || null; draw(); },
       curve: function () { return curve; },
       open: open,

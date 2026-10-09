@@ -125,7 +125,7 @@
     '.cw-map canvas.cw-sea{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     /* deep time (6 Oct 2026): past the seam the globe is the base, over the tiles, the sea and the marks;
        it arrives pulling away from the ground and leaves coming down to it — a scale and a fade, never a cut */
-    '.cw-map .cw-deep-base{position:absolute;left:0;top:0;width:100%;height:100%;background:#f4f1e8;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(2.4);transition:opacity .5s ease,transform .5s ease;pointer-events:none;line-height:0;}',
+    '.cw-map .cw-deep-base{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;background:#f4f1e8;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(2.4);transition:opacity .5s ease,transform .5s ease;pointer-events:none;line-height:0;}',
     '.cw-map .cw-deep-base.on{opacity:1;transform:scale(1);pointer-events:auto;}',
     '.cw-map .cw-deep-base.half{left:50%;width:50%;background:rgba(244,241,232,0.92);}',
     '.cw-map .cw-deep-base>div{margin:0 6px;}',
@@ -1088,7 +1088,11 @@
         var shown = kids.filter(function (k) { return k.style.display !== 'none'; }), n = shown.length || 1, cw = hw / n;
         shown.forEach(function (k) {
           var flat = k === (deepFlat && deepFlat._host), d;
-          if (flat) { d = Math.max(160, Math.min(cw, 2 * hh) - 16); k.style.width = d + 'px'; k.style.height = (d / 2) + 'px'; }
+          // the flat map alone fills the box's width (Michael, 9 Oct: when it is map only it should fill its area);
+          // the box is wider than 2:1, so the poles are cropped evenly top and bottom, as the pyramid crops them.
+          // Beside the globe it keeps to its half.
+          if (flat && n === 1) { d = Math.max(160, cw - 16); k.style.width = d + 'px'; k.style.height = (d / 2) + 'px'; }
+          else if (flat) { d = Math.max(160, Math.min(cw, 2 * hh) - 16); k.style.width = d + 'px'; k.style.height = (d / 2) + 'px'; }
           else { d = Math.max(120, Math.min(cw, hh) - 16); k.style.width = d + 'px'; k.style.height = d + 'px'; }
         });
       }
@@ -1109,6 +1113,21 @@
         if (window.ResizeObserver) new ResizeObserver(deepSize).observe(stage);
         return true;
       }
+      // the flat map alone (Michael, 9 Oct: when it is map only it should fill its area): the box grows to
+      // the map's 2:1 at the box's full width, within the window's cap, and comes back to its height when
+      // the globe returns or the ground does; past the cap the poles are cropped evenly, as the pyramid crops them
+      var deepGrewFrom = null;
+      function growForFlat(on) {
+        if (on && deepGrewFrom === null) {
+          deepGrewFrom = stage.style.height;
+          var nh = Math.max(STAGE_MIN, Math.min(stageMax(), Math.round(stage.clientWidth / 2)));
+          stage.style.height = nh + 'px'; if (leftBar) leftBar.style.height = nh + 'px';
+        } else if (!on && deepGrewFrom !== null) {
+          stage.style.height = deepGrewFrom; if (leftBar) leftBar.style.height = deepGrewFrom;
+          deepGrewFrom = null;
+          placeTiles(); draw();
+        }
+      }
       function applyView() {
         if (!deepHost) return;
         var wantGlobe = deepView !== 'map', wantFlat = deepAgeNow && deepView !== 'globe';
@@ -1117,6 +1136,7 @@
         if (deepGlobe) deepGlobe._host.style.display = wantGlobe ? '' : 'none';
         if (deepFlat) deepFlat._host.style.display = wantFlat ? '' : 'none';
         deepHost.classList.toggle('half', !deepAgeNow && deepView === 'both');
+        growForFlat(wantFlat && !wantGlobe);
         deepSize();
       }
       function tellDeep() {
@@ -1148,7 +1168,7 @@
             if (deepGlobe) deepGlobe.setTime(ago / 1e6); if (deepFlat) deepFlat.setTime(ago / 1e6);
             setDeep(true);
             if (deepAgeNow) return;
-          } else if (deepHost) setDeep(false);
+          } else if (deepHost) { growForFlat(false); setDeep(false); }
         }
         var m = curveAt(T.seaLevel, timeYear);
         if (m !== null && seaCanvas) { var nm = Math.min(0, Math.round(m * 2) / 2); if (nm !== seaLevel) { seaLevel = nm; drawSea(); } }

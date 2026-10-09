@@ -142,3 +142,19 @@ Michael's rulings for the deep-time Time Machine, given as `claude/Plan-Deep-Tim
    *Amended 6 Oct, evening, from Michael's iPad test:* the globe has a standard view. At rest the north pole is at the top and the south at the bottom. The poles are the limits: tilting stops when either pole faces us. The equator runs east–west, and a drag from left to right moves the surface east whatever the tilt, right to left west, with no limit. (The first build tilted backwards and past the pole, from a sign error; the picture that showed it is in the session of 6 Oct.)
 And, earlier the same day: **the continents move for real** — pieces with plate identities and sampled rotations, each turned to its year — never a crossfade of stills.
 4. **Three more, 7 Oct 2026, on reading the first seventy deep events.** *Life* is a kind in the closed list (sky, earth, crop, craft, object, place, person, text, life), for living things that are neither crop nor animal; more may follow. A deep event may have no place: "this makes sense if there is no honest way to show a location." An age given only as a span or a minimum is shown as a plain dot for now; spans in particular may want showing later.
+
+## The one timeline (9 Oct 2026)
+Michael, 9 Oct, answering twelve questions put to him with Claude's advice ("yes to everything but the descent"), on his page of current thinking `claude/Timeline-Format-Thinking-Oct08.md`:
+1. **His 8 Oct page rules the shape.** One zoomable timeline from the Big Bang to now; Deep Time and the Time Machine become one continuous zoom, the last 12,000 years the deepest drop-down; the Time Machine's envelope and funnel at every level; the filled bars retired. The page's details stay open where it says so.
+2. **Periods are his five** (the young Earth, First life, Oxygen arrives, Ancestors, Animals, with Animals dropping down to the sea, the land, the dinosaurs and after), plainly named, in place of the six chunks of 6 Oct. Each bar keeps its *known from* line.
+3. **Before the Earth** (13.8 to 4.57 billion years) is one rung above the Earth, built last.
+4. **A line's left edge reads 0 and years ago together.** BCE is still absent from deep lines; a story may pin zero to an event.
+5. **The hand-over.** When the last rung opens, the Time Machine's own lines appear beneath it, with the map and the summary; the Time Machine reads the one store and its September file retires.
+6. **The descent on first visit: deferred.** Michael: "let's wait for that."
+7. **The column** is Geometry's left column, holding only the words that act; the explaining paragraphs go into How this works.
+8. **Pictures in a More** are a later round.
+9. **Landmarks** begin with his eight starred ones, their dates checked as the batches were.
+10. **Four small points:** the tree's root extends so the oldest grains draw; the ten uncertain ages and the three `idea` kinds wait for a later pass; the Jōmon pots sit on the ice-ages bar as a September blurb for now.
+11. **Out, for now:** textures, the atmosphere rim, the per-pixel globe, the Edge of Knowing story.
+12. **The iPad test comes after the rebuild.**
+And five things of his own the same morning, "more important": past the ice ages the flat map alone fills its area; the map's words go below the map, and the event's summary stays above it; as the marker passes an event, its name and summary are posted (an experiment: "it may be too much"); the curves want a *graph* tool in the column that explains which line each curve belongs to, switches to that line and plays through it, and opens a panel saying what she is looking at; events are vertical bars, not dots, with the tail running from the bar. The first, second, third and fifth were built the same day on `active/deep-time.html`; the fourth is in the Stage 7 brief, `claude/Prompt-Build-One-Timeline.md`.

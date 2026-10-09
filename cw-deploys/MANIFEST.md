@@ -1112,6 +1112,22 @@ backstop for the Claude Code session that lands the file.
   labels heavier first, and a tap on one opens its More with the stepped three-line date (the
   Time Machine's), a September survivor's summary without the word More. `js/deep-time.js?v=2026-10-09`
   on this page and both benches (`globe-bench.html`, `deep-time-bench.html`, restamped). `CW_VERSION 2026-10-09 20ce31e`.
+  **9 Oct 2026, later — Michael's five points, four built (`CW_VERSION 2026-10-09b 924933f`; `map.js`, `globe.js`
+  and `deep-time.js` at `?v=2026-10-09b` here and on the two benches):** (1) the flat map alone fills its area —
+  in `../js/map.js` the deep base, past the seam with *Map* chosen, grows the box to the map's 2:1 at its full
+  width within the window's cap (`STAGE_MAX_FRACTION`) and brings it back when the globe returns or the ground
+  does, and `.cw-deep-base` clips so past the cap the poles crop evenly, as the pyramid crops them; in
+  `../js/globe.js` the flat projection takes its host's whole width, only the disc capped at 560 px. (2) The
+  map's words — the grade, its sentence, *See it as*, Climate, another guess — sit below the map in `#mapwords`;
+  above it only the year and the event's summary. (3) **The passing line**, an experiment, his to keep or cut:
+  as the marker passes an event on the deepest open bar the page posts its name and summary marked *just
+  passed*, with More, the one nearest where the marker now is when a jump crosses several; `js/deep-time.js`
+  gives `events()` and `span()` for it. (4) A mark is a short vertical bar under the body, not a dot, the tail
+  running older from it. The fifth point, the graph tool, is lane D of `CWVault/claude/Prompt-Build-One-Timeline.md`,
+  the Stage 7 brief. Checked on the Mac: *Map* at 300 million years grows the box from 397 to 505 px and the
+  map is 961 wide; *Both* and *Globe* bring it back; the ground at 10,000 years brings it back and the tiles
+  redraw; a walk across the dinosaurs' bar posts the Great Dying, Dinosaurs, Triassic ends, Archaeopteryx,
+  Flowers in turn; 179 bars drawn (the oldest grains still past the root); no console errors.
 
 - **`globe-bench.html` (6 Oct 2026)** — *The earth from space*: the nested bar of deep time over a
   globe, Stage 3 of `CWVault/claude/Plan-Deep-Time.md`. **`../js/globe.js`** (new that day) —
