@@ -163,7 +163,7 @@
   <div class="kicker">Time Machine</div>
   <h1 id="introTitle">After the Ice</h1>
   <p id="introText">About twelve thousand years ago, the ice that covered the north began to melt, and it did not come back in the winter. This page counts years from then. Everything people have made since then fits on the line at the top: farms, cities, writing, ships, all of it.</p>
-  <p class="how" id="introHow">The line at the top is the whole of the Earth’s time, in periods. Tap a period and the blue window settles on it, and the period opens as a line of its own beneath; tap it again and it closes. Drag the window’s ends to take in more or less. The last line is the twelve thousand years since the ice let go, spread out below its window, with the copper handle for the year you are in. The map shows the world in that year: this side of the ice ages the ground, past them the earth from space, with a word under it saying how sure that is. Tap a mark to read what happened there, and <i>More</i> for the story.</p>
+  <p class="how" id="introHow">The line at the top is the whole of the Earth’s time, in periods. Tap a period and the blue window settles on it, and the period opens as a line of its own beneath; tap it again and it closes. Drag the window’s ends to take in more or less: the line below says how long that is. When the lines pile up, <i>Collapse</i> folds the ones above into strips. The last line is the twelve thousand years since the ice let go, spread out below its window, with the copper handle for the year you are in. The map shows the world in that year: this side of the ice ages the ground, past them the earth from space, with a word under it saying how sure that is. Tap a mark to read what happened there, and <i>More</i> for the story.</p>
   <p class="open">Open on <span class="viewing on" data-v="after-the-ice">After the Ice</span> · <span class="viewing" data-v="china">China, with the Song in the window</span> · <span class="viewing" data-v="egypt">Egypt, from the Sahara to Cleopatra</span></p>
   <div class="credit">The picture on the wall: Naomi Devil, <i>Idő-töltés</i> (2016), a cybernetic sculpture with Nicolas Schöffer’s hourglass. Photograph by Darabos György, <a href="https://commons.wikimedia.org/wiki/File:Naomi_Devil,_Id%C5%91-t%C3%B6lt%C3%A9s,_Nicolas_Sch%C3%B6ffer_homok%C3%B3r%C3%A1j%C3%A1b%C3%B3l_k%C3%A9sz%C3%BClt_kibernetikus_szobor_a_Hungarikon-gy%C5%B1jtem%C3%A9ny_sz%C3%A1m%C3%A1ra.jpg">Wikimedia Commons</a>, CC BY-SA 4.0, cropped.</div>
   <span class="cmd next" id="next" role="button" tabindex="0">Next</span>
@@ -181,6 +181,7 @@
       <li class="htw-action-row"><span class="htw-action-word vw" data-v="both">Both</span></li>
       <li class="htw-action-row"><span class="htw-action-word" id="wClimate">Climate</span></li>
       <li class="htw-action-row"><span class="htw-action-word absent" id="wGuess" style="display:none">another guess</span></li>
+      <li class="htw-action-row group"><span class="htw-action-word" id="wAuto">Collapse by itself</span></li>
       <li class="htw-action-row group"><span class="htw-action-word curve" data-c="people">People</span></li>
       <li class="htw-action-row"><span class="htw-action-word curve" data-c="sea">Sea level</span></li>
       <li class="htw-action-row"><span class="htw-action-word curve deep" data-c="oxygen">Oxygen</span></li>
@@ -209,12 +210,12 @@
 <script src="../js/map.js?v=2026-10-09b"></script>
 <script src="../js/timeline.js?v=2026-09-27-ati"></script>
 <script src="../js/globe.js?v=2026-10-09b"></script>
-<script src="../js/deep-time.js?v=2026-10-09d"></script>
+<script src="../js/deep-time.js?v=2026-10-09e"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-09d 35d25b0';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-09e 05aa2bd';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -599,6 +600,8 @@
   document.querySelectorAll('#htw-panel .vw').forEach(w => w.addEventListener('click', () => { document.querySelectorAll('#htw-panel .vw').forEach(x => x.classList.remove('on')); w.classList.add('on'); if (map) map.deepView(w.dataset.v); }));
   $('wClimate').addEventListener('click', () => { const w = $('wClimate'); w.classList.toggle('active'); if (map) { map.deepClimate(w.classList.contains('active')); $('model').textContent = cwGlobe.CLIMATE_WORDS; $('model').style.display = w.classList.contains('active') ? 'block' : 'none'; } });
   $('wGuess').addEventListener('click', () => { if (map) map.deepReguess(); });
+  // lane D's switch, for Michael to compare: the lines above the parent fold by themselves as she goes deeper
+  $('wAuto').addEventListener('click', () => { const w = $('wAuto'); w.classList.toggle('active'); if (bar) bar.autoCollapse(w.classList.contains('active')); });
 
   // ---------- the deep lines, and the hand-over ----------
   let bar = null, handed = false, ranOnce = false, shownId = null, lastMa = null;

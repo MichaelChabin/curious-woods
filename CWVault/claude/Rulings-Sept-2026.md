@@ -149,6 +149,7 @@ Michael, 9 Oct, answering twelve questions put to him with Claude's advice ("yes
 2. **Periods are his five** (the young Earth, First life, Oxygen arrives, Ancestors, Animals, with Animals dropping down to the sea, the land, the dinosaurs and after), plainly named, in place of the six chunks of 6 Oct. Each bar keeps its *known from* line.
 3. **Before the Earth** (13.8 to 4.57 billion years) is one rung above the Earth, built last.
 4. **A line's left edge reads 0 and years ago together.** BCE is still absent from deep lines; a story may pin zero to an event.
+   *Amended the same night (Michael, from his second chat of 9 Oct):* the 0 goes. Lines count ago only, with two dates at their ends; every line carries one centred label with its name and its length (`The dinosaurs, 186 million years`). "How long did it take?" is answered by a measurement between two ends, and a story sets those ends instead of pinning a zero. The brief's lane D (`claude/Prompt-Build-One-Timeline.md`) builds it.
 5. **The hand-over.** When the last rung opens, the Time Machine's own lines appear beneath it, with the map and the summary; the Time Machine reads the one store and its September file retires.
 6. **The descent on first visit: deferred.** Michael: "let's wait for that."
 7. **The column** is Geometry's left column, holding only the words that act; the explaining paragraphs go into How this works.

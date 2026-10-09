@@ -301,7 +301,7 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Where it sits.** The readout of every line; the shape page's "name a zero", applied inside the lab; a family of "how long after" stories (the impact to a full ecosystem, the ice's retreat to the last mammoths, the first grass to grass everywhere).
 **Opens.** Recovery and spread as stories a child can read off the line.
 **Costs.** The deep ruling says deep lines count *ago* only; this adds a count from the left edge beside it. The date line of a More (Timeline-Stories, Dates) would gain a pinned-zero form.
-**Source.** Michael's chat of 8 Oct, `claude/Timeline-Format-Thinking-Oct08.md`.
+**Source.** Michael's chat of 8 Oct, `claude/Timeline-Format-Thinking-Oct08.md`. *Superseded 9 Oct, night (Michael): the 0 at the left edge goes and lines count ago only; a measurement between two ends answers "how long", and a story sets the ends — Rulings, The one timeline 4, amended; the brief's lane D.*
 
 ### Landmarks on every line   · 8 Oct 2026 · candidate
 **Idea.** A small set of landmark events appears on every line where it falls, at every level — some to remember a period by (the oceans form, the meteor strike, the Siberian volcanoes), some great milestones (photosynthesis) — so that, absorbed, they give her a sense of scale she carries with her. Nineteen candidates from the Big Bang to the end of the ice, the strongest starred, on the format page. A pile-up rule is needed: from the meteor on, everything falls in the last 1.5 % of the full line, so a crowded stretch shows only the most important and the rest appear as she zooms.

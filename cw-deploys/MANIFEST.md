@@ -1331,7 +1331,28 @@ backstop for the Claude Code session that lands the file.
   deep lines (a fixed viewing of its own). The Timeline and Map panels' words rewritten. Checked on the Mac:
   Main's ends land on the funnel's foot to the pixel; the sweep runs once; Socrates selects and the map
   follows; `gobekli` resolves to Göbekli Tepe and a cut id to nothing; closing After the ice restores the
-  marker; no console errors. A September record that stands aside for the shared list (`same`) is kept,
+  marker; no console errors. **9 Oct 2026, night — lane D: labels, the measurer, collapsing** (`CW_VERSION
+  2026-10-09e 05aa2bd`; `js/deep-time.js?v=2026-10-09e` here and on the two benches; from Michael's second
+  chat of the day, `CWVault/claude/Prompt-Build-Timeline-Labels.md`, restated as lane D of the brief; his ruling
+  of the same night in Rulings, *The one timeline* 4, amended): in `../js/deep-time.js` every line has one label,
+  centred above it on a line drawn out to both ends with end ticks, as on a drafting drawing — the period's name
+  and its length when the envelope above is snapped ("The dinosaurs, 186 million years"), "about" and its length
+  when free, "The Earth, 4.6 billion years" at the top with no dates — and every other line its two dates in
+  years ago at its ends; the 0 at the left edge, the name at the left and the funnel's label are gone; a label
+  wider than its line stays centred and never leaves the svg. Main, the last rung, gets its label above it the
+  same way ("After the ice, 12,000 years") from the module, and keeps the Time Machine's readouts below. **The
+  measurer** is the envelope: a free envelope's two ends are the markers and the line below reads the length
+  ("about 132 million years"); no markers of their own were built (Michael to say if he wants a measurement that
+  opens nothing). **Collapsing:** once more than two lines show, *Collapse* at the top right of the lines folds
+  every line but the top and the bottom into strips (`STRIP_H` 64: the label in line above, a 30 px bar of the
+  periods with 42 px hit areas, the envelope's outline over the open one, the copper tick, *Show* at the right);
+  the top line keeps everything but its events; *Show all* unfolds; a tap on a period of a strip opens it (the
+  tap rule as it is). **Collapse by itself**, a word in the column for Michael to compare (`bar.autoCollapse`):
+  going a level deeper folds every line above the parent, so two whole lines always show, the strips the way
+  back. Checked on the Mac: the three-line stack 350 px high (396 before); collapsed 264; the whole chain to
+  After the ice with collapse by itself 492 px (868 the night before) with Main whole beneath; the free
+  envelope reads "about 132 million years" with its dates 252 and 120 million years ago; no console errors.
+  Screenshots `Claude outputs/time-machine-lane-d-*.jpg`. A September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the
