@@ -50,10 +50,13 @@
 /experiments/deepTime        /experiments/globe-bench.html   302
 /experiments/deep-time-bar   /experiments/deep-time-bench.html   302
 
-# Deep Time was built at its experiments address as the join, then hung on 7 Oct 2026.
-/experiments/join-bench.html   /active/deep-time.html   301
-/experiments/join-bench        /active/deep-time.html   301
-/experiments/deep-time-join    /active/deep-time.html   301
+# Deep Time was built at its experiments address as the join, hung on 7 Oct 2026, and on 9 Oct
+# folded into the Time Machine (the one timeline, lane C): every old address lands there.
+/experiments/join-bench.html   /active/time-machine.html   301
+/experiments/join-bench        /active/time-machine.html   301
+/experiments/deep-time-join    /active/time-machine.html   301
+/active/deep-time.html         /active/time-machine.html   301
+/active/deep-time              /active/time-machine.html   301
 
 # The Glass Rose took its series name, Geo-1-Glass-Circles, on 8 Oct 2026 (Michael). The old address was live for six days.
 /experiments/the-glass-rose.html        /experiments/geo-1-glass-circles.html         301

@@ -47,6 +47,9 @@
               astronomer's year (this year minus ma million), what map.setTime takes
      onBar    function (bar, path) — a bar was pulled down (or closed back to this one)
      onMark   function (mark, bar) — a mark was tapped
+     handoff   { line, gap } — the deepest line whose node carries `line` is the page's own (the Time
+               Machine's Main, lane C): laid out, not drawn, the funnel ending `gap` px below this svg;
+               onHandoff({ on, xL, xR, from, to, node }) tells the page, every draw
    Times are millions of years ago throughout ('from' the older end); the readout writes them as
    billions, millions or thousands of years ago, never BCE, never "after zero" (the ruling).
 
@@ -154,6 +157,10 @@
       tierGeom = [];
       for (var i = 0; i <= env.length; i++) tierGeom.push(layout(lineOf(i), i));
       var deep = tierGeom[tierGeom.length - 1], small = W < 520;
+      // the hand-over (lane C): when the deepest line is the one the page draws itself (After the ice,
+      // the Time Machine's Main), it is laid out but not drawn — the funnel above ends where the page's
+      // line will be, `gap` below this svg's bottom — and the page is told its ends, so Main can sit on them
+      var handed = !!(opts.handoff && env.length && deep.node.line === opts.handoff.line);
 
       // the readout, top left: the marker's year, bold, ago; under it what this line is known from
       var rt = el('text', { x: PAD, y: 18, 'font-size': 13, fill: INK_SOFT, 'class': 'halo' }, svg);
@@ -166,6 +173,7 @@
       }
 
       tierGeom.forEach(function (g, d) {
+        if (handed && g === deep) return;
         var L = g.line, grp = el('g', { 'class': 'bar', 'data-depth': d }, svg), e = env[d];
         // the funnel from this line's envelope down to the next line, and its label
         if (e) {
@@ -253,17 +261,23 @@
           el('line', { x1: hx, y1: g.y - 9, x2: hx, y2: g.y + 9, stroke: COPPER, 'stroke-width': 2, opacity: 0.85 }, grp);
         }
       });
-      // the curve under the deepest line: the band, the line, the second series, the words at the marker
-      var curveH = 0;
-      if (curve) curveH = drawCurve(deep);
-      // the deepest line's marker and hit area, last so they sit on top
-      var hx2 = Math.max(deep.xL, Math.min(deep.xR, deep.x(ma)));
-      var kg = el('g', { 'class': 'knob' }, svg);
-      el('line', { x1: hx2, y1: deep.y - 11, x2: hx2, y2: deep.y + 14, stroke: COPPER, 'stroke-width': 2 }, kg);
-      el('circle', { cx: hx2, cy: deep.y + 13.5, r: 14, fill: 'transparent' }, kg);
-      el('circle', { cx: hx2, cy: deep.y + 13.5, r: 7, fill: COPPER, stroke: PARCH, 'stroke-width': 2 }, kg);
-      kg.addEventListener('pointerdown', startDrag);
-      var H = TOP + tierGeom.length * TIER_H - 50 + curveH;
+      var curveH = 0, H;
+      if (handed) {
+        H = deep.y - (opts.handoff.gap || 18);
+        if (opts.onHandoff) opts.onHandoff({ on: true, xL: deep.xL, xR: deep.xR, from: deep.from, to: deep.to, node: deep.node });
+      } else {
+        // the curve under the deepest line: the band, the line, the second series, the words at the marker
+        if (curve) curveH = drawCurve(deep);
+        // the deepest line's marker and hit area, last so they sit on top
+        var hx2 = Math.max(deep.xL, Math.min(deep.xR, deep.x(ma)));
+        var kg = el('g', { 'class': 'knob' }, svg);
+        el('line', { x1: hx2, y1: deep.y - 11, x2: hx2, y2: deep.y + 14, stroke: COPPER, 'stroke-width': 2 }, kg);
+        el('circle', { cx: hx2, cy: deep.y + 13.5, r: 14, fill: 'transparent' }, kg);
+        el('circle', { cx: hx2, cy: deep.y + 13.5, r: 7, fill: COPPER, stroke: PARCH, 'stroke-width': 2 }, kg);
+        kg.addEventListener('pointerdown', startDrag);
+        H = TOP + tierGeom.length * TIER_H - 50 + curveH;
+        if (opts.onHandoff) opts.onHandoff({ on: false });
+      }
       svg.setAttribute('height', H); svg.style.height = H + 'px';
     }
     function marksFor(g) {

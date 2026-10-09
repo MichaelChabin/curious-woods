@@ -37,6 +37,15 @@ at the left, the duration over the years ago (or *now*) at the right; the Time M
 
 ## Lane C — the hand-over, and one page
 
+*Built 9 Oct 2026, night, on Michael's "start on C"; checked, committed and pushed on his word.* Points 1 to 5, with these calls
+made in the building, his to overturn: Main is the last rung itself — the deep module lays After the ice out
+but does not draw it, and its funnel ends on Main (point 1 decided); the one painting keeps the Time Machine's
+hourglass and name until he chooses, Deep Time's line is off the wall and its picture kept; After the Ice's own
+page stays on the wall; the map's default view on this page is Map (the ground, where its events live), Globe and
+Both hers to choose; the curves are plain words in the column for now, one at a time across both kinds, until
+lane D; the China and Egypt viewings keep their own fixed lines with no deep lines above; Detail's ends say
+"years after the ice" (the viewing's own phrase) in place of "years after 0". The iPad test is his, now.
+
 1. When the last rung opens, the Time Machine's Main, Focus window and Detail appear beneath it, the map and the summary below as today, the marker handing to the copper handle. The deep bar above is the Time Machine's Main made recursive, so Main's own line may become the last rung itself; decide with the code in front of us and say which.
 2. `active/time-machine.html` opens on the Earth bar; `active/deep-time.html` redirects to it; the gallery hangs one painting (its picture Michael's choice: the earth from space, or the hourglass). After the Ice's own page comes off the wall or stays, Michael's call.
 3. The Time Machine reads the one store only; `stories/after-the-ice-events.json` retires from the page (After the Ice's page still reads it); her line's old ids resolve through the store's `aliases`.

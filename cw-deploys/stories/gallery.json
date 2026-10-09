@@ -106,14 +106,5 @@
     "frame": "#4a4e9e",
     "frameWidth": 8,
     "size": "medium"
-  },
-  {
-    "slug": "deep-time",
-    "title": "Deep Time",
-    "href": "active/deep-time.html",
-    "picture": "art/gallery/deep-time-gallery.png",
-    "frame": "#46597a",
-    "frameWidth": 8,
-    "size": "medium"
   }
 ]

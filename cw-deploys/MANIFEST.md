@@ -70,9 +70,10 @@ Center, the stand-in is the label — lat, lon; the eclipse has no coordinates i
 so), the summary without its
 trailing More, the More as paragraphs with its date line as parts (count, ordinary date, years
 ago, each with `about`), references, the Pictures wanted line as data, and a `weight` (1 to 3)
-proposed by the tool and marked `proposed`. Notes for us and the Checked paragraph never enter it. Read by
-`active/time-machine.html`; folded whole into `stories/deep-time-events.json` by `tools/deep-events-from-vault.py`
-(9 Oct). **`stories/curves/` (30 Sep 2026)** — curves a timeline draws
+proposed by the tool and marked `proposed`. Notes for us and the Checked paragraph never enter it. Folded whole
+into `stories/deep-time-events.json` by `tools/deep-events-from-vault.py` (9 Oct), which is what
+`active/time-machine.html` reads since 9 Oct, evening; no page reads this file now, and it stays as the
+timeline batches' own output. **`stories/curves/` (30 Sep 2026)** — curves a timeline draws
 along its span, points in astronomers' years with the source, the licence and how sure the
 numbers are: `people.json` (world population, Our World in Data's long-run series — HYDE 3.3,
 Gapminder, UN WPP — thinned to 73 points, CC BY 4.0) and `sea-level.json` (the readings of
@@ -135,10 +136,10 @@ fields — `ma`, `uncertaintyMa` and `precisionYears` (null where the Age line g
 `tail` with its reason and `evidence` (earliest or dated), `knownFrom`, `placeNow` (where the evidence is
 today), `replacesSketch`, `chunk`, the date line as `{ ago, tail, sure? }` (deep lines count ago only) —
 with a weight proposed by rule. A later batch
-revising an earlier event (batch 7's *Archaeopteryx*) wins. Read by `js/deep-time.js` on
-`active/deep-time.html` and the two benches; the More opens in the map's window on the page and inline on
-the bar bench. The Time Machine page still reads `timeline-events.json` and the September file, its own
-two, until it opens on the earth line (the rest of Stage 7).
+revising an earlier event (batch 7's *Archaeopteryx*) wins. Read by `active/time-machine.html` (since 9 Oct,
+evening: the only store that page reads — the after-the-ice records are Main's events, the deep records the
+deep lines', `aliases` resolve her line's old ids) and by `js/deep-time.js` on the two benches; the More
+opens in the map's window on the page and inline on the bar bench.
 **`stories/plates/continents.json` (6 Oct 2026)** — GENERATED, never edited by hand: the continents
 in motion, for the deep-time Time Machine (`CWVault/claude/Plan-Deep-Time.md`, Stage 1).
 `tools/plates-from-gplates.py` (outside this folder, in `_CW/tools/`; needs `pip install pygplates
@@ -708,8 +709,12 @@ backstop for the Claude Code session that lands the file.
   Michael). Back link to the gallery.
 
 ### active/
-- **`deep-time.html` (hung 7 Oct 2026)** — **Deep Time**, the Time Machine's deep page: see the entry
-  under `experiments/` for `join-bench.html → active/deep-time.html`, where it was built and is described.
+- **`deep-time.html` (hung 7 Oct 2026; retired 9 Oct 2026)** — **Deep Time**, the Time Machine's deep page for two
+  days: see the entry under `experiments/` for `join-bench.html → active/deep-time.html`, where it was built and
+  is described. **On 9 Oct 2026 it folded into `active/time-machine.html`** (the one timeline, lane C of
+  `CWVault/claude/Prompt-Build-One-Timeline.md`): the file moved to `../../outdated-files/deep-time-2026-10-09.html`,
+  its address and the join's old addresses redirect to the Time Machine in `_redirects`, and its gallery line is
+  gone (`art/gallery/deep-time-gallery.png` stays on disk for Michael's choice of the one painting's picture).
   `CW_VERSION 2026-10-07 0042379`.
 - **`wordplay.html`** — **puzzle: Wordplay** (28 Sep 2026; Claude Code, from
   `CWVault/claude/Prompt-Build-Limerick-Puzzle.md`). Read at its experiments address and **hung 28 Sep 2026**
@@ -1089,7 +1094,7 @@ backstop for the Claude Code session that lands the file.
 
 ### experiments/
 
-- **`join-bench.html` → `active/deep-time.html`** — *The join*, built 6 Oct 2026 and **hung 7 Oct on
+- **`join-bench.html` → `active/deep-time.html` → `active/time-machine.html` (9 Oct)** — *The join*, built 6 Oct 2026 and **hung 7 Oct on
   Michael's word as Deep Time**, beside the Time Machine in the gallery (`stories/gallery.json`, slug
   `deep-time`, picture `art/gallery/deep-time-gallery.png`, a slate frame), the bench retired to
   `../../outdated-files/join-bench-2026-10-07.html` and its addresses redirected in `_redirects`
@@ -1136,6 +1141,7 @@ backstop for the Claude Code session that lands the file.
   map is 961 wide; *Both* and *Globe* bring it back; the ground at 10,000 years brings it back and the tiles
   redraw; a walk across the dinosaurs' bar posts the Great Dying, Dinosaurs, Triassic ends, Archaeopteryx,
   Flowers in turn; 179 bars drawn (the oldest grains still past the root); no console errors.
+  **9 Oct 2026, later — lane C: this page retired into `active/time-machine.html`** (see that entry).
   **9 Oct 2026, evening — lane B, the line in the Time Machine's form (`CW_VERSION 2026-10-09c 966da51`;
   `js/deep-time.js?v=2026-10-09c` here and on the two benches):** `../js/deep-time.js` rewritten — every level is
   a line, the periods on it quiet tinted segments with their edges ticked and their names on them (the short
@@ -1298,7 +1304,34 @@ backstop for the Claude Code session that lands the file.
   the data, 86 ids by batch 7), and `CUT` in the page drops the two September records Michael cut
   with no replacement (`lead-socrates-2` Heraclitus, 1 Oct; `lead-frank-3` Aldini, 8 Oct), no alias.
   **9 Oct 2026, batches 5 to 7 loaded:** 111 events on the line (109 from the batches, plus `jomon` and
-  `starry`, the last September records standing); `CW_VERSION 2026-10-09 20ce31e`. A September record that stands aside for the shared list (`same`) is kept,
+  `starry`, the last September records standing); `CW_VERSION 2026-10-09 20ce31e`. **9 Oct 2026, later — the
+  one timeline (lane C of `CWVault/claude/Prompt-Build-One-Timeline.md`, on Michael's rulings of that day;
+  `CW_VERSION 2026-10-09d 35d25b0`; `js/deep-time.js?v=2026-10-09d`, `js/globe.js?v=2026-10-09b`,
+  `js/map.js?v=2026-10-09b`):** this page opens on the Earth line and Deep Time folded into it. Above Main sit
+  the deep lines (`#bar`, `../js/deep-time.js`, `../stories/deep-time.json`); when she opens the last period,
+  After the ice, the module lays that line out but does not draw it (`handoff: { line, gap }` →
+  `onHandoff`), its funnel ends on Main — the `#lines` block is placed at the funnel's foot
+  (`margin-left`, `width`) with Main's line `MAIN_Y` below the bar's svg — and the copper handle takes over
+  from the marker: the handle drives the map and sets the deep marker so the ticks on the lines above follow.
+  The arrival run sweeps once, the first time After the ice opens in a visit (the descent is deferred). Close
+  After the ice and `#lines` hides (`.off`), the marker returns, and the summary block shows the deep event
+  tapped or *just passed* (the passing line from Deep Time; only the deepest open line's own events). **The
+  one store:** this page reads `../stories/deep-time-events.json` alone — Main's events are its
+  `after-the-ice` records (a `legacy` one keeps its blurb and has no More), her line's old ids resolve through
+  its `aliases` — and no longer reads `after-the-ice-events.json`, `timeline-events.json` or `places.json`
+  (`SAME`, `CUT`, `plain()`'s callers are gone). **The map** takes `time.deep` (the globe past the seam, the
+  five words, the climate wash), with `view: 'map'` as this page's default — the ground this side of the ice
+  ages, the flat deep map past them; Globe and Both are hers — and the sea from `sea-level-ice-ages.json`;
+  the grade word and its sentence sit under the map in `#mapwords` (Michael, 9 Oct). **The column** gains
+  Globe · Map · Both, Climate, *another guess* (present only when the word is *guessed* or *invented*), and
+  the deep curves Oxygen, Day length, Minerals, Sun and inside (fetched from `../stories/curves/` on first
+  use, drawn under the deepest deep line; one curve at a time across both kinds; lane D makes a tool of
+  them). Detail's ends say "years after the ice" (the viewing's `name`), not "years after 0" — one phrase.
+  The intro's first viewing is *The whole of time*; the China and Egypt viewings open as before, with no
+  deep lines (a fixed viewing of its own). The Timeline and Map panels' words rewritten. Checked on the Mac:
+  Main's ends land on the funnel's foot to the pixel; the sweep runs once; Socrates selects and the map
+  follows; `gobekli` resolves to Göbekli Tepe and a cut id to nothing; closing After the ice restores the
+  marker; no console errors. A September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the
