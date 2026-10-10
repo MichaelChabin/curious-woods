@@ -1473,7 +1473,14 @@ backstop for the Claude Code session that lands the file.
   tapped on the Animals strip (Animals opens, Dinosaurs beneath with its words, the After the ice line gone, the map
   at 252 million years); tapped again, gone; the Earth's title opens its line with the twelve labels first; a free
   window reads "about 137 million years"; Globe turns; Oxygen plots under the Oxygen line; no console errors.
-  Screenshots `Claude outputs/time-machine-stack-*.jpg`. A September record that stands aside for the shared list (`same`) is kept,
+  Screenshots `Claude outputs/time-machine-stack-*.jpg`. **Later the same day (`CW_VERSION 2026-10-10b ccff78b`, `deep-time.js?v=2026-10-10b`):**
+  an event's tap area begins below the band, not at its middle (Michael: with the lines reaching the band's middle
+  the period was hard to tap where events crowd toward now); the band and its name are the period's, the space
+  below the band the event's; the drawn line still reaches the band's middle. The drawn lines and labels pass the
+  pointer through, and the window's own tap area is the band and its name, not the event feet beneath, so under the
+  window too a tap on the band is the period's and a tap below it the event's. And the tap rule: a tap on a period already
+  open beneath shows its line when that line is a closed strip (a tap says "show me this"); only when the line is
+  open is the tap the undo that removes it and everything beneath (Michael's yes, 10 Oct). A September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the

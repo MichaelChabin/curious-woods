@@ -75,6 +75,7 @@
     '.cw-deep .knob{cursor:grab;}',
     '.cw-deep.dragging,.cw-deep.dragging .knob{cursor:grabbing;}',
     '.cw-deep .mark{cursor:pointer;}',
+    '.cw-deep .mark line,.cw-deep .mark text{pointer-events:none;}',   /* the drawn line and label never catch a tap; the tap area below the band does */
     '.cw-deep .halo{paint-order:stroke;stroke:#f4f1e8;stroke-width:4px;stroke-linejoin:round;}',
     '.cw-deep .env{cursor:grab;}',
     '.cw-deep .seg{cursor:pointer;}',
@@ -314,7 +315,7 @@
             var mg = el('g', { 'class': 'mark' }, grp);
             el('line', { x1: l.mx, y1: g.y, x2: l.mx, y2: ly - 10, stroke: INK, 'stroke-width': 0.8 }, mg);
             el('text', { x: l.mx, y: ly, 'font-size': 11, fill: INK_SOFT, 'text-anchor': 'middle', 'class': 'halo' }, mg, l.mk.label);
-            el('rect', { x: l.mx - 9, y: g.y, width: 18, height: ly - g.y + 4, fill: 'transparent' }, mg);
+            el('rect', { x: l.mx - 8, y: g.stripY + STRIP + 1, width: 16, height: ly - g.stripY - STRIP + 3, fill: 'transparent' }, mg);   // the band and its name are the period's to tap; below the band is the event's
             el('title', {}, mg, l.mk.label + ' · ' + fmt(l.mk.ma) + (l.mk.tail ? ' (probably began by ' + fmt(l.mk.tail).replace(' ago', '') + ')' : ''));
             mg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
             mg.addEventListener('click', function (ev) { ev.stopPropagation(); tapMark(d, l.mk, L); });
@@ -323,7 +324,7 @@
         g.ticks.forEach(function (tk) {
           var mg = el('g', { 'class': 'mark' }, grp), len = g.open ? TICK_H + 2 : TICK_H;
           el('line', { x1: tk.mx, y1: g.y, x2: tk.mx, y2: g.stripY + STRIP + len, stroke: g.open ? INK : '#9a958b', 'stroke-width': 0.8, opacity: g.open ? 0.9 : 0.6 }, mg);
-          el('rect', { x: tk.mx - 6, y: g.y, width: 12, height: STRIP + len + 4, fill: 'transparent' }, mg);
+          el('rect', { x: tk.mx - 6, y: g.stripY + STRIP + 1, width: 12, height: len + 6, fill: 'transparent' }, mg);
           el('title', {}, mg, tk.mk.label + ' · ' + fmt(tk.mk.ma));
           mg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
           mg.addEventListener('click', function (ev) { ev.stopPropagation(); tapMark(d, tk.mk, L); });
@@ -333,7 +334,7 @@
           var ea = g.x(e.a), eb = g.x(e.b), eg = el('g', { 'class': 'env' }, grp), ly0 = g.stripY - 4, lh = STRIP + 8;
           el('rect', { x: ea, y: ly0, width: Math.max(3, eb - ea), height: lh, rx: 2, fill: '#ffffff', 'fill-opacity': 0.28, stroke: INK, 'stroke-width': 1 }, eg);
           [ea, eb].forEach(function (x) { el('rect', { x: x - 1.5, y: ly0 - 3, width: 3, height: lh + 6, rx: 1, fill: INK }, eg); });
-          el('rect', { x: ea - 10, y: ly0 - 8, width: Math.max(20, eb - ea + 20), height: lh + 16, rx: 4, fill: 'transparent' }, eg);
+          el('rect', { x: ea - 10, y: ly0 - 6, width: Math.max(20, eb - ea + 20), height: STRIP + 15, rx: 4, fill: 'transparent' }, eg);   // the band and its name, a little above and 1 px below; everything beneath the band is the events'
           eg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); startEnvDrag(ev, d, g); });
         }
         // the marker's tap strip on the deepest line (jump the marker), beneath its marks
@@ -453,7 +454,12 @@
        and the page is told the period */
     function tapSeg(depth, sg) {
       var e = env[depth];
-      if (e && e.child === sg.node && env.length > depth) { env = env.slice(0, depth); closed[depth] = false; settled(); return; }
+      if (e && e.child === sg.node && env.length > depth) {
+        // the period is already open beneath: a closed line there is shown (a tap says "show me this"); an open one
+        // is removed with everything beneath, the undo (Michael, 10 Oct)
+        if (closed[depth + 1]) { closed[depth + 1] = false; closed[depth] = false; touched[depth] = true; closeAbove(depth); draw(); return; }
+        env = env.slice(0, depth); closed[depth] = false; settled(); return;
+      }
       env = env.slice(0, depth).concat([{ a: sg.from, b: sg.to, child: sg.whole ? sg.node : null }]);
       closed[depth] = false; closed[depth + 1] = false; touched[depth] = true; closeAbove(depth);
       ma = sg.from; tellYear();
