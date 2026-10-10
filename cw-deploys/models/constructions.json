@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "comment": "The construction library's manifest (controls build, 13 Aug 2026 — ledger §15). The picker reads this at load; library growth is a log file plus a line here, no code. Keys keep the _builtin_ prefix so preview caches stay stable and the picker knows they are the standard set: never deleted, never replaced. An entry may carry `speed` (seconds, 0–15) to open at a chosen playback duration. The standard set of 2 Oct 2026 (Michael's list, in the geometry spine's order) is written by tools/glass-constructions.js through tools/glass-log.js, which runs the lab's own geometry code, so every id is the lab's; svgFile is only a fallback thumbnail, the picker draws previews from the logs.",
+  "comment": "The construction library's manifest (controls build, 13 Aug 2026 — ledger §15). The picker reads this at load; library growth is a log file plus a line here, no code. Keys keep the _builtin_ prefix so preview caches stay stable and the picker knows they are the standard set: never deleted, never replaced. An entry may carry `speed` (seconds, 0–15) to open at a chosen playback duration. The standard set of 2 Oct 2026 (Michael's list, in the geometry spine's order) is written by tools/glass-constructions.js through tools/glass-log.js, which runs the lab's own geometry code, so every id is the lab's; svgFile is only a fallback thumbnail, the picker draws previews from the logs. Michael's own saved designs from the window profile, 9 Oct 2026, join the set at the end (Top): his file as Save wrote it, under a _builtin_ key so the Demo list and the picker find it.",
   "constructions": [
     {
       "key": "_builtin_rose",
@@ -63,6 +63,13 @@
       "name": "Pythagoras",
       "svgFile": "",
       "logFile": "../models/logs/geo_pythagoras.json",
+      "note": ""
+    },
+    {
+      "key": "_builtin_top",
+      "name": "Top",
+      "svgFile": "",
+      "logFile": "../models/logs/geo_top.json",
       "note": ""
     }
   ]

@@ -1179,8 +1179,10 @@ undecided and seeded, not specced: draining the ocean to the floor
   The World's eighteen events, none with a story, written out with their full texts for the Cowork chat in
   `claude/Events-Theophilus-World-To-Write.md`. Committed and pushed (20ce31e). **9 Oct:** his Top saved
   from the board is in the standard set (`models/logs/geo_top.json`, `_builtin_top`) and plays under Demo;
-  his Penguin is in Safari's share folder, which this session cannot read. **Next action: Michael drops
-  Penguin.json into Downloads or `_CW`; then commit Top (and Penguin) and push.**
+  his Penguin is in Safari's share folder, which this session cannot read. **10 Oct — hung** on Michael's word, for his demo that night: `active/geo-1-glass-circles.html`, both old
+  addresses redirected, in `stories/gallery.json` as *Stained Glass Circles* with his Rose II as the picture and
+  the tab icon; Top in the standard set with it. **Next action: Penguin.json into Downloads or `_CW` when he
+  has it; the captions' voice pass; the story file in the vault brought to the 8 Oct draft.**
 - **7 Oct — The Glass Rose rewritten as a story about making windows, on a window profile of the lab
   (Claude Code, from Michael's chat's prompt and his new draft; built and checked, uncommitted).** The prompt
   asked for a new file built from the lab; built instead as `app: 'window'` in `js/glass.js`, so the main lab

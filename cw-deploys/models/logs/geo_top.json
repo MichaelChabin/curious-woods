@@ -1,0 +1,323 @@
+{
+  "version": 1,
+  "name": "Top",
+  "description": "A spinning top: three circles, then one more; Michael, 9 Oct 2026, saved from the window profile of Stained Glass Circles.",
+  "speed": 5,
+  "operations": [
+    {
+      "op": "init",
+      "seed0": {
+        "x": -100,
+        "y": 0
+      },
+      "seed1": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:2:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1791486626885",
+      "vertices": [
+        "seed:1",
+        "cc:1:2:0",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:1",
+          "b": "cc:1:2:0",
+          "circIdx": 1,
+          "angleA": 0,
+          "angleB": 1.0471975511965976,
+          "sweep": 1.0471975511965974
+        },
+        {
+          "type": "arc",
+          "a": "cc:1:2:0",
+          "b": "seed:0",
+          "circIdx": 2,
+          "angleA": 2.0943951023931957,
+          "angleB": 3.141592653589793,
+          "sweep": 1.0471975511965974
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "seed:1",
+          "circIdx": 3,
+          "angleA": -2.0943951023931957,
+          "angleB": -1.0471975511965976,
+          "sweep": 1.0471975511965983
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1791486627516",
+      "vertices": [
+        "cc:1:2:0",
+        "seed:1",
+        "cc:2:3:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:1:2:0",
+          "b": "seed:1",
+          "circIdx": 1,
+          "angleA": 1.0471975511965976,
+          "angleB": 0,
+          "sweep": -1.0471975511965974
+        },
+        {
+          "type": "arc",
+          "a": "seed:1",
+          "b": "cc:2:3:1",
+          "circIdx": 3,
+          "angleA": -1.0471975511965976,
+          "angleB": 0,
+          "sweep": 1.0471975511965974
+        },
+        {
+          "type": "arc",
+          "a": "cc:2:3:1",
+          "b": "cc:1:2:0",
+          "circIdx": 2,
+          "angleA": 1.0471975511965976,
+          "angleB": 2.0943951023931957,
+          "sweep": 1.0471975511965983
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1791486628148",
+      "vertices": [
+        "cc:2:3:1",
+        "cc:1:3:0",
+        "cc:1:2:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:2:3:1",
+          "b": "cc:1:3:0",
+          "circIdx": 3,
+          "angleA": 0,
+          "angleB": 3.141592653589793,
+          "sweep": 3.141592653589793
+        },
+        {
+          "type": "arc",
+          "a": "cc:1:3:0",
+          "b": "cc:1:2:0",
+          "circIdx": 1,
+          "angleA": 2.0943951023931957,
+          "angleB": 1.0471975511965976,
+          "sweep": -1.0471975511965983
+        },
+        {
+          "type": "arc",
+          "a": "cc:1:2:0",
+          "b": "cc:2:3:1",
+          "circIdx": 2,
+          "angleA": 2.0943951023931957,
+          "angleB": 1.0471975511965976,
+          "sweep": -1.0471975511965983
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1791486628848",
+      "vertices": [
+        "cc:1:2:0",
+        "cc:1:3:0",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:1:2:0",
+          "b": "cc:1:3:0",
+          "circIdx": 1,
+          "angleA": 1.0471975511965976,
+          "angleB": 2.0943951023931957,
+          "sweep": 1.0471975511965983
+        },
+        {
+          "type": "arc",
+          "a": "cc:1:3:0",
+          "b": "seed:0",
+          "circIdx": 3,
+          "angleA": 3.141592653589793,
+          "angleB": -2.0943951023931957,
+          "sweep": 1.0471975511965974
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:1:2:0",
+          "circIdx": 2,
+          "angleA": 3.141592653589793,
+          "angleB": 2.0943951023931957,
+          "sweep": -1.0471975511965974
+        }
+      ],
+      "color": "#c2d4bc",
+      "opacity": 1
+    },
+    {
+      "op": "repaint_fill",
+      "fillId": "fill:1791486626885",
+      "color": "#1a6a2a",
+      "opacity": 1
+    },
+    {
+      "op": "repaint_fill",
+      "fillId": "fill:1791486627516",
+      "color": "#8b1a1a",
+      "opacity": 1
+    },
+    {
+      "op": "repaint_fill",
+      "fillId": "fill:1791486628848",
+      "color": "#8b1a1a",
+      "opacity": 1
+    },
+    {
+      "op": "repaint_fill",
+      "fillId": "fill:1791486628148",
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1791486648375",
+      "vertices": [
+        "cc:1:2:1",
+        "seed:1",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:1:2:1",
+          "b": "seed:1",
+          "circIdx": 1,
+          "angleA": -1.0471975511965976,
+          "angleB": 0,
+          "sweep": 1.0471975511965974
+        },
+        {
+          "type": "arc",
+          "a": "seed:1",
+          "b": "seed:0",
+          "circIdx": 3,
+          "angleA": -1.0471975511965976,
+          "angleB": -2.0943951023931957,
+          "sweep": -1.0471975511965983
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:1:2:1",
+          "circIdx": 2,
+          "angleA": 3.141592653589793,
+          "angleB": -2.0943951023931957,
+          "sweep": 1.0471975511965974
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:2:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1791486654591",
+      "vertices": [
+        "seed:0",
+        "seed:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "seed:1",
+          "circIdx": 3,
+          "angleA": -2.0943951023931957,
+          "angleB": -1.0471975511965976,
+          "sweep": 1.0471975511965983
+        },
+        {
+          "type": "arc",
+          "a": "seed:1",
+          "b": "seed:0",
+          "circIdx": 13,
+          "angleA": 1.0471975511965976,
+          "angleB": 2.0943951023931957,
+          "sweep": 1.0471975511965983
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "repaint_fill",
+      "fillId": "fill:1791486654591",
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "repaint_fill",
+      "fillId": "fill:1791486654591",
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "repaint_fill",
+      "fillId": "fill:1791486648375",
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "repaint_fill",
+      "fillId": "fill:1791486648375",
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "repaint_fill",
+      "fillId": "fill:1791486654591",
+      "color": "#c8780a",
+      "opacity": 1
+    }
+  ]
+}

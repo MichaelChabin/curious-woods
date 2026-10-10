@@ -14,6 +14,7 @@ Stages, from Publishing-a-Story: **written** (Michael has said yes to the words)
 *About Your Brain* — tool, the brain atlas.
 *Hokusai: The Great Wave* — paintings series, `across`; whole picture hung since the 21 Sept fix.
 *Vermeer: Girl with a Pearl Earring* — paintings series.
+*Stained Glass Circles* (Geo-1-Glass-Circles; *The Glass Rose* until 8 Oct) — geometry series, step 1, `across`; the window profile of `js/glass.js` as its board; hung 10 Oct 2026, `active/geo-1-glass-circles.html`. The 8 Oct draft is on the page and not yet in `claude/Story-The-Glass-Rose.md`.
 *Van Gogh: Starry Night* — paintings series.
 *Stained Glass* — the lab formerly called Glass Geometry (name changed 22 Sept; file and URL unchanged).
 *Glass Multiplication* — lab, listed under Labs.
@@ -28,7 +29,7 @@ Stages, from Publishing-a-Story: **written** (Michael has said yes to the words)
 
 *Have You Thought of a Story?* — Frankenstein hub story, 1816. Draft 1, 15 Sept. Open: one sentence near the end, a prose anchor for the year, which picture.
 *The Compass Counts to Six* — the rosette; door to Stained Glass. Draft 1, 15 Sept; Michael called it good. Needs the yes; the picture is his rosette screenshot.
-*Stained Glass Circles* (Geo-1-Glass-Circles; *The Glass Rose* until 8 Oct 2026) — **Built** (2 Oct 2026, stage 2; rebuilt 7 Oct to Michael's new draft, a story about making windows, on the module's window profile; renamed and brought to his 8 Oct draft on 8 Oct, Theophilus's World back below the counts): `experiments/geo-1-glass-circles.html`; awaiting Michael's read (stage 3). The 8 Oct draft is not yet in `claude/Story-The-Glass-Rose.md`; the page carries it. *The God Who Would Not Move* · *A Very Strange Cube* — drafts in the project; state to confirm with their chats.
+ *The God Who Would Not Move* · *A Very Strange Cube* — drafts in the project; state to confirm with their chats.
 
 ## Shared parts that exist
 

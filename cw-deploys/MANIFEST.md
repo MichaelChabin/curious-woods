@@ -709,6 +709,69 @@ backstop for the Claude Code session that lands the file.
   Michael). Back link to the gallery.
 
 ### active/
+- **`geo-1-glass-circles.html` (hung 10 Oct 2026)** — **Stained Glass Circles**, in the gallery on Michael's word
+  (Publishing-a-Story, stage 4): moved from `experiments/`, both old addresses (`the-glass-rose`, `geo-1-glass-circles`)
+  redirected to here in `_redirects`, its line in `stories/gallery.json` (slug `stained-glass-circles`, a blue
+  frame `#2f4a8a`, medium). The gallery picture is his Rose II made on the board, whole
+  (`art/gallery/stained-glass-circles-gallery.png`, 580 × 600), and the tab icon a square of it
+  (`art/icons/stained-glass-circles-icon-256.png`); the rose-mark icon and gallery mark of 2 Oct stay in the
+  folders unused. Stamp `2026-10-10 a8a4323`. The entry as it stood in `experiments/` follows.
+  *Before the hang:* **story: Stained Glass Circles**, Geo-1-Glass-Circles, the first of the
+  geometry series (Michael's names, 8 Oct 2026: the series name is the file's, the gallery name is the
+  page's title; `the-glass-rose.html` until then, the old address redirected in `_redirects`; the pictures
+  moved with it to `art/stories/geo-1-glass-circles/` on 8 Oct, later; the icon and the gallery mark keep
+  their `glass-rose` file names). Built 2 Oct 2026 from `template-story.html`, per
+  `CWVault/claude/Prompt-Build-The-Glass-Rose.md`; Publishing-a-Story stage 2, at its own address and hung
+  nowhere. **8 Oct 2026, Michael's rulings on the 7 Oct build (`glass.js?v=2026-10-08`, stamp `2026-10-08
+  5ffb77e`):** the text is his draft of 8 Oct (`_mscVault/0. Current/Designing Glass with Circles.md`),
+  which puts the board after "Give it a try." and the counts after the board, adds the pale-green clear
+  glass and why (sand, wood ash, iron), and names the leaded-glass picture on the left; the same slips of
+  the pen corrected as on 7 Oct (he thanked the correction), plus "so thin, that" → "so thin that", "it had
+  a built-in eraser" → "has", "laid it out" → "laid out", "click" → "tap"; the numbers left as he wrote
+  them, on his word (they give a sense of how fast the options grow). *Theophilus's World* is back below
+  the counts, the 2 Oct build's data unchanged, because he says a timeline and map come below; a *More*
+  on each event is not built (`timeline.js` has no More; the Time Machine's is its own page's). The
+  board's new rules are the module's (the `js/glass.js` entry, 8 Oct). Theophilus's World's event texts
+  are the 2 Oct build's, not his. **8 Oct, later — the left column (Michael's asks of 8 Oct; built, uncommitted):**
+  two picture stacks (`figure.margin.stack`: pages piled with their edges showing, a tap sending the top one to
+  the bottom, the caption following the top; the pile's shape per stack in `--pile`; one script serves every
+  stack). *The book itself*, beside the first paragraph: five pages from the three oldest copies, read off
+  their red headings against the Latin (Bibliotheca Augustana's text) — Wien ÖNB Cod. 2527 f. 1r (the
+  "Theophilus, who is also Roger" line; the Augsburg scan, 480 wide, the codex not digitised), Wolfenbüttel HAB
+  Cod. Guelf. 69 Gud. lat. 2° ff. 86r and 89v (the library's own scans, Public Domain Mark, 1024 wide, cropped
+  to the page: images 00179 and 00186), London BL Harley 3915 ff. 9v and 19r (the Augsburg scans; the BL's
+  images offline since 2023). *Examples*, beside "For your design, all you need are circles": Michael's three
+  windows made on the board (`made-rose-ii.png`, `made-bird.png`, `made-candle.png`, his postcards cropped to
+  600 px). *The lead*, a stack of two: real came on top (`canterbury-came-1200s.jpg`, a Canterbury Cathedral panel of
+  the 1200s lit from inside with flash so the cames, the soldered joints and the iron rods show; Wikimedia
+  Commons "Canterbury Cathedral 012 window showing leading and support", TTaylor 2005, public domain; 1200 ×
+  1600 served at 900), and under it his photograph of a stained-glass bird (`bird-copper-foil-and-solder.jpg`,
+  copper foil and solder, said so in the caption). The Five Sisters was too far away to show a join; its file
+  stays. The captions are drafts for Michael's voice pass. The World's eighteen events are listed with their
+  full texts for the story-writing chat in `CWVault/claude/Events-Theophilus-World-To-Write.md`. **Rewritten 7 Oct 2026 to Michael's new draft**, a story about making windows and not about
+  geometry: the board is the module's window profile (`app: 'window'`) where the story says "Your board is
+  below", three-quarters of the window's height; one margin picture, leaded glass (the Five Sisters); no
+  More and no World in this draft, so the Notre-Dame rose and Villard's page are not on the page (the files
+  stay in `art/stories/geo-1-glass-circles/`, the folder `glass-rose/` until 8 Oct) and *Theophilus's World* is out, its data still in the story file and
+  the shared lists. Slips of the pen in the draft corrected and listed in the session report; the story's
+  count of 6,548 locations is the draft's — the lab's own crossing rules give 3,954, reported, not changed.
+  Stamp `2026-10-07 cf25ae5`. *The 2 Oct build, for the record:* The first story of the geometry series and the door to the circles level of Glass Geometry
+  (`Geometry-Spine.md`, step 1). `placement: across`: the table is `js/glass.js` mounted at level `circles`
+  with the rose ready (`open: 'Rose'`, Chartres palette), in a host at the shell's width and three-quarters of the
+  window's height (full height was asked, but the lab takes the wheel and the finger, and with the table
+  filling the window the page could not be scrolled at all), directly under the date line; the lab's own column and words are the lab's and the page adds
+  none; no left column on the page. The words are Draft 10's, word for word (the Save paragraph still
+  names *Postcard*, which left the Save panel the same day — reported, not changed). Pictures, each with its
+  source beside it in the page: the north rose of Notre-Dame at full width as a `still` (Wikimedia Commons,
+  Ibex73, CC BY 4.0, 1920 wide, 742 KB; the caption says it is not sixfold), Villard de Honnecourt's geometry
+  page as a margin picture (BnF, public domain, 1280 wide), the Five Sisters window as a margin picture
+  (Wikimedia Commons, Stch2022, CC0, 900 wide). The York floor stack is left out for want of a licensed
+  file and named in a comment where it would go; the story's sentence about it stands. *Theophilus's World*
+  on the moving world, 1079 to 1365, the craft above the line and the world below, no far-away cards;
+  Adelard's route draws solid, because `timeline.js` has no dashed route. Pictures in
+  `art/stories/geo-1-glass-circles/` (`glass-rose/` until 8 Oct); the gallery mark `art/gallery/the-glass-rose-gallery.png` and the tab icon
+  `art/icons/the-glass-rose-icon-256.png` are the rose drawn as a mark (seven circles, copper dots), not
+  in `gallery.json`. Stamp `2026-10-02 cf25ae5`.
 - **`deep-time.html` (hung 7 Oct 2026; retired 9 Oct 2026)** — **Deep Time**, the Time Machine's deep page for two
   days: see the entry under `experiments/` for `join-bench.html → active/deep-time.html`, where it was built and
   is described. **On 9 Oct 2026 it folded into `active/time-machine.html`** (the one timeline, lane C of
@@ -1727,62 +1790,6 @@ backstop for the Claude Code session that lands the file.
   stripes and a monochrome toggle. With colour off and order the only channel, 6, 10 and
   14 render identical — so colour currently carries information rather than delight, and
   a second channel is required. Two candidates are in the bench. In progress.
-- **`geo-1-glass-circles.html`** — **story: Stained Glass Circles**, Geo-1-Glass-Circles, the first of the
-  geometry series (Michael's names, 8 Oct 2026: the series name is the file's, the gallery name is the
-  page's title; `the-glass-rose.html` until then, the old address redirected in `_redirects`; the pictures
-  moved with it to `art/stories/geo-1-glass-circles/` on 8 Oct, later; the icon and the gallery mark keep
-  their `glass-rose` file names). Built 2 Oct 2026 from `template-story.html`, per
-  `CWVault/claude/Prompt-Build-The-Glass-Rose.md`; Publishing-a-Story stage 2, at its own address and hung
-  nowhere. **8 Oct 2026, Michael's rulings on the 7 Oct build (`glass.js?v=2026-10-08`, stamp `2026-10-08
-  5ffb77e`):** the text is his draft of 8 Oct (`_mscVault/0. Current/Designing Glass with Circles.md`),
-  which puts the board after "Give it a try." and the counts after the board, adds the pale-green clear
-  glass and why (sand, wood ash, iron), and names the leaded-glass picture on the left; the same slips of
-  the pen corrected as on 7 Oct (he thanked the correction), plus "so thin, that" → "so thin that", "it had
-  a built-in eraser" → "has", "laid it out" → "laid out", "click" → "tap"; the numbers left as he wrote
-  them, on his word (they give a sense of how fast the options grow). *Theophilus's World* is back below
-  the counts, the 2 Oct build's data unchanged, because he says a timeline and map come below; a *More*
-  on each event is not built (`timeline.js` has no More; the Time Machine's is its own page's). The
-  board's new rules are the module's (the `js/glass.js` entry, 8 Oct). Theophilus's World's event texts
-  are the 2 Oct build's, not his. **8 Oct, later — the left column (Michael's asks of 8 Oct; built, uncommitted):**
-  two picture stacks (`figure.margin.stack`: pages piled with their edges showing, a tap sending the top one to
-  the bottom, the caption following the top; the pile's shape per stack in `--pile`; one script serves every
-  stack). *The book itself*, beside the first paragraph: five pages from the three oldest copies, read off
-  their red headings against the Latin (Bibliotheca Augustana's text) — Wien ÖNB Cod. 2527 f. 1r (the
-  "Theophilus, who is also Roger" line; the Augsburg scan, 480 wide, the codex not digitised), Wolfenbüttel HAB
-  Cod. Guelf. 69 Gud. lat. 2° ff. 86r and 89v (the library's own scans, Public Domain Mark, 1024 wide, cropped
-  to the page: images 00179 and 00186), London BL Harley 3915 ff. 9v and 19r (the Augsburg scans; the BL's
-  images offline since 2023). *Examples*, beside "For your design, all you need are circles": Michael's three
-  windows made on the board (`made-rose-ii.png`, `made-bird.png`, `made-candle.png`, his postcards cropped to
-  600 px). *The lead*, a stack of two: real came on top (`canterbury-came-1200s.jpg`, a Canterbury Cathedral panel of
-  the 1200s lit from inside with flash so the cames, the soldered joints and the iron rods show; Wikimedia
-  Commons "Canterbury Cathedral 012 window showing leading and support", TTaylor 2005, public domain; 1200 ×
-  1600 served at 900), and under it his photograph of a stained-glass bird (`bird-copper-foil-and-solder.jpg`,
-  copper foil and solder, said so in the caption). The Five Sisters was too far away to show a join; its file
-  stays. The captions are drafts for Michael's voice pass. The World's eighteen events are listed with their
-  full texts for the story-writing chat in `CWVault/claude/Events-Theophilus-World-To-Write.md`. **Rewritten 7 Oct 2026 to Michael's new draft**, a story about making windows and not about
-  geometry: the board is the module's window profile (`app: 'window'`) where the story says "Your board is
-  below", three-quarters of the window's height; one margin picture, leaded glass (the Five Sisters); no
-  More and no World in this draft, so the Notre-Dame rose and Villard's page are not on the page (the files
-  stay in `art/stories/geo-1-glass-circles/`, the folder `glass-rose/` until 8 Oct) and *Theophilus's World* is out, its data still in the story file and
-  the shared lists. Slips of the pen in the draft corrected and listed in the session report; the story's
-  count of 6,548 locations is the draft's — the lab's own crossing rules give 3,954, reported, not changed.
-  Stamp `2026-10-07 cf25ae5`. *The 2 Oct build, for the record:* The first story of the geometry series and the door to the circles level of Glass Geometry
-  (`Geometry-Spine.md`, step 1). `placement: across`: the table is `js/glass.js` mounted at level `circles`
-  with the rose ready (`open: 'Rose'`, Chartres palette), in a host at the shell's width and three-quarters of the
-  window's height (full height was asked, but the lab takes the wheel and the finger, and with the table
-  filling the window the page could not be scrolled at all), directly under the date line; the lab's own column and words are the lab's and the page adds
-  none; no left column on the page. The words are Draft 10's, word for word (the Save paragraph still
-  names *Postcard*, which left the Save panel the same day — reported, not changed). Pictures, each with its
-  source beside it in the page: the north rose of Notre-Dame at full width as a `still` (Wikimedia Commons,
-  Ibex73, CC BY 4.0, 1920 wide, 742 KB; the caption says it is not sixfold), Villard de Honnecourt's geometry
-  page as a margin picture (BnF, public domain, 1280 wide), the Five Sisters window as a margin picture
-  (Wikimedia Commons, Stch2022, CC0, 900 wide). The York floor stack is left out for want of a licensed
-  file and named in a comment where it would go; the story's sentence about it stands. *Theophilus's World*
-  on the moving world, 1079 to 1365, the craft above the line and the world below, no far-away cards;
-  Adelard's route draws solid, because `timeline.js` has no dashed route. Pictures in
-  `art/stories/geo-1-glass-circles/` (`glass-rose/` until 8 Oct); the gallery mark `art/gallery/the-glass-rose-gallery.png` and the tab icon
-  `art/icons/the-glass-rose-icon-256.png` are the rose drawn as a mark (seven circles, copper dots), not
-  in `gallery.json`. Stamp `2026-10-02 cf25ae5`.
 - **`glass-circles.html`** — experiment: **Glass 1: Circles** (2 Oct 2026, from the prompt Michael's chat wrote;
   awaiting his look). The one `js/glass.js`, mounted at level `circles` with two powers no level owns yet:
   `fill: 'tap'` and `measure: true`. **Tap to fill:** with Color open and a colour chosen, a tap inside a
