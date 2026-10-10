@@ -303,7 +303,8 @@ There is one more clue. Another kind of shelly tube lies in the same rock, and n
 
 ## 7. Animals, kept
 
-**Label:** Animals, kept
+**Label:** Animals, fossils
+**Line:** earth
 **Age:** 539 Ma · ± 0.6 Ma · the start of the Cambrian on the international chart, 538.8 ± 0.6 Ma, from dated ash in Namibia (Linnemann 2019); defined by a level in the rock at Fortune Head
 **Tail:** 640 Ma — chemistry in older rock in Oman that may be from sponges, and gene clocks; both argued
 **Known from:** burrows, then shells, in rock laid down in shallow seas

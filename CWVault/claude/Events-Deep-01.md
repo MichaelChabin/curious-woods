@@ -103,7 +103,8 @@ The iron at the centre is partly liquid still, and its churning makes the Earth'
 
 ## 3. Big thwack
 
-**Label:** Big thwack
+**Label:** Moon forms
+**Line:** earth
 **Age:** 4510 Ma · argued, 4510 to 4350 Ma · radiometric on moon rocks and their crystals, which give the youngest the Moon could be
 **Tail:** none — a dated moment, if the date could be settled
 **Known from:** moon rocks brought back by Apollo, and computer models of the crash
@@ -202,7 +203,8 @@ The closest anyone has come to it is in Greenland. Rocks near Isua, about 3.8 bi
 
 ## 5. Blue Earth
 
-**Label:** Blue Earth
+**Label:** Oceans form
+**Line:** earth
 **Age:** 4404 Ma · ± 8 Ma · radiometric (uranium–lead) on the crystal itself
 **Tail:** 4500 Ma — the models in which the steam rained out within a few million years of the Moon's making
 **Known from:** a few crystals of zircon, smaller than grains of sand, among thousands older than four billion years
@@ -352,6 +354,7 @@ The Earth has kept no crater from this time. The oldest signs of big hits are th
 ## 8. Stromatolites
 
 **Label:** Stromatolites
+**Line:** earth
 **Age:** 3430 Ma · between about 3430 and 3350 Ma · from the layers above and below, not from the mounds themselves
 **Tail:** 4100 Ma — carbon inside a 4.1-billion-year-old zircon that may be life's trace
 **Known from:** layered mounds in rock in the Pilbara, and older, disputed traces in Greenland, Labrador, Nunavik and a single zircon

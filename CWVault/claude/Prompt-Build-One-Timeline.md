@@ -56,6 +56,11 @@ lane E; the China and Egypt viewings keep their own fixed lines with no deep lin
 
 ## Lane D — labels, the measurer, and collapsing
 
+*Superseded 10 Oct 2026 by `Prompt-Build-Timeline-Stack.md`, built the same day: the centred labels gave way to margin
+titles, the blue envelope to a clear lens, Collapse / Show / Show all and Collapse by itself to open, closed and removed
+lines that close by themselves above the parent; lane E's panel to the Graphs word with its commands. The tree is now
+Periods-Deep.md's thirty periods. Lanes B to E below are the record of how it was reached.*
+
 *Written 9 Oct 2026, night, from Michael's second chat of the day (`claude/Prompt-Build-Timeline-Labels.md`, which
 named the retired page; this lane restates it against the page as it is, and supersedes it) and his ruling of the
 same night: a line's left edge no longer reads 0; lines count ago only; "how long did it take?" is answered by a

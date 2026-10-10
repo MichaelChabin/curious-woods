@@ -112,7 +112,8 @@ This was not the Earth's first ice age. Rubble in South Africa shows that glacie
 
 ## 3. Oxygen in the air
 
-**Label:** Oxygen in the air
+**Label:** Oxygen alone
+**Line:** earth
 **Age:** 2430 Ma · ± 20 Ma · bracketed: from sulphur in the rock, and lava dated 2,426 ± 3 Ma in the Northern Cape (Gumsley 2017)
 **Tail:** none — a dated change; the oxygen-makers' own tail is on *Cyanobacteria* (batch 1)
 **Known from:** sulphur in rocks laid down on the seafloor, whose odd mix of atoms vanishes once there is oxygen in the air
@@ -207,7 +208,8 @@ Mineralogists keep finding new kinds. In September 2026 the official list held 6
 
 ## 5. Banded iron
 
-**Label:** Banded iron
+**Label:** Rust
+**Line:** earth
 **Age:** 1878 Ma · ± 2 Ma · radiometric (uranium–lead) on zircons in volcanic ash in the Gunflint iron formation, which matches the Mesabi's
 **Tail:** none — banded iron is far older than this; this is its last great pulse
 **Known from:** iron formations around Lake Superior, dated by ash beds in them and by a layer of debris from the Sudbury impact above them
@@ -305,6 +307,7 @@ Nobody has drawn a map of Nuna that everyone accepts.
 ## 7. Cells with nuclei
 
 **Label:** Cells with nuclei
+**Line:** earth
 **Age:** 1640 Ma · ± 10 Ma · radiometric (uranium–lead) on ash in the rock that holds the fossils (1,641.7 ± 1.2 Ma from one ash bed); what the fossils were is argued
 **Tail:** 1900 Ma — the clocks in living things' genes, and a disputed fossil at 1.87 billion
 **Certainly by:** 1050 Ma — *Bangiomorpha*, the oldest fossil that nobody disputes belongs to a group alive today (a trial field: Michael's two-tailed dot)
@@ -453,6 +456,7 @@ A million or two years after the last of the Arctic lavas cooled, the ice began 
 ## 10. Snowball one
 
 **Label:** Snowball one
+**Line:** earth
 **Age:** 717 Ma · ± 1 Ma · radiometric (uranium–lead) on ash beds inside and below the glacial rocks, in Yukon
 **Tail:** none — a dated moment
 **Known from:** glacial rubble in rocks that sat at the equator, dated by volcanic ash

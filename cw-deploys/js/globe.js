@@ -10,7 +10,7 @@
 
    The five words of knowing (Ideas-Ledger, *Invented land, honest about it*, 7 Oct), by age:
      measured   to 200 million years: the seafloor's stripes; drawn solid
-     inferred   to 540: rock magnetism gives how far north, not how far east; drawn smeared east–west
+     inferred   to 540: rock magnetism gives how far north, not how far east; drawn once at the model's position (10 Oct: no smear)
      fitted     to the model's reach: the pieces are real, the fits argued; drawn as a ghost
      guessed    past the model's reach, while cratons exist (to 4 billion): the real pieces of crust,
                 which still exist, placed by the model's last position plus a random slow drift from a
@@ -417,7 +417,7 @@
       enterUnit(r, cx, cy);
       if (data && g !== 'none') {
         if (g === 'measured' || g === 'ground') fillLand(landPath(V, Math.max(ma, 0), 0, 'model'), LAND, g === 'ground' ? 0.45 : 1, null);
-        else if (g === 'inferred') [-12, -8, -4, 4, 8, 12, 0].forEach(function (s) { fillLand(landPath(V, ma, s, 'model'), LAND, 0.2, null); });   // the unshifted last, so the wash clips to it
+        else if (g === 'inferred') fillLand(landPath(V, ma, 0, 'model'), LAND, 1, null);   // the model's own position, once: a guess called a guess, not a smear (Michael, 10 Oct; the seven shifted copies are gone)
         else if (g === 'fitted') [-27, -18, -9, 9, 18, 27, 0].forEach(function (s) { fillLand(landPath(V, ma, s, 'model'), LAND, 0.14, null); });
         else if (g === 'guessed') fillLand(landPath(V, ma, 0, 'guessed'), LAND_PALE, 0.7, 'dashed');
         else if (g === 'invented') fillLand(landPath(V, ma, 0, 'invented'), LAND_PALE, 0.5, 'dotted');

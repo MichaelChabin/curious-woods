@@ -16,6 +16,7 @@ What the checkers caught, in short. Kevin Boyce's quotation in *Coal* was not hi
 ## 1. Plants ashore
 
 **Label:** Plants ashore
+**Line:** earth
 **Age:** 470 Ma · ± 2 Ma · from the fossils in the layers around the spores (Dapingian, early Middle Ordovician, 471.3 to 469.4 Ma on the chart of 2024), not a radiometric date; the paper gives about 473 to 471 on the chart of its day
 **Tail:** 500 Ma — gene clocks put the origin of land plants in the Cambrian or a little after, between about 515 and 474 Ma (Morris 2018); older spore-like specks (about 480 Ma, and argued ones older) point the same way
 **Known from:** spores of tiny plants, carried into water and kept in rock
@@ -397,6 +398,7 @@ In 2016 another team argued back. Many of the coal-swamp trees had little lignin
 ## 9. The Great Dying
 
 **Label:** The Great Dying
+**Line:** earth
 **Age:** 251.9 Ma · ± 0.04 Ma · radiometric (uranium–lead) on zircons in ash beds at Meishan: the dying began 251.941 ± 0.037 Ma and lasted about 60,000 years (Burgess 2014)
 **Tail:** none — a dated moment
 **Known from:** fossils of sea animals that stop at one layer, and the volcanic ash around it

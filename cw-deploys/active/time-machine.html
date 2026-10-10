@@ -86,6 +86,8 @@
   #htw-panel .htw-item, #htw-panel .htw-action-word { cursor: pointer; }
   #htw-panel .htw-action-row { display: block; }
   #htw-panel .htw-action-row.group { margin-top: 20px; }
+  #htw-panel .htw-action-row.sub { padding-left: 14px; }        /* a word indented under Map or Graphs (the stack prompt, parts 4 and 6) */
+  #htw-panel .htw-item.graphs { margin-top: 14px; cursor: default; }
   #htw-panel .htw-action-word.on { font-style: normal; color: var(--ink); }
   #htw-panel .htw-action-word.active { color: var(--copper); }
   #htw-panel .htw-action-row:has(> .htw-action-word[style*="none"]) { display: none; }
@@ -163,7 +165,7 @@
   <div class="kicker">Time Machine</div>
   <h1 id="introTitle">After the Ice</h1>
   <p id="introText">About twelve thousand years ago, the ice that covered the north began to melt, and it did not come back in the winter. This page counts years from then. Everything people have made since then fits on the line at the top: farms, cities, writing, ships, all of it.</p>
-  <p class="how" id="introHow">The line at the top is the whole of the Earth’s time, in periods. Tap a period and the blue window settles on it, and the period opens as a line of its own beneath; tap it again and it closes. Drag the window’s ends to take in more or less: the line below says how long that is. When the lines pile up, <i>Collapse</i> folds the ones above into strips. The last line is the twelve thousand years since the ice let go, spread out below its window, with the copper handle for the year you are in. The map shows the world in that year: this side of the ice ages the ground, past them the earth from space, with a word under it saying how sure that is. Tap a mark to read what happened there, and <i>More</i> for the story.</p>
+  <p class="how" id="introHow">The lines are the whole of the Earth’s time, in periods, each period a band in its own colour. Tap a period and it opens as a line beneath; tap it again and that line goes. Drag the window’s ends to take in more or less: the line beneath says how long that is. Tap a line’s title to fold it to a strip. The last line is the twelve thousand years since the ice let go, spread out below its window, with the copper handle for the year you are in. The map shows the world in that year: this side of the ice ages the ground, past them the earth from space, with a word under it saying how sure that is. Tap a mark to read what happened there, and <i>More</i> for the story.</p>
   <p class="open">Open on <span class="viewing on" data-v="after-the-ice">After the Ice</span> · <span class="viewing" data-v="china">China, with the Song in the window</span> · <span class="viewing" data-v="egypt">Egypt, from the Sahara to Cleopatra</span></p>
   <div class="credit">The picture on the wall: Naomi Devil, <i>Idő-töltés</i> (2016), a cybernetic sculpture with Nicolas Schöffer’s hourglass. Photograph by Darabos György, <a href="https://commons.wikimedia.org/wiki/File:Naomi_Devil,_Id%C5%91-t%C3%B6lt%C3%A9s,_Nicolas_Sch%C3%B6ffer_homok%C3%B3r%C3%A1j%C3%A1b%C3%B3l_k%C3%A9sz%C3%BClt_kibernetikus_szobor_a_Hungarikon-gy%C5%B1jtem%C3%A9ny_sz%C3%A1m%C3%A1ra.jpg">Wikimedia Commons</a>, CC BY-SA 4.0, cropped.</div>
   <span class="cmd next" id="next" role="button" tabindex="0">Next</span>
@@ -175,20 +177,17 @@
     <ul id="htw-panel-list">
       <li class="htw-item" data-panel="timeline">Timeline</li>
       <li class="htw-item" data-panel="map">Map</li>
+      <li class="htw-action-row sub"><span class="htw-action-word" id="wGlobe">Globe</span></li>
+      <li class="htw-action-row sub"><span class="htw-action-word" id="wClimate">Climate</span></li>
+      <li class="htw-action-row sub"><span class="htw-action-word absent" id="wGuess" style="display:none">another guess</span></li>
+      <li class="htw-item graphs" id="wGraphs">Graphs</li>
+      <li class="htw-action-row sub"><span class="htw-action-word curve absent" data-c="people" style="display:none">People</span></li>
+      <li class="htw-action-row sub"><span class="htw-action-word curve absent" data-c="sea" style="display:none">Sea level</span></li>
+      <li class="htw-action-row sub"><span class="htw-action-word curve deep absent" data-c="oxygen" style="display:none">Oxygen</span></li>
+      <li class="htw-action-row sub"><span class="htw-action-word curve deep absent" data-c="day-length" style="display:none">Day length</span></li>
+      <li class="htw-action-row sub"><span class="htw-action-word curve deep absent" data-c="minerals" style="display:none">Minerals</span></li>
+      <li class="htw-action-row sub"><span class="htw-action-word curve deep absent" data-c="sun-and-inside" style="display:none">Sun and inside</span></li>
       <li class="htw-action-row group"><span class="htw-action-word absent" id="wSeen" style="display:none">What I’ve seen</span></li>
-      <li class="htw-action-row group"><span class="htw-action-word vw" data-v="globe">Globe</span></li>
-      <li class="htw-action-row"><span class="htw-action-word vw on" data-v="map">Map</span></li>
-      <li class="htw-action-row"><span class="htw-action-word vw" data-v="both">Both</span></li>
-      <li class="htw-action-row"><span class="htw-action-word" id="wClimate">Climate</span></li>
-      <li class="htw-action-row"><span class="htw-action-word absent" id="wGuess" style="display:none">another guess</span></li>
-      <li class="htw-action-row group"><span class="htw-action-word" id="wAuto">Collapse by itself</span></li>
-      <li class="htw-action-row group"><span class="htw-action-word curve" data-c="people">People</span></li>
-      <li class="htw-action-row"><span class="htw-action-word curve" data-c="sea">Sea level</span></li>
-      <li class="htw-action-row"><span class="htw-action-word curve deep" data-c="oxygen">Oxygen</span></li>
-      <li class="htw-action-row"><span class="htw-action-word curve deep" data-c="day-length">Day length</span></li>
-      <li class="htw-action-row"><span class="htw-action-word curve deep" data-c="minerals">Minerals</span></li>
-      <li class="htw-action-row"><span class="htw-action-word curve deep" data-c="sun-and-inside">Sun and inside</span></li>
-      <li class="htw-action-row group"><span class="htw-action-word" id="wBillion">When were there a billion people?</span></li>
     </ul>
   </nav>
   <main id="stage">
@@ -207,15 +206,15 @@
   </main>
 </section>
 
-<script src="../js/map.js?v=2026-10-09b"></script>
+<script src="../js/map.js?v=2026-10-10"></script>
 <script src="../js/timeline.js?v=2026-09-27-ati"></script>
-<script src="../js/globe.js?v=2026-10-09b"></script>
-<script src="../js/deep-time.js?v=2026-10-09e"></script>
+<script src="../js/globe.js?v=2026-10-10"></script>
+<script src="../js/deep-time.js?v=2026-10-10"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-09e 05aa2bd';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-10 a8a4323';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -251,19 +250,8 @@
   const MAIN_Y = 18, DET_Y = 172, BAND = 64, PADX = 8;
   // The panels' words (the mockup's).
   const PANELS = {
-    timeline: ['Timeline', '<p>The lines above are the whole of the Earth’s time, in periods. Tap a period and the blue window settles on it and it opens as a line beneath; tap it again and it closes. Drag the window’s ends to take in more or less: they click onto a period’s edges, and between them the window turns white.</p><p>The last period, After the ice, opens as the two lines below: the whole twelve thousand years, from the ice to now.</p><p>The pale blue window on it is the Focus window. Drag it to move through time. Drag either end to make it wider or narrower.</p><p>The line below shows only the years inside the Focus window, spread out so there is room to read.</p><p>The copper handle is the year you are in. Drag it, or tap anywhere on the line, and the map shows the world in that year. Tap a mark to go to its year and see what happened.</p>'],
+    timeline: ['Timeline', '<p>The lines are the whole of the Earth’s time, in periods, each period a band in its own colour. Tap a period and it opens as a line beneath, with the window on it; tap it again and that line goes. Drag the window’s ends to take in more or less: they click onto a period’s edges, and the line beneath says how long that is. Tap a line’s title to fold it to a strip, or open it again.</p><p>The last period, After the ice, opens as the two lines below: the whole twelve thousand years, from the ice to now.</p><p>The pale blue window on it is the Focus window. Drag it to move through time. Drag either end to make it wider or narrower.</p><p>The line below shows only the years inside the Focus window, spread out so there is room to read.</p><p>The copper handle is the year you are in. Drag it, or tap anywhere on the line, and the map shows the world in that year. Tap a mark to go to its year and see what happened.</p>'],
     map: ['Map', '<p>The map shows the world in the handle’s year. This side of the ice ages it is the ground, today’s land with the sea lower where it was lower; past them it is the earth from space, with the continents where they were, and the word under it says how sure that is, from <i>measured</i> down to <i>invented</i>. Drag the globe to turn it. Where the word is <i>guessed</i>, <i>another guess</i> draws a new one.</p><p>Tap a place, and its mark lights up on the timeline. Drag the bars at the map’s edges to make it bigger.</p>']
-  };
-  // The recorded question: a list of steps, each an action with a duration and a line for the
-  // summary block. Glass Geometry records an operation log with one replay speed, not steps
-  // with durations, so this shape is the bench's own.
-  const QUESTIONS = {
-    billion: { steps: [
-      { do: 'focus', to: 'all', ms: 1400, say: 'First, open the Focus window to the whole line…' },
-      { do: 'curve', name: 'people', ms: 900, say: '…show <b>People</b>…' },
-      { do: 'handle', to: { curve: 'people', value: 1e9 }, ms: 2600, say: '…and drag the handle until it reads a billion.' },
-      { do: 'say', text: 'found' }
-    ] }
   };
 
   // ---------- numbers and years ----------
@@ -287,14 +275,14 @@
   function merge(store) {
     const out = [];
     (store.events || []).forEach(r => {
-      if (r.line !== 'after-the-ice') return;
+      if (r.side !== 'after-the-ice') return;   // the store's after-the-ice records (r.line is the widest line the event is labelled on)
       const p = r.place && r.place.lat != null ? { name: r.place.short || r.place.name, lat: r.place.lat, lon: r.place.lon } : null;
       out.push({ id: r.id, year: r.year + ICE, astro: r.year, precision: r.precision || 'year', kind: r.kind, weight: r.weight || 1,
                  label: r.label, side: 'world', summary: r.summary, more: r.more, refs: r.references || [], place: p, fresh: !r.legacy });
     });
     alias = Object.assign({}, store.aliases || {});   // every retired September id → the record that stands for it; the cut ones are absent
     EVENTS = out.filter(e => e.year >= 0 && e.year <= NOW).sort((a, b) => a.year - b.year);
-    window.__timeMachine = { events: EVENTS, alias, select: id => select(id) };   // for checking from the console; nothing on the page uses it
+    window.__timeMachine = { events: EVENTS, alias, select: id => select(id), graphsFor: () => graphsFor(), handed: () => handed, bar: () => bar, map: () => map };   // for checking from the console; nothing on the page uses it
     byId = {}; EVENTS.forEach(e => { byId[e.id] = e; });
     groups = {}; EVENTS.forEach(e => { if (e.place) { const k = e.place.lat.toFixed(2) + ',' + e.place.lon.toFixed(2); (groups[k] = groups[k] || []).push(e); } });
   }
@@ -488,6 +476,7 @@
     stopAnim();
     if (id && !byId[id]) id = null;
     sel = id === sel ? null : id;
+    if (sel) namesOn = true;
     const e = sel && byId[sel];
     if (e) {
       if (!inFocus(e)) { const s = focus.b - focus.a; focus.a = Math.max(0, Math.min(NOW - s, e.year - s / 2)); focus.b = focus.a + s; drawDetail(); }
@@ -533,7 +522,8 @@
     Object.keys(groups).forEach(k => {
       const g = groups[k].filter(e => vis.has(e.id)); if (!g.length) return;
       const on = g.some(e => e.id === sel), inside = g.some(inFocus), heavy = Math.max(...g.map(e => e.weight));
-      const name = (g.find(e => e.id === sel) || g.find(inFocus) || g[0]).place.name;
+      // no names at rest (the stack prompt, part 5): after a tap, the tapped place and the places with events inside the selected period
+      const name = namesOn && (on || inside) ? (g.find(e => e.id === sel) || g.find(inFocus) || g[0]).place.name : '';
       marks.push({ type: 'place', lat: g[0].place.lat, lon: g[0].place.lon, name, world: true, minor: !inside && !on, on, weight: inside ? heavy : 1, onTap: () => tapPlace(g) });
     });
     map.redraw();
@@ -579,17 +569,19 @@
   const wSeen = $('wSeen');
   function showWord() { CW.setWordPresent(wSeen, live && (seenOnly || seenIds().size > 0)); }
   wSeen.addEventListener('click', () => { seenOnly = !seenOnly; wSeen.classList.toggle('active', seenOnly); drawDetail(); draw(); markMap(); });
-  // one curve at a time across both kinds: People and Sea level draw on Detail, the deep ones under the deep lines
+  // Graphs (the stack prompt, part 6): a command is present only when the selected period holds enough of its
+  // curve (the file's from, to and minPoints); one plot at a time; People and Sea level draw on the close-up
+  // of After the ice (the Time Machine's own drawing, for now), the deep ones under the deepest deep line
   function setCurve(c) { curve = c; if (c && bar) bar.setCurve(null); document.querySelectorAll('#htw-panel .curve').forEach(x => x.classList.toggle('on', x.dataset.c === c)); draw(); }
-  const DEEP_CURVE_NAMES = { oxygen: 'Oxygen', 'day-length': 'Day length', minerals: 'Minerals', 'sun-and-inside': 'The sun, and from inside' }, deepCurveCache = {};
+  const DEEP_CURVE_NAMES = { oxygen: 'Oxygen', 'day-length': 'Day length', minerals: 'Minerals', 'sun-and-inside': 'The sun, and from inside' };
+  const CURVE_FILES = { people: 'people', sea: 'sea-level', oxygen: 'oxygen', 'day-length': 'day-length', minerals: 'minerals', 'sun-and-inside': 'sun-and-inside' };
+  let curveFiles = {};   // key -> the file, loaded with the page
   function setDeepCurve(key) {
     if (!bar) return;
     if (!key) { bar.setCurve(null); document.querySelectorAll('#htw-panel .curve.deep').forEach(x => x.classList.remove('on')); return; }
     if (curve) setCurve(null);
     document.querySelectorAll('#htw-panel .curve.deep').forEach(x => x.classList.toggle('on', x.dataset.c === key));
-    const show = c => { c.name = DEEP_CURVE_NAMES[key] || key; bar.setCurve(c); };
-    if (deepCurveCache[key]) { show(deepCurveCache[key]); return; }
-    get('../stories/curves/' + key + '.json').then(c => { deepCurveCache[key] = c; if (document.querySelector('#htw-panel .curve.deep.on[data-c="' + key + '"]')) show(c); });
+    const c = curveFiles[key]; if (c) { c.name = DEEP_CURVE_NAMES[key] || key; bar.setCurve(c); }
   }
   document.querySelectorAll('#htw-panel .curve').forEach(x => x.addEventListener('click', () => {
     stopAnim();
@@ -597,19 +589,61 @@
     if (bar) setDeepCurve(null);
     setCurve(curve === x.dataset.c ? null : x.dataset.c);
   }));
-  document.querySelectorAll('#htw-panel .vw').forEach(w => w.addEventListener('click', () => { document.querySelectorAll('#htw-panel .vw').forEach(x => x.classList.remove('on')); w.classList.add('on'); if (map) map.deepView(w.dataset.v); }));
+  // which commands are present: the selected period's span in store years against each file's range.
+  // CW.setWordPresent fades a word in on the next frame, so a word made present then absent in one frame would
+  // come back; the wanted state is kept on the word and restored after that frame.
+  function graphsFor() {
+    let lo, hi;
+    if (bar && !handed) { const sp = bar.span(); lo = THIS_YEAR - sp.from * 1e6; hi = THIS_YEAR - sp.to * 1e6; }
+    else { lo = -ICE; hi = THIS_YEAR; }
+    document.querySelectorAll('#htw-panel .curve').forEach(x => {
+      const c = curveFiles[x.dataset.c]; let ok = false;
+      // enough points inside the period, or a range that covers it whole (a sketched curve has few points but a value everywhere between them)
+      if (c) { const inside = (c.points || []).filter(pt => pt[0] >= lo && pt[0] <= hi).length; ok = inside >= (c.minPoints || 3) || (c.from <= lo && c.to >= hi); }
+      const deep = x.classList.contains('deep');
+      if (deep && handed) ok = false;             // a deep curve draws under a deep line
+      if (!deep && !handed) ok = false;           // People and Sea level draw on the close-up
+      x._want = ok; CW.setWordPresent(x, ok);
+      if (!ok) requestAnimationFrame(() => { if (!x._want) x.classList.add('absent'); });
+      if (!ok && x.classList.contains('on')) { if (deep) setDeepCurve(null); else setCurve(null); }
+    });
+  }
+  // Globe under Map: one word that reads Globe, and Map while the globe is up (the stack prompt, part 4)
+  $('wGlobe').addEventListener('click', () => { const w = $('wGlobe'), on = w.textContent === 'Globe'; w.textContent = on ? 'Map' : 'Globe'; if (map) map.deepView(on ? 'globe' : 'map'); });
   $('wClimate').addEventListener('click', () => { const w = $('wClimate'); w.classList.toggle('active'); if (map) { map.deepClimate(w.classList.contains('active')); $('model').textContent = cwGlobe.CLIMATE_WORDS; $('model').style.display = w.classList.contains('active') ? 'block' : 'none'; } });
   $('wGuess').addEventListener('click', () => { if (map) map.deepReguess(); });
-  // lane D's switch, for Michael to compare: the lines above the parent fold by themselves as she goes deeper
-  $('wAuto').addEventListener('click', () => { const w = $('wAuto'); w.classList.toggle('active'); if (bar) bar.autoCollapse(w.classList.contains('active')); });
 
   // ---------- the deep lines, and the hand-over ----------
-  let bar = null, handed = false, ranOnce = false, shownId = null, lastMa = null;
+  let bar = null, handed = false, ranOnce = false, shownId = null, lastMa = null, namesOn = false;
+  // a period tapped behaves like an event tapped (the stack prompt, part 1): its summary in the block, More in the
+  // window, from stories/deep-time-periods.json; a period with no words yet shows its name and span
+  function showPeriod(node, span) {
+    namesOn = false; markMap(); graphsFor();
+    shownId = null;
+    const words = bar && bar.periodWords(), rec = node && words && words[node.name];
+    if (!node) { summary.innerHTML = '<span class="hint">about ' + esc(bar.fmt(span.from - span.to).replace(' ago', '')) + '</span>'; return; }
+    shownId = 'period:' + node.name;
+    if (!rec) { summary.innerHTML = '<b>' + esc(node.name) + '.</b> <span class="hint">' + esc(bar.fmt(node.from).replace(' ago', '')) + ' to ' + esc(node.to <= 0 ? 'now' : bar.fmt(node.to).replace(' ago', '')) + ' ago.' + (node.official ? ' ' + esc(node.official) + '.' : '') + '</span>'; return; }
+    summary.innerHTML = '<b>' + esc(node.name) + '.</b> ' + cwDeepTime.prose(rec.summary) + ' <span class="cmd" id="more" role="button" tabindex="0">More</span>';
+    $('more').addEventListener('click', ev => {
+      ev.stopPropagation();
+      const box = document.createElement('div'); box.className = 'tm-more';
+      let h = '<h3>' + esc(node.name) + '</h3>' + (rec.officialName ? '<p class="known"><i>' + esc(rec.officialName) + '</i></p>' : '') + '<div class="stepped"><div>' + esc(rec.more.spanLine) + '</div></div>';
+      h += rec.more.paragraphs.map(pg => pg && pg.quote ? '<blockquote><p>' + cwDeepTime.prose(pg.quote) + '</p></blockquote>' : '<p>' + cwDeepTime.prose(pg) + '</p>').join('');
+      if (rec.knownFrom) h += '<p class="known"><i>Known from</i> ' + esc(rec.knownFrom) + '.</p>';
+      if (rec.references && rec.references.length) h += '<div class="refs">' + rec.references.map(r => '<div>' + cwDeepTime.prose(r) + '</div>').join('') + '</div>';
+      box.innerHTML = h; cwWindow(box, {});
+    });
+  }
   // the event under the deep marker: tapped, or the one the marker has just passed (the passing line,
   // an experiment, Michael, 9 Oct); only the deepest open line's own events count
   function showRec(rec, passed) {
     if (!rec || rec.id === shownId) return;
     shownId = rec.id;
+    if (!passed && map) {   // the map goes to the event's place and shows its name; on the globe it turns to face her
+      const pl = rec.placeNow || rec.place; namesOn = true;
+      if (pl && pl.lat != null) { map.centre(pl.lat, pl.lon); map.deepTurn(pl.lon, pl.lat); }
+    }
     summary.innerHTML = (passed ? '<span class="passed">just passed</span><br>' : '') + '<b>' + esc(sentence(rec.label)) + '</b> ' + cwDeepTime.prose(rec.summary) + (rec.more ? ' <span class="cmd" id="more" role="button" tabindex="0">More</span>' : '');
     const m = $('more'); if (m) m.addEventListener('click', ev => { ev.stopPropagation(); const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec); cwWindow(box, {}); });
   }
@@ -630,15 +664,16 @@
     if (h.on) {
       lines.style.marginLeft = (h.xL - PADX) + 'px'; lines.style.width = (h.xR - h.xL + 2 * PADX) + 'px';
       if (!handed) {
-        handed = true; lines.classList.remove('off');
-        shownId = null; say(sel && byId[sel]);
+        handed = true; lines.classList.remove('off'); namesOn = !!sel;
+        shownId = null; say(sel && byId[sel]); graphsFor();
         measure(); drawDetail(); draw(); markMap(); timeToMap(); showWord();
         if (!ranOnce) { ranOnce = true; if (reduced) setFocus(VIEW.focus[0], VIEW.focus[1]); else sweep(); }
       } else { measure(); drawDetail(); draw(); }
     } else if (handed) {
       handed = false; stopAnim(); lines.classList.add('off');
-      shownId = null; summary.innerHTML = '<span class="hint">Tap a period, a mark, or drag the copper marker.</span>';
-      lastMa = null;
+      if (shownId === null || typeof shownId !== 'string' || shownId.indexOf('period:') !== 0) { shownId = null; summary.innerHTML = '<span class="hint">Tap a period, a mark, or drag the copper marker.</span>'; }
+      lastMa = null; graphsFor();
+      if (bar && map) map.setTime(THIS_YEAR - bar.year() * 1e6);   // the deep marker drives the map again, from where it stands
     }
   }
   function buildBar(store) {
@@ -646,8 +681,12 @@
       data: '../stories/deep-time.json', events: store, year: 0,
       handoff: { line: 'after-the-ice', gap: MAIN_Y },
       onHandoff,
+      periods: '../stories/deep-time-periods.json',
+      scene: ['Animals', 'Mammals', 'Ice', 'Mammoths', 'The last ice age', 'After the ice'],   // the opening scene: every line down to After the ice, closed
       onYear: (ma, storeYear) => { if (handed) return; if (map) map.setTime(storeYear); passing(ma); },
-      onMark: mk => { if (!handed && mk.rec) showRec(mk.rec, false); }
+      onMark: mk => { if (!handed && mk.rec) showRec(mk.rec, false); },
+      onPeriod: (node, span) => { showPeriod(node, span); },
+      onBar: () => { graphsFor(); }
     });
   }
 
@@ -679,26 +718,6 @@
       tween(SETTLE_MS, e => { const a = a0 + (VIEW.focus[0] - a0) * e, b = b0 + (VIEW.focus[1] - b0) * e; handle = (a + b) / 2; setFocus(a, b); }, () => { stopAnim(); });
     });
   }
-  function askBillion() {
-    stopAnim(); select(null); setCurve(null);
-    anyTapStops();
-    const steps = QUESTIONS.billion.steps.slice();
-    const next = () => {
-      const s = steps.shift(); if (!s) { stopHook = null; return; }
-      if (s.say) summary.innerHTML = '<span class="say">' + s.say + '</span>';
-      if (s.do === 'focus') { const a0 = focus.a, b0 = focus.b, h0 = handle; tween(s.ms, e => { setFocus(a0 * (1 - e), b0 + (NOW - b0) * e); handle = h0; }, next); }
-      else if (s.do === 'curve') { setTimeout(() => { if (!stopHook) return; setCurve(s.name); next(); }, reduced ? 0 : s.ms); }
-      else if (s.do === 'handle') { const c = CURVES[s.to.curve], h1 = handle, target = yearWhere(c, s.to.value); tween(s.ms, e => setHandle(h1 + (target - h1) * e), next); }
-      else if (s.do === 'say') {
-        const c = CURVES.people, y = Math.round(yearWhere(c, 1e9)), times = Math.round(curveAt(c, TODAY) / 1e9);
-        summary.innerHTML = '<b>About ' + (y - ICE) + '.</b> For almost all of the twelve thousand years there were fewer than half a billion people. Then the count reached a billion around ' + (y - ICE) + ', and it has grown about ' + ['', '', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][times] + ' times since.';
-        const h = stopHook; stopHook = null; if (h) { const keep = summary.innerHTML; h(); summary.innerHTML = keep; }
-        next();
-      }
-    };
-    next();
-  }
-  $('wBillion').addEventListener('click', ev => { ev.stopPropagation(); askBillion(); });
 
   // ---------- the pages ----------
   let raw = null, wanted = false;   // the files, once loaded; whether Next was pressed before they were
@@ -743,9 +762,11 @@
   // ---------- load ----------
   const get = u => fetch(u, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
   Promise.all([get('../stories/deep-time-events.json'), get('../stories/curves/people.json'), get('../stories/curves/sea-level.json'),
-               get('../stories/curves/sea-level-ice-ages.json'), cwMap.load(PYRAMID)])
-    .then(([store, people, sea, seaIce, pyramid]) => {
+               get('../stories/curves/sea-level-ice-ages.json'), cwMap.load(PYRAMID),
+               get('../stories/curves/oxygen.json'), get('../stories/curves/day-length.json'), get('../stories/curves/minerals.json'), get('../stories/curves/sun-and-inside.json')])
+    .then(([store, people, sea, seaIce, pyramid, oxygen, dayLength, minerals, sunInside]) => {
       raw = { store, people, sea, seaIce, pyramid };
+      curveFiles = { people, sea, oxygen, 'day-length': dayLength, minerals, 'sun-and-inside': sunInside };
       if (wanted) showBench();
       // which past layers the pyramid carries, said once in the console (Spec-Maps, Time on the map)
       const names = (pyramid.layers || []).map(L => L.name);

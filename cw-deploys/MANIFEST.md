@@ -97,7 +97,27 @@ can be seen; `second: { name, say, points }`), **`crust-and-land.json`** (7 Oct:
 series as fractions of the earth's surface — the crust that existed, today 0.40, and the land above the
 sea, today 0.29 — a sketch from the reviews with the disagreement as the band; the globe's invented land
 takes its area from the first). Drawn by `js/deep-time.js`'s `setCurve`.
-**`stories/deep-time.json` (6 Oct 2026; rewritten 9 Oct)** — the period tree of the one timeline, edited by hand.
+**`stories/deep-time-periods.json` (10 Oct 2026)** — GENERATED, never edited by hand: the words of the periods, written
+by Claude.ai chats with Michael to `CWVault/claude/Prompt-Deep-Time-Periods.md` in batches (`CWVault/claude/Periods-Deep-01.md`,
+`-02.md`, more to come; researched by agents, not yet checked in round 4) and read by `tools/periods-from-vault.py`
+(outside this folder, in `_CW/tools/`): one record per period, keyed by its name as the tree has it — the summary
+(its trailing More removed), the More as paragraphs with its span line, the official name, known from, what opens
+and what is inside, the references, the Pictures wanted line, the Checked line. 18 of the 30 periods on 10 Oct;
+a period without words shows its name and span on the page and says nothing. Read by `active/time-machine.html`.
+**`stories/deep-time.json` (6 Oct 2026; rewritten 9 Oct, and again 10 Oct)** — the period tree of the one timeline, edited by hand.
+**Since 10 Oct 2026 (`CWVault/claude/Prompt-Build-Timeline-Stack.md`, part 1; the tree agreed in `Periods-Deep.md`, which wins):**
+thirty periods, plainly named so that a line's names read as its story — the Earth's five (Molten 4,600–4,000 million years,
+Oceans 4,000–2,500, Oxygen 2,500–1,800, Big cells 1,800–720, Animals 720–now), Animals' four (Soft bodies, Trilobites, Dinosaurs,
+Mammals), Trilobites' six (Shells, Crowded seas, Green land, Fish, Coal forests, One continent), Dinosaurs' three (First
+dinosaurs, Giants, Flowers), Mammals' five (Recovery, Heat, Cooling, Grass, Ice), Ice's three (Lucy, Hand axes, Mammoths),
+Mammoths' one (The last ice age, 130,000 years to now, the rest of its line a plain stretch) and its three (Hippos in London,
+Ice sheets, After the ice, `line: 'after-the-ice'`). Each period: `name`, `from`, `to`, `official` (the specialists' name and
+what it means), `colour` (a glass colour from `art/palette/palettes.json`, with its `palette`), `chunks`; a line the events'
+`line` field names carries an `id` (`earth`, `animals`, `trilobites`, `dinosaurs`, `mammals`, `ice`, `mammoths`,
+`the-last-ice-age`, `after-the-ice`). Every period is at least 5 % of its line. The root is 4,600 (the oldest grains at
+4,567 draw inside Molten). What the 9 Oct tree had and this one does not: The young Earth, First life, Oxygen arrives,
+Ancestors, In the sea, On land, The dinosaurs, After the dinosaurs, Humans, The ice ages, Our kind; the only name kept with
+new dates is Animals (635 → 720). *The 9 Oct tree:*
 **Since 9 Oct 2026 (lane B of `CWVault/claude/Prompt-Build-One-Timeline.md`, on Michael's rulings of that day,
 Rulings-Sept-2026.md *The one timeline* 2):** Michael's five periods, plainly named — the young Earth (4,568–4,000
 million years), First life (4,000–2,400), Oxygen arrives (2,400–1,800), Ancestors (1,800–635), Animals (635–now),
@@ -1420,7 +1440,40 @@ backstop for the Claude Code session that lands the file.
   back. Checked on the Mac: the three-line stack 350 px high (396 before); collapsed 264; the whole chain to
   After the ice with collapse by itself 492 px (868 the night before) with Main whole beneath; the free
   envelope reads "about 132 million years" with its dates 252 and 120 million years ago; no console errors.
-  Screenshots `Claude outputs/time-machine-lane-d-*.jpg`. A September record that stands aside for the shared list (`same`) is kept,
+  Screenshots `Claude outputs/time-machine-lane-d-*.jpg`. **10 Oct 2026 — the timeline stack** (`CW_VERSION 2026-10-10
+  a8a4323`; `js/deep-time.js`, `js/globe.js`, `js/map.js` at `?v=2026-10-10` here and on the two benches; from
+  `CWVault/claude/Prompt-Build-Timeline-Stack.md`, Michael's second chat of 10 Oct with Claude Code's amendments of the same
+  afternoon at its foot; it supersedes lane B's blue envelope, lane D's centred labels and collapse words, and lane E's
+  panel): **(1)** the tree is `Periods-Deep.md` (see `stories/deep-time.json`); five Earth-line events renamed in the
+  `Events-Deep` files (Moon forms, Oceans form, Oxygen alone, Rust, Animals, fossils) and the twelve of the Earth line
+  carry `**Line:** earth`, which the generator writes as `line` and `weight` 3; a period tapped behaves like an event
+  tapped — its summary in the block from `stories/deep-time-periods.json`, More in the window (the official name
+  small, the span line, the paragraphs, known from, the references), the marker to its beginning, its line opening
+  beneath; **(2)** each period a band 6 px high in its glass colour with its name above in italic (dropped where it
+  does not fit); the window a clear lens — a 1 px ink edge, a faint white wash, an ink grip at each end; titles in a
+  left margin, right-aligned, the name over the span in grey (a free span its length alone, "about …"), the Earth's
+  centred above its line; the two dates in years ago at an open line's ends; each event a 0.8 px ink line from the
+  strip to its label, an unlabelled one a short line; a line is a box measured after its labels are placed (the
+  dates row, the names row, the strip, the event lines, up to four label rows, a gap) so nothing collides, and the
+  cone is drawn behind; which events get labels: those whose `line` is this line or a wider one first, then by
+  weight, room permitting; **(3)** the stack: a line is open or closed (a tap on its title), lines beneath a tap are
+  removed; the opening scene is every line down to After the ice, closed, no cones, the After the ice line beneath
+  with the close-up (the arrival run sweeps once there); a period tapped opens its line beneath and closes every
+  line above its parent (the amendment); tapped again, its line and everything beneath go, the marker staying; a
+  window dragged opens the next line; a cone appears at a junction once she has acted there; **(4)** the column:
+  *Globe* under Map, one word that reads Map while the globe is up; Both, Collapse by itself and *When were there a
+  billion people?* are gone; **(5)** no place names on the map at rest — a tapped event's place is named and the map
+  goes to it (the globe turns to face it, no zoom), then the places with events inside the selected period are named
+  until another period is chosen; the map at the marker's year always; the smear is gone (`js/globe.js`: between a
+  billion and two hundred million years the model's position once, graded *inferred*); **(6)** *Graphs*, with the six
+  curve words under it, each present only when the selected period holds the curve (the files' `from`, `to`,
+  `minPoints`, or a range covering the period whole); a deep curve draws beneath the selected deep line, its name and
+  unit in the margin, the marker's line down through it, the value "about …"; People and Sea level draw on the
+  close-up of After the ice as before. Checked on the Mac and at 375 px: the opening scene 384 px high; Dinosaurs
+  tapped on the Animals strip (Animals opens, Dinosaurs beneath with its words, the After the ice line gone, the map
+  at 252 million years); tapped again, gone; the Earth's title opens its line with the twelve labels first; a free
+  window reads "about 137 million years"; Globe turns; Oxygen plots under the Oxygen line; no console errors.
+  Screenshots `Claude outputs/time-machine-stack-*.jpg`. A September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the

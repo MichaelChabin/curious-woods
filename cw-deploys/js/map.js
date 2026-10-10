@@ -1156,6 +1156,7 @@
       api.deep = function () { return { on: deepOn, view: deepView, grade: deepGlobe ? deepGlobe.grade() : (deepFlat ? deepFlat.grade() : null) }; };
       api.deepView = function (v) { if (v === 'globe' || v === 'map' || v === 'both') { deepView = v; if (timeYear !== null) api.setTime(timeYear); } return deepView; };
       api.deepClimate = function (on) { if (on !== undefined) deepClimate = !!on; if (deepGlobe) deepGlobe.setClimate(deepClimate); if (deepFlat) deepFlat.setClimate(deepClimate); return deepClimate; };
+      api.deepTurn = function (lon, lat) { if (deepGlobe) deepGlobe.turn(lon, lat); };   // the globe turns to face a place (10 Oct); it does not zoom
       api.deepReguess = function () { if (!deepGlobe && !deepFlat) return; var s = (deepGlobe || deepFlat).reguess(); if (deepGlobe && deepFlat) (deepGlobe === (deepGlobe || deepFlat) ? deepFlat : deepGlobe).setSeed(s); };
       api.setTime = function (year) {
         timeYear = +year;

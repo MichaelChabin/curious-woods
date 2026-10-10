@@ -105,5 +105,9 @@
    2026,
    0
   ]
- ]
+ ],
+ "from": -17974,
+ "to": 2026,
+ "minPoints": 3,
+ "_range": "from and to are the store years (astronomer's years) the curve is meaningful between — its first and last points; minPoints is the fewest points a period must hold for the curve to be offered (Prompt-Build-Timeline-Stack.md, part 6, 10 Oct 2026)"
 }

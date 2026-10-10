@@ -1,5 +1,5 @@
 ---
-status: Deep time, batch 5, 6 Oct 2026, the last deep batch. Twelve marks, from *Archaeopteryx* to the last glacial maximum, in age order: the last two chunks of the deep-time tree before the ice lets go (The dinosaurs' world, from *Flowers* on, and Our world down to the ice ages), with four marks added on Claude's proposal (*Archaeopteryx*, *Antarctica freezes*, *Stone tools*, *Panama closes*; Michael, 6 Oct: "Add the four"). Michael settled the open calls after the research (6 Oct): *Flowers* moves to about 125 with its tail at 140; Tanis goes into *The asteroid* ("He was a graduate student and didn't handle it well, but the data was good"); *Last glacial maximum* opens in Chicago; the rest as proposed. Researched the same day by three agents with web search, four marks each; written in one pass by Claude from their fact sheets. Checked the same day by four independent agents with web search (three took four marks each; one read only units, ages and word counts); their changes are applied, and each event ends with what was changed, confirmed and not confirmed. *The ice lets go* (Events-Batch-03.md) and *Writing* belong to After the Ice and are not here.
+status: Deep time, batch 5, 6 Oct 2026, the last deep batch. (10 Oct: the event *Flowers* is renamed *Oldest flowers*, so it no longer shares a label with the period *Flowers*; Periods-Deep-02.md.) Twelve marks, from *Archaeopteryx* to the last glacial maximum, in age order: the last two chunks of the deep-time tree before the ice lets go (The dinosaurs' world, from *Flowers* on, and Our world down to the ice ages), with four marks added on Claude's proposal (*Archaeopteryx*, *Antarctica freezes*, *Stone tools*, *Panama closes*; Michael, 6 Oct: "Add the four"). Michael settled the open calls after the research (6 Oct): *Flowers* moves to about 125 with its tail at 140; Tanis goes into *The asteroid* ("He was a graduate student and didn't handle it well, but the data was good"); *Last glacial maximum* opens in Chicago; the rest as proposed. Researched the same day by three agents with web search, four marks each; written in one pass by Claude from their fact sheets. Checked the same day by four independent agents with web search (three took four marks each; one read only units, ages and word counts); their changes are applied, and each event ends with what was changed, confirmed and not confirmed. *The ice lets go* (Events-Batch-03.md) and *Writing* belong to After the Ice and are not here.
 role: The fifth and last batch of deep-time events, in the full form of Timeline-Stories.md with the fields deep time adds (Prompt-Deep-Time-Events.md). Each event names the sketch it replaces in deep-time.json, or says it is new.
 ---
 
@@ -70,7 +70,7 @@ About a dozen skeletons have been found, all in the limestones of southern Bavar
 
 ## 2. Flowers
 
-**Label:** Flowers
+**Label:** Oldest flowers
 **Age:** 125 Ma · ± 5 Ma · *Archaefructus*, from the Yixian Formation, radiometric (argon) on ash in the same rocks, about 125 Ma; *Montsechia*'s beds dated by their fossils (Barremian), which on the chart of 2023 puts them at about 126 to 121 Ma, perhaps older
 **Tail:** 140 Ma — the oldest pollen most specialists accept as from flowering plants, from Morocco, Israel and England, about 137 to 130 Ma on the chart of 2023 (139 to 133 on the older chart); 140 is a round figure; gene clocks give much older ages, which fossil specialists dispute
 **Known from:** pollen in rock, and a few whole plants pressed flat in the mud of old lakes
@@ -121,6 +121,7 @@ In 1879 Charles Darwin wrote to a friend that the rapid rise of the flowering pl
 ## 3. The asteroid
 
 **Label:** The asteroid
+**Line:** earth
 **Age:** 66.04 Ma · ± 0.04 Ma · radiometric (argon) on ash at the boundary and on glass beads from the impact, 66.043 ± 0.043 Ma (Renne 2013); a uranium–lead date in Colorado gives 66.021 ± 0.024 (Clyde 2016)
 **Tail:** none — a dated moment
 **Known from:** a thin layer of clay rich in iridium, found all round the world, and a crater buried under Yucatán
@@ -507,6 +508,7 @@ Since then there have been about fifty cold spells. The last ended about twelve 
 ## 11. Homo sapiens
 
 **Label:** Homo sapiens
+**Line:** earth
 **Age:** 0.315 Ma · ± 0.034 Ma · thermoluminescence on burnt flints in the same layers as the bones; a tooth gives 0.286 ± 0.032 Ma by another method (Richter 2017)
 **Tail:** 0.35 Ma — the older end of the date's range, and the genes of living people, whose oldest split is put between 350,000 and 260,000 years ago (Schlebusch 2017)
 **Known from:** a few skulls, jaws and teeth, and the stone tools beside them

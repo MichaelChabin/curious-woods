@@ -1,107 +1,263 @@
 {
- "_about": "The period tree of the one timeline (CWVault/claude/Prompt-Build-One-Timeline.md, lane B; Michael's periods of 8 Oct 2026, ruled 9 Oct: Rulings-Sept-2026.md, The one timeline). Times are millions of years ago (ma); 'from' is the older end. Each period: its name, a 'short' name for a narrow segment, 'knownFrom' (one line saying what that stretch is known from, the fog in words), 'colour' (after Hazen's sequence, drawn as a quiet tint on the line), and its 'chunks', the periods inside it. The 5 % rule (a segment narrower than about five percent of its line is not a period) holds everywhere but the last rung: After the ice is 4 % of Our kind and stays, because it is the door to the Time Machine (Michael). The six chunks of 6 Oct cut where the evidence changed kind; these cut where the story changes, and keep the evidence in the knownFrom lines. The root reaches 4568 so the oldest grains (4567.3) draw. Events are not here: stories/deep-time-events.json holds every event, and js/deep-time.js draws on each line the events whose age falls in its span. Read by js/deep-time.js.",
- "name": "Earth",
- "from": 4568,
+ "_about": "The period tree of the one timeline, from CWVault/claude/Periods-Deep.md (agreed with Michael 10 Oct 2026; the file wins) and the colours of Prompt-Build-Timeline-Stack.md (glass colours from art/palette/palettes.json, each with its palette). Times are millions of years ago (ma); 'from' is the older end. Each period: name, from, to, 'official' (the specialists' name and what it means, said small under the period), 'colour' and 'palette', its 'chunks'. Every period is at least 5 % of its line (the tap rule). 'line' names the rung the page draws itself: After the ice is the Time Machine's own line with the Focus window and the close-up. The period's words — summary, More, known from, official name in full — are stories/deep-time-periods.json (tools/periods-from-vault.py), keyed by name. Mammoths carries 'stretchColour' for the plain stretch of its line outside The last ice age. The root's 'id' values are the names the events' Line field uses (earth, animals, …). Read by js/deep-time.js.",
+ "name": "The Earth",
+ "id": "earth",
+ "from": 4600,
  "to": 0,
  "knownFrom": "everything below, each stretch from what survived of it",
  "chunks": [
   {
-   "name": "The young Earth",
-   "from": 4568,
+   "name": "Molten",
+   "from": 4600,
    "to": 4000,
-   "colour": "#2a2521",
-   "knownFrom": "a few zircon grains, some moon rocks and meteorites; nothing else survived",
-   "short": "Young Earth"
+   "official": "Hadean, after Hades, the underworld",
+   "colour": "#a83018",
+   "palette": "Gaudí, gold colloidal"
   },
   {
-   "name": "First life",
+   "name": "Oceans",
    "from": 4000,
-   "to": 2400,
-   "colour": "#4f7fa6",
-   "knownFrom": "the oldest surviving rock, four billion years old; the first stromatolites; iron that stayed dissolved in a sea with no oxygen"
+   "to": 2500,
+   "official": "Archean, \"ancient\", from the Greek for \"beginning\"",
+   "colour": "#1a4a9a",
+   "palette": "Gaudí, cobalt oxide"
   },
   {
-   "name": "Oxygen arrives",
-   "from": 2400,
+   "name": "Oxygen",
+   "from": 2500,
    "to": 1800,
-   "colour": "#a0522d",
-   "knownFrom": "banded iron and red beds: rock that records oxygen arriving in the air",
-   "short": "Oxygen"
+   "official": "early Proterozoic, \"earlier life\"",
+   "colour": "#c8780a",
+   "palette": "Chartres, iron and sulfur"
   },
   {
-   "name": "Ancestors",
+   "name": "Big cells",
    "from": 1800,
-   "to": 635,
-   "colour": "#8a877a",
-   "knownFrom": "a few fossils of single cells, then of cells with nuclei; glacial rubble in rocks that sat at the equator, and the limestone laid on top of it"
+   "to": 720,
+   "official": "later Proterozoic",
+   "colour": "#8a8a7a",
+   "palette": "Chartres, iron unrefined"
   },
   {
    "name": "Animals",
-   "from": 635,
+   "from": 720,
    "to": 0,
-   "colour": "#5e7d46",
-   "knownFrom": "fossils hard enough to keep; from 200 million years the seafloor's magnetic stripes; at the end, ice that counts the years",
+   "official": "the Cryogenian, then the Phanerozoic, \"visible life\", from 539",
+   "colour": "#4a8a30",
+   "palette": "Gaudí, copper oxide",
+   "id": "animals",
    "chunks": [
     {
-     "name": "In the sea",
-     "from": 635,
-     "to": 470,
-     "colour": "#6b8a52",
-     "knownFrom": "the first fossils of bodies, soft ones kept under volcanic ash, then shells and the first hard parts",
-     "short": "The sea"
+     "name": "Soft bodies",
+     "from": 720,
+     "to": 539,
+     "official": "Cryogenian and Ediacaran",
+     "colour": "#2a8a8a",
+     "palette": "Gaudí, copper oxide"
     },
     {
-     "name": "On land",
-     "from": 470,
+     "name": "Trilobites",
+     "from": 539,
      "to": 252,
-     "colour": "#78955e",
-     "knownFrom": "fossils of plants and animals in rock laid down on land, and coal; rock magnetism for how far north the land was, never how far east",
-     "short": "Land"
-    },
-    {
-     "name": "The dinosaurs",
-     "from": 252,
-     "to": 66,
-     "colour": "#7a9a5c",
-     "knownFrom": "fossils, and from 200 million years the seafloor's magnetic stripes, so the map is crisp",
-     "short": "Dinosaurs"
-    },
-    {
-     "name": "After the dinosaurs",
-     "from": 66,
-     "to": 0,
-     "colour": "#93ae78",
-     "knownFrom": "fossils, then ice cores and sea-floor mud that count the years",
-     "short": "After",
+     "official": "Paleozoic, \"old life\"",
+     "colour": "#4a8ab0",
+     "palette": "Alhambra",
+     "id": "trilobites",
      "chunks": [
       {
-       "name": "Humans",
-       "from": 6,
+       "name": "Shells",
+       "from": 539,
+       "to": 487,
+       "official": "Cambrian, after Cambria, Wales",
+       "colour": "#d4a878",
+       "palette": "Chartres, iron oxide and lead"
+      },
+      {
+       "name": "Crowded seas",
+       "from": 487,
+       "to": 444,
+       "official": "Ordovician, after the Ordovices, a people of Wales",
+       "colour": "#1a4a9a",
+       "palette": "Gaudí, cobalt oxide"
+      },
+      {
+       "name": "Green land",
+       "from": 444,
+       "to": 419,
+       "official": "Silurian, after the Silures, another",
+       "colour": "#4a8a30",
+       "palette": "Gaudí, copper oxide"
+      },
+      {
+       "name": "Fish",
+       "from": 419,
+       "to": 359,
+       "official": "Devonian, after Devon",
+       "colour": "#4a8ab0",
+       "palette": "Alhambra"
+      },
+      {
+       "name": "Coal forests",
+       "from": 359,
+       "to": 299,
+       "official": "Carboniferous, \"coal-bearing\"",
+       "colour": "#8a6018",
+       "palette": "Alhambra"
+      },
+      {
+       "name": "One continent",
+       "from": 299,
+       "to": 252,
+       "official": "Permian, after Perm, in Russia",
+       "colour": "#c86820",
+       "palette": "Gaudí, iron and sulfur"
+      }
+     ]
+    },
+    {
+     "name": "Dinosaurs",
+     "from": 252,
+     "to": 66,
+     "official": "Mesozoic, \"middle life\"",
+     "colour": "#1a6a2a",
+     "palette": "Chartres, copper oxide",
+     "id": "dinosaurs",
+     "chunks": [
+      {
+       "name": "First dinosaurs",
+       "from": 252,
+       "to": 201,
+       "official": "Triassic, \"threefold\", for three layers in Germany",
+       "colour": "#c8780a",
+       "palette": "Chartres, iron and sulfur"
+      },
+      {
+       "name": "Giants",
+       "from": 201,
+       "to": 143,
+       "official": "Jurassic, after the Jura mountains",
+       "colour": "#1a6a2a",
+       "palette": "Chartres, copper oxide"
+      },
+      {
+       "name": "Flowers",
+       "from": 143,
+       "to": 66,
+       "official": "Cretaceous, \"chalky\"",
+       "colour": "#c84878",
+       "palette": "Chartres, gold and manganese"
+      }
+     ]
+    },
+    {
+     "name": "Mammals",
+     "from": 66,
+     "to": 0,
+     "official": "Cenozoic, \"new life\"",
+     "colour": "#c8b878",
+     "palette": "Gaudí, iron and silver stain",
+     "id": "mammals",
+     "chunks": [
+      {
+       "name": "Recovery",
+       "from": 66,
+       "to": 56,
+       "official": "Paleocene",
+       "colour": "#8a8a7a",
+       "palette": "Chartres, iron unrefined"
+      },
+      {
+       "name": "Heat",
+       "from": 56,
+       "to": 34,
+       "official": "Eocene",
+       "colour": "#c86820",
+       "palette": "Gaudí, iron and sulfur"
+      },
+      {
+       "name": "Cooling",
+       "from": 34,
+       "to": 23,
+       "official": "Oligocene",
+       "colour": "#4a8ab0",
+       "palette": "Alhambra"
+      },
+      {
+       "name": "Grass",
+       "from": 23,
+       "to": 5.3,
+       "official": "Miocene",
+       "colour": "#c8a800",
+       "palette": "Gaudí, silver stain"
+      },
+      {
+       "name": "Ice",
+       "from": 5.3,
        "to": 0,
-       "colour": "#a8bd90",
-       "knownFrom": "fossil bones and footprints, stone tools, and the sea-floor mud that counts the years",
+       "official": "Pliocene to now",
+       "colour": "#c2d4bc",
+       "palette": "craft, clear glass",
+       "id": "ice",
        "chunks": [
         {
-         "name": "The ice ages",
+         "name": "Lucy",
+         "from": 5.3,
+         "to": 2.6,
+         "official": "Pliocene",
+         "colour": "#8a6018",
+         "palette": "Alhambra"
+        },
+        {
+         "name": "Hand axes",
          "from": 2.6,
+         "to": 1,
+         "official": "early Pleistocene; the ice comes and goes about every 41,000 years",
+         "colour": "#d4a878",
+         "palette": "Chartres, iron oxide and lead"
+        },
+        {
+         "name": "Mammoths",
+         "from": 1,
          "to": 0,
-         "colour": "#c9d4bf",
-         "knownFrom": "ice cores, sea-floor mud, and the sea's old shorelines",
-         "short": "Ice ages",
+         "official": "the ice ages grow longer, about 100,000 years each",
+         "colour": "#c8c0a8",
+         "palette": "Chartres, tin oxide",
+         "id": "mammoths",
+         "stretchColour": "#c8c0a8",
          "chunks": [
           {
-           "name": "Our kind",
-           "from": 0.3,
+           "name": "The last ice age",
+           "from": 0.13,
            "to": 0,
-           "colour": "#d6dfcc",
-           "knownFrom": "bones, beads, paint and tools; radiocarbon for the last fifty thousand years",
+           "official": "Late Pleistocene and Holocene",
+           "colour": "#4a8ab0",
+           "palette": "Alhambra",
+           "id": "the-last-ice-age",
            "chunks": [
+            {
+             "name": "Hippos in London",
+             "from": 0.13,
+             "to": 0.115,
+             "official": "the last warm spell; hippo bones under Trafalgar Square",
+             "colour": "#4a8a30",
+             "palette": "Gaudí, copper oxide"
+            },
+            {
+             "name": "Ice sheets",
+             "from": 0.115,
+             "to": 0.0117,
+             "official": "the last cold spell",
+             "colour": "#c2d4bc",
+             "palette": "craft, clear glass"
+            },
             {
              "name": "After the ice",
              "from": 0.0117,
              "to": 0,
-             "colour": "#e3e9d8",
-             "knownFrom": "ice cores by the year, tree rings, and what people wrote",
+             "official": "Holocene",
+             "colour": "#2a6a28",
+             "palette": "Alhambra",
+             "id": "after-the-ice",
              "line": "after-the-ice"
             }
            ]
