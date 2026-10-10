@@ -35,6 +35,7 @@
      book from three copies, piled as pages are, the top one readable, the ones beneath showing their
      edges. A tap sends the top page to the bottom and the caption changes with it. */
   figure.margin.stack .pile { position: relative; aspect-ratio: var(--pile, 480 / 900); cursor: pointer; user-select: none; -webkit-user-select: none; outline: none; }
+  figure.margin.stack .pile.sized { aspect-ratio: auto; }   /* the script sets its height from the tallest picture */
   figure.margin.stack .pile img { position: absolute; left: 7%; top: 0; width: 86%; height: 100%; object-fit: contain; object-position: 50% 0;
     filter: drop-shadow(0 1px 3px rgba(42,38,32,0.3)); transition: transform 420ms ease; transform-origin: 50% 60%; }
   figure.margin.stack .pile img.p0 { z-index: 5; transform: none; }
@@ -152,7 +153,9 @@
 
     <p>Here is the important thing: whenever circles cross each other, new copper colored dots appear. These mark locations you can use, along with the ones marked 0 and 1 to make new circles.</p>
 
-    <p>Give it a try.</p>
+    <p>You can zoom and pan the workspace. Use pinch to zoom. Click and drag to pan.</p>
+
+    <p id="beforeBoard">Give it a try.</p>
 
     <!-- THE BOARD: the lab's window profile, three-quarters of the window's height (full height left no
          way to scroll the page: the lab takes the wheel and the finger). -->
@@ -194,7 +197,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-10 a8a4323';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-10 4ef91c7';   // date + short commit hash; bump in the same commit as any change
   console.log('geo-1-glass-circles', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
@@ -207,7 +210,8 @@
   // ==========================================================================
   // THE STACK: a tap sends the top page to the bottom; the caption follows the top page.
   // ==========================================================================
-  Array.prototype.forEach.call(document.querySelectorAll('figure.stack'), function (fig) {
+  var stacks = Array.prototype.slice.call(document.querySelectorAll('figure.stack'));
+  stacks.forEach(function (fig) {
     var pile = fig.querySelector('.pile'), cap = fig.querySelector('.cap');
     var pages = Array.prototype.slice.call(pile.querySelectorAll('img'));
     function lay() {
@@ -219,6 +223,32 @@
     pile.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); turn(); } });
     lay();
   });
+  // Each pile is as tall as its tallest picture plus the pile's spread, no taller (Michael, 10 Oct 2026:
+  // the gap under the came and under the examples). And where the left column stands, the lead stack and
+  // the examples stack are lifted together so the examples end level with the last line of text before the
+  // board (the stacks are floats that clear each other, so lifting the first lifts both).
+  var leadFig = stacks[1], exFig = stacks[2], lastP = document.getElementById('beforeBoard');
+  function size() {
+    stacks.forEach(function (fig) {
+      var pile = fig.querySelector('.pile'), w = pile.clientWidth * 0.86, h = 0;
+      Array.prototype.forEach.call(pile.querySelectorAll('img'), function (img) {
+        h = Math.max(h, w * (parseInt(img.getAttribute('height'), 10) / parseInt(img.getAttribute('width'), 10)));
+      });
+      pile.classList.add('sized'); pile.style.height = Math.round(h + 20) + 'px';
+    });
+    if (!leadFig || !exFig || !lastP) return;
+    leadFig.style.marginTop = '';
+    var floated = getComputedStyle(leadFig).float === 'left';
+    if (!floated) return;
+    var want = lastP.getBoundingClientRect().bottom - exFig.getBoundingClientRect().bottom;   // negative: lift
+    if (want < 0) {
+      var bookFig = stacks[0], room = leadFig.getBoundingClientRect().top - bookFig.getBoundingClientRect().bottom - 24;
+      leadFig.style.marginTop = Math.round(Math.max(want, -room)) + 'px';
+    }
+  }
+  size();
+  window.addEventListener('resize', size);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);
 
   // THEOPHILUS'S WORLD. One list of events read two ways. Above the line: Theophilus and the
   // craft (Michael, 2 Oct). Below: the world, picked from the shared list by ref, each with

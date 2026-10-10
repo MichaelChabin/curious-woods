@@ -715,7 +715,12 @@ backstop for the Claude Code session that lands the file.
   frame `#2f4a8a`, medium). The gallery picture is his Rose II made on the board, whole
   (`art/gallery/stained-glass-circles-gallery.png`, 580 × 600), and the tab icon a square of it
   (`art/icons/stained-glass-circles-icon-256.png`); the rose-mark icon and gallery mark of 2 Oct stay in the
-  folders unused. Stamp `2026-10-10 a8a4323`. The entry as it stood in `experiments/` follows.
+  folders unused. **Later the same day (stamp `2026-10-10 4ef91c7`):** a line of Michael's above "Give it a
+  try." (zoom and pan the workspace: pinch to zoom, click and drag to pan); each stack's pile is as tall as its
+  tallest picture plus the spread, set by the script from the pictures' own sizes, so the caption sits close
+  under it; and where the left column stands, the lead stack and the examples stack are lifted together so the
+  examples end level with that last line before the board (the first float's top margin, measured at load and
+  on resize, never above the book stack). The entry as it stood in `experiments/` follows.
   *Before the hang:* **story: Stained Glass Circles**, Geo-1-Glass-Circles, the first of the
   geometry series (Michael's names, 8 Oct 2026: the series name is the file's, the gallery name is the
   page's title; `the-glass-rose.html` until then, the old address redirected in `_redirects`; the pictures
