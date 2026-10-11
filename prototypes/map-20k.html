@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Map at 20,000 years ago — picture bench</title>
+<!-- prototypes/map-20k.html — a bench for one picture: CW's own map with the sea 130 m lower, for the period Ice sheets
+     (Pictures-Deep-01, 11 Oct 2026). Not served; opened from a local server at the _CW root. ?view=northsea | bering | world, ?w=1600 -->
+<style>html,body{margin:0;background:#f4f1e8;font-family:Georgia,serif}#map{margin:0}#say{font-size:14px;color:#7a6e60;padding:6px 10px}</style>
+</head><body>
+<div id="map"></div><div id="say"></div>
+<script src="../cw-deploys/js/map.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+var q = new URLSearchParams(location.search), view = q.get('view') || 'northsea', W = +(q.get('w') || 1600);
+var FITS = {
+  northsea: { west: -11, south: 48.5, east: 12, north: 61.5 },
+  bering:   { west: 160, south: 50, east: 200, north: 72 },
+  beringw:  { west: -180, south: 50, east: -140, north: 72 },
+  world:    { west: -180, south: -60, east: 180, north: 84 }
+};
+var fit = FITS[view] || FITS.northsea;
+if (q.get('box')) { var b = q.get('box').split(',').map(Number); fit = { west: b[0], south: b[1], east: b[2], north: b[3] }; }
+document.getElementById('map').style.width = W + 'px';
+Promise.all([cwMap.load('../cw-deploys/art/maps/world-pyramid.json'), fetch('../cw-deploys/stories/curves/sea-level-ice-ages.json').then(function (r) { return r.json(); })]).then(function (r) {
+  var pyramid = r[0], curve = r[1];
+  var marks = [];
+  var map = cwMap(document.getElementById('map'), pyramid, marks, { fit: fit, reset: 'reset', layers: { vegetation: false }, time: { seaLevel: curve.points || curve.series || curve } });
+  var year = new Date().getFullYear() - 20000;
+  map.setTime(year);
+  window.cwBenchMap = map;
+  if (q.get('ice')) fetch('ice/ice-outlines.json').then(function (r) { return r.json(); }).then(function (ice) { map.setIce(ice, 20000); });
+  setTimeout(function () { document.getElementById('say').textContent = view + ' · ' + JSON.stringify(map.view()) + ' · sea ' + map.seaLevel() + ' m'; }, 1500);
+  window.cwSave = function (name) {
+    var box = document.querySelector('#map .cw-map') || document.getElementById('map');
+    return html2canvas(box, { scale: 1, useCORS: true, backgroundColor: '#f4f1e8', logging: false }).then(function (c) {
+      return new Promise(function (res) { c.toBlob(function (b) { fetch('http://localhost:8777/' + name, { method: 'POST', body: b }).then(function (r) { return r.text(); }).then(function (t) { res(c.width + 'x' + c.height + ' ' + t); }); }, 'image/png'); });
+    });
+  };
+}).catch(function (e) { document.getElementById('say').textContent = 'failed: ' + e; });
+</script></body></html>
