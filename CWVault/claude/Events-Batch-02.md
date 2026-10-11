@@ -1,5 +1,5 @@
 ---
-status: Batch 2, 30 Sept 2026. Twenty-one events, 1500 to now, outside Europe. Chosen by Claude; Michael kept all twenty and asked for Hubble to be split into two (Leavitt's rule, and the VAR! plate). Checked by four independent fact-checkers, whose changes are applied. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
+status: built. Batch 2, 30 Sept 2026. Twenty-one events, 1500 to now, outside Europe. Chosen by Claude; Michael kept all twenty and asked for Hubble to be split into two (Leavitt's rule, and the VAR! plate). Checked by four independent fact-checkers, whose changes are applied. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
 role: The second batch of generated timeline events, for the Time Machine bench and, later, the shared list.
 ---
 

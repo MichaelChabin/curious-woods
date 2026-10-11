@@ -1,5 +1,5 @@
 ---
-status: Batch 1, 30 Sept 2026. Twenty events, all before 1500, chosen by Claude and kept whole by Michael. Written to Timeline-Stories.md and the two samples; checked by four independent fact-checkers, whose changes are applied. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
+status: built. Batch 1, 30 Sept 2026. Twenty events, all before 1500, chosen by Claude and kept whole by Michael. Written to Timeline-Stories.md and the two samples; checked by four independent fact-checkers, whose changes are applied. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
 role: The first batch of generated timeline events, for the After the Ice bench and, later, the shared list.
 ---
 
