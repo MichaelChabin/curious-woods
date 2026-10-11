@@ -52,7 +52,14 @@
     '.cw-globe.dragging canvas{cursor:grabbing;}'
   ].join('\n');
   var SEA = '#93bed7', SEA_DEEP = '#7fa9c4', LAND = '#8c8366', LAND_PALE = '#c3bba5', COAST = '#4a4336', SHELF = '#2f5c78', GRAT = 'rgba(42,36,28,0.10)', MAGMA = '#6e2410', MAGMA_GLOW = '#b8471c';
-  var OLDEST_ROCK = 4000, NO_MAP = 4400, DRIFT_DEG_PER_MA = 0.45;   // a plate's few centimetres a year, as degrees of arc
+  var OLDEST_ROCK = 4000, NO_MAP = 4400, MOLTEN_START = 4600, DRIFT_DEG_PER_MA = 0.45;   // a plate's few centimetres a year, as degrees of arc
+  var BLACK = '#0c0a08';
+  /* two hex colours mixed, t of the second (0 to 1) */
+  function mix(a, b, t) {
+    var A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16), out = 0;
+    [16, 8, 0].forEach(function (s) { var va = (A >> s) & 255, vb = (B >> s) & 255; out |= Math.round(va + (vb - va) * t) << s; });
+    return '#' + ('000000' + out.toString(16)).slice(-6);
+  }
   var WASH_GREEN = '#5e8a46', WASH_DRY = '#d9b36a', WASH_ICE = '#f4f6f8';
   // the cold ages, in millions of years ago, and how far from the poles the ice reached (degrees of latitude from the equator)
   var ICEHOUSES = [[2400, 2100, 55], [717, 635, 0], [460, 430, 60], [360, 260, 50], [34, 2.6, 66], [2.6, 0, 58]];
@@ -407,9 +414,13 @@
       var g = gradeFor(ma).grade, V = viewMatrix();
       if (proj === 'flat') V = mmul([1, 0, 0, 0, 1, 0, 0, 0, 1], rotZ(-lon0));   // flat: only the turn about the pole; north up
       var r = W / 2 - 4, cx = W / 2, cy = H / 2;
-      // the sea, or the magma
+      // the sea, or the magma: through Molten the ball fades with the age — magma at 4.6 billion, black by 4.4
+      // (the crust's skin), and from there to the blue of the sea by 4.0 (Michael, 12 Oct 2026)
       var sea = proj === 'flat' ? ctx.createLinearGradient(0, 0, 0, H) : ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.35, r * 0.1, cx, cy, r);
-      if (g === 'none') { sea.addColorStop(0, MAGMA_GLOW); sea.addColorStop(1, MAGMA); } else { sea.addColorStop(0, SEA); sea.addColorStop(1, SEA_DEEP); }
+      var top = SEA, bottom = SEA_DEEP;
+      if (ma >= NO_MAP) { var tm = Math.min(1, Math.max(0, (ma - NO_MAP) / (MOLTEN_START - NO_MAP))); top = mix(BLACK, MAGMA_GLOW, tm); bottom = mix(BLACK, MAGMA, tm); }
+      else if (ma >= OLDEST_ROCK) { var tb = (ma - OLDEST_ROCK) / (NO_MAP - OLDEST_ROCK); top = mix(SEA, BLACK, tb); bottom = mix(SEA_DEEP, BLACK, tb); }
+      sea.addColorStop(0, top); sea.addColorStop(1, bottom);
       ctx.fillStyle = sea;
       if (proj === 'flat') ctx.fillRect(0, 0, W, H); else { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill(); }
       ctx.save();

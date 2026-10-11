@@ -1266,7 +1266,8 @@ backstop for the Claude Code session that lands the file.
   console errors. Screenshots `Claude outputs/deep-time-lane-b-lines.jpg`, `-phone.jpg`.
 
 - **`globe-bench.html` (6 Oct 2026)** — *The earth from space*: the nested bar of deep time over a
-  globe, Stage 3 of `CWVault/claude/Plan-Deep-Time.md`. **`../js/globe.js`** (new that day) —
+  globe, Stage 3 of `CWVault/claude/Plan-Deep-Time.md`. **`../js/globe.js`** (new that day; 12 Oct 2026: through Molten the
+  ball fades with the age, magma at 4.6 billion, black by 4.4, the sea's blue by 4.0) —
   `cwGlobe(host, opts)`: a canvas disc, orthographic; reads `../stories/plates/continents.json`
   and, for a year, turns every living piece of continent by its plate's rotation (slerped between
   the file's samples, precomputed to a 3×3 per plate per draw) and draws them as one fill, never
@@ -1310,7 +1311,9 @@ backstop for the Claude Code session that lands the file.
   (302, not a move): `/experiments/deep-time` and `/experiments/deepTime` open this bench,
   `/experiments/deep-time-bar` the bar alone, `/experiments/deep-time-join` the join.
 - **`deep-time-bench.html` (6 Oct 2026)** — *Deep time, in sections*: the nested bar alone, Stage 2
-  of `CWVault/claude/Plan-Deep-Time.md`. **`../js/deep-time.js`** (new that day) — `cwDeepTime(host,
+  of `CWVault/claude/Plan-Deep-Time.md`. **`../js/deep-time.js`** (new that day; 12 Oct 2026: events on the deepest line only,
+  the bands 12 px in the line's colour, one-line margin titles "Animals 720 Ma", no dates row, the knob above the band with its
+  age, the range readout — see `active/time-machine.html`, 12 Oct) — `cwDeepTime(host,
   opts)`, a shelf module mounted into an element as `glass.js` and `map.js` are: one SVG; the top
   bar is the whole of Earth from `../stories/deep-time.json`; tap a chunk and it comes down as a
   bar of its own at three-quarters width, attached by two lines and a pale trapezoid to the gap it
@@ -1497,7 +1500,29 @@ backstop for the Claude Code session that lands the file.
   *kainos*) are italic on the page, not starred; the periods store is 30 of 30 and the events store 185 (see both under `stories/`).
   Checked on the Mac: Mammals, Ice, Mammoths and The last ice age opened in turn, the twelve new periods' summaries and Mores read,
   Hippos in London tappable, the five new events found on their lines and their Mores opened, Cooling and Antarctica freezes
-  reading fifty-five to seventy; no console errors. Screenshots `Claude outputs/time-machine-periods-ice-line.jpg`, `-last-ice-age.jpg`. A September record that stands aside for the shared list (`same`) is kept,
+  reading fifty-five to seventy; no console errors. Screenshots `Claude outputs/time-machine-periods-ice-line.jpg`, `-last-ice-age.jpg`.
+  **12 Oct 2026 — Michael's changes (`CW_VERSION 2026-10-12`; `js/deep-time.js` and `js/globe.js` at `?v=2026-10-12` here and
+  on the two benches):** *the bug* — events on the deep lines had stopped answering a tap since the opening scene of 10 Oct
+  left After the ice open from the first moment, because this page's `onMark` dropped every tap while the hand-over was on
+  (`!handed`); the commit of 11 Oct (`7c522d7`) touched no handler, and the shared id `lucy` was not it (periods are keyed
+  `period:` on the page). Now `js/deep-time.js` draws events on the deepest line only, so a period opened beneath hides the
+  events of the lines above (Michael's first change), the deepest line that draws them is never the page's own, and the
+  guard is gone; a tap on a period already open higher in the stack makes its line the deepest (the 10 Oct "show me this"
+  tap, which showed nothing once events left the upper lines, is retired; the undo tap on the deepest stays). *The look:*
+  every band 12 px high in its line's colour (Oceans and every leaf coloured, not a hairline), its periods' bands over it;
+  the title one line in a wider margin, "Animals 720 Ma" (the age a line begins at, in Ba, Ma or ka; a free span its two
+  ages), the Earth's "Earth 4.6 Ba" the same way and its centred dimension label gone, every line one width; the dates
+  row above a line gone; an event's line starts at the band's bottom; the knob above the band, its line down to the band's
+  top, its age beside it ("345 Ma"), the marker's line through a plot drawn by the plot; the readout at the top left is the
+  deepest line's range, "Earth 4.6 Ba to today". *The page:* no arrival run (the sweep) on the one timeline; a tapped
+  event's place is a `map.fit` box about 2,000 km across on the flat map (the globe only turns); the intro and the Timeline
+  panel reworded. *The globe (`js/globe.js`):* through Molten the ball's colour follows the age — magma at 4.6 billion,
+  black by 4.4, the sea's blue by 4.0 (`mix`). Checked on the Mac and at 375 px: Mammals tapped on the Animals line becomes
+  the deepest line with its events, the Earth's and Animals' put away; Hot spike tapped gives its summary and the map at 56
+  million years; Molten at 4.45 billion near-black, at 4.15 slate-blue; no console errors. Screenshots `Claude
+  outputs/time-machine-12oct-mammals-events.jpg`, `-phone-molten.jpg`. Not built, Michael's to say: textures on the globe
+  and the drifting pieces (ruled out for now on 9 Oct; asked for again 12 Oct); what the map shows after it zooms to a
+  place (his line ends "and show"). A September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the

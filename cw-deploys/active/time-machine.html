@@ -165,7 +165,7 @@
   <div class="kicker">Time Machine</div>
   <h1 id="introTitle">After the Ice</h1>
   <p id="introText">About twelve thousand years ago, the ice that covered the north began to melt, and it did not come back in the winter. This page counts years from then. Everything people have made since then fits on the line at the top: farms, cities, writing, ships, all of it.</p>
-  <p class="how" id="introHow">The lines are the whole of the Earth’s time, in periods, each period a band in its own colour. Tap a period and it opens as a line beneath; tap it again and that line goes. Drag the window’s ends to take in more or less: the line beneath says how long that is. Tap a line’s title to fold it to a strip. The last line is the twelve thousand years since the ice let go, spread out below its window, with the copper handle for the year you are in. The map shows the world in that year: this side of the ice ages the ground, past them the earth from space, with a word under it saying how sure that is. Tap a mark to read what happened there, and <i>More</i> for the story.</p>
+  <p class="how" id="introHow">The lines are the whole of the Earth’s time, in periods, each period a band in its own colour. Tap a period and it opens as a line beneath, with its events; tap it again and that line goes. Drag the window’s ends to take in more or less. The copper knob above the lowest line is the age you are in, and the map shows the world then: this side of the ice ages the ground, past them the earth from space, with a word under it saying how sure that is. The last line is the twelve thousand years since the ice let go, spread out below its window. Tap a mark to read what happened there, and <i>More</i> for the story.</p>
   <p class="open">Open on <span class="viewing on" data-v="after-the-ice">After the Ice</span> · <span class="viewing" data-v="china">China, with the Song in the window</span> · <span class="viewing" data-v="egypt">Egypt, from the Sahara to Cleopatra</span></p>
   <div class="credit">The picture on the wall: Naomi Devil, <i>Idő-töltés</i> (2016), a cybernetic sculpture with Nicolas Schöffer’s hourglass. Photograph by Darabos György, <a href="https://commons.wikimedia.org/wiki/File:Naomi_Devil,_Id%C5%91-t%C3%B6lt%C3%A9s,_Nicolas_Sch%C3%B6ffer_homok%C3%B3r%C3%A1j%C3%A1b%C3%B3l_k%C3%A9sz%C3%BClt_kibernetikus_szobor_a_Hungarikon-gy%C5%B1jtem%C3%A9ny_sz%C3%A1m%C3%A1ra.jpg">Wikimedia Commons</a>, CC BY-SA 4.0, cropped.</div>
   <span class="cmd next" id="next" role="button" tabindex="0">Next</span>
@@ -208,13 +208,13 @@
 
 <script src="../js/map.js?v=2026-10-10"></script>
 <script src="../js/timeline.js?v=2026-09-27-ati"></script>
-<script src="../js/globe.js?v=2026-10-10"></script>
-<script src="../js/deep-time.js?v=2026-10-10b"></script>
+<script src="../js/globe.js?v=2026-10-12"></script>
+<script src="../js/deep-time.js?v=2026-10-12"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-11 116f2b7';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-12 3ea9c2a';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -250,7 +250,7 @@
   const MAIN_Y = 18, DET_Y = 172, BAND = 64, PADX = 8;
   // The panels' words (the mockup's).
   const PANELS = {
-    timeline: ['Timeline', '<p>The lines are the whole of the Earth’s time, in periods, each period a band in its own colour. Tap a period and it opens as a line beneath, with the window on it; tap it again and that line goes. Drag the window’s ends to take in more or less: they click onto a period’s edges, and the line beneath says how long that is. Tap a line’s title to fold it to a strip, or open it again.</p><p>The last period, After the ice, opens as the two lines below: the whole twelve thousand years, from the ice to now.</p><p>The pale blue window on it is the Focus window. Drag it to move through time. Drag either end to make it wider or narrower.</p><p>The line below shows only the years inside the Focus window, spread out so there is room to read.</p><p>The copper handle is the year you are in. Drag it, or tap anywhere on the line, and the map shows the world in that year. Tap a mark to go to its year and see what happened.</p>'],
+    timeline: ['Timeline', '<p>The lines are the whole of the Earth’s time, in periods, each period a band in its own colour. Tap a period and it opens as a line beneath, with its events; the lines above keep their bands and put their events away. Tap it again and that line goes. Drag the window’s ends to take in more or less: they click onto a period’s edges. The copper knob above the lowest line is the age you are in; drag it, or tap below the band.</p><p>The last period, After the ice, opens as the two lines below: the whole twelve thousand years, from the ice to now.</p><p>The pale blue window on it is the Focus window. Drag it to move through time. Drag either end to make it wider or narrower.</p><p>The line below shows only the years inside the Focus window, spread out so there is room to read.</p><p>The copper handle is the year you are in. Drag it, or tap anywhere on the line, and the map shows the world in that year. Tap a mark to go to its year and see what happened.</p>'],
     map: ['Map', '<p>The map shows the world in the handle’s year. This side of the ice ages it is the ground, today’s land with the sea lower where it was lower; past them it is the earth from space, with the continents where they were, and the word under it says how sure that is, from <i>measured</i> down to <i>invented</i>. Drag the globe to turn it. Where the word is <i>guessed</i>, <i>another guess</i> draws a new one.</p><p>Tap a place, and its mark lights up on the timeline. Drag the bars at the map’s edges to make it bigger.</p>']
   };
 
@@ -481,7 +481,7 @@
     if (e) {
       if (!inFocus(e)) { const s = focus.b - focus.a; focus.a = Math.max(0, Math.min(NOW - s, e.year - s / 2)); focus.b = focus.a + s; drawDetail(); }
       handle = e.year; addSeen(e.id); showWord();
-      if (map && e.place && !fromMap) map.centre(e.place.lat, e.place.lon);
+      if (map && e.place && !fromMap) goTo(e.place.lat, e.place.lon);
     }
     detail.select(sel ? [sel] : []);
     draw(); markMap(); timeToMap(); say(e);
@@ -509,6 +509,14 @@
   }
 
   // ---------- the map ----------
+  // a selected event's place: the flat map slides there and zooms in to a box about 2,000 km across (Michael, 12 Oct;
+  // the stack prompt, part 5); the globe past the seam only turns (zoom there is engine work, later)
+  const PLACE_BOX = { lon: 11, lat: 6.5 };
+  function goTo(lat, lon) {
+    if (!map) return;
+    if (map.fit) map.fit({ west: lon - PLACE_BOX.lon, east: lon + PLACE_BOX.lon, south: Math.max(-85, lat - PLACE_BOX.lat), north: Math.min(85, lat + PLACE_BOX.lat) });
+    else map.centre(lat, lon);
+  }
   function tapPlace(group) {
     // several events at one place: the one in the Focus window nearest the handle, else the nearest in years
     let best = null, bd = Infinity;
@@ -642,7 +650,7 @@
     shownId = rec.id;
     if (!passed && map) {   // the map goes to the event's place and shows its name; on the globe it turns to face her
       const pl = rec.placeNow || rec.place; namesOn = true;
-      if (pl && pl.lat != null) { map.centre(pl.lat, pl.lon); map.deepTurn(pl.lon, pl.lat); }
+      if (pl && pl.lat != null) { goTo(pl.lat, pl.lon); map.deepTurn(pl.lon, pl.lat); }
     }
     summary.innerHTML = (passed ? '<span class="passed">just passed</span><br>' : '') + '<b>' + esc(sentence(rec.label)) + '</b> ' + cwDeepTime.prose(rec.summary) + (rec.more ? ' <span class="cmd" id="more" role="button" tabindex="0">More</span>' : '');
     const m = $('more'); if (m) m.addEventListener('click', ev => { ev.stopPropagation(); const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec); cwWindow(box, {}); });
@@ -667,7 +675,7 @@
         handed = true; lines.classList.remove('off'); namesOn = !!sel;
         shownId = null; say(sel && byId[sel]); graphsFor();
         measure(); drawDetail(); draw(); markMap(); timeToMap(); showWord();
-        if (!ranOnce) { ranOnce = true; if (reduced) setFocus(VIEW.focus[0], VIEW.focus[1]); else sweep(); }
+        if (!ranOnce) { ranOnce = true; setFocus(VIEW.focus[0], VIEW.focus[1]); }   // no arrival run on the one timeline (Michael, 12 Oct)
       } else { measure(); drawDetail(); draw(); }
     } else if (handed) {
       handed = false; stopAnim(); lines.classList.add('off');
@@ -684,7 +692,9 @@
       periods: '../stories/deep-time-periods.json',
       scene: ['Animals', 'Mammals', 'Ice', 'Mammoths', 'The last ice age', 'After the ice'],   // the opening scene: every line down to After the ice, closed
       onYear: (ma, storeYear) => { if (handed) return; if (map) map.setTime(storeYear); passing(ma); },
-      onMark: mk => { if (!handed && mk.rec) showRec(mk.rec, false); },
+      // (12 Oct: the `!handed` guard that was here dropped every deep tap once the opening scene left After the ice
+      // open; the module now draws events on the deepest line only, never on the page's own, so the guard goes)
+      onMark: mk => { if (mk.rec) showRec(mk.rec, false); },
       onPeriod: (node, span) => { showPeriod(node, span); },
       onBar: () => { graphsFor(); }
     });
