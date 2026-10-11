@@ -317,6 +317,20 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** The ruled cuts fall where the evidence changes kind; these fall where the story changes. Whether names say what happened or what the Earth was like, and whether Hazen's colour sequence colours the segments, are his open questions.
 **Source.** Michael's chat of 8 Oct, `claude/Timeline-Format-Thinking-Oct08.md`.
 
+### Pictures for the Mores, as a kind   · 11 Oct 2026 · candidate
+**Idea.** Give the events, periods and plots their pictures by the same pipeline that wrote them: the *Pictures wanted* lines are the candidates; research agents find free files and return the licence as data, not by eye; one chat chooses one picture per More and writes its caption; checkers confirm the file is the thing the caption says. "None" is an allowed answer, written down with its reason, and beats a wrong picture.
+**Where it sits.** Timelines, the More of every event, period and plot; the Rulings' image rule (evidence, never decoration) is the spine.
+**Opens.** A timeline that shows the thing as well as telling it, about a hundred and ten Mores' worth, without Michael curating any of them. Diagrams (a whale beside a frond to scale, a top's wobble) as plain SVGs in the house line, drawn by Claude Code.
+**Costs.** Museum "licence to ask" pictures do not scale and mostly become "none". Pictorial reconstructions stay out unless a free one exists and is labelled a drawing. The agents could not open Commons in batch 6; the fix is the Commons API, which must be tested first. Michael's choice still owed: who draws, if anyone.
+**Source.** Michael's question, chat of 10–11 Oct; the pipeline and the "none" rule Claude's.
+
+### A plot is a question   · 11 Oct 2026 · loose
+**Idea.** Label each plot by the question a child would ask ("How long was a day?", "How many people were there?"), and let the events be the index: an event's More says "tap the line" where its figure stands on a curve. With the spec's rule that a plot shows only where it has data, nobody ever faces a shelf of 250 plots.
+**Where it sits.** Timelines, the graph tool in the column; the plots level of the geometry spine.
+**Opens.** Plots found by curiosity rather than by menu, and the plot stays a question, not a lesson. A plot's data carry a grade, measured, reconstructed from a published curve, or guessed for CW, shown in the band and said in the More.
+**Costs.** Every figure in a More that stands on a series wants that series found and licensed; the pool grows toward the present faster than anyone can write. The grade field is new to the plot form.
+**Source.** Michael's question, chat of 11 Oct; the question-label and the grades Claude's.
+
 ## Stories
 
 ### The edge of knowing (working name)   · 5 Oct 2026 · candidate
@@ -358,3 +372,24 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** The level becomes a point in time: one control in the lab lets her slide along the levels and watch the tools appear. The column of words folds by level, earlier ones collapsed; folding is easy because the capabilities and her experience of them are already there.
 **Costs.** Once a level's door opens, its words and gestures are frozen, or every earlier story breaks. The core must be built for the hard levels from day one: faces with curved edges in exact arithmetic, a construction log that can be replayed for dragging, and two kinds of point once the grid arrives. Rough size, twenty to thirty Claude Code sessions, the first ten decisive.
 **Source.** Michael, chat of 4 Oct, with Claude's sizing. *(Merged from the holding pen, 6 Oct.)*
+
+### The pool brief   · 11 Oct 2026 · candidate
+**Idea.** Events, periods, plots and pictures all ran, or will run, through one shape: candidates, a brief, research agents, one writing pass, independent checkers with one for numbers, a batch file with *Checked* lines, a build. Write that shape once as a master brief, and give each kind a short insert: its form, its traps, its build. A ledger per kind is both the wish list and the record of what is written, checked and built.
+**Where it sits.** Across the whole; how CW's pool is filled.
+**Opens.** A new kind of thing (pictures, plots of people, Time Machine events by the thousand) costs an insert, not a new prompt. The candidate step, so far Michael's notes, becomes a chat that reads the ledger.
+**Costs.** The three prompts now in use must be reconciled into one without losing their learned traps. Nothing known otherwise.
+**Source.** Michael's question whether there is a generalised approach, chat of 11 Oct; the master-and-insert form Claude's.
+
+### Check the store, not the batch   · 11 Oct 2026 · candidate
+**Idea.** Each batch checks itself against the files it was told to read, so batches can drift apart (seventy metres against fifty-five to seventy; 135 in a text against 140 on its dot). At thousands of entries, add a standing pass that reads every More for figures that disagree, and a sweep of the "not confirmed" lines, which are honest but pile up.
+**Where it sits.** Across the whole; the fourth checker, raised from the batch to the store.
+**Opens.** The accuracy claim stays true as the pool grows. Candidates for the Claude Code build (a script over the store) or a scheduled task.
+**Costs.** A first run will find a backlog; someone must rule on each disagreement.
+**Source.** Claude, chat of 11 Oct, from reading the three batch series together.
+
+### A routine a machine can check   · 11 Oct 2026 · candidate
+**Idea.** Every batch file's status opens with one word from a fixed ladder (planned, researched, written, checked, awaiting Michael, read, changes applied, built), moved by whoever did the step. Every batch ends by appending its asks, five lines at most, to `For-Michael.md`, which is the one inbox; empty means nothing waits. Batches run as scheduled tasks, unattended in Auto mode, stopping only at the plan, and notify when done. A weekly task reads the batch files and the inbox and posts what is waiting, unapplied, or unconfirmed.
+**Where it sits.** Across the whole; ways of working.
+**Opens.** Michael can be in geometry while a batch runs and still miss nothing, because the missing is found by the sweep, not by memory.
+**Costs.** The brief's four stops shrink to one, so Claude's round-two and round-three choices go unreviewed until the file is read. The weekly task's day is not chosen.
+**Source.** Michael's ask for a checkable routine, chat of 11 Oct; the ladder, inbox and sweep Claude's.

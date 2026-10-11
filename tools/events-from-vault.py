@@ -142,7 +142,8 @@ def parse_place(line, where):
     text = re.sub(r'^\*\*Place:\*\*\s*', '', line).strip()
     # "(37.22 N, 38.92 E)", or "(38.0 N, 23.7 E marks Athens, where ...)" — words after the
     # coordinates inside the bracket are a note about them, kept as place.note
-    m = re.search(r'\((\d+(?:\.\d+)?)\s*([NS]),\s*(\d+(?:\.\d+)?)\s*([EW])([^)]*)\)', text)
+    # '(about 11.17 N, 40.63 E; …)': a coordinate given as approximate (Lucy, Lystrosaurus, 11 Oct 2026) is still a coordinate
+    m = re.search(r'\((?:about\s+)?(\d+(?:\.\d+)?)\s*([NS]),\s*(\d+(?:\.\d+)?)\s*([EW])([^)]*)\)', text)
     place = {'name': text}
     if m:
         lat = float(m.group(1)) * (1 if m.group(2) == 'N' else -1)

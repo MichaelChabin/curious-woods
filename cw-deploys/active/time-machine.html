@@ -214,7 +214,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-10b ccff78b';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-11 116f2b7';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -628,7 +628,7 @@
     $('more').addEventListener('click', ev => {
       ev.stopPropagation();
       const box = document.createElement('div'); box.className = 'tm-more';
-      let h = '<h3>' + esc(node.name) + '</h3>' + (rec.officialName ? '<p class="known"><i>' + esc(rec.officialName) + '</i></p>' : '') + '<div class="stepped"><div>' + esc(rec.more.spanLine) + '</div></div>';
+      let h = '<h3>' + esc(node.name) + '</h3>' + (rec.officialName ? '<p class="known"><i>' + cwDeepTime.prose(rec.officialName) + '</i></p>' : '') + '<div class="stepped"><div>' + esc(rec.more.spanLine) + '</div></div>';
       h += rec.more.paragraphs.map(pg => pg && pg.quote ? '<blockquote><p>' + cwDeepTime.prose(pg.quote) + '</p></blockquote>' : '<p>' + cwDeepTime.prose(pg) + '</p>').join('');
       if (rec.knownFrom) h += '<p class="known"><i>Known from</i> ' + esc(rec.knownFrom) + '.</p>';
       if (rec.references && rec.references.length) h += '<div class="refs">' + rec.references.map(r => '<div>' + cwDeepTime.prose(r) + '</div>').join('') + '</div>';

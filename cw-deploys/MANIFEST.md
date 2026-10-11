@@ -97,13 +97,17 @@ can be seen; `second: { name, say, points }`), **`crust-and-land.json`** (7 Oct:
 series as fractions of the earth's surface — the crust that existed, today 0.40, and the land above the
 sea, today 0.29 — a sketch from the reviews with the disagreement as the band; the globe's invented land
 takes its area from the first). Drawn by `js/deep-time.js`'s `setCurve`.
-**`stories/deep-time-periods.json` (10 Oct 2026)** — GENERATED, never edited by hand: the words of the periods, written
-by Claude.ai chats with Michael to `CWVault/claude/Prompt-Deep-Time-Periods.md` in batches (`CWVault/claude/Periods-Deep-01.md`,
-`-02.md`, more to come; researched by agents, not yet checked in round 4) and read by `tools/periods-from-vault.py`
+**`stories/deep-time-periods.json` (10 Oct 2026; all thirty since 11 Oct)** — GENERATED, never edited by hand: the words of the periods, written
+by Claude.ai chats with Michael to `CWVault/claude/Prompt-Deep-Time-Periods.md` in three batches (`CWVault/claude/Periods-Deep-01.md`,
+`-02.md`, `-03.md`; researched by agents and checked in round 4 by independent checkers, each entry carrying its Checked line;
+batch 3 read by Michael 11 Oct, with his rulings folded in) and read by `tools/periods-from-vault.py`
 (outside this folder, in `_CW/tools/`): one record per period, keyed by its name as the tree has it — the summary
 (its trailing More removed), the More as paragraphs with its span line, the official name, known from, what opens
-and what is inside, the references, the Pictures wanted line, the Checked line. 18 of the 30 periods on 10 Oct;
-a period without words shows its name and span on the page and says nothing. Read by `active/time-machine.html`.
+and what is inside, the references, the Pictures wanted line, the Checked line (the words in its brackets: when and by whom).
+30 of the 30 periods on 11 Oct, every leaf and branch of `deep-time.json`, every span agreeing with the tree; a span
+written in years ago (the last ice age and its three) is divided down to Ma. `tools/periods-from-vault.py --links` lists,
+period by period, every name in italics that is not an event's label, heading or id, a plot or a period — the links the
+page would need; the page does not yet make italics open anything (11 Oct). Read by `active/time-machine.html`.
 **`stories/deep-time.json` (6 Oct 2026; rewritten 9 Oct, and again 10 Oct)** — the period tree of the one timeline, edited by hand.
 **Since 10 Oct 2026 (`CWVault/claude/Prompt-Build-Timeline-Stack.md`, part 1; the tree agreed in `Periods-Deep.md`, which wins):**
 thirty periods, plainly named so that a line's names read as its story — the Earth's five (Molten 4,600–4,000 million years,
@@ -134,8 +138,8 @@ holds every event. Read by `js/deep-time.js`.
 **`stories/deep-time-events.json` (7 Oct 2026; the one store since 9 Oct)** — GENERATED, never edited by hand.
 **Since 9 Oct 2026 it is the one store of Deep Time, every event deep and after the ice** (Plan-Deep-Time
 Stage 7's first step; Michael, 9 Oct: deep time supersedes the timeline, and the two sets of batches
-merge into the events it uses, the new names and labels winning over old ones): 180 records, oldest
-first, each with `ma` and `chunk` and a `line` saying which it is — 69 `deep` records as below; 109
+merge into the events it uses, the new names and labels winning over old ones): 185 records, oldest
+first, each with `ma` and `chunk` and a `line` saying which it is — 74 `deep` records as below; 109
 `after-the-ice` records, the timeline batches 1 to 7 and the samples parsed by `tools/events-from-vault.py`'s
 own parser (the same records as `timeline-events.json`, with `ma` added; their date line stays as its
 parts and `js/deep-time.js` steps it as the Time Machine does); and the 2 September survivors of
@@ -151,7 +155,15 @@ written by a Cowork chat on Opus to `CWVault/claude/Prompt-Deep-Time-Events.md` 
 (`CWVault/claude/Events-Deep-01.md` to `-07.md`, 6–7 Oct; researched by agents, checked by four
 independent checkers each) and read by `tools/deep-events-from-vault.py` (outside this folder, in
 `_CW/tools/`): 69 events from the oldest grains in a meteorite to the last glacial maximum, and the
-beads, paint and flutes of the ice ages. The same record shape as `timeline-events.json` plus the deep
+beads, paint and flutes of the ice ages; and, since 11 Oct, the five new events the three period batches carry in the same
+form (`CWVault/claude/Periods-Deep-01.md` to `-03.md`, the sections whose Kind is not period, read by the same tool and named
+among its sources): *Fern spike* (66.0 Ma, Recovery), *Lystrosaurus* (251.8, First dinosaurs, above *The Great Dying*),
+*Big footprints* (200.95, Giants), *Dimetrodon* (280, tail to 295, One continent) and *Lucy* (3.18, a maximum, kind object,
+in the period *Lucy*; the page keys periods by name and events by id, so the two do not collide). The same day *Animals, fossils* took
+the summary Periods-Deep-01's changes section gives, *Antarctica freezes* says the sea fell fifty-five to seventy metres and *Ice lets
+go* 120 to 130 (Michael, 11 Oct: sea-level falls are ranges); and `tools/events-from-vault.py` reads a Place now written
+"(about 11.17 N, 40.63 E; …)" as a coordinate, so *Lucy* and *Lystrosaurus* have places and five older records — Cells with nuclei,
+Plants ashore, Tiktaalik, Coal, Oldest flowers — gained the coordinates their lines always carried. The same record shape as `timeline-events.json` plus the deep
 fields — `ma`, `uncertaintyMa` and `precisionYears` (null where the Age line gave none), `ageHow`,
 `tail` with its reason and `evidence` (earliest or dated), `knownFrom`, `placeNow` (where the evidence is
 today), `replacesSketch`, `chunk`, the date line as `{ ago, tail, sure? }` (deep lines count ago only) —
@@ -1480,7 +1492,12 @@ backstop for the Claude Code session that lands the file.
   pointer through, and the window's own tap area is the band and its name, not the event feet beneath, so under the
   window too a tap on the band is the period's and a tap below it the event's. And the tap rule: a tap on a period already
   open beneath shows its line when that line is a closed strip (a tap says "show me this"); only when the line is
-  open is the tap the undo that removes it and everything beneath (Michael's yes, 10 Oct). A September record that stands aside for the shared list (`same`) is kept,
+  open is the tap the undo that removes it and everything beneath (Michael's yes, 10 Oct). **11 Oct 2026 (`CW_VERSION 2026-10-11
+  116f2b7`):** a period's official name is drawn through `cwDeepTime.prose`, so the Greek roots batch 3 writes in asterisks (*holos*,
+  *kainos*) are italic on the page, not starred; the periods store is 30 of 30 and the events store 185 (see both under `stories/`).
+  Checked on the Mac: Mammals, Ice, Mammoths and The last ice age opened in turn, the twelve new periods' summaries and Mores read,
+  Hippos in London tappable, the five new events found on their lines and their Mores opened, Cooling and Antarctica freezes
+  reading fifty-five to seventy; no console errors. Screenshots `Claude outputs/time-machine-periods-ice-line.jpg`, `-last-ice-age.jpg`. A September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the

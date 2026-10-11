@@ -1,5 +1,5 @@
 ---
-status: Agreed with Michael, 10 Oct 2026, in the plots chat. Replaces the period names and edges of Spec-Deep-Time-Interface.md (8 Oct) and the five periods ruled on 9 Oct. Dates are the official boundaries, rounded. Amended the same day (Michael, in the periods chat): Animals starts at 720 million, the official start of the Cryogenian, in place of the guess of 700, so that Snowball one opens the Animals line. Amended again the same day (Michael, in the batch 2 periods chat, Periods-Deep-02.md): Shells ends at 487, not 485, and Giants at 143, not 145, because the old figures lay outside the current chart's error (the base of the Cretaceous moved from 145.0 to 143.1 in v2024/12); the event *Flowers* is renamed *Oldest flowers* so it no longer shares the period's label. Not yet built: the chunk tree (cw-deploys/stories/deep-time.json) still has the old names.
+status: Agreed with Michael, 10 Oct 2026, in the plots chat. Replaces the period names and edges of Spec-Deep-Time-Interface.md (8 Oct) and the five periods ruled on 9 Oct. Dates are the official boundaries, rounded. Amended the same day (Michael, in the periods chat): Animals starts at 720 million, the official start of the Cryogenian, in place of the guess of 700, so that Snowball one opens the Animals line. Amended again the same day (Michael, in the batch 2 periods chat, Periods-Deep-02.md): Shells ends at 487, not 485, and Giants at 143, not 145, because the old figures lay outside the current chart's error (the base of the Cretaceous moved from 145.0 to 143.1 in v2024/12); the event *Flowers* is renamed *Oldest flowers* so it no longer shares the period's label. Not yet built: the chunk tree (cw-deploys/stories/deep-time.json) still has the old names. Amended 11 Oct from Periods-Deep-03.md: the Hand axes / Mammoths edge noted as ours; index animals and *Grasslands* settled.
 role: The period tree for the one timeline, with the reasoning behind the names. The source for Prompt-Deep-Time-Periods.md (the words for each period) and for the Claude Code brief that will rebuild the tree.
 ---
 
@@ -42,7 +42,7 @@ Every period is at least 5 percent of its line (the tap rule).
       - **Grass**: 23 to 5.3 (Miocene)
       - **Ice**: 5.3 million to now (Pliocene to now)
         - **Lucy**: 5.3 to 2.6 million (Pliocene)
-        - **Hand axes**: 2.6 to 1 million (early Pleistocene; the ice comes and goes about every 41,000 years)
+        - **Hand axes**: 2.6 to 1 million (early Pleistocene; the ice comes and goes about every 41,000 years). The 1 million edge is ours, not an official boundary: it is the middle of the change from 41,000-year to 100,000-year ice ages, about 1.25 to 0.7 million (Michael, 10 Oct, kept over 774,000)
         - **Mammoths**: 1 million to now (the ice ages grow longer, about 100,000 years each)
           - **The last ice age**: 130,000 years ago to now (Late Pleistocene and Holocene). The rest of the Mammoths line is a plain stretch with events.
             - **Hippos in London**: 130,000 to 115,000 (the last warm spell; hippo bones under Trafalgar Square)
@@ -63,6 +63,6 @@ Every period is at least 5 percent of its line (the tap rule).
 
 - The four periods before Animals have no lines of their own yet.
 - Oceans could end at 2.4 billion, just before the oxygen jump, as the present line does, instead of the official 2.5.
-- Event labels that clash with period names: *Grasslands* (with *Grass*); *Coal* and *Forests* (with *Coal forests*). Rename the events.
+- Event labels that clash with period names: *Coal* and *Forests* (with *Coal forests*). Rename the events. (*Grasslands* keeps its name beside *Grass*: Michael, 10 Oct.)
 - The oceans formed by about 4.4 billion years ago (*Blue Earth*), inside *Molten*. The period's More says so; moving the edge would make *Molten* too narrow to tap.
-- Index animals (Michael, 10 Oct): the horse (cat-sized at the start of *Heat*) and the elephant line (fox, pig, giant, mammoth) followed down the lines as events. The dates and sizes are from memory and need checking.
+- Index animals: settled 10 Oct (Periods-Deep-03.md). The horse and the elephant line are told in the text of the Mammals periods, not as events; the sizes are checked there, and the elephant line's first step is a large cat, not a fox.

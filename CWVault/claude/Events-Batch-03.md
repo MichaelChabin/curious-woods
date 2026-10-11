@@ -1,5 +1,5 @@
 ---
-status: Batch 3, 1 Oct 2026. Fifteen events from the worklist (Events-To-Upgrade.md), the first fifteen keeps in date order, from the ice letting go to the Great Pyramid. Upgraded from the September blurbs, which were used as starting points only. Researched by three agents, written in one pass, checked by four independent fact-checkers whose changes are applied. The checkers' web searches ran out partway, so each event says what was confirmed by the checker, what only by the research pass, and what by neither. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
+status: Batch 3, 1 Oct 2026. Fifteen events from the worklist (Events-To-Upgrade.md), the first fifteen keeps in date order, from the ice letting go to the Great Pyramid. Upgraded from the September blurbs, which were used as starting points only. Researched by three agents, written in one pass, checked by four independent fact-checkers whose changes are applied. The checkers' web searches ran out partway, so each event says what was confirmed by the checker, what only by the research pass, and what by neither. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use). (11 Oct, Michael, from Periods-Deep-03.md: sea-level falls are given as ranges, the same in every file.) *Ice lets go*: the sea "120 to 130 metres lower", not "about 130".
 role: The third batch of timeline events, and the first upgraded from the September Time Machine. Each event names the old record it replaces.
 ---
 
@@ -33,7 +33,7 @@ Every year, snow falls on the middle of Greenland and does not melt. The next ye
 
 So what does the ice say?
 
-For most of the last hundred thousand years, the world was colder than it is now. Ice sheets covered much of North America and northern Europe. At the coldest, so much water was locked up in ice that the sea was about 130 metres lower than it is today, and people could walk from Asia to America.
+For most of the last hundred thousand years, the world was colder than it is now. Ice sheets covered much of North America and northern Europe. At the coldest, so much water was locked up in ice that the sea was 120 to 130 metres lower than it is today, and people could walk from Asia to America.
 
 Then, 1,492 metres down in one of the Greenland ice cores, something changes. In the layers below that point, the snow fell in bitter cold. In the layers above it, Greenland is about ten degrees warmer. Some of the signs in the ice change from one year to the next. The whole warming took a few decades.
 
@@ -51,7 +51,7 @@ Farms, cities, writing and everything else on this line happened in the warm.
 - J. P. Steffensen and others, "High-resolution Greenland ice core data show abrupt climate change happens in few years," *Science*, 2008. How fast the signals changed.
 - Mike Walker and others, "Formal definition and dating of the GSSP (Global Stratotype Section and Point) for the base of the Holocene using the Greenland NGRIP ice core, and selected auxiliary records," *Journal of Quaternary Science*, 2009. The depth (1,492.45 m) and the date (11,700 years before 2000).
 - Alexi Grachev and Jeffrey Severinghaus, "A revised +10±4 °C magnitude of the abrupt change in Greenland temperature at the Younger Dryas termination using published GISP2 gas isotope data and air thermal diffusion constants," *Quaternary Science Reviews*, 2005. About ten degrees.
-- Kurt Lambeck and others, "Sea level and global ice volumes from the Last Glacial Maximum to the Holocene," *PNAS*, 2014. The sea about 130 metres lower.
+- Kurt Lambeck and others, "Sea level and global ice volumes from the Last Glacial Maximum to the Holocene," *PNAS*, 2014. The sea 120 to 130 metres lower.
 
 **Notes for us.** The beat: the ice age ended fast, and the snow wrote it down. This is the line's own zero, so it is the one event that says "this line". The line's zero (12,026 years ago) is about 300 years before the ice-core date (11,700 years before 2000); the More says so plainly ("starts near there, at a round number"). Checks: Holocene boundary at 1,492.45 m in NGRIP, 11,700 b2k (Walker 2009). Some signals switch in 1 to 3 years; temperature over decades (Steffensen 2008). About +10 °C (Grachev and Severinghaus 2005; earlier estimates 7 to 15). Sea level about 120 to 134 m lower at the Last Glacial Maximum (Lambeck 2014). NGRIP reached bedrock at about 3,085 m. The comet idea for the Younger Dryas is left out: most specialists reject it, and it would be a second argument. Dansgaard, who first read the jump in the ice, is left out for length; he could be a story of his own.
 
