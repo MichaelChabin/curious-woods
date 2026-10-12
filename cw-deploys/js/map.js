@@ -1080,7 +1080,7 @@
       // pyramid alone, 'globe' the globe with today's coast over the pyramid, 'both' the globe in the
       // right half beside the pyramid. The two views share one seed, so a guess is the same in each.
       var deepClimate = !!(T.deep && T.deep.climate);
-      var deepHost = null, deepGlobe = null, deepFlat = null, deepOn = false, deepView = (T.deep && T.deep.view) || 'globe', deepAgeNow = false, deepGradeNow = null;
+      var deepHost = null, deepGlobe = null, deepFlat = null, deepOn = false, deepView = (T.deep && T.deep.view) || 'globe', deepAgeNow = false, deepGradeNow = null, deepCities = false;
       function deepSize() {
         if (!deepHost) return;
         var hw = deepHost.clientWidth, hh = deepHost.clientHeight, kids = [];
@@ -1098,7 +1098,7 @@
       }
       function makeView(projection) {
         var g = document.createElement('div'); deepHost.appendChild(g);
-        var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, ma: 0, lon: view.lon, lat: view.lat, projection: projection, climate: deepClimate,
+        var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, cities: T.deep.cities, citiesOn: deepCities, ma: 0, lon: view.lon, lat: view.lat, projection: projection, climate: deepClimate,
           seam: (T.deep.seam || 2.6e6) / 1e6, seed: deepGlobe ? deepGlobe.seed() : undefined,
           onGrade: function (grade, why) { if (projection === 'globe' || !deepGlobe) tellDeep(); } });
         inst._host = g;
@@ -1156,6 +1156,7 @@
       api.deep = function () { return { on: deepOn, view: deepView, grade: deepGlobe ? deepGlobe.grade() : (deepFlat ? deepFlat.grade() : null) }; };
       api.deepView = function (v) { if (v === 'globe' || v === 'map' || v === 'both') { deepView = v; if (timeYear !== null) api.setTime(timeYear); } return deepView; };
       api.deepClimate = function (on) { if (on !== undefined) deepClimate = !!on; if (deepGlobe) deepGlobe.setClimate(deepClimate); if (deepFlat) deepFlat.setClimate(deepClimate); return deepClimate; };
+      api.deepCities = function (on) { if (on !== undefined) deepCities = !!on; if (deepGlobe) deepGlobe.setCities(deepCities); if (deepFlat) deepFlat.setCities(deepCities); return deepCities; };   // the cities on the drifting pieces (12 Oct)
       api.deepTurn = function (lon, lat) { if (deepGlobe) deepGlobe.turn(lon, lat); };   // the globe turns to face a place (10 Oct); it does not zoom
       api.deepReguess = function () { if (!deepGlobe && !deepFlat) return; var s = (deepGlobe || deepFlat).reguess(); if (deepGlobe && deepFlat) (deepGlobe === (deepGlobe || deepFlat) ? deepFlat : deepGlobe).setSeed(s); };
       api.setTime = function (year) {

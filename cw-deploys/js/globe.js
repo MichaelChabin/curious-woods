@@ -58,6 +58,8 @@
      seam                   millions of years; younger than it the grade is `ground` (default 2.6)
      seed                   the first seed (default: this visit's)
      climate                the wash on at the start (default off)
+     cities, citiesOn       the cities file (default ../stories/plates/cities.json) and whether they show at the start;
+                            setCities(on) turns them on and off (part 3, 12 Oct)
      textures, ground, vegetation   the skin's files (defaults ../art/globe/, ../art/maps/world.webp and
                             ../art/maps/world-vegetation.webp); textures: false draws the flat fills only
      onDraw(ms), onGrade(grade, sentence), onMolten(phase, ma)
@@ -310,6 +312,36 @@
       lastSkinMs = performance.now() - t0;
       if (st.phase !== moltenPhase) { moltenPhase = st.phase; if (opts.onMolten) opts.onMolten(st.phase, age); }
       return st;
+    }
+
+    // ---- the cities (12 Oct 2026, part 3): a dozen of today's cities ride the continents, each pinned to its plate ----
+    var cities = null, citiesOn = !!opts.citiesOn, CITY_FADE = 20, CITY_INK = '#2a241c', CITY_HALO = 'rgba(244,241,234,0.85)';
+    load(opts.cities === undefined ? '../stories/plates/cities.json' : opts.cities, function (c) { cities = c.cities || c; schedule(); });
+    function drawCities(V, age, g, r, cx, cy) {
+      if (!citiesOn || !cities || !data || g === 'invented' || g === 'none') return;
+      var mats = {}, items = [];
+      cities.forEach(function (c) {
+        if (age > c.from) return;                                   // absent before the ground under it existed as a piece
+        var a = Math.min(1, (c.from - age) / CITY_FADE); if (a <= 0) return;   // and fading out over the twenty million years before
+        var M = mats[c.plate];
+        if (M === undefined) { M = g === 'guessed' ? guessedMatrix(c.plate, age) : plateMatrixAt(c.plate, Math.max(age, 0)); mats[c.plate] = M; }
+        if (!M) return;
+        var v = xyz(c.lon, c.lat);
+        var wx = M[0] * v[0] + M[1] * v[1] + M[2] * v[2], wy = M[3] * v[0] + M[4] * v[1] + M[5] * v[2], wz = M[6] * v[0] + M[7] * v[1] + M[8] * v[2];
+        var sx = V[0] * wx + V[1] * wy + V[2] * wz, sy = V[3] * wx + V[4] * wy + V[5] * wz, sz = V[6] * wx + V[7] * wy + V[8] * wz, px, py;
+        if (proj === 'flat') { var lon = Math.atan2(sy, sx), lat = Math.asin(Math.max(-1, Math.min(1, sz))); px = (lon + Math.PI) / (2 * Math.PI) * W; py = (Math.PI / 2 - lat) / Math.PI * H; }
+        else { if (sz < 0.03) return; px = cx + sx * r; py = cy - sy * r; }
+        items.push({ x: px, y: py, a: a, name: c.name });
+      });
+      ctx.save(); ctx.font = '11px Georgia, serif'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+      items.forEach(function (it) {
+        ctx.globalAlpha = it.a;
+        ctx.beginPath(); ctx.arc(it.x, it.y, 3.5, 0, Math.PI * 2); ctx.fillStyle = CITY_HALO; ctx.fill();
+        ctx.beginPath(); ctx.arc(it.x, it.y, 2.2, 0, Math.PI * 2); ctx.fillStyle = CITY_INK; ctx.fill();
+        ctx.lineWidth = 3; ctx.strokeStyle = CITY_HALO; ctx.strokeText(it.name, it.x + 6, it.y);
+        ctx.fillStyle = CITY_INK; ctx.fillText(it.name, it.x + 6, it.y);
+      });
+      ctx.restore();
     }
 
     // ---- the seed, and the guesses it makes ----
@@ -638,6 +670,7 @@
       for (var lo2 = -180; lo2 < 180; lo2 += 30) { var ring2 = []; for (var la2 = -90; la2 <= 90; la2 += 5) { var v2 = xyz(lo2, la2); ring2.push(v2[0], v2[1], v2[2]); } var q2 = new Path2D(); trace(new Float64Array(ring2), V, q2); gp.addPath(q2); }
       ctx.stroke(gp);
       ctx.restore(); ctx.restore();
+      drawCities(V, ma, g, r, cx, cy);
       // the limb shading and the haze at the rim (12 Oct): a ball, with an atmosphere — blue once there is a sea, grey steam before
       if (proj !== 'flat') {
         var shade = ctx.createRadialGradient(cx, cy, r * 0.78, cx, cy, r);
@@ -692,6 +725,8 @@
       turn: function (lon, lat) { if (lon != null) lon0 = lon; if (lat != null) lat0 = Math.max(-90, Math.min(90, lat)); schedule(); },
       grade: function () { return gradeFor(ma); },
       moltenPhase: function () { return ma > NO_MAP ? moltenState(ma).phase : null; },
+      setCities: function (on) { citiesOn = !!on; schedule(); },
+      cities: function () { return citiesOn; },
       skinMs: function () { return lastSkinMs; },
       reguess: function () { seed = (seed * 1103515245 + 12345 + Date.now()) % 2147483647; guesses = {}; blobsKey = null; interiorCache = {}; schedule(); return seed; },
       seed: function () { return seed; },

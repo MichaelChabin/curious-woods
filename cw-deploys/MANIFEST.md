@@ -185,7 +185,8 @@ et al. 2014, via PMIP4 (both in the file). Read by `active/time-machine.html`, w
 part 3 of the globe brief): each a point in today's coordinates with the plate of `continents.json` it is pinned to and the birth
 age of the piece it stands on; chosen by hand, the plate by point-in-polygon on the pieces, except San Francisco (in no piece;
 pinned to North America, fading at 150 Ma) — the file's `_about` says the rest. **Written, not yet read by anything** (the cities
-draw in part 3, after Michael's look at the skin).
+draw in part 3, after Michael's look at the skin). **Read since the same night by `js/globe.js`** (`setCities`), the word
+*Cities* in the Time Machine's column.
 **`art/globe/` (12 Oct 2026)** — the globe's skin maps, 1024 × 512, made by `tools/globe-textures.py` (outside this folder) from
 Michael's maps in `prototypes/globe-textures/` (his `molten.py`, 2048 × 1024, noise on the sphere, no seam, no pinch at the poles):
 `cooling-order.png` (dark cools first, light stays molten longest), `cracks.png` (the seams between the rafts), and `rock-grain.png`
@@ -1295,7 +1296,8 @@ backstop for the Claude Code session that lands the file.
   crust by 4,558, a faint uncertain sea from 4,548, the white flash at 4,510 (Moon forms), molten again with the maps turned 137°
   and flipped for a different crust, crust by 4,480, the sea's blue by 4,400 — each phase with its own sentence (`MOLTEN_WORDS`),
   `onMolten(phase, ma)` and `moltenPhase()` the hook for the stories; `skinMs()` for checking; `textures: false` keeps the flat
-  fills) —
+  fills; **the cities**, later that night: `cities` (the file), `citiesOn`, `setCities(on)`, `cities()`, drawn after the land and
+  the wash, each pinned to its plate, fading over twenty million years before its piece's birth) —
   `cwGlobe(host, opts)`: a canvas disc, orthographic; reads `../stories/plates/continents.json`
   and, for a year, turns every living piece of continent by its plate's rotation (slerped between
   the file's samples, precomputed to a 3×3 per plate per draw) and draws them as one fill, never
@@ -1572,7 +1574,20 @@ backstop for the Claude Code session that lands the file.
   px: Giants at 160 million years on the globe and the flat map, Fish at 400 (rock), Molten at 4,560, 4,535, 4,510, 4,500 and
   4,430, The last ice age at 20,000 years with the ice drawn; no console errors but the one 404 of the ice file before it existed.
   Screenshots `Claude outputs/time-machine-12oct-globe-skin-160ma.jpg`, `-flat-skin-150ma.jpg`, `-molten-*.{jpg,png}`,
-  `-ice-20ka.jpg`, `-phone-molten-again.jpg`. A September record that stands aside for the shared list (`same`) is kept,
+  `-ice-20ka.jpg`, `-phone-molten-again.jpg`. **Later the same night — the cities, part 3 (`CW_VERSION 2026-10-12c d90d4d4`; the
+  three scripts at `?v=2026-10-12c` here and on the two benches), on Michael's "go ahead" after his look:** *Cities*, a word in the
+  column under Map, off by default, puts the dozen cities of `../stories/plates/cities.json` on the drifting pieces (globe and
+  flat), each turned with its plate exactly as the plate's outline is, a dot and its name with the halo; a city fades over the
+  twenty million years before the piece it stands on was born and is absent earlier; on the guessed ages it goes where the guessed
+  piece goes; none on the invented land or the melt. The Map panel says so in one line, with the paleomagnetic caveat and San
+  Francisco's (on North America, east of the San Andreas, fading at 150 million years; the ground under it a story for later).
+  `map.deepCities(on)` in `js/map.js`, `setCities(on)` and `cities()` in `js/globe.js`. Checked on the Mac and at 375 px: Giants at
+  160 million years on the flat map (Moscow, Montreal, Paris, Mexico City, Riyadh, Nairobi, Delhi, Buenos Aires on the one land, San
+  Francisco rightly absent) and on the globe; Fish at 400; Animals at 700 (fitted); no console errors. Screenshots `Claude
+  outputs/time-machine-12oct-cities-*`. **And part 5, the plan, not the build:** `CWVault/claude/Plan-Edge-of-Knowing.md` — the
+  stripes interactive (the ruler that clicks, the continents closing, the speed read once), what she does, the data (the reversal
+  timescale, Müller et al.'s seafloor age grid, the plate rotations as the check), where it sits (behind the globe's *measured* word,
+  and in the gallery as the story's tool), and what the story's words must carry. A September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the

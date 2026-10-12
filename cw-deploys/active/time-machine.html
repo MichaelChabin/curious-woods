@@ -180,6 +180,7 @@
       <li class="htw-item" data-panel="map">Map</li>
       <li class="htw-action-row sub"><span class="htw-action-word" id="wGlobe">Globe</span></li>
       <li class="htw-action-row sub"><span class="htw-action-word" id="wClimate">Climate</span></li>
+      <li class="htw-action-row sub"><span class="htw-action-word" id="wCities">Cities</span></li>
       <li class="htw-action-row sub"><span class="htw-action-word absent" id="wGuess" style="display:none">another guess</span></li>
       <li class="htw-item graphs" id="wGraphs">Graphs</li>
       <li class="htw-action-row sub"><span class="htw-action-word curve absent" data-c="people" style="display:none">People</span></li>
@@ -207,15 +208,15 @@
   </main>
 </section>
 
-<script src="../js/map.js?v=2026-10-12b"></script>
+<script src="../js/map.js?v=2026-10-12c"></script>
 <script src="../js/timeline.js?v=2026-09-27-ati"></script>
-<script src="../js/globe.js?v=2026-10-12b"></script>
-<script src="../js/deep-time.js?v=2026-10-12b"></script>
+<script src="../js/globe.js?v=2026-10-12c"></script>
+<script src="../js/deep-time.js?v=2026-10-12c"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-12b 748def3';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-12c d90d4d4';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -252,7 +253,7 @@
   // The panels' words (the mockup's).
   const PANELS = {
     timeline: ['Timeline', '<p>The lines are the whole of the Earth’s time, in periods, each period a band in its own colour. Tap a period and it opens as a line beneath, with its events; the lines above keep their bands and put their events away. Tap it again and that line goes. Drag the window’s ends to take in more or less: they click onto a period’s edges. The copper knob above the lowest line is the age you are in; drag it, or tap below the band.</p><p>The last period, After the ice, opens as the two lines below: the whole twelve thousand years, from the ice to now.</p><p>The pale blue window on it is the Focus window. Drag it to move through time. Drag either end to make it wider or narrower.</p><p>The line below shows only the years inside the Focus window, spread out so there is room to read.</p><p>The copper handle is the year you are in. Drag it, or tap anywhere on the line, and the map shows the world in that year. Tap a mark to go to its year and see what happened.</p>'],
-    map: ['Map', '<p>The map shows the world in the handle’s year. This side of the ice ages it is the ground, today’s land with the sea lower where it was lower and the ice where it reached; past them it is the earth from space, with the continents where they were, and the word under it says how sure that is, from <i>measured</i> down to <i>invented</i>. Drag the globe to turn it. Where the word is <i>guessed</i>, <i>another guess</i> draws a new one.</p><p>The ground on the drifting pieces is today’s, back as far as the seafloor can be measured; older than that it is plain rock, since nobody knows what grew there. Before the Earth had a crust the globe is the melt itself, and whether there was a sea before the Moon was made is not known: that faint blue is a guess.</p><p>Tap an event with a place and the map goes there; the other events of the open line inside the view show as places you can tap. Tap a place, and its mark lights up on the timeline. Drag the bars at the map’s edges to make it bigger.</p><p class="refs">The ice: ICE-6G_C (Peltier, Argus and Drummond 2015), via PMIP4. The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.</p>']
+    map: ['Map', '<p>The map shows the world in the handle’s year. This side of the ice ages it is the ground, today’s land with the sea lower where it was lower and the ice where it reached; past them it is the earth from space, with the continents where they were, and the word under it says how sure that is, from <i>measured</i> down to <i>invented</i>. Drag the globe to turn it. Where the word is <i>guessed</i>, <i>another guess</i> draws a new one.</p><p>The ground on the drifting pieces is today’s, back as far as the seafloor can be measured; older than that it is plain rock, since nobody knows what grew there. Before the Earth had a crust the globe is the melt itself, and whether there was a sea before the Moon was made is not known: that faint blue is a guess.</p><p><i>Cities</i> puts a dozen of today’s cities on the drifting pieces, each riding its own plate; a city fades out before the ground under it existed. Before about 200 million years the model knows how far north a place was, not how far east, so a city’s east-west place is one guess. San Francisco rides with North America, where the city sits today, east of the San Andreas; the ground under it is a sliver of ocean floor scraped onto the continent, and that is a story for later.</p><p>Tap an event with a place and the map goes there; the other events of the open line inside the view show as places you can tap. Tap a place, and its mark lights up on the timeline. Drag the bars at the map’s edges to make it bigger.</p><p class="refs">The ice: ICE-6G_C (Peltier, Argus and Drummond 2015), via PMIP4. The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.</p>']
   };
 
   // ---------- numbers and years ----------
@@ -570,6 +571,7 @@
       seaLevel: seaCurve,
       ice: ice || undefined,   // the ice that existed then and not now, ICE-6G_C via PMIP4 (12 Oct): map.setTime blends between its steps
       deep: { seam: 2.6e6, plates: '../stories/plates/continents.json', coast: '../art/maps/world-tiles/contours-0.json', view: 'map',   // the ground this side of the ice ages, the flat deep map past them; Globe and Both are hers to choose (this page's events live on the ground)
+              cities: '../stories/plates/cities.json',
               onChange: (on, grade, why) => { $('grade').textContent = GRADE_WORDS[grade] || grade; $('why').textContent = on ? (why || '') : ''; CW.setWordPresent($('wGuess'), grade === 'guessed' || grade === 'invented'); } }
     } });
     mapWords = host.querySelector('.cw-strip span');
@@ -648,6 +650,8 @@
   $('wGlobe').addEventListener('click', () => { const w = $('wGlobe'), on = w.textContent === 'Globe'; w.textContent = on ? 'Map' : 'Globe'; if (map) map.deepView(on ? 'globe' : 'map'); });
   $('wClimate').addEventListener('click', () => { const w = $('wClimate'); w.classList.toggle('active'); if (map) { map.deepClimate(w.classList.contains('active')); $('model').textContent = cwGlobe.CLIMATE_WORDS; $('model').style.display = w.classList.contains('active') ? 'block' : 'none'; } });
   $('wGuess').addEventListener('click', () => { if (map) map.deepReguess(); });
+  // Cities (12 Oct, part 3): a dozen of today's cities ride the drifting pieces; off by default
+  $('wCities').addEventListener('click', () => { const w = $('wCities'); w.classList.toggle('active'); if (map) map.deepCities(w.classList.contains('active')); });
 
   // ---------- the deep lines, and the hand-over ----------
   let bar = null, handed = false, ranOnce = false, shownId = null, lastMa = null, namesOn = false;
