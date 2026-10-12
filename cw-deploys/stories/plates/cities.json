@@ -1,0 +1,17 @@
+{
+ "_about": "A dozen modern cities that ride the continents as they move (Michael, 12 Oct 2026, Prompt-Build-Globe-Cities-Ice.md part 3; Rulings, The one timeline 14). Each is a point in today's coordinates pinned to a plate of stories/plates/continents.json and turned with that plate's rotation exactly as the plate's outline is; 'from' is the birth, in millions of years ago, of the piece of continent the city stands on, and the city fades out over the twenty million years before it and is absent earlier. Chosen by hand: the plate is the piece the point lies in today (checked by point-in-polygon on the pieces), except San Francisco, which lies in no piece — the Coast Ranges are not among the model's old blocks — and is pinned to North America, where the city sits today, east of the San Andreas, and fades at 150 million years when its ground arrives (the ground under it is a sliver of ocean floor scraped onto the continent: a story for later). Mexico City lies in two overlapping pieces whose plates move alike; Mexico is taken. Riyadh is the twelfth: Arabia parts from Africa thirty million years ago and the Red Sea opens between it and Nairobi. Before about 200 million years the frame is paleomagnetic: how far north is known, how far east is the model's one guess. Read by js/globe.js.",
+ "cities": [
+  { "name": "San Francisco", "lat": 37.77, "lon": -122.42, "plate": "101", "from": 150, "piece": "none; pinned to North America (Michael, 12 Oct), fades when the Coast Ranges' ground arrives" },
+  { "name": "Mexico City", "lat": 19.43, "lon": -99.13, "plate": "104", "from": 250, "piece": "Mexico (also inside Guerrero, 215, which moves the same)" },
+  { "name": "Montreal", "lat": 45.50, "lon": -73.57, "plate": "101", "from": 1500, "piece": "Humber" },
+  { "name": "Buenos Aires", "lat": -34.60, "lon": -58.38, "plate": "22041", "from": 1800, "piece": "Paraná basin" },
+  { "name": "Paris", "lat": 48.86, "lon": 2.35, "plate": "305", "from": 420, "piece": "Armorica" },
+  { "name": "Moscow", "lat": 55.76, "lon": 37.62, "plate": "302", "from": 3600, "piece": "Baltica" },
+  { "name": "Nairobi", "lat": -1.29, "lon": 36.82, "plate": "709", "from": 600, "piece": "East African Orogen crust" },
+  { "name": "Riyadh", "lat": 24.71, "lon": 46.68, "plate": "5031", "from": 550, "piece": "Arabia" },
+  { "name": "Delhi", "lat": 28.61, "lon": 77.21, "plate": "501", "from": 3300, "piece": "Aravalli craton" },
+  { "name": "Beijing", "lat": 39.90, "lon": 116.40, "plate": "601", "from": 1800, "piece": "Trans-North China Orogen" },
+  { "name": "Tokyo", "lat": 35.68, "lon": 139.69, "plate": "629", "from": 250, "piece": "Kanto" },
+  { "name": "Melbourne", "lat": -37.81, "lon": 144.96, "plate": "801", "from": 450, "piece": "Lachlan" }
+ ]
+}

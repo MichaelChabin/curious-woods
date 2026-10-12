@@ -1141,7 +1141,7 @@
       }
       function tellDeep() {
         if (!T.deep.onChange) return;
-        var g = deepOn ? (deepGlobe || deepFlat).grade() : null, name = deepOn ? g.grade : 'ground', key = name + (deepOn ? '+' : '-');
+        var g = deepOn ? (deepGlobe || deepFlat).grade() : null, name = deepOn ? g.grade : 'ground', key = name + (deepOn ? '+' : '-') + (g ? g.why : '');   // the sentence is part of the key: the molten phases change it (12 Oct)
         if (key === deepGradeNow) return;
         deepGradeNow = key;
         T.deep.onChange(deepOn, name, deepOn ? g.why : '');
@@ -1176,7 +1176,10 @@
         if (T.ice) { var ago = new Date().getFullYear() - timeYear; iceData = T.ice; iceAgo = Math.max(0, ago); draw(); }
       };
       api.time = function () { return timeYear; };
+      api.deepInstances = function () { return { globe: deepGlobe, flat: deepFlat }; };   // for checking from the console (12 Oct); nothing on a page uses it
       api.view = function () { return { lat: view.lat, lon: view.lon, S: view.S, k: view.k }; };
+      // the box in view, in degrees (12 Oct 2026, for the Time Machine's zoom: which events fall inside it)
+      api.bounds = function () { var w = box.clientWidth, h = box.clientHeight, nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h); return { west: nw.lon, north: nw.lat, east: se.lon, south: se.lat, w: w, h: h }; };
     }
     return api;
   }

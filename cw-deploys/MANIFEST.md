@@ -172,6 +172,24 @@ revising an earlier event (batch 7's *Archaeopteryx*) wins. Read by `active/time
 evening: the only store that page reads — the after-the-ice records are Main's events, the deep records the
 deep lines', `aliases` resolve her line's old ids) and by `js/deep-time.js` on the two benches; the More
 opens in the map's window on the page and inline on the bar bench.
+**`stories/ice-outlines.json` (12 Oct 2026)** — GENERATED, never edited by hand: the ice that existed then and not now, by years
+ago, as filled rings of [lon, lat] (even-odd fill), 48 steps every 500 years to 21,000 then every 1,000 to 26,000; 526 KB. From the
+PMIP4 copy of ICE-6G_C (VM5a) — the PMIP4 ICE-6G-C ice-sheet data page's 48 ten-minute files — by `tools/ice-from-pmip4.py` (outside
+this folder, in `_CW/tools/`): each file fetched from the LSCE share the page links, checked against the md5 the page lists
+(`tools/ice-from-pmip4-md5.json`), the ice mask reduced to the one-degree ice-area fraction, today's taken away, smoothed by half a
+cell and traced at one half, rings under six points dropped; the same area as the 29 Sep trace from Peltier's own one-degree files
+to a tenth of a percent (that trace, `prototypes/ice/`, is gone with its `.gitignore` line: Michael, 12 Oct, the PMIP4
+redistribution is the source and the letter to Peltier is no longer waited on). Cite: Peltier, Argus and Drummond 2015 and Argus
+et al. 2014, via PMIP4 (both in the file). Read by `active/time-machine.html`, which hands it to `js/map.js`'s `time.ice`.
+**`stories/plates/cities.json` (12 Oct 2026)** — a dozen modern cities that ride the continents as they move (Michael, 12 Oct,
+part 3 of the globe brief): each a point in today's coordinates with the plate of `continents.json` it is pinned to and the birth
+age of the piece it stands on; chosen by hand, the plate by point-in-polygon on the pieces, except San Francisco (in no piece;
+pinned to North America, fading at 150 Ma) — the file's `_about` says the rest. **Written, not yet read by anything** (the cities
+draw in part 3, after Michael's look at the skin).
+**`art/globe/` (12 Oct 2026)** — the globe's skin maps, 1024 × 512, made by `tools/globe-textures.py` (outside this folder) from
+Michael's maps in `prototypes/globe-textures/` (his `molten.py`, 2048 × 1024, noise on the sphere, no seam, no pinch at the poles):
+`cooling-order.png` (dark cools first, light stays molten longest), `cracks.png` (the seams between the rafts), and `rock-grain.png`
+(the same noise recipe as the crust's grain, the neutral rock for the inferred and fitted ages). Read by `js/globe.js`.
 **`stories/plates/continents.json` (6 Oct 2026)** — GENERATED, never edited by hand: the continents
 in motion, for the deep-time Time Machine (`CWVault/claude/Plan-Deep-Time.md`, Stage 1).
 `tools/plates-from-gplates.py` (outside this folder, in `_CW/tools/`; needs `pip install pygplates
@@ -1267,7 +1285,17 @@ backstop for the Claude Code session that lands the file.
 
 - **`globe-bench.html` (6 Oct 2026)** — *The earth from space*: the nested bar of deep time over a
   globe, Stage 3 of `CWVault/claude/Plan-Deep-Time.md`. **`../js/globe.js`** (new that day; 12 Oct 2026: through Molten the
-  ball fades with the age, magma at 4.6 billion, black by 4.4, the sea's blue by 4.0) —
+  ball fades with the age, magma at 4.6 billion, black by 4.4, the sea's blue by 4.0; **12 Oct, evening — the skin:** the globe
+  and the flat deep map are drawn per pixel, the projection inverted to the sphere, an id raster of the plates for the age, the
+  plate's rotation inverted, the skin read where the point is today — today's ground picture (`../art/maps/world.webp` with its
+  vegetation) for *measured* and this side of the seam, the rock grain of `../art/globe/` for *inferred* and *fitted*, no skin for
+  *guessed* and *invented*; the passes at half the CSS resolution, scaled up; the flat fills stand in while the globe itself is
+  dragged; a limb shading and a haze at the rim; **Molten to black, twice** from Michael's maps in `../art/globe/` — crust where
+  the cooling value is below a threshold rising with the age, the cracks glowing and dimming, the Earth assembled molten at 4,567,
+  crust by 4,558, a faint uncertain sea from 4,548, the white flash at 4,510 (Moon forms), molten again with the maps turned 137°
+  and flipped for a different crust, crust by 4,480, the sea's blue by 4,400 — each phase with its own sentence (`MOLTEN_WORDS`),
+  `onMolten(phase, ma)` and `moltenPhase()` the hook for the stories; `skinMs()` for checking; `textures: false` keeps the flat
+  fills) —
   `cwGlobe(host, opts)`: a canvas disc, orthographic; reads `../stories/plates/continents.json`
   and, for a year, turns every living piece of continent by its plate's rotation (slerped between
   the file's samples, precomputed to a 3×3 per plate per draw) and draws them as one fill, never
@@ -1311,7 +1339,7 @@ backstop for the Claude Code session that lands the file.
   (302, not a move): `/experiments/deep-time` and `/experiments/deepTime` open this bench,
   `/experiments/deep-time-bar` the bar alone, `/experiments/deep-time-join` the join.
 - **`deep-time-bench.html` (6 Oct 2026)** — *Deep time, in sections*: the nested bar alone, Stage 2
-  of `CWVault/claude/Plan-Deep-Time.md`. **`../js/deep-time.js`** (new that day; 12 Oct 2026: events on the deepest line only,
+  of `CWVault/claude/Plan-Deep-Time.md`. **`../js/deep-time.js`** (new that day; 12 Oct 2026: events on the deepest line only, the Earth's title from the tree,
   the bands 12 px in the line's colour, one-line margin titles "Animals 720 Ma", no dates row, the knob above the band with its
   age, the range readout — see `active/time-machine.html`, 12 Oct) — `cwDeepTime(host,
   opts)`, a shelf module mounted into an element as `glass.js` and `map.js` are: one SVG; the top
@@ -1522,7 +1550,29 @@ backstop for the Claude Code session that lands the file.
   million years; Molten at 4.45 billion near-black, at 4.15 slate-blue; no console errors. Screenshots `Claude
   outputs/time-machine-12oct-mammals-events.jpg`, `-phone-molten.jpg`. Not built, Michael's to say: textures on the globe
   and the drifting pieces (ruled out for now on 9 Oct; asked for again 12 Oct); what the map shows after it zooms to a
-  place (his line ends "and show"). A September record that stands aside for the shared list (`same`) is kept,
+  place (his line ends "and show"). **12 Oct 2026, evening — the globe's skin, the molten sequence, the zoom finished, the ice, the
+  rename (`CW_VERSION 2026-10-12b 748def3`; `js/globe.js`, `js/map.js`, `js/deep-time.js` at `?v=2026-10-12b` here and on the two
+  benches; from `CWVault/claude/Prompt-Build-Globe-Cities-Ice.md` parts 6, 4, 2, 1 and 7 on Michael's answers of 12 Oct late; the
+  cities, part 3, and the Edge of Knowing plan, part 5, wait on his look):** *the rename* — the tree's root is `Earth`
+  (`Periods-Deep.md` too), the module no longer strips an article. *The ice* — `../stories/ice-outlines.json` (ICE-6G_C via PMIP4,
+  see under `stories/`) is loaded with the page and handed to the map's `time.ice`, so the ground shows the ice where it reached as
+  the marker moves through the last 26,000 years; the Map panel carries the citation. *The zoom, finished* — once a tap has zoomed
+  the map (the box about 2,000 km across), the other events of the open line whose places fall inside the box show with their
+  names (the map's placer thins the names, every mark stays tappable; 26 events in the worst box, round Ötzi); a tap on one makes it
+  the event and the map moves only if the place is in the outer 15 % of the box or off it (`map.bounds()`, new in `js/map.js`);
+  the deepest deep line's events mark the ground map too, by where their evidence is today (`placeNow`); a period chosen or the
+  map's *reset* ends the zoom. Past the seam the deep view takes no marks: engine work, later. *The skin and the rim* — see
+  `js/globe.js`: today's ground picture on the drifting pieces for the *measured* ages and this side of the seam, a neutral rock
+  grain for *inferred* and *fitted*, the pale dashed and dotted fills unchanged for *guessed* and *invented*; a limb shading and a
+  haze at the rim. Measured on the Mac at a device ratio of 2, the passes at half resolution: the flat deep map (818 px wide)
+  33 ms a draw, the globe (300 px disc) 14 to 20 ms, Molten on the flat map 40 to 50 ms, on the globe 4 ms, at phone width 8 ms;
+  the id raster (the plates filled by index once per age) is about half of each. *Molten, twice* — the sequence of part 7 from
+  Michael's maps (`art/globe/`), with its own sentence under the map for each phase (crust, first sea, moon, molten again, crust
+  again, sea); the 12 Oct fade from black to blue over 4,400 to 4,000 is superseded: blue by 4,400. Checked on the Mac and at 375
+  px: Giants at 160 million years on the globe and the flat map, Fish at 400 (rock), Molten at 4,560, 4,535, 4,510, 4,500 and
+  4,430, The last ice age at 20,000 years with the ice drawn; no console errors but the one 404 of the ice file before it existed.
+  Screenshots `Claude outputs/time-machine-12oct-globe-skin-160ma.jpg`, `-flat-skin-150ma.jpg`, `-molten-*.{jpg,png}`,
+  `-ice-20ka.jpg`, `-phone-molten-again.jpg`. A September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the

@@ -147,6 +147,7 @@
   .tm-more .refs div { margin: 0 0 5px; }
   /* the panels' words */
   .tm-panel p { margin: 0 0 9px; }
+  .tm-panel p.refs { font-size: 12px; line-height: 1.45; color: var(--ink-soft); border-top: .5px solid var(--sep); margin-top: 10px; padding-top: 6px; }
 
   @media (max-width: 760px) {
     #htw-panel { position: static; width: auto; padding: 14px 16px 12px; border-right: 0; border-bottom: .5px solid #d6c9ad; }
@@ -206,15 +207,15 @@
   </main>
 </section>
 
-<script src="../js/map.js?v=2026-10-10"></script>
+<script src="../js/map.js?v=2026-10-12b"></script>
 <script src="../js/timeline.js?v=2026-09-27-ati"></script>
-<script src="../js/globe.js?v=2026-10-12"></script>
-<script src="../js/deep-time.js?v=2026-10-12"></script>
+<script src="../js/globe.js?v=2026-10-12b"></script>
+<script src="../js/deep-time.js?v=2026-10-12b"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-12 3ea9c2a';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-12b 748def3';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -251,7 +252,7 @@
   // The panels' words (the mockup's).
   const PANELS = {
     timeline: ['Timeline', '<p>The lines are the whole of the Earth’s time, in periods, each period a band in its own colour. Tap a period and it opens as a line beneath, with its events; the lines above keep their bands and put their events away. Tap it again and that line goes. Drag the window’s ends to take in more or less: they click onto a period’s edges. The copper knob above the lowest line is the age you are in; drag it, or tap below the band.</p><p>The last period, After the ice, opens as the two lines below: the whole twelve thousand years, from the ice to now.</p><p>The pale blue window on it is the Focus window. Drag it to move through time. Drag either end to make it wider or narrower.</p><p>The line below shows only the years inside the Focus window, spread out so there is room to read.</p><p>The copper handle is the year you are in. Drag it, or tap anywhere on the line, and the map shows the world in that year. Tap a mark to go to its year and see what happened.</p>'],
-    map: ['Map', '<p>The map shows the world in the handle’s year. This side of the ice ages it is the ground, today’s land with the sea lower where it was lower; past them it is the earth from space, with the continents where they were, and the word under it says how sure that is, from <i>measured</i> down to <i>invented</i>. Drag the globe to turn it. Where the word is <i>guessed</i>, <i>another guess</i> draws a new one.</p><p>Tap a place, and its mark lights up on the timeline. Drag the bars at the map’s edges to make it bigger.</p>']
+    map: ['Map', '<p>The map shows the world in the handle’s year. This side of the ice ages it is the ground, today’s land with the sea lower where it was lower and the ice where it reached; past them it is the earth from space, with the continents where they were, and the word under it says how sure that is, from <i>measured</i> down to <i>invented</i>. Drag the globe to turn it. Where the word is <i>guessed</i>, <i>another guess</i> draws a new one.</p><p>The ground on the drifting pieces is today’s, back as far as the seafloor can be measured; older than that it is plain rock, since nobody knows what grew there. Before the Earth had a crust the globe is the melt itself, and whether there was a sea before the Moon was made is not known: that faint blue is a guess.</p><p>Tap an event with a place and the map goes there; the other events of the open line inside the view show as places you can tap. Tap a place, and its mark lights up on the timeline. Drag the bars at the map’s edges to make it bigger.</p><p class="refs">The ice: ICE-6G_C (Peltier, Argus and Drummond 2015), via PMIP4. The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.</p>']
   };
 
   // ---------- numbers and years ----------
@@ -481,7 +482,7 @@
     if (e) {
       if (!inFocus(e)) { const s = focus.b - focus.a; focus.a = Math.max(0, Math.min(NOW - s, e.year - s / 2)); focus.b = focus.a + s; drawDetail(); }
       handle = e.year; addSeen(e.id); showWord();
-      if (map && e.place && !fromMap) goTo(e.place.lat, e.place.lon);
+      if (map && e.place && !stays(e.place.lat, e.place.lon)) goTo(e.place.lat, e.place.lon);
     }
     detail.select(sel ? [sel] : []);
     draw(); markMap(); timeToMap(); say(e);
@@ -516,7 +517,18 @@
     if (!map) return;
     if (map.fit) map.fit({ west: lon - PLACE_BOX.lon, east: lon + PLACE_BOX.lon, south: Math.max(-85, lat - PLACE_BOX.lat), north: Math.min(85, lat + PLACE_BOX.lat) });
     else map.centre(lat, lon);
+    zoomed = true;
   }
+  // the zoom, finished (Michael, 12 Oct, part 2): once a tap has zoomed the map, the other events of the open line whose
+  // places fall inside the box show with their names (the map's placer thins the names, every mark stays tappable); a
+  // tap on one makes it the event, and the map moves only if the place is near the box's edge (the outer 15 %) or off it
+  let zoomed = false;
+  function inBounds(lat, lon, b, inner) {
+    const dx = (b.east - b.west) * (1 - inner) / 2, dy = (b.north - b.south) * (1 - inner) / 2;
+    return lon >= b.west + dx && lon <= b.east - dx && lat >= b.south + dy && lat <= b.north - dy;
+  }
+  function stays(lat, lon) { return zoomed && map && map.bounds && inBounds(lat, lon, map.bounds(), 0.7); }
+  const shortName = pl => (pl.short || pl.name || '').split(/[,(;]/)[0].trim();
   function tapPlace(group) {
     // several events at one place: the one in the Focus window nearest the handle, else the nearest in years
     let best = null, bd = Infinity;
@@ -526,26 +538,42 @@
   function markMap() {
     if (!map) return;
     marks.length = 0;
-    const vis = new Set(visible().map(e => e.id)), done = {};
-    Object.keys(groups).forEach(k => {
-      const g = groups[k].filter(e => vis.has(e.id)); if (!g.length) return;
-      const on = g.some(e => e.id === sel), inside = g.some(inFocus), heavy = Math.max(...g.map(e => e.weight));
-      // no names at rest (the stack prompt, part 5): after a tap, the tapped place and the places with events inside the selected period
-      const name = namesOn && (on || inside) ? (g.find(e => e.id === sel) || g.find(inFocus) || g[0]).place.name : '';
-      marks.push({ type: 'place', lat: g[0].place.lat, lon: g[0].place.lon, name, world: true, minor: !inside && !on, on, weight: inside ? heavy : 1, onTap: () => tapPlace(g) });
-    });
+    const b = zoomed && map.bounds ? map.bounds() : null;
+    if (handed) {
+      const vis = new Set(visible().map(e => e.id));
+      Object.keys(groups).forEach(k => {
+        const g = groups[k].filter(e => vis.has(e.id)); if (!g.length) return;
+        const on = g.some(e => e.id === sel), inside = g.some(inFocus), heavy = Math.max(...g.map(e => e.weight));
+        const inBox = b ? inBounds(g[0].place.lat, g[0].place.lon, b, 1) : inside;
+        // no names at rest (the stack prompt, part 5): after a tap, the tapped place and, zoomed, the places with events
+        // inside the box (before a zoom, inside the Focus window)
+        const name = namesOn && (on || inBox) ? (g.find(e => e.id === sel) || g.find(inFocus) || g[0]).place.name : '';
+        marks.push({ type: 'place', lat: g[0].place.lat, lon: g[0].place.lon, name, world: true, minor: !inBox && !on, on, weight: inBox ? heavy : 1, onTap: () => tapPlace(g) });
+      });
+    } else if (bar && bar.events()) {
+      // the deepest deep line's events, by where their evidence is today, on the ground map (past the seam the deep
+      // view covers the map and takes no marks: engine work, later)
+      const sp = bar.span();
+      bar.events().forEach(e => {
+        const pl = e.placeNow; if (!pl || pl.lat == null || e.ma > sp.from || e.ma < sp.to) return;
+        const on = shownId === e.id, inBox = b ? inBounds(pl.lat, pl.lon, b, 1) : false;
+        marks.push({ type: 'place', lat: pl.lat, lon: pl.lon, name: namesOn && (on || inBox) ? shortName(pl) : '', world: true, minor: !inBox && !on, on, weight: e.weight || 1,
+                     onTap: () => { bar.setYear(e.ma); showRec(e, false, true); } });
+      });
+    }
     map.redraw();
   }
-  function buildMap(pyramid, seaCurve) {
+  function buildMap(pyramid, seaCurve, ice) {
     const host = $('map');
     const GRADE_WORDS = { ground: 'the ground', measured: 'measured', inferred: 'inferred', fitted: 'fitted', guessed: 'guessed', invented: 'invented', none: 'no map' };
     map = cwMap(host, pyramid, marks, { fit: FIT, reset: 'reset', time: {
       seaLevel: seaCurve,
+      ice: ice || undefined,   // the ice that existed then and not now, ICE-6G_C via PMIP4 (12 Oct): map.setTime blends between its steps
       deep: { seam: 2.6e6, plates: '../stories/plates/continents.json', coast: '../art/maps/world-tiles/contours-0.json', view: 'map',   // the ground this side of the ice ages, the flat deep map past them; Globe and Both are hers to choose (this page's events live on the ground)
               onChange: (on, grade, why) => { $('grade').textContent = GRADE_WORDS[grade] || grade; $('why').textContent = on ? (why || '') : ''; CW.setWordPresent($('wGuess'), grade === 'guessed' || grade === 'invented'); } }
     } });
     mapWords = host.querySelector('.cw-strip span');
-    if (mapWords) mapWords.addEventListener('click', () => { $('mapwrap').style.marginLeft = ''; $('mapwrap').style.marginRight = ''; });
+    if (mapWords) mapWords.addEventListener('click', () => { $('mapwrap').style.marginLeft = ''; $('mapwrap').style.marginRight = ''; zoomed = false; markMap(); });
     // the bars at the left and right edges stretch the map; the left one may take it over the column to the page's edge
     document.querySelectorAll('.grip').forEach(gr => {
       let st = null; const wrap = $('mapwrap');
@@ -626,7 +654,7 @@
   // a period tapped behaves like an event tapped (the stack prompt, part 1): its summary in the block, More in the
   // window, from stories/deep-time-periods.json; a period with no words yet shows its name and span
   function showPeriod(node, span) {
-    namesOn = false; markMap(); graphsFor();
+    namesOn = false; zoomed = false; markMap(); graphsFor();
     shownId = null;
     const words = bar && bar.periodWords(), rec = node && words && words[node.name];
     if (!node) { summary.innerHTML = '<span class="hint">about ' + esc(bar.fmt(span.from - span.to).replace(' ago', '')) + '</span>'; return; }
@@ -645,12 +673,13 @@
   }
   // the event under the deep marker: tapped, or the one the marker has just passed (the passing line,
   // an experiment, Michael, 9 Oct); only the deepest open line's own events count
-  function showRec(rec, passed) {
+  function showRec(rec, passed, fromMap) {
     if (!rec || rec.id === shownId) return;
     shownId = rec.id;
     if (!passed && map) {   // the map goes to the event's place and shows its name; on the globe it turns to face her
       const pl = rec.placeNow || rec.place; namesOn = true;
-      if (pl && pl.lat != null) { goTo(pl.lat, pl.lon); map.deepTurn(pl.lon, pl.lat); }
+      if (pl && pl.lat != null) { if (!stays(pl.lat, pl.lon)) goTo(pl.lat, pl.lon); map.deepTurn(pl.lon, pl.lat); }
+      markMap();
     }
     summary.innerHTML = (passed ? '<span class="passed">just passed</span><br>' : '') + '<b>' + esc(sentence(rec.label)) + '</b> ' + cwDeepTime.prose(rec.summary) + (rec.more ? ' <span class="cmd" id="more" role="button" tabindex="0">More</span>' : '');
     const m = $('more'); if (m) m.addEventListener('click', ev => { ev.stopPropagation(); const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec); cwWindow(box, {}); });
@@ -751,7 +780,7 @@
       onEmpty: () => { emptyTap = true; }
     });
     wireDetail();
-    buildMap(raw.pyramid, raw.seaIce.points);
+    buildMap(raw.pyramid, raw.seaIce.points, raw.ice);
     live = true;
     if (VIEW === VIEWINGS['after-the-ice']) {   // the one timeline: the deep lines above, Main as the last rung
       summary.innerHTML = '<span class="hint">Tap a period, a mark, or drag the copper marker.</span>';
@@ -773,9 +802,10 @@
   const get = u => fetch(u, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
   Promise.all([get('../stories/deep-time-events.json'), get('../stories/curves/people.json'), get('../stories/curves/sea-level.json'),
                get('../stories/curves/sea-level-ice-ages.json'), cwMap.load(PYRAMID),
-               get('../stories/curves/oxygen.json'), get('../stories/curves/day-length.json'), get('../stories/curves/minerals.json'), get('../stories/curves/sun-and-inside.json')])
-    .then(([store, people, sea, seaIce, pyramid, oxygen, dayLength, minerals, sunInside]) => {
-      raw = { store, people, sea, seaIce, pyramid };
+               get('../stories/curves/oxygen.json'), get('../stories/curves/day-length.json'), get('../stories/curves/minerals.json'), get('../stories/curves/sun-and-inside.json'),
+               get('../stories/ice-outlines.json').catch(e => { console.warn('Time Machine: no ice outlines', e.message); return null; })])
+    .then(([store, people, sea, seaIce, pyramid, oxygen, dayLength, minerals, sunInside, ice]) => {
+      raw = { store, people, sea, seaIce, pyramid, ice };
       curveFiles = { people, sea, oxygen, 'day-length': dayLength, minerals, 'sun-and-inside': sunInside };
       if (wanted) showBench();
       // which past layers the pyramid carries, said once in the console (Spec-Maps, Time on the map)

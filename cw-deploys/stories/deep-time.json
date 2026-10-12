@@ -1,6 +1,6 @@
 {
  "_about": "The period tree of the one timeline, from CWVault/claude/Periods-Deep.md (agreed with Michael 10 Oct 2026; the file wins) and the colours of Prompt-Build-Timeline-Stack.md (glass colours from art/palette/palettes.json, each with its palette). Times are millions of years ago (ma); 'from' is the older end. Each period: name, from, to, 'official' (the specialists' name and what it means, said small under the period), 'colour' and 'palette', its 'chunks'. Every period is at least 5 % of its line (the tap rule). 'line' names the rung the page draws itself: After the ice is the Time Machine's own line with the Focus window and the close-up. The period's words — summary, More, known from, official name in full — are stories/deep-time-periods.json (tools/periods-from-vault.py), keyed by name. Mammoths carries 'stretchColour' for the plain stretch of its line outside The last ice age. The root's 'id' values are the names the events' Line field uses (earth, animals, …). Read by js/deep-time.js.",
- "name": "The Earth",
+ "name": "Earth",
  "id": "earth",
  "from": 4600,
  "to": 0,

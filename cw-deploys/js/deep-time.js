@@ -230,9 +230,9 @@
       return g;
     }
     /* the title: the name and, beside it, the age the line begins at — "Animals 720 Ma"; a free span its two ages;
-       the Earth's as Michael wrote it, without the article */
+       the Earth's the same */
     function titleOf(L, depth) {
-      if (depth === 0) return { name: root.name.replace(/^The /, ''), num: fmtShort(L.from) };
+      if (depth === 0) return { name: root.name, num: fmtShort(L.from) };   // the tree says Earth since 12 Oct (Michael)
       if (L.snapped) return { name: L.node.name, num: fmtShort(L.from) };
       return { name: null, num: fmtShort(L.from) + ' to ' + fmtShort(L.to) };
     }

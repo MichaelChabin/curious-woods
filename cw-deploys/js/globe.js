@@ -30,7 +30,24 @@
    sea), green elsewhere, ice at the poles in the cold ages, white all over in the snowballs. The
    rock atlases (coal, salt, dune sandstone, glacial rubble) can replace the rules later.
 
-   cwGlobe(host, opts) → { setTime(ma), time(), view(), turn(lon, lat), grade(), reguess(),
+   The skin (12 Oct 2026, Prompt-Build-Globe-Cities-Ice.md parts 1 and 7, on Michael's rulings 14; the 9 Oct
+   "out for now" lifted): the globe is drawn per pixel. For every pixel of the disc (or of the flat map) the
+   projection is inverted to a point on the sphere at the chosen age; an id raster, the plates filled by index
+   into an offscreen equirectangular canvas for that age, says which plate is there; that plate's rotation is
+   inverted to find the point's place today, and the skin is read there — today's ground picture
+   (art/maps/world.webp with its vegetation) for the *measured* ages and this side of the seam, a neutral rock
+   grain (art/globe/rock-grain.png, one tone, no climate in it) for *inferred* and *fitted*; *guessed* and
+   *invented* keep their pale dashed and dotted fills with no skin, so the grade shows at a glance. A limb
+   shading and a haze at the rim make it a ball. While the globe itself is dragged the flat fills stand in, and
+   the skin returns when the finger lifts. Molten, twice (part 7): above 4,400 million years the pixels follow
+   Michael's maps (art/globe/cooling-order.png, dark cools first; cracks.png, the seams): crust wherever the
+   cooling value is below a threshold that rises with the age, the cracks glowing and dimming; the Earth
+   assembles molten at 4,567, a black crust within a few million years, a faint uncertain sea, the white flash
+   of the Moon-forming impact at 4,510 (the store's age for Moon forms), molten again with the maps turned so
+   the second crust is a different crust, black again, and the sea's blue by 4,400, which the Jack Hills zircons
+   vouch for. onMolten(phase, ma) tells the page the phase; moltenPhase() reads it (a hook for the stories).
+
+   cwGlobe(host, opts) → { setTime(ma), time(), view(), turn(lon, lat), grade(), reguess(), moltenPhase(),
                            setProjection(p), projection(), setClimate(on), climate(), destroy() }
    opts:
      plates, coast, crust   the three files, or their URLs (defaults under ../stories and ../art/maps)
@@ -41,7 +58,9 @@
      seam                   millions of years; younger than it the grade is `ground` (default 2.6)
      seed                   the first seed (default: this visit's)
      climate                the wash on at the start (default off)
-     onDraw(ms), onGrade(grade, sentence)
+     textures, ground, vegetation   the skin's files (defaults ../art/globe/, ../art/maps/world.webp and
+                            ../art/maps/world-vegetation.webp); textures: false draws the flat fills only
+     onDraw(ms), onGrade(grade, sentence), onMolten(phase, ma)
    Classic script, no dependencies. */
 (function () {
   'use strict';
@@ -53,7 +72,18 @@
   ].join('\n');
   var SEA = '#93bed7', SEA_DEEP = '#7fa9c4', LAND = '#8c8366', LAND_PALE = '#c3bba5', COAST = '#4a4336', SHELF = '#2f5c78', GRAT = 'rgba(42,36,28,0.10)', MAGMA = '#6e2410', MAGMA_GLOW = '#b8471c';
   var OLDEST_ROCK = 4000, NO_MAP = 4400, MOLTEN_START = 4600, DRIFT_DEG_PER_MA = 0.45;   // a plate's few centimetres a year, as degrees of arc
-  var BLACK = '#0c0a08';
+  var BLACK = '#0c0a08', HOT = '#f0a040', CRUST = '#141010', CRUST_LIGHT = '#2a2320', FLASH = '#fbf4e6';
+  // the molten sequence, in millions of years ago (part 7; the ages as the events store has them)
+  var ASSEMBLED = 4567, FIRST_CRUST = 4558, MOON = 4510, SECOND_CRUST = 4480, FIRST_SEA_FROM = 4548, FIRST_SEA_TO = 4520;
+  var MOLTEN_WORDS = {
+    molten:    'A ball of melted rock. Nothing to stand on, and nothing from it survived.',
+    crust:     'A skin of black rock freezes over the melt in rafts, and the seams between them glow.',
+    'first sea': 'Whether there was a sea before the Moon, nobody knows. The faint blue is a guess, and it says so.',
+    moon:      'Something the size of Mars strikes the Earth. The whole surface melts again, and the Moon is made from what was thrown off.',
+    'molten again': 'Melted again, from the top down.',
+    'crust again': 'Freezing again, into a different crust.',
+    sea:       'Blue by 4.4 billion years: a tiny crystal from Western Australia says there was liquid water.'
+  };
   /* two hex colours mixed, t of the second (0 to 1) */
   function mix(a, b, t) {
     var A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16), out = 0;
@@ -128,6 +158,158 @@
         if (age >= a0 && age <= a1) return qmat(slerp(qs[k], qs[k + 1], a1 === a0 ? 0 : (age - a0) / (a1 - a0)));
       }
       return null;
+    }
+
+    // ---- the skin: the textures, the id raster, the per-pixel passes (12 Oct 2026) ----
+    var TW = 1024, TH = 512, tex = {}, texOn = opts.textures !== false, lastSkinMs = 0, moltenPhase = null;
+    // the per-pixel passes run at half the CSS resolution and are scaled up: the skin's own resolution (a 1024-wide
+    // picture, 3 px per degree on a 560 px disc) is the limit, not the canvas, and the cost falls by four
+    var SKIN_SCALE = opts.skinScale || 0.5, SW = 0, SH = 0;
+    var idCanvas = null, idCtx = null, skinCanvas = null, skinCtx = null, plateIndex = {}, plateByIndex = [null];
+    function texCanvas() { var c = document.createElement('canvas'); c.width = TW; c.height = TH; return c; }
+    function loadImage(src, then) {
+      if (!src) return;
+      var im = new Image(); im.onload = function () { then(im); }; im.onerror = function () { console.warn('globe.js: no texture', src); }; im.src = src;
+    }
+    function loadTextures() {
+      if (!texOn) return;
+      var base = opts.textures || '../art/globe/';
+      ['cooling-order', 'cracks', 'rock-grain'].forEach(function (name) {
+        loadImage(base + name + '.png', function (im) { var c = texCanvas(), x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, TW, TH); tex[name] = x.getImageData(0, 0, TW, TH).data; schedule(); });
+      });
+      // today's ground: the base picture with its vegetation multiplied over it, as the map shows it (no ice: Greenland's is three million years old)
+      loadImage(opts.ground || '../art/maps/world.webp', function (im) {
+        var c = texCanvas(), x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, TW, TH);
+        var finish = function () { tex.ground = x.getImageData(0, 0, TW, TH).data; schedule(); };
+        if (opts.vegetation === false) { finish(); return; }
+        loadImage(opts.vegetation || '../art/maps/world-vegetation.webp', function (veg) { x.globalCompositeOperation = 'multiply'; x.drawImage(veg, 0, 0, TW, TH); x.globalCompositeOperation = 'source-over'; finish(); });
+      });
+    }
+    function skinReady() { return texOn && tex.ground && tex['rock-grain']; }
+    function moltenReady() { return texOn && tex['cooling-order'] && tex.cracks && tex['rock-grain']; }
+    function indexOf(pid) { var i = plateIndex[pid]; if (!i) { i = plateByIndex.length; plateByIndex.push(pid); plateIndex[pid] = i; } return i; }
+    // the id raster: every living piece filled with its plate's index (low byte red, high byte green) at its position at this age
+    function idRaster(age) {
+      if (!idCanvas) { idCanvas = texCanvas(); idCtx = idCanvas.getContext('2d', { willReadFrequently: true }); }
+      var oc = idCtx;
+      oc.setTransform(1, 0, 0, 1, 0, 0); oc.fillStyle = '#000'; oc.fillRect(0, 0, TW, TH);
+      oc.setTransform(TW, 0, 0, TH, 0, 0);
+      var saveProj = proj; proj = 'flat';
+      var byPlate = {}, mats = {}, i, k;
+      for (i = 0; i < pieces.length; i++) {
+        var p = pieces[i];
+        if (age > p.from || age < p.to) continue;
+        var M = mats[p.plate];
+        if (M === undefined) { M = plateMatrixAt(p.plate, age); mats[p.plate] = M; }
+        if (!M) continue;
+        var path = byPlate[p.plate] || (byPlate[p.plate] = new Path2D());
+        for (k = 0; k < p.rings.length; k++) { var q = new Path2D(); if (trace(p.rings[k], M, q)) path.addPath(q); }
+      }
+      proj = saveProj;
+      for (var pid in byPlate) {
+        var idx = indexOf(pid), col = 'rgb(' + (idx & 255) + ',' + (idx >> 8 & 255) + ',0)';
+        oc.fillStyle = col; oc.fill(byPlate[pid], 'nonzero');
+        oc.strokeStyle = col; oc.lineWidth = 1.5 / TW; oc.stroke(byPlate[pid]);   // closes the hairline gaps between pieces
+      }
+      oc.setTransform(1, 0, 0, 1, 0, 0);
+      return oc.getImageData(0, 0, TW, TH).data;
+    }
+    function hex3(h) { var n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+    var LAND3 = hex3(LAND), MAGMA3 = hex3(MAGMA), GLOW3 = hex3(MAGMA_GLOW), HOT3 = hex3(HOT), CRUST3 = hex3(CRUST), CRUSTL3 = hex3(CRUST_LIGHT), SEA3 = hex3(SEA), SEAD3 = hex3(SEA_DEEP), FLASH3 = hex3(FLASH);
+    // the inverse of the view: screen (x east, y north, z toward the eye) back to the world at this age
+    function pixelToWorld(V) {
+      var flat = proj === 'flat', sw = SW, sh = SH, r = (W / 2 - 4) * SKIN_SCALE, cx = sw / 2, cy = sh / 2;
+      var T0 = V[0], T1 = V[3], T2 = V[6], T3 = V[1], T4 = V[4], T5 = V[7], T6 = V[2], T7 = V[5], T8 = V[8];
+      return function (px, py, out) {
+        var X, Y, Z;
+        if (flat) { var lo = (px + 0.5) / sw * 2 * Math.PI - Math.PI, la = Math.PI / 2 - (py + 0.5) / sh * Math.PI, cl = Math.cos(la); X = cl * Math.cos(lo); Y = cl * Math.sin(lo); Z = Math.sin(la); }
+        else { X = (px + 0.5 - cx) / r; Y = -(py + 0.5 - cy) / r; var q = 1 - X * X - Y * Y; if (q < 0) return false; Z = Math.sqrt(q); }
+        out[0] = T0 * X + T1 * Y + T2 * Z; out[1] = T3 * X + T4 * Y + T5 * Z; out[2] = T6 * X + T7 * Y + T8 * Z;
+        return true;
+      };
+    }
+    function texIndex(x, y, z) {   // the texel of a unit vector, times four
+      var lon = Math.atan2(y, x), lat = Math.asin(z > 1 ? 1 : (z < -1 ? -1 : z));
+      var u = ((lon + Math.PI) / (2 * Math.PI) * TW) | 0, v = ((Math.PI / 2 - lat) / Math.PI * TH) | 0;
+      if (u < 0) u = 0; else if (u >= TW) u = TW - 1; if (v < 0) v = 0; else if (v >= TH) v = TH - 1;
+      return (v * TW + u) << 2;
+    }
+    function skinTarget() {
+      SW = Math.max(2, Math.round(W * SKIN_SCALE)); SH = Math.max(2, Math.round(H * SKIN_SCALE));
+      if (!skinCanvas) { skinCanvas = document.createElement('canvas'); skinCtx = skinCanvas.getContext('2d'); }
+      if (skinCanvas.width !== SW || skinCanvas.height !== SH) { skinCanvas.width = SW; skinCanvas.height = SH; }
+      return skinCtx.createImageData(SW, SH);
+    }
+    // the land's skin for the model's ages: the ground picture (measured, ground) or the rock grain (inferred, fitted)
+    function paintSkin(V, age, g) {
+      var t0 = performance.now(), ids = idRaster(Math.max(age, 0)), picture = (g === 'measured' || g === 'ground') ? tex.ground : null, grain = tex['rock-grain'];
+      var out = skinTarget(), o = out.data, inv = {}, toWorld = pixelToWorld(V), w3 = [0, 0, 0], sw = SW, sh = SH;
+      for (var py = 0; py < sh; py++) for (var px = 0; px < sw; px++) {
+        if (!toWorld(px, py, w3)) continue;
+        var k = texIndex(w3[0], w3[1], w3[2]), idx = ids[k] | (ids[k + 1] << 8);
+        if (!idx) continue;
+        var M = inv[idx];
+        if (M === undefined) { var R = plateMatrixAt(plateByIndex[idx], Math.max(age, 0)); M = R ? [R[0], R[3], R[6], R[1], R[4], R[7], R[2], R[5], R[8]] : null; inv[idx] = M; }
+        if (!M) continue;
+        var tx = M[0] * w3[0] + M[1] * w3[1] + M[2] * w3[2], ty = M[3] * w3[0] + M[4] * w3[1] + M[5] * w3[2], tz = M[6] * w3[0] + M[7] * w3[1] + M[8] * w3[2];
+        var k2 = texIndex(tx, ty, tz), oi = (py * sw + px) << 2;
+        if (picture) { o[oi] = picture[k2]; o[oi + 1] = picture[k2 + 1]; o[oi + 2] = picture[k2 + 2]; }
+        else { var f = 0.72 + 0.56 * grain[k2] / 255; o[oi] = LAND3[0] * f; o[oi + 1] = LAND3[1] * f; o[oi + 2] = LAND3[2] * f; }
+        o[oi + 3] = 255;
+      }
+      skinCtx.putImageData(out, 0, 0);
+      ctx.drawImage(skinCanvas, 0, 0, W, H);
+      lastSkinMs = performance.now() - t0;
+    }
+    // the molten sequence's state for an age: t the crust's progress (0 melt, 1 crusted), glow of the cracks, sea the
+    // sea's strength, flash the impact's white, second whether this is the second crust, and the phase's name
+    function moltenState(age) {
+      var st = { t: 0, glow: 1, sea: 0, flash: 0, second: false, phase: 'molten' }, c = function (v) { return v < 0 ? 0 : (v > 1 ? 1 : v); };
+      if (age >= ASSEMBLED) return st;
+      if (age > MOON) {
+        st.t = c((ASSEMBLED - age) / (ASSEMBLED - FIRST_CRUST));
+        st.glow = Math.pow(1 - st.t, 1.3) * 0.9 + 0.05 * c((age - MOON) / (FIRST_CRUST - MOON));
+        st.sea = 0.35 * c((FIRST_SEA_FROM - age) / (FIRST_SEA_FROM - FIRST_SEA_TO));
+        st.phase = st.t < 1 ? 'crust' : (st.sea > 0 ? 'first sea' : 'crust');
+      } else {
+        st.second = true;
+        st.t = c((MOON - age) / (MOON - SECOND_CRUST));
+        st.glow = Math.pow(1 - st.t, 1.3) * 0.9 + 0.05;
+        st.sea = c((SECOND_CRUST - age) / (SECOND_CRUST - NO_MAP));
+        st.phase = st.t < 0.15 ? 'molten again' : (st.sea > 0.5 ? 'sea' : 'crust again');
+      }
+      var d = Math.abs(age - MOON);
+      if (d <= 1.5) { st.flash = 1 - d / 1.5; st.phase = 'moon'; }
+      return st;
+    }
+    function paintMolten(V, age) {
+      var t0 = performance.now(), st = moltenState(age), cool = tex['cooling-order'], cracks = tex.cracks, grain = tex['rock-grain'];
+      var out = skinTarget(), o = out.data, toWorld = pixelToWorld(V), w3 = [0, 0, 0], sw = SW, sh = SH;
+      var thresh = st.t * 1.15 - 0.05, turn = st.second ? (137 * Math.PI / 180) : 0, ct = Math.cos(turn), sn = Math.sin(turn);
+      for (var py = 0; py < sh; py++) for (var px = 0; px < sw; px++) {
+        if (!toWorld(px, py, w3)) continue;
+        var x = w3[0], y = w3[1], z = w3[2];
+        if (st.second) { var x2 = x * ct - y * sn; y = x * sn + y * ct; x = x2; z = -z; }   // a different crust: the maps turned and flipped
+        var k = texIndex(x, y, z), cv = cool[k] / 255, cr = cracks[k] / 255, sw1 = grain[k] / 255;
+        var solid = (thresh - cv) / 0.08; solid = solid < 0 ? 0 : (solid > 1 ? 1 : solid);
+        var hot = sw1 - 0.62; hot = hot < 0 ? 0 : hot * 1.6;
+        var R = 0, G = 0, B = 0, i;
+        for (i = 0; i < 3; i++) {
+          var melt = MAGMA3[i] * (1 - sw1) + GLOW3[i] * sw1 + HOT3[i] * hot;
+          var crust = CRUST3[i] * (1 - sw1) + CRUSTL3[i] * sw1 + GLOW3[i] * cr * st.glow;
+          var v = melt * (1 - solid) + crust * solid;
+          if (st.sea > 0) { var sea = st.sea * solid * (cv < 0.55 ? 1 : 0.35), s3 = (cv < 0.3 ? SEAD3 : SEA3)[i]; v = v * (1 - sea) + s3 * sea; }
+          if (st.flash > 0) v = v * (1 - st.flash) + FLASH3[i] * st.flash;
+          if (i === 0) R = v; else if (i === 1) G = v; else B = v;
+        }
+        var oi = (py * sw + px) << 2;
+        o[oi] = R > 255 ? 255 : R; o[oi + 1] = G > 255 ? 255 : G; o[oi + 2] = B > 255 ? 255 : B; o[oi + 3] = 255;
+      }
+      skinCtx.putImageData(out, 0, 0);
+      ctx.drawImage(skinCanvas, 0, 0, W, H);
+      lastSkinMs = performance.now() - t0;
+      if (st.phase !== moltenPhase) { moltenPhase = st.phase; if (opts.onMolten) opts.onMolten(st.phase, age); }
+      return st;
     }
 
     // ---- the seed, and the guesses it makes ----
@@ -242,7 +424,9 @@
         g = 'fitted';
         for (var i = 0; i < grades.length; i++) if (age <= grades[i].to) { g = grades[i].grade; break; }
       }
-      return { grade: g, why: GRADE_WORDS[g] || '' };
+      var why = GRADE_WORDS[g] || '';
+      if (g === 'none' && moltenReady()) why = MOLTEN_WORDS[moltenState(age).phase] || why;
+      return { grade: g, why: why };
     }
 
     // ---- drawing ----
@@ -414,22 +598,27 @@
       var g = gradeFor(ma).grade, V = viewMatrix();
       if (proj === 'flat') V = mmul([1, 0, 0, 0, 1, 0, 0, 0, 1], rotZ(-lon0));   // flat: only the turn about the pole; north up
       var r = W / 2 - 4, cx = W / 2, cy = H / 2;
-      // the sea, or the magma: through Molten the ball fades with the age — magma at 4.6 billion, black by 4.4
-      // (the crust's skin), and from there to the blue of the sea by 4.0 (Michael, 12 Oct 2026)
+      // the sea, or the magma: without the textures (or before they load) through Molten the ball fades with the
+      // age — magma at 4.6 billion, black by 4.4, the sea's blue from there (12 Oct); with them, part 7's sequence below
       var sea = proj === 'flat' ? ctx.createLinearGradient(0, 0, 0, H) : ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.35, r * 0.1, cx, cy, r);
       var top = SEA, bottom = SEA_DEEP;
       if (ma >= NO_MAP) { var tm = Math.min(1, Math.max(0, (ma - NO_MAP) / (MOLTEN_START - NO_MAP))); top = mix(BLACK, MAGMA_GLOW, tm); bottom = mix(BLACK, MAGMA, tm); }
-      else if (ma >= OLDEST_ROCK) { var tb = (ma - OLDEST_ROCK) / (NO_MAP - OLDEST_ROCK); top = mix(SEA, BLACK, tb); bottom = mix(SEA_DEEP, BLACK, tb); }
       sea.addColorStop(0, top); sea.addColorStop(1, bottom);
       ctx.fillStyle = sea;
       if (proj === 'flat') ctx.fillRect(0, 0, W, H); else { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill(); }
       ctx.save();
       if (proj === 'flat') { ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip(); } else { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip(); }
+      // the per-pixel passes, in CSS pixels before the unit transform: the molten sequence, or the land's skin for the
+      // model's ages (not while the globe itself is dragged: the flat fills stand in, and the skin returns on release)
+      var skinned = false, moltenSt = null;
+      lastSkinMs = 0;
+      if (g === 'none' && moltenReady()) moltenSt = paintMolten(V, ma);
+      else if (data && skinReady() && !drag && (g === 'measured' || g === 'ground' || g === 'inferred' || g === 'fitted')) { paintSkin(V, ma, g); skinned = true; }
       enterUnit(r, cx, cy);
       if (data && g !== 'none') {
-        if (g === 'measured' || g === 'ground') fillLand(landPath(V, Math.max(ma, 0), 0, 'model'), LAND, g === 'ground' ? 0.45 : 1, null);
-        else if (g === 'inferred') fillLand(landPath(V, ma, 0, 'model'), LAND, 1, null);   // the model's own position, once: a guess called a guess, not a smear (Michael, 10 Oct; the seven shifted copies are gone)
-        else if (g === 'fitted') [-27, -18, -9, 9, 18, 27, 0].forEach(function (s) { fillLand(landPath(V, ma, s, 'model'), LAND, 0.14, null); });
+        if (g === 'measured' || g === 'ground') { var lp = landPath(V, Math.max(ma, 0), 0, 'model'); if (!skinned) fillLand(lp, LAND, g === 'ground' ? 0.45 : 1, null); }
+        else if (g === 'inferred') { var lp2 = landPath(V, ma, 0, 'model'); if (!skinned) fillLand(lp2, LAND, 1, null); }   // the model's own position, once: a guess called a guess, not a smear (Michael, 10 Oct; the seven shifted copies are gone)
+        else if (g === 'fitted') [-27, -18, -9, 9, 18, 27, 0].forEach(function (s) { var lp3 = landPath(V, ma, s, 'model'); if (!skinned || s !== 0) fillLand(lp3, LAND, 0.14, null); });
         else if (g === 'guessed') fillLand(landPath(V, ma, 0, 'guessed'), LAND_PALE, 0.7, 'dashed');
         else if (g === 'invented') fillLand(landPath(V, ma, 0, 'invented'), LAND_PALE, 0.5, 'dotted');
         if (climateOn && g !== 'ground') drawClimate(V, ma, g === 'guessed' || g === 'invented' ? g : 'model');
@@ -449,12 +638,23 @@
       for (var lo2 = -180; lo2 < 180; lo2 += 30) { var ring2 = []; for (var la2 = -90; la2 <= 90; la2 += 5) { var v2 = xyz(lo2, la2); ring2.push(v2[0], v2[1], v2[2]); } var q2 = new Path2D(); trace(new Float64Array(ring2), V, q2); gp.addPath(q2); }
       ctx.stroke(gp);
       ctx.restore(); ctx.restore();
+      // the limb shading and the haze at the rim (12 Oct): a ball, with an atmosphere — blue once there is a sea, grey steam before
+      if (proj !== 'flat') {
+        var shade = ctx.createRadialGradient(cx, cy, r * 0.78, cx, cy, r);
+        shade.addColorStop(0, 'rgba(20,16,12,0)'); shade.addColorStop(1, 'rgba(20,16,12,0.30)');
+        ctx.fillStyle = shade; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+        var hazeCol = g === 'none' && !(moltenSt && moltenSt.sea > 0.5) ? '200,190,180' : '160,200,228';
+        var haze = ctx.createRadialGradient(cx, cy, r - 1, cx, cy, r + 4);
+        haze.addColorStop(0, 'rgba(' + hazeCol + ',0.55)'); haze.addColorStop(1, 'rgba(' + hazeCol + ',0)');
+        ctx.fillStyle = haze; ctx.beginPath(); ctx.arc(cx, cy, r + 4, 0, Math.PI * 2); ctx.arc(cx, cy, r - 1, 0, Math.PI * 2, true); ctx.fill();
+      }
       // the limb, or the frame
       ctx.strokeStyle = 'rgba(42,36,28,0.35)'; ctx.lineWidth = 1;
       if (proj === 'flat') ctx.strokeRect(0.5, 0.5, W - 1, H - 1); else { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); }
       var ms = performance.now() - t0;
       if (opts.onDraw) opts.onDraw(ms);
-      if (opts.onGrade && g !== lastGrade) { lastGrade = g; opts.onGrade(g, GRADE_WORDS[g]); }
+      var gw = gradeFor(ma), gkey = g + ':' + gw.why;
+      if (opts.onGrade && gkey !== lastGrade) { lastGrade = gkey; opts.onGrade(g, gw.why); }
     }
     function schedule() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
 
@@ -475,10 +675,11 @@
       }
       schedule();
     });
-    function release(ev) { if (drag && ev.pointerId === drag.id) { drag = null; host.classList.remove('dragging'); } }
+    function release(ev) { if (drag && ev.pointerId === drag.id) { drag = null; host.classList.remove('dragging'); schedule(); } }
     canvas.addEventListener('pointerup', release); canvas.addEventListener('pointercancel', release);
 
     load(opts.plates || '../stories/plates/continents.json', prepare);
+    loadTextures();
     load(opts.coast === undefined ? '../art/maps/world-tiles/contours-0.json' : opts.coast, prepareCoast);
     load(opts.crust === undefined ? '../stories/curves/crust-and-land.json' : opts.crust, function (c) { crust = c; blobsKey = null; schedule(); });
     if (window.ResizeObserver) { ro = new ResizeObserver(function () { size(); schedule(); }); ro.observe(host); }
@@ -490,6 +691,8 @@
       view: function () { return { lon: lon0, lat: lat0 }; },
       turn: function (lon, lat) { if (lon != null) lon0 = lon; if (lat != null) lat0 = Math.max(-90, Math.min(90, lat)); schedule(); },
       grade: function () { return gradeFor(ma); },
+      moltenPhase: function () { return ma > NO_MAP ? moltenState(ma).phase : null; },
+      skinMs: function () { return lastSkinMs; },
       reguess: function () { seed = (seed * 1103515245 + 12345 + Date.now()) % 2147483647; guesses = {}; blobsKey = null; interiorCache = {}; schedule(); return seed; },
       seed: function () { return seed; },
       setSeed: function (s) { seed = s; guesses = {}; blobsKey = null; interiorCache = {}; schedule(); },   // two views of one world share a seed
