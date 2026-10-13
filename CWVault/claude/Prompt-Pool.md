@@ -128,7 +128,7 @@ This kind runs in **Claude Code**, not a Cowork chat: Wikimedia Commons cannot b
 - **Licences, in order of trust:** public domain and government work (NASA, ESA, USGS, NPS, the Geological Survey of Canada); CC0; CC BY; CC BY-SA; CC BY-NC only with a note in the manifest; nothing else. The licence is read from the file's data (the Commons API's `extmetadata`, the Smithsonian's open-access record), never from a caption or a thumbnail page.
 - **Where to look, in order:** Wikimedia Commons; Smithsonian Open Access (CC0; it holds Walcott's Burgess Shale specimens); the NHM London data portal; NASA, USGS and NPS image libraries; Geograph (CC BY-SA, for British places); the figures of open-access papers (CC BY, cited to the paper). The *ask* bin is not searched: it becomes "none" unless the museum has an open-access programme, and the manifest keeps a short list of the five or six worth one email from Michael.
 - **"None" is an answer.** Written with its reason: nothing free shows the real thing; the only candidates are reconstructions no one has checked; the tag on the only file is doubtful. None beats wrong.
-- **The caption** is one sentence in the voice: what it is and where, and whose drawing if it is one. Never "here we see". **The credit** is one line in a fixed form: "Photo: Name, CC BY-SA 4.0, via Wikimedia Commons", or "NASA", or "Smithsonian Institution, CC0".
+- **The caption** is one sentence in the voice: what it is and where, and whose drawing if it is one. Never "here we see". **The credit** is one line in a fixed form: "Photo: Name, CC BY-SA 4.0, via Wikimedia Commons", or "NASA", or "Smithsonian Institution, CC0". Three more, allowed by Michael on 13 Oct (pictures batch 1): add ", cropped" where a picture under an attribution licence was cut, since the licence asks for changes to be shown; "Map: Curious Woods, from …" for the house's own maps, naming the data; and a museum portal's own credit, "Photo: Name, institution, licence", where the file is not on Commons. A paper's figure: "Photos: Authors, *Journal*, year, licence".
 
 **The fields**, one entry per picture, in `Pictures-Deep-NN.md`:
 
@@ -152,6 +152,9 @@ The manifest, `cw-deploys/art/stories/deep/manifest.json`, holds the same fields
 - A reconstruction captioned as a fossil, or a cast as the original.
 - A thumbnail that looks right and a full file that shows something else; always open the full file.
 - Press-release images, which are usually not free, whatever the article says.
+- A Commons file renamed by a later editor to a specimen number the photographer never gave (batch 1's *Titanoboa* vertebra, a museum copy). Read the upload history.
+- A Commons licence tag that the source no longer carries (batch 1's Hadar photograph: Licence Ouverte on Commons, CC BY-NC at the archive). For a file copied from an archive by a bot, read the archive's own record.
+- A copy on show where the original is in a vault (Lucy in Addis Ababa, the Nariokotome boy in Nairobi). Say "a copy" or "a cast" unless a source says otherwise.
 
 **Agree with.** The More the picture serves, and the *Pictures wanted* line.
 **File.** `claude/Pictures-Deep-NN.md`.

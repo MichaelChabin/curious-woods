@@ -191,6 +191,15 @@ draw in part 3, after Michael's look at the skin). **Read since the same night b
 Michael's maps in `prototypes/globe-textures/` (his `molten.py`, 2048 × 1024, noise on the sphere, no seam, no pinch at the poles):
 `cooling-order.png` (dark cools first, light stays molten longest), `cracks.png` (the seams between the rafts), and `rock-grain.png`
 (the same noise recipe as the crust's grain, the neutral rock for the inferred and fitted ages). Read by `js/globe.js`.
+**`art/stories/deep/` (12 Oct 2026)** — the pictures for the deep-time Mores, pool pictures batch 1 (`CWVault/claude/Pictures-Deep-01.md`,
+checked 12 Oct, Michael's answers applied 13 Oct): seventeen JPEGs, long edge 1,200 to 2,000 px, and `manifest.json`, written by
+`tools/pictures-manifest.py` (outside this folder) from the batch file, never by hand. The manifest is keyed `period-<id>` and
+`event-<id>` (Michael, 11 Oct), each key a list in the order the More shows them, an empty list where the answer is none
+(*Mammoths*); each picture carries its file, source page, licence, author, caption and credit, and `held` with a reason where one waits
+on Michael (none since 13 Oct); `period-lucy` and `event-lucy` share `lucy-skeleton.jpg`. Every licence is read from the
+file's own data (Commons `extmetadata`, the NHM Data Portal record, the papers' own statements): CC0, CC BY, CC BY-SA, one US
+government photograph and one CW map (`ice-sheets-map-20000.jpg`, from `js/map.js`, ETOPO 2022 and `stories/ice-outlines.json`,
+the sea at −130 m). **Not yet read by anything**: the page shows no pictures in a More yet; the build note is in the batch file.
 **`stories/plates/continents.json` (6 Oct 2026)** — GENERATED, never edited by hand: the continents
 in motion, for the deep-time Time Machine (`CWVault/claude/Plan-Deep-Time.md`, Stage 1).
 `tools/plates-from-gplates.py` (outside this folder, in `_CW/tools/`; needs `pip install pygplates

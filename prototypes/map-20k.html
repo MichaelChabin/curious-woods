@@ -25,8 +25,9 @@ Promise.all([cwMap.load('../cw-deploys/art/maps/world-pyramid.json'), fetch('../
   var map = cwMap(document.getElementById('map'), pyramid, marks, { fit: fit, reset: 'reset', layers: { vegetation: false }, time: { seaLevel: curve.points || curve.series || curve } });
   var year = new Date().getFullYear() - 20000;
   map.setTime(year);
+  if (q.get('sea')) map.setSeaLevel(+q.get('sea'));
   window.cwBenchMap = map;
-  if (q.get('ice')) fetch('ice/ice-outlines.json').then(function (r) { return r.json(); }).then(function (ice) { map.setIce(ice, 20000); });
+  if (q.get('ice')) fetch('../cw-deploys/stories/ice-outlines.json').then(function (r) { return r.json(); }).then(function (ice) { map.setIce(ice, 20000); });
   setTimeout(function () { document.getElementById('say').textContent = view + ' · ' + JSON.stringify(map.view()) + ' · sea ' + map.seaLevel() + ' m'; }, 1500);
   window.cwSave = function (name) {
     var box = document.querySelector('#map .cw-map') || document.getElementById('map');

@@ -1,0 +1,183 @@
+{
+ "_about": "Pictures for the deep-time periods and events, keyed period-<id> and event-<id>; each key a list in the order the More shows them, an empty list where the answer is none. A picture with \"held\" waits on Michael and is not shown (none at present). Captions may hold <i> for names in italics. Written by Claude from claude/Pictures-Deep-01.md (checked 12 Oct 2026, read by Michael 13 Oct); edit the batch file, not this.",
+ "version": "2026-10-13",
+ "batches": [
+  "Pictures-Deep-01"
+ ],
+ "pictures": {
+  "period-recovery": [
+   {
+    "file": "recovery-titanoboa-vertebra.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Titanoboa_paratype_precloacal_vertebra_UF-IGM_2.jpg",
+    "licence": "CC0",
+    "author": "Anfecaro",
+    "caption": "A copy of one bone from the backbone of <i>Titanoboa</i>, whose bones were found in the coal mine at Cerrejón, in the Museo Geológico Nacional José Royo y Gómez in Bogotá.",
+    "credit": "Photo: Anfecaro, CC0, via Wikimedia Commons"
+   }
+  ],
+  "period-heat": [
+   {
+    "file": "heat-strathcona-fiord-stumps.jpg",
+    "source": "https://doi.org/10.1371/journal.pone.0239073",
+    "licence": "CC BY 4.0",
+    "author": "Jaelyn Eberle, Wighart von Koenigswald and David Eberth",
+    "caption": "Stumps of the swamp forest, turned to stone, on a hillside at Strathcona Fiord on Ellesmere Island.",
+    "credit": "Photos: Eberle, von Koenigswald and Eberth, <i>PLOS ONE</i>, 2020, CC BY 4.0"
+   },
+   {
+    "file": "heat-dawn-redwood.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Dawn_redwood_grove_in_Kell_Park_1.jpg",
+    "licence": "CC BY 4.0",
+    "author": "Bjankuloski06",
+    "caption": "Dawn redwoods, the tree most of that forest was made of, planted in a park in Auckland, New Zealand.",
+    "credit": "Photo: Bjankuloski06, CC BY 4.0, via Wikimedia Commons"
+   }
+  ],
+  "period-cooling": [
+   {
+    "file": "cooling-badlands.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Badlands_National_Park_-_Yellow_Mounds_1.jpg",
+    "licence": "CC0",
+    "author": "Eekim",
+    "caption": "Striped hills in the Badlands of South Dakota.",
+    "credit": "Photo: Eekim, CC0, via Wikimedia Commons"
+   },
+   {
+    "file": "cooling-mesohippus.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Mesohippus_bairdi_(fossil_horse)_(Middle_Oligocene;_Badland_Creek,_Nebraska,_USA)_1_(32356331322).jpg",
+    "licence": "CC BY 2.0",
+    "author": "James St. John",
+    "caption": "A skeleton of <i>Mesohippus</i> from Nebraska, with three toes on each foot, in the Carnegie Museum of Natural History in Pittsburgh.",
+    "credit": "Photo: James St. John, CC BY 2.0, via Wikimedia Commons"
+   }
+  ],
+  "period-grass": [
+   {
+    "file": "grass-ashfall-rhinos.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Ashfall_Fossil_Beds_-_Teleoceras_female_and_calf.jpg",
+    "licence": "CC0",
+    "author": "Ammodramus",
+    "caption": "A rhino and a calf that was probably hers, lying where they died in the ash, under the barn near Royal, in Nebraska.",
+    "credit": "Photo: Ammodramus, CC0, via Wikimedia Commons"
+   },
+   {
+    "file": "grass-deinotherium-skull.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Deinotherium_giganteum_skull_789.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Ghedo",
+    "caption": "The skull of a <i>Deinotherium</i>, with tusks that curve down from its lower jaw, in the Gallery of Palaeontology in Paris.",
+    "credit": "Photo: Ghedo, CC BY-SA 4.0, via Wikimedia Commons"
+   }
+  ],
+  "period-ice": [
+   {
+    "file": "ice-kap-kobenhavn.jpg",
+    "source": "https://www.nature.com/articles/s41586-022-05453-y/figures/6",
+    "licence": "CC BY 4.0",
+    "author": "Kurt Kjær and others",
+    "caption": "The slopes of Kap København, at the top of Greenland, where the old genes were found in the mud.",
+    "credit": "Photos: Kjær and others, <i>Nature</i>, 2022, CC BY 4.0, cropped",
+    "note": "Extended Data Fig. 1, panels a to d, cropped."
+   }
+  ],
+  "period-lucy": [
+   {
+    "file": "lucy-skeleton.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Restos_de_Lucy_(Australopithecus_afarensis),_museo_nacional_de_Etiopía,_Adís_Abeba,_Etiopía,_2024-01-19,_DD_23.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Diego Delso",
+    "caption": "A copy of Lucy's bones, laid out in a case in the National Museum of Ethiopia, in Addis Ababa.",
+    "credit": "Photo: Diego Delso, CC BY-SA 4.0, via Wikimedia Commons"
+   },
+   {
+    "file": "lucy-laetoli-footprints.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Laetoli_footprints_replica.jpg",
+    "licence": "CC BY-SA 3.0",
+    "author": "Momotarou2012",
+    "caption": "A cast of footprints from Laetoli, in the National Museum of Nature and Science in Tokyo.",
+    "credit": "Photo: Momotarou2012, CC BY-SA 3.0, via Wikimedia Commons"
+   }
+  ],
+  "event-lucy": [
+   {
+    "file": "lucy-skeleton.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Restos_de_Lucy_(Australopithecus_afarensis),_museo_nacional_de_Etiopía,_Adís_Abeba,_Etiopía,_2024-01-19,_DD_23.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Diego Delso",
+    "caption": "A copy of Lucy's bones, laid out in a case in the National Museum of Ethiopia, in Addis Ababa.",
+    "credit": "Photo: Diego Delso, CC BY-SA 4.0, via Wikimedia Commons"
+   }
+  ],
+  "period-hand-axes": [
+   {
+    "file": "hand-axes-olduvai-hand-axe.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:GLAM_Ice_Age_050.jpg",
+    "licence": "CC BY-SA 3.0",
+    "author": "Discott",
+    "caption": "A hand axe of the same kind, from Olduvai Gorge in Tanzania, between about 850,000 and 400,000 years old.",
+    "credit": "Photo: Discott, CC BY-SA 3.0, via Wikimedia Commons",
+    "note": "British Museum 1934,1214.59; the age is the museum's for a cleaver from the same find (HK Bed IV)."
+   },
+   {
+    "file": "hand-axes-nariokotome.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Niño_de_Turkana_-_Museo_Nacional_de_Nairobi.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "ProtoplasmaKid",
+    "caption": "A cast of the skeleton of the boy from Nariokotome, as it is shown in the Nairobi National Museum, in Kenya.",
+    "credit": "Photo: ProtoplasmaKid, CC BY-SA 4.0, via Wikimedia Commons"
+   }
+  ],
+  "period-mammoths": [],
+  "period-the-last-ice-age": [
+   {
+    "file": "the-last-ice-age-neem-bottom-core.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Defense.gov_photo_essay_100728-D-1852B-576.jpg",
+    "licence": "Public domain",
+    "author": "Fred W. Baker III, US Department of Defense",
+    "caption": "The bottom of the ice core at NEEM, with grit from the rock beneath the ice sheet, in July 2010.",
+    "credit": "Photo: US Department of Defense",
+    "note": "Michael ruled none unless a real NEEM photograph was free; this one is, and he said yes on 13 Oct."
+   }
+  ],
+  "period-hippos-in-london": [
+   {
+    "file": "hippos-in-london-canine.jpg",
+    "source": "https://data.nhm.ac.uk/object/89e724b1-2d78-4c13-8b28-9224be29e37b",
+    "licence": "CC BY 4.0",
+    "author": "Kevin Webb, The Trustees of the Natural History Museum, London",
+    "caption": "A hippo's tooth, dug from the gravel under Trafalgar Square, kept in the Natural History Museum in London.",
+    "credit": "Photo: Kevin Webb, Natural History Museum, London, CC BY 4.0",
+    "note": "NHMUK PV M 26795."
+   }
+  ],
+  "period-ice-sheets": [
+   {
+    "file": "ice-sheets-map-20000.jpg",
+    "source": "prototypes/map-20k.html?sea=-130&ice=1 (js/map.js, world pyramid, stories/ice-outlines.json at 20,000 years)",
+    "licence": "Curious Woods; ground from NOAA ETOPO 2022 (public domain); ice from ICE-6G_C via PMIP4",
+    "author": "Curious Woods",
+    "caption": "A map drawn for Curious Woods: the North Sea about 20,000 years ago, with the sea lowered and ice over Ireland, the north of Britain, Scandinavia and the northern North Sea.",
+    "credit": "Map: Curious Woods, from NOAA's ETOPO 2022 and ICE-6G_C (Peltier and others, via PMIP4)"
+   }
+  ],
+  "period-after-the-ice": [
+   {
+    "file": "after-the-ice-gobero-burial.jpg",
+    "source": "https://doi.org/10.1371/journal.pone.0002995.g005",
+    "licence": "CC BY",
+    "author": "Mike Hettwer, in Sereno and others 2008",
+    "caption": "The grave of a man at Gobero, in Niger, lifted from the sand in one block: seen from above, from below with a turtle shell, and his skull.",
+    "credit": "Photos: Mike Hettwer, in Sereno and others, <i>PLOS ONE</i>, 2008, CC BY, cropped",
+    "note": "Figure 5, panels A to C (burial G1B11, about 4645 BCE); the rest of the figure left out on Michael's word, 13 Oct."
+   },
+   {
+    "file": "after-the-ice-tassili-cattle.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Daily_scene_with_cattle.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "IssamBarhoumi",
+    "caption": "Cattle and people, painted on a rock in Tassili n'Ajjer, in Algeria.",
+    "credit": "Photo: IssamBarhoumi, CC BY-SA 4.0, via Wikimedia Commons"
+   }
+  ]
+ }
+}

@@ -1,5 +1,5 @@
 ---
-status: Started 11 Oct 2026 by the first pictures batch (Pictures-Deep-01.md, round 1), from every *Pictures wanted* line in the batch files: 408 wanted pictures across 17 files. The twelve periods of Periods-Deep-03 are sorted into bins; everything else is unsorted until its batch runs. Hand-kept from here: a batch that sorts or finds a picture writes its bin and, when found, the file.
+status: Started 11 Oct 2026; batch 1's rows brought up to date 12 Oct after round 4 by the first pictures batch (Pictures-Deep-01.md, round 1), from every *Pictures wanted* line in the batch files: 408 wanted pictures across 17 files. The twelve periods of Periods-Deep-03 are sorted into bins; everything else is unsorted until its batch runs. Hand-kept from here: a batch that sorts or finds a picture writes its bin and, when found, the file.
 role: The pictures ledger of Prompt-Pool.md: what is wanted, the bin each wanted picture landed in (findable, ask, draw, map, none), what is done, and what came back unconfirmed. Read by every pictures batch before round 1; the batch starts where the ledger says the last one stopped.
 ---
 
@@ -7,11 +7,11 @@ role: The pictures ledger of Prompt-Pool.md: what is wanted, the bin each wanted
 
 **The bins** (Prompt-Pool.md, the pictures insert): *findable*, a free file likely exists; *ask*, a museum's or a scientist's photograph, not searched, kept for one email from Michael; *draw*, a diagram for the house line; *map*, from CW's own globe or map at a year; *none*, with its reason. "Findable, to try" means the source is likely but unconfirmed until round 2 opens it.
 
-**Done.** Nothing found or downloaded yet. Batch 1 (the twelve periods of Periods-Deep-03) is at round 1, *planned*, awaiting Michael.
+**Done.** Batch 1 (the twelve periods of Periods-Deep-03 and the event *Lucy*): checked 12 Oct, answered by Michael and changes applied 13 Oct; seventeen files in `cw-deploys/art/stories/deep/` with `manifest.json`, none held; *Mammoths* none. The next batch starts at the next file in the list below that has no bins.
 
-**Unconfirmed.** Nothing yet.
+**Unconfirmed.** From batch 1: whether the *Mesohippus* mount (CM 961) and the Paris *Deinotherium* skull are casts; the dawn redwoods' species beyond the photographer's word; the Olduvai axe's own age (the museum dates a cleaver from the same layer).
 
-**The ask list** (worth one email each, kept short): the Florida Museum (a *Titanoboa* vertebra beside an anaconda's); Beth Zaiken (the Kap København painting); the West Turkana Archaeological Project or the National Museums of Kenya (a Kokiselei hand axe); the Niels Bohr Institute (NEEM, the camp and a piece of its ice); the museum that holds the *Colinda* point.
+**The ask list** (worth one email each, kept short): the Smithsonian Tropical Research Institute (a Cerrejón leaf); Beth Zaiken (the Kap København painting); the West Turkana Archaeological Project (a Kokiselei hand axe); the Swedish Museum of Natural History (the Siberian molars); the Natuurhistorisch Museum Rotterdam (full-size files of North Sea teeth, already CC BY); Norwich Castle Museum (the *Colinda* point); the Niels Bohr Institute (NEEM ice with its bubbles).
 
 # The wanted pictures, by batch file
 
@@ -447,30 +447,32 @@ role: The pictures ledger of Prompt-Pool.md: what is wanted, the bin each wanted
 
 ## Periods-Deep-03
 
-- **Recovery** — a giant fossil leaf from Cerrejón (Smithsonian Tropical Research Institute or Florida Museum; licence to ask). *Bin:* findable, to try (Smithsonian Open Access).
-- **Recovery** — a *Titanoboa* vertebra beside a modern anaconda's (Florida Museum; licence to ask). *Bin:* ask (Florida Museum).
-- **Heat** — the fossil forest stumps of Axel Heiberg Island, or the Strathcona Fiord beds on Ellesmere (Geological Survey of Canada or Carnegie Museum; licence to ask). *Bin:* findable, to try; a lookalike (Axel Heiberg is not Ellesmere), Michael to rule.
-- **Heat** — a living dawn redwood (Commons; licence to check). *Bin:* findable.
-- **Cooling** — the striped walls of the Badlands, South Dakota (National Park Service, public domain). *Bin:* findable (NPS, public domain).
-- **Cooling** — a *Mesohippus* skeleton (Commons or the South Dakota School of Mines museum; licence to check). *Bin:* findable (Commons; cast or original to say).
-- **Grass** — the rhino skeletons in the Hubbard Rhino Barn at Ashfall Fossil Beds (University of Nebraska State Museum; licence to ask). *Bin:* findable (Commons).
-- **Grass** — a *Deinotherium* skull with its downturned tusks (Commons; licence to check). *Bin:* findable (Commons).
-- **Ice** — Kap København today, the bare hills by the frozen sea (Natural History Museum of Denmark; licence to ask). *Bin:* findable, to try (Kjær 2022, CC BY, its site photographs); else ask.
-- **Ice** — a painting of the Kap København forest with mastodons (Beth Zaiken's artwork for the 2022 paper; licence to ask). *Bin:* ask (the artist).
-- **Lucy** — Lucy's skeleton laid out (the cast; National Museum of Ethiopia or Cleveland Museum of Natural History; licence to ask). *Bin:* findable (a cast; Commons); shared with the event.
-- **Lucy** — the Laetoli footprints (Commons; licence to check). *Bin:* findable (a cast; the trail is reburied).
-- **Hand axes** — a Kokiselei hand axe (West Turkana Archaeological Project, or the National Museums of Kenya; licence to ask). *Bin:* ask (Lepre 2011, not open); another hand axe only if Michael allows the More's own comparison.
-- **Hand axes** — the Nariokotome skeleton (National Museums of Kenya; licence to ask). *Bin:* findable (a cast; Commons).
-- **Mammoths** — a woolly mammoth tooth from the permafrost (Swedish Museum of Natural History; licence to ask). *Bin:* findable, to try (van der Valk 2021, if CC BY and the molars are in a figure); else ask.
-- **Mammoths** — a woolly mammoth skeleton (Commons; licence to check). *Bin:* none, proposed: she can picture a mammoth, and a skeleton shows no hair.
-- **The last ice age** — the NEEM camp on the Greenland ice (Niels Bohr Institute, University of Copenhagen; licence to ask). *Bin:* ask (Niels Bohr Institute); Commons to try.
-- **The last ice age** — a piece of NEEM ice with its bubbles (the same). *Bin:* ask; a public-domain core from elsewhere only if Michael allows.
-- **Hippos in London** — the hippo bones from Trafalgar Square (Natural History Museum, London; licence to ask). *Bin:* findable, to try (NHM Data Portal, CC BY); else ask.
-- **Hippos in London** — the Barrington hippo (Sedgwick Museum, Cambridge; licence to ask). *Bin:* findable, to try (a visitor's photograph on Commons); else ask.
-- **Ice sheets** — a mammoth tooth hauled up by a fishing boat (Natural History Museum, Rotterdam, or Urk's museum; licence to ask). *Bin:* findable, to try (Commons); else ask.
-- **Ice sheets** — the Colinda point (British Museum; licence to check). *Bin:* ask; and which museum holds it (Norwich Castle, not the British Museum, to confirm).
-- **Ice sheets** — map: CW's own map at about 20,000 years ago, the southern North Sea and the Bering plain as land (not on the wanted line; proposed in round 1).
-- **After the ice** — the rock paintings of Tassili n'Ajjer, Algeria, with hippos and cattle (UNESCO or Commons; licence to check). *Bin:* findable (Commons; the photographer's own licence, never a PD-Art tag).
-- **After the ice** — the Gobero site (Paul Sereno, University of Chicago; licence to ask). *Bin:* findable (Sereno 2008, PLOS ONE, CC BY).
-- **Lucy (the event)** — Lucy's skeleton laid out (a cast; Cleveland Museum of Natural History or the Institute of Human Origins; licence to ask). *Bin:* findable (a cast; one file shared with the period).
-- **Lucy (the event)** — Hadar's gullies (Commons; licence to check). *Bin:* findable, to try (Commons).
+Batch 1 (Pictures-Deep-01, checked 12 Oct, read and answered by Michael 13 Oct, changes applied). What each wanted picture came to; *found* means in `cw-deploys/art/stories/deep/` and the manifest.
+
+- **Recovery** — a giant fossil leaf from Cerrejón. *Bin:* ask (none free on Smithsonian Open Access or Commons): the Smithsonian Tropical Research Institute.
+- **Recovery** — a *Titanoboa* vertebra beside an anaconda's. *Found instead:* a copy of a *Titanoboa* vertebra in Bogotá, CC0 (`recovery-titanoboa-vertebra.jpg`).
+- **Heat** — the fossil forest stumps of Axel Heiberg or Strathcona Fiord. *Found:* Strathcona Fiord itself, Eberle and others 2020, CC BY 4.0 (`heat-strathcona-fiord-stumps.jpg`); Axel Heiberg's mummified stump (Ansgar Walk, CC BY-SA 2.5) in reserve.
+- **Heat** — a living dawn redwood. *Found:* a grove in Auckland, CC BY 4.0 (`heat-dawn-redwood.jpg`).
+- **Cooling** — the striped walls of the Badlands. *Found:* Yellow Mounds, CC0 (`cooling-badlands.jpg`); an NPS photograph in reserve.
+- **Cooling** — a *Mesohippus* skeleton. *Found:* CM 961, Carnegie Museum, CC BY 2.0 (`cooling-mesohippus.jpg`); cast or original unconfirmed.
+- **Grass** — the rhino skeletons in the Hubbard Rhino Barn. *Found:* a female and probably her calf, CC0 (`grass-ashfall-rhinos.jpg`).
+- **Grass** — a *Deinotherium* skull. *Found:* the Paris skull, CC BY-SA 4.0 (`grass-deinotherium-skull.jpg`); the Smithsonian file is a statue, rejected.
+- **Ice** — Kap København today. *Found:* Kjær and others 2022, Extended Data Fig. 1, panels a to d, CC BY 4.0 (`ice-kap-kobenhavn.jpg`).
+- **Ice** — Beth Zaiken's painting. *Bin:* ask.
+- **Lucy** — Lucy's skeleton laid out. *Found:* the copy in the National Museum of Ethiopia, CC BY-SA 4.0 (`lucy-skeleton.jpg`), shared with the event.
+- **Lucy** — the Laetoli footprints. *Found:* a cast in Tokyo, CC BY-SA 3.0 (`lucy-laetoli-footprints.jpg`).
+- **Hand axes** — a Kokiselei hand axe. *Bin:* ask (Lepre 2011 not open). *Found instead, by Michael's rule:* an Olduvai hand axe, British Museum, CC BY-SA 3.0 (`hand-axes-olduvai-hand-axe.jpg`).
+- **Hand axes** — the Nariokotome skeleton. *Found:* the cast in Nairobi, CC BY-SA 4.0 (`hand-axes-nariokotome.jpg`).
+- **Mammoths** — a woolly mammoth tooth from the permafrost. *Bin:* ask (van der Valk 2021 is not open): the Swedish Museum of Natural History.
+- **Mammoths** — a woolly mammoth skeleton. *Bin:* none (Michael, 11 Oct).
+- **The last ice age** — the NEEM camp. *Found:* the bottom of the NEEM core, US Department of Defense, public domain (`the-last-ice-age-neem-bottom-core.jpg`); Michael's yes, 13 Oct.
+- **The last ice age** — a piece of NEEM ice with its bubbles. *Bin:* ask (the Niels Bohr Institute).
+- **Hippos in London** — the hippo bones from Trafalgar Square. *Found:* the canine PV M 26795, NHM Data Portal, CC BY 4.0 (`hippos-in-london-canine.jpg`).
+- **Hippos in London** — the Barrington hippo. *Bin:* not searched further; the More does not name Barrington.
+- **Ice sheets** — a mammoth tooth hauled up by a fishing boat. *Bin:* ask (Rotterdam's North Sea files are CC BY 4.0 but about 510 px, and its woolly mammoth records are dredged bones): the Natuurhistorisch Museum Rotterdam.
+- **Ice sheets** — the *Colinda* point. *Bin:* ask (Norwich Castle Museum, to confirm).
+- **Ice sheets** — map. *Made:* CW's map at 20,000 years, sea −130 m, the PMIP4 ice (`ice-sheets-map-20000.jpg`).
+- **After the ice** — the rock paintings of Tassili n'Ajjer. *Found:* cattle and people, CC BY-SA 4.0 (`after-the-ice-tassili-cattle.jpg`); no hippo found.
+- **After the ice** — the Gobero site. *Found:* Sereno and others 2008, Fig. 5, the man's burial only (panels A to C, Michael, 13 Oct), CC BY (`after-the-ice-gobero-burial.jpg`); the site's aerial photograph is 996 px, below the floor.
+- **Lucy (the event)** — Lucy's skeleton laid out. *Found:* the period's file.
+- **Lucy (the event)** — Hadar's gullies. *Skipped* (Michael, 13 Oct): Raymonde Bonnefille's 1973 photograph, CC BY-NC 4.0 at its source (Commons says Licence Ouverte).

@@ -1,5 +1,5 @@
 ---
-status: planned. Pictures, batch 1, 11 Oct 2026, the trial run of Prompt-Pool.md's pictures insert, in Claude Code. The twelve periods of Periods-Deep-03.md (Recovery to After the ice) and, beside them, the new event *Lucy*, whose wanted cast is the period's. Round 1 only: every *Pictures wanted* line read against its More and sorted into the five bins, with the picture proposed for each More and the five questions for Michael. Nothing searched, downloaded or written yet; the APIs (Commons, Smithsonian Open Access, the NHM Data Portal) answer from this machine. Michael answered the five questions the same day: *Heat*, yes to Axel Heiberg, the same Eocene forest, with a caption saying where it is ("Stumps of the same forest, on Axel Heiberg Island, the next island west of Ellesmere"); *Hand axes*, yes to a hand axe from elsewhere, since the More makes that comparison, captioned with its place and age ("A hand axe of the same kind, from X, about N years old") and never called Kokiselei's, Kokiselei kept on the ask list; *The last ice age*, none for now, since a slice from another core answers neither the folded ice nor its bubbles, but round 2 checks whether a real NEEM photograph is free through its American partners (NSF photographs are public domain); *Mammoths*, the skeleton out, the Siberian molars the picture if the paper's figure gives them; *Ice sheets*, yes to the map at 20,000 years with the North Sea and Bering plain as land; and one shared file for the period *Lucy* and the event, the manifest keyed by prefix (`period-lucy`, `event-lucy`), both pointing at it. Round 2 began on his word.
+status: changes applied. Pictures, batch 1, 11 Oct 2026, the trial run of Prompt-Pool.md's pictures insert, in Claude Code. The twelve periods of Periods-Deep-03.md (Recovery to After the ice) and, beside them, the new event *Lucy*, whose wanted cast is the period's. Round 1 (the sort) by Claude on 11 Oct. Michael answered the five questions the same day: *Heat*, yes to Axel Heiberg, the same Eocene forest, with a caption saying where it is ("Stumps of the same forest, on Axel Heiberg Island, the next island west of Ellesmere"); *Hand axes*, yes to a hand axe from elsewhere, since the More makes that comparison, captioned with its place and age ("A hand axe of the same kind, from X, about N years old") and never called Kokiselei's, Kokiselei kept on the ask list; *The last ice age*, none for now, since a slice from another core answers neither the folded ice nor its bubbles, but round 2 checks whether a real NEEM photograph is free through its American partners (NSF photographs are public domain); *Mammoths*, the skeleton out, the Siberian molars the picture if the paper's figure gives them; *Ice sheets*, yes to the map at 20,000 years with the North Sea and Bering plain as land; and one shared file for the period *Lucy* and the event, the manifest keyed by prefix (`period-lucy`, `event-lucy`), both pointing at it. Round 2 began on his word: three subagents on the APIs, one share each (A: Recovery to Grass; B: Ice to Mammoths with the event *Lucy*; C: The last ice age to After the ice). Share A was cut off by the session's usage limit before reporting, with its downloads and notes saved (copied to `prototypes/pictures-batch-01/r2/A/`: Ashfall, Badlands NPS and USGS, Yellow Mounds, a dawn redwood grove, Axel Heiberg petrified wood, the Strathcona Fiord site photograph from Eberle and others 2020, *Deinotherium*, a *Titanoboa* vertebra photograph and the Vancouver model, each still to be read for licence and content); shares B and C were still running when the session's own limit stopped it, their notes landing in the session scratchpad and copied as far as they had got. The map for *Ice sheets* is made: `prototypes/map-20k.html` (a bench at the _CW root, served locally) frames the world pyramid with the sea on the Time Machine's own curve at 20,000 years ago, captured by html2canvas at 1600 by 978 px, two versions in `prototypes/pictures-batch-01/`: land only, and with the ICE-6G ice sheets, which were not public then (settled 12 Oct: Michael ruled the PMIP4 copy the source, so the ice version is the picture). The map clamps at 180 degrees and does not wrap, so the Bering plain cannot be shown in one view. The Time Machine's curve puts the sea 116.5 m down at 20,000 years ago where the plot and events say about 130, a disagreement for the store check. Round 2 was finished in this session on 12 Oct from the shares' downloads (see *Round 2*); round 3 chose and wrote the pictures; round 4 checked them with three independent subagents and their changes are applied; checked, the files and the manifest written to `cw-deploys/art/stories/deep/` (not committed), the four questions in the inbox. Awaiting Michael. Read by Michael 13 Oct, who answered the four: yes to the NEEM core; Gobero, the man only (Figure 5 cropped to panels A to C); skip the Hadar photograph (the event *Lucy* keeps the shared copy alone); and the three credit forms as advised. Applied the same day, with the changes to earlier files; no picture is held.
 role: The first pictures batch in the form of Prompt-Pool.md's pictures insert: the sort (round 1), then the files found, chosen, checked and downloaded (rounds 2 to 4), one entry per picture with For, Shows, File, Licence, Caption, Credit, Why this one or None because, and Checked; then Changes to earlier files and For Michael.
 ---
 
@@ -61,44 +61,45 @@ The rule applied to each candidate, before its bin: does the picture answer a qu
 - The Barrington hippo: **findable, to try** (a visitor's photograph of the Sedgwick Museum's mounted skeleton on Commons). The More does not name Barrington; it stands for "more than thirty-five places".
 - Proposed: the tooth; the Barrington hippo as the second if found.
 
-**11. Ice sheets** (`ice-sheets`). The More is Doggerland, the fishing boats and the *Colinda* point.
-- A mammoth tooth hauled up by a fishing boat: **findable, to try** (Commons, the Natuurhistorisch Museum Rotterdam's North Sea fossils); else *ask*.
-- The *Colinda* point: **ask.** The wanted line says the British Museum; the point is believed to be in Norwich Castle Museum, to confirm in round 2, and the museum asked.
-- **Map**, not on the wanted line: CW's own map at about 20,000 years ago, the southern North Sea and the Bering plain as land. The ice-age sea is already on the join bench's map (Stage 5), so this is the one picture the house can make itself, and it is the one the More most wants ("The southern North Sea was a plain of rivers, hills and marshes"). Question 5.
-- Proposed: the map, and the tooth if found.
+**11. Ice sheets** (`period-ice-sheets`)
+- **Shows:** CW's own map, the North Sea at about 20,000 years ago, the sea 130 metres lower and the ice sheets drawn.
+- **File:** made 12 Oct from `js/map.js`, the world pyramid and `stories/ice-outlines.json` at 20,000 years, the sea set at −130 m (`prototypes/map-20k.html?sea=-130&ice=1`) → `ice-sheets-map-20000.jpg`, 1600 × 978. A land-only version is kept in `prototypes/pictures-batch-01/chosen/`, not used.
+- **Licence:** CW's own; the ground from NOAA's ETOPO 2022 (public domain); the ice from ICE-6G_C through the PMIP4 copy, which Michael ruled on 12 Oct is the source (the letter to Peltier no longer waited on; MANIFEST, `stories/ice-outlines.json`).
+- **Caption:** A map drawn for Curious Woods: the North Sea about 20,000 years ago, with the sea lowered and ice over Ireland, the north of Britain, Scandinavia and the northern North Sea.
+- **Credit:** Map: Curious Woods, from NOAA's ETOPO 2022 and ICE-6G_C (Peltier and others, via PMIP4)
+- **Why this one:** Michael's yes. The land-only map draws the northern North Sea as dry ground where the More says "The northern part lay under ice", so as evidence it contradicts its own text; the ice version agrees, and since 12 Oct its ice is public. The Bering plain cannot be drawn in one view (the map does not wrap at 180°). The North Sea tooth and the *Colinda* point: *ask*.
+- **Checked (12 Oct, round 4).** Changed: the sea redrawn at 130 m (the Time Machine's curve gave 116.5 m at 20,000 years, against the More's and *Last glacial maximum*'s "about 130"); the ice caption, "the north of Britain" (southern England was not under ice; Ireland added, which the map shows under ice); the ice redrawn from the public PMIP4 trace, the same area as the earlier one. Confirmed by eye: the southern North Sea, Doggerland and the Channel dry; the ice's edge across Ireland, the Midlands and north Germany.
 
-**12. After the ice** (`after-the-ice`). The More is Gobero's graves and the drawings of Tassili n'Ajjer.
-- The rock paintings of Tassili n'Ajjer with hippos and cattle: **findable** (Commons, many; cattle sure, a hippo to find). The licence must be the photographer's own, never a "public domain" tag on a photograph of a rock wall, the trap list's second item.
-- The Gobero site: **findable** (Sereno and others 2008, *PLOS ONE*, CC BY; its figures show the site and the burials, cited to the paper).
-- Proposed: both; the graves are the scene, the drawings the second question.
+**12. After the ice** (`period-after-the-ice`), two pictures
+- **Shows:** (1) Sereno and others 2008, Figure 5, panels A to C: the burial of a man (G1B11, about 4645 BCE), lifted in a plaster jacket and cleaned in the lab, from above and from below (a turtle shell against his hip), and his skull. (2) Painted cattle and people on a rock in Tassili n'Ajjer.
+- **File:** (1) https://doi.org/10.1371/journal.pone.0002995.g005 → `after-the-ice-gobero-burial.jpg`, 1993 × 777, cropped from 1993 × 1974. (2) https://commons.wikimedia.org/wiki/File:Daily_scene_with_cattle.jpg → `after-the-ice-tassili-cattle.jpg`, 5163 × 2904 (web 2000).
+- **Licence:** (1) CC BY, "© 2008 Sereno et al."; the photographs by Mike Hettwer (the paper's acknowledgements). (2) CC BY-SA 4.0, IssamBarhoumi, own work, 7 February 2023; the photographer's own licence, not a public-domain tag on a rock wall.
+- **Caption:** (1) The grave of a man at Gobero, in Niger, lifted from the sand in one block: seen from above, from below with a turtle shell, and his skull. (2) Cattle and people, painted on a rock in Tassili n'Ajjer, in Algeria.
+- **Credit:** (1) Photos: Mike Hettwer, in Sereno and others, *PLOS ONE*, 2008, CC BY, cropped. (2) Photo: IssamBarhoumi, CC BY-SA 4.0, via Wikimedia Commons
+- **Why these:** the graves the More opens on; and the drawings it names. No free photograph of a Tassili hippo was found.
+- **Checked (12 Oct, round 4).** Changed: (1)'s caption ("as the team found them in the sand" was wrong: the panels are laboratory photographs of burials lifted in plaster, the paper's Methods; and the More never introduces a team); the photographer credited. Confirmed: CC BY with no credit line on the figure; the legend's turtle carapace (*Pelusios adansonii*) against the pelvis; Tassili n'Ajjer from the file's description and category, the site not named and the map point typed by hand. Cropped on Michael's word, 13 Oct: the child's burial and the triple burial left out, the triple burial kept for a later story.
 
-**The event *Lucy*** (`lucy`, the event). Its wanted cast is the period's: one file. Hadar's gullies: **findable, to try** (Commons); it answers "a gully at Hadar", what the place looks like.
+## Round 4: what was wrong
 
-**Least sure of:** the three paper figures (Kjær 2022, van der Valk 2021, Sereno 2008), which rest on each paper being CC BY and its figure being a photograph rather than a map; the NHM Data Portal having imaged the Trafalgar Square canine; and whether any Axel Heiberg or NEEM photograph on Commons is the uploader's own.
+Three independent subagents on 12 Oct: two opened every file's source data and an outside source for each claim; the third read every caption against its More. What they found, plainly. Four captions said more than was true: the *Titanoboa* bone is a copy; the Nariokotome skeleton is a cast; the Olduvai axe's "over a million years" was the uploader's, not the museum's; the Gobero burials were photographed in the lab, not in the sand. One caption said less than was sure ("probably hers"). One licence was wrong: the Hadar photograph's source now says CC BY-NC, not the Licence Ouverte its Commons page claims. One file was renamed by an editor to a specimen number nothing supports. The map drew the sea at 116.5 m, not the More's 130. Four credits did not follow the fixed forms. All are fixed above, or held for Michael.
 
-## The count
-
-| Bin | Wanted pictures |
-|---|---|
-| findable | 10 |
-| findable, to try | 7 |
-| ask | 6 |
-| map | 1 (proposed, not on a wanted line) |
-| draw | 0 |
-| none | 1 (proposed) |
-
-Twenty-five over the twelve periods (24 wanted, 1 proposed); two more for the event *Lucy*, one of them shared. If every "to try" comes back, nine Mores of twelve get a picture from free sources, *The last ice age* gets none, and *Heat* and *Hand axes* depend on questions 1 and 2.
+**The count after round 4:** eleven of the twelve periods have a picture: seventeen files, one shared with the event *Lucy*, none held after Michael's answers of 13 Oct; *Mammoths* has none. The ask list, one email each: the Smithsonian Tropical Research Institute (a Cerrejón leaf); Beth Zaiken (the Kap København painting); the West Turkana Archaeological Project (a Kokiselei axe); the Swedish Museum of Natural History (the molars); the Natuurhistorisch Museum Rotterdam (full-size files of North Sea teeth, already CC BY 4.0 at about 510 px); Norwich Castle Museum (the *Colinda* point; its holder to confirm).
 
 ## For the build
 
-- `cw-deploys/art/stories/deep/` does not exist; round 4 creates it with `manifest.json`.
-- The manifest is keyed by store id. The period *Lucy* and the event *Lucy* are both `lucy`; the page keys periods as `period:Lucy`, so the manifest should key `period:lucy` and `event:lucy`, or whatever the build brief settles.
+- `cw-deploys/art/stories/deep/` made 12 Oct with the files and `manifest.json` (not committed). Each key is a list in the order the More shows them; a held picture carries `held` with its reason, and the build shows nothing held.
+- The manifest is keyed `period-<id>` and `event-<id>` (Michael, 11 Oct); `period-lucy` and `event-lucy` point at one file.
 - The page draws no pictures yet (the Rulings of 9 Oct: pictures in a More are a later round). The build note will say: one picture in the More, below the span line, with its caption and credit.
+
+## Changes to earlier files
+
+Made 13 Oct, on Michael's answers, except the store check's, which waits for the store check.
+
+- **Periods-Deep-03, *Hippos in London*, notes:** the NHM record for the canine, PV M 26795, gives "foundations of Uganda House, Trafalgar Square" and its label "TRAF. SQ. I. 1957", which settles what the period's notes left unconfirmed (the building and the late 1950s); the More may keep "In the 1950s". The museum's own page says many such finds came from nineteenth-century digs; this tooth did not.
+- **Periods-Deep-03, *Hand axes*, *Pictures wanted*:** add "a free hand axe from elsewhere, captioned with its place and age (Michael, 11 Oct)".
+- **Pool-Report, for the store check:** the Time Machine's sea curve (`stories/curves/sea-level-ice-ages.json`) gives −116.5 m at 20,000 years ago, where *Last glacial maximum*, the *Sea level* plot's words and *The last ice age* say about 130.
+- **Prompt-Pool.md, the pictures insert:** add the credit forms this batch needed (", cropped"; "Map: Curious Woods, from …"; "Photo: Name, institution, licence" for museum portals), and two traps found: a Commons file renamed by an editor to a specimen number; a Commons licence tag that the source record no longer carries.
 
 ## For Michael
 
-1. *Heat*: Axel Heiberg's stumps with an honest caption, when the More names only Ellesmere, or none?
-2. *Hand axes*: a free hand axe from elsewhere, captioned as the same shape, or wait for Kokiselei?
-3. *The last ice age*: core ice from another core, captioned as what core ice looks like, or none?
-4. *Mammoths*: the skeleton out, as proposed?
-5. *Ice sheets*: CW's own map at 20,000 years ago as its picture; and one shared file for the period *Lucy* and the event?
+Answered 13 Oct, and the lines are out of the inbox: the NEEM core, yes; Gobero, the man only; the Hadar photograph, skip; the credit forms, as advised.
