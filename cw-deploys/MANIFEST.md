@@ -200,6 +200,13 @@ on Michael (none since 13 Oct); `period-lucy` and `event-lucy` share `lucy-skele
 file's own data (Commons `extmetadata`, the NHM Data Portal record, the papers' own statements): CC0, CC BY, CC BY-SA, one US
 government photograph and one CW map (`ice-sheets-map-20000.jpg`, from `js/map.js`, ETOPO 2022 and `stories/ice-outlines.json`,
 the sea at −130 m). **Not yet read by anything**: the page shows no pictures in a More yet; the build note is in the batch file.
+*Batch 2 (13 Oct 2026, `CWVault/claude/Pictures-Deep-02.md`, checked, Michael's answers applied the same day):* sixteen files more — eleven JPEGs (long
+edge 946 to 2,400 px; the larger photographs saved at 2,400), one PNG figure and three SVG drawings — for the nine periods of
+Periods-Deep-01 and the events `fern-spike`, `lystrosaurus` and `big-thwack`; `period-dinosaurs` and `event-lystrosaurus` share
+`lystrosaurus-skull.jpg`. New in the manifest: `near`, the word after whose paragraph a second picture sits; one photograph from
+Flickr (`mammals-corral-bluffs.jpg`, CC BY 2.0, licence read from its own page); CW's own map of Pangaea
+(`dinosaurs-pangaea-250.jpg`, from `js/globe.js` and Merdith and others 2021) and three house drawings (the whale and the fronds;
+the Earth and the Moon; Theia and the young Earth). The folder is about 19 MB.
 **`stories/plates/continents.json` (6 Oct 2026)** — GENERATED, never edited by hand: the continents
 in motion, for the deep-time Time Machine (`CWVault/claude/Plan-Deep-Time.md`, Stage 1).
 `tools/plates-from-gplates.py` (outside this folder, in `_CW/tools/`; needs `pip install pygplates

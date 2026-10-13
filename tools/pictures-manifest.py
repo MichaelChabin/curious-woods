@@ -1,11 +1,15 @@
 """tools/pictures-manifest.py: write cw-deploys/art/stories/deep/manifest.json and copy the files from
-prototypes/pictures-batch-01/chosen/ (the working copies, not in git), from the checked entries of
-CWVault/claude/Pictures-Deep-01.md (round 4, 12 Oct 2026; Michael's answers, 13 Oct). Run from _CW with python3 -I."""
+prototypes/pictures-batch-NN/chosen/ (the working copies, not in git), from the checked entries of
+CWVault/claude/Pictures-Deep-01.md (round 4, 12 Oct 2026; Michael's answers, 13 Oct) and Pictures-Deep-02.md
+(round 4, 13 Oct). Each batch adds its block; never edit the JSON. Run from _CW with python3 -I."""
 import json, shutil, os
-SRC = 'prototypes/pictures-batch-01/chosen/'; DST = 'cw-deploys/art/stories/deep/'
+SRC = 'prototypes/pictures-batch-01/chosen/'; SRC2 = 'prototypes/pictures-batch-02/chosen/'; DST = 'cw-deploys/art/stories/deep/'
 C = 'https://commons.wikimedia.org/wiki/File:'
-def pic(file, source, licence, author, caption, credit, held=None, note=None):
+FROM = {}   # file -> the batch folder it is copied from (default SRC)
+def pic(file, source, licence, author, caption, credit, held=None, note=None, near=None, src=None):
     r = {'file': file, 'source': source, 'licence': licence, 'author': author, 'caption': caption, 'credit': credit}
+    if near: r['near'] = near
+    if src: FROM[file] = src
     if held: r['held'] = held
     if note: r['note'] = note
     return r
@@ -63,10 +67,58 @@ P = {
    pic('after-the-ice-tassili-cattle.jpg', C + 'Daily_scene_with_cattle.jpg', 'CC BY-SA 4.0', 'IssamBarhoumi',
     'Cattle and people, painted on a rock in Tassili n\'Ajjer, in Algeria.', 'Photo: IssamBarhoumi, CC BY-SA 4.0, via Wikimedia Commons')],
 }
+# Pictures-Deep-02 (13 Oct 2026): the periods of Periods-Deep-01 and the events Fern spike, Lystrosaurus and Moon forms
+B2 = SRC2
+lys = pic('lystrosaurus-skull.jpg', C + 'Lystrosaurus_NHMW.jpg', 'CC BY 4.0', 'Armin Reindl',
+          'The skull of a <i>Lystrosaurus</i> from South Africa, with one of its tusks, in the Natural History Museum in Vienna.',
+          'Photo: Armin Reindl, CC BY 4.0, via Wikimedia Commons', src=B2, note='Lystrosaurus declivis; label "Kapland, Südafrika – Trias".')
+CW = 'Curious Woods'
+P.update({
+ 'period-molten': [pic('molten-jack-hills-zircons.png', 'https://doi.org/10.1038/s41598-023-27843-6', 'CC BY 4.0', 'Monika Kusiak, Richard Wirth, Simon Wilde and Robert Pidgeon',
+    'Crystals of zircon from the Jack Hills, in Western Australia, each less than a quarter of a millimetre long, seen in an electron microscope by the light they give off; the numbers marked Ma are ages measured at spots inside them, in millions of years.',
+    'Images: Kusiak and others, <i>Scientific Reports</i>, 2023, CC BY 4.0', src=B2, note='Figure 1, uncropped.')],
+ 'period-oceans': [pic('oceans-strelley-pool-stromatolite.jpg', C + 'Stromatolithe_Paléoarchéen_-_MNHT.PAL.2009.10.1.jpg', 'CC BY-SA 4.0', 'Didier Descouens',
+    'A stromatolite from the Strelley Pool rocks of the Pilbara, in Western Australia, cut open to show its layers, in the Muséum de Toulouse.',
+    'Photo: Didier Descouens, CC BY-SA 4.0, via Wikimedia Commons', src=B2, note='Muséum de Toulouse MNHT.PAL.2009.10.1; the Commons 1920 px thumbnail.')],
+ 'period-oxygen': [pic('oxygen-joffre-gorge.jpg', C + 'Joffre_Gorge,_Karijini_National_Park.jpg', 'CC BY 2.0', 'Graeme Churchard',
+    'The striped walls of Joffre Gorge, in Karijini, in the Pilbara of Western Australia.', 'Photo: Graeme Churchard, CC BY 2.0, via Wikimedia Commons', src=B2)],
+ 'period-big-cells': [pic('big-cells-gaoyuzhuang-ribbons.jpg', 'https://doi.org/10.1038/ncomms11500', 'CC BY 4.0', 'Shixing Zhu and others',
+    'Ribbons and other shapes, dark in the shale of the Gaoyuzhuang rocks in Hebei, in northern China: fossils of living things made of many cells, beside rulers 5 cm long.',
+    'Photos: Zhu and others, <i>Nature Communications</i>, 2016, CC BY 4.0', src=B2, note='Figure 3, 946 px, the largest copy (under the floor on Michael\'s word, 13 Oct).')],
+ 'period-animals': [pic('animals-whale-and-frond.svg', 'Drawn for Curious Woods, 13 Oct 2026 (Pictures-Deep-02)', CW, CW,
+    'A drawing for Curious Woods: a blue whale beside two fronds from Mistaken Point, one nearly two metres tall and one a hand long that lay flat on the sea floor, all to one scale.',
+    'Drawing: Curious Woods', src=B2)],
+ 'period-soft-bodies': [pic('soft-bodies-mistaken-point-frond.jpg', C + 'Ediacaran_fossils_Mistaken_Point_Newfoundland.jpg', 'CC BY-SA 4.0', 'Alicejmichel',
+    'A frond in the rock at Mistaken Point, in Newfoundland, with a coin beside it for size.', 'Photo: Alicejmichel, CC BY-SA 4.0, via Wikimedia Commons', src=B2),
+   pic('soft-bodies-dickinsonia.jpg', C + 'Dickinsonia_observed_in_situ_at_Nilpena_Ediacara_National_Park.jpg', 'CC BY-SA 4.0', 'Citronnel',
+    'A <i>Dickinsonia</i>, still in its rock, at Nilpena in South Australia.', 'Photo: Citronnel, CC BY-SA 4.0, via Wikimedia Commons', src=B2, near='Dickinsonia')],
+ 'period-trilobites': [pic('trilobites-chengjiang-eoredlichia.jpg', C + 'Eoredlichia_intermedia,_Chengjiang_biota_3.jpg', 'CC BY-SA 4.0', 'Woudloper',
+    'A trilobite called <i>Eoredlichia</i> from the Chengjiang fossil beds, in Yunnan, with its two feelers kept, in the museum there.',
+    'Photo: Woudloper, CC BY-SA 4.0, cropped, via Wikimedia Commons', src=B2, note='Cropped to leave out the display stand.'),
+   pic('trilobites-phacops-eye.jpg', C + 'Phacops_rana_crassituberculata_eye_3.jpg', 'CC BY-SA 3.0', 'Dwergenpaartje',
+    'The eye of a trilobite from Ohio, more than 350 million years old: each round bump is a lens.', 'Photo: Dwergenpaartje, CC BY-SA 3.0, via Wikimedia Commons', src=B2,
+    near='lenses', note='Phacops rana (now Eldredgeops rana), Devonian, near Sylvania, Ohio.')],
+ 'period-dinosaurs': [lys,
+   pic('dinosaurs-pangaea-250.jpg', 'prototypes/globe-250.html?ma=250&lon=10&lat=-5&size=1400 (js/globe.js, stories/plates/continents.json)', 'Curious Woods; plates from Merdith and others 2021 (EarthByte, CC BY 4.0)', CW,
+    'A map drawn for Curious Woods: the land about 250 million years ago, most of it joined in one continent, Pangaea, as one model fits the pieces together.',
+    'Map: Curious Woods, from the plate model of Merdith and others, 2021 (EarthByte, CC BY 4.0)', src=B2, near='Pangaea')],
+ 'period-mammals': [pic('mammals-corral-bluffs.jpg', 'https://www.flickr.com/photos/markbyzewski/49200022111/', 'CC BY 2.0', 'Mark Byzewski',
+    'A bluff at Corral Bluffs, in Colorado, with Pikes Peak behind.', 'Photo: Mark Byzewski, CC BY 2.0, via Flickr', src=B2, note='A-0600, 7 Dec 2019; saved at 2400 px from 6000.')],
+ 'event-fern-spike': [pic('fern-spike-boundary-clay.jpg', C + 'Cretaceous-Tertiary_boundary_clay_(Raton_Formation,_65_Ma;_southern_Colorado,_USA)_(34782334145).jpg', 'CC BY 2.0', 'James St. John',
+    'A piece of rock from the Raton Basin, in Colorado; the pale layer across its middle is the clay the asteroid laid down.', 'Photo: James St. John, CC BY 2.0, via Wikimedia Commons', src=B2)],
+ 'event-lystrosaurus': [pic('lystrosaurus-karoo-hills.jpg', C + 'Karoo_Landscape_(32677595391).jpg', 'CC BY-SA 2.0', 'Bernard Dupont',
+    'Flat-topped hills in the Karoo, in South Africa, near Beaufort West.', 'Photo: Bernard Dupont, CC BY-SA 2.0, via Wikimedia Commons', src=B2),
+   dict(lys, near='shovel lizard')],
+ 'event-big-thwack': [pic('moon-forms-earth-and-moon-today.svg', 'Drawn for Curious Woods, 13 Oct 2026 (Pictures-Deep-02)', CW, CW,
+    'A drawing for Curious Woods: the Earth and the Moon today, to one scale; the distance between them is not to scale.', 'Drawing: Curious Woods', src=B2),
+   pic('moon-forms-theia-and-earth.svg', 'Drawn for Curious Woods, 13 Oct 2026 (Pictures-Deep-02)', CW, CW,
+    "A drawing for Curious Woods: the young Earth and Theia to one scale, if Theia was the size of Mars; nobody knows Theia's size. The dashed circle is the Earth today.",
+    'Drawing: Curious Woods', src=B2, near='Theia')],
+})
 os.makedirs(DST, exist_ok=True)
 files = sorted({p['file'] for v in P.values() for p in v})
-for f in files: shutil.copy2(SRC + f, DST + f)
-out = {'_about': 'Pictures for the deep-time periods and events, keyed period-<id> and event-<id>; each key a list in the order the More shows them, an empty list where the answer is none. A picture with "held" waits on Michael and is not shown (none at present). Captions may hold <i> for names in italics. Written by Claude from claude/Pictures-Deep-01.md (checked 12 Oct 2026, read by Michael 13 Oct); edit the batch file, not this.',
-       'version': '2026-10-13', 'batches': ['Pictures-Deep-01'], 'pictures': P}
+for f in files: shutil.copy2(FROM.get(f, SRC) + f, DST + f)
+out = {'_about': 'Pictures for the deep-time periods and events, keyed period-<id> and event-<id>; each key a list in the order the More shows them, an empty list where the answer is none. A picture with "held" waits on Michael and is not shown (none at present). Captions may hold <i> for names in italics. A picture with "near" sits after the first paragraph of its More containing that word. Written by Claude from claude/Pictures-Deep-01.md (checked 12 Oct 2026, read by Michael 13 Oct) and Pictures-Deep-02.md (checked 13 Oct); edit the batch files and the tool, not this.',
+       'version': '2026-10-13b', 'batches': ['Pictures-Deep-01', 'Pictures-Deep-02'], 'pictures': P}
 json.dump(out, open(DST + 'manifest.json', 'w'), indent=1, ensure_ascii=False)
 print(len(files), 'files;', sum(len(v) for v in P.values()), 'entries;', sum(1 for v in P.values() for p in v if p.get('held')), 'held')

@@ -137,7 +137,7 @@ When the crash happened is argued too. Crystals from Apollo 14 rocks say at leas
 
 The Moon is still moving away, about 3.8 centimetres a year. We know because Apollo crews left mirrors on the Moon, and people on Earth still bounce laser light off them.
 
-**Pictures wanted:** a moon rock in a nitrogen cabinet at the Johnson Space Center (NASA, public domain); the full Moon.
+**Pictures wanted:** a moon rock in a nitrogen cabinet at the Johnson Space Center (NASA, public domain); the full Moon. Drawn: the Earth and the Moon today, and Theia beside the young Earth, each to one scale (drawn for CW, Pictures-Deep-02, on Michael's ask of 13 Oct).
 
 **References**
 - Robin Canup and Erik Asphaug, "Origin of the Moon in a giant impact near the end of the Earth's formation," *Nature*, 2001. The Mars-sized body; the five-hour day.

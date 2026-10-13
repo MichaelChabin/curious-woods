@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520">
+<!-- A blue whale beside a Mistaken Point frond, to one scale: 56 px to the metre. Drawn for Curious Woods by Claude,
+     13 Oct 2026, for the period Animals (Pictures-Deep-02). The whale 25 m from the tips of the flukes to the snout, about 24.7 m from the notch, McClain's measure (a
+     large ordinary adult: three in four measured blue whales were 25.3 m or less, McClain and others 2015); the big frond
+     1.85 m (Trepassia wardae, the longest Mistaken Point frond, "nearly 2 m", Narbonne and Gehling 2003, from the Drook Formation in the Mistaken Point reserve), drawn slender with no holdfast, which no source we reached describes;
+     the small one 16 cm, lying flat (Fractofusus, the middle size modelled by Perez-Pinedo and others 2024, "a sediment-reclining organism"). -->
+<rect width="1600" height="520" fill="#f4f1e8"/>
+<g font-family="Georgia, 'Times New Roman', serif" fill="#2a241c">
+  <!-- the big frond, standing: a leaf branched into smaller leaves on a central stalk; 1.85 m = 104 px, from the floor at y 420 to 315 -->
+  <g stroke="#2a241c" stroke-linecap="round" fill="none">
+    <path d="M80 420 C70 400, 69 345, 80 315 C91 345, 90 400, 80 420 Z" fill="#2a241c" stroke-width="1"/>
+    <g stroke="#f4f1e8" stroke-width="1.2">
+      <line x1="80" y1="414" x2="80" y2="318"/>
+      <path d="M80 406 L74 400 M80 398 L73 392 M80 390 L73 384 M80 382 L72 375 M80 374 L72 366 M80 366 L72 357 M80 358 L72 349 M80 350 L72 341 M80 342 L73 333 M80 334 L74 326 M80 326 L76 319 M80 320 L78 318"/>
+      <path d="M80 406 L86 400 M80 398 L87 392 M80 390 L87 384 M80 382 L88 375 M80 374 L88 366 M80 366 L88 357 M80 358 L88 349 M80 350 L88 341 M80 342 L87 333 M80 334 L86 326 M80 326 L84 319 M80 320 L82 318"/>
+    </g>
+  </g>
+  <!-- a small frond, a hand long, lying flat on the sea floor as Fractofusus did: 16 cm = 9 px long -->
+  <path d="M123.5 419 C125.5 416.8, 130.5 416.8, 132.5 419 Z" fill="#2a241c"/>
+  <line x1="80" y1="138" x2="80" y2="298" stroke="#6b655a" stroke-width="1"/>
+  <line x1="128" y1="138" x2="128" y2="410" stroke="#6b655a" stroke-width="1"/>
+  <text x="40" y="104" font-size="24">from Mistaken Point: a frond nearly</text>
+  <text x="40" y="132" font-size="24">2 metres tall, and one a hand long that lay flat</text>
+
+  <!-- the whale, facing right: 25 m = 1400 px, from the flukes' tips near x 174 to the snout at 1580 -->
+  <path fill="#2a241c" d="M1580 240 C1530 196, 1420 168, 1300 158 C1100 150, 800 160, 560 196 L512 182 L488 206 C420 220, 330 240, 250 251 L176 232 L198 258 L172 286 L250 266 C340 280, 450 302, 600 322 C800 346, 1100 352, 1300 337 C1460 322, 1556 288, 1582 246 Z"/>
+  <path fill="#2a241c" d="M1262 330 C1232 362, 1186 384, 1146 390 C1172 370, 1208 346, 1236 326 Z"/>
+  <circle cx="1452" cy="250" r="4" fill="#f4f1e8"/>
+  <path d="M1578 246 C1530 262, 1470 270, 1420 268" stroke="#f4f1e8" stroke-width="1.5" fill="none" opacity="0.7"/>
+  <g stroke="#f4f1e8" stroke-width="1.2" fill="none" opacity="0.55">
+    <path d="M1540 292 C1400 326, 1260 340, 1120 344"/>
+    <path d="M1520 302 C1390 332, 1260 345, 1140 348"/>
+    <path d="M1496 312 C1380 336, 1270 348, 1170 350"/>
+  </g>
+  <text x="870" y="120" font-size="24" text-anchor="middle">a blue whale, about 25 metres long</text>
+
+  <!-- the sea floor and the scale: 0 to 25 m under the whale, from x 180 -->
+  <line x1="40" y1="420" x2="1580" y2="420" stroke="#9a958b" stroke-width="1"/>
+  <g stroke="#2a241c" stroke-width="1.5">
+    <line x1="180" y1="462" x2="1580" y2="462"/>
+    <line x1="180" y1="454" x2="180" y2="470"/><line x1="460" y1="454" x2="460" y2="470"/><line x1="740" y1="454" x2="740" y2="470"/>
+    <line x1="1020" y1="454" x2="1020" y2="470"/><line x1="1300" y1="454" x2="1300" y2="470"/><line x1="1580" y1="454" x2="1580" y2="470"/>
+  </g>
+  <g font-size="20" fill="#6b655a" text-anchor="middle">
+    <text x="180" y="496">0</text><text x="460" y="496">5</text><text x="740" y="496">10</text>
+    <text x="1020" y="496">15</text><text x="1300" y="496">20</text><text x="1580" y="496" text-anchor="end">25 metres</text>
+  </g>
+</g>
+</svg>

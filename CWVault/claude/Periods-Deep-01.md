@@ -14,7 +14,7 @@ Written in round 3 of Prompt-Deep-Time-Periods.md and checked in round 4. Dates 
 **Span:** 4,600 to 4,000 Ma · both edges dated boundaries, rounded: the chart has 4,567 (the oldest grains in meteorites, ratified 2022) and 4,031 ± 3 (the oldest rock, Acasta, since 2023)
 **Length:** 600 million years
 **Official name:** Hadean, after Hades, the Greek god of the dead and the underworld he ruled; named by Preston Cloud in 1972
-**Known from:** a few zircon crystals, smaller than grains of sand, and some moon rocks and meteorites
+**Known from:** a few zircon crystals, each less than a quarter of a millimetre long, and some moon rocks and meteorites
 **Opens to:** nothing yet
 **Inside it:** events *Oldest grains*, *Gathering*, *Moon formed*, *Black Earth*, *Blue Earth*, *Grey Earth* (at the end edge). Plots: *Day length* and the inside line of *Sun and inside* begin at *Moon formed*; *Minerals*, *Continents* and the Sun line begin at 4,567.
 **Index:** none

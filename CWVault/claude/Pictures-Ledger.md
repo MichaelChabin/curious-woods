@@ -7,11 +7,11 @@ role: The pictures ledger of Prompt-Pool.md: what is wanted, the bin each wanted
 
 **The bins** (Prompt-Pool.md, the pictures insert): *findable*, a free file likely exists; *ask*, a museum's or a scientist's photograph, not searched, kept for one email from Michael; *draw*, a diagram for the house line; *map*, from CW's own globe or map at a year; *none*, with its reason. "Findable, to try" means the source is likely but unconfirmed until round 2 opens it.
 
-**Done.** Batch 1 (the twelve periods of Periods-Deep-03 and the event *Lucy*): checked 12 Oct, answered by Michael and changes applied 13 Oct; seventeen files in `cw-deploys/art/stories/deep/` with `manifest.json`, none held; *Mammoths* none. The next batch starts at the next file in the list below that has no bins.
+**Done.** Batch 1 (the twelve periods of Periods-Deep-03 and the event *Lucy*): checked 12 Oct, answered by Michael and changes applied 13 Oct; seventeen files in `cw-deploys/art/stories/deep/` with `manifest.json`, none held; *Mammoths* none. Batch 2 (the nine periods of Periods-Deep-01, the events *Fern spike* and *Lystrosaurus*, and two drawings for *Moon forms*): checked 13 Oct, answered by Michael and changes applied the same day; sixteen files added to `cw-deploys/art/stories/deep/` and the manifest; every period of the batch and all three events have a picture. The next batch starts at the next file in the list below that has no bins.
 
-**Unconfirmed.** From batch 1: whether the *Mesohippus* mount (CM 961) and the Paris *Deinotherium* skull are casts; the dawn redwoods' species beyond the photographer's word; the Olduvai axe's own age (the museum dates a cleaver from the same layer).
+**Unconfirmed.** From batch 1: whether the *Mesohippus* mount (CM 961) and the Paris *Deinotherium* skull are casts; the dawn redwoods' species beyond the photographer's word; the Olduvai axe's own age (the museum dates a cleaver from the same layer). From batch 2: whether the Vienna *Lystrosaurus* skull and the Chengjiang *Eoredlichia* are casts; the Raton sample's exact site; Canup and Asphaug 2001 read through a review, not opened.
 
-**The ask list** (worth one email each, kept short): the Smithsonian Tropical Research Institute (a Cerrejón leaf); Beth Zaiken (the Kap København painting); the West Turkana Archaeological Project (a Kokiselei hand axe); the Swedish Museum of Natural History (the Siberian molars); the Natuurhistorisch Museum Rotterdam (full-size files of North Sea teeth, already CC BY); Norwich Castle Museum (the *Colinda* point); the Niels Bohr Institute (NEEM ice with its bubbles).
+**The ask list** (worth one email each, kept short): the Smithsonian Tropical Research Institute (a Cerrejón leaf); Beth Zaiken (the Kap København painting); the West Turkana Archaeological Project (a Kokiselei hand axe); the Swedish Museum of Natural History (the Siberian molars); the Natuurhistorisch Museum Rotterdam (full-size files of North Sea teeth, already CC BY); Norwich Castle Museum (the *Colinda* point); the Niels Bohr Institute (NEEM ice with its bubbles); from batch 2, the Denver Museum of Nature and Science (a Corral Bluffs palm leaf), Vivi Vajda or Antoine Bercovici (a fern spore from the boundary), John Valley (the 4.4-billion-year crystal, for *Blue Earth*).
 
 # The wanted pictures, by batch file
 
@@ -397,28 +397,30 @@ role: The pictures ledger of Prompt-Pool.md: what is wanted, the bin each wanted
 
 ## Periods-Deep-01
 
-- **Molten** — a painting of the magma ocean with the close Moon (NASA or ESA artwork; licence to check). *Bin:* unsorted.
-- **Molten** — a Jack Hills zircon in cathodoluminescence (John Valley, University of Wisconsin; licence to ask). *Bin:* unsorted.
-- **Oceans** — the stromatolites at Strelley Pool, Pilbara (Geological Survey of Western Australia or Commons; licence to check). *Bin:* unsorted.
-- **Oceans** — living stromatolites at Hamelin Pool, Shark Bay, as a picture of what the mounds were like (Commons; licence to check). *Bin:* unsorted.
-- **Oxygen** — the banded iron walls of Joffre Gorge or Dales Gorge, Karijini (Commons or Parks and Wildlife WA; licence to check). *Bin:* unsorted.
-- **Oxygen** — a polished slab of banded iron (Commons; licence to check). *Bin:* unsorted.
-- **Big cells** — the ribbon fossils of the Gaoyuzhuang Formation, Hebei (Zhu and others 2016, *Nature Communications*, open access, CC BY; to confirm). *Bin:* unsorted.
-- **Big cells** — *Bangiomorpha* under the microscope (Nicholas Butterfield; licence to ask). *Bin:* unsorted.
-- **Animals** — a living sponge, as the animal the oldest argued chemistry points to (Commons; licence to check). *Bin:* unsorted.
-- **Animals** — a blue whale beside a frond from Mistaken Point, drawn to one scale (to make). *Bin:* unsorted.
-- **Soft bodies** — the fronds on the E Surface at Mistaken Point (UNESCO or Parks and Natural Areas, Newfoundland and Labrador; licence to check). *Bin:* unsorted.
-- **Soft bodies** — a *Dickinsonia* fossil (Commons; licence to check). *Bin:* unsorted.
-- **Trilobites** — a trilobite from Chengjiang, legs and all (Yunnan Key Laboratory for Palaeobiology or Commons; licence to check). *Bin:* unsorted.
-- **Trilobites** — a trilobite eye, its lenses visible (Commons; licence to check). *Bin:* unsorted.
-- **Dinosaurs** — a *Lystrosaurus* skeleton (Iziko South African Museum or Commons; licence to check). *Bin:* unsorted.
-- **Dinosaurs** — a map of Pangaea at 250 million years (our own map, at that year). *Bin:* unsorted.
-- **Mammals** — the cliffs at Corral Bluffs, Colorado (Denver Museum of Nature and Science; licence to ask). *Bin:* unsorted.
-- **Mammals** — a fossil palm leaf from the first hundred thousand years (the same). *Bin:* unsorted.
-- **Fern spike** — the boundary clay in the Raton Basin (USGS, public domain; to confirm). *Bin:* unsorted.
-- **Fern spike** — a fern spore under the microscope (Commons; licence to check). *Bin:* unsorted.
-- **Lystrosaurus** — a *Lystrosaurus* skull (Iziko South African Museum or Commons; licence to check). *Bin:* unsorted.
-- **Lystrosaurus** — the Karoo's flat-topped hills (Commons; licence to check). *Bin:* unsorted.
+Batch 2 (Pictures-Deep-02), checked 13 Oct, answered by Michael and changes applied the same day. What each wanted picture came to; *found* means in `cw-deploys/art/stories/deep/` and the manifest. Also drawn, on Michael's ask, for the event *Moon forms*: the Earth and the Moon today, and Theia beside the young Earth (`moon-forms-*.svg`).
+
+- **Molten** — a painting of the magma ocean with the close Moon (NASA or ESA artwork; licence to check). *Bin:* none (no free painting shows the magma ocean; NASA's nearest has no sea of lava and no Moon).
+- **Molten** — a Jack Hills zircon in cathodoluminescence (John Valley, University of Wisconsin; licence to ask). *Bin:* found: Jack Hills zircons in cathodoluminescence, Kusiak and others 2023, CC BY 4.0 (`molten-jack-hills-zircons.png`); Valley's 4.4 crystal ask.
+- **Oceans** — the stromatolites at Strelley Pool, Pilbara (Geological Survey of Western Australia or Commons; licence to check). *Bin:* found: a Strelley Pool slab, Muséum de Toulouse, CC BY-SA 4.0 (`oceans-strelley-pool-stromatolite.jpg`); no free outcrop photograph.
+- **Oceans** — living stromatolites at Hamelin Pool, Shark Bay, as a picture of what the mounds were like (Commons; licence to check). *Bin:* none (Michael, 13 Oct).
+- **Oxygen** — the banded iron walls of Joffre Gorge or Dales Gorge, Karijini (Commons or Parks and Wildlife WA; licence to check). *Bin:* found: Joffre Gorge, Churchard, CC BY 2.0 (`oxygen-joffre-gorge.jpg`).
+- **Oxygen** — a polished slab of banded iron (Commons; licence to check). *Bin:* none (the gorge answers; Churchard's Dales Gorge close-up in reserve).
+- **Big cells** — the ribbon fossils of the Gaoyuzhuang Formation, Hebei (Zhu and others 2016, *Nature Communications*, open access, CC BY; to confirm). *Bin:* found: Zhu 2016 Fig. 3, CC BY 4.0, 946 px (`big-cells-gaoyuzhuang-ribbons.jpg`).
+- **Big cells** — *Bangiomorpha* under the microscope (Nicholas Butterfield; licence to ask). *Bin:* none here, kept for the event *Bangiomorpha*.
+- **Animals** — a living sponge, as the animal the oldest argued chemistry points to (Commons; licence to check). *Bin:* none.
+- **Animals** — a blue whale beside a frond from Mistaken Point, drawn to one scale (to make). *Bin:* drawn (`animals-whale-and-frond.svg`).
+- **Soft bodies** — the fronds on the E Surface at Mistaken Point (UNESCO or Parks and Natural Areas, Newfoundland and Labrador; licence to check). *Bin:* found: a frond at Mistaken Point with a coin, CC BY-SA 4.0 (`soft-bodies-mistaken-point-frond.jpg`); the E Surface (Mitchell and Pates 2025) in reserve.
+- **Soft bodies** — a *Dickinsonia* fossil (Commons; licence to check). *Bin:* found: in place at Nilpena, CC BY-SA 4.0 (`soft-bodies-dickinsonia.jpg`).
+- **Trilobites** — a trilobite from Chengjiang, legs and all (Yunnan Key Laboratory for Palaeobiology or Commons; licence to check). *Bin:* found: *Eoredlichia* with its feelers, Chengjiang museum, CC BY-SA 4.0, cropped (`trilobites-chengjiang-eoredlichia.jpg`); no free photograph shows legs.
+- **Trilobites** — a trilobite eye, its lenses visible (Commons; licence to check). *Bin:* found: *Phacops* (*Eldredgeops*) eye, Ohio, CC BY-SA 3.0 (`trilobites-phacops-eye.jpg`).
+- **Dinosaurs** — a *Lystrosaurus* skeleton (Iziko South African Museum or Commons; licence to check). *Bin:* found: *L. declivis* skull, Vienna, CC BY 4.0 (`lystrosaurus-skull.jpg`), shared with the event.
+- **Dinosaurs** — a map of Pangaea at 250 million years (our own map, at that year). *Bin:* made: CW's globe at 250 Ma (`dinosaurs-pangaea-250.jpg`).
+- **Mammals** — the cliffs at Corral Bluffs, Colorado (Denver Museum of Nature and Science; licence to ask). *Bin:* found: a bluff at Corral Bluffs, Mark Byzewski, CC BY 2.0, via Flickr (`mammals-corral-bluffs.jpg`), found in round 4.
+- **Mammals** — a fossil palm leaf from the first hundred thousand years (the same). *Bin:* ask (Denver Museum of Nature and Science).
+- **Fern spike** — the boundary clay in the Raton Basin (USGS, public domain; to confirm). *Bin:* found: a Raton Formation sample, James St. John, CC BY 2.0 (`fern-spike-boundary-clay.jpg`).
+- **Fern spike** — a fern spore under the microscope (Commons; licence to check). *Bin:* none (no open micrograph); ask Vajda or Bercovici.
+- **Lystrosaurus** — a *Lystrosaurus* skull (Iziko South African Museum or Commons; licence to check). *Bin:* found: the period's file, shared.
+- **Lystrosaurus** — the Karoo's flat-topped hills (Commons; licence to check). *Bin:* found: Karoo National Park, Bernard Dupont, CC BY-SA 2.0 (`lystrosaurus-karoo-hills.jpg`).
 
 ## Periods-Deep-02
 

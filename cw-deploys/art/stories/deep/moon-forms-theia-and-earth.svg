@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="820" viewBox="0 0 1300 820">
+<!-- Theia and the young Earth, to one scale: 1 px to 20 km. Drawn for Curious Woods by Claude, 13 Oct 2026, for the event
+     Moon forms (big-thwack), on Michael's ask (Pictures-Deep-02). The model most scientists favour (Canup and Asphaug 2001):
+     a body about the size of Mars (radius 3,390 km) hits an Earth of about nine tenths of today's mass; the young Earth's radius
+     taken as today's times the cube root of 0.9 (about 6,150 km; self-compression ignored), today's Earth dashed round it. -->
+<rect width="1300" height="820" fill="#f4f1e8"/>
+<g font-family="Georgia, 'Times New Roman', serif" fill="#2a241c">
+  <circle cx="420" cy="380" r="318.6" fill="none" stroke="#6b655a" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <circle cx="420" cy="380" r="307.6" fill="#6b655a"/>
+  <circle cx="1000" cy="380" r="169.5" fill="#9a958b"/>
+  <text x="420" y="747" font-size="24" text-anchor="middle">the young Earth, a little smaller than now</text>
+  <text x="420" y="777" font-size="20" fill="#6b655a" text-anchor="middle">dashed: the Earth today</text>
+  <text x="1000" y="598" font-size="24" text-anchor="middle">Theia, perhaps the size of Mars</text>
+  <g stroke="#2a241c" stroke-width="1.5">
+    <line x1="875" y1="750" x2="1125" y2="750"/>
+    <line x1="875" y1="742" x2="875" y2="758"/><line x1="1125" y1="742" x2="1125" y2="758"/>
+  </g>
+  <text x="1000" y="782" font-size="20" fill="#6b655a" text-anchor="middle">5,000 kilometres</text>
+</g>
+</svg>

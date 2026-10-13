@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1040" viewBox="0 0 1400 1040">
+<!-- The Earth and the Moon today, to one scale: 1 px to 16 km (radii 6,371 and 1,737 km). Drawn for Curious Woods by Claude,
+     13 Oct 2026, for the event Moon forms (big-thwack), on Michael's ask (Pictures-Deep-02). The sizes are to scale; the
+     distance between them is not: about thirty Earths would fit between them (384,400 km). -->
+<rect width="1400" height="1040" fill="#f4f1e8"/>
+<g font-family="Georgia, 'Times New Roman', serif" fill="#2a241c">
+  <circle cx="470" cy="440" r="398.2" fill="#3f5a78"/>
+  <circle cx="1150" cy="440" r="108.6" fill="#9a958b"/>
+  <text x="470" y="888" font-size="24" text-anchor="middle">the Earth today, about 12,700 kilometres across</text>
+  <text x="1150" y="599" font-size="24" text-anchor="middle">the Moon, about 3,500</text>
+  <text x="700" y="950" font-size="20" fill="#6b655a" text-anchor="middle">The sizes are to scale. The distance is not: about thirty Earths would fit between them.</text>
+  <g stroke="#2a241c" stroke-width="1.5">
+    <line x1="994" y1="990" x2="1306" y2="990"/>
+    <line x1="994" y1="982" x2="994" y2="998"/><line x1="1306" y1="982" x2="1306" y2="998"/>
+  </g>
+  <text x="1150" y="1022" font-size="20" fill="#6b655a" text-anchor="middle">5,000 kilometres</text>
+</g>
+</svg>

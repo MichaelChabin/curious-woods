@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Globe at 250 Ma — picture bench</title>
+<!-- prototypes/globe-250.html — a bench for one picture: CW's own globe at 250 million years, Pangaea, for the period
+     Dinosaurs (Pictures-Deep-02, 13 Oct 2026). Not served; opened from a local server at the _CW root.
+     ?ma=250&lon=20&lat=0&size=1400&climate=0 ; cwSave() returns the canvas as a PNG data URL. -->
+<style>html,body{margin:0;background:#f4f1e8;font-family:Georgia,serif}#g{margin:0}#say{font-size:14px;color:#7a6e60;padding:6px 10px}</style>
+</head><body>
+<div id="g"></div><div id="say"></div>
+<script src="../cw-deploys/js/globe.js"></script>
+<script>
+var q = new URLSearchParams(location.search), D = '../cw-deploys/', S = +(q.get('size') || 1400);
+document.getElementById('g').style.width = S + 'px';
+var g = cwGlobe(document.getElementById('g'), {
+  ma: +(q.get('ma') || 250), lon: +(q.get('lon') || 20), lat: +(q.get('lat') || 0), size: S, climate: q.get('climate') === '1',
+  plates: D + 'stories/plates/continents.json', coast: D + 'art/maps/world-tiles/contours-0.json', crust: D + 'stories/curves/crust-and-land.json',
+  cities: null, textures: D + 'art/globe/', ground: D + 'art/maps/world.webp', vegetation: D + 'art/maps/world-vegetation.webp',
+  onGrade: function (gr, s) { document.getElementById('say').textContent = gr + ' · ' + s; }
+});
+window.cwSave = function () { var c = document.querySelector('#g canvas'); return c.toDataURL('image/png'); };
+</script></body></html>
