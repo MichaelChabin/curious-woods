@@ -158,9 +158,11 @@ The manifest, `cw-deploys/art/stories/deep/manifest.json`, holds the same fields
 
 **Agree with.** The More the picture serves, and the *Pictures wanted* line.
 **File.** `claude/Pictures-Deep-NN.md`.
-**Build.** The manifest; a short note of what the page needs (one picture in the More, below the span line, with its caption and credit) for the build brief.
-**Ledger.** `claude/Pictures-Ledger.md`, made at the first run from every *Pictures wanted* line, with the bin each landed in.
-**First run.** Batch 1 is the twelve periods of `Periods-Deep-03.md`, as a trial, so Michael sees how many come back "none" before the other hundred Mores run.
+**Build.** `tools/pictures-manifest.py` copies the checked files to `cw-deploys/art/stories/deep/` and writes `manifest.json`, keyed `period-<id>` and `event-<id>`; add the batch's entries to it, never edit the JSON. The page draws them by `claude/Prompt-Build-Pictures-in-the-Mores.md` (the first picture below the span line, a second level with the paragraph its `near` word names); a later batch needs no new build, only its entries and their `near` words.
+**Ledger.** `claude/Pictures-Ledger.md`, made by batch 1 from every *Pictures wanted* line in the batch files: what is wanted, the bin each landed in, what was found, and the ask list.
+**Order.** Batch 1 (11–13 Oct) was the twelve periods of `Periods-Deep-03.md`, the trial: eleven of twelve got a picture. Periods first, then events: batch 2 is `Periods-Deep-01.md`, batch 3 `Periods-Deep-02.md`, so all thirty period Mores are done before the events, whose Mores need no new build either.
+
+**Learned from batch 1.** `Pictures-Deep-01.md` is the model batch file. Commons throttles: pause about two seconds between calls, and treat an empty answer as "retry", not "nothing there". Trace any downloaded file back to its page and licence by its SHA-1 (the API's `list=allimages&aisha1=`); it works after a file has been renamed. Subagents can be cut off by the usage limit: have each save its files and notes to disk as it goes, so the round can be finished from them. A paper's single panel is often under 1,200 px; several panels together can clear the floor, credited with ", cropped". Before putting a museum on the ask list, try its open data: the NHM Data Portal and GBIF records carry their own licence fields (the Trafalgar Square tooth was there, CC BY 4.0). A press or Defense photograph of a real expedition can be public domain (the NEEM core). Look at every candidate whole, on a contact sheet: batch 1's "*Deinotherium* skull" was a bronze statue. A caption says only what the file and a source say; round 4 found four that said more.
 
 ### The store check
 
