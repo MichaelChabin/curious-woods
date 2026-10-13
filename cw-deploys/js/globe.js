@@ -11,7 +11,7 @@
    The five words of knowing (Ideas-Ledger, *Invented land, honest about it*, 7 Oct), by age:
      measured   to 200 million years: the seafloor's stripes; drawn solid
      inferred   to 540: rock magnetism gives how far north, not how far east; drawn once at the model's position (10 Oct: no smear)
-     fitted     to the model's reach: the pieces are real, the fits argued; drawn as a ghost
+     fitted     to the model's reach: the pieces are real, the fits argued; drawn once, like inferred (the ghost went 13 Oct)
      guessed    past the model's reach, while cratons exist (to 4 billion): the real pieces of crust,
                 which still exist, placed by the model's last position plus a random slow drift from a
                 seed, so that going back the accuracy falls to chance; drawn pale with a dashed edge
@@ -72,7 +72,7 @@
     '.cw-globe canvas{display:block;touch-action:none;cursor:grab;}',
     '.cw-globe.dragging canvas{cursor:grabbing;}'
   ].join('\n');
-  var SEA = '#93bed7', SEA_DEEP = '#7fa9c4', LAND = '#8c8366', LAND_PALE = '#c3bba5', COAST = '#4a4336', SHELF = '#2f5c78', GRAT = 'rgba(42,36,28,0.10)', MAGMA = '#6e2410', MAGMA_GLOW = '#b8471c';
+  var SEA = '#5793b4', SEA_DEEP = '#33699a', LAND = '#8c8366', LAND_PALE = '#c3bba5', COAST = '#4a4336', SHELF = '#2f5c78', GRAT = 'rgba(42,36,28,0.10)', MAGMA = '#6e2410', MAGMA_GLOW = '#b8471c';
   var OLDEST_ROCK = 4000, NO_MAP = 4400, MOLTEN_START = 4600, DRIFT_DEG_PER_MA = 0.45;   // a plate's few centimetres a year, as degrees of arc
   var BLACK = '#0c0a08', HOT = '#f0a040', CRUST = '#141010', CRUST_LIGHT = '#2a2320', FLASH = '#fbf4e6';
   // the molten sequence, in millions of years ago (part 7; the ages as the events store has them)
@@ -333,13 +333,11 @@
         else { if (sz < 0.03) return; px = cx + sx * r; py = cy - sy * r; }
         items.push({ x: px, y: py, a: a, name: c.name });
       });
-      ctx.save(); ctx.font = '11px Georgia, serif'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+      ctx.save(); ctx.font = '14px Georgia, serif'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';   // 14 px and no halo (13 Oct 2026, Michael: legibility)
       items.forEach(function (it) {
         ctx.globalAlpha = it.a;
-        ctx.beginPath(); ctx.arc(it.x, it.y, 3.5, 0, Math.PI * 2); ctx.fillStyle = CITY_HALO; ctx.fill();
-        ctx.beginPath(); ctx.arc(it.x, it.y, 2.2, 0, Math.PI * 2); ctx.fillStyle = CITY_INK; ctx.fill();
-        ctx.lineWidth = 3; ctx.strokeStyle = CITY_HALO; ctx.strokeText(it.name, it.x + 6, it.y);
-        ctx.fillStyle = CITY_INK; ctx.fillText(it.name, it.x + 6, it.y);
+        ctx.beginPath(); ctx.arc(it.x, it.y, 2.4, 0, Math.PI * 2); ctx.fillStyle = CITY_INK; ctx.fill();
+        ctx.fillStyle = CITY_INK; ctx.fillText(it.name, it.x + 7, it.y);
       });
       ctx.restore();
     }
@@ -588,6 +586,15 @@
       for (y = 0; y < ch; y++) for (x = 0; x < cw; x++) if (mask[y * cw + x]) pts.push([(x + 0.5) / cw * 360 - 180, 90 - (y + 0.5) / ch * 180]);
       interiorCache[key] = pts; return pts;
     }
+    // the polar ice alone, without the rest of the wash: the ice ages are not a Climate opinion (13 Oct 2026)
+    function drawPolarIce(V, age) {
+      var reach = iceReach(age); if (reach === null || !lastLand) return;
+      ctx.save(); ctx.clip(lastLand, 'nonzero');
+      var fb = function (ring, colour, alpha) { var p = new Path2D(); if (trace(ring, V, p)) { ctx.globalAlpha = alpha; ctx.fillStyle = colour; ctx.fill(p, 'evenodd'); } };
+      if (!(age <= 34 && age > 2.6)) fb(bandRing(reach, 89.9), WASH_ICE, 0.8);
+      fb(bandRing(-89.9, -reach), WASH_ICE, 0.8);
+      ctx.restore(); ctx.globalAlpha = 1;
+    }
     function drawClimate(V, age, how) {
       if (!lastLand) return;
       ctx.save(); ctx.clip(lastLand, 'nonzero');
@@ -650,10 +657,10 @@
       if (data && g !== 'none') {
         if (g === 'measured' || g === 'ground') { var lp = landPath(V, Math.max(ma, 0), 0, 'model'); if (!skinned) fillLand(lp, LAND, g === 'ground' ? 0.45 : 1, null); }
         else if (g === 'inferred') { var lp2 = landPath(V, ma, 0, 'model'); if (!skinned) fillLand(lp2, LAND, 1, null); }   // the model's own position, once: a guess called a guess, not a smear (Michael, 10 Oct; the seven shifted copies are gone)
-        else if (g === 'fitted') [-27, -18, -9, 9, 18, 27, 0].forEach(function (s) { var lp3 = landPath(V, ma, s, 'model'); if (!skinned || s !== 0) fillLand(lp3, LAND, 0.14, null); });
+        else if (g === 'fitted') { var lp3 = landPath(V, ma, 0, 'model'); if (!skinned) fillLand(lp3, LAND, 1, null); }   // once, like inferred: the six shifted ghosts went on 13 Oct 2026 (Michael: the shapes are real now)
         else if (g === 'guessed') fillLand(landPath(V, ma, 0, 'guessed'), LAND_PALE, 0.7, 'dashed');
         else if (g === 'invented') fillLand(landPath(V, ma, 0, 'invented'), LAND_PALE, 0.5, 'dotted');
-        if (climateOn && g !== 'ground') drawClimate(V, ma, g === 'guessed' || g === 'invented' ? g : 'model');
+        if (g !== 'ground') { if (climateOn) drawClimate(V, ma, g === 'guessed' || g === 'invented' ? g : 'model'); else drawPolarIce(V, ma); }
       }
       // today's coast and the shelf's edge, this side of the seam and fading out by five million years
       if (coast && ma < 5) {

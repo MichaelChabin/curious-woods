@@ -1,6 +1,6 @@
 {
- "_about": "Pictures for the deep-time periods and events, keyed period-<id> and event-<id>; each key a list in the order the More shows them, an empty list where the answer is none. A picture with \"held\" waits on Michael and is not shown (none at present). Captions may hold <i> for names in italics. A picture with \"near\" sits after the first paragraph of its More containing that word. Written by Claude from claude/Pictures-Deep-01.md (checked 12 Oct 2026, read by Michael 13 Oct) and Pictures-Deep-02.md (checked 13 Oct); edit the batch files and the tool, not this.",
- "version": "2026-10-13b",
+ "_about": "Pictures for the deep-time periods and events, keyed period-<id> and event-<id>; each key a list in the order the More shows them, an empty list where the answer is none. A picture with \"held\" waits on Michael and is not shown (none at present). Captions may hold <i> for names in italics. A picture with \"near\" sits after the first paragraph of its More containing that word; width and height are read from the file. Written by Claude from claude/Pictures-Deep-01.md (checked 12 Oct 2026, read by Michael 13 Oct) and Pictures-Deep-02.md (checked 13 Oct); edit the batch files and the tool, not this.",
+ "version": "2026-10-13c",
  "batches": [
   "Pictures-Deep-01",
   "Pictures-Deep-02"
@@ -13,7 +13,9 @@
     "licence": "CC0",
     "author": "Anfecaro",
     "caption": "A copy of one bone from the backbone of <i>Titanoboa</i>, whose bones were found in the coal mine at Cerrejón, in the Museo Geológico Nacional José Royo y Gómez in Bogotá.",
-    "credit": "Photo: Anfecaro, CC0, via Wikimedia Commons"
+    "credit": "Photo: Anfecaro, CC0, via Wikimedia Commons",
+    "width": 2000,
+    "height": 1956
    }
   ],
   "period-heat": [
@@ -23,7 +25,9 @@
     "licence": "CC BY 4.0",
     "author": "Jaelyn Eberle, Wighart von Koenigswald and David Eberth",
     "caption": "Stumps of the swamp forest, turned to stone, on a hillside at Strathcona Fiord on Ellesmere Island.",
-    "credit": "Photos: Eberle, von Koenigswald and Eberth, <i>PLOS ONE</i>, 2020, CC BY 4.0"
+    "credit": "Photos: Eberle, von Koenigswald and Eberth, <i>PLOS ONE</i>, 2020, CC BY 4.0",
+    "width": 1762,
+    "height": 1248
    },
    {
     "file": "heat-dawn-redwood.jpg",
@@ -31,7 +35,10 @@
     "licence": "CC BY 4.0",
     "author": "Bjankuloski06",
     "caption": "Dawn redwoods, the tree most of that forest was made of, planted in a park in Auckland, New Zealand.",
-    "credit": "Photo: Bjankuloski06, CC BY 4.0, via Wikimedia Commons"
+    "credit": "Photo: Bjankuloski06, CC BY 4.0, via Wikimedia Commons",
+    "near": "dawn redwood",
+    "width": 2000,
+    "height": 1500
    }
   ],
   "period-cooling": [
@@ -41,7 +48,9 @@
     "licence": "CC0",
     "author": "Eekim",
     "caption": "Striped hills in the Badlands of South Dakota.",
-    "credit": "Photo: Eekim, CC0, via Wikimedia Commons"
+    "credit": "Photo: Eekim, CC0, via Wikimedia Commons",
+    "width": 2000,
+    "height": 1500
    },
    {
     "file": "cooling-mesohippus.jpg",
@@ -49,7 +58,10 @@
     "licence": "CC BY 2.0",
     "author": "James St. John",
     "caption": "A skeleton of <i>Mesohippus</i> from Nebraska, with three toes on each foot, in the Carnegie Museum of Natural History in Pittsburgh.",
-    "credit": "Photo: James St. John, CC BY 2.0, via Wikimedia Commons"
+    "credit": "Photo: James St. John, CC BY 2.0, via Wikimedia Commons",
+    "near": "Mesohippus",
+    "width": 2000,
+    "height": 1236
    }
   ],
   "period-grass": [
@@ -59,7 +71,9 @@
     "licence": "CC0",
     "author": "Ammodramus",
     "caption": "A rhino and a calf that was probably hers, lying where they died in the ash, under the barn near Royal, in Nebraska.",
-    "credit": "Photo: Ammodramus, CC0, via Wikimedia Commons"
+    "credit": "Photo: Ammodramus, CC0, via Wikimedia Commons",
+    "width": 2000,
+    "height": 1389
    },
    {
     "file": "grass-deinotherium-skull.jpg",
@@ -67,7 +81,10 @@
     "licence": "CC BY-SA 4.0",
     "author": "Ghedo",
     "caption": "The skull of a <i>Deinotherium</i>, with tusks that curve down from its lower jaw, in the Gallery of Palaeontology in Paris.",
-    "credit": "Photo: Ghedo, CC BY-SA 4.0, via Wikimedia Commons"
+    "credit": "Photo: Ghedo, CC BY-SA 4.0, via Wikimedia Commons",
+    "near": "Deinotherium",
+    "width": 1891,
+    "height": 2000
    }
   ],
   "period-ice": [
@@ -78,7 +95,9 @@
     "author": "Kurt Kjær and others",
     "caption": "The slopes of Kap København, at the top of Greenland, where the old genes were found in the mud.",
     "credit": "Photos: Kjær and others, <i>Nature</i>, 2022, CC BY 4.0, cropped",
-    "note": "Extended Data Fig. 1, panels a to d, cropped."
+    "note": "Extended Data Fig. 1, panels a to d, cropped.",
+    "width": 1823,
+    "height": 1299
    }
   ],
   "period-lucy": [
@@ -88,7 +107,9 @@
     "licence": "CC BY-SA 4.0",
     "author": "Diego Delso",
     "caption": "A copy of Lucy's bones, laid out in a case in the National Museum of Ethiopia, in Addis Ababa.",
-    "credit": "Photo: Diego Delso, CC BY-SA 4.0, via Wikimedia Commons"
+    "credit": "Photo: Diego Delso, CC BY-SA 4.0, via Wikimedia Commons",
+    "width": 1333,
+    "height": 2000
    },
    {
     "file": "lucy-laetoli-footprints.jpg",
@@ -96,7 +117,10 @@
     "licence": "CC BY-SA 3.0",
     "author": "Momotarou2012",
     "caption": "A cast of footprints from Laetoli, in the National Museum of Nature and Science in Tokyo.",
-    "credit": "Photo: Momotarou2012, CC BY-SA 3.0, via Wikimedia Commons"
+    "credit": "Photo: Momotarou2012, CC BY-SA 3.0, via Wikimedia Commons",
+    "near": "Laetoli",
+    "width": 2000,
+    "height": 871
    }
   ],
   "event-lucy": [
@@ -106,7 +130,9 @@
     "licence": "CC BY-SA 4.0",
     "author": "Diego Delso",
     "caption": "A copy of Lucy's bones, laid out in a case in the National Museum of Ethiopia, in Addis Ababa.",
-    "credit": "Photo: Diego Delso, CC BY-SA 4.0, via Wikimedia Commons"
+    "credit": "Photo: Diego Delso, CC BY-SA 4.0, via Wikimedia Commons",
+    "width": 1333,
+    "height": 2000
    }
   ],
   "period-hand-axes": [
@@ -117,7 +143,9 @@
     "author": "Discott",
     "caption": "A hand axe of the same kind, from Olduvai Gorge in Tanzania, between about 850,000 and 400,000 years old.",
     "credit": "Photo: Discott, CC BY-SA 3.0, via Wikimedia Commons",
-    "note": "British Museum 1934,1214.59; the age is the museum's for a cleaver from the same find (HK Bed IV)."
+    "note": "British Museum 1934,1214.59; the age is the museum's for a cleaver from the same find (HK Bed IV).",
+    "width": 2000,
+    "height": 1333
    },
    {
     "file": "hand-axes-nariokotome.jpg",
@@ -125,7 +153,10 @@
     "licence": "CC BY-SA 4.0",
     "author": "ProtoplasmaKid",
     "caption": "A cast of the skeleton of the boy from Nariokotome, as it is shown in the Nairobi National Museum, in Kenya.",
-    "credit": "Photo: ProtoplasmaKid, CC BY-SA 4.0, via Wikimedia Commons"
+    "credit": "Photo: ProtoplasmaKid, CC BY-SA 4.0, via Wikimedia Commons",
+    "near": "Nariokotome",
+    "width": 1506,
+    "height": 2000
    }
   ],
   "period-mammoths": [],
@@ -137,7 +168,9 @@
     "author": "Fred W. Baker III, US Department of Defense",
     "caption": "The bottom of the ice core at NEEM, with grit from the rock beneath the ice sheet, in July 2010.",
     "credit": "Photo: US Department of Defense",
-    "note": "Michael ruled none unless a real NEEM photograph was free; this one is, and he said yes on 13 Oct."
+    "note": "Michael ruled none unless a real NEEM photograph was free; this one is, and he said yes on 13 Oct.",
+    "width": 2000,
+    "height": 1334
    }
   ],
   "period-hippos-in-london": [
@@ -148,7 +181,9 @@
     "author": "Kevin Webb, The Trustees of the Natural History Museum, London",
     "caption": "A hippo's tooth, dug from the gravel under Trafalgar Square, kept in the Natural History Museum in London.",
     "credit": "Photo: Kevin Webb, Natural History Museum, London, CC BY 4.0",
-    "note": "NHMUK PV M 26795."
+    "note": "NHMUK PV M 26795.",
+    "width": 1616,
+    "height": 2000
    }
   ],
   "period-ice-sheets": [
@@ -158,7 +193,9 @@
     "licence": "Curious Woods; ground from NOAA ETOPO 2022 (public domain); ice from ICE-6G_C via PMIP4",
     "author": "Curious Woods",
     "caption": "A map drawn for Curious Woods: the North Sea about 20,000 years ago, with the sea lowered and ice over Ireland, the north of Britain, Scandinavia and the northern North Sea.",
-    "credit": "Map: Curious Woods, from NOAA's ETOPO 2022 and ICE-6G_C (Peltier and others, via PMIP4)"
+    "credit": "Map: Curious Woods, from NOAA's ETOPO 2022 and ICE-6G_C (Peltier and others, via PMIP4)",
+    "width": 1600,
+    "height": 978
    }
   ],
   "period-after-the-ice": [
@@ -169,7 +206,9 @@
     "author": "Mike Hettwer, in Sereno and others 2008",
     "caption": "The grave of a man at Gobero, in Niger, lifted from the sand in one block: seen from above, from below with a turtle shell, and his skull.",
     "credit": "Photos: Mike Hettwer, in Sereno and others, <i>PLOS ONE</i>, 2008, CC BY, cropped",
-    "note": "Figure 5, panels A to C (burial G1B11, about 4645 BCE); the rest of the figure left out on Michael's word, 13 Oct."
+    "note": "Figure 5, panels A to C (burial G1B11, about 4645 BCE); the rest of the figure left out on Michael's word, 13 Oct.",
+    "width": 1993,
+    "height": 777
    },
    {
     "file": "after-the-ice-tassili-cattle.jpg",
@@ -177,7 +216,10 @@
     "licence": "CC BY-SA 4.0",
     "author": "IssamBarhoumi",
     "caption": "Cattle and people, painted on a rock in Tassili n'Ajjer, in Algeria.",
-    "credit": "Photo: IssamBarhoumi, CC BY-SA 4.0, via Wikimedia Commons"
+    "credit": "Photo: IssamBarhoumi, CC BY-SA 4.0, via Wikimedia Commons",
+    "near": "Tassili",
+    "width": 2000,
+    "height": 1125
    }
   ],
   "period-molten": [
@@ -188,7 +230,9 @@
     "author": "Monika Kusiak, Richard Wirth, Simon Wilde and Robert Pidgeon",
     "caption": "Crystals of zircon from the Jack Hills, in Western Australia, each less than a quarter of a millimetre long, seen in an electron microscope by the light they give off; the numbers marked Ma are ages measured at spots inside them, in millions of years.",
     "credit": "Images: Kusiak and others, <i>Scientific Reports</i>, 2023, CC BY 4.0",
-    "note": "Figure 1, uncropped."
+    "note": "Figure 1, uncropped.",
+    "width": 1649,
+    "height": 1928
    }
   ],
   "period-oceans": [
@@ -199,7 +243,9 @@
     "author": "Didier Descouens",
     "caption": "A stromatolite from the Strelley Pool rocks of the Pilbara, in Western Australia, cut open to show its layers, in the Muséum de Toulouse.",
     "credit": "Photo: Didier Descouens, CC BY-SA 4.0, via Wikimedia Commons",
-    "note": "Muséum de Toulouse MNHT.PAL.2009.10.1; the Commons 1920 px thumbnail."
+    "note": "Muséum de Toulouse MNHT.PAL.2009.10.1; the Commons 1920 px thumbnail.",
+    "width": 1920,
+    "height": 1353
    }
   ],
   "period-oxygen": [
@@ -209,7 +255,9 @@
     "licence": "CC BY 2.0",
     "author": "Graeme Churchard",
     "caption": "The striped walls of Joffre Gorge, in Karijini, in the Pilbara of Western Australia.",
-    "credit": "Photo: Graeme Churchard, CC BY 2.0, via Wikimedia Commons"
+    "credit": "Photo: Graeme Churchard, CC BY 2.0, via Wikimedia Commons",
+    "width": 2400,
+    "height": 1594
    }
   ],
   "period-big-cells": [
@@ -220,7 +268,9 @@
     "author": "Shixing Zhu and others",
     "caption": "Ribbons and other shapes, dark in the shale of the Gaoyuzhuang rocks in Hebei, in northern China: fossils of living things made of many cells, beside rulers 5 cm long.",
     "credit": "Photos: Zhu and others, <i>Nature Communications</i>, 2016, CC BY 4.0",
-    "note": "Figure 3, 946 px, the largest copy (under the floor on Michael's word, 13 Oct)."
+    "note": "Figure 3, 946 px, the largest copy (under the floor on Michael's word, 13 Oct).",
+    "width": 946,
+    "height": 1005
    }
   ],
   "period-animals": [
@@ -230,7 +280,9 @@
     "licence": "Curious Woods",
     "author": "Curious Woods",
     "caption": "A drawing for Curious Woods: a blue whale beside two fronds from Mistaken Point, one nearly two metres tall and one a hand long that lay flat on the sea floor, all to one scale.",
-    "credit": "Drawing: Curious Woods"
+    "credit": "Drawing: Curious Woods",
+    "width": 1600,
+    "height": 520
    }
   ],
   "period-soft-bodies": [
@@ -240,7 +292,9 @@
     "licence": "CC BY-SA 4.0",
     "author": "Alicejmichel",
     "caption": "A frond in the rock at Mistaken Point, in Newfoundland, with a coin beside it for size.",
-    "credit": "Photo: Alicejmichel, CC BY-SA 4.0, via Wikimedia Commons"
+    "credit": "Photo: Alicejmichel, CC BY-SA 4.0, via Wikimedia Commons",
+    "width": 1800,
+    "height": 1350
    },
    {
     "file": "soft-bodies-dickinsonia.jpg",
@@ -249,7 +303,9 @@
     "author": "Citronnel",
     "caption": "A <i>Dickinsonia</i>, still in its rock, at Nilpena in South Australia.",
     "credit": "Photo: Citronnel, CC BY-SA 4.0, via Wikimedia Commons",
-    "near": "Dickinsonia"
+    "near": "Dickinsonia",
+    "width": 1200,
+    "height": 1600
    }
   ],
   "period-trilobites": [
@@ -260,7 +316,9 @@
     "author": "Woudloper",
     "caption": "A trilobite called <i>Eoredlichia</i> from the Chengjiang fossil beds, in Yunnan, with its two feelers kept, in the museum there.",
     "credit": "Photo: Woudloper, CC BY-SA 4.0, cropped, via Wikimedia Commons",
-    "note": "Cropped to leave out the display stand."
+    "note": "Cropped to leave out the display stand.",
+    "width": 1659,
+    "height": 2400
    },
    {
     "file": "trilobites-phacops-eye.jpg",
@@ -270,7 +328,9 @@
     "caption": "The eye of a trilobite from Ohio, more than 350 million years old: each round bump is a lens.",
     "credit": "Photo: Dwergenpaartje, CC BY-SA 3.0, via Wikimedia Commons",
     "near": "lenses",
-    "note": "Phacops rana (now Eldredgeops rana), Devonian, near Sylvania, Ohio."
+    "note": "Phacops rana (now Eldredgeops rana), Devonian, near Sylvania, Ohio.",
+    "width": 1808,
+    "height": 1752
    }
   ],
   "period-dinosaurs": [
@@ -281,7 +341,9 @@
     "author": "Armin Reindl",
     "caption": "The skull of a <i>Lystrosaurus</i> from South Africa, with one of its tusks, in the Natural History Museum in Vienna.",
     "credit": "Photo: Armin Reindl, CC BY 4.0, via Wikimedia Commons",
-    "note": "Lystrosaurus declivis; label \"Kapland, Südafrika – Trias\"."
+    "note": "Lystrosaurus declivis; label \"Kapland, Südafrika – Trias\".",
+    "width": 2211,
+    "height": 2129
    },
    {
     "file": "dinosaurs-pangaea-250.jpg",
@@ -290,7 +352,9 @@
     "author": "Curious Woods",
     "caption": "A map drawn for Curious Woods: the land about 250 million years ago, most of it joined in one continent, Pangaea, as one model fits the pieces together.",
     "credit": "Map: Curious Woods, from the plate model of Merdith and others, 2021 (EarthByte, CC BY 4.0)",
-    "near": "Pangaea"
+    "near": "Pangaea",
+    "width": 1600,
+    "height": 1600
    }
   ],
   "period-mammals": [
@@ -301,7 +365,9 @@
     "author": "Mark Byzewski",
     "caption": "A bluff at Corral Bluffs, in Colorado, with Pikes Peak behind.",
     "credit": "Photo: Mark Byzewski, CC BY 2.0, via Flickr",
-    "note": "A-0600, 7 Dec 2019; saved at 2400 px from 6000."
+    "note": "A-0600, 7 Dec 2019; saved at 2400 px from 6000.",
+    "width": 2400,
+    "height": 1600
    }
   ],
   "event-fern-spike": [
@@ -311,7 +377,9 @@
     "licence": "CC BY 2.0",
     "author": "James St. John",
     "caption": "A piece of rock from the Raton Basin, in Colorado; the pale layer across its middle is the clay the asteroid laid down.",
-    "credit": "Photo: James St. John, CC BY 2.0, via Wikimedia Commons"
+    "credit": "Photo: James St. John, CC BY 2.0, via Wikimedia Commons",
+    "width": 2400,
+    "height": 1711
    }
   ],
   "event-lystrosaurus": [
@@ -321,7 +389,9 @@
     "licence": "CC BY-SA 2.0",
     "author": "Bernard Dupont",
     "caption": "Flat-topped hills in the Karoo, in South Africa, near Beaufort West.",
-    "credit": "Photo: Bernard Dupont, CC BY-SA 2.0, via Wikimedia Commons"
+    "credit": "Photo: Bernard Dupont, CC BY-SA 2.0, via Wikimedia Commons",
+    "width": 2400,
+    "height": 1381
    },
    {
     "file": "lystrosaurus-skull.jpg",
@@ -331,7 +401,9 @@
     "caption": "The skull of a <i>Lystrosaurus</i> from South Africa, with one of its tusks, in the Natural History Museum in Vienna.",
     "credit": "Photo: Armin Reindl, CC BY 4.0, via Wikimedia Commons",
     "note": "Lystrosaurus declivis; label \"Kapland, Südafrika – Trias\".",
-    "near": "shovel lizard"
+    "near": "shovel lizard",
+    "width": 2211,
+    "height": 2129
    }
   ],
   "event-big-thwack": [
@@ -341,7 +413,9 @@
     "licence": "Curious Woods",
     "author": "Curious Woods",
     "caption": "A drawing for Curious Woods: the Earth and the Moon today, to one scale; the distance between them is not to scale.",
-    "credit": "Drawing: Curious Woods"
+    "credit": "Drawing: Curious Woods",
+    "width": 1400,
+    "height": 1040
    },
    {
     "file": "moon-forms-theia-and-earth.svg",
@@ -350,7 +424,9 @@
     "author": "Curious Woods",
     "caption": "A drawing for Curious Woods: the young Earth and Theia to one scale, if Theia was the size of Mars; nobody knows Theia's size. The dashed circle is the Earth today.",
     "credit": "Drawing: Curious Woods",
-    "near": "Theia"
+    "near": "Theia",
+    "width": 1300,
+    "height": 820
    }
   ]
  }

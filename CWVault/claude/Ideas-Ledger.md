@@ -209,6 +209,7 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** The red ball becomes a surface with a story; and a texture is the first use of the per-pixel globe Spec-Map-Lab planned.
 **Costs.** A texture that turns with the globe needs the inverse projection (for each pixel of the disc, find its latitude and longitude and sample the picture), which is the per-pixel work the plan deferred for the iPad's sake; a texture that does not turn is a picture, not a globe. About thirty lines, and an iPad test.
 **Source.** Michael, 6 Oct, after the iPad test.
+*Added 12 Oct.* The maps exist: `prototypes/globe-textures/`, a cooling-order map and a cracks map (Claude, from a chat on the iPad), and the brief of 12 Oct part 7 asks for them.
 
 ### The atmosphere, if she likes   · 6 Oct 2026 · loose
 **Idea.** The air should be visible when she wants it. Boring most of the time, but there are years when it matters: the methane haze before the oxygen came, the oxygen arriving at 2.4 billion.
@@ -331,6 +332,20 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** Every figure in a More that stands on a series wants that series found and licensed; the pool grows toward the present faster than anyone can write. The grade field is new to the plot form.
 **Source.** Michael's question, chat of 11 Oct; the question-label and the grades Claude's.
 
+### Molten to black, twice   · 12 Oct 2026 · candidate
+**Idea.** The young Earth cools twice. It assembles molten at about 4.57 billion, freezes a black crust in rafts, perhaps gets an ocean, and then the Moon-forming impact melts it to the core; it freezes again, a different crust, and is blue by 4.4. The globe shows both, with a white flash at the impact. Whether there was a blue Earth before the Moon is not known, and the globe says so with a faint, uncertain blue.
+**Where it sits.** The globe through the Molten band; the *Moon forms* event; the Edge of Knowing (the first ocean is a nobody-knows).
+**Opens.** The red ball becomes a sequence with a plot, and the Moon event has something to point at. The same two maps and one threshold do both coolings; nothing new in the engine beyond the skin.
+**Costs.** The first cycle is seventy million years inside a band that is already thin, so only the globe can show it, not the line. Needs the per-pixel globe (the skin, brief of 12 Oct part 1).
+**Source.** Michael, 12 Oct, on the iPad, after seeing the first texture maps; the timing and the uncertain first ocean from Claude.
+
+### The crust freezes in rafts (working name)   · 12 Oct 2026 · candidate
+**Idea.** A surface that cools is not a crossfade. One grayscale map says where crust forms first and where last; the engine draws crust wherever the map is below a threshold that rises with the age, and the rafts grow from their centres and meet at the cracks, which glow and then dim. One image and one number per frame, in place of keyframes.
+**Where it sits.** `globe.js`, the Molten band; the same trick could later serve ice sheets growing, a desert spreading, or any front that moves.
+**Opens.** Any slow change over the globe becomes one map and a threshold; the ice outlines could be replaced by a single "freezing order" map if the data ever allows.
+**Costs.** One texture read per pixel; needs the per-pixel globe.
+**Source.** Claude, 12 Oct, making the molten maps for Michael.
+
 ## Stories
 
 ### The edge of knowing (working name)   · 5 Oct 2026 · candidate
@@ -347,6 +362,13 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** Stories stop carrying lines of their own; the lab is the one timeline.
 **Costs.** The World section as built (a fixed viewing on the page) becomes a call into the lab with settings; the marker and the snap-back are new to the Time Machine.
 **Source.** Michael's chat of 8 Oct, `claude/Timeline-Format-Thinking-Oct08.md`.
+
+### The Moon that filled the sky   · 12 Oct 2026 · loose
+**Idea.** A gallery story for the Moon's birth and the days after it: the Moon fifteen times closer than now, filling the sky, a day five hours long, the tides mountains high; and the slow drift outward that the Apollo mirrors still measure. The event *Moon forms* links to it.
+**Where it sits.** Stories, timeline strand, beside the Edge of Knowing; the *Moon forms* event and the globe's double cooling.
+**Opens.** The deep events get their first story a child can picture; the Apollo mirrors tie it to something measured today.
+**Costs.** Nothing known; the story's words through the pool.
+**Source.** Michael, 12 Oct: "there will be a story or two in the gallery about this"; the close Moon Claude's suggestion.
 
 ## Practice and Maya
 

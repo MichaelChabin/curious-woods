@@ -84,13 +84,21 @@
     '.cw-deep .knob{cursor:grab;}',
     '.cw-deep.dragging,.cw-deep.dragging .knob{cursor:grabbing;}',
     '.cw-deep .mark{cursor:pointer;}',
-    '.cw-deep .mark line,.cw-deep .mark text{pointer-events:none;}',   /* the drawn line and label never catch a tap; the tap area below the band does */
+    '.cw-deep .mark line,.cw-deep .mark text{pointer-events:none;}',   /* the drawn line and label never catch a tap; the tap areas (the line's and the label's) do */
     '.cw-deep .halo{paint-order:stroke;stroke:#f4f1e8;stroke-width:4px;stroke-linejoin:round;}',
     '.cw-deep .env{cursor:grab;}',
     '.cw-deep .seg{cursor:pointer;}',
     '.cw-deep .seg:hover rect.tint{opacity:.42;}',
     '.cw-deep .word{cursor:pointer;}',
-    '.cw-deep .word:hover text{fill:#3D3D3A;}'
+    '.cw-deep .word:hover text{fill:#3D3D3A;}',
+    /* a picture in a More (13 Oct 2026, Prompt-Build-Pictures-in-the-Mores): the window's width, a tall one capped and centred,
+       never cropped; the caption in the More's ink at 14 px, the credit in the references' size and colour; a tap opens it larger */
+    '.cw-pic{margin:0 0 1em;}',
+    '.cw-pic img{display:block;width:100%;height:auto;cursor:zoom-in;}',
+    '.cw-pic.tall img{height:340px;width:auto;max-width:100%;object-fit:contain;margin:0 auto;}',   /* every tall file is over 340 px high, so the box is known before the file arrives */
+    '.cw-pic .cap{font-size:14px;line-height:1.4;color:#2a241c;margin:6px 0 0;}',
+    '.cw-pic .cred{font-size:12px;line-height:1.45;color:#6b655a;margin:2px 0 0;}',
+    '.cw-pic-large figure img{width:auto;height:auto;max-width:min(700px,calc(100vw - 56px));max-height:calc(100vh - 230px);}'
   ].join('\n');
 
   var SVG = 'http://www.w3.org/2000/svg';
@@ -331,7 +339,9 @@
             var mg = el('g', { 'class': 'mark' }, grp);
             el('line', { x1: l.mx, y1: g.stripY + STRIP, x2: l.mx, y2: ly - 10, stroke: INK, 'stroke-width': 0.8 }, mg);
             el('text', { x: l.mx, y: ly, 'font-size': 11, fill: INK_SOFT, 'text-anchor': 'middle', 'class': 'halo' }, mg, l.mk.label);
-            el('rect', { x: l.mx - 8, y: g.stripY + STRIP + 1, width: 16, height: ly - g.stripY - STRIP + 3, fill: 'transparent' }, mg);   // the band and its name are the period's to tap; below the band is the event's
+            el('rect', { x: l.mx - 11, y: g.stripY + STRIP + 1, width: 22, height: ly - g.stripY - STRIP + 3, fill: 'transparent' }, mg);   // the band and its name are the period's to tap; below the band is the event's
+            var lw2 = l.mk.label.length * 5.6 + 8;   // the label itself is a tap too (13 Oct 2026, Michael: events were hard to hit with a mouse)
+            el('rect', { x: l.mx - lw2 / 2, y: ly - 11, width: lw2, height: 15, fill: 'transparent' }, mg);
             el('title', {}, mg, l.mk.label + ' · ' + fmt(l.mk.ma) + (l.mk.tail ? ' (probably began by ' + fmt(l.mk.tail).replace(' ago', '') + ')' : ''));
             mg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
             mg.addEventListener('click', function (ev) { ev.stopPropagation(); tapMark(d, l.mk, L); });
@@ -340,7 +350,7 @@
         g.ticks.forEach(function (tk) {
           var mg = el('g', { 'class': 'mark' }, grp), len = g.open ? TICK_H + 2 : TICK_H;
           el('line', { x1: tk.mx, y1: g.stripY + STRIP, x2: tk.mx, y2: g.stripY + STRIP + len, stroke: g.open ? INK : '#9a958b', 'stroke-width': 0.8, opacity: g.open ? 0.9 : 0.6 }, mg);
-          el('rect', { x: tk.mx - 6, y: g.stripY + STRIP + 1, width: 12, height: len + 6, fill: 'transparent' }, mg);
+          el('rect', { x: tk.mx - 9, y: g.stripY + STRIP + 1, width: 18, height: len + 8, fill: 'transparent' }, mg);
           el('title', {}, mg, tk.mk.label + ' · ' + fmt(tk.mk.ma));
           mg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
           mg.addEventListener('click', function (ev) { ev.stopPropagation(); tapMark(d, tk.mk, L); });
@@ -644,12 +654,69 @@
     if (g) L.push('or ' + (g.about ? 'about ' : '') + withCommasStr(g.value) + ' years ago.');
     return L;
   }
+  /* Pictures in the Mores (13 Oct 2026, CWVault/claude/Prompt-Build-Pictures-in-the-Mores.md). The manifest,
+     art/stories/deep/manifest.json (written by tools/pictures-manifest.py), is keyed period-<id> and event-<id>; each
+     key a list in the order the More shows them. cwDeepTime.pictures(url) fetches it once; moreBody(key, paragraphs)
+     returns the paragraphs with the pictures placed — the first directly below the span line, before the first
+     paragraph; a later one directly after the first paragraph containing its `near` word (after the last paragraph,
+     and the console says so, if the word is not found); a held picture is not shown. If the manifest has not loaded
+     or the key is missing, the paragraphs are drawn as they were, and the console says why once. wirePictures(box)
+     makes a tap on a picture open it larger in its own cwWindow, with the sampler's zoom (map.js, opts.zoom). */
+  var pictures = null, picturesBase = '', picturesWhy = null, picturesSaid = {};
+  cwDeepTime.pictures = function (url) {
+    picturesBase = url.replace(/[^\/]*$/, '');
+    return fetch(url, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(r.status + ' ' + r.statusText); return r.json(); })
+      .then(function (m) { pictures = m.pictures || {}; return pictures; })
+      .catch(function (e) { picturesWhy = 'the pictures manifest did not load (' + (e && e.message || e) + ')'; console.warn('deep-time.js: ' + picturesWhy); });
+  };
+  function stripTags(t) { return String(t == null ? '' : t).replace(/<[^>]*>/g, ''); }
+  cwDeepTime.pictureHTML = function (p) {
+    var tall = p.width && p.height && p.height > p.width;
+    var h = '<figure class="cw-pic' + (tall ? ' tall' : '') + '">';
+    h += '<img src="' + escapeHTML(picturesBase + p.file) + '"' + (p.width ? ' width="' + p.width + '" height="' + p.height + '"' : '') + ' alt="' + escapeHTML(stripTags(p.caption)) + '" data-caption="' + escapeHTML(p.caption || '') + '" data-credit="' + escapeHTML(p.credit || '') + '">';
+    h += '<figcaption><div class="cap">' + (p.caption || '') + '</div><div class="cred">' + (p.credit || '') + '</div></figcaption></figure>';
+    return h;
+  };
+  function paragraphHTML(p) { return p && p.quote ? '<blockquote><p>' + prose(p.quote) + '</p></blockquote>' : '<p>' + prose(p) + '</p>'; }
+  function sayOnce(key, why) { if (!picturesSaid[key]) { picturesSaid[key] = true; console.info('deep-time.js: no pictures for ' + key + ': ' + why); } }
+  cwDeepTime.moreBody = function (key, paragraphs) {
+    var list = pictures && key ? pictures[key] : null;
+    if (!pictures) { if (key) sayOnce(key, picturesWhy || 'the manifest has not loaded yet'); list = null; }
+    else if (key && !list) sayOnce(key, 'no such key in the manifest');
+    list = (list || []).filter(function (p) { return !p.held; });
+    var out = [], after = [];
+    paragraphs.forEach(function () { after.push(''); });
+    list.forEach(function (p, i) {
+      if (i === 0) { out.push(cwDeepTime.pictureHTML(p)); return; }
+      var at = -1;
+      if (p.near) paragraphs.some(function (pg, j) { var t = pg && pg.quote ? pg.quote : String(pg || ''); if (t.indexOf(p.near) >= 0) { at = j; return true; } return false; });
+      if (at < 0) { console.warn('deep-time.js: ' + key + ': the word "' + (p.near || '') + '" for ' + p.file + ' is not in its More; the picture goes after the last paragraph'); at = paragraphs.length - 1; }
+      after[at] += cwDeepTime.pictureHTML(p);
+    });
+    paragraphs.forEach(function (pg, j) { out.push(paragraphHTML(pg) + after[j]); });
+    return out.join('');
+  };
+  cwDeepTime.wirePictures = function (box) {
+    Array.prototype.forEach.call(box.querySelectorAll('.cw-pic img'), function (img) {
+      img.addEventListener('error', function () { var f = img.parentNode; if (f) f.removeChild(img); });   // a file that fails leaves no frame, only its words
+      img.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        if (!window.cwWindow) return;
+        var big = document.createElement('div'); big.className = 'cw-pic-large';
+        var fig = document.createElement('figure'), im = document.createElement('img'), cap = document.createElement('figcaption');
+        im.src = img.src; im.alt = img.alt; if (img.width) { im.width = img.getAttribute('width'); im.height = img.getAttribute('height'); }
+        cap.innerHTML = img.getAttribute('data-caption') + (img.getAttribute('data-credit') ? '<br>' + img.getAttribute('data-credit') : '');
+        fig.appendChild(im); fig.appendChild(cap); big.appendChild(fig);
+        window.cwWindow(big, { zoom: im });
+      });
+    });
+  };
   cwDeepTime.moreHTML = function (rec) {
     var dl = rec.more.dateLine, lines;
     if (dl.count && dl.ordinary) lines = timelineDateLines(dl);
     else { lines = [dl.ago]; if (dl.tail) lines.push(dl.tail); if (dl.sure) lines.push(dl.sure); }
     var h = '<h3>' + escapeHTML(rec.label) + '</h3><div class="stepped">' + lines.map(function (l) { return '<div>' + escapeHTML(l) + '</div>'; }).join('') + '</div>';
-    h += rec.more.paragraphs.map(function (p) { return p && p.quote ? '<blockquote><p>' + prose(p.quote) + '</p></blockquote>' : '<p>' + prose(p) + '</p>'; }).join('');
+    h += cwDeepTime.moreBody(rec.id ? 'event-' + rec.id : null, rec.more.paragraphs);
     if (rec.knownFrom) h += '<p class="known"><i>Known from</i> ' + escapeHTML(rec.knownFrom) + '.' + (rec.placeNow ? ' <i>The evidence is at</i> ' + escapeHTML(rec.placeNow.name) + '.' : '') + '</p>';
     if (rec.references && rec.references.length) h += '<div class="refs">' + rec.references.map(function (r) { return '<div>' + prose(r) + '</div>'; }).join('') + '</div>';
     return h;

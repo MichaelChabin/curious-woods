@@ -199,7 +199,7 @@ checked 12 Oct, Michael's answers applied 13 Oct): seventeen JPEGs, long edge 1,
 on Michael (none since 13 Oct); `period-lucy` and `event-lucy` share `lucy-skeleton.jpg`. Every licence is read from the
 file's own data (Commons `extmetadata`, the NHM Data Portal record, the papers' own statements): CC0, CC BY, CC BY-SA, one US
 government photograph and one CW map (`ice-sheets-map-20000.jpg`, from `js/map.js`, ETOPO 2022 and `stories/ice-outlines.json`,
-the sea at −130 m). **Not yet read by anything**: the page shows no pictures in a More yet; the build note is in the batch file.
+the sea at −130 m). **Read, since 13 Oct 2026, by `js/deep-time.js`** (`cwDeepTime.pictures(url)` fetches the manifest once when `active/time-machine.html` builds its bar; `moreBody(key, paragraphs)` places the pictures in a More, `wirePictures(box)` makes a tap open one larger) **and so by `active/time-machine.html`**, whose period and event Mores draw them; the manifest also carries each file's `width` and `height`, read from the file by the tool, so the window does not jump as a picture loads.
 *Batch 2 (13 Oct 2026, `CWVault/claude/Pictures-Deep-02.md`, checked, Michael's answers applied the same day):* sixteen files more — eleven JPEGs (long
 edge 946 to 2,400 px; the larger photographs saved at 2,400), one PNG figure and three SVG drawings — for the nine periods of
 Periods-Deep-01 and the events `fern-spike`, `lystrosaurus` and `big-thwack`; `period-dinosaurs` and `event-lystrosaurus` share
@@ -1359,7 +1359,9 @@ backstop for the Claude Code session that lands the file.
 - **`deep-time-bench.html` (6 Oct 2026)** — *Deep time, in sections*: the nested bar alone, Stage 2
   of `CWVault/claude/Plan-Deep-Time.md`. **`../js/deep-time.js`** (new that day; 12 Oct 2026: events on the deepest line only, the Earth's title from the tree,
   the bands 12 px in the line's colour, one-line margin titles "Animals 720 Ma", no dates row, the knob above the band with its
-  age, the range readout — see `active/time-machine.html`, 12 Oct) — `cwDeepTime(host,
+  age, the range readout — see `active/time-machine.html`, 12 Oct; **13 Oct 2026: the pictures in the Mores** — `cwDeepTime.pictures(url)`,
+  `pictureHTML(p)`, `moreBody(key, paragraphs)` and `wirePictures(box)`, reading `art/stories/deep/manifest.json`; `moreHTML(rec)`
+  now places an event's pictures by `event-<id>`; the `.cw-pic` and `.cw-pic-large` styles) — `cwDeepTime(host,
   opts)`, a shelf module mounted into an element as `glass.js` and `map.js` are: one SVG; the top
   bar is the whole of Earth from `../stories/deep-time.json`; tap a chunk and it comes down as a
   bar of its own at three-quarters width, attached by two lines and a pale trapezoid to the gap it
@@ -1603,7 +1605,50 @@ backstop for the Claude Code session that lands the file.
   outputs/time-machine-12oct-cities-*`. **And part 5, the plan, not the build:** `CWVault/claude/Plan-Edge-of-Knowing.md` — the
   stripes interactive (the ruler that clicks, the continents closing, the speed read once), what she does, the data (the reversal
   timescale, Müller et al.'s seafloor age grid, the plate rotations as the check), where it sits (behind the globe's *measured* word,
-  and in the gallery as the story's tool), and what the story's words must carry. A September record that stands aside for the shared list (`same`) is kept,
+  and in the gallery as the story's tool), and what the story's words must carry. **13 Oct 2026 — pictures in the Mores (`CW_VERSION 2026-10-13 66ff710`; `js/deep-time.js?v=2026-10-13` here and on
+  the two benches; `CWVault/claude/Prompt-Build-Pictures-in-the-Mores.md`):** a period's More (`showPeriod`) and an event's
+  (`cwDeepTime.moreHTML`, from `showRec`) draw the pictures of `../art/stories/deep/manifest.json` (pictures batches 1 and 2), through
+  one function on the shelf, `cwDeepTime.moreBody(key, paragraphs)`: the first picture directly below the span line, a second
+  directly after the first paragraph holding its `near` word; the picture at the window's width, a tall one 340 px high and
+  centred, never cropped; the caption at 14 px in the ink, the credit in the references' size and colour; `width` and `height` on
+  the `img` from the manifest; a tap opens it larger in its own `cwWindow` with the sampler's zoom (`opts.zoom`). The manifest is
+  fetched once in `buildBar`; if it does not load, or a key is missing, the More is drawn as before and the console says why
+  once; a file that fails leaves only its caption and credit. The After-the-Ice events' Mores (`openMore`) are untouched. Checked
+  on the Mac at 1024: all twenty-one periods and the four events of both batches, each picture in order with its caption and
+  credit, second pictures after their paragraphs (*Heat*'s and *Cooling*'s name their second picture in the first paragraph, so
+  it sits right under the first); *Mammoths*, *Shells*, *Flowers* and *Jericho tower* unchanged; the Badlands, Lucy and the
+  *Ice sheets* map opened larger, zoomed, panned, reset and closed; at 375 px *Grass* and *After the ice* fit with no caption
+  clipped; no console errors. Screenshots `Claude outputs/pictures-more-grass.jpg`, `pictures-more-lucy.jpg`,
+  `pictures-larger-lucy.jpg`, `pictures-more-after-the-ice-phone.jpg`. Open: *Fern spike* and *Lystrosaurus* cannot be tapped
+  on their lines at 1024 (thinned out within 3 px of *The asteroid* and *The Great Dying*; their Mores were checked through the
+  same function). **13 Oct 2026, later — Michael's timeline changes, Job 2 (`CW_VERSION 2026-10-13c 66ff710`; `js/deep-time.js`, `js/map.js` and
+  `js/globe.js` at `?v=2026-10-13c` here and on the two benches; the story pages keep their `map.js` stamp, nothing they draw changed):**
+  *The opening state:* the Earth line alone, the knob at today, the same every visit (`scene: []`; the 12 Oct chain down to After the
+  ice is retired; a story's `?view=` still opens its own line). *The map's controls* (`#mapbar`, above the map): *play* at the left edge with
+  a speed slider beside it (a crossing of the open line in 60 s at 1 to 6 s at 10; the word reads *stop* while it runs; any tap stops it;
+  it drags the marker across the deepest deep line, or the Focus window once After the ice is open, and the map follows), *Globe/Map* in the
+  middle (moved out of the column), *reset* at the right edge (re-homes the map and clears the page's zoom, as the strip's word did; that
+  word is hidden), all in the ink. *Climate* is withdrawn from the column until Michael can explain it (the handler stays, guarded).
+  *Graphs:* the word opens the shared info panel with three sentences, and the panel closes on any other tap; the plot words sit 30 px in
+  and 2 px apart; *Sun and inside* is *Energy source*; the four deep plot words are always offered, and a tap opens the Earth line and
+  draws the plot. *Events:* a tap on an event's label is a tap on the event, and the hit strip is 22 px (`deep-time.js`); a tapped event
+  always goes through to the zoom and the names (`showRec` no longer returns when the passing line had just shown the same record);
+  the names inside the box are placed from the box the zoom was asked for (`zoomBox`), not the bounds mid-slide; the red dot is the
+  tapped event's only (`tappedId`), and `showPeriod` clears the ids before it redraws the marks, so no red dot outlives its period.
+  *The map engine* (`map.js`, `globe.js`): the flat sea is the colour of the deep water the skin brings with the pieces (`SEA #5793b4`,
+  `SEA_DEEP #33699a`); the polar ice draws whatever Climate says (`drawPolarIce`), so the ice does not vanish past the 2.6 Ma seam;
+  fitted ages (540 to 1,000 Ma) draw once like inferred, the six shifted ghosts gone (the "fuzzy shapes"); the flat map alone fits the
+  box whole, poles and all (`deepSize`), and the ground map's `FIT` is the whole world (90 S to 90 N); the cities draw on the ground map
+  too, where they are today (`markMap`, from `stories/plates/cities.json`), and on both maps their names are 14 px with no halo. Checked
+  on the Mac at 1024 and at 375: the opening state; play and stop on a deep line and on After the ice; Graphs open and close; Energy
+  source from Mammals opens Earth and draws; Homo sapiens tapped zooms to Jebel Irhoud with its name; reset; cities at 0.8 Ma and
+  3 Ma; the whole world at the start; 700 Ma without ghosts; no console errors. Screenshots `Claude outputs/time-machine-13oct-*.jpg`.
+  **Open, engine work, not done:** east–west wrapping on the ground map (the pyramid clamps longitude and its tiles, lines and marks
+  are drawn once; the deep flat map wraps); the flashes at plate-age boundaries (pieces appear whole at their birth age, many share
+  one, and the skin switches method at 200, 540 and 1,000 Ma without a blend; a crossfade as the cities have is the fix); a marker for
+  the asteroid on the drifting map (the record's place is Gubbio, the clay, not the crater; Chicxulub with a plate id is a batch
+  change, and the globe has no marker API yet, `drawCities` is the model); the ground map's ice outline is the 26,000-year one held
+  unchanged back to 2.6 Ma; the deep seam's half-second scale-and-fade. The event stories for the five plots are not written. A September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the

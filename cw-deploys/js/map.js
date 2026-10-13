@@ -145,6 +145,8 @@
     '.cw-map svg text.cw-minor{font-size:' + SIZE_MINOR + 'px;}',
     '.cw-map svg text.cw-water{font-style:italic;}',
     '.cw-map svg text.cw-on{font-weight:bold;}',
+    '.cw-map svg text.cw-city{font-size:14px;}',
+    '.cw-map svg g.cw-halos text.cw-city{display:none;}',   /* a city's name: 14 px, no halo (13 Oct 2026, Michael) */
     '.cw-map svg g.cw-halos text{fill:none;stroke:' + HALO + ';stroke-width:' + (2 * HALO_PX) + 'px;stroke-linejoin:round;stroke-linecap:round;}',
     '.cw-map svg g.cw-halos{opacity:' + HALO_ALPHA + ';}',
     '.cw-map .cw-map-text{position:absolute;font-family:' + FONT + ';font-size:' + SIZE_TEXT + 'px;line-height:1.35;color:' + INK + ';background:' + PAPER + ';padding:5px 8px;max-width:220px;pointer-events:none;user-select:none;-webkit-user-select:none;}',
@@ -840,7 +842,7 @@
         layer.appendChild(g);
         var size = m.minor ? SIZE_MINOR : SIZE;
         box = place(p, m.name || '', size, false, r, m.side, placed, dots, w, h, m);
-        var cls = [m.minor ? 'cw-minor' : '', m.on ? 'cw-on' : ''].join(' ').trim() || null;
+        var cls = [m.minor ? 'cw-minor' : '', m.on ? 'cw-on' : '', m.cls || ''].join(' ').trim() || null;
         if (box) { placed.push(box); label(m.name || '', box, cls, halosLayer, glyphLayer); }
       }
     }
@@ -1091,7 +1093,7 @@
           // the flat map alone fills the box's width (Michael, 9 Oct: when it is map only it should fill its area);
           // the box is wider than 2:1, so the poles are cropped evenly top and bottom, as the pyramid crops them.
           // Beside the globe it keeps to its half.
-          if (flat && n === 1) { d = Math.max(160, cw - 16); k.style.width = d + 'px'; k.style.height = (d / 2) + 'px'; }
+          if (flat && n === 1) { d = Math.max(160, Math.min(cw, 2 * hh) - 16); k.style.width = d + 'px'; k.style.height = (d / 2) + 'px'; }   // whole, poles and all (Michael, 13 Oct)
           else if (flat) { d = Math.max(160, Math.min(cw, 2 * hh) - 16); k.style.width = d + 'px'; k.style.height = (d / 2) + 'px'; }
           else { d = Math.max(120, Math.min(cw, hh) - 16); k.style.width = d + 'px'; k.style.height = d + 'px'; }
         });
