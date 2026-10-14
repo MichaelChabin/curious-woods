@@ -1,5 +1,5 @@
 ---
-status: Written 13 Oct 2026, for Michael to paste into Claude Code, after pictures batch 1 (Pictures-Deep-01.md) was answered, applied and pushed (d3dec02). Brought up to date the same day after pictures batch 2 (Pictures-Deep-02.md, pushed 66ff710): the manifest now holds both batches, batch 2's `near` words are already in the tool, and the checks include batch 2's Mores. Not yet run.
+status: Written 13 Oct 2026, for Michael to paste into Claude Code, after pictures batch 1 (Pictures-Deep-01.md) was answered, applied and pushed (d3dec02). Brought up to date the same day after pictures batch 2 (Pictures-Deep-02.md, pushed 66ff710): the manifest now holds both batches, batch 2's `near` words are already in the tool, and the checks include batch 2's Mores. Run 13 Oct 2026, afternoon, in Claude Code, and pushed with Michael's timeline changes (`4b76e41`): both batches at *built*. Done; kept as the record of how the pictures are drawn. A later pictures batch needs no new build, only its entries and `near` words in `tools/pictures-manifest.py`.
 role: Puts the deep-time pictures into the Mores on the Time Machine page: each picture in its More's window, with its caption and credit, read from art/stories/deep/manifest.json. The first build of the pictures kind; every later pictures batch only adds to the manifest.
 ---
 
