@@ -217,15 +217,15 @@
   </main>
 </section>
 
-<script src="../js/map.js?v=2026-10-13c"></script>
+<script src="../js/map.js?v=2026-10-13d"></script>
 <script src="../js/timeline.js?v=2026-09-27-ati"></script>
-<script src="../js/globe.js?v=2026-10-13c"></script>
-<script src="../js/deep-time.js?v=2026-10-13c"></script>
+<script src="../js/globe.js?v=2026-10-13d"></script>
+<script src="../js/deep-time.js?v=2026-10-13d"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-13c 66ff710';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-13d 4b76e41';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -419,8 +419,11 @@
   function setHandle(y) { handle = Math.max(focus.a, Math.min(focus.b, y)); draw(); timeToMap(); }
   function timeToMap() {
     if (!handed) return;                                  // the deep marker drives the map until After the ice is open
-    if (map && map.setTime) { cancelAnimationFrame(mapRaf); mapRaf = requestAnimationFrame(() => map.setTime(handle - ICE)); }
-    if (bar) bar.setYear((THIS_YEAR - (handle - ICE)) / 1e6);   // the copper ticks on the lines above follow the handle
+    // while play runs (13 Oct 2026) the map and the lines above are updated a few times a second, not every frame: the
+    // handle itself moves every frame, and Safari stepped when every frame also rebuilt seven lines and the ground
+    const now = performance.now();
+    if (map && map.setTime && (!playing || now - playing.mapAt > 60)) { if (playing) playing.mapAt = now; cancelAnimationFrame(mapRaf); mapRaf = requestAnimationFrame(() => map.setTime(handle - ICE)); }
+    if (bar && (!playing || now - playing.barAt > 120)) { if (playing) playing.barAt = now; bar.setYear((THIS_YEAR - (handle - ICE)) / 1e6); }   // the copper ticks on the lines above follow the handle
   }
 
   // ---------- pointer: Main moves the Focus window; the knob and empty Detail move the handle ----------
@@ -538,6 +541,7 @@
   let zoomed = false;
   function inBounds(lat, lon, b, inner) {
     const dx = (b.east - b.west) * (1 - inner) / 2, dy = (b.north - b.south) * (1 - inner) / 2;
+    lon = lon - 360 * Math.round((lon - (b.west + b.east) / 2) / 360);   // the box may run past 180 now that the map wraps (13 Oct 2026)
     return lon >= b.west + dx && lon <= b.east - dx && lat >= b.south + dy && lat <= b.north - dy;
   }
   function stays(lat, lon) { return zoomed && map && map.bounds && inBounds(lat, lon, map.bounds(), 0.7); }
@@ -679,7 +683,7 @@
   // slider says how fast (a crossing in 60 s at 1, 6 s at 10); the word reads stop while it runs, and any tap stops it
   let playing = null;
   function playSecs() { return 66 - 6 * Number($('speed').value); }
-  function stopPlay() { if (!playing) return; cancelAnimationFrame(playing.raf); document.removeEventListener('pointerdown', playing.stop, true); playing = null; $('wPlay').textContent = 'play'; }
+  function stopPlay() { if (!playing) return; cancelAnimationFrame(playing.raf); document.removeEventListener('pointerdown', playing.stop, true); playing = null; $('wPlay').textContent = 'play'; if (map && map.deepFast) map.deepFast(false); }
   function startPlay() {
     stopAnim(); stopPlay();
     const deep = bar && !handed;
@@ -694,9 +698,10 @@
       if (k < 1 && playing) playing.raf = requestAnimationFrame(step); else stopPlay();
     };
     const stop = ev => { if (!$('mapbar').contains(ev.target)) stopPlay(); };
-    playing = { raf: requestAnimationFrame(step), stop };
+    playing = { raf: requestAnimationFrame(step), stop, barAt: 0, mapAt: 0 };
     document.addEventListener('pointerdown', stop, true);
     $('wPlay').textContent = 'stop';
+    if (map && map.deepFast) map.deepFast(true);   // the drifting map draws its flat fills while the year runs, the skin returns at stop (Safari stepped)
   }
   $('wPlay').addEventListener('click', ev => { ev.stopPropagation(); if (playing) stopPlay(); else startPlay(); });
   $('speed').addEventListener('pointerdown', ev => ev.stopPropagation());
@@ -711,6 +716,7 @@
   // window, from stories/deep-time-periods.json; a period with no words yet shows its name and span
   function showPeriod(node, span) {
     namesOn = false; zoomed = false; zoomBox = null; tappedId = null; shownId = null; markMap(); graphsFor();   // the ids first, then the marks (13 Oct: the red dot stayed)
+    if (map && map.deepMark) { map.deepMark(null); map.deepZoom(null); }
     const words = bar && bar.periodWords(), rec = node && words && words[node.name];
     if (!node) { summary.innerHTML = '<span class="hint">about ' + esc(bar.fmt(span.from - span.to).replace(' ago', '')) + '</span>'; return; }
     shownId = 'period:' + node.name;
@@ -737,6 +743,11 @@
     if (!passed && map) {   // the map goes to the event's place and shows its name; on the globe it turns to face her
       const pl = rec.placeNow || rec.place; namesOn = true; tappedId = rec.id;
       if (pl && pl.lat != null) { if (!stays(pl.lat, pl.lon)) goTo(pl.lat, pl.lon); map.deepTurn(pl.lon, pl.lat); }
+      // on the drifting map (past the seam, or the globe up): a marker where it happened — the event's own place (the asteroid's
+      // crater) before the place of its evidence — carried on its plate, and the flat map zooms to it (13 Oct 2026)
+      const then = rec.place && rec.place.lat != null ? rec.place : pl;
+      if (map.deepMark) map.deepMark(then && then.lat != null ? { lat: then.lat, lon: then.lon, name: shortName(then) } : null);
+      if (then && then.lat != null && map.deepZoom && map.deep().on) map.deepZoom(then.lon, then.lat, 4);
       markMap();
     }
     summary.innerHTML = (passed ? '<span class="passed">just passed</span><br>' : '') + '<b>' + esc(sentence(rec.label)) + '</b> ' + cwDeepTime.prose(rec.summary) + (rec.more ? ' <span class="cmd" id="more" role="button" tabindex="0">More</span>' : '');

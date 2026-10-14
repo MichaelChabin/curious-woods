@@ -26,6 +26,7 @@ The deep fields, as the batches write them:
                   and evidence: 'dated' | 'earliest'
   **Known from:** one line → knownFrom
   **Place now:**  'none' | 'Erawondoo Hill, Jack Hills, … (26.18 S, 116.93 E)' → placeNow: null | { name, short, lat, lon }
+  **Place then:** optional (13 Oct 2026, the asteroid): where it happened, in today's coordinates, for the drifting map to carry on its plate → place: { name, short, lat, lon }
   **Kind:**       a word from the closed list
   **Replaces:**   'sketch *Blue Earth*' | 'a new mark (Michael, 7 Oct)' | "the sketch *X*'s …" → replacesSketch: [labels] | []
   the date line:  one or two lines in a code block, 'About 4.4 billion years ago' / 'and probably begun by …'
@@ -152,6 +153,8 @@ def parse_event(block, source, where):
     rec['evidence'] = 'earliest' if rec['tail'] else 'dated'
     rec['knownFrom'] = field(lines, 'Known from', where)
     rec['placeNow'] = parse_place_now(field(lines, 'Place now', where))
+    then = field(lines, 'Place then', where, required=False)
+    rec['place'] = parse_place_now(then) if then else None   # 13 Oct 2026: where it happened, for the drifting map (the asteroid: Chicxulub)
     kind = field(lines, 'Kind', where); k = re.sub(r'\s*\(.*\)\s*$', '', kind.strip().lower())   # 'crop or animal (a living thing; …)' → the word
     if 'living thing' in kind.lower(): k = 'life'   # Michael, 7 Oct: *life* is a kind; the batches reached for it before it existed
     rec['kindRaw'] = kind; rec['kind'] = KINDS.get(k, k)

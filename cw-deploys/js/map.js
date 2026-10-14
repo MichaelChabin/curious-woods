@@ -334,11 +334,11 @@
       var levels = region.shelf.levels, zs = Math.min(levelFor(), levels[levels.length - 1]);
       var L = region.levels[zs], dlon = 360 / L.cols, dlat = 180 / L.rows;
       var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
-      var tx0 = Math.max(0, Math.floor((nw.lon + 180) / dlon)), tx1 = Math.min(L.cols - 1, Math.floor((se.lon + 180) / dlon));
+      var tx0 = Math.floor((nw.lon + 180) / dlon), tx1 = Math.floor((se.lon + 180) / dlon);   // the columns wrap (13 Oct 2026)
       var ty0 = Math.max(0, Math.floor((90 - nw.lat) / dlat)), ty1 = Math.min(L.rows - 1, Math.floor((90 - se.lat) / dlat));
       var drew = false, tx, ty;
       for (ty = ty0; ty <= ty1; ty++) for (tx = tx0; tx <= tx1; tx++) {
-        var im = shelfImg(zs, tx, ty);
+        var im = shelfImg(zs, ((tx % L.cols) + L.cols) % L.cols, ty);
         if (!im || !(im.complete && im.naturalWidth)) continue;
         var r = tileRect(zs, tx, ty, w, h);
         ctx.drawImage(im, r.x * k, r.y * k, r.w * k + 1, r.h * k + 1);
@@ -414,10 +414,19 @@
     function viewToPixel(lon, lat, w, h) {
       return { x: w / 2 + (lon - view.lon) * view.S, y: h / 2 - (ywPL(lat) - ywPL(view.lat)) * view.S };
     }
+    // the wrap (13 Oct 2026): a point is drawn at the copy of its longitude nearest the view's centre; a line or an outline
+    // is drawn once for each copy of the world the view sees, a world apart, so nothing crosses the map
+    function wrapLon(lon) { return lon - 360 * Math.round((lon - view.lon) / 360); }
+    function worldCopies(w, h) {
+      if (!pyr) return [0];
+      var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h), out = [];
+      [-360, 0, 360].forEach(function (o) { if (Math.min(se.lon, 180 + o) - Math.max(nw.lon, -180 + o) > 0) out.push(o); });
+      return out.length ? out : [0];
+    }
     function viewToLonLat(x, y, w, h) {
       return { lon: view.lon + (x - w / 2) / view.S, lat: ywPLInv(ywPL(view.lat) - (y - h / 2) / view.S) };
     }
-    function P(lon, lat, w, h) { return pyr ? viewToPixel(lon, lat, w, h) : toPixel(region, lon, lat, w, h); }
+    function P(lon, lat, w, h) { return pyr ? viewToPixel(wrapLon(lon), lat, w, h) : toPixel(region, lon, lat, w, h); }   // a point, at its nearest copy
     // pixels per degree of latitude at the centre — what the tile level is chosen by
     function ppdCentre() { var k = view.k; return view.S * ((1 - k) + k / Math.cos(Math.max(-LAT_CAP, Math.min(LAT_CAP, view.lat)) * D2R)); }
     function levelFor() {
@@ -439,8 +448,7 @@
       var halfY = h / (2 * v.S);
       var yc = Math.max(bottom + halfY, Math.min(top - halfY, yw(v.lat)));
       v.lat = ywInv(yc);
-      var halfLon = w / (2 * v.S);
-      v.lon = halfLon >= 180 ? 0 : Math.max(-180 + halfLon, Math.min(180 - halfLon, v.lon));
+      v.lon = ((v.lon + 180) % 360 + 360) % 360 - 180;   // longitude is free: the world wraps east-west (13 Oct 2026, Michael); only kept in [-180, 180)
       setKnots();
       view = saved;
       return v;
@@ -485,23 +493,25 @@
       var z = levelFor(), L = region.levels[z];
       var dlon = 360 / L.cols, dlat = 180 / L.rows;
       var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
-      var tx0 = Math.max(0, Math.floor((nw.lon + 180) / dlon) - 1), tx1 = Math.min(L.cols - 1, Math.floor((se.lon + 180) / dlon) + 1);
+      var tx0 = Math.floor((nw.lon + 180) / dlon) - 1, tx1 = Math.floor((se.lon + 180) / dlon) + 1;   // past the edges the columns wrap (13 Oct 2026); the view is at most a world wide, so at most cols + 2 columns
       var ty0 = Math.max(0, Math.floor((90 - nw.lat) / dlat) - 1), ty1 = Math.min(L.rows - 1, Math.floor((90 - se.lat) / dlat) + 1);
       if (nw.lat >= LAT_CAP - 0.01) ty0 = 0; if (se.lat <= -LAT_CAP + 0.01) ty1 = L.rows - 1;
+      var wrapCol = function (tx) { return ((tx % L.cols) + L.cols) % L.cols; };
       var baseDiv = tileLayers[0].div;
       function baseLoaded(key) { var b = baseDiv.querySelector('img[data-key="' + key + '"]'); return !!(b && b.complete && b.naturalWidth); }
       tileLayers.forEach(function (T) {
         var keep = {}, allLoaded = true, tx, ty, key, im;
         for (ty = ty0; ty <= ty1; ty++) for (tx = tx0; tx <= tx1; tx++) {
-          if (T.have && !(T.have[z] && T.have[z][tx + '/' + ty])) continue;
-          key = z + '/' + tx + '/' + ty;
+          var txw = wrapCol(tx);
+          if (T.have && !(T.have[z] && T.have[z][txw + '/' + ty])) continue;
+          key = z + '/' + tx + '/' + ty;   // the key is the drawn column, the source the wrapped one
           keep[key] = true;
           im = T.div.querySelector('img[data-key="' + key + '"]');
           if (!im) {
             im = document.createElement('img');
             im.alt = ''; im.draggable = false;
             im.setAttribute('data-key', key); im.setAttribute('data-z', z); im.setAttribute('data-x', tx); im.setAttribute('data-y', ty);
-            im.src = resolve(region.tiles + '/' + z + '/' + tx + '/' + ty + T.suffix);
+            im.src = resolve(region.tiles + '/' + z + '/' + txw + '/' + ty + T.suffix);
             im.addEventListener('load', tileArrived);
             T.div.appendChild(im);
           }
@@ -720,21 +730,23 @@
       if (typeof spec === 'string') return [loadContourFile(String(zc), spec)];
       var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
       var dlon = 360 / spec.cols;
-      var x0 = Math.max(0, Math.floor((nw.lon + 180) / dlon)), x1 = Math.min(spec.cols - 1, Math.floor((se.lon + 180) / dlon));
-      var sets = [];
-      for (var x = x0; x <= x1; x++) sets.push(loadContourFile(zc + '/' + x, spec.perColumn.replace('{x}', x)));
+      var x0 = Math.floor((nw.lon + 180) / dlon), x1 = Math.floor((se.lon + 180) / dlon);   // the columns wrap (13 Oct 2026); each file once
+      var sets = [], seen = {};
+      for (var x = x0; x <= x1; x++) { var xw = ((x % spec.cols) + spec.cols) % spec.cols; if (seen[xw]) continue; seen[xw] = true; sets.push(loadContourFile(zc + '/' + xw, spec.perColumn.replace('{x}', xw))); }
       return sets;
     }
     // ---- time on the map: the ice (any map) ----
     var iceData = null, iceAgo = 0;
     var ICE_FILL = '#eaf1f4', ICE_EDGE = '#c9d6de';
     function iceRingsPath(rings, w, h) {
-      var d = [];
-      for (var i = 0; i < rings.length; i++) {
-        var r = rings[i];
-        for (var j = 0; j < r.length; j++) { var q = P(r[j][0], r[j][1], w, h); d.push((j ? 'L' : 'M') + q.x.toFixed(1) + ' ' + q.y.toFixed(1)); }
-        d.push('Z');
-      }
+      var d = [], copies = worldCopies(w, h);
+      copies.forEach(function (o) {   // once per copy of the world in view (13 Oct 2026)
+        for (var i = 0; i < rings.length; i++) {
+          var r = rings[i];
+          for (var j = 0; j < r.length; j++) { var q = pyr ? viewToPixel(r[j][0] + o, r[j][1], w, h) : P(r[j][0], r[j][1], w, h); d.push((j ? 'L' : 'M') + q.x.toFixed(1) + ' ' + q.y.toFixed(1)); }
+          d.push('Z');
+        }
+      });
       return d.join('');
     }
     function drawIce(layer, w, h) {
@@ -743,25 +755,21 @@
       for (i = 0; i < ages.length; i++) { if (ages[i] <= iceAgo) a = ages[i]; if (ages[i] >= iceAgo && b === null) b = ages[i]; }
       if (a === null) a = ages[0]; if (b === null) b = ages[ages.length - 1];
       var t = (b === a) ? 1 : (iceAgo - a) / (b - a);
-      // the soft edge: one blur, defined once per svg
-      if (!svg.querySelector('#cw-ice-soft')) {
-        var defs = el('defs', {}), f = el('filter', { id: 'cw-ice-soft', x: '-5%', y: '-5%', width: '110%', height: '110%' });
-        f.appendChild(el('feGaussianBlur', { stdDeviation: '1.6' }));
-        defs.appendChild(f); svg.insertBefore(defs, svg.firstChild);
-      }
+      // no blur filter on the ice (13 Oct 2026): Safari repainted the filter's region, the whole north, as white patches under the
+      // pointer; the soft edge is a wider, fainter stroke instead
       [[a, 1 - t], [b, t]].forEach(function (pair) {
         if (pair[1] <= 0.01) return;
         var rings = iceData.outlines[String(pair[0])];
         if (!rings || !rings.length) return;
         layer.appendChild(el('path', { d: iceRingsPath(rings, w, h), fill: ICE_FILL, 'fill-rule': 'evenodd', 'fill-opacity': (0.94 * pair[1]).toFixed(3),
-                                        stroke: ICE_EDGE, 'stroke-width': 1, 'stroke-opacity': (0.8 * pair[1]).toFixed(3), 'vector-effect': 'non-scaling-stroke', filter: 'url(#cw-ice-soft)' }));
+                                        stroke: ICE_EDGE, 'stroke-width': 2.5, 'stroke-opacity': (0.45 * pair[1]).toFixed(3), 'vector-effect': 'non-scaling-stroke' }));
       });
     }
     function drawLines(layer, w, h) {
       var c = region.contours;
       if (!c) return;
       if (pyr) {
-        var sets = contourSets(w, h);
+        var sets = contourSets(w, h), copies = worldCopies(w, h);
         var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
         for (var lv in LINES) {
           var dd = [], seen = {};
@@ -769,10 +777,12 @@
             if (!cc.ready || !cc.lines.hasOwnProperty(lv)) return;
             cc.lines[lv].forEach(function (L) {
               var b = L.bbox;
-              if (b[2] < nw.lon || b[0] > se.lon || b[3] < se.lat || b[1] > nw.lat) return;
-              var id = b.join(',') + ':' + L.pts.length;        // a line in two columns is drawn once
-              if (seen[id]) return; seen[id] = true;
-              for (var j = 0; j < L.pts.length; j++) { var q = viewToPixel(L.pts[j][0], L.pts[j][1], w, h); dd.push((j ? 'L' : 'M') + q.x.toFixed(1) + ' ' + q.y.toFixed(1)); }
+              copies.forEach(function (o) {   // once per copy of the world in view (13 Oct 2026)
+                if (b[2] + o < nw.lon || b[0] + o > se.lon || b[3] < se.lat || b[1] > nw.lat) return;
+                var id = b.join(',') + ':' + L.pts.length + ':' + o;        // a line in two columns is drawn once
+                if (seen[id]) return; seen[id] = true;
+                for (var j = 0; j < L.pts.length; j++) { var q = viewToPixel(L.pts[j][0] + o, L.pts[j][1], w, h); dd.push((j ? 'L' : 'M') + q.x.toFixed(1) + ' ' + q.y.toFixed(1)); }
+              });
             });
           });
           if (dd.length) layer.appendChild(el('path', { 'class': 'cw-line', d: dd.join(''), stroke: LINES[lv].stroke, 'stroke-opacity': LINES[lv].opacity }));
@@ -1056,6 +1066,7 @@
         setWiden(home.widen);
         view.lat = home.view.lat; view.lon = home.view.lon; view.S = home.view.S; view.k = home.view.k;
         frozen = false; clampView(view); placeTiles(); readGround(); draw();
+        if (deepFlat) deepFlat.zoomOut();   // 13 Oct 2026: the flat deep map's zoom goes with the ground map's
       }
       api.centre = function (lat, lon) { slideTo({ lat: lat, lon: lon, S: view.S }, SLIDE_MS); };
       api.fit = function (b) {
@@ -1160,6 +1171,11 @@
       api.deepClimate = function (on) { if (on !== undefined) deepClimate = !!on; if (deepGlobe) deepGlobe.setClimate(deepClimate); if (deepFlat) deepFlat.setClimate(deepClimate); return deepClimate; };
       api.deepCities = function (on) { if (on !== undefined) deepCities = !!on; if (deepGlobe) deepGlobe.setCities(deepCities); if (deepFlat) deepFlat.setCities(deepCities); return deepCities; };   // the cities on the drifting pieces (12 Oct)
       api.deepTurn = function (lon, lat) { if (deepGlobe) deepGlobe.turn(lon, lat); };   // the globe turns to face a place (10 Oct); it does not zoom
+      // 13 Oct 2026: a marker riding its plate on both deep views (null clears it); the flat map's zoom to a place (null zooms out);
+      // fast drawing (flat fills, no per-pixel skin) while the year runs
+      api.deepMark = function (m) { if (deepGlobe) deepGlobe.setMarker(m); if (deepFlat) deepFlat.setMarker(m); };
+      api.deepZoom = function (lon, lat, k) { if (!deepFlat) return; if (lon == null) deepFlat.zoomOut(); else deepFlat.zoomTo(lon, lat, k || 4); };
+      api.deepFast = function (on) { if (deepGlobe) deepGlobe.setFast(on); if (deepFlat) deepFlat.setFast(on); };
       api.deepReguess = function () { if (!deepGlobe && !deepFlat) return; var s = (deepGlobe || deepFlat).reguess(); if (deepGlobe && deepFlat) (deepGlobe === (deepGlobe || deepFlat) ? deepFlat : deepGlobe).setSeed(s); };
       api.setTime = function (year) {
         timeYear = +year;

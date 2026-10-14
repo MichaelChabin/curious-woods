@@ -126,6 +126,7 @@ In 1879 Charles Darwin wrote to a friend that the rapid rise of the flowering pl
 **Tail:** none — a dated moment
 **Known from:** a thin layer of clay rich in iridium, found all round the world, and a crater buried under Yucatán
 **Place now:** Bottaccione Gorge, Gubbio, Umbria, Italy (43.365 N, 12.583 E)
+**Place then:** Chicxulub, under the north coast of Yucatán, Mexico (21.3 N, 89.5 W)
 **Kind:** earth event
 **Replaces:** sketch *The asteroid*
 

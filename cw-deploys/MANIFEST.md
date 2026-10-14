@@ -1648,7 +1648,30 @@ backstop for the Claude Code session that lands the file.
   one, and the skin switches method at 200, 540 and 1,000 Ma without a blend; a crossfade as the cities have is the fix); a marker for
   the asteroid on the drifting map (the record's place is Gubbio, the clay, not the crater; Chicxulub with a plate id is a batch
   change, and the globe has no marker API yet, `drawCities` is the model); the ground map's ice outline is the 26,000-year one held
-  unchanged back to 2.6 Ma; the deep seam's half-second scale-and-fade. The event stories for the five plots are not written. A September record that stands aside for the shared list (`same`) is kept,
+  unchanged back to 2.6 Ma; the deep seam's half-second scale-and-fade. The event stories for the five plots are not written. **13 Oct 2026, night — two bugs and the engine items (`CW_VERSION 2026-10-13d 4b76e41`; the three scripts at
+  `?v=2026-10-13d` here and on the two benches):** *Play on After the ice stepped* (Safari): every frame rebuilt the seven lines above
+  and the ground; now while play runs the handle moves every frame and the lines and the map follow a few times a second
+  (`timeToMap`), and on a deep line the drifting map draws its flat fills without the per-pixel skin until play stops
+  (`map.deepFast`, `globe.setFast`). *White patches in Europe under the pointer* (Safari): the ice outlines carried an SVG blur
+  filter whose region was the whole north, and Safari repainted it white; the filter is gone, the soft edge is a wider, fainter
+  stroke. *The flashes* (`globe.js`): a piece dissolves into the sea over the eight million years before its birth age and after its
+  end (`dissolvePieces`, `FADE`); across the measured edge at 200 Ma the picture blends into the rock grain pixel by pixel
+  (`paintSkin`); toward the model's reach at 1,000 Ma the skin fades out and the guessed look (pale, dashed) fades in. *The asteroid:*
+  the batch entry (`CWVault/claude/Events-Deep-05.md`, §3) has a **Place then** line, Chicxulub (21.3 N, 89.5 W), which
+  `tools/deep-events-from-vault.py` reads into a new `place` field of `stories/deep-time-events.json` (null elsewhere; the store
+  regenerated, which also took up batch 2's *Moon forms* pictures line); a tapped event past the seam puts a marker on the drifting
+  map where it happened, carried on its plate (`globe.setMarker`, the plate found under the place today, `map.deepMark`), and the
+  flat map zooms to it four times (`globe.zoomTo`/`zoomOut`, `map.deepZoom`; the drag pans the zoomed map; reset and a period tap
+  zoom out). *The wrap* (`map.js`): the ground map's longitude is free, so the world wraps east–west at every zoom: tile, shelf and
+  contour columns run past the edges to the wrapped source column, lines and the ice are drawn once per copy of the world in view
+  (`worldCopies`), a point at its nearest copy (`wrapLon`); the page judges a place against a box that may run past 180. Checked on
+  the Mac: play from 4 Ba with the skin off and back; the asteroid at 66 Ma zoomed to Chicxulub on North America with its marker;
+  reset zooms out; 996 Ma blending to the guessed look; the whole-world map dragged 150° east with no gap and the cities at their
+  nearest copy; a 60° box across the antimeridian at a finer level continuous; no console errors. Screenshots
+  `Claude outputs/time-machine-13oct-wrap*.jpg`, `-asteroid-chicxulub.jpg`, `-fitted-to-guessed-996ma.jpg`. Still open: the
+  invented land reshuffles every 20 Myr (`makeBlobs`); pieces freeze where their plate's samples run out; the seam's half-second
+  scale-and-fade; the ground map's ice outline held at 26 ka back to 2.6 Ma; the zoomed flat map is blocky (its skin is half the
+  host's width). A September record that stands aside for the shared list (`same`) is kept,
   since this page does not read the shared list; `../stories/places.json` is read for the
   coordinates the September file names by id; `../stories/curves/`. An old event shows its
   September blurb, with its plain year in front, and has no More. Tested on the Mac in the

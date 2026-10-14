@@ -113,6 +113,9 @@
     var canvas = document.createElement('canvas'); host.appendChild(canvas);
     var ctx = canvas.getContext('2d');
     var ma = opts.ma || 0, lon0 = opts.lon != null ? opts.lon : 20, lat0 = opts.lat != null ? opts.lat : 15;
+    var fz = { k: 1, lat: 0 }, fzAnim = null;   // the flat map's zoom (13 Oct 2026): k times, about the centre; lat the centre's latitude (lon0 its longitude)
+    function fzY() { return (90 - fz.lat) / 180; }   // the centre latitude as a fraction of the height
+    var FADE = 8;   // million years: a piece dissolves into the sea over this long before its birth age, and the skin blends across a grade's edge (13 Oct 2026)
     var proj = opts.projection === 'flat' ? 'flat' : 'globe', seam = opts.seam != null ? opts.seam : 2.6;
     var data = null, coast = null, shelf = null, crust = null, pieces = [], plates = {}, ages = [], grades = [], reach = 1000, lastGrade = null, destroyed = false, raf = 0, ro = null;
     var W = 0, H = 0, dpr = 1;
@@ -196,7 +199,7 @@
       var oc = idCtx;
       oc.setTransform(1, 0, 0, 1, 0, 0); oc.fillStyle = '#000'; oc.fillRect(0, 0, TW, TH);
       oc.setTransform(TW, 0, 0, TH, 0, 0);
-      var saveProj = proj; proj = 'flat';
+      var saveProj = proj, saveFz = fz; proj = 'flat'; fz = { k: 1, lat: 0 };   // texture space: the whole world, unzoomed (13 Oct)
       var byPlate = {}, mats = {}, i, k;
       for (i = 0; i < pieces.length; i++) {
         var p = pieces[i];
@@ -207,7 +210,7 @@
         var path = byPlate[p.plate] || (byPlate[p.plate] = new Path2D());
         for (k = 0; k < p.rings.length; k++) { var q = new Path2D(); if (trace(p.rings[k], M, q)) path.addPath(q); }
       }
-      proj = saveProj;
+      proj = saveProj; fz = saveFz;
       for (var pid in byPlate) {
         var idx = indexOf(pid), col = 'rgb(' + (idx & 255) + ',' + (idx >> 8 & 255) + ',0)';
         oc.fillStyle = col; oc.fill(byPlate[pid], 'nonzero');
@@ -224,7 +227,7 @@
       var T0 = V[0], T1 = V[3], T2 = V[6], T3 = V[1], T4 = V[4], T5 = V[7], T6 = V[2], T7 = V[5], T8 = V[8];
       return function (px, py, out) {
         var X, Y, Z;
-        if (flat) { var lo = (px + 0.5) / sw * 2 * Math.PI - Math.PI, la = Math.PI / 2 - (py + 0.5) / sh * Math.PI, cl = Math.cos(la); X = cl * Math.cos(lo); Y = cl * Math.sin(lo); Z = Math.sin(la); }
+        if (flat) { var fx = 0.5 + ((px + 0.5) / sw - 0.5) / fz.k, fy = fzY() + ((py + 0.5) / sh - 0.5) / fz.k; if (fy < 0 || fy > 1) return false; var lo = fx * 2 * Math.PI - Math.PI, la = Math.PI / 2 - fy * Math.PI, cl = Math.cos(la); X = cl * Math.cos(lo); Y = cl * Math.sin(lo); Z = Math.sin(la); }
         else { X = (px + 0.5 - cx) / r; Y = -(py + 0.5 - cy) / r; var q = 1 - X * X - Y * Y; if (q < 0) return false; Z = Math.sqrt(q); }
         out[0] = T0 * X + T1 * Y + T2 * Z; out[1] = T3 * X + T4 * Y + T5 * Z; out[2] = T6 * X + T7 * Y + T8 * Z;
         return true;
@@ -243,8 +246,10 @@
       return skinCtx.createImageData(SW, SH);
     }
     // the land's skin for the model's ages: the ground picture (measured, ground) or the rock grain (inferred, fitted)
-    function paintSkin(V, age, g) {
-      var t0 = performance.now(), ids = idRaster(Math.max(age, 0)), picture = (g === 'measured' || g === 'ground') ? tex.ground : null, grain = tex['rock-grain'];
+    function paintSkin(V, age, g, alpha) {
+      // across the measured edge (200 Ma) the picture blends into the rock grain over FADE million years (13 Oct 2026)
+      var edge = grades.length ? grades[0].to : 200, t = Math.max(0, Math.min(1, (age - (edge - FADE / 2)) / FADE));
+      var t0 = performance.now(), ids = idRaster(Math.max(age, 0)), picture = t < 1 ? tex.ground : null, grain = tex['rock-grain'];
       var out = skinTarget(), o = out.data, inv = {}, toWorld = pixelToWorld(V), w3 = [0, 0, 0], sw = SW, sh = SH;
       for (var py = 0; py < sh; py++) for (var px = 0; px < sw; px++) {
         if (!toWorld(px, py, w3)) continue;
@@ -255,12 +260,15 @@
         if (!M) continue;
         var tx = M[0] * w3[0] + M[1] * w3[1] + M[2] * w3[2], ty = M[3] * w3[0] + M[4] * w3[1] + M[5] * w3[2], tz = M[6] * w3[0] + M[7] * w3[1] + M[8] * w3[2];
         var k2 = texIndex(tx, ty, tz), oi = (py * sw + px) << 2;
-        if (picture) { o[oi] = picture[k2]; o[oi + 1] = picture[k2 + 1]; o[oi + 2] = picture[k2 + 2]; }
-        else { var f = 0.72 + 0.56 * grain[k2] / 255; o[oi] = LAND3[0] * f; o[oi + 1] = LAND3[1] * f; o[oi + 2] = LAND3[2] * f; }
+        if (picture && t === 0) { o[oi] = picture[k2]; o[oi + 1] = picture[k2 + 1]; o[oi + 2] = picture[k2 + 2]; }
+        else { var f = 0.72 + 0.56 * grain[k2] / 255, r0 = LAND3[0] * f, g0 = LAND3[1] * f, b0 = LAND3[2] * f;
+          if (picture) { r0 = picture[k2] * (1 - t) + r0 * t; g0 = picture[k2 + 1] * (1 - t) + g0 * t; b0 = picture[k2 + 2] * (1 - t) + b0 * t; }
+          o[oi] = r0; o[oi + 1] = g0; o[oi + 2] = b0; }
         o[oi + 3] = 255;
       }
       skinCtx.putImageData(out, 0, 0);
-      ctx.drawImage(skinCanvas, 0, 0, W, H);
+      if (alpha != null && alpha < 1) ctx.globalAlpha = alpha;
+      ctx.drawImage(skinCanvas, 0, 0, W, H); ctx.globalAlpha = 1;
       lastSkinMs = performance.now() - t0;
     }
     // the molten sequence's state for an age: t the crust's progress (0 melt, 1 crusted), glow of the cracks, sea the
@@ -314,6 +322,61 @@
       return st;
     }
 
+    // a world point to the screen, through the view: the flat map's zoom, or the disc (13 Oct 2026; cities and the marker)
+    function screenPoint(sx, sy, sz, r, cx, cy) {
+      if (proj === 'flat') { var lon = Math.atan2(sy, sx), lat = Math.asin(Math.max(-1, Math.min(1, sz))); return [(0.5 + ((lon + Math.PI) / (2 * Math.PI) - 0.5) * fz.k) * W, (0.5 + ((Math.PI / 2 - lat) / Math.PI - fzY()) * fz.k) * H]; }
+      if (sz < 0.03) return null; return [cx + sx * r, cy - sy * r];
+    }
+    // a piece appears and goes without a pop (13 Oct 2026, Michael: the flashes at the plate boundaries): over the FADE
+    // million years before its birth age (and after its end, where it has one) it dissolves into the sea
+    var SEA_MID = mix(SEA, SEA_DEEP, 0.5);
+    function dissolvePieces(V, age, g) {
+      if (!pieces.length) return;
+      var mats = {}, byAlpha = {};
+      for (var i = 0; i < pieces.length; i++) {
+        var p = pieces[i], a = 0;
+        if (age <= p.from && age > p.from - FADE) a = 1 - (p.from - age) / FADE;
+        else if (p.to > 0 && age >= p.to && age < p.to + FADE) a = 1 - (age - p.to) / FADE;
+        if (a <= 0) continue;
+        var M = mats[p.plate];
+        if (M === undefined) { var R = g === 'guessed' ? guessedMatrix(p.plate, age) : plateMatrixAt(p.plate, Math.max(age, 0)); M = R ? mmul(V, R) : null; mats[p.plate] = M; }
+        if (!M) continue;
+        var key = a.toFixed(2), path = byAlpha[key] || (byAlpha[key] = new Path2D());
+        for (var k = 0; k < p.rings.length; k++) { var q = new Path2D(); if (trace(p.rings[k], M, q)) path.addPath(q); }
+      }
+      for (var ak in byAlpha) { ctx.globalAlpha = +ak; ctx.fillStyle = SEA_MID; ctx.fill(byAlpha[ak], 'nonzero'); ctx.strokeStyle = SEA_MID; ctx.lineWidth = 1.8 * unit(); ctx.stroke(byAlpha[ak]); }
+      ctx.globalAlpha = 1;
+    }
+    // the plate under a place today, by the piece whose outline holds it (13 Oct 2026, for the marker)
+    function plateAt(lon, lat) {
+      for (var i = 0; i < pieces.length; i++) {
+        var p = pieces[i]; if (p.to > 0) continue;
+        for (var k = 0; k < p.ll.length; k++) {
+          var ring = p.ll[k], n = ring.length / 2, c = false, j = n - 1;
+          for (var m = 0; m < n; m++) { var xi = ring[2 * m], yi = ring[2 * m + 1], xj = ring[2 * j], yj = ring[2 * j + 1]; if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / ((yj - yi) || 1e-9) + xi) c = !c; j = m; }
+          if (c) return p.plate;
+        }
+      }
+      return null;
+    }
+    // the marker (13 Oct 2026, Michael: the asteroid): one place, carried on its plate as the cities are, a vermilion dot with its name
+    var marker = null, MARK = '#c8451f', PARCH_INK = '#f4f1e8';
+    function drawMarker(V, age, g, r, cx, cy) {
+      if (!marker || !data || g === 'none') return;
+      if (marker.plate === undefined) marker.plate = plateAt(marker.lon, marker.lat);
+      var M = null;
+      if (marker.plate) M = g === 'guessed' || g === 'invented' ? guessedMatrix(marker.plate, age) : plateMatrixAt(marker.plate, Math.max(age, 0));
+      if (!M) M = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+      var v = xyz(marker.lon, marker.lat);
+      var wx = M[0] * v[0] + M[1] * v[1] + M[2] * v[2], wy = M[3] * v[0] + M[4] * v[1] + M[5] * v[2], wz = M[6] * v[0] + M[7] * v[1] + M[8] * v[2];
+      var sx = V[0] * wx + V[1] * wy + V[2] * wz, sy = V[3] * wx + V[4] * wy + V[5] * wz, sz = V[6] * wx + V[7] * wy + V[8] * wz;
+      var pq = screenPoint(sx, sy, sz, r, cx, cy); if (!pq) return;
+      ctx.save(); ctx.font = 'bold 14px Georgia, serif'; ctx.textBaseline = 'middle';
+      ctx.beginPath(); ctx.arc(pq[0], pq[1], 11, 0, Math.PI * 2); ctx.fillStyle = 'rgba(200,69,31,0.22)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(pq[0], pq[1], 4.5, 0, Math.PI * 2); ctx.fillStyle = MARK; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = PARCH_INK; ctx.stroke();
+      if (marker.name) { ctx.fillStyle = CITY_INK; ctx.fillText(marker.name, pq[0] + 9, pq[1]); }
+      ctx.restore();
+    }
     // ---- the cities (12 Oct 2026, part 3): a dozen of today's cities ride the continents, each pinned to its plate ----
     var cities = null, citiesOn = !!opts.citiesOn, CITY_FADE = 20, CITY_INK = '#2a241c', CITY_HALO = 'rgba(244,241,234,0.85)';
     load(opts.cities === undefined ? '../stories/plates/cities.json' : opts.cities, function (c) { cities = c.cities || c; schedule(); });
@@ -329,9 +392,8 @@
         var v = xyz(c.lon, c.lat);
         var wx = M[0] * v[0] + M[1] * v[1] + M[2] * v[2], wy = M[3] * v[0] + M[4] * v[1] + M[5] * v[2], wz = M[6] * v[0] + M[7] * v[1] + M[8] * v[2];
         var sx = V[0] * wx + V[1] * wy + V[2] * wz, sy = V[3] * wx + V[4] * wy + V[5] * wz, sz = V[6] * wx + V[7] * wy + V[8] * wz, px, py;
-        if (proj === 'flat') { var lon = Math.atan2(sy, sx), lat = Math.asin(Math.max(-1, Math.min(1, sz))); px = (lon + Math.PI) / (2 * Math.PI) * W; py = (Math.PI / 2 - lat) / Math.PI * H; }
-        else { if (sz < 0.03) return; px = cx + sx * r; py = cy - sy * r; }
-        items.push({ x: px, y: py, a: a, name: c.name });
+        var pq = screenPoint(sx, sy, sz, r, cx, cy); if (!pq) return;
+        items.push({ x: pq[0], y: pq[1], a: a, name: c.name });
       });
       ctx.save(); ctx.font = '14px Georgia, serif'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';   // 14 px and no halo (13 Oct 2026, Michael: legibility)
       items.forEach(function (it) {
@@ -420,7 +482,7 @@
       data = d; ages = d.ages; grades = d.grades || []; reach = d.reach || ages[ages.length - 1];
       for (var pid in d.plates) { var P = d.plates[pid]; plates[pid] = { first: P.first, q: P.rot.map(function (r) { return quat(r[0], r[1], r[2]); }) }; }
       pieces = d.pieces.map(function (p) {
-        return { plate: String(p.plate), from: p.from, to: p.to, rings: p.rings.map(function (ring) {
+        return { plate: String(p.plate), from: p.from, to: p.to, ll: p.rings, rings: p.rings.map(function (ring) {
           var n = ring.length / 2, arr = new Float64Array(n * 3);
           for (var i = 0; i < n; i++) { var v = xyz(ring[2 * i], ring[2 * i + 1]); arr[3 * i] = v[0]; arr[3 * i + 1] = v[1]; arr[3 * i + 2] = v[2]; }
           return arr;
@@ -504,7 +566,7 @@
       }
       for (var off = -1; off <= 1; off++) {
         for (var j = 0; j < pts.length; j += 2) {
-          var px = (pts[j] + Math.PI) / (2 * Math.PI) + off, py = (Math.PI / 2 - pts[j + 1]) / Math.PI;
+          var px = 0.5 + ((pts[j] + Math.PI) / (2 * Math.PI) + off - 0.5) * fz.k, py = 0.5 + ((Math.PI / 2 - pts[j + 1]) / Math.PI - fzY()) * fz.k;
           if (j === 0) into.moveTo(px, py); else into.lineTo(px, py);
         }
         into.closePath();
@@ -534,11 +596,11 @@
       if (!shift) { lastLand = any ? land : null; lastIslands = share > 0 && any ? islands : null; }
       return any ? land : null;
     }
-    function fillLand(path, colour, alpha, edge) {
+    function fillLand(path, colour, alpha, edge, edgeAlpha) {
       if (!path) return;
       // a guessed or invented edge is dashed or dotted — but the edge of the union, never of each piece:
       // the dashes are stroked wide under an opaque fill, so only their outer half shows, round the land
-      if (edge) { ctx.globalAlpha = 0.85; ctx.strokeStyle = COAST; ctx.lineWidth = 3 * unit(); ctx.setLineDash(edge === 'dashed' ? [5 * unit(), 4 * unit()] : [1.5 * unit(), 3.5 * unit()]); ctx.stroke(path); ctx.setLineDash([]); alpha = 1; }
+      if (edge) { ctx.globalAlpha = edgeAlpha != null ? edgeAlpha : 0.85; ctx.strokeStyle = COAST; ctx.lineWidth = 3 * unit(); ctx.setLineDash(edge === 'dashed' ? [5 * unit(), 4 * unit()] : [1.5 * unit(), 3.5 * unit()]); ctx.stroke(path); ctx.setLineDash([]); alpha = 1; }
       ctx.globalAlpha = alpha; ctx.fillStyle = colour; ctx.fill(path, 'nonzero');
       ctx.strokeStyle = colour; ctx.lineWidth = 1.6 * unit(); ctx.stroke(path);   // closes the hairline gaps between pieces, and covers the dashes' inner half
       if (edge && lastIslands) { ctx.fillStyle = LAND; ctx.fill(lastIslands, 'nonzero'); ctx.strokeStyle = LAND; ctx.lineWidth = 1.2 * unit(); ctx.stroke(lastIslands); }   // the part above the sea
@@ -566,11 +628,11 @@
       var key = how + ':' + (how === 'guessed' || how === 'invented' ? seed + ':' : '') + Math.round(age / 10);
       if (interiorCache[key]) return interiorCache[key];
       var cw = 180, ch = 90, off = document.createElement('canvas'); off.width = cw; off.height = ch;
-      var oc = off.getContext('2d', { willReadFrequently: true }), saveProj = proj, saveCtx = ctx, saveLand = lastLand, saveIslands = lastIslands;
-      proj = 'flat'; ctx = oc; oc.setTransform(cw, 0, 0, ch, 0, 0); oc.fillStyle = '#000'; oc.fillRect(0, 0, 1, 1);
+      var oc = off.getContext('2d', { willReadFrequently: true }), saveProj = proj, saveCtx = ctx, saveLand = lastLand, saveIslands = lastIslands, saveFz = fz;
+      proj = 'flat'; fz = { k: 1, lat: 0 }; ctx = oc; oc.setTransform(cw, 0, 0, ch, 0, 0); oc.fillStyle = '#000'; oc.fillRect(0, 0, 1, 1);
       var path = landPath(rotZ(0), age, 0, how);
       if (path) { oc.fillStyle = '#fff'; oc.fill(path, 'nonzero'); }
-      proj = saveProj; ctx = saveCtx; lastLand = saveLand; lastIslands = saveIslands;
+      proj = saveProj; fz = saveFz; ctx = saveCtx; lastLand = saveLand; lastIslands = saveIslands;
       var img = oc.getImageData(0, 0, cw, ch).data, mask = new Uint8Array(cw * ch), i, x, y, pass;
       for (i = 0; i < cw * ch; i++) mask[i] = img[4 * i] > 128 ? 1 : 0;
       var STEPS = 5;   // five erosions of two degrees each: about ten degrees of arc from the sea, a thousand kilometres
@@ -650,17 +712,20 @@
       // the per-pixel passes, in CSS pixels before the unit transform: the molten sequence, or the land's skin for the
       // model's ages (not while the globe itself is dragged: the flat fills stand in, and the skin returns on release)
       var skinned = false, moltenSt = null;
+      // toward the model's reach the skin fades and the guessed look fades in, over FADE million years (13 Oct 2026)
+      var tg = (data && g === 'fitted') ? Math.max(0, Math.min(1, (ma - (reach - FADE)) / FADE)) : 0;
       lastSkinMs = 0;
       if (g === 'none' && moltenReady()) moltenSt = paintMolten(V, ma);
-      else if (data && skinReady() && !drag && (g === 'measured' || g === 'ground' || g === 'inferred' || g === 'fitted')) { paintSkin(V, ma, g); skinned = true; }
+      else if (data && skinReady() && !drag && !fast && (g === 'measured' || g === 'ground' || g === 'inferred' || g === 'fitted')) { paintSkin(V, ma, g, 1 - tg); skinned = true; }
       enterUnit(r, cx, cy);
       if (data && g !== 'none') {
         if (g === 'measured' || g === 'ground') { var lp = landPath(V, Math.max(ma, 0), 0, 'model'); if (!skinned) fillLand(lp, LAND, g === 'ground' ? 0.45 : 1, null); }
         else if (g === 'inferred') { var lp2 = landPath(V, ma, 0, 'model'); if (!skinned) fillLand(lp2, LAND, 1, null); }   // the model's own position, once: a guess called a guess, not a smear (Michael, 10 Oct; the seven shifted copies are gone)
-        else if (g === 'fitted') { var lp3 = landPath(V, ma, 0, 'model'); if (!skinned) fillLand(lp3, LAND, 1, null); }   // once, like inferred: the six shifted ghosts went on 13 Oct 2026 (Michael: the shapes are real now)
+        else if (g === 'fitted') { var lp3 = landPath(V, ma, 0, 'model'); if (!skinned) fillLand(lp3, LAND, 1 - tg, null); if (tg > 0) fillLand(landPath(V, ma, 0, 'guessed'), LAND_PALE, 0.7 * tg, 'dashed', 0.85 * tg); }   // once, like inferred (the ghosts went 13 Oct); the guessed look fades in toward the reach
         else if (g === 'guessed') fillLand(landPath(V, ma, 0, 'guessed'), LAND_PALE, 0.7, 'dashed');
         else if (g === 'invented') fillLand(landPath(V, ma, 0, 'invented'), LAND_PALE, 0.5, 'dotted');
         if (g !== 'ground') { if (climateOn) drawClimate(V, ma, g === 'guessed' || g === 'invented' ? g : 'model'); else drawPolarIce(V, ma); }
+        if (g !== 'invented') dissolvePieces(V, ma, g);
       }
       // today's coast and the shelf's edge, this side of the seam and fading out by five million years
       if (coast && ma < 5) {
@@ -678,6 +743,7 @@
       ctx.stroke(gp);
       ctx.restore(); ctx.restore();
       drawCities(V, ma, g, r, cx, cy);
+      drawMarker(V, ma, g, r, cx, cy);
       // the limb shading and the haze at the rim (12 Oct): a ball, with an atmosphere — blue once there is a sea, grey steam before
       if (proj !== 'flat') {
         var shade = ctx.createRadialGradient(cx, cy, r * 0.78, cx, cy, r);
@@ -699,15 +765,15 @@
     function schedule() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
 
     // ---- the gesture: drag turns (east–west about the pole) and tilts (north–south, the poles the limits) ----
-    var drag = null;
+    var drag = null, fast = false;
     canvas.addEventListener('pointerdown', function (ev) {
-      drag = { id: ev.pointerId, x: ev.clientX, y: ev.clientY, lon: lon0, lat: lat0 };
+      drag = { id: ev.pointerId, x: ev.clientX, y: ev.clientY, lon: lon0, lat: lat0, flat: fz.lat };
       ev.preventDefault(); try { canvas.setPointerCapture(ev.pointerId); } catch (e) {}
       host.classList.add('dragging');
     });
     canvas.addEventListener('pointermove', function (ev) {
       if (!drag || ev.pointerId !== drag.id) return;
-      if (proj === 'flat') { lon0 = drag.lon - (ev.clientX - drag.x) * 360 / (W || 400); }
+      if (proj === 'flat') { lon0 = drag.lon - (ev.clientX - drag.x) * 360 / ((W || 400) * fz.k); if (fz.k > 1) { var lim = 90 - 90 / fz.k; fz.lat = Math.max(-lim, Math.min(lim, drag.flat + (ev.clientY - drag.y) * 180 / ((H || 200) * fz.k))); } }
       else {
         var k = 180 / (W || 400);
         lon0 = drag.lon - (ev.clientX - drag.x) * k;
@@ -730,6 +796,19 @@
       time: function () { return ma; },
       view: function () { return { lon: lon0, lat: lat0 }; },
       turn: function (lon, lat) { if (lon != null) lon0 = lon; if (lat != null) lat0 = Math.max(-90, Math.min(90, lat)); schedule(); },
+      // the flat map's zoom (13 Oct 2026): to a place, k times, over 350 ms; and out again
+      zoomTo: function (lon, lat, k, ms) {
+        if (proj !== 'flat') { lon0 = lon; lat0 = lat; schedule(); return; }
+        k = Math.max(1, Math.min(8, k || 4)); var lim = 90 - 90 / k, lat1 = Math.max(-lim, Math.min(lim, lat));
+        var from = { lon: lon0, lat: fz.lat, k: fz.k }, dlon = ((lon - lon0 + 540) % 360) - 180, t0 = performance.now(), T = ms || 350;
+        if (fzAnim) cancelAnimationFrame(fzAnim);
+        var step = function (t) { var u = Math.min(1, (t - t0) / T); u = 1 - (1 - u) * (1 - u); lon0 = from.lon + dlon * u; fz.lat = from.lat + (lat1 - from.lat) * u; fz.k = from.k * Math.pow(k / from.k, u); draw(); if (u < 1) fzAnim = requestAnimationFrame(step); else fzAnim = null; };
+        fzAnim = requestAnimationFrame(step);
+      },
+      zoomOut: function () { if (fz.k === 1 && fz.lat === 0) return; if (fzAnim) cancelAnimationFrame(fzAnim); fz.k = 1; fz.lat = 0; schedule(); },
+      zoom: function () { return fz.k; },
+      setMarker: function (m) { marker = m ? { lat: m.lat, lon: m.lon, name: m.name || '', plate: m.plate } : null; schedule(); },
+      setFast: function (on) { fast = !!on; schedule(); },
       grade: function () { return gradeFor(ma); },
       moltenPhase: function () { return ma > NO_MAP ? moltenState(ma).phase : null; },
       setCities: function (on) { citiesOn = !!on; schedule(); },
