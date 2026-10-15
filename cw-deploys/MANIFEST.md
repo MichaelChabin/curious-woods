@@ -844,6 +844,7 @@ backstop for the Claude Code session that lands the file.
   `art/stories/geo-1-glass-circles/` (`glass-rose/` until 8 Oct); the gallery mark `art/gallery/the-glass-rose-gallery.png` and the tab icon
   `art/icons/the-glass-rose-icon-256.png` are the rose drawn as a mark (seven circles, copper dots), not
   in `gallery.json`. Stamp `2026-10-02 cf25ae5`.
+  **14 Oct 2026:** the circle measured again while it is drawn — a thin radius with *radius ≈ n* beside it and *area ≈ n* inside near the bottom, gone on release. The window profile in `js/glass.js` had forced the measure off; it now follows the mount's `measure` option, and this page passes `measure: true` (`glass.js?v=2026-10-14`). CW_VERSION 2026-10-14.
 - **`deep-time.html` (hung 7 Oct 2026; retired 9 Oct 2026)** — **Deep Time**, the Time Machine's deep page for two
   days: see the entry under `experiments/` for `join-bench.html → active/deep-time.html`, where it was built and
   is described. **On 9 Oct 2026 it folded into `active/time-machine.html`** (the one timeline, lane C of
@@ -986,6 +987,7 @@ backstop for the Claude Code session that lands the file.
   Molière added to the World and to *More*, two margin pictures in *More*. Checked at 1440, 1100, 834 and
   390 px — no horizontal scroll, no clipped labels, no console errors. Seen by Michael 21 Sep; **not
   yet read on an iPad.**
+  **14 Oct 2026:** the opening rewritten on Michael's text — the magnifier can be turned off in the sidebar, the picture zooms and drags; the pearl-without-a-hook paragraph gone; "one of the most famous paintings in the world" added. CW_VERSION 2026-10-14.
 - **`hokusai-the-great-wave.html`** — story: **Hokusai: The Great Wave** (19–20 Sep 2026;
   `CWVault/claude/Story-Hokusai-The-Great-Wave.md`), the first of the paintings series.
   **Hung 20 Sep 2026** (Publishing-a-Story stage 4): moved here from `experiments/`, where
@@ -1689,6 +1691,7 @@ backstop for the Claude Code session that lands the file.
   names one with `?view=<id>` in the address. Main runs the viewing's span, its right end carries
   the viewing's end name, the count under Main says the viewing's name, and *years ago* counts
   from today whatever the end. The zeros and names are Claude's choices, to be ruled on.
+  **14 Oct 2026:** the summary block above the map is a fixed height (5.8em; 7.25em under 760 px) and scrolls inside itself, so a new line no longer grows it and moves the map. CW_VERSION 2026-10-14.
 - **`index-old.html`** — the home page as it stood from 13 to 20 Sep 2026 (two labs as
   words, three round icons, Experiments as a line), retired when the gallery took
   `index.html`. Recovered from git with its links rebased one folder up, given a tab icon

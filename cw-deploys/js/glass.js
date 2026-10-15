@@ -455,7 +455,8 @@ var MEASURE = (opts.measure !== undefined) ? !!opts.measure : !!POWERS.measure;
 // own file, Open listing only her designs, the remove chip taking a pane away. The main
 // lab is untouched: all of it is this flag.
 var APP = opts.app === 'window';
-if (APP) { levelName = 'circles'; POWERS = LEVELS.circles; FILL_MODE = 'tap'; MEASURE = false; }
+// The measure follows the mount here too (Michael, 14 Oct 2026: radius and area back while a circle is drawn).
+if (APP) { levelName = 'circles'; POWERS = LEVELS.circles; FILL_MODE = 'tap'; MEASURE = !!opts.measure; }
 var REMOVE = 'remove';            // the palette's sentinel for the chip that takes colour away (window profile)
 var currentKey = null, fromDemo = false, currentDemo = null;   // what Save would overwrite (window profile)
 // On a pointer device, tap-to-fill with a colour chosen shows a small ring (a PNG: Safari takes

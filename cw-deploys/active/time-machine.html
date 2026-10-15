@@ -121,7 +121,9 @@
   #detail text { font-family: Georgia, serif; }
 
   /* the summary block: Detail's width, centred, its space reserved so the page never jumps */
-  #summary { width: 66.667%; margin: 4px auto 0; font-size: 16px; line-height: 1.45; min-height: 4.4em; }
+  /* a fixed height, not a least one (Michael, 14 Oct 2026): a longer summary scrolls inside the block
+     instead of growing it and nudging the map down */
+  #summary { width: 66.667%; margin: 4px auto 0; font-size: 16px; line-height: 1.45; height: 5.8em; overflow-y: auto; overscroll-behavior: contain; }
   #summary b { font-weight: bold; }
   #summary .hint { color: #a39c8c; font-style: italic; }
   #summary .say { font-style: italic; color: var(--payne); }
@@ -164,7 +166,7 @@
     #htw-panel-list { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
     #htw-panel .htw-action-row.group { margin-top: 8px; }
     #stage { margin-left: 0; padding: 8px 12px 30px; }
-    #summary { width: 90%; }
+    #summary { width: 90%; height: 7.25em; }
     #mapwords { width: 90%; }
   }
   @media (prefers-reduced-motion: reduce) { .htw-action-word { transition: none; } }
@@ -225,7 +227,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-13d 4b76e41';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-14 ba8f02f';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
