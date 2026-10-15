@@ -723,7 +723,10 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   option ready for it.
   *16 Oct, later:* **How many ways** in the key (per-resolution counts, a total of distinct corners
   among the rows showing; his values for 2 all match). Selection: newest fixed number, or a tap on
-  a held number's area, underlined — Michael to rule. Committed; push awaits his word.
+  a held number's area, underlined — Michael to rule. Then, on his notes: counts beside their
+  fractions under *Number of / Rectangles*; a new resolution walks all its stops by itself, half a
+  second apart (his reading of an earlier brief: every stop of a chosen resolution is laid down).
+  Committed; push awaits his word ("don't push yet").
   **Next action:** the iPad drive; Mirror's brief, if it exists, to Claude Code.
 
 ### 2. Perception Lab — the child's own instrument

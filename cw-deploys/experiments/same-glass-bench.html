@@ -45,12 +45,16 @@
   .cw-dial canvas{position:static;display:block}
 
   /* The key: resolutions she has used. */
-  .krow{display:flex;align-items:center;gap:8px;min-height:30px;font-size:13px}
+  /* The key as a grid: dot, line, fraction, and the count right beside its fraction, under a
+     centred title. */
+  .krow,.khead{display:grid;grid-template-columns:22px 22px 28px 62px;column-gap:4px;align-items:center}
+  .krow{min-height:30px;font-size:13px}
+  .khead .title{grid-column:4;text-align:center;font-size:11px;line-height:1.25;color:#546A80;margin-bottom:2px}
   .krow .dot{width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
   .krow .dot i{display:block;width:11px;height:11px;border-radius:50%;border:2px solid}
   .krow .lead{width:22px;height:0;border-top:2.5px solid;flex:none}
   .krow.off .lead,.krow.off .fr,.krow.off .ways{opacity:.35}
-  .krow .ways{margin-left:auto;padding-right:6px;font-size:14px;color:#3D3D3A}
+  .krow .ways{text-align:center;font-size:14px;color:#3D3D3A}
   .ktotal{font-size:13px;color:#546A80;margin-top:6px}
   /* The selected number, when more than one is held: a quiet underline under its area (Michael to rule). */
   .ro.sel .area{border-bottom:1.5px solid #c8b89a}
@@ -305,7 +309,7 @@ CW.axisNumbers = { step: step, text: text, draw: draw };
 </script>
 
 <script>
-var CW_VERSION = '2026-10-16b e0db3ba'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-10-16c e0db3ba'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 // ============================================================================
 // SAME GLASS — A BENCH (15 Oct 2026; first revision the same day, from Michael's
 // first impressions)
@@ -637,11 +641,19 @@ function startAnim(h, toLw, dur, fit) {
     h.anim = { from: h.lw, to: toLw, t0: performance.now(), dur: dur, fit: !!fit };
     if (!holdView) viewTarget = null;
 }
+// A new resolution lays down every one of its stops by itself (Michael, 16 Oct): the corner
+// glides to the widest, then walks to the tallest one stop at a time, AUTO_STEP_MS apart,
+// each stop staying as it is reached. Her own drag, Fixed, or Clear stops the walk.
+var AUTO_STEP_MS = 500;     // between one new rectangle landing and the next
+var AUTO_GLIDE_MS = 200;    // the corner's glide from one stop to the next, inside that half second
 function setRes(i) {
     qi = i;
     held.forEach(function(h) {
-        h.stops = stopsFor(h.N, RES[qi]);
-        if (h.stops.length) startAnim(h, h.stops[h.stops.length - 1].lw, 900, true);
+        h.stops = stopsFor(h.N, RES[qi]); h.auto = null;
+        if (h.stops.length) {
+            startAnim(h, h.stops[h.stops.length - 1].lw, 900, true);
+            h.auto = { i: h.stops.length - 2, at: performance.now() + 900 + AUTO_STEP_MS - AUTO_GLIDE_MS };
+        }
     });
     if (held.length) markUsed(qi);
     renderReadouts(); dirty = true;
@@ -852,6 +864,13 @@ function frame(now) {
     var dt = Math.min(100, now - lastFrame); lastFrame = now;
     var anyAnim = false;
     held.forEach(function(h) {
+        if (h.auto && !h.anim && now >= h.auto.at) {
+            if (h.auto.i < 0) h.auto = null;
+            else { startAnim(h, h.stops[h.auto.i].lw, AUTO_GLIDE_MS); h.auto.i--; h.auto.at = now + AUTO_STEP_MS; }
+        }
+        if (h.auto) anyAnim = true;           // the camera keeps the walk in sight, outward only
+    });
+    held.forEach(function(h) {
         if (!h.anim) return;
         var t = Math.min(1, (now - h.anim.t0) / h.anim.dur), e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
         h.lw = h.anim.from + (h.anim.to - h.anim.from) * e;
@@ -945,7 +964,7 @@ canvas.addEventListener('pointerdown', function(e) {
     else if (held.length) {
         var h = nearestHeld(p);
         drag = { kind: 'fixed', h: h, start: p, moved: false, lw0: h.lw, si: nearestStop(h.stops, h.lw) };
-        h.anim = null;
+        h.anim = null; h.auto = null;
     }
     else drag = { kind: 'pan', start: p, last: p, moved: false };
 });
@@ -1064,7 +1083,8 @@ function wayCounts() {
 }
 function renderKey() {
     var wc = wayCounts();
-    var html = used.map(function(i) {
+    var html = (wc && used.length) ? '<div class="khead"><span class="title">Number of<br>Rectangles</span></div>' : '';
+    html += used.map(function(i) {
         var c = resColor[i];
         return '<div class="krow' + (isShown(i) ? '' : ' off') + '" data-i="' + i + '">' +
             '<span class="dot"><i style="border-color:' + c + ';background:' + (isShown(i) ? c : 'transparent') + '"></i></span>' +

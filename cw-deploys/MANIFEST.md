@@ -1279,7 +1279,10 @@ backstop for the Claude Code session that lands the file.
   newest fixed one; a tap on a held number's area selects another, shown by a quiet underline under
   its area when more than one is held (Michael to rule). Checked against his values for 2 (2, 4, 6,
   6, 6, 12, 6, 8, 10, 12, 30, 56; halves and thirds together 8; metres to tenths 32, matching an
-  independent count). `CW_VERSION 2026-10-16b e0db3ba`.
+  independent count). *Then:* the counts sit just right of their fractions under a centred title,
+  *Number of / Rectangles*; and a **new resolution lays down all its stops by itself** — the corner
+  glides to the widest, then walks to the tallest one stop at a time, `AUTO_STEP_MS` (500) between
+  landings — stopped by her own drag, *Fixed* or *Clear*. `CW_VERSION 2026-10-16c e0db3ba`.
 
 - **`join-bench.html` → `active/deep-time.html` → `active/time-machine.html` (9 Oct)** — *The join*, built 6 Oct 2026 and **hung 7 Oct on
   Michael's word as Deep Time**, beside the Time Machine in the gallery (`stories/gallery.json`, slug
