@@ -49,7 +49,11 @@
   .krow .dot{width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
   .krow .dot i{display:block;width:11px;height:11px;border-radius:50%;border:2px solid}
   .krow .lead{width:22px;height:0;border-top:2.5px solid;flex:none}
-  .krow.off .lead,.krow.off .fr{opacity:.35}
+  .krow.off .lead,.krow.off .fr,.krow.off .ways{opacity:.35}
+  .krow .ways{margin-left:auto;padding-right:6px;font-size:14px;color:#3D3D3A}
+  .ktotal{font-size:13px;color:#546A80;margin-top:6px}
+  /* The selected number, when more than one is held: a quiet underline under its area (Michael to rule). */
+  .ro.sel .area{border-bottom:1.5px solid #c8b89a}
 
   /* Words that act: Geometry's action words, italic, no hover box. */
   /* Bold for now: every word in the column that acts (Michael, 15 Oct; the column's layout is provisional). */
@@ -88,6 +92,7 @@
     <li>Tap <em>Fix</em> to hold it.</li>
     <li>Turn the dial to choose how finely to cut.</li>
     <li>Tap <em>Join</em> to connect the corners; tap it again to erase.</li>
+    <li>The numbers in the key count the ways. Turn a dot off to count without it.</li>
     <li>Drag right to make it wider, up to make it taller.</li>
     <li>Tap <em>Near</em> or <em>Whole</em> to change the view.</li>
     <li>Tap <em>Clear</em> to start again.</li>
@@ -300,7 +305,7 @@ CW.axisNumbers = { step: step, text: text, draw: draw };
 </script>
 
 <script>
-var CW_VERSION = '2026-10-16 9b73dc2'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-10-16b e0db3ba'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 // ============================================================================
 // SAME GLASS — A BENCH (15 Oct 2026; first revision the same day, from Michael's
 // first impressions)
@@ -429,6 +434,7 @@ var numForm = 'fraction';
 try { if (localStorage.getItem('cw-number-form') === 'decimal') numForm = 'decimal'; } catch (e) {}
 var palSelected = null; // a colour from the palette, or null (the palette is closed)
 var joinOn = false;     // Join: straight lines between one number's corners at one resolution
+var selN = null;        // the number the key's counts belong to (its area, exact)
 var fillOn = false;     // Fill: half see-through glass in every rectangle, multiplied where they overlap, no outlines
 
 function markUsed(i) {
@@ -443,7 +449,7 @@ function keepStop(s) {
     rectKeys[k] = true;
     rects.push({ w: s.w, h: s.h, a: qmul(s.w, s.h), wf: qf(s.w), hf: qf(s.h), qi: qi, lab: null });
     markUsed(qi);
-    renderWords(); renderReadouts(); dirty = true;
+    renderKey(); renderWords(); renderReadouts(); dirty = true;
 }
 
 // ------------------------------------------------------------------- the view
@@ -550,7 +556,7 @@ function heldShowing(h) {           // the exact stop the readout speaks for
 }
 function roLine(w, h, N, attr, mark, word) {     // area first, as the labels: 9 = 1/5 × 45
     return '<div class="ro" ' + attr + '><span class="mark"' + (mark ? ' style="background:' + mark + '"' : '') + '></span>' +
-        '<span class="cw-line"><span class="num">' + numHTML(N) + '</span>' + CW.num.op('=') +
+        '<span class="cw-line"><span class="num area">' + numHTML(N) + '</span>' + CW.num.op('=') +
         '<span class="num">' + numHTML(w) + '</span>' + CW.num.op('\u00d7') +
         '<span class="num">' + numHTML(h) + '</span></span>' +
         '<span class="word fix">' + word + '</span></div>';
@@ -577,16 +583,25 @@ function renderReadouts() {
     var html = '';
     held.forEach(function(h, i) {
         var s = heldShowing(h), g = glassUsed(h.N);
-        html += roLine(s.w, s.h, h.N, 'data-held="' + i + '"', h.color, 'Fixed');
+        var sel = held.length > 1 && selN && qcmp(selN, h.N) === 0;
+        html += roLine(s.w, s.h, h.N, 'data-held="' + i + '"' + (sel ? ' data-sel="1"' : ''), h.color, 'Fixed');
         if (g) html += '<div class="used" data-used="1">Glass used:<span class="cw-line"><span class="num">' + numHTML(g) + '</span></span>square metres</div>';
     });
     if (free) html += roLine(free.w, free.h, qmul(free.w, free.h), 'data-free="1"', null, 'Fix');
+    html = html.replace(/<div class="ro" data-held="(\d+)" data-sel="1"/, '<div class="ro sel" data-held="$1"');
     if (html !== roHost._last) { roHost.innerHTML = html; roHost._last = html; }
 }
 roHost.addEventListener('click', function(e) {
     var ro = e.target.closest('.ro, .used'); if (!ro) return;
     if (e.target.closest('.fix')) {           // Fix holds the area; Fixed lets it go
         if (ro.hasAttribute('data-free')) fix(); else letGo(Number(ro.getAttribute('data-held')));
+        return;
+    }
+    if (e.target.closest('.area') && ro.hasAttribute('data-held')) {
+        // A tap on a held number's area selects it: the key counts its ways (chosen here;
+        // its width and height still switch fractions and decimals).
+        var hh = held[Number(ro.getAttribute('data-held'))];
+        if (hh) { selN = hh.N; renderReadouts(); renderKey(); }
         return;
     }
     if (e.target.closest('.num')) {           // a number: fractions or decimals, and her choice holds
@@ -605,6 +620,7 @@ function fix() {
     var h = { N: N, Nf: qf(N), color: color, lw: Math.log(qf(free.w)), stops: stopsFor(N, RES[qi]),
               cur: { w: free.w, h: free.h }, anim: null };
     held.push(h);
+    selN = N;                                            // the newest number is the one counted
     free = null;                                         // her starting rectangle is not kept
     markUsed(qi);
     if (h.stops.length) startAnim(h, h.stops[h.stops.length - 1].lw, 900, true);   // the widest stop
@@ -634,7 +650,7 @@ function setRes(i) {
 // Clear: every rectangle goes, every held number is let go, the key empties (and its
 // colours return to their own). The dial stays where it is.
 function clearAll() {
-    rects = []; rectKeys = {}; held = []; free = null; used = []; shown = {}; catchUp = null;
+    rects = []; rectKeys = {}; held = []; free = null; used = []; shown = {}; catchUp = null; selN = null;
     resColor = RES_COLOR.slice();
     renderKey(); renderReadouts(); renderWords(); dirty = true;
 }
@@ -1032,14 +1048,32 @@ document.getElementById('w-fill').addEventListener('click', function() {
 // With a colour chosen in the palette, a tap on a resolution gives it that colour:
 // its grid, rectangles and labels. With none chosen, a tap on the dot shows or hides it.
 var keyHost = document.getElementById('key');
+// How many ways: each row counts the stops its resolution has laid down for the selected
+// number; the total counts distinct corners among the rows still showing, so a corner that
+// several resolutions share (1 × 2 is a stop in metres, halves and tenths) counts once.
+function wayCounts() {
+    var per = {}, corners = {}, total = 0;
+    if (!selN) return null;
+    rects.forEach(function(r) {
+        if (qcmp(r.a, selN) !== 0) return;
+        per[r.qi] = (per[r.qi] || 0) + 1;
+        if (!isShown(r.qi)) return;
+        var k = qkey(r.w); if (!corners[k]) { corners[k] = 1; total++; }
+    });
+    return { per: per, total: total };
+}
 function renderKey() {
-    keyHost.innerHTML = used.map(function(i) {
+    var wc = wayCounts();
+    var html = used.map(function(i) {
         var c = resColor[i];
         return '<div class="krow' + (isShown(i) ? '' : ' off') + '" data-i="' + i + '">' +
             '<span class="dot"><i style="border-color:' + c + ';background:' + (isShown(i) ? c : 'transparent') + '"></i></span>' +
             '<span class="lead" style="border-color:' + c + '"></span>' +
-            '<span class="fr cw-line">' + CW.num.html(1, RES[i]) + '</span></div>';
+            '<span class="fr cw-line">' + CW.num.html(1, RES[i]) + '</span>' +
+            (wc ? '<span class="ways">' + CW.num.count(wc.per[i] || 0) + '</span>' : '') + '</div>';
     }).join('');
+    if (wc && used.length) html += '<div class="ktotal">Total: ' + CW.num.count(wc.total) + (wc.total === 1 ? ' way' : ' ways') + '</div>';
+    if (html !== keyHost._last) { keyHost.innerHTML = html; keyHost._last = html; }
 }
 keyHost.addEventListener('click', function(e) {
     var row = e.target.closest('.krow'); if (!row) return;

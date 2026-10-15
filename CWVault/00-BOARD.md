@@ -720,7 +720,11 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   live (his checking values all match), and **axes** solid and numbered in whole metres by a
   reusable `CW.axisNumbers` in the page. His brief refers to a **Mirror** ("as in revision 4") that
   was never built here — no revision 4 reached Claude Code; the axis numbers carry a `negative`
-  option ready for it. **Next action:** the iPad drive; Mirror's brief, if it exists, to Claude Code.
+  option ready for it.
+  *16 Oct, later:* **How many ways** in the key (per-resolution counts, a total of distinct corners
+  among the rows showing; his values for 2 all match). Selection: newest fixed number, or a tap on
+  a held number's area, underlined — Michael to rule. Committed; push awaits his word.
+  **Next action:** the iPad drive; Mirror's brief, if it exists, to Claude Code.
 
 ### 2. Perception Lab — the child's own instrument
 Colour, pitch, and rhythm discrimination. One measurement harness, three axes.

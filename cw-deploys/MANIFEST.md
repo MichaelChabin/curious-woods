@@ -1273,7 +1273,13 @@ backstop for the Claude Code session that lands the file.
   `CW.axisNumbers` — its own `<script>` in the page (step 1, 2, 5, 10 … the smallest that leaves
   room; no labels when no whole number is on screen; 0 at the origin; a `negative` option for the
   other quarters without minus signs), kept separate for other benches to lift into `js/`.
-  `CW_VERSION 2026-10-16 9b73dc2`.
+  *16 Oct, later:* **How many ways** — each key row counts the stops its resolution has laid down
+  for the selected number (dimmed, not dropped, when its dot is off), and *Total: n ways* counts
+  distinct corners among the rows still showing; live, reset by *Clear*. The counted number is the
+  newest fixed one; a tap on a held number's area selects another, shown by a quiet underline under
+  its area when more than one is held (Michael to rule). Checked against his values for 2 (2, 4, 6,
+  6, 6, 12, 6, 8, 10, 12, 30, 56; halves and thirds together 8; metres to tenths 32, matching an
+  independent count). `CW_VERSION 2026-10-16b e0db3ba`.
 
 - **`join-bench.html` → `active/deep-time.html` → `active/time-machine.html` (9 Oct)** — *The join*, built 6 Oct 2026 and **hung 7 Oct on
   Michael's word as Deep Time**, beside the Time Machine in the gallery (`stories/gallery.json`, slug
