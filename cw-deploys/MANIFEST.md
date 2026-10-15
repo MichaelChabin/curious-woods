@@ -1266,7 +1266,14 @@ backstop for the Claude Code session that lands the file.
   itself only outward and only when a rectangle would leave the visible plane (during a drag, after
   it until caught up, and during the glides after *Fix* and the dial), never inward; the readout
   reads area first, "9 = ⅕ × 45"; `FILL_ALPHA` 0.035; every word that acts is bold italic for now.
-  `CW_VERSION 2026-10-15e db459f0`.
+  *16 Oct:* under each held number, **Glass used**, the exact area its rectangles cover together
+  (every resolution, overlaps once, hidden ones counted; narrowest whole, then each next's strip
+  past the one before), climbing live; checked against Michael's values (9: 21, 34½, 60.9, 100.395;
+  2: 3, 5). **Axes** solid and darker than any grid, over the glass, numbered in whole metres by
+  `CW.axisNumbers` — its own `<script>` in the page (step 1, 2, 5, 10 … the smallest that leaves
+  room; no labels when no whole number is on screen; 0 at the origin; a `negative` option for the
+  other quarters without minus signs), kept separate for other benches to lift into `js/`.
+  `CW_VERSION 2026-10-16 9b73dc2`.
 
 - **`join-bench.html` → `active/deep-time.html` → `active/time-machine.html` (9 Oct)** — *The join*, built 6 Oct 2026 and **hung 7 Oct on
   Michael's word as Deep Time**, beside the Time Machine in the gallery (`stories/gallery.json`, slug

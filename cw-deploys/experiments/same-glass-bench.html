@@ -30,6 +30,9 @@
   .ro .mark{width:8px;height:8px;border-radius:50%;flex:none}
   .ro .cw-line{gap:.3em}
   .ro .num{cursor:pointer;padding:1px 2px;border-radius:3px}
+  /* Glass used: the second line under a held number's readout. */
+  .used{display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-size:13px;color:#546A80;margin:-2px 0 6px 14px}
+  .used .num{cursor:pointer}
 
   /* The resolution dial (its own module, below). */
   .cw-dial{display:flex;align-items:center;gap:2px}
@@ -227,7 +230,77 @@ CW.resolutionDial = function(host, opts) {
 </script>
 
 <script>
-var CW_VERSION = '2026-10-15e db459f0'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+// ============================================================================
+// AXIS NUMBERS — how a plane's axes are numbered, in one place (16 Oct 2026).
+//
+// Built in the Same Glass bench because no shared file does this (plane.js numbers
+// its own lattice on a 1–5–10 ladder in decimals); kept in its own <script> so other
+// benches on the plane can lift it to js/ and use it unchanged.
+//
+// The rule: whole numbers only, never fractions or decimals. The step is the smallest
+// of 1, 2, 5, 10, 20, 50, 100 … that leaves room between labels; zoomed in so far that
+// no whole number is on screen, there are simply no labels and the grid carries the
+// scale. 0 at the origin. With `negative`, the other sides are numbered the same way,
+// with no minus signs (the map convention). Labels sit outside the axes — below the
+// x axis, left of the y axis — and keep to the edge of the box when an axis is off it.
+//
+//   CW.axisNumbers.step(pxPerUnit, needPx) → 1, 2, 5, 10 …
+//   CW.axisNumbers.text(v)                 → "1 000" (grouped, no sign)
+//   CW.axisNumbers.draw(ctx, { w2s, z, box:{l,r,t,b}, negative, color })
+// ============================================================================
+(function() {
+'use strict';
+window.CW = window.CW || {};
+var FONT = '12px Georgia, serif', GAP_X = 14, GAP_Y = 20, TICK = 4;
+
+function step(pxPerUnit, need) {
+    for (var mag = 1; mag < 1e15; mag *= 10) {
+        var c = [1, 2, 5];
+        for (var i = 0; i < 3; i++) if (c[i] * mag * pxPerUnit >= need) return c[i] * mag;
+    }
+    return null;
+}
+function text(v) { return CW.num.count(Math.abs(Math.round(v))); }
+
+function draw(ctx, o) {
+    var b = o.box, z = o.z, org = o.w2s(0, 0);
+    var x0 = (b.l - org.x) / z, x1 = (b.r - org.x) / z;          // visible x, world
+    var y0 = (org.y - b.b) / z, y1 = (org.y - b.t) / z;          // visible y, world
+    var lo = o.negative ? -Infinity : 0;
+    ctx.save();
+    ctx.font = FONT; ctx.fillStyle = o.color; ctx.strokeStyle = o.color; ctx.lineWidth = 1;
+    // x: the widest label in view decides the room it needs
+    var widest = ctx.measureText(text(Math.max(Math.abs(x0), Math.abs(x1)))).width;
+    var sx = step(z, widest + GAP_X), sy = step(z, GAP_Y);
+    var rowY = Math.max(b.t + 4, Math.min(org.y + TICK + 3, b.b - 16));
+    var colX = Math.max(b.l + 4 + widest, Math.min(org.x - TICK - 4, b.r - 4));
+    var axisXOn = org.y >= b.t && org.y <= b.b, axisYOn = org.x >= b.l && org.x <= b.r;
+    var k, v, p;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    if (sx) for (k = Math.ceil(Math.max(x0, lo) / sx); k * sx <= x1; k++) {
+        v = k * sx; if (!v) continue;
+        p = o.w2s(v, 0).x;
+        if (p < b.l + 10) continue;
+        ctx.fillText(text(v), p, rowY);
+        if (axisXOn) { ctx.beginPath(); ctx.moveTo(Math.round(p) + 0.5, org.y); ctx.lineTo(Math.round(p) + 0.5, org.y + TICK); ctx.stroke(); }
+    }
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    if (sy) for (k = Math.ceil(Math.max(y0, lo) / sy); k * sy <= y1; k++) {
+        v = k * sy; if (!v) continue;
+        p = o.w2s(0, v).y;
+        if (p > b.b - 24) continue;                             // clear of the x row
+        ctx.fillText(text(v), colX, p);
+        if (axisYOn) { ctx.beginPath(); ctx.moveTo(org.x - TICK, Math.round(p) + 0.5); ctx.lineTo(org.x, Math.round(p) + 0.5); ctx.stroke(); }
+    }
+    if (axisXOn && axisYOn) { ctx.textBaseline = 'top'; ctx.fillText('0', org.x - TICK - 2, org.y + TICK + 3); }
+    ctx.restore();
+}
+CW.axisNumbers = { step: step, text: text, draw: draw };
+})();
+</script>
+
+<script>
+var CW_VERSION = '2026-10-16 9b73dc2'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 // ============================================================================
 // SAME GLASS — A BENCH (15 Oct 2026; first revision the same day, from Michael's
 // first impressions)
@@ -282,6 +355,9 @@ function Q(n, d) {
     return { n: n / g, d: d / g };
 }
 function qmul(a, b) { return Q(a.n * b.n, a.d * b.d); }
+function qadd(a, b) { return Q(a.n * b.d + b.n * a.d, a.d * b.d); }
+function qsub(a, b) { return Q(a.n * b.d - b.n * a.d, a.d * b.d); }
+function qcmp(a, b) { var l = a.n * b.d, r = b.n * a.d; return l < r ? -1 : l > r ? 1 : 0; }
 function qf(a) { return Number(a.n) / Number(a.d); }
 function qkey(a) { return a.n + '/' + a.d; }
 
@@ -296,6 +372,7 @@ var resColor = RES_COLOR.slice();
 // A held number's own colour, on its corner and its readout. Copper first: Geometry's point colour.
 var NUM_COLOR = ['#BE622F', '#2c5aa0', '#3f7a3a', '#8b1a1a', '#6a3a8c'];
 var INK = '#3D3D3A', SLATE = '#546A80', PAPER = '#f4f1e8';
+var AXIS_COLOR = '#3f4f60';      // the axes: Payne's grey, darker than any grid
 var LEAD_ALPHA = 0.55, LABEL_ALPHA = 0.7;   // overlapping lines darken where they cross
 var FILL_ALPHA = 0.035;                     // each rectangle's glass when Fill is on: light, because
                                             // by the axes every rectangle lies on every other
@@ -366,7 +443,7 @@ function keepStop(s) {
     rectKeys[k] = true;
     rects.push({ w: s.w, h: s.h, a: qmul(s.w, s.h), wf: qf(s.w), hf: qf(s.h), qi: qi, lab: null });
     markUsed(qi);
-    renderWords(); dirty = true;
+    renderWords(); renderReadouts(); dirty = true;
 }
 
 // ------------------------------------------------------------------- the view
@@ -478,17 +555,36 @@ function roLine(w, h, N, attr, mark, word) {     // area first, as the labels: 9
         '<span class="num">' + numHTML(h) + '</span></span>' +
         '<span class="word fix">' + word + '</span></div>';
 }
+// Glass used: the area all of one number's rectangles cover together, every resolution
+// included, overlaps counted once — what Fill would paint. Exact: its stops on the plane,
+// duplicates removed, narrowest first; the narrowest counts whole, and each next adds only
+// the strip that sticks out past the one before, (its width − the previous width) × its
+// height. Hidden resolutions still count: this is about the glass, not the view.
+function glassUsed(N) {
+    var seen = {}, mine = [];
+    rects.forEach(function(r) {
+        if (qcmp(r.a, N) !== 0) return;
+        var k = qkey(r.w); if (seen[k]) return;
+        seen[k] = 1; mine.push(r);
+    });
+    if (!mine.length) return null;
+    mine.sort(function(p, q) { return qcmp(p.w, q.w); });
+    var total = qmul(mine[0].w, mine[0].h);
+    for (var i = 1; i < mine.length; i++) total = qadd(total, qmul(qsub(mine[i].w, mine[i - 1].w), mine[i].h));
+    return total;
+}
 function renderReadouts() {
     var html = '';
     held.forEach(function(h, i) {
-        var s = heldShowing(h);
+        var s = heldShowing(h), g = glassUsed(h.N);
         html += roLine(s.w, s.h, h.N, 'data-held="' + i + '"', h.color, 'Fixed');
+        if (g) html += '<div class="used" data-used="1">Glass used:<span class="cw-line"><span class="num">' + numHTML(g) + '</span></span>square metres</div>';
     });
     if (free) html += roLine(free.w, free.h, qmul(free.w, free.h), 'data-free="1"', null, 'Fix');
     if (html !== roHost._last) { roHost.innerHTML = html; roHost._last = html; }
 }
 roHost.addEventListener('click', function(e) {
-    var ro = e.target.closest('.ro'); if (!ro) return;
+    var ro = e.target.closest('.ro, .used'); if (!ro) return;
     if (e.target.closest('.fix')) {           // Fix holds the area; Fixed lets it go
         if (ro.hasAttribute('data-free')) fix(); else letGo(Number(ro.getAttribute('data-held')));
         return;
@@ -670,22 +766,11 @@ function render() {
     used.forEach(function(i) { if (isShown(i) && i !== qi) drawGrid(RES[i], resColor[i], 0.10); });
     if (isShown(qi)) drawGrid(RES[qi], used.indexOf(qi) >= 0 ? resColor[qi] : SLATE, 0.14);
 
-    // The axes and the 1
+    // The 1
     var o = w2s(0, 0), u = w2s(1, 1);
-    ctx.strokeStyle = SLATE; ctx.globalAlpha = 0.3; ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(snap(o.x), 0); ctx.lineTo(snap(o.x), H);
-    ctx.moveTo(a.x0, snap(o.y)); ctx.lineTo(W, snap(o.y));
-    ctx.stroke(); ctx.globalAlpha = 1;
     ctx.fillStyle = '#fffdf7'; ctx.fillRect(o.x, u.y, Math.max(1, u.x - o.x), Math.max(1, o.y - u.y));
     ctx.strokeStyle = '#c8b89a'; ctx.lineWidth = 1;
     ctx.strokeRect(snap(o.x), snap(u.y), Math.round(u.x - o.x), Math.round(o.y - u.y));
-    ctx.fillStyle = SLATE; ctx.globalAlpha = 0.75; ctx.font = '12px Georgia, serif';
-    ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillText('0', o.x - 4, o.y + 4);
-    if (u.x - o.x > 16) {
-        ctx.textAlign = 'center'; ctx.fillText('1', u.x, o.y + 4);
-        ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText('1', o.x - 5, u.y);
-    }
     if (u.x - o.x > 30) {
         ctx.globalAlpha = 0.5; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.font = Math.min(28, (u.x - o.x) * 0.45) + 'px Georgia, serif';
@@ -714,6 +799,16 @@ function render() {
     });
     ctx.globalAlpha = 1;
     if (joinOn) drawJoins();
+
+    // The axes: solid, darker than any grid line, over the glass so Fill never hides them,
+    // numbered in whole metres by the shared rule (CW.axisNumbers, above).
+    ctx.strokeStyle = AXIS_COLOR; ctx.lineWidth = 1.25;
+    ctx.beginPath();
+    ctx.moveTo(snap(o.x), 0); ctx.lineTo(snap(o.x), H);
+    ctx.moveTo(a.x0, snap(o.y)); ctx.lineTo(W, snap(o.y));
+    ctx.stroke();
+    CW.axisNumbers.draw(ctx, { w2s: w2s, z: view.z, box: { l: a.x0, r: W, t: 0, b: H },
+                               negative: false, color: AXIS_COLOR });
     drawLabels();
 
     // The live rectangles and their corners
