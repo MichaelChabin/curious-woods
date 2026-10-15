@@ -1231,6 +1231,43 @@ backstop for the Claude Code session that lands the file.
 
 ### experiments/
 
+- **`same-glass-bench.html` (15 Oct 2026; revised the same day on Michael's first impressions)** —
+  *Same Glass*: a bench. Five literal instructions head the column. She makes a number as a
+  rectangle from the 1 at the current resolution, taps *Fix* beside the readout to hold its area
+  (*Fixed* lets go), and drags the corner along xy = N; it stops only at exact stops (width and height
+  multiples of 1/q, area exactly N), and **every stop it passes or comes to rest on stays** as a
+  rectangle. Outlines only, no glass yet: each in its resolution's colour (the strong version of
+  that resolution's faint grid), half see-through so overlaps darken, labelled "w × h" just outside
+  its upper-right corner; a label that would overlap one already placed is left out (zooming in
+  brings it back), never shrunk. The area appears once, in the readout. Fraction or decimal by a
+  tap on any number, kept in `localStorage` `cw-number-form`. *Color* opens Geometry's palette
+  window (Chartres from `art/palette/palettes.json`); with a colour chosen, a tap on a key entry
+  gives that resolution the colour, grid, rectangles and labels; with none, the entry's dot shows
+  or hides them. *Clear* removes every rectangle, lets go of every held number and empties the key
+  (its colours return to their own); the dial stays. The **resolution dial** (1, ½ … ⅒, 1/100,
+  1/1000, 1/10 000) is its own `<script>` in the page, `CW.resolutionDial(host, {steps, index,
+  isDim, onChange})`, kept separate to lift into `js/` when ruled a general tool. Several held
+  numbers at once, each with its own corner colour (9 and 10 is the test). All arithmetic in BigInt
+  fractions. Stands on `js/cw-number.js` and `js/cw-flags.js`; **not on `js/plane.js`**, whose zoom
+  clamp (0.05–10) spans 200 where this needs ~10⁷ (a 9 m² strip at 1/10 000 is 90 km by 0.1 mm),
+  so it carries its own view with plane.js's conventions. Tab icon
+  `art/icons/stained-glass-circles-icon-256.png`. Listed in `experiments/index.html`.
+  *Second revision, the same evening:* *Near* (the 1 in the lower-left quarter) and *Whole* (every
+  rectangle, small margin) glide the view; labels read "9 = 1½ × 6"; *Fill* (off by default) gives
+  each rectangle multiplied half see-through glass in its resolution's colour; while *Fixed* a
+  one-finger drag anywhere moves the corner by doubling (`DOUBLING_PX` = 100 px of travel doubles
+  or halves the width, the larger direction counts, right and down wider), landing only on the stop
+  nearest by ratio and keeping every stop passed, the camera following; two fingers pan and pinch;
+  her own zooming stops at *Whole* going out. *Then, on his word:* a drag from the 1 always makes a
+  new number, held or not, so 9 and 10 can be held side by side again; *Fill* means no outlines, the
+  glass's own edges standing for them. *Third revision, the same night:* *Join* draws straight
+  pieces between the reached corners of each number at each resolution, tallest to widest, in the
+  resolution's colour (never the curve; hidden with its resolution's dot); the camera moves by
+  itself only outward and only when a rectangle would leave the visible plane (during a drag, after
+  it until caught up, and during the glides after *Fix* and the dial), never inward; the readout
+  reads area first, "9 = ⅕ × 45"; `FILL_ALPHA` 0.035; every word that acts is bold italic for now.
+  `CW_VERSION 2026-10-15e db459f0`.
+
 - **`join-bench.html` → `active/deep-time.html` → `active/time-machine.html` (9 Oct)** — *The join*, built 6 Oct 2026 and **hung 7 Oct on
   Michael's word as Deep Time**, beside the Time Machine in the gallery (`stories/gallery.json`, slug
   `deep-time`, picture `art/gallery/deep-time-gallery.png`, a slate frame), the bench retired to

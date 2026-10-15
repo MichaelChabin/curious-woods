@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/icons/stained-glass-circles-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/stained-glass-circles-icon-256.png">
+<title>Same Glass — a bench</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{background:#f4f1e8;font-family:Georgia,serif;color:#3D3D3A;overflow:hidden;
+       user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+  canvas{display:block;position:fixed;inset:0;touch-action:none}
+
+  /* The left column: Geometry's, holding only the words that act. */
+  #col{position:fixed;left:0;top:0;bottom:0;z-index:10;overflow-y:auto;overflow-x:hidden;
+       background:rgba(244,241,232,.95);border-right:.5px solid #c8b89a;padding:16px 14px 20px}
+  #col h1{font-size:15px;font-weight:normal;color:#546A80;margin-bottom:3px}
+  #col .sub{font-size:11px;color:#a09880;line-height:1.45;margin-bottom:12px}
+  .section{margin-top:14px}
+
+  /* The instructions: literal, the words on the screen in italics (Geometry's action words). */
+  .how{font-size:12.5px;line-height:1.45;color:#3D3D3A;list-style:none;margin-bottom:12px}
+  .how li{margin-bottom:4px}
+  .how em{color:#546A80}
+
+  /* Readouts: width × height = area, then Fix or Fixed. One line per number. */
+  .ro{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;font-size:15px;min-height:34px;padding:2px 0}
+  .ro .mark{width:8px;height:8px;border-radius:50%;flex:none}
+  .ro .cw-line{gap:.3em}
+  .ro .num{cursor:pointer;padding:1px 2px;border-radius:3px}
+
+  /* The resolution dial (its own module, below). */
+  .cw-dial{display:flex;align-items:center;gap:2px}
+  .cw-dial .arrow{font-size:20px;color:#546A80;cursor:pointer;padding:4px 5px;line-height:1;flex:none}
+  .cw-dial .arrow:hover{color:#3D3D3A}
+  .cw-dial .vp{position:relative;flex:1;height:66px;overflow:hidden;touch-action:none;cursor:grab}
+  .cw-dial .cell{position:absolute;top:6px;left:0;display:flex;flex-direction:column;align-items:center;
+                 gap:4px;transform-origin:50% 0;font-size:15px;color:#3D3D3A;pointer-events:none}
+  .cw-dial.anim .cell{transition:transform 220ms ease,opacity 220ms ease}
+  .cw-dial canvas{position:static;display:block}
+
+  /* The key: resolutions she has used. */
+  .krow{display:flex;align-items:center;gap:8px;min-height:30px;font-size:13px}
+  .krow .dot{width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+  .krow .dot i{display:block;width:11px;height:11px;border-radius:50%;border:2px solid}
+  .krow .lead{width:22px;height:0;border-top:2.5px solid;flex:none}
+  .krow.off .lead,.krow.off .fr{opacity:.35}
+
+  /* Words that act: Geometry's action words, italic, no hover box. */
+  /* Bold for now: every word in the column that acts (Michael, 15 Oct; the column's layout is provisional). */
+  .word{font-size:14px;font-style:italic;font-weight:bold;color:#546A80;cursor:pointer}
+  .word:hover{color:#3D3D3A}
+  .words{display:flex;gap:18px}
+  .gone{display:none}
+  .views{margin-bottom:12px}
+  /* Fill is on or off: the small square before the word is empty or filled (chosen here). */
+  #w-fill,#w-join{display:inline-flex;align-items:center;gap:5px}
+  .word .box{display:inline-block;width:9px;height:9px;border:1.2px solid #546A80;border-radius:1px}
+  .word.on .box{background:#546A80}
+  .words{flex-wrap:wrap;row-gap:8px}
+
+  /* Geometry's palette window: draggable by its header, closeable. */
+  #pal{position:fixed;z-index:20;width:168px;display:none;background:rgba(244,241,232,.97);
+       border:.5px solid #c8b89a;border-radius:6px;padding:0 10px 10px;box-shadow:0 2px 12px rgba(42,38,32,.12)}
+  #pal .hd{display:flex;justify-content:space-between;align-items:center;padding:9px 0 8px;cursor:grab;touch-action:none}
+  #pal .name{font-size:14px;color:#546A80}
+  #pal .close{font-size:12px;color:#546A80;cursor:pointer}
+  #pal .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+  #pal .sw{height:28px;border-radius:3px;cursor:pointer;border:1.5px solid transparent;
+           box-shadow:inset 0 0 0 2px #4a4540}
+  #pal .sw.sel{border-color:#546A80}
+  #pal .recipe{font-style:italic;font-size:11px;color:rgba(42,38,32,.7);margin-top:8px;min-height:14px}
+</style>
+<script src="../js/cw-flags.js?v=2026-09-15"></script>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="col">
+  <h1>Same glass</h1>
+  <ul class="how">
+    <li>Touch the 1 and drag to make a number.</li>
+    <li>Tap <em>Fix</em> to hold it.</li>
+    <li>Turn the dial to choose how finely to cut.</li>
+    <li>Tap <em>Join</em> to connect the corners; tap it again to erase.</li>
+    <li>Drag right to make it wider, up to make it taller.</li>
+    <li>Tap <em>Near</em> or <em>Whole</em> to change the view.</li>
+    <li>Tap <em>Clear</em> to start again.</li>
+  </ul>
+  <div class="words views"><span class="word" id="w-near">Near</span><span class="word" id="w-whole">Whole</span></div>
+  <div id="readouts"></div>
+  <div class="section" id="dial"></div>
+  <div class="section" id="key"></div>
+  <div class="section words"><span class="word" id="w-color">Color</span><span class="word" id="w-fill"><b class="box"></b>Fill</span><span class="word" id="w-join"><b class="box"></b>Join</span><span class="word gone" id="w-clear">Clear</span></div>
+</div>
+
+<div id="pal">
+  <div class="hd"><span class="name">Chartres</span><span class="close">close</span></div>
+  <div class="grid"></div>
+  <div class="recipe">&nbsp;</div>
+</div>
+
+<script src="../js/cw-number.js?v=2026-09-03"></script>
+
+<script>
+// ============================================================================
+// THE RESOLUTION DIAL — its own module.
+//
+// Built inside the Same Glass bench (15 Oct 2026) because no shared file offers
+// it, and kept in its own <script> so it lifts out to js/ unchanged when Michael
+// rules it a general tool. Its job everywhere will be the same and no larger:
+// the one resolution a plane or grid is working at, which the page then uses for
+// snap spacing, faint grid spacing and readout denominators. Nothing more.
+//
+//   var dial = CW.resolutionDial(host, {
+//       steps:   [1, 2, 3, ..., 10000],   // denominators: the step is 1/q
+//       index:   0,                       // where it starts
+//       isDim:   function(i) {...},       // finer than a pixel at the page's zoom
+//       onChange:function(i) {...}        // she chose a new one
+//   });
+//   dial.index(); dial.set(i); dial.refresh();
+//
+// Three positions show: the current one in the middle, larger, its neighbours
+// smaller either side. Arrows at both ends. A touch that moves more than a few
+// pixels is a swipe (it slides the strip and settles on the nearest); otherwise it
+// is a tap, and a tap on a neighbour selects it. Each position is a tiny bar cut
+// into q pieces with 1/q stacked beneath it; at fine resolutions the cuts run
+// together into grey, which is the pixel limit shown honestly. A dimmed position
+// can still be chosen.
+// ============================================================================
+(function() {
+'use strict';
+window.CW = window.CW || {};
+
+var SWIPE_PX = 6;      // more than this and a touch is a swipe
+var BAR_W = 56, BAR_H = 9;
+
+function drawBar(cv, q) {
+    var dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(BAR_W * dpr); cv.height = Math.round(BAR_H * dpr);
+    cv.style.width = BAR_W + 'px'; cv.style.height = BAR_H + 'px';
+    var g = cv.getContext('2d');
+    g.scale(dpr, dpr);
+    g.fillStyle = '#fbf9f2'; g.fillRect(0, 0, BAR_W, BAR_H);
+    // The cuts, each one CSS pixel wide at its true place. Past about one cut per
+    // two pixels they merge; nothing here pretends otherwise.
+    g.fillStyle = 'rgba(61,61,58,.75)';
+    for (var i = 1; i < q; i++) g.fillRect(i * BAR_W / q - 0.5, 0, 1, BAR_H);
+    g.strokeStyle = '#3D3D3A'; g.lineWidth = 1;
+    g.strokeRect(0.5, 0.5, BAR_W - 1, BAR_H - 1);
+}
+
+CW.resolutionDial = function(host, opts) {
+    var steps = opts.steps, index = opts.index || 0, offset = 0;
+    var isDim = opts.isDim || function() { return false; };
+    host.classList.add('cw-dial');      // no transition until it has been laid out once
+    host.innerHTML = '<span class="arrow" data-d="-1">‹</span><div class="vp"></div><span class="arrow" data-d="1">›</span>';
+    var vp = host.querySelector('.vp');
+    var cells = steps.map(function(q) {
+        var c = document.createElement('div'); c.className = 'cell';
+        var cv = document.createElement('canvas'); drawBar(cv, q);
+        var lab = document.createElement('div');
+        lab.className = 'cw-line';
+        lab.innerHTML = CW.num.html(1, q);
+        c.appendChild(cv); c.appendChild(lab); vp.appendChild(c);
+        return c;
+    });
+
+    function layout() {
+        var w = vp.clientWidth || 150, sp = w / 3;
+        cells.forEach(function(c, k) {
+            var rel = k - (index + offset), a = Math.abs(rel);
+            var s = (1 - 0.38 * Math.min(1, a)) * Math.min(1, sp / (BAR_W * 1.1));   // a narrow column shrinks the bars
+            var op = a > 1.6 ? 0 : Math.max(0, 1 - Math.max(0, a - 1) * 1.7);
+            if (isDim(k)) op *= 0.35;
+            c.style.opacity = op;
+            c.style.transform = 'translateX(' + (w / 2 + rel * sp - BAR_W / 2) + 'px) scale(' + s + ')';
+            c.style.width = BAR_W + 'px';
+        });
+    }
+    function set(i, silent) {
+        i = Math.max(0, Math.min(steps.length - 1, i));
+        var changed = i !== index;
+        index = i; offset = 0; host.classList.add('anim'); layout();
+        if (changed && !silent && opts.onChange) opts.onChange(index);
+    }
+
+    host.querySelectorAll('.arrow').forEach(function(a) {
+        a.addEventListener('click', function() { set(index + Number(a.getAttribute('data-d'))); });
+    });
+
+    var down = null;
+    vp.addEventListener('pointerdown', function(e) {
+        e.preventDefault();
+        vp.setPointerCapture(e.pointerId);
+        down = { x: e.clientX, swiping: false };
+    });
+    vp.addEventListener('pointermove', function(e) {
+        if (!down) return;
+        var dx = e.clientX - down.x;
+        if (!down.swiping && Math.abs(dx) > SWIPE_PX) { down.swiping = true; host.classList.remove('anim'); }
+        if (down.swiping) {
+            var sp = (vp.clientWidth || 150) / 3;
+            offset = Math.max(-index, Math.min(steps.length - 1 - index, -dx / sp));
+            layout();
+        }
+    });
+    function up(e) {
+        if (!down) return;
+        var d = down; down = null;
+        if (d.swiping) { set(Math.round(index + offset)); return; }
+        // A tap: which position is under it?
+        var r = vp.getBoundingClientRect(), sp = r.width / 3;
+        var rel = Math.round((e.clientX - r.left - r.width / 2) / sp);
+        if (rel) set(index + rel);
+    }
+    vp.addEventListener('pointerup', up);
+    vp.addEventListener('pointercancel', function() { down = null; set(index, true); });
+    window.addEventListener('resize', layout);
+    requestAnimationFrame(layout);
+
+    return { index: function() { return index; }, set: set, refresh: layout };
+};
+})();
+</script>
+
+<script>
+var CW_VERSION = '2026-10-15e db459f0'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+// ============================================================================
+// SAME GLASS — A BENCH (15 Oct 2026; first revision the same day, from Michael's
+// first impressions)
+//
+// She makes a number as a rectangle from the 1, taps Fix to hold its area, and
+// drags the corner along xy = N. The corner can stop only where the area is
+// exactly that number at the resolution on the dial, and every exact stop she
+// passes stays on the plane as a rectangle in that resolution's colour, labelled
+// with its width and height. The window that results is a record of every exact
+// way to make the number. At finer resolutions there are more stops, but far
+// fewer than she expects: 9, between 1 m and 9 m wide, has 3 exact stops in
+// metres, 13 in tenths, 21 in hundredths, 29 in thousandths. The curve never
+// fills in.
+//
+// Standing on: js/cw-number.js (every number written). NOT on js/plane.js, read
+// and deliberately left aside — its one zoom clamp is 0.05 to 10, a range of
+// 200, and this bench needs about ten million (a 9 m² strip at 1/10 000 is 90 km
+// long and a tenth of a millimetre high). The bench carries its own small view
+// with plane.js's conventions: world y up, pan = the world point under the centre
+// of the drawing area, zoom = pixels per metre, wheel and pinch zoom about that
+// centre as Geometry's do. Its grid is the resolution's grid, not plane.js's
+// 1–5–10 ladder, because the dial sets grid spacing.
+//
+// All arithmetic is exact: a number is a BigInt fraction {n, d}. Floats are used
+// only to put things on the screen and to move the corner between stops.
+//
+// Outlines only, for now: no glass in the rectangles, no panes, no colouring of
+// panes (Michael, first revision: "No fills yet"). The palette serves the key.
+//
+// Second revision, the same evening: Near and Whole; labels read "9 = 1½ × 6";
+// Fill (multiplied glass, off by default); while Fixed a one-finger drag anywhere
+// moves the corner, by doubling (DOUBLING_PX), snapping to the stop nearest by ratio;
+// two fingers pan and pinch; her own zooming stops at Whole going out.
+//
+// Still Michael to rule — what is built so he can judge it on the iPad:
+//   • The dial's last position: 1/10 000.
+//   • Changing resolution while held: every held corner glides to the widest stop
+//     at the new resolution, which stays as a rectangle, and the view glides out.
+//   • The key's dot hides that resolution's gridlines, rectangles and labels.
+//   • Each held number keeps its own colour on its corner, its moving outline and
+//     the dot of its readout; the rectangles it leaves take the resolution's.
+// ============================================================================
+(function() {
+'use strict';
+
+// ---------------------------------------------------------------- exact numbers
+function bgcd(a, b) { if (a < 0n) a = -a; if (b < 0n) b = -b; while (b) { var t = a % b; a = b; b = t; } return a; }
+function Q(n, d) {
+    n = BigInt(n); d = (d === undefined) ? 1n : BigInt(d);
+    if (d < 0n) { n = -n; d = -d; }
+    var g = bgcd(n, d) || 1n;
+    return { n: n / g, d: d / g };
+}
+function qmul(a, b) { return Q(a.n * b.n, a.d * b.d); }
+function qf(a) { return Number(a.n) / Number(a.d); }
+function qkey(a) { return a.n + '/' + a.d; }
+
+// --------------------------------------------------------------- the resolutions
+var RES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 10000];   // step is 1/q metre
+// Lead colours, one per resolution, from the glass palettes (darker members, so
+// a came reads as a came). The grid of a resolution is the same colour, faint.
+// She can give any resolution another colour from the palette (see the key).
+var RES_COLOR = ['#4a4540', '#1a3a8c', '#8b1a1a', '#1a6a2a', '#c8780a', '#4a1a8c', '#2a8a8a',
+                 '#a83018', '#6a5a2a', '#c84878', '#2a6a5a', '#7a3a8a', '#9a7a1a'];
+var resColor = RES_COLOR.slice();
+// A held number's own colour, on its corner and its readout. Copper first: Geometry's point colour.
+var NUM_COLOR = ['#BE622F', '#2c5aa0', '#3f7a3a', '#8b1a1a', '#6a3a8c'];
+var INK = '#3D3D3A', SLATE = '#546A80', PAPER = '#f4f1e8';
+var LEAD_ALPHA = 0.55, LABEL_ALPHA = 0.7;   // overlapping lines darken where they cross
+var FILL_ALPHA = 0.035;                     // each rectangle's glass when Fill is on: light, because
+                                            // by the axes every rectangle lies on every other
+
+var qi = 0;                       // the dial's index
+
+// ------------------------------------------------------------------- the stops
+// Exact stops for area N at step 1/q: w = a/q, h = b/q, a·b = N·q². They exist
+// only if N·q² is a whole number; then they are its divisors. Cached.
+var stopCache = {};
+function factor(m) {            // m: a Number below 2^53
+    var f = [], p = 2;
+    while (p * p <= m) {
+        if (m % p === 0) { var e = 0; while (m % p === 0) { m /= p; e++; } f.push([p, e]); }
+        p += (p === 2) ? 1 : 2;
+    }
+    if (m > 1) f.push([m, 1]);
+    return f;
+}
+function stopsFor(N, q) {
+    var k = qkey(N) + '@' + q;
+    if (stopCache[k]) return stopCache[k];
+    var M = Q(N.n * BigInt(q) * BigInt(q), N.d), out = [];
+    if (M.d === 1n && M.n > 0n && M.n <= 9007199254740991n) {
+        var m = Number(M.n), divs = [1];
+        factor(m).forEach(function(pe) {
+            var add = [];
+            divs.forEach(function(d) { var x = d; for (var i = 0; i < pe[1]; i++) { x *= pe[0]; add.push(x); } });
+            divs = divs.concat(add);
+        });
+        divs.sort(function(a, b) { return a - b; });
+        out = divs.map(function(a) {
+            return { w: Q(a, q), h: Q(m / a, q), lw: Math.log(a) - Math.log(q) };
+        });
+    }
+    stopCache[k] = out;
+    return out;
+}
+function nearestStop(stops, lw) {
+    var lo = 0, hi = stops.length - 1;
+    if (hi < 0) return -1;
+    while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (stops[mid].lw < lw) lo = mid; else hi = mid; }
+    return (Math.abs(stops[lo].lw - lw) <= Math.abs(stops[hi].lw - lw)) ? lo : hi;
+}
+
+// ------------------------------------------------------------------ the state
+var free = null;        // the rectangle being made: {w, h} exact, or null
+var held = [];          // {N, Nf, color, lw, stops, cur:{w,h}, anim}
+var rects = [];         // the stops that stay: {w, h, wf, hf, qi, lab}
+var rectKeys = {};      // qi|w|h → true, so a stop stays once
+var used = [];          // resolution indices she has used, for the key
+var shown = {};         // key dot per resolution index: false hides it
+var numForm = 'fraction';
+try { if (localStorage.getItem('cw-number-form') === 'decimal') numForm = 'decimal'; } catch (e) {}
+var palSelected = null; // a colour from the palette, or null (the palette is closed)
+var joinOn = false;     // Join: straight lines between one number's corners at one resolution
+var fillOn = false;     // Fill: half see-through glass in every rectangle, multiplied where they overlap, no outlines
+
+function markUsed(i) {
+    if (used.indexOf(i) < 0) { used.push(i); used.sort(function(a, b) { return a - b; }); renderKey(); }
+}
+function isShown(i) { return shown[i] !== false; }
+
+// Passing a stop is keeping it.
+function keepStop(s) {
+    var k = qi + '|' + qkey(s.w) + '|' + qkey(s.h);
+    if (rectKeys[k]) return;
+    rectKeys[k] = true;
+    rects.push({ w: s.w, h: s.h, a: qmul(s.w, s.h), wf: qf(s.w), hf: qf(s.h), qi: qi, lab: null });
+    markUsed(qi);
+    renderWords(); dirty = true;
+}
+
+// ------------------------------------------------------------------- the view
+var canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+var col = document.getElementById('col');
+var W = 0, H = 0, colW = 220;
+var view = { x: 5, y: 4, z: 60 };            // world point at the drawing area's centre; px per metre
+var Z_MIN = 1e-4, Z_MAX = 5e6;
+
+function area() { return { x0: colW, y0: 0, w: W - colW, h: H, cx: colW + (W - colW) / 2, cy: H / 2 }; }
+function w2s(x, y) { var a = area(); return { x: a.cx + (x - view.x) * view.z, y: a.cy - (y - view.y) * view.z }; }
+function s2w(sx, sy) { var a = area(); return { x: (sx - a.cx) / view.z + view.x, y: -(sy - a.cy) / view.z + view.y }; }
+function setZoom(z) { view.z = Math.max(Z_MIN, Math.min(Z_MAX, z)); }
+
+function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    colW = Math.min(220, Math.round(W * 0.42));
+    col.style.width = colW + 'px';
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    dirty = true;
+}
+// Near: the 1 in the lower-left quarter of the drawing area, a comfortable size.
+function nearView() {
+    var a = area(), z = Math.min(a.w, a.h) / 6;
+    return { x: (a.w / 2 - a.w * 0.12) / z, y: (a.h / 2 - a.h * 0.12) / z, z: z };
+}
+function homeView() { var v = nearView(); view.x = v.x; view.y = v.y; view.z = v.z; }
+
+// The whole of a box anchored at the origin, in sight with a margin.
+function fitBox(Wd, Ht, margin) {
+    var a = area(), m = margin || 1.25;
+    var z = Math.min(a.w / (Wd * m), a.h / (Ht * m));
+    return { x: Wd / 2, y: Ht / 2, z: Math.max(Z_MIN, Math.min(Z_MAX, z)) };
+}
+function fitHeld() {
+    var Wd = 0, Ht = 0;
+    held.forEach(function(h) { var w = Math.exp(h.lw); Wd = Math.max(Wd, w); Ht = Math.max(Ht, h.Nf / w); });
+    return (Wd > 0) ? fitBox(Wd, Ht) : null;
+}
+// The least zoom-out that brings the box [0,Wd]×[0,Ht] into sight with a small margin,
+// or null when it is already in sight. Never a zoom in.
+function outward(Wd, Ht) {
+    var a = area(), m = 14;
+    var tl = s2w(a.x0 + m, m), br = s2w(W - m, H - m);
+    if (tl.x <= 0 && br.x >= Wd && br.y <= 0 && tl.y >= Ht) return null;
+    var L = Math.min(tl.x, 0), R = Math.max(br.x, Wd), B = Math.min(br.y, 0), T = Math.max(tl.y, Ht);
+    var z = Math.min((a.w - 2 * m) / ((R - L) * 1.04), (a.h - 2 * m) / ((T - B) * 1.04));
+    return { x: (L + R) / 2, y: (B + T) / 2, z: Math.max(Z_MIN, Math.min(view.z, z)) };
+}
+// Whole: every rectangle on the plane (and any being made or held, and the 1), small margin.
+function wholeView() {
+    var Wd = 1, Ht = 1;
+    rects.forEach(function(r) { Wd = Math.max(Wd, r.wf); Ht = Math.max(Ht, r.hf); });
+    held.forEach(function(h) { var w = Math.exp(h.lw); Wd = Math.max(Wd, w); Ht = Math.max(Ht, h.Nf / w); });
+    if (free) { Wd = Math.max(Wd, qf(free.w)); Ht = Math.max(Ht, qf(free.h)); }
+    return fitBox(Wd, Ht, 1.12);
+}
+// Her own zooming stops at Whole going out (or at Near, while Whole is nearer than Near:
+// with little on the plane, Whole alone would hold her closer than the view she starts in).
+function minZoom() { return Math.min(wholeView().z, nearView().z); }
+function zoomBy(z) { setZoom(Math.max(minZoom(), z)); }
+
+var viewTarget = null;     // a glide in progress
+var catchUp = null;        // the held number whose rectangle the camera is still widening to show
+var holdView = false;      // her own pan or pinch wins until she lets go
+var wheelHoldUntil = 0;
+function glideToward(t, dt) {
+    var k = 1 - Math.exp(-dt / 140);
+    var lz = Math.log(view.z), tz = Math.log(t.z);
+    view.z = Math.exp(lz + (tz - lz) * k);
+    view.x += (t.x - view.x) * k; view.y += (t.y - view.y) * k;
+    return Math.abs(tz - lz) < 0.002 && Math.abs(t.x - view.x) * view.z < 0.5 && Math.abs(t.y - view.y) * view.z < 0.5;
+}
+
+// ------------------------------------------------------------- numbers, written
+function decimalParts(v) {        // exact decimal, or null when the denominator is not 2s and 5s
+    var d = v.d, t = 0, f = 0;
+    while (d % 2n === 0n) { d /= 2n; t++; }
+    while (d % 5n === 0n) { d /= 5n; f++; }
+    if (d !== 1n) return null;
+    var p = Math.max(t, f);
+    return { num: v.n * (10n ** BigInt(p)) / v.d, places: p };
+}
+function numHTML(v) {
+    if (numForm === 'decimal') { var dp = decimalParts(v); if (dp) return CW.num.decimal(Number(dp.num), dp.places); }
+    return CW.num.html(Number(v.n), Number(v.d), { mixed: true });
+}
+function numTokens(v) {           // for the canvas: text runs and stacked fractions
+    if (numForm === 'decimal') { var dp = decimalParts(v); if (dp) return [{ s: CW.num.decimal(Number(dp.num), dp.places) }]; }
+    var n = Number(v.n), d = Number(v.d);
+    if (d === 1) return [{ s: CW.num.count(n) }];
+    if (n > d) return [{ s: CW.num.count(Math.floor(n / d)) }, { n: n % d, d: d }];
+    return [{ n: n, d: d }];
+}
+
+// ----------------------------------------------------------------- readouts
+var roHost = document.getElementById('readouts');
+function heldShowing(h) {           // the exact stop the readout speaks for
+    if (h.stops.length) { var s = h.stops[nearestStop(h.stops, h.lw)]; return { w: s.w, h: s.h }; }
+    return h.cur;
+}
+function roLine(w, h, N, attr, mark, word) {     // area first, as the labels: 9 = 1/5 × 45
+    return '<div class="ro" ' + attr + '><span class="mark"' + (mark ? ' style="background:' + mark + '"' : '') + '></span>' +
+        '<span class="cw-line"><span class="num">' + numHTML(N) + '</span>' + CW.num.op('=') +
+        '<span class="num">' + numHTML(w) + '</span>' + CW.num.op('\u00d7') +
+        '<span class="num">' + numHTML(h) + '</span></span>' +
+        '<span class="word fix">' + word + '</span></div>';
+}
+function renderReadouts() {
+    var html = '';
+    held.forEach(function(h, i) {
+        var s = heldShowing(h);
+        html += roLine(s.w, s.h, h.N, 'data-held="' + i + '"', h.color, 'Fixed');
+    });
+    if (free) html += roLine(free.w, free.h, qmul(free.w, free.h), 'data-free="1"', null, 'Fix');
+    if (html !== roHost._last) { roHost.innerHTML = html; roHost._last = html; }
+}
+roHost.addEventListener('click', function(e) {
+    var ro = e.target.closest('.ro'); if (!ro) return;
+    if (e.target.closest('.fix')) {           // Fix holds the area; Fixed lets it go
+        if (ro.hasAttribute('data-free')) fix(); else letGo(Number(ro.getAttribute('data-held')));
+        return;
+    }
+    if (e.target.closest('.num')) {           // a number: fractions or decimals, and her choice holds
+        numForm = (numForm === 'decimal') ? 'fraction' : 'decimal';
+        try { localStorage.setItem('cw-number-form', numForm); } catch (err) {}
+        rects.forEach(function(r) { r.lab = null; });
+        roHost._last = null; renderReadouts(); dirty = true;
+    }
+});
+
+// ------------------------------------------------------------- hold and let go
+function fix() {
+    if (!free) return;
+    var N = qmul(free.w, free.h), taken = held.map(function(h) { return h.color; });
+    var color = NUM_COLOR.filter(function(c) { return taken.indexOf(c) < 0; })[0] || NUM_COLOR[held.length % NUM_COLOR.length];
+    var h = { N: N, Nf: qf(N), color: color, lw: Math.log(qf(free.w)), stops: stopsFor(N, RES[qi]),
+              cur: { w: free.w, h: free.h }, anim: null };
+    held.push(h);
+    free = null;                                         // her starting rectangle is not kept
+    markUsed(qi);
+    if (h.stops.length) startAnim(h, h.stops[h.stops.length - 1].lw, 900, true);   // the widest stop
+    renderReadouts(); renderWords(); dirty = true;
+}
+function letGo(i) {
+    var h = held[i]; if (!h) return;
+    var s = heldShowing(h);
+    held.splice(i, 1);
+    free = { w: s.w, h: s.h };                           // the rectangle stays; its corner is free again
+    renderReadouts(); dirty = true;
+}
+function startAnim(h, toLw, dur, fit) {
+    h.anim = { from: h.lw, to: toLw, t0: performance.now(), dur: dur, fit: !!fit };
+    if (!holdView) viewTarget = null;
+}
+function setRes(i) {
+    qi = i;
+    held.forEach(function(h) {
+        h.stops = stopsFor(h.N, RES[qi]);
+        if (h.stops.length) startAnim(h, h.stops[h.stops.length - 1].lw, 900, true);
+    });
+    if (held.length) markUsed(qi);
+    renderReadouts(); dirty = true;
+}
+
+// Clear: every rectangle goes, every held number is let go, the key empties (and its
+// colours return to their own). The dial stays where it is.
+function clearAll() {
+    rects = []; rectKeys = {}; held = []; free = null; used = []; shown = {}; catchUp = null;
+    resColor = RES_COLOR.slice();
+    renderKey(); renderReadouts(); renderWords(); dirty = true;
+}
+function renderWords() {
+    document.getElementById('w-clear').classList.toggle('gone', !(rects.length || held.length || free));
+}
+document.getElementById('w-clear').addEventListener('click', clearAll);
+
+// ------------------------------------------------------------------- drawing
+var dirty = true, lastFrame = performance.now(), dimMask = '';
+function snap(v) { return Math.round(v) + 0.5; }   // plane.js's half-pixel snap, not loaded here
+function clampPx(v) { return Math.max(-20000, Math.min(20000, v)); }
+// A world rectangle as a screen path, never thinner than a pixel: a strip too
+// thin to see is still drawn, as a hairline, which is the honest picture of it.
+function rectPath(x0, y0, x1, y1) {
+    var a = w2s(x0, y1), b = w2s(x1, y0);
+    var l = clampPx(a.x), t = clampPx(a.y), r = clampPx(b.x), bt = clampPx(b.y);
+    if (r - l < 1) r = l + 1;
+    if (bt - t < 1) t = bt - 1;
+    ctx.rect(l, t, r - l, bt - t);
+}
+
+function drawGrid(q, color, alpha) {
+    var a = area(), sp = view.z / q;
+    if (sp < 3) return;                                 // finer than this is grey; the dial says so
+    var fade = Math.min(1, (sp - 3) / 12);
+    var tl = s2w(a.x0, 0), br = s2w(W, H);
+    var i0 = Math.floor(tl.x * q), i1 = Math.ceil(br.x * q), j0 = Math.floor(br.y * q), j1 = Math.ceil(tl.y * q);
+    ctx.save();
+    ctx.strokeStyle = color; ctx.globalAlpha = alpha * fade; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var i = i0; i <= i1; i++) { if (!i) continue; var x = snap(w2s(i / q, 0).x); ctx.moveTo(x, 0); ctx.lineTo(x, H); }
+    for (var j = j0; j <= j1; j++) { if (!j) continue; var y = snap(w2s(0, j / q).y); ctx.moveTo(a.x0, y); ctx.lineTo(W, y); }
+    ctx.stroke();
+    ctx.restore();
+}
+
+// Join: for each resolution and each number made at it, straight pieces between its
+// corners in order, tallest stop to widest. Only the stops she has reached; never the
+// curve xy = N itself. A resolution hidden by its dot hides its lines.
+function drawJoins() {
+    var groups = {};
+    rects.forEach(function(r) {
+        if (!isShown(r.qi)) return;
+        var k = r.qi + '|' + qkey(r.a);
+        (groups[k] = groups[k] || { qi: r.qi, pts: [] }).pts.push(r);
+    });
+    var a = area(), box = { l: a.x0 - 10, r: W + 10, t: -10, b: H + 10 };
+    ctx.save(); ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.globalAlpha = LEAD_ALPHA;
+    Object.keys(groups).forEach(function(k) {
+        var g = groups[k];
+        if (g.pts.length < 2) return;
+        g.pts.sort(function(p, q) { return p.wf - q.wf; });
+        ctx.strokeStyle = resColor[g.qi];
+        ctx.beginPath();
+        for (var i = 1; i < g.pts.length; i++) {
+            var s0 = w2s(g.pts[i - 1].wf, g.pts[i - 1].hf), s1 = w2s(g.pts[i].wf, g.pts[i].hf);
+            var c = clipSeg(s0.x, s0.y, s1.x, s1.y, box);
+            if (c) { ctx.moveTo(c[0], c[1]); ctx.lineTo(c[2], c[3]); }
+        }
+        ctx.stroke();
+    });
+    ctx.restore();
+}
+// Liang–Barsky: a segment cut to the screen, so a corner far off it is still joined
+// truly (the canvas misdraws coordinates in the billions).
+function clipSeg(x0, y0, x1, y1, b) {
+    var t0 = 0, t1 = 1, dx = x1 - x0, dy = y1 - y0;
+    var ps = [-dx, dx, -dy, dy], qs = [x0 - b.l, b.r - x0, y0 - b.t, b.b - y0];
+    for (var i = 0; i < 4; i++) {
+        if (ps[i] === 0) { if (qs[i] < 0) return null; continue; }
+        var r = qs[i] / ps[i];
+        if (ps[i] < 0) { if (r > t1) return null; if (r > t0) t0 = r; }
+        else { if (r < t0) return null; if (r < t1) t1 = r; }
+    }
+    return [x0 + t0 * dx, y0 + t0 * dy, x0 + t1 * dx, y0 + t1 * dy];
+}
+
+// A rectangle's label, "9 = 1½ × 6" (area, then width × height), measured once per number form.
+var LABEL_SIZE = 13, LABEL_GAP = 4;
+function labelOf(r) {
+    if (r.lab && r.lab.form === numForm) return r.lab;
+    var tokens = numTokens(r.a).concat([{ s: '=' }], numTokens(r.w), [{ s: '×' }], numTokens(r.h));
+    ctx.save(); ctx.font = LABEL_SIZE + 'px Georgia, serif';
+    var widths = tokens.map(function(t) {
+        return t.s !== undefined ? ctx.measureText(t.s).width : CW.num.measure(ctx, t.n, t.d, { size: LABEL_SIZE }).w;
+    });
+    ctx.restore();
+    var hasFrac = tokens.some(function(t) { return t.s === undefined; });
+    r.lab = { form: numForm, tokens: tokens, widths: widths,
+              w: widths.reduce(function(p, c) { return p + c; }, 0) + LABEL_GAP * (widths.length - 1),
+              h: hasFrac ? 2 * (LABEL_SIZE * 0.82 + LABEL_SIZE * 0.06) + 2 : LABEL_SIZE + 4 };
+    return r.lab;
+}
+// Labels just outside each rectangle's upper-right corner. One that would overlap a
+// label already placed is left out (zooming in brings it back); none is ever shrunk.
+// The rectangles kept first are placed first, so a label never jumps as she sweeps.
+function drawLabels() {
+    var a = area(), placed = [];
+    rects.forEach(function(r) {
+        if (!isShown(r.qi)) return;
+        var c = w2s(r.wf, r.hf), L = labelOf(r);
+        var box = { l: c.x + 4, r: c.x + 4 + L.w, t: c.y - 3 - L.h, b: c.y - 3 };
+        if (box.r < a.x0 || box.l > W || box.b < 0 || box.t > H) return;
+        for (var i = 0; i < placed.length; i++) {
+            var p = placed[i];
+            if (box.l < p.r + 6 && box.r + 6 > p.l && box.t < p.b + 2 && box.b + 2 > p.t) return;   // a little air between labels
+        }
+        placed.push(box);
+        var x = box.l, y = (box.t + box.b) / 2, col = resColor[r.qi];
+        ctx.save(); ctx.globalAlpha = LABEL_ALPHA;
+        L.tokens.forEach(function(t, k) {
+            if (t.s !== undefined) CW.num.drawText(ctx, t.s, x, y, { size: LABEL_SIZE, color: col, align: 'left' });
+            else CW.num.draw(ctx, t.n, t.d, x, y, { size: LABEL_SIZE, color: col, align: 'left' });
+            x += L.widths[k] + LABEL_GAP;
+        });
+        ctx.restore();
+    });
+}
+
+function render() {
+    var a = area();
+    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(a.x0, 0, a.w, H); ctx.clip();
+
+    // Faint grids: each resolution in the key whose dot is on, in its colour, and the
+    // dial's current one (neutral until she has used it).
+    used.forEach(function(i) { if (isShown(i) && i !== qi) drawGrid(RES[i], resColor[i], 0.10); });
+    if (isShown(qi)) drawGrid(RES[qi], used.indexOf(qi) >= 0 ? resColor[qi] : SLATE, 0.14);
+
+    // The axes and the 1
+    var o = w2s(0, 0), u = w2s(1, 1);
+    ctx.strokeStyle = SLATE; ctx.globalAlpha = 0.3; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(snap(o.x), 0); ctx.lineTo(snap(o.x), H);
+    ctx.moveTo(a.x0, snap(o.y)); ctx.lineTo(W, snap(o.y));
+    ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.fillStyle = '#fffdf7'; ctx.fillRect(o.x, u.y, Math.max(1, u.x - o.x), Math.max(1, o.y - u.y));
+    ctx.strokeStyle = '#c8b89a'; ctx.lineWidth = 1;
+    ctx.strokeRect(snap(o.x), snap(u.y), Math.round(u.x - o.x), Math.round(o.y - u.y));
+    ctx.fillStyle = SLATE; ctx.globalAlpha = 0.75; ctx.font = '12px Georgia, serif';
+    ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillText('0', o.x - 4, o.y + 4);
+    if (u.x - o.x > 16) {
+        ctx.textAlign = 'center'; ctx.fillText('1', u.x, o.y + 4);
+        ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText('1', o.x - 5, u.y);
+    }
+    if (u.x - o.x > 30) {
+        ctx.globalAlpha = 0.5; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = Math.min(28, (u.x - o.x) * 0.45) + 'px Georgia, serif';
+        ctx.fillText('1', (o.x + u.x) / 2, (o.y + u.y) / 2);
+    }
+    ctx.globalAlpha = 1;
+
+    // The stops that stay: outlines only, each stroked on its own and half see-through,
+    // so where lines lie over each other they darken.
+    // Fill: each rectangle half see-through in its resolution's colour, multiplied, so the
+    // corner by the axes, under every rectangle, goes darkest. Fill means no outline (Michael,
+    // 15 Oct): the edges are the glass's own, drawn at their exact places, antialiased.
+    if (fillOn) {
+        ctx.globalCompositeOperation = 'multiply'; ctx.globalAlpha = FILL_ALPHA;
+        rects.forEach(function(r) {
+            if (!isShown(r.qi)) return;
+            ctx.beginPath(); rectPath(0, 0, r.wf, r.hf); ctx.fillStyle = resColor[r.qi]; ctx.fill();
+        });
+        ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+    }
+    ctx.lineJoin = 'miter'; ctx.lineWidth = 2;
+    ctx.globalAlpha = LEAD_ALPHA;
+    if (!fillOn) rects.forEach(function(r) {             // with Fill on, the glass's own edges are the outline
+        if (!isShown(r.qi)) return;
+        ctx.beginPath(); rectPath(0, 0, r.wf, r.hf); ctx.strokeStyle = resColor[r.qi]; ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    if (joinOn) drawJoins();
+    drawLabels();
+
+    // The live rectangles and their corners
+    if (free) {
+        ctx.beginPath(); rectPath(0, 0, qf(free.w), qf(free.h)); ctx.strokeStyle = INK; ctx.lineWidth = 1.5; ctx.stroke();
+        drawCorner(qf(free.w), qf(free.h), INK, true);
+    }
+    held.forEach(function(h) {
+        var w = Math.exp(h.lw), ht = h.Nf / w;
+        if (!fillOn) { ctx.beginPath(); rectPath(0, 0, w, ht); ctx.strokeStyle = h.color; ctx.lineWidth = 1; ctx.stroke(); }
+        var atStop = h.stops.length && Math.abs(h.stops[nearestStop(h.stops, h.lw)].lw - h.lw) < 1e-9;
+        drawCorner(w, ht, h.color, atStop);
+    });
+    ctx.restore();
+}
+function drawCorner(w, h, color, solid) {
+    var s = w2s(w, h);
+    ctx.beginPath(); ctx.arc(s.x, s.y, 7, 0, Math.PI * 2);
+    ctx.fillStyle = PAPER; ctx.fill();
+    ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+    if (solid) { ctx.beginPath(); ctx.arc(s.x, s.y, 3, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill(); }
+}
+
+function frame(now) {
+    var dt = Math.min(100, now - lastFrame); lastFrame = now;
+    var anyAnim = false;
+    held.forEach(function(h) {
+        if (!h.anim) return;
+        var t = Math.min(1, (now - h.anim.t0) / h.anim.dur), e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        h.lw = h.anim.from + (h.anim.to - h.anim.from) * e;
+        if (t >= 1) {
+            var fitAfter = h.anim.fit; h.lw = h.anim.to; h.anim = null; h.cur = heldShowing(h);
+            // Where the corner comes to rest is a stop it has reached: it stays.
+            var si = nearestStop(h.stops, h.lw);
+            if (si >= 0 && h.stops[si].lw === h.lw) keepStop(h.stops[si]);
+        }
+        else anyAnim = true;
+        renderReadouts(); dirty = true;
+    });
+    var free2Move = !holdView && now > wheelHoldUntil;
+    if (free2Move) {
+        var t = null;
+        // The camera moves by itself only outward, and only when a rectangle would leave the
+        // visible plane: during a drag the current one, during a glide after Fix or the dial
+        // every held one. Zooming in is hers alone (pinch, scroll, Near).
+        if (drag && drag.kind === 'fixed' && drag.moved) { var w = Math.exp(drag.h.lw); t = outward(w, drag.h.Nf / w); }
+        else if (catchUp) {         // a quick drag ended before the camera had caught up: it finishes
+            var w3 = Math.exp(catchUp.lw); t = outward(w3, catchUp.Nf / w3);
+            if (!t) catchUp = null;
+        }
+        else if (anyAnim) {
+            var Wd = 0, Ht = 0;
+            held.forEach(function(h) { var w2 = Math.exp(h.lw); Wd = Math.max(Wd, w2); Ht = Math.max(Ht, h.Nf / w2); });
+            t = outward(Wd, Ht);
+        }
+        if (t) { glideToward(t, dt); dirty = true; }
+        else if (viewTarget) { if (glideToward(viewTarget, dt)) viewTarget = null; dirty = true; }
+    }
+    // The dial dims what is finer than a pixel here
+    var m = RES.map(function(q) { return view.z / q < 1 ? '1' : '0'; }).join('');
+    if (m !== dimMask) { dimMask = m; dial.refresh(); }
+    if (dirty) { dirty = false; render(); }
+    requestAnimationFrame(frame);
+}
+
+// ------------------------------------------------------------------- gestures
+// A one-finger drag from the 1 makes a rectangle, Fixed or not (from a free corner it
+// reshapes it). Not Fixed, a drag anywhere else pans, as Geometry's drag on empty space does.
+// Fixed, a drag anywhere else moves the corner along the curve — right or down
+// wider, left or up taller, a diagonal by its larger direction — and panning and
+// zooming are two fingers. Two fingers always pan and pinch; wheel and Safari's
+// trackpad pinch zoom as Geometry's do. Tap and drag part at 8px, as there. A tap on
+// the plane does nothing (Geometry's tap-to-undo is not here: the instructions name
+// only Clear).
+var TAP_PX = 8, CORNER_PX = 22;
+// The finger travel that doubles (or halves) the width. Distance multiplies: 1 m to
+// 2 m to 4 m is the same travel as 100 m to 200 m to 400 m.
+var DOUBLING_PX = 100;
+var pointers = new Map(), drag = null, pinch = null;
+
+function cornerOf(h) { var w = Math.exp(h.lw); return w2s(w, h.Nf / w); }
+function freeCornerHit(sx, sy) {
+    if (!free) return false;
+    var f = w2s(qf(free.w), qf(free.h));
+    return Math.hypot(f.x - sx, f.y - sy) < CORNER_PX;
+}
+// With more than one number held, the drag moves the corner nearest where it began.
+function nearestHeld(p) {
+    var best = null, bd = Infinity;
+    held.forEach(function(h) { var c = cornerOf(h), d = Math.hypot(c.x - p.x, c.y - p.y); if (d < bd) { bd = d; best = h; } });
+    return best;
+}
+function pos(e) { return { x: e.clientX, y: e.clientY }; }
+function startPinch() {
+    var pts = Array.from(pointers.values());
+    var mid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+    pinch = { d: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1, z: view.z, anchor: s2w(mid.x, mid.y) };
+}
+
+canvas.addEventListener('pointerdown', function(e) {
+    e.preventDefault();
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+    pointers.set(e.pointerId, pos(e));
+    if (pointers.size === 2) {
+        // A second finger: pan and pinch. The corner stays at the stop it is on; her view wins.
+        drag = null; holdView = true; viewTarget = null; catchUp = null;
+        startPinch();
+        return;
+    }
+    if (pointers.size > 2) return;
+    var p = pos(e), wp = s2w(p.x, p.y);
+    if (p.x < colW) return;
+    // A drag from the 1 always makes a new number, Fixed or not, so a second number can be
+    // made beside one already held (Michael, 15 Oct). Everywhere else, while a number is
+    // held, a one-finger drag moves its corner.
+    if (freeCornerHit(p.x, p.y)) drag = { kind: 'make', start: p, last: p, moved: false };
+    else if (wp.x > 0 && wp.x < 1 && wp.y > 0 && wp.y < 1) drag = { kind: 'one', start: p, last: p, moved: false };
+    else if (held.length) {
+        var h = nearestHeld(p);
+        drag = { kind: 'fixed', h: h, start: p, moved: false, lw0: h.lw, si: nearestStop(h.stops, h.lw) };
+        h.anim = null;
+    }
+    else drag = { kind: 'pan', start: p, last: p, moved: false };
+});
+
+canvas.addEventListener('pointermove', function(e) {
+    if (!pointers.has(e.pointerId)) return;
+    e.preventDefault();
+    pointers.set(e.pointerId, pos(e));
+    if (pinch && pointers.size === 2) {
+        // Two fingers: the world point that was under their midpoint stays under it.
+        var pts = Array.from(pointers.values());
+        var mid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+        zoomBy(pinch.z * Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) / pinch.d);
+        var a = area();
+        view.x = pinch.anchor.x - (mid.x - a.cx) / view.z;
+        view.y = pinch.anchor.y + (mid.y - a.cy) / view.z;
+        dirty = true; return;
+    }
+    if (!drag) return;
+    var p = pos(e);
+    if (!drag.moved && Math.hypot(p.x - drag.start.x, p.y - drag.start.y) > TAP_PX) {
+        drag.moved = true;
+        if (drag.kind === 'one') { drag.kind = 'make'; }
+        if (drag.kind === 'pan') { holdView = true; viewTarget = null; catchUp = null; }
+        if (drag.kind === 'fixed') viewTarget = null;
+    }
+    if (!drag.moved) return;
+    if (drag.kind === 'fixed') { moveFixed(drag, p); dirty = true; return; }
+    var dx = p.x - drag.last.x, dy = p.y - drag.last.y;
+    drag.last = p;
+    if (drag.kind === 'pan') {
+        view.x -= dx / view.z; view.y += dy / view.z;
+    } else if (drag.kind === 'make') {
+        var wp = s2w(p.x, p.y), q = RES[qi];
+        var a = Math.max(1, Math.round(wp.x * q)), b = Math.max(1, Math.round(wp.y * q));
+        free = { w: Q(a, q), h: Q(b, q) };
+        renderReadouts(); renderWords();
+    }
+    dirty = true;
+});
+
+// The drag's larger direction, signed so that right and down are wider, sets the target
+// width as a multiple of the width the drag began at: 2 to the power (travel / DOUBLING_PX).
+// The corner goes to the stop nearest that width by ratio, never anywhere between, and
+// every stop on the way stays.
+function moveFixed(d, p) {
+    var h = d.h; if (!h.stops.length) return;
+    var dx = p.x - d.start.x, dy = p.y - d.start.y;
+    var travel = Math.abs(dx) >= Math.abs(dy) ? dx : dy;
+    var target = d.lw0 + (travel / DOUBLING_PX) * Math.LN2;
+    var j = nearestStop(h.stops, target), i = nearestStop(h.stops, h.lw);
+    if (j === i && h.stops[i].lw === h.lw) return;
+    var lo = Math.min(i, j), hi = Math.max(i, j);
+    for (var k = lo; k <= hi; k++) keepStop(h.stops[k]);
+    h.lw = h.stops[j].lw;
+    renderReadouts();
+}
+
+function endPointer(e) {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.delete(e.pointerId);
+    if (pinch) { if (pointers.size === 0) { pinch = null; holdView = false; } return; }
+    if (pointers.size > 0 || !drag) return;
+    var d = drag; drag = null;
+    if (d.kind === 'pan' && d.moved) { holdView = false; return; }
+    if (d.kind === 'make') { if (d.moved) markUsed(qi); renderReadouts(); dirty = true; return; }
+    if (d.kind === 'fixed' && d.moved) catchUp = d.h;
+    // A tap does nothing on the plane.
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+canvas.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+canvas.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    if (gestureBase !== null) return;
+    zoomBy(view.z * (e.deltaY > 0 ? 0.9 : 1.1));
+    viewTarget = null; catchUp = null; wheelHoldUntil = performance.now() + 600; dirty = true;
+}, { passive: false });
+// Safari's trackpad pinch, claimed as Geometry claims it
+var gestureBase = null;
+canvas.addEventListener('gesturestart', function(e) { e.preventDefault(); gestureBase = view.z; }, { passive: false });
+canvas.addEventListener('gesturechange', function(e) {
+    e.preventDefault(); if (gestureBase === null) gestureBase = view.z;
+    zoomBy(gestureBase * e.scale); viewTarget = null; catchUp = null; wheelHoldUntil = performance.now() + 600; dirty = true;
+}, { passive: false });
+canvas.addEventListener('gestureend', function(e) { e.preventDefault(); gestureBase = null; }, { passive: false });
+
+// ------------------------------------------------------------------ the views
+document.getElementById('w-near').addEventListener('click', function() { catchUp = null; viewTarget = nearView(); dirty = true; });
+document.getElementById('w-whole').addEventListener('click', function() { catchUp = null; viewTarget = wholeView(); dirty = true; });
+document.getElementById('w-join').addEventListener('click', function() {
+    joinOn = !joinOn; this.classList.toggle('on', joinOn); dirty = true;
+});
+document.getElementById('w-fill').addEventListener('click', function() {
+    fillOn = !fillOn; this.classList.toggle('on', fillOn); dirty = true;
+});
+
+// ----------------------------------------------------------------- the key
+// With a colour chosen in the palette, a tap on a resolution gives it that colour:
+// its grid, rectangles and labels. With none chosen, a tap on the dot shows or hides it.
+var keyHost = document.getElementById('key');
+function renderKey() {
+    keyHost.innerHTML = used.map(function(i) {
+        var c = resColor[i];
+        return '<div class="krow' + (isShown(i) ? '' : ' off') + '" data-i="' + i + '">' +
+            '<span class="dot"><i style="border-color:' + c + ';background:' + (isShown(i) ? c : 'transparent') + '"></i></span>' +
+            '<span class="lead" style="border-color:' + c + '"></span>' +
+            '<span class="fr cw-line">' + CW.num.html(1, RES[i]) + '</span></div>';
+    }).join('');
+}
+keyHost.addEventListener('click', function(e) {
+    var row = e.target.closest('.krow'); if (!row) return;
+    var i = Number(row.getAttribute('data-i'));
+    if (palSelected) { resColor[i] = palSelected; renderKey(); dirty = true; return; }
+    if (!e.target.closest('.dot')) return;
+    shown[i] = !isShown(i);
+    renderKey(); dirty = true;
+});
+keyHost.style.cursor = 'default';
+
+// ------------------------------------------------------------- the palette
+var pal = document.getElementById('pal'), palGrid = pal.querySelector('.grid');
+var palRecipe = pal.querySelector('.recipe'), palPos = null;
+var CHARTRES = [
+    { hex: '#1a3a8c', recipe: 'cobalt oxide' }, { hex: '#8b1a1a', recipe: 'gold, colloidal' },
+    { hex: '#c8780a', recipe: 'iron, sulfur' }, { hex: '#4a1a8c', recipe: 'cobalt, manganese' },
+    { hex: '#1a6a2a', recipe: 'copper oxide' }, { hex: '#8a8a7a', recipe: 'iron, unrefined?' },
+    { hex: '#d4a878', recipe: 'iron oxide, lead?' }, { hex: '#c8c0a8', recipe: 'tin oxide' },
+    { hex: '#c84878', recipe: 'gold, manganese?' }];
+function buildPalette(colors) {
+    palGrid.innerHTML = '';
+    colors.forEach(function(c) {
+        var sw = document.createElement('div'); sw.className = 'sw'; sw.style.background = c.hex;
+        sw.addEventListener('click', function() {
+            palSelected = c.hex;
+            pal.querySelectorAll('.sw').forEach(function(s) { s.classList.remove('sel'); });
+            sw.classList.add('sel'); palRecipe.textContent = c.recipe;
+        });
+        if (palSelected === c.hex) sw.classList.add('sel');
+        palGrid.appendChild(sw);
+    });
+}
+buildPalette(CHARTRES);
+fetch('../art/palette/palettes.json', { cache: 'no-cache' }).then(function(r) { return r.json(); }).then(function(j) {
+    var p = j.palettes.filter(function(x) { return x.id === 'chartres_glass'; })[0];
+    if (p) buildPalette(p.colors.map(function(c) { return { hex: c.hex, recipe: c.uncertain ? c.recipe + '?' : c.recipe }; }));
+}).catch(function() {});
+function openPalette() {
+    pal.style.display = 'block';
+    if (palPos) { pal.style.left = palPos.x + 'px'; pal.style.top = palPos.y + 'px'; }
+    else { pal.style.left = Math.max(colW + 12, W - pal.offsetWidth - 16) + 'px'; pal.style.top = '16px'; }
+}
+function closePalette() {
+    palPos = { x: pal.offsetLeft, y: pal.offsetTop };
+    pal.style.display = 'none'; palSelected = null;
+    pal.querySelectorAll('.sw').forEach(function(s) { s.classList.remove('sel'); });
+    palRecipe.innerHTML = '&nbsp;';
+}
+document.getElementById('w-color').addEventListener('click', openPalette);
+pal.querySelector('.close').addEventListener('click', closePalette);
+(function() {
+    var hd = pal.querySelector('.hd'), st = null;
+    hd.addEventListener('pointerdown', function(e) {
+        if (e.target.classList.contains('close')) return;
+        hd.setPointerCapture(e.pointerId);
+        st = { x: e.clientX, y: e.clientY, l: pal.offsetLeft, t: pal.offsetTop };
+    });
+    hd.addEventListener('pointermove', function(e) {
+        if (!st) return;
+        pal.style.left = Math.max(0, Math.min(W - 40, st.l + e.clientX - st.x)) + 'px';
+        pal.style.top = Math.max(0, Math.min(H - 30, st.t + e.clientY - st.y)) + 'px';
+    });
+    hd.addEventListener('pointerup', function() { st = null; });
+    hd.addEventListener('pointercancel', function() { st = null; });
+})();
+
+// -------------------------------------------------------------------- start
+var dial = CW.resolutionDial(document.getElementById('dial'), {
+    steps: RES, index: 0,
+    isDim: function(i) { return view.z / RES[i] < 1; },
+    onChange: setRes
+});
+window.addEventListener('resize', resize);
+resize(); homeView();
+renderReadouts();
+requestAnimationFrame(frame);
+
+// For looking at the bench from the console; nothing in the page reads it.
+window.sameGlass = { stopsFor: stopsFor, Q: Q, state: function() { return { held: held, rects: rects, free: free, view: view, qi: qi, used: used, resColor: resColor }; } };
+})();
+</script>
+</body>
+</html>
