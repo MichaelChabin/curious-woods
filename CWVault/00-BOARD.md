@@ -726,7 +726,7 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   a held number's area, underlined — Michael to rule. Then, on his notes: counts beside their
   fractions under *Number of / Rectangles*; a new resolution walks all its stops by itself, half a
   second apart (his reading of an earlier brief: every stop of a chosen resolution is laid down).
-  Committed; push awaits his word ("don't push yet").
+  Pushed on his word, 16 Oct.
   **Next action:** the iPad drive; Mirror's brief, if it exists, to Claude Code.
 
 ### 2. Perception Lab — the child's own instrument
