@@ -38,8 +38,8 @@
    (art/maps/world.webp with its vegetation) for the *measured* ages and this side of the seam, a neutral rock
    grain (art/globe/rock-grain.png, one tone, no climate in it) for *inferred* and *fitted*; *guessed* and
    *invented* keep their pale dashed and dotted fills with no skin, so the grade shows at a glance. A limb
-   shading and a haze at the rim make it a ball. While the globe itself is dragged the flat fills stand in, and
-   the skin returns when the finger lifts. Molten, twice (part 7): above 4,400 million years the pixels follow
+   shading and a haze at the rim make it a ball. While the globe itself is dragged the skin is painted coarser
+   (14 Oct 2026; until then the flat fills stood in), and sharp again when the finger lifts. Molten, twice (part 7): above 4,400 million years the pixels follow
    Michael's maps (art/globe/cooling-order.png, dark cools first; cracks.png, the seams): crust wherever the
    cooling value is below a threshold that rises with the age, the cracks glowing and dimming; the Earth
    assembles molten at 4,567, a black crust within a few million years, a faint uncertain sea, the white flash
@@ -170,6 +170,9 @@
     // the per-pixel passes run at half the CSS resolution and are scaled up: the skin's own resolution (a 1024-wide
     // picture, 3 px per degree on a 560 px disc) is the limit, not the canvas, and the cost falls by four
     var SKIN_SCALE = opts.skinScale || 0.5, SW = 0, SH = 0;
+    // while the globe itself is dragged the skin is painted at half this again, coarser for a moment and sharp on
+    // release, instead of the flat fills standing in (Michael, 14 Oct 2026: the textures went brown under the hand)
+    var DRAG_SCALE = SKIN_SCALE / 2, skinScale = SKIN_SCALE;
     var idCanvas = null, idCtx = null, skinCanvas = null, skinCtx = null, plateIndex = {}, plateByIndex = [null];
     function texCanvas() { var c = document.createElement('canvas'); c.width = TW; c.height = TH; return c; }
     function loadImage(src, then) {
@@ -194,7 +197,11 @@
     function moltenReady() { return texOn && tex['cooling-order'] && tex.cracks && tex['rock-grain']; }
     function indexOf(pid) { var i = plateIndex[pid]; if (!i) { i = plateByIndex.length; plateByIndex.push(pid); plateIndex[pid] = i; } return i; }
     // the id raster: every living piece filled with its plate's index (low byte red, high byte green) at its position at this age
+    // the raster depends only on the age (and the pieces), so a drag, which only turns the view, reuses it (14 Oct 2026)
+    var idKey = null, idData = null;
     function idRaster(age) {
+      var key = age + '|' + pieces.length + '|' + seed;
+      if (key === idKey && idData) return idData;
       if (!idCanvas) { idCanvas = texCanvas(); idCtx = idCanvas.getContext('2d', { willReadFrequently: true }); }
       var oc = idCtx;
       oc.setTransform(1, 0, 0, 1, 0, 0); oc.fillStyle = '#000'; oc.fillRect(0, 0, TW, TH);
@@ -217,13 +224,14 @@
         oc.strokeStyle = col; oc.lineWidth = 1.5 / TW; oc.stroke(byPlate[pid]);   // closes the hairline gaps between pieces
       }
       oc.setTransform(1, 0, 0, 1, 0, 0);
-      return oc.getImageData(0, 0, TW, TH).data;
+      idKey = key; idData = oc.getImageData(0, 0, TW, TH).data;
+      return idData;
     }
     function hex3(h) { var n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
     var LAND3 = hex3(LAND), MAGMA3 = hex3(MAGMA), GLOW3 = hex3(MAGMA_GLOW), HOT3 = hex3(HOT), CRUST3 = hex3(CRUST), CRUSTL3 = hex3(CRUST_LIGHT), SEA3 = hex3(SEA), SEAD3 = hex3(SEA_DEEP), FLASH3 = hex3(FLASH);
     // the inverse of the view: screen (x east, y north, z toward the eye) back to the world at this age
     function pixelToWorld(V) {
-      var flat = proj === 'flat', sw = SW, sh = SH, r = (W / 2 - 4) * SKIN_SCALE, cx = sw / 2, cy = sh / 2;
+      var flat = proj === 'flat', sw = SW, sh = SH, r = (W / 2 - 4) * skinScale, cx = sw / 2, cy = sh / 2;
       var T0 = V[0], T1 = V[3], T2 = V[6], T3 = V[1], T4 = V[4], T5 = V[7], T6 = V[2], T7 = V[5], T8 = V[8];
       return function (px, py, out) {
         var X, Y, Z;
@@ -240,7 +248,7 @@
       return (v * TW + u) << 2;
     }
     function skinTarget() {
-      SW = Math.max(2, Math.round(W * SKIN_SCALE)); SH = Math.max(2, Math.round(H * SKIN_SCALE));
+      SW = Math.max(2, Math.round(W * skinScale)); SH = Math.max(2, Math.round(H * skinScale));
       if (!skinCanvas) { skinCanvas = document.createElement('canvas'); skinCtx = skinCanvas.getContext('2d'); }
       if (skinCanvas.width !== SW || skinCanvas.height !== SH) { skinCanvas.width = SW; skinCanvas.height = SH; }
       return skinCtx.createImageData(SW, SH);
@@ -710,13 +718,13 @@
       ctx.save();
       if (proj === 'flat') { ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip(); } else { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip(); }
       // the per-pixel passes, in CSS pixels before the unit transform: the molten sequence, or the land's skin for the
-      // model's ages (not while the globe itself is dragged: the flat fills stand in, and the skin returns on release)
+      // model's ages (while the globe itself is dragged, coarser; during play the flat fills stand in)
       var skinned = false, moltenSt = null;
       // toward the model's reach the skin fades and the guessed look fades in, over FADE million years (13 Oct 2026)
       var tg = (data && g === 'fitted') ? Math.max(0, Math.min(1, (ma - (reach - FADE)) / FADE)) : 0;
-      lastSkinMs = 0;
+      lastSkinMs = 0; skinScale = drag ? DRAG_SCALE : SKIN_SCALE;
       if (g === 'none' && moltenReady()) moltenSt = paintMolten(V, ma);
-      else if (data && skinReady() && !drag && !fast && (g === 'measured' || g === 'ground' || g === 'inferred' || g === 'fitted')) { paintSkin(V, ma, g, 1 - tg); skinned = true; }
+      else if (data && skinReady() && !fast && (g === 'measured' || g === 'ground' || g === 'inferred' || g === 'fitted')) { paintSkin(V, ma, g, 1 - tg); skinned = true; }
       enterUnit(r, cx, cy);
       if (data && g !== 'none') {
         if (g === 'measured' || g === 'ground') { var lp = landPath(V, Math.max(ma, 0), 0, 'model'); if (!skinned) fillLand(lp, LAND, g === 'ground' ? 0.45 : 1, null); }

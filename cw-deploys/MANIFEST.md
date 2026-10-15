@@ -1692,6 +1692,7 @@ backstop for the Claude Code session that lands the file.
   the viewing's end name, the count under Main says the viewing's name, and *years ago* counts
   from today whatever the end. The zeros and names are Claude's choices, to be ruled on.
   **14 Oct 2026:** the summary block above the map is a fixed height (5.8em; 7.25em under 760 px) and scrolls inside itself, so a new line no longer grows it and moves the map. CW_VERSION 2026-10-14.
+  **15 Oct 2026:** the drifting map and globe keep their textures while dragged (Michael: they went to the brown fills under the hand). `js/globe.js` paints the skin at a quarter of the CSS resolution during a drag, sharp at half again on release, and caches the plate id raster per age (a drag only turns the view), so a frame stays near 8 ms in Chrome; play still draws the flat fills. `globe.js?v=2026-10-15` here and on `experiments/globe-bench.html`. CW_VERSION 2026-10-15.
 - **`index-old.html`** — the home page as it stood from 13 to 20 Sep 2026 (two labs as
   words, three round icons, Experiments as a line), retired when the gallery took
   `index.html`. Recovered from git with its links rebased one folder up, given a tab icon
