@@ -731,7 +731,7 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   count** (3 s a sweep, 15–500 ms a rectangle), **sound** (ticks and a shush, *Sound* on by
   default, Michael to rule). Smooth at hundreds of rectangles on a Mac; iPad unmeasured. Glass
   used over many cuts is an exact fraction hundreds of digits long: folded to its whole part and
-  its length, open on a tap — Michael to rule. Committed; push awaits his word.
+  its length, open on a tap — Michael to rule. Pushed on his word, 16 Oct.
   **Next action:** the iPad drive; Mirror's brief, if it exists, to Claude Code.
 
 ### 2. Perception Lab — the child's own instrument
