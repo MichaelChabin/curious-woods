@@ -64,18 +64,21 @@
   .cmd:hover { color: #3D3D3A; }
 
   /* ---------- the introduction page ---------- */
-  #intro { max-width: 700px; margin: 0 auto; padding: 56px 24px 120px; position: relative; min-height: 100vh; }
-  #intro .kicker { font-size: 12px; letter-spacing: .12em; color: var(--ink-soft); text-transform: uppercase; }
-  #intro h1 { font-weight: normal; font-size: 36px; line-height: 1.1; margin: 6px 0 22px; }
-  #intro .how { font-size: 17px; color: var(--ink-soft); }
-  #intro .open { font-size: 16px; color: var(--ink-soft); margin-top: 1.6em; line-height: 1.7; }
-  #intro .viewing { font-style: italic; color: var(--payne); cursor: pointer; }
-  #intro .viewing:hover { color: #3D3D3A; }
-  #intro .viewing.on { font-style: normal; color: var(--ink); }
+  #intro { max-width: 700px; margin: 0 auto; padding: 56px 24px 56px; }
+  #intro h1 { font-weight: normal; font-size: 36px; line-height: 1.1; margin: 0 0 22px; }
+  #intro h2 { font-weight: normal; font-size: 24px; line-height: 1.2; margin: 1.6em 0 .6em; }
   #intro p { font-size: 20px; line-height: 1.45; margin: 0 0 1em; }
-  #intro .next { position: absolute; right: 24px; bottom: 56px; font-size: 20px; }
-  #intro .credit { position: absolute; left: 24px; bottom: 56px; max-width: 60%; font-size: 12px; line-height: 1.4; color: var(--grey); }
+  /* the picture of the map (16 Oct 2026): about 360 px on a laptop, the column's width on a phone; a picture, not a button */
+  #intro .pic { margin: 0 0 1.4em; width: 360px; max-width: 100%; }
+  #intro .pic img { display: block; width: 100%; height: auto; border-radius: 2px; }
+  #intro .pic figcaption { font-size: 12px; line-height: 1.4; color: var(--grey); margin-top: 6px; }
+  #intro .go { text-align: right; margin: 1.6em 0 2.4em; }
+  #intro .next { font-size: 20px; }
+  #intro .credit { font-size: 12px; line-height: 1.4; color: var(--grey); }
+  #intro .credit div { margin: 0 0 2px; }
+  #intro .credit p { font-size: 12px; line-height: 1.4; margin: 10px 0 0; }
   #intro .credit a { color: var(--grey); }
+  @media (max-width: 760px) { #intro .pic { width: 100%; } }
 
   /* ---------- the bench ---------- */
   #bench { display: none; position: relative; min-height: 100vh; }
@@ -175,13 +178,49 @@
 <body>
 
 <section id="intro">
-  <div class="kicker">Time Machine</div>
-  <h1 id="introTitle">After the Ice</h1>
-  <p id="introText">About twelve thousand years ago, the ice that covered the north began to melt, and it did not come back in the winter. This page counts years from then. Everything people have made since then fits on the line at the top: farms, cities, writing, ships, all of it.</p>
-  <p class="how" id="introHow">The lines are the whole of the Earth’s time, in periods, each period a band in its own colour. Tap a period and it opens as a line beneath, with its events; tap it again and that line goes. Drag the window’s ends to take in more or less. The copper knob above the lowest line is the age you are in, and the map shows the world then: this side of the ice ages the ground, past them the earth from space, with a word under it saying how sure that is. The last line is the twelve thousand years since the ice let go, spread out below its window. Tap a mark to read what happened there, and <i>More</i> for the story.</p>
-  <p class="open">Open on <span class="viewing on" data-v="after-the-ice">After the Ice</span> · <span class="viewing" data-v="china">China, with the Song in the window</span> · <span class="viewing" data-v="egypt">Egypt, from the Sahara to Cleopatra</span></p>
-  <div class="credit">The picture on the wall: Naomi Devil, <i>Idő-töltés</i> (2016), a cybernetic sculpture with Nicolas Schöffer’s hourglass. Photograph by Darabos György, <a href="https://commons.wikimedia.org/wiki/File:Naomi_Devil,_Id%C5%91-t%C3%B6lt%C3%A9s,_Nicolas_Sch%C3%B6ffer_homok%C3%B3r%C3%A1j%C3%A1b%C3%B3l_k%C3%A9sz%C3%BClt_kibernetikus_szobor_a_Hungarikon-gy%C5%B1jtem%C3%A9ny_sz%C3%A1m%C3%A1ra.jpg">Wikimedia Commons</a>, CC BY-SA 4.0, cropped.</div>
-  <span class="cmd next" id="next" role="button" tabindex="0">Next</span>
+  <h1 id="introTitle">Time Machine</h1>
+  <p>The whole history of the Earth fits on this page: four and a half billion years, from the crash that made the Moon to this morning. You can go to any year you like and see what the world looked like then.</p>
+  <figure class="pic"><img src="../art/maps/time-machine-250ma.jpg" width="720" height="360" alt="The flat map of the Earth 250 million years ago: almost all the land in one continent, in one ocean"><figcaption>The Earth 250 million years ago</figcaption></figure>
+  <p>It isn’t finished. New things arrive all the time, so come back.</p>
+  <p>Under How this works, in the column on the left, tap Timeline, Map or Graphs. A note opens explaining each one.</p>
+
+  <h2>The timeline</h2>
+  <p>Each coloured band is a period. Tap one and it opens as a longer line underneath. When two upright bars stand round it, drag them apart for more detail or together for less. Drag the space between them to slide along.</p>
+  <p>Tap a mark and you get a sentence about what happened. <i>More</i>, at the end, tells the rest, with pictures when there are any.</p>
+  <p>The copper dot is the year you’re in. Drag it, and the map shows the Earth in that year.</p>
+  <p>Tap <i>play</i>, above the map on the left, and the year runs along the line by itself while the world changes under it.</p>
+
+  <h2>The map</h2>
+  <p><i>Globe</i>, above the middle of the map, turns the flat map into a world you can spin. Zoom and drag as far as you like. <i>reset</i>, at the right, brings it home.</p>
+  <p>Watch the sea. Twelve thousand years ago it was so low you could walk from London to Paris, from Siberia to Alaska, or from Boston to Nantucket.</p>
+  <p>For the last 200 million years we know pretty well where the continents were, because the ocean floor kept a record of how it spread. Before that, the record is thinner, and the map goes blurry, then ghostly. We know there was land, and that it moved. We don’t know where.</p>
+  <p><i>Cities</i> puts today’s cities on the globe, and they ride along with the land. Where was Melbourne a hundred million years ago? Tap <i>Cities</i> and drag the copper dot. (It wasn’t anywhere you’d want to go swimming.)</p>
+
+  <h2>Graphs (new, and still rough)</h2>
+  <p><i>Energy source</i>: how much of the warmth at the Earth’s surface came from inside the planet, and how much from the Sun.</p>
+  <p><i>Day length</i>: when the Moon was made, a day was perhaps five hours long. The Moon has been slowing us down ever since.</p>
+  <p>More graphs are on the way.</p>
+
+  <div class="go"><span class="cmd next" id="next" role="button" tabindex="0">Next</span></div>
+
+  <div class="credit">
+    <div>Sources:</div>
+    <div>Continents: Merdith and others, 2021 (EarthByte)</div>
+    <div>Land before the oldest rocks: Hawkesworth and others, 2020; Dhuime and others, 2012; Flament and others, 2008; Bindeman and others, 2018; Korenaga and others, 2017</div>
+    <div>The ground: ETOPO 2022 (NOAA); Copernicus Global Land Cover, 2019</div>
+    <div>Ice sheets: Peltier, Argus and Drummond, 2015 (ICE-6G_C, via PMIP4)</div>
+    <div>Sea level since the ice: Lambeck and others, 2014</div>
+    <div>Sea level in the ice ages: Spratt and Lisiecki, 2016; Bintanja and van de Wal, 2008</div>
+    <div>People: Our World in Data, from HYDE, 2023, Gapminder, 2022, and the United Nations, 2024</div>
+    <div>Oxygen: Lyons, Reinhard and Planavsky, 2014</div>
+    <div>Day length: Williams, 2000; Bartlett and Stevenson, 2016; Meyers and Malinverno, 2018</div>
+    <div>Minerals: Hazen and others, 2008</div>
+    <div>Energy source: Gough, 1981 (the Sun); Davies and Davies, 2010, Korenaga, 2008, and Zahnle and others, 2007 (the inside)</div>
+    <p>This is also the master record behind the maps and dates in our stories, such as Van Gogh’s <i>Starry Night</i>, so they all agree with each other.</p>
+    <p>The picture on the wall: Naomi Devil, <i>Idő-töltés</i> (2016), a cybernetic sculpture with Nicolas Schöffer’s hourglass. Photograph by Darabos György, <a href="https://commons.wikimedia.org/wiki/File:Naomi_Devil,_Id%C5%91-t%C3%B6lt%C3%A9s,_Nicolas_Sch%C3%B6ffer_homok%C3%B3r%C3%A1j%C3%A1b%C3%B3l_k%C3%A9sz%C3%BClt_kibernetikus_szobor_a_Hungarikon-gy%C5%B1jtem%C3%A9ny_sz%C3%A1m%C3%A1ra.jpg">Wikimedia Commons</a>, CC BY-SA 4.0, cropped.</p>
+  </div>
+  <!-- the viewings' chooser (After the Ice · China · Egypt) is off the first page (Michael, 16 Oct 2026: the choices
+       did not do what a reader would expect); the VIEWINGS and ?view= in the script are kept, unused here, so they can come back -->
 </section>
 
 <section id="bench">
@@ -227,7 +266,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-15 4052457';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-16 6f826b1';   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -249,8 +288,7 @@
     VIEW = VIEWINGS[id] || VIEWINGS['after-the-ice'];
     ICE = -VIEW.zero; NAME = VIEW.name; NOW = VIEW.end + ICE; TODAY = THIS_YEAR + ICE;
     focus.a = VIEW.focus[0]; focus.b = VIEW.focus[1]; handle = (focus.a + focus.b) / 2;
-    $('introTitle').textContent = VIEW.title; $('introText').textContent = VIEW.text;
-    document.querySelectorAll('#intro .viewing').forEach(w => w.classList.toggle('on', w.dataset.v === id));
+    // the front page no longer changes with the viewing (16 Oct 2026): VIEW.title and VIEW.text are kept, unread, for when the chooser comes back
   }
   const DETAIL_ROWS = 4;        // at most this many label rows under Detail; the lightest lose their label, not their mark
   const FOCUS_MIN = 50;         // the narrowest Focus window, in years
@@ -261,11 +299,11 @@
   const FIT = { west: -180, south: -90, east: 180, north: 90 };   // the whole world, poles and all (13 Oct 2026, Michael; was 58 S to 78 N)
   // Layout, in pixels of the overlay: Main's line, Detail's rail, the curve band above Detail.
   const MAIN_Y = 18, DET_Y = 172, BAND = 64, PADX = 8;
-  // The panels' words (the mockup's).
+  // The panels' words (Michael's, 16 Oct 2026; the front page carries the same text).
   const PANELS = {
-    timeline: ['Timeline', '<p>The lines are the whole of the Earth’s time, in periods, each period a band in its own colour. Tap a period and it opens as a line beneath, with its events; the lines above keep their bands and put their events away. Tap it again and that line goes. Drag the window’s ends to take in more or less: they click onto a period’s edges. The copper knob above the lowest line is the age you are in; drag it, or tap below the band.</p><p>The last period, After the ice, opens as the two lines below: the whole twelve thousand years, from the ice to now.</p><p>The pale blue window on it is the Focus window. Drag it to move through time. Drag either end to make it wider or narrower.</p><p>The line below shows only the years inside the Focus window, spread out so there is room to read.</p><p>The copper handle is the year you are in. Drag it, or tap anywhere on the line, and the map shows the world in that year. Tap a mark to go to its year and see what happened.</p>'],
-    graphs: ['Graphs', '<p>A graph draws one thing the Earth has kept a record of, along the line that is open: the oxygen in the air, the length of a day, the number of kinds of minerals, or where the Earth’s heat comes from. The copper marker’s value is written under it. Tap a graph’s name to see it, and tap it again to put it away.</p>'],
-    map: ['Map', '<p>The map shows the world in the handle’s year. This side of the ice ages it is the ground, today’s land with the sea lower where it was lower and the ice where it reached; past them it is the earth from space, with the continents where they were, and the word under it says how sure that is, from <i>measured</i> down to <i>invented</i>. Drag the globe to turn it. Where the word is <i>guessed</i>, <i>another guess</i> draws a new one.</p><p>The ground on the drifting pieces is today’s, back as far as the seafloor can be measured; older than that it is plain rock, since nobody knows what grew there. Before the Earth had a crust the globe is the melt itself, and whether there was a sea before the Moon was made is not known: that faint blue is a guess.</p><p><i>Cities</i> puts a dozen of today’s cities on the drifting pieces, each riding its own plate; a city fades out before the ground under it existed. Before about 200 million years the model knows how far north a place was, not how far east, so a city’s east-west place is one guess. San Francisco rides with North America, where the city sits today, east of the San Andreas; the ground under it is a sliver of ocean floor scraped onto the continent, and that is a story for later.</p><p>Tap an event with a place and the map goes there; the other events of the open line inside the view show as places you can tap. Tap a place, and its mark lights up on the timeline. Drag the bars at the map’s edges to make it bigger.</p><p class="refs">The ice: ICE-6G_C (Peltier, Argus and Drummond 2015), via PMIP4. The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.</p>']
+    timeline: ['Timeline', '<p>Each coloured band is a period. Tap one and it opens as a longer line underneath. When two upright bars stand round it, drag them apart for more detail or together for less. Drag the space between them to slide along.</p><p>Tap a mark and you get a sentence about what happened. <i>More</i>, at the end, tells the rest, with pictures when there are any.</p><p>The copper dot is the year you’re in. Drag it, and the map shows the Earth in that year.</p><p>Tap <i>play</i>, above the map on the left, and the year runs along the line by itself while the world changes under it.</p>'],
+    graphs: ['Graphs', '<p><i>Energy source</i>: how much of the warmth at the Earth’s surface came from inside the planet, and how much from the Sun.</p><p><i>Day length</i>: when the Moon was made, a day was perhaps five hours long. The Moon has been slowing us down ever since.</p><p>More graphs are on the way.</p>'],
+    map: ['Map', '<p><i>Globe</i>, above the middle of the map, turns the flat map into a world you can spin. Zoom and drag as far as you like. <i>reset</i>, at the right, brings it home.</p><p>Watch the sea. Twelve thousand years ago it was so low you could walk from London to Paris, from Siberia to Alaska, or from Boston to Nantucket.</p><p>For the last 200 million years we know pretty well where the continents were, because the ocean floor kept a record of how it spread. Before that, the record is thinner, and the map goes blurry, then ghostly. We know there was land, and that it moved. We don’t know where.</p><p><i>Cities</i> puts today’s cities on the globe, and they ride along with the land. Where was Melbourne a hundred million years ago? Tap <i>Cities</i> and drag the copper dot. (It wasn’t anywhere you’d want to go swimming.)</p><p class="refs">The ice: ICE-6G_C (Peltier, Argus and Drummond 2015), via PMIP4. The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.</p>']
   };
 
   // ---------- numbers and years ----------
@@ -865,7 +903,6 @@
     }
   }
   $('next').addEventListener('click', showBench);
-  document.querySelectorAll('#intro .viewing').forEach(w => w.addEventListener('click', () => applyViewing(w.dataset.v)));
   applyViewing(new URLSearchParams(location.search).get('view') || 'after-the-ice');
   $('next').addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); showBench(); } });
   let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!live) return; measure(); drawDetail(); draw(); }, 120); });
