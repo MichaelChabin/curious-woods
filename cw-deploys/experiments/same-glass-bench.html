@@ -33,6 +33,9 @@
   /* Glass used: the second line under a held number's readout. */
   .used{display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-size:13px;color:#546A80;margin:-2px 0 6px 14px}
   .used .num{cursor:pointer}
+  .used .fold{font-style:italic;cursor:pointer;border-bottom:1px dotted #a09880}
+  /* an exact fraction too long for the column wraps rather than being cut or rounded */
+  .used .big{font-size:10px;word-break:break-all;max-width:150px;text-align:center}
 
   /* The resolution dial (its own module, below). */
   .cw-dial{display:flex;align-items:center;gap:2px}
@@ -47,7 +50,9 @@
   /* The key: resolutions she has used. */
   /* The key as a grid: dot, line, fraction, and the count right beside its fraction, under a
      centred title. */
-  .krow,.khead{display:grid;grid-template-columns:22px 22px 28px 62px;column-gap:4px;align-items:center}
+  .krow,.khead{display:grid;grid-template-columns:22px 22px 46px 58px;column-gap:4px;align-items:center}
+  .krow .fr{justify-self:end}
+  .krow .every{font-size:11px;line-height:1.15;text-align:right;color:#3D3D3A}
   .krow{min-height:30px;font-size:13px}
   .khead .title{grid-column:4;text-align:center;font-size:11px;line-height:1.25;color:#546A80;margin-bottom:2px}
   .krow .dot{width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
@@ -67,7 +72,7 @@
   .gone{display:none}
   .views{margin-bottom:12px}
   /* Fill is on or off: the small square before the word is empty or filled (chosen here). */
-  #w-fill,#w-join{display:inline-flex;align-items:center;gap:5px}
+  #w-fill,#w-join,#w-sound{display:inline-flex;align-items:center;gap:5px}
   .word .box{display:inline-block;width:9px;height:9px;border:1.2px solid #546A80;border-radius:1px}
   .word.on .box{background:#546A80}
   .words{flex-wrap:wrap;row-gap:8px}
@@ -95,17 +100,19 @@
     <li>Touch the 1 and drag to make a number.</li>
     <li>Tap <em>Fix</em> to hold it.</li>
     <li>Turn the dial to choose how finely to cut.</li>
+    <li>Tap <em>Every cut</em> to sweep every cut up to the one on the dial.</li>
     <li>Tap <em>Join</em> to connect the corners; tap it again to erase.</li>
     <li>The numbers in the key count the ways. Turn a dot off to count without it.</li>
     <li>Drag right to make it wider, up to make it taller.</li>
     <li>Tap <em>Near</em> or <em>Whole</em> to change the view.</li>
+    <li>Tap <em>Sound</em> to turn the sound off or on.</li>
     <li>Tap <em>Clear</em> to start again.</li>
   </ul>
   <div class="words views"><span class="word" id="w-near">Near</span><span class="word" id="w-whole">Whole</span></div>
   <div id="readouts"></div>
   <div class="section" id="dial"></div>
   <div class="section" id="key"></div>
-  <div class="section words"><span class="word" id="w-color">Color</span><span class="word" id="w-fill"><b class="box"></b>Fill</span><span class="word" id="w-join"><b class="box"></b>Join</span><span class="word gone" id="w-clear">Clear</span></div>
+  <div class="section words"><span class="word" id="w-color">Color</span><span class="word" id="w-fill"><b class="box"></b>Fill</span><span class="word" id="w-join"><b class="box"></b>Join</span><span class="word gone" id="w-every">Every cut</span><span class="word on" id="w-sound"><b class="box"></b>Sound</span><span class="word gone" id="w-clear">Clear</span></div>
 </div>
 
 <div id="pal">
@@ -309,7 +316,7 @@ CW.axisNumbers = { step: step, text: text, draw: draw };
 </script>
 
 <script>
-var CW_VERSION = '2026-10-16c e0db3ba'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-10-16d 05ccc2c'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 // ============================================================================
 // SAME GLASS — A BENCH (15 Oct 2026; first revision the same day, from Michael's
 // first impressions)
@@ -378,6 +385,15 @@ var RES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 10000];   // step is 1/q me
 var RES_COLOR = ['#4a4540', '#1a3a8c', '#8b1a1a', '#1a6a2a', '#c8780a', '#4a1a8c', '#2a8a8a',
                  '#a83018', '#6a5a2a', '#c84878', '#2a6a5a', '#7a3a8a', '#9a7a1a'];
 var resColor = RES_COLOR.slice();
+// A key row is a dial resolution (0 … 12) or an Every cut run, EVERY_ROW + the finest cut.
+var EVERY_ROW = 1000;
+var EVERY_COLOR = ['#2f5d62', '#7a4a1a', '#5a2a6a'];   // Every cut rows, in turn (chosen here)
+function isEvery(row) { return row >= EVERY_ROW; }
+function rowColor(row) {
+    if (resColor[row]) return resColor[row];
+    var n = used.filter(isEvery).indexOf(row);
+    return EVERY_COLOR[Math.max(0, n) % EVERY_COLOR.length];
+}
 // A held number's own colour, on its corner and its readout. Copper first: Geometry's point colour.
 var NUM_COLOR = ['#BE622F', '#2c5aa0', '#3f7a3a', '#8b1a1a', '#6a3a8c'];
 var INK = '#3D3D3A', SLATE = '#546A80', PAPER = '#f4f1e8';
@@ -447,14 +463,19 @@ function markUsed(i) {
 function isShown(i) { return shown[i] !== false; }
 
 // Passing a stop is keeping it.
-function keepStop(s) {
-    var k = qi + '|' + qkey(s.w) + '|' + qkey(s.h);
-    if (rectKeys[k]) return;
+function keepStop(s, row, quiet) {
+    if (row === undefined) row = qi;
+    var k = row + '|' + qkey(s.w) + '|' + qkey(s.h);
+    if (rectKeys[k]) return false;
     rectKeys[k] = true;
-    rects.push({ w: s.w, h: s.h, a: qmul(s.w, s.h), wf: qf(s.w), hf: qf(s.h), qi: qi, lab: null });
-    markUsed(qi);
-    renderKey(); renderWords(); renderReadouts(); dirty = true;
+    rects.push({ w: s.w, h: s.h, a: qmul(s.w, s.h), wf: qf(s.w), hf: qf(s.h), qi: row, lab: null });
+    rectsVersion++;
+    markUsed(row);
+    if (!quiet) Sound.tick();
+    keyDirty = roDirty = true; renderWords(); dirty = true;
+    return true;
 }
+var rectsVersion = 0, keyDirty = false, roDirty = false, lastPanelDraw = 0;
 
 // ------------------------------------------------------------------- the view
 var canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
@@ -476,6 +497,8 @@ function resize() {
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // Opened while the window had no size, the view could not be set: set it now (as Geometry does).
+    if (W > 0 && H > 0 && !(view.z > 0 && isFinite(view.x) && isFinite(view.y))) homeView();
     dirty = true;
 }
 // Near: the 1 in the lower-left quarter of the drawing area, a comfortable size.
@@ -540,9 +563,27 @@ function decimalParts(v) {        // exact decimal, or null when the denominator
     var p = Math.max(t, f);
     return { num: v.n * (10n ** BigInt(p)) / v.d, places: p };
 }
+// CW.num writes from ordinary numbers, exact only below 2^53. Glass used over many cuts is a
+// fraction whose denominator runs to dozens of digits (the cuts' least common multiple), so
+// past that size the bench writes it itself, digit for digit from the BigInts, in CW.num's
+// own markup and grouping: still exact, never rounded, never 5.7e+38.
+var SAFE = 9007199254740991n;
+function bigGroup(b) { var t = String(b < 0n ? -b : b).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); return (b < 0n ? '-' : '') + t; }
 function numHTML(v) {
-    if (numForm === 'decimal') { var dp = decimalParts(v); if (dp) return CW.num.decimal(Number(dp.num), dp.places); }
-    return CW.num.html(Number(v.n), Number(v.d), { mixed: true });
+    var small = (v.n < 0n ? -v.n : v.n) <= SAFE && v.d <= SAFE;
+    if (numForm === 'decimal') {
+        var dp = decimalParts(v);
+        if (dp && (dp.num < 0n ? -dp.num : dp.num) <= SAFE) return CW.num.decimal(Number(dp.num), dp.places);
+        if (dp) {
+            var str = String(dp.num).padStart(dp.places + 1, '0'), ip = str.slice(0, str.length - dp.places);
+            var fp = str.slice(str.length - dp.places).replace(/0+$/, '');
+            return '<span class="big">' + bigGroup(BigInt(ip)) + (fp ? '.' + fp : '') + '</span>';
+        }
+    }
+    if (small) return CW.num.html(Number(v.n), Number(v.d), { mixed: true });
+    var whole = v.n / v.d, r = v.n % v.d;
+    var frac = r ? '<span class="cw-frac big"><span class="cw-nu">' + bigGroup(r) + '</span><span class="cw-de">' + bigGroup(v.d) + '</span></span>' : '';
+    return '<span class="cw-mix"><span class="cw-n">' + bigGroup(whole) + '</span>' + frac + '</span>';
 }
 function numTokens(v) {           // for the canvas: text runs and stacked fractions
     if (numForm === 'decimal') { var dp = decimalParts(v); if (dp) return [{ s: CW.num.decimal(Number(dp.num), dp.places) }]; }
@@ -578,10 +619,30 @@ function glassUsed(N) {
         seen[k] = 1; mine.push(r);
     });
     if (!mine.length) return null;
-    mine.sort(function(p, q) { return qcmp(p.w, q.w); });
-    var total = qmul(mine[0].w, mine[0].h);
-    for (var i = 1; i < mine.length; i++) total = qadd(total, qmul(qsub(mine[i].w, mine[i - 1].w), mine[i].h));
-    return total;
+    mine.sort(function(p, q) { return p.wf - q.wf || qcmp(p.w, q.w); });
+    // The same sum, over one common denominator: every width and height brought to L (the
+    // least common multiple of their denominators), the strips added as whole numbers over L²,
+    // and the result reduced once at the end. Exactly the same number, without a reduction at
+    // every step (which, over a thousand cuts, took half a second).
+    var L = 1n;
+    mine.forEach(function(r) { L = L / bgcd(L, r.w.d) * r.w.d; L = L / bgcd(L, r.h.d) * r.h.d; });
+    function over(x) { return x.n * (L / x.d); }
+    var sum = over(mine[0].w) * over(mine[0].h), prev = over(mine[0].w);
+    for (var i = 1; i < mine.length; i++) { var w = over(mine[i].w); sum += (w - prev) * over(mine[i].h); prev = w; }
+    return Q(sum, L * L);
+}
+// Glass used, written. A fraction whose denominator runs past USED_DIGITS digits (every cut to
+// 1000 makes one hundreds of digits long) is shown as its whole part and how long the fraction
+// is; a tap on that shows it in full, and another folds it away. Nothing is rounded either way.
+var USED_DIGITS = 12, usedOpen = false;
+function usedHTML(g) {
+    var dl = String(g.d).length;
+    if (dl <= USED_DIGITS || (numForm === 'decimal' && decimalParts(g) && String(decimalParts(g).num).length <= USED_DIGITS + 6)) {
+        return '<span class="cw-line"><span class="num">' + numHTML(g) + '</span></span>';
+    }
+    if (usedOpen) return '<span class="cw-line"><span class="num">' + numHTML(g) + '</span></span><span class="fold">fold it</span>';
+    var whole = g.n / g.d;
+    return '<span class="cw-line"><span class="num">' + bigGroup(whole) + '</span></span><span class="fold">and a fraction ' + CW.num.count(dl) + ' digits long</span>';
 }
 function renderReadouts() {
     var html = '';
@@ -589,7 +650,7 @@ function renderReadouts() {
         var s = heldShowing(h), g = glassUsed(h.N);
         var sel = held.length > 1 && selN && qcmp(selN, h.N) === 0;
         html += roLine(s.w, s.h, h.N, 'data-held="' + i + '"' + (sel ? ' data-sel="1"' : ''), h.color, 'Fixed');
-        if (g) html += '<div class="used" data-used="1">Glass used:<span class="cw-line"><span class="num">' + numHTML(g) + '</span></span>square metres</div>';
+        if (g) html += '<div class="used" data-used="1">Glass used:' + usedHTML(g) + 'square metres</div>';
     });
     if (free) html += roLine(free.w, free.h, qmul(free.w, free.h), 'data-free="1"', null, 'Fix');
     html = html.replace(/<div class="ro" data-held="(\d+)" data-sel="1"/, '<div class="ro sel" data-held="$1"');
@@ -597,6 +658,7 @@ function renderReadouts() {
 }
 roHost.addEventListener('click', function(e) {
     var ro = e.target.closest('.ro, .used'); if (!ro) return;
+    if (e.target.closest('.fold')) { usedOpen = !usedOpen; roHost._last = null; renderReadouts(); return; }
     if (e.target.closest('.fix')) {           // Fix holds the area; Fixed lets it go
         if (ro.hasAttribute('data-free')) fix(); else letGo(Number(ro.getAttribute('data-held')));
         return;
@@ -627,7 +689,7 @@ function fix() {
     selN = N;                                            // the newest number is the one counted
     free = null;                                         // her starting rectangle is not kept
     markUsed(qi);
-    if (h.stops.length) startAnim(h, h.stops[h.stops.length - 1].lw, 900, true);   // the widest stop
+    if (h.stops.length) startAnim(h, h.stops[h.stops.length - 1].lw, 900, true, true);   // the widest stop
     renderReadouts(); renderWords(); dirty = true;
 }
 function letGo(i) {
@@ -635,38 +697,82 @@ function letGo(i) {
     var s = heldShowing(h);
     held.splice(i, 1);
     free = { w: s.w, h: s.h };                           // the rectangle stays; its corner is free again
-    renderReadouts(); dirty = true;
+    renderReadouts(); renderWords(); dirty = true;
 }
-function startAnim(h, toLw, dur, fit) {
-    h.anim = { from: h.lw, to: toLw, t0: performance.now(), dur: dur, fit: !!fit };
+function startAnim(h, toLw, dur, fit, keep) {
+    h.anim = { from: h.lw, to: toLw, t0: performance.now(), dur: dur, fit: !!fit, keep: !!keep };
     if (!holdView) viewTarget = null;
 }
-// A new resolution lays down every one of its stops by itself (Michael, 16 Oct): the corner
-// glides to the widest, then walks to the tallest one stop at a time, AUTO_STEP_MS apart,
-// each stop staying as it is reached. Her own drag, Fixed, or Clear stops the walk.
-var AUTO_STEP_MS = 500;     // between one new rectangle landing and the next
-var AUTO_GLIDE_MS = 200;    // the corner's glide from one stop to the next, inside that half second
+// A sweep lays rectangles down one after another by itself: a new resolution's stops,
+// widest to tallest (Michael, 16 Oct), or Every cut's. The pace depends on how many: the whole
+// sweep aims at SWEEP_MS, one rectangle every SWEEP_MS ÷ n, but never slower than
+// DELAY_MAX_MS apart (two stops do not crawl) nor faster than DELAY_MIN_MS (a large sweep
+// takes longer rather than flashing by). Her own drag on that number, Fixed, or Clear stops it.
+var SWEEP_MS = 3000, DELAY_MAX_MS = 500, DELAY_MIN_MS = 15;
+var GLIDE_MAX_MS = 200;     // the corner glides between stops when there is time, else steps
+function startSweep(h, items, row) {
+    items = items.filter(function(s) { return !rectKeys[row + '|' + qkey(s.w) + '|' + qkey(s.h)]; });
+    h.run = null;
+    if (!items.length) return;
+    var delay = Math.max(DELAY_MIN_MS, Math.min(DELAY_MAX_MS, SWEEP_MS / items.length));
+    h.anim = null;
+    h.run = { items: items, k: 0, row: row, delay: delay, next: performance.now(), fast: delay <= TICK_LIMIT_MS };
+    markUsed(row);
+}
+// Lay whatever of a sweep is due by now; returns how many went down.
+function stepSweep(h, now) {
+    var r = h.run, laid = 0;
+    while (r && r.k < r.items.length && now >= r.next) {
+        var st = r.items[r.k++], lw = Math.log(qf(st.w));
+        if (keepStop(st, r.row, r.fast)) laid++;
+        if (r.delay >= 100) startAnim(h, lw, Math.min(GLIDE_MAX_MS, r.delay / 2));
+        else { h.anim = null; h.lw = lw; }
+        r.next += r.delay;
+    }
+    if (r && r.k >= r.items.length && !h.anim) {
+        // Done: the corner rests on the stop of the dial's cut nearest where it ended.
+        h.run = null;
+        var si = nearestStop(h.stops, h.lw);
+        if (si >= 0) h.lw = h.stops[si].lw;
+        roDirty = keyDirty = true;
+    }
+    return laid;
+}
 function setRes(i) {
     qi = i;
     held.forEach(function(h) {
-        h.stops = stopsFor(h.N, RES[qi]); h.auto = null;
-        if (h.stops.length) {
-            startAnim(h, h.stops[h.stops.length - 1].lw, 900, true);
-            h.auto = { i: h.stops.length - 2, at: performance.now() + 900 + AUTO_STEP_MS - AUTO_GLIDE_MS };
-        }
+        h.stops = stopsFor(h.N, RES[qi]);
+        startSweep(h, h.stops.slice().reverse(), qi);
     });
     if (held.length) markUsed(qi);
     renderReadouts(); dirty = true;
+}
+// Every cut: every cut from whole metres to the one on the dial, one after another (1, ½, ⅓ …
+// up to 1/q), each corner once however many cuts share it, as one row of the key. For the
+// selected number (the one the key counts).
+function everyCut() {
+    var h = held.filter(function(x) { return selN && qcmp(x.N, selN) === 0; })[0] || held[held.length - 1];
+    if (!h) return;
+    var Qmax = RES[qi], seen = {}, items = [];
+    for (var q = 1; q <= Qmax; q++) {
+        stopsFor(h.N, q).slice().reverse().forEach(function(st) {
+            var k = qkey(st.w); if (seen[k]) return;
+            seen[k] = 1; items.push(st);
+        });
+    }
+    startSweep(h, items, EVERY_ROW + Qmax);
+    renderKey(); dirty = true;
 }
 
 // Clear: every rectangle goes, every held number is let go, the key empties (and its
 // colours return to their own). The dial stays where it is.
 function clearAll() {
     rects = []; rectKeys = {}; held = []; free = null; used = []; shown = {}; catchUp = null; selN = null;
-    resColor = RES_COLOR.slice();
+    resColor = RES_COLOR.slice(); rectsVersion++;
     renderKey(); renderReadouts(); renderWords(); dirty = true;
 }
 function renderWords() {
+    document.getElementById('w-every').classList.toggle('gone', !held.length);
     document.getElementById('w-clear').classList.toggle('gone', !(rects.length || held.length || free));
 }
 document.getElementById('w-clear').addEventListener('click', clearAll);
@@ -700,23 +806,53 @@ function drawGrid(q, color, alpha) {
     ctx.restore();
 }
 
+// Outlines, drawn so that hundreds stay smooth: each rectangle is only its two edges off the
+// axes (the axes are drawn solid over everything, and every rectangle shares them), those
+// off the screen are skipped, and each row is one path. Rows are stroked one by one, half
+// see-through, so where one row's lines lie on another's they darken.
+function drawOutlines() {
+    var a = area(), tl = s2w(a.x0, 0), br = s2w(W, H), paths = {};
+    rects.forEach(function(r) {
+        if (!isShown(r.qi)) return;
+        var right = r.wf >= tl.x && r.wf <= br.x && r.hf >= br.y;           // x = w, from 0 up to h
+        var top = r.hf >= br.y && r.hf <= tl.y && r.wf >= tl.x;             // y = h, from 0 out to w
+        if (!right && !top) return;
+        var p = paths[r.qi] || (paths[r.qi] = []);
+        var c = w2s(r.wf, r.hf), o = w2s(0, 0);
+        var cx = clampPx(c.x), cy = clampPx(c.y);
+        if (right) p.push(cx, clampPx(o.y), cx, cy);
+        if (top) p.push(clampPx(o.x), cy, cx, cy);
+    });
+    Object.keys(paths).forEach(function(row) {
+        var p = paths[row];
+        ctx.beginPath();
+        for (var i = 0; i < p.length; i += 4) { ctx.moveTo(p[i], p[i + 1]); ctx.lineTo(p[i + 2], p[i + 3]); }
+        ctx.strokeStyle = rowColor(Number(row)); ctx.stroke();
+    });
+}
+
 // Join: for each resolution and each number made at it, straight pieces between its
 // corners in order, tallest stop to widest. Only the stops she has reached; never the
 // curve xy = N itself. A resolution hidden by its dot hides its lines.
+var joinCache = { v: -1, groups: null };
 function drawJoins() {
+    if (joinCache.v !== rectsVersion) {
+        var gs = {};
+        rects.forEach(function(r) {
+            var k = r.qi + '|' + qkey(r.a);
+            (gs[k] = gs[k] || { qi: r.qi, pts: [] }).pts.push(r);
+        });
+        Object.keys(gs).forEach(function(k) { gs[k].pts.sort(function(p, q) { return p.wf - q.wf; }); });
+        joinCache = { v: rectsVersion, groups: gs };
+    }
     var groups = {};
-    rects.forEach(function(r) {
-        if (!isShown(r.qi)) return;
-        var k = r.qi + '|' + qkey(r.a);
-        (groups[k] = groups[k] || { qi: r.qi, pts: [] }).pts.push(r);
-    });
+    Object.keys(joinCache.groups).forEach(function(k) { if (isShown(joinCache.groups[k].qi)) groups[k] = joinCache.groups[k]; });
     var a = area(), box = { l: a.x0 - 10, r: W + 10, t: -10, b: H + 10 };
     ctx.save(); ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.globalAlpha = LEAD_ALPHA;
     Object.keys(groups).forEach(function(k) {
         var g = groups[k];
         if (g.pts.length < 2) return;
-        g.pts.sort(function(p, q) { return p.wf - q.wf; });
-        ctx.strokeStyle = resColor[g.qi];
+        ctx.strokeStyle = rowColor(g.qi);
         ctx.beginPath();
         for (var i = 1; i < g.pts.length; i++) {
             var s0 = w2s(g.pts[i - 1].wf, g.pts[i - 1].hf), s1 = w2s(g.pts[i].wf, g.pts[i].hf);
@@ -772,7 +908,7 @@ function drawLabels() {
             if (box.l < p.r + 6 && box.r + 6 > p.l && box.t < p.b + 2 && box.b + 2 > p.t) return;   // a little air between labels
         }
         placed.push(box);
-        var x = box.l, y = (box.t + box.b) / 2, col = resColor[r.qi];
+        var x = box.l, y = (box.t + box.b) / 2, col = rowColor(r.qi);
         ctx.save(); ctx.globalAlpha = LABEL_ALPHA;
         L.tokens.forEach(function(t, k) {
             if (t.s !== undefined) CW.num.drawText(ctx, t.s, x, y, { size: LABEL_SIZE, color: col, align: 'left' });
@@ -791,8 +927,8 @@ function render() {
 
     // Faint grids: each resolution in the key whose dot is on, in its colour, and the
     // dial's current one (neutral until she has used it).
-    used.forEach(function(i) { if (isShown(i) && i !== qi) drawGrid(RES[i], resColor[i], 0.10); });
-    if (isShown(qi)) drawGrid(RES[qi], used.indexOf(qi) >= 0 ? resColor[qi] : SLATE, 0.14);
+    used.forEach(function(i) { if (!isEvery(i) && isShown(i) && i !== qi) drawGrid(RES[i], rowColor(i), 0.10); });
+    if (isShown(qi)) drawGrid(RES[qi], used.indexOf(qi) >= 0 ? rowColor(qi) : SLATE, 0.14);
 
     // The 1
     var o = w2s(0, 0), u = w2s(1, 1);
@@ -815,16 +951,13 @@ function render() {
         ctx.globalCompositeOperation = 'multiply'; ctx.globalAlpha = FILL_ALPHA;
         rects.forEach(function(r) {
             if (!isShown(r.qi)) return;
-            ctx.beginPath(); rectPath(0, 0, r.wf, r.hf); ctx.fillStyle = resColor[r.qi]; ctx.fill();
+            ctx.beginPath(); rectPath(0, 0, r.wf, r.hf); ctx.fillStyle = rowColor(r.qi); ctx.fill();
         });
         ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
     }
     ctx.lineJoin = 'miter'; ctx.lineWidth = 2;
     ctx.globalAlpha = LEAD_ALPHA;
-    if (!fillOn) rects.forEach(function(r) {             // with Fill on, the glass's own edges are the outline
-        if (!isShown(r.qi)) return;
-        ctx.beginPath(); rectPath(0, 0, r.wf, r.hf); ctx.strokeStyle = resColor[r.qi]; ctx.stroke();
-    });
+    if (!fillOn) drawOutlines();                         // with Fill on, the glass's own edges are the outline
     ctx.globalAlpha = 1;
     if (joinOn) drawJoins();
 
@@ -863,22 +996,30 @@ function drawCorner(w, h, color, solid) {
 function frame(now) {
     var dt = Math.min(100, now - lastFrame); lastFrame = now;
     var anyAnim = false;
+    var fastLaid = 0, fastOn = false;
     held.forEach(function(h) {
-        if (h.auto && !h.anim && now >= h.auto.at) {
-            if (h.auto.i < 0) h.auto = null;
-            else { startAnim(h, h.stops[h.auto.i].lw, AUTO_GLIDE_MS); h.auto.i--; h.auto.at = now + AUTO_STEP_MS; }
-        }
-        if (h.auto) anyAnim = true;           // the camera keeps the walk in sight, outward only
+        if (!h.run) return;
+        var fast = h.run.fast, n = stepSweep(h, now);
+        if (fast) { fastLaid += n; fastOn = fastOn || !!h.run; }
+        if (h.run) anyAnim = true;            // the camera keeps the sweep in sight, outward only
     });
+    Sound.flow(fastOn ? fastLaid / Math.max(dt, 1) * 1000 : 0);
+    // The key and the readouts follow the sweep a few times a second (Glass used is exact
+    // arithmetic over every rectangle, too dear to redo for each one of hundreds).
+    if ((keyDirty || roDirty) && (!anyAnim || now - lastPanelDraw > 200)) {
+        if (keyDirty) renderKey();
+        if (roDirty) renderReadouts();
+        keyDirty = roDirty = false; lastPanelDraw = now;
+    }
     held.forEach(function(h) {
         if (!h.anim) return;
         var t = Math.min(1, (now - h.anim.t0) / h.anim.dur), e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
         h.lw = h.anim.from + (h.anim.to - h.anim.from) * e;
         if (t >= 1) {
-            var fitAfter = h.anim.fit; h.lw = h.anim.to; h.anim = null; h.cur = heldShowing(h);
+            var fitAfter = h.anim.fit; h.anim_keep = h.anim.keep; h.lw = h.anim.to; h.anim = null; h.cur = heldShowing(h);
             // Where the corner comes to rest is a stop it has reached: it stays.
             var si = nearestStop(h.stops, h.lw);
-            if (si >= 0 && h.stops[si].lw === h.lw) keepStop(h.stops[si]);
+            if (h.anim_keep && si >= 0 && h.stops[si].lw === h.lw) keepStop(h.stops[si]);
         }
         else anyAnim = true;
         renderReadouts(); dirty = true;
@@ -964,7 +1105,7 @@ canvas.addEventListener('pointerdown', function(e) {
     else if (held.length) {
         var h = nearestHeld(p);
         drag = { kind: 'fixed', h: h, start: p, moved: false, lw0: h.lw, si: nearestStop(h.stops, h.lw) };
-        h.anim = null; h.auto = null;
+        h.anim = null; h.run = null;
     }
     else drag = { kind: 'pan', start: p, last: p, moved: false };
 });
@@ -1063,6 +1204,70 @@ document.getElementById('w-fill').addEventListener('click', function() {
     fillOn = !fillOn; this.classList.toggle('on', fillOn); dirty = true;
 });
 
+// ------------------------------------------------------------------ the sound
+// The sound of glass being set: not a reward, not a signal. Generated here (Web Audio, no
+// files). At a slow pace each rectangle is one soft tick, a 20 ms burst of filtered noise
+// with no pitch; at a fast pace the ticks would run together, so it is a soft shush whose
+// loudness follows how fast rectangles arrive, fading over about half a second when the
+// sweep ends. Nothing chimes, rises, or marks an ending. iPad lets audio start only after
+// a tap, so it wakes on her first tap anywhere. Sound is on by default (Michael to rule);
+// her choice holds for the visit.
+var TICK_LIMIT_MS = 80;        // slower than this between rectangles: ticks; faster: the shush
+var TICK_VOLUME = 0.05, SHUSH_VOLUME = 0.03, SHUSH_FULL_RATE = 50;   // rate (per second) at full shush
+var Sound = (function() {
+    var ac = null, noise = null, shush = null, lastTick = 0, on = true, level = 0;
+    function wake() {
+        if (!ac) {
+            var C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+            ac = new C();
+            noise = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
+            var d = noise.getChannelData(0);
+            for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+        }
+        if (ac.state === 'suspended') ac.resume();
+    }
+    function tick() {
+        if (!on || !ac || ac.state !== 'running') return;
+        var t = ac.currentTime;
+        if (t - lastTick < 0.025) return;                    // a burst of several in one move is one tick
+        lastTick = t;
+        var src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+        src.buffer = noise;
+        f.type = 'bandpass'; f.frequency.value = 3000; f.Q.value = 0.6;   // broad: a click, not a note
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(TICK_VOLUME, t + 0.002);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.02);
+        src.connect(f); f.connect(g); g.connect(ac.destination);
+        src.start(t, Math.random() * 0.9, 0.025);
+    }
+    // rate: rectangles per second in a fast sweep now (0 when none is running)
+    function flow(rate) {
+        if (!ac || ac.state !== 'running') return;
+        var want = on ? SHUSH_VOLUME * Math.min(1, rate / SHUSH_FULL_RATE) : 0;
+        if (want === 0 && level === 0) return;
+        if (!shush) {
+            var src = ac.createBufferSource(), lo = ac.createBiquadFilter(), hi = ac.createBiquadFilter(), g = ac.createGain();
+            src.buffer = noise; src.loop = true;
+            hi.type = 'highpass'; hi.frequency.value = 500; lo.type = 'lowpass'; lo.frequency.value = 3500;
+            g.gain.value = 0;
+            src.connect(hi); hi.connect(lo); lo.connect(g); g.connect(ac.destination); src.start();
+            shush = g;
+        }
+        // swell gently toward the rate; fade to nothing over about half a second
+        if (want !== level) shush.gain.setTargetAtTime(want, ac.currentTime, want > level ? 0.25 : 0.15);
+        level = want;
+    }
+    function setOn(v) { on = v; if (!on) flow(0); }
+    ['pointerdown', 'touchend', 'click', 'keydown'].forEach(function(ev) {
+        document.addEventListener(ev, wake, { capture: true, passive: true });
+    });
+    return { tick: tick, flow: flow, setOn: setOn };
+})();
+document.getElementById('w-sound').addEventListener('click', function() {
+    var on = !this.classList.contains('on'); this.classList.toggle('on', on); Sound.setOn(on);
+});
+document.getElementById('w-every').addEventListener('click', everyCut);
+
 // ----------------------------------------------------------------- the key
 // With a colour chosen in the palette, a tap on a resolution gives it that colour:
 // its grid, rectangles and labels. With none chosen, a tap on the dot shows or hides it.
@@ -1085,11 +1290,13 @@ function renderKey() {
     var wc = wayCounts();
     var html = (wc && used.length) ? '<div class="khead"><span class="title">Number of<br>Rectangles</span></div>' : '';
     html += used.map(function(i) {
-        var c = resColor[i];
+        var c = rowColor(i);
+        var label = isEvery(i)
+            ? '<span class="fr every">every cut<br>to ' + CW.num.count(i - EVERY_ROW) + '</span>'
+            : '<span class="fr cw-line">' + CW.num.html(1, RES[i]) + '</span>';
         return '<div class="krow' + (isShown(i) ? '' : ' off') + '" data-i="' + i + '">' +
             '<span class="dot"><i style="border-color:' + c + ';background:' + (isShown(i) ? c : 'transparent') + '"></i></span>' +
-            '<span class="lead" style="border-color:' + c + '"></span>' +
-            '<span class="fr cw-line">' + CW.num.html(1, RES[i]) + '</span>' +
+            '<span class="lead" style="border-color:' + c + '"></span>' + label +
             (wc ? '<span class="ways">' + CW.num.count(wc.per[i] || 0) + '</span>' : '') + '</div>';
     }).join('');
     if (wc && used.length) html += '<div class="ktotal">Total: ' + CW.num.count(wc.total) + (wc.total === 1 ? ' way' : ' ways') + '</div>';
@@ -1173,7 +1380,9 @@ renderReadouts();
 requestAnimationFrame(frame);
 
 // For looking at the bench from the console; nothing in the page reads it.
-window.sameGlass = { stopsFor: stopsFor, Q: Q, state: function() { return { held: held, rects: rects, free: free, view: view, qi: qi, used: used, resColor: resColor }; } };
+window.sameGlass = { stopsFor: stopsFor, Q: Q,
+    timeRender: function() { var t = performance.now(); render(); return performance.now() - t; },
+    state: function() { return { held: held, rects: rects, free: free, view: view, qi: qi, used: used, resColor: resColor }; } };
 })();
 </script>
 </body>

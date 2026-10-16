@@ -1283,6 +1283,19 @@ backstop for the Claude Code session that lands the file.
   *Number of / Rectangles*; and a **new resolution lays down all its stops by itself** — the corner
   glides to the widest, then walks to the tallest one stop at a time, `AUTO_STEP_MS` (500) between
   landings — stopped by her own drag, *Fixed* or *Clear*. `CW_VERSION 2026-10-16c e0db3ba`.
+  *16 Oct, trials:* **Every cut** sweeps every cut from whole metres to the dial's (1, ½ … 1/q),
+  each corner once, for the selected number, as one key row "every cut to q" with its own colour
+  (2: to 10, 32; to 100, 498, 117 between ¼ and 4 m; to 1000, 6 832). **Pace**: a sweep aims at
+  `SWEEP_MS` 3 000, one rectangle every 3 000 ÷ n ms, clamped to `DELAY_MAX_MS` 500 and
+  `DELAY_MIN_MS` 15. **Sound** (Web Audio, generated, woken by her first tap): slower than
+  `TICK_LIMIT_MS` 80 a 20 ms filtered-noise tick per rectangle, faster a shush following the rate,
+  fading in about half a second; *Sound* toggles it, on by default (Michael to rule), held for the
+  visit. Drawing: outlines are each rectangle's two edges off the axes, culled to the screen, one
+  path per key row — 0.4 ms a frame at 498 rectangles, 1.3 ms at 7 386 on a Mac (iPad not
+  measured). Glass used is summed over one common denominator (37 ms at 6 889 rectangles, was 425)
+  and written from the BigInts; a fraction past 12 digits folds to "21 and a fraction 40 digits
+  long", a tap opening it. The view recovers if the page opened with no size.
+  `CW_VERSION 2026-10-16d 05ccc2c`.
 
 - **`join-bench.html` → `active/deep-time.html` → `active/time-machine.html` (9 Oct)** — *The join*, built 6 Oct 2026 and **hung 7 Oct on
   Michael's word as Deep Time**, beside the Time Machine in the gallery (`stories/gallery.json`, slug
