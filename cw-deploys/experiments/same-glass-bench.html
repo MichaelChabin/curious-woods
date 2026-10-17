@@ -25,7 +25,7 @@
   #col .part:first-child{margin-top:0}
   #col .part.apart{margin-top:var(--gap-apart)}
   #col .p-how{order:1} #col .p-numbers{order:2} #col .p-dial{order:3} #col .p-key{order:4}
-  #col .p-look{order:5} #col .p-glass{order:6} #col .p-end{order:7}
+  #col .p-look{order:5} #col .p-glass{order:6} #col .p-share{order:7} #col .p-end{order:8}
   #col .p-dial .word{display:inline-block;margin-top:4px}
 
   /* How this works: Geometry's movable window; a list of ideas, each opening its explanation. */
@@ -95,6 +95,22 @@
   .word.on .box{background:#546A80}
   .words{flex-wrap:wrap;row-gap:8px}
 
+  /* Share: the picture as it will go, its options, and Geometry's name-and-note box. */
+  #share{position:fixed;z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);display:none;
+         width:min(460px,92vw);background:rgba(244,241,232,.98);border:.5px solid #c8b89a;border-radius:6px;
+         padding:12px 14px 12px;box-shadow:0 2px 16px rgba(42,38,32,.18)}
+  #share{max-height:94vh;overflow-y:auto}
+  #share img{display:block;max-width:100%;max-height:52vh;width:auto;height:auto;margin:0 auto;border-radius:2px}
+  #share .opts{margin:10px 0 8px}
+  #share .opt{display:inline-flex;align-items:center;gap:5px}
+  #share input,#share textarea{display:block;width:100%;font:13px Georgia,serif;color:#546A80;background:transparent;
+         border:none;border-bottom:.5px solid rgba(200,184,154,.6);padding:5px 0;outline:none}
+  #share input{font-size:14px}
+  #share textarea{font-style:italic;resize:none;height:44px;margin-top:4px}
+  #share .foot{display:flex;justify-content:flex-end;gap:18px;margin-top:10px;font-size:14px;color:#546A80}
+  #share .foot span{cursor:pointer}
+  #share .s-ok{font-weight:bold}
+
   /* Geometry's palette window: draggable by its header, closeable. */
   #pal{position:fixed;z-index:20;width:168px;display:none;background:rgba(244,241,232,.97);
        border:.5px solid #c8b89a;border-radius:6px;padding:0 10px 10px;box-shadow:0 2px 12px rgba(42,38,32,.12)}
@@ -119,6 +135,7 @@
   <div class="part p-key" id="key"></div>
   <div class="part p-look words"><span class="word" id="w-near">Near</span><span class="word" id="w-whole">Whole</span><span class="word" id="w-mirror"><b class="box"></b>Mirror</span></div>
   <div class="part p-glass words"><span class="word" id="w-join"><b class="box"></b>Join</span><span class="word" id="w-fill"><b class="box"></b>Fill</span><span class="word" id="w-color">Color</span></div>
+  <div class="part p-share words"><span class="word" id="w-share">Share</span></div>
   <div class="part p-end apart words"><span class="word on" id="w-sound"><b class="box"></b>Sound</span><span class="word gone" id="w-clear">Clear</span></div>
 </div>
 
@@ -136,8 +153,23 @@
   <div class="body">The numbers in the key count the ways. Turn a dot off to count without it.</div>
   <div class="idea">Looking</div>
   <div class="body">Tap <em>Near</em> or <em>Whole</em> to change the view. Pinch to zoom. Tap <em>Mirror</em> to see all four quarters.</div>
+  <div class="idea">Sharing</div>
+  <div class="body">Pan and pinch until the plane shows what you want, then tap <em>Share</em>. Choose <em>Labels</em>, <em>Grid lines</em> or <em>Axes</em> if you want them in the picture.</div>
   <div class="idea">Glass</div>
   <div class="body">Tap <em>Join</em> to connect the corners, and <em>Fill</em> to fill the rectangles. Tap <em>Color</em>, choose a colour, then tap a row of the key.</div>
+</div>
+
+<!-- Share: Geometry's preview and name-and-note box, with the picture's three options. -->
+<div id="share">
+  <img alt="" draggable="false">
+  <div class="opts words">
+    <span class="word opt" data-opt="labels"><b class="box"></b>Labels</span>
+    <span class="word opt" data-opt="grid"><b class="box"></b>Grid lines</span>
+    <span class="word opt" data-opt="axes"><b class="box"></b>Axes</span>
+  </div>
+  <input class="s-name" type="text" placeholder="name" autocomplete="off">
+  <textarea class="s-note" placeholder="add a note..."></textarea>
+  <div class="foot"><span class="s-cancel">Cancel</span><span class="s-ok">OK</span></div>
 </div>
 
 <div id="pal">
@@ -341,7 +373,7 @@ CW.axisNumbers = { step: step, text: text, draw: draw };
 </script>
 
 <script>
-var CW_VERSION = '2026-10-16e 6f826b1'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-10-17 b6cae21'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 // ============================================================================
 // SAME GLASS — A BENCH (15 Oct 2026; first revision the same day, from Michael's
 // first impressions)
@@ -805,12 +837,32 @@ function everyCut() {
     renderKey(); dirty = true;
 }
 
+// A new number starts at whole metres (Michael, 17 Oct): the dial goes back to 1 without a
+// sweep; numbers already held keep their rectangles and simply stand at whole metres too.
+function dialToWhole() {
+    if (qi === 0) return;
+    dial.set(0, true); qi = 0; paused = false;
+    held.forEach(function(h) { h.stops = stopsFor(h.N, 1); });
+}
+
 // Clear: every rectangle goes, every held number is let go, the key empties (and its
 // colours return to their own). The dial stays where it is.
+// Clear returns the bench to exactly how it opens (Michael, 17 Oct): everything she made and
+// chose goes, the dial at 1, the view at Near, Mirror, Join and Fill off, every panel shut,
+// and 2 made and fixed again. Only her Sound choice stays.
 function clearAll() {
     rects = []; rectKeys = {}; held = []; free = null; used = []; shown = {}; catchUp = null; selN = null;
-    paused = false; tiles = null; highlight = null;
+    paused = false; tiles = null; highlight = null; usedOpen = false; viewTarget = null;
     resColor = RES_COLOR.slice(); rectsVersion++;
+    mirrorOn = joinOn = fillOn = false;
+    ['w-mirror', 'w-join', 'w-fill'].forEach(function(id) { document.getElementById(id).classList.remove('on'); });
+    if (typeof closeHow === 'function') closeHow();
+    if (pal.style.display === 'block') closePalette();
+    closeShare();
+    if (dial) dial.set(0, true);
+    qi = 0;
+    homeView();
+    free = { w: Q(2), h: Q(1) }; fix();
     renderKey(); renderReadouts(); renderWords(); dirty = true;
 }
 function renderWords() {
@@ -1063,19 +1115,23 @@ function drawHighlight(now) {
     dirty = true;
 }
 
+var exporting = null;   // while a picture is drawn: { labels, grid, axes }
 function render() {
-    var a = area();
+    var a = area(), X = exporting;
     ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H);
     ctx.save();
     ctx.beginPath(); ctx.rect(a.x0, 0, a.w, H); ctx.clip();
 
     // Faint grids: each resolution in the key whose dot is on, in its colour, and the
     // dial's current one (neutral until she has used it).
-    used.forEach(function(i) { if (!isEvery(i) && isShown(i) && i !== qi) drawGrid(RES[i], rowColor(i), 0.10); });
-    if (isShown(qi)) drawGrid(RES[qi], used.indexOf(qi) >= 0 ? rowColor(qi) : SLATE, 0.14);
+    if (!X || X.grid) {
+        used.forEach(function(i) { if (!isEvery(i) && isShown(i) && i !== qi) drawGrid(RES[i], rowColor(i), 0.10); });
+        if (isShown(qi)) drawGrid(RES[qi], used.indexOf(qi) >= 0 ? rowColor(qi) : SLATE, 0.14);
+    }
 
-    // The 1
+    // The 1 (in a picture, only with the grid: it belongs to the measuring, not the glass)
     var o = w2s(0, 0), u = w2s(1, 1);
+    if (!X || X.grid) {
     ctx.fillStyle = '#fffdf7'; ctx.fillRect(o.x, u.y, Math.max(1, u.x - o.x), Math.max(1, o.y - u.y));
     ctx.strokeStyle = '#c8b89a'; ctx.lineWidth = 1;
     ctx.strokeRect(snap(o.x), snap(u.y), Math.round(u.x - o.x), Math.round(o.y - u.y));
@@ -1085,6 +1141,7 @@ function render() {
         ctx.fillText('1', (o.x + u.x) / 2, (o.y + u.y) / 2);
     }
     ctx.globalAlpha = 1;
+    }
 
     // The stops that stay: outlines only, each stroked on its own and half see-through,
     // so where lines lie over each other they darken.
@@ -1113,14 +1170,17 @@ function render() {
 
     // The axes: solid, darker than any grid line, over the glass so Fill never hides them,
     // numbered in whole metres by the shared rule (CW.axisNumbers, above).
-    ctx.strokeStyle = AXIS_COLOR; ctx.lineWidth = 1.25;
-    ctx.beginPath();
-    ctx.moveTo(snap(o.x), 0); ctx.lineTo(snap(o.x), H);
-    ctx.moveTo(a.x0, snap(o.y)); ctx.lineTo(W, snap(o.y));
-    ctx.stroke();
-    CW.axisNumbers.draw(ctx, { w2s: w2s, z: view.z, box: { l: a.x0, r: W, t: 0, b: H },
-                               negative: mirrorOn, color: AXIS_COLOR });
-    drawLabels();
+    if (!X || X.axes) {
+        ctx.strokeStyle = AXIS_COLOR; ctx.lineWidth = 1.25;
+        ctx.beginPath();
+        ctx.moveTo(snap(o.x), 0); ctx.lineTo(snap(o.x), H);
+        ctx.moveTo(a.x0, snap(o.y)); ctx.lineTo(W, snap(o.y));
+        ctx.stroke();
+        CW.axisNumbers.draw(ctx, { w2s: w2s, z: view.z, box: { l: a.x0, r: W, t: 0, b: H },
+                                   negative: mirrorOn, color: AXIS_COLOR });
+    }
+    if (!X || X.labels) drawLabels();
+    if (X) { ctx.restore(); return; }       // nothing of the working plane goes into a picture
     if (tiles) drawTiles(performance.now());
     if (highlight) drawHighlight(performance.now());
 
@@ -1280,7 +1340,7 @@ canvas.addEventListener('pointermove', function(e) {
     var p = pos(e);
     if (!drag.moved && Math.hypot(p.x - drag.start.x, p.y - drag.start.y) > TAP_PX) {
         drag.moved = true;
-        if (drag.kind === 'one') { drag.kind = 'make'; }
+        if (drag.kind === 'one') { drag.kind = 'make'; dialToWhole(); }
         if (drag.kind === 'pan') { holdView = true; viewTarget = null; catchUp = null; }
         if (drag.kind === 'fixed') {
             // Her own drag takes the corner: any sweep or glide of that number stops (a mere
@@ -1433,6 +1493,79 @@ var Sound = (function() {
     });
     return { tick: tick, flow: flow, setOn: setOn };
 })();
+// ------------------------------------------------------------------ sharing
+// Glass Geometry's Share, carried over (js/glass.js: sharePostcard → showExportPreview, the
+// name-and-note box with Cancel and OK, doSaveImage → renderPostcardPNG, then the share sheet
+// or a download; those live inside Geometry's module and cannot be called from here, so the
+// behaviour is rebuilt, not the code shared). One change, asked for: the picture is what she
+// has framed — the current view at its pan and zoom — not the glass's bounds. Geometry's
+// postcard dress: a dark mat, a thin light line inside it, the plane on parchment, 1 200 px
+// wide. Options chosen at the moment of sharing, all off by default so the glass stands alone:
+// labels, grid lines, axes. Nothing from the column. Made on her device; it goes nowhere
+// unless she sends it.
+var POSTCARD_W = 1200, POSTCARD_MAT = 40;
+var shareOpts = { labels: false, grid: false, axes: false };
+function renderPicture() {
+    var a = area(), artW = POSTCARD_W - 2 * POSTCARD_MAT, S = artW / a.w, artH = Math.round(H * S);
+    var off = document.createElement('canvas');
+    off.width = POSTCARD_W; off.height = artH + 2 * POSTCARD_MAT;
+    var oc = off.getContext('2d');
+    oc.fillStyle = '#2a2620'; oc.fillRect(0, 0, off.width, off.height);
+    oc.strokeStyle = '#c8b89a'; oc.lineWidth = 2;
+    oc.strokeRect(POSTCARD_MAT - 1, POSTCARD_MAT - 1, artW + 2, artH + 2);
+    oc.save();
+    oc.beginPath(); oc.rect(POSTCARD_MAT, POSTCARD_MAT, artW, artH); oc.clip();
+    oc.setTransform(S, 0, 0, S, POSTCARD_MAT - a.x0 * S, POSTCARD_MAT);
+    var keep = ctx; ctx = oc; exporting = shareOpts;
+    try { render(); } finally { ctx = keep; exporting = null; dirty = true; }
+    oc.restore();
+    return off;
+}
+var shareEl = document.getElementById('share'), sharePic = null;
+function refreshSharePreview() {
+    sharePic = renderPicture();
+    shareEl.querySelector('img').src = sharePic.toDataURL('image/png');
+}
+function openShare() {
+    shareEl.querySelector('.s-name').value = ''; shareEl.querySelector('.s-note').value = '';
+    shareEl.style.display = 'block';
+    refreshSharePreview();
+}
+function closeShare() { shareEl.style.display = 'none'; sharePic = null; }
+shareEl.querySelectorAll('.opt').forEach(function(el) {
+    el.addEventListener('click', function() {
+        var k = el.getAttribute('data-opt'); shareOpts[k] = !shareOpts[k];
+        el.classList.toggle('on', shareOpts[k]); refreshSharePreview();
+    });
+});
+shareEl.querySelector('.s-cancel').addEventListener('click', closeShare);
+shareEl.querySelector('.s-ok').addEventListener('click', function() {
+    var name = shareEl.querySelector('.s-name').value.trim(), note = shareEl.querySelector('.s-note').value.trim();
+    var pic = sharePic || renderPicture();
+    closeShare();
+    pic.toBlob(function(blob) {
+        var filename = (name || 'same-glass-' + new Date().toISOString().slice(0, 10)).replace(/[^a-z0-9 _-]/gi, '_') + '.png';
+        // As Geometry's doSaveImage: the share sheet where there is one; declined by the
+        // platform, a download; a cancelled sheet is her no and stays quiet.
+        if (navigator.share && navigator.canShare) {
+            var file = new File([blob], filename, { type: 'image/png' });
+            if (navigator.canShare({ files: [file] })) {
+                navigator.share({ title: name || 'Same glass', text: note || '', files: [file] }).catch(function(err) {
+                    if (!err || err.name !== 'AbortError') download(blob, filename);
+                });
+                return;
+            }
+        }
+        download(blob, filename);
+    }, 'image/png');
+});
+function download(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+document.getElementById('w-share').addEventListener('click', openShare);
+
 document.getElementById('w-sound').addEventListener('click', function() {
     var on = !this.classList.contains('on'); this.classList.toggle('on', on); Sound.setOn(on);
 });
@@ -1444,8 +1577,14 @@ document.getElementById('w-mirror').addEventListener('click', function() {
 // How this works, as Geometry's: a movable window listing the ideas; a tap on one opens its
 // explanation (and closes the one open before); close puts it away, and How this works
 // brings it back where she left it.
+var closeHow = null;
 (function() {
     var how = document.getElementById('how'), pos = null, drag = null;
+    closeHow = function() {
+        if (how.style.display !== 'block') return;
+        pos = { x: how.offsetLeft, y: how.offsetTop }; how.style.display = 'none';
+        how.querySelectorAll('.idea').forEach(function(x) { x.classList.remove('open'); });
+    };
     document.getElementById('how-example').innerHTML = '2 ' + CW.num.op('=') + CW.num.html(2, 3) + CW.num.op('\u00d7') + ' 3';
     document.getElementById('w-how').addEventListener('click', function() {
         if (how.style.display === 'block') return;
@@ -1453,9 +1592,7 @@ document.getElementById('w-mirror').addEventListener('click', function() {
         if (pos) { how.style.left = pos.x + 'px'; how.style.top = pos.y + 'px'; }
         else { how.style.left = (colW + 16) + 'px'; how.style.top = '16px'; }
     });
-    how.querySelector('.close').addEventListener('click', function() {
-        pos = { x: how.offsetLeft, y: how.offsetTop }; how.style.display = 'none';
-    });
+    how.querySelector('.close').addEventListener('click', function() { closeHow(); });
     how.querySelectorAll('.idea').forEach(function(el) {
         el.addEventListener('click', function() {
             var open = el.classList.contains('open');
@@ -1579,14 +1716,15 @@ pal.querySelector('.close').addEventListener('click', closePalette);
 })();
 
 // -------------------------------------------------------------------- start
-var dial = CW.resolutionDial(document.getElementById('dial'), {
+var dial = null;
+dial = CW.resolutionDial(document.getElementById('dial'), {
     steps: RES, index: 0,
     isDim: function(i) { return view.z / RES[i] < 1; },
     onChange: setRes
 });
 window.addEventListener('resize', resize);
-resize(); homeView();
-renderReadouts();
+resize();
+clearAll();             // the bench opens as Clear leaves it: 2, fixed, at whole metres
 requestAnimationFrame(frame);
 
 // For looking at the bench from the console; nothing in the page reads it.

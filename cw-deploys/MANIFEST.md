@@ -1312,6 +1312,16 @@ backstop for the Claude Code session that lands the file.
   the instructions moved into **How this works**, Geometry's movable window, six ideas each
   opening its explanation in Michael's words. Only the words that act are bold.
   `CW_VERSION 2026-10-16e 6f826b1`.
+  *17 Oct:* a **new number starts at whole metres** (dragging from the 1 sets the dial to 1, no
+  sweep; earlier numbers keep their rectangles). **Clear is the opening state**, and the bench now
+  opens in it: rectangles, numbers and key emptied, dial at 1, view at *Near*, Mirror, Join and Fill
+  off, every panel shut, then 2 made and fixed; only *Sound* is kept. **Share**, Glass Geometry's
+  (`js/glass.js`: `sharePostcard`, its preview and name-and-note box, `doSaveImage`,
+  `renderPostcardPNG`, then `navigator.share` or a download), rebuilt in the page because those
+  functions are private to Geometry's module: the picture is the current view at its pan and zoom
+  (not the glass's bounds), on Geometry's postcard mat, 1 200 px wide, with *Labels*, *Grid lines*
+  and *Axes* chosen at sharing, all off by default; nothing from the column; made on her device.
+  `CW_VERSION 2026-10-17 b6cae21`.
 
 - **`join-bench.html` → `active/deep-time.html` → `active/time-machine.html` (9 Oct)** — *The join*, built 6 Oct 2026 and **hung 7 Oct on
   Michael's word as Deep Time**, beside the Time Machine in the gallery (`stories/gallery.json`, slug
