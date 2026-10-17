@@ -740,7 +740,8 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   *17 Oct:* a new number starts at whole metres; Clear is the opening state (2, fixed) and the
   bench opens in it — Claude Code inferred that opening from "as at the start", since the bench
   had opened empty; Share, Glass Geometry's postcard behaviour framing the current view, with
-  labels, grid and axes chosen at sharing (off by default). Checked in the app's browser.
+  labels, grid and axes chosen at sharing (off by default). Checked in the app's browser;
+  pushed on his word, 17 Oct.
   **Next action:** the iPad drive; Mirror's brief, if it exists, to Claude Code.
 
 ### 2. Perception Lab — the child's own instrument
