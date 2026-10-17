@@ -20,7 +20,13 @@
 
    A gesture names a location by where it is; the nearest recorded point within `tol`
    (6 world units) is taken, and a miss throws, so a wrong coordinate cannot slip through
-   as a different point. 2 Oct 2026, for the canonical set (board, Glass). */
+   as a different point. 2 Oct 2026, for the canonical set (board, Glass).
+
+   The lines board (17 Oct 2026): G.create({ board: true }) opens on the board's frame instead
+   of the two seeds (the init op carries the frame; its sides are lines −1 to −4, its corners
+   fr:bl, fr:br, fr:tr, fr:tl at (±240, ±180) — the unit is glass.js's FRAME_UNIT, 240), and
+   g.free(u, v) puts the free point down, in
+   units from the origin. Circle crossings are hidden vertices there, as on the board. */
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -49,6 +55,8 @@ function create(opts) {
   const stubs = {
     PARAMS: { birthDuration: 0 },
     FOREST_GLASS: '#c2d4bc',
+    // The window profile's flags, read by replayLog since 8 Oct 2026 (the harness threw on APP until this).
+    APP: !!opts.board, BOARD: !!opts.board, showGlass: false,
     state: { palette: { selected: null } },
     plane: {
       setUnitFrame(ox, oy, len) { unit.x = ox; unit.y = oy; unit.len = len; },
@@ -56,6 +64,7 @@ function create(opts) {
       unitLength() { return unit.len; },
       resetView() {}
     },
+    homeView() {},
     syncCanvasNoteDOMs() {}, updateViewingWords() {}, checkHtwTriggers() {}, checkTipFadeThresholds() {},
     playSound() {}
   };
@@ -110,6 +119,17 @@ function create(opts) {
     line(ax, ay, bx, by) {
       const a = near(ax, ay, 'first point'), b = near(bx, by, 'second point');
       lab.append({ op: 'line', p1Id: a, p2Id: b }); return api;
+    },
+    // The lines board's free point, in units from the origin (the board records hundredths).
+    free(u, v) {
+      if (!opts.board) throw new Error('free() is the lines board\'s gesture: create({ board: true })');
+      lab.append({ op: 'free_point', u: u, v: v }); return api;
+    },
+    // Glass on the pane around (x, y), as the board's tap lays it: one fill op with the pane's own edges.
+    pane(x, y, colour) {
+      const face = lab.face(x, y); if (!face) throw new Error('no pane at (' + x + ', ' + y + ')');
+      lab.append({ op: 'fill', fillId: 'fill:' + Date.now(), vertices: face.vertices, edges: face.edges, color: colour || '#c2d4bc', opacity: 1.0 });
+      return api;
     },
     // Lead on the edge nearest (x, y). A closed loop fills, exactly as the lab does it.
     lead(x, y) {
