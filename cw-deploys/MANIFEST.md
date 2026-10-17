@@ -22,7 +22,24 @@ working, for the same reason retired files are never deleted.
 Superseded versions, kept as the archive record.
 
 **`js/`** — shared code, at the root of this folder. Classic scripts, no
-build step. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael's call, when
+build step. **`probe.js` (17 Oct 2026, Drain the sea)** — the probe on the sea floor, a shelf module for
+later stories: `cwProbe(map, opts)` rides a moving map that carries the pyramid's data layers. A tap on
+the sea enters it (the map zooms to a box 22° wide if it is wider; a tap on land does nothing); a ring
+sits on the spot and a card beside it says how deep the floor is, how old it is in words, and, from the
+age through `stories/plates/reversals.json`, which way a compass pointed when that floor cooled, drawn
+as a needle; one finger drags it, the ground drifts under it near the map's edge at a capped speed,
+two fingers pan (`opts.twoFinger`), *Done* or Escape ends it; `opts.onRead(reading)` is how a page
+makes a timeline's handle follow the age. First used by `experiments/maps/drain-the-sea-bench.html`.
+**`map.js`, 17 Oct 2026 — Drain the sea** (`?v=2026-10-17` on the bench; no other page's query changed,
+nothing they draw changed): the pyramid's `data` block (from `render.py --drain`) is read — `floor`, `age`,
+`stripes`, 8-bit tiles whose value is a number; `setSeaLevel` goes past the shelf's 130 m to the bottom
+by the floor layer; `map.drainStyle('land' | 'sea')` paints newly dry floor in the land ramp by height
+above the new shore with relief from the depth, or as the floor's own picture under a parchment wash
+(unset, a page keeps the shelf's painting within 130 m, so the Time Machine is as it was);
+`map.setLayer('age' | 'stripes', on)` paints those two from their numbers through a colour table each,
+at half the screen's resolution; `map.sample(lon, lat)` reads the three numbers under a point from the
+tiles in hand (`pending` while one is arriving, `map.onData(fn)` when it has); `lonLatAt`, `pixelOf`,
+`panBy`, `level`, `stage`, `onView` serve an instrument. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael's call, when
 the Hokusai story called it; a second base, the globe past the deep-time seam, 6 Oct 2026 — see
 `experiments/join-bench.html`)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
 the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
@@ -181,6 +198,13 @@ cell and traced at one half, rings under six points dropped; the same area as th
 to a tenth of a percent (that trace, `prototypes/ice/`, is gone with its `.gitignore` line: Michael, 12 Oct, the PMIP4
 redistribution is the source and the letter to Peltier is no longer waited on). Cite: Peltier, Argus and Drummond 2015 and Argus
 et al. 2014, via PMIP4 (both in the file). Read by `active/time-machine.html`, which hands it to `js/map.js`'s `time.ice`.
+**`stories/plates/reversals.json` (17 Oct 2026, Drain the sea)** — the geomagnetic polarity time scale, for the probe's
+needle (`js/probe.js`): 189 chrons from today to 82.9 million years (GTS2020, Ogg 2020, chapter 5 of Geologic Time Scale
+2020, the boundary ages as PmagPy tabulates them for GTS2020, BSD 3-clause) and the Cretaceous Normal Superchron to 121.4
+million years (GTS2020's Aptian base); each its younger and older end, `n` or `r`, its chron and a familiar name where
+there is one (Brunhes, Jaramillo, Olduvai …). **The M-sequence past 121.4 (to about 170 million years) is not in it:**
+GTS2020's Table 5.4 wants copying in by hand. The floor's ages are on GTS2012 and this table on GTS2020, which the
+file's `_about` says. Source and licence in the file.
 **`stories/plates/cities.json` (12 Oct 2026)** — a dozen modern cities that ride the continents as they move (Michael, 12 Oct,
 part 3 of the globe brief): each a point in today's coordinates with the plate of `continents.json` it is pinned to and the birth
 age of the piece it stands on; chosen by hand, the plate by point-in-polygon on the pieces, except San Francisco (in no piece;
@@ -652,7 +676,20 @@ depth in metres (1 to 130) for ocean up to 130 m deep, 255 for deeper — 1 306 
 listed in the pyramid JSON's `shelf`. Made by `render.py --shelf` (9 minutes); the ocean is
 the largest connected body below sea level on the 60 arc-second grid, so the Caspian and the
 Dead Sea never drain, and the Black Sea, whose strait is narrower than a cell, counts as a
-lake — as it roughly was at the ice-age low. Rendered by `render.py --pyramid`
+lake — as it roughly was at the ice-age low. **The data layers** (17 Oct 2026, Drain the sea): beside
+every tile at levels 0 to 4, 256 px, 8-bit, the value a number and not a colour, listed in the
+pyramid JSON's `data` with each one's encoding, source and licence — `<y>-floor.png`, the world
+ocean's depth to the bottom, square-root coded so a step is 10 m at the shelf edge and 50 m on the
+plain, 0 for land and for water not joined to the ocean (ETOPO 2022; 599 tiles, 9.5 MB: 0.05, 0.17,
+0.60, 2.05 and 6.65 MB by level); `<y>-age.png`, the floor's age in millions of years, RGB, the whole
+millions in red and the fraction in green, red 255 where there is no age (Seton et al. 2020, the
+EarthByte grid at 2 arc-minutes on GTS2012 ages; 532 tiles, 18.3 MB: 0.12, 0.42, 1.38, 4.21 and
+12.12 MB — the fraction byte is what makes these heavy); `<y>-stripes.png`, the magnetic anomaly at
+sea level, 127 the zero, ±127 at ±300 nT, 255 off the ocean (EMAG2v3, NOAA NCEI, averaged down to
+each level's pixel first; 599 tiles, 10.4 MB: 0.06, 0.21, 0.75, 2.35 and 7.00 MB). 38 MB in all,
+1 730 files; the folder is 113 MB on disk. Level 4 (4.9 km a pixel) is about the two grids' own
+resolution, so level 5 is not written and `map.js` stretches level 4 past it. Made by `render.py
+--drain` (5 minutes) from `_data/agegrid/` and `_data/emag2/`, downloaded, never committed. Rendered by `render.py --pyramid`
 in 41 minutes, one tile row at a time so no level sits whole in memory, the tree cover read
 once at the finest level and averaged down. Made for the map that moves; no still map uses it.
 **Contours, as vectors** (third pass, 20 Sep): the coast (0 m) and the
@@ -1828,6 +1865,22 @@ backstop for the Claude Code session that lands the file.
   (110 Hz at 12 beads; 220 at 40 beads ×4). Origin: a projected piece in the Denver Art
   Museum children's area; footage and a timestamped catalogue in `_CW/Beads Analysis/`
   (outside the deploy). Tab icon `art/icons/beads-icon-256.png`. Not yet heard on an iPad.
+- **`maps/drain-the-sea-bench.html`** — bench: **Drain the sea** (17 Oct 2026; Michael's brief of 17 Oct,
+  for `CWVault/claude/Spec-Drain-the-Sea.md`, which was not on disk when it was built, so the three
+  paragraphs above the map are stand-ins in the voice). The Time Machine's map and its deep-time
+  timeline, Georgia, one column; under the map a slider that lowers the sea from today past the
+  ice-age low to the bottom, the pyramid's `floor` data layer feeding it, and newly dry floor painted
+  two ways, switchable on this page only (*land colours*: the land ramp by height above the new shore
+  with its own relief; *sea colours*: the floor's own picture under a wash); two layers off by default,
+  *Age* and *Stripes*, painted from the `age` and `stripes` data tiles; and the probe (`js/probe.js`),
+  entered by a tap on the sea, whose reading of the age moves the timeline's handle (reopening the Earth
+  line when the age lies outside the open one); *two fingers pan* is a switch here too. Her own drag of
+  the handle moves the sea through the ice ages (`sea-level-ice-ages.json`); the probe's does not.
+  Sources and licences at the foot and in the pyramid JSON. Checked on the Mac in the browser pane:
+  the drain at 130, 3 000 and 11 000 m in both paintings, the two layers, the probe entering, reading,
+  dragging and ending, a tap on land doing nothing, no console errors. **Not tested on an iPad:** the
+  one-finger drag of the probe against the page scroll, the two-finger pan and the ring's lift above a
+  finger wait on Michael's own iPad.
 - **`maps/sea-level-bench.html`** — bench: **The sea, lower** (29 Sep 2026; Spec-Maps *Time on
   the map*, the first bench of it). The moving map on the North Sea and a slider from 20,000
   years ago to today; one line says how far down the sea was, from `stories/sea-level.json`.
@@ -1853,7 +1906,8 @@ backstop for the Claude Code session that lands the file.
 - **`maps/`** — bench: **Maps** (18 Sep 2026; `CWVault/claude/Spec-Maps.md`, the bench of
   its build prompt). A map is a still picture of the ground with the story's marks on it,
   and nothing else. Two files here since 20 Sep, when `map.js` moved to `js/` (below, under
-  *Folders*) because the Hokusai story called it — Michael's call, made that day. **`render.py`** makes one base picture into `art/maps/`
+  *Folders*) because the Hokusai story called it — Michael's call, made that day. **`render.py --drain`** (17 Oct 2026) writes the
+  three data layers of Drain the sea beside the pyramid's tiles (see `art/maps/`, *the data layers*). **`render.py`** makes one base picture into `art/maps/`
   (see the entry there): equirectangular with the standard parallel at the region's
   mid-latitude, three colour families as named constants at the top, none red and none
   green, warm at the bottom and cool at the top (the second pass of 18 Sep; the first was

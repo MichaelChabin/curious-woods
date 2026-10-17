@@ -52,6 +52,19 @@
    sea level from the curve; `{ ice: outlines }` (as setIce takes) blends the ice for that year.
    A layer the page does not hand it, or that is not rendered, stays as today's: the map
    shows today's ground and says nothing. `map.time()` is the year it was last given.
+   Drain the sea (17 Oct 2026, experiments/maps/drain-the-sea-bench.html). The pyramid may carry
+   DATA layers (`data` in its JSON, from render.py --drain): 8-bit tiles whose value is a number —
+   `floor`, the ocean's depth to the bottom; `age`, the floor's age in millions of years; `stripes`,
+   the magnetic anomaly. With a floor layer `setSeaLevel` goes past the shelf's 130 m to the floor,
+   and `map.drainStyle('land' | 'sea')` chooses how newly dry floor is painted: `land`, the land
+   ramp by height above the new shore with its own relief from the depth; `sea`, the floor's own
+   picture under a parchment wash. Unset, a page with the shallow layer keeps the shelf's painting
+   within 130 m and the floor's past it. `age` and `stripes` are painted in the browser from their
+   numbers (a colour table each), off unless `opts.layers` or `map.setLayer(name, on)` turns them
+   on. `map.sample(lon, lat)` reads the three numbers under a point from the tiles in hand (null
+   while a tile is still arriving; `map.onData(fn)` says when one has); `map.lonLatAt(x, y)`,
+   `map.pixelOf(lon, lat)`, `map.panBy(dx, dy)`, `map.level()`, `map.stage()` and `map.onView(fn)`
+   are for an instrument that rides the map, such as js/probe.js.
 
    The ground has layers (26 Sep 2026). The base picture is height alone. The region's
    JSON lists its layers — ice, vegetation, later sea level — each a half-width RGBA
@@ -123,6 +136,7 @@
     '.cw-map .cw-tiles{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     '.cw-map .cw-tiles img{position:absolute;display:block;width:auto;height:auto;max-width:none;pointer-events:none;}',
     '.cw-map canvas.cw-sea{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
+    '.cw-map canvas.cw-data{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     /* deep time (6 Oct 2026): past the seam the globe is the base, over the tiles, the sea and the marks;
        it arrives pulling away from the ground and leaves coming down to it — a scale and a fade, never a cut */
     '.cw-map .cw-deep-base{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;background:#f4f1e8;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(2.4);transition:opacity .5s ease,transform .5s ease;pointer-events:none;line-height:0;}',
@@ -301,12 +315,12 @@
     var seaCanvas = null, shelfImgs = {}, shelfHave = null;
     var SEA_LAND = [[0, [230, 223, 203]], [250, [216, 205, 170]]];   // the land ramp's first stops (#e6dfcb, #d8cdaa)
     var SEA_EDGE = [74, 67, 54];                                    // the coast's own ink, #4a4336
-    if (pyr && region.shelf) {
+    if (pyr && (region.shelf || region.data)) {
       seaCanvas = document.createElement('canvas');
       seaCanvas.className = 'cw-sea';
       stage.insertBefore(seaCanvas, svg);
       shelfHave = {};
-      Object.keys(region.shelf.tiles || {}).forEach(function (z) { shelfHave[z] = {}; region.shelf.tiles[z].forEach(function (k) { shelfHave[z][k] = true; }); });
+      Object.keys((region.shelf && region.shelf.tiles) || {}).forEach(function (z) { shelfHave[z] = {}; region.shelf.tiles[z].forEach(function (k) { shelfHave[z][k] = true; }); });
     }
     function shelfImg(z, x, y) {
       var key = z + '/' + x + '/' + y;
@@ -319,9 +333,142 @@
       }
       return shelfImgs[key];
     }
+
+    // ---- the data layers (Drain the sea, 17 Oct 2026): numbers in tiles, painted and read here ----
+    var DATA = (pyr && region.data) || null;
+    var dataImgs = {}, dataPix = {}, dataHave = {}, dataCanvas = {}, dataOn = {}, dataListeners = [], drainStyle = null;
+    var LAND_RAMP = [[0, [230, 223, 203]], [250, [216, 205, 170]], [800, [195, 171, 128]], [1600, [168, 154, 128]], [2400, [143, 141, 144]], [3200, [174, 176, 184]], [4800, [232, 236, 238]], [6000, [242, 245, 246]]];   // render.py's LAND_STOPS
+    var AGE_RAMP = [[0, [243, 230, 176]], [20, [217, 199, 122]], [50, [159, 185, 138]], [90, [95, 154, 160]], [140, [63, 106, 143]], [200, [58, 63, 110]], [254, [42, 36, 64]]];   // the floor's age: new floor pale, old floor dark; no red on the earth
+    var AGE_ALPHA = 0.88, STRIPE_INK = [42, 36, 28], STRIPE_PARCH = [244, 241, 232], STRIPE_ALPHA_INK = 0.55, STRIPE_ALPHA_PARCH = 0.7, STRIPE_GAMMA = 0.55;
+    var DRAIN_WASH = [230, 223, 203], DRAIN_WASH_ALPHA = 0.55;   // the `sea` style: the floor's own picture under the shore buff
+    var DRAIN_SHADE = 0.35;                                       // the `land` style's relief, as render.py's
+    if (DATA) {
+      Object.keys(DATA).forEach(function (name) {
+        var D = DATA[name]; dataHave[name] = {};
+        Object.keys(D.tiles || {}).forEach(function (z) { dataHave[name][z] = {}; D.tiles[z].forEach(function (k) { dataHave[name][z][k] = true; }); });
+        if (name !== 'floor') dataOn[name] = wanted.hasOwnProperty(name) ? !!wanted[name] : false;   // painted layers are off unless asked for
+      });
+    }
+    function ramp(stops, v) {
+      if (v <= stops[0][0]) return stops[0][1];
+      for (var i = 1; i < stops.length; i++) if (v <= stops[i][0]) { var a = stops[i - 1], b = stops[i], t = (v - a[0]) / (b[0] - a[0]); return [a[1][0] + (b[1][0] - a[1][0]) * t, a[1][1] + (b[1][1] - a[1][1]) * t, a[1][2] + (b[1][2] - a[1][2]) * t]; }
+      return stops[stops.length - 1][1];
+    }
+    var lutCache = {};
+    function lut(name) {
+      if (lutCache[name]) return lutCache[name];
+      var t = new Uint8ClampedArray(256 * 4), v, c, a;
+      for (v = 0; v < 255; v++) {
+        if (name === 'age') { c = ramp(AGE_RAMP, v); t[v * 4] = c[0]; t[v * 4 + 1] = c[1]; t[v * 4 + 2] = c[2]; t[v * 4 + 3] = Math.round(255 * AGE_ALPHA); }
+        else if (name === 'stripes') {
+          // a power under 1, so the weak anomalies of the South Atlantic and the Pacific (±50 nT) show as well as Iceland's (±250)
+          if (v >= 127) { c = STRIPE_INK; a = Math.pow((v - 127) / 127, STRIPE_GAMMA) * STRIPE_ALPHA_INK; } else { c = STRIPE_PARCH; a = Math.pow((127 - v) / 127, STRIPE_GAMMA) * STRIPE_ALPHA_PARCH; }
+          t[v * 4] = c[0]; t[v * 4 + 1] = c[1]; t[v * 4 + 2] = c[2]; t[v * 4 + 3] = Math.round(255 * a);
+        }
+      }
+      lutCache[name] = t;   // 255 stays transparent: no data
+      return t;
+    }
+    function dataLevel(name) { var levels = DATA[name].levels; return Math.min(levelFor(), levels[levels.length - 1]); }
+    function dataImg(name, z, x, y) {
+      var key = name + '/' + z + '/' + x + '/' + y;
+      if (!(dataHave[name][z] && dataHave[name][z][x + '/' + y])) return null;
+      if (!dataImgs[key]) {
+        var im = new Image();
+        im.onload = function () { dataArrived(name); };
+        im.src = resolve(region.tiles + '/' + z + '/' + x + '/' + y + DATA[name].suffix);
+        dataImgs[key] = im;
+      }
+      return dataImgs[key];
+    }
+    var dataTimer = null;
+    function dataArrived(name) {
+      clearTimeout(dataTimer);
+      dataTimer = setTimeout(function () { if (name === 'floor') drawSea(); else paintData(); dataListeners.forEach(function (f) { f(name); }); }, 40);
+    }
+    // the tiles of a data layer in view, drawn into a canvas the size of the box: the raster the painters and the sea share
+    function rasterData(name, cw, ch, w, h) {
+      var zs = dataLevel(name), L = region.levels[zs], dlon = 360 / L.cols, dlat = 180 / L.rows;
+      var c = document.createElement('canvas'); c.width = cw; c.height = ch;
+      var ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = false;   // a number is not to be blended with its neighbour
+      var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h), k = cw / w;
+      var tx0 = Math.floor((nw.lon + 180) / dlon), tx1 = Math.floor((se.lon + 180) / dlon);
+      var ty0 = Math.max(0, Math.floor((90 - nw.lat) / dlat)), ty1 = Math.min(L.rows - 1, Math.floor((90 - se.lat) / dlat));
+      var drew = false, tx, ty;
+      for (ty = ty0; ty <= ty1; ty++) for (tx = tx0; tx <= tx1; tx++) {
+        var im = dataImg(name, zs, ((tx % L.cols) + L.cols) % L.cols, ty);
+        if (!im || !(im.complete && im.naturalWidth)) continue;
+        var r = tileRect(zs, tx, ty, w, h);
+        ctx.drawImage(im, r.x * k, r.y * k, r.w * k + 1, r.h * k + 1);
+        drew = true;
+      }
+      return drew ? ctx.getImageData(0, 0, cw, ch) : null;
+    }
+    function paintData() {
+      if (!DATA) return;
+      var w = box.clientWidth, h = box.clientHeight;
+      if (!w || !h) return;
+      Object.keys(dataOn).forEach(function (name) {
+        var c = dataCanvas[name];
+        if (!dataOn[name]) { if (c) c.style.display = 'none'; return; }
+        if (!c) { c = dataCanvas[name] = document.createElement('canvas'); c.className = 'cw-data'; stage.insertBefore(c, svg); }
+        c.style.display = '';
+        var cw = Math.ceil(w / 2), ch = Math.ceil(h / 2);   // half resolution: the tiles are coarser than the screen anyway
+        if (c.width !== cw || c.height !== ch) { c.width = cw; c.height = ch; }
+        var ctx = c.getContext('2d'); ctx.clearRect(0, 0, cw, ch);
+        var img = rasterData(name, cw, ch, w, h);
+        if (!img) return;
+        var d = img.data, t = lut(name), n = cw * ch, i, j, v;
+        for (i = 0; i < n; i++) { j = i * 4; v = d[j + 3] ? d[j] : 255; d[j] = t[v * 4]; d[j + 1] = t[v * 4 + 1]; d[j + 2] = t[v * 4 + 2]; d[j + 3] = t[v * 4 + 3]; }
+        ctx.putImageData(img, 0, 0);
+      });
+    }
+    function floorDepth(v) { return v > 0 ? DATA.floor.max * Math.pow((v - 1) / 253, 2) : 0; }
+    // the floor path of the sea: everything the shelf path does, to any depth, in one of two styles
+    function drawSeaFloor(w, h) {
+      var k = 1, cw = Math.ceil(w * k), ch = Math.ceil(h * k);
+      if (seaCanvas.width !== cw || seaCanvas.height !== ch) { seaCanvas.width = cw; seaCanvas.height = ch; }
+      var ctx = seaCanvas.getContext('2d');
+      ctx.clearRect(0, 0, cw, ch);
+      var img = rasterData('floor', cw, ch, w, h);
+      if (!img) return;
+      var d = img.data, n = cw * ch, i, j, v, depthHere = -seaLevel;
+      var depth = new Float32Array(n), exposed = new Uint8Array(n);
+      for (i = 0; i < n; i++) { v = d[i * 4 + 3] ? d[i * 4] : 0; depth[i] = v > 0 ? floorDepth(v) : -1; exposed[i] = (v > 0 && depth[i] <= depthHere) ? 1 : 0; }
+      var land = (drainStyle || 'land') === 'land';
+      // metres per screen pixel here, for the relief: the degree's width at the centre, Mercator's stretch and all
+      var mpp = 111320 * Math.cos(view.lat * D2R) / ppdCentre(), shade = land && !frozen;
+      var lx = -0.5, ly = -0.5, lz = Math.SQRT1_2;   // light from the north-west, 45° up (screen y grows south)
+      for (i = 0; i < n; i++) {
+        j = i * 4;
+        if (!exposed[i]) { d[j + 3] = 0; continue; }
+        var x = i % cw, y = (i / cw) | 0;
+        var edge = (x > 0 && !exposed[i - 1] && depth[i - 1] > depthHere) || (x < cw - 1 && !exposed[i + 1] && depth[i + 1] > depthHere) ||
+                   (y > 0 && !exposed[i - cw] && depth[i - cw] > depthHere) || (y < ch - 1 && !exposed[i + cw] && depth[i + cw] > depthHere);
+        if (edge) { d[j] = SEA_EDGE[0]; d[j + 1] = SEA_EDGE[1]; d[j + 2] = SEA_EDGE[2]; d[j + 3] = 170; continue; }
+        if (!land) { d[j] = DRAIN_WASH[0]; d[j + 1] = DRAIN_WASH[1]; d[j + 2] = DRAIN_WASH[2]; d[j + 3] = Math.round(255 * DRAIN_WASH_ALPHA); continue; }
+        var above = depthHere - depth[i], c = ramp(LAND_RAMP, above), f = 1;
+        if (shade) {
+          var zl = x > 0 && depth[i - 1] >= 0 ? depth[i - 1] : depth[i], zr = x < cw - 1 && depth[i + 1] >= 0 ? depth[i + 1] : depth[i];
+          var zu = y > 0 && depth[i - cw] >= 0 ? depth[i - cw] : depth[i], zd = y < ch - 1 && depth[i + cw] >= 0 ? depth[i + cw] : depth[i];
+          var gx = (zl - zr) / (2 * mpp), gy = (zu - zd) / (2 * mpp);   // the height above the shore rises where the depth falls
+          var nl = Math.sqrt(gx * gx + gy * gy + 1), dot = (-gx * lx - gy * ly + lz) / nl;
+          f = 1 + DRAIN_SHADE * (dot / lz - 1) * 2;
+        }
+        d[j] = Math.max(0, Math.min(255, c[0] * f)); d[j + 1] = Math.max(0, Math.min(255, c[1] * f)); d[j + 2] = Math.max(0, Math.min(255, c[2] * f));
+        d[j + 3] = 240;
+      }
+      ctx.putImageData(img, 0, 0);
+    }
     function drawSea() {
       if (!seaCanvas) return;
       if (seaLevel >= 0) { seaCanvas.style.display = 'none'; return; }
+      if (DATA && DATA.floor && (drainStyle || !region.shelf || seaLevel < -region.shelf.depth)) {
+        seaCanvas.style.display = '';
+        var fw = box.clientWidth, fh = box.clientHeight;
+        if (fw && fh) drawSeaFloor(fw, fh);
+        return;
+      }
       seaCanvas.style.display = '';
       var w = box.clientWidth, h = box.clientHeight;
       if (!w || !h) return;
@@ -331,6 +478,7 @@
       ctx.clearRect(0, 0, cw, ch);
       ctx.imageSmoothingEnabled = true;
       if ('imageSmoothingQuality' in ctx) ctx.imageSmoothingQuality = 'high';
+      if (!region.shelf) return;
       var levels = region.shelf.levels, zs = Math.min(levelFor(), levels[levels.length - 1]);
       var L = region.levels[zs], dlon = 360 / L.cols, dlat = 180 / L.rows;
       var nw = viewToLonLat(0, 0, w, h), se = viewToLonLat(w, h, w, h);
@@ -688,8 +836,10 @@
         these.forEach(function (x) { drawMark(x.m, w, h, marksLayer, halos, glyphs, placed, dots); });
       });
       shown.forEach(function (s) { positionText(s, w, h); });
-      if (pyr) drawSea();
+      if (pyr) { drawSea(); paintData(); }
+      viewListeners.forEach(function (f) { f(); });
     }
+    var viewListeners = [];
 
     // The earth's lines on the moving map come per level, and at the finer levels per
     // tile column (`{ perColumn, cols }` in the region's JSON), fetched as the view needs them.
@@ -1077,6 +1227,44 @@
       api.home = goHome;
       api.setSeaLevel = function (m) { seaLevel = Math.min(0, +m || 0); drawSea(); };
       api.seaLevel = function () { return seaLevel; };
+      // Drain the sea (17 Oct 2026): the floor's painting, the painted data layers, the numbers under a point
+      api.drainStyle = function (s) { if (s === 'land' || s === 'sea' || s === null) { drainStyle = s; drawSea(); } return drainStyle; };
+      api.setLayer = function (name, on) { if (on !== undefined && DATA && DATA[name] && name !== 'floor') { dataOn[name] = !!on; paintData(); } return !!dataOn[name]; };   // with no second argument, only asks
+      api.layers = function () { return DATA ? Object.keys(DATA) : []; };
+      api.floorMax = function () { return DATA && DATA.floor ? DATA.floor.max : (region.shelf ? region.shelf.depth : 0); };
+      function dataValue(name, lon, lat) {
+        if (!DATA || !DATA[name]) return { v: null, ok: true };
+        var D = DATA[name], zs = dataLevel(name), L = region.levels[zs], dlon = 360 / L.cols, dlat = 180 / L.rows;
+        lon = ((lon + 180) % 360 + 360) % 360 - 180;
+        var fx = (lon + 180) / dlon, fy = (90 - lat) / dlat, tx = Math.min(L.cols - 1, Math.floor(fx)), ty = Math.max(0, Math.min(L.rows - 1, Math.floor(fy)));
+        if (!(dataHave[name][zs] && dataHave[name][zs][tx + '/' + ty])) return { v: D.nodata, ok: true };   // no tile: nothing there
+        var im = dataImg(name, zs, tx, ty), key = name + '/' + zs + '/' + tx + '/' + ty;
+        if (!(im && im.complete && im.naturalWidth)) return { v: null, ok: false };
+        if (!dataPix[key]) {
+          var c = document.createElement('canvas'); c.width = D.tile; c.height = D.tile;
+          var ctx = c.getContext('2d'); ctx.drawImage(im, 0, 0);
+          dataPix[key] = ctx.getImageData(0, 0, D.tile, D.tile).data;
+        }
+        var px = Math.max(0, Math.min(D.tile - 1, Math.floor((fx - tx) * D.tile))), py = Math.max(0, Math.min(D.tile - 1, Math.floor((fy - ty) * D.tile)));
+        var at = (py * D.tile + px) * 4;
+        return { v: dataPix[key][at], g: dataPix[key][at + 1], ok: true };
+      }
+      api.sample = function (lon, lat) {
+        var f = dataValue('floor', lon, lat), a = dataValue('age', lon, lat), m = dataValue('stripes', lon, lat);
+        return {
+          depth: f.ok ? (f.v === null ? null : floorDepth(f.v)) : null,                             // metres; 0 is land or a lake
+          age: a.ok ? (a.v === null || a.v === 255 ? null : a.v + (a.g || 0) / 254) : null,          // millions of years, to about 4 000 years; null where the floor has no age
+          anomaly: m.ok ? (m.v === null || m.v === 255 ? null : (m.v - 127) / 127 * DATA.stripes.nt) : null,   // nanotesla
+          pending: !(f.ok && a.ok && m.ok)
+        };
+      };
+      api.onData = function (f) { dataListeners.push(f); };
+      api.onView = function (f) { viewListeners.push(f); };
+      api.lonLatAt = function (x, y) { return viewToLonLat(x, y, box.clientWidth, box.clientHeight); };
+      api.pixelOf = function (lon, lat) { return P(lon, lat, box.clientWidth, box.clientHeight); };
+      api.panBy = function (dx, dy) { beginGesture(); view.lon = view.lon - dx / view.S; view.lat = ywPLInv(ywPL(view.lat) + dy / view.S); fast(); endGesture(); };
+      api.level = levelFor;
+      api.stage = function () { return stage; };
       // Time on the map, by the year: the sea from the curve the page gave, the ice from its
       // outlines; each only if given and rendered. The store's year in; today's world for a
       // year past the curve's end.

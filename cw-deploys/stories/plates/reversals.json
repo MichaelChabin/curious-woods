@@ -1,0 +1,1150 @@
+{
+ "_about": "The geomagnetic polarity time scale: which way the Earth’s field pointed when sea floor of a given age cooled, for the probe on the map (js/probe.js). Each chron: top (the younger end) and base (the older end) in millions of years ago, polarity n (normal, a compass points north) or r (reversed, it points south), the chron it belongs to, and a familiar name where there is one. Ages run from today to 121.4 million years; the M-sequence beyond (M0r to M44, to about 170 million years) waits on GTS2020 Table 5.4 being copied in. The floor’s ages (world-tiles/*-age.png) are on the GTS2012 timescale, this table on GTS2020; the two differ by less than a million years through most of the span, so near a boundary the needle can be a chron out.",
+ "source": "Ogg, J. G. (2020), Geomagnetic Polarity Time Scale, chapter 5 of Gradstein, F. M., Ogg, J. G., Schmitz, M. D. and Ogg, G. M. (eds), Geologic Time Scale 2020, Elsevier; the boundary ages as tabulated for GTS2020 in PmagPy (Tauxe et al. 2016, Geochemistry, Geophysics, Geosystems 17, doi:10.1002/2016GC006307; pmagpy/pmag.py get_ts(\"gts20\"), BSD 3-clause), with the C34n span added from GTS2020’s Aptian base",
+ "licence": "The ages are published facts (GTS2020); the tabulation is from PmagPy, BSD 3-clause; this file CC BY 4.0 like the rest of the stories folder",
+ "version": "2026-10-17",
+ "reach": 121.4,
+ "chrons": [
+  {
+   "top": 0.0,
+   "base": 0.773,
+   "polarity": "n",
+   "chron": "C1n",
+   "name": "Brunhes"
+  },
+  {
+   "top": 0.773,
+   "base": 0.99,
+   "polarity": "r",
+   "chron": "C1r"
+  },
+  {
+   "top": 0.99,
+   "base": 1.07,
+   "polarity": "n",
+   "chron": "C1r",
+   "name": "Jaramillo"
+  },
+  {
+   "top": 1.07,
+   "base": 1.18,
+   "polarity": "r",
+   "chron": "C1r"
+  },
+  {
+   "top": 1.18,
+   "base": 1.215,
+   "polarity": "n",
+   "chron": "C1r",
+   "name": "Cobb Mountain"
+  },
+  {
+   "top": 1.215,
+   "base": 1.775,
+   "polarity": "r",
+   "chron": "C1r"
+  },
+  {
+   "top": 1.775,
+   "base": 1.934,
+   "polarity": "n",
+   "chron": "C2n",
+   "name": "Olduvai"
+  },
+  {
+   "top": 1.934,
+   "base": 2.116,
+   "polarity": "r",
+   "chron": "C2r"
+  },
+  {
+   "top": 2.116,
+   "base": 2.14,
+   "polarity": "n",
+   "chron": "C2r",
+   "name": "Réunion"
+  },
+  {
+   "top": 2.14,
+   "base": 2.595,
+   "polarity": "r",
+   "chron": "C2r"
+  },
+  {
+   "top": 2.595,
+   "base": 3.032,
+   "polarity": "n",
+   "chron": "C2An"
+  },
+  {
+   "top": 3.032,
+   "base": 3.116,
+   "polarity": "r",
+   "chron": "C2An"
+  },
+  {
+   "top": 3.116,
+   "base": 3.207,
+   "polarity": "n",
+   "chron": "C2An"
+  },
+  {
+   "top": 3.207,
+   "base": 3.33,
+   "polarity": "r",
+   "chron": "C2An"
+  },
+  {
+   "top": 3.33,
+   "base": 3.596,
+   "polarity": "n",
+   "chron": "C2An"
+  },
+  {
+   "top": 3.596,
+   "base": 4.187,
+   "polarity": "r",
+   "chron": "C2Ar"
+  },
+  {
+   "top": 4.187,
+   "base": 4.3,
+   "polarity": "n",
+   "chron": "C3n"
+  },
+  {
+   "top": 4.3,
+   "base": 4.493,
+   "polarity": "r",
+   "chron": "C3n"
+  },
+  {
+   "top": 4.493,
+   "base": 4.631,
+   "polarity": "n",
+   "chron": "C3n"
+  },
+  {
+   "top": 4.631,
+   "base": 4.799,
+   "polarity": "r",
+   "chron": "C3n"
+  },
+  {
+   "top": 4.799,
+   "base": 4.896,
+   "polarity": "n",
+   "chron": "C3n"
+  },
+  {
+   "top": 4.896,
+   "base": 4.997,
+   "polarity": "r",
+   "chron": "C3n"
+  },
+  {
+   "top": 4.997,
+   "base": 5.235,
+   "polarity": "n",
+   "chron": "C3n"
+  },
+  {
+   "top": 5.235,
+   "base": 6.023,
+   "polarity": "r",
+   "chron": "C3r"
+  },
+  {
+   "top": 6.023,
+   "base": 6.272,
+   "polarity": "n",
+   "chron": "C3An"
+  },
+  {
+   "top": 6.272,
+   "base": 6.386,
+   "polarity": "r",
+   "chron": "C3An"
+  },
+  {
+   "top": 6.386,
+   "base": 6.727,
+   "polarity": "n",
+   "chron": "C3An"
+  },
+  {
+   "top": 6.727,
+   "base": 7.104,
+   "polarity": "r",
+   "chron": "C3Ar"
+  },
+  {
+   "top": 7.104,
+   "base": 7.214,
+   "polarity": "n",
+   "chron": "C3Bn"
+  },
+  {
+   "top": 7.214,
+   "base": 7.262,
+   "polarity": "r",
+   "chron": "C3Br"
+  },
+  {
+   "top": 7.262,
+   "base": 7.305,
+   "polarity": "n",
+   "chron": "C3Br"
+  },
+  {
+   "top": 7.305,
+   "base": 7.456,
+   "polarity": "r",
+   "chron": "C3Br"
+  },
+  {
+   "top": 7.456,
+   "base": 7.499,
+   "polarity": "n",
+   "chron": "C3Br"
+  },
+  {
+   "top": 7.499,
+   "base": 7.537,
+   "polarity": "r",
+   "chron": "C3Br"
+  },
+  {
+   "top": 7.537,
+   "base": 7.65,
+   "polarity": "n",
+   "chron": "C4n"
+  },
+  {
+   "top": 7.65,
+   "base": 7.701,
+   "polarity": "r",
+   "chron": "C4n"
+  },
+  {
+   "top": 7.701,
+   "base": 8.125,
+   "polarity": "n",
+   "chron": "C4n"
+  },
+  {
+   "top": 8.125,
+   "base": 8.257,
+   "polarity": "r",
+   "chron": "C4r"
+  },
+  {
+   "top": 8.257,
+   "base": 8.3,
+   "polarity": "n",
+   "chron": "C4r"
+  },
+  {
+   "top": 8.3,
+   "base": 8.771,
+   "polarity": "r",
+   "chron": "C4r"
+  },
+  {
+   "top": 8.771,
+   "base": 9.105,
+   "polarity": "n",
+   "chron": "C4An"
+  },
+  {
+   "top": 9.105,
+   "base": 9.311,
+   "polarity": "r",
+   "chron": "C4Ar"
+  },
+  {
+   "top": 9.311,
+   "base": 9.426,
+   "polarity": "n",
+   "chron": "C4Ar"
+  },
+  {
+   "top": 9.426,
+   "base": 9.647,
+   "polarity": "r",
+   "chron": "C4Ar"
+  },
+  {
+   "top": 9.647,
+   "base": 9.721,
+   "polarity": "n",
+   "chron": "C4Ar"
+  },
+  {
+   "top": 9.721,
+   "base": 9.786,
+   "polarity": "r",
+   "chron": "C4Ar"
+  },
+  {
+   "top": 9.786,
+   "base": 9.937,
+   "polarity": "n",
+   "chron": "C5n"
+  },
+  {
+   "top": 9.937,
+   "base": 9.984,
+   "polarity": "r",
+   "chron": "C5n"
+  },
+  {
+   "top": 9.984,
+   "base": 11.056,
+   "polarity": "n",
+   "chron": "C5n"
+  },
+  {
+   "top": 11.056,
+   "base": 11.146,
+   "polarity": "r",
+   "chron": "C5r"
+  },
+  {
+   "top": 11.146,
+   "base": 11.188,
+   "polarity": "n",
+   "chron": "C5r"
+  },
+  {
+   "top": 11.188,
+   "base": 11.592,
+   "polarity": "r",
+   "chron": "C5r"
+  },
+  {
+   "top": 11.592,
+   "base": 11.657,
+   "polarity": "n",
+   "chron": "C5r"
+  },
+  {
+   "top": 11.657,
+   "base": 12.049,
+   "polarity": "r",
+   "chron": "C5r"
+  },
+  {
+   "top": 12.049,
+   "base": 12.174,
+   "polarity": "n",
+   "chron": "C5An"
+  },
+  {
+   "top": 12.174,
+   "base": 12.272,
+   "polarity": "r",
+   "chron": "C5An"
+  },
+  {
+   "top": 12.272,
+   "base": 12.474,
+   "polarity": "n",
+   "chron": "C5An"
+  },
+  {
+   "top": 12.474,
+   "base": 12.735,
+   "polarity": "r",
+   "chron": "C5Ar"
+  },
+  {
+   "top": 12.735,
+   "base": 12.77,
+   "polarity": "n",
+   "chron": "C5Ar"
+  },
+  {
+   "top": 12.77,
+   "base": 12.829,
+   "polarity": "r",
+   "chron": "C5Ar"
+  },
+  {
+   "top": 12.829,
+   "base": 12.887,
+   "polarity": "n",
+   "chron": "C5Ar"
+  },
+  {
+   "top": 12.887,
+   "base": 13.032,
+   "polarity": "r",
+   "chron": "C5Ar"
+  },
+  {
+   "top": 13.032,
+   "base": 13.183,
+   "polarity": "n",
+   "chron": "C5AAn"
+  },
+  {
+   "top": 13.183,
+   "base": 13.363,
+   "polarity": "r",
+   "chron": "C5AAr"
+  },
+  {
+   "top": 13.363,
+   "base": 13.608,
+   "polarity": "n",
+   "chron": "C5ABn"
+  },
+  {
+   "top": 13.608,
+   "base": 13.739,
+   "polarity": "r",
+   "chron": "C5ABr"
+  },
+  {
+   "top": 13.739,
+   "base": 14.07,
+   "polarity": "n",
+   "chron": "C5ACn"
+  },
+  {
+   "top": 14.07,
+   "base": 14.163,
+   "polarity": "r",
+   "chron": "C5ACr"
+  },
+  {
+   "top": 14.163,
+   "base": 14.609,
+   "polarity": "n",
+   "chron": "C5ADn"
+  },
+  {
+   "top": 14.609,
+   "base": 14.775,
+   "polarity": "r",
+   "chron": "C5ADr"
+  },
+  {
+   "top": 14.775,
+   "base": 14.87,
+   "polarity": "n",
+   "chron": "C5Bn"
+  },
+  {
+   "top": 14.87,
+   "base": 15.032,
+   "polarity": "r",
+   "chron": "C5Bn"
+  },
+  {
+   "top": 15.032,
+   "base": 15.16,
+   "polarity": "n",
+   "chron": "C5Bn"
+  },
+  {
+   "top": 15.16,
+   "base": 15.974,
+   "polarity": "r",
+   "chron": "C5Br"
+  },
+  {
+   "top": 15.974,
+   "base": 16.268,
+   "polarity": "n",
+   "chron": "C5Cn"
+  },
+  {
+   "top": 16.268,
+   "base": 16.303,
+   "polarity": "r",
+   "chron": "C5Cn"
+  },
+  {
+   "top": 16.303,
+   "base": 16.472,
+   "polarity": "n",
+   "chron": "C5Cn"
+  },
+  {
+   "top": 16.472,
+   "base": 16.543,
+   "polarity": "r",
+   "chron": "C5Cn"
+  },
+  {
+   "top": 16.543,
+   "base": 16.721,
+   "polarity": "n",
+   "chron": "C5Cn"
+  },
+  {
+   "top": 16.721,
+   "base": 17.235,
+   "polarity": "r",
+   "chron": "C5Cr"
+  },
+  {
+   "top": 17.235,
+   "base": 17.533,
+   "polarity": "n",
+   "chron": "C5Dn"
+  },
+  {
+   "top": 17.533,
+   "base": 17.717,
+   "polarity": "r",
+   "chron": "C5Dn"
+  },
+  {
+   "top": 17.717,
+   "base": 17.74,
+   "polarity": "n",
+   "chron": "C5Dn"
+  },
+  {
+   "top": 17.74,
+   "base": 18.007,
+   "polarity": "r",
+   "chron": "C5Dn"
+  },
+  {
+   "top": 18.007,
+   "base": 18.497,
+   "polarity": "n",
+   "chron": "C5En"
+  },
+  {
+   "top": 18.497,
+   "base": 18.636,
+   "polarity": "r",
+   "chron": "C5Er"
+  },
+  {
+   "top": 18.636,
+   "base": 19.535,
+   "polarity": "n",
+   "chron": "C6n"
+  },
+  {
+   "top": 19.535,
+   "base": 19.979,
+   "polarity": "r",
+   "chron": "C6r"
+  },
+  {
+   "top": 19.979,
+   "base": 20.182,
+   "polarity": "n",
+   "chron": "C6An"
+  },
+  {
+   "top": 20.182,
+   "base": 20.448,
+   "polarity": "r",
+   "chron": "C6An"
+  },
+  {
+   "top": 20.448,
+   "base": 20.765,
+   "polarity": "n",
+   "chron": "C6An"
+  },
+  {
+   "top": 20.765,
+   "base": 21.13,
+   "polarity": "r",
+   "chron": "C6Ar"
+  },
+  {
+   "top": 21.13,
+   "base": 21.204,
+   "polarity": "n",
+   "chron": "C6AAn"
+  },
+  {
+   "top": 21.204,
+   "base": 21.441,
+   "polarity": "r",
+   "chron": "C6AAn"
+  },
+  {
+   "top": 21.441,
+   "base": 21.519,
+   "polarity": "n",
+   "chron": "C6AAn"
+  },
+  {
+   "top": 21.519,
+   "base": 21.691,
+   "polarity": "r",
+   "chron": "C6AAn"
+  },
+  {
+   "top": 21.691,
+   "base": 21.722,
+   "polarity": "n",
+   "chron": "C6AAn"
+  },
+  {
+   "top": 21.722,
+   "base": 21.806,
+   "polarity": "r",
+   "chron": "C6AAn"
+  },
+  {
+   "top": 21.806,
+   "base": 21.985,
+   "polarity": "n",
+   "chron": "C6Bn"
+  },
+  {
+   "top": 21.985,
+   "base": 22.042,
+   "polarity": "r",
+   "chron": "C6Bn"
+  },
+  {
+   "top": 22.042,
+   "base": 22.342,
+   "polarity": "n",
+   "chron": "C6Bn"
+  },
+  {
+   "top": 22.342,
+   "base": 22.621,
+   "polarity": "r",
+   "chron": "C6Br"
+  },
+  {
+   "top": 22.621,
+   "base": 22.792,
+   "polarity": "n",
+   "chron": "C6Cn"
+  },
+  {
+   "top": 22.792,
+   "base": 22.973,
+   "polarity": "r",
+   "chron": "C6Cn"
+  },
+  {
+   "top": 22.973,
+   "base": 23.04,
+   "polarity": "n",
+   "chron": "C6Cn"
+  },
+  {
+   "top": 23.04,
+   "base": 23.212,
+   "polarity": "r",
+   "chron": "C6Cn"
+  },
+  {
+   "top": 23.212,
+   "base": 23.318,
+   "polarity": "n",
+   "chron": "C6Cn"
+  },
+  {
+   "top": 23.318,
+   "base": 24.025,
+   "polarity": "r",
+   "chron": "C6Cr"
+  },
+  {
+   "top": 24.025,
+   "base": 24.061,
+   "polarity": "n",
+   "chron": "C7n"
+  },
+  {
+   "top": 24.061,
+   "base": 24.124,
+   "polarity": "r",
+   "chron": "C7n"
+  },
+  {
+   "top": 24.124,
+   "base": 24.459,
+   "polarity": "n",
+   "chron": "C7n"
+  },
+  {
+   "top": 24.459,
+   "base": 24.654,
+   "polarity": "r",
+   "chron": "C7r"
+  },
+  {
+   "top": 24.654,
+   "base": 24.766,
+   "polarity": "n",
+   "chron": "C7An"
+  },
+  {
+   "top": 24.766,
+   "base": 25.099,
+   "polarity": "r",
+   "chron": "C7Ar"
+  },
+  {
+   "top": 25.099,
+   "base": 25.264,
+   "polarity": "n",
+   "chron": "C8n"
+  },
+  {
+   "top": 25.264,
+   "base": 25.304,
+   "polarity": "r",
+   "chron": "C8n"
+  },
+  {
+   "top": 25.304,
+   "base": 25.987,
+   "polarity": "n",
+   "chron": "C8n"
+  },
+  {
+   "top": 25.987,
+   "base": 26.42,
+   "polarity": "r",
+   "chron": "C8r"
+  },
+  {
+   "top": 26.42,
+   "base": 27.439,
+   "polarity": "n",
+   "chron": "C9n"
+  },
+  {
+   "top": 27.439,
+   "base": 27.859,
+   "polarity": "r",
+   "chron": "C9r"
+  },
+  {
+   "top": 27.859,
+   "base": 28.087,
+   "polarity": "n",
+   "chron": "C10n"
+  },
+  {
+   "top": 28.087,
+   "base": 28.141,
+   "polarity": "r",
+   "chron": "C10n"
+  },
+  {
+   "top": 28.141,
+   "base": 28.278,
+   "polarity": "n",
+   "chron": "C10n"
+  },
+  {
+   "top": 28.278,
+   "base": 29.183,
+   "polarity": "r",
+   "chron": "C10r"
+  },
+  {
+   "top": 29.183,
+   "base": 29.477,
+   "polarity": "n",
+   "chron": "C11n"
+  },
+  {
+   "top": 29.477,
+   "base": 29.527,
+   "polarity": "r",
+   "chron": "C11n"
+  },
+  {
+   "top": 29.527,
+   "base": 29.97,
+   "polarity": "n",
+   "chron": "C11n"
+  },
+  {
+   "top": 29.97,
+   "base": 30.591,
+   "polarity": "r",
+   "chron": "C11r"
+  },
+  {
+   "top": 30.591,
+   "base": 30.977,
+   "polarity": "n",
+   "chron": "C12n"
+  },
+  {
+   "top": 30.977,
+   "base": 33.214,
+   "polarity": "r",
+   "chron": "C12r"
+  },
+  {
+   "top": 33.214,
+   "base": 33.726,
+   "polarity": "n",
+   "chron": "C13n"
+  },
+  {
+   "top": 33.726,
+   "base": 35.102,
+   "polarity": "r",
+   "chron": "C13r"
+  },
+  {
+   "top": 35.102,
+   "base": 35.336,
+   "polarity": "n",
+   "chron": "C15n"
+  },
+  {
+   "top": 35.336,
+   "base": 35.58,
+   "polarity": "r",
+   "chron": "C15r"
+  },
+  {
+   "top": 35.58,
+   "base": 35.718,
+   "polarity": "n",
+   "chron": "C16n"
+  },
+  {
+   "top": 35.718,
+   "base": 35.774,
+   "polarity": "r",
+   "chron": "C16n"
+  },
+  {
+   "top": 35.774,
+   "base": 36.351,
+   "polarity": "n",
+   "chron": "C16n"
+  },
+  {
+   "top": 36.351,
+   "base": 36.573,
+   "polarity": "r",
+   "chron": "C16r"
+  },
+  {
+   "top": 36.573,
+   "base": 37.385,
+   "polarity": "n",
+   "chron": "C17n"
+  },
+  {
+   "top": 37.385,
+   "base": 37.53,
+   "polarity": "r",
+   "chron": "C17n"
+  },
+  {
+   "top": 37.53,
+   "base": 37.781,
+   "polarity": "n",
+   "chron": "C17n"
+  },
+  {
+   "top": 37.781,
+   "base": 37.858,
+   "polarity": "r",
+   "chron": "C17n"
+  },
+  {
+   "top": 37.858,
+   "base": 38.081,
+   "polarity": "n",
+   "chron": "C17n"
+  },
+  {
+   "top": 38.081,
+   "base": 38.398,
+   "polarity": "r",
+   "chron": "C17r"
+  },
+  {
+   "top": 38.398,
+   "base": 39.582,
+   "polarity": "n",
+   "chron": "C18n"
+  },
+  {
+   "top": 39.582,
+   "base": 39.666,
+   "polarity": "r",
+   "chron": "C18n"
+  },
+  {
+   "top": 39.666,
+   "base": 40.073,
+   "polarity": "n",
+   "chron": "C18n"
+  },
+  {
+   "top": 40.073,
+   "base": 41.03,
+   "polarity": "r",
+   "chron": "C18r"
+  },
+  {
+   "top": 41.03,
+   "base": 41.18,
+   "polarity": "n",
+   "chron": "C19n"
+  },
+  {
+   "top": 41.18,
+   "base": 42.196,
+   "polarity": "r",
+   "chron": "C19r"
+  },
+  {
+   "top": 42.196,
+   "base": 43.45,
+   "polarity": "n",
+   "chron": "C20n"
+  },
+  {
+   "top": 43.45,
+   "base": 46.235,
+   "polarity": "r",
+   "chron": "C20r"
+  },
+  {
+   "top": 46.235,
+   "base": 47.76,
+   "polarity": "n",
+   "chron": "C21n"
+  },
+  {
+   "top": 47.76,
+   "base": 48.878,
+   "polarity": "r",
+   "chron": "C21r"
+  },
+  {
+   "top": 48.878,
+   "base": 49.666,
+   "polarity": "n",
+   "chron": "C22n"
+  },
+  {
+   "top": 49.666,
+   "base": 50.767,
+   "polarity": "r",
+   "chron": "C22r"
+  },
+  {
+   "top": 50.767,
+   "base": 50.996,
+   "polarity": "n",
+   "chron": "C23n"
+  },
+  {
+   "top": 50.996,
+   "base": 51.047,
+   "polarity": "r",
+   "chron": "C23n"
+  },
+  {
+   "top": 51.047,
+   "base": 51.724,
+   "polarity": "n",
+   "chron": "C23n"
+  },
+  {
+   "top": 51.724,
+   "base": 52.54,
+   "polarity": "r",
+   "chron": "C23r"
+  },
+  {
+   "top": 52.54,
+   "base": 52.93,
+   "polarity": "n",
+   "chron": "C24n"
+  },
+  {
+   "top": 52.93,
+   "base": 53.02,
+   "polarity": "r",
+   "chron": "C24n"
+  },
+  {
+   "top": 53.02,
+   "base": 53.12,
+   "polarity": "n",
+   "chron": "C24n"
+  },
+  {
+   "top": 53.12,
+   "base": 53.25,
+   "polarity": "r",
+   "chron": "C24n"
+  },
+  {
+   "top": 53.25,
+   "base": 53.9,
+   "polarity": "n",
+   "chron": "C24n"
+  },
+  {
+   "top": 53.9,
+   "base": 57.101,
+   "polarity": "r",
+   "chron": "C24r"
+  },
+  {
+   "top": 57.101,
+   "base": 57.656,
+   "polarity": "n",
+   "chron": "C25n"
+  },
+  {
+   "top": 57.656,
+   "base": 58.959,
+   "polarity": "r",
+   "chron": "C25r"
+  },
+  {
+   "top": 58.959,
+   "base": 59.237,
+   "polarity": "n",
+   "chron": "C26n"
+  },
+  {
+   "top": 59.237,
+   "base": 62.278,
+   "polarity": "r",
+   "chron": "C26r"
+  },
+  {
+   "top": 62.278,
+   "base": 62.53,
+   "polarity": "n",
+   "chron": "C27n"
+  },
+  {
+   "top": 62.53,
+   "base": 63.537,
+   "polarity": "r",
+   "chron": "C27r"
+  },
+  {
+   "top": 63.537,
+   "base": 64.645,
+   "polarity": "n",
+   "chron": "C28n"
+  },
+  {
+   "top": 64.645,
+   "base": 64.862,
+   "polarity": "r",
+   "chron": "C28r"
+  },
+  {
+   "top": 64.862,
+   "base": 65.7,
+   "polarity": "n",
+   "chron": "C29n"
+  },
+  {
+   "top": 65.7,
+   "base": 66.38,
+   "polarity": "r",
+   "chron": "C29r"
+  },
+  {
+   "top": 66.38,
+   "base": 68.178,
+   "polarity": "n",
+   "chron": "C30n"
+  },
+  {
+   "top": 68.178,
+   "base": 68.351,
+   "polarity": "r",
+   "chron": "C30r"
+  },
+  {
+   "top": 68.351,
+   "base": 69.271,
+   "polarity": "n",
+   "chron": "C31n"
+  },
+  {
+   "top": 69.271,
+   "base": 71.451,
+   "polarity": "r",
+   "chron": "C31r"
+  },
+  {
+   "top": 71.451,
+   "base": 71.691,
+   "polarity": "n",
+   "chron": "C32n"
+  },
+  {
+   "top": 71.691,
+   "base": 71.851,
+   "polarity": "r",
+   "chron": "C32n"
+  },
+  {
+   "top": 71.851,
+   "base": 73.651,
+   "polarity": "n",
+   "chron": "C32n"
+  },
+  {
+   "top": 73.651,
+   "base": 73.951,
+   "polarity": "r",
+   "chron": "C32r"
+  },
+  {
+   "top": 73.951,
+   "base": 74.051,
+   "polarity": "n",
+   "chron": "C32r"
+  },
+  {
+   "top": 74.051,
+   "base": 74.201,
+   "polarity": "r",
+   "chron": "C32r"
+  },
+  {
+   "top": 74.201,
+   "base": 79.9,
+   "polarity": "n",
+   "chron": "C33n"
+  },
+  {
+   "top": 79.9,
+   "base": 82.875,
+   "polarity": "r",
+   "chron": "C33r"
+  },
+  {
+   "top": 82.875,
+   "base": 121.4,
+   "polarity": "n",
+   "chron": "C34n",
+   "name": "Cretaceous Normal Superchron",
+   "note": "the base is the base of the Aptian in GTS2020 (121.4 Ma), where chron M0r begins; the M-sequence past it is not in this file yet"
+  }
+ ]
+}

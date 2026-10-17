@@ -34,6 +34,7 @@ cw-deploys/art/maps/:
     python3 render.py --contours  the finer levels' coastlines again, cut per tile column
     python3 render.py --shelf     the shallow-sea layer, for a lower sea (Time on the map)
     python3 render.py --ice       ice outlines through time from ICE-6G_C, to prototypes/ice/ (not served)
+    python3 render.py --drain     the floor's depth, age and magnetic stripes as data tiles (Drain the sea, below)
 
 The ground has layers (Spec-Maps, 26 Sep 2026): height is the base and always present;
 ice, vegetation and later sea level are files beside the picture that map.js draws over
@@ -868,6 +869,155 @@ def render_ice(out_dir=None):
     print('ice: %d time steps, %.0f KB -> %s' % (len(out), os.path.getsize(path) / 1024.0, path))
 
 
+# Drain the sea (17 Oct 2026, the bench experiments/maps/drain-the-sea-bench.html): three DATA
+# layers beside the pyramid's tiles, 256 px a tile, levels 0 to 4, each an 8-bit greyscale PNG
+# whose value is a number and not a colour, so the browser can both paint it and read it back
+# under a probe:
+#   <y>-floor.png    the world ocean's depth: v = 1 + 253 * sqrt(depth / FLOOR_MAX), 0 for land
+#                    and for water not joined to the ocean (the Caspian never drains). The
+#                    square root spends the bits where the floor is shallow: a step is 10 m at
+#                    the shelf edge and 50 m on the abyssal plain. ETOPO 2022, as the shelf layer.
+#   <y>-age.png      the age of the floor in millions of years, RGB: red the whole millions, 0
+#                    to 254, green the fraction in 254ths (so the age reads to about 4 000
+#                    years, which a reversal table needs); red 255 where there is no age (land,
+#                    and the continents' drowned edges). Seton et al. 2020, the EarthByte age
+#                    grid at 2 arc-minutes on the GTS2012 timescale, nearest cell.
+#   <y>-stripes.png  the magnetic anomaly at sea level: v = 127 + 127 * anomaly / STRIPE_NT,
+#                    clipped, 255 off the ocean. EMAG2v3 (NOAA NCEI) at 2 arc-minutes, averaged
+#                    down to the level's pixels first so the stripes do not alias.
+# Level 4 (8 192 px round the earth, 4.9 km a pixel) is about the two grids' own resolution;
+# level 5 would be an upsampling and is not written. map.js stretches level 4 past it, as it
+# does the shelf. The pyramid JSON gains a `data` block naming each layer, its encoding, its
+# source and its licence.
+DRAIN_LEVELS = [0, 1, 2, 3, 4]
+FLOOR_MAX = 11000.0        # metres: Challenger Deep is 10 935
+STRIPE_NT = 300.0          # nanotesla at full strength; oceanic anomalies are mostly within this
+AGE_SOURCE = os.path.join(DATA, 'agegrid', 'age.2020.1.GTS2012.2m.nc')
+EMAG_SOURCE = os.path.join(DATA, 'emag2', 'EMAG2_V3_20170530_Sealevel.tif')
+AGE_CITATION = ('Seton, M., Müller, R. D., Zahirovic, S., Williams, S., Wright, N., Cannon, J., Whittaker, J., '
+                'Matthews, K. and McGirr, R. (2020), A global dataset of present-day oceanic crustal age and seafloor '
+                'spreading parameters, Geochemistry, Geophysics, Geosystems 21, e2020GC009214, doi:10.1029/2020GC009214; '
+                'the grid age.2020.1.GTS2012.2m.nc from earthbyte.org (ages on the GTS2012 timescale, Ogg 2012)')
+AGE_LICENCE = ('The grid folder states no licence; the paper is open access (CC BY 4.0) and the EarthByte group '
+               'publishes its data collections under Creative Commons Attribution; cite Seton et al. 2020')
+EMAG_CITATION = ('Meyer, B., Saltus, R. and Chulliat, A. (2017), EMAG2v3: Earth Magnetic Anomaly Grid (2-arc-minute '
+                 'resolution), version 3, NOAA National Centers for Environmental Information, doi:10.7289/V5H70CVX; '
+                 'the sea-level grid EMAG2_V3_20170530_Sealevel.tif')
+EMAG_LICENCE = ('Produced by NOAA NCEI: "not subject to copyright protection within the United States" (a US '
+                'government work, public domain); NCEI asks for the citation')
+
+
+def render_drain():
+    import time
+    from scipy.ndimage import uniform_filter
+    t0 = time.time()
+    for path in (AGE_SOURCE, EMAG_SOURCE):
+        if not os.path.exists(path):
+            sys.exit('missing %s — download it into _data/ first (see the module docstring)' % path)
+    ocean, olat, olon = ocean_mask()
+    print('  ocean mask: %.0f s' % (time.time() - t0), flush=True)
+    # the age grid: gridline-registered, 10801 x 5401, NaN where the floor has no age
+    with h5py.File(AGE_SOURCE, 'r') as f:
+        alat = np.asarray(f['lat'], np.float64); alon = np.asarray(f['lon'], np.float64)
+        age = np.asarray(f['z'], np.float32)
+    if alat[1] < alat[0]:
+        alat = alat[::-1]; age = age[::-1]
+    print('  age grid read: %d x %d, %.0f s' % (age.shape[1], age.shape[0], time.time() - t0), flush=True)
+    # the anomaly grid: 10800 x 5399 GeoTIFF, longitude 0 to 360 and row 0 at the north; turned to -180..180 and south-up
+    import rasterio
+    with rasterio.open(EMAG_SOURCE) as r:
+        emag = r.read(1).astype(np.float32)
+        nodata = r.nodata
+        b = r.bounds
+        elon0, elat_top = b.left, b.top
+        dlon_e = (b.right - b.left) / r.width; dlat_e = (b.top - b.bottom) / r.height
+    emag = np.where(np.isfinite(emag) & (emag > -1e30) & (emag != nodata), emag, 0.0).astype(np.float32)
+    emag = emag[::-1]                                               # south-up
+    elat0 = elat_top - r.height * dlat_e + dlat_e / 2.0             # the first row's centre latitude
+    # columns start at lon elon0 (about 0): roll so that the first column is at -180
+    ecol_lon = elon0 + (np.arange(r.width) + 0.5) * dlon_e
+    ecol_lon = np.where(ecol_lon >= 180.0, ecol_lon - 360.0, ecol_lon)
+    order = np.argsort(ecol_lon)
+    emag = emag[:, order]; ecol_lon = ecol_lon[order]
+    print('  anomaly grid read: %d x %d, %.0f s' % (emag.shape[1], emag.shape[0], time.time() - t0), flush=True)
+
+    out_dir = os.path.join(OUT, PYRAMID_DIR)
+    meta_path = os.path.join(OUT, 'world-pyramid.json')
+    with open(meta_path) as fh:
+        meta = json.load(fh)
+    listed = {'floor': {}, 'age': {}, 'stripes': {}}
+    total = {'floor': 0, 'age': 0, 'stripes': 0}
+    for z in DRAIN_LEVELS:
+        cols, rows = 2 ** (z + 1), 2 ** z
+        W = cols * LAYER_TILE
+        src = SOURCES['60s' if z <= 2 else '30s'][0]
+        # the anomaly, averaged down to this level's pixel so stripes finer than a pixel do not alias
+        f = max(1, int(round(emag.shape[1] / float(W))))
+        emag_z = uniform_filter(emag, size=f, mode='wrap') if f > 1 else emag
+        n = {'floor': 0, 'age': 0, 'stripes': 0}
+        for ty in range(rows):
+            north = 90.0 - ty * 180.0 / rows
+            south = north - 180.0 / rows
+            g = Grid(os.path.join(DATA, src), -180.0, south, 180.0, north, W, LAYER_TILE)
+            zb = g.sample(W, LAYER_TILE)
+            lat_t = north - (np.arange(LAYER_TILE) + 0.5) * (north - south) / LAYER_TILE
+            lon_t = -180.0 + (np.arange(W) + 0.5) * 360.0 / W
+            ri = np.clip(np.round((lat_t - olat[0]) / (olat[1] - olat[0])).astype(int), 0, len(olat) - 1)
+            ci = np.clip(np.round((lon_t - olon[0]) / (olon[1] - olon[0])).astype(int), 0, len(olon) - 1)
+            oc = ocean[np.ix_(ri, ci)]
+            sea = oc & (zb < 0)
+            depth = np.clip(-zb, 0.0, FLOOR_MAX)
+            floor = np.where(sea, 1 + np.round(253.0 * np.sqrt(depth / FLOOR_MAX)), 0).astype(np.uint8)
+            # age: nearest cell of the 2-arc-minute grid
+            ar = np.clip(np.round((lat_t - alat[0]) / (alat[1] - alat[0])).astype(int), 0, len(alat) - 1)
+            ac = np.clip(np.round((lon_t - alon[0]) / (alon[1] - alon[0])).astype(int), 0, len(alon) - 1)
+            a = age[np.ix_(ar, ac)]
+            whole = np.floor(np.where(np.isnan(a), 0, a))
+            agev = np.zeros(a.shape + (3,), np.uint8)
+            agev[..., 0] = np.where(np.isnan(a), 255, np.clip(whole, 0, 254))
+            agev[..., 1] = np.where(np.isnan(a), 0, np.clip(np.round((a - whole) * 254.0), 0, 254))
+            # stripes: bilinear in the averaged anomaly, blank off the ocean
+            er = (lat_t - elat0) / dlat_e
+            ec = (lon_t - ecol_lon[0]) / dlon_e
+            R, C = np.meshgrid(er, ec, indexing='ij')
+            an = map_coordinates(emag_z, [R, C], order=1, mode='nearest')
+            sv = np.where(oc, np.clip(np.round(127.0 + 127.0 * an / STRIPE_NT), 0, 254), 255).astype(np.uint8)
+            for tx in range(cols):
+                sl = slice(tx * LAYER_TILE, (tx + 1) * LAYER_TILE)
+                d = os.path.join(out_dir, str(z), str(tx))
+                os.makedirs(d, exist_ok=True)
+                for name, arr, keep in (('floor', floor[:, sl], (floor[:, sl] > 0).any()),
+                                        ('age', agev[:, sl], (agev[:, sl, 0] != 255).any()),
+                                        ('stripes', sv[:, sl], (sv[:, sl] != 255).any())):
+                    p = os.path.join(d, '%d-%s.png' % (ty, name))
+                    if not keep:
+                        if os.path.exists(p):
+                            os.remove(p)
+                        continue
+                    Image.fromarray(arr, 'RGB' if arr.ndim == 3 else 'L').save(p, 'PNG', optimize=True)
+                    total[name] += os.path.getsize(p); n[name] += 1
+                    listed[name].setdefault(str(z), []).append('%d/%d' % (tx, ty))
+        print('level %d: floor %d tiles, age %d, stripes %d  %.0f s' % (z, n['floor'], n['age'], n['stripes'], time.time() - t0), flush=True)
+    meta['data'] = {
+        'floor': {'suffix': '-floor.png', 'tile': LAYER_TILE, 'levels': DRAIN_LEVELS, 'encode': 'sqrt', 'max': FLOOR_MAX, 'nodata': 0,
+                  'what': 'depth of the world ocean in metres: depth = max * ((v - 1) / 253)^2; 0 is land or water not joined to the ocean',
+                  'source': 'ETOPO 2022 v1 (NOAA NCEI; 60 arc-second ice surface to level 2, 30 arc-second past it), public domain',
+                  'tiles': listed['floor']},
+        'age': {'suffix': '-age.png', 'tile': LAYER_TILE, 'levels': DRAIN_LEVELS, 'unit': 'Ma', 'nodata': 255,
+                'what': 'age of the sea floor in millions of years: red the whole millions, 0 to 254, green the fraction in 254ths (age = r + g / 254); red 255 where the floor has no age',
+                'source': AGE_CITATION, 'licence': AGE_LICENCE, 'tiles': listed['age']},
+        'stripes': {'suffix': '-stripes.png', 'tile': LAYER_TILE, 'levels': DRAIN_LEVELS, 'nt': STRIPE_NT, 'nodata': 255,
+                    'what': 'magnetic anomaly at sea level in nanotesla: nT = (v - 127) / 127 * nt, clipped; 255 off the ocean',
+                    'source': EMAG_CITATION, 'licence': EMAG_LICENCE, 'tiles': listed['stripes']},
+    }
+    with open(meta_path, 'w') as fh:
+        json.dump(meta, fh, indent=1)
+        fh.write('\n')
+    for name in ('floor', 'age', 'stripes'):
+        print('%s: %d tiles, %.1f MB' % (name, sum(len(v) for v in listed[name].values()), total[name] / 1e6))
+    print('drain: %.0f s' % (time.time() - t0))
+
+
 def render_all():
     """Every region in art/maps/, again, from its own JSON: corners, width, exaggeration
     and contour levels as recorded there."""
@@ -894,6 +1044,9 @@ def main(argv):
         return
     if argv == ['--ice']:
         render_ice()
+        return
+    if argv == ['--drain']:
+        render_drain()
         return
     opts = {'width': '2000', 'exaggeration': None, 'levels': None}
     args = []

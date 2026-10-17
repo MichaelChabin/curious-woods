@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../../art/icons/map-icon-256.png">
+<link rel="apple-touch-icon" href="../../art/icons/map-icon-256.png">
+<!--
+  drain-the-sea-bench.html — bench: Drain the sea (17 Oct 2026, from Michael's brief of 17 Oct). The Time
+  Machine's map (js/map.js on the world pyramid) and its deep-time timeline (js/deep-time.js), with:
+    1. a sea-level slider that goes past the shelf's 130 m to the bottom (the pyramid's new `floor` data
+       layer, render.py --drain), newly dry floor painted two ways, switchable here only: the land colours
+       by height above the new shore with their own relief, or the floor's own picture under a wash;
+    2. two layers, off by default: Age (Seton et al. 2020) and Stripes (EMAG2v3), painted in the browser
+       from data tiles;
+    3. the probe (js/probe.js): tap the sea and it enters, zooming in if the map is wide; one finger drags
+       it; the ground drifts under it near the edge; two fingers pan (switchable here); Done ends it;
+       quiet on land; the card says the depth, the age in words and which way a compass pointed when the
+       floor cooled, from stories/plates/reversals.json (GTS2020); the timeline's handle follows the age.
+  The spec this was to follow, CWVault/claude/Spec-Drain-the-Sea.md, was not on disk when this was built,
+  nor was Worknote-Time-Machine.md; the three paragraphs below are stand-ins in the story's voice, to be
+  replaced by the spec's. The map's sea follows the timeline's handle through the ice ages
+  (stories/curves/sea-level-ice-ages.json) when she drags the handle herself; when the probe moves the
+  handle the sea stays where the slider put it.
+-->
+<title>Drain the sea — bench</title>
+<style>
+  :root { --parch: #f4f1e8; --ink: #2a241c; --ink-soft: #6b655a; --slate: #546A80; --copper: #b5652b; --sep: #c8b89a; }
+  html, body { background: var(--parch); color: var(--ink); }
+  body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
+  article { max-width: 700px; margin: 0 auto; padding: 40px 40px 80px 40px; box-sizing: border-box; }
+  h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0 0 1em 0; }
+  p { margin: 0 0 1em 0; }
+  #bar { width: 100%; margin: 1.2em 0 0.4em; }
+  #map { margin-top: 6px; }
+  #map .cw-strip-left { display: none; }
+  .row { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; font-size: 14px; font-style: italic; color: var(--ink); margin-top: 10px; }
+  .row .w { cursor: pointer; color: var(--slate); }
+  .row .w:hover { color: #3D3D3A; }
+  .row .w.on { color: var(--ink); font-weight: bold; }
+  .row .lab { font-style: normal; color: var(--ink-soft); }
+  .row .sep { color: var(--sep); }
+  .when { font-size: 18px; margin: 1.1em 0 0.3em 0; min-height: 1.4em; }
+  .sea { width: 100%; accent-color: var(--copper); margin: 0; }
+  .ends { display: flex; justify-content: space-between; font-size: 13px; color: #7a6e60; margin-top: 2px; }
+  .note { font-size: 14px; color: #7a6e60; border-top: 0.5px solid var(--sep); margin-top: 3em; padding-top: 1.2em; line-height: 1.45; }
+  .note p { margin: 0 0 0.6em; }
+  @media (max-width: 800px) { article { padding: 24px 16px 60px 16px; } body { font-size: 18px; } h1 { font-size: 28px; } }
+</style>
+</head>
+<body>
+<article>
+  <h1>Drain the sea</h1>
+  <!-- stand-ins for the spec's three paragraphs (Spec-Drain-the-Sea.md was not on disk); in the voice, to be replaced -->
+  <p>Below is the whole Earth. Most of it is sea, and the sea hides a landscape nobody had seen until about seventy years ago, when ships began to measure its depth with sound. Drag the slider under the map and the sea goes down. The shallow shelves round the continents dry first. Then a mountain range comes up out of the Atlantic, longer than any on land, running down the middle of the ocean like a seam.</p>
+  <p>The floor is young. Nothing on it is much older than 180 million years, while the oldest rocks on land are twenty times that. New floor is made along the seam and moves away on both sides, a few centimetres a year, about as fast as your fingernails grow. Turn on <i>Age</i> and the floor is coloured by when it was made: pale at the seam, darker the farther it has travelled.</p>
+  <p>The Earth’s magnetic field flips every so often: north becomes south, and a compass would point the other way. Floor that cools while the field is one way keeps that direction in its rock. Turn on <i>Stripes</i> and you can see it, in bands either side of the seam, mirrored. Tap the sea anywhere and a probe tells you how deep the floor is, how old it is, and which way a compass pointed when it was made.</p>
+
+  <div id="bar"></div>
+  <div id="map"></div>
+  <div class="row" id="words">
+    <span class="lab">Layers:</span>
+    <span class="w" id="wAge">Age</span>
+    <span class="w" id="wStripes">Stripes</span>
+    <span class="sep">·</span>
+    <span class="lab">Dry floor:</span>
+    <span class="w on" id="wLand">land colours</span>
+    <span class="w" id="wSea">sea colours</span>
+    <span class="sep">·</span>
+    <span class="lab">Probe:</span>
+    <span class="w on" id="wTwo">two fingers pan</span>
+  </div>
+  <div class="when" id="when">Today’s sea.</div>
+  <input class="sea" id="sea" type="range" min="0" max="11000" step="10" value="0" aria-label="how far the sea is lowered, in metres">
+  <div class="ends"><span>today</span><span>the sea 130 m lower, the ice-age low</span><span>drained</span></div>
+
+  <div class="note">
+    <p>A bench, not a story. The slider is a what-if past 130 metres: no sea was ever that low. The floor keeps its shape as the water leaves; the land does not rise, and the exposed floor is painted dry at once.</p>
+    <p>Sources. The ground and the floor: ETOPO 2022 (NOAA NCEI), public domain. The floor’s age: Seton, Müller, Zahirovic, Williams, Wright, Cannon, Whittaker, Matthews and McGirr, 2020, <i>A global dataset of present-day oceanic crustal age and seafloor spreading parameters</i>, Geochemistry, Geophysics, Geosystems 21 (EarthByte; the paper is open access, the grid folder states no licence, cited as its authors ask). The stripes: Meyer, Saltus and Chulliat, 2017, EMAG2v3 (NOAA NCEI, doi:10.7289/V5H70CVX), a US government work. Which way the field pointed: the Geomagnetic Polarity Time Scale of GTS2020 (Ogg, 2020), as tabulated in PmagPy, to 121 million years; the older chrons are not in the table yet. The sea through the ice ages: Spratt and Lisiecki, 2016; Bintanja and van de Wal, 2008; Lambeck and others, 2014. The ice: Peltier, Argus and Drummond, 2015 (ICE-6G_C, via PMIP4). The floor’s ages are on the 2012 timescale and the reversals on the 2020 one, so near a boundary the needle can be a chron out.</p>
+  </div>
+</article>
+
+<script src="../../js/map.js?v=2026-10-17"></script>
+<script src="../../js/deep-time.js?v=2026-10-13d"></script>
+<script src="../../js/probe.js?v=2026-10-17"></script>
+<script>
+(function () {
+  'use strict';
+  var CW_VERSION = '2026-10-17 aa3e18f'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+
+  var $ = function (id) { return document.getElementById(id); };
+  var THIS_YEAR = new Date().getFullYear();
+  var FIT = { west: -180, south: -90, east: 180, north: 90 };   // the Time Machine's opening: the whole world
+  var map = null, bar = null, probe = null, curve = null, probeDriving = false;
+  var FROM_DISK = location.protocol === 'file:';
+  var AGAIN = FROM_DISK ? 'This page was opened from the file on disk; open it from curiouswoods.org instead.' : 'Reloading the page usually brings it back.';
+  var get = function (u) { return fetch(u, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }); };
+
+  // ---- the slider: metres lower than today ----
+  var slider = $('sea'), when = $('when');
+  function sayLevel(m) {
+    if (m <= 0) return 'Today’s sea.';
+    var s = 'The sea ' + Math.round(m).toLocaleString('en-GB') + ' metres lower than today.';
+    if (m > 130) s += ' No sea was ever this low.';
+    else if (m >= 100) s += ' About where it stood at the height of the last ice age.';
+    return s;
+  }
+  function applySlider() {
+    var m = +slider.value;
+    if (map) map.setSeaLevel(-m);
+    when.textContent = sayLevel(m);
+  }
+  slider.addEventListener('input', applySlider);
+  function showLevel() { var m = map ? -map.seaLevel() : 0; slider.value = Math.round(m); when.textContent = sayLevel(m); }
+
+  // ---- the words ----
+  function word(id, on) { $(id).classList.toggle('on', !!on); }
+  $('wAge').addEventListener('click', function () { if (!map) return; word('wAge', map.setLayer('age', !map.setLayer('age'))); });
+  $('wStripes').addEventListener('click', function () { if (!map) return; word('wStripes', map.setLayer('stripes', !map.setLayer('stripes'))); });
+  $('wLand').addEventListener('click', function () { if (!map) return; map.drainStyle('land'); word('wLand', true); word('wSea', false); });
+  $('wSea').addEventListener('click', function () { if (!map) return; map.drainStyle('sea'); word('wLand', false); word('wSea', true); });
+  $('wTwo').addEventListener('click', function () { if (!probe) return; word('wTwo', probe.twoFinger(!probe.twoFinger())); });
+
+  // ---- the timeline: the deep lines, as the Time Machine mounts them; her drag of the handle moves the sea ----
+  function buildBar(store) {
+    bar = cwDeepTime($('bar'), {
+      data: '../../stories/deep-time.json', events: store, year: 0,
+      periods: '../../stories/deep-time-periods.json',
+      scene: [],
+      onYear: function (ma, storeYear) {
+        if (probeDriving || !map) return;          // the probe moves the handle; the handle does not then move the sea
+        map.setTime(storeYear); showLevel();
+      }
+    });
+  }
+  // the handle follows the probe's age: within the open line if it can, else the Earth line
+  function handleTo(ma) {
+    if (!bar) return;
+    var sp = bar.span();
+    probeDriving = true;
+    try {
+      if (ma > sp.from || ma < sp.to) bar.open([]);
+      bar.setYear(ma);
+    } finally { probeDriving = false; }
+  }
+
+  // ---- the map, the probe ----
+  Promise.all([cwMap.load('../../art/maps/world-pyramid.json'), get('../../stories/curves/sea-level-ice-ages.json'),
+               get('../../stories/plates/reversals.json').catch(function (e) { console.warn('no reversal table', e.message); return null; }),
+               get('../../stories/ice-outlines.json').catch(function (e) { console.warn('no ice outlines', e.message); return null; }),
+               get('../../stories/deep-time-events.json').catch(function (e) { console.warn('no events', e.message); return null; })])
+    .then(function (r) {
+      var world = r[0], sea = r[1], reversals = r[2], ice = r[3], store = r[4];
+      curve = sea.points;
+      map = cwMap($('map'), world, [], { fit: FIT, reset: 'reset', time: { seaLevel: curve, ice: ice || undefined } });
+      map.drainStyle('land');
+      map.setSeaLevel(0);
+      probe = cwProbe(map, {
+        reversals: reversals,
+        onRead: function (rd) { if (rd.age !== null && rd.age !== undefined) handleTo(rd.age); }
+      });
+      if (store) buildBar(store);
+      window.cwDrain = { map: map, probe: probe, bar: function () { return bar; } };   // for checking from the console; nothing on the page uses it
+      var names = map.layers();
+      console.info('Drain the sea: data layers ' + JSON.stringify(names) + '; floor to ' + map.floorMax() + ' m');
+      if (names.indexOf('floor') < 0) when.textContent = 'The floor layer is not rendered yet (render.py --drain); the slider stops at the shelf.';
+    })
+    .catch(function (e) { console.error(e); $('map').textContent = 'The map did not load. ' + AGAIN; });
+})();
+</script>
+</body>
+</html>
