@@ -13,17 +13,34 @@
        user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
   canvas{display:block;position:fixed;inset:0;touch-action:none}
 
-  /* The left column: Geometry's, holding only the words that act. */
+  /* The left column: Geometry's, holding only the words that act. Provisional (Michael will
+     rework it): every part is a .part in document order, spaced by the variables below, and
+     its place can be changed with `order` without touching the markup. */
   #col{position:fixed;left:0;top:0;bottom:0;z-index:10;overflow-y:auto;overflow-x:hidden;
-       background:rgba(244,241,232,.95);border-right:.5px solid #c8b89a;padding:16px 14px 20px}
-  #col h1{font-size:15px;font-weight:normal;color:#546A80;margin-bottom:3px}
-  #col .sub{font-size:11px;color:#a09880;line-height:1.45;margin-bottom:12px}
-  .section{margin-top:14px}
+       background:rgba(244,241,232,.95);border-right:.5px solid #c8b89a;padding:16px 14px 20px;
+       display:flex;flex-direction:column;
+       --gap:14px;        /* between parts */
+       --gap-apart:30px;  /* before the parts set apart at the bottom */}
+  #col .part{margin-top:var(--gap)}
+  #col .part:first-child{margin-top:0}
+  #col .part.apart{margin-top:var(--gap-apart)}
+  #col .p-how{order:1} #col .p-numbers{order:2} #col .p-dial{order:3} #col .p-key{order:4}
+  #col .p-look{order:5} #col .p-glass{order:6} #col .p-end{order:7}
+  #col .p-dial .word{display:inline-block;margin-top:4px}
 
-  /* The instructions: literal, the words on the screen in italics (Geometry's action words). */
-  .how{font-size:12.5px;line-height:1.45;color:#3D3D3A;list-style:none;margin-bottom:12px}
-  .how li{margin-bottom:4px}
-  .how em{color:#546A80}
+  /* How this works: Geometry's movable window; a list of ideas, each opening its explanation. */
+  #how{position:fixed;z-index:30;width:250px;display:none;background:rgba(244,241,232,.97);
+       border:.5px solid #c8b89a;border-radius:6px;padding:10px 14px 14px;box-shadow:0 2px 12px rgba(42,38,32,.12);
+       cursor:grab;touch-action:none}
+  #how .hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+  #how .hd span:first-child{font-size:14px;color:#546A80}
+  #how .close{font-size:11px;color:#b0a090;cursor:pointer}
+  #how .idea{font-size:13px;color:#546A80;cursor:pointer;padding-left:12px;position:relative;margin-top:8px}
+  #how .idea::before{content:'\2022';position:absolute;left:0}
+  #how .idea.open{color:#3D3D3A}
+  #how .body{display:none;font-size:13px;line-height:1.55;color:#3D3D3A;margin:4px 0 2px 12px;cursor:auto}
+  #how .idea.open + .body{display:block}
+  #how em{font-style:italic;color:#546A80}
 
   /* Readouts: width × height = area, then Fix or Fixed. One line per number. */
   .ro{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;font-size:15px;min-height:34px;padding:2px 0}
@@ -69,10 +86,11 @@
   .word{font-size:14px;font-style:italic;font-weight:bold;color:#546A80;cursor:pointer}
   .word:hover{color:#3D3D3A}
   .words{display:flex;gap:18px}
+  /* Only the words that act are bold; numbers, fractions and counts are plain. */
+  .ktotal,.ways,.fr,.ro .num,.used{font-weight:normal}
   .gone{display:none}
-  .views{margin-bottom:12px}
   /* Fill is on or off: the small square before the word is empty or filled (chosen here). */
-  #w-fill,#w-join,#w-sound{display:inline-flex;align-items:center;gap:5px}
+  #w-fill,#w-join,#w-sound,#w-mirror{display:inline-flex;align-items:center;gap:5px}
   .word .box{display:inline-block;width:9px;height:9px;border:1.2px solid #546A80;border-radius:1px}
   .word.on .box{background:#546A80}
   .words{flex-wrap:wrap;row-gap:8px}
@@ -95,24 +113,31 @@
 <canvas id="c"></canvas>
 
 <div id="col">
-  <h1>Same glass</h1>
-  <ul class="how">
-    <li>Touch the 1 and drag to make a number.</li>
-    <li>Tap <em>Fix</em> to hold it.</li>
-    <li>Turn the dial to choose how finely to cut.</li>
-    <li>Tap <em>Every cut</em> to sweep every cut up to the one on the dial.</li>
-    <li>Tap <em>Join</em> to connect the corners; tap it again to erase.</li>
-    <li>The numbers in the key count the ways. Turn a dot off to count without it.</li>
-    <li>Drag right to make it wider, up to make it taller.</li>
-    <li>Tap <em>Near</em> or <em>Whole</em> to change the view.</li>
-    <li>Tap <em>Sound</em> to turn the sound off or on.</li>
-    <li>Tap <em>Clear</em> to start again.</li>
-  </ul>
-  <div class="words views"><span class="word" id="w-near">Near</span><span class="word" id="w-whole">Whole</span></div>
-  <div id="readouts"></div>
-  <div class="section" id="dial"></div>
-  <div class="section" id="key"></div>
-  <div class="section words"><span class="word" id="w-color">Color</span><span class="word" id="w-fill"><b class="box"></b>Fill</span><span class="word" id="w-join"><b class="box"></b>Join</span><span class="word gone" id="w-every">Every cut</span><span class="word on" id="w-sound"><b class="box"></b>Sound</span><span class="word gone" id="w-clear">Clear</span></div>
+  <div class="part p-how"><span class="word" id="w-how">How this works</span></div>
+  <div class="part p-numbers" id="readouts"></div>
+  <div class="part p-dial"><div id="dial"></div><span class="word gone" id="w-every">Every cut</span></div>
+  <div class="part p-key" id="key"></div>
+  <div class="part p-look words"><span class="word" id="w-near">Near</span><span class="word" id="w-whole">Whole</span><span class="word" id="w-mirror"><b class="box"></b>Mirror</span></div>
+  <div class="part p-glass words"><span class="word" id="w-join"><b class="box"></b>Join</span><span class="word" id="w-fill"><b class="box"></b>Fill</span><span class="word" id="w-color">Color</span></div>
+  <div class="part p-end apart words"><span class="word on" id="w-sound"><b class="box"></b>Sound</span><span class="word gone" id="w-clear">Clear</span></div>
+</div>
+
+<!-- How this works: the ideas, each opening its explanation. The instructions live here, not in
+     the column. Command words in italics, as Geometry's. -->
+<div id="how">
+  <div class="hd"><span>How this works</span><span class="close">close</span></div>
+  <div class="idea">Making a number</div>
+  <div class="body">Touch the 1 and drag to make a rectangle. Its area is the number. Tap <em>Fix</em> to hold it; tap <em>Fixed</em> to let go.</div>
+  <div class="idea">Cutting finer</div>
+  <div class="body">Turn the dial to cut each metre into smaller pieces. Every way to make the number at that cut appears, one rectangle at a time. Tap the plane to pause; tap again to go on. Tap <em>Every cut</em> to try every cut up to the one on the dial.</div>
+  <div class="idea">Watching the glass</div>
+  <div class="body">Tap a label, like <span class="cw-line" style="display:inline-flex" id="how-example"></span>, to watch the glass cut into tiles and put back together.</div>
+  <div class="idea">Counting</div>
+  <div class="body">The numbers in the key count the ways. Turn a dot off to count without it.</div>
+  <div class="idea">Looking</div>
+  <div class="body">Tap <em>Near</em> or <em>Whole</em> to change the view. Pinch to zoom. Tap <em>Mirror</em> to see all four quarters.</div>
+  <div class="idea">Glass</div>
+  <div class="body">Tap <em>Join</em> to connect the corners, and <em>Fill</em> to fill the rectangles. Tap <em>Color</em>, choose a colour, then tap a row of the key.</div>
 </div>
 
 <div id="pal">
@@ -316,7 +341,7 @@ CW.axisNumbers = { step: step, text: text, draw: draw };
 </script>
 
 <script>
-var CW_VERSION = '2026-10-16d 05ccc2c'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-10-16e 6f826b1'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 // ============================================================================
 // SAME GLASS — A BENCH (15 Oct 2026; first revision the same day, from Michael's
 // first impressions)
@@ -455,6 +480,10 @@ try { if (localStorage.getItem('cw-number-form') === 'decimal') numForm = 'decim
 var palSelected = null; // a colour from the palette, or null (the palette is closed)
 var joinOn = false;     // Join: straight lines between one number's corners at one resolution
 var selN = null;        // the number the key's counts belong to (its area, exact)
+var mirrorOn = false;   // Mirror: every rectangle also in the other three quarters
+var QUARTERS = [[1, 1]], QUARTERS_ALL = [[1, 1], [-1, 1], [-1, -1], [1, -1]];
+function quarters() { return mirrorOn ? QUARTERS_ALL : QUARTERS; }
+var paused = false, pausedAt = 0;   // a tap on the plane pauses a sweep; another goes on
 var fillOn = false;     // Fill: half see-through glass in every rectangle, multiplied where they overlap, no outlines
 
 function markUsed(i) {
@@ -535,7 +564,9 @@ function wholeView() {
     rects.forEach(function(r) { Wd = Math.max(Wd, r.wf); Ht = Math.max(Ht, r.hf); });
     held.forEach(function(h) { var w = Math.exp(h.lw); Wd = Math.max(Wd, w); Ht = Math.max(Ht, h.Nf / w); });
     if (free) { Wd = Math.max(Wd, qf(free.w)); Ht = Math.max(Ht, qf(free.h)); }
-    return fitBox(Wd, Ht, 1.12);
+    if (!mirrorOn) return fitBox(Wd, Ht, 1.12);
+    var a = area(), z = Math.min(a.w / (2 * Wd * 1.12), a.h / (2 * Ht * 1.12));
+    return { x: 0, y: 0, z: Math.max(Z_MIN, Math.min(Z_MAX, z)) };
 }
 // Her own zooming stops at Whole going out (or at Near, while Whole is nearer than Near:
 // with little on the plane, Whole alone would hold her closer than the view she starts in).
@@ -716,15 +747,25 @@ function startSweep(h, items, row) {
     if (!items.length) return;
     var delay = Math.max(DELAY_MIN_MS, Math.min(DELAY_MAX_MS, SWEEP_MS / items.length));
     h.anim = null;
-    h.run = { items: items, k: 0, row: row, delay: delay, next: performance.now(), fast: delay <= TICK_LIMIT_MS };
+    h.run = { items: items, k: 0, row: row, delay: delay, next: performance.now(), fast: delay <= TICK_LIMIT_MS, waiting: false };
     markUsed(row);
 }
 // Lay whatever of a sweep is due by now; returns how many went down.
 function stepSweep(h, now) {
     var r = h.run, laid = 0;
+    if (paused || r.waiting) return 0;
     while (r && r.k < r.items.length && now >= r.next) {
         var st = r.items[r.k++], lw = Math.log(qf(st.w));
         if (keepStop(st, r.row, r.fast)) laid++;
+        // The first rectangle of each new cut (not Every cut) shows its glass being cut and
+        // put back together, once; the sweep waits for it, then goes on at its pace.
+        if (r.k === 1 && !isEvery(r.row) && !(h.played && h.played[r.row])) {
+            (h.played = h.played || {})[r.row] = true;
+            var last = rects[rects.length - 1];
+            if (last && last.qi === r.row && playTiles(last, function() { r.waiting = false; r.next = performance.now() + r.delay; })) {
+                r.waiting = true; h.anim = null; h.lw = lw; break;
+            }
+        }
         if (r.delay >= 100) startAnim(h, lw, Math.min(GLIDE_MAX_MS, r.delay / 2));
         else { h.anim = null; h.lw = lw; }
         r.next += r.delay;
@@ -739,7 +780,7 @@ function stepSweep(h, now) {
     return laid;
 }
 function setRes(i) {
-    qi = i;
+    qi = i; paused = false;
     held.forEach(function(h) {
         h.stops = stopsFor(h.N, RES[qi]);
         startSweep(h, h.stops.slice().reverse(), qi);
@@ -768,6 +809,7 @@ function everyCut() {
 // colours return to their own). The dial stays where it is.
 function clearAll() {
     rects = []; rectKeys = {}; held = []; free = null; used = []; shown = {}; catchUp = null; selN = null;
+    paused = false; tiles = null; highlight = null;
     resColor = RES_COLOR.slice(); rectsVersion++;
     renderKey(); renderReadouts(); renderWords(); dirty = true;
 }
@@ -811,17 +853,21 @@ function drawGrid(q, color, alpha) {
 // off the screen are skipped, and each row is one path. Rows are stroked one by one, half
 // see-through, so where one row's lines lie on another's they darken.
 function drawOutlines() {
-    var a = area(), tl = s2w(a.x0, 0), br = s2w(W, H), paths = {};
+    var a = area(), tl = s2w(a.x0, 0), br = s2w(W, H), paths = {}, o = w2s(0, 0), qs = quarters();
+    var L = tl.x, R = br.x, B = br.y, T = tl.y;
     rects.forEach(function(r) {
-        if (!isShown(r.qi)) return;
-        var right = r.wf >= tl.x && r.wf <= br.x && r.hf >= br.y;           // x = w, from 0 up to h
-        var top = r.hf >= br.y && r.hf <= tl.y && r.wf >= tl.x;             // y = h, from 0 out to w
-        if (!right && !top) return;
-        var p = paths[r.qi] || (paths[r.qi] = []);
-        var c = w2s(r.wf, r.hf), o = w2s(0, 0);
-        var cx = clampPx(c.x), cy = clampPx(c.y);
-        if (right) p.push(cx, clampPx(o.y), cx, cy);
-        if (top) p.push(clampPx(o.x), cy, cx, cy);
+        if (!isShown(r.qi) || (tiles && tiles.r === r)) return;
+        qs.forEach(function(sg) {
+            var x = sg[0] * r.wf, y = sg[1] * r.hf;
+            var ylo = Math.min(0, y), yhi = Math.max(0, y), xlo = Math.min(0, x), xhi = Math.max(0, x);
+            var right = x >= L && x <= R && yhi >= B && ylo <= T;          // x = ±w, from 0 to ±h
+            var top = y >= B && y <= T && xhi >= L && xlo <= R;            // y = ±h, from 0 to ±w
+            if (!right && !top) return;
+            var p = paths[r.qi] || (paths[r.qi] = []);
+            var c = w2s(x, y), cx = clampPx(c.x), cy = clampPx(c.y);
+            if (right) p.push(cx, clampPx(o.y), cx, cy);
+            if (top) p.push(clampPx(o.x), cy, cx, cy);
+        });
     });
     Object.keys(paths).forEach(function(row) {
         var p = paths[row];
@@ -854,11 +900,13 @@ function drawJoins() {
         if (g.pts.length < 2) return;
         ctx.strokeStyle = rowColor(g.qi);
         ctx.beginPath();
-        for (var i = 1; i < g.pts.length; i++) {
-            var s0 = w2s(g.pts[i - 1].wf, g.pts[i - 1].hf), s1 = w2s(g.pts[i].wf, g.pts[i].hf);
-            var c = clipSeg(s0.x, s0.y, s1.x, s1.y, box);
-            if (c) { ctx.moveTo(c[0], c[1]); ctx.lineTo(c[2], c[3]); }
-        }
+        quarters().forEach(function(sg) {
+            for (var i = 1; i < g.pts.length; i++) {
+                var s0 = w2s(sg[0] * g.pts[i - 1].wf, sg[1] * g.pts[i - 1].hf), s1 = w2s(sg[0] * g.pts[i].wf, sg[1] * g.pts[i].hf);
+                var c = clipSeg(s0.x, s0.y, s1.x, s1.y, box);
+                if (c) { ctx.moveTo(c[0], c[1]); ctx.lineTo(c[2], c[3]); }
+            }
+        });
         ctx.stroke();
     });
     ctx.restore();
@@ -896,10 +944,12 @@ function labelOf(r) {
 // Labels just outside each rectangle's upper-right corner. One that would overlap a
 // label already placed is left out (zooming in brings it back); none is ever shrunk.
 // The rectangles kept first are placed first, so a label never jumps as she sweeps.
+var labelHits = [];
 function drawLabels() {
     var a = area(), placed = [];
+    labelHits = [];
     rects.forEach(function(r) {
-        if (!isShown(r.qi)) return;
+        if (!isShown(r.qi) || (tiles && tiles.r === r)) return;
         var c = w2s(r.wf, r.hf), L = labelOf(r);
         var box = { l: c.x + 4, r: c.x + 4 + L.w, t: c.y - 3 - L.h, b: c.y - 3 };
         if (box.r < a.x0 || box.l > W || box.b < 0 || box.t > H) return;
@@ -908,15 +958,109 @@ function drawLabels() {
             if (box.l < p.r + 6 && box.r + 6 > p.l && box.t < p.b + 2 && box.b + 2 > p.t) return;   // a little air between labels
         }
         placed.push(box);
-        var x = box.l, y = (box.t + box.b) / 2, col = rowColor(r.qi);
-        ctx.save(); ctx.globalAlpha = LABEL_ALPHA;
-        L.tokens.forEach(function(t, k) {
-            if (t.s !== undefined) CW.num.drawText(ctx, t.s, x, y, { size: LABEL_SIZE, color: col, align: 'left' });
-            else CW.num.draw(ctx, t.n, t.d, x, y, { size: LABEL_SIZE, color: col, align: 'left' });
-            x += L.widths[k] + LABEL_GAP;
-        });
-        ctx.restore();
+        labelHits.push({ box: box, r: r });
+        drawLabelAt(r, box, LABEL_ALPHA);
     });
+}
+function labelBox(r) {
+    var c = w2s(r.wf, r.hf), L = labelOf(r);
+    return { l: c.x + 4, r: c.x + 4 + L.w, t: c.y - 3 - L.h, b: c.y - 3 };
+}
+function drawLabelAt(r, box, alpha) {
+    var L = labelOf(r), x = box.l, y = (box.t + box.b) / 2, col = rowColor(r.qi);
+    ctx.save(); ctx.globalAlpha = alpha;
+    L.tokens.forEach(function(t, k) {
+        if (t.s !== undefined) CW.num.drawText(ctx, t.s, x, y, { size: LABEL_SIZE, color: col, align: 'left' });
+        else CW.num.draw(ctx, t.n, t.d, x, y, { size: LABEL_SIZE, color: col, align: 'left' });
+        x += L.widths[k] + LABEL_GAP;
+    });
+    ctx.restore();
+}
+function labelAt(sx, sy) {
+    for (var i = labelHits.length - 1; i >= 0; i--) {
+        var b = labelHits[i].box;
+        if (sx >= b.l - 4 && sx <= b.r + 4 && sy >= b.t - 4 && sy <= b.b + 4) return labelHits[i].r;
+    }
+    return null;
+}
+
+// ------------------------------------------------------------------ the tiles
+// Showing the cutting. The number's glass, cut into tiles at the rectangle's cut, flows
+// into the rectangle: the source is N × 1 (or, for an N that is not whole, the stop at that
+// cut nearest to square), the cut lines cross it, then the tiles move one at a time from
+// the source in reading order (bottom row first, left to right) into the rectangle in the
+// same order, and fade into it with its label. N × cut² tiles, which is also the
+// rectangle's width × height in tiles. Not played above TILE_LIMIT tiles (by then they are
+// smaller than pixels); a tapped label there gets a brief highlight instead.
+var TILE_LIMIT = 200;
+var TILE_CUT_MS = 400, TILE_FLOW_MS = 2000, TILE_MOVE_MS = 350, TILE_FINISH_MS = 450, HIGHLIGHT_MS = 700;
+var tiles = null, highlight = null;
+function cutOf(r) {             // the cut a rectangle belongs to: its row's, or for Every cut its own finest
+    if (!isEvery(r.qi)) return RES[r.qi];
+    var d = r.w.d * r.h.d / bgcd(r.w.d, r.h.d);
+    return Number(d);
+}
+function tileCount(r) { var q = BigInt(cutOf(r)); var c = qmul(r.a, Q(q * q)); return c.d === 1n ? Number(c.n) : Infinity; }
+function playTiles(r, onDone) {
+    var q = cutOf(r), n = tileCount(r);
+    if (!(n <= TILE_LIMIT)) return false;
+    var src;
+    if (r.a.d === 1n) src = { c: Number(r.a.n) * q, rows: q };
+    else {
+        var st = stopsFor(r.a, q), half = Math.log(qf(r.a)) / 2, best = st[0];
+        st.forEach(function(x) { if (Math.abs(x.lw - half) < Math.abs(best.lw - half)) best = x; });
+        src = { c: Number(qmul(best.w, Q(q)).n), rows: Number(qmul(best.h, Q(q)).n) };
+    }
+    tiles = { r: r, q: q, n: n, src: src, tgt: { c: Number(qmul(r.w, Q(q)).n) }, t0: performance.now(), done: onDone || null };
+    dirty = true;
+    return true;
+}
+function tilesEnd() { return TILE_CUT_MS + TILE_FLOW_MS + TILE_FINISH_MS; }
+function ease(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+function drawTiles(now) {
+    var T = tiles, e = now - T.t0, t = 1 / T.q, col = rowColor(T.r.qi);
+    if (e >= tilesEnd()) { var done = T.done; tiles = null; dirty = true; if (done) done(); return; }
+    var stagger = (TILE_FLOW_MS - TILE_MOVE_MS) / Math.max(1, T.n - 1);
+    var finish = Math.max(0, Math.min(1, (e - TILE_CUT_MS - TILE_FLOW_MS) / TILE_FINISH_MS));
+    // the source, faint, with the cut lines arriving across it
+    var sw = T.src.c * t, sh = T.src.rows * t;
+    ctx.save();
+    ctx.globalAlpha = 0.18 * (1 - finish);
+    ctx.beginPath(); rectPath(0, 0, sw, sh); ctx.fillStyle = col; ctx.fill();
+    var cutA = Math.min(1, e / TILE_CUT_MS) * (1 - finish);
+    if (cutA > 0) {
+        ctx.globalAlpha = 0.5 * cutA; ctx.strokeStyle = col; ctx.lineWidth = 0.75; ctx.beginPath();
+        for (var i = 1; i < T.src.c; i++) { var x = w2s(i * t, 0).x; ctx.moveTo(x, w2s(0, 0).y); ctx.lineTo(x, w2s(0, sh).y); }
+        for (var j = 1; j < T.src.rows; j++) { var y = w2s(0, j * t).y; ctx.moveTo(w2s(0, 0).x, y); ctx.lineTo(w2s(sw, 0).x, y); }
+        ctx.stroke();
+    }
+    // the tiles: each from its place in the source to its place in the rectangle
+    var fillP = new Path2D(), leadP = new Path2D();
+    for (var k = 0; k < T.n; k++) {
+        var p = e < TILE_CUT_MS ? 0 : ease(Math.max(0, Math.min(1, (e - TILE_CUT_MS - k * stagger) / TILE_MOVE_MS)));
+        var x0 = (k % T.src.c) * t, y0 = Math.floor(k / T.src.c) * t;
+        var x1 = (k % T.tgt.c) * t, y1 = Math.floor(k / T.tgt.c) * t;
+        var a = w2s(x0 + (x1 - x0) * p, y0 + (y1 - y0) * p + t), b = w2s(x0 + (x1 - x0) * p + t, y0 + (y1 - y0) * p);
+        fillP.rect(a.x, a.y, b.x - a.x, b.y - a.y);
+        leadP.rect(a.x, a.y, b.x - a.x, b.y - a.y);
+    }
+    ctx.globalAlpha = 0.38 * (1 - finish); ctx.fillStyle = col; ctx.fill(fillP);
+    ctx.globalAlpha = 0.6 * (1 - finish); ctx.strokeStyle = '#4a4540'; ctx.lineWidth = 0.6; ctx.stroke(leadP);
+    // the finish: the ordinary rectangle, and its label, come in as the tiles go
+    if (finish > 0) {
+        ctx.globalAlpha = LEAD_ALPHA * finish; ctx.lineWidth = 2; ctx.strokeStyle = col;
+        ctx.beginPath(); rectPath(0, 0, T.r.wf, T.r.hf); ctx.stroke();
+        ctx.restore();
+        drawLabelAt(T.r, labelBox(T.r), LABEL_ALPHA * finish);
+    } else ctx.restore();
+    dirty = true;
+}
+function drawHighlight(now) {
+    var age = now - highlight.t0;
+    if (age > HIGHLIGHT_MS) { highlight = null; return; }
+    ctx.save(); ctx.globalAlpha = 0.8 * (1 - age / HIGHLIGHT_MS); ctx.lineWidth = 4; ctx.strokeStyle = rowColor(highlight.r.qi);
+    ctx.beginPath(); rectPath(0, 0, highlight.r.wf, highlight.r.hf); ctx.stroke(); ctx.restore();
+    dirty = true;
 }
 
 function render() {
@@ -949,9 +1093,15 @@ function render() {
     // 15 Oct): the edges are the glass's own, drawn at their exact places, antialiased.
     if (fillOn) {
         ctx.globalCompositeOperation = 'multiply'; ctx.globalAlpha = FILL_ALPHA;
+        var qs = quarters();
         rects.forEach(function(r) {
-            if (!isShown(r.qi)) return;
-            ctx.beginPath(); rectPath(0, 0, r.wf, r.hf); ctx.fillStyle = rowColor(r.qi); ctx.fill();
+            if (!isShown(r.qi) || (tiles && tiles.r === r)) return;
+            ctx.fillStyle = rowColor(r.qi);
+            qs.forEach(function(sg) {
+                ctx.beginPath();
+                rectPath(Math.min(0, sg[0] * r.wf), Math.min(0, sg[1] * r.hf), Math.max(0, sg[0] * r.wf), Math.max(0, sg[1] * r.hf));
+                ctx.fill();
+            });
         });
         ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
     }
@@ -969,8 +1119,10 @@ function render() {
     ctx.moveTo(a.x0, snap(o.y)); ctx.lineTo(W, snap(o.y));
     ctx.stroke();
     CW.axisNumbers.draw(ctx, { w2s: w2s, z: view.z, box: { l: a.x0, r: W, t: 0, b: H },
-                               negative: false, color: AXIS_COLOR });
+                               negative: mirrorOn, color: AXIS_COLOR });
     drawLabels();
+    if (tiles) drawTiles(performance.now());
+    if (highlight) drawHighlight(performance.now());
 
     // The live rectangles and their corners
     if (free) {
@@ -1003,7 +1155,8 @@ function frame(now) {
         if (fast) { fastLaid += n; fastOn = fastOn || !!h.run; }
         if (h.run) anyAnim = true;            // the camera keeps the sweep in sight, outward only
     });
-    Sound.flow(fastOn ? fastLaid / Math.max(dt, 1) * 1000 : 0);
+    var tileRate = (tiles && now - tiles.t0 > TILE_CUT_MS && now - tiles.t0 < TILE_CUT_MS + TILE_FLOW_MS) ? tiles.n / (TILE_FLOW_MS / 1000) : 0;
+    Sound.flow(Math.max(fastOn ? fastLaid / Math.max(dt, 1) * 1000 : 0, tileRate));
     // The key and the readouts follow the sweep a few times a second (Glass used is exact
     // arithmetic over every rectangle, too dear to redo for each one of hundreds).
     if ((keyDirty || roDirty) && (!anyAnim || now - lastPanelDraw > 200)) {
@@ -1105,7 +1258,6 @@ canvas.addEventListener('pointerdown', function(e) {
     else if (held.length) {
         var h = nearestHeld(p);
         drag = { kind: 'fixed', h: h, start: p, moved: false, lw0: h.lw, si: nearestStop(h.stops, h.lw) };
-        h.anim = null; h.run = null;
     }
     else drag = { kind: 'pan', start: p, last: p, moved: false };
 });
@@ -1130,7 +1282,11 @@ canvas.addEventListener('pointermove', function(e) {
         drag.moved = true;
         if (drag.kind === 'one') { drag.kind = 'make'; }
         if (drag.kind === 'pan') { holdView = true; viewTarget = null; catchUp = null; }
-        if (drag.kind === 'fixed') viewTarget = null;
+        if (drag.kind === 'fixed') {
+            // Her own drag takes the corner: any sweep or glide of that number stops (a mere
+            // tap does not; it pauses or plays tiles instead).
+            viewTarget = null; drag.h.anim = null; drag.h.run = null; drag.lw0 = drag.h.lw;
+        }
     }
     if (!drag.moved) return;
     if (drag.kind === 'fixed') { moveFixed(drag, p); dirty = true; return; }
@@ -1173,7 +1329,21 @@ function endPointer(e) {
     if (d.kind === 'pan' && d.moved) { holdView = false; return; }
     if (d.kind === 'make') { if (d.moved) markUsed(qi); renderReadouts(); dirty = true; return; }
     if (d.kind === 'fixed' && d.moved) catchUp = d.h;
-    // A tap does nothing on the plane.
+    if (d.moved) return;
+    // A tap on a label shows that rectangle's glass being cut and put back together (or, past
+    // TILE_LIMIT tiles, a brief highlight). Anywhere else on the plane, a tap pauses a sweep
+    // and the next goes on; with no sweep running it does nothing.
+    var r = labelAt(d.start.x, d.start.y);
+    if (r) {
+        if (tiles && tiles.done) { var fin = tiles.done; tiles = null; fin(); }
+        if (!playTiles(r)) highlight = { r: r, t0: performance.now() };
+        dirty = true; return;
+    }
+    if (paused) {
+        var gap = performance.now() - pausedAt;
+        held.forEach(function(h) { if (h.run) h.run.next += gap; });
+        paused = false;
+    } else if (held.some(function(h) { return h.run; })) { paused = true; pausedAt = performance.now(); }
 }
 canvas.addEventListener('pointerup', endPointer);
 canvas.addEventListener('pointercancel', endPointer);
@@ -1266,7 +1436,47 @@ var Sound = (function() {
 document.getElementById('w-sound').addEventListener('click', function() {
     var on = !this.classList.contains('on'); this.classList.toggle('on', on); Sound.setOn(on);
 });
-document.getElementById('w-every').addEventListener('click', everyCut);
+document.getElementById('w-every').addEventListener('click', function() { paused = false; everyCut(); });
+document.getElementById('w-mirror').addEventListener('click', function() {
+    mirrorOn = !mirrorOn; this.classList.toggle('on', mirrorOn); dirty = true;
+});
+
+// How this works, as Geometry's: a movable window listing the ideas; a tap on one opens its
+// explanation (and closes the one open before); close puts it away, and How this works
+// brings it back where she left it.
+(function() {
+    var how = document.getElementById('how'), pos = null, drag = null;
+    document.getElementById('how-example').innerHTML = '2 ' + CW.num.op('=') + CW.num.html(2, 3) + CW.num.op('\u00d7') + ' 3';
+    document.getElementById('w-how').addEventListener('click', function() {
+        if (how.style.display === 'block') return;
+        how.style.display = 'block';
+        if (pos) { how.style.left = pos.x + 'px'; how.style.top = pos.y + 'px'; }
+        else { how.style.left = (colW + 16) + 'px'; how.style.top = '16px'; }
+    });
+    how.querySelector('.close').addEventListener('click', function() {
+        pos = { x: how.offsetLeft, y: how.offsetTop }; how.style.display = 'none';
+    });
+    how.querySelectorAll('.idea').forEach(function(el) {
+        el.addEventListener('click', function() {
+            var open = el.classList.contains('open');
+            how.querySelectorAll('.idea').forEach(function(x) { x.classList.remove('open'); });
+            if (!open) el.classList.add('open');
+        });
+    });
+    // the whole window is the drag surface, except its words
+    how.addEventListener('pointerdown', function(e) {
+        if (e.target.closest('.close, .idea')) return;
+        how.setPointerCapture(e.pointerId);
+        drag = { x: e.clientX, y: e.clientY, l: how.offsetLeft, t: how.offsetTop, moved: false };
+    });
+    how.addEventListener('pointermove', function(e) {
+        if (!drag) return;
+        how.style.left = Math.max(0, Math.min(W - 60, drag.l + e.clientX - drag.x)) + 'px';
+        how.style.top = Math.max(0, Math.min(H - 40, drag.t + e.clientY - drag.y)) + 'px';
+    });
+    how.addEventListener('pointerup', function() { drag = null; });
+    how.addEventListener('pointercancel', function() { drag = null; });
+})();
 
 // ----------------------------------------------------------------- the key
 // With a colour chosen in the palette, a tap on a resolution gives it that colour:

@@ -1296,6 +1296,22 @@ backstop for the Claude Code session that lands the file.
   and written from the BigInts; a fraction past 12 digits folds to "21 and a fraction 40 digits
   long", a tap opening it. The view recovers if the page opened with no size.
   `CW_VERSION 2026-10-16d 05ccc2c`.
+  *16 Oct, later:* **Tiles that flow** — the glass shown being cut: the source (N × 1, or the stop
+  nearest square for an N not whole) is cut at the rectangle's cut, and its N × cut² tiles move one
+  at a time, reading order to reading order, into the rectangle, then fade into it and its label
+  (`TILE_CUT_MS` 400, `TILE_FLOW_MS` 2 000, `TILE_MOVE_MS` 350, `TILE_FINISH_MS` 450). Played once
+  for the first rectangle of each new cut in a sweep (the sweep waits), and on a tap on a label;
+  never above `TILE_LIMIT` 200 tiles (a tapped label there flashes its rectangle) nor for Every cut.
+  The flow shushes like a sweep. A tap on the plane pauses a sweep and the next goes on (only a
+  real drag of the corner ends one). **Mirror**, never briefed to Claude Code ("revision 4"),
+  built on the bench's own reading: every rectangle, its fill and its Join drawn in all four
+  quarters, the axes numbered on every side without minus signs, *Whole* framing all four; the
+  1, the corner, labels and tiles stay upper-right. **The column** is now the working parts only,
+  in parts spaced by two CSS variables and ordered by `order` (How this works; the numbers; the
+  dial with *Every cut*; the key; Near Whole Mirror; Join Fill Color; set apart, Sound Clear);
+  the instructions moved into **How this works**, Geometry's movable window, six ideas each
+  opening its explanation in Michael's words. Only the words that act are bold.
+  `CW_VERSION 2026-10-16e 6f826b1`.
 
 - **`join-bench.html` → `active/deep-time.html` → `active/time-machine.html` (9 Oct)** — *The join*, built 6 Oct 2026 and **hung 7 Oct on
   Michael's word as Deep Time**, beside the Time Machine in the gallery (`stories/gallery.json`, slug

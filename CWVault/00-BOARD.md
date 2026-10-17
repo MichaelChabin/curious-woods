@@ -732,6 +732,10 @@ viewings of one coordinate space. Ten settled decisions, four phases, three benc
   default, Michael to rule). Smooth at hundreds of rectangles on a Mac; iPad unmeasured. Glass
   used over many cuts is an exact fraction hundreds of digits long: folded to its whole part and
   its length, open on a tap — Michael to rule. Pushed on his word, 16 Oct.
+  *16 Oct, later:* **tiles that flow** (the cut shown, once per new cut in a sweep and on a label
+  tap, up to 200 tiles), **pause** on a tap, **Mirror** built on Claude Code's own reading (its
+  brief never reached this session — Michael to check it against what he meant), and **the
+  column** rebuilt with the instructions moved into How this works. Checked in the app's browser.
   **Next action:** the iPad drive; Mirror's brief, if it exists, to Claude Code.
 
 ### 2. Perception Lab — the child's own instrument
