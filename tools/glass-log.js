@@ -131,6 +131,19 @@ function create(opts) {
       lab.append({ op: 'fill', fillId: 'fill:' + Date.now(), vertices: face.vertices, edges: face.edges, color: colour || '#c2d4bc', opacity: 1.0 });
       return api;
     },
+    // One sheet from the panes under a list of [x, y] spots, as the board's drag joins them (18 Oct 2026).
+    sheet(spots, colour) {
+      const seen = {}, panes = [];
+      spots.forEach(s => {
+        const f = lab.face(s[0], s[1]); if (!f) throw new Error('no pane at (' + s[0] + ', ' + s[1] + ')');
+        const k = f.vertices.slice().sort().join(','); if (seen[k]) return; seen[k] = true;
+        panes.push({ vertices: f.vertices, edges: f.edges });
+      });
+      if (!panes.length) throw new Error('an empty sheet');
+      lab.append({ op: 'fill', fillId: 'fill:' + Date.now(), panes: panes, color: colour || '#c2d4bc', opacity: 1.0 });
+      return api;
+    },
+    glassOnly(on) { lab.append({ op: 'show_glass', value: on !== false }); return api; },
     // Lead on the edge nearest (x, y). A closed loop fills, exactly as the lab does it.
     lead(x, y) {
       const hit = nearestEdge(x, y);

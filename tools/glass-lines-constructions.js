@@ -45,21 +45,26 @@ g.line(P[0], P[1], X2[0], X2[1]);
 const Mr = llx(P, X2, BR, TR); expect('the middle of the right side', Mr, [U, 0]);
 g.line(Mr[0], Mr[1], C[0], C[1]);                                  // the level line through the middle
 
-// Glass: every pane inside the frame, found by sampling, each once, coloured by its quarter.
-const QUARTER = { tl: '#1a3a8c', tr: '#8b1a1a', bl: '#c8780a', br: '#1a6a2a' };   // Chartres: cobalt, gold-red, amber, copper green
-const seen = {}; const panes = [];
+// Glass, the way we hope she will work (18 Oct 2026): the four quarters as four sheets, each one drag
+// across the scaffolding, in two alternating colours; then Glass only, so the last thing she sees is
+// a clean four-pane window. The panes of each quarter are found by sampling and handed to sheet()
+// as one spot each (a pane never straddles a quarter: the two middle lines are lines of the board).
+const BLUE = '#1a3a8c', AMBER = '#c8780a';   // Chartres: cobalt and amber
+const QUARTER = { tl: BLUE, tr: AMBER, bl: AMBER, br: BLUE };
+const seen = {}; const spots = { tl: [], tr: [], bl: [], br: [] };
 for (let y = BL[1] + 1; y < TR[1]; y += 2) for (let x = BL[0] + 1; x < TR[0]; x += 2) {
   const f = g.lab.face(x, y); if (!f) continue;
   const key = f.vertices.slice().sort().join(','); if (seen[key]) continue; seen[key] = true;
   const pts = f.vertices.map(id => g.lab.points.get(id));
   const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length, cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
   if (cx <= BL[0] || cx >= TR[0] || cy <= BL[1] || cy >= TR[1]) continue;   // outside the frame: no glass
-  panes.push({ x: x, y: y, colour: QUARTER[(cy > 0 ? 't' : 'b') + (cx > 0 ? 'r' : 'l')], area: f.area });
+  spots[(cy > 0 ? 't' : 'b') + (cx > 0 ? 'r' : 'l')].push([x, y]);
 }
-panes.sort((p, q) => q.area - p.area);
-panes.forEach(p => g.pane(p.x, p.y, p.colour));
+['tl', 'tr', 'bl', 'br'].forEach(q => g.sheet(spots[q], QUARTER[q]));
+g.glassOnly();
 
 g.write('cw-deploys/models/logs/geo_halves.json', 'Halves',
-  'The lines board\'s first demo: with one free point outside the frame and lines alone, the middle of the bottom is found (lines from the point to the two bottom corners, the crossing lines, the line through their crossing), then the diagonals and the upright through the two middles; the same again for the height from the left and right sides gives the level line. Every pane inside the frame then takes glass, a colour to each quarter.',
+  'The lines board\'s first demo: with one free point outside the frame and lines alone, the middle of the bottom is found (lines from the point to the two bottom corners, the crossing lines, the line through their crossing), then the diagonals and the upright through the two middles; the same again for the height from the left and right sides gives the level line. Then the four quarters take glass as four sheets, one drag each, in two colours, and the window is shown alone.',
   { level: 'lines' });
-console.log('Halves: ' + g.ops().length + ' ops, ' + g.lab.fills.size + ' panes of glass, ' + [...g.lab.points.values()].filter(p => p.type !== 'hidden').length + ' dots');
+const sheets = [...g.lab.fills.values()].filter(f => !f.dissolved);
+console.log('Halves: ' + g.ops().length + ' ops, ' + sheets.length + ' sheets of ' + sheets.map(f => (f.panes || [1]).length).join('+') + ' panes, ' + g.lab.points.size + ' dots');

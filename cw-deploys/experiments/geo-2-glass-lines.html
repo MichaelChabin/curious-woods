@@ -9,19 +9,29 @@
   geo-2-glass-lines.html — the lines board (Geo-2-Glass-Lines, the second of the geometry series,
   after active/geo-1-glass-circles.html): the tool behind the second geometry story, Wright's
   Light Screens, which is not yet written. An experiment page, to find out how the board feels.
-  Built 17 Oct 2026 in Claude Code from CWVault/claude/Prompt-Build-Glass-Lines.md.
+  Built 17 Oct 2026 in Claude Code from CWVault/claude/Prompt-Build-Glass-Lines.md; revised 18 Oct
+  from claude/Prompt-Revise-Geo-2-Glass-Lines-01.md after Michael's first try: the board takes the
+  whole width of the window (a board is never confined to the story column — the standing rule
+  from that prompt), goes full screen on her first touch where the browser allows, has no circles,
+  joins panes into one sheet when colour is dragged across them, and pans with two fingers.
   The board: ../js/glass.js mounted as its window profile at the lines level
-  (app: 'window', level: 'lines'), palette 'chartres', the circle measured as it is drawn.
-  The frame, the free point, the hidden circle crossings and the rest are the level's
-  (js/glass.js, LEVELS.lines and everything marked BOARD). The page carries no story: a title,
-  a few literal sentences, the board at three-quarters of the window's height (as Stained Glass
-  Circles has it), and nothing else. Tab icon borrowed from Stained Glass Circles until the
-  story has a picture of its own.
+  (app: 'window', level: 'lines', fullscreen: true), palette 'chartres'. The frame, the free point,
+  the sheets and the rest are the level's (js/glass.js, LEVELS.lines and everything marked BOARD).
+  The page carries no story: a title, a few literal sentences, the board at three-quarters of the
+  window's height and the window's full width, and nothing else. Tab icon borrowed from Stained
+  Glass Circles until the story has a picture of its own.
 -->
 <title>Stained Glass Lines — Curious Woods</title>
 <link rel="stylesheet" href="../css/story.css?v=2026-09-27b">
 <style>
   :root { --aspect: calc(1 / 1); }   /* the board has no picture shape of its own; everything else is ../css/story.css */
+  /* A board is never confined to the story column (Michael, 18 Oct 2026): the figure is as wide as the
+     window at every width, centred on it (story.css's breakout centres on the shell, which is centred
+     too), and below 760px, where breakout folds back into the column, this still wins. */
+  html, body { overflow-x: hidden; }
+  figure.breakout.board { width: 100vw; left: calc(50% - (var(--rail-w) + var(--rail-gap)) / 2); transform: translateX(-50%); position: relative; }
+  @media (max-width: 1067px) { figure.breakout.board { left: 50%; } }
+  @media (max-width: 760px) { figure.breakout.board { position: relative; left: 50%; transform: translateX(-50%); width: 100vw; } }
   .bench-note { font-size: 14px; color: var(--cw-ink-soft); line-height: 1.5; margin: 1.2em 0 0; }
 </style>
 </head>
@@ -37,15 +47,15 @@
       <p class="subtitle">The board for <i>Wright&rsquo;s Light Screens</i>, the second geometry story. The story is not written yet; this is the tool, to find out how it feels.</p>
     </div>
 
-    <p>The frame is your window. Tap any empty space outside the frame to put down one dot; drag the dot to move it. Tap a dot, then tap another, and a line runs across the whole board. Where lines cross, new dots appear, and you can use those too. Tap a pane inside the frame to fill it with glass. Before your first line, drag a side of the frame to change its size.</p>
+    <p>The frame is your window. Touch the board once and it fills the screen; <i>Exit</i> at the bottom right, or the Escape key, brings the page back. Tap any empty space outside the frame to put down one dot; drag the dot to move it. Tap a dot, then tap another, and a line runs across the whole board. Where lines cross, new dots appear, and you can use those too. Tap a pane inside the frame to fill it with glass, or drag across several panes to make them one sheet. Two fingers move the board, and a pinch zooms it. Before your first line, drag a side of the frame to change its size.</p>
 
-    <!-- THE BOARD: the lab's window profile at the lines level, three-quarters of the window's height
-         (full height would leave no way to scroll the page: the lab takes the wheel and the finger). -->
-    <figure id="plate" class="breakout table">
+    <!-- THE BOARD: the lab's window profile at the lines level, the window's full width and three-quarters
+         of its height (full height would leave no way to scroll the page: the lab takes the wheel and the finger). -->
+    <figure id="plate" class="breakout table board">
       <div id="table" style="height: 72vh; min-height: 420px;"></div>
     </figure>
 
-    <p>Under <i>Demo</i> on the left, <i>Halves</i> finds the middle of the window with lines alone, and then colours it.</p>
+    <p>Under <i>Demo</i> on the left, <i>Halves</i> finds the middle of the window with lines alone, then colours the four quarters as four sheets and shows the window by itself.</p>
 
     <p class="bench-note">An experiment: the words in <i>How this works</i> are placeholders, and the frame&rsquo;s numbers are in the board&rsquo;s own unit, which has no name.</p>
 
@@ -58,17 +68,18 @@
 <script src="../js/cw-number.js?v=2026-09-03"></script>
 <script src="../js/plane.js?v=2026-08-13"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
-<script src="../js/glass.js?v=2026-10-17"></script>
+<script src="../js/glass.js?v=2026-10-18"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-17 40530d7';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-18 677b0e1';   // date + short commit hash; bump in the same commit as any change
   console.log('geo-2-glass-lines', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
   // THE BOARD: Glass Geometry's window profile at the lines level — the frame, the free point,
-  // lines across the board, circles whose crossings are hidden, glass inside the frame only.
-  if (typeof cwGlass === 'function') cwGlass(document.getElementById('table'), { app: 'window', level: 'lines', palette: 'chartres', measure: true });
+  // lines across the board, glass by tap or by a drag that joins panes into a sheet, inside the
+  // frame only; full screen on her first touch where the browser allows it.
+  if (typeof cwGlass === 'function') cwGlass(document.getElementById('table'), { app: 'window', level: 'lines', palette: 'chartres', fullscreen: true });
 })();
 </script>
 </body>

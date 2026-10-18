@@ -16,13 +16,18 @@
                            not greyed, and nothing says so
                 'both'     circles and lines (the default; what the lab has always done)
                 'lines'    the lines board (17 Oct 2026, Glass 2: Lines, the tool behind
-                           Wright's Light Screens; claude/Prompt-Build-Glass-Lines.md): served
-                           only by the window profile (app: 'window'). A frame instead of 0 and
-                           1, resizable until her first line; one free point she places outside
-                           it; lines across the whole board, fainter outside the frame; circles
-                           whose crossings are hidden vertices, never dots; glass only inside
-                           the frame; Undo a word only. Asked for by any other mount it is
-                           reported on the console and served as 'both'.
+                           Wright's Light Screens; claude/Prompt-Build-Glass-Lines.md and
+                           Prompt-Revise-Geo-2-Glass-Lines-01.md): served only by the window
+                           profile (app: 'window'). A frame instead of 0 and 1, resizable until
+                           her first line; one free point she places outside it; lines across
+                           the whole board, fainter outside the frame; no circles (18 Oct); glass
+                           only inside the frame, a tap for one pane and a drag for a sheet of
+                           panes with lead round the outside alone; Undo a word only; two fingers
+                           pan. Asked for by any other mount it is reported on the console and
+                           served as 'both'.
+     fullscreen  true: the first touch on the board takes it full screen where the browser
+              allows (Mac, iPad; not iPhone Safari), with a small Exit word and the Escape key
+              out (18 Oct 2026; the lines board asks for it).
               named, not built — the spine's steps after that, in order: 'grid',
               'rectangles', 'regions', 'plots'. Asking for one of them, or an unknown name, is
               reported on the console and served as 'both'. There is no store of what she has
@@ -91,6 +96,8 @@
     "    .cw-glass.g-app .g-left-panel { pointer-events: auto; touch-action: pan-y; }",
     "    .cw-glass.g-app .workspace-tool-header { margin: -12px -14px 10px; padding: 14px 14px 10px; min-height: 42px; background: rgba(200,184,154,0.22); border-radius: 6px 6px 0 0; }",
     "    .cw-glass.g-app .g-scroll-margin { position: absolute; top: 0; right: 0; bottom: 0; z-index: 1; pointer-events: auto; touch-action: pan-y; }",
+    "    /* The way out of full screen (18 Oct 2026), present only while the board is full screen. */",
+    "    .cw-glass .g-fs-exit { position: absolute; right: 44px; bottom: 12px; z-index: 120; display: none; font-size: 12px; pointer-events: all; }",
     "    .cw-glass .g-left-panel::after {",
     "      content: ''; position: absolute;",
     "      top: 0; right: 0; bottom: 0; width: 0.5px;",
@@ -444,7 +451,9 @@
     both:    { circle: true, line: true, htw: ['construction', 'shapes', 'color', 'eraser'], map: true, madeWord: 'Show the making', fill: 'edge', measure: false },
     // The lines board (17 Oct 2026): the window profile's second level. frame: the board opens with a
     // frame in place of 0 and 1, and everything below marked BOARD follows from that flag.
-    lines:   { circle: true, line: true, htw: ['lines', 'board-circles', 'board-color'], map: false, madeWord: 'Show lines', fill: 'tap', measure: true, frame: true },
+    // 18 Oct 2026 (Prompt-Revise-Geo-2-Glass-Lines-01): no circles on this board — they belong to a later
+    // step; the straightedge alone, and glass dragged across panes joins them into one sheet.
+    lines:   { circle: false, line: true, htw: ['lines', 'board-color'], map: false, madeWord: 'Show lines', fill: 'tap', measure: false, frame: true },
     // Named, not built: the spine's steps, arriving in this order.
     grid: null, rectangles: null, regions: null, plots: null
   };
@@ -494,6 +503,20 @@ function inDrawingBox(pos) {
     if (!APP) return true;
     var b = drawingBox();
     return pos.x >= b.x && pos.x <= b.x + b.w && pos.y >= b.y && pos.y <= b.y + b.h;
+}
+// Full screen (18 Oct 2026, the lines board asks for it): where the browser allows an element to
+// go full screen (Mac, iPad; not iPhone Safari), the first touch on the board takes it there.
+// The host is the full-screen element, so everything the lab shows comes with it; a small Exit
+// word at the bottom right and the Escape key bring it back.
+var FULLSCREEN = !!opts.fullscreen && !!(root.requestFullscreen || root.webkitRequestFullscreen);
+var fsAsked = false, fsPending = false;
+function isFullscreen() { return (document.fullscreenElement || document.webkitFullscreenElement) === root; }
+function enterFullscreen() {
+    // A refusal (no gesture, a browser that will not, an embedding that forbids it) is reported and that is all.
+    try { var p = root.requestFullscreen ? root.requestFullscreen() : root.webkitRequestFullscreen(); if (p && p.catch) p.catch(function (err) { console.warn('glass: full screen refused:', err && err.message || err); }); } catch (e) { console.warn('glass: full screen refused:', e && e.message || e); }
+}
+function exitFullscreen() {
+    try { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); } catch (e) {}
 }
 
 root.classList.add('cw-glass');
@@ -768,7 +791,24 @@ function replayLog(animateNew) {
             var s = logicalSegments.get(op.key); if (s) s.isEmphasized = false;
             var a = logicalArcs.get(op.key); if (a) a.isEmphasized = false;
         } else if (op.op === 'fill') {
-            fills.set(op.fillId, { fillId:op.fillId, vertices:op.vertices, edges:op.edges||null, color:op.color, opacity:(op.opacity !== undefined ? op.opacity : 1.0), dissolved:false });
+            // A fill is one pane (vertices, edges) or, since 18 Oct 2026 (the lines board), a sheet:
+            // `panes`, a list of panes joined into one piece of glass, lead round the outside alone.
+            var nf = { fillId:op.fillId, vertices:op.vertices, edges:op.edges||null, panes:op.panes||null, color:op.color, opacity:(op.opacity !== undefined ? op.opacity : 1.0), dissolved:false };
+            if (nf.panes && nf.panes.length) { nf.vertices = nf.panes[0].vertices; nf.edges = nf.panes[0].edges || null; }
+            fills.set(op.fillId, nf);
+            // A sheet takes its panes from whatever glass held them: an older fill loses those panes,
+            // and one left with none is gone. Nothing underneath is lost but the glass and the lead.
+            if (nf.panes) {
+                var taken = {};
+                nf.panes.forEach(function(p) { taken[paneKey(p.vertices)] = true; });
+                fills.forEach(function(f) {
+                    if (f === nf || f.dissolved) return;
+                    var ps = fillPanes(f), keep = ps.filter(function(p) { return !taken[paneKey(p.vertices)]; });
+                    if (keep.length === ps.length) return;
+                    if (!keep.length) { f.dissolved = true; return; }
+                    f.panes = keep; f.vertices = keep[0].vertices; f.edges = keep[0].edges || null;
+                });
+            }
         } else if (op.op === 'repaint_fill') {
             var f = fills.get(op.fillId); if (f) { f.color = op.color; f.opacity = (op.opacity !== undefined ? op.opacity : f.opacity); }
         } else if (op.op === 'dissolve_fill') {
@@ -842,7 +882,7 @@ function detectLineX(lineI, prev, an) {
     });
     circles.forEach(function(c, j) {
         var ce = points.get(c.centerId);
-        lcX(p1,p2,ce,c.radius).forEach(function(pt,k) { regX('lc:'+lineI+':'+j+':'+k, pt, prev, an, BOARD); });
+        lcX(p1,p2,ce,c.radius).forEach(function(pt,k) { regX('lc:'+lineI+':'+j+':'+k, pt, prev, an); });
     });
 }
 
@@ -850,30 +890,25 @@ function detectCircX(circI, prev, an) {
     var circ = circles.get(circI), ce = points.get(circ.centerId);
     lines.forEach(function(l, j) {
         var p1 = points.get(l.p1Id), p2 = points.get(l.p2Id);
-        lcX(p1,p2,ce,circ.radius).forEach(function(pt,k) { regX('lc:'+j+':'+circI+':'+k, pt, prev, an, BOARD); });
+        lcX(p1,p2,ce,circ.radius).forEach(function(pt,k) { regX('lc:'+j+':'+circI+':'+k, pt, prev, an); });
     });
     circles.forEach(function(o, j) {
         if (j >= circI) return;
         var oc = points.get(o.centerId);
-        ccX(ce,circ.radius,oc,o.radius).forEach(function(pt,k) { regX('cc:'+Math.min(circI,j)+':'+Math.max(circI,j)+':'+k, pt, prev, an, BOARD); });
+        ccX(ce,circ.radius,oc,o.radius).forEach(function(pt,k) { regX('cc:'+Math.min(circI,j)+':'+Math.max(circI,j)+':'+k, pt, prev, an); });
     });
 }
 
 var _dupEpsilon = 5; // world units; set from the seed unit on every init replay
 
-// On the lines board a crossing that a circle makes (line–circle, circle–circle) is a hidden
-// vertex: it is in the arrangement, so the pane finder sees the pane a circle cuts in two,
-// but it is not drawn, not tappable and not snapped to — nothing can be drawn from it. A line
-// drawn later through a hidden vertex brings it into view as an ordinary dot.
-function regX(id, pt, prev, an, hidden) {
+function regX(id, pt, prev, an) {
     if (points.has(id)) return;
-    var dup = null;
-    points.forEach(function(ex) { if (!dup && dist(pt.x,pt.y,ex.x,ex.y) < _dupEpsilon) dup = ex; });
-    if (dup) { if (!hidden && dup.type === 'hidden') dup.type = 'intersection'; return; }
-    _addPt(id, pt.x, pt.y, hidden ? 'hidden' : 'intersection', prev, an);
+    var dup = false;
+    points.forEach(function(ex) { if (dist(pt.x,pt.y,ex.x,ex.y) < _dupEpsilon) dup = true; });
+    if (dup) return;
+    _addPt(id, pt.x, pt.y, 'intersection', prev, an);
     _integrateNewPoint(id);
 }
-function visiblePoint(pt) { return pt.type !== 'hidden'; }
 
 // A newly recorded point joins any line or circle it happens to lie on —
 // used by intersection registration and by lattice-point minting alike.
@@ -1171,12 +1206,8 @@ function newConstruction() {
 // Bounding box is computed from fill polygon vertices, not all geometry.
 function captureConstructionPNG(note, callback) {
     // Collect all fill polygon points for tight bounding box
-    var allPolys = []; // each entry: { poly, fill }
-    fills.forEach(function(f) {
-        if (f.dissolved) return;
-        var poly = expandFillToPolygon(f);
-        if (poly.length >= 3) allPolys.push({ poly:poly, fill:f });
-    });
+    var allPolys = []; // each entry: { poly, fill } — a sheet contributes one entry per pane
+    liveFills().forEach(function(f) { fillPolygons(f).forEach(function(poly) { allPolys.push({ poly:poly, fill:f }); }); });
     // Fall back to all points if no fills exist
     var hasFills = allPolys.length > 0;
     var minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
@@ -1235,7 +1266,7 @@ function captureConstructionPNG(note, callback) {
             oc.beginPath(); oc.moveTo(pa.x, pa.y); oc.lineTo(pb.x, pb.y); oc.stroke();
         });
         oc.fillStyle = COLORS.point; oc.globalAlpha = 1;
-        points.forEach(function(pt) { if (!visiblePoint(pt)) return; var q = wp(pt.x, pt.y); oc.beginPath(); oc.arc(q.x, q.y, 2.5, 0, Math.PI * 2); oc.fill(); });
+        points.forEach(function(pt) { var q = wp(pt.x, pt.y); oc.beginPath(); oc.arc(q.x, q.y, 2.5, 0, Math.PI * 2); oc.fill(); });
     }
     if (crop) { oc.restore(); oc.strokeStyle = COLORS.border; oc.lineWidth = 1; oc.globalAlpha = 0.8; oc.strokeRect(ca.x, cb.y, cb.x-ca.x, ca.y-cb.y); oc.globalAlpha = 1; }
     // Note text at bottom
@@ -1316,8 +1347,7 @@ function superscript(n) {
 }
 
 function showUniquenessObservation() {
-    var nPts = 0; points.forEach(function(pt) { if (visiblePoint(pt)) nPts++; });
-    var nLines = lines.size - (BOARD && frame ? 4 : 0), nCircles = circles.size;   // the frame's sides are not hers
+    var nPts = points.size, nLines = lines.size - (BOARD && frame ? 4 : 0), nCircles = circles.size;   // the frame's sides are not hers
     var u = computeUniqueness(nPts);
 
     // Find comparison
@@ -1379,11 +1409,7 @@ var _previewData = null; // { minX, minY, ww, wh, s, matPx, offX, offY, artW, ar
 function renderPreviewCanvas(sizeKey) {
     // Fast preview: artwork + lead + border mat, no texture enhancements
     var allPolys = [];
-    fills.forEach(function(f) {
-        if (f.dissolved) return;
-        var poly = expandFillToPolygon(f);
-        if (poly.length >= 3) allPolys.push({ poly: poly, fill: f });
-    });
+    liveFills().forEach(function(f) { fillPolygons(f).forEach(function(poly) { allPolys.push({ poly: poly, fill: f }); }); });
     var leadLines2 = collectLeadLines();
     var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     allPolys.forEach(function(item) {
@@ -1422,13 +1448,10 @@ function renderPreviewCanvas(sizeKey) {
     oc.strokeStyle = '#c8b89a'; oc.lineWidth = 1;
     oc.strokeRect(matPx - 0.5, matPx - 0.5, artW + 1, artH + 1);
     oc.fillStyle = COLORS.background; oc.fillRect(matPx, matPx, artW, artH);
-    var sorted = allPolys.slice().sort(function(a, b) { return shoelaceArea(b.poly) - shoelaceArea(a.poly); });
-    sorted.forEach(function(item) {
-        var f = item.fill;
-        var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
-        oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
-        for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
-        oc.closePath(); oc.fillStyle = f.color; oc.globalAlpha = f.opacity; oc.fill('evenodd');
+    var sortedF = liveFills().sort(function(a, b) { return fillArea(b) - fillArea(a); });
+    sortedF.forEach(function(f) {
+        oc.fillStyle = f.color; oc.globalAlpha = f.opacity;
+        fillPolygons(f).forEach(function(poly) { fillPath(oc, poly, wp); oc.fill('evenodd'); });
         oc.globalAlpha = 1;
     });
     var lw = Math.max(1, LEAD_WIDTH * sc);
@@ -1438,12 +1461,7 @@ function renderPreviewCanvas(sizeKey) {
         else { var c = wp(l.cx, l.cy); oc.beginPath(); oc.arc(c.x, c.y, l.r * sc, -l.aA, -l.aB, true); oc.stroke(); } // y-up flip
     }
     oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = lw;
-    sorted.forEach(function(item) {
-        var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
-        oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
-        for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
-        oc.closePath(); oc.stroke();
-    });
+    sortedF.forEach(function(f) { strokeFillLead(oc, f, wp); });
     leadLines2.forEach(drawLL);
     if (BOARD && frame) { var fa = wp(frame.x0, frame.y0), fb = wp(frame.x1, frame.y1); oc.beginPath(); oc.rect(fa.x, fb.y, fb.x - fa.x, fa.y - fb.y); oc.stroke(); }
     return off.toDataURL('image/png');
@@ -1758,11 +1776,8 @@ function crc32(data) {
 // Postcard-quality image export
 function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     var allPolys = [];
-    fills.forEach(function(f) {
-        if (f.dissolved) return;
-        var poly = expandFillToPolygon(f);
-        if (poly.length >= 3) allPolys.push({ poly: poly, fill: f });
-    });
+    var sortedF = liveFills().sort(function(a, b) { return fillArea(b) - fillArea(a); });   // largest first, smallest on top
+    sortedF.forEach(function(f) { fillPolygons(f).forEach(function(poly) { allPolys.push({ poly: poly, fill: f }); }); });
     var leadLines = collectLeadLines();
     // No toast-block (acceptance: absent means absent, nothing toast-blocked):
     // a construction with no glass renders an honest empty parchment — the
@@ -1845,7 +1860,7 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     oc.fillRect(matPx, matPx, artW, artH);
 
     // Glass fills (sorted largest first)
-    var sorted = allPolys.slice().sort(function(a, b) { return shoelaceArea(b.poly) - shoelaceArea(a.poly); });
+    var sorted = allPolys;   // in the fills' order: a sheet's panes together, largest fill first
     sorted.forEach(function(item) {
         var f = item.fill;
         var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
@@ -1895,12 +1910,8 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
             oc.beginPath(); oc.arc(c.x, c.y, l.r * s, -l.aA, -l.aB, true); oc.stroke(); // y-up flip
         }
     }
-    function drawFillBoundary(item) {
-        var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
-        oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
-        for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
-        oc.closePath(); oc.stroke();
-    }
+    // Each fill's lead: its outline, or a sheet's outside edges alone (18 Oct 2026).
+    function drawFillBoundary(f) { strokeFillLead(oc, f, wp); }
     function drawFrameLead() {
         if (!(BOARD && frame)) return;
         var fa = wp(frame.x0, frame.y0), fb = wp(frame.x1, frame.y1);
@@ -1911,20 +1922,20 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     // Shadow pass (all lead)
     oc.save(); oc.translate(2, 2);
     oc.strokeStyle = 'rgba(0,0,0,0.2)'; oc.lineWidth = leadW;
-    sorted.forEach(drawFillBoundary);
+    sortedF.forEach(drawFillBoundary);
     leadLines.forEach(drawLeadLine);
     drawFrameLead();
     oc.restore();
     // Highlight pass (top-left edge)
     oc.save(); oc.translate(-1, -1);
     oc.strokeStyle = 'rgba(255,255,255,0.15)'; oc.lineWidth = Math.max(1, leadW * 0.4);
-    sorted.forEach(drawFillBoundary);
+    sortedF.forEach(drawFillBoundary);
     leadLines.forEach(drawLeadLine);
     drawFrameLead();
     oc.restore();
     // Main lead pass
     oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = leadW; oc.globalAlpha = 1;
-    sorted.forEach(drawFillBoundary);
+    sortedF.forEach(drawFillBoundary);
     leadLines.forEach(drawLeadLine);
     drawFrameLead();
 
@@ -2219,6 +2230,59 @@ function shoelaceArea(poly) {
     return Math.abs(a) / 2;
 }
 
+// ── Sheets (18 Oct 2026, the lines board) ───────────────────────────────────────────────
+// A fill holds one pane or several (`panes`). Every reader of a fill goes through these, so a
+// sheet draws as the union of its panes and its lead runs round the outside alone: an edge
+// (a pair of point ids) that two of its panes share is inside the sheet and is not lead.
+function paneKey(vertices) { return vertices.slice().sort().join(','); }
+function fillPanes(f) { return f.panes || [{ vertices: f.vertices, edges: f.edges }]; }
+function fillPolygons(f) { return fillPanes(f).map(expandFillToPolygon).filter(function(p) { return p.length >= 3; }); }
+function fillArea(f) { return fillPolygons(f).reduce(function(s, p) { return s + shoelaceArea(p); }, 0); }
+// The sheet's outside, as point-id pairs; null for a one-pane fill, whose polygon is its own outline.
+function fillBoundary(f) {
+    if (!f.panes || f.panes.length < 2) return null;
+    var count = {}, pairs = {};
+    f.panes.forEach(function(p) {
+        var edges = p.edges || p.vertices.map(function(id, i) { return { type:'seg', a:id, b:p.vertices[(i + 1) % p.vertices.length] }; });
+        edges.forEach(function(e) {
+            if (e.type !== 'seg') return;
+            var k = e.a < e.b ? e.a + '|' + e.b : e.b + '|' + e.a;
+            count[k] = (count[k] || 0) + 1; pairs[k] = [e.a, e.b];
+        });
+    });
+    var out = [];
+    Object.keys(count).forEach(function(k) { if (count[k] === 1) out.push(pairs[k]); });
+    return out;
+}
+// Lead for a fill on a 2d context, in the current stroke style: the polygon's outline, or the
+// sheet's outside edges. `map` turns a world point into the context's.
+function strokeFillLead(c, f, map) {
+    var b = fillBoundary(f);
+    if (!b) {
+        fillPolygons(f).forEach(function(poly) {
+            var v = poly.map(function(p) { return map(p.x, p.y); });
+            c.beginPath(); c.moveTo(v[0].x, v[0].y);
+            for (var i = 1; i < v.length; i++) c.lineTo(v[i].x, v[i].y);
+            c.closePath(); c.stroke();
+        });
+        return;
+    }
+    c.beginPath();
+    b.forEach(function(pr) {
+        var A = points.get(pr[0]), B = points.get(pr[1]); if (!A || !B) return;
+        var a = map(A.x, A.y), bb = map(B.x, B.y);
+        c.moveTo(a.x, a.y); c.lineTo(bb.x, bb.y);
+    });
+    c.stroke();
+}
+function fillPath(c, poly, map) {
+    var v = poly.map(function(p) { return map(p.x, p.y); });
+    c.beginPath(); c.moveTo(v[0].x, v[0].y);
+    for (var i = 1; i < v.length; i++) c.lineTo(v[i].x, v[i].y);
+    c.closePath();
+}
+function liveFills() { var arr = []; fills.forEach(function(f) { if (!f.dissolved) arr.push(f); }); return arr; }
+
 function pip(px,py,v) {
     var inside=false;
     for (var i=0,j=v.length-1; i<v.length; j=i++) {
@@ -2229,15 +2293,12 @@ function pip(px,py,v) {
 }
 
 function hitFilledRegion(wx,wy) {
-    var arr = [];
-    fills.forEach(function(f) { if (!f.dissolved) arr.push(f); });
+    var arr = liveFills();
     // Sort by area ascending so smallest (topmost) fill is tested first
-    arr.sort(function(a, b) {
-        return shoelaceArea(expandFillToPolygon(a)) - shoelaceArea(expandFillToPolygon(b));
-    });
+    arr.sort(function(a, b) { return fillArea(a) - fillArea(b); });
     for (var i=0; i<arr.length; i++) {
-        var v = expandFillToPolygon(arr[i]);
-        if (v.length>=3 && pip(wx,wy,v)) return arr[i];
+        var polys = fillPolygons(arr[i]);
+        for (var k = 0; k < polys.length; k++) if (pip(wx,wy,polys[k])) return arr[i];
     }
     return null;
 }
@@ -2621,25 +2682,27 @@ function render() {
     if (mapShown && !showGlass) plane.drawLattice(ctx);
 
     // Sort fills by area descending (largest first, smallest on top)
-    var sortedFills = [];
-    fills.forEach(function(f) { if (!f.dissolved) sortedFills.push(f); });
-    sortedFills.sort(function(a, b) {
-        var polyA = expandFillToPolygon(a), polyB = expandFillToPolygon(b);
-        return shoelaceArea(polyB) - shoelaceArea(polyA);
-    });
+    var sortedFills = liveFills();
+    sortedFills.sort(function(a, b) { return fillArea(b) - fillArea(a); });
     sortedFills.forEach(function(f) {
-        var poly = expandFillToPolygon(f);
-        var v = poly.map(function(p) { return w2s(p.x,p.y); });
-        if (v.length < 3) return;
-        ctx.beginPath(); ctx.moveTo(v[0].x,v[0].y);
-        for (var i=1; i<v.length; i++) ctx.lineTo(v[i].x,v[i].y);
-        ctx.closePath();
-        ctx.fillStyle = f.color; ctx.globalAlpha = f.opacity; ctx.fill('evenodd');
+        // the glass: every pane of the fill; then its lead — the outline, or a sheet's outside alone
+        ctx.fillStyle = f.color; ctx.globalAlpha = f.opacity;
+        fillPolygons(f).forEach(function(poly) { fillPath(ctx, poly, w2s); ctx.fill('evenodd'); });
         ctx.strokeStyle = LEAD_BORDER_COLOR; ctx.lineWidth = LEAD_WIDTH;
         ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-        ctx.globalAlpha = 1; ctx.stroke();
         ctx.globalAlpha = 1;
+        strokeFillLead(ctx, f, w2s);
     });
+    // The sheet being dragged (the lines board): the panes crossed so far, in the colour, lightly.
+    if (paint && paint.order.length) {
+        var pf = { panes: paint.order.map(function(k) { return paint.panes[k]; }) };
+        ctx.fillStyle = paint.colour; ctx.globalAlpha = 0.55;
+        fillPolygons(pf).forEach(function(poly) { fillPath(ctx, poly, w2s); ctx.fill('evenodd'); });
+        ctx.strokeStyle = LEAD_BORDER_COLOR; ctx.lineWidth = LEAD_WIDTH; ctx.globalAlpha = 0.5;
+        if (pf.panes.length === 1) strokeFillLead(ctx, { vertices: pf.panes[0].vertices, edges: pf.panes[0].edges }, w2s);
+        else strokeFillLead(ctx, pf, w2s);
+        ctx.globalAlpha = 1;
+    }
 
     if (showLines && !showGlass) {
         if (BOARD && frame) {
@@ -2776,7 +2839,6 @@ function render() {
     // Just the glass (ledger §9): the finished window shows glass, lead and
     // notes — no points, no construction lines, no lattice.
     if (!showGlass) points.forEach(function(pt) {
-        if (!visiblePoint(pt)) return;   // a hidden vertex (the lines board) is in the arrangement, not on the board
         var s=w2s(pt.x,pt.y),sc=ptScale(pt.id),sm=((pt.type==='seed'||pt.type==='free')?1.4:1.0);
         var ap = false;
         if (ghostCircle && snapTarget && snapTarget.id===pt.id) ap=true;
@@ -3103,7 +3165,6 @@ animate();
 function hitPt(wx,wy) {
     var t=THRESHOLDS.pointHitRadius/plane.zoom(), tFade=t*0.5, found=null;
     points.forEach(function(p) {
-        if (!visiblePoint(p)) return;
         var r = p.isScaffold ? tFade : t;
         if (dist(wx,wy,p.x,p.y)<r) found=p;
     });
@@ -3163,7 +3224,7 @@ function findSnap(cp,cr) {
     // Collect all candidate snap points (within threshold of the circle arc)
     var candidates = [];
     points.forEach(function(p) {
-        if (p.id===cp.id || !visiblePoint(p)) return;
+        if (p.id===cp.id) return;
         var d=Math.abs(dist(cp.x,cp.y,p.x,p.y)-cr);
         if (d<t) candidates.push(p);
     });
@@ -3311,10 +3372,13 @@ function tryAutoComplete(clickedKey) {
 // its own glass is repainted or dissolved; a shape inside older glass gets glass of its own, or,
 // for Remove, a pane of the board's own colour so the glass under it is gone to the shape's edges.
 function fillWithFace(face) {
-    var want = face.vertices.slice().sort().join(','), found = null;
+    // The fill holding this very pane: a one-pane fill of the same shape, or a sheet one of whose
+    // panes it is (a tap on a sheet speaks to the whole sheet).
+    var want = paneKey(face.vertices), found = null;
     fills.forEach(function(f) {
         if (found || f.dissolved) return;
-        if (f.vertices.slice().sort().join(',') !== want) return;
+        if (f.panes) { if (f.panes.some(function(p) { return paneKey(p.vertices) === want; })) found = f; return; }
+        if (paneKey(f.vertices) !== want) return;
         var a = shoelaceArea(expandFillToPolygon(f));
         if (Math.abs(a - face.area) <= 1e-6 * Math.max(1, face.area)) found = f;
     });
@@ -3373,6 +3437,11 @@ var ghostLineEnd=null, ghostCircle=null, snapTarget=null;
 var pointerStart=null, lastTapTime=0, lastTapTarget=null;
 var isPanning=false, panStart=null;
 var frameDrag=null;   // the lines board: { side } while a side of the frame is being dragged
+// Glass by hand (the lines board, 18 Oct 2026): a press inside the frame waits in paintPending —
+// a release without moving is a tap on one pane; a move starts `paint`, which gathers every pane
+// the finger crosses, sampled along its path, and the release joins them into one sheet.
+var paintPending=null;   // { world, onEdge }
+var paint=null;          // { panes: { key: { vertices, edges, poly } }, order: [key], colour, last: {x, y} }
 
 // ── Eraser state ─────────────────────────────────────────────────────────────
 var eraserActive    = false; // true while sweep drag is in progress
@@ -3393,6 +3462,7 @@ var POINT_HOVER_SCREEN = 12;
 
 var activeTouches = new Map(); // track multi-touch for pinch-to-zoom
 var pinchBaseDist = null, pinchBaseScale = null;
+var pinchBaseMid = null, pinchBasePan = null;   // two fingers also pan, on the lines board (18 Oct 2026)
 
 function getPos(e) {
     var r=canvas.getBoundingClientRect();
@@ -3407,6 +3477,9 @@ function onDown(e) {
     // A tap during play skips to the end and closes the panel (ledger §15)
     // — consumed entirely; it draws nothing.
     if (replayPlaying) { skipReplayToEnd(); return; }
+    // Full screen on her first touch (18 Oct 2026, where the browser allows it): the touch is spent
+    // on that and draws nothing; the request itself waits for the release, which counts as her gesture.
+    if (FULLSCREEN && !fsAsked && !isFullscreen()) { fsPending = true; return; }
     canvas.setPointerCapture(e.pointerId);
     activeTouches.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
@@ -3415,6 +3488,9 @@ function onDown(e) {
         var pts = Array.from(activeTouches.values());
         pinchBaseDist = dist(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
         pinchBaseScale = plane.zoom();
+        pinchBaseMid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+        pinchBasePan = plane.pan();
+        paint = null; paintPending = null;   // a second finger means the view, not the glass
         return;
     }
     if (activeTouches.size > 2) return; // ignore 3+ fingers
@@ -3451,6 +3527,14 @@ function onDown(e) {
     if (BOARD && !frameLocked() && !isStepThroughActive()) {
         var side = frameSideAt(world.x, world.y);
         if (side) { frameDrag = { side: side }; interactionState = 'FRAME_DRAG'; return; }
+    }
+
+    // ── 1c. Glass by hand (the lines board, 18 Oct 2026): a press inside the frame is a tap on one
+    //       pane, or the start of a drag that joins every pane it crosses into one sheet.
+    if (BOARD && inFrame(world.x, world.y) && state.palette.selected !== REMOVE) {
+        if (interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; interactionState='IDLE'; selectedPoint=null; return; }
+        paintPending = { world: world, onEdge: !!hitLC(world.x, world.y) };
+        return;
     }
 
     // ── 2. Logical segment / arc hit (bounded by two construction points) ─────────
@@ -3527,6 +3611,11 @@ function onMove(e) {
         var pts = Array.from(activeTouches.values());
         var curDist = dist(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
         plane.setZoom(pinchBaseScale * (curDist / pinchBaseDist));
+        // On the lines board two fingers pan as well as pinch (one finger there is the glass).
+        if (BOARD && pinchBaseMid && pinchBasePan) {
+            var mid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 }, z = plane.zoom();
+            plane.setPan(pinchBasePan.x - (mid.x - pinchBaseMid.x) / z, pinchBasePan.y + (mid.y - pinchBaseMid.y) / z);
+        }
         syncCanvasNoteDOMs();
         return;
     }
@@ -3536,6 +3625,18 @@ function onMove(e) {
 
     // ── The frame's side being dragged (the lines board) ─────────────────────────
     if (frameDrag) { resizeFrame(world); return; }
+
+    // ── Glass by hand (the lines board): the drag that gathers panes into a sheet ─
+    if (paintPending && !paint) {
+        if (dist(pointerStart.x, pointerStart.y, pos.x, pos.y) > THRESHOLDS.tapMovement) {
+            if (isStepThroughActive()) forkStepThrough();
+            paint = { panes: {}, order: [], colour: state.palette.selected || FOREST_GLASS, last: paintPending.world };
+            paintPending = null;
+            paintAlong(paint.last, world);
+        }
+        return;
+    }
+    if (paint) { paintAlong(paint.last, world); return; }
 
     // ── Eraser candidate: activate sweep if drag exceeds threshold ───────────────
     if (eraserCandidate && !eraserActive) {
@@ -3582,7 +3683,9 @@ function onMove(e) {
     // A drag from a point draws a circle — except from the board's free point while it is still
     // free, which it moves (the lines board).
     if (interactionState==='POINT_PRESSED' && dist(pointerStart.x,pointerStart.y,pos.x,pos.y)>THRESHOLDS.tapMovement) {
-        interactionState = (BOARD && selectedPoint && selectedPoint.id === 'free:0' && freeMovable()) ? 'FREE_DRAG' : 'DRAGGING_CIRCLE';
+        if (BOARD && selectedPoint && selectedPoint.id === 'free:0' && freeMovable()) interactionState = 'FREE_DRAG';
+        else if (POWERS.circle) interactionState = 'DRAGGING_CIRCLE';
+        else { interactionState = 'IDLE'; selectedPoint = null; }   // no compass at this level: a drag from a dot is nothing
     }
     if (interactionState==='FREE_DRAG') { moveFreePoint(world); return; }
     if (interactionState==='DRAGGING_CIRCLE' && selectedPoint) {
@@ -3770,6 +3873,39 @@ function moveFreePoint(world) {
     fp.u = u; fp.v = v;
     replayLog(false);
 }
+// The panes a drag crosses (18 Oct 2026): the path from the last sample to the hand is walked
+// in steps of six screen pixels, and at each step the pane around the point joins the sheet,
+// once (a point already inside a gathered pane is skipped). Only panes inside the frame count.
+function paintAlong(a, b) {
+    var step = 6 / plane.zoom(), d = dist(a.x, a.y, b.x, b.y), n = Math.max(1, Math.ceil(d / step));
+    for (var i = 0; i <= n; i++) {
+        var t = i / n, x = a.x + (b.x - a.x) * t, y = a.y + (b.y - a.y) * t;
+        if (!inFrame(x, y)) continue;
+        var inside = false;
+        for (var j = 0; j < paint.order.length && !inside; j++) if (pip(x, y, paint.panes[paint.order[j]].poly)) inside = true;
+        if (inside) continue;
+        var face = findFaceAround(x, y); if (!face) continue;
+        var k = paneKey(face.vertices);
+        if (!paint.panes[k]) { paint.panes[k] = { vertices: face.vertices, edges: face.edges, poly: expandFillToPolygon(face) }; paint.order.push(k); }
+    }
+    paint.last = b;
+}
+// The release: one pane is coloured as a tap colours it; two or more become one sheet, which
+// takes those panes from any glass that held them (replayLog does the taking, so the record
+// is one op and Undo takes the whole drag back).
+function commitPaint() {
+    var p = paint; paint = null;
+    var panes = p.order.map(function(k) { return { vertices: p.panes[k].vertices, edges: p.panes[k].edges }; });
+    if (!panes.length) return;
+    if (panes.length === 1) {
+        var own = fillWithFace({ vertices: panes[0].vertices, area: shoelaceArea(expandFillToPolygon(panes[0])) });
+        if (own) recolorRegion(own.fillId, p.colour, 1.0);
+        else appendOp({ op:'fill', fillId:'fill:'+Date.now(), vertices:panes[0].vertices, edges:panes[0].edges, color:p.colour, opacity:1.0 });
+    } else {
+        appendOp({ op:'fill', fillId:'fill:'+Date.now(), panes:panes, color:p.colour, opacity:1.0 });
+    }
+    playSound('fill');
+}
 
 function hitForEraser(wx, wy) {
     var tL = THRESHOLDS.lineHitRadius / plane.zoom();
@@ -3794,10 +3930,12 @@ function hitForEraser(wx, wy) {
 function onUp(e) {
     e.preventDefault(); unlockAudio();
     activeTouches.delete(e.pointerId);
+    // The first touch, spent on going full screen (see onDown).
+    if (fsPending) { fsPending = false; fsAsked = true; enterFullscreen(); return; }
 
     // If we were pinching and one finger lifts, reset pinch state
     if (pinchBaseDist && activeTouches.size < 2) {
-        pinchBaseDist = null; pinchBaseScale = null;
+        pinchBaseDist = null; pinchBaseScale = null; pinchBaseMid = null; pinchBasePan = null;
         return;
     }
     if (activeTouches.size > 0) return; // still touches active
@@ -3807,9 +3945,15 @@ function onUp(e) {
     var moved = pointerStart ? dist(pointerStart.x, pointerStart.y, pos.x, pos.y) : 0;
     var isTap = moved < THRESHOLDS.tapMovement;
 
-    // ── The lines board: a frame resize or a free-point move ends here ───────────
+    // ── The lines board: a frame resize, a free-point move, or glass by hand ends here ──
     if (frameDrag) { frameDrag = null; interactionState = 'IDLE'; return; }
     if (interactionState === 'FREE_DRAG') { interactionState = 'IDLE'; selectedPoint = null; return; }
+    if (paintPending) {
+        var pp = paintPending; paintPending = null;
+        if (isTap && !pp.onEdge) windowTap(world.x, world.y);   // a tap colours one pane; on an edge it does nothing
+        interactionState = 'IDLE'; return;
+    }
+    if (paint) { commitPaint(); interactionState = 'IDLE'; return; }
 
     // ── Eraser sweep end ──────────────────────────────────────────────────────
     if (eraserActive) {
@@ -3979,6 +4123,13 @@ canvas.addEventListener('gestureend', function(e) { e.preventDefault(); gestureB
 canvas.addEventListener('wheel', function(e) {
     e.preventDefault();
     if (gestureBase !== null) return;
+    // On the lines board the trackpad's two-finger scroll pans (18 Oct 2026; one finger there is
+    // the glass); a pinch still zooms — Safari's as a gesture above, Chrome's as a wheel with ctrl.
+    if (BOARD && !e.ctrlKey) {
+        var z = plane.zoom(), pn = plane.pan();
+        plane.setPan(pn.x + e.deltaX / z, pn.y - e.deltaY / z);
+        syncCanvasNoteDOMs(); return;
+    }
     plane.setZoom(plane.zoom()*(e.deltaY>0?0.9:1.1));
     syncCanvasNoteDOMs();
 }, { passive:false });
@@ -5399,18 +5550,7 @@ var HTW_STAGES = [
             { text: 'Where lines cross, new dots appear, inside the frame and outside it. Use those to make more lines.' },
             { text: '' },
             { text: 'Before your first line, you can drag a side of the frame to change its size.' },
-            { text: 'Undo takes back your last mark.' }
-        ]
-    },
-    {
-        id: 'board-circles',
-        label: 'Circles',
-        trigger: function() { return userLineCount() >= 6; },
-        suppress: function() { return circles.size > 0; },
-        content: [
-            { text: 'To make a circle, tap a dot, then drag to another. The circle is centred on the first dot and passes through the second.' },
-            { text: '' },
-            { text: 'A circle cuts the panes it crosses in two, but it makes no new dots. Nothing can be drawn from where a circle crosses a line.' }
+            { text: 'Two fingers move the board, and a pinch zooms it. Undo takes back your last mark.' }
         ]
     },
     {
@@ -5426,9 +5566,10 @@ var HTW_STAGES = [
             return false;
         },
         content: [
-            { text: 'To colour a pane, tap Colors, choose a colour, then tap inside the pane. With no colour chosen, the pane turns to clear glass.' },
+            { text: 'Tap inside a pane to colour it, with lead round it. With no colour chosen, it turns to clear glass.' },
+            { text: 'Drag across several panes to colour them as one sheet of glass. Lead runs round the outside of the sheet only.' },
+            { text: 'Tap a sheet to recolour it. The first chip, tapped on a sheet, takes its glass away.' },
             { text: 'Only panes inside the frame take glass.' },
-            { text: 'The first chip takes the colour away again.' },
             { text: '' },
             { text: 'To choose a different set of colours, tap [Choose new colors].' },
             { text: 'Use the slider to change lead thickness.' }
@@ -5522,7 +5663,6 @@ applyTipWords();
 var HTW_ACTIONS = {
     circles:      function() { openHtwOnCanvas('circles'); },
     lines:            function() { openHtwOnCanvas('lines'); },
-    'board-circles':  function() { openHtwOnCanvas('board-circles'); },
     'board-color':    function() { openColorTool(); openHtwOnCanvas('board-color'); },
     construction: function() { openHtwOnCanvas('construction'); },
     shapes:       function() { openHtwOnCanvas('shapes'); },
@@ -5663,8 +5803,6 @@ function checkTipFadeThresholds() {
         shouldFade = circles.size >= 2;
     } else if (stageId === 'lines') {
         shouldFade = userLineCount() >= 2;
-    } else if (stageId === 'board-circles') {
-        shouldFade = circles.size >= 1;
     } else if (stageId === 'board-color') {
         var boardRepaints = 0;
         for (var bi = 0; bi < operationLog.length; bi++) { if (operationLog[bi].op === 'repaint_fill') boardRepaints++; }
@@ -5779,6 +5917,20 @@ function initHowThisWorks() {
         list2.appendChild(demos);
         buildDemoList();
         updateViewingWords();   // the words just made take their presence from the board as it is
+    }
+
+    // Full screen's way out, and the board's response to going there and back: the canvas resized,
+    // the column laid out again, and the view re-homed while nothing has been made yet.
+    if (FULLSCREEN) {
+        var fx = document.createElement('span'); fx.className = 'htw-action-word g-fs-exit'; fx.textContent = 'Exit';
+        fx.addEventListener('click', exitFullscreen);
+        root.appendChild(fx);
+        var onFs = function () {
+            fx.style.display = isFullscreen() ? 'block' : 'none';
+            resizeCanvas(); layoutPanelTools();
+            if (!logHasMarks()) homeView();
+        };
+        onDoc('fullscreenchange', onFs); onDoc('webkitfullscreenchange', onFs);
     }
 
     // Wire each htw-item to its action
@@ -5941,7 +6093,13 @@ initHowThisWorks();
 // resize is still listened to above for the rest.
 var ro = null;
 if (typeof ResizeObserver !== 'undefined') {
-    ro = new ResizeObserver(function () { resizeCanvas(); layoutPanelTools(); });
+    ro = new ResizeObserver(function () {
+        // The lines board keeps its home view through a change of size while nothing has been made:
+        // the host's size can shift as the page settles, and the frame should sit where it belongs.
+        var wasHome = BOARD && !resetShown && !logHasMarks();
+        resizeCanvas(); layoutPanelTools();
+        if (wasHome) homeView();
+    });
     ro.observe(root);
 }
 
@@ -5993,6 +6151,11 @@ function destroy() {
     root.innerHTML = '';
     root.classList.remove('cw-glass');
 }
+
+// A reading of the lab's state for a session checking it in a browser (18 Oct 2026); nothing in
+// the site reads it.
+root._glass = { view: function () { return plane.view(); }, viewport: function () { return [plane.viewportWidth(), plane.viewportHeight()]; },
+                frame: function () { return frame; }, log: function () { return operationLog; }, fills: function () { return liveFills(); } };
 
 return {
     el: root,
