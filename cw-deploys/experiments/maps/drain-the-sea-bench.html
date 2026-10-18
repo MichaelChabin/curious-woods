@@ -18,8 +18,14 @@
        quiet on land; the card says the depth, the age in words and which way a compass pointed when the
        floor cooled, from stories/plates/reversals.json (GTS2020); the timeline's handle follows the age.
   The spec this was to follow, CWVault/claude/Spec-Drain-the-Sea.md, was not on disk when this was built,
-  nor was Worknote-Time-Machine.md; the three paragraphs below are stand-ins in the story's voice, to be
-  replaced by the spec's. The map's sea follows the timeline's handle through the ice ages
+  nor was Worknote-Time-Machine.md, nor at the revision of 17 Oct, later; the three paragraphs below are
+  stand-ins in the story's voice, to be replaced by the spec's.
+  Revised 17 Oct 2026, later (Michael's prompt): the picture gets the screen (Rulings, 17 Oct) — the map breaks
+  out of the column to the window's width less a margin, about three-quarters of the window's height, the
+  deep-time timeline drawn over its top edge on a translucent paper band; the probe's ring is the compass
+  with the needle inside, its words in a strip along the map's bottom edge with Done at the right; the ice
+  layer off here, and map.js never draws ice below the current sea; the stripes two-tone and the probe's
+  zoom one level closer. The chron's name shows only in the bench's own line under the map. The map's sea follows the timeline's handle through the ice ages
   (stories/curves/sea-level-ice-ages.json) when she drags the handle herself; when the probe moves the
   handle the sea stays where the slider put it.
 -->
@@ -31,9 +37,14 @@
   article { max-width: 700px; margin: 0 auto; padding: 40px 40px 80px 40px; box-sizing: border-box; }
   h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0 0 1em 0; }
   p { margin: 0 0 1em 0; }
-  #bar { width: 100%; margin: 1.2em 0 0.4em; }
-  #map { margin-top: 6px; }
+  /* the picture gets the screen (Rulings, 17 Oct 2026): the map at the window's width less a margin, the timeline over its top edge */
+  :root { --m: 14px; }
+  .mapwrap { position: relative; width: calc(100vw - 2 * var(--m)); margin: 1.4em 0 0 calc(50% - 50vw + var(--m)); }
+  #bar { position: absolute; left: 0; right: 0; top: 0; z-index: 6; margin: 0; padding: 6px 12px 0; background: rgba(244, 241, 232, 0.78); box-sizing: border-box; }
+  #map { margin: 0; }
   #map .cw-strip-left { display: none; }
+  .below { max-width: 700px; margin: 0 auto; }
+  .chron { font-size: 13px; color: #7a6e60; font-style: italic; margin-top: 6px; min-height: 1.3em; }
   .row { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; font-size: 14px; font-style: italic; color: var(--ink); margin-top: 10px; }
   .row .w { cursor: pointer; color: var(--slate); }
   .row .w:hover { color: #3D3D3A; }
@@ -56,8 +67,11 @@
   <p>The floor is young. Nothing on it is much older than 180 million years, while the oldest rocks on land are twenty times that. New floor is made along the seam and moves away on both sides, a few centimetres a year, about as fast as your fingernails grow. Turn on <i>Age</i> and the floor is coloured by when it was made: pale at the seam, darker the farther it has travelled.</p>
   <p>The Earth’s magnetic field flips every so often: north becomes south, and a compass would point the other way. Floor that cools while the field is one way keeps that direction in its rock. Turn on <i>Stripes</i> and you can see it, in bands either side of the seam, mirrored. Tap the sea anywhere and a probe tells you how deep the floor is, how old it is, and which way a compass pointed when it was made.</p>
 
-  <div id="bar"></div>
-  <div id="map"></div>
+  <div class="mapwrap">
+    <div id="bar"></div>
+    <div id="map"></div>
+  </div>
+  <div class="below">
   <div class="row" id="words">
     <span class="lab">Layers:</span>
     <span class="w" id="wAge">Age</span>
@@ -73,6 +87,8 @@
   <div class="when" id="when">Today’s sea.</div>
   <input class="sea" id="sea" type="range" min="0" max="11000" step="10" value="0" aria-label="how far the sea is lowered, in metres">
   <div class="ends"><span>today</span><span>the sea 130 m lower, the ice-age low</span><span>drained</span></div>
+  <div class="chron" id="chron"></div>
+  </div>
 
   <div class="note">
     <p>A bench, not a story. The slider is a what-if past 130 metres: no sea was ever that low. The floor keeps its shape as the water leaves; the land does not rise, and the exposed floor is painted dry at once.</p>
@@ -80,13 +96,13 @@
   </div>
 </article>
 
-<script src="../../js/map.js?v=2026-10-17"></script>
+<script src="../../js/map.js?v=2026-10-17b"></script>
 <script src="../../js/deep-time.js?v=2026-10-13d"></script>
-<script src="../../js/probe.js?v=2026-10-17"></script>
+<script src="../../js/probe.js?v=2026-10-17b"></script>
 <script>
 (function () {
   'use strict';
-  var CW_VERSION = '2026-10-17 aa3e18f'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+  var CW_VERSION = '2026-10-17b 677b0e1'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   var $ = function (id) { return document.getElementById(id); };
   var THIS_YEAR = new Date().getFullYear();
@@ -145,19 +161,25 @@
   }
 
   // ---- the map, the probe ----
+  // no ice on this bench (Michael, 17 Oct): the pyramid's ice layer off, and no past ice handed to the map
   Promise.all([cwMap.load('../../art/maps/world-pyramid.json'), get('../../stories/curves/sea-level-ice-ages.json'),
                get('../../stories/plates/reversals.json').catch(function (e) { console.warn('no reversal table', e.message); return null; }),
-               get('../../stories/ice-outlines.json').catch(function (e) { console.warn('no ice outlines', e.message); return null; }),
                get('../../stories/deep-time-events.json').catch(function (e) { console.warn('no events', e.message); return null; })])
     .then(function (r) {
-      var world = r[0], sea = r[1], reversals = r[2], ice = r[3], store = r[4];
+      var world = r[0], sea = r[1], reversals = r[2], store = r[3];
       curve = sea.points;
-      map = cwMap($('map'), world, [], { fit: FIT, reset: 'reset', time: { seaLevel: curve, ice: ice || undefined } });
+      // about three-quarters of the window's height (the picture gets the screen); map.js clamps it to its own cap
+      map = cwMap($('map'), world, [], { fit: FIT, reset: 'reset', height: Math.round((window.innerHeight || 768) * 0.75), layers: { ice: false }, time: { seaLevel: curve } });
       map.drainStyle('land');
       map.setSeaLevel(0);
       probe = cwProbe(map, {
         reversals: reversals,
-        onRead: function (rd) { if (rd.age !== null && rd.age !== undefined) handleTo(rd.age); }
+        zoom: { lon: 5.5, lat: 3.25 },   // one level closer than the Time Machine's 2,000 km box (Michael, 17 Oct): the stripes read
+        onRead: function (rd) {
+          if (rd.age !== null && rd.age !== undefined) handleTo(rd.age);
+          $('chron').textContent = rd.chron ? 'bench: chron ' + rd.chron + (rd.chronName ? ' (' + rd.chronName + ')' : '') + ', GTS2020' : '';
+        },
+        onDone: function () { $('chron').textContent = ''; }
       });
       if (store) buildBar(store);
       window.cwDrain = { map: map, probe: probe, bar: function () { return bar; } };   // for checking from the console; nothing on the page uses it

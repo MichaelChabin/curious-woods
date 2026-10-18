@@ -29,7 +29,9 @@ sits on the spot and a card beside it says how deep the floor is, how old it is 
 age through `stories/plates/reversals.json`, which way a compass pointed when that floor cooled, drawn
 as a needle; one finger drags it, the ground drifts under it near the map's edge at a capped speed,
 two fingers pan (`opts.twoFinger`), *Done* or Escape ends it; `opts.onRead(reading)` is how a page
-makes a timeline's handle follow the age. First used by `experiments/maps/drain-the-sea-bench.html`.
+makes a timeline's handle follow the age. First used by `experiments/maps/drain-the-sea-bench.html`. **17 Oct 2026,
+later:** the ring is the compass (48 px) with the needle inside; the words in a strip docked along the map's bottom
+edge, Done at its right; nothing else beside the ring; the chron's name in `reading.chron` only.
 **`map.js`, 17 Oct 2026 — Drain the sea** (`?v=2026-10-17` on the bench; no other page's query changed,
 nothing they draw changed): the pyramid's `data` block (from `render.py --drain`) is read — `floor`, `age`,
 `stripes`, 8-bit tiles whose value is a number; `setSeaLevel` goes past the shelf's 130 m to the bottom
@@ -39,7 +41,15 @@ above the new shore with relief from the depth, or as the floor's own picture un
 `map.setLayer('age' | 'stripes', on)` paints those two from their numbers through a colour table each,
 at half the screen's resolution; `map.sample(lon, lat)` reads the three numbers under a point from the
 tiles in hand (`pending` while one is arriving, `map.onData(fn)` when it has); `lonLatAt`, `pixelOf`,
-`panBy`, `level`, `stage`, `onView` serve an instrument. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael's call, when
+`panBy`, `level`, `stage`, `onView` serve an instrument. **`map.js`, 17 Oct 2026, later — no ice below the sea
+(Michael's ruling of that day; `?v=2026-10-17b` on the bench, the Time Machine keeps its query):** on the moving map the
+time ice (`setIce`, `time.ice`) is drawn on a canvas of its own, over the sea and under the data layers and the marks, and
+cut away wherever the floor layer says the ground is under the current sea level — so today's sea shows no ice over
+Hudson Bay, the Barents Sea or the Baltic, and a lowered sea shows the ice on the shelf it exposes. A map with no floor
+layer keeps the SVG rings. **The Time Machine relied on the old drawing:** at 20,000 years its sea is at −116 m and the
+ICE-6G outlines run over the Barents and Kara shelves, which lie deeper, so that ice vanishes there when its `map.js`
+query is next bumped; at 12,000 years, sea at −60 m, Hudson Bay's ice goes too. The stripes layer is now a two-tone split
+at zero anomaly, ink and parchment, softened only within ±24 nT of the split. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael's call, when
 the Hokusai story called it; a second base, the globe past the deep-time seam, 6 Oct 2026 — see
 `experiments/join-bench.html`)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
 the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
@@ -1880,7 +1890,17 @@ backstop for the Claude Code session that lands the file.
   the drain at 130, 3 000 and 11 000 m in both paintings, the two layers, the probe entering, reading,
   dragging and ending, a tap on land doing nothing, no console errors. **Not tested on an iPad:** the
   one-finger drag of the probe against the page scroll, the two-finger pan and the ring's lift above a
-  finger wait on Michael's own iPad.
+  finger wait on Michael's own iPad. **17 Oct 2026, later — the picture gets the screen (Michael's
+  prompt; `CW_VERSION 2026-10-17b`; `map.js` and `probe.js` at `?v=2026-10-17b`):** under the ruling of
+  that day the map breaks out of the column to the window's width less 14 px a side and opens at
+  three-quarters of the window's height (the resize strip stays), the deep-time timeline drawn over
+  its top edge on a translucent paper band (78 %), the paragraphs above in the column, the bench's
+  words and the slider below; the probe's ring is the compass, 48 px, the needle inside it, its words
+  in a strip along the map's bottom edge with *Done* at the right, the chron's name only in the
+  bench's own line under the slider; the ice layer off here and no past ice handed to the map; the
+  stripes two-tone; the probe's zoom one level closer (a box 11° wide). Checked at 1024 × 768 and
+  768 × 1024: the band's labels legible over sea, land and drained floor because the band carries the
+  contrast; the Earth line's last label runs a few pixels past the band's right edge in portrait.
 - **`maps/sea-level-bench.html`** — bench: **The sea, lower** (29 Sep 2026; Spec-Maps *Time on
   the map*, the first bench of it). The moving map on the North Sea and a slider from 20,000
   years ago to today; one line says how far down the sea was, from `stories/sea-level.json`.

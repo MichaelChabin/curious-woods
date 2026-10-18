@@ -102,6 +102,15 @@ other. Two sessions would each build half. [M]
 maps, are seeds, not spec. — Nothing about either is decided, and the rule is
 that ideas go to `03-SEEDS/` as faceted notes. [C]
 
+2026-10-17 — The picture gets the screen: when the point of an interactive is
+the picture (a map, a timeline, the plane), it is not confined to the text
+column; it takes the full width of the window, less a small margin, and as
+much height as the screen allows. The text column is for text. This holds for
+Glass Geometry's plane too, which is meant to run to infinity. — A map held to
+the 700 px column shows a sliver of the world on an iPad, and a plane inside a
+column cannot run to infinity. Applied first to the Drain the sea bench; Glass
+Geometry waits for its own session. [M]
+
 ---
 
 ### The shelf — settled 24 Aug

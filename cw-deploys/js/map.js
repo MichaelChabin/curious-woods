@@ -65,6 +65,11 @@
    while a tile is still arriving; `map.onData(fn)` says when one has); `map.lonLatAt(x, y)`,
    `map.pixelOf(lon, lat)`, `map.panBy(dx, dy)`, `map.level()`, `map.stage()` and `map.onView(fn)`
    are for an instrument that rides the map, such as js/probe.js.
+   The ice never lies below the sea (17 Oct 2026, Michael): on the moving map the time ice is drawn on a
+   canvas and cut away wherever the floor layer says the ground is under the current sea level, so a
+   lowered sea shows ice on the shelf it exposes and today's sea shows none over water. A map with no
+   floor layer (the still crops) keeps the SVG rings as they were. The stripes layer is a two-tone,
+   split at zero anomaly, with only a little softening at the split.
 
    The ground has layers (26 Sep 2026). The base picture is height alone. The region's
    JSON lists its layers — ice, vegetation, later sea level — each a half-width RGBA
@@ -137,6 +142,7 @@
     '.cw-map .cw-tiles img{position:absolute;display:block;width:auto;height:auto;max-width:none;pointer-events:none;}',
     '.cw-map canvas.cw-sea{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     '.cw-map canvas.cw-data{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
+    '.cw-map canvas.cw-ice-canvas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     /* deep time (6 Oct 2026): past the seam the globe is the base, over the tiles, the sea and the marks;
        it arrives pulling away from the ground and leaves coming down to it — a scale and a fade, never a cut */
     '.cw-map .cw-deep-base{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;background:#f4f1e8;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(2.4);transition:opacity .5s ease,transform .5s ease;pointer-events:none;line-height:0;}',
@@ -322,6 +328,8 @@
       shelfHave = {};
       Object.keys((region.shelf && region.shelf.tiles) || {}).forEach(function (z) { shelfHave[z] = {}; region.shelf.tiles[z].forEach(function (k) { shelfHave[z][k] = true; }); });
     }
+    var iceCanvas = null;
+    if (pyr) { iceCanvas = document.createElement('canvas'); iceCanvas.className = 'cw-ice-canvas'; stage.insertBefore(iceCanvas, svg); }   // over the sea, under the data layers and the marks
     function shelfImg(z, x, y) {
       var key = z + '/' + x + '/' + y;
       if (!(shelfHave[z] && shelfHave[z][x + '/' + y])) return null;
@@ -339,7 +347,7 @@
     var dataImgs = {}, dataPix = {}, dataHave = {}, dataCanvas = {}, dataOn = {}, dataListeners = [], drainStyle = null;
     var LAND_RAMP = [[0, [230, 223, 203]], [250, [216, 205, 170]], [800, [195, 171, 128]], [1600, [168, 154, 128]], [2400, [143, 141, 144]], [3200, [174, 176, 184]], [4800, [232, 236, 238]], [6000, [242, 245, 246]]];   // render.py's LAND_STOPS
     var AGE_RAMP = [[0, [243, 230, 176]], [20, [217, 199, 122]], [50, [159, 185, 138]], [90, [95, 154, 160]], [140, [63, 106, 143]], [200, [58, 63, 110]], [254, [42, 36, 64]]];   // the floor's age: new floor pale, old floor dark; no red on the earth
-    var AGE_ALPHA = 0.88, STRIPE_INK = [42, 36, 28], STRIPE_PARCH = [244, 241, 232], STRIPE_ALPHA_INK = 0.55, STRIPE_ALPHA_PARCH = 0.7, STRIPE_GAMMA = 0.55;
+    var AGE_ALPHA = 0.88, STRIPE_INK = [42, 36, 28], STRIPE_PARCH = [244, 241, 232], STRIPE_ALPHA_INK = 0.5, STRIPE_ALPHA_PARCH = 0.72, STRIPE_SOFT = 0.08;   // two tones split at zero; a little softening within ±8 % (±24 nT) of it
     var DRAIN_WASH = [230, 223, 203], DRAIN_WASH_ALPHA = 0.55;   // the `sea` style: the floor's own picture under the shore buff
     var DRAIN_SHADE = 0.35;                                       // the `land` style's relief, as render.py's
     if (DATA) {
@@ -361,8 +369,10 @@
       for (v = 0; v < 255; v++) {
         if (name === 'age') { c = ramp(AGE_RAMP, v); t[v * 4] = c[0]; t[v * 4 + 1] = c[1]; t[v * 4 + 2] = c[2]; t[v * 4 + 3] = Math.round(255 * AGE_ALPHA); }
         else if (name === 'stripes') {
-          // a power under 1, so the weak anomalies of the South Atlantic and the Pacific (±50 nT) show as well as Iceland's (±250)
-          if (v >= 127) { c = STRIPE_INK; a = Math.pow((v - 127) / 127, STRIPE_GAMMA) * STRIPE_ALPHA_INK; } else { c = STRIPE_PARCH; a = Math.pow((127 - v) / 127, STRIPE_GAMMA) * STRIPE_ALPHA_PARCH; }
+          // two tones, split at zero anomaly (17 Oct 2026, Michael: stripes that read as stripes), so the weak stripes of
+          // the Pacific read as plainly as Iceland's; the softening keeps the split from sparkling where the anomaly hovers at zero
+          var an = (v - 127) / 127, soft = Math.min(1, Math.abs(an) / STRIPE_SOFT);
+          if (an >= 0) { c = STRIPE_INK; a = soft * STRIPE_ALPHA_INK; } else { c = STRIPE_PARCH; a = soft * STRIPE_ALPHA_PARCH; }
           t[v * 4] = c[0]; t[v * 4 + 1] = c[1]; t[v * 4 + 2] = c[2]; t[v * 4 + 3] = Math.round(255 * a);
         }
       }
@@ -899,7 +909,50 @@
       });
       return d.join('');
     }
+    function icePath2D(rings, w, h) {
+      var p = new Path2D(), copies = worldCopies(w, h);
+      copies.forEach(function (o) {
+        for (var i = 0; i < rings.length; i++) {
+          var r = rings[i];
+          for (var j = 0; j < r.length; j++) { var q = viewToPixel(r[j][0] + o, r[j][1], w, h); if (j) p.lineTo(q.x, q.y); else p.moveTo(q.x, q.y); }
+          p.closePath();
+        }
+      });
+      return p;
+    }
+    // the moving map's ice: on its canvas, and never below the current sea (17 Oct 2026, Michael) — where the floor layer says
+    // the ground is still under water at this sea level, the ice is cut away; a lowered sea shows the ice on the shelf it exposes
+    function drawIceCanvas(w, h) {
+      var ctx = iceCanvas.getContext('2d');
+      if (!iceData || !iceAgo) { iceCanvas.style.display = 'none'; return; }
+      iceCanvas.style.display = '';
+      var k = frozen ? 0.5 : 1, cw = Math.ceil(w * k), ch = Math.ceil(h * k);   // half resolution while a gesture lasts
+      if (iceCanvas.width !== cw || iceCanvas.height !== ch) { iceCanvas.width = cw; iceCanvas.height = ch; }
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cw, ch); ctx.setTransform(k, 0, 0, k, 0, 0);
+      var ages = iceData.ages, a = null, b = null, i;
+      for (i = 0; i < ages.length; i++) { if (ages[i] <= iceAgo) a = ages[i]; if (ages[i] >= iceAgo && b === null) b = ages[i]; }
+      if (a === null) a = ages[0]; if (b === null) b = ages[ages.length - 1];
+      var t = (b === a) ? 1 : (iceAgo - a) / (b - a), drew = false;
+      [[a, 1 - t], [b, t]].forEach(function (pair) {
+        if (pair[1] <= 0.01) return;
+        var rings = iceData.outlines[String(pair[0])];
+        if (!rings || !rings.length) return;
+        var path = icePath2D(rings, w, h);
+        ctx.globalAlpha = 0.94 * pair[1]; ctx.fillStyle = ICE_FILL; ctx.fill(path, 'evenodd');
+        ctx.globalAlpha = 0.45 * pair[1]; ctx.strokeStyle = ICE_EDGE; ctx.lineWidth = 2.5 / k; ctx.stroke(path);
+        drew = true;
+      });
+      ctx.globalAlpha = 1;
+      if (!drew || !DATA || !DATA.floor) return;
+      var img = rasterData('floor', cw, ch, w, h);
+      if (!img) return;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      var out = ctx.getImageData(0, 0, cw, ch), o = out.data, d = img.data, n = cw * ch, depthHere = -seaLevel, j, v;
+      for (i = 0; i < n; i++) { j = i * 4; if (!o[j + 3]) continue; v = d[j + 3] ? d[j] : 0; if (v > 0 && floorDepth(v) > depthHere) o[j + 3] = 0; }
+      ctx.putImageData(out, 0, 0);
+    }
     function drawIce(layer, w, h) {
+      if (iceCanvas) { drawIceCanvas(w, h); return; }
       if (!iceData || !iceAgo) return;
       var ages = iceData.ages, a = null, b = null, i;
       for (i = 0; i < ages.length; i++) { if (ages[i] <= iceAgo) a = ages[i]; if (ages[i] >= iceAgo && b === null) b = ages[i]; }
@@ -1225,7 +1278,7 @@
         slideTo(viewForBox(span, w, h), SLIDE_MS);
       };
       api.home = goHome;
-      api.setSeaLevel = function (m) { seaLevel = Math.min(0, +m || 0); drawSea(); };
+      api.setSeaLevel = function (m) { seaLevel = Math.min(0, +m || 0); drawSea(); if (iceCanvas) drawIceCanvas(box.clientWidth, box.clientHeight); };
       api.seaLevel = function () { return seaLevel; };
       // Drain the sea (17 Oct 2026): the floor's painting, the painted data layers, the numbers under a point
       api.drainStyle = function (s) { if (s === 'land' || s === 'sea' || s === null) { drainStyle = s; drawSea(); } return drainStyle; };
@@ -1379,7 +1432,7 @@
           } else if (deepHost) { growForFlat(false); setDeep(false); }
         }
         var m = curveAt(T.seaLevel, timeYear);
-        if (m !== null && seaCanvas) { var nm = Math.min(0, Math.round(m * 2) / 2); if (nm !== seaLevel) { seaLevel = nm; drawSea(); } }
+        if (m !== null && seaCanvas) { var nm = Math.min(0, Math.round(m * 2) / 2); if (nm !== seaLevel) { seaLevel = nm; drawSea(); if (iceCanvas && !T.ice) drawIceCanvas(box.clientWidth, box.clientHeight); } }
         if (T.ice) { var ago = new Date().getFullYear() - timeYear; iceData = T.ice; iceAgo = Math.max(0, ago); draw(); }
       };
       api.time = function () { return timeYear; };
