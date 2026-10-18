@@ -56,10 +56,12 @@
    DATA layers (`data` in its JSON, from render.py --drain): 8-bit tiles whose value is a number —
    `floor`, the ocean's depth to the bottom; `age`, the floor's age in millions of years; `stripes`,
    the magnetic anomaly. With a floor layer `setSeaLevel` goes past the shelf's 130 m to the floor,
-   and `map.drainStyle('land' | 'sea')` chooses how newly dry floor is painted: `land`, the land
-   ramp by height above the new shore with its own relief from the depth; `sea`, the floor's own
-   picture under a parchment wash. Unset, a page with the shallow layer keeps the shelf's painting
-   within 130 m and the floor's past it. `age` and `stripes` are painted in the browser from their
+   and newly dry floor keeps its blues (18 Oct 2026, Michael: deeper is darker, and white means ice):
+   the floor ramp by depth, pale on the shelves to nearly black in the trenches, with the land's
+   relief strength from the depth and the new shore as a line. `map.drainStyle(on)` makes the floor
+   path paint at every level; unset, a page with the shallow layer keeps the shelf's painting within
+   130 m and the floor's past it. `map.wetGlass(on)` draws the water still there as a thin glassy
+   film over the blue floor (a bench's try). `age` and `stripes` are painted in the browser from their
    numbers (a colour table each), off unless `opts.layers` or `map.setLayer(name, on)` turns them
    on. `map.sample(lon, lat)` reads the three numbers under a point from the tiles in hand (null
    while a tile is still arriving; `map.onData(fn)` says when one has); `map.lonLatAt(x, y)`,
@@ -131,6 +133,16 @@
   var STAGE_MIN = 220, STAGE_MAX_FRACTION = 0.85;   // a moving map's height: at least this, at most this much of the window
   var SLIDE_MS = 250;                     // centre() and fit(): one short slide, never a flight
   var TAP_PX = 6;                         // a press that moves less than this is a tap, not a drag
+  // the zoom gain (18 Oct 2026): plane.js owns the one named number, CW.ZOOM_GAIN; these are the same
+  // numbers for a page that does not load plane.js. wheel: the step for a notch of 100 px; pinch: the
+  // exponent on the fingers' distance ratio
+  var ZOOM_GAIN_FALLBACK = { wheel: 0.10, pinch: 1.0 };
+  function zoomGain() { return (window.CW && window.CW.ZOOM_GAIN) || ZOOM_GAIN_FALLBACK; }
+  function wheelFactor(e) {
+    var g = zoomGain(), d = e.deltaMode === 1 ? e.deltaY * 16 : (e.deltaMode === 2 ? e.deltaY * 100 : e.deltaY);
+    var n = Math.max(-1, Math.min(1, d / 100));
+    return Math.pow(1 + g.wheel, -n);
+  }
   var SVG = 'http://www.w3.org/2000/svg';
 
   var css = [
@@ -345,11 +357,13 @@
     // ---- the data layers (Drain the sea, 17 Oct 2026): numbers in tiles, painted and read here ----
     var DATA = (pyr && region.data) || null;
     var dataImgs = {}, dataPix = {}, dataHave = {}, dataCanvas = {}, dataOn = {}, dataListeners = [], drainStyle = null;
-    var LAND_RAMP = [[0, [230, 223, 203]], [250, [216, 205, 170]], [800, [195, 171, 128]], [1600, [168, 154, 128]], [2400, [143, 141, 144]], [3200, [174, 176, 184]], [4800, [232, 236, 238]], [6000, [242, 245, 246]]];   // render.py's LAND_STOPS
+    // the floor, by depth (18 Oct 2026, deeper is darker): the sea charts' convention, pale blue on the shelves, a
+    // light-to-middle blue on the ridge tops, deep blue on the plains, nearly black-navy in the trenches
+    var FLOOR_RAMP = [[0, [147, 190, 215]], [150, [127, 176, 204]], [800, [87, 147, 180]], [2500, [61, 120, 168]], [3700, [44, 90, 136]], [5000, [34, 65, 95]], [7000, [22, 41, 61]], [11000, [10, 17, 28]]];
+    var FLOOR_ALPHA = 228, WET_GLASS = [190, 218, 236], WET_GLASS_ALPHA = 0.30, wetGlass = false;
     var AGE_RAMP = [[0, [243, 230, 176]], [20, [217, 199, 122]], [50, [159, 185, 138]], [90, [95, 154, 160]], [140, [63, 106, 143]], [200, [58, 63, 110]], [254, [42, 36, 64]]];   // the floor's age: new floor pale, old floor dark; no red on the earth
     var AGE_ALPHA = 0.88, STRIPE_INK = [42, 36, 28], STRIPE_PARCH = [244, 241, 232], STRIPE_ALPHA_INK = 0.5, STRIPE_ALPHA_PARCH = 0.72, STRIPE_SOFT = 0.08;   // two tones split at zero; a little softening within ±8 % (±24 nT) of it
-    var DRAIN_WASH = [230, 223, 203], DRAIN_WASH_ALPHA = 0.55;   // the `sea` style: the floor's own picture under the shore buff
-    var DRAIN_SHADE = 0.35;                                       // the `land` style's relief, as render.py's
+    var DRAIN_SHADE = 0.35;                                       // the drained floor's relief, the land's strength (render.py's)
     if (DATA) {
       Object.keys(DATA).forEach(function (name) {
         var D = DATA[name]; dataHave[name] = {};
@@ -445,19 +459,21 @@
       var d = img.data, n = cw * ch, i, j, v, depthHere = -seaLevel;
       var depth = new Float32Array(n), exposed = new Uint8Array(n);
       for (i = 0; i < n; i++) { v = d[i * 4 + 3] ? d[i * 4] : 0; depth[i] = v > 0 ? floorDepth(v) : -1; exposed[i] = (v > 0 && depth[i] <= depthHere) ? 1 : 0; }
-      var land = (drainStyle || 'land') === 'land';
       // metres per screen pixel here, for the relief: the degree's width at the centre, Mercator's stretch and all
-      var mpp = 111320 * Math.cos(view.lat * D2R) / ppdCentre(), shade = land && !frozen;
+      var mpp = 111320 * Math.cos(view.lat * D2R) / ppdCentre(), shade = !frozen, ga = Math.round(255 * WET_GLASS_ALPHA);
       var lx = -0.5, ly = -0.5, lz = Math.SQRT1_2;   // light from the north-west, 45° up (screen y grows south)
       for (i = 0; i < n; i++) {
         j = i * 4;
-        if (!exposed[i]) { d[j + 3] = 0; continue; }
+        if (!exposed[i]) {
+          if (wetGlass && depth[i] > 0) { d[j] = WET_GLASS[0]; d[j + 1] = WET_GLASS[1]; d[j + 2] = WET_GLASS[2]; d[j + 3] = ga; }   // the water still there, as a film
+          else d[j + 3] = 0;
+          continue;
+        }
         var x = i % cw, y = (i / cw) | 0;
         var edge = (x > 0 && !exposed[i - 1] && depth[i - 1] > depthHere) || (x < cw - 1 && !exposed[i + 1] && depth[i + 1] > depthHere) ||
                    (y > 0 && !exposed[i - cw] && depth[i - cw] > depthHere) || (y < ch - 1 && !exposed[i + cw] && depth[i + cw] > depthHere);
         if (edge) { d[j] = SEA_EDGE[0]; d[j + 1] = SEA_EDGE[1]; d[j + 2] = SEA_EDGE[2]; d[j + 3] = 170; continue; }
-        if (!land) { d[j] = DRAIN_WASH[0]; d[j + 1] = DRAIN_WASH[1]; d[j + 2] = DRAIN_WASH[2]; d[j + 3] = Math.round(255 * DRAIN_WASH_ALPHA); continue; }
-        var above = depthHere - depth[i], c = ramp(LAND_RAMP, above), f = 1;
+        var c = ramp(FLOOR_RAMP, depth[i]), f = 1;   // its blues by its own depth: old sea floor never looks like land
         if (shade) {
           var zl = x > 0 && depth[i - 1] >= 0 ? depth[i - 1] : depth[i], zr = x < cw - 1 && depth[i + 1] >= 0 ? depth[i + 1] : depth[i];
           var zu = y > 0 && depth[i - cw] >= 0 ? depth[i - cw] : depth[i], zd = y < ch - 1 && depth[i + cw] >= 0 ? depth[i + cw] : depth[i];
@@ -466,7 +482,7 @@
           f = 1 + DRAIN_SHADE * (dot / lz - 1) * 2;
         }
         d[j] = Math.max(0, Math.min(255, c[0] * f)); d[j + 1] = Math.max(0, Math.min(255, c[1] * f)); d[j + 2] = Math.max(0, Math.min(255, c[2] * f));
-        d[j + 3] = 240;
+        d[j + 3] = FLOOR_ALPHA;
       }
       ctx.putImageData(img, 0, 0);
     }
@@ -1164,7 +1180,7 @@
         if (nPointers >= 2 && pinch) {
           var ids = Object.keys(pointers), a = pointers[ids[0]], b = pointers[ids[1]];
           var d = Math.hypot(a.x - b.x, a.y - b.y);
-          view.S = Math.max(S_MIN, Math.min(S_MAX, pinch.S0 * d / pinch.d0));
+          view.S = Math.max(S_MIN, Math.min(S_MAX, pinch.S0 * Math.pow(d / pinch.d0, zoomGain().pinch)));
           // keep the ground under the fingers' midpoint where it was
           var r = stage.getBoundingClientRect();
           var mid = { x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top };
@@ -1203,7 +1219,7 @@
         var w = box.clientWidth, h = box.clientHeight, r = stage.getBoundingClientRect();
         var at = viewToLonLat(e.clientX - r.left, e.clientY - r.top, w, h);
         beginGesture();
-        view.S = Math.max(S_MIN, Math.min(S_MAX, view.S * (e.deltaY > 0 ? 0.9 : 1.1)));
+        view.S = Math.max(S_MIN, Math.min(S_MAX, view.S * wheelFactor(e)));
         anchor(at, e.clientX - r.left, e.clientY - r.top, w, h);
         fast(); endGesture();
       }, { passive: false });
@@ -1281,7 +1297,8 @@
       api.setSeaLevel = function (m) { seaLevel = Math.min(0, +m || 0); drawSea(); if (iceCanvas) drawIceCanvas(box.clientWidth, box.clientHeight); };
       api.seaLevel = function () { return seaLevel; };
       // Drain the sea (17 Oct 2026): the floor's painting, the painted data layers, the numbers under a point
-      api.drainStyle = function (s) { if (s === 'land' || s === 'sea' || s === null) { drainStyle = s; drawSea(); } return drainStyle; };
+      api.drainStyle = function (on) { if (on !== undefined) { drainStyle = on ? 'floor' : null; drawSea(); } return drainStyle; };   // 18 Oct: one painting; on means the floor path at every level
+      api.wetGlass = function (on) { if (on !== undefined) { wetGlass = !!on; drawSea(); } return wetGlass; };
       api.setLayer = function (name, on) { if (on !== undefined && DATA && DATA[name] && name !== 'floor') { dataOn[name] = !!on; paintData(); } return !!dataOn[name]; };   // with no second argument, only asks
       api.layers = function () { return DATA ? Object.keys(DATA) : []; };
       api.floorMax = function () { return DATA && DATA.floor ? DATA.floor.max : (region.shelf ? region.shelf.depth : 0); };

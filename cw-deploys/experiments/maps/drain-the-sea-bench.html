@@ -6,138 +6,347 @@
 <link rel="icon" type="image/png" href="../../art/icons/map-icon-256.png">
 <link rel="apple-touch-icon" href="../../art/icons/map-icon-256.png">
 <!--
-  drain-the-sea-bench.html — bench: Drain the sea (17 Oct 2026, from Michael's brief of 17 Oct). The Time
-  Machine's map (js/map.js on the world pyramid) and its deep-time timeline (js/deep-time.js), with:
-    1. a sea-level slider that goes past the shelf's 130 m to the bottom (the pyramid's new `floor` data
-       layer, render.py --drain), newly dry floor painted two ways, switchable here only: the land colours
-       by height above the new shore with their own relief, or the floor's own picture under a wash;
-    2. two layers, off by default: Age (Seton et al. 2020) and Stripes (EMAG2v3), painted in the browser
-       from data tiles;
-    3. the probe (js/probe.js): tap the sea and it enters, zooming in if the map is wide; one finger drags
-       it; the ground drifts under it near the edge; two fingers pan (switchable here); Done ends it;
-       quiet on land; the card says the depth, the age in words and which way a compass pointed when the
-       floor cooled, from stories/plates/reversals.json (GTS2020); the timeline's handle follows the age.
-  The spec this was to follow, CWVault/claude/Spec-Drain-the-Sea.md, was not on disk when this was built,
-  nor was Worknote-Time-Machine.md, nor at the revision of 17 Oct, later; the three paragraphs below are
-  stand-ins in the story's voice, to be replaced by the spec's.
-  Revised 17 Oct 2026, later (Michael's prompt): the picture gets the screen (Rulings, 17 Oct) — the map breaks
-  out of the column to the window's width less a margin, about three-quarters of the window's height, the
-  deep-time timeline drawn over its top edge on a translucent paper band; the probe's ring is the compass
-  with the needle inside, its words in a strip along the map's bottom edge with Done at the right; the ice
-  layer off here, and map.js never draws ice below the current sea; the stripes two-tone and the probe's
-  zoom one level closer. The chron's name shows only in the bench's own line under the map. The map's sea follows the timeline's handle through the ice ages
-  (stories/curves/sea-level-ice-ages.json) when she drags the handle herself; when the probe moves the
-  handle the sea stays where the slider put it.
+  drain-the-sea-bench.html — bench: Drain the sea (17 Oct 2026, from Michael's brief of 17 Oct; revised 17 Oct evening
+  and 18 Oct from his prompts; the spec it was to follow, CWVault/claude/Spec-Drain-the-Sea.md, has not been on disk
+  for any of the three builds, nor Prompt-Revise-Drain-the-Sea-Bench-01.md, so the three paragraphs are stand-ins in
+  the story's voice). On the Time Machine's model since 18 Oct: two pages — the words, ending in Next; then the working
+  parts with Glass Geometry's left column (../../css/htw.css), the deep-time timeline (js/deep-time.js) above the map,
+  the map (js/map.js on the world pyramid, js/globe.js for the Globe word) below it with bars on its left and right
+  edges and map.js's own strip along the bottom, and reset. At reset the map is as large as it can be while showing
+  the whole world, poles included, beside the column and under the timeline (Rulings, 18 Oct); the bars make it bigger.
+    The sea: a vertical gauge down the map's right edge, today at the top and the deepest trench at the foot, on an
+  uneven scale that gives the top 130 m room; she drags the water line down it, and the probe's floor gets a mark on
+  the same gauge. Newly dry floor keeps its blues, deeper darker, with the land's relief (Rulings, 18 Oct); a bench-only
+  toggle draws the water still there as a glassy film. The water taken out is drawn as a ball on Santa Fe, at true
+  scale, from stories/curves/ocean-volume.json (tools/ocean-volume.py), and said in one line in the readout strip.
+    The probe (js/probe.js): tap the sea; the ring is the compass; its words, the sea's sentence and the ball's line in
+  the strip along the map's bottom edge. The timeline's window follows the probe (the last 250 million years, or a span
+  around the age — a bench toggle), and the handle follows the age. Age and Stripes are column words, off by default;
+  Full words expands the timeline's labels; Story goes back to the words. Bench-only toggles and the zoom-gain
+  sliders (plane.js's CW.ZOOM_GAIN, read live by map.js) sit below the map.
 -->
 <title>Drain the sea — bench</title>
+<link rel="stylesheet" href="../../css/htw.css?v=2026-09-29">
 <style>
-  :root { --parch: #f4f1e8; --ink: #2a241c; --ink-soft: #6b655a; --slate: #546A80; --copper: #b5652b; --sep: #c8b89a; }
-  html, body { background: var(--parch); color: var(--ink); }
-  body { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; font-size: 20px; line-height: 1.4; }
-  article { max-width: 700px; margin: 0 auto; padding: 40px 40px 80px 40px; box-sizing: border-box; }
-  h1 { font-size: 34px; font-weight: normal; line-height: 1.15; margin: 0 0 1em 0; }
-  p { margin: 0 0 1em 0; }
-  /* the picture gets the screen (Rulings, 17 Oct 2026): the map at the window's width less a margin, the timeline over its top edge */
-  :root { --m: 14px; }
-  .mapwrap { position: relative; width: calc(100vw - 2 * var(--m)); margin: 1.4em 0 0 calc(50% - 50vw + var(--m)); }
-  #bar { position: absolute; left: 0; right: 0; top: 0; z-index: 6; margin: 0; padding: 6px 12px 0; background: rgba(244, 241, 232, 0.78); box-sizing: border-box; }
-  #map { margin: 0; }
+  :root { --parch: #f4f1e8; --parch-deep: #ece6d6; --ink: #2a241c; --ink-soft: #6b655a; --slate: #3f5a78; --payne: #546A80;
+          --grey: #9a958b; --copper: #b5652b; --sep: #c8b89a; --col: 170px; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--parch); color: var(--ink); font-family: Georgia, "Times New Roman", Times, serif; }
+  body { font-size: 16px; line-height: 1.4; }
+  .cmd { font-style: italic; color: var(--payne); cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .cmd:hover { color: #3D3D3A; }
+
+  /* ---------- the words, page one (the Time Machine's) ---------- */
+  #intro { max-width: 700px; margin: 0 auto; padding: 56px 24px 56px; }
+  #intro h1 { font-weight: normal; font-size: 36px; line-height: 1.1; margin: 0 0 22px; }
+  #intro p { font-size: 20px; line-height: 1.45; margin: 0 0 1em; }
+  #intro .go { text-align: right; margin: 1.6em 0 2.4em; }
+  #intro .next { font-size: 20px; font-weight: bold; }
+  #intro .credit { font-size: 12px; line-height: 1.4; color: var(--grey); }
+  #intro .credit p { margin: 0 0 6px; }
+
+  /* ---------- the working parts, page two ---------- */
+  #bench { display: none; position: relative; min-height: 100vh; }
+  #htw-panel { position: fixed; left: 0; top: 0; bottom: 0; width: var(--col); padding: 22px 16px; z-index: 20;
+               background: var(--parch-deep); border-right: .5px solid #d6c9ad; user-select: none; -webkit-user-select: none; }
+  #htw-panel-list { margin: 6px 0 0; padding: 0; list-style: none; }
+  #htw-panel .htw-item, #htw-panel .htw-action-word { cursor: pointer; }
+  #htw-panel .htw-action-row { display: block; }
+  #htw-panel .htw-action-row.group { margin-top: 20px; }
+  #htw-panel .htw-action-word.on { font-style: normal; color: var(--ink); }
+  #stage { margin-left: var(--col); padding: 8px 18px 40px; }
+  #title { text-align: center; font-weight: normal; font-size: 22px; letter-spacing: .02em; margin: 0 0 2px; }
+  #bar { width: 100%; margin: 4px 0 0; }
+  #mapbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-top: 1.2em; font-size: 14px; font-style: italic; color: var(--ink); }
+  #mapbar .mb { cursor: pointer; }
+  #mapbar .mb:hover { color: var(--slate); }
+  #mapbar .end { justify-self: end; }
+  #map .cw-strip span { display: none; }
   #map .cw-strip-left { display: none; }
-  .below { max-width: 700px; margin: 0 auto; }
-  .chron { font-size: 13px; color: #7a6e60; font-style: italic; margin-top: 6px; min-height: 1.3em; }
-  .row { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; font-size: 14px; font-style: italic; color: var(--ink); margin-top: 10px; }
-  .row .w { cursor: pointer; color: var(--slate); }
+  .mapwrap { position: relative; margin-top: 6px; z-index: 30; }
+  .grip { position: absolute; top: 0; bottom: 16px; width: 16px; z-index: 6; touch-action: none; cursor: ew-resize;
+          background: rgba(200,184,154,0.28); user-select: none; -webkit-user-select: none; }
+  .grip.l { left: -18px; border-radius: 8px 0 0 8px; }
+  .grip.r { right: -18px; border-radius: 0 8px 8px 0; }
+  .grip::after { content: ""; position: absolute; left: 6px; top: 50%; width: 4px; height: 44px; margin-top: -22px; background: #b9ad92; border-radius: 2px; opacity: .8; }
+  /* the gauge down the map's right edge, inside the map, over everything but the bars */
+  #gauge { position: absolute; right: 8px; top: 14px; bottom: 30px; width: 150px; z-index: 7; touch-action: none; cursor: ns-resize; user-select: none; -webkit-user-select: none; }
+  #gauge svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  #gauge text { font-family: Georgia, serif; font-size: 11px; fill: var(--ink); paint-order: stroke; stroke: rgba(244,241,232,0.85); stroke-width: 3px; stroke-linejoin: round; }
+  #gauge .water text { fill: var(--copper); font-weight: bold; }
+  /* the water ball: a picture, never a target */
+  #ball { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; overflow: hidden; }
+  #ball svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  /* the bench's own strip along the map's bottom edge, when the probe is off (the probe's takes over while it is on) */
+  .bench-strip { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(244,241,232,0.82); padding: 9px 170px 9px 14px; font-size: 15px; line-height: 1.35; color: var(--ink); pointer-events: none; z-index: 3; }
+  .bench-strip .extra { color: var(--ink-soft); }
+  #map .cw-probe .strip { padding-right: 170px; }   /* the probe's words keep clear of the gauge */
+  /* below the map: the bench's own toggles, out of the column (Michael, 18 Oct) */
+  .row { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; font-size: 14px; font-style: italic; color: var(--ink); margin: 14px auto 0; max-width: 820px; }
+  .row .w { cursor: pointer; color: var(--payne); }
   .row .w:hover { color: #3D3D3A; }
   .row .w.on { color: var(--ink); font-weight: bold; }
   .row .lab { font-style: normal; color: var(--ink-soft); }
   .row .sep { color: var(--sep); }
-  .when { font-size: 18px; margin: 1.1em 0 0.3em 0; min-height: 1.4em; }
-  .sea { width: 100%; accent-color: var(--copper); margin: 0; }
-  .ends { display: flex; justify-content: space-between; font-size: 13px; color: #7a6e60; margin-top: 2px; }
-  .note { font-size: 14px; color: #7a6e60; border-top: 0.5px solid var(--sep); margin-top: 3em; padding-top: 1.2em; line-height: 1.45; }
-  .note p { margin: 0 0 0.6em; }
-  @media (max-width: 800px) { article { padding: 24px 16px 60px 16px; } body { font-size: 18px; } h1 { font-size: 28px; } }
+  .row input[type=range] { width: 120px; vertical-align: middle; accent-color: var(--copper); }
+  .row .val { font-style: normal; color: var(--ink-soft); font-size: 13px; min-width: 3em; }
+  .chron { font-size: 13px; color: #7a6e60; font-style: italic; margin: 8px auto 0; max-width: 820px; min-height: 1.3em; }
+  .tm-panel p { margin: 0 0 9px; }
+  @media (max-width: 760px) {
+    #htw-panel { position: static; width: auto; padding: 14px 16px 12px; border-right: 0; border-bottom: .5px solid #d6c9ad; }
+    #htw-panel-list { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+    #htw-panel .htw-action-row.group { margin-top: 8px; }
+    #stage { margin-left: 0; padding: 8px 12px 30px; }
+    .bench-strip { font-size: 14px; padding-right: 120px; }
+    #gauge { width: 120px; }
+  }
 </style>
 </head>
 <body>
-<article>
+
+<section id="intro">
   <h1>Drain the sea</h1>
   <!-- stand-ins for the spec's three paragraphs (Spec-Drain-the-Sea.md was not on disk); in the voice, to be replaced -->
-  <p>Below is the whole Earth. Most of it is sea, and the sea hides a landscape nobody had seen until about seventy years ago, when ships began to measure its depth with sound. Drag the slider under the map and the sea goes down. The shallow shelves round the continents dry first. Then a mountain range comes up out of the Atlantic, longer than any on land, running down the middle of the ocean like a seam.</p>
+  <p>Below is the whole Earth. Most of it is sea, and the sea hides a landscape nobody had seen until about seventy years ago, when ships began to measure its depth with sound. Drag the water line down the gauge at the map’s edge and the sea goes down. The shallow shelves round the continents dry first. Then a mountain range comes up out of the Atlantic, longer than any on land, running down the middle of the ocean like a seam.</p>
   <p>The floor is young. Nothing on it is much older than 180 million years, while the oldest rocks on land are twenty times that. New floor is made along the seam and moves away on both sides, a few centimetres a year, about as fast as your fingernails grow. Turn on <i>Age</i> and the floor is coloured by when it was made: pale at the seam, darker the farther it has travelled.</p>
   <p>The Earth’s magnetic field flips every so often: north becomes south, and a compass would point the other way. Floor that cools while the field is one way keeps that direction in its rock. Turn on <i>Stripes</i> and you can see it, in bands either side of the seam, mirrored. Tap the sea anywhere and a probe tells you how deep the floor is, how old it is, and which way a compass pointed when it was made.</p>
+  <div class="go"><span class="cmd next" id="next" role="button" tabindex="0">Next</span></div>
+  <div class="credit">
+    <p>A bench, not a story. The water line is a what-if past 130 metres: no sea was ever that low. The floor keeps its shape as the water leaves; the land does not rise.</p>
+    <p>Sources. The ground and the floor: ETOPO 2022 (NOAA NCEI), public domain. The floor’s age: Seton, Müller, Zahirovic, Williams, Wright, Cannon, Whittaker, Matthews and McGirr, 2020, <i>A global dataset of present-day oceanic crustal age and seafloor spreading parameters</i>, Geochemistry, Geophysics, Geosystems 21 (EarthByte; the paper is open access, the grid folder states no licence, cited as its authors ask). The stripes: Meyer, Saltus and Chulliat, 2017, EMAG2v3 (NOAA NCEI, doi:10.7289/V5H70CVX), a US government work. Which way the field pointed: the Geomagnetic Polarity Time Scale of GTS2020 (Ogg, 2020), as tabulated in PmagPy, to 121 million years; the older chrons are not in the table yet. The water taken out: worked out from ETOPO 2022 (tools/ocean-volume.py); the whole ocean comes to 1.34 billion cubic kilometres, within a tenth of a percent of the published figure. The sea through the ice ages: Spratt and Lisiecki, 2016; Bintanja and van de Wal, 2008; Lambeck and others, 2014. Continents: Merdith and others, 2021 (EarthByte). The floor’s ages are on the 2012 timescale and the reversals on the 2020 one, so near a boundary the needle can be a chron out.</p>
+  </div>
+</section>
 
-  <div class="mapwrap">
+<section id="bench">
+  <nav id="htw-panel" aria-label="How this works">
+    <span id="htw-panel-heading">How this works</span>
+    <ul id="htw-panel-list">
+      <li class="htw-item" data-panel="timeline">Timeline</li>
+      <li class="htw-item" data-panel="map">Map</li>
+      <li class="htw-action-row sub"><span class="htw-action-word" id="wAge">Age</span></li>
+      <li class="htw-action-row sub"><span class="htw-action-word" id="wStripes">Stripes</span></li>
+      <li class="htw-action-row group"><span class="htw-action-word" id="wFull">Full words</span></li>
+      <li class="htw-action-row group"><span class="htw-action-word" id="wStory">Story</span></li>
+    </ul>
+  </nav>
+  <main id="stage">
+    <h1 id="title">Drain the sea</h1>
     <div id="bar"></div>
-    <div id="map"></div>
-  </div>
-  <div class="below">
-  <div class="row" id="words">
-    <span class="lab">Layers:</span>
-    <span class="w" id="wAge">Age</span>
-    <span class="w" id="wStripes">Stripes</span>
-    <span class="sep">·</span>
-    <span class="lab">Dry floor:</span>
-    <span class="w on" id="wLand">land colours</span>
-    <span class="w" id="wSea">sea colours</span>
-    <span class="sep">·</span>
-    <span class="lab">Probe:</span>
-    <span class="w on" id="wTwo">two fingers pan</span>
-  </div>
-  <div class="when" id="when">Today’s sea.</div>
-  <input class="sea" id="sea" type="range" min="0" max="11000" step="10" value="0" aria-label="how far the sea is lowered, in metres">
-  <div class="ends"><span>today</span><span>the sea 130 m lower, the ice-age low</span><span>drained</span></div>
-  <div class="chron" id="chron"></div>
-  </div>
+    <div id="mapbar"><span class="left"></span><span class="mb mid" id="wGlobe" role="button" tabindex="0">Globe</span><span class="mb end" id="wReset" role="button" tabindex="0">reset</span></div>
+    <div class="mapwrap" id="mapwrap">
+      <div id="map"></div>
+      <div class="grip l" data-g="l"></div><div class="grip r" data-g="r"></div>
+      <div id="ball"></div>
+      <div id="gauge"></div>
+    </div>
+    <div class="row" id="words">
+      <span class="lab">Bench:</span>
+      <span class="w" id="wWet">wet glass</span>
+      <span class="w on" id="wTwo">two fingers pan</span>
+      <span class="sep">·</span>
+      <span class="lab">Window follows the probe:</span>
+      <span class="w on" id="wLast">last 250 million years</span>
+      <span class="w" id="wAround">around the age</span>
+    </div>
+    <div class="row">
+      <span class="lab">Zoom gain:</span>
+      <span class="lab">wheel</span><input type="range" id="gWheel" min="0.02" max="0.30" step="0.01" value="0.10" aria-label="wheel zoom gain"><span class="val" id="vWheel">0.10</span>
+      <span class="lab">pinch</span><input type="range" id="gPinch" min="0.3" max="1.5" step="0.05" value="1.0" aria-label="pinch zoom gain"><span class="val" id="vPinch">1.00</span>
+    </div>
+    <div class="chron" id="chron"></div>
+  </main>
+</section>
 
-  <div class="note">
-    <p>A bench, not a story. The slider is a what-if past 130 metres: no sea was ever that low. The floor keeps its shape as the water leaves; the land does not rise, and the exposed floor is painted dry at once.</p>
-    <p>Sources. The ground and the floor: ETOPO 2022 (NOAA NCEI), public domain. The floor’s age: Seton, Müller, Zahirovic, Williams, Wright, Cannon, Whittaker, Matthews and McGirr, 2020, <i>A global dataset of present-day oceanic crustal age and seafloor spreading parameters</i>, Geochemistry, Geophysics, Geosystems 21 (EarthByte; the paper is open access, the grid folder states no licence, cited as its authors ask). The stripes: Meyer, Saltus and Chulliat, 2017, EMAG2v3 (NOAA NCEI, doi:10.7289/V5H70CVX), a US government work. Which way the field pointed: the Geomagnetic Polarity Time Scale of GTS2020 (Ogg, 2020), as tabulated in PmagPy, to 121 million years; the older chrons are not in the table yet. The sea through the ice ages: Spratt and Lisiecki, 2016; Bintanja and van de Wal, 2008; Lambeck and others, 2014. The ice: Peltier, Argus and Drummond, 2015 (ICE-6G_C, via PMIP4). The floor’s ages are on the 2012 timescale and the reversals on the 2020 one, so near a boundary the needle can be a chron out.</p>
-  </div>
-</article>
-
-<script src="../../js/map.js?v=2026-10-17b"></script>
-<script src="../../js/deep-time.js?v=2026-10-13d"></script>
-<script src="../../js/probe.js?v=2026-10-17b"></script>
+<script src="../../js/plane.js?v=2026-10-18"></script>
+<script src="../../js/map.js?v=2026-10-18"></script>
+<script src="../../js/globe.js?v=2026-10-15"></script>
+<script src="../../js/deep-time.js?v=2026-10-18"></script>
+<script src="../../js/probe.js?v=2026-10-18"></script>
+<script src="../../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  var CW_VERSION = '2026-10-17b 677b0e1'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+  var CW_VERSION = '2026-10-18 9bf557d'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   var $ = function (id) { return document.getElementById(id); };
   var THIS_YEAR = new Date().getFullYear();
-  var FIT = { west: -180, south: -90, east: 180, north: 90 };   // the Time Machine's opening: the whole world
-  var map = null, bar = null, probe = null, curve = null, probeDriving = false;
-  var FROM_DISK = location.protocol === 'file:';
-  var AGAIN = FROM_DISK ? 'This page was opened from the file on disk; open it from curiouswoods.org instead.' : 'Reloading the page usually brings it back.';
+  var FIT = { west: -180, south: -90, east: 180, north: 90 };   // the whole world, poles and all
+  var SANTA_FE = { lat: 35.687, lon: -105.938 };
+  var DEEPEST = 11000;
+  // the gauge's uneven scale: metres lower → fraction of the pole, the top 130 m given room
+  var GAUGE_KNOTS = [[0, 0], [130, 0.22], [2500, 0.50], [3700, 0.62], [DEEPEST, 1]];
+  var GAUGE_MARKS = [[0, 'today'], [130, 'ice-age low, 130 m'], [2500, 'ridge tops, 2,500 m'], [3700, 'average floor, 3,700 m'], [DEEPEST, 'deepest trench, 11,000 m']];
+  var map = null, bar = null, probe = null, curve = null, volume = null, probeDriving = false, windowMode = 'last';
+  var seaStrip = null, lastReading = null;
   var get = function (u) { return fetch(u, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }); };
 
-  // ---- the slider: metres lower than today ----
-  var slider = $('sea'), when = $('when');
-  function sayLevel(m) {
-    if (m <= 0) return 'Today’s sea.';
-    var s = 'The sea ' + Math.round(m).toLocaleString('en-GB') + ' metres lower than today.';
+  // ---------- words ----------
+  function withCommas(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  function seaSentence(m) {
+    if (m <= 0) return '';
+    var s = 'The sea ' + withCommas(m) + ' metres lower than today.';
     if (m > 130) s += ' No sea was ever this low.';
     else if (m >= 100) s += ' About where it stood at the height of the last ice age.';
     return s;
   }
-  function applySlider() {
-    var m = +slider.value;
-    if (map) map.setSeaLevel(-m);
-    when.textContent = sayLevel(m);
+  function volumeAt(m) {   // [km³, ball km] from the table, between its points
+    if (!volume) return null;
+    var pts = volume.points, i = Math.min(pts.length - 1, Math.max(0, Math.floor(m / 10)));
+    if (i >= pts.length - 1) return { km3: pts[i][1], km: pts[i][2] };
+    var a = pts[i], b = pts[i + 1], t = (m - a[0]) / (b[0] - a[0]);
+    return { km3: a[1] + (b[1] - a[1]) * t, km: a[2] + (b[2] - a[2]) * t };
   }
-  slider.addEventListener('input', applySlider);
-  function showLevel() { var m = map ? -map.seaLevel() : 0; slider.value = Math.round(m); when.textContent = sayLevel(m); }
+  function ballSentence(m) {
+    var v = volumeAt(m);
+    if (!v || v.km < 5) return '';
+    var d = v.km >= 1000 ? Math.round(v.km / 50) * 50 : Math.round(v.km / 10) * 10;
+    var s = 'The water you’ve taken out would make a ball about ' + withCommas(d) + ' kilometres across';
+    var best = null;
+    (volume.distances_from_santa_fe || []).forEach(function (x) { var off = Math.abs(x.km - v.km) / v.km; if (off <= 0.15 && (!best || off < best.off)) best = { off: off, place: x.place }; });
+    if (best) s += ', about as far as Santa Fe to ' + best.place;
+    return s + '.';
+  }
+  function extraWords() { var m = map ? -map.seaLevel() : 0, a = seaSentence(m), b = ballSentence(m); return (a ? a + ' ' : '') + b; }
+  function sayStrip() {
+    if (probe && probe.active()) { probe.refresh(); if (seaStrip) seaStrip.style.display = 'none'; return; }
+    if (!seaStrip) return;
+    var w = extraWords();
+    seaStrip.innerHTML = w ? '<span class="extra">' + w + '</span>' : '';
+    seaStrip.style.display = w ? '' : 'none';
+  }
 
-  // ---- the words ----
+  // ---------- the gauge ----------
+  var gauge = $('gauge'), gsvg = null, gaugeGeom = null;
+  function gaugeFrac(m) { for (var i = 1; i < GAUGE_KNOTS.length; i++) { var a = GAUGE_KNOTS[i - 1], b = GAUGE_KNOTS[i]; if (m <= b[0]) return a[1] + (b[1] - a[1]) * (m - a[0]) / (b[0] - a[0]); } return 1; }
+  function gaugeMetres(f) { f = Math.max(0, Math.min(1, f)); for (var i = 1; i < GAUGE_KNOTS.length; i++) { var a = GAUGE_KNOTS[i - 1], b = GAUGE_KNOTS[i]; if (f <= b[1]) return a[0] + (b[0] - a[0]) * (f - a[1]) / (b[1] - a[1]); } return DEEPEST; }
+  function svgEl(name, attrs, parent, text) { var e = document.createElementNS('http://www.w3.org/2000/svg', name); Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); }); if (text != null) e.textContent = text; if (parent) parent.appendChild(e); return e; }
+  function drawGauge() {
+    if (!gsvg) { gsvg = svgEl('svg', {}); gauge.appendChild(gsvg); }
+    var w = gauge.clientWidth, h = gauge.clientHeight; if (!w || !h) return;
+    gsvg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    while (gsvg.firstChild) gsvg.removeChild(gsvg.firstChild);
+    var x = w - 14, top = 10, bottom = h - 10, len = bottom - top;
+    gaugeGeom = { x: x, top: top, len: len };
+    svgEl('rect', { x: x - 5, y: top - 6, width: 10, height: len + 12, rx: 4, fill: 'rgba(244,241,232,0.55)' }, gsvg);
+    svgEl('line', { x1: x, y1: top, x2: x, y2: bottom, stroke: '#4a4336', 'stroke-width': 1.5, 'stroke-opacity': 0.8 }, gsvg);
+    GAUGE_MARKS.forEach(function (mk) {
+      var y = top + gaugeFrac(mk[0]) * len;
+      svgEl('line', { x1: x - 6, y1: y, x2: x + 6, y2: y, stroke: '#4a4336', 'stroke-width': 1, 'stroke-opacity': 0.8 }, gsvg);
+      svgEl('text', { x: x - 10, y: y + 4, 'text-anchor': 'end' }, gsvg, mk[1]);
+    });
+    // the probe's floor, a mark on the same scale
+    if (lastReading && lastReading.depth > 0) {
+      var yp = top + gaugeFrac(Math.min(DEEPEST, lastReading.depth)) * len;
+      var pg = svgEl('g', {}, gsvg);
+      svgEl('circle', { cx: x, cy: yp, r: 4, fill: '#2a241c', stroke: 'rgba(244,241,232,0.9)', 'stroke-width': 1.5 }, pg);
+      var yw0 = top + gaugeFrac(map ? -map.seaLevel() : 0) * len, below = yp >= yw0;   // its label on the side away from the water line's
+      svgEl('text', { x: x - 10, y: yp + (below ? 14 : -6), 'text-anchor': 'end' }, pg, 'the floor under the probe');
+    }
+    // the water line, hers to drag
+    var m = map ? -map.seaLevel() : 0, yw = top + gaugeFrac(m) * len, wg = svgEl('g', { 'class': 'water' }, gsvg);
+    svgEl('line', { x1: x - 16, y1: yw, x2: x + 16, y2: yw, stroke: '#b5652b', 'stroke-width': 3, 'stroke-linecap': 'round' }, wg);
+    svgEl('polygon', { points: (x + 20) + ',' + yw + ' ' + (x + 28) + ',' + (yw - 5) + ' ' + (x + 28) + ',' + (yw + 5), fill: '#b5652b' }, wg);
+    if (m > 0) svgEl('text', { x: x - 20, y: yw - 7, 'text-anchor': 'end' }, wg, withCommas(m) + ' m');
+  }
+  var gdrag = null;
+  function gaugeAt(ev) { var r = gauge.getBoundingClientRect(); return (ev.clientY - r.top - gaugeGeom.top) / gaugeGeom.len; }
+  gauge.addEventListener('pointerdown', function (ev) { if (!gaugeGeom || !map) return; ev.preventDefault(); ev.stopPropagation(); gdrag = ev.pointerId; try { gauge.setPointerCapture(ev.pointerId); } catch (e) {} setSea(gaugeMetres(gaugeAt(ev))); });
+  gauge.addEventListener('pointermove', function (ev) { if (gdrag !== ev.pointerId) return; ev.preventDefault(); setSea(gaugeMetres(gaugeAt(ev))); });
+  function gup(ev) { if (gdrag === ev.pointerId) gdrag = null; }
+  gauge.addEventListener('pointerup', gup); gauge.addEventListener('pointercancel', gup);
+  gauge.addEventListener('click', function (ev) { ev.stopPropagation(); });
+  function setSea(m) { m = Math.round(Math.max(0, Math.min(DEEPEST, m)) / 10) * 10; if (map) map.setSeaLevel(-m); drawGauge(); drawBall(); sayStrip(); }
+
+  // ---------- the water ball, on Santa Fe ----------
+  var ballHost = $('ball'), bsvg = null;
+  function drawBall() {
+    if (!map) return;
+    if (!bsvg) {
+      bsvg = svgEl('svg', {}); ballHost.appendChild(bsvg);
+      var defs = svgEl('defs', {}, bsvg), g = svgEl('radialGradient', { id: 'ballg', cx: '36%', cy: '33%', r: '68%' }, defs);
+      [['0%', '#d6e8f3'], ['22%', '#8dbad8'], ['58%', '#3f7aa8'], ['88%', '#234e78'], ['100%', '#17344f']].forEach(function (st) { svgEl('stop', { offset: st[0], 'stop-color': st[1] }, g); });
+    }
+    var st = map.stage(), w = st.clientWidth, h = st.clientHeight;
+    bsvg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    Array.prototype.slice.call(bsvg.querySelectorAll('ellipse')).forEach(function (e) { bsvg.removeChild(e); });
+    var v = volumeAt(-map.seaLevel());
+    if (!v || v.km < 5) return;
+    var R = v.km / 2, p = map.pixelOf(SANTA_FE.lon, SANTA_FE.lat);
+    var pe = map.pixelOf(SANTA_FE.lon + 0.5, SANTA_FE.lat), pw = map.pixelOf(SANTA_FE.lon - 0.5, SANTA_FE.lat);
+    var pn = map.pixelOf(SANTA_FE.lon, SANTA_FE.lat + 0.5), ps = map.pixelOf(SANTA_FE.lon, SANTA_FE.lat - 0.5);
+    var pxPerDegLon = Math.abs(pe.x - pw.x), pxPerDegLat = Math.abs(pn.y - ps.y);
+    var rx = R / (111.32 * Math.cos(SANTA_FE.lat * Math.PI / 180)) * pxPerDegLon, ry = R / 111.32 * pxPerDegLat;   // a true circle on the ground
+    if (rx < 1 || ry < 1) return;
+    svgEl('ellipse', { cx: p.x + rx * 0.06, cy: p.y + ry * 0.08, rx: rx, ry: ry, fill: 'rgba(20,30,45,0.22)' }, bsvg);   // its shadow on the ground
+    svgEl('ellipse', { cx: p.x, cy: p.y, rx: rx, ry: ry, fill: 'url(#ballg)' }, bsvg);
+  }
+
+  // ---------- the map's size: as large as it can be and still the whole world, poles included ----------
+  var wrap = $('mapwrap'), stage = $('stage'), margins = { l: 0, r: 0 }, homeSize = null;
+  function fitSize() {
+    var stageW = stage.clientWidth - 36;                                   // the stage's padding
+    var top = wrap.getBoundingClientRect().top + window.scrollY;           // where the map starts on the page
+    var availH = Math.max(220, window.innerHeight - top - 16 - 28);        // the strip under the map, and a breath
+    var W = Math.floor(Math.min(stageW, 2 * availH)), H = Math.floor(W / 2);
+    return { W: W, H: H, stageW: stageW };
+  }
+  function applySize(sz) {
+    margins.l = margins.r = Math.max(0, Math.floor((sz.stageW - sz.W) / 2));
+    layoutWrap();
+  }
+  function layoutWrap() { wrap.style.marginLeft = margins.l + 'px'; wrap.style.marginRight = margins.r + 'px'; }
+  // the bars at the left and right edges stretch the map (the Time Machine's); the left one may take it over the column
+  document.querySelectorAll('.grip').forEach(function (gr) {
+    var st = null;
+    gr.addEventListener('pointerdown', function (ev) {
+      var r = wrap.getBoundingClientRect();
+      st = { x: ev.clientX, ml: margins.l, mr: margins.r, roomL: r.left, roomR: window.innerWidth - r.right };
+      ev.preventDefault(); ev.stopPropagation(); try { gr.setPointerCapture(ev.pointerId); } catch (e) {}
+    });
+    gr.addEventListener('pointermove', function (ev) {
+      if (!st) return; var dx = ev.clientX - st.x;
+      if (gr.dataset.g === 'l') margins.l = Math.max(st.ml - st.roomL + 18, st.ml + dx);
+      else margins.r = Math.max(st.mr - st.roomR + 18, st.mr - dx);
+      layoutWrap();
+    });
+    var up = function () { st = null; };
+    gr.addEventListener('pointerup', up); gr.addEventListener('pointercancel', up);
+  });
+  function home() { if (!map) return; map.home(); if (homeSize) applySize(homeSize); drawGauge(); drawBall(); }
+  $('wReset').addEventListener('click', home);
+  $('wGlobe').addEventListener('click', function () { var w = $('wGlobe'), on = w.textContent === 'Globe'; w.textContent = on ? 'Map' : 'Globe'; if (map) map.deepView(on ? 'globe' : 'map'); });
+
+  // ---------- the column ----------
+  var PANELS = {
+    timeline: ['Timeline', '<p>Each coloured band is a period. Tap one and it opens as a longer line underneath. Drag the copper dot and the map shows the Earth in that year.</p><p>When the probe is out, the window follows it to the age of the floor under your finger, and the dot goes there.</p><p>Press and hold a label to see its words in full. <i>Full words</i>, in the column, writes them all out where there is room.</p>'],
+    map: ['Map', '<p>Drag the water line down the gauge at the right edge and the sea goes down; the floor it leaves keeps its blues, darker the deeper it was. The ball on New Mexico is the water you have taken out, at true scale.</p><p>Tap the sea and the probe tells you how deep the floor is there, how old, and which way a compass pointed when it cooled. Drag it; two fingers move the map. <i>Done</i> puts it away.</p><p><i>Age</i> colours the floor by when it was made; <i>Stripes</i> shows the record of the field’s flips. <i>Globe</i> turns the map into a world you can spin; <i>reset</i> brings it home.</p>']
+  };
+  var panels = {};
+  document.querySelectorAll('#htw-panel .htw-item').forEach(function (li) { li.addEventListener('click', function () {
+    var k = li.dataset.panel; Object.keys(panels).forEach(function (o) { if (o !== k) panels[o].hide(); });
+    if (!panels[k]) { panels[k] = CW.createInfoPanel({ width: 300 }); panels[k].body.innerHTML = '<div class="tm-panel"><b>' + PANELS[k][0] + '</b>' + PANELS[k][1] + '</div>'; }
+    var p = panels[k];
+    if (p.visible() && p.el.style.opacity === '1') { p.hide(); return; }
+    if (!p.userMoved()) { var r = stage.getBoundingClientRect(); p.setPosition(Math.max(8, r.left + 24), k === 'map' ? wrap.getBoundingClientRect().top + 12 : 56); }
+    p.show();
+  }); });
   function word(id, on) { $(id).classList.toggle('on', !!on); }
   $('wAge').addEventListener('click', function () { if (!map) return; word('wAge', map.setLayer('age', !map.setLayer('age'))); });
   $('wStripes').addEventListener('click', function () { if (!map) return; word('wStripes', map.setLayer('stripes', !map.setLayer('stripes'))); });
-  $('wLand').addEventListener('click', function () { if (!map) return; map.drainStyle('land'); word('wLand', true); word('wSea', false); });
-  $('wSea').addEventListener('click', function () { if (!map) return; map.drainStyle('sea'); word('wLand', false); word('wSea', true); });
+  $('wFull').addEventListener('click', function () { if (!bar) return; word('wFull', bar.fullWords(!bar.fullWords())); });
+  $('wStory').addEventListener('click', function () { $('bench').style.display = 'none'; $('intro').style.display = 'block'; window.scrollTo(0, 0); });
+  // the bench's own toggles, below the map
+  $('wWet').addEventListener('click', function () { if (!map) return; word('wWet', map.wetGlass(!map.wetGlass())); });
   $('wTwo').addEventListener('click', function () { if (!probe) return; word('wTwo', probe.twoFinger(!probe.twoFinger())); });
+  $('wLast').addEventListener('click', function () { windowMode = 'last'; word('wLast', true); word('wAround', false); if (lastReading && lastReading.age != null) handleTo(lastReading.age, true); });
+  $('wAround').addEventListener('click', function () { windowMode = 'around'; word('wLast', false); word('wAround', true); if (lastReading && lastReading.age != null) handleTo(lastReading.age, true); });
+  // the zoom gain: plane.js's one number, read live by map.js
+  function gainWords() { $('vWheel').textContent = CW.ZOOM_GAIN.wheel.toFixed(2); $('vPinch').textContent = CW.ZOOM_GAIN.pinch.toFixed(2); }
+  $('gWheel').addEventListener('input', function () { CW.ZOOM_GAIN.wheel = +this.value; gainWords(); });
+  $('gPinch').addEventListener('input', function () { CW.ZOOM_GAIN.pinch = +this.value; gainWords(); });
+  gainWords();
 
-  // ---- the timeline: the deep lines, as the Time Machine mounts them; her drag of the handle moves the sea ----
+  // ---------- the timeline: the deep lines, as the Time Machine mounts them; her drag of the handle moves the map ----------
   function buildBar(store) {
     bar = cwDeepTime($('bar'), {
       data: '../../stories/deep-time.json', events: store, year: 0,
@@ -145,49 +354,73 @@
       scene: [],
       onYear: function (ma, storeYear) {
         if (probeDriving || !map) return;          // the probe moves the handle; the handle does not then move the sea
-        map.setTime(storeYear); showLevel();
-      }
+        map.setTime(storeYear); drawGauge(); drawBall(); sayStrip();
+      },
+      onBar: function () { requestAnimationFrame(function () { if (homeSize) { homeSize = fitSize(); } }); }   // the bar's height changed: the home size follows
     });
   }
-  // the handle follows the probe's age: within the open line if it can, else the Earth line
-  function handleTo(ma) {
+  // the window follows the probe: the last 250 million years, or a span round the age; the handle follows the age
+  function handleTo(ma, force) {
     if (!bar) return;
-    var sp = bar.span();
+    var sp = bar.span(), a, b;
+    if (windowMode === 'last') { a = 250; b = 0; }
+    else { var span = Math.max(20, ma); a = Math.min(4600, ma + span / 2); b = Math.max(0, ma - span / 2); }
+    var inside = ma <= sp.from - 0.2 * (sp.from - sp.to) && ma >= sp.to + 0.2 * (sp.from - sp.to);
+    var want = windowMode === 'last' ? !(sp.from === 250 && sp.to === 0) : !inside;
     probeDriving = true;
     try {
-      if (ma > sp.from || ma < sp.to) bar.open([]);
+      if (want || force) { bar.open([]); bar.focus(a, b); }
       bar.setYear(ma);
     } finally { probeDriving = false; }
   }
 
-  // ---- the map, the probe ----
-  // no ice on this bench (Michael, 17 Oct): the pyramid's ice layer off, and no past ice handed to the map
+  // ---------- the pages ----------
+  var raw = null, wanted = false, live = false;
+  function showBench() {
+    if (!raw) { wanted = true; return; }
+    $('intro').style.display = 'none'; $('bench').style.display = 'block';
+    if (live) return;
+    live = true;
+    homeSize = fitSize(); applySize(homeSize);
+    // the Time Machine's map: the pyramid, the sea through the ice ages, the globe past the seam; no ice layer on this bench
+    map = cwMap($('map'), raw.world, [], { fit: FIT, reset: 'reset', height: homeSize.H, layers: { ice: false }, time: {
+      seaLevel: curve,
+      deep: { seam: 2.6e6, plates: '../../stories/plates/continents.json', coast: '../../art/maps/world-tiles/contours-0.json', view: 'map', cities: '../../stories/plates/cities.json' }
+    } });
+    map.drainStyle(true);
+    map.setSeaLevel(0);
+    seaStrip = document.createElement('div'); seaStrip.className = 'bench-strip'; seaStrip.style.display = 'none'; map.stage().appendChild(seaStrip);
+    probe = cwProbe(map, {
+      reversals: raw.reversals,
+      zoom: { lon: 5.5, lat: 3.25 },
+      extra: function () { return extraWords(); },
+      onRead: function (rd) {
+        lastReading = rd;
+        if (rd.age !== null && rd.age !== undefined) handleTo(rd.age);
+        $('chron').textContent = rd.chron ? 'bench: chron ' + rd.chron + (rd.chronName ? ' (' + rd.chronName + ')' : '') + ', GTS2020' : '';
+        drawGauge(); if (seaStrip) seaStrip.style.display = 'none';
+      },
+      onDone: function () { lastReading = null; $('chron').textContent = ''; drawGauge(); sayStrip(); }
+    });
+    map.onView(function () { drawBall(); });
+    if (raw.store) buildBar(raw.store);
+    drawGauge(); drawBall(); sayStrip();
+    window.cwDrain = { map: map, probe: probe, bar: function () { return bar; }, setSea: setSea, handleTo: handleTo, size: function () { return { home: homeSize, wrap: wrap.getBoundingClientRect(), stage: map.stage().getBoundingClientRect() }; } };
+    console.info('Drain the sea: data layers ' + JSON.stringify(map.layers()) + '; floor to ' + map.floorMax() + ' m; map at reset ' + homeSize.W + ' × ' + homeSize.H);
+  }
+  $('next').addEventListener('click', showBench);
+  $('next').addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); showBench(); } });
+  var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { if (!live) return; homeSize = fitSize(); drawGauge(); drawBall(); }, 150); });
+
   Promise.all([cwMap.load('../../art/maps/world-pyramid.json'), get('../../stories/curves/sea-level-ice-ages.json'),
                get('../../stories/plates/reversals.json').catch(function (e) { console.warn('no reversal table', e.message); return null; }),
-               get('../../stories/deep-time-events.json').catch(function (e) { console.warn('no events', e.message); return null; })])
+               get('../../stories/deep-time-events.json').catch(function (e) { console.warn('no events', e.message); return null; }),
+               get('../../stories/curves/ocean-volume.json').catch(function (e) { console.warn('no volume table', e.message); return null; })])
     .then(function (r) {
-      var world = r[0], sea = r[1], reversals = r[2], store = r[3];
-      curve = sea.points;
-      // about three-quarters of the window's height (the picture gets the screen); map.js clamps it to its own cap
-      map = cwMap($('map'), world, [], { fit: FIT, reset: 'reset', height: Math.round((window.innerHeight || 768) * 0.75), layers: { ice: false }, time: { seaLevel: curve } });
-      map.drainStyle('land');
-      map.setSeaLevel(0);
-      probe = cwProbe(map, {
-        reversals: reversals,
-        zoom: { lon: 5.5, lat: 3.25 },   // one level closer than the Time Machine's 2,000 km box (Michael, 17 Oct): the stripes read
-        onRead: function (rd) {
-          if (rd.age !== null && rd.age !== undefined) handleTo(rd.age);
-          $('chron').textContent = rd.chron ? 'bench: chron ' + rd.chron + (rd.chronName ? ' (' + rd.chronName + ')' : '') + ', GTS2020' : '';
-        },
-        onDone: function () { $('chron').textContent = ''; }
-      });
-      if (store) buildBar(store);
-      window.cwDrain = { map: map, probe: probe, bar: function () { return bar; } };   // for checking from the console; nothing on the page uses it
-      var names = map.layers();
-      console.info('Drain the sea: data layers ' + JSON.stringify(names) + '; floor to ' + map.floorMax() + ' m');
-      if (names.indexOf('floor') < 0) when.textContent = 'The floor layer is not rendered yet (render.py --drain); the slider stops at the shelf.';
+      raw = { world: r[0], reversals: r[2], store: r[3] }; curve = r[1].points; volume = r[4];
+      if (wanted) showBench();
     })
-    .catch(function (e) { console.error(e); $('map').textContent = 'The map did not load. ' + AGAIN; });
+    .catch(function (e) { console.error(e); $('intro').querySelector('p').insertAdjacentHTML('afterend', '<p style="color:#8b1a1a;font-size:16px">The map did not load. Reloading the page usually brings it back.</p>'); });
 })();
 </script>
 </body>

@@ -31,7 +31,18 @@ as a needle; one finger drags it, the ground drifts under it near the map's edge
 two fingers pan (`opts.twoFinger`), *Done* or Escape ends it; `opts.onRead(reading)` is how a page
 makes a timeline's handle follow the age. First used by `experiments/maps/drain-the-sea-bench.html`. **17 Oct 2026,
 later:** the ring is the compass (48 px) with the needle inside; the words in a strip docked along the map's bottom
-edge, Done at its right; nothing else beside the ring; the chron's name in `reading.chron` only.
+edge, Done at its right; nothing else beside the ring; the chron's name in `reading.chron` only. **18 Oct 2026:**
+`opts.extra(reading)` adds a page's own words to the strip and `probe.refresh()` redraws it.
+**`plane.js`, 18 Oct 2026 — the zoom gain:** `CW.ZOOM_GAIN = { wheel: 0.10, pinch: 1.0 }`, one named number for every
+page (Michael: the pinch and the wheel were too sensitive), and `CW.wheelFactor(e)`, which gives a mouse notch its
+whole step and a trackpad's small deltas a proportionate share, where the twitch was; `glass.js`'s wheel and
+`map.js`'s wheel and pinch read it. The defaults are August's numbers and stay until Michael has picked others on the
+Drain the sea bench's sliders; the labs' script queries are not bumped, so they take the shared number on uncached
+loads only. **`deep-time.js`, 18 Oct 2026** (`?v=2026-10-18` on the Time Machine and the bench): Ga for billions, not
+the invented Ba; `fmtLong`; the page's first abbreviation once in full with the short form after it ("Earth 4.6 billion
+years ago (4.6 Ga) to today", until she first acts); press and hold on a title, the knob's age or the readout shows
+the full words in place; `bar.fullWords(on)` expands every label that has room, the short form staying where there is
+none (a free span's title in the margin, "250 Ma to today").
 **`map.js`, 17 Oct 2026 — Drain the sea** (`?v=2026-10-17` on the bench; no other page's query changed,
 nothing they draw changed): the pyramid's `data` block (from `render.py --drain`) is read — `floor`, `age`,
 `stripes`, 8-bit tiles whose value is a number; `setSeaLevel` goes past the shelf's 130 m to the bottom
@@ -49,7 +60,12 @@ Hudson Bay, the Barents Sea or the Baltic, and a lowered sea shows the ice on th
 layer keeps the SVG rings. **The Time Machine relied on the old drawing:** at 20,000 years its sea is at −116 m and the
 ICE-6G outlines run over the Barents and Kara shelves, which lie deeper, so that ice vanishes there when its `map.js`
 query is next bumped; at 12,000 years, sea at −60 m, Hudson Bay's ice goes too. The stripes layer is now a two-tone split
-at zero anomaly, ink and parchment, softened only within ±24 nT of the split. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael's call, when
+at zero anomaly, ink and parchment, softened only within ±24 nT of the split. **`map.js`, 18 Oct 2026** (`?v=2026-10-18`
+on the bench only): newly dry floor keeps its blues — the floor ramp by depth, pale on the shelves to nearly black in
+the trenches, with the land's relief strength (Michael's rulings *deeper is darker* and *white means ice*); the
+land/sea paintings are gone, `drainStyle(on)` only chooses the floor path, and `wetGlass(on)` films the water still
+there; the wheel and the pinch read the one zoom gain, `CW.ZOOM_GAIN` from `plane.js` when it is loaded, the same
+numbers as a fallback when not. **`map.js` (moved here 20 Sep 2026 from `experiments/maps/`, Michael's call, when
 the Hokusai story called it; a second base, the globe past the deep-time seam, 6 Oct 2026 — see
 `experiments/join-bench.html`)** — the map overlay: `cwMap`, `cwMapWindow`, `cwMap.load`, and
 the projection pair `cwMap.toPixel` / `cwMap.toLonLat`. Described in full under
@@ -208,6 +224,12 @@ cell and traced at one half, rings under six points dropped; the same area as th
 to a tenth of a percent (that trace, `prototypes/ice/`, is gone with its `.gitignore` line: Michael, 12 Oct, the PMIP4
 redistribution is the source and the letter to Peltier is no longer waited on). Cite: Peltier, Argus and Drummond 2015 and Argus
 et al. 2014, via PMIP4 (both in the file). Read by `active/time-machine.html`, which hands it to `js/map.js`'s `time.ice`.
+**`stories/curves/ocean-volume.json` (18 Oct 2026, Drain the sea)** — the water taken out of the sea at each level,
+every 10 m from today to 11,000 m, as cubic kilometres and as the diameter of a ball of that volume, worked out once
+from ETOPO 2022 by `tools/ocean-volume.py` (an area-weighted histogram of depth over the world ocean, not area times
+depth): 130 m lower is 45.2 million km³, a ball 442 km across; 2,500 m is 790 million, 1,147 km; fully drained is
+1.337 billion km³, 1,367 km, a tenth of a percent from the published ocean volume. With a small table of straight-line
+distances from Santa Fe for the strip's one comparison. Read by `experiments/maps/drain-the-sea-bench.html`.
 **`stories/plates/reversals.json` (17 Oct 2026, Drain the sea)** — the geomagnetic polarity time scale, for the probe's
 needle (`js/probe.js`): 189 chrons from today to 82.9 million years (GTS2020, Ogg 2020, chapter 5 of Geologic Time Scale
 2020, the boundary ages as PmagPy tabulates them for GTS2020, BSD 3-clause) and the Cretaceous Normal Superchron to 121.4
@@ -1923,6 +1945,23 @@ backstop for the Claude Code session that lands the file.
   *The world that moves*, the bench its prompt asked for). Six of Hokusai's events, hand-
   written with places and weights, on a `timeline.js` timeline over the world pyramid,
   opening on the corners of `japan-and-china`; a tap on the line slides the map to the
+  **18 Oct 2026 — on the Time Machine's model, under five rulings of that day (Michael's prompt; `CW_VERSION
+  2026-10-18`; `plane.js`, `map.js`, `deep-time.js`, `probe.js` at `?v=2026-10-18`):** two pages — the words ending
+  in a bold *Next*, then the working parts with Glass Geometry's column (Timeline and Map panels, *Age*, *Stripes*,
+  *Full words*, *Story* back to the words), the deep-time timeline above the map, the map below it with *Globe* and
+  *reset* and the Time Machine's bars on its left and right edges. At reset the map is as large as it can be while
+  showing the whole world, poles included, beside the column and under the timeline: 818 × 409 at 1024 × 768 (the
+  Mac's pane and an iPad landscape), 562 × 281 in iPad portrait. The sea by a vertical gauge down the map's right
+  edge, today at the top and the deepest trench at the foot, on an uneven scale (the top 130 m a fifth of the pole;
+  marks at the ice-age low, ridge tops, the average floor, the deepest trench), the water line dragged by finger or
+  mouse, the probe's floor marked on the same pole; the sea's sentence moved into the readout strip. Dry floor keeps
+  its blues by depth with the land's relief (the land/sea toggle gone); *wet glass*, bench-only, films the water
+  still there. The water taken out as a ball on Santa Fe at true scale, from `stories/curves/ocean-volume.json`, with
+  one line in the strip and a distance from the table when one is within 15 %. The timeline's window follows the
+  probe (the last 250 million years, or a span round the age — a bench toggle) and the handle follows the age. The
+  zoom gain's two sliders, bench-only, set `CW.ZOOM_GAIN` live. Checked on the Mac at 1024 × 768 and 768 × 1024:
+  no errors; in portrait the gauge's labels cover a quarter of the narrow map. **Needs Michael's finger:** the gauge
+  and the bars by touch, the probe's one- and two-finger gestures, the zoom gain by pinch.
   place, the road to Kyoto fits itself, the strip resizes, the word resets. Nothing else on
   the page. Tested on the Mac in the built-in browser: pan, wheel zoom, resize, reset, the
   slide and the fit, tiles arriving without a blank, labels holding still during a pan,

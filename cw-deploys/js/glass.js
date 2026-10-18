@@ -4130,7 +4130,7 @@ canvas.addEventListener('wheel', function(e) {
         plane.setPan(pn.x + e.deltaX / z, pn.y - e.deltaY / z);
         syncCanvasNoteDOMs(); return;
     }
-    plane.setZoom(plane.zoom()*(e.deltaY>0?0.9:1.1));
+    plane.setZoom(plane.zoom() * (CW.wheelFactor ? CW.wheelFactor(e) : (e.deltaY>0?0.9:1.1)));   // the shared gain, plane.js (18 Oct 2026)
     syncCanvasNoteDOMs();
 }, { passive:false });
 canvas.addEventListener('dragover', function(e) { e.preventDefault(); e.dataTransfer.dropEffect='copy'; });

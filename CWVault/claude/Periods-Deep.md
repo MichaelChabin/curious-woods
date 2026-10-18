@@ -17,7 +17,7 @@ Every period is at least 5 percent of its line (the tap rule).
 
 ## The tree
 
-- **Earth**: 4.6 billion years to now. Label: *Earth 4.6 Ba* (Michael, 12 Oct: "Earth" without the article; the title is the name and the age it begins at).
+- **Earth**: 4.6 billion years to now. Label: *Earth 4.6 Ga* (was *4.6 Ba* until Michael's ruling of 18 Oct 2026 on abbreviations: the real forms, never an invented one) (Michael, 12 Oct: "Earth" without the article; the title is the name and the age it begins at).
   - **Molten**: 4.6 to 4.0 billion years ago (Hadean, after Hades, the underworld)
   - **Oceans**: 4.0 to 2.5 billion (Archean, "ancient", from the Greek for "beginning")
   - **Oxygen**: 2.5 to 1.8 billion (early Proterozoic, "earlier life")

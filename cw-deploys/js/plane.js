@@ -28,6 +28,21 @@ window.CW = window.CW || {};
 // Half-pixel snap for 1px strokes: one crisp pixel at any position.
 CW.snap = function(v) { return Math.round(v) + 0.5; };
 
+// The zoom gain (18 Oct 2026, Michael: the pinch and the wheel were too sensitive, on the maps and the
+// Time Machine): one named number for every page, here because the plane owns view state.
+//   wheel  the step for one notch of a mouse wheel (100 px of deltaY), as a fraction: 0.10 is ×1.1 a notch,
+//          what Glass Geometry and the map have done since August. A trackpad's small deltas now take a
+//          proportionate share of the notch instead of a whole step each, which is where the twitch was.
+//   pinch  the exponent on the two fingers' distance ratio: 1 keeps the ground under the fingers.
+// Read by glass.js and by js/map.js (which carries the same numbers as its fallback for pages that do not
+// load this file). The defaults stay until Michael has picked a number on the Drain the sea bench's sliders.
+CW.ZOOM_GAIN = CW.ZOOM_GAIN || { wheel: 0.10, pinch: 1.0 };
+CW.wheelFactor = function (e) {
+    var g = CW.ZOOM_GAIN, d = e.deltaMode === 1 ? e.deltaY * 16 : (e.deltaMode === 2 ? e.deltaY * 100 : e.deltaY);
+    var n = Math.max(-1, Math.min(1, d / 100));          // a notch, or the trackpad's fraction of one
+    return Math.pow(1 + g.wheel, -n);
+};
+
 CW.createPlane = function(opts) {
     opts = opts || {};
 

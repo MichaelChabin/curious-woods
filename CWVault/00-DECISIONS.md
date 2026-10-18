@@ -111,6 +111,34 @@ the 700 px column shows a sliver of the world on an iPad, and a plane inside a
 column cannot run to infinity. Applied first to the Drain the sea bench; Glass
 Geometry waits for its own session. [M]
 
+2026-10-18 — The picture gets the screen, amended: a map is as large as it can
+be while still showing the whole world, poles included, with room for the left
+column; at reset it is that size, and the drag bars make it bigger. — Yesterday's
+version, full width at any height, cut off the poles. The 17 Oct line stands as
+written; this replaces it. [M]
+
+2026-10-18 — White means ice: on every map, white and near-white mean ice and
+nothing else; height on land keeps the land ramp, depth at sea the sea ramp. —
+The drained floor painted in the land ramp went white at depth and read as ice
+or as peaks. [M]
+
+2026-10-18 — Deeper is darker: the sea floor follows the sea charts, pale on the
+shelves, darkening across the open floor, nearly black-navy in the trenches, and
+ground that was sea keeps its blues when the water is taken away. — Old sea
+floor must never look like land. [M]
+
+2026-10-18 — Abbreviations only where full words would hide something (labels,
+crowded lines, readouts), never in prose; the real forms (Ma, Ga, km), never an
+invented one (no "Ba"); the first use on a page in full with the short form
+after it; press and hold shows the full words in place, and a column word, Full
+words, expands every label with room. — "Ba" was invented on 12 Oct and nobody
+in the field writes it. [M]
+
+2026-10-18 — Zero is a choice, and moving it is a good habit; the direction, not
+built, is that the child sets zero herself from any event she taps. Until then
+a story may suggest a zero, and Drain the Sea's is the Atlantic beginning to
+open. — Counting from an event she chose makes the span hers. [M]
+
 ---
 
 ### The shelf — settled 24 Aug

@@ -18,6 +18,8 @@
    is on; the probe's overlay takes every pointer.
 
    opts: { reversals: the table (or null), onRead(reading), onDone(), twoFinger: true,
+           extra(reading): HTML a page adds to the strip after the probe's words (18 Oct 2026: the sea's sentence,
+           the water ball's line); `probe.refresh()` redraws the strip when what it says has changed,
            zoom: { lon: 11, lat: 6.5 } (half-widths in degrees of the box a tap zooms to; null for no zoom),
            edge: 36, drift: 6 (pixels: the band at the edge where the ground drifts, and the fastest it goes a frame),
            lift: 28 (pixels the ring sits above a finger, so the finger does not hide it; 0 for a mouse) }
@@ -35,6 +37,7 @@
     '.cw-probe .ring svg{display:block;width:100%;height:100%;overflow:visible;}',
     '.cw-probe .strip{position:absolute;left:0;right:0;bottom:0;background:' + PAPER + ';padding:9px 96px 9px 14px;font-family:Georgia,"Times New Roman",serif;font-size:15px;line-height:1.35;color:' + INK + ';pointer-events:none;min-height:1.35em;}',
     '.cw-probe .strip .quiet{color:' + SOFT + ';}',
+    '.cw-probe .strip .extra{color:' + SOFT + ';}',
     '.cw-probe .done{position:absolute;right:14px;bottom:9px;font-family:Georgia,serif;font-size:14px;font-style:italic;color:#546A80;cursor:pointer;pointer-events:auto;line-height:1.35;}',
     '.cw-probe .done:hover{color:#3D3D3A;}',
     '@media (max-width:600px){.cw-probe .strip{font-size:14px;padding-right:72px;}}'
@@ -140,6 +143,7 @@
           else if (table && s.age >= (table.reach || 0)) h += ' <span class="quiet">Older than the reversal table reaches, ' + Math.round(table.reach) + ' million years.</span>';
         }
       }
+      if (opts.extra) { var x = opts.extra(reading); if (x) h += ' <span class="extra">' + x + '</span>'; }
       card.innerHTML = h;
       ring.innerHTML = ringSVG(c ? c.polarity : null);
       if (opts.onRead) opts.onRead(reading);
@@ -229,6 +233,7 @@
       active: function () { return active; },
       end: end,
       reading: function () { return reading; },
+      refresh: function () { if (active) read(); },
       twoFinger: function (on) { if (on !== undefined) twoFinger = !!on; return twoFinger; },
       destroy: function () { end(); stage.removeEventListener('click', onStageClick); }
     };

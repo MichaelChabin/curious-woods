@@ -32,10 +32,10 @@
 
    12 Oct 2026 (Michael): events show only on the deepest line, so opening a period beneath hides the events of
    the lines above; every band is STRIP (12 px) high in its line's colour, its periods' bands over it; the title
-   is one line in the margin, "Animals 720 Ma" (the age the line begins at, in Ba, Ma or ka; a free span its two
+   is one line in the margin, "Animals 720 Ma" (the age the line begins at, in Ga, Ma or ka; a free span its two
    ages), the Earth's the same, and the dates row above a line is gone; an event's line starts at the band's
    bottom; the knob sits above the band with its line down to the band's top and its age beside it; the readout
-   at the top left is the deepest line's range, "Earth 4.6 Ba to today". The bug this fixed: with After the ice
+   at the top left is the deepest line's range, "Earth 4.6 Ga to today". The bug this fixed: with After the ice
    open from the opening scene, the page's onMark dropped every deep tap (`!handed`); now no line above the
    deepest draws events, and the deepest line that draws them is never the page's own.
 
@@ -138,15 +138,40 @@
   }
   function spanText(from, to) { return fmt(from).replace(' ago', '') + ' to ' + (to <= 0 ? 'now' : fmt(to).replace(' ago', '')); }
   function durText(span) { return fmt(span).replace(' ago', ''); }   // a length of time: '570 million years'
-  /* the short age (Michael, 12 Oct 2026): 4.6 Ba, 720 Ma, 5.3 Ma, 130 ka, today — the titles, the knob and the readout */
+  /* the short age (Michael, 12 Oct 2026): 4.6 Ga, 720 Ma, 5.3 Ma, 130 ka, today — the titles, the knob and the readout.
+     Ga for billions (Michael's ruling of 18 Oct 2026: the real forms people in the field use, never an invented one). */
   function fmtShort(ma) {
     if (ma <= 0) return 'today';
     var r = function (v) { return (v >= 10 ? Math.round(v) : Math.round(v * 10) / 10).toString(); };
-    if (ma >= 1000) return r(ma / 1000) + ' Ba';
+    if (ma >= 1000) return r(ma / 1000) + ' Ga';
     if (ma >= 1) return r(ma) + ' Ma';
     return r(ma * 1000) + ' ka';
   }
-  function rangeText(name, from, to) { return (name ? name + ' ' : '') + fmtShort(from) + ' to ' + fmtShort(to); }
+  /* the same age in full words, for press-and-hold and Full words (18 Oct 2026): 4.6 billion years ago */
+  function fmtLong(ma) {
+    if (ma <= 0) return 'today';
+    var r = function (v) { return (v >= 10 ? Math.round(v) : Math.round(v * 10) / 10).toString(); };
+    if (ma >= 1000) return r(ma / 1000) + ' billion years ago';
+    if (ma >= 1) return r(ma) + ' million years ago';
+    return r(ma * 1000) + ' thousand years ago';
+  }
+  var fullWords = false;      // Full words, the column's word: every label with room shows its full words
+  var introduced = false;     // the first abbreviation on a page appears once in full with the short form after it
+  var heldJustNow = false;    // a press-and-hold that showed full words is not also a tap
+  function age(ma) { return fullWords ? fmtLong(ma) : fmtShort(ma); }
+  function rangeText(name, from, to) { return (name ? name + ' ' : '') + age(from) + ' to ' + age(to); }
+  /* press and hold on a label shows its full words in place; release puts the short form back. `t` is the text
+     node to swap (a tspan or a text), `elm` the element that takes the press. */
+  function holdToExpand(elm, t, longText, shortText) {
+    var timer = null, shown = false;
+    function restore() { clearTimeout(timer); timer = null; if (shown) { t.textContent = shortText; shown = false; } }
+    elm.addEventListener('pointerdown', function () {
+      if (longText === shortText) return;
+      clearTimeout(timer);
+      timer = setTimeout(function () { t.textContent = longText; shown = true; heldJustNow = true; setTimeout(function () { heldJustNow = false; }, 400); }, 450);
+    });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (k) { elm.addEventListener(k, restore); });
+  }
 
   function cwDeepTime(host, opts) {
     opts = opts || {};
@@ -239,10 +264,15 @@
     }
     /* the title: the name and, beside it, the age the line begins at — "Animals 720 Ma"; a free span its two ages;
        the Earth's the same */
+    function titleNum(L, depth, long) {
+      var f = long ? fmtLong : fmtShort;
+      if (depth === 0 || L.snapped) return f(L.from);
+      return f(L.from) + ' to ' + f(L.to);
+    }
     function titleOf(L, depth) {
-      if (depth === 0) return { name: root.name, num: fmtShort(L.from) };   // the tree says Earth since 12 Oct (Michael)
-      if (L.snapped) return { name: L.node.name, num: fmtShort(L.from) };
-      return { name: null, num: fmtShort(L.from) + ' to ' + fmtShort(L.to) };
+      if (depth === 0) return { name: root.name, num: titleNum(L, depth, fullWords) };   // the tree says Earth since 12 Oct (Michael)
+      if (L.snapped) return { name: L.node.name, num: titleNum(L, depth, fullWords) };
+      return { name: null, num: titleNum(L, depth, fullWords) };
     }
     function word(x, y, text, anchor, parent, onTap, cls) {
       var g = el('g', { 'class': 'word' + (cls ? ' ' + cls : '') }, parent);
@@ -263,10 +293,15 @@
       for (var i = 0; i < n; i++) { var g0 = layout(lineOf(i), i, top, i === n - 1 && !handed); tierGeom.push(g0); top += g0.h; }
       var deep = tierGeom[tierGeom.length - 1];
 
-      // the readout, top left: the deepest line's name and range, "Earth 4.6 Ba to today" (Michael, 12 Oct); under it
+      // the readout, top left: the deepest line's name and range, "Earth 4.6 Ga to today" (Michael, 12 Oct); under it
       // what this line is known from
-      var tt0 = titleOf(deepL, n - 1);
-      el('text', { x: PAD, y: 18, 'font-size': 16, 'font-weight': 'bold', fill: INK, 'class': 'halo' }, svg, rangeText(tt0.name, deepL.from, deepL.to));
+      var tt0 = titleOf(deepL, n - 1), readout;
+      if (!introduced && !fullWords) {   // the page's first abbreviation, once in full with the short form after it (18 Oct 2026)
+        readout = (tt0.name ? tt0.name + ' ' : '') + fmtLong(deepL.from) + ' (' + fmtShort(deepL.from) + ') to ' + fmtShort(deepL.to);
+      } else readout = rangeText(tt0.name, deepL.from, deepL.to);
+      var rd = el('text', { x: PAD, y: 18, 'font-size': 16, 'font-weight': 'bold', fill: INK, 'class': 'halo' }, svg, readout);
+      if (!fitText(rd, W - 2 * PAD)) rd.textContent = rangeText(tt0.name, deepL.from, deepL.to);
+      holdToExpand(rd, rd, (tt0.name ? tt0.name + ' ' : '') + fmtLong(deepL.from) + ' to ' + fmtLong(deepL.to), rd.textContent);
       var kfn = periodWords && periodWords[deep.node.name] ? periodWords[deep.node.name].knownFrom : deep.node.knownFrom;
       if (kfn) {
         var kf = el('text', { x: PAD, y: 36, 'font-size': 12, 'font-style': 'italic', fill: INK_SOFT, 'class': 'halo' }, svg);
@@ -287,16 +322,21 @@
       tierGeom.forEach(function (g, d) {
         var L = g.line, grp = el('g', { 'class': 'bar', 'data-depth': d, 'data-open': g.open ? '1' : '0' }, svg), e = env[d], tt = titleOf(L, d);
         // the title, one line in the margin, right-aligned (above the line at phone width): the name in ink, the age it
-        // begins at in grey beside it — "Animals 720 Ma" (Michael, 12 Oct); the Earth's the same, "Earth 4.6 Ba"
+        // begins at in grey beside it — "Animals 720 Ma" (Michael, 12 Oct); the Earth's the same, "Earth 4.6 Ga"
+        var ttShort = titleNum(L, d, false), ttLong = titleNum(L, d, true);
         if (g.small) {
           var ta = el('text', { x: g.xL, y: g.top + 12, 'font-size': 13, fill: INK, 'class': 'halo title' }, grp, tt.name ? tt.name + ' ' : '');
-          el('tspan', { 'font-size': 11, fill: '#9a958b' }, ta, tt.num);
+          var tas = el('tspan', { 'font-size': 11, fill: '#9a958b' }, ta, tt.num);
+          if (fullWords && !fitText(ta, W - 2 * PAD)) tas.textContent = ttShort;   // no room for the full words: the short form stays
+          holdToExpand(ta, tas, ttLong, tas.textContent);
           wireTitle(ta, d);
         } else {
           var tg = el('g', { 'class': 'title' }, grp), tx = g.xL - 12;
           var tn = el('text', { x: tx, y: g.y + 4, 'font-size': 13, fill: INK, 'text-anchor': 'end', 'class': 'halo' }, tg, tt.name ? tt.name + ' ' : '');
-          el('tspan', { 'font-size': 11, fill: '#9a958b' }, tn, tt.num);
+          var tns = el('tspan', { 'font-size': 11, fill: '#9a958b' }, tn, tt.num);
+          if (fullWords && !fitText(tn, MARGIN - 16)) tns.textContent = ttShort;
           el('rect', { x: PAD, y: g.y - 12, width: MARGIN - 16, height: 24, fill: 'transparent' }, tg);
+          holdToExpand(tg, tns, ttLong, tns.textContent);
           wireTitle(tg, d);
         }
         // the band: every line a band STRIP high in its own colour (Michael, 12 Oct: thick and coloured, Oceans too),
@@ -382,7 +422,9 @@
         el('circle', { cx: hx2, cy: ky, r: 14, fill: 'transparent' }, kg);
         el('circle', { cx: hx2, cy: ky, r: 6.5, fill: COPPER, stroke: PARCH, 'stroke-width': 2 }, kg);
         var right = hx2 + 70 < deep.xR;
-        el('text', { x: hx2 + (right ? 11 : -11), y: ky + 4, 'font-size': 12, fill: COPPER, 'text-anchor': right ? 'start' : 'end', 'class': 'halo' }, kg, fmtShort(ma));
+        var kt = el('text', { x: hx2 + (right ? 11 : -11), y: ky + 4, 'font-size': 12, fill: COPPER, 'text-anchor': right ? 'start' : 'end', 'class': 'halo' }, kg, age(ma));
+        if (fullWords && !fitText(kt, (deep.xR - deep.xL) * 0.45)) kt.textContent = fmtShort(ma);
+        holdToExpand(kg, kt, fmtLong(ma), kt.textContent);
         kg.addEventListener('pointerdown', startDrag);
         H = deep.top + deep.h + curveH;
         if (opts.onHandoff) opts.onHandoff({ on: false });
@@ -392,7 +434,7 @@
     function wireTitle(elm, d) {
       elm.classList.add('title'); elm.style.cursor = 'pointer';
       elm.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
-      elm.addEventListener('click', function (ev) { ev.stopPropagation(); closed[d] = !closed[d]; draw(); });
+      elm.addEventListener('click', function (ev) { ev.stopPropagation(); if (heldJustNow) return; closed[d] = !closed[d]; draw(); });
     }
     var curve = null;
     function curveAt(pts, y, k) {   // the value (k = 1), low (2) or high (3) at a store year, by straight lines between points
@@ -478,6 +520,7 @@
        beneath (named after it, or a free span for a clipped segment), the marker goes to its beginning,
        and the page is told the period */
     function tapSeg(depth, sg) {
+      introduced = true;
       var e = env[depth];
       // the period is already open beneath and its line is the deepest: the tap is the undo, removing it (Michael, 10 Oct).
       // (12 Oct: events show on the deepest line only, so a tap on a period open higher in the stack falls through and
@@ -552,6 +595,7 @@
     function pos(ev) { var r = svg.getBoundingClientRect(); return ev.clientX - r.left; }
     function startDrag(ev) {
       var deep = tierGeom[tierGeom.length - 1];
+      introduced = true;
       drag = { id: ev.pointerId };
       ev.preventDefault();
       try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
@@ -625,6 +669,7 @@
       year: function () { return ma; },
       setYear: setYear,
       setCurve: function (c) { curve = c || null; draw(); },
+      fullWords: function (on) { if (on !== undefined) { fullWords = !!on; introduced = true; draw(); } return fullWords; },   // the column's word (18 Oct 2026)
       curve: function () { return curve; },
       open: open,
       scene: scene,
