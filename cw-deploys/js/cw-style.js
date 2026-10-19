@@ -57,6 +57,7 @@
     // ---- the earth ----
     coast: '#4a4336', coastAlpha: 0.55,   // the 0 m line
     shelf: '#2f5c78', shelfAlpha: 0.30,   // the −200 m line
+    shelfWash: '#7fb0cc', shelfWashAlpha: 0.55,   // a continental shelf under the sea on the drifting world (Spec-Maps' sea ramp at −150 m), laid translucent over the globe's sea (19 Oct 2026, step 5)
     seaShore: '#93bed7',       // the sea at the shore (Spec-Maps' ramp at 0 m); the moving map's ground
     shoreLand: [[0, [230, 223, 203]], [250, [216, 205, 170]]],   // the land ramp's first stops, for the shelf a lower sea exposes
     shoreEdge: [74, 67, 54],   // the coast's ink, as numbers, for the new shore

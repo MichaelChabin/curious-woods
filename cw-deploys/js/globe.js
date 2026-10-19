@@ -38,7 +38,10 @@
    grain (art/globe/rock-grain.png, one tone, no climate in it) for *inferred* and *fitted*; *guessed* and
    *invented* keep their pale dashed and dotted fills with no skin, so the grade shows at a glance. A limb
    shading and a haze at the rim make it a ball. While the globe itself is dragged the skin is painted coarser
-   (14 Oct 2026; until then the flat fills stood in), and sharp again when the finger lifts. The fast flag of 13 Oct, which drew flat fills in place of the skin
+   (14 Oct 2026; until then the flat fills stood in), and sharp again when the finger lifts. On 19 Oct 2026 (step 5) the drag took the same resolution as rest: the skin is read between texels rather
+   than snapped to the nearest, and sea in today's picture under a piece (the shelf, an inland sea) is painted as a
+   translucent shelf wash over the globe's sea rather than copied as blue onto the land — the audit's problem 4, the blue
+   squares and their jiggle. The fast flag of 13 Oct, which drew flat fills in place of the skin
    while the year ran, went on 19 Oct 2026 (step 4 of the audit's order, Michael's go-ahead): the skin paints in play
    too, made cheap by keeping the view's part of the pass (every pixel's unit vector and texel) while the view holds and
    the id raster at half-million-year steps, so a frame of play does only the plates' turns and one texel lookup per
@@ -177,7 +180,7 @@
     var SKIN_SCALE = opts.skinScale || 0.5, SW = 0, SH = 0;
     // while the globe itself is dragged the skin is painted at half this again, coarser for a moment and sharp on
     // release, instead of the flat fills standing in (Michael, 14 Oct 2026: the textures went brown under the hand)
-    var DRAG_SCALE = SKIN_SCALE / 2, skinScale = SKIN_SCALE;
+    var skinScale = SKIN_SCALE;   // one resolution, dragging or not (19 Oct 2026, step 5; the quarter-resolution drag of 14 Oct is gone)
     var idCanvas = null, idCtx = null, skinCanvas = null, skinCtx = null, plateIndex = {}, plateByIndex = [null];
     function texCanvas() { var c = document.createElement('canvas'); c.width = TW; c.height = TH; return c; }
     function loadImage(src, then) {
@@ -193,11 +196,23 @@
       // today's ground: the base picture with its vegetation multiplied over it, as the map shows it (no ice: Greenland's is three million years old)
       loadImage(opts.ground || '../art/maps/world.webp', function (im) {
         var c = texCanvas(), x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, TW, TH);
-        var finish = function () { tex.ground = x.getImageData(0, 0, TW, TH).data; schedule(); };
+        var finish = function () { tex.ground = x.getImageData(0, 0, TW, TH).data; buildSeaMask(); schedule(); };
         if (opts.vegetation === false) { finish(); return; }
         loadImage(opts.vegetation || '../art/maps/world-vegetation.webp', function (veg) { x.globalCompositeOperation = 'multiply'; x.drawImage(veg, 0, 0, TW, TH); x.globalCompositeOperation = 'source-over'; finish(); });
       });
     }
+    // the sea of today's picture, as a mask (19 Oct 2026, step 5 of the audit's order — the blue squares): a piece of
+    // continent carries its shelf and its inland seas, which in the picture are sea blue, and the skin used to copy that
+    // blue onto the land as pale patches along every old join. A texel is sea where blue leads red by a fifth and leads
+    // green: the sea ramp of Spec-Maps and never its land ramp (the violet-grey peaks come closest, at 1.06). Under a
+    // piece, sea in the picture is painted as shelf: the shelf wash, translucent, over the globe's own sea
+    var seaMask = null;
+    function buildSeaMask() {
+      var p = tex.ground, m = new Uint8Array(TW * TH);
+      for (var i = 0, j = 0; i < m.length; i++, j += 4) m[i] = (p[j + 2] > p[j] * 1.2 && p[j + 2] > p[j + 1]) ? 1 : 0;
+      seaMask = m;
+    }
+    var SHELF3 = hex3(S.shelfWash || '#7fb0cc'), SHELF_A = S.shelfWashAlpha != null ? S.shelfWashAlpha : 0.55;
     function skinReady() { return texOn && tex.ground && tex['rock-grain']; }
     function moltenReady() { return texOn && tex['cooling-order'] && tex.cracks && tex['rock-grain']; }
     function indexOf(pid) { var i = plateIndex[pid]; if (!i) { i = plateByIndex.length; plateByIndex.push(pid); plateIndex[pid] = i; } return i; }
@@ -294,12 +309,37 @@
         if (!M) continue;
         var x = w3[3 * i], y = w3[3 * i + 1], z = w3[3 * i + 2];
         var tx = M[0] * x + M[1] * y + M[2] * z, ty = M[3] * x + M[4] * y + M[5] * z, tz = M[6] * x + M[7] * y + M[8] * z;
-        var k2 = texIndex(tx, ty, tz), oi = i << 2;
-        if (picture && t === 0) { o[oi] = picture[k2]; o[oi + 1] = picture[k2 + 1]; o[oi + 2] = picture[k2 + 2]; }
-        else { var f = 0.72 + 0.56 * grain[k2] / 255, r0 = LAND3[0] * f, g0 = LAND3[1] * f, b0 = LAND3[2] * f;
-          if (picture) { r0 = picture[k2] * (1 - t) + r0 * t; g0 = picture[k2 + 1] * (1 - t) + g0 * t; b0 = picture[k2 + 2] * (1 - t) + b0 * t; }
-          o[oi] = r0; o[oi + 1] = g0; o[oi + 2] = b0; }
-        o[oi + 3] = 255;
+        // the point's place in the picture, read between its four nearest texels (smooth, not snapped: the snapping was
+        // the squares, and their jiggle under a drag); u wraps round the world, v stops at the poles
+        var lon = Math.atan2(ty, tx), lat = Math.asin(tz > 1 ? 1 : (tz < -1 ? -1 : tz));
+        var u = (lon + Math.PI) / (2 * Math.PI) * TW - 0.5, v = (Math.PI / 2 - lat) / Math.PI * TH - 0.5;
+        var u0 = Math.floor(u), v0 = Math.floor(v), fu = u - u0, fv = v - v0;
+        u0 = ((u0 % TW) + TW) % TW; var u1 = u0 + 1 < TW ? u0 + 1 : 0;
+        if (v0 < 0) { v0 = 0; fv = 0; } else if (v0 >= TH - 1) { v0 = TH - 1; fv = 0; }
+        var v1 = v0 + 1 < TH ? v0 + 1 : v0;
+        var i00 = v0 * TW + u0, i10 = v0 * TW + u1, i01 = v1 * TW + u0, i11 = v1 * TW + u1;
+        var w00 = (1 - fu) * (1 - fv), w10 = fu * (1 - fv), w01 = (1 - fu) * fv, w11 = fu * fv;
+        var j00 = i00 << 2, j10 = i10 << 2, j01 = i01 << 2, j11 = i11 << 2;
+        var sea = seaMask ? seaMask[i00] * w00 + seaMask[i10] * w10 + seaMask[i01] * w01 + seaMask[i11] * w11 : 0;
+        var r0, g0, b0, oi = i << 2;
+        if (picture && t === 0) {
+          r0 = picture[j00] * w00 + picture[j10] * w10 + picture[j01] * w01 + picture[j11] * w11;
+          g0 = picture[j00 + 1] * w00 + picture[j10 + 1] * w10 + picture[j01 + 1] * w01 + picture[j11 + 1] * w11;
+          b0 = picture[j00 + 2] * w00 + picture[j10 + 2] * w10 + picture[j01 + 2] * w01 + picture[j11 + 2] * w11;
+        } else {
+          var gr = grain[j00] * w00 + grain[j10] * w10 + grain[j01] * w01 + grain[j11] * w11, f = 0.72 + 0.56 * gr / 255;
+          r0 = LAND3[0] * f; g0 = LAND3[1] * f; b0 = LAND3[2] * f;
+          if (picture) {
+            r0 = (picture[j00] * w00 + picture[j10] * w10 + picture[j01] * w01 + picture[j11] * w11) * (1 - t) + r0 * t;
+            g0 = (picture[j00 + 1] * w00 + picture[j10 + 1] * w10 + picture[j01 + 1] * w01 + picture[j11 + 1] * w11) * (1 - t) + g0 * t;
+            b0 = (picture[j00 + 2] * w00 + picture[j10 + 2] * w10 + picture[j01 + 2] * w01 + picture[j11 + 2] * w11) * (1 - t) + b0 * t;
+          }
+        }
+        if (sea > 0) {   // the shelf, and an inland sea: the wash, translucent over the globe's sea, blended at the shore
+          r0 = r0 * (1 - sea) + SHELF3[0] * sea; g0 = g0 * (1 - sea) + SHELF3[1] * sea; b0 = b0 * (1 - sea) + SHELF3[2] * sea;
+          o[oi + 3] = 255 * (1 - sea) + 255 * SHELF_A * sea;
+        } else o[oi + 3] = 255;
+        o[oi] = r0; o[oi + 1] = g0; o[oi + 2] = b0;
       }
       skinCtx.putImageData(out, 0, 0);
       if (alpha != null && alpha < 1) ctx.globalAlpha = alpha;
@@ -338,14 +378,14 @@
         var k = texIndex(x, y, z), cv = cool[k] / 255, cr = cracks[k] / 255, sw1 = grain[k] / 255;
         var solid = (thresh - cv) / 0.08; solid = solid < 0 ? 0 : (solid > 1 ? 1 : solid);
         var hot = sw1 - 0.62; hot = hot < 0 ? 0 : hot * 1.6;
-        var R = 0, G = 0, B = 0, i;
-        for (i = 0; i < 3; i++) {
-          var melt = MAGMA3[i] * (1 - sw1) + GLOW3[i] * sw1 + HOT3[i] * hot;
-          var crust = CRUST3[i] * (1 - sw1) + CRUSTL3[i] * sw1 + GLOW3[i] * cr * st.glow;
+        var R = 0, G = 0, B = 0, c;   // c, the channel: the pixel's own index i must not be touched here (found 19 Oct, step 5)
+        for (c = 0; c < 3; c++) {
+          var melt = MAGMA3[c] * (1 - sw1) + GLOW3[c] * sw1 + HOT3[c] * hot;
+          var crust = CRUST3[c] * (1 - sw1) + CRUSTL3[c] * sw1 + GLOW3[c] * cr * st.glow;
           var v = melt * (1 - solid) + crust * solid;
-          if (st.sea > 0) { var sea = st.sea * solid * (cv < 0.55 ? 1 : 0.35), s3 = (cv < 0.3 ? SEAD3 : SEA3)[i]; v = v * (1 - sea) + s3 * sea; }
-          if (st.flash > 0) v = v * (1 - st.flash) + FLASH3[i] * st.flash;
-          if (i === 0) R = v; else if (i === 1) G = v; else B = v;
+          if (st.sea > 0) { var sea = st.sea * solid * (cv < 0.55 ? 1 : 0.35), s3 = (cv < 0.3 ? SEAD3 : SEA3)[c]; v = v * (1 - sea) + s3 * sea; }
+          if (st.flash > 0) v = v * (1 - st.flash) + FLASH3[c] * st.flash;
+          if (c === 0) R = v; else if (c === 1) G = v; else B = v;
         }
         var oi = i << 2;
         o[oi] = R > 255 ? 255 : R; o[oi + 1] = G > 255 ? 255 : G; o[oi + 2] = B > 255 ? 255 : B; o[oi + 3] = 255;
@@ -682,7 +722,7 @@
       var skinned = false, moltenSt = null;
       // toward the model's reach the skin fades and the guessed look fades in, over FADE million years (13 Oct 2026)
       var tg = (data && g === 'fitted') ? Math.max(0, Math.min(1, (ma - (reach - FADE)) / FADE)) : 0;
-      lastSkinMs = 0; skinScale = drag ? DRAG_SCALE : SKIN_SCALE;
+      lastSkinMs = 0;
       if (g === 'none' && moltenReady()) moltenSt = paintMolten(V, ma);
       else if (data && skinReady() && (g === 'measured' || g === 'ground' || g === 'inferred' || g === 'fitted')) { paintSkin(V, ma, g, 1 - tg); skinned = true; }
       enterUnit(r, cx, cy);
