@@ -64,6 +64,9 @@
      year     the marker's opening age, in millions of years ago (default: the root's start)
      onYear   function (ma, storeYear) — every time the marker moves; storeYear is the store's
               astronomer's year (this year minus ma million), what map.setTime takes
+     time     the year's owner, CW.cwYear (js/cw-time.js; 19 Oct 2026): the marker sets it when she moves it (the
+              source is this bar) and follows it when anything else does, clamped to the deepest line; a page
+              with an owner reads the year from it rather than from onYear
      onBar    function (bar, path) — a bar was pulled down (or closed back to this one)
      onMark   function (mark, bar) — a mark was tapped
      handoff   { line, gap } — the deepest line whose node carries `line` is the page's own (the Time
@@ -73,45 +76,50 @@
    Times are millions of years ago throughout ('from' the older end); the readout writes them as
    billions, millions or thousands of years ago, never BCE, never "after zero" (the ruling).
 
-   Classic script, no dependencies. */
+   The colours and sizes come from js/cw-style.js and the year's helpers from js/cw-time.js (19 Oct 2026);
+   both load before this file. Classic script. */
 (function () {
   'use strict';
 
+  // the colours and sizes are js/cw-style.js's, the one style file (19 Oct 2026); the names below are this file's
+  var S = window.CW && window.CW.STYLE;
+  if (!S) throw new Error('deep-time.js needs js/cw-style.js loaded before it');
+  if (!(window.CW.curveAt && window.CW.THIS_YEAR)) throw new Error('deep-time.js needs js/cw-time.js loaded before it');
   var CSS = [
-    '.cw-deep{position:relative;font-family:Georgia,"Times New Roman",serif;color:#2a241c;user-select:none;-webkit-user-select:none;}',
+    '.cw-deep{position:relative;font-family:Georgia,"Times New Roman",serif;color:' + S.ink + ';user-select:none;-webkit-user-select:none;}',
     '.cw-deep svg{display:block;width:100%;overflow:visible;touch-action:none;}',
     '.cw-deep text{font-family:Georgia,serif;}',
     '.cw-deep .knob{cursor:grab;}',
     '.cw-deep.dragging,.cw-deep.dragging .knob{cursor:grabbing;}',
     '.cw-deep .mark{cursor:pointer;}',
     '.cw-deep .mark line,.cw-deep .mark text{pointer-events:none;}',   /* the drawn line and label never catch a tap; the tap areas (the line's and the label's) do */
-    '.cw-deep .halo{paint-order:stroke;stroke:#f4f1e8;stroke-width:4px;stroke-linejoin:round;}',
+    '.cw-deep .halo{paint-order:stroke;stroke:' + S.parchment + ';stroke-width:4px;stroke-linejoin:round;}',
     '.cw-deep .env{cursor:grab;}',
     '.cw-deep .seg{cursor:pointer;}',
     '.cw-deep .seg:hover rect.tint{opacity:.42;}',
     '.cw-deep .word{cursor:pointer;}',
-    '.cw-deep .word:hover text{fill:#3D3D3A;}',
+    '.cw-deep .word:hover text{fill:' + S.payneHover + ';}',
     /* a picture in a More (13 Oct 2026, Prompt-Build-Pictures-in-the-Mores): the window's width, a tall one capped and centred,
        never cropped; the caption in the More's ink at 14 px, the credit in the references' size and colour; a tap opens it larger */
     '.cw-pic{margin:0 0 1em;}',
     '.cw-pic img{display:block;width:100%;height:auto;cursor:zoom-in;}',
     '.cw-pic.tall img{height:340px;width:auto;max-width:100%;object-fit:contain;margin:0 auto;}',   /* every tall file is over 340 px high, so the box is known before the file arrives */
-    '.cw-pic .cap{font-size:14px;line-height:1.4;color:#2a241c;margin:6px 0 0;}',
-    '.cw-pic .cred{font-size:12px;line-height:1.45;color:#6b655a;margin:2px 0 0;}',
+    '.cw-pic .cap{font-size:14px;line-height:1.4;color:' + S.ink + ';margin:6px 0 0;}',
+    '.cw-pic .cred{font-size:12px;line-height:1.45;color:' + S.inkSoft + ';margin:2px 0 0;}',
     '.cw-pic-large figure img{width:auto;height:auto;max-width:min(700px,calc(100vw - 56px));max-height:calc(100vh - 230px);}'
   ].join('\n');
 
   var SVG = 'http://www.w3.org/2000/svg';
-  var INK = '#2a241c', INK_SOFT = '#6b655a', GREY = '#9a958b', COPPER = '#b5652b', LINE = '#46597a', PARCH = '#f4f1e8', FOCUS_EDGE = '#8fb0d2', FOCUS = '#bcd3ea';
+  var INK = S.ink, INK_SOFT = S.inkSoft, GREY = S.grey, COPPER = S.copper, LINE = S.line, PARCH = S.parchment, FOCUS_EDGE = S.focusEdge, FOCUS = S.focus, WORD = S.payne, BAND = S.band;
   var TOP = 48, PAD = 12, HIT_PX = 28, DETENT_PX = 9, MIN_SPAN_PX = 6;
   // a line's box (part 2 of the stack prompt): the dates row, the row of period names, the strip 6 px high, the event lines, the label rows, a gap
   // 12 Oct 2026 (Michael): the band twice as thick and every line coloured; no dates row; the title one line,
   // "Animals 720 Ma", in a wider margin; the knob above the band, with its age beside it (KNOB_H its room)
   var NAMES_H = 16, STRIP = 12, EV_LINE = 12, ROW_H = 13, TICK_H = 7, BOX_GAP = 14, TITLE_ABOVE = 18, MARGIN = 160, LABEL_ROWS_MAX = 4, KNOB_H = 22;
-  var CONE = '#bcd3ea', CONE_EDGE = '#8fb0d2';
+  var CONE = S.focus, CONE_EDGE = S.focusEdge;
   var CURVE_H = 84;   // the band's height under the deepest line
-  var CURVE_FILL = '#8fb0d2', CURVE_LINE = '#46597a', CURVE_FILL_2 = '#d9a066', CURVE_LINE_2 = '#b5652b';   // widths are honest (6 Oct, Michael): a hairline is the lesson; a thin chunk gets a finger-sized hit area
-  var THIS_YEAR = new Date().getFullYear();
+  var CURVE_FILL = S.curveFill, CURVE_LINE = S.curveLine, CURVE_FILL_2 = S.curveFill2, CURVE_LINE_2 = S.curveLine2;   // widths are honest (6 Oct, Michael): a hairline is the lesson; a thin chunk gets a finger-sized hit area
+  var THIS_YEAR = window.CW.THIS_YEAR;
 
   function el(tag, attrs, parent, text) {
     var e = document.createElementNS(SVG, tag);
@@ -184,6 +192,7 @@
     el('stop', { offset: 1, 'stop-color': INK, 'stop-opacity': 0.32 }, grad);
 
     var root = null, ma = 0, W = 0, drag = null, destroyed = false, ro = null, store = null;
+    var time = opts.time || null, api = null, playTimer = null;   // the year's owner, when the page has one (js/cw-time.js, 19 Oct 2026)
     // the stack (Prompt-Build-Timeline-Stack.md, part 3): line 0 is the Earth; env[i] = { a, b, child } is the
     // window on line i (a the older end, b the younger, in ma; child the period it is snapped to, or null
     // when free), and line i + 1 is that window's span. A line is OPEN (its strip with event labels) or
@@ -276,7 +285,7 @@
     }
     function word(x, y, text, anchor, parent, onTap, cls) {
       var g = el('g', { 'class': 'word' + (cls ? ' ' + cls : '') }, parent);
-      var t = el('text', { x: x, y: y, 'font-size': 12, 'font-style': 'italic', fill: '#546A80', 'text-anchor': anchor, 'class': 'halo' }, g, text);
+      var t = el('text', { x: x, y: y, 'font-size': 12, 'font-style': 'italic', fill: WORD, 'text-anchor': anchor, 'class': 'halo' }, g, text);
       var w = 0; try { w = t.getComputedTextLength(); } catch (e) { w = text.length * 6; }
       el('rect', { x: anchor === 'end' ? x - w - 8 : (anchor === 'middle' ? x - w / 2 - 8 : x - 8), y: y - 14, width: w + 16, height: 22, fill: 'transparent' }, g);
       g.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
@@ -326,14 +335,14 @@
         var ttShort = titleNum(L, d, false), ttLong = titleNum(L, d, true);
         if (g.small) {
           var ta = el('text', { x: g.xL, y: g.top + 12, 'font-size': 13, fill: INK, 'class': 'halo title' }, grp, tt.name ? tt.name + ' ' : '');
-          var tas = el('tspan', { 'font-size': 11, fill: '#9a958b' }, ta, tt.num);
+          var tas = el('tspan', { 'font-size': 11, fill: GREY }, ta, tt.num);
           if (fullWords && !fitText(ta, W - 2 * PAD)) tas.textContent = ttShort;   // no room for the full words: the short form stays
           holdToExpand(ta, tas, ttLong, tas.textContent);
           wireTitle(ta, d);
         } else {
           var tg = el('g', { 'class': 'title' }, grp), tx = g.xL - 12;
           var tn = el('text', { x: tx, y: g.y + 4, 'font-size': 13, fill: INK, 'text-anchor': 'end', 'class': 'halo' }, tg, tt.name ? tt.name + ' ' : '');
-          var tns = el('tspan', { 'font-size': 11, fill: '#9a958b' }, tn, tt.num);
+          var tns = el('tspan', { 'font-size': 11, fill: GREY }, tn, tt.num);
           if (fullWords && !fitText(tn, MARGIN - 16)) tns.textContent = ttShort;
           el('rect', { x: PAD, y: g.y - 12, width: MARGIN - 16, height: 24, fill: 'transparent' }, tg);
           holdToExpand(tg, tns, ttLong, tns.textContent);
@@ -342,10 +351,10 @@
         // the band: every line a band STRIP high in its own colour (Michael, 12 Oct: thick and coloured, Oceans too),
         // its periods' bands over it, each with its name above in italic; the plain stretch of a line whose periods
         // do not fill it (Mammoths) shows the line's stretch colour
-        el('rect', { x: g.xL, y: g.stripY, width: g.xR - g.xL, height: STRIP, fill: L.node.stretchColour || L.node.colour || '#cdbfa3', opacity: L.node.stretchColour ? 0.55 : 1 }, grp);
+        el('rect', { x: g.xL, y: g.stripY, width: g.xR - g.xL, height: STRIP, fill: L.node.stretchColour || L.node.colour || BAND, opacity: L.node.stretchColour ? 0.55 : 1 }, grp);
         g.segs.forEach(function (sg) {
           var cn = sg.node, sgp = el('g', { 'class': 'seg' }, grp);
-          el('rect', { 'class': 'band', x: sg.x0, y: g.stripY, width: Math.max(1, sg.x1 - sg.x0), height: STRIP, fill: cn.colour || '#cdbfa3' }, sgp);
+          el('rect', { 'class': 'band', x: sg.x0, y: g.stripY, width: Math.max(1, sg.x1 - sg.x0), height: STRIP, fill: cn.colour || BAND }, sgp);
           var t = el('text', { x: (sg.x0 + sg.x1) / 2, y: g.stripY - 4, 'font-size': 11, 'font-style': 'italic', fill: INK_SOFT, 'text-anchor': 'middle', 'class': 'halo' }, sgp);
           t.textContent = cn.name;
           if (!fitText(t, sg.x1 - sg.x0 - 4)) t.textContent = '';
@@ -389,7 +398,7 @@
         }
         g.ticks.forEach(function (tk) {
           var mg = el('g', { 'class': 'mark' }, grp), len = g.open ? TICK_H + 2 : TICK_H;
-          el('line', { x1: tk.mx, y1: g.stripY + STRIP, x2: tk.mx, y2: g.stripY + STRIP + len, stroke: g.open ? INK : '#9a958b', 'stroke-width': 0.8, opacity: g.open ? 0.9 : 0.6 }, mg);
+          el('line', { x1: tk.mx, y1: g.stripY + STRIP, x2: tk.mx, y2: g.stripY + STRIP + len, stroke: g.open ? INK : GREY, 'stroke-width': 0.8, opacity: g.open ? 0.9 : 0.6 }, mg);
           el('rect', { x: tk.mx - 9, y: g.stripY + STRIP + 1, width: 18, height: len + 8, fill: 'transparent' }, mg);
           el('title', {}, mg, tk.mk.label + ' · ' + fmt(tk.mk.ma));
           mg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
@@ -437,13 +446,7 @@
       elm.addEventListener('click', function (ev) { ev.stopPropagation(); if (heldJustNow) return; closed[d] = !closed[d]; draw(); });
     }
     var curve = null;
-    function curveAt(pts, y, k) {   // the value (k = 1), low (2) or high (3) at a store year, by straight lines between points
-      if (!pts || !pts.length) return null;
-      if (y <= pts[0][0]) return pts[0][k] != null ? pts[0][k] : pts[0][1];
-      var K = function (p) { return p[k] != null ? p[k] : p[1]; };
-      for (var i = 1; i < pts.length; i++) if (y <= pts[i][0]) { var a = pts[i - 1], b = pts[i], t = (y - a[0]) / ((b[0] - a[0]) || 1); return K(a) + (K(b) - K(a)) * t; }
-      return K(pts[pts.length - 1]);
-    }
+    var curveAt = window.CW.curveAt;   // the value (k = 1), low (2) or high (3) at a store year: the one curve reader (js/cw-time.js)
     function sayValue(tmpl, v, unit) {
       var n = Math.abs(v), txt;
       if (n === 0) txt = '0';
@@ -487,7 +490,7 @@
       });
       // the axis words: the unit at the left, how sure at the right, both small
       if (deep.small || deep.depth === 0) el('text', { x: xL, y: y0 - 6, 'font-size': 11, fill: INK_SOFT, 'class': 'halo' }, grp, (c.name || '') + (c.unit ? ' \u00b7 ' + c.unit : '') + (log ? ' \u00b7 log scale' : ''));
-      else { el('text', { x: xL - 12, y: y0 + CURVE_H / 2, 'font-size': 13, fill: INK, 'text-anchor': 'end', 'class': 'halo' }, grp, c.name || ''); el('text', { x: xL - 12, y: y0 + CURVE_H / 2 + 14, 'font-size': 11, fill: '#9a958b', 'text-anchor': 'end', 'class': 'halo' }, grp, (c.unit || '') + (log ? ' \u00b7 log scale' : '')); }
+      else { el('text', { x: xL - 12, y: y0 + CURVE_H / 2, 'font-size': 13, fill: INK, 'text-anchor': 'end', 'class': 'halo' }, grp, c.name || ''); el('text', { x: xL - 12, y: y0 + CURVE_H / 2 + 14, 'font-size': 11, fill: GREY, 'text-anchor': 'end', 'class': 'halo' }, grp, (c.unit || '') + (log ? ' \u00b7 log scale' : '')); }
       var hs = el('text', { x: xR, y: y0 - 6, 'font-size': 11, 'font-style': 'italic', fill: INK_SOFT, 'text-anchor': 'end', 'class': 'halo' }, grp);
       var words = (c.howSureShort || (c.howSure || '').split('.')[0]).split(' '); hs.textContent = words.join(' ');
       while (words.length > 2 && !fitText(hs, (xR - xL) * 0.55)) { words.pop(); hs.textContent = words.join(' ') + '\u2026'; }
@@ -611,7 +614,7 @@
     svg.addEventListener('pointerup', release); svg.addEventListener('pointercancel', release);
 
     var raf = 0;
-    function tellYear() { if (opts.onYear) opts.onYear(ma, storeYear(ma)); }
+    function tellYear() { if (time) time.setMa(ma, api); if (opts.onYear) opts.onYear(ma, storeYear(ma)); }
     function setYear(m) {
       var d = deepest();
       ma = Math.max(d.to, Math.min(d.from, m));
@@ -665,7 +668,23 @@
 
     if (window.ResizeObserver) { ro = new ResizeObserver(function () { if (root) draw(); }); ro.observe(host); }
 
-    return {
+    // the year set elsewhere (the page's own line, play): the marker follows, clamped to the deepest line. While play
+    // runs on the page's own line (the hand-over) the copper ticks follow a few times a second, not every frame
+    // (Safari stepped when every frame rebuilt the lines, 13 Oct 2026)
+    if (time) time.listen(function (y, src) {
+      if (src === api || !root) return;
+      var d = deepest(), m = Math.max(d.to, Math.min(d.from, window.CW.yearToMa(y)));
+      if (m === ma) return;
+      ma = m;
+      var handedNow = !!(opts.handoff && env.length && d.node.line === opts.handoff.line);
+      if (src === 'play' && handedNow) {
+        if (playTimer) return;
+        playTimer = setTimeout(function () { playTimer = null; if (!destroyed) draw(); }, 120);
+      }
+      cancelAnimationFrame(raf); raf = requestAnimationFrame(draw);
+    });
+
+    api = {
       year: function () { return ma; },
       setYear: setYear,
       setCurve: function (c) { curve = c || null; draw(); },
@@ -679,8 +698,9 @@
       events: function () { return store; },
       periodWords: function () { return periodWords; },
       span: function () { var d = deepest(); return { from: d.from, to: d.to, name: d.node.name, node: d.node, snapped: !!d.snapped }; },
-      destroy: function () { destroyed = true; if (ro) ro.disconnect(); cancelAnimationFrame(raf); host.innerHTML = ''; host.classList.remove('cw-deep'); }
+      destroy: function () { destroyed = true; if (ro) ro.disconnect(); cancelAnimationFrame(raf); clearTimeout(playTimer); host.innerHTML = ''; host.classList.remove('cw-deep'); }
     };
+    return api;
   }
   cwDeepTime.fmt = fmt;
   function escapeHTML(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }

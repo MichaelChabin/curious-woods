@@ -346,12 +346,13 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** One texture read per pixel; needs the per-pixel globe.
 **Source.** Claude, 12 Oct, making the molten maps for Michael.
 
-### Two year markers, equals (working name)   · 19 Oct 2026 · candidate
+### Two year markers, equals (working name)   · 19 Oct 2026 · ruled
 **Idea.** Two markers on the timeline, neither first nor second. The one she last touched is the current year and the map and globe show it; dragging one moves the world, tapping the other flips the world to its year, and the distance between them is always written. Pangaea, then Pangaea breaking; the world before the ice, then after; copper to bronze.
 **Where it sits.** The Time Machine, on the deep lines; the first of the tools Michael wants children to bring to the timeline.
 **Opens.** Flipping between two moments as a gesture; "how long from X to Y" answered by her own two hands rather than by the envelope's snap.
 **Costs.** The code is not ready: the year has three owners, the line's scale is private, the deep module wipes its drawing on every change, and the After the ice line is drawn by the page with a second marker. The audit of 19 Oct names what comes first: one owner of the year, a public scale, a tool layer, the knob as the first tool. The free envelope already measures a span (lane D); two measurers want one ruling.
 **Source.** Michael's prompt of 19 Oct, `claude/Prompt-Audit-Timeline-Graphics.md`, as the test case for adding tools.
+*Ruled the same day (Rulings-Sept-2026, *Timeline graphics* 5):* the two markers, the Focus window and the envelope are one tool, **the bracket**, and the term Focus window is retired.
 
 ### Tools plug into the timeline (working name)   · 19 Oct 2026 · candidate
 **Idea.** The timeline is a place children bring tools to, and the next tool and the one after should cost little: a tool is a small thing with a draw and a few pointer handlers, given the current year and the line's scale, drawn in a layer of its own.

@@ -68,33 +68,37 @@
    on the line and on the map. Labels above the line drop the person's name: the side says
    whose they are.
 
+   The colours and sizes come from js/cw-style.js (19 Oct 2026), which loads before this file.
    Classic script, no dependencies beyond map.js. */
 (function () {
   'use strict';
 
   var NS = 'http://www.w3.org/2000/svg';
-  var INK = '#2a241c', SLATE = '#3f5a78', COPPER = '#b5652b', VERMILION = '#c84830';
-  var LEAD_P = '#c9b8b0', LEAD_W = '#c3ccd6', RAIL = '#8a8378', YEAR = '#9a958b';
-  var LABEL = 14, ROW = 21, PAD = 26;
+  // the colours and sizes are js/cw-style.js's, the one style file (19 Oct 2026); the names below are this file's
+  var S = window.CW && window.CW.STYLE;
+  if (!S) throw new Error('timeline.js needs js/cw-style.js loaded before it');
+  var INK = S.ink, SLATE = S.slate, COPPER = S.copper, VERMILION = S.vermilion;
+  var LEAD_P = S.leadPerson, LEAD_W = S.leadWorld, RAIL = S.greyDot, YEAR = S.grey;
+  var LABEL = S.size.mark, ROW = 21, PAD = 26;
 
   var css = [
     '.cw-world{position:relative;}',
     '.cw-world .cw-tl{display:block;width:100%;touch-action:manipulation;user-select:none;-webkit-user-select:none;}',
     '.cw-world .cw-tl text{font-family:Georgia,"Times New Roman",serif;}',
-    '.cw-world .cw-tl .cw-tl-lbl{paint-order:stroke;stroke:rgba(244,241,234,.8);stroke-width:3px;stroke-linejoin:round;}',
+    '.cw-world .cw-tl .cw-tl-lbl{paint-order:stroke;stroke:' + S.alpha(S.halo, 0.8) + ';stroke-width:3px;stroke-linejoin:round;}',
     '.cw-world .cw-wmap{position:relative;margin-top:14px;}',
-    '.cw-world .cw-card{position:absolute;width:176px;padding:10px 12px;background:rgba(244,241,234,.94);',
-    '  border:1px solid #d9d4c8;border-radius:3px;text-align:left;font:inherit;color:inherit;cursor:pointer;line-height:1.3;}',
+    '.cw-world .cw-card{position:absolute;width:176px;padding:10px 12px;background:' + S.alpha(S.halo, 0.94) + ';',
+    '  border:1px solid ' + S.cardEdge + ';border-radius:3px;text-align:left;font:inherit;color:inherit;cursor:pointer;line-height:1.3;}',
     '.cw-world .cw-card .n{font-size:15px;display:flex;align-items:center;gap:8px;}',
     '.cw-world .cw-card .n i{display:inline-block;width:8px;height:8px;border-radius:50%;background:' + SLATE + ';flex:none;}',
-    '.cw-world .cw-card .y{font-size:13px;color:#7d7a72;margin-top:3px;}',
-    '.cw-world .cw-card .d{font-size:13px;color:#7d7a72;margin-top:6px;}',
+    '.cw-world .cw-card .y{font-size:13px;color:' + S.greyWord + ';margin-top:3px;}',
+    '.cw-world .cw-card .d{font-size:13px;color:' + S.greyWord + ';margin-top:6px;}',
     '.cw-world .cw-card.on{border-color:' + VERMILION + ';}',
     '.cw-world .cw-card.east{right:12px;}',
     '.cw-world .cw-card.west{left:12px;}',
-    '.cw-world .cw-panel{min-height:150px;margin-top:10px;padding-top:12px;border-top:.5px solid #c8b89a;}',
-    '.cw-world .cw-panel .hint{color:#7d7a72;font-size:15px;}',
-    '.cw-world .cw-panel .when{font-size:13px;color:#7d7a72;letter-spacing:.02em;}',
+    '.cw-world .cw-panel{min-height:150px;margin-top:10px;padding-top:12px;border-top:.5px solid ' + S.rule + ';}',
+    '.cw-world .cw-panel .hint{color:' + S.greyWord + ';font-size:15px;}',
+    '.cw-world .cw-panel .when{font-size:13px;color:' + S.greyWord + ';letter-spacing:.02em;}',
     '.cw-world .cw-panel h3{font-weight:normal;font-size:20px;margin:2px 0 6px;}',
     '.cw-world .cw-panel p{font-size:17px;line-height:1.5;margin:0 0 12px;max-width:44em;}',
     /* on a phone a card over the map would cover the places that matter, so it sits under

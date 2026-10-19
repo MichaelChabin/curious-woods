@@ -25,11 +25,14 @@
            lift: 28 (pixels the ring sits above a finger, so the finger does not hide it; 0 for a mouse) }
    reading: { lon, lat, depth (m; 0 on land), age (Ma or null), anomaly (nT or null), chron, polarity ('n' | 'r' | null), pending }
 
-   Classic script; needs map.js. Georgia; nothing responds to hover. */
+   Classic script; needs map.js, and js/cw-style.js before it (19 Oct 2026). Georgia; nothing responds to hover. */
 (function () {
   'use strict';
 
-  var INK = '#2a241c', COPPER = '#b87333', PAPER = 'rgba(244,241,232,0.82)', SOFT = '#6b655a';
+  // the colours are js/cw-style.js's, the one style file (19 Oct 2026): copper is the marker's #b5652b (was #b87333)
+  var S = window.CW && window.CW.STYLE;
+  if (!S) throw new Error('probe.js needs js/cw-style.js loaded before it');
+  var INK = S.ink, COPPER = S.copper, PAPER = S.alpha(S.parchment, 0.82), SOFT = S.inkSoft, WORD = S.payne, WORD_HOVER = S.payneHover, HALO = S.alpha(S.parchment, 0.9), HALO_RING = S.alpha(S.parchment, 0.85);
   var RING = 48;   // the compass's diameter in screen pixels: the needle reads at a glance, the ground round it still shows
   var css = [
     '.cw-probe{position:absolute;left:0;top:0;width:100%;height:100%;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none;z-index:5;}',
@@ -38,8 +41,8 @@
     '.cw-probe .strip{position:absolute;left:0;right:0;bottom:0;background:' + PAPER + ';padding:9px 96px 9px 14px;font-family:Georgia,"Times New Roman",serif;font-size:15px;line-height:1.35;color:' + INK + ';pointer-events:none;min-height:1.35em;}',
     '.cw-probe .strip .quiet{color:' + SOFT + ';}',
     '.cw-probe .strip .extra{color:' + SOFT + ';}',
-    '.cw-probe .done{position:absolute;right:14px;bottom:9px;font-family:Georgia,serif;font-size:14px;font-style:italic;color:#546A80;cursor:pointer;pointer-events:auto;line-height:1.35;}',
-    '.cw-probe .done:hover{color:#3D3D3A;}',
+    '.cw-probe .done{position:absolute;right:14px;bottom:9px;font-family:Georgia,serif;font-size:14px;font-style:italic;color:' + WORD + ';cursor:pointer;pointer-events:auto;line-height:1.35;}',
+    '.cw-probe .done:hover{color:' + WORD_HOVER + ';}',
     '@media (max-width:600px){.cw-probe .strip{font-size:14px;padding-right:72px;}}'
   ].join('\n');
   var style = document.createElement('style'); style.textContent = css; document.head.appendChild(style);
@@ -66,17 +69,17 @@
   // floor's age gives a polarity — its copper end to the north for normal, to the south for reversed; a dot alone otherwise
   function ringSVG(polarity) {
     var r = 20, c = 24, h = '<svg viewBox="0 0 48 48" aria-hidden="true">' +
-      '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" stroke="rgba(244,241,232,0.85)" stroke-width="5"/>' +
+      '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" stroke="' + HALO_RING + '" stroke-width="5"/>' +
       '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" stroke="' + COPPER + '" stroke-width="1.8"/>' +
-      '<text x="' + c + '" y="7.5" text-anchor="middle" font-family="Georgia,serif" font-size="7" fill="' + INK + '" stroke="rgba(244,241,232,0.9)" stroke-width="2" paint-order="stroke">N</text>';
+      '<text x="' + c + '" y="7.5" text-anchor="middle" font-family="Georgia,serif" font-size="7" fill="' + INK + '" stroke="' + HALO + '" stroke-width="2" paint-order="stroke">N</text>';
     if (polarity === 'n' || polarity === 'r') {
       var rot = polarity === 'n' ? 0 : 180;
       h += '<g transform="rotate(' + rot + ' ' + c + ' ' + c + ')">' +
-        '<polygon points="24,9 27.5,24 24,39 20.5,24" fill="rgba(244,241,232,0.9)"/>' +
+        '<polygon points="24,9 27.5,24 24,39 20.5,24" fill="' + HALO + '"/>' +
         '<polygon points="24,10.5 26.8,24 24,37.5 21.2,24" fill="' + INK + '"/>' +
         '<polygon points="24,10.5 26.8,24 21.2,24" fill="' + COPPER + '"/></g>';
     }
-    h += '<circle cx="' + c + '" cy="' + c + '" r="2" fill="' + INK + '" stroke="rgba(244,241,232,0.9)" stroke-width="1"/></svg>';
+    h += '<circle cx="' + c + '" cy="' + c + '" r="2" fill="' + INK + '" stroke="' + HALO + '" stroke-width="1"/></svg>';
     return h;
   }
 

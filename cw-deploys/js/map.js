@@ -25,7 +25,8 @@
    drag handle, turned to this use — resizes the height; the word at its right (`reset`,
    or opts.reset) returns view and size to what the story set. `opts.fit` is that opening
    box; `map.centre(lat, lon)` slides there at her scale in 250 ms; `map.fit(box)` fits a
-   route; `map.home()` is the word's own act. Weight: a mark's `weight` (1 to 3, 1 if
+   route; `map.home()` is the word's own act. `opts.resetWord: false` leaves the word off the strip and
+   `opts.leftBar: false` leaves the left bar out, for a page with controls of its own (19 Oct 2026). Weight: a mark's `weight` (1 to 3, 1 if
    unsaid) places it before lighter marks, so the heavier survives a collision — on every
    map, since it is one placer.
 
@@ -106,28 +107,34 @@
    glow and a bold name; `onTap(mark)` is called when the place is tapped, and the tap goes
    no further, so a page can clear its selection on a tap that lands on empty ground.
 
-   Nothing responds to hover. Classic script, no dependencies. */
+   The colours, sizes and weights come from js/cw-style.js and the year's helpers from js/cw-time.js
+   (19 Oct 2026, Michael's rulings on the audit); both load before this file.
+   Nothing responds to hover. Classic script. */
 (function () {
   'use strict';
 
-  var VERMILION = '#c84830';
-  var COPPER = '#b87333';                 // the one the story is about; nothing else
-  var INK = '#2a241c';                    // every label
-  var HALO = '#f4f1ea';                   // under every label, translucent
-  var HALO_ALPHA = 0.7;
-  var HALO_PX = 3;
-  var GREY = '#8a8378';                   // a lesser place's dot
-  var SLATE = '#3f5a78';                  // a place that belongs to the world's events, not the person's
-  var PAPER = '#f0ece0';                  // the ground of a text block
-  var DOT = 4;                            // screen pixels, whatever the picture's size
-  var DOT_MINOR = 3;
-  var TAP = 14;                           // the invisible circle a finger actually hits
-  var WASH = 0.18;
-  var WASHES = { grows: '#33663f', made: '#5a4a8c' };   // what grows; what people made. Two only.
-  var FONT = 'Georgia, "Times New Roman", Times, serif';
-  var SIZE = 15, SIZE_MINOR = 13, SIZE_TEXT = 13;
-  var LINES = { '0': { stroke: '#4a4336', opacity: 0.55 },      // the coast
-                '-200': { stroke: '#2f5c78', opacity: 0.30 } };  // the shelf edge
+  // the colours, sizes and weights are js/cw-style.js's, the one style file (19 Oct 2026); the names below are this file's
+  var S = window.CW && window.CW.STYLE;
+  if (!S) throw new Error('map.js needs js/cw-style.js loaded before it');
+  if (!(window.CW.curveAt && window.CW.THIS_YEAR)) throw new Error('map.js needs js/cw-time.js loaded before it');
+  var VERMILION = S.vermilion;
+  var COPPER = S.copper;                  // the one the story is about; nothing else
+  var INK = S.ink;                        // every label
+  var HALO = S.halo;                      // under every label, translucent
+  var HALO_ALPHA = S.haloAlpha;
+  var HALO_PX = S.haloPx;
+  var GREY = S.greyDot;                   // a lesser place's dot
+  var SLATE = S.slate;                    // a place that belongs to the world's events, not the person's
+  var PAPER = S.paper;                    // the ground of a text block
+  var DOT = S.dot.place;                  // screen pixels, whatever the picture's size
+  var DOT_MINOR = S.dot.minor;
+  var TAP = S.dot.tap;                    // the invisible circle a finger actually hits
+  var WASH = S.washAlpha;
+  var WASHES = { grows: S.washGrows, made: S.washMade };   // what grows; what people made. Two only.
+  var FONT = S.font;
+  var SIZE = S.size.label, SIZE_MINOR = S.size.minor, SIZE_TEXT = S.size.text;
+  var LINES = { '0': { stroke: S.coast, opacity: S.coastAlpha },      // the coast
+                '-200': { stroke: S.shelf, opacity: S.shelfAlpha } };  // the shelf edge
   var WINDOW_MAP_WIDTH = 380;             // the story page's stage width; a map in a window is this wide
   var SAMPLE_WIDTH = 400;                 // the picture is read at this width for label placement
   var STAGE_MIN = 220, STAGE_MAX_FRACTION = 0.85;   // a moving map's height: at least this, at most this much of the window
@@ -145,10 +152,10 @@
   }
   var SVG = 'http://www.w3.org/2000/svg';
 
-  var css = [
+  var css = [   // the page's own colours come from the style file too
     '.cw-map img.cw-layer{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     /* the map that moves */
-    '.cw-map .cw-stage{position:relative;overflow:hidden;width:100%;touch-action:none;cursor:grab;background:#93bed7;}',
+    '.cw-map .cw-stage{position:relative;overflow:hidden;width:100%;touch-action:none;cursor:grab;background:' + S.seaShore + ';}',
     '.cw-map .cw-stage.dragging{cursor:grabbing;}',
     '.cw-map .cw-tiles{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     '.cw-map .cw-tiles img{position:absolute;display:block;width:auto;height:auto;max-width:none;pointer-events:none;}',
@@ -157,18 +164,17 @@
     '.cw-map canvas.cw-ice-canvas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     /* deep time (6 Oct 2026): past the seam the globe is the base, over the tiles, the sea and the marks;
        it arrives pulling away from the ground and leaves coming down to it — a scale and a fade, never a cut */
-    '.cw-map .cw-deep-base{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;background:#f4f1e8;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(2.4);transition:opacity .5s ease,transform .5s ease;pointer-events:none;line-height:0;}',
+    '.cw-map .cw-deep-base{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;background:' + S.parchment + ';display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(2.4);transition:opacity .5s ease,transform .5s ease;pointer-events:none;line-height:0;}',
     '.cw-map .cw-deep-base.on{opacity:1;transform:scale(1);pointer-events:auto;}',
-    '.cw-map .cw-deep-base.half{left:50%;width:50%;background:rgba(244,241,232,0.92);}',
     '.cw-map .cw-deep-base>div{margin:0 6px;}',
     '@media (prefers-reduced-motion:reduce){.cw-map .cw-deep-base{transition:opacity .2s ease;transform:none;}}',
     /* the strip is the picker's drag handle turned to this use, with the handle's own tint
        (rgba(200,184,154,.25)) so it reads as a thing to take hold of, not as the page */
-    '.cw-map .cw-strip{height:16px;border-radius:0 0 8px 8px;cursor:ns-resize;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;background:rgba(200,184,154,0.28);touch-action:none;user-select:none;-webkit-user-select:none;line-height:16px;}',
-    '.cw-map .cw-strip span{font-family:Georgia,serif;font-size:13px;font-weight:bold;color:#b0a090;cursor:default;transition:color 80ms;}',
-    '.cw-map .cw-strip-left{position:absolute;left:-18px;top:0;width:16px;border-radius:8px 0 0 8px;cursor:ew-resize;background:rgba(200,184,154,0.28);touch-action:none;user-select:none;-webkit-user-select:none;}',
+    '.cw-map .cw-strip{height:16px;border-radius:0 0 8px 8px;cursor:ns-resize;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;background:' + S.strip + ';touch-action:none;user-select:none;-webkit-user-select:none;line-height:16px;}',
+    '.cw-map .cw-strip span{font-family:Georgia,serif;font-size:13px;font-weight:bold;color:' + S.greyClose + ';cursor:default;transition:color 80ms;}',
+    '.cw-map .cw-strip-left{position:absolute;left:-18px;top:0;width:16px;border-radius:8px 0 0 8px;cursor:ew-resize;background:' + S.strip + ';touch-action:none;user-select:none;-webkit-user-select:none;}',
     'html.cw-map-gesture, html.cw-map-gesture *{user-select:none !important;-webkit-user-select:none !important;}',
-    '.cw-map .cw-strip span:hover{color:#546A80;}',
+    '.cw-map .cw-strip span:hover{color:' + S.payne + ';}',
     '.cw-map{position:relative;line-height:0;}',
     '.cw-map img{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}',
     '.cw-map svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;cursor:default;}',
@@ -184,17 +190,17 @@
     '.cw-map .cw-map-text{position:absolute;font-family:' + FONT + ';font-size:' + SIZE_TEXT + 'px;line-height:1.35;color:' + INK + ';background:' + PAPER + ';padding:5px 8px;max-width:220px;pointer-events:none;user-select:none;-webkit-user-select:none;}',
     /* the window: Glass Geometry's picker, copied */
     '.cw-map-backdrop{position:fixed;inset:0;z-index:600;}',
-    '.cw-map-window{position:fixed;z-index:601;background:#f0ede4;border:0.5px solid #c8b89a;border-radius:8px;padding:18px;box-shadow:0 4px 24px rgba(42,38,32,0.18);opacity:0;transition:opacity 200ms ease-in;pointer-events:none;max-height:85vh;overflow-y:auto;box-sizing:border-box;max-width:calc(100vw - 16px);}',
+    '.cw-map-window{position:fixed;z-index:601;background:' + S.window + ';border:0.5px solid ' + S.rule + ';border-radius:8px;padding:18px;box-shadow:0 4px 24px ' + S.shadow + ';opacity:0;transition:opacity 200ms ease-in;pointer-events:none;max-height:85vh;overflow-y:auto;box-sizing:border-box;max-width:calc(100vw - 16px);}',
     '.cw-map-window.visible{opacity:1;pointer-events:all;}',
-    '.cw-map-drag{height:14px;margin:-18px -18px 0 -18px;border-radius:8px 8px 0 0;cursor:grab;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;position:sticky;top:-18px;z-index:1;background:#f0ede4;touch-action:none;}',
+    '.cw-map-drag{height:14px;margin:-18px -18px 0 -18px;border-radius:8px 8px 0 0;cursor:grab;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;position:sticky;top:-18px;z-index:1;background:' + S.window + ';touch-action:none;}',
     '.cw-map-drag:active{cursor:grabbing;}',
     /* the strip stays put while a tall window scrolls (a poem, a letter). It sticks at -18px, the
        window's padding, so it sits on the window's top edge: at top:0 it stuck 18px down and the
        words showed through the slit above it before vanishing under it, which read as a glitch.
        The words fade under it rather than meeting a hard edge (26 Sep 2026, Michael) */
-    '.cw-map-drag::after{content:"";position:absolute;left:0;right:0;top:100%;height:12px;pointer-events:none;background:linear-gradient(#f0ede4,rgba(240,237,228,0));}',
-    '.cw-map-close{font-family:Georgia,serif;font-size:13px;font-weight:bold;color:#b0a090;cursor:default;transition:color 80ms;pointer-events:all;line-height:14px;}',
-    '.cw-map-close:hover{color:#546A80;}',
+    '.cw-map-drag::after{content:"";position:absolute;left:0;right:0;top:100%;height:12px;pointer-events:none;background:linear-gradient(' + S.window + ',rgba(240,237,228,0));}',
+    '.cw-map-close{font-family:Georgia,serif;font-size:13px;font-weight:bold;color:' + S.greyClose + ';cursor:default;transition:color 80ms;pointer-events:all;line-height:14px;}',
+    '.cw-map-close:hover{color:' + S.payne + ';}',
     '.cw-map-window .cw-map{margin-top:14px;width:' + WINDOW_MAP_WIDTH + 'px;max-width:100%;}',
     /* a picture in the window (cwWindow): at the reading column's width, its caption under it */
     '.cw-map-window figure{margin:14px 0 0;}',
@@ -204,7 +210,7 @@
     '.cw-zoom{position:relative;overflow:hidden;touch-action:none;cursor:zoom-in;user-select:none;-webkit-user-select:none;}',
     '.cw-zoom.zoomed{cursor:grab;}',
     '.cw-zoom img{transform-origin:0 0;-webkit-user-drag:none;user-select:none;}',
-    '.cw-zoom-reset{display:block;margin:8px 0 0;font-family:Georgia,serif;font-size:15px;font-weight:bold;color:#546A80;background:none;border:0;padding:0;cursor:pointer;}',
+    '.cw-zoom-reset{display:block;margin:8px 0 0;font-family:Georgia,serif;font-size:15px;font-weight:bold;color:' + S.payne + ';background:none;border:0;padding:0;cursor:pointer;}',
     '.cw-zoom-reset:hover{color:#3d5266;}'
   ].join('\n');
   var style = document.createElement('style');
@@ -316,11 +322,13 @@
       });
       strip = document.createElement('div');
       strip.className = 'cw-strip';
-      var word = document.createElement('span');
-      word.textContent = opts.reset || 'reset';
-      strip.appendChild(word);
+      if (opts.resetWord !== false) {   // a page with its own reset word asks for none (the Time Machine, 19 Oct 2026)
+        var word = document.createElement('span');
+        word.textContent = opts.reset || 'reset';
+        strip.appendChild(word);
+        word.addEventListener('click', function (e) { e.stopPropagation(); if (api.home) api.home(); });
+      }
       container.appendChild(strip);
-      word.addEventListener('click', function (e) { e.stopPropagation(); if (api.home) api.home(); });
       // the strip is a handle, not ground: its clicks never reach the page (a drag on it ends in one)
       strip.addEventListener('click', function (e) { e.stopPropagation(); });
     }
@@ -331,8 +339,8 @@
     // ---- time on the map: the sea level (the pyramid only) ----
     var seaLevel = opts.seaLevel || 0;
     var seaCanvas = null, shelfImgs = {}, shelfHave = null;
-    var SEA_LAND = [[0, [230, 223, 203]], [250, [216, 205, 170]]];   // the land ramp's first stops (#e6dfcb, #d8cdaa)
-    var SEA_EDGE = [74, 67, 54];                                    // the coast's own ink, #4a4336
+    var SEA_LAND = S.shoreLand;        // the land ramp's first stops
+    var SEA_EDGE = S.shoreEdge;        // the coast's own ink
     if (pyr && (region.shelf || region.data)) {
       seaCanvas = document.createElement('canvas');
       seaCanvas.className = 'cw-sea';
@@ -647,10 +655,12 @@
       view = viewForBox(fitBox, w0, h0);
       home = { view: { lat: view.lat, lon: view.lon, S: view.S, k: view.k }, height: h0, widen: 0 };
       // the left bar: drag it left and the map widens into the margins on both sides, not far
-      leftBar = document.createElement('div');
-      leftBar.className = 'cw-strip-left';
-      leftBar.style.height = h0 + 'px';
-      container.appendChild(leftBar);          // on the container, not the stage: the stage clips its overflow
+      if (opts.leftBar !== false) {   // a page with its own bars asks for none (the Time Machine, 19 Oct 2026)
+        leftBar = document.createElement('div');
+        leftBar.className = 'cw-strip-left';
+        leftBar.style.height = h0 + 'px';
+        container.appendChild(leftBar);          // on the container, not the stage: the stage clips its overflow
+      }
     }
 
     // ---- tiles (the pyramid only) ----
@@ -913,7 +923,7 @@
     }
     // ---- time on the map: the ice (any map) ----
     var iceData = null, iceAgo = 0;
-    var ICE_FILL = '#eaf1f4', ICE_EDGE = '#c9d6de';
+    var ICE_FILL = S.iceFill, ICE_EDGE = S.iceEdge;
     function iceRingsPath(rings, w, h) {
       var d = [], copies = worldCopies(w, h);
       copies.forEach(function (o) {   // once per copy of the world in view (13 Oct 2026)
@@ -1236,7 +1246,7 @@
       strip.addEventListener('pointermove', function (e) {
         if (!rs) return;
         var nh = Math.max(STAGE_MIN, Math.min(stageMax(), rs.h + (e.clientY - rs.y)));
-        stage.style.height = nh + 'px'; leftBar.style.height = nh + 'px';
+        stage.style.height = nh + 'px'; if (leftBar) leftBar.style.height = nh + 'px';
         fast();
       });
       function rsUp() { if (rs) { rs = null; endGesture(); } }
@@ -1249,17 +1259,19 @@
         widen = Math.max(0, Math.min(widenMax(), Math.round(x)));
         container.style.marginLeft = (-widen) + 'px'; container.style.marginRight = (-widen) + 'px';
       }
-      leftBar.addEventListener('pointerdown', function (e) {
-        e.preventDefault(); e.stopPropagation();
-        lb = { x: e.clientX, w: widen };
-        try { leftBar.setPointerCapture(e.pointerId); } catch (err) {}
-        beginGesture();
-      });
-      leftBar.addEventListener('pointermove', function (e) { if (!lb) return; setWiden(lb.w + (lb.x - e.clientX)); fast(); });
       function lbUp() { if (lb) { lb = null; endGesture(); } }
-      leftBar.addEventListener('pointerup', lbUp);
-      leftBar.addEventListener('pointercancel', lbUp);
-      leftBar.addEventListener('click', function (e) { e.stopPropagation(); });
+      if (leftBar) {
+        leftBar.addEventListener('pointerdown', function (e) {
+          e.preventDefault(); e.stopPropagation();
+          lb = { x: e.clientX, w: widen };
+          try { leftBar.setPointerCapture(e.pointerId); } catch (err) {}
+          beginGesture();
+        });
+        leftBar.addEventListener('pointermove', function (e) { if (!lb) return; setWiden(lb.w + (lb.x - e.clientX)); fast(); });
+        leftBar.addEventListener('pointerup', lbUp);
+        leftBar.addEventListener('pointercancel', lbUp);
+        leftBar.addEventListener('click', function (e) { e.stopPropagation(); });
+      }
 
       // the slides: centre() at her scale, fit() for a route; home() for the word
       var sliding = null;
@@ -1281,7 +1293,7 @@
         sliding = requestAnimationFrame(step);
       }
       function goHome() {
-        stage.style.height = home.height + 'px'; leftBar.style.height = home.height + 'px';
+        stage.style.height = home.height + 'px'; if (leftBar) leftBar.style.height = home.height + 'px';
         setWiden(home.widen);
         view.lat = home.view.lat; view.lon = home.view.lon; view.S = home.view.S; view.k = home.view.k;
         frozen = false; clampView(view); placeTiles(); readGround(); draw();
@@ -1339,37 +1351,30 @@
       // outlines; each only if given and rendered. The store's year in; today's world for a
       // year past the curve's end.
       var timeYear = null, T = opts.time || {};
-      function curveAt(pts, y) {
-        if (!pts || !pts.length) return null;
-        if (y <= pts[0][0]) return pts[0][1];
-        for (var i = 1; i < pts.length; i++) if (y <= pts[i][0]) { var a = pts[i - 1], b = pts[i]; return a[1] + (b[1] - a[1]) * (y - a[0]) / (b[0] - a[0] || 1); }
-        return pts[pts.length - 1][1];
-      }
+      var curveAt = window.CW.curveAt;   // the one curve reader (js/cw-time.js, 19 Oct 2026)
       // deep time: the globe as the base past the seam (see the header), and since 7 Oct 2026 the
-      // choice of view — 'globe', 'map' (the same world flat) or 'both' — held across the whole span:
-      // past the seam the host shows the chosen view(s) of the pieces; this side of it 'map' is the
-      // pyramid alone, 'globe' the globe with today's coast over the pyramid, 'both' the globe in the
-      // right half beside the pyramid. The two views share one seed, so a guess is the same in each.
-      var deepClimate = !!(T.deep && T.deep.climate);
+      // choice of view — 'globe' or 'map' (the same world flat) — held across the whole span: past the
+      // seam the host shows the chosen view of the pieces; this side of it 'map' is the pyramid alone,
+      // 'globe' the globe with today's coast over the pyramid. ('both', the globe beside the pyramid,
+      // and the climate wash went on 19 Oct 2026, Michael's ruling.) The two views share one seed, so a
+      // guess is the same in each.
       var deepHost = null, deepGlobe = null, deepFlat = null, deepOn = false, deepView = (T.deep && T.deep.view) || 'globe', deepAgeNow = false, deepGradeNow = null, deepCities = false;
       function deepSize() {
         if (!deepHost) return;
         var hw = deepHost.clientWidth, hh = deepHost.clientHeight, kids = [];
         if (deepGlobe) kids.push(deepGlobe._host); if (deepFlat) kids.push(deepFlat._host);
-        var shown = kids.filter(function (k) { return k.style.display !== 'none'; }), n = shown.length || 1, cw = hw / n;
+        var shown = kids.filter(function (k) { return k.style.display !== 'none'; }), cw = hw;   // one view shows at a time
         shown.forEach(function (k) {
           var flat = k === (deepFlat && deepFlat._host), d;
-          // the flat map alone fills the box's width (Michael, 9 Oct: when it is map only it should fill its area);
-          // the box is wider than 2:1, so the poles are cropped evenly top and bottom, as the pyramid crops them.
-          // Beside the globe it keeps to its half.
-          if (flat && n === 1) { d = Math.max(160, Math.min(cw, 2 * hh) - 16); k.style.width = d + 'px'; k.style.height = (d / 2) + 'px'; }   // whole, poles and all (Michael, 13 Oct)
-          else if (flat) { d = Math.max(160, Math.min(cw, 2 * hh) - 16); k.style.width = d + 'px'; k.style.height = (d / 2) + 'px'; }
+          // the flat map fills the box's width (Michael, 9 Oct: when it is map only it should fill its area);
+          // the box is wider than 2:1, so the poles are cropped evenly top and bottom, as the pyramid crops them
+          if (flat) { d = Math.max(160, Math.min(cw, 2 * hh) - 16); k.style.width = d + 'px'; k.style.height = (d / 2) + 'px'; }   // whole, poles and all (Michael, 13 Oct)
           else { d = Math.max(120, Math.min(cw, hh) - 16); k.style.width = d + 'px'; k.style.height = d + 'px'; }
         });
       }
       function makeView(projection) {
         var g = document.createElement('div'); deepHost.appendChild(g);
-        var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, cities: T.deep.cities, citiesOn: deepCities, ma: 0, lon: view.lon, lat: view.lat, projection: projection, climate: deepClimate,
+        var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, cities: T.deep.cities, citiesOn: deepCities, ma: 0, lon: view.lon, lat: view.lat, projection: projection,
           seam: (T.deep.seam || 2.6e6) / 1e6, seed: deepGlobe ? deepGlobe.seed() : undefined,
           onGrade: function (grade, why) { if (projection === 'globe' || !deepGlobe) tellDeep(); } });
         inst._host = g;
@@ -1406,7 +1411,6 @@
         if (wantFlat && !deepFlat) deepFlat = makeView('flat');
         if (deepGlobe) deepGlobe._host.style.display = wantGlobe ? '' : 'none';
         if (deepFlat) deepFlat._host.style.display = wantFlat ? '' : 'none';
-        deepHost.classList.toggle('half', !deepAgeNow && deepView === 'both');
         growForFlat(wantFlat && !wantGlobe);
         deepSize();
       }
@@ -1425,8 +1429,7 @@
         tellDeep();
       }
       api.deep = function () { return { on: deepOn, view: deepView, grade: deepGlobe ? deepGlobe.grade() : (deepFlat ? deepFlat.grade() : null) }; };
-      api.deepView = function (v) { if (v === 'globe' || v === 'map' || v === 'both') { deepView = v; if (timeYear !== null) api.setTime(timeYear); } return deepView; };
-      api.deepClimate = function (on) { if (on !== undefined) deepClimate = !!on; if (deepGlobe) deepGlobe.setClimate(deepClimate); if (deepFlat) deepFlat.setClimate(deepClimate); return deepClimate; };
+      api.deepView = function (v) { if (v === 'globe' || v === 'map') { deepView = v; if (timeYear !== null) api.setTime(timeYear); } return deepView; };
       api.deepCities = function (on) { if (on !== undefined) deepCities = !!on; if (deepGlobe) deepGlobe.setCities(deepCities); if (deepFlat) deepFlat.setCities(deepCities); return deepCities; };   // the cities on the drifting pieces (12 Oct)
       api.deepTurn = function (lon, lat) { if (deepGlobe) deepGlobe.turn(lon, lat); };   // the globe turns to face a place (10 Oct); it does not zoom
       // 13 Oct 2026: a marker riding its plate on both deep views (null clears it); the flat map's zoom to a place (null zooms out);
@@ -1437,7 +1440,7 @@
       api.deepReguess = function () { if (!deepGlobe && !deepFlat) return; var s = (deepGlobe || deepFlat).reguess(); if (deepGlobe && deepFlat) (deepGlobe === (deepGlobe || deepFlat) ? deepFlat : deepGlobe).setSeed(s); };
       api.setTime = function (year) {
         timeYear = +year;
-        var ago = new Date().getFullYear() - timeYear;
+        var ago = window.CW.THIS_YEAR - timeYear;
         if (T.deep) {
           deepAgeNow = ago > (T.deep.seam || 2.6e6);
           var want = deepAgeNow || deepView !== 'map';
@@ -1450,7 +1453,7 @@
         }
         var m = curveAt(T.seaLevel, timeYear);
         if (m !== null && seaCanvas) { var nm = Math.min(0, Math.round(m * 2) / 2); if (nm !== seaLevel) { seaLevel = nm; drawSea(); if (iceCanvas && !T.ice) drawIceCanvas(box.clientWidth, box.clientHeight); } }
-        if (T.ice) { var ago = new Date().getFullYear() - timeYear; iceData = T.ice; iceAgo = Math.max(0, ago); draw(); }
+        if (T.ice) { var ago = window.CW.THIS_YEAR - timeYear; iceData = T.ice; iceAgo = Math.max(0, ago); draw(); }
       };
       api.time = function () { return timeYear; };
       api.deepInstances = function () { return { globe: deepGlobe, flat: deepFlat }; };   // for checking from the console (12 Oct); nothing on a page uses it

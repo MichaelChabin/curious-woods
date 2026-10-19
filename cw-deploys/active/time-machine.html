@@ -31,9 +31,17 @@
   go, the marker returns, and the summary block shows the deep event under the marker, or the one
   the marker has just passed. The map (js/map.js, with js/globe.js) is the ground this side of the ice
   ages and the earth from space past them, with the grade word and its sentence under the map; the
-  column holds Globe, Map, Both, Climate, another guess, and the curves (People and Sea level on
-  Detail; Oxygen, Day length, Minerals, Sun and inside under the deep lines — lane D makes a tool of
-  them). Deep Time, active/deep-time.html, is retired into this page and its address redirects here.
+  column holds Timeline, Map and Graphs (the panels), Cities, another guess (at the guessed and invented
+  ages), the Graphs words (People and Sea level on Detail; Oxygen, Day length, Minerals, Energy source
+  under the deep lines) and What I've seen; Globe (reading Map while the globe is up), play, its speed
+  and reset sit above the map. Deep Time, active/deep-time.html, is retired into this page and its
+  address redirects here.
+
+  19 Oct 2026 (Michael's rulings on the audit, claude/Audit-Timeline-Graphics-Oct19.md): the colours
+  come from js/cw-style.js, the one style file; the year is owned once, by js/cw-time.js's cwYear, which
+  the deep lines, this page's line, play and the map follow; and the China and Egypt viewings with their
+  chooser and arrival sweep, Both, Climate, the map's hidden reset word and left bar, and the model
+  paragraph are gone.
 
   Data, read and never written: ../stories/deep-time-events.json, the one store of every event
   (tools/deep-events-from-vault.py; the after-the-ice records are Main's events, the deep records
@@ -49,12 +57,16 @@
   window is cwWindow, Glass Geometry's picker window as map.js carries it.
 -->
 <title>Time Machine</title>
+<script src="../js/cw-style.js?v=2026-10-19"></script>
+<script src="../js/cw-time.js?v=2026-10-19"></script>
 <link rel="stylesheet" href="../css/htw.css?v=2026-09-29">
 <style>
+  /* the colours are js/cw-style.js's, the one style file (19 Oct 2026), which writes them to the page as --cw-* ;
+     the page's old names are kept as aliases so nothing below had to change */
   :root {
-    --parch: #f4f1e8; --parch-deep: #ece6d6; --ink: #2a241c; --ink-soft: #6b655a; --slate: #3f5a78;
-    --payne: #546A80; --grey: #9a958b; --copper: #b5652b; --verm: #c84830; --sep: #c8b89a;
-    --line: #46597a; --focus: #bcd3ea; --focus-edge: #8fb0d2;
+    --parch: var(--cw-parchment); --parch-deep: var(--cw-parchment-deep); --ink: var(--cw-ink); --ink-soft: var(--cw-ink-soft); --slate: var(--cw-slate);
+    --payne: var(--cw-payne); --grey: var(--cw-grey); --copper: var(--cw-copper); --verm: var(--cw-vermilion); --sep: var(--cw-rule);
+    --line: var(--cw-line); --focus: var(--cw-focus); --focus-edge: var(--cw-focus-edge);
     --col: 170px;
   }
   * { box-sizing: border-box; }
@@ -106,7 +118,6 @@
   #mapwords { width: 66.667%; margin: 10px auto 0; min-height: 3.2em; }
   #mapwords .grade { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin: 2px 0 4px; }
   #mapwords p { margin: 0; font-size: 15px; color: var(--ink-soft); }
-  #mapwords .model { font-size: 13px; margin-top: 6px; display: none; }
   .tm-more .known { font-size: 14px; color: var(--ink-soft); }
   #title { text-align: center; font-weight: normal; font-size: 22px; letter-spacing: .02em; margin: 0 0 2px; }
 
@@ -132,7 +143,8 @@
   #summary .say { font-style: italic; color: var(--payne); }
 
   /* the map: the moving world, the timeline's width to start; bars at its left, right and
-     bottom stretch it (the bottom one is map.js's own strip, with the reset word) */
+     bottom stretch it (the bottom one is map.js's own strip; its reset word and left bar are not asked for,
+     the page's own controls doing those jobs — 19 Oct 2026, before that hidden by CSS) */
   /* the map's controls, above it (13 Oct 2026, Michael): play and the speed slider at the left edge, Globe/Map in the
      middle, reset at the right edge, all in the ink (the strip's pale word was hard to read, and is hidden) */
   #mapbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-top: 1.4em; font-size: 14px; font-style: italic; color: var(--ink); }
@@ -140,9 +152,7 @@
   #mapbar .mb:hover { color: var(--slate); }
   #mapbar .end { justify-self: end; }
   #mapbar #speed { width: 110px; margin-left: 14px; vertical-align: middle; accent-color: var(--ink); }
-  #map .cw-strip span { display: none; }
   .mapwrap { position: relative; margin-top: 6px; z-index: 30; }   /* above the column (20): the left bar may take the map over it to the page's edge */
-  #map .cw-strip-left { display: none; }         /* the page's own bars take its place */
   .grip { position: absolute; top: 0; bottom: 16px; width: 16px; z-index: 6; touch-action: none; cursor: ew-resize;
           background: rgba(200,184,154,0.28); user-select: none; -webkit-user-select: none; }
   .grip.l { left: -18px; border-radius: 8px 0 0 8px; }
@@ -221,8 +231,8 @@
     <p>This is also the master record behind the maps and dates in our stories, such as Van Gogh’s <i>Starry Night</i>, so they all agree with each other.</p>
     <p>The picture on the wall: Naomi Devil, <i>Idő-töltés</i> (2016), a cybernetic sculpture with Nicolas Schöffer’s hourglass. Photograph by Darabos György, <a href="https://commons.wikimedia.org/wiki/File:Naomi_Devil,_Id%C5%91-t%C3%B6lt%C3%A9s,_Nicolas_Sch%C3%B6ffer_homok%C3%B3r%C3%A1j%C3%A1b%C3%B3l_k%C3%A9sz%C3%BClt_kibernetikus_szobor_a_Hungarikon-gy%C5%B1jtem%C3%A9ny_sz%C3%A1m%C3%A1ra.jpg">Wikimedia Commons</a>, CC BY-SA 4.0, cropped.</p>
   </div>
-  <!-- the viewings' chooser (After the Ice · China · Egypt) is off the first page (Michael, 16 Oct 2026: the choices
-       did not do what a reader would expect); the VIEWINGS and ?view= in the script are kept, unused here, so they can come back -->
+  <!-- the viewings' chooser (After the Ice · China · Egypt) came off the first page on 16 Oct 2026 and out of the
+       script on 19 Oct (Michael: they were stories, not timeline tools) -->
 </section>
 
 <section id="bench">
@@ -256,46 +266,30 @@
       <div id="map"></div>
       <div class="grip l" data-g="l"></div><div class="grip r" data-g="r"></div>
     </div>
-    <div id="mapwords"><div class="grade" id="grade">the ground</div><p id="why"></p><p class="model" id="model"></p></div>
+    <div id="mapwords"><div class="grade" id="grade">the ground</div><p id="why"></p></div>
   </main>
 </section>
 
-<script src="../js/map.js?v=2026-10-13d"></script>
-<script src="../js/timeline.js?v=2026-09-27-ati"></script>
-<script src="../js/globe.js?v=2026-10-15"></script>
-<script src="../js/deep-time.js?v=2026-10-18"></script>
+<script src="../js/map.js?v=2026-10-19"></script>
+<script src="../js/timeline.js?v=2026-10-19"></script>
+<script src="../js/globe.js?v=2026-10-19"></script>
+<script src="../js/deep-time.js?v=2026-10-19"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-18 9bf557d';   // 18 Oct 2026: deep-time.js says Ga, not Ba, and carries press-and-hold full words (Michael's ruling on abbreviations)   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-19 3726e69';   // 19 Oct 2026: the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
-  // A viewing is a zero, a name, a span and a focus (Time-Machine-Shape.md). The store writes the
-  // astronomer's year; a line adds its own zero (ICE) so that its years are positive and counted
-  // from a thing. ICE, NAME, NOW are the chosen viewing's; TODAY is this year on that line.
-  // A story names one with ?view=<id> in the address, or she chooses one on the first page.
-  const THIS_YEAR = new Date().getFullYear();
-  const VIEWINGS = {
-    'after-the-ice': { title: 'The whole of time', zero: -10000, name: 'after the ice', end: THIS_YEAR, endName: 'now', focus: [4000, 7500],
-      text: 'The Earth is four and a half billion years old, and this line is all of it. About twelve thousand years ago the ice that covered the north began to melt, and it did not come back in the winter; everything people have made since then fits on the last line, where the years are counted from the ice: farms, cities, writing, ships, all of it.' },
-    china:   { title: 'China', zero: -2069, name: 'after the Xia began', end: THIS_YEAR, endName: 'now', focus: [960 + 2069, 1279 + 2069],
-      text: 'Chinese history is usually counted from the Xia, a dynasty of about four thousand years ago that the old histories describe and archaeologists are still looking for. This line starts there, and the window opens on the Song, three centuries when China had paper money, printed books and the compass.' },
-    egypt:   { title: 'Egypt', zero: -5499, name: 'after the Sahara began to dry', end: -29, endName: 'Cleopatra', focus: [5499 - 2700, 5499 - 2100],
-      text: 'About seven and a half thousand years ago the Sahara, which had been grassland with lakes and cattle, began to dry, and people moved to the Nile. This line starts there and ends with Cleopatra. The window opens on the centuries of the great pyramids, nearer to the start of the line than to its end.' }
-  };
-  let VIEW = VIEWINGS['after-the-ice'], ICE = 10000, NAME = 'after the ice', NOW = THIS_YEAR + ICE, TODAY = NOW;
-  function applyViewing(id) {
-    VIEW = VIEWINGS[id] || VIEWINGS['after-the-ice'];
-    ICE = -VIEW.zero; NAME = VIEW.name; NOW = VIEW.end + ICE; TODAY = THIS_YEAR + ICE;
-    focus.a = VIEW.focus[0]; focus.b = VIEW.focus[1]; handle = (focus.a + focus.b) / 2;
-    // the front page no longer changes with the viewing (16 Oct 2026): VIEW.title and VIEW.text are kept, unread, for when the chooser comes back
-  }
+  // The store writes the astronomer's year; this line adds its own zero (ICE) so that its years are positive
+  // and counted from a thing: year 0 is the ice letting go, 10000 BCE. (The China and Egypt viewings and their
+  // chooser, 30 Sep to 16 Oct, went on 19 Oct 2026, Michael: they were stories, not timeline tools.)
+  const THIS_YEAR = CW.THIS_YEAR;
+  const ICE = 10000, NAME = 'after the ice', NOW = THIS_YEAR + ICE, TODAY = NOW, END_NAME = 'now';
+  const FOCUS_OPEN = [4000, 7500];   // where Detail opens the first time After the ice is opened (the mockup's 4 000–7 500)
   const DETAIL_ROWS = 4;        // at most this many label rows under Detail; the lightest lose their label, not their mark
   const FOCUS_MIN = 50;         // the narrowest Focus window, in years
-  const SWEEP_SPAN = 900, SWEEP_MS = 3000, SETTLE_MS = 1200; // the arrival run: the window sweeps from the ice to now...
-  // ...then settles on the viewing's focus (the mockup's 4 000–7 500 for After the Ice)
   const KEY = 'cw-after-the-ice';                            // her line, shared with active/after-the-ice.html
   const PYRAMID = '../art/maps/world-pyramid.json';
   const FIT = { west: -180, south: -90, east: 180, north: 90 };   // the whole world, poles and all (13 Oct 2026, Michael; was 58 S to 78 N)
@@ -336,7 +330,7 @@
     });
     alias = Object.assign({}, store.aliases || {});   // every retired September id → the record that stands for it; the cut ones are absent
     EVENTS = out.filter(e => e.year >= 0 && e.year <= NOW).sort((a, b) => a.year - b.year);
-    window.__timeMachine = { events: EVENTS, alias, select: id => select(id), graphsFor: () => graphsFor(), handed: () => handed, bar: () => bar, map: () => map };   // for checking from the console; nothing on the page uses it
+    window.__timeMachine = { events: EVENTS, alias, select: id => select(id), graphsFor: () => graphsFor(), handed: () => handed, bar: () => bar, map: () => map, time };   // for checking from the console; nothing on the page uses it
     byId = {}; EVENTS.forEach(e => { byId[e.id] = e; });
     groups = {}; EVENTS.forEach(e => { if (e.place) { const k = e.place.lat.toFixed(2) + ',' + e.place.lon.toFixed(2); (groups[k] = groups[k] || []).push(e); } });
   }
@@ -350,11 +344,7 @@
 
   // ---------- the curves ----------
   const CURVES = {};   // people, sea: { pts: [[lineYear, value]], fixed, lo, hi, say, fill }
-  function curveAt(c, y) {
-    const p = c.pts; if (y <= p[0][0]) return p[0][1];
-    for (let i = 1; i < p.length; i++) if (y <= p[i][0]) { const a = p[i - 1], b = p[i]; return a[1] + (b[1] - a[1]) * (y - a[0]) / (b[0] - a[0] || 1); }
-    return p[p.length - 1][1];
-  }
+  const curveAt = (c, y) => CW.curveAt(c.pts, y);   // the one curve reader (js/cw-time.js, 19 Oct 2026)
   function yearWhere(c, value) {        // the first line year the curve reaches a value
     const p = c.pts;
     for (let i = 1; i < p.length; i++) if (p[i][1] >= value) { const a = p[i - 1], b = p[i]; return a[0] + (b[0] - a[0]) * (value - a[1]) / ((b[1] - a[1]) || 1); }
@@ -369,15 +359,18 @@
   function saySea(v) { return v > -0.75 ? 'the sea about where it is today' : 'the sea about ' + Math.round(-v) + ' m lower than today'; }
 
   // ---------- state ----------
+  // the year is owned once (js/cw-time.js, 19 Oct 2026): the deep lines set it when she moves their marker, this
+  // page's line sets it when she moves the handle, play sets it as it runs; the map follows it from here. `handle`
+  // is this line's copy, in years after the ice: the owner's while the line is hers (the hand-over), dormant before
+  const time = CW.cwYear({ year: THIS_YEAR });
   const focus = { a: 4000, b: 7500 };
   let handle = 5750, sel = null, seenOnly = false, curve = null, live = false;
   const $ = id => document.getElementById(id);
   const over = $('over'), detailSvg = $('detail'), summary = $('summary'), lines = $('lines'), stage = $('stage');
   const NS = 'http://www.w3.org/2000/svg';
   function el(tag, attrs, parent, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; (parent || over).appendChild(e); return e; }
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let W = 0, geom = {}, detail = null, railY = 47, map = null, marks = [], mapWords = null;
+  let W = 0, geom = {}, detail = null, railY = 47, map = null, marks = [];
   const inFocus = e => e.year >= focus.a && e.year <= focus.b;
   function visible() { if (!seenOnly) return EVENTS; const s = seenIds(); return EVENTS.filter(e => s.has(e.id)); }
   function windowEvents() { return visible().filter(inFocus); }
@@ -415,7 +408,7 @@
     const t = el('text', { x: PADX, y: MAIN_Y + 28, 'font-size': 13, fill: 'var(--ink-soft)', class: 'halo' });
     el('tspan', { 'font-weight': 'bold', 'font-size': 15, fill: 'var(--ink)' }, t, fmt(handle));
     el('tspan', { 'font-style': 'italic' }, t, ' years ' + NAME);
-    el('text', { x: W - PADX, y: MAIN_Y + 28, 'font-size': 12, 'font-style': 'italic', fill: 'var(--grey)', 'text-anchor': 'end', class: 'halo' }, null, VIEW.endName);
+    el('text', { x: W - PADX, y: MAIN_Y + 28, 'font-size': 12, 'font-style': 'italic', fill: 'var(--grey)', 'text-anchor': 'end', class: 'halo' }, null, END_NAME);
     // the curve, a soft silhouette above Detail along its span, one number at the handle
     if (curve && CURVES[curve]) {
       const c = CURVES[curve], N = 160, ys = [];
@@ -455,18 +448,25 @@
     const rail = detailSvg.querySelector('line');
     if (rail) { const ry = +rail.getAttribute('y1'); if (ry && ry !== railY) { railY = ry; detailSvg.style.top = (DET_Y - railY) + 'px'; } }
   }
-  function clampHandle() { handle = Math.max(focus.a, Math.min(focus.b, handle)); }
-  let mapRaf = 0;
-  function focusChanged() { clampHandle(); drawDetail(); draw(); markMap(); timeToMap(); }
-  function setHandle(y) { handle = Math.max(focus.a, Math.min(focus.b, y)); draw(); timeToMap(); }
-  function timeToMap() {
-    if (!handed) return;                                  // the deep marker drives the map until After the ice is open
-    // while play runs (13 Oct 2026) the map and the lines above are updated a few times a second, not every frame: the
-    // handle itself moves every frame, and Safari stepped when every frame also rebuilt seven lines and the ground
+  // this line's year, in years after the ice, clamped to the window: the owner's while the line is hers, else the dormant copy
+  function setLineYear(y, src) { y = Math.max(focus.a, Math.min(focus.b, y)); if (handed) time.set(y - ICE, src || 'page'); else handle = y; }
+  function clampHandle() { setLineYear(handle); }
+  function focusChanged() { clampHandle(); drawDetail(); draw(); markMap(); }
+  function setHandle(y, src) { setLineYear(y, src); draw(); }
+  // the map follows the year: a few times a second while play runs on this line, not every frame (13 Oct 2026: the
+  // handle itself moves every frame, and Safari stepped when every frame also rebuilt seven lines and the ground; the
+  // deep lines throttle their own redraw the same way, in js/deep-time.js)
+  let mapRaf = 0, mapAt = 0;
+  function pushToMap() {
+    if (!map || !map.setTime) return;
     const now = performance.now();
-    if (map && map.setTime && (!playing || now - playing.mapAt > 60)) { if (playing) playing.mapAt = now; cancelAnimationFrame(mapRaf); mapRaf = requestAnimationFrame(() => map.setTime(handle - ICE)); }
-    if (bar && (!playing || now - playing.barAt > 120)) { if (playing) playing.barAt = now; bar.setYear((THIS_YEAR - (handle - ICE)) / 1e6); }   // the copper ticks on the lines above follow the handle
+    if (handed && playing && now - mapAt < 60) return;
+    mapAt = now; cancelAnimationFrame(mapRaf); mapRaf = requestAnimationFrame(() => map.setTime(time.get()));
   }
+  time.listen((y, src) => {
+    if (handed) { if (src !== bar) { handle = y + ICE; pushToMap(); } return; }   // while this line is hers the deep marker's own moves are not followed (as before the owner)
+    pushToMap(); passing(time.ma());   // on the deep lines: the map, and the event the marker has just passed
+  });
 
   // ---------- pointer: Main moves the Focus window; the knob and empty Detail move the handle ----------
   let drag = null, emptyTap = false;
@@ -474,7 +474,6 @@
   over.addEventListener('pointerdown', ev => {
     if (!live) return;
     const p = overPos(ev), { mx, xm } = geom;
-    stopAnim();
     if (ev.target.parentNode && ev.target.parentNode.classList && ev.target.parentNode.classList.contains('knob')) {
       drag = { k: 'h', id: ev.pointerId };
     } else if (p.y <= MAIN_Y + 16) {
@@ -511,7 +510,6 @@
   function wireDetail() {
   detailSvg.addEventListener('pointerdown', ev => {
     if (!live) return;
-    stopAnim();
     if (!emptyTap) return;
     emptyTap = false;
     const r = detailSvg.getBoundingClientRect(), x = ev.clientX - r.left - 26;
@@ -530,18 +528,17 @@
 
   // ---------- selecting ----------
   function select(id, fromMap) {
-    stopAnim();
     if (id && !byId[id]) id = null;
     sel = id === sel ? null : id;
     if (sel) namesOn = true;
     const e = sel && byId[sel];
     if (e) {
       if (!inFocus(e)) { const s = focus.b - focus.a; focus.a = Math.max(0, Math.min(NOW - s, e.year - s / 2)); focus.b = focus.a + s; drawDetail(); }
-      handle = e.year; addSeen(e.id); showWord();
+      setLineYear(e.year); addSeen(e.id); showWord();
       if (map && e.place && !stays(e.place.lat, e.place.lon)) goTo(e.place.lat, e.place.lon);
     }
     detail.select(sel ? [sel] : []);
-    draw(); markMap(); timeToMap(); say(e);
+    draw(); markMap(); say(e);
   }
   function say(e) {
     if (!e) { summary.innerHTML = '<span class="hint">Tap a mark or a place, or drag the copper handle.</span>'; return; }
@@ -628,15 +625,13 @@
   function buildMap(pyramid, seaCurve, ice) {
     const host = $('map');
     const GRADE_WORDS = { ground: 'the ground', measured: 'measured', inferred: 'inferred', fitted: 'fitted', guessed: 'guessed', invented: 'invented', none: 'no map' };
-    map = cwMap(host, pyramid, marks, { fit: FIT, reset: 'reset', time: {
+    map = cwMap(host, pyramid, marks, { fit: FIT, resetWord: false, leftBar: false, time: {   // the page's own reset word and bars (19 Oct 2026)
       seaLevel: seaCurve,
       ice: ice || undefined,   // the ice that existed then and not now, ICE-6G_C via PMIP4 (12 Oct): map.setTime blends between its steps
       deep: { seam: 2.6e6, plates: '../stories/plates/continents.json', coast: '../art/maps/world-tiles/contours-0.json', view: 'map',   // the ground this side of the ice ages, the flat deep map past them; Globe and Both are hers to choose (this page's events live on the ground)
               cities: '../stories/plates/cities.json',
               onChange: (on, grade, why) => { $('grade').textContent = GRADE_WORDS[grade] || grade; $('why').textContent = on ? (why || '') : ''; CW.setWordPresent($('wGuess'), grade === 'guessed' || grade === 'invented'); } }
     } });
-    mapWords = host.querySelector('.cw-strip span');
-    if (mapWords) mapWords.addEventListener('click', () => { $('mapwrap').style.marginLeft = ''; $('mapwrap').style.marginRight = ''; zoomed = false; markMap(); });
     // the bars at the left and right edges stretch the map; the left one may take it over the column to the page's edge
     document.querySelectorAll('.grip').forEach(gr => {
       let st = null; const wrap = $('mapwrap');
@@ -687,7 +682,6 @@
     const c = curveFiles[key]; if (c) { c.name = DEEP_CURVE_NAMES[key] || key; bar.setCurve(c); }
   }
   document.querySelectorAll('#htw-panel .curve').forEach(x => x.addEventListener('click', () => {
-    stopAnim();
     if (x.classList.contains('deep')) {
       if (x.classList.contains('on')) { setDeepCurve(null); return; }
       if (bar && (bar.path().length || handed)) bar.open([]);   // the whole of Earth's time, where every one of these plots is meant to be read (13 Oct, Michael)
@@ -717,7 +711,6 @@
   }
   // Globe under Map: one word that reads Globe, and Map while the globe is up (the stack prompt, part 4)
   $('wGlobe').addEventListener('click', () => { const w = $('wGlobe'), on = w.textContent === 'Globe'; w.textContent = on ? 'Map' : 'Globe'; if (map) map.deepView(on ? 'globe' : 'map'); });
-  if ($('wClimate')) $('wClimate').addEventListener('click', () => { const w = $('wClimate'); w.classList.toggle('active'); if (map) { map.deepClimate(w.classList.contains('active')); $('model').textContent = cwGlobe.CLIMATE_WORDS; $('model').style.display = w.classList.contains('active') ? 'block' : 'none'; } });
   $('wGuess').addEventListener('click', () => { if (map) map.deepReguess(); });
   $('wReset').addEventListener('click', () => { if (!map) return; map.home(); $('mapwrap').style.marginLeft = ''; $('mapwrap').style.marginRight = ''; zoomed = false; zoomBox = null; markMap(); });   // as the strip's word did
   // play (13 Oct 2026, Michael): the current year is dragged across the selected line, the oldest end to the youngest —
@@ -727,20 +720,20 @@
   function playSecs() { return 66 - 6 * Number($('speed').value); }
   function stopPlay() { if (!playing) return; cancelAnimationFrame(playing.raf); document.removeEventListener('pointerdown', playing.stop, true); playing = null; $('wPlay').textContent = 'play'; if (map && map.deepFast) map.deepFast(false); }
   function startPlay() {
-    stopAnim(); stopPlay();
+    stopPlay();
     const deep = bar && !handed;
     const from = deep ? bar.span().from : focus.a, to = deep ? bar.span().to : focus.b;
-    const at = deep ? bar.year() : handle;
+    const at = deep ? time.ma() : handle;
     // from where the marker stands, unless it is at the end already; then from the start
     const k0 = deep ? (from - at) / ((from - to) || 1) : (at - from) / ((to - from) || 1);
     const start = k0 >= 0.995 ? 0 : Math.max(0, k0), t0 = performance.now(), ms = playSecs() * 1000;
     const step = t => {
       const k = Math.min(1, start + (t - t0) / ms);
-      if (deep) bar.setYear(from - (from - to) * k); else setHandle(from + (to - from) * k);
+      if (deep) time.setMa(from - (from - to) * k, 'play'); else setHandle(from + (to - from) * k, 'play');
       if (k < 1 && playing) playing.raf = requestAnimationFrame(step); else stopPlay();
     };
     const stop = ev => { if (!$('mapbar').contains(ev.target)) stopPlay(); };
-    playing = { raf: requestAnimationFrame(step), stop, barAt: 0, mapAt: 0 };
+    playing = { raf: requestAnimationFrame(step), stop };
     document.addEventListener('pointerdown', stop, true);
     $('wPlay').textContent = 'stop';
     if (map && map.deepFast) map.deepFast(true);   // the drifting map draws its flat fills while the year runs, the skin returns at stop (Safari stepped)
@@ -814,14 +807,15 @@
       if (!handed) {
         handed = true; lines.classList.remove('off'); namesOn = !!sel;
         shownId = null; say(sel && byId[sel]); graphsFor();
-        measure(); drawDetail(); draw(); markMap(); timeToMap(); showWord();
-        if (!ranOnce) { ranOnce = true; setFocus(VIEW.focus[0], VIEW.focus[1]); }   // no arrival run on the one timeline (Michael, 12 Oct)
+        time.set(handle - ICE, 'page');   // this line's year is the year now: the map and the ticks above follow
+        measure(); drawDetail(); draw(); markMap(); showWord();
+        if (!ranOnce) { ranOnce = true; setFocus(FOCUS_OPEN[0], FOCUS_OPEN[1]); }   // no arrival run on the one timeline (Michael, 12 Oct)
       } else { measure(); drawDetail(); draw(); }
     } else if (handed) {
-      handed = false; stopAnim(); lines.classList.add('off');
+      handed = false; lines.classList.add('off');
       if (shownId === null || typeof shownId !== 'string' || shownId.indexOf('period:') !== 0) { shownId = null; summary.innerHTML = '<span class="hint">Tap a period, a mark, or drag the copper marker.</span>'; }
       lastMa = null; graphsFor();
-      if (bar && map) map.setTime(THIS_YEAR - bar.year() * 1e6);   // the deep marker drives the map again, from where it stands
+      pushToMap();   // the deep marker drives the map again, from where it stands
     }
   }
   function buildBar(store) {
@@ -832,43 +826,14 @@
       onHandoff,
       periods: '../stories/deep-time-periods.json',
       scene: [],   // the opening scene (13 Oct 2026, Michael): the Earth line alone, the same every time; the 12 Oct chain down to After the ice is retired
-      onYear: (ma, storeYear) => { if (handed) return; if (map) map.setTime(storeYear); passing(ma); },
-      // (12 Oct: the `!handed` guard that was here dropped every deep tap once the opening scene left After the ice
-      // open; the module now draws events on the deepest line only, never on the page's own, so the guard goes)
+      time,        // the year's owner: the marker sets it, the page's listener does the rest (19 Oct 2026; onYear went with it)
       onMark: mk => { if (mk.rec) showRec(mk.rec, false); },
       onPeriod: (node, span) => { showPeriod(node, span); },
       onBar: () => { graphsFor(); }
     });
   }
 
-  // ---------- animation: the arrival run, and the recorded question ----------
-  let anim = null, stopHook = null;
-  function stopAnim() {
-    if (anim) { cancelAnimationFrame(anim); anim = null; }
-    if (stopHook) { const h = stopHook; stopHook = null; h(); }
-  }
-  function tween(ms, f, done) {
-    if (reduced) { f(1, 1); if (done) done(); return; }
-    const t0 = performance.now();
-    const step = t => { const k = Math.min(1, (t - t0) / ms), e = k * k * (3 - 2 * k); f(e, k); if (k < 1) anim = requestAnimationFrame(step); else { anim = null; if (done) done(); } };
-    anim = requestAnimationFrame(step);
-  }
-  function anyTapStops() {
-    const stop = ev => { stopAnim(); };
-    document.addEventListener('pointerdown', stop, true);
-    stopHook = () => { document.removeEventListener('pointerdown', stop, true); summaryReset(); };
-  }
-  function summaryReset() { if (!summary.querySelector('b')) say(sel && byId[sel]); }
-  function setFocus(a, b) { focus.a = a; focus.b = b; handle = Math.max(a, Math.min(b, handle)); focusChanged(); }
-  function sweep() {
-    // the Focus window sweeps from the ice to now, then settles; a tap stops it
-    anyTapStops();
-    summary.innerHTML = '<span class="hint">tap to stop</span>';
-    tween(SWEEP_MS, (e, k) => { const a = k * (NOW - SWEEP_SPAN); handle = a + SWEEP_SPAN / 2; setFocus(a, a + SWEEP_SPAN); }, () => {
-      const a0 = focus.a, b0 = focus.b;
-      tween(SETTLE_MS, e => { const a = a0 + (VIEW.focus[0] - a0) * e, b = b0 + (VIEW.focus[1] - b0) * e; handle = (a + b) / 2; setFocus(a, b); }, () => { stopAnim(); });
-    });
-  }
+  function setFocus(a, b) { focus.a = a; focus.b = b; focusChanged(); }
 
   // ---------- the pages ----------
   let raw = null, wanted = false;   // the files, once loaded; whether Next was pressed before they were
@@ -893,19 +858,13 @@
     });
     wireDetail();
     buildMap(raw.pyramid, raw.seaIce.points, raw.ice);
+    pushToMap();   // the map's year from the start (today), so Globe works before anything moves
     live = true;
-    if (VIEW === VIEWINGS['after-the-ice']) {   // the one timeline: the deep lines above, Main as the last rung
-      summary.innerHTML = '<span class="hint">Tap a period, a mark, or drag the copper marker.</span>';
-      buildBar(raw.store);
-    } else {                                    // a fixed viewing of its own: no deep lines, Main as before
-      $('bar').style.display = 'none'; handed = true; ranOnce = true; lines.classList.remove('off');
-      measure(); drawDetail(); draw(); markMap(); timeToMap(); showWord();
-      if (reduced) { setFocus(VIEW.focus[0], VIEW.focus[1]); return; }
-      sweep();
-    }
+    // the one timeline: the deep lines above, Main as the last rung
+    summary.innerHTML = '<span class="hint">Tap a period, a mark, or drag the copper marker.</span>';
+    buildBar(raw.store);
   }
   $('next').addEventListener('click', showBench);
-  applyViewing(new URLSearchParams(location.search).get('view') || 'after-the-ice');
   $('next').addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); showBench(); } });
   let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!live) return; measure(); drawDetail(); draw(); }, 120); });
 
