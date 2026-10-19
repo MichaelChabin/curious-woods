@@ -346,6 +346,27 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** One texture read per pixel; needs the per-pixel globe.
 **Source.** Claude, 12 Oct, making the molten maps for Michael.
 
+### Two year markers, equals (working name)   · 19 Oct 2026 · candidate
+**Idea.** Two markers on the timeline, neither first nor second. The one she last touched is the current year and the map and globe show it; dragging one moves the world, tapping the other flips the world to its year, and the distance between them is always written. Pangaea, then Pangaea breaking; the world before the ice, then after; copper to bronze.
+**Where it sits.** The Time Machine, on the deep lines; the first of the tools Michael wants children to bring to the timeline.
+**Opens.** Flipping between two moments as a gesture; "how long from X to Y" answered by her own two hands rather than by the envelope's snap.
+**Costs.** The code is not ready: the year has three owners, the line's scale is private, the deep module wipes its drawing on every change, and the After the ice line is drawn by the page with a second marker. The audit of 19 Oct names what comes first: one owner of the year, a public scale, a tool layer, the knob as the first tool. The free envelope already measures a span (lane D); two measurers want one ruling.
+**Source.** Michael's prompt of 19 Oct, `claude/Prompt-Audit-Timeline-Graphics.md`, as the test case for adding tools.
+
+### Tools plug into the timeline (working name)   · 19 Oct 2026 · candidate
+**Idea.** The timeline is a place children bring tools to, and the next tool and the one after should cost little: a tool is a small thing with a draw and a few pointer handlers, given the current year and the line's scale, drawn in a layer of its own.
+**Where it sits.** `js/deep-time.js`, with the year owned once (the store's year) and listened to by the deep lines, the page's line, the map and play.
+**Opens.** Markers, measurers, a graph tool, the "count from here" zero of the 18 Oct ruling, all as tools of one shape.
+**Costs.** The hand-over (the page's own After the ice line, on the September module five stories share) is the long debt; until it is retired a tool must serve two lines or stay deep-only.
+**Source.** Michael, 19 Oct, the ground rules of the audit prompt; the audit's §6.
+
+### The earliest continents, believable (working name)   · 19 Oct 2026 · candidate
+**Idea.** The invented and guessed continents (past 1,000 million years) get rounded, natural outlines; dark grey, nearly black, with a rock texture, so they read as continental crust; semi-transparent shelves so the edges look submerged; and they never pass through each other — they collide, stick, and break apart again. Believable, not realistic.
+**Where it sits.** `js/globe.js`, the guessed and invented grades (Rulings, *The one timeline* 14; the ledger's *Invented land, honest about it*, 7 Oct).
+**Opens.** The young Earth as a story picture a child can watch without being distracted by it; a motion model that could later be told as a story (continents assembling).
+**Costs.** The look is cheap once the skin is cheap and the shelf is masked (the audit's steps 4 and 5). The collisions are the hard part: a stepped motion model with contact, run from the seed so *another guess* and replay agree, joined seamlessly to the real cratons at 1,000 million years, cached per age step. Last, after the look.
+**Source.** Michael's prompt of 19 Oct, *Coming later*; the audit's §8.
+
 ## Stories
 
 ### The edge of knowing (working name)   · 5 Oct 2026 · candidate
