@@ -270,15 +270,15 @@
   </main>
 </section>
 
-<script src="../js/map.js?v=2026-10-19"></script>
+<script src="../js/map.js?v=2026-10-19b"></script>
 <script src="../js/timeline.js?v=2026-10-19"></script>
-<script src="../js/globe.js?v=2026-10-19"></script>
+<script src="../js/globe.js?v=2026-10-19b"></script>
 <script src="../js/deep-time.js?v=2026-10-19"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-19 3726e69';   // 19 Oct 2026: the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-19b fbe6403';   // 19 Oct 2026, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -718,7 +718,7 @@
   // slider says how fast (a crossing in 60 s at 1, 6 s at 10); the word reads stop while it runs, and any tap stops it
   let playing = null;
   function playSecs() { return 66 - 6 * Number($('speed').value); }
-  function stopPlay() { if (!playing) return; cancelAnimationFrame(playing.raf); document.removeEventListener('pointerdown', playing.stop, true); playing = null; $('wPlay').textContent = 'play'; if (map && map.deepFast) map.deepFast(false); }
+  function stopPlay() { if (!playing) return; cancelAnimationFrame(playing.raf); document.removeEventListener('pointerdown', playing.stop, true); playing = null; $('wPlay').textContent = 'play'; }
   function startPlay() {
     stopPlay();
     const deep = bar && !handed;
@@ -736,7 +736,7 @@
     playing = { raf: requestAnimationFrame(step), stop };
     document.addEventListener('pointerdown', stop, true);
     $('wPlay').textContent = 'stop';
-    if (map && map.deepFast) map.deepFast(true);   // the drifting map draws its flat fills while the year runs, the skin returns at stop (Safari stepped)
+    // (the fast flag of 13 Oct, flat fills while the year ran, went 19 Oct 2026: the textures stay through play)
   }
   $('wPlay').addEventListener('click', ev => { ev.stopPropagation(); if (playing) stopPlay(); else startPlay(); });
   $('speed').addEventListener('pointerdown', ev => ev.stopPropagation());

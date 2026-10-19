@@ -38,7 +38,11 @@
    grain (art/globe/rock-grain.png, one tone, no climate in it) for *inferred* and *fitted*; *guessed* and
    *invented* keep their pale dashed and dotted fills with no skin, so the grade shows at a glance. A limb
    shading and a haze at the rim make it a ball. While the globe itself is dragged the skin is painted coarser
-   (14 Oct 2026; until then the flat fills stood in), and sharp again when the finger lifts. Molten, twice (part 7): above 4,400 million years the pixels follow
+   (14 Oct 2026; until then the flat fills stood in), and sharp again when the finger lifts. The fast flag of 13 Oct, which drew flat fills in place of the skin
+   while the year ran, went on 19 Oct 2026 (step 4 of the audit's order, Michael's go-ahead): the skin paints in play
+   too, made cheap by keeping the view's part of the pass (every pixel's unit vector and texel) while the view holds and
+   the id raster at half-million-year steps, so a frame of play does only the plates' turns and one texel lookup per
+   pixel; skinMs() reads the cost. Molten, twice (part 7): above 4,400 million years the pixels follow
    Michael's maps (art/globe/cooling-order.png, dark cools first; cracks.png, the seams): crust wherever the
    cooling value is below a threshold that rises with the age, the cracks glowing and dimming; the Earth
    assembles molten at 4,567, a black crust within a few million years, a faint uncertain sea, the white flash
@@ -199,8 +203,11 @@
     function indexOf(pid) { var i = plateIndex[pid]; if (!i) { i = plateByIndex.length; plateByIndex.push(pid); plateIndex[pid] = i; } return i; }
     // the id raster: every living piece filled with its plate's index (low byte red, high byte green) at its position at this age
     // the raster depends only on the age (and the pieces), so a drag, which only turns the view, reuses it (14 Oct 2026)
+    // the raster is built at half-million-year steps (19 Oct 2026, step 4 of the audit's order): a plate moves at most
+    // a quarter of a degree in that time, under a pixel at any size the map takes, and play no longer rebuilds it every frame
     var idKey = null, idData = null;
     function idRaster(age) {
+      age = Math.round(age * 2) / 2;
       var key = age + '|' + pieces.length + '|' + seed;
       if (key === idKey && idData) return idData;
       if (!idCanvas) { idCanvas = texCanvas(); idCtx = idCanvas.getContext('2d', { willReadFrequently: true }); }
@@ -242,6 +249,24 @@
         return true;
       };
     }
+    // the view's own part of the skin, kept while the view holds (19 Oct 2026, step 4): for every pixel of the skin
+    // canvas, whether it is on the world, the unit vector under it and that vector's texel. Play changes the age and
+    // not the view, so during play the per-pixel pass has only the plate's turn and one texel lookup left to do
+    var viewCache = { key: null };
+    function viewPixels(V) {
+      var key = [proj, lon0, lat0, fz.k, fz.lat, SW, SH, W, H].join('|');
+      if (viewCache.key === key) return viewCache;
+      var toWorld = pixelToWorld(V), n = SW * SH, same = viewCache.inside && viewCache.inside.length === n, p = [0, 0, 0], i = 0;
+      // the arrays are kept and refilled while the size holds (a drag changes the view every frame)
+      var w3 = same ? viewCache.w3 : new Float32Array(n * 3), ks = same ? viewCache.k : new Int32Array(n), inside = same ? viewCache.inside : new Uint8Array(n);
+      if (same) inside.fill(0);
+      for (var py = 0; py < SH; py++) for (var px = 0; px < SW; px++, i++) {
+        if (!toWorld(px, py, p)) continue;
+        inside[i] = 1; w3[3 * i] = p[0]; w3[3 * i + 1] = p[1]; w3[3 * i + 2] = p[2]; ks[i] = texIndex(p[0], p[1], p[2]);
+      }
+      viewCache = { key: key, w3: w3, k: ks, inside: inside };
+      return viewCache;
+    }
     function texIndex(x, y, z) {   // the texel of a unit vector, times four
       var lon = Math.atan2(y, x), lat = Math.asin(z > 1 ? 1 : (z < -1 ? -1 : z));
       var u = ((lon + Math.PI) / (2 * Math.PI) * TW) | 0, v = ((Math.PI / 2 - lat) / Math.PI * TH) | 0;
@@ -259,16 +284,17 @@
       // across the measured edge (200 Ma) the picture blends into the rock grain over FADE million years (13 Oct 2026)
       var edge = grades.length ? grades[0].to : 200, t = Math.max(0, Math.min(1, (age - (edge - FADE / 2)) / FADE));
       var t0 = performance.now(), ids = idRaster(Math.max(age, 0)), picture = t < 1 ? tex.ground : null, grain = tex['rock-grain'];
-      var out = skinTarget(), o = out.data, inv = {}, toWorld = pixelToWorld(V), w3 = [0, 0, 0], sw = SW, sh = SH;
-      for (var py = 0; py < sh; py++) for (var px = 0; px < sw; px++) {
-        if (!toWorld(px, py, w3)) continue;
-        var k = texIndex(w3[0], w3[1], w3[2]), idx = ids[k] | (ids[k + 1] << 8);
+      var out = skinTarget(), o = out.data, inv = new Array(plateByIndex.length), vc = viewPixels(V), w3 = vc.w3, ks = vc.k, inside = vc.inside, n = SW * SH;
+      for (var i = 0; i < n; i++) {
+        if (!inside[i]) continue;
+        var k = ks[i], idx = ids[k] | (ids[k + 1] << 8);
         if (!idx) continue;
         var M = inv[idx];
         if (M === undefined) { var R = plateMatrixAt(plateByIndex[idx], Math.max(age, 0)); M = R ? [R[0], R[3], R[6], R[1], R[4], R[7], R[2], R[5], R[8]] : null; inv[idx] = M; }
         if (!M) continue;
-        var tx = M[0] * w3[0] + M[1] * w3[1] + M[2] * w3[2], ty = M[3] * w3[0] + M[4] * w3[1] + M[5] * w3[2], tz = M[6] * w3[0] + M[7] * w3[1] + M[8] * w3[2];
-        var k2 = texIndex(tx, ty, tz), oi = (py * sw + px) << 2;
+        var x = w3[3 * i], y = w3[3 * i + 1], z = w3[3 * i + 2];
+        var tx = M[0] * x + M[1] * y + M[2] * z, ty = M[3] * x + M[4] * y + M[5] * z, tz = M[6] * x + M[7] * y + M[8] * z;
+        var k2 = texIndex(tx, ty, tz), oi = i << 2;
         if (picture && t === 0) { o[oi] = picture[k2]; o[oi + 1] = picture[k2 + 1]; o[oi + 2] = picture[k2 + 2]; }
         else { var f = 0.72 + 0.56 * grain[k2] / 255, r0 = LAND3[0] * f, g0 = LAND3[1] * f, b0 = LAND3[2] * f;
           if (picture) { r0 = picture[k2] * (1 - t) + r0 * t; g0 = picture[k2 + 1] * (1 - t) + g0 * t; b0 = picture[k2 + 2] * (1 - t) + b0 * t; }
@@ -303,11 +329,11 @@
     }
     function paintMolten(V, age) {
       var t0 = performance.now(), st = moltenState(age), cool = tex['cooling-order'], cracks = tex.cracks, grain = tex['rock-grain'];
-      var out = skinTarget(), o = out.data, toWorld = pixelToWorld(V), w3 = [0, 0, 0], sw = SW, sh = SH;
+      var out = skinTarget(), o = out.data, vc = viewPixels(V), w3 = vc.w3, inside = vc.inside, n = SW * SH;
       var thresh = st.t * 1.15 - 0.05, turn = st.second ? (137 * Math.PI / 180) : 0, ct = Math.cos(turn), sn = Math.sin(turn);
-      for (var py = 0; py < sh; py++) for (var px = 0; px < sw; px++) {
-        if (!toWorld(px, py, w3)) continue;
-        var x = w3[0], y = w3[1], z = w3[2];
+      for (var i = 0; i < n; i++) {
+        if (!inside[i]) continue;
+        var x = w3[3 * i], y = w3[3 * i + 1], z = w3[3 * i + 2];
         if (st.second) { var x2 = x * ct - y * sn; y = x * sn + y * ct; x = x2; z = -z; }   // a different crust: the maps turned and flipped
         var k = texIndex(x, y, z), cv = cool[k] / 255, cr = cracks[k] / 255, sw1 = grain[k] / 255;
         var solid = (thresh - cv) / 0.08; solid = solid < 0 ? 0 : (solid > 1 ? 1 : solid);
@@ -321,7 +347,7 @@
           if (st.flash > 0) v = v * (1 - st.flash) + FLASH3[i] * st.flash;
           if (i === 0) R = v; else if (i === 1) G = v; else B = v;
         }
-        var oi = (py * sw + px) << 2;
+        var oi = i << 2;
         o[oi] = R > 255 ? 255 : R; o[oi + 1] = G > 255 ? 255 : G; o[oi + 2] = B > 255 ? 255 : B; o[oi + 3] = 255;
       }
       skinCtx.putImageData(out, 0, 0);
@@ -651,13 +677,14 @@
       ctx.save();
       if (proj === 'flat') { ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip(); } else { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip(); }
       // the per-pixel passes, in CSS pixels before the unit transform: the molten sequence, or the land's skin for the
-      // model's ages (while the globe itself is dragged, coarser; during play the flat fills stand in)
+      // model's ages (while the globe itself is dragged, coarser; in play too, since 19 Oct 2026 — the fast flag that
+      // put flat fills in its place is gone)
       var skinned = false, moltenSt = null;
       // toward the model's reach the skin fades and the guessed look fades in, over FADE million years (13 Oct 2026)
       var tg = (data && g === 'fitted') ? Math.max(0, Math.min(1, (ma - (reach - FADE)) / FADE)) : 0;
       lastSkinMs = 0; skinScale = drag ? DRAG_SCALE : SKIN_SCALE;
       if (g === 'none' && moltenReady()) moltenSt = paintMolten(V, ma);
-      else if (data && skinReady() && !fast && (g === 'measured' || g === 'ground' || g === 'inferred' || g === 'fitted')) { paintSkin(V, ma, g, 1 - tg); skinned = true; }
+      else if (data && skinReady() && (g === 'measured' || g === 'ground' || g === 'inferred' || g === 'fitted')) { paintSkin(V, ma, g, 1 - tg); skinned = true; }
       enterUnit(r, cx, cy);
       if (data && g !== 'none') {
         if (g === 'measured' || g === 'ground') { var lp = landPath(V, Math.max(ma, 0), 0, 'model'); if (!skinned) fillLand(lp, LAND, g === 'ground' ? 0.45 : 1, null); }
@@ -706,7 +733,7 @@
     function schedule() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
 
     // ---- the gesture: drag turns (east–west about the pole) and tilts (north–south, the poles the limits) ----
-    var drag = null, fast = false;
+    var drag = null;
     canvas.addEventListener('pointerdown', function (ev) {
       drag = { id: ev.pointerId, x: ev.clientX, y: ev.clientY, lon: lon0, lat: lat0, flat: fz.lat };
       ev.preventDefault(); try { canvas.setPointerCapture(ev.pointerId); } catch (e) {}
@@ -749,7 +776,6 @@
       zoomOut: function () { if (fz.k === 1 && fz.lat === 0) return; if (fzAnim) cancelAnimationFrame(fzAnim); fz.k = 1; fz.lat = 0; schedule(); },
       zoom: function () { return fz.k; },
       setMarker: function (m) { marker = m ? { lat: m.lat, lon: m.lon, name: m.name || '', plate: m.plate } : null; schedule(); },
-      setFast: function (on) { fast = !!on; schedule(); },
       grade: function () { return gradeFor(ma); },
       moltenPhase: function () { return ma > NO_MAP ? moltenState(ma).phase : null; },
       setCities: function (on) { citiesOn = !!on; schedule(); },

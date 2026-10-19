@@ -1432,11 +1432,10 @@
       api.deepView = function (v) { if (v === 'globe' || v === 'map') { deepView = v; if (timeYear !== null) api.setTime(timeYear); } return deepView; };
       api.deepCities = function (on) { if (on !== undefined) deepCities = !!on; if (deepGlobe) deepGlobe.setCities(deepCities); if (deepFlat) deepFlat.setCities(deepCities); return deepCities; };   // the cities on the drifting pieces (12 Oct)
       api.deepTurn = function (lon, lat) { if (deepGlobe) deepGlobe.turn(lon, lat); };   // the globe turns to face a place (10 Oct); it does not zoom
-      // 13 Oct 2026: a marker riding its plate on both deep views (null clears it); the flat map's zoom to a place (null zooms out);
-      // fast drawing (flat fills, no per-pixel skin) while the year runs
+      // 13 Oct 2026: a marker riding its plate on both deep views (null clears it); the flat map's zoom to a place (null zooms out).
+      // (deepFast, the flat fills while the year ran, went 19 Oct 2026: the skin paints in play now.)
       api.deepMark = function (m) { if (deepGlobe) deepGlobe.setMarker(m); if (deepFlat) deepFlat.setMarker(m); };
       api.deepZoom = function (lon, lat, k) { if (!deepFlat) return; if (lon == null) deepFlat.zoomOut(); else deepFlat.zoomTo(lon, lat, k || 4); };
-      api.deepFast = function (on) { if (deepGlobe) deepGlobe.setFast(on); if (deepFlat) deepFlat.setFast(on); };
       api.deepReguess = function () { if (!deepGlobe && !deepFlat) return; var s = (deepGlobe || deepFlat).reguess(); if (deepGlobe && deepFlat) (deepGlobe === (deepGlobe || deepFlat) ? deepFlat : deepGlobe).setSeed(s); };
       api.setTime = function (year) {
         timeYear = +year;
