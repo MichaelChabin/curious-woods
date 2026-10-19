@@ -271,9 +271,9 @@ puzzle.** — Endless is a workshop, consumable is a puzzle with a solution. Two
 different tools; the workshop is the one that surprises teachers. [C]
 
 2026-10-19 — One copper, the marker's `#b5652b`, wherever copper appears on the
-timeline, the map and the globe; the map's vermilion `#c84830` the candidate for
-the one vermilion, to be confirmed side by side. — The audit found two of each,
-copied by hand between files. [M]
+timeline, the map and the globe; and one vermilion, the map's `#c84830`,
+confirmed side by side the same day. — The audit found two of each, copied by
+hand between files. [M]
 
 2026-10-19 — The ice is never an outline held unchanged for 2.6 million years:
 it fades with the glaciations, from a cited curve this side of the seam and as a

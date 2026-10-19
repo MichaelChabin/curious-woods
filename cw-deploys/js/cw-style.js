@@ -4,7 +4,7 @@
    anything new matches by reading from here instead of copying numbers by hand, which is how the two
    coppers happened. The values are the ones the five scripts carried on 19 Oct, named by their roles, with
    two changes: copper is the current-year marker's #b5652b everywhere (map.js and probe.js had #b87333),
-   and the globe's marker takes the map's vermilion #c84830 (it had #c8451f), pending Michael's yes.
+   and the globe's marker takes the map's vermilion #c84830 (it had #c8451f), confirmed by Michael the same day.
    Where two scripts carried near-twins of one colour (the map's halo #f4f1ea beside the page's parchment
    #f4f1e8) both are kept under their own names, unchanged, so nothing a child sees moves; merging them is
    a later, visible decision.
@@ -38,7 +38,7 @@
 
     // ---- the colours that mean something ----
     copper: '#b5652b',         // the current year; the one the story is about (one copper, 19 Oct 2026)
-    vermilion: '#c84830',      // the tapped thing; the story's hand on a map
+    vermilion: '#c84830',      // the tapped thing; the story's hand on a map (one vermilion, Michael's yes of 19 Oct 2026)
     slate: '#3f5a78',          // the world's events, and a place that belongs to them
     payne: '#546A80',          // a word that acts
     payneHover: '#3D3D3A',     // the same word under a mouse
