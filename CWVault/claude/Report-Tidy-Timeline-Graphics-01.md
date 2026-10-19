@@ -1,5 +1,5 @@
 ---
-status: Report, 19 Oct 2026 (Claude Code), answering `claude/Prompt-Tidy-Timeline-Graphics-01.md`: the tidying steps 1 to 3 built and checked, the bracket question answered, the iPad baseline described. Committed, not pushed.
+status: Report, 19 Oct 2026 (Claude Code), answering `claude/Prompt-Tidy-Timeline-Graphics-01.md`: the tidying steps 1 to 3 built and checked, the bracket question answered, the iPad baseline described. Committed `54bbf5e` and `1223dab`, pushed on Michael's word.
 role: What changed in the tidying, what was checked and how, what surprised; whether the bracket absorbs the Focus window and the envelope; how to take the iPad baseline.
 ---
 
@@ -52,7 +52,7 @@ So: build the bracket on the deep lines first, with the snapshot rule; then reti
 
 ## The iPad baseline, for step 4
 
-I cannot drive the iPad from here, and the live site is still the version before today's tidying until the push, so the baseline can be taken any time before then, and today's tidying would not change it anyway.
+I cannot drive the iPad from here. The tidying is live now, and it changes nothing in play (the fast flag, the seam and the squares are as they were), so the baseline is taken on the live site as it is.
 
 On the iPad in Safari, open `curiouswoods.org/active/time-machine.html` and tap Next. Then, with Control Centre's screen recording running (Settings → Control Centre → add Screen Recording, if it is not there):
 
