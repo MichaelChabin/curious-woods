@@ -43,10 +43,13 @@
    `opts.time.deep.seam` says otherwise), the map's base is the globe — js/globe.js, which the page
    loads — with the continents where they were in that year; this side of it, the pyramid with the
    sea and the ice. `opts.time.deep = { seam?, plates?, coast?, onChange?(on, grade, why) }`, the
-   middle two what cwGlobe takes. The globe opens centred where the map was looking and arrives
-   pulling away from the ground (a scale and a fade); crossing back it comes down to it. Zoom in
-   time is zoom in space. Over it nothing of the map responds: no marks, no pan, no zoom; its own
-   drag turns it. `map.deep()` says whether it is on and how sure the positions are.
+   middle two what cwGlobe takes. The globe opens centred where the map was looking. Since 19 Oct
+   2026 (step 6 of the audit's order) the flat deep map is a painting of the map's own view — the
+   box's size, the same centre and pixels per degree, following every pan and fit, its own drag
+   panning the map — so the seam is a short fade between two paintings of one view; the 2.4× arrival
+   of 6 Oct and the box grown to 2:1 are gone. Over the globe nothing of the map responds: no marks,
+   no pan, no zoom; its own drag turns it. `map.deep()` says whether it is on and how sure the
+   positions are; `map.deepPlace(lon, lat)` carries a place today to where it was at the current age.
    `map.setTime(year)` (30 Sep 2026, for Time Machine) takes one year — the store's astronomer's
    year — and turns on the layers that are true for it, from what the page hands it in
    `opts.time`: `{ seaLevel: [[year, metres], ...] }` (stories/curves/sea-level.json) sets the
@@ -162,12 +165,13 @@
     '.cw-map canvas.cw-sea{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     '.cw-map canvas.cw-data{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
     '.cw-map canvas.cw-ice-canvas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}',
-    /* deep time (6 Oct 2026): past the seam the globe is the base, over the tiles, the sea and the marks;
-       it arrives pulling away from the ground and leaves coming down to it — a scale and a fade, never a cut */
-    '.cw-map .cw-deep-base{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;background:' + S.parchment + ';display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(2.4);transition:opacity .5s ease,transform .5s ease;pointer-events:none;line-height:0;}',
-    '.cw-map .cw-deep-base.on{opacity:1;transform:scale(1);pointer-events:auto;}',
+    /* deep time (6 Oct 2026): past the seam the globe is the base, over the tiles, the sea and the marks. Until 19 Oct
+       2026 it arrived pulling away from the ground, a scale of 2.4 and a fade; now the flat deep map is the same frame
+       as the ground map, so the seam is a short fade between two paintings of one view (step 6 of the audit's order) */
+    '.cw-map .cw-deep-base{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;background:' + S.parchment + ';display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .35s ease;pointer-events:none;line-height:0;}',
+    '.cw-map .cw-deep-base.on{opacity:1;pointer-events:auto;}',
     '.cw-map .cw-deep-base>div{margin:0 6px;}',
-    '@media (prefers-reduced-motion:reduce){.cw-map .cw-deep-base{transition:opacity .2s ease;transform:none;}}',
+    '@media (prefers-reduced-motion:reduce){.cw-map .cw-deep-base{transition:opacity .2s ease;}}',
     /* the strip is the picker's drag handle turned to this use, with the handle's own tint
        (rgba(200,184,154,.25)) so it reads as a thing to take hold of, not as the page */
     '.cw-map .cw-strip{height:16px;border-radius:0 0 8px 8px;cursor:ns-resize;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;background:' + S.strip + ';touch-action:none;user-select:none;-webkit-user-select:none;line-height:16px;}',
@@ -873,6 +877,7 @@
       });
       shown.forEach(function (s) { positionText(s, w, h); });
       if (pyr) { drawSea(); paintData(); }
+      if (deepFlat) deepFlat.setView({ lon: view.lon, lat: view.lat, ppd: view.S });   // the flat deep map paints this view (19 Oct 2026, step 6)
       viewListeners.forEach(function (f) { f(); });
     }
     var viewListeners = [];
@@ -948,6 +953,19 @@
     }
     // the moving map's ice: on its canvas, and never below the current sea (17 Oct 2026, Michael) — where the floor layer says
     // the ground is still under water at this sea level, the ice is cut away; a lowered sea shows the ice on the shelf it exposes
+    // which outlines to draw at this year, and how strongly: between two of the file's steps the two cross-fade; beyond
+    // its oldest step (26,000 years) the oldest outline fades with the sea-level curve of the ice ages the page gave —
+    // a low sea is a big ice sheet, 120 m down is the whole sheet — in place of standing unchanged back to the seam
+    // (19 Oct 2026, step 6; Michael's ruling on the ice: it fades in and out with the glaciations, from a cited curve)
+    function icePairs() {
+      var ages = iceData.ages, last = ages[ages.length - 1];
+      if (iceAgo > last) return [[last, Math.min(1, Math.max(0, -seaLevel / 120))]];
+      var a = null, b = null, i;
+      for (i = 0; i < ages.length; i++) { if (ages[i] <= iceAgo) a = ages[i]; if (ages[i] >= iceAgo && b === null) b = ages[i]; }
+      if (a === null) a = ages[0]; if (b === null) b = last;
+      var t = (b === a) ? 1 : (iceAgo - a) / (b - a);
+      return [[a, 1 - t], [b, t]];
+    }
     function drawIceCanvas(w, h) {
       var ctx = iceCanvas.getContext('2d');
       if (!iceData || !iceAgo) { iceCanvas.style.display = 'none'; return; }
@@ -955,11 +973,8 @@
       var k = frozen ? 0.5 : 1, cw = Math.ceil(w * k), ch = Math.ceil(h * k);   // half resolution while a gesture lasts
       if (iceCanvas.width !== cw || iceCanvas.height !== ch) { iceCanvas.width = cw; iceCanvas.height = ch; }
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cw, ch); ctx.setTransform(k, 0, 0, k, 0, 0);
-      var ages = iceData.ages, a = null, b = null, i;
-      for (i = 0; i < ages.length; i++) { if (ages[i] <= iceAgo) a = ages[i]; if (ages[i] >= iceAgo && b === null) b = ages[i]; }
-      if (a === null) a = ages[0]; if (b === null) b = ages[ages.length - 1];
-      var t = (b === a) ? 1 : (iceAgo - a) / (b - a), drew = false;
-      [[a, 1 - t], [b, t]].forEach(function (pair) {
+      var pairs = icePairs(), drew = false, i;
+      pairs.forEach(function (pair) {
         if (pair[1] <= 0.01) return;
         var rings = iceData.outlines[String(pair[0])];
         if (!rings || !rings.length) return;
@@ -980,13 +995,9 @@
     function drawIce(layer, w, h) {
       if (iceCanvas) { drawIceCanvas(w, h); return; }
       if (!iceData || !iceAgo) return;
-      var ages = iceData.ages, a = null, b = null, i;
-      for (i = 0; i < ages.length; i++) { if (ages[i] <= iceAgo) a = ages[i]; if (ages[i] >= iceAgo && b === null) b = ages[i]; }
-      if (a === null) a = ages[0]; if (b === null) b = ages[ages.length - 1];
-      var t = (b === a) ? 1 : (iceAgo - a) / (b - a);
       // no blur filter on the ice (13 Oct 2026): Safari repainted the filter's region, the whole north, as white patches under the
       // pointer; the soft edge is a wider, fainter stroke instead
-      [[a, 1 - t], [b, t]].forEach(function (pair) {
+      icePairs().forEach(function (pair) {
         if (pair[1] <= 0.01) return;
         var rings = iceData.outlines[String(pair[0])];
         if (!rings || !rings.length) return;
@@ -1297,7 +1308,6 @@
         setWiden(home.widen);
         view.lat = home.view.lat; view.lon = home.view.lon; view.S = home.view.S; view.k = home.view.k;
         frozen = false; clampView(view); placeTiles(); readGround(); draw();
-        if (deepFlat) deepFlat.zoomOut();   // 13 Oct 2026: the flat deep map's zoom goes with the ground map's
       }
       api.centre = function (lat, lon) { slideTo({ lat: lat, lon: lon, S: view.S }, SLIDE_MS); };
       api.fit = function (b) {
@@ -1366,18 +1376,19 @@
         var shown = kids.filter(function (k) { return k.style.display !== 'none'; }), cw = hw;   // one view shows at a time
         shown.forEach(function (k) {
           var flat = k === (deepFlat && deepFlat._host), d;
-          // the flat map fills the box's width (Michael, 9 Oct: when it is map only it should fill its area);
-          // the box is wider than 2:1, so the poles are cropped evenly top and bottom, as the pyramid crops them
-          if (flat) { d = Math.max(160, Math.min(cw, 2 * hh) - 16); k.style.width = d + 'px'; k.style.height = (d / 2) + 'px'; }   // whole, poles and all (Michael, 13 Oct)
+          // the flat map is the box itself, a painting of the ground map's view (19 Oct 2026, step 6); the disc is capped
+          if (flat) { k.style.width = hw + 'px'; k.style.height = hh + 'px'; k.style.margin = '0'; }
           else { d = Math.max(120, Math.min(cw, hh) - 16); k.style.width = d + 'px'; k.style.height = d + 'px'; }
         });
       }
       function makeView(projection) {
         var g = document.createElement('div'); deepHost.appendChild(g);
         var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, cities: T.deep.cities, citiesOn: deepCities, ma: 0, lon: view.lon, lat: view.lat, projection: projection,
+          fill: projection === 'flat', onDrag: projection === 'flat' ? function (dx, dy) { api.panBy(dx, dy); } : undefined,   // the flat view is the ground map's: a drag pans the map (19 Oct 2026)
           seam: (T.deep.seam || 2.6e6) / 1e6, seed: deepGlobe ? deepGlobe.seed() : undefined,
           onGrade: function (grade, why) { if (projection === 'globe' || !deepGlobe) tellDeep(); } });
         inst._host = g;
+        if (projection === 'flat') { deepSize(); inst.setView({ lon: view.lon, lat: view.lat, ppd: view.S }); }
         return inst;
       }
       function ensureDeep() {
@@ -1389,21 +1400,6 @@
         if (window.ResizeObserver) new ResizeObserver(deepSize).observe(stage);
         return true;
       }
-      // the flat map alone (Michael, 9 Oct: when it is map only it should fill its area): the box grows to
-      // the map's 2:1 at the box's full width, within the window's cap, and comes back to its height when
-      // the globe returns or the ground does; past the cap the poles are cropped evenly, as the pyramid crops them
-      var deepGrewFrom = null;
-      function growForFlat(on) {
-        if (on && deepGrewFrom === null) {
-          deepGrewFrom = stage.style.height;
-          var nh = Math.max(STAGE_MIN, Math.min(stageMax(), Math.round(stage.clientWidth / 2)));
-          stage.style.height = nh + 'px'; if (leftBar) leftBar.style.height = nh + 'px';
-        } else if (!on && deepGrewFrom !== null) {
-          stage.style.height = deepGrewFrom; if (leftBar) leftBar.style.height = deepGrewFrom;
-          deepGrewFrom = null;
-          placeTiles(); draw();
-        }
-      }
       function applyView() {
         if (!deepHost) return;
         var wantGlobe = deepView !== 'map', wantFlat = deepAgeNow && deepView !== 'globe';
@@ -1411,7 +1407,6 @@
         if (wantFlat && !deepFlat) deepFlat = makeView('flat');
         if (deepGlobe) deepGlobe._host.style.display = wantGlobe ? '' : 'none';
         if (deepFlat) deepFlat._host.style.display = wantFlat ? '' : 'none';
-        growForFlat(wantFlat && !wantGlobe);
         deepSize();
       }
       function tellDeep() {
@@ -1432,10 +1427,11 @@
       api.deepView = function (v) { if (v === 'globe' || v === 'map') { deepView = v; if (timeYear !== null) api.setTime(timeYear); } return deepView; };
       api.deepCities = function (on) { if (on !== undefined) deepCities = !!on; if (deepGlobe) deepGlobe.setCities(deepCities); if (deepFlat) deepFlat.setCities(deepCities); return deepCities; };   // the cities on the drifting pieces (12 Oct)
       api.deepTurn = function (lon, lat) { if (deepGlobe) deepGlobe.turn(lon, lat); };   // the globe turns to face a place (10 Oct); it does not zoom
-      // 13 Oct 2026: a marker riding its plate on both deep views (null clears it); the flat map's zoom to a place (null zooms out).
+      // 13 Oct 2026: a marker riding its plate on both deep views (null clears it). (The flat map's own zoom went 19 Oct: the map's view is its view.)
       // (deepFast, the flat fills while the year ran, went 19 Oct 2026: the skin paints in play now.)
       api.deepMark = function (m) { if (deepGlobe) deepGlobe.setMarker(m); if (deepFlat) deepFlat.setMarker(m); };
-      api.deepZoom = function (lon, lat, k) { if (!deepFlat) return; if (lon == null) deepFlat.zoomOut(); else deepFlat.zoomTo(lon, lat, k || 4); };
+      // a place today carried to where it was at the current age (19 Oct 2026): a page zooms the map there; the flat deep map, being the map's view, follows
+      api.deepPlace = function (lon, lat) { var v = deepGlobe || deepFlat; return v ? v.placeAt(lon, lat) : { lon: lon, lat: lat }; };
       api.deepReguess = function () { if (!deepGlobe && !deepFlat) return; var s = (deepGlobe || deepFlat).reguess(); if (deepGlobe && deepFlat) (deepGlobe === (deepGlobe || deepFlat) ? deepFlat : deepGlobe).setSeed(s); };
       api.setTime = function (year) {
         timeYear = +year;
@@ -1448,10 +1444,10 @@
             if (deepGlobe) deepGlobe.setTime(ago / 1e6); if (deepFlat) deepFlat.setTime(ago / 1e6);
             setDeep(true);
             if (deepAgeNow) return;
-          } else if (deepHost) { growForFlat(false); setDeep(false); }
+          } else if (deepHost) setDeep(false);
         }
         var m = curveAt(T.seaLevel, timeYear);
-        if (m !== null && seaCanvas) { var nm = Math.min(0, Math.round(m * 2) / 2); if (nm !== seaLevel) { seaLevel = nm; drawSea(); if (iceCanvas && !T.ice) drawIceCanvas(box.clientWidth, box.clientHeight); } }
+        if (m !== null && seaCanvas) { var nm = Math.min(0, Math.round(m * 2) / 2); if (nm !== seaLevel) { seaLevel = nm; drawSea(); if (iceCanvas && !T.ice) drawIceCanvas(box.clientWidth, box.clientHeight); } }   // with T.ice the draw below redraws the ice at the new level
         if (T.ice) { var ago = window.CW.THIS_YEAR - timeYear; iceData = T.ice; iceAgo = Math.max(0, ago); draw(); }
       };
       api.time = function () { return timeYear; };

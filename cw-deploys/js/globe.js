@@ -59,7 +59,9 @@
      plates, coast, crust   the three files, or their URLs (defaults under ../stories and ../art/maps)
      ma, lon, lat           the opening age (millions of years ago) and view
      projection             'globe' (default) or 'flat' — the same rings, equirectangular on a 2:1 canvas,
-                            a drag panning east–west
+                            a drag panning east–west; with fill: true the flat canvas is its host's own size, and
+                            setView({ lon, lat, ppd }) makes it a painting of a page's view (the ground map's), a
+                            drag then handed to onDrag(dx, dy) for the page to pan (19 Oct 2026, step 6)
      size                   the disc's diameter, or the flat map's width, in CSS px (default: the host's width)
      seam                   millions of years; younger than it the grade is `ground` (default 2.6)
      seed                   the first seed (default: this visit's)
@@ -122,8 +124,14 @@
     var canvas = document.createElement('canvas'); host.appendChild(canvas);
     var ctx = canvas.getContext('2d');
     var ma = opts.ma || 0, lon0 = opts.lon != null ? opts.lon : 20, lat0 = opts.lat != null ? opts.lat : 15;
-    var fz = { k: 1, lat: 0 }, fzAnim = null;   // the flat map's zoom (13 Oct 2026): k times, about the centre; lat the centre's latitude (lon0 its longitude)
+    // the flat map's view (13 Oct 2026; 19 Oct, step 6 of the audit's order): k times the whole world across the width and
+    // ky times its half across the height (equal pixels per degree when the canvas is 2:1), about the centre; lat the
+    // centre's latitude (lon0 its longitude). flatView, when a page sets it, is the ground map's own view — centre and
+    // pixels per degree — so the flat deep map is the same frame as the ground map and the seam is a fade between two
+    // paintings of one view; the canvas then fills its host (opts.fill) and a drag is handed to the page (opts.onDrag)
+    var fz = { k: 1, ky: 1, lat: 0 }, flatView = null;
     function fzY() { return (90 - fz.lat) / 180; }   // the centre latitude as a fraction of the height
+    function applyFlatView() { lon0 = flatView.lon; fz.lat = flatView.lat; fz.k = flatView.ppd * 360 / (W || 1); fz.ky = flatView.ppd * 180 / (H || 1); }
     var FADE = 8;   // million years: a piece dissolves into the sea over this long before its birth age, and the skin blends across a grade's edge (13 Oct 2026)
     var proj = opts.projection === 'flat' ? 'flat' : 'globe', seam = opts.seam != null ? opts.seam : 2.6;
     var data = null, coast = null, shelf = null, crust = null, pieces = [], plates = {}, ages = [], grades = [], reach = 1000, lastGrade = null, destroyed = false, raf = 0, ro = null;
@@ -229,7 +237,7 @@
       var oc = idCtx;
       oc.setTransform(1, 0, 0, 1, 0, 0); oc.fillStyle = '#000'; oc.fillRect(0, 0, TW, TH);
       oc.setTransform(TW, 0, 0, TH, 0, 0);
-      var saveProj = proj, saveFz = fz; proj = 'flat'; fz = { k: 1, lat: 0 };   // texture space: the whole world, unzoomed (13 Oct)
+      var saveProj = proj, saveFz = fz; proj = 'flat'; fz = { k: 1, ky: 1, lat: 0 };   // texture space: the whole world, unzoomed (13 Oct)
       var byPlate = {}, mats = {}, i, k;
       for (i = 0; i < pieces.length; i++) {
         var p = pieces[i];
@@ -258,7 +266,7 @@
       var T0 = V[0], T1 = V[3], T2 = V[6], T3 = V[1], T4 = V[4], T5 = V[7], T6 = V[2], T7 = V[5], T8 = V[8];
       return function (px, py, out) {
         var X, Y, Z;
-        if (flat) { var fx = 0.5 + ((px + 0.5) / sw - 0.5) / fz.k, fy = fzY() + ((py + 0.5) / sh - 0.5) / fz.k; if (fy < 0 || fy > 1) return false; var lo = fx * 2 * Math.PI - Math.PI, la = Math.PI / 2 - fy * Math.PI, cl = Math.cos(la); X = cl * Math.cos(lo); Y = cl * Math.sin(lo); Z = Math.sin(la); }
+        if (flat) { var fx = 0.5 + ((px + 0.5) / sw - 0.5) / fz.k, fy = fzY() + ((py + 0.5) / sh - 0.5) / fz.ky; if (fy < 0 || fy > 1) return false; var lo = fx * 2 * Math.PI - Math.PI, la = Math.PI / 2 - fy * Math.PI, cl = Math.cos(la); X = cl * Math.cos(lo); Y = cl * Math.sin(lo); Z = Math.sin(la); }
         else { X = (px + 0.5 - cx) / r; Y = -(py + 0.5 - cy) / r; var q = 1 - X * X - Y * Y; if (q < 0) return false; Z = Math.sqrt(q); }
         out[0] = T0 * X + T1 * Y + T2 * Z; out[1] = T3 * X + T4 * Y + T5 * Z; out[2] = T6 * X + T7 * Y + T8 * Z;
         return true;
@@ -269,7 +277,7 @@
     // not the view, so during play the per-pixel pass has only the plate's turn and one texel lookup left to do
     var viewCache = { key: null };
     function viewPixels(V) {
-      var key = [proj, lon0, lat0, fz.k, fz.lat, SW, SH, W, H].join('|');
+      var key = [proj, lon0, lat0, fz.k, fz.ky, fz.lat, SW, SH, W, H].join('|');
       if (viewCache.key === key) return viewCache;
       var toWorld = pixelToWorld(V), n = SW * SH, same = viewCache.inside && viewCache.inside.length === n, p = [0, 0, 0], i = 0;
       // the arrays are kept and refilled while the size holds (a drag changes the view every frame)
@@ -399,7 +407,7 @@
 
     // a world point to the screen, through the view: the flat map's zoom, or the disc (13 Oct 2026; cities and the marker)
     function screenPoint(sx, sy, sz, r, cx, cy) {
-      if (proj === 'flat') { var lon = Math.atan2(sy, sx), lat = Math.asin(Math.max(-1, Math.min(1, sz))); return [(0.5 + ((lon + Math.PI) / (2 * Math.PI) - 0.5) * fz.k) * W, (0.5 + ((Math.PI / 2 - lat) / Math.PI - fzY()) * fz.k) * H]; }
+      if (proj === 'flat') { var lon = Math.atan2(sy, sx), lat = Math.asin(Math.max(-1, Math.min(1, sz))); return [(0.5 + ((lon + Math.PI) / (2 * Math.PI) - 0.5) * fz.k) * W, (0.5 + ((Math.PI / 2 - lat) / Math.PI - fzY()) * fz.ky) * H]; }
       if (sz < 0.03) return null; return [cx + sx * r, cy - sy * r];
     }
     // a piece appears and goes without a pop (13 Oct 2026, Michael: the flashes at the plate boundaries): over the FADE
@@ -590,6 +598,8 @@
       var w = host.clientWidth || host.getBoundingClientRect().width || 400;
       var D = Math.round(opts.size || (proj === 'flat' ? w : Math.min(w, 560)));   // the flat map takes its host's whole width (9 Oct); the disc is capped
       W = D; H = proj === 'flat' ? Math.round(D / 2) : D;
+      if (proj === 'flat' && opts.fill) { W = Math.max(2, Math.round(w)); H = Math.max(2, Math.round(host.clientHeight || host.getBoundingClientRect().height || W / 2)); }   // the box itself (19 Oct 2026)
+      if (flatView) applyFlatView();
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     }
@@ -630,7 +640,7 @@
       }
       for (var off = -1; off <= 1; off++) {
         for (var j = 0; j < pts.length; j += 2) {
-          var px = 0.5 + ((pts[j] + Math.PI) / (2 * Math.PI) + off - 0.5) * fz.k, py = 0.5 + ((Math.PI / 2 - pts[j + 1]) / Math.PI - fzY()) * fz.k;
+          var px = 0.5 + ((pts[j] + Math.PI) / (2 * Math.PI) + off - 0.5) * fz.k, py = 0.5 + ((Math.PI / 2 - pts[j + 1]) / Math.PI - fzY()) * fz.ky;
           if (j === 0) into.moveTo(px, py); else into.lineTo(px, py);
         }
         into.closePath();
@@ -781,7 +791,11 @@
     });
     canvas.addEventListener('pointermove', function (ev) {
       if (!drag || ev.pointerId !== drag.id) return;
-      if (proj === 'flat') { lon0 = drag.lon - (ev.clientX - drag.x) * 360 / ((W || 400) * fz.k); if (fz.k > 1) { var lim = 90 - 90 / fz.k; fz.lat = Math.max(-lim, Math.min(lim, drag.flat + (ev.clientY - drag.y) * 180 / ((H || 200) * fz.k))); } }
+      if (proj === 'flat') {
+        if (opts.onDrag) { opts.onDrag(ev.clientX - drag.x, ev.clientY - drag.y); drag.x = ev.clientX; drag.y = ev.clientY; return; }   // the page's view: it pans (19 Oct 2026)
+        lon0 = drag.lon - (ev.clientX - drag.x) * 360 / ((W || 400) * fz.k);
+        if (fz.ky > 1) { var lim = 90 - 90 / fz.ky; fz.lat = Math.max(-lim, Math.min(lim, drag.flat + (ev.clientY - drag.y) * 180 / ((H || 200) * fz.ky))); }
+      }
       else {
         var k = 180 / (W || 400);
         lon0 = drag.lon - (ev.clientX - drag.x) * k;
@@ -804,17 +818,17 @@
       time: function () { return ma; },
       view: function () { return { lon: lon0, lat: lat0 }; },
       turn: function (lon, lat) { if (lon != null) lon0 = lon; if (lat != null) lat0 = Math.max(-90, Math.min(90, lat)); schedule(); },
-      // the flat map's zoom (13 Oct 2026): to a place, k times, over 350 ms; and out again
-      zoomTo: function (lon, lat, k, ms) {
-        if (proj !== 'flat') { lon0 = lon; lat0 = lat; schedule(); return; }
-        k = Math.max(1, Math.min(8, k || 4)); var lim = 90 - 90 / k, lat1 = Math.max(-lim, Math.min(lim, lat));
-        var from = { lon: lon0, lat: fz.lat, k: fz.k }, dlon = ((lon - lon0 + 540) % 360) - 180, t0 = performance.now(), T = ms || 350;
-        if (fzAnim) cancelAnimationFrame(fzAnim);
-        var step = function (t) { var u = Math.min(1, (t - t0) / T); u = 1 - (1 - u) * (1 - u); lon0 = from.lon + dlon * u; fz.lat = from.lat + (lat1 - from.lat) * u; fz.k = from.k * Math.pow(k / from.k, u); draw(); if (u < 1) fzAnim = requestAnimationFrame(step); else fzAnim = null; };
-        fzAnim = requestAnimationFrame(step);
+      // the flat map's view, the page's (19 Oct 2026, step 6): centre and pixels per degree, the ground map's own
+      setView: function (v) { if (proj !== 'flat' || !v) return; flatView = { lon: v.lon, lat: v.lat, ppd: v.ppd }; applyFlatView(); schedule(); },
+      // a place today, carried to where it was at the current age on its plate (for a page's zoom to an event's place)
+      placeAt: function (lon, lat) {
+        if (!data) return { lon: lon, lat: lat };
+        var g = gradeFor(ma).grade, pid = plateAt(lon, lat), M = null;
+        if (pid) M = g === 'guessed' || g === 'invented' ? guessedMatrix(pid, ma) : plateMatrixAt(pid, Math.max(ma, 0));
+        if (!M) return { lon: lon, lat: lat };
+        var v = xyz(lon, lat), wx = M[0] * v[0] + M[1] * v[1] + M[2] * v[2], wy = M[3] * v[0] + M[4] * v[1] + M[5] * v[2], wz = M[6] * v[0] + M[7] * v[1] + M[8] * v[2];
+        return { lon: Math.atan2(wy, wx) * 180 / Math.PI, lat: Math.asin(Math.max(-1, Math.min(1, wz))) * 180 / Math.PI };
       },
-      zoomOut: function () { if (fz.k === 1 && fz.lat === 0) return; if (fzAnim) cancelAnimationFrame(fzAnim); fz.k = 1; fz.lat = 0; schedule(); },
-      zoom: function () { return fz.k; },
       setMarker: function (m) { marker = m ? { lat: m.lat, lon: m.lon, name: m.name || '', plate: m.plate } : null; schedule(); },
       grade: function () { return gradeFor(ma); },
       moltenPhase: function () { return ma > NO_MAP ? moltenState(ma).phase : null; },

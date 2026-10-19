@@ -222,7 +222,7 @@
     <div>The ground: ETOPO 2022 (NOAA); Copernicus Global Land Cover, 2019</div>
     <div>Ice sheets: Peltier, Argus and Drummond, 2015 (ICE-6G_C, via PMIP4)</div>
     <div>Sea level since the ice: Lambeck and others, 2014</div>
-    <div>Sea level in the ice ages: Spratt and Lisiecki, 2016; Bintanja and van de Wal, 2008</div>
+    <div>Sea level in the ice ages: Spratt and Lisiecki, 2016; Bintanja and van de Wal, 2008 (the ice sheets beyond 26,000 years ago follow this curve)</div>
     <div>People: Our World in Data, from HYDE, 2023, Gapminder, 2022, and the United Nations, 2024</div>
     <div>Oxygen: Lyons, Reinhard and Planavsky, 2014</div>
     <div>Day length: Williams, 2000; Bartlett and Stevenson, 2016; Meyers and Malinverno, 2018</div>
@@ -270,15 +270,15 @@
   </main>
 </section>
 
-<script src="../js/map.js?v=2026-10-19b"></script>
+<script src="../js/map.js?v=2026-10-19e"></script>
 <script src="../js/timeline.js?v=2026-10-19"></script>
-<script src="../js/globe.js?v=2026-10-19c"></script>
+<script src="../js/globe.js?v=2026-10-19d"></script>
 <script src="../js/deep-time.js?v=2026-10-19"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-19c b3e6157';   // 19 Oct 2026, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-19d 95072f3';   // 19 Oct 2026, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -299,7 +299,7 @@
   const PANELS = {
     timeline: ['Timeline', '<p>Each coloured band is a period. Tap one and it opens as a longer line underneath. When two upright bars stand round it, drag them together for more detail or apart for less. Drag the space between them to slide along.</p><p>Tap a mark and you get a sentence about what happened. <i>More</i>, at the end, tells the rest, with pictures when there are any.</p><p>The copper dot is the year you’re in. Drag it, and the map shows the Earth in that year.</p><p>Tap <i>play</i>, above the map on the left, and the year runs along the line by itself while the world changes under it.</p>'],
     graphs: ['Graphs', '<p><i>Energy source</i>: how much of the warmth at the Earth’s surface came from inside the planet, and how much from the Sun.</p><p><i>Day length</i>: when the Moon was made, a day was perhaps five hours long. The Moon has been slowing us down ever since.</p><p><i>Oxygen</i>: how much oxygen was in the air, compared with today. For the first two billion years there was almost none.</p><p><i>Minerals</i>: how many kinds of mineral there were. The number jumped when oxygen arrived in the air.</p><p>More graphs are on the way.</p>'],
-    map: ['Map', '<p><i>Globe</i>, above the middle of the map, turns the flat map into a world you can spin. Drag it as far as you like. <i>reset</i>, at the right, brings it home.</p><p>Watch the sea. Twelve thousand years ago it was so low you could walk from London to Paris, from Siberia to Alaska, or from Boston to Nantucket.</p><p>For the last 200 million years we know pretty well where the continents were, because the ocean floor kept a record of how it spread. Before that, the record is thinner, and the land turns to plain rock, then to pale shapes with dashed edges. We know there was land, and that it moved. We don’t know where.</p><p><i>Cities</i> puts today’s cities on the globe, and they ride along with the land. Where was Melbourne a hundred million years ago? Tap <i>Cities</i> and drag the copper dot. (It wasn’t anywhere you’d want to go swimming.)</p><p class="refs">The ice: ICE-6G_C (Peltier, Argus and Drummond 2015), via PMIP4. The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.</p>']
+    map: ['Map', '<p><i>Globe</i>, above the middle of the map, turns the flat map into a world you can spin. Drag it as far as you like. <i>reset</i>, at the right, brings it home.</p><p>Watch the sea. Twelve thousand years ago it was so low you could walk from London to Paris, from Siberia to Alaska, or from Boston to Nantucket.</p><p>For the last 200 million years we know pretty well where the continents were, because the ocean floor kept a record of how it spread. Before that, the record is thinner, and the land turns to plain rock, then to pale shapes with dashed edges. We know there was land, and that it moved. We don’t know where.</p><p><i>Cities</i> puts today’s cities on the globe, and they ride along with the land. Where was Melbourne a hundred million years ago? Tap <i>Cities</i> and drag the copper dot. (It wasn’t anywhere you’d want to go swimming.)</p><p class="refs">The ice: ICE-6G_C (Peltier, Argus and Drummond 2015), via PMIP4, to 26,000 years ago; before that the sheets follow the sea level of the ice ages (Spratt and Lisiecki 2016; Bintanja and van de Wal 2008). The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.</p>']
   };
 
   // ---------- numbers and years ----------
@@ -751,7 +751,7 @@
   // window, from stories/deep-time-periods.json; a period with no words yet shows its name and span
   function showPeriod(node, span) {
     namesOn = false; zoomed = false; zoomBox = null; tappedId = null; shownId = null; markMap(); graphsFor();   // the ids first, then the marks (13 Oct: the red dot stayed)
-    if (map && map.deepMark) { map.deepMark(null); map.deepZoom(null); }
+    if (map && map.deepMark) map.deepMark(null);
     const words = bar && bar.periodWords(), rec = node && words && words[node.name];
     if (!node) { summary.innerHTML = '<span class="hint">about ' + esc(bar.fmt(span.from - span.to).replace(' ago', '')) + '</span>'; return; }
     shownId = 'period:' + node.name;
@@ -777,12 +777,13 @@
     shownId = rec.id;
     if (!passed && map) {   // the map goes to the event's place and shows its name; on the globe it turns to face her
       const pl = rec.placeNow || rec.place; namesOn = true; tappedId = rec.id;
-      if (pl && pl.lat != null) { if (!stays(pl.lat, pl.lon)) goTo(pl.lat, pl.lon); map.deepTurn(pl.lon, pl.lat); }
       // on the drifting map (past the seam, or the globe up): a marker where it happened — the event's own place (the asteroid's
-      // crater) before the place of its evidence — carried on its plate, and the flat map zooms to it (13 Oct 2026)
+      // crater) before the place of its evidence — carried on its plate; the map zooms to where that place was at this age,
+      // and the flat deep map, being the map's view, follows (13 Oct 2026; 19 Oct, step 6)
       const then = rec.place && rec.place.lat != null ? rec.place : pl;
       if (map.deepMark) map.deepMark(then && then.lat != null ? { lat: then.lat, lon: then.lon, name: shortName(then) } : null);
-      if (then && then.lat != null && map.deepZoom && map.deep().on) map.deepZoom(then.lon, then.lat, 4);
+      if (map.deep().on && then && then.lat != null) { const at = map.deepPlace(then.lon, then.lat); goTo(at.lat, at.lon); map.deepTurn(at.lon, at.lat); }
+      else if (pl && pl.lat != null) { if (!stays(pl.lat, pl.lon)) goTo(pl.lat, pl.lon); map.deepTurn(pl.lon, pl.lat); }
       markMap();
     }
     summary.innerHTML = (passed ? '<span class="passed">just passed</span><br>' : '') + '<b>' + esc(sentence(rec.label)) + '</b> ' + cwDeepTime.prose(rec.summary) + (rec.more ? ' <span class="cmd" id="more" role="button" tabindex="0">More</span>' : '');
