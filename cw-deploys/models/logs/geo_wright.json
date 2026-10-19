@@ -1,0 +1,192 @@
+{
+  "version": 1,
+  "name": "Wright",
+  "description": "The Wright window's demo: the 10 by 10 kept, ten lines pulled off the sides and off each other that divide it the way Wright's windows are divided, a few large panes with narrow strips and small squares along two edges, every line stopping at the lines around it; then two squares in amber, two in red and one strip in cobalt, the rest left clear; then the window alone.",
+  "level": "wright",
+  "operations": [
+    {
+      "op": "init",
+      "wright": {
+        "unit": 56,
+        "left": -5,
+        "bottom": -5,
+        "width": 10,
+        "height": 10
+      }
+    },
+    {
+      "op": "cut",
+      "pane": {
+        "x0": -5,
+        "y0": -5,
+        "x1": 5,
+        "y1": 5
+      },
+      "dir": "h",
+      "at": 3
+    },
+    {
+      "op": "cut",
+      "pane": {
+        "x0": -5,
+        "y0": -5,
+        "x1": 5,
+        "y1": 3
+      },
+      "dir": "v",
+      "at": -3
+    },
+    {
+      "op": "cut",
+      "pane": {
+        "x0": -5,
+        "y0": 3,
+        "x1": 5,
+        "y1": 5
+      },
+      "dir": "v",
+      "at": -3
+    },
+    {
+      "op": "cut",
+      "pane": {
+        "x0": -3,
+        "y0": 3,
+        "x1": 5,
+        "y1": 5
+      },
+      "dir": "h",
+      "at": 4
+    },
+    {
+      "op": "cut",
+      "pane": {
+        "x0": -3,
+        "y0": 4,
+        "x1": 5,
+        "y1": 5
+      },
+      "dir": "v",
+      "at": -2
+    },
+    {
+      "op": "cut",
+      "pane": {
+        "x0": -2,
+        "y0": 4,
+        "x1": 5,
+        "y1": 5
+      },
+      "dir": "v",
+      "at": -1
+    },
+    {
+      "op": "cut",
+      "pane": {
+        "x0": -5,
+        "y0": -5,
+        "x1": -3,
+        "y1": 3
+      },
+      "dir": "h",
+      "at": 1
+    },
+    {
+      "op": "cut",
+      "pane": {
+        "x0": -5,
+        "y0": -5,
+        "x1": -3,
+        "y1": 1
+      },
+      "dir": "h",
+      "at": -4
+    },
+    {
+      "op": "cut",
+      "pane": {
+        "x0": -3,
+        "y0": -5,
+        "x1": 5,
+        "y1": 3
+      },
+      "dir": "h",
+      "at": -4
+    },
+    {
+      "op": "cut",
+      "pane": {
+        "x0": -3,
+        "y0": -4,
+        "x1": 5,
+        "y1": 3
+      },
+      "dir": "v",
+      "at": 4
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1",
+      "rect": {
+        "x0": -5,
+        "y0": 3,
+        "x1": -3,
+        "y1": 5
+      },
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:2",
+      "rect": {
+        "x0": -3,
+        "y0": 4,
+        "x1": -2,
+        "y1": 5
+      },
+      "color": "#8b1a1a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:3",
+      "rect": {
+        "x0": -2,
+        "y0": 4,
+        "x1": -1,
+        "y1": 5
+      },
+      "color": "#8b1a1a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:4",
+      "rect": {
+        "x0": -5,
+        "y0": 1,
+        "x1": -3,
+        "y1": 3
+      },
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:5",
+      "rect": {
+        "x0": 4,
+        "y0": -4,
+        "x1": 5,
+        "y1": 3
+      },
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "show_glass",
+      "value": true
+    }
+  ]
+}

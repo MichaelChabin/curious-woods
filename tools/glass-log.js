@@ -26,7 +26,13 @@
    of the two seeds (the init op carries the frame; its sides are lines −1 to −4, its corners
    fr:bl, fr:br, fr:tr, fr:tl at (±240, ±180) — the unit is glass.js's FRAME_UNIT, 240), and
    g.free(u, v) puts the free point down, in
-   units from the origin. Circle crossings are hidden vertices there, as on the board. */
+   units from the origin. Circle crossings are hidden vertices there, as on the board.
+
+   The Wright window (19 Oct 2026): G.create({ wright: true }) opens on its 10 by 10 frame of whole
+   steps (the init op carries `wright`; no points at all). g.resize(left, bottom, width, height) is
+   one drag of a side; g.cut(x, y, dir, at) pulls a line across the pane around (x, y) in units,
+   'h' at y = at or 'v' at x = at; g.wrPane(x, y, colour) colours that pane. The model is the lab's
+   own code (wrReplayOp), so a cut with no room or a pane not there throws here, not in the browser. */
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -56,7 +62,7 @@ function create(opts) {
     PARAMS: { birthDuration: 0 },
     FOREST_GLASS: '#c2d4bc',
     // The window profile's flags, read by replayLog since 8 Oct 2026 (the harness threw on APP until this).
-    APP: !!opts.board, BOARD: !!opts.board, showGlass: false,
+    APP: !!(opts.board || opts.wright), BOARD: !!opts.board, WRIGHT: !!opts.wright, FRAMED: !!(opts.board || opts.wright), showGlass: false,
     state: { palette: { selected: null } },
     plane: {
       setUnitFrame(ox, oy, len) { unit.x = ox; unit.y = oy; unit.len = len; },
@@ -77,7 +83,8 @@ function create(opts) {
              init: initLog, append: appendOp, points: points, lines: lines, circles: circles,
              segs: logicalSegments, arcs: logicalArcs, fills: fills, checkAndFill: checkAndFill,
              dist: dist, getAngle: getAngle, angleBetween: angleBetween,
-             face: (typeof findFaceAround === 'function') ? findFaceAround : null };`;
+             face: (typeof findFaceAround === 'function') ? findFaceAround : null,
+             wr: function () { return { frame: wrFrame, panes: wrPanes, cuts: wrCuts, paneAt: wrPaneAt, fillOf: wrFillOf }; } };`;
   const lab = new Function(...names, body)(...names.map(n => stubs[n]));
   lab.init();
 
@@ -144,6 +151,30 @@ function create(opts) {
       return api;
     },
     glassOnly(on) { lab.append({ op: 'show_glass', value: on !== false }); return api; },
+    // The Wright window's gestures (19 Oct 2026), checked against the lab's own model as they go.
+    resize(left, bottom, width, height) {
+      if (!opts.wright) throw new Error('resize() is the Wright window\'s gesture: create({ wright: true })');
+      lab.append({ op: 'resize', left, bottom, width, height });
+      const f = lab.wr().frame;
+      if (f.width !== width || f.height !== height) throw new Error('the frame did not take the size');
+      return api;
+    },
+    cut(x, y, dir, at) {
+      if (!opts.wright) throw new Error('cut() is the Wright window\'s gesture: create({ wright: true })');
+      const p = lab.wr().paneAt(x, y); if (!p) throw new Error('no pane at (' + x + ', ' + y + ')');
+      const before = lab.wr().cuts.length;
+      lab.append({ op: 'cut', pane: { x0: p.x0, y0: p.y0, x1: p.x1, y1: p.y1 }, dir, at });
+      if (lab.wr().cuts.length !== before + 1) throw new Error('the cut at ' + dir + ' ' + at + ' had no room in the pane ' + JSON.stringify(p));
+      return api;
+    },
+    wrPane(x, y, colour) {
+      if (!opts.wright) throw new Error('wrPane() is the Wright window\'s gesture: create({ wright: true })');
+      const p = lab.wr().paneAt(x, y); if (!p) throw new Error('no pane at (' + x + ', ' + y + ')');
+      const own = lab.wr().fillOf(p);
+      if (own) lab.append({ op: 'repaint_fill', fillId: own.fillId, color: colour || '#c2d4bc', opacity: 1.0 });
+      else lab.append({ op: 'fill', fillId: 'fill:' + Date.now(), rect: { x0: p.x0, y0: p.y0, x1: p.x1, y1: p.y1 }, color: colour || '#c2d4bc', opacity: 1.0 });
+      return api;
+    },
     // Lead on the edge nearest (x, y). A closed loop fills, exactly as the lab does it.
     lead(x, y) {
       const hit = nearestEdge(x, y);

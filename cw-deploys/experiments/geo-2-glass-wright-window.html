@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="../art/icons/stained-glass-circles-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/stained-glass-circles-icon-256.png">
+<!--
+  geo-2-glass-wright-window.html — the Wright window board (Geo 2: Glass Wright Window): a stained
+  glass window built by dividing a frame with parallel lines, the idea of CWVault/claude/Worknote-
+  Parallel-Window.md after the straightedge board (geo-2-glass-lines.html, which stays as it is)
+  did not feel right. An experiment page, to see how the board works and feels; no story text or
+  pictures yet. Built 19 Oct 2026 in Claude Code from CWVault/claude/Prompt-Build-Geo-2-Glass-Wright-
+  Window.md.
+  The board: ../js/glass.js mounted as its window profile at the wright level
+  (app: 'window', level: 'wright', fullscreen: true), palette 'chartres'. The frame of whole steps,
+  its handles and numbers, the lines pulled off edges, the colour totals and the rest are the
+  level's (js/glass.js, LEVELS.wright and everything marked WRIGHT). The page carries a title, two
+  placeholder paragraphs for Michael's words, and the board at three-quarters of the window's height
+  and the window's full width. Tab icon borrowed from Stained Glass Circles until the story has a
+  picture of its own.
+-->
+<title>Wright Window — Curious Woods</title>
+<link rel="stylesheet" href="../css/story.css?v=2026-09-27b">
+<style>
+  :root { --aspect: calc(1 / 1); }   /* the board has no picture shape of its own; everything else is ../css/story.css */
+  /* A board is never confined to the story column (Michael, 18 Oct 2026): the figure is as wide as the
+     window at every width, centred on it, and below 760px, where breakout folds back into the column,
+     this still wins. The same rule as geo-2-glass-lines.html. */
+  html, body { overflow-x: hidden; }
+  figure.breakout.board { width: 100vw; left: calc(50% - (var(--rail-w) + var(--rail-gap)) / 2); transform: translateX(-50%); position: relative; }
+  @media (max-width: 1067px) { figure.breakout.board { left: 50%; } }
+  @media (max-width: 760px) { figure.breakout.board { position: relative; left: 50%; transform: translateX(-50%); width: 100vw; } }
+  .bench-note { font-size: 14px; color: var(--cw-ink-soft); line-height: 1.5; margin: 1.2em 0 0; }
+</style>
+</head>
+<body>
+
+<main class="page">
+  <div class="shell">
+  <article>
+
+    <div class="titleblock">
+      <div class="eyebrow">Curious Woods · Experiments</div>
+      <h1>Wright Window</h1>
+      <p class="subtitle">A window built by dividing a frame with parallel lines. The story is not written yet; this is the board, to find out how it feels.</p>
+    </div>
+
+    <!-- A placeholder paragraph; Michael will write the words. -->
+    <p>The square is your window, ten steps across and ten up. Touch the board once and it fills the screen; <i>Exit</i> at the bottom right, or the Escape key, brings the page back. Before your first line, drag one of the small dots outside the sides to make the window a different size. Then press on any edge and drag into the pane: a line comes with you, parallel to the edge, across that one pane, and settles on a whole step when you let go. Lines never cross; they meet. Tap a pane to colour it.</p>
+
+    <!-- THE BOARD: the lab's window profile at the wright level, the window's full width and three-quarters
+         of its height (full height would leave no way to scroll the page: the lab takes the wheel and the finger). -->
+    <figure id="plate" class="breakout table board">
+      <div id="table" style="height: 72vh; min-height: 420px;"></div>
+    </figure>
+
+    <!-- A placeholder paragraph; Michael will write the words. -->
+    <p>Under <i>Demo</i> on the left, <i>Wright</i> divides the window the way Frank Lloyd Wright divided his, a few large panes and some narrow strips and small squares, colours a handful of the small ones, and shows the window by itself.</p>
+
+    <p class="bench-note">An experiment: the words in <i>How this works</i> and on this page are placeholders, and the window&rsquo;s steps are in the board&rsquo;s own unit, which has no name.</p>
+
+  </article>
+  </div>
+</main>
+
+<!-- THE SHELVES. Tools live here, not inside pages. -->
+<script src="../js/cw-flags.js?v=2026-09-21"></script>
+<script src="../js/cw-number.js?v=2026-09-03"></script>
+<script src="../js/plane.js?v=2026-08-13"></script>
+<script src="../js/cw-panel.js?v=2026-10-01b"></script>
+<script src="../js/glass.js?v=2026-10-19c"></script>
+<script>
+(function () {
+  'use strict';
+  const CW_VERSION = '2026-10-19c 95072f3';   // date + short commit hash; bump in the same commit as any change
+  console.log('geo-2-glass-wright-window', CW_VERSION);
+  window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
+
+  // THE BOARD: Glass Geometry's window profile at the wright level — a frame of whole steps, resized by
+  // its handles until the first line; lines pulled off any edge, parallel to it, across one pane; glass
+  // by a tap, with the colour totals under the board; full screen on her first touch where the browser
+  // allows it.
+  if (typeof cwGlass === 'function') cwGlass(document.getElementById('table'), { app: 'window', level: 'wright', palette: 'chartres', fullscreen: true });
+})();
+</script>
+</body>
+</html>
