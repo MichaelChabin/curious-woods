@@ -296,6 +296,11 @@ is something in it. — One tool where there were three. [M]
 2026-10-19 — The grid is off on the globe; it follows Spec-Maps, which rules
 out a graticule and a frame. [M]
 
+2026-10-19 — The bracket's line below is a snapshot: set when she taps the bar,
+kept until she taps again; dragging a marker moves the map and the span, not
+the line beneath. — The current year is one of the bracket's ends, so a live
+line below would zoom under her finger every time she scrubbed the year. [M]
+
 ---
 
 ## Observed with children
