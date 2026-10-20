@@ -55,7 +55,7 @@
    the second crust is a different crust, black again, and the sea's blue by 4,400, which the Jack Hills zircons
    vouch for. onMolten(phase, ma) tells the page the phase; moltenPhase() reads it (a hook for the stories).
 
-   cwGlobe(host, opts) → { setTime(ma), time(), view(), turn(lon, lat), grade(), reguess(), moltenPhase(),
+   cwGlobe(host, opts) → { setTime(ma), time(), view(), turn(lon, lat), project(lon, lat), placeAt(lon, lat), grade(), reguess(), moltenPhase(),
                            setProjection(p), projection(), destroy() }
    opts:
      plates, coast, crust   the three files, or their URLs (defaults under ../stories and ../art/maps)
@@ -67,8 +67,7 @@
      size                   the disc's diameter, or the flat map's width, in CSS px (default: the host's width)
      seam                   millions of years; younger than it the grade is `ground` (default 2.6)
      seed                   the first seed (default: this visit's)
-     cities, citiesOn       the cities file (default ../stories/plates/cities.json) and whether they show at the start;
-                            setCities(on) turns them on and off (part 3, 12 Oct)
+     onTurn()               the disc was turned (a drag, or turn()); a page re-places what it draws over it (step 10, 20 Oct 2026)
      textures, ground, vegetation   the skin's files (defaults ../art/globe/, ../art/maps/world.webp and
                             ../art/maps/world-vegetation.webp); textures: false draws the flat fills only
      onDraw(ms), onGrade(grade, sentence), onMolten(phase, ma)
@@ -496,51 +495,9 @@
       }
       return null;
     }
-    // the marker (13 Oct 2026, Michael: the asteroid): one place, carried on its plate as the cities are, a vermilion dot with its name
-    var marker = null, MARK = S.vermilion, PARCH_INK = S.parchment;   // the map's vermilion since 19 Oct 2026 (was #c8451f)
-    function drawMarker(V, age, g, r, cx, cy) {
-      if (!marker || !data || g === 'none') return;
-      if (marker.plate === undefined) marker.plate = plateAt(marker.lon, marker.lat);
-      var M = null;
-      if (marker.plate) M = g === 'guessed' || g === 'invented' ? guessedMatrix(marker.plate, age) : plateMatrixAt(marker.plate, Math.max(age, 0));
-      if (!M) M = [1, 0, 0, 0, 1, 0, 0, 0, 1];
-      var v = xyz(marker.lon, marker.lat);
-      var wx = M[0] * v[0] + M[1] * v[1] + M[2] * v[2], wy = M[3] * v[0] + M[4] * v[1] + M[5] * v[2], wz = M[6] * v[0] + M[7] * v[1] + M[8] * v[2];
-      var sx = V[0] * wx + V[1] * wy + V[2] * wz, sy = V[3] * wx + V[4] * wy + V[5] * wz, sz = V[6] * wx + V[7] * wy + V[8] * wz;
-      var pq = screenPoint(sx, sy, sz, r, cx, cy); if (!pq) return;
-      ctx.save(); ctx.font = 'bold ' + S.size.mark + 'px ' + S.font; ctx.textBaseline = 'middle';
-      ctx.beginPath(); ctx.arc(pq[0], pq[1], 11, 0, Math.PI * 2); ctx.fillStyle = S.alpha(MARK, 0.22); ctx.fill();
-      ctx.beginPath(); ctx.arc(pq[0], pq[1], 4.5, 0, Math.PI * 2); ctx.fillStyle = MARK; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = PARCH_INK; ctx.stroke();
-      if (marker.name) { ctx.fillStyle = CITY_INK; ctx.fillText(marker.name, pq[0] + 9, pq[1]); }
-      ctx.restore();
-    }
-    // ---- the cities (12 Oct 2026, part 3): a dozen of today's cities ride the continents, each pinned to its plate ----
-    var cities = null, citiesOn = !!opts.citiesOn, CITY_FADE = 20, CITY_INK = S.ink, CITY_HALO = S.alpha(S.halo, 0.85);
-    load(opts.cities === undefined ? '../stories/plates/cities.json' : opts.cities, function (c) { cities = c.cities || c; schedule(); });
-    function drawCities(V, age, g, r, cx, cy) {
-      if (!citiesOn || !cities || !data || g === 'invented' || g === 'none') return;
-      var mats = {}, items = [];
-      cities.forEach(function (c) {
-        if (age > c.from) return;                                   // absent before the ground under it existed as a piece
-        var a = Math.min(1, (c.from - age) / CITY_FADE); if (a <= 0) return;   // and fading out over the twenty million years before
-        var M = mats[c.plate];
-        if (M === undefined) { M = g === 'guessed' ? guessedMatrix(c.plate, age) : plateMatrixAt(c.plate, Math.max(age, 0)); mats[c.plate] = M; }
-        if (!M) return;
-        var v = xyz(c.lon, c.lat);
-        var wx = M[0] * v[0] + M[1] * v[1] + M[2] * v[2], wy = M[3] * v[0] + M[4] * v[1] + M[5] * v[2], wz = M[6] * v[0] + M[7] * v[1] + M[8] * v[2];
-        var sx = V[0] * wx + V[1] * wy + V[2] * wz, sy = V[3] * wx + V[4] * wy + V[5] * wz, sz = V[6] * wx + V[7] * wy + V[8] * wz, px, py;
-        var pq = screenPoint(sx, sy, sz, r, cx, cy); if (!pq) return;
-        items.push({ x: pq[0], y: pq[1], a: a, name: c.name });
-      });
-      ctx.save(); ctx.font = S.size.mark + 'px ' + S.font; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';   // 14 px and no halo (13 Oct 2026, Michael: legibility)
-      items.forEach(function (it) {
-        ctx.globalAlpha = it.a;
-        ctx.beginPath(); ctx.arc(it.x, it.y, 2.4, 0, Math.PI * 2); ctx.fillStyle = CITY_INK; ctx.fill();
-        ctx.fillStyle = CITY_INK; ctx.fillText(it.name, it.x + 7, it.y);
-      });
-      ctx.restore();
-    }
-
+    // (the marker of 13 Oct and the cities of 12 Oct, which this engine drew on its own canvas, went on 20 Oct 2026, step 10
+    // of the audit's order: the map's one placer draws them over both views now, carried to their place at the age by
+    // placeAt and, on the disc, projected by project() below)
     // ---- the seed, and the guesses it makes ----
     function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
     function hashStr(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -825,8 +782,6 @@
       // (the graticule, every thirty degrees, went 19 Oct 2026: Spec-Maps rules out a graticule, Michael's ruling 6)
       ctx.restore(); ctx.restore();
       if (data && g !== 'none' && g !== 'ground') paintIce(V, ma);   // over the land and the sea, under the cities and the marker
-      drawCities(V, ma, g, r, cx, cy);
-      drawMarker(V, ma, g, r, cx, cy);
       // the limb shading and the haze at the rim (12 Oct): a ball, with an atmosphere — blue once there is a sea, grey steam before
       if (proj !== 'flat') {
         var shade = ctx.createRadialGradient(cx, cy, r * 0.78, cx, cy, r);
@@ -864,6 +819,7 @@
         var k = 180 / (W || 400);
         lon0 = drag.lon - (ev.clientX - drag.x) * k;
         lat0 = Math.max(-90, Math.min(90, drag.lat + (ev.clientY - drag.y) * k));
+        if (opts.onTurn) opts.onTurn();   // the page's marks follow the turn (step 10)
       }
       schedule();
     });
@@ -881,7 +837,15 @@
       setTime: function (m) { ma = Math.max(0, m); schedule(); },
       time: function () { return ma; },
       view: function () { return { lon: lon0, lat: lat0 }; },
-      turn: function (lon, lat) { if (lon != null) lon0 = lon; if (lat != null) lat0 = Math.max(-90, Math.min(90, lat)); schedule(); },
+      turn: function (lon, lat) { if (lon != null) lon0 = lon; if (lat != null) lat0 = Math.max(-90, Math.min(90, lat)); schedule(); if (opts.onTurn) opts.onTurn(); },
+      // a place (already carried to its position at the age) as a pixel of this canvas, or null on the far side of the disc (step 10)
+      project: function (lon, lat) {
+        var V = viewMatrix(), v = xyz(lon, lat);
+        if (proj === 'flat') { V = mmul([1, 0, 0, 0, 1, 0, 0, 0, 1], rotZ(-lon0)); }
+        var sx = V[0] * v[0] + V[1] * v[1] + V[2] * v[2], sy = V[3] * v[0] + V[4] * v[1] + V[5] * v[2], sz = V[6] * v[0] + V[7] * v[1] + V[8] * v[2];
+        var q = screenPoint(sx, sy, sz, W / 2 - 4, W / 2, H / 2);
+        return q ? { x: q[0], y: q[1] } : null;
+      },
       // the flat map's view, the page's (19 Oct 2026, step 6): centre and pixels per degree, the ground map's own
       setView: function (v) { if (proj !== 'flat' || !v) return; flatView = { lon: v.lon, lat: v.lat, ppd: v.ppd, k: v.k || 0 }; applyFlatView(); schedule(); },
       // a place today, carried to where it was at the current age on its plate (for a page's zoom to an event's place)
@@ -895,11 +859,8 @@
       },
       setGround: function (gs) { ground = gs || null; schedule(); },   // { sea, ice: { outlines, pairs } } from the page's map (step 8)
       setFloor: function (t) { floorTex = t || null; schedule(); },      // the floor's depth at the texture's size, from the map
-      setMarker: function (m) { marker = m ? { lat: m.lat, lon: m.lon, name: m.name || '', plate: m.plate } : null; schedule(); },
       grade: function () { return gradeFor(ma); },
       moltenPhase: function () { return ma > NO_MAP ? moltenState(ma).phase : null; },
-      setCities: function (on) { citiesOn = !!on; schedule(); },
-      cities: function () { return citiesOn; },
       skinMs: function () { return lastSkinMs; },
       reguess: function () { seed = (seed * 1103515245 + 12345 + Date.now()) % 2147483647; guesses = {}; blobsKey = null; schedule(); return seed; },
       seed: function () { return seed; },

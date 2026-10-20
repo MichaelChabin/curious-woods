@@ -50,6 +50,9 @@
    of 6 Oct and the box grown to 2:1 are gone. Over the globe nothing of the map responds: no marks,
    no pan, no zoom; its own drag turns it. `map.deep()` says whether it is on and how sure the
    positions are; `map.deepPlace(lon, lat)` carries a place today to where it was at the current age.
+   Since 20 Oct 2026 (step 10) the map's own marks are drawn over the deep views too, by the one placer:
+   each place carried to where it was at the age on its plate, and on the disc projected by the globe
+   (the far side is left out); a mark may carry `alpha`. The engine's own cities and marker are gone.
    `map.setTime(year)` (30 Sep 2026, for Time Machine) takes one year — the store's astronomer's
    year — and turns on the layers that are true for it, from what the page hands it in
    `opts.time`: `{ seaLevel: [[year, metres], ...] }` (stories/curves/sea-level.json) sets the
@@ -338,6 +341,7 @@
     }
 
     var svg = el('svg', { viewBox: '0 0 1 1', preserveAspectRatio: 'none' });
+    if (pyr) svg.style.pointerEvents = 'none';   // the moving map's svg lets a press through to the stage, or to a deep view under it (step 10); a mark catches its own
     box.appendChild(svg);
 
     // ---- time on the map: the sea level (the pyramid only) ----
@@ -612,7 +616,17 @@
     function viewToLonLat(x, y, w, h) {
       return { lon: view.lon + (x - w / 2) / view.S, lat: ywPLInv(ywPL(view.lat) - (y - h / 2) / view.S) };
     }
-    function P(lon, lat, w, h) { return pyr ? viewToPixel(wrapLon(lon), lat, w, h) : toPixel(region, lon, lat, w, h); }   // a point, at its nearest copy
+    // a point, at its nearest copy. Over a deep view (20 Oct 2026, step 10) the place is first carried to where it was at the
+    // age on its plate; on the disc the globe projects it, and null is the far side
+    function P(lon, lat, w, h) {
+      if (!pyr) return toPixel(region, lon, lat, w, h);
+      if (typeof deepOn !== 'undefined' && deepOn && (deepGlobe || deepFlat)) {
+        var eng = deepGlobe && deepGlobe._host.style.display !== 'none' ? deepGlobe : deepFlat, at = eng.placeAt(lon, lat);
+        if (eng === deepGlobe) { var q = eng.project(at.lon, at.lat); return q ? { x: q.x + eng._host.offsetLeft, y: q.y + eng._host.offsetTop } : null; }
+        lon = at.lon; lat = at.lat;
+      }
+      return viewToPixel(wrapLon(lon), lat, w, h);
+    }
     // pixels per degree of latitude at the centre — what the tile level is chosen by
     function ppdCentre() { var k = view.k; return view.S * ((1 - k) + k / Math.cos(Math.max(-LAT_CAP, Math.min(LAT_CAP, view.lat)) * D2R)); }
     function levelFor() {
@@ -863,7 +877,7 @@
 
       var placed = [], dots = [];
       marks.forEach(function (m) {
-        if (m.type === 'place') { var q = P(m.lon, m.lat, w, h); dots.push({ x: q.x, y: q.y, r: m.on ? DOT + 2.5 : (m.minor ? DOT_MINOR : (m.lit ? DOT + 1.5 : DOT)) }); }
+        if (m.type === 'place') { var q = P(m.lon, m.lat, w, h); if (q) dots.push({ x: q.x, y: q.y, r: m.on ? DOT + 2.5 : (m.minor ? DOT_MINOR : (m.lit ? DOT + 1.5 : DOT)) }); }
       });
       var order = ['region', 'path', 'place', 'note'];
       order.forEach(function (kind) {
@@ -1053,7 +1067,7 @@
     function drawMark(m, w, h, layer, halosLayer, glyphLayer, placed, dots) {
       var p, box;
       if (m.type === 'region') {
-        var pts = (m.points || []).map(function (q) { var r = P(q[1], q[0], w, h); return r.x + ',' + r.y; });
+        var pts = (m.points || []).map(function (q) { var r = P(q[1], q[0], w, h); return r ? r.x + ',' + r.y : null; }).filter(function (x) { return x; });
         layer.appendChild(el('polygon', { points: pts.join(' '), fill: WASHES[m.wash] || WASHES.grows, 'fill-opacity': WASH, stroke: 'none' }));
       } else if (m.type === 'path') {
         var seg = [];
@@ -1062,19 +1076,20 @@
           if (typeof q === 'string') { var pl = placeByName(q); if (!pl) return; lat = pl.lat; lon = pl.lon; }
           else { lat = q[0]; lon = q[1]; }
           var r = P(lon, lat, w, h);
-          seg.push(r.x + ',' + r.y);
+          if (r) seg.push(r.x + ',' + r.y);
         });
         var line = { points: seg.join(' '), fill: 'none', stroke: VERMILION, 'stroke-width': 1.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', 'vector-effect': 'non-scaling-stroke' };
         if (m.possible) line['stroke-dasharray'] = '5 4';
         layer.appendChild(el('polyline', line));
       } else if (m.type === 'note') {
-        p = P(m.lon, m.lat, w, h);
+        p = P(m.lon, m.lat, w, h); if (!p) return;
         box = place(p, m.text || '', SIZE, !!m.water, 0, m.side, placed, dots, w, h, m);
         if (box) { placed.push(box); label(m.text || '', box, m.water ? 'cw-water' : null, halosLayer, glyphLayer); }
       } else if (m.type === 'place') {
-        p = P(m.lon, m.lat, w, h);
+        p = P(m.lon, m.lat, w, h); if (!p) return;
         var r = m.on ? DOT + 2.5 : (m.minor ? DOT_MINOR : (m.lit ? DOT + 1.5 : DOT));
-        var g = el('g', {});
+        var g = el('g', m.alpha != null && m.alpha < 1 ? { opacity: m.alpha } : {});
+        g.style.pointerEvents = 'all';
         if (m.text || m.story || m.onTap) {
           g.appendChild(el('circle', { cx: p.x, cy: p.y, r: TAP, fill: 'transparent', stroke: 'none' }));
         }
@@ -1113,7 +1128,7 @@
 
     // Below and to the right of the dot; flipped left or up when the box would run out.
     function positionText(s, w, h) {
-      var p = P(s.mark.lon, s.mark.lat, w, h);
+      var p = P(s.mark.lon, s.mark.lat, w, h) || { x: -999, y: -999 };
       var d = s.div;
       d.style.left = (p.x + 10) + 'px';
       d.style.top = (p.y + 8) + 'px';
@@ -1368,7 +1383,7 @@
       // 'globe' the globe with today's coast over the pyramid. ('both', the globe beside the pyramid,
       // and the climate wash went on 19 Oct 2026, Michael's ruling.) The two views share one seed, so a
       // guess is the same in each.
-      var deepHost = null, deepGlobe = null, deepFlat = null, deepOn = false, deepView = (T.deep && T.deep.view) || 'globe', deepAgeNow = false, deepGradeNow = null, deepCities = false;
+      var deepHost = null, deepGlobe = null, deepFlat = null, deepOn = false, deepView = (T.deep && T.deep.view) || 'globe', deepAgeNow = false, deepGradeNow = null;
       function deepSize() {
         if (!deepHost) return;
         var hw = deepHost.clientWidth, hh = deepHost.clientHeight, kids = [];
@@ -1408,7 +1423,8 @@
       }
       function makeView(projection) {
         var g = document.createElement('div'); deepHost.appendChild(g);
-        var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, cities: T.deep.cities, citiesOn: deepCities, ma: 0, lon: view.lon, lat: view.lat, projection: projection,
+        var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, ma: 0, lon: view.lon, lat: view.lat, projection: projection,
+          onTurn: projection === 'globe' ? function () { draw(); } : undefined,   // the marks follow the disc's turn (step 10)
           fill: projection === 'flat', onDrag: projection === 'flat' ? function (dx, dy) { api.panBy(dx, dy); } : undefined,   // the flat view is the ground map's: a drag pans the map (19 Oct 2026)
           seam: (T.deep.seam || 2.6e6) / 1e6, seed: deepGlobe ? deepGlobe.seed() : undefined,
           onGrade: function (grade, why) { if (projection === 'globe' || !deepGlobe) tellDeep(); } });
@@ -1421,7 +1437,7 @@
         if (deepHost) return true;
         if (!window.cwGlobe) { console.warn('map.js: a deep-time year was asked for, but js/globe.js is not loaded; the map shows today'); return false; }
         deepHost = document.createElement('div'); deepHost.className = 'cw-deep-base';
-        stage.appendChild(deepHost);
+        stage.insertBefore(deepHost, svg);   // under the marks (step 10): the one placer draws over the deep views too
         ['pointerdown', 'wheel', 'click', 'dblclick'].forEach(function (t) { deepHost.addEventListener(t, function (e) { e.stopPropagation(); }); });
         if (window.ResizeObserver) new ResizeObserver(deepSize).observe(stage);
         return true;
@@ -1447,15 +1463,13 @@
         deepOn = on;
         if (on) { if (deepGlobe) deepGlobe.turn(view.lon, view.lat); void deepHost.offsetWidth; deepHost.classList.add('on'); }
         else deepHost.classList.remove('on');
-        tellDeep();
+        tellDeep(); draw();   // the marks are placed afresh over, or without, the deep view (step 10)
       }
       api.deep = function () { return { on: deepOn, view: deepView, grade: deepGlobe ? deepGlobe.grade() : (deepFlat ? deepFlat.grade() : null) }; };
       api.deepView = function (v) { if (v === 'globe' || v === 'map') { deepView = v; if (timeYear !== null) api.setTime(timeYear); } return deepView; };
-      api.deepCities = function (on) { if (on !== undefined) deepCities = !!on; if (deepGlobe) deepGlobe.setCities(deepCities); if (deepFlat) deepFlat.setCities(deepCities); return deepCities; };   // the cities on the drifting pieces (12 Oct)
       api.deepTurn = function (lon, lat) { if (deepGlobe) deepGlobe.turn(lon, lat); };   // the globe turns to face a place (10 Oct); it does not zoom
-      // 13 Oct 2026: a marker riding its plate on both deep views (null clears it). (The flat map's own zoom went 19 Oct: the map's view is its view.)
+      // (the marker riding its plate of 13 Oct, deepMark, and the cities, deepCities, went 20 Oct 2026, step 10: the page's marks are drawn over the deep views by the one placer, carried to their place at the age)
       // (deepFast, the flat fills while the year ran, went 19 Oct 2026: the skin paints in play now.)
-      api.deepMark = function (m) { if (deepGlobe) deepGlobe.setMarker(m); if (deepFlat) deepFlat.setMarker(m); };
       // a place today carried to where it was at the current age (19 Oct 2026): a page zooms the map there; the flat deep map, being the map's view, follows
       api.deepPlace = function (lon, lat) { var v = deepGlobe || deepFlat; return v ? v.placeAt(lon, lat) : { lon: lon, lat: lat }; };
       api.deepReguess = function () { if (!deepGlobe && !deepFlat) return; var s = (deepGlobe || deepFlat).reguess(); if (deepGlobe && deepFlat) (deepGlobe === (deepGlobe || deepFlat) ? deepFlat : deepGlobe).setSeed(s); };
@@ -1469,7 +1483,7 @@
             applyView();
             if (deepGlobe) deepGlobe.setTime(ago / 1e6); if (deepFlat) deepFlat.setTime(ago / 1e6);
             setDeep(true);
-            if (deepAgeNow) return;
+            if (deepAgeNow) { if (!frozen) draw(); return; }   // the places ride their plates: placed afresh at the new age (step 10)
           } else if (deepHost) setDeep(false);
         }
         var m = curveAt(T.seaLevel, timeYear);

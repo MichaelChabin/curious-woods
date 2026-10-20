@@ -270,15 +270,15 @@
   </main>
 </section>
 
-<script src="../js/map.js?v=2026-10-20c"></script>
+<script src="../js/map.js?v=2026-10-20d"></script>
 <script src="../js/timeline.js?v=2026-10-19"></script>
-<script src="../js/globe.js?v=2026-10-20c"></script>
+<script src="../js/globe.js?v=2026-10-20d"></script>
 <script src="../js/deep-time.js?v=2026-10-19"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-20c a9106b4';   // 19 Oct 2026, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-20d 7c8921d';   // 19 Oct 2026, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- this timeline's zero, and the numbers that shape the page ----------
@@ -607,19 +607,21 @@
         marks.push({ type: 'place', lat: g[0].place.lat, lon: g[0].place.lon, name, world: true, minor: !inBox && !on, on, weight: inBox ? heavy : 1, onTap: () => tapPlace(g) });
       });
     } else if (bar && bar.events()) {
-      // the deepest deep line's events, by where their evidence is today, on the ground map (past the seam the deep
-      // view covers the map and takes no marks: engine work, later)
-      const sp = bar.span();
+      // the deepest deep line's events: on the ground map by where their evidence is today; on a deep view by where they
+      // happened (the asteroid's crater before the place of its evidence, Michael, 13 Oct), each carried to its place at
+      // the age by the map's placer (20 Oct 2026, step 10: the deep views take marks now)
+      const sp = bar.span(), deepNow = !!(map.deep && map.deep().on);
       bar.events().forEach(e => {
-        const pl = e.placeNow; if (!pl || pl.lat == null || e.ma > sp.from || e.ma < sp.to) return;
+        const pl = deepNow && e.place && e.place.lat != null ? e.place : e.placeNow; if (!pl || pl.lat == null || e.ma > sp.from || e.ma < sp.to) return;
         const on = tappedId === e.id, inBox = b ? inBounds(pl.lat, pl.lon, b, 1) : false;
         marks.push({ type: 'place', lat: pl.lat, lon: pl.lon, name: namesOn && (on || inBox) ? shortName(pl) : '', world: true, minor: !inBox && !on, on, weight: e.weight || 1,
                      onTap: () => { bar.setYear(e.ma); showRec(e, false, true); } });
       });
     }
-    // the cities on the ground map too (13 Oct 2026, Michael: they were lost when the modern map appeared): the same dozen,
-    // where they are today, named at 14 px with no halo
-    if (citiesOn && cityList && !(map.deep && map.deep().on)) cityList.forEach(c => marks.push({ type: 'place', lat: c.lat, lon: c.lon, name: c.name, world: true, minor: true, cls: 'cw-city' }));
+    // the cities (12 Oct, part 3; 13 Oct: on the ground map too; 20 Oct, step 10: one placer on every view): the same
+    // dozen, each at its place today, carried by the map to where that ground was at the age, named at 14 px with no
+    // halo; a city is absent before its ground existed as a piece and fades over the twenty million years before
+    if (citiesOn && cityList) { const age = time.ma(); cityList.forEach(c => { if (age > c.from) return; const a = Math.min(1, (c.from - age) / 20); if (a > 0) marks.push({ type: 'place', lat: c.lat, lon: c.lon, name: c.name, world: true, minor: true, cls: 'cw-city', alpha: a }); }); }
     map.redraw();
   }
   function buildMap(pyramid, seaCurve, ice) {
@@ -743,7 +745,7 @@
   // Cities (12 Oct, part 3): a dozen of today's cities ride the drifting pieces; off by default
   let citiesOn = false, cityList = null;
   fetch('../stories/plates/cities.json', { cache: 'no-cache' }).then(r => r.json()).then(c => { cityList = c.cities || c; }).catch(() => {});
-  $('wCities').addEventListener('click', () => { const w = $('wCities'); w.classList.toggle('active'); citiesOn = w.classList.contains('active'); if (map) { map.deepCities(citiesOn); markMap(); } });
+  $('wCities').addEventListener('click', () => { const w = $('wCities'); w.classList.toggle('active'); citiesOn = w.classList.contains('active'); if (map) markMap(); });
 
   // ---------- the deep lines, and the hand-over ----------
   let bar = null, handed = false, ranOnce = false, shownId = null, lastMa = null, namesOn = false;
@@ -751,7 +753,6 @@
   // window, from stories/deep-time-periods.json; a period with no words yet shows its name and span
   function showPeriod(node, span) {
     namesOn = false; zoomed = false; zoomBox = null; tappedId = null; shownId = null; markMap(); graphsFor();   // the ids first, then the marks (13 Oct: the red dot stayed)
-    if (map && map.deepMark) map.deepMark(null);
     const words = bar && bar.periodWords(), rec = node && words && words[node.name];
     if (!node) { summary.innerHTML = '<span class="hint">about ' + esc(bar.fmt(span.from - span.to).replace(' ago', '')) + '</span>'; return; }
     shownId = 'period:' + node.name;
@@ -777,11 +778,10 @@
     shownId = rec.id;
     if (!passed && map) {   // the map goes to the event's place and shows its name; on the globe it turns to face her
       const pl = rec.placeNow || rec.place; namesOn = true; tappedId = rec.id;
-      // on the drifting map (past the seam, or the globe up): a marker where it happened — the event's own place (the asteroid's
-      // crater) before the place of its evidence — carried on its plate; the map zooms to where that place was at this age,
-      // and the flat deep map, being the map's view, follows (13 Oct 2026; 19 Oct, step 6)
+      // on a deep view: the event's own place (the asteroid's crater) before the place of its evidence, which markMap draws
+      // as the lit mark carried on its plate; the map zooms to where that place was at this age, and the flat deep map,
+      // being the map's view, follows (13 Oct 2026; 19 Oct, step 6; 20 Oct, step 10)
       const then = rec.place && rec.place.lat != null ? rec.place : pl;
-      if (map.deepMark) map.deepMark(then && then.lat != null ? { lat: then.lat, lon: then.lon, name: shortName(then) } : null);
       if (map.deep().on && then && then.lat != null) { const at = map.deepPlace(then.lon, then.lat); goTo(at.lat, at.lon); map.deepTurn(at.lon, at.lat); }
       else if (pl && pl.lat != null) { if (!stays(pl.lat, pl.lon)) goTo(pl.lat, pl.lon); map.deepTurn(pl.lon, pl.lat); }
       markMap();
