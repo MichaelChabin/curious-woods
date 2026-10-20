@@ -1381,6 +1381,31 @@
           else { d = Math.max(120, Math.min(cw, hh) - 16); k.style.width = d + 'px'; k.style.height = d + 'px'; }
         });
       }
+      // this side of the seam the globe shows what the map shows (20 Oct 2026, step 8): the floor's depth at the globe's
+      // texture size, built once from level 1's eight floor tiles (1024 × 512), and the sea level and the ice sheets at
+      // every year, handed over as the map draws them
+      var floorTex = null, floorTexAsked = false;
+      function floorTexture() {
+        if (floorTex || floorTexAsked || !DATA || !DATA.floor) return;
+        var z = 1, L = region.levels[z], D = DATA.floor, c = document.createElement('canvas'), imgs = [], tx, ty;
+        c.width = L.cols * D.tile; c.height = L.rows * D.tile;
+        for (ty = 0; ty < L.rows; ty++) for (tx = 0; tx < L.cols; tx++) { var im = dataImg('floor', z, tx, ty); if (im) imgs.push([im, tx, ty]); }
+        floorTexAsked = true;
+        if (!imgs.length) return;
+        var left = imgs.length;
+        var finish = function () {
+          var g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+          imgs.forEach(function (t) { g.drawImage(t[0], t[1] * D.tile, t[2] * D.tile); });
+          floorTex = { width: c.width, height: c.height, data: g.getImageData(0, 0, c.width, c.height).data, max: D.max };
+          if (deepGlobe) deepGlobe.setFloor(floorTex);
+        };
+        imgs.forEach(function (t) { var im = t[0]; if (im.complete && im.naturalWidth) { if (--left === 0) finish(); } else im.addEventListener('load', function () { if (--left === 0) finish(); }); });
+      }
+      function groundToGlobe() {
+        if (!deepGlobe) return;
+        floorTexture(); if (floorTex) deepGlobe.setFloor(floorTex);
+        deepGlobe.setGround({ sea: seaLevel, ice: iceData && iceAgo ? { outlines: iceData.outlines, pairs: icePairs() } : null });
+      }
       function makeView(projection) {
         var g = document.createElement('div'); deepHost.appendChild(g);
         var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, cities: T.deep.cities, citiesOn: deepCities, ma: 0, lon: view.lon, lat: view.lat, projection: projection,
@@ -1389,6 +1414,7 @@
           onGrade: function (grade, why) { if (projection === 'globe' || !deepGlobe) tellDeep(); } });
         inst._host = g;
         if (projection === 'flat') { deepSize(); inst.setView({ lon: view.lon, lat: view.lat, ppd: view.S }); }
+        if (projection === 'globe') { deepGlobe = inst; groundToGlobe(); }
         return inst;
       }
       function ensureDeep() {
@@ -1449,6 +1475,7 @@
         var m = curveAt(T.seaLevel, timeYear);
         if (m !== null && seaCanvas) { var nm = Math.min(0, Math.round(m * 2) / 2); if (nm !== seaLevel) { seaLevel = nm; drawSea(); if (iceCanvas && !T.ice) drawIceCanvas(box.clientWidth, box.clientHeight); } }   // with T.ice the draw below redraws the ice at the new level
         if (T.ice) { var ago = window.CW.THIS_YEAR - timeYear; iceData = T.ice; iceAgo = Math.max(0, ago); draw(); }
+        groundToGlobe();   // the globe this side of the seam shows the same sea and ice (step 8)
       };
       api.time = function () { return timeYear; };
       api.deepInstances = function () { return { globe: deepGlobe, flat: deepFlat }; };   // for checking from the console (12 Oct); nothing on a page uses it

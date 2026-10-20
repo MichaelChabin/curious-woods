@@ -112,7 +112,7 @@
   // from the equator): the Huronian, the two snowballs, the Andean-Saharan, the late Palaeozoic, the Antarctic, the Quaternary
   var ICEHOUSES = [[2400, 2100, 55], [717, 635, 0], [460, 430, 60], [360, 260, 50], [34, 2.6, 66], [2.6, 0, 58]];
   var GRADE_WORDS = {
-    ground:   'This side of the ice ages the ground is the map’s. The globe shows today’s coast and the edge of the shelf; the picture of the ground on a sphere is still to come.',
+    ground:   'This side of the ice ages the globe shows what the map shows: today’s ground, the sea as low as it was, and the ice sheets where they were.',
     measured: 'The seafloor still carries its magnetic stripes, so the plates can be run backwards and measured.',
     inferred: 'Rock magnetism and fossils say how far north each piece was, not how far east. North and south are firm; east and west are one best estimate.',
     fitted:   'These pieces of crust are real and still exist. How they fitted together is argued from scattered evidence, and the models disagree. This is one fit.',
@@ -225,6 +225,26 @@
       seaMask = m;
     }
     var SHELF3 = hex3(S.shelfWash || '#7fb0cc'), SHELF_A = S.shelfWashAlpha != null ? S.shelfWashAlpha : 0.55;
+    // this side of the seam the globe shows what the map shows (20 Oct 2026, step 8 of the audit's order): the page's map
+    // hands it the sea level and the ice sheets' outlines with their strengths (setGround), and the ocean floor's depth at
+    // the texture's own size (setFloor, the pyramid's level-1 floor tiles). At the ground grade the skin then paints the
+    // shelf a lowered sea has bared as land by its height above the new shore, as the map does, and the ICE-6G sheets
+    // at their strength, never below the sea
+    var ground = null, floorTex = null, iceMasks = {}, SHORE = S.shoreLand || [[0, [230, 223, 203]], [250, [216, 205, 170]]], ICEF3 = hex3(S.iceFill || '#eaf1f4');
+    function floorDepthAt(j) { if (!floorTex) return -1; var dv = floorTex.data[j]; return dv > 0 ? floorTex.max * Math.pow((dv - 1) / 253, 2) : -1; }   // metres, or -1 for land
+    function iceMask(age, outlines) {   // an outline's rings filled in texture space, once per age
+      var key = String(age); if (iceMasks[key] !== undefined) return iceMasks[key];
+      var rings = outlines[key]; if (!rings || !rings.length) { iceMasks[key] = null; return null; }
+      var c = texCanvas(), x = c.getContext('2d', { willReadFrequently: true });
+      x.setTransform(TW / 360, 0, 0, -TH / 180, TW / 2, TH / 2); x.fillStyle = '#fff';
+      var path = new Path2D();
+      for (var r = 0; r < rings.length; r++) { var ring = rings[r]; for (var q = 0; q < ring.length; q++) { if (q) path.lineTo(ring[q][0], ring[q][1]); else path.moveTo(ring[q][0], ring[q][1]); } path.closePath(); }
+      x.fill(path, 'evenodd');
+      x.setTransform(1, 0, 0, 1, 0, 0);
+      var d = x.getImageData(0, 0, TW, TH).data, m = new Uint8Array(TW * TH);
+      for (var i = 0, j = 3; i < m.length; i++, j += 4) m[i] = d[j];
+      iceMasks[key] = m; return m;
+    }
     function skinReady() { return texOn && tex.ground && tex['rock-grain']; }
     function moltenReady() { return texOn && tex['cooling-order'] && tex.cracks && tex['rock-grain']; }
     function indexOf(pid) { var i = plateIndex[pid]; if (!i) { i = plateByIndex.length; plateByIndex.push(pid); plateIndex[pid] = i; } return i; }
@@ -353,6 +373,18 @@
           var pb = picture[j00 + 2] * w00 + picture[j10 + 2] * w10 + picture[j01 + 2] * w01 + picture[j11 + 2] * w11;
           if (tp < 1) { r0 = r0 * (1 - tp) + pr * tp; g0 = g0 * (1 - tp) + pg * tp; b0 = b0 * (1 - tp) + pb * tp; }
           else { r0 = pr; g0 = pg; b0 = pb; }
+        }
+        if (ground && g === 'ground') {
+          var depth = floorTex ? floorDepthAt(j00) : -1;
+          if (sea > 0 && ground.sea < 0 && depth > 0 && depth <= -ground.sea) {   // bared by the lowered sea: land, by its height above the new shore
+            var ab = Math.min(1, (-ground.sea - depth) / 250), c0 = SHORE[0][1], c1 = SHORE[1][1];
+            r0 = c0[0] + (c1[0] - c0[0]) * ab; g0 = c0[1] + (c1[1] - c0[1]) * ab; b0 = c0[2] + (c1[2] - c0[2]) * ab; sea = 0;
+          }
+          if (ground.ice && !(depth > 0 && depth > -ground.sea)) {   // the ice sheets, never below the sea
+            var ia = 0, prs = ground.ice.pairs;
+            for (var pi = 0; pi < prs.length; pi++) { var im = iceMask(prs[pi][0], ground.ice.outlines); if (im) ia += (im[i00] * w00 + im[i10] * w10 + im[i01] * w01 + im[i11] * w11) / 255 * prs[pi][1]; }
+            if (ia > 0) { ia = Math.min(1, ia) * 0.94; r0 = r0 * (1 - ia) + ICEF3[0] * ia; g0 = g0 * (1 - ia) + ICEF3[1] * ia; b0 = b0 * (1 - ia) + ICEF3[2] * ia; if (sea > 0) sea = sea * (1 - ia); }
+          }
         }
         if (sea > 0) {   // the shelf, and an inland sea: the wash, translucent over the globe's sea, blended at the shore
           r0 = r0 * (1 - sea) + SHELF3[0] * sea; g0 = g0 * (1 - sea) + SHELF3[1] * sea; b0 = b0 * (1 - sea) + SHELF3[2] * sea;
@@ -850,6 +882,8 @@
         var v = xyz(lon, lat), wx = M[0] * v[0] + M[1] * v[1] + M[2] * v[2], wy = M[3] * v[0] + M[4] * v[1] + M[5] * v[2], wz = M[6] * v[0] + M[7] * v[1] + M[8] * v[2];
         return { lon: Math.atan2(wy, wx) * 180 / Math.PI, lat: Math.asin(Math.max(-1, Math.min(1, wz))) * 180 / Math.PI };
       },
+      setGround: function (gs) { ground = gs || null; schedule(); },   // { sea, ice: { outlines, pairs } } from the page's map (step 8)
+      setFloor: function (t) { floorTex = t || null; schedule(); },      // the floor's depth at the texture's size, from the map
       setMarker: function (m) { marker = m ? { lat: m.lat, lon: m.lon, name: m.name || '', plate: m.plate } : null; schedule(); },
       grade: function () { return gradeFor(ma); },
       moltenPhase: function () { return ma > NO_MAP ? moltenState(ma).phase : null; },
