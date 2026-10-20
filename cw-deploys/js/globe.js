@@ -11,6 +11,8 @@
    The five words of knowing (Ideas-Ledger, *Invented land, honest about it*, 7 Oct), by age:
      measured   to 200 million years: the seafloor's stripes; drawn solid
      inferred   to 540: rock magnetism gives how far north, not how far east; drawn once at the model's position (10 Oct: no smear)
+                (the look of the land, since 19 Oct 2026, follows the age of life and not the grade: bare rock until plants at
+                450, then today's picture blending in by 300 — paintSkin)
      fitted     to the model's reach: the pieces are real, the fits argued; drawn once, like inferred (the ghost went 13 Oct)
      guessed    past the model's reach, while cratons exist (to 4 billion): the real pieces of crust,
                 which still exist, placed by the model's last position plus a random slow drift from a
@@ -26,8 +28,8 @@
    above the sea — the land series of the crust-and-land curve over the crust series — drawn in the
    land colour inside the pale drowned crust. The climate wash of 7 Oct (a model: dry belts, a dry
    interior, green elsewhere) was withdrawn from the column on 13 Oct and deleted on 19 Oct (Michael's
-   ruling 2 on the audit); what remains of it is the polar caps of the cold ages, drawPolarIce, which the
-   ice ruling of 19 Oct will replace with a soft overlay.
+   ruling 2 on the audit); its polar caps became, the same day, the soft overlay of the cold ages, paintIce
+   (ruling 3): per pixel, feathered, over land and sea, fading in and out with each glaciation.
 
    The skin (12 Oct 2026, Prompt-Build-Globe-Cities-Ice.md parts 1 and 7, on Michael's rulings 14; the 9 Oct
    "out for now" lifted): the globe is drawn per pixel. For every pixel of the disc (or of the flat map) the
@@ -84,7 +86,7 @@
   var S = window.CW && window.CW.STYLE;
   if (!S) throw new Error('globe.js needs js/cw-style.js loaded before it');
   if (!(window.CW.curveAt && window.CW.maToYear)) throw new Error('globe.js needs js/cw-time.js loaded before it');
-  var SEA = S.globeSea, SEA_DEEP = S.globeSeaDeep, LAND = S.globeLand, LAND_PALE = S.globeLandPale, COAST = S.coast, SHELF = S.shelf, GRAT = S.graticule, MAGMA = S.magma, MAGMA_GLOW = S.magmaGlow;
+  var SEA = S.globeSea, SEA_DEEP = S.globeSeaDeep, LAND = S.globeLand, LAND_PALE = S.globeLandPale, COAST = S.coast, SHELF = S.shelf, MAGMA = S.magma, MAGMA_GLOW = S.magmaGlow;
   var OLDEST_ROCK = 4000, NO_MAP = 4400, MOLTEN_START = 4600, DRIFT_DEG_PER_MA = 0.45;   // a plate's few centimetres a year, as degrees of arc
   var BLACK = S.black, HOT = S.hot, CRUST = S.crust, CRUST_LIGHT = S.crustLight, FLASH = S.flash;
   // the molten sequence, in millions of years ago (part 7; the ages as the events store has them)
@@ -106,6 +108,8 @@
   }
   var WASH_ICE = S.washIce;
   // the cold ages, in millions of years ago, and how far from the poles the ice reached (degrees of latitude from the equator)
+  // the cold ages of deep time, in millions of years ago, and how far from the poles the ice reached (degrees of latitude
+  // from the equator): the Huronian, the two snowballs, the Andean-Saharan, the late Palaeozoic, the Antarctic, the Quaternary
   var ICEHOUSES = [[2400, 2100, 55], [717, 635, 0], [460, 430, 60], [360, 260, 50], [34, 2.6, 66], [2.6, 0, 58]];
   var GRADE_WORDS = {
     ground:   'This side of the ice ages the ground is the map’s. The globe shows today’s coast and the edge of the shelf; the picture of the ground on a sphere is still to come.',
@@ -259,7 +263,8 @@
       return idData;
     }
     function hex3(h) { var n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
-    var LAND3 = hex3(LAND), MAGMA3 = hex3(MAGMA), GLOW3 = hex3(MAGMA_GLOW), HOT3 = hex3(HOT), CRUST3 = hex3(CRUST), CRUSTL3 = hex3(CRUST_LIGHT), SEA3 = hex3(SEA), SEAD3 = hex3(SEA_DEEP), FLASH3 = hex3(FLASH);
+    var ROCK_G = hex3(S.rockGrey || '#8c8880'), ROCK_T = hex3(S.rockTan || '#a89a80'), ROCK_R = hex3(S.rockRust || '#96603e'), ICE3 = hex3(WASH_ICE), DEEP_ICE_A = S.deepIceAlpha != null ? S.deepIceAlpha : 0.75;
+    var MAGMA3 = hex3(MAGMA), GLOW3 = hex3(MAGMA_GLOW), HOT3 = hex3(HOT), CRUST3 = hex3(CRUST), CRUSTL3 = hex3(CRUST_LIGHT), SEA3 = hex3(SEA), SEAD3 = hex3(SEA_DEEP), FLASH3 = hex3(FLASH);
     // the inverse of the view: screen (x east, y north, z toward the eye) back to the world at this age
     function pixelToWorld(V) {
       var flat = proj === 'flat', sw = SW, sh = SH, r = (W / 2 - 4) * skinScale, cx = sw / 2, cy = sh / 2;
@@ -302,11 +307,16 @@
       if (skinCanvas.width !== SW || skinCanvas.height !== SH) { skinCanvas.width = SW; skinCanvas.height = SH; }
       return skinCtx.createImageData(SW, SH);
     }
-    // the land's skin for the model's ages: the ground picture (measured, ground) or the rock grain (inferred, fitted)
+    // the land's skin for the model's ages, by the age of life (Michael's ruling 4, 19 Oct 2026): bare rock — grey to tan by
+    // the grain, rusty where the cooling map runs high, lit by the grain, no green anywhere — until plants, about 450 million
+    // years ago; then green spreads as today's picture blends in, whole by 300; the picture alone after. The one-tone brown
+    // grain for the inferred and fitted ages, and the hard switch to the picture at the measured edge, went with this. (The
+    // near-black crust before 2,400 million years is the guessed and invented pieces', which keep their pale fills until the
+    // invented-continents pass.)
+    var PLANTS = 450, GREEN_BY = 300;
     function paintSkin(V, age, g, alpha) {
-      // across the measured edge (200 Ma) the picture blends into the rock grain over FADE million years (13 Oct 2026)
-      var edge = grades.length ? grades[0].to : 200, t = Math.max(0, Math.min(1, (age - (edge - FADE / 2)) / FADE));
-      var t0 = performance.now(), ids = idRaster(Math.max(age, 0)), picture = t < 1 ? tex.ground : null, grain = tex['rock-grain'];
+      var tp = Math.max(0, Math.min(1, (PLANTS - age) / (PLANTS - GREEN_BY)));   // how far the picture has come in: 0 bare rock, 1 the picture
+      var t0 = performance.now(), ids = idRaster(Math.max(age, 0)), picture = tp > 0 ? tex.ground : null, grain = tex['rock-grain'], cool = tex['cooling-order'];
       var out = skinTarget(), o = out.data, inv = new Array(plateByIndex.length), vc = viewPixels(V), w3 = vc.w3, ks = vc.k, inside = vc.inside, n = SW * SH;
       for (var i = 0; i < n; i++) {
         if (!inside[i]) continue;
@@ -330,18 +340,19 @@
         var j00 = i00 << 2, j10 = i10 << 2, j01 = i01 << 2, j11 = i11 << 2;
         var sea = seaMask ? seaMask[i00] * w00 + seaMask[i10] * w10 + seaMask[i01] * w01 + seaMask[i11] * w11 : 0;
         var r0, g0, b0, oi = i << 2;
-        if (picture && t === 0) {
-          r0 = picture[j00] * w00 + picture[j10] * w10 + picture[j01] * w01 + picture[j11] * w11;
-          g0 = picture[j00 + 1] * w00 + picture[j10 + 1] * w10 + picture[j01 + 1] * w01 + picture[j11 + 1] * w11;
-          b0 = picture[j00 + 2] * w00 + picture[j10 + 2] * w10 + picture[j01 + 2] * w01 + picture[j11 + 2] * w11;
-        } else {
-          var gr = grain[j00] * w00 + grain[j10] * w10 + grain[j01] * w01 + grain[j11] * w11, f = 0.72 + 0.56 * gr / 255;
-          r0 = LAND3[0] * f; g0 = LAND3[1] * f; b0 = LAND3[2] * f;
-          if (picture) {
-            r0 = (picture[j00] * w00 + picture[j10] * w10 + picture[j01] * w01 + picture[j11] * w11) * (1 - t) + r0 * t;
-            g0 = (picture[j00 + 1] * w00 + picture[j10 + 1] * w10 + picture[j01 + 1] * w01 + picture[j11 + 1] * w11) * (1 - t) + g0 * t;
-            b0 = (picture[j00 + 2] * w00 + picture[j10 + 2] * w10 + picture[j01 + 2] * w01 + picture[j11 + 2] * w11) * (1 - t) + b0 * t;
-          }
+        if (tp < 1) {   // bare rock
+          var gr = (grain[j00] * w00 + grain[j10] * w10 + grain[j01] * w01 + grain[j11] * w11) / 255;
+          var rust = cool ? Math.max(0, Math.min(1, (cool[j00] / 255 - 0.55) / 0.25)) : 0, lit = 0.8 + 0.4 * (gr - 0.5);
+          r0 = ((ROCK_G[0] + (ROCK_T[0] - ROCK_G[0]) * gr) * (1 - rust) + ROCK_R[0] * rust) * lit;
+          g0 = ((ROCK_G[1] + (ROCK_T[1] - ROCK_G[1]) * gr) * (1 - rust) + ROCK_R[1] * rust) * lit;
+          b0 = ((ROCK_G[2] + (ROCK_T[2] - ROCK_G[2]) * gr) * (1 - rust) + ROCK_R[2] * rust) * lit;
+        }
+        if (tp > 0) {   // the picture, green and all
+          var pr = picture[j00] * w00 + picture[j10] * w10 + picture[j01] * w01 + picture[j11] * w11;
+          var pg = picture[j00 + 1] * w00 + picture[j10 + 1] * w10 + picture[j01 + 1] * w01 + picture[j11 + 1] * w11;
+          var pb = picture[j00 + 2] * w00 + picture[j10 + 2] * w10 + picture[j01 + 2] * w01 + picture[j11 + 2] * w11;
+          if (tp < 1) { r0 = r0 * (1 - tp) + pr * tp; g0 = g0 * (1 - tp) + pg * tp; b0 = b0 * (1 - tp) + pb * tp; }
+          else { r0 = pr; g0 = pg; b0 = pb; }
         }
         if (sea > 0) {   // the shelf, and an inland sea: the wash, translucent over the globe's sea, blended at the shore
           r0 = r0 * (1 - sea) + SHELF3[0] * sea; g0 = g0 * (1 - sea) + SHELF3[1] * sea; b0 = b0 * (1 - sea) + SHELF3[2] * sea;
@@ -685,20 +696,35 @@
       for (var i = 0; i < ICEHOUSES.length; i++) if (age <= ICEHOUSES[i][0] && age >= ICEHOUSES[i][1]) return ICEHOUSES[i][2];
       return null;
     }
-    function bandRing(latA, latB) {   // a ring round the band between two latitudes: east along one, west along the other
-      var pts = [], lo, v;
-      for (lo = -180; lo <= 180; lo += 4) { v = xyz(lo, latA); pts.push(v[0], v[1], v[2]); }
-      for (lo = 180; lo >= -180; lo -= 4) { v = xyz(lo, latB); pts.push(v[0], v[1], v[2]); }
-      return new Float64Array(pts);
+    // the glaciations of deep time (Michael's ruling 3, 19 Oct 2026): a soft, translucent overlay with feathered edges, over
+    // land and sea alike, fading in and out with each cold age — never a sharp line, and bare land never shows on top of
+    // it. Per pixel: the latitude under the pixel at this age against the ice's reach, feathered over sixteen degrees and
+    // roughened by the grain; a cold age's strength ramps up over its first tenth and down over its last. (This side of
+    // the seam the map's own ice sheets are the ice; the globe at the ground grade shows none yet.)
+    function iceStrength(age) {   // the cold age this age falls in: [its reach, how strong], or null when the world was warm
+      for (var i = 0; i < ICEHOUSES.length; i++) {
+        var h = ICEHOUSES[i]; if (age > h[0] || age < h[1]) continue;
+        var ramp = Math.max(2, (h[0] - h[1]) * 0.1), st = Math.min(1, (h[0] - age) / ramp, (age - h[1]) / ramp);
+        return [h[2], Math.max(0, st)];
+      }
+      return null;
     }
-    // the polar ice of the cold ages (13 Oct 2026; the climate wash it was once part of went 19 Oct)
-    function drawPolarIce(V, age) {
-      var reach = iceReach(age); if (reach === null || !lastLand) return;
-      ctx.save(); ctx.clip(lastLand, 'nonzero');
-      var fb = function (ring, colour, alpha) { var p = new Path2D(); if (trace(ring, V, p)) { ctx.globalAlpha = alpha; ctx.fillStyle = colour; ctx.fill(p, 'evenodd'); } };
-      if (!(age <= 34 && age > 2.6)) fb(bandRing(reach, 89.9), WASH_ICE, 0.8);
-      fb(bandRing(-89.9, -reach), WASH_ICE, 0.8);
-      ctx.restore(); ctx.globalAlpha = 1;
+    function paintIce(V, age) {
+      var st = iceStrength(age); if (!st || st[1] <= 0) return;
+      var reach = st[0], strength = st[1], grain = tex['rock-grain'], vc = viewPixels(V), w3 = vc.w3, ks = vc.k, inside = vc.inside, n = SW * SH;
+      var out = skinTarget(), o = out.data, north = !(age <= 34 && age > 2.6);   // the Antarctic ice came first; the north's from 2.6
+      var snowball = reach <= 0, heart = snowball ? 0.9 : DEEP_ICE_A;   // a snowball has no edge to feather: white all over, a little stronger
+      for (var i = 0; i < n; i++) {
+        if (!inside[i]) continue;
+        var z = w3[3 * i + 2], lat = Math.asin(z > 1 ? 1 : (z < -1 ? -1 : z)) * 180 / Math.PI;
+        if (lat > 0 && !north) continue;
+        var a = snowball ? 1 : (Math.abs(lat) - (reach - 10)) / 16; if (a <= 0) continue; if (a > 1) a = 1;
+        a = a * a * (3 - 2 * a);
+        if (grain) { a *= 0.8 + 0.4 * grain[ks[i]] / 255; if (a > 1) a = 1; }
+        var oi = i << 2; o[oi] = ICE3[0]; o[oi + 1] = ICE3[1]; o[oi + 2] = ICE3[2]; o[oi + 3] = 255 * heart * strength * a;
+      }
+      skinCtx.putImageData(out, 0, 0);
+      ctx.drawImage(skinCanvas, 0, 0, W, H);
     }
     var unitPx = 1;
     function unit() { return unitPx; }   // one screen pixel in the current unit transform
@@ -742,7 +768,6 @@
         else if (g === 'fitted') { var lp3 = landPath(V, ma, 'model'); if (!skinned) fillLand(lp3, LAND, 1 - tg, null); if (tg > 0) fillLand(landPath(V, ma, 'guessed'), LAND_PALE, 0.7 * tg, 'dashed', 0.85 * tg); }   // once, like inferred (the ghosts went 13 Oct); the guessed look fades in toward the reach
         else if (g === 'guessed') fillLand(landPath(V, ma, 'guessed'), LAND_PALE, 0.7, 'dashed');
         else if (g === 'invented') fillLand(landPath(V, ma, 'invented'), LAND_PALE, 0.5, 'dotted');
-        if (g !== 'ground') drawPolarIce(V, ma);   // the polar caps of the cold ages (the climate wash went 19 Oct 2026)
         if (g !== 'invented') dissolvePieces(V, ma, g);
       }
       // today's coast and the shelf's edge, this side of the seam and fading out by five million years
@@ -754,12 +779,9 @@
           ctx.lineWidth = 1.1 * unit(); ctx.strokeStyle = L[1]; ctx.globalAlpha = L[2] * fade; ctx.stroke(cp); ctx.globalAlpha = 1;
         });
       }
-      // the graticule, every thirty degrees
-      ctx.lineWidth = unit(); ctx.strokeStyle = GRAT; var gp = new Path2D();
-      for (var la = -60; la <= 60; la += 30) { var ring = []; for (var lo = -180; lo <= 180; lo += 5) { var v = xyz(lo, la); ring.push(v[0], v[1], v[2]); } var q1 = new Path2D(); trace(new Float64Array(ring), V, q1); gp.addPath(q1); }
-      for (var lo2 = -180; lo2 < 180; lo2 += 30) { var ring2 = []; for (var la2 = -90; la2 <= 90; la2 += 5) { var v2 = xyz(lo2, la2); ring2.push(v2[0], v2[1], v2[2]); } var q2 = new Path2D(); trace(new Float64Array(ring2), V, q2); gp.addPath(q2); }
-      ctx.stroke(gp);
+      // (the graticule, every thirty degrees, went 19 Oct 2026: Spec-Maps rules out a graticule, Michael's ruling 6)
       ctx.restore(); ctx.restore();
+      if (data && g !== 'none' && g !== 'ground') paintIce(V, ma);   // over the land and the sea, under the cities and the marker
       drawCities(V, ma, g, r, cx, cy);
       drawMarker(V, ma, g, r, cx, cy);
       // the limb shading and the haze at the rim (12 Oct): a ball, with an atmosphere — blue once there is a sea, grey steam before
@@ -772,9 +794,8 @@
         haze.addColorStop(0, 'rgba(' + hazeCol + ',0.55)'); haze.addColorStop(1, 'rgba(' + hazeCol + ',0)');
         ctx.fillStyle = haze; ctx.beginPath(); ctx.arc(cx, cy, r + 4, 0, Math.PI * 2); ctx.arc(cx, cy, r - 1, 0, Math.PI * 2, true); ctx.fill();
       }
-      // the limb, or the frame
-      ctx.strokeStyle = S.limb; ctx.lineWidth = 1;
-      if (proj === 'flat') ctx.strokeRect(0.5, 0.5, W - 1, H - 1); else { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); }
+      // the limb (the flat map's frame went 19 Oct 2026: Spec-Maps rules out a frame, Michael's ruling 6)
+      if (proj !== 'flat') { ctx.strokeStyle = S.limb; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); }
       var ms = performance.now() - t0;
       if (opts.onDraw) opts.onDraw(ms);
       var gw = gradeFor(ma), gkey = g + ':' + gw.why;
