@@ -877,7 +877,7 @@
       });
       shown.forEach(function (s) { positionText(s, w, h); });
       if (pyr) { drawSea(); paintData(); }
-      if (deepFlat) deepFlat.setView({ lon: view.lon, lat: view.lat, ppd: view.S });   // the flat deep map paints this view (19 Oct 2026, step 6)
+      if (deepFlat) deepFlat.setView({ lon: view.lon, lat: view.lat, ppd: view.S, k: view.k });   // the flat deep map paints this view, its Mercator blend too (19 Oct 2026, step 6; 20 Oct, step 9)
       viewListeners.forEach(function (f) { f(); });
     }
     var viewListeners = [];
@@ -1413,7 +1413,7 @@
           seam: (T.deep.seam || 2.6e6) / 1e6, seed: deepGlobe ? deepGlobe.seed() : undefined,
           onGrade: function (grade, why) { if (projection === 'globe' || !deepGlobe) tellDeep(); } });
         inst._host = g;
-        if (projection === 'flat') { deepSize(); inst.setView({ lon: view.lon, lat: view.lat, ppd: view.S }); }
+        if (projection === 'flat') { deepSize(); inst.setView({ lon: view.lon, lat: view.lat, ppd: view.S, k: view.k }); }
         if (projection === 'globe') { deepGlobe = inst; groundToGlobe(); }
         return inst;
       }

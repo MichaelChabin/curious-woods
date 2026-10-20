@@ -133,9 +133,18 @@
     // centre's latitude (lon0 its longitude). flatView, when a page sets it, is the ground map's own view — centre and
     // pixels per degree — so the flat deep map is the same frame as the ground map and the seam is a fade between two
     // paintings of one view; the canvas then fills its host (opts.fill) and a drag is handed to the page (opts.onDrag)
-    var fz = { k: 1, ky: 1, lat: 0 }, flatView = null;
-    function fzY() { return (90 - fz.lat) / 180; }   // the centre latitude as a fraction of the height
-    function applyFlatView() { lon0 = flatView.lon; fz.lat = flatView.lat; fz.k = flatView.ppd * 360 / (W || 1); fz.ky = flatView.ppd * 180 / (H || 1); }
+    // the flat view (20 Oct 2026, step 9 of the audit's order): the ground map's own projection — a centre, pixels per
+    // degree, and the map's blend k from plate carrée (0, the whole world) toward Mercator (1, zoomed in; the map's yw
+    // and its 85° cap, copied) — so that a zoomed-in ground map and the flat deep map over it are one frame. fv is the
+    // view in force; a page sets it (setView) and otherwise it is the whole world across the width; the id raster
+    // swaps in texture space for its own drawing
+    var fv = { lon: lon0, lat: 0, ppd: 1, k: 0, w: 360, h: 180 }, flatView = null;
+    function mercF(lat) { var f = Math.max(-85, Math.min(85, lat)) * Math.PI / 180; return 180 / Math.PI * Math.log(Math.tan(Math.PI / 4 + f / 2)); }
+    function fwY(lat) { var k = fv.k; return (1 - k) * lat + k * mercF(lat); }   // world y in degree-like units, growing north
+    function fwYInv(y) { var lo = -90, hi = 90; for (var i = 0; i < 40; i++) { var mid = (lo + hi) / 2; if (fwY(mid) < y) lo = mid; else hi = mid; } return (lo + hi) / 2; }
+    function flatX(lonDeg) { return 0.5 + (lonDeg - fv.lon) * fv.ppd / fv.w; }                 // in units of the width
+    function flatY(latDeg) { return 0.5 - (fwY(latDeg) - fwY(fv.lat)) * fv.ppd / fv.h; }      // in units of the height
+    function applyFlatView() { if (flatView) { lon0 = flatView.lon; fv = { lon: flatView.lon, lat: flatView.lat, ppd: flatView.ppd, k: flatView.k || 0, w: W || 1, h: H || 1 }; } else fv = { lon: lon0, lat: 0, ppd: (W || 360) / 360, k: 0, w: W || 360, h: H || 180 }; }
     var FADE = 8;   // million years: a piece dissolves into the sea over this long before its birth age, and the skin blends across a grade's edge (13 Oct 2026)
     var proj = opts.projection === 'flat' ? 'flat' : 'globe', seam = opts.seam != null ? opts.seam : 2.6;
     var data = null, coast = null, shelf = null, crust = null, pieces = [], plates = {}, ages = [], grades = [], reach = 1000, lastGrade = null, destroyed = false, raf = 0, ro = null;
@@ -261,7 +270,7 @@
       var oc = idCtx;
       oc.setTransform(1, 0, 0, 1, 0, 0); oc.fillStyle = '#000'; oc.fillRect(0, 0, TW, TH);
       oc.setTransform(TW, 0, 0, TH, 0, 0);
-      var saveProj = proj, saveFz = fz; proj = 'flat'; fz = { k: 1, ky: 1, lat: 0 };   // texture space: the whole world, unzoomed (13 Oct)
+      var saveProj = proj, saveFv = fv; proj = 'flat'; fv = { lon: 0, lat: 0, ppd: TW / 360, k: 0, w: TW, h: TH };   // texture space: the whole world, unzoomed (13 Oct)
       var byPlate = {}, mats = {}, i, k;
       for (i = 0; i < pieces.length; i++) {
         var p = pieces[i];
@@ -272,7 +281,7 @@
         var path = byPlate[p.plate] || (byPlate[p.plate] = new Path2D());
         for (k = 0; k < p.rings.length; k++) { var q = new Path2D(); if (trace(p.rings[k], M, q)) path.addPath(q); }
       }
-      proj = saveProj; fz = saveFz;
+      proj = saveProj; fv = saveFv;
       for (var pid in byPlate) {
         var idx = indexOf(pid), col = 'rgb(' + (idx & 255) + ',' + (idx >> 8 & 255) + ',0)';
         oc.fillStyle = col; oc.fill(byPlate[pid], 'nonzero');
@@ -288,10 +297,12 @@
     // the inverse of the view: screen (x east, y north, z toward the eye) back to the world at this age
     function pixelToWorld(V) {
       var flat = proj === 'flat', sw = SW, sh = SH, r = (W / 2 - 4) * skinScale, cx = sw / 2, cy = sh / 2;
+      var rowLat = null;   // flat: the latitude of each row of the skin canvas, by the view's blend (one inverse per row, not per pixel)
+      if (flat) { rowLat = new Float64Array(sh); var y0 = fwY(fv.lat), top = fwY(90), bottom = fwY(-90); for (var ry = 0; ry < sh; ry++) { var yy = y0 - ((ry + 0.5) / sh - 0.5) * fv.h / fv.ppd; rowLat[ry] = (yy > top || yy < bottom) ? NaN : fwYInv(yy); } }
       var T0 = V[0], T1 = V[3], T2 = V[6], T3 = V[1], T4 = V[4], T5 = V[7], T6 = V[2], T7 = V[5], T8 = V[8];
       return function (px, py, out) {
         var X, Y, Z;
-        if (flat) { var fx = 0.5 + ((px + 0.5) / sw - 0.5) / fz.k, fy = fzY() + ((py + 0.5) / sh - 0.5) / fz.ky; if (fy < 0 || fy > 1) return false; var lo = fx * 2 * Math.PI - Math.PI, la = Math.PI / 2 - fy * Math.PI, cl = Math.cos(la); X = cl * Math.cos(lo); Y = cl * Math.sin(lo); Z = Math.sin(la); }
+        if (flat) { var la = rowLat[py]; if (la !== la) return false; var lo = (fv.lon + ((px + 0.5) / sw - 0.5) * fv.w / fv.ppd) * Math.PI / 180; la = la * Math.PI / 180; var cl = Math.cos(la); X = cl * Math.cos(lo); Y = cl * Math.sin(lo); Z = Math.sin(la); }
         else { X = (px + 0.5 - cx) / r; Y = -(py + 0.5 - cy) / r; var q = 1 - X * X - Y * Y; if (q < 0) return false; Z = Math.sqrt(q); }
         out[0] = T0 * X + T1 * Y + T2 * Z; out[1] = T3 * X + T4 * Y + T5 * Z; out[2] = T6 * X + T7 * Y + T8 * Z;
         return true;
@@ -302,7 +313,7 @@
     // not the view, so during play the per-pixel pass has only the plate's turn and one texel lookup left to do
     var viewCache = { key: null };
     function viewPixels(V) {
-      var key = [proj, lon0, lat0, fz.k, fz.ky, fz.lat, SW, SH, W, H].join('|');
+      var key = [proj, lon0, lat0, fv.lon, fv.lat, fv.ppd, fv.k, SW, SH, W, H].join('|');
       if (viewCache.key === key) return viewCache;
       var toWorld = pixelToWorld(V), n = SW * SH, same = viewCache.inside && viewCache.inside.length === n, p = [0, 0, 0], i = 0;
       // the arrays are kept and refilled while the size holds (a drag changes the view every frame)
@@ -450,7 +461,7 @@
 
     // a world point to the screen, through the view: the flat map's zoom, or the disc (13 Oct 2026; cities and the marker)
     function screenPoint(sx, sy, sz, r, cx, cy) {
-      if (proj === 'flat') { var lon = Math.atan2(sy, sx), lat = Math.asin(Math.max(-1, Math.min(1, sz))); return [(0.5 + ((lon + Math.PI) / (2 * Math.PI) - 0.5) * fz.k) * W, (0.5 + ((Math.PI / 2 - lat) / Math.PI - fzY()) * fz.ky) * H]; }
+      if (proj === 'flat') { var lonD = Math.atan2(sy, sx) * 180 / Math.PI, latD = Math.asin(Math.max(-1, Math.min(1, sz))) * 180 / Math.PI; lonD -= 360 * Math.round((lonD - fv.lon) / 360); return [flatX(lonD) * W, flatY(latD) * H]; }
       if (sz < 0.03) return null; return [cx + sx * r, cy - sy * r];
     }
     // a piece appears and goes without a pop (13 Oct 2026, Michael: the flashes at the plate boundaries): over the FADE
@@ -642,7 +653,7 @@
       var D = Math.round(opts.size || (proj === 'flat' ? w : Math.min(w, 560)));   // the flat map takes its host's whole width (9 Oct); the disc is capped
       W = D; H = proj === 'flat' ? Math.round(D / 2) : D;
       if (proj === 'flat' && opts.fill) { W = Math.max(2, Math.round(w)); H = Math.max(2, Math.round(host.clientHeight || host.getBoundingClientRect().height || W / 2)); }   // the box itself (19 Oct 2026)
-      if (flatView) applyFlatView();
+      applyFlatView();
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     }
@@ -683,7 +694,7 @@
       }
       for (var off = -1; off <= 1; off++) {
         for (var j = 0; j < pts.length; j += 2) {
-          var px = 0.5 + ((pts[j] + Math.PI) / (2 * Math.PI) + off - 0.5) * fz.k, py = 0.5 + ((Math.PI / 2 - pts[j + 1]) / Math.PI - fzY()) * fz.ky;
+          var px = flatX(pts[j] * 180 / Math.PI + off * 360), py = flatY(pts[j + 1] * 180 / Math.PI);
           if (j === 0) into.moveTo(px, py); else into.lineTo(px, py);
         }
         into.closePath();
@@ -838,7 +849,7 @@
     // ---- the gesture: drag turns (east–west about the pole) and tilts (north–south, the poles the limits) ----
     var drag = null;
     canvas.addEventListener('pointerdown', function (ev) {
-      drag = { id: ev.pointerId, x: ev.clientX, y: ev.clientY, lon: lon0, lat: lat0, flat: fz.lat };
+      drag = { id: ev.pointerId, x: ev.clientX, y: ev.clientY, lon: lon0, lat: lat0, flat: fv.lat, flatY: fwY(fv.lat) };
       ev.preventDefault(); try { canvas.setPointerCapture(ev.pointerId); } catch (e) {}
       host.classList.add('dragging');
     });
@@ -846,8 +857,8 @@
       if (!drag || ev.pointerId !== drag.id) return;
       if (proj === 'flat') {
         if (opts.onDrag) { opts.onDrag(ev.clientX - drag.x, ev.clientY - drag.y); drag.x = ev.clientX; drag.y = ev.clientY; return; }   // the page's view: it pans (19 Oct 2026)
-        lon0 = drag.lon - (ev.clientX - drag.x) * 360 / ((W || 400) * fz.k);
-        if (fz.ky > 1) { var lim = 90 - 90 / fz.ky; fz.lat = Math.max(-lim, Math.min(lim, drag.flat + (ev.clientY - drag.y) * 180 / ((H || 200) * fz.ky))); }
+        lon0 = drag.lon - (ev.clientX - drag.x) / fv.ppd; fv.lon = lon0;   // the view of its own, with no page to pan
+        fv.lat = Math.max(-85, Math.min(85, fwYInv(drag.flatY + (ev.clientY - drag.y) / fv.ppd)));
       }
       else {
         var k = 180 / (W || 400);
@@ -872,7 +883,7 @@
       view: function () { return { lon: lon0, lat: lat0 }; },
       turn: function (lon, lat) { if (lon != null) lon0 = lon; if (lat != null) lat0 = Math.max(-90, Math.min(90, lat)); schedule(); },
       // the flat map's view, the page's (19 Oct 2026, step 6): centre and pixels per degree, the ground map's own
-      setView: function (v) { if (proj !== 'flat' || !v) return; flatView = { lon: v.lon, lat: v.lat, ppd: v.ppd }; applyFlatView(); schedule(); },
+      setView: function (v) { if (proj !== 'flat' || !v) return; flatView = { lon: v.lon, lat: v.lat, ppd: v.ppd, k: v.k || 0 }; applyFlatView(); schedule(); },
       // a place today, carried to where it was at the current age on its plate (for a page's zoom to an event's place)
       placeAt: function (lon, lat) {
         if (!data) return { lon: lon, lat: lat };
