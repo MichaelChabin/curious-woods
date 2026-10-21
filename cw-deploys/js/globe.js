@@ -16,9 +16,13 @@
      fitted     to the model's reach: the pieces are real, the fits argued; drawn once, like inferred (the ghost went 13 Oct)
      guessed    past the model's reach, while cratons exist (to 4 billion): the real pieces of crust,
                 which still exist, placed by the model's last position plus a random slow drift from a
-                seed, so that going back the accuracy falls to chance; drawn pale with a dashed edge
+                seed, so that going back the accuracy falls to chance
      invented   before the oldest rock (4.0 to 4.4 billion): random land from the amount curve, the
-                shapes and places made up, only the amount from the rocks; drawn pale with a dotted edge
+                shapes and places made up, only the amount from the rocks
+                (both drawn, since 21 Oct 2026, by the skin like the model's ages — the pale dashed and dotted fills are
+                gone: bare rock, going near-black before oxygen at about 2,400, the island lighter, the drowned part under a
+                wash with the texture showing through, and a translucent shelf round each piece; the brief
+                CWVault/claude/Prompt-Build-Earliest-Continents.md, the audit's §8, Michael's ruling 4 of 19 Oct)
      none       above 4.4 billion: a ball of melted rock
    and, this side of the deep seam, `ground`: today's coast and the shelf's edge as lines, the ground
    picture itself being the map's (the picture on a sphere is later). The seed holds while the marker
@@ -115,8 +119,8 @@
     measured: 'The seafloor still carries its magnetic stripes, so the plates can be run backwards and measured.',
     inferred: 'Rock magnetism and fossils say how far north each piece was, not how far east. North and south are firm; east and west are one best estimate.',
     fitted:   'These pieces of crust are real and still exist. How they fitted together is argued from scattered evidence, and the models disagree. This is one fit.',
-    guessed:  'These pieces of crust are real; you can stand on them today. Where they were, nobody knows. This is a guess; tap another guess, and next time it will be different. The darker part of each is about how much stood above the sea; the pale is drowned.',
-    invented: 'No rock survives from this time. There was probably some continent, and this much is the rocks’ guess at the amount. The shapes and the places are made up; the darker part is about how much stood above the sea.',
+    guessed:  'These pieces of crust are real; you can stand on them today. Where they were, nobody knows. This is a guess; tap another guess, and next time it will be different. The lighter part of each is about how much stood above the sea; the rest lies under shallow water.',
+    invented: 'No rock survives from this time. There was probably some continent, and this much is the rocks’ guess at the amount. The shapes and the places are made up; the lighter part is about how much stood above the sea.',
     none:     'No map. A ball of melted rock with a skin that keeps sinking; nothing to draw, and nothing survived.'
   };
 
@@ -260,38 +264,47 @@
     // the raster depends only on the age (and the pieces), so a drag, which only turns the view, reuses it (14 Oct 2026)
     // the raster is built at half-million-year steps (19 Oct 2026, step 4 of the audit's order): a plate moves at most
     // a quarter of a degree in that time, under a pixel at any size the map takes, and play no longer rebuilds it every frame
+    // since 21 Oct 2026 the raster is by body — a plate at the model's or the guessed position, or an invented blob — and at the
+    // guessed and invented ages the island of each piece (the part above the sea) is flagged in the blue byte
     var idKey = null, idData = null;
-    function idRaster(age) {
-      age = Math.round(age * 2) / 2;
-      var key = age + '|' + pieces.length + '|' + seed;
+    function idRaster(age, how) {
+      age = Math.round(age * 2) / 2; how = how || 'model';
+      var key = age + '|' + how + '|' + pieces.length + '|' + seed;
       if (key === idKey && idData) return idData;
       if (!idCanvas) { idCanvas = texCanvas(); idCtx = idCanvas.getContext('2d', { willReadFrequently: true }); }
       var oc = idCtx;
       oc.setTransform(1, 0, 0, 1, 0, 0); oc.fillStyle = '#000'; oc.fillRect(0, 0, TW, TH);
       oc.setTransform(TW, 0, 0, TH, 0, 0);
       var saveProj = proj, saveFv = fv; proj = 'flat'; fv = { lon: 0, lat: 0, ppd: TW / 360, k: 0, w: TW, h: TH };   // texture space: the whole world, unzoomed (13 Oct)
-      var byPlate = {}, mats = {}, i, k;
-      for (i = 0; i < pieces.length; i++) {
-        var p = pieces[i];
-        if (age > p.from || age < p.to) continue;
-        var M = mats[p.plate];
-        if (M === undefined) { M = plateMatrixAt(p.plate, age); mats[p.plate] = M; }
-        if (!M) continue;
-        var path = byPlate[p.plate] || (byPlate[p.plate] = new Path2D());
-        for (k = 0; k < p.rings.length; k++) { var q = new Path2D(); if (trace(p.rings[k], M, q)) path.addPath(q); }
-      }
+      var byBody = {}, islands = {}, share = (how !== 'model' || age > reach - FADE) ? exposedShare(age) : 0, k;   // the islands come in over the FADE before the reach
+      eachBody(age, how, function (id, rings, M) {
+        var path = byBody[id] || (byBody[id] = new Path2D()), isl = share > 0 ? (islands[id] || (islands[id] = new Path2D())) : null;
+        for (k = 0; k < rings.length; k++) {
+          var q = new Path2D(); if (trace(rings[k], M, q)) path.addPath(q);
+          if (isl) { var q2 = new Path2D(); if (trace(shrunk(rings[k], share), M, q2)) isl.addPath(q2); }
+        }
+      });
       proj = saveProj; fv = saveFv;
-      for (var pid in byPlate) {
-        var idx = indexOf(pid), col = 'rgb(' + (idx & 255) + ',' + (idx >> 8 & 255) + ',0)';
-        oc.fillStyle = col; oc.fill(byPlate[pid], 'nonzero');
-        oc.strokeStyle = col; oc.lineWidth = 1.5 / TW; oc.stroke(byPlate[pid]);   // closes the hairline gaps between pieces
+      var id;
+      for (id in byBody) {
+        var idx = indexOf(id), col = 'rgb(' + (idx & 255) + ',' + (idx >> 8 & 255) + ',0)';
+        oc.fillStyle = col; oc.fill(byBody[id], 'nonzero');
+        oc.strokeStyle = col; oc.lineWidth = (how === 'model' ? 1.5 : 2.5) / TW; oc.stroke(byBody[id]);   // closes the hairline gaps between pieces (a little wider at the old ages, where the shelf would show through them)
       }
+      for (id in islands) { var ix = indexOf(id); oc.fillStyle = 'rgb(' + (ix & 255) + ',' + (ix >> 8 & 255) + ',255)'; oc.fill(islands[id], 'nonzero'); }
       oc.setTransform(1, 0, 0, 1, 0, 0);
       idKey = key; idData = oc.getImageData(0, 0, TW, TH).data;
       return idData;
     }
     function hex3(h) { var n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
     var ROCK_G = hex3(S.rockGrey || '#8c8880'), ROCK_T = hex3(S.rockTan || '#a89a80'), ROCK_R = hex3(S.rockRust || '#96603e'), ICE3 = hex3(WASH_ICE), DEEP_ICE_A = S.deepIceAlpha != null ? S.deepIceAlpha : 0.75;
+    // the earliest continents (21 Oct 2026, the brief Prompt-Build-Earliest-Continents.md; ruling 4 of 19 Oct): before oxygen the
+    // crust is near-black to dark grey by the grain, the part above the sea a touch lighter, the drowned part under the shelf wash
+    // with the texture showing through, and a translucent shelf round each piece. The blend from bare rock to the dark crust runs
+    // from OXYGEN back to DARK_BY, so the look follows the age and never switches at a grade's edge
+    var OLD3 = hex3(S.oldCrust || '#1c1a17'), OLDG3 = hex3(S.oldCrustGrey || '#3e3a35'), OLDL3 = hex3(S.oldLand || '#2a2724'), OLDLG3 = hex3(S.oldLandGrey || '#56504a');
+    var DROWN_W = S.drownedWash != null ? S.drownedWash : 0.26, DROWN_A = S.drownedAlpha != null ? S.drownedAlpha : 0.9, RIM_A = S.shelfRimAlpha != null ? S.shelfRimAlpha : 0.38;
+    var OXYGEN = 2300, DARK_BY = 2500, SHELF_DEG = 2.2;   // the shelf's width round an old piece, in degrees of arc
     var MAGMA3 = hex3(MAGMA), GLOW3 = hex3(MAGMA_GLOW), HOT3 = hex3(HOT), CRUST3 = hex3(CRUST), CRUSTL3 = hex3(CRUST_LIGHT), SEA3 = hex3(SEA), SEAD3 = hex3(SEA_DEEP), FLASH3 = hex3(FLASH);
     // the inverse of the view: screen (x east, y north, z toward the eye) back to the world at this age
     function pixelToWorld(V) {
@@ -344,16 +357,22 @@
     // near-black crust before 2,400 million years is the guessed and invented pieces', which keep their pale fills until the
     // invented-continents pass.)
     var PLANTS = 450, GREEN_BY = 300;
-    function paintSkin(V, age, g, alpha) {
+    // how: 'model' (the pieces at the model's positions), 'guessed' (at the guessed positions) or 'invented' (the blobs) — the
+    // guessed and invented pieces take the skin too since 21 Oct 2026, dark before oxygen, their islands lighter, the rest drowned
+    function paintSkin(V, age, g, alpha, how, oldT) {
+      how = how || 'model'; oldT = how === 'model' ? (oldT || 0) : 1;   // how far the old look (the islands, the drowned wash) is in: it blends in over the FADE before the reach
       var tp = Math.max(0, Math.min(1, (PLANTS - age) / (PLANTS - GREEN_BY)));   // how far the picture has come in: 0 bare rock, 1 the picture
-      var t0 = performance.now(), ids = idRaster(Math.max(age, 0)), picture = tp > 0 ? tex.ground : null, grain = tex['rock-grain'], cool = tex['cooling-order'];
+      var td = Math.max(0, Math.min(1, (age - OXYGEN) / (DARK_BY - OXYGEN)));     // how far the dark crust has come in: 0 bare rock, 1 near-black
+      var old = oldT > 0, dw = DROWN_W * oldT, da = 1 - (1 - DROWN_A) * oldT;
+      var t0 = performance.now(), ids = idRaster(Math.max(age, 0), how), picture = tp > 0 ? tex.ground : null, grain = tex['rock-grain'], cool = tex['cooling-order'];
       var out = skinTarget(), o = out.data, inv = new Array(plateByIndex.length), vc = viewPixels(V), w3 = vc.w3, ks = vc.k, inside = vc.inside, n = SW * SH;
       for (var i = 0; i < n; i++) {
         if (!inside[i]) continue;
         var k = ks[i], idx = ids[k] | (ids[k + 1] << 8);
         if (!idx) continue;
+        var island = old && ids[k + 2] > 127;
         var M = inv[idx];
-        if (M === undefined) { var R = plateMatrixAt(plateByIndex[idx], Math.max(age, 0)); M = R ? [R[0], R[3], R[6], R[1], R[4], R[7], R[2], R[5], R[8]] : null; inv[idx] = M; }
+        if (M === undefined) { var R = bodyMatrixAt(plateByIndex[idx], Math.max(age, 0), how); M = R ? [R[0], R[3], R[6], R[1], R[4], R[7], R[2], R[5], R[8]] : null; inv[idx] = M; }
         if (!M) continue;
         var x = w3[3 * i], y = w3[3 * i + 1], z = w3[3 * i + 2];
         var tx = M[0] * x + M[1] * y + M[2] * z, ty = M[3] * x + M[4] * y + M[5] * z, tz = M[6] * x + M[7] * y + M[8] * z;
@@ -376,6 +395,10 @@
           r0 = ((ROCK_G[0] + (ROCK_T[0] - ROCK_G[0]) * gr) * (1 - rust) + ROCK_R[0] * rust) * lit;
           g0 = ((ROCK_G[1] + (ROCK_T[1] - ROCK_G[1]) * gr) * (1 - rust) + ROCK_R[1] * rust) * lit;
           b0 = ((ROCK_G[2] + (ROCK_T[2] - ROCK_G[2]) * gr) * (1 - rust) + ROCK_R[2] * rust) * lit;
+          if (td > 0) {   // before oxygen: the dark crust by the grain, the island a touch lighter
+            var d0 = island ? OLDL3 : OLD3, d1 = island ? OLDLG3 : OLDG3, g2 = gr * gr * (3 - 2 * gr);
+            r0 = r0 * (1 - td) + (d0[0] + (d1[0] - d0[0]) * g2) * td; g0 = g0 * (1 - td) + (d0[1] + (d1[1] - d0[1]) * g2) * td; b0 = b0 * (1 - td) + (d0[2] + (d1[2] - d0[2]) * g2) * td;
+          }
         }
         if (tp > 0) {   // the picture, green and all
           var pr = picture[j00] * w00 + picture[j10] * w10 + picture[j01] * w01 + picture[j11] * w11;
@@ -396,10 +419,15 @@
             if (ia > 0) { ia = Math.min(1, ia) * 0.94; r0 = r0 * (1 - ia) + ICEF3[0] * ia; g0 = g0 * (1 - ia) + ICEF3[1] * ia; b0 = b0 * (1 - ia) + ICEF3[2] * ia; if (sea > 0) sea = sea * (1 - ia); }
           }
         }
+        if (old && !island) {   // the drowned part of an old piece: the crust under shallow water, its texture showing through
+          r0 = r0 * (1 - dw) + SHELF3[0] * dw; g0 = g0 * (1 - dw) + SHELF3[1] * dw; b0 = b0 * (1 - dw) + SHELF3[2] * dw;
+          sea = sea * (1 - oldT);   // today's inland seas and shelves fade out as the old look comes in
+        } else if (old) sea = sea * (1 - oldT);   // an island stands clear of today's seas
+        var aBase = (old && !island) ? da : 1;   // a drowned pixel is a little see-through
         if (sea > 0) {   // the shelf, and an inland sea: the wash, translucent over the globe's sea, blended at the shore
           r0 = r0 * (1 - sea) + SHELF3[0] * sea; g0 = g0 * (1 - sea) + SHELF3[1] * sea; b0 = b0 * (1 - sea) + SHELF3[2] * sea;
-          o[oi + 3] = 255 * (1 - sea) + 255 * SHELF_A * sea;
-        } else o[oi + 3] = 255;
+          o[oi + 3] = 255 * aBase * (1 - sea) + 255 * SHELF_A * sea;
+        } else o[oi + 3] = 255 * aBase;
         o[oi] = r0; o[oi + 1] = g0; o[oi + 2] = b0;
       }
       skinCtx.putImageData(out, 0, 0);
@@ -465,7 +493,7 @@
     }
     // a piece appears and goes without a pop (13 Oct 2026, Michael: the flashes at the plate boundaries): over the FADE
     // million years before its birth age (and after its end, where it has one) it dissolves into the sea
-    var SEA_MID = mix(SEA, SEA_DEEP, 0.5);
+    var SEA_MID = mix(SEA, SEA_DEEP, 0.5), seaFill = SEA_MID;   // seaFill: the sea's own gradient of the draw in hand, so the cover leaves no ghost (21 Oct 2026)
     function dissolvePieces(V, age, g) {
       if (!pieces.length) return;
       var mats = {}, byAlpha = {};
@@ -480,7 +508,9 @@
         var key = a.toFixed(2), path = byAlpha[key] || (byAlpha[key] = new Path2D());
         for (var k = 0; k < p.rings.length; k++) { var q = new Path2D(); if (trace(p.rings[k], M, q)) path.addPath(q); }
       }
-      for (var ak in byAlpha) { ctx.globalAlpha = +ak; ctx.fillStyle = SEA_MID; ctx.fill(byAlpha[ak], 'nonzero'); ctx.strokeStyle = SEA_MID; ctx.lineWidth = 1.8 * unit(); ctx.stroke(byAlpha[ak]); }
+      ctx.save(); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);   // the gradient is in CSS pixels: the paths go to pixel space to meet it
+      for (var ak in byAlpha) { ctx.globalAlpha = +ak; ctx.fillStyle = seaFill; var pp = pixelPath(byAlpha[ak]); ctx.fill(pp, 'nonzero'); ctx.strokeStyle = seaFill; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.stroke(pp); }   // wide enough to cover the raster's edge beyond the outline
+      ctx.restore();
       ctx.globalAlpha = 1;
     }
     // the plate under a place today, by the piece whose outline holds it (13 Oct 2026, for the marker)
@@ -559,6 +589,26 @@
       }
       return out;
     }
+
+    // ---- the bodies: what is drawn at an age, and where (21 Oct 2026, the earliest continents) ----
+    // at the model's ages and the guessed ages a body is a plate with its living pieces; at the invented ages a blob. fn(id, rings, M)
+    // is called once per body with its rings in its own frame and its matrix at the age, by how: 'model', 'guessed' or 'invented'
+    function eachBody(age, how, fn) {
+      if (how === 'invented') { makeBlobs(age).forEach(function (ring, i) { fn('b' + i, [ring], blobMatrix(i, age)); }); return; }
+      var byPlate = {}, order = [];
+      for (var i = 0; i < pieces.length; i++) {
+        var p = pieces[i];
+        if (age > p.from || age < p.to) continue;
+        var list = byPlate[p.plate]; if (!list) { list = byPlate[p.plate] = []; order.push(p.plate); }
+        for (var k = 0; k < p.rings.length; k++) list.push(p.rings[k]);
+      }
+      for (var j = 0; j < order.length; j++) { var M = bodyMatrixAt(order[j], age, how); if (M) fn(order[j], byPlate[order[j]], M); }
+    }
+    function bodyMatrixAt(id, age, how) {
+      if (how === 'invented') return typeof id === 'string' && id.charAt(0) === 'b' ? blobMatrix(+id.slice(1), age) : null;
+      return how === 'guessed' ? guessedMatrix(id, age) : plateMatrixAt(id, Math.max(age, 0));
+    }
+    function blobMatrix(i, age) { return IDENT; }   // a blob stands where it was made, until the motion model
 
     // ---- the data ----
     function prepare(d) {
@@ -691,6 +741,51 @@
       if (edge && lastIslands) { ctx.fillStyle = LAND; ctx.fill(lastIslands, 'nonzero'); ctx.strokeStyle = LAND; ctx.lineWidth = 1.2 * unit(); ctx.stroke(lastIslands); }   // the part above the sea
       ctx.globalAlpha = 1;
     }
+    // the same path in screen pixels (Path2D.addPath with a matrix), for strokes that must be the same width in every direction
+    function pixelPath(unitPath) {
+      var pp = new Path2D(), m = proj === 'flat' ? new DOMMatrix([W, 0, 0, H, 0, 0]) : new DOMMatrix([W / 2 - 4, 0, 0, W / 2 - 4, W / 2, H / 2]);
+      pp.addPath(unitPath, m); return pp;
+    }
+    function degPx() { return proj === 'flat' ? fv.ppd : (W / 2 - 4) * Math.PI / 180; }   // one degree of arc in pixels (at the disc's centre)
+    // the shelf round each old piece (21 Oct 2026): the land's outline enlarged by SHELF_DEG, in the shelf wash, translucent,
+    // under the crust — a wide round stroke of the union, whose inner half the crust covers. A piece being born (dissolving in)
+    // brings its shelf in with it: the strokes are grouped by the pieces' birth fade
+    function shelfRim(V, age, how, strength) {
+      var groups = {};
+      eachBodyRings(age, how, function (ring, M, a) {
+        var key = a.toFixed(2), path = groups[key] || (groups[key] = new Path2D()), q = new Path2D();
+        if (trace(ring, M, q)) path.addPath(q);
+      });
+      ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.strokeStyle = S.shelfWash || '#7fb0cc'; ctx.lineWidth = 2 * SHELF_DEG * degPx();
+      for (var k in groups) { ctx.globalAlpha = RIM_A * (+k) * strength; ctx.stroke(pixelPath(groups[k])); }
+      ctx.restore();
+    }
+    // a hairline in the drowned crust's tone along the land's edge, under the skin, so that only its outer half shows: it
+    // cleans the raster's stair-steps at the coast, and the joins between the pieces of one plate stay covered
+    function crustEdge(V, age, how, strength) {
+      var td = Math.max(0, Math.min(1, (age - OXYGEN) / (DARK_BY - OXYGEN))), path = new Path2D();
+      eachBodyRings(age, how, function (ring, M, a) { if (a < 1) return; var q = new Path2D(); if (trace(ring, M, q)) path.addPath(q); });
+      ctx.save(); ctx.lineJoin = 'round'; ctx.strokeStyle = mix(mix(S.rockGrey, S.shelfWash || '#7fb0cc', DROWN_W), mix(S.oldCrust, S.shelfWash || '#7fb0cc', DROWN_W), td); ctx.lineWidth = 1.6; ctx.globalAlpha = DROWN_A * strength; ctx.stroke(pixelPath(path));
+      ctx.restore();
+    }
+    // every ring of every body at the age, through the view, with the piece's birth fade (1 whole; less while it dissolves in)
+    function eachBodyRings(age, how, fn) {
+      if (how === 'invented') { makeBlobs(age).forEach(function (ring, i) { fn(ring, mmul(V_now, blobMatrix(i, age)), 1); }); return; }
+      var mats = {};
+      for (var i = 0; i < pieces.length; i++) {
+        var p = pieces[i];
+        if (age > p.from || age < p.to) continue;
+        var a = 1;
+        if (age > p.from - FADE) a = (p.from - age) / FADE;
+        else if (p.to > 0 && age < p.to + FADE) a = (age - p.to) / FADE;
+        if (a <= 0) continue;
+        var M = mats[p.plate];
+        if (M === undefined) { var R = bodyMatrixAt(p.plate, age, how); M = R ? mmul(V_now, R) : null; mats[p.plate] = M; }
+        if (!M) continue;
+        for (var k = 0; k < p.rings.length; k++) fn(p.rings[k], M, a);
+      }
+    }
+    var V_now = IDENT;   // the view matrix of the draw in hand, for the helpers above
     // ---- the climate wash: a model by latitude, by distance from the sea, and by the cold ages ----
     function iceReach(age) {   // the latitude the ice reaches down to, or null when the world was warm
       for (var i = 0; i < ICEHOUSES.length; i++) if (age <= ICEHOUSES[i][0] && age >= ICEHOUSES[i][1]) return ICEHOUSES[i][2];
@@ -748,6 +843,7 @@
       var top = SEA, bottom = SEA_DEEP;
       if (ma >= NO_MAP) { var tm = Math.min(1, Math.max(0, (ma - NO_MAP) / (MOLTEN_START - NO_MAP))); top = mix(BLACK, MAGMA_GLOW, tm); bottom = mix(BLACK, MAGMA, tm); }
       sea.addColorStop(0, top); sea.addColorStop(1, bottom);
+      seaFill = sea;
       ctx.fillStyle = sea;
       if (proj === 'flat') ctx.fillRect(0, 0, W, H); else { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill(); }
       ctx.save();
@@ -755,19 +851,25 @@
       // the per-pixel passes, in CSS pixels before the unit transform: the molten sequence, or the land's skin for the
       // model's ages (while the globe itself is dragged, coarser; in play too, since 19 Oct 2026 — the fast flag that
       // put flat fills in its place is gone)
-      var skinned = false, moltenSt = null;
-      // toward the model's reach the skin fades and the guessed look fades in, over FADE million years (13 Oct 2026)
-      var tg = (data && g === 'fitted') ? Math.max(0, Math.min(1, (ma - (reach - FADE)) / FADE)) : 0;
+      var skinned = false, moltenSt = null, old = g === 'guessed' || g === 'invented', how = old ? g : 'model';
+      V_now = V;
+      // the old look — the shelves, the islands, the drowned wash — comes in over the FADE million years before the model's reach
+      // (the crossfade of the skin into the pale guessed fill of 13 Oct 2026 went 21 Oct: the guessed positions begin where the
+      // model's end, and the guessed pieces take the skin, so nothing switches at the reach but the knowing)
+      var tg = old ? 1 : ((data && g === 'fitted') ? Math.max(0, Math.min(1, (ma - (reach - FADE)) / FADE)) : 0);
       lastSkinMs = 0;
       if (g === 'none' && moltenReady()) moltenSt = paintMolten(V, ma);
-      else if (data && skinReady() && (g === 'measured' || g === 'ground' || g === 'inferred' || g === 'fitted')) { paintSkin(V, ma, g, 1 - tg); skinned = true; }
+      else if (data && skinReady() && g !== 'none') { if (tg > 0) { shelfRim(V, ma, how, tg); crustEdge(V, ma, how, tg); } paintSkin(V, ma, g, 1, how, tg); skinned = true; }
       enterUnit(r, cx, cy);
       if (data && g !== 'none') {
-        if (g === 'measured' || g === 'ground') { var lp = landPath(V, Math.max(ma, 0), 0, 'model'); if (!skinned) fillLand(lp, LAND, g === 'ground' ? 0.45 : 1, null); }
-        else if (g === 'inferred') { var lp2 = landPath(V, ma, 'model'); if (!skinned) fillLand(lp2, LAND, 1, null); }   // the model's own position, once: a guess called a guess, not a smear (Michael, 10 Oct; the seven shifted copies are gone)
-        else if (g === 'fitted') { var lp3 = landPath(V, ma, 'model'); if (!skinned) fillLand(lp3, LAND, 1 - tg, null); if (tg > 0) fillLand(landPath(V, ma, 'guessed'), LAND_PALE, 0.7 * tg, 'dashed', 0.85 * tg); }   // once, like inferred (the ghosts went 13 Oct); the guessed look fades in toward the reach
-        else if (g === 'guessed') fillLand(landPath(V, ma, 'guessed'), LAND_PALE, 0.7, 'dashed');
-        else if (g === 'invented') fillLand(landPath(V, ma, 'invented'), LAND_PALE, 0.5, 'dotted');
+        if (!skinned) {   // without the textures (or before they load): the flat fills, as before 21 Oct 2026
+          var tg = g === 'fitted' ? Math.max(0, Math.min(1, (ma - (reach - FADE)) / FADE)) : 0;
+          if (g === 'measured' || g === 'ground') fillLand(landPath(V, Math.max(ma, 0), 'model'), LAND, g === 'ground' ? 0.45 : 1, null);
+          else if (g === 'inferred') fillLand(landPath(V, ma, 'model'), LAND, 1, null);   // the model's own position, once: a guess called a guess, not a smear (Michael, 10 Oct; the seven shifted copies are gone)
+          else if (g === 'fitted') { fillLand(landPath(V, ma, 'model'), LAND, 1 - tg, null); if (tg > 0) fillLand(landPath(V, ma, 'guessed'), LAND_PALE, 0.7 * tg, 'dashed', 0.85 * tg); }
+          else if (g === 'guessed') fillLand(landPath(V, ma, 'guessed'), LAND_PALE, 0.7, 'dashed');
+          else if (g === 'invented') fillLand(landPath(V, ma, 'invented'), LAND_PALE, 0.5, 'dotted');
+        }
         if (g !== 'invented') dissolvePieces(V, ma, g);
       }
       // today's coast and the shelf's edge, this side of the seam and fading out by five million years
