@@ -1426,7 +1426,7 @@
         var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, ma: 0, lon: view.lon, lat: view.lat, projection: projection,
           onTurn: projection === 'globe' ? function () { draw(); } : undefined,   // the marks follow the disc's turn (step 10)
           fill: projection === 'flat', onDrag: projection === 'flat' ? function (dx, dy) { api.panBy(dx, dy); } : undefined,   // the flat view is the ground map's: a drag pans the map (19 Oct 2026)
-          seam: (T.deep.seam || 2.6e6) / 1e6, seed: deepGlobe ? deepGlobe.seed() : undefined,
+          seam: (T.deep.seam || 2.6e6) / 1e6, seed: (deepGlobe || deepFlat) ? (deepGlobe || deepFlat).seed() : undefined,   // two views of one world share a seed (the flat map, made first, now hands its seed to the disc: 21 Oct 2026)
           onGrade: function (grade, why) { if (projection === 'globe' || !deepGlobe) tellDeep(); } });
         inst._host = g;
         if (projection === 'flat') { deepSize(); inst.setView({ lon: view.lon, lat: view.lat, ppd: view.S, k: view.k }); }

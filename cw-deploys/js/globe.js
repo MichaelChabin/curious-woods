@@ -15,13 +15,16 @@
                 450, then today's picture blending in by 300 — paintSkin)
      fitted     to the model's reach: the pieces are real, the fits argued; drawn once, like inferred (the ghost went 13 Oct)
      guessed    past the model's reach, while cratons exist (to 4 billion): the real pieces of crust,
-                which still exist, placed by the model's last position plus a random slow drift from a
-                seed, so that going back the accuracy falls to chance
-     invented   before the oldest rock (4.0 to 4.4 billion): random land from the amount curve, the
-                shapes and places made up, only the amount from the rocks
+                which still exist, leaving the model's last position at the model's own speed and moved from
+                there by the motion model (runSim, 21 Oct 2026): a stepped run from the seed in which the plates
+                drift, collide, stick together and break apart again and never pass through each other, cached
+                per step, so that going back the accuracy falls to chance and *another guess* gives another world
+     invented   before the oldest rock (4.0 to 4.4 billion): blobs made once per seed, their total area the
+                amount curve's, the shapes and places made up, only the amount from the rocks, run by the same
+                motion model from 4,400 forward
                 (both drawn, since 21 Oct 2026, by the skin like the model's ages — the pale dashed and dotted fills are
                 gone: bare rock, going near-black before oxygen at about 2,400, the island lighter, the drowned part under a
-                wash with the texture showing through, and a translucent shelf round each piece; the brief
+                wash with the texture showing through, and a translucent shelf round each piece; the outlines softened; the brief
                 CWVault/claude/Prompt-Build-Earliest-Continents.md, the audit's §8, Michael's ruling 4 of 19 Oct)
      none       above 4.4 billion: a ball of melted rock
    and, this side of the deep seam, `ground`: today's coast and the shelf's edge as lines, the ground
@@ -152,7 +155,7 @@
     var proj = opts.projection === 'flat' ? 'flat' : 'globe', seam = opts.seam != null ? opts.seam : 2.6;
     var data = null, coast = null, shelf = null, crust = null, pieces = [], plates = {}, ages = [], grades = [], reach = 1000, lastGrade = null, destroyed = false, raf = 0, ro = null;
     var W = 0, H = 0, dpr = 1;
-    var seed = opts.seed != null ? opts.seed : ((Date.now() % 1000003) + Math.floor(Math.random() * 1000)), guesses = {}, blobs = null, blobsKey = null;
+    var seed = opts.seed != null ? opts.seed : ((Date.now() % 1000003) + Math.floor(Math.random() * 1000));
 
     // ---- geometry ----
     function xyz(lon, lat) { var la = lat * Math.PI / 180, lo = lon * Math.PI / 180; return [Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la)]; }
@@ -521,21 +524,182 @@
     // ---- the seed, and the guesses it makes ----
     function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
     function hashStr(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
-    // a plate's guess: a random axis and rate of drift, and a random full rotation for a plate the
-    // model never placed; the model's last position is the anchor, so the join at its reach is seamless
-    function guessFor(pid) {
-      var g = guesses[pid]; if (g) return g;
-      var r = mulberry((seed ^ hashStr(String(pid))) >>> 0);
-      var lat = Math.asin(2 * r() - 1) * 180 / Math.PI, lon = 360 * r() - 180, rate = DRIFT_DEG_PER_MA * (0.5 + r()) * (r() < 0.5 ? -1 : 1);
-      var fLat = Math.asin(2 * r() - 1) * 180 / Math.PI, fLon = 360 * r() - 180, fAng = 360 * r();
-      g = { axis: [lat, lon], rate: rate, free: qmat(quat(fLat, fLon, fAng)) };
-      guesses[pid] = g; return g;
+
+    // ---- the motion model (phase 3 of the earliest continents, 21 Oct 2026; the brief Prompt-Build-Earliest-Continents.md) ----
+    // Past the model's reach the pieces move by a stepped model run from the seed, so that *another guess* and a replay give the
+    // same world every time. A body is a plate with its living pieces (the cratons, from the reach outward to the oldest rock)
+    // or an invented blob (from 4,400 forward to the oldest rock); its shape for touching is a few discs along each piece
+    // (discsOf). Each body carries a turning velocity (a vector through the Earth's centre, radians a million years) that
+    // wanders from the seed (an Ornstein–Uhlenbeck walk, capped at a plate's few centimetres a year); at the reach a craton's
+    // velocity is the model's own, so nothing jumps there. The pieces never pass through each other: when two discs of
+    // different bodies overlap, the bodies are pushed apart along the great circle between the discs, by their masses, and
+    // stick — they become one cluster that turns as one — for a seeded while (150 to 600 million years), after which the
+    // cluster breaks along a random rift line through its centre, the two halves kicked apart and kept from sticking again
+    // for a while. The positions of every body at every step are cached per seed (quaternions, slerped between steps), so
+    // scrubbing the year is a lookup and not a simulation.
+    var SIM_DT = 2, OMEGA_MAX = DRIFT_DEG_PER_MA * Math.PI / 180, SIM_TAU = 160, SIM_SIGMA = 0.0175 * Math.PI / 180;
+    var SIM_LIFE = [150, 450], SIM_COOL = 60, SIM_KICK = 0.22 * Math.PI / 180;
+    var sim = null, blobCache = null;   // the caches for this seed
+    function gauss(r) { var u = 1 - r(), v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+    function qAxis(ax, ang) { var L = Math.hypot(ax[0], ax[1], ax[2]) || 1, h = ang / 2, s = Math.sin(h) / L; return [Math.cos(h), ax[0] * s, ax[1] * s, ax[2] * s]; }
+    function qmul(a, b) { return [a[0] * b[0] - a[1] * b[1] - a[2] * b[2] - a[3] * b[3], a[0] * b[1] + a[1] * b[0] + a[2] * b[3] - a[3] * b[2], a[0] * b[2] - a[1] * b[3] + a[2] * b[0] + a[3] * b[1], a[0] * b[3] + a[1] * b[2] - a[2] * b[1] + a[3] * b[0]]; }
+    function qconj(a) { return [a[0], -a[1], -a[2], -a[3]]; }
+    function qnorm(q) { var n = Math.hypot(q[0], q[1], q[2], q[3]) || 1; return [q[0] / n, q[1] / n, q[2] / n, q[3] / n]; }
+    function qToVector(q) {   // a rotation as axis times angle
+      if (q[0] < 0) q = [-q[0], -q[1], -q[2], -q[3]];
+      var w = Math.min(1, q[0]), s = Math.sqrt(Math.max(0, 1 - w * w)); if (s < 1e-9) return [0, 0, 0];
+      var ang = 2 * Math.acos(w); return [q[1] / s * ang, q[2] / s * ang, q[3] / s * ang];
     }
+    function cross(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+    function norm3(a) { var L = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / L, a[1] / L, a[2] / L]; }
+    function angBetween(a, b) { var d = a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; return Math.acos(d > 1 ? 1 : (d < -1 ? -1 : d)); }
+    function mv(M, p) { return [M[0] * p[0] + M[1] * p[1] + M[2] * p[2], M[3] * p[0] + M[4] * p[1] + M[5] * p[2], M[6] * p[0] + M[7] * p[1] + M[8] * p[2]]; }
+    // a ring's discs: its vertices in the tangent plane at its centre, the long axis by the spread, and as many discs along
+    // it as its length holds widths, each a little over half the width; and the ring's area, as the mass
+    function discsOf(ring) {
+      var n = ring.length / 3, cx = 0, cy = 0, cz = 0, i;
+      for (i = 0; i < n; i++) { cx += ring[3 * i]; cy += ring[3 * i + 1]; cz += ring[3 * i + 2]; }
+      var c = norm3([cx, cy, cz]), u = norm3(Math.abs(c[2]) < 0.9 ? cross([0, 0, 1], c) : cross([1, 0, 0], c)), v = cross(c, u);
+      var xs = new Float64Array(n), ys = new Float64Array(n), sxx = 0, sxy = 0, syy = 0;
+      for (i = 0; i < n; i++) { var p = [ring[3 * i], ring[3 * i + 1], ring[3 * i + 2]]; xs[i] = p[0] * u[0] + p[1] * u[1] + p[2] * u[2]; ys[i] = p[0] * v[0] + p[1] * v[1] + p[2] * v[2]; sxx += xs[i] * xs[i]; sxy += xs[i] * ys[i]; syy += ys[i] * ys[i]; }
+      var th = 0.5 * Math.atan2(2 * sxy, sxx - syy), ct = Math.cos(th), st = Math.sin(th), aMin = Infinity, aMax = -Infinity, bMin = Infinity, bMax = -Infinity;
+      for (i = 0; i < n; i++) { var a = xs[i] * ct + ys[i] * st, b = -xs[i] * st + ys[i] * ct; if (a < aMin) aMin = a; if (a > aMax) aMax = a; if (b < bMin) bMin = b; if (b > bMax) bMax = b; }
+      var L = aMax - aMin, Wd = Math.max(bMax - bMin, 0.01), nd = Math.max(1, Math.min(6, Math.round(L / Wd))), r = Wd / 2 * 1.12, bMid = (bMin + bMax) / 2, out = [];
+      for (var k = 0; k < nd; k++) {
+        var a2 = aMin + L * (k + 0.5) / nd, x = a2 * ct - bMid * st, y = a2 * st + bMid * ct;
+        out.push({ c: norm3([c[0] + x * u[0] + y * v[0], c[1] + x * u[1] + y * v[1], c[2] + x * u[2] + y * v[2]]), r: r });
+      }
+      return { discs: out, mass: Math.max(L * Wd, 1e-4) };
+    }
+    // the model's own turning velocity at its reach, from its last two samples: the craton leaves the reach as it arrived
+    function modelVelocity(pid) {
+      var P = plates[pid]; if (!P || P.q.length < 2) return [0, 0, 0];
+      var n = P.q.length, a1 = ages[P.first + n - 1], a0 = ages[P.first + n - 2]; if (!(a1 > a0)) return [0, 0, 0];
+      var w = qToVector(qmul(P.q[n - 1], qconj(P.q[n - 2]))), k = 1 / (a1 - a0);
+      w = [w[0] * k, w[1] * k, w[2] * k]; var L = Math.hypot(w[0], w[1], w[2]);
+      if (L > OMEGA_MAX) { var f = OMEGA_MAX / L; w = [w[0] * f, w[1] * f, w[2] * f]; }
+      return w;
+    }
+    // the stepped model itself. bodies: [{ id, q, omega, parts: [{ from, to, discs, mass }] }] — a part is alive at an age when
+    // from >= age >= to; the body turns while any part lives. The run goes from age `from` by `dt` (signed) for `steps` steps,
+    // the randomness all from `rng`, and returns the quaternion of every body at every step (step 0 the start)
+    function runSim(bodies, from, dt, steps, rng) {
+      var nb = bodies.length, out = new Float32Array((steps + 1) * nb * 4), i, j, k;
+      var cl = new Array(nb), clusters = [], cool = {};
+      for (i = 0; i < nb; i++) { cl[i] = i; clusters.push({ members: [i], omega: bodies[i].omega.slice(), joined: from, life: Infinity }); }
+      function store(step) { for (var b = 0; b < nb; b++) { var q = bodies[b].q, o = (step * nb + b) * 4; out[o] = q[0]; out[o + 1] = q[1]; out[o + 2] = q[2]; out[o + 3] = q[3]; } }
+      function alive(b, age) { var ps = bodies[b].parts; for (var p = 0; p < ps.length; p++) if (ps[p].from >= age && age >= ps[p].to) return true; return false; }
+      function massOf(b, age) { var ps = bodies[b].parts, m = 0; for (var p = 0; p < ps.length; p++) if (ps[p].from >= age && age >= ps[p].to) m += ps[p].mass; return m; }
+      function clusterMass(c, age) { var m = 0; for (var t = 0; t < c.members.length; t++) m += massOf(c.members[t], age); return m; }
+      function turn(c, ax, ang) { var dq = qAxis(ax, ang); for (var t = 0; t < c.members.length; t++) { var b = c.members[t]; bodies[b].q = qnorm(qmul(dq, bodies[b].q)); } }
+      var world = new Array(nb), bound = new Array(nb);
+      function place(b, age) {   // the body's discs in the world at this step, and a cap round them all
+        var M = qmat(bodies[b].q), ps = bodies[b].parts, ds = [], cx = 0, cy = 0, cz = 0;
+        for (var p = 0; p < ps.length; p++) { if (!(ps[p].from >= age && age >= ps[p].to)) continue; for (var d = 0; d < ps[p].discs.length; d++) { var w = mv(M, ps[p].discs[d].c); ds.push({ c: w, r: ps[p].discs[d].r }); cx += w[0]; cy += w[1]; cz += w[2]; } }
+        world[b] = ds; if (!ds.length) { bound[b] = null; return; }
+        var bc = norm3([cx, cy, cz]), br = 0; for (var e = 0; e < ds.length; e++) { var a = angBetween(bc, ds[e].c) + ds[e].r; if (a > br) br = a; }
+        bound[b] = { c: bc, r: br };
+      }
+      function centroid(c, age) { var x = 0, y = 0, z = 0; for (var t = 0; t < c.members.length; t++) { var bd = bound[c.members[t]]; if (bd) { var m = massOf(c.members[t], age); x += bd.c[0] * m; y += bd.c[1] * m; z += bd.c[2] * m; } } return norm3([x, y, z]); }
+      store(0);
+      for (k = 1; k <= steps; k++) {
+        var age = from + k * dt, adt = Math.abs(dt);
+        // the velocities wander: toward rest over SIM_TAU, a seeded nudge each step, a big cluster nudged less, capped
+        for (i = 0; i < clusters.length; i++) {
+          var c = clusters[i]; if (!c.members.length) continue;
+          var w = c.omega, f = 1 - adt / SIM_TAU, s = SIM_SIGMA * Math.sqrt(adt) / Math.sqrt(c.members.length), cap = Math.max(0.35 * OMEGA_MAX, OMEGA_MAX / (1 + 0.25 * (c.members.length - 1)));
+          w[0] = w[0] * f + gauss(rng) * s; w[1] = w[1] * f + gauss(rng) * s; w[2] = w[2] * f + gauss(rng) * s;
+          var L = Math.hypot(w[0], w[1], w[2]); if (L > cap) { var g = cap / L; w[0] *= g; w[1] *= g; w[2] *= g; }
+          if (L > 1e-12) turn(c, w, L * adt);
+        }
+        for (i = 0; i < nb; i++) if (alive(i, age)) place(i, age); else { world[i] = []; bound[i] = null; }
+        // the pieces never pass through each other: push apart, and stick, in two passes
+        for (var pass = 0; pass < 2; pass++) {
+          for (i = 0; i < nb; i++) {
+            if (!bound[i]) continue;
+            for (j = i + 1; j < nb; j++) {
+              if (!bound[j] || cl[i] === cl[j]) continue;
+              if (angBetween(bound[i].c, bound[j].c) > bound[i].r + bound[j].r) continue;
+              var best = 0, bi = null, bj = null, di = world[i], dj = world[j];
+              for (var a = 0; a < di.length; a++) for (var b = 0; b < dj.length; b++) { var pen = di[a].r + dj[b].r - angBetween(di[a].c, dj[b].c); if (pen > best) { best = pen; bi = di[a]; bj = dj[b]; } }
+              if (!(best > 0)) continue;
+              var ci = clusters[cl[i]], cj = clusters[cl[j]], mi = clusterMass(ci, age), mj = clusterMass(cj, age), mt = mi + mj || 1;
+              var n = cross(bi.c, bj.c); if (Math.hypot(n[0], n[1], n[2]) < 1e-9) n = cross(bi.c, [0, 0, 1]);
+              var push = best * 1.05;   // a positive turn about n carries i toward j: so i turns back, j on
+              turn(ci, n, -push * mj / mt); turn(cj, n, push * mi / mt);
+              for (var t = 0; t < ci.members.length; t++) place(ci.members[t], age);
+              for (t = 0; t < cj.members.length; t++) place(cj.members[t], age);
+              var coolKey = i < j ? i + '|' + j : j + '|' + i;
+              if (cool[coolKey] !== undefined && Math.abs(age - cool[coolKey]) < SIM_COOL) continue;   // lately parted: they touch and go
+              // they stick: one cluster, one velocity by their masses, a life from the seed
+              var wi = ci.omega, wj = cj.omega, w2 = [(wi[0] * mi + wj[0] * mj) / mt, (wi[1] * mi + wj[1] * mj) / mt, (wi[2] * mi + wj[2] * mj) / mt];
+              var keep = cl[i], gone = cl[j];
+              for (t = 0; t < cj.members.length; t++) { ci.members.push(cj.members[t]); cl[cj.members[t]] = keep; }
+              cj.members = []; ci.omega = w2; ci.joined = age; ci.life = SIM_LIFE[0] + rng() * SIM_LIFE[1];
+            }
+          }
+        }
+        // a cluster that has held its life breaks along a random rift line through its centre, the halves kicked apart
+        for (i = 0; i < clusters.length; i++) {
+          var cc = clusters[i]; if (cc.members.length < 2 || Math.abs(age - cc.joined) < cc.life) continue;
+          var live = cc.members.filter(function (b) { return bound[b]; }); if (live.length < 2) { cc.joined = age; continue; }
+          var cen = centroid(cc, age), rv = norm3([gauss(rng), gauss(rng), gauss(rng)]), nrm = norm3(cross(cen, rv));
+          var A = [], B = [];
+          for (var t2 = 0; t2 < cc.members.length; t2++) { var bb = cc.members[t2], bd = bound[bb]; var side = bd ? (bd.c[0] * nrm[0] + bd.c[1] * nrm[1] + bd.c[2] * nrm[2]) : (t2 % 2 ? 1 : -1); (side >= 0 ? A : B).push(bb); }
+          if (!A.length || !B.length) { var all = cc.members.slice(); A = all.slice(0, Math.ceil(all.length / 2)); B = all.slice(A.length); }
+          var nc = { members: B, omega: cc.omega.slice(), joined: age, life: SIM_LIFE[0] + rng() * SIM_LIFE[1] }; clusters.push(nc);
+          cc.members = A; cc.joined = age; cc.life = SIM_LIFE[0] + rng() * SIM_LIFE[1];
+          for (t2 = 0; t2 < B.length; t2++) cl[B[t2]] = clusters.length - 1;
+          var cA = centroid(cc, age), cB = centroid(nc, age), ax = cross(cA, cB), aL = Math.hypot(ax[0], ax[1], ax[2]);
+          if (aL > 1e-9) { ax = [ax[0] / aL, ax[1] / aL, ax[2] / aL]; cc.omega[0] -= ax[0] * SIM_KICK; cc.omega[1] -= ax[1] * SIM_KICK; cc.omega[2] -= ax[2] * SIM_KICK; nc.omega[0] += ax[0] * SIM_KICK; nc.omega[1] += ax[1] * SIM_KICK; nc.omega[2] += ax[2] * SIM_KICK; }
+          for (var x1 = 0; x1 < A.length; x1++) for (var y1 = 0; y1 < B.length; y1++) cool[A[x1] < B[y1] ? A[x1] + '|' + B[y1] : B[y1] + '|' + A[x1]] = age;
+        }
+        store(k);
+      }
+      return out;
+    }
+    // the quaternion of body b at an age, slerped between the steps on either side
+    function simQuat(run, nb, b, from, dt, age) {
+      var f = (age - from) / dt, steps = run.length / (nb * 4) - 1; if (f < 0) f = 0; if (f > steps) f = steps;
+      var k = Math.floor(f), t = f - k, o0 = (k * nb + b) * 4, q0 = [run[o0], run[o0 + 1], run[o0 + 2], run[o0 + 3]];
+      if (t <= 0 || k >= steps) return q0;
+      var o1 = ((k + 1) * nb + b) * 4; return slerp(q0, [run[o1], run[o1 + 1], run[o1 + 2], run[o1 + 3]], t);
+    }
+    // the cratons' run: every plate with a piece older than the reach, from the reach to the oldest rock
+    function cratonSim() {
+      if (sim && sim.seed === seed && sim.pieces === pieces.length) return sim;
+      var t0 = performance.now(), byPlate = {}, order = [], i;
+      for (i = 0; i < pieces.length; i++) {
+        var p = pieces[i]; if (p.from <= reach) continue;
+        var body = byPlate[p.plate]; if (!body) { body = byPlate[p.plate] = { id: p.plate, parts: [] }; order.push(p.plate); }
+        var rs = pieceRings(p, reach + 1, 'guessed');
+        for (var k = 0; k < rs.length; k++) { var d = discsOf(rs[k]); body.parts.push({ from: p.from, to: p.to, discs: d.discs, mass: d.mass }); }
+      }
+      var bodies = order.map(function (pid) {
+        var b = byPlate[pid], P = plates[pid], q = P ? P.q[P.q.length - 1] : [1, 0, 0, 0];
+        if (P && reach < ages[P.first + P.q.length - 1]) { var M = plateMatrixAt(pid, reach); q = matToQuat(M); }   // a plate whose samples run past the reach
+        b.q = q.slice(); b.omega = modelVelocity(pid); b.index = order.indexOf(pid); return b;
+      });
+      var steps = Math.ceil((OLDEST_ROCK - reach) / SIM_DT), run = runSim(bodies, reach, SIM_DT, steps, mulberry((seed ^ 0x51A7C0DE) >>> 0));
+      sim = { seed: seed, pieces: pieces.length, index: {}, run: run, nb: bodies.length, from: reach, dt: SIM_DT, ms: performance.now() - t0 };
+      bodies.forEach(function (b, j) { sim.index[b.id] = j; });
+      return sim;
+    }
+    function matToQuat(M) {   // a rotation matrix's quaternion
+      var tr = M[0] + M[4] + M[8], q;
+      if (tr > 0) { var s = Math.sqrt(tr + 1) * 2; q = [0.25 * s, (M[7] - M[5]) / s, (M[2] - M[6]) / s, (M[3] - M[1]) / s]; }
+      else if (M[0] > M[4] && M[0] > M[8]) { var s1 = Math.sqrt(1 + M[0] - M[4] - M[8]) * 2; q = [(M[7] - M[5]) / s1, 0.25 * s1, (M[1] + M[3]) / s1, (M[2] + M[6]) / s1]; }
+      else if (M[4] > M[8]) { var s2 = Math.sqrt(1 + M[4] - M[0] - M[8]) * 2; q = [(M[2] - M[6]) / s2, (M[1] + M[3]) / s2, 0.25 * s2, (M[5] + M[7]) / s2]; }
+      else { var s3 = Math.sqrt(1 + M[8] - M[0] - M[4]) * 2; q = [(M[3] - M[1]) / s3, (M[2] + M[6]) / s3, (M[5] + M[7]) / s3, 0.25 * s3]; }
+      return qnorm(q);
+    }
+    // a plate's position at a guessed age: the model's last position at the reach, the run's after; a plate the model never
+    // placed, or that has no piece older than the reach, stands where the model left it
     function guessedMatrix(pid, age) {
-      var base = plateMatrixAt(pid, reach), g = guessFor(pid);
-      if (!base) base = g.free;
-      var drift = qmat(quat(g.axis[0], g.axis[1], g.rate * Math.max(0, age - reach)));
-      return mmul(drift, base);
+      if (age <= reach || !pieces.length) return plateMatrixAt(pid, Math.min(age, reach));
+      var s = cratonSim(), b = s.index[pid];
+      if (b === undefined) return plateMatrixAt(pid, reach);
+      return qmat(simQuat(s.run, s.nb, b, s.from, s.dt, age));
     }
     // invented land: blobs whose total area is the crust curve's amount at this age, shapes and places from the seed
     function curveValue(pts, age) { return window.CW.curveAt(pts, window.CW.maToYear(age)); }   // the one curve reader (js/cw-time.js)
@@ -546,26 +710,49 @@
       return c > 0 ? Math.max(0.02, Math.min(0.9, l / c)) : 0;
     }
     function crustFraction(age) { return crust ? curveValue(crust.points, age) : 0.02; }
-    function makeBlobs(age) {
-      var key = seed + ':' + Math.round(age / 20);   // the shapes hold for twenty million years at a time
-      if (blobsKey === key) return blobs;
-      var r = mulberry((seed ^ 0x9E3779B9 ^ Math.round(age / 20)) >>> 0), total = crustFraction(age) * 4 * Math.PI, n = 5 + Math.floor(r() * 5), out = [];
+    // the blobs are made once per seed (phase 3; until then they were remade every twenty million years), at the size the
+    // curve gives at the oldest rock, placed clear of each other, and run from 4,400 forward by the same motion model; at an
+    // age each is shrunk to the curve's amount then
+    var BLOB_START = NO_MAP;
+    function blobSet() {
+      if (blobCache && blobCache.seed === seed && blobCache.crust === crust) return blobCache;
+      var r = mulberry((seed ^ 0x9E3779B9) >>> 0), ref = crustFraction(OLDEST_ROCK), total = ref * 4 * Math.PI, n = 5 + Math.floor(r() * 5), rings = [], centres = [], rhos = [];
       var shares = []; for (var i = 0; i < n; i++) shares.push(0.4 + r()); var sum = shares.reduce(function (a, b) { return a + b; }, 0);
       for (var k = 0; k < n; k++) {
         var area = total * shares[k] / sum, rho = Math.acos(Math.max(-1, 1 - area / (2 * Math.PI)));   // a cap of this area has this angular radius
         if (!(rho > 0.01)) continue;
+        var c = null;
+        for (var tries = 0; tries < 40 && !c; tries++) {   // a place clear of the blobs already made, at their full size
+          var cLat = Math.asin((2 * r() - 1) * 0.82), cLon = (2 * r() - 1) * Math.PI, cand = [Math.cos(cLat) * Math.cos(cLon), Math.cos(cLat) * Math.sin(cLon), Math.sin(cLat)], clear = true;   // within about 55° of the equator: a blob on a pole is a bar across the flat map
+          for (var e = 0; e < centres.length && clear; e++) if (angBetween(cand, centres[e]) < (rho + rhos[e]) * 1.3) clear = false;
+          if (clear || tries === 39) c = cand;
+        }
         // the outline (phase 2, 21 Oct 2026): ninety-six points and three gentle harmonics, where twenty-eight points and two strong ones made corners
-        var cLat = Math.asin(2 * r() - 1), cLon = (2 * r() - 1) * Math.PI, m = 96, ring = new Float64Array(m * 3), w1 = 2 + Math.floor(r() * 3), w2 = 5 + Math.floor(r() * 4), w3 = 9 + Math.floor(r() * 6), p1 = r() * 6.28, p2 = r() * 6.28, p3 = r() * 6.28;
-        var c = [Math.cos(cLat) * Math.cos(cLon), Math.cos(cLat) * Math.sin(cLon), Math.sin(cLat)];
-        var u = [-Math.sin(cLon), Math.cos(cLon), 0], v = [-Math.sin(cLat) * Math.cos(cLon), -Math.sin(cLat) * Math.sin(cLon), Math.cos(cLat)];
+        var m = 96, ring = new Float64Array(m * 3), w1 = 2 + Math.floor(r() * 3), w2 = 5 + Math.floor(r() * 4), w3 = 9 + Math.floor(r() * 6), p1 = r() * 6.28, p2 = r() * 6.28, p3 = r() * 6.28;
+        var u = norm3(Math.abs(c[2]) < 0.9 ? cross([0, 0, 1], c) : cross([1, 0, 0], c)), v = cross(c, u);
         for (var j = 0; j < m; j++) {
           var t = j / m * 2 * Math.PI, rr = rho * (1 + 0.2 * Math.sin(w1 * t + p1) + 0.1 * Math.sin(w2 * t + p2) + 0.045 * Math.sin(w3 * t + p3)), cr = Math.cos(rr), sr = Math.sin(rr);
           var x = c[0] * cr + (u[0] * Math.cos(t) + v[0] * Math.sin(t)) * sr, y = c[1] * cr + (u[1] * Math.cos(t) + v[1] * Math.sin(t)) * sr, z = c[2] * cr + (u[2] * Math.cos(t) + v[2] * Math.sin(t)) * sr;
           ring[3 * j] = x; ring[3 * j + 1] = y; ring[3 * j + 2] = z;
         }
-        out.push(ring);
+        rings.push(ring); centres.push(c); rhos.push(rho);
       }
-      blobs = out; blobsKey = key; return out;
+      // the run: one disc per blob, its radius the curve's at the age (a part per step of size would be exact; the largest serves)
+      var bodies = rings.map(function (ring, i) { return { id: 'b' + i, q: [1, 0, 0, 0], omega: [gauss(r) * 0.4 * OMEGA_MAX, gauss(r) * 0.4 * OMEGA_MAX, gauss(r) * 0.4 * OMEGA_MAX], parts: [{ from: BLOB_START, to: 0, discs: [{ c: centres[i], r: rhos[i] * 1.1 }], mass: Math.PI * rhos[i] * rhos[i] }] }; });
+      var steps = Math.ceil((BLOB_START - OLDEST_ROCK) / SIM_DT), run = bodies.length ? runSim(bodies, BLOB_START, -SIM_DT, steps, mulberry((seed ^ 0xB10B5) >>> 0)) : new Float32Array(0);
+      blobCache = { seed: seed, crust: crust, rings: rings, rhos: rhos, ref: ref, run: run, nb: bodies.length, byAge: {} };
+      return blobCache;
+    }
+    function makeBlobs(age) {   // the blobs' rings at an age: the set's, shrunk to the curve's amount then
+      var set = blobSet(), key = String(Math.round(age * 2) / 2);
+      if (set.byAge[key]) return set.byAge[key];
+      var k = set.ref > 0 ? Math.max(0.02, Math.min(1, crustFraction(age) / set.ref)) : 1;
+      var out = set.rings.map(function (ring) { return k < 1 ? shrunk(ring, k) : ring; });
+      set.byAge[key] = out; return out;
+    }
+    function blobMatrix(i, age) {
+      var set = blobSet(); if (i >= set.nb) return IDENT;
+      return qmat(simQuat(set.run, set.nb, i, BLOB_START, -SIM_DT, age));
     }
 
     // a ring's corners cut (Chaikin), by t — 0 leaves it, 1 cuts every corner to its quarter points — a pass at a time, the
@@ -628,7 +815,6 @@
       if (how === 'invented') return typeof id === 'string' && id.charAt(0) === 'b' ? blobMatrix(+id.slice(1), age) : null;
       return how === 'guessed' ? guessedMatrix(id, age) : plateMatrixAt(id, Math.max(age, 0));
     }
-    function blobMatrix(i, age) { return IDENT; }   // a blob stands where it was made, until the motion model
 
     // ---- the data ----
     function prepare(d) {
@@ -739,7 +925,7 @@
         land.addPath(p); any = true;
         if (share > 0) { var q = new Path2D(); if (trace(shrunk(ring, share), M, q)) islands.addPath(q); }
       }
-      if (how === 'invented') makeBlobs(age).forEach(function (ring) { add(ring, Vs); });
+      if (how === 'invented') makeBlobs(age).forEach(function (ring, i) { add(ring, mmul(Vs, blobMatrix(i, age))); });
       else for (var i = 0; i < pieces.length; i++) {
         var p = pieces[i];
         if (age > p.from || age < p.to) continue;
@@ -972,7 +1158,7 @@
     load(opts.plates || '../stories/plates/continents.json', prepare);
     loadTextures();
     load(opts.coast === undefined ? '../art/maps/world-tiles/contours-0.json' : opts.coast, prepareCoast);
-    load(opts.crust === undefined ? '../stories/curves/crust-and-land.json' : opts.crust, function (c) { crust = c; blobsKey = null; schedule(); });
+    load(opts.crust === undefined ? '../stories/curves/crust-and-land.json' : opts.crust, function (c) { crust = c; blobCache = null; schedule(); });
     if (window.ResizeObserver) { ro = new ResizeObserver(function () { size(); schedule(); }); ro.observe(host); }
     size(); draw();
 
@@ -1005,9 +1191,10 @@
       grade: function () { return gradeFor(ma); },
       moltenPhase: function () { return ma > NO_MAP ? moltenState(ma).phase : null; },
       skinMs: function () { return lastSkinMs; },
-      reguess: function () { seed = (seed * 1103515245 + 12345 + Date.now()) % 2147483647; guesses = {}; blobsKey = null; schedule(); return seed; },
+      reguess: function () { seed = (seed * 1103515245 + 12345 + Date.now()) % 2147483647; sim = null; blobCache = null; schedule(); return seed; },
       seed: function () { return seed; },
-      setSeed: function (s) { seed = s; guesses = {}; blobsKey = null; schedule(); },   // two views of one world share a seed
+      setSeed: function (s) { seed = s; sim = null; blobCache = null; schedule(); },   // two views of one world share a seed
+      simMs: function () { return sim ? sim.ms : null; },   // the cratons' run's cost, for checking
       setProjection: function (p) { proj = p === 'flat' ? 'flat' : 'globe'; size(); schedule(); },
       projection: function () { return proj; },
       destroy: function () { destroyed = true; cancelAnimationFrame(raf); if (ro) ro.disconnect(); host.innerHTML = ''; host.classList.remove('cw-globe'); }

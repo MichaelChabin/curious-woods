@@ -367,6 +367,7 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** The young Earth as a story picture a child can watch without being distracted by it; a motion model that could later be told as a story (continents assembling).
 **Costs.** The look is cheap once the skin is cheap and the shelf is masked (the audit's steps 4 and 5). The collisions are the hard part: a stepped motion model with contact, run from the seed so *another guess* and replay agree, joined seamlessly to the real cratons at 1,000 million years, cached per age step. Last, after the look.
 **Source.** Michael's prompt of 19 Oct, *Coming later*; the audit's §8.
+*Built 21–22 Oct 2026 in three commits (the look, the outlines, the motion), from the brief `claude/Prompt-Build-Earliest-Continents.md`; MANIFEST entries of those dates. The motion is a stepped model from the seed: the plates leave the model at its own speed, wander, stick for 150 to 600 million years and break along a rift line; five numbers at the head of the model set how often they touch and how long they hold. Not yet seen by Michael.*
 
 ## Stories
 
