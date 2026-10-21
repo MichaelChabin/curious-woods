@@ -208,7 +208,7 @@
     // while the globe itself is dragged the skin is painted at half this again, coarser for a moment and sharp on
     // release, instead of the flat fills standing in (Michael, 14 Oct 2026: the textures went brown under the hand)
     var skinScale = SKIN_SCALE;   // one resolution, dragging or not (19 Oct 2026, step 5; the quarter-resolution drag of 14 Oct is gone)
-    var idCanvas = null, idCtx = null, skinCanvas = null, skinCtx = null, plateIndex = {}, plateByIndex = [null];
+    var idCanvas = null, idCtx = null, skinCanvas = null, skinCtx = null, iceCanvas = null, iceCtx = null, plateIndex = {}, plateByIndex = [null];
     function texCanvas() { var c = document.createElement('canvas'); c.width = TW; c.height = TH; return c; }
     function loadImage(src, then) {
       if (!src) return;
@@ -347,6 +347,14 @@
       if (!skinCanvas) { skinCanvas = document.createElement('canvas'); skinCtx = skinCanvas.getContext('2d'); }
       if (skinCanvas.width !== SW || skinCanvas.height !== SH) { skinCanvas.width = SW; skinCanvas.height = SH; }
       return skinCtx.createImageData(SW, SH);
+    }
+    // the ice of deep time has a canvas of its own (22 Oct 2026, Michael on the iPad: inside an ice window the land vanished
+    // under the white bars). It shared the skin's canvas, drawn to the page and then overwritten by the ice in the same frame;
+    // Safari defers a canvas-to-canvas draw, so the ice stood where the land had been
+    function iceTarget() {
+      if (!iceCanvas) { iceCanvas = document.createElement('canvas'); iceCtx = iceCanvas.getContext('2d'); }
+      if (iceCanvas.width !== SW || iceCanvas.height !== SH) { iceCanvas.width = SW; iceCanvas.height = SH; }
+      return iceCtx.createImageData(SW, SH);
     }
     // the land's skin for the model's ages, by the age of life (Michael's ruling 4, 19 Oct 2026): bare rock — grey to tan by
     // the grain, rusty where the cooling map runs high, lit by the grain, no green anywhere — until plants, about 450 million
@@ -1034,7 +1042,7 @@
     function paintIce(V, age) {
       var st = iceStrength(age); if (!st || st[1] <= 0) return;
       var reach = st[0], strength = st[1], grain = tex['rock-grain'], vc = viewPixels(V), w3 = vc.w3, ks = vc.k, inside = vc.inside, n = SW * SH;
-      var out = skinTarget(), o = out.data, north = !(age <= 34 && age > 2.6);   // the Antarctic ice came first; the north's from 2.6
+      var out = iceTarget(), o = out.data, north = !(age <= 34 && age > 2.6);   // the Antarctic ice came first; the north's from 2.6
       var snowball = reach <= 0, heart = snowball ? 0.9 : DEEP_ICE_A;   // a snowball has no edge to feather: white all over, a little stronger
       for (var i = 0; i < n; i++) {
         if (!inside[i]) continue;
@@ -1045,8 +1053,8 @@
         if (grain) { a *= 0.8 + 0.4 * grain[ks[i]] / 255; if (a > 1) a = 1; }
         var oi = i << 2; o[oi] = ICE3[0]; o[oi + 1] = ICE3[1]; o[oi + 2] = ICE3[2]; o[oi + 3] = 255 * heart * strength * a;
       }
-      skinCtx.putImageData(out, 0, 0);
-      ctx.drawImage(skinCanvas, 0, 0, W, H);
+      iceCtx.putImageData(out, 0, 0);
+      ctx.drawImage(iceCanvas, 0, 0, W, H);
     }
     var unitPx = 1;
     function unit() { return unitPx; }   // one screen pixel in the current unit transform
