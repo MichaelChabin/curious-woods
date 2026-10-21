@@ -49,7 +49,8 @@
    panning the map — so the seam is a short fade between two paintings of one view; the 2.4× arrival
    of 6 Oct and the box grown to 2:1 are gone. Over the globe nothing of the map responds: no marks,
    no pan, no zoom; its own drag turns it. `map.deep()` says whether it is on and how sure the
-   positions are; `map.deepPlace(lon, lat)` carries a place today to where it was at the current age.
+   positions are; `map.deepPlace(lon, lat)` carries a place today to where it was at the current age,
+   or answers null until the plates have arrived — `map.deepReady(fn)` calls fn then (22 Oct 2026).
    Since 20 Oct 2026 (step 10) the map's own marks are drawn over the deep views too, by the one placer:
    each place carried to where it was at the age on its plate, and on the disc projected by the globe
    (the far side is left out); a mark may carry `alpha`. The engine's own cities and marker are gone.
@@ -622,6 +623,7 @@
       if (!pyr) return toPixel(region, lon, lat, w, h);
       if (typeof deepOn !== 'undefined' && deepOn && (deepGlobe || deepFlat)) {
         var eng = deepGlobe && deepGlobe._host.style.display !== 'none' ? deepGlobe : deepFlat, at = eng.placeAt(lon, lat);
+        if (!at) return null;   // the plates have not arrived: nothing to carry it on, and the view paints nothing yet (22 Oct 2026)
         if (eng === deepGlobe) { var q = eng.project(at.lon, at.lat); return q ? { x: q.x + eng._host.offsetLeft, y: q.y + eng._host.offsetTop } : null; }
         lon = at.lon; lat = at.lat;
       }
@@ -1425,9 +1427,10 @@
         var g = document.createElement('div'); deepHost.appendChild(g);
         var inst = window.cwGlobe(g, { plates: T.deep.plates, coast: T.deep.coast, crust: T.deep.crust, ma: 0, lon: view.lon, lat: view.lat, projection: projection,
           onTurn: projection === 'globe' ? function () { draw(); } : undefined,   // the marks follow the disc's turn (step 10)
-          fill: projection === 'flat', onDrag: projection === 'flat' ? function (dx, dy) { api.panBy(dx, dy); } : undefined,   // the flat view is the ground map's: a drag pans the map (19 Oct 2026)
+          fill: projection === 'flat', gestures: projection !== 'flat',   // the flat view is the ground map's: the stage's own drag, pinch and wheel move it (22 Oct 2026; since 19 Oct a drag had been handed back as a pan, and a pinch scrolled the page)
           seam: (T.deep.seam || 2.6e6) / 1e6, seed: (deepGlobe || deepFlat) ? (deepGlobe || deepFlat).seed() : undefined,   // two views of one world share a seed (the flat map, made first, now hands its seed to the disc: 21 Oct 2026)
-          onGrade: function (grade, why) { if (projection === 'globe' || !deepGlobe) tellDeep(); } });
+          onGrade: function (grade, why) { if (projection === 'globe' || !deepGlobe) tellDeep(); },
+          onReady: function () { var fs = deepReadyFns; deepReadyFns = []; fs.forEach(function (f) { f(); }); } });   // the plates are here: whoever waited to carry a place (22 Oct 2026)
         inst._host = g;
         if (projection === 'flat') { deepSize(); inst.setView({ lon: view.lon, lat: view.lat, ppd: view.S, k: view.k }); }
         if (projection === 'globe') { deepGlobe = inst; groundToGlobe(); }
@@ -1438,7 +1441,9 @@
         if (!window.cwGlobe) { console.warn('map.js: a deep-time year was asked for, but js/globe.js is not loaded; the map shows today'); return false; }
         deepHost = document.createElement('div'); deepHost.className = 'cw-deep-base';
         stage.insertBefore(deepHost, svg);   // under the marks (step 10): the one placer draws over the deep views too
-        ['pointerdown', 'wheel', 'click', 'dblclick'].forEach(function (t) { deepHost.addEventListener(t, function (e) { e.stopPropagation(); }); });
+        // the disc keeps its gestures to itself (a drag turns it); the flat deep map is the stage's own view, so a press,
+        // a pinch or the wheel over it reaches the stage and pans or zooms the map as on the ground (22 Oct 2026)
+        ['pointerdown', 'wheel', 'click', 'dblclick'].forEach(function (t) { deepHost.addEventListener(t, function (e) { if (deepGlobe && deepGlobe._host.contains(e.target)) e.stopPropagation(); }); });
         if (window.ResizeObserver) new ResizeObserver(deepSize).observe(stage);
         return true;
       }
@@ -1471,7 +1476,10 @@
       // (the marker riding its plate of 13 Oct, deepMark, and the cities, deepCities, went 20 Oct 2026, step 10: the page's marks are drawn over the deep views by the one placer, carried to their place at the age)
       // (deepFast, the flat fills while the year ran, went 19 Oct 2026: the skin paints in play now.)
       // a place today carried to where it was at the current age (19 Oct 2026): a page zooms the map there; the flat deep map, being the map's view, follows
+      // null while the deep view's plates have not arrived (the first deep year of a visit); deepReady(fn) calls fn once they have (22 Oct 2026)
+      var deepReadyFns = [];
       api.deepPlace = function (lon, lat) { var v = deepGlobe || deepFlat; return v ? v.placeAt(lon, lat) : { lon: lon, lat: lat }; };
+      api.deepReady = function (f) { var v = deepGlobe || deepFlat; if (!v || v.ready()) f(); else deepReadyFns.push(f); };
       api.deepReguess = function () { if (!deepGlobe && !deepFlat) return; var s = (deepGlobe || deepFlat).reguess(); if (deepGlobe && deepFlat) (deepGlobe === (deepGlobe || deepFlat) ? deepFlat : deepGlobe).setSeed(s); };
       api.setTime = function (year) {
         timeYear = +year;

@@ -346,6 +346,13 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** One texture read per pixel; needs the per-pixel globe.
 **Source.** Claude, 12 Oct, making the molten maps for Michael.
 
+### A sharper skin for the zoomed deep map   · 22 Oct 2026 · loose
+**Idea.** The flat deep map's skin is a 1,024-by-512 raster painted at half the page's resolution, so past about 6 px per degree the texels show as blocks, and the zoom to a deep event's place is held there. A sharper skin — the id raster at 2,048 or 4,096 with the pieces' outlines drawn as paths over it, or the texels sampled smoothly at the edges — would let the place zoom to the 2,000-km box the ground map uses.
+**Where it sits.** `globe.js`, the flat deep map; the Time Machine's zoom to a deep event's place.
+**Opens.** The deep map at the ground map's depth, so a tap on Bangiomorpha lands as close as a tap on Tambora.
+**Costs.** Four to sixteen times the raster, built per half-million-year step and per seed; the skin pass slower by the same on the iPad. Outlines as paths are a second renderer beside the raster.
+**Source.** Claude, 22 Oct, holding the zoom at the picture's resolution for Michael's "pixelated image".
+
 ### Two year markers, equals (working name)   · 19 Oct 2026 · ruled
 **Idea.** Two markers on the timeline, neither first nor second. The one she last touched is the current year and the map and globe show it; dragging one moves the world, tapping the other flips the world to its year, and the distance between them is always written. Pangaea, then Pangaea breaking; the world before the ice, then after; copper to bronze.
 **Where it sits.** The Time Machine, on the deep lines; the first of the tools Michael wants children to bring to the timeline.

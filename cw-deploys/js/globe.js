@@ -69,12 +69,15 @@
      ma, lon, lat           the opening age (millions of years ago) and view
      projection             'globe' (default) or 'flat' — the same rings, equirectangular on a 2:1 canvas,
                             a drag panning east–west; with fill: true the flat canvas is its host's own size, and
-                            setView({ lon, lat, ppd }) makes it a painting of a page's view (the ground map's), a
-                            drag then handed to onDrag(dx, dy) for the page to pan (19 Oct 2026, step 6)
+                            setView({ lon, lat, ppd }) makes it a painting of a page's view (the ground map's), and
+                            gestures: false leaves the pointer to the page, whose own gestures pan and zoom that
+                            view (22 Oct 2026; a drag had been handed to onDrag(dx, dy) since 19 Oct, step 6, and a
+                            second finger went to the page as a scroll)
      size                   the disc's diameter, or the flat map's width, in CSS px (default: the host's width)
      seam                   millions of years; younger than it the grade is `ground` (default 2.6)
      seed                   the first seed (default: this visit's)
      onTurn()               the disc was turned (a drag, or turn()); a page re-places what it draws over it (step 10, 20 Oct 2026)
+     onReady()              the plates have arrived: placeAt answers (null before; ready() says which) (22 Oct 2026)
      textures, ground, vegetation   the skin's files (defaults ../art/globe/, ../art/maps/world.webp and
                             ../art/maps/world-vegetation.webp); textures: false draws the flat fills only
      onDraw(ms), onGrade(grade, sentence), onMolten(phase, ma)
@@ -138,7 +141,7 @@
     // ky times its half across the height (equal pixels per degree when the canvas is 2:1), about the centre; lat the
     // centre's latitude (lon0 its longitude). flatView, when a page sets it, is the ground map's own view — centre and
     // pixels per degree — so the flat deep map is the same frame as the ground map and the seam is a fade between two
-    // paintings of one view; the canvas then fills its host (opts.fill) and a drag is handed to the page (opts.onDrag)
+    // paintings of one view; the canvas then fills its host (opts.fill) and takes no pointer (opts.gestures false)
     // the flat view (20 Oct 2026, step 9 of the audit's order): the ground map's own projection — a centre, pixels per
     // degree, and the map's blend k from plate carrée (0, the whole world) toward Mercator (1, zoomed in; the map's yw
     // and its 85° cap, copied) — so that a zoomed-in ground map and the flat deep map over it are one frame. fv is the
@@ -1134,7 +1137,11 @@
     function schedule() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
 
     // ---- the gesture: drag turns (east–west about the pole) and tilts (north–south, the poles the limits) ----
+    // A page's view (gestures: false) takes none of it: the canvas is a painting under the page's own map, whose drag,
+    // pinch and wheel move the view it paints (22 Oct 2026; while the canvas took the pointer and handed a one-finger
+    // drag to the page, a second finger was nobody's and scrolled the page instead of zooming the map)
     var drag = null;
+    if (opts.gestures !== false) {
     canvas.addEventListener('pointerdown', function (ev) {
       drag = { id: ev.pointerId, x: ev.clientX, y: ev.clientY, lon: lon0, lat: lat0, flat: fv.lat, flatY: fwY(fv.lat) };
       ev.preventDefault(); try { canvas.setPointerCapture(ev.pointerId); } catch (e) {}
@@ -1143,8 +1150,7 @@
     canvas.addEventListener('pointermove', function (ev) {
       if (!drag || ev.pointerId !== drag.id) return;
       if (proj === 'flat') {
-        if (opts.onDrag) { opts.onDrag(ev.clientX - drag.x, ev.clientY - drag.y); drag.x = ev.clientX; drag.y = ev.clientY; return; }   // the page's view: it pans (19 Oct 2026)
-        lon0 = drag.lon - (ev.clientX - drag.x) / fv.ppd; fv.lon = lon0;   // the view of its own, with no page to pan
+        lon0 = drag.lon - (ev.clientX - drag.x) / fv.ppd; fv.lon = lon0;   // a view of its own (a page's view takes no pointer: gestures false)
         fv.lat = Math.max(-85, Math.min(85, fwYInv(drag.flatY + (ev.clientY - drag.y) / fv.ppd)));
       }
       else {
@@ -1157,8 +1163,9 @@
     });
     function release(ev) { if (drag && ev.pointerId === drag.id) { drag = null; host.classList.remove('dragging'); schedule(); } }
     canvas.addEventListener('pointerup', release); canvas.addEventListener('pointercancel', release);
+    } else canvas.style.cursor = '';   // the page's map says what the pointer does
 
-    load(opts.plates || '../stories/plates/continents.json', prepare);
+    load(opts.plates || '../stories/plates/continents.json', function (d) { prepare(d); if (opts.onReady) opts.onReady(); });   // the plates are here: places can be carried (22 Oct 2026)
     loadTextures();
     load(opts.coast === undefined ? '../art/maps/world-tiles/contours-0.json' : opts.coast, prepareCoast);
     load(opts.crust === undefined ? '../stories/curves/crust-and-land.json' : opts.crust, function (c) { crust = c; blobCache = null; schedule(); });
@@ -1182,7 +1189,7 @@
       setView: function (v) { if (proj !== 'flat' || !v) return; flatView = { lon: v.lon, lat: v.lat, ppd: v.ppd, k: v.k || 0 }; applyFlatView(); schedule(); },
       // a place today, carried to where it was at the current age on its plate (for a page's zoom to an event's place)
       placeAt: function (lon, lat) {
-        if (!data) return { lon: lon, lat: lat };
+        if (!data) return null;   // the plates have not arrived; a page waits for onReady (22 Oct 2026: today's place came back as if carried, and a first tap into deep time zoomed to open sea)
         var g = gradeFor(ma).grade, pid = plateAt(lon, lat), M = null;
         if (pid) M = g === 'guessed' || g === 'invented' ? guessedMatrix(pid, ma) : plateMatrixAt(pid, Math.max(ma, 0));
         if (!M) return { lon: lon, lat: lat };
@@ -1191,6 +1198,7 @@
       },
       setGround: function (gs) { ground = gs || null; schedule(); },   // { sea, ice: { outlines, pairs } } from the page's map (step 8)
       setFloor: function (t) { floorTex = t || null; schedule(); },      // the floor's depth at the texture's size, from the map
+      ready: function () { return !!data; },   // the plates have arrived (22 Oct 2026)
       grade: function () { return gradeFor(ma); },
       moltenPhase: function () { return ma > NO_MAP ? moltenState(ma).phase : null; },
       skinMs: function () { return lastSkinMs; },
