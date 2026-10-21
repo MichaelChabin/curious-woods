@@ -24,7 +24,9 @@
   column holds Timeline, Map and Graphs (the panels), Cities, another guess (at the guessed and invented ages), the
   Graphs words (People and Sea level open After the ice; Oxygen, Day length, Minerals, Energy source the Earth line)
   and What I've seen (her line, the after-the-ice events she has opened); Globe (reading Map while the globe is up),
-  play, its speed and reset sit above the map. Deep Time, active/deep-time.html, is retired into this page and its
+  play, its speed and reset sit above the map. Next takes the page full screen where the browser allows it (22 Oct
+  2026, Michael on the iPad); the word at the top right, Exit full screen or Full screen, is the way out and back,
+  and is absent where the browser will not. Deep Time, active/deep-time.html, is retired into this page and its
   address redirects here.
 
   Data, read and never written: ../stories/deep-time-events.json, the one store of every event
@@ -93,6 +95,9 @@
   #htw-panel .htw-action-row:has(> .htw-action-word[style*="none"]) { display: none; }
 
   #stage { margin-left: var(--col); padding: 8px 18px 40px; }
+  /* the way out of full screen, and back (22 Oct 2026, Michael on the iPad): one word at the top right of the bench,
+     fixed so it is there wherever she has scrolled; absent where the browser has no full screen */
+  #wFull { position: fixed; top: 10px; right: 18px; z-index: 25; font-size: 14px; }
   /* the deep lines above Main (js/deep-time.js); Main sits on the funnel's foot when After the ice is open */
   #bar { width: 100%; margin: 4px 0 0; }
   #summary .passed { font-size: 12px; letter-spacing: .1em; color: var(--ink-soft); text-transform: uppercase; }
@@ -144,7 +149,7 @@
   .tm-panel p.refs { font-size: 12px; line-height: 1.45; color: var(--ink-soft); border-top: .5px solid var(--sep); margin-top: 10px; padding-top: 6px; }
 
   @media (max-width: 760px) {
-    #htw-panel { position: static; width: auto; padding: 14px 16px 12px; border-right: 0; border-bottom: .5px solid #d6c9ad; }
+    #htw-panel { position: static; width: auto; padding: 14px 130px 12px 16px; border-right: 0; border-bottom: .5px solid #d6c9ad; }   /* room at the right for the full-screen word */
     #htw-panel-list { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
     #htw-panel .htw-action-row.group { margin-top: 8px; }
     #stage { margin-left: 0; padding: 8px 12px 30px; }
@@ -205,6 +210,7 @@
 </section>
 
 <section id="bench">
+  <span class="cmd" id="wFull" role="button" tabindex="0" style="display:none">Exit full screen</span>
   <nav id="htw-panel" aria-label="How this works">
     <span id="htw-panel-heading">How this works</span>
     <ul id="htw-panel-list">
@@ -235,14 +241,14 @@
   </main>
 </section>
 
-<script src="../js/map.js?v=2026-10-21e"></script>
-<script src="../js/globe.js?v=2026-10-22b"></script>
+<script src="../js/map.js?v=2026-10-22c"></script>
+<script src="../js/globe.js?v=2026-10-22c"></script>
 <script src="../js/deep-time.js?v=2026-10-21c"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-22b 35f1e03';   // 19 Oct 2026, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-22c 8fa63d4';   // 22 Oct 2026: full screen on Next, the word top right (Michael on the iPad); 19 Oct, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- the numbers that shape the page ----------
@@ -300,6 +306,7 @@
   const summary = $('summary'), stage = $('stage');
   let map = null, marks = [], mapRaf = 0;
   function pushToMap() { if (!map || !map.setTime) return; cancelAnimationFrame(mapRaf); mapRaf = requestAnimationFrame(() => map.setTime(time.get())); }
+  function flushMap() { if (!map || !map.setTime) return; cancelAnimationFrame(mapRaf); map.setTime(time.get()); }   // the map at the year now, not next frame: for a place asked for at the year (22 Oct 2026)
   time.listen(() => { pushToMap(); passing(time.ma()); });
 
   // ---------- selecting ----------
@@ -310,10 +317,21 @@
   // a selected event's place: the flat map slides there and zooms in to a box about 2,000 km across (Michael, 12 Oct;
   // the stack prompt, part 5); the globe past the seam only turns (zoom there is engine work, later)
   const PLACE_BOX = { lon: 11, lat: 6.5 };
+  // past the seam the box grows so the map is no deeper than DEEP_PPD pixels per degree (22 Oct 2026; Michael on the
+  // iPad: Bangiomorpha's place "a pixelated image"). The flat deep map's skin is painted at half the page's resolution
+  // from a 1,024-wide texture, about 2.8 texels to the degree, so at about 5.7 px per degree one texel is one skin
+  // pixel; deeper, the texels show as blocks (the 2,000-km box on an 800-px stage is 25 px per degree, a 9-px square
+  // each). The box is widened, not the map's fit capped, so the names and "stays" below still read the box that shows.
+  const DEEP_PPD = 6;
   let zoomBox = null;   // the box the last zoom was asked for: the map is still sliding when markMap reads its bounds (13 Oct 2026)
   function goTo(lat, lon) {
     if (!map) return;
-    zoomBox = { west: lon - PLACE_BOX.lon, east: lon + PLACE_BOX.lon, south: Math.max(-85, lat - PLACE_BOX.lat), north: Math.min(85, lat + PLACE_BOX.lat) };
+    let bx = PLACE_BOX;
+    if (map.deep && map.deep().on) {
+      const mh = $('map'), w = (mh.querySelector('.cw-stage') || mh).clientWidth || 800, half = w / (2 * 1.24 * DEEP_PPD);   // the half-width that fits the stage at DEEP_PPD, the map's 12 % padding each side counted
+      if (half > PLACE_BOX.lon) bx = { lon: half, lat: half * PLACE_BOX.lat / PLACE_BOX.lon };
+    }
+    zoomBox = { west: lon - bx.lon, east: lon + bx.lon, south: Math.max(-85, lat - bx.lat), north: Math.min(85, lat + bx.lat) };
     if (map.fit) map.fit(zoomBox);
     else map.centre(lat, lon);
     zoomed = true;
@@ -499,17 +517,28 @@
     shownId = rec.id;
     if (!passed && rec.side === 'after-the-ice') { addSeen(rec.id); showWord(); }   // her line, as the page's own line kept it
     if (!passed && map) {   // the map goes to the event's place and shows its name; on the globe it turns to face her
+      // the tap set the year a moment ago and the map follows on the next frame; the place is asked for at the year, so
+      // the map is brought to it first (22 Oct 2026: before, the place was carried at the age the map still showed, or
+      // not carried at all when the map had not yet gone deep, and Bangiomorpha's zoom landed on open sea)
+      flushMap();
       const pl = rec.placeNow || rec.place; namesOn = true; tappedId = rec.id;
       // on a deep view: the event's own place (the asteroid's crater) before the place of its evidence, which markMap draws
       // as the lit mark carried on its plate; the map zooms to where that place was at this age, and the flat deep map,
       // being the map's view, follows (13 Oct 2026; 19 Oct, step 6; 20 Oct, step 10)
       const then = rec.place && rec.place.lat != null ? rec.place : pl;
-      if (map.deep().on && then && then.lat != null) { const at = map.deepPlace(then.lon, then.lat); goTo(at.lat, at.lon); map.deepTurn(at.lon, at.lat); }
+      if (map.deep().on && then && then.lat != null) placeDeep(rec, then);
       else if (pl && pl.lat != null) { if (!stays(pl.lat, pl.lon)) goTo(pl.lat, pl.lon); map.deepTurn(pl.lon, pl.lat); }
       markMap();
     }
     summary.innerHTML = (passed ? '<span class="passed">just passed</span><br>' : '') + '<b>' + esc(sentence(rec.label)) + '</b> ' + cwDeepTime.prose(rec.summary) + (rec.more ? ' <span class="cmd" id="more" role="button" tabindex="0">More</span>' : '');
     const m = $('more'); if (m) m.addEventListener('click', ev => { ev.stopPropagation(); const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec); cwWindow(box, {}); cwDeepTime.wirePictures(box); });
+  }
+  // the place carried to where it was at the age; on the first deep year of a visit the plates are still arriving, and the
+  // map answers null until they have, so the zoom waits for them and goes then, if she still has this event (22 Oct 2026)
+  function placeDeep(rec, then) {
+    const at = map.deepPlace(then.lon, then.lat);
+    if (at) { goTo(at.lat, at.lon); map.deepTurn(at.lon, at.lat); return; }
+    map.deepReady(() => { if (tappedId === rec.id && map.deep().on) { placeDeep(rec, then); markMap(); } });
   }
   function passing(ma) {
     const store = bar && bar.events();
@@ -538,6 +567,34 @@
   }
 
 
+  // ---------- full screen (22 Oct 2026, Michael on the iPad) ----------
+  // Next takes the page full screen where the browser allows it — the Mac's browsers, Safari on the iPad (prefixed
+  // before iPadOS 16.4), not Safari on the iPhone nor a page saved to the home screen — the way the lines board goes
+  // (js/glass.js, 18 Oct). The page is the full-screen element, not the bench: the panels and the More window build
+  // themselves on the body, and only the full-screen element and what is inside it shows. The word at the top right
+  // says what tapping it will do: Exit full screen while the page is full screen, Full screen once she has left it
+  // (by the word, Escape, or the system's own way out). Where the browser has no full screen the word is absent and
+  // Next only brings the bench up; a refusal is said in the console and that is all. The bar, the map and the globe
+  // follow the size change through their own resize observers.
+  const page = document.documentElement;
+  const FS = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled) && !!(page.requestFullscreen || page.webkitRequestFullscreen);
+  const wFull = $('wFull');
+  function isFull() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  function enterFull() {
+    if (!FS || isFull()) return;
+    const said = err => console.warn('Time Machine: full screen refused:', err && err.message || err);
+    try { const p = page.requestFullscreen ? page.requestFullscreen() : page.webkitRequestFullscreen(); if (p && p.catch) p.catch(said); } catch (e) { said(e); }
+  }
+  function exitFull() { try { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); } catch (e) {} }
+  function fullWord() { wFull.textContent = isFull() ? 'Exit full screen' : 'Full screen'; }
+  if (FS) {
+    wFull.style.display = '';
+    wFull.addEventListener('click', () => { if (isFull()) exitFull(); else enterFull(); });
+    wFull.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); wFull.click(); } });
+    ['fullscreenchange', 'webkitfullscreenchange'].forEach(t => document.addEventListener(t, fullWord));
+    fullWord();
+  }
+
   // ---------- the pages ----------
   let raw = null, wanted = false;   // the files, once loaded; whether Next was pressed before they were
   function showBench() {
@@ -552,8 +609,11 @@
     buildBar(raw.store);
     showWord();
   }
-  $('next').addEventListener('click', showBench);
-  $('next').addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); showBench(); } });
+  // full screen is asked for on the tap itself (a browser grants it only inside her gesture), and the bench shows at
+  // once, or when the files arrive if she tapped before they had
+  const next = () => { enterFull(); showBench(); };
+  $('next').addEventListener('click', next);
+  $('next').addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); next(); } });
 
   // ---------- load ----------
   const get = u => fetch(u, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
