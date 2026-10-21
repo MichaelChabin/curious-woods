@@ -976,14 +976,9 @@
       for (var k in groups) { ctx.globalAlpha = RIM_A * (+k) * strength; ctx.stroke(pixelPath(groups[k])); }
       ctx.restore();
     }
-    // a hairline in the drowned crust's tone along the land's edge, under the skin, so that only its outer half shows: it
-    // cleans the raster's stair-steps at the coast, and the joins between the pieces of one plate stay covered
-    function crustEdge(V, age, how, strength) {
-      var td = Math.max(0, Math.min(1, (age - OXYGEN) / (DARK_BY - OXYGEN))), path = new Path2D();
-      eachBodyRings(age, how, function (ring, M, a) { if (a < 1) return; var q = new Path2D(); if (trace(ring, M, q)) path.addPath(q); });
-      ctx.save(); ctx.lineJoin = 'round'; ctx.strokeStyle = mix(mix(S.rockGrey, S.rockTan, 0.5), S.oldCrust, td); ctx.lineWidth = 2 * BLOAT_DEG * degPx() + 2.4; ctx.globalAlpha = strength; ctx.stroke(pixelPath(path));   // as wide as the skin's bloat, so its smooth outer edge is the land's edge
-      ctx.restore();
-    }
+    // (a hairline in the crust's tone along the land's edge, under the skin, cleaned the raster's stair-steps at the coast from
+    // 21 Oct 2026; it went on 22 Oct — Michael, on the iPad: a black outline the pieces do not need, and the plainer they are the
+    // better they say that their presence is guessed and their place is not)
     // the islands and the drowned parts (21 Oct 2026, phase 2; as paths, smooth at any zoom, where the raster's stairs showed): over
     // the skin, the band between each piece's outline and its island — the part under shallow water — takes the shelf wash
     // (the outlines and the islands filled together, even-odd), and the island is lifted a touch lighter
@@ -1094,7 +1089,7 @@
       var tg = old ? 1 : ((data && g === 'fitted') ? Math.max(0, Math.min(1, (ma - (reach - FADE)) / FADE)) : 0);
       lastSkinMs = 0;
       if (g === 'none' && moltenReady()) moltenSt = paintMolten(V, ma);
-      else if (data && skinReady() && g !== 'none') { if (tg > 0) { shelfRim(V, ma, how, tg); crustEdge(V, ma, how, tg); } paintSkin(V, ma, g, 1, how, tg); skinned = true; if (tg > 0) drownedBand(V, ma, how, tg); }
+      else if (data && skinReady() && g !== 'none') { if (tg > 0) shelfRim(V, ma, how, tg); paintSkin(V, ma, g, 1, how, tg); skinned = true; if (tg > 0) drownedBand(V, ma, how, tg); }
       enterUnit(r, cx, cy);
       if (data && g !== 'none') {
         if (!skinned) {   // without the textures (or before they load): the flat fills, as before 21 Oct 2026
