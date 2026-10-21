@@ -235,14 +235,14 @@
   </main>
 </section>
 
-<script src="../js/map.js?v=2026-10-20d"></script>
+<script src="../js/map.js?v=2026-10-21d"></script>
 <script src="../js/globe.js?v=2026-10-20d"></script>
 <script src="../js/deep-time.js?v=2026-10-21c"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-21b 0a2b3dd';   // 19 Oct 2026, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-21d 9cc0619';   // 19 Oct 2026, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- the numbers that shape the page ----------
@@ -342,8 +342,10 @@
       const sp = bar.span(), deepNow = !!(map.deep && map.deep().on), near = sp.from <= 0.13, seen = seenOnly ? seenIds() : null;
       bar.events().forEach(e => {
         if (e.side === 'after-the-ice' && (!near || (seen && !seen.has(e.id)))) return;
+        const on = tappedId === e.id;
+        if (deepNow && !on) return;   // the drifting world shows the tapped event's place alone (21 Oct 2026, Michael: seventy grey dots riding the plates read as noise on the ice); the ground map shows them all
         const pl = deepNow && e.place && e.place.lat != null ? e.place : (e.placeNow || e.place); if (!pl || pl.lat == null || e.ma > sp.from || e.ma < sp.to) return;
-        const on = tappedId === e.id, inBox = b ? inBounds(pl.lat, pl.lon, b, 1) : false;
+        const inBox = b ? inBounds(pl.lat, pl.lon, b, 1) : false;
         marks.push({ type: 'place', lat: pl.lat, lon: pl.lon, name: namesOn && (on || inBox) ? shortName(pl) : '', world: true, minor: !inBox && !on, on, weight: e.weight || 1,
                      onTap: () => { bar.setYear(e.ma); showRec(e, false, true); } });
       });
@@ -354,6 +356,7 @@
     if (citiesOn && cityList) { const age = time.ma(); cityList.forEach(c => { if (age > c.from) return; const a = Math.min(1, (c.from - age) / 20); if (a > 0) marks.push({ type: 'place', lat: c.lat, lon: c.lon, name: c.name, world: true, minor: true, cls: 'cw-city', alpha: a }); }); }
     map.redraw();
   }
+  let deepWas = false;   // whether the drifting world was up at the last change of grade
   function buildMap(pyramid, seaCurve, ice) {
     const host = $('map');
     const GRADE_WORDS = { ground: 'the ground', measured: 'measured', inferred: 'inferred', fitted: 'fitted', guessed: 'guessed', invented: 'invented', none: 'no map' };
@@ -362,7 +365,7 @@
       ice: ice || undefined,   // the ice that existed then and not now, ICE-6G_C via PMIP4 (12 Oct): map.setTime blends between its steps
       deep: { seam: 2.6e6, plates: '../stories/plates/continents.json', coast: '../art/maps/world-tiles/contours-0.json', view: 'map',   // the ground this side of the ice ages, the flat deep map past them; Globe and Both are hers to choose (this page's events live on the ground)
               cities: '../stories/plates/cities.json',
-              onChange: (on, grade, why) => { $('grade').textContent = GRADE_WORDS[grade] || grade; $('why').textContent = on ? (why || '') : ''; CW.setWordPresent($('wGuess'), grade === 'guessed' || grade === 'invented'); } }
+              onChange: (on, grade, why) => { $('grade').textContent = GRADE_WORDS[grade] || grade; $('why').textContent = on ? (why || '') : ''; CW.setWordPresent($('wGuess'), grade === 'guessed' || grade === 'invented'); if (on !== deepWas) { deepWas = on; markMap(); } } }   // the marks differ between the ground and the drifting world: placed afresh at the seam (21 Oct 2026)
     } });
     // the bars at the left and right edges stretch the map; the left one may take it over the column to the page's edge
     document.querySelectorAll('.grip').forEach(gr => {

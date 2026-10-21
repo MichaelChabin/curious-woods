@@ -873,7 +873,7 @@
       var lines = el('g', { 'class': 'cw-lines' }), marksLayer = el('g', {}), halos = el('g', { 'class': 'cw-halos' }), glyphs = el('g', {});
       svg.appendChild(iceLayer); svg.appendChild(lines); svg.appendChild(marksLayer); svg.appendChild(halos); svg.appendChild(glyphs);
       drawIce(iceLayer, w, h);
-      drawLines(lines, w, h);
+      if (!(typeof deepOn !== 'undefined' && deepOn)) drawLines(lines, w, h);   // today's coast and shelf lines are the ground's, not the drifting world's (21 Oct 2026: they had shown through the deep views since the mark layer moved above them)
 
       var placed = [], dots = [];
       marks.forEach(function (m) {
