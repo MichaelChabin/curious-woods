@@ -4,7 +4,22 @@
    deep lines count "ago" only. The ideas: Ideas-Ledger.md, Other labs, 5–6 Oct (the nested bar, uneven
    nesting, the dot and tail, Hazen's colours, the descent). The chunk tree: stories/deep-time.json.
 
-   cwDeepTime(host, opts)  → { year(), setYear(ma), open(names), focus(a, b), path(), span(), events(), destroy() }
+   cwDeepTime(host, opts)  → { year(), setYear(ma), open(names), focus(a, b), path(), span(), events(), bracket(),
+                               setCurrent('a' | 'b'), openBelow(), scale(depth), addTool(tool), destroy() }
+
+   The bracket (21 Oct 2026; Michael's ruling of 19 Oct, *Timeline graphics* 5, and the snapshot rule of that evening):
+   on every line two copper markers at the ends of a stretch, joined by a bar, the dates outside the markers (inside
+   near the line's ends), the span on the bar in a gap (above it when the markers are close). The marker she last
+   touched is the current year — solid; the other hollow, a tap making it the year. Tapping the bar opens the stretch
+   as a line beneath, a snapshot: dragging a marker afterwards moves the map and the span and not the line beneath,
+   until she taps the bar again; a second tap while that line is the deepest closes it; a stretch with nothing in it
+   (no event, period or curve point) opens nothing. Dragging the bar slides the bracket, span unchanged. A tap on a
+   period snaps the line's bracket to it. Play (the page's) makes the left marker walk to the right one. The envelope
+   and the knob are gone; the Focus window of the page's own line stays until the hand-over is retired.
+   The tool layer (the audit's step 12): addTool({ draw(t) }) is called on every draw with t = { svg, layer, el, lines,
+   deepest, handed, scale(depth) → { xL, xR, from, to, x(ma), m(px), y, stripY, top, h, node, open, segs }, year,
+   setYear, fmt, fmtShort, fmtLong, fullWords, detent, drag(ev, { start, move, end }), holdToExpand, fitText, small };
+   the bracket is the first tool and draws through the same door.
 
    Lane B of the one timeline (9 Oct 2026; CWVault/claude/Prompt-Build-One-Timeline.md, on Michael's
    rulings of the same day): every level is a line in the Time Machine's own form. The top line is
@@ -94,7 +109,7 @@
     '.cw-deep .mark{cursor:pointer;}',
     '.cw-deep .mark line,.cw-deep .mark text{pointer-events:none;}',   /* the drawn line and label never catch a tap; the tap areas (the line's and the label's) do */
     '.cw-deep .halo{paint-order:stroke;stroke:' + S.parchment + ';stroke-width:4px;stroke-linejoin:round;}',
-    '.cw-deep .env{cursor:grab;}',
+    '.cw-deep .bracket .knob{cursor:grab;}',
     '.cw-deep .seg{cursor:pointer;}',
     '.cw-deep .seg:hover rect.tint{opacity:.42;}',
     '.cw-deep .word{cursor:pointer;}',
@@ -199,6 +214,13 @@
     // CLOSED (its strip with short faint event lines and no labels): `closed[i]`. Lines beneath a tap are
     // REMOVED: env is cut. A cone shows at junction i once she has acted there: `touched[i]`.
     var env = [], closed = {}, touched = {};
+    // the brackets (Michael's ruling of 19 Oct 2026, *Timeline graphics* 5; built 21 Oct, the audit's steps 12 and 13): on every
+    // line two markers at the ends of a stretch, joined by a bar — brk[i] = { a, b }, a the older end. The marker she last
+    // touched is the current year: curLine and cur ('a' or 'b'), and ma is its value. env[i], what line i + 1 shows, is a
+    // snapshot taken when she taps the bar (ruled 19 Oct, evening): dragging a marker afterwards moves the map and the span,
+    // not the line beneath. The envelope of 10 Oct and the knob of 12 Oct are gone; the bracket is the first tool of the tool
+    // layer (addTool, scale), drawn through the same door any tool would use
+    var brk = {}, curLine = 0, cur = 'b', tools = [];
     var tierGeom = [];   // per line: { node, ids, from, to, snapped, open, xL, xR, top, h, stripY, x(ma), m(px), segs, labels, ticks }
 
     function lineOf(i) {
@@ -263,7 +285,7 @@
       g.x = function (m) { return xL + width * (L.from - m) / span; };
       g.m = function (px) { return L.from - span * (px - xL) / width; };
       segsOf(L).forEach(function (sg) { sg.x0 = g.x(sg.from); sg.x1 = g.x(sg.to); g.segs.push(sg); });
-      var y = top + (small ? TITLE_ABOVE : 0) + (withEvents ? KNOB_H : 0) + NAMES_H;
+      var y = top + (small ? TITLE_ABOVE : 0) + KNOB_H + NAMES_H;   // the bracket's room on every line (21 Oct 2026)
       g.stripY = y;                       // the strip's top; the line's middle is stripY + STRIP / 2
       g.y = y + STRIP / 2;
       var pl = withEvents ? placeLabels(g, L, open) : { labels: [], ticks: [], rows: 0 };
@@ -371,11 +393,11 @@
           hg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
           hg.addEventListener('click', function (ev) { ev.stopPropagation(); tapSeg(d, sg); });
         });
-        // the marker's tap strip on the deepest line (jump the marker), under the band and beneath the marks, so a
-        // tap below the band with no event under it moves the marker and a tap on an event is the event's
-        if (g === deep && !handed) {
+        // the tap strip under the band (every line, 21 Oct 2026), beneath the marks: a press below the band with no event
+        // under it brings this line's nearer marker to it and drags it; a tap on an event is the event's
+        if (!(g === deep && handed)) {
           var stripR = el('rect', { x: g.xL, y: g.stripY + STRIP, width: g.xR - g.xL, height: 14, fill: 'transparent', 'class': 'knob' }, grp);
-          stripR.addEventListener('pointerdown', startDrag);
+          stripR.addEventListener('pointerdown', (function (dd) { return function (ev) { startStripDrag(ev, dd); }; })(d));
         }
         // the events, on the deepest line only (Michael, 12 Oct; the page's own line draws its own): a line 0.8 px
         // from the band's bottom down to its label; an unlabelled one a short line; on a closed line short, faint
@@ -404,37 +426,21 @@
           mg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
           mg.addEventListener('click', function (ev) { ev.stopPropagation(); tapMark(d, tk.mk, L); });
         });
-        // the window: a clear lens — a thin ink edge, a faint white wash, a small ink grip at each end
-        if (e) {
-          var ea = g.x(e.a), eb = g.x(e.b), eg = el('g', { 'class': 'env' }, grp), ly0 = g.stripY - 4, lh = STRIP + 8;
-          el('rect', { x: ea, y: ly0, width: Math.max(3, eb - ea), height: lh, rx: 2, fill: '#ffffff', 'fill-opacity': 0.28, stroke: INK, 'stroke-width': 1 }, eg);
-          [ea, eb].forEach(function (x) { el('rect', { x: x - 1.5, y: ly0 - 3, width: 3, height: lh + 6, rx: 1, fill: INK }, eg); });
-          el('rect', { x: ea - 10, y: ly0 - 6, width: Math.max(20, eb - ea + 20), height: STRIP + 15, rx: 4, fill: 'transparent' }, eg);   // the band and its name, a little above and 1 px below; everything beneath the band is the events'
-          eg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); startEnvDrag(ev, d, g); });
-        }
-        // the marker: a copper tick on every line above the deepest
-        if (g !== deep && ma <= L.from && ma >= L.to) {
+        // the current year as a copper tick on every line but the one whose marker it is
+        if (d !== curLine && ma <= L.from && ma >= L.to) {
           var hx = g.x(ma);
           el('line', { x1: hx, y1: g.stripY - 5, x2: hx, y2: g.stripY + STRIP + 5, stroke: COPPER, 'stroke-width': 2, opacity: 0.85 }, grp);
         }
       });
+      // the tools, the bracket first among them (21 Oct 2026): each draws into a layer of its own through the tool API
+      var toolsG = el('g', { 'class': 'tools' }, svg);
+      tools.forEach(function (t) { try { t.draw(toolApi(toolsG)); } catch (err) { console.error('deep-time.js: a tool failed to draw', err); } });
       var curveH = 0, H;
       if (handed) {
         H = deep.y - (opts.handoff.gap || 18);   // the page's own line lands on the band's middle
         if (opts.onHandoff) opts.onHandoff({ on: true, xL: deep.xL, xR: deep.xR, from: deep.from, to: deep.to, node: deep.node });
       } else {
         if (curve) curveH = drawCurve(deep);
-        // the knob above the band, its line pointing down to the band's top, the age beside it, "345 Ma" (Michael, 12 Oct)
-        var hx2 = Math.max(deep.xL, Math.min(deep.xR, deep.x(ma))), ky = deep.stripY - NAMES_H - 11;
-        var kg = el('g', { 'class': 'knob' }, svg);
-        el('line', { x1: hx2, y1: ky, x2: hx2, y2: deep.stripY, stroke: COPPER, 'stroke-width': 1.5, opacity: 0.9 }, kg);
-        el('circle', { cx: hx2, cy: ky, r: 14, fill: 'transparent' }, kg);
-        el('circle', { cx: hx2, cy: ky, r: 6.5, fill: COPPER, stroke: PARCH, 'stroke-width': 2 }, kg);
-        var right = hx2 + 70 < deep.xR;
-        var kt = el('text', { x: hx2 + (right ? 11 : -11), y: ky + 4, 'font-size': 12, fill: COPPER, 'text-anchor': right ? 'start' : 'end', 'class': 'halo' }, kg, age(ma));
-        if (fullWords && !fitText(kt, (deep.xR - deep.xL) * 0.45)) kt.textContent = fmtShort(ma);
-        holdToExpand(kg, kt, fmtLong(ma), kt.textContent);
-        kg.addEventListener('pointerdown', startDrag);
         H = deep.top + deep.h + curveH;
         if (opts.onHandoff) opts.onHandoff({ on: false });
       }
@@ -510,48 +516,76 @@
       try { if (t.getComputedTextLength() <= maxW) return true; } catch (e) { return true; }
       return false;
     }
+    function isHanded() { return !!(opts.handoff && env.length && deepest().node.line === opts.handoff.line); }
+    function bracketOf(d) {   // this line's bracket, made at the line's ends when there is none, and kept inside the line
+      var L = lineOf(d); if (!brk[d]) brk[d] = { a: L.from, b: L.to };
+      var k = brk[d]; k.a = Math.min(L.from, Math.max(L.to, k.a)); k.b = Math.max(L.to, Math.min(L.from, k.b)); if (k.a < k.b) k.a = k.b;
+      return k;
+    }
+    // a marker set: it becomes the current year; the markers never cross, the other giving way
+    function setMarker(d, which, m, quiet) {
+      var L = lineOf(d), k = bracketOf(d);
+      k[which] = Math.max(L.to, Math.min(L.from, m));
+      if (k.a < k.b) { if (which === 'a') k.b = k.a; else k.a = k.b; }
+      curLine = d; cur = which; ma = k[which];
+      if (!quiet) tellYear();
+    }
+    function cutBelow(d) { Object.keys(brk).forEach(function (i) { if (+i > d) delete brk[i]; }); }
     function settled() {
       var d = deepest();
       if (ma > d.from || ma < d.to) { ma = Math.max(d.to, Math.min(d.from, ma)); tellYear(); }
+      if (curLine > env.length) curLine = env.length;
+      var k = bracketOf(curLine), L = lineOf(curLine);   // the current marker stands where the year is
+      if (k[cur] !== ma) { cur = Math.abs(ma - k.a) <= Math.abs(ma - k.b) ? 'a' : 'b'; k[cur] = Math.max(L.to, Math.min(L.from, ma)); if (k.a < k.b) { if (cur === 'a') k.b = k.a; else k.a = k.b; } }
       draw();
       if (opts.onBar) opts.onBar(d.node, path());
     }
     /* the lines above the parent close by themselves when a line opens beneath (the amendment of 10 Oct) */
     function closeAbove(d) { for (var i = 0; i < d - 1; i++) closed[i] = true; }
-    /* a tap on a period: if it is the one open beneath, its line and everything beneath are removed (undo;
-       the marker stays); else the lines beneath are removed, the window settles on it, the line opens
-       beneath (named after it, or a free span for a clipped segment), the marker goes to its beginning,
-       and the page is told the period */
+    /* a tap on a period: if it is the one open beneath and its line is the deepest, its line and everything beneath are
+       removed (undo; the marker stays); else the lines beneath are removed, this line's bracket snaps to the period, the
+       line opens beneath (a snapshot of it), the current marker is the bracket's left one at the period's beginning, and
+       the page is told the period */
     function tapSeg(depth, sg) {
       introduced = true;
       var e = env[depth];
-      // the period is already open beneath and its line is the deepest: the tap is the undo, removing it (Michael, 10 Oct).
-      // (12 Oct: events show on the deepest line only, so a tap on a period open higher in the stack falls through and
-      // makes its line the deepest — the lines beneath go, its events show; the 10 Oct "show me this" tap showed nothing)
-      if (e && e.child === sg.node && env.length === depth + 1) { env = env.slice(0, depth); closed[depth] = false; settled(); return; }
-      env = env.slice(0, depth).concat([{ a: sg.from, b: sg.to, child: sg.whole ? sg.node : null }]);
+      if (e && e.child === sg.node && env.length === depth + 1) { env = env.slice(0, depth); cutBelow(depth); closed[depth] = false; settled(); return; }
+      env = env.slice(0, depth).concat([{ a: sg.from, b: sg.to, child: sg.whole ? sg.node : null }]); cutBelow(depth);
+      brk[depth] = { a: sg.from, b: sg.to }; curLine = depth; cur = 'a'; ma = sg.from; tellYear();
       closed[depth] = false; closed[depth + 1] = false; touched[depth] = true; closeAbove(depth);
-      ma = sg.from; tellYear();
       draw();
       if (opts.onPeriod) opts.onPeriod(sg.whole ? sg.node : null, { from: sg.from, to: sg.to });
       if (opts.onBar) opts.onBar(deepest().node, path());
     }
+    /* a tap on an event: this line's nearer marker comes to it and is the current year */
     function tapMark(depth, mk, L) {
       if (closed[depth]) { closed[depth] = false; }
-      setYear(mk.ma);
+      var k = bracketOf(depth), which = Math.abs(mk.ma - k.a) <= Math.abs(mk.ma - k.b) ? 'a' : 'b';
+      setMarker(depth, which, mk.ma);
+      cancelAnimationFrame(raf); raf = requestAnimationFrame(draw);
       if (opts.onMark) opts.onMark(mk, L.node);
     }
-    var envDrag = null;
-    function startEnvDrag(ev, depth, g) {
-      var e = env[depth]; if (!e) return;
-      ev.preventDefault();
-      var px = pos(ev), fa = g.x(e.a), fb = g.x(e.b), kind;
-      if (Math.abs(px - fa) < 10 && Math.abs(px - fa) <= Math.abs(px - fb)) kind = 'a';
-      else if (Math.abs(px - fb) < 10) kind = 'b';
-      else kind = 'm';
-      envDrag = { id: ev.pointerId, depth: depth, kind: kind, x0: px, off: g.m(px) - e.a, moved: false, span: e.a - e.b };
-      try { svg.setPointerCapture(ev.pointerId); } catch (err) {}
-      host.classList.add('dragging');
+    /* is there anything in a stretch — an event, a period, a curve's point — for a line beneath to show? */
+    function hasContent(a, b, g) {
+      if (store && store.some(function (ev) { return ev.ma <= a && ev.ma >= b; })) return true;
+      if (g && g.node.chunks && g.node.chunks.some(function (c) { return c.from > b && c.to < a; })) return true;
+      if (curve && curve.points) { var ya = storeYear(a), yb = storeYear(b); if (curve.points.some(function (pt) { return pt[0] >= ya && pt[0] <= yb; })) return true; }
+      return false;
+    }
+    /* a tap on the bar: the stretch opens beneath as a new line, a snapshot of the bracket now; tapped again while that line
+       is the deepest, it closes; a stretch with nothing in it opens nothing (the nesting ends where the content ends) */
+    function openBelow(d) {
+      introduced = true;
+      var g = tierGeom[d], k = bracketOf(d); if (!g) return;
+      var e = env[d];
+      if (e && e.a === k.a && e.b === k.b && env.length === d + 1) { env = env.slice(0, d); cutBelow(d); closed[d] = false; settled(); return; }
+      if (!hasContent(k.a, k.b, g)) return;
+      var child = null; g.segs.forEach(function (sg) { if (sg.whole && sg.node.from === k.a && sg.node.to === k.b) child = sg.node; });
+      env = env.slice(0, d).concat([{ a: k.a, b: k.b, child: child }]); cutBelow(d);
+      closed[d] = false; closed[d + 1] = false; touched[d] = true; closeAbove(d);
+      draw();
+      if (opts.onPeriod) opts.onPeriod(child, { from: k.a, to: k.b });
+      if (opts.onBar) opts.onBar(deepest().node, path());
     }
     function detent(g, m, px) {
       var best = null, stops = [g.from, g.to];
@@ -559,66 +593,118 @@
       stops.forEach(function (v) { if (v <= g.from && v >= g.to) { var dpx = Math.abs(g.x(v) - px); if (dpx < DETENT_PX && (best === null || dpx < best.d)) best = { v: v, d: dpx }; } });
       return best ? best.v : m;
     }
-    function moveEnv(ev) {
-      var dd = envDrag, g = tierGeom[dd.depth], e = env[dd.depth]; if (!g || !e) return;
-      var px = pos(ev);
-      if (!dd.moved && Math.abs(px - dd.x0) < 3) return;
-      if (!dd.moved) { dd.moved = true; env = env.slice(0, dd.depth + 1); closed[dd.depth] = false; closed[dd.depth + 1] = false; touched[dd.depth] = true; closeAbove(dd.depth); }
-      var minSpan = (g.from - g.to) * MIN_SPAN_PX / ((g.xR - g.xL) || 1);
-      var m = Math.max(g.to, Math.min(g.from, g.m(px)));
-      if (dd.kind === 'a') e.a = Math.max(e.b + minSpan, detent(g, m, px));
-      else if (dd.kind === 'b') e.b = Math.min(e.a - minSpan, detent(g, m, px));
-      else {
-        var a = Math.max(g.to + dd.span, Math.min(g.from, m - dd.off));
-        var a2 = detent(g, a, g.x(a)), b2 = detent(g, a - dd.span, g.x(a - dd.span));
-        if (a2 !== a) a = a2; else if (b2 !== a - dd.span) a = b2 + dd.span;
-        e.a = a; e.b = a - dd.span;
-      }
-      e.child = null;
-      g.segs.forEach(function (sg) { if (sg.whole && sg.node.from === e.a && sg.node.to === e.b) e.child = sg.node; });
-      var d = deepest(); ma = Math.max(d.to, Math.min(d.from, ma));
-      cancelAnimationFrame(raf); raf = requestAnimationFrame(draw);
-    }
-    function endEnv(ev) {
-      var dd = envDrag; if (!dd || ev.pointerId !== dd.id) return;
-      envDrag = null; host.classList.remove('dragging');
-      var g = tierGeom[dd.depth];
-      if (!dd.moved) {
-        var px = pos(ev), hit = null;
-        if (g) g.segs.forEach(function (sg) { if (px >= sg.x0 && px <= sg.x1) hit = sg; });
-        if (hit) tapSeg(dd.depth, hit);
-        return;
-      }
-      tellYear(); draw();
-      var e = env[dd.depth];
-      if (opts.onPeriod) opts.onPeriod(e.child || null, { from: e.a, to: e.b });
-      if (opts.onBar) opts.onBar(deepest().node, path());
-    }
 
+    // ---- the drags: one plumbing for every tool (21 Oct 2026) ----
     function pos(ev) { var r = svg.getBoundingClientRect(); return ev.clientX - r.left; }
-    function startDrag(ev) {
-      var deep = tierGeom[tierGeom.length - 1];
-      introduced = true;
-      drag = { id: ev.pointerId };
-      ev.preventDefault();
+    var drag = null;   // { id, x0, moved, move(px, ev), end(px, moved, ev) }
+    function beginDrag(ev, h) {
+      ev.preventDefault(); ev.stopPropagation();
+      drag = { id: ev.pointerId, x0: pos(ev), moved: false, move: h.move, end: h.end };
       try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
       host.classList.add('dragging');
-      moveTo(pos(ev), deep);
+      if (h.start) h.start(pos(ev));
     }
-    function moveTo(px, deep) { setYear(deep.m(Math.max(deep.xL, Math.min(deep.xR, px)))); }
     svg.addEventListener('pointermove', function (ev) {
-      if (drag && ev.pointerId === drag.id) moveTo(pos(ev), tierGeom[tierGeom.length - 1]);
-      else if (envDrag && ev.pointerId === envDrag.id) moveEnv(ev);
+      if (!drag || ev.pointerId !== drag.id) return;
+      var px = pos(ev);
+      if (!drag.moved && Math.abs(px - drag.x0) < 3) return;
+      drag.moved = true;
+      if (drag.move) drag.move(px, ev);
     });
-    function release(ev) { if (drag && ev.pointerId === drag.id) { drag = null; host.classList.remove('dragging'); } else endEnv(ev); }
+    function release(ev) {
+      if (!drag || ev.pointerId !== drag.id) return;
+      var dd = drag; drag = null; host.classList.remove('dragging');
+      if (dd.end) dd.end(pos(ev), dd.moved, ev);
+    }
     svg.addEventListener('pointerup', release); svg.addEventListener('pointercancel', release);
+    function redrawSoon() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+
+    // ---- the bracket, the first tool ----
+    function startMarkerDrag(ev, d, which) {
+      introduced = true;
+      var g = tierGeom[d]; if (!g) return;
+      beginDrag(ev, {
+        move: function (px) { var m = g.m(Math.max(g.xL, Math.min(g.xR, px))); setMarker(d, which, detent(g, m, px)); redrawSoon(); },
+        end: function (px, moved) { if (!moved) setMarker(d, which, bracketOf(d)[which]); draw(); }   // a tap on the hollow marker makes it the year
+      });
+    }
+    function startBarDrag(ev, d) {
+      introduced = true;
+      var g = tierGeom[d], k = bracketOf(d); if (!g) return;
+      var span = k.a - k.b, off = 0;
+      beginDrag(ev, {
+        start: function (px) { off = g.m(px) - k.a; },
+        move: function (px) {
+          var a = Math.max(g.to + span, Math.min(g.from, g.m(px) - off));
+          var a2 = detent(g, a, g.x(a)), b2 = detent(g, a - span, g.x(a - span));
+          if (a2 !== a) a = a2; else if (b2 !== a - span) a = b2 + span;
+          k.a = a; k.b = a - span;
+          if (curLine === d) { ma = k[cur]; tellYear(); }
+          redrawSoon();
+        },
+        end: function (px, moved) { if (!moved) openBelow(d); else draw(); }
+      });
+    }
+    function startStripDrag(ev, d) {
+      introduced = true;
+      var g = tierGeom[d], k = bracketOf(d); if (!g) return;
+      var m0 = g.m(Math.max(g.xL, Math.min(g.xR, pos(ev)))), which = Math.abs(m0 - k.a) <= Math.abs(m0 - k.b) ? 'a' : 'b';
+      setMarker(d, which, m0);
+      beginDrag(ev, {
+        move: function (px) { setMarker(d, which, detent(g, g.m(Math.max(g.xL, Math.min(g.xR, px))), px)); redrawSoon(); },
+        end: function () { draw(); }
+      });
+      draw();
+    }
+    function drawBracket(t, d) {
+      var g = t.scale(d), k = bracketOf(d), grp = el('g', { 'class': 'bracket', 'data-depth': d }, t.layer);
+      var xa = g.x(k.a), xb = g.x(k.b), ky = g.stripY - NAMES_H - 11, mid = (xa + xb) / 2, wbar = Math.abs(xb - xa);
+      // the span, centred on the bar in a gap; above the bar when the markers come too close
+      var spanTxt = durText(k.a - k.b), st = el('text', { x: mid, y: ky + 4, 'font-size': 11, 'font-style': 'italic', fill: INK_SOFT, 'text-anchor': 'middle', 'class': 'halo' }, grp, spanTxt);
+      var tw = 0; try { tw = st.getComputedTextLength(); } catch (e) { tw = spanTxt.length * 5.5; }
+      var bar = { stroke: COPPER, 'stroke-width': 1.5, opacity: 0.9 };
+      if (wbar > tw + 40) {
+        el('line', Object.assign({ x1: xa, y1: ky, x2: mid - tw / 2 - 6, y2: ky }, bar), grp);
+        el('line', Object.assign({ x1: mid + tw / 2 + 6, y1: ky, x2: xb, y2: ky }, bar), grp);
+      } else {
+        if (wbar > 0) el('line', Object.assign({ x1: xa, y1: ky, x2: xb, y2: ky }, bar), grp);
+        st.setAttribute('y', ky - 10);
+      }
+      // the bar's handle: a tap opens the stretch beneath, a drag slides the bracket
+      var hit = el('rect', { x: Math.min(xa, xb) + 8, y: ky - 9, width: Math.max(0, wbar - 16), height: 18, fill: 'transparent', 'class': 'knob' }, grp);
+      hit.addEventListener('pointerdown', function (ev) { startBarDrag(ev, d); });
+      // the dates, outside the markers; a date that would fall off the line's end flips inside
+      [['a', xa, -1], ['b', xb, 1]].forEach(function (m) {
+        var which = m[0], x = m[1], side = m[2], txt = age(k[which]);
+        var dt = el('text', { x: x + side * 11, y: ky + 4, 'font-size': 12, fill: COPPER, 'text-anchor': side < 0 ? 'end' : 'start', 'class': 'halo' }, grp, txt);
+        var dw = 0; try { dw = dt.getComputedTextLength(); } catch (e) { dw = txt.length * 6; }
+        if (side < 0 ? x - 11 - dw < g.xL : x + 11 + dw > g.xR) { dt.setAttribute('x', x - side * 11); dt.setAttribute('text-anchor', side < 0 ? 'start' : 'end'); dt.setAttribute('y', ky - 10); }
+        if (fullWords && !fitText(dt, (g.xR - g.xL) * 0.45)) dt.textContent = fmtShort(k[which]);
+        holdToExpand(dt, dt, fmtLong(k[which]), dt.textContent);
+      });
+      // the markers: the current year solid, the other hollow; each a line down to the band's top
+      [['a', xa], ['b', xb]].forEach(function (m) {
+        var which = m[0], x = m[1], isCur = d === curLine && cur === which, mg = el('g', { 'class': 'knob marker' + (isCur ? ' current' : '') }, grp);
+        el('line', { x1: x, y1: ky, x2: x, y2: g.stripY, stroke: COPPER, 'stroke-width': 1.5, opacity: 0.9 }, mg);
+        el('circle', { cx: x, cy: ky, r: 14, fill: 'transparent' }, mg);
+        el('circle', { cx: x, cy: ky, r: 6.5, fill: isCur ? COPPER : PARCH, stroke: isCur ? PARCH : COPPER, 'stroke-width': 2 }, mg);
+        mg.addEventListener('pointerdown', function (ev) { startMarkerDrag(ev, d, which); });
+      });
+    }
+    var bracketTool = { name: 'bracket', draw: function (t) { for (var d = 0; d < t.lines; d++) { if (t.handed && d === t.deepest) continue; drawBracket(t, d); } } };
+    tools.push(bracketTool);
+    // the tool API (the audit's step 12): what a tool is given to draw with
+    function scaleOf(d) { var g = tierGeom[d]; if (!g) return null; return { depth: d, xL: g.xL, xR: g.xR, from: g.from, to: g.to, x: g.x, m: g.m, y: g.y, stripY: g.stripY, top: g.top, h: g.h, node: g.node, open: g.open, segs: g.segs }; }
+    function toolApi(layer) {
+      return { svg: svg, layer: layer, el: el, lines: tierGeom.length, deepest: tierGeom.length - 1, handed: isHanded(), scale: scaleOf, year: ma,
+               setYear: setYear, fmt: age, fmtShort: fmtShort, fmtLong: fmtLong, fullWords: fullWords, detent: detent, drag: beginDrag, holdToExpand: holdToExpand, fitText: fitText, small: W < 560 };
+    }
 
     var raf = 0;
     function tellYear() { if (time) time.setMa(ma, api); if (opts.onYear) opts.onYear(ma, storeYear(ma)); }
-    function setYear(m) {
-      var d = deepest();
-      ma = Math.max(d.to, Math.min(d.from, m));
-      tellYear();
+    function setYear(m) {   // the year from outside (a mark on the map, a page): on the deepest line, its nearer marker comes to it
+      if (isHanded()) { var d = deepest(); ma = Math.max(d.to, Math.min(d.from, m)); tellYear(); }
+      else { var dd = env.length, k = bracketOf(dd); setMarker(dd, Math.abs(m - k.a) <= Math.abs(m - k.b) ? 'a' : 'b', m); }
       cancelAnimationFrame(raf); raf = requestAnimationFrame(draw);
     }
     /* open(names): snap the window to each named period in turn, from the root down, every line open */
@@ -628,6 +714,7 @@
         var c = (n.chunks || []).filter(function (x) { return x.name === nm; })[0];
         if (c) { env.push({ a: c.from, b: c.to, child: c }); n = c; touched[i] = true; }
       });
+      brk = {}; env.forEach(function (e, i) { brk[i] = { a: e.a, b: e.b }; }); curLine = env.length;
       settled();
     }
     /* scene(names): the opening scene — the same path, every line closed, no cones */
@@ -641,6 +728,7 @@
       if (!env.length) env.push({ a: a, b: b, child: null }); else env[d] = { a: a, b: b, child: null };
       var e = env[d]; e.a = Math.min(g.from, Math.max(g.to, e.a)); e.b = Math.max(g.to, Math.min(g.from, e.b));
       (g.node.chunks || []).forEach(function (c) { if (c.from === e.a && c.to === e.b) e.child = c; });
+      brk[d] = { a: e.a, b: e.b }; cutBelow(d); curLine = d + 1;
       touched[d] = true; closed[d] = false; closed[d + 1] = false;
       settled();
     }
@@ -675,8 +763,8 @@
       if (src === api || !root) return;
       var d = deepest(), m = Math.max(d.to, Math.min(d.from, window.CW.yearToMa(y)));
       if (m === ma) return;
-      ma = m;
-      var handedNow = !!(opts.handoff && env.length && d.node.line === opts.handoff.line);
+      var handedNow = isHanded();
+      if (handedNow) ma = m; else setMarker(curLine, cur, m, true);   // the current marker walks (play) or follows
       if (src === 'play' && handedNow) {
         if (playTimer) return;
         playTimer = setTimeout(function () { playTimer = null; if (!destroyed) draw(); }, 120);
@@ -687,6 +775,13 @@
     api = {
       year: function () { return ma; },
       setYear: setYear,
+      // the bracket (21 Oct 2026): the current marker's line and ends, which is current; setCurrent makes the other the year;
+      // openBelow is the bar's tap; scale and addTool are the tool layer (the audit's step 12)
+      bracket: function () { var k = bracketOf(curLine); return { line: curLine, a: k.a, b: k.b, cur: cur }; },
+      setCurrent: function (which) { if (which !== 'a' && which !== 'b') return; var k = bracketOf(curLine); cur = which; ma = k[cur]; tellYear(); draw(); },
+      openBelow: function () { openBelow(curLine); },
+      scale: scaleOf,
+      addTool: function (t) { tools.push(t); if (root) draw(); return function () { var i = tools.indexOf(t); if (i >= 0) tools.splice(i, 1); if (root) draw(); }; },
       setCurve: function (c) { curve = c || null; draw(); },
       fullWords: function (on) { if (on !== undefined) { fullWords = !!on; introduced = true; draw(); } return fullWords; },   // the column's word (18 Oct 2026)
       curve: function () { return curve; },
