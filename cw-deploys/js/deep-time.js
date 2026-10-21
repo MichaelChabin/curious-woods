@@ -15,7 +15,10 @@
    until she taps the bar again; a second tap while that line is the deepest closes it; a stretch with nothing in it
    (no event, period or curve point) opens nothing. Dragging the bar slides the bracket, span unchanged. A tap on a
    period snaps the line's bracket to it. Play (the page's) makes the left marker walk to the right one. The envelope
-   and the knob are gone; the Focus window of the page's own line stays until the hand-over is retired.
+   and the knob are gone. The hand-over went the same day (step 14): After the ice is drawn here like every other
+   line, with the bracket; a record's `precision` (decade, century, millennium) draws a soft stretch under its mark,
+   the deepest open line carries the ladder's ticks, a curve's `say` may be a function, and opts.filter / setFilter
+   let a page keep her line's "What I've seen".
    The tool layer (the audit's step 12): addTool({ draw(t) }) is called on every draw with t = { svg, layer, el, lines,
    deepest, handed, scale(depth) → { xL, xR, from, to, x(ma), m(px), y, stripY, top, h, node, open, segs }, year,
    setYear, fmt, fmtShort, fmtLong, fullWords, detent, drag(ev, { start, move, end }), holdToExpand, fitText, small };
@@ -79,6 +82,7 @@
      year     the marker's opening age, in millions of years ago (default: the root's start)
      onYear   function (ma, storeYear) — every time the marker moves; storeYear is the store's
               astronomer's year (this year minus ma million), what map.setTime takes
+     filter   function (record) → whether it shows (21 Oct 2026); setFilter(f) changes it
      time     the year's owner, CW.cwYear (js/cw-time.js; 19 Oct 2026): the marker sets it when she moves it (the
               source is this bar) and follows it when anything else does, clamped to the deepest line; a page
               with an owner reads the year from it rather than from onYear
@@ -238,11 +242,21 @@
         return { node: c, from: f, to: t, whole: f === c.from && t === c.to };
       });
     }
+    var filter = opts.filter || null;   // a page's say on which records show (her line's "What I've seen", 21 Oct 2026)
     function marksFor(g) {
       if (!store) return [];
-      return store.filter(function (ev) { return ev.ma <= g.from && ev.ma >= g.to; }).map(function (ev) {
-        return { ma: ev.ma, label: ev.label, tail: ev.tail ? ev.tail.ma : null, text: ev.summary, weight: ev.weight || 1, line: ev.line || null, rec: ev };
+      return store.filter(function (ev) { return ev.ma <= g.from && ev.ma >= g.to && (!filter || filter(ev)); }).map(function (ev) {
+        return { ma: ev.ma, label: ev.label, tail: ev.tail ? ev.tail.ma : null, text: ev.summary, weight: ev.weight || 1, line: ev.line || null, precision: ev.precision || null, rec: ev };
       });
+    }
+    // an uncertain date — a decade, a century, a millennium — draws a soft stretch under its mark, as the page's own line did
+    // (21 Oct 2026, with the hand-over gone); a tail is the older kind of uncertainty and draws as before
+    var PREC = { decade: 10, century: 100, millennium: 1000 };
+    function drawStretch(g, mk, grp, y) {
+      var yrs = PREC[mk.precision]; if (!yrs) return;
+      var half = yrs / 2 / 1e6, x0 = g.x(Math.min(g.from, mk.ma + half)), x1 = g.x(Math.max(g.to, mk.ma - half));
+      if (x1 - x0 < 2) return;
+      el('rect', { x: x0, y: y, width: x1 - x0, height: 3, rx: 1.5, fill: INK, opacity: 0.12 }, grp);
     }
     /* which events get a label on this line (Event-Lines.md): an event labelled on this line or a wider one
        is a candidate, the wider line's first; an event with no line yet is a candidate by weight (today's
@@ -407,6 +421,7 @@
           g.labels.forEach(function (l) {
             var ly = g.stripY + STRIP + EV_LINE + l.row * ROW_H + 9;
             if (l.mk.tail && l.mk.tail > l.mk.ma) el('rect', { x: g.x(Math.min(l.mk.tail, L.from)), y: tailY, width: Math.max(2, l.mx - g.x(Math.min(l.mk.tail, L.from))), height: 2, fill: 'url(#cw-deep-tail)' }, grp);
+            drawStretch(g, l.mk, grp, tailY);
             var mg = el('g', { 'class': 'mark' }, grp);
             el('line', { x1: l.mx, y1: g.stripY + STRIP, x2: l.mx, y2: ly - 10, stroke: INK, 'stroke-width': 0.8 }, mg);
             el('text', { x: l.mx, y: ly, 'font-size': 11, fill: INK_SOFT, 'text-anchor': 'middle', 'class': 'halo' }, mg, l.mk.label);
@@ -418,8 +433,16 @@
             mg.addEventListener('click', function (ev) { ev.stopPropagation(); tapMark(d, l.mk, L); });
           });
         }
+        // the ladder's ticks on the deepest open line (the page's Detail had them, unlabelled: the ends say the years): a step
+        // from the 1–5–10 ladder with at least forty-eight pixels between ticks
+        if (g === deep && g.open && !handed) {
+          var spanMa = g.from - g.to, width = g.xR - g.xL, step = null;
+          for (var ex = -6; ex <= 4 && step === null; ex++) for (var mi = 0; mi < 3 && step === null; mi++) { var cand = [1, 2, 5][mi] * Math.pow(10, ex); if (width * cand / spanMa >= 48) step = cand; }
+          if (step) for (var tv = Math.ceil(g.to / step) * step; tv <= g.from + 1e-9; tv += step) el('line', { x1: g.x(tv), y1: g.stripY + STRIP, x2: g.x(tv), y2: g.stripY + STRIP + 3, stroke: GREY, 'stroke-width': 1, opacity: 0.7 }, grp);
+        }
         g.ticks.forEach(function (tk) {
           var mg = el('g', { 'class': 'mark' }, grp), len = g.open ? TICK_H + 2 : TICK_H;
+          if (g.open) drawStretch(g, tk.mk, grp, tailY);
           el('line', { x1: tk.mx, y1: g.stripY + STRIP, x2: tk.mx, y2: g.stripY + STRIP + len, stroke: g.open ? INK : GREY, 'stroke-width': 0.8, opacity: g.open ? 0.9 : 0.6 }, mg);
           el('rect', { x: tk.mx - 9, y: g.stripY + STRIP + 1, width: 18, height: len + 8, fill: 'transparent' }, mg);
           el('title', {}, mg, tk.mk.label + ' · ' + fmt(tk.mk.ma));
@@ -454,6 +477,7 @@
     var curve = null;
     var curveAt = window.CW.curveAt;   // the value (k = 1), low (2) or high (3) at a store year: the one curve reader (js/cw-time.js)
     function sayValue(tmpl, v, unit) {
+      if (typeof tmpl === 'function') return tmpl(v);   // a page's own wording (People, Sea level, 21 Oct 2026)
       var n = Math.abs(v), txt;
       if (n === 0) txt = '0';
       else if (n >= 100) txt = withCommas(Math.round(n));
@@ -507,7 +531,8 @@
         var v = curveAt(S.pts, yr, 1); if (v == null) return;
         el('circle', { cx: mx, cy: vy(v), r: 3.5, fill: S.line, stroke: PARCH, 'stroke-width': 1.5 }, grp);
         var tx = Math.max(xL + 90, Math.min(xR - 90, mx));
-        el('text', { x: tx, y: y1 + 16 + row * 14, 'font-size': 12, 'font-style': 'italic', fill: S.line, 'text-anchor': 'middle', 'class': 'halo' }, grp, 'about ' + sayValue(S.say, v, c.unit).replace(/^about /, ''));
+        var said = typeof S.say === 'function' ? S.say(v) : 'about ' + sayValue(S.say, v, c.unit).replace(/^about /, '');   // a page's own function owns its words
+        el('text', { x: tx, y: y1 + 16 + row * 14, 'font-size': 12, 'font-style': 'italic', fill: S.line, 'text-anchor': 'middle', 'class': 'halo' }, grp, said);
         row++;
       });
       return CURVE_H + 30 + row * 14;
@@ -784,6 +809,7 @@
       addTool: function (t) { tools.push(t); if (root) draw(); return function () { var i = tools.indexOf(t); if (i >= 0) tools.splice(i, 1); if (root) draw(); }; },
       setCurve: function (c) { curve = c || null; draw(); },
       fullWords: function (on) { if (on !== undefined) { fullWords = !!on; introduced = true; draw(); } return fullWords; },   // the column's word (18 Oct 2026)
+      setFilter: function (f) { filter = f || null; if (root) draw(); },   // which records show (21 Oct 2026)
       curve: function () { return curve; },
       open: open,
       scene: scene,
