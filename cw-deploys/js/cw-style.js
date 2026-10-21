@@ -70,8 +70,8 @@
     washIce: '#f4f6f8', deepIceAlpha: 0.75,   // the glaciations of deep time: a soft overlay on the drifting world, this strong at its heart (ruling 3, 19 Oct 2026)
     rockGrey: '#8c8880', rockTan: '#a89a80', rockRust: '#96603e',   // bare rock before plants, grey to tan by the grain and rusty in places (ruling 4, 19 Oct 2026)
     oldCrust: '#1c1a17', oldCrustGrey: '#3e3a35',   // the crust before oxygen, about 2,400 million years and earlier: near-black to dark grey by the grain (ruling 4; the earliest continents, 21 Oct 2026)
-    oldLand: '#2a2724', oldLandGrey: '#56504a',     // the part of an old piece that stood above the sea, a touch lighter
-    drownedWash: 0.26, drownedAlpha: 0.92,          // the drowned part of a guessed or invented piece: the shelf wash mixed this far into the crust, and the pixel this opaque, so the crust reads dark under shallow water
+    drownedWash: 0.3,                               // the drowned part of a guessed or invented piece: the shelf wash laid over the crust at this alpha, so it reads as crust under shallow water
+    islandLift: '#a39b8e', islandLiftAlpha: 0.16,   // the part of an old piece that stood above the sea: this tone laid over it, a touch lighter
     shelfRimAlpha: 0.38,                            // the shelf round each old piece: its outline enlarged, in the shelf wash at this alpha, under the crust
     magma: '#6e2410', magmaGlow: '#b8471c', hot: '#f0a040',
     black: '#0c0a08', crust: '#141010', crustLight: '#2a2320', flash: '#fbf4e6',

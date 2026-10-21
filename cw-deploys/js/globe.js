@@ -264,8 +264,7 @@
     // the raster depends only on the age (and the pieces), so a drag, which only turns the view, reuses it (14 Oct 2026)
     // the raster is built at half-million-year steps (19 Oct 2026, step 4 of the audit's order): a plate moves at most
     // a quarter of a degree in that time, under a pixel at any size the map takes, and play no longer rebuilds it every frame
-    // since 21 Oct 2026 the raster is by body — a plate at the model's or the guessed position, or an invented blob — and at the
-    // guessed and invented ages the island of each piece (the part above the sea) is flagged in the blue byte
+    // since 21 Oct 2026 the raster is by body — a plate at the model's or the guessed position, or an invented blob
     var idKey = null, idData = null;
     function idRaster(age, how) {
       age = Math.round(age * 2) / 2; how = how || 'model';
@@ -276,22 +275,18 @@
       oc.setTransform(1, 0, 0, 1, 0, 0); oc.fillStyle = '#000'; oc.fillRect(0, 0, TW, TH);
       oc.setTransform(TW, 0, 0, TH, 0, 0);
       var saveProj = proj, saveFv = fv; proj = 'flat'; fv = { lon: 0, lat: 0, ppd: TW / 360, k: 0, w: TW, h: TH };   // texture space: the whole world, unzoomed (13 Oct)
-      var byBody = {}, islands = {}, share = (how !== 'model' || age > reach - FADE) ? exposedShare(age) : 0, k;   // the islands come in over the FADE before the reach
+      var byBody = {}, k;
       eachBody(age, how, function (id, rings, M) {
-        var path = byBody[id] || (byBody[id] = new Path2D()), isl = share > 0 ? (islands[id] || (islands[id] = new Path2D())) : null;
-        for (k = 0; k < rings.length; k++) {
-          var q = new Path2D(); if (trace(rings[k], M, q)) path.addPath(q);
-          if (isl) { var q2 = new Path2D(); if (trace(shrunk(rings[k], share), M, q2)) isl.addPath(q2); }
-        }
+        var path = byBody[id] || (byBody[id] = new Path2D());
+        for (k = 0; k < rings.length; k++) { var q = new Path2D(); if (trace(rings[k], M, q)) path.addPath(q); }
       });
       proj = saveProj; fv = saveFv;
       var id;
       for (id in byBody) {
         var idx = indexOf(id), col = 'rgb(' + (idx & 255) + ',' + (idx >> 8 & 255) + ',0)';
         oc.fillStyle = col; oc.fill(byBody[id], 'nonzero');
-        oc.strokeStyle = col; oc.lineWidth = (how === 'model' ? 1.5 : 2.5) / TW; oc.stroke(byBody[id]);   // closes the hairline gaps between pieces (a little wider at the old ages, where the shelf would show through them)
+        oc.strokeStyle = col; oc.lineWidth = 1.5 / TW; oc.stroke(byBody[id]);   // closes the hairline gaps between pieces
       }
-      for (id in islands) { var ix = indexOf(id); oc.fillStyle = 'rgb(' + (ix & 255) + ',' + (ix >> 8 & 255) + ',255)'; oc.fill(islands[id], 'nonzero'); }
       oc.setTransform(1, 0, 0, 1, 0, 0);
       idKey = key; idData = oc.getImageData(0, 0, TW, TH).data;
       return idData;
@@ -302,8 +297,8 @@
     // crust is near-black to dark grey by the grain, the part above the sea a touch lighter, the drowned part under the shelf wash
     // with the texture showing through, and a translucent shelf round each piece. The blend from bare rock to the dark crust runs
     // from OXYGEN back to DARK_BY, so the look follows the age and never switches at a grade's edge
-    var OLD3 = hex3(S.oldCrust || '#1c1a17'), OLDG3 = hex3(S.oldCrustGrey || '#3e3a35'), OLDL3 = hex3(S.oldLand || '#2a2724'), OLDLG3 = hex3(S.oldLandGrey || '#56504a');
-    var DROWN_W = S.drownedWash != null ? S.drownedWash : 0.26, DROWN_A = S.drownedAlpha != null ? S.drownedAlpha : 0.9, RIM_A = S.shelfRimAlpha != null ? S.shelfRimAlpha : 0.38;
+    var OLD3 = hex3(S.oldCrust || '#1c1a17'), OLDG3 = hex3(S.oldCrustGrey || '#3e3a35');
+    var DROWN_W = S.drownedWash != null ? S.drownedWash : 0.3, LIFT = S.islandLift || '#a39b8e', LIFT_A = S.islandLiftAlpha != null ? S.islandLiftAlpha : 0.16, RIM_A = S.shelfRimAlpha != null ? S.shelfRimAlpha : 0.38;
     var OXYGEN = 2300, DARK_BY = 2500, SHELF_DEG = 2.2;   // the shelf's width round an old piece, in degrees of arc
     var MAGMA3 = hex3(MAGMA), GLOW3 = hex3(MAGMA_GLOW), HOT3 = hex3(HOT), CRUST3 = hex3(CRUST), CRUSTL3 = hex3(CRUST_LIGHT), SEA3 = hex3(SEA), SEAD3 = hex3(SEA_DEEP), FLASH3 = hex3(FLASH);
     // the inverse of the view: screen (x east, y north, z toward the eye) back to the world at this age
@@ -358,19 +353,18 @@
     // invented-continents pass.)
     var PLANTS = 450, GREEN_BY = 300;
     // how: 'model' (the pieces at the model's positions), 'guessed' (at the guessed positions) or 'invented' (the blobs) — the
-    // guessed and invented pieces take the skin too since 21 Oct 2026, dark before oxygen, their islands lighter, the rest drowned
+    // guessed and invented pieces take the skin too since 21 Oct 2026, dark before oxygen (their islands and drowned parts are
+    // drawn over the skin by drownedBand, as paths)
     function paintSkin(V, age, g, alpha, how, oldT) {
-      how = how || 'model'; oldT = how === 'model' ? (oldT || 0) : 1;   // how far the old look (the islands, the drowned wash) is in: it blends in over the FADE before the reach
+      how = how || 'model'; oldT = how === 'model' ? (oldT || 0) : 1;   // how far the old look is in: today's inland seas fade out of the old pieces over the FADE before the reach
       var tp = Math.max(0, Math.min(1, (PLANTS - age) / (PLANTS - GREEN_BY)));   // how far the picture has come in: 0 bare rock, 1 the picture
       var td = Math.max(0, Math.min(1, (age - OXYGEN) / (DARK_BY - OXYGEN)));     // how far the dark crust has come in: 0 bare rock, 1 near-black
-      var old = oldT > 0, dw = DROWN_W * oldT, da = 1 - (1 - DROWN_A) * oldT;
       var t0 = performance.now(), ids = idRaster(Math.max(age, 0), how), picture = tp > 0 ? tex.ground : null, grain = tex['rock-grain'], cool = tex['cooling-order'];
       var out = skinTarget(), o = out.data, inv = new Array(plateByIndex.length), vc = viewPixels(V), w3 = vc.w3, ks = vc.k, inside = vc.inside, n = SW * SH;
       for (var i = 0; i < n; i++) {
         if (!inside[i]) continue;
         var k = ks[i], idx = ids[k] | (ids[k + 1] << 8);
         if (!idx) continue;
-        var island = old && ids[k + 2] > 127;
         var M = inv[idx];
         if (M === undefined) { var R = bodyMatrixAt(plateByIndex[idx], Math.max(age, 0), how); M = R ? [R[0], R[3], R[6], R[1], R[4], R[7], R[2], R[5], R[8]] : null; inv[idx] = M; }
         if (!M) continue;
@@ -395,9 +389,9 @@
           r0 = ((ROCK_G[0] + (ROCK_T[0] - ROCK_G[0]) * gr) * (1 - rust) + ROCK_R[0] * rust) * lit;
           g0 = ((ROCK_G[1] + (ROCK_T[1] - ROCK_G[1]) * gr) * (1 - rust) + ROCK_R[1] * rust) * lit;
           b0 = ((ROCK_G[2] + (ROCK_T[2] - ROCK_G[2]) * gr) * (1 - rust) + ROCK_R[2] * rust) * lit;
-          if (td > 0) {   // before oxygen: the dark crust by the grain, the island a touch lighter
-            var d0 = island ? OLDL3 : OLD3, d1 = island ? OLDLG3 : OLDG3, g2 = gr * gr * (3 - 2 * gr);
-            r0 = r0 * (1 - td) + (d0[0] + (d1[0] - d0[0]) * g2) * td; g0 = g0 * (1 - td) + (d0[1] + (d1[1] - d0[1]) * g2) * td; b0 = b0 * (1 - td) + (d0[2] + (d1[2] - d0[2]) * g2) * td;
+          if (td > 0) {   // before oxygen: the dark crust by the grain
+            var g2 = gr * gr * (3 - 2 * gr);
+            r0 = r0 * (1 - td) + (OLD3[0] + (OLDG3[0] - OLD3[0]) * g2) * td; g0 = g0 * (1 - td) + (OLD3[1] + (OLDG3[1] - OLD3[1]) * g2) * td; b0 = b0 * (1 - td) + (OLD3[2] + (OLDG3[2] - OLD3[2]) * g2) * td;
           }
         }
         if (tp > 0) {   // the picture, green and all
@@ -419,15 +413,11 @@
             if (ia > 0) { ia = Math.min(1, ia) * 0.94; r0 = r0 * (1 - ia) + ICEF3[0] * ia; g0 = g0 * (1 - ia) + ICEF3[1] * ia; b0 = b0 * (1 - ia) + ICEF3[2] * ia; if (sea > 0) sea = sea * (1 - ia); }
           }
         }
-        if (old && !island) {   // the drowned part of an old piece: the crust under shallow water, its texture showing through
-          r0 = r0 * (1 - dw) + SHELF3[0] * dw; g0 = g0 * (1 - dw) + SHELF3[1] * dw; b0 = b0 * (1 - dw) + SHELF3[2] * dw;
-          sea = sea * (1 - oldT);   // today's inland seas and shelves fade out as the old look comes in
-        } else if (old) sea = sea * (1 - oldT);   // an island stands clear of today's seas
-        var aBase = (old && !island) ? da : 1;   // a drowned pixel is a little see-through
+        if (oldT > 0) sea = sea * (1 - oldT);   // today's inland seas and shelves fade out of the old pieces as the old look comes in
         if (sea > 0) {   // the shelf, and an inland sea: the wash, translucent over the globe's sea, blended at the shore
           r0 = r0 * (1 - sea) + SHELF3[0] * sea; g0 = g0 * (1 - sea) + SHELF3[1] * sea; b0 = b0 * (1 - sea) + SHELF3[2] * sea;
-          o[oi + 3] = 255 * aBase * (1 - sea) + 255 * SHELF_A * sea;
-        } else o[oi + 3] = 255 * aBase;
+          o[oi + 3] = 255 * (1 - sea) + 255 * SHELF_A * sea;
+        } else o[oi + 3] = 255;
         o[oi] = r0; o[oi + 1] = g0; o[oi + 2] = b0;
       }
       skinCtx.putImageData(out, 0, 0);
@@ -505,11 +495,11 @@
         var M = mats[p.plate];
         if (M === undefined) { var R = g === 'guessed' ? guessedMatrix(p.plate, age) : plateMatrixAt(p.plate, Math.max(age, 0)); M = R ? mmul(V, R) : null; mats[p.plate] = M; }
         if (!M) continue;
-        var key = a.toFixed(2), path = byAlpha[key] || (byAlpha[key] = new Path2D());
-        for (var k = 0; k < p.rings.length; k++) { var q = new Path2D(); if (trace(p.rings[k], M, q)) path.addPath(q); }
+        var key = a.toFixed(2), path = byAlpha[key] || (byAlpha[key] = new Path2D()), rs = pieceRings(p, age, g === 'guessed' ? 'guessed' : 'model');
+        for (var k = 0; k < rs.length; k++) { var q = new Path2D(); if (trace(rs[k], M, q)) path.addPath(q); }
       }
       ctx.save(); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);   // the gradient is in CSS pixels: the paths go to pixel space to meet it
-      for (var ak in byAlpha) { ctx.globalAlpha = +ak; ctx.fillStyle = seaFill; var pp = pixelPath(byAlpha[ak]); ctx.fill(pp, 'nonzero'); ctx.strokeStyle = seaFill; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.stroke(pp); }   // wide enough to cover the raster's edge beyond the outline
+      for (var ak in byAlpha) { ctx.globalAlpha = +ak; ctx.fillStyle = seaFill; var pp = pixelPath(byAlpha[ak]); ctx.fill(pp, 'nonzero'); ctx.strokeStyle = seaFill; ctx.lineWidth = 2 * BLOAT_DEG * degPx() + 6; ctx.lineJoin = 'round'; ctx.stroke(pp); }   // wide enough to cover the skin's bloat and the edge beyond the outline
       ctx.restore();
       ctx.globalAlpha = 1;
     }
@@ -564,11 +554,12 @@
       for (var k = 0; k < n; k++) {
         var area = total * shares[k] / sum, rho = Math.acos(Math.max(-1, 1 - area / (2 * Math.PI)));   // a cap of this area has this angular radius
         if (!(rho > 0.01)) continue;
-        var cLat = Math.asin(2 * r() - 1), cLon = (2 * r() - 1) * Math.PI, m = 28, ring = new Float64Array(m * 3), w1 = 2 + Math.floor(r() * 3), w2 = 5 + Math.floor(r() * 4), p1 = r() * 6.28, p2 = r() * 6.28;
+        // the outline (phase 2, 21 Oct 2026): ninety-six points and three gentle harmonics, where twenty-eight points and two strong ones made corners
+        var cLat = Math.asin(2 * r() - 1), cLon = (2 * r() - 1) * Math.PI, m = 96, ring = new Float64Array(m * 3), w1 = 2 + Math.floor(r() * 3), w2 = 5 + Math.floor(r() * 4), w3 = 9 + Math.floor(r() * 6), p1 = r() * 6.28, p2 = r() * 6.28, p3 = r() * 6.28;
         var c = [Math.cos(cLat) * Math.cos(cLon), Math.cos(cLat) * Math.sin(cLon), Math.sin(cLat)];
         var u = [-Math.sin(cLon), Math.cos(cLon), 0], v = [-Math.sin(cLat) * Math.cos(cLon), -Math.sin(cLat) * Math.sin(cLon), Math.cos(cLat)];
         for (var j = 0; j < m; j++) {
-          var t = j / m * 2 * Math.PI, rr = rho * (1 + 0.28 * Math.sin(w1 * t + p1) + 0.16 * Math.sin(w2 * t + p2)), cr = Math.cos(rr), sr = Math.sin(rr);
+          var t = j / m * 2 * Math.PI, rr = rho * (1 + 0.2 * Math.sin(w1 * t + p1) + 0.1 * Math.sin(w2 * t + p2) + 0.045 * Math.sin(w3 * t + p3)), cr = Math.cos(rr), sr = Math.sin(rr);
           var x = c[0] * cr + (u[0] * Math.cos(t) + v[0] * Math.sin(t)) * sr, y = c[1] * cr + (u[1] * Math.cos(t) + v[1] * Math.sin(t)) * sr, z = c[2] * cr + (u[2] * Math.cos(t) + v[2] * Math.sin(t)) * sr;
           ring[3 * j] = x; ring[3 * j + 1] = y; ring[3 * j + 2] = z;
         }
@@ -577,6 +568,34 @@
       blobs = out; blobsKey = key; return out;
     }
 
+    // a ring's corners cut (Chaikin), by t — 0 leaves it, 1 cuts every corner to its quarter points — a pass at a time, the
+    // points put back on the sphere: the cratons are softened a little when drawn as guesses (phase 2, 21 Oct 2026), the
+    // softening coming in with the old look over the FADE before the reach so that no shape jumps there
+    function soften(arr, t, passes) {
+      var cur = arr;
+      for (var pass = 0; pass < passes; pass++) {
+        var n = cur.length / 3, out = new Float64Array(n * 6), q = t / 4;
+        for (var i = 0; i < n; i++) {
+          var j = (i + 1) % n, ax = cur[3 * i], ay = cur[3 * i + 1], az = cur[3 * i + 2], bx = cur[3 * j], by = cur[3 * j + 1], bz = cur[3 * j + 2];
+          var dx = bx - ax, dy = by - ay, dz = bz - az;
+          var x1 = ax + dx * q, y1 = ay + dy * q, z1 = az + dz * q, m1 = Math.hypot(x1, y1, z1) || 1;
+          var x2 = bx - dx * q, y2 = by - dy * q, z2 = bz - dz * q, m2 = Math.hypot(x2, y2, z2) || 1;
+          out[6 * i] = x1 / m1; out[6 * i + 1] = y1 / m1; out[6 * i + 2] = z1 / m1;
+          out[6 * i + 3] = x2 / m2; out[6 * i + 4] = y2 / m2; out[6 * i + 5] = z2 / m2;
+        }
+        cur = out;
+      }
+      return cur;
+    }
+    var SOFT_PASSES = 2;
+    // a piece's rings as drawn at an age: today's outline at the model's ages, softened as a guess, the softening blending in
+    // over the FADE before the reach
+    function pieceRings(p, age, how) {
+      if (how === 'guessed') { if (!p.soft) p.soft = p.rings.map(function (r) { return soften(r, 1, SOFT_PASSES); }); return p.soft; }
+      var t = age > reach - FADE ? Math.min(1, (age - (reach - FADE)) / FADE) : 0;
+      if (t <= 0) return p.rings;
+      return p.rings.map(function (r) { return soften(r, t, SOFT_PASSES); });
+    }
     // a ring shrunk toward its own centre on the sphere by a share k of area (the square root in length): the island
     function shrunk(arr, k) {
       var n = arr.length / 3, cx = 0, cy = 0, cz = 0, i;
@@ -600,7 +619,8 @@
         var p = pieces[i];
         if (age > p.from || age < p.to) continue;
         var list = byPlate[p.plate]; if (!list) { list = byPlate[p.plate] = []; order.push(p.plate); }
-        for (var k = 0; k < p.rings.length; k++) list.push(p.rings[k]);
+        var rs = pieceRings(p, age, how);
+        for (var k = 0; k < rs.length; k++) list.push(rs[k]);
       }
       for (var j = 0; j < order.length; j++) { var M = bodyMatrixAt(order[j], age, how); if (M) fn(order[j], byPlate[order[j]], M); }
     }
@@ -726,7 +746,8 @@
         var M = mats[p.plate];
         if (M === undefined) { var R = how === 'guessed' ? guessedMatrix(p.plate, age) : plateMatrixAt(p.plate, age); M = R ? mmul(Vs, R) : null; mats[p.plate] = M; }
         if (!M) continue;
-        for (var k = 0; k < p.rings.length; k++) add(p.rings[k], M);
+        var rs = pieceRings(p, age, how);
+        for (var k = 0; k < rs.length; k++) add(rs[k], M);
       }
       lastLand = any ? land : null; lastIslands = share > 0 && any ? islands : null;
       return any ? land : null;
@@ -747,6 +768,7 @@
       pp.addPath(unitPath, m); return pp;
     }
     function degPx() { return proj === 'flat' ? fv.ppd : (W / 2 - 4) * Math.PI / 180; }   // one degree of arc in pixels (at the disc's centre)
+    var BLOAT_DEG = 0.75 * 360 / TW;   // how far the raster's gap-closing stroke carries a piece's skin past its outline, in degrees
     // the shelf round each old piece (21 Oct 2026): the land's outline enlarged by SHELF_DEG, in the shelf wash, translucent,
     // under the crust — a wide round stroke of the union, whose inner half the crust covers. A piece being born (dissolving in)
     // brings its shelf in with it: the strokes are grouped by the pieces' birth fade
@@ -765,7 +787,25 @@
     function crustEdge(V, age, how, strength) {
       var td = Math.max(0, Math.min(1, (age - OXYGEN) / (DARK_BY - OXYGEN))), path = new Path2D();
       eachBodyRings(age, how, function (ring, M, a) { if (a < 1) return; var q = new Path2D(); if (trace(ring, M, q)) path.addPath(q); });
-      ctx.save(); ctx.lineJoin = 'round'; ctx.strokeStyle = mix(mix(S.rockGrey, S.shelfWash || '#7fb0cc', DROWN_W), mix(S.oldCrust, S.shelfWash || '#7fb0cc', DROWN_W), td); ctx.lineWidth = 1.6; ctx.globalAlpha = DROWN_A * strength; ctx.stroke(pixelPath(path));
+      ctx.save(); ctx.lineJoin = 'round'; ctx.strokeStyle = mix(mix(S.rockGrey, S.rockTan, 0.5), S.oldCrust, td); ctx.lineWidth = 2 * BLOAT_DEG * degPx() + 2.4; ctx.globalAlpha = strength; ctx.stroke(pixelPath(path));   // as wide as the skin's bloat, so its smooth outer edge is the land's edge
+      ctx.restore();
+    }
+    // the islands and the drowned parts (21 Oct 2026, phase 2; as paths, smooth at any zoom, where the raster's stairs showed): over
+    // the skin, the band between each piece's outline and its island — the part under shallow water — takes the shelf wash
+    // (the outlines and the islands filled together, even-odd), and the island is lifted a touch lighter
+    function drownedBand(V, age, how, strength) {
+      var share = exposedShare(age); if (!(share > 0) || !(strength > 0)) return;
+      var bands = {}, isles = {};
+      eachBodyRings(age, how, function (ring, M, a) {
+        var key = a.toFixed(2), band = bands[key] || (bands[key] = new Path2D()), isle = isles[key] || (isles[key] = new Path2D());
+        var q = new Path2D(); if (!trace(ring, M, q)) return; band.addPath(q);
+        var q2 = new Path2D(); if (trace(shrunk(ring, share), M, q2)) { band.addPath(q2); isle.addPath(q2); }
+      });
+      ctx.save();
+      for (var k in bands) {
+        ctx.globalAlpha = DROWN_W * strength * (+k); ctx.fillStyle = S.shelfWash || '#7fb0cc'; ctx.fill(pixelPath(bands[k]), 'evenodd');
+        ctx.globalAlpha = LIFT_A * strength * (+k); ctx.fillStyle = LIFT; ctx.fill(pixelPath(isles[k]), 'nonzero');
+      }
       ctx.restore();
     }
     // every ring of every body at the age, through the view, with the piece's birth fade (1 whole; less while it dissolves in)
@@ -782,7 +822,8 @@
         var M = mats[p.plate];
         if (M === undefined) { var R = bodyMatrixAt(p.plate, age, how); M = R ? mmul(V_now, R) : null; mats[p.plate] = M; }
         if (!M) continue;
-        for (var k = 0; k < p.rings.length; k++) fn(p.rings[k], M, a);
+        var rs = pieceRings(p, age, how);
+        for (var k = 0; k < rs.length; k++) fn(rs[k], M, a);
       }
     }
     var V_now = IDENT;   // the view matrix of the draw in hand, for the helpers above
@@ -859,7 +900,7 @@
       var tg = old ? 1 : ((data && g === 'fitted') ? Math.max(0, Math.min(1, (ma - (reach - FADE)) / FADE)) : 0);
       lastSkinMs = 0;
       if (g === 'none' && moltenReady()) moltenSt = paintMolten(V, ma);
-      else if (data && skinReady() && g !== 'none') { if (tg > 0) { shelfRim(V, ma, how, tg); crustEdge(V, ma, how, tg); } paintSkin(V, ma, g, 1, how, tg); skinned = true; }
+      else if (data && skinReady() && g !== 'none') { if (tg > 0) { shelfRim(V, ma, how, tg); crustEdge(V, ma, how, tg); } paintSkin(V, ma, g, 1, how, tg); skinned = true; if (tg > 0) drownedBand(V, ma, how, tg); }
       enterUnit(r, cx, cy);
       if (data && g !== 'none') {
         if (!skinned) {   // without the textures (or before they load): the flat fills, as before 21 Oct 2026
