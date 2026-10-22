@@ -24,9 +24,9 @@
   column holds Timeline, Map and Graphs (the panels), Cities, another guess (at the guessed and invented ages), the
   Graphs words (People and Sea level open After the ice; Oxygen, Day length, Minerals, Energy source the Earth line)
   and What I've seen (her line, the after-the-ice events she has opened); Globe (reading Map while the globe is up),
-  play, its speed and reset sit above the map. Next takes the page full screen where the browser allows it (22 Oct
-  2026, Michael on the iPad); the word at the top right, Exit full screen or Full screen, is the way out and back,
-  and is absent where the browser will not. Deep Time, active/deep-time.html, is retired into this page and its
+  play, its speed and reset sit above the map. Full screen is a word in the column above Cities, Full screen or Exit
+  full screen, absent where the browser has no full screen (22 Oct 2026, Michael on the iPad: a command, not the default;
+  earlier that day Next had taken the page full screen itself). Deep Time, active/deep-time.html, is retired into this page and its
   address redirects here.
 
   Data, read and never written: ../stories/deep-time-events.json, the one store of every event
@@ -95,9 +95,6 @@
   #htw-panel .htw-action-row:has(> .htw-action-word[style*="none"]) { display: none; }
 
   #stage { margin-left: var(--col); padding: 8px 18px 40px; }
-  /* the way out of full screen, and back (22 Oct 2026, Michael on the iPad): one word at the top right of the bench,
-     fixed so it is there wherever she has scrolled; absent where the browser has no full screen */
-  #wFull { position: fixed; top: 10px; right: 18px; z-index: 25; font-size: 14px; }
   /* the deep lines above Main (js/deep-time.js); Main sits on the funnel's foot when After the ice is open */
   #bar { width: 100%; margin: 4px 0 0; }
   #summary .passed { font-size: 12px; letter-spacing: .1em; color: var(--ink-soft); text-transform: uppercase; }
@@ -149,7 +146,7 @@
   .tm-panel p.refs { font-size: 12px; line-height: 1.45; color: var(--ink-soft); border-top: .5px solid var(--sep); margin-top: 10px; padding-top: 6px; }
 
   @media (max-width: 760px) {
-    #htw-panel { position: static; width: auto; padding: 14px 130px 12px 16px; border-right: 0; border-bottom: .5px solid #d6c9ad; }   /* room at the right for the full-screen word */
+    #htw-panel { position: static; width: auto; padding: 14px 16px 12px; border-right: 0; border-bottom: .5px solid #d6c9ad; }
     #htw-panel-list { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
     #htw-panel .htw-action-row.group { margin-top: 8px; }
     #stage { margin-left: 0; padding: 8px 12px 30px; }
@@ -210,12 +207,12 @@
 </section>
 
 <section id="bench">
-  <span class="cmd" id="wFull" role="button" tabindex="0" style="display:none">Exit full screen</span>
   <nav id="htw-panel" aria-label="How this works">
     <span id="htw-panel-heading">How this works</span>
     <ul id="htw-panel-list">
       <li class="htw-item" data-panel="timeline">Timeline</li>
       <li class="htw-item" data-panel="map">Map</li>
+      <li class="htw-action-row sub"><span class="htw-action-word" id="wFull" role="button" tabindex="0" style="display:none">Full screen</span></li>
       <li class="htw-action-row sub"><span class="htw-action-word" id="wCities">Cities</span></li>
       <li class="htw-action-row sub"><span class="htw-action-word absent" id="wGuess" style="display:none">another guess</span></li>
       <li class="htw-item graphs" id="wGraphs" data-panel="graphs">Graphs</li>
@@ -248,7 +245,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-22c 8fa63d4';   // 22 Oct 2026: full screen on Next, the word top right (Michael on the iPad); 19 Oct, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-22d bfab86b';   // 22 Oct 2026, later: full screen a word in the column above Cities, not the default (Michael on the iPad); earlier: full screen on Next; 19 Oct, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- the numbers that shape the page ----------
@@ -568,14 +565,15 @@
 
 
   // ---------- full screen (22 Oct 2026, Michael on the iPad) ----------
-  // Next takes the page full screen where the browser allows it — the Mac's browsers, Safari on the iPad (prefixed
-  // before iPadOS 16.4), not Safari on the iPhone nor a page saved to the home screen — the way the lines board goes
-  // (js/glass.js, 18 Oct). The page is the full-screen element, not the bench: the panels and the More window build
-  // themselves on the body, and only the full-screen element and what is inside it shows. The word at the top right
-  // says what tapping it will do: Exit full screen while the page is full screen, Full screen once she has left it
-  // (by the word, Escape, or the system's own way out). Where the browser has no full screen the word is absent and
-  // Next only brings the bench up; a refusal is said in the console and that is all. The bar, the map and the globe
-  // follow the size change through their own resize observers.
+  // A word in the column, under Map above Cities, takes the page full screen where the browser allows it — the Mac's
+  // browsers, Safari on the iPad (prefixed before iPadOS 16.4), not Safari on the iPhone nor a page saved to the home
+  // screen — the way the lines board goes (js/glass.js, 18 Oct). It is a command, not the default (Michael, 22 Oct,
+  // later: Next had taken the page full screen itself that morning, and should not). The page is the full-screen
+  // element, not the bench: the panels and the More window build themselves on the body, and only the full-screen
+  // element and what is inside it shows. The word says what tapping it will do: Full screen, then Exit full screen
+  // while the page is full screen, Full screen again once she has left it (by the word, Escape, or the system's own
+  // way out). Where the browser has no full screen the word is absent; a refusal is said in the console and that is
+  // all. The bar, the map and the globe follow the size change through their own resize observers.
   const page = document.documentElement;
   const FS = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled) && !!(page.requestFullscreen || page.webkitRequestFullscreen);
   const wFull = $('wFull');
@@ -609,11 +607,8 @@
     buildBar(raw.store);
     showWord();
   }
-  // full screen is asked for on the tap itself (a browser grants it only inside her gesture), and the bench shows at
-  // once, or when the files arrive if she tapped before they had
-  const next = () => { enterFull(); showBench(); };
-  $('next').addEventListener('click', next);
-  $('next').addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); next(); } });
+  $('next').addEventListener('click', showBench);
+  $('next').addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); showBench(); } });
 
   // ---------- load ----------
   const get = u => fetch(u, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
