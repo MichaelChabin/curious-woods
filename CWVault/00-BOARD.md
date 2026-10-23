@@ -1528,7 +1528,11 @@ undecided and seeded, not specced: draining the ocean to the floor
   the ghost layer, the sound question's markup, the unread craft row), 6,562 lines to 6,203; `playSound` reads `cw-sound`
   (on unless `off`). Checked by the same walk of the three live pages on the committed tree and on this one, hashed at
   every state (the `js/glass.js` entry in MANIFEST says how): identical in everything visible. Logs byte-identical.
-  **Next: T2 to T5, then R1, then the report.**
+  **T3 done:** one scene renderer, `drawScene`, for the screen, the thumbnail, the share preview and the postcard, over
+  three primitives, the four callers' habits its named options; the postcard's texture one object, `POSTCARD_TEXTURE`,
+  for ruling 5 to delete in one place; found by the check and kept: the Wright window's cuts stroked as one path differ
+  at a T from one at a time. Every visible hash identical. **T2** is a check, not a change: the harness's sections are
+  untouched so far and the logs come out byte-identical after every step. **Next: T4, T5, R1, then the report.**
 - **23 Oct — Glass Geometry audited, read-only (Claude Code, from `claude/Prompt-Audit-Glass-Geometry.md`; the report is
   `claude/Audit-Glass-Geometry-Oct23.md`; no code changed, nothing committed).** `js/glass.js` is 6,562 lines, up a quarter
   since the extraction (5,285 on 2 Oct), all of it boards added as flags: about 4,500 lines of shell, 330 the straightedge

@@ -1265,38 +1265,12 @@ function captureConstructionPNG(note, callback) {
     function wp(wx,wy) { return { x:(wx-minX+pad)*sc, y:(maxY-wy+pad)*sc }; }
     var ca = crop && wp(crop.x0, crop.y0), cb = crop && wp(crop.x1, crop.y1);
     if (crop) { oc.save(); oc.beginPath(); oc.rect(ca.x, cb.y, cb.x-ca.x, ca.y-cb.y); oc.clip(); }
-    // The glass, if there is any; a construction with none yet shows its drawing
-    // instead (2 Oct 2026 — the Rose, and anything she saves before leading it,
-    // used to preview as blank parchment).
-    allPolys.forEach(function(item) {
-        var f = item.fill;
-        var mapped = item.poly.map(function(p) { return wp(p.x,p.y); });
-        oc.beginPath(); oc.moveTo(mapped[0].x,mapped[0].y);
-        for (var i=1;i<mapped.length;i++) oc.lineTo(mapped[i].x,mapped[i].y);
-        oc.closePath(); oc.fillStyle=f.color; oc.globalAlpha=f.opacity; oc.fill('evenodd');
-        oc.globalAlpha=1;
-    });
-    if (!hasFills) {
-        oc.strokeStyle = COLORS.border; oc.lineWidth = 1; oc.globalAlpha = 0.8;
-        circles.forEach(function(ci) {
-            var ce = points.get(ci.centerId); if (!ce) return;
-            var c = wp(ce.x, ce.y);
-            oc.beginPath(); oc.arc(c.x, c.y, ci.radius * sc, 0, Math.PI * 2); oc.stroke();
-        });
-        lines.forEach(function(l) {
-            var ids = l.pointsOnLine; if (ids.length < 2) return;
-            var a = points.get(ids[0]), b = points.get(ids[ids.length - 1]); if (!a || !b) return;
-            var pa = wp(a.x, a.y), pb = wp(b.x, b.y);
-            oc.beginPath(); oc.moveTo(pa.x, pa.y); oc.lineTo(pb.x, pb.y); oc.stroke();
-        });
-        oc.fillStyle = COLORS.point; oc.globalAlpha = 1;
-        points.forEach(function(pt) { var q = wp(pt.x, pt.y); oc.beginPath(); oc.arc(q.x, q.y, 2.5, 0, Math.PI * 2); oc.fill(); });
-    }
-    if (WRIGHT) {
-        // the lines, in lead, over the glass
-        oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = Math.max(1, LEAD_WIDTH * sc); oc.lineCap = 'round'; oc.globalAlpha = 1;
-        collectLeadLines().forEach(function(l) { var a = wp(l.x1, l.y1), b = wp(l.x2, l.y2); oc.beginPath(); oc.moveTo(a.x, a.y); oc.lineTo(b.x, b.y); oc.stroke(); });
-    }
+    // The glass, if there is any, in the record's order and without its came; a construction with
+    // none yet shows its drawing instead (2 Oct 2026 — the Rose, and anything she saves before
+    // leading it, used to preview as blank parchment). The Wright window's lines are lead over the glass.
+    drawScene(oc, wp, sc, { fills: 'insertion', lead: WRIGHT ? 'after' : 'none', leadWidth: Math.max(1, LEAD_WIDTH * sc),
+                            outlines: false, leadLines: WRIGHT ? collectLeadLines() : null, passes: WRIGHT ? [{ style: LEAD_BORDER_COLOR, width: Math.max(1, LEAD_WIDTH * sc) }] : null,
+                            construction: hasFills ? 'none' : 'spans', constructionWidth: 1, constructionAlpha: 0.8, points: !hasFills });
     if (crop) { oc.restore(); oc.strokeStyle = COLORS.border; oc.lineWidth = 1; oc.globalAlpha = 0.8; oc.strokeRect(ca.x, cb.y, cb.x-ca.x, ca.y-cb.y); oc.globalAlpha = 1; }
     // Note text at bottom
     if (noteLines.length > 0) {
@@ -1477,22 +1451,7 @@ function renderPreviewCanvas(sizeKey) {
     oc.strokeStyle = '#c8b89a'; oc.lineWidth = 1;
     oc.strokeRect(matPx - 0.5, matPx - 0.5, artW + 1, artH + 1);
     oc.fillStyle = COLORS.background; oc.fillRect(matPx, matPx, artW, artH);
-    var sortedF = liveFills().sort(function(a, b) { return fillArea(b) - fillArea(a); });
-    sortedF.forEach(function(f) {
-        oc.fillStyle = f.color; oc.globalAlpha = f.opacity;
-        fillPolygons(f).forEach(function(poly) { fillPath(oc, poly, wp); oc.fill('evenodd'); });
-        oc.globalAlpha = 1;
-    });
-    var lw = Math.max(1, LEAD_WIDTH * sc);
-    oc.lineJoin = 'round'; oc.lineCap = 'round';
-    function drawLL(l) {
-        if (l.type === 'seg') { var p1 = wp(l.x1, l.y1), p2 = wp(l.x2, l.y2); oc.beginPath(); oc.moveTo(p1.x, p1.y); oc.lineTo(p2.x, p2.y); oc.stroke(); }
-        else { var c = wp(l.cx, l.cy); oc.beginPath(); oc.arc(c.x, c.y, l.r * sc, -l.aA, -l.aB, true); oc.stroke(); } // y-up flip
-    }
-    oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = lw;
-    sortedF.forEach(function(f) { strokeFillLead(oc, f, wp); });
-    leadLines2.forEach(drawLL);
-    if (FRAMED && frame) { var fa = wp(frame.x0, frame.y0), fb = wp(frame.x1, frame.y1); oc.beginPath(); oc.rect(fa.x, fb.y, fb.x - fa.x, fa.y - fb.y); oc.stroke(); }
+    drawScene(oc, wp, sc, { fills: 'sorted', lead: 'after', leadWidth: Math.max(1, LEAD_WIDTH * sc), leadLines: leadLines2, frame: FRAMED });
     return off.toDataURL('image/png');
 }
 
@@ -1807,6 +1766,41 @@ function crc32(data) {
     return (crc ^ 0xFFFFFFFF) >>> 0;
 }
 
+// The postcard's texture (March 2026), one object so it can go in one place: ruling 5 of 24 Oct
+// 2026 says what she shares is the framed window, plain — no mat, vignette, noise or warm light —
+// and the renderer step of the rebuild removes it. Kept for now so nothing visible changes.
+//   glass(c, v, f)  after a pane's base colour: a radial gradient within it (lighter centre, darker
+//                   edge, five percent) and three hundred specks of noise scattered round its corners
+//   light(c)        after all the glass, before the came: a warm overlay across every pane
+var POSTCARD_TEXTURE = {
+    glass: function(oc, mapped, f) {
+        oc.save(); oc.clip();
+        var bb = { x1: Infinity, y1: Infinity, x2: -Infinity, y2: -Infinity };
+        mapped.forEach(function(p) { bb.x1 = Math.min(bb.x1, p.x); bb.y1 = Math.min(bb.y1, p.y); bb.x2 = Math.max(bb.x2, p.x); bb.y2 = Math.max(bb.y2, p.y); });
+        var gcx = (bb.x1 + bb.x2) / 2, gcy = (bb.y1 + bb.y2) / 2;
+        var gr = Math.max(bb.x2 - bb.x1, bb.y2 - bb.y1) / 2;
+        var gg = oc.createRadialGradient(gcx, gcy, 0, gcx, gcy, gr);
+        gg.addColorStop(0, 'rgba(255,255,255,0.05)');
+        gg.addColorStop(1, 'rgba(0,0,0,0.05)');
+        oc.fillStyle = gg; oc.globalAlpha = 1; oc.fill('evenodd');
+        oc.restore();
+        oc.globalAlpha = 1;
+        for (var n = 0; n < 300; n++) {
+            var rx = mapped[Math.floor(Math.random() * mapped.length)];
+            var nx = rx.x + (Math.random() - 0.5) * 80;
+            var ny = rx.y + (Math.random() - 0.5) * 80;
+            oc.fillStyle = Math.random() > 0.5 ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)';
+            oc.fillRect(nx, ny, 2, 2);
+        }
+    },
+    light: function(oc) {
+        liveFills().sort(function(a, b) { return fillArea(b) - fillArea(a); }).forEach(function(f) {
+            fillPolygons(f).forEach(function(poly) { fillPath(oc, poly, POSTCARD_TEXTURE._map); oc.fillStyle = 'rgba(255,248,230,0.03)'; oc.globalAlpha = 1; oc.fill('evenodd'); });
+        });
+    },
+    _map: null   // the postcard's mapping, set by renderPostcardPNG for light()
+};
+
 // Postcard-quality image export
 function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     var allPolys = [];
@@ -1875,6 +1869,7 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     var oc = off.getContext('2d');
     // World y is up; canvas y is down — flip so the export matches the screen
     function wp(wx, wy) { return { x: (wx - minX) * s + matPx + offX, y: (maxY - wy) * s + matPx + offY }; }
+    POSTCARD_TEXTURE._map = wp;
 
     // Dark border mat
     oc.fillStyle = '#2a2620'; oc.fillRect(0, 0, pw, ph);
@@ -1893,85 +1888,14 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     oc.fillStyle = vgr;
     oc.fillRect(matPx, matPx, artW, artH);
 
-    // Glass fills (sorted largest first)
-    var sorted = allPolys;   // in the fills' order: a sheet's panes together, largest fill first
-    sorted.forEach(function(item) {
-        var f = item.fill;
-        var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
-        oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
-        for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
-        oc.closePath();
-        // Base color fill
-        oc.fillStyle = f.color; oc.globalAlpha = f.opacity; oc.fill('evenodd');
-        // Subtle glass gradient (lighter center, darker edges ~5%)
-        oc.save(); oc.clip();
-        var bb = { x1: Infinity, y1: Infinity, x2: -Infinity, y2: -Infinity };
-        mapped.forEach(function(p) { bb.x1 = Math.min(bb.x1, p.x); bb.y1 = Math.min(bb.y1, p.y); bb.x2 = Math.max(bb.x2, p.x); bb.y2 = Math.max(bb.y2, p.y); });
-        var gcx = (bb.x1 + bb.x2) / 2, gcy = (bb.y1 + bb.y2) / 2;
-        var gr = Math.max(bb.x2 - bb.x1, bb.y2 - bb.y1) / 2;
-        var gg = oc.createRadialGradient(gcx, gcy, 0, gcx, gcy, gr);
-        gg.addColorStop(0, 'rgba(255,255,255,0.05)');
-        gg.addColorStop(1, 'rgba(0,0,0,0.05)');
-        oc.fillStyle = gg; oc.globalAlpha = 1; oc.fill('evenodd');
-        oc.restore();
-        // Glass noise texture
-        oc.globalAlpha = 1;
-        for (var n = 0; n < 300; n++) {
-            var rx = mapped[Math.floor(Math.random() * mapped.length)];
-            var nx = rx.x + (Math.random() - 0.5) * 80;
-            var ny = rx.y + (Math.random() - 0.5) * 80;
-            oc.fillStyle = Math.random() > 0.5 ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)';
-            oc.fillRect(nx, ny, 2, 2);
-        }
-    });
-
-    // Warm light overlay across all glass
-    sorted.forEach(function(item) {
-        var mapped = item.poly.map(function(p) { return wp(p.x, p.y); });
-        oc.beginPath(); oc.moveTo(mapped[0].x, mapped[0].y);
-        for (var i = 1; i < mapped.length; i++) oc.lineTo(mapped[i].x, mapped[i].y);
-        oc.closePath();
-        oc.fillStyle = 'rgba(255,248,230,0.03)'; oc.globalAlpha = 1; oc.fill('evenodd');
-    });
-
-    // Lead lines — helper
-    function drawLeadLine(l) {
-        if (l.type === 'seg') {
-            var p1 = wp(l.x1, l.y1), p2 = wp(l.x2, l.y2);
-            oc.beginPath(); oc.moveTo(p1.x, p1.y); oc.lineTo(p2.x, p2.y); oc.stroke();
-        } else {
-            var c = wp(l.cx, l.cy);
-            oc.beginPath(); oc.arc(c.x, c.y, l.r * s, -l.aA, -l.aB, true); oc.stroke(); // y-up flip
-        }
-    }
-    // Each fill's lead: its outline, or a sheet's outside edges alone (18 Oct 2026).
-    function drawFillBoundary(f) { strokeFillLead(oc, f, wp); }
-    function drawFrameLead() {
-        if (!(FRAMED && frame)) return;
-        var fa = wp(frame.x0, frame.y0), fb = wp(frame.x1, frame.y1);
-        oc.beginPath(); oc.rect(fa.x, fb.y, fb.x - fa.x, fa.y - fb.y); oc.stroke();
-    }
-    // Round joints for all lead
-    oc.lineJoin = 'round'; oc.lineCap = 'round';
-    // Shadow pass (all lead)
-    oc.save(); oc.translate(2, 2);
-    oc.strokeStyle = 'rgba(0,0,0,0.2)'; oc.lineWidth = leadW;
-    sortedF.forEach(drawFillBoundary);
-    leadLines.forEach(drawLeadLine);
-    drawFrameLead();
-    oc.restore();
-    // Highlight pass (top-left edge)
-    oc.save(); oc.translate(-1, -1);
-    oc.strokeStyle = 'rgba(255,255,255,0.15)'; oc.lineWidth = Math.max(1, leadW * 0.4);
-    sortedF.forEach(drawFillBoundary);
-    leadLines.forEach(drawLeadLine);
-    drawFrameLead();
-    oc.restore();
-    // Main lead pass
-    oc.strokeStyle = LEAD_BORDER_COLOR; oc.lineWidth = leadW; oc.globalAlpha = 1;
-    sortedF.forEach(drawFillBoundary);
-    leadLines.forEach(drawLeadLine);
-    drawFrameLead();
+    // The glass and the came: largest first; the texture (POSTCARD_TEXTURE) on each pane as it is laid
+    // and the warm light over all of it before the came; the came in three passes, a shadow, a
+    // highlight and the main one.
+    drawScene(oc, wp, s, { fills: 'sorted', lead: 'after', leadWidth: leadW, leadLines: leadLines, frame: FRAMED,
+                           glassTexture: POSTCARD_TEXTURE.glass, beforeLead: POSTCARD_TEXTURE.light,
+                           passes: [{ dx: 2, dy: 2, style: 'rgba(0,0,0,0.2)', width: leadW },
+                                    { dx: -1, dy: -1, style: 'rgba(255,255,255,0.15)', width: Math.max(1, leadW * 0.4) },
+                                    { style: LEAD_BORDER_COLOR, width: leadW }] });
 
     // Note text at the position the child placed it
     // 9pt at 300 DPI ≈ 38px, line-height 1.5 (matches textarea CSS)
@@ -2316,6 +2240,7 @@ function fillPath(c, poly, map) {
     c.beginPath(); c.moveTo(v[0].x, v[0].y);
     for (var i = 1; i < v.length; i++) c.lineTo(v[i].x, v[i].y);
     c.closePath();
+    return v;
 }
 function liveFills() { var arr = []; fills.forEach(function(f) { if (!f.dissolved) arr.push(f); }); return arr; }
 
@@ -2649,6 +2574,121 @@ function s2w(sx,sy) { return plane.screenToWorld(sx,sy); }
 // Exposes: render(), animate() — animate() self-schedules via rAF
 // ============================================================
 
+// ── THE SCENE (T3, 24 Oct 2026) ────────────────────────────────────────────────────────────
+// One drawing of the glass and its came, for the screen, the thumbnail, the share preview and the
+// postcard, which until today each drew it their own way. `map` turns a world point into the
+// context's, `s` is the context's pixels per world unit (an arc's radius scales by it). The options
+// are the four callers' habits, kept so that nothing visible changed when they were folded together;
+// the renderer step of the rebuild (ruling 5: what she shares is the framed window, plain) decides
+// which survive:
+//   fills      'sorted' — largest first, smallest on top (the screen, the preview, the postcard);
+//              'insertion' — the record's order (the thumbnail); 'none'
+//   lead       'each' — a fill's came stroked right after its glass (the screen); 'after' — all the
+//              came after all the glass, in `passes` (the exports); 'none' (the thumbnail)
+//   leadWidth  the came's width in the context's pixels (the screen's is unscaled by zoom)
+//   passes     for 'after': [{ dx, dy, style, width, onePath }] — the postcard's shadow and highlight passes
+//              come before its main one; the preview has the main one alone
+//   leadLines  came that is not a fill's outline — lead laid on edges, the Wright window's cuts —
+//              as collectLeadLines() gives them, or null
+//   frame      true: the frame's rectangle is stroked in the came, as the exports and the Wright
+//              window do; the lines board strokes its own on screen
+//   snap       true: segment ends snapped to half-pixels (the screen)
+//   outlines   false: for 'after', the fills' own outlines are not stroked (the thumbnail's Wright lines)
+//   glassTexture(c, polyPx, fill)  called after each polygon's base colour (the postcard's texture)
+//   beforeLead(c)                  called after all the glass, before the came (the postcard's light)
+//   construction  'extended' (lines to the edge of the view; the screen draws these itself, by
+//              drawConstruction), 'spans' (between their first and last points; the thumbnail of a
+//              construction with no glass yet) or 'none'; `constructionAlpha`, `constructionWidth`
+//   points     true: the dots (the thumbnail without glass)
+function drawScene(c, map, s, o) {
+    var list = o.fills === 'none' ? [] : liveFills();
+    if (o.fills === 'sorted') list.sort(function(a, b) { return fillArea(b) - fillArea(a); });
+    list.forEach(function(f) {
+        c.fillStyle = f.color; c.globalAlpha = f.opacity;
+        fillPolygons(f).forEach(function(poly) {
+            var v = fillPath(c, poly, map); c.fill('evenodd');
+            if (o.glassTexture) { o.glassTexture(c, v, f); c.fillStyle = f.color; c.globalAlpha = f.opacity; }
+        });
+        c.globalAlpha = 1;
+        if (o.lead === 'each') {
+            c.strokeStyle = LEAD_BORDER_COLOR; c.lineWidth = o.leadWidth; c.lineJoin = 'round'; c.lineCap = 'round';
+            strokeFillLead(c, f, map);
+        }
+    });
+    if (o.beforeLead) o.beforeLead(c);
+    if (o.construction && o.construction !== 'none') drawConstruction(c, map, s, { mode: o.construction, width: o.constructionWidth, alpha: o.constructionAlpha });
+    if (o.points) {
+        c.fillStyle = COLORS.point; c.globalAlpha = 1;
+        points.forEach(function(pt) { var q = map(pt.x, pt.y); c.beginPath(); c.arc(q.x, q.y, 2.5, 0, Math.PI * 2); c.fill(); });
+    }
+    if (o.lead === 'after') (o.passes || [{ style: LEAD_BORDER_COLOR, width: o.leadWidth }]).forEach(function(pass) {
+        paintLead(c, map, s, o.outlines === false ? [] : list, o.leadLines, !!o.frame, pass, !!o.snap);
+    });
+    else if (o.lead === 'each' && (o.leadLines || o.frame)) paintLead(c, map, s, [], o.leadLines, !!o.frame, { style: LEAD_BORDER_COLOR, width: o.leadWidth }, !!o.snap);
+}
+// One pass of came: the fills' outlines (a sheet's outside alone), the lead lines, the frame.
+function paintLead(c, map, s, fills, leadLines, withFrame, pass, snapped) {
+    c.save();
+    if (pass.dx || pass.dy) c.translate(pass.dx || 0, pass.dy || 0);
+    c.strokeStyle = pass.style; c.lineWidth = pass.width; c.lineJoin = 'round'; c.lineCap = 'round'; c.globalAlpha = 1;
+    fills.forEach(function(f) { strokeFillLead(c, f, map); });
+    if (leadLines) strokeLeadLines(c, map, s, leadLines, snapped, !!pass.onePath);
+    if (withFrame && frame) { var fa = map(frame.x0, frame.y0), fb = map(frame.x1, frame.y1); c.beginPath(); c.rect(fa.x, fb.y, fb.x - fa.x, fa.y - fb.y); c.stroke(); }
+    c.restore();
+}
+// Lead lines in the current stroke style: a segment, or an arc (world y is up: a world angle lands
+// at its negative on the context, and an increasing sweep runs anticlockwise). `onePath` strokes
+// every segment in one path, as the Wright window's screen always has: where two meet in a T the
+// antialiasing differs from one stroke at a time, which is the exports' habit; the rebuild settles one.
+function strokeLeadLines(c, map, s, lines, snapped, onePath) {
+    if (onePath) c.beginPath();
+    lines.forEach(function(l) {
+        if (!onePath) c.beginPath();
+        if (l.type === 'seg') {
+            var p1 = map(l.x1, l.y1), p2 = map(l.x2, l.y2);
+            if (snapped) { c.moveTo(snap(p1.x), snap(p1.y)); c.lineTo(snap(p2.x), snap(p2.y)); }
+            else { c.moveTo(p1.x, p1.y); c.lineTo(p2.x, p2.y); }
+            if (!onePath) c.stroke();
+        } else {
+            if (onePath) { c.stroke(); c.beginPath(); }   // an arc must begin its own path: arc() joins from the current point
+            var ce = map(l.cx, l.cy); c.arc(ce.x, ce.y, l.r * s, -l.aA, -l.aB, true); c.stroke();
+            if (onePath) c.beginPath();
+        }
+    });
+    if (onePath) c.stroke();
+}
+// The construction's lines and circles: 'extended' runs each line to the edge of the view (the
+// screen); 'spans' draws it between its first and last points (the thumbnail). A scaffolded line
+// or circle draws at the scaffold opacity on the screen; the thumbnail draws everything alike.
+function drawConstruction(c, map, s, o) {
+    var width = o.width !== undefined ? o.width : PARAMS.lineWidth, alpha = o.alpha !== undefined ? o.alpha : 1;
+    var extended = o.mode === 'extended', scaffolds = extended;
+    // The screen draws lines then circles; the thumbnail drew circles then lines, and at its alpha the
+    // order shows where they cross, so each keeps its own until the rebuild settles one.
+    if (!extended) drawCircles();
+    drawLines();
+    if (extended) drawCircles();
+    function drawLines() { lines.forEach(function(l) {
+        var p1 = points.get(l.p1Id), p2 = points.get(l.p2Id), a, b;
+        if (extended) { var ext = extLine(p1, p2); if (!ext) return; a = map(ext.x1, ext.y1); b = map(ext.x2, ext.y2); }
+        else { var ids = l.pointsOnLine; if (ids.length < 2) return; var A = points.get(ids[0]), B = points.get(ids[ids.length - 1]); if (!A || !B) return; a = map(A.x, A.y); b = map(B.x, B.y); }
+        c.strokeStyle = COLORS.border; c.lineWidth = width;
+        c.globalAlpha = (scaffolds && l.isScaffold ? PARAMS.scaffoldOpacity : 1) * alpha;
+        c.beginPath();
+        if (extended) { c.moveTo(snap(a.x), snap(a.y)); c.lineTo(snap(b.x), snap(b.y)); } else { c.moveTo(a.x, a.y); c.lineTo(b.x, b.y); }
+        c.stroke();
+        c.globalAlpha = 1;
+    }); }
+    function drawCircles() { circles.forEach(function(ci) {
+        var ce = points.get(ci.centerId); if (!ce) return;
+        var sc = map(ce.x, ce.y);
+        c.strokeStyle = COLORS.border; c.lineWidth = extended ? PARAMS.circleWidth : width;
+        c.globalAlpha = (scaffolds && ci.isScaffold ? PARAMS.scaffoldOpacity : 1) * alpha;
+        c.beginPath(); c.arc(sc.x, sc.y, ci.radius * s, 0, Math.PI * 2); c.stroke();
+        c.globalAlpha = 1;
+    }); }
+}
+
 // ============================================================
 // ERASER CURSOR
 // What:    Draws the rounded-rectangle eraser shape at screen
@@ -2691,17 +2731,6 @@ function extLine(p1,p2) {
     return { x1:p1.x-nx*m,y1:p1.y-ny*m, x2:p1.x+nx*m,y2:p1.y+ny*m };
 }
 
-// Draw an emphasized segment or arc with a soft glow halo, then a crisp line on top.
-function drawEmphasisPath(drawFn) {
-    // Render as lead came — same visual as completed glass boundaries
-    ctx.strokeStyle = LEAD_BORDER_COLOR;
-    ctx.lineWidth   = LEAD_WIDTH;
-    ctx.lineJoin    = 'round';
-    ctx.lineCap     = 'round';
-    ctx.globalAlpha = 1;
-    ctx.beginPath(); drawFn(); ctx.stroke();
-}
-
 function render() {
     ctx.fillStyle = COLORS.background;
     ctx.fillRect(0,0,canvas.clientWidth,canvas.clientHeight);
@@ -2717,18 +2746,8 @@ function render() {
     // The ambient lattice, under everything the child has made
     if (mapShown && !showGlass) plane.drawLattice(ctx);
 
-    // Sort fills by area descending (largest first, smallest on top)
-    var sortedFills = liveFills();
-    sortedFills.sort(function(a, b) { return fillArea(b) - fillArea(a); });
-    sortedFills.forEach(function(f) {
-        // the glass: every pane of the fill; then its lead — the outline, or a sheet's outside alone
-        ctx.fillStyle = f.color; ctx.globalAlpha = f.opacity;
-        fillPolygons(f).forEach(function(poly) { fillPath(ctx, poly, w2s); ctx.fill('evenodd'); });
-        ctx.strokeStyle = LEAD_BORDER_COLOR; ctx.lineWidth = LEAD_WIDTH;
-        ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-        ctx.globalAlpha = 1;
-        strokeFillLead(ctx, f, w2s);
-    });
+    // The glass and its came: largest first, smallest on top, each fill's lead right after its glass.
+    drawScene(ctx, w2s, plane.zoom(), { fills: 'sorted', lead: 'each', leadWidth: LEAD_WIDTH });
     // The sheet being dragged (the lines board): the panes crossed so far, in the colour, lightly.
     if (paint && paint.order.length) {
         var pf = { panes: paint.order.map(function(k) { return paint.panes[k]; }) };
@@ -2748,10 +2767,10 @@ function render() {
             // The lines board: outside the frame the construction is scaffolding and draws a
             // little fainter, so the window reads as the window (17 Oct 2026). The frame's own
             // sides are drawn once more, a shade heavier, so the frame reads as a frame.
-            drawConstruction(FAINT_OUTSIDE);
-            ctx.save(); clipToFrame(); drawConstruction(1); ctx.restore();
+            drawConstruction(ctx, w2s, plane.zoom(), { mode: 'extended', alpha: FAINT_OUTSIDE });
+            ctx.save(); clipToFrame(); drawConstruction(ctx, w2s, plane.zoom(), { mode: 'extended' }); ctx.restore();
             strokeFrame(1, COLORS.border, 1);
-        } else drawConstruction(1);
+        } else drawConstruction(ctx, w2s, plane.zoom(), { mode: 'extended' });
     }
     // Glass only on the board: the window alone, its frame in lead.
     if (showGlass && BOARD && frame) strokeFrame(LEAD_WIDTH, LEAD_BORDER_COLOR, 1);
@@ -2819,28 +2838,9 @@ function render() {
         });
     }
 
-    // Emphasized segments — glow + crisp
-    logicalSegments.forEach(function(seg) {
-        if (!seg.isEmphasized) return;
-        var A=points.get(seg.pointAId),B=points.get(seg.pointBId);
-        var s1=w2s(A.x,A.y),s2=w2s(B.x,B.y);
-        drawEmphasisPath(function() {
-            ctx.moveTo(snap(s1.x),snap(s1.y)); ctx.lineTo(snap(s2.x),snap(s2.y));
-        });
-    });
-
-    // Emphasized arcs — glow + crisp
-    logicalArcs.forEach(function(arc) {
-        if (!arc.isEmphasized) return;
-        var ci=circles.get(arc.circIdx),ce=points.get(ci.centerId);
-        var sc=w2s(ce.x,ce.y),sr=ci.radius*plane.zoom();
-        var pA=points.get(arc.pointAId),pB=points.get(arc.pointBId);
-        var aA=getAngle(pA.x,pA.y,ce),aB=getAngle(pB.x,pB.y,ce);
-        drawEmphasisPath(function() {
-            // y-up: world angles negate on screen, sweep runs anticlockwise
-            ctx.arc(sc.x,sc.y,sr,-aA,-aB,true);
-        });
-    });
+    // The lead she has laid on edges, drawn as came, over the construction lines (the Wright window's
+    // cuts were drawn with its frame above; collectLeadLines() gives them too, but it has no edges).
+    if (!WRIGHT) paintLead(ctx, w2s, plane.zoom(), [], collectLeadLines(), false, { style: LEAD_BORDER_COLOR, width: LEAD_WIDTH }, true);
 
     if (ghostLineEnd && firstTapPoint) {
         var gw=s2w(ghostLineEnd.x,ghostLineEnd.y),ext=extLine(firstTapPoint,gw);
@@ -2946,27 +2946,8 @@ function render() {
     if (mapShown && !showGlass) drawPixelFloorReadout();
 }
 
-// The construction's lines and circles, at a multiple of their own alpha (the lines board
-// draws them twice: faint everywhere, then full inside the frame).
+// The lines board draws the construction twice: faint everywhere, then full inside the frame.
 var FAINT_OUTSIDE = 0.4;
-function drawConstruction(mul) {
-    lines.forEach(function(l) {
-        var p1=points.get(l.p1Id),p2=points.get(l.p2Id);
-        var ext=extLine(p1,p2); if (!ext) return;
-        var s1=w2s(ext.x1,ext.y1),s2=w2s(ext.x2,ext.y2);
-        ctx.strokeStyle=COLORS.border; ctx.lineWidth=PARAMS.lineWidth;
-        ctx.globalAlpha=(l.isScaffold?PARAMS.scaffoldOpacity:1)*mul;
-        ctx.beginPath(); ctx.moveTo(snap(s1.x),snap(s1.y)); ctx.lineTo(snap(s2.x),snap(s2.y)); ctx.stroke();
-        ctx.globalAlpha=1;
-    });
-    circles.forEach(function(ci) {
-        var ce=points.get(ci.centerId),sc=w2s(ce.x,ce.y),sr=ci.radius*plane.zoom();
-        ctx.strokeStyle=COLORS.border; ctx.lineWidth=PARAMS.circleWidth;
-        ctx.globalAlpha=(ci.isScaffold?PARAMS.scaffoldOpacity:1)*mul;
-        ctx.beginPath(); ctx.arc(sc.x,sc.y,sr,0,Math.PI*2); ctx.stroke();
-        ctx.globalAlpha=1;
-    });
-}
 function frameScreenRect() {
     var a = w2s(frame.x0, frame.y0), b = w2s(frame.x1, frame.y1);   // a: bottom-left on screen, b: top-right
     return { x: a.x, y: b.y, w: b.x - a.x, h: a.y - b.y, a: a, b: b };
@@ -3028,16 +3009,8 @@ function wrHandles() {
 function wrText(word, v) { return word + ': ' + CW.num.count(v); }   // whole numbers only, on this board
 function wrRender() {
     var U = wrUnit, r = frameScreenRect();
-    // the lead: every line, then the frame
-    ctx.save(); ctx.strokeStyle = LEAD_BORDER_COLOR; ctx.lineWidth = LEAD_WIDTH; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.globalAlpha = 1;
-    ctx.beginPath();
-    wrCuts.forEach(function(c) {
-        var a = c.dir === 'h' ? wrScreen(c.from, c.at) : wrScreen(c.at, c.from), b = c.dir === 'h' ? wrScreen(c.to, c.at) : wrScreen(c.at, c.to);
-        ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-    });
-    ctx.stroke();
-    ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.stroke();
-    ctx.restore();
+    // the lead: every line in one path, then the frame (the same pass as the exports', unsnapped)
+    paintLead(ctx, w2s, plane.zoom(), [], collectLeadLines(), true, { style: LEAD_BORDER_COLOR, width: LEAD_WIDTH, onePath: true }, false);
     if (showGlass) return;
     ctx.save();
     ctx.font = '11px Georgia, serif'; ctx.fillStyle = '#546A80'; ctx.globalAlpha = 0.85;
