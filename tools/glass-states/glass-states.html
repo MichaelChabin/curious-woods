@@ -1,0 +1,186 @@
+<!doctype html>
+<!--
+  glass-states.html — the check that the Glass Geometry tidying ran at every step (24 Oct 2026; the audit's
+  order of work, Michael's rulings). Mounts js/glass.js from a served tree as one of the live pages mounts it
+  (standalone, circles, wright) and walks a fixed list of states, hashing at each the canvas, the visible
+  markup, the column's words, the view, the record and the exports; two runs on two trees compare.
+
+  Why a harness page and not the pages themselves: the app's browser pane stops drawing frames when it is
+  hidden, so a canvas hash read there can be a stale frame. Here the frame loop runs on timers, pointer
+  capture tolerates scripted gestures, and the clock is frozen for the hashed frame (the snap ring pulses).
+
+  How to run it, from _CW:
+    git worktree add /tmp/committed HEAD               # the tree to compare against
+    node tools/glass-states/serve.js /tmp/committed/cw-deploys 8777 &
+    node tools/glass-states/serve.js cw-deploys 8775 &
+    node tools/glass-states/serve.js tools/glass-states 8778 &
+  then in the pane, for each page and tree:
+    http://localhost:8778/glass-states.html?tree=8777&page=circles&save=before-circles
+    javascript: localStorage.clear(); localStorage.setItem('cw-replay-duration','0'); location.reload()
+    javascript: __run()                                 # posts results/before-circles.json to the 8778 server
+  and compare:
+    node tools/glass-states/compare.js tools/glass-states/results/before-circles.json tools/glass-states/results/after-circles.json
+  The full-markup hashes (dom, imgs) differ from any tree before T1, which removed hidden elements; the
+  visible-markup hashes (visDom, visImgs) are the proof. Not deployed: tools/ is outside cw-deploys/.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>glass states</title>
+<style>
+  html, body { margin: 0; background: #f4f1e8; }
+  #host { position: absolute; left: 0; top: 0; }
+</style>
+<script>
+  // The lab's frame loop on timers, so it runs while the app's browser pane is hidden (which stops
+  // requestAnimationFrame). Pointer capture tolerated for synthetic pointers, so a gesture can be
+  // dispatched from a script. Both apply to every tree alike; they change timing, not pixels.
+  window.requestAnimationFrame = function (cb) { return setTimeout(function () { cb(performance.now()); }, 16); };
+  window.cancelAnimationFrame = function (id) { clearTimeout(id); };
+  var spc = Element.prototype.setPointerCapture;
+  Element.prototype.setPointerCapture = function (id) { try { return spc.call(this, id); } catch (e) {} };
+  var rpc = Element.prototype.releasePointerCapture;
+  Element.prototype.releasePointerCapture = function (id) { try { return rpc.call(this, id); } catch (e) {} };
+  window.__errors = [];
+  window.addEventListener('error', function (e) { __errors.push('error: ' + e.message); });
+  window.addEventListener('unhandledrejection', function (e) { __errors.push('rejection: ' + (e.reason && e.reason.message || e.reason)); });
+  var cwarn = console.warn, cerr = console.error;
+  console.warn = function () { __errors.push('warn: ' + [].slice.call(arguments).join(' ')); cwarn.apply(console, arguments); };
+  console.error = function () { __errors.push('console.error: ' + [].slice.call(arguments).join(' ')); cerr.apply(console, arguments); };
+</script>
+</head>
+<body>
+<div id="host"></div>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var tree = q.get('tree') || '8777', page = q.get('page') || 'circles';
+  var base = 'http://localhost:' + tree + '/';
+  var SIZE = { standalone: [1280, 900], circles: [1028, 648], wright: [1280, 648], lines: [1280, 648] }[page];
+  var OPTS = {
+    standalone: { level: 'both' },
+    circles: { app: 'window', palette: 'chartres', measure: true },
+    wright: { app: 'window', level: 'wright', palette: 'chartres', fullscreen: true },
+    lines: { app: 'window', level: 'lines', palette: 'chartres', fullscreen: true }
+  }[page];
+  var host = document.getElementById('host');
+  host.style.width = SIZE[0] + 'px'; host.style.height = SIZE[1] + 'px';
+  window.__page = page; window.__tree = tree;
+
+  function load(src) { return new Promise(function (res, rej) { var s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = function () { rej(new Error('failed ' + src)); }; document.head.appendChild(s); }); }
+  var scripts = ['js/cw-flags.js', 'js/cw-number.js', 'js/plane.js', 'js/cw-panel.js', 'js/glass.js'];
+  window.__ready = (async function () {
+    for (var i = 0; i < scripts.length; i++) await load(base + scripts[i] + '?h=' + Date.now());
+    window.__lab = cwGlass(host, OPTS);
+    if (page === 'standalone') __lab.focus();
+    return 'mounted ' + page + ' from ' + tree;
+  })();
+
+  // ---- helpers ----
+  var enc = new TextEncoder();
+  async function sha(s) { var b = await crypto.subtle.digest('SHA-256', enc.encode(s)); return Array.from(new Uint8Array(b)).slice(0, 6).map(function (x) { return x.toString(16).padStart(2, '0'); }).join(''); }
+  window.__sha = sha;
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  window.__hash = async function () {
+    await sleep(500);   // timer frames, and the words' fades settle
+    // the clock frozen for the frame that is hashed: the snap ring's pulse follows Date.now()
+    var realNow = Date.now; Date.now = function () { return 1800000000000; };
+    await sleep(100);
+    var canvas = host.querySelector('.g-canvas'), out = {};
+    out.size = [canvas.width, canvas.height, host.clientWidth, host.clientHeight].join('x');
+    out.canvas = await sha(canvas.toDataURL());
+    Date.now = realNow;
+    var clone = host.cloneNode(true); clone.querySelectorAll('canvas').forEach(function (c) { c.remove(); });
+    var imgs = Array.from(clone.querySelectorAll('img')).map(function (i) { return i.getAttribute('src') || ''; }).join('|');
+    clone.querySelectorAll('img').forEach(function (i) { i.removeAttribute('src'); });
+    out.dom = await sha(clone.innerHTML); out.imgs = await sha(imgs);
+    // the visible markup: what a child could see or touch — elements hidden by display or opacity left out
+    var live = Array.from(host.querySelectorAll('*')), hidden = [];
+    live.forEach(function (el, i) { var cs = getComputedStyle(el); if (cs.display === 'none' || cs.opacity === '0' || cs.visibility === 'hidden') { el.setAttribute('data-hid', '1'); hidden.push(el); } });
+    var vclone = host.cloneNode(true); hidden.forEach(function (el) { el.removeAttribute('data-hid'); });
+    vclone.querySelectorAll('[data-hid]').forEach(function (el) { el.remove(); }); vclone.querySelectorAll('canvas').forEach(function (c) { c.remove(); });
+    var vimgs = Array.from(vclone.querySelectorAll('img')).map(function (i) { return i.getAttribute('src') || ''; }).join('|');
+    vclone.querySelectorAll('img').forEach(function (i) { i.removeAttribute('src'); });
+    out.visDom = await sha(vclone.innerHTML.replace(/>\s+</g, '><').replace(/\s+/g, ' ')); out.visImgs = await sha(vimgs);
+    if (window.__keepHtml) out.html = clone.innerHTML;
+    out.words = Array.from(host.querySelectorAll('.htw-action-word, .htw-item, .g-htw-panel-heading, .g-demo-heading, .g-fs-exit, .g-wr-totals span')).map(function (e) { return e.textContent.trim() + ':' + (e.classList.contains('absent') ? 'absent' : 'present') + ':' + getComputedStyle(e).display; }).join('|');
+    out.view = JSON.stringify(host._glass.view()); out.log = await sha(JSON.stringify(host._glass.log()).replace(/fill:\d+/g, function () { return 'fill:#'; })); out.logLen = host._glass.log().length; out.fills = host._glass.fills().length;
+    return out;
+  };
+  window.__click = function (txt) { var el = Array.from(document.querySelectorAll('span, div')).find(function (e) { return e.children.length === 0 && e.textContent.trim() === txt; }); if (!el) return 'no word ' + txt; el.click(); return 'clicked ' + txt; };
+  window.__thumb = function (txt) { var it = Array.from(document.querySelectorAll('.picker-item')).find(function (i) { return i.textContent.trim() === txt; }); if (!it) return 'no item ' + txt; it.querySelector('.picker-thumb').click(); return 'thumb ' + txt; };
+  window.__pos = function (wx, wy) { var r = host.querySelector('.g-canvas').getBoundingClientRect(); var v = host._glass.view(); var vp = host._glass.viewport(); return { x: Math.round(r.left + (wx - v.x) * v.zoom + vp[0] / 2), y: Math.round(r.top - (wy - v.y) * v.zoom + vp[1] / 2) }; };
+  function ev(type, p, extra) {
+    var canvas = host.querySelector('.g-canvas');
+    var e = new PointerEvent(type, Object.assign({ bubbles: true, cancelable: true, pointerId: 1, isPrimary: true, pointerType: 'mouse', clientX: p.x, clientY: p.y, button: 0, buttons: type === 'pointerup' ? 0 : 1 }, extra || {}));
+    canvas.dispatchEvent(e);
+  }
+  window.__drag = async function (a, b, steps) {
+    steps = steps || 12;
+    ev('pointermove', a); ev('pointerdown', a); await sleep(40);
+    for (var i = 1; i <= steps; i++) { ev('pointermove', { x: a.x + (b.x - a.x) * i / steps, y: a.y + (b.y - a.y) * i / steps }); await sleep(16); }
+    ev('pointerup', b); await sleep(120);
+  };
+  window.__hold = async function (a, b, steps) {
+    steps = steps || 12;
+    ev('pointermove', a); ev('pointerdown', a); await sleep(40);
+    for (var i = 1; i <= steps; i++) { ev('pointermove', { x: a.x + (b.x - a.x) * i / steps, y: a.y + (b.y - a.y) * i / steps }); await sleep(16); }
+    await sleep(60);
+  };
+  window.__release = async function (b) { ev('pointerup', b); await sleep(120); };
+  window.__tap = async function (p) { ev('pointermove', p); ev('pointerdown', p); await sleep(40); ev('pointerup', p); await sleep(120); };
+  window.__hookPostcard = function () { var s = 12345; Math.random = function () { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; }; var tb = HTMLCanvasElement.prototype.toBlob; HTMLCanvasElement.prototype.toBlob = function (cb, type) { window.__lastPostcard = this.toDataURL(); return tb.call(this, cb, type); }; try { Object.defineProperty(navigator, 'share', { value: undefined, configurable: true }); } catch (e) {} HTMLAnchorElement.prototype.click = function () {}; return 'hooked'; };
+
+  // ---- the states, the same walk for every tree ----
+  window.__run = async function () {
+    await __ready;
+    await sleep(1800);   // the palettes, the library and the previews arrive
+    var states = {}, name = page;
+    async function rec(label) { states[label] = await __hash(); }
+    await rec('1 opening');
+    if (name === 'wright' || name === 'lines') { await __tap(__pos(0, 0)); await sleep(300); }   // the first touch, spent on full screen
+    if (name === 'wright') {
+      await __hold(__pos(0, 280), __pos(0, 168)); await rec('2a the line held mid-pull, its readouts'); await __release(__pos(0, 168)); await sleep(120);
+      await rec('2 a line pulled off the top side');
+      var hr = __pos(280, 0); hr = { x: hr.x + 28, y: hr.y };
+      await __hold(hr, { x: hr.x + 40, y: hr.y }); await rec('2b the right handle held out, its readouts'); await __release(hr); await sleep(120);
+      __click('Wright'); await sleep(500); __click('Start a new construction'); await sleep(1200); await rec('3 the Wright demo played');
+      await __tap(__pos(0, 0)); await sleep(300); await rec('4 the big pane tapped');
+      __hookPostcard(); __click('Share'); await sleep(500); await rec('5 the share preview');
+      document.querySelector('.g-save-note-name').value = 'Wright'; document.querySelector('.g-save-note-text').value = 'a note'; __click('OK'); await sleep(1200);
+      states['6 the postcard'] = { postcard: await sha(window.__lastPostcard || ''), len: (window.__lastPostcard || '').length };
+    } else if (name === 'lines') {
+      await __tap(__pos(-400, 300)); await sleep(200); await rec('2 a free point placed');
+      await __hold(__pos(240, 0), __pos(300, 0)); await rec('3a the side held mid-drag, its readouts'); await __release(__pos(300, 0)); await sleep(120);
+      await rec('3 the right side dragged out');
+      __click('Halves'); await sleep(500); __click('Start a new construction'); await sleep(1200); await rec('4 the Halves demo played');
+      __click('Show lines'); await sleep(300);
+      await __drag(__pos(-120, 90), __pos(120, 90)); await rec('5 a sheet dragged across the top quarters');
+      __click('Glass only'); await sleep(300); await rec('6 Glass only');
+    } else {
+      await __hold(__pos(-100, 0), __pos(100, 0)); await rec('2a the circle held mid-drag, its measure'); await __release(__pos(100, 0)); await sleep(120);
+      await rec('2 a circle from 0 through 1');
+      if (name === 'circles') {
+        __click('Rose'); await sleep(500); __click('Start a new construction'); await sleep(1200); await rec('3 the Rose played');
+        await __tap(__pos(50, 0)); await sleep(300); await rec('4 a petal tapped');
+        __click('Glass only'); await sleep(300); await rec('5 Glass only');
+      } else {
+        __click('Open'); await sleep(500); __click('Start a new construction'); await sleep(600);
+        __thumb('Equilateral Triangle'); await sleep(600); __click('Play'); await sleep(1200); await rec('3 the Equilateral Triangle played');
+        __click('Show map'); await sleep(300); await rec('4 Show map');
+        __click('Just the glass'); await sleep(300); await rec('5 Just the glass');
+      }
+      __hookPostcard(); __click('Share'); await sleep(500); await rec('6 the share preview');
+      document.querySelector('.g-save-note-name').value = 'Mine'; document.querySelector('.g-save-note-text').value = 'a note'; __click('OK'); await sleep(1200);
+      states['7 the postcard'] = { postcard: await sha(window.__lastPostcard || ''), len: (window.__lastPostcard || '').length };
+    }
+    states.errors = __errors.slice();
+    var label = (q.get('save') || (tree + '-' + page));
+    try { await fetch('http://localhost:8778/save?name=' + encodeURIComponent(label), { method: 'POST', body: JSON.stringify(states, null, 1) }); states.saved = label; } catch (e) { states.saved = 'not saved: ' + e.message; }
+    return states;
+  };
+})();
+</script>
+</body>
+</html>
