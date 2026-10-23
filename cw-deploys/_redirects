@@ -64,3 +64,7 @@
 /experiments/the-glass-rose             /active/geo-1-glass-circles.html              301
 /experiments/geo-1-glass-circles.html   /active/geo-1-glass-circles.html              301
 /experiments/geo-1-glass-circles        /active/geo-1-glass-circles.html              301
+
+# The straightedge board (Stained Glass Lines) retired on 24 Oct 2026 (Michael's ruling 1 on the Glass Geometry
+# audit); the Wright window is the board that took its place as the Wright story's.
+/experiments/geo-2-glass-lines.html     /experiments/geo-2-glass-wright-window.html   301

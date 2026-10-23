@@ -22,11 +22,8 @@
    (6 world units) is taken, and a miss throws, so a wrong coordinate cannot slip through
    as a different point. 2 Oct 2026, for the canonical set (board, Glass).
 
-   The lines board (17 Oct 2026): G.create({ board: true }) opens on the board's frame instead
-   of the two seeds (the init op carries the frame; its sides are lines −1 to −4, its corners
-   fr:bl, fr:br, fr:tr, fr:tl at (±240, ±180) — the unit is glass.js's FRAME_UNIT, 240), and
-   g.free(u, v) puts the free point down, in
-   units from the origin. Circle crossings are hidden vertices there, as on the board.
+   The lines board's option (create({ board: true }), g.free(u, v)) went with the board on 24 Oct 2026
+   (ruling 1, R1); its script is kept in _CW/outdated-files/glass-lines-retired-2026-10-24/.
 
    The Wright window (19 Oct 2026): G.create({ wright: true }) opens on its 10 by 10 frame of whole
    steps (the init op carries `wright`; no points at all). g.resize(left, bottom, width, height) is
@@ -34,8 +31,8 @@
    'h' at y = at or 'v' at x = at; g.wrPane(x, y, colour) colours that pane. The model is the lab's
    own code (wrReplayOp), so a cut with no room or a pane not there throws here, not in the browser.
 
-   Since T4 (24 Oct 2026) the two boards are blocks of their own between the OPERATION LOG section and
-   CANVAS NOTES, inside the span cut below; the Wright model is read through wrightBoard.state(). */
+   Since T4 (24 Oct 2026) the Wright window is a block of its own between the OPERATION LOG section and
+   CANVAS NOTES, inside the span cut below; its model is read through wrightBoard.state(). */
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -65,7 +62,7 @@ function create(opts) {
     PARAMS: { birthDuration: 0 },
     FOREST_GLASS: '#c2d4bc',
     // The window profile's flags, read by replayLog since 8 Oct 2026 (the harness threw on APP until this).
-    APP: !!(opts.board || opts.wright), BOARD: !!opts.board, WRIGHT: !!opts.wright, FRAMED: !!(opts.board || opts.wright), showGlass: false,
+    APP: !!opts.wright, WRIGHT: !!opts.wright, showGlass: false,
     state: { palette: { selected: null } },
     plane: {
       setUnitFrame(ox, oy, len) { unit.x = ox; unit.y = oy; unit.len = len; },
@@ -129,11 +126,6 @@ function create(opts) {
     line(ax, ay, bx, by) {
       const a = near(ax, ay, 'first point'), b = near(bx, by, 'second point');
       lab.append({ op: 'line', p1Id: a, p2Id: b }); return api;
-    },
-    // The lines board's free point, in units from the origin (the board records hundredths).
-    free(u, v) {
-      if (!opts.board) throw new Error('free() is the lines board\'s gesture: create({ board: true })');
-      lab.append({ op: 'free_point', u: u, v: v }); return api;
     },
     // Glass on the pane around (x, y), as the board's tap lays it: one fill op with the pane's own edges.
     pane(x, y, colour) {

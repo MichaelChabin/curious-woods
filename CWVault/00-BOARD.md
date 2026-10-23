@@ -1538,7 +1538,12 @@ undecided and seeded, not specced: draining the ocean to the floor
   first draft of R4's interface; the harness reads the Wright model through `wrightBoard.state()`; the lines board
   walked too; every visible hash identical on four pages. **T5 done:** one formatter, `readoutText(word, v, rule)`, with
   the board's rule (whole, approx, exact), and one label, `readout`, for every number shown while she drags; four
-  mid-drag states added to the walk since none had been hashed; identical on four pages. **Next: R1, then the report.**
+  mid-drag states added to the walk since none had been hashed; identical on four pages. **R1 done:** level `lines`
+  retired — the block, the flag, the page, its demo and its harness script (kept whole in
+  `outdated-files/glass-lines-retired-2026-10-24/`), its index row, a redirect to the Wright window; every `FRAMED`
+  path read as the Wright window's; the two ideas kept as notes under Stained Glass in the inventory; the
+  two-instance bench restored (ruling 12). 5,923 lines. Identical on the three live pages. **Next: the report
+  (`claude/Report-Tidy-Glass-Geometry-01.md`), then Michael's read and the rebuild prompt.**
 - **23 Oct — Glass Geometry audited, read-only (Claude Code, from `claude/Prompt-Audit-Glass-Geometry.md`; the report is
   `claude/Audit-Glass-Geometry-Oct23.md`; no code changed, nothing committed).** `js/glass.js` is 6,562 lines, up a quarter
   since the extraction (5,285 on 2 Oct), all of it boards added as flags: about 4,500 lines of shell, 330 the straightedge
