@@ -944,36 +944,23 @@ var paint=null;          // { panes: { key: { vertices, edges, poly } }, order: 
 // The lines board draws the construction twice: faint everywhere, then full inside the frame.
 var FAINT_OUTSIDE = 0.4;
 function clipToFrame() { var r = frameScreenRect(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip(); }
-// The frame's numbers while it is dragged: exact where they are exact (sizes snap to tenths, so
-// width and height always are, and an area to hundredths), "≈" to two places where they are not.
-function frameMeasureText(word, v) {
-    var n = Math.round(v);
-    if (Math.abs(v - n) < 1e-9) return word + ': ' + CW.num.count(n);
-    if (Math.abs(v * 10 - Math.round(v * 10)) < 1e-9) return word + ': ' + CW.num.decimal(Math.round(v * 10), 1);
-    if (Math.abs(v * 100 - Math.round(v * 100)) < 1e-9) return word + ': ' + CW.num.decimal(Math.round(v * 100), 2);
-    return word + ' ≈ ' + CW.num.decimal(Math.round(v * 100), 2);
-}
+// The frame's numbers while it is dragged: sizes snap to tenths, so width and height are always
+// exact and an area is exact to hundredths; "≈" where a number is not (the 'exact' rule).
 function drawFrameMeasure() {
     var f = frameOp(); if (!f) return;
     var w = f.width, h = f.height, r = frameScreenRect();
     ctx.save();
-    ctx.font = '11px Georgia, serif'; ctx.fillStyle = '#546A80'; ctx.globalAlpha = 0.85;
     // the width above the top side, the height beside the right side
-    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
-    ctx.fillText(frameMeasureText('width', w), r.x + r.w / 2, r.y - 6);
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(frameMeasureText('height', h), r.x + r.w + 8, r.y + r.h / 2);
+    readout(ctx, readoutText('width', w, 'exact'), r.x + r.w / 2, r.y - 6, 'center', 'bottom');
+    readout(ctx, readoutText('height', h, 'exact'), r.x + r.w + 8, r.y + r.h / 2, 'left', 'middle');
     // the diagonal, a thin line corner to corner as the radius is drawn, its length beside its middle
-    ctx.strokeStyle = COLORS.border; ctx.lineWidth = PARAMS.lineWidth; ctx.globalAlpha = 0.7;
-    ctx.beginPath(); ctx.moveTo(snap(r.a.x), snap(r.a.y)); ctx.lineTo(snap(r.b.x), snap(r.b.y)); ctx.stroke();
-    ctx.globalAlpha = 0.85;
+    readoutLine(ctx, r.a, r.b);
     var dx = r.b.x - r.a.x, dy = r.b.y - r.a.y, dl = Math.sqrt(dx*dx + dy*dy) || 1;
     var nx = dy / dl, ny = -dx / dl;   // the perpendicular pointing up the screen and left
     var mx = (r.a.x + r.b.x) / 2 + nx * 10, my = (r.a.y + r.b.y) / 2 + ny * 10;
-    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-    ctx.fillText(frameMeasureText('diagonal', Math.sqrt(w*w + h*h)), mx, my);
+    readout(ctx, readoutText('diagonal', Math.sqrt(w*w + h*h), 'exact'), mx, my, 'right', 'middle');
     // the area inside, near the bottom, centred, where there is room
-    if (r.h > 60 && r.w > 90) { ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(frameMeasureText('area', w * h), r.x + r.w / 2, r.y + r.h - 10); }
+    if (r.h > 60 && r.w > 90) readout(ctx, readoutText('area', w * h, 'exact'), r.x + r.w / 2, r.y + r.h - 10, 'center', 'bottom');
     ctx.restore();
 }
 
@@ -1303,25 +1290,21 @@ function wrHandles() {
              { side:'top',    x: r.x + r.w / 2,          y: r.y - WR_HANDLE },
              { side:'bottom', x: r.x + r.w / 2,          y: r.y + r.h + WR_HANDLE } ];
 }
-function wrText(word, v) { return word + ': ' + CW.num.count(v); }   // whole numbers only, on this board
 function wrRender() {
     var U = wrUnit, r = frameScreenRect();
     // the lead: every line in one path, then the frame (the same pass as the exports', unsnapped)
     paintLead(ctx, w2s, plane.zoom(), [], collectLeadLines(), true, { style: LEAD_BORDER_COLOR, width: LEAD_WIDTH, onePath: true }, false);
     if (showGlass) return;
     ctx.save();
-    ctx.font = '11px Georgia, serif'; ctx.fillStyle = '#546A80'; ctx.globalAlpha = 0.85;
     // the numbers at each whole step, thinned where they would crowd; the last one always
     var step = U * plane.zoom(), every = step >= 16 ? 1 : step >= 8 ? 2 : 5;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
     for (var i = 0; i <= wrFrame.width; i++) {
         if (i % every && i !== wrFrame.width) continue;
-        var s = wrScreen(wrFrame.left + i, wrFrame.bottom); ctx.fillText(CW.num.count(i), s.x, s.y + 7);
+        var s = wrScreen(wrFrame.left + i, wrFrame.bottom); readout(ctx, CW.num.count(i), s.x, s.y + 7, 'center', 'top');
     }
-    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     for (var j = 0; j <= wrFrame.height; j++) {
         if (j % every && j !== wrFrame.height) continue;
-        var t = wrScreen(wrFrame.left, wrFrame.bottom + j); ctx.fillText(CW.num.count(j), t.x - 8, t.y);
+        var t = wrScreen(wrFrame.left, wrFrame.bottom + j); readout(ctx, CW.num.count(j), t.x - 8, t.y, 'right', 'middle');
     }
     var d = wrDrag;
     // the handles, until the first line; while one is dragged, that one alone
@@ -1333,13 +1316,13 @@ function wrRender() {
             ctx.beginPath(); ctx.arc(h.x, h.y, on ? 5 : 4, 0, Math.PI * 2); ctx.fill();
             ctx.globalAlpha = 0.25; ctx.beginPath(); ctx.arc(h.x, h.y, 9, 0, Math.PI * 2); ctx.fill();
         });
-        ctx.fillStyle = '#546A80'; ctx.globalAlpha = 0.85;
     }
     // the frame measured while a side is dragged: width above, height beside the right, area inside
+    // (whole numbers always, on this board: the 'whole' rule)
     if (d && d.kind === 'resize') {
-        ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(wrText('width', wrFrame.width), r.x + r.w / 2, r.y - 6);
-        ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(wrText('height', wrFrame.height), r.x + r.w + 44, r.y + r.h / 2);
-        if (r.h > 60 && r.w > 90) { ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(wrText('area', wrFrame.width * wrFrame.height), r.x + r.w / 2, r.y + r.h - 10); }
+        readout(ctx, readoutText('width', wrFrame.width, 'whole'), r.x + r.w / 2, r.y - 6, 'center', 'bottom');
+        readout(ctx, readoutText('height', wrFrame.height, 'whole'), r.x + r.w + 44, r.y + r.h / 2, 'left', 'middle');
+        if (r.h > 60 && r.w > 90) readout(ctx, readoutText('area', wrFrame.width * wrFrame.height, 'whole'), r.x + r.w / 2, r.y + r.h - 10, 'center', 'bottom');
     }
     // the line being pulled: where it would settle, its length, and the two panes it is making
     if (d && d.kind === 'pull' && d.pane && d.at !== null && d.at !== undefined) {
@@ -1347,16 +1330,14 @@ function wrRender() {
         var a = d.dir === 'h' ? wrScreen(p.x0, d.at) : wrScreen(d.at, p.y0), b = d.dir === 'h' ? wrScreen(p.x1, d.at) : wrScreen(d.at, p.y1);
         ctx.strokeStyle = LEAD_BORDER_COLOR; ctx.lineWidth = LEAD_WIDTH; ctx.lineCap = 'round'; ctx.globalAlpha = 0.5;
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-        ctx.globalAlpha = 0.85;
         var len = d.dir === 'h' ? p.x1 - p.x0 : p.y1 - p.y0;
-        if (d.dir === 'h') { ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(wrText('length', len), b.x + 8, b.y); }
-        else { ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(wrText('length', len), a.x, Math.min(a.y, b.y) - 6); }
+        if (d.dir === 'h') readout(ctx, readoutText('length', len, 'whole'), b.x + 8, b.y, 'left', 'middle');
+        else readout(ctx, readoutText('length', len, 'whole'), a.x, Math.min(a.y, b.y) - 6, 'center', 'bottom');
         if (halves) halves.forEach(function(h) {
             var c = wrScreen((h.x0 + h.x1) / 2, (h.y0 + h.y1) / 2), hw = h.x1 - h.x0, hh = h.y1 - h.y0, pw = hw * step, ph = hh * step;
-            var size = CW.num.count(hw) + ' by ' + CW.num.count(hh), area = wrText('area', hw * hh);
-            ctx.textAlign = 'center';
-            if (ph >= 34 && pw >= 70) { ctx.textBaseline = 'bottom'; ctx.fillText(size, c.x, c.y - 2); ctx.textBaseline = 'top'; ctx.fillText(area, c.x, c.y + 2); }
-            else if (pw >= 110 || ph >= 20) { ctx.textBaseline = 'middle'; ctx.fillText(size + ', ' + area, c.x, c.y); }
+            var size = CW.num.count(hw) + ' by ' + CW.num.count(hh), area = readoutText('area', hw * hh, 'whole');
+            if (ph >= 34 && pw >= 70) { readout(ctx, size, c.x, c.y - 2, 'center', 'bottom'); readout(ctx, area, c.x, c.y + 2, 'center', 'top'); }
+            else if (pw >= 110 || ph >= 20) readout(ctx, size + ', ' + area, c.x, c.y, 'center', 'middle');
         });
     }
     ctx.restore();
@@ -3652,17 +3633,39 @@ function drawAxisLabels() {
 }
 
 var alive = true, rafId = 0;
-// The circle measured as it is drawn (2 Oct 2026, measure: true): a thin radius from
-// the centre to the point on the ghost in the direction of the hand — the cursor while
-// free, the snap point once snapped — with its length beside it, and the area inside
-// the circle near its bottom. Units are the plane's, where 0 to 1 is one. A render hint
-// like the ghost itself: not in the log, not in replay, gone on release. The only
-// rounding is at the ≈, two places; a whole number of units reads as one.
-function measureText(word, v) {
+// The circle measured as it is drawn (2 Oct 2026, measure: true): the hand is the cursor while
+// free, the snap point once snapped. Units are the plane's, where 0 to 1 is one. A render hint
+// like the ghost itself: not in the log, not in replay, gone on release.
+// ── THE READOUT (T5, 24 Oct 2026) ──────────────────────────────────────────────────────────
+// Every number shown while she drags — the circle's radius and area, the lines board's frame, the
+// Wright window's frame, line and panes — goes through one formatter and one label. The formatter
+// takes the board's rule for whole numbers and ≈ (ruling 9's one vocabulary, the numbers' half):
+//   'whole'   the value is a whole number of steps and is printed as one (the Wright window)
+//   'approx'  a whole number where it is one, else ≈ to two places (the circle's radius and area)
+//   'exact'   exact to tenths or hundredths where it is, else ≈ to two places (the lines board)
+function readoutText(word, v, rule) {
+    if (rule === 'whole') return word + ': ' + CW.num.count(v);
     var n = Math.round(v);
     if (Math.abs(v - n) < 1e-9) return word + ': ' + CW.num.count(n);
+    if (rule === 'exact') {
+        if (Math.abs(v * 10 - Math.round(v * 10)) < 1e-9) return word + ': ' + CW.num.decimal(Math.round(v * 10), 1);
+        if (Math.abs(v * 100 - Math.round(v * 100)) < 1e-9) return word + ': ' + CW.num.decimal(Math.round(v * 100), 2);
+    }
     return word + ' ≈ ' + CW.num.decimal(Math.round(v * 100), 2);
 }
+// One label: 11px Georgia in Payne's grey at 0.85, placed with its alignment.
+function readout(c, text, x, y, align, baseline) {
+    c.font = '11px Georgia, serif'; c.fillStyle = '#546A80'; c.globalAlpha = 0.85;
+    c.textAlign = align; c.textBaseline = baseline;
+    c.fillText(text, x, y);
+}
+// The thin measuring line beside a readout (the radius, the frame's diagonal), snapped.
+function readoutLine(c, a, b) {
+    c.strokeStyle = COLORS.border; c.lineWidth = PARAMS.lineWidth; c.globalAlpha = 0.7;
+    c.beginPath(); c.moveTo(snap(a.x), snap(a.y)); c.lineTo(snap(b.x), snap(b.y)); c.stroke();
+}
+// The circle measured as it is drawn: a thin radius from the centre to the point on the ghost in the
+// direction of the hand, its length beside it, and the area inside near the bottom.
 function drawMeasure(g, sc) {
     var unit = plane.unitLength(); if (!(unit > 0)) return;
     var hand = snapTarget ? { x: snapTarget.x, y: snapTarget.y } : s2w(mouseScreenPos.x, mouseScreenPos.y);
@@ -3670,22 +3673,18 @@ function drawMeasure(g, sc) {
     var ex = g.center.x + dx / len * g.radius, ey = g.center.y + dy / len * g.radius;
     var se = w2s(ex, ey);
     ctx.save();
-    ctx.strokeStyle = COLORS.border; ctx.lineWidth = PARAMS.lineWidth; ctx.globalAlpha = 0.7;
-    ctx.beginPath(); ctx.moveTo(snap(sc.x), snap(sc.y)); ctx.lineTo(snap(se.x), snap(se.y)); ctx.stroke();
-    ctx.font = '11px Georgia, serif'; ctx.fillStyle = '#546A80'; ctx.globalAlpha = 0.85;
+    readoutLine(ctx, sc, se);
     // the radius label off the line, on the side away from the hand: beside the line's
     // nearer half, offset to whichever perpendicular points up the screen
     var vx = se.x - sc.x, vy = se.y - sc.y, vl = Math.sqrt(vx*vx + vy*vy) || 1;
     var px = -vy / vl, py = vx / vl; if (py > 0) { px = -px; py = -py; }
     var lx = sc.x + vx * 0.4 + px * 12, ly = sc.y + vy * 0.4 + py * 12;
-    ctx.textAlign = (px < 0) ? 'right' : 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(measureText('radius', g.radius / unit), lx, ly);
+    readout(ctx, readoutText('radius', g.radius / unit, 'approx'), lx, ly, (px < 0) ? 'right' : 'left', 'middle');
     // the area near the bottom of the circle, centred, only where there is room for it
     var sr = g.radius * plane.zoom(), ay = sc.y + sr - 16;
     if (sr > 48 && ay > 12 && ay < canvas.clientHeight - 6 && sc.x > 40 && sc.x < canvas.clientWidth - 40) {
         var ru = g.radius / unit;
-        ctx.textAlign = 'center';
-        ctx.fillText(measureText('area', Math.PI * ru * ru), sc.x, ay);
+        readout(ctx, readoutText('area', Math.PI * ru * ru, 'approx'), sc.x, ay, 'center', 'middle');
     }
     ctx.restore();
 }

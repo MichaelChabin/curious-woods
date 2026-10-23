@@ -1536,7 +1536,9 @@ undecided and seeded, not specced: draining the ocean to the floor
   in one of two blocks, `linesBoard` and `wrightBoard`, called where the branches were; the shared frame and the
   `FRAMED` rules left in the shell as the frame's (ruling 7); what each block reaches into written at its head, the
   first draft of R4's interface; the harness reads the Wright model through `wrightBoard.state()`; the lines board
-  walked too; every visible hash identical on four pages. **Next: T5, R1, then the report.**
+  walked too; every visible hash identical on four pages. **T5 done:** one formatter, `readoutText(word, v, rule)`, with
+  the board's rule (whole, approx, exact), and one label, `readout`, for every number shown while she drags; four
+  mid-drag states added to the walk since none had been hashed; identical on four pages. **Next: R1, then the report.**
 - **23 Oct — Glass Geometry audited, read-only (Claude Code, from `claude/Prompt-Audit-Glass-Geometry.md`; the report is
   `claude/Audit-Glass-Geometry-Oct23.md`; no code changed, nothing committed).** `js/glass.js` is 6,562 lines, up a quarter
   since the extraction (5,285 on 2 Oct), all of it boards added as flags: about 4,500 lines of shell, 330 the straightedge
