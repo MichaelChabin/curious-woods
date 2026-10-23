@@ -32,7 +32,10 @@
    steps (the init op carries `wright`; no points at all). g.resize(left, bottom, width, height) is
    one drag of a side; g.cut(x, y, dir, at) pulls a line across the pane around (x, y) in units,
    'h' at y = at or 'v' at x = at; g.wrPane(x, y, colour) colours that pane. The model is the lab's
-   own code (wrReplayOp), so a cut with no room or a pane not there throws here, not in the browser. */
+   own code (wrReplayOp), so a cut with no room or a pane not there throws here, not in the browser.
+
+   Since T4 (24 Oct 2026) the two boards are blocks of their own between the OPERATION LOG section and
+   CANVAS NOTES, inside the span cut below; the Wright model is read through wrightBoard.state(). */
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -84,7 +87,7 @@ function create(opts) {
              segs: logicalSegments, arcs: logicalArcs, fills: fills, checkAndFill: checkAndFill,
              dist: dist, getAngle: getAngle, angleBetween: angleBetween,
              face: (typeof findFaceAround === 'function') ? findFaceAround : null,
-             wr: function () { return { frame: wrFrame, panes: wrPanes, cuts: wrCuts, paneAt: wrPaneAt, fillOf: wrFillOf }; } };`;
+             wr: function () { return wrightBoard.state(); } };`;
   const lab = new Function(...names, body)(...names.map(n => stubs[n]));
   lab.init();
 

@@ -1532,7 +1532,11 @@ undecided and seeded, not specced: draining the ocean to the floor
   three primitives, the four callers' habits its named options; the postcard's texture one object, `POSTCARD_TEXTURE`,
   for ruling 5 to delete in one place; found by the check and kept: the Wright window's cuts stroked as one path differ
   at a T from one at a time. Every visible hash identical. **T2** is a check, not a change: the harness's sections are
-  untouched so far and the logs come out byte-identical after every step. **Next: T4, T5, R1, then the report.**
+  untouched so far and the logs come out byte-identical after every step. **T4 done:** every `BOARD` and `WRIGHT` branch
+  in one of two blocks, `linesBoard` and `wrightBoard`, called where the branches were; the shared frame and the
+  `FRAMED` rules left in the shell as the frame's (ruling 7); what each block reaches into written at its head, the
+  first draft of R4's interface; the harness reads the Wright model through `wrightBoard.state()`; the lines board
+  walked too; every visible hash identical on four pages. **Next: T5, R1, then the report.**
 - **23 Oct — Glass Geometry audited, read-only (Claude Code, from `claude/Prompt-Audit-Glass-Geometry.md`; the report is
   `claude/Audit-Glass-Geometry-Oct23.md`; no code changed, nothing committed).** `js/glass.js` is 6,562 lines, up a quarter
   since the extraction (5,285 on 2 Oct), all of it boards added as flags: about 4,500 lines of shell, 330 the straightedge
