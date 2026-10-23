@@ -116,18 +116,6 @@
     "      background: #c8b89a; pointer-events: none;",
     "    }",
     "",
-    "    .cw-glass .g-model-layer {",
-    "      position: absolute; inset: 0; z-index: 590;",
-    "      pointer-events: none; display: none; overflow: hidden;",
-    "    }",
-    "    .cw-glass .g-model-layer img {",
-    "      position: absolute; cursor: move;",
-    "      pointer-events: all; user-select: none;",
-    "      top: 50%; left: 50%;",
-    "      transform: translate(-50%,-50%) scale(1);",
-    "      max-width: none; transform-origin: center center;",
-    "    }",
-    "",
     "        /* --- Remember --- */",
     "    .cw-glass .g-remember {",
     "      position: absolute; left: 16px; top: 65%;",
@@ -138,22 +126,6 @@
     "    .cw-glass .g-remember.dragging { transition: none; cursor: grabbing; }",
     "    .cw-glass .remember-plain { font-family: Georgia, serif; font-size: 16px; color: #2a2620; display: block; }",
     "    .cw-glass .remember-word { font-family: Georgia, serif; font-size: 19px; color: #b87333; display: block; }",
-    "",
-    "    /* --- Panel tools --- */",
-    "    .cw-glass .panel-tool {",
-    "      position: absolute; left: 16px; z-index: 100;",
-    "      pointer-events: all; width: 188px;",
-    "      opacity: 0; transition: opacity 200ms ease-in, top 400ms ease-in-out;",
-    "    }",
-    "    .cw-glass .panel-tool.visible { opacity: 1; }",
-    "    .cw-glass .panel-tool-header {",
-    "      display: flex; justify-content: space-between; align-items: baseline;",
-    "      margin-bottom: 8px; cursor: grab;",
-    "    }",
-    "    .cw-glass .panel-tool-header:active { cursor: grabbing; }",
-    "    .cw-glass .panel-tool-title { font-family: Georgia, serif; font-size: 14px; color: #546A80; font-weight: normal; line-height: 1; }",
-    "    .cw-glass .panel-tool-close { font-family: Georgia, serif; font-size: 11px; color: #b0a090; cursor: default; transition: color 80ms; line-height: 1; }",
-    "    .cw-glass .panel-tool-close:hover { color: #546A80; }",
     "",
     "    /* --- How-this-works tip window --- */",
     "    .cw-glass .htw-canvas { position: absolute; z-index: 500; background: rgba(244,241,232,0.96); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 14px 14px; box-shadow: 0 2px 12px rgba(42,38,32,0.08); user-select: none; touch-action: none; cursor: grab; pointer-events: all; width: 220px; }",
@@ -223,9 +195,6 @@
     "    .cw-glass .palette-choose { display: block; font-family: Georgia, serif; font-size: 13px; color: #546A80; cursor: default; margin-top: 10px; transition: color 80ms; user-select: none; }",
     "    .cw-glass .palette-choose:hover { color: #3D3D3A; }",
     "",
-    "    /* --- Model tool --- */",
-    "    .cw-glass .g-tool-model .model-hint { font-family: Georgia, serif; font-size: 11px; font-style: italic; color: #9a8e80; display: block; margin-bottom: 10px; }",
-    "",
     "    /* --- Workspace pinned tools --- */",
     "    .cw-glass .workspace-tool { position: absolute; z-index: 500; background: rgba(244,241,232,0.96); border: 0.5px solid #c8b89a; border-radius: 6px; padding: 12px 14px 14px; pointer-events: all; box-shadow: 0 2px 12px rgba(42,38,32,0.08); min-width: 188px; }",
     "    .cw-glass .workspace-tool-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; cursor: grab; touch-action: none; }",
@@ -257,25 +226,12 @@
     "    .cw-glass .g-drag-hint { position: absolute; left: 16px; font: 9px/1 system-ui; color: #b0a090; pointer-events: none; z-index: 99; transition: opacity 1s ease-in; }",
     "    .cw-glass .g-drag-hint.faded { opacity: 0; }",
     "",
-    "    /* --- Sound permission --- */",
-    "    .cw-glass .g-sound-permission { position: absolute; left: 16px; z-index: 100; pointer-events: all; opacity: 0; transition: opacity 300ms ease-in; }",
-    "    .cw-glass .g-sound-permission.visible { opacity: 1; }",
-    "    .cw-glass .sound-ask { font-family: Georgia, serif; font-size: 13px; color: #546A80; line-height: 1.5; }",
-    "    .cw-glass .sound-ask-word { font-family: Georgia, serif; font-size: 13px; color: #546A80; cursor: default; transition: color 80ms; margin-right: 10px; }",
-    "    .cw-glass .sound-ask-word:hover { color: #3D3D3A; }",
-    "",
-    "    /* --- Post-replay controls --- */",
-    "",
     "    /* --- Step-through replay controls --- */",
     "    /* The replay panel's rows (the panel shell is the shared component). The",
     "       arrows are the surface's only glyph controls \u2014 kept, flagged at review. */",
     "    .cw-glass .cx-step-arrows { display: flex; gap: 18px; justify-content: center; margin: 2px 0 8px; }",
     "    .cw-glass .cx-step-arrow { font-family: Georgia, serif; font-size: 16px; color: #546A80; cursor: default; transition: color 80ms; }",
     "    .cw-glass .cx-step-arrow:hover { color: #3D3D3A; }",
-    "",
-    "    /* --- WIP / cancel dialogs --- */",
-    "    /* The old bare-dialog styles left with the dialogs \u2014 occasional acts",
-    "       open choice panels now (CW.createChoicePanel). */",
     "",
     "    /* --- Export preview --- */",
     "    .cw-glass .g-export-preview { position: absolute; inset: 0; z-index: 790; background: rgba(42,38,32,0.6); display: flex; align-items: center; justify-content: center; pointer-events: all; }",
@@ -295,10 +251,6 @@
     "    .cw-glass .save-note-ok { font-family: Georgia, serif; font-size: 14px; color: #546A80; cursor: default; transition: color 80ms; }",
     "    .cw-glass .save-note-ok:hover { color: #3D3D3A; }",
     "",
-    "    /* Ghost SVG overlay */",
-    "    .cw-glass .g-ghost-layer { position: absolute; inset: 0; z-index: 591; pointer-events: none; display: none; overflow: hidden; }",
-    "    .cw-glass .g-ghost-layer img { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: 0.22; max-width: none; user-select: none; width: 340px; height: 340px; }",
-    "",
     "    /* The column's words \u2014 css/htw.css (29 Sep 2026), scoped. Wordplay still loads the file. */",
     "    .cw-glass .g-htw-panel-heading { display: block; font-family: Georgia, serif; font-size: 14px; color: #546A80; font-weight: normal; cursor: default; transition: color 80ms; line-height: 1; }",
     "    .cw-glass .g-htw-panel-heading:hover { color: #3D3D3A; }",
@@ -317,7 +269,6 @@
   var MARKUP = [
     "<canvas class=\"g-canvas\"></canvas>",
     "<div class=\"g-left-panel\"></div>",
-    "<div class=\"g-model-layer\"><img class=\"g-model-img\" src=\"\" alt=\"\" draggable=\"false\"></div>",
     "",
     "<!-- How this works panel -->",
     "<div class=\"g-htw-panel\">",
@@ -365,15 +316,6 @@
     "</div>",
     "<div class=\"g-drag-hint\">drag to position</div>",
     "",
-    "<div class=\"g-sound-permission\">",
-    "  <div class=\"sound-ask\">may I use sound?</div>",
-    "  <div style=\"margin-top:4px;\">",
-    "    <span class=\"sound-ask-word g-sound-yes\">yes</span><span class=\"sound-ask-word g-sound-no\">no</span>",
-    "  </div>",
-    "</div>",
-    "",
-    "<div class=\"g-ghost-layer\"><img class=\"g-ghost-img\" src=\"\" alt=\"\" draggable=\"false\"></div>",
-    "",
     "<!-- The replay panel (ledger \u00a715) is built in JS on the shared info-panel",
     "     component: play + duration, the step arrows, Start over, close-as-fork. -->",
     "",
@@ -418,23 +360,6 @@
     "    </div>",
     "  </div>",
     "  <span class=\"palette-choose g-palette-choose\">Choose new colors</span>",
-    "</div>",
-    "",
-    "<div class=\"panel-tool g-tool-model\" style=\"display:none;\">",
-    "  <div class=\"panel-tool-header g-model-drag-handle\">",
-    "    <span class=\"panel-tool-title g-model-name-btn\" style=\"cursor:default;\">Nested Squares</span>",
-    "    <span class=\"panel-tool-close g-model-close\">close</span>",
-    "  </div>",
-    "  <span class=\"model-hint\">click and drag to reposition</span>",
-    "  <div class=\"cw-slider-row\">",
-    "    <span class=\"cw-slider-label\">scale</span>",
-    "    <input type=\"range\" class=\"cw-slider g-model-scale\" min=\"5\" max=\"150\" value=\"25\" step=\"1\">",
-    "  </div>",
-    "  <div class=\"cw-slider-row\">",
-    "    <span class=\"cw-slider-label\">opacity</span>",
-    "    <input type=\"range\" class=\"cw-slider g-model-opacity\" min=\"5\" max=\"100\" value=\"35\" step=\"1\">",
-    "  </div>",
-    "  <span class=\"palette-choose g-model-choose\">Choose new model</span>",
     "</div>",
     "",
     "<div class=\"g-picker-backdrop\"></div>",
@@ -586,7 +511,7 @@ function adoptPanel(p, centreOnOpen) {
 // Depends: nothing
 // Exposes: COLORS, THRESHOLDS, PARAMS, GLOW,
 //          FOREST_GLASS, LEAD_COLOR, LEAD_BORDER_COLOR, LEAD_WIDTH,
-//          showLines (mutable), showGlass (mutable)
+//          showGlass (mutable)
 // ============================================================
 
 var COLORS     = { background:'#f4f1e8', border:'#546A80', active:'#2c5aa0', point:'#BE622F' };
@@ -611,7 +536,6 @@ var LEAD_COLOR        = '#4a4540';
 var LEAD_BORDER_COLOR = '#777777';
 var LEAD_WIDTH        = 2;
 
-var showLines   = true;
 var showGlass   = false;
 // Where numbers live: 'map' shows the plane's ambient lattice (grid and
 // tick numbers); 'points' turns the lattice down to reveal the emergent
@@ -630,13 +554,20 @@ var mapShown = false;
 // What:    Web Audio API sound effects for construction events
 //          (point, line, circle, snap, fill, emphasis, scaffold).
 //          Browser autoplay policy requires unlockAudio() on first
-//          user gesture before any sound will play.
-// Depends: nothing
-// Exposes: unlockAudio(), playSound(type)
+//          user gesture before any sound will play. Sound is a setting,
+//          not a question (Michael, 24 Oct 2026, ruling 6): the lab reads
+//          it and never asks; the lab's intro page and the stories will own
+//          the switch. The old "may I use sound?" markup had no script.
+// Depends: localStorage (the setting)
+// Exposes: unlockAudio(), playSound(type), soundOn()
 // ============================================================
 
+// On unless the key says 'off'. Nothing writes it yet.
+var SOUND_KEY = 'cw-sound';
+function soundOn() { try { return localStorage.getItem(SOUND_KEY) !== 'off'; } catch (e) { return true; } }
 var audioCtx = null, audioUnlocked = false;
 function unlockAudio() {
+    if (!soundOn()) return;
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended' || audioCtx.state === 'interrupted') audioCtx.resume();
     if (!audioUnlocked) {
@@ -645,7 +576,7 @@ function unlockAudio() {
     }
 }
 function playSound(type) {
-    if (!audioCtx || audioCtx.state !== 'running') return;
+    if (!soundOn() || !audioCtx || audioCtx.state !== 'running') return;
     var ac = audioCtx, gain = ac.createGain(); gain.connect(ac.destination);
     var t = ac.currentTime + 0.01;
     function osc(f,e) { var o = ac.createOscillator(); o.connect(gain); o.frequency.value = f; o.start(t); o.stop(t+e); }
@@ -1647,7 +1578,7 @@ function showSaveNoteBox(mode) {
     var textEl = $('save-note-text');
     nameEl.value = ''; textEl.value = '';
     // Position: center of canvas area
-    var panelW = parseInt(leftPanel.style.width) || PANEL_BASE_WIDTH;
+    var panelW = PANEL_BASE_WIDTH;
     var cx2 = panelW + (hostW() - panelW) / 2;
     box.style.left = (cx2 - 120) + 'px';
     box.style.top = ((hostH() - 180) / 2) + 'px';
@@ -2712,7 +2643,7 @@ function s2w(sx,sy) { return plane.screenToWorld(sx,sy); }
 // Depends: canvas, ctx, COLORS, PARAMS, GLOW, LEAD_BORDER_COLOR,
 //          LEAD_WIDTH, fills, lines, circles, logicalSegments,
 //          logicalArcs, points, pointAnimations,
-//          showLines, showGlass, plane (zoom, transforms),
+//          showGlass, plane (zoom, transforms),
 //          w2s(), s2w(), snap(), extLine(), expandFillToPolygon(),
 //          ghostLineEnd, ghostCircle, snapTarget, firstTapPoint
 // Exposes: render(), animate() — animate() self-schedules via rAF
@@ -2812,7 +2743,7 @@ function render() {
     // The Wright window: its lead, numbers, handles and readouts (19 Oct 2026).
     if (WRIGHT && frame) wrRender();
 
-    if (showLines && !showGlass) {
+    if (!showGlass) {
         if (BOARD && frame) {
             // The lines board: outside the frame the construction is scaffolding and draws a
             // little fainter, so the window reads as the window (17 Oct 2026). The frame's own
@@ -4469,20 +4400,15 @@ canvas.addEventListener('drop', function(e) {
 // What:    Loads art/palette/palettes.json at startup and stores palette
 //          definitions in PALETTES_DATA keyed by id. Provides
 //          fallback inline data if the fetch fails (Chartres, Gaudi).
-//          CRAFT_SWATCHES holds the special-material row (empty,
-//          clear glass, lead).
+//          The file's craft row (empty, clear, lead) is not read: the
+//          craft row on screen is built by buildCraftRow from two chips
+//          of its own, and the variable that held the file's was never
+//          used (T1, 24 Oct 2026).
 // Depends: fetch() for art/palette/palettes.json
-// Exposes: PALETTES_DATA (object), CRAFT_SWATCHES (array),
-//          CRAFT_FALLBACK (array), loadPalettesJSON()
+// Exposes: PALETTES_DATA (object), loadPalettesJSON()
 // ============================================================
 
 var PALETTES_DATA = {};
-var CRAFT_FALLBACK = [
-    { hex:null,       label:'empty', recipe:'no glass',                uncertain:false },
-    { hex:'#c2d4bc',  label:'clear', recipe:'iron in sand, unrefined', uncertain:false },
-    { hex:null,       label:'lead',  recipe:'lead, antimony',           uncertain:false },
-];
-var CRAFT_SWATCHES = CRAFT_FALLBACK;
 
 // External text content (loaded from text/geometry-v1.json, with hardcoded fallback)
 var CONTENT = null;
@@ -4508,7 +4434,6 @@ function loadPalettesJSON() {
         .then(function(resp) { return resp.json(); })
         .then(function(json) {
             json.palettes.forEach(function(p) { PALETTES_DATA[p.id]=p; });
-            if (json.craft_swatches) CRAFT_SWATCHES=json.craft_swatches.colors;
             initColorPanel();
         })
         .catch(function(e) {
@@ -4549,58 +4474,25 @@ function initColorPanel() {
 }
 
 // ============================================================
-// MODEL DATA
-// What:    Static catalog of overlay SVG models (geometric guides)
-//          and an inline SVG string cache so thumbnails and the
-//          overlay render instantly without network round-trips.
-//          MODEL_NAME_OVERRIDES allows friendly display-name overrides.
-// Depends: nothing
-// Exposes: MODEL_FILES, MODELS (array of {file,name,path}),
-//          SVG_CACHE (object of filename → SVG string),
-//          MODEL_NAME_OVERRIDES
-// ============================================================
-
-var MODEL_NAME_OVERRIDES = { 'ratio_golden_5.svg':'Golden Rectangle' };
-function modelDisplayName(f) {
-    if (MODEL_NAME_OVERRIDES[f]) return MODEL_NAME_OVERRIDES[f];
-    return f.replace(/\.svg$/,'').replace(/^[^_]+_/,'').replace(/_/g,' ').replace(/\b\w/g,function(c){ return c.toUpperCase(); });
-}
-var MODEL_FILES = ['geo_squares_nested.svg','geo_nested_triangle.svg','geo_hexagon_triangle.svg','geo_pentagon_pentagram.svg','ratio_golden_5.svg'];
-var MODELS = MODEL_FILES.map(function(f) { return { file:f, name:modelDisplayName(f), path:BASE+'models/'+f }; });
-
-var SVG_CACHE = {
-    'geo_squares_nested.svg':    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><rect x="40" y="40" width="720" height="720" fill="none" stroke="#555" stroke-width="6"/><polygon points="400,40 760,400 400,760 40,400" fill="none" stroke="#555" stroke-width="6"/></svg>',
-    'geo_nested_triangle.svg':   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><polygon points="400,40 711.769,580 88.231,580" fill="none" stroke="#555" stroke-width="6"/><polygon points="555.885,310 400,580 244.115,310" fill="none" stroke="#555" stroke-width="6"/></svg>',
-    'geo_hexagon_triangle.svg':  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><polygon points="400,40 711.769,220 711.769,580 400,760 88.231,580 88.231,220" fill="none" stroke="#555" stroke-width="6"/><polygon points="400,40 711.769,580 88.231,580" fill="none" stroke="#555" stroke-width="6"/></svg>',
-    'geo_pentagon_pentagram.svg':'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><polygon points="400,40 742.422,288.537 611.696,691.463 188.304,691.463 57.578,288.537" fill="none" stroke="#555" stroke-width="6"/><polygon points="400,40 611.696,691.463 57.578,288.537 742.422,288.537 188.304,691.463" fill="none" stroke="#555" stroke-width="6"/></svg>',
-    'ratio_golden_5.svg':        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><rect x="101" y="215" width="599" height="370" fill="none" stroke="#555" stroke-width="6"/><line x1="471" y1="215" x2="471" y2="585" stroke="#555" stroke-width="6"/></svg>',
-};
-
-// ============================================================
 // LAYOUT + UI STATE
 // What:    Central mutable `state` object plus DOM element references
-//          used throughout the UI. Holds menu open/close timers,
-//          panel tool stack (max 2), pinned workspace tool map,
-//          and the palette/model sub-states.
-// Depends: DOM (getElementById)
-// Exposes: state {panelTools[], workspaceTools{},
-//                 rememberManual, palette{…}, model{…}},
-//          leftPanel, remember, dragHint,
-//          toolPalette, toolModel, modelLayer, modelImg
+//          used throughout the UI: the pinned workspace tool map (the
+//          palette window) and the palette's state.
+// Depends: DOM
+// Exposes: state {workspaceTools{}, rememberManual, palette{…}},
+//          remember, dragHint, toolPalette
 // ============================================================
 
-var TOOLS_TOP = 20, TOOLS_PANEL_GAP = 20, PANEL_TOOL_GAP = 14, REMEMBER_GAP = 24;
+var TOOLS_TOP = 20, TOOLS_PANEL_GAP = 20;
 // 160 since 1 Oct 2026 (Michael: the column was larger than it needed to be once the
-// palette left it); 220 when the model tool stacks there, since that tool is 188 wide.
-var PANEL_BASE_WIDTH = 160, PANEL_WIDE_WIDTH = 220;
+// palette left it). Nothing widens it: the model tool that stacked there went in T1 (24 Oct 2026).
+var PANEL_BASE_WIDTH = 160;
 
 var state = {
-    panelTools:[], workspaceTools:{}, rememberManual:false,
+    workspaceTools:{}, rememberManual:false,
     palette: { current:'chartres_glass', selected:null },
-    model:   { current:null, visible:false, scale:0.25, opacity:0.35, x:0, y:0 },
 };
 
-var leftPanel   = $('left-panel');
 // One choice panel serves every occasional act (Save, the WIP guard, replay
 // Cancel): it opens, takes one choice, and fades (ledger §1).
 var choicePanel = adoptPanel(CW.createChoicePanel(), true);
@@ -4610,162 +4502,26 @@ var remember    = $('remember');
 if (!(window.CW && CW.flags && CW.flags.maya)) { remember.style.display = 'none'; $('drag-hint').style.display = 'none'; }
 var dragHint    = $('drag-hint');
 var toolPalette = $('tool-palette');
-var toolModel   = $('tool-model');
-var modelLayer  = $('model-layer');
-var modelImg    = $('model-img');
 
 // ============================================================
-// TOOL ACTIONS
-// What:    Actions formerly in the Tools dropdown, now called directly
-//          from the "How this works" panel or other UI.
-// Exposes: toggleLines(), exportImage()
-// ============================================================
-
-function toggleLines() {
-    showLines = !showLines;
-}
-// toggleGlass removed — lead is always on
-
-function exportImage() {
-    if (points.size===0) { alert('Nothing to export.'); return; }
-    // Bounding box must include full circle extents, not just intersection points
-    var minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
-    points.forEach(function(pt) { minX=Math.min(minX,pt.x);minY=Math.min(minY,pt.y);maxX=Math.max(maxX,pt.x);maxY=Math.max(maxY,pt.y); });
-    circles.forEach(function(ci) {
-        var ce=points.get(ci.centerId); if (!ce) return;
-        minX=Math.min(minX,ce.x-ci.radius); maxX=Math.max(maxX,ce.x+ci.radius);
-        minY=Math.min(minY,ce.y-ci.radius); maxY=Math.max(maxY,ce.y+ci.radius);
-    });
-    var pad=60,ww=maxX-minX+pad*2,wh=maxY-minY+pad*2;
-    var sc=Math.min(1200/ww,900/wh,3), pw=Math.round(ww*sc), ph=Math.round(wh*sc);
-    var off=document.createElement('canvas'); off.width=pw; off.height=ph;
-    var oc=off.getContext('2d'); oc.fillStyle=COLORS.background; oc.fillRect(0,0,pw,ph);
-    // World y is up; canvas y is down — flip so the export matches the screen
-    function wp(wx,wy) { return { x:(wx-minX+pad)*sc, y:(maxY-wy+pad)*sc }; }
-    fills.forEach(function(f) {
-        if (f.dissolved) return;
-        var poly=expandFillToPolygon(f).map(function(p) { return wp(p.x,p.y); });
-        if (poly.length<3) return;
-        oc.beginPath(); oc.moveTo(poly[0].x,poly[0].y);
-        for (var i=1;i<poly.length;i++) oc.lineTo(poly[i].x,poly[i].y);
-        oc.closePath(); oc.fillStyle=f.color; oc.globalAlpha=f.opacity; oc.fill('evenodd');
-        oc.strokeStyle=LEAD_BORDER_COLOR; oc.lineWidth=LEAD_WIDTH*sc;
-        oc.lineJoin='round'; oc.lineCap='round';
-        oc.globalAlpha=1; oc.stroke();
-        oc.globalAlpha=1;
-    });
-    off.toBlob(function(blob) {
-        var url=URL.createObjectURL(blob),a=document.createElement('a');
-        a.href=url; a.download='construction.png'; a.click(); URL.revokeObjectURL(url);
-    },'image/png');
-}
-
-// ============================================================
-// PANEL TOOL SYSTEM
-// What:    Manages the left-panel tool stack (max 2 open at once;
-//          since 1 Oct 2026 only the model tool lives here — the
-//          palette is a workspace window, see PALETTE TOOL).
-//          openPanelTool() shows a tool, closePanelTool() fades it out.
-//          layoutPanelTools() repositions all open tools below the
-//          menu and pushes Remember down to avoid overlap.
-//          Drag-past-threshold on a panel tool header pins it as a
-//          free-floating workspace tool (pinToWorkspace).
-// Depends: state.panelTools, state.workspaceTools, state.rememberManual,
-//          leftPanel, remember, toolModel,
-//          PANEL_BASE_WIDTH, PANEL_WIDE_WIDTH, TOOLS_PANEL_GAP, etc.
-// Exposes: openPanelTool(id), closePanelTool(id),
-//          layoutPanelTools(), getPanelToolEl(id),
-//          pinToWorkspace(id, x, y), pulseWorkspaceTool(id)
+// WORKSPACE WINDOWS
+// What:    The windows that float over the workspace (the palette;
+//          nothing else since T1, 24 Oct 2026): dragged by their
+//          header, pulsed when summoned while already open.
+//          layoutPanelTools() keeps Remember at its resting place
+//          until she moves it. The column's tool stack, which held
+//          only the drawing-guide tool, and the drag that pinned a
+//          stacked tool to the workspace went with that tool.
+// Depends: state.workspaceTools, state.rememberManual, remember
+// Exposes: layoutPanelTools(), makeWorkspaceDraggable(el, id),
+//          pulseWorkspaceTool(id)
 // ============================================================
 
 function layoutPanelTools() {
-    var htwPanel = $('htw-panel');
-    var cursor = TOOLS_TOP;
-    if (htwPanel && htwPanel.style.display !== 'none') {
-        cursor += htwPanel.offsetHeight + PANEL_TOOL_GAP;
-    }
-    state.panelTools.forEach(function(id) {
-        var el = getPanelToolEl(id);
-        if (!el || el.style.display==='none') return;
-        el.style.top = cursor+'px'; cursor += el.offsetHeight + PANEL_TOOL_GAP;
-    });
     if (!state.rememberManual) {
-        if (state.panelTools.length > 0) {
-            var targetTop = cursor + REMEMBER_GAP;
-            var remRect = remember.getBoundingClientRect();
-            // Only push Remember down if it would overlap the panel tools.
-            // Never move it upward — its natural position is always acceptable.
-            if (remRect.top - hostRect().top < targetTop) {
-                remember.style.transform = 'none';
-                remember.style.top = targetTop + 'px';
-            }
-        } else {
-            remember.style.top = '65%';
-            remember.style.transform = 'translateY(-50%)';
-        }
+        remember.style.top = '65%';
+        remember.style.transform = 'translateY(-50%)';
     }
-}
-
-function getPanelToolEl(id) {
-    if (id==='model')         return toolModel;
-    return null;
-}
-
-function openPanelTool(id) {
-    if (state.workspaceTools[id]) { pulseWorkspaceTool(id); return; }
-    if (state.panelTools.includes(id)) return;
-    if (state.panelTools.length >= 2) closePanelTool(state.panelTools[0]);
-    state.panelTools.push(id);
-    var el = getPanelToolEl(id); if (!el) return;
-    leftPanel.style.width = PANEL_WIDE_WIDTH+'px'; leftPanel.style.minWidth = PANEL_WIDE_WIDTH+'px';
-    el.style.display='block'; el.classList.remove('visible');
-    // Double rAF so offsetHeight is valid when we read it.
-    requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-            // Pin Remember to its current rendered pixel position before layout moves it.
-            // Without this, the CSS transition animates from 50% (center) through the
-            // panel tool to the final position, which looks like it slides up behind it.
-            if (!state.rememberManual) {
-                var remRect = remember.getBoundingClientRect();
-                remember.style.top = (remRect.top - hostRect().top) + 'px';
-                remember.style.transform = 'none';
-            }
-            layoutPanelTools();
-            setTimeout(function() { layoutPanelTools(); el.classList.add('visible'); }, 380);
-        });
-    });
-    enablePanelToolDrag(el, id);
-}
-
-function closePanelTool(id) {
-    var idx = state.panelTools.indexOf(id); if (idx===-1) return;
-    state.panelTools.splice(idx,1);
-    var el = getPanelToolEl(id); if (!el) return;
-    el.classList.remove('visible');
-    setTimeout(function() {
-        el.style.display='none'; layoutPanelTools();
-        if (state.panelTools.length===0) { leftPanel.style.width=PANEL_BASE_WIDTH+'px'; leftPanel.style.minWidth=PANEL_BASE_WIDTH+'px'; }
-    }, 220);
-}
-
-function enablePanelToolDrag(el, id) {
-    var handle = el.querySelector('.panel-tool-header');
-    if (!handle || handle._dragBound) return; handle._dragBound=true;
-    var dragging=false, sx, sy;
-    handle.addEventListener('mousedown', function(e) { if (e.target.classList.contains('panel-tool-close')) return; e.preventDefault(); dragging=true; sx=e.clientX; sy=e.clientY; });
-    onDoc('mousemove', function(e) {
-        if (!dragging) return;
-        if (Math.abs(e.clientX-sx)>30 || Math.abs(e.clientY-sy)>20) { dragging=false; pinToWorkspace(id,e.clientX,e.clientY); }
-    });
-    onDoc('mouseup', function() { dragging=false; });
-}
-
-function pinToWorkspace(id, dropX, dropY) {
-    closePanelTool(id);
-    var el = buildWorkspaceTool(id); if (!el) return;
-    var lp = toLocal(dropX, dropY);
-    el.style.left = Math.max(lp.x-100,230)+'px'; el.style.top = Math.max(lp.y-20,20)+'px';
-    root.appendChild(el); state.workspaceTools[id]=el; makeWorkspaceDraggable(el,id);
 }
 
 function makeWorkspaceDraggable(el, id) {
@@ -4777,11 +4533,6 @@ function makeWorkspaceDraggable(el, id) {
     header.addEventListener('pointermove', function(e) { if (!dragging) return; el.style.left=(ox+e.clientX-sx)+'px'; el.style.top=(oy+e.clientY-sy)+'px'; });
     header.addEventListener('pointerup', function() { dragging=false; });
     header.addEventListener('pointercancel', function() { dragging=false; });
-}
-
-function buildWorkspaceTool(id) {
-    if (id==='model')   return buildWorkspaceModel();
-    return null;
 }
 
 function pulseWorkspaceTool(id) {
@@ -4805,7 +4556,7 @@ function pulseWorkspaceTool(id) {
 //          header, closed by its close word, and reopens where
 //          the child last left it. It never sits in the column
 //          stack; the dragged-off clone is gone.
-// Depends: PALETTES_DATA, CRAFT_SWATCHES, state.palette,
+// Depends: PALETTES_DATA, state.palette,
 //          state.workspaceTools, makeWorkspaceDraggable(),
 //          pulseWorkspaceTool(), openPickerWindow(),
 //          DOM: #tool-palette, #palette-grid, #craft-row, etc.
@@ -4927,14 +4678,14 @@ updateLeadSlider();
 //          and its preview card were removed 7 Aug 2026 — they had no
 //          caller; the picker is the one entry to opening work, and
 //          the Numbers control re-homes with the lattice labels.
-// Depends: SVG_CACHE, operationLog, replayLog(), appendOp(),
+// Depends: operationLog, replayLog(), appendOp(),
 //          captureConstructionPNG(), openPickerWindow(), plane,
-//          DOM: dialogs, step controls, save-note box, #ghost-layer
-// Exposes: initConstructions(), cxState,
+//          DOM: the save-note box
+// Exposes: initConstructions(),
 //          startStepThrough(), exitStepThrough()
 // ============================================================
 
-// Built-in starter constructions (thumbnails use SVG_CACHE inline renders)
+// Built-in starter constructions (the picker draws their thumbnails from their logs)
 // The library is content-only (ledger §15, amended brief §4): the built-in
 // constructions live in ../models/constructions.json, read at load. Library
 // growth is a log file plus a manifest line — no code.
@@ -4949,11 +4700,6 @@ function loadConstructionsManifest() {
         })
         .catch(function() { console.warn('construction library manifest failed to load'); });
 }
-
-var cxState = {
-    ghostActive: false,
-    ghostFile:   null,
-};
 
 function initConstructions() {
     // The library manifest loads the built-ins and generates their previews.
@@ -5264,7 +5010,7 @@ function buildReplayPanel() {
 function showReplayPanel() {
     if (!replayPanel) return;
     if (!replayPanel.userMoved()) {
-        var panelW = parseInt(leftPanel.style.width) || PANEL_BASE_WIDTH;
+        var panelW = PANEL_BASE_WIDTH;
         replayPanel.setPosition(panelW + 16, 20);
     }
     replayPanel.show();
@@ -5508,97 +5254,26 @@ function loadConstructionEntry(entry, then) {
     }
 }
 
-// --- Ghost overlay (still used for future try-it or reference) ---
-function clearGhost() {
-    $('ghost-layer').style.display = 'none';
-    $('ghost-img').src = '';
-    cxState.ghostActive = false;
-    cxState.ghostFile = null;
-}
-
-// ============================================================
-// DRAWING GUIDE TOOL  (a.k.a. Model / Overlay)
-// What:    Floating SVG overlay used as a tracing guide.
-//          Loaded from SVG_CACHE or models/ directory.
-//          Scale and opacity controlled by sliders; position by drag.
-//          The model name in the panel header is also a "Choose..."
-//          entry point to the picker window.
-// Depends: SVG_CACHE, MODELS, state.model,
-//          modelLayer, modelImg,
-//          openPanelTool(), closePanelTool(), openPickerWindow(),
-//          DOM: #tool-model, #model-scale, #model-opacity, etc.
-// Exposes: openDrawingGuide(), loadModel(modelObj), clearModel(),
-//          applyModelTransform(), buildWorkspaceModel()
-// ============================================================
-
-function openDrawingGuide() { if (!state.model.current) loadModel(MODELS[0]); openPanelTool('model'); }
-
-function loadModel(modelObj) {
-    state.model.current = modelObj;
-    var svgStr = SVG_CACHE[modelObj.file];
-    if (svgStr) {
-        var blob = new Blob([svgStr],{type:'image/svg+xml'}), url=URL.createObjectURL(blob);
-        modelImg.onload = function() { URL.revokeObjectURL(url); state.model.visible=true; modelLayer.style.display='block'; applyModelTransform(); setModelNameBtn(modelObj.name); };
-        modelImg.src = url;
-    } else {
-        modelImg.onload = function() { state.model.visible=true; modelLayer.style.display='block'; applyModelTransform(); setModelNameBtn(modelObj.name); };
-        modelImg.src = modelObj.path;
-    }
-}
-
-function clearModel() { state.model.current=null; state.model.visible=false; modelLayer.style.display='none'; closePanelTool('model'); }
-function applyModelTransform() { modelImg.style.transform='translate(calc(-50% + '+state.model.x+'px), calc(-50% + '+state.model.y+'px)) scale('+state.model.scale+')'; modelImg.style.opacity=state.model.opacity; }
-
-// The model title is a fact, not a control (ledger §13): it names what is
-// loaded. "Choose new model" is the way to the picker — the same word
-// pattern the palette uses.
-function setModelNameBtn(name) { var b=$('model-name-btn'); if (b) { b.textContent=name; } }
-
-$('model-choose').addEventListener('click', function() { openPickerWindow('models'); });
-$('model-close').addEventListener('click', function() { closePanelTool('model'); });
-$('model-opacity').addEventListener('input', function(e) { state.model.opacity=e.target.value/100; applyModelTransform(); });
-$('model-scale').addEventListener('input', function(e) { state.model.scale=e.target.value/100; applyModelTransform(); });
-
-var mdDragging=false,mdSX,mdSY,mdOX,mdOY;
-modelImg.addEventListener('mousedown', function(e) { e.preventDefault(); mdDragging=true; mdSX=e.clientX; mdSY=e.clientY; mdOX=state.model.x; mdOY=state.model.y; modelImg.style.cursor='grabbing'; });
-onDoc('mousemove', function(e) { if (!mdDragging) return; state.model.x=mdOX+(e.clientX-mdSX); state.model.y=mdOY+(e.clientY-mdSY); applyModelTransform(); });
-onDoc('mouseup', function() { if (!mdDragging) return; mdDragging=false; modelImg.style.cursor='move'; });
-modelImg.addEventListener('wheel', function(e) { e.preventDefault(); state.model.scale=Math.max(0.1,Math.min(4,state.model.scale-e.deltaY*0.001)); var sl=$('model-scale'); if (sl) sl.value=Math.round(state.model.scale*100); applyModelTransform(); }, {passive:false});
-
-function buildWorkspaceModel() {
-    var el=document.createElement('div'); el.className='workspace-tool';
-    var m=state.model.current;
-    el.innerHTML='<div class="workspace-tool-header"><span class="workspace-tool-title ws-model-name" style="cursor:default;">'+(m?m.name:'--')+'</span><span class="workspace-tool-close">close</span></div><span style="font:italic 11px Georgia;color:#9a8e80;display:block;margin-bottom:10px;">click and drag to reposition</span><div class="cw-slider-row"><span class="cw-slider-label">scale</span><input type="range" class="cw-slider" min="5" max="150" value="'+Math.round(state.model.scale*100)+'" step="1"></div><div class="cw-slider-row"><span class="cw-slider-label">opacity</span><input type="range" class="cw-slider" min="5" max="100" value="'+Math.round(state.model.opacity*100)+'" step="1"></div>';
-    var sliders=el.querySelectorAll('input.cw-slider');
-    sliders[0].addEventListener('input', function(e) { state.model.scale=e.target.value/100; var ps=$('model-scale'); if (ps) ps.value=e.target.value; applyModelTransform(); });
-    sliders[1].addEventListener('input', function(e) { state.model.opacity=e.target.value/100; var ps=$('model-opacity'); if (ps) ps.value=e.target.value; applyModelTransform(); });
-    el.querySelector('.workspace-tool-close').addEventListener('click', function() { el.remove(); delete state.workspaceTools['model']; });
-    return el;
-}
-
 // ============================================================
 // PICKER WINDOW
-// What:    Full-canvas modal grid picker used for both model
-//          selection (thumbnails from SVG_CACHE) and palette
-//          selection (source images from art/). Draggable by its
-//          handle bar. Two modes: 'models' | 'palettes'.
-// Depends: MODELS, PALETTES_DATA, state.model, state.palette,
-//          SVG_CACHE, loadModel(), openPaletteTool(),
-//          leftPanel (for centering),
-//          DOM: #picker-backdrop, #picker-window, #picker-grid
+// What:    Full-canvas modal grid picker for her constructions and
+//          the standard set (Open) and for the palettes (Choose new
+//          colors). Draggable by its handle bar. Two modes:
+//          'constructions' | 'palettes'; the models mode went with
+//          the drawing-guide tool (T1, 24 Oct 2026).
+// Depends: CX_BUILTINS, PALETTES_DATA, state.palette,
+//          loadConstructionEntry(), openPaletteTool(),
+//          DOM: the picker backdrop, window and grid
 // Exposes: openPickerWindow(mode), closePicker()
 // ============================================================
 
 var pickerBackdrop = $('picker-backdrop');
 var pickerWindow   = $('picker-window');
 var pickerGrid     = $('picker-grid');
-var pickerMode = 'models';
 
 function openPickerWindow(mode) {
-    pickerMode = mode||'models';
-    if (pickerMode==='palettes')       buildPickerPalettes();
-    else if (pickerMode==='constructions') buildPickerConstructions();
-    else                                buildPickerModels();
+    if (mode === 'palettes') buildPickerPalettes();
+    else buildPickerConstructions();
     positionPicker();
     pickerBackdrop.classList.add('visible');
     requestAnimationFrame(function() { requestAnimationFrame(function() { pickerWindow.classList.add('visible'); }); });
@@ -5638,15 +5313,7 @@ function buildPickerConstructions() {
         var thumb = document.createElement('div'); thumb.className='picker-thumb';
         var img = new Image(); img.width=184; img.height=184; img.draggable=false;
         img.style.cssText='width:184px;height:184px;object-fit:contain;pointer-events:none;';
-        if (entry.png) {
-            img.src = entry.png;
-        } else if (entry.svgFile && SVG_CACHE[entry.svgFile]) {
-            var svgStr = SVG_CACHE[entry.svgFile];
-            var blob = new Blob([svgStr],{type:'image/svg+xml'});
-            var url = URL.createObjectURL(blob);
-            img.onload = function(){ URL.revokeObjectURL(url); };
-            img.src = url;
-        }
+        if (entry.png) img.src = entry.png;   // a built-in's preview arrives once its log has been drawn
         thumb.appendChild(img);
         // Delete button for saved (non-canonical) constructions
         var isBuiltin = entry.key && entry.key.indexOf('_builtin_') === 0;
@@ -5689,39 +5356,13 @@ $('picker-close-btn').addEventListener('click', function(e) { e.stopPropagation(
 })();
 
 function positionPicker() {
-    var panelW=parseInt(leftPanel.style.width)||PANEL_BASE_WIDTH;
+    var panelW=PANEL_BASE_WIDTH;
     var canvasW=hostW()-panelW, canvasH=hostH();
     // Measured, not assumed: the palettes grid is half the size of the constructions grid
     // (1 Oct 2026), so the window is sized by what it holds.
     var w=pickerWindow.offsetWidth||660, h=Math.min(pickerWindow.offsetHeight||300, canvasH*0.85);
     pickerWindow.style.left=Math.max(panelW+10, panelW+(canvasW-w)/2)+'px';
     pickerWindow.style.top=Math.max(10, (canvasH-h)/2)+'px';
-}
-
-function buildPickerModels() {
-    pickerGrid.innerHTML=''; pickerGrid.style.gridTemplateColumns=''; pickerGrid.style.gap='';
-    var noneItem=document.createElement('div'); noneItem.className='picker-item';
-    var noneThumb=document.createElement('div'); noneThumb.className='picker-thumb';
-    if (!state.model.current) noneThumb.classList.add('selected');
-    noneThumb.style.background='rgba(200,184,154,0.12)';
-    var noneLabel=document.createElement('div'); noneLabel.className='picker-item-name'; noneLabel.textContent='None';
-    noneItem.appendChild(noneThumb); noneItem.appendChild(noneLabel);
-    noneThumb.addEventListener('click', function() { pickerWindow.classList.remove('visible'); setTimeout(function(){pickerBackdrop.classList.remove('visible');},200); clearModel(); });
-    pickerGrid.appendChild(noneItem);
-    MODELS.forEach(function(m) {
-        var item=document.createElement('div'); item.className='picker-item';
-        var thumb=document.createElement('div'); thumb.className='picker-thumb';
-        if (state.model.current&&state.model.current.file===m.file) thumb.classList.add('selected');
-        var svgStr=SVG_CACHE[m.file];
-        if (svgStr) {
-            var parser=new DOMParser(),doc=parser.parseFromString(svgStr,'image/svg+xml'),svg=doc.querySelector('svg');
-            if (svg) { svg.removeAttribute('width'); svg.removeAttribute('height'); svg.style.width='184px'; svg.style.height='184px'; svg.querySelectorAll('[stroke]').forEach(function(el){el.setAttribute('stroke-width','8');}); thumb.appendChild(svg); }
-        }
-        var label=document.createElement('div'); label.className='picker-item-name'; label.textContent=m.name;
-        item.appendChild(thumb); item.appendChild(label);
-        thumb.addEventListener('click', function() { loadModel(m); openPanelTool('model'); pickerWindow.classList.remove('visible'); setTimeout(function(){pickerBackdrop.classList.remove('visible');},200); });
-        pickerGrid.appendChild(item);
-    });
 }
 
 // The palettes at half the constructions' size, both ways (Michael, 1 Oct 2026): a
