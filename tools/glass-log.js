@@ -26,8 +26,8 @@
    (ruling 1, R1); its script is kept in _CW/outdated-files/glass-lines-retired-2026-10-24/.
 
    The Wright window (19 Oct 2026): G.create({ wright: true }) opens on its 10 by 10 frame of whole
-   steps (the init op carries `wright`; no points at all). g.resize(left, bottom, width, height) is
-   one drag of a side; g.cut(x, y, dir, at) pulls a line across the pane around (x, y) in units,
+   steps (the init entry carries the frame, the shell's since R2; no points at all). g.resize(left, bottom,
+   width, height) is one drag of a handle (a `frame` entry); g.lock() the Lock word; g.cut(x, y, dir, at) pulls a line across the pane around (x, y) in units,
    'h' at y = at or 'v' at x = at; g.wrPane(x, y, colour) colours that pane. The model is the lab's
    own code (wrReplayOp), so a cut with no room or a pane not there throws here, not in the browser.
 
@@ -146,10 +146,11 @@ function create(opts) {
       return api;
     },
     glassOnly(on) { lab.append({ op: 'show_glass', value: on !== false }); return api; },
-    // The Wright window's gestures (19 Oct 2026), checked against the lab's own model as they go.
+    // The Wright window's gestures (19 Oct 2026), checked against the lab's own model as they go. A
+    // resize is the shell's `frame` entry since R2 (24 Oct 2026); `lock` is the shell's too.
     resize(left, bottom, width, height) {
       if (!opts.wright) throw new Error('resize() is the Wright window\'s gesture: create({ wright: true })');
-      lab.append({ op: 'resize', left, bottom, width, height });
+      lab.append({ op: 'frame', left, bottom, width, height });
       const f = lab.wr().frame;
       if (f.width !== width || f.height !== height) throw new Error('the frame did not take the size');
       return api;
@@ -162,6 +163,7 @@ function create(opts) {
       if (lab.wr().cuts.length !== before + 1) throw new Error('the cut at ' + dir + ' ' + at + ' had no room in the pane ' + JSON.stringify(p));
       return api;
     },
+    lock() { lab.append({ op: 'lock' }); return api; },
     wrPane(x, y, colour) {
       if (!opts.wright) throw new Error('wrPane() is the Wright window\'s gesture: create({ wright: true })');
       const p = lab.wr().paneAt(x, y); if (!p) throw new Error('no pane at (' + x + ', ' + y + ')');

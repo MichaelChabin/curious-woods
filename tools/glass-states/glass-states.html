@@ -129,6 +129,8 @@
     await sleep(60);
   };
   window.__release = async function (b) { ev('pointerup', b); await sleep(120); };
+  // the hand back where it pressed, then released: a frame handle held and put back writes no entry
+  window.__back = async function (a) { ev('pointermove', a); await sleep(40); ev('pointerup', a); await sleep(120); };
   window.__tap = async function (p) { ev('pointermove', p); ev('pointerdown', p); await sleep(40); ev('pointerup', p); await sleep(120); };
   window.__hookPostcard = function () { var s = 12345; Math.random = function () { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; }; var tb = HTMLCanvasElement.prototype.toBlob; HTMLCanvasElement.prototype.toBlob = function (cb, type) { window.__lastPostcard = this.toDataURL(); return tb.call(this, cb, type); }; try { Object.defineProperty(navigator, 'share', { value: undefined, configurable: true }); } catch (e) {} HTMLAnchorElement.prototype.click = function () {}; return 'hooked'; };
 
@@ -141,10 +143,18 @@
     await rec('1 opening');
     if (name === 'wright' || name === 'lines') { await __tap(__pos(0, 0)); await sleep(300); }   // the first touch, spent on full screen
     if (name === 'wright') {
+      // R2: Lock and Undo on the opening frame; the frame moved by its centre handle and put back; a corner held
+      __click('Lock'); await sleep(300); await rec('1b Lock tapped');
+      __click('Undo'); await sleep(300); await rec('1c the lock undone');
+      var fc = __pos(0, 0), step = (__pos(56, 0).x - fc.x);
+      await __hold(fc, { x: fc.x + step, y: fc.y }); await rec('1d the centre handle held, the frame moved one step'); await __back(fc);
+      await rec('1e the centre handle put back, no entry');
+      var tl = __pos(-280, 280); tl = { x: tl.x - 28, y: tl.y - 28 };
+      await __hold(tl, { x: tl.x - step, y: tl.y - step }); await rec('1f the top-left corner held out, its readouts'); await __back(tl);
+      var hr = __pos(280, 0); hr = { x: hr.x + 28, y: hr.y };
+      await __hold(hr, { x: hr.x + 40, y: hr.y }); await rec('1g the right handle held out, its readouts'); await __back(hr);
       await __hold(__pos(0, 280), __pos(0, 168)); await rec('2a the line held mid-pull, its readouts'); await __release(__pos(0, 168)); await sleep(120);
       await rec('2 a line pulled off the top side');
-      var hr = __pos(280, 0); hr = { x: hr.x + 28, y: hr.y };
-      await __hold(hr, { x: hr.x + 40, y: hr.y }); await rec('2b the right handle held out, its readouts'); await __release(hr); await sleep(120);
       __click('Wright'); await sleep(500); __click('Start a new construction'); await sleep(1200); await rec('3 the Wright demo played');
       await __tap(__pos(0, 0)); await sleep(300); await rec('4 the big pane tapped');
       __hookPostcard(); __click('Share'); await sleep(500); await rec('5 the share preview');

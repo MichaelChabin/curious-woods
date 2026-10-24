@@ -6,8 +6,9 @@
   "operations": [
     {
       "op": "init",
-      "wright": {
-        "unit": 56,
+      "board": "wright",
+      "unit": 56,
+      "frame": {
         "left": -5,
         "bottom": -5,
         "width": 10,
