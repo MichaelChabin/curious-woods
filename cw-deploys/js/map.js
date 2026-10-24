@@ -149,8 +149,8 @@
   var TAP_PX = 6;                         // a press that moves less than this is a tap, not a drag
   // the zoom gain (18 Oct 2026): plane.js owns the one named number, CW.ZOOM_GAIN; these are the same
   // numbers for a page that does not load plane.js. wheel: the step for a notch of 100 px; pinch: the
-  // exponent on the fingers' distance ratio
-  var ZOOM_GAIN_FALLBACK = { wheel: 0.10, pinch: 1.0 };
+  // exponent on the fingers' distance ratio (0.65 since 24 Oct 2026, Michael's number from the bench's sliders)
+  var ZOOM_GAIN_FALLBACK = { wheel: 0.10, pinch: 0.65 };
   function zoomGain() { return (window.CW && window.CW.ZOOM_GAIN) || ZOOM_GAIN_FALLBACK; }
   function wheelFactor(e) {
     var g = zoomGain(), d = e.deltaMode === 1 ? e.deltaY * 16 : (e.deltaMode === 2 ? e.deltaY * 100 : e.deltaY);

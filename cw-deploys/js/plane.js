@@ -39,10 +39,11 @@ CW.snap = function(v) { return Math.round(v) + 0.5; };
 //   wheel  the step for one notch of a mouse wheel (100 px of deltaY), as a fraction: 0.10 is ×1.1 a notch,
 //          what Glass Geometry and the map have done since August. A trackpad's small deltas now take a
 //          proportionate share of the notch instead of a whole step each, which is where the twitch was.
-//   pinch  the exponent on the two fingers' distance ratio: 1 keeps the ground under the fingers.
+//   pinch  the exponent on the two fingers' distance ratio: 1 keeps the ground under the fingers; 0.65 is
+//          Michael's number from the Drain the sea bench's sliders (24 Oct 2026), the same on every map.
 // Read by glass.js and by js/map.js (which carries the same numbers as its fallback for pages that do not
-// load this file). The defaults stay until Michael has picked a number on the Drain the sea bench's sliders.
-CW.ZOOM_GAIN = CW.ZOOM_GAIN || { wheel: 0.10, pinch: 1.0 };
+// load this file). Michael picked these on the bench's sliders, 24 Oct 2026: the wheel kept, the pinch 0.65.
+CW.ZOOM_GAIN = CW.ZOOM_GAIN || { wheel: 0.10, pinch: 0.65 };
 
 // The metre, in world units: the distance from 0 to 1 that Glass Geometry has always had, so
 // every record that counts from its seeds counts in metres without a change (R3, 24 Oct 2026).

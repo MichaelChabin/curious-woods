@@ -151,16 +151,16 @@
     <div class="row">
       <span class="lab">Zoom gain:</span>
       <span class="lab">wheel</span><input type="range" id="gWheel" min="0.02" max="0.30" step="0.01" value="0.10" aria-label="wheel zoom gain"><span class="val" id="vWheel">0.10</span>
-      <span class="lab">pinch</span><input type="range" id="gPinch" min="0.3" max="1.5" step="0.05" value="1.0" aria-label="pinch zoom gain"><span class="val" id="vPinch">1.00</span>
+      <span class="lab">pinch</span><input type="range" id="gPinch" min="0.3" max="1.5" step="0.05" value="0.65" aria-label="pinch zoom gain"><span class="val" id="vPinch">0.65</span>
     </div>
     <div class="chron" id="chron"></div>
   </main>
 </section>
 
-<script src="../../js/plane.js?v=2026-10-24g"></script>
+<script src="../../js/plane.js?v=2026-10-24-pinch"></script>
 <script src="../../js/cw-style.js?v=2026-10-21f"></script>
 <script src="../../js/cw-time.js?v=2026-10-19"></script>
-<script src="../../js/map.js?v=2026-10-22c"></script>
+<script src="../../js/map.js?v=2026-10-24-pinch"></script>
 <script src="../../js/globe.js?v=2026-10-22c"></script>
 <script src="../../js/deep-time.js?v=2026-10-21c"></script>
 <script src="../../js/probe.js?v=2026-10-19"></script>
@@ -168,7 +168,7 @@
 <script>
 (function () {
   'use strict';
-  var CW_VERSION = '2026-10-24g bb4b8dd'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+  var CW_VERSION = '2026-10-24-pinch 56b88f0'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   var $ = function (id) { return document.getElementById(id); };
   var THIS_YEAR = new Date().getFullYear();
