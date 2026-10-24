@@ -27,7 +27,7 @@
 
    The Wright window (19 Oct 2026): G.create({ wright: true }) opens on its 10 by 10 frame of whole
    steps (the init entry carries the frame, the shell's since R2; no points at all). g.resize(left, bottom,
-   width, height) is one drag of a handle (a `frame` entry); g.lock() the Lock word; g.cut(x, y, dir, at) pulls a line across the pane around (x, y) in units,
+   width, height) is one drag of a handle (a `frame` entry, in metres since R3); g.lock() the Lock word; g.cut(x, y, dir, at) pulls a line across the pane around (x, y) in units,
    'h' at y = at or 'v' at x = at; g.wrPane(x, y, colour) colours that pane. The model is the lab's
    own code (wrReplayOp), so a cut with no room or a pane not there throws here, not in the browser.
 
@@ -68,6 +68,8 @@ function create(opts) {
       setUnitFrame(ox, oy, len) { unit.x = ox; unit.y = oy; unit.len = len; },
       unitOrigin() { return { x: unit.x, y: unit.y }; },
       unitLength() { return unit.len; },
+      metre() { return 200; },                         // CW.METRE (R3, 24 Oct 2026)
+      setLatticeStep() {}, latticeStep() { return 1; },
       resetView() {}
     },
     homeView() {},

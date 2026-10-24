@@ -18,6 +18,12 @@
 // The lab declares its unit frame (decision 4) — where "0" sits
 // and how long a unit is — and may supply its own default-view
 // policy via opts.defaultView(viewW, viewH) → {x, y, zoom}.
+//
+// The metre (R3, 24 Oct 2026; Michael's ruling 8): one declared
+// unit, CW.METRE world units long, for every board's frame, grid,
+// readouts and plan. The lattice step can be set directly
+// (setLatticeStep): the resolution, in metres — whole, halves,
+// tenths — which every snap asks for.
 // ============================================================
 
 (function() {
@@ -37,6 +43,10 @@ CW.snap = function(v) { return Math.round(v) + 0.5; };
 // Read by glass.js and by js/map.js (which carries the same numbers as its fallback for pages that do not
 // load this file). The defaults stay until Michael has picked a number on the Drain the sea bench's sliders.
 CW.ZOOM_GAIN = CW.ZOOM_GAIN || { wheel: 0.10, pinch: 1.0 };
+
+// The metre, in world units: the distance from 0 to 1 that Glass Geometry has always had, so
+// every record that counts from its seeds counts in metres without a change (R3, 24 Oct 2026).
+CW.METRE = 200;
 CW.wheelFactor = function (e) {
     var g = CW.ZOOM_GAIN, d = e.deltaMode === 1 ? e.deltaY * 16 : (e.deltaMode === 2 ? e.deltaY * 100 : e.deltaY);
     var n = Math.max(-1, Math.min(1, d / 100));          // a notch, or the trackpad's fraction of one
@@ -68,6 +78,8 @@ CW.createPlane = function(opts) {
     // self-similar as she descends; untied, the step freezes and zooming
     // crowds or spreads the same lines. Both are wanted (Phase 3).
     var _latticeTied = true, _latticeFrozenStep = null;
+    // The step set directly (the resolution, in units): when set it is the step, tied or not.
+    var _latticeFixedStep = null;
 
     // The one zoom clamp. Every zoom write passes through here.
     var ZOOM_MIN = 0.05, ZOOM_MAX = 10;
@@ -114,6 +126,10 @@ CW.createPlane = function(opts) {
             _latticeTied = !!t;
         },
         latticeTied: function() { return _latticeTied; },
+        // The resolution (R3): the lattice step in units, set by the lab and asked for by every
+        // snap; null lets the step follow the zoom again (tied) or stay frozen.
+        setLatticeStep: function(step) { _latticeFixedStep = (step > 0) ? step : null; },
+        metre: function() { return CW.METRE; },
 
         // World y is up: screen y grows downward, so y negates on the way
         // through. These are the only two places that know that.
@@ -133,6 +149,7 @@ CW.createPlane = function(opts) {
         // the ladder renumbers by decades in both directions: 0.05, 0.1,
         // 0.5, 1, 5, 10, 50… as far as the zoom clamp lets it walk.
         latticeStep: function() {
+            if (_latticeFixedStep) return _latticeFixedStep;
             if (!_latticeTied && _latticeFrozenStep) return _latticeFrozenStep;
             var ppu = zoom * unitLength;
             var m = Math.floor(Math.log10(40 / ppu) + 1e-9);
@@ -151,6 +168,7 @@ CW.createPlane = function(opts) {
             var step = this.latticeStep();
             var stepW = step * unitLength;           // world units between lines
             var spacing = stepW * zoom;              // px between lines
+            var ppuLabel = zoom * unitLength;        // px per unit, for the labels' rung
             if (spacing < 3) return;                 // untied and far out: crowding has made its point
             var tl = this.screenToWorld(0, 0), br = this.screenToWorld(viewW, viewH);
             // Visible tick ranges with a one-step margin so lines don't pop at the edges
@@ -188,23 +206,29 @@ CW.createPlane = function(opts) {
 
             // Tick numbers, positive in all four directions (map convention).
             // Label rows clamp to the viewport edge when their axis is out of
-            // view — the window is small, the map is not.
+            // view — the window is small, the map is not. With a fine step the
+            // numbers would crowd, so they sit on the smallest rung of the 1–5–10
+            // ladder that is at least 40px apart and no finer than the step (R3).
             var rowY = Math.max(2, Math.min(ay + 4, viewH - 14));
             var colX = Math.max(28, Math.min(ax - 5, viewW - 4));
+            var lm = Math.floor(Math.log10(40 / ppuLabel) + 1e-9), lrung = Math.pow(10, lm);
+            lrung = (lrung * 5 * ppuLabel > 40) ? lrung * 5 : lrung * 10;
+            var labelStep = Math.max(lrung, step);
+            function labelled(k) { var v = k * step / labelStep; return Math.abs(v - Math.round(v)) < 1e-9; }
             ctx.globalAlpha = 0.55;
             ctx.fillStyle = '#546A80';
             ctx.font = '10px Georgia, serif';
             ctx.textBaseline = 'top'; ctx.textAlign = 'center';
             for (n = nx0; n <= nx1; n++) {
-                if (n === 0) continue;
+                if (n === 0 || !labelled(n)) continue;
                 sx = this.worldToScreen(unitOrigin.x + n * stepW, 0).x;
-                ctx.fillText(latticeLabelText(Math.abs(n) * step, step), sx, rowY);
+                ctx.fillText(latticeLabelText(Math.abs(n) * step, labelStep), sx, rowY);
             }
             ctx.textBaseline = 'middle'; ctx.textAlign = 'right';
             for (n = ny0; n <= ny1; n++) {
-                if (n === 0) continue;
+                if (n === 0 || !labelled(n)) continue;
                 sy = this.worldToScreen(0, unitOrigin.y + n * stepW).y;
-                ctx.fillText(latticeLabelText(Math.abs(n) * step, step), colX, sy);
+                ctx.fillText(latticeLabelText(Math.abs(n) * step, labelStep), colX, sy);
             }
             ctx.textBaseline = 'top'; ctx.textAlign = 'right';
             ctx.fillText('0', colX, rowY);

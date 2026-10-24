@@ -538,7 +538,10 @@ var showGlass   = false;
 // word. Earned numbers belong to the points and render whenever the map is
 // hidden; "no numbers at all" is Just the glass's job. Geometry greets with
 // the map hidden — earned numbers first.
-var mapShown = false;
+// The grid is given (Michael, 22 Oct 2026, the inventory's first ruling; built in R3, 24 Oct): the
+// map shows from the start on every board. The standalone lab's Show map / Hide map word still
+// turns it, recorded as a viewing entry, until R5.
+var mapShown = true;
 
 // ============================================================
 // AUDIO
@@ -629,9 +632,20 @@ function freshLog() {
 // demo and any saved design open as before and are saved in the new shape.
 var frame = null;          // as last replayed, in world coordinates { x0, y0, x1, y1 }, or null
 var frameU = null;         // the same in units { left, bottom, width, height }, or null
-var frameUnit = 0;         // world units per unit, from the init entry
+var frameUnit = 0;         // world units per unit: the metre (plane.metre()) while a frame is up
+// The resolution (R3): the grid's step in metres — whole, halves, tenths — that every snap asks
+// for. Finer in the column steps round; the change is a viewing entry in the record
+// ({ op: 'resolution', step }), so a replay reproduces it and Undo skips it. Whole to start:
+// the inventory leaves open whether the child or the story sets it, so the default is the coarsest.
+var RESOLUTIONS = [1, 0.5, 0.1];
+var gridStep = 1;
+function setResolution(step) { gridStep = step; plane.setLatticeStep(step); }
+function clean(v) { return Math.round(v * 1e6) / 1e6; }
+function snapU(v) { return clean(Math.round(v / gridStep) * gridStep); }   // to the grid, in units
+function nextResolution() { var i = RESOLUTIONS.indexOf(gridStep); return RESOLUTIONS[(i + 1) % RESOLUTIONS.length]; }
+function finer() { if (isStepThroughActive()) forkStepThrough(); appendOp({ op: 'resolution', step: nextResolution() }); }
 var frameLockedOp = false; // a `lock` entry replayed
-var FRAME_MIN = 1, FRAME_MAX = 20;   // each way, in whole units (the Wright window's limits of 19 Oct; the frame's until the rebuild says otherwise)
+var FRAME_MIN = 1, FRAME_MAX = 20;   // each way, in metres (the Wright window's limits of 19 Oct; the frame's until the rebuild says otherwise)
 var FRAME_MARGIN = 1;                // the home view's margin round the frame, in units
 function inFrame(wx, wy) { return !!frame && wx > frame.x0 && wx < frame.x1 && wy > frame.y0 && wy < frame.y1; }
 function setFrameUnits(f) {
@@ -648,7 +662,8 @@ function frameLocked() { return frameLockedOp || (WRIGHT && wrightBoard.builtFro
 function migrateLog() {
     for (var i = 0; i < operationLog.length; i++) {
         var op = operationLog[i];
-        if (op.op === 'init' && op.wright) operationLog[i] = { op:'init', board:'wright', unit: op.wright.unit || 56, frame: { left: op.wright.left, bottom: op.wright.bottom, width: op.wright.width, height: op.wright.height } };
+        if (op.op === 'init' && op.wright) operationLog[i] = { op:'init', board:'wright', frame: { left: op.wright.left, bottom: op.wright.bottom, width: op.wright.width, height: op.wright.height } };
+        else if (op.op === 'init' && op.board === 'wright' && op.unit !== undefined) { operationLog[i] = { op:'init', board:'wright', frame: op.frame }; }   // R2's shape carried the unit; the metre is the plane's since R3
         else if (op.op === 'resize') operationLog[i] = { op:'frame', left: op.left, bottom: op.bottom, width: op.width, height: op.height };
     }
 }
@@ -686,9 +701,9 @@ function frameDragMove(world) {
     var d = frameDrag, f = d.from, U = frameUnit, h = d.handle;
     var hx = FRAME_HANDLE / plane.zoom() / U, ux = world.x / U, uy = world.y / U;
     var left = f.left, bottom = f.bottom, width = f.width, height = f.height, right = left + width, top = bottom + height;
-    function size(v) { return Math.max(FRAME_MIN, Math.min(FRAME_MAX, Math.round(v))); }
+    function size(v) { return Math.max(FRAME_MIN, Math.min(FRAME_MAX, snapU(v))); }
     if (h.kind === 'move') {
-        left = f.left + Math.round(ux - d.start.x); bottom = f.bottom + Math.round(uy - d.start.y);
+        left = clean(f.left + snapU(ux - d.start.x)); bottom = clean(f.bottom + snapU(uy - d.start.y));
     } else {
         var id = h.id;
         if (id === 'right' || id === 'tr' || id === 'br')  width = size(ux - hx - left);
@@ -726,14 +741,14 @@ function drawFrameHandles() {
     });
 }
 // The frame measured while a handle is dragged: width above, height beside the right, area inside
-// (whole numbers, until R3).
+// (exact to the grid's step, and ≈ where a number is not).
 function drawFrameMeasure() {
     if (!frameDrag || !frame) return;
     var r = frameScreenRect();
     ctx.save();
-    readout(ctx, readoutText('width', frameU.width, 'whole'), r.x + r.w / 2, r.y - 6, 'center', 'bottom');
-    readout(ctx, readoutText('height', frameU.height, 'whole'), r.x + r.w + 44, r.y + r.h / 2, 'left', 'middle');
-    if (r.h > 60 && r.w > 90) readout(ctx, readoutText('area', frameU.width * frameU.height, 'whole'), r.x + r.w / 2, r.y + r.h - 10, 'center', 'bottom');
+    readout(ctx, readoutText('width', frameU.width, 'exact'), r.x + r.w / 2, r.y - 6, 'center', 'bottom');
+    readout(ctx, readoutText('height', frameU.height, 'exact'), r.x + r.w + 44, r.y + r.h / 2, 'left', 'middle');
+    if (r.h > 60 && r.w > 90) readout(ctx, readoutText('area', frameU.width * frameU.height, 'exact'), r.x + r.w / 2, r.y + r.h - 10, 'center', 'bottom');
     ctx.restore();
 }
 function initLog() {
@@ -755,13 +770,15 @@ function replayLog(animateNew) {
     // empty board and the Rose as it played. The main lab keeps its habit until Michael rules.
     if (APP) showGlass = false;
     frame = null; frameU = null; frameUnit = 0; frameLockedOp = false; wrightBoard.reset();
+    setResolution(1);
     migrateLog();
     for (var i = 0; i < operationLog.length; i++) {
         var op = operationLog[i];
         // The frame's entries: a board's init carrying the opening frame, a frame moved or resized, a lock.
-        if (op.op === 'init' && op.board === 'wright') { frameUnit = op.unit || 56; setFrameUnits(op.frame); continue; }
+        if (op.op === 'init' && op.board === 'wright') { frameUnit = plane.metre(); setFrameUnits(op.frame); continue; }
         if (op.op === 'frame') { if (frameUnit) setFrameUnits(op); continue; }
         if (op.op === 'lock') { frameLockedOp = true; continue; }
+        if (op.op === 'resolution') { if (RESOLUTIONS.indexOf(op.step) >= 0) setResolution(op.step); continue; }
         // The board's own entries, known by their shape and not by the flag (a record from one board
         // dropped on another still replays its entries, as it always has): the Wright window's cuts.
         if (wrightBoard.replay(op)) continue;
@@ -769,11 +786,11 @@ function replayLog(animateNew) {
         if (op.op === 'init') {
             _addPt('seed:0', op.seed0.x, op.seed0.y, 'seed', prev, animateNew);
             _addPt('seed:1', op.seed1.x, op.seed1.y, 'seed', prev, animateNew);
-            // The seed distance IS the unit interval, and seed:0 is where the
-            // count starts. The lab declares the whole frame to the plane here
-            // (decision 4) rather than the plane reaching in.
+            // The seed distance is the metre (every record's seeds are 200 world units apart,
+            // CW.METRE), and seed:0 is where the count starts. The lab declares the frame to the
+            // plane here (decision 4) rather than the plane reaching in.
             var seedUnit = dist(op.seed0.x, op.seed0.y, op.seed1.x, op.seed1.y);
-            plane.setUnitFrame(op.seed0.x, op.seed0.y, seedUnit);
+            plane.setUnitFrame(op.seed0.x, op.seed0.y, plane.metre());
             // Duplicate-intersection merge radius, proportional to the unit
             // so a log with different seeds still replays sensibly. It must
             // stay view-independent: replay decides which intersections are
@@ -940,7 +957,7 @@ function appendOp(op) { operationLog.push(op); replayLog(true); checkHtwTriggers
 // over them — tap-in-empty-space must never make the map disappear. Viewing
 // state is reversed by its own control (that is what destination-named
 // titles are for).
-var VIEWING_OPS = { numbers: true, show_glass: true };
+var VIEWING_OPS = { numbers: true, show_glass: true, resolution: true };
 // Work means marks on the world. Viewing ops alone are not work: they must
 // not summon New and Save onto an empty canvas, and the WIP guard has
 // nothing to guard when only the viewing changed.
@@ -994,8 +1011,7 @@ var wrightBoard = (function () {
 // holds glass cuts the glass with it, the two halves named after the one. The frame's four sides
 // are the first four segments on the board and nothing more special than that: a line is pulled
 // off them as off any cut.
-var WR_UNIT = 56;                                     // world units per step: a 10 by 10 stands about two-thirds of the box's height
-var WR_DEFAULT = { left: -5, bottom: -5, width: 10, height: 10 };
+var WR_DEFAULT = { left: -5, bottom: -5, width: 10, height: 10 };   // metres (R3: the step is the metre, the unit the plane's)
 var wrPanes = [];                                     // [{ x0, y0, x1, y1 }], in units
 var wrCuts = [];                                      // [{ dir, at, from, to }]: 'h' at y = at from x = from to x = to; 'v' at x = at from y = from to y = to
 // The frame has changed (it can only while nothing is built from it): the one pane is the frame
@@ -1058,16 +1074,9 @@ function wrRender() {
     paintLead(ctx, w2s, plane.zoom(), [], collectLeadLines(), true, { style: LEAD_BORDER_COLOR, width: LEAD_WIDTH, onePath: true }, false);
     if (showGlass) return;
     ctx.save();
-    // the numbers at each whole step, thinned where they would crowd; the last one always
-    var step = U * plane.zoom(), every = step >= 16 ? 1 : step >= 8 ? 2 : 5;
-    for (var i = 0; i <= wrFrame.width; i++) {
-        if (i % every && i !== wrFrame.width) continue;
-        var s = wrScreen(wrFrame.left + i, wrFrame.bottom); readout(ctx, CW.num.count(i), s.x, s.y + 7, 'center', 'top');
-    }
-    for (var j = 0; j <= wrFrame.height; j++) {
-        if (j % every && j !== wrFrame.height) continue;
-        var t = wrScreen(wrFrame.left, wrFrame.bottom + j); readout(ctx, CW.num.count(j), t.x - 8, t.y, 'right', 'middle');
-    }
+    // the numbers along the bottom and the left are the plane's tick numbers since R3 (the plane's
+    // origin is the frame's corner)
+    var step = U * plane.zoom();
     var d = wrDrag;
     // the line being pulled: where it would settle, its length, and the two panes it is making
     if (d && d.kind === 'pull' && d.pane && d.at !== null && d.at !== undefined) {
@@ -1075,12 +1084,12 @@ function wrRender() {
         var a = d.dir === 'h' ? wrScreen(p.x0, d.at) : wrScreen(d.at, p.y0), b = d.dir === 'h' ? wrScreen(p.x1, d.at) : wrScreen(d.at, p.y1);
         ctx.strokeStyle = LEAD_BORDER_COLOR; ctx.lineWidth = LEAD_WIDTH; ctx.lineCap = 'round'; ctx.globalAlpha = 0.5;
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-        var len = d.dir === 'h' ? p.x1 - p.x0 : p.y1 - p.y0;
-        if (d.dir === 'h') readout(ctx, readoutText('length', len, 'whole'), b.x + 8, b.y, 'left', 'middle');
-        else readout(ctx, readoutText('length', len, 'whole'), a.x, Math.min(a.y, b.y) - 6, 'center', 'bottom');
+        var len = clean(d.dir === 'h' ? p.x1 - p.x0 : p.y1 - p.y0);
+        if (d.dir === 'h') readout(ctx, readoutText('length', len, 'exact'), b.x + 8, b.y, 'left', 'middle');
+        else readout(ctx, readoutText('length', len, 'exact'), a.x, Math.min(a.y, b.y) - 6, 'center', 'bottom');
         if (halves) halves.forEach(function(h) {
-            var c = wrScreen((h.x0 + h.x1) / 2, (h.y0 + h.y1) / 2), hw = h.x1 - h.x0, hh = h.y1 - h.y0, pw = hw * step, ph = hh * step;
-            var size = CW.num.count(hw) + ' by ' + CW.num.count(hh), area = readoutText('area', hw * hh, 'whole');
+            var c = wrScreen((h.x0 + h.x1) / 2, (h.y0 + h.y1) / 2), hw = clean(h.x1 - h.x0), hh = clean(h.y1 - h.y0), pw = hw * step, ph = hh * step;
+            var size = numText(hw) + ' by ' + numText(hh), area = readoutText('area', clean(hw * hh), 'exact');
             if (ph >= 34 && pw >= 70) { readout(ctx, size, c.x, c.y - 2, 'center', 'bottom'); readout(ctx, area, c.x, c.y + 2, 'center', 'top'); }
             else if (pw >= 110 || ph >= 20) readout(ctx, size + ', ' + area, c.x, c.y, 'center', 'middle');
         });
@@ -1106,10 +1115,10 @@ function wrUpdateTotals() {
     wrTotalsEl.textContent = '';
     order.forEach(function(c) {
         var sp = document.createElement('span'), sw = document.createElement('i'); sw.className = 'sw'; sw.style.background = c;
-        sp.appendChild(sw); sp.appendChild(document.createTextNode(CW.num.count(by[c]))); wrTotalsEl.appendChild(sp);
+        sp.appendChild(sw); sp.appendChild(document.createTextNode(numText(by[c]))); wrTotalsEl.appendChild(sp);
     });
-    var em = document.createElement('span'); em.textContent = 'empty ' + CW.num.count(all - used); wrTotalsEl.appendChild(em);
-    var tot = document.createElement('span'); tot.className = 'all'; tot.textContent = '= ' + CW.num.count(all); wrTotalsEl.appendChild(tot);
+    var em = document.createElement('span'); em.textContent = 'empty ' + numText(all - used); wrTotalsEl.appendChild(em);
+    var tot = document.createElement('span'); tot.className = 'all'; tot.textContent = '= ' + numText(all); wrTotalsEl.appendChild(tot);
 }
 
 var wrDrag=null;      // the Wright window: { kind: 'pull' | 'tap', ... } from a press to its release
@@ -1148,9 +1157,10 @@ function wrMove(pos, world) {
             d.pane = (e.dir === 'h' ? wrPaneAt(d.start.x / U, e.at + eps) : wrPaneAt(e.at + eps, d.start.y / U)) || null;
         }
         if (!d.pane) { d.at = null; return; }
-        var p = d.pane, lo = (e.dir === 'h' ? p.y0 : p.x0) + 1, hi = (e.dir === 'h' ? p.y1 : p.x1) - 1;
+        // the line settles on the grid (the resolution's step, asked of the shell), never on the pane's own edges
+        var p = d.pane, lo = clean((e.dir === 'h' ? p.y0 : p.x0) + gridStep), hi = clean((e.dir === 'h' ? p.y1 : p.x1) - gridStep);
         if (hi < lo) { d.at = null; return; }                       // no room: a pane one step across takes no line
-        d.at = Math.max(lo, Math.min(hi, Math.round(e.dir === 'h' ? uy2 : ux2)));
+        d.at = Math.max(lo, Math.min(hi, snapU(e.dir === 'h' ? uy2 : ux2)));
         return;
     }
     if (d.kind === 'tap' && dist(pointerStart.x, pointerStart.y, pos.x, pos.y) > THRESHOLDS.tapMovement) d.moved = true;
@@ -1185,7 +1195,7 @@ function wrTap(wx, wy) {
 function repaintCount() { var n = 0; for (var i = 0; i < operationLog.length; i++) { if (operationLog[i].op === 'repaint_fill') n++; } return n; }
 
 return {
-    freshLog: function () { return [{ op:'init', board:'wright', unit: WR_UNIT, frame: Object.assign({}, WR_DEFAULT) }]; },
+    freshLog: function () { return [{ op:'init', board:'wright', frame: Object.assign({}, WR_DEFAULT) }]; },
     reset: function () { wrPanes = []; wrCuts = []; },
     // The shell's frame has changed; the board's panes follow it.
     onFrame: wrOnFrame,
@@ -3218,8 +3228,8 @@ function render() {
 
     drawAxisLabels();
 
-    // The pixel floor, part of the map's furniture
-    if (mapShown && !showGlass) drawPixelFloorReadout();
+    // The pixel floor, part of the map's furniture: the lab's own until R5, as minting is
+    if (mapShown && !showGlass && POWERS.map) drawPixelFloorReadout();
 }
 
 function frameScreenRect() {
@@ -3351,16 +3361,23 @@ var alive = true, rafId = 0;
 // Every number shown while she drags — the circle's radius and area, the
 // Wright window's frame, line and panes — goes through one formatter and one label. The formatter
 // takes the board's rule for whole numbers and ≈ (ruling 9's one vocabulary, the numbers' half):
-//   'whole'   the value is a whole number of steps and is printed as one (the Wright window)
+//   'whole'   the value is a whole number of steps and is printed as one (no user since R3; kept
+//             for a board whose numbers are counts)
 //   'approx'  a whole number where it is one, else ≈ to two places (the circle's radius and area)
-// (The retired lines board's rule, 'exact' — exact to tenths or hundredths where it is, else ≈ —
-// went with it; the frame of the rebuild, which snaps to the grid, will want it back.)
+//   'exact'   exact to tenths or hundredths where it is, else ≈ to two places (the frame, and the
+//             Wright window since R3, whose grid has halves and tenths)
 function readoutText(word, v, rule) {
     if (rule === 'whole') return word + ': ' + CW.num.count(v);
     var n = Math.round(v);
     if (Math.abs(v - n) < 1e-9) return word + ': ' + CW.num.count(n);
+    if (rule === 'exact') {
+        if (Math.abs(v * 10 - Math.round(v * 10)) < 1e-9) return word + ': ' + CW.num.decimal(Math.round(v * 10), 1);
+        if (Math.abs(v * 100 - Math.round(v * 100)) < 1e-9) return word + ': ' + CW.num.decimal(Math.round(v * 100), 2);
+    }
     return word + ' ≈ ' + CW.num.decimal(Math.round(v * 100), 2);
 }
+// A bare number by the 'exact' rule, for the Wright window's totals and pane sizes.
+function numText(v) { return readoutText('', v, 'exact').replace(/^(: | ≈ )/, function(m) { return m === ': ' ? '' : '≈ '; }); }
 // One label: 11px Georgia in Payne's grey at 0.85, placed with its alignment.
 function readout(c, text, x, y, align, baseline) {
     c.font = '11px Georgia, serif'; c.fillStyle = '#546A80'; c.globalAlpha = 0.85;
@@ -4178,7 +4195,9 @@ function onUp(e) {
             // point — the moment possibility becomes history. Inside the
             // snap radius this outranks undo; everywhere else taps behave
             // exactly as before.
-            if (mapShown) {
+            // Minting stays the lab's own power until R5 gives Stained Glass its grid points: with
+            // the map shown from the start (R3), Circles would otherwise mint where it used to undo.
+            if (mapShown && POWERS.map) {
                 var mint = latticeMintTarget(world.x, world.y);
                 if (mint) {
                     appendOp({ op:'lattice_point', u:mint.u, v:mint.v });
@@ -5756,6 +5775,17 @@ function initHowThisWorks() {
         updateViewingWords();   // the words just made take their presence from the board as it is
     }
 
+    // Finer (R3, 24 Oct 2026): one word on every board that steps the grid whole → halves → tenths
+    // and round again; a viewing entry in the record. After the Glass only row in either column.
+    (function () {
+        var rowGlass2 = $('glass-toggle').parentNode;
+        var rowFiner = document.createElement('li'); rowFiner.className = 'htw-action-row';
+        var fw = document.createElement('span'); fw.className = 'htw-action-word g-finer'; fw.textContent = 'Finer';
+        fw.addEventListener('click', finer);
+        rowFiner.appendChild(fw);
+        rowGlass2.parentNode.insertBefore(rowFiner, rowGlass2.nextSibling);
+    })();
+
     // Full screen's way out, and the board's response to going there and back: the canvas resized,
     // the column laid out again, and the view re-homed while nothing has been made yet.
     if (FULLSCREEN) {
@@ -5915,9 +5945,9 @@ loadPalettesJSON();
 initLog();
 // Geometry's grid keeps its step, always — no toggle (ledger §11): a tied
 // grid quietly mints finer lines nobody constructed at every decade
-// crossing. Frozen at the default view's step; zoom in and its lines
-// spread like any drawn thing seen closer.
-plane.setLatticeTied(false);
+// crossing. Since R3 the step is the resolution, set here and by Finer;
+// zoom in and its lines spread like any drawn thing seen closer.
+setResolution(1);   // whole metres to start (R3); Finer steps it
 initConstructions();
 initHowThisWorks();
 
@@ -5994,7 +6024,7 @@ function destroy() {
 // A reading of the lab's state for a session checking it in a browser (18 Oct 2026); nothing in
 // the site reads it.
 root._glass = { view: function () { return plane.view(); }, viewport: function () { return [plane.viewportWidth(), plane.viewportHeight()]; },
-                frame: function () { return frame; }, frameUnits: function () { return frameU; }, locked: frameLocked, log: function () { return operationLog; }, fills: function () { return liveFills(); },
+                frame: function () { return frame; }, frameUnits: function () { return frameU; }, locked: frameLocked, step: function () { return gridStep; }, log: function () { return operationLog; }, fills: function () { return liveFills(); },
                 panes: function () { return wrightBoard.state().panes; }, cuts: function () { return wrightBoard.state().cuts; } };
 
 return {

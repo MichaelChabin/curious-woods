@@ -7,7 +7,6 @@
     {
       "op": "init",
       "board": "wright",
-      "unit": 56,
       "frame": {
         "left": -5,
         "bottom": -5,
