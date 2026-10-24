@@ -58,12 +58,14 @@
   var tree = q.get('tree') || '8777', page = q.get('page') || 'circles';
   var base = 'http://localhost:' + tree + '/';
   var SIZE = { standalone: [1280, 900], circles: [1028, 648], wright: [1280, 648], lines: [1280, 648] }[page];
-  var OPTS = {
+  // The mount, as the pages have it: one word since R4 (24 Oct 2026); the older trees' options before it.
+  var OPTS_OLD = {
     standalone: { level: 'both' },
     circles: { app: 'window', palette: 'chartres', measure: true },
     wright: { app: 'window', level: 'wright', palette: 'chartres', fullscreen: true },
     lines: { app: 'window', level: 'lines', palette: 'chartres', fullscreen: true }
   }[page];
+  var OPTS_NEW = { standalone: { board: 'euclid' }, circles: { board: 'circles', palette: 'chartres' }, wright: { board: 'wright', palette: 'chartres' } }[page];
   var host = document.getElementById('host');
   host.style.width = SIZE[0] + 'px'; host.style.height = SIZE[1] + 'px';
   window.__page = page; window.__tree = tree;
@@ -72,7 +74,9 @@
   var scripts = ['js/cw-flags.js', 'js/cw-number.js', 'js/plane.js', 'js/cw-panel.js', 'js/glass.js'];
   window.__ready = (async function () {
     for (var i = 0; i < scripts.length; i++) await load(base + scripts[i] + '?h=' + Date.now());
-    window.__lab = cwGlass(host, OPTS);
+    var NEW = !!(window.CW && CW.boards);   // a tree with the shell's interface (R4) registers the boards
+    if (NEW && page === 'wright') await load(base + 'js/boards/wright.js?h=' + Date.now());
+    window.__lab = cwGlass(host, NEW ? OPTS_NEW : OPTS_OLD);
     if (page === 'standalone') __lab.focus();
     return 'mounted ' + page + ' from ' + tree;
   })();
@@ -141,7 +145,7 @@
     var states = {}, name = page;
     async function rec(label) { states[label] = await __hash(); }
     await rec('1 opening');
-    if (name === 'wright' || name === 'lines') { await __tap(__pos(0, 0)); await sleep(300); }   // the first touch, spent on full screen
+    if (host.querySelector('.g-fs-exit')) { await __tap(__pos(0, 0)); await sleep(300); }   // the first touch, spent on full screen (the trees before R4)
     if (name === 'wright') {
       // R2: Lock and Undo on the opening frame; the frame moved by its centre handle and put back; a corner held
       __click('Lock'); await sleep(300); await rec('1b Lock tapped');

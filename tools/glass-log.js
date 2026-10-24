@@ -31,8 +31,9 @@
    'h' at y = at or 'v' at x = at; g.wrPane(x, y, colour) colours that pane. The model is the lab's
    own code (wrReplayOp), so a cut with no room or a pane not there throws here, not in the browser.
 
-   Since T4 (24 Oct 2026) the Wright window is a block of its own between the OPERATION LOG section and
-   CANVAS NOTES, inside the span cut below; its model is read through wrightBoard.state(). */
+   Since R4 (24 Oct 2026) the Wright window is a board of its own, cw-deploys/js/boards/wright.js, built here
+   from its factory with the shell's services (THE BOARD section, inside the span cut below) as the shell builds
+   it; its model is read through board.state(). A fill on it carries the pane as `pane` (R4; `rect` before). */
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -54,6 +55,9 @@ const CODE = [
   section('OPERATION LOG + DATA STRUCTURES', 'CANVAS NOTES'),
   section('GEOMETRY HELPERS', 'THE PLANE (shared)')
 ].join('\n');
+// The boards on the interface, registered under CW.boards as the browser has them.
+global.CW = global.CW || {};
+new Function(fs.readFileSync(path.join(ROOT, 'cw-deploys/js/boards/wright.js'), 'utf8'))();
 
 function create(opts) {
   opts = opts || {};
@@ -61,8 +65,13 @@ function create(opts) {
   const stubs = {
     PARAMS: { birthDuration: 0 },
     FOREST_GLASS: '#c2d4bc',
-    // The window profile's flags, read by replayLog since 8 Oct 2026 (the harness threw on APP until this).
-    APP: !!opts.wright, WRIGHT: !!opts.wright, showGlass: false,
+    // The window profile's flag, read by replayLog since 8 Oct 2026 (the harness threw on APP until this);
+    // the board's factory, as the mount resolves it (R4), and what the shell's services reach for.
+    APP: !!opts.wright, showGlass: false, boardFactory: opts.wright ? CW.boards.wright : null,
+    POWERS: { htw: [], madeWord: '' }, root: {}, THRESHOLDS: { lineHitRadius: 14, tapMovement: 8 },
+    w2s() { return { x: 0, y: 0 }; }, readout() {}, readoutText() { return ''; }, numText() { return ''; },
+    LEAD_BORDER_COLOR: '#777777', LEAD_WIDTH: 2, isStepThroughActive() { return false; }, forkStepThrough() {},
+    hitPt() { return null; }, interactionState: 'IDLE', isPanning: false, panStart: null,
     state: { palette: { selected: null } },
     plane: {
       setUnitFrame(ox, oy, len) { unit.x = ox; unit.y = oy; unit.len = len; },
@@ -70,7 +79,7 @@ function create(opts) {
       unitLength() { return unit.len; },
       metre() { return 200; },                         // CW.METRE (R3, 24 Oct 2026)
       setLatticeStep() {}, latticeStep() { return 1; },
-      resetView() {}
+      resetView() {}, zoom() { return 1; }, pan() { return { x: 0, y: 0 }; }
     },
     homeView() {},
     syncCanvasNoteDOMs() {}, updateViewingWords() {}, checkHtwTriggers() {}, checkTipFadeThresholds() {},
@@ -86,7 +95,7 @@ function create(opts) {
              segs: logicalSegments, arcs: logicalArcs, fills: fills, checkAndFill: checkAndFill,
              dist: dist, getAngle: getAngle, angleBetween: angleBetween,
              face: (typeof findFaceAround === 'function') ? findFaceAround : null,
-             wr: function () { return wrightBoard.state(); } };`;
+             wr: function () { return board.state(); } };`;
   const lab = new Function(...names, body)(...names.map(n => stubs[n]));
   lab.init();
 
@@ -171,7 +180,7 @@ function create(opts) {
       const p = lab.wr().paneAt(x, y); if (!p) throw new Error('no pane at (' + x + ', ' + y + ')');
       const own = lab.wr().fillOf(p);
       if (own) lab.append({ op: 'repaint_fill', fillId: own.fillId, color: colour || '#c2d4bc', opacity: 1.0 });
-      else lab.append({ op: 'fill', fillId: 'fill:' + Date.now(), rect: { x0: p.x0, y0: p.y0, x1: p.x1, y1: p.y1 }, color: colour || '#c2d4bc', opacity: 1.0 });
+      else lab.append({ op: 'fill', fillId: 'fill:' + Date.now(), pane: { x0: p.x0, y0: p.y0, x1: p.x1, y1: p.y1 }, color: colour || '#c2d4bc', opacity: 1.0 });
       return api;
     },
     // Lead on the edge nearest (x, y). A closed loop fills, exactly as the lab does it.

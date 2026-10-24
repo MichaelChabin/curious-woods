@@ -47,7 +47,7 @@
     </div>
 
     <!-- A placeholder paragraph; Michael will write the words. -->
-    <p>The square is your window, ten steps across and ten up. Touch the board once and it fills the screen; <i>Exit</i> at the bottom right, or the Escape key, brings the page back. Before your first line, drag one of the small dots outside the sides to make the window a different size. Then press on any edge and drag into the pane: a line comes with you, parallel to the edge, across that one pane, and settles on a whole step when you let go. Lines never cross; they meet. Tap a pane to colour it.</p>
+    <p>The square is your window, ten steps across and ten up. <i>Full screen</i> in the column fills the screen; the same word, or the Escape key, brings the page back. Before your first line, drag one of the small dots outside the sides to make the window a different size. Then press on any edge and drag into the pane: a line comes with you, parallel to the edge, across that one pane, and settles on a whole step when you let go. Lines never cross; they meet. Tap a pane to colour it.</p>
 
     <!-- THE BOARD: the lab's window profile at the wright level, the window's full width and three-quarters
          of its height (full height would leave no way to scroll the page: the lab takes the wheel and the finger). -->
@@ -69,19 +69,20 @@
 <script src="../js/cw-number.js?v=2026-09-03"></script>
 <script src="../js/plane.js?v=2026-10-24g"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
-<script src="../js/glass.js?v=2026-10-24g"></script>
+<script src="../js/glass.js?v=2026-10-24h"></script>
+<script src="../js/boards/wright.js?v=2026-10-24h"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-24g bb4b8dd';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-24h 56b88f0';   // date + short commit hash; bump in the same commit as any change
   console.log('geo-2-glass-wright-window', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
-  // THE BOARD: Glass Geometry's window profile at the wright level — a frame of whole steps, resized by
-  // its handles until the first line; lines pulled off any edge, parallel to it, across one pane; glass
-  // by a tap, with the colour totals under the board; full screen on her first touch where the browser
-  // allows it.
-  if (typeof cwGlass === 'function') cwGlass(document.getElementById('table'), { app: 'window', level: 'wright', palette: 'chartres', fullscreen: true });
+  // THE BOARD: the Wright window, js/boards/wright.js, on the Glass shell's interface (R4, 24 Oct 2026) — the
+  // shell's frame in metres, moved and resized by its handles until the first line or Lock; lines pulled off
+  // any edge, parallel to it, across one pane; glass by a tap, with the colour totals under the board; Full
+  // screen a word in the column where the browser allows it.
+  if (typeof cwGlass === 'function') cwGlass(document.getElementById('table'), { board: 'wright', palette: 'chartres' });
 })();
 </script>
 </body>

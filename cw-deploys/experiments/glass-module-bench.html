@@ -36,7 +36,7 @@
 <body>
 <div class="page">
   <h1>Glass, as a module</h1>
-  <p class="sub">The same lab twice, in two boxes. The left one is at level <i>circles</i> — Glass 1: Circles, as Michael named it on 1 Oct: a tap on a location does nothing, and nothing says so; its column holds Circles, Color, New Open Save and Just the glass. The right one is at <i>both</i>, which is the lab as it hangs in the gallery. Draw in one, then the other; undo in one must not touch the other.</p>
+  <p class="sub">The same lab twice, in two boxes. The left one is the <i>circles</i> board — Stained Glass Circles as its story page mounts it (since R4, 24 Oct 2026; before that the lab at the circles level): a tap inside a shape colours it, and its column is the window profile's. The right one is <i>euclid</i>, which is the lab as it hangs in the gallery. Draw in one, then the other; undo in one must not touch the other.</p>
 
   <div class="row">
     <div class="box">
@@ -59,12 +59,12 @@
 <script src="../js/cw-number.js?v=2026-09-03"></script>
 <script src="../js/plane.js?v=2026-10-24g"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
-<script src="../js/glass.js?v=2026-10-24g"></script>
+<script src="../js/glass.js?v=2026-10-24h"></script>
 <script>
-var CW_VERSION = '2026-10-24g bb4b8dd'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-10-24h 56b88f0'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 document.addEventListener('DOMContentLoaded', function () {
-  var a = cwGlass(document.getElementById('labCircles'), { level: 'circles', open: 'rose', palette: 'chartres' });
-  var b = cwGlass(document.getElementById('labBoth'), { level: 'both', palette: 'gaudi' });
+  var a = cwGlass(document.getElementById('labCircles'), { board: 'circles', open: 'rose', palette: 'chartres' });   // Stained Glass Circles' board (R4, the one mount word; until then the lab at the circles level, which no page serves now)
+  var b = cwGlass(document.getElementById('labBoth'), { board: 'euclid', palette: 'gaudi' });
   document.getElementById('again').addEventListener('click', function () { a.replay(); });
   window.cwBench = { a: a, b: b };   // for a look from the console
 });

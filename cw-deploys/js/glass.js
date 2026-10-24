@@ -3,44 +3,25 @@
    the spine: CWVault/claude/Geometry-Spine.md; the prompt: claude/Prompt-Extract-Glass-Module.md.
    Extracted 1 Oct 2026 from active/glass-geometry.html, which now mounts it at the fullest level.
 
-   cwGlass(host, opts)  → { el, level, replay(), focus(), resize(), destroy() }
+   cwGlass(host, opts)  → { el, board, level, replay(), focus(), resize(), destroy() }
 
    `host` is an element the page has given a size. The lab draws inside it: the plane on a
    canvas, the column, the tip window, the panels, the picker, Remember — all positioned
    relative to the host, so on the standalone page (where the host fills the viewport)
    nothing visible changes, and in a story page nothing floats over the story's own column.
 
-   opts:
-     level    the powers served (a floor, not a ceiling):
-                'circles'  circles only — the straightedge gesture (tap, tap) is absent,
-                           not greyed, and nothing says so
-                'both'     circles and lines (the default; what the lab has always done)
-                'lines'    retired (Michael's ruling 1 of 24 Oct 2026; step R1): the straightedge
-                           board of 17–18 Oct went with its page, its demo and its harness script
-                           (kept in _CW/outdated-files/glass-lines-retired-2026-10-24/); two of its
-                           ideas, a free point placed outside the frame and lines fainter outside
-                           the frame, are notes under Stained Glass in Inventory-Glass-Stories.md.
-                           Asked for, it is reported on the console and served as 'both'.
-                'wright'   the Wright window (19 Oct 2026, Geo 2: Glass Wright Window;
-                           claude/Prompt-Build-Geo-2-Glass-Wright-Window.md): served only by the
-                           window profile. A 10 by 10 frame of whole steps, resized by handles
-                           until her first line; lines pulled off any edge, parallel to it, across
-                           one pane, meeting in T's; every pane a rectangle of whole sides; every
-                           line lead; colour totals under the board. No points, no circles, no
-                           straightedge: its model is its own (the shell's frame, its panes and
-                           cuts) and the lab's glass is laid on it, a fill carrying the pane's
-                           rectangle. Since R2 (24 Oct 2026) the frame is the shell's: a record
-                           entry, moved and resized by handles, locked by a word or the first cut.
-     fullscreen  true: the first touch on the board takes it full screen where the browser
-              allows (Mac, iPad; not iPhone Safari), with a small Exit word and the Escape key
-              out (18 Oct 2026; the Wright window asks for it).
-              named, not built — the spine's steps after that, in order: 'grid',
-              'rectangles', 'regions', 'plots'. Asking for one of them, or an unknown name, is
-              reported on the console and served as 'both'. There is no store of what she has
-              earned (the browser holds only her library, the replay speed and the
-              How-this-works flags), so the level asked for is the level served.
-     app      'window': the window profile — the lab seen as a tool for stained-glass designs
-              (Stained Glass Circles). With level 'wright' it is the Wright window.
+   opts (R4, 24 Oct 2026; Michael's ruling 10, one mount call; CWVault/claude/Spec-Glass-Shell.md):
+     board    the board served, by name:
+                'euclid'   the standalone lab: circles and lines, lead on edges, the map (active/glass-geometry.html)
+                'circles'  Stained Glass Circles: the window profile, circles only, a tap inside a shape colours it,
+                           the circle measured as it is drawn (active/geo-1-glass-circles.html)
+                any name registered under CW.boards by a script in js/boards/ (the Wright window, js/boards/wright.js,
+                           as 'wright'): the window profile standing on the shell's interface. The page loads the
+                           board's script after this one.
+              An unknown or missing name is reported on the console and served as 'euclid'. There is no store of
+              what she has earned (the browser holds only her library, the replay speed and the How-this-works
+              flags), so the board asked for is the board served. The old options — level, app, measure, fill,
+              fullscreen — went with the one mount call; full screen is a word in the column on every board.
      open     a construction from models/constructions.json to have ready behind the story's
               own word (the Glass Rose's "again"): its key, its key without the _builtin_
               prefix, or its name. The table opens empty either way; replay() plays it.
@@ -102,12 +83,6 @@
     "    .cw-glass.g-app .g-left-panel { pointer-events: auto; touch-action: pan-y; }",
     "    .cw-glass.g-app .workspace-tool-header { margin: -12px -14px 10px; padding: 14px 14px 10px; min-height: 42px; background: rgba(200,184,154,0.22); border-radius: 6px 6px 0 0; }",
     "    .cw-glass.g-app .g-scroll-margin { position: absolute; top: 0; right: 0; bottom: 0; z-index: 1; pointer-events: auto; touch-action: pan-y; }",
-    "    /* The way out of full screen (18 Oct 2026), present only while the board is full screen. */",
-    "    .cw-glass .g-fs-exit { position: absolute; right: 44px; bottom: 12px; z-index: 120; display: none; font-size: 12px; pointer-events: all; }",
-    "    /* The Wright window's colour totals (19 Oct 2026): a line under the drawing area, right of the column. */",
-    "    .cw-glass .g-wr-totals { position: absolute; left: 184px; bottom: 18px; z-index: 5; display: flex; gap: 16px; align-items: center; font: 12px Georgia, serif; color: #546A80; pointer-events: none; white-space: nowrap; }",
-    "    .cw-glass .g-wr-totals .sw { display: inline-block; width: 12px; height: 12px; border: 1px solid #777777; vertical-align: -2px; margin-right: 5px; }",
-    "    .cw-glass .g-wr-totals .all { opacity: 0.75; }",
     "    .cw-glass .g-left-panel::after {",
     "      content: ''; position: absolute;",
     "      top: 0; right: 0; bottom: 0; width: 0.5px;",
@@ -384,12 +359,19 @@
     // (2 Oct 2026, Glass 1: Circles asks for them per mount); a level may own them later.
     circles: { circle: true, line: false, htw: ['circles', 'color'], map: false, madeWord: 'Show lines', fill: 'edge', measure: false },
     both:    { circle: true, line: true, htw: ['construction', 'shapes', 'color', 'eraser'], map: true, madeWord: 'Show the making', fill: 'edge', measure: false },
-    // The Wright window (19 Oct 2026): the window profile's second level (its first was the lines board,
-    // retired 24 Oct 2026). wright: the board is a frame of
-    // whole steps divided by parallel lines, and everything below marked WRIGHT follows from that flag.
-    wright:  { circle: false, line: false, htw: ['wr-frame', 'wr-lines', 'wr-color'], map: false, madeWord: 'Show lines', fill: 'tap', measure: false, wright: true },
     // Named, not built: the spine's steps, arriving in this order.
     grid: null, rectangles: null, regions: null, plots: null
+  };
+  // The boards on the shell's interface (R4, 24 Oct 2026; CWVault/claude/Spec-Glass-Shell.md): each a classic
+  // script in js/boards/ registering a factory under its name, called once at mount with the shell's services.
+  // The Wright window (js/boards/wright.js, 'wright') is the first; Stained Glass moves here in R5.
+  window.CW = window.CW || {};
+  CW.boards = CW.boards || {};
+  // The two boards still inside this file, served by the same mount word: the standalone lab and Stained Glass
+  // Circles (the window profile at the circles level, the circle measured as it is drawn, Michael 14 Oct 2026).
+  var IN_FILE_BOARDS = {
+    euclid:  { level: 'both',    app: false },
+    circles: { level: 'circles', app: true, measure: true, madeWord: 'Show circles' }
   };
 
 function cwGlass(host, opts) {
@@ -398,33 +380,25 @@ var root = host;
 var BASE = opts.base || SCRIPT_BASE;
 function resolveUrl(u) { return (typeof u === 'string' && u.indexOf('../') === 0) ? BASE + u.slice(3) : u; }
 
-var levelName = opts.level || 'both';
-// The window profile (7 Oct 2026, The Glass Rose rewritten as a story about making windows):
-// the lab seen entirely as a tool for stained-glass designs made of circles. Circles only, a
-// tap inside a shape colours it (pale green with no colour chosen), the column reordered —
-// Glass only · Undo, New Open Save, Share, Reset view, and a Demo list — Save keeping her
-// own file, Open listing only her designs, the remove chip taking a pane away. The main
-// lab is untouched: all of it is this flag. Since 17 Oct 2026 the profile takes a level of
-// its own: 'circles' (Stained Glass Circles, the default) or 'wright' (the Wright window).
-var APP = opts.app === 'window';
-if (APP) levelName = (opts.level === 'wright') ? 'wright' : 'circles';
-else if (!LEVELS.hasOwnProperty(levelName)) { console.warn('glass: no level named "' + levelName + '"; serving both'); levelName = 'both'; }
-else if (!LEVELS[levelName]) { console.warn('glass: level "' + levelName + '" is named but not built yet; serving both'); levelName = 'both'; }
-else if (LEVELS[levelName].wright) { console.warn('glass: level "' + levelName + '" is the window board\'s (app: \'window\'); serving both'); levelName = 'both'; }
-var POWERS = LEVELS[levelName];
-var FILL_MODE = (opts.fill === 'tap' || opts.fill === 'edge') ? opts.fill : (POWERS.fill || 'edge');
-var MEASURE = (opts.measure !== undefined) ? !!opts.measure : !!POWERS.measure;
-// The measure follows the mount here too (Michael, 14 Oct 2026: radius and area back while a circle is drawn).
-if (APP) { FILL_MODE = 'tap'; MEASURE = !!opts.measure; }
-// The Wright window (19 Oct 2026, claude/Prompt-Build-Geo-2-Glass-Wright-Window.md): the window profile
-// at level 'wright'. Its frame, panes and lines are a model of its own (the wrightBoard block, under the
-// operation log) and the lab's points, lines and circles stay empty; the glass is the lab's, a fill
-// carrying the pane's rectangle. Everything it changes is behind this flag — including what the frame
-// brings, which was FRAMED while the lines board shared it (until R1, 24 Oct 2026): the crop of the
-// thumbnail, the preview and the postcard, Save's level tag and Open's listing, the home view,
-// two-finger and wheel panning, the demo list, the re-homing on a resize. Those are the frame's rules,
-// which ruling 7 makes the shell's on every board.
-var WRIGHT = APP && !!POWERS.wright;
+// The board asked for (R4, 24 Oct 2026; ruling 10). Two kinds: a board still inside this file (euclid, circles),
+// served by its level's powers; and a board on the interface (CW.boards), the window profile standing on the
+// shell with the board's own panes, segments, drawing and tips. The window profile (7 Oct 2026, The Glass Rose
+// rewritten as a story about making windows): the lab seen entirely as a tool for stained-glass designs — a tap
+// inside a shape colours it (pale green with no colour chosen), the column reordered (Glass only · Undo, New
+// Open Save, Share, Reset view, and a Demo list), Save keeping her own file, Open listing only her designs, the
+// remove chip taking a pane away. The main lab (euclid) is untouched: all of it is the APP flag.
+var BOARD_NAME = opts.board, profile = null, boardFactory = null;
+if (IN_FILE_BOARDS.hasOwnProperty(BOARD_NAME)) profile = IN_FILE_BOARDS[BOARD_NAME];
+else if (BOARD_NAME && CW.boards.hasOwnProperty(BOARD_NAME)) boardFactory = CW.boards[BOARD_NAME];
+else { console.warn(BOARD_NAME ? 'glass: no board named "' + BOARD_NAME + '"; serving euclid' : 'glass: no board asked for; serving euclid'); BOARD_NAME = 'euclid'; profile = IN_FILE_BOARDS.euclid; }
+var levelName = profile ? profile.level : BOARD_NAME;   // the record's and the library's name for the board
+var APP = profile ? profile.app : true;
+// A board on the interface has the window profile's powers and nothing of the engine's; its tips and its made
+// word are filled in from the board once it is built (THE BOARD, below).
+var POWERS = profile ? LEVELS[levelName] : { circle: false, line: false, htw: [], map: false, madeWord: '', fill: 'tap', measure: false };
+var FILL_MODE = APP ? 'tap' : (POWERS.fill || 'edge');
+var MEASURE = profile ? !!profile.measure : false;
+function madeWord() { return board ? board.madeWord : (profile.madeWord || POWERS.madeWord); }
 var REMOVE = 'remove';            // the palette's sentinel for the chip that takes colour away (window profile)
 var currentKey = null, fromDemo = false, currentDemo = null;   // what Save would overwrite (window profile)
 // On a pointer device, tap-to-fill with a colour chosen shows a small ring (a PNG: Safari takes
@@ -442,12 +416,12 @@ function inDrawingBox(pos) {
     var b = drawingBox();
     return pos.x >= b.x && pos.x <= b.x + b.w && pos.y >= b.y && pos.y <= b.y + b.h;
 }
-// Full screen (18 Oct 2026, the Wright window asks for it): where the browser allows an element to
-// go full screen (Mac, iPad; not iPhone Safari), the first touch on the board takes it there.
-// The host is the full-screen element, so everything the lab shows comes with it; a small Exit
-// word at the bottom right and the Escape key bring it back.
-var FULLSCREEN = !!opts.fullscreen && !!(root.requestFullscreen || root.webkitRequestFullscreen);
-var fsAsked = false, fsPending = false;
+// Full screen (ruling 2, R4 24 Oct 2026; first built 18 Oct as the first touch on the Wright window): a word in
+// the column on every board where the browser allows an element to go full screen (Mac, iPad; not iPhone
+// Safari) — Full screen, then Exit full screen while it is, as the Time Machine's word reads. The host is the
+// full-screen element, so everything the lab shows comes with it; the Escape key and the system's own way out
+// bring the word back. No touch on the board is spent on it.
+var FULLSCREEN_OK = !!(root.requestFullscreen || root.webkitRequestFullscreen);
 function isFullscreen() { return (document.fullscreenElement || document.webkitFullscreenElement) === root; }
 function enterFullscreen() {
     // A refusal (no gesture, a browser that will not, an embedding that forbids it) is reported and that is all.
@@ -612,8 +586,11 @@ var points = new Map(), lines = new Map(), circles = new Map();
 var logicalSegments = new Map(), logicalArcs = new Map();
 var fills = new Map(), pointAnimations = new Map(), canvasNotes = new Map();
 
+// A fresh record: the lab's two seeds, or a board's opening entry — its name and, where it has one, its frame.
 function freshLog() {
-    return WRIGHT ? wrightBoard.freshLog() : [{ op:'init', seed0:{x:-100,y:0}, seed1:{x:100,y:0} }];
+    if (!board) return [{ op:'init', seed0:{x:-100,y:0}, seed1:{x:100,y:0} }];
+    var e = { op:'init', board: board.name }; if (board.frame) e.frame = Object.assign({}, board.frame);
+    return [e];
 }
 // ── THE FRAME (R2, 24 Oct 2026; Michael's ruling 7) ──────────────────────────────────────────
 // One frame on every board that has one: a rectangle on the plane in the board's unit (the metre,
@@ -654,17 +631,19 @@ function setFrameUnits(f) {
     frame = { x0: f.left * U, y0: f.bottom * U, x1: (f.left + f.width) * U, y1: (f.bottom + f.height) * U };
     // The board's unit is the frame's: the plane counts from the bottom-left corner.
     plane.setUnitFrame(frame.x0, frame.y0, U);
-    if (WRIGHT) wrightBoard.onFrame(frameU);
+    if (board) board.onFrame(frameU);
 }
-function frameLocked() { return frameLockedOp || (WRIGHT && wrightBoard.builtFromFrame()); }
+function frameLocked() { return frameLockedOp || !!(board && board.builtFromFrame()); }
 // The record's older shapes, rewritten in place before a replay (as the record already maps old
-// `numbers` values): the Wright window's init with the frame inside it, and its `resize` entries.
+// `numbers` values): the Wright window's init with the frame inside it, its `resize` entries, and a fill
+// carrying the pane as `rect` (R4: a board's pane is `pane`, whatever the board's description).
 function migrateLog() {
     for (var i = 0; i < operationLog.length; i++) {
         var op = operationLog[i];
         if (op.op === 'init' && op.wright) operationLog[i] = { op:'init', board:'wright', frame: { left: op.wright.left, bottom: op.wright.bottom, width: op.wright.width, height: op.wright.height } };
         else if (op.op === 'init' && op.board === 'wright' && op.unit !== undefined) { operationLog[i] = { op:'init', board:'wright', frame: op.frame }; }   // R2's shape carried the unit; the metre is the plane's since R3
         else if (op.op === 'resize') operationLog[i] = { op:'frame', left: op.left, bottom: op.bottom, width: op.width, height: op.height };
+        else if (op.op === 'fill' && op.rect) { var m = {}; Object.keys(op).forEach(function(k) { m[k === 'rect' ? 'pane' : k] = op[k]; }); operationLog[i] = m; }
     }
 }
 // The handles, in screen pixels: a dot 28 px outside the middle of each side and each corner, and
@@ -769,19 +748,19 @@ function replayLog(animateNew) {
     // Glass only carried over from the last log into New and into a demo, hiding 0 and 1 on an
     // empty board and the Rose as it played. The main lab keeps its habit until Michael rules.
     if (APP) showGlass = false;
-    frame = null; frameU = null; frameUnit = 0; frameLockedOp = false; wrightBoard.reset();
+    frame = null; frameU = null; frameUnit = 0; frameLockedOp = false; if (board) board.reset();
     setResolution(1);
     migrateLog();
     for (var i = 0; i < operationLog.length; i++) {
         var op = operationLog[i];
         // The frame's entries: a board's init carrying the opening frame, a frame moved or resized, a lock.
-        if (op.op === 'init' && op.board === 'wright') { frameUnit = plane.metre(); setFrameUnits(op.frame); continue; }
+        if (op.op === 'init' && op.board) { frameUnit = plane.metre(); if (op.frame) setFrameUnits(op.frame); continue; }
         if (op.op === 'frame') { if (frameUnit) setFrameUnits(op); continue; }
         if (op.op === 'lock') { frameLockedOp = true; continue; }
         if (op.op === 'resolution') { if (RESOLUTIONS.indexOf(op.step) >= 0) setResolution(op.step); continue; }
-        // The board's own entries, known by their shape and not by the flag (a record from one board
-        // dropped on another still replays its entries, as it always has): the Wright window's cuts.
-        if (wrightBoard.replay(op)) continue;
+        // The board's own entries, known by their shape (the Wright window's cuts): offered to the board
+        // mounted. A record from one board dropped on another replays what the shell knows of it and no more.
+        if (board && board.replay(op)) continue;
         if (op.op === 'init' && !op.seed0) continue;   // a record of the retired lines board (its init carried a frame): nothing to open on
         if (op.op === 'init') {
             _addPt('seed:0', op.seed0.x, op.seed0.y, 'seed', prev, animateNew);
@@ -817,19 +796,20 @@ function replayLog(animateNew) {
             var s = logicalSegments.get(op.key); if (s) s.isEmphasized = false;
             var a = logicalArcs.get(op.key); if (a) a.isEmphasized = false;
         } else if (op.op === 'fill') {
-            // A fill is one pane (vertices, edges) or, since 18 Oct 2026 (the lines board), a sheet:
-            // `panes`, a list of panes joined into one piece of glass, lead round the outside alone.
-            var nf = { fillId:op.fillId, vertices:op.vertices, edges:op.edges||null, panes:op.panes||null, rect:op.rect||null, color:op.color, opacity:(op.opacity !== undefined ? op.opacity : 1.0), dissolved:false };
+            // A fill is one pane — the engine's (vertices, edges) or a board's (`pane`, the board's own
+            // description, R4) — or, since 18 Oct 2026 (the lines board), a sheet: `panes`, a list of panes
+            // joined into one piece of glass, lead round the outside alone.
+            var nf = { fillId:op.fillId, vertices:op.vertices, edges:op.edges||null, panes:op.panes||null, pane:op.pane||null, color:op.color, opacity:(op.opacity !== undefined ? op.opacity : 1.0), dissolved:false };
             if (nf.panes && nf.panes.length) { nf.vertices = nf.panes[0].vertices; nf.edges = nf.panes[0].edges || null; }
             fills.set(op.fillId, nf);
             // A sheet takes its panes from whatever glass held them: an older fill loses those panes,
             // and one left with none is gone. Nothing underneath is lost but the glass and the lead.
             if (nf.panes) {
                 var taken = {};
-                nf.panes.forEach(function(p) { taken[paneKey(p.vertices)] = true; });
+                nf.panes.forEach(function(p) { taken[fillPaneKey(p)] = true; });
                 fills.forEach(function(f) {
                     if (f === nf || f.dissolved) return;
-                    var ps = fillPanes(f), keep = ps.filter(function(p) { return !taken[paneKey(p.vertices)]; });
+                    var ps = fillPanes(f), keep = ps.filter(function(p) { return !taken[fillPaneKey(p)]; });
                     if (keep.length === ps.length) return;
                     if (!keep.length) { f.dissolved = true; return; }
                     f.panes = keep; f.vertices = keep[0].vertices; f.edges = keep[0].edges || null;
@@ -976,312 +956,130 @@ function undoOp() {
 }
 
 // ============================================================
-// THE WRIGHT WINDOW  (level 'wright', behind WRIGHT; built 19 Oct 2026, gathered 24 Oct, T4)
-// What:    Everything the Wright window adds to the shell, in one place: its model (the panes
-//          the shell's frame is divided into and the cuts that divided them, under the record's
-//          cut entries; the frame itself is the shell's since R2), its drawing (every line lead,
-//          the frame with them, the numbers along the bottom and the left, the readouts while a
-//          line is pulled), its gestures (an edge pulls a line across one pane, a pane takes a
-//          tap), the colour totals under the board, its three tips. The shell calls it where the branches were: freshLog and replay, the lead, a
-//          fill's rectangle, the screen, the press, the move, the release, the window tap, the
-//          step grouping, the column, the viewing words, the tips. The lab's points, lines and
-//          circles stay empty on this board; its glass is the lab's, a fill carrying the pane's
-//          rectangle.
-// Reaches into the shell for: the record (operationLog, appendOp); the shell's frame (frame,
-//          frameU, frameUnit, frameScreenRect, inFrame) and the plane (zoom, pan); fills (fills,
-//          liveFills, recolorRegion, dissolveRegion); the gesture state (interactionState,
-//          pointerStart, isPanning, panStart, THRESHOLDS); the demo (isStepThroughActive,
-//          forkStepThrough); the palette (state.palette, REMOVE, FOREST_GLASS); drawing (ctx,
-//          w2s, COLORS, LEAD_WIDTH, LEAD_BORDER_COLOR, paintLead, collectLeadLines, showGlass);
-//          sound (playSound); the numbers (CW.num); the host (root).
-// Exposes: wrightBoard — freshLog(), reset(), onFrame(f), builtFromFrame(), replay(op),
-//          rectPolygon(rect), leadLines(), draw(), tap(wx, wy), down(pos, world, e),
-//          move(pos, world), up(world, isTap), mount(), updateTotals(), state(), visibleOps, tips
+// THE BOARD  (R4, 24 Oct 2026; CWVault/claude/Spec-Glass-Shell.md)
+// What:    The shell's side of its interface with a board. A board says how the plane is divided
+//          into panes and how she divides it; the shell owns everything else. Here: the board
+//          built from its factory with the shell's services; one name for a pane, from its geometry,
+//          shared by the engine's panes and a board's; glass cut with a pane; and the gesture
+//          vocabulary of ruling 9 as code — the shell decides what was touched (a frame handle, a
+//          segment, a point, a pane, empty ground) and calls the board's one hook for it. Two
+//          fingers are the view and are handled with the pinch, below.
+// Depends: the record (operationLog, appendOp), the frame (frame, frameU, frameUnit), the grid
+//          (gridStep, snapU, clean), fills (fills, liveFills, expandFillToPolygon, hitFilledRegion),
+//          the engine's points (for a face's key), the plane (w2s, zoom), the readout, the demo
+//          (isStepThroughActive, forkStepThrough), sound, the host
+// Exposes: board, paneKey(), faceKey(), fillPaneKey(), fillKeys(), fillWithKey(), splitGlass(),
+//          boardDown(), boardDrag, hitBoardSegment()
 // ============================================================
 
-var wrightBoard = (function () {
-// ── The Wright window (19 Oct 2026) ─────────────────────────────────────────────────────────
-// The model is rectangles in whole steps: the shell's frame (R2, 24 Oct 2026: the frame is the
-// shell's on every board that has one; the board reads frameU and frameUnit), the panes it is
-// divided into, and the cuts that divided them. The record holds the shell's init entry (`board:
-// 'wright'`, the unit, the opening frame), the shell's `frame` and `lock` entries, a `cut` entry per
-// line pulled ({ pane, dir, at }: the pane it crosses, 'h' for a level line at y = at or 'v' for an
-// upright at x = at, in units), and the lab's own fill ops, each carrying the pane's rectangle
-// (`rect`). Replay rebuilds panes and cuts from the entries in order; a cut through a pane that
-// holds glass cuts the glass with it, the two halves named after the one. The frame's four sides
-// are the first four segments on the board and nothing more special than that: a line is pulled
-// off them as off any cut.
-var WR_DEFAULT = { left: -5, bottom: -5, width: 10, height: 10 };   // metres (R3: the step is the metre, the unit the plane's)
-var wrPanes = [];                                     // [{ x0, y0, x1, y1 }], in units
-var wrCuts = [];                                      // [{ dir, at, from, to }]: 'h' at y = at from x = from to x = to; 'v' at x = at from y = from to y = to
-// The frame has changed (it can only while nothing is built from it): the one pane is the frame
-// again, and glass laid on it follows.
-function wrOnFrame(f) {
-    wrPanes = [{ x0: f.left, y0: f.bottom, x1: f.left + f.width, y1: f.bottom + f.height }];
-    wrCuts = [];
-    fills.forEach(function(f2) { if (!f2.dissolved && f2.rect) f2.rect = Object.assign({}, wrPanes[0]); });
+// What the shell lends a board: functions, never its state. A board on the interface sees the record,
+// the frame, the grid, the glass, the plane's mapping, the one readout, the came's colour and width,
+// Glass only, sound and the host — and nothing of the engine, which no board on the interface asks for yet.
+function shellServices() {
+    return {
+        log: function () { return operationLog; },
+        append: function (op) { appendOp(op); },
+        fork: function () { if (isStepThroughActive()) forkStepThrough(); },
+        frame: function () { return frame; },
+        frameUnits: function () { return frameU; },
+        metre: function () { return plane.metre(); },
+        step: function () { return gridStep; },
+        snap: function (v) { return snapU(v); },
+        clean: function (v) { return clean(v); },
+        glass: function () { return liveFills(); },
+        glassOn: function (pane) { return fillWithKey(paneKey(board.panePolygon(pane))); },
+        splitGlass: function (f, panes) { splitGlass(f, panes); },
+        w2s: function (x, y) { return w2s(x, y); },
+        zoom: function () { return plane.zoom(); },
+        readout: function (c, text, x, y, align, baseline) { readout(c, text, x, y, align, baseline); },
+        readoutText: function (word, v, rule) { return readoutText(word, v, rule); },
+        numText: function (v) { return numText(v); },
+        lead: function () { return { colour: LEAD_BORDER_COLOR, width: LEAD_WIDTH }; },
+        showGlass: function () { return showGlass; },
+        play: function (name) { playSound(name); },
+        host: root
+    };
 }
-function wrSameRect(a, b) { return !!a && !!b && a.x0 === b.x0 && a.y0 === b.y0 && a.x1 === b.x1 && a.y1 === b.y1; }
-function wrPaneIndex(r) { for (var i = 0; i < wrPanes.length; i++) if (wrSameRect(wrPanes[i], r)) return i; return -1; }
-// The pane strictly around a point in units; null on an edge or outside the frame.
-function wrPaneAt(ux, uy) {
-    for (var i = 0; i < wrPanes.length; i++) { var p = wrPanes[i]; if (ux > p.x0 && ux < p.x1 && uy > p.y0 && uy < p.y1) return p; }
-    return null;
-}
-// A cut's two halves, or null when it has no room (a line can't settle on the pane's own edges).
-function wrSplit(p, dir, at) {
-    if (dir === 'h') { if (!(at > p.y0 && at < p.y1)) return null; return [{ x0: p.x0, y0: p.y0, x1: p.x1, y1: at }, { x0: p.x0, y0: at, x1: p.x1, y1: p.y1 }]; }
-    if (!(at > p.x0 && at < p.x1)) return null;
-    return [{ x0: p.x0, y0: p.y0, x1: at, y1: p.y1 }, { x0: at, y0: p.y0, x1: p.x1, y1: p.y1 }];
-}
-function wrReplayOp(op) {
-    if (!frameU) return;
-    if (op.op === 'cut') {
-        var i = wrPaneIndex(op.pane); if (i < 0) return;            // a cut whose pane is not there is nothing
-        var halves = wrSplit(wrPanes[i], op.dir, op.at); if (!halves) return;
-        wrPanes.splice(i, 1, halves[0], halves[1]);
-        var p = op.pane;
-        wrCuts.push(op.dir === 'h' ? { dir: 'h', at: op.at, from: p.x0, to: p.x1 } : { dir: 'v', at: op.at, from: p.y0, to: p.y1 });
-        // Glass in the pane is cut with it: the fill gives way to two, named after it, so a later
-        // repaint or dissolve of either half replays the same.
-        var split = [];
-        fills.forEach(function(f) { if (!f.dissolved && f.rect && wrSameRect(f.rect, p)) split.push(f); });
-        split.forEach(function(f) {
-            f.dissolved = true;
-            halves.forEach(function(h, k) {
-                var id = f.fillId + (k ? '/b' : '/a');
-                fills.set(id, { fillId: id, rect: h, vertices: null, edges: null, panes: null, color: f.color, opacity: f.opacity, dissolved: false });
-            });
-        });
-    }
-}
-// Something built from the frame — a cut — locks it (the shell asks).
-function wrLocked() { for (var i = 1; i < operationLog.length; i++) if (operationLog[i].op === 'cut') return true; return false; }
-function wrCutCount() { var n = 0; for (var i = 1; i < operationLog.length; i++) if (operationLog[i].op === 'cut') n++; return n; }
-// The glass holding this very pane.
-function wrFillOf(p) { var found = null; fills.forEach(function(f) { if (!found && !f.dissolved && f.rect && wrSameRect(f.rect, p)) found = f; }); return found; }
+// The board, built once; its tips and its made word fill in the powers the options left open.
+var board = boardFactory ? boardFactory(shellServices()) : null;
+if (board) { POWERS.htw = board.tips.map(function (t) { return t.id; }); POWERS.madeWord = board.madeWord; }
 
-// ── The Wright window drawn (19 Oct 2026) ───────────────────────────────────────────────────
-// Every line is lead, the frame with them, from the first: there is no scaffolding on this board,
-// every line is one she chose. Then, unless Glass only: the numbers along the bottom and up the
-// left (no axis lines; the plane's own tick numbers from R3), and the readouts while a line is
-// pulled, in the circle measure's style, gone on release. The frame's handles and its measure while
-// a handle is dragged are the shell's (drawFrameHandles, drawFrameMeasure).
-function wrScreen(ux, uy) { return w2s(ux * frameUnit, uy * frameUnit); }
-function wrRender() {
-    var U = frameUnit, r = frameScreenRect(), wrFrame = frameU;
-    // the lead: every line in one path, then the frame (the same pass as the exports', unsnapped)
-    paintLead(ctx, w2s, plane.zoom(), [], collectLeadLines(), true, { style: LEAD_BORDER_COLOR, width: LEAD_WIDTH, onePath: true }, false);
-    if (showGlass) return;
-    ctx.save();
-    // the numbers along the bottom and the left are the plane's tick numbers since R3 (the plane's
-    // origin is the frame's corner)
-    var step = U * plane.zoom();
-    var d = wrDrag;
-    // the line being pulled: where it would settle, its length, and the two panes it is making
-    if (d && d.kind === 'pull' && d.pane && d.at !== null && d.at !== undefined) {
-        var p = d.pane, halves = wrSplit(p, d.dir, d.at);
-        var a = d.dir === 'h' ? wrScreen(p.x0, d.at) : wrScreen(d.at, p.y0), b = d.dir === 'h' ? wrScreen(p.x1, d.at) : wrScreen(d.at, p.y1);
-        ctx.strokeStyle = LEAD_BORDER_COLOR; ctx.lineWidth = LEAD_WIDTH; ctx.lineCap = 'round'; ctx.globalAlpha = 0.5;
-        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-        var len = clean(d.dir === 'h' ? p.x1 - p.x0 : p.y1 - p.y0);
-        if (d.dir === 'h') readout(ctx, readoutText('length', len, 'exact'), b.x + 8, b.y, 'left', 'middle');
-        else readout(ctx, readoutText('length', len, 'exact'), a.x, Math.min(a.y, b.y) - 6, 'center', 'bottom');
-        if (halves) halves.forEach(function(h) {
-            var c = wrScreen((h.x0 + h.x1) / 2, (h.y0 + h.y1) / 2), hw = clean(h.x1 - h.x0), hh = clean(h.y1 - h.y0), pw = hw * step, ph = hh * step;
-            var size = numText(hw) + ' by ' + numText(hh), area = readoutText('area', clean(hw * hh), 'exact');
-            if (ph >= 34 && pw >= 70) { readout(ctx, size, c.x, c.y - 2, 'center', 'bottom'); readout(ctx, area, c.x, c.y + 2, 'center', 'top'); }
-            else if (pw >= 110 || ph >= 20) readout(ctx, size + ', ' + area, c.x, c.y, 'center', 'middle');
-        });
-    }
-    ctx.restore();
+// ── One name for a pane ─────────────────────────────────────────────────────────────────────
+// Fills, hit-testing, sheets and the parts list to come all key on the pane. The key is made from
+// the pane's geometry and nothing else, so the engine's panes and a board's share one scheme: the
+// pane's boundary points — its vertices and, for a curved edge, the midpoint of the arc — each rounded
+// to a thousandth of a world unit, sorted and joined. Derived, never stored. (Until R4 the engine's
+// panes were keyed by point ids with an area check, the Wright window's by their rectangles.)
+var PANE_TOLERANCE = 1e-3;   // world units; open — the engine's own merge radius is far coarser
+function paneKey(pts) {
+    function r(v) { return String(Math.round(v / PANE_TOLERANCE) * PANE_TOLERANCE); }
+    return pts.map(function (p) { return r(p.x) + ',' + r(p.y); }).sort().join(';');
 }
-// The colour totals (19 Oct 2026): a line under the drawing area, right of the column, the area of
-// each colour in use in the order it came, the empty panes, and the window's whole area, which they
-// add up to. Built from nodes, not markup: a colour string comes from a saved or shared file.
-var wrTotalsEl = null;
-function wrUpdateTotals() {
-    var wrFrame = frameU;
-    if (!wrTotalsEl || !wrFrame) return;
-    wrTotalsEl.style.display = showGlass ? 'none' : '';
-    var order = [], by = {}, used = 0;
-    liveFills().forEach(function(f) {
-        if (!f.rect) return;
-        var a = (f.rect.x1 - f.rect.x0) * (f.rect.y1 - f.rect.y0);
-        if (!by.hasOwnProperty(f.color)) { by[f.color] = 0; order.push(f.color); }
-        by[f.color] += a; used += a;
+// A pane of the engine's: its vertices (point ids) and edges, as a face or a fill carries them.
+function faceKey(pane) {
+    var pts = [];
+    (pane.vertices || []).forEach(function (id) { var p = points.get(id); if (p) pts.push({ x: p.x, y: p.y }); });
+    (pane.edges || []).forEach(function (e) {
+        if (e.type !== 'arc') return;
+        var ci = circles.get(e.circIdx), ce = ci && points.get(ci.centerId); if (!ce) return;
+        var mid = e.angleA + e.sweep / 2;
+        pts.push({ x: ce.x + Math.cos(mid) * ci.radius, y: ce.y + Math.sin(mid) * ci.radius });
     });
-    var all = wrFrame.width * wrFrame.height;
-    wrTotalsEl.textContent = '';
-    order.forEach(function(c) {
-        var sp = document.createElement('span'), sw = document.createElement('i'); sw.className = 'sw'; sw.style.background = c;
-        sp.appendChild(sw); sp.appendChild(document.createTextNode(numText(by[c]))); wrTotalsEl.appendChild(sp);
+    return paneKey(pts);
+}
+// A pane as a fill holds it: a board's description, or the engine's vertices and edges.
+function fillPaneKey(p) { return p.pane ? (board ? paneKey(board.panePolygon(p.pane)) : '') : faceKey(p); }
+function fillKeys(f) { return fillPanes(f).map(fillPaneKey); }
+// The live fill holding this very pane: a one-pane fill of the same shape, or a sheet one of whose
+// panes it is (a tap on a sheet speaks to the whole sheet).
+function fillWithKey(key) {
+    var found = null;
+    fills.forEach(function (f) { if (found || f.dissolved) return; if (fillKeys(f).indexOf(key) >= 0) found = f; });
+    return found;
+}
+// Glass in a pane cut with it (the Wright window's cuts): one fill gives way to one per pane, named
+// after it (/a, /b, …), so a later repaint or dissolve of either replays the same.
+function splitGlass(f, panes) {
+    f.dissolved = true;
+    panes.forEach(function (h, k) {
+        var id = f.fillId + '/' + String.fromCharCode(97 + k);
+        fills.set(id, { fillId: id, pane: h, vertices: null, edges: null, panes: null, color: f.color, opacity: f.opacity, dissolved: false });
     });
-    var em = document.createElement('span'); em.textContent = 'empty ' + numText(all - used); wrTotalsEl.appendChild(em);
-    var tot = document.createElement('span'); tot.className = 'all'; tot.textContent = '= ' + numText(all); wrTotalsEl.appendChild(tot);
 }
 
-var wrDrag=null;      // the Wright window: { kind: 'pull' | 'tap', ... } from a press to its release
-// ── The Wright window's gestures (19 Oct 2026) ──────────────────────────────────────────────
-// The frame's handles are the shell's and take a press first (R2). The side itself pulls a line
-// inward. Inside a pane a tap colours it. A line comes off any edge, a side of the frame or a line
-// already drawn, parallel to it and across the one pane on the side the hand moves to; it moves in
-// whole steps and settles where it is let go, never on the pane's own edges. Around the frame a
-// mouse drag pans; one finger there does nothing (two pan).
-// The edge under the hand, in units: { dir, at, from, to }, the nearest within the line's hit radius.
-function wrEdgeAt(world) {
-    var U = frameUnit, ux = world.x / U, uy = world.y / U, t = THRESHOLDS.lineHitRadius / plane.zoom() / U, best = null, bd = t;
-    function edge(dir, at, from, to) {
-        var dd = dir === 'h' ? Math.abs(uy - at) : Math.abs(ux - at), along = dir === 'h' ? ux : uy;
-        if (dd < bd && along >= from - t && along <= to + t) { bd = dd; best = { dir: dir, at: at, from: from, to: to }; }
-    }
-    var f = frameU, L = f.left, B = f.bottom, R = L + f.width, T = B + f.height;
-    edge('h', B, L, R); edge('h', T, L, R); edge('v', L, B, T); edge('v', R, B, T);
-    wrCuts.forEach(function(c) { edge(c.dir, c.at, c.from, c.to); });
+// ── The gestures (ruling 9) ─────────────────────────────────────────────────────────────────
+// A press on a board on the interface, after the frame's handles have had their chance. In order:
+// a segment the board offers (a drag from it is the board's); a point (a drag from it is the board's
+// where it says so, else the shell's compass where the board has circles — none on the interface
+// yet); a pane (a tap colours it: the shell's); empty ground (a mouse drag pans; a tap, on release,
+// is the board's; one finger alone does nothing — the view is two fingers). The board hands back a
+// drag, { move(world, pos, moved), end(world, isTap) }, and the shell runs it to the release.
+var boardDrag = null;
+function hitBoardSegment(world) {
+    var t = THRESHOLDS.lineHitRadius / plane.zoom(), best = null, bd = t;
+    board.segments().forEach(function (sg) {
+        var dx = sg.x2 - sg.x1, dy = sg.y2 - sg.y1, len = Math.sqrt(dx * dx + dy * dy); if (!len) return;
+        var along = ((world.x - sg.x1) * dx + (world.y - sg.y1) * dy) / len;
+        if (along < -t || along > len + t) return;
+        var d = Math.abs((world.x - sg.x1) * dy - (world.y - sg.y1) * dx) / len;
+        if (d < bd) { bd = d; best = sg; }
+    });
     return best;
 }
-function wrDown(pos, world, e) {
-    if (!frameU) return;
-    var edge = wrEdgeAt(world);
-    if (edge) { wrDrag = { kind: 'pull', edge: edge, start: world, pane: null, at: null, dir: edge.dir }; interactionState = 'WR_DRAG'; return; }
-    if (inFrame(world.x, world.y)) { wrDrag = { kind: 'tap', moved: false }; interactionState = 'WR_DRAG'; return; }
+function startBoardDrag(d) { boardDrag = d; interactionState = 'BOARD_DRAG'; }
+// The tap on a pane, as a drag: the colour goes on at the release if the hand never left the tap radius.
+function paneTapDrag() {
+    var moved = false;
+    return { move: function (w, pos, m) { if (m) moved = true; }, end: function (w, isTap) { if (isTap && !moved) tapPane(w.x, w.y); } };
+}
+function boardDown(pos, world, e) {
+    var seg = hitBoardSegment(world);
+    if (seg) { var ds = board.dragSegment(seg, world); if (ds) { startBoardDrag(ds); return; } }
+    var pt = hitPt(world.x, world.y);
+    if (pt) { var dp = board.dragPoint ? board.dragPoint(pt, world) : null; if (dp) startBoardDrag(dp); return; }
+    if (board.paneAt(world.x, world.y)) { startBoardDrag(paneTapDrag()); return; }
     if (e.pointerType === 'mouse') { isPanning = true; panStart = { pan: plane.pan(), sx: pos.x, sy: pos.y }; }
 }
-function wrMove(pos, world) {
-    var d = wrDrag, U = frameUnit;
-    if (d.kind === 'pull') {
-        if (!d.pane && dist(pointerStart.x, pointerStart.y, pos.x, pos.y) <= THRESHOLDS.tapMovement) return;
-        var e = d.edge, ux2 = world.x / U, uy2 = world.y / U, su = e.dir === 'h' ? uy2 - e.at : ux2 - e.at;   // which side of the edge the hand is on
-        if (!d.pane || Math.abs(su) > 0.05) {
-            var eps = 1e-3 * (su >= 0 ? 1 : -1);
-            d.pane = (e.dir === 'h' ? wrPaneAt(d.start.x / U, e.at + eps) : wrPaneAt(e.at + eps, d.start.y / U)) || null;
-        }
-        if (!d.pane) { d.at = null; return; }
-        // the line settles on the grid (the resolution's step, asked of the shell), never on the pane's own edges
-        var p = d.pane, lo = clean((e.dir === 'h' ? p.y0 : p.x0) + gridStep), hi = clean((e.dir === 'h' ? p.y1 : p.x1) - gridStep);
-        if (hi < lo) { d.at = null; return; }                       // no room: a pane one step across takes no line
-        d.at = Math.max(lo, Math.min(hi, snapU(e.dir === 'h' ? uy2 : ux2)));
-        return;
-    }
-    if (d.kind === 'tap' && dist(pointerStart.x, pointerStart.y, pos.x, pos.y) > THRESHOLDS.tapMovement) d.moved = true;
-}
-function wrUp(world, isTap) {
-    var d = wrDrag; wrDrag = null;
-    if (d.kind === 'pull') {
-        if (!d.pane || d.at === null || d.at === undefined) return;
-        if (isStepThroughActive()) forkStepThrough();
-        appendOp({ op:'cut', pane: { x0: d.pane.x0, y0: d.pane.y0, x1: d.pane.x1, y1: d.pane.y1 }, dir: d.dir, at: d.at });
-        playSound('line'); return;
-    }
-    if (d.kind === 'tap' && isTap && !d.moved) wrTap(world.x, world.y);
-}
-// A tap on a pane: the colour chosen, clear glass with none, the first chip taking the glass away.
-function wrTap(wx, wy) {
-    var U = frameUnit, p = wrPaneAt(wx / U, wy / U); if (!p) return false;
-    var own = wrFillOf(p);
-    if (state.palette.selected === REMOVE) {
-        if (!own) return false;
-        if (isStepThroughActive()) forkStepThrough();
-        dissolveRegion(own.fillId); playSound('repaint'); return true;
-    }
-    if (isStepThroughActive()) forkStepThrough();
-    var colour = state.palette.selected || FOREST_GLASS;
-    if (own) { if (own.color !== colour) { recolorRegion(own.fillId, colour, 1.0); playSound('repaint'); } return true; }
-    appendOp({ op:'fill', fillId:'fill:'+Date.now(), rect: { x0: p.x0, y0: p.y0, x1: p.x1, y1: p.y1 }, color: colour, opacity: 1.0 });
-    playSound('fill'); return true;
-}
-
-
-function repaintCount() { var n = 0; for (var i = 0; i < operationLog.length; i++) { if (operationLog[i].op === 'repaint_fill') n++; } return n; }
-
-return {
-    freshLog: function () { return [{ op:'init', board:'wright', frame: Object.assign({}, WR_DEFAULT) }]; },
-    reset: function () { wrPanes = []; wrCuts = []; },
-    // The shell's frame has changed; the board's panes follow it.
-    onFrame: wrOnFrame,
-    // A cut is something built from the frame: the shell's frame locks at the first.
-    builtFromFrame: wrLocked,
-    // The board's entries, by their shape: a cut.
-    replay: function (op) {
-        if (op.op === 'cut') { wrReplayOp(op); return true; }
-        return false;
-    },
-    // A pane's rectangle, in the frame's whole steps, as a polygon in world coordinates.
-    rectPolygon: function (rr) { var RU = frameUnit; return [{ x:rr.x0*RU, y:rr.y0*RU }, { x:rr.x1*RU, y:rr.y0*RU }, { x:rr.x1*RU, y:rr.y1*RU }, { x:rr.x0*RU, y:rr.y1*RU }]; },
-    // Every line is lead: the cuts as segments (the frame is stroked by the lead pass itself).
-    leadLines: function () {
-        var leadSegs = [], U = frameUnit;
-        wrCuts.forEach(function(c) {
-            leadSegs.push(c.dir === 'h' ? { type:'seg', x1:c.from*U, y1:c.at*U, x2:c.to*U, y2:c.at*U } : { type:'seg', x1:c.at*U, y1:c.from*U, x2:c.at*U, y2:c.to*U });
-        });
-        return leadSegs;
-    },
-    draw: function () { if (frame) wrRender(); },
-    tap: wrTap,
-    down: wrDown,
-    move: function (pos, world) { if (!wrDrag) return false; wrMove(pos, world); return true; },
-    up: function (world, isTap) { if (!wrDrag) return false; wrUp(world, isTap); interactionState = 'IDLE'; return true; },
-    mount: function () { wrTotalsEl = document.createElement('div'); wrTotalsEl.className = 'g-wr-totals'; root.appendChild(wrTotalsEl); },
-    updateTotals: wrUpdateTotals,
-    // For the Node harness (tools/glass-log.js) and the test hook: the model as it stands.
-    state: function () { return { frame: frameU, panes: wrPanes, cuts: wrCuts, paneAt: wrPaneAt, fillOf: wrFillOf, unit: frameUnit }; },
-    // The entries that change the picture, for the step grouping of a replay.
-    visibleOps: { cut: true },
-    tips: [
-    // The Wright window's three (19 Oct 2026; plain words, for Michael to rewrite).
-    {
-        id: 'wr-frame',
-        fades: function() { return wrLocked(); },
-        label: 'Frame',
-        trigger: function() { return true; },
-        suppress: function() { return false; },
-        content: [
-            { text: 'The square is your window: 10 steps across and 10 steps up. The numbers along the bottom and the left count the steps.' },
-            { text: '' },
-            { text: 'Before your first line, drag one of the small dots outside the sides to make the window wider or taller, or smaller, up to 20 steps each way. While you drag, you see its width, its height and its area.' },
-            { text: 'Once you draw a line, the window keeps its size.' }
-        ]
-    },
-    {
-        id: 'wr-lines',
-        fades: function() { return wrCutCount() >= 2; },
-        label: 'Lines',
-        trigger: function() { return true; },
-        suppress: function() { return false; },
-        content: [
-            { text: 'Press on any edge, a side of the window or a line you have drawn, and drag into the pane. A new line comes with you, parallel to the edge, across that one pane.' },
-            { text: 'It moves in whole steps and settles where you let go. It cannot sit on the pane\'s own edges, and lines never cross: each new line stops at the lines around it.' },
-            { text: 'While you drag, you see the line\'s length and the size and area of the two panes it is making.' },
-            { text: '' },
-            { text: 'Undo takes back your last line. Two fingers move the board, and a pinch zooms it.' }
-        ]
-    },
-    {
-        id: 'wr-color',
-        colour: true,
-        fades: function() { return repaintCount() >= 2; },
-        label: 'Colors',
-        trigger: function() {
-            var count = 0;
-            fills.forEach(function(f) { if (!f.dissolved) count++; });
-            return count >= 2;
-        },
-        suppress: function() {
-            for (var i = 0; i < operationLog.length; i++) { if (operationLog[i].op === 'repaint_fill') return true; }
-            return false;
-        },
-        content: [
-            { text: 'Tap a pane to fill it with the colour you have chosen. With no colour chosen, it fills with clear glass.' },
-            { text: 'Tap it again with another colour to change it. The first chip takes the glass away.' },
-            { text: 'The numbers under the board add up the area of each colour, and of the empty panes, to the area of the whole window.' },
-            { text: '' },
-            { text: 'To choose a different set of colours, tap [Choose new colors].' },
-            { text: 'Use the slider to change lead thickness.' }
-        ]
-    }
-    ]
-};
-})();
 
 // ============================================================
 // CANVAS NOTES
@@ -1554,8 +1352,8 @@ function captureConstructionPNG(note, callback) {
     } else {
         points.forEach(function(pt) { minX=Math.min(minX,pt.x);minY=Math.min(minY,pt.y);maxX=Math.max(maxX,pt.x);maxY=Math.max(maxY,pt.y); });
     }
-    // The Wright window's preview is the window: the frame and what is inside it.
-    var crop = (WRIGHT && frame) ? frame : null;
+    // A board with a frame previews the window: the frame and what is inside it.
+    var crop = frame;
     if (crop) { minX = crop.x0; minY = crop.y0; maxX = crop.x1; maxY = crop.y1; }
     var pad=crop?12:40, ww=maxX-minX+pad*2, wh=maxY-minY+pad*2;
     // Note text reserve: add bottom margin if note present
@@ -1576,9 +1374,9 @@ function captureConstructionPNG(note, callback) {
     if (crop) { oc.save(); oc.beginPath(); oc.rect(ca.x, cb.y, cb.x-ca.x, ca.y-cb.y); oc.clip(); }
     // The glass, if there is any, in the record's order and without its came; a construction with
     // none yet shows its drawing instead (2 Oct 2026 — the Rose, and anything she saves before
-    // leading it, used to preview as blank parchment). The Wright window's lines are lead over the glass.
-    drawScene(oc, wp, sc, { fills: 'insertion', lead: WRIGHT ? 'after' : 'none', leadWidth: Math.max(1, LEAD_WIDTH * sc),
-                            outlines: false, leadLines: WRIGHT ? collectLeadLines() : null, passes: WRIGHT ? [{ style: LEAD_BORDER_COLOR, width: Math.max(1, LEAD_WIDTH * sc) }] : null,
+    // leading it, used to preview as blank parchment). A board's lead lines are lead over the glass.
+    drawScene(oc, wp, sc, { fills: 'insertion', lead: board ? 'after' : 'none', leadWidth: Math.max(1, LEAD_WIDTH * sc),
+                            outlines: false, leadLines: board ? collectLeadLines() : null, passes: board ? [{ style: LEAD_BORDER_COLOR, width: Math.max(1, LEAD_WIDTH * sc) }] : null,
                             construction: hasFills ? 'none' : 'spans', constructionWidth: 1, constructionAlpha: 0.8, points: !hasFills });
     if (crop) { oc.restore(); oc.strokeStyle = COLORS.border; oc.lineWidth = 1; oc.globalAlpha = 0.8; oc.strokeRect(ca.x, cb.y, cb.x-ca.x, ca.y-cb.y); oc.globalAlpha = 1; }
     // Note text at bottom
@@ -1740,10 +1538,10 @@ function renderPreviewCanvas(sizeKey) {
         }
     });
     if (!isFinite(minX)) { minX = -100; minY = -100; maxX = 100; maxY = 100; }
-    // The Wright window shares the window alone: cropped at the frame's edge.
-    if (WRIGHT && frame) { minX = frame.x0; minY = frame.y0; maxX = frame.x1; maxY = frame.y1; }
+    // A board with a frame shares the window alone: cropped at the frame's edge.
+    if (frame) { minX = frame.x0; minY = frame.y0; maxX = frame.x1; maxY = frame.y1; }
     var cW = maxX - minX, cH = maxY - minY;
-    var pf = (WRIGHT && frame) ? 0.04 : 0.15;
+    var pf = frame ? 0.04 : 0.15;
     minX -= cW * pf; minY -= cH * pf; maxX += cW * pf; maxY += cH * pf;
     var ww = maxX - minX, wh = maxY - minY;
     var sizes = { postcard: { w: 900, h: 600 }, fullsheet: { w: 1000, h: 800 } }; // screen-res preview
@@ -1760,7 +1558,7 @@ function renderPreviewCanvas(sizeKey) {
     oc.strokeStyle = '#c8b89a'; oc.lineWidth = 1;
     oc.strokeRect(matPx - 0.5, matPx - 0.5, artW + 1, artH + 1);
     oc.fillStyle = COLORS.background; oc.fillRect(matPx, matPx, artW, artH);
-    drawScene(oc, wp, sc, { fills: 'sorted', lead: 'after', leadWidth: Math.max(1, LEAD_WIDTH * sc), leadLines: leadLines2, frame: WRIGHT });
+    drawScene(oc, wp, sc, { fills: 'sorted', lead: 'after', leadWidth: Math.max(1, LEAD_WIDTH * sc), leadLines: leadLines2, frame: !!frame });
     return off.toDataURL('image/png');
 }
 
@@ -1921,13 +1719,13 @@ function doSaveConstruction(name, note, existingKey) {
         // opens at the default view), so it is not recorded either. The
         // playback duration saves with the construction (ledger §15).
         var entry = { key: key, name: name, note: note || '', notePos: notePos, created: new Date().toISOString(), operations: log, speed: replayDuration, png: png };
-        // A design made on the Wright window says so, and only it lists it (17 Oct 2026):
-        // its record begins with a frame, which no other mount opens on.
-        if (WRIGHT) entry.level = levelName;
+        // A design made on a board says which (17 Oct 2026, the Wright window), and only that board
+        // lists it: its record begins with the board's entry, which no other mount opens on.
+        if (board) entry.level = levelName;
         try {
             localStorage.setItem(key, JSON.stringify(entry));
             var index = cxGetStorageIndex();
-            if (!existingKey) { var ref = { key: key, name: name, created: entry.created }; if (WRIGHT) ref.level = levelName; index.push(ref); }
+            if (!existingKey) { var ref = { key: key, name: name, created: entry.created }; if (board) ref.level = levelName; index.push(ref); }
             localStorage.setItem('cw-cx-index', JSON.stringify(index));
         } catch (e) {
             console.warn('localStorage save failed:', e);
@@ -1940,7 +1738,7 @@ function doSaveConstruction(name, note, existingKey) {
         // is sent, and where there is no sheet nothing more happens. The
         // receiving child opens it as a copy and makes it her own.
         var shared = { version: 1, name: name, note: note || '', created: entry.created, speed: replayDuration, operations: log };
-        if (WRIGHT) shared.level = levelName;
+        if (board) shared.level = levelName;
         var blob = new Blob([JSON.stringify(shared, null, 2)], { type: 'application/json' });
         var fname = (name.replace(/[^a-z0-9 _-]/gi, '_').trim() || 'construction') + '.json';
         var jfile = null;
@@ -1992,8 +1790,8 @@ function doSaveImage(name, note, isShare, noteScreenPos) {
 // Collect all emphasized (lead) segments and arcs for rendering
 function collectLeadLines() {
     var leadSegs = [];
-    // The Wright window: every line is lead (the frame is stroked by the lead pass itself).
-    if (WRIGHT) leadSegs = wrightBoard.leadLines();
+    // A board's lead that is lead regardless of colour (the Wright window's cuts; the frame is stroked by the lead pass itself).
+    if (board) leadSegs = board.leadLines();
     logicalSegments.forEach(function(seg) {
         if (!seg.isEmphasized) return;
         var A = points.get(seg.pointAId), B = points.get(seg.pointBId);
@@ -2135,13 +1933,13 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
         }
     });
     if (!isFinite(minX)) { minX = -100; minY = -100; maxX = 100; maxY = 100; }
-    // The Wright window shares the window alone: the frame and what is inside it, cropped at
+    // A board with a frame shares the window alone: the frame and what is inside it, cropped at
     // the frame's edge, the frame itself in lead.
-    if (WRIGHT && frame) { minX = frame.x0; minY = frame.y0; maxX = frame.x1; maxY = frame.y1; }
+    if (frame) { minX = frame.x0; minY = frame.y0; maxX = frame.x1; maxY = frame.y1; }
 
     // 15% padding around bounding box
     var contentW = maxX - minX, contentH = maxY - minY;
-    var padFrac = (WRIGHT && frame) ? 0.04 : 0.15;
+    var padFrac = frame ? 0.04 : 0.15;
     var padX = contentW * padFrac, padY = contentH * padFrac;
     minX -= padX; minY -= padY; maxX += padX; maxY += padY;
     var ww = maxX - minX, wh = maxY - minY;
@@ -2197,7 +1995,7 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     // The glass and the came: largest first; the texture (POSTCARD_TEXTURE) on each pane as it is laid
     // and the warm light over all of it before the came; the came in three passes, a shadow, a
     // highlight and the main one.
-    drawScene(oc, wp, s, { fills: 'sorted', lead: 'after', leadWidth: leadW, leadLines: leadLines, frame: WRIGHT,
+    drawScene(oc, wp, s, { fills: 'sorted', lead: 'after', leadWidth: leadW, leadLines: leadLines, frame: !!frame,
                            glassTexture: POSTCARD_TEXTURE.glass, beforeLead: POSTCARD_TEXTURE.light,
                            passes: [{ dx: 2, dy: 2, style: 'rgba(0,0,0,0.2)', width: leadW },
                                     { dx: -1, dy: -1, style: 'rgba(255,255,255,0.15)', width: Math.max(1, leadW * 0.4) },
@@ -2291,9 +2089,9 @@ function cxGetStorageIndex() {
     try { return JSON.parse(localStorage.getItem('cw-cx-index')||'[]'); } catch(e) { return []; }
 }
 // Her library is one, shared by every mount; what each mount lists is what it can open (17 Oct
-// 2026): the Wright window lists the designs made on it, every other mount the rest; a design saved on
+// 2026): a board lists the designs made on it, every other mount the rest; a design saved on
 // the retired lines board (level 'lines') is listed by no mount.
-function entryFits(ref) { return WRIGHT ? ref.level === levelName : !ref.level; }
+function entryFits(ref) { return board ? ref.level === levelName : !ref.level; }
 function cxGetAllEntries() {
     return cxGetStorageIndex().map(function(ref) {
         try { return JSON.parse(localStorage.getItem(ref.key)); } catch(e) { return null; }
@@ -2466,8 +2264,8 @@ function dissolveRegion(fillId) {
 // ============================================================
 
 function expandFillToPolygon(fill) {
-    // The Wright window's pane (19 Oct 2026): a rectangle in the frame's whole steps.
-    if (fill.rect) return wrightBoard.rectPolygon(fill.rect);
+    // A board's pane (R4; the Wright window's rectangle in metres since 19 Oct 2026): the board gives its outline.
+    if (fill.pane) return board ? board.panePolygon(fill.pane) : [];
     if (fill.edges) {
         var poly = [];
         fill.edges.forEach(function(edge) {
@@ -2501,8 +2299,8 @@ function shoelaceArea(poly) {
 // A fill holds one pane or several (`panes`). Every reader of a fill goes through these, so a
 // sheet draws as the union of its panes and its lead runs round the outside alone: an edge
 // (a pair of point ids) that two of its panes share is inside the sheet and is not lead.
-function paneKey(vertices) { return vertices.slice().sort().join(','); }
-function fillPanes(f) { return f.panes || [f.rect ? { rect: f.rect } : { vertices: f.vertices, edges: f.edges }]; }
+// paneKey, faceKey and fillPaneKey — one name for a pane, from its geometry — are THE BOARD's (R4).
+function fillPanes(f) { return f.panes || [f.pane ? { pane: f.pane } : { vertices: f.vertices, edges: f.edges }]; }
 function fillPolygons(f) { return fillPanes(f).map(expandFillToPolygon).filter(function(p) { return p.length >= 3; }); }
 function fillArea(f) { return fillPolygons(f).reduce(function(s, p) { return s + shoelaceArea(p); }, 0); }
 // The sheet's outside, as point-id pairs; null for a one-pane fill, whose polygon is its own outline.
@@ -3055,9 +2853,10 @@ function render() {
 
     // The glass and its came: largest first, smallest on top, each fill's lead right after its glass.
     drawScene(ctx, w2s, plane.zoom(), { fills: 'sorted', lead: 'each', leadWidth: LEAD_WIDTH });
-    // The board's own drawing over the glass: the Wright window's lead, numbers and readouts; then
-    // the frame's handles, and its measure while one is dragged (the shell's).
-    if (WRIGHT) wrightBoard.draw();
+    // A board on the interface: its lead and the frame as one pass of came (one path, unsnapped — the Wright
+    // window's habit, for the renderer step to settle), then what the board draws over the glass (the Wright
+    // window's readouts while a line is pulled); then the frame's handles, and its measure while one is dragged.
+    if (board) { paintLead(ctx, w2s, plane.zoom(), [], collectLeadLines(), true, { style: LEAD_BORDER_COLOR, width: LEAD_WIDTH, onePath: true }, false); board.draw(ctx); }
     drawFrameHandles();
     drawFrameMeasure();
 
@@ -3126,9 +2925,9 @@ function render() {
         });
     }
 
-    // The lead she has laid on edges, drawn as came, over the construction lines (the Wright window's
-    // cuts were drawn with its frame above; collectLeadLines() gives them too, but it has no edges).
-    if (!WRIGHT) paintLead(ctx, w2s, plane.zoom(), [], collectLeadLines(), false, { style: LEAD_BORDER_COLOR, width: LEAD_WIDTH }, true);
+    // The lead she has laid on edges, drawn as came, over the construction lines (a board's lead lines were
+    // drawn with the frame above; collectLeadLines() gives them too, but a board on the interface has no edges).
+    if (!board) paintLead(ctx, w2s, plane.zoom(), [], collectLeadLines(), false, { style: LEAD_BORDER_COLOR, width: LEAD_WIDTH }, true);
 
     if (ghostLineEnd && firstTapPoint) {
         var gw=s2w(ghostLineEnd.x,ghostLineEnd.y),ext=extLine(firstTapPoint,gw);
@@ -3662,34 +3461,29 @@ function tryAutoComplete(clickedKey) {
 // shape. Remove takes glass away the same way, to the edges of the shape. A shape that already has
 // its own glass is repainted or dissolved; a shape inside older glass gets glass of its own, or,
 // for Remove, a pane of the board's own colour so the glass under it is gone to the shape's edges.
-function fillWithFace(face) {
-    // The fill holding this very pane: a one-pane fill of the same shape, or a sheet one of whose
-    // panes it is (a tap on a sheet speaks to the whole sheet).
-    var want = paneKey(face.vertices), found = null;
-    fills.forEach(function(f) {
-        if (found || f.dissolved) return;
-        if (f.panes) { if (f.panes.some(function(p) { return paneKey(p.vertices) === want; })) found = f; return; }
-        if (paneKey(f.vertices) !== want) return;
-        var a = shoelaceArea(expandFillToPolygon(f));
-        if (Math.abs(a - face.area) <= 1e-6 * Math.max(1, face.area)) found = f;
-    });
-    return found;
+// Since R4 (24 Oct 2026) this is the shell's on every board, the first slot of ruling 9's vocabulary:
+// the pane is the board's (paneAt) or the engine's (the face walk), named by its geometry either way,
+// and the fill entry carries the board's description or the engine's vertices and edges. A pane that
+// already wears the colour is left alone (the Wright window's rule, now everyone's).
+function paneUnderTap(wx, wy) {
+    if (board) { var p = board.paneAt(wx, wy); if (!p) return null; return { key: paneKey(board.panePolygon(p)), fields: { pane: p } }; }
+    var face = findFaceAround(wx, wy); if (!face) return null;
+    return { key: faceKey(face), fields: { vertices: face.vertices, edges: face.edges } };
 }
-function windowTap(wx, wy) {
-    if (WRIGHT) return wrightBoard.tap(wx, wy);
-    var face = findFaceAround(wx, wy); if (!face) return false;
-    var own = fillWithFace(face);
+function tapPane(wx, wy) {
+    var pane = paneUnderTap(wx, wy); if (!pane) return false;
+    var own = fillWithKey(pane.key);
     if (state.palette.selected === REMOVE) {
         if (!own && !hitFilledRegion(wx, wy)) return false;   // nothing under the tap to take away
         if (isStepThroughActive()) forkStepThrough();
         if (own) dissolveRegion(own.fillId);
-        else appendOp({ op:'fill', fillId:'fill:'+Date.now(), vertices:face.vertices, edges:face.edges, color:COLORS.background, opacity:1.0 });
+        else appendOp(Object.assign({ op:'fill', fillId:'fill:'+Date.now() }, pane.fields, { color:COLORS.background, opacity:1.0 }));
         playSound('repaint'); return true;
     }
     if (isStepThroughActive()) forkStepThrough();             // her first mark ends the demo there
     var colour = state.palette.selected || FOREST_GLASS;
-    if (own) { recolorRegion(own.fillId, colour, 1.0); playSound('repaint'); return true; }
-    appendOp({ op:'fill', fillId:'fill:'+Date.now(), vertices:face.vertices, edges:face.edges, color:colour, opacity:1.0 });
+    if (own) { if (own.color !== colour) { recolorRegion(own.fillId, colour, 1.0); playSound('repaint'); } return true; }
+    appendOp(Object.assign({ op:'fill', fillId:'fill:'+Date.now() }, pane.fields, { color:colour, opacity:1.0 }));
     playSound('fill'); return true;
 }
 
@@ -3761,9 +3555,6 @@ function onDown(e) {
     // A tap during play skips to the end and closes the panel (ledger §15)
     // — consumed entirely; it draws nothing.
     if (replayPlaying) { skipReplayToEnd(); return; }
-    // Full screen on her first touch (18 Oct 2026, where the browser allows it): the touch is spent
-    // on that and draws nothing; the request itself waits for the release, which counts as her gesture.
-    if (FULLSCREEN && !fsAsked && !isFullscreen()) { fsPending = true; return; }
     canvas.setPointerCapture(e.pointerId);
     activeTouches.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
@@ -3794,8 +3585,8 @@ function onDown(e) {
     // ── The frame's handles (the shell's, R2): a side, a corner, or the centre to move it ──
     if (frameHandleDown(pos, world)) return;
 
-    // ── The Wright window: an edge, a pane, or the board around the frame ──
-    if (WRIGHT) { wrightBoard.down(pos, world, e); return; }
+    // ── A board on the interface: what was touched, in the shell's words (THE BOARD) ──
+    if (board) { boardDown(pos, world, e); return; }
 
     // ── Fork step-through if child interacts ──────────────────────────────────
     if (isStepThroughActive()) {
@@ -3886,8 +3677,9 @@ function onMove(e) {
         var pts = Array.from(activeTouches.values());
         var curDist = dist(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
         plane.setZoom(pinchBaseScale * (curDist / pinchBaseDist));
-        // On the Wright window two fingers pan as well as pinch (one finger there is the glass).
-        if (WRIGHT && pinchBaseMid && pinchBasePan) {
+        // On a board on the interface two fingers pan as well as pinch (one finger there is the glass);
+        // the in-file boards pan with one finger and pinch alone with two, until R5.
+        if (board && pinchBaseMid && pinchBasePan) {
             var mid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 }, z = plane.zoom();
             plane.setPan(pinchBasePan.x - (mid.x - pinchBaseMid.x) / z, pinchBasePan.y + (mid.y - pinchBaseMid.y) / z);
         }
@@ -3901,8 +3693,8 @@ function onMove(e) {
     // ── A frame handle dragged (the shell's) ──
     if (frameDrag) { frameDragMove(world); return; }
 
-    // ── The board's drag: the Wright window's line or moved tap ──
-    if (WRIGHT && wrightBoard.move(pos, world)) return;
+    // ── A board's drag (THE BOARD): the hand's position, and whether it has left the tap radius ──
+    if (boardDrag) { boardDrag.move(world, pos, dist(pointerStart.x, pointerStart.y, pos.x, pos.y) > THRESHOLDS.tapMovement); return; }
 
     // ── Eraser candidate: activate sweep if drag exceeds threshold ───────────────
     if (eraserCandidate && !eraserActive) {
@@ -4110,8 +3902,6 @@ function hitForEraser(wx, wy) {
 function onUp(e) {
     e.preventDefault(); unlockAudio();
     activeTouches.delete(e.pointerId);
-    // The first touch, spent on going full screen (see onDown).
-    if (fsPending) { fsPending = false; fsAsked = true; enterFullscreen(); return; }
 
     // If we were pinching and one finger lifts, reset pinch state
     if (pinchBaseDist && activeTouches.size < 2) {
@@ -4128,8 +3918,8 @@ function onUp(e) {
     // ── A frame handle released: the frame's entry is written if it moved ──
     if (frameDrag) { frameDragUp(); interactionState = 'IDLE'; return; }
 
-    // ── The board's drag ends here: the Wright window's line or tap on a pane ──
-    if (WRIGHT && wrightBoard.up(world, isTap)) return;
+    // ── A board's drag ends here (THE BOARD): the board writes its entry, or the tap colours the pane ──
+    if (boardDrag) { var bd = boardDrag; boardDrag = null; bd.end(world, isTap); interactionState = 'IDLE'; return; }
 
     // ── Eraser sweep end ──────────────────────────────────────────────────────
     if (eraserActive) {
@@ -4177,10 +3967,13 @@ function onUp(e) {
         isPanning=false; panStart=null;
         if (isTap) {
             if (APP) {
+                // A board on the interface: under Glass only the press panned rather than reaching the board, so
+                // a tap on a pane still colours it here; otherwise a tap on empty ground is the board's (ruling
+                // 9's second slot; on the Wright window it is nothing, Undo being a word).
+                if (board) { if (tapPane(world.x, world.y)) return; board.tapGround(world); return; }
                 // The window profile: the shape under the tap takes the colour, or loses its
                 // glass; in open ground a tap undoes, as the Circles words say.
-                if (windowTap(world.x, world.y)) return;
-                if (WRIGHT) return;   // the Wright window: a tap on empty board is nothing (Undo is a word)
+                if (tapPane(world.x, world.y)) return;
                 if (showGlass || state.palette.selected === REMOVE) return;   // nothing to take away: nothing happens
             } else {
                 if (showGlass) { tryPaletteAction(world.x, world.y); return; }   // the finished window: colour, or nothing
@@ -4296,9 +4089,9 @@ canvas.addEventListener('gestureend', function(e) { e.preventDefault(); gestureB
 canvas.addEventListener('wheel', function(e) {
     e.preventDefault();
     if (gestureBase !== null) return;
-    // On the Wright window the trackpad's two-finger scroll pans (18 Oct 2026; one finger there is
-    // the glass); a pinch still zooms — Safari's as a gesture above, Chrome's as a wheel with ctrl.
-    if (WRIGHT && !e.ctrlKey) {
+    // On a board on the interface the trackpad's two-finger scroll pans (18 Oct 2026, the Wright window; one
+    // finger there is the glass); a pinch still zooms — Safari's as a gesture above, Chrome's as a wheel with ctrl.
+    if (board && !e.ctrlKey) {
         var z = plane.zoom(), pn = plane.pan();
         plane.setPan(pn.x + e.deltaX / z, pn.y - e.deltaY / z);
         syncCanvasNoteDOMs(); return;
@@ -4776,7 +4569,7 @@ function computeStepGroups(ops) {
         for (var j = grp.start; j < grp.end; j++) {
             var o = ops[j];
             if (o.op === 'fill' || o.op === 'repaint_fill' || o.op === 'dissolve_fill') hasFill = true;
-            else if (o.op === 'line' || o.op === 'circle' || o.op === 'numbers' || o.op === 'frame' || o.op === 'lock' || wrightBoard.visibleOps[o.op]) hasGeometry = true;
+            else if (o.op === 'line' || o.op === 'circle' || o.op === 'numbers' || o.op === 'frame' || o.op === 'lock' || (board && board.visibleOps[o.op])) hasGeometry = true;
             else if (o.op === 'scaffold') hasScaffold = true;
             else if (o.op === 'note_open' || o.op === 'note_close') hasNote = true;
             else if (o.op === 'emphasize') emphState[o.key] = true;
@@ -5489,9 +5282,9 @@ var HTW_STAGES = [
     },
     // save and newopen are direct action words in the panel, not tip window stages
 ];
-// The board's tips come from its block, after the circles level's and before the rest; each
-// carries its own fade rule. The level decides which stages exist; the rest are simply absent, triggers included.
-HTW_STAGES = [HTW_STAGES[0]].concat(wrightBoard.tips, HTW_STAGES.slice(1));
+// A board's tips come from the board, after the circles level's and before the rest; each
+// carries its own fade rule. The board decides which stages exist; the rest are simply absent, triggers included.
+HTW_STAGES = [HTW_STAGES[0]].concat(board ? board.tips : [], HTW_STAGES.slice(1));
 HTW_STAGES = HTW_STAGES.filter(function(s) { return POWERS.htw.indexOf(s.id) >= 0; });
 // At tap-to-fill the two tips say so (2 Oct 2026; candidate words, for the voice pass).
 // Applied here and again when text/geometry-v1.json arrives, which rewrites the color tip.
@@ -5516,8 +5309,8 @@ var HTW_ACTIONS = {
     eraser:       function() { openHtwOnCanvas('eraser'); },
     // save and newopen are now direct action words in the panel, not tip window stages
 };
-// The board's tips open the same way; a colour tip opens the colour window first.
-wrightBoard.tips.forEach(function(t) {
+// A board's tips open the same way; a colour tip opens the colour window first.
+(board ? board.tips : []).forEach(function(t) {
     HTW_ACTIONS[t.id] = t.colour ? function() { openColorTool(); openHtwOnCanvas(t.id); } : function() { openHtwOnCanvas(t.id); };
 });
 
@@ -5703,8 +5496,8 @@ function pulsePanelBullet(stageId) {
 function buildDemoList() {
     var box = $('demo-list'); if (!box) return;
     box.innerHTML = '';
-    // At circles, what the compass alone can make; on the Wright window, what was made for it.
-    CX_BUILTINS.filter(function(cx) { return WRIGHT ? cx.level === levelName : (!cx.level && cx.usesLines === false); }).slice(0, 8).forEach(function(cx) {
+    // At circles, what the compass alone can make; on a board, what was made for it.
+    CX_BUILTINS.filter(function(cx) { return board ? cx.level === levelName : (!cx.level && cx.usesLines === false); }).slice(0, 8).forEach(function(cx) {
         var w = document.createElement('span'); w.className = 'htw-action-word'; w.textContent = cx.name;
         w.addEventListener('click', function() {
             if (currentDemo === cx && isStepThroughActive()) { stopReplayPlay(); stepFirst(); startReplayPlay(); return; }
@@ -5771,7 +5564,7 @@ function initHowThisWorks() {
         demos.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-top:8px;padding-left:12px;';
         list2.appendChild(demos);
         buildDemoList();
-        if (WRIGHT) wrightBoard.mount();   // the colour totals under the board
+        if (board && board.mount) board.mount(root);   // the board's own furniture (the Wright window's colour totals)
         updateViewingWords();   // the words just made take their presence from the board as it is
     }
 
@@ -5786,14 +5579,17 @@ function initHowThisWorks() {
         rowGlass2.parentNode.insertBefore(rowFiner, rowGlass2.nextSibling);
     })();
 
-    // Full screen's way out, and the board's response to going there and back: the canvas resized,
-    // the column laid out again, and the view re-homed while nothing has been made yet.
-    if (FULLSCREEN) {
-        var fx = document.createElement('span'); fx.className = 'htw-action-word g-fs-exit'; fx.textContent = 'Exit';
-        fx.addEventListener('click', exitFullscreen);
-        root.appendChild(fx);
+    // Full screen (ruling 2, R4): a word in the column on every board, after Share, where the browser allows it;
+    // it says what tapping it will do. Going there and back resizes the canvas, lays the column out again, and
+    // re-homes the view while nothing has been made yet.
+    if (FULLSCREEN_OK) {
+        var rowShare = $('share').parentNode;
+        var rowFs = document.createElement('li'); rowFs.className = 'htw-action-row';
+        var fsw = document.createElement('span'); fsw.className = 'htw-action-word g-fullscreen'; fsw.textContent = 'Full screen';
+        fsw.addEventListener('click', function () { if (isFullscreen()) exitFullscreen(); else enterFullscreen(); });
+        rowFs.appendChild(fsw); rowShare.parentNode.insertBefore(rowFs, rowShare.nextSibling);
         var onFs = function () {
-            fx.style.display = isFullscreen() ? 'block' : 'none';
+            fsw.textContent = isFullscreen() ? 'Exit full screen' : 'Full screen';
             resizeCanvas(); layoutPanelTools();
             if (!logHasMarks()) homeView();
         };
@@ -5871,8 +5667,8 @@ function updateViewingWords() {
     var mapWord = $('map-toggle');
     if (mapWord) mapWord.textContent = mapShown ? 'Hide map' : 'Show map';
     var glassWord = $('glass-toggle');
-    if (glassWord) glassWord.textContent = showGlass ? (APP ? (WRIGHT ? 'Show lines' : 'Show circles') : POWERS.madeWord) : (APP ? 'Glass only' : 'Just the glass');
-    if (WRIGHT) wrightBoard.updateTotals();
+    if (glassWord) glassWord.textContent = showGlass ? madeWord() : (APP ? 'Glass only' : 'Just the glass');
+    if (board && board.update) board.update();
     // Conditional presence (ledger §14): an empty canvas shows only Open —
     // New is irrelevant and Save has nothing to save. Marks count; viewing
     // changes alone do not.
@@ -5963,9 +5759,9 @@ initHowThisWorks();
 var ro = null;
 if (typeof ResizeObserver !== 'undefined') {
     ro = new ResizeObserver(function () {
-        // The Wright window keeps its home view through a change of size while nothing has been made:
+        // A board with a frame keeps its home view through a change of size while nothing has been made:
         // the host's size can shift as the page settles, and the frame should sit where it belongs.
-        var wasHome = WRIGHT && !resetShown && !logHasMarks();
+        var wasHome = !!frame && !resetShown && !logHasMarks();
         resizeCanvas(); layoutPanelTools();
         if (wasHome) homeView();
     });
@@ -6025,10 +5821,11 @@ function destroy() {
 // the site reads it.
 root._glass = { view: function () { return plane.view(); }, viewport: function () { return [plane.viewportWidth(), plane.viewportHeight()]; },
                 frame: function () { return frame; }, frameUnits: function () { return frameU; }, locked: frameLocked, step: function () { return gridStep; }, log: function () { return operationLog; }, fills: function () { return liveFills(); },
-                panes: function () { return wrightBoard.state().panes; }, cuts: function () { return wrightBoard.state().cuts; } };
+                board: function () { return BOARD_NAME; }, panes: function () { return board ? board.state().panes : []; }, cuts: function () { return board ? board.state().cuts : []; } };
 
 return {
     el: root,
+    board: BOARD_NAME,
     level: levelName,
     // Plays the construction named by opts.open — the story's own word ("again").
     // It goes through the same guard as Open, so her unsaved work is never silently lost.
