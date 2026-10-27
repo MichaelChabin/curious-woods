@@ -9,8 +9,10 @@
 <!-- The Sun, Boiling, rebuilt on the shared 3D shelf (js/3d/) from the 25 Oct sketch (prototypes/3d-sketches/
      sun-boiling.html): three.js r186's WebGPU renderer with its WebGL 2 fallback, every shader in TSL. A bench:
      the corner readout (backend, tier, frame rate) is for the bench only and is not a thing a child's page carries.
-     The standard: CWVault/claude/Standard-Interactives.md. -->
-<script src="../js/cw-style.js?v=2026-10-21f"></script>
+     The standard: CWVault/claude/Standard-Interactives.md. Brought to the standard 27 Oct 2026: no idle turn, the
+     ground and every colour from cw-style.js (the Sun's own group, sun), the scale notes on the picture with their
+     brackets, vermilion for the tapped zone, the tier test to §2, the kept picture with notes, caption and credit. -->
+<script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script type="importmap">
 { "imports": {
   "three":        "../js/vendor/three-r186/three.webgpu.js",
@@ -33,10 +35,10 @@
   .sub { color: var(--cw-ink-soft, #6b655a); margin: 0 0 18px; max-width: 62ch; }
   #stage {
     position: relative; width: 100%; height: clamp(340px, 68vh, 680px);
-    border-radius: 6px; overflow: hidden; background: #140f0b; touch-action: none;
+    border-radius: 6px; overflow: hidden; background: var(--cw-black, #0c0a08); touch-action: none;
   }
-  #hint { position: absolute; left: 14px; bottom: 10px; color: #a49d92; font-size: 0.85rem; pointer-events: none; font-style: italic; }
-  #readout { position: absolute; right: 12px; top: 10px; color: #a49d92; font-size: 0.8rem; pointer-events: none; font-variant-numeric: tabular-nums; }
+  #hint { position: absolute; left: 14px; bottom: 10px; color: var(--cw-grey, #9a958b); font-size: 0.85rem; pointer-events: none; font-style: italic; }
+  #readout { position: absolute; right: 12px; top: 10px; color: var(--cw-grey, #9a958b); font-size: 0.8rem; pointer-events: none; font-variant-numeric: tabular-nums; }
   .words { display: flex; gap: 22px; flex-wrap: wrap; margin: 12px 0 0; }
   .word {
     background: none; border: 0; padding: 4px 0; color: var(--cw-payne, #546A80); font: inherit; cursor: pointer;
@@ -46,16 +48,17 @@
   .word[aria-pressed="true"] { color: var(--cw-ink, #2a241c); border-bottom-color: var(--cw-copper, #b5652b); }
   .word:focus-visible { outline: 2px solid var(--cw-copper, #b5652b); outline-offset: 3px; }
   #touched { margin: 10px 0 0; min-height: 1.5em; color: var(--cw-ink, #2a241c); }
-  #touched i { color: var(--cw-copper, #b5652b); font-style: normal; }
+  #touched i { color: var(--cw-vermilion, #c84830); font-style: normal; }
   .legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px 24px; margin: 18px 0 22px; padding: 0; list-style: none; }
   .legend li { display: flex; gap: 10px; align-items: baseline; min-width: 0; padding-left: 6px; border-left: 2px solid transparent; }
-  .legend li[aria-current="true"] { border-left-color: var(--cw-copper, #b5652b); }
+  .legend li[aria-current="true"] { border-left-color: var(--cw-vermilion, #c84830); }
   .sw { width: 14px; height: 14px; border-radius: 3px; flex: none; transform: translateY(2px); }
   #kept { margin: 16px 0 0; display: none; }
   #kept img { display: block; width: 100%; height: auto; border-radius: 4px; }
   #kept figcaption { display: flex; gap: 22px; margin-top: 6px; }
   #kept a { color: var(--cw-payne, #546A80); text-decoration: none; }
   #fail { color: var(--cw-vermilion, #c84830); display: none; margin: 12px 0 0; white-space: pre-wrap; font-size: 13px; }
+  .credit { color: var(--cw-ink-soft, #6b655a); font-size: 13px; margin: 0; }
   @media (max-width: 600px) { #stage { height: 60vh; } }
 </style>
 </head>
@@ -76,28 +79,33 @@
 </div>
 <div class="column">
   <ul class="legend" id="legend">
-    <li data-zone="core"><span class="sw" style="background:#fff6d8"></span><span>Core, the inner quarter: about 15 million degrees, where hydrogen burns into helium</span></li>
-    <li data-zone="radiative"><span class="sw" style="background:#f6b450"></span><span>Radiative zone, out to seven tenths: light wanders out, bounced from atom to atom</span></li>
-    <li data-zone="convection"><span class="sw" style="background:#c44a12"></span><span>Convection zone, the outer three tenths: hot gas rises, cools and sinks, like a pot on the stove</span></li>
-    <li data-zone="surface"><span class="sw" style="background:#ffd27a"></span><span>Granules on the surface: the tops of those rising columns, bright in the middle, dark where they sink</span></li>
+    <li data-zone="core"><span class="sw"></span><span>Core, the inner quarter: about 15 million degrees, where hydrogen burns into helium</span></li>
+    <li data-zone="radiative"><span class="sw"></span><span>Radiative zone, out to seven tenths: light wanders out, bounced from atom to atom</span></li>
+    <li data-zone="convection"><span class="sw"></span><span>Convection zone, the outer three tenths: hot gas rises, cools and sinks, like a pot on the stove</span></li>
+    <li data-zone="surface"><span class="sw"></span><span>Granules on the surface: the tops of those rising columns, bright in the middle, dark where they sink</span></li>
   </ul>
-  <div id="honest"></div>
+  <p class="credit" id="credit"></p>
 </div>
 
 <script type="module">
-  const CW_VERSION = '2026-10-26 8886117';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-27 34be853';   // date + short commit hash; bump in the same commit as any change
   console.log('sun-3d', CW_VERSION);
   import * as THREE from 'three';
   import { Fn, vec3, float, uniform, positionLocal, normalView, positionView, normalize, dot, clamp, pow, mix, smoothstep, sin, atan, length, abs, select, sRGBTransferEOTF } from 'three/tsl';
-  import { cwScene } from '../js/3d/scene.js?v=2026-10-26';
+  import { cwScene, cwRGB } from '../js/3d/scene.js?v=2026-10-27b';
   import { cwCutaway } from '../js/3d/cutaway.js?v=2026-10-26';
   import { noise3, cells3 } from '../js/3d/noise.js?v=2026-10-26';
-  import { cwGlow } from '../js/3d/glow.js?v=2026-10-26';
-  import { cwHonest } from '../js/3d/honest.js?v=2026-10-26';
-  import { cwStill } from '../js/3d/still.js?v=2026-10-26';
+  import { cwGlow } from '../js/3d/glow.js?v=2026-10-27b';
+  import { cwHonest } from '../js/3d/honest.js?v=2026-10-27b';
+  import { cwStill } from '../js/3d/still.js?v=2026-10-27b';
 
   const $ = id => document.getElementById(id);
-  const GROUND = '#140f0b';
+  const S = window.CW && window.CW.STYLE;
+  if (!S || !S.sun) { $('fail').style.display = 'block'; $('fail').textContent = 'cw-style.js did not load, or has no sun group: this page has no colours.'; throw new Error('cw-style.js missing'); }
+  const SUN = S.sun;
+  const GROUND = S.black;                       // the ground of a scene in space (§6)
+  const rgb = hex => { const c = cwRGB(hex); return vec3(c[0], c[1], c[2]); };   // a display colour from cw-style.js, as a TSL vec3
+  ['core', 'radiative', 'convection', 'surface'].forEach(z => { document.querySelector(`#legend li[data-zone="${z}"] .sw`).style.background = SUN[z]; });
   // bench only: with ?log=1 every console error and warning is also written under the stage, for a browser
   // whose console cannot be reached (Safari in the simulator)
   if (new URLSearchParams(location.search).get('log') === '1') {
@@ -106,6 +114,9 @@
     window.addEventListener('error', e => show('uncaught', [e.message])); window.addEventListener('unhandledrejection', e => show('rejection', [e.reason]));
   }
   const FACE = new URLSearchParams(location.search).get('face');   // bench only: 'flat' or 'zones' stand in for the face shader
+  // bench only: ?slow=ms busy-waits that long in every frame, to see the tier test drop; ?slowAfter=ms starts the
+  // slowing that long after the page opens, to see the five-second sag check fire
+  const SLOW = +(new URLSearchParams(location.search).get('slow') || 0), SLOW_AFTER = +(new URLSearchParams(location.search).get('slowAfter') || 0);
   const uTime = uniform(5);                     // the one clock every shader reads; stops with Boiling off
   const state = { boil: true, cut: true };
 
@@ -127,15 +138,15 @@
       let g = edge.mul(life);
       if (tier === 'full') g = g.add(noise3(p.mul(90).add(t.mul(0.1))).mul(0.05));        // the fine grain
       const big = float(0.5).add(noise3(p.mul(2).add(t.mul(0.006))).mul(0.5));            // broad slow patches
-      const cool = vec3(0.66, 0.22, 0.04), mid = vec3(0.98, 0.58, 0.16), hot = vec3(1.0, 0.90, 0.62);
+      const cool = rgb(SUN.surfaceCool), mid = rgb(SUN.surfaceMid), hot = rgb(SUN.surfaceHot);
       let col = mix(cool, mid, smoothstep(0.0, 0.45, g));
       col = mix(col, hot, smoothstep(0.45, 1.0, g));
       col = col.mul(float(0.9).add(big.mul(0.16)));
       // limb darkening: the edge of the disc darker and redder, as the real Sun's is
       const mu = clamp(dot(normalize(normalView), normalize(positionView.negate())), 0.0, 1.0);
       col = col.mul(float(0.35).add(pow(mu, 0.55).mul(0.65)));
-      col = mix(col.mul(vec3(1.0, 0.62, 0.38)), col, smoothstep(0.0, 0.6, mu));
-      return sRGBTransferEOTF(col);               // the numbers above are display colours
+      col = mix(col.mul(rgb(SUN.limb)), col, smoothstep(0.0, 0.6, mu));
+      return sRGBTransferEOTF(col);               // the colours above are display values
     })();
     return m;
   }
@@ -144,14 +155,14 @@
   // r is the fraction of the radius: the core to 0.25, the radiative zone to 0.70, the convection zone to 1.
   function faceFn(tier) {
     if (FACE === 'flat') return Fn(([q, side]) => sRGBTransferEOTF(vec3(length(q), float(0.5), side.mul(0.5).add(0.5))));
-    if (FACE === 'zones') return Fn(([q, side]) => { const r = length(q); return sRGBTransferEOTF(select(r.lessThan(0.25), vec3(1.0, 1.0, 0.9), select(r.lessThan(0.7), vec3(1.0, 0.8, 0.4), vec3(0.6, 0.2, 0.05)))); });
+    if (FACE === 'zones') return Fn(([q, side]) => { const r = length(q); return sRGBTransferEOTF(select(r.lessThan(0.25), rgb(SUN.coreIn), select(r.lessThan(0.7), rgb(SUN.radiativeIn), rgb(SUN.convectionDeep)))); });
     return Fn(([q, side]) => {
       const r = length(q), t = uTime, seed = float(10).add(side.mul(7)), ang = atan(q.y, q.x);
-      let core = mix(vec3(1.0, 1.0, 0.92), vec3(1.0, 0.86, 0.5), smoothstep(0.0, 0.25, r));
+      let core = mix(rgb(SUN.coreIn), rgb(SUN.coreOut), smoothstep(0.0, 0.25, r));
       if (tier !== 'floor') core = core.mul(float(0.97).add(noise3(vec3(q.mul(30), t.mul(0.8).add(seed))).mul(0.03)));
       // the radiative zone's shimmer: light working its way out
       const sp = noise3(vec3(q.mul(55), t.mul(2.2).add(seed)));
-      let rad = mix(vec3(1.0, 0.80, 0.40), vec3(0.95, 0.48, 0.12), smoothstep(0.25, 0.7, r));
+      let rad = mix(rgb(SUN.radiativeIn), rgb(SUN.radiativeOut), smoothstep(0.25, 0.7, r));
       rad = rad.mul(float(0.95).add(sp.mul(0.06)));
       // the convection zone: rolling, rising columns
       const roll = noise3(vec3(q.mul(8), t.mul(0.10).add(seed)));
@@ -161,7 +172,7 @@
         const rise = noise3(vec3(ang.mul(7), r.mul(10).sub(t.mul(0.35)), t.mul(0.04).add(seed)));
         c = float(0.5).add(roll.mul(0.55).add(rise.mul(0.45)).mul(0.5));
       }
-      let con = mix(vec3(0.48, 0.11, 0.02), vec3(1.0, 0.58, 0.16), smoothstep(0.15, 0.9, c));
+      let con = mix(rgb(SUN.convectionDeep), rgb(SUN.convectionBright), smoothstep(0.15, 0.9, c));
       con = con.mul(mix(float(1.0), float(0.82), smoothstep(0.7, 1.0, r)));
       let col = select(r.lessThan(0.25), core, select(r.lessThan(0.7), rad, con));
       // a hairline at each boundary
@@ -177,7 +188,7 @@
   let view;
   try {
     view = await cwScene($('stage'), {
-      ground: GROUND, key: 'sun-3d', turn: 0.09,
+      ground: GROUND, key: 'sun-3d',            // no idle turn: nothing spins when the page opens (§6); the boiling moves
       camera: { fov: 32, position: [-1.7, 1.4, -3.7], near: 0.05, far: 100, min: 1.25, max: 9 },
       words: $('words'),
       onTier: (tier, v) => {
@@ -205,15 +216,17 @@
       },
       onTouch: () => { $('hint').hidden = true; }
     });
+    if (view.phone) $('hint').hidden = true;   // a phone takes no gesture, and its one line is the stage's
   } catch (e) {
     $('fail').style.display = 'block';
     $('fail').textContent = 'This page could not start its 3D view: ' + (e && e.message ? e.message : e);
     console.error(e);
   }
   if (view) {
-    view.scene.add(cwGlow({ colour: '#ffbe6e', size: 3.4, strength: 0.55 }));   // drawn first; the Sun paints over it
+    view.scene.add(cwGlow({ colour: SUN.glow, size: 3.4, strength: 0.55 }));   // drawn first; the Sun paints over it
 
     view.onFrame((dt, moving) => { if (state.boil && moving) uTime.value += dt; });
+    if (SLOW > 0) { const t0 = performance.now(); view.onFrame(() => { if (performance.now() - t0 < SLOW_AFTER) return; const t = performance.now(); while (performance.now() - t < SLOW); }); }
 
     function toggle(id, key, after) {
       const b = $(id);
@@ -222,17 +235,22 @@
     toggle('boil', 'boil');
     toggle('cut', 'cut', () => sun.setCut(state.cut));
 
-    // ---------- the honest notes ----------
-    const honest = cwHonest($('honest'), {
+    // ---------- the scale notes, on the picture (§5) ----------
+    // Only what is stretched says anything: the granules, drawn about fifty times too big (a real one is about
+    // 1,000 km across; here each is about a fiftieth of the Sun's width); and time, which runs a few hundred times
+    // fast while the boiling runs (a granule lives about ten minutes; here a second or two). The zones, the limb
+    // and the colours are to scale or true, and say nothing. The anchors are points on the ball's surface, chosen
+    // where the camera sees them at the home view, away from the cut; a note hides on the far side and turns
+    // with the ball. The bracket spans about seven drawn granules.
+    const honest = cwHonest(view, {
       notes: [
-        { what: 'The granules', says: 'are drawn about fifty times too big, so that you can see them.', bracket: 'a real one is about 1,000 km across, wider than New Mexico, and there are some four million at once' },
-        { what: 'Time', says: 'runs a few hundred times fast.', bracket: 'a granule lives about ten minutes; here, a second or two' },
-        { what: 'The three zones', says: 'are at true scale.', bracket: 'the core to a quarter of the way out, the radiative zone to seven tenths, the convection zone the rest' },
-        { what: 'The edge of the disc', says: 'is darker and redder than the middle, as the real Sun’s is, because there you look through only the cooler outer gas.', bracket: '' },
-        { what: 'The colours', says: 'are a camera’s, through a filter.', bracket: 'the real surface is close to white, and would blind you' }
+        { text: 'granules: drawn about fifty times too big', at: [0.55, 0.30, -0.78], span: 0.3 },
+        { text: 'time: running a few hundred times fast', at: [0.35, -0.35, -0.87], span: 0.3, show: () => state.boil && view.moving }
       ],
-      credit: 'Drawn fresh every frame on the graphics card. The zones’ sizes are the standard solar model’s.'
+      credit: 'Drawn fresh every frame on the graphics card. The zones’ sizes are the standard solar model’s.',
+      keep: { bottom: 30 }   // the hint's line along the bottom of the stage
     });
+    $('credit').textContent = honest.credit;
 
     // ---------- the kept picture ----------
     const keep = document.createElement('button'); keep.type = 'button'; keep.className = 'word'; keep.textContent = 'Keep this picture';
@@ -240,7 +258,7 @@
     keep.addEventListener('click', async () => {
       keep.disabled = true; keep.textContent = 'Making it…';
       try {
-        const blob = await cwStill(view, { long: 4096, notes: honest.lines(), credit: honest.credit, title: 'The Sun, boiling' });
+        const blob = await cwStill(view, { long: 4096, honest, caption: 'The Sun, cut open.', credit: honest.credit });   // the caption until Michael writes a better one
         const url = URL.createObjectURL(blob);
         $('kept').querySelector('img').src = url; $('save').href = url; $('kept').style.display = 'block';
         $('kept').dataset.bytes = blob.size;
@@ -251,7 +269,7 @@
 
     // ---------- the bench's corner readout: backend, tier, frame rate ----------
     setInterval(() => {
-      $('readout').textContent = view.backend + ' · ' + view.tier + (view.timing !== 'done' ? ' (timing)' : '') + ' · ' + view.fps + ' fps';
+      $('readout').textContent = view.backend + ' · ' + view.tier + (view.timing !== 'done' ? ' (timing)' : view.sag ? ' (sag ' + view.sag + ')' : '') + ' · ' + view.fps + ' fps · holds ' + view.target + (view.refresh ? ' of ' + view.refresh + ' Hz' : '');
     }, 500);
     window.cwView = view;   // for the bench's tests
 

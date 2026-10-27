@@ -1,4 +1,4 @@
-/* glow.js — the one glow, drawn first (Standard-Interactives; the lesson of the 25 Oct worknote).
+/* glow.js — the one glow, drawn first (Standard-Interactives; the lesson of the 25 Oct worknote; 26 Oct 2026, the colour read right 27 Oct).
    A soft light behind a ball. It is a sprite that always faces the camera, added onto the ground (additive
    blending, so black adds nothing), and it is drawn before everything else: depth test off, depth write off,
    renderOrder -1, and `transparent` left false so it sits in the opaque list, where renderOrder is obeyed — the
@@ -7,7 +7,9 @@
    Both backends apply a material's blending when transparent is false (checked in r186: WebGL's state and
    WebGPU's pipeline both skip blending only for NormalBlending).
      cwGlow({ colour, size, reach, strength })
-       colour    the glow's colour at its heart (CSS hex)
+       colour    the glow's colour at its heart (CSS hex, from cw-style.js: a display value, read as one — not through
+                 THREE.Color, which would take it for sRGB and convert it to linear before the shader converted it
+                 again, and did until 27 Oct, which made the glow redder than the colour named)
        size      the sprite's width in world units (the ball is 2 across at radius 1)
        inner, mid, reach   0..1 of the sprite's half-width: full strength to inner, a knee at mid (three tenths
                  of the strength), nothing at reach (defaults 0.31, 0.45, 1: the sketch's stops)
@@ -17,7 +19,8 @@ import * as THREE from 'three';
 import { Fn, vec3, float, uv, length, smoothstep, mix, select, sRGBTransferEOTF } from 'three/tsl';
 
 export function cwGlow({ colour = '#ffbe6e', size = 3.4, inner = 0.31, mid = 0.45, reach = 1, strength = 0.55 } = {}) {
-  const c = new THREE.Color(colour);
+  const n = parseInt(String(colour).replace('#', ''), 16);
+  const c = { r: (n >> 16 & 255) / 255, g: (n >> 8 & 255) / 255, b: (n & 255) / 255 };
   const mat = new THREE.SpriteNodeMaterial();
   mat.colorNode = Fn(() => {
     const d = length(uv().sub(0.5)).mul(2);                    // 0 at the heart, 1 at the sprite's edge

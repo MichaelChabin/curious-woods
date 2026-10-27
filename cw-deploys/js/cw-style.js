@@ -12,6 +12,7 @@
    CW.STYLE and stop with a plain message if it is missing. It also writes every colour to the page as a
    CSS variable, --cw-<name> (--cw-ink, --cw-ink-soft, --cw-copper …), so a page's own CSS reads the same
    values; the Time Machine's :root aliases its old names to them.
+   Nested groups (sun) are read as CW.STYLE.sun.<name>; they are not written as CSS variables.
    Classic script, no dependencies. */
 (function () {
   'use strict';
@@ -75,6 +76,19 @@
     shelfRimAlpha: 0.38,                            // the shelf round each old piece: its outline enlarged, in the shelf wash at this alpha, under the crust
     magma: '#6e2410', magmaGlow: '#b8471c', hot: '#f0a040',
     black: '#0c0a08', crust: '#141010', crustLight: '#2a2320', flash: '#fbf4e6',
+
+    // ---- the Sun (27 Oct 2026, Michael's ruling: every colour comes from here; one named group, which a star lab
+    //      will share). The numbers are the 25 Oct sketch's, as the Sun bench carried them, named by their roles.
+    //      Display values: a shader reads them as sRGB and converts (sRGBTransferEOTF), never through THREE.Color. ----
+    sun: {
+      surfaceCool: '#a8380a', surfaceMid: '#fa9429', surfaceHot: '#ffe69e',   // the surface's three: the lanes, the body, the heart of a granule
+      limb: '#ff9e61',                                                        // the tint of the disc's edge, seen through the cooler outer gas
+      coreIn: '#ffffeb', coreOut: '#ffdb80',                                  // the core, from its centre to its edge
+      radiativeIn: '#ffcc66', radiativeOut: '#f27a1f',                        // the radiative zone, inner edge to outer
+      convectionDeep: '#7a1c05', convectionBright: '#ff9429',                 // the convection zone: a sinking column and a rising one
+      core: '#fff6d8', radiative: '#f6b450', convection: '#c44a12', surface: '#ffd27a',   // each zone's one name colour, for a legend
+      glow: '#ffbe6e'                                                         // the one glow behind the ball
+    },
 
     // ---- type: screen pixels, whatever the picture's size ----
     size: { label: 15, minor: 13, text: 13, mark: 14, readout: 16, word: 12, tiny: 11 },

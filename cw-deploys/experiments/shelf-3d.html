@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/png" href="../art/icons/star-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/star-icon-256.png">
+<title>The 3D shelf — Curious Woods</title>
+<!-- A bench for each piece of the shared 3D shelf (js/3d/), on one page (Standard-Interactives §7: every new shelf
+     piece gets a bench that shows it alone; Michael's ruling of 27 Oct 2026: one page, not six). A word in the left
+     column picks the piece, and the stage shows that piece alone on a plain ball: the scene and its gestures, the
+     cut-away, the noise, the glow, the scale notes, the kept picture. A workbench, not a story. The corner readout
+     (backend, tier, frame rate) is the bench's only. -->
+<script src="../js/cw-style.js?v=2026-10-27b"></script>
+<script type="importmap">
+{ "imports": {
+  "three":        "../js/vendor/three-r186/three.webgpu.js",
+  "three/webgpu": "../js/vendor/three-r186/three.webgpu.js",
+  "three/tsl":    "../js/vendor/three-r186/three.tsl.js"
+} }
+</script>
+<style>
+  :root { color-scheme: light; }
+  html, body { margin: 0; }
+  body {
+    background: var(--cw-parchment, #f4f1e8); color: var(--cw-ink, #2a241c);
+    font-family: var(--cw-font, Georgia, serif); font-size: 17px; line-height: 1.5;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-top: 28px; padding-bottom: 48px;
+  }
+  .wide { max-width: 1100px; margin: 0 auto; }
+  h1 { font-weight: normal; font-size: 1.7rem; margin: 0 0 6px; letter-spacing: 0.01em; }
+  .sub { color: var(--cw-ink-soft, #6b655a); margin: 0 0 18px; max-width: 62ch; }
+  .bench { display: grid; grid-template-columns: 180px 1fr; gap: 0 24px; align-items: start; }
+  .column { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+  .column h2 { font-weight: normal; font-size: 0.85rem; color: var(--cw-ink-soft, #6b655a); margin: 14px 0 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .column h2:first-child { margin-top: 2px; }
+  .word {
+    background: none; border: 0; padding: 3px 0; color: var(--cw-payne, #546A80); font: inherit; cursor: pointer;
+    border-bottom: 1px solid transparent; text-align: left;
+  }
+  .word:hover { color: var(--cw-payne-hover, #3D3D3A); }
+  .word[aria-pressed="true"] { color: var(--cw-ink, #2a241c); border-bottom-color: var(--cw-copper, #b5652b); }
+  .word:focus-visible { outline: 2px solid var(--cw-copper, #b5652b); outline-offset: 3px; }
+  .word[hidden] { display: none; }
+  #stage {
+    position: relative; width: 100%; height: clamp(340px, 66vh, 640px);
+    border-radius: 6px; overflow: hidden; background: var(--cw-black, #0c0a08); touch-action: none;
+  }
+  #readout { position: absolute; right: 12px; top: 10px; color: var(--cw-grey, #9a958b); font-size: 0.8rem; pointer-events: none; font-variant-numeric: tabular-nums; }
+  #about { margin: 10px 0 0; color: var(--cw-ink-soft, #6b655a); font-size: 0.95rem; max-width: 70ch; min-height: 3em; }
+  #kept { margin: 16px 0 0; display: none; }
+  #kept img { display: block; width: 100%; height: auto; border-radius: 4px; }
+  #kept figcaption { display: flex; gap: 22px; margin-top: 6px; }
+  #kept a { color: var(--cw-payne, #546A80); text-decoration: none; }
+  #fail { color: var(--cw-vermilion, #c84830); display: none; margin: 12px 0 0; white-space: pre-wrap; font-size: 13px; }
+  @media (max-width: 700px) {
+    .bench { grid-template-columns: 1fr; }
+    .column { flex-direction: row; flex-wrap: wrap; gap: 2px 18px; align-items: baseline; margin-bottom: 10px; }
+    .column h2 { width: 100%; margin: 8px 0 0; }
+    #stage { height: 60vh; }
+  }
+</style>
+</head>
+<body>
+<div class="wide">
+  <h1>The 3D shelf</h1>
+  <p class="sub">One bench for every piece of <code>js/3d/</code>. Pick a piece on the left; the stage shows that piece alone on a plain ball.</p>
+  <div class="bench">
+    <div class="column" id="column">
+      <h2>Piece</h2>
+      <button class="word" type="button" data-piece="scene">Scene and gestures</button>
+      <button class="word" type="button" data-piece="cutaway">Cut-away</button>
+      <button class="word" type="button" data-piece="noise">Noise</button>
+      <button class="word" type="button" data-piece="glow">Glow</button>
+      <button class="word" type="button" data-piece="honest">Scale notes</button>
+      <button class="word" type="button" data-piece="still">Kept picture</button>
+      <h2 id="subHead" hidden>Noise</h2>
+      <button class="word sub" type="button" data-noise="noise3" hidden>noise3</button>
+      <button class="word sub" type="button" data-noise="fbm3" hidden>fbm3</button>
+      <button class="word sub" type="button" data-noise="cells3" hidden>cells3</button>
+      <h2>View</h2>
+      <div id="words" class="column"></div>
+    </div>
+    <div>
+      <div id="stage"><div id="readout"></div></div>
+      <p id="about"></p>
+      <p id="fail"></p>
+      <figure id="kept"><img alt="The kept picture"><figcaption><a id="save" download="the-shelf.png">Save the picture</a><a href="#" id="unkeep">Close</a></figcaption></figure>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  const CW_VERSION = '2026-10-27 34be853';   // date + short commit hash; bump in the same commit as any change
+  console.log('shelf-3d', CW_VERSION);
+  import * as THREE from 'three';
+  import { Fn, vec3, float, uniform, positionLocal, normalView, normalize, dot, clamp, mix, smoothstep, abs, fract, atan, asin, length, sRGBTransferEOTF } from 'three/tsl';
+  import { cwScene, cwRGB } from '../js/3d/scene.js?v=2026-10-27b';
+  import { cwCutaway } from '../js/3d/cutaway.js?v=2026-10-26';
+  import { noise3, fbm3, cells3 } from '../js/3d/noise.js?v=2026-10-26';
+  import { cwGlow } from '../js/3d/glow.js?v=2026-10-27b';
+  import { cwHonest } from '../js/3d/honest.js?v=2026-10-27b';
+  import { cwStill } from '../js/3d/still.js?v=2026-10-27b';
+
+  const $ = id => document.getElementById(id);
+  const S = window.CW && window.CW.STYLE;
+  if (!S) { $('fail').style.display = 'block'; $('fail').textContent = 'cw-style.js did not load: this page has no colours.'; throw new Error('cw-style.js missing'); }
+  const rgb = hex => { const c = cwRGB(hex); return vec3(c[0], c[1], c[2]); };
+  const uTime = uniform(0);
+  const ABOUT = {
+    scene: 'scene.js: the renderer (WebGPU, WebGL 2 behind it), the camera, the tiers chosen by timing, the gestures. One finger turns the ball; pinch zooms; two fingers move the view; tap picks (the readout says what was hit); Reset view. A plain ball with a thirty-degree grid, lit from the upper left, so the turn shows.',
+    cutaway: 'cutaway.js: the same ball with a quarter out, closed by two cut faces drawn by radius — rings every quarter of the way in. Cut open closes and opens it.',
+    noise: 'noise.js: the one noise library, on the ball’s surface in grey. noise3 is the gradient noise; fbm3 sums it over octaves; cells3 is the moving cells (the granules of the Sun), drifting with time.',
+    glow: 'glow.js: the one glow, drawn first behind the ball, so it never bleeds onto the cut faces. Shown with the cut open: the faces stay clean.',
+    honest: 'honest.js: the scale notes, on the picture — a short italic note beside the stretched thing with a thin drawn bracket, re-placed as the ball turns and hidden on the far side. Two sample notes.',
+    still: 'still.js: the kept picture, one frame at full tier, 4,096 px on the long side, with the notes drawn where they sit on screen, a caption and the credit at the bottom. Keep this picture makes one.'
+  };
+
+  // ---------- the plain ball ----------
+  // a quiet grey-brown from cw-style.js, lit from the upper left, with a hairline grid every thirty degrees so a turn
+  // can be seen; the noise piece paints its noise on the same ball
+  let noiseKind = 'fbm3';
+  function ballMaterial(kind) {
+    const m = new THREE.MeshBasicNodeMaterial();
+    m.colorNode = Fn(() => {
+      const p = normalize(positionLocal);
+      const lit = clamp(dot(normalize(normalView), normalize(vec3(-0.5, 0.6, 0.65))), 0.0, 1.0);
+      let col;
+      if (kind === 'plain') {
+        const lon = atan(p.z, p.x), lat = asin(p.y);
+        const g30 = Math.PI / 6;
+        const dl = abs(fract(lon.div(g30)).sub(0.5)).mul(2).oneMinus();   // 1 at a grid line, 0 between
+        const dt = abs(fract(lat.div(g30)).sub(0.5)).mul(2).oneMinus();
+        const line = smoothstep(0.985, 1.0, dl).add(smoothstep(0.985, 1.0, dt));
+        col = mix(rgb(S.rockTan), rgb(S.parchmentDeep), clamp(line, 0.0, 1.0).mul(0.6));
+      } else {
+        let v;
+        if (kind === 'noise3') v = noise3(p.mul(4).add(uTime.mul(0.05))).mul(0.5).add(0.5);
+        else if (kind === 'fbm3') v = fbm3(p.mul(3).add(uTime.mul(0.05)), 5).mul(0.5).add(0.5);
+        else { const c = cells3(p.mul(10), uTime); v = smoothstep(0.0, 0.5, c.y.sub(c.x)); }
+        col = mix(rgb(S.crustLight), rgb(S.parchmentDeep), clamp(v, 0.0, 1.0));
+      }
+      col = col.mul(float(0.45).add(lit.mul(0.55)));
+      return sRGBTransferEOTF(col);
+    })();
+    return m;
+  }
+  const faceFn = Fn(([q, side]) => {
+    const r = length(q);
+    let col = mix(rgb(S.rockRust), rgb(S.rockTan), r);
+    const ring = smoothstep(0.96, 1.0, abs(fract(r.mul(4)).sub(0.5)).mul(2).oneMinus());   // a hairline every quarter of the way in
+    col = mix(col, rgb(S.parchmentDeep), ring.mul(0.6));
+    return sRGBTransferEOTF(col);
+  });
+
+  // ---------- the stage ----------
+  let ball = null, glow = null, honest = null, piece = null, cut = true;
+  let view;
+  try {
+    view = await cwScene($('stage'), {
+      key: 'shelf-3d',
+      words: $('words'),
+      onTier: (tier, v) => {
+        const seg = { full: [160, 80], middle: [128, 64], floor: [96, 48] }[tier];
+        if (!ball) { ball = cwCutaway({ segments: seg, surface: ballMaterial('plain'), face: faceFn }); v.ball.add(ball.group); }
+        else ball.rebuild(seg);
+      },
+      picks: () => [ball.surface, ...ball.faces],
+      onPick: (hit) => { $('readout').dataset.hit = hit ? (hit.object.name === 'cut' ? 'tap: a cut face, ' + ball.radiusOf(hit).toFixed(2) + ' of the way out' : 'tap: the surface') : 'tap: nothing'; }
+    });
+  } catch (e) {
+    $('fail').style.display = 'block';
+    $('fail').textContent = 'This page could not start its 3D view: ' + (e && e.message ? e.message : e);
+    console.error(e);
+  }
+  if (view) {
+    view.onFrame((dt, moving) => { if (moving) uTime.value += dt; });
+
+    // the words the stage adds (Reset view, Let it move) come first; the bench's own go after them
+    const cutWord = document.createElement('button'); cutWord.type = 'button'; cutWord.className = 'word'; cutWord.textContent = 'Cut open'; cutWord.setAttribute('aria-pressed', 'true');
+    cutWord.addEventListener('click', () => { cut = !cut; cutWord.setAttribute('aria-pressed', String(cut)); ball.setCut(cut); view.redraw(); });
+    $('words').appendChild(cutWord);
+    const keep = document.createElement('button'); keep.type = 'button'; keep.className = 'word'; keep.textContent = 'Keep this picture';
+    $('words').appendChild(keep);
+    keep.addEventListener('click', async () => {
+      keep.disabled = true; keep.textContent = 'Making it…';
+      try {
+        const blob = await cwStill(view, { long: 4096, honest, caption: 'A plain ball, cut open.', credit: 'The shared 3D shelf, on a bench.' });
+        const url = URL.createObjectURL(blob);
+        $('kept').querySelector('img').src = url; $('save').href = url; $('kept').style.display = 'block';
+        $('kept').dataset.bytes = blob.size;
+      } catch (e) { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The picture could not be made: ' + e.message; }
+      keep.disabled = false; keep.textContent = 'Keep this picture';
+    });
+    $('unkeep').addEventListener('click', e => { e.preventDefault(); $('kept').style.display = 'none'; });
+
+    // ---------- picking a piece ----------
+    function show(name) {
+      piece = name;
+      document.querySelectorAll('#column [data-piece]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.piece === name)));
+      $('about').textContent = ABOUT[name];
+      const isNoise = name === 'noise';
+      $('subHead').hidden = !isNoise;
+      document.querySelectorAll('#column [data-noise]').forEach(b => { b.hidden = !isNoise; b.setAttribute('aria-pressed', String(b.dataset.noise === noiseKind)); });
+      // the ball's surface: plain, or the noise
+      ball.setSurface(ballMaterial(isNoise ? noiseKind : 'plain'));
+      // the cut: open for the cut-away and the glow (where the clean faces are the point), closed for the rest
+      cut = name === 'cutaway' || name === 'glow' || name === 'still';
+      cutWord.setAttribute('aria-pressed', String(cut)); ball.setCut(cut);
+      cutWord.hidden = !(name === 'cutaway' || name === 'glow');
+      // the glow
+      if (glow) { view.scene.remove(glow); glow = null; }
+      if (name === 'glow') { glow = cwGlow({ colour: S.hot, size: 3.6, strength: 0.85 }); view.scene.add(glow); }   // stronger than the Sun's, so the piece shows plainly
+      // the notes
+      if (honest) { honest.remove(); honest = null; }
+      if (name === 'honest' || name === 'still') {
+        honest = cwHonest(view, {
+          notes: [
+            { text: 'this patch: drawn ten times too big', at: [0.55, 0.30, -0.78], span: 0.3 },
+            { text: 'the grid: drawn far too thick', at: [-0.2, -0.55, -0.81], span: 0.5, along: [0, 1, 0] }
+          ],
+          credit: 'The shared 3D shelf, on a bench.'
+        });
+      }
+      keep.hidden = name !== 'still';
+      $('kept').style.display = 'none';
+      view.redraw();
+      try { sessionStorage.setItem('shelf-3d:piece', name); } catch (e) {}
+    }
+    document.querySelectorAll('#column [data-piece]').forEach(b => b.addEventListener('click', () => show(b.dataset.piece)));
+    document.querySelectorAll('#column [data-noise]').forEach(b => b.addEventListener('click', () => { noiseKind = b.dataset.noise; show('noise'); }));
+    const q = new URLSearchParams(location.search).get('piece');
+    let first = 'scene';
+    try { first = q || sessionStorage.getItem('shelf-3d:piece') || 'scene'; } catch (e) {}
+    show(ABOUT[first] ? first : 'scene');
+
+    // ---------- the bench's corner readout ----------
+    setInterval(() => {
+      $('readout').textContent = view.backend + ' · ' + view.tier + (view.timing !== 'done' ? ' (timing)' : view.sag ? ' (sag ' + view.sag + ')' : '') + ' · ' + view.fps + ' fps · holds ' + view.target + (view.refresh ? ' of ' + view.refresh + ' Hz' : '') + ($('readout').dataset.hit ? ' · ' + $('readout').dataset.hit : '');
+    }, 500);
+    window.cwView = view;   // for the bench's tests
+  }
+</script>
+</body>
+</html>
