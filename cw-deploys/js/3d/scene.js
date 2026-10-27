@@ -11,7 +11,11 @@
        onTier: (tier) => {},                    // the page rebuilds what the tier changes (its materials)
        picks: () => [meshes],                   // what a tap can pick
        onPick: (hit, view) => {},               // a tap's hit, or null for empty ground
-       words: element                           // where Reset view and Let it move go
+       words: element,                          // where Reset view and Let it move go
+       gesture: 'trackball',                    // or 'globe': the desk-globe turn (below); the trackball unless asked
+       home: { lon: 20, lat: 15 },              // 'globe' only: the view when the page opens, and after Reset view
+       onTurn: (view) => {},                    // 'globe' only: a finger, the inertia or Reset view turned the ball
+       phone: 'still'                           // or 'run': a phone runs the page at the floor tier instead of a still
      });
 
    The standard's three tiers (§2): every page is made for the best machine, full, and steps itself down to
@@ -38,12 +42,26 @@
    a little inertia); pinch zooms; two fingers move the view; tap picks; Reset view puts everything back. On a
    mouse: drag turns, wheel zooms, a drag with the right button or shift moves the view.
 
+   The desk-globe turn (gesture: 'globe'; the Earth's, 27 Oct 2026, by Spec-Earth-3D and the deep-time ruling 3 of
+   6 Oct): the ball turns like a globe on a stand. North is up at rest; a drag up or down tilts it, and the tilt
+   stops when a pole faces her; a drag to the right moves the surface east whatever the tilt, because the spin is
+   about the ball's own axis and the tilt about the camera's right. The view is a longitude and a latitude at the
+   centre of the picture, as globe.js's: view.turnOf() reads it and view.turnTo(lon, lat) sets it (without onTurn,
+   so a page can follow another view without a loop). The inertia is the trackball's, unchanged. The Sun keeps the
+   trackball.
+
    Reduced motion (the system setting): the page opens still and the word "Let it move" starts it; "Hold still"
    stops it again. A phone (short side of the screen under 600 px) gets one frame at full tier and the words
-   "This one needs a bigger screen"; it takes no gesture.
+   "This one needs a bigger screen"; it takes no gesture — unless the page passes phone: 'run' (the Earth, by
+   Spec-Earth-3D: the one exception to the standard's phone rule), when the phone runs the page at the floor tier
+   with every gesture and no message, and only a device that cannot draw 3D at all (cwScene throws) gets a still.
+
+   Textures (the Earth audit, §9): view.maxTexture is the largest texture side the device allows (WebGPU's
+   maxTextureDimension2D, WebGL 2's MAX_TEXTURE_SIZE), and view.fitTexture(px) halves a wanted size until the device
+   allows it, so a tier's 8,192 picture steps down to 4,096 where 8,192 is refused instead of failing to load.
 
    Returns { renderer, scene, camera, ball, host, backend, tier, fps, refresh, target, moving, ground, setTier,
-   onFrame, resetView, redraw, stop }. The page adds its objects to `ball` (what the finger turns) or to `scene`
+   onFrame, resetView, redraw, stop, maxTexture, fitTexture, turnTo, turnOf }. The page adds its objects to `ball` (what the finger turns) or to `scene`
    (what stays, like the glow). onFrame(fn) is called every animation frame with (dt, moving), drawn or not.
    cwRGB(hex) gives a CSS hex colour as [r, g, b] in 0..1, display values, for a shader that reads cw-style.js. */
 import * as THREE from 'three';
@@ -137,6 +155,9 @@ export async function cwScene(host, o = {}) {
   const forceGL = !!o.forceWebGL || q.get('gl') === '1';
   const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) || q.get('reduce') === '1';   // ?reduce=1 for testing
   const phone = Math.min(screen.width, screen.height) < 600;
+  const phoneStill = phone && o.phone !== 'run';   // a phone shows a still, unless the page runs on phones at the floor
+  const globe = o.gesture === 'globe';
+  const DEG = Math.PI / 180;
   const key = 'cw3d-tier:' + (o.key || location.pathname);
   const cam = Object.assign({ fov: 32, position: [-1.7, 1.4, -3.7], near: 0.05, far: 100, min: 1.25, max: 9 }, o.camera || {});
   const ground = o.ground || (S ? S.black : '#0c0a08');
@@ -158,10 +179,21 @@ export async function cwScene(host, o = {}) {
   camera.lookAt(target3);
   const ball = new THREE.Group();
   scene.add(ball);
-  const home = { pos: camera.position.clone(), target: target3.clone(), quat: ball.quaternion.clone() };
+  const home = { pos: camera.position.clone(), target: target3.clone(), quat: ball.quaternion.clone(),
+                 lon: o.home && o.home.lon != null ? o.home.lon : 0, lat: o.home && o.home.lat != null ? o.home.lat : 0 };
+  let gLon = home.lon, gLat = home.lat;   // the desk-globe turn's view: the longitude and latitude at the centre
+
+  // ---------- the texture limit ----------
+  let maxTexture = 4096;
+  try {
+    const b = renderer.backend;
+    if (b.isWebGPUBackend) maxTexture = b.device.limits.maxTextureDimension2D;
+    else if (b.gl) maxTexture = b.gl.getParameter(b.gl.MAX_TEXTURE_SIZE);
+  } catch (e) { console.warn('scene.js: the texture limit could not be read; 4,096 assumed', e); }
+  function fitTexture(px) { let p = px; while (p > maxTexture && p > 256) p = p >> 1; return p; }
 
   // ---------- tiers ----------
-  let tier = forcedTier || (phone ? 'full' : (sessionStorage.getItem(key) || 'full'));
+  let tier = forcedTier || (phoneStill ? 'full' : phone ? 'floor' : (sessionStorage.getItem(key) || 'full'));   // a phone that runs starts at the floor
   if (!TIERS.includes(tier)) tier = 'full';
   let switching = false;
   function applyPixelRatio() { renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, PIXEL[tier])); }
@@ -185,7 +217,7 @@ export async function cwScene(host, o = {}) {
   if (window.ResizeObserver) new ResizeObserver(resize).observe(host); else window.addEventListener('resize', resize);
 
   // ---------- the loop ----------
-  let moving = !reduce && !phone, needs = true, stopped = false, touched = false;   // touched: the idle turn, if any, ends at the first touch
+  let moving = !reduce && !phoneStill, needs = true, stopped = false, touched = false;   // touched: the idle turn, if any, ends at the first touch
   const frameFns = [];
   let last = performance.now(), fpsCount = 0, fpsAt = last, fps = 0;
   const timer = cwTierTimer({ target, skip: !!(forcedTier || phone) });   // the timing that picks the tier
@@ -218,12 +250,27 @@ export async function cwScene(host, o = {}) {
   let pinch = null, ease = null;
   const tmpQ = new THREE.Quaternion(), tmpV = new THREE.Vector3();
   function radPerPx() { return 1.8 / Math.min(host.clientWidth || 1, host.clientHeight || 1); }
+  const tmpQ2 = new THREE.Quaternion();
+  function applyGlobe(tell) {   // the desk-globe turn: spin about the ball's own axis, then tilt about the camera's right
+    tmpV.set(0, 1, 0).applyQuaternion(camera.quaternion);
+    tmpQ2.setFromAxisAngle(tmpV, -gLon * DEG);
+    tmpV.set(1, 0, 0).applyQuaternion(camera.quaternion);
+    tmpQ.setFromAxisAngle(tmpV, gLat * DEG);
+    ball.quaternion.copy(tmpQ).multiply(tmpQ2);
+    needs = true;
+    if (tell && o.onTurn) o.onTurn(view);
+  }
   function turnBy(ax, ay) {   // ax, ay in radians: around the camera's up, then its right
+    if (globe) {   // the same radians, as a change of the view's longitude and latitude; the tilt stops at the poles
+      gLon -= ax / DEG; gLat = THREE.MathUtils.clamp(gLat + ay / DEG, -90, 90);
+      applyGlobe(true); return;
+    }
     tmpV.set(1, 0, 0).applyQuaternion(camera.quaternion);
     ball.quaternion.premultiply(tmpQ.setFromAxisAngle(tmpV, ay));
     tmpV.set(0, 1, 0).applyQuaternion(camera.quaternion);
     ball.quaternion.premultiply(tmpQ.setFromAxisAngle(tmpV, ax));
   }
+  function wrapLon(l) { l = ((l + 180) % 360 + 360) % 360 - 180; return l === -180 ? 180 : l; }
   function zoomBy(f) {
     const dir = camera.position.clone().sub(target3);
     const d = THREE.MathUtils.clamp(dir.length() * f, cam.min, cam.max);
@@ -247,7 +294,7 @@ export async function cwScene(host, o = {}) {
     o.onPick(hits.length ? hits[0] : null, view);
     needs = true;
   }
-  if (!phone) {
+  if (!phoneStill) {
     canvas.addEventListener('pointerdown', e => {
       if (e.button !== 0 && e.button !== 2) return;
       try { canvas.setPointerCapture(e.pointerId); } catch (err) {}   // a synthetic pointer has nothing to capture
@@ -292,10 +339,12 @@ export async function cwScene(host, o = {}) {
     touched = false;   // an idle turn, if the page asked for one, comes back with the home view
     const from = { pos: camera.position.clone(), target: target3.clone(), quat: ball.quaternion.clone() }, t0 = performance.now();
     vel.x = vel.y = 0;
+    const fromLon = gLon, fromLat = gLat, dLon = wrapLon(home.lon - gLon);   // the globe eases home the short way round
     ease = now => {
       const u = Math.min(1, (now - t0) / 500), s = u * u * (3 - 2 * u);
       camera.position.lerpVectors(from.pos, home.pos, s); target3.lerpVectors(from.target, home.target, s);
-      ball.quaternion.slerpQuaternions(from.quat, home.quat, s);
+      if (globe) { gLon = fromLon + dLon * s; gLat = fromLat + (home.lat - fromLat) * s; applyGlobe(true); }
+      else ball.quaternion.slerpQuaternions(from.quat, home.quat, s);
       if (u >= 1) ease = null;
     };
   }
@@ -307,12 +356,12 @@ export async function cwScene(host, o = {}) {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'word'; b.textContent = text;
     b.addEventListener('click', onTap); wordsHost.appendChild(b); return b;
   }
-  if (!phone) word('Reset view', resetView);   // a phone's still has no view to reset
+  if (!phoneStill) word('Reset view', resetView);   // a phone's still has no view to reset
   let moveWord = null;
-  if (reduce && !phone) {
+  if (reduce && !phoneStill) {
     moveWord = word('Let it move', () => { moving = !moving; moveWord.textContent = moving ? 'Hold still' : 'Let it move'; needs = true; });
   }
-  if (phone) {
+  if (phoneStill) {
     const m = document.createElement('p');
     m.className = 'cw3d-bigger';
     m.textContent = 'This one needs a bigger screen';
@@ -325,12 +374,15 @@ export async function cwScene(host, o = {}) {
     get tier() { return tier; }, get fps() { return fps; }, get moving() { return moving; },
     set moving(v) { moving = !!v; needs = true; },
     get timing() { return timer.phase; }, get sag() { return timer.sag; },
-    reduce, phone, setTier, resetView,
+    reduce, phone, setTier, resetView, maxTexture, fitTexture,
+    turnTo: (lon, lat) => { if (!globe) return; if (lon != null) gLon = lon; if (lat != null) gLat = THREE.MathUtils.clamp(lat, -90, 90); applyGlobe(false); },
+    turnOf: () => globe ? { lon: wrapLon(gLon), lat: gLat } : null,
     onFrame: fn => frameFns.push(fn),
     redraw: () => { needs = true; },
     stop: () => { stopped = true; renderer.setAnimationLoop(null); }
   };
   applyPixelRatio(); resize();
+  if (globe) { applyGlobe(false); home.quat.copy(ball.quaternion); }
   if (o.onTier) await o.onTier(tier, view);
   renderer.setAnimationLoop(frame);
   return view;

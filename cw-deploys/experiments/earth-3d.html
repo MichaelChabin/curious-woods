@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/png" href="../art/icons/time-machine-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/time-machine-icon-256.png">
+<title>The Earth, in 3D — Curious Woods</title>
+<!-- The first Earth bench (Spec-Earth-3D, step 1 of Getting there; Michael's prompt Prompt-Build-Earth-Bench-01.md;
+     27 Oct 2026): the 3D Earth on the shared shelf (js/3d/earth.js on js/3d/scene.js) beside the 2D globe the Time
+     Machine runs on (js/globe.js), both at the same age and turned to the same longitude and latitude, so the two can
+     be compared by eye. A bench, beside the Time Machine and not in it: nothing a child sees changes. The pieces of
+     continent carry today's picture at every age here, which is not honest, and the line under the stage says so.
+     The corner readout (backend, tier, frame rate, the triangles) is for the bench only.
+     The Earth wears the Time Machine's icon for now; it has none of its own. -->
+<script src="../js/cw-style.js?v=2026-10-27"></script>
+<script src="../js/cw-time.js?v=2026-10-19"></script>
+<script src="../js/globe.js?v=2026-10-22c"></script>
+<script type="importmap">
+{ "imports": {
+  "three":        "../js/vendor/three-r186/three.webgpu.js",
+  "three/webgpu": "../js/vendor/three-r186/three.webgpu.js",
+  "three/tsl":    "../js/vendor/three-r186/three.tsl.js"
+} }
+</script>
+<style>
+  :root { color-scheme: light; }
+  html, body { margin: 0; }
+  body {
+    background: var(--cw-parchment, #f4f1e8); color: var(--cw-ink, #2a241c);
+    font-family: var(--cw-font, Georgia, serif); font-size: 17px; line-height: 1.5;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-top: 28px; padding-bottom: 48px;
+  }
+  .column { max-width: 700px; margin: 0 auto; }
+  .wide { max-width: 1040px; margin: 0 auto; }
+  h1 { font-weight: normal; font-size: 1.7rem; margin: 0 0 6px; letter-spacing: 0.01em; text-wrap: balance; }
+  .sub { color: var(--cw-ink-soft, #6b655a); margin: 0 0 18px; max-width: 62ch; }
+  .bench { display: grid; grid-template-columns: 150px 1fr; gap: 18px 24px; align-items: start; }
+  .left { display: flex; flex-direction: column; gap: 6px; padding-top: 4px; }
+  .pair { display: flex; gap: 10px; align-items: baseline; }
+  .pair .slash { color: var(--cw-grey, #9a958b); }
+  .word {
+    background: none; border: 0; padding: 2px 0; color: var(--cw-payne, #546A80); font: inherit; cursor: pointer;
+    border-bottom: 1px solid transparent; text-align: left;
+  }
+  .word:hover { color: var(--cw-payne-hover, #3D3D3A); }
+  .word[aria-pressed="true"] { color: var(--cw-ink, #2a241c); border-bottom-color: var(--cw-copper, #b5652b); }
+  .word:focus-visible { outline: 2px solid var(--cw-copper, #b5652b); outline-offset: 3px; }
+  .stages { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .stage-box { min-width: 0; }
+  .stage { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; touch-action: none; background: var(--cw-parchment, #f4f1e8); }
+  #stage2d .cw-globe { position: absolute; inset: 0; }
+  .under { margin: 6px 0 0; font-size: 13px; font-style: italic; color: var(--cw-ink-soft, #6b655a); }
+  .age { margin: 18px 0 0; display: grid; grid-template-columns: 150px 1fr; gap: 24px; align-items: center; }
+  .age label { color: var(--cw-ink, #2a241c); }
+  .age input { width: 100%; accent-color: var(--cw-copper, #b5652b); margin: 0; }
+  .age output { display: block; margin-top: 2px; font-size: 15px; color: var(--cw-ink-soft, #6b655a); font-variant-numeric: tabular-nums; }
+  .readout { margin: 10px 0 0; font-size: 12px; color: var(--cw-grey-word, #7d7a72); font-variant-numeric: tabular-nums; line-height: 1.4; }
+  .credit { margin: 18px 0 0; font-size: 13px; color: var(--cw-ink-soft, #6b655a); }
+  #fail { color: var(--cw-vermilion, #c84830); display: none; margin: 12px 0 0; white-space: pre-wrap; font-size: 13px; }
+  #still { display: none; }
+  #still img { display: block; width: 100%; height: auto; }
+  #kept { margin: 16px 0 0; display: none; }
+  #kept img { display: block; width: 100%; height: auto; border-radius: 4px; }
+  #kept figcaption { display: flex; gap: 22px; margin-top: 6px; }
+  #kept a { color: var(--cw-payne, #546A80); text-decoration: none; }
+  @media (max-width: 760px) {
+    .bench, .age { grid-template-columns: 1fr; gap: 12px; }
+    .left { flex-direction: row; flex-wrap: wrap; gap: 6px 22px; }
+    .stages { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="column">
+  <h1>The Earth, in 3D</h1>
+  <p class="sub">On the left, the Earth as a ball on the graphics card, the pieces of continent turned by their plates. On the right, the globe the Time Machine draws today. The same age, the same view: turn one and the other follows.</p>
+</div>
+<div class="wide">
+  <div class="bench">
+    <div class="left" id="words">
+      <div class="pair"><button class="word" id="wBlue" type="button" aria-pressed="false">Blue Marble</button><span class="slash">/</span><button class="word" id="wOld" type="button" aria-pressed="true">old ground</button></div>
+      <div class="pair"><button class="word" id="wLit" type="button" aria-pressed="false">Lit</button><span class="slash">/</span><button class="word" id="wEven" type="button" aria-pressed="true">even</button></div>
+    </div>
+    <div class="stages">
+      <div class="stage-box">
+        <div id="stage3d" class="stage"><div id="cities"></div></div>
+        <p class="under">bench only: today’s ground carried back in time</p>
+        <div id="still"><img alt="The Earth, a still picture" src="../art/globe/earth-3d-still.webp"><p class="under" id="stillLine">This one needs a newer device.</p></div>
+      </div>
+      <div class="stage-box">
+        <div id="stage2d" class="stage"></div>
+        <p class="under">the 2D globe, as the Time Machine draws it</p>
+      </div>
+    </div>
+  </div>
+  <div class="age">
+    <label for="age">Age<output id="ageWord" for="age">today</output></label>
+    <input type="range" id="age" min="0" max="1000" step="1" value="0" aria-label="Age, millions of years ago">
+  </div>
+  <p class="readout" id="readout"></p>
+  <p id="fail"></p>
+  <figure id="kept"><img alt="The kept picture"><figcaption><a id="save" download="the-earth.png">Save the picture</a><a href="#" id="unkeep">Close</a></figcaption></figure>
+  <p class="credit" id="credit"></p>
+</div>
+
+<script type="module">
+  const CW_VERSION = '2026-10-27 c87809e';   // date + short commit hash; bump in the same commit as any change
+  console.log('earth-3d', CW_VERSION);
+  import * as THREE from 'three';
+  import { cwScene } from '../js/3d/scene.js?v=2026-10-27c';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-10-27c';
+  import { cwStill } from '../js/3d/still.js?v=2026-10-27b';
+
+  const $ = id => document.getElementById(id);
+  const S = window.CW && window.CW.STYLE;
+  if (!S) { $('fail').style.display = 'block'; $('fail').textContent = 'cw-style.js did not load: this page has no colours.'; throw new Error('cw-style.js missing'); }
+  const Q = new URLSearchParams(location.search);
+  // bench only: with ?log=1 every console error and warning is also written under the stage, for a browser whose
+  // console cannot be reached (Safari in the simulator)
+  if (Q.get('log') === '1') {
+    const show = (kind, args) => { const f = $('fail'); f.style.display = 'block'; f.textContent += '\n' + kind + ': ' + [...args].map(a => a && a.message ? a.message : String(a)).join(' ').slice(0, 1500); };
+    ['error', 'warn'].forEach(k => { const orig = console[k].bind(console); console[k] = (...a) => { orig(...a); show(k, a); }; });
+    window.addEventListener('error', e => show('uncaught', [e.message])); window.addEventListener('unhandledrejection', e => show('rejection', [e.reason]));
+  }
+  const CREDITS = {
+    old: 'The ground: height from ETOPO 2022 (NOAA), tree cover from Copernicus Global Land Cover 2019, as the Time Machine’s map. The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.',
+    blue: 'The ground: Blue Marble: Next Generation, July 2004, NASA Earth Observatory (Reto Stöckli, NASA Goddard Space Flight Center). The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.'
+  };
+  const HOME = { lon: 20, lat: 15 };   // the 2D globe's opening view
+  const state = { ground: 'old', light: 'even', ma: 0 };
+  let view = null, earth = null, g2d = null, syncing = false;
+
+  // ---------- the 3D Earth ----------
+  // The Earth runs on phones at the floor tier (Spec-Earth-3D: the exception to the standard's phone rule); only a
+  // device that cannot draw 3D at all gets the still and its line. ?no3d=1 forces that, for the bench.
+  try {
+    if (Q.get('no3d') === '1') throw new Error('bench: no 3D (?no3d=1)');
+    view = await cwScene($('stage3d'), {
+      ground: S.parchment, key: 'earth-3d', phone: 'run',
+      gesture: 'globe', home: HOME,
+      camera: { fov: 24, position: [0, 0, 4.9], near: 0.1, far: 50, min: 1.4, max: 12 },   // the ball fills the square as the 2D disc does (its radius W/2 − 4)
+      words: $('words'),
+      onTurn: v => { if (g2d && !syncing) { syncing = true; const t = v.turnOf(); g2d.turn(t.lon, t.lat); syncing = false; } },
+      onTier: async (tier) => { if (earth) await earth.setTier(tier); }
+    });
+    earth = await cwEarth(view, { citiesHost: $('cities') });
+    await earth.setTier(view.tier);
+  } catch (e) {
+    console.warn('earth-3d: no 3D view;', e && e.message ? e.message : e);
+    $('stage3d').style.display = 'none'; $('still').style.display = 'block';
+    if (Q.get('no3d') !== '1') { $('fail').style.display = 'block'; $('fail').textContent = 'This page could not start its 3D view: ' + (e && e.message ? e.message : e); }
+  }
+
+  // ---------- the 2D globe, as the Time Machine has it ----------
+  g2d = window.cwGlobe($('stage2d'), {
+    ma: 0, lon: HOME.lon, lat: HOME.lat, projection: 'globe',
+    onTurn: () => { if (view && !syncing) { syncing = true; const t = g2d.view(); view.turnTo(t.lon, t.lat); syncing = false; } }
+  });
+
+  // ---------- the words ----------
+  function pressed(on, off) { on.setAttribute('aria-pressed', 'true'); off.setAttribute('aria-pressed', 'false'); }
+  function setGround(g) { state.ground = g; if (earth) earth.setGround(g); pressed($(g === 'blue' ? 'wBlue' : 'wOld'), $(g === 'blue' ? 'wOld' : 'wBlue')); $('credit').textContent = CREDITS[g]; }
+  function setLight(l) { state.light = l; if (earth) earth.setLight(l); pressed($(l === 'lit' ? 'wLit' : 'wEven'), $(l === 'lit' ? 'wEven' : 'wLit')); }
+  $('wBlue').addEventListener('click', () => setGround('blue'));
+  $('wOld').addEventListener('click', () => setGround('old'));
+  $('wLit').addEventListener('click', () => setLight('lit'));
+  $('wEven').addEventListener('click', () => setLight('even'));
+  setGround(Q.get('ground') === 'blue' ? 'blue' : 'old');
+  setLight(Q.get('light') === 'lit' ? 'lit' : 'even');
+
+  // ---------- the age ----------
+  function ageWord(ma) { return ma === 0 ? 'today' : ma + ' million years ago'; }
+  function setAge(ma) {
+    state.ma = ma; $('ageWord').value = ageWord(ma);
+    if (earth) earth.setTime(ma);
+    g2d.setTime(ma);
+  }
+  $('age').addEventListener('input', () => setAge(+$('age').value));
+  if (Q.get('ma')) { $('age').value = Q.get('ma'); }
+  setAge(+$('age').value);
+
+  // ---------- the kept picture (the credit goes on it) ----------
+  if (view) {
+    const keep = document.createElement('button'); keep.type = 'button'; keep.className = 'word'; keep.textContent = 'Keep this picture';
+    $('words').appendChild(keep);
+    keep.addEventListener('click', async () => {
+      keep.disabled = true; keep.textContent = 'Making it…';
+      try {
+        const blob = await cwStill(view, { long: 4096, caption: 'The Earth, ' + ageWord(state.ma) + '.', credit: CREDITS[state.ground] });
+        const url = URL.createObjectURL(blob);
+        $('kept').querySelector('img').src = url; $('save').href = url; $('kept').style.display = 'block';
+        $('kept').dataset.bytes = blob.size;
+      } catch (e) { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The picture could not be made: ' + e.message; }
+      keep.disabled = false; keep.textContent = 'Keep this picture';
+    });
+    $('unkeep').addEventListener('click', e => { e.preventDefault(); $('kept').style.display = 'none'; });
+  }
+
+  // ---------- the bench's readout: backend, tier, frame rate, the triangles ----------
+  if (view) {
+    const st = earth.stats;
+    setInterval(() => {
+      $('readout').textContent = view.backend + ' · ' + view.tier + (view.timing !== 'done' ? ' (timing)' : '') + ' · ' + view.fps + ' fps · ' +
+        st.triangles.toLocaleString('en') + ' triangles from ' + st.pieces + ' pieces on ' + st.plates + ' plates, built in ' + st.buildMs + ' ms (the file in ' + st.fetchMs + ' ms)' +
+        ' · Blue Marble ' + (st.blue() ? st.blue() + ' px (device allows ' + view.maxTexture + ')' : 'not loaded');
+    }, 500);
+  } else {
+    $('readout').textContent = 'no 3D view: the still picture and the 2D globe';
+  }
+
+  // ---------- for the bench's own checks (the browser pane) ----------
+  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = setAge;
+  // The bench's own timer, as the Sun bench's: draws `frames` frames off-screen at the canvas's size for a tier,
+  // the age moving a million years a frame (so every plate's turn is read each frame, as a slider drag reads it),
+  // and waits for the graphics card to finish each, so the number is the true cost of a frame, not the display's
+  // refresh. cwBench('full') in the console; returns ms a frame and the rate that would give.
+  window.cwBench = async function (tier, frames = 30) {
+    if (!view) return null;
+    const live = view.tier, ma0 = state.ma; await view.setTier(tier, { quiet: true });
+    const w = view.renderer.domElement.width, h = view.renderer.domElement.height;
+    const rt = new THREE.RenderTarget(w, h, { depthBuffer: true });
+    const done = () => view.renderer.readRenderTargetPixelsAsync(rt, 0, 0, 1, 1);
+    view.renderer.setRenderTarget(rt);
+    view.renderer.render(view.scene, view.camera); await done();   // the first frame compiles
+    const t0 = performance.now();
+    for (let i = 0; i < frames; i++) { earth.setTime(ma0 + i); view.renderer.render(view.scene, view.camera); await done(); }
+    const ms = (performance.now() - t0) / frames;
+    view.renderer.setRenderTarget(null); rt.dispose();
+    earth.setTime(ma0);
+    await view.setTier(live, { quiet: true });
+    return { backend: view.backend, tier, pixels: w + 'x' + h, msPerFrame: +ms.toFixed(2), fpsIfAlone: +(1000 / ms).toFixed(1) };
+  };
+  // the two stages as one picture, the cities marked on both from each engine's own projection, for the report
+  window.cwPair = async function (px = 800) {
+    if (!view) return null;
+    const r = view.renderer, cam = view.camera;
+    const rt = new THREE.RenderTarget(px, px, { type: THREE.UnsignedByteType, colorSpace: THREE.SRGBColorSpace, depthBuffer: true });
+    const oldAspect = cam.aspect; cam.aspect = 1; cam.updateProjectionMatrix();
+    r.setRenderTarget(rt); r.render(view.scene, cam);
+    const data = await r.readRenderTargetPixelsAsync(rt, 0, 0, px, px);
+    r.setRenderTarget(null); rt.dispose(); cam.aspect = oldAspect; cam.updateProjectionMatrix();
+    const flip = !!(r.backend && r.backend.isWebGLBackend);
+    const cv = document.createElement('canvas'); cv.width = px * 2 + 20; cv.height = px + 40;
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = S.parchment; ctx.fillRect(0, 0, cv.width, cv.height);
+    const img = ctx.createImageData(px, px), src = new Uint8ClampedArray(data.buffer, data.byteOffset, px * px * 4);
+    if (flip) { for (let y = 0; y < px; y++) img.data.set(src.subarray((px - 1 - y) * px * 4, (px - y) * px * 4), y * px * 4); } else img.data.set(src);
+    for (let i = 3; i < img.data.length; i += 4) img.data[i] = 255;
+    ctx.putImageData(img, 0, 0);
+    const c2 = $('stage2d').querySelector('canvas');
+    ctx.drawImage(c2, px + 20, 0, px, px);
+    // the cities, each engine's own: the 3D by its plate's turn, the 2D by placeAt (point in polygon) and project
+    const W3 = view.host.clientWidth, W2 = c2.clientWidth, s3 = px / W3, s2 = px / W2, rows = [];
+    ctx.font = Math.round(px / 50) + 'px ' + S.font; ctx.textBaseline = 'middle';
+    for (const c of earth.cities) {
+      if (state.ma > c.from) continue;
+      const p3 = earth.project(c.lon, c.lat, c.plate);
+      const at = g2d.placeAt(c.lon, c.lat), p2 = at ? g2d.project(at.lon, at.lat) : null;
+      const in3 = p3.front && p3.x >= 0 && p3.x <= W3 && p3.y >= 0 && p3.y <= W3;   // on the 3D stage, not past its edge
+      if (in3) { ctx.fillStyle = S.vermilion; ctx.beginPath(); ctx.arc(p3.x * s3, p3.y * s3, px / 160, 0, 7); ctx.fill(); ctx.fillStyle = S.ink; ctx.fillText(c.name, p3.x * s3 + px / 100, p3.y * s3); }
+      if (p2) { ctx.fillStyle = S.vermilion; ctx.beginPath(); ctx.arc(px + 20 + p2.x * s2, p2.y * s2, px / 160, 0, 7); ctx.fill(); ctx.fillStyle = S.ink; ctx.fillText(c.name, px + 20 + p2.x * s2 + px / 100, p2.y * s2); }
+      rows.push({ name: c.name, x3: in3 ? p3.x / W3 : null, y3: in3 ? p3.y / W3 : null, x2: p2 ? p2.x / W2 : null, y2: p2 ? p2.y / W2 : null });
+    }
+    ctx.fillStyle = S.inkSoft; ctx.font = Math.round(px / 40) + 'px ' + S.font; ctx.textBaseline = 'alphabetic';
+    const t = view.turnOf();
+    ctx.fillText('3D: ' + ageWord(state.ma) + ', lon ' + t.lon.toFixed(0) + '°, lat ' + t.lat.toFixed(0) + '°, ' + state.ground + ', ' + state.light, 8, px + 26);
+    ctx.fillText('2D (globe.js): the same', px + 28, px + 26);
+    const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
+    return { blob, rows };
+  };
+</script>
+</body>
+</html>
