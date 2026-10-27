@@ -1,5 +1,5 @@
 ---
-status: Report — the first Earth bench, built 27 Oct 2026 (late morning) to Michael's prompt Prompt-Build-Earth-Bench-01.md; checked in the pane on the Mac; not committed until Michael says so
+status: Report — the first Earth bench, built 27 Oct 2026 (late morning) to Michael's prompt Prompt-Build-Earth-Bench-01.md; checked in the pane on the Mac; committed 9066c9d on his word; his rulings of the same day applied and pushed (the last section)
 role: What was built for step 1 of Spec-Earth-3D's Getting there, what was measured, what the two engines agree on, what still shows, and what needs Michael's finger on the iPad
 related: Spec-Earth-3D.md, Audit-Earth-3D.md (§3, §9, §11), Standard-Interactives.md, Report-3D-Shelf-Oct26.md, Report-Revise-3D-Shelf-01.md, cw-deploys/js/3d/earth.js, cw-deploys/js/3d/scene.js, cw-deploys/experiments/earth-3d.html, Earth-3D-Bench-Oct27/ (the fifteen pair pictures)
 updated: 2026-10-27
@@ -201,6 +201,20 @@ finding again, the pane's and not the Earth's, and the first thing the iPad answ
 - **The version stamp**: the page's `CW_VERSION` carries `c87809e`, the commit it was built on; the shelf imports are at
   `?v=2026-10-27c` (`scene.js` changed; `earth.js` new); the Sun and shelf benches still import `scene.js` at `?v=2026-10-27b`
   and are unchanged.
+
+## Michael's rulings, 27 Oct, after looking on the Mac
+
+Blue Marble looks very good to him; the agreement between the engines is what he hoped for. The rulings, applied and
+pushed the same day: **no halo** on the cities' names (the 13 Oct ruling stands; the prompt was wrong to ask) — taken
+off; **San Francisco** stays the bench's way, pinned to North America as `cities.json` says, the Time Machine not changed
+now and the difference noted for the swap (step 8); **July** stays; **`earth.js` is a shelf file**, the spec now says so;
+**the drag's gain** matches the 2D globe's for now (180° across the stage's shorter side, in `scene.js` for the desk-globe
+turn only), to be judged by finger on the iPad; **lit or even** still open, both left; **the zoom's limit** is fine for this
+bench, closer is step 5.
+
+**For step 2, so it is not lost:** Blue Marble's ocean is near-black, so the shelf each piece carries past the coast shows
+as a black band that drifts with the continents, and it reads as night. The sea mask must treat the photograph's sea as the
+shelf wash, and it matters more for Blue Marble than for the old ground.
 
 ## Files
 

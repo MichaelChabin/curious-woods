@@ -47,8 +47,9 @@
    stops when a pole faces her; a drag to the right moves the surface east whatever the tilt, because the spin is
    about the ball's own axis and the tilt about the camera's right. The view is a longitude and a latitude at the
    centre of the picture, as globe.js's: view.turnOf() reads it and view.turnTo(lon, lat) sets it (without onTurn,
-   so a page can follow another view without a loop). The inertia is the trackball's, unchanged. The Sun keeps the
-   trackball.
+   so a page can follow another view without a loop). The drag turns 180° across the stage's shorter side, as the 2D
+   disc turns across its width (the trackball: 1.8 radians). The inertia is the trackball's, unchanged. The Sun keeps
+   the trackball.
 
    Reduced motion (the system setting): the page opens still and the word "Let it move" starts it; "Hold still"
    stops it again. A phone (short side of the screen under 600 px) gets one frame at full tier and the words
@@ -249,7 +250,9 @@ export async function cwScene(host, o = {}) {
   const vel = { x: 0, y: 0 };
   let pinch = null, ease = null;
   const tmpQ = new THREE.Quaternion(), tmpV = new THREE.Vector3();
-  function radPerPx() { return 1.8 / Math.min(host.clientWidth || 1, host.clientHeight || 1); }
+  // the trackball turns 1.8 radians across the stage's shorter side; the desk globe turns 180° across it, as globe.js's disc
+  // does across its width (Michael, 27 Oct: match the 2D for now, to be judged by finger on the iPad)
+  function radPerPx() { return (globe ? Math.PI : 1.8) / Math.min(host.clientWidth || 1, host.clientHeight || 1); }
   const tmpQ2 = new THREE.Quaternion();
   function applyGlobe(tell) {   // the desk-globe turn: spin about the ball's own axis, then tilt about the camera's right
     tmpV.set(0, 1, 0).applyQuaternion(camera.quaternion);

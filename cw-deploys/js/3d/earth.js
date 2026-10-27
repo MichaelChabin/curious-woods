@@ -31,7 +31,9 @@
    multiply matches the 2D canvas's. Light, two ways: one soft light from the upper left in the camera's frame, or
    even. The dozen cities of stories/plates/cities.json ride their plates as HTML dots and names over the stage,
    placed by projecting from the ball, hidden on the far side, fading over the twenty million years before their
-   ground's birth as the Time Machine's do.
+   ground's birth as the Time Machine's do; the names at 14 px with no halo (Michael's ruling of 13 Oct, kept 27 Oct),
+   each city carried by the plate cities.json names (the Time Machine carries a city by the piece under it today, which
+   leaves San Francisco at home; the bench's way is the one to keep at the swap — Michael, 27 Oct).
 
      const earth = await cwEarth(view, {
        plates: '../stories/plates/continents.json', cities: '../stories/plates/cities.json',
@@ -316,13 +318,13 @@ export async function cwEarth(view, o = {}) {
   const cityEls = [];
   if (o.citiesHost && cities.length) {
     const host = o.citiesHost;
-    const dotPx = S.dot.minor, halo = S.alpha(S.halo, S.haloAlpha), hp = S.haloPx;
+    const dotPx = S.dot.minor;
     for (const c of cities) {
       const el = document.createElement('div');
       el.className = 'cw-earth-city';
       el.style.cssText = `position:absolute;left:0;top:0;pointer-events:none;will-change:transform;display:none;font:${S.size.mark}px ${S.font};color:${S.ink};white-space:nowrap;`;
       el.innerHTML = `<span style="position:absolute;left:${-dotPx / 2}px;top:${-dotPx / 2}px;width:${dotPx}px;height:${dotPx}px;border-radius:50%;background:${S.greyDot}"></span>` +
-        `<span style="position:absolute;left:${dotPx / 2 + 4}px;top:-0.65em;text-shadow:0 0 ${hp}px ${halo},0 0 ${hp}px ${halo},0 0 ${hp}px ${halo}">${c.name}</span>`;
+        `<span style="position:absolute;left:${dotPx / 2 + 4}px;top:-0.65em">${c.name}</span>`;   // no halo: Michael's ruling of 13 Oct, kept 27 Oct
       host.appendChild(el); cityEls.push({ c, el });
     }
   }
