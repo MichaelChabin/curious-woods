@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" type="image/png" href="../art/icons/geometry-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/geometry-icon-256.png">
+<title>Construct Coordinates — second bench</title>
+<style>
+  html, body { margin:0; padding:0; height:100%; overflow:hidden; background:#f4f1e8; }
+  #stage { position:fixed; inset:0; touch-action:none; }
+  #panel {
+    position:fixed; left:16px; top:16px; z-index:10; width:230px;
+    max-height:calc(100% - 32px); overflow-y:auto; box-sizing:border-box;
+    background:rgba(244,241,232,0.94); border:0.5px solid #c8b89a; border-radius:6px;
+    padding:12px 14px; font:13px/1.5 Georgia, serif; color:#546A80;
+    user-select:none;
+  }
+  #panel h1 { font-size:14px; font-weight:normal; margin:0 0 2px; color:#546A80; }
+  .quiet { font-size:11px; font-style:italic; opacity:0.75; margin:0 0 10px; }
+  .row { margin:9px 0 0; }
+  .row label { display:block; font-size:12px; margin-bottom:2px; }
+  .row input[type=range] { width:100%; }
+  .val { opacity:0.8; }
+  .word { color:#3D3D3A; cursor:pointer; }
+  .word:hover { color:#2c5aa0; }
+  .note { font-size:11px; font-style:italic; opacity:0.7; margin:6px 0 0; }
+  .sep { border-top:0.5px solid #d8cbb0; margin:12px 0 2px; }
+  #readout {
+    position:fixed; right:16px; bottom:14px; z-index:10;
+    font:12px Georgia, serif; color:#546A80; opacity:0.85; text-align:right;
+    user-select:none; pointer-events:none;
+  }
+  #benchnote {
+    position:fixed; left:262px; bottom:14px; z-index:10; max-width:340px;
+    font:11px/1.5 Georgia, serif; font-style:italic; color:#546A80; opacity:0.65;
+    user-select:none; pointer-events:none;
+  }
+  #fail { display:none; position:fixed; left:50%; top:40%; transform:translate(-50%,-50%); z-index:20;
+    font:14px Georgia, serif; color:#546A80; background:#f4f1e8; padding:12px 16px; border:0.5px solid #c8b89a; }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<div id="panel">
+  <h1>Construct Coordinates</h1>
+  <p class="quiet">the grid, constructed in front of you — second bench</p>
+  <div class="row"><span class="word" id="replay">replay</span></div>
+  <div class="row">
+    <label>duration &nbsp;<span class="val" id="v-dur">5.0s</span></label>
+    <input type="range" id="k-dur" min="2" max="10" step="0.5" value="5">
+  </div>
+  <div class="row">
+    <label>legible opening &nbsp;<span class="val" id="v-leg">6 steps</span></label>
+    <input type="range" id="k-leg" min="0" max="12" step="1" value="6">
+  </div>
+  <div class="row">
+    <label>acceleration &nbsp;<span class="val" id="v-acc">3</span></label>
+    <input type="range" id="k-acc" min="1" max="6" step="1" value="3">
+  </div>
+  <div class="row">
+    <label>pause at the y axis &nbsp;<span class="val" id="v-pause">0.5s</span></label>
+    <input type="range" id="k-pause" min="0" max="2" step="0.1" value="0.5">
+  </div>
+  <div class="row">
+    <label>slow grid lines &nbsp;<span class="val" id="v-slow">3</span></label>
+    <input type="range" id="k-slow" min="0" max="8" step="1" value="3">
+  </div>
+  <div class="row">
+    <label>hold after each &nbsp;<span class="val" id="v-hold">0.4s</span></label>
+    <input type="range" id="k-hold" min="0" max="1.5" step="0.1" value="0.4">
+  </div>
+  <div class="row"><span class="word" id="skip-word">tap skips ahead</span></div>
+  <div class="sep"></div>
+  <p class="note">once the grid stands, tap any crossing for its fraction</p>
+  <div class="row">
+    <label>one fraction takes &nbsp;<span class="val" id="v-frac">3.0s</span></label>
+    <input type="range" id="k-frac" min="1" max="8" step="0.5" value="3">
+  </div>
+  <div class="row"><span class="word" id="method-word">walk from 1</span></div>
+  <div class="row"><span class="word" id="clear-word">clear fractions</span></div>
+  <div class="sep"></div>
+  <div class="row">
+    <label>zoom &nbsp;<span class="val" id="v-zoom"></span></label>
+    <input type="range" id="k-zoom" min="22" max="260" step="1" value="56">
+  </div>
+  <div class="row"><span class="word" id="mode-word">finer grid constructs itself</span></div>
+</div>
+
+<div id="readout"></div>
+<div id="benchnote">
+  The second bench for the map reveal (the first is construct-coordinates.html, left as it
+  was). Numbers arrive as their points do; a pause at the crossing the y axis goes through;
+  the first grid lines slowly, each with a hold; the words <i>x axis</i> and <i>y axis</i>
+  riding their axes; a tap on a crossing constructs its fraction, two ways to carry it.
+  Drag pans, the wheel or two fingers zoom.
+</div>
+<div id="fail"></div>
+
+<script src="../js/cw-style.js?v=2026-10-27b"></script>
+<script src="../js/cw-number.js?v=2026-09-03"></script>
+<script>
+var CW_VERSION = '2026-10-28 da958b6 · construct-coordinates v2'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+(function () {
+'use strict';
+
+// ---------- the shelf ----------
+var S = window.CW && window.CW.STYLE, NUM = window.CW && window.CW.num;
+if (!S || !NUM) {
+  var fail = document.getElementById('fail');
+  fail.style.display = 'block';
+  fail.textContent = (S ? 'cw-number.js' : 'cw-style.js') + ' did not load: this page has no ' + (S ? 'fractions' : 'copper') + '.';
+  throw new Error('shelf script missing');
+}
+
+// ---------- canvas ----------
+var canvas = document.getElementById('stage');
+var ctx = canvas.getContext('2d');
+var DPR = Math.min(window.devicePixelRatio || 1, 2);
+var W = 0, H = 0;
+function resize() {
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+}
+window.addEventListener('resize', function () { resize(); });
+resize();
+
+// ---------- view ----------
+var view = { scale: 56, cx: 0.6, cy: 0.4 };   // px per unit; centre in world units
+function sx(x) { return W / 2 + (x - view.cx) * view.scale; }
+function sy(y) { return H / 2 - (y - view.cy) * view.scale; }
+function wx(px) { return view.cx + (px - W / 2) / view.scale; }
+function wy(py) { return view.cy - (py - H / 2) / view.scale; }
+
+// ---------- palette (v1's, plus the one copper from cw-style.js) ----------
+var INK       = '#546A80';                    // axes, labels
+var GRID      = 'rgba(84,106,128,0.30)';      // settled grid lines
+var ARC       = '#2c5aa0';                    // compass ceremony
+var POINT     = '#BE622F';                    // minted points
+var SUBGRID   = 'rgba(84,106,128,0.16)';      // constructed tenths
+var COPPER    = S.copper;                     // fraction work, apart from the grid
+var TAU = 6.2832;
+
+// ---------- knobs ----------
+var kDur = document.getElementById('k-dur');
+var kLeg = document.getElementById('k-leg');
+var kAcc = document.getElementById('k-acc');
+var kPause = document.getElementById('k-pause');
+var kSlow = document.getElementById('k-slow');
+var kHold = document.getElementById('k-hold');
+var kFrac = document.getElementById('k-frac');
+var kZoom = document.getElementById('k-zoom');
+var skipOn = true;
+var modeConstruct = true;
+var method = 'walk';                          // 'walk' (from 1) or 'carry' (to 0)
+
+function knobLabels() {
+  document.getElementById('v-dur').textContent = (+kDur.value).toFixed(1) + 's';
+  document.getElementById('v-leg').textContent = kLeg.value + ' steps';
+  document.getElementById('v-acc').textContent = kAcc.value;
+  document.getElementById('v-pause').textContent = (+kPause.value).toFixed(1) + 's';
+  document.getElementById('v-slow').textContent = kSlow.value;
+  document.getElementById('v-hold').textContent = (+kHold.value).toFixed(1) + 's';
+  document.getElementById('v-frac').textContent = (+kFrac.value).toFixed(1) + 's';
+  document.getElementById('v-zoom').textContent = '';
+  document.getElementById('skip-word').textContent = skipOn ? 'tap skips ahead' : 'tap does nothing';
+  document.getElementById('method-word').textContent = method === 'walk' ? 'walk from 1' : 'carry to 0';
+  document.getElementById('mode-word').textContent = modeConstruct ? 'finer grid constructs itself' : 'grid keeps its step';
+}
+knobLabels();
+
+// ---------- the constructions, as steps ----------
+// One clock. The main run sits at offset 0; each fraction is its own log of steps at its
+// own offset, one after another. Every step: { t:type, dur, t0, t1, geometry... }.
+// Types: pt, line, arc (a full circle, swept), lab (a number), hold (nothing drawn, time
+// passes), flab (a fraction, written). Drawing never reads anything but the log and the clock.
+var main = { steps: [], total: 0, bounds: null, xAxis: -1, yAxis: -1 };
+var fracs = [];
+var t0 = 0;
+function clock() { return performance.now() / 1000 - t0; }
+function runEnd() {
+  if (fracs.length) { var l = fracs[fracs.length - 1]; return l.offset + l.total; }
+  return main.total;
+}
+
+function visibleBounds(pad) {
+  var hw = W / (2 * view.scale), hh = H / (2 * view.scale);
+  return {
+    x0: Math.floor(view.cx - hw - pad), x1: Math.ceil(view.cx + hw + pad),
+    y0: Math.floor(view.cy - hh - pad), y1: Math.ceil(view.cy + hh + pad)
+  };
+}
+
+// Holds keep their own seconds. Every other step shares T by weight: the legible opening
+// (the first L0 drawn steps) and any step marked slow at full weight, the rest compressed
+// by the accelerando in their own order. Returns the run's whole length, holds included.
+// With share given, the legible opening takes that share of T whatever follows it (a
+// fraction's three opening steps against a hundred walk circles); without it, every step
+// shares T by weight, as v1's main run does.
+function assignTiming(s, T, L0, c, share) {
+  var wBase = { line: 1.0, arc: 0.75, pt: 0.3, lab: 0.12, flab: 0.4 };
+  // a number is not a construction step: it rides its point and takes no legible slot
+  var seen = 0, nAcc = 0;
+  s.forEach(function (st) {
+    if (st.t === 'hold') return;
+    st.k = st.t === 'lab' ? Math.max(0, seen - 1) : seen++;
+    if (st.k >= L0 && !st.slow) nAcc++;
+  });
+  var j = 0, weights = [], sum = 0, sumOpen = 0;
+  s.forEach(function (st, i) {
+    if (st.t === 'hold') { weights[i] = 0; return; }
+    var w = wBase[st.t] || 0.5;
+    if (st.k >= L0 && !st.slow) { w *= Math.exp(-c * (j / Math.max(1, nAcc))); j++; sum += w; }
+    else sumOpen += w;
+    weights[i] = w;
+  });
+  var t = 0, holds = 0;
+  s.forEach(function (st, i) {
+    if (st.t === 'hold') st.dur = st.hold;
+    else if (share == null || sum === 0) st.dur = (weights[i] / (sum + sumOpen)) * T;
+    else st.dur = (st.k < L0 || st.slow) ? (weights[i] / sumOpen) * share * T : (weights[i] / sum) * (1 - share) * T;
+    if (st.t === 'hold') holds += st.hold;
+    st.t0 = t; t += st.dur; st.t1 = t;
+  });
+  // ceremony that must outlast a hold: its fade waits until the hold is over
+  s.forEach(function (st) {
+    if (st.lingerTo != null) st.linger = Math.max(0, s[st.lingerTo].t1 - st.t1);
+  });
+  return T + holds;
+}
+
+function buildMain() {
+  var b = visibleBounds(1);
+  main.bounds = b;
+  var s = [];
+  var SQ3 = Math.sqrt(3);
+  // a point, and its number the moment it appears, if it is an integer on an axis
+  function pt(x, y) {
+    s.push({ t: 'pt', x: x, y: y });
+    if (y === 0 && x !== 0 && x === Math.round(x)) s.push({ t: 'lab', x: x, y: 0, txt: '' + x });
+    else if (x === 0 && y !== 0 && y === Math.round(y)) s.push({ t: 'lab', x: 0, y: y, txt: '' + y });
+  }
+
+  // seeds
+  pt(0, 0);
+  pt(1, 0);
+  // the first line: through the two seeds (the x axis)
+  main.xAxis = s.length;
+  s.push({ t: 'line', axis: true, x1: b.x0, y1: 0, x2: b.x1, y2: 0, mx: 0, my: 0 });
+  // perpendicular ceremony at O — full circles only; the lab has no arcs.
+  s.push({ t: 'arc', cx: 0, cy: 0, r: 1, a0: 3.14, a1: 3.14 + TAU });
+  pt(-1, 0);
+  var iA = s.length; s.push({ t: 'arc', cx: 1, cy: 0, r: 2, a0: 1.57, a1: 1.57 + TAU });
+  var iB = s.length; s.push({ t: 'arc', cx: -1, cy: 0, r: 2, a0: 1.57, a1: 1.57 + TAU });
+  pt(0, SQ3);
+  // the pause: both circles drawn, crossing at (0, √3), before the axis goes through it
+  var pause = +kPause.value;
+  if (pause > 0) {
+    s.push({ t: 'hold', hold: pause, why: 'the crossing at (0, √3)' });
+    s[iA].lingerTo = s[iB].lingerTo = s.length - 1;
+  }
+  main.yAxis = s.length;
+  s.push({ t: 'line', axis: true, x1: 0, y1: b.y0, x2: 0, y2: b.y1, mx: 0, my: 0, vertical: true });
+  // the circle O r1 again, briefly, to mint (0,1) where it crosses the new axis
+  s.push({ t: 'arc', cx: 0, cy: 0, r: 1, a0: 1.57, a1: 1.57 + TAU, faint: true });
+  pt(0, 1);
+
+  // compass transfers outward along both axes, each number minted as its point is
+  var order = [];
+  var maxR = Math.max(b.x1, -b.x0, b.y1, -b.y0);
+  for (var k = 1; k <= maxR; k++) {
+    if (k + 1 <= b.x1) order.push({ axis: 'x', from: k, to: k + 1 });
+    if (-(k + 1) >= b.x0) order.push({ axis: 'x', from: -k, to: -(k + 1) });
+    if (k + 1 <= b.y1) order.push({ axis: 'y', from: k, to: k + 1 });
+    if (-(k + 1) >= b.y0) order.push({ axis: 'y', from: -k, to: -(k + 1) });
+  }
+  order.forEach(function (o) {
+    var dir = o.to > o.from ? 1 : -1;
+    if (o.axis === 'x') {
+      s.push({ t: 'arc', cx: o.from, cy: 0, r: 1, a0: dir > 0 ? 0 : 3.14, a1: (dir > 0 ? 0 : 3.14) + TAU });
+      pt(o.to, 0);
+    } else {
+      s.push({ t: 'arc', cx: 0, cy: o.from, r: 1, a0: dir > 0 ? 1.57 : -1.57, a1: (dir > 0 ? 1.57 : -1.57) + TAU });
+      pt(0, o.to);
+    }
+  });
+
+  // grid lines outward from the axes, every one with its two circles in the log
+  var lines = [];
+  for (k = 1; k <= Math.max(b.x1, -b.x0); k++) {
+    if (k <= b.x1) lines.push({ vertical: true, at: k });
+    if (-k >= b.x0) lines.push({ vertical: true, at: -k });
+  }
+  for (k = 1; k <= Math.max(b.y1, -b.y0); k++) {
+    if (k <= b.y1) lines.push({ vertical: false, at: k });
+    if (-k >= b.y0) lines.push({ vertical: false, at: -k });
+  }
+  // the first few slowly — full weight, a hold after each — then the accelerando
+  var nSlow = +kSlow.value, hold = +kHold.value;
+  lines.forEach(function (L, idx) {
+    var r = 1.5, slow = idx < nSlow, first = s.length;
+    if (L.vertical) {
+      s.push({ t: 'arc', cx: L.at - 1, cy: 0, r: r, a0: 0, a1: TAU, slow: slow });
+      s.push({ t: 'arc', cx: L.at + 1, cy: 0, r: r, a0: 3.14, a1: 3.14 + TAU, slow: slow });
+      s.push({ t: 'line', x1: L.at, y1: b.y0, x2: L.at, y2: b.y1, mx: L.at, my: 0, vertical: true, slow: slow });
+    } else {
+      s.push({ t: 'arc', cx: 0, cy: L.at - 1, r: r, a0: 1.57, a1: 1.57 + TAU, slow: slow });
+      s.push({ t: 'arc', cx: 0, cy: L.at + 1, r: r, a0: -1.57, a1: -1.57 + TAU, slow: slow });
+      s.push({ t: 'line', x1: b.x0, y1: L.at, x2: b.x1, y2: L.at, mx: 0, my: L.at, slow: slow });
+    }
+    if (slow && hold > 0) {
+      s.push({ t: 'hold', hold: hold, why: 'a grid line' });
+      s[first].lingerTo = s[first + 1].lingerTo = s.length - 1;
+    }
+  });
+
+  main.total = assignTiming(s, +kDur.value, +kLeg.value, +kAcc.value);
+  main.steps = s;
+}
+
+// ---------- a fraction ----------
+// The tapped crossing (X, Y), both nonzero integers. f = |Y| / |X|. The line through the
+// point and the origin, its crossing with x = 1, the circle on (1, 0) through it, then the
+// length carried along both axes by one of two methods.
+function extent(X, Y, box) {
+  // t such that (tX, tY) leaves the box, each way along the line
+  var pos = Infinity, neg = -Infinity;
+  if (X > 0) { pos = Math.min(pos, box.x1 / X); neg = Math.max(neg, box.x0 / X); }
+  if (X < 0) { pos = Math.min(pos, box.x0 / X); neg = Math.max(neg, box.x1 / X); }
+  if (Y > 0) { pos = Math.min(pos, box.y1 / Y); neg = Math.max(neg, box.y0 / Y); }
+  if (Y < 0) { pos = Math.min(pos, box.y0 / Y); neg = Math.max(neg, box.y1 / Y); }
+  return { pos: pos, neg: neg };
+}
+
+function buildFraction(X, Y, how, T) {
+  var b = visibleBounds(1), mb = main.bounds || b;
+  var box = { x0: Math.min(b.x0, mb.x0) - 1, x1: Math.max(b.x1, mb.x1) + 1,
+              y0: Math.min(b.y0, mb.y0) - 1, y1: Math.max(b.y1, mb.y1) + 1 };
+  var f = Math.abs(Y) / Math.abs(X), sgn = X * Y > 0 ? 1 : -1;
+  var s = [];
+  // the line through the tapped point and (0, 0), across the plane; it stays
+  var e = extent(X, Y, box);
+  s.push({ t: 'line', x1: X * e.neg, y1: Y * e.neg, x2: X * e.pos, y2: Y * e.pos, mx: 0, my: 0 });
+  // where it crosses x = 1: (1, f), or (1, −f) in the second and fourth quadrants; it stays
+  s.push({ t: 'pt', x: 1, y: sgn * f });
+  // the circle centred on (1, 0) through it: radius f, marking the x axis at 1 − f and 1 + f
+  s.push({ t: 'arc', cx: 1, cy: 0, r: f, a0: sgn > 0 ? 1.57 : -1.57, a1: (sgn > 0 ? 1.57 : -1.57) + TAU });
+  s.push({ t: 'pt', x: 1 - f, y: 0 });
+  s.push({ t: 'pt', x: 1 + f, y: 0 });
+  // the walk: circles each centred on the last mark and passing through the one before,
+  // each minting the next, out to the edge of the screen
+  function walk(axis, centre, dir, limit) {
+    for (;;) {
+      var next = centre + dir * f;
+      if (dir > 0 ? next > limit : next < limit) break;
+      if (axis === 'x') {
+        s.push({ t: 'arc', cx: centre, cy: 0, r: f, a0: dir > 0 ? 3.14 : 0, a1: (dir > 0 ? 3.14 : 0) + TAU });
+        s.push({ t: 'pt', x: next, y: 0 });
+      } else {
+        s.push({ t: 'arc', cx: 0, cy: centre, r: f, a0: dir > 0 ? -1.57 : 1.57, a1: (dir > 0 ? -1.57 : 1.57) + TAU });
+        s.push({ t: 'pt', x: 0, y: next });
+      }
+      centre = next;
+    }
+  }
+  if (how === 'walk') {
+    walk('x', 1 + f, 1, b.x1);
+    walk('x', 1 - f, -1, b.x0);
+    // on the y axis, the same from (0, 1): a circle centred there with radius f, then the walk
+    s.push({ t: 'arc', cx: 0, cy: 1, r: f, a0: 1.57, a1: 1.57 + TAU });
+    s.push({ t: 'pt', x: 0, y: 1 - f });
+    s.push({ t: 'pt', x: 0, y: 1 + f });
+    walk('y', 1 + f, 1, b.y1);
+    walk('y', 1 - f, -1, b.y0);
+  } else {
+    // the radius carried to (0, 0): one circle there marks both axes at f, then the walk from 0
+    s.push({ t: 'arc', cx: 0, cy: 0, r: f, a0: 0, a1: TAU });
+    s.push({ t: 'pt', x: f, y: 0 });
+    s.push({ t: 'pt', x: -f, y: 0 });
+    s.push({ t: 'pt', x: 0, y: f });
+    s.push({ t: 'pt', x: 0, y: -f });
+    walk('x', f, 1, b.x1);
+    walk('x', -f, -1, b.x0);
+    walk('y', f, 1, b.y1);
+    walk('y', -f, -1, b.y0);
+  }
+  // the fraction, written: as tapped, then in lowest terms if that differs
+  var n = Math.abs(Y), d = Math.abs(X), g = NUM.gcd(n, d) || 1;
+  var parts = [[n, d]];
+  if (g > 1) parts.push([n / g, d / g]);
+  s.push({ t: 'flab', x: X, y: Y, parts: parts });
+
+  var fr = { X: X, Y: Y, f: f, how: how, steps: s, offset: 0, total: 0 };
+  fr.total = assignTiming(s, T, 3, +kAcc.value, 0.5);   // the line, the crossing, the circle take half the time; the walk the rest
+  return fr;
+}
+
+// ---------- the finer grid (deep zoom) ----------
+var sub = { active: false, steps: [], t0: 0, total: 1.4, done: false };
+function buildSub() {
+  var b = visibleBounds(0);
+  var s = [];
+  var x, y, k;
+  for (x = b.x0; x < b.x1; x++)
+    for (k = 1; k < 10; k++) s.push({ vertical: true, at: x + k / 10, y0: b.y0, y1: b.y1 });
+  for (y = b.y0; y < b.y1; y++)
+    for (k = 1; k < 10; k++) s.push({ vertical: false, at: y + k / 10, x0: b.x0, x1: b.x1 });
+  // strong accelerando, no ceremony — fluency already earned
+  var n = s.length, c = 5, t = 0;
+  var weights = s.map(function (_, i) { return Math.exp(-c * i / n); });
+  var sum = weights.reduce(function (a, b2) { return a + b2; }, 0);
+  s.forEach(function (st, i) { st.dur = weights[i] / sum * sub.total; st.t0 = t; t += st.dur; st.t1 = t; });
+  sub.steps = s; sub.done = false; sub.t0 = performance.now() / 1000;
+}
+
+// ---------- what is on the screen, for the axis labels to keep clear of ----------
+// Rebuilt every frame as things are drawn. kind: seg | ring | dot | rect; w is how much
+// it matters (a number or a point outweighs a grid line; the finer grid barely counts).
+var obs = [];
+function rectHitsSeg(r, x1, y1, x2, y2) {
+  // Liang–Barsky: does the segment pass through the rect?
+  var t0 = 0, t1 = 1, dx = x2 - x1, dy = y2 - y1;
+  var p = [-dx, dx, -dy, dy], q = [x1 - r.x0, r.x1 - x1, y1 - r.y0, r.y1 - y1];
+  for (var i = 0; i < 4; i++) {
+    if (p[i] === 0) { if (q[i] < 0) return false; continue; }
+    var t = q[i] / p[i];
+    if (p[i] < 0) { if (t > t1) return false; if (t > t0) t0 = t; }
+    else          { if (t < t0) return false; if (t < t1) t1 = t; }
+  }
+  return true;
+}
+function rectDist(r, x, y) {
+  // nearest and farthest distance from (x, y) to the rect
+  var dx = Math.max(r.x0 - x, 0, x - r.x1), dy = Math.max(r.y0 - y, 0, y - r.y1);
+  var fx = Math.max(x - r.x0, r.x1 - x), fy = Math.max(y - r.y0, r.y1 - y);
+  return { near: Math.sqrt(dx * dx + dy * dy), far: Math.sqrt(fx * fx + fy * fy) };
+}
+function costAt(r) {
+  var c = 0, o, d;
+  for (var i = 0; i < obs.length; i++) {
+    o = obs[i];
+    if (o.kind === 'rect') {
+      if (o.x0 < r.x1 && o.x1 > r.x0 && o.y0 < r.y1 && o.y1 > r.y0) c += o.w;
+    } else if (o.kind === 'seg') {
+      if (rectHitsSeg(r, o.x1, o.y1, o.x2, o.y2)) c += o.w;
+    } else if (o.kind === 'ring') {
+      d = rectDist(r, o.cx, o.cy);
+      if (d.near <= o.r && o.r <= d.far) c += o.w;
+    } else if (o.kind === 'dot') {
+      d = rectDist(r, o.cx, o.cy);
+      if (d.near <= o.r) c += o.w;
+    }
+  }
+  return c;
+}
+
+// ---------- drawing ----------
+function drawGrowingLine(st, p) {
+  // grows outward from (mx, my) in both directions
+  var ax = st.mx + (st.x1 - st.mx) * p, ay = st.my + (st.y1 - st.my) * p;
+  var bx = st.mx + (st.x2 - st.mx) * p, by = st.my + (st.y2 - st.my) * p;
+  ctx.beginPath();
+  ctx.moveTo(sx(ax), sy(ay));
+  ctx.lineTo(sx(st.mx), sy(st.my));
+  ctx.lineTo(sx(bx), sy(by));
+  ctx.stroke();
+  obs.push({ kind: 'seg', x1: sx(ax), y1: sy(ay), x2: sx(bx), y2: sy(by), w: st.axis || st.frac ? 3 : 2 });
+}
+
+var textW = {};
+function widthOf(txt) {
+  if (textW[txt] == null) { ctx.font = '11px Georgia, serif'; textW[txt] = ctx.measureText(txt).width; }
+  return textW[txt];
+}
+
+function drawSteps(steps, t, frac) {
+  var i, st, p;
+  for (i = 0; i < steps.length; i++) {
+    st = steps[i];
+    if (t < st.t0) break;
+    p = st.dur > 0 ? Math.min(1, (t - st.t0) / st.dur) : 1;
+
+    if (st.t === 'line') {
+      st.frac = frac;
+      ctx.strokeStyle = frac ? COPPER : (st.axis ? INK : GRID);
+      ctx.lineWidth = frac ? 0.9 : (st.axis ? 1.4 : 0.7);
+      drawGrowingLine(st, p);
+    }
+    else if (st.t === 'arc') {
+      // ceremony: sweeps in, then fades away entirely once its work is done.
+      // The fade rides the step's own tempo, and waits out a hold it was drawn for.
+      var fadeT = Math.max(0.22, Math.min(1.2, st.dur * 5));
+      var age = t - st.t1 - (st.linger || 0);
+      var alpha = age < 0 ? 0.8 : Math.max(0, 0.8 * (1 - age / fadeT));
+      if (st.faint) alpha *= 0.6;
+      if (alpha > 0.01) {
+        ctx.strokeStyle = frac ? COPPER : ARC; ctx.globalAlpha = alpha; ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        var a1 = st.a0 + (st.a1 - st.a0) * p;
+        ctx.arc(sx(st.cx), sy(st.cy), st.r * view.scale, -st.a0, -a1, st.a1 > st.a0);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        obs.push({ kind: 'ring', cx: sx(st.cx), cy: sy(st.cy), r: st.r * view.scale, w: 2 });
+      }
+    }
+    else if (st.t === 'pt') {
+      var rr = 2 + (p < 0.4 ? (0.4 - p) * 8 : 0);   // birth pop
+      ctx.fillStyle = frac ? COPPER : POINT;
+      ctx.beginPath(); ctx.arc(sx(st.x), sy(st.y), rr, 0, 6.284); ctx.fill();
+      obs.push({ kind: 'dot', cx: sx(st.x), cy: sy(st.y), r: 3, w: 4 });
+    }
+    else if (st.t === 'lab') {
+      ctx.globalAlpha = p;
+      ctx.fillStyle = INK; ctx.font = '11px Georgia, serif';
+      var w = widthOf(st.txt);
+      if (st.y === 0 && st.x !== 0) {
+        ctx.textAlign = 'center'; ctx.fillText(st.txt, sx(st.x), sy(0) + 16);
+        obs.push({ kind: 'rect', x0: sx(st.x) - w / 2 - 1, x1: sx(st.x) + w / 2 + 1, y0: sy(0) + 6, y1: sy(0) + 19, w: 4 });
+      } else {
+        ctx.textAlign = 'right'; ctx.fillText(st.txt, sx(0) - 7, sy(st.y) + 4);
+        obs.push({ kind: 'rect', x0: sx(0) - 8 - w, x1: sx(0) - 6, y0: sy(st.y) - 6, y1: sy(st.y) + 6, w: 4 });
+      }
+      ctx.globalAlpha = 1;
+    }
+    else if (st.t === 'flab') {
+      // stacked, by the number standard; to the left of the tapped point, the bar on its height
+      ctx.globalAlpha = p;
+      var xr = sx(st.x) - 9, ya = sy(st.y), size = 12, left = xr, parts = st.parts, m;
+      for (var q = parts.length - 1; q >= 0; q--) {
+        NUM.draw(ctx, parts[q][0], parts[q][1], left, ya, { size: size, color: COPPER, align: 'right' });
+        m = NUM.measure(ctx, parts[q][0], parts[q][1], { size: size });
+        left -= m.w;
+        if (q > 0) { NUM.drawText(ctx, ',', left - 2, ya, { size: size, color: COPPER, align: 'right' }); left -= 8; }
+      }
+      obs.push({ kind: 'rect', x0: left, x1: xr, y0: ya - m.h / 2, y1: ya + m.h / 2, w: 4 });
+      ctx.globalAlpha = 1;
+    }
+    // 'hold': nothing is drawn; time passes
+  }
+}
+
+// ---------- the axis labels ----------
+// "x axis" under the x axis near the right edge, "y axis" left of the y axis near the top.
+// They ride their axis on pan and zoom and go when it goes. Never over a construction: a
+// label that would sit on something slides along its axis to the nearest clear spot — or,
+// when nothing on the screen is clear (the lowest zooms, the finer grid), to the spot that
+// covers least. d is the slide from the preferred spot, in px; drawn eases toward it.
+var axisLabel = { x: { d: 0, drawn: 0, alpha: 0 }, y: { d: 0, drawn: 0, alpha: 0 } };
+var lastFrame = 0;
+function settle(lab, rectAt, maxD) {
+  // the nearest clear spot to the preferred one; the current spot keeps if it is clear
+  // and no more than a few px from that, so a passing circle does not make it twitch
+  // (a far spot pays for its distance: a grid line is worth 120 px of slide, a number 240,
+  // so at the lowest zooms, where nothing is clear, the label stays near its edge)
+  var best = 0, bestCost = Infinity, d, c;
+  for (d = 0; d <= maxD; d += 3) {
+    c = costAt(rectAt(d));
+    if (c === 0) { best = d; bestCost = 0; break; }
+    if (c + d / 60 < bestCost) { bestCost = c + d / 60; best = d; }
+  }
+  if (bestCost === 0 && Math.abs(lab.d - best) <= 6 && costAt(rectAt(lab.d)) === 0) return;
+  lab.d = best;
+}
+function easeLabel(lab, dt, want) {
+  var k = Math.min(1, dt * 8);
+  lab.drawn += (lab.d - lab.drawn) * k;
+  lab.alpha += (want - lab.alpha) * Math.min(1, dt * 10);
+}
+function drawAxisLabels(c, dt) {
+  var b = main.bounds; if (!b) return;
+  ctx.font = '11px Georgia, serif'; ctx.fillStyle = INK;
+  var step, p, lab, pref, row, rectAt, want;
+
+  // x axis
+  lab = axisLabel.x; want = 0;
+  step = main.steps[main.xAxis];
+  if (step && c >= step.t0) {
+    p = step.dur > 0 ? Math.min(1, (c - step.t0) / step.dur) : 1;
+    var right = sx(b.x1 * p), leftEnd = sx(b.x0 * p);
+    if (sy(0) >= -4 && sy(0) <= H + 4 && right > 20 && leftEnd < W - 20) {
+      want = 0.7 * p;
+      pref = Math.min(W - 14, right - 2);
+      row = sy(0) + 16;
+      var wxl = widthOf('x axis');
+      rectAt = function (d) { return { x0: pref - d - wxl - 1, x1: pref - d + 1, y0: row - 10, y1: row + 3 }; };
+      settle(lab, rectAt, Math.max(0, Math.min(pref - leftEnd - wxl - 20, pref - wxl - 14)));   // never off the screen
+      if (lab.alpha < 0.02) lab.drawn = lab.d;
+    }
+  }
+  easeLabel(lab, dt, want);
+  if (lab.alpha > 0.01 && pref != null) {
+    ctx.globalAlpha = lab.alpha; ctx.textAlign = 'right';
+    ctx.fillText('x axis', pref - lab.drawn, row);
+    ctx.globalAlpha = 1;
+  }
+
+  // y axis
+  lab = axisLabel.y; want = 0; pref = null;
+  step = main.steps[main.yAxis];
+  if (step && c >= step.t0) {
+    p = step.dur > 0 ? Math.min(1, (c - step.t0) / step.dur) : 1;
+    var top = sy(b.y1 * p), bottomEnd = sy(b.y0 * p);
+    if (sx(0) >= -4 && sx(0) <= W + 4 && bottomEnd > 20 && top < H - 20) {
+      want = 0.7 * p;
+      pref = Math.max(24, top + 12);                 // baseline
+      var col = sx(0) - 7, wyl = widthOf('y axis');
+      rectAt = function (d) { return { x0: col - wyl - 1, x1: col + 1, y0: pref + d - 10, y1: pref + d + 3 }; };
+      settle(lab, rectAt, Math.max(0, Math.min(bottomEnd - pref - 20, H - 14 - pref)));   // never off the screen
+      if (lab.alpha < 0.02) lab.drawn = lab.d;
+    }
+  }
+  easeLabel(lab, dt, want);
+  if (lab.alpha > 0.01 && pref != null) {
+    ctx.globalAlpha = lab.alpha; ctx.textAlign = 'right';
+    ctx.fillText('y axis', sx(0) - 7, pref + lab.drawn);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function panelRect() {
+  var r = document.getElementById('panel').getBoundingClientRect();
+  return { kind: 'rect', x0: r.left - 2, x1: r.right + 2, y0: r.top - 2, y1: r.bottom + 2, w: 4 };
+}
+
+// ---------- the frame ----------
+function render(now) {
+  var c = clock();
+  var dt = lastFrame ? Math.min(0.1, (now - lastFrame) / 1000) : 0.016; lastFrame = now;
+
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  obs = [panelRect()];
+
+  var i, st, p;
+  drawSteps(main.steps, c, false);
+  for (i = 0; i < fracs.length; i++) if (c >= fracs[i].offset) drawSteps(fracs[i].steps, c - fracs[i].offset, true);
+
+  // the finer grid
+  if (sub.active) {
+    var ts = performance.now() / 1000 - sub.t0;
+    ctx.strokeStyle = SUBGRID; ctx.lineWidth = 0.5;
+    for (i = 0; i < sub.steps.length; i++) {
+      st = sub.steps[i];
+      if (ts < st.t0) break;
+      p = st.dur > 0 ? Math.min(1, (ts - st.t0) / st.dur) : 1;
+      ctx.beginPath();
+      if (st.vertical) {
+        var ym = (st.y0 + st.y1) / 2, hh = (st.y1 - st.y0) / 2 * p;
+        ctx.moveTo(sx(st.at), sy(ym - hh)); ctx.lineTo(sx(st.at), sy(ym + hh));
+        obs.push({ kind: 'seg', x1: sx(st.at), y1: sy(ym - hh), x2: sx(st.at), y2: sy(ym + hh), w: 0.3 });
+      } else {
+        var xm = (st.x0 + st.x1) / 2, hw = (st.x1 - st.x0) / 2 * p;
+        ctx.moveTo(sx(xm - hw), sy(st.at)); ctx.lineTo(sx(xm + hw), sy(st.at));
+        obs.push({ kind: 'seg', x1: sx(xm - hw), y1: sy(st.at), x2: sx(xm + hw), y2: sy(st.at), w: 0.3 });
+      }
+      ctx.stroke();
+    }
+    if (ts >= sub.total) sub.done = true;
+  }
+
+  drawAxisLabels(c, dt);
+
+  // readout
+  var ro = document.getElementById('readout'), txt;
+  if (c < main.total) {
+    var doneCount = 0, n = 0;
+    for (i = 0; i < main.steps.length; i++) { if (main.steps[i].t === 'hold') continue; n++; if (c >= main.steps[i].t1) doneCount++; }
+    txt = 'constructing · step ' + doneCount + ' / ' + n + ' · ' + Math.max(0, c).toFixed(1) + 's of ' + main.total.toFixed(1) + 's';
+  } else {
+    var cur = null, idx = 0;
+    for (i = 0; i < fracs.length; i++) if (c >= fracs[i].offset && c < fracs[i].offset + fracs[i].total) { cur = fracs[i]; idx = i + 1; }
+    if (cur) {
+      var dc = 0, tl = c - cur.offset;
+      for (i = 0; i < cur.steps.length; i++) if (tl >= cur.steps[i].t1) dc++;
+      txt = 'fraction ' + idx + ' · step ' + dc + ' / ' + cur.steps.length + ' · ' + tl.toFixed(1) + 's of ' + cur.total.toFixed(1) + 's';
+    } else {
+      txt = 'constructed · ' + main.steps.length + ' steps' +
+        (fracs.length ? ' · ' + fracs.length + (fracs.length === 1 ? ' fraction' : ' fractions') : '') +
+        (sub.active ? ' · tenths: ' + (sub.done ? 'constructed' : 'constructing') : '');
+    }
+  }
+  ro.textContent = txt;
+
+  requestAnimationFrame(render);
+}
+
+// ---------- control wiring ----------
+function replay() {
+  sub.active = false; sub.done = false;
+  buildMain();
+  var off = main.total;
+  fracs.forEach(function (fr) { fr.offset = off; off += fr.total; });
+  t0 = performance.now() / 1000;
+}
+function skip() {
+  // jump the clock to the end of whatever is being built now
+  var c = clock(), end = null;
+  if (c < main.total) end = main.total;
+  else for (var i = 0; i < fracs.length; i++) if (c >= fracs[i].offset && c < fracs[i].offset + fracs[i].total) end = fracs[i].offset + fracs[i].total;
+  if (end != null) t0 -= (end - c);
+  if (sub.active && !sub.done) sub.t0 -= sub.total;
+}
+document.getElementById('replay').addEventListener('click', replay);
+[kDur, kLeg, kAcc, kPause, kSlow, kHold].forEach(function (k) {
+  k.addEventListener('input', function () { knobLabels(); });
+  k.addEventListener('change', function () { replay(); });
+});
+kFrac.addEventListener('input', function () { knobLabels(); });
+document.getElementById('skip-word').addEventListener('click', function () {
+  skipOn = !skipOn; knobLabels();
+});
+document.getElementById('method-word').addEventListener('click', function () {
+  method = method === 'walk' ? 'carry' : 'walk'; knobLabels();
+});
+document.getElementById('clear-word').addEventListener('click', function () {
+  fracs = [];
+});
+document.getElementById('mode-word').addEventListener('click', function () {
+  modeConstruct = !modeConstruct; knobLabels();
+  if (!modeConstruct) sub.active = false;
+  checkSub();
+});
+
+function checkSub() {
+  if (modeConstruct && view.scale > 150 && !sub.active) { buildSub(); sub.active = true; }
+  if (view.scale <= 120 && sub.active) sub.active = false;
+}
+function setScale(s) {
+  view.scale = Math.max(22, Math.min(260, s));
+  kZoom.value = view.scale; checkSub();
+}
+kZoom.addEventListener('input', function () { setScale(+kZoom.value); });
+canvas.addEventListener('wheel', function (e) {
+  e.preventDefault();
+  setScale(view.scale * Math.exp(-e.deltaY * 0.0015));
+}, { passive: false });
+
+// a tap: skip what is being built, or construct a fraction at a crossing of the main grid
+function tap(px, py) {
+  var c = clock();
+  if (c < runEnd()) {
+    if (skipOn) { skip(); return; }
+    if (c < main.total) return;                        // the grid is not built yet
+  }
+  var b = main.bounds; if (!b) return;
+  var X = Math.round(wx(px)), Y = Math.round(wy(py));
+  if (X === 0 || Y === 0) return;                      // a point on an axis does nothing
+  if (Math.abs(sx(X) - px) > 14 || Math.abs(sy(Y) - py) > 14) return;
+  if (X < b.x0 || X > b.x1 || Y < b.y0 || Y > b.y1) return;
+  for (var i = 0; i < fracs.length; i++) if (fracs[i].X === X && fracs[i].Y === Y) return;
+  var fr = buildFraction(X, Y, method, +kFrac.value);
+  fr.offset = Math.max(c, runEnd());
+  fracs.push(fr);
+}
+
+// pointers: one drags the plane, two pinch it, a tap is a tap
+var pointers = {}, nPointers = 0, drag = null, pinch = null;
+canvas.addEventListener('pointerdown', function (e) {
+  try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+  pointers[e.pointerId] = { x: e.clientX, y: e.clientY }; nPointers++;
+  if (nPointers === 1) drag = { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, moved: false };
+  else { drag = null; pinch = null; }
+});
+canvas.addEventListener('pointermove', function (e) {
+  var q = pointers[e.pointerId]; if (!q) return;
+  q.x = e.clientX; q.y = e.clientY;
+  if (nPointers === 1 && drag) {
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (Math.abs(e.clientX - drag.x0) > 6 || Math.abs(e.clientY - drag.y0) > 6) drag.moved = true;
+    if (drag.moved) { view.cx -= dx / view.scale; view.cy += dy / view.scale; }
+    drag.x = e.clientX; drag.y = e.clientY;
+  } else if (nPointers === 2) {
+    var ids = Object.keys(pointers), a = pointers[ids[0]], b = pointers[ids[1]];
+    var dist = Math.hypot(a.x - b.x, a.y - b.y), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    if (pinch) {
+      setScale(view.scale * dist / pinch.dist);
+      view.cx -= (mx - pinch.mx) / view.scale; view.cy += (my - pinch.my) / view.scale;
+    }
+    pinch = { dist: dist, mx: mx, my: my };
+  }
+});
+function pointerEnd(e) {
+  if (!pointers[e.pointerId]) return;
+  delete pointers[e.pointerId]; nPointers--;
+  if (nPointers === 0) {
+    if (drag && !drag.moved && e.type === 'pointerup') tap(e.clientX, e.clientY);
+    drag = null; pinch = null;
+  }
+}
+canvas.addEventListener('pointerup', pointerEnd);
+canvas.addEventListener('pointercancel', pointerEnd);
+
+// ---------- go ----------
+replay();
+requestAnimationFrame(render);
+
+// bench only: the clock and the log, for the checks (freeze(c) holds the clock at c seconds; freeze() lets go)
+var frozen = null;
+clock = function () { return frozen != null ? frozen : performance.now() / 1000 - t0; };
+window.cwConstruct = {
+  main: main, fracs: function () { return fracs; }, clock: function () { return clock(); },
+  freeze: function (c) { if (c == null) { if (frozen != null) t0 = performance.now() / 1000 - frozen; frozen = null; } else frozen = c; },
+  seek: function (c) { frozen = null; t0 = performance.now() / 1000 - c; },
+  view: view, obstacles: function () { return obs; }, labels: axisLabel, cost: function (r) { return costAt(r); }
+};
+
+})();
+</script>
+</body>
+</html>

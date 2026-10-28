@@ -1356,6 +1356,26 @@ backstop for the Claude Code session that lands the file.
 
 ### experiments/
 
+- **`construct-coordinates-v2.html` (28 Oct 2026)** — *Construct Coordinates, second bench*: v1's page
+  (`construct-coordinates.html`, left byte for byte as it was) with the six things of Michael's prompt
+  `CWVault/claude/Prompt-Build-Construct-Coordinates-v2.md`; the report `CWVault/claude/Report-Construct-Coordinates-v2.md`,
+  fifty-five pictures beside it in `Construct-Coordinates-v2-Oct28/`. Every construction is still a log of steps, drawing
+  apart from the log; `glass.js` not touched. Numbers written the moment their point is minted; a hold at (0, √3) before the
+  y axis is drawn (knob, 0.5 s); the first grid lines at full weight, each followed by a hold (knobs: how many, 3; how long,
+  0.4 s), the holds added to the run; the words *x axis* and *y axis* at their screen edges, riding the axis on pan and zoom,
+  gone when it is, sliding along the axis clear of every line, circle, point and number drawn that frame (and to the spot that
+  covers least where nothing is clear); a tap on a crossing of the main grid constructs its fraction f = |y| / |x| — the line
+  through the origin, the crossing with x = 1, the circle on (1, 0), then the length carried along both axes by *walk from 1*
+  or *carry to 0* (a word in the panel; Michael to choose by looking at 2/3), the circles fading, the marks staying, the
+  fraction stacked by `js/cw-number.js` left of the point, as tapped and then in lowest terms — all in the one copper of
+  `js/cw-style.js` (the prompt said `palettes.json`, which has no copper); *clear fractions*; replay rebuilds the grid and
+  then every standing fraction. Drag pans, two fingers pinch (v1 had no pan). A fraction takes 3 s (knob), half of it the
+  three opening steps. Bench only: `window.cwConstruct` (the log and a clock that can be held, for the checks). Icon: the
+  geometry lab's. Stamp `2026-10-28 da958b6 · construct-coordinates v2`. Checked in the pane on the Mac: the opening at the
+  defaults, the pause, the three slow lines, the labels zoomed in, out, and with each axis pushed off, the five fractions of
+  the prompt under both methods, skip, clear, replay; not the iPad. **v1 had been untracked** since the 16 Oct clear-out — its
+  rename from `map-reveal.html` was never committed — so the rename, and `sound-benches/sound-workbench.html`'s move with its
+  index line, landed in v2's commit; the clear-out's other deletions are still uncommitted on disk.
 - **`earth-3d.html` (27 Oct 2026)** — *The Earth, in 3D*, the first Earth bench (Spec-Earth-3D, step 1): the 3D Earth **Step 2, 27 Oct afternoon (not committed):** the look by age — the picture's sea as the shelf wash on both grounds, the photograph fading to paint by 2.6 million years with two paints to choose from (*photograph painted / green and rock*, bench only), bare rock before plants, the islands, shelf rims, drowned band and dissolves before the model's reach, the deep ice, the limb shading and the haze; the slider by a square law. The report `CWVault/claude/Report-Earth-3D-Bench-02.md`. **Step 3, 28 Oct (not committed):** the slider to 4,567 million years by knots, the guessed ages by `globe.js`'s motion model with one seed for both globes and *another guess*, the blobs as meshes, the dark crust before oxygen, the molten Earth on the whole ball with the Moon's impact two ways (*quiet brightening / no flash*, bench only), the grade's word and sentence under the stage; *photograph painted* and *Lit* gone on Michael's rulings. The report `CWVault/claude/Report-Earth-3D-Bench-03.md`.
   (`js/3d/earth.js` on `scene.js`) beside the 2D globe the Time Machine runs on, both at the same age and view, a slider for
   the age to 1,000 million years, *Blue Marble / old ground*, *Lit / even*, *Reset view*, *Keep this picture*; the dozen cities
