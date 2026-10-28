@@ -34,6 +34,17 @@
      buff, the grey and its word gone; the coast is drawn at today again; the fine slider stays. Bench only, for Michael
      to choose by looking: land lighter, a small slider from as now to clearly lighter (a curve on the photograph's
      luma, earth.js's setLandLift). While the photograph shows, the honest block's credit line says what the picture is.
+     Step 4, a third revision (Prompt-Revise-Earth-Bench-04d.md, run with step 5): the fine slider is a window of three
+     million years centred on the main slider's age, plain and even, except when it starts at today, where it keeps its
+     scale (the last 30,000 years two fifths of it); its two ends are written under it. Land lighter opens at 100 (Michael's
+     setting) and goes to 200.
+     Step 5, close in (28 Oct; Prompt-Build-Earth-Bench-05.md): the old globe behind a word, *old globe*, the Earth's stage
+     about 1.8 times as wide while it is hidden (the 2D globe keeps following the age, the seed and the turn, out of sight,
+     so cwPair still pairs them); pinch all the way in, from the whole ball to Blue Marble at 500 m (level 6 of its tiles)
+     at the full tier, the turn slowing with the zoom so the ground stays under the finger; the tiles of the picture and of
+     the shelf and floor laid on the ball by the pieces' own shader; the coast and the ICE-6G ice at the view's own detail;
+     the dozen cities and the map's own places on the ball by the map's placer. Bench only: the map beside the Earth at the
+     same place and scale (cwMapAt), for the comparison pictures.
      The Earth wears the Time Machine's icon for now; it has none of its own. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
@@ -69,7 +80,12 @@
   .word:hover { color: var(--cw-payne-hover, #3D3D3A); }
   .word[aria-pressed="true"] { color: var(--cw-ink, #2a241c); border-bottom-color: var(--cw-copper, #b5652b); }
   .word:focus-visible { outline: 2px solid var(--cw-copper, #b5652b); outline-offset: 3px; }
-  .stages { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .stages { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; position: relative; }
+  /* the old globe hidden (step 5): the Earth alone, about 1.8 times its width beside the old globe, as large as the window
+     allows; the old globe keeps drawing at its side-by-side size, out of sight, so it is right when it comes back */
+  .stages.solo { grid-template-columns: min(calc(0.9 * (100% - 24px)), calc(100vh - 48px)); }
+  .stages.solo #box2d { position: absolute; left: 0; top: 0; width: calc((100% - 24px) / 2); visibility: hidden; pointer-events: none; }
+  .fine-ends { display: flex; justify-content: space-between; font-size: 12px; color: var(--cw-grey-word, #7d7a72); margin-top: 2px; font-variant-numeric: tabular-nums; }
   .stage-box { min-width: 0; }
   .stage { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; touch-action: none; background: var(--cw-parchment, #f4f1e8); }
   #stage2d .cw-globe { position: absolute; inset: 0; }
@@ -99,14 +115,15 @@
   @media (max-width: 760px) {
     .bench, .age { grid-template-columns: 1fr; gap: 12px; }
     .left { flex-direction: row; flex-wrap: wrap; gap: 6px 22px; }
-    .stages { grid-template-columns: 1fr; }
+    .stages, .stages.solo { grid-template-columns: 1fr; }
+    .stages.solo #box2d { width: 100%; }
   }
 </style>
 </head>
 <body>
 <div class="column">
   <h1>The Earth, in 3D</h1>
-  <p class="sub">On the left, the Earth as a ball on the graphics card, the pieces of continent turned by their plates. On the right, the globe the Time Machine draws today. The same age, the same view: turn one and the other follows.</p>
+  <p class="sub">The Earth as a ball on the graphics card, the pieces of continent turned by their plates. Pinch or scroll all the way in. <i>old globe</i> shows the globe the Time Machine draws today beside it, at the same age and the same view: turn one and the other follows.</p>
 </div>
 <div class="wide">
   <div class="bench">
@@ -114,15 +131,16 @@
       <div class="pair"><button class="word" id="wBlue" type="button" aria-pressed="false">Blue Marble</button><span class="slash">/</span><button class="word" id="wOld" type="button" aria-pressed="true">old ground</button></div>
       <button class="word" id="wCoasts" type="button" aria-pressed="false">today’s coasts</button>
       <button class="word" id="wGuess" type="button">another guess</button>
+      <button class="word" id="wOldGlobe" type="button" aria-pressed="false">old globe</button>
     </div>
-    <div class="stages">
+    <div class="stages solo" id="stages">
       <div class="stage-box">
-        <div id="stage3d" class="stage"><div id="cities"></div></div>
+        <div id="stage3d" class="stage"></div>
         <div class="under honest" id="honestBlock"></div>
         <p class="under">bench only: the fine slider, land lighter, and <i>another guess</i> giving both globes the same new guess</p>
         <div id="still"><img alt="The Earth, a still picture" src="../art/globe/earth-3d-still.webp"><p class="under" id="stillLine">This one needs a newer device.</p></div>
       </div>
-      <div class="stage-box">
+      <div class="stage-box" id="box2d">
         <div id="stage2d" class="stage"></div>
         <p class="under">the 2D globe, as the Time Machine draws it</p>
       </div>
@@ -133,12 +151,12 @@
     <input type="range" id="age" min="0" max="1500" step="1" value="0" aria-label="Age, millions of years ago">
   </div>
   <div class="age fine">
-    <label for="fine">the last 3 million<output id="fineWord" for="fine">bench only</output></label>
-    <input type="range" id="fine" min="0" max="1000" step="1" value="0" aria-label="Age, the last three million years">
+    <label for="fine">3 million years<output id="fineWord" for="fine">bench only</output></label>
+    <div><input type="range" id="fine" min="0" max="1000" step="1" value="0" aria-label="Age, a window of three million years round the main slider's"><div class="fine-ends"><span id="fineFrom">today</span><span id="fineTo">3 million years ago</span></div></div>
   </div>
   <div class="age fine lift">
-    <label for="lift">land lighter<output id="liftWord" for="lift">as now</output></label>
-    <input type="range" id="lift" min="0" max="100" step="1" value="0" aria-label="The photograph's land, as now to clearly lighter">
+    <label for="lift">land lighter<output id="liftWord" for="lift">100</output></label>
+    <input type="range" id="lift" min="0" max="200" step="1" value="100" aria-label="The photograph's land, as it was to lighter still">
   </div>
   <p class="readout" id="readout"></p>
   <p id="fail"></p>
@@ -147,11 +165,11 @@
 </div>
 
 <script type="module">
-  const CW_VERSION = '2026-10-28 4719840 · earth-3d step 4c';   // 28 Oct: step 4 revised again — our sea at every age, the buff shelf, the coast at today, land lighter   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-28 b1a514c · earth-3d step 5';   // 28 Oct: close in — the tiles on the ball, the marks, the old globe behind a word; and 4d's fine window and land lighter   // date + short commit hash; bump in the same commit as any change
   console.log('earth-3d', CW_VERSION);
   import * as THREE from 'three';
-  import { cwScene } from '../js/3d/scene.js?v=2026-10-27d';
-  import { cwEarth } from '../js/3d/earth.js?v=2026-10-28m';
+  import { cwScene } from '../js/3d/scene.js?v=2026-10-28e';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-10-28n';
   import { cwHonest } from '../js/3d/honest.js?v=2026-10-28a';
   import { cwStill } from '../js/3d/still.js?v=2026-10-28a';
 
@@ -177,7 +195,7 @@
   // the seed: one for both globes, so the same guess shows on each (the spec: the same seed gives the same guess in both
   // engines); ?seed= fixes it for a check, otherwise this visit's, made as globe.js makes one
   const seed0 = Q.get('seed') ? +Q.get('seed') : ((Date.now() % 1000003) + Math.floor(Math.random() * 1000));
-  const state = { ground: 'old', lift: Q.get('lift') ? Math.max(0, Math.min(1, +Q.get('lift'))) : 0, coasts: Q.get('coasts') === '1', ma: 0, seed: seed0 };
+  const state = { ground: 'old', lift: Q.get('lift') ? Math.max(0, Math.min(2, +Q.get('lift'))) : 1, coasts: Q.get('coasts') === '1', ma: 0, seed: seed0, oldGlobe: Q.get('old') === '1' };
   let view = null, earth = null, g2d = null, honest = null, syncing = false;
 
   // ---------- the 3D Earth ----------
@@ -188,12 +206,12 @@
     view = await cwScene($('stage3d'), {
       ground: S.parchment, key: 'earth-3d', phone: 'run',
       gesture: 'globe', home: HOME,
-      camera: { fov: 24, position: [0, 0, 4.9], near: 0.1, far: 50, min: 1.4, max: 12 },   // the ball fills the square as the 2D disc does (its radius W/2 − 4)
+      camera: { fov: 24, position: [0, 0, 4.9], near: 0.1, far: 50, min: 1.4, max: 12 },   // the ball fills the square as the 2D disc does (its radius W/2 − 4); the nearest is the Earth's, by the tier's deepest level
       words: $('words'),
       onTurn: v => { if (g2d && !syncing) { syncing = true; const t = v.turnOf(); g2d.turn(t.lon, t.lat); syncing = false; } },
       onTier: async (tier) => { if (earth) await earth.setTier(tier); }
     });
-    earth = await cwEarth(view, { citiesHost: $('cities'), seed: seed0, landLift: state.lift });
+    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, landLift: state.lift, coldTiles: Q.get('cold') === '1' });   // ?cold=1: tiles past the browser's cache (bench only, for timing)
     await earth.setTier(view.tier);
     // the honest block (Standard-Interactives §5, §8): no scale note and no bracket — on a true ball nothing is stretched;
     // the crust's note waits for Cut open. The block under the stage says what the picture is, what it says, and the credit
@@ -235,7 +253,10 @@
   function pressed(on, off) { on.setAttribute('aria-pressed', 'true'); off.setAttribute('aria-pressed', 'false'); }
   function setGround(g) { state.ground = g; if (earth) earth.setGround(g); pressed($(g === 'blue' ? 'wBlue' : 'wOld'), $(g === 'blue' ? 'wOld' : 'wBlue')); $('credit').textContent = CREDITS[g]; if (honest) tellGrade(); }
   // bench only: the land lighter, 0 as now to 1 clearly lighter (Michael names the setting; it becomes a constant)
-  function setLift(v) { state.lift = Math.max(0, Math.min(1, v)); if (earth) earth.setLandLift(state.lift); $('lift').value = Math.round(state.lift * 100); $('liftWord').value = state.lift === 0 ? 'as now' : Math.round(state.lift * 100) + ' of 100'; }
+  // (step 4d: Michael's 100 is the default; the slider goes to 200 for one more look)
+  function setLift(v) { state.lift = Math.max(0, Math.min(2, v)); if (earth) earth.setLandLift(state.lift); $('lift').value = Math.round(state.lift * 100); $('liftWord').value = state.lift === 0 ? 'as it was' : String(Math.round(state.lift * 100)); }
+  // the old globe on a word (step 5): hidden, it keeps drawing at its side-by-side size out of sight
+  function setOldGlobe(on) { state.oldGlobe = !!on; $('stages').classList.toggle('solo', !on); $('wOldGlobe').setAttribute('aria-pressed', on ? 'true' : 'false'); }
   function setCoasts(on) { state.coasts = !!on; if (earth) earth.setCoasts(on); $('wCoasts').setAttribute('aria-pressed', on ? 'true' : 'false'); }
   // another guess: the 2D globe draws the new seed and the 3D takes the same one, so both show one world
   let guessMs = null;
@@ -251,6 +272,8 @@
   $('lift').addEventListener('input', () => setLift(+$('lift').value / 100));
   $('wCoasts').addEventListener('click', () => setCoasts(!state.coasts));
   $('wGuess').addEventListener('click', anotherGuess);
+  $('wOldGlobe').addEventListener('click', () => setOldGlobe(!state.oldGlobe));
+  setOldGlobe(state.oldGlobe);
   setGround(Q.get('ground') === 'blue' ? 'blue' : 'old');
   setLift(state.lift); setCoasts(state.coasts);
 
@@ -281,13 +304,28 @@
   // 30,000 years take the first 400 positions (two fifths of the width) and three million is position 1,000: 6,000 years
   // at 212, 21,000 at 356, 125,000 at 583, 450,000 at 751, the seam at 981; about 170 years a position at 21,000. The
   // first step back is 11 years, the second 23
-  const FINE_N = 1000, FINE_B = Math.log(20.9) / 400, FINE_A = 3e6 / (Math.exp(FINE_B * FINE_N) - 1), FINE_MAX = 3;
+  //   Since step 4d (Michael, 28 Oct) the fine slider is a window of three million years centred on the main slider's age:
+  // the main slider recentres it; the fine slider moves the age within it and the main slider follows, but the window stays
+  // put; at either end of time it stops (today to three million years; the last three million before 4,567). Starting at
+  // today it keeps the scale above; anywhere else it is plain and even, 3,000 years a position, the age to a thousand years
+  const FINE_N = 1000, FINE_B = Math.log(20.9) / 400, FINE_A = 3e6 / (Math.exp(FINE_B * FINE_N) - 1), FINE_MAX = 3, FINE_SPAN = 3, EARTH_AGE = 4567;
+  let fine0 = 0;   // the window's young end, million years ago
   function fineAgeOf(p) {
+    if (fine0 > 0) return Math.round((fine0 + FINE_SPAN * p / FINE_N) * 1000) / 1000;
     const y = FINE_A * (Math.exp(FINE_B * p) - 1);
     const r = y < 1000 ? 1 : y < 10000 ? 10 : y < 100000 ? 100 : 1000;   // to a year under a thousand, ten under ten thousand, a hundred under a hundred thousand, a thousand above
     return Math.round(y / r) * r / 1e6;
   }
-  function finePosOf(ma) { return ma >= FINE_MAX ? FINE_N : Math.round(Math.log(1 + ma * 1e6 / FINE_A) / FINE_B); }
+  function finePosOf(ma) {
+    if (fine0 > 0) return Math.max(0, Math.min(FINE_N, Math.round((ma - fine0) / FINE_SPAN * FINE_N)));
+    return ma >= FINE_MAX ? FINE_N : Math.round(Math.log(1 + ma * 1e6 / FINE_A) / FINE_B);
+  }
+  const endWord = ma => ma === 0 ? 'today' : ma < 10 ? (Math.round(ma * 1000) / 1000).toLocaleString('en') + ' million years ago' : ma.toLocaleString('en', { maximumFractionDigits: 1 }) + ' million years ago';
+  function setWindow(ma) {   // centred on the age, stopping at either end of time
+    fine0 = ma - FINE_SPAN / 2 <= 0 ? 0 : Math.min(EARTH_AGE - FINE_SPAN, ma - FINE_SPAN / 2);
+    fine0 = Math.round(fine0 * 1000) / 1000;
+    $('fineFrom').textContent = endWord(fine0); $('fineTo').textContent = endWord(fine0 + FINE_SPAN);
+  }
   function ageWord(ma) { return ma === 0 ? 'today' : ma < 1 ? Math.round(ma * 1e6).toLocaleString('en') + ' years ago' : (ma < 10 ? ma.toFixed(1) : Math.round(ma).toLocaleString('en')) + ' million years ago'; }
   // the honest block under the stage (honest.js): what the picture is, what it says — the grade's word and sentence from
   // the 3D Earth (globe.js's words, copied there), the molten phase's while there is no grade — and the credit, NASA Earth
@@ -311,9 +349,9 @@
     tellGrade();
   }
   // the two sliders move together: either sets the age, the other follows to its nearest position
-  $('age').addEventListener('input', () => { const a = ageOf(+$('age').value); $('fine').value = finePosOf(a); setAge(a); });
-  $('fine').addEventListener('input', () => { const a = fineAgeOf(+$('fine').value); $('age').value = posOf(a); setAge(a); });
-  function toAge(ma) { $('age').value = posOf(ma); $('fine').value = finePosOf(ma); setAge(ma); }
+  $('age').addEventListener('input', () => { const a = ageOf(+$('age').value); setWindow(a); $('fine').value = finePosOf(a); setAge(a); $('fineWord').value = 'bench only'; });
+  $('fine').addEventListener('input', () => { const a = fineAgeOf(+$('fine').value); $('age').value = posOf(a); setAge(a); $('fineWord').value = fine0 > 0 ? endWord(a) : 'bench only'; });
+  function toAge(ma) { setWindow(ma); $('age').value = posOf(ma); $('fine').value = finePosOf(ma); setAge(ma); }
   toAge(Q.get('ma') ? +Q.get('ma') : 0);
 
   // ---------- the kept picture (the credit goes on it) ----------
@@ -343,7 +381,7 @@
       $('readout').textContent = view.backend + ' · ' + view.tier + (view.timing !== 'done' ? ' (timing)' : '') + ' · ' + view.fps + ' fps · ' +
         st.triangles.toLocaleString('en') + ' triangles from ' + st.pieces + ' pieces on ' + st.plates + ' plates (the rims ' + st.rimTriangles.toLocaleString('en') + ' more), built in ' + st.buildMs + ' ms (the file in ' + st.fetchMs + ' ms; the masks in ' + st.lookMs + ' ms)' +
         ' · Blue Marble ' + (st.blue() ? st.blue() + ' px (device allows ' + view.maxTexture + ')' : 'not loaded') +
-        ' · seed ' + state.seed + simLine() + groundLine();
+        ' · seed ' + state.seed + simLine() + groundLine() + tileLine();
     }, 500);
   } else {
     $('readout').textContent = 'no 3D view: the still picture and the 2D globe';
@@ -360,6 +398,13 @@
     return t;
   }
 
+  function tileLine() {   // close in (step 5): the level at the centre, the tiles held against the limit, what they cost
+    if (!earth) return '';
+    const t = earth.tiles(), m = earth.marks();
+    return ' · close in: level ' + t.centreLevel + ' (deepest ' + t.deepest + '), ' + t.held + ' picture tiles held of ' + t.limit + ' (' + t.wanted + ' wanted, ' + t.loading + ' on the way), ' + t.heldData + ' data tiles, ' +
+      t.fetchedMB + ' MB fetched, the arrays ' + t.cardMB + ' MB' + (t.lastFillMs != null ? ', the last fill ' + t.lastFillMs + ' ms' : '') + ', the coast at level ' + t.coastLevel + (t.iceLocal ? ', the ice filled over the view' : '') +
+      ' · marks ' + m.labelled + ' named of ' + m.shown + ' in view';
+  }
   function groundLine() {
     if (!earth) return '';
     const f = earth.floor(), m = earth.seaLevel(), pairs = earth.icePairs();
@@ -367,7 +412,7 @@
   }
 
   // ---------- for the bench's own checks (the browser pane) ----------
-  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetLift = setLift; window.cwFineAgeOf = fineAgeOf; window.cwFinePosOf = finePosOf; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest; window.cwAgeOf = ageOf; window.cwPosOf = posOf;
+  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetLift = setLift; window.cwFineAgeOf = fineAgeOf; window.cwFinePosOf = finePosOf; window.cwFineWindow = () => [fine0, fine0 + FINE_SPAN]; window.cwSetOldGlobe = setOldGlobe; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest; window.cwAgeOf = ageOf; window.cwPosOf = posOf;
   // The bench's own timer, as the Sun bench's: draws `frames` frames off-screen at the canvas's size for a tier,
   // the age moving a million years a frame (so every plate's turn is read each frame, as a slider drag reads it),
   // and waits for the graphics card to finish each, so the number is the true cost of a frame, not the display's
@@ -431,6 +476,114 @@
     ctx.fillText('2D (globe.js): the same', px + 28, px + 26);
     const blob = await new Promise(res => cv.toBlob(res, type, quality));
     return { blob, rows };
+  };
+  // ---------- close in, for the bench's checks (step 5) ----------
+  // cwGo(lon, lat, km): the view straight down on a place, the stage's height across `km` kilometres of ground (or the
+  // camera's distance in radii, if under 20); cwWait(): until the tiles in view have arrived; cwShot(px): the Earth alone
+  // with its marks, as a JPEG; cwMapAt(px): the map (map.js, as the stories draw it) at the same place and scale, drawn
+  // into a picture from its own tiles, canvases and marks; cwSave(dir, name, blob): to the bench's picture server
+  const R_KM = 6371, TILE_WAIT_MS = 350;
+  window.cwGo = function (lon, lat, km) {
+    if (!view) return;
+    const d = km == null ? null : km < 20 ? km : 1 + km / R_KM / (2 * Math.tan(view.camera.fov * Math.PI / 360));
+    view.turnTo(lon, lat); if (g2d) g2d.turn(lon, lat);
+    earth.step();   // the nearest she may come, for this stage and tier
+    if (d) view.zoomTo(d);
+    earth.resetFill(); earth.settle(); view.redraw();
+    return { distance: view.camera.position.length(), limits: view.zoomLimits() };
+  };
+  window.cwWait = async function (ms = 20000) {
+    const t0 = performance.now();
+    await new Promise(r => setTimeout(r, 120));
+    earth.step();   // the pane runs no frames while a script waits: the tiles are asked for here
+    while (performance.now() - t0 < ms) { earth.step(); const t = earth.tiles(); if (!t.queued && !t.loading && t.held >= Math.min(t.wanted, t.limit) && t.heldData >= t.wantedData) break; await new Promise(r => setTimeout(r, 80)); }
+    earth.settle(); await new Promise(r => setTimeout(r, 450)); earth.step();
+    await new Promise(r => setTimeout(r, TILE_WAIT_MS)); earth.step();   // the last tiles' fade in
+    return earth.tiles();
+  };
+  window.cwShot = async function (px = 768, type = 'image/jpeg', quality = 0.86) {
+    const r = view.renderer, cam = view.camera, W = view.host.clientWidth, H = view.host.clientHeight, ph = Math.round(px * H / W);
+    const rt = new THREE.RenderTarget(px, ph, { type: THREE.UnsignedByteType, colorSpace: THREE.SRGBColorSpace, depthBuffer: true });
+    earth.frame(ph); r.setRenderTarget(rt); r.render(view.scene, cam);
+    const data = await r.readRenderTargetPixelsAsync(rt, 0, 0, px, ph);
+    r.setRenderTarget(null); rt.dispose();
+    const flip = !!(r.backend && r.backend.isWebGLBackend), cv = document.createElement('canvas'); cv.width = px; cv.height = ph;
+    const ctx = cv.getContext('2d'), img = ctx.createImageData(px, ph), src = new Uint8ClampedArray(data.buffer, data.byteOffset, px * ph * 4);
+    if (flip) { for (let y = 0; y < ph; y++) img.data.set(src.subarray((ph - 1 - y) * px * 4, (ph - y) * px * 4), y * px * 4); } else img.data.set(src);
+    for (let i = 3; i < img.data.length; i += 4) img.data[i] = 255;
+    ctx.putImageData(img, 0, 0);
+    const mc = view.host.querySelector('canvas.cw-earth-marks'); if (mc) ctx.drawImage(mc, 0, 0, px, ph);
+    return await new Promise(res => cv.toBlob(res, type, quality));
+  };
+  let mapApi = null;
+  window.cwMapAt = async function (px = 768, type = 'image/jpeg', quality = 0.86) {
+    if (!window.cwMap) await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = '../js/map.js?v=2026-10-22'; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc); });
+    const W = view.host.clientWidth, H = view.host.clientHeight, t = view.turnOf();
+    // the Earth's scale at the centre: CSS pixels a degree of ground; the map's S is pixels a degree of longitude, Mercator
+    // at a regional span, so S = that × cos(latitude)
+    const f = (H / 2) / Math.tan(view.camera.fov * Math.PI / 360), ppd = f / (view.camera.position.length() - 1) * Math.PI / 180;
+    const S = ppd * Math.cos(t.lat * Math.PI / 180), span = W / S;
+    let host = document.getElementById('mapBench');
+    if (!host) { host = document.createElement('div'); host.id = 'mapBench'; document.body.appendChild(host); }
+    host.style.cssText = 'position:absolute;left:-30000px;top:0;width:' + W + 'px;';
+    const region = await window.cwMap.load('../art/maps/world-pyramid.json');
+    const placeFile = await fetch('../stories/places.json').then(r => r.json()), cityFile = await fetch('../stories/plates/cities.json').then(r => r.json());
+    const marks = Object.values(placeFile.places).map(p => ({ type: 'place', lat: p.lat, lon: p.lon, name: p.name, weight: p.weight }))
+      .concat((cityFile.cities || cityFile).map(c => ({ type: 'place', lat: c.lat, lon: c.lon, name: c.name, world: true, minor: true, cls: 'cw-city' })));
+    mapApi = window.cwMap(host, region, marks, { height: H, resetWord: false, leftBar: false, fit: { west: t.lon - span / 2, east: t.lon + span / 2, south: t.lat - 0.0005, north: t.lat + 0.0005 } });
+    const stage = host.querySelector('.cw-stage');
+    const t0 = performance.now();
+    await new Promise(r => setTimeout(r, 600));
+    while (performance.now() - t0 < 15000 && [...stage.querySelectorAll('img')].some(im => !(im.complete && im.naturalWidth))) await new Promise(r => setTimeout(r, 100));
+    await new Promise(r => setTimeout(r, 400));
+    const cv = document.createElement('canvas'), k = px / W; cv.width = px; cv.height = Math.round(H * k);
+    const ctx = cv.getContext('2d'); ctx.fillStyle = getComputedStyle(stage).backgroundColor; ctx.fillRect(0, 0, cv.width, cv.height);
+    for (const el of stage.children) {
+      if (el.classList.contains('cw-tiles')) {
+        ctx.globalCompositeOperation = el.style.mixBlendMode || 'source-over';
+        for (const im of el.querySelectorAll('img')) if (im.complete && im.naturalWidth && im.style.visibility !== 'hidden') ctx.drawImage(im, parseFloat(im.style.left) * k, parseFloat(im.style.top) * k, parseFloat(im.style.width) * k, parseFloat(im.style.height) * k);
+        ctx.globalCompositeOperation = 'source-over';
+      } else if (el.tagName === 'CANVAS' && el.style.display !== 'none' && el.width) ctx.drawImage(el, 0, 0, cv.width, cv.height);
+      else if (el.tagName.toLowerCase() === 'svg') {
+        const clone = el.cloneNode(true), a = el.querySelectorAll('*'), b = clone.querySelectorAll('*');
+        const props = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-linejoin', 'stroke-linecap', 'opacity', 'font-family', 'font-size', 'font-style', 'font-weight', 'display', 'text-anchor'];
+        a.forEach((n, i) => { const cs = getComputedStyle(n); b[i].setAttribute('style', props.map(q => q + ':' + cs.getPropertyValue(q)).join(';')); });
+        clone.setAttribute('width', W); clone.setAttribute('height', H); clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(clone));
+        await new Promise(res => { const im = new Image(); im.onload = () => { ctx.drawImage(im, 0, 0, cv.width, cv.height); res(); }; im.onerror = res; im.src = url; });
+      }
+    }
+    const v = mapApi.view();
+    const blob = await new Promise(res => cv.toBlob(res, type, quality));
+    return { blob, view: v, wanted: { S, lon: t.lon, lat: t.lat }, level: mapApi.level() };
+  };
+  // cwZoomBench(from, to, frames): a zoom from one distance to another, a frame at a time, each frame the close-in work
+  // (the tiles wanted, the page table, the marks) and the drawing, waiting for the card; the tiles arrive as they would
+  window.cwZoomBench = async function (from, to, frames = 90) {
+    const r = view.renderer, times = [];
+    const done = () => r.backend.isWebGPUBackend ? r.backend.device.queue.onSubmittedWorkDone() : Promise.resolve(r.backend.gl.finish());
+    for (let i = 0; i <= frames; i++) {
+      const t0 = performance.now();
+      view.zoomTo(from * Math.pow(to / from, i / frames));
+      earth.step(); earth.frame(); r.render(view.scene, view.camera); await done();
+      times.push(performance.now() - t0);
+    }
+    times.sort((a, b) => a - b);
+    const mean = times.reduce((a, b) => a + b, 0) / times.length;
+    return { frames: times.length, meanMs: +mean.toFixed(2), medianMs: +times[times.length >> 1].toFixed(2), p95Ms: +times[Math.floor(times.length * 0.95)].toFixed(2), worstMs: +times[times.length - 1].toFixed(2), tiles: earth.tiles().held };
+  };
+  // cwTestMarks(): bench only, a few places over the Sahara and Australia (none of places.json lies there), drawn as the
+  // map's places are, a vermilion dot and the name with its halo, for the check of names over the photograph's reds
+  window.cwTestMarks = () => earth.addMarks([
+    { name: 'Timbuktu', lon: -3.0, lat: 16.77, weight: 2 }, { name: 'Agadez', lon: 7.99, lat: 16.97, weight: 2 }, { name: 'Tamanrasset', lon: 5.52, lat: 22.79, weight: 2 },
+    { name: 'Faya', lon: 19.1, lat: 17.9, weight: 2 }, { name: 'Kufra', lon: 23.3, lat: 24.2, weight: 2 }, { name: 'Siwa', lon: 25.52, lat: 29.2, weight: 2 },
+    { name: 'Alice Springs', lon: 133.88, lat: -23.7, weight: 2 }, { name: 'Uluru', lon: 131.04, lat: -25.34, weight: 2 }, { name: 'Coober Pedy', lon: 134.75, lat: -29.0, weight: 2 },
+    { name: 'Broome', lon: 122.24, lat: -17.96, weight: 2 }, { name: 'Kalgoorlie', lon: 121.47, lat: -30.75, weight: 2 }, { name: 'Tennant Creek', lon: 134.19, lat: -19.65, weight: 2 }
+  ]);
+  window.cwSave = async function (dir, name, blob) {
+    const url = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
+    const r = await fetch('http://localhost:8771/save?dir=' + encodeURIComponent(dir) + '&name=' + encodeURIComponent(name), { method: 'POST', body: url });
+    return r.ok ? (await r.text()) : 'failed ' + r.status;
   };
 </script>
 </body>

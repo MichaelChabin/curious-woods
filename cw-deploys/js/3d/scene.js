@@ -51,6 +51,20 @@
    disc turns across its width (the trackball: 1.8 radians). The inertia is the trackball's, unchanged. The Sun keeps
    the trackball.
 
+   Close in (the globe only; Spec-Earth-3D step 5, 28 Oct 2026). She looks straight down at the ground at every zoom:
+   the camera stays on the line through the ball's centre. Zoom works on the height above the ground, not the distance
+   from the centre, so a pinch close in is as gentle as far out; the wheel and the pinch hold the ground under the
+   pointer, or between the two fingers, where it was (the view is turned to put it back, by the point's longitude and
+   latitude read off the ball). Two fingers turn the ball under them rather than sliding the camera off the centre. The
+   one-finger turn slows with the zoom: at the centre of the picture one pixel is height × 2 tan(fov / 2) / H radians of
+   ground (H the stage's shorter side), and close in the turn is exactly that, the longitude divided by the cosine of the
+   latitude, so the ground stays under the finger; far out it rises to the 180° across the stage it always had (reached
+   at the home height, and never more), the cosine fading out on the way. view.setZoomLimits(min, max) sets the nearest
+   and farthest distances (the page's deepest level by tier); the near and far planes follow the height each frame, so
+   nothing is cut away at any zoom. view.lonLatAt(x, y) reads the longitude and latitude under a point of the stage (or
+   null off the ball); view.onGesture(fn) hears 'start' when a finger, the wheel, the inertia or Reset view starts to
+   move the view and 'end' when it has stopped, for a page whose labels hold still while the view moves.
+
    Reduced motion (the system setting): the page opens still and the word "Let it move" starts it; "Hold still"
    stops it again. A phone (short side of the screen under 600 px) gets one frame at full tier and the words
    "This one needs a bigger screen"; it takes no gesture — unless the page passes phone: 'run' (the Earth, by
@@ -62,7 +76,8 @@
    allows it, so a tier's 8,192 picture steps down to 4,096 where 8,192 is refused instead of failing to load.
 
    Returns { renderer, scene, camera, ball, host, backend, tier, fps, refresh, target, moving, ground, setTier,
-   onFrame, resetView, redraw, stop, maxTexture, fitTexture, turnTo, turnOf }. The page adds its objects to `ball` (what the finger turns) or to `scene`
+   onFrame, resetView, redraw, stop, maxTexture, fitTexture, turnTo, turnOf, lonLatAt, setZoomLimits, zoomLimits,
+   onGesture, busy }. The page adds its objects to `ball` (what the finger turns) or to `scene`
    (what stays, like the glow). onFrame(fn) is called every animation frame with (dt, moving), drawn or not.
    cwRGB(hex) gives a CSS hex colour as [r, g, b] in 0..1, display values, for a shader that reads cw-style.js. */
 import * as THREE from 'three';
@@ -232,6 +247,9 @@ export async function cwScene(host, o = {}) {
       else if (turn && moving && !touched) { ball.rotateOnWorldAxis(UP, turn * dt); needs = true; }
     }
     if (ease) { ease(now); needs = true; }
+    if (globe) fitPlanes();
+    const isBusy = ptrs.size > 0 || Math.abs(vel.x) > 1e-4 || Math.abs(vel.y) > 1e-4 || !!ease || now < wheelUntil;
+    if (isBusy !== busy) { busy = isBusy; gestureFns.forEach(fn => fn(busy ? 'start' : 'end')); }
     frameFns.forEach(fn => fn(dt, moving));
     if (moving || needs) {
       renderer.render(scene, camera);
@@ -248,11 +266,24 @@ export async function cwScene(host, o = {}) {
   const UP = new THREE.Vector3(0, 1, 0);
   const ptrs = new Map();
   const vel = { x: 0, y: 0 };
-  let pinch = null, ease = null;
+  let pinch = null, ease = null, wheelUntil = 0, busy = false;
+  const gestureFns = [];
   const tmpQ = new THREE.Quaternion(), tmpV = new THREE.Vector3();
   // the trackball turns 1.8 radians across the stage's shorter side; the desk globe turns 180° across it, as globe.js's disc
   // does across its width (Michael, 27 Oct: match the 2D for now, to be judged by finger on the iPad)
-  function radPerPx() { return (globe ? Math.PI : 1.8) / Math.min(host.clientWidth || 1, host.clientHeight || 1); }
+  // the globe close in: the ground's own radians a pixel at the centre, rising to the 180° across far out (see the header)
+  const homeAlt = Math.max(0.5, home.pos.length() - 1);
+  function radPerPx() {
+    const H = Math.min(host.clientWidth || 1, host.clientHeight || 1);
+    if (!globe) return 1.8 / H;
+    const alt = camera.position.length() - 1, ground = alt * 2 * Math.tan(cam.fov * DEG / 2) / H, far = Math.PI / H;
+    const r = far / (homeAlt * 2 * Math.tan(cam.fov * DEG / 2) / H), s = THREE.MathUtils.clamp((alt - 1) / Math.max(0.01, homeAlt - 1), 0, 1);
+    return Math.min(far, ground * (1 + (r - 1) * s * s * (3 - 2 * s)));
+  }
+  function lonStretch() {   // close in a turn along the parallel is divided by its cosine, so the ground keeps up with the finger
+    const alt = camera.position.length() - 1, s = THREE.MathUtils.clamp((alt - 1) / Math.max(0.01, homeAlt - 1), 0, 1);
+    return 1 / THREE.MathUtils.lerp(Math.max(0.1, Math.cos(gLat * DEG)), 1, s * s * (3 - 2 * s));
+  }
   const tmpQ2 = new THREE.Quaternion();
   function applyGlobe(tell) {   // the desk-globe turn: spin about the ball's own axis, then tilt about the camera's right
     tmpV.set(0, 1, 0).applyQuaternion(camera.quaternion);
@@ -265,7 +296,7 @@ export async function cwScene(host, o = {}) {
   }
   function turnBy(ax, ay) {   // ax, ay in radians: around the camera's up, then its right
     if (globe) {   // the same radians, as a change of the view's longitude and latitude; the tilt stops at the poles
-      gLon -= ax / DEG; gLat = THREE.MathUtils.clamp(gLat + ay / DEG, -90, 90);
+      gLon -= ax / DEG * lonStretch(); gLat = THREE.MathUtils.clamp(gLat + ay / DEG, -90, 90);
       applyGlobe(true); return;
     }
     tmpV.set(1, 0, 0).applyQuaternion(camera.quaternion);
@@ -276,9 +307,43 @@ export async function cwScene(host, o = {}) {
   function wrapLon(l) { l = ((l + 180) % 360 + 360) % 360 - 180; return l === -180 ? 180 : l; }
   function zoomBy(f) {
     const dir = camera.position.clone().sub(target3);
-    const d = THREE.MathUtils.clamp(dir.length() * f, cam.min, cam.max);
+    const d = globe ? 1 + THREE.MathUtils.clamp((dir.length() - 1) * f, cam.min - 1, cam.max - 1)   // the globe: the height above the ground
+                    : THREE.MathUtils.clamp(dir.length() * f, cam.min, cam.max);
     camera.position.copy(target3).add(dir.normalize().multiplyScalar(d));
+    camera.updateMatrixWorld();
     needs = true;
+  }
+  // the globe: the longitude and latitude under a point of the page (client pixels), or null off the ball
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), invQ = new THREE.Quaternion();
+  function lonLatAt(cx, cy) {
+    const r = canvas.getBoundingClientRect();
+    ndc.set(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
+    camera.updateMatrixWorld(); ray.setFromCamera(ndc, camera);
+    const o = ray.ray.origin, d = ray.ray.direction, b = o.dot(d), c = o.lengthSq() - 1, disc = b * b - c;
+    if (disc < 0) return null;
+    const p = o.clone().addScaledVector(d, -b - Math.sqrt(disc)).applyQuaternion(invQ.copy(ball.quaternion).invert());
+    return { lon: Math.atan2(p.x, p.z) / DEG, lat: Math.asin(THREE.MathUtils.clamp(p.y, -1, 1)) / DEG };
+  }
+  // the globe: turn the view so that the ground at `at` (a longitude and latitude) lies under the client point (cx, cy);
+  // three passes of a small correction, exact enough close in and harmless far out
+  function holdAt(at, cx, cy) {
+    if (!at) return;
+    for (let i = 0; i < 3; i++) {
+      const now = lonLatAt(cx, cy); if (!now) return;
+      gLon += wrapLon(at.lon - now.lon); gLat = THREE.MathUtils.clamp(gLat + (at.lat - now.lat), -90, 90);
+      applyGlobe(false);
+    }
+    if (o.onTurn) o.onTurn(view);
+  }
+  function zoomAt(f, cx, cy) {   // the globe zooms holding the ground under the pointer; the trackball about the centre
+    const at = globe && cx != null ? lonLatAt(cx, cy) : null;
+    zoomBy(f);
+    if (at) holdAt(at, cx, cy);
+  }
+  let planesD = -1;
+  function fitPlanes() {   // the near and far planes by the height: the ground never cut, the depth kept fine
+    const D = camera.position.length(); if (Math.abs(D - planesD) < 1e-9) return;
+    planesD = D; camera.near = Math.max(1e-4, (D - 1) * 0.5); camera.far = D + 1.2; camera.updateProjectionMatrix();
   }
   function panBy(dx, dy) {   // screen pixels → the view moves with the fingers
     const dist = camera.position.distanceTo(target3);
@@ -312,14 +377,19 @@ export async function cwScene(host, o = {}) {
       p.moved += Math.abs(dx) + Math.abs(dy);
       p.x = e.clientX; p.y = e.clientY; p.t = now;
       if (ptrs.size === 1) {
-        if (p.button === 2 || p.shift) panBy(dx, dy);
+        if ((p.button === 2 || p.shift) && !globe) panBy(dx, dy);   // the globe never slides off its centre: she looks straight down
         else { const k = radPerPx(); turnBy(dx * k, dy * k); vel.x = dx * k / dt; vel.y = dy * k / dt; }
         needs = true;
       } else if (ptrs.size === 2 && pinch) {
         const [a, b] = [...ptrs.values()];
         const d = Math.hypot(a.x - b.x, a.y - b.y), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-        if (d > 0 && pinch.d > 0) zoomBy(pinch.d / d);
-        panBy(mx - pinch.mx, my - pinch.my);
+        if (globe) {   // the ground between the fingers goes where they go, then the pinch zooms holding it there
+          holdAt(lonLatAt(pinch.mx, pinch.my), mx, my);
+          if (d > 0 && pinch.d > 0) zoomAt(pinch.d / d, mx, my);
+        } else {
+          if (d > 0 && pinch.d > 0) zoomBy(pinch.d / d);
+          panBy(mx - pinch.mx, my - pinch.my);
+        }
         pinch = { d, mx, my };
       }
     });
@@ -335,7 +405,7 @@ export async function cwScene(host, o = {}) {
     canvas.addEventListener('pointerup', end);
     canvas.addEventListener('pointercancel', end);
     canvas.addEventListener('contextmenu', e => e.preventDefault());
-    canvas.addEventListener('wheel', e => { e.preventDefault(); zoomBy(Math.exp(THREE.MathUtils.clamp(e.deltaY, -60, 60) * 0.0025)); if (o.onTouch) o.onTouch(); }, { passive: false });
+    canvas.addEventListener('wheel', e => { e.preventDefault(); wheelUntil = performance.now() + 160; vel.x = vel.y = 0; zoomAt(Math.exp(THREE.MathUtils.clamp(e.deltaY, -60, 60) * 0.0025), e.clientX, e.clientY); if (o.onTouch) o.onTouch(); }, { passive: false });
   }
 
   function resetView() {
@@ -380,6 +450,12 @@ export async function cwScene(host, o = {}) {
     reduce, phone, setTier, resetView, maxTexture, fitTexture,
     turnTo: (lon, lat) => { if (!globe) return; if (lon != null) gLon = lon; if (lat != null) gLat = THREE.MathUtils.clamp(lat, -90, 90); applyGlobe(false); },
     turnOf: () => globe ? { lon: wrapLon(gLon), lat: gLat } : null,
+    lonLatAt: (x, y) => { const r = canvas.getBoundingClientRect(); return lonLatAt(r.left + x, r.top + y); },   // stage pixels
+    setZoomLimits: (min, max) => { if (min != null) cam.min = min; if (max != null) cam.max = max; zoomBy(1); },
+    zoomLimits: () => ({ min: cam.min, max: cam.max }),
+    zoomTo: d => { const dir = camera.position.clone().sub(target3).normalize(); camera.position.copy(target3).addScaledVector(dir, THREE.MathUtils.clamp(d, cam.min, cam.max)); camera.updateMatrixWorld(); needs = true; },   // the camera's distance from the centre, for a page's checks
+    onGesture: fn => gestureFns.push(fn),
+    get busy() { return busy; },
     onFrame: fn => frameFns.push(fn),
     redraw: () => { needs = true; },
     stop: () => { stopped = true; renderer.setAnimationLoop(null); }
