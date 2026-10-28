@@ -69,24 +69,69 @@
      while the grade is none), moltenState copied for its five numbers and its phase, MOLTEN_WORDS copied for the
      words: the melt by the grain, the black crust where the cooling-order map is below a threshold rising with
      the age, the cracks glowing and dimming, the faint uncertain first sea, the maps turned 137° and flipped for
-     the second crust, the sea's blue by 4,400. The Moon's impact at 4,510 two ways, the bench's choice, neither a
-     flare (Michael: without the fireworks): `warm`, the whole ball warming toward the melt's colour over MOON_WARM
-     million years either side, no white; or `melt`, no brightening at all — the first crust sinks into the melt
-     over MOON_MELT million years after the impact, the last-cooled rafts first, the cracks brightening as it goes,
-     while the second crust begins on the turned maps as globe.js has it. The 2D's white flash is not drawn.
+     the second crust, the sea's blue by 4,400. The Moon's impact at 4,510 with no flash (Michael's ruling of 28 Oct,
+     after the third bench showed it two ways): no brightening, no white, nothing beyond the rim — the first crust
+     breaks into rafts that sink into the melt over MOON_MELT million years after the impact, the last-cooled rafts
+     first, the cracks brightening as it goes, while the second crust begins on the turned maps as globe.js has it.
+     The 2D's white flash is not drawn; it retires with globe.js.
    - The grade and its sentence: gradeFor and GRADE_WORDS copied; grade() answers as globe.js's does.
+
+   This side of the seam, and the honesty (step 4, 28 Oct; the audit's §1 and §5):
+   - The ice-age sea. This side of the seam the sea follows the sea-level curve the Time Machine hands its map
+     (stories/curves/sea-level-ice-ages.json, Spratt and Lisiecki to 800,000 years, Bintanja and van de Wal to three
+     million), read by the one curve reader at the age and rounded to half a metre as map.js rounds it. Lowering the
+     sea is lowering the sea's ball by that many metres of the Earth's radius (invisible at this scale, and done), and
+     what it uncovers is read from ETOPO's depths: the pyramid's floor tiles (world-tiles, level 3 at the full tier,
+     level 2 below) as one R8 texture, depth = max × ((v − 1) / 253)², painted in the skin shader exactly as paintSkin
+     paints it — where the picture's sea is shallower than the lowered sea, the land ramp's first stops by the height
+     above the new shore (shoreLand), the wash gone there. (The spec says floor that comes out is grey, Drain the Sea's;
+     the bench paints it the 2D's way so the two can be compared, and the report says how it looks on the photograph.)
+   - The ICE-6G ice. The same outlines the Time Machine hands the globe (stories/ice-outlines.json, 48 steps to
+     26,000 years), each step filled once into a 1,024 × 512 mask as iceMask fills it and kept; the two steps either
+     side of the age as two mask textures with map.js's icePairs weights (beyond 26,000 years the oldest outline at the
+     strength of the sea-level curve, −m/120), painted as paintSkin paints them: iceFill at 0.94 of the summed masks,
+     never below the sea at its level. Where the ICE-6G ice ends at the seam and the deep ice of the old ages begins,
+     no snap: the ground's sea and ice fade out over the same ramp the Antarctic age's deep ice fades in on (2.6 to
+     5.7 million years), where the 2D switches at the seam.
+   - The sea's colour: the 2D's two blues by depth (globeSea at the centre to globeSeaDeep at the limb, by the ray's
+     distance, centred: the 2D's colours without its sun-side highlight), with even light (Michael's ruling on the fourth
+     bench, 28 Oct; the flat globeSea and its switch are gone). The rims' and the dissolves' sea follow it.
+   - NASA's sea, at today (the same ruling: at today the photograph shows its own sea; as soon as she moves back, our
+     sea takes over, because the sea level changes all the time). setSea('nasa') makes the photograph NASA's Blue
+     Marble with topography and bathymetry (July 2004, the sea floor's shape in its blues, the land with NASA's relief
+     shading), its sea mask built from its own 2,048 px file; at today the sea's ball shows that picture and the pieces
+     show its sea as it is, opaque, in place of the wash (every body of water in NASA's blues — the ocean, the Caspian,
+     the Black Sea; a lake its base map leaves near-black, Victoria or Baikal, keeps our wash: buildShowMask); going back the photograph's sea gives way to ours over the
+     first eighty years, by the cube root of the age (1 at today, a half at ten years, gone at eighty: the main slider's
+     first two positions), and the photograph's land fades to paint as before. setSea('ours') is the bench as it was:
+     the land-only Blue Marble over our sea at every age.
+   - The bared shelf, two ways on the bench (setShelf): the 2D's buff (shoreLand's first stops) or a neutral grey, the
+     spec's floor that comes out (Drain the Sea's held note: middle grey on the shelves, no hue), darker at the new
+     shore and lighter above it.
+   - Today's coasts. The 0 m rings of contours-0.json, as prepareCoast reads them, fixed in the globe's frame (they do
+     not ride the plates: globe.js draws them through the view alone), as a line on the ball in the coast colour at
+     COAST_A, a strip COAST_PX CSS pixels wide. Not at today, where the photograph shows its own coast: it comes in with our sea over the first
+     eighty years. Then this side of the seam always; past it off, fading over the 2D's own span to 5 million years,
+     unless the page's word today's coasts turns them on over the ancient ground. The 2D draws a second modern line, the shelf's
+     edge at −200 m (shelf, 0.3); it is not drawn here (the brief: report, don't add).
+   - The honest block and the kept picture are honest.js's and still.js's; the Earth tells the page what the picture is
+     and says (grade(), seaLevel(), the credit by the ground) and the page hands the block to them.
 
      const earth = await cwEarth(view, {
        plates, cities, crust,         // the files; crust: stories/curves/crust-and-land.json (the amount, and the island's share)
        ground, vegetation,            // the old ground and its vegetation
        blue: px => url,               // Blue Marble by size; blueSmall: the 2,048 px file (the mask)
+       blueSea: px => url,            // NASA's Blue Marble with its sea (topography and bathymetry) by size; blueSeaSmall
+       sea: 'nasa' | 'ours',          // the photograph's sea at today (default 'nasa'); shelf: 'buff' | 'grey' (default 'buff')
        textures: '../art/globe/',     // rock-grain.png, cooling-order.png and cracks.png
        seed,                          // the first seed (default: this visit's, as globe.js makes one)
-       impact: 'warm' | 'melt',       // the Moon's impact, two ways (bench)
+       seaCurve, ice, coast, pyramid, // the sea-level curve, the ice outlines, the coast contours, the pyramid (its floor tiles): files or URLs, or false
        maxEdge: 4, bloat: 0.75 * 360 / 1024, citiesHost: element
      });
    Returns { group, setTime(ma), time(), grade() → { grade, why }, moltenPhase(), setGround('old'|'blue'), ground(),
-   setImpact('warm'|'melt'), impact(), seed(), setSeed(s), reguess(), simMs() → { cratons, blobs, blobBuild },
+   seaLevel() (metres, ≤ 0), icePairs(), setSea('nasa'|'ours'), seaMode(), nasaSea() (how much of NASA's sea shows),
+   setShelf('buff'|'grey'), shelf(), setCoasts(on), coasts(),
+   seed(), setSeed(s), reguess(), simMs() → { cratons, blobs, blobBuild },
    setTier(tier), placeAt, project → {x, y, front}, cities,
    stats: { pieces, rings, plates, triangles, rimTriangles, buildMs, lookMs, fetchMs, blue() }, meshes, dispose() }. */
 import * as THREE from 'three';
@@ -103,10 +148,12 @@ const OLDEST_ROCK = 4000, NO_MAP = 4400, DRIFT_DEG_PER_MA = 0.45;   // a plate's
 // the molten sequence, in millions of years ago (globe.js part 7; the ages as the events store has them)
 const ASSEMBLED = 4567, FIRST_CRUST = 4558, MOON = 4510, SECOND_CRUST = 4480, FIRST_SEA_FROM = 4548, FIRST_SEA_TO = 4520;
 const MAP_TURN = 137 * D2R;   // the second crust: the maps turned this far and flipped, so it is a different crust
-// the Moon's impact, two ways (step 3; the bench chooses): the span of the quiet brightening either side of the impact, and
-// the span after it over which the first crust sinks into the melt when there is no brightening — both in million years,
-// for Michael to move by looking
-const MOON_WARM = 5, MOON_MELT = 3;
+// the Moon's impact (Michael's ruling of 28 Oct: no flash): the span after it, in million years, over which the first
+// crust sinks into the melt — 6.5, about ten positions of the bench's slider (the third bench's 3 was too quick)
+const MOON_MELT = 6.5;
+const NASA_SEA_TO = 80e-6;   // NASA's sea gives way to ours by eighty years ago (million years), by the cube root of the age: the main slider's first two positions
+const COAST_A = 0.6, COAST_PX = 1.5;   // today's coast: its alpha (the 2D's), and its width in CSS pixels at the ball's near face (the 2D strokes 1.1; 28 Oct, the one-pixel line could not be seen)
+const COAST_FADE_TO = 5;   // past the seam today's coasts fade out by this age (million years), the 2D's own end; the page's word keeps them on
 const RIM_SEG = 10;   // the disc at each point of a shelf rim's outline: ten segments on a 2.2° disc sag 0.11° between them, under the quads' joins along a soft curve
 // the cold ages of deep time, in millions of years ago, and how far from the poles the ice reached (degrees of latitude
 // from the equator): the Huronian, the two snowballs, the Andean-Saharan, the late Palaeozoic, the Antarctic, the Quaternary
@@ -516,7 +563,41 @@ function buildMask(pic, w, h, isBlue) {
   const mx = mc.getContext('2d'), md = mx.createImageData(w, h), m32 = new Uint32Array(md.data.buffer);
   for (let i = 0; i < n; i++) m32[i] = mask[i] ? 0xffffffff : 0xff000000;   // little-endian ABGR: opaque white or opaque black
   mx.putImageData(md, 0, 0);
-  return { maskCanvas: mc, ms: performance.now() - t0, seaShare: seaCount / n };
+  return { maskCanvas: mc, ms: performance.now() - t0, seaShare: seaCount / n, mask };
+}
+// NASA's sea, which bodies of water show the photograph at today: each connected body of the mask (four neighbours,
+// wrapping east to west) by its mean colour — NASA's blues (blue at least 14 and over 1.6 times green: the open ocean
+// with its coast's mixed pixels, the Caspian, the Black Sea) show, and a near-black lake (Victoria, Baikal, Superior,
+// Tanganyika: the base map's dark water, unshaded) keeps our wash
+function buildShowMask(pic, look, w, h) {
+  const t0 = performance.now(), p = pic.data, m = look.mask, n = w * h;
+  const comp = new Int32Array(n).fill(-1), stack = new Int32Array(n), show = [];
+  let c = 0;
+  for (let s = 0; s < n; s++) {
+    if (!m[s] || comp[s] >= 0) continue;
+    let top = 0, gs = 0, bs = 0, k = 0; stack[top++] = s; comp[s] = c;
+    while (top) {
+      const i = stack[--top], x = i % w, y = (i - x) / w;
+      gs += p[i * 4 + 1]; bs += p[i * 4 + 2]; k++;
+      const nb = [y * w + (x + 1) % w, y * w + (x + w - 1) % w, y > 0 ? i - w : -1, y < h - 1 ? i + w : -1];
+      for (const j of nb) if (j >= 0 && m[j] && comp[j] < 0) { comp[j] = c; stack[top++] = j; }
+    }
+    show.push(bs / k >= 14 && bs > gs * 1.6); c++;
+  }
+  // carried two texels into the land, so the shown water reaches the picture's own coast at 8,192 px (it only ever
+  // multiplies the sea the shader finds, so land stays land); without it the 2,048 px edge left blocky steps of wash
+  let on = new Uint8Array(n);
+  for (let i = 0; i < n; i++) on[i] = comp[i] >= 0 && show[comp[i]] ? 1 : 0;
+  for (let pass = 0; pass < 2; pass++) {
+    const nx = on.slice();
+    for (let i = 0; i < n; i++) if (!on[i]) { const x = i % w, y = (i - x) / w; if (on[y * w + (x + 1) % w] || on[y * w + (x + w - 1) % w] || (y > 0 && on[i - w]) || (y < h - 1 && on[i + w])) nx[i] = 1; }
+    on = nx;
+  }
+  const mc = document.createElement('canvas'); mc.width = w; mc.height = h;
+  const mx = mc.getContext('2d'), md = mx.createImageData(w, h), m32 = new Uint32Array(md.data.buffer);
+  for (let i = 0; i < n; i++) m32[i] = on[i] ? 0xffffffff : 0xff000000;
+  mx.putImageData(md, 0, 0);
+  return { maskCanvas: mc, ms: performance.now() - t0, bodies: c, shown: show.filter(Boolean).length };
 }
 
 export async function cwEarth(view, o = {}) {
@@ -529,15 +610,21 @@ export async function cwEarth(view, o = {}) {
   const texBase = o.textures || '../art/globe/';
   const seam = o.seam != null ? o.seam : SEAM;
   let seed = o.seed != null ? o.seed : ((Date.now() % 1000003) + Math.floor(Math.random() * 1000));   // the first seed: this visit's, as globe.js makes one
-  let impact = o.impact === 'melt' ? 'melt' : 'warm';
 
   // ---- the data ----
   const t0 = performance.now();
-  const [data, cityFile, crust] = await Promise.all([
+  const getJson = (given, dflt) => given === false ? Promise.resolve(null) : (given && typeof given !== 'string' ? Promise.resolve(given) : fetch(given || dflt, { cache: 'no-cache' }).then(r => r.json()).catch(e => { console.warn('earth.js: did not load', given || dflt, e); return null; }));
+  const [data, cityFile, crust, seaCurveFile, iceFile, coastFile, pyramid] = await Promise.all([
     fetch(o.plates || '../stories/plates/continents.json', { cache: 'no-cache' }).then(r => r.json()),
-    o.cities === false ? null : fetch(o.cities || '../stories/plates/cities.json', { cache: 'no-cache' }).then(r => r.json()).catch(() => null),
-    o.crust === false ? null : fetch(o.crust || '../stories/curves/crust-and-land.json', { cache: 'no-cache' }).then(r => r.json()).catch(() => null)
+    getJson(o.cities, '../stories/plates/cities.json'),
+    getJson(o.crust, '../stories/curves/crust-and-land.json'),
+    getJson(o.seaCurve, '../stories/curves/sea-level-ice-ages.json'),   // the map's sea past the Lambeck curve: the Time Machine hands this one to map.setTime
+    getJson(o.ice, '../stories/ice-outlines.json'),                      // ICE-6G_C via PMIP4, as the Time Machine hands it
+    getJson(o.coast, '../art/maps/world-tiles/contours-0.json'),        // today's coast, the 0 m rings (prepareCoast)
+    getJson(o.pyramid, '../art/maps/world-pyramid.json')                 // for its floor tiles: ETOPO's depths
   ]);
+  const seaCurve = seaCurveFile ? (seaCurveFile.points || seaCurveFile) : null;
+  const iceData = iceFile && iceFile.ages && iceFile.outlines ? iceFile : null;
   const fetchMs = performance.now() - t0;
   const ages = data.ages, grades = data.grades || [], plates = {}, reach = data.reach || ages[ages.length - 1];
   for (const pid in data.plates) { const P = data.plates[pid]; plates[pid] = { first: P.first, q: P.rot.map(r => quat(r[0], r[1], r[2])) }; }
@@ -766,28 +853,112 @@ export async function cwEarth(view, o = {}) {
   }
   const loadTex = async url => prep(await loader.loadAsync(url));
   const loadImg = url => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('did not load ' + url)); im.src = url; });
-  const blueUrl = o.blue || (px => `../art/globe/blue-marble-july-${px}.webp`);
-  const [texOld, texVeg, texGrain, texCool, texCracks, imgOld, imgVeg, imgBlueSmall] = await Promise.all([
+  const blueUrls = { ours: o.blue || (px => `../art/globe/blue-marble-july-${px}.webp`), nasa: o.blueSea || (px => `../art/globe/blue-marble-sea-july-${px}.webp`) };
+  let seaMode = o.sea === 'ours' ? 'ours' : 'nasa';
+  const [texOld, texVeg, texGrain, texCool, texCracks, imgOld, imgVeg, imgBlueSmall, imgSeaSmall] = await Promise.all([
     loadTex(o.ground || '../art/maps/world.webp'), loadTex(o.vegetation || '../art/maps/world-vegetation.webp'),
     loadTex(texBase + 'rock-grain.png'), loadTex(texBase + 'cooling-order.png'), loadTex(texBase + 'cracks.png'),
     loadImg(o.ground || '../art/maps/world.webp'), loadImg(o.vegetation || '../art/maps/world-vegetation.webp'),
-    blueUrl ? loadImg(o.blueSmall || blueUrl(2048)).catch(() => null) : null
+    loadImg(o.blueSmall || blueUrls.ours(2048)).catch(() => null),
+    loadImg(o.blueSeaSmall || blueUrls.nasa(2048)).catch(() => null)
   ]);
   // the sea masks, from the pictures' own pixels: the old ground as the 2D globe multiplies it, Blue Marble from its
   // 2,048 px file whatever the tier shows
   const MW = 2048, MH = 1024;
   const lookOld = buildMask(pictureCanvas(imgOld, MW, MH, imgVeg), MW, MH, false);
   const lookBlue = imgBlueSmall ? buildMask(pictureCanvas(imgBlueSmall, MW, MH, null), MW, MH, true) : lookOld;
+  const picSea = imgSeaSmall ? pictureCanvas(imgSeaSmall, MW, MH, null) : null;
+  const lookSea = picSea ? buildMask(picSea, MW, MH, true) : lookBlue;   // NASA's sea: its own mask (its blues pass the blue test; it marks the coast's mixed pixels as sea a little more readily)
+  const lookShow = picSea ? buildShowMask(picSea, lookSea, MW, MH) : null;
+  if (!imgSeaSmall) seaMode = 'ours';
   const canvasTex = c => prep(new THREE.CanvasTexture(c));
-  const maskOld = canvasTex(lookOld.maskCanvas), maskBlue = canvasTex(lookBlue.maskCanvas);
-  const lookMs = lookOld.ms + (imgBlueSmall ? lookBlue.ms : 0);
+  const maskOld = canvasTex(lookOld.maskCanvas), maskBlueOurs = canvasTex(lookBlue.maskCanvas), maskBlueSea = canvasTex(lookSea.maskCanvas);
+  const maskShow = lookShow ? canvasTex(lookShow.maskCanvas) : maskBlueSea;   // which of NASA's waters show at today
+  let maskBlue = seaMode === 'nasa' ? maskBlueSea : maskBlueOurs;
+  const lookMs = lookOld.ms + (imgBlueSmall ? lookBlue.ms : 0) + (imgSeaSmall ? lookSea.ms + lookShow.ms : 0);
+  // ---- the ground this side of the seam: ETOPO's depths from the pyramid's floor tiles, and the ICE-6G masks ----
+  // the floor: the tiles of one level drawn into a canvas (nearest, as map.js draws a number), its red channel as an
+  // R8 texture with the rows turned so that v = 1 is north, as every picture here is read; a missing tile is land.
+  // depth = max × ((v − 1) / 253)² metres, 0 land or water not joined to the ocean (the pyramid's own words)
+  const FLOOR = pyramid && pyramid.data && pyramid.data.floor ? pyramid.data.floor : null;
+  const FLOOR_MAX = FLOOR ? FLOOR.max : 11000;
+  const floorBase = (o.pyramid && typeof o.pyramid === 'string' ? o.pyramid : '../art/maps/world-pyramid.json').replace(/[^/]*$/, '') + (pyramid ? pyramid.tiles : 'world-tiles') + '/';
+  let texFloor = null, floorLevel = -1, floorMs = 0, floorLoading = null;
+  const emptyR8 = () => { const t = new THREE.DataTexture(new Uint8Array(4), 2, 1, THREE.RedFormat, THREE.UnsignedByteType); t.needsUpdate = true; return t; };
+  function prepR8(t, filter) { t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.ClampToEdgeWrapping; t.minFilter = t.magFilter = filter || THREE.LinearFilter; t.generateMipmaps = false; t.colorSpace = THREE.NoColorSpace; t.needsUpdate = true; return t; }
+  async function loadFloor(level) {
+    if (!FLOOR || !pyramid.levels[level]) return null;
+    const t0 = performance.now(), cols = 2 << level, rows = 1 << level, T = FLOOR.tile, w = cols * T, h = rows * T;
+    const have = new Set(FLOOR.tiles[String(level)] || []);
+    const imgs = await Promise.all([...have].map(k => { const [x, y] = k.split('/').map(Number); return loadImg(floorBase + level + '/' + x + '/' + y + FLOOR.suffix).then(im => [im, x, y]).catch(() => null); }));
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const g = c.getContext('2d', { willReadFrequently: true }); g.imageSmoothingEnabled = false;
+    imgs.forEach(t => { if (t) g.drawImage(t[0], t[1] * T, t[2] * T); });
+    const d = g.getImageData(0, 0, w, h).data, r8 = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) { const src = (h - 1 - y) * w, dst = y * w; for (let x = 0; x < w; x++) r8[dst + x] = d[(src + x) << 2]; }
+    const t = prepR8(new THREE.DataTexture(r8, w, h, THREE.RedFormat, THREE.UnsignedByteType));
+    floorMs = performance.now() - t0;
+    return t;
+  }
+  async function wantFloor(tier) {
+    const level = FLOOR ? Math.min(FLOOR.levels[FLOOR.levels.length - 1], tier === 'full' ? 3 : 2) : -1;
+    if (level < 0 || level === floorLevel) return;
+    floorLoading = loadFloor(level).then(t => { if (!t) return; if (texFloor && texFloor !== floorEmpty) texFloor.dispose(); texFloor = t; floorLevel = level; rebuildMaterials(); view.redraw(); });
+    return floorLoading;
+  }
+  const floorEmpty = emptyR8(); texFloor = floorEmpty;
+  // the ice masks (globe.js's iceMask): an outline's rings filled even-odd in texture space, 1,024 × 512, once per
+  // step and kept as bytes; two textures carry the two steps either side of the age, their weights map.js's icePairs
+  const IW = 1024, IH = 512, iceMasks = {};
+  const iceCanvas = document.createElement('canvas'); iceCanvas.width = IW; iceCanvas.height = IH;
+  const iceCtx = iceCanvas.getContext('2d', { willReadFrequently: true });
+  function iceMask(age) {
+    const key = String(age); if (iceMasks[key] !== undefined) return iceMasks[key];
+    const rings = iceData && iceData.outlines[key]; if (!rings || !rings.length) { iceMasks[key] = null; return null; }
+    iceCtx.setTransform(1, 0, 0, 1, 0, 0); iceCtx.clearRect(0, 0, IW, IH);
+    iceCtx.setTransform(IW / 360, 0, 0, -IH / 180, IW / 2, IH / 2); iceCtx.fillStyle = '#fff';
+    const path = new Path2D();
+    for (const ring of rings) { ring.forEach((q, i) => { if (i) path.lineTo(q[0], q[1]); else path.moveTo(q[0], q[1]); }); path.closePath(); }
+    iceCtx.fill(path, 'evenodd');
+    iceCtx.setTransform(1, 0, 0, 1, 0, 0);
+    const d = iceCtx.getImageData(0, 0, IW, IH).data, m = new Uint8Array(IW * IH);
+    for (let y = 0; y < IH; y++) { const src = (IH - 1 - y) * IW, dst = y * IW; for (let x = 0; x < IW; x++) m[dst + x] = d[((src + x) << 2) + 3]; }   // the rows turned: v = 1 north
+    iceMasks[key] = m; return m;
+  }
+  // each step's mask becomes a texture once and is kept (48 at most, half a megabyte each on the card); the two slots are
+  // texture nodes whose texture is swapped by reference, so a drag through the ice ages uploads nothing (re-uploading
+  // the two masks every frame cost seven milliseconds a frame on the M1, 28 Oct)
+  const iceEmpty = prepR8(new THREE.DataTexture(new Uint8Array(4), 2, 1, THREE.RedFormat, THREE.UnsignedByteType)), iceTexByAge = {};
+  function iceTexture(age) {
+    const key = String(age); if (iceTexByAge[key]) return iceTexByAge[key];
+    const m = iceMask(age); if (!m) return (iceTexByAge[key] = iceEmpty);
+    return (iceTexByAge[key] = prepR8(new THREE.DataTexture(m, IW, IH, THREE.RedFormat, THREE.UnsignedByteType)));
+  }
+  const iceNodes = [texture(iceEmpty), texture(iceEmpty)];   // the two slots, read through .sample() so a swapped texture reaches every read
+  const iceTexAge = [null, null];
+  function setIceSlot(i, age) {   // the slot shows this step's mask (or nothing)
+    if (iceTexAge[i] === age) return;
+    iceNodes[i].value = age == null ? iceEmpty : iceTexture(age); iceTexAge[i] = age;
+  }
+  // which outlines at this many years ago, and how strongly (map.js's icePairs, copied): between two steps the two
+  // cross-fade; beyond the oldest step the oldest outline fades with the sea-level curve, 120 m down the whole sheet
+  function icePairs(iceAgo, seaLevel) {
+    var ages = iceData.ages, last = ages[ages.length - 1];
+    if (iceAgo > last) return [[last, Math.min(1, Math.max(0, -seaLevel / 120))]];
+    var a = null, b = null, i;
+    for (i = 0; i < ages.length; i++) { if (ages[i] <= iceAgo) a = ages[i]; if (ages[i] >= iceAgo && b === null) b = ages[i]; }
+    if (a === null) a = ages[0]; if (b === null) b = last;
+    var t = (b === a) ? 1 : (iceAgo - a) / (b - a);
+    return [[a, 1 - t], [b, t]];
+  }
   const BLUE_PX = { full: 8192, middle: 4096, floor: 2048 };
-  let texBlue = null, bluePx = 0, blueLoading = null;
+  // one photograph on the card at a time: the land-only Blue Marble (our sea) or NASA's with its sea, by the sea word
+  let texBlue = null, bluePx = 0, blueMode = null, blueLoading = null;
   async function wantBlue(tier) {
-    const px = view.fitTexture(BLUE_PX[tier] || 2048);
-    if (px === bluePx || !blueUrl) return;
-    const url = blueUrl(px);
-    blueLoading = loadTex(url).then(t => { if (texBlue) texBlue.dispose(); texBlue = t; bluePx = px; rebuildMaterials(); view.redraw(); }).catch(e => { console.warn('earth.js: Blue Marble did not load', url, e); });
+    const px = view.fitTexture(BLUE_PX[tier] || 2048), mode = seaMode;
+    if (px === bluePx && mode === blueMode) return blueLoading;
+    const url = blueUrls[mode](px);
+    blueLoading = loadTex(url).then(t => { if (mode !== seaMode) { t.dispose(); return; } if (texBlue) texBlue.dispose(); texBlue = t; bluePx = px; blueMode = mode; maskBlue = mode === 'nasa' ? maskBlueSea : maskBlueOurs; rebuildMaterials(); setTime(ma); }).catch(e => { console.warn('earth.js: Blue Marble did not load', url, e); });
     return blueLoading;
   }
 
@@ -801,12 +972,26 @@ export async function cwEarth(view, o = {}) {
   const uPxDist = uniform(0.01);                   // one screen pixel at the ball's edge, as the ray's distance from the centre
   // the molten sequence's numbers (moltenState's, as uniforms): the first crust's threshold and glow, the second's, the sea,
   // which maps the melt and the sea read (the turned ones after the Moon), the quiet brightening, and the haze's steam
-  const uThresh1 = uniform(-1), uGlow1 = uniform(0), uThresh2 = uniform(-1), uGlow2 = uniform(0), uSeaM = uniform(0), uSecond = uniform(0), uWarm = uniform(0), uSteam = uniform(0);
+  const uThresh1 = uniform(-1), uGlow1 = uniform(0), uThresh2 = uniform(-1), uGlow2 = uniform(0), uSeaM = uniform(0), uSecond = uniform(0), uSteam = uniform(0);
+  // the ground this side of the seam: the sea's level (metres, ≤ 0), how much of the ground's look is in (1 this side of
+  // the seam, fading to 0 over the deep ice's ramp past it), the two ice steps' weights; the sea's style; the coast's alpha
+  const uSea = uniform(0), uGroundT = uniform(1), uIceW = [uniform(0), uniform(0)], uCoastA = uniform(COAST_A);
+  // NASA's sea: how much of the photograph's own sea shows (1 at today with NASA's picture up, gone by eighty years);
+  // the bared shelf's colour, 0 the 2D's buff, 1 grey
+  const uCoastHalfW = uniform(0.002);   // half the coast's strip, as the ball's radius, set each frame
+  const uNasa = uniform(0), uShelfGrey = uniform(o.shelf === 'grey' ? 1 : 0);
 
   // ---- the shaders ----
   const SEA3 = rgb(S.globeSea), SEAD3 = rgb(S.globeSeaDeep), SHELF3 = rgb(S.shelfWash || '#7fb0cc'), SHELF_A = float(S.shelfWashAlpha != null ? S.shelfWashAlpha : 0.55);
   const DROWN_W = float(S.drownedWash != null ? S.drownedWash : 0.3), LIFT3 = rgb(S.islandLift || '#a39b8e'), LIFT_A = float(S.islandLiftAlpha != null ? S.islandLiftAlpha : 0.16), RIM_A = float(S.shelfRimAlpha != null ? S.shelfRimAlpha : 0.38);
   const ROCK_G = rgb(S.rockGrey || '#8c8880'), ROCK_T = rgb(S.rockTan || '#a89a80'), ROCK_R = rgb(S.rockRust || '#96603e');
+  const SHORE = S.shoreLand || [[0, [230, 223, 203]], [250, [216, 205, 170]]];   // the land ramp's first stops, for the shelf a lower sea exposes (map.js, paintSkin)
+  const SHORE0 = vec3(SHORE[0][1][0] / 255, SHORE[0][1][1] / 255, SHORE[0][1][2] / 255), SHORE1 = vec3(SHORE[1][1][0] / 255, SHORE[1][1][1] / 255, SHORE[1][1][2] / 255), SHORE_M = SHORE[1][0] || 250;
+  // the grey shelf (bench only, a candidate; not in cw-style.js): neutral, no hue, darker at the new shore and lighter
+  // above it, as the held note's floor is middle grey on the shelves and darkens with depth
+  const GREY0 = vec3(142 / 255, 141 / 255, 138 / 255), GREY1 = vec3(166 / 255, 165 / 255, 161 / 255);
+  const ICEF3 = rgb(S.iceFill || '#eaf1f4');   // the ice sheets this side of the seam
+  const COAST3 = rgb(S.coast || '#4a4336');
   const OLD3 = rgb(S.oldCrust || '#1c1a17'), OLDG3 = rgb(S.oldCrustGrey || '#3e3a35');   // the crust before oxygen: near-black to dark grey by the grain
   const GREEN3 = rgb(S.paintGreen || '#9aa882');
   const MAGMA3 = rgb(S.magma), GLOW3 = rgb(S.magmaGlow), HOT3 = rgb(S.hot), CRUST3 = rgb(S.crust), CRUSTL3 = rgb(S.crustLight);
@@ -817,6 +1002,9 @@ export async function cwEarth(view, o = {}) {
   const LIMB3 = vec3(limbCss[0] / 255, limbCss[1] / 255, limbCss[2] / 255), LIMB_A = limbCss[3] != null ? limbCss[3] : 0.35;
   const centreView = () => modelViewMatrix.mul(vec4(0, 0, 0, 1)).xyz;   // the ball's centre in the camera's frame (every mesh sits at it)
   const rayDist = () => length(cross(centreView(), normalize(positionView)));   // the fragment's ray's distance from the ball's centre: 1 at the edge
+  // the sea's colour: the 2D's two blues by depth — globeSea at the centre to globeSeaDeep at the limb, by the ray's
+  // distance, centred (the 2D's gradient without its sun-side offset; Michael's ruling of 28 Oct, even light)
+  const seaNode = () => mix(SEA3, SEAD3, rayDist());
   const ageFrame = () => uGroupInv.mul(vec4(positionWorld, 1)).xyz;   // the point in the ball's frame: where it is at the age
   const uvOf = p => vec2(atan(p.y, p.x).div(2 * Math.PI).add(0.5), asin(clamp(p.z, -1, 1)).div(Math.PI).add(0.5));   // a unit vector's place in an equirectangular picture
   // a picture read at a unit vector's place, without the seam: where the longitude wraps, the texture coordinate jumps
@@ -827,7 +1015,7 @@ export async function cwEarth(view, o = {}) {
     const uvn = uvOf(p), u2 = fract(uvn.x.add(0.5));
     const gx = vec2(select(abs(dFdx(uvn.x)).lessThan(0.5), dFdx(uvn.x), dFdx(u2)), dFdx(uvn.y));
     const gy = vec2(select(abs(dFdy(uvn.x)).lessThan(0.5), dFdy(uvn.x), dFdy(u2)), dFdy(uvn.y));
-    return texture(tex, uvn).grad(gx, gy);
+    return (tex.isTextureNode ? tex.sample(uvn) : texture(tex, uvn)).grad(gx, gy);
   };
   const iceNode = () => {   // paintIce: the latitude at the age against the ice's reach, feathered and roughened
     const p = ageFrame();
@@ -879,13 +1067,34 @@ export async function cwEarth(view, o = {}) {
       const pic = mix(paint, photo, tph);
       const tp = clamp(float(PLANTS).sub(uAge).div(PLANTS - GREEN_BY), 0, 1);   // how far the picture has come in: 0 bare rock, 1 the picture
       let col = mix(rock, pic, tp);
-      const sea = mix(read(maskOld).r, read(maskBlue).r, uBlue).mul(float(1).sub(uOld));   // today's inland seas fade out of the old pieces as the old look comes in
+      // the picture's sea: the mask (2,048 texels wide), and the same test on the picture's own texel at its full size, so
+      // the edge of the sea is the picture's and not the mask's — close in, the mask's coarser edge left a dark stair-step
+      // of Blue Marble's near-black sea along every coast inside the bloat (seen at 21,000 years beside the bared shelf, 28 Oct)
+      const pr = photo.r.mul(255), pg = photo.g.mul(255), pb = photo.b.mul(255);
+      const blueLeads = pb.greaterThan(pr.mul(1.2)).and(pb.greaterThan(pg)), nearBlack = pr.add(pg).add(pb).lessThan(70).and(pb.greaterThanEqual(pr));
+      const pixelSea = select(blueLeads.or(uBlue.greaterThan(0.5).and(nearBlack)), float(1), float(0));
+      let sea = max(mix(read(maskOld).r, read(maskBlue).r, uBlue), pixelSea).mul(float(1).sub(uOld));   // today's inland seas fade out of the old pieces as the old look comes in
+      // this side of the seam, the ground grade (paintSkin's ground block): the floor's depth under the point; where the
+      // picture's sea is shallower than the lowered sea it is bared, painted as land by its height above the new shore,
+      // and no longer sea; then the ICE-6G sheets at their steps' weights, never below the sea at its level
+      const fv = read(texFloor).r.mul(255);
+      const depth = select(fv.lessThan(0.5), float(-1), fv.sub(1).div(253).pow(2).mul(FLOOR_MAX));
+      const bared = select(uSea.lessThan(0).and(depth.greaterThan(0)).and(depth.lessThanEqual(uSea.negate())), uGroundT, float(0)).mul(sea);
+      const above = clamp(uSea.negate().sub(depth).div(SHORE_M), 0, 1);
+      const shore = mix(mix(SHORE0, SHORE1, above), mix(GREY0, GREY1, above), uShelfGrey);
+      col = mix(col, shore, bared); sea = sea.mul(float(1).sub(bared));
+      const belowSea = depth.greaterThan(0).and(depth.greaterThan(uSea.negate()));
+      const ia = min(read(iceNodes[0]).r.mul(uIceW[0]).add(read(iceNodes[1]).r.mul(uIceW[1])), 1).mul(0.94).mul(uGroundT).mul(select(belowSea, float(0), float(1)));
+      col = mix(col, ICEF3, ia); sea = sea.mul(float(1).sub(ia));
       col = mix(col, SHELF3, sea);
       let alpha = float(1).sub(sea.mul(float(1).sub(SHELF_A)));
+      // NASA's sea at today: the photograph's own sea, opaque, in place of the wash, giving way to ours as she goes back
+      const ns = sea.mul(uNasa).mul(uBlue).mul(read(maskShow).r);
+      col = mix(col, photo, ns); alpha = mix(alpha, float(1), ns);
       const oldA = uOld.mul(life);
       col = island ? mix(col, LIFT3, LIFT_A.mul(oldA)) : mix(col, SHELF3, DROWN_W.mul(oldA));
       const cover = float(1).sub(life);
-      col = mix(col, SEA3, cover); alpha = mix(alpha, float(1), cover);
+      col = mix(col, seaNode(), cover); alpha = mix(alpha, float(1), cover);
       return vec4(finish(col), alpha);
     })();
   }
@@ -900,7 +1109,7 @@ export async function cwEarth(view, o = {}) {
     if (blob) {   // shrunk by the curve, the picture read at the shrunk point (as the 2D reads it through the body's inverse)
       const shr = shrinkBlob(p); m.positionNode = shr;
       const sv = varying(shr); out = skinNode(tex => readAt(tex, sv), false);
-    } else { m.positionNode = p; out = skinNode(tex => texture(tex, uv()), false); }
+    } else { m.positionNode = p; out = skinNode(tex => tex.isTextureNode ? tex.sample(uv()) : texture(tex, uv()), false); }
     m.colorNode = out.rgb; m.opacityNode = out.a;
     return m;
   }
@@ -924,18 +1133,21 @@ export async function cwEarth(view, o = {}) {
       aliveOrDiscard();
       const k = RIM_A.mul(uOld).mul(lifeNode());
       If(k.lessThan(0.002), () => { Discard(); });
-      return finish(mix(SEA3, SHELF3, k));   // opaque, the sea's own colour under the wash: where quads and discs overlap, one paint
+      return finish(mix(seaNode(), SHELF3, k));   // opaque, the sea's own colour under the wash: where quads and discs overlap, one paint
     })();
     return m;
   }
-  function makeSea() {
+  function makeSea() {   // our sea; at today, with NASA's picture up, the photograph's own sea over it, giving way as she goes back
     const m = new THREE.MeshBasicNodeMaterial();
-    m.colorNode = Fn(() => finish(SEA3))();
+    m.colorNode = Fn(() => {
+      const col = texBlue ? mix(seaNode(), readAt(texBlue, normalize(ageFrame())).rgb, uNasa.mul(uBlue)) : seaNode();
+      return finish(col);
+    })();
     return m;
   }
   // the molten Earth (paintMolten) on the whole ball: the melt by the grain, the crust where the cooling-order map is below
   // the threshold, the cracks glowing, the faint sea; the second crust on the maps turned and flipped; the Moon's impact as
-  // the quiet brightening (uWarm) or as the first crust sinking while the second begins (uThresh1 and uThresh2 both live)
+  // the first crust sinking into the melt while the second begins (uThresh1 and uThresh2 both live)
   function makeMolten() {
     const m = new THREE.MeshBasicNodeMaterial();
     m.colorNode = Fn(() => {
@@ -956,7 +1168,6 @@ export async function cwEarth(view, o = {}) {
       const cvA = select(uSecond.greaterThan(0.5), cv2, cv1), solidA = select(uSecond.greaterThan(0.5), solid2, solid1);
       const seaK = uSeaM.mul(solidA).mul(select(cvA.lessThan(0.55), float(1), float(0.35)));
       col = mix(col, select(cvA.lessThan(0.3), SEAD3, SEA3), seaK);
-      col = mix(col, melt, uWarm);   // the quiet brightening: the whole ball toward the melt's colour, no white
       return finish(clamp(col, 0, 1));
     })();
     return m;
@@ -983,10 +1194,44 @@ export async function cwEarth(view, o = {}) {
   const haze = new THREE.Mesh(new THREE.SphereGeometry(1.04, 96, 48), null);
   haze.renderOrder = 100000; haze.frustumCulled = false;
   group.add(haze);
+  // today's coast: the 0 m rings as a thin strip on the ball, in the globe's frame (fixed, as globe.js draws them
+  // through the view alone), drawn after the land and under the haze; the far side is discarded by its facing. A strip,
+  // not a line: the card draws a line one device pixel wide, half a CSS pixel on a Retina screen, which Michael could not
+  // see (28 Oct); the strip is COAST_PX CSS pixels wide at the ball's near face (the 2D strokes 1.1), each segment a quad
+  // pushed out either side along the ball's surface in the vertex shader, its half-width set each frame from the camera
+  let coastLine = null, coastMat = null;
+  if (coastFile && coastFile['0']) {
+    const pos = [], tang = [], side = [], idx = [];
+    for (const ring of coastFile['0']) {
+      for (let i = 0; i < ring.length; i++) {
+        const a = xyz(ring[i][0], ring[i][1]), b = xyz(ring[(i + 1) % ring.length][0], ring[(i + 1) % ring.length][1]);
+        const t = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], tl = Math.hypot(t[0], t[1], t[2]) || 1, k = pos.length / 3;
+        for (const [p, sd] of [[a, -1], [a, 1], [b, -1], [b, 1]]) { pos.push(p[0], p[1], p[2]); tang.push(t[0] / tl, t[1] / tl, t[2] / tl); side.push(sd); }
+        idx.push(k, k + 1, k + 2, k + 1, k + 3, k + 2);
+      }
+    }
+    const cg = new THREE.BufferGeometry();
+    cg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pos), 3));
+    cg.setAttribute('tang', new THREE.BufferAttribute(new Float32Array(tang), 3));
+    cg.setAttribute('side', new THREE.BufferAttribute(new Float32Array(side), 1));
+    cg.setIndex(idx);
+    coastLine = new THREE.Mesh(cg, null); coastLine.frustumCulled = false; coastLine.renderOrder = 50000;
+    group.add(coastLine);
+  }
+  function makeCoast() {
+    const m = new THREE.MeshBasicNodeMaterial();
+    m.side = THREE.DoubleSide; m.depthWrite = false; m.depthTest = false; m.transparent = true;
+    const p = attribute('position', 'vec3');
+    m.positionNode = normalize(p.add(normalize(cross(attribute('tang', 'vec3'), p)).mul(attribute('side', 'float')).mul(uCoastHalfW)));
+    m.colorNode = Fn(() => { If(dot(positionView.sub(centreView()), positionView).greaterThanEqual(0), () => { Discard(); }); return sRGBTransferEOTF(COAST3); })();
+    m.opacityNode = uCoastA;
+    return m;
+  }
   let molten = false;
   function rebuildMaterials() {
-    const olds = [landMat, islandMat, rimMat, seaMat, moltenMat, hazeMat, blobLandMat, blobIslandMat, blobRimMat];
+    const olds = [landMat, islandMat, rimMat, seaMat, moltenMat, hazeMat, blobLandMat, blobIslandMat, blobRimMat, coastMat];
     landMat = makeLand(false); islandMat = makeIsland(false); rimMat = makeRim(false); seaMat = makeSea(); moltenMat = makeMolten(); hazeMat = makeHaze();
+    if (coastLine) { coastMat = makeCoast(); coastLine.material = coastMat; }
     blobLandMat = makeLand(true); blobIslandMat = makeIsland(true); blobRimMat = makeRim(true);
     for (const m of meshes.values()) m.material = landMat;
     for (const m of islands.values()) m.material = islandMat;
@@ -999,7 +1244,7 @@ export async function cwEarth(view, o = {}) {
   view.ball.add(group);   // only now, with every mesh wearing a material: the loop is already drawing
 
   // ---- the age: each body's turn, the raster's order, and the look's numbers ----
-  let ma = 0, phaseNow = null;
+  let ma = 0, phaseNow = null, seaM = 0, coastsOn = false, pairsNow = [];
   const q = new THREE.Quaternion();
   function bodyQuat(pid, age, how) { return how === 'guessed' ? guessedQuat(pid, age) : plateQuatAt(plates[pid], ages, Math.max(age, 0)); }
   function setTime(m) {
@@ -1013,6 +1258,26 @@ export async function cwEarth(view, o = {}) {
     const ice = ma >= seam ? iceStrength(ma) : null;   // this side of the seam the ground grade shows no deep ice, as the 2D
     uIceStr.value = ice ? ice[1] : 0; uIceReach.value = ice ? ice[0] : 90; uIceSnow.value = ice && ice[0] <= 0 ? 1 : 0;
     uIceNorth.value = (ma <= 34 && ma > 2.6) ? 0 : 1;   // the Antarctic ice came first; the north's from 2.6
+    // the ground this side of the seam: the sea from the curve at the age (rounded to half a metre, as map.js rounds it),
+    // the sea's ball lowered by it, the ICE-6G steps either side of the age at map.js's weights; all of it whole this side
+    // of the seam and fading out past it over the ramp the deep ice fades in on, so nothing snaps at 2.6 million years
+    const year = CWt.maToYear ? CWt.maToYear(ma) : null;
+    const level = seaCurve && CWt.curveAt && year !== null && year >= seaCurve[0][0] ? CWt.curveAt(seaCurve, year) : null;   // before the curve's oldest point the file ends and says nothing
+    seaM = level === null ? 0 : Math.min(0, Math.round(level * 2) / 2);
+    uSea.value = seaM; sea.scale.setScalar(1 + seaM / 6371000);
+    const groundT = ma < seam ? 1 : Math.max(0, 1 - (ice ? ice[1] : 1));
+    uGroundT.value = groundT;
+    const iceAgo = Math.max(0, ma * 1e6);
+    pairsNow = iceData && iceAgo > 0 && groundT > 0 ? icePairs(iceAgo, seaM) : [];
+    setIceSlot(0, pairsNow[0] ? pairsNow[0][0] : null); setIceSlot(1, pairsNow[1] ? pairsNow[1][0] : null);
+    uIceW[0].value = pairsNow[0] ? pairsNow[0][1] : 0; uIceW[1].value = pairsNow[1] ? pairsNow[1][1] : 0;
+    // NASA's sea: whole at today, a half at ten years, gone by eighty (the cube root of the age), with NASA's picture up
+    const nasaT = Math.max(0, 1 - Math.cbrt(ma / NASA_SEA_TO));
+    uNasa.value = blueMode === 'nasa' ? nasaT : 0;
+    // today's coasts: not at today (the photograph shows its own coast; the line comes in as our sea does), then the coast
+    // itself this side of the seam; past it off (fading out by COAST_FADE_TO, the 2D's own end) unless the word keeps them on
+    const coastA = (ma < seam || coastsOn ? COAST_A : COAST_A * Math.max(0, 1 - (ma - seam) / (COAST_FADE_TO - seam))) * (1 - nasaT);
+    uCoastA.value = coastA; if (coastLine) coastLine.visible = coastA > 0.001 && g !== 'none';
     // the pieces, at the model's or the guessed positions
     const showPieces = g !== 'none' && g !== 'invented';
     let order = 1;
@@ -1041,7 +1306,7 @@ export async function cwEarth(view, o = {}) {
       });
     } else for (const m of blobMeshes) { m.land.visible = m.isle.visible = false; if (m.rim) m.rim.visible = false; }
     // the molten Earth: the ball takes paintMolten's shader while the grade is none, its numbers from moltenState and the
-    // bench's choice of impact
+    // Moon's impact with no flash
     molten = g === 'none';
     sea.material = molten ? moltenMat : seaMat;
     let steam = 0;
@@ -1050,16 +1315,12 @@ export async function cwEarth(view, o = {}) {
       if (!st.second) { uThresh1.value = thresh; uGlow1.value = st.glow; uThresh2.value = -1; uGlow2.value = 0; }
       else {
         uThresh2.value = thresh; uGlow2.value = st.glow;
-        // no brightening: the first crust sinks into the melt over MOON_MELT million years after the impact, the last-cooled
-        // rafts first (its threshold running down from whole), the cracks brightening as it goes
-        const sink = impact === 'melt' ? Math.max(0, Math.min(1, (MOON - ma) / MOON_MELT)) : 1;
+        // no flash: the first crust sinks into the melt over MOON_MELT million years after the impact, the last-cooled rafts
+        // first (its threshold running down from whole), the cracks brightening as it goes
+        const sink = Math.max(0, Math.min(1, (MOON - ma) / MOON_MELT));
         uThresh1.value = sink < 1 ? 1.1 - 1.15 * sink : -1; uGlow1.value = sink < 1 ? 0.9 * sink : 0;
       }
       uSecond.value = st.second ? 1 : 0; uSeaM.value = st.sea;
-      // the quiet brightening: the whole ball toward the melt's colour over MOON_WARM million years either side of the impact
-      let warm = 0;
-      if (impact === 'warm') { warm = Math.max(0, 1 - Math.abs(ma - MOON) / MOON_WARM); warm = warm * warm * (3 - 2 * warm); }
-      uWarm.value = warm;
       steam = st.sea > 0.5 ? 0 : 1;   // the haze is grey steam until there is a sea
       if (st.phase !== phaseNow) { phaseNow = st.phase; if (o.onMolten) o.onMolten(st.phase, ma); }
     }
@@ -1074,6 +1335,7 @@ export async function cwEarth(view, o = {}) {
     uGroupInv.value.copy(tmpM.multiply(tmpM2).invert());
     const D = view.camera.position.length(), f = (pxHeight || view.host.clientHeight || 1) / 2 / Math.tan(view.camera.fov * D2R / 2);
     uPxDist.value = Math.pow(Math.max(1e-6, D * D - 1), 1.5) / (f * D * D);   // d(ray distance)/d(screen pixel) at the edge
+    uCoastHalfW.value = COAST_PX / 2 * (D - 1) / f;   // a CSS pixel on the ball's near face, as the radius
   }
   view.onFrame(() => { frame(); if (cityEls.length) placeCities(); });
 
@@ -1123,34 +1385,40 @@ export async function cwEarth(view, o = {}) {
     }
   }
 
-  await wantBlue(view.tier);
+  await Promise.all([wantBlue(view.tier), wantFloor(view.tier)]);
   setTime(0);
 
   const earth = {
     group, meshes, islands, rims, sea, haze, cities,
     get blobs() { return blobMeshes; },
     stats: { pieces: data.pieces.length, rings, plates: meshes.size, triangles, rimTriangles, buildMs: Math.round(buildMs), lookMs: Math.round(lookMs), fetchMs: Math.round(fetchMs), blue: () => bluePx,
-             seaShare: { old: lookOld.seaShare, blue: lookBlue.seaShare } },
+             seaShare: { old: lookOld.seaShare, blue: lookBlue.seaShare, sea: lookSea.seaShare }, waters: lookShow ? { bodies: lookShow.bodies, shown: lookShow.shown, ms: Math.round(lookShow.ms) } : null },
     setTime, time: () => ma,
     grade: () => gradeFor(ma),
     moltenPhase: () => (ma > NO_MAP ? moltenState(ma).phase : null),
     setGround: g => { uBlue.value = g === 'blue' ? 1 : 0; view.redraw(); }, ground: () => (uBlue.value ? 'blue' : 'old'),
-    setImpact: i => { impact = i === 'melt' ? 'melt' : 'warm'; setTime(ma); }, impact: () => impact,
+    seaLevel: () => seaM, icePairs: () => pairsNow.slice(), seam,
+    // the photograph's sea at today: NASA's (its picture with the sea floor's blues) or ours always (the land-only picture)
+    setSea: async mode => { seaMode = mode === 'ours' ? 'ours' : 'nasa'; if (!imgSeaSmall) seaMode = 'ours'; await wantBlue(view.tier); }, seaMode: () => seaMode, nasaSea: () => uNasa.value,
+    setShelf: sh => { uShelfGrey.value = sh === 'grey' ? 1 : 0; view.redraw(); }, shelf: () => (uShelfGrey.value ? 'grey' : 'buff'),
+    setCoasts: on => { coastsOn = !!on; setTime(ma); }, coasts: () => coastsOn,
+    floor: () => ({ level: floorLevel, ms: Math.round(floorMs), width: texFloor && texFloor.image ? texFloor.image.width : 0 }),
     // the seed, as globe.js keeps it: the same seed in both engines is the same guess (setSeed); reguess draws a new one
     seed: () => seed,
     setSeed: s => { seed = s; sim = null; blobCache = null; setTime(ma); },
     reguess: () => { seed = (seed * 1103515245 + 12345 + Date.now()) % 2147483647; sim = null; blobCache = null; setTime(ma); return seed; },
     simMs: () => ({ cratons: sim ? sim.ms : null, blobs: blobCache ? blobCache.ms : null, blobBuild: blobMeshes.length ? blobBuildMs : null }),   // the runs' costs, for checking
-    setTier: async tier => { await wantBlue(tier); sea.geometry.dispose(); sea.geometry = new THREE.SphereGeometry(SEA_R, tier === 'floor' ? 96 : tier === 'middle' ? 128 : 160, tier === 'floor' ? 48 : tier === 'middle' ? 64 : 80); view.redraw(); },
+    setTier: async tier => { await Promise.all([wantBlue(tier), wantFloor(tier)]); sea.geometry.dispose(); sea.geometry = new THREE.SphereGeometry(SEA_R, tier === 'floor' ? 96 : tier === 'middle' ? 128 : 160, tier === 'floor' ? 48 : tier === 'middle' ? 64 : 80); view.redraw(); },
     placeAt, project, placeCities, frame, exposedShare, crustFraction, iceStrength, moltenState, gradeFor,
     plateQuatAt: (pid, age) => plateQuatAt(plates[String(pid)], ages, age),
     bodyQuat: (pid, age) => bodyQuat(String(pid), age, age > reach ? 'guessed' : 'model'),
-    looks: { maskOld: lookOld.maskCanvas, maskBlue: lookBlue.maskCanvas },   // for the bench's checks
+    looks: { maskOld: lookOld.maskCanvas, maskBlue: lookBlue.maskCanvas, maskSea: lookSea.maskCanvas, maskShow: lookShow ? lookShow.maskCanvas : null },   // for the bench's checks
     dispose: () => {
       for (const m of meshes.values()) m.geometry.dispose(); for (const m of rims.values()) m.geometry.dispose();
       for (const m of blobMeshes) { m.land.geometry.dispose(); if (m.rim) m.rim.geometry.dispose(); }
       sea.geometry.dispose(); haze.geometry.dispose();
-      [landMat, islandMat, rimMat, seaMat, moltenMat, hazeMat, blobLandMat, blobIslandMat, blobRimMat, texOld, texVeg, texGrain, texCool, texCracks, texBlue, maskOld, maskBlue].forEach(t => { if (t) t.dispose(); });
+      [landMat, islandMat, rimMat, seaMat, moltenMat, hazeMat, blobLandMat, blobIslandMat, blobRimMat, coastMat, texOld, texVeg, texGrain, texCool, texCracks, texBlue, maskOld, maskBlueOurs, maskBlueSea, maskShow, texFloor, floorEmpty, iceEmpty, ...Object.values(iceTexByAge)].forEach(t => { if (t) t.dispose(); });
+      if (coastLine) { coastLine.geometry.dispose(); group.remove(coastLine); }
       view.ball.remove(group); cityEls.forEach(({ el }) => el.remove());
     }
   };

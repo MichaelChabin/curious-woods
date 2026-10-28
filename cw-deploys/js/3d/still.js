@@ -1,13 +1,16 @@
 /* still.js — the kept picture (Standard-Interactives §8; 26 Oct 2026; brought to the standard 27 Oct).
    One frame drawn off-screen at full tier, 4,096 px on the long side whatever the live view runs at, with the
-   scale notes drawn on the picture where they sit on screen, a one-line caption and the small credit at the
-   bottom, handed back as a PNG blob. The page asks for it from a word ("Keep this picture") and offers it as a file.
+   scale notes drawn on the picture where they sit on screen, the honest block's lines (or a one-line caption) and
+   the small credit at the bottom, handed back as a PNG blob. The page asks for it from a word ("Keep this picture")
+   and offers it as a file.
      cwStill(view, { long, honest, caption, credit })
        view     what cwScene returned
        long     the long side in pixels (default 4096)
-       honest   what cwHonest returned; its notes are drawn on the picture (none if absent)
-       caption  one line, under the picture
-       credit   one line, small, at the bottom (default: the honest notes' credit)
+       honest   what cwHonest returned; its notes are drawn on the picture (none if absent), and its block's lines —
+                what the picture is, and what it says with the word of knowing in italics — go under the picture,
+                wrapped to its width (the Earth bench, 28 Oct 2026)
+       caption  one line, under the picture, in place of the block's first line
+       credit   one line, small, at the bottom (default: the block's credit, else the honest notes' credit)
    How: the view is put at full tier for one frame (the page's onTier rebuilds its materials), drawn into a render
    target the size of the picture, read back, put into a 2D canvas with the notes drawn over it and the words
    under it, and the live tier restored. The readback comes top-down from WebGPU and bottom-up from WebGL 2, so the
@@ -38,10 +41,20 @@ export async function cwStill(view, { long = 4096, honest = null, caption = '', 
   const S = (window.CW && window.CW.STYLE) || null;
   const font = S ? S.font : 'Georgia, serif';
   const fsCaption = Math.round((S ? S.size.label : 15) * scale * 1.1);
+  const fsSays = Math.round((S ? S.size.minor : 13) * scale);
   const fsCredit = Math.round((S ? S.size.minor : 13) * scale * 0.9);
   const pad = Math.round(fsCaption * 0.9);
-  if (!credit && honest) credit = honest.credit || '';
-  const bandH = (caption || credit) ? pad + (caption ? fsCaption * 1.4 : 0) + (credit ? fsCredit * 1.5 : 0) + pad : 0;
+  const blk = honest && honest.block ? honest.block : null;
+  if (!credit) credit = (blk && blk.credit) || (honest && honest.credit) || '';
+  const what = caption || (blk && blk.what) || '';
+  const says = blk && blk.says ? blk.says : null;
+  // the lines wrapped to the picture's width, measured first so the band under the picture is the right height
+  const measure = document.createElement('canvas').getContext('2d');
+  const wrap = (text, fnt, width) => { measure.font = fnt; const out = []; let cur = ''; text.split(' ').forEach(word => { const t = cur ? cur + ' ' + word : word; if (measure.measureText(t).width > width && cur) { out.push(cur); cur = word; } else cur = t; }); if (cur) out.push(cur); return out; };
+  const whatLines = what ? wrap(what, `${fsCaption}px ${font}`, w - 2 * pad) : [];
+  const saysText = says ? (says.word ? says.word + '  ' : '') + says.sentence : '';
+  const saysLines = saysText ? wrap(saysText, `italic ${fsSays}px ${font}`, w - 2 * pad) : [];
+  const bandH = (whatLines.length || saysLines.length || credit) ? pad + whatLines.length * fsCaption * 1.4 + (saysLines.length ? fsSays * 0.4 + saysLines.length * fsSays * 1.35 : 0) + (credit ? fsCredit * 1.8 : 0) + pad : 0;
   const ground = view.ground;
 
   const cv = document.createElement('canvas');
@@ -63,11 +76,26 @@ export async function cwStill(view, { long = 4096, honest = null, caption = '', 
   rt.dispose();
   if (liveTier !== 'full') await view.setTier(liveTier, { quiet: true });
 
-  // the caption and the credit, under the picture
+  // the block's lines and the credit, under the picture: what the picture is; what it says, the word of knowing in
+  // italics with the rest; the credit small
   let y = h + pad;
   ctx.textBaseline = 'top'; ctx.textAlign = 'left';
-  if (caption) { ctx.font = `${fsCaption}px ${font}`; ctx.fillStyle = S ? S.parchment : '#f4f1e8'; ctx.fillText(caption, pad, y); y += fsCaption * 1.4; }
-  if (credit) { ctx.font = `${fsCredit}px ${font}`; ctx.fillStyle = S ? S.grey : '#9a958b'; ctx.fillText(credit, pad, y); }
+  const onDark = S ? (S.parchment || '#f4f1e8') : '#f4f1e8', onDarkSoft = S ? (S.parchmentDeep || '#ece6d6') : '#ece6d6';
+  const dark = (() => { const n = parseInt(String(ground).replace('#', ''), 16); return (((n >> 16) & 255) * 0.299 + ((n >> 8) & 255) * 0.587 + (n & 255) * 0.114) < 128; })();   // the words in ink on parchment, in parchment on a dark ground
+  const ink = dark ? onDark : (S ? S.ink : '#2a241c'), inkSoft = dark ? onDarkSoft : (S ? S.inkSoft : '#6b655a'), inkCredit = S ? S.grey : '#9a958b';
+  ctx.font = `${fsCaption}px ${font}`; ctx.fillStyle = ink;
+  whatLines.forEach(l => { ctx.fillText(l, pad, y); y += fsCaption * 1.4; });
+  if (saysLines.length) {
+    y += fsSays * 0.4; ctx.fillStyle = inkSoft;
+    saysLines.forEach((l, i) => {
+      if (i === 0 && says.word) {   // the word in italics, the sentence upright after it
+        ctx.font = `italic ${fsSays}px ${font}`; ctx.fillText(says.word, pad, y); const wW = ctx.measureText(says.word + '  ').width;
+        ctx.font = `${fsSays}px ${font}`; ctx.fillText(l.slice(says.word.length).trimStart(), pad + wW, y);
+      } else { ctx.font = `${fsSays}px ${font}`; ctx.fillText(l, pad, y); }
+      y += fsSays * 1.35;
+    });
+  }
+  if (credit) { y += fsCredit * 0.5; ctx.font = `${fsCredit}px ${font}`; ctx.fillStyle = inkCredit; ctx.fillText(credit, pad, y); }
 
   return new Promise(res => cv.toBlob(res, 'image/png'));
 }

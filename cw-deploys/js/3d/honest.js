@@ -17,14 +17,20 @@
        credit  one line (who made the picture, from what), kept for the still
        keep    { top, bottom, left, right } in screen pixels: bands of the stage the notes stay out of (a page's
                own line along the bottom, say); default none
+       block   an element under the stage for the honest block (the Earth bench, 28 Oct 2026): what the picture
+               is, what it says, and the credit — three short lines a page keeps current with say():
+                 honest.say({ what: 'The Earth, 21,000 years ago: …', says: { word: 'ground', sentence: '…' }, credit: 'NASA Earth Observatory' })
+               The word is the grade's (or the molten phase's) and the sentence its sentence; the page styles the
+               spans .cw-honest-what, .cw-honest-says (with .cw-honest-word inside) and .cw-honest-credit. The same
+               lines go under the kept picture (still.js reads honest.block). A line left out is not shown.
 
    The notes are drawn on a 2D canvas over the stage, redrawn when the view or the ball moves; the same drawing
    goes onto the kept picture (still.js) at the picture's size, so a note sits on the still where it sat on screen.
-   Returns { draw(ctx, w, h, scale), notes, credit, setNotes(notes), remove() }.
+   Returns { draw(ctx, w, h, scale), notes, credit, setNotes(notes), say(block), block, remove() }.
 
    The marks of knowing (§5: measured, inferred, fitted, guessed, invented — the more we know, the more solid the
-   picture: a photograph, then solid with crisp edges, then painted and washed) belong in this file too. Not
-   built yet: the Sun shows nothing by grade, and the Earth will need them first (27 Oct 2026). */
+   picture: a photograph, then solid with crisp edges, then painted and washed) are the Earth's own look (earth.js,
+   steps 2 and 3); the words of knowing are the block above. The Sun shows nothing by grade. */
 import * as THREE from 'three';
 
 const V = new THREE.Vector3(), N = new THREE.Vector3(), A = new THREE.Vector3(), E1 = new THREE.Vector3(), E2 = new THREE.Vector3(), C = new THREE.Vector3(), CAM = new THREE.Vector3();
@@ -32,7 +38,7 @@ const Q = new THREE.Quaternion();
 const UPV = new THREE.Vector3(0, 1, 0);
 const TIGHT = 150;   // screen pixels of margin a note wants beside the ball; with less, it slants out and may sit over the limb
 
-export function cwHonest(view, { notes = [], credit = '', keep = {} } = {}) {
+export function cwHonest(view, { notes = [], credit = '', keep = {}, block = null } = {}) {
   const S = (window.CW && window.CW.STYLE) || null;
   if (!S) console.log('honest.js: cw-style.js is not loaded; plain defaults');
   const font = S ? S.font : 'Georgia, serif';
@@ -167,11 +173,30 @@ export function cwHonest(view, { notes = [], credit = '', keep = {} } = {}) {
   view.onFrame(update);
   update();
 
+  // ---------- the honest block under the stage ----------
+  let blockNow = { what: '', says: null, credit: '' };
+  let elWhat = null, elSays = null, elWord = null, elSentence = null, elCredit = null;
+  if (block) {
+    block.classList.add('cw-honest-block');
+    const line = (cls) => { const d = document.createElement('div'); d.className = cls; block.appendChild(d); return d; };
+    elWhat = line('cw-honest-what');
+    elSays = line('cw-honest-says'); elWord = document.createElement('i'); elWord.className = 'cw-honest-word'; elSentence = document.createElement('span'); elSays.appendChild(elWord); elSays.appendChild(document.createTextNode(' ')); elSays.appendChild(elSentence);
+    elCredit = line('cw-honest-credit');
+  }
+  function say(b) {
+    blockNow = { what: b.what || '', says: b.says && (b.says.word || b.says.sentence) ? { word: b.says.word || '', sentence: b.says.sentence || '' } : null, credit: b.credit || '' };
+    if (!block) return;
+    elWhat.textContent = blockNow.what; elWhat.style.display = blockNow.what ? '' : 'none';
+    elWord.textContent = blockNow.says ? blockNow.says.word : ''; elSentence.textContent = blockNow.says ? blockNow.says.sentence : ''; elSays.style.display = blockNow.says ? '' : 'none';
+    elCredit.textContent = blockNow.credit; elCredit.style.display = blockNow.credit ? '' : 'none';
+  }
+
   return {
     draw,
     get notes() { return list; },
     credit,
     setNotes(n) { list = n.slice(); lastKey = ''; update(); },
-    remove() { cv.remove(); list = []; lastKey = ''; }
+    say, get block() { return blockNow; },
+    remove() { cv.remove(); list = []; lastKey = ''; if (block) block.textContent = ''; }
   };
 }

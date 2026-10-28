@@ -1,5 +1,5 @@
 ---
-status: Draft for Michael's read, 27 Oct 2026. Step 2 of the 3D Earth chat (Prompt-Chat-3D-Earth.md). Built on the audit of 26 Oct (Audit-Earth-3D.md) and Michael's rulings of 26–27 Oct. Nothing is built from it until he has read it.
+status: Canonical; updated 28 Oct 2026 with the rulings on the third bench. First drafted 27 Oct 2026. Step 2 of the 3D Earth chat (Prompt-Chat-3D-Earth.md). Built on the audit of 26 Oct (Audit-Earth-3D.md) and Michael's rulings of 26–27 Oct. Nothing is built from it until he has read it.
 role: The one Earth: what it is, what it shows, how she handles it, how it becomes the map, what stays exactly as now, and how every page gets there without breaking.
 related: Audit-Earth-3D.md, Standard-Interactives.md, Worknote-3D-Session-25Oct.md, Spec-Maps.md, Spec-Drain-the-Sea.md, Notes-Drain-the-Sea-Held.md, Report-3D-Shelf-Oct26.md, cw-deploys/js/globe.js (header)
 ---
@@ -26,9 +26,9 @@ The pieces of continent become cut-outs of today's picture, glued to a ball and 
 
 **The story maps match the globe.** They take the same skin, because they are the same Earth zoomed in. (Michael, 26 Oct.)
 
-**The photograph fades by 2.6 million years.** A photograph is true only of today. As she goes back it fades to paint, gradually, and is gone by the seam at 2.6 million years, where the plates start to move. Before that the paint follows the colours already ruled: green while there are plants, bare rock before about 450 million years, near-black before oxygen at about 2,400. The paint looks like the photograph painted, so what changes is how sure the picture is, not what it shows. (Michael, 26 Oct; it replaces the globe's present rule, which carries today's picture on the plates back to 300 million years.)
+**The photograph fades by 2.6 million years.** A photograph is true only of today. As she goes back it fades to paint, gradually, and is gone by the seam at 2.6 million years, where the plates start to move. Before that the paint follows the colours already ruled: green while there are plants, bare rock before about 450 million years, near-black before oxygen at about 2,400. **The paint is green and rock** (Michael, 28 Oct): one quiet green with the rock grain under it, carrying no pattern of today's deserts, forests or ice back in time. A softened photograph was tried on the second bench and refused, because it carried today's climate on the moving plates: Australia's desert beside Antarctica, the ice sheets riding back to ages when they were forest. (Michael, 26 Oct; it replaces the globe's present rule, which carries today's picture on the plates back to 300 million years.)
 
-**The land-only Blue Marble**, over CW's own sea: the version with the sea floor painted in is NASA's blues, and the floor belongs to Drain the Sea (grey, per the held note). Credit: *NASA Earth Observatory*.
+**The photograph is July 2004.** *Ruled 28 Oct (Michael), replacing the land-only rule:* at today the photograph shows its own sea, as a photograph should. As soon as she moves back, our sea takes over, because the sea level changes all the time and the change is worth seeing. Before that ruling the land-only Blue Marble sat over CW's own sea; the fourth bench's revision compares the two. Drain the Sea keeps its grey floor. Credit: *NASA Earth Observatory*.
 
 ### The plates, and the five words of knowing
 
@@ -37,11 +37,11 @@ The ages and their words stay exactly as `globe.js` has them: *ground* this side
 The picture carries two honest signals, and they are separate:
 
 - **The surface** says how sure we are of what the ground looked like: photograph near today, paint everywhere else.
-- **The edges** say how sure we are of where the pieces were: crisp for measured, inferred and fitted; soft, washed and uneven for guessed and invented, as they are now.
+- **The edges** say how sure we are of where the pieces were: crisp for measured, inferred and fitted; soft, washed and uneven for guessed and invented, as they are now. On the third bench the 3D's soft edges came out smoother than the 2D's ragged outline, and read better as *guessed*: kept as built, with the near-black crust before oxygen. (Michael, 28 Oct.)
 
 ### The sea
 
-The sea is a ball of its own, glassy, just above the floor. Lowering the sea is lowering that ball, from the same height data. Where the floor comes out, it is grey (the held note). The island, the drowned band and the shelf round each old piece stay as they are now, drawn as meshes.
+The sea is a ball of its own, glassy, just above the floor, in the 2D globe's deeper blue with even light (Michael, 28 Oct). Lowering the sea is lowering that ball, from the same height data. Where the floor comes out, it is grey (the held note). The island, the drowned band and the shelf round each old piece stay as they are now, drawn as meshes.
 
 ### Ice
 
@@ -49,7 +49,7 @@ The ice ages of the last 2.6 million years from ICE-6G, as now, fading in and ou
 
 ### Today's lines on the past
 
-Today's coastlines, and any other modern line, are **off** over an ancient surface. A word in the left column turns them on. (Michael, 26 Oct.) This side of the seam they are the coast itself and always drawn.
+Today's coastlines, and any other modern line, are **off** over an ancient surface. A word in the left column turns them on. (Michael, 26 Oct.) This side of the seam they are the coast itself and always drawn, except at today, where the photograph shows its own coast.
 
 ### The inside: *Cut open*
 
@@ -101,8 +101,8 @@ The ages and the words of the five grades; every grade sentence and molten sente
 `globe.js` keeps running the Time Machine until the last step. Every page works at every step.
 
 1. **The first bench**, `experiments/earth-3d.html`, beside the Time Machine and not in it: the lit ball, north up, the desk-globe turn, pinch; the pieces as meshes, turned by the plate model to 1,000 million years under a slider; the cities. The old 2D globe beside it at the same age, so the two can be compared by eye. Blue Marble and the old coloured ground switchable, so the photograph can be judged. Tried on a phone once.
-2. **The look by age**: the fade from photograph to paint, the paint by age, the islands and shelves, the deep ice, the molten sequence. Judged side by side with the old globe at a fixed list of ages and views.
-3. **The guessed and invented ages**: the motion model, the blobs, *another guess*, with the same seed giving the same guess in both engines.
+2. **The look by age**: the photograph's sea as the shelf wash, the fade from photograph to paint, the paint by age, the islands and shelves, the deep ice, the rim. Judged side by side with the old globe at a fixed list of ages and views.
+3. **The guessed and invented ages, and the molten Earth**: the motion model, the blobs, *another guess*, with the same seed giving the same guess in both engines; the near-black crust before oxygen; the molten sequence. (The molten sequence moved here from step 2 on 27 Oct, since all of these need the slider past 1,000 million years.) *Built 28 Oct; Michael tried it on the iPad and said commit.*
 4. **This side of the seam and the honesty**: the sea, the floor, the ICE-6G ice, today's lines and their word, the edges, the scale note, the kept picture.
 5. **Close in**: the tiles draped on the ball, the marks and labels on it, the probe on the Drain the Sea bench.
 6. **Flat**: the *Map* word laying the same Earth out flat, whole and still.
@@ -115,10 +115,12 @@ Each step ends with Michael's finger before the next. The audit guessed eleven t
 ## Open, and not invented here
 
 - **Scotese.** *Ruled 27 Oct (Michael): keep Merdith, and decide about Scotese by looking.* Scotese and Wright's PaleoDEMs (117 height maps, every 5 million years back to 540; CC BY 4.0; 1° and 0.1° grids; Zenodo 5460860) would let the paint of the past follow real reconstructed ground, above all the shallow seas over the continents. But they sit on Scotese's own plate model, they are whole-world snapshots rather than pieces on plates, and the published model lacks the plate boundaries Drain the Sea needs. The Earth is built on Merdith 2021 and paints the past by rule. Once it exists, one bench shows three moments (Pangaea at 250 million years, the flooded continents at about 90, the bare world at 450) painted our way beside Scotese's. If his shallow seas earn their place, the build first looks for a reconstruction of the same thing on Merdith's model; switching models is the last resort. The follow-up in `Prompt-Audit-Earth-3D.md` is no longer needed.
-- **Which month of Blue Marble.** One month shows seasonal snow, which competes with *white means ice*. One summer month, a blend, or the seasons.
+- **Which month of Blue Marble.** *July, on the first bench (27 Oct).* Summer snow is light; revisit only if the iPad says otherwise.
 - **The photograph against two map rules.** The Sahara's orange and Australia's red-brown under vermilion marks bend *no red on the earth*; labels may be harder to read on a photograph than on the quiet ramp. A bench question, and Spec-Maps changes when it's settled.
-- **Light.** Whether the ball has a day side and a night side, and whether that is light or drama.
-- **The wedge.** Whether *Cut open* also turns the cut toward her, or she turns the ball to look in.
+- **Light.** *Ruled 28 Oct (Michael): even.* No sun lighting one side; the rim and the haze make it a ball.
+- **The Moon's impact.** *Ruled 28 Oct (Michael): no flash.* The crust breaks into rafts, the seams glow, and the rafts sink into the melt, last-cooled first. No brightening, no white, nothing beyond the rim. It runs longer than the third bench's three million years, about ten positions of the slider. The 2D's white flash retires with `globe.js`. Later, with the Time Machine's play: a way for her to replay the impact with its words. Not built yet; it belongs with play.
+- **The slider near today, and the timeline.** The whole slider gives the last ice age only a dozen positions, so 21,000 years can't be reached by hand. The fourth bench's revision adds a second slider for the last three million years. Michael is asking (28 Oct) whether the slider, played with a narration and stopping on an epoch whose events then appear below, should replace the timeline as the Time Machine's main control. Whether one slider zooms or each trip opens on its own span is undecided. A worknote comes before the swap.
+- **The wedge.** Whether *Cut open* also turns the cut toward her, or she turns the ball to look in. *Ruled 28 Oct (Michael): Cut open is a general tool, `cutaway.js` on the shelf, for any planet or star, as the Sun bench already uses it; the Earth is its first planet, not a special case.* Michael's idea, the same day: she controls how far it opens, up to slicing it in half. `cutaway.js` cuts a fixed quarter today; its faces already draw by radius and angle, so a wider cut is mostly geometry. How she opens it (drag the cut wider, or place a slice) is undecided, and is a new gesture.
 - **The water ball.** In space beside the Earth, or on the surface where the water was.
 - **The insides' details.** Exactly where the eras meet; when the inner core appears.
 - **The small still maps.** Whether margin maps and pop-up windows become the Earth too, or stay small pictures.
