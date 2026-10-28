@@ -6,14 +6,18 @@
 <link rel="icon" type="image/png" href="../art/icons/time-machine-icon-256.png">
 <link rel="apple-touch-icon" href="../art/icons/time-machine-icon-256.png">
 <title>The Earth, in 3D — Curious Woods</title>
-<!-- The Earth bench (Spec-Earth-3D, steps 1 and 2 of Getting there; Michael's prompts Prompt-Build-Earth-Bench-01.md
-     and -02.md; 27 Oct 2026): the 3D Earth on the shared shelf (js/3d/earth.js on js/3d/scene.js) beside the 2D globe
-     the Time Machine runs on (js/globe.js), both at the same age and turned to the same longitude and latitude, so the
-     two can be compared by eye. A bench, beside the Time Machine and not in it: nothing a child sees changes. Step 2
-     gave the pieces the look by age: the photograph fading to paint by 2.6 million years (two paints to choose from,
-     bench only), bare rock before plants, the picture's sea as the shelf wash, the islands and shelves and dissolves
-     before the model's reach, the deep ice, and the rim. The slider runs by a square law so the first few million
-     years, where the photograph fades, take a hand's width. The corner readout is for the bench only.
+<!-- The Earth bench (Spec-Earth-3D, steps 1 to 3 of Getting there; Michael's prompts Prompt-Build-Earth-Bench-01.md,
+     -02.md and -03.md; 27–28 Oct 2026): the 3D Earth on the shared shelf (js/3d/earth.js on js/3d/scene.js) beside the
+     2D globe the Time Machine runs on (js/globe.js), both at the same age and turned to the same longitude and latitude,
+     so the two can be compared by eye. A bench, beside the Time Machine and not in it: nothing a child sees changes.
+     Step 2 gave the pieces the look by age: the photograph fading to paint (green and rock, Michael's ruling of 28 Oct)
+     by 2.6 million years, bare rock before plants, the picture's sea as the shelf wash, the islands and shelves and
+     dissolves before the model's reach, the deep ice, and the rim; the light is even (the same ruling). Step 3 took the
+     slider to the Earth's birth at 4,567 million years: the guessed ages by the motion model, with one seed for both
+     globes and the word *another guess* giving both a new one; the invented ages' blobs; the near-black crust before
+     oxygen and the Huronian ice; the molten Earth, with the Moon's impact two ways to choose from (bench only); and the
+     grade's word and sentence under the stage. The slider keeps its square law over the first ten million years and
+     then runs by segments, one per era, so every era has room under a finger. The corner readout is for the bench only.
      The Earth wears the Time Machine's icon for now; it has none of its own. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
@@ -54,6 +58,8 @@
   .stage { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; touch-action: none; background: var(--cw-parchment, #f4f1e8); }
   #stage2d .cw-globe { position: absolute; inset: 0; }
   .under { margin: 6px 0 0; font-size: 13px; font-style: italic; color: var(--cw-ink-soft, #6b655a); }
+  .under.grade { font-style: normal; font-size: 14px; color: var(--cw-ink, #2a241c); min-height: 3.2em; }
+  .under.grade i { color: var(--cw-copper, #b5652b); }
   .age { margin: 18px 0 0; display: grid; grid-template-columns: 150px 1fr; gap: 24px; align-items: center; }
   .age label { color: var(--cw-ink, #2a241c); }
   .age input { width: 100%; accent-color: var(--cw-copper, #b5652b); margin: 0; }
@@ -83,13 +89,14 @@
   <div class="bench">
     <div class="left" id="words">
       <div class="pair"><button class="word" id="wBlue" type="button" aria-pressed="false">Blue Marble</button><span class="slash">/</span><button class="word" id="wOld" type="button" aria-pressed="true">old ground</button></div>
-      <div class="pair"><button class="word" id="wLit" type="button" aria-pressed="false">Lit</button><span class="slash">/</span><button class="word" id="wEven" type="button" aria-pressed="true">even</button></div>
-      <div class="pair"><button class="word" id="wPhoto" type="button" aria-pressed="true">photograph painted</button><span class="slash">/</span><button class="word" id="wGreen" type="button" aria-pressed="false">green and rock</button></div>
+      <div class="pair"><button class="word" id="wWarm" type="button" aria-pressed="true">quiet brightening</button><span class="slash">/</span><button class="word" id="wMelt" type="button" aria-pressed="false">no flash</button></div>
+      <button class="word" id="wGuess" type="button">another guess</button>
     </div>
     <div class="stages">
       <div class="stage-box">
         <div id="stage3d" class="stage"><div id="cities"></div></div>
-        <p class="under">bench only: the paint the photograph fades to is a choice of two</p>
+        <p class="under grade"><i id="gradeWord"></i> <span id="gradeWhy"></span></p>
+        <p class="under">bench only: the Moon’s impact is a choice of two, and <i>another guess</i> gives both globes the same new guess</p>
         <div id="still"><img alt="The Earth, a still picture" src="../art/globe/earth-3d-still.webp"><p class="under" id="stillLine">This one needs a newer device.</p></div>
       </div>
       <div class="stage-box">
@@ -100,7 +107,7 @@
   </div>
   <div class="age">
     <label for="age">Age<output id="ageWord" for="age">today</output></label>
-    <input type="range" id="age" min="0" max="1000" step="1" value="0" aria-label="Age, millions of years ago">
+    <input type="range" id="age" min="0" max="1500" step="1" value="0" aria-label="Age, millions of years ago">
   </div>
   <p class="readout" id="readout"></p>
   <p id="fail"></p>
@@ -109,11 +116,11 @@
 </div>
 
 <script type="module">
-  const CW_VERSION = '2026-10-27 15fe8e5';   // 27 Oct, afternoon: step 2, the look by age   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-28 da958b6';   // 28 Oct: step 3, the Earth back to its birth   // date + short commit hash; bump in the same commit as any change
   console.log('earth-3d', CW_VERSION);
   import * as THREE from 'three';
   import { cwScene } from '../js/3d/scene.js?v=2026-10-27d';
-  import { cwEarth } from '../js/3d/earth.js?v=2026-10-27g';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-10-28d';
   import { cwStill } from '../js/3d/still.js?v=2026-10-27b';
 
   const $ = id => document.getElementById(id);
@@ -132,7 +139,10 @@
     blue: 'The ground: Blue Marble: Next Generation, July 2004, NASA Earth Observatory (Reto Stöckli, NASA Goddard Space Flight Center). The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.'
   };
   const HOME = { lon: 20, lat: 15 };   // the 2D globe's opening view
-  const state = { ground: 'old', light: 'even', paint: 'photo', ma: 0 };
+  // the seed: one for both globes, so the same guess shows on each (the spec: the same seed gives the same guess in both
+  // engines); ?seed= fixes it for a check, otherwise this visit's, made as globe.js makes one
+  const seed0 = Q.get('seed') ? +Q.get('seed') : ((Date.now() % 1000003) + Math.floor(Math.random() * 1000));
+  const state = { ground: 'old', impact: Q.get('impact') === 'melt' ? 'melt' : 'warm', ma: 0, seed: seed0 };
   let view = null, earth = null, g2d = null, syncing = false;
 
   // ---------- the 3D Earth ----------
@@ -148,7 +158,7 @@
       onTurn: v => { if (g2d && !syncing) { syncing = true; const t = v.turnOf(); g2d.turn(t.lon, t.lat); syncing = false; } },
       onTier: async (tier) => { if (earth) await earth.setTier(tier); }
     });
-    earth = await cwEarth(view, { citiesHost: $('cities') });
+    earth = await cwEarth(view, { citiesHost: $('cities'), seed: seed0, impact: state.impact });
     await earth.setTier(view.tier);
   } catch (e) {
     console.warn('earth-3d: no 3D view;', e && e.message ? e.message : e);
@@ -158,35 +168,65 @@
 
   // ---------- the 2D globe, as the Time Machine has it ----------
   g2d = window.cwGlobe($('stage2d'), {
-    ma: 0, lon: HOME.lon, lat: HOME.lat, projection: 'globe',
+    ma: 0, lon: HOME.lon, lat: HOME.lat, projection: 'globe', seed: seed0,
     onTurn: () => { if (view && !syncing) { syncing = true; const t = g2d.view(); view.turnTo(t.lon, t.lat); syncing = false; } }
   });
 
   // ---------- the words ----------
   function pressed(on, off) { on.setAttribute('aria-pressed', 'true'); off.setAttribute('aria-pressed', 'false'); }
   function setGround(g) { state.ground = g; if (earth) earth.setGround(g); pressed($(g === 'blue' ? 'wBlue' : 'wOld'), $(g === 'blue' ? 'wOld' : 'wBlue')); $('credit').textContent = CREDITS[g]; }
-  function setLight(l) { state.light = l; if (earth) earth.setLight(l); pressed($(l === 'lit' ? 'wLit' : 'wEven'), $(l === 'lit' ? 'wEven' : 'wLit')); }
-  function setPaint(p) { state.paint = p; if (earth) earth.setPaint(p); pressed($(p === 'green' ? 'wGreen' : 'wPhoto'), $(p === 'green' ? 'wPhoto' : 'wGreen')); }
-  $('wPhoto').addEventListener('click', () => setPaint('photo'));
-  $('wGreen').addEventListener('click', () => setPaint('green'));
+  function setImpact(i) { state.impact = i; if (earth) earth.setImpact(i); pressed($(i === 'melt' ? 'wMelt' : 'wWarm'), $(i === 'melt' ? 'wWarm' : 'wMelt')); }
+  // another guess: the 2D globe draws the new seed and the 3D takes the same one, so both show one world
+  let guessMs = null;
+  function anotherGuess() {
+    const t0 = performance.now();
+    state.seed = g2d.reguess();
+    if (earth) earth.setSeed(state.seed);
+    guessMs = performance.now() - t0;   // the 3D's run (the 2D's runs on its next frame; simMs reads it)
+    tellGrade();
+  }
   $('wBlue').addEventListener('click', () => setGround('blue'));
   $('wOld').addEventListener('click', () => setGround('old'));
-  $('wLit').addEventListener('click', () => setLight('lit'));
-  $('wEven').addEventListener('click', () => setLight('even'));
+  $('wWarm').addEventListener('click', () => setImpact('warm'));
+  $('wMelt').addEventListener('click', () => setImpact('melt'));
+  $('wGuess').addEventListener('click', anotherGuess);
   setGround(Q.get('ground') === 'blue' ? 'blue' : 'old');
-  setLight(Q.get('light') === 'lit' ? 'lit' : 'even');
-  setPaint(Q.get('paint') === 'green' ? 'green' : 'photo');
+  setImpact(state.impact);
 
   // ---------- the age ----------
-  // the slider runs by a square law (step 2): its thousand positions reach 1,000 million years, but the first fifty
-  // cover the 2.6 million years in which the photograph fades to paint, and the first hundred the first ten million
-  function ageOf(v) { return v <= 100 ? Math.round(v * v / 100) / 10 : Math.round(v * v / 1000); }
-  function posOf(ma) { return Math.round(Math.sqrt(ma * 1000)); }
-  function ageWord(ma) { return ma === 0 ? 'today' : (ma < 10 ? ma.toFixed(1) : ma) + ' million years ago'; }
+  // the slider (step 3): 1,500 positions from today to 4,567 million years. The first hundred keep step 2's square law
+  // (the first fifty cover the 2.6 million years in which the photograph fades to paint, the first hundred the first ten
+  // million); after that it runs straight between knots, one segment per era, so every era has room under a finger:
+  //   100 → 300  measured, 10 to 200       (0.95 million years a position)
+  //   300 → 500  inferred, 200 to 540      (1.7)
+  //   500 → 700  fitted, 540 to 1,000      (2.3)
+  //   700 → 1100 guessed, 1,000 to 4,000   (7.5)
+  //   1100 → 1250 invented, 4,000 to 4,400 (2.7)
+  //   1250 → 1500 molten, 4,400 to 4,567   (0.67: the Moon's three million years take four or five positions)
+  const KNOTS = [[100, 10], [300, 200], [500, 540], [700, 1000], [1100, 4000], [1250, 4400], [1500, 4567]];
+  function ageOf(v) {
+    if (v <= 100) return Math.round(v * v / 100) / 10;
+    for (let i = 1; i < KNOTS.length; i++) { const [p0, a0] = KNOTS[i - 1], [p1, a1] = KNOTS[i]; if (v <= p1) return Math.round((a0 + (a1 - a0) * (v - p0) / (p1 - p0)) * 10) / 10; }
+    return KNOTS[KNOTS.length - 1][1];
+  }
+  function posOf(ma) {
+    if (ma <= 10) return Math.round(Math.sqrt(ma * 1000));
+    for (let i = 1; i < KNOTS.length; i++) { const [p0, a0] = KNOTS[i - 1], [p1, a1] = KNOTS[i]; if (ma <= a1) return Math.round(p0 + (p1 - p0) * (ma - a0) / (a1 - a0)); }
+    return KNOTS[KNOTS.length - 1][0];
+  }
+  function ageWord(ma) { return ma === 0 ? 'today' : (ma < 10 ? ma.toFixed(1) : Math.round(ma).toLocaleString('en')) + ' million years ago'; }
+  // the grade's word and sentence under the stage, from the 3D Earth (globe.js's words, copied there), so the edges can
+  // be watched changing with the words; the molten phases' sentences while the grade is none
+  function tellGrade() {
+    const g = earth ? earth.grade() : g2d.grade();
+    $('gradeWord').textContent = g.grade === 'none' ? (earth ? earth.moltenPhase() : g2d.moltenPhase()) || 'none' : g.grade;
+    $('gradeWhy').textContent = g.why;
+  }
   function setAge(ma) {
     state.ma = ma; $('ageWord').value = ageWord(ma);
     if (earth) earth.setTime(ma);
     g2d.setTime(ma);
+    tellGrade();
   }
   $('age').addEventListener('input', () => setAge(ageOf(+$('age').value)));
   if (Q.get('ma')) { $('age').value = posOf(+Q.get('ma')); setAge(+Q.get('ma')); } else setAge(0);
@@ -213,15 +253,27 @@
     const st = earth.stats;
     setInterval(() => {
       $('readout').textContent = view.backend + ' · ' + view.tier + (view.timing !== 'done' ? ' (timing)' : '') + ' · ' + view.fps + ' fps · ' +
-        st.triangles.toLocaleString('en') + ' triangles from ' + st.pieces + ' pieces on ' + st.plates + ' plates (the rims ' + st.rimTriangles.toLocaleString('en') + ' more), built in ' + st.buildMs + ' ms (the file in ' + st.fetchMs + ' ms; the masks and paints in ' + st.lookMs + ' ms)' +
-        ' · Blue Marble ' + (st.blue() ? st.blue() + ' px (device allows ' + view.maxTexture + ')' : 'not loaded');
+        st.triangles.toLocaleString('en') + ' triangles from ' + st.pieces + ' pieces on ' + st.plates + ' plates (the rims ' + st.rimTriangles.toLocaleString('en') + ' more), built in ' + st.buildMs + ' ms (the file in ' + st.fetchMs + ' ms; the masks in ' + st.lookMs + ' ms)' +
+        ' · Blue Marble ' + (st.blue() ? st.blue() + ' px (device allows ' + view.maxTexture + ')' : 'not loaded') +
+        ' · seed ' + state.seed + simLine();
     }, 500);
   } else {
     $('readout').textContent = 'no 3D view: the still picture and the 2D globe';
   }
 
+  // the motion model's cost, for the readout: the cratons' run and the blobs' (the 3D's and the 2D's), and the last another guess
+  function simLine() {
+    if (!earth) return '';
+    const s = earth.simMs(), s2 = g2d.simMs();
+    let t = '';
+    if (s.cratons != null) t += ' · the cratons’ run ' + Math.round(s.cratons) + ' ms (the 2D’s ' + (s2 != null ? Math.round(s2) : '–') + ')';
+    if (s.blobs != null) t += ' · the blobs’ run ' + Math.round(s.blobs) + ' ms, their meshes ' + Math.round(s.blobBuild || 0);
+    if (guessMs != null) t += ' · another guess took ' + Math.round(guessMs) + ' ms here';
+    return t;
+  }
+
   // ---------- for the bench's own checks (the browser pane) ----------
-  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = ma => { $('age').value = posOf(ma); setAge(ma); }; window.cwSetPaint = setPaint; window.cwSetGround = setGround; window.cwSetLight = setLight;
+  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = ma => { $('age').value = posOf(ma); setAge(ma); }; window.cwSetGround = setGround; window.cwSetImpact = setImpact; window.cwGuess = anotherGuess; window.cwAgeOf = ageOf; window.cwPosOf = posOf;
   // The bench's own timer, as the Sun bench's: draws `frames` frames off-screen at the canvas's size for a tier,
   // the age moving a million years a frame (so every plate's turn is read each frame, as a slider drag reads it),
   // and waits for the graphics card to finish each, so the number is the true cost of a frame, not the display's
@@ -246,7 +298,7 @@
   // the pair picture shown on the page (in the kept picture's place), for checks in a browser pane that presents
   // the live canvas late
   window.cwShow = async function (px = 768) { const { blob, rows } = await cwPair(px); $('kept').querySelector('img').src = URL.createObjectURL(blob); $('kept').style.display = 'block'; return rows; };
-  window.cwPair = async function (px = 800) {
+  window.cwPair = async function (px = 800, type = 'image/png', quality) {
     if (!view) return null;
     const r = view.renderer, cam = view.camera;
     const rt = new THREE.RenderTarget(px, px, { type: THREE.UnsignedByteType, colorSpace: THREE.SRGBColorSpace, depthBuffer: true });
@@ -269,7 +321,7 @@
     const W3 = view.host.clientWidth, W2 = c2.clientWidth, s3 = px / W3, s2 = px / W2, rows = [];
     ctx.font = Math.round(px / 50) + 'px ' + S.font; ctx.textBaseline = 'middle';
     for (const c of earth.cities) {
-      if (state.ma > c.from) continue;
+      if (state.ma > c.from || earth.grade().grade === 'none' || earth.grade().grade === 'invented') continue;
       const p3 = earth.project(c.lon, c.lat, c.plate);
       const at = g2d.placeAt(c.lon, c.lat), p2 = at ? g2d.project(at.lon, at.lat) : null;
       const in3 = p3.front && p3.x >= 0 && p3.x <= W3 && p3.y >= 0 && p3.y <= W3;   // on the 3D stage, not past its edge
@@ -279,9 +331,10 @@
     }
     ctx.fillStyle = S.inkSoft; ctx.font = Math.round(px / 40) + 'px ' + S.font; ctx.textBaseline = 'alphabetic';
     const t = view.turnOf();
-    ctx.fillText('3D: ' + ageWord(state.ma) + ', lon ' + t.lon.toFixed(0) + '°, lat ' + t.lat.toFixed(0) + '°, ' + (state.ground === 'blue' ? 'Blue Marble' : 'old ground') + ', ' + state.light + ', ' + (state.paint === 'green' ? 'green and rock' : 'photograph painted'), 8, px + 26);
+    const gw = earth.grade();
+    ctx.fillText('3D: ' + ageWord(state.ma) + ', lon ' + t.lon.toFixed(0) + '°, lat ' + t.lat.toFixed(0) + '°, ' + (state.ground === 'blue' ? 'Blue Marble' : 'old ground') + ', seed ' + state.seed + ', ' + (gw.grade === 'none' ? earth.moltenPhase() : gw.grade) + (gw.grade === 'none' ? ', impact: ' + (state.impact === 'melt' ? 'no flash' : 'quiet brightening') : ''), 8, px + 26);
     ctx.fillText('2D (globe.js): the same', px + 28, px + 26);
-    const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
+    const blob = await new Promise(res => cv.toBlob(res, type, quality));
     return { blob, rows };
   };
 </script>
