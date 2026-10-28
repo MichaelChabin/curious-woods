@@ -28,7 +28,7 @@ The pieces of continent become cut-outs of today's picture, glued to a ball and 
 
 **The photograph fades by 2.6 million years.** A photograph is true only of today. As she goes back it fades to paint, gradually, and is gone by the seam at 2.6 million years, where the plates start to move. Before that the paint follows the colours already ruled: green while there are plants, bare rock before about 450 million years, near-black before oxygen at about 2,400. **The paint is green and rock** (Michael, 28 Oct): one quiet green with the rock grain under it, carrying no pattern of today's deserts, forests or ice back in time. A softened photograph was tried on the second bench and refused, because it carried today's climate on the moving plates: Australia's desert beside Antarctica, the ice sheets riding back to ages when they were forest. (Michael, 26 Oct; it replaces the globe's present rule, which carries today's picture on the plates back to 300 million years.)
 
-**The photograph is July 2004.** *Ruled 28 Oct (Michael), replacing the land-only rule:* at today the photograph shows its own sea, as a photograph should. As soon as she moves back, our sea takes over, because the sea level changes all the time and the change is worth seeing. Before that ruling the land-only Blue Marble sat over CW's own sea; the fourth bench's revision compares the two. Drain the Sea keeps its grey floor. Credit: *NASA Earth Observatory*.
+**The photograph is July 2004**, the land-only Blue Marble, over CW's own sea, at every age. NASA's version with the ocean was tried on the fourth bench's revision and refused (Michael, 28 Oct): its sea is too dark, and its sea floor is drawn from soundings, not seen, so it is not a photograph. Our sea is plainer and reads better. The photograph is itself a month of cloud-free satellite pictures stitched together, and the note under the globe says so. Michael finds the land too dark; the fifth bench's revision tries it lighter. Credit: *NASA Earth Observatory*.
 
 ### The plates, and the five words of knowing
 
@@ -41,7 +41,7 @@ The picture carries two honest signals, and they are separate:
 
 ### The sea
 
-The sea is a ball of its own, glassy, just above the floor, in the 2D globe's deeper blue with even light (Michael, 28 Oct). Lowering the sea is lowering that ball, from the same height data. Where the floor comes out, it is grey (the held note). The island, the drowned band and the shelf round each old piece stay as they are now, drawn as meshes.
+The sea is a ball of its own, glassy, just above the floor, in the 2D globe's deeper blue with even light (Michael, 28 Oct). Lowering the sea is lowering that ball, from the same height data. Where a lowered sea uncovers the shelf, it is the 2D's plain buff (Michael, 28 Oct): featureless, so it reads as shelf. For Drain the Sea, Michael leans toward keeping the buff for the shelf and grey for the deeper floor beyond it (the held note said grey for all). The island, the drowned band and the shelf round each old piece stay as they are now, drawn as meshes.
 
 ### Ice
 
@@ -49,7 +49,7 @@ The ice ages of the last 2.6 million years from ICE-6G, as now, fading in and ou
 
 ### Today's lines on the past
 
-Today's coastlines, and any other modern line, are **off** over an ancient surface. A word in the left column turns them on. (Michael, 26 Oct.) This side of the seam they are the coast itself and always drawn, except at today, where the photograph shows its own coast.
+Today's coastlines, and any other modern line, are **off** over an ancient surface. A word in the left column turns them on. (Michael, 26 Oct.) This side of the seam they are the coast itself and always drawn.
 
 ### The inside: *Cut open*
 
@@ -119,7 +119,7 @@ Each step ends with Michael's finger before the next. The audit guessed eleven t
 - **The photograph against two map rules.** The Sahara's orange and Australia's red-brown under vermilion marks bend *no red on the earth*; labels may be harder to read on a photograph than on the quiet ramp. A bench question, and Spec-Maps changes when it's settled.
 - **Light.** *Ruled 28 Oct (Michael): even.* No sun lighting one side; the rim and the haze make it a ball.
 - **The Moon's impact.** *Ruled 28 Oct (Michael): no flash.* The crust breaks into rafts, the seams glow, and the rafts sink into the melt, last-cooled first. No brightening, no white, nothing beyond the rim. It runs longer than the third bench's three million years, about ten positions of the slider. The 2D's white flash retires with `globe.js`. Later, with the Time Machine's play: a way for her to replay the impact with its words. Not built yet; it belongs with play.
-- **The slider near today, and the timeline.** The whole slider gives the last ice age only a dozen positions, so 21,000 years can't be reached by hand. The fourth bench's revision adds a second slider for the last three million years. Michael is asking (28 Oct) whether the slider, played with a narration and stopping on an epoch whose events then appear below, should replace the timeline as the Time Machine's main control. Whether one slider zooms or each trip opens on its own span is undecided. A worknote comes before the swap.
+- **The slider near today, and the timeline.** The whole slider gives the last ice age only a dozen positions, so 21,000 years can't be reached by hand. The fourth bench's revision added a second slider for the last three million years, and Michael likes it (28 Oct). Michael is asking (28 Oct) whether the slider, played with a narration and stopping on an epoch whose events then appear below, should replace the timeline as the Time Machine's main control. Whether one slider zooms or each trip opens on its own span is undecided. A worknote comes before the swap.
 - **The wedge.** Whether *Cut open* also turns the cut toward her, or she turns the ball to look in. *Ruled 28 Oct (Michael): Cut open is a general tool, `cutaway.js` on the shelf, for any planet or star, as the Sun bench already uses it; the Earth is its first planet, not a special case.* Michael's idea, the same day: she controls how far it opens, up to slicing it in half. `cutaway.js` cuts a fixed quarter today; its faces already draw by radius and angle, so a wider cut is mostly geometry. How she opens it (drag the cut wider, or place a slice) is undecided, and is a new gesture.
 - **The water ball.** In space beside the Earth, or on the surface where the water was.
 - **The insides' details.** Exactly where the eras meet; when the inner core appears.

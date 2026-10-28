@@ -29,6 +29,11 @@
      today. Bench only, for Michael to choose by looking: NASA's sea / our sea always, buff shelf / grey shelf for what a
      lowered sea uncovers, and a fine slider under the main one, today to three million years, the last 30,000 years given
      two fifths of its width; the two sliders move together.
+     Step 4 revised again (28 Oct, Michael's rulings on step 4b): our sea at every age, today too — NASA's sea, the change
+     at the first step back and their word are gone, and its pictures with them; what a lowered sea uncovers is the 2D's
+     buff, the grey and its word gone; the coast is drawn at today again; the fine slider stays. Bench only, for Michael
+     to choose by looking: land lighter, a small slider from as now to clearly lighter (a curve on the photograph's
+     luma, earth.js's setLandLift). While the photograph shows, the honest block's credit line says what the picture is.
      The Earth wears the Time Machine's icon for now; it has none of its own. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
@@ -81,6 +86,7 @@
   .age output { display: block; margin-top: 2px; font-size: 15px; color: var(--cw-ink-soft, #6b655a); font-variant-numeric: tabular-nums; }
   .age.fine { margin-top: 10px; }
   .age.fine label { color: var(--cw-ink-soft, #6b655a); font-size: 15px; }
+  .age.lift { max-width: 360px; }
   .readout { margin: 10px 0 0; font-size: 12px; color: var(--cw-grey-word, #7d7a72); font-variant-numeric: tabular-nums; line-height: 1.4; }
   .credit { margin: 18px 0 0; font-size: 13px; color: var(--cw-ink-soft, #6b655a); }
   #fail { color: var(--cw-vermilion, #c84830); display: none; margin: 12px 0 0; white-space: pre-wrap; font-size: 13px; }
@@ -106,8 +112,6 @@
   <div class="bench">
     <div class="left" id="words">
       <div class="pair"><button class="word" id="wBlue" type="button" aria-pressed="false">Blue Marble</button><span class="slash">/</span><button class="word" id="wOld" type="button" aria-pressed="true">old ground</button></div>
-      <div class="pair"><button class="word" id="wSeaNasa" type="button" aria-pressed="true">NASA’s sea</button><span class="slash">/</span><button class="word" id="wSeaOurs" type="button" aria-pressed="false">our sea always</button></div>
-      <div class="pair"><button class="word" id="wShelfBuff" type="button" aria-pressed="true">buff shelf</button><span class="slash">/</span><button class="word" id="wShelfGrey" type="button" aria-pressed="false">grey shelf</button></div>
       <button class="word" id="wCoasts" type="button" aria-pressed="false">today’s coasts</button>
       <button class="word" id="wGuess" type="button">another guess</button>
     </div>
@@ -115,7 +119,7 @@
       <div class="stage-box">
         <div id="stage3d" class="stage"><div id="cities"></div></div>
         <div class="under honest" id="honestBlock"></div>
-        <p class="under">bench only: NASA’s sea at today or ours always, the uncovered shelf buff or grey, the fine slider, and <i>another guess</i> giving both globes the same new guess</p>
+        <p class="under">bench only: the fine slider, land lighter, and <i>another guess</i> giving both globes the same new guess</p>
         <div id="still"><img alt="The Earth, a still picture" src="../art/globe/earth-3d-still.webp"><p class="under" id="stillLine">This one needs a newer device.</p></div>
       </div>
       <div class="stage-box">
@@ -132,6 +136,10 @@
     <label for="fine">the last 3 million<output id="fineWord" for="fine">bench only</output></label>
     <input type="range" id="fine" min="0" max="1000" step="1" value="0" aria-label="Age, the last three million years">
   </div>
+  <div class="age fine lift">
+    <label for="lift">land lighter<output id="liftWord" for="lift">as now</output></label>
+    <input type="range" id="lift" min="0" max="100" step="1" value="0" aria-label="The photograph's land, as now to clearly lighter">
+  </div>
   <p class="readout" id="readout"></p>
   <p id="fail"></p>
   <figure id="kept"><img alt="The kept picture"><figcaption><a id="save" download="the-earth.png">Save the picture</a><a href="#" id="unkeep">Close</a><span class="meta" id="keptMeta"></span></figcaption></figure>
@@ -139,11 +147,11 @@
 </div>
 
 <script type="module">
-  const CW_VERSION = '2026-10-28 6675915 · earth-3d step 4b';   // 28 Oct: step 4 revised — NASA's sea at today, the deeper blue, the fine slider, the shelf two ways   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-28 4719840 · earth-3d step 4c';   // 28 Oct: step 4 revised again — our sea at every age, the buff shelf, the coast at today, land lighter   // date + short commit hash; bump in the same commit as any change
   console.log('earth-3d', CW_VERSION);
   import * as THREE from 'three';
   import { cwScene } from '../js/3d/scene.js?v=2026-10-27d';
-  import { cwEarth } from '../js/3d/earth.js?v=2026-10-28k';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-10-28m';
   import { cwHonest } from '../js/3d/honest.js?v=2026-10-28a';
   import { cwStill } from '../js/3d/still.js?v=2026-10-28a';
 
@@ -160,15 +168,16 @@
   }
   const CREDITS = {
     old: 'The ground: height from ETOPO 2022 (NOAA), tree cover from Copernicus Global Land Cover 2019, as the Time Machine’s map. The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.',
-    blue: 'The ground: Blue Marble: Next Generation, July 2004, NASA Earth Observatory (Reto Stöckli, NASA Goddard Space Flight Center). The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.',
-    blueSea: 'The ground: Blue Marble: Next Generation with Topography and Bathymetry, July 2004, NASA Earth Observatory (Reto Stöckli, NASA Goddard Space Flight Center). The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.'
+    blue: 'The ground: Blue Marble: Next Generation, July 2004, NASA Earth Observatory (Reto Stöckli, NASA Goddard Space Flight Center). The continents: Merdith et al. 2021 (EarthByte), CC BY 4.0.'
   };
-  const SHORT_CREDIT = { old: 'ETOPO 2022 (NOAA), Copernicus Global Land Cover 2019', blue: 'NASA Earth Observatory' };
+  // the honest block's credit line while the photograph shows: on Blue Marble it says what the picture is (Michael will
+  // adjust the words)
+  const SHORT_CREDIT = { old: 'ETOPO 2022 (NOAA), Copernicus Global Land Cover 2019', blue: 'The land: satellite pictures from July 2004, a month of them stitched together without clouds. NASA Earth Observatory' };
   const HOME = { lon: 20, lat: 15 };   // the 2D globe's opening view
   // the seed: one for both globes, so the same guess shows on each (the spec: the same seed gives the same guess in both
   // engines); ?seed= fixes it for a check, otherwise this visit's, made as globe.js makes one
   const seed0 = Q.get('seed') ? +Q.get('seed') : ((Date.now() % 1000003) + Math.floor(Math.random() * 1000));
-  const state = { ground: 'old', sea: Q.get('sea') === 'ours' ? 'ours' : 'nasa', shelf: Q.get('shelf') === 'grey' ? 'grey' : 'buff', coasts: Q.get('coasts') === '1', ma: 0, seed: seed0 };
+  const state = { ground: 'old', lift: Q.get('lift') ? Math.max(0, Math.min(1, +Q.get('lift'))) : 0, coasts: Q.get('coasts') === '1', ma: 0, seed: seed0 };
   let view = null, earth = null, g2d = null, honest = null, syncing = false;
 
   // ---------- the 3D Earth ----------
@@ -184,7 +193,7 @@
       onTurn: v => { if (g2d && !syncing) { syncing = true; const t = v.turnOf(); g2d.turn(t.lon, t.lat); syncing = false; } },
       onTier: async (tier) => { if (earth) await earth.setTier(tier); }
     });
-    earth = await cwEarth(view, { citiesHost: $('cities'), seed: seed0, sea: state.sea, shelf: state.shelf });
+    earth = await cwEarth(view, { citiesHost: $('cities'), seed: seed0, landLift: state.lift });
     await earth.setTier(view.tier);
     // the honest block (Standard-Interactives §5, §8): no scale note and no bracket — on a true ball nothing is stretched;
     // the crust's note waits for Cut open. The block under the stage says what the picture is, what it says, and the credit
@@ -224,11 +233,9 @@
 
   // ---------- the words ----------
   function pressed(on, off) { on.setAttribute('aria-pressed', 'true'); off.setAttribute('aria-pressed', 'false'); }
-  function setGround(g) { state.ground = g; if (earth) earth.setGround(g); pressed($(g === 'blue' ? 'wBlue' : 'wOld'), $(g === 'blue' ? 'wOld' : 'wBlue')); $('credit').textContent = CREDITS[g === 'blue' && state.sea === 'nasa' ? 'blueSea' : g]; if (honest) tellGrade(); }
-  // bench only: the photograph's sea at today, NASA's (giving way to ours as she goes back) or ours always
-  async function setSea(st) { state.sea = st; pressed($(st === 'ours' ? 'wSeaOurs' : 'wSeaNasa'), $(st === 'ours' ? 'wSeaNasa' : 'wSeaOurs')); setGround(state.ground); if (earth) await earth.setSea(st); }
-  // bench only: what a lowered sea uncovers, the 2D's buff or the spec's grey
-  function setShelf(sh) { state.shelf = sh; if (earth) earth.setShelf(sh); pressed($(sh === 'grey' ? 'wShelfGrey' : 'wShelfBuff'), $(sh === 'grey' ? 'wShelfBuff' : 'wShelfGrey')); }
+  function setGround(g) { state.ground = g; if (earth) earth.setGround(g); pressed($(g === 'blue' ? 'wBlue' : 'wOld'), $(g === 'blue' ? 'wOld' : 'wBlue')); $('credit').textContent = CREDITS[g]; if (honest) tellGrade(); }
+  // bench only: the land lighter, 0 as now to 1 clearly lighter (Michael names the setting; it becomes a constant)
+  function setLift(v) { state.lift = Math.max(0, Math.min(1, v)); if (earth) earth.setLandLift(state.lift); $('lift').value = Math.round(state.lift * 100); $('liftWord').value = state.lift === 0 ? 'as now' : Math.round(state.lift * 100) + ' of 100'; }
   function setCoasts(on) { state.coasts = !!on; if (earth) earth.setCoasts(on); $('wCoasts').setAttribute('aria-pressed', on ? 'true' : 'false'); }
   // another guess: the 2D globe draws the new seed and the 3D takes the same one, so both show one world
   let guessMs = null;
@@ -241,15 +248,11 @@
   }
   $('wBlue').addEventListener('click', () => setGround('blue'));
   $('wOld').addEventListener('click', () => setGround('old'));
-  $('wSeaNasa').addEventListener('click', () => setSea('nasa'));
-  $('wSeaOurs').addEventListener('click', () => setSea('ours'));
-  $('wShelfBuff').addEventListener('click', () => setShelf('buff'));
-  $('wShelfGrey').addEventListener('click', () => setShelf('grey'));
+  $('lift').addEventListener('input', () => setLift(+$('lift').value / 100));
   $('wCoasts').addEventListener('click', () => setCoasts(!state.coasts));
   $('wGuess').addEventListener('click', anotherGuess);
   setGround(Q.get('ground') === 'blue' ? 'blue' : 'old');
-  pressed($(state.sea === 'ours' ? 'wSeaOurs' : 'wSeaNasa'), $(state.sea === 'ours' ? 'wSeaNasa' : 'wSeaOurs')); setGround(state.ground);   // cwEarth was made with the sea and the shelf
-  setShelf(state.shelf); setCoasts(state.coasts);
+  setLift(state.lift); setCoasts(state.coasts);
 
   // ---------- the age ----------
   // the slider (step 3; the first segment step 4): 1,500 positions from today to 4,567 million years. The first hundred
@@ -364,7 +367,7 @@
   }
 
   // ---------- for the bench's own checks (the browser pane) ----------
-  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetSea = setSea; window.cwSetShelf = setShelf; window.cwFineAgeOf = fineAgeOf; window.cwFinePosOf = finePosOf; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest; window.cwAgeOf = ageOf; window.cwPosOf = posOf;
+  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetLift = setLift; window.cwFineAgeOf = fineAgeOf; window.cwFinePosOf = finePosOf; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest; window.cwAgeOf = ageOf; window.cwPosOf = posOf;
   // The bench's own timer, as the Sun bench's: draws `frames` frames off-screen at the canvas's size for a tier,
   // the age moving a million years a frame (so every plate's turn is read each frame, as a slider drag reads it),
   // and waits for the graphics card to finish each, so the number is the true cost of a frame, not the display's
@@ -424,7 +427,7 @@
     const t = view.turnOf();
     const gw = earth.grade();
     const sm = earth.seaLevel();
-    ctx.fillText('3D: ' + ageWord(state.ma) + ', lon ' + t.lon.toFixed(0) + '°, lat ' + t.lat.toFixed(0) + '°, ' + (state.ground === 'blue' ? 'Blue Marble' : 'old ground') + ', seed ' + state.seed + ', ' + (gw.grade === 'none' ? earth.moltenPhase() : gw.grade) + (sm < 0 ? ', the sea ' + sm + ' m' : '') + (state.sea === 'ours' ? ', our sea always' : (earth.nasaSea() > 0.001 ? ', NASA’s sea ' + earth.nasaSea().toFixed(2) : '')) + (sm < 0 ? ', ' + state.shelf + ' shelf' : '') + (state.coasts ? ', coasts on' : ''), 8, px + 26);
+    ctx.fillText('3D: ' + ageWord(state.ma) + ', lon ' + t.lon.toFixed(0) + '°, lat ' + t.lat.toFixed(0) + '°, ' + (state.ground === 'blue' ? 'Blue Marble' : 'old ground') + ', seed ' + state.seed + ', ' + (gw.grade === 'none' ? earth.moltenPhase() : gw.grade) + (sm < 0 ? ', the sea ' + sm + ' m' : '') + (state.ground === 'blue' && state.lift > 0 ? ', land lighter ' + Math.round(state.lift * 100) : '') + (state.coasts ? ', coasts on' : ''), 8, px + 26);
     ctx.fillText('2D (globe.js): the same', px + 28, px + 26);
     const blob = await new Promise(res => cv.toBlob(res, type, quality));
     return { blob, rows };
