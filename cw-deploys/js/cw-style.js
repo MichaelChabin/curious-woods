@@ -67,6 +67,7 @@
     // ---- the globe ----
     globeSea: '#5793b4', globeSeaDeep: '#33699a',
     globeLand: '#8c8366', globeLandPale: '#c3bba5',
+    paintGreen: '#9aa882',     // the one quiet green of the 'green and rock' paint on the 3D Earth bench (step 2, 27 Oct 2026): a candidate, Michael's to choose by looking
     limb: 'rgba(42,36,28,0.35)',
     washIce: '#f4f6f8', deepIceAlpha: 0.75,   // the glaciations of deep time: a soft overlay on the drifting world, this strong at its heart (ruling 3, 19 Oct 2026)
     rockGrey: '#8c8880', rockTan: '#a89a80', rockRust: '#96603e',   // bare rock before plants, grey to tan by the grain and rusty in places (ruling 4, 19 Oct 2026)

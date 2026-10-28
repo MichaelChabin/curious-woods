@@ -16,7 +16,7 @@ It is a ball, from far out all the way in to the Alps. When she wants the whole 
 
 ## How it's made, in one paragraph
 
-The pieces of continent become cut-outs of today's picture, glued to a ball and turned by their plates. The graphics card draws them where they are; nothing works out, pixel by pixel, which plate it is looking at. The plate model and the motion model stay in JavaScript, as now, and hand the card one turn per plate per frame. (The audit, section 3, found this; it replaces the "which plate" picture the first plan put at the centre.) The shaders are written in TSL on three.js's WebGPU renderer, which falls back to WebGL 2, per the standard. The Earth stands on the shelf already built: `scene.js`, `noise.js`, `honest.js`, `still.js`, and later `cutaway.js`.
+The pieces of continent become cut-outs of today's picture, glued to a ball and turned by their plates. The graphics card draws them where they are; nothing works out, pixel by pixel, which plate it is looking at. The plate model and the motion model stay in JavaScript, as now, and hand the card one turn per plate per frame. (The audit, section 3, found this; it replaces the "which plate" picture the first plan put at the centre.) The shaders are written in TSL on three.js's WebGPU renderer, which falls back to WebGL 2, per the standard. The Earth stands on the shelf already built: `scene.js`, `noise.js`, `honest.js`, `still.js`, and later `cutaway.js`. The Earth itself is a shelf file too, `js/3d/earth.js` (first bench, 27 Oct).
 
 ## What it shows
 
@@ -114,7 +114,7 @@ Each step ends with Michael's finger before the next. The audit guessed eleven t
 
 ## Open, and not invented here
 
-- **Scotese.** Whether Scotese and Wright's PaleoDEMs (heights for the last 540 million years) become the data under the painted past, and if so, which plate model the Earth runs on: Merdith's or Scotese's, not both. The follow-up question in `Prompt-Audit-Earth-3D.md` has not been answered yet.
+- **Scotese.** *Ruled 27 Oct (Michael): keep Merdith, and decide about Scotese by looking.* Scotese and Wright's PaleoDEMs (117 height maps, every 5 million years back to 540; CC BY 4.0; 1° and 0.1° grids; Zenodo 5460860) would let the paint of the past follow real reconstructed ground, above all the shallow seas over the continents. But they sit on Scotese's own plate model, they are whole-world snapshots rather than pieces on plates, and the published model lacks the plate boundaries Drain the Sea needs. The Earth is built on Merdith 2021 and paints the past by rule. Once it exists, one bench shows three moments (Pangaea at 250 million years, the flooded continents at about 90, the bare world at 450) painted our way beside Scotese's. If his shallow seas earn their place, the build first looks for a reconstruction of the same thing on Merdith's model; switching models is the last resort. The follow-up in `Prompt-Audit-Earth-3D.md` is no longer needed.
 - **Which month of Blue Marble.** One month shows seasonal snow, which competes with *white means ice*. One summer month, a blend, or the seasons.
 - **The photograph against two map rules.** The Sahara's orange and Australia's red-brown under vermilion marks bend *no red on the earth*; labels may be harder to read on a photograph than on the quiet ramp. A bench question, and Spec-Maps changes when it's settled.
 - **Light.** Whether the ball has a day side and a night side, and whether that is light or drama.
