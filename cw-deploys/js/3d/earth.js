@@ -134,6 +134,29 @@
    - Today's ground under the pieces (makeUnder), to UNDER_GONE: the gaps between pieces and the land no piece holds.
    - The marks: the cities and the map's places by map.js's placer, copied, on a canvas over the stage (o.marksHost).
 
+   The sixth bench (29 Oct; Michael's prompt Prompt-Build-Earth-Bench-06.md and Spec-Earth-3D *Close in, and flat*):
+   - Today's ground under the pieces stays whole to the seam, its photograph fading to paint as on the pieces, and fades
+     out over UNDER_PAST just past it: Iceland, Hawaii and every island no piece holds stay to the seam and are gone past
+     it, until plate boundaries (step 9).
+   - The glide: between the seam and GLIDE_TO each piece eases (smoothstep) from today's place to where the model puts it
+     at that age, so nothing snaps close in; not the plates' true path, and the page says so (glide()).
+   - Today's names: the Earth's list names places as they are called today (TODAY_NAMES); places.json and the stories keep
+     theirs.
+   - Flat (step 6): setFlat(true) lays the same Earth out flat in the Equal Earth projection (Šavrič, Patterson and Jenny
+     2018), centred on the 0° meridian, whole and still, fitted to the window with parchment round it. Drawn by projecting
+     the pieces: every piece's mesh is drawn twice more, in a scene of its own (flatScene, through an orthographic camera),
+     with a vertex shader that turns each point by its plate and projects it; each triangle is unwrapped about its own
+     centre's longitude (the 'tricentre' attribute; 'ref' is a word WGSL reserves), and the second copy is the same
+     triangle a world to the other side, so what crosses the 180° meridian is drawn on both edges (the second copy only
+     for a piece that can reach that meridian, nearEdge), and every fragment past the edge is discarded by the exact outline
+     (the fragment's own point, inverted from the plane). Every fragment reads its picture, its data and its ice at its own
+     point, inverted from the plane and carried back by its plate to where that ground lies today, so the flat world is
+     the ball's look at every age: the same pieces, pictures, sea, ice, paint, grades and soft edges. The sea, today's
+     ground under the pieces and the molten Earth fill the outline. The poles are the projection's flat edges, rounded at
+     the corners. No limb shading and no haze; the limb line runs round the outline. The places are placed by the same
+     placer. A tap on the flat world goes back to the globe, centred on the place tapped, FROM_FLAT_KM across the window.
+   - A tap on a place on the globe glides it to the centre (TAP_GLIDE_S) and zooms in a step (TAP_ZOOM_STEP): tap(x, y).
+
      const earth = await cwEarth(view, {
        plates, cities, crust,         // the files; crust: stories/curves/crust-and-land.json (the amount, and the island's share)
        ground, vegetation,            // the old ground and its vegetation
@@ -143,7 +166,8 @@
        seaCurve, ice, coast, pyramid, // the sea-level curve, the ice outlines, the coast contours, the pyramid (its floor tiles): files or URLs, or false
        maxEdge: 4, bloat: 0.75 * 360 / 1024, citiesHost: element,   // or marksHost: the stage, for the cities and the places by the map's placer
        places, blueTiles,              // stories/places.json, art/globe/tiles/blue-marble.json: files or URLs
-       coldTiles: false                // bench only: every tile past the browser's cache, for a cold timing
+       coldTiles: false,               // bench only: every tile past the browser's cache, for a cold timing
+       onFlat: (on, at) => {}          // step 6: a tap on the flat world went back to the globe, centred on `at`
      });
    Returns { group, setTime(ma), time(), grade() → { grade, why }, moltenPhase(), setGround('old'|'blue'), ground(),
    seaLevel() (metres, ≤ 0), icePairs(), setCoasts(on), coasts(),
@@ -151,11 +175,13 @@
    addMarks(list) (bench only), resetFill(),
    seed(), setSeed(s), reguess(), simMs() → { cratons, blobs, blobBuild },
    setTier(tier), placeAt, project → {x, y, front}, cities,
+   step 6: setFlat(on), flat(), tap(x, y) → { to, lon, lat, place } or null, markAt(x, y), flatLonLatAt(x, y), projectFlat,
+   flatScene, flatCamera, eeForward, eeInverse, glide() → { on, t, to },
    stats: { pieces, rings, plates, triangles, rimTriangles, buildMs, lookMs, fetchMs, blue() }, meshes, dispose() }. */
 import * as THREE from 'three';
 import { Fn, vec2, vec3, vec4, float, int, uniform, texture, uv, attribute, varying, positionView, positionWorld, modelViewMatrix,
          normalize, dot, cross, length, mix, smoothstep, clamp, abs, min, max, select, If, Discard, sRGBTransferEOTF, atan, asin, sqrt, fract, dFdx, dFdy,
-         floor, exp2, round, cameraPosition, modelWorldMatrixInverse } from 'three/tsl';
+         floor, exp2, round, cameraPosition, modelWorldMatrixInverse, modelWorldMatrix, sin, cos } from 'three/tsl';
 import { cwRGB } from './scene.js';
 
 const D2R = Math.PI / 180;
@@ -171,6 +197,31 @@ const MAP_TURN = 137 * D2R;   // the second crust: the maps turned this far and 
 // crust sinks into the melt — 6.5, about ten positions of the bench's slider (the third bench's 3 was too quick)
 const MOON_MELT = 6.5;
 const WASH_IN = 3.14;    // million years past the seam for the pieces' pale wash to come in whole: the ramp the Antarctic ice comes in on (iceStrength's, a tenth of 34 − 2.6)
+// the sixth bench (29 Oct)
+const UNDER_PAST = 0.3;   // million years past the seam over which today's ground under the pieces fades out (whole to the seam: Michael, 29 Oct)
+const GLIDE_TO = 5;       // the glide: from the seam to this age each piece eases from today's place to the model's (Michael, 29 Oct: "about 5")
+const TAP_GLIDE_S = 0.6;  // a tap on a place: seconds for it to glide to the centre
+const TAP_ZOOM_STEP = 2.5;   // and the zoom's step: the height above the ground divided by this
+const FROM_FLAT_KM = 3000;   // a tap on the flat world: the globe comes back with this many kilometres across the window's height
+const FLAT_MARGIN = 14;   // CSS pixels of parchment round the flat world, at least
+// the places by today's names (Michael, 29 Oct: Tokyo, not Edo), by their ids in stories/places.json, which keeps its own
+const TODAY_NAMES = { edo: 'Tokyo', antioch: 'Antakya' };
+// Equal Earth (Šavrič, Patterson and Jenny 2018), as d3-geo has it: x = λ cos θ / (M (A1 + 3A2θ² + 7A3θ⁶ + 9A4θ⁸)),
+// y = θ (A1 + A2θ² + A3θ⁶ + A4θ⁸), sin θ = M sin φ; on the unit sphere it is 2 × 2.7066 wide and 2 × 1.3173 tall
+const EE_A1 = 1.340264, EE_A2 = -0.081106, EE_A3 = 0.000893, EE_A4 = 0.003796, EE_M = Math.sqrt(3) / 2;
+function eeForward(lonDeg, latDeg) {
+  const lam = lonDeg * D2R, th = Math.asin(EE_M * Math.sin(latDeg * D2R)), t2 = th * th, t6 = t2 * t2 * t2;
+  return [lam * Math.cos(th) / (EE_M * (EE_A1 + 3 * EE_A2 * t2 + t6 * (7 * EE_A3 + 9 * EE_A4 * t2))), th * (EE_A1 + EE_A2 * t2 + t6 * (EE_A3 + EE_A4 * t2))];
+}
+function eeInverse(x, y) {   // { lon, lat } in degrees, or null off the world
+  let l = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, y / EE_A1));
+  for (let i = 0; i < 12; i++) { const l2 = l * l, l6 = l2 * l2 * l2, d = (l * (EE_A1 + EE_A2 * l2 + l6 * (EE_A3 + EE_A4 * l2)) - y) / (EE_A1 + 3 * EE_A2 * l2 + l6 * (7 * EE_A3 + 9 * EE_A4 * l2)); l -= d; if (Math.abs(d) < 1e-12) break; }
+  if (Math.abs(l) > Math.PI / 3 + 1e-9) return null;
+  const l2 = l * l, l6 = l2 * l2 * l2, lam = EE_M * x * (EE_A1 + 3 * EE_A2 * l2 + l6 * (7 * EE_A3 + 9 * EE_A4 * l2)) / Math.cos(l);
+  if (Math.abs(lam) > Math.PI) return null;
+  return { lon: lam / D2R, lat: Math.asin(Math.max(-1, Math.min(1, Math.sin(l) / EE_M))) / D2R };
+}
+const EE_XMAX = eeForward(180, 0)[0], EE_YMAX = eeForward(0, 90)[1];
 const LAND_LIFT_K = 2;   // the land lighter, Michael's 100 (29 Oct): the curve's k (the lift at Y = 0.25 is 0.21 of white; at Y = 0.6, 0.08)
 const COAST_A = 0.6, COAST_PX = 1.5;   // today's coast: its alpha (the 2D's), and its width in CSS pixels at the ball's near face (the 2D strokes 1.1; 28 Oct, the one-pixel line could not be seen)
 // close in (step 5): the tiles. The picture's tiles are 512 px, the data's 256, both in the map's tiling (level z is
@@ -523,9 +574,10 @@ function triangulateRing(ring, bloatRad, maxEdgeRad, out, rim, opt = {}) {
     if (ref === null) ref = 0;
     for (let i = 0; i < 3; i++) { if (lons[i] === null) continue; while (lons[i] - ref > 180) lons[i] -= 360; while (lons[i] - ref < -180) lons[i] += 360; }
     const known = lons.filter(l => l !== null), meanLon = known.reduce((s, l) => s + l, 0) / (known.length || 1);
+    const tc = v3.norm(v3.add(v3.add(a[0], b[0]), c[0]));   // the triangle's centre: the flat world unwraps the triangle about its longitude
     for (let i = 0; i < 3; i++) {
       const p = vs[i][0], s = vs[i][1], lon = lons[i] === null ? meanLon : lons[i];
-      out.pos.push(p[0], p[1], p[2]); out.soft.push(s[0], s[1], s[2]); out.uv.push(lon / 360 + 0.5, lats[i] / 180 + 0.5); out.centre.push(centre[0], centre[1], centre[2]);
+      out.pos.push(p[0], p[1], p[2]); out.soft.push(s[0], s[1], s[2]); out.uv.push(lon / 360 + 0.5, lats[i] / 180 + 0.5); out.centre.push(centre[0], centre[1], centre[2]); out.ref.push(tc[0], tc[1], tc[2]);
     }
     count++;
   }
@@ -552,7 +604,8 @@ function triangulateRing(ring, bloatRad, maxEdgeRad, out, rim, opt = {}) {
     const tri = (A, B, C) => {   // each [base, dir]; wound outward by where the vertices land
       const at = v => v3.norm(v3.add(v[0], v3.scale(v[1], tanR)));
       if (!outward(at(A), at(B), at(C))) { const t = B; B = C; C = t; }
-      for (const v of [A, B, C]) rim.pos.push(v[0][0], v[0][1], v[0][2]), rim.dir.push(v[1][0], v[1][1], v[1][2]), rim.centre.push(centre[0], centre[1], centre[2]);
+      const tc = v3.norm(v3.add(v3.add(at(A), at(B)), at(C)));   // the triangle's centre, for the flat world
+      for (const v of [A, B, C]) rim.pos.push(v[0][0], v[0][1], v[0][2]), rim.dir.push(v[1][0], v[1][1], v[1][2]), rim.centre.push(centre[0], centre[1], centre[2]), rim.ref.push(tc[0], tc[1], tc[2]);
       rim.count++;
     };
     const ZERO = [0, 0, 0];
@@ -758,17 +811,17 @@ export async function cwEarth(view, o = {}) {
   const t1 = performance.now();
   const plateBuild = new Map();
   let triangles = 0, rimTriangles = 0, rings = 0;
-  const newBuild = () => ({ pos: [], soft: [], uv: [], centre: [], from: [], to: [], rim: { pos: [], dir: [], centre: [], from: [], to: [], count: 0 }, pieces: [] });
+  const newBuild = () => ({ pos: [], soft: [], uv: [], centre: [], ref: [], from: [], to: [], rim: { pos: [], dir: [], centre: [], ref: [], from: [], to: [], count: 0 }, pieces: [] });
   data.pieces.forEach((p, index) => {
     const pid = String(p.plate);
     let b = plateBuild.get(pid); if (!b) { b = newBuild(); plateBuild.set(pid, b); }
-    const out = { pos: [], soft: [], uv: [], centre: [] }, rim = { pos: [], dir: [], centre: [], count: 0 };
+    const out = { pos: [], soft: [], uv: [], centre: [], ref: [] }, rim = { pos: [], dir: [], centre: [], ref: [], count: 0 };
     let n = 0;
     for (const ring of p.rings) { n += triangulateRing(ring, bloatRad, maxEdgeRad, out, rim); rings++; }
     for (let i = 0; i < n * 3; i++) { b.from.push(p.from); b.to.push(p.to); }
     for (let i = 0; i < rim.count * 3; i++) { b.rim.from.push(p.from); b.rim.to.push(p.to); }
-    for (const k of ['pos', 'soft', 'uv', 'centre']) for (const v of out[k]) b[k].push(v);
-    for (const v of rim.pos) b.rim.pos.push(v); for (const v of rim.dir) b.rim.dir.push(v); for (const v of rim.centre) b.rim.centre.push(v);
+    for (const k of ['pos', 'soft', 'uv', 'centre', 'ref']) for (const v of out[k]) b[k].push(v);
+    for (const k of ['pos', 'dir', 'centre', 'ref']) for (const v of rim[k]) b.rim[k].push(v);
     b.rim.count += rim.count;
     b.pieces.push({ index, from: p.from, to: p.to, triangles: n });
     triangles += n; rimTriangles += rim.count;
@@ -786,6 +839,7 @@ export async function cwEarth(view, o = {}) {
     g.setAttribute('soft', new THREE.BufferAttribute(new Float32Array(b.soft), 3));
     g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(b.uv), 2));
     g.setAttribute('centre', new THREE.BufferAttribute(new Float32Array(b.centre), 3));
+    g.setAttribute('tricentre', new THREE.BufferAttribute(new Float32Array(b.ref), 3));
     g.setAttribute('born', new THREE.BufferAttribute(new Float32Array(b.from), 1));   // 'from' and 'to' are WGSL's reserved words
     g.setAttribute('ended', new THREE.BufferAttribute(new Float32Array(b.to), 1));
     g.computeBoundingSphere();
@@ -797,6 +851,7 @@ export async function cwEarth(view, o = {}) {
       rg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(b.rim.pos), 3));
       rg.setAttribute('dir', new THREE.BufferAttribute(new Float32Array(b.rim.dir), 3));
       rg.setAttribute('centre', new THREE.BufferAttribute(new Float32Array(b.rim.centre), 3));
+      rg.setAttribute('tricentre', new THREE.BufferAttribute(new Float32Array(b.rim.ref), 3));
       rg.setAttribute('born', new THREE.BufferAttribute(new Float32Array(b.rim.from), 1));
       rg.setAttribute('ended', new THREE.BufferAttribute(new Float32Array(b.rim.to), 1));
       rg.computeBoundingSphere();
@@ -805,12 +860,21 @@ export async function cwEarth(view, o = {}) {
     return { land, isle, rim };
   }
   const meshes = new Map(), islands = new Map(), rims = new Map();
+  // the flat world's copies of every mesh (step 6): two each, sharing the geometry, added to the flat scene with it
+  const twins = [];
+  let flatMats = null, flatSeaMat = null, flatMoltenMat = null, flatUnderMat = null, flatCoastMat = null, flatLimbMat = null, flatGroup = null;   // made with the flat section, below
+  function addTwins(src, kind) {
+    const t = [0, 1].map(() => { const m = new THREE.Mesh(src.geometry, flatMats ? flatMats[kind][0] : null); m.frustumCulled = false; m.visible = false; return m; });
+    if (flatMats) { t[1].material = flatMats[kind][1]; flatGroup.add(t[0], t[1]); }
+    twins.push({ src, t, kind });
+  }
   for (const [pid, b] of plateBuild) {
     const m = makeMeshes(b); if (!m) continue;
     m.land.userData.pid = pid; m.land.userData.pieces = b.pieces;
     meshes.set(pid, m.land); group.add(m.land);
     islands.set(pid, m.isle); group.add(m.isle);
     if (m.rim) { rims.set(pid, m.rim); group.add(m.rim); }
+    addTwins(m.land, 'land'); addTwins(m.isle, 'isle'); if (m.rim) addTwins(m.rim, 'rim');
   }
   const buildMs = performance.now() - t1;
   // the blobs' meshes, remade for each seed: each blob's ring triangulated as a piece's (already smooth, so unsoftened),
@@ -822,18 +886,20 @@ export async function cwEarth(view, o = {}) {
     if (blobSeed === set.seed && blobMeshes.length === set.nb) return set;
     const t0 = performance.now();
     for (const m of blobMeshes) { group.remove(m.land); group.remove(m.isle); if (m.rim) group.remove(m.rim); m.land.geometry.dispose(); if (m.rim) m.rim.geometry.dispose(); }
+    for (let i = twins.length - 1; i >= 0; i--) if (twins[i].kind[0] === 'b') { flatGroup.remove(...twins[i].t); twins.splice(i, 1); }
     blobMeshes = [];
     set.rings.forEach((ring, i) => {
-      const b = newBuild(), out = { pos: [], soft: [], uv: [], centre: [] }, rim = { pos: [], dir: [], centre: [], count: 0 };
+      const b = newBuild(), out = { pos: [], soft: [], uv: [], centre: [], ref: [] }, rim = { pos: [], dir: [], centre: [], ref: [], count: 0 };
       const n = triangulateRing(ring, bloatRad, maxEdgeRad, out, rim, { xyz: true, smooth: false });
       for (let k = 0; k < n * 3; k++) { b.from.push(1e9); b.to.push(0); }
       for (let k = 0; k < rim.count * 3; k++) { b.rim.from.push(1e9); b.rim.to.push(0); }
-      for (const k of ['pos', 'soft', 'uv', 'centre']) b[k] = out[k];
-      b.rim.pos = rim.pos; b.rim.dir = rim.dir; b.rim.centre = rim.centre; b.rim.count = rim.count;
+      for (const k of ['pos', 'soft', 'uv', 'centre', 'ref']) b[k] = out[k];
+      b.rim.pos = rim.pos; b.rim.dir = rim.dir; b.rim.centre = rim.centre; b.rim.ref = rim.ref; b.rim.count = rim.count;
       const m = makeMeshes(b); if (!m) return;
       m.land.userData.blob = i; m.land.visible = m.isle.visible = false;
       m.land.material = blobLandMat; m.isle.material = blobIslandMat; if (m.rim) m.rim.material = blobRimMat;
       group.add(m.land); group.add(m.isle); if (m.rim) group.add(m.rim);
+      addTwins(m.land, 'bland'); addTwins(m.isle, 'bisle'); if (m.rim) addTwins(m.rim, 'brim');
       blobMeshes.push(m);
     });
     blobSeed = set.seed; blobBuildMs = performance.now() - t0;
@@ -1254,7 +1320,8 @@ export async function cwEarth(view, o = {}) {
   const rayDist = () => length(cross(centreView(), normalize(positionView)));   // the fragment's ray's distance from the ball's centre: 1 at the edge
   // the sea's colour: the 2D's two blues by depth — globeSea at the centre to globeSeaDeep at the limb, by the ray's
   // distance, centred (the 2D's gradient without its sun-side offset; Michael's ruling of 28 Oct, even light)
-  const seaNode = () => mix(SEA3, SEAD3, rayDist());
+  // on the flat world (fl, flatCtx's), the same two blues by the distance from the middle of the outline to its edge
+  const seaNode = fl => mix(SEA3, SEAD3, fl ? clamp(length(vec2(fl.plane.x.div(EE_XMAX), fl.plane.y.div(EE_YMAX))), 0, 1) : rayDist());
   const ageFrame = () => uGroupInv.mul(vec4(positionWorld, 1)).xyz;   // the point in the ball's frame: where it is at the age
   const uvOf = p => vec2(atan(p.y, p.x).div(2 * Math.PI).add(0.5), asin(clamp(p.z, -1, 1)).div(Math.PI).add(0.5));   // a unit vector's place in an equirectangular picture
   // a picture read at a unit vector's place, without the seam: where the longitude wraps, the texture coordinate jumps
@@ -1273,8 +1340,8 @@ export async function cwEarth(view, o = {}) {
     const q = float(1).sub(dot(c, vec3(0.2126, 0.7152, 0.0722)));
     return min(c.mul(float(1).add(q.mul(q).mul(q).mul(LAND_LIFT_K))), 1);
   };
-  const iceNode = () => {   // paintIce: the latitude at the age against the ice's reach, feathered and roughened
-    const p = ageFrame();
+  const iceNode = (pAge) => {   // paintIce: the latitude at the age against the ice's reach, feathered and roughened (pAge: the point at the age, the flat world's)
+    const p = pAge || ageFrame();
     const lat = asin(clamp(p.z, -1, 1)).div(D2R);
     const a0 = select(uIceSnow.greaterThan(0.5), float(1), clamp(abs(lat).sub(uIceReach.sub(10)).div(16), 0, 1));
     const a1 = select(lat.greaterThan(0).and(uIceNorth.lessThan(0.5)), float(0), a0);
@@ -1283,8 +1350,9 @@ export async function cwEarth(view, o = {}) {
     const heart = select(uIceSnow.greaterThan(0.5), float(0.9), float(DEEP_ICE_A));
     return min(a2.mul(rough), 1).mul(heart).mul(uIceStr);
   };
-  const finish = col => {   // the ice over everything, then the limb shading, then to linear
-    const iced = mix(col, ICE3, iceNode());
+  const finish = (col, fl) => {   // the ice over everything, then the limb shading (none on the flat world), then to linear
+    const iced = mix(col, ICE3, iceNode(fl ? fl.pAge : null));
+    if (fl) return sRGBTransferEOTF(iced);
     const t = clamp(rayDist().sub(0.78).div(0.22), 0, 1);
     return sRGBTransferEOTF(mix(iced, DARK3, t.mul(DARK_A)));
   };
@@ -1299,10 +1367,11 @@ export async function cwEarth(view, o = {}) {
   // it), not from the triangle's winding — a sliver, or a fringe fan collapsed onto its corner, can be wound either way,
   // and one wound the wrong way on the far side passed the winding test and showed through (28 Oct). The land meshes
   // are two-sided for this
-  const aliveOrDiscard = () => {
+  const aliveOrDiscard = fl => {   // on the flat world, past the outline in place of the far side
     const aFrom = attribute('born', 'float'), aTo = attribute('ended', 'float');
     If(uAge.greaterThan(aFrom).or(uAge.lessThan(aTo)), () => { Discard(); });
-    If(dot(positionView.sub(centreView()), positionView).greaterThanEqual(0), () => { Discard(); });
+    if (fl) If(fl.inside.not(), () => { Discard(); });
+    else If(dot(positionView.sub(centreView()), positionView).greaterThanEqual(0), () => { Discard(); });
   };
   // the skin (paintSkin): the picture or its paint by the age, bare rock as the plants go, the dark crust before oxygen,
   // the picture's sea as the shelf wash, the drowned band or the island's lift, the dissolve into the sea
@@ -1349,11 +1418,18 @@ export async function cwEarth(view, o = {}) {
     return select(layer.greaterThanEqual(0), mix(dp, dt, pg.F.y), under);
   };
   const iceLocalNodes = [texture(iceLocalTex[0]), texture(iceLocalTex[1])];
-  function skinNode(read, island, close) {   // read(tex): the picture at this fragment's place today; close: read at the true ground, with the tiles
+  function skinNode(read, island, close, flat) {   // read(tex): the picture at this fragment's place today; close: read at the true ground, with the tiles; flat: on the flat world
     return Fn(() => {
-      aliveOrDiscard();
+      const fl = flat ? flatCtx() : null;
+      aliveOrDiscard(fl);
       let pT = null, uvn = null, gx = null, gy = null, page = null;
-      if (close) {   // the place on the picture and its gradients once, for every read (each readAt would work them out again)
+      if (fl) {   // the flat world: the fragment's point at the age, carried back by its plate to where it lies today; no tiles
+        pT = normalize(modelWorldMatrixInverse.mul(vec4(fl.pAge, 1)).xyz); uvn = uvOf(pT);
+        const u2 = fract(uvn.x.add(0.5));
+        gx = vec2(select(abs(dFdx(uvn.x)).lessThan(0.5), dFdx(uvn.x), dFdx(u2)), dFdx(uvn.y));
+        gy = vec2(select(abs(dFdy(uvn.x)).lessThan(0.5), dFdy(uvn.x), dFdy(u2)), dFdy(uvn.y));
+        read = tex => (tex.isTextureNode ? tex.sample(uvn) : texture(tex, uvn)).grad(gx, gy);
+      } else if (close) {   // the place on the picture and its gradients once, for every read (each readAt would work them out again)
         pT = todayPoint(); uvn = uvOf(pT);
         const u2 = fract(uvn.x.add(0.5));   // the gradient across the dateline, as readAt takes it
         gx = vec2(select(abs(dFdx(uvn.x)).lessThan(0.5), dFdx(uvn.x), dFdx(u2)), dFdx(uvn.y));
@@ -1414,8 +1490,8 @@ export async function cwEarth(view, o = {}) {
       const oldA = uOld.mul(life);
       col = island ? mix(col, LIFT3, LIFT_A.mul(oldA)) : mix(col, SHELF3, DROWN_W.mul(oldA));
       const cover = float(1).sub(life);
-      col = mix(col, seaNode(), cover); alpha = mix(alpha, float(1), cover);
-      return vec4(finish(col), alpha);
+      col = mix(col, seaNode(fl), cover); alpha = mix(alpha, float(1), cover);
+      return vec4(finish(col, fl), alpha);
     })();
   }
   // a blob's point shrunk toward its ring's centre by the crust curve's share (shrunk, in the vertex shader)
@@ -1465,35 +1541,39 @@ export async function cwEarth(view, o = {}) {
   // of the seam the pieces stand where they are today too (Michael, 29 Oct), so it is honest there, and it fades out with
   // the photograph, whole today and gone at the seam, where the plates start to move
   const uUnder = uniform(1);
-  function makeUnder() {
+  function makeUnder(flat) {   // flat: on the flat world's outline, read at the fragment's own point, without the tiles
     const m = new THREE.MeshBasicNodeMaterial();
     m.side = THREE.FrontSide; m.depthWrite = false; m.depthTest = false; m.transparent = true;
     const out = Fn(() => {
-      const pT = todayPoint(), uvn = uvOf(pT), u2 = fract(uvn.x.add(0.5));
+      const fl = flat ? flatCtx() : null;
+      const pT = fl ? fl.pAge : todayPoint(), uvn = uvOf(pT), u2 = fract(uvn.x.add(0.5));
       const gx = vec2(select(abs(dFdx(uvn.x)).lessThan(0.5), dFdx(uvn.x), dFdx(u2)), dFdx(uvn.y));
       const gy = vec2(select(abs(dFdy(uvn.x)).lessThan(0.5), dFdy(uvn.x), dFdy(u2)), dFdy(uvn.y));
-      const page = pageOf(uvn), read = tex => (tex.isTextureNode ? tex.sample(uvn) : texture(tex, uvn)).grad(gx, gy);
+      const page = fl ? null : pageOf(uvn), read = tex => (tex.isTextureNode ? tex.sample(uvn) : texture(tex, uvn)).grad(gx, gy);
       const gr = read(texGrain).r, rust = clamp(read(texCool).r.sub(0.55).div(0.25), 0, 1), lit = gr.sub(0.5).mul(0.4).add(0.8);
       const rock = mix(mix(ROCK_G, ROCK_T, gr), ROCK_R, rust).mul(lit), paint = mix(GREEN3.mul(lit), rock, 0.2);
       const old = read(texOld).rgb.mul(read(texVeg).rgb);
-      let photo = texBlue ? mix(old, read(texBlue).rgb, uBlue) : old;
-      const tp = tilePicture(uvn, gx, gy, page, photo); photo = tp.col;
+      let photo = texBlue ? mix(old, read(texBlue).rgb, uBlue) : old, cover = float(0);
+      if (!fl) { const tp = tilePicture(uvn, gx, gy, page, photo); photo = tp.col; cover = tp.cover; }
       let col = mix(paint, mix(photo, liftLand(photo), uBlue), clamp(float(1).sub(uAge.div(SEAM)), 0, 1));
       const pr = photo.r.mul(255), pgr = photo.g.mul(255), pb = photo.b.mul(255);
       const pixelSea = select(pb.greaterThan(pr.mul(1.2)).and(pb.greaterThan(pgr)).or(uBlue.greaterThan(0.5).and(pr.add(pgr).add(pb).lessThan(70)).and(pb.greaterThanEqual(pr))), float(1), float(0));
-      let sea = mix(max(mix(read(maskOld).r, read(maskBlue).r, uBlue), pixelSea), pixelSea, tp.cover);
-      const fv = read(texFloor).r.mul(255);
-      const depth = tileDepth(uvn, page, select(fv.lessThan(0.5), float(-1), fv.sub(1).div(253).pow(2).mul(FLOOR_MAX)));
+      let sea = mix(max(mix(read(maskOld).r, read(maskBlue).r, uBlue), pixelSea), pixelSea, cover);
+      const fv = read(texFloor).r.mul(255), depth0 = select(fv.lessThan(0.5), float(-1), fv.sub(1).div(253).pow(2).mul(FLOOR_MAX));
+      const depth = fl ? depth0 : tileDepth(uvn, page, depth0);
       const bared = select(uSea.lessThan(0).and(depth.greaterThan(0)).and(depth.lessThanEqual(uSea.negate())), uGroundT, float(0)).mul(sea);
       col = mix(col, mix(SHORE0, SHORE1, clamp(uSea.negate().sub(depth).div(SHORE_M), 0, 1)), bared); sea = sea.mul(float(1).sub(bared));
-      const lon = uvn.x.sub(0.5).mul(360), lat = uvn.y.sub(0.5).mul(180);
-      const lu = fract(lon.sub(uIceBox.x).div(360)).mul(360).div(uIceBox.z), lv = lat.sub(uIceBox.y).div(uIceBox.w);
-      const inBox = uIceLocal.greaterThan(0.5).and(lu.lessThan(1)).and(lv.greaterThan(0)).and(lv.lessThan(1)), luv = vec2(lu, lv);
-      const ice0 = select(inBox, iceLocalNodes[0].sample(luv).r, read(iceNodes[0]).r), ice1 = select(inBox, iceLocalNodes[1].sample(luv).r, read(iceNodes[1]).r);
+      let ice0 = read(iceNodes[0]).r, ice1 = read(iceNodes[1]).r;
+      if (!fl) {
+        const lon = uvn.x.sub(0.5).mul(360), lat = uvn.y.sub(0.5).mul(180);
+        const lu = fract(lon.sub(uIceBox.x).div(360)).mul(360).div(uIceBox.z), lv = lat.sub(uIceBox.y).div(uIceBox.w);
+        const inBox = uIceLocal.greaterThan(0.5).and(lu.lessThan(1)).and(lv.greaterThan(0)).and(lv.lessThan(1)), luv = vec2(lu, lv);
+        ice0 = select(inBox, iceLocalNodes[0].sample(luv).r, ice0); ice1 = select(inBox, iceLocalNodes[1].sample(luv).r, ice1);
+      }
       const belowSea = depth.greaterThan(0).and(depth.greaterThan(uSea.negate()));
       const ia = min(ice0.mul(uIceW[0]).add(ice1.mul(uIceW[1])), 1).mul(0.94).mul(uGroundT).mul(select(belowSea, float(0), float(1)));
       col = mix(col, ICEF3, ia); sea = sea.mul(float(1).sub(ia));
-      return vec4(finish(col), float(1).sub(sea).mul(uUnder));
+      return vec4(finish(col, fl), float(1).sub(sea).mul(uUnder));
     })();
     m.colorNode = out.rgb; m.opacityNode = out.a;
     return m;
@@ -1506,10 +1586,11 @@ export async function cwEarth(view, o = {}) {
   // the molten Earth (paintMolten) on the whole ball: the melt by the grain, the crust where the cooling-order map is below
   // the threshold, the cracks glowing, the faint sea; the second crust on the maps turned and flipped; the Moon's impact as
   // the first crust sinking into the melt while the second begins (uThresh1 and uThresh2 both live)
-  function makeMolten() {
+  function makeMolten(flat) {   // flat: on the flat world's outline, at the fragment's own point
     const m = new THREE.MeshBasicNodeMaterial();
     m.colorNode = Fn(() => {
-      const p = ageFrame();
+      const fl = flat ? flatCtx() : null;
+      const p = fl ? fl.pAge : ageFrame();
       const ct = Math.cos(MAP_TURN), sn = Math.sin(MAP_TURN);
       const p2 = vec3(p.x.mul(ct).sub(p.y.mul(sn)), p.x.mul(sn).add(p.y.mul(ct)), p.z.negate());   // a different crust: the maps turned and flipped
       const pA = select(uSecond.greaterThan(0.5), p2, p);
@@ -1526,7 +1607,7 @@ export async function cwEarth(view, o = {}) {
       const cvA = select(uSecond.greaterThan(0.5), cv2, cv1), solidA = select(uSecond.greaterThan(0.5), solid2, solid1);
       const seaK = uSeaM.mul(solidA).mul(select(cvA.lessThan(0.55), float(1), float(0.35)));
       col = mix(col, select(cvA.lessThan(0.3), SEAD3, SEA3), seaK);
-      return finish(clamp(col, 0, 1));
+      return finish(clamp(col, 0, 1), fl);
     })();
     return m;
   }
@@ -1546,6 +1627,129 @@ export async function cwEarth(view, o = {}) {
     m.colorNode = out.rgb; m.opacityNode = out.a;
     return m;
   }
+  // ---- the flat world (step 6; see the header): Equal Earth, whole and still, in a scene of its own ----
+  // the point under a fragment of the flat world: its place on the plane (every flat mesh's world position is the plane's),
+  // inverted (Newton on θ, four steps from y / A1), whether it lies inside the outline, and the unit vector at the age
+  const flatCtx = () => {
+    const pl = positionWorld.xy;
+    const l = clamp(pl.y.div(EE_A1), -Math.PI / 3, Math.PI / 3).toVar();
+    const Dof = (l2, l6) => float(EE_A1).add(l2.mul(3 * EE_A2)).add(l6.mul(float(7 * EE_A3).add(l2.mul(9 * EE_A4))));
+    for (let i = 0; i < 4; i++) {   // from y / A1 the error is at most 0.05 rad; four steps leave it far under 1e-6
+      const l2 = l.mul(l), l6 = l2.mul(l2).mul(l2);
+      l.assign(l.sub(l.mul(float(EE_A1).add(l2.mul(EE_A2)).add(l6.mul(float(EE_A3).add(l2.mul(EE_A4))))).sub(pl.y).div(Dof(l2, l6))));
+    }
+    const l2 = l.mul(l), l6 = l2.mul(l2).mul(l2);
+    const lam = pl.x.mul(EE_M).mul(Dof(l2, l6)).div(cos(l)).toVar(), phi = asin(clamp(sin(l).div(EE_M), -1, 1)).toVar();
+    const cp = cos(phi);
+    return { plane: pl, lam, phi, inside: abs(lam).lessThanEqual(Math.PI).and(abs(pl.y).lessThanEqual(EE_YMAX)), pAge: vec3(cp.mul(cos(lam)), cp.mul(sin(lam)), sin(phi)).toVar() };
+  };
+  // a point of a piece onto the plane: turned by its plate (the copy's world matrix), its longitude unwrapped about the
+  // triangle's centre's (tricentre; a point on a pole takes the centre's), a world to the other side for the second copy, and
+  // projected; handed over as the local position whose world position is the point on the plane
+  const TWO_PI = 2 * Math.PI;
+  const flatPos = (pLocal, refLocal, shift) => Fn(() => {
+    const w = modelWorldMatrix.mul(vec4(pLocal, 1)).xyz.toVar(), r = modelWorldMatrix.mul(vec4(refLocal, 1)).xyz;
+    const lr = atan(r.y, r.x).toVar();
+    const d = select(abs(w.z).greaterThan(0.999999), lr, atan(w.y, w.x)).sub(lr);
+    let lam = lr.add(d.sub(round(d.div(TWO_PI)).mul(TWO_PI)));
+    if (shift) lam = lam.add(select(lr.greaterThanEqual(0), float(-TWO_PI), float(TWO_PI)));
+    const th = asin(clamp(w.z, -1, 1).mul(EE_M)).toVar(), t2 = th.mul(th), t6 = t2.mul(t2).mul(t2);
+    const x = lam.mul(cos(th)).div(float(EE_A1).add(t2.mul(3 * EE_A2)).add(t6.mul(float(7 * EE_A3).add(t2.mul(9 * EE_A4)))).mul(EE_M));
+    const y = th.mul(float(EE_A1).add(t2.mul(EE_A2)).add(t6.mul(float(EE_A3).add(t2.mul(EE_A4)))));
+    return modelWorldMatrixInverse.mul(vec4(x, y, 0, 1)).xyz;
+  })();
+  const flatMat = () => { const m = new THREE.MeshBasicNodeMaterial(); m.side = THREE.DoubleSide; m.depthWrite = false; m.depthTest = false; m.transparent = true; return m; };
+  function makeFlatLand(blob, shift) {
+    const m = flatMat(), p = mix(attribute('position', 'vec3'), attribute('soft', 'vec3'), uOld), ref = attribute('tricentre', 'vec3');
+    m.positionNode = blob ? flatPos(shrinkBlob(p), shrinkBlob(ref), shift) : flatPos(p, ref, shift);
+    const out = skinNode(null, false, false, true); m.colorNode = out.rgb; m.opacityNode = out.a;
+    return m;
+  }
+  function makeFlatIsland(blob, shift) {
+    const m = flatMat(), c = attribute('centre', 'vec3'), p = mix(attribute('position', 'vec3'), attribute('soft', 'vec3'), uOld), ref = attribute('tricentre', 'vec3');
+    const f = blob ? uShrink.mul(uBlobF) : uShrink, shr = q => normalize(c.add(q.sub(c).mul(f)));
+    m.positionNode = flatPos(shr(p), shr(ref), shift);
+    const out = skinNode(null, true, false, true); m.colorNode = out.rgb; m.opacityNode = out.a;
+    return m;
+  }
+  function makeFlatRim(blob, shift) {
+    const m = flatMat(); m.transparent = false;
+    const base = blob ? shrinkBlob(attribute('position', 'vec3')) : attribute('position', 'vec3'), ref = attribute('tricentre', 'vec3');
+    m.positionNode = flatPos(normalize(base.add(attribute('dir', 'vec3').mul(Math.tan(SHELF_DEG * D2R)))), blob ? shrinkBlob(ref) : ref, shift);
+    m.colorNode = Fn(() => {
+      const fl = flatCtx(); aliveOrDiscard(fl);
+      const k = RIM_A.mul(uOld).mul(lifeNode());
+      If(k.lessThan(0.002), () => { Discard(); });
+      return finish(mix(seaNode(fl), SHELF3, k), fl);
+    })();
+    return m;
+  }
+  function makeFlatSea() { const m = new THREE.MeshBasicNodeMaterial(); m.colorNode = Fn(() => { const fl = flatCtx(); return finish(seaNode(fl), fl); })(); return m; }
+  // a line on the plane (today's coasts, the limb line): a quad along each segment pushed out either side by halfW
+  const uFlatCoastHalfW = uniform(0.002), uFlatLimbHalfW = uniform(0.002);
+  function makeFlatLine(col3, alpha, halfW) {
+    const m = flatMat();
+    m.positionNode = vec3(attribute('position', 'vec3').xy.add(attribute('nrm', 'vec2').mul(attribute('side', 'float')).mul(halfW)), 0);
+    m.colorNode = sRGBTransferEOTF(col3); m.opacityNode = alpha;
+    return m;
+  }
+  function flatLineGeometry(lines) {   // lines: arrays of [x, y] on the plane, each drawn open
+    let n = 0; for (const L of lines) n += Math.max(0, L.length - 1);
+    const pos = new Float32Array(n * 12), nrm = new Float32Array(n * 8), side = new Float32Array(n * 4), idx = new Uint32Array(n * 6);
+    let q = 0;
+    for (const L of lines) for (let i = 0; i + 1 < L.length; i++) {
+      const a = L[i], b = L[i + 1], dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy) || 1, nx = -dy / len, ny = dx / len;
+      let v = 0;
+      for (const [p, sd] of [[a, -1], [a, 1], [b, -1], [b, 1]]) { const k = q * 4 + v; pos[k * 3] = p[0]; pos[k * 3 + 1] = p[1]; nrm[k * 2] = nx; nrm[k * 2 + 1] = ny; side[k] = sd; v++; }
+      const k = q * 4; idx.set([k, k + 1, k + 2, k + 1, k + 3, k + 2], q * 6); q++;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('nrm', new THREE.BufferAttribute(nrm, 2)); g.setAttribute('side', new THREE.BufferAttribute(side, 1));
+    g.setIndex(new THREE.BufferAttribute(idx, 1));
+    return g;
+  }
+  // a ring of longitudes and latitudes as lines on the plane, cut where it crosses the 180° meridian
+  function cutAtEdge(ring, closed) {
+    const out = []; let cur = [];
+    const n = closed ? ring.length : ring.length - 1;
+    for (let i = 0; i < n; i++) {
+      const a = ring[i], b = ring[(i + 1) % ring.length];
+      if (!cur.length) cur.push(eeForward(a[0], a[1]));
+      if (Math.abs(b[0] - a[0]) > 180) {
+        const edge = a[0] >= 0 ? 180 : -180, bU = b[0] + (edge > 0 ? 360 : -360), t = (edge - a[0]) / ((bU - a[0]) || 1), latC = a[1] + t * (b[1] - a[1]);
+        cur.push(eeForward(edge, latC)); out.push(cur); cur = [eeForward(-edge, latC)];
+      }
+      cur.push(eeForward(b[0], b[1]));
+    }
+    if (cur.length > 1) out.push(cur);
+    return out;
+  }
+  // the outline: the 180° meridian up the east edge and down the west; the poles are the straight edges between
+  const outlineLL = []; for (let i = 0; i <= 361; i++) outlineLL.push(i <= 180 ? [180, -90 + i] : [-180, 90 - (i - 181)]);
+  const outlinePts = outlineLL.map(([lo, la]) => eeForward(lo, la));
+  const outlineGeo = new THREE.ShapeGeometry(new THREE.Shape(outlinePts.map(p => new THREE.Vector2(p[0], p[1]))));
+  const flatScene = new THREE.Scene(); flatGroup = new THREE.Group(); flatScene.add(flatGroup);
+  const flatCam = new THREE.OrthographicCamera(-EE_XMAX, EE_XMAX, EE_YMAX, -EE_YMAX, 0.1, 20); flatCam.position.set(0, 0, 5); flatCam.lookAt(0, 0, 0);
+  const flatSea = new THREE.Mesh(outlineGeo, null); flatSea.renderOrder = 0; flatSea.frustumCulled = false;
+  const flatUnder = new THREE.Mesh(outlineGeo, null); flatUnder.renderOrder = 0.25; flatUnder.frustumCulled = false;
+  const flatLimb = new THREE.Mesh(flatLineGeometry([outlinePts.concat([outlinePts[0]])]), null); flatLimb.renderOrder = 100000; flatLimb.frustumCulled = false;
+  flatGroup.add(flatSea, flatUnder, flatLimb);
+  let flatCoast = null;
+  if (coastFile && coastFile['0']) { const lines = []; for (const ring of coastFile['0']) for (const L of cutAtEdge(ring, true)) lines.push(L); flatCoast = new THREE.Mesh(flatLineGeometry(lines), null); flatCoast.renderOrder = 50000; flatCoast.frustumCulled = false; flatCoast.visible = false; flatGroup.add(flatCoast); }
+  // every piece's mesh twice more on the flat world, sharing its geometry (twins: the source, its two copies, its kind)
+  for (const tw of twins) for (const m of tw.t) flatGroup.add(m);
+  function makeFlatMaterials() {
+    const olds = flatMats ? [...Object.values(flatMats).flat(), flatSeaMat, flatMoltenMat, flatUnderMat, flatCoastMat, flatLimbMat] : [];
+    flatMats = { land: [0, 1].map(k => makeFlatLand(false, k)), isle: [0, 1].map(k => makeFlatIsland(false, k)), rim: [0, 1].map(k => makeFlatRim(false, k)),
+                 bland: [0, 1].map(k => makeFlatLand(true, k)), bisle: [0, 1].map(k => makeFlatIsland(true, k)), brim: [0, 1].map(k => makeFlatRim(true, k)) };
+    for (const tw of twins) { tw.t[0].material = flatMats[tw.kind][0]; tw.t[1].material = flatMats[tw.kind][1]; }
+    flatSeaMat = makeFlatSea(); flatMoltenMat = makeMolten(true); flatUnderMat = makeUnder(true);
+    flatSea.material = molten ? flatMoltenMat : flatSeaMat; flatUnder.material = flatUnderMat;
+    flatLimbMat = makeFlatLine(LIMB3, float(LIMB_A), uFlatLimbHalfW); flatLimb.material = flatLimbMat;
+    flatCoastMat = makeFlatLine(COAST3, uCoastA, uFlatCoastHalfW); if (flatCoast) flatCoast.material = flatCoastMat;
+    olds.forEach(m => { if (m) m.dispose(); });
+  }
+
   const sea = new THREE.Mesh(new THREE.SphereGeometry(SEA_R, 160, 80), null);
   sea.renderOrder = 0;
   group.add(sea);
@@ -1660,6 +1864,7 @@ export async function cwEarth(view, o = {}) {
     for (const m of blobMeshes) { m.land.material = blobLandMat; m.isle.material = blobIslandMat; if (m.rim) m.rim.material = blobRimMat; }
     sea.material = molten ? moltenMat : seaMat; haze.material = hazeMat;
     olds.forEach(m => { if (m) m.dispose(); });
+    makeFlatMaterials();
   }
   rebuildMaterials();
   view.ball.add(group);   // only now, with every mesh wearing a material: the loop is already drawing
@@ -1669,8 +1874,18 @@ export async function cwEarth(view, o = {}) {
   const q = new THREE.Quaternion();
   // this side of the seam every piece stands where it is today, as the old globe and the map have it (Michael, 29 Oct:
   // close in, plates moving over the last 2.6 million years drew San Francisco's coast twice over today's ground); the
-  // plates start moving at the seam, from the model's turn there, as globe.js's pieces do
-  function bodyQuat(pid, age, how) { return how === 'guessed' ? guessedQuat(pid, age) : plateQuatAt(plates[pid], ages, age < seam ? 0 : age); }
+  // plates start moving at the seam. Between the seam and GLIDE_TO each piece eases from today's place to the model's at
+  // that age (smoothstep, so it leaves today's place and arrives at the model's without a jolt; Michael, 29 Oct: the jump
+  // at the seam was 130 km for a typical plate, 416 at New Guinea). Not the plates' true path: the page says so (glide())
+  const glideT = age => { const u = Math.max(0, Math.min(1, (age - seam) / (GLIDE_TO - seam))); return u * u * (3 - 2 * u); };
+  function bodyQuat(pid, age, how) {
+    if (how === 'guessed') return guessedQuat(pid, age);
+    const P = plates[pid];
+    if (age < seam) return plateQuatAt(P, ages, 0);
+    const Qm = plateQuatAt(P, ages, age);
+    if (age >= GLIDE_TO || !Qm) return Qm;
+    return slerp(plateQuatAt(P, ages, 0), Qm, glideT(age));
+  }
   function setTime(m) {
     ma = Math.max(0, m); uAge.value = ma;
     const g = gradeFor(ma).grade, how = g === 'guessed' ? 'guessed' : 'model';
@@ -1699,8 +1914,10 @@ export async function cwEarth(view, o = {}) {
     // today's coasts: only on their word, at every age (step 5b)
     const coastA = coastsOn ? COAST_A : 0;
     uCoastA.value = coastA; if (coastLine) { coastLine.userData.on = coastA > 0.001 && g !== 'none'; syncCoast(); }
-    // today's ground under the pieces: with the photograph, whole today and gone at the seam
-    uUnder.value = Math.max(0, 1 - ma / seam); under.visible = uUnder.value > 0 && g !== 'none';
+    // today's ground under the pieces: whole to the seam (its photograph fading to paint as the pieces' does), gone over
+    // UNDER_PAST past it, smoothly (Michael, 29 Oct: Iceland and Hawaii stay to the seam)
+    const uu = Math.max(0, Math.min(1, (ma - seam) / UNDER_PAST));
+    uUnder.value = ma <= seam ? 1 : 1 - uu * uu * (3 - 2 * uu); under.visible = uUnder.value > 0 && g !== 'none';
     // the pieces, at the model's or the guessed positions
     const showPieces = g !== 'none' && g !== 'invented';
     let order = 1;
@@ -1748,8 +1965,29 @@ export async function cwEarth(view, o = {}) {
       if (st.phase !== phaseNow) { phaseNow = st.phase; if (o.onMolten) o.onMolten(st.phase, ma); }
     }
     uSteam.value = steam;
+    if (flat) syncTwins();
     ageMoved();
     view.redraw();
+  }
+  // the flat world follows the ball: each copy shows, turns and paints in order as its source does
+  // the second copy only where the piece can reach the 180° meridian: its bounding sphere, turned by its plate, meets the
+  // half-plane of that meridian (y = 0, x ≤ 0 in globe.js's frame); a margin for the rim's 2.2° and the softening. Most
+  // pieces never come near it, and their second copy would be drawn wholly off the map (it halves the draws)
+  const EDGE_MARGIN = 0.06, tmpSc = new THREE.Vector3();
+  const nearEdge = src => {
+    const bs = src.geometry.boundingSphere; if (!bs) return true;
+    tmpSc.copy(bs.center).applyQuaternion(src.quaternion); const r = bs.radius + EDGE_MARGIN;
+    return Math.abs(tmpSc.y) <= r && tmpSc.x <= r;
+  };
+  function syncTwins() {
+    for (const tw of twins) {
+      const s = tw.src;
+      for (const m of tw.t) { m.quaternion.copy(s.quaternion); m.renderOrder = s.renderOrder; }
+      tw.t[0].visible = s.visible; tw.t[1].visible = s.visible && nearEdge(s);
+    }
+    flatUnder.visible = under.visible;
+    flatSea.material = molten ? flatMoltenMat : flatSeaMat;
+    if (flatCoast) flatCoast.visible = !!(coastLine && coastLine.userData.on);
   }
   // what the frame sets: the ball's frame for the ice's latitude, and a pixel at the edge for the haze (frame() is
   // also for a page drawing off-screen between the loop's frames, as the bench's pair pictures do)
@@ -1757,11 +1995,13 @@ export async function cwEarth(view, o = {}) {
   function frame(pxHeight) {
     tmpM.makeRotationFromQuaternion(view.ball.quaternion); tmpM2.makeRotationFromQuaternion(group.quaternion);
     uGroupInv.value.copy(tmpM.multiply(tmpM2).invert());
-    const D = view.camera.position.length(), f = (pxHeight || view.host.clientHeight || 1) / 2 / Math.tan(view.camera.fov * D2R / 2);
+    // the scale is the window's usual size's when it is cropped (view.refSize); pxHeight, a picture's height for the window's
+    const hostH = view.host.clientHeight || 1, refH = view.refSize ? view.refSize().h : hostH;
+    const D = view.camera.position.length(), f = refH * (pxHeight ? pxHeight / hostH : 1) / 2 / Math.tan(view.camera.fov * D2R / 2);
     uPxDist.value = Math.pow(Math.max(1e-6, D * D - 1), 1.5) / (f * D * D);   // d(ray distance)/d(screen pixel) at the edge
     uCoastHalfW.value = COAST_PX / 2 * (D - 1) / f;   // a CSS pixel on the ball's near face, as the radius
   }
-  view.onFrame(() => { frame(); if (cityEls.length) placeCities(); });
+  view.onFrame(() => { frame(); if (flat) fitFlat(); if (cityEls.length) placeCities(); });
 
   // ---- places: a point today, carried by a plate to where it was at the age, and projected ----
   const tmpV = new THREE.Vector3(), tmpN = new THREE.Vector3(), tmpC = new THREE.Vector3();
@@ -1800,7 +2040,7 @@ export async function cwEarth(view, o = {}) {
   function placeCities() {
     const shown = gradeFor(ma).grade;
     for (const { c, el } of cityEls) {
-      if (ma > c.from || shown === 'none' || shown === 'invented') { el.style.display = 'none'; continue; }
+      if (flat || ma > c.from || shown === 'none' || shown === 'invented') { el.style.display = 'none'; continue; }
       const a = Math.min(1, (c.from - ma) / 20);
       const p = project(c.lon, c.lat, c.plate);
       if (!p.front || a <= 0) { el.style.display = 'none'; continue; }
@@ -1812,7 +2052,8 @@ export async function cwEarth(view, o = {}) {
   // ---- the marks on the ball (step 5; one list since step 5b): the map's own places and the Time Machine's cities ----
   // One list, each place once (Michael, 29 Oct: Beijing showed twice): the places the stories share (stories/places.json),
   // then each of the Time Machine's dozen modern cities (stories/plates/cities.json) that has no place of the stories
-  // within MERGE_KM — Paris, Beijing and Tokyo are there already, Tokyo as the stories' Edo — at CITY_WEIGHT. All in the
+  // within MERGE_KM — Paris, Beijing and Tokyo are there already (the stories' Edo, named Tokyo here since step 6: the
+  // Earth's names are today's, TODAY_NAMES) — at CITY_WEIGHT. All in the
   // places' style, a vermilion dot and the name with its halo, which the photograph needs (the cities had none, by
   // Michael's ruling of 13 Oct for the 2D globe; he may overrule it here). Each is carried by the plate whose piece holds
   // it today (globe.js's plateAt, copied; a city by the plate it names) and shown while that piece lives, fading over the
@@ -1840,7 +2081,7 @@ export async function cwEarth(view, o = {}) {
   }
   if (markHost) {
     const pl = placeFile && placeFile.places ? placeFile.places : {};
-    for (const id in pl) { const p = pl[id], pc = plateAt(p.lon, p.lat); marks.push({ type: 'place', id, name: p.name, lon: p.lon, lat: p.lat, weight: p.weight, plate: pc ? pc.plate : null, from: pc ? pc.from : 4000 }); }
+    for (const id in pl) { const p = pl[id], pc = plateAt(p.lon, p.lat); marks.push({ type: 'place', id, name: TODAY_NAMES[id] || p.name, lon: p.lon, lat: p.lat, weight: p.weight, plate: pc ? pc.plate : null, from: pc ? pc.from : 4000 }); }
     const km = (a, b) => 6371 * Math.acos(Math.min(1, Math.sin(a.lat * D2R) * Math.sin(b.lat * D2R) + Math.cos(a.lat * D2R) * Math.cos(b.lat * D2R) * Math.cos((a.lon - b.lon) * D2R)));
     const ofPlaces = marks.slice();
     for (const c of cities) if (!ofPlaces.some(p => km(p, c) < MERGE_KM)) marks.push({ type: 'place', name: c.name, lon: c.lon, lat: c.lat, weight: CITY_WEIGHT, plate: c.plate, from: c.from, city: true });
@@ -1925,11 +2166,13 @@ export async function cwEarth(view, o = {}) {
     const gw = 400, gh = Math.max(1, Math.round(gw * h / w)), r = view.renderer;
     const rt = new THREE.RenderTarget(gw, gh, { type: THREE.UnsignedByteType, colorSpace: THREE.SRGBColorSpace, depthBuffer: true });
     try {
-      frame(); r.setRenderTarget(rt); r.render(view.scene, view.camera);
+      const st = view.stage ? view.stage() : view;   // the flat world while it is up
+      frame(); r.setRenderTarget(rt); r.render(st.scene, st.camera);
       const d = await r.readRenderTargetPixelsAsync(rt, 0, 0, gw, gh);
       if (ask !== groundAsk) return;
       const flip = !!(r.backend && r.backend.isWebGLBackend), lum = new Float32Array(gw * gh);
-      for (let y = 0; y < gh; y++) { const sy = flip ? gh - 1 - y : y; for (let x = 0; x < gw; x++) { const j = (sy * gw + x) * 4; lum[y * gw + x] = (0.299 * d[j] + 0.587 * d[j + 1] + 0.114 * d[j + 2]) / 255; } }
+      const stride = gh > 1 ? Math.round((d.length - gw * 4) / (gh - 1)) : gw * 4;   // WebGPU pads every row but the last to 256 bytes (400 px is 1,600, read as if 1,792 apart until 29 Oct)
+      for (let y = 0; y < gh; y++) { const sy = flip ? gh - 1 - y : y; for (let x = 0; x < gw; x++) { const j = sy * stride + x * 4; lum[y * gw + x] = (0.299 * d[j] + 0.587 * d[j + 1] + 0.114 * d[j + 2]) / 255; } }
       groundLum = { w: gw, h: gh, lum };
     } finally { r.setRenderTarget(null); rt.dispose(); }
   }
@@ -1938,7 +2181,7 @@ export async function cwEarth(view, o = {}) {
     if (!markHost) return;
     const w = view.host.clientWidth, h = view.host.clientHeight; if (!w || !h) return;
     const cam = view.camera.position, bq = view.ball.quaternion;
-    const key = [cam.x, cam.y, cam.z, bq.x, bq.y, bq.z, bq.w, w, h, ma, marksFrozen, groundLum ? groundLum.lum.length + groundAsk : 0].join();
+    const key = [cam.x, cam.y, cam.z, bq.x, bq.y, bq.z, bq.w, w, h, ma, marksFrozen, groundLum ? groundLum.lum.length + groundAsk : 0, flat, flatKey].join();
     if (!force && key === marksKey) return;
     marksKey = key;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -1947,13 +2190,13 @@ export async function cwEarth(view, o = {}) {
     c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, markCanvas.width, markCanvas.height); c.setTransform(dpr, 0, 0, dpr, 0, 0);
     hc.setTransform(1, 0, 0, 1, 0, 0); hc.clearRect(0, 0, haloCanvas.width, haloCanvas.height); hc.setTransform(dpr, 0, 0, dpr, 0, 0);
     const g = gradeFor(ma).grade;
-    if (g === 'none' || g === 'invented' || !placesOn) { lastMarks = { shown: 0, labelled: 0, names: [] }; return; }
+    if (g === 'none' || g === 'invented' || !placesOn) { lastMarks = { shown: 0, labelled: 0, names: [] }; hits = []; return; }
     view.scene.updateMatrixWorld();
     const shown = [];
     marks.forEach((m, i) => {
       if (ma > m.from) return;
       const a = Math.min(1, (m.from - ma) / 20); if (a <= 0) return;
-      const p = project(m.lon, m.lat, m.plate);
+      const p = flat ? projectFlat(m.lon, m.lat, m.plate) : project(m.lon, m.lat, m.plate);
       if (!p.front) return;
       shown.push({ m, i, p, a, r: m.minor ? DOT_MINOR : DOT });
     });
@@ -1977,14 +2220,72 @@ export async function cwEarth(view, o = {}) {
     for (const L of labels) { c.globalAlpha = L.s.a; c.font = L.size + 'px ' + FONT; c.textAlign = L.box.anchor === 'start' ? 'left' : L.box.anchor === 'end' ? 'right' : 'center'; c.fillText(L.s.m.name, L.box.tx, L.box.ty); }
     c.globalAlpha = 1;
     lastMarks = { shown: shown.length, labelled: labels.length, names: labels.map(L => L.s.m.name) };
+    hits = shown.map(s => { const L = labels.find(l => l.s === s); return { m: s.m, x: s.p.x, y: s.p.y, r: s.r, box: L ? L.box : null }; });
   }
-  let lastMarks = { shown: 0, labelled: 0, names: [] };
+  let lastMarks = { shown: 0, labelled: 0, names: [] }, hits = [];
+  // the place under a point of the stage: its name's box, or within TAP_PX of its dot (the nearest)
+  const TAP_PX = 10;
+  function markAt(x, y) {
+    let best = null, bd = Infinity;
+    for (const h of hits) {
+      if (h.box && x >= h.box.x && x <= h.box.x + h.box.w && y >= h.box.y && y <= h.box.y + h.box.h) return h.m;
+      const d = Math.hypot(x - h.x, y - h.y); if (d <= h.r + TAP_PX && d < bd) { bd = d; best = h.m; }
+    }
+    return best;
+  }
+
+  // ---- the flat world on its word (step 6) ----
+  let flat = false, flatKey = '', flatS = 1;
+  function fitFlat() {   // the whole world in the window, FLAT_MARGIN of parchment round it at least, centred
+    const w = view.host.clientWidth || 1, h = view.host.clientHeight || 1, key = w + 'x' + h; if (key === flatKey) return;
+    flatKey = key;
+    const s = Math.max(1e-3, Math.min((w - 2 * FLAT_MARGIN) / (2 * EE_XMAX), (h - 2 * FLAT_MARGIN) / (2 * EE_YMAX)));
+    flatCam.left = -w / 2 / s; flatCam.right = w / 2 / s; flatCam.top = h / 2 / s; flatCam.bottom = -h / 2 / s; flatCam.updateProjectionMatrix();
+    flatS = s; uFlatCoastHalfW.value = COAST_PX / 2 / s; uFlatLimbHalfW.value = 0.5 / s;   // a CSS pixel, as the ball's limb line
+    marksKey = ''; view.redraw();
+  }
+  function projectFlat(lon, lat, plate) {   // a place today → where it was at the age → the plane → the stage's pixels
+    const a = placeAt(lon, lat, plate), [X, Y] = eeForward(a.lon, a.lat), w = view.host.clientWidth, h = view.host.clientHeight;
+    return { x: (X - flatCam.left) / (flatCam.right - flatCam.left) * w, y: (flatCam.top - Y) / (flatCam.top - flatCam.bottom) * h, front: true };
+  }
+  function flatLonLatAt(x, y) {   // the stage's pixels → the place on the flat world at the age, or null off it
+    const w = view.host.clientWidth || 1, h = view.host.clientHeight || 1;
+    return eeInverse(flatCam.left + x / w * (flatCam.right - flatCam.left), flatCam.top - y / h * (flatCam.top - flatCam.bottom));
+  }
+  function setFlat(on) {
+    on = !!on; if (on === flat) return;
+    flat = on; view.hold = on; view.drawWith(on ? flatScene : null, flatCam);
+    if (on) { flatKey = ''; fitFlat(); syncTwins(); }
+    if (cityEls.length) placeCities();
+    marksKey = ''; viewKey = ''; groundLum = null; settle(); view.redraw();
+  }
+  // the camera's distance for a view `km` kilometres across the window's height
+  const distanceFor = km => { const hostH = view.host.clientHeight || 1, refH = view.refSize ? view.refSize().h : hostH; return 1 + km / 6371 / (2 * Math.tan(view.camera.fov * D2R / 2) * hostH / refH); };
+  // a tap (the stage's pixels): on the flat world, back to the globe centred on the place tapped (a place's own point if a
+  // place was tapped), FROM_FLAT_KM across; on the globe, a tapped place glides to the centre and the Earth zooms in a step.
+  // Answers what it did, or null (nothing there)
+  function tap(x, y) {
+    const hit = markAt(x, y);
+    if (flat) {
+      const at = hit ? placeAt(hit.lon, hit.lat, hit.plate) : flatLonLatAt(x, y);
+      if (!at) return null;
+      setFlat(false);
+      view.turnTo(at.lon, at.lat); view.zoomTo(distanceFor(FROM_FLAT_KM));
+      settle(); view.redraw();
+      if (o.onFlat) o.onFlat(false, at);
+      return { to: 'globe', lon: at.lon, lat: at.lat, place: hit ? hit.name : null };
+    }
+    if (!hit) return null;
+    const at = placeAt(hit.lon, hit.lat, hit.plate), D = view.camera.position.length();
+    view.glideTo(at.lon, at.lat, 1 + (D - 1) / TAP_ZOOM_STEP, TAP_GLIDE_S * 1000);
+    return { to: 'place', lon: at.lon, lat: at.lat, place: hit.name };
+  }
 
   // ---- each frame, close in: the tiles wanted, the page table, the fades; and when the view settles, the coast's
   //      detail, the ice filled over the view, the ground read and the labels placed afresh ----
   let zoomFor = '';
   function fitZoom() {   // the nearest she may come: the deepest level's texel two CSS pixels wide at the centre (map.js's S_MAX, twice the finest)
-    const H = Math.min(view.host.clientWidth || 1, view.host.clientHeight || 1), L = deepestLevel();
+    const rs = view.refSize ? view.refSize() : { w: view.host.clientWidth || 1, h: view.host.clientHeight || 1 }, H = Math.min(rs.w, rs.h), L = deepestLevel();   // the scale is the usual window's when cropped
     const key = H + '/' + L; if (key === zoomFor) return; zoomFor = key;
     const ppd = 2 * TILE_PX * (2 << L) / 360;   // CSS pixels a degree
     view.setZoomLimits(1 + H / (ppd * 2 * Math.tan(view.camera.fov * D2R / 2) / D2R));
@@ -2016,7 +2317,7 @@ export async function cwEarth(view, o = {}) {
   view.onGesture(s => { if (s === 'start') marksFrozen = true; else settle(); });
   function closeFrame() {
     fitZoom();
-    updateTiles(false);
+    if (!flat) updateTiles(false);
     if (pageDirty) writePage();
     if (fading) { fading = writeFades(); view.redraw(); }
     drawMarks(false);
@@ -2057,6 +2358,9 @@ export async function cwEarth(view, o = {}) {
     simMs: () => ({ cratons: sim ? sim.ms : null, blobs: blobCache ? blobCache.ms : null, blobBuild: blobMeshes.length ? blobBuildMs : null }),   // the runs' costs, for checking
     setTier: async tier => { await Promise.all([wantBlue(tier), wantFloor(tier)]); sea.geometry.dispose(); sea.geometry = new THREE.SphereGeometry(SEA_R, tier === 'floor' ? 96 : tier === 'middle' ? 128 : 160, tier === 'floor' ? 48 : tier === 'middle' ? 64 : 80); viewKey = ''; zoomFor = ''; view.redraw(); },
     // close in (step 5): settle() as when a gesture ends (for a page that moves the view itself), and what the tiles hold
+    // step 6: the flat world, the tap, the glide
+    setFlat, flat: () => flat, tap, markAt, flatLonLatAt, projectFlat, flatScene, flatCamera: flatCam, eeForward, eeInverse,
+    glide: () => ({ on: ma > seam && ma < GLIDE_TO, t: ma > seam && ma < GLIDE_TO ? glideT(ma) : (ma >= GLIDE_TO ? 1 : 0), to: GLIDE_TO }),
     settle, marks: () => lastMarks, setPlaces: on => { placesOn = !!on; marksKey = ''; drawMarks(true); view.redraw(); }, places: () => placesOn,
     addMarks: list => { for (const p of list) { const pc = plateAt(p.lon, p.lat); marks.push(Object.assign({ type: 'place', plate: pc ? pc.plate : null, from: pc ? pc.from : 4000 }, p)); } marksKey = ''; drawMarks(true); },   // bench only: places of a check's own
     step: () => { closeFrame(); viewKey = ''; updateTiles(true); if (pageDirty) writePage(); },   // one frame's close-in work, for a page whose checks hold the loop
@@ -2073,6 +2377,9 @@ export async function cwEarth(view, o = {}) {
       for (const m of meshes.values()) m.geometry.dispose(); for (const m of rims.values()) m.geometry.dispose();
       for (const m of blobMeshes) { m.land.geometry.dispose(); if (m.rim) m.rim.geometry.dispose(); }
       sea.geometry.dispose(); haze.geometry.dispose(); under.geometry.dispose(); if (underMat) underMat.dispose();
+      outlineGeo.dispose(); flatLimb.geometry.dispose(); if (flatCoast) flatCoast.geometry.dispose();
+      [...Object.values(flatMats || {}).flat(), flatSeaMat, flatMoltenMat, flatUnderMat, flatCoastMat, flatLimbMat].forEach(m => { if (m) m.dispose(); });
+      if (flat) view.drawWith(null); view.hold = false;
       [landMat, islandMat, rimMat, seaMat, moltenMat, hazeMat, blobLandMat, blobIslandMat, blobRimMat, coastMat, texOld, texVeg, texGrain, texCool, texCracks, texBlue, maskOld, maskBlue, texFloor, floorEmpty, iceEmpty, ...Object.values(iceTexByAge),
        picH.arr, dataH.arr, texPageA, texPageB, texPageF, ...iceLocalTex].forEach(t => { if (t) t.dispose(); });
       for (const m of coastMeshes.values()) { m.geometry.dispose(); group.remove(m); }

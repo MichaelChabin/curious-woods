@@ -52,6 +52,14 @@
      the sea not drawn this side of the seam, coming in past it; one list of places, each once, all with the halo, and the
      word *places* turning them off and on; land lighter settled at 100, its slider gone. Bench only: ?at=lon,lat,km opens
      straight down on a place (for the iPad simulator).
+     Step 6 (29 Oct; Prompt-Build-Earth-Bench-06.md): today's ground under the pieces whole to the seam and gone just past it
+     (Iceland and Hawaii stay to the seam); between the seam and 5 million years the pieces glide from today's places to the
+     model's, and the honest block says so while they do; the places by today's names (Tokyo, not Edo). Flat: the word *Map*
+     lays the same Earth out flat in the Equal Earth projection, whole and still, centred on the 0° meridian, parchment round
+     it; *Globe* brings the ball back; a tap on the flat world goes back to the globe, centred and zoomed on the place tapped.
+     On the globe a tap on a place glides it to the centre and zooms in a step. The window that holds the Earth has bars on
+     its right and bottom edges, as the map's, to crop it narrower, wider, shorter or taller; the Earth stays centred and
+     keeps its size, the kept picture takes the window's shape, and Reset view puts the window back. On a phone, no bars.
      The Earth wears the Time Machine's icon for now; it has none of its own. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
@@ -95,6 +103,15 @@
   .fine-ends { display: flex; justify-content: space-between; font-size: 12px; color: var(--cw-grey-word, #7d7a72); margin-top: 2px; font-variant-numeric: tabular-nums; }
   .stage-box { min-width: 0; }
   .stage { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; touch-action: none; background: var(--cw-parchment, #f4f1e8); }
+  /* the window's bars (step 6): at the right edge and along the bottom, as the map's and the Time Machine's, to crop it */
+  .stage-wrap { position: relative; }
+  .grip { position: absolute; top: 0; bottom: 18px; right: -18px; width: 16px; border-radius: 0 8px 8px 0; z-index: 6; touch-action: none; cursor: ew-resize;
+          background: rgba(200,184,154,0.28); user-select: none; -webkit-user-select: none; }
+  .grip::after { content: ""; position: absolute; left: 6px; top: 50%; width: 4px; height: 44px; margin-top: -22px; background: #b9ad92; border-radius: 2px; opacity: .8; }
+  .strip { position: relative; height: 16px; margin-top: 2px; border-radius: 0 0 8px 8px; touch-action: none; cursor: ns-resize;
+           background: rgba(200,184,154,0.28); user-select: none; -webkit-user-select: none; }
+  .strip::after { content: ""; position: absolute; top: 6px; left: 50%; height: 4px; width: 44px; margin-left: -22px; background: #b9ad92; border-radius: 2px; opacity: .8; }
+  .phone .grip, .phone .strip { display: none; }
   #stage2d .cw-globe { position: absolute; inset: 0; }
   .under { margin: 6px 0 0; font-size: 13px; font-style: italic; color: var(--cw-ink-soft, #6b655a); }
   .under.honest { font-style: normal; font-size: 14px; color: var(--cw-ink, #2a241c); min-height: 4.6em; line-height: 1.4; }
@@ -135,14 +152,15 @@
   <div class="bench">
     <div class="left" id="words">
       <div class="pair"><button class="word" id="wBlue" type="button" aria-pressed="false">Blue Marble</button><span class="slash">/</span><button class="word" id="wOld" type="button" aria-pressed="true">old ground</button></div>
+      <button class="word" id="wFlat" type="button">Map</button>
       <button class="word" id="wCoasts" type="button" aria-pressed="false">today’s coasts</button>
       <button class="word" id="wPlaces" type="button" aria-pressed="true">places</button>
       <button class="word" id="wGuess" type="button">another guess</button>
       <button class="word" id="wOldGlobe" type="button" aria-pressed="false">old globe</button>
     </div>
     <div class="stages solo" id="stages">
-      <div class="stage-box">
-        <div id="stage3d" class="stage"></div>
+      <div class="stage-box" id="stageBox">
+        <div class="stage-wrap" id="stageWrap"><div id="stage3d" class="stage"></div><div class="grip" id="gripR"></div><div class="strip" id="stripB"></div></div>
         <div class="under honest" id="honestBlock"></div>
         <p class="under">bench only: the fine slider, and <i>another guess</i> giving both globes the same new guess</p>
         <div id="still"><img alt="The Earth, a still picture" src="../art/globe/earth-3d-still.webp"><p class="under" id="stillLine">This one needs a newer device.</p></div>
@@ -168,13 +186,13 @@
 </div>
 
 <script type="module">
-  const CW_VERSION = '2026-10-29 53ca022 · earth-3d step 5b';   // 29 Oct: the continents still this side of the seam, the lakes, the coasts on their word, no wash this side, one list of places, land lighter at 100   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-29 ee7fcfb · earth-3d step 6';   // 29 Oct: flat (Equal Earth), the glide, Iceland to the seam, today's names, tap to a place, the window's bars   // date + short commit hash; bump in the same commit as any change
   console.log('earth-3d', CW_VERSION);
   import * as THREE from 'three';
-  import { cwScene } from '../js/3d/scene.js?v=2026-10-28e';
-  import { cwEarth } from '../js/3d/earth.js?v=2026-10-29a';
+  import { cwScene } from '../js/3d/scene.js?v=2026-10-29c';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-10-29g';
   import { cwHonest } from '../js/3d/honest.js?v=2026-10-28a';
-  import { cwStill } from '../js/3d/still.js?v=2026-10-28a';
+  import { cwStill } from '../js/3d/still.js?v=2026-10-29f';
 
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -198,7 +216,7 @@
   // the seed: one for both globes, so the same guess shows on each (the spec: the same seed gives the same guess in both
   // engines); ?seed= fixes it for a check, otherwise this visit's, made as globe.js makes one
   const seed0 = Q.get('seed') ? +Q.get('seed') : ((Date.now() % 1000003) + Math.floor(Math.random() * 1000));
-  const state = { ground: 'old', coasts: Q.get('coasts') === '1', places: Q.get('places') !== '0', ma: 0, seed: seed0, oldGlobe: Q.get('old') === '1' };
+  const state = { ground: 'old', coasts: Q.get('coasts') === '1', places: Q.get('places') !== '0', ma: 0, seed: seed0, oldGlobe: Q.get('old') === '1', flat: false };
   let view = null, earth = null, g2d = null, honest = null, syncing = false;
 
   // ---------- the 3D Earth ----------
@@ -212,9 +230,12 @@
       camera: { fov: 24, position: [0, 0, 4.9], near: 0.1, far: 50, min: 1.4, max: 12 },   // the ball fills the square as the 2D disc does (its radius W/2 − 4); the nearest is the Earth's, by the tier's deepest level
       words: $('words'),
       onTurn: v => { if (g2d && !syncing) { syncing = true; const t = v.turnOf(); g2d.turn(t.lon, t.lat); syncing = false; } },
-      onTier: async (tier) => { if (earth) await earth.setTier(tier); }
+      onTier: async (tier) => { if (earth) await earth.setTier(tier); },
+      onTap: (x, y) => !!(earth && earth.tap(x, y)),   // a place on the globe glides to the centre; the flat world goes back to the globe
+      onReset: () => setCrop(null)                      // Reset view puts the window back to its usual size too
     });
-    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, coldTiles: Q.get('cold') === '1' });   // ?cold=1: tiles past the browser's cache (bench only, for timing)
+    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, coldTiles: Q.get('cold') === '1',   // ?cold=1: tiles past the browser's cache (bench only, for timing)
+      onFlat: (on, at) => { setFlatWord(on); if (at && g2d) g2d.turn(at.lon, at.lat); tellGrade(); } });
     await earth.setTier(view.tier);
     // the honest block (Standard-Interactives §5, §8): no scale note and no bracket — on a true ball nothing is stretched;
     // the crust's note waits for Cut open. The block under the stage says what the picture is, what it says, and the credit
@@ -275,6 +296,11 @@
   $('wPlaces').addEventListener('click', () => setPlaces(!state.places));
   $('wGuess').addEventListener('click', anotherGuess);
   $('wOldGlobe').addEventListener('click', () => setOldGlobe(!state.oldGlobe));
+  // Map and Globe (step 6): one word, as the Time Machine's — Map while the ball is up, Globe while the flat world is
+  function setFlatWord(on) { state.flat = !!on; $('wFlat').textContent = on ? 'Globe' : 'Map'; }
+  function setFlat(on) { if (!earth) return; earth.setFlat(on); setFlatWord(on); tellGrade(); }
+  $('wFlat').addEventListener('click', () => setFlat(!state.flat));
+  if (!earth) $('wFlat').style.display = 'none';
   setOldGlobe(state.oldGlobe);
   setGround(Q.get('ground') === 'blue' ? 'blue' : 'old');
   setCoasts(state.coasts); setPlaces(state.places);
@@ -332,6 +358,8 @@
   // the honest block under the stage (honest.js): what the picture is, what it says — the grade's word and sentence from
   // the 3D Earth (globe.js's words, copied there), the molten phase's while there is no grade — and the credit, NASA Earth
   // Observatory while the photograph shows at all (the old ground's sources when it is up); the plates' past the seam
+  // while the pieces glide from today's places to the model's (step 6; Michael will adjust the words)
+  const GLIDE_NOTE = 'Here the continents are easing into the places the plate model gives them; the path between is drawn, not known.';
   function tellGrade() {
     const eng = earth || g2d, g = eng.grade(), word = g.grade === 'none' ? (eng.moltenPhase() || 'none') : g.grade;
     if (!honest) return;
@@ -340,7 +368,7 @@
     let what;
     if (g.grade === 'none') what = 'The Earth, ' + ageWord(ma) + ': a ball of melted rock.';
     else if (ma < (earth ? earth.seam : 2.6)) what = 'The Earth, ' + ageWord(ma) + ': today’s ground' + (m < 0 ? ', the sea ' + Math.round(-m) + ' m lower' : (ma > 0 ? ', the sea where it is' : '')) + (iceOn ? ', the ice where it was.' : '.');
-    else what = 'The Earth, ' + ageWord(ma) + ': the continents where they were, painted.';
+    else what = 'The Earth, ' + ageWord(ma) + ': the continents where they were, painted.' + (earth && earth.glide().on ? ' ' + GLIDE_NOTE : '');
     const photo = ma < (earth ? earth.seam : 2.6);
     honest.say({ what, says: { word, sentence: g.why }, credit: photo ? SHORT_CREDIT[state.ground] : 'The continents: Merdith et al. 2021 (EarthByte)' });
   }
@@ -355,6 +383,38 @@
   $('fine').addEventListener('input', () => { const a = fineAgeOf(+$('fine').value); $('age').value = posOf(a); setAge(a); $('fineWord').value = fine0 > 0 ? endWord(a) : 'bench only'; });
   function toAge(ma) { setWindow(ma); $('age').value = posOf(ma); $('fine').value = finePosOf(ma); setAge(ma); }
   toAge(Q.get('ma') ? +Q.get('ma') : 0);
+
+  // ---------- the window's bars (step 6) ----------
+  // The right bar makes the window narrower or wider, the bottom one shorter or taller. The Earth keeps the scale it has at
+  // the window's usual size (a square the column's width) and stays centred (view.setFrame); the flat world is fitted to the
+  // window whatever its shape. Reset view puts it back. On a phone, no bars.
+  const CROP_MIN = 160;
+  let crop = null;   // { w, h } in CSS pixels, or null at the usual size
+  const usualSize = () => { const w = $('stageBox').clientWidth; return { w, h: w }; };
+  function setCrop(c) {
+    crop = c; const wrap = $('stageWrap'), st = $('stage3d');
+    if (!crop) { wrap.style.width = ''; st.style.height = ''; st.style.aspectRatio = ''; }
+    else { wrap.style.width = crop.w + 'px'; st.style.height = crop.h + 'px'; st.style.aspectRatio = 'auto'; }
+    if (view) view.setFrame(crop ? usualSize() : null);
+  }
+  window.addEventListener('resize', () => { if (crop && view) view.setFrame(usualSize()); });
+  if (!view || view.phone) document.body.classList.add('phone');
+  else [['gripR', 'w'], ['stripB', 'h']].forEach(([id, dim]) => {
+    const bar = $(id); let st = null;
+    bar.addEventListener('pointerdown', e => {
+      const r = $('stage3d').getBoundingClientRect();
+      st = { x: e.clientX, y: e.clientY, w: r.width, h: r.height, maxW: window.innerWidth - r.left - 34, maxH: Math.max(2 * usualSize().w, 400) };
+      e.preventDefault(); try { bar.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    bar.addEventListener('pointermove', e => {
+      if (!st) return;
+      const w = dim === 'w' ? Math.max(CROP_MIN, Math.min(st.maxW, Math.round(st.w + e.clientX - st.x))) : Math.round(st.w);
+      const h = dim === 'h' ? Math.max(CROP_MIN, Math.min(st.maxH, Math.round(st.h + e.clientY - st.y))) : Math.round(st.h);
+      setCrop({ w, h });
+    });
+    const up = () => { st = null; if (earth) earth.settle(); };
+    bar.addEventListener('pointerup', up); bar.addEventListener('pointercancel', up);
+  });
 
   // ---------- the kept picture (the credit goes on it) ----------
   if (view) {
@@ -414,6 +474,7 @@
   }
 
   // ---------- for the bench's own checks (the browser pane) ----------
+  window.cwSetFlat = setFlat; window.cwSetCrop = setCrop; window.cwCrop = () => crop;
   window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetPlaces = setPlaces; window.cwFineAgeOf = fineAgeOf; window.cwFinePosOf = finePosOf; window.cwFineWindow = () => [fine0, fine0 + FINE_SPAN]; window.cwSetOldGlobe = setOldGlobe; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest; window.cwAgeOf = ageOf; window.cwPosOf = posOf;
   // The bench's own timer, as the Sun bench's: draws `frames` frames off-screen at the canvas's size for a tier,
   // the age moving a million years a frame (so every plate's turn is read each frame, as a slider drag reads it),
@@ -426,9 +487,10 @@
     const rt = new THREE.RenderTarget(w, h, { depthBuffer: true });
     const done = () => view.renderer.readRenderTargetPixelsAsync(rt, 0, 0, 1, 1);
     view.renderer.setRenderTarget(rt);
-    view.renderer.render(view.scene, view.camera); await done();   // the first frame compiles
+    view.renderer.render(view.stage().scene, view.stage().camera); await done();   // the first frame compiles
     const t0 = performance.now();
-    for (let i = 0; i < frames; i++) { earth.setTime(ma0 + i * step); view.renderer.render(view.scene, view.camera); await done(); }
+    const stg = view.stage();   // the flat world while it is up (step 6)
+    for (let i = 0; i < frames; i++) { earth.setTime(ma0 + i * step); view.renderer.render(stg.scene, stg.camera); await done(); }
     const ms = (performance.now() - t0) / frames;
     view.renderer.setRenderTarget(null); rt.dispose();
     earth.setTime(ma0);
@@ -506,7 +568,8 @@
   window.cwShot = async function (px = 768, type = 'image/jpeg', quality = 0.86) {
     const r = view.renderer, cam = view.camera, W = view.host.clientWidth, H = view.host.clientHeight, ph = Math.round(px * H / W);
     const rt = new THREE.RenderTarget(px, ph, { type: THREE.UnsignedByteType, colorSpace: THREE.SRGBColorSpace, depthBuffer: true });
-    earth.frame(ph); r.setRenderTarget(rt); r.render(view.scene, cam);
+    const stg = view.stage();   // the flat world while it is up (step 6)
+    earth.frame(ph); r.setRenderTarget(rt); r.render(stg.scene, stg.camera);
     const data = await r.readRenderTargetPixelsAsync(rt, 0, 0, px, ph);
     r.setRenderTarget(null); rt.dispose();
     const flip = !!(r.backend && r.backend.isWebGLBackend), cv = document.createElement('canvas'); cv.width = px; cv.height = ph;

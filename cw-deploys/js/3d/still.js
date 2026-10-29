@@ -15,11 +15,16 @@
    target the size of the picture, read back, put into a 2D canvas with the notes drawn over it and the words
    under it, and the live tier restored. The readback comes top-down from WebGPU and bottom-up from WebGL 2, so the
    rows are flipped on the WebGL side. Open (27 Oct): on WebGL 2 the readback waits on requestAnimationFrame, so
-   a still cannot be made while the page is hidden on that backend. Returns a Promise of a Blob (image/png). */
+   a still cannot be made while the page is hidden on that backend. Returns a Promise of a Blob (image/png).
+   The Earth's sixth bench (29 Oct 2026): the picture is of whatever the view draws (view.stage(): the flat world while
+   it is up), and a cropped window (view.setFrame) keeps its camera's view offset, so the picture takes the window's shape
+   and shows what the window shows; the camera's aspect is set only when the window is not cropped. */
 import * as THREE from 'three';
 
 export async function cwStill(view, { long = 4096, honest = null, caption = '', credit = '' } = {}) {
-  const { renderer, scene, camera, host } = view;
+  const { renderer, host } = view;
+  const { scene, camera } = view.stage ? view.stage() : view;   // the flat world while it is up (the Earth's sixth bench)
+  const cropped = !!(camera.view && camera.view.enabled) || !camera.isPerspectiveCamera;   // a cropped window's offset, or a camera framed by its page, is left as it is
   const hostW = Math.max(1, host.clientWidth), hostH = Math.max(1, host.clientHeight);
   const aspect = hostW / hostH;
   const w = aspect >= 1 ? long : Math.round(long * aspect);
@@ -31,7 +36,7 @@ export async function cwStill(view, { long = 4096, honest = null, caption = '', 
 
   const rt = new THREE.RenderTarget(w, h, { type: THREE.UnsignedByteType, colorSpace: THREE.SRGBColorSpace, depthBuffer: true });
   const oldAspect = camera.aspect;
-  camera.aspect = w / h; camera.updateProjectionMatrix();
+  if (!cropped) { camera.aspect = w / h; camera.updateProjectionMatrix(); }
   renderer.setRenderTarget(rt);
   renderer.render(scene, camera);
   const px = await renderer.readRenderTargetPixelsAsync(rt, 0, 0, w, h);   // waits for the card to finish
@@ -54,7 +59,8 @@ export async function cwStill(view, { long = 4096, honest = null, caption = '', 
   const whatLines = what ? wrap(what, `${fsCaption}px ${font}`, w - 2 * pad) : [];
   const saysText = says ? (says.word ? says.word + '  ' : '') + says.sentence : '';
   const saysLines = saysText ? wrap(saysText, `italic ${fsSays}px ${font}`, w - 2 * pad) : [];
-  const bandH = (whatLines.length || saysLines.length || credit) ? pad + whatLines.length * fsCaption * 1.4 + (saysLines.length ? fsSays * 0.4 + saysLines.length * fsSays * 1.35 : 0) + (credit ? fsCredit * 1.8 : 0) + pad : 0;
+  const creditLines = credit ? wrap(credit, `${fsCredit}px ${font}`, w - 2 * pad) : [];   // wrapped too, for a narrow window's picture (29 Oct)
+  const bandH = (whatLines.length || saysLines.length || credit) ? pad + whatLines.length * fsCaption * 1.4 + (saysLines.length ? fsSays * 0.4 + saysLines.length * fsSays * 1.35 : 0) + (credit ? fsCredit * 0.5 + creditLines.length * fsCredit * 1.3 : 0) + pad : 0;
   const ground = view.ground;
 
   const cv = document.createElement('canvas');
@@ -63,16 +69,19 @@ export async function cwStill(view, { long = 4096, honest = null, caption = '', 
   ctx.fillStyle = ground; ctx.fillRect(0, 0, cv.width, cv.height);
 
   const img = ctx.createImageData(w, h);
-  const src = new Uint8ClampedArray(px.buffer, px.byteOffset, w * h * 4);
-  if (flip) { for (let y = 0; y < h; y++) img.data.set(src.subarray((h - 1 - y) * w * 4, (h - y) * w * 4), y * w * 4); }
-  else img.data.set(src);
+  // WebGPU hands every row but the last back padded to 256 bytes: a width that is not a multiple of 64 (a cropped
+  // window's) has a longer stride than its pixels, so the rows are read by the stride (29 Oct 2026; the square stage
+  // never met it, and a 4,096-wide picture has none)
+  const stride = h > 1 ? Math.round((px.length - w * 4) / (h - 1)) : w * 4;
+  const src = new Uint8ClampedArray(px.buffer, px.byteOffset, px.length);
+  for (let y = 0; y < h; y++) { const sy = flip ? h - 1 - y : y; img.data.set(src.subarray(sy * stride, sy * stride + w * 4), y * w * 4); }
   for (let i = 3; i < img.data.length; i += 4) img.data[i] = 255;   // the picture is opaque
   ctx.putImageData(img, 0, 0);
 
   // the scale notes, where they sit on screen (the camera still has the picture's aspect, which is the stage's)
   if (honest) honest.draw(ctx, w, h, scale);
 
-  camera.aspect = oldAspect; camera.updateProjectionMatrix();
+  if (!cropped) { camera.aspect = oldAspect; camera.updateProjectionMatrix(); }
   rt.dispose();
   if (liveTier !== 'full') await view.setTier(liveTier, { quiet: true });
 
@@ -95,7 +104,7 @@ export async function cwStill(view, { long = 4096, honest = null, caption = '', 
       y += fsSays * 1.35;
     });
   }
-  if (credit) { y += fsCredit * 0.5; ctx.font = `${fsCredit}px ${font}`; ctx.fillStyle = inkCredit; ctx.fillText(credit, pad, y); }
+  if (credit) { y += fsCredit * 0.5; ctx.font = `${fsCredit}px ${font}`; ctx.fillStyle = inkCredit; creditLines.forEach(l => { ctx.fillText(l, pad, y); y += fsCredit * 1.3; }); }
 
   return new Promise(res => cv.toBlob(res, 'image/png'));
 }

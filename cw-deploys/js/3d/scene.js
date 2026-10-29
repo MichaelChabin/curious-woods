@@ -65,6 +65,21 @@
    null off the ball); view.onGesture(fn) hears 'start' when a finger, the wheel, the inertia or Reset view starts to
    move the view and 'end' when it has stopped, for a page whose labels hold still while the view moves.
 
+   For the Earth's sixth bench (29 Oct 2026; Spec-Earth-3D *How she handles it* and *Close in, and flat*), five additions,
+   each idle unless a page asks for it, so the Sun bench is as it was:
+   - o.onTap(x, y): a tap (the same tap that picks) in stage pixels; when it answers true, nothing is picked.
+   - view.glideTo(lon, lat, distance, ms): the globe eases to a longitude and latitude at the centre, the short way round,
+     and to a distance from the centre (the height above the ground eased geometrically), as Reset view eases home; a
+     gesture while it runs ends it, and the page hears 'start' and 'end' through onGesture.
+   - view.hold: while true, the fingers, the wheel and the inertia move nothing (the flat world is still); a tap is still
+     heard. view.drawWith(scene, camera) draws another scene through another camera in place of the ball (null: the ball
+     again); view.stage() says which is in force, for a kept picture or a page's own drawing.
+   - view.setFrame({ w, h }): the window is cropped. The picture keeps the scale it has at that size (the window's usual
+     size) and the window shows the middle of it, however narrow, wide, short or tall it is made: the camera takes a view
+     offset of the larger picture (three's setViewOffset), so the Earth stays centred and its size does not follow the
+     window. null: the window is its usual size again. view.refSize() is the size the scale is set by.
+   - o.onReset: called when Reset view is tapped (the page puts back what it changed, the window's size).
+
    Reduced motion (the system setting): the page opens still and the word "Let it move" starts it; "Hold still"
    stops it again. A phone (short side of the screen under 600 px) gets one frame at full tier and the words
    "This one needs a bigger screen"; it takes no gesture — unless the page passes phone: 'run' (the Earth, by
@@ -224,12 +239,17 @@ export async function cwScene(host, o = {}) {
   const dropTier = () => setTier(TIERS[Math.min(TIERS.length - 1, TIERS.indexOf(tier) + 1)]);
 
   // ---------- size ----------
+  let frameRef = null;   // the cropped window's usual size ({ w, h }), whose scale the picture keeps; null when not cropped
   function resize() {
     const w = host.clientWidth || 1, h = host.clientHeight || 1;
     renderer.setSize(w, h, false);
-    camera.aspect = w / h; camera.updateProjectionMatrix();
+    if (frameRef) { camera.aspect = frameRef.w / frameRef.h; camera.setViewOffset(frameRef.w, frameRef.h, (frameRef.w - w) / 2, (frameRef.h - h) / 2, w, h); }
+    else { camera.clearViewOffset(); camera.aspect = w / h; }
+    camera.updateProjectionMatrix();
     needs = true;
   }
+  const refSize = () => frameRef ? { w: frameRef.w, h: frameRef.h } : { w: host.clientWidth || 1, h: host.clientHeight || 1 };
+  let drawScene = null, drawCamera = null, hold = false;   // view.drawWith and view.hold
   if (window.ResizeObserver) new ResizeObserver(resize).observe(host); else window.addEventListener('resize', resize);
 
   // ---------- the loop ----------
@@ -242,6 +262,7 @@ export async function cwScene(host, o = {}) {
     const raw = now - last;
     const dt = Math.min(0.05, raw / 1000); last = now;
     // inertia and the idle turn
+    if (hold) { vel.x = vel.y = 0; }
     if (ptrs.size === 0) {
       if (Math.abs(vel.x) > 1e-4 || Math.abs(vel.y) > 1e-4) { turnBy(vel.x * dt, vel.y * dt); vel.x *= Math.pow(0.08, dt); vel.y *= Math.pow(0.08, dt); needs = true; }
       else if (turn && moving && !touched) { ball.rotateOnWorldAxis(UP, turn * dt); needs = true; }
@@ -252,7 +273,7 @@ export async function cwScene(host, o = {}) {
     if (isBusy !== busy) { busy = isBusy; gestureFns.forEach(fn => fn(busy ? 'start' : 'end')); }
     frameFns.forEach(fn => fn(dt, moving));
     if (moving || needs) {
-      renderer.render(scene, camera);
+      renderer.render(drawScene || scene, drawCamera || camera);
       needs = false;
       fpsCount++;
       if (now - fpsAt >= 500) { fps = Math.round(fpsCount * 1000 / (now - fpsAt)); fpsCount = 0; fpsAt = now; }
@@ -274,7 +295,7 @@ export async function cwScene(host, o = {}) {
   // the globe close in: the ground's own radians a pixel at the centre, rising to the 180° across far out (see the header)
   const homeAlt = Math.max(0.5, home.pos.length() - 1);
   function radPerPx() {
-    const H = Math.min(host.clientWidth || 1, host.clientHeight || 1);
+    const rs = refSize(), H = Math.min(rs.w, rs.h);
     if (!globe) return 1.8 / H;
     const alt = camera.position.length() - 1, ground = alt * 2 * Math.tan(cam.fov * DEG / 2) / H, far = Math.PI / H;
     const r = far / (homeAlt * 2 * Math.tan(cam.fov * DEG / 2) / H), s = THREE.MathUtils.clamp((alt - 1) / Math.max(0.01, homeAlt - 1), 0, 1);
@@ -376,6 +397,7 @@ export async function cwScene(host, o = {}) {
       const now = performance.now(), dx = e.clientX - p.x, dy = e.clientY - p.y, dt = Math.max(1, now - p.t) / 1000;
       p.moved += Math.abs(dx) + Math.abs(dy);
       p.x = e.clientX; p.y = e.clientY; p.t = now;
+      if (hold) return;   // the flat world: nothing moves, a tap is still heard
       if (ptrs.size === 1) {
         if ((p.button === 2 || p.shift) && !globe) panBy(dx, dy);   // the globe never slides off its centre: she looks straight down
         else { const k = radPerPx(); turnBy(dx * k, dy * k); vel.x = dx * k / dt; vel.y = dy * k / dt; }
@@ -398,14 +420,18 @@ export async function cwScene(host, o = {}) {
       ptrs.delete(e.pointerId); pinch = null;
       const now = performance.now();
       if (ptrs.size === 0) {
-        if (p.moved < 8 && now - p.t0 < 350 && p.button === 0) { vel.x = vel.y = 0; pick(e.clientX, e.clientY); }
+        if (p.moved < 8 && now - p.t0 < 350 && p.button === 0) {
+          vel.x = vel.y = 0;
+          const r = canvas.getBoundingClientRect();
+          if (!(o.onTap && o.onTap(e.clientX - r.left, e.clientY - r.top, view))) pick(e.clientX, e.clientY);
+        }
         else if (now - p.t > 80) vel.x = vel.y = 0;   // held still before letting go: no inertia
       } else vel.x = vel.y = 0;
     };
     canvas.addEventListener('pointerup', end);
     canvas.addEventListener('pointercancel', end);
     canvas.addEventListener('contextmenu', e => e.preventDefault());
-    canvas.addEventListener('wheel', e => { e.preventDefault(); wheelUntil = performance.now() + 160; vel.x = vel.y = 0; zoomAt(Math.exp(THREE.MathUtils.clamp(e.deltaY, -60, 60) * 0.0025), e.clientX, e.clientY); if (o.onTouch) o.onTouch(); }, { passive: false });
+    canvas.addEventListener('wheel', e => { if (hold) return; e.preventDefault(); wheelUntil = performance.now() + 160; vel.x = vel.y = 0; zoomAt(Math.exp(THREE.MathUtils.clamp(e.deltaY, -60, 60) * 0.0025), e.clientX, e.clientY); if (o.onTouch) o.onTouch(); }, { passive: false });
   }
 
   function resetView() {
@@ -420,6 +446,23 @@ export async function cwScene(host, o = {}) {
       else ball.quaternion.slerpQuaternions(from.quat, home.quat, s);
       if (u >= 1) ease = null;
     };
+    if (o.onReset) o.onReset(view);
+  }
+  // the globe eases to a place at the centre and a distance (view.glideTo; see the header)
+  function glideTo(lon, lat, dist, ms = 600) {
+    if (!globe) return;
+    const t0 = performance.now(), fromLon = gLon, fromLat = gLat, dLon = wrapLon(lon - gLon);
+    const fromH = camera.position.distanceTo(target3) - 1, toH = THREE.MathUtils.clamp(dist != null ? dist : fromH + 1, cam.min, cam.max) - 1;
+    vel.x = vel.y = 0;
+    ease = now => {
+      const u = Math.min(1, (now - t0) / Math.max(1, ms)), s = u * u * (3 - 2 * u);
+      gLon = fromLon + dLon * s; gLat = THREE.MathUtils.clamp(fromLat + (lat - fromLat) * s, -90, 90);
+      const d = 1 + fromH * Math.pow(toH / fromH, s), dir = camera.position.clone().sub(target3).normalize();
+      camera.position.copy(target3).addScaledVector(dir, d); camera.updateMatrixWorld();
+      applyGlobe(true);
+      if (u >= 1) ease = null;
+    };
+    needs = true;
   }
 
   // ---------- the words ----------
@@ -455,6 +498,12 @@ export async function cwScene(host, o = {}) {
     zoomLimits: () => ({ min: cam.min, max: cam.max }),
     zoomTo: d => { const dir = camera.position.clone().sub(target3).normalize(); camera.position.copy(target3).addScaledVector(dir, THREE.MathUtils.clamp(d, cam.min, cam.max)); camera.updateMatrixWorld(); needs = true; },   // the camera's distance from the centre, for a page's checks
     onGesture: fn => gestureFns.push(fn),
+    glideTo,
+    get hold() { return hold; }, set hold(v) { hold = !!v; if (hold) { vel.x = vel.y = 0; ease = null; } needs = true; },
+    drawWith: (s, c) => { drawScene = s || null; drawCamera = s ? c : null; needs = true; },
+    stage: () => ({ scene: drawScene || scene, camera: drawCamera || camera }),
+    setFrame: f => { frameRef = f && f.w > 0 && f.h > 0 ? { w: f.w, h: f.h } : null; resize(); },
+    refSize,
     get busy() { return busy; },
     onFrame: fn => frameFns.push(fn),
     redraw: () => { needs = true; },
