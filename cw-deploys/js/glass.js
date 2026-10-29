@@ -13,8 +13,10 @@
    opts (R4, 24 Oct 2026; Michael's ruling 10, one mount call; CWVault/claude/Spec-Glass-Shell.md):
      board    the board served, by name:
                 'euclid'   the standalone lab: circles and lines, lead on edges, the map (active/glass-geometry.html)
-                'circles'  Stained Glass Circles: the window profile, circles only, a tap inside a shape colours it,
-                           the circle measured as it is drawn (active/geo-1-glass-circles.html)
+                'circles'  the window profile, circles only, a tap inside a shape colours it, the circle measured
+                           as it is drawn (Stained Glass Circles' board until 29 Oct 2026; no page mounts it now)
+                'theophilus'  Glass 900 years ago: the window profile with circles and lines, no grid, numbers on
+                           the axes, the controls inside the How this works boxes (active/geo-1-glass-circles.html)
                 any name registered under CW.boards by a script in js/boards/ (the Wright window, js/boards/wright.js,
                            as 'wright'): the window profile standing on the shell's interface. The page loads the
                            board's script after this one.
@@ -369,9 +371,15 @@
   CW.boards = CW.boards || {};
   // The two boards still inside this file, served by the same mount word: the standalone lab and Stained Glass
   // Circles (the window profile at the circles level, the circle measured as it is drawn, Michael 14 Oct 2026).
+  // Glass 900 years ago (29 Oct 2026, Michael's prompt claude/Prompt-Build-Glass-900-Years-Ago.md): the window
+  // profile with circles and lines, named for the story's person as the Wright window is. No grid and no Finer;
+  // numbers on the axes (axisNumbers); the column's other words in the boxes How this works opens (boxes); the
+  // demos named. The circles board stays in the file, unused by any page.
   var IN_FILE_BOARDS = {
     euclid:  { level: 'both',    app: false },
-    circles: { level: 'circles', app: true, measure: true, madeWord: 'Show circles' }
+    circles: { level: 'circles', app: true, measure: true, madeWord: 'Show circles' },
+    theophilus: { level: 'both', app: true, measure: true, madeWord: 'Show circles and lines', grid: false, axisNumbers: true, boxes: true,
+                  demos: ['Rose', 'Top'], powers: { map: false, htw: ['box-make', 'box-color', 'box-files', 'box-demos'] } }
   };
 
 function cwGlass(host, opts) {
@@ -395,9 +403,12 @@ var levelName = profile ? profile.level : BOARD_NAME;   // the record's and the 
 var APP = profile ? profile.app : true;
 // A board on the interface has the window profile's powers and nothing of the engine's; its tips and its made
 // word are filled in from the board once it is built (THE BOARD, below).
-var POWERS = profile ? LEVELS[levelName] : { circle: false, line: false, htw: [], map: false, madeWord: '', fill: 'tap', measure: false };
+var POWERS = profile ? Object.assign({}, LEVELS[levelName], profile.powers || {}) : { circle: false, line: false, htw: [], map: false, madeWord: '', fill: 'tap', measure: false };
 var FILL_MODE = APP ? 'tap' : (POWERS.fill || 'edge');
 var MEASURE = profile ? !!profile.measure : false;
+var GRID = !(profile && profile.grid === false);              // the grid behind the plane, and Finer with it
+var AXIS_NUMBERS = !!(profile && profile.axisNumbers);        // a point on either axis wears its number (AXIS NUMBERS, below)
+var BOXES = !!(profile && profile.boxes);                     // the controls in the boxes How this works opens (BOXES, below)
 function madeWord() { return board ? board.madeWord : (profile.madeWord || POWERS.madeWord); }
 var REMOVE = 'remove';            // the palette's sentinel for the chip that takes colour away (window profile)
 var currentKey = null, fromDemo = false, currentDemo = null;   // what Save would overwrite (window profile)
@@ -2848,8 +2859,8 @@ function render() {
         ctx.globalAlpha = 1;
     }
 
-    // The ambient lattice, under everything the child has made
-    if (mapShown && !showGlass) plane.drawLattice(ctx);
+    // The ambient lattice, under everything the child has made (none on a board without a grid)
+    if (GRID && mapShown && !showGlass) plane.drawLattice(ctx);
 
     // The glass and its came: largest first, smallest on top, each fill's lead right after its glass.
     drawScene(ctx, w2s, plane.zoom(), { fills: 'sorted', lead: 'each', leadWidth: LEAD_WIDTH });
@@ -2948,6 +2959,13 @@ function render() {
         ctx.strokeStyle=COLORS.active; ctx.lineWidth=3; ctx.globalAlpha=pulse;
         ctx.beginPath(); ctx.arc(s.x,s.y,8,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1;
     }
+    // The point a line is waiting on (the window profile, 29 Oct 2026): a copper ring breathing round it until
+    // the second tap, so a finger, which has no hover to draw the ghost line, sees that the first tap took.
+    if (APP && interactionState === 'AWAITING_SECOND_TAP' && firstTapPoint && !showGlass) {
+        var sw0 = w2s(firstTapPoint.x, firstTapPoint.y), breath = 0.55 + 0.35 * Math.sin(Date.now() / 260);
+        ctx.strokeStyle = COLORS.point; ctx.lineWidth = 2; ctx.globalAlpha = breath;
+        ctx.beginPath(); ctx.arc(sw0.x, sw0.y, 9, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
+    }
 
     // Draw eraser cursor when active or briefly flashing after release
     var showEraserFlash = eraserFlash && (Date.now() - eraserFlashTime) < 350;
@@ -2957,7 +2975,7 @@ function render() {
         drawEraserCursor(mouseScreenPos.x, mouseScreenPos.y, eraserAngle);
     } else {
         // (state is declared below the render loop's first frame; hence the guard)
-        canvas.style.cursor = (FILL_MODE === 'tap' && typeof state === 'object' && state && state.workspaceTools['palette'] && state.palette.selected !== null) ? RING_CURSOR : '';
+        canvas.style.cursor = (FILL_MODE === 'tap' && typeof state === 'object' && state && (state.workspaceTools['palette'] || boxOpen('box-color')) && state.palette.selected !== null) ? RING_CURSOR : '';
     }
 
     // Just the glass (ledger §9): the finished window shows glass, lead and
@@ -3025,7 +3043,7 @@ function render() {
         ctx.restore();
     });
 
-    drawAxisLabels();
+    if (AXIS_NUMBERS) drawAxisNumbers(); else drawAxisLabels();
 
     // The pixel floor, part of the map's furniture: the lab's own until R5, as minting is
     if (mapShown && !showGlass && POWERS.map) drawPixelFloorReadout();
@@ -3150,6 +3168,67 @@ function drawAxisLabels() {
         ctx.fillText(lb.text, lb.x + 5, lb.y - 3);
     });
     ctx.restore();
+}
+
+// ============================================================
+// AXIS NUMBERS (Glass 900 years ago, 29 Oct 2026; a board with axisNumbers)
+// What:    The x axis is the line through 0 and 1; the y axis the line through 0 at right angles to it,
+//          up positive. A point that lies on either wears its number beside it, fading in as the point
+//          appears, whether or not she has drawn that axis; 0 and 1 from the start. Points anywhere
+//          else wear none. A number is named exactly when it is a whole number or a fraction (2, −1, 1/2);
+//          a point whose number is neither (√3) wears none in this version, which is open.
+// How exact: the engine keeps positions as floating-point numbers, not exact values. A position is read
+//          as a fraction p/q when it lies within AXIS_TOL of one with q no larger than AXIS_MAX_DENOM,
+//          the smallest such q winning. Arithmetic error in a crossing is far below the tolerance, and a
+//          number that is not a fraction (√2, √3, the golden ratio) stays far outside it at every q up to
+//          the limit, so the test tells them apart. The same tolerance decides that a point is on an axis.
+// Depends: points, PARAMS (birthDuration), plane (unitLength, declared at the init replay), w2s(), showGlass
+// Exposes: axisNumberText(v), drawAxisNumbers()
+// ============================================================
+
+var AXIS_TOL = 1e-9, AXIS_MAX_DENOM = 100;   // in metres (the 0-to-1 distance)
+var axisNumberSeen = new Map();              // a number's first frame, for its fade-in: point id and text → time
+function axisNumberText(v) {
+    for (var q = 1; q <= AXIS_MAX_DENOM; q++) {
+        var p = Math.round(v * q);
+        if (Math.abs(v - p / q) > AXIS_TOL) continue;
+        if (p === 0) return '0';
+        var sign = p < 0 ? '−' : '';
+        return q === 1 ? sign + Math.abs(p) : sign + Math.abs(p) + '/' + q;
+    }
+    return null;
+}
+function drawAxisNumbers() {
+    if (showGlass) return;
+    var s0 = points.get('seed:0'), s1 = points.get('seed:1'); if (!s0 || !s1) return;
+    var unit = plane.unitLength(); if (!(unit > 0)) return;
+    var ex = (s1.x - s0.x) / unit, ey = (s1.y - s0.y) / unit;   // along the x axis; the y axis is this turned a quarter, anticlockwise
+    var now = Date.now(), live = {};
+    ctx.save();
+    ctx.font = '11px Georgia, serif'; ctx.fillStyle = '#546A80';
+    ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
+    points.forEach(function(pt) {
+        if (pt.isScaffold) return;
+        var dx = (pt.x - s0.x) / unit, dy = (pt.y - s0.y) / unit;
+        var u = dx * ex + dy * ey, w = -dx * ey + dy * ex;   // the point's place along each axis, in metres
+        var text = null;
+        if (Math.abs(w) <= AXIS_TOL) text = axisNumberText(u);
+        else if (Math.abs(u) <= AXIS_TOL) text = axisNumberText(w);
+        if (text === null) return;
+        // Its own clock, not the point's birth animation, which the record restarts for every point at each new mark.
+        var key = pt.id + '@' + text; live[key] = true;
+        if (!axisNumberSeen.has(key)) axisNumberSeen.set(key, now);
+        var grow = Math.min(1, (now - axisNumberSeen.get(key)) / PARAMS.birthDuration);
+        var s = w2s(pt.x, pt.y);
+        // A thin parchment halo, so a number stays legible where it sits on glass (0 at the corner of a pane).
+        ctx.globalAlpha = 0.8 * grow;
+        ctx.strokeStyle = COLORS.background; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+        ctx.strokeText(text, s.x + 5, s.y - 3);
+        ctx.fillText(text, s.x + 5, s.y - 3);
+    });
+    ctx.restore();
+    // A number whose point has gone (Undo, New, another design) is forgotten, so it fades in again if the point returns.
+    axisNumberSeen.forEach(function(t, key) { if (!live[key]) axisNumberSeen.delete(key); });
 }
 
 var alive = true, rafId = 0;
@@ -3577,7 +3656,7 @@ function onDown(e) {
     // ── 0. Just the glass: the finished window. A tap colours glass or pans; it
     //      never starts a line, lays lead, places a note undoes, or forks a replay (Michael, 2 Oct 2026).
     if (showGlass) {
-        if (interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; interactionState='IDLE'; selectedPoint=null; }
+        if (interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; interactionState='IDLE'; selectedPoint=null; if (APP) return; }
         isPanning=true; panStart={ pan:plane.pan(), sx:pos.x, sy:pos.y };
         return;
     }
@@ -3654,6 +3733,9 @@ function onDown(e) {
     }
 
     // ── 4. Palette action on fills ───────────────────────────────────────────
+    // The window profile with lines (29 Oct 2026): while a line is waiting, a tap anywhere but another point
+    // cancels it and colours nothing, glass included.
+    if (APP && interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; interactionState='IDLE'; selectedPoint=null; return; }
     var paletteActive = state.palette.selected !== null;
     if (paletteActive && hitFilledRegion(world.x, world.y)) {
         if (interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; interactionState='IDLE'; selectedPoint=null; }
@@ -4184,6 +4266,7 @@ function initColorPanel() {
         state.palette.pendingOpen = false;
         openColorTool();
     }
+    if (BOXES && boxOpen('box-color')) refreshBoxColours();   // the Color box opened before the palettes arrived
 }
 
 // ============================================================
@@ -4298,6 +4381,7 @@ function openPaletteTool(paletteId) {
     if (nameBtn) nameBtn.textContent = pal.name;
     buildPaletteSwatches(paletteId,$('palette-grid'));
     buildCraftRow($('craft-row'));
+    if (BOXES) return;   // the colours live in the Color box (BOXES): the new set is in it already
     if (state.workspaceTools['palette']) { pulseWorkspaceTool('palette'); return; }
     // Open over the workspace at its top right, or where the child last left it.
     // The right side because the Color tip window hangs to the left of the
@@ -4336,11 +4420,15 @@ function buildPaletteSwatches(paletteId, grid) {
         var recipe=c.uncertain?c.recipe+'?':c.recipe;
         sw.addEventListener('mouseenter', function() { setRecipe(recipe); });
         sw.addEventListener('mouseleave', function() { setRecipe(''); });
-        sw.addEventListener('click', function() {
+        function pick() {
             state.palette.selected=c.hex;
             root.querySelectorAll('.g-palette-grid .palette-swatch, .g-craft-row .palette-swatch').forEach(function(s) { s.classList.remove('selected'); });
             sw.classList.add('selected'); setRecipe(recipe);
-        });
+        }
+        sw.addEventListener('click', pick);
+        // On an iPad the first tap on a swatch runs its hover (the recipe line) and Safari holds back the click; in a box
+        // (BOXES, 29 Oct 2026) a touch's release picks the colour itself. Picking twice is picking once.
+        if (BOXES) sw.addEventListener('pointerup', function(e) { if (e.pointerType !== 'mouse') pick(); });
         if (state.palette.selected===c.hex) sw.classList.add('selected');
         grid.appendChild(sw);
     });
@@ -4358,12 +4446,14 @@ function buildCraftRow(row) {
         if (c.border) sw.style.border='1.5px solid #c8b89a';
         sw.addEventListener('mouseenter', function() { setRecipe(c.recipe); });
         sw.addEventListener('mouseleave', function() { setRecipe(''); });
-        sw.addEventListener('click', function() {
+        function pick() {
             // In the window profile the first chip takes a pane's colour away, lead and all.
             state.palette.selected=(APP && c.border) ? REMOVE : c.hex;
             root.querySelectorAll('.g-palette-grid .palette-swatch, .g-craft-row .palette-swatch').forEach(function(s) { s.classList.remove('selected'); });
             sw.classList.add('selected'); setRecipe(c.recipe);
-        });
+        }
+        sw.addEventListener('click', pick);
+        if (BOXES) sw.addEventListener('pointerup', function(e) { if (e.pointerType !== 'mouse') pick(); });   // as the swatches above
         if (state.palette.selected===c.hex || (APP && c.border && state.palette.selected===REMOVE)) sw.classList.add('selected');
         row.appendChild(sw);
     });
@@ -5281,6 +5371,46 @@ var HTW_STAGES = [
         ]
     },
     // save and newopen are direct action words in the panel, not tip window stages
+    // The four boxes of Glass 900 years ago (29 Oct 2026; Michael's words, exactly as the prompt gives them). A
+    // line's `control` is the control that sits under it in the box and works while the box is open (BOXES, below).
+    // No trigger after the first, and none fades: a box with controls in it stays until she closes it.
+    {
+        id: 'box-make',
+        label: 'Circles and Lines',
+        trigger: function() { return true; },
+        suppress: function() { return false; },
+        content: [
+            { text: 'To make a circle, tap a point, then drag to another point.' },
+            { text: 'To make a line, tap a point, then tap another.' },
+            { text: 'Where shapes intersect, new points appear. Use these to build still more circles and lines.' }
+        ]
+    },
+    {
+        id: 'box-color',
+        label: 'Color',
+        content: [
+            { text: 'To color your glass, tap a color, then tap a shape.', control: 'colours' },
+            { text: 'Use the slider to change the thickness of the lead.', control: 'slider' },
+            { text: 'Tap Glass Only to see your finished design.', control: 'glass' },
+            { text: 'Tap Choose New Colors to select a new set of colors to use.', control: 'choose' }
+        ]
+    },
+    {
+        id: 'box-files',
+        label: 'New Open Save',
+        content: [
+            { text: 'Tap Save to give your construction a name and save it on your computer.', control: 'save' },
+            { text: 'Tap Open to open a construction you’ve saved.', control: 'open' },
+            { text: 'Tap New to start a new construction from scratch.', control: 'new' }
+        ]
+    },
+    {
+        id: 'box-demos',
+        label: 'Demos',
+        content: [
+            { text: 'Tap any of these to see sample constructions.', control: 'demos' }
+        ]
+    }
 ];
 // A board's tips come from the board, after the circles level's and before the rest; each
 // carries its own fade rule. The board decides which stages exist; the rest are simply absent, triggers included.
@@ -5309,6 +5439,8 @@ var HTW_ACTIONS = {
     eraser:       function() { openHtwOnCanvas('eraser'); },
     // save and newopen are now direct action words in the panel, not tip window stages
 };
+// The boxes open as tips do; the Color box carries the colours itself, so no colour window opens with it.
+['box-make', 'box-color', 'box-files', 'box-demos'].forEach(function(id) { HTW_ACTIONS[id] = function() { openHtwOnCanvas(id); }; });
 // A board's tips open the same way; a colour tip opens the colour window first.
 (board ? board.tips : []).forEach(function(t) {
     HTW_ACTIONS[t.id] = t.colour ? function() { openColorTool(); openHtwOnCanvas(t.id); } : function() { openHtwOnCanvas(t.id); };
@@ -5338,6 +5470,7 @@ var HTW_TIP_ACTIONS = {
 function htwBuildBody(stageIdx) {
     var stage = HTW_STAGES[stageIdx];
     var bodyEl = $('htw-canvas-body');
+    if (BOXES) parkBoxControls();   // the last box's controls go home before its words are cleared
     bodyEl.innerHTML = '';
     stage.content.forEach(function(item) {
         if (item.text === '') { bodyEl.appendChild(document.createElement('br')); return; }
@@ -5369,8 +5502,53 @@ function htwBuildBody(stageIdx) {
             }
         }
         bodyEl.appendChild(p);
+        if (BOXES && item.control && BOX_CTL[item.control]) bodyEl.appendChild(BOX_CTL[item.control]);
     });
+    if (BOXES && stage.id === 'box-color') refreshBoxColours();
 }
+
+// ============================================================
+// BOXES (Glass 900 years ago, 29 Oct 2026; a board with boxes)
+// What:    The column holds How this works and four items, then Undo, Share, Full screen and Reset view.
+//          Every other control lives in the box its item opens, under the sentence that explains it, and
+//          works while the box is open: the colours, the lead slider, Glass only and Choose new colors in
+//          Color; New, Open and Save in New Open Save; the demo list in Demos. Each control is the lab's
+//          own element, moved, so its wiring is the one it always had; between boxes they wait in a hidden
+//          park. The palette's floating window is not used on this board: Choose new colors brings the
+//          new set into the Color box.
+// Depends: the palette tool's elements, the action words, the tip window (htwBuildBody, htwActiveStageIdx)
+// Exposes: setUpBoxes(), parkBoxControls(), refreshBoxColours(), boxOpen(id)
+// ============================================================
+
+var boxPark = null, BOX_CTL = {};
+function setUpBoxes() {
+    boxPark = document.createElement('div'); boxPark.className = 'g-box-park'; boxPark.style.display = 'none';
+    root.appendChild(boxPark);
+    function ctl(name, els, css) {
+        var d = document.createElement('div'); d.className = 'g-box-ctl'; d.style.cssText = css || 'margin:-2px 0 11px 12px;';
+        els.forEach(function(e) { if (e) d.appendChild(e); });
+        boxPark.appendChild(d); BOX_CTL[name] = d;
+    }
+    ctl('colours', [$('palette-grid'), $('craft-row'), $('palette-recipe')], 'margin:2px 0 10px 0;width:132px;');
+    ctl('slider', [root.querySelector('.g-tool-palette .lead-slider-row')], 'margin:0 0 12px 0;width:132px;');
+    ctl('glass', [$('glass-toggle')]);
+    var choose = $('palette-choose'); choose.style.marginTop = '0';
+    ctl('choose', [choose]);
+    ctl('save', [$('htw-action-save')]);
+    ctl('open', [$('htw-action-open')]);
+    ctl('new',  [$('htw-action-new')]);
+    var demos = document.createElement('div'); demos.className = 'g-demo-list';
+    demos.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;';
+    ctl('demos', [demos]);
+}
+function parkBoxControls() { Object.keys(BOX_CTL).forEach(function(k) { boxPark.appendChild(BOX_CTL[k]); }); }
+function refreshBoxColours() {
+    var id = state.palette.current || 'chartres_glass';
+    if (!PALETTES_DATA[id]) return;   // not loaded yet: initColorPanel calls again when it is
+    buildPaletteSwatches(id, $('palette-grid'));
+    buildCraftRow($('craft-row'));
+}
+function boxOpen(id) { return BOXES && htwActiveStageIdx >= 0 && HTW_STAGES[htwActiveStageIdx] && HTW_STAGES[htwActiveStageIdx].id === id; }
 
 function toggleHtwPanel() {
     var list = $('htw-panel-list');
@@ -5393,10 +5571,16 @@ function openHtwOnCanvas(stageId) {
     } else {
         var s0 = w2s(-100, 0);
         var winW = 248, winH = 260;
-        el.style.left = Math.max(s0.x - winW - 20, 10) + 'px';
+        // A box (BOXES) opens clear of the column, whose items she may want next, and of 0 and 1: left of 0
+        // where that clears the column, else right of 1 where there is room (an iPad upright), else as before.
+        var leftOf0 = s0.x - winW - 20, rightOf1 = w2s(100, 0).x + 20;
+        if (BOXES && leftOf0 < PANEL_BASE_WIDTH + 20 && rightOf1 + winW <= hostW() - BOX_MARGIN_RIGHT) el.style.left = rightOf1 + 'px';
+        else el.style.left = Math.max(leftOf0, BOXES ? PANEL_BASE_WIDTH + 20 : 10) + 'px';
         el.style.top  = Math.max(Math.round(s0.y - winH / 2), 20) + 'px';
     }
     el.style.opacity = '0'; el.style.display = '';
+    // A box can be tall (the Color box holds the palette): kept inside the host, top and bottom.
+    if (BOXES) el.style.top = Math.max(10, Math.min(parseInt(el.style.top, 10) || 0, hostH() - el.offsetHeight - 10)) + 'px';
     requestAnimationFrame(function() {
         el.style.transition = 'opacity 200ms ease-in'; el.style.opacity = '1';
         setTimeout(function() { el.style.transition = ''; }, 220);
@@ -5496,17 +5680,21 @@ function pulsePanelBullet(stageId) {
 function buildDemoList() {
     var box = $('demo-list'); if (!box) return;
     box.innerHTML = '';
-    // At circles, what the compass alone can make; on a board, what was made for it.
-    CX_BUILTINS.filter(function(cx) { return board ? cx.level === levelName : (!cx.level && cx.usesLines === false); }).slice(0, 8).forEach(function(cx) {
+    // At circles, what the compass alone can make; on a board, what was made for it; where the board names its
+    // demos (Glass 900 years ago), those, in its order.
+    var named = profile && profile.demos;
+    var list = named ? named.map(function(n) { return CX_BUILTINS.find(function(cx) { return cx.name === n && !cx.level; }); }).filter(Boolean)
+                     : CX_BUILTINS.filter(function(cx) { return board ? cx.level === levelName : (!cx.level && cx.usesLines === false); });
+    list.slice(0, 8).forEach(function(cx) {
         var w = document.createElement('span'); w.className = 'htw-action-word'; w.textContent = cx.name;
         w.addEventListener('click', function() {
+            if (BOXES && htwActiveStageIdx >= 0) closeHtwCanvas();   // the box steps aside so the demo can be seen
             if (currentDemo === cx && isStepThroughActive()) { stopReplayPlay(); stepFirst(); startReplayPlay(); return; }
             checkWipThen(function() { loadConstructionEntry(cx, function() { currentDemo = cx; startReplayPlay(); }); });
         });
         box.appendChild(w);
     });
 }
-
 function initHowThisWorks() {
     if (HTW_DEBUG_RESET) { localStorage.removeItem(HTW_KEY); HTW_STAGES.forEach(function(s) { localStorage.removeItem(HTW_KEY + '-' + s.id); }); }
 
@@ -5537,10 +5725,14 @@ function initHowThisWorks() {
         var list2 = $('htw-panel-list');
         list2.style.maxHeight = '640px';
         var rowAct = $('htw-action-new').parentNode, rowGlass = $('glass-toggle').parentNode;
+        // With boxes the column keeps Undo, Share, Full screen and Reset view; Glass only, New Open Save and the
+        // demos go to the boxes (BOXES), and their rows go with them.
+        if (BOXES) setUpBoxes();
         var undo = document.createElement('span'); undo.className = 'htw-action-word g-undo'; undo.textContent = 'Undo';
         undo.addEventListener('click', function() { if (isStepThroughActive()) forkStepThrough(); undoOp(); });
         rowGlass.appendChild(undo); rowGlass.style.marginTop = '12px';
         list2.insertBefore(rowGlass, rowAct);
+        if (BOXES) rowAct.remove();
         // Lock (R2, 24 Oct 2026): on a board with a frame, present while the frame is still free. A
         // board without a frame has no row at all (an empty row would still take its margin).
         if (frame) {
@@ -5556,21 +5748,24 @@ function initHowThisWorks() {
         reset.style.cssText = 'font-size:11px;opacity:0.7;display:none;';
         reset.addEventListener('click', function() { homeView(); syncCanvasNoteDOMs(); });
         rowReset.appendChild(reset); list2.appendChild(rowReset);
-        var rowDemo = document.createElement('li'); rowDemo.className = 'htw-action-row'; rowDemo.style.cssText = 'margin-top:14px;padding-left:0;';
-        var dh = document.createElement('span'); dh.className = 'g-demo-heading'; dh.textContent = 'Demo';
-        dh.style.cssText = 'font-family:Georgia,serif;font-size:14px;color:#546A80;line-height:1;cursor:default;';
-        rowDemo.appendChild(dh); list2.appendChild(rowDemo);
-        var demos = document.createElement('li'); demos.className = 'g-demo-list';
-        demos.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-top:8px;padding-left:12px;';
-        list2.appendChild(demos);
+        if (!BOXES) {
+            var rowDemo = document.createElement('li'); rowDemo.className = 'htw-action-row'; rowDemo.style.cssText = 'margin-top:14px;padding-left:0;';
+            var dh = document.createElement('span'); dh.className = 'g-demo-heading'; dh.textContent = 'Demo';
+            dh.style.cssText = 'font-family:Georgia,serif;font-size:14px;color:#546A80;line-height:1;cursor:default;';
+            rowDemo.appendChild(dh); list2.appendChild(rowDemo);
+            var demos = document.createElement('li'); demos.className = 'g-demo-list';
+            demos.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-top:8px;padding-left:12px;';
+            list2.appendChild(demos);
+        }
         buildDemoList();
         if (board && board.mount) board.mount(root);   // the board's own furniture (the Wright window's colour totals)
         updateViewingWords();   // the words just made take their presence from the board as it is
     }
 
     // Finer (R3, 24 Oct 2026): one word on every board that steps the grid whole → halves → tenths
-    // and round again; a viewing entry in the record. After the Glass only row in either column.
-    (function () {
+    // and round again; a viewing entry in the record. After the Glass only row in either column. Not on a board
+    // without a grid.
+    if (GRID) (function () {
         var rowGlass2 = $('glass-toggle').parentNode;
         var rowFiner = document.createElement('li'); rowFiner.className = 'htw-action-row';
         var fw = document.createElement('span'); fw.className = 'htw-action-word g-finer'; fw.textContent = 'Finer';
@@ -5621,6 +5816,7 @@ function initHowThisWorks() {
     el.addEventListener('pointerdown', function(e) {
         if (e.target.classList.contains('g-htw-close')) return;
         if (e.target.classList.contains('htw-action')) return;
+        if (e.target.closest && e.target.closest('.g-box-ctl')) return;   // a control in a box (BOXES) is used, not dragged
         e.preventDefault();
         dragging = true; sx = e.clientX; sy = e.clientY;
         ox = parseInt(el.style.left) || 0; oy = parseInt(el.style.top) || 0;

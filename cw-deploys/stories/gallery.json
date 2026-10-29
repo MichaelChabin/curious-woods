@@ -27,15 +27,6 @@
     "size": "medium"
   },
   {
-    "slug": "glass-geometry",
-    "title": "Stained Glass",
-    "href": "active/glass-geometry.html",
-    "picture": "art/gallery/glass-geometry-gallery.jpg",
-    "frame": "#2b3f6b",
-    "frameWidth": 14,
-    "size": "large"
-  },
-  {
     "slug": "hokusai-the-great-wave",
     "title": "Hokusai: The Great Wave",
     "href": "active/hokusai-the-great-wave.html",
@@ -109,7 +100,7 @@
   },
   {
     "slug": "stained-glass-circles",
-    "title": "Stained Glass Circles",
+    "title": "Glass 900 years ago",
     "href": "active/geo-1-glass-circles.html",
     "picture": "art/gallery/stained-glass-circles-gallery.png",
     "frame": "#2f4a8a",
