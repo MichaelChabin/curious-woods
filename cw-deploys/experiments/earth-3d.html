@@ -45,6 +45,13 @@
      the shelf and floor laid on the ball by the pieces' own shader; the coast and the ICE-6G ice at the view's own detail;
      the dozen cities and the map's own places on the ball by the map's placer. Bench only: the map beside the Earth at the
      same place and scale (cwMapAt), for the comparison pictures.
+     Step 5 revised (29 Oct; Michael's rulings on step 5, Prompt-Revise-Earth-Bench-05.md): this side of the seam the
+     continents stand where they are today and the ball of today's ground under them fades with the photograph, gone at the
+     seam; the lakes keep their water (on Safari the data tiles' 0s came back as 1s and a lowered sea bared them in buff
+     speckles; they now go through an Image); today's coasts only on their word, at every age; the pieces' pale wash over
+     the sea not drawn this side of the seam, coming in past it; one list of places, each once, all with the halo, and the
+     word *places* turning them off and on; land lighter settled at 100, its slider gone. Bench only: ?at=lon,lat,km opens
+     straight down on a place (for the iPad simulator).
      The Earth wears the Time Machine's icon for now; it has none of its own. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
@@ -102,7 +109,6 @@
   .age output { display: block; margin-top: 2px; font-size: 15px; color: var(--cw-ink-soft, #6b655a); font-variant-numeric: tabular-nums; }
   .age.fine { margin-top: 10px; }
   .age.fine label { color: var(--cw-ink-soft, #6b655a); font-size: 15px; }
-  .age.lift { max-width: 360px; }
   .readout { margin: 10px 0 0; font-size: 12px; color: var(--cw-grey-word, #7d7a72); font-variant-numeric: tabular-nums; line-height: 1.4; }
   .credit { margin: 18px 0 0; font-size: 13px; color: var(--cw-ink-soft, #6b655a); }
   #fail { color: var(--cw-vermilion, #c84830); display: none; margin: 12px 0 0; white-space: pre-wrap; font-size: 13px; }
@@ -130,6 +136,7 @@
     <div class="left" id="words">
       <div class="pair"><button class="word" id="wBlue" type="button" aria-pressed="false">Blue Marble</button><span class="slash">/</span><button class="word" id="wOld" type="button" aria-pressed="true">old ground</button></div>
       <button class="word" id="wCoasts" type="button" aria-pressed="false">today’s coasts</button>
+      <button class="word" id="wPlaces" type="button" aria-pressed="true">places</button>
       <button class="word" id="wGuess" type="button">another guess</button>
       <button class="word" id="wOldGlobe" type="button" aria-pressed="false">old globe</button>
     </div>
@@ -137,7 +144,7 @@
       <div class="stage-box">
         <div id="stage3d" class="stage"></div>
         <div class="under honest" id="honestBlock"></div>
-        <p class="under">bench only: the fine slider, land lighter, and <i>another guess</i> giving both globes the same new guess</p>
+        <p class="under">bench only: the fine slider, and <i>another guess</i> giving both globes the same new guess</p>
         <div id="still"><img alt="The Earth, a still picture" src="../art/globe/earth-3d-still.webp"><p class="under" id="stillLine">This one needs a newer device.</p></div>
       </div>
       <div class="stage-box" id="box2d">
@@ -154,10 +161,6 @@
     <label for="fine">3 million years<output id="fineWord" for="fine">bench only</output></label>
     <div><input type="range" id="fine" min="0" max="1000" step="1" value="0" aria-label="Age, a window of three million years round the main slider's"><div class="fine-ends"><span id="fineFrom">today</span><span id="fineTo">3 million years ago</span></div></div>
   </div>
-  <div class="age fine lift">
-    <label for="lift">land lighter<output id="liftWord" for="lift">100</output></label>
-    <input type="range" id="lift" min="0" max="200" step="1" value="100" aria-label="The photograph's land, as it was to lighter still">
-  </div>
   <p class="readout" id="readout"></p>
   <p id="fail"></p>
   <figure id="kept"><img alt="The kept picture"><figcaption><a id="save" download="the-earth.png">Save the picture</a><a href="#" id="unkeep">Close</a><span class="meta" id="keptMeta"></span></figcaption></figure>
@@ -165,11 +168,11 @@
 </div>
 
 <script type="module">
-  const CW_VERSION = '2026-10-28 b1a514c · earth-3d step 5';   // 28 Oct: close in — the tiles on the ball, the marks, the old globe behind a word; and 4d's fine window and land lighter   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-29 53ca022 · earth-3d step 5b';   // 29 Oct: the continents still this side of the seam, the lakes, the coasts on their word, no wash this side, one list of places, land lighter at 100   // date + short commit hash; bump in the same commit as any change
   console.log('earth-3d', CW_VERSION);
   import * as THREE from 'three';
   import { cwScene } from '../js/3d/scene.js?v=2026-10-28e';
-  import { cwEarth } from '../js/3d/earth.js?v=2026-10-28n';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-10-29a';
   import { cwHonest } from '../js/3d/honest.js?v=2026-10-28a';
   import { cwStill } from '../js/3d/still.js?v=2026-10-28a';
 
@@ -195,7 +198,7 @@
   // the seed: one for both globes, so the same guess shows on each (the spec: the same seed gives the same guess in both
   // engines); ?seed= fixes it for a check, otherwise this visit's, made as globe.js makes one
   const seed0 = Q.get('seed') ? +Q.get('seed') : ((Date.now() % 1000003) + Math.floor(Math.random() * 1000));
-  const state = { ground: 'old', lift: Q.get('lift') ? Math.max(0, Math.min(2, +Q.get('lift'))) : 1, coasts: Q.get('coasts') === '1', ma: 0, seed: seed0, oldGlobe: Q.get('old') === '1' };
+  const state = { ground: 'old', coasts: Q.get('coasts') === '1', places: Q.get('places') !== '0', ma: 0, seed: seed0, oldGlobe: Q.get('old') === '1' };
   let view = null, earth = null, g2d = null, honest = null, syncing = false;
 
   // ---------- the 3D Earth ----------
@@ -211,7 +214,7 @@
       onTurn: v => { if (g2d && !syncing) { syncing = true; const t = v.turnOf(); g2d.turn(t.lon, t.lat); syncing = false; } },
       onTier: async (tier) => { if (earth) await earth.setTier(tier); }
     });
-    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, landLift: state.lift, coldTiles: Q.get('cold') === '1' });   // ?cold=1: tiles past the browser's cache (bench only, for timing)
+    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, coldTiles: Q.get('cold') === '1' });   // ?cold=1: tiles past the browser's cache (bench only, for timing)
     await earth.setTier(view.tier);
     // the honest block (Standard-Interactives §5, §8): no scale note and no bracket — on a true ball nothing is stretched;
     // the crust's note waits for Cut open. The block under the stage says what the picture is, what it says, and the credit
@@ -252,12 +255,11 @@
   // ---------- the words ----------
   function pressed(on, off) { on.setAttribute('aria-pressed', 'true'); off.setAttribute('aria-pressed', 'false'); }
   function setGround(g) { state.ground = g; if (earth) earth.setGround(g); pressed($(g === 'blue' ? 'wBlue' : 'wOld'), $(g === 'blue' ? 'wOld' : 'wBlue')); $('credit').textContent = CREDITS[g]; if (honest) tellGrade(); }
-  // bench only: the land lighter, 0 as now to 1 clearly lighter (Michael names the setting; it becomes a constant)
-  // (step 4d: Michael's 100 is the default; the slider goes to 200 for one more look)
-  function setLift(v) { state.lift = Math.max(0, Math.min(2, v)); if (earth) earth.setLandLift(state.lift); $('lift').value = Math.round(state.lift * 100); $('liftWord').value = state.lift === 0 ? 'as it was' : String(Math.round(state.lift * 100)); }
   // the old globe on a word (step 5): hidden, it keeps drawing at its side-by-side size out of sight
   function setOldGlobe(on) { state.oldGlobe = !!on; $('stages').classList.toggle('solo', !on); $('wOldGlobe').setAttribute('aria-pressed', on ? 'true' : 'false'); }
   function setCoasts(on) { state.coasts = !!on; if (earth) earth.setCoasts(on); $('wCoasts').setAttribute('aria-pressed', on ? 'true' : 'false'); }
+  // the places on the ball, all of them, off and on (step 5b)
+  function setPlaces(on) { state.places = !!on; if (earth) earth.setPlaces(on); $('wPlaces').setAttribute('aria-pressed', on ? 'true' : 'false'); }
   // another guess: the 2D globe draws the new seed and the 3D takes the same one, so both show one world
   let guessMs = null;
   function anotherGuess() {
@@ -269,13 +271,13 @@
   }
   $('wBlue').addEventListener('click', () => setGround('blue'));
   $('wOld').addEventListener('click', () => setGround('old'));
-  $('lift').addEventListener('input', () => setLift(+$('lift').value / 100));
   $('wCoasts').addEventListener('click', () => setCoasts(!state.coasts));
+  $('wPlaces').addEventListener('click', () => setPlaces(!state.places));
   $('wGuess').addEventListener('click', anotherGuess);
   $('wOldGlobe').addEventListener('click', () => setOldGlobe(!state.oldGlobe));
   setOldGlobe(state.oldGlobe);
   setGround(Q.get('ground') === 'blue' ? 'blue' : 'old');
-  setLift(state.lift); setCoasts(state.coasts);
+  setCoasts(state.coasts); setPlaces(state.places);
 
   // ---------- the age ----------
   // the slider (step 3; the first segment step 4): 1,500 positions from today to 4,567 million years. The first hundred
@@ -412,7 +414,7 @@
   }
 
   // ---------- for the bench's own checks (the browser pane) ----------
-  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetLift = setLift; window.cwFineAgeOf = fineAgeOf; window.cwFinePosOf = finePosOf; window.cwFineWindow = () => [fine0, fine0 + FINE_SPAN]; window.cwSetOldGlobe = setOldGlobe; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest; window.cwAgeOf = ageOf; window.cwPosOf = posOf;
+  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetPlaces = setPlaces; window.cwFineAgeOf = fineAgeOf; window.cwFinePosOf = finePosOf; window.cwFineWindow = () => [fine0, fine0 + FINE_SPAN]; window.cwSetOldGlobe = setOldGlobe; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest; window.cwAgeOf = ageOf; window.cwPosOf = posOf;
   // The bench's own timer, as the Sun bench's: draws `frames` frames off-screen at the canvas's size for a tier,
   // the age moving a million years a frame (so every plate's turn is read each frame, as a slider drag reads it),
   // and waits for the graphics card to finish each, so the number is the true cost of a frame, not the display's
@@ -472,7 +474,7 @@
     const t = view.turnOf();
     const gw = earth.grade();
     const sm = earth.seaLevel();
-    ctx.fillText('3D: ' + ageWord(state.ma) + ', lon ' + t.lon.toFixed(0) + '°, lat ' + t.lat.toFixed(0) + '°, ' + (state.ground === 'blue' ? 'Blue Marble' : 'old ground') + ', seed ' + state.seed + ', ' + (gw.grade === 'none' ? earth.moltenPhase() : gw.grade) + (sm < 0 ? ', the sea ' + sm + ' m' : '') + (state.ground === 'blue' && state.lift > 0 ? ', land lighter ' + Math.round(state.lift * 100) : '') + (state.coasts ? ', coasts on' : ''), 8, px + 26);
+    ctx.fillText('3D: ' + ageWord(state.ma) + ', lon ' + t.lon.toFixed(0) + '°, lat ' + t.lat.toFixed(0) + '°, ' + (state.ground === 'blue' ? 'Blue Marble' : 'old ground') + ', seed ' + state.seed + ', ' + (gw.grade === 'none' ? earth.moltenPhase() : gw.grade) + (sm < 0 ? ', the sea ' + sm + ' m' : '') + (state.coasts ? ', coasts on' : ''), 8, px + 26);
     ctx.fillText('2D (globe.js): the same', px + 28, px + 26);
     const blob = await new Promise(res => cv.toBlob(res, type, quality));
     return { blob, rows };
@@ -585,6 +587,8 @@
     const r = await fetch('http://localhost:8771/save?dir=' + encodeURIComponent(dir) + '&name=' + encodeURIComponent(name), { method: 'POST', body: url });
     return r.ok ? (await r.text()) : 'failed ' + r.status;
   };
+  // ?at=lon,lat,km: bench only, the view straight down on a place at the start (for the iPad simulator, which has no console)
+  if (view && Q.get('at')) { const [lon, lat, km] = Q.get('at').split(',').map(Number); cwGo(lon, lat, km); }
 </script>
 </body>
 </html>

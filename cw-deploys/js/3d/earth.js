@@ -102,17 +102,16 @@
      git's history.
    - The bared shelf: the 2D's plain buff (shoreLand's first stops), featureless, so it reads as shelf (the same ruling;
      step 4b's grey is gone).
-   - The land lighter (step 4c, bench only, setLandLift): Blue Marble's land lifted by a curve on its luma, not a flat
-     add: Y' = Y + k·Y·(1 − Y)³, k = LAND_LIFT_K × the setting (0 as now, 1 clearly lighter). The lift is greatest at
+   - The land lighter (step 4c; settled at 100 by Michael on 29 Oct, the bench's slider gone in step 5b): Blue Marble's
+     land lifted by a curve on its luma, not a flat add: Y' = Y + k·Y·(1 − Y)³, k = LAND_LIFT_K. The lift is greatest at
      Y = 0.25, the forests' and shadows' tones, small in the deserts' (Y 0.6 lifts by a third as much) and nothing at
      white, so the Sahara does not glare; the colour is scaled by Y'/Y, so hue and the channels' proportions stay and the
      greens are not washed toward grey. Monotonic for k ≤ 4. Only the photograph's colour is lifted: the sea test reads
-     the picture unlifted, and the fade to paint by 2.6 million years is unchanged. Michael names the setting, and it
-     becomes a constant.
+     the picture unlifted, and the fade to paint by 2.6 million years is unchanged.
    - Today's coasts. The 0 m rings of contours-0.json, as prepareCoast reads them, fixed in the globe's frame (they do
      not ride the plates: globe.js draws them through the view alone), as a line on the ball in the coast colour at
-     COAST_A, a strip COAST_PX CSS pixels wide, this side of the seam always, today too; past it off, fading over the 2D's own span to 5 million years,
-     unless the page's word today's coasts turns them on over the ancient ground. The 2D draws a second modern line, the shelf's
+     COAST_A, a strip COAST_PX CSS pixels wide, only while the page's word today's coasts is on, at every age, this side of
+     the seam too (Michael, 29 Oct: at today the photograph's own edge is the coast). The 2D draws a second modern line, the shelf's
      edge at −200 m (shelf, 0.3); it is not drawn here (the brief: report, don't add).
    - The honest block and the kept picture are honest.js's and still.js's; the Earth tells the page what the picture is
      and says (grade(), seaLevel(), the credit by the ground) and the page hands the block to them.
@@ -139,7 +138,6 @@
        plates, cities, crust,         // the files; crust: stories/curves/crust-and-land.json (the amount, and the island's share)
        ground, vegetation,            // the old ground and its vegetation
        blue: px => url,               // Blue Marble by size; blueSmall: the 2,048 px file (the mask)
-       landLift: 0,                   // the land lighter, 0 (as now) to 1 (clearly lighter): bench only
        textures: '../art/globe/',     // rock-grain.png, cooling-order.png and cracks.png
        seed,                          // the first seed (default: this visit's, as globe.js makes one)
        seaCurve, ice, coast, pyramid, // the sea-level curve, the ice outlines, the coast contours, the pyramid (its floor tiles): files or URLs, or false
@@ -148,7 +146,7 @@
        coldTiles: false                // bench only: every tile past the browser's cache, for a cold timing
      });
    Returns { group, setTime(ma), time(), grade() → { grade, why }, moltenPhase(), setGround('old'|'blue'), ground(),
-   seaLevel() (metres, ≤ 0), icePairs(), setLandLift(0–2), landLift(), setCoasts(on), coasts(),
+   seaLevel() (metres, ≤ 0), icePairs(), setCoasts(on), coasts(),
    settle(), step(), tiles() → { held, wanted, centreLevel, deepest, limit, cardMB, fetchedMB, lastFillMs, … }, marks(),
    addMarks(list) (bench only), resetFill(),
    seed(), setSeed(s), reguess(), simMs() → { cratons, blobs, blobBuild },
@@ -172,9 +170,9 @@ const MAP_TURN = 137 * D2R;   // the second crust: the maps turned this far and 
 // the Moon's impact (Michael's ruling of 28 Oct: no flash): the span after it, in million years, over which the first
 // crust sinks into the melt — 6.5, about ten positions of the bench's slider (the third bench's 3 was too quick)
 const MOON_MELT = 6.5;
-const LAND_LIFT_K = 2;   // the land lighter at its full setting: the curve's k (the lift at Y = 0.25 is 0.21 of white; at Y = 0.6, 0.08)
+const WASH_IN = 3.14;    // million years past the seam for the pieces' pale wash to come in whole: the ramp the Antarctic ice comes in on (iceStrength's, a tenth of 34 − 2.6)
+const LAND_LIFT_K = 2;   // the land lighter, Michael's 100 (29 Oct): the curve's k (the lift at Y = 0.25 is 0.21 of white; at Y = 0.6, 0.08)
 const COAST_A = 0.6, COAST_PX = 1.5;   // today's coast: its alpha (the 2D's), and its width in CSS pixels at the ball's near face (the 2D strokes 1.1; 28 Oct, the one-pixel line could not be seen)
-const COAST_FADE_TO = 5;   // past the seam today's coasts fade out by this age (million years), the 2D's own end; the page's word keeps them on
 // close in (step 5): the tiles. The picture's tiles are 512 px, the data's 256, both in the map's tiling (level z is
 // 2^(z+1) columns by 2^z rows from 180° W and the north); the page table is kept at the finest level, 6
 const TILE_PX = 512, DATA_PX = 256, PAGE_Z = 6, PAGE_COLS = 2 << PAGE_Z, PAGE_ROWS = 1 << PAGE_Z;
@@ -1006,6 +1004,15 @@ export async function cwEarth(view, o = {}) {
   const dataBase = () => Math.max(0, floorLevel);
   const tileFetch = o.coldTiles ? { cache: 'reload' } : {};   // bench only: every tile from the server, for a cold timing
   const fetchBitmap = url => fetch(url, tileFetch).then(r => { if (!r.ok) throw new Error(r.status + ' ' + url); return r.blob(); }).then(b => { fetchedBytes += b.size; return createImageBitmap(b); });
+  // the data tiles are numbers, not colours, and go through an Image: Safari's createImageBitmap hands back some of a
+  // greyscale PNG's 0s as 1s (with colorSpaceConversion 'none' too; the iPadOS 26.5 simulator, 29 Oct), and a lake's 0
+  // filtered among 1s read as a metre of ocean the lowered sea bared — the buff speckles in the Caspian at 13,000 years.
+  // An Image drawn into a canvas reads back exact (as the floor's own texture and the 2D globe's floor are read)
+  const fetchExact = url => fetch(url, tileFetch).then(r => { if (!r.ok) throw new Error(r.status + ' ' + url); return r.blob(); }).then(b => {
+    fetchedBytes += b.size;
+    const u = URL.createObjectURL(b);
+    return loadImg(u).finally(() => URL.revokeObjectURL(u));
+  });
   let fetchedBytes = 0;
   const work = document.createElement('canvas'); work.width = work.height = TILE_PX;
   const wctx = work.getContext('2d', { willReadFrequently: true });
@@ -1029,16 +1036,16 @@ export async function cwEarth(view, o = {}) {
     const fz = Math.min(z, FLOOR_TOP), sh = z <= SHELF_TOP && shelfHave[z] && shelfHave[z].has(x + '/' + y);
     const d = z - fz, fx = x >> d, fy = y >> d, fl = fz >= 0 && floorHave[fz] && floorHave[fz].has(fx + '/' + fy);
     if (!fl && !sh) return null;   // all land, or no data: the coarser data stands, and the picture says land there anyway
-    const [fi, si] = await Promise.all([fl ? fetchBitmap(pyrBase + fz + '/' + fx + '/' + fy + FLOOR.suffix) : null, sh ? fetchBitmap(pyrBase + z + '/' + x + '/' + y + pyramid.shelf.suffix) : null]);
+    const [fi, si] = await Promise.all([fl ? fetchExact(pyrBase + fz + '/' + fx + '/' + fy + FLOOR.suffix) : null, sh ? fetchExact(pyrBase + z + '/' + x + '/' + y + pyramid.shelf.suffix) : null]);
     const out = new Uint8ClampedArray(DATA_PX * DATA_PX * 4);
     wctx.imageSmoothingEnabled = false; wctx.globalCompositeOperation = 'source-over';
     if (fi) {
       const s = DATA_PX >> d;   // past the floor's last level, the quarter of its tile under this one, widened
-      wctx.clearRect(0, 0, DATA_PX, DATA_PX); wctx.drawImage(fi, (x - (fx << d)) * s, (y - (fy << d)) * s, s, s, 0, 0, DATA_PX, DATA_PX); fi.close();
+      wctx.clearRect(0, 0, DATA_PX, DATA_PX); wctx.drawImage(fi, (x - (fx << d)) * s, (y - (fy << d)) * s, s, s, 0, 0, DATA_PX, DATA_PX);
       const p = wctx.getImageData(0, 0, DATA_PX, DATA_PX).data; for (let i = 0; i < p.length; i += 4) out[i] = p[i];
     }
     if (si) {
-      wctx.clearRect(0, 0, DATA_PX, DATA_PX); wctx.drawImage(si, 0, 0); si.close();
+      wctx.clearRect(0, 0, DATA_PX, DATA_PX); wctx.drawImage(si, 0, 0);
       const p = wctx.getImageData(0, 0, DATA_PX, DATA_PX).data; for (let i = 0; i < p.length; i += 4) out[i + 1] = p[i];
     }
     for (let i = 3; i < out.length; i += 4) out[i] = 255;
@@ -1219,7 +1226,10 @@ export async function cwEarth(view, o = {}) {
   // the seam, fading to 0 over the deep ice's ramp past it), the two ice steps' weights; the sea's style; the coast's alpha
   const uSea = uniform(0), uGroundT = uniform(1), uIceW = [uniform(0), uniform(0)], uCoastA = uniform(COAST_A);
   const uCoastHalfW = uniform(0.002);   // half the coast's strip, as the ball's radius, set each frame
-  const uLandLift = uniform(Math.max(0, Math.min(2, +o.landLift || 0)) * LAND_LIFT_K);   // the land lighter: the curve's k (bench only)
+  // the pieces' pale wash over the picture's sea (the shelf wash at SHELF_A): not drawn this side of the seam (Michael, 29
+  // Oct: close in it showed as straight-sided polygons, the pieces' cut lines), coming in past it as the ground's look goes
+  // (over WASH_IN, the ramp the deep ice comes in on), so it never snaps
+  const uWash = uniform(0);
   // close in, the ICE-6G ice is also filled at the view's own size (ICE_LOCAL px square over the lon/lat box in view, as the
   // map fills its outlines at the screen's), the box (west, south, width, height in degrees) and whether it is in use
   const uIceBox = uniform(new THREE.Vector4(-180, -90, 360, 180)), uIceLocal = uniform(0);
@@ -1261,7 +1271,7 @@ export async function cwEarth(view, o = {}) {
   // in the deserts', none at white), the colour scaled by Y'/Y so its hue and proportions stay
   const liftLand = c => {
     const q = float(1).sub(dot(c, vec3(0.2126, 0.7152, 0.0722)));
-    return min(c.mul(float(1).add(uLandLift.mul(q).mul(q).mul(q))), 1);
+    return min(c.mul(float(1).add(q.mul(q).mul(q).mul(LAND_LIFT_K))), 1);
   };
   const iceNode = () => {   // paintIce: the latitude at the age against the ice's reach, feathered and roughened
     const p = ageFrame();
@@ -1399,8 +1409,8 @@ export async function cwEarth(view, o = {}) {
       }
       const ia = min(ice0.mul(uIceW[0]).add(ice1.mul(uIceW[1])), 1).mul(0.94).mul(uGroundT).mul(select(belowSea, float(0), float(1)));
       col = mix(col, ICEF3, ia); sea = sea.mul(float(1).sub(ia));
-      col = mix(col, SHELF3, sea);
-      let alpha = float(1).sub(sea.mul(float(1).sub(SHELF_A)));
+      col = mix(col, SHELF3, sea.mul(uWash));
+      let alpha = float(1).sub(sea.mul(float(1).sub(SHELF_A.mul(uWash))));   // this side of the seam the picture's sea is clear: the sea ball alone
       const oldA = uOld.mul(life);
       col = island ? mix(col, LIFT3, LIFT_A.mul(oldA)) : mix(col, SHELF3, DROWN_W.mul(oldA));
       const cover = float(1).sub(life);
@@ -1451,9 +1461,9 @@ export async function cwEarth(view, o = {}) {
   // the Alps) and the land no piece holds (Hawaii, Iceland) showed as open sea. Near today the ground is today's wherever it
   // is, so a ball of it lies under the pieces, read at the true ground with the tiles and the data as the pieces read them:
   // the picture's land, what a lowered sea uncovers and the ICE-6G ice opaque, the picture's sea clear, so the sea ball
-  // shows and nothing of the pieces' wash is added. It does not ride the plates: it is whole to UNDER_FULL and gone by
-  // UNDER_GONE million years, while the fastest plate has moved less than the bloat (0.26°), so no coast is drawn twice
-  const UNDER_FULL = 0.1, UNDER_GONE = 0.3;
+  // shows and nothing of the pieces' wash is added. It does not ride the plates, and since step 5b it need not: this side
+  // of the seam the pieces stand where they are today too (Michael, 29 Oct), so it is honest there, and it fades out with
+  // the photograph, whole today and gone at the seam, where the plates start to move
   const uUnder = uniform(1);
   function makeUnder() {
     const m = new THREE.MeshBasicNodeMaterial();
@@ -1657,7 +1667,10 @@ export async function cwEarth(view, o = {}) {
   // ---- the age: each body's turn, the raster's order, and the look's numbers ----
   let ma = 0, phaseNow = null, seaM = 0, coastsOn = false, pairsNow = [];
   const q = new THREE.Quaternion();
-  function bodyQuat(pid, age, how) { return how === 'guessed' ? guessedQuat(pid, age) : plateQuatAt(plates[pid], ages, Math.max(age, 0)); }
+  // this side of the seam every piece stands where it is today, as the old globe and the map have it (Michael, 29 Oct:
+  // close in, plates moving over the last 2.6 million years drew San Francisco's coast twice over today's ground); the
+  // plates start moving at the seam, from the model's turn there, as globe.js's pieces do
+  function bodyQuat(pid, age, how) { return how === 'guessed' ? guessedQuat(pid, age) : plateQuatAt(plates[pid], ages, age < seam ? 0 : age); }
   function setTime(m) {
     ma = Math.max(0, m); uAge.value = ma;
     const g = gradeFor(ma).grade, how = g === 'guessed' ? 'guessed' : 'model';
@@ -1678,16 +1691,16 @@ export async function cwEarth(view, o = {}) {
     uSea.value = seaM; sea.scale.setScalar(1 + seaM / 6371000);
     const groundT = ma < seam ? 1 : Math.max(0, 1 - (ice ? ice[1] : 1));
     uGroundT.value = groundT;
+    uWash.value = Math.max(0, Math.min(1, (ma - seam) / WASH_IN));   // the pieces' pale wash: none this side of the seam, in over the ramp past it
     const iceAgo = Math.max(0, ma * 1e6);
     pairsNow = iceData && iceAgo > 0 && groundT > 0 ? icePairs(iceAgo, seaM) : [];
     setIceSlot(0, pairsNow[0] ? pairsNow[0][0] : null); setIceSlot(1, pairsNow[1] ? pairsNow[1][0] : null);
     uIceW[0].value = pairsNow[0] ? pairsNow[0][1] : 0; uIceW[1].value = pairsNow[1] ? pairsNow[1][1] : 0;
-    // today's coasts: the coast itself this side of the seam, today too; past it off (fading out by COAST_FADE_TO, the
-    // 2D's own end) unless the word keeps them on
-    const coastA = ma < seam || coastsOn ? COAST_A : COAST_A * Math.max(0, 1 - (ma - seam) / (COAST_FADE_TO - seam));
+    // today's coasts: only on their word, at every age (step 5b)
+    const coastA = coastsOn ? COAST_A : 0;
     uCoastA.value = coastA; if (coastLine) { coastLine.userData.on = coastA > 0.001 && g !== 'none'; syncCoast(); }
-    // today's ground under the pieces: whole to UNDER_FULL, gone by UNDER_GONE
-    uUnder.value = ma <= UNDER_FULL ? 1 : Math.max(0, 1 - (ma - UNDER_FULL) / (UNDER_GONE - UNDER_FULL)); under.visible = uUnder.value > 0 && g !== 'none';
+    // today's ground under the pieces: with the photograph, whole today and gone at the seam
+    uUnder.value = Math.max(0, 1 - ma / seam); under.visible = uUnder.value > 0 && g !== 'none';
     // the pieces, at the model's or the guessed positions
     const showPieces = g !== 'none' && g !== 'invented';
     let order = 1;
@@ -1796,17 +1809,22 @@ export async function cwEarth(view, o = {}) {
     }
   }
 
-  // ---- the marks on the ball (step 5): the dozen cities and the map's own places, by map.js's rules ----
-  // The places of stories/places.json with their weights, each carried by the plate whose piece holds it today (globe.js's
-  // plateAt, copied) and shown while that piece lives, fading over the twenty million years before its birth as the
-  // cities do; the cities as the Time Machine hands them to the map (minor, a grey dot, 14 px, no halo: Michael's ruling
-  // of 13 Oct). Placed by projection, by map.js's placer copied line for line (its eight sides, its order, its scoring
+  // ---- the marks on the ball (step 5; one list since step 5b): the map's own places and the Time Machine's cities ----
+  // One list, each place once (Michael, 29 Oct: Beijing showed twice): the places the stories share (stories/places.json),
+  // then each of the Time Machine's dozen modern cities (stories/plates/cities.json) that has no place of the stories
+  // within MERGE_KM — Paris, Beijing and Tokyo are there already, Tokyo as the stories' Edo — at CITY_WEIGHT. All in the
+  // places' style, a vermilion dot and the name with its halo, which the photograph needs (the cities had none, by
+  // Michael's ruling of 13 Oct for the 2D globe; he may overrule it here). Each is carried by the plate whose piece holds
+  // it today (globe.js's plateAt, copied; a city by the plate it names) and shown while that piece lives, fading over the
+  // twenty million years before its birth. The word places turns them all off and on (setPlaces). Placed by projection,
+  // by map.js's placer copied line for line (its eight sides, its order, its scoring
   // on the ground's evenness and the dots' crowding; heavier marks first, the lesser giving way, a label that would collide
   // dropped), in screen pixels, with its halo (the halos in one layer under every glyph, at the halo's alpha). While a
   // gesture lasts every label keeps the side it had, or stays dropped, and only moves with its point; when the view
   // settles the ground is read once, small, from the picture itself (a 400 px drawing of the view, as map.js reads its
   // tiles), and every label is placed afresh. The far side is hidden. More places find room as she zooms, as on the map.
-  const marks = [], markHost = o.marksHost || null;
+  const marks = [], markHost = o.marksHost || null, MERGE_KM = 25, CITY_WEIGHT = 2;
+  let placesOn = true;
   let markCanvas = null, haloCanvas = null, markCtx = null, haloCtx = null, groundLum = null, marksFrozen = false, marksKey = '';
   const sideCache = new Map();
   function plateAt(lon, lat) {   // globe.js's: the plate under a place today, by the piece whose outline holds it
@@ -1823,14 +1841,16 @@ export async function cwEarth(view, o = {}) {
   if (markHost) {
     const pl = placeFile && placeFile.places ? placeFile.places : {};
     for (const id in pl) { const p = pl[id], pc = plateAt(p.lon, p.lat); marks.push({ type: 'place', id, name: p.name, lon: p.lon, lat: p.lat, weight: p.weight, plate: pc ? pc.plate : null, from: pc ? pc.from : 4000 }); }
-    for (const c of cities) marks.push({ type: 'place', name: c.name, lon: c.lon, lat: c.lat, plate: c.plate, from: c.from, minor: true, city: true });
+    const km = (a, b) => 6371 * Math.acos(Math.min(1, Math.sin(a.lat * D2R) * Math.sin(b.lat * D2R) + Math.cos(a.lat * D2R) * Math.cos(b.lat * D2R) * Math.cos((a.lon - b.lon) * D2R)));
+    const ofPlaces = marks.slice();
+    for (const c of cities) if (!ofPlaces.some(p => km(p, c) < MERGE_KM)) marks.push({ type: 'place', name: c.name, lon: c.lon, lat: c.lat, weight: CITY_WEIGHT, plate: c.plate, from: c.from, city: true });
     markCanvas = document.createElement('canvas'); markCanvas.className = 'cw-earth-marks';
     markCanvas.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;';
     markHost.appendChild(markCanvas); markCtx = markCanvas.getContext('2d');
     haloCanvas = document.createElement('canvas'); haloCtx = haloCanvas.getContext('2d');
   }
   // map.js's placer, copied (its SIDES, ORDER, textWidth, labelBox, overlap, unevenness and place)
-  const FONT = S.font, SIZE = S.size.label, SIZE_MINOR = S.size.minor, SIZE_CITY = 14, HALO_PX = S.haloPx, DOT = S.dot.place, DOT_MINOR = S.dot.minor;
+  const FONT = S.font, SIZE = S.size.label, SIZE_MINOR = S.size.minor, HALO_PX = S.haloPx, DOT = S.dot.place, DOT_MINOR = S.dot.minor;
   const SIDES = {
     'upper-right': { dx: 6, dy: -6, anchor: 'start' }, 'right': { dx: 8, dy: 0.35, anchor: 'start' }, 'upper-left': { dx: -6, dy: -6, anchor: 'end' },
     'left': { dx: -8, dy: 0.35, anchor: 'end' }, 'above': { dx: 0, dy: -9, anchor: 'middle' }, 'below': { dx: 0, dy: 1.0, anchor: 'middle' },
@@ -1927,7 +1947,7 @@ export async function cwEarth(view, o = {}) {
     c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, markCanvas.width, markCanvas.height); c.setTransform(dpr, 0, 0, dpr, 0, 0);
     hc.setTransform(1, 0, 0, 1, 0, 0); hc.clearRect(0, 0, haloCanvas.width, haloCanvas.height); hc.setTransform(dpr, 0, 0, dpr, 0, 0);
     const g = gradeFor(ma).grade;
-    if (g === 'none' || g === 'invented') return;
+    if (g === 'none' || g === 'invented' || !placesOn) { lastMarks = { shown: 0, labelled: 0, names: [] }; return; }
     view.scene.updateMatrixWorld();
     const shown = [];
     marks.forEach((m, i) => {
@@ -1941,7 +1961,7 @@ export async function cwEarth(view, o = {}) {
     shown.sort((x, y) => (weightOf(y.m) - weightOf(x.m)) || ((x.m.minor ? 1 : 0) - (y.m.minor ? 1 : 0)) || (x.i - y.i));
     const placed = [], labels = [];
     for (const s of shown) {
-      const size = s.m.city ? SIZE_CITY : s.m.minor ? SIZE_MINOR : SIZE;
+      const size = s.m.minor ? SIZE_MINOR : SIZE;
       const box = placeLabel(s.p, s.m.name, size, false, s.r, s.m.side, placed, dots, w, h, s.m);
       if (box) { placed.push(box); labels.push({ s, box, size }); }
     }
@@ -1951,7 +1971,7 @@ export async function cwEarth(view, o = {}) {
     c.textBaseline = 'alphabetic'; c.fillStyle = S.ink;
     for (const L of labels) {
       const align = L.box.anchor === 'start' ? 'left' : L.box.anchor === 'end' ? 'right' : 'center', font = L.size + 'px ' + FONT;
-      if (!L.s.m.city) { hc.globalAlpha = L.s.a; hc.font = font; hc.textAlign = align; hc.strokeText(L.s.m.name, L.box.tx, L.box.ty); }
+      hc.globalAlpha = L.s.a; hc.font = font; hc.textAlign = align; hc.strokeText(L.s.m.name, L.box.tx, L.box.ty);
     }
     c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = S.haloAlpha; c.drawImage(haloCanvas, 0, 0); c.setTransform(dpr, 0, 0, dpr, 0, 0);
     for (const L of labels) { c.globalAlpha = L.s.a; c.font = L.size + 'px ' + FONT; c.textAlign = L.box.anchor === 'start' ? 'left' : L.box.anchor === 'end' ? 'right' : 'center'; c.fillText(L.s.m.name, L.box.tx, L.box.ty); }
@@ -2028,7 +2048,6 @@ export async function cwEarth(view, o = {}) {
     setGround: g => { const was = uBlue.value; uBlue.value = g === 'blue' ? 1 : 0; if (was !== uBlue.value) { clearHolder(picH); viewKey = ''; } view.redraw(); }, ground: () => (uBlue.value ? 'blue' : 'old'),
     seaLevel: () => seaM, icePairs: () => pairsNow.slice(), seam,
     // the land lighter (bench only): 0 as now to 1 clearly lighter
-    setLandLift: v => { uLandLift.value = Math.max(0, Math.min(2, +v || 0)) * LAND_LIFT_K; view.redraw(); }, landLift: () => uLandLift.value / LAND_LIFT_K,
     setCoasts: on => { coastsOn = !!on; setTime(ma); }, coasts: () => coastsOn,
     floor: () => ({ level: floorLevel, ms: Math.round(floorMs), width: texFloor && texFloor.image ? texFloor.image.width : 0 }),
     // the seed, as globe.js keeps it: the same seed in both engines is the same guess (setSeed); reguess draws a new one
@@ -2038,7 +2057,7 @@ export async function cwEarth(view, o = {}) {
     simMs: () => ({ cratons: sim ? sim.ms : null, blobs: blobCache ? blobCache.ms : null, blobBuild: blobMeshes.length ? blobBuildMs : null }),   // the runs' costs, for checking
     setTier: async tier => { await Promise.all([wantBlue(tier), wantFloor(tier)]); sea.geometry.dispose(); sea.geometry = new THREE.SphereGeometry(SEA_R, tier === 'floor' ? 96 : tier === 'middle' ? 128 : 160, tier === 'floor' ? 48 : tier === 'middle' ? 64 : 80); viewKey = ''; zoomFor = ''; view.redraw(); },
     // close in (step 5): settle() as when a gesture ends (for a page that moves the view itself), and what the tiles hold
-    settle, marks: () => lastMarks,
+    settle, marks: () => lastMarks, setPlaces: on => { placesOn = !!on; marksKey = ''; drawMarks(true); view.redraw(); }, places: () => placesOn,
     addMarks: list => { for (const p of list) { const pc = plateAt(p.lon, p.lat); marks.push(Object.assign({ type: 'place', plate: pc ? pc.plate : null, from: pc ? pc.from : 4000 }, p)); } marksKey = ''; drawMarks(true); },   // bench only: places of a check's own
     step: () => { closeFrame(); viewKey = ''; updateTiles(true); if (pageDirty) writePage(); },   // one frame's close-in work, for a page whose checks hold the loop
     tiles: () => ({ held: picH.byKey.size, heldData: dataH.byKey.size, wanted: picH.wanted.size, wantedData: dataH.wanted.size, loading: picH.loading.size + dataH.loading.size, queued: queue.length,
