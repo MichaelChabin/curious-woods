@@ -1,5 +1,5 @@
 ---
-status: Built and checked 29 Oct 2026; committed on Michael's word the same day ("Commit this session's hunks only, with MANIFEST and the board. Don't push."), not pushed. Waiting on Michael's look.
+status: Built and checked 29 Oct 2026; committed on Michael's word the same day ("Commit this session's hunks only, with MANIFEST and the board. Don't push."), then pushed on his word the same day ("Push"; `ac96edf`, live on curiouswoods.org). Waiting on Michael's look.
 role: What Prompt-Build-Glass-900-Years-Ago.md asked for, what was built, how it was checked, and what needs his eye.
 related: Prompt-Build-Glass-900-Years-Ago.md, cw-deploys/js/glass.js, cw-deploys/active/geo-1-glass-circles.html, cw-deploys/active/glass-geometry.html, cw-deploys/labs.html, cw-deploys/stories/gallery.json
 pictures: Glass-900-Years-Ago-Oct29/ (mac-*.jpg are the canvas alone, from the pane at 1280 × 860; ipad-*.jpg are the whole screen of the iPadOS 26.5 iPad Air simulator, upright)
@@ -7,7 +7,7 @@ pictures: Glass-900-Years-Ago-Oct29/ (mac-*.jpg are the canvas alone, from the p
 
 # Report: Glass 900 years ago
 
-Built on `b5e2892`. Committed on Michael's word, not pushed. Everything below was checked on this Mac in the app's browser pane and on the iPad Air simulator (iPadOS 26.5), with real taps and drags.
+Built on `b5e2892`. Committed and pushed on Michael's word (`ac96edf`), live on curiouswoods.org. Everything below was checked on this Mac in the app's browser pane and on the iPad Air simulator (iPadOS 26.5), with real taps and drags.
 
 ## What changed
 
@@ -105,6 +105,6 @@ These controls are the lab's own elements, moved into the box, so they work exac
 
 ## Not done
 
-- **Not pushed.** Committed on Michael's word; the push waits for him.
+- **Committed and pushed** on Michael's word (`ac96edf`); checked live after the deploy: the Labs page lists Glass Geometry, both pages carry their new titles and `glass.js?v=2026-10-29`, the gallery list has no Stained Glass.
 - **Not checked on a real iPad.**
 - **Full screen** was not tried: the pane refuses it, and on the simulator it was not reached.
