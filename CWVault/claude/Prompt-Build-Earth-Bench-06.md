@@ -1,5 +1,5 @@
 ---
-status: Built 29 Oct 2026 by Claude Code on ee7fcfb; the report is Report-Earth-3D-Bench-06.md, the pictures in Earth-3D-Bench-06-Oct29/; not committed, waiting for Michael's word. (Was: ready for Michael's read, 29 Oct 2026. Step 6 of the migration in Spec-Earth-3D.md, flat, with three fixes from step 5b and two small things Michael asked for.)
+status: Built 29 Oct 2026 by Claude Code on ee7fcfb; the report is Report-Earth-3D-Bench-06.md, the pictures in Earth-3D-Bench-06-Oct29/; committed and pushed on his word, 29 Oct (7cfb078). (Was: ready for Michael's read, 29 Oct 2026. Step 6 of the migration in Spec-Earth-3D.md, flat, with three fixes from step 5b and two small things Michael asked for.)
 role: The Map word laying the same Earth out flat in Equal Earth; Iceland and Hawaii kept to the seam; the pieces gliding past the seam instead of jumping; today's names; tap to centre and zoom; a window she can crop.
 related: Spec-Earth-3D.md, Report-Earth-3D-Bench-05b.md, Standard-Interactives.md, Spec-Maps.md
 ---
