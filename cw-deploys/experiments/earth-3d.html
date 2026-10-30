@@ -90,6 +90,10 @@
      window's opening size by one rule (usualSize: up to 800 wide, as tall as leaves the slider and the title line on screen
      without scrolling, at most 7/8 of its width). Full screen leaves a margin above and below the ball, the words' box
      lower and clear of the safe areas, with the title and every command (js/cw-fullscreen.js).
+     Step 6d (30 Oct; Prompt-Revise-Earth-Bench-06d.md): the flags show their years — while a flag is away from its end, and
+     while she drags it, its year stands beside it (the left flag's to its left, the right flag's to its right) and between
+     the flags, centred in the gap, how long the gap is; each number rounded to what one pixel of the line is worth; the
+     gap's label just above the flags when it cannot fit between them, a flag's label inside the flag near the line's ends.
      The Earth wears the Time Machine's icon for now; it has none of its own. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
@@ -155,7 +159,7 @@
      above and below the ball, the bars go, the title and every command float at the top left below the platform's own
      close button, the age slider and the title line along the bottom */
   .stage-wrap.cw-fullscreen { width: auto !important; }
-  .cw-fullscreen #stage3d { position: absolute !important; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + 44px); bottom: calc(env(safe-area-inset-bottom, 0px) + 132px); height: auto !important; width: auto; }
+  .cw-fullscreen #stage3d { position: absolute !important; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + 44px); bottom: calc(env(safe-area-inset-bottom, 0px) + 146px); height: auto !important; width: auto; }
   .cw-fullscreen .grip, .cw-fullscreen .strip, .cw-fullscreen .size-readout { display: none; }
   .cw-fs-bottom .age-row { margin: 0; }
   .cw-fs-bottom .age-title { margin: 4px 0 0; font-size: 15px; }
@@ -163,19 +167,23 @@
   .under { margin: 6px 0 0; font-size: 13px; font-style: italic; color: var(--cw-ink-soft, #6b655a); }
   /* under the globe (6c): a column exactly as wide as the window — the age slider, the title line, the text box */
   .under-col { width: 100%; }
-  .age-row { margin: 14px 0 0; display: grid; grid-template-columns: 1fr 118px; column-gap: 14px; align-items: start; }
-  .age-row .stretch-words { padding-top: 18px; display: flex; gap: 16px; align-items: baseline; font-size: 15px; }
+  .age-row { margin: 4px 0 0; display: grid;   /* 6d: 10 px of the old 14 px margin went into the track, for a gap's label above the flags */ grid-template-columns: 1fr 118px; column-gap: 14px; align-items: start; }
+  .age-row .stretch-words { padding-top: 32px; display: flex; gap: 16px; align-items: baseline; font-size: 15px; }
   .age-row .stretch-words .word { font-size: 15px; }
   /* the age slider (6c): one even line she can stretch — two small copper flags at its ends to drag in, the thumb the age */
-  .stretch-track { position: relative; height: 48px; touch-action: none; cursor: pointer; user-select: none; -webkit-user-select: none; }
-  .stretch-line { position: absolute; left: 0; right: 0; top: 31px; height: 2px; background: var(--cw-grey, #9a958b); border-radius: 1px; }
-  .flag { position: absolute; top: 4px; width: 2px; height: 30px; margin-left: -1px; background: var(--cw-copper, #b5652b); cursor: ew-resize; }
+  .stretch-track { position: relative; height: 62px; touch-action: none; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .stretch-line { position: absolute; left: 0; right: 0; top: 45px; height: 2px; background: var(--cw-grey, #9a958b); border-radius: 1px; }
+  .flag { position: absolute; top: 18px; width: 2px; height: 30px; margin-left: -1px; background: var(--cw-copper, #b5652b); cursor: ew-resize; }
   .flag::before { content: ""; position: absolute; top: 0; width: 13px; height: 9px; background: var(--cw-copper, #b5652b); opacity: .9; }
   .flag::after { content: ""; position: absolute; top: -8px; bottom: -8px; left: -11px; right: -11px; }   /* room for a finger */
   .flag.a::before { left: 2px; border-radius: 0 3px 3px 0; }
   .flag.b::before { right: 2px; border-radius: 3px 0 0 3px; }
-  .stretch-thumb { position: absolute; top: 24px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--cw-copper, #b5652b); box-shadow: 0 0 0 2px var(--cw-parchment, #f4f1e8); }
+  .stretch-thumb { position: absolute; top: 38px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--cw-copper, #b5652b); box-shadow: 0 0 0 2px var(--cw-parchment, #f4f1e8); }
   .stretch-thumb.out { opacity: .3; }
+  /* the flags' years (6d): the left flag's to its left, the right flag's to its right, the gap's length centred between
+     them in the pennants' row, or just above when it cannot fit; the same type as the line's other labels */
+  .flag-label { position: absolute; top: 15px; line-height: 14px; font-size: 12px; color: var(--cw-grey-word, #7d7a72); font-variant-numeric: tabular-nums; white-space: nowrap; pointer-events: none; display: none; }
+  .flag-label.above { top: 1px; }
   .stretch-under { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--cw-grey-word, #7d7a72); margin-top: 0; font-variant-numeric: tabular-nums; }
   .age-title { margin: 10px 0 0; font-size: 17px; color: var(--cw-ink, #2a241c); font-variant-numeric: tabular-nums; }
   .text-box { margin: 6px 0 0; font-size: 15px; line-height: 1.45; color: var(--cw-ink, #2a241c); min-height: 4.6em; }
@@ -224,7 +232,7 @@
         <div class="under-col" id="underCol">
           <div class="age-row" id="ageRow">
             <div>
-              <div class="stretch-track" id="stretchTrack" aria-label="The age: a line from today to the Earth’s birth, which she can stretch"><div class="stretch-line"></div><div class="flag a" id="flagA" title="drag in"></div><div class="flag b" id="flagB" title="drag in"></div><div class="stretch-thumb" id="stretchThumb"></div></div>
+              <div class="stretch-track" id="stretchTrack" aria-label="The age: a line from today to the Earth’s birth, which she can stretch"><div class="stretch-line"></div><div class="flag a" id="flagA" title="drag in"></div><div class="flag b" id="flagB" title="drag in"></div><div class="stretch-thumb" id="stretchThumb"></div><span class="flag-label" id="labelA"></span><span class="flag-label" id="labelB"></span><span class="flag-label" id="labelGap"></span></div>
               <div class="stretch-under"><span id="stretchFrom">today</span><span class="pixel" id="pixelLine"></span><span id="stretchTo">4,567 million years ago</span></div>
             </div>
             <div class="stretch-words"><button class="word absent" id="wStretch" type="button">stretch</button><button class="word absent" id="wBack" type="button">back</button></div>
@@ -262,7 +270,7 @@
 </div>
 
 <script type="module">
-  const CW_VERSION = '2026-10-30 2e8f3b3 · earth-3d step 6c';   // 30 Oct: the stretch on the age line itself, the stand at every zoom, Blue Marble and the whole globe at the start, zoom out about the centre, the new layout with How this works and Current year, the window's size rule, full screen with margins   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-30 d624fb7 · earth-3d step 6d';   // 30 Oct: the stretch on the age line itself, the stand at every zoom, Blue Marble and the whole globe at the start, zoom out about the centre, the new layout with How this works and Current year, the window's size rule, full screen with margins   // date + short commit hash; bump in the same commit as any change
   console.log('earth-3d', CW_VERSION);
   import * as THREE from 'three';
   import { cwScene } from '../js/3d/scene.js?v=2026-10-30b';
@@ -445,6 +453,50 @@
   const dpr = () => window.devicePixelRatio || 1;
   const EPS = 1e-9;
   const flagsMoved = () => STR.flags[0] > STR.a + EPS || STR.flags[1] < STR.b - EPS;
+  // The flags show their years (6d). While a flag is away from its end, and while she drags it, its year stands beside it
+  // — the left flag's to its left, the right flag's to its right — and between the two flags, centred in the gap, how
+  // long the gap is. Each number is rounded to what one pixel of the line is worth as it stands (the smallest of 1, 2, 5
+  // × a power of ten that is at least a pixel's worth), so a label never claims more than the line can show. The labels
+  // sit in the pennants' row; a gap's label that cannot fit between the flags goes just above them, and a flag's label
+  // that would run off the line's end goes inside the flag instead.
+  const labelEls = [$('labelA'), $('labelB')], gapEl = $('labelGap');
+  const LABEL_PAD = 5, LABEL_GAP = 8, PENNANT = 15;   // pole to label; between labels; the pole plus its pennant
+  function pixelStep() {   // one pixel's worth in years, taken up to 1, 2 or 5 × a power of ten
+    const p = (STR.b - STR.a) * 1e6 / (trackW() * dpr()), e = Math.pow(10, Math.floor(Math.log10(p)));
+    return [1, 2, 5, 10].map(k => k * e).find(v => v >= p - 1e-9);
+  }
+  function roundedWord(years, step, suffix) {   // a count of years rounded to the step: "5,330 years", "66 million years", "66.5 million years"
+    const v = Math.round(years / step) * step;
+    if (v < 1) return null;
+    if (v >= 1e6 && step >= 1e4) { const d = Math.max(0, 6 - Math.floor(Math.log10(step) + 1e-9)); return (v / 1e6).toLocaleString('en', { maximumFractionDigits: d }) + ' million years' + suffix; }
+    return v.toLocaleString('en') + ' years' + suffix;
+  }
+  const flagWord = (ma, step) => roundedWord(ma * 1e6, step, ' ago') || 'today';
+  const gapWord = (ma, step) => roundedWord(ma * 1e6, step, '') || 'a year';
+  const dragging = i => !!(sPtr && sPtr.target === 'f' + i);
+  function placeLabels(W) {
+    const show = STR.anim ? [false, false] : [STR.flags[0] > STR.a + EPS || dragging(0), STR.flags[1] < STR.b - EPS || dragging(1)];
+    const any = show[0] || show[1];
+    labelEls.forEach((el, i) => { el.style.display = show[i] ? 'block' : 'none'; });   // each flag's year on its own account
+    gapEl.style.display = any ? 'block' : 'none';
+    if (!any) return;
+    const step = pixelStep(), xA = Math.max(0, Math.min(W, xOf(STR.flags[0]))), xB = Math.max(0, Math.min(W, xOf(STR.flags[1])));
+    labelEls[0].textContent = flagWord(STR.flags[0], step); labelEls[1].textContent = flagWord(STR.flags[1], step);
+    gapEl.textContent = gapWord(STR.flags[1] - STR.flags[0], step);
+    const wA = show[0] ? labelEls[0].offsetWidth : 0, wB = show[1] ? labelEls[1].offsetWidth : 0, wG = gapEl.offsetWidth;
+    // each flag's label on its outer side, or inside the flag where the outer side would run off the line
+    let inA = show[0] && xA - LABEL_PAD - wA < 0, inB = show[1] && xB + LABEL_PAD + wB > W;
+    let lA = inA ? xA + PENNANT + LABEL_PAD : xA - LABEL_PAD - wA;
+    let lB = inB ? xB - PENNANT - LABEL_PAD - wB : xB + LABEL_PAD;
+    if (inA && show[1] && !inB && lB < lA + wA + LABEL_GAP) lB = lA + wA + LABEL_GAP;   // both near the left end: the right flag's label clears the left's
+    if (inB && show[0] && !inA && lA + wA > lB - LABEL_GAP) lA = lB - LABEL_GAP - wA;   // both near the right end, mirrored
+    labelEls[0].style.left = lA + 'px'; labelEls[1].style.left = lB + 'px';
+    // the gap's length, centred between the flags where it fits (clear of the pennants and of any label inside), else just above
+    const innerL = inA ? lA + wA : xA + PENNANT, innerR = inB ? lB : xB - PENNANT;
+    const fits = innerR - innerL >= wG + 2 * LABEL_GAP, mid = (xA + xB) / 2 - wG / 2;
+    gapEl.classList.toggle('above', !fits);
+    gapEl.style.left = (fits ? Math.max(innerL + LABEL_GAP, Math.min(innerR - LABEL_GAP - wG, mid)) : Math.max(0, Math.min(W - wG, mid))) + 'px';
+  }
   function yearsWord(y) {   // a span of years to two figures: "5 million years", "500,000 years", "23,000 years", "7.3 years", "a year"
     if (y < 1.5) return 'a year';
     if (y >= 1e6) { const m = y / 1e6; return (m >= 10 ? Math.round(m) : Math.round(m * 10) / 10).toLocaleString('en') + ' million years'; }
@@ -469,6 +521,7 @@
     $('pixelLine').textContent = 'one pixel: ' + yearsWord((STR.b - STR.a) * 1e6 / (W * dpr()));
     present($('wStretch'), !STR.anim && flagsMoved());
     present($('wBack'), !STR.anim && STR.stack.length > 0);
+    placeLabels(W);
   };
   function resetFlags() { STR.flags = [STR.a, STR.b]; }
   function glideStretch(a1, b1) {   // the line's ends ease to the new stretch over STRETCH_MS; the flags ease to its ends
@@ -483,6 +536,7 @@
       if (u < 1) STR.anim = requestAnimationFrame(step); else { STR.anim = null; STR.target = null; STR.a = a1; STR.b = b1; resetFlags(); renderStretch(); }
     };
     STR.anim = requestAnimationFrame(step);
+    renderStretch();   // the words and the flags' years go at once, not at the first frame
   }
   function finishStretch() {   // bench only: the glide finished at once, for a browser pane that runs frames only while looked at
     if (!STR.anim) return; cancelAnimationFrame(STR.anim); STR.anim = null;
@@ -516,6 +570,7 @@
     sPtr = { id: e.pointerId, x0: x, target, moved: false };
     try { track.setPointerCapture(e.pointerId); } catch (err) {}
     e.preventDefault();
+    if (target === 'f0' || target === 'f1') renderStretch();   // a flag taken hold of shows its year at once
   });
   track.addEventListener('pointermove', e => {
     if (!sPtr) return;
@@ -526,8 +581,8 @@
     if (sPtr.target === 'thumb') toAge(maOf(x));
     else if (sPtr.target === 'f0') setFlag(0, maOf(x)); else if (sPtr.target === 'f1') setFlag(1, maOf(x));
   });
-  const sUp = e => { if (!sPtr) return; const r = track.getBoundingClientRect(); if (!sPtr.moved && sPtr.target === 'tap') toAge(maOf(e.clientX - r.left)); sPtr = null; };
-  track.addEventListener('pointerup', sUp); track.addEventListener('pointercancel', () => { sPtr = null; });
+  const sUp = e => { if (!sPtr) return; const r = track.getBoundingClientRect(); if (!sPtr.moved && sPtr.target === 'tap') toAge(maOf(e.clientX - r.left)); sPtr = null; renderStretch(); };
+  track.addEventListener('pointerup', sUp); track.addEventListener('pointercancel', () => { sPtr = null; renderStretch(); });
   $('wStretch').addEventListener('click', doStretch);
   $('wBack').addEventListener('click', stretchBack);
   window.addEventListener('resize', renderStretch);
@@ -774,7 +829,7 @@
   window.cwSetFlat = setFlat; window.cwSetCrop = setCrop; window.cwCrop = () => crop; window.cwShowSize = showSize;
   window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetPlaces = setPlaces; window.cwSetOldGlobe = setOldGlobe; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest;
   window.cwOpenOn = openOn; window.cwViews = VIEWS; window.cwOpenedOn = () => openedOn; window.cwUsualSize = usualSize; window.cwAgeTitle = ageTitle;
-  window.cwStretch = { state: STR, flag: setFlag, stretch: doStretch, back: stretchBack, render: renderStretch, finish: finishStretch, xOf, maOf, moved: flagsMoved };
+  window.cwStretch = { state: STR, flag: setFlag, stretch: doStretch, back: stretchBack, render: renderStretch, finish: finishStretch, xOf, maOf, moved: flagsMoved, step: pixelStep, flagWord, gapWord, labels: () => [labelEls[0], labelEls[1], gapEl] };
   window.cwFullscreen = fs; window.cwPanel = panel; window.cwHtwPanel = htwPanel; window.cwYearPanel = yearPanel; window.cwPlaceWord = placeWord; window.cwCompose = composeKept; window.cwKept = () => ({ picture: keptPicture, blob: keptBlob, note: keptNote });
   // The bench's own timer, as the Sun bench's: draws `frames` frames off-screen at the canvas's size for a tier,
   // the age moving a million years a frame (so every plate's turn is read each frame, as a slider drag reads it),
