@@ -28,11 +28,13 @@ The pieces of continent become cut-outs of today's picture, glued to a ball and 
 
 **The photograph fades by 2.6 million years.** A photograph is true only of today. As she goes back it fades to paint, gradually, and is gone by the seam at 2.6 million years, where the plates start to move. Before that the paint follows the colours already ruled: green while there are plants, bare rock before about 450 million years, near-black before oxygen at about 2,400. **The paint is green and rock** (Michael, 28 Oct): one quiet green with the rock grain under it, carrying no pattern of today's deserts, forests or ice back in time. A softened photograph was tried on the second bench and refused, because it carried today's climate on the moving plates: Australia's desert beside Antarctica, the ice sheets riding back to ages when they were forest. (Michael, 26 Oct; it replaces the globe's present rule, which carries today's picture on the plates back to 300 million years.)
 
-**The photograph is July 2004**, the land-only Blue Marble, over CW's own sea, at every age. NASA's version with the ocean was tried on the fourth bench's revision and refused (Michael, 28 Oct): its sea is too dark, and its sea floor is drawn from soundings, not seen, so it is not a photograph. Our sea is plainer and reads better. The photograph is itself a month of cloud-free satellite pictures stitched together, and the note under the globe says so. Michael finds the land too dark; the fifth bench's revision tries it lighter. Credit: *NASA Earth Observatory*.
+**The photograph is July 2004**, the land-only Blue Marble, over CW's own sea, at every age. NASA's version with the ocean was tried on the fourth bench's revision and refused (Michael, 28 Oct): its sea is too dark, and its sea floor is drawn from soundings, not seen, so it is not a photograph. Our sea is plainer and reads better. The photograph is itself a month of cloud-free satellite pictures stitched together, and the note under the globe says so. The land is lightened (*land lighter* at 100 on the bench; Michael, 29 Oct). Credit: *NASA Earth Observatory*.
 
 ### The plates, and the five words of knowing
 
 The ages and their words stay exactly as `globe.js` has them: *ground* this side of 2.6 million years, then *measured*, *inferred*, *fitted*, *guessed*, *invented*, and *none* above 4,400. The plate model (Merdith 2021, to 1,000 million years), the motion model past it, the blobs before the oldest rock, the seed, *another guess*: all kept.
+
+**This side of the seam the continents stay where they are today** (Michael, 29 Oct), as the old globe and the map have them; the plates start moving at the seam. Close in, moving plates over the last 2.6 million years showed a doubled coast at San Francisco and gaps between pieces. Watching the plates move close in belongs to a later step, plate boundaries (see *Getting there*). Between 2.6 and about 5 million years the pieces glide from today's places to where the model puts them, so nothing snaps close in (the jump measured on the fifth bench was 130 km for a typical plate, 416 km at New Guinea); the glide is not the plates' true path, and the note under the globe says so (Michael, 29 Oct). Islands no piece holds, Iceland and Hawaii among them, stay until the seam on the ball of today's ground under the pieces, painted like everything else.
 
 The picture carries two honest signals, and they are separate:
 
@@ -41,7 +43,7 @@ The picture carries two honest signals, and they are separate:
 
 ### The sea
 
-The sea is a ball of its own, glassy, just above the floor, in the 2D globe's deeper blue with even light (Michael, 28 Oct). Lowering the sea is lowering that ball, from the same height data. Where a lowered sea uncovers the shelf, it is the 2D's plain buff (Michael, 28 Oct): featureless, so it reads as shelf. For Drain the Sea, Michael leans toward keeping the buff for the shelf and grey for the deeper floor beyond it (the held note said grey for all). The island, the drowned band and the shelf round each old piece stay as they are now, drawn as meshes.
+The sea is a ball of its own, glassy, just above the floor, in the 2D globe's deeper blue with even light (Michael, 28 Oct). Lowering the sea is lowering that ball, from the same height data. Where a lowered sea uncovers the shelf, it is the 2D's plain buff (Michael, 28 Oct): featureless, so it reads as shelf. For Drain the Sea, Michael leans toward keeping the buff for the shelf and grey for the deeper floor beyond it (the held note said grey for all). The island, the drowned band and the shelf round each old piece stay as they are now, drawn as meshes, past the seam. This side of the seam the pieces' pale wash over the open sea is not drawn (Michael, 29 Oct): close in it showed as straight-sided polygons, the pieces' cut lines rather than the real shelf, and the sea there is plain. A lowered sea uncovers only floor joined to the ocean; lakes keep their own water (29 Oct).
 
 ### Ice
 
@@ -49,7 +51,7 @@ The ice ages of the last 2.6 million years from ICE-6G, as now, fading in and ou
 
 ### Today's lines on the past
 
-Today's coastlines, and any other modern line, are **off** over an ancient surface. A word in the left column turns them on. (Michael, 26 Oct.) This side of the seam they are the coast itself and always drawn.
+Today's coastlines, and any other modern line, are **off** at every age; the word ***today's coasts*** in the left column turns them on (Michael, 26 Oct; widened 29 Oct). At today the photograph's own edge is the coast. Once the sea is lowered today's coast is not the coast, so it is not drawn unless asked for.
 
 ### The inside: *Cut open*
 
@@ -65,8 +67,10 @@ Core and mantle to scale; the crust stretched, with a note and a thin bracket on
 
 - **One finger turns it like a globe on a stand.** North up at rest; the tilt stops when a pole faces her; a drag to the right moves the surface east, whatever the tilt (deep-time ruling 3, 6 Oct). The toolkit's free trackball stays for the Sun; the Earth gets its own turn. (Michael, 27 Oct.)
 - **Pinch zooms**, from the whole ball down to the finest detail the map pictures hold.
-- **Two fingers move the view**; **tap picks**: a city, an event's place, a piece of continent at this age.
+- **Two fingers move the view**; **tap picks**: a city, an event's place, a piece of continent at this age. A tapped place glides to the centre and the Earth zooms in a step (Michael, 29 Oct).
 - ***Reset view*** is a word.
+- **The window that holds the Earth can be resized**, by bars on its edges as the map's are, so she can crop it; the kept picture takes the window's shape (Michael, 29 Oct).
+- **Names on the Earth are today's names** (Tokyo, not Edo); a story may use its own (Michael, 29 Oct).
 - **Nothing turns on its own** when the page opens.
 - In Drain the Sea, a ***Probe*** word puts the probe out. While it is out, one finger moves the probe and the Earth holds still; two fingers turn and zoom. (Held note, 19 Oct.)
 
@@ -108,7 +112,8 @@ The ages and the words of the five grades; every grade sentence and molten sente
 6. **Flat**: the *Map* word laying the same Earth out flat, whole and still.
 7. ***Cut open***: the three insides lined up with the outside.
 8. **The swap**: `map.js` makes the Earth instead of the globe; the Time Machine on the 3D Earth, checked on the iPad at every tier. `globe.js` retires on Michael's word, after the iPad and not before.
-9. **After**: Drain the Sea on it (the water ball as a real sphere, the ridges, the grey floor); the story pages' world maps moved onto the Earth, each opening where its old map did; the Earth at a story's end as a story's choice.
+9. **Plate boundaries** (Michael, 29 Oct, beside Drain the Sea): today's picture cut along the plate boundaries rather than the continents' outlines, so the plates cover the whole Earth and each piece turns with its plate; with the sea floor's age, so crust younger than the age fades out going back (Hawaii's Big Island, Iceland's halves). Then the Pacific plate can be seen sliding past San Francisco, and Iceland splitting, on purpose. Merdith's model has the boundaries; they change with age, which is real work.
+10. **After**: Drain the Sea on it (the water ball as a real sphere, the ridges, the grey floor); the story pages' world maps moved onto the Earth, each opening where its old map did; the Earth at a story's end as a story's choice.
 
 Each step ends with Michael's finger before the next. The audit guessed eleven to fifteen Claude Code sessions, with the morph; without it, perhaps one or two fewer, and the riskiest step gone.
 
@@ -124,6 +129,6 @@ Each step ends with Michael's finger before the next. The audit guessed eleven t
 - **The water ball.** In space beside the Earth, or on the surface where the water was.
 - **The insides' details.** Exactly where the eras meet; when the inner core appears.
 - **The small still maps.** Whether margin maps and pop-up windows become the Earth too, or stay small pictures.
-- **The flat world's projection.** Plain equirectangular (the pictures' own shape, so the simplest) or something kinder to the poles. A bench look.
-- **Marks on the flat world.** Whether a tap on the flat world picks a place as on the ball, or the flat world is only to look at.
+- **The flat world's projection.** *Ruled 29 Oct (Michael): Equal Earth*, atlas-like, every country its true size.
+- **Marks on the flat world.** *29 Oct:* places show on the flat world; a tap on it goes back to the globe, centred and zoomed on that place, since to look closer she goes back to the ball. For Michael to judge on the sixth bench. Showing sharper detail for a place a story cares about belongs on the globe, as a deeper picture there (Michael's Egypt thought, 29 Oct), not on the flat world.
 - **Engineering, for the build to report on:** seams between piece meshes, the pinch at the poles, old iPads below 30 frames a second.
