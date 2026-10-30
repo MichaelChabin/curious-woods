@@ -1,5 +1,5 @@
 ---
-status: Built and checked 30 Oct 2026; committed on Michael's word the same day ("Commit, don't push"; `e38c88fd`), not pushed. Waiting on his look.
+status: Built and checked 30 Oct 2026; committed on Michael's word the same day ("Commit, don't push"; `e38c88fd`) and pushed on his word the same day ("Push now"). Waiting on his look.
 role: What Prompt-Revise-Glass-900-Years-Ago-01.md asked for, what was built, how it was checked, what needs his eye, and what is open.
 related: Prompt-Revise-Glass-900-Years-Ago-01.md, Report-Glass-900-Years-Ago.md, cw-deploys/js/glass.js, cw-deploys/active/geo-1-glass-circles.html, cw-deploys/art/palette/palettes.json
 pictures: Glass-900-Years-Ago-Oct30/ (mac-*.jpg are the canvas alone, from the pane at 984 × 553, or the pane's own screenshot where a box or the picker is the subject; ipad-*.jpg are the whole screen of the iPadOS 26.5 iPad Air simulator, upright)
@@ -7,7 +7,7 @@ pictures: Glass-900-Years-Ago-Oct30/ (mac-*.jpg are the canvas alone, from the p
 
 # Report: Glass 900 years ago, revision 1
 
-Built on `d624fb7`; committed on Michael's word (`e38c88fd`), not pushed. Everything below was checked on this Mac in the app's browser pane and on the iPad Air simulator (iPadOS 26.5), with real taps and drags on the iPad and scripted pointer gestures on the Mac.
+Built on `d624fb7`; committed on Michael's word (`e38c88fd`) and pushed the same day on his word. Everything below was checked on this Mac in the app's browser pane and on the iPad Air simulator (iPadOS 26.5), with real taps and drags on the iPad and scripted pointer gestures on the Mac.
 
 **One thing first.** The three photographs were not at `art/palette/glass-gaudi-full.png`, `glass-gaudi-sea-forest.png` and `glass-gaudi-fire-sun.png`; the only Gaudí picture in that folder was March's `glass-gaudi.jpg`. The prompt says stop and ask if any is missing. I looked before stopping, and found them in Preview's iCloud folder (`~/Library/Mobile Documents/com~apple~Preview/Documents/`), saved there this afternoon: *Gaudi Full.jpeg*, *Gaudi Sea and Forrest.jpeg* and *Gaudi Fire and Sunlight.heic* (and a *Gaudi Colors.png* from this morning, which I took to be the source of the colours). Since the names leave no doubt which is which, I converted each to a PNG at 360 px on its long side (the picker shows them at 92 px) and put them at the three paths, rather than leave the board with broken pictures. **Please check they are the three you meant**, and replace any you would rather crop yourself; the paths are the prompt's, so a replacement needs no code change. Nothing is committed.
 
@@ -101,6 +101,6 @@ None of it is built. The recipe lines of the three Gaudí palettes are empty and
 
 ## Not done
 
-- **Committed, not pushed** (`e38c88fd`, on Michael's word): `glass.js`, `palettes.json`, the three PNGs, the four pages, this report, the prompt, the pictures, MANIFEST and the board, this session's hunks only.
+- **Committed and pushed** (`e38c88fd`, both on Michael's word): `glass.js`, `palettes.json`, the three PNGs, the four pages, this report, the prompt, the pictures, MANIFEST and the board, this session's hunks only.
 - **Not checked on a real iPad**, and **full screen** not tried (the pane refuses it, the simulator was not taken there).
 - **Not checked:** the frame dragged by hand under Glass only; a design dropped on the window as a file (the drop reads the same record, so the frame should come with it).
