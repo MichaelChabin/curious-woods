@@ -1,5 +1,5 @@
 ---
-status: Report — the Earth bench, step 6b (Prompt-Revise-Earth-Bench-06.md, Michael's eight items on step 6); built 30 Oct 2026 on d0dea3d; checked in the pane on the Mac; NOT committed
+status: Report — the Earth bench, step 6b (Prompt-Revise-Earth-Bench-06.md, Michael's eight items on step 6); built 30 Oct 2026 on d0dea3d; checked in the pane on the Mac; committed and pushed on Michael's word, 30 Oct (04645d1a)
 role: What was built for each of the eight items, how the turn close in was done and what it cannot do, what was found, what was checked, and what needs Michael's eye
 related: Spec-Earth-3D.md, Worknote-Time-Slider.md, Report-Earth-3D-Bench-06.md, Prompt-Revise-Earth-Bench-06.md, cw-deploys/js/3d/scene.js, cw-deploys/js/3d/earth.js, cw-deploys/js/3d/still.js, cw-deploys/js/cw-fullscreen.js, cw-deploys/experiments/earth-3d.html, Earth-3D-Bench-06b-Oct30/ (the pictures)
 updated: 2026-10-30
@@ -272,5 +272,4 @@ file is a PNG of 13.4 MB at 4,096 px; Messages and Mail will take it, but a JPEG
 - **`cw-deploys/experiments/index.html`:** the bench's item.
 - **`cw-deploys/MANIFEST.md`** and **`CWVault/00-BOARD.md`:** the entry and the delta.
 
-`tools/check-deploys.sh`: no errors; the untracked `js/cw-fullscreen.js` is its one warning until the commit. Not
-committed, not pushed: on your word.
+`tools/check-deploys.sh`: no errors. Committed and pushed on your word, 30 Oct, this session's hunks only (`04645d1a`).

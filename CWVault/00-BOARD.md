@@ -788,7 +788,7 @@ deliberately **not** archived — it still holds unmigrated live threads.
 
 ### 4. The 3D shelf — built, committed and pushed 26 Oct 2026; brought to the standard 27 Oct (`c87809e`, not pushed); the first Earth bench on it 27 Oct, not committed
 
-**30 Oct 2026 — step 6b of the Earth bench, Michael's eight items on step 6 (built; NOT committed; his prompt
+**30 Oct 2026 — step 6b of the Earth bench, Michael's eight items on step 6 (built; committed and pushed on his word, 30 Oct, this session's hunks only, `04645d1a`; his prompt
 `claude/Prompt-Revise-Earth-Bench-06.md`, on `d0dea3d`; the spec checked first: *Ruled 29 Oct (Michael): Equal Earth* is under
 *Open*, nothing written in it; before building, the spec and `claude/Archive/` committed and pushed on his word as `d0dea3d`).**
 Nothing a child sees changes. **The turn close in:** on a ball with north kept up every move east is a turn about the pole,
