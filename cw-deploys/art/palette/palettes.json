@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "generated": "2026-03-05",
-  "note": "Palettes extracted from source images by Designer Chat. Colors selected for distinctiveness, usability, and fidelity to source. Recipe lines added Mar 5 2026 — one to four words, uncertain:true where chemistry is genuinely unresolved.",
+  "note": "Palettes extracted from source images by Designer Chat. Colors selected for distinctiveness, usability, and fidelity to source. Recipe lines added Mar 5 2026 — one to four words, uncertain:true where chemistry is genuinely unresolved. The three Gaudí palettes of twelve (gaudi_full, gaudi_sea_forest, gaudi_fire_sun) are Michael's of 30 Oct 2026, for Glass 900 years ago, each colour in his order, their pictures his photographs; their recipe lines are empty, open.",
 
   "palettes": [
 
@@ -255,6 +255,69 @@
         { "hex": "#a8bcd8", "recipe": "cobalt oxide, trace", "uncertain": false },
         { "hex": "#f0eee8", "recipe": "kaolin, fired", "uncertain": false },
         { "hex": "#f8f8f8", "recipe": "kaolin, fired", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "gaudi_full",
+      "name": "Gaudi Full",
+      "source": "glass-gaudi-full.png",
+      "description": "Antoni Gaudí, the Sagrada Família's glass, the whole range (Michael, 30 Oct 2026; the recipe lines are open)",
+      "colors": [
+        { "hex": "#103DF2", "recipe": "", "uncertain": false },
+        { "hex": "#1230C4", "recipe": "", "uncertain": false },
+        { "hex": "#168BFA", "recipe": "", "uncertain": false },
+        { "hex": "#13D8F4", "recipe": "", "uncertain": false },
+        { "hex": "#19DCC7", "recipe": "", "uncertain": false },
+        { "hex": "#05B875", "recipe": "", "uncertain": false },
+        { "hex": "#64DA43", "recipe": "", "uncertain": false },
+        { "hex": "#C2F34D", "recipe": "", "uncertain": false },
+        { "hex": "#FFF43B", "recipe": "", "uncertain": false },
+        { "hex": "#FFB52D", "recipe": "", "uncertain": false },
+        { "hex": "#FF5925", "recipe": "", "uncertain": false },
+        { "hex": "#F80B4B", "recipe": "", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "gaudi_sea_forest",
+      "name": "Gaudi Sea and Forest",
+      "source": "glass-gaudi-sea-forest.png",
+      "description": "Antoni Gaudí, the Sagrada Família's glass, the blues and greens (Michael, 30 Oct 2026; the recipe lines are open)",
+      "colors": [
+        { "hex": "#071E91", "recipe": "", "uncertain": false },
+        { "hex": "#1035EF", "recipe": "", "uncertain": false },
+        { "hex": "#075BFF", "recipe": "", "uncertain": false },
+        { "hex": "#1295FF", "recipe": "", "uncertain": false },
+        { "hex": "#35C5FF", "recipe": "", "uncertain": false },
+        { "hex": "#9CEFF5", "recipe": "", "uncertain": false },
+        { "hex": "#05DDDC", "recipe": "", "uncertain": false },
+        { "hex": "#45F0CE", "recipe": "", "uncertain": false },
+        { "hex": "#00C58B", "recipe": "", "uncertain": false },
+        { "hex": "#05A66C", "recipe": "", "uncertain": false },
+        { "hex": "#70E957", "recipe": "", "uncertain": false },
+        { "hex": "#D7F64A", "recipe": "", "uncertain": false }
+      ]
+    },
+
+    {
+      "id": "gaudi_fire_sun",
+      "name": "Gaudi Fire and Sunlight",
+      "source": "glass-gaudi-fire-sun.png",
+      "description": "Antoni Gaudí, the Sagrada Família's glass, the reds and yellows (Michael, 30 Oct 2026; the recipe lines are open)",
+      "colors": [
+        { "hex": "#D90838", "recipe": "", "uncertain": false },
+        { "hex": "#FF0A43", "recipe": "", "uncertain": false },
+        { "hex": "#FF2870", "recipe": "", "uncertain": false },
+        { "hex": "#FF5350", "recipe": "", "uncertain": false },
+        { "hex": "#FF4A20", "recipe": "", "uncertain": false },
+        { "hex": "#FF701C", "recipe": "", "uncertain": false },
+        { "hex": "#FF951B", "recipe": "", "uncertain": false },
+        { "hex": "#FFB02A", "recipe": "", "uncertain": false },
+        { "hex": "#FFCA29", "recipe": "", "uncertain": false },
+        { "hex": "#FFE02D", "recipe": "", "uncertain": false },
+        { "hex": "#FFF22E", "recipe": "", "uncertain": false },
+        { "hex": "#FFFF78", "recipe": "", "uncertain": false }
       ]
     }
 

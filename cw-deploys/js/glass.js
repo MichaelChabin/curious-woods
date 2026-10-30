@@ -16,7 +16,8 @@
                 'circles'  the window profile, circles only, a tap inside a shape colours it, the circle measured
                            as it is drawn (Stained Glass Circles' board until 29 Oct 2026; no page mounts it now)
                 'theophilus'  Glass 900 years ago: the window profile with circles and lines, no grid, numbers on
-                           the axes, the controls inside the How this works boxes (active/geo-1-glass-circles.html)
+                           the axes, the controls inside the How this works boxes, the table she designs her window
+                           on (a frame that crops the glass, 30 Oct 2026) and palettes of twelve (active/geo-1-glass-circles.html)
                 any name registered under CW.boards by a script in js/boards/ (the Wright window, js/boards/wright.js,
                            as 'wright'): the window profile standing on the shell's interface. The page loads the
                            board's script after this one.
@@ -153,6 +154,9 @@
     "    .cw-glass .g-tool-palette .palette-name { font-family: Georgia, serif; font-size: 14px; color: #546A80; cursor: default; user-select: none; line-height: 1; }",
     "    .cw-glass .palette-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; }",
     "    .cw-glass .palette-grid.wide { grid-template-columns: repeat(4,1fr); }",
+    "    /* Palettes of twelve (Glass 900 years ago, 30 Oct 2026): three rows of four, a swatch the size it has in three columns; a cell past the palette's last colour is empty. */",
+    "    .cw-glass .palette-grid.twelve { grid-template-columns: repeat(4,1fr); }",
+    "    .cw-glass .palette-swatch.empty { background: transparent; box-shadow: none; border-color: transparent; cursor: default; pointer-events: none; }",
     "    .cw-glass .palette-swatch { height: 28px; width: 100%; border-radius: 3px; cursor: pointer; border: 1.5px solid transparent; transition: border-color 100ms; box-sizing: border-box; box-shadow: inset 0 0 0 2px #4a4540; }",
     "    .cw-glass .palette-swatch:hover { border-color: rgba(84,106,128,0.4); }",
     "    .cw-glass .palette-swatch.selected { border-color: #546A80; }",
@@ -379,7 +383,13 @@
     euclid:  { level: 'both',    app: false },
     circles: { level: 'circles', app: true, measure: true, madeWord: 'Show circles' },
     theophilus: { level: 'both', app: true, measure: true, madeWord: 'Show circles and lines', grid: false, axisNumbers: true, boxes: true,
-                  demos: ['Rose', 'Top'], powers: { map: false, htw: ['box-make', 'box-color', 'box-files', 'box-demos'] } }
+                  demos: ['Rose', 'Top'], powers: { map: false, htw: ['box-make', 'box-color', 'box-files', 'box-demos'] },
+                  // 30 Oct 2026 (Michael's prompt claude/Prompt-Revise-Glass-900-Years-Ago-01.md): the table she designs her
+                  // window on, a frame 6 by 3 with its lower-left corner at 0 to start (THE TABLE); the home view with 0 a
+                  // quarter in and a third up (homeViewFor); palettes of twelve with the craft row not shown (twelve); the
+                  // board's own palettes, the three from Gaudí's basilica, first in the picker and the first the default.
+                  table: { left: 0, bottom: 0, width: 6, height: 3 }, twelve: true,
+                  palettes: ['gaudi_full', 'gaudi_sea_forest', 'gaudi_fire_sun'], palette: 'gaudi_full' }
   };
 
 function cwGlass(host, opts) {
@@ -409,6 +419,8 @@ var MEASURE = profile ? !!profile.measure : false;
 var GRID = !(profile && profile.grid === false);              // the grid behind the plane, and Finer with it
 var AXIS_NUMBERS = !!(profile && profile.axisNumbers);        // a point on either axis wears its number (AXIS NUMBERS, below)
 var BOXES = !!(profile && profile.boxes);                     // the controls in the boxes How this works opens (BOXES, below)
+var TABLE = (profile && profile.table) ? profile.table : null; // the table she designs her window on: its opening frame, in units (THE TABLE, below)
+var TWELVE = !!(profile && profile.twelve);                   // palettes of twelve: three rows of four, the craft row not shown (PALETTE TOOL, below)
 function madeWord() { return board ? board.madeWord : (profile.madeWord || POWERS.madeWord); }
 var REMOVE = 'remove';            // the palette's sentinel for the chip that takes colour away (window profile)
 var currentKey = null, fromDemo = false, currentDemo = null;   // what Save would overwrite (window profile)
@@ -672,7 +684,7 @@ function frameHandles() {
              { id:'br',     kind:'corner', x: r.x + r.w + H,   y: r.y + r.h + H },
              { id:'move',   kind:'move',   x: r.x + r.w / 2,   y: r.y + r.h / 2 } ];
 }
-function frameHandlesShown() { return !!frame && !showGlass && !frameLocked() && !isStepThroughActive(); }
+function frameHandlesShown() { return !!frame && !TABLE && !showGlass && !frameLocked() && !isStepThroughActive(); }
 var frameDrag = null;   // { handle, from: the frame in units, start: the hand in units } from a press to its release
 // The press: a handle within reach takes it, and the frame follows the hand until the release.
 function frameHandleDown(pos, world) {
@@ -741,6 +753,87 @@ function drawFrameMeasure() {
     if (r.h > 60 && r.w > 90) readout(ctx, readoutText('area', frameU.width * frameU.height, 'exact'), r.x + r.w / 2, r.y + r.h - 10, 'center', 'bottom');
     ctx.restore();
 }
+// ── THE TABLE (Glass 900 years ago, 30 Oct 2026; Michael's prompt claude/Prompt-Revise-Glass-900-Years-Ago-01.md) ──
+// In the story this is the table she designs her window on: a rectangle on the plane in the board's unit (the
+// 0-to-1 distance), 3 tall and 6 wide to start with its lower-left corner at 0. It is the shell's `frame`
+// (so the thumbnail, the share preview and the postcard crop to it as they do for any board with a frame),
+// but it is not the Wright window's: it has no handles, no lock and no entries in the record. She drags it at
+// any time — a drag that starts on its edge, away from any point, moves the whole frame; one that starts on
+// a corner resizes it, the opposite corner staying put; a drag that starts on a point still makes a circle,
+// as now. Everything snaps to whole units, and it is never smaller than 1 by 1. It crops the glass: inside
+// the frame glass and lead as now, outside it none, the construction still shown there as plain lines and
+// circles (RENDER); Glass only and Share show what is inside it alone. The construction knows nothing of
+// it — points, circles, lines and the record's steps are the same with or without it, and Undo never undoes
+// it. It saves and opens with the construction: it is kept on the record's opening entry (`init.table`, in
+// units), written there when a drag ends, read at replay, carried by Save and the shared file; a record
+// without one (a demo, a design saved before today) opens with the board's opening frame.
+var tableDrag = null;   // { kind: 'move' | 'corner', id, from: the frame in units, start: the hand in units } from a press to its release
+var TABLE_CORNER_HIT = 16, TABLE_EDGE_HIT = 9;   // screen pixels
+function tableOrigin() { var s0 = points.get('seed:0'); return s0 ? { x: s0.x, y: s0.y } : { x: -100, y: 0 }; }
+function tableUnits(world) { var o = tableOrigin(), U = frameUnit || plane.metre(); return { x: (world.x - o.x) / U, y: (world.y - o.y) / U }; }
+// The frame set from units: the shell's `frame` and `frameU`, the unit the metre. The plane's own unit frame is
+// left alone — the board counts from 0, not from the table's corner, so the numbers stay where they are.
+function setTableFrame(u) {
+    var o = tableOrigin(), U = plane.metre();
+    frameUnit = U;
+    frameU = { left: u.left, bottom: u.bottom, width: u.width, height: u.height };
+    frame = { x0: o.x + u.left * U, y0: o.y + u.bottom * U, x1: o.x + (u.left + u.width) * U, y1: o.y + (u.bottom + u.height) * U };
+}
+// What a press touched: a corner within reach, else an edge within reach, else nothing.
+function tableHit(pos) {
+    if (!TABLE || !frame) return null;
+    var r = frameScreenRect(), H = TABLE_EDGE_HIT;
+    var corners = [ { id: 'bl', x: r.x, y: r.y + r.h }, { id: 'br', x: r.x + r.w, y: r.y + r.h }, { id: 'tl', x: r.x, y: r.y }, { id: 'tr', x: r.x + r.w, y: r.y } ];
+    for (var i = 0; i < corners.length; i++) if (dist(pos.x, pos.y, corners[i].x, corners[i].y) < TABLE_CORNER_HIT) return { kind: 'corner', id: corners[i].id };
+    var onV = (Math.abs(pos.x - r.x) < H || Math.abs(pos.x - (r.x + r.w)) < H) && pos.y > r.y - H && pos.y < r.y + r.h + H;
+    var onH = (Math.abs(pos.y - r.y) < H || Math.abs(pos.y - (r.y + r.h)) < H) && pos.x > r.x - H && pos.x < r.x + r.w + H;
+    return (onV || onH) ? { kind: 'move' } : null;
+}
+function tableDown(pos, world) {
+    var hit = tableHit(pos); if (!hit) return false;
+    tableDrag = { kind: hit.kind, id: hit.id, from: Object.assign({}, frameU), start: tableUnits(world) };
+    interactionState = 'TABLE_DRAG';
+    return true;
+}
+// The move: the frame follows the hand by whole units. The resize: the corner under the hand goes to the
+// whole unit nearest it, the opposite corner stays, and neither side shrinks below one unit.
+function tableDragMove(world) {
+    var d = tableDrag, f = d.from, h = tableUnits(world);
+    var left = f.left, bottom = f.bottom, width = f.width, height = f.height;
+    if (d.kind === 'move') {
+        left = f.left + Math.round(h.x - d.start.x); bottom = f.bottom + Math.round(h.y - d.start.y);
+    } else {
+        var right = f.left + f.width, top = f.bottom + f.height, cx = Math.round(h.x), cy = Math.round(h.y);
+        if (d.id === 'bl' || d.id === 'tl') { left = Math.min(cx, right - 1); width = right - left; }
+        else width = Math.max(1, cx - left);
+        if (d.id === 'bl' || d.id === 'br') { bottom = Math.min(cy, top - 1); height = top - bottom; }
+        else height = Math.max(1, cy - bottom);
+    }
+    if (left === frameU.left && bottom === frameU.bottom && width === frameU.width && height === frameU.height) return;
+    setTableFrame({ left: left, bottom: bottom, width: width, height: height });   // the window redrawn as she drags
+}
+function tableDragUp() {
+    var d = tableDrag; tableDrag = null;
+    var f = frameU, o = d.from;
+    if (f.left === o.left && f.bottom === o.bottom && f.width === o.width && f.height === o.height) return;
+    // Kept on the record's opening entry, a fresh object (a demo's entries are the library's): not a step, so the
+    // construction and Undo know nothing of it; Save and the shared file carry it. A demo being stepped through
+    // keeps it too, so stepping does not put the table back.
+    var t = { left: f.left, bottom: f.bottom, width: f.width, height: f.height };
+    operationLog[0] = Object.assign({}, operationLog[0], { table: t });
+    if (stepState.active && stepState.ops) { stepState.ops = stepState.ops.slice(); stepState.ops[0] = Object.assign({}, stepState.ops[0], { table: t }); }
+    playSound('snap');
+}
+// The table drawn: a thin line in the construction's ink, a little stronger while she drags it. Under Glass only
+// its edge is the window's came, as the share image has it (drawScene strokes it, with `frame`).
+function drawTable() {
+    if (!TABLE || !frame || showGlass) return;
+    var r = frameScreenRect();
+    ctx.save();
+    ctx.strokeStyle = COLORS.border; ctx.lineWidth = 1; ctx.globalAlpha = tableDrag ? 0.9 : 0.5;
+    ctx.strokeRect(snap(r.x) + 0.5, snap(r.y) + 0.5, Math.round(r.w), Math.round(r.h));
+    ctx.restore();
+}
 function initLog() {
     operationLog = freshLog();
     replayLog(false);
@@ -781,6 +874,8 @@ function replayLog(animateNew) {
             // plane here (decision 4) rather than the plane reaching in.
             var seedUnit = dist(op.seed0.x, op.seed0.y, op.seed1.x, op.seed1.y);
             plane.setUnitFrame(op.seed0.x, op.seed0.y, plane.metre());
+            // The table (THE TABLE): where the record's opening entry has one, there; else the board's opening frame.
+            if (TABLE) setTableFrame(op.table || TABLE);
             // Duplicate-intersection merge radius, proportional to the unit
             // so a log with different seeds still replays sensibly. It must
             // stay view-independent: replay decides which intersections are
@@ -1569,7 +1664,7 @@ function renderPreviewCanvas(sizeKey) {
     oc.strokeStyle = '#c8b89a'; oc.lineWidth = 1;
     oc.strokeRect(matPx - 0.5, matPx - 0.5, artW + 1, artH + 1);
     oc.fillStyle = COLORS.background; oc.fillRect(matPx, matPx, artW, artH);
-    drawScene(oc, wp, sc, { fills: 'sorted', lead: 'after', leadWidth: Math.max(1, LEAD_WIDTH * sc), leadLines: leadLines2, frame: !!frame });
+    drawScene(oc, wp, sc, { fills: 'sorted', lead: 'after', leadWidth: Math.max(1, LEAD_WIDTH * sc), leadLines: leadLines2, frame: !!frame, clipFrame: !!TABLE });
     return off.toDataURL('image/png');
 }
 
@@ -2006,7 +2101,7 @@ function renderPostcardPNG(name, note, noteScreenPos, sizeKey, callback) {
     // The glass and the came: largest first; the texture (POSTCARD_TEXTURE) on each pane as it is laid
     // and the warm light over all of it before the came; the came in three passes, a shadow, a
     // highlight and the main one.
-    drawScene(oc, wp, s, { fills: 'sorted', lead: 'after', leadWidth: leadW, leadLines: leadLines, frame: !!frame,
+    drawScene(oc, wp, s, { fills: 'sorted', lead: 'after', leadWidth: leadW, leadLines: leadLines, frame: !!frame, clipFrame: !!TABLE,
                            glassTexture: POSTCARD_TEXTURE.glass, beforeLead: POSTCARD_TEXTURE.light,
                            passes: [{ dx: 2, dy: 2, style: 'rgba(0,0,0,0.2)', width: leadW },
                                     { dx: -1, dy: -1, style: 'rgba(255,255,255,0.15)', width: Math.max(1, leadW * 0.4) },
@@ -2708,6 +2803,8 @@ function s2w(sx,sy) { return plane.screenToWorld(sx,sy); }
 //              as collectLeadLines() gives them, or null
 //   frame      true: the frame's rectangle is stroked in the came, as the exports and the Wright
 //              window does
+//   clipFrame  true: the glass and its came are clipped to the frame (the table, 30 Oct 2026), and the
+//              frame's own came, where `frame` asks for it, is stroked unclipped after
 //   snap       true: segment ends snapped to half-pixels (the screen)
 //   outlines   false: for 'after', the fills' own outlines are not stroked (the thumbnail's Wright lines)
 //   glassTexture(c, polyPx, fill)  called after each polygon's base colour (the postcard's texture)
@@ -2717,6 +2814,8 @@ function s2w(sx,sy) { return plane.screenToWorld(sx,sy); }
 //              construction with no glass yet) or 'none'; `constructionAlpha`, `constructionWidth`
 //   points     true: the dots (the thumbnail without glass)
 function drawScene(c, map, s, o) {
+    var clip = !!(o.clipFrame && frame), withFrame = !!o.frame && !clip;
+    if (clip) { var ka = map(frame.x0, frame.y0), kb = map(frame.x1, frame.y1); c.save(); c.beginPath(); c.rect(ka.x, kb.y, kb.x - ka.x, ka.y - kb.y); c.clip(); }
     var list = o.fills === 'none' ? [] : liveFills();
     if (o.fills === 'sorted') list.sort(function(a, b) { return fillArea(b) - fillArea(a); });
     list.forEach(function(f) {
@@ -2737,10 +2836,12 @@ function drawScene(c, map, s, o) {
         c.fillStyle = COLORS.point; c.globalAlpha = 1;
         points.forEach(function(pt) { var q = map(pt.x, pt.y); c.beginPath(); c.arc(q.x, q.y, 2.5, 0, Math.PI * 2); c.fill(); });
     }
-    if (o.lead === 'after') (o.passes || [{ style: LEAD_BORDER_COLOR, width: o.leadWidth }]).forEach(function(pass) {
-        paintLead(c, map, s, o.outlines === false ? [] : list, o.leadLines, !!o.frame, pass, !!o.snap);
+    var passes = o.lead === 'after' ? (o.passes || [{ style: LEAD_BORDER_COLOR, width: o.leadWidth }]) : [{ style: LEAD_BORDER_COLOR, width: o.leadWidth }];
+    if (o.lead === 'after') passes.forEach(function(pass) {
+        paintLead(c, map, s, o.outlines === false ? [] : list, o.leadLines, withFrame, pass, !!o.snap);
     });
-    else if (o.lead === 'each' && (o.leadLines || o.frame)) paintLead(c, map, s, [], o.leadLines, !!o.frame, { style: LEAD_BORDER_COLOR, width: o.leadWidth }, !!o.snap);
+    else if (o.lead === 'each' && (o.leadLines || withFrame)) paintLead(c, map, s, [], o.leadLines, withFrame, passes[0], !!o.snap);
+    if (clip) { c.restore(); if (o.frame) passes.forEach(function(pass) { paintLead(c, map, s, [], null, true, pass, !!o.snap); }); }
 }
 // One pass of came: the fills' outlines (a sheet's outside alone), the lead lines, the frame.
 function paintLead(c, map, s, fills, leadLines, withFrame, pass, snapped) {
@@ -2863,7 +2964,10 @@ function render() {
     if (GRID && mapShown && !showGlass) plane.drawLattice(ctx);
 
     // The glass and its came: largest first, smallest on top, each fill's lead right after its glass.
-    drawScene(ctx, w2s, plane.zoom(), { fills: 'sorted', lead: 'each', leadWidth: LEAD_WIDTH });
+    // On the table's board the glass and its came are clipped to the table, whose edge is the came under Glass only
+    // (THE TABLE); the table itself is drawn after, a thin line, while the construction is shown.
+    drawScene(ctx, w2s, plane.zoom(), { fills: 'sorted', lead: 'each', leadWidth: LEAD_WIDTH, clipFrame: !!TABLE, frame: !!TABLE && showGlass, snap: !!TABLE });
+    drawTable();
     // A board on the interface: its lead and the frame as one pass of came (one path, unsnapped — the Wright
     // window's habit, for the renderer step to settle), then what the board draws over the glass (the Wright
     // window's readouts while a line is pulled); then the frame's handles, and its measure while one is dragged.
@@ -3176,7 +3280,9 @@ function drawAxisLabels() {
 //          up positive. A point that lies on either wears its number beside it, fading in as the point
 //          appears, whether or not she has drawn that axis; 0 and 1 from the start. Points anywhere
 //          else wear none. A number is named exactly when it is a whole number or a fraction (2, −1, 1/2);
-//          a point whose number is neither (√3) wears none in this version, which is open.
+//          a point whose number is neither (√3) wears none in this version, which is open. Where it sits
+//          (30 Oct 2026, to agree with the coordinate plane that comes later): a number on the x axis just
+//          below its point, centred; a number on the y axis just to the left of its point. 0 is on the x axis.
 // How exact: the engine keeps positions as floating-point numbers, not exact values. A position is read
 //          as a fraction p/q when it lies within AXIS_TOL of one with q no larger than AXIS_MAX_DENOM,
 //          the smallest such q winning. Arithmetic error in a crossing is far below the tolerance, and a
@@ -3206,25 +3312,26 @@ function drawAxisNumbers() {
     var now = Date.now(), live = {};
     ctx.save();
     ctx.font = '11px Georgia, serif'; ctx.fillStyle = '#546A80';
-    ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
     points.forEach(function(pt) {
         if (pt.isScaffold) return;
         var dx = (pt.x - s0.x) / unit, dy = (pt.y - s0.y) / unit;
         var u = dx * ex + dy * ey, w = -dx * ey + dy * ex;   // the point's place along each axis, in metres
-        var text = null;
-        if (Math.abs(w) <= AXIS_TOL) text = axisNumberText(u);
+        var text = null, onX = Math.abs(w) <= AXIS_TOL;
+        if (onX) text = axisNumberText(u);
         else if (Math.abs(u) <= AXIS_TOL) text = axisNumberText(w);
         if (text === null) return;
         // Its own clock, not the point's birth animation, which the record restarts for every point at each new mark.
         var key = pt.id + '@' + text; live[key] = true;
         if (!axisNumberSeen.has(key)) axisNumberSeen.set(key, now);
         var grow = Math.min(1, (now - axisNumberSeen.get(key)) / PARAMS.birthDuration);
-        var s = w2s(pt.x, pt.y);
+        var s = w2s(pt.x, pt.y), tx, ty;
+        if (onX) { ctx.textAlign = 'center'; ctx.textBaseline = 'top'; tx = s.x; ty = s.y + 6; }
+        else { ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; tx = s.x - 7; ty = s.y + 1; }
         // A thin parchment halo, so a number stays legible where it sits on glass (0 at the corner of a pane).
         ctx.globalAlpha = 0.8 * grow;
         ctx.strokeStyle = COLORS.background; ctx.lineWidth = 3; ctx.lineJoin = 'round';
-        ctx.strokeText(text, s.x + 5, s.y - 3);
-        ctx.fillText(text, s.x + 5, s.y - 3);
+        ctx.strokeText(text, tx, ty);
+        ctx.fillText(text, tx, ty);
     });
     ctx.restore();
     // A number whose point has gone (Undo, New, another design) is forgotten, so it fades in again if the point returns.
@@ -3298,6 +3405,17 @@ function drawMeasure(g, sc) {
 function homeViewFor() {
     var W = hostW(), H = hostH();
     if (!frame) return { x: 0, y: 0, zoom: Math.min(W, H) / 900 };
+    // The table's board (30 Oct 2026): 0 a quarter of the way in from the left edge of the drawing box and a third
+    // of the way up from its bottom, 1 one unit to its right, the unit the largest that leaves the board's opening
+    // frame (not the frame as she has it now: home is where the board opened) inside the box with half a unit to
+    // spare at its right and its top. Reset view returns to it whatever she has done to the frame.
+    if (TABLE) {
+        var bx = drawingBox(), o = tableOrigin(), t = TABLE;
+        if (!(bx.w > 0 && bx.h > 0)) return { x: 0, y: 0, zoom: Math.min(W, H) / 900 };
+        var U = Math.min(0.75 * bx.w / (t.left + t.width + 0.5), (2 / 3) * bx.h / (t.bottom + t.height + 0.5));
+        var tz = U / plane.metre(), sx0 = bx.x + 0.25 * bx.w, sy0 = bx.y + (2 / 3) * bx.h;
+        return { x: o.x + (W / 2 - sx0) / tz, y: o.y + (sy0 - H / 2) / tz, zoom: tz };
+    }
     var b = APP ? drawingBox() : { x: 0, y: 0, w: W, h: H };
     var m = FRAME_MARGIN * frameUnit, fw = frame.x1 - frame.x0 + 2 * m, fh = frame.y1 - frame.y0 + 2 * m;
     if (!(b.w > 0 && b.h > 0 && fw > 0 && fh > 0)) return { x: 0, y: 0, zoom: Math.min(W, H) / 900 };
@@ -3653,6 +3771,14 @@ function onDown(e) {
     mouseScreenPos.x = pos.x; mouseScreenPos.y = pos.y;
     eraserCandidate = null; // clear any leftover candidate
 
+    // ── The table (THE TABLE, 30 Oct 2026): a press on its edge away from any point moves it, on a corner resizes
+    //    it, under Glass only too; a point wins while the construction is shown, so a drag from 0 is still a circle.
+    //    A line waiting is cancelled, as any tap elsewhere cancels it.
+    if (TABLE && (showGlass || !hitPt(world.x, world.y)) && tableHit(pos)) {
+        if (interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; selectedPoint=null; }
+        tableDown(pos, world); return;
+    }
+
     // ── 0. Just the glass: the finished window. A tap colours glass or pans; it
     //      never starts a line, lays lead, places a note undoes, or forks a replay (Michael, 2 Oct 2026).
     if (showGlass) {
@@ -3772,7 +3898,8 @@ function onMove(e) {
     var pos=getPos(e), world=s2w(pos.x,pos.y);
     mouseScreenPos.x = pos.x; mouseScreenPos.y = pos.y;
 
-    // ── A frame handle dragged (the shell's) ──
+    // ── The table dragged (THE TABLE), or a frame handle (the shell's) ──
+    if (tableDrag) { tableDragMove(world); return; }
     if (frameDrag) { frameDragMove(world); return; }
 
     // ── A board's drag (THE BOARD): the hand's position, and whether it has left the tap radius ──
@@ -3997,6 +4124,8 @@ function onUp(e) {
     var moved = pointerStart ? dist(pointerStart.x, pointerStart.y, pos.x, pos.y) : 0;
     var isTap = moved < THRESHOLDS.tapMovement;
 
+    // ── The table released (THE TABLE): kept on the record's opening entry if it moved; a tap on its edge is nothing ──
+    if (tableDrag) { tableDragUp(); interactionState = 'IDLE'; return; }
     // ── A frame handle released: the frame's entry is written if it moved ──
     if (frameDrag) { frameDragUp(); interactionState = 'IDLE'; return; }
 
@@ -4363,6 +4492,7 @@ function pulseWorkspaceTool(id) {
 
 function openColorTool() {
     var id = state.palette.current || 'chartres_glass';
+    if (!PALETTES_DATA[id] && Object.keys(PALETTES_DATA).length) id = state.palette.current = Object.keys(PALETTES_DATA)[0];   // the file lacks it: the first the file has
     if (!PALETTES_DATA[id]) {
         // Palette data not loaded yet — defer until initColorPanel runs
         state.palette.pendingOpen = true;
@@ -4414,8 +4544,10 @@ function setRecipe(text) { var el=$('palette-recipe'); if (el) el.textContent=te
 
 function buildPaletteSwatches(paletteId, grid) {
     var pal=PALETTES_DATA[paletteId]; if (!pal||!grid) return;
-    grid.innerHTML=''; grid.classList.toggle('wide',pal.colors.length>12);
-    pal.colors.forEach(function(c) {
+    grid.innerHTML=''; grid.classList.toggle('wide',!TWELVE && pal.colors.length>12); grid.classList.toggle('twelve', TWELVE);
+    // Palettes of twelve (TWELVE): the first twelve colours fill three rows of four from the top left, the rest of the cells empty.
+    var colours = TWELVE ? pal.colors.slice(0, 12) : pal.colors;
+    colours.forEach(function(c) {
         var sw=document.createElement('div'); sw.className='palette-swatch'; sw.style.background=c.hex;
         var recipe=c.uncertain?c.recipe+'?':c.recipe;
         sw.addEventListener('mouseenter', function() { setRecipe(recipe); });
@@ -4432,10 +4564,16 @@ function buildPaletteSwatches(paletteId, grid) {
         if (state.palette.selected===c.hex) sw.classList.add('selected');
         grid.appendChild(sw);
     });
+    if (TWELVE) for (var k = colours.length; k < 12; k++) { var em = document.createElement('div'); em.className = 'palette-swatch empty'; grid.appendChild(em); }
 }
 
 function buildCraftRow(row) {
     if (!row) return; row.innerHTML='';
+    // The craft row — Roman glass and remove glass — is not shown on a board with palettes of twelve (TWELVE, 30 Oct
+    // 2026); the chips stay in the code and work where they are shown. Roman glass is still what a tap lays with no
+    // colour chosen.
+    row.style.display = TWELVE ? 'none' : '';
+    if (TWELVE) return;
     var universalChips = [
         { hex: COLORS.background, recipe: 'remove color', border: true },
         { hex: FOREST_GLASS, recipe: 'clear glass' }
@@ -5174,7 +5312,10 @@ var PALETTE_THUMB = 100;
 function buildPickerPalettes() {
     pickerGrid.innerHTML=''; pickerGrid.style.gridTemplateColumns='repeat(3,'+PALETTE_THUMB+'px)'; pickerGrid.style.gap='10px';
     var inner = PALETTE_THUMB - 8;
-    Object.keys(PALETTES_DATA).forEach(function(id) {
+    // A board with palettes of its own (the profile's `palettes`, 30 Oct 2026) lists them first, in its order; the rest follow as the file has them.
+    var ids = Object.keys(PALETTES_DATA), own = (profile && profile.palettes) || [];
+    ids = own.filter(function(id) { return PALETTES_DATA[id]; }).concat(ids.filter(function(id) { return own.indexOf(id) < 0; }));
+    ids.forEach(function(id) {
         var pal=PALETTES_DATA[id];
         var item=document.createElement('div'); item.className='picker-item';
         var thumb=document.createElement('div'); thumb.className='picker-thumb';
@@ -5529,7 +5670,7 @@ function setUpBoxes() {
         els.forEach(function(e) { if (e) d.appendChild(e); });
         boxPark.appendChild(d); BOX_CTL[name] = d;
     }
-    ctl('colours', [$('palette-grid'), $('craft-row'), $('palette-recipe')], 'margin:2px 0 10px 0;width:132px;');
+    ctl('colours', [$('palette-grid'), $('craft-row'), $('palette-recipe')], 'margin:2px 0 10px 0;width:' + (TWELVE ? 178 : 132) + 'px;');   // four columns of the same swatch for palettes of twelve
     ctl('slider', [root.querySelector('.g-tool-palette .lead-slider-row')], 'margin:0 0 12px 0;width:132px;');
     ctl('glass', [$('glass-toggle')]);
     var choose = $('palette-choose'); choose.style.marginTop = '0';
@@ -5544,6 +5685,7 @@ function setUpBoxes() {
 function parkBoxControls() { Object.keys(BOX_CTL).forEach(function(k) { boxPark.appendChild(BOX_CTL[k]); }); }
 function refreshBoxColours() {
     var id = state.palette.current || 'chartres_glass';
+    if (!PALETTES_DATA[id] && Object.keys(PALETTES_DATA).length) id = state.palette.current = Object.keys(PALETTES_DATA)[0];   // the file lacks it: the first the file has
     if (!PALETTES_DATA[id]) return;   // not loaded yet: initColorPanel calls again when it is
     buildPaletteSwatches(id, $('palette-grid'));
     buildCraftRow($('craft-row'));
@@ -5734,8 +5876,9 @@ function initHowThisWorks() {
         list2.insertBefore(rowGlass, rowAct);
         if (BOXES) rowAct.remove();
         // Lock (R2, 24 Oct 2026): on a board with a frame, present while the frame is still free. A
-        // board without a frame has no row at all (an empty row would still take its margin).
-        if (frame) {
+        // board without a frame has no row at all (an empty row would still take its margin). The table (THE TABLE)
+        // has no lock and no row.
+        if (frame && !TABLE) {
             var rowLock = document.createElement('li'); rowLock.className = 'htw-action-row';
             var lock = document.createElement('span'); lock.className = 'htw-action-word g-lock absent'; lock.textContent = 'Lock';
             lock.style.display = 'none';
@@ -5964,7 +6107,9 @@ if (typeof ResizeObserver !== 'undefined') {
     ro.observe(root);
 }
 
-// The palette asked for, by id or by name, once the palettes have arrived.
+// The palette asked for, by id or by name, once the palettes have arrived; a board with a palette of its own
+// (the profile's `palette`, 30 Oct 2026) opens with it unless the page asks for another.
+if (!opts.palette && profile && profile.palette) state.palette.current = profile.palette;
 if (opts.palette) {
     var want = String(opts.palette).toLowerCase();
     var tries = 0;

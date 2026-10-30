@@ -21,7 +21,11 @@
   a story about making windows, slips of the pen corrected and listed in the session report; the
   board where the draft says "put the interactive here", the counts after it, no More.
   The board: ../js/glass.js, board 'theophilus' (29 Oct 2026; 'circles' until then): the window profile with
-  circles and lines, no grid, numbers on the axes, the controls in the How this works boxes; palette 'chartres'.
+  circles and lines, no grid, numbers on the axes, the controls in the How this works boxes; since 30 Oct 2026 (Michael's
+  prompt CWVault/claude/Prompt-Revise-Glass-900-Years-Ago-01.md) the table she designs her window on — a frame 6 by 3
+  with its corner at 0 that she drags and that crops the glass — numbers below the x axis and left of the y axis, 0 a
+  quarter in and a third up, and palettes of twelve, the board's own three from Gaudí's basilica, Gaudi Full the
+  default (the board's palette, not the page's: the mount asks for none).
   One picture, with its source in a comment beside it: the Five Sisters window (Wikimedia Commons,
   Stch2022, CC0). The north rose of Notre-Dame and Villard's page stay in art/stories/geo-1-glass-circles/,
   not on this page.
@@ -194,7 +198,7 @@
 <script src="../js/cw-number.js?v=2026-09-03"></script>
 <script src="../js/plane.js?v=2026-10-24g"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
-<script src="../js/glass.js?v=2026-10-29"></script>
+<script src="../js/glass.js?v=2026-10-30"></script>
 <script src="../js/cw-style.js?v=2026-10-19"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
 <script src="../js/map.js?v=2026-10-24-pinch"></script>
@@ -202,16 +206,16 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-29 b5e2892';   // date + short commit hash; bump in the same commit as any change. The board: 'theophilus', glass.js?v=2026-10-29
+  const CW_VERSION = '2026-10-30 d624fb7';   // date + short commit hash; bump in the same commit as any change. The board: 'theophilus' with the table, glass.js?v=2026-10-30
   console.log('geo-1-glass-circles', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
   // ==========================================================================
   // THE BOARD: Glass Geometry's window profile, from the shelf, board 'theophilus' (29 Oct 2026): circles and
   // lines, a tap inside a shape colours it, no grid, numbers on the axes, the controls in the How this works
-  // boxes, the demos Rose and Top. It opens with 0 and 1 and nothing else.
+  // boxes, the demos Rose and Top. It opens with 0 and 1, and the table (30 Oct 2026); its palette is the board's own.
   // ==========================================================================
-  if (typeof cwGlass === 'function') cwGlass(document.getElementById('table'), { board: 'theophilus', palette: 'chartres' });   // Glass 900 years ago: the board by name (one mount word since R4, 24 Oct 2026; the measure is the board's)
+  if (typeof cwGlass === 'function') cwGlass(document.getElementById('table'), { board: 'theophilus' });   // Glass 900 years ago: the board by name (one mount word since R4, 24 Oct 2026; the measure and, since 30 Oct, the palette are the board's)
 
   // ==========================================================================
   // THE STACK: a tap sends the top page to the bottom; the caption follows the top page.
