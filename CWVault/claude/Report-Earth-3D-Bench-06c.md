@@ -1,5 +1,5 @@
 ---
-status: Report — the Earth bench, step 6c (Prompt-Revise-Earth-Bench-06c.md, Michael's seven items after trying 6b on the Mac and the iPad); built 30 Oct 2026 on 2e8f3b3; checked in the pane on the Mac; not committed
+status: Report — the Earth bench, step 6c (Prompt-Revise-Earth-Bench-06c.md, Michael's seven items after trying 6b on the Mac and the iPad); built 30 Oct 2026 on 2e8f3b3; checked in the pane on the Mac; committed and pushed on Michael's word, 30 Oct (de85b504)
 role: What was built for each of the seven items, the wording of the new lines for Michael to adjust, the window's size rule and what it gives, what was checked, and what needs Michael's eye
 related: Spec-Earth-3D.md, Worknote-Time-Slider.md, Report-Earth-3D-Bench-06b.md, Prompt-Revise-Earth-Bench-06c.md, cw-deploys/js/3d/scene.js, cw-deploys/js/cw-fullscreen.js, cw-deploys/experiments/earth-3d.html, Earth-3D-Bench-06c-Oct30/ (the pictures)
 updated: 2026-10-30
@@ -215,5 +215,6 @@ below the fold on that screen). The bars and the size readout stay; *Reset* puts
 - **`cw-deploys/experiments/index.html`:** the bench's item.
 - **`cw-deploys/MANIFEST.md`** and **`CWVault/00-BOARD.md`:** the entry and the delta.
 
-Not committed. When you say so: this session's hunks only (other sessions have uncommitted hunks in MANIFEST and the
-experiments index, staged from HEAD plus these edits), with the prompt, the report and the pictures, and then the push.
+Committed and pushed on your word, 30 Oct ("Commit and push"; `de85b504`), this session's hunks only — MANIFEST and the
+experiments index staged from HEAD plus these edits, other sessions' uncommitted hunks left in the working tree — with the prompt,
+the report and the pictures. Live on curiouswoods.org.
