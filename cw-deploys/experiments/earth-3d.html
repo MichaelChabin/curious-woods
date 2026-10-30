@@ -75,12 +75,27 @@
      worth; *Keep this picture* opens a small panel (cw-panel.js) with the picture, a line for a note, and the words
      *Share* (the device's own share sheet, by the Web Share API, where it can take files) and *Save*; the picture carries
      her note, the Earth's age and the place at the centre, today's date and the credit (still.js).
+     Step 6c (30 Oct; Prompt-Revise-Earth-Bench-06c.md, Michael's seven items after trying 6b on the Mac and the iPad): the
+     age slider is itself the stretching line — one even line, today to 4,567 million years, two small flags at its ends
+     dragged in to bracket the years, the word *stretch* appearing once a flag has moved and the line gliding to run between
+     the flags' years, *back* stepping out, under it the two ends and what one screen pixel is worth; the second line, its
+     tap-twice/drag-in switch and the main slider's stretched scale near today are gone. The turn is the stand at every zoom
+     (scene.js; the slide and ?turn= gone). The page opens on Blue Marble, the whole globe centred on one of the seven places
+     at random (?view= picks), today, nothing remembered but the tier. A zoom out keeps the centre and the turn (scene.js). A
+     new layout: the left column holds the title, *How this works* (a movable panel, as Glass Geometry's, with a first draft
+     of the text and the bench's own controls: Blue Marble / old ground, old globe, another guess, places, the readout) and
+     the commands in order — Map / Globe, Current year (a panel on the flags, stretch and back), Coastlines / Hide coastlines,
+     Reset, Save or share, Full screen; under the globe, in a column as wide as the window, the slider, a title line giving
+     the Earth's age and how long ago, and a text box that holds the introduction at first and the age's words after. The
+     window's opening size by one rule (usualSize: up to 800 wide, as tall as leaves the slider and the title line on screen
+     without scrolling, at most 7/8 of its width). Full screen leaves a margin above and below the ball, the words' box
+     lower and clear of the safe areas, with the title and every command (js/cw-fullscreen.js).
      The Earth wears the Time Machine's icon for now; it has none of its own. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
 <script src="../js/globe.js?v=2026-10-22c"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
-<script src="../js/cw-fullscreen.js?v=2026-10-30a"></script>
+<script src="../js/cw-fullscreen.js?v=2026-10-30b"></script>
 <script type="importmap">
 { "imports": {
   "three":        "../js/vendor/three-r186/three.webgpu.js",
@@ -97,12 +112,11 @@
     padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
     padding-top: 28px; padding-bottom: 48px;
   }
-  .column { max-width: 700px; margin: 0 auto; }
   .wide { max-width: 1040px; margin: 0 auto; }
-  h1 { font-weight: normal; font-size: 1.7rem; margin: 0 0 6px; letter-spacing: 0.01em; text-wrap: balance; }
-  .sub { color: var(--cw-ink-soft, #6b655a); margin: 0 0 18px; max-width: 62ch; }
-  .bench { display: grid; grid-template-columns: 150px 1fr; gap: 18px 24px; align-items: start; }
-  .left { display: flex; flex-direction: column; gap: 6px; padding-top: 4px; }
+  h1 { font-weight: normal; font-size: 1.5rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: 0.01em; text-wrap: balance; }
+  /* the left column (6c): the title, How this works, then the commands in order */
+  .bench { display: grid; grid-template-columns: 160px 1fr; gap: 18px 24px; align-items: start; }
+  .left { display: flex; flex-direction: column; gap: 6px; padding-top: 0; align-items: flex-start; }
   .pair { display: flex; gap: 10px; align-items: baseline; }
   .pair .slash { color: var(--cw-grey, #9a958b); }
   .word {
@@ -112,14 +126,17 @@
   .word:hover { color: var(--cw-payne-hover, #3D3D3A); }
   .word[aria-pressed="true"] { color: var(--cw-ink, #2a241c); border-bottom-color: var(--cw-copper, #b5652b); }
   .word:focus-visible { outline: 2px solid var(--cw-copper, #b5652b); outline-offset: 3px; }
+  .word.absent { opacity: 0; pointer-events: none; }
+  .word { transition: opacity 300ms ease-in-out; }
   .stages { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; position: relative; }
-  /* the old globe hidden (step 5): the Earth alone, about 1.8 times its width beside the old globe, as large as the window
-     allows; the old globe keeps drawing at its side-by-side size, out of sight, so it is right when it comes back */
-  .stages.solo { grid-template-columns: min(calc(0.9 * (100% - 24px)), calc(100vh - 48px)); }
+  /* the old globe hidden (step 5): the Earth alone; the old globe keeps drawing at its side-by-side size, out of sight, so
+     it is right when it comes back */
+  .stages.solo { grid-template-columns: 1fr; }
   .stages.solo #box2d { position: absolute; left: 0; top: 0; width: calc((100% - 24px) / 2); visibility: hidden; pointer-events: none; }
-  .fine-ends { display: flex; justify-content: space-between; font-size: 12px; color: var(--cw-grey-word, #7d7a72); margin-top: 2px; font-variant-numeric: tabular-nums; }
   .stage-box { min-width: 0; }
-  .stage { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; touch-action: none; background: var(--cw-parchment, #f4f1e8); }
+  /* the window (6c): its usual size is set by the script (usualSize), not by a square */
+  .stage { position: relative; width: 100%; height: 500px; overflow: hidden; touch-action: none; background: var(--cw-parchment, #f4f1e8); }
+  #stage2d.stage { aspect-ratio: 1 / 1; height: auto; }
   /* the window's bars (step 6): at the right edge and along the bottom, as the map's and the Time Machine's, to crop it */
   .stage-wrap { position: relative; }
   .grip { position: absolute; top: 0; bottom: 18px; right: -18px; width: 16px; border-radius: 0 8px 8px 0; z-index: 6; touch-action: none; cursor: ew-resize;
@@ -134,73 +151,94 @@
   .size-readout { position: absolute; right: 10px; bottom: 26px; z-index: 7; pointer-events: none; font-size: 12px; color: var(--cw-grey-word, #7d7a72);
                   font-variant-numeric: tabular-nums; background: rgba(244,241,232,0.82); padding: 1px 7px; border-radius: 4px; opacity: 0; transition: opacity .35s; }
   .size-readout.show { opacity: 1; }
-  /* full screen (6b; js/cw-fullscreen.js puts the class on the window): the Earth fills it, the bars go, the age row floats
-     along the bottom in smaller type */
+  /* full screen (6b, 6c; js/cw-fullscreen.js puts the class on the window): the Earth fills the screen with a clear margin
+     above and below the ball, the bars go, the title and every command float at the top left below the platform's own
+     close button, the age slider and the title line along the bottom */
   .stage-wrap.cw-fullscreen { width: auto !important; }
-  .cw-fullscreen #stage3d { height: 100% !important; aspect-ratio: auto !important; }
+  .cw-fullscreen #stage3d { position: absolute !important; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + 44px); bottom: calc(env(safe-area-inset-bottom, 0px) + 132px); height: auto !important; width: auto; }
   .cw-fullscreen .grip, .cw-fullscreen .strip, .cw-fullscreen .size-readout { display: none; }
-  .cw-fs-bottom .age { margin: 0; grid-template-columns: 170px 1fr; gap: 14px; }
-  .cw-fs-bottom .age label, .cw-fs-bottom .age output { font-size: 13px; }
-  .cw-fs-bottom .age output { margin-top: 0; }
-  .phone .cw-fs-bottom .age { grid-template-columns: 1fr; gap: 4px; }
+  .cw-fs-bottom .age-row { margin: 0; }
+  .cw-fs-bottom .age-title { margin: 4px 0 0; font-size: 15px; }
   #stage2d .cw-globe { position: absolute; inset: 0; }
   .under { margin: 6px 0 0; font-size: 13px; font-style: italic; color: var(--cw-ink-soft, #6b655a); }
-  .under.honest { font-style: normal; font-size: 14px; color: var(--cw-ink, #2a241c); min-height: 4.6em; line-height: 1.4; }
-  .under.honest .cw-honest-what { color: var(--cw-ink, #2a241c); }
-  .under.honest .cw-honest-says { color: var(--cw-ink-soft, #6b655a); }
-  .under.honest .cw-honest-word { color: var(--cw-copper, #b5652b); font-style: italic; }
-  .under.honest .cw-honest-credit { font-size: 12px; color: var(--cw-grey-word, #7d7a72); margin-top: 2px; }
-  .age { margin: 18px 0 0; display: grid; grid-template-columns: 150px 1fr; gap: 24px; align-items: center; }
-  .age label { color: var(--cw-ink, #2a241c); }
-  .age input { width: 100%; accent-color: var(--cw-copper, #b5652b); margin: 0; }
-  .age output { display: block; margin-top: 2px; font-size: 15px; color: var(--cw-ink-soft, #6b655a); font-variant-numeric: tabular-nums; }
-  .age.stretch { margin-top: 10px; align-items: start; }
-  .age.stretch label { color: var(--cw-ink-soft, #6b655a); font-size: 15px; padding-top: 14px; }
-  /* the stretching slider (6b, bench only): an even line, two copper marks above it with small flags to grab, the age's
-     thumb on it; the stretch's ends and what a pixel is worth under it; back and the way of placing the marks below */
-  .stretch-track { position: relative; height: 46px; touch-action: none; cursor: pointer; user-select: none; -webkit-user-select: none; }
-  .stretch-line { position: absolute; left: 0; right: 0; top: 29px; height: 2px; background: var(--cw-grey, #9a958b); border-radius: 1px; }
-  .stretch-mark { position: absolute; top: 6px; width: 2px; height: 32px; margin-left: -1px; background: var(--cw-copper, #b5652b); }
-  .stretch-mark::before { content: ""; position: absolute; left: -7px; top: -5px; width: 16px; height: 11px; border-radius: 3px; background: var(--cw-copper, #b5652b); opacity: .85; }
-  .stretch-thumb { position: absolute; top: 22px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--cw-copper, #b5652b); box-shadow: 0 0 0 2px var(--cw-parchment, #f4f1e8); }
+  /* under the globe (6c): a column exactly as wide as the window — the age slider, the title line, the text box */
+  .under-col { width: 100%; }
+  .age-row { margin: 14px 0 0; display: grid; grid-template-columns: 1fr 118px; column-gap: 14px; align-items: start; }
+  .age-row .stretch-words { padding-top: 18px; display: flex; gap: 16px; align-items: baseline; font-size: 15px; }
+  .age-row .stretch-words .word { font-size: 15px; }
+  /* the age slider (6c): one even line she can stretch — two small copper flags at its ends to drag in, the thumb the age */
+  .stretch-track { position: relative; height: 48px; touch-action: none; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .stretch-line { position: absolute; left: 0; right: 0; top: 31px; height: 2px; background: var(--cw-grey, #9a958b); border-radius: 1px; }
+  .flag { position: absolute; top: 4px; width: 2px; height: 30px; margin-left: -1px; background: var(--cw-copper, #b5652b); cursor: ew-resize; }
+  .flag::before { content: ""; position: absolute; top: 0; width: 13px; height: 9px; background: var(--cw-copper, #b5652b); opacity: .9; }
+  .flag::after { content: ""; position: absolute; top: -8px; bottom: -8px; left: -11px; right: -11px; }   /* room for a finger */
+  .flag.a::before { left: 2px; border-radius: 0 3px 3px 0; }
+  .flag.b::before { right: 2px; border-radius: 3px 0 0 3px; }
+  .stretch-thumb { position: absolute; top: 24px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--cw-copper, #b5652b); box-shadow: 0 0 0 2px var(--cw-parchment, #f4f1e8); }
   .stretch-thumb.out { opacity: .3; }
   .stretch-under { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--cw-grey-word, #7d7a72); margin-top: 0; font-variant-numeric: tabular-nums; }
-  .stretch-under .pixel { color: var(--cw-grey-word, #7d7a72); }
-  .stretch-words { display: flex; gap: 22px; align-items: baseline; margin-top: 4px; font-size: 14px; }
-  .stretch-words .word { font-size: 14px; }
-  .readout { margin: 10px 0 0; font-size: 12px; color: var(--cw-grey-word, #7d7a72); font-variant-numeric: tabular-nums; line-height: 1.4; }
+  .age-title { margin: 10px 0 0; font-size: 17px; color: var(--cw-ink, #2a241c); font-variant-numeric: tabular-nums; }
+  .text-box { margin: 6px 0 0; font-size: 15px; line-height: 1.45; color: var(--cw-ink, #2a241c); min-height: 4.6em; }
+  .text-box p { margin: 0 0 6px; }
+  .text-box .cw-honest-what { color: var(--cw-ink, #2a241c); }
+  .text-box .cw-honest-says { color: var(--cw-ink-soft, #6b655a); }
+  .text-box .cw-honest-word { color: var(--cw-copper, #b5652b); font-style: italic; }
+  .text-box .cw-honest-credit, .text-box .intro-credit { font-size: 12px; color: var(--cw-grey-word, #7d7a72); margin-top: 2px; }
+  /* the panels (6c): How this works and Current year, cw-panel.js's window as Glass Geometry's; the bench's own words in
+     the first, smaller */
+  .cw-info-panel .panel-text { font-size: 13px; line-height: 1.5; color: var(--cw-ink, #2a241c); }
+  .cw-info-panel .panel-text p { margin: 0 0 8px; }
+  .cw-info-panel .panel-text i { color: var(--cw-copper, #b5652b); }
+  .cw-info-panel .bench-words { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; margin-top: 10px; padding-top: 8px; border-top: 1px solid #e0d8c6; }
+  .cw-info-panel .bench-words .word, .cw-info-panel .bench-words .pair { font-size: 13px; }
+  .cw-info-panel .bench-words .label { font-size: 11px; color: var(--cw-grey-word, #7d7a72); font-style: italic; }
+  .readout { margin: 6px 0 0; font-size: 11px; color: var(--cw-grey-word, #7d7a72); font-variant-numeric: tabular-nums; line-height: 1.4; white-space: pre-line; user-select: text; -webkit-user-select: text; }
   .credit { margin: 18px 0 0; font-size: 13px; color: var(--cw-ink-soft, #6b655a); }
   #fail { color: var(--cw-vermilion, #c84830); display: none; margin: 12px 0 0; white-space: pre-wrap; font-size: 13px; }
   #still { display: none; }
   #still img { display: block; width: 100%; height: auto; }
   @media (max-width: 760px) {
-    .bench, .age { grid-template-columns: 1fr; gap: 12px; }
-    .left { flex-direction: row; flex-wrap: wrap; gap: 6px 22px; }
+    .bench { grid-template-columns: 1fr; gap: 12px; }
+    .left { flex-direction: row; flex-wrap: wrap; gap: 6px 22px; align-items: baseline; }
+    .left h1 { width: 100%; margin-bottom: 2px; }
     .stages, .stages.solo { grid-template-columns: 1fr; }
     .stages.solo #box2d { width: 100%; }
+    .age-row { grid-template-columns: 1fr 104px; column-gap: 10px; }
   }
 </style>
 </head>
 <body>
-<div class="column">
-  <h1>The Earth, in 3D</h1>
-  <p class="sub">The Earth as a ball on the graphics card, the pieces of continent turned by their plates. Pinch or scroll all the way in. <i>old globe</i> shows the globe the Time Machine draws today beside it, at the same age and the same view: turn one and the other follows.</p>
-</div>
 <div class="wide">
   <div class="bench">
     <div class="left" id="words">
-      <div class="pair"><button class="word" id="wBlue" type="button" aria-pressed="false">Blue Marble</button><span class="slash">/</span><button class="word" id="wOld" type="button" aria-pressed="true">old ground</button></div>
+      <h1 id="title">The Earth, in 3D</h1>
+      <button class="word" id="wHtw" type="button" aria-pressed="false">How this works</button>
       <button class="word" id="wFlat" type="button">Map</button>
-      <button class="word" id="wCoasts" type="button" aria-pressed="false">today’s coasts</button>
-      <button class="word" id="wPlaces" type="button" aria-pressed="true">places</button>
-      <button class="word" id="wGuess" type="button">another guess</button>
-      <button class="word" id="wOldGlobe" type="button" aria-pressed="false">old globe</button>
+      <button class="word" id="wYear" type="button" aria-pressed="false">Current year</button>
+      <button class="word" id="wCoasts" type="button" aria-pressed="false">Coastlines</button>
+      <!-- Reset (scene.js), Save or share and Full screen (cw-fullscreen.js) are appended by the script, in that order -->
     </div>
     <div class="stages solo" id="stages">
       <div class="stage-box" id="stageBox">
         <div class="stage-wrap" id="stageWrap"><div id="stage3d" class="stage"></div><div class="grip" id="gripR"></div><div class="strip" id="stripB"></div><div class="size-readout" id="sizeReadout"></div></div>
-        <div class="under honest" id="honestBlock"></div>
-        <p class="under">bench only: the stretching slider, and <i>another guess</i> giving both globes the same new guess</p>
+        <div class="under-col" id="underCol">
+          <div class="age-row" id="ageRow">
+            <div>
+              <div class="stretch-track" id="stretchTrack" aria-label="The age: a line from today to the Earth’s birth, which she can stretch"><div class="stretch-line"></div><div class="flag a" id="flagA" title="drag in"></div><div class="flag b" id="flagB" title="drag in"></div><div class="stretch-thumb" id="stretchThumb"></div></div>
+              <div class="stretch-under"><span id="stretchFrom">today</span><span class="pixel" id="pixelLine"></span><span id="stretchTo">4,567 million years ago</span></div>
+            </div>
+            <div class="stretch-words"><button class="word absent" id="wStretch" type="button">stretch</button><button class="word absent" id="wBack" type="button">back</button></div>
+          </div>
+          <p class="age-title" id="ageTitle">The Earth today, 4,567 million years old</p>
+          <div class="text-box" id="textBox">
+            <div id="intro">
+              <p>This is the Earth, drawn as a ball on your device’s graphics card and turned by your finger. Drag it to turn it. Pinch or scroll to come closer, all the way down to a few hundred metres across; scroll out and the whole ball comes back. Tap a place and it glides to the centre.</p>
+              <p>The line above is time: today at its left end, the Earth’s birth at its right, 4,567 million years ago. Drag the copper dot along it and the continents move to where they were, carried by their plates, and these lines say what the picture is and how sure it is.</p>
+              <div class="intro-credit" id="introCredit"></div>
+            </div>
+            <div id="honestBlock" style="display:none"></div>
+          </div>
+        </div>
         <div id="still"><img alt="The Earth, a still picture" src="../art/globe/earth-3d-still.webp"><p class="under" id="stillLine">This one needs a newer device.</p></div>
       </div>
       <div class="stage-box" id="box2d">
@@ -209,28 +247,25 @@
       </div>
     </div>
   </div>
-  <div class="age" id="ageRow">
-    <label for="age">Age<output id="ageWord" for="age">today</output></label>
-    <input type="range" id="age" min="0" max="1500" step="1" value="0" aria-label="Age, millions of years ago">
-  </div>
-  <div class="age stretch" id="stretchRow">
-    <label>Stretch<output id="stretchWord">bench only</output></label>
-    <div>
-      <div class="stretch-track" id="stretchTrack" aria-label="The age, on a line she can stretch"><div class="stretch-line"></div><div class="stretch-mark" id="markA"></div><div class="stretch-mark" id="markB"></div><div class="stretch-thumb" id="stretchThumb"></div></div>
-      <div class="stretch-under"><span id="stretchFrom">today</span><span class="pixel" id="pixelLine"></span><span id="stretchTo">4,567 million years ago</span></div>
-      <div class="stretch-words"><button class="word" id="wBack" type="button">back</button><span class="pair"><button class="word" id="wTapTwice" type="button" aria-pressed="true">tap twice</button><span class="slash">/</span><button class="word" id="wDragIn" type="button" aria-pressed="false">drag in</button></span></div>
-    </div>
-  </div>
-  <p class="readout" id="readout"></p>
   <p id="fail"></p>
   <p class="credit" id="credit"></p>
 </div>
 
+<!-- the bench's own words and readout (6c): moved into the How this works panel by the script -->
+<div id="benchWords" class="bench-words" style="display:none">
+  <span class="label">for the bench</span>
+  <div class="pair"><button class="word" id="wBlue" type="button" aria-pressed="false">Blue Marble</button><span class="slash">/</span><button class="word" id="wOld" type="button" aria-pressed="true">old ground</button></div>
+  <button class="word" id="wOldGlobe" type="button" aria-pressed="false">old globe</button>
+  <button class="word" id="wGuess" type="button">another guess</button>
+  <button class="word" id="wPlaces" type="button" aria-pressed="true">places</button>
+  <p class="readout" id="readout"></p>
+</div>
+
 <script type="module">
-  const CW_VERSION = '2026-10-30 d0dea3d · earth-3d step 6b';   // 30 Oct: the map's slide close in, nothing over the sea this side of the seam, the window's size, Full screen, seven opening views, the reach at every tier, the stretching slider, Share with a note   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-30 2e8f3b3 · earth-3d step 6c';   // 30 Oct: the stretch on the age line itself, the stand at every zoom, Blue Marble and the whole globe at the start, zoom out about the centre, the new layout with How this works and Current year, the window's size rule, full screen with margins   // date + short commit hash; bump in the same commit as any change
   console.log('earth-3d', CW_VERSION);
   import * as THREE from 'three';
-  import { cwScene } from '../js/3d/scene.js?v=2026-10-30a';
+  import { cwScene } from '../js/3d/scene.js?v=2026-10-30b';
   import { cwEarth } from '../js/3d/earth.js?v=2026-10-30a';
   import { cwHonest } from '../js/3d/honest.js?v=2026-10-28a';
   import { cwStillPicture, cwStillCompose } from '../js/3d/still.js?v=2026-10-30a';
@@ -254,10 +289,12 @@
   // adjust the words)
   const SHORT_CREDIT = { old: 'ETOPO 2022 (NOAA), Copernicus Global Land Cover 2019', blue: 'The land: satellite pictures from July 2004, a month of them stitched together without clouds. NASA Earth Observatory' };
   const HOME = { lon: 20, lat: 15 };   // the 2D globe's opening view; the Earth opens on one of the seven views below
+  const HOME_DISTANCE = 4.9;           // the camera's distance at which the whole ball fills the window's height (6c: the page opens there)
   // the seed: one for both globes, so the same guess shows on each (the spec: the same seed gives the same guess in both
   // engines); ?seed= fixes it for a check, otherwise this visit's, made as globe.js makes one
   const seed0 = Q.get('seed') ? +Q.get('seed') : ((Date.now() % 1000003) + Math.floor(Math.random() * 1000));
-  const state = { ground: 'old', coasts: Q.get('coasts') === '1', places: Q.get('places') !== '0', ma: 0, seed: seed0, oldGlobe: Q.get('old') === '1', flat: false };
+  // nothing is remembered from a last visit (6c): no view, age, ground or word; only scene.js's tier, for the session
+  const state = { ground: 'blue', coasts: Q.get('coasts') === '1', places: Q.get('places') !== '0', ma: 0, seed: seed0, oldGlobe: Q.get('old') === '1', flat: false };
   let view = null, earth = null, g2d = null, honest = null, syncing = false;
 
   // ---------- the 3D Earth ----------
@@ -268,7 +305,7 @@
     view = await cwScene($('stage3d'), {
       ground: S.parchment, key: 'earth-3d', phone: 'run',
       gesture: 'globe', home: HOME,
-      camera: { fov: 24, position: [0, 0, 4.9], near: 0.1, far: 50, min: 1.4, max: 12 },   // the ball fills the square as the 2D disc does (its radius W/2 − 4); the nearest is the Earth's, by the ground's deepest level
+      camera: { fov: 24, position: [0, 0, HOME_DISTANCE], near: 0.1, far: 50, min: 1.4, max: 12 },   // the ball fills the window's height as the 2D disc fills its square; the nearest is the Earth's, by the ground's deepest level
       words: $('words'),
       onTurn: v => { if (g2d && !syncing) { syncing = true; const t = v.turnOf(); g2d.turn(t.lon, t.lat); syncing = false; } },
       onTier: async (tier) => { if (earth) await earth.setTier(tier); },
@@ -316,10 +353,11 @@
 
   // ---------- the words ----------
   function pressed(on, off) { on.setAttribute('aria-pressed', 'true'); off.setAttribute('aria-pressed', 'false'); }
-  function setGround(g) { state.ground = g; if (earth) earth.setGround(g); pressed($(g === 'blue' ? 'wBlue' : 'wOld'), $(g === 'blue' ? 'wOld' : 'wBlue')); $('credit').textContent = CREDITS[g]; if (honest) tellGrade(); }
+  function setGround(g) { state.ground = g; if (earth) earth.setGround(g); pressed($(g === 'blue' ? 'wBlue' : 'wOld'), $(g === 'blue' ? 'wOld' : 'wBlue')); $('credit').textContent = CREDITS[g]; $('introCredit').textContent = SHORT_CREDIT[g] + '.'; if (honest) tellGrade(); }
   // the old globe on a word (step 5): hidden, it keeps drawing at its side-by-side size out of sight
   function setOldGlobe(on) { state.oldGlobe = !!on; $('stages').classList.toggle('solo', !on); $('wOldGlobe').setAttribute('aria-pressed', on ? 'true' : 'false'); }
-  function setCoasts(on) { state.coasts = !!on; if (earth) earth.setCoasts(on); $('wCoasts').setAttribute('aria-pressed', on ? 'true' : 'false'); }
+  // Coastlines / Hide coastlines (6c; today's coasts, renamed): one word, its text saying what a tap will do
+  function setCoasts(on) { state.coasts = !!on; if (earth) earth.setCoasts(on); $('wCoasts').textContent = on ? 'Hide coastlines' : 'Coastlines'; $('wCoasts').setAttribute('aria-pressed', on ? 'true' : 'false'); }
   // the places on the ball, all of them, off and on (step 5b)
   function setPlaces(on) { state.places = !!on; if (earth) earth.setPlaces(on); $('wPlaces').setAttribute('aria-pressed', on ? 'true' : 'false'); }
   // another guess: the 2D globe draws the new seed and the 3D takes the same one, so both show one world
@@ -343,32 +381,13 @@
   $('wFlat').addEventListener('click', () => setFlat(!state.flat));
   if (!earth) $('wFlat').style.display = 'none';
   setOldGlobe(state.oldGlobe);
-  setGround(Q.get('ground') === 'blue' ? 'blue' : 'old');
+  setGround(Q.get('ground') === 'old' ? 'old' : 'blue');   // Blue Marble at the start (6c); ?ground=old for a check
   setCoasts(state.coasts); setPlaces(state.places);
 
   // ---------- the age ----------
-  // the slider (step 3; the first segment step 4): 1,500 positions from today to 4,567 million years. The first hundred
-  // run by a cube law to ten million years, so the last ice age has room under a finger (position 13 is 22,000 years,
-  // 30 is 270,000, 64 the seam at 2.6 million; step 2's square law gave 100,000 years as its first step); after that it
-  // runs straight between knots, one segment per era, so every era has room under a finger:
-  //   100 → 300  measured, 10 to 200       (0.95 million years a position)
-  //   300 → 500  inferred, 200 to 540      (1.7)
-  //   500 → 700  fitted, 540 to 1,000      (2.3)
-  //   700 → 1100 guessed, 1,000 to 4,000   (7.5)
-  //   1100 → 1250 invented, 4,000 to 4,400 (2.7)
-  //   1250 → 1500 molten, 4,400 to 4,567   (0.67: the Moon's three million years take four or five positions)
-  const KNOTS = [[100, 10], [300, 200], [500, 540], [700, 1000], [1100, 4000], [1250, 4400], [1500, 4567]];
+  // One even line, today to 4,567 million years (6c): the stretching line is the age slider itself. The main slider's
+  // stretched scale near today (a cube law to ten million years, then a segment per era) is gone: a stretch does that job.
   const EARTH_AGE = 4567;
-  function ageOf(v) {
-    if (v <= 100) { const a = Math.pow(v / 100, 3) * 10; return a < 0.01 ? Math.round(a * 1e5) / 1e5 : (a < 1 ? Math.round(a * 1000) / 1000 : Math.round(a * 10) / 10); }   // to ten years under 10,000, a thousand under a million, a tenth of a million above
-    for (let i = 1; i < KNOTS.length; i++) { const [p0, a0] = KNOTS[i - 1], [p1, a1] = KNOTS[i]; if (v <= p1) return Math.round((a0 + (a1 - a0) * (v - p0) / (p1 - p0)) * 10) / 10; }
-    return KNOTS[KNOTS.length - 1][1];
-  }
-  function posOf(ma) {
-    if (ma <= 10) return Math.round(100 * Math.cbrt(ma / 10));
-    for (let i = 1; i < KNOTS.length; i++) { const [p0, a0] = KNOTS[i - 1], [p1, a1] = KNOTS[i]; if (ma <= a1) return Math.round(p0 + (p1 - p0) * (ma - a0) / (a1 - a0)); }
-    return KNOTS[KNOTS.length - 1][0];
-  }
   // the age as words: years under a million; under ten million to a thousandth where the stretching slider sets one
   // (the main slider's own ages are tenths); whole millions above
   function ageWord(ma) { return ma === 0 ? 'today' : ma < 1 ? Math.round(ma * 1e6).toLocaleString('en') + ' years ago' : (ma < 10 ? (Math.round(ma * 1000) / 1000).toLocaleString('en', { maximumFractionDigits: 3 }) : Math.round(ma).toLocaleString('en')) + ' million years ago'; }
@@ -391,30 +410,41 @@
     const photo = state.ma < (earth ? earth.seam : 2.6);
     honest.say({ what: whatLine(null), says: { word, sentence: g.why }, credit: photo ? SHORT_CREDIT[state.ground] : 'The continents: Merdith et al. 2021 (EarthByte)' });
   }
+  // the title line under the slider (6c): the Earth's age and how long ago — "The Earth at 4,317 million years old:
+  // 250 million years ago"; at today "The Earth today, 4,567 million years old" (Michael will adjust the words)
+  function ageTitle(ma) {
+    if (ma === 0) return 'The Earth today, ' + EARTH_AGE.toLocaleString('en') + ' million years old';
+    return 'The Earth at ' + Math.round(EARTH_AGE - ma).toLocaleString('en') + ' million years old: ' + ageWord(ma);
+  }
+  // the text box (6c): the introduction at first; from the first change of the year, the honest block for that age
+  let introUp = true;
+  function showBlock() { if (!introUp) return; introUp = false; $('intro').style.display = 'none'; $('honestBlock').style.display = ''; }
   function setAge(ma) {
-    state.ma = ma; $('ageWord').value = ageWord(ma); $('stretchWord').value = ageWord(ma);
+    const changed = ma !== state.ma;
+    state.ma = ma; $('ageTitle').textContent = ageTitle(ma);
     if (earth) earth.setTime(ma);
     g2d.setTime(ma); groundTo2d();
     tellGrade();
+    if (changed) showBlock();
     if (renderStretch) renderStretch();
   }
-  $('age').addEventListener('input', () => setAge(ageOf(+$('age').value)));
-  function toAge(ma) { $('age').value = posOf(ma); setAge(ma); }
+  const toAge = ma => setAge(Math.max(0, Math.min(EARTH_AGE, ma)));
 
-  // ---------- the stretching slider (6b, bench only; Worknote-Time-Slider.md) ----------
-  // One even line, today to 4,567 million years, in place of the fine slider. She puts two marks on it — two taps on the
-  // line (tap twice), or the marks start at the line's ends and she drags them in (drag in); the pair of words switches —
-  // and a tap between them stretches that stretch to fill the whole line, in a short glide; again and again, to a year a
-  // pixel at the least; the word back steps out one stretch. The thumb is the age, dragged as on any slider, and the Earth
-  // follows it throughout; the main slider moves with it. Under the line: the stretch's two ends, and what one of the
-  // screen's own pixels is worth now (the stretch over the line's width in device pixels, by devicePixelRatio).
-  const STR = { a: 0, b: EARTH_AGE, stack: [], marks: [], mode: 'tap', anim: null };
-  const track = $('stretchTrack'), thumbEl = $('stretchThumb'), markEls = [$('markA'), $('markB')];
+  // ---------- the age slider, which stretches (6c; Worknote-Time-Slider.md) ----------
+  // One even line, today at its left end and the Earth's birth at its right. The thumb is the age: dragged, or set by a tap
+  // on the line, as on any slider, and the Earth follows it throughout. Two small flags sit at the line's two ends; she
+  // drags them in to bracket the years she wants, and once a flag has moved the word stretch appears beside the line: a
+  // tap and the line glides to run between the flags' years, the flags springing back to the ends, ready to go again; to
+  // a year a screen pixel at the least. back steps out one stretch, and is absent when there is nothing to step out of.
+  // Under the line: the stretch's two ends, and what one of the screen's own pixels is worth now (by devicePixelRatio).
+  const STR = { a: 0, b: EARTH_AGE, stack: [], flags: [0, EARTH_AGE], anim: null, target: null };
+  const track = $('stretchTrack'), thumbEl = $('stretchThumb'), flagEls = [$('flagA'), $('flagB')];
   const trackW = () => track.clientWidth || 1;
   const xOf = ma => (ma - STR.a) / (STR.b - STR.a) * trackW();
   const maOf = x => STR.a + Math.max(0, Math.min(1, x / trackW())) * (STR.b - STR.a);
   const dpr = () => window.devicePixelRatio || 1;
-  const sortedMarks = () => STR.marks.slice().sort((p, q) => p - q);
+  const EPS = 1e-9;
+  const flagsMoved = () => STR.flags[0] > STR.a + EPS || STR.flags[1] < STR.b - EPS;
   function yearsWord(y) {   // a span of years to two figures: "5 million years", "500,000 years", "23,000 years", "7.3 years", "a year"
     if (y < 1.5) return 'a year';
     if (y >= 1e6) { const m = y / 1e6; return (m >= 10 ? Math.round(m) : Math.round(m * 10) / 10).toLocaleString('en') + ' million years'; }
@@ -429,63 +459,58 @@
     const step = Math.max(1, Math.pow(10, Math.floor(Math.log10(span * 1e6)) - 2));
     return (Math.round(ma * 1e6 / step) * step).toLocaleString('en') + ' years ago';
   }
+  const present = (el, on) => el.classList.toggle('absent', !on);
   var renderStretch = function () {
-    const W = trackW(), ms = sortedMarks();
-    markEls.forEach((el, i) => { if (ms[i] != null) { el.style.display = ''; el.style.left = xOf(ms[i]) + 'px'; } else el.style.display = 'none'; });
-    const out = state.ma < STR.a - 1e-9 || state.ma > STR.b + 1e-9;
+    const W = trackW();
+    flagEls.forEach((el, i) => { el.style.left = Math.max(0, Math.min(W, xOf(STR.flags[i]))) + 'px'; });
+    const out = state.ma < STR.a - EPS || state.ma > STR.b + EPS;
     thumbEl.style.left = Math.max(0, Math.min(W, xOf(state.ma))) + 'px'; thumbEl.classList.toggle('out', out);
     $('stretchFrom').textContent = spanEndWord(STR.a); $('stretchTo').textContent = spanEndWord(STR.b);
     $('pixelLine').textContent = 'one pixel: ' + yearsWord((STR.b - STR.a) * 1e6 / (W * dpr()));
-    $('wBack').style.visibility = STR.stack.length ? '' : 'hidden';
+    present($('wStretch'), !STR.anim && flagsMoved());
+    present($('wBack'), !STR.anim && STR.stack.length > 0);
   };
-  function resetMarks() { STR.marks = STR.mode === 'drag' ? [STR.a, STR.b] : []; }
-  function glideStretch(a1, b1) {   // the line's ends ease to the new stretch over STRETCH_MS; the marks ease to its ends
-    const a0 = STR.a, b0 = STR.b, m0 = sortedMarks(), t0 = performance.now(), T = STRETCH_MS;
+  function resetFlags() { STR.flags = [STR.a, STR.b]; }
+  function glideStretch(a1, b1) {   // the line's ends ease to the new stretch over STRETCH_MS; the flags ease to its ends
+    const a0 = STR.a, b0 = STR.b, f0 = STR.flags.slice(), t0 = performance.now(), T = STRETCH_MS;
     if (STR.anim) cancelAnimationFrame(STR.anim);
     STR.target = [a1, b1];
     const step = now => {
       const u = Math.min(1, (now - t0) / T), s = u * u * (3 - 2 * u);
       STR.a = a0 + (a1 - a0) * s; STR.b = b0 + (b1 - b0) * s;
-      if (m0.length === 2) STR.marks = [m0[0] + (a1 - m0[0]) * s, m0[1] + (b1 - m0[1]) * s];
+      STR.flags = [f0[0] + (a1 - f0[0]) * s, f0[1] + (b1 - f0[1]) * s];
       renderStretch();
-      if (u < 1) STR.anim = requestAnimationFrame(step); else { STR.anim = null; STR.target = null; STR.a = a1; STR.b = b1; resetMarks(); renderStretch(); }
+      if (u < 1) STR.anim = requestAnimationFrame(step); else { STR.anim = null; STR.target = null; STR.a = a1; STR.b = b1; resetFlags(); renderStretch(); }
     };
     STR.anim = requestAnimationFrame(step);
   }
   function finishStretch() {   // bench only: the glide finished at once, for a browser pane that runs frames only while looked at
     if (!STR.anim) return; cancelAnimationFrame(STR.anim); STR.anim = null;
-    [STR.a, STR.b] = STR.target; STR.target = null; resetMarks(); renderStretch();
+    [STR.a, STR.b] = STR.target; STR.target = null; resetFlags(); renderStretch();
   }
   const STRETCH_MS = 380, YEARS_PER_PX_LEAST = 1;   // the glide; and a stretch can go no finer than a year a device pixel
-  function stretchTo(ms) {
-    let [a1, b1] = ms.slice().sort((p, q) => p - q);
+  function doStretch() {   // the word stretch: the line runs between the flags' years
+    if (STR.anim || !flagsMoved()) return;
+    let [a1, b1] = STR.flags.slice().sort((p, q) => p - q);
     const least = trackW() * dpr() * YEARS_PER_PX_LEAST / 1e6;
     if (b1 - a1 < least) { const c = (a1 + b1) / 2; a1 = Math.max(0, c - least / 2); b1 = Math.min(EARTH_AGE, a1 + least); }
-    if (Math.abs(a1 - STR.a) < 1e-12 && Math.abs(b1 - STR.b) < 1e-12) return;
+    if (Math.abs(a1 - STR.a) < 1e-12 && Math.abs(b1 - STR.b) < 1e-12) { resetFlags(); renderStretch(); return; }
     STR.stack.push([STR.a, STR.b]);
     glideStretch(a1, b1);
   }
-  function stretchBack() { const prev = STR.stack.pop(); if (prev) glideStretch(prev[0], prev[1]); }
-  function fromStretch(ma) { ma = Math.max(0, Math.min(EARTH_AGE, ma)); $('age').value = posOf(ma); setAge(ma); $('stretchWord').value = ageWord(ma); }
-  function tapStretch(x) {
-    const ma = maOf(x), ms = sortedMarks();
-    if (STR.mode === 'tap') {
-      if (ms.length < 2) { STR.marks.push(ma); renderStretch(); return; }
-      if (ma > ms[0] && ma < ms[1]) { stretchTo(ms); return; }
-      STR.marks = [ma]; renderStretch();   // outside the pair: start again, this tap the first mark
-    } else {
-      const movedIn = ms[0] > STR.a + 1e-12 || ms[1] < STR.b - 1e-12;
-      if (movedIn && ma > ms[0] && ma < ms[1]) stretchTo(ms);
-      else fromStretch(ma);   // the ordinary slider: a tap on the line sets the age
-    }
+  function stretchBack() { if (STR.anim) return; const prev = STR.stack.pop(); if (prev) glideStretch(prev[0], prev[1]); }
+  function setFlag(i, ma) {   // a flag dragged: kept inside the line and on its own side of the other flag
+    const gap = (STR.b - STR.a) * 2 / trackW();   // two pixels at least between them
+    STR.flags[i] = i === 0 ? Math.max(STR.a, Math.min(STR.flags[1] - gap, ma)) : Math.min(STR.b, Math.max(STR.flags[0] + gap, ma));
+    renderStretch();
   }
   let sPtr = null;
   track.addEventListener('pointerdown', e => {
-    const r = track.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, ms = sortedMarks();
+    const r = track.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
     let target = 'tap';
-    if (y < r.height * 0.45 && STR.mode === 'drag' && ms.length === 2) {   // the marks' zone, above the line: the nearer mark within reach
-      const d0 = Math.abs(xOf(ms[0]) - x), d1 = Math.abs(xOf(ms[1]) - x);
-      if (Math.min(d0, d1) <= 16) target = d0 <= d1 ? 'm0' : 'm1';
+    if (y < r.height * 0.5) {   // the flags' zone, above the line: the nearer flag within reach
+      const d0 = Math.abs(xOf(STR.flags[0]) - x), d1 = Math.abs(xOf(STR.flags[1]) - x);
+      if (Math.min(d0, d1) <= 16) target = d0 <= d1 ? 'f0' : 'f1';
     }
     if (target === 'tap' && y >= r.height * 0.3 && Math.abs(xOf(state.ma) - x) <= 14) target = 'thumb';
     sPtr = { id: e.pointerId, x0: x, target, moved: false };
@@ -497,17 +522,18 @@
     const r = track.getBoundingClientRect(), x = e.clientX - r.left;
     if (Math.abs(x - sPtr.x0) > 4) sPtr.moved = true;
     if (!sPtr.moved) return;
-    if (sPtr.target === 'thumb') fromStretch(maOf(x));
-    else if (sPtr.target === 'm0' || sPtr.target === 'm1') { const ms = sortedMarks(), i = sPtr.target === 'm0' ? 0 : 1; ms[i] = Math.max(STR.a, Math.min(STR.b, maOf(x))); STR.marks = ms; renderStretch(); }
+    if (sPtr.target === 'tap') sPtr.target = 'thumb';   // a press on the line that moves drags the age, as on any slider
+    if (sPtr.target === 'thumb') toAge(maOf(x));
+    else if (sPtr.target === 'f0') setFlag(0, maOf(x)); else if (sPtr.target === 'f1') setFlag(1, maOf(x));
   });
-  const sUp = e => { if (!sPtr) return; const r = track.getBoundingClientRect(); if (!sPtr.moved && sPtr.target === 'tap') tapStretch(e.clientX - r.left); sPtr = null; };
+  const sUp = e => { if (!sPtr) return; const r = track.getBoundingClientRect(); if (!sPtr.moved && sPtr.target === 'tap') toAge(maOf(e.clientX - r.left)); sPtr = null; };
   track.addEventListener('pointerup', sUp); track.addEventListener('pointercancel', () => { sPtr = null; });
-  function setStretchMode(m) { STR.mode = m; pressed($(m === 'tap' ? 'wTapTwice' : 'wDragIn'), $(m === 'tap' ? 'wDragIn' : 'wTapTwice')); resetMarks(); renderStretch(); }
-  $('wTapTwice').addEventListener('click', () => setStretchMode('tap')); $('wDragIn').addEventListener('click', () => setStretchMode('drag'));
+  $('wStretch').addEventListener('click', doStretch);
   $('wBack').addEventListener('click', stretchBack);
   window.addEventListener('resize', renderStretch);
-  setStretchMode(Q.get('stretch') === 'drag' ? 'drag' : 'tap');
-  toAge(Q.get('ma') ? +Q.get('ma') : 0);
+  if (window.ResizeObserver) new ResizeObserver(renderStretch).observe(track);
+  state.ma = -1; toAge(Q.get('ma') ? +Q.get('ma') : 0);   // ?ma= opens at an age (bench only); the first set is 'changed' only if not today
+  if (state.ma === 0) { introUp = true; $('intro').style.display = ''; $('honestBlock').style.display = 'none'; }
 
   // ---------- the window's bars (step 6), and its size while they are dragged (6b) ----------
   // The right bar makes the window narrower or wider, the bottom one shorter or taller. The Earth keeps the scale it has at
@@ -516,14 +542,23 @@
   // after, the window shows its size in the page's own pixels, small and grey, inside its bottom right corner.
   const CROP_MIN = 160;
   let crop = null;   // { w, h } in CSS pixels, or null at the usual size
-  const usualSize = () => { const w = $('stageBox').clientWidth; return { w, h: w }; };
+  // the window's usual size (6c; Michael measured about 800 × 500 on the Mac and 800 × 700 on the iPad): as wide as the
+  // column allows, to WIN_MAX_W; as tall as leaves the age slider and the title line on screen without scrolling (the
+  // browser's inner height less the window's top on the page and BELOW for the bars, the slider, its ends and the title
+  // line), capped at RATIO_MAX of the width and never under WIN_MIN_H. The column under the globe is exactly as wide.
+  const WIN_MAX_W = 800, RATIO_MAX = 0.875, BELOW = 150, WIN_MIN_H = 320;
+  const usualSize = () => {
+    const w = Math.min($('stageBox').clientWidth || WIN_MAX_W, WIN_MAX_W);
+    const top = $('stageWrap').getBoundingClientRect().top + window.scrollY;
+    const h = Math.max(WIN_MIN_H, Math.min(Math.round(w * RATIO_MAX), window.innerHeight - Math.round(top) - BELOW));
+    return { w, h };
+  };
   function setCrop(c) {
-    crop = c; const wrap = $('stageWrap'), st = $('stage3d');
-    if (!crop) { wrap.style.width = ''; st.style.height = ''; st.style.aspectRatio = ''; }
-    else { wrap.style.width = crop.w + 'px'; st.style.height = crop.h + 'px'; st.style.aspectRatio = 'auto'; }
+    crop = c; const wrap = $('stageWrap'), st = $('stage3d'), size = crop || usualSize();
+    wrap.style.width = size.w + 'px'; st.style.height = size.h + 'px'; $('underCol').style.width = size.w + 'px';
     if (view) view.setFrame(crop ? usualSize() : null);
   }
-  window.addEventListener('resize', () => { if (crop && view) view.setFrame(usualSize()); });
+  window.addEventListener('resize', () => { if (fs && fs.on) return; setCrop(crop); });
   let sizeTimer = null;
   function showSize() {
     const r = $('stage3d').getBoundingClientRect(), el = $('sizeReadout');
@@ -549,46 +584,62 @@
     bar.addEventListener('pointerup', up); bar.addEventListener('pointercancel', up);
   });
 
-  // ---------- the opening views (6b): one of seven at random, each framed on its subject ----------
+  // ---------- the opening views (6b, 6c): the whole globe, centred on one of seven places at random ----------
   // ?view=alps (nile, tibet, australia, mexico, amazon, victoria) picks one for a check; ?at=lon,lat,km (bench only, below)
-  // overrides. Reset view returns to the view the page opened on (view.setHome). Each subject is given as its centre and its
-  // extent east–west and north–south in kilometres, and fitted to the window's usual size with a tenth of margin; a subject
-  // closer than the deepest level allows (Mexico City) opens as close as the zoom goes.
+  // overrides. The ball is whole, not zoomed in, at HOME_DISTANCE; Reset returns to the view the page opened on (view.setHome).
   const VIEWS = {
-    alps:      { name: 'the Alps, whole',                            lon: 10.4,   lat: 46.2,  ew: 1050, ns: 600 },
-    nile:      { name: 'the Nile, from its delta to Lake Victoria',  lon: 32.8,   lat: 15.3,  ew: 1300, ns: 3800 },
-    tibet:     { name: 'the Tibetan Plateau',                        lon: 89,     lat: 33.5,  ew: 2700, ns: 1500 },
-    australia: { name: 'Australia, whole',                           lon: 134,    lat: -27.5, ew: 4200, ns: 3900 },
-    mexico:    { name: 'Mexico City, close',                         lon: -99.13, lat: 19.43, ew: 70,   ns: 70 },
-    amazon:    { name: 'the Amazon basin',                           lon: -63,    lat: -5,    ew: 3300, ns: 2300 },
-    victoria:  { name: 'Lake Victoria',                              lon: 33.2,   lat: -1.3,  ew: 480,  ns: 480 }
+    alps:      { name: 'the Alps',             lon: 10.4,   lat: 46.2 },
+    nile:      { name: 'the Nile',             lon: 32.8,   lat: 15.3 },
+    tibet:     { name: 'the Tibetan Plateau',  lon: 89,     lat: 33.5 },
+    australia: { name: 'Australia',            lon: 134,    lat: -27.5 },
+    mexico:    { name: 'Mexico City',          lon: -99.13, lat: 19.43 },
+    amazon:    { name: 'the Amazon',           lon: -63,    lat: -5 },
+    victoria:  { name: 'Lake Victoria',        lon: 33.2,   lat: -1.3 }
   };
-  let openedOn = null, framedKey = '';   // the view the page opened on, and the window's size it was framed for
-  function frameDistance(ewKm, nsKm) {   // the camera's distance so the subject fits the window's usual size, a tenth of margin
-    const rs = view.refSize(), kmpp = Math.max(ewKm * 1.1 / rs.w, nsKm * 1.1 / rs.h);
-    framedKey = rs.w + 'x' + rs.h;
-    return 1 + kmpp * rs.h / 6371 / (2 * Math.tan(view.camera.fov * Math.PI / 360));
-  }
+  let openedOn = null;   // the view the page opened on
   function openOn(key) {
     const v = VIEWS[key]; if (!v || !view) return null;
-    view.turnTo(v.lon, v.lat, 0);
-    earth.step();   // the nearest she may come, for this ground, before the zoom is clamped by it (the old ground's limit stood until the next frame)
-    view.zoomTo(frameDistance(v.ew, v.ns));
-    const d = view.camera.position.length();
-    view.setHome({ lon: v.lon, lat: v.lat, distance: d });
+    view.turnTo(v.lon, v.lat);
+    view.zoomTo(HOME_DISTANCE);
+    view.setHome({ lon: v.lon, lat: v.lat, distance: HOME_DISTANCE });
     earth.step(); earth.resetFill(); earth.settle(); view.redraw();
     if (g2d) g2d.turn(v.lon, v.lat);
     openedOn = key;
-    return { key, name: v.name, distance: d, kmAcross: Math.round((d - 1) * 2 * Math.tan(view.camera.fov * Math.PI / 360) * 6371) };
+    return { key, name: v.name, distance: view.camera.position.length() };
   }
   if (view && !Q.get('at')) { const keys = Object.keys(VIEWS); openOn(VIEWS[Q.get('view')] ? Q.get('view') : keys[Math.floor(Math.random() * keys.length)]); }
-  // the window's size can settle after the page opens (a browser pane laying the page out late, an iPad turned over):
-  // until she touches the Earth, a change of the window's usual size frames the opening view again
-  let touched = false;
-  if (view) {
-    view.onGesture(s => { if (s === 'start') touched = true; });
-    if (window.ResizeObserver) new ResizeObserver(() => { const rs = view.refSize(); if (openedOn && !touched && rs.w + 'x' + rs.h !== framedKey) openOn(openedOn); }).observe($('stage3d'));
+
+  // ---------- the panels (6c): How this works and Current year, as Glass Geometry's ----------
+  // cw-panel.js's window — draggable by its whole surface, a close word top right, fading in and out — inside the Earth's
+  // window so it shows over a full screen too. How this works holds a first draft of the words (Michael will rewrite them)
+  // and the bench's own controls; Current year says how to set the span of the line. Each opens where it was left.
+  const mkPanel = (width) => { const pn = CW.createInfoPanel({ width }); $('stageWrap').appendChild(pn.el); pn.el.style.zIndex = '600'; pn.el.style.cursor = 'default'; pn.el.classList.add('cw-info-panel'); return pn; };
+  const htwPanel = window.CW.createInfoPanel ? mkPanel(344) : null, yearPanel = window.CW.createInfoPanel ? mkPanel(300) : null;
+  if (htwPanel) {
+    htwPanel.body.innerHTML = '<div class="panel-text">' +
+      '<p><b>The picture.</b> The Earth is a ball drawn fresh every moment on your device’s graphics card. The land is a photograph from space, NASA’s Blue Marble; the sea is painted, and so is the land before 2.6 million years ago, where the photograph no longer tells the truth. The continents are pieces of crust moved by their plates, from a model geologists built from the rocks and the sea floor. The further back, the less is known, and the words under the picture say so.</p>' +
+      '<p><b>Using it.</b> Drag to turn the Earth: it turns like a globe on its stand, north up. Pinch or scroll to come closer, down to a few hundred metres across; scroll out and the whole ball comes back. Tap a place and it glides to the centre. <i>Map</i> lays the Earth out flat; <i>Globe</i> brings the ball back. The line under the Earth is time: drag the copper dot to any year, and <i>Current year</i> says how to look closely at a stretch of it. <i>Coastlines</i> draws today’s coasts at any age. <i>Reset</i> puts everything back as it opened. <i>Save or share</i> keeps the picture, with a note of your own.</p>' +
+      '</div>';
+    const bw = $('benchWords'); bw.style.display = ''; htwPanel.body.appendChild(bw);
   }
+  if (yearPanel) {
+    yearPanel.body.innerHTML = '<div class="panel-text">' +
+      '<p>The line under the Earth runs from today, at its left end, to the Earth’s birth at its right, 4,567 million years ago. Drag the copper dot along it, or tap the line, to set the year. The line is even: every bit of it is the same number of years, and the small figure under it says what one pixel of your screen is worth now, about 2.6 million years at the start.</p>' +
+      '<p>To look closely at a stretch of time, drag the two small flags in from the ends until they bracket the years you want, and tap <i>stretch</i>: the line glides out until those years fill it, and the flags go back to the ends, ready to go again. Do it again and again, down to a single year a pixel. <i>back</i> steps out one stretch.</p>' +
+      '</div>';
+  }
+  function placePanel(pn, dx, dy) {   // over the window's top left corner, unless she has moved it
+    const r = $('stage3d').getBoundingClientRect(), w = pn.el.offsetWidth || 320;
+    if (!pn.userMoved()) pn.setPosition(Math.max(8, Math.min(window.innerWidth - w - 16, r.left + dx)), Math.max(8, r.top + dy));
+  }
+  function togglePanel(pn, wordEl, dx, dy) {
+    if (!pn) return;
+    if (pn.visible() && pn.el.style.opacity === '1') { pn.hide(); wordEl.setAttribute('aria-pressed', 'false'); return; }
+    placePanel(pn, dx, dy); pn.show(); wordEl.setAttribute('aria-pressed', 'true');
+  }
+  $('wHtw').addEventListener('click', () => togglePanel(htwPanel, $('wHtw'), 16, 16));
+  $('wYear').addEventListener('click', () => togglePanel(yearPanel, $('wYear'), 16 + 344, 16));
+  [[htwPanel, 'wHtw'], [yearPanel, 'wYear']].forEach(([pn, id]) => { if (pn) pn.el.querySelector('span').addEventListener('click', () => $(id).setAttribute('aria-pressed', 'false')); });
 
   // ---------- the kept picture (6b): a small panel with the picture, a note, Share and Save ----------
   // Keep this picture draws the picture once (still.js, at full, 4,096 px) and opens a panel (cw-panel.js: draggable,
@@ -635,7 +686,7 @@
     panel.show();
   }
   if (view && panel) {
-    keep = document.createElement('button'); keep.type = 'button'; keep.className = 'word'; keep.textContent = 'Keep this picture';
+    keep = document.createElement('button'); keep.type = 'button'; keep.className = 'word'; keep.textContent = 'Save or share';   // Keep this picture, renamed (6c)
     $('words').appendChild(keep);
     keep.addEventListener('click', async () => {
       keep.disabled = true; keep.textContent = 'Making it…';
@@ -647,7 +698,7 @@
         $('keptMeta').textContent += ' · ' + Math.round(performance.now() - t0) + ' ms · ' + view.tier + ' live';   // bench only
         openPanel();
       } catch (e) { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The picture could not be made: ' + e.message; }
-      keep.disabled = false; keep.textContent = 'Keep this picture';
+      keep.disabled = false; keep.textContent = 'Save or share';
     });
     $('keptNote').addEventListener('input', () => { keptNote = $('keptNote').value; clearTimeout(noteTimer); noteTimer = setTimeout(composeKept, 300); });
     $('wShare').addEventListener('click', async () => {
@@ -662,28 +713,34 @@
     $('wSave').addEventListener('click', e => { if (keptPending || noteTimer) { e.preventDefault(); clearTimeout(noteTimer); noteTimer = null; composeKept().then(() => $('wSave').click()); } });
   }
 
-  // ---------- Full screen (6b; js/cw-fullscreen.js) ----------
-  // The word fills the screen with the Earth's window; Map/Globe, Reset view, Keep this picture and the word itself float
-  // small at the top left, the age slider along the bottom; the same word, Escape or the device's own gesture returns.
-  // The window's crop is undone first (the window is the screen). No word where the device has no full screen.
+  // ---------- Full screen (6b, 6c; js/cw-fullscreen.js) ----------
+  // The word fills the screen with the Earth's window, a clear margin above and below the ball (the page's CSS); the title
+  // and every command float at the top left, below the platform's own close button; the age slider and the title line
+  // along the bottom; the same word, Escape or the device's own gesture returns. The window's crop is undone first (the
+  // window is the screen). No word where the device has no full screen.
   const fs = view && window.CW.fullscreen ? CW.fullscreen($('stageWrap'), {
     wordsHost: $('words'),
-    words: () => [$('wFlat'), view.resetWord, keep].filter(Boolean),
-    bottom: () => [$('ageRow')],
-    onChange: on => { if (on) setCrop(null); if (earth) earth.settle(); view.redraw(); renderStretch(); if (panel && panel.visible()) openPanel(); }
+    words: () => [$('title'), $('wHtw'), $('wFlat'), $('wYear'), $('wCoasts'), view.resetWord, keep].filter(Boolean),
+    bottom: () => [$('ageRow'), $('ageTitle')],
+    onChange: on => { if (on) setCrop(null); else setCrop(crop); if (earth) earth.settle(); view.redraw(); renderStretch(); [panel, htwPanel, yearPanel].forEach(pn => { if (pn && pn.visible()) { if (pn === panel) openPanel(); else placePanel(pn, 16, 16); } }); }
   }) : null;
+  // the column's order (6c): the title, How this works, Map / Globe, Current year, Coastlines, Reset, Save or share, Full screen
+  if (view) { view.resetWord.textContent = 'Reset'; [$('wFlat'), $('wYear'), $('wCoasts'), view.resetWord, keep, fs && fs.word].filter(Boolean).forEach(el => $('words').appendChild(el)); }
+  setCrop(null);   // the window's usual size, now that everything above and beside it is in place
 
   // ---------- the bench's readout: backend, tier and reach, the turn, frame rate, the triangles ----------
   if (view) {
     const st = earth.stats;
     setInterval(() => {
       const t = earth.tiles(), v = view.turnOf();
-      $('readout').textContent = view.backend + ' · tier ' + view.tier + (view.timing !== 'done' ? ' (timing)' : '') + ' (the sharpness) · deepest level ' + t.deepest + ' (the reach, at every tier) · level ' + t.centreLevel + ' at the centre' +
-        ' · the turn ' + Math.round(view.feel() * 100) + '% the map’s slide, north leaning ' + Math.abs(v.roll).toFixed(1) + '°' + (openedOn ? ' · opened on ' + VIEWS[openedOn].name : '') + (fs && fs.available ? '' : ' · no full screen here') +
-        ' · ' + view.fps + ' fps · ' +
-        st.triangles.toLocaleString('en') + ' triangles from ' + st.pieces + ' pieces on ' + st.plates + ' plates (the rims ' + st.rimTriangles.toLocaleString('en') + ' more), built in ' + st.buildMs + ' ms (the file in ' + st.fetchMs + ' ms; the masks in ' + st.lookMs + ' ms)' +
-        ' · Blue Marble ' + (st.blue() ? st.blue() + ' px (device allows ' + view.maxTexture + ')' : 'not loaded') +
-        ' · seed ' + state.seed + simLine() + groundLine() + tileLine();
+      const rs = usualSize(), st3 = $('stage3d').getBoundingClientRect();
+      // three short lines in the panel (6c); the long figures behind cwStats() in the console
+      $('readout').textContent = view.backend + ' · tier ' + view.tier + (view.timing !== 'done' ? ' (timing)' : '') + ' · ' + view.fps + ' fps · deepest level ' + t.deepest + ' at every tier · level ' + t.centreLevel + ' at the centre' +
+        '\n' + Math.abs(v.lat).toFixed(1) + '° ' + (v.lat >= 0 ? 'N' : 'S') + ', ' + Math.abs(v.lon).toFixed(1) + '° ' + (v.lon >= 0 ? 'E' : 'W') + ' at the centre · ' + Math.round((view.camera.position.length() - 1) * 2 * Math.tan(view.camera.fov * Math.PI / 360) * 6371 * st3.height / view.refSize().h).toLocaleString('en') + ' km across' + (openedOn ? ' · opened on ' + VIEWS[openedOn].name : '') +
+        ' · the window ' + Math.round(st3.width) + ' × ' + Math.round(st3.height) + (crop ? ' (usual ' + rs.w + ' × ' + rs.h + ')' : '') + (fs && fs.available ? '' : ' · no full screen here') +
+        '\n' + t.held + ' tiles held of ' + t.limit + ' · seed ' + state.seed + ' · cwStats() in the console for the rest';
+      window.cwStats = () => st.triangles.toLocaleString('en') + ' triangles from ' + st.pieces + ' pieces on ' + st.plates + ' plates (the rims ' + st.rimTriangles.toLocaleString('en') + ' more), built in ' + st.buildMs + ' ms (the file in ' + st.fetchMs + ' ms; the masks in ' + st.lookMs + ' ms)' +
+        ' · Blue Marble ' + (st.blue() ? st.blue() + ' px (device allows ' + view.maxTexture + ')' : 'not loaded') + ' · seed ' + state.seed + simLine() + groundLine() + tileLine();
     }, 500);
   } else {
     $('readout').textContent = 'no 3D view: the still picture and the 2D globe';
@@ -715,10 +772,10 @@
 
   // ---------- for the bench's own checks (the browser pane) ----------
   window.cwSetFlat = setFlat; window.cwSetCrop = setCrop; window.cwCrop = () => crop; window.cwShowSize = showSize;
-  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetPlaces = setPlaces; window.cwSetOldGlobe = setOldGlobe; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest; window.cwAgeOf = ageOf; window.cwPosOf = posOf;
-  window.cwOpenOn = openOn; window.cwViews = VIEWS; window.cwOpenedOn = () => openedOn; window.cwFramedKey = () => framedKey;
-  window.cwStretch = { state: STR, to: stretchTo, back: stretchBack, mode: setStretchMode, tap: tapStretch, render: renderStretch, finish: finishStretch, xOf, maOf };
-  window.cwFullscreen = fs; window.cwPanel = panel; window.cwPlaceWord = placeWord; window.cwCompose = composeKept; window.cwKept = () => ({ picture: keptPicture, blob: keptBlob, note: keptNote });
+  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetPlaces = setPlaces; window.cwSetOldGlobe = setOldGlobe; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest;
+  window.cwOpenOn = openOn; window.cwViews = VIEWS; window.cwOpenedOn = () => openedOn; window.cwUsualSize = usualSize; window.cwAgeTitle = ageTitle;
+  window.cwStretch = { state: STR, flag: setFlag, stretch: doStretch, back: stretchBack, render: renderStretch, finish: finishStretch, xOf, maOf, moved: flagsMoved };
+  window.cwFullscreen = fs; window.cwPanel = panel; window.cwHtwPanel = htwPanel; window.cwYearPanel = yearPanel; window.cwPlaceWord = placeWord; window.cwCompose = composeKept; window.cwKept = () => ({ picture: keptPicture, blob: keptBlob, note: keptNote });
   // The bench's own timer, as the Sun bench's: draws `frames` frames off-screen at the canvas's size for a tier,
   // the age moving a million years a frame (so every plate's turn is read each frame, as a slider drag reads it),
   // and waits for the graphics card to finish each, so the number is the true cost of a frame, not the display's
@@ -887,7 +944,7 @@
     { name: 'Alice Springs', lon: 133.88, lat: -23.7, weight: 2 }, { name: 'Uluru', lon: 131.04, lat: -25.34, weight: 2 }, { name: 'Coober Pedy', lon: 134.75, lat: -29.0, weight: 2 },
     { name: 'Broome', lon: 122.24, lat: -17.96, weight: 2 }, { name: 'Kalgoorlie', lon: 121.47, lat: -30.75, weight: 2 }, { name: 'Tennant Creek', lon: 134.19, lat: -19.65, weight: 2 }
   ]);
-  window.cwSave = async function (dir, name, blob, port = 8771) {
+  window.cwSave = async function (dir, name, blob, port = 8772) {
     const url = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
     const r = await fetch('http://localhost:' + port + '/save?dir=' + encodeURIComponent(dir) + '&name=' + encodeURIComponent(name), { method: 'POST', body: url });
     return r.ok ? (await r.text()) : 'failed ' + r.status;

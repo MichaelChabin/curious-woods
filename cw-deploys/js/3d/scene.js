@@ -80,24 +80,13 @@
      window. null: the window is its usual size again. view.refSize() is the size the scale is set by.
    - o.onReset: called when Reset view is tapped (the page puts back what it changed, the window's size).
 
-   The map's slide (the Earth's 6b bench, 30 Oct 2026; Michael: close in, a drag should move the ground as a map moves,
-   not swing the globe). On a ball with north kept up at the centre, every move east is a turn about the pole, and the
-   picture pivots about the pole as it goes: at the whole-ball scale that is the globe on its stand, but with a country
-   filling the window the pivot sits just past the frame and the ground swings. So close in a one-finger drag is a rigid
-   slide instead — the trackball's turn about the camera's own axes, under which every point in the window moves the same
-   way and nothing pivots — read back as a view: a longitude and latitude at the centre and a lean of north there (gRoll).
-   A slide east leaves north leaning by the meridians' convergence (the drag's longitude times the sine of the latitude:
-   about nine degrees for a window-width over the Alps, a degree and a half over Nantucket, nothing at the equator); a
-   slide north leaves it as it was. The two turns are blended by how much ground the window shows: wholly the slide at
-   and under MAP_SPAN radians across the window's height (about 760 km), wholly the stand from STAND_SPAN out (about
-   3,800 km), smoothly between on the logarithm of the span, so the feel never jumps as she zooms. The lean comes out
-   as she zooms out, in proportion as the slide gives way to the stand (a zoom already changes the whole picture), and
-   Reset view and a glide to a place ease it to nothing; at rest close in it stays, since taking it out would be the
-   picture rolling on its own. Two fingers keep north up at every zoom (the ground between them follows them exactly).
-   ?turn=map or ?turn=stand forces one turn at every zoom, for the bench. view.turnOf() carries the lean as `roll`;
-   view.feel() says how much of the slide is in force (0 the stand, 1 the map); view.setHome({ lon, lat, distance })
-   sets where Reset view goes (the Earth's opening views); view.resetWord is the Reset view button, for a page that
-   floats it over a full screen.
+   The turn at every zoom (the Earth's 6c bench, 30 Oct 2026; Michael's ruling after trying both on the Mac and the
+   iPad): the globe on its stand close in too — east spins the ball about its own axis at every zoom, north stays up.
+   The 6b bench's map slide close in (a rigid turn about the camera's axes, leaving north leaning) is gone with its
+   `?turn=`. view.setHome({ lon, lat, distance }) sets where Reset view goes (the Earth's opening views); view.resetWord
+   is the Reset view button, for a page that floats it over a full screen or renames it. A zoom out keeps whatever is at
+   the centre of the window at the centre and the ball's turn as it is (the same ruling); a zoom in still heads for the
+   pointer, or the point between two fingers, holding the ground there.
 
    Reduced motion (the system setting): the page opens still and the word "Let it move" starts it; "Hold still"
    stops it again. A phone (short side of the screen under 600 px) gets one frame at full tier and the words
@@ -232,11 +221,6 @@ export async function cwScene(host, o = {}) {
   const home = { pos: camera.position.clone(), target: target3.clone(), quat: ball.quaternion.clone(),
                  lon: o.home && o.home.lon != null ? o.home.lon : 0, lat: o.home && o.home.lat != null ? o.home.lat : 0 };
   let gLon = home.lon, gLat = home.lat;   // the desk-globe turn's view: the longitude and latitude at the centre
-  let gRoll = 0;                           // and north's lean there, in degrees, left by the map's slide close in (see the header); 0 is north up
-  // the map's slide against the globe on a stand (30 Oct 2026): the spans, in radians of ground across the window's
-  // height, between which one gives way to the other; ?turn= forces one for the bench
-  const MAP_SPAN = 0.12, STAND_SPAN = 0.6;
-  const turnForced = o.turn === 'map' || o.turn === 'stand' ? o.turn : (q.get('turn') === 'map' || q.get('turn') === 'stand' ? q.get('turn') : null);
 
   // ---------- the texture limit ----------
   let maxTexture = 4096;
@@ -269,6 +253,9 @@ export async function cwScene(host, o = {}) {
     renderer.setSize(w, h, false);
     if (frameRef) { camera.aspect = frameRef.w / frameRef.h; camera.setViewOffset(frameRef.w, frameRef.h, (frameRef.w - w) / 2, (frameRef.h - h) / 2, w, h); }
     else { camera.clearViewOffset(); camera.aspect = w / h; }
+    // the globe in a window taller than wide (a tablet held upright, full screen; 6c): the field of view is widened so the
+    // ball fits the width as it fits the height elsewhere — the shorter side governs, as radPerPx already has it
+    if (globe) camera.fov = camera.aspect < 1 ? 2 * Math.atan(Math.tan(cam.fov * DEG / 2) / camera.aspect) / DEG : cam.fov;
     camera.updateProjectionMatrix();
     needs = true;
   }
@@ -329,54 +316,21 @@ export async function cwScene(host, o = {}) {
     const alt = camera.position.length() - 1, s = THREE.MathUtils.clamp((alt - 1) / Math.max(0.01, homeAlt - 1), 0, 1);
     return 1 / THREE.MathUtils.lerp(Math.max(0.1, Math.cos(gLat * DEG)), 1, s * s * (3 - 2 * s));
   }
-  const tmpQ2 = new THREE.Quaternion(), tmpQ3 = new THREE.Quaternion(), tmpQi = new THREE.Quaternion(), tmpP = new THREE.Vector3(), tmpN = new THREE.Vector3(), tmpU = new THREE.Vector3(), tmpR = new THREE.Vector3();
-  function applyGlobe(tell) {   // the desk-globe turn: spin about the ball's own axis, then tilt about the camera's right, then north's lean about the camera's forward
+  const tmpQ2 = new THREE.Quaternion();
+  function applyGlobe(tell) {   // the desk-globe turn: spin about the ball's own axis, then tilt about the camera's right; north stays up
     tmpV.set(0, 1, 0).applyQuaternion(camera.quaternion);
     tmpQ2.setFromAxisAngle(tmpV, -gLon * DEG);
     tmpV.set(1, 0, 0).applyQuaternion(camera.quaternion);
     tmpQ.setFromAxisAngle(tmpV, gLat * DEG);
     ball.quaternion.copy(tmpQ).multiply(tmpQ2);
-    if (gRoll) { tmpV.set(0, 0, 1).applyQuaternion(camera.quaternion); ball.quaternion.premultiply(tmpQ.setFromAxisAngle(tmpV, gRoll * DEG)); }
     needs = true;
     if (tell && o.onTurn) o.onTurn(view);
   }
-  // the span of ground across the window's height, in radians (flat, at the centre), and how much of the map's slide is
-  // in force at it: 1 at and under MAP_SPAN, 0 from STAND_SPAN out, smooth between on the logarithm; none at a pole,
-  // where east has no one direction
-  const spanNow = () => (camera.position.length() - 1) * 2 * Math.tan(cam.fov * DEG / 2);
-  function mapWeight() {
-    if (!globe) return 0;
-    const polar = THREE.MathUtils.clamp((88 - Math.abs(gLat)) / 3, 0, 1);
-    if (turnForced) return (turnForced === 'map' ? 1 : 0) * polar;
-    const t = THREE.MathUtils.clamp((Math.log(spanNow()) - Math.log(MAP_SPAN)) / (Math.log(STAND_SPAN) - Math.log(MAP_SPAN)), 0, 1);
-    return (1 - t * t * (3 - 2 * t)) * polar;
-  }
-  // a ball orientation read back as a view: the longitude and latitude at the centre of the picture, and north's lean
-  // there (degrees, positive leaning left, as applyGlobe turns it)
-  function decompose(Q) {
-    tmpQi.copy(Q).invert();
-    tmpP.set(0, 0, 1).applyQuaternion(camera.quaternion).applyQuaternion(tmpQi);   // the ball point at the centre
-    const lat = Math.asin(THREE.MathUtils.clamp(tmpP.y, -1, 1)), lon = Math.atan2(tmpP.x, tmpP.z);
-    tmpN.set(-Math.sin(lat) * Math.sin(lon), Math.cos(lat), -Math.sin(lat) * Math.cos(lon)).applyQuaternion(Q);   // north there, in the world
-    tmpU.set(0, 1, 0).applyQuaternion(camera.quaternion); tmpR.set(1, 0, 0).applyQuaternion(camera.quaternion);
-    return { lon: lon / DEG, lat: lat / DEG, roll: Math.atan2(-tmpN.dot(tmpR), tmpN.dot(tmpU)) / DEG };
-  }
-  // the lean comes out as the slide gives way to the stand (a zoom out), never otherwise on its own
-  function bleedRoll(w0) { if (!globe || !gRoll) return; const w1 = mapWeight(); if (w0 > 1e-6 && w1 < w0) { gRoll *= w1 / w0; applyGlobe(false); } }
   function turnBy(ax, ay) {   // ax, ay in radians: around the camera's up, then its right
     if (globe) {
-      // the globe on a stand: the same radians as a change of the view's longitude and latitude, the tilt stopping at the
-      // poles; close in, the map's slide — the rigid turn below, read back as a view — takes over by mapWeight (the header)
-      const w = mapWeight();
-      let dLon = -ax / DEG * lonStretch(), dLat = ay / DEG, dRoll = 0;
-      if (w > 0) {
-        tmpQ3.copy(ball.quaternion);
-        tmpV.set(1, 0, 0).applyQuaternion(camera.quaternion); tmpQ3.premultiply(tmpQ.setFromAxisAngle(tmpV, ay));
-        tmpV.set(0, 1, 0).applyQuaternion(camera.quaternion); tmpQ3.premultiply(tmpQ.setFromAxisAngle(tmpV, ax));
-        const d = decompose(tmpQ3), sLon = wrapLon(d.lon - gLon), sLat = d.lat - gLat, sRoll = wrapLon(d.roll - gRoll);
-        dLon += (sLon - dLon) * w; dLat += (sLat - dLat) * w; dRoll = sRoll * w;
-      }
-      gLon += dLon; gLat = THREE.MathUtils.clamp(gLat + dLat, -90, 90); gRoll = wrapLon(gRoll + dRoll);
+      // the globe on a stand, at every zoom (6c): the same radians as a change of the view's longitude and latitude, the
+      // tilt stopping at the poles; close in the longitude is stretched by the latitude's cosine so the ground keeps up
+      gLon += -ax / DEG * lonStretch(); gLat = THREE.MathUtils.clamp(gLat + ay / DEG, -90, 90);
       applyGlobe(true); return;
     }
     tmpV.set(1, 0, 0).applyQuaternion(camera.quaternion);
@@ -386,14 +340,12 @@ export async function cwScene(host, o = {}) {
   }
   function wrapLon(l) { l = ((l + 180) % 360 + 360) % 360 - 180; return l === -180 ? 180 : l; }
   function zoomBy(f) {
-    const w0 = mapWeight();
     const dir = camera.position.clone().sub(target3);
     const d = globe ? 1 + THREE.MathUtils.clamp((dir.length() - 1) * f, cam.min - 1, cam.max - 1)   // the globe: the height above the ground
                     : THREE.MathUtils.clamp(dir.length() * f, cam.min, cam.max);
     camera.position.copy(target3).add(dir.normalize().multiplyScalar(d));
     camera.updateMatrixWorld();
     needs = true;
-    bleedRoll(w0);
   }
   // the globe: the longitude and latitude under a point of the page (client pixels), or null off the ball
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), invQ = new THREE.Quaternion();
@@ -417,8 +369,8 @@ export async function cwScene(host, o = {}) {
     }
     if (o.onTurn) o.onTurn(view);
   }
-  function zoomAt(f, cx, cy) {   // the globe zooms holding the ground under the pointer; the trackball about the centre
-    const at = globe && cx != null ? lonLatAt(cx, cy) : null;
+  function zoomAt(f, cx, cy) {   // the globe zooms in holding the ground under the pointer; a zoom out keeps the centre and the turn (6c); the trackball about the centre
+    const at = globe && cx != null && f < 1 ? lonLatAt(cx, cy) : null;
     zoomBy(f);
     if (at) holdAt(at, cx, cy);
   }
@@ -499,11 +451,11 @@ export async function cwScene(host, o = {}) {
     touched = false;   // an idle turn, if the page asked for one, comes back with the home view
     const from = { pos: camera.position.clone(), target: target3.clone(), quat: ball.quaternion.clone() }, t0 = performance.now();
     vel.x = vel.y = 0;
-    const fromLon = gLon, fromLat = gLat, fromRoll = gRoll, dLon = wrapLon(home.lon - gLon);   // the globe eases home the short way round, north coming up
+    const fromLon = gLon, fromLat = gLat, dLon = wrapLon(home.lon - gLon);   // the globe eases home the short way round
     ease = now => {
       const u = Math.min(1, (now - t0) / 500), s = u * u * (3 - 2 * u);
       camera.position.lerpVectors(from.pos, home.pos, s); target3.lerpVectors(from.target, home.target, s);
-      if (globe) { gLon = fromLon + dLon * s; gLat = fromLat + (home.lat - fromLat) * s; gRoll = fromRoll * (1 - s); applyGlobe(true); }
+      if (globe) { gLon = fromLon + dLon * s; gLat = fromLat + (home.lat - fromLat) * s; applyGlobe(true); }
       else ball.quaternion.slerpQuaternions(from.quat, home.quat, s);
       if (u >= 1) ease = null;
     };
@@ -512,12 +464,12 @@ export async function cwScene(host, o = {}) {
   // the globe eases to a place at the centre and a distance (view.glideTo; see the header)
   function glideTo(lon, lat, dist, ms = 600) {
     if (!globe) return;
-    const t0 = performance.now(), fromLon = gLon, fromLat = gLat, fromRoll = gRoll, dLon = wrapLon(lon - gLon);
+    const t0 = performance.now(), fromLon = gLon, fromLat = gLat, dLon = wrapLon(lon - gLon);
     const fromH = camera.position.distanceTo(target3) - 1, toH = THREE.MathUtils.clamp(dist != null ? dist : fromH + 1, cam.min, cam.max) - 1;
     vel.x = vel.y = 0;
     ease = now => {
       const u = Math.min(1, (now - t0) / Math.max(1, ms)), s = u * u * (3 - 2 * u);
-      gLon = fromLon + dLon * s; gLat = THREE.MathUtils.clamp(fromLat + (lat - fromLat) * s, -90, 90); gRoll = fromRoll * (1 - s);   // north comes up as it glides
+      gLon = fromLon + dLon * s; gLat = THREE.MathUtils.clamp(fromLat + (lat - fromLat) * s, -90, 90);
       const d = 1 + fromH * Math.pow(toH / fromH, s), dir = camera.position.clone().sub(target3).normalize();
       camera.position.copy(target3).addScaledVector(dir, d); camera.updateMatrixWorld();
       applyGlobe(true);
@@ -552,14 +504,13 @@ export async function cwScene(host, o = {}) {
     set moving(v) { moving = !!v; needs = true; },
     get timing() { return timer.phase; }, get sag() { return timer.sag; },
     reduce, phone, setTier, resetView, maxTexture, fitTexture, resetWord,
-    turnTo: (lon, lat, roll) => { if (!globe) return; if (lon != null) gLon = lon; if (lat != null) gLat = THREE.MathUtils.clamp(lat, -90, 90); if (roll != null) gRoll = wrapLon(roll); applyGlobe(false); },
-    turnOf: () => globe ? { lon: wrapLon(gLon), lat: gLat, roll: gRoll } : null,
-    feel: mapWeight,   // how much of the map's slide is in force at this zoom: 0 the globe on a stand, 1 the map
+    turnTo: (lon, lat) => { if (!globe) return; if (lon != null) gLon = lon; if (lat != null) gLat = THREE.MathUtils.clamp(lat, -90, 90); applyGlobe(false); },
+    turnOf: () => globe ? { lon: wrapLon(gLon), lat: gLat } : null,
     setHome: h => { if (!h) return; if (h.lon != null) home.lon = h.lon; if (h.lat != null) home.lat = THREE.MathUtils.clamp(h.lat, -90, 90); if (h.distance != null) home.pos.copy(camera.position).sub(target3).normalize().multiplyScalar(THREE.MathUtils.clamp(h.distance, cam.min, cam.max)).add(target3); },   // where Reset view goes (the Earth's opening views, 30 Oct 2026)
     lonLatAt: (x, y) => { const r = canvas.getBoundingClientRect(); return lonLatAt(r.left + x, r.top + y); },   // stage pixels
     setZoomLimits: (min, max) => { if (min != null) cam.min = min; if (max != null) cam.max = max; zoomBy(1); },
     zoomLimits: () => ({ min: cam.min, max: cam.max }),
-    zoomTo: d => { const w0 = mapWeight(); const dir = camera.position.clone().sub(target3).normalize(); camera.position.copy(target3).addScaledVector(dir, THREE.MathUtils.clamp(d, cam.min, cam.max)); camera.updateMatrixWorld(); needs = true; bleedRoll(w0); },   // the camera's distance from the centre, for a page's checks
+    zoomTo: d => { const dir = camera.position.clone().sub(target3).normalize(); camera.position.copy(target3).addScaledVector(dir, THREE.MathUtils.clamp(d, cam.min, cam.max)); camera.updateMatrixWorld(); needs = true; },   // the camera's distance from the centre, for a page's checks
     onGesture: fn => gestureFns.push(fn),
     glideTo,
     get hold() { return hold; }, set hold(v) { hold = !!v; if (hold) { vel.x = vel.y = 0; ease = null; } needs = true; },

@@ -28,6 +28,11 @@
 // own way out (Escape, the iPad's gesture) is heard through fullscreenchange and undoes everything the same way. Where
 // the browser has the API but refuses the request (a browser pane, an embedded view), the window fills the viewport
 // instead, fixed over the page, and Escape leaves: the same look, for checking.
+//
+// 6c (30 Oct 2026; Michael, after the iPad): the words' box sits lower, clear of the platform's own close button (the
+// iPad draws a large X at the top left) and of the safe areas, and the bottom box clears the bottom safe area; a page
+// may put its title and every command in the box (an h1 is styled small there), and leaves its own margin above and
+// below the picture by its CSS on .cw-fullscreen.
 // ============================================================
 
 (function () {
@@ -37,10 +42,11 @@ window.CW = window.CW || {};
 
 var STYLE = '.cw-fullscreen{background:var(--cw-parchment,#f4f1e8);overflow:hidden}' +
   '.cw-fullscreen.cw-fs-fallback{position:fixed!important;inset:0!important;width:auto!important;height:auto!important;z-index:5000;margin:0}' +
-  '.cw-fs-words{position:absolute;left:14px;top:12px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;z-index:20;' +
-    'padding:6px 10px 7px 8px;border-radius:6px;background:rgba(244,241,232,0.72)}' +
-  '.cw-fs-words .word{font-size:13px;padding:1px 0}' +
-  '.cw-fs-bottom{position:absolute;left:18px;right:18px;bottom:10px;z-index:20;padding:6px 10px;border-radius:6px;background:rgba(244,241,232,0.72)}';
+  '.cw-fs-words{position:absolute;left:calc(env(safe-area-inset-left,0px) + 16px);top:calc(env(safe-area-inset-top,0px) + 64px);display:flex;flex-direction:column;align-items:flex-start;gap:3px;z-index:20;' +
+    'padding:8px 12px 9px 10px;border-radius:6px;background:rgba(244,241,232,0.78)}' +
+  '.cw-fs-words .word{font-size:14px;padding:1px 0}' +
+  '.cw-fs-words h1{font-size:17px;font-weight:normal;margin:0 0 6px;letter-spacing:0.01em}' +
+  '.cw-fs-bottom{position:absolute;left:calc(env(safe-area-inset-left,0px) + 18px);right:calc(env(safe-area-inset-right,0px) + 18px);bottom:calc(env(safe-area-inset-bottom,0px) + 10px);z-index:20;padding:6px 10px;border-radius:6px;background:rgba(244,241,232,0.78)}';
 
 function addStyle() {
   if (document.getElementById('cw-fullscreen-style')) return;
@@ -119,8 +125,11 @@ CW.fullscreen = function (host, opts) {
     if (api.on) return;
     var p;
     try { p = request.call(host, { navigationUI: 'hide' }); } catch (e) { p = Promise.reject(e); }
-    if (p && typeof p.then === 'function') p.then(function () { if (fsElement() === host) applyOn(); }, function (e) { console.warn('cw-fullscreen: the request was refused; filling the viewport instead.', e && e.message ? e.message : e); enterFallback(); });
-    else setTimeout(function () { if (fsElement() === host) applyOn(); else if (!api.on) enterFallback(); }, 300);   // WebKit's prefixed call returns nothing
+    var answered = false;
+    if (p && typeof p.then === 'function') p.then(function () { answered = true; if (fsElement() === host) applyOn(); }, function (e) { answered = true; console.warn('cw-fullscreen: the request was refused; filling the viewport instead.', e && e.message ? e.message : e); enterFallback(); });
+    else setTimeout(function () { answered = true; if (fsElement() === host) applyOn(); else if (!api.on) enterFallback(); }, 300);   // WebKit's prefixed call returns nothing
+    // a browser that neither grants nor refuses (the app's browser pane on a real tap, 30 Oct 2026): the fallback after a moment
+    setTimeout(function () { if (!answered && !api.on && fsElement() !== host) { console.warn('cw-fullscreen: no answer to the request; filling the viewport instead.'); enterFallback(); } }, 1500);
   }
   function exit() {
     if (fallback) { applyOff(); return; }
