@@ -1,5 +1,5 @@
 ---
-status: Report — the Earth bench, step 6d (Prompt-Revise-Earth-Bench-06d.md, the flags show their years); built 30 Oct 2026 on d624fb7; checked in the pane on the Mac; not committed — waits for Michael's word
+status: Report — the Earth bench, step 6d (Prompt-Revise-Earth-Bench-06d.md, the flags show their years); built 30 Oct 2026 on d624fb7; checked in the pane on the Mac; committed and pushed on Michael's word, 30 Oct (a0033530)
 role: What was built, the rounding rule, where each label goes, what was checked at the Bronze Age and the dinosaurs, and what needs Michael's eye
 related: Spec-Earth-3D.md, Worknote-Time-Slider.md, Report-Earth-3D-Bench-06c.md, Prompt-Revise-Earth-Bench-06d.md, cw-deploys/experiments/earth-3d.html, Earth-3D-Bench-06d-Oct30/ (the pictures)
 updated: 2026-10-30
@@ -125,5 +125,4 @@ palette pictures under `art/`).
 `cw-deploys/experiments/earth-3d.html` only — the header note, the CSS for `.flag-label` and the track's room, three
 `<span>`s in the track, `pixelStep`, `roundedWord`, `flagWord`, `gapWord`, `placeLabels` (called from `renderStretch`), a
 render on a flag's pointerdown and on pointerup/cancel, a render as a glide starts, `cwStretch.step/flagWord/gapWord/labels`
-for checks; the stamp `2026-10-30 d624fb7 · earth-3d step 6d`. `MANIFEST.md` and `00-BOARD.md` in the same commit, when
-Michael says so.
+for checks; the stamp `2026-10-30 d624fb7 · earth-3d step 6d`. `MANIFEST.md` and `00-BOARD.md` in the same commit (`a0033530`).
