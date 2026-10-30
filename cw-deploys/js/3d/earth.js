@@ -157,6 +157,19 @@
      placer. A tap on the flat world goes back to the globe, centred on the place tapped, FROM_FLAT_KM across the window.
    - A tap on a place on the globe glides it to the centre (TAP_GLIDE_S) and zooms in a step (TAP_ZOOM_STEP): tap(x, y).
 
+   The 6b bench (30 Oct 2026; Michael's prompt Prompt-Revise-Earth-Bench-06.md):
+   - This side of the seam no piece draws anything over the sea (Michael, 30 Oct: the Taiwan wedge). The dissolve of a
+     piece in the eight million years after its birth painted the sea's colour over the sea and over the land under it, and
+     six pieces on four plates were born within that span — Luzon's at 5 million years, whose fade lay as a pale wedge of
+     shade from Taiwan to Luzon at today. The dissolve now comes in only as the ground's look goes past the seam (by
+     1 − uGroundT, over 2.6 to 5.7 million years), so this side of the seam a living piece is whole and the sea is the sea
+     ball's and today's ground's alone. The wash, the rim, the island and the drowned band were already off this side.
+   - The deepest level is the ground's, at every tier (DEEPEST by ground alone; Michael, 30 Oct: drop the sharpness, not the
+     reach). A tier that drops on a big screen keeps its pixel ratio and its tile budget (HOLD) but zooms as deep as the
+     full tier does.
+   - placeNear(lon, lat): the nearest named place to a point of the ball at this age, with its distance, for the kept
+     picture's line.
+
      const earth = await cwEarth(view, {
        plates, cities, crust,         // the files; crust: stories/curves/crust-and-land.json (the amount, and the island's share)
        ground, vegetation,            // the old ground and its vegetation
@@ -228,7 +241,7 @@ const COAST_A = 0.6, COAST_PX = 1.5;   // today's coast: its alpha (the 2D's), a
 // 2^(z+1) columns by 2^z rows from 180° W and the north); the page table is kept at the finest level, 6
 const TILE_PX = 512, DATA_PX = 256, PAGE_Z = 6, PAGE_COLS = 2 << PAGE_Z, PAGE_ROWS = 1 << PAGE_Z;
 const SPLIT_PX = TILE_PX / 0.84;   // a tile is split once it would cover more than this many device pixels (a texel under 0.84 of a pixel: map.js's rule, levelFor's − 0.25)
-const DEEPEST = { blue: { full: 6, middle: 4, floor: 3 }, old: { full: 5, middle: 4, floor: 3 } };   // the deepest level she can reach, by tier (the audit's 5, 4, 3, and Blue Marble's level 6 at full)
+const DEEPEST = { blue: 6, old: 5 };   // the deepest level she can reach, by ground alone (30 Oct 2026, Michael: a fast machine on a big screen keeps the reach and drops the sharpness; the tiers' 6/4/3 and 5/4/3 stopped a dropped tier's zoom at a quarter of the depth)
 const HOLD = { full: 64, middle: 48, floor: 32 };   // the most picture tiles held at once (a megabyte each on the card and as many in the page); the data's the same count at a quarter the size
 const TILE_FADE_S = 0.3;   // a tile that arrives fades in over this many seconds
 // the tiles that touch a pole go no deeper than this: every column of the tiling meets there, so a view of the pole would
@@ -1064,7 +1077,7 @@ export async function cwEarth(view, o = {}) {
   const t0s = performance.now();
   const nowS = () => (performance.now() - t0s) / 1000;
   const picSource = () => (uBlue.value ? 'blue' : 'old');
-  const deepestLevel = (src = picSource()) => Math.min(DEEPEST[src][view.tier] || 3, src === 'blue' ? BLUE_TOP : OLD_TOP);
+  const deepestLevel = (src = picSource()) => Math.min(DEEPEST[src] || 3, src === 'blue' ? BLUE_TOP : OLD_TOP);
   // the ball's own picture, as a level of the tiling: 8,192 px is level 3; the old ground's 2,000 px lies under level 1
   const picBase = src => src === 'blue' ? Math.round(Math.log2((bluePx || 2048) / 1024)) : Math.floor(Math.log2(((imgOld && imgOld.naturalWidth) || 2000) / 1024));
   const dataBase = () => Math.max(0, floorLevel);
@@ -1489,7 +1502,9 @@ export async function cwEarth(view, o = {}) {
       let alpha = float(1).sub(sea.mul(float(1).sub(SHELF_A.mul(uWash))));   // this side of the seam the picture's sea is clear: the sea ball alone
       const oldA = uOld.mul(life);
       col = island ? mix(col, LIFT3, LIFT_A.mul(oldA)) : mix(col, SHELF3, DROWN_W.mul(oldA));
-      const cover = float(1).sub(life);
+      // the dissolve into the sea round a piece's birth: only as the ground's look goes past the seam — this side of it a
+      // living piece is whole and draws nothing over the sea (Michael, 30 Oct: the Taiwan wedge, Luzon's piece born at 5)
+      const cover = float(1).sub(life).mul(float(1).sub(uGroundT));
       col = mix(col, seaNode(fl), cover); alpha = mix(alpha, float(1), cover);
       return vec4(finish(col, fl), alpha);
     })();
@@ -2223,6 +2238,19 @@ export async function cwEarth(view, o = {}) {
     hits = shown.map(s => { const L = labels.find(l => l.s === s); return { m: s.m, x: s.p.x, y: s.p.y, r: s.r, box: L ? L.box : null }; });
   }
   let lastMarks = { shown: 0, labelled: 0, names: [] }, hits = [];
+  // the nearest named place to a point of the ball at this age (where the places are then), with its distance in km;
+  // null when no place lives at this age (the kept picture's line, 30 Oct 2026)
+  function placeNear(lon, lat) {
+    let best = null;
+    const la = lat * D2R;
+    for (const m of marks) {
+      if (ma > m.from) continue;
+      const a = placeAt(m.lon, m.lat, m.plate);
+      const km = 6371 * Math.acos(Math.min(1, Math.max(-1, Math.sin(la) * Math.sin(a.lat * D2R) + Math.cos(la) * Math.cos(a.lat * D2R) * Math.cos((a.lon - lon) * D2R))));
+      if (!best || km < best.km) best = { name: m.name, km, lon: a.lon, lat: a.lat };
+    }
+    return best;
+  }
   // the place under a point of the stage: its name's box, or within TAP_PX of its dot (the nearest)
   const TAP_PX = 10;
   function markAt(x, y) {
@@ -2359,7 +2387,7 @@ export async function cwEarth(view, o = {}) {
     setTier: async tier => { await Promise.all([wantBlue(tier), wantFloor(tier)]); sea.geometry.dispose(); sea.geometry = new THREE.SphereGeometry(SEA_R, tier === 'floor' ? 96 : tier === 'middle' ? 128 : 160, tier === 'floor' ? 48 : tier === 'middle' ? 64 : 80); viewKey = ''; zoomFor = ''; view.redraw(); },
     // close in (step 5): settle() as when a gesture ends (for a page that moves the view itself), and what the tiles hold
     // step 6: the flat world, the tap, the glide
-    setFlat, flat: () => flat, tap, markAt, flatLonLatAt, projectFlat, flatScene, flatCamera: flatCam, eeForward, eeInverse,
+    setFlat, flat: () => flat, tap, markAt, flatLonLatAt, projectFlat, flatScene, flatCamera: flatCam, eeForward, eeInverse, placeNear,
     glide: () => ({ on: ma > seam && ma < GLIDE_TO, t: ma > seam && ma < GLIDE_TO ? glideT(ma) : (ma >= GLIDE_TO ? 1 : 0), to: GLIDE_TO }),
     settle, marks: () => lastMarks, setPlaces: on => { placesOn = !!on; marksKey = ''; drawMarks(true); view.redraw(); }, places: () => placesOn,
     addMarks: list => { for (const p of list) { const pc = plateAt(p.lon, p.lat); marks.push(Object.assign({ type: 'place', plate: pc ? pc.plate : null, from: pc ? pc.from : 4000 }, p)); } marksKey = ''; drawMarks(true); },   // bench only: places of a check's own

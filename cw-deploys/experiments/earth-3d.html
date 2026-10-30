@@ -60,10 +60,27 @@
      On the globe a tap on a place glides it to the centre and zooms in a step. The window that holds the Earth has bars on
      its right and bottom edges, as the map's, to crop it narrower, wider, shorter or taller; the Earth stays centred and
      keeps its size, the kept picture takes the window's shape, and Reset view puts the window back. On a phone, no bars.
+     Step 6b (30 Oct; Prompt-Revise-Earth-Bench-06.md, Michael's eight items on step 6): close in a drag moves the ground as
+     a map moves — a rigid slide, nothing pivoting — blending into the globe on its stand as she zooms out (scene.js; the
+     lean of north it leaves is in the readout); this side of the seam no piece draws anything over the sea (the Taiwan
+     wedge was Luzon's piece, born 5 million years ago, still in its birth fade; earth.js); the window shows its size in
+     small grey type while its bars are dragged; the word *Full screen* (js/cw-fullscreen.js, for any interactive) fills
+     the screen with the Earth's window, the essential words and the age slider floating over it; the bench opens on one
+     of seven views at random, each framed on its subject (?view=alps, nile, tibet, australia, mexico, amazon, victoria),
+     and Reset view returns to it; the deepest level is the ground's at every tier, so a big screen that drops a tier keeps
+     the reach (earth.js), and the readout says the tier and the deepest level; the fine slider gives way to the stretching
+     slider (bench only; Worknote-Time-Slider.md): an even line from today to 4,567 million years, two marks placed by two
+     taps or dragged in from the ends (switchable), a tap between them stretching that stretch over the whole line with a
+     short glide, again and again, *back* stepping out one, and under the line what one of the screen's own pixels is
+     worth; *Keep this picture* opens a small panel (cw-panel.js) with the picture, a line for a note, and the words
+     *Share* (the device's own share sheet, by the Web Share API, where it can take files) and *Save*; the picture carries
+     her note, the Earth's age and the place at the centre, today's date and the credit (still.js).
      The Earth wears the Time Machine's icon for now; it has none of its own. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
 <script src="../js/globe.js?v=2026-10-22c"></script>
+<script src="../js/cw-panel.js?v=2026-10-01b"></script>
+<script src="../js/cw-fullscreen.js?v=2026-10-30a"></script>
 <script type="importmap">
 { "imports": {
   "three":        "../js/vendor/three-r186/three.webgpu.js",
@@ -112,6 +129,20 @@
            background: rgba(200,184,154,0.28); user-select: none; -webkit-user-select: none; }
   .strip::after { content: ""; position: absolute; top: 6px; left: 50%; height: 4px; width: 44px; margin-left: -22px; background: #b9ad92; border-radius: 2px; opacity: .8; }
   .phone .grip, .phone .strip { display: none; }
+  /* the window's size while its bars are dragged, and for two seconds after (6b): small grey type inside the window, in the
+     page's own pixels */
+  .size-readout { position: absolute; right: 10px; bottom: 26px; z-index: 7; pointer-events: none; font-size: 12px; color: var(--cw-grey-word, #7d7a72);
+                  font-variant-numeric: tabular-nums; background: rgba(244,241,232,0.82); padding: 1px 7px; border-radius: 4px; opacity: 0; transition: opacity .35s; }
+  .size-readout.show { opacity: 1; }
+  /* full screen (6b; js/cw-fullscreen.js puts the class on the window): the Earth fills it, the bars go, the age row floats
+     along the bottom in smaller type */
+  .stage-wrap.cw-fullscreen { width: auto !important; }
+  .cw-fullscreen #stage3d { height: 100% !important; aspect-ratio: auto !important; }
+  .cw-fullscreen .grip, .cw-fullscreen .strip, .cw-fullscreen .size-readout { display: none; }
+  .cw-fs-bottom .age { margin: 0; grid-template-columns: 170px 1fr; gap: 14px; }
+  .cw-fs-bottom .age label, .cw-fs-bottom .age output { font-size: 13px; }
+  .cw-fs-bottom .age output { margin-top: 0; }
+  .phone .cw-fs-bottom .age { grid-template-columns: 1fr; gap: 4px; }
   #stage2d .cw-globe { position: absolute; inset: 0; }
   .under { margin: 6px 0 0; font-size: 13px; font-style: italic; color: var(--cw-ink-soft, #6b655a); }
   .under.honest { font-style: normal; font-size: 14px; color: var(--cw-ink, #2a241c); min-height: 4.6em; line-height: 1.4; }
@@ -119,22 +150,29 @@
   .under.honest .cw-honest-says { color: var(--cw-ink-soft, #6b655a); }
   .under.honest .cw-honest-word { color: var(--cw-copper, #b5652b); font-style: italic; }
   .under.honest .cw-honest-credit { font-size: 12px; color: var(--cw-grey-word, #7d7a72); margin-top: 2px; }
-  #kept .meta { color: var(--cw-grey-word, #7d7a72); font-size: 12px; margin-left: auto; }
   .age { margin: 18px 0 0; display: grid; grid-template-columns: 150px 1fr; gap: 24px; align-items: center; }
   .age label { color: var(--cw-ink, #2a241c); }
   .age input { width: 100%; accent-color: var(--cw-copper, #b5652b); margin: 0; }
   .age output { display: block; margin-top: 2px; font-size: 15px; color: var(--cw-ink-soft, #6b655a); font-variant-numeric: tabular-nums; }
-  .age.fine { margin-top: 10px; }
-  .age.fine label { color: var(--cw-ink-soft, #6b655a); font-size: 15px; }
+  .age.stretch { margin-top: 10px; align-items: start; }
+  .age.stretch label { color: var(--cw-ink-soft, #6b655a); font-size: 15px; padding-top: 14px; }
+  /* the stretching slider (6b, bench only): an even line, two copper marks above it with small flags to grab, the age's
+     thumb on it; the stretch's ends and what a pixel is worth under it; back and the way of placing the marks below */
+  .stretch-track { position: relative; height: 46px; touch-action: none; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .stretch-line { position: absolute; left: 0; right: 0; top: 29px; height: 2px; background: var(--cw-grey, #9a958b); border-radius: 1px; }
+  .stretch-mark { position: absolute; top: 6px; width: 2px; height: 32px; margin-left: -1px; background: var(--cw-copper, #b5652b); }
+  .stretch-mark::before { content: ""; position: absolute; left: -7px; top: -5px; width: 16px; height: 11px; border-radius: 3px; background: var(--cw-copper, #b5652b); opacity: .85; }
+  .stretch-thumb { position: absolute; top: 22px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--cw-copper, #b5652b); box-shadow: 0 0 0 2px var(--cw-parchment, #f4f1e8); }
+  .stretch-thumb.out { opacity: .3; }
+  .stretch-under { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--cw-grey-word, #7d7a72); margin-top: 0; font-variant-numeric: tabular-nums; }
+  .stretch-under .pixel { color: var(--cw-grey-word, #7d7a72); }
+  .stretch-words { display: flex; gap: 22px; align-items: baseline; margin-top: 4px; font-size: 14px; }
+  .stretch-words .word { font-size: 14px; }
   .readout { margin: 10px 0 0; font-size: 12px; color: var(--cw-grey-word, #7d7a72); font-variant-numeric: tabular-nums; line-height: 1.4; }
   .credit { margin: 18px 0 0; font-size: 13px; color: var(--cw-ink-soft, #6b655a); }
   #fail { color: var(--cw-vermilion, #c84830); display: none; margin: 12px 0 0; white-space: pre-wrap; font-size: 13px; }
   #still { display: none; }
   #still img { display: block; width: 100%; height: auto; }
-  #kept { margin: 16px 0 0; display: none; }
-  #kept img { display: block; width: 100%; height: auto; border-radius: 4px; }
-  #kept figcaption { display: flex; gap: 22px; margin-top: 6px; }
-  #kept a { color: var(--cw-payne, #546A80); text-decoration: none; }
   @media (max-width: 760px) {
     .bench, .age { grid-template-columns: 1fr; gap: 12px; }
     .left { flex-direction: row; flex-wrap: wrap; gap: 6px 22px; }
@@ -160,9 +198,9 @@
     </div>
     <div class="stages solo" id="stages">
       <div class="stage-box" id="stageBox">
-        <div class="stage-wrap" id="stageWrap"><div id="stage3d" class="stage"></div><div class="grip" id="gripR"></div><div class="strip" id="stripB"></div></div>
+        <div class="stage-wrap" id="stageWrap"><div id="stage3d" class="stage"></div><div class="grip" id="gripR"></div><div class="strip" id="stripB"></div><div class="size-readout" id="sizeReadout"></div></div>
         <div class="under honest" id="honestBlock"></div>
-        <p class="under">bench only: the fine slider, and <i>another guess</i> giving both globes the same new guess</p>
+        <p class="under">bench only: the stretching slider, and <i>another guess</i> giving both globes the same new guess</p>
         <div id="still"><img alt="The Earth, a still picture" src="../art/globe/earth-3d-still.webp"><p class="under" id="stillLine">This one needs a newer device.</p></div>
       </div>
       <div class="stage-box" id="box2d">
@@ -171,28 +209,31 @@
       </div>
     </div>
   </div>
-  <div class="age">
+  <div class="age" id="ageRow">
     <label for="age">Age<output id="ageWord" for="age">today</output></label>
     <input type="range" id="age" min="0" max="1500" step="1" value="0" aria-label="Age, millions of years ago">
   </div>
-  <div class="age fine">
-    <label for="fine">3 million years<output id="fineWord" for="fine">bench only</output></label>
-    <div><input type="range" id="fine" min="0" max="1000" step="1" value="0" aria-label="Age, a window of three million years round the main slider's"><div class="fine-ends"><span id="fineFrom">today</span><span id="fineTo">3 million years ago</span></div></div>
+  <div class="age stretch" id="stretchRow">
+    <label>Stretch<output id="stretchWord">bench only</output></label>
+    <div>
+      <div class="stretch-track" id="stretchTrack" aria-label="The age, on a line she can stretch"><div class="stretch-line"></div><div class="stretch-mark" id="markA"></div><div class="stretch-mark" id="markB"></div><div class="stretch-thumb" id="stretchThumb"></div></div>
+      <div class="stretch-under"><span id="stretchFrom">today</span><span class="pixel" id="pixelLine"></span><span id="stretchTo">4,567 million years ago</span></div>
+      <div class="stretch-words"><button class="word" id="wBack" type="button">back</button><span class="pair"><button class="word" id="wTapTwice" type="button" aria-pressed="true">tap twice</button><span class="slash">/</span><button class="word" id="wDragIn" type="button" aria-pressed="false">drag in</button></span></div>
+    </div>
   </div>
   <p class="readout" id="readout"></p>
   <p id="fail"></p>
-  <figure id="kept"><img alt="The kept picture"><figcaption><a id="save" download="the-earth.png">Save the picture</a><a href="#" id="unkeep">Close</a><span class="meta" id="keptMeta"></span></figcaption></figure>
   <p class="credit" id="credit"></p>
 </div>
 
 <script type="module">
-  const CW_VERSION = '2026-10-29 ee7fcfb · earth-3d step 6';   // 29 Oct: flat (Equal Earth), the glide, Iceland to the seam, today's names, tap to a place, the window's bars   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-30 d0dea3d · earth-3d step 6b';   // 30 Oct: the map's slide close in, nothing over the sea this side of the seam, the window's size, Full screen, seven opening views, the reach at every tier, the stretching slider, Share with a note   // date + short commit hash; bump in the same commit as any change
   console.log('earth-3d', CW_VERSION);
   import * as THREE from 'three';
-  import { cwScene } from '../js/3d/scene.js?v=2026-10-29c';
-  import { cwEarth } from '../js/3d/earth.js?v=2026-10-29g';
+  import { cwScene } from '../js/3d/scene.js?v=2026-10-30a';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-10-30a';
   import { cwHonest } from '../js/3d/honest.js?v=2026-10-28a';
-  import { cwStill } from '../js/3d/still.js?v=2026-10-29f';
+  import { cwStillPicture, cwStillCompose } from '../js/3d/still.js?v=2026-10-30a';
 
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -212,7 +253,7 @@
   // the honest block's credit line while the photograph shows: on Blue Marble it says what the picture is (Michael will
   // adjust the words)
   const SHORT_CREDIT = { old: 'ETOPO 2022 (NOAA), Copernicus Global Land Cover 2019', blue: 'The land: satellite pictures from July 2004, a month of them stitched together without clouds. NASA Earth Observatory' };
-  const HOME = { lon: 20, lat: 15 };   // the 2D globe's opening view
+  const HOME = { lon: 20, lat: 15 };   // the 2D globe's opening view; the Earth opens on one of the seven views below
   // the seed: one for both globes, so the same guess shows on each (the spec: the same seed gives the same guess in both
   // engines); ?seed= fixes it for a check, otherwise this visit's, made as globe.js makes one
   const seed0 = Q.get('seed') ? +Q.get('seed') : ((Date.now() % 1000003) + Math.floor(Math.random() * 1000));
@@ -227,7 +268,7 @@
     view = await cwScene($('stage3d'), {
       ground: S.parchment, key: 'earth-3d', phone: 'run',
       gesture: 'globe', home: HOME,
-      camera: { fov: 24, position: [0, 0, 4.9], near: 0.1, far: 50, min: 1.4, max: 12 },   // the ball fills the square as the 2D disc does (its radius W/2 − 4); the nearest is the Earth's, by the tier's deepest level
+      camera: { fov: 24, position: [0, 0, 4.9], near: 0.1, far: 50, min: 1.4, max: 12 },   // the ball fills the square as the 2D disc does (its radius W/2 − 4); the nearest is the Earth's, by the ground's deepest level
       words: $('words'),
       onTurn: v => { if (g2d && !syncing) { syncing = true; const t = v.turnOf(); g2d.turn(t.lon, t.lat); syncing = false; } },
       onTier: async (tier) => { if (earth) await earth.setTier(tier); },
@@ -317,6 +358,7 @@
   //   1100 → 1250 invented, 4,000 to 4,400 (2.7)
   //   1250 → 1500 molten, 4,400 to 4,567   (0.67: the Moon's three million years take four or five positions)
   const KNOTS = [[100, 10], [300, 200], [500, 540], [700, 1000], [1100, 4000], [1250, 4400], [1500, 4567]];
+  const EARTH_AGE = 4567;
   function ageOf(v) {
     if (v <= 100) { const a = Math.pow(v / 100, 3) * 10; return a < 0.01 ? Math.round(a * 1e5) / 1e5 : (a < 1 ? Math.round(a * 1000) / 1000 : Math.round(a * 10) / 10); }   // to ten years under 10,000, a thousand under a million, a tenth of a million above
     for (let i = 1; i < KNOTS.length; i++) { const [p0, a0] = KNOTS[i - 1], [p1, a1] = KNOTS[i]; if (v <= p1) return Math.round((a0 + (a1 - a0) * (v - p0) / (p1 - p0)) * 10) / 10; }
@@ -327,67 +369,151 @@
     for (let i = 1; i < KNOTS.length; i++) { const [p0, a0] = KNOTS[i - 1], [p1, a1] = KNOTS[i]; if (ma <= a1) return Math.round(p0 + (p1 - p0) * (ma - a0) / (a1 - a0)); }
     return KNOTS[KNOTS.length - 1][0];
   }
-  // the fine slider (bench only, while Michael decides how the Time Machine's control will work): 1,000 positions from
-  // today to three million years, by years = A (e^(B p) − 1) with A = 1,503 years and B = ln(20.9) / 400, so that the last
-  // 30,000 years take the first 400 positions (two fifths of the width) and three million is position 1,000: 6,000 years
-  // at 212, 21,000 at 356, 125,000 at 583, 450,000 at 751, the seam at 981; about 170 years a position at 21,000. The
-  // first step back is 11 years, the second 23
-  //   Since step 4d (Michael, 28 Oct) the fine slider is a window of three million years centred on the main slider's age:
-  // the main slider recentres it; the fine slider moves the age within it and the main slider follows, but the window stays
-  // put; at either end of time it stops (today to three million years; the last three million before 4,567). Starting at
-  // today it keeps the scale above; anywhere else it is plain and even, 3,000 years a position, the age to a thousand years
-  const FINE_N = 1000, FINE_B = Math.log(20.9) / 400, FINE_A = 3e6 / (Math.exp(FINE_B * FINE_N) - 1), FINE_MAX = 3, FINE_SPAN = 3, EARTH_AGE = 4567;
-  let fine0 = 0;   // the window's young end, million years ago
-  function fineAgeOf(p) {
-    if (fine0 > 0) return Math.round((fine0 + FINE_SPAN * p / FINE_N) * 1000) / 1000;
-    const y = FINE_A * (Math.exp(FINE_B * p) - 1);
-    const r = y < 1000 ? 1 : y < 10000 ? 10 : y < 100000 ? 100 : 1000;   // to a year under a thousand, ten under ten thousand, a hundred under a hundred thousand, a thousand above
-    return Math.round(y / r) * r / 1e6;
-  }
-  function finePosOf(ma) {
-    if (fine0 > 0) return Math.max(0, Math.min(FINE_N, Math.round((ma - fine0) / FINE_SPAN * FINE_N)));
-    return ma >= FINE_MAX ? FINE_N : Math.round(Math.log(1 + ma * 1e6 / FINE_A) / FINE_B);
-  }
-  const endWord = ma => ma === 0 ? 'today' : ma < 10 ? (Math.round(ma * 1000) / 1000).toLocaleString('en') + ' million years ago' : ma.toLocaleString('en', { maximumFractionDigits: 1 }) + ' million years ago';
-  function setWindow(ma) {   // centred on the age, stopping at either end of time
-    fine0 = ma - FINE_SPAN / 2 <= 0 ? 0 : Math.min(EARTH_AGE - FINE_SPAN, ma - FINE_SPAN / 2);
-    fine0 = Math.round(fine0 * 1000) / 1000;
-    $('fineFrom').textContent = endWord(fine0); $('fineTo').textContent = endWord(fine0 + FINE_SPAN);
-  }
-  function ageWord(ma) { return ma === 0 ? 'today' : ma < 1 ? Math.round(ma * 1e6).toLocaleString('en') + ' years ago' : (ma < 10 ? ma.toFixed(1) : Math.round(ma).toLocaleString('en')) + ' million years ago'; }
+  // the age as words: years under a million; under ten million to a thousandth where the stretching slider sets one
+  // (the main slider's own ages are tenths); whole millions above
+  function ageWord(ma) { return ma === 0 ? 'today' : ma < 1 ? Math.round(ma * 1e6).toLocaleString('en') + ' years ago' : (ma < 10 ? (Math.round(ma * 1000) / 1000).toLocaleString('en', { maximumFractionDigits: 3 }) : Math.round(ma).toLocaleString('en')) + ' million years ago'; }
   // the honest block under the stage (honest.js): what the picture is, what it says — the grade's word and sentence from
   // the 3D Earth (globe.js's words, copied there), the molten phase's while there is no grade — and the credit, NASA Earth
   // Observatory while the photograph shows at all (the old ground's sources when it is up); the plates' past the seam
-  // while the pieces glide from today's places to the model's (step 6; Michael will adjust the words)
+  // while the pieces glide from today's places to the model's (step 6; Michael will adjust the words). The kept picture
+  // takes the same first line with the place at the centre after the age (6b)
   const GLIDE_NOTE = 'Here the continents are easing into the places the plate model gives them; the path between is drawn, not known.';
+  function whatLine(place) {
+    const ma = state.ma, g = (earth || g2d).grade(), m = earth ? earth.seaLevel() : 0, pairs = earth ? earth.icePairs() : [];
+    const iceOn = pairs.some(p => p[1] > 0.01), where = place ? ', ' + place : '';
+    if (g.grade === 'none') return 'The Earth, ' + ageWord(ma) + where + ': a ball of melted rock.';
+    if (ma < (earth ? earth.seam : 2.6)) return 'The Earth, ' + ageWord(ma) + where + ': today’s ground' + (m < 0 ? ', the sea ' + Math.round(-m) + ' m lower' : (ma > 0 ? ', the sea where it is' : '')) + (iceOn ? ', the ice where it was.' : '.');
+    return 'The Earth, ' + ageWord(ma) + where + ': the continents where they were, painted.' + (earth && earth.glide().on ? ' ' + GLIDE_NOTE : '');
+  }
   function tellGrade() {
     const eng = earth || g2d, g = eng.grade(), word = g.grade === 'none' ? (eng.moltenPhase() || 'none') : g.grade;
     if (!honest) return;
-    const ma = state.ma, m = earth ? earth.seaLevel() : 0, pairs = earth ? earth.icePairs() : [];
-    const iceOn = pairs.some(p => p[1] > 0.01);
-    let what;
-    if (g.grade === 'none') what = 'The Earth, ' + ageWord(ma) + ': a ball of melted rock.';
-    else if (ma < (earth ? earth.seam : 2.6)) what = 'The Earth, ' + ageWord(ma) + ': today’s ground' + (m < 0 ? ', the sea ' + Math.round(-m) + ' m lower' : (ma > 0 ? ', the sea where it is' : '')) + (iceOn ? ', the ice where it was.' : '.');
-    else what = 'The Earth, ' + ageWord(ma) + ': the continents where they were, painted.' + (earth && earth.glide().on ? ' ' + GLIDE_NOTE : '');
-    const photo = ma < (earth ? earth.seam : 2.6);
-    honest.say({ what, says: { word, sentence: g.why }, credit: photo ? SHORT_CREDIT[state.ground] : 'The continents: Merdith et al. 2021 (EarthByte)' });
+    const photo = state.ma < (earth ? earth.seam : 2.6);
+    honest.say({ what: whatLine(null), says: { word, sentence: g.why }, credit: photo ? SHORT_CREDIT[state.ground] : 'The continents: Merdith et al. 2021 (EarthByte)' });
   }
   function setAge(ma) {
-    state.ma = ma; $('ageWord').value = ageWord(ma);
+    state.ma = ma; $('ageWord').value = ageWord(ma); $('stretchWord').value = ageWord(ma);
     if (earth) earth.setTime(ma);
     g2d.setTime(ma); groundTo2d();
     tellGrade();
+    if (renderStretch) renderStretch();
   }
-  // the two sliders move together: either sets the age, the other follows to its nearest position
-  $('age').addEventListener('input', () => { const a = ageOf(+$('age').value); setWindow(a); $('fine').value = finePosOf(a); setAge(a); $('fineWord').value = 'bench only'; });
-  $('fine').addEventListener('input', () => { const a = fineAgeOf(+$('fine').value); $('age').value = posOf(a); setAge(a); $('fineWord').value = fine0 > 0 ? endWord(a) : 'bench only'; });
-  function toAge(ma) { setWindow(ma); $('age').value = posOf(ma); $('fine').value = finePosOf(ma); setAge(ma); }
+  $('age').addEventListener('input', () => setAge(ageOf(+$('age').value)));
+  function toAge(ma) { $('age').value = posOf(ma); setAge(ma); }
+
+  // ---------- the stretching slider (6b, bench only; Worknote-Time-Slider.md) ----------
+  // One even line, today to 4,567 million years, in place of the fine slider. She puts two marks on it — two taps on the
+  // line (tap twice), or the marks start at the line's ends and she drags them in (drag in); the pair of words switches —
+  // and a tap between them stretches that stretch to fill the whole line, in a short glide; again and again, to a year a
+  // pixel at the least; the word back steps out one stretch. The thumb is the age, dragged as on any slider, and the Earth
+  // follows it throughout; the main slider moves with it. Under the line: the stretch's two ends, and what one of the
+  // screen's own pixels is worth now (the stretch over the line's width in device pixels, by devicePixelRatio).
+  const STR = { a: 0, b: EARTH_AGE, stack: [], marks: [], mode: 'tap', anim: null };
+  const track = $('stretchTrack'), thumbEl = $('stretchThumb'), markEls = [$('markA'), $('markB')];
+  const trackW = () => track.clientWidth || 1;
+  const xOf = ma => (ma - STR.a) / (STR.b - STR.a) * trackW();
+  const maOf = x => STR.a + Math.max(0, Math.min(1, x / trackW())) * (STR.b - STR.a);
+  const dpr = () => window.devicePixelRatio || 1;
+  const sortedMarks = () => STR.marks.slice().sort((p, q) => p - q);
+  function yearsWord(y) {   // a span of years to two figures: "5 million years", "500,000 years", "23,000 years", "7.3 years", "a year"
+    if (y < 1.5) return 'a year';
+    if (y >= 1e6) { const m = y / 1e6; return (m >= 10 ? Math.round(m) : Math.round(m * 10) / 10).toLocaleString('en') + ' million years'; }
+    const p = Math.pow(10, Math.floor(Math.log10(y)) - 1);
+    return (Math.round(y / p) * p).toLocaleString('en', { maximumFractionDigits: 1 }) + ' years';
+  }
+  function spanEndWord(ma) {   // an end of the stretch, to a precision suited to its width
+    const span = STR.b - STR.a;
+    if (ma <= 0) return 'today';
+    if (span >= 50) return Math.round(ma).toLocaleString('en') + ' million years ago';
+    if (span >= 1) return (Math.round(ma * 10) / 10).toLocaleString('en', { maximumFractionDigits: 1 }) + ' million years ago';
+    const step = Math.max(1, Math.pow(10, Math.floor(Math.log10(span * 1e6)) - 2));
+    return (Math.round(ma * 1e6 / step) * step).toLocaleString('en') + ' years ago';
+  }
+  var renderStretch = function () {
+    const W = trackW(), ms = sortedMarks();
+    markEls.forEach((el, i) => { if (ms[i] != null) { el.style.display = ''; el.style.left = xOf(ms[i]) + 'px'; } else el.style.display = 'none'; });
+    const out = state.ma < STR.a - 1e-9 || state.ma > STR.b + 1e-9;
+    thumbEl.style.left = Math.max(0, Math.min(W, xOf(state.ma))) + 'px'; thumbEl.classList.toggle('out', out);
+    $('stretchFrom').textContent = spanEndWord(STR.a); $('stretchTo').textContent = spanEndWord(STR.b);
+    $('pixelLine').textContent = 'one pixel: ' + yearsWord((STR.b - STR.a) * 1e6 / (W * dpr()));
+    $('wBack').style.visibility = STR.stack.length ? '' : 'hidden';
+  };
+  function resetMarks() { STR.marks = STR.mode === 'drag' ? [STR.a, STR.b] : []; }
+  function glideStretch(a1, b1) {   // the line's ends ease to the new stretch over STRETCH_MS; the marks ease to its ends
+    const a0 = STR.a, b0 = STR.b, m0 = sortedMarks(), t0 = performance.now(), T = STRETCH_MS;
+    if (STR.anim) cancelAnimationFrame(STR.anim);
+    STR.target = [a1, b1];
+    const step = now => {
+      const u = Math.min(1, (now - t0) / T), s = u * u * (3 - 2 * u);
+      STR.a = a0 + (a1 - a0) * s; STR.b = b0 + (b1 - b0) * s;
+      if (m0.length === 2) STR.marks = [m0[0] + (a1 - m0[0]) * s, m0[1] + (b1 - m0[1]) * s];
+      renderStretch();
+      if (u < 1) STR.anim = requestAnimationFrame(step); else { STR.anim = null; STR.target = null; STR.a = a1; STR.b = b1; resetMarks(); renderStretch(); }
+    };
+    STR.anim = requestAnimationFrame(step);
+  }
+  function finishStretch() {   // bench only: the glide finished at once, for a browser pane that runs frames only while looked at
+    if (!STR.anim) return; cancelAnimationFrame(STR.anim); STR.anim = null;
+    [STR.a, STR.b] = STR.target; STR.target = null; resetMarks(); renderStretch();
+  }
+  const STRETCH_MS = 380, YEARS_PER_PX_LEAST = 1;   // the glide; and a stretch can go no finer than a year a device pixel
+  function stretchTo(ms) {
+    let [a1, b1] = ms.slice().sort((p, q) => p - q);
+    const least = trackW() * dpr() * YEARS_PER_PX_LEAST / 1e6;
+    if (b1 - a1 < least) { const c = (a1 + b1) / 2; a1 = Math.max(0, c - least / 2); b1 = Math.min(EARTH_AGE, a1 + least); }
+    if (Math.abs(a1 - STR.a) < 1e-12 && Math.abs(b1 - STR.b) < 1e-12) return;
+    STR.stack.push([STR.a, STR.b]);
+    glideStretch(a1, b1);
+  }
+  function stretchBack() { const prev = STR.stack.pop(); if (prev) glideStretch(prev[0], prev[1]); }
+  function fromStretch(ma) { ma = Math.max(0, Math.min(EARTH_AGE, ma)); $('age').value = posOf(ma); setAge(ma); $('stretchWord').value = ageWord(ma); }
+  function tapStretch(x) {
+    const ma = maOf(x), ms = sortedMarks();
+    if (STR.mode === 'tap') {
+      if (ms.length < 2) { STR.marks.push(ma); renderStretch(); return; }
+      if (ma > ms[0] && ma < ms[1]) { stretchTo(ms); return; }
+      STR.marks = [ma]; renderStretch();   // outside the pair: start again, this tap the first mark
+    } else {
+      const movedIn = ms[0] > STR.a + 1e-12 || ms[1] < STR.b - 1e-12;
+      if (movedIn && ma > ms[0] && ma < ms[1]) stretchTo(ms);
+      else fromStretch(ma);   // the ordinary slider: a tap on the line sets the age
+    }
+  }
+  let sPtr = null;
+  track.addEventListener('pointerdown', e => {
+    const r = track.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, ms = sortedMarks();
+    let target = 'tap';
+    if (y < r.height * 0.45 && STR.mode === 'drag' && ms.length === 2) {   // the marks' zone, above the line: the nearer mark within reach
+      const d0 = Math.abs(xOf(ms[0]) - x), d1 = Math.abs(xOf(ms[1]) - x);
+      if (Math.min(d0, d1) <= 16) target = d0 <= d1 ? 'm0' : 'm1';
+    }
+    if (target === 'tap' && y >= r.height * 0.3 && Math.abs(xOf(state.ma) - x) <= 14) target = 'thumb';
+    sPtr = { id: e.pointerId, x0: x, target, moved: false };
+    try { track.setPointerCapture(e.pointerId); } catch (err) {}
+    e.preventDefault();
+  });
+  track.addEventListener('pointermove', e => {
+    if (!sPtr) return;
+    const r = track.getBoundingClientRect(), x = e.clientX - r.left;
+    if (Math.abs(x - sPtr.x0) > 4) sPtr.moved = true;
+    if (!sPtr.moved) return;
+    if (sPtr.target === 'thumb') fromStretch(maOf(x));
+    else if (sPtr.target === 'm0' || sPtr.target === 'm1') { const ms = sortedMarks(), i = sPtr.target === 'm0' ? 0 : 1; ms[i] = Math.max(STR.a, Math.min(STR.b, maOf(x))); STR.marks = ms; renderStretch(); }
+  });
+  const sUp = e => { if (!sPtr) return; const r = track.getBoundingClientRect(); if (!sPtr.moved && sPtr.target === 'tap') tapStretch(e.clientX - r.left); sPtr = null; };
+  track.addEventListener('pointerup', sUp); track.addEventListener('pointercancel', () => { sPtr = null; });
+  function setStretchMode(m) { STR.mode = m; pressed($(m === 'tap' ? 'wTapTwice' : 'wDragIn'), $(m === 'tap' ? 'wDragIn' : 'wTapTwice')); resetMarks(); renderStretch(); }
+  $('wTapTwice').addEventListener('click', () => setStretchMode('tap')); $('wDragIn').addEventListener('click', () => setStretchMode('drag'));
+  $('wBack').addEventListener('click', stretchBack);
+  window.addEventListener('resize', renderStretch);
+  setStretchMode(Q.get('stretch') === 'drag' ? 'drag' : 'tap');
   toAge(Q.get('ma') ? +Q.get('ma') : 0);
 
-  // ---------- the window's bars (step 6) ----------
+  // ---------- the window's bars (step 6), and its size while they are dragged (6b) ----------
   // The right bar makes the window narrower or wider, the bottom one shorter or taller. The Earth keeps the scale it has at
   // the window's usual size (a square the column's width) and stays centred (view.setFrame); the flat world is fitted to the
-  // window whatever its shape. Reset view puts it back. On a phone, no bars.
+  // window whatever its shape. Reset view puts it back. On a phone, no bars. While a bar is dragged, and for two seconds
+  // after, the window shows its size in the page's own pixels, small and grey, inside its bottom right corner.
   const CROP_MIN = 160;
   let crop = null;   // { w, h } in CSS pixels, or null at the usual size
   const usualSize = () => { const w = $('stageBox').clientWidth; return { w, h: w }; };
@@ -398,6 +524,12 @@
     if (view) view.setFrame(crop ? usualSize() : null);
   }
   window.addEventListener('resize', () => { if (crop && view) view.setFrame(usualSize()); });
+  let sizeTimer = null;
+  function showSize() {
+    const r = $('stage3d').getBoundingClientRect(), el = $('sizeReadout');
+    el.textContent = Math.round(r.width) + ' × ' + Math.round(r.height); el.classList.add('show');
+    clearTimeout(sizeTimer); sizeTimer = setTimeout(() => el.classList.remove('show'), 2000);
+  }
   if (!view || view.phone) document.body.classList.add('phone');
   else [['gripR', 'w'], ['stripB', 'h']].forEach(([id, dim]) => {
     const bar = $(id); let st = null;
@@ -405,42 +537,150 @@
       const r = $('stage3d').getBoundingClientRect();
       st = { x: e.clientX, y: e.clientY, w: r.width, h: r.height, maxW: window.innerWidth - r.left - 34, maxH: Math.max(2 * usualSize().w, 400) };
       e.preventDefault(); try { bar.setPointerCapture(e.pointerId); } catch (err) {}
+      showSize();
     });
     bar.addEventListener('pointermove', e => {
       if (!st) return;
       const w = dim === 'w' ? Math.max(CROP_MIN, Math.min(st.maxW, Math.round(st.w + e.clientX - st.x))) : Math.round(st.w);
       const h = dim === 'h' ? Math.max(CROP_MIN, Math.min(st.maxH, Math.round(st.h + e.clientY - st.y))) : Math.round(st.h);
-      setCrop({ w, h });
+      setCrop({ w, h }); showSize();
     });
-    const up = () => { st = null; if (earth) earth.settle(); };
+    const up = () => { if (st) showSize(); st = null; if (earth) earth.settle(); };
     bar.addEventListener('pointerup', up); bar.addEventListener('pointercancel', up);
   });
 
-  // ---------- the kept picture (the credit goes on it) ----------
+  // ---------- the opening views (6b): one of seven at random, each framed on its subject ----------
+  // ?view=alps (nile, tibet, australia, mexico, amazon, victoria) picks one for a check; ?at=lon,lat,km (bench only, below)
+  // overrides. Reset view returns to the view the page opened on (view.setHome). Each subject is given as its centre and its
+  // extent east–west and north–south in kilometres, and fitted to the window's usual size with a tenth of margin; a subject
+  // closer than the deepest level allows (Mexico City) opens as close as the zoom goes.
+  const VIEWS = {
+    alps:      { name: 'the Alps, whole',                            lon: 10.4,   lat: 46.2,  ew: 1050, ns: 600 },
+    nile:      { name: 'the Nile, from its delta to Lake Victoria',  lon: 32.8,   lat: 15.3,  ew: 1300, ns: 3800 },
+    tibet:     { name: 'the Tibetan Plateau',                        lon: 89,     lat: 33.5,  ew: 2700, ns: 1500 },
+    australia: { name: 'Australia, whole',                           lon: 134,    lat: -27.5, ew: 4200, ns: 3900 },
+    mexico:    { name: 'Mexico City, close',                         lon: -99.13, lat: 19.43, ew: 70,   ns: 70 },
+    amazon:    { name: 'the Amazon basin',                           lon: -63,    lat: -5,    ew: 3300, ns: 2300 },
+    victoria:  { name: 'Lake Victoria',                              lon: 33.2,   lat: -1.3,  ew: 480,  ns: 480 }
+  };
+  let openedOn = null, framedKey = '';   // the view the page opened on, and the window's size it was framed for
+  function frameDistance(ewKm, nsKm) {   // the camera's distance so the subject fits the window's usual size, a tenth of margin
+    const rs = view.refSize(), kmpp = Math.max(ewKm * 1.1 / rs.w, nsKm * 1.1 / rs.h);
+    framedKey = rs.w + 'x' + rs.h;
+    return 1 + kmpp * rs.h / 6371 / (2 * Math.tan(view.camera.fov * Math.PI / 360));
+  }
+  function openOn(key) {
+    const v = VIEWS[key]; if (!v || !view) return null;
+    view.turnTo(v.lon, v.lat, 0);
+    earth.step();   // the nearest she may come, for this ground, before the zoom is clamped by it (the old ground's limit stood until the next frame)
+    view.zoomTo(frameDistance(v.ew, v.ns));
+    const d = view.camera.position.length();
+    view.setHome({ lon: v.lon, lat: v.lat, distance: d });
+    earth.step(); earth.resetFill(); earth.settle(); view.redraw();
+    if (g2d) g2d.turn(v.lon, v.lat);
+    openedOn = key;
+    return { key, name: v.name, distance: d, kmAcross: Math.round((d - 1) * 2 * Math.tan(view.camera.fov * Math.PI / 360) * 6371) };
+  }
+  if (view && !Q.get('at')) { const keys = Object.keys(VIEWS); openOn(VIEWS[Q.get('view')] ? Q.get('view') : keys[Math.floor(Math.random() * keys.length)]); }
+  // the window's size can settle after the page opens (a browser pane laying the page out late, an iPad turned over):
+  // until she touches the Earth, a change of the window's usual size frames the opening view again
+  let touched = false;
   if (view) {
-    const keep = document.createElement('button'); keep.type = 'button'; keep.className = 'word'; keep.textContent = 'Keep this picture';
+    view.onGesture(s => { if (s === 'start') touched = true; });
+    if (window.ResizeObserver) new ResizeObserver(() => { const rs = view.refSize(); if (openedOn && !touched && rs.w + 'x' + rs.h !== framedKey) openOn(openedOn); }).observe($('stage3d'));
+  }
+
+  // ---------- the kept picture (6b): a small panel with the picture, a note, Share and Save ----------
+  // Keep this picture draws the picture once (still.js, at full, 4,096 px) and opens a panel (cw-panel.js: draggable,
+  // closeable, inside the window so it shows over a full screen too) with the picture, a line for a note, and the words
+  // Share and Save. The picture carries, under it, her note if she wrote one, the Earth's age and the place at the centre
+  // (the nearest named place, or the latitude and longitude), the grade's word and sentence, today's date and the credit,
+  // all in the page's type; the words are composed again as she writes. Share hands the file to the device's own share
+  // sheet (the Web Share API) with the note and the age as the message; where the device cannot share files, only Save
+  // shows. Nothing is sent anywhere by the page.
+  let keep = null, keptPicture = null, keptBlob = null, keptPending = null, keptNote = '', noteTimer = null;
+  const panel = window.CW.createInfoPanel ? CW.createInfoPanel({ width: 300 }) : null;
+  if (panel) {
+    $('stageWrap').appendChild(panel.el); panel.el.style.zIndex = '600'; panel.el.style.cursor = 'default';
+    panel.body.innerHTML = '<img id="keptImg" alt="The kept picture" style="display:block;width:100%;max-height:52vh;object-fit:contain;border-radius:3px;background:' + (S.parchmentDeep || '#ece6d6') + '">' +
+      '<input id="keptNote" type="text" placeholder="a note, if you like" autocomplete="off" style="display:block;width:100%;box-sizing:border-box;margin:9px 0 6px;padding:4px 2px;border:0;border-bottom:1px solid #c8b89a;border-radius:0;background:none;font:inherit;font-size:13px;color:' + S.ink + '">' +
+      '<div style="display:flex;gap:18px;align-items:baseline"><button class="word" id="wShare" type="button" style="font-size:13px">Share</button><a class="word" id="wSave" download="the-earth.png" href="#" style="font-size:13px;text-decoration:none">Save</a><span id="keptMeta" style="margin-left:auto;font-size:11px;color:' + (S.greyWord || '#7d7a72') + '"></span></div>';
+  }
+  const canShareFiles = (() => { try { return !!(navigator.canShare && navigator.canShare({ files: [new File([new Blob([new Uint8Array(4)], { type: 'image/png' })], 'a.png', { type: 'image/png' })] })); } catch (e) { return false; } })();
+  if (panel && !canShareFiles) $('wShare').style.display = 'none';
+  const dateWord = () => new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  function placeWord() {   // the place at the centre: at or near the nearest named place in view, else the latitude and longitude
+    if (!earth) return '';
+    if (state.flat) return 'the whole world';
+    const t = view.turnOf(), near = earth.placeNear(t.lon, t.lat);
+    const hostH = view.host.clientHeight || 1, refH = view.refSize().h;
+    const spanKm = (view.camera.position.length() - 1) * 2 * Math.tan(view.camera.fov * Math.PI / 360) * 6371 * hostH / refH;
+    if (near && near.km < spanKm * 0.03) return 'at ' + near.name;
+    if (near && near.km < spanKm * 0.125) return 'near ' + near.name;   // within an eighth of the window: at the middle of it
+    return Math.abs(t.lat).toFixed(1) + '° ' + (t.lat >= 0 ? 'N' : 'S') + ', ' + Math.abs(t.lon).toFixed(1) + '° ' + (t.lon >= 0 ? 'E' : 'W');
+  }
+  function composeKept() {   // the words under the picture, composed again; the Promise of the Blob
+    if (!keptPicture) return Promise.resolve(null);
+    const credit = (honest && honest.block && honest.block.credit) || '';
+    keptPending = cwStillCompose(keptPicture, { honest, caption: whatLine(placeWord()), credit, note: keptNote, date: dateWord() }).then(blob => {
+      keptBlob = blob; const url = URL.createObjectURL(blob);
+      $('keptImg').src = url; $('wSave').href = url; $('keptMeta').textContent = (blob.size / 1024 / 1024).toFixed(2) + ' MB';
+      keptPending = null; return blob;
+    });
+    return keptPending;
+  }
+  function openPanel() {
+    const r = $('stage3d').getBoundingClientRect();
+    if (!panel.userMoved()) panel.setPosition(Math.max(8, Math.min(window.innerWidth - 300 - 36, r.right - 300 - 44)), Math.max(8, r.top + 14));
+    panel.show();
+  }
+  if (view && panel) {
+    keep = document.createElement('button'); keep.type = 'button'; keep.className = 'word'; keep.textContent = 'Keep this picture';
     $('words').appendChild(keep);
     keep.addEventListener('click', async () => {
       keep.disabled = true; keep.textContent = 'Making it…';
       try {
         const t0 = performance.now();
-        const blob = await cwStill(view, { long: 4096, honest });   // always at full, 4,096 px, with the honest block's lines and the credit on it
-        const ms = Math.round(performance.now() - t0);
-        const url = URL.createObjectURL(blob);
-        $('kept').querySelector('img').src = url; $('save').href = url; $('kept').style.display = 'block';
-        $('kept').dataset.bytes = blob.size; $('kept').dataset.ms = ms;
-        $('keptMeta').textContent = (blob.size / 1024 / 1024).toFixed(2) + ' MB · ' + ms + ' ms · ' + view.tier + ' live';   // bench only
+        keptPicture = await cwStillPicture(view, { long: 4096, honest });   // always at full, 4,096 px; the honest notes on it
+        keptNote = ''; $('keptNote').value = '';
+        await composeKept();
+        $('keptMeta').textContent += ' · ' + Math.round(performance.now() - t0) + ' ms · ' + view.tier + ' live';   // bench only
+        openPanel();
       } catch (e) { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The picture could not be made: ' + e.message; }
       keep.disabled = false; keep.textContent = 'Keep this picture';
     });
-    $('unkeep').addEventListener('click', e => { e.preventDefault(); $('kept').style.display = 'none'; });
+    $('keptNote').addEventListener('input', () => { keptNote = $('keptNote').value; clearTimeout(noteTimer); noteTimer = setTimeout(composeKept, 300); });
+    $('wShare').addEventListener('click', async () => {
+      try {
+        if (noteTimer) { clearTimeout(noteTimer); noteTimer = null; composeKept(); }
+        const blob = keptPending ? await keptPending : keptBlob; if (!blob) return;
+        const file = new File([blob], 'the-earth.png', { type: 'image/png' });
+        const text = (keptNote.trim() ? keptNote.trim() + ' — ' : '') + 'The Earth, ' + ageWord(state.ma) + ', ' + placeWord() + '.';
+        await navigator.share({ files: [file], text, title: 'The Earth' });
+      } catch (e) { if (!e || e.name !== 'AbortError') { console.warn('earth-3d: the share sheet did not open', e); $('keptMeta').textContent = 'The share sheet did not open: ' + (e && e.message ? e.message : e); } }
+    });
+    $('wSave').addEventListener('click', e => { if (keptPending || noteTimer) { e.preventDefault(); clearTimeout(noteTimer); noteTimer = null; composeKept().then(() => $('wSave').click()); } });
   }
 
-  // ---------- the bench's readout: backend, tier, frame rate, the triangles ----------
+  // ---------- Full screen (6b; js/cw-fullscreen.js) ----------
+  // The word fills the screen with the Earth's window; Map/Globe, Reset view, Keep this picture and the word itself float
+  // small at the top left, the age slider along the bottom; the same word, Escape or the device's own gesture returns.
+  // The window's crop is undone first (the window is the screen). No word where the device has no full screen.
+  const fs = view && window.CW.fullscreen ? CW.fullscreen($('stageWrap'), {
+    wordsHost: $('words'),
+    words: () => [$('wFlat'), view.resetWord, keep].filter(Boolean),
+    bottom: () => [$('ageRow')],
+    onChange: on => { if (on) setCrop(null); if (earth) earth.settle(); view.redraw(); renderStretch(); if (panel && panel.visible()) openPanel(); }
+  }) : null;
+
+  // ---------- the bench's readout: backend, tier and reach, the turn, frame rate, the triangles ----------
   if (view) {
     const st = earth.stats;
     setInterval(() => {
-      $('readout').textContent = view.backend + ' · ' + view.tier + (view.timing !== 'done' ? ' (timing)' : '') + ' · ' + view.fps + ' fps · ' +
+      const t = earth.tiles(), v = view.turnOf();
+      $('readout').textContent = view.backend + ' · tier ' + view.tier + (view.timing !== 'done' ? ' (timing)' : '') + ' (the sharpness) · deepest level ' + t.deepest + ' (the reach, at every tier) · level ' + t.centreLevel + ' at the centre' +
+        ' · the turn ' + Math.round(view.feel() * 100) + '% the map’s slide, north leaning ' + Math.abs(v.roll).toFixed(1) + '°' + (openedOn ? ' · opened on ' + VIEWS[openedOn].name : '') + (fs && fs.available ? '' : ' · no full screen here') +
+        ' · ' + view.fps + ' fps · ' +
         st.triangles.toLocaleString('en') + ' triangles from ' + st.pieces + ' pieces on ' + st.plates + ' plates (the rims ' + st.rimTriangles.toLocaleString('en') + ' more), built in ' + st.buildMs + ' ms (the file in ' + st.fetchMs + ' ms; the masks in ' + st.lookMs + ' ms)' +
         ' · Blue Marble ' + (st.blue() ? st.blue() + ' px (device allows ' + view.maxTexture + ')' : 'not loaded') +
         ' · seed ' + state.seed + simLine() + groundLine() + tileLine();
@@ -460,10 +700,10 @@
     return t;
   }
 
-  function tileLine() {   // close in (step 5): the level at the centre, the tiles held against the limit, what they cost
+  function tileLine() {   // close in (step 5): the tiles held against the limit, what they cost
     if (!earth) return '';
     const t = earth.tiles(), m = earth.marks();
-    return ' · close in: level ' + t.centreLevel + ' (deepest ' + t.deepest + '), ' + t.held + ' picture tiles held of ' + t.limit + ' (' + t.wanted + ' wanted, ' + t.loading + ' on the way), ' + t.heldData + ' data tiles, ' +
+    return ' · close in: ' + t.held + ' picture tiles held of ' + t.limit + ' (' + t.wanted + ' wanted, ' + t.loading + ' on the way), ' + t.heldData + ' data tiles, ' +
       t.fetchedMB + ' MB fetched, the arrays ' + t.cardMB + ' MB' + (t.lastFillMs != null ? ', the last fill ' + t.lastFillMs + ' ms' : '') + ', the coast at level ' + t.coastLevel + (t.iceLocal ? ', the ice filled over the view' : '') +
       ' · marks ' + m.labelled + ' named of ' + m.shown + ' in view';
   }
@@ -474,8 +714,11 @@
   }
 
   // ---------- for the bench's own checks (the browser pane) ----------
-  window.cwSetFlat = setFlat; window.cwSetCrop = setCrop; window.cwCrop = () => crop;
-  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetPlaces = setPlaces; window.cwFineAgeOf = fineAgeOf; window.cwFinePosOf = finePosOf; window.cwFineWindow = () => [fine0, fine0 + FINE_SPAN]; window.cwSetOldGlobe = setOldGlobe; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest; window.cwAgeOf = ageOf; window.cwPosOf = posOf;
+  window.cwSetFlat = setFlat; window.cwSetCrop = setCrop; window.cwCrop = () => crop; window.cwShowSize = showSize;
+  window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetPlaces = setPlaces; window.cwSetOldGlobe = setOldGlobe; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest; window.cwAgeOf = ageOf; window.cwPosOf = posOf;
+  window.cwOpenOn = openOn; window.cwViews = VIEWS; window.cwOpenedOn = () => openedOn; window.cwFramedKey = () => framedKey;
+  window.cwStretch = { state: STR, to: stretchTo, back: stretchBack, mode: setStretchMode, tap: tapStretch, render: renderStretch, finish: finishStretch, xOf, maOf };
+  window.cwFullscreen = fs; window.cwPanel = panel; window.cwPlaceWord = placeWord; window.cwCompose = composeKept; window.cwKept = () => ({ picture: keptPicture, blob: keptBlob, note: keptNote });
   // The bench's own timer, as the Sun bench's: draws `frames` frames off-screen at the canvas's size for a tier,
   // the age moving a million years a frame (so every plate's turn is read each frame, as a slider drag reads it),
   // and waits for the graphics card to finish each, so the number is the true cost of a frame, not the display's
@@ -498,9 +741,8 @@
     return { backend: view.backend, tier, pixels: w + 'x' + h, msPerFrame: +ms.toFixed(2), fpsIfAlone: +(1000 / ms).toFixed(1) };
   };
   // the two stages as one picture, the cities marked on both from each engine's own projection, for the report
-  // the pair picture shown on the page (in the kept picture's place), for checks in a browser pane that presents
-  // the live canvas late
-  window.cwShow = async function (px = 768) { const { blob, rows } = await cwPair(px); $('kept').querySelector('img').src = URL.createObjectURL(blob); $('kept').style.display = 'block'; return rows; };
+  // the pair picture shown on the page (in the kept panel), for checks in a browser pane that presents the live canvas late
+  window.cwShow = async function (px = 768) { const { blob, rows } = await cwPair(px); if (panel) { $('keptImg').src = URL.createObjectURL(blob); openPanel(); } return rows; };
   window.cwPair = async function (px = 800, type = 'image/png', quality) {
     if (!view) return null;
     const r = view.renderer, cam = view.camera;
@@ -645,13 +887,14 @@
     { name: 'Alice Springs', lon: 133.88, lat: -23.7, weight: 2 }, { name: 'Uluru', lon: 131.04, lat: -25.34, weight: 2 }, { name: 'Coober Pedy', lon: 134.75, lat: -29.0, weight: 2 },
     { name: 'Broome', lon: 122.24, lat: -17.96, weight: 2 }, { name: 'Kalgoorlie', lon: 121.47, lat: -30.75, weight: 2 }, { name: 'Tennant Creek', lon: 134.19, lat: -19.65, weight: 2 }
   ]);
-  window.cwSave = async function (dir, name, blob) {
+  window.cwSave = async function (dir, name, blob, port = 8771) {
     const url = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
-    const r = await fetch('http://localhost:8771/save?dir=' + encodeURIComponent(dir) + '&name=' + encodeURIComponent(name), { method: 'POST', body: url });
+    const r = await fetch('http://localhost:' + port + '/save?dir=' + encodeURIComponent(dir) + '&name=' + encodeURIComponent(name), { method: 'POST', body: url });
     return r.ok ? (await r.text()) : 'failed ' + r.status;
   };
-  // ?at=lon,lat,km: bench only, the view straight down on a place at the start (for the iPad simulator, which has no console)
-  if (view && Q.get('at')) { const [lon, lat, km] = Q.get('at').split(',').map(Number); cwGo(lon, lat, km); }
+  // ?at=lon,lat,km: bench only, the view straight down on a place at the start (for the iPad simulator, which has no console);
+  // Reset view returns there
+  if (view && Q.get('at')) { const [lon, lat, km] = Q.get('at').split(',').map(Number); cwGo(lon, lat, km); view.setHome({ lon, lat, distance: view.camera.position.length() }); }
 </script>
 </body>
 </html>

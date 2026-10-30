@@ -788,6 +788,35 @@ deliberately **not** archived — it still holds unmigrated live threads.
 
 ### 4. The 3D shelf — built, committed and pushed 26 Oct 2026; brought to the standard 27 Oct (`c87809e`, not pushed); the first Earth bench on it 27 Oct, not committed
 
+**30 Oct 2026 — step 6b of the Earth bench, Michael's eight items on step 6 (built; NOT committed; his prompt
+`claude/Prompt-Revise-Earth-Bench-06.md`, on `d0dea3d`; the spec checked first: *Ruled 29 Oct (Michael): Equal Earth* is under
+*Open*, nothing written in it; before building, the spec and `claude/Archive/` committed and pushed on his word as `d0dea3d`).**
+Nothing a child sees changes. **The turn close in:** on a ball with north kept up every move east is a turn about the pole,
+and with a country in the window the picture pivots about a point just past the frame (the swing); so close in a drag is a
+rigid slide, read back as a view with a lean of north, wholly the slide under 0.12 radians of ground across the window
+(about 760 km), wholly the globe on its stand from 0.6 (about 3,800 km), smooth between; the lean a slide east leaves
+(nine degrees for a window-width over the Alps) comes out as she zooms out and on Reset view, and stays at rest close in,
+since taking it out would be the picture rolling on its own — the geometry allows north up or no swing, not both, and
+the report says so plainly; `?turn=stand` keeps the old turn for comparison. **The Taiwan wedge:** Luzon's piece, born 5
+million years ago and still in its birth dissolve at today, with five more pieces (Flores–Alor, the Banda Arc's two, the
+Vitiaz Trench's two round Fiji); the dissolve now comes in only past the seam, so this side of it no piece draws anything
+over the sea. **With it:** the window's size in small grey type while its bars are dragged; the word *Full screen*
+(`js/cw-fullscreen.js`, built for any interactive: the essential words float at the top left, the age slider along the
+bottom; no word on a phone without it); seven opening views at random, each framed on its subject, `?view=` picking one
+and Reset view returning to it; the deepest level at every tier (the middle and floor tiers had stopped the zoom at a
+quarter and an eighth of the depth: Michael's 4 mm Nantucket on the 6K), the readout saying the tier and the reach; the
+stretching slider in the fine slider's place (bench only, both ways to place the marks, *back*, one pixel's worth under
+the line, a year a pixel at the least); *Keep this picture* opening a panel with a note, *Share* (the Web Share API, where
+it takes files) and *Save*, the picture carrying her note, the age and the place at the centre, the date and the credit.
+Checked in the pane on the Mac: the Alps east and north on the slide and on the stand, far out; Taiwan, Fiji and the
+Banda Arc before and after; the size readout; full screen (the pane refuses the API, so the viewport fallback is what
+was seen); the seven views; the middle and floor tiers reaching level 6; the slider both ways three deep and back; a
+kept picture with a note. The Time Machine, the Sun bench, the shelf bench and the Van Gogh story open clean. Not
+tried: the iPad (the real full screen, Share, the slide by finger). **Next action:** Michael reads
+`claude/Report-Earth-3D-Bench-06b.md` and the pictures in `claude/Earth-3D-Bench-06b-Oct30/`, tries the turn over the
+Alps by finger on the iPad and the Mac (and `?turn=stand` beside it), rules on north's lean, measures the window and
+names its opening size, tries both ways of placing the marks, and says commit.
+
 **29 Oct 2026, later — step 6 of the Earth bench, flat (built; committed and pushed on his word, 29 Oct ("Commit and push step 6, this session's hunks only"; `7cfb078`); his prompt
 `claude/Prompt-Build-Earth-Bench-06.md`, on `ee7fcfb`; the spec checked first: *Ruled 29 Oct (Michael): Equal Earth* is
 under *Open*).** The word *Map* (reading *Globe* while up) lays the same Earth out flat in Equal Earth, centred on 0°,
