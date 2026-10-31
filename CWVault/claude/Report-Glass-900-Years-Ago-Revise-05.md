@@ -1,5 +1,5 @@
 ---
-status: Built and checked 31 Oct 2026; not committed — the prompt says stop and report. Waiting on Michael's look and his word.
+status: Built and checked 31 Oct 2026; committed and pushed on Michael's word the same day ("Commit and push"), `fd9ad33f`, this session's hunks only. Waiting on his look.
 role: What Prompt-Revise-Glass-900-Years-Ago-05.md asked for beyond revision 4 (the table 6 m by 4 m centred on 1 with its size under it, the plane edge to edge, the piece under the tip outlined and the leak fixed, Save New Open as commands, the Color box with sunlight), what was built, how it was checked, what needs his eye, and what is open.
 related: Prompt-Revise-Glass-900-Years-Ago-05.md, Report-Glass-900-Years-Ago-Revise-04.md, cw-deploys/js/glass.js, cw-deploys/active/geo-1-glass-circles.html
 pictures: Glass-900-Years-Ago-Oct31-Rev05/ (mac-*.jpg are the canvas alone from the pane at 1440 × 648, the unit 100 px, or the pane's own screenshot where a box or panel is the subject; mac-16 and mac-18 are the saved image and the share image themselves; ipad-*.png are the whole screen of the iPadOS 26.5 iPad Air simulator, upright; leak-near-miss.json is the construction the leak was shown with)
@@ -7,7 +7,7 @@ pictures: Glass-900-Years-Ago-Oct31-Rev05/ (mac-*.jpg are the canvas alone from 
 
 # Report: Glass 900 years ago, revision 5
 
-Built on `150e097e` (the tree after revision 4 was pushed). The prompt's own heading says "revision 3" and its status line says to paste it after "revision 2 (Prompt-Revise-Glass-900-Years-Ago-04.md)"; the board and the reports count the prompts by their file numbers, so this is revision 5 here, built on revision 4. Everything below was checked on this Mac in the app's browser pane with scripted pointer gestures (the pane emulating a 1440 × 900 window), and on the iPad Air simulator (iPadOS 26.5) with real taps and drags. Nothing is committed.
+Built on `150e097e` (the tree after revision 4 was pushed). The prompt's own heading says "revision 3" and its status line says to paste it after "revision 2 (Prompt-Revise-Glass-900-Years-Ago-04.md)"; the board and the reports count the prompts by their file numbers, so this is revision 5 here, built on revision 4. Everything below was checked on this Mac in the app's browser pane with scripted pointer gestures (the pane emulating a 1440 × 900 window), and on the iPad Air simulator (iPadOS 26.5) with real taps and drags. Committed and pushed on Michael's word: `fd9ad33f`.
 
 ## What changed
 
@@ -81,6 +81,6 @@ Built on `150e097e` (the tree after revision 4 was pushed). The prompt's own hea
 
 ## Not done
 
-- **Not committed.** In the working tree: `glass.js`, the four pages, this report, the prompt, the pictures; MANIFEST and the board have their entries. Other sessions' uncommitted hunks (the Earth bench, the vault tidy) sit beside them and would be left out of this commit.
+- **Committed** on Michael's word ("Commit and push") as `fd9ad33f`, this session's hunks only (`glass.js`, the four pages, this report, the prompt, the pictures, MANIFEST's and the board's entries), and pushed; the commit after it records the hash here, in MANIFEST and on the board. Other sessions' uncommitted hunks (the Earth bench, the vault tidy) stay in the working tree.
 - **Not checked on a real iPad**; full screen not tried in this revision (the pane refuses it; the column goes to the left edge there by rule, unchecked).
 - **Not checked:** two instances on one page (the module bench loads the new script with its stamp only).
