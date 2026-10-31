@@ -17,7 +17,8 @@
                            as it is drawn (Stained Glass Circles' board until 29 Oct 2026; no page mounts it now)
                 'theophilus'  Glass 900 years ago: the window profile with circles and lines, no grid, numbers on
                            the axes, the controls inside the How this works boxes, the table she designs her window
-                           on (a frame that crops the glass, 30 Oct 2026) and palettes of twelve (active/geo-1-glass-circles.html)
+                           on (a frame that crops the glass, free until her first circle or line, its edges lead that
+                           bound pieces; 30 Oct 2026) and palettes of twelve (active/geo-1-glass-circles.html)
                 any name registered under CW.boards by a script in js/boards/ (the Wright window, js/boards/wright.js,
                            as 'wright'): the window profile standing on the shell's interface. The page loads the
                            board's script after this one.
@@ -384,8 +385,9 @@
     circles: { level: 'circles', app: true, measure: true, madeWord: 'Show circles' },
     theophilus: { level: 'both', app: true, measure: true, madeWord: 'Show circles and lines', grid: false, axisNumbers: true, boxes: true,
                   demos: ['Rose', 'Top'], powers: { map: false, htw: ['box-make', 'box-color', 'box-files', 'box-demos'] },
-                  // 30 Oct 2026 (Michael's prompt claude/Prompt-Revise-Glass-900-Years-Ago-01.md): the table she designs her
-                  // window on, a frame 6 by 3 with its lower-left corner at 0 to start (THE TABLE); the home view with 0 a
+                  // 30 Oct 2026 (Michael's prompts claude/Prompt-Revise-Glass-900-Years-Ago-01.md to -03.md): the table she
+                  // designs her window on, a frame 6 by 3 with its lower-left corner at 0 to start, free until her first circle
+                  // or line, its edges lead (THE TABLE, THE TABLE'S EDGES); the home view with 0 a
                   // quarter in and a third up (homeViewFor); palettes of twelve with the craft row not shown (twelve); the
                   // board's own palettes, the three from Gaudí's basilica, first in the picker and the first the default.
                   table: { left: 0, bottom: 0, width: 6, height: 3 }, twelve: true,
@@ -753,24 +755,39 @@ function drawFrameMeasure() {
     if (r.h > 60 && r.w > 90) readout(ctx, readoutText('area', frameU.width * frameU.height, 'exact'), r.x + r.w / 2, r.y + r.h - 10, 'center', 'bottom');
     ctx.restore();
 }
-// ── THE TABLE (Glass 900 years ago, 30 Oct 2026; Michael's prompt claude/Prompt-Revise-Glass-900-Years-Ago-01.md) ──
+// ── THE TABLE (Glass 900 years ago, 30 Oct 2026; Michael's prompts claude/Prompt-Revise-Glass-900-Years-Ago-01.md, -02.md, -03.md) ──
 // In the story this is the table she designs her window on: a rectangle on the plane in the board's unit (the
 // 0-to-1 distance), 3 tall and 6 wide to start with its lower-left corner at 0. It is the shell's `frame`
 // (so the thumbnail, the share preview and the postcard crop to it as they do for any board with a frame),
-// but it is not the Wright window's: it has no handles, no lock and no entries in the record. She drags it at
-// any time — a drag that starts on its edge, away from any point, moves the whole frame; one that starts on
-// a corner resizes it, the opposite corner staying put; a drag that starts on a point still makes a circle,
-// as now. Everything snaps to whole units, and it is never smaller than 1 by 1. It crops the glass: inside
-// the frame glass and lead as now, outside it none, the construction still shown there as plain lines and
-// circles (RENDER); Glass only and Share show what is inside it alone. The construction knows nothing of
-// it — points, circles, lines and the record's steps are the same with or without it, and Undo never undoes
-// it. It saves and opens with the construction: it is kept on the record's opening entry (`init.table`, in
-// units), written there when a drag ends, read at replay, carried by Save and the shared file; a record
-// without one (a demo, a design saved before today) opens with the board's opening frame.
+// but it is not the Wright window's: it has no handles, no Lock word and no entries in the record. Setting up
+// the table comes first, then the work on it, as it did 900 years ago (03): it is free until her first circle
+// or line and from then on stays where it is; New frees it again, and so does undoing back to no circles or
+// lines (tableFixed — read off the construction, never stored). While it is free, a drag that starts on its
+// edge, away from any point, moves the whole frame; one that starts on a corner resizes it, the opposite
+// corner staying put; a drag that starts on a point still makes a circle, as now. Both snap to quarter units
+// (02), and it is never smaller than 1 by 1. While she drags it its size shows — the width above the top edge,
+// the height right of the right edge, in units as whole numbers and quarters in lowest terms (4, 4 1/4,
+// 4 1/2, 4 3/4) — and goes when she lets go (drawTableMeasure). The frame is lead (03): its four edges bound
+// pieces of glass as circles and lines do, so the space between a circle or line and the edge is a piece of
+// its own, and before there is any circle or line the whole table is one piece (THE TABLE'S EDGES, below);
+// its edges never make points and never enter the construction. It crops the glass: inside the frame glass
+// and lead, outside it none, the construction still shown there as plain lines and circles (RENDER), where
+// she can go on building; Glass only and Share show what is inside it alone. The construction knows nothing
+// of it — points, circles, lines and the record's steps are the same with or without it, and Undo never
+// undoes it. It saves and opens with the construction: it is kept on the record's opening entry
+// (`init.table`, in units), written there when a drag ends, read at replay, carried by Save and the shared
+// file; a record without one (a demo, a design saved before 30 Oct) opens with the board's opening frame. On
+// the screen its edge is a thin line while it is a bare free table, and came — the window's lead — once it is
+// fixed, once there is glass against it, and under Glass only (tableCame).
 var tableDrag = null;   // { kind: 'move' | 'corner', id, from: the frame in units, start: the hand in units } from a press to its release
 var TABLE_CORNER_HIT = 16, TABLE_EDGE_HIT = 9;   // screen pixels
+var TABLE_STEP = 0.25;                            // the move and the resize snap to quarter units (02)
 function tableOrigin() { var s0 = points.get('seed:0'); return s0 ? { x: s0.x, y: s0.y } : { x: -100, y: 0 }; }
 function tableUnits(world) { var o = tableOrigin(), U = frameUnit || plane.metre(); return { x: (world.x - o.x) / U, y: (world.y - o.y) / U }; }
+function tableFixed() { return !!TABLE && (lines.size > 0 || circles.size > 0); }   // from the first circle or line until none is left (03)
+function tableFree() { return !!TABLE && !!frame && !tableFixed(); }
+function tableCame() { return !!TABLE && !!frame && (showGlass || tableFixed() || liveFills().length > 0); }
+function tableQ(v) { return clean(Math.round(v / TABLE_STEP) * TABLE_STEP); }
 // The frame set from units: the shell's `frame` and `frameU`, the unit the metre. The plane's own unit frame is
 // left alone — the board counts from 0, not from the table's corner, so the numbers stay where they are.
 function setTableFrame(u) {
@@ -795,19 +812,19 @@ function tableDown(pos, world) {
     interactionState = 'TABLE_DRAG';
     return true;
 }
-// The move: the frame follows the hand by whole units. The resize: the corner under the hand goes to the
-// whole unit nearest it, the opposite corner stays, and neither side shrinks below one unit.
+// The move: the frame follows the hand by quarter units. The resize: the corner under the hand goes to the
+// quarter unit nearest it, the opposite corner stays, and neither side shrinks below one unit.
 function tableDragMove(world) {
     var d = tableDrag, f = d.from, h = tableUnits(world);
     var left = f.left, bottom = f.bottom, width = f.width, height = f.height;
     if (d.kind === 'move') {
-        left = f.left + Math.round(h.x - d.start.x); bottom = f.bottom + Math.round(h.y - d.start.y);
+        left = clean(f.left + tableQ(h.x - d.start.x)); bottom = clean(f.bottom + tableQ(h.y - d.start.y));
     } else {
-        var right = f.left + f.width, top = f.bottom + f.height, cx = Math.round(h.x), cy = Math.round(h.y);
-        if (d.id === 'bl' || d.id === 'tl') { left = Math.min(cx, right - 1); width = right - left; }
-        else width = Math.max(1, cx - left);
-        if (d.id === 'bl' || d.id === 'br') { bottom = Math.min(cy, top - 1); height = top - bottom; }
-        else height = Math.max(1, cy - bottom);
+        var right = clean(f.left + f.width), top = clean(f.bottom + f.height), cx = tableQ(h.x), cy = tableQ(h.y);
+        if (d.id === 'bl' || d.id === 'tl') { left = Math.min(cx, clean(right - 1)); width = clean(right - left); }
+        else width = Math.max(1, clean(cx - left));
+        if (d.id === 'bl' || d.id === 'br') { bottom = Math.min(cy, clean(top - 1)); height = clean(top - bottom); }
+        else height = Math.max(1, clean(cy - bottom));
     }
     if (left === frameU.left && bottom === frameU.bottom && width === frameU.width && height === frameU.height) return;
     setTableFrame({ left: left, bottom: bottom, width: width, height: height });   // the window redrawn as she drags
@@ -824,15 +841,158 @@ function tableDragUp() {
     if (stepState.active && stepState.ops) { stepState.ops = stepState.ops.slice(); stepState.ops[0] = Object.assign({}, stepState.ops[0], { table: t }); }
     playSound('snap');
 }
-// The table drawn: a thin line in the construction's ink, a little stronger while she drags it. Under Glass only
-// its edge is the window's came, as the share image has it (drawScene strokes it, with `frame`).
+// The size while she drags it: whole numbers and quarters in lowest terms, as the prompt writes them.
+function tableSizeText(v) {
+    var q = Math.round(v * 4), n = Math.floor(q / 4), frac = ['', '1/4', '1/2', '3/4'][q - n * 4];
+    return n ? (frac ? n + ' ' + frac : String(n)) : frac;
+}
+// The width above the top edge, centred along it; the height to the right of the right edge, centred along it.
+// Only while she holds the frame: nothing when she lets go.
+function drawTableMeasure() {
+    if (!tableDrag || !frame) return;
+    var r = frameScreenRect();
+    ctx.save();
+    readout(ctx, tableSizeText(frameU.width), r.x + r.w / 2, r.y - 6, 'center', 'bottom');
+    readout(ctx, tableSizeText(frameU.height), r.x + r.w + 8, r.y + r.h / 2, 'left', 'middle');
+    ctx.restore();
+}
+// The bare free table drawn: a thin line in the construction's ink, a little stronger while she drags it. Once it
+// is fixed, once there is glass, and under Glass only, its edge is the window's came, as the share image has it
+// (drawScene strokes it, with `frame`, after the clip).
 function drawTable() {
-    if (!TABLE || !frame || showGlass) return;
+    if (!TABLE || !frame || tableCame()) return;
     var r = frameScreenRect();
     ctx.save();
     ctx.strokeStyle = COLORS.border; ctx.lineWidth = 1; ctx.globalAlpha = tableDrag ? 0.9 : 0.5;
     ctx.strokeRect(snap(r.x) + 0.5, snap(r.y) + 0.5, Math.round(r.w), Math.round(r.h));
     ctx.restore();
+}
+// ── THE TABLE'S EDGES (03: the frame is lead) ────────────────────────────────────────────────
+// The table's edges bound pieces as the construction does, without touching it. The shape under a tap is found
+// (findFaceAround) in an arrangement of what lies inside the frame — each line cut to the frame and divided at
+// the construction's points inside it, each circle's arcs inside it, and the frame's four edges — whose vertices
+// are the construction's points in or on the frame and the table's own: its corners, and the places lines and
+// circles cross its edges. The table's are named, never made: a corner is `tbl:c:bl` (br, tr, tl); a line's
+// crossing `tbl:l:<line>:<edge>`; a circle's `tbl:o:<circle>:<edge>:<k>`, k its place along the edge's
+// direction (left to right, bottom to top). A fill's record carries these names as it carries point ids, and
+// the place is worked out again from the frame and the construction whenever the pane is drawn or named
+// (tableVertex, vtx), so the whole table coloured before any circle follows the frame as she drags it, and a
+// saved design reopens with its pieces. A crossing that lands on a construction point (1, where the first
+// circle meets the bottom edge) takes the point's id; a line along an edge adds nothing, the edge standing for
+// it. No point is made and nothing enters the record but the glass.
+var TABLE_EDGES = ['bottom', 'right', 'top', 'left'];
+function tableEdge(name) {   // the edge as two points in its direction
+    var f = frame; if (!f) return null;
+    if (name === 'bottom') return { a: { x: f.x0, y: f.y0 }, b: { x: f.x1, y: f.y0 } };
+    if (name === 'top')    return { a: { x: f.x0, y: f.y1 }, b: { x: f.x1, y: f.y1 } };
+    if (name === 'left')   return { a: { x: f.x0, y: f.y0 }, b: { x: f.x0, y: f.y1 } };
+    if (name === 'right')  return { a: { x: f.x1, y: f.y0 }, b: { x: f.x1, y: f.y1 } };
+    return null;
+}
+function tableCorner(name) {
+    var f = frame; if (!f) return null;
+    return { bl: { x: f.x0, y: f.y0 }, br: { x: f.x1, y: f.y0 }, tr: { x: f.x1, y: f.y1 }, tl: { x: f.x0, y: f.y1 } }[name] || null;
+}
+// Where a line meets an edge's line; where a circle meets it (none, one or two, in the edge's direction).
+function tableLineCut(idx, name) {
+    var l = lines.get(idx), e = tableEdge(name); if (!l || !e) return null;
+    var p1 = points.get(l.p1Id), p2 = points.get(l.p2Id); if (!p1 || !p2) return null;
+    return llX(p1, p2, e.a, e.b);
+}
+function tableCircleCuts(idx, name) {
+    var ci = circles.get(idx), e = tableEdge(name), ce = ci && points.get(ci.centerId); if (!ci || !e || !ce) return [];
+    return lcX(e.a, e.b, ce, ci.radius);
+}
+function tableVertex(id) {
+    if (!frame || typeof id !== 'string' || id.indexOf('tbl:') !== 0) return null;
+    var p = id.split(':');
+    if (p[1] === 'c') return tableCorner(p[2]);
+    if (p[1] === 'l') return tableLineCut(+p[2], p[3]);
+    if (p[1] === 'o') return tableCircleCuts(+p[2], p[3])[+p[4]] || null;
+    return null;
+}
+// A vertex of a pane by its id: a construction point, or one of the table's.
+function vtx(id) { return points.get(id) || tableVertex(id); }
+// The arrangement inside the frame, as the face walk takes it: segments and arcs, each with the ids of its ends
+// and their places. Places within the engine's own merge radius are one vertex.
+function tableArrangement() {
+    var f = frame, eps = _dupEpsilon, TAU = 2 * Math.PI, V = [], at = {}, E = [];
+    function reg(x, y, id) {
+        for (var i = 0; i < V.length; i++) if (dist(x, y, V[i].x, V[i].y) < eps) return V[i].id;
+        V.push({ id: id, x: x, y: y }); at[id] = { x: x, y: y }; return id;
+    }
+    function within(x, y) { return x > f.x0 - eps && x < f.x1 + eps && y > f.y0 - eps && y < f.y1 + eps; }      // in the frame or on its edge
+    function strictly(x, y) { return x > f.x0 + eps && x < f.x1 - eps && y > f.y0 + eps && y < f.y1 - eps; }
+    function onSpan(name, p) { return (name === 'bottom' || name === 'top') ? (p.x > f.x0 - eps && p.x < f.x1 + eps) : (p.y > f.y0 - eps && p.y < f.y1 + eps); }
+    function along(name, p) { return (name === 'bottom' || name === 'top') ? p.x : p.y; }
+    var onEdge = { bottom: [], right: [], top: [], left: [] };
+    function mark(name, p, id) { onEdge[name].push({ t: along(name, p), id: id }); }
+    function seg(key, a, b) { if (a !== b) E.push({ type:'seg', key:key, a:a, b:b, pA:at[a], pB:at[b] }); }
+    function chain(key, list) {   // the vertices along a line or an edge in order, each once, joined in turn
+        list.sort(function(p, q) { return p.t - q.t; });
+        var prev = null;
+        list.forEach(function(v) { if (prev && prev.id !== v.id) seg(key + ':' + prev.id + ':' + v.id, prev.id, v.id); if (!prev || prev.id !== v.id) prev = v; });
+    }
+    // While the table is free (no circle or line yet) the arrangement is its four corners and edges alone, so the
+    // whole table coloured then is named by its corners and follows the frame wherever she drags it; 0 and 1 on
+    // its bottom edge are not vertices until the table is fixed. Once it is fixed, the construction's points in
+    // or on the frame come first, so a crossing that lands on one takes its id.
+    var fixed = tableFixed();
+    if (fixed) points.forEach(function(p) { if (within(p.x, p.y)) reg(p.x, p.y, p.id); });
+    var corner = {};
+    ['bl', 'br', 'tr', 'tl'].forEach(function(c) { var p = tableCorner(c); corner[c] = reg(p.x, p.y, 'tbl:c:' + c); });
+    var ends = { bottom: ['bl', 'br'], top: ['tl', 'tr'], left: ['bl', 'tl'], right: ['br', 'tr'] };
+    TABLE_EDGES.forEach(function(name) {
+        var e = tableEdge(name);
+        mark(name, e.a, corner[ends[name][0]]); mark(name, e.b, corner[ends[name][1]]);
+        if (fixed) points.forEach(function(p) { if (within(p.x, p.y) && ptOnLine(p.x, p.y, e.a, e.b, eps)) mark(name, p, reg(p.x, p.y, p.id)); });
+    });
+    // the lines: cut to the frame, divided at the construction's points inside it; a line along an edge adds
+    // nothing; a line that only touches a corner adds nothing either (its two cuts are one vertex)
+    lines.forEach(function(l, idx) {
+        var p1 = points.get(l.p1Id), p2 = points.get(l.p2Id); if (!p1 || !p2) return;
+        var dx = p2.x - p1.x, dy = p2.y - p1.y, list = [], cuts = 0;
+        function t(p) { return (p.x - p1.x) * dx + (p.y - p1.y) * dy; }
+        for (var k = 0; k < TABLE_EDGES.length; k++) { var e = tableEdge(TABLE_EDGES[k]); if (ptOnLine(p1.x, p1.y, e.a, e.b, eps) && ptOnLine(p2.x, p2.y, e.a, e.b, eps)) return; }
+        TABLE_EDGES.forEach(function(name) {
+            var x = tableLineCut(idx, name); if (!x || !onSpan(name, x)) return;
+            var id = reg(x.x, x.y, 'tbl:l:' + idx + ':' + name);
+            list.push({ t: t(x), id: id }); mark(name, x, id); cuts++;
+        });
+        if (cuts < 2) return;
+        l.pointsOnLine.forEach(function(pid) { var p = points.get(pid); if (p && within(p.x, p.y)) list.push({ t: t(p), id: pid }); });
+        chain('tl:' + idx, list);
+    });
+    // the circles: their arcs inside the frame, divided at the construction's points there and at the crossings
+    circles.forEach(function(ci, idx) {
+        var ce = points.get(ci.centerId); if (!ce) return;
+        var list = [];
+        TABLE_EDGES.forEach(function(name) {
+            tableCircleCuts(idx, name).forEach(function(x, k) {
+                if (!onSpan(name, x)) return;
+                var id = reg(x.x, x.y, 'tbl:o:' + idx + ':' + name + ':' + k);
+                list.push({ a: normA(getAngle(x.x, x.y, ce)), id: id }); mark(name, x, id);
+            });
+        });
+        ci.pointsOnCircle.forEach(function(pid) { var p = points.get(pid); if (p && within(p.x, p.y)) list.push({ a: normA(getAngle(p.x, p.y, ce)), id: pid }); });
+        list.sort(function(p, q) { return p.a - q.a; });
+        var u = []; list.forEach(function(v) { if (!u.some(function(w) { return w.id === v.id; })) u.push(v); });
+        if (u.length < 2) return;
+        for (var i = 0; i < u.length; i++) {
+            var a = u[i], b = u[(i + 1) % u.length], sweep = normA(b.a - a.a); if (sweep < 1e-9) sweep = TAU;
+            var mid = a.a + sweep / 2;
+            if (!strictly(ce.x + Math.cos(mid) * ci.radius, ce.y + Math.sin(mid) * ci.radius)) continue;
+            E.push({ type:'arc', key:'to:' + idx + ':' + a.id + ':' + b.id, a:a.id, b:b.id, circIdx:idx, ce:ce, r:ci.radius, aA:a.a, aB:b.a, sweep:sweep, pA:at[a.id], pB:at[b.id] });
+        }
+    });
+    // the frame's own edges, divided at everything on them
+    TABLE_EDGES.forEach(function(name) { chain('tf:' + name, onEdge[name]); });
+    return E;
+}
+// A circle wholly inside the frame (within the merge radius): a candidate on its own when nothing divides it.
+function tableHolds(ci) {
+    var ce = points.get(ci.centerId), f = frame, eps = _dupEpsilon; if (!ce || !f) return false;
+    return ce.x - ci.radius > f.x0 - eps && ce.x + ci.radius < f.x1 + eps && ce.y - ci.radius > f.y0 - eps && ce.y + ci.radius < f.y1 + eps;
 }
 function initLog() {
     operationLog = freshLog();
@@ -1124,7 +1284,7 @@ function paneKey(pts) {
 // A pane of the engine's: its vertices (point ids) and edges, as a face or a fill carries them.
 function faceKey(pane) {
     var pts = [];
-    (pane.vertices || []).forEach(function (id) { var p = points.get(id); if (p) pts.push({ x: p.x, y: p.y }); });
+    (pane.vertices || []).forEach(function (id) { var p = vtx(id); if (p) pts.push({ x: p.x, y: p.y }); });
     (pane.edges || []).forEach(function (e) {
         if (e.type !== 'arc') return;
         var ci = circles.get(e.circIdx), ce = ci && points.get(ci.centerId); if (!ce) return;
@@ -2376,7 +2536,7 @@ function expandFillToPolygon(fill) {
         var poly = [];
         fill.edges.forEach(function(edge) {
             if (edge.type === 'seg') {
-                var p = points.get(edge.a); if (p) poly.push({ x:p.x, y:p.y });
+                var p = vtx(edge.a); if (p) poly.push({ x:p.x, y:p.y });   // a point, or one of the table's vertices (THE TABLE'S EDGES)
             } else {
                 var ci = circles.get(edge.circIdx); if (!ci) return;
                 var ce = points.get(ci.centerId); if (!ce) return;
@@ -2390,7 +2550,7 @@ function expandFillToPolygon(fill) {
         });
         return poly;
     }
-    return fill.vertices.map(function(id) { return points.get(id); }).filter(Boolean);
+    return fill.vertices.map(function(id) { return vtx(id); }).filter(Boolean);
 }
 
 function shoelaceArea(poly) {
@@ -2440,7 +2600,7 @@ function strokeFillLead(c, f, map) {
     }
     c.beginPath();
     b.forEach(function(pr) {
-        var A = points.get(pr[0]), B = points.get(pr[1]); if (!A || !B) return;
+        var A = vtx(pr[0]), B = vtx(pr[1]); if (!A || !B) return;
         var a = map(A.x, A.y), bb = map(B.x, B.y);
         c.moveTo(a.x, a.y); c.lineTo(bb.x, bb.y);
     });
@@ -2575,9 +2735,13 @@ function findClosedRegionEdges() {
 // disc; the smallest-on-top order hides that, as it hides overlapping fills today — the
 // same temporary fix, not region subtraction. The record it returns is exactly what
 // checkAndFill writes, so nothing downstream knows the difference.
+// On the table's board (THE TABLE'S EDGES, 30 Oct 2026) the arrangement is what lies inside the frame, the
+// frame's edges among its edges, so every piece is bounded and the frame's inside is the only outside.
 function findFaceAround(wx, wy) {
     var TAU = 2 * Math.PI;
-    var E = [];
+    var E = [], onTable = !!(TABLE && frame);
+    if (onTable) E = tableArrangement();
+    else {
     logicalArcs.forEach(function(arc, key) {
         var ci = circles.get(arc.circIdx), ce = ci && points.get(ci.centerId); if (!ci || !ce) return;
         var pA = points.get(arc.pointAId), pB = points.get(arc.pointBId); if (!pA || !pB) return;
@@ -2589,6 +2753,7 @@ function findFaceAround(wx, wy) {
         var A = points.get(seg.pointAId), B = points.get(seg.pointBId); if (!A || !B) return;
         E.push({ type:'seg', key:key, a:seg.pointAId, b:seg.pointBId, pA:A, pB:B });
     });
+    }
     // distance from the point to the piece of edge, and which side of it the point is
     function edgeDist(e) {
         if (e.type === 'arc') {
@@ -2676,8 +2841,9 @@ function findFaceAround(wx, wy) {
         var face = record(cycle);
         if (face) { best = face; break; }
     }
-    // circles nothing crosses: one arc, the whole way round
+    // circles nothing crosses: one arc, the whole way round (on the table's board, those wholly inside the frame)
     circles.forEach(function(ci, idx) {
+        if (onTable && !tableHolds(ci)) return;
         if (ci.pointsOnCircle.length >= 2) return;
         var ce = points.get(ci.centerId); if (!ce) return;
         if (dist(wx, wy, ce.x, ce.y) >= ci.radius) return;
@@ -2966,7 +3132,7 @@ function render() {
     // The glass and its came: largest first, smallest on top, each fill's lead right after its glass.
     // On the table's board the glass and its came are clipped to the table, whose edge is the came under Glass only
     // (THE TABLE); the table itself is drawn after, a thin line, while the construction is shown.
-    drawScene(ctx, w2s, plane.zoom(), { fills: 'sorted', lead: 'each', leadWidth: LEAD_WIDTH, clipFrame: !!TABLE, frame: !!TABLE && showGlass, snap: !!TABLE });
+    drawScene(ctx, w2s, plane.zoom(), { fills: 'sorted', lead: 'each', leadWidth: LEAD_WIDTH, clipFrame: !!TABLE, frame: tableCame(), snap: !!TABLE });
     drawTable();
     // A board on the interface: its lead and the frame as one pass of came (one path, unsnapped — the Wright
     // window's habit, for the renderer step to settle), then what the board draws over the glass (the Wright
@@ -2976,6 +3142,7 @@ function render() {
     drawFrameMeasure();
 
     if (!showGlass) drawConstruction(ctx, w2s, plane.zoom(), { mode: 'extended' });
+    drawTableMeasure();   // the table's size while she holds it (THE TABLE), over the construction
 
     // Connected-segment hover highlight
     // When a segment or arc was just tapped (is lastTapTarget), nearby segments
@@ -3664,6 +3831,13 @@ function tryAutoComplete(clickedKey) {
 // already wears the colour is left alone (the Wright window's rule, now everyone's).
 function paneUnderTap(wx, wy) {
     if (board) { var p = board.paneAt(wx, wy); if (!p) return null; return { key: paneKey(board.panePolygon(p)), fields: { pane: p } }; }
+    // The table's board (THE TABLE'S EDGES): outside the frame there is no glass, so no pane; a tap within reach of
+    // the edge is taken just inside it, so the edge takes a tap as a pane's edge does.
+    if (TABLE && frame) {
+        var reach = THRESHOLDS.lineHitRadius / plane.zoom(), d = plane.metre() * 1e-3;
+        if (wx < frame.x0 - reach || wx > frame.x1 + reach || wy < frame.y0 - reach || wy > frame.y1 + reach) return null;
+        wx = Math.min(Math.max(wx, frame.x0 + d), frame.x1 - d); wy = Math.min(Math.max(wy, frame.y0 + d), frame.y1 - d);
+    }
     var face = findFaceAround(wx, wy); if (!face) return null;
     return { key: faceKey(face), fields: { vertices: face.vertices, edges: face.edges } };
 }
@@ -3771,11 +3945,12 @@ function onDown(e) {
     mouseScreenPos.x = pos.x; mouseScreenPos.y = pos.y;
     eraserCandidate = null; // clear any leftover candidate
 
-    // ── The table (THE TABLE, 30 Oct 2026): a press on its edge away from any point moves it, on a corner resizes
-    //    it, under Glass only too; a point wins while the construction is shown, so a drag from 0 is still a circle.
-    //    A line waiting is cancelled, as any tap elsewhere cancels it.
-    if (TABLE && (showGlass || !hitPt(world.x, world.y)) && tableHit(pos)) {
-        if (interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; selectedPoint=null; }
+    // ── The table (THE TABLE, 30 Oct 2026): while it is free, a press on its edge away from any point moves it, on a
+    //    corner resizes it, under Glass only too; a point wins while the construction is shown, so a drag from 0 is
+    //    still a circle. A line waiting is only cancelled by the press (03), as any tap but a point's cancels it.
+    //    Once it is fixed a press on its edge is a press on the board: the edge is the pane's edge.
+    if (TABLE && tableFree() && (showGlass || !hitPt(world.x, world.y)) && tableHit(pos)) {
+        if (interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; selectedPoint=null; interactionState='IDLE'; return; }
         tableDown(pos, world); return;
     }
 
