@@ -1,5 +1,5 @@
 ---
-status: Report — the Earth bench, step 6e (Prompt-Revise-Earth-Bench-06e.md, shortcuts for the timeline); built 30 Oct 2026 on 709a1e8a; checked in the pane on the Mac; committed on Michael's word, 30 Oct ("Commit, don't push"), not pushed
+status: Report — the Earth bench, step 6e (Prompt-Revise-Earth-Bench-06e.md, shortcuts for the timeline); built 30 Oct 2026 on 709a1e8a; checked in the pane on the Mac; committed on Michael's word, 30 Oct ("Commit, don't push"), 834c3982, and pushed on his word ("Push this when it is ready")
 role: What was built, the table of spans, what each shortcut showed in the pane, back, and what needs Michael's eye
 related: Spec-Earth-3D.md, Worknote-Time-Slider.md, Report-Earth-3D-Bench-06d.md, Prompt-Revise-Earth-Bench-06e.md, cw-deploys/experiments/earth-3d.html, Earth-3D-Bench-06e-Oct30/ (the pictures)
 updated: 2026-10-30
@@ -107,4 +107,4 @@ No console errors; `check-deploys` no errors (its one warning is another session
 `placeSpans` (called from `renderStretch` and `setCrop`, and by a `ResizeObserver` on the window), `spanEndWord`
 rewritten, the list among the full screen's words after *Full screen*, a sentence in the *Current year* panel,
 `cwStretch.spans/goTo/spanWords/placeSpans/el` for checks; the stamp `2026-10-30 709a1e8 · earth-3d step 6e`. Committed
-on Michael's word, 30 Oct, "Commit, don't push", this session's hunks only; `MANIFEST.md` and `00-BOARD.md` in the same commit.
+on Michael's word, 30 Oct, "Commit, don't push", this session's hunks only (`834c3982`), and pushed on his word; `MANIFEST.md` and `00-BOARD.md` in the same commit.
