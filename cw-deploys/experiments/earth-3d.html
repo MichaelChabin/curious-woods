@@ -94,6 +94,10 @@
      while she drags it, its year stands beside it (the left flag's to its left, the right flag's to its right) and between
      the flags, centred in the gap, how long the gap is; each number rounded to what one pixel of the line is worth; the
      gap's label just above the flags when it cannot fit between them, a flag's label inside the flag near the line's ends.
+     Step 6e (30 Oct; Prompt-Revise-Earth-Bench-06e.md): shortcuts for the timeline — a short list of words in the left column,
+     centred beside the age slider (Dinosaurs, After the Ice, Egypt, China, Mesoamerica, France), each setting the line's span at
+     once with the same short glide, the age moving to the span's start, back returning to the whole; the list and its spans in
+     one small table in the script (SPANS), a line each.
      The Earth wears the Time Machine's icon for now; it has none of its own. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
@@ -170,6 +174,12 @@
   .age-row { margin: 4px 0 0; display: grid;   /* 6d: 10 px of the old 14 px margin went into the track, for a gap's label above the flags */ grid-template-columns: 1fr 118px; column-gap: 14px; align-items: start; }
   .age-row .stretch-words { padding-top: 32px; display: flex; gap: 16px; align-items: baseline; font-size: 15px; }
   .age-row .stretch-words .word { font-size: 15px; }
+  /* the timeline's shortcuts (6e): a short list of words in the left column, centred beside the age slider by the script
+     (placeSpans); in the narrow layout they follow the commands; in the full screen's box they follow the commands too */
+  .left { position: relative; }
+  .spans { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+  .spans .word { font-size: 15px; padding: 1px 0; }
+  .cw-fs-words .spans { position: static; margin-top: 8px; gap: 3px; }
   /* the age slider (6c): one even line she can stretch — two small copper flags at its ends to drag in, the thumb the age */
   .stretch-track { position: relative; height: 62px; touch-action: none; cursor: pointer; user-select: none; -webkit-user-select: none; }
   .stretch-line { position: absolute; left: 0; right: 0; top: 45px; height: 2px; background: var(--cw-grey, #9a958b); border-radius: 1px; }
@@ -212,6 +222,7 @@
     .stages, .stages.solo { grid-template-columns: 1fr; }
     .stages.solo #box2d { width: 100%; }
     .age-row { grid-template-columns: 1fr 104px; column-gap: 10px; }
+    .spans { position: static; width: 100%; flex-direction: row; flex-wrap: wrap; gap: 4px 18px; margin-top: 4px; }
   }
 </style>
 </head>
@@ -270,7 +281,7 @@
 </div>
 
 <script type="module">
-  const CW_VERSION = '2026-10-30 d624fb7 · earth-3d step 6d';   // 30 Oct: the stretch on the age line itself, the stand at every zoom, Blue Marble and the whole globe at the start, zoom out about the centre, the new layout with How this works and Current year, the window's size rule, full screen with margins   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-10-30 709a1e8 · earth-3d step 6e';   // 30 Oct: the stretch on the age line itself, the stand at every zoom, Blue Marble and the whole globe at the start, zoom out about the centre, the new layout with How this works and Current year, the window's size rule, full screen with margins   // date + short commit hash; bump in the same commit as any change
   console.log('earth-3d', CW_VERSION);
   import * as THREE from 'three';
   import { cwScene } from '../js/3d/scene.js?v=2026-10-30b';
@@ -446,6 +457,7 @@
   // a year a screen pixel at the least. back steps out one stretch, and is absent when there is nothing to step out of.
   // Under the line: the stretch's two ends, and what one of the screen's own pixels is worth now (by devicePixelRatio).
   const STR = { a: 0, b: EARTH_AGE, stack: [], flags: [0, EARTH_AGE], anim: null, target: null };
+  let spanWords = [];   // the timeline's shortcuts (6e), filled below
   const track = $('stretchTrack'), thumbEl = $('stretchThumb'), flagEls = [$('flagA'), $('flagB')];
   const trackW = () => track.clientWidth || 1;
   const xOf = ma => (ma - STR.a) / (STR.b - STR.a) * trackW();
@@ -503,13 +515,10 @@
     const p = Math.pow(10, Math.floor(Math.log10(y)) - 1);
     return (Math.round(y / p) * p).toLocaleString('en', { maximumFractionDigits: 1 }) + ' years';
   }
-  function spanEndWord(ma) {   // an end of the stretch, to a precision suited to its width
-    const span = STR.b - STR.a;
+  function spanEndWord(ma) {   // an end of the stretch: the line's own ends by name, any other rounded as the flags' years are (6e; 6c rounded to three figures of the span, so a shortcut's 5,125 read 5,130)
     if (ma <= 0) return 'today';
-    if (span >= 50) return Math.round(ma).toLocaleString('en') + ' million years ago';
-    if (span >= 1) return (Math.round(ma * 10) / 10).toLocaleString('en', { maximumFractionDigits: 1 }) + ' million years ago';
-    const step = Math.max(1, Math.pow(10, Math.floor(Math.log10(span * 1e6)) - 2));
-    return (Math.round(ma * 1e6 / step) * step).toLocaleString('en') + ' years ago';
+    if (ma >= EARTH_AGE - EPS) return EARTH_AGE.toLocaleString('en') + ' million years ago';
+    return flagWord(ma, pixelStep());
   }
   const present = (el, on) => el.classList.toggle('absent', !on);
   var renderStretch = function () {
@@ -522,6 +531,7 @@
     present($('wStretch'), !STR.anim && flagsMoved());
     present($('wBack'), !STR.anim && STR.stack.length > 0);
     placeLabels(W);
+    markSpans(); placeSpans();
   };
   function resetFlags() { STR.flags = [STR.a, STR.b]; }
   function glideStretch(a1, b1) {   // the line's ends ease to the new stretch over STRETCH_MS; the flags ease to its ends
@@ -558,6 +568,49 @@
     STR.flags[i] = i === 0 ? Math.max(STR.a, Math.min(STR.flags[1] - gap, ma)) : Math.min(STR.b, Math.max(STR.flags[0] + gap, ma));
     renderStretch();
   }
+  // ---------- shortcuts for the timeline (6e; Prompt-Revise-Earth-Bench-06e.md) ----------
+  // A short list of words in the left column, centred beside the age slider. Each sets the line's span at once, as if she had
+  // stretched to it, with the same short glide; the age moves to the span's start (its earlier end); back returns to the whole.
+  // The list and its spans are this one table, a line each, from the earlier end to the later: a year CE as itself, BCE
+  // negative (-3100 is 3100 BCE; there is no year 0), 'today' for now, { ago } for years ago, { ma } for million years ago.
+  const SPANS = [
+    ['Dinosaurs',     { ma: 233 },    { ma: 66 }, 'the first dinosaurs to the end of all but the birds'],
+    ['After the Ice', { ago: 12000 }, 'today',    ''],
+    ['Egypt',         -3100,          -30,        'the Upper and Lower Kingdoms united, to Cleopatra’s death'],
+    ['China',         -1600,          1912,       'the Shang dynasty to the end of the Qing'],
+    ['Mesoamerica',   -1600,          1697,       'the first Olmec towns to the fall of the last Maya kingdom, Tayasal'],
+    ['France',        768,            'today',    'Charlemagne becomes king of the Franks'],
+  ];
+  const markMa = m => m === 'today' ? 0 : typeof m === 'number' ? CW.yearToMa(m < 0 ? m + 1 : m) : m.ma != null ? m.ma : m.ago / 1e6;
+  const markWord = m => m === 'today' ? 'today' : typeof m === 'number' ? (m < 0 ? (-m).toLocaleString('en') + ' BCE' : String(m)) : m.ma != null ? m.ma + ' million years ago' : m.ago.toLocaleString('en') + ' years ago';
+  const spansEl = document.createElement('div'); spansEl.className = 'spans'; spansEl.id = 'spans';
+  spanWords = SPANS.map(([word, from, to, note]) => {
+    const b = markMa(from), a = markMa(to);
+    const el = document.createElement('button'); el.type = 'button'; el.className = 'word'; el.textContent = word;
+    el.title = markWord(from) + ' to ' + markWord(to) + (note ? ' — ' + note : '');
+    el.setAttribute('aria-pressed', 'false');
+    el.addEventListener('click', () => goToSpan(a, b));
+    spansEl.appendChild(el);
+    return { word, el, a, b };
+  });
+  function goToSpan(a, b) {   // the line glides to the span, as a stretch would; back returns to the whole; the Earth at the span's start
+    if (STR.anim) return;
+    STR.stack = [[0, EARTH_AGE]];
+    toAge(b);
+    glideStretch(a, b);
+  }
+  function markSpans() {   // the word whose span the line stands at reads as chosen
+    const near = (x, y) => Math.abs(x - y) < 1e-9;
+    spanWords.forEach(s => s.el.setAttribute('aria-pressed', !STR.anim && near(STR.a, s.a) && near(STR.b, s.b) ? 'true' : 'false'));
+  }
+  function placeSpans() {   // the list's middle at the slider row's middle, measured in the left column; nothing where the CSS lays it in flow
+    if (!spansEl.isConnected || getComputedStyle(spansEl).position !== 'absolute') { spansEl.style.top = ''; return; }
+    const col = spansEl.offsetParent ? spansEl.offsetParent.getBoundingClientRect() : null, row = $('ageRow').getBoundingClientRect();
+    if (!col || !row.height) return;
+    spansEl.style.top = Math.max(0, Math.round(row.top + row.height / 2 - spansEl.offsetHeight / 2 - col.top)) + 'px';
+  }
+  if (window.ResizeObserver) new ResizeObserver(placeSpans).observe($('stage3d'));   // the window's height sets where the slider is
+
   let sPtr = null;
   track.addEventListener('pointerdown', e => {
     const r = track.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
@@ -612,6 +665,7 @@
     crop = c; const wrap = $('stageWrap'), st = $('stage3d'), size = crop || usualSize();
     wrap.style.width = size.w + 'px'; st.style.height = size.h + 'px'; $('underCol').style.width = size.w + 'px';
     if (view) view.setFrame(crop ? usualSize() : null);
+    placeSpans();
   }
   window.addEventListener('resize', () => { if (fs && fs.on) return; setCrop(crop); });
   let sizeTimer = null;
@@ -681,6 +735,7 @@
     yearPanel.body.innerHTML = '<div class="panel-text">' +
       '<p>The line under the Earth runs from today, at its left end, to the Earth’s birth at its right, 4,567 million years ago. Drag the copper dot along it, or tap the line, to set the year. The line is even: every bit of it is the same number of years, and the small figure under it says what one pixel of your screen is worth now, about 2.6 million years at the start.</p>' +
       '<p>To look closely at a stretch of time, drag the two small flags in from the ends until they bracket the years you want, and tap <i>stretch</i>: the line glides out until those years fill it, and the flags go back to the ends, ready to go again. Do it again and again, down to a single year a pixel. <i>back</i> steps out one stretch.</p>' +
+      '<p>The short list of words beside the line — <i>Dinosaurs</i>, <i>Egypt</i> and the rest — sets it to a span at once, the Earth at the span’s start; <i>back</i> returns to the whole.</p>' +
       '</div>';
   }
   function placePanel(pn, dx, dy) {   // over the window's top left corner, unless she has moved it
@@ -775,12 +830,13 @@
   // window is the screen). No word where the device has no full screen.
   const fs = view && window.CW.fullscreen ? CW.fullscreen($('stageWrap'), {
     wordsHost: $('words'),
-    words: () => [$('title'), $('wHtw'), $('wFlat'), $('wYear'), $('wCoasts'), view.resetWord, keep].filter(Boolean),
+    words: () => [$('title'), $('wHtw'), $('wFlat'), $('wYear'), $('wCoasts'), view.resetWord, keep, fs.word, spansEl].filter(Boolean),   // fs is set by then; the timeline's shortcuts (6e) after every command
     bottom: () => [$('ageRow'), $('ageTitle')],
     onChange: on => { if (on) setCrop(null); else setCrop(crop); if (earth) earth.settle(); view.redraw(); renderStretch(); [panel, htwPanel, yearPanel].forEach(pn => { if (pn && pn.visible()) { if (pn === panel) openPanel(); else placePanel(pn, 16, 16); } }); }
   }) : null;
   // the column's order (6c): the title, How this works, Map / Globe, Current year, Coastlines, Reset, Save or share, Full screen
   if (view) { view.resetWord.textContent = 'Reset'; [$('wFlat'), $('wYear'), $('wCoasts'), view.resetWord, keep, fs && fs.word].filter(Boolean).forEach(el => $('words').appendChild(el)); }
+  $('words').appendChild(spansEl);   // the timeline's shortcuts (6e), last in the column; placed beside the slider by placeSpans
   setCrop(null);   // the window's usual size, now that everything above and beside it is in place
 
   // ---------- the bench's readout: backend, tier and reach, the turn, frame rate, the triangles ----------
@@ -829,7 +885,7 @@
   window.cwSetFlat = setFlat; window.cwSetCrop = setCrop; window.cwCrop = () => crop; window.cwShowSize = showSize;
   window.cwView = view; window.cwEarth = earth; window.cwG2d = g2d; window.cwSetAge = toAge; window.cwSetGround = setGround; window.cwSetPlaces = setPlaces; window.cwSetOldGlobe = setOldGlobe; window.cwSetCoasts = setCoasts; window.cwGuess = anotherGuess; window.cwHonest = () => honest;
   window.cwOpenOn = openOn; window.cwViews = VIEWS; window.cwOpenedOn = () => openedOn; window.cwUsualSize = usualSize; window.cwAgeTitle = ageTitle;
-  window.cwStretch = { state: STR, flag: setFlag, stretch: doStretch, back: stretchBack, render: renderStretch, finish: finishStretch, xOf, maOf, moved: flagsMoved, step: pixelStep, flagWord, gapWord, labels: () => [labelEls[0], labelEls[1], gapEl] };
+  window.cwStretch = { state: STR, flag: setFlag, stretch: doStretch, back: stretchBack, render: renderStretch, finish: finishStretch, xOf, maOf, moved: flagsMoved, step: pixelStep, flagWord, gapWord, labels: () => [labelEls[0], labelEls[1], gapEl], spans: SPANS, goTo: goToSpan, spanWords: () => spanWords, placeSpans, el: spansEl };
   window.cwFullscreen = fs; window.cwPanel = panel; window.cwHtwPanel = htwPanel; window.cwYearPanel = yearPanel; window.cwPlaceWord = placeWord; window.cwCompose = composeKept; window.cwKept = () => ({ picture: keptPicture, blob: keptBlob, note: keptNote });
   // The bench's own timer, as the Sun bench's: draws `frames` frames off-screen at the canvas's size for a tier,
   // the age moving a million years a frame (so every plate's turn is read each frame, as a slider drag reads it),
