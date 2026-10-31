@@ -1,5 +1,5 @@
 ---
-status: Built and checked 30 Oct 2026; committed and pushed on Michael's word the same evening ("Push this when it is ready") — revision 3 as its own commit first, then this one; the hashes are in the closing section.
+status: Built and checked 30 Oct 2026; committed and pushed on Michael's word the same evening ("Push this when it is ready") — revision 3 as its own commit first (`8f0d1e88`), then this one (`0ac8fef0`), the hashes recorded in `(closing commit)`.
 role: What Prompt-Revise-Glass-900-Years-Ago-04.md asked for beyond revision 3 (the frame makes points, and enters the record when it becomes fixed), what was built, how it was checked, what needs his eye, and what is open.
 related: Prompt-Revise-Glass-900-Years-Ago-04.md, Report-Glass-900-Years-Ago-Revise-03.md, cw-deploys/js/glass.js, cw-deploys/active/geo-1-glass-circles.html
 pictures: Glass-900-Years-Ago-Oct30-Rev04/ (mac-*.jpg are the canvas alone from the pane at 1028 × 576, the unit 95 px; ipad-*.png are the whole screen of the iPadOS 26.5 iPad Air simulator, upright, the unit 66 pt)
@@ -72,4 +72,4 @@ Built on the working tree as revision 3 left it (`709a1e8` plus revision 3's unc
 
 ## Committed
 
-On Michael's word ("Push this when it is ready"), after the checks: revision 3's tree as its own commit, then this revision, each with its MANIFEST entry and board line, this session's hunks only; the Earth session's uncommitted hunks stay in the working tree. The hashes are recorded in the closing commit.
+On Michael's word ("Push this when it is ready"), after the checks: revision 3's tree as its own commit, then this revision, each with its MANIFEST entry and board line, this session's hunks only; the Earth session's uncommitted hunks stay in the working tree. Revision 3 is `8f0d1e88`, this revision `0ac8fef0`; the commit after them records the hashes here, in MANIFEST and on the board, and the push carries all three.

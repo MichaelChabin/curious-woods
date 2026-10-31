@@ -1,5 +1,5 @@
 ---
-status: Built and checked 30 Oct 2026; committed on Michael's word the same evening ("Push this when it is ready", given for revision 4, which stands on this one), as its own commit just before revision 4's. Waiting on his look.
+status: Built and checked 30 Oct 2026; committed on Michael's word the same evening ("Push this when it is ready", given for revision 4, which stands on this one), as its own commit, `8f0d1e88`, just before revision 4's. Waiting on his look.
 role: What Prompt-Revise-Glass-900-Years-Ago-03.md asked for beyond revision 1 (02: quarter units and the size while dragging; 03: the frame fixed from the first circle or line, and the frame as lead), what was built, how it was checked, what needs his eye, and what is open.
 related: Prompt-Revise-Glass-900-Years-Ago-03.md, Report-Glass-900-Years-Ago-Revise-01.md, cw-deploys/js/glass.js, cw-deploys/active/geo-1-glass-circles.html
 pictures: Glass-900-Years-Ago-Oct30-Rev03/ (mac-*.jpg are the canvas alone from the pane at 1028 × 648, the unit 95 px, or the pane's own screenshot where a box is the subject; mac-17 is the share image itself; ipad-*.png are the whole screen of the iPadOS 26.5 iPad Air simulator, upright)
