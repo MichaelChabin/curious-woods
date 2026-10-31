@@ -25,7 +25,11 @@
   prompt CWVault/claude/Prompt-Revise-Glass-900-Years-Ago-01.md) the table she designs her window on — a frame 6 by 3
   with its corner at 0 that she drags and that crops the glass — numbers below the x axis and left of the y axis, 0 a
   quarter in and a third up, and palettes of twelve, the board's own three from Gaudí's basilica, Gaudi Full the
-  default (the board's palette, not the page's: the mount asks for none).
+  default (the board's palette, not the page's: the mount asks for none). Since 31 Oct 2026 (revision 5, Michael's prompt
+  CWVault/claude/Prompt-Revise-Glass-900-Years-Ago-05.md): the board's figure runs the full width of the window (class wide; the
+  script below sets its width and margin, since .breakout stops at the shell), and the board's column stands where the page's left
+  column is, told to the board in --g-column-left; the table opens 6 m by 4 m centred on 1 with its size under it; the piece under
+  the tip is outlined before it is coloured; Save New Open are commands in the column; the Color box has lead thickness and sunlight.
   One picture, with its source in a comment beside it: the Five Sisters window (Wikimedia Commons,
   Stch2022, CC0). The north rose of Notre-Dame and Villard's page stay in art/stories/geo-1-glass-circles/,
   not on this page.
@@ -52,6 +56,10 @@
   figure.margin.stack .pile img.p4 { z-index: 1; transform: translate(12px, 18px) rotate(3.5deg); }
   figure.margin.stack .pile:focus-visible img.p0 { outline: 2px solid var(--cw-word); }
   figure.margin.stack figcaption .turn { display: block; margin-top: 5px; font-style: italic; }
+  /* Edge to edge (revision 5, 31 Oct 2026): the board's figure runs the full width of the window. The page's full-width rule
+     (.breakout) stops at the shell, so this one undoes its placing and the script below sets the width and the margin from the
+     window's own width, which no CSS unit gives exactly where a scrollbar is drawn. */
+  figure#plate.wide { left: auto; transform: none; width: auto; }
 </style>
 </head>
 <body>
@@ -166,7 +174,7 @@
 
     <!-- THE BOARD: the lab's window profile, three-quarters of the window's height (full height left no
          way to scroll the page: the lab takes the wheel and the finger). -->
-    <figure id="plate" data-opening="drawn" class="breakout table">
+    <figure id="plate" data-opening="drawn" class="breakout table wide">
       <div id="table" style="height: 72vh; min-height: 420px;"></div>
     </figure>
 
@@ -198,7 +206,7 @@
 <script src="../js/cw-number.js?v=2026-09-03"></script>
 <script src="../js/plane.js?v=2026-10-24g"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
-<script src="../js/glass.js?v=2026-10-30c"></script>
+<script src="../js/glass.js?v=2026-10-31"></script>
 <script src="../js/cw-style.js?v=2026-10-19"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
 <script src="../js/map.js?v=2026-10-24-pinch"></script>
@@ -206,7 +214,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-30 709a1e8 · glass 04';   // date + short commit hash; bump in the same commit as any change. The board: 'theophilus' with the table, free until the first circle or line, lead at its edges, its corners and the crossings on its edges points since the 30 Oct revisions 3 and 4; glass.js?v=2026-10-30c
+  const CW_VERSION = '2026-10-31 150e097 · glass 05';   // date + short commit hash; bump in the same commit as any change. The board: 'theophilus' with the table, free until the first circle or line, lead at its edges, its corners and the crossings on its edges points since the 30 Oct revisions 3 and 4; since 31 Oct (revision 5) edge to edge, the table 6 m by 4 m centred on 1, the piece under the tip outlined, Save New Open, sunlight; glass.js?v=2026-10-31
   console.log('geo-1-glass-circles', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
@@ -215,7 +223,21 @@
   // lines, a tap inside a shape colours it, no grid, numbers on the axes, the controls in the How this works
   // boxes, the demos Rose and Top. It opens with 0 and 1, and the table (30 Oct 2026); its palette is the board's own.
   // ==========================================================================
-  if (typeof cwGlass === 'function') cwGlass(document.getElementById('table'), { board: 'theophilus' });   // Glass 900 years ago: the board by name (one mount word since R4, 24 Oct 2026; the measure and, since 30 Oct, the palette are the board's)
+  var tableHost = document.getElementById('table'), plate = document.getElementById('plate');
+  var lab = (typeof cwGlass === 'function') ? cwGlass(tableHost, { board: 'theophilus' }) : null;   // Glass 900 years ago: the board by name (one mount word since R4, 24 Oct 2026; the measure and, since 30 Oct, the palette are the board's)
+  // Edge to edge (revision 5, 31 Oct 2026): the figure spans the window, from its left edge to its right, whatever the page's layout —
+  // measured, not computed, so a scrollbar changes nothing — and the board is told where the page's left column begins (the shell's
+  // left edge) in --g-column-left, so its own column stands lined up with the page while the plane runs behind it and past it.
+  function bleed() {
+    plate.style.width = ''; plate.style.marginLeft = '';
+    var left = plate.getBoundingClientRect().left, W = document.documentElement.clientWidth;
+    plate.style.marginLeft = (-left) + 'px'; plate.style.width = W + 'px';
+    var shell = document.querySelector('.shell').getBoundingClientRect();
+    tableHost.style.setProperty('--g-column-left', Math.max(0, Math.round(shell.left - plate.getBoundingClientRect().left)) + 'px');
+    if (lab) lab.resize();
+  }
+  bleed();
+  window.addEventListener('resize', bleed);
 
   // ==========================================================================
   // THE STACK: a tap sends the top page to the bottom; the caption follows the top page.

@@ -19,7 +19,10 @@
                            the axes, the controls inside the How this works boxes, the table she designs her window
                            on (a frame that crops the glass, free until her first circle or line, its edges lead that
                            bound pieces, its corners and the crossings on its edges points she builds from; 30 Oct
-                           2026) and palettes of twelve (active/geo-1-glass-circles.html)
+                           2026), palettes of twelve, and since 31 Oct 2026 (revision 5) the plane edge to edge with
+                           the column where the page's is, the table 6 m by 4 m centred on 1 with its size under it,
+                           the piece under the tip outlined before it is coloured, Save New Open as commands with
+                           Save as Image, and sunlight (active/geo-1-glass-circles.html)
                 any name registered under CW.boards by a script in js/boards/ (the Wright window, js/boards/wright.js,
                            as 'wright'): the window profile standing on the shell's interface. The page loads the
                            board's script after this one.
@@ -88,6 +91,11 @@
     "    .cw-glass.g-app .g-left-panel { pointer-events: auto; touch-action: pan-y; }",
     "    .cw-glass.g-app .workspace-tool-header { margin: -12px -14px 10px; padding: 14px 14px 10px; min-height: 42px; background: rgba(200,184,154,0.22); border-radius: 6px 6px 0 0; }",
     "    .cw-glass.g-app .g-scroll-margin { position: absolute; top: 0; right: 0; bottom: 0; z-index: 1; pointer-events: auto; touch-action: pan-y; }",
+    "    /* Edge to edge (Glass 900 years ago, revision 5, 31 Oct 2026; EDGE TO EDGE below): the host runs the full width of the window and the",
+    "       column stands where the page's left column is (its left set by inline style from --g-column-left); the plane passes behind the column,",
+    "       which is parchment through, and shows again in the margin past it, so the column wears a line on its left edge as on its right. */",
+    "    .cw-glass.g-edge .g-left-panel { background: #f4f1e8; }",
+    "    .cw-glass.g-edge .g-left-panel::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 0.5px; background: #c8b89a; pointer-events: none; }",
     "    .cw-glass .g-left-panel::after {",
     "      content: ''; position: absolute;",
     "      top: 0; right: 0; bottom: 0; width: 0.5px;",
@@ -173,6 +181,9 @@
     "    .cw-glass .lead-slider::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: #546A80; border: 1.5px solid #f4f1e8; cursor: grab; }",
     "    .cw-glass .lead-slider::-webkit-slider-runnable-track { background: transparent; }",
     "    .cw-glass .lead-slider::-moz-range-track { background: transparent; }",
+    "    /* Glass 900 years ago, revision 5 (31 Oct 2026): in the Color box the sliders' words sit under them, centred — lead thickness, sunlight. */",
+    "    .cw-glass .slider-under { display: block; text-align: center; font-family: Georgia, serif; font-size: 11px; color: #546A80; margin-top: 1px; user-select: none; }",
+    "    .cw-glass .g-sun-row { margin-top: 8px; }",
     "    .cw-glass .palette-choose { display: block; font-family: Georgia, serif; font-size: 13px; color: #546A80; cursor: default; margin-top: 10px; transition: color 80ms; user-select: none; }",
     "    .cw-glass .palette-choose:hover { color: #3D3D3A; }",
     "",
@@ -384,15 +395,19 @@
   var IN_FILE_BOARDS = {
     euclid:  { level: 'both',    app: false },
     circles: { level: 'circles', app: true, measure: true, madeWord: 'Show circles' },
-    theophilus: { level: 'both', app: true, measure: true, madeWord: 'Show circles and lines', grid: false, axisNumbers: true, boxes: true,
-                  demos: ['Rose', 'Top'], powers: { map: false, htw: ['box-make', 'box-color', 'box-files', 'box-demos'] },
+    theophilus: { level: 'both', app: true, measure: true, madeWord: 'Show Construction', glassWord: 'Show Glass Only', grid: false, axisNumbers: true, boxes: true,
+                  demos: ['Rose', 'Top'], powers: { map: false, htw: ['box-make', 'box-color', 'box-demos'] },
                   // 30 Oct 2026 (Michael's prompts claude/Prompt-Revise-Glass-900-Years-Ago-01.md to -04.md): the table she
-                  // designs her window on, a frame 6 by 3 with its lower-left corner at 0 to start, free until her first circle
-                  // or line, its edges lead, its corners and the crossings on its edges points (THE TABLE, THE TABLE'S EDGES);
-                  // the home view with 0 a
-                  // quarter in and a third up (homeViewFor); palettes of twelve with the craft row not shown (twelve); the
+                  // designs her window on, free until her first circle or line, its edges lead, its corners and the crossings on
+                  // its edges points (THE TABLE, THE TABLE'S EDGES); palettes of twelve with the craft row not shown (twelve); the
                   // board's own palettes, the three from Gaudí's basilica, first in the picker and the first the default.
-                  table: { left: 0, bottom: 0, width: 6, height: 3 }, twelve: true,
+                  // 31 Oct 2026 (revision 5, claude/Prompt-Revise-Glass-900-Years-Ago-05.md): the table 6 m by 4 m centred on 1,
+                  // its corners at (−2, −2) and (4, 2), 1 at the centre of the drawing area (homeViewFor) and its size written under
+                  // it; the plane edge to edge with the column where the page's left column is (edge; EDGE TO EDGE); the piece under
+                  // the tip outlined before it is coloured (THE PIECE SHE MEANS); Save New Open as commands, Save with Save as
+                  // Construction and Save as Image (files; SAVE NEW OPEN); the Color box with lead thickness and sunlight
+                  // (SUNLIGHT), Show Glass Only / Show Construction and New Colors as its words.
+                  table: { left: -2, bottom: -2, width: 6, height: 4 }, twelve: true, edge: true, files: true,
                   palettes: ['gaudi_full', 'gaudi_sea_forest', 'gaudi_fire_sun'], palette: 'gaudi_full' }
   };
 
@@ -425,6 +440,24 @@ var AXIS_NUMBERS = !!(profile && profile.axisNumbers);        // a point on eith
 var BOXES = !!(profile && profile.boxes);                     // the controls in the boxes How this works opens (BOXES, below)
 var TABLE = (profile && profile.table) ? profile.table : null; // the table she designs her window on: its opening frame, in units (THE TABLE, below)
 var TWELVE = !!(profile && profile.twelve);                   // palettes of twelve: three rows of four, the craft row not shown (PALETTE TOOL, below)
+var EDGE = !!(profile && profile.edge);                       // the plane edge to edge, the column where the page's left column is (EDGE TO EDGE, below)
+var FILES = !!(profile && profile.files);                     // Save New Open as commands, Save as Image, Save First? (SAVE NEW OPEN, below)
+// ── EDGE TO EDGE (Glass 900 years ago, revision 5, 31 Oct 2026) ──
+// On a board with `edge` the host runs the full width of the window (the page's doing) and the column stands where the page's left
+// column is: the page writes the distance in --g-column-left on the host, read here at every resize and put on the column and on
+// How this works by inline style (nothing changes on a board without it). In full screen the column goes back to the left edge.
+// The drawing area then runs from the left edge to the right (drawingBox), the plane passing behind the column, which is parchment
+// through, and showing again in the margin past it; lines stop at the board's top and bottom, where a rule marks each (RENDER).
+var COLUMN_W = 160;
+var columnX = 0;   // the column's left edge in the host
+function columnLeft() { return columnX; }
+function columnRight() { return columnX + COLUMN_W; }
+function readColumnLeft() {
+    if (!EDGE) return;
+    var v = parseFloat(getComputedStyle(root).getPropertyValue('--g-column-left'));
+    columnX = (!isFullscreen() && isFinite(v) && v > 0) ? Math.round(v) : 0;
+    $('left-panel').style.left = columnX + 'px'; $('htw-panel').style.left = (columnX + 16) + 'px';
+}
 function madeWord() { return board ? board.madeWord : (profile.madeWord || POWERS.madeWord); }
 var REMOVE = 'remove';            // the palette's sentinel for the chip that takes colour away (window profile)
 var currentKey = null, fromDemo = false, currentDemo = null;   // what Save would overwrite (window profile)
@@ -436,6 +469,7 @@ var RING_CURSOR = 'url("' + BASE + 'art/icons/ring-cursor.png") 8 8, crosshair';
 // only inside it; one that has started may leave it.
 var BOX_INSET = 12, BOX_MARGIN_RIGHT = 32;
 function drawingBox() {
+    if (EDGE) return { x: 0, y: BOX_INSET, w: hostW() - BOX_MARGIN_RIGHT, h: hostH() - 2 * BOX_INSET };   // edge to edge; the column takes its own touches (EDGE TO EDGE)
     return { x: 160 + BOX_INSET, y: BOX_INSET, w: hostW() - 160 - BOX_INSET - BOX_MARGIN_RIGHT, h: hostH() - 2 * BOX_INSET };
 }
 function inDrawingBox(pos) {
@@ -460,6 +494,7 @@ function exitFullscreen() {
 
 root.classList.add('cw-glass');
 if (APP) root.classList.add('g-app');   // the window profile's own rules in the CSS above
+if (EDGE) root.classList.add('g-edge');  // the column parchment through, with a line on its left (EDGE TO EDGE)
 if (!root.hasAttribute('tabindex')) root.tabIndex = 0;
 root.innerHTML = MARKUP;
 function $(name) { return root.querySelector('.g-' + name); }
@@ -527,6 +562,27 @@ var FOREST_GLASS      = '#c2d4bc';
 var LEAD_COLOR        = '#4a4540';
 var LEAD_BORDER_COLOR = '#777777';
 var LEAD_WIDTH        = 2;
+// ── SUNLIGHT (Glass 900 years ago, revision 5, 31 Oct 2026; the Color box's second slider) ──
+// How bright the glass is, as if more or less sun shone through: −1 dim, 0 the colours exactly as given, 1 bright. Every piece of glass
+// and the colours in the box are drawn through sunlit(); the record keeps the colours as given. It is kept on the record's opening entry
+// (`init.sunlight`, written when the slider is let go, read at replay), so it saves with the construction and shows in a saved or shared
+// image; a record without one — a demo, a new construction — is at 0. The range (SUN_DIM, SUN_BRIGHT) is for Michael's eye.
+var sunlight = 0, SUN_DIM = 0.6, SUN_BRIGHT = 0.55;
+function sunlit(hex) {
+    if (!sunlight || typeof hex !== 'string' || hex.length !== 7 || hex.charAt(0) !== '#' || hex === COLORS.background) return hex;
+    function ch(v) { var o = sunlight < 0 ? v * (1 + SUN_DIM * sunlight) : v + (255 - v) * SUN_BRIGHT * sunlight; return Math.max(0, Math.min(255, Math.round(o))); }
+    return 'rgb(' + ch(parseInt(hex.slice(1, 3), 16)) + ',' + ch(parseInt(hex.slice(3, 5), 16)) + ',' + ch(parseInt(hex.slice(5, 7), 16)) + ')';
+}
+function setSunlight(v, write) {
+    var nv = Math.max(-1, Math.min(1, v)), changed = nv !== sunlight;
+    sunlight = nv;
+    var s = $('sun-slider'); if (s && Math.round(50 + sunlight * 50) !== Math.round(parseFloat(s.value))) s.value = Math.round(50 + sunlight * 50);
+    if (changed && BOXES && boxOpen('box-color')) refreshBoxColours();   // the colours in the box through the new light
+    if (!write) return;
+    var e = { sunlight: sunlight };
+    operationLog[0] = Object.assign({}, operationLog[0], e);
+    if (stepState.active && stepState.ops) { stepState.ops = stepState.ops.slice(); stepState.ops[0] = Object.assign({}, stepState.ops[0], e); }
+}
 
 var showGlass   = false;
 // Where numbers live: 'map' shows the plane's ambient lattice (grid and
@@ -609,6 +665,7 @@ function playSound(type) {
 // ============================================================
 
 var operationLog = [];
+var logVersion = 0;   // counts replays, for anything that caches a reading of the record (the piece under the tip, THE PIECE SHE MEANS)
 var points = new Map(), lines = new Map(), circles = new Map();
 var logicalSegments = new Map(), logicalArcs = new Map();
 var fills = new Map(), pointAnimations = new Map(), canvasNotes = new Map();
@@ -792,6 +849,8 @@ function drawFrameMeasure() {
 // saved before 30 Oct) opens with the board's opening frame. On the screen its edge is a thin line while it
 // is a bare free table, and came — the window's lead — once it is fixed, once there is glass against it, and
 // under Glass only (tableCame).
+// Revision 5 (31 Oct 2026): the table opens 6 m by 4 m centred on 1, its corners at (−2, −2) and (4, 2), with 1 at the centre of the
+// drawing area (homeViewFor); its units are metres, said in its size under it (drawTableLabel) and in the readouts while she drags.
 var tableDrag = null;   // { kind: 'move' | 'corner', id, from: the frame in units, start: the hand in units } from a press to its release
 var TABLE_CORNER_HIT = 16, TABLE_EDGE_HIT = 9;   // screen pixels
 var TABLE_STEP = 0.25;                            // the move and the resize snap to quarter units (02)
@@ -894,8 +953,21 @@ function drawTableMeasure() {
     if (!tableDrag || !frame) return;
     var r = frameScreenRect();
     ctx.save();
-    readout(ctx, tableSizeText(frameU.width), r.x + r.w / 2, r.y - 6, 'center', 'bottom');
-    readout(ctx, tableSizeText(frameU.height), r.x + r.w + 8, r.y + r.h / 2, 'left', 'middle');
+    readout(ctx, tableSizeText(frameU.width) + ' m', r.x + r.w / 2, r.y - 6, 'center', 'bottom');
+    readout(ctx, tableSizeText(frameU.height) + ' m', r.x + r.w + 8, r.y + r.h / 2, 'left', 'middle');
+    ctx.restore();
+}
+// The table's size under it (05): "Table 6 m × 4 m", centred below the bottom edge in the column's own type, there whether or not she
+// holds the frame and current as she drags, whole metres and quarters in lowest terms. Not under Show Glass Only, which is the window alone.
+var TABLE_LABEL_ROOM = 30;   // the room the home view leaves under the table for it, in pixels
+function tableLabelText() { return 'Table ' + tableSizeText(frameU.width) + ' m \u00d7 ' + tableSizeText(frameU.height) + ' m'; }
+function drawTableLabel() {
+    if (!TABLE || !frame || showGlass) return;
+    var r = frameScreenRect(), text = tableLabelText(), x = r.x + r.w / 2, y = r.y + r.h + 8;
+    ctx.save();
+    ctx.font = '14px Georgia, serif'; ctx.fillStyle = '#546A80'; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.globalAlpha = 1;
+    ctx.strokeStyle = COLORS.background; ctx.lineWidth = 3; ctx.lineJoin = 'round';   // a thin parchment halo, as the axis numbers wear
+    ctx.strokeText(text, x, y); ctx.fillText(text, x, y);
     ctx.restore();
 }
 // The bare free table drawn: a thin line in the construction's ink, a little stronger while she drags it. Once it
@@ -1046,6 +1118,7 @@ function initLog() {
 
 function replayLog(animateNew) {
     var prev = new Map(pointAnimations);
+    logVersion++;
     // Preserve editing state across replay
     var prevEditing = {};
     canvasNotes.forEach(function(cn) { if (cn.editing) prevEditing[cn.noteId] = true; });
@@ -1081,6 +1154,7 @@ function replayLog(animateNew) {
             plane.setUnitFrame(op.seed0.x, op.seed0.y, plane.metre());
             // The table (THE TABLE): where the record's opening entry has one, there; else the board's opening frame.
             if (TABLE) setTableFrame(op.table || TABLE);
+            setSunlight(typeof op.sunlight === 'number' ? op.sunlight : 0, false);   // the light as the record has it (SUNLIGHT)
             // Duplicate-intersection merge radius, proportional to the unit
             // so a log with different seeds still replays sensibly. It must
             // stay view-independent: replay decides which intersections are
@@ -1198,11 +1272,11 @@ function detectLineX(lineI, prev, an) {
     lines.forEach(function(o, j) {
         if (j >= lineI) return;
         var q1 = points.get(o.p1Id), q2 = points.get(o.p2Id), pt = llX(p1,p2,q1,q2);
-        if (pt) regX('ll:'+Math.min(lineI,j)+':'+Math.max(lineI,j), pt, prev, an);
+        if (pt) regX('ll:'+Math.min(lineI,j)+':'+Math.max(lineI,j), pt, prev, an, [{ line: lineI }, { line: j }]);
     });
     circles.forEach(function(c, j) {
         var ce = points.get(c.centerId);
-        lcX(p1,p2,ce,c.radius).forEach(function(pt,k) { regX('lc:'+lineI+':'+j+':'+k, pt, prev, an); });
+        lcX(p1,p2,ce,c.radius).forEach(function(pt,k) { regX('lc:'+lineI+':'+j+':'+k, pt, prev, an, [{ line: lineI }, { circle: j }]); });
     });
 }
 
@@ -1210,24 +1284,35 @@ function detectCircX(circI, prev, an) {
     var circ = circles.get(circI), ce = points.get(circ.centerId);
     lines.forEach(function(l, j) {
         var p1 = points.get(l.p1Id), p2 = points.get(l.p2Id);
-        lcX(p1,p2,ce,circ.radius).forEach(function(pt,k) { regX('lc:'+j+':'+circI+':'+k, pt, prev, an); });
+        lcX(p1,p2,ce,circ.radius).forEach(function(pt,k) { regX('lc:'+j+':'+circI+':'+k, pt, prev, an, [{ line: j }, { circle: circI }]); });
     });
     circles.forEach(function(o, j) {
         if (j >= circI) return;
         var oc = points.get(o.centerId);
-        ccX(ce,circ.radius,oc,o.radius).forEach(function(pt,k) { regX('cc:'+Math.min(circI,j)+':'+Math.max(circI,j)+':'+k, pt, prev, an); });
+        ccX(ce,circ.radius,oc,o.radius).forEach(function(pt,k) { regX('cc:'+Math.min(circI,j)+':'+Math.max(circI,j)+':'+k, pt, prev, an, [{ circle: circI }, { circle: j }]); });
     });
 }
 
 var _dupEpsilon = 5; // world units; set from the seed unit on every init replay
 
-function regX(id, pt, prev, an) {
+// A crossing registered: a new point where none is near, which then joins whatever it lies on. One that lands within the merge radius
+// of a point already there is that point — and that point joins the two curves that cross there (`on`: the line or circle indices),
+// where it is not on them already. THE LEAK (31 Oct 2026, revision 5): until today such a crossing was simply dropped, and where the
+// point already there was not on one of the two curves — a near miss, under the merge radius but over the on-curve tolerance — that
+// curve went undivided there, so the face walk ran straight across the other and one tap coloured across several lead lines.
+function regX(id, pt, prev, an, on) {
     if (points.has(id)) return;
-    var dup = false;
-    points.forEach(function(ex) { if (dist(pt.x,pt.y,ex.x,ex.y) < _dupEpsilon) dup = true; });
-    if (dup) return;
+    var near = null, nd = _dupEpsilon;
+    points.forEach(function(ex) { var d = dist(pt.x,pt.y,ex.x,ex.y); if (d < nd) { nd = d; near = ex; } });
+    if (near) { if (on) joinCurves(near.id, on); return; }
     _addPt(id, pt.x, pt.y, 'intersection', prev, an);
     _integrateNewPoint(id);
+}
+function joinCurves(pid, on) {
+    on.forEach(function(c) {
+        if (c.line !== undefined) { var l = lines.get(c.line); if (l && l.pointsOnLine.indexOf(pid) < 0) { l.pointsOnLine.push(pid); sortLine(l); updateSegs(l, c.line); } }
+        else { var ci = circles.get(c.circle); if (ci && ci.centerId !== pid && ci.pointsOnCircle.indexOf(pid) < 0) { ci.pointsOnCircle.push(pid); sortCirc(ci); updateArcs(ci, c.circle); } }
+    });
 }
 
 // A newly recorded point joins any line or circle it happens to lie on —
@@ -1643,6 +1728,7 @@ function newConstruction() {
     operationLog = freshLog();
     replayLog(false);
     homeView();
+    markSaved();   // nothing unsaved on a fresh board (SAVE NEW OPEN)
     // Reset color to clear (bottle green)
     state.palette.selected = FOREST_GLASS;
     // Close any note tip windows, step-through controls, and loaded notes
@@ -1925,6 +2011,101 @@ function hideExportPreview() {
     ta.style.fontSize = ''; ta.style.lineHeight = '';
 }
 
+// ── SAVE NEW OPEN (Glass 900 years ago, revision 5, 31 Oct 2026; a board with `files`) ──
+// Three commands in the column, in italics and in this order, Save New Open, each acting at once (initHowThisWorks). Save opens a
+// panel of two choices, Save as Construction and Save as Image; either opens the box where she names the file and can add a note. A
+// construction saves as constructions save (her library, the share offer); an image is the glass inside the table as Show Glass Only
+// shows it, with the sunlight as it is set and the note printed under the picture, and goes to her computer (renderTableImage). New and
+// Open ask first only when something is unsaved — marks that differ from the record as it was last saved or opened (savedLogText) — in
+// a panel headed Save First? with Save First and Start New (or Open) and a close that leaves everything as it was; Save First opens the
+// Save panel, and once the file is saved the drawing clears and the new one begins, or the list opens (afterSave). A demo being stepped
+// through, untouched, is nothing of hers and is not asked about. The same name is the same file: a design opened from her library and
+// saved under the name it had is overwritten (executeSave); a new name is a new file.
+var savedLogText = null;   // the record as last saved or opened
+var afterSave = null;      // what follows a save that New or Open asked for
+function logText() { return JSON.stringify(operationLog); }
+function markSaved() { savedLogText = logText(); }
+function unsaved() { return logHasMarks() && !isStepThroughActive() && logText() !== savedLogText; }
+function runAfterSave() { var go = afterSave; afterSave = null; if (go) go(); }
+function savePanel() {
+    if (!logHasMarks()) return;
+    openChoices({ choices: [
+        { word: 'Save as Construction', line: 'a file you can open and keep working on', action: function() { showSaveNoteBox('construction'); } },
+        { word: 'Save as Image', line: 'a picture of your window, for your computer', action: function() { showSaveNoteBox('tableimage'); } }
+    ] });
+}
+function askSaveFirst(word, line, go) {
+    if (!unsaved()) { go(); return; }
+    openChoices({ title: 'Save First?', choices: [
+        { word: 'Save First', line: 'then ' + line, action: function() { afterSave = go; savePanel(); } },
+        { word: word, line: 'and let this one go', action: go }
+    ] });
+}
+// A choice panel opened with a heading where one is asked for (the shared panel has none of its own: the heading goes into its body,
+// which the panel clears at each opening), and kept inside the board (keepInside).
+function openChoices(config) {
+    choicePanel.open(config);
+    if (config.title) {
+        var body = choicePanel.el.lastElementChild, t = document.createElement('div');
+        t.textContent = config.title; t.style.cssText = 'font:14px Georgia,serif;color:#546A80;margin:0 0 9px;';
+        body.insertBefore(t, body.firstChild);
+    }
+    keepInside(choicePanel.el);
+}
+// A panel kept inside the board (05): dragged anywhere across its width, never past its edges, and nudged back in when the board
+// changes size — the boxes, the save box and the choice panel, on the table's board.
+function keepInside(el) {
+    if (!el || el.style.display === 'none') return;
+    var w = el.offsetWidth, h = el.offsetHeight, W = hostW(), H = hostH();
+    if (!(w > 0 && h > 0 && W > 0 && H > 0)) return;
+    var x = parseInt(el.style.left, 10) || 0, y = parseInt(el.style.top, 10) || 0;
+    el.style.left = Math.max(0, Math.min(x, W - w)) + 'px'; el.style.top = Math.max(0, Math.min(y, H - h)) + 'px';
+}
+function keepPanelsInside() {
+    if (!FILES) return;
+    placeOpenBox();
+    keepInside($('htw-canvas')); keepInside($('save-note-box')); keepInside(choicePanel.el);
+    var el = $('htw-canvas'); if (el && el.style.display !== 'none' && htwLastPos) htwLastPos = { left: el.style.left, top: el.style.top };
+}
+// Save as Image: the glass inside the table as Show Glass Only shows it — glass, came, the frame's came, the sunlight as set — at up to
+// 1600 pixels across, the came as thick as it is on the screen, the name and the note under the picture; a PNG for her computer.
+function renderTableImage(name, note, callback) {
+    var f = frame; if (!f) return;
+    var fw = f.x1 - f.x0, fh = f.y1 - f.y0, s = Math.min(1600 / fw, 1100 / fh), pad = 40;
+    var pw = Math.round(fw * s), ph = Math.round(fh * s), W = pw + 2 * pad;
+    var nameText = (name || '').trim(), noteText = (note || '').trim();
+    var nameFont = '30px Georgia, serif', noteFont = 'italic 24px Georgia, serif', nameH = 30 * 1.5, lineH = 24 * 1.45;
+    var tmp = document.createElement('canvas').getContext('2d'), noteLines = [];
+    if (noteText) { tmp.font = noteFont; noteText.split('\n').forEach(function(rl) {
+        if (!rl.trim()) { noteLines.push(''); return; }
+        var cur = ''; rl.split(' ').forEach(function(w) { var t = cur ? cur + ' ' + w : w; if (tmp.measureText(t).width > pw && cur) { noteLines.push(cur); cur = w; } else cur = t; });
+        if (cur) noteLines.push(cur);
+    }); }
+    var textH = (nameText ? nameH : 0) + noteLines.length * lineH;
+    var H = pad + ph + (textH ? 24 + textH : 0) + pad;
+    var off = document.createElement('canvas'); off.width = W; off.height = H;
+    var oc = off.getContext('2d');
+    oc.fillStyle = COLORS.background; oc.fillRect(0, 0, W, H);
+    function wp(wx, wy) { return { x: pad + (wx - f.x0) * s, y: pad + (f.y1 - wy) * s }; }
+    drawScene(oc, wp, s, { fills: 'sorted', lead: 'after', leadWidth: Math.max(1, LEAD_WIDTH * s / plane.zoom()), leadLines: collectLeadLines(), frame: true, clipFrame: true });
+    var ty = pad + ph + 24;
+    oc.fillStyle = '#546A80'; oc.textBaseline = 'top'; oc.textAlign = 'left'; oc.globalAlpha = 1;
+    if (nameText) { oc.font = nameFont; oc.fillText(nameText, pad, ty); ty += nameH; }
+    if (noteLines.length) { oc.font = noteFont; noteLines.forEach(function(l) { if (l) oc.fillText(l, pad, ty); ty += lineH; }); }
+    off.toBlob(callback, 'image/png');
+}
+function doSaveTableImage(name, note) {
+    renderTableImage(name, note, function(blob) {
+        if (!blob) { toast('could not make the picture'); return; }
+        var filename = (name || 'window-' + new Date().toISOString().slice(0, 10)).replace(/[^a-z0-9 _-]/gi, '_') + '.png';
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+        setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
+        toast('saved');
+        runAfterSave();
+    });
+}
+
 // The Save panel (ledger §§2, 12): one choice panel, three words about
 // three destinations. Postcard IS the share action — there is no Share
 // word anywhere. When the canvas is empty the Save word is simply absent
@@ -1947,6 +2128,7 @@ function saveHers() {
 }
 function openSavePanel() {
     if (!logHasMarks()) return;
+    if (FILES) { savePanel(); return; }   // the board's own Save panel (SAVE NEW OPEN)
     if (APP) { saveHers(); return; }
     choicePanel.open({ choices: [
         { word: 'Save construction', line: 'a file you can open and keep working on', action: function() {
@@ -1965,8 +2147,10 @@ function showSaveNoteBox(mode) {
     var nameEl = $('save-note-name');
     var textEl = $('save-note-text');
     nameEl.value = ''; textEl.value = '';
+    // On a board with the Save panel (SAVE NEW OPEN) a design opened from her library comes back with its name and note in the box.
+    if (FILES && mode === 'construction' && currentKey && !fromDemo) { try { var cur = JSON.parse(localStorage.getItem(currentKey)); if (cur) { nameEl.value = cur.name || ''; textEl.value = cur.note || ''; } } catch (err) {} }
     // Position: center of canvas area
-    var panelW = PANEL_BASE_WIDTH;
+    var panelW = columnRight();
     var cx2 = panelW + (hostW() - panelW) / 2;
     box.style.left = (cx2 - 120) + 'px';
     box.style.top = ((hostH() - 180) / 2) + 'px';
@@ -1976,10 +2160,14 @@ function showSaveNoteBox(mode) {
     if (!prompt) {
         prompt = document.createElement('div'); prompt.className = 'g-save-note-prompt';
         prompt.style.cssText = 'position:absolute;bottom:100%;left:0;right:0;font:12px Georgia,serif;color:#546A80;pointer-events:none;padding-bottom:4px;line-height:1.4;';
-        prompt.textContent = (CONTENT && CONTENT.note_instruction) || 'This note will appear as part of your image. You can place it anywhere you like.';
         box.appendChild(prompt);
     }
+    // What the note is for, by the kind of save (SAVE NEW OPEN): printed under the picture, or kept with the construction; the postcard's words otherwise.
+    prompt.textContent = (FILES && mode === 'tableimage') ? 'Your note is printed under the picture.'
+                       : (FILES && mode === 'construction') ? 'Your note is kept with the construction.'
+                       : ((CONTENT && CONTENT.note_instruction) || 'This note will appear as part of your image. You can place it anywhere you like.');
     prompt.style.display = '';
+    if (FILES) keepInside(box);
     setTimeout(function() { nameEl.focus(); }, 60);
 }
 
@@ -2020,7 +2208,12 @@ function executeSave() {
     dismissSaveNoteBox();
 
     if (mode === 'construction') {
-        doSaveConstruction(name, note);
+        // The same name is the same file (SAVE NEW OPEN): a design opened from her library and saved under its own name is overwritten.
+        var ek = null;
+        if (FILES && currentKey && !fromDemo) { try { var had = JSON.parse(localStorage.getItem(currentKey)); if (had && had.name === name) ek = currentKey; } catch (err) {} }
+        doSaveConstruction(name, note, ek);
+    } else if (mode === 'tableimage') {
+        doSaveTableImage(name, note);
     } else if (mode === 'image' || mode === 'share') {
         // Postcard IS the share action (ledger §12): a picture to send goes
         // to the share sheet; the full sheet — a picture to keep — downloads.
@@ -2067,8 +2260,11 @@ function doSaveConstruction(name, note, existingKey) {
         try { jfile = new File([blob], fname, { type: 'application/json' }); } catch (e) {}
         toast('saved');
         currentKey = key; fromDemo = false;
+        markSaved();                               // nothing unsaved now (SAVE NEW OPEN)
+        var next = afterSave; afterSave = null;    // what New or Open asked for follows, and the offer stands aside for it
         updateViewingWords();   // Open is present once she has a design to open (window profile)
-        if (existingKey) { if (points.size >= 10) setTimeout(showUniquenessObservation, 800); return; }   // quietly, as the profile asks
+        if (existingKey) { if (next) next(); else if (points.size >= 10) setTimeout(showUniquenessObservation, 800); return; }   // quietly, as the profile asks
+        if (next) { next(); return; }
         // Saved; then the offer (Michael, 2 Oct 2026): the sheet used to open on its own
         // with no word about what it was for. Where there is no sheet, no offer.
         if (jfile && navigator.share && navigator.canShare && navigator.canShare({ files: [jfile] })) {
@@ -2457,6 +2653,7 @@ function fitViewToConstruction() {
     var scaleX = (cw - padX*2) / contentW;
     var scaleY = (ch - padY*2) / contentH;
     plane.setZoom(Math.min(scaleX, scaleY)); // the plane's single clamp applies
+    viewTouched = true;
     // Centre the view on the bounding box — the pan point maps to screen centre by definition.
     plane.setPan((minX + maxX) / 2, (minY + maxY) / 2);
 }
@@ -2969,6 +3166,7 @@ function resizeCanvas() {
     // Embedded contexts can report a 0×0 window at load and deliver real
     // dimensions later without a resize event. Retry until they exist.
     if (!w || !h) { requestAnimationFrame(resizeCanvas); return; }
+    readColumnLeft();   // the column where the page's is (EDGE TO EDGE)
     canvas.width  = w * dpr;
     canvas.height = h * dpr;
     // Pin the CSS layout size to CSS pixels so canvas.clientWidth === hostW()
@@ -3041,10 +3239,10 @@ function drawScene(c, map, s, o) {
     var list = o.fills === 'none' ? [] : liveFills();
     if (o.fills === 'sorted') list.sort(function(a, b) { return fillArea(b) - fillArea(a); });
     list.forEach(function(f) {
-        c.fillStyle = f.color; c.globalAlpha = f.opacity;
+        c.fillStyle = sunlit(f.color); c.globalAlpha = f.opacity;   // the colour as given, through the sunlight (SUNLIGHT)
         fillPolygons(f).forEach(function(poly) {
             var v = fillPath(c, poly, map); c.fill('evenodd');
-            if (o.glassTexture) { o.glassTexture(c, v, f); c.fillStyle = f.color; c.globalAlpha = f.opacity; }
+            if (o.glassTexture) { o.glassTexture(c, v, f); c.fillStyle = sunlit(f.color); c.globalAlpha = f.opacity; }
         });
         c.globalAlpha = 1;
         if (o.lead === 'each') {
@@ -3178,7 +3376,10 @@ function render() {
     if (APP) {
         var bx = drawingBox();
         ctx.strokeStyle = '#c8b89a'; ctx.lineWidth = 1; ctx.globalAlpha = 0.9;
-        ctx.strokeRect(snap(bx.x) + 0.5, snap(bx.y) + 0.5, Math.round(bx.w), Math.round(bx.h));
+        if (EDGE) {   // edge to edge: a rule above and one below, the full width, and no sides (EDGE TO EDGE)
+            var ry0 = snap(bx.y) + 0.5, ry1 = snap(bx.y + bx.h) + 0.5;
+            ctx.beginPath(); ctx.moveTo(0, ry0); ctx.lineTo(canvas.clientWidth, ry0); ctx.moveTo(0, ry1); ctx.lineTo(canvas.clientWidth, ry1); ctx.stroke();
+        } else ctx.strokeRect(snap(bx.x) + 0.5, snap(bx.y) + 0.5, Math.round(bx.w), Math.round(bx.h));
         ctx.globalAlpha = 1;
     }
 
@@ -3199,6 +3400,8 @@ function render() {
 
     if (!showGlass) drawConstruction(ctx, w2s, plane.zoom(), { mode: 'extended' });
     drawTableMeasure();   // the table's size while she holds it (THE TABLE), over the construction
+    drawTableLabel();     // and its size under it, always (05)
+    drawTipPiece();       // the piece under the tip, outlined before it is coloured (THE PIECE SHE MEANS)
 
     // Connected-segment hover highlight
     // When a segment or arc was just tapped (is lastTapTarget), nearby segments
@@ -3302,7 +3505,7 @@ function render() {
         drawEraserCursor(mouseScreenPos.x, mouseScreenPos.y, eraserAngle);
     } else {
         // (state is declared below the render loop's first frame; hence the guard)
-        canvas.style.cursor = (FILL_MODE === 'tap' && typeof state === 'object' && state && (state.workspaceTools['palette'] || boxOpen('box-color')) && state.palette.selected !== null) ? RING_CURSOR : '';
+        canvas.style.cursor = (FILL_MODE === 'tap' && !TABLE && typeof state === 'object' && state && (state.workspaceTools['palette'] || boxOpen('box-color')) && state.palette.selected !== null) ? RING_CURSOR : '';   // no ring on the table's board: the piece itself is outlined (05)
     }
 
     // Just the glass (ledger §9): the finished window shows glass, lead and
@@ -3628,16 +3831,19 @@ function drawMeasure(g, sc) {
 function homeViewFor() {
     var W = hostW(), H = hostH();
     if (!frame) return { x: 0, y: 0, zoom: Math.min(W, H) / 900 };
-    // The table's board (30 Oct 2026): 0 a quarter of the way in from the left edge of the drawing box and a third
-    // of the way up from its bottom, 1 one unit to its right, the unit the largest that leaves the board's opening
-    // frame (not the frame as she has it now: home is where the board opened) inside the box with half a unit to
-    // spare at its right and its top. Reset view returns to it whatever she has done to the frame.
+    // The table's board (31 Oct 2026, revision 5; from 30 Oct until then 0 stood a quarter in and a third up): 1 at the centre of
+    // the drawing area, 0 one unit to its left, the board's opening frame (not the frame as she has it now: home is where the board
+    // opened) centred on 1 — the unit the largest that keeps that frame clear of the column and of the right-hand margin by a quarter
+    // unit and leaves room under it for its label (TABLE_LABEL_ROOM). Reset view returns to it whatever she has done to the frame.
     if (TABLE) {
-        var bx = drawingBox(), o = tableOrigin(), t = TABLE;
+        var bx = drawingBox(), o = tableOrigin(), t = TABLE, M = plane.metre();
         if (!(bx.w > 0 && bx.h > 0)) return { x: 0, y: 0, zoom: Math.min(W, H) / 900 };
-        var U = Math.min(0.75 * bx.w / (t.left + t.width + 0.5), (2 / 3) * bx.h / (t.bottom + t.height + 0.5));
-        var tz = U / plane.metre(), sx0 = bx.x + 0.25 * bx.w, sy0 = bx.y + (2 / 3) * bx.h;
-        return { x: o.x + (W / 2 - sx0) / tz, y: o.y + (sy0 - H / 2) / tz, zoom: tz };
+        var cx = bx.x + bx.w / 2, cy = bx.y + bx.h / 2;
+        var hw = Math.max(1 - t.left, t.left + t.width - 1), hh = Math.max(-t.bottom, t.bottom + t.height);
+        var U = Math.min((bx.h / 2 - TABLE_LABEL_ROOM) / hh, (cx - Math.max(columnRight(), bx.x) - 12) / (hw + 0.25), (bx.x + bx.w - cx - 12) / (hw + 0.25));
+        if (!(U > 0)) U = Math.min(bx.w, bx.h) / 8;
+        var tz = U / M;
+        return { x: o.x + M + (W / 2 - cx) / tz, y: o.y + (cy - H / 2) / tz, zoom: tz };
     }
     var b = APP ? drawingBox() : { x: 0, y: 0, w: W, h: H };
     var m = FRAME_MARGIN * frameUnit, fw = frame.x1 - frame.x0 + 2 * m, fh = frame.y1 - frame.y0 + 2 * m;
@@ -3646,9 +3852,13 @@ function homeViewFor() {
     var cx = (frame.x0 + frame.x1) / 2, cy = (frame.y0 + frame.y1) / 2;
     return { x: cx - ((b.x + b.w / 2) - W / 2) / zoom, y: cy + ((b.y + b.h / 2) - H / 2) / zoom, zoom: zoom };
 }
-function homeView() { if (frame) plane.setView(homeViewFor()); else plane.resetView(); }
+function homeView() { if (frame) plane.setView(homeViewFor()); else plane.resetView(); viewTouched = false; }
 // Reset view (window profile) is present only while the view is away from its home.
 var resetShown = false;
+// Whether she has panned or zoomed since the view was last put home (31 Oct 2026): what a change of the host's size reads to decide
+// whether an untouched board goes home again. It used to read resetShown, which a frame between the page's own resize and the
+// observer's callback could trip on the new size before the callback ran, so an edge-to-edge board opened at its page's old width.
+var viewTouched = false;
 function watchView() {
     if (!APP) return;
     var v = plane.view(), h = homeViewFor();
@@ -3965,6 +4175,40 @@ var mouseScreenPos = { x: 0, y: 0 };
 // Points grow from 2px to 4px when cursor is within this many screen pixels.
 var POINT_HOVER_SCREEN = 12;
 
+// ── THE PIECE SHE MEANS (Glass 900 years ago, revision 5, 31 Oct 2026) ──
+// On the table's board, with a colour chosen, the piece of glass under the tip of the mouse wears a thin outline as the mouse moves,
+// before she presses; a press, by finger or mouse, outlines the piece under the tip, a slide moves the outline to whatever piece is
+// under it now, and the release colours that piece (tapPane), however far the hand went and nothing panning meanwhile. No round
+// cursor. The piece is found once a frame, where the tip last was, and only when the tip, the record, the view or the free frame has
+// moved (tipPieceNow); nothing of it enters the record. Points still win a press, as they do everywhere.
+var tipAt = null, tipPiece = null, tipSig = '', tipPressed = false, tipIsMouse = false;
+function tipWanted() { return !!(TABLE && frame && typeof state === 'object' && state && state.palette.selected !== null && (tipPressed || (tipIsMouse && tipAt))); }
+function tipPieceNow() {
+    if (!tipAt) { tipPiece = null; tipSig = ''; return null; }
+    var sig = tipAt.x + ',' + tipAt.y + '|' + logVersion + '|' + JSON.stringify(plane.view()) + '|' + JSON.stringify(frameU);
+    if (sig === tipSig) return tipPiece;
+    tipSig = sig; tipPiece = null;
+    var w = s2w(tipAt.x, tipAt.y), pane = paneUnderTap(w.x, w.y);
+    if (pane) { var poly = expandFillToPolygon(pane.fields); if (poly.length >= 3) tipPiece = { key: pane.key, poly: poly }; }
+    return tipPiece;
+}
+function drawTipPiece() {
+    if (!tipWanted()) return;
+    var p = tipPieceNow(); if (!p) return;
+    ctx.save();
+    fillPath(ctx, p.poly, w2s);
+    ctx.strokeStyle = COLORS.point; ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.globalAlpha = 0.9;
+    ctx.stroke();
+    ctx.restore();
+}
+// The press on a piece with a colour chosen: the outline from here to the release.
+function tipPressStart(pos, world) {
+    if (!(TABLE && frame && state.palette.selected !== null)) return false;
+    if (!paneUnderTap(world.x, world.y)) return false;
+    tipPressed = true; tipAt = pos; interactionState = 'PIECE_PRESSED';
+    return true;
+}
+
 var activeTouches = new Map(); // track multi-touch for pinch-to-zoom
 var pinchBaseDist = null, pinchBaseScale = null;
 var pinchBaseMid = null, pinchBasePan = null;   // two fingers also pan, on the Wright window (18 Oct 2026)
@@ -4020,6 +4264,7 @@ function onDown(e) {
     //      never starts a line, lays lead, places a note undoes, or forks a replay (Michael, 2 Oct 2026).
     if (showGlass) {
         if (interactionState==='AWAITING_SECOND_TAP') { ghostLineEnd=null; firstTapPoint=null; interactionState='IDLE'; selectedPoint=null; if (APP) return; }
+        if (tipPressStart(pos, world)) return;   // a piece under the tip, a colour chosen (THE PIECE SHE MEANS)
         isPanning=true; panStart={ pan:plane.pan(), sx:pos.x, sy:pos.y };
         return;
     }
@@ -4044,6 +4289,9 @@ function onDown(e) {
         interactionState=(interactionState==='AWAITING_SECOND_TAP')?'AWAITING_SECOND_TAP':'POINT_PRESSED';
         return;
     }
+
+    // ── The piece under the tip (THE PIECE SHE MEANS): with a colour chosen, a press inside the table is the piece's, edge or not ──
+    if (interactionState !== 'AWAITING_SECOND_TAP' && tipPressStart(pos, world)) return;
 
     // ── 2. Logical segment / arc hit (bounded by two construction points) ─────────
     // These are selectable (single click) and fadeable (double click).
@@ -4121,7 +4369,7 @@ function onMove(e) {
     if (activeTouches.size === 2 && pinchBaseDist) {
         var pts = Array.from(activeTouches.values());
         var curDist = dist(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
-        plane.setZoom(pinchBaseScale * (curDist / pinchBaseDist));
+        plane.setZoom(pinchBaseScale * (curDist / pinchBaseDist)); viewTouched = true;
         // On a board on the interface two fingers pan as well as pinch (one finger there is the glass);
         // the in-file boards pan with one finger and pinch alone with two, until R5.
         if (board && pinchBaseMid && pinchBasePan) {
@@ -4134,6 +4382,8 @@ function onMove(e) {
 
     var pos=getPos(e), world=s2w(pos.x,pos.y);
     mouseScreenPos.x = pos.x; mouseScreenPos.y = pos.y;
+    tipAt = pos; tipIsMouse = e.pointerType === 'mouse';   // where the tip is (THE PIECE SHE MEANS)
+    if (interactionState === 'PIECE_PRESSED') return;      // the outline follows the tip; nothing pans
 
     // ── The table dragged (THE TABLE), or a frame handle (the shell's) ──
     if (tableDrag) { tableDragMove(world); return; }
@@ -4181,6 +4431,7 @@ function onMove(e) {
         // y-up: screen-down drag carries the pan point up in world terms
         plane.setPan(panStart.pan.x - (pos.x-panStart.sx)/plane.zoom(),
                      panStart.pan.y + (pos.y-panStart.sy)/plane.zoom());
+        viewTouched = true;
         syncCanvasNoteDOMs();
         return;
     }
@@ -4352,6 +4603,7 @@ function onUp(e) {
     // If we were pinching and one finger lifts, reset pinch state
     if (pinchBaseDist && activeTouches.size < 2) {
         pinchBaseDist = null; pinchBaseScale = null; pinchBaseMid = null; pinchBasePan = null;
+        if (interactionState === 'PIECE_PRESSED') { tipPressed = false; tipAt = null; interactionState = 'IDLE'; }   // a second finger made it a pinch (THE PIECE SHE MEANS)
         return;
     }
     if (activeTouches.size > 0) return; // still touches active
@@ -4365,6 +4617,8 @@ function onUp(e) {
     if (tableDrag) { tableDragUp(); interactionState = 'IDLE'; return; }
     // ── A frame handle released: the frame's entry is written if it moved ──
     if (frameDrag) { frameDragUp(); interactionState = 'IDLE'; return; }
+    // ── The piece released (THE PIECE SHE MEANS): the piece under the tip now takes the colour ──
+    if (interactionState === 'PIECE_PRESSED') { tipPressed = false; interactionState = 'IDLE'; if (!tipIsMouse) tipAt = null; tapPane(world.x, world.y); return; }
 
     // ── A board's drag ends here (THE BOARD): the board writes its entry, or the tap colours the pane ──
     if (boardDrag) { var bd = boardDrag; boardDrag = null; bd.end(world, isTap); interactionState = 'IDLE'; return; }
@@ -4521,6 +4775,7 @@ canvas.addEventListener('pointerdown',  onDown);
 canvas.addEventListener('pointermove',  onMove);
 canvas.addEventListener('pointerup',    onUp);
 canvas.addEventListener('pointercancel', onUp);
+canvas.addEventListener('pointerleave', function() { if (!tipPressed) tipAt = null; });   // the outline goes with the mouse (THE PIECE SHE MEANS)
 // A trackpad pinch in Safari is its own gesture event, and a page that does not claim it
 // gets zoomed whole, plane and window together (Michael, 3 Oct 2026). Claimed here and
 // turned into the plane's zoom by the gesture's scale, as the sampler does for a painting;
@@ -4530,13 +4785,14 @@ canvas.addEventListener('gesturestart', function(e) { e.preventDefault(); gestur
 canvas.addEventListener('gesturechange', function(e) {
     e.preventDefault();
     if (gestureBase === null) gestureBase = plane.zoom();
-    plane.setZoom(gestureBase * e.scale);
+    plane.setZoom(gestureBase * e.scale); viewTouched = true;
     syncCanvasNoteDOMs();
 }, { passive:false });
 canvas.addEventListener('gestureend', function(e) { e.preventDefault(); gestureBase = null; }, { passive:false });
 canvas.addEventListener('wheel', function(e) {
     e.preventDefault();
     if (gestureBase !== null) return;
+    viewTouched = true;
     // On a board on the interface the trackpad's two-finger scroll pans (18 Oct 2026, the Wright window; one
     // finger there is the glass); a pinch still zooms — Safari's as a gesture above, Chrome's as a wheel with ctrl.
     if (board && !e.ctrlKey) {
@@ -4657,7 +4913,8 @@ var state = {
 
 // One choice panel serves every occasional act (Save, the WIP guard, replay
 // Cancel): it opens, takes one choice, and fades (ledger §1).
-var choicePanel = adoptPanel(CW.createChoicePanel(), true);
+var choicePanel = adoptPanel(CW.createChoicePanel({ onDismiss: function() { afterSave = null; } }), true);   // closing the Save panel drops what New or Open was waiting for (SAVE NEW OPEN)
+if (FILES) choicePanel.el.addEventListener('pointermove', function() { keepInside(choicePanel.el); });   // dragged, it stays inside the board (05)
 var remember    = $('remember');
 // Without Maya there is nobody to work out what she meant, so the inscription is not
 // yet summoned (Rulings-Sept-2026, the Maya flag; Michael, 1 Oct 2026). The flag decides.
@@ -4785,7 +5042,7 @@ function buildPaletteSwatches(paletteId, grid) {
     // Palettes of twelve (TWELVE): the first twelve colours fill three rows of four from the top left, the rest of the cells empty.
     var colours = TWELVE ? pal.colors.slice(0, 12) : pal.colors;
     colours.forEach(function(c) {
-        var sw=document.createElement('div'); sw.className='palette-swatch'; sw.style.background=c.hex;
+        var sw=document.createElement('div'); sw.className='palette-swatch'; sw.style.background=sunlit(c.hex);   // through the sunlight (SUNLIGHT); what she picks is the colour as given
         var recipe=c.uncertain?c.recipe+'?':c.recipe;
         sw.addEventListener('mouseenter', function() { setRecipe(recipe); });
         sw.addEventListener('mouseleave', function() { setRecipe(''); });
@@ -4895,6 +5152,7 @@ function initConstructions() {
     $('save-note-cancel').addEventListener('click', function() {
         dismissSaveNoteBox();
         _pendingSaveLog = null; // cancelled — drop any snapshot so a later save uses the live log
+        afterSave = null;       // and what New or Open was waiting for (SAVE NEW OPEN)
     });
 
     // Save note box drag
@@ -4913,6 +5171,7 @@ function initConstructions() {
             if (!dragging) return;
             box.style.left = (ox + e.clientX - sx) + 'px';
             box.style.top = (oy + e.clientY - sy) + 'px';
+            if (FILES) keepInside(box);   // never past the board's edges (05)
         });
         handle.addEventListener('pointerup', function() { dragging = false; });
     })();
@@ -5188,7 +5447,7 @@ function buildReplayPanel() {
 function showReplayPanel() {
     if (!replayPanel) return;
     if (!replayPanel.userMoved()) {
-        var panelW = PANEL_BASE_WIDTH;
+        var panelW = columnRight();
         replayPanel.setPosition(panelW + 16, 20);
     }
     replayPanel.show();
@@ -5324,6 +5583,7 @@ function forkStepThrough() {
 // words. It fronts New, Open, and the .json drop alike — the drop used to
 // slip past it (Phase 2 gap, closed here). Keep working is the quiet no.
 function checkWipThen(callback) {
+    if (FILES) { askSaveFirst('Open', 'open', callback); return; }   // the board's own panel (SAVE NEW OPEN): a demo, a drop, Cmd+O
     if (!logHasMarks()) {
         callback();
         return;
@@ -5414,6 +5674,7 @@ function loadConstructionEntry(entry, then) {
         // child's own last-used duration stays the local default.
         if (typeof speed === 'number' && isFinite(speed)) setReplayDuration(speed, false);
         startStepThrough(ops);
+        savedLogText = JSON.stringify(ops);   // played to its end it is as she opened it (SAVE NEW OPEN)
         if (entry.note) showLoadedNote(entry);
         if (then) then();
     }
@@ -5534,7 +5795,7 @@ $('picker-close-btn').addEventListener('click', function(e) { e.stopPropagation(
 })();
 
 function positionPicker() {
-    var panelW=PANEL_BASE_WIDTH;
+    var panelW=columnRight();
     var canvasW=hostW()-panelW, canvasH=hostH();
     // Measured, not assumed: the palettes grid is half the size of the constructions grid
     // (1 Oct 2026), so the window is sized by what it holds.
@@ -5766,11 +6027,12 @@ var HTW_STAGES = [
     {
         id: 'box-color',
         label: 'Color',
+        // 31 Oct 2026 (revision 5): the one sentence, then the colours, the two sliders with their words under them, and the two
+        // commands; the sentences about the slider, Glass Only and Choose New Colors are gone (a control with no text stands alone).
         content: [
             { text: 'To color your glass, tap a color, then tap a shape.', control: 'colours' },
-            { text: 'Use the slider to change the thickness of the lead.', control: 'slider' },
-            { text: 'Tap Glass Only to see your finished design.', control: 'glass' },
-            { text: 'Tap Choose New Colors to select a new set of colors to use.', control: 'choose' }
+            { control: 'sliders' },
+            { control: 'commands' }
         ]
     },
     {
@@ -5851,6 +6113,7 @@ function htwBuildBody(stageIdx) {
     if (BOXES) parkBoxControls();   // the last box's controls go home before its words are cleared
     bodyEl.innerHTML = '';
     stage.content.forEach(function(item) {
+        if (item.text === undefined) { if (BOXES && item.control && BOX_CTL[item.control]) bodyEl.appendChild(BOX_CTL[item.control]); return; }   // a control with no sentence (05)
         if (item.text === '') { bodyEl.appendChild(document.createElement('br')); return; }
         var p = document.createElement('p');
         p.className = 'htw-para';
@@ -5908,13 +6171,22 @@ function setUpBoxes() {
         boxPark.appendChild(d); BOX_CTL[name] = d;
     }
     ctl('colours', [$('palette-grid'), $('craft-row'), $('palette-recipe')], 'margin:2px 0 10px 0;width:' + (TWELVE ? 178 : 132) + 'px;');   // four columns of the same swatch for palettes of twelve
-    ctl('slider', [root.querySelector('.g-tool-palette .lead-slider-row')], 'margin:0 0 12px 0;width:132px;');
-    ctl('glass', [$('glass-toggle')]);
-    var choose = $('palette-choose'); choose.style.marginTop = '0';
-    ctl('choose', [choose]);
-    ctl('save', [$('htw-action-save')]);
-    ctl('open', [$('htw-action-open')]);
-    ctl('new',  [$('htw-action-new')]);
+    // The two sliders (05), centred under the colours, each with its word under it: lead thickness, then sunlight, built like it (SUNLIGHT).
+    var leadRow = root.querySelector('.g-tool-palette .lead-slider-row'), leadLabel = leadRow.querySelector('.lead-slider-label');
+    leadLabel.className = 'slider-under'; leadRow.appendChild(leadLabel);
+    var sunRow = document.createElement('div'); sunRow.className = 'lead-slider-row g-sun-row';
+    sunRow.innerHTML = '<div class="lead-slider-track-wrap"><div class="lead-slider-track" style="height:1px;"></div>' +
+                       '<input type="range" class="lead-slider g-sun-slider" min="0" max="100" value="50" step="1"></div><span class="slider-under">sunlight</span>';
+    var sun = sunRow.querySelector('.g-sun-slider');
+    sun.addEventListener('input', function() { setSunlight((sun.value - 50) / 50, false); });
+    sun.addEventListener('change', function() { setSunlight((sun.value - 50) / 50, true); });
+    ctl('sliders', [leadRow, sunRow], 'margin:0 0 12px ' + (TWELVE ? 23 : 0) + 'px;width:132px;');
+    // The box's two commands in one row, in italics (05): Show Glass Only / Show Construction, and New Colors.
+    var choose = $('palette-choose'); choose.className = 'htw-action-word g-palette-choose'; choose.style.marginTop = '0'; choose.textContent = 'New Colors';
+    var cmds = document.createElement('div'); cmds.style.cssText = 'display:flex;gap:14px;flex-wrap:wrap;';
+    cmds.appendChild($('glass-toggle')); cmds.appendChild(choose);
+    ctl('commands', [cmds], 'margin:2px 0 4px 0;');
+    if (!FILES) { ctl('save', [$('htw-action-save')]); ctl('open', [$('htw-action-open')]); ctl('new', [$('htw-action-new')]); }   // with `files` the three are commands in the column (SAVE NEW OPEN)
     var demos = document.createElement('div'); demos.className = 'g-demo-list';
     demos.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;';
     ctl('demos', [demos]);
@@ -5947,25 +6219,42 @@ function openHtwOnCanvas(stageId) {
     var el = $('htw-canvas');
     if (htwLastPos) {
         el.style.left = htwLastPos.left; el.style.top = htwLastPos.top;
+    } else if (FILES) {
+        placeBoxAtColumn(el);
     } else {
         var s0 = w2s(-100, 0);
         var winW = 248, winH = 260;
         // A box (BOXES) opens clear of the column, whose items she may want next, and of 0 and 1: left of 0
         // where that clears the column, else right of 1 where there is room (an iPad upright), else as before.
         var leftOf0 = s0.x - winW - 20, rightOf1 = w2s(100, 0).x + 20;
-        if (BOXES && leftOf0 < PANEL_BASE_WIDTH + 20 && rightOf1 + winW <= hostW() - BOX_MARGIN_RIGHT) el.style.left = rightOf1 + 'px';
-        else el.style.left = Math.max(leftOf0, BOXES ? PANEL_BASE_WIDTH + 20 : 10) + 'px';
+        if (BOXES && leftOf0 < columnRight() + 20 && rightOf1 + winW <= hostW() - BOX_MARGIN_RIGHT) el.style.left = rightOf1 + 'px';
+        else el.style.left = Math.max(leftOf0, BOXES ? columnRight() + 20 : 10) + 'px';
         el.style.top  = Math.max(Math.round(s0.y - winH / 2), 20) + 'px';
     }
     el.style.opacity = '0'; el.style.display = '';
-    // A box can be tall (the Color box holds the palette): kept inside the host, top and bottom.
-    if (BOXES) el.style.top = Math.max(10, Math.min(parseInt(el.style.top, 10) || 0, hostH() - el.offsetHeight - 10)) + 'px';
+    // A box can be tall (the Color box holds the palette): kept inside the host, top and bottom — and on the table's board left and right too (05).
+    if (FILES) keepInside(el);
+    else if (BOXES) el.style.top = Math.max(10, Math.min(parseInt(el.style.top, 10) || 0, hostH() - el.offsetHeight - 10)) + 'px';
     requestAnimationFrame(function() {
         el.style.transition = 'opacity 200ms ease-in'; el.style.opacity = '1';
         setTimeout(function() { el.style.transition = ''; }, 220);
     });
 }
 
+// A box on the table's board (05) opens on the left, centred on the column, its top just below the column's last word (the row kept
+// for Reset view): the prompt's place for the Color box, given to every box here so none opens over the table; where it would run past
+// the board's left edge it stands against it (keepInside). A box opened before the page has said where the column is — the first
+// visit's, opened at mount — is placed again when the board is told (placeOpenBox, from resize), unless she has dragged it.
+function placeBoxAtColumn(el) {
+    var panel = $('htw-panel').getBoundingClientRect();
+    el.style.left = Math.round(columnLeft() + COLUMN_W / 2 - 110) + 'px';
+    el.style.top = Math.round(panel.bottom - hostRect().top + 8) + 'px';
+    keepInside(el);
+}
+function placeOpenBox() {
+    var el = $('htw-canvas');
+    if (FILES && el && el.style.display !== 'none' && !htwLastPos && htwActiveStageIdx >= 0) placeBoxAtColumn(el);
+}
 function closeHtwCanvas() {
     var stageIdx = htwActiveStageIdx;
     var stage = stageIdx >= 0 ? HTW_STAGES[stageIdx] : null;
@@ -6111,7 +6400,13 @@ function initHowThisWorks() {
         undo.addEventListener('click', function() { if (isStepThroughActive()) forkStepThrough(); undoOp(); });
         rowGlass.appendChild(undo); rowGlass.style.marginTop = '12px';
         list2.insertBefore(rowGlass, rowAct);
-        if (BOXES) rowAct.remove();
+        if (BOXES && !FILES) rowAct.remove();
+        // Save New Open (05): the three commands in the column, in italics, in this order, between Color and Demos (SAVE NEW OPEN).
+        if (FILES) {
+            rowAct.appendChild($('htw-action-new')); rowAct.appendChild($('htw-action-open'));
+            var demosItem = root.querySelector('.htw-item[data-stage="box-demos"]');
+            list2.insertBefore(rowAct, demosItem || rowGlass);
+        }
         // Lock (R2, 24 Oct 2026): on a board with a frame, present while the frame is still free. A
         // board without a frame has no row at all (an empty row would still take its margin). The table (THE TABLE)
         // has no lock and no row.
@@ -6165,7 +6460,7 @@ function initHowThisWorks() {
         rowFs.appendChild(fsw); rowShare.parentNode.insertBefore(rowFs, rowShare.nextSibling);
         var onFs = function () {
             fsw.textContent = isFullscreen() ? 'Exit full screen' : 'Full screen';
-            resizeCanvas(); layoutPanelTools();
+            resizeCanvas(); layoutPanelTools(); keepPanelsInside();
             if (!logHasMarks()) homeView();
         };
         onDoc('fullscreenchange', onFs); onDoc('webkitfullscreenchange', onFs);
@@ -6181,9 +6476,11 @@ function initHowThisWorks() {
 
     // Wire action row words (direct actions, no tip windows)
     $('htw-action-new').addEventListener('click', function() {
+        if (FILES) { askSaveFirst('Start New', 'start a new one', newConstruction); return; }   // SAVE NEW OPEN
         checkWipThen(function() { newConstruction(); });
     });
     $('htw-action-open').addEventListener('click', function() {
+        if (FILES) { askSaveFirst('Open', 'open', function() { openPickerWindow('constructions'); }); return; }
         checkWipThen(function() { openPickerWindow('constructions'); });
     });
     $('htw-action-save').addEventListener('click', function() {
@@ -6206,6 +6503,7 @@ function initHowThisWorks() {
         if (!dragging) return;
         el.style.left = (ox + e.clientX - sx) + 'px';
         el.style.top  = (oy + e.clientY - sy) + 'px';
+        if (FILES) keepInside(el);   // never past the board's edges (05)
         htwLastPos = { left: el.style.left, top: el.style.top };
     });
     el.addEventListener('pointerup', function() { dragging = false; el.classList.remove('dragging'); });
@@ -6243,7 +6541,7 @@ function updateViewingWords() {
     var mapWord = $('map-toggle');
     if (mapWord) mapWord.textContent = mapShown ? 'Hide map' : 'Show map';
     var glassWord = $('glass-toggle');
-    if (glassWord) glassWord.textContent = showGlass ? madeWord() : (APP ? 'Glass only' : 'Just the glass');
+    if (glassWord) glassWord.textContent = showGlass ? madeWord() : (APP ? ((profile && profile.glassWord) || 'Glass only') : 'Just the glass');   // Show Glass Only on the table's board (05)
     if (board && board.update) board.update();
     // Conditional presence (ledger §14): an empty canvas shows only Open —
     // New is irrelevant and Save has nothing to save. Marks count; viewing
@@ -6337,9 +6635,10 @@ if (typeof ResizeObserver !== 'undefined') {
     ro = new ResizeObserver(function () {
         // A board with a frame keeps its home view through a change of size while nothing has been made:
         // the host's size can shift as the page settles, and the frame should sit where it belongs.
-        var wasHome = !!frame && !resetShown && !logHasMarks();
+        var wasHome = !!frame && !viewTouched && !logHasMarks() && !frameDrag && !tableDrag;   // not while she holds the frame
         resizeCanvas(); layoutPanelTools();
         if (wasHome) homeView();
+        keepPanelsInside();   // the boxes and panels nudged back inside the board (05)
     });
     ro.observe(root);
 }
@@ -6399,7 +6698,9 @@ function destroy() {
 // the site reads it.
 root._glass = { view: function () { return plane.view(); }, viewport: function () { return [plane.viewportWidth(), plane.viewportHeight()]; },
                 frame: function () { return frame; }, frameUnits: function () { return frameU; }, locked: frameLocked, step: function () { return gridStep; }, log: function () { return operationLog; }, fills: function () { return liveFills(); },
-                board: function () { return BOARD_NAME; }, panes: function () { return board ? board.state().panes : []; }, cuts: function () { return board ? board.state().cuts : []; } };
+                board: function () { return BOARD_NAME; }, panes: function () { return board ? board.state().panes : []; }, cuts: function () { return board ? board.state().cuts : []; },
+                sunlight: function () { return sunlight; }, unsaved: function () { return unsaved(); }, tip: function () { return tipPiece; }, column: function () { return columnX; }, home: function () { return homeViewFor(); }, box: function () { return drawingBox(); },
+                piece: function (wx, wy) { var p = paneUnderTap(wx, wy); return p ? { key: p.key, area: shoelaceArea(expandFillToPolygon(p.fields)), vertices: p.fields.vertices } : null; } };
 
 return {
     el: root,
@@ -6416,7 +6717,9 @@ return {
         });
     },
     focus: function () { if (!destroyed) root.focus({ preventScroll: true }); },
-    resize: function () { if (!destroyed) { resizeCanvas(); layoutPanelTools(); } },
+    // The page's own word that the host's size changed (an edge-to-edge page, after it has set its width): as the size observer, an
+    // untouched board goes home on the new size, and the panels are kept inside.
+    resize: function () { if (!destroyed) { var wasHome = !!frame && !viewTouched && !logHasMarks() && !frameDrag && !tableDrag; resizeCanvas(); layoutPanelTools(); if (wasHome) homeView(); keepPanelsInside(); } },
     destroy: destroy
 };
 }

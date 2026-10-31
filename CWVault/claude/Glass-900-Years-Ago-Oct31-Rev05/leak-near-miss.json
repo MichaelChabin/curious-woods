@@ -1,0 +1,43 @@
+{
+ "version": 1,
+ "name": "leak",
+ "note": "a near miss for the leak",
+ "created": "2026-10-31T00:00:00Z",
+ "speed": 0,
+ "level": "both",
+ "operations": [
+  {
+   "op": "init",
+   "seed0": {
+    "x": -100,
+    "y": 0
+   },
+   "seed1": {
+    "x": 100,
+    "y": 0
+   }
+  },
+  {
+   "op": "table",
+   "left": -2,
+   "bottom": -2,
+   "width": 6,
+   "height": 4
+  },
+  {
+   "op": "line",
+   "p1Id": "seed:0",
+   "p2Id": "tbl:c:br"
+  },
+  {
+   "op": "circle",
+   "centerId": "tbl:c:tr",
+   "edgeId": "seed:1"
+  },
+  {
+   "op": "circle",
+   "centerId": "seed:0",
+   "edgeId": "tbl:c:bl"
+  }
+ ]
+}
