@@ -67,6 +67,9 @@
   .window-row { display: grid; grid-template-columns: 150px 1fr; gap: 0 16px; align-items: start; }
   .scales { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; padding-top: 2px; }
   .scales .cmd { font-size: 15px; white-space: nowrap; }
+  /* nothing on the window selects as text: a drag that starts in the came or runs past the glass must never start a
+     selection, whose highlight would wash over the canvas and hide the colours (Michael, 1 Nov) */
+  .window-row, .plaque-slot { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
   .glass-box { position: relative; min-width: 0; }
   canvas.glass { display: block; width: 100%; cursor: crosshair; touch-action: none; }
   .cursor-label { position: absolute; z-index: 5; pointer-events: none; font-size: 12px; line-height: 1.3; color: var(--cw-ink, #2a241c);
@@ -154,7 +157,7 @@
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-01 46f58e8 · earth-3d-window step 7';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-01b 6138514 · earth-3d-window step 7';   // date + short commit hash; bump in the same commit as any change
   console.log('earth-3d-window', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -398,10 +401,11 @@
   }
   const at = e => { const r = cv.getBoundingClientRect(); return hit(e.clientX - r.left, e.clientY - r.top); };
   cv.addEventListener('pointerdown', e => {
+    e.preventDefault();   // every press on the glass, in the came too: no text selection starts here
     const i = at(e); state.touch = e.pointerType === 'touch'; if (i < 0) return;
     state.drag = [i, i]; state.anchor = i; state.hover = i;
     try { cv.setPointerCapture(e.pointerId); } catch (err) {}
-    e.preventDefault(); draw(); showLabel(e, i); showPlaque(i);
+    draw(); showLabel(e, i); showPlaque(i);
   });
   cv.addEventListener('pointermove', e => {
     const i = at(e);
