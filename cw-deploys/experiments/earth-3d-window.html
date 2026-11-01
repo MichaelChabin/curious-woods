@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/png" href="../art/icons/time-machine-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/time-machine-icon-256.png">
+<title>The Earth in squares — Curious Woods</title>
+<!-- The window (step 7 of the Earth bench; Michael's prompt Prompt-Build-Earth-Bench-07.md, 1 Nov 2026; the design
+     Worknote-Deep-Time-Window-02.md): a page in front of the Earth bench that introduces a way of picking a time or a
+     range. A stained-glass window where each square is a stretch of time, over the bench's own timeline; Next at the
+     bottom right opens experiments/earth-3d.html as it is. Four windows, one shown at a time, chosen by four italic
+     commands to the left of the glass, the one in use in copper: 4.6 billion years (a square a million years, 5,000
+     squares in five rows of ten blocks, 4,600 of them past and the rest of the fifth row clear future glass, the twelve
+     eras coloured by what she would have seen, their plaques); the last million years (1,000 squares of 1,000 years, ice
+     age against warm spell from stories/curves/sea-level-ice-ages.json, the curve the globe's sea follows, two ways for
+     the bench — A two colours, B graded by the sea; the plaques Ice age, Warm spell, and from 130,000 years the periods
+     Hippos in London, Ice sheets, After the ice); the last 100,000 years (1,000 squares of 100 years, graded like B; Ice
+     sheets, After the ice); the last 12,000 years (10-year squares counted from year 0 after the ice, twelve blocks to
+     the year 12,000 and a thirteenth holding now, 12,026, the rest of it clear; plain glass, no plaques yet). Past at
+     the top left, future to the right, time running down each column of ten and then right; the silver came, 2 points
+     between blocks and 5 between rows; handmade-glass shading; a thin gold mark at now; events from
+     stories/deep-time-events.json as single squares backlit in a brighter version of their own colour; a label under
+     the cursor saying "ago" (and the ordinary decade on the 12,000 window); plaques on rollover (by finger, while it is
+     down), below the glass, ivory with a fine border and a stripe of the era's colour, the era lit and the rest gently
+     dimmed. The timeline below is the Earth bench's own stretching line with its two copper flags, stretch and back,
+     copied from experiments/earth-3d.html (not moved into js/: see the report), drawn past-left so it runs the way the
+     window does, with shrink added: the whole line as it stands fits between the flags, new time coming in on both
+     sides, now a wall, the window stepping up a scale when the span outgrows it. Dragging across squares sets the line
+     to that span with the usual glide; the flags, stretch, shrink and back move the lit squares. The left column is
+     Glass Geometry's convention: How this works (a text box, placeholder words), bulleted words in normal type for the
+     tools (Window, Timeline), italic words for commands. -->
+<script src="../js/cw-style.js?v=2026-10-27b"></script>
+<script src="../js/cw-time.js?v=2026-10-19"></script>
+<script src="../js/cw-panel.js?v=2026-10-01b"></script>
+<style>
+  :root { color-scheme: light; }
+  html, body { margin: 0; }
+  body {
+    background: var(--cw-parchment, #f4f1e8); color: var(--cw-ink, #2a241c);
+    font-family: var(--cw-font, Georgia, serif); font-size: 17px; line-height: 1.5;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-top: 28px; padding-bottom: 48px;
+  }
+  .wide { max-width: 1180px; margin: 0 auto; }
+  h1 { font-weight: normal; font-size: 1.5rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: 0.01em; text-wrap: balance; }
+  /* the left column, Glass Geometry's convention: How this works, bulleted items in normal type, italic commands */
+  .bench { display: grid; grid-template-columns: 160px 1fr; gap: 18px 24px; align-items: start; }
+  .left { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .word {
+    background: none; border: 0; padding: 2px 0; color: var(--cw-payne, #546A80); font: inherit; cursor: pointer;
+    border-bottom: 1px solid transparent; text-align: left; transition: opacity 300ms ease-in-out;
+  }
+  .word:hover { color: var(--cw-payne-hover, #3D3D3A); }
+  .word:focus-visible { outline: 2px solid var(--cw-copper, #b5652b); outline-offset: 3px; }
+  .word.absent { opacity: 0; pointer-events: none; }
+  .word[aria-pressed="true"] { color: var(--cw-ink, #2a241c); border-bottom-color: var(--cw-copper, #b5652b); }
+  .items { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .items li { position: relative; padding-left: 14px; font-size: 15px; }
+  .items li::before { content: '\2022'; position: absolute; left: 0; color: var(--cw-payne, #546A80); }
+  .items .word { font-size: 15px; border-bottom: 0; }
+  .items .word[aria-pressed="true"] { color: var(--cw-payne-hover, #3D3D3A); }
+  .cmd { font-style: italic; }
+  .cmd[aria-pressed="true"] { color: var(--cw-copper, #b5652b); border-bottom-color: transparent; }
+  /* the window: the four scales to its left, the glass, the plaque under it */
+  .main { min-width: 0; }
+  .window-row { display: grid; grid-template-columns: 150px 1fr; gap: 0 16px; align-items: start; }
+  .scales { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; padding-top: 2px; }
+  .scales .cmd { font-size: 15px; white-space: nowrap; }
+  .glass-box { position: relative; min-width: 0; }
+  canvas.glass { display: block; width: 100%; cursor: crosshair; touch-action: none; }
+  .cursor-label { position: absolute; z-index: 5; pointer-events: none; font-size: 12px; line-height: 1.3; color: var(--cw-ink, #2a241c);
+                  background: rgba(244,241,232,0.94); border: 0.5px solid #c8b89a; border-radius: 4px; padding: 2px 7px; white-space: nowrap; display: none; }
+  .plaque-slot { min-height: 74px; margin: 10px 0 0; }
+  .plaque { display: none; max-width: 560px; background: #fbf7ea; border: 0.5px solid #c8b89a; border-radius: 4px; padding: 8px 12px 9px 14px;
+            font-size: 14px; line-height: 1.45; position: relative; box-shadow: 0 1px 6px rgba(42,38,32,0.06); }
+  .plaque.up { display: block; }
+  .plaque::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 4px 0 0 4px; background: var(--stripe, #999); }
+  .plaque b { font-weight: normal; color: var(--cw-ink, #2a241c); display: block; margin-bottom: 1px; }
+  .plaque span { color: var(--cw-ink-soft, #6b655a); }
+  /* the timeline: the Earth bench's age row (6c, 6d), its words stacked to the right */
+  .age-row { margin: 14px 0 0; display: grid; grid-template-columns: 1fr 118px; column-gap: 14px; align-items: start; }
+  .age-row .stretch-words { padding-top: 22px; display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+  .age-row .stretch-words .word { font-size: 15px; font-style: italic; }
+  .stretch-track { position: relative; height: 62px; touch-action: none; cursor: default; user-select: none; -webkit-user-select: none; }
+  .stretch-line { position: absolute; left: 0; right: 0; top: 45px; height: 2px; background: var(--cw-grey, #9a958b); border-radius: 1px; }
+  .flag { position: absolute; top: 18px; width: 2px; height: 30px; margin-left: -1px; background: var(--cw-copper, #b5652b); cursor: ew-resize; }
+  .flag::before { content: ""; position: absolute; top: 0; width: 13px; height: 9px; background: var(--cw-copper, #b5652b); opacity: .9; }
+  .flag::after { content: ""; position: absolute; top: -8px; bottom: -8px; left: -11px; right: -11px; }   /* room for a finger */
+  .flag.a::before { left: 2px; border-radius: 0 3px 3px 0; }
+  .flag.b::before { right: 2px; border-radius: 3px 0 0 3px; }
+  .flag-label { position: absolute; top: 15px; line-height: 14px; font-size: 12px; color: var(--cw-grey-word, #7d7a72); font-variant-numeric: tabular-nums; white-space: nowrap; pointer-events: none; display: none; }
+  .flag-label.above { top: 1px; }
+  .stretch-under { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--cw-grey-word, #7d7a72); margin-top: 0; font-variant-numeric: tabular-nums; }
+  .next-row { display: flex; justify-content: flex-end; margin: 36px 0 0; }
+  .next-row .word { font-style: italic; text-decoration: none; }
+  .cw-info-panel .panel-text { font-size: 13px; line-height: 1.5; color: var(--cw-ink, #2a241c); }
+  .cw-info-panel .panel-text p { margin: 0 0 8px; }
+  .cw-info-panel .panel-text i { color: var(--cw-copper, #b5652b); }
+  .cw-info-panel .panel-text .ph { color: var(--cw-grey-word, #7d7a72); }
+  .cw-info-panel .bench-words { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; margin-top: 10px; padding-top: 8px; border-top: 1px solid #e0d8c6; }
+  .cw-info-panel .bench-words .label { font-size: 11px; color: var(--cw-grey-word, #7d7a72); font-style: italic; }
+  .cw-info-panel .bench-words .pair { display: flex; gap: 10px; align-items: baseline; font-size: 13px; }
+  .cw-info-panel .bench-words .word { font-size: 13px; }
+  .cw-info-panel .bench-words .slash { color: var(--cw-grey, #9a958b); }
+  .cw-info-panel .bench-words .readout { font-size: 11px; color: var(--cw-grey-word, #7d7a72); margin: 4px 0 0; line-height: 1.4; white-space: pre-line; }
+  #fail { color: var(--cw-vermilion, #c84830); display: none; margin: 12px 0 0; white-space: pre-wrap; font-size: 13px; }
+  @media (max-width: 760px) {
+    .bench { grid-template-columns: 1fr; gap: 12px; }
+    .left { flex-direction: row; flex-wrap: wrap; gap: 6px 22px; align-items: baseline; }
+    .left h1 { width: 100%; margin-bottom: 2px; }
+    .items { flex-direction: row; gap: 4px 18px; }
+    .window-row { grid-template-columns: 1fr; gap: 6px 0; }
+    .scales { flex-direction: row; flex-wrap: wrap; gap: 2px 16px; }
+    .age-row { grid-template-columns: 1fr 86px; column-gap: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wide">
+  <div class="bench">
+    <div class="left" id="words">
+      <h1 id="title">The Earth in squares</h1>
+      <button class="word" id="wHtw" type="button" aria-pressed="false">How this works</button>
+      <ul class="items">
+        <li><button class="word" id="iWindow" type="button" aria-pressed="true">Window</button></li>
+        <li><button class="word" id="iTimeline" type="button" aria-pressed="true">Timeline</button></li>
+      </ul>
+    </div>
+    <div class="main">
+      <div class="window-row" id="windowRow">
+        <div class="scales" id="scales"></div>
+        <div class="glass-box" id="glassBox"><canvas class="glass" id="glass" aria-label="A stained-glass window of time: each square a stretch of time, the past at the top left"></canvas><div class="cursor-label" id="cursorLabel"></div></div>
+      </div>
+      <div class="plaque-slot"><div class="plaque" id="plaque"><b id="plaqueName"></b><span id="plaqueText"></span></div></div>
+      <div class="age-row" id="ageRow">
+        <div>
+          <div class="stretch-track" id="stretchTrack" aria-label="The timeline: a line from the Earth’s birth to today, which she can stretch and shrink"><div class="stretch-line"></div><div class="flag a" id="flagA" title="drag in"></div><div class="flag b" id="flagB" title="drag in"></div><span class="flag-label" id="labelA"></span><span class="flag-label" id="labelB"></span><span class="flag-label" id="labelGap"></span></div>
+          <div class="stretch-under"><span id="stretchFrom">4,567 million years ago</span><span class="pixel" id="pixelLine"></span><span id="stretchTo">today</span></div>
+        </div>
+        <div class="stretch-words"><button class="word absent" id="wStretch" type="button">stretch</button><button class="word absent" id="wShrink" type="button">shrink</button><button class="word absent" id="wBack" type="button">back</button></div>
+      </div>
+    </div>
+  </div>
+  <p id="fail"></p>
+  <p class="next-row"><a class="word" id="wNext" href="earth-3d.html">Next</a></p>
+</div>
+
+<!-- the bench's own words (moved into the How this works panel by the script) -->
+<div id="benchWords" class="bench-words" style="display:none">
+  <span class="label">for the bench</span>
+  <div class="pair"><span style="font-size:12px;color:#7d7a72">the last million:</span><button class="word" id="wGlassA" type="button" aria-pressed="true">A two colours</button><span class="slash">/</span><button class="word" id="wGlassB" type="button" aria-pressed="false">B graded</button></div>
+  <p class="readout" id="readout"></p>
+</div>
+
+<script>
+  const CW_VERSION = '2026-11-01 46f58e8 · earth-3d-window step 7';   // date + short commit hash; bump in the same commit as any change
+  console.log('earth-3d-window', CW_VERSION);
+  const $ = id => document.getElementById(id);
+  const S = window.CW && window.CW.STYLE;
+  if (!S) { $('fail').style.display = 'block'; $('fail').textContent = 'cw-style.js did not load: this page has no colours.'; throw new Error('cw-style.js missing'); }
+  const Q = new URLSearchParams(location.search);
+  const THIS_YEAR = CW.THIS_YEAR, NOW_AI = THIS_YEAR + 10000;   // after-the-ice years: year 0 is the ice letting go, the store's −10000; this year is 12,026
+  const EARTH_AGE = 4567;   // million years: the line's far end, as the bench's
+  const fmt = n => n.toLocaleString('en');
+
+  // ---------- colours ----------
+  const hex2rgb = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+  const rgbStr = c => 'rgb(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ')';
+  const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+  function rgb2hsl(c) {
+    const r = c[0] / 255, g = c[1] / 255, b = c[2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2;
+    if (mx === mn) return [0, 0, l];
+    const d = mx - mn, s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+    let h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    return [h / 6, s, l];
+  }
+  function hsl2rgb(c) {
+    const [h, s, l] = c; if (s === 0) return [l * 255, l * 255, l * 255];
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+    const f = t => { t = (t + 1) % 1; return t < 1 / 6 ? p + (q - p) * 6 * t : t < 1 / 2 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p; };
+    return [f(h + 1 / 3) * 255, f(h) * 255, f(h - 1 / 3) * 255];
+  }
+  const shade = (c, dl, ds) => { const h = rgb2hsl(c); h[2] = Math.max(0, Math.min(1, h[2] + dl)); h[1] = Math.max(0, Math.min(1, h[1] + (ds || 0))); return hsl2rgb(h); };
+  const backlit = c => { const l = rgb2hsl(c)[2]; return l > 0.68 ? mix(c, hex2rgb('#f0c84a'), 0.75) : shade(c, 0.22, 0.18); };   // an event: a brighter version of the square's own colour; a pale square has no brighter, so it goes to gold
+  const hash = (i, k) => { let h = (i * 2654435761 + k * 40503 + 12345) >>> 0; h ^= h >>> 13; h = Math.imul(h, 0x5bd1e995) >>> 0; h ^= h >>> 15; return (h % 10000) / 10000; };
+  const CAME = hex2rgb('#b9c0c4'), CLEAR = hex2rgb('#e6e8e4'), PARCH = hex2rgb(S.parchment || '#f4f1e8'), GOLD = '#c9a227', PLAIN = hex2rgb('#c8b48c');
+
+  // ---------- the twelve eras of the 4.6 billion window (what she would have seen; the words from the sketch, revision 1's) ----------
+  const ERAS = [
+    { from: 4600, to: 4400, c: '#d9521f', n: 'Molten', t: 'The Sun has just lit up. Around it, a flat disk of dust and rock is crashing together into lumps, and one of the lumps is the Earth. It glows: its surface is a sea of melted rock. Early on, something the size of Mars hits it, and the splash becomes the Moon.' },
+    { from: 4400, to: 3800, c: '#2c4a55', n: 'Dark seas, falling rocks', t: 'The rock has cooled enough for rain. It rains for a very long time, and oceans fill. Big rocks still fall out of the sky now and then.' },
+    { from: 3800, to: 2450, c: '#8b7442', n: 'An orange sky', t: 'There are living things now, far too small to see. The air has no oxygen in it, so you couldn’t breathe here, and the sky may have been a hazy orange.' },
+    { from: 2450, to: 1800, c: '#9a4529', n: 'Rust', t: 'Tiny living things have started making oxygen, and the air changes. Ice spreads a long way, perhaps nearly to the equator. Oxygen gets into the sea, and the iron dissolved in it rusts. Layers of red rust settle on the sea floor. People mine those layers for iron today.' },
+    { from: 1800, to: 720, c: '#4c6c84', n: 'The quiet billion', t: 'Blue seas and bare brown land, and for a very long time not much seems to change. Out of sight, cells are learning to live together.' },
+    { from: 720, to: 635, c: '#9fb6c3', n: 'Snowball Earth', t: 'The whole planet freezes, perhaps from pole to pole. It happens twice. Volcanoes slowly warm it up again.' },
+    { from: 635, to: 539, c: '#2f80a5', n: 'Soft, strange creatures', t: 'The first living things big enough to see lie on the sea floor, shaped like quilts and feathers. Nothing like them is alive today.' },
+    { from: 539, to: 470, c: '#1e66b0', n: 'Eyes and shells', t: 'Animals with eyes, legs and shells fill the sea. The land is still bare rock. Nothing green grows on it yet.' },
+    { from: 470, to: 360, c: '#4f9a6a', n: 'Green comes ashore', t: 'Small plants creep onto the land, then bigger ones. By the end there are forests, and a fish has crawled out of the water.' },
+    { from: 360, to: 252, c: '#2c6638', n: 'Swamp forests', t: 'Huge swampy forests, and dragonflies bigger than crows. The trees that fall here become the coal people burn today. It ends with the worst die-off the Earth has known.' },
+    { from: 252, to: 66, c: '#73a03a', n: 'Dinosaurs', t: 'Dinosaurs take over. One giant continent slowly breaks apart into pieces you would almost recognize.' },
+    { from: 66, to: 0, c: '#b8a043', n: 'Mammals, grass and ice', t: 'An asteroid ends the dinosaurs, all but the birds. Mammals spread everywhere, and grass covers the plains. At the very end, ice sheets grow and shrink, over and over. Everyone who has ever lived is in the last square.' }
+  ];
+  // the two kinds of glass of the ice ages (the plaque words are placeholders for Michael)
+  const ICE = { c: '#93adb9', n: 'Ice age', t: 'Sheets of ice cover much of the north, and the sea is low enough to walk to some islands.' };
+  const WARM = { c: '#7fa86a', n: 'Warm spell', t: 'Warm, like now. Forests grow where the ice was.' };
+  const ICE_DEEP = hex2rgb('#7a9cad'), ICE_PALE = hex2rgb('#e6eef1');   // B: the ice colour at the threshold, the palest at the lowest sea
+  // the threshold between the two: the sea at or above this is a warm spell. Set by looking at the repo's curve
+  // (Spratt and Lisiecki's stack to 798,000 years, Bintanja and van de Wal beyond): at −20 m every one of the eleven
+  // interglacials of the last million years shows; at −5 m only six do, because the stack's older interglacials
+  // peak ten to twenty metres below today. See Report-Earth-3D-Bench-07.md.
+  const WARM_THRESHOLD_M = Q.get('thr') ? +Q.get('thr') : -20, SEA_LOW_M = -130;
+  let glassMode = Q.get('glass') === 'B' ? 'B' : 'A';   // bench only: the last million two ways
+
+  // ---------- the four windows ----------
+  // Each: the word, the squares (100 a block, 10 columns of 10; time down each column and then right), the blocks in a
+  // row, the rows, and the time of square i as its older and newer edges in million years ago (ma, the line's unit).
+  const WINDOWS = [
+    { id: 'w0', word: '4.6 billion years', blocks: 10, rows: 5, unitMa: 1, startMa: 4600, squares: 5000, gutter: 60,
+      labelsLeft: k => k === 0 ? '0' : k + ' billion', agoWord: i => i === 4599 ? 'the last million years' : fmt(4600 - i) + ' million years ago' },
+    { id: 'w1', word: 'The last million years', blocks: 10, rows: 1, unitMa: 0.001, startMa: 1, squares: 1000, gutter: 0,
+      labelsUnder: j => j === 0 ? '1 million' : j === 10 ? 'now' : fmt((10 - j) * 100000), agoWord: i => i === 999 ? 'the last 1,000 years' : fmt((1000 - i) * 1000) + ' years ago' },
+    { id: 'w2', word: 'The last 100,000 years', blocks: 10, rows: 1, unitMa: 0.0001, startMa: 0.1, squares: 1000, gutter: 0,
+      labelsUnder: j => j === 0 ? '100,000' : j === 10 ? 'now' : fmt((10 - j) * 10000), agoWord: i => i === 999 ? 'the last 100 years' : fmt((1000 - i) * 100) + ' years ago' },
+    { id: 'w3', word: 'The last 12,000 years', blocks: 13, rows: 1, unitMa: 0.00001, startMa: NOW_AI / 1e6, squares: 1300, gutter: 0,
+      labelsUnder: j => j === 0 ? 'year 0 after the ice' : j <= 12 ? fmt(j * 1000) : '', agoWord: i => decadeWord(i) }
+  ];
+  function decadeWord(i) {   // the 12,000 window: the ordinary decade and how long ago
+    const start = 10 * i - 10000, mid = start + 5;   // astronomer's years: 0 is 1 BCE
+    if (start + 10 > THIS_YEAR) return 'the ' + start + 's · now';
+    const dec = start >= 10 ? 'the ' + start + 's' : start >= 0 ? 'the first years CE' : 'about ' + fmt(-start) + ' BCE';
+    return dec + ' · ' + fmt(Math.round((THIS_YEAR - mid) / 10) * 10) + ' years ago';
+  }
+  WINDOWS.forEach(w => { w.olderMa = i => w.startMa - i * w.unitMa; w.newerMa = i => w.startMa - (i + 1) * w.unitMa; w.real = Math.ceil(w.startMa / w.unitMa - 1e-9); w.spanMa = Math.min(w.startMa, EARTH_AGE); });
+  // the periods whose plaques the ice-age windows use (stories/deep-time-periods.json: the label and the first sentence of the summary)
+  const PERIOD_PLAQUES = { w1: ['Hippos in London', 'Ice sheets', 'After the ice'], w2: ['Ice sheets', 'After the ice'] };
+  const PERIOD_COLOURS = { 'Hippos in London': '#7fa86a', 'Ice sheets': '#93adb9', 'After the ice': '#7fa86a' };
+
+  let periods = null, events = [], sea = null;   // loaded below
+  const seaAt = year => sea ? CW.curveAt(sea.points, year) : null;
+
+  // ---------- building a window's glass ----------
+  // For each square: its kind (era, ice run, period, plain, clear), its colour (the era's, graded along the era; the ice
+  // by the sea; handmade shading by a hash), its events. Built once per window and glass mode, drawn many times.
+  function build(w) {
+    const n = w.squares, col = new Array(n), kind = new Array(n), lit = new Array(n), ev = new Array(n);
+    const plaques = [];   // one per era/run/period, by kind index
+    const addPlaque = p => { plaques.push(p); return plaques.length - 1; };
+    if (w.id === 'w0') {
+      const ids = ERAS.map(e => addPlaque({ n: e.n, t: e.t, c: e.c }));
+      for (let i = 0; i < n; i++) {
+        if (i >= w.real) { kind[i] = -1; col[i] = CLEAR; continue; }
+        const ma = w.olderMa(i) - 0.5, k = ERAS.findIndex(e => ma <= e.from && ma > e.to);
+        const e = ERAS[k < 0 ? ERAS.length - 1 : k], u = (e.from - ma) / (e.from - e.to);   // 0 at the era's old end
+        kind[i] = ids[k < 0 ? ERAS.length - 1 : k];
+        col[i] = shade(hex2rgb(e.c), -0.05 + 0.1 * u + (hash(i, 1) - 0.5) * 0.07, (hash(i, 2) - 0.5) * 0.06);   // a gentle gradient along the era, the handmade shading over it
+      }
+    } else if (w.id === 'w1' || w.id === 'w2') {
+      const graded = w.id === 'w2' || glassMode === 'B';
+      const warmOf = new Array(n), mOf = new Array(n);
+      for (let i = 0; i < n; i++) {
+        if (i >= w.real) { warmOf[i] = null; continue; }
+        let sum = 0; for (let k = 0; k < 5; k++) sum += seaAt(CW.maToYear(w.newerMa(i) + (k + 0.5) / 5 * w.unitMa));
+        mOf[i] = sum / 5; warmOf[i] = mOf[i] >= WARM_THRESHOLD_M;
+      }
+      const names = PERIOD_PLAQUES[w.id], pids = {};
+      names.forEach(nm => { const p = periods && periods[nm]; pids[nm] = addPlaque({ n: nm, t: p ? firstSentence(p.summary) : '', c: PERIOD_COLOURS[nm], from: p ? p.from : 0, to: p ? p.to : 0 }); });
+      let run = null, runKind = null;
+      for (let i = 0; i < n; i++) {
+        if (i >= w.real) { kind[i] = -1; col[i] = CLEAR; continue; }
+        const warm = warmOf[i], ma = w.olderMa(i) - w.unitMa / 2;
+        const per = names.find(nm => { const p = plaques[pids[nm]]; return ma <= p.from && ma > p.to; });
+        if (per) kind[i] = pids[per];
+        else { if (runKind !== warm) { run = addPlaque(warm ? WARM : ICE); runKind = warm; } kind[i] = run; }
+        if (per && runKind !== null) runKind = null;
+        let c;
+        if (warm) c = hex2rgb(WARM.c);
+        else if (graded) c = mix(ICE_DEEP, ICE_PALE, Math.max(0, Math.min(1, (WARM_THRESHOLD_M - mOf[i]) / (WARM_THRESHOLD_M - SEA_LOW_M))));
+        else c = hex2rgb(ICE.c);
+        col[i] = shade(c, (hash(i, 1) - 0.5) * 0.06, (hash(i, 2) - 0.5) * 0.05);
+      }
+      w.seaOf = mOf;
+    } else {
+      for (let i = 0; i < n; i++) {
+        if (i >= w.real) { kind[i] = -1; col[i] = CLEAR; continue; }
+        kind[i] = -2;   // plain glass: no plaque yet
+        col[i] = shade(PLAIN, (hash(i, 1) - 0.5) * 0.09, (hash(i, 2) - 0.5) * 0.06);
+      }
+    }
+    // the events, each a single square
+    for (let i = 0; i < n; i++) ev[i] = null;
+    for (const e of events) {
+      if (e.ma > w.startMa + 1e-12 || e.ma < 0) continue;
+      const i = Math.min(w.real - 1, Math.max(0, Math.floor((w.startMa - e.ma) / w.unitMa + 1e-9)));
+      (ev[i] = ev[i] || []).push(e.label);
+    }
+    w.col = col; w.kind = kind; w.ev = ev; w.plaques = plaques; w.built = glassMode;
+  }
+  const firstSentence = s => { const m = /^.*?[.!?](?=\s|$)/.exec(s || ''); return m ? m[0] : (s || ''); };
+
+  // ---------- layout and drawing ----------
+  const cv = $('glass'), ctx = cv.getContext('2d');
+  const state = { w: WINDOWS[0], L: null, hover: -1, drag: null, anchor: -1, touch: false, up: true, lineUp: true };
+  const GAP_B = 2, GAP_L = 4, GAP_R = 5, LABEL_H = 18, FRAME = 1.5;
+  function layout() {
+    const w = state.w, W = $('glassBox').clientWidth, dpr = window.devicePixelRatio || 1;
+    const wide = W >= 640, BPL = wide ? w.blocks : Math.ceil(w.blocks / 2), lines = Math.ceil(w.blocks / BPL);
+    const G = w.gutter, p = (W - G - 2 * FRAME - (BPL - 1) * GAP_B) / (BPL * 10);
+    const lineH = 10 * p, rowH = lines * lineH + (lines - 1) * GAP_L, glassH = w.rows * rowH + (w.rows - 1) * GAP_R + 2 * FRAME;
+    const H = glassH + (w.labelsUnder ? LABEL_H : 0);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.height = H + 'px';
+    state.L = { W, H, G, p, BPL, lines, lineH, rowH, glassH, dpr, gap: p > 6 ? 1 : 0.6 };
+  }
+  function rect(i) {
+    const w = state.w, L = state.L, perRow = w.blocks * 100, row = Math.floor(i / perRow), r0 = i % perRow, blk = Math.floor(r0 / 100), hw = r0 % 100;
+    const c = Math.floor(hw / 10), r = hw % 10, line = Math.floor(blk / L.BPL), bx = blk % L.BPL;
+    return { x: L.G + FRAME + bx * (10 * L.p + GAP_B) + c * L.p, y: FRAME + row * (L.rowH + GAP_R) + line * (L.lineH + GAP_L) + r * L.p, s: L.p };
+  }
+  function hit(x, y) {
+    const w = state.w, L = state.L; x -= L.G + FRAME; y -= FRAME;
+    if (x < 0 || y < 0) return -1;
+    const bw = 10 * L.p + GAP_B, bx = Math.floor(x / bw), xin = x - bx * bw; if (bx >= L.BPL || xin >= 10 * L.p) return -1;
+    const row = Math.floor(y / (L.rowH + GAP_R)), yr = y - row * (L.rowH + GAP_R); if (row >= w.rows || yr >= L.rowH) return -1;
+    const line = Math.floor(yr / (L.lineH + GAP_L)), yl = yr - line * (L.lineH + GAP_L); if (line >= L.lines || yl >= L.lineH) return -1;
+    const blk = line * L.BPL + bx; if (blk >= w.blocks) return -1;
+    const i = row * w.blocks * 100 + blk * 100 + Math.floor(xin / L.p) * 10 + Math.floor(yl / L.p);
+    return i < w.squares ? i : -1;
+  }
+  const litSpan = () => [Math.min(STR.flags[0], STR.flags[1]), Math.max(STR.flags[0], STR.flags[1])];   // the flags' span, in ma: what the window lights
+  function draw() {
+    const w = state.w, L = state.L; if (!L) return;
+    if (w.built !== glassMode) build(w);
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.setTransform(L.dpr, 0, 0, L.dpr, 0, 0);
+    // the came: silver behind every block (a block's sheet runs FRAME past its squares, so neighbours merge and the
+    // whole wears a frame; a line's empty slot, where a narrow layout wraps the blocks, stays parchment)
+    ctx.fillStyle = rgbStr(CAME);
+    for (let b = 0; b < w.rows * w.blocks; b++) { const r = rect(b * 100); ctx.fillRect(r.x - FRAME, r.y - FRAME, 10 * L.p + 2 * FRAME, 10 * L.p + 2 * FRAME); }
+    const span = state.drag ? null : litSpan(), hoverKind = state.hover >= 0 ? w.kind[state.hover] : null;
+    const dragA = state.drag ? Math.min(state.drag[0], state.drag[1]) : -1, dragB = state.drag ? Math.max(state.drag[0], state.drag[1]) : -1;
+    const sheen = L.p >= 7;
+    for (let i = 0; i < w.squares; i++) {
+      const r = rect(i), k = w.kind[i];
+      let c = k === -1 ? CLEAR : (w.ev[i] ? backlit(w.col[i]) : w.col[i]);
+      if (k !== -1) {
+        let dim = 1;
+        if (state.drag) { if (i < dragA || i > dragB) dim *= 0.5; }
+        else if (span && !(w.olderMa(i) > span[0] + 1e-12 && w.newerMa(i) < span[1] - 1e-12)) dim *= 0.5;
+        if (hoverKind !== null && hoverKind >= 0 && k !== hoverKind) dim *= 0.65;
+        if (dim < 1) c = mix(PARCH, c, dim);
+      }
+      ctx.fillStyle = rgbStr(c); ctx.fillRect(r.x, r.y, r.s - L.gap, r.s - L.gap);
+      if (sheen && k !== -1) { ctx.fillStyle = 'rgba(255,255,255,0.16)'; ctx.fillRect(r.x, r.y, r.s - L.gap, 1); }
+    }
+    // the hovered square, the dragged range, now
+    if (state.hover >= 0 && !state.drag) { const r = rect(state.hover); ctx.strokeStyle = S.ink; ctx.lineWidth = 1; ctx.strokeRect(r.x - 0.5, r.y - 0.5, r.s - L.gap + 1, r.s - L.gap + 1); }
+    const nowSq = Math.min(w.real - 1, Math.max(0, Math.floor((w.startMa - 0) / w.unitMa - 1e-9)));
+    const nr = rect(nowSq); ctx.strokeStyle = GOLD; ctx.lineWidth = 1.5; ctx.strokeRect(nr.x - 1, nr.y - 1, nr.s - L.gap + 2, nr.s - L.gap + 2);
+    // labels: the 4.6 billion window's rows on the left, counting forward; the others under the block edges
+    ctx.fillStyle = S.greyWord || '#7d7a72'; ctx.font = '12px ' + (S.font || 'Georgia, serif');
+    if (w.labelsLeft) { ctx.textBaseline = 'top'; ctx.textAlign = 'left'; for (let k = 0; k < w.rows; k++) ctx.fillText(w.labelsLeft(k), 0, rect(k * w.blocks * 100).y + 1); }
+    if (w.labelsUnder) {
+      ctx.textBaseline = 'alphabetic'; let lastRight = -1e9, nowLeft = 1e9;
+      if (w.id === 'w3') { const x = nr.x + nr.s - L.gap, tw = ctx.measureText('now').width; ctx.textAlign = 'center'; ctx.fillText('now', x, L.glassH + 13); nowLeft = x - tw / 2; }   // now first: it wins over a block's edge
+      for (let j = 0; j <= w.blocks; j++) {
+        const edge = j < w.blocks ? rect(j * 100) : null;
+        let x = edge ? edge.x : rect((w.blocks - 1) * 100 + 90).x + L.p, text = w.labelsUnder(j);
+        if (j === w.blocks && w.id === 'w3') continue;
+        if (!text) continue;
+        ctx.textAlign = j === 0 ? 'left' : j === w.blocks ? 'right' : 'center';
+        const tw = ctx.measureText(text).width, left = j === 0 ? x : j === w.blocks ? x - tw : x - tw / 2;
+        if (left < lastRight + 8 || left + tw > nowLeft - 8) continue;
+        ctx.fillText(text, x, L.glassH + 13); lastRight = left + tw;
+      }
+    }
+  }
+
+  // ---------- the pointer on the glass: rollover, a tap, a drag across squares ----------
+  const label = $('cursorLabel'), plaque = $('plaque');
+  function labelFor(i) {
+    const w = state.w; if (i < 0) return '';
+    if (w.kind[i] === -1) return 'not yet';
+    let t = w.agoWord(i);
+    if (w.ev[i]) t += ' · ' + w.ev[i].join(' · ');
+    return t;
+  }
+  function showLabel(e, i) {
+    if (i < 0) { label.style.display = 'none'; return; }
+    label.textContent = labelFor(i); label.style.display = 'block';
+    const box = $('glassBox').getBoundingClientRect(), x = e.clientX - box.left, y = e.clientY - box.top, lw = label.offsetWidth, lh = label.offsetHeight;
+    let lx = x + 14, ly = state.touch ? y - lh - 40 : y - lh - 10;
+    if (lx + lw > box.width) lx = x - lw - 10; if (lx < 0) lx = 0; if (ly < 0) ly = y + 18;
+    label.style.left = lx + 'px'; label.style.top = ly + 'px';
+  }
+  function showPlaque(i) {
+    const w = state.w, k = i >= 0 ? w.kind[i] : null, p = k !== null && k >= 0 ? w.plaques[k] : null;
+    if (!p) { plaque.classList.remove('up'); return; }
+    $('plaqueName').textContent = p.n; $('plaqueText').textContent = p.t; plaque.style.setProperty('--stripe', p.c); plaque.classList.add('up');
+  }
+  const at = e => { const r = cv.getBoundingClientRect(); return hit(e.clientX - r.left, e.clientY - r.top); };
+  cv.addEventListener('pointerdown', e => {
+    const i = at(e); state.touch = e.pointerType === 'touch'; if (i < 0) return;
+    state.drag = [i, i]; state.anchor = i; state.hover = i;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    e.preventDefault(); draw(); showLabel(e, i); showPlaque(i);
+  });
+  cv.addEventListener('pointermove', e => {
+    const i = at(e);
+    if (state.drag) { if (i >= 0) { state.drag = [state.anchor, i]; state.hover = i; } draw(); showLabel(e, i >= 0 ? i : state.hover); showPlaque(state.hover); return; }
+    if (e.pointerType === 'touch') return;   // by finger the plaque is for while it is down
+    if (i !== state.hover) { state.hover = i; draw(); showPlaque(i); }
+    showLabel(e, i);
+  });
+  function endDrag(e) {
+    if (!state.drag) return;
+    const w = state.w; let [a, b] = state.drag; state.drag = null;
+    if (a > b) [a, b] = [b, a];
+    b = Math.min(b, w.real - 1); if (a > b) a = b;
+    if (state.touch) { state.hover = -1; label.style.display = 'none'; showPlaque(-1); }
+    goToSpan(Math.max(0, w.newerMa(b)), Math.min(EARTH_AGE, w.olderMa(a)));   // a tap is the one square; a drag the squares crossed
+    draw();
+  }
+  cv.addEventListener('pointerup', endDrag);
+  cv.addEventListener('pointercancel', () => { state.drag = null; state.hover = -1; label.style.display = 'none'; showPlaque(-1); draw(); });
+  cv.addEventListener('pointerleave', () => { if (state.drag) return; state.hover = -1; label.style.display = 'none'; showPlaque(-1); draw(); });
+
+  // ---------- the four scales ----------
+  const scaleEls = WINDOWS.map((w, k) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'word cmd'; b.textContent = w.word; b.setAttribute('aria-pressed', k === 0 ? 'true' : 'false');
+    b.addEventListener('click', () => setWindow(k, true)); $('scales').appendChild(b); return b;
+  });
+  function setWindow(k, byHer) {   // the window of that scale, the one in use in copper; the line keeps its span if the window reaches it, else takes the window's whole
+    const w = WINDOWS[k]; state.w = w; state.hover = -1; state.drag = null; showPlaque(-1); label.style.display = 'none';
+    scaleEls.forEach((el, j) => el.setAttribute('aria-pressed', j === k ? 'true' : 'false'));
+    layout();
+    if (byHer && !STR.anim && STR.b > w.spanMa + 1e-9) goToSpan(0, w.spanMa);
+    draw();
+  }
+  function windowFor(spanB) {   // the smallest window that reaches the span's older end, for the step up
+    for (let k = WINDOWS.length - 1; k >= 0; k--) if (WINDOWS[k].spanMa >= spanB - 1e-9) return k;
+    return 0;
+  }
+  function stepUpIfNeeded(b1) { const k = WINDOWS.indexOf(state.w); if (b1 > state.w.spanMa + 1e-9) setWindow(Math.min(k, windowFor(b1)), false); }
+
+  // ---------- the timeline: the Earth bench's stretching line (experiments/earth-3d.html, 6c–6e), copied ----------
+  // One even line, drawn past-left so it runs the way the window above does: the Earth's birth at its left end, today at
+  // its right. Two small copper flags at the ends, dragged in to bracket the years she wants; stretch glides the line
+  // to run between them; shrink is the opposite; back steps out one. Under the line the two ends and what one of the
+  // screen's own pixels is worth. STR.flags[0] is the recent flag (the right one), STR.flags[1] the older (the left).
+  const STR = { a: 0, b: EARTH_AGE, stack: [], flags: [0, EARTH_AGE], anim: null, target: null };
+  const track = $('stretchTrack'), flagEls = [$('flagB'), $('flagA')], labelEls = [$('labelB'), $('labelA')], gapEl = $('labelGap');
+  const trackW = () => track.clientWidth || 1;
+  const xOf = ma => (STR.b - ma) / (STR.b - STR.a) * trackW();
+  const maOf = x => STR.b - Math.max(0, Math.min(1, x / trackW())) * (STR.b - STR.a);
+  const dpr = () => window.devicePixelRatio || 1;
+  const EPS = 1e-9;
+  const flagsMoved = () => STR.flags[0] > STR.a + EPS || STR.flags[1] < STR.b - EPS;
+  const LABEL_PAD = 5, LABEL_GAP = 8, PENNANT = 15;
+  function pixelStep() {   // one pixel's worth in years, taken up to 1, 2 or 5 × a power of ten, a year at the least
+    const p = Math.max(1, (STR.b - STR.a) * 1e6 / (trackW() * dpr())), e = Math.pow(10, Math.floor(Math.log10(p)));
+    return [1, 2, 5, 10].map(k => k * e).find(v => v >= p - 1e-9);
+  }
+  function roundedWord(years, step, suffix) {
+    const v = Math.round(years / step) * step;
+    if (v < 1) return null;
+    if (v >= 1e6 && step >= 1e4) { const d = Math.max(0, 6 - Math.floor(Math.log10(step) + 1e-9)); return (v / 1e6).toLocaleString('en', { maximumFractionDigits: d }) + ' million years' + suffix; }
+    return v.toLocaleString('en') + ' years' + suffix;
+  }
+  const flagWord = (ma, step) => roundedWord(ma * 1e6, step, ' ago') || 'today';
+  const gapWord = (ma, step) => roundedWord(ma * 1e6, step, '') || 'a year';
+  const dragging = i => !!(sPtr && sPtr.target === 'f' + i);
+  function placeLabels(W) {   // the bench's rule, mirrored: the right flag's year to its right, the left flag's to its left, the gap's length between
+    const show = STR.anim ? [false, false] : [STR.flags[0] > STR.a + EPS || dragging(0), STR.flags[1] < STR.b - EPS || dragging(1)];
+    const any = show[0] || show[1];
+    labelEls.forEach((el, i) => { el.style.display = show[i] ? 'block' : 'none'; });
+    gapEl.style.display = any ? 'block' : 'none';
+    if (!any) return;
+    const step = pixelStep(), xR = Math.max(0, Math.min(W, xOf(STR.flags[0]))), xL = Math.max(0, Math.min(W, xOf(STR.flags[1])));
+    labelEls[0].textContent = flagWord(STR.flags[0], step); labelEls[1].textContent = flagWord(STR.flags[1], step);
+    gapEl.textContent = gapWord(STR.flags[1] - STR.flags[0], step);
+    const wR = show[0] ? labelEls[0].offsetWidth : 0, wL = show[1] ? labelEls[1].offsetWidth : 0, wG = gapEl.offsetWidth;
+    let inR = show[0] && xR + LABEL_PAD + wR > W, inL = show[1] && xL - LABEL_PAD - wL < 0;
+    let lR = inR ? xR - PENNANT - LABEL_PAD - wR : xR + LABEL_PAD;
+    let lL = inL ? xL + PENNANT + LABEL_PAD : xL - LABEL_PAD - wL;
+    if (inL && show[0] && !inR && lR < lL + wL + LABEL_GAP) lR = lL + wL + LABEL_GAP;
+    if (inR && show[1] && !inL && lL + wL > lR - LABEL_GAP) lL = lR - LABEL_GAP - wL;
+    labelEls[0].style.left = lR + 'px'; labelEls[1].style.left = lL + 'px';
+    const innerL = inL ? lL + wL : xL + PENNANT, innerR = inR ? lR : xR - PENNANT;
+    const fits = innerR - innerL >= wG + 2 * LABEL_GAP, mid = (xL + xR) / 2 - wG / 2;
+    gapEl.classList.toggle('above', !fits);
+    gapEl.style.left = (fits ? Math.max(innerL + LABEL_GAP, Math.min(innerR - LABEL_GAP - wG, mid)) : Math.max(0, Math.min(W - wG, mid))) + 'px';
+  }
+  function yearsWord(y) {
+    if (y < 1.5) return y < 0.95 ? 'under a year' : 'a year';
+    if (y >= 1e6) { const m = y / 1e6; return (m >= 10 ? Math.round(m) : Math.round(m * 10) / 10).toLocaleString('en') + ' million years'; }
+    const p = Math.pow(10, Math.floor(Math.log10(y)) - 1);
+    return (Math.round(y / p) * p).toLocaleString('en', { maximumFractionDigits: 1 }) + ' years';
+  }
+  function spanEndWord(ma) {
+    if (ma <= 0) return 'today';
+    if (ma >= EARTH_AGE - EPS) return EARTH_AGE.toLocaleString('en') + ' million years ago';
+    return flagWord(ma, pixelStep());
+  }
+  const present = (el, on) => el.classList.toggle('absent', !on);
+  function renderStretch() {
+    const W = trackW();
+    flagEls.forEach((el, i) => { el.style.left = Math.max(0, Math.min(W, xOf(STR.flags[i]))) + 'px'; });
+    $('stretchFrom').textContent = spanEndWord(STR.b); $('stretchTo').textContent = spanEndWord(STR.a);
+    $('pixelLine').textContent = 'one pixel: ' + yearsWord((STR.b - STR.a) * 1e6 / (W * dpr()));
+    present($('wStretch'), !STR.anim && flagsMoved());
+    present($('wShrink'), !STR.anim && flagsMoved());
+    present($('wBack'), !STR.anim && STR.stack.length > 0);
+    placeLabels(W);
+    draw();   // the lit squares follow the flags
+  }
+  function resetFlags() { STR.flags = [STR.a, STR.b]; }
+  function glideStretch(a1, b1) {
+    const a0 = STR.a, b0 = STR.b, f0 = STR.flags.slice(), t0 = performance.now(), T = STRETCH_MS;
+    if (STR.anim) cancelAnimationFrame(STR.anim);
+    STR.target = [a1, b1];
+    const step = now => {
+      const u = Math.min(1, (now - t0) / T), s = u * u * (3 - 2 * u);
+      STR.a = a0 + (a1 - a0) * s; STR.b = b0 + (b1 - b0) * s;
+      STR.flags = [f0[0] + (a1 - f0[0]) * s, f0[1] + (b1 - f0[1]) * s];
+      renderStretch();
+      if (u < 1) STR.anim = requestAnimationFrame(step); else { STR.anim = null; STR.target = null; STR.a = a1; STR.b = b1; resetFlags(); renderStretch(); }
+    };
+    STR.anim = requestAnimationFrame(step);
+    renderStretch();
+  }
+  function finishStretch() {   // bench only: the glide finished at once, for a browser pane that runs frames only while looked at
+    if (!STR.anim) return; cancelAnimationFrame(STR.anim); STR.anim = null;
+    [STR.a, STR.b] = STR.target; STR.target = null; resetFlags(); renderStretch();
+  }
+  const STRETCH_MS = 380, YEARS_PER_PX_LEAST = 1;
+  function doStretch() {
+    if (STR.anim || !flagsMoved()) return;
+    let [a1, b1] = STR.flags.slice().sort((p, q) => p - q);
+    const least = trackW() * dpr() * YEARS_PER_PX_LEAST / 1e6;
+    if (b1 - a1 < least) { const c = (a1 + b1) / 2; a1 = Math.max(0, c - least / 2); b1 = Math.min(EARTH_AGE, a1 + least); }
+    if (Math.abs(a1 - STR.a) < 1e-12 && Math.abs(b1 - STR.b) < 1e-12) { resetFlags(); renderStretch(); return; }
+    STR.stack.push([STR.a, STR.b]);
+    stepUpIfNeeded(b1);   // a span the window in use cannot reach: the window steps up so the lit squares can follow
+    glideStretch(a1, b1);
+  }
+  // shrink (Worknote-Deep-Time-Window-02): the whole line as it stands fits between the flags, so the line grows by the
+  // factor a stretch would shrink it, new time filling in on both sides; now is a wall, so what would run past today
+  // comes in on the left instead; the Earth's birth is the other wall. If the span outgrows the window in use, the
+  // window steps up to the scale that holds it.
+  function doShrink() {
+    if (STR.anim || !flagsMoved()) return;
+    const [fa, fb] = STR.flags.slice().sort((p, q) => p - q), k = (STR.b - STR.a) / (fb - fa);
+    let a1 = STR.a - (fa - STR.a) * k, b1 = STR.b + (STR.b - fb) * k; const len = b1 - a1;
+    if (a1 < 0) { a1 = 0; b1 = Math.min(EARTH_AGE, len); }
+    if (b1 > EARTH_AGE) { b1 = EARTH_AGE; a1 = Math.max(0, b1 - len); }
+    if (b1 - a1 <= STR.b - STR.a + 1e-12) { resetFlags(); renderStretch(); return; }
+    STR.stack.push([STR.a, STR.b]);
+    stepUpIfNeeded(b1);
+    glideStretch(a1, b1);
+  }
+  function stretchBack() { if (STR.anim) return; const prev = STR.stack.pop(); if (prev) { stepUpIfNeeded(prev[1]); glideStretch(prev[0], prev[1]); } }
+  function goToSpan(a, b) {   // from the window: the line glides to the span, as a stretch would; back returns
+    if (STR.anim) finishStretch();
+    if (b - a < 1e-12) return;
+    if (Math.abs(a - STR.a) < 1e-12 && Math.abs(b - STR.b) < 1e-12) { resetFlags(); renderStretch(); return; }
+    STR.stack.push([STR.a, STR.b]);
+    glideStretch(a, b);
+  }
+  function setFlag(i, ma) {   // a flag dragged: kept inside the line and on its own side of the other flag
+    const gap = (STR.b - STR.a) * 2 / trackW();
+    STR.flags[i] = i === 0 ? Math.max(STR.a, Math.min(STR.flags[1] - gap, ma)) : Math.min(STR.b, Math.max(STR.flags[0] + gap, ma));
+    renderStretch();
+  }
+  let sPtr = null;
+  track.addEventListener('pointerdown', e => {
+    const r = track.getBoundingClientRect(), x = e.clientX - r.left;
+    const d0 = Math.abs(xOf(STR.flags[0]) - x), d1 = Math.abs(xOf(STR.flags[1]) - x);
+    if (Math.min(d0, d1) > 22) return;   // the flags only: this line has no thumb
+    sPtr = { id: e.pointerId, x0: x, target: d0 <= d1 ? 'f0' : 'f1', moved: false };
+    try { track.setPointerCapture(e.pointerId); } catch (err) {}
+    e.preventDefault(); renderStretch();
+  });
+  track.addEventListener('pointermove', e => {
+    if (!sPtr) return;
+    const r = track.getBoundingClientRect(), x = e.clientX - r.left;
+    if (Math.abs(x - sPtr.x0) > 2) sPtr.moved = true;
+    if (!sPtr.moved) return;
+    setFlag(sPtr.target === 'f0' ? 0 : 1, maOf(x));
+  });
+  const sUp = () => { if (!sPtr) return; sPtr = null; renderStretch(); };
+  track.addEventListener('pointerup', sUp); track.addEventListener('pointercancel', sUp);
+  $('wStretch').addEventListener('click', doStretch);
+  $('wShrink').addEventListener('click', doShrink);
+  $('wBack').addEventListener('click', stretchBack);
+
+  // ---------- the left column: How this works, Window, Timeline ----------
+  const htwPanel = window.CW.createInfoPanel ? CW.createInfoPanel({ width: 344 }) : null;
+  if (htwPanel) {
+    document.body.appendChild(htwPanel.el); htwPanel.el.style.zIndex = '600'; htwPanel.el.style.cursor = 'default'; htwPanel.el.classList.add('cw-info-panel');
+    htwPanel.body.innerHTML = '<div class="panel-text">' +
+      '<p class="ph">[Placeholder words. Michael will write these.]</p>' +
+      '<p>Every square in the window is a stretch of time, and the past is at the top left. On the first window a square is a million years and a row is a billion; the gold square is now. The four words to the left of the glass change the scale: a thousand years a square, then a hundred, then ten.</p>' +
+      '<p>Drag across squares to pick a span, and the line below stretches to it. On the line, drag the two flags in and tap <i>stretch</i> to look closer, or <i>shrink</i> to see more; <i>back</i> steps out. The lit squares always show where the line is.</p>' +
+      '</div>';
+    const bw = $('benchWords'); bw.style.display = ''; htwPanel.body.appendChild(bw);
+  }
+  function placePanel(pn) { const r = $('glassBox').getBoundingClientRect(), w = pn.el.offsetWidth || 344; if (!pn.userMoved()) pn.setPosition(Math.max(8, Math.min(window.innerWidth - w - 16, r.left + 16)), Math.max(8, r.top + 16)); }
+  function togglePanel(pn, wordEl) {
+    if (!pn) return;
+    if (pn.visible() && pn.el.style.opacity === '1') { pn.hide(); wordEl.setAttribute('aria-pressed', 'false'); return; }
+    placePanel(pn); pn.show(); wordEl.setAttribute('aria-pressed', 'true');
+  }
+  $('wHtw').addEventListener('click', () => togglePanel(htwPanel, $('wHtw')));
+  if (htwPanel) htwPanel.el.querySelector('span').addEventListener('click', () => $('wHtw').setAttribute('aria-pressed', 'false'));
+  // the two tools: each word brings its tool up or takes it down; both are up at the start
+  function setTool(which, on) {
+    if (which === 'window') { state.up = on; $('windowRow').style.display = on ? '' : 'none'; document.querySelector('.plaque-slot').style.display = on ? '' : 'none'; $('iWindow').setAttribute('aria-pressed', on ? 'true' : 'false'); if (on) { layout(); draw(); } }
+    else { state.lineUp = on; $('ageRow').style.display = on ? '' : 'none'; $('iTimeline').setAttribute('aria-pressed', on ? 'true' : 'false'); if (on) renderStretch(); }
+  }
+  $('iWindow').addEventListener('click', () => setTool('window', !state.up));
+  $('iTimeline').addEventListener('click', () => setTool('timeline', !state.lineUp));
+  // bench only: the last million two ways
+  function setGlassMode(m) { glassMode = m; $('wGlassA').setAttribute('aria-pressed', m === 'A' ? 'true' : 'false'); $('wGlassB').setAttribute('aria-pressed', m === 'B' ? 'true' : 'false'); draw(); }
+  $('wGlassA').addEventListener('click', () => setGlassMode('A')); $('wGlassB').addEventListener('click', () => setGlassMode('B'));
+
+  // ---------- the data, then the first drawing ----------
+  async function loadAll() {
+    const [ev, per, curve] = await Promise.all([
+      fetch('../stories/deep-time-events.json').then(r => r.json()),
+      fetch('../stories/deep-time-periods.json').then(r => r.json()),
+      fetch('../stories/curves/sea-level-ice-ages.json').then(r => r.json())
+    ]);
+    events = ev.events.map(e => ({ id: e.id, label: e.label, ma: e.ma != null ? e.ma : CW.yearToMa(e.year), side: e.side })).filter(e => e.ma != null && !isNaN(e.ma));
+    periods = per.periods; sea = curve;
+    WINDOWS.forEach(w => { w.built = null; });
+    $('readout').textContent = events.length + ' events from deep-time-events.json (' + events.filter(e => e.side === 'deep').length + ' deep, ' + events.filter(e => e.side !== 'deep').length + ' after the ice) · the sea from sea-level-ice-ages.json, warm at or above ' + WARM_THRESHOLD_M + ' m';
+  }
+  WINDOWS.forEach(w => build(w));   // plain first; built again with the data
+  layout(); draw(); renderStretch();
+  setGlassMode(glassMode);
+  if (Q.get('w')) setWindow(Math.max(0, Math.min(3, +Q.get('w'))), false);
+  loadAll().then(() => { WINDOWS.forEach(w => build(w)); draw(); }).catch(e => { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The events or the sea curve did not load: ' + e.message; });
+  window.addEventListener('resize', () => { layout(); renderStretch(); });
+  if (window.ResizeObserver) new ResizeObserver(() => { layout(); renderStretch(); }).observe($('glassBox'));
+
+  // ---------- for the bench's own checks (the browser pane) ----------
+  window.cwWin = { WINDOWS, ERAS, state, STR, set: k => setWindow(k, true), draw, layout, rect, hit, select: (a, b) => goToSpan(a, b), finish: finishStretch,
+    stretch: doStretch, shrink: doShrink, back: stretchBack, flag: setFlag, lit: litSpan, labelFor, showPlaque, setGlassMode, mode: () => glassMode, build,
+    warmSpells: () => { const w = WINDOWS[1]; if (w.built !== glassMode) build(w); const runs = []; let cur = null; for (let i = 0; i < w.real; i++) { const warm = w.plaques[w.kind[i]].n !== 'Ice age' && w.plaques[w.kind[i]].n !== 'Ice sheets'; if (warm && !cur) cur = [i, i]; else if (warm) cur[1] = i; else if (cur) { runs.push(cur); cur = null; } } if (cur) runs.push(cur); return runs.map(([a, b]) => [(1000 - a) * 1000, (999 - b) * 1000]); },
+    eventsIn: k => { const w = WINDOWS[k]; const out = []; w.ev.forEach((e, i) => { if (e) out.push([i, e]); }); return out; } };
+</script>
+</body>
+</html>

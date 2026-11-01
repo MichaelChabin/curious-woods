@@ -1,0 +1,336 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>The Earth in Squares</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one row per billion years, past on the left, future on the right; smaller rows open beneath; the picked stretch below */
+:root{
+  --bg:#eef1ef; --panel:#f8faf9; --ink:#1d2a30; --muted:#5a6a70; --line:#d2dbdc;
+  --future:#b9c5c8; --pick:#1d2a30; --mark:#d99a12; --cent-a:#c3ced1; --cent-b:#a9b9bd; --tip:#1d2a30; --tip-ink:#f3f6f6;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f161a; --panel:#152026; --ink:#e3eaec; --muted:#93a3a9; --line:#26343b;
+  --future:#34444b; --pick:#ffffff; --mark:#f0b740; --cent-a:#2d3d44; --cent-b:#3d5159; --tip:#e3eaec; --tip-ink:#10181c; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0f161a; --panel:#152026; --ink:#e3eaec; --muted:#93a3a9; --line:#26343b;
+  --future:#34444b; --pick:#ffffff; --mark:#f0b740; --cent-a:#2d3d44; --cent-b:#3d5159; --tip:#e3eaec; --tip-ink:#10181c; color-scheme:dark }
+body{ background:var(--bg); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.5 }
+.wrap{ max-width:1180px; margin:0 auto; padding-block:24px 56px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex; flex-direction:column; gap:16px }
+h1{ font-family:var(--display); font-weight:400; font-size:clamp(28px,4vw,40px); line-height:1.1; margin:0 }
+.sub{ color:var(--muted); margin:6px 0 0; font-size:15px; max-width:66ch }
+h2{ font-family:var(--display); font-weight:400; font-size:20px; margin:0 }
+.grid{ display:flex; flex-direction:column; gap:8px }
+.grid[hidden]{ display:none }
+.gridhead{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 16px }
+.gridhead .note{ color:var(--muted); font-size:14px }
+canvas.sq{ display:block; width:100%; cursor:crosshair; touch-action:none }
+@media (max-width:640px){ canvas.sq{ touch-action:pan-y } }
+.row{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between }
+.legend{ display:flex; flex-wrap:wrap; gap:6px }
+.key{ font:inherit; font-size:13px; display:flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--panel); color:var(--ink); padding:4px 10px 4px 6px; border-radius:999px; cursor:pointer }
+.key i{ width:14px; height:14px; border-radius:3px; display:block; box-shadow:inset 0 0 0 1px rgba(0,0,0,.18) }
+.key[aria-pressed="true"]{ border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink) }
+.btn{ font:inherit; font-size:15px; border:1px solid var(--ink); background:var(--ink); color:var(--bg); padding:7px 16px; border-radius:6px; cursor:pointer }
+.btn.quiet{ background:transparent; color:var(--ink) }
+.btn:disabled{ opacity:.35; cursor:default }
+button:focus-visible{ outline:2px solid var(--mark); outline-offset:2px }
+.below{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.3fr); gap:16px; align-items:start }
+@media (max-width:820px){ .below{ grid-template-columns:minmax(0,1fr) } }
+.card{ background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; display:flex; flex-direction:column; gap:8px; min-width:0 }
+.label{ font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted) }
+.when{ font-family:var(--display); font-size:clamp(20px,2.6vw,26px); line-height:1.2; margin:0 }
+.scene{ display:flex; align-items:center; gap:8px; font-weight:700 }
+.scene i{ width:16px; height:16px; border-radius:3px; display:block; box-shadow:inset 0 0 0 1px rgba(0,0,0,.18) }
+.card p{ margin:0; max-width:62ch }
+.moment{ border-left:3px solid var(--mark); padding-left:10px }
+.pos{ font-family:var(--mono); font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums }
+.strip{ width:100%; display:block }
+#zoom{ cursor:crosshair; touch-action:none }
+.ends{ display:flex; justify-content:space-between; gap:12px; font-family:var(--mono); font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums }
+.empty{ color:var(--muted) }
+#tip{ position:fixed; z-index:20; pointer-events:none; background:var(--tip); color:var(--tip-ink); font-size:13px; line-height:1.35; padding:7px 10px; border-radius:6px; max-width:260px; box-shadow:0 4px 14px rgba(0,0,0,.18) }
+#tip b{ font-weight:700 }
+#tip .h{ opacity:.75; font-size:12px; display:block; margin-top:2px }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>The Earth in Squares</h1>
+    <p class="sub">Every square is a million years, and every row is a billion. The past is on the left and the future on the right. The gold square is now.</p>
+  </header>
+
+  <section class="grid" id="g0"></section>
+  <section class="grid" id="g1" hidden></section>
+  <section class="grid" id="g2" hidden></section>
+
+  <div class="below">
+    <section class="card" id="info" aria-live="polite"></section>
+    <section class="card">
+      <div class="label">Where it sits</div>
+      <canvas class="strip" id="whole" data-h="28"></canvas>
+      <div class="ends"><span id="w0"></span><span id="w1"></span></div>
+      <div class="row" style="margin-top:6px">
+        <div class="label">Stretched out</div>
+        <button class="btn quiet" id="back" disabled>Back</button>
+      </div>
+      <canvas class="strip" id="zoom" data-h="44"></canvas>
+      <div class="ends"><span id="z0"></span><span id="z1"></span></div>
+      <p id="span" class="empty">Drag across squares to pick a stretch of time. Then drag across this band to stretch it further.</p>
+    </section>
+  </div>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+// ---------- What she would have seen (ages in millions of years ago)
+const SCENES = [
+ {from:4600,to:4540,c:"#6e5d50",n:"Dust around a new Sun",t:"The Sun has just lit up. Around it, a flat disk of dust and rock is crashing together into lumps. One of the lumps will be the Earth."},
+ {from:4540,to:4400,c:"#d9521f",n:"Molten",t:"The Earth glows. Its surface is a sea of melted rock. Early on, something the size of Mars hits it, and the splash becomes the Moon."},
+ {from:4400,to:3800,c:"#2c4a55",n:"Dark seas, falling rocks",t:"The rock has cooled enough for rain. It rains for a very long time, and oceans fill. Big rocks still fall out of the sky now and then."},
+ {from:3800,to:2450,c:"#8b7442",n:"An orange sky",t:"There are living things now, far too small to see. The air has no oxygen in it, so you couldn't breathe here, and the sky may have been a hazy orange."},
+ {from:2450,to:2200,c:"#8aa3b0",n:"The first big freeze",t:"Tiny living things have started making oxygen, and the air changes. Ice spreads a long way, perhaps nearly to the equator."},
+ {from:2200,to:1800,c:"#9a4529",n:"Rust",t:"Oxygen gets into the sea, and the iron dissolved in it rusts. Layers of red rust settle on the sea floor. People mine those layers for iron today."},
+ {from:1800,to:720,c:"#4c6c84",n:"The quiet billion",t:"Blue seas and bare brown land, and for a very long time not much seems to change. Out of sight, cells are learning to live together."},
+ {from:720,to:635,c:"#9fb6c3",n:"Snowball Earth",t:"The whole planet freezes, perhaps from pole to pole. It happens twice. Volcanoes slowly warm it up again."},
+ {from:635,to:539,c:"#2f80a5",n:"Soft, strange creatures",t:"The first living things big enough to see lie on the sea floor, shaped like quilts and feathers. Nothing like them is alive today."},
+ {from:539,to:470,c:"#1e66b0",n:"Eyes and shells",t:"Animals with eyes, legs and shells fill the sea. The land is still bare rock. Nothing green grows on it yet."},
+ {from:470,to:360,c:"#4f9a6a",n:"Green comes ashore",t:"Small plants creep onto the land, then bigger ones. By the end there are forests, and a fish has crawled out of the water."},
+ {from:360,to:252,c:"#2c6638",n:"Swamp forests",t:"Huge swampy forests, and dragonflies bigger than crows. The trees that fall here become the coal people burn today. It ends with the worst die-off the Earth has known."},
+ {from:252,to:66,c:"#73a03a",n:"Dinosaurs",t:"Dinosaurs take over. One giant continent slowly breaks apart into pieces you would almost recognize."},
+ {from:66,to:2.6,c:"#b8a043",n:"Mammals and grass",t:"An asteroid ends the dinosaurs, all but the birds. Mammals spread everywhere, and grass covers the plains."},
+ {from:2.6,to:0,c:"#7d9dab",n:"Ice ages",t:"Ice sheets grow and shrink, over and over. Everyone who has ever lived is in the very last square."}
+];
+const MOMENTS_M = {4567:"The Sun lights up.",4540:"The Earth is finished enough to call it the Earth.",4510:"Something the size of Mars hits the Earth. The Moon forms from the splash.",4400:"The oldest crystal anyone has found was made around now.",3500:"The oldest signs of life we're sure about.",2400:"Oxygen starts to build up in the air.",717:"The Earth starts to freeze over.",575:"The first living things big enough to see.",539:"Animals with eyes and shells.",470:"The first plants on land.",375:"A fish crawls out onto the land.",252:"The Great Dying. Most living things vanish.",230:"The first dinosaurs.",66:"The asteroid.",7:"Our line and the chimpanzees' line go separate ways.",3:"The ice ages begin."};
+// thousand-year row: warm spells, roughly, from ice cores and sea-floor mud
+const WARM = [[0,12],[115,130],[190,245],[300,337],[374,424],[478,533],[563,621],[676,712],[761,790],[814,866],[936,959]];
+const ICE = {c:"#93adb9",n:"Ice age",t:"Sheets of ice cover much of the north, and the sea is low enough to walk to some islands."};
+const WARMS = {c:"#7fa86a",n:"A warm spell",t:"Warm, like now. Forests grow where the ice was."};
+const MOMENTS_K = {300:"People like us appear, in Africa.",125:"Warm enough for hippos to wallow where London is now.",60:"People spread out of Africa.",40:"The last Neanderthals.",21:"The coldest part of the last ice age. Ice two miles thick covers Canada.",12:"The ice melts back. Soon people start to farm.",6:"Writing begins.",5:"The Great Pyramid is built."};
+const Y0 = 1027;
+const MOMENTS_Y = {1088:"The first university opens, in Bologna.",1440:"Gutenberg starts printing.",1492:"Columbus crosses the Atlantic.",1543:"Copernicus puts the Sun in the middle.",1614:"Napier publishes his logarithms.",1687:"Newton explains why things fall.",1903:"The first airplane flies.",1969:"People walk on the Moon.",2016:"If you're ten, you were born about here.",2026:"This year."};
+
+const fmt = n => n.toLocaleString("en-US");
+const sceneM = age => SCENES.find(s=>age<=s.from && age>s.to) || SCENES[SCENES.length-1];
+const isWarm = ka => WARM.some(([a,b])=>ka>=a && ka<b);
+const ago = (v,u) => v<=0 ? "now" : `${fmt(v)} ${u} years ago`;
+const ordinal = k => ["1st","2nd","3rd","4th","5th"][k];
+
+const DEFS = [
+ { id:"g0", title:"The whole story", note:"Each block of a hundred squares is 100 million years.", rows:5, n:5000, real:4600,
+   unit:"million years", unit1:"million years", whole:"the whole story",
+   rowLabel:k=>ordinal(k)+" billion",
+   scene:i=>i>=4600?null:sceneM(4600-i-.5),
+   color(i){ const s=this.scene(i); return s?s.c:null },
+   from:i=>ago(4600-i,"million"), to:i=>ago(4599-i,"million"),
+   when:i=>`About ${fmt(4600-i)} million years ago`,
+   moment:i=>{ for(const a in MOMENTS_M) if(4600-Math.ceil(+a)===i) return MOMENTS_M[a]; return null },
+   opens:"Open the last million years", child:1 },
+ { id:"g1", title:"The last million years", note:"Each square is a thousand years. Each block is 100,000.", rows:1, n:1000, real:1000,
+   unit:"thousand years", unit1:"thousand years", whole:"the last million years",
+   rowLabel:()=>"Last million",
+   scene:i=>isWarm(1000-i-.5)?WARMS:ICE,
+   color(i){ return this.scene(i).c },
+   from:i=>ago(1000-i,"thousand"), to:i=>ago(999-i,"thousand"),
+   when:i=>`About ${fmt(1000-i)} thousand years ago`,
+   moment:i=>{ for(const a in MOMENTS_K) if(1000-Math.ceil(+a)===i) return MOMENTS_K[a]; return null },
+   opens:"Open the last thousand years", child:2 },
+ { id:"g2", title:"The last thousand years", note:"Each square is a year. Each block is a century.", rows:1, n:1000, real:1000,
+   unit:"years", unit1:"year", whole:"the last thousand years",
+   rowLabel:()=>"Last thousand",
+   scene:()=>null,
+   color(i){ if(MOMENTS_Y[Y0+i]) return tok("--mark"); return Math.floor(i/100)%2?tok("--cent-b"):tok("--cent-a") },
+   from:i=>String(Y0+i), to:i=>String(Y0+i),
+   when:i=>`The year ${Y0+i}`,
+   moment:i=>MOMENTS_Y[Y0+i]||null, opens:null }
+];
+
+const $ = id => document.getElementById(id);
+const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const tip = $("tip");
+const S = { sel:null, view:[], focus:null };   // sel: {d, a, b}; view: stack of [a,b] stretches
+
+// ---------- one grid of squares
+function Grid(d, k){
+  const sec = $(d.id);
+  sec.innerHTML = `<div class="gridhead"><h2>${d.title}</h2><span class="note">${d.note}</span></div>
+    <canvas class="sq" aria-label="${d.title}, as squares"></canvas>
+    <div class="row"><div class="legend"></div>${d.opens?`<button class="btn quiet open">${d.opens}</button>`:""}</div>`;
+  const cv = sec.querySelector("canvas"), ctx = cv.getContext("2d");
+  const g = { d, k, sec, cv, L:null, hover:-1, drag:null };
+  g.layout = () => {
+    const W = cv.parentElement.clientWidth, dpr = devicePixelRatio||1;
+    const BPL = W>=640 ? 10 : 5, lines = 10/BPL, labelW = W>=640 ? 104 : 0;
+    const gp = W>=640 ? 5 : 3, G2 = gp*3;
+    const p = (W - labelW - (BPL-1)*gp)/(BPL*10);
+    const rowH = lines*10*p + (lines-1)*gp, H = d.rows*rowH + (d.rows-1)*G2;
+    cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr); cv.style.height = H+"px";
+    g.L = { W,H,p,gp,G2,BPL,labelW,rowH,dpr, gap: p>8?1:.6 };
+  };
+  g.rect = i => {
+    const L = g.L, row = Math.floor(i/1000), w = i%1000, blk = Math.floor(w/100), hw = w%100;
+    const col = Math.floor(hw/10), r = hw%10;            // time runs down each column, then right
+    const line = Math.floor(blk/L.BPL), bx = blk%L.BPL;
+    return { x: L.labelW + bx*(10*L.p+L.gp) + col*L.p, y: row*(L.rowH+L.G2) + line*(10*L.p+L.gp) + r*L.p, s: L.p-L.gap };
+  };
+  g.hit = (x,y) => { for(let i=0;i<d.n;i++){ const r=g.rect(i); if(x>=r.x&&x<r.x+g.L.p&&y>=r.y&&y<r.y+g.L.p) return i } return -1 };
+  g.draw = () => {
+    const L = g.L; ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,cv.width,cv.height); ctx.setTransform(L.dpr,0,0,L.dpr,0,0);
+    const fut = tok("--future"), pick = tok("--pick"), mark = tok("--mark");
+    const sel = g.drag || (S.sel && S.sel.d===d ? [S.sel.a,S.sel.b] : null);
+    for (let i=0;i<d.n;i++){
+      const r = g.rect(i), c = i<d.real ? d.color(i) : null;
+      let a = 1;
+      if (S.focus && g.k<2 && c!==S.focus) a = .2;
+      if (sel && sel[0]!==sel[1] && (i<sel[0]||i>sel[1])) a = Math.min(a,.5);
+      ctx.globalAlpha = a;
+      if (c===null){ ctx.strokeStyle = fut; ctx.lineWidth = 1; ctx.strokeRect(r.x+.5, r.y+.5, Math.max(0,r.s-1), Math.max(0,r.s-1)) }
+      else { ctx.fillStyle = c; ctx.fillRect(r.x, r.y, r.s, r.s) }
+    }
+    ctx.globalAlpha = 1;
+    if (L.labelW){
+      ctx.fillStyle = tok("--muted"); ctx.font = `14px ${tok("--body")}`; ctx.textBaseline = "middle";
+      for (let k=0;k<d.rows;k++) ctx.fillText(d.rowLabel(k), 0, k*(L.rowH+L.G2) + L.rowH/2);
+    }
+    const now = g.rect(d.real-1); ctx.strokeStyle = mark; ctx.lineWidth = 2; ctx.strokeRect(now.x-1.5, now.y-1.5, now.s+3, now.s+3);
+    if (g.hover>=0){ const r=g.rect(g.hover); ctx.strokeStyle=pick; ctx.lineWidth=1.5; ctx.strokeRect(r.x-1,r.y-1,r.s+2,r.s+2) }
+    if (sel && sel[0]===sel[1]){ const r=g.rect(sel[0]); ctx.strokeStyle=pick; ctx.lineWidth=2; ctx.strokeRect(r.x-2,r.y-2,r.s+4,r.s+4) }
+  };
+  const at = e => { const r = cv.getBoundingClientRect(); return g.hit(e.clientX-r.left, e.clientY-r.top) };
+  cv.addEventListener("pointerdown", e => { const i = at(e); if(i<0) return; g.drag=[i,i]; g.anchor=i; cv.setPointerCapture(e.pointerId); g.draw(); showTip(e, g, i) });
+  cv.addEventListener("pointermove", e => {
+    const i = at(e);
+    if (g.drag && i>=0){ let a=Math.min(g.anchor,i), b=Math.max(g.anchor,i); g.drag=[a,b] }
+    if (i!==g.hover){ g.hover=i; }
+    g.draw(); showTip(e, g, i);
+  });
+  const end = () => {
+    if (!g.drag) return; let [a,b] = g.drag; g.drag = null;
+    if (a!==b){ b=Math.min(b,d.real-1); if(a>b) a=b }
+    select(d,a,b);
+  };
+  cv.addEventListener("pointerup", end);
+  cv.addEventListener("pointercancel", () => { g.drag=null; g.draw(); tip.hidden=true });
+  cv.addEventListener("pointerleave", () => { if(!g.drag){ g.hover=-1; g.draw() } tip.hidden=true });
+  const ob = sec.querySelector(".open"); if (ob) ob.onclick = () => openChild(d);
+  g.legend = () => {
+    const el = sec.querySelector(".legend"); el.innerHTML = "";
+    let items = k===0 ? SCENES.map(s=>[s.c,s.n]) : k===1 ? [[ICE.c,ICE.n],[WARMS.c,WARMS.n]] : [[tok("--mark"),"Something happened"]];
+    items.forEach(([c,n]) => {
+      const b = document.createElement("button"); b.className="key"; b.innerHTML=`<i style="background:${c}"></i>${n}`;
+      b.setAttribute("aria-pressed", S.focus===c);
+      if (k<2) b.onclick = () => { S.focus = S.focus===c?null:c; GRIDS.forEach(x=>{x.legend(); x.draw()}) }; else b.disabled = true;
+      el.appendChild(b);
+    });
+  };
+  return g;
+}
+
+function showTip(e, g, i){
+  const d = g.d;
+  if (i<0 && !g.drag){ tip.hidden = true; return }
+  let h;
+  if (g.drag && g.drag[0]!==g.drag[1]){
+    const a = g.drag[0], b = Math.min(g.drag[1], d.real-1), n = b-a+1;
+    h = `<b>${fmt(n)} ${n===1?d.unit1:d.unit}</b><br>from ${d.from(a)} to ${d.to(b)}<span class="h">Let go to keep this stretch.</span>`;
+  } else if (i>=d.real){
+    h = `<b>Not yet</b><span class="h">The future. The Sun has billions of years left.</span>`;
+  } else {
+    const s = d.scene(i);
+    h = `<b>${d.when(i)}</b>${s?"<br>"+s.n:""}${d.moment(i)?"<br>"+d.moment(i):""}<span class="h">Tap to look closer. Drag to pick a stretch.</span>`;
+  }
+  tip.innerHTML = h; tip.hidden = false;
+  const tw = tip.offsetWidth, th = tip.offsetHeight, touch = e.pointerType==="touch";
+  let x = e.clientX + 14, y = touch ? e.clientY - th - 28 : e.clientY + 18;
+  if (x + tw > innerWidth - 8) x = e.clientX - tw - 14;
+  if (y + th > innerHeight - 8) y = e.clientY - th - 14;
+  tip.style.left = Math.max(8,x)+"px"; tip.style.top = Math.max(8,y)+"px";
+}
+
+function select(d,a,b){ S.sel = {d,a,b}; S.view = [[a,b]]; refresh() }
+function openChild(d){
+  const c = DEFS[d.child]; $(c.id).hidden = false; GRIDS[d.child].layout(); GRIDS[d.child].legend(); GRIDS[d.child].draw();
+  $(c.id).scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"center"});
+}
+
+function showInfo(){
+  const info = $("info");
+  if (!S.sel){ info.innerHTML = `<div class="label">Tap a square</div><p class="empty">Each one shows what the Earth was like then. Drag across squares, even from one row onto the next, to pick a stretch.</p>`; return }
+  const {d,a,b} = S.sel;
+  if (a!==b){
+    const n = b-a+1, whole = d.real/n;
+    info.innerHTML = `<div class="label">You picked</div><p class="when">${fmt(n)} ${n===1?d.unit1:d.unit}</p>
+      <p>From ${d.from(a)} to ${d.to(b)}.</p>
+      <p class="pos">${whole>=1.05?"About one part in "+fmt(Math.round(whole))+" of "+d.whole+".":"Nearly all of "+d.whole+"."}</p>`;
+    return;
+  }
+  const s = d.scene(a), m = d.moment(a);
+  let h = `<div class="label">${d===DEFS[2]?"One year":"One square"}</div><p class="when">${d.when(a)}</p>`;
+  if (s) h += `<div class="scene"><i style="background:${s.c}"></i>${s.n}</div><p>${s.t}</p>`;
+  if (m) h += `<p class="moment">${m}</p>`;
+  if (a===d.real-1 && d.opens){ h += `<p>${d===DEFS[0]?"This square is the last million years. Everything people have ever done is in here.":"This square is the last thousand years."}</p><button class="btn" id="openhere">${d.opens}</button>` }
+  info.innerHTML = h;
+  const o = $("openhere"); if (o) o.onclick = () => openChild(d);
+}
+
+// ---------- strips
+function sizeStrip(c){
+  const W = c.parentElement.clientWidth - 0, H = +c.dataset.h, dpr = devicePixelRatio||1;
+  c.width = Math.round(W*dpr); c.height = Math.round(H*dpr); c.style.height = H+"px";
+  const x = c.getContext("2d"); x.setTransform(dpr,0,0,dpr,0,0); x.clearRect(0,0,W,H); return {x,W,H};
+}
+function paint(c, d, a, b){
+  const {x,W,H} = sizeStrip(c), n = b-a+1;
+  for (let k=0;k<n;k++){ const col = d.color(a+k) || tok("--future"); x.fillStyle = col; x.fillRect(Math.floor(k*W/n), 0, Math.ceil(W/n)+1, H) }
+  return {x,W,H,n};
+}
+function showStrips(){
+  const d = S.sel ? S.sel.d : DEFS[0];
+  const v = S.sel ? S.view[S.view.length-1] : [0, d.real-1];
+  const w = paint($("whole"), d, 0, d.real-1);
+  if (S.sel){
+    const x0 = v[0]*w.W/w.n, x1 = (v[1]+1)*w.W/w.n;
+    w.x.fillStyle = tok("--bg"); w.x.globalAlpha=.6; w.x.fillRect(0,0,x0,w.H); w.x.fillRect(x1,0,w.W-x1,w.H); w.x.globalAlpha=1;
+    w.x.strokeStyle = tok("--pick"); w.x.lineWidth=2; w.x.strokeRect(x0+1,1,Math.max(2,x1-x0-2),w.H-2);
+  }
+  $("w0").textContent = d.from(0); $("w1").textContent = d.to(d.real-1);
+  const z = paint($("zoom"), d, v[0], v[1]);
+  if (zdrag){ const xa=Math.min(zdrag[0],zdrag[1]), xb=Math.max(zdrag[0],zdrag[1]); z.x.strokeStyle=tok("--pick"); z.x.lineWidth=2; z.x.strokeRect(xa,1,Math.max(2,xb-xa),z.H-2) }
+  $("z0").textContent = d.from(v[0]); $("z1").textContent = d.to(v[1]);
+  $("span").hidden = !!S.sel && S.view.length>1;
+  $("back").disabled = !(S.view.length>1);
+}
+let zdrag = null;
+const zc = $("zoom");
+zc.addEventListener("pointerdown", e => { if(!S.sel) return; const r=zc.getBoundingClientRect(); zdrag=[e.clientX-r.left,e.clientX-r.left]; zc.setPointerCapture(e.pointerId) });
+zc.addEventListener("pointermove", e => { if(!zdrag) return; const r=zc.getBoundingClientRect(); zdrag[1]=Math.max(0,Math.min(r.width,e.clientX-r.left)); showStrips() });
+zc.addEventListener("pointerup", () => {
+  if (!zdrag) return; const W = zc.getBoundingClientRect().width, v = S.view[S.view.length-1], n = v[1]-v[0]+1;
+  const xa = Math.min(...zdrag), xb = Math.max(...zdrag); zdrag = null;
+  if (xb-xa > 4){
+    const a = v[0] + Math.floor(xa/W*n), b = v[0] + Math.min(n-1, Math.floor(xb/W*n));
+    if (!(a===v[0] && b===v[1])) S.view.push([a,b]);
+  }
+  showStrips();
+});
+$("back").onclick = () => { if (S.view.length>1){ S.view.pop(); showStrips() } };
+
+function refresh(){ GRIDS.forEach(g=>g.draw()); showInfo(); showStrips() }
+
+const GRIDS = DEFS.map((d,k)=>Grid(d,k));
+GRIDS.forEach(g=>{ g.layout(); g.legend() });
+new ResizeObserver(() => { GRIDS.forEach(g=>{ if(!g.sec.hidden){ g.layout(); g.draw() } }); showStrips() }).observe(document.querySelector(".wrap"));
+const redraw = () => { GRIDS.forEach(g=>{ g.legend(); if(!g.sec.hidden) g.draw() }); showStrips() };
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redraw);
+new MutationObserver(redraw).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+addEventListener("scroll", () => { tip.hidden = true }, {passive:true});
+refresh();
+</script>
+
+</body></html>
