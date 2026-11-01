@@ -254,6 +254,8 @@ simulator this time: the prompt asked for the pane at iPad size.
 
 ## Changed
 
+**1 Nov, later — the selection fix** (`2026-11-01b`, `00a98f8b`). Michael, on the live page: dragging across the squares selected them as if they were text, and the highlight hid the colours. Two causes: the glass had no `user-select` rule (the timeline's track had one, copied from the bench), and a press that landed in the came, a block gap or the label row returned before `preventDefault`, so the browser began a text selection that then washed over the canvas. The window row and the plaque slot now carry `user-select: none` (and `-webkit-touch-callout: none`), and every press on the canvas prevents the default first. Checked in the pane: a drag from the came between two blocks out past the right edge of the glass selects nothing and still sets a span; an ordinary drag across squares as before.
+
 New: `cw-deploys/experiments/earth-3d-window.html`. Edited: `cw-deploys/experiments/index.html` (the new item at the
 top; the Earth item's link and meta), `cw-deploys/MANIFEST.md`, `CWVault/00-BOARD.md`. New: this report and
 `CWVault/claude/Earth-3D-Bench-07-Nov01/`. Committed and pushed on Michael's word, `9e2cea4f`, this session's hunks only; the hash recorded in a second commit. Other sessions' uncommitted hunks (the Ideas Ledger, the Pool
