@@ -22,8 +22,9 @@
      between blocks and 5 between rows; handmade-glass shading; a thin gold mark at now; events from
      stories/deep-time-events.json as single squares backlit in a brighter version of their own colour; a label under
      the cursor saying "ago" (and the ordinary decade on the 12,000 window); plaques on rollover (by finger, while it is
-     down), below the glass, ivory with a fine border and a stripe of the era's colour, the era lit and the rest gently
-     dimmed. The timeline below is the Earth bench's own stretching line with its two copper flags, stretch and back,
+     down), below the glass, ivory with a fine border and a stripe of the era's colour, the era lifted a little; the chosen
+     span lit as an event is lit, its events in their own colour, nothing ever greyed (1 Nov, after Michael's first look).
+     The timeline below is the Earth bench's own stretching line with its two copper flags, stretch and back,
      copied from experiments/earth-3d.html (not moved into js/: see the report), drawn past-left so it runs the way the
      window does, with shrink added: the whole line as it stands fits between the flags, new time coming in on both
      sides, now a wall, the window stepping up a scale when the span outgrows it. Dragging across squares sets the line
@@ -157,7 +158,7 @@
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-01b 6138514 · earth-3d-window step 7';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-01c c786dac · earth-3d-window step 7';   // date + short commit hash; bump in the same commit as any change
   console.log('earth-3d-window', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -338,19 +339,19 @@
     // whole wears a frame; a line's empty slot, where a narrow layout wraps the blocks, stays parchment)
     ctx.fillStyle = rgbStr(CAME);
     for (let b = 0; b < w.rows * w.blocks; b++) { const r = rect(b * 100); ctx.fillRect(r.x - FRAME, r.y - FRAME, 10 * L.p + 2 * FRAME, 10 * L.p + 2 * FRAME); }
+    // The light (Michael, 1 Nov, after the first look): every square wears its true colour at rest, nothing is ever
+    // greyed. The chosen span is lit as an event is lit, and inside it the events drop back to their own colour, so
+    // they still show; a span that is the whole of the window lights nothing. The era under the cursor is lifted a
+    // little. (The first build mixed everything outside the span halfway to the parchment, which killed the colours.)
     const span = state.drag ? null : litSpan(), hoverKind = state.hover >= 0 ? w.kind[state.hover] : null;
+    const whole = span && span[0] <= 1e-12 && span[1] >= w.spanMa - 1e-9;
     const dragA = state.drag ? Math.min(state.drag[0], state.drag[1]) : -1, dragB = state.drag ? Math.max(state.drag[0], state.drag[1]) : -1;
     const sheen = L.p >= 7;
     for (let i = 0; i < w.squares; i++) {
       const r = rect(i), k = w.kind[i];
-      let c = k === -1 ? CLEAR : (w.ev[i] ? backlit(w.col[i]) : w.col[i]);
-      if (k !== -1) {
-        let dim = 1;
-        if (state.drag) { if (i < dragA || i > dragB) dim *= 0.5; }
-        else if (span && !(w.olderMa(i) > span[0] + 1e-12 && w.newerMa(i) < span[1] - 1e-12)) dim *= 0.5;
-        if (hoverKind !== null && hoverKind >= 0 && k !== hoverKind) dim *= 0.65;
-        if (dim < 1) c = mix(PARCH, c, dim);
-      }
+      const inside = k !== -1 && (state.drag ? i >= dragA && i <= dragB : !!span && !whole && w.olderMa(i) > span[0] + 1e-12 && w.newerMa(i) < span[1] - 1e-12);
+      let c = k === -1 ? CLEAR : (inside !== !!w.ev[i]) ? backlit(w.col[i]) : w.col[i];
+      if (k !== -1 && !inside && hoverKind !== null && hoverKind >= 0 && k === hoverKind) c = shade(c, 0.05, 0);
       ctx.fillStyle = rgbStr(c); ctx.fillRect(r.x, r.y, r.s - L.gap, r.s - L.gap);
       if (sheen && k !== -1) { ctx.fillStyle = 'rgba(255,255,255,0.16)'; ctx.fillRect(r.x, r.y, r.s - L.gap, 1); }
     }
