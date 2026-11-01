@@ -1,5 +1,5 @@
 ---
-status: Report — the Earth bench, step 7 (Prompt-Build-Earth-Bench-07.md, the window); built 1 Nov 2026 on 46f58e82; checked in the pane on the Mac at 1,024 × 768 and at iPad size (768 × 1,024); not committed, on Michael's "Stop and report. Don't commit"
+status: Report — the Earth bench, step 7 (Prompt-Build-Earth-Bench-07.md, the window); built 1 Nov 2026 on 46f58e82; checked in the pane on the Mac at 1,024 × 768 and at iPad size (768 × 1,024); committed and pushed on Michael's word the same day ("Can you put this on curiouswoods.org/experiments?"), `9e2cea4f`
 role: What was built, where the worknotes and the prompt were read differently and why, the threshold and the warm spells, the events taken, the colour-blindness check, what the pane showed, what a finger cannot do, and what needs Michael's eye
 related: Worknote-Deep-Time-Window-02.md, Prompt-Build-Earth-Bench-07.md, Sketch-Earth-in-Squares-01.html, Window-Mockups-Nov01/, Worknote-Time-Slider.md, Report-Earth-3D-Bench-06e.md, cw-deploys/experiments/earth-3d-window.html, Earth-3D-Bench-07-Nov01/ (the pictures)
 updated: 2026-11-01
@@ -256,6 +256,6 @@ simulator this time: the prompt asked for the pane at iPad size.
 
 New: `cw-deploys/experiments/earth-3d-window.html`. Edited: `cw-deploys/experiments/index.html` (the new item at the
 top; the Earth item's link and meta), `cw-deploys/MANIFEST.md`, `CWVault/00-BOARD.md`. New: this report and
-`CWVault/claude/Earth-3D-Bench-07-Nov01/`. Not committed. Other sessions' uncommitted hunks (the Ideas Ledger, the Pool
+`CWVault/claude/Earth-3D-Bench-07-Nov01/`. Committed and pushed on Michael's word, `9e2cea4f`, this session's hunks only; the hash recorded in a second commit. Other sessions' uncommitted hunks (the Ideas Ledger, the Pool
 Inbox, the Prompt Pool, the 3D shelf report, the deleted prompt and report files, the untracked vault files) stay as they
 are; when this lands, it is this session's hunks only.
