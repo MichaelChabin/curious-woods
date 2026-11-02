@@ -1,5 +1,5 @@
 ---
-status: Report — the Earth bench, step 7, the window, rebuilt 2 Nov 2026 to Prompt-Build-Earth-Bench-07b.md and Worknote-Deep-Time-Window-03.md on f184e34d; checked in the pane on the Mac at 1,024 × 768 and at iPad size (768 × 1,024); NOT committed (the prompt says stop and report). The first build (1 Nov, to 07 and revision 2, pushed as 9e2cea4f with two fixes after Michael's look) is summarised at the end.
+status: Report — the Earth bench, step 7, the window, rebuilt 2 Nov 2026 to Prompt-Build-Earth-Bench-07b.md and Worknote-Deep-Time-Window-03.md on f184e34d; checked in the pane on the Mac at 1,024 × 768 and at iPad size (768 × 1,024); committed and pushed on Michael's word the same day ("Please commit and push it"), `fc6ca96d`, this session's hunks only. The first build (1 Nov, to 07 and revision 2, pushed as 9e2cea4f with two fixes after Michael's look) is summarised at the end.
 role: What was built, where the prompt, the worknotes and Michael's rulings of 1 Nov disagree and which was followed, the threshold and the warm spells, the events taken, the colour-blindness check, what the pane showed, what a finger cannot do, and what needs Michael's eye
 related: Worknote-Deep-Time-Window-03.md, Worknote-Deep-Time-Window-02.md, Prompt-Build-Earth-Bench-07b.md, Sketch-Earth-in-Squares-01.html, Window-Mockups-Nov01/mock-window-dark-03.png, Worknote-Time-Slider.md, cw-deploys/experiments/earth-3d-window.html, Earth-3D-Bench-07-Nov02/ (the pictures), Earth-3D-Bench-07-Nov01/ (the first build's)
 updated: 2026-11-02
@@ -11,7 +11,7 @@ Built on `f184e34d`. One page rewritten, `cw-deploys/experiments/earth-3d-window
 changes (`experiments/index.html` already opens the page, and the Earth item's link already goes through it, since 1 Nov).
 `earth-3d.html`, `js/`, the Time Machine and every story are untouched. Nothing under `CWVault/` was stashed, restored or
 checked out. The pictures are in `Earth-3D-Bench-07-Nov02/`, 27 of them, 1.8 MB, the pane's own screenshots and zooms (a
-1,024 × 768 page drawn at about four fifths). `check-deploys`: no errors. **Not committed.**
+1,024 × 768 page drawn at about four fifths). `check-deploys`: no errors. Committed and pushed on Michael's word, `fc6ca96d`, this session's hunks only; the hash recorded in a second commit.
 
 ## Read first, and where the sources disagree
 
