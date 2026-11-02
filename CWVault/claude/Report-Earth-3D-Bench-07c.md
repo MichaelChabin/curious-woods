@@ -1,5 +1,5 @@
 ---
-status: Report — the Earth bench, step 7c, the mosaic page revised 2 Nov 2026 to Prompt-Revise-Earth-Bench-07c.md and Worknote-Deep-Time-Window-04.md, on a3a5cb37 (the page's last commit fc6ca96d); checked in the pane on the Mac at 1,024 × 768 and at iPad size (768 × 1,024). Built to the prompt's "stop and report", then committed and pushed on Michael's word, 2 Nov ("Please commit and push").
+status: Report — the Earth bench, step 7c, the mosaic page revised 2 Nov 2026 to Prompt-Revise-Earth-Bench-07c.md and Worknote-Deep-Time-Window-04.md, on a3a5cb37 (the page's last commit fc6ca96d), committed as d94dba59; checked in the pane on the Mac at 1,024 × 768 and at iPad size (768 × 1,024). Built to the prompt's "stop and report", then committed and pushed on Michael's word, 2 Nov ("Please commit and push").
 role: What changed on the page, how the pull works and what its numbers are, where the brief was read two ways and which was taken, what the pane showed on the Mac and at iPad size, and what needs Michael's eye
 related: Prompt-Revise-Earth-Bench-07c.md, Worknote-Deep-Time-Window-04.md, Report-Earth-3D-Bench-07.md (the 7b build this revises), cw-deploys/experiments/earth-3d-window.html, Earth-3D-Bench-07c-Nov02/ (the pictures)
 updated: 2026-11-02
