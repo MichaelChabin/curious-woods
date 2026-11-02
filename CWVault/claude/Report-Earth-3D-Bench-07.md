@@ -1,265 +1,267 @@
 ---
-status: Report — the Earth bench, step 7 (Prompt-Build-Earth-Bench-07.md, the window); built 1 Nov 2026 on 46f58e82; checked in the pane on the Mac at 1,024 × 768 and at iPad size (768 × 1,024); committed and pushed on Michael's word the same day ("Can you put this on curiouswoods.org/experiments?"), `9e2cea4f`
-role: What was built, where the worknotes and the prompt were read differently and why, the threshold and the warm spells, the events taken, the colour-blindness check, what the pane showed, what a finger cannot do, and what needs Michael's eye
-related: Worknote-Deep-Time-Window-02.md, Prompt-Build-Earth-Bench-07.md, Sketch-Earth-in-Squares-01.html, Window-Mockups-Nov01/, Worknote-Time-Slider.md, Report-Earth-3D-Bench-06e.md, cw-deploys/experiments/earth-3d-window.html, Earth-3D-Bench-07-Nov01/ (the pictures)
-updated: 2026-11-01
+status: Report — the Earth bench, step 7, the window, rebuilt 2 Nov 2026 to Prompt-Build-Earth-Bench-07b.md and Worknote-Deep-Time-Window-03.md on f184e34d; checked in the pane on the Mac at 1,024 × 768 and at iPad size (768 × 1,024); NOT committed (the prompt says stop and report). The first build (1 Nov, to 07 and revision 2, pushed as 9e2cea4f with two fixes after Michael's look) is summarised at the end.
+role: What was built, where the prompt, the worknotes and Michael's rulings of 1 Nov disagree and which was followed, the threshold and the warm spells, the events taken, the colour-blindness check, what the pane showed, what a finger cannot do, and what needs Michael's eye
+related: Worknote-Deep-Time-Window-03.md, Worknote-Deep-Time-Window-02.md, Prompt-Build-Earth-Bench-07b.md, Sketch-Earth-in-Squares-01.html, Window-Mockups-Nov01/mock-window-dark-03.png, Worknote-Time-Slider.md, cw-deploys/experiments/earth-3d-window.html, Earth-3D-Bench-07-Nov02/ (the pictures), Earth-3D-Bench-07-Nov01/ (the first build's)
+updated: 2026-11-02
 ---
 
-# Report: the Earth bench, step 7 — the window (1 Nov 2026)
+# Report: the Earth bench, step 7 — the window, revision 3 (2 Nov 2026)
 
-Built on `46f58e82`. One new page, `cw-deploys/experiments/earth-3d-window.html`; `experiments/index.html` gains its
-entry and the Earth item's link now points at it (the bench is reached through the window page; *Next* at its foot opens
-`earth-3d.html`). `earth-3d.html` itself, `js/`, the Time Machine and every story are untouched. Nothing under `CWVault/`
-was stashed, restored or checked out. The pictures are in `Earth-3D-Bench-07-Nov01/`, 27 of them, 1.2 MB, the pane's own
-screenshots and zooms (a 1,024 × 768 page drawn at about four fifths).
+Built on `f184e34d`. One page rewritten, `cw-deploys/experiments/earth-3d-window.html`; nothing else under `cw-deploys/`
+changes (`experiments/index.html` already opens the page, and the Earth item's link already goes through it, since 1 Nov).
+`earth-3d.html`, `js/`, the Time Machine and every story are untouched. Nothing under `CWVault/` was stashed, restored or
+checked out. The pictures are in `Earth-3D-Bench-07-Nov02/`, 27 of them, 1.8 MB, the pane's own screenshots and zooms (a
+1,024 × 768 page drawn at about four fifths). `check-deploys`: no errors. **Not committed.**
 
 ## Read first, and where the sources disagree
 
-**Revision 1 of the worknote is not on disk.** The prompt says to read `Worknote-Deep-Time-Window-02.md` "and revision 1
-beside it", and revision 2's frontmatter names it `Worknote-Deep-Time-Window.md`. There is no such file in `CWVault/`, in
-the git history, in `~/Library/Mobile Documents`, `~/Documents` or `~/Downloads`. So "revision 1's colours and gradient"
-and "revision 1's words" for the twelve plaques could not be taken from it. They are taken from what revision 1 left
-behind: the sketch `Sketch-Earth-in-Squares-01.html` (its fifteen scenes, "what she would have seen", each with a colour
-and a plaque text) and the Ideas Ledger's entry of 1 Nov. Fifteen became twelve by merging the three thinnest joins:
-*Dust around a new Sun* (60 squares) into *Molten*; *The first big freeze* into *Rust* (one plaque, both sentences);
-*Ice ages* (2.6 squares) into *Mammals and grass*, now *Mammals, grass and ice*, keeping its last sentence ("Everyone who
-has ever lived is in the last square"). The "gradient" is read as a gentle run of lightness along each era, darker at its
-old end, with handmade shading over it. When revision 1 turns up, the table `ERAS` in the page is twelve lines to replace.
-
-**Where the worknotes and the prompt differ, the prompt was followed**, as it asked, except on one count where the prompt
-is at odds with itself: the 12,000 window (below).
-
-**The timeline's direction.** The bench's line runs today-left, the Earth's birth at the right. The window runs past-left.
-The prompt says "now is a wall: what would run past today comes in on the left", which only makes sense with now on the
-right, and the mockup draws the line past-left. So the bench's code is copied and drawn past-left: one function (`xOf`)
-reversed, the flags' roles swapped (the left flag is the older end), the labels' rule mirrored. `earth-3d.html` is not
-touched.
+- **The prompt says 07 "was never run". It was.** The first build went up on 1 Nov (`9e2cea4f`, on Michael's "Can you put
+  this on curiouswoods.org/experiments?") and Michael looked at it live, which gave two rulings the same evening: a drag must
+  never select the page as text (`00a98f8b`), and nothing on the glass is ever greyed — the chosen span is lit as an event
+  is lit, its events back in their own colour (`f184e34d`). Both are kept in this rebuild. The chat that wrote 07b and
+  revision 3 had not seen the board's 1 Nov entry.
+- **"The rest of the window dims gently" (07b, revision 3's period boxes) against "nothing is ever greyed … the era under
+  the cursor is lifted a little instead of the rest being dimmed" (Michael, 1 Nov, on the live page).** Built as the prompt
+  says, gently: with *Periods* on, the period under the cursor is lifted and the rest mixes 12 % toward the parchment
+  (`LOOK.dimRest: 0.12`); at rest nothing dims and the span is lit as on 1 Nov. If the dim is not wanted, `dimRest: 0` is the
+  one line.
+- **Revision 2 against revision 3:** four windows against three, the scales beside the glass against in the column, the
+  years on the left against the right, clear future glass against none, plaques against boxes. Revision 3 was followed on
+  every count, as the prompt says.
+- **Revision 1 is still not on disk** (not in `CWVault/`, the git history, iCloud, Documents or Downloads), so "revision 1's
+  twelve colours" cannot be read from it. The first build took the sketch's colours. This build takes the colours of the
+  mockup the prompt points at, `mock-window-dark-03.png`, sampled from the picture block by block (the mockup was made in
+  the same chats as revisions 1 and 2, so its colours are the likeliest to be revision 1's); they are brighter than the
+  sketch's. Thirteen lines in `PERIODS` to change if revision 1 turns up.
+- **The last million's boxes:** 07 gave the window the periods *Hippos in London*, *Ice sheets* and *After the ice* from
+  130,000 years; 07b gives it two boxes, *Ice age* and *Warm spell*, so the periods are gone from it.
+- **"The text the bench shows goes below the timeline."** Read as the bench's words under its line (what one pixel is worth;
+  the ends), not the bench's paragraph about the globe, which has no place here. The ends are now said by the flags
+  themselves, so under the line only *one pixel: …* remains, centred.
 
 ## What was built
 
-**The page.** The page standard (doctype, charset, viewport, the Time Machine's icon as the bench's, `CW_VERSION
-2026-11-01 46f58e8 · earth-3d-window step 7`); `check-deploys` no errors. It loads `cw-style.js`, `cw-time.js` and
-`cw-panel.js`, no 3D. The left column is Glass Geometry's convention: *How this works* opens cw-panel.js's box with
-placeholder words, marked as such in grey at the top; under a rule, *for the bench*, the A/B choice for the last million
-and a readout of what loaded. The bulleted words *Window* and *Timeline*, in normal type, each bring their tool up or
-take it down (both are up at the start; the word reads dark while its tool is up). No italic commands in the column:
-the four scales stand to the left of the glass, *stretch*, *shrink* and *back* to the right of the line, *Next* at the
-bottom right in italics.
+**The page.** The page standard; `CW_VERSION 2026-11-02 f184e34 · earth-3d-window step 7b`. It loads `cw-style.js`,
+`cw-time.js` and `cw-panel.js`, no 3D. **Every size, colour, line and word is in three tables at the top of the script**
+— `LOOK` (the came, the lines, the gaps, the gold, the gutter, the shading, the lift and the dim, the box, the glass
+colours, the threshold, the end margin, the glide), `WORDS` (the three commands, the three explanations, *Periods* / *Hide
+periods*, *Cities* / *Hide cities*, *now*) and `PERIODS` (thirteen lines: span forward in million years, colour, texts) — so
+a change is one line. `ICE` and `WARM` sit under them.
 
-**The scale in use.** Glass Geometry marks no command in use (its commands rename, *Show Glass Only* / *Show
-Construction*; its items open boxes). The Earth bench marks a pressed word in ink with a copper underline. The mockup's
-copper word stands: the scale in use is in copper, no underline.
+**The left column**, the house convention: *How this works* at the top (cw-panel.js's box, placeholder words marked as
+such in grey, then under a rule *for the bench*: A / B for the last million, *year inside* / *a margin* for a flag at the
+end of the line, and a readout of what loaded); then two bulleted words in normal type, **Select years** with *4.6 billion*,
+*Last million*, *Last 12,000* under it and **Information** with *Periods* / *Hide periods* and *Cities* / *Hide cities*.
+The two bulleted words are headings and do nothing when pressed: the convention says bulleted words open tools, and
+these two open nothing, which is the nearest the brief's list comes to the convention; if they should fold their commands
+away, say so. *Cities* renames and does nothing else, as the prompt says. **The scale in use is in copper:** Glass Geometry
+marks no command in use (its commands rename; its items open boxes), so the mockup's copper stands, no underline.
 
-**The four windows**, one shown at a time, each 100 squares a block in ten columns of ten, time down each column and
-then right, past at the top left:
+**The three windows**, one at a time, centred over the timeline (the glass and the track share one column, 676 px at
+1,024 wide, the words *stretch*, *shrink*, *back* in the column to the right of both), one line of explanation above, in
+the prompt's words:
 
-| command | a square | a block | squares | glass | plaques |
+| command | a square | a block | squares | glass | boxes |
 |---|---|---|---|---|---|
-| *4.6 billion years* | 1 million years | 100 million | 5,000 in five rows of 1,000; 4,600 past, the rest of the fifth row clear | the twelve eras | the twelve |
-| *The last million years* | 1,000 years | 100,000 | 1,000 | ice age / warm spell, A or B | Ice age, Warm spell; from 130,000 years Hippos in London, Ice sheets, After the ice |
-| *The last 100,000 years* | 100 years | 10,000 | 1,000 | graded like B | Ice sheets, After the ice |
-| *The last 12,000 years* | 10 years | 1,000 | 1,300 in thirteen blocks (see below) | plain glass, each square its own shade | none |
+| *4.6 billion* | 1 million years | 100 million | 4,600: four rows of 1,000 and a fifth of 600 | the thirteen periods | the thirteen |
+| *Last million* | 1,000 years | 100,000 | 1,000 | ice age / warm spell, A or B | Ice age, Warm spell |
+| *Last 12,000* | 10 years | 1,000 | 1,203: twelve blocks to the year 2000, a thirteenth of three (the 2000s, 2010s, 2020s), from the date | plain glass | none |
 
-**The 12,000 window's thirteenth block.** The prompt says 1,200 squares, twelve blocks, *and* year 0 after the ice at the
-left edge *and* now at 12,026 *and* a square ten years. Twelve blocks of ten-year squares from year 0 reach the year
-12,000 after the ice, which is 2000 CE; now is 26 years, 2.6 squares, further on. Three ways out were weighed: squares
-of 10.02 years (the decades drift by 2.6 squares across the window, so *the 1760s* would not be the 1760s); a left edge
-at 12,000 years ago (then the label *year 0 after the ice* is 26 years off the Time Machine's own count); or the first
-window's own device, a last block that runs on into clear future glass. The last was built: a thirteenth block whose
-first 2.6 squares are past (the gold rim on the square that holds now, 2020–2030), the rest clear. Every square is a true
-decade, the labels are true, and the window is twelve blocks and a stub. Easy to change if Michael prefers another.
+Past at the top left, time down each column of ten and then right. No squares for time that hasn't happened: the fifth
+row stops at six blocks, the thirteenth block is three squares in a sliver of came that will gain a square each decade
+(`DECADES_BEGUN`, worked out from `CW.THIS_YEAR`). The square that holds now (the last million years; the last 1,000
+years; the 2020s) is filled gold, `#e2b33a`.
 
-**The glass.** The silver came (`#b9c0c4`) behind every block, 2 pt between blocks, 5 between rows, 4 between the lines
-of a row when a narrow layout wraps the blocks, a frame round the whole; a hairline between squares (1 px, 0.6 under 6
-px squares); handmade shading by a hash (lightness ± 3–4 %, saturation ± 3 %), a one-pixel sheen along each square's
-top edge when squares are 7 px or more. Clear future glass `#e6e8e4`. The square that holds now wears a thin gold rim
-(`#c9a227`, gold as the design says, not the site's copper). On rollover the era (or the ice run, or the period) stays
-lit and the rest is dimmed by mixing 35 % toward the parchment; squares outside the line's span are dimmed 50 %.
+**The look.** Near-black lines (`#141416`) between and round the small squares, 1 px (0.6 under squares of fewer than 6
+px); the silver came `#949ca0` (the mockup's, darker than the first build's `#b9c0c4`) between blocks, 4 px, and as a
+3 px frame round each row; between rows 10 px of parchment (the sketch's gap was 15; `rowGapCame: true` would make it
+came); handmade shading by a hash (lightness ± 3.5 %, saturation ± 3 %) over a gentle run of lightness along each period,
+darker at its old end. The mockup's look, close.
 
-**The last million, two ways** (bench only; *How this works*, or `?glass=B`). A: two colours, ice age `#93adb9` and
-warm spell `#7fa86a` (the sketch's). B: graded, the ice from `#7a9cad` at the threshold to `#e6eef1` at −130 m, the
-paler the lower the sea, warm spells in the warm colour. The last 100,000 is graded like B. Each square's sea is the mean
-of five readings of the curve across it (`CW.curveAt`).
+**The years on the right**, 12 px grey, as revision 3 says. The 4.6 billion window: *1 billion* … *4 billion* at the
+bottom right of each row, in the gutter, and *4.6 billion* just after the last square of the short fifth row. The other
+two mark their block edges the same way, under each block's right edge, and put *now* after the last square: the 12,000
+window counts years after the ice, *1,000* … *12,000*; the last million counts years ago, *900,000* … *100,000* — read
+against *now* at its right. Counting forward there (*100,000* … *1 million* at now) was tried in the head and dropped as
+the odder reading; one line to change (`blockLabel`). The label under the cursor says how long ago, and names the
+square's events: *3,292 million years ago*; *410,000 years ago*; on the 12,000 window the ordinary decade too — *the 1760s ·
+260 years ago · Tupaia's map*, *the 1810s · 210 years ago · Tambora · Frankenstein*, *about 10,000 BCE · 12,020 years ago ·
+Ice lets go*, *the 2020s · now*.
 
-**The threshold.** The prompt asks for the line between the two "so the warm spells fall where the interglacials do (the
-sea within a few metres of today's, or higher)". In the repo's curve (Spratt and Lisiecki's stack to 798,000 years,
-Bintanja and van de Wal beyond) the older interglacials peak ten to twenty metres below today, so the literal rule picks
-too few. Warm spells per threshold, over 1,000-year squares:
+**The glass of the 4.6 billion window:** revision 3's thirteen periods, by span, with the mockup's colours — 1 `#b75027`,
+2 `#1e3b47`, 3 `#c39444`, 4 `#8daec1`, 5 `#8f3321`, 6 `#2a5c8c`, 7 `#c2dae5`, 8 `#21848c`, 9 `#163d87`, 10 `#2b763f`, 11
+`#a6c24a`, 12 `#cb7d22`, and 13, the last three squares, a pale ice `#dbe6ec` (mine; the mockup has none). The
+boundaries are revision 3's, which it says still want checking against Periods-Deep.
 
-| threshold | warm spells | which |
-|---|---|---|
-| −5 m | 6 | 410–394k, 329–321k, 213–211k, 124–119k, 7–0k |
-| −10 m | 8 | adds 953–946k, 776–773k, 575–570k |
-| −15 m | 13 | adds 698–685k, 616–613k, 494–490k, 201–197k; still no 845–860k |
-| **−20 m** | **16** | every one of the eleven interglacials (MIS 1, 5e, 7, 9, 11, 13, 15, 17, 19, 21, 25), some as two or three peaks, plus MIS 5c at 101–98k |
-| −30 m | 18 | adds MIS 5a and more substages |
+**The last million, two ways** (bench only; *How this works*, or `?glass=B`). A: two colours, ice age `#93adb9` and warm
+spell `#7fa86a`. B: graded, the ice from `#7a9cad` at the threshold to `#e6eef1` at −130 m, the paler the lower the sea.
+Each square's sea is the mean of five readings of `stories/curves/sea-level-ice-ages.json` across it (`CW.curveAt`). **The
+threshold is −20 m** (`LOOK.threshold`; `?thr=` tries another), as on 1 Nov: in the repo's curve (Spratt and Lisiecki's
+stack to 798,000 years, Bintanja and van de Wal beyond) the older interglacials peak ten to twenty metres below today, so
+"within a few metres of today" picks six of the eleven; −20 m shows all eleven (MIS 1, 5e, 7, 9, 11, 13, 15, 17, 19, 21, 25),
+some as two or three peaks. The warm spells it gives, in thousand-year squares, years ago: 956–940, 859–845, 782–770,
+700–684, 616–606, 579–566, 499–485, 414–392, 388–385, 331–312, 239–235, 217–204, 203–196, 126–117, 101–98 (MIS 5c), 10–0.
+Sixteen runs; "one warm spell per block" holds loosely, as revision 2 said it would.
 
-**−20 m is the threshold built** (`WARM_THRESHOLD_M`; `?thr=` tries another). The warm spells it gives, in the window:
-956–940k, 859–845k, 782–770k, 700–684k, 616–606k, 579–566k, 499–485k, 414–392k, 388–385k, 331–312k, 239–235k,
-217–204k, 203–196k, then the periods: Hippos in London 130–115k (warm), Ice sheets 115–11.7k (ice, with the sea's own
-colour in B — MIS 5c at 101–98k shows warm inside it, honestly), After the ice 12–0k (warm). Michael and Eileen's "one
-warm spell per block" holds loosely, as revision 2 said it would: MIS 7 and 15 come as two or three short peaks.
+**The last 12,000: plain glass**, each square its own shade of a pale stone, `#c4bfae`. The first build's tan (`#c8b48c`)
+was changed because the gold square at now was weak against it (14 on the colour-difference scale below, 9.8 for a
+tritanope); against the stone it is 21. What colours the window when no story paints it is still open.
 
-**Plaques.** Ice age: "Sheets of ice cover much of the north, and the sea is low enough to walk to some islands." Warm
-spell: "Warm, like now. Forests grow where the ice was." (placeholders, as the prompt gave them). The periods' plaques are
-the period's label and the first sentence of its summary from `stories/deep-time-periods.json`: *Hippos in London — A
-warm spell, about as warm as now.* *Ice sheets — The cold came back.* *After the ice — The great ice sheets melted and did
-not come back.* A plaque is ivory (`#fbf7ea`), a fine border, a 5 px stripe of the era's colour down its left, below the
-glass in a slot that keeps its height so the page does not jump; on rollover by mouse, by finger while it is down.
+**Events.** From `stories/deep-time-events.json` alone, the one store since 9 Oct (its 111 after-the-ice records are the
+same records as `timeline-events.json`, by id; the September `after-the-ice-events.json` is the holding file they replaced):
+185 events, 74 deep (by `ma`) and 111 after the ice (by `year`, through `CW.yearToMa`), each in the square its date lies in.
+57 squares carry events on the 4.6 billion window (all the after-the-ice ones in the last square), 26 on the last million,
+88 on the last 12,000 (some carry two or more: *Tambora · Frankenstein* in the 1810s). An event square is backlit in a
+brighter version of its own colour (lightness +22 %, saturation +18 %); a pale square (the ice, the palest B squares) has
+no brighter, so it goes three quarters of the way to gold.
 
-**Events.** Taken from `stories/deep-time-events.json` alone: it is the one store since 9 Oct (its 111 after-the-ice
-records are the same records as `stories/timeline-events.json`, by id, so that file adds nothing; the September
-`after-the-ice-events.json` is the holding file those records replaced, and its ids live on as the store's `aliases`).
-The bench itself loads no event file. 185 events, 74 deep (by `ma`) and 111 after the ice (by `year`, through
-`CW.yearToMa`); each falls in the square its date lies in, inside each window's span: 57 squares carry events on the 4.6
-billion window (all the after-the-ice ones in the last square), 26 on the last million, 60 on the last 100,000, 88 on the
-last 12,000 (some squares carry two or more: *Tambora · Frankenstein* in the 1810s). An event square is backlit in a
-brighter version of its own colour (lightness +22 %, saturation +18 %); a pale square (the palest ice, the clear-ish
-tans) has no brighter, so it goes three quarters of the way to gold. The label under the cursor names the square's events.
+**Periods.** With *Periods* on (the first state), rolling over a period lifts it and dims the rest gently, and a white box
+appears below it: a small grey first line (the box's name — *Ice age*, *Warm spell* — or the period's span, *2,450 to
+2,200 million years ago*, *3 million years ago to now*), then its words in ink; a 1 px pointer line, 14 px long, runs up
+from the box to the bottom edge of the period. One box at a time, never wider than the window's panes (420 px at most),
+centred on the period's squares in the row and line under the cursor, slid inward when it would stick out (period 1 at the
+left edge, the warm spell at 125,000 at the right edge: `box-period-1-at-the-left-edge.jpg`,
+`last-million-A-box-warm-spell-inside-the-panes.png`). The box floats: for a period in a lower row it lies over the rows
+beneath; for one in the last row, over the timeline (`box-period-13-ice-sheets.jpg`), which it hides until the cursor
+leaves. On the iPad, by finger, while it is down (`ipad-finger-down-box-while-down.jpg`). With *Periods* off the lifting
+and the dim stay and no box appears (`periods-off-lighting-stays.jpg`). **The words** are revision 3's table for the
+thirteen, with its (C) marks removed, and the two placeholders for the last million. Each period's `t` is a list; when it
+holds several, they come shuffled without repeats until all have been seen, and the first of a new shuffle is never the
+last one shown (`nextText`). Today every list has one.
 
-**Labels.** The 4.6 billion window: *0*, *1 billion* … *4 billion* on the left of each row only, counting forward from the
-window's start (4,600 million years ago). The others: under the block edges — *1 million, 900,000 … 100,000, now*;
-*100,000 … 10,000, now*; *year 0 after the ice, 1,000 … 11,000, now* (12,000 is dropped where it would collide with
-*now*). The label under the cursor says *ago* — *3,292 million years ago*; *410,000 years ago*; *5,000 years ago · Caral ·
-Great Pyramid · …* — and on the 12,000 window the ordinary decade as well: *the 1760s · 260 years ago · Tupaia's map*;
-*about 5,000 BCE · 7,020 years ago · Green Sahara · Copper*; *the 2020s · now*. A square of the future says *not yet*.
+**The timeline** is the bench's age row (6c–6e), copied as on 1 Nov, drawn past-left, no thumb (not moved into `js/`:
+below). New since 1 Nov, from revision 3:
 
-**The timeline.** The bench's age row (6c, 6d), copied: the track, the two copper flags with their years and the gap's
-length (the mirrored rule), the ends under the line and what one pixel is worth, the 380 ms glide, `finish()` for the
-pane. Not copied: the thumb (the age) and a tap on the line — this page has no Earth to set an age on; the words
-*stretch*, *shrink*, *back* stand one under the other to the right. **shrink:** with the flags at `fa`, `fb` on a line
-`[a, b]`, the new line is `a − (fa − a)·k` to `b + (b − fb)·k` with `k = (b − a)/(fb − fa)`, the exact inverse of the
-stretch; if it would run past today the near end stays at today and the whole length comes in on the older side; the
-Earth's birth is the other wall. **The step up:** after a shrink, a stretch or a back, if the line's older end is beyond
-the window in use, the window steps up to the smallest scale that holds it. (The prompt names the shrink only; a stretch
-by the flags on the whole line while the 12,000 window is up gave a span the window could not show, so it steps up
-too.) The window never steps down by itself.
+- **The flags always show their years**, the right flag's to its right, the left flag's to its left, the line's own ends
+  exact (*4,567 million years ago*, *12,026 years ago*, *today*; a moved flag's year to the pixel as on the bench). At an
+  end of the line with no room outside, **two ways, a bench switch** (`?ends=margin`, or the words in *How this works*):
+  *year inside* (the first state; the bench's own rule — the year tucked inside the flag: `page-1024x768-opening.jpg`) and
+  *a margin* (136 px of bare track at each end of the line, the years always outside: `ends-margin-at-rest.jpg`,
+  `ends-margin-flags-in.png`). The margin costs the line 272 px of its 676 — one pixel 5.7 million years instead of 3.4.
+- **A narrow copper line between the flags**, 3 px, with the span written on it in black on a parchment pad (*4,567
+  million years*; *73 years*): `flag-dragged-years-outside-span-on-copper.jpg`. When the span is too narrow for the words
+  they go above the flags, as the bench's gap label did.
+- *stretch*, *shrink* and *back* to the right, one under the other. **shrink** (the exact inverse of the stretch: with the
+  flags at `fa`, `fb` on `[a, b]`, the new line is `a − (fa − a)·k` to `b + (b − fb)·k`, `k = (b − a)/(fb − fa)`); now is a
+  wall and so is the Earth's birth; when the span outgrows the window in use, the window steps up to the smallest scale
+  that holds it (on a stretch or a back too). **One change to the stretch:** the bench's floor of a year a pixel used to
+  *lengthen* a line already finer than that (a 100-year span from the window, flags 73 years apart: *stretch* made a
+  1,352-year line); now a line already under the floor stretches on, and *one pixel: under a year* says so.
+- Dragging across squares sets the line to those squares (a tap, the one square); the lit squares are always the flags'
+  span, live. Pressing a scale keeps the line's span if the window reaches it, else sets the line to the window's whole.
 
-**Together.** Dragging across squares sets the line to those squares with the glide, as a stretch, so *back* returns; a
-tap is the one square. A span from the window keeps its size exactly — a decade on a 676 px line is finer than a year a
-pixel, and the *one pixel* line then says *under a year*; the flags' stretch keeps the bench's floor of a year a pixel.
-The lit squares are always the flags' span, so a flag dragged lights and unlights squares as it goes, and a glide shows
-the squares sliding to the new span. Pressing a scale keeps the line's span if the window reaches it (the big window
-then shows one lit square for the last million), else sets the line to the window's whole.
-
-**Moving code into `js/`.** Using the bench's timeline on a second page means two copies of about 120 lines (`STR`,
-`xOf`/`maOf`, `pixelStep`, `roundedWord`, `flagWord`, `gapWord`, `placeLabels`, `yearsWord`, `spanEndWord`,
-`renderStretch`, `glideStretch`, `finishStretch`, `doStretch`, `stretchBack`, `setFlag`, the pointer handlers) and 14
-lines of CSS. What would move: those, as `js/cw-stretch.js` — `CW.stretchLine(trackEl, { from, to, direction, words,
-onChange })` returning `{ state, stretch, shrink, back, goTo, finish, render }` — with the direction, the thumb and
-*shrink* as options, so the bench keeps today-left and its thumb and this page takes past-left and shrink. Why: one rule
-for the labels and the pixel step, one glide, and shrink and the step-up reaching the globe when the window joins it.
-Stopped there, as the prompt says: the copy is in the page and `earth-3d.html` behaves as it did.
+**Moving code into `js/`.** Two pages now carry about 130 lines of the same stretching line (`STR`, `xOf`/`maOf`,
+`pixelStep`, `roundedWord`, `flagWord`, `gapWord`, `placeLabels`, `yearsWord`, `spanEndWord`, `renderStretch`,
+`glideStretch`, `finishStretch`, `doStretch`, `stretchBack`, `setFlag`, the pointer handlers) and 16 lines of CSS. What
+would move: those, as `js/cw-stretch.js` — `CW.stretchLine(trackEl, { from, to, direction, thumb, shrink, ends, words,
+onChange })` returning `{ state, stretch, shrink, back, goTo, finish, render }` — so the bench keeps today-left, its thumb
+and its labels-only-when-moved, and this page takes past-left, always-on years, the copper span and shrink. Why: one rule
+for the pixel step and the words, one glide, and shrink, the span line and the step-up reaching the globe when the window
+joins it. Stopped there, as the prompt says.
 
 ## The colour-blindness check
 
-Every neighbouring pair on every window, and each era against its own backlit event square, through Machado,
-Oliveira and Fernandes's 2009 matrices at full severity (protanopia, deuteranopia, tritanopia), the difference as
-CIEDE2000 after simulation; under 10 counts as a fail, 10 to 15 as weak. The script is in the session's scratchpad; the
-numbers:
+Every neighbouring pair on every window, the gold square against what it sits in, and each colour against its own
+backlit event square, through Machado, Oliveira and Fernandes's 2009 matrices at full severity, the difference as
+CIEDE2000 after simulation; with the near-black lines in place every colour is at least 13 from the line under every
+simulation, so the lines separate the squares whatever the pair does. Under 10 fails, 10 to 15 is weak. The script is in
+the session's scratchpad. Every pair not listed is 16 or more under every simulation.
 
-| window | pair | normal | protan | deutan | tritan |
-|---|---|---|---|---|---|
-| 4.6 billion | Orange sky / Rust | 22.9 | 12.1 | **8.0** | 16.6 |
-| 4.6 billion | Soft creatures / Eyes and shells | 12.2 | 10.3 | **9.7** | **7.6** |
-| 4.6 billion | Eyes and shells / Green ashore | 43.7 | 43.0 | 41.4 | 14.9 (weak) |
-| 4.6 billion | Dinosaurs / Mammals | 18.0 | **2.6** | **6.2** | 36.0 |
-| last million A | Ice age / Warm spell | 27.1 | 27.1 | 26.7 | **6.4** |
-| last million B, 100,000 | ice at the threshold / Warm spell | 29.4 | 29.5 | 29.3 | **6.1** |
-| events | Snowball, Mammals, Ice age, Warm spell, plain glass against their own event square | 13.5–14.6 | | | (weak) |
+| pair | normal | protan | deutan | tritan |
+|---|---|---|---|---|
+| 11 dinosaurs `#a6c24a` / 12 mammals `#cb7d22` | 33.9 | 16.0 | **9.8** | 36.3 |
+| 9 eyes and shells / 10 to land | 46.3 | 45.9 | 43.8 | 16.4 |
+| A: ice age / warm spell | 27.1 | 27.1 | 26.7 | **6.4** |
+| B: ice at the threshold / warm spell | 29.4 | 29.5 | 29.3 | **6.1** |
+| gold now / plain glass (the stone) | 21.2 | 21.7 | 20.6 | 17.7 |
+| gold now / warm spell | 26.6 | 12.4 (weak) | 16.1 | 40.1 |
+| a colour against its own event square: 3, 4, 11, 12, ice age, warm spell, plain | 11–15 (weak) | | | |
 
-The other eight era pairs, era against clear glass, plain against clear, and the palest ice against the warm colour
-pass (19 to 53). **Fails:** three era pairs for red-green blindness — *Dinosaurs / Mammals* (`#73a03a` / `#b8a043`) is
-the worst, near-identical to a protanope — and ice against warm for tritanopia (rare, about one in 10,000). The palest
-ice against its own event square failed at 5 before the gold rule and passes now. These are the sketch's colours,
-standing for revision 1's, so they are left as they are for Michael's ruling; a second channel (texture by era, as the
-ledger suggested) or a shift of the Mammals' tan toward ochre would clear the worst.
+**Fails:** *Dinosaurs / Mammals* for a deuteranope, by a hair (9.8; the first build's pair failed at 2.6 and 6.2), and ice
+against warm for a tritanope (rare, about one in 10,000), as on 1 Nov. The mockup's colours stand for Michael's ruling; a
+mammals' orange one step redder (`#c8661a`) would clear the first (14). The thirteen periods otherwise pass well: the
+mockup's palette is a better one than the sketch's for this.
 
 ## Checked in the pane on the Mac, 1,024 × 768
 
-The page at the pane's own size, `devicePixelRatio` 2, the glass 642 px wide (the left column 160, the scales 150), the
-track 676 px. Every item of the prompt's list:
+The glass 676 px wide with a 78 px gutter for the years; squares 5.56 px on the 4.6 billion window, 6.2 on the million,
+4.46 on the 12,000. Every item of the prompt's list:
 
-- **Each window** (`page-1024x768-opening.jpg`, `big-window-close.png`, `page-last-million-A.jpg`,
-  `last-million-A-two-colours.png`, `last-million-B-graded.png`, `page-last-100000.jpg`, `last-100000-graded.png`,
-  `last-12000-the-1760s.png`): squares of 5.6 px on the 4.6 billion window (its 60 px gutter for the row labels), 6.2 on
-  the million and the 100,000, 4.7 on the 12,000; the scale in use in copper; the labels as above.
-- **Labels and plaques:** rollover on *An orange sky* at 3,292 million years (`rollover-an-orange-sky.jpg`: the label
-  beside the cursor, the plaque below, the era lit and the rest dimmed); on the last million a warm spell at 410,000
-  (`plaque-warm-spell-410000.png`), an ice age at 500,000 (`plaque-ice-age-500000.png`), Hippos in London at 120,000
-  (`plaque-hippos-in-london.png`), After the ice at 5,000 with its six events; on the 100,000 Ice sheets at 70,000 and
-  After the ice at 5,000 (`plaque-after-the-ice-100000.png`); on the 12,000 the 1760s (Tupaia's map) and the 1810s
-  (Tambora, Frankenstein).
-- **A and B** by the words in *How this works* (`how-this-works-box.jpg`) and by `?glass=B`: the same warm spells, the
-  ice graded in B, gold events on the palest squares.
-- **A drag on each window:** across row 2 of the big window (`drag-across-squares-row-2.jpg`): the line glided to 3,476
-  to 3,245 million years ago, one pixel 170,000 years, the 232 squares lit and the rest dimmed, *back* present; by
-  finger-style pointer events on the last million from 410,000 to 360,000 (`finger-drag-last-million.png`: the plaque up
-  while down, *Warm spell* then *Ice age* as the finger crossed, the label above the finger, both gone on release, the
-  line at 410,000 to 359,000); on the 12,000, eight squares from the 1760s (266 to 186 years ago, *one pixel: under a
-  year*).
-- **The flags** (`flags-dragged-in-their-years.jpg`, `flags-on-the-last-12000.jpg`): the left flag dragged in shows its
-  year to its left, the right flag's to its right, the gap's length between; the lit squares followed each flag as it
-  moved; *stretch* and *shrink* appeared.
-- **stretch** (`after-stretch.jpg`): from the whole, flags at 3,425 and 920 million years, the line ran between them,
-  one pixel 1.9 million years, the flags back at the ends, the words gone, *back* present; the window stepped up from the
-  12,000 to the 4.6 billion.
-- **shrink, the wall and the step up** (`after-shrink-the-wall-and-the-step-up.jpg`): the line at the last 12,026 years
-  (the 12,000 window), flags at 7,220 and 3,010 years ago: the whole fitted between them makes 34,300 years, which would
-  have run 8,600 years past today; today stayed at the right end, the line became today to 34,300 years ago, one pixel 25
-  years, and the window stepped up to the last 100,000 with the last 34,300 years lit. A shrink with no wall, on the big
-  window, grew the line on both sides.
-- **back** (`after-back.jpg`): the line returned to the last 12,026 years with the glide, the lit squares with it; the
-  window stayed at the 100,000 (it does not step down); a second *back* returned to the whole and stepped up to the 4.6
-  billion.
-- **The tools' words:** *Timeline* took the line down and brought it back (`timeline-taken-down.jpg`); *Window* the glass.
-- No console errors; `check-deploys` no errors (its warning lists the new page as untracked, as it is until the commit,
-  with another session's palette pictures).
+- **Each window, its explanation, its years on the right:** `page-1024x768-opening.jpg`, `big-window-close.png` (the
+  thirteen periods, *1 billion* … *4.6 billion*), `last-million-A-box-ice-age-500000.png` (*900,000* … *100,000*, *now*),
+  `last-12000-the-1760s.png` (*1,000* … *12,000*, *now* after the thirteenth block's three squares; the label *the 1760s ·
+  260 years ago · Tupaia's map*).
+- **The thirteenth block:** three squares, the last gold, in a sliver of came; *now* after it. The readout in *How this
+  works* says *the thirteenth block of the 12,000 window holds 3 decades*.
+- **Periods on and off, the box inside the window:** `box-period-1-at-the-left-edge.jpg` (the box slid inward to the
+  glass's left edge, the pointer line up to the period, the period lifted and the rest dimmed), `box-period-4-oxygen.jpg`,
+  `box-period-13-ice-sheets.jpg` (the last row: the box over the timeline), `periods-off-lighting-stays.jpg`; on the
+  million, `last-million-A-box-ice-age-500000.png`, `last-million-A-box-warm-spell-inside-the-panes.png` (the right edge).
+- **A and B:** `last-million-B-graded.png` (the ice graded, the warm spells the same squares); the words in *How this
+  works* (`how-this-works-box.jpg`) and `?glass=B`.
+- **A drag on each window:** `drag-big-window-row-2-lit.jpg` (row 2 lit as an event is lit, its events dark inside, the
+  line glided to 3,575–2,734 million years ago, *841 million years* on the copper, one pixel 620,000 years);
+  `drag-last-million-697000-to-436000.png`; `drag-last-12000-1760s-to-1840s.png` (266 to 176 years ago, *90 years*, *one
+  pixel: under a year*).
+- **The flags' years at the ends of the line:** inside (`page-1024x768-opening.jpg`) and in a margin
+  (`ends-margin-at-rest.jpg`); both ways with the flags dragged in (`flag-dragged-years-outside-span-on-copper.jpg`,
+  `ends-margin-flags-in.png`).
+- **stretch:** `after-stretch-last-12000-73-years.png` (flags at 239 and 166 years ago on a 100-year line: the line is now
+  73 years, no longer lengthened by the floor), `after-stretch-big-window-2505-million.jpg` (flags at 3,425 and 920 million
+  years: the line between them, 2,505 million years lit on the glass).
+- **shrink, the wall and the step up:** `flags-before-shrink-7220-3010.png`, `after-shrink-the-wall-and-the-step-up.jpg`
+  (the 12,026-year line, flags at 7,220 and 3,010: the whole fitted between them makes 34,353 years, which would have run
+  8,600 years past today; today stayed at the right end, the line became today to 34,353 years ago, one pixel 25 years,
+  and the window stepped up to the last million with the last 34 squares lit).
+- **back:** `after-back.jpg` (the line back to 12,026 years with the glide, the lit squares with it; the window stays at
+  the million — it never steps down by itself).
+- **The lit squares following the flags:** in every picture with the flags moved; a flag dragged by the pointer lit and
+  unlit squares as it went.
+- No console errors; `check-deploys` no errors (two warnings, neither this page's: an older lab's icon, another session's
+  untracked palette pictures).
 
 ## At iPad size, 768 × 1,024 in the pane
 
-The two-column layout holds (the media rule is at 760); the glass gets 386 px, so the blocks wrap: five a line, two lines
-a row, squares of 6.3 px on the big window (`ipad-768x1024-the-4-6-billion-window.jpg`), 673 px tall, the timeline below
-it; on the 12,000 window seven blocks a line, 5.3 px squares (`ipad-768x1024-the-last-12000.png`; the picture before
-the came was painted per block, `…-before-came-fix.jpg`, shows the empty slot that fix removed). A finger-style drag of
-eight squares on the 12,000 window set the line to 266–186 years ago. At 1,024 × 768 (iPad landscape) the page is the
-Mac's.
+The two-column layout holds (the media rule is at 760); the glass gets 420 px, so the blocks wrap: five a line, two lines
+a row, squares of 6.4 px on the 4.6 billion window, 706 px tall (`ipad-768x1024-the-4-6-billion-window.jpg`; the years at
+the right of each row's second line, *4.6 billion* after the fifth row's one wrapped block); seven blocks a line on the
+12,000, 4.5 px squares, the years under each line (`ipad-last-12000-wrapped-labels-under-each-line.png` — the first take
+had the first line's years running into the second line's came; the gap between labelled lines is now 26 px);
+`ipad-last-million-wrapped.png`. By finger (pointer events of type touch on the million window, 410,000 to 359,000):
+the box up while the finger is down and the label 40 px above it (`ipad-finger-down-box-while-down.jpg`); on release
+both gone and the line at 410,000 to 359,000 years ago (`ipad-finger-up-span-set.jpg`). At 1,024 × 768 (iPad landscape)
+the page is the Mac's.
 
-**What a finger cannot do.** Pick one square: at 4.7 to 6.3 px a square is a tenth of a fingertip, so a tap lands on
-some square near the meant one and a drag's ends are approximate — the design's answer, that the glass picks spans and
-the line picks years, stands, and the plaque-while-down lets her feel for an era. The plaque and the label hide under
-the finger's own hand on the 12,000 window's single row (the label is placed 40 px above the touch; the plaque is below
-the glass, clear of the hand). The hairline between squares is invisible by finger. Not tried on the real iPad or the
-simulator this time: the prompt asked for the pane at iPad size.
+**What a finger cannot do.** Pick one square: at 4.5 to 6.4 px a square is a tenth of a fingertip, so a tap lands on
+some square near the meant one and a drag's ends are approximate; the design's answer, that the glass picks spans and
+the line picks years, stands, and the box-while-down lets her feel for a period. The box, being below the period, is
+clear of her hand on every row but the last of the 4.6 billion window and on the single-row windows, where it falls
+below the glass and under the heel of the hand; the label is above the finger. The near-black lines are invisible by
+finger. Not tried on the real iPad or the simulator: the prompt asked for the pane at iPad size.
 
 ## Needs Michael's eye
 
-- **A or B** for the last million (the bench shows both).
-- **The threshold −20 m**, against the prompt's "within a few metres": the stack's older interglacials never reach today's
-  sea. Also the short double and triple peaks (MIS 7, 15) and MIS 5c showing warm inside Ice sheets.
-- **The twelve eras and their words**, merged from the sketch's fifteen because revision 1 is not on disk; the gradient
-  as read.
-- **The 12,000 window's thirteenth block** (twelve blocks reach the year 12,000; now is 12,026).
-- **The colour-blind pairs that fail**, above all Dinosaurs / Mammals.
-- **The squares' size** at 1,024 wide: 4.7 to 6.2 px. The page is 1,180 wide at most; the left column (160) and the scale
-  column (150) take 334 px with their gaps. A narrower scale column, or the scales above the glass, would give the glass
-  a quarter more.
-- **Window and Timeline as show/hide words** — the prompt says bulleted words "open tools"; with both tools up from the
-  start, each word takes its tool down and brings it back. If they should do something else, say what.
-- **The window never steps down** on a stretch or on *back*, only up.
-- **The stack grows** with every window pressed and every drag, so *back* retraces them all.
+- **The dim on rollover** (12 % toward the parchment, the prompt's "gently") against his rule of 1 Nov; `dimRest: 0` ends it.
+- **The thirteen colours**, the mockup's, standing for revision 1's; the pale ice of the last three squares and the
+  stone of the 12,000 window are mine.
+- **A or B**, and the −20 m threshold, as on 1 Nov.
+- **The years on the million window** counting ago (*900,000* … *100,000*, *now*), where the big window counts forward.
+- **Year inside or a margin** for a flag at the end of the line.
+- **The box over the timeline** when the period is in the last row.
+- **Select years and Information as headings** that do nothing when pressed.
+- **The colour-blind pairs:** Dinosaurs / Mammals by a hair, ice against warm for tritanopia.
+- **The squares' size** at 1,024 wide (4.5 to 6.2 px) — the gutter for the years takes 78 px of the glass's 676.
 - **The words of *How this works***, placeholders.
-- **The timeline's bareness:** no events on the line (the mockup drew ticks and labels under it; the prompt's timeline is
-  the bench's, which has none).
 
-## Changed
+## The first build, 1 Nov 2026, for the record
 
-**1 Nov, later still — the light** (`2026-11-01c`). Michael's first look at the live page: the halfway mix toward the parchment outside the chosen span (and outside the rolled-over era) greyed the whole window after one drag and killed the colours; the halfway mix was never his, he wanted brilliant colours. His rule, now built: every square wears its true colour at rest and nothing is ever greyed; the chosen span (and a drag in progress) is lit the way an event is lit, and the events inside it drop back to their own colour so they still show; a span that is the whole of the window lights nothing; the era under the cursor is lifted a little instead of the rest being dimmed. Checked in the pane: the window at rest in full colour, a drag across row 2 lit as a pale block with its events dark inside, the same on the 12,000 window (`light-the-span-lit-as-an-event.jpg`, `light-the-span-lit-close.png`, `light-the-span-on-the-last-12000.png`).
-
-**1 Nov, later — the selection fix** (`2026-11-01b`, `00a98f8b`). Michael, on the live page: dragging across the squares selected them as if they were text, and the highlight hid the colours. Two causes: the glass had no `user-select` rule (the timeline's track had one, copied from the bench), and a press that landed in the came, a block gap or the label row returned before `preventDefault`, so the browser began a text selection that then washed over the canvas. The window row and the plaque slot now carry `user-select: none` (and `-webkit-touch-callout: none`), and every press on the canvas prevents the default first. Checked in the pane: a drag from the came between two blocks out past the right edge of the glass selects nothing and still sets a span; an ordinary drag across squares as before.
-
-New: `cw-deploys/experiments/earth-3d-window.html`. Edited: `cw-deploys/experiments/index.html` (the new item at the
-top; the Earth item's link and meta), `cw-deploys/MANIFEST.md`, `CWVault/00-BOARD.md`. New: this report and
-`CWVault/claude/Earth-3D-Bench-07-Nov01/`. Committed and pushed on Michael's word, `9e2cea4f`, this session's hunks only; the hash recorded in a second commit. Other sessions' uncommitted hunks (the Ideas Ledger, the Pool
-Inbox, the Prompt Pool, the 3D shelf report, the deleted prompt and report files, the untracked vault files) stay as they
-are; when this lands, it is this session's hunks only.
+Built on `46f58e82` to `Prompt-Build-Earth-Bench-07.md` and revision 2; committed and pushed on Michael's word the same
+day (`9e2cea4f`), the hash recorded in `6138514e`; then two fixes after his first look at the live page — the selection
+fix (`2026-11-01b`, `00a98f8b`: `user-select: none` on the window row and the plaque slot, every press on the glass
+preventing the default, so a drag never selects the page as text) and the light (`2026-11-01c`, `f184e34d`: every square
+its true colour at rest, nothing ever greyed, the chosen span lit as an event is lit with its events back in their own
+colour, a span that is the whole window lighting nothing, the era under the cursor lifted a little). Its windows were
+four (the last 100,000 years too), its scales stood to the left of the glass, its years on the left, its fifth row ran on
+into clear future glass, its eras were twelve merged from the sketch's fifteen scenes with plaques in a slot below the
+glass, and its 12,000 window counted from year 0 after the ice into a thirteenth block that was mostly future. Its
+report is in the git history at `f184e34d`; its 27 pictures stay in `Earth-3D-Bench-07-Nov01/`.
