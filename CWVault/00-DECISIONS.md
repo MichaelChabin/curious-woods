@@ -413,3 +413,4 @@ Added 24 Aug:
 - **That the primes go on forever is not addressed by any of this**, and a child
   could reasonably conclude from four buttons, then five, then six, that someone
   has the complete list. Not a flaw to patch here. A hook for something later.
+- 3 Nov 2026 — Chartres red is copper, flashed; Chartres pink is manganese. The earlier gold lines were out of period by ~500 years.

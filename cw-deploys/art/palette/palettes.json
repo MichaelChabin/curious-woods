@@ -12,14 +12,14 @@
       "description": "Medieval cathedral glass, 12th–13th century",
       "colors": [
         { "hex": "#1a3a8c", "recipe": "cobalt oxide", "uncertain": false },
-        { "hex": "#8b1a1a", "recipe": "gold, colloidal", "uncertain": false },
+        { "hex": "#8b1a1a", "recipe": "copper, flashed", "uncertain": false },
         { "hex": "#c8780a", "recipe": "iron, sulfur", "uncertain": false },
         { "hex": "#4a1a8c", "recipe": "cobalt, manganese", "uncertain": false },
         { "hex": "#1a6a2a", "recipe": "copper oxide", "uncertain": false },
         { "hex": "#8a8a7a", "recipe": "iron, unrefined", "uncertain": true },
         { "hex": "#d4a878", "recipe": "iron oxide, lead", "uncertain": true },
         { "hex": "#c8c0a8", "recipe": "tin oxide", "uncertain": false },
-        { "hex": "#c84878", "recipe": "gold, manganese", "uncertain": true }
+        { "hex": "#c84878", "recipe": "manganese", "uncertain": false }
       ]
     },
 
