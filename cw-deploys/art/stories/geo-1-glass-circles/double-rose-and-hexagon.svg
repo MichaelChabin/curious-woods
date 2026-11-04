@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="900" height="900" role="img" aria-labelledby="t d">
+<title id="t">The double rose and hexagon</title>
+<desc id="d">A design drawn in lead on a chalked board: twelve petals meeting at a centre, six of them reaching the corners of a hexagon drawn around them. The circles that made the petals are drawn faintly.</desc>
+<rect width="300" height="300" fill="#f6f2e8"/>
+<g fill="none" stroke="#9a948a" stroke-width="0.45" opacity="0.55">
+<circle cx="150" cy="150" r="100"/>
+<circle cx="250" cy="150" r="100"/>
+<circle cx="236.6" cy="100" r="100"/>
+<circle cx="200" cy="63.4" r="100"/>
+<circle cx="150" cy="50" r="100"/>
+<circle cx="100" cy="63.4" r="100"/>
+<circle cx="63.4" cy="100" r="100"/>
+<circle cx="50" cy="150" r="100"/>
+<circle cx="63.4" cy="200" r="100"/>
+<circle cx="100" cy="236.6" r="100"/>
+<circle cx="150" cy="250" r="100"/>
+<circle cx="200" cy="236.6" r="100"/>
+<circle cx="236.6" cy="200" r="100"/>
+</g>
+<g fill="none" stroke="#4a463f" stroke-width="1.3" stroke-linejoin="round">
+<path d="M150 150 A100 100 0 0 1 250 150 A100 100 0 0 1 150 150 Z"/>
+<path d="M150 150 A100 100 0 0 1 236.6 100 A100 100 0 0 1 150 150 Z"/>
+<path d="M150 150 A100 100 0 0 1 200 63.4 A100 100 0 0 1 150 150 Z"/>
+<path d="M150 150 A100 100 0 0 1 150 50 A100 100 0 0 1 150 150 Z"/>
+<path d="M150 150 A100 100 0 0 1 100 63.4 A100 100 0 0 1 150 150 Z"/>
+<path d="M150 150 A100 100 0 0 1 63.4 100 A100 100 0 0 1 150 150 Z"/>
+<path d="M150 150 A100 100 0 0 1 50 150 A100 100 0 0 1 150 150 Z"/>
+<path d="M150 150 A100 100 0 0 1 63.4 200 A100 100 0 0 1 150 150 Z"/>
+<path d="M150 150 A100 100 0 0 1 100 236.6 A100 100 0 0 1 150 150 Z"/>
+<path d="M150 150 A100 100 0 0 1 150 250 A100 100 0 0 1 150 150 Z"/>
+<path d="M150 150 A100 100 0 0 1 200 236.6 A100 100 0 0 1 150 150 Z"/>
+<path d="M150 150 A100 100 0 0 1 236.6 200 A100 100 0 0 1 150 150 Z"/>
+</g>
+<polygon points="250,150 200,63.4 100,63.4 50,150 100,236.6 200,236.6" fill="none" stroke="#4a463f" stroke-width="1.5" stroke-linejoin="round"/>
+<g fill="#4a463f">
+<circle cx="150" cy="150" r="1.1"/>
+<circle cx="250" cy="150" r="1.1"/>
+<circle cx="236.6" cy="100" r="1.1"/>
+<circle cx="200" cy="63.4" r="1.1"/>
+<circle cx="150" cy="50" r="1.1"/>
+<circle cx="100" cy="63.4" r="1.1"/>
+<circle cx="63.4" cy="100" r="1.1"/>
+<circle cx="50" cy="150" r="1.1"/>
+<circle cx="63.4" cy="200" r="1.1"/>
+<circle cx="100" cy="236.6" r="1.1"/>
+<circle cx="150" cy="250" r="1.1"/>
+<circle cx="200" cy="236.6" r="1.1"/>
+<circle cx="236.6" cy="200" r="1.1"/>
+</g>
+</svg>

@@ -14,7 +14,7 @@ Stages, from Publishing-a-Story: **written** (Michael has said yes to the words)
 *About Your Brain* — tool, the brain atlas.
 *Hokusai: The Great Wave* — paintings series, `across`; whole picture hung since the 21 Sept fix.
 *Vermeer: Girl with a Pearl Earring* — paintings series.
-*Stained Glass Circles* (Geo-1-Glass-Circles; *The Glass Rose* until 8 Oct) — geometry series, step 1, `across`; the window profile of `js/glass.js` as its board; hung 10 Oct 2026, `active/geo-1-glass-circles.html`. The 8 Oct draft is on the page and not yet in `claude/Story-The-Glass-Rose.md`.
+*Glass 900 years ago* (since 29 Oct 2026; *Stained Glass Circles* from 8 Oct, *The Glass Rose* before) — geometry series, step 1, `across`; the `theophilus` board of `js/glass.js`; hung 10 Oct 2026, `active/geo-1-glass-circles.html`. The words are Michael's text of 4 Nov 2026, `claude/Story-Glass-900-Years-Ago-02.md`, on the page since that evening (report `claude/Report-Glass-900-Years-Ago-Words-02.md`); his read on the iPad is next. Open: the compass picture; the double rose and hexagon drawn by the session, his to replace.
 *Van Gogh: Starry Night* — paintings series.
 *Stained Glass* — the lab formerly called Glass Geometry (name changed 22 Sept; file and URL unchanged).
 *Glass Multiplication* — lab, listed under Labs.

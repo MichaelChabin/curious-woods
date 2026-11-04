@@ -62,6 +62,13 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 
 ## Both
 
+### The double rose as a demo (working name)   · 4 Nov 2026 · loose
+**Idea.** The pattern the story's twelve-year-old plans, the double rose and hexagon, is a construction of circles and lines; it could be one of the board's Demos, so that the picture in the story and the demo on the board are the same thing, and "tap Demos" shows the window she just read about being made step by step.
+**Where it sits.** Both (circles and lines), on the `theophilus` board of Glass 900 years ago; beside the demos Rose and Top.
+**Opens.** The story's picture stops being a still drawn by hand and becomes something she can watch being made, then make.
+**Costs.** The demo must be the pattern Michael means; the drawing on the page now is a reading of his words. A demo is a record, so it needs building once on the board.
+**Source.** This Claude Code session, 4 Nov 2026, building the page from Michael's text (`Story-Glass-900-Years-Ago-02.md`).
+
 ## Grid
 
 ## Rectangles
