@@ -79,5 +79,5 @@ The pieces each demo colours, as the script counts them (every number is the boa
 
 ## Not done
 
-- **Committed and pushed** on Michael's word, "Please commit and push", after the report. In the commit: `js/glass.js`, the four pages, `models/constructions.json`, the six logs under `models/logs/`, `tools/glass-log.js` (the stubs), `tools/glass-demos-theophilus.js`, `tools/glass-states/results/r07-*.json`, this report and its pictures, the prompt and the demos file (both untracked), with MANIFEST and the board — this session's hunks only; the Time-lab session's hunks and the earlier clear-out's stay in the working tree.
+- **Committed and pushed** on Michael's word, "Please commit and push", after the report (`541b272f`). In the commit: `js/glass.js`, the four pages, `models/constructions.json`, the six logs under `models/logs/`, `tools/glass-log.js` (the stubs), `tools/glass-demos-theophilus.js`, `tools/glass-states/results/r07-*.json`, this report and its pictures, the prompt and the demos file (both untracked), with MANIFEST and the board — this session's hunks only; the Time-lab session's hunks and the earlier clear-out's stay in the working tree.
 - **Not checked on a real iPad.**
