@@ -1,5 +1,5 @@
 ---
-status: Report, 5 Nov 2026. Step 3 of the Time lab bench built on `c7383286` (the step-2 page as committed in `ed18d0bb`), checked in the pane at 1,024 × 768 by pointer and 768 × 1,024 by finger events, committed with MANIFEST and the board; not pushed. Michael's prompt `Prompt-Revise-Time-Lab-Bench-03b.md` (revision b, with the flat world; 03 was never run).
+status: Report, 5 Nov 2026. Step 3 of the Time lab bench built on `c7383286` (the step-2 page as committed in `ed18d0bb`), checked in the pane at 1,024 × 768 by pointer and 768 × 1,024 by finger events, committed with MANIFEST and the board (`aaec50e8`) and pushed on Michael's word the same afternoon. Michael's prompt `Prompt-Revise-Time-Lab-Bench-03b.md` (revision b, with the flat world; 03 was never run).
 role: What step 3 did to `experiments/time-lab.html`, what it found, and what needs Michael's eye.
 related: Prompt-Revise-Time-Lab-Bench-03b.md, Report-Time-Lab-Bench-01.md (step 1, and step 2 as its last section — there is no Report-Time-Lab-Bench-02.md: the 12,000 row went into the step-1 commit the same day), Periods-12000-01.md, Lab-Time-01.md, Report-Earth-3D-Bench-06.md (the flat world)
 ---
