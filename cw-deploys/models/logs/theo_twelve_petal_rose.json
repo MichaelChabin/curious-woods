@@ -1,0 +1,1624 @@
+{
+  "version": 1,
+  "name": "The twelve-petal rose",
+  "description": "The twelve-petal rose: the six-petal rose, a line straight up through 0, a second rose on the points that line and the first rose find, turned half a petal, and the hexagon through the first rose's points. Inside the hexagon the first rose's petals are red, the second's amber, each overlap of neighbouring petals amber, the rest blue.",
+  "steps": [
+    "A circle centered on 0, through 1.",
+    "A circle centered on 1, through 0.",
+    "Around the first circle, as for the six-petal rose: centered on the upper crossing, through 0.",
+    "The next one around.",
+    "The next.",
+    "The next.",
+    "The last. That is the first rose.",
+    "A line from 0 straight up, through the point high above where two circles cross. It meets the first circle at the top and the bottom.",
+    "A circle centered on the top point, through 0. It makes two new points on the first circle, halfway between the old ones.",
+    "The same from the bottom point.",
+    "Now go around again, on the new points: centered here, through 0.",
+    "The next.",
+    "The next.",
+    "The last. A second rose, turned halfway between the petals of the first.",
+    "The hexagon: from 1 to the next corner up.",
+    "Across the top.",
+    "Down the left.",
+    "On down.",
+    "Across the bottom.",
+    "And back to 1."
+  ],
+  "operations": [
+    {
+      "op": "init",
+      "seed0": {
+        "x": -100,
+        "y": 0
+      },
+      "seed1": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:0",
+      "edgeId": "seed:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "seed:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:2:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:3:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:4:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:5:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:2:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "seed:0",
+      "p2Id": "cc:3:4:1"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:8:1:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "lc:8:1:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:9:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:9:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:10:1",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "circle",
+      "centerId": "cc:1:10:0",
+      "edgeId": "seed:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "seed:1",
+      "p2Id": "cc:1:2:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:2:0",
+      "p2Id": "cc:1:3:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:3:0",
+      "p2Id": "cc:1:4:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:4:0",
+      "p2Id": "cc:1:5:0"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:5:0",
+      "p2Id": "cc:1:2:1"
+    },
+    {
+      "op": "line",
+      "p1Id": "cc:1:2:1",
+      "p2Id": "seed:1"
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:1",
+      "vertices": [
+        "cc:1:3:0",
+        "cc:3:13:1",
+        "seed:0",
+        "cc:5:11:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:1:3:0",
+          "b": "cc:3:13:1",
+          "circIdx": 3,
+          "angleA": 3.141592653589793,
+          "angleB": -2.617993877991494,
+          "sweep": 0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:3:13:1",
+          "b": "seed:0",
+          "circIdx": 13,
+          "angleA": 1.0471975511965976,
+          "angleB": 0.5235987755982989,
+          "sweep": -0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:5:11:0",
+          "circIdx": 11,
+          "angleA": -2.6179938779914944,
+          "angleB": 3.141592653589793,
+          "sweep": -0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "cc:5:11:0",
+          "b": "cc:1:3:0",
+          "circIdx": 5,
+          "angleA": 0.5235987755982991,
+          "angleB": 1.0471975511965976,
+          "sweep": 0.5235987755982983
+        }
+      ],
+      "color": "#8b1a1a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:2",
+      "vertices": [
+        "seed:0",
+        "cc:2:13:0",
+        "cc:1:2:1",
+        "cc:6:11:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:2:13:0",
+          "circIdx": 13,
+          "angleA": 0.5235987755982989,
+          "angleB": -5.684341886080804e-16,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:2:13:0",
+          "b": "cc:1:2:1",
+          "circIdx": 2,
+          "angleA": -2.617993877991494,
+          "angleB": -2.0943951023931957,
+          "sweep": 0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "cc:1:2:1",
+          "b": "cc:6:11:1",
+          "circIdx": 6,
+          "angleA": 0,
+          "angleB": 0.5235987755982984,
+          "sweep": 0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "cc:6:11:1",
+          "b": "seed:0",
+          "circIdx": 11,
+          "angleA": -2.094395102393195,
+          "angleB": -2.6179938779914944,
+          "sweep": -0.5235987755983
+        }
+      ],
+      "color": "#8b1a1a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:3",
+      "vertices": [
+        "cc:1:4:0",
+        "cc:4:10:1",
+        "seed:0",
+        "cc:6:9:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:1:4:0",
+          "b": "cc:4:10:1",
+          "circIdx": 4,
+          "angleA": -2.0943951023931957,
+          "angleB": -1.5707963267948968,
+          "sweep": 0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:4:10:1",
+          "b": "seed:0",
+          "circIdx": 10,
+          "angleA": 2.0943951023931957,
+          "angleB": 1.5707963267948966,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:6:9:0",
+          "circIdx": 9,
+          "angleA": -1.5707963267948966,
+          "angleB": -2.0943951023931957,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:6:9:0",
+          "b": "cc:1:4:0",
+          "circIdx": 6,
+          "angleA": 1.5707963267948968,
+          "angleB": 2.0943951023931957,
+          "sweep": 0.5235987755982991
+        }
+      ],
+      "color": "#8b1a1a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:4",
+      "vertices": [
+        "seed:0",
+        "cc:3:10:0",
+        "seed:1",
+        "cc:7:9:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:3:10:0",
+          "circIdx": 10,
+          "angleA": 1.5707963267948966,
+          "angleB": 1.0471975511965976,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:3:10:0",
+          "b": "seed:1",
+          "circIdx": 3,
+          "angleA": -1.5707963267948963,
+          "angleB": -1.0471975511965976,
+          "sweep": 0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "seed:1",
+          "b": "cc:7:9:1",
+          "circIdx": 7,
+          "angleA": 1.0471975511965976,
+          "angleB": 1.5707963267948963,
+          "sweep": 0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "cc:7:9:1",
+          "b": "seed:0",
+          "circIdx": 9,
+          "angleA": -1.0471975511965976,
+          "angleB": -1.5707963267948966,
+          "sweep": -0.5235987755982991
+        }
+      ],
+      "color": "#8b1a1a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:5",
+      "vertices": [
+        "seed:0",
+        "cc:4:14:0",
+        "cc:1:2:0",
+        "cc:2:12:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:4:14:0",
+          "circIdx": 14,
+          "angleA": 2.6179938779914944,
+          "angleB": 2.094395102393195,
+          "sweep": -0.5235987755983
+        },
+        {
+          "type": "arc",
+          "a": "cc:4:14:0",
+          "b": "cc:1:2:0",
+          "circIdx": 4,
+          "angleA": -0.5235987755982984,
+          "angleB": 0,
+          "sweep": 0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "cc:1:2:0",
+          "b": "cc:2:12:1",
+          "circIdx": 2,
+          "angleA": 2.0943951023931957,
+          "angleB": 2.617993877991494,
+          "sweep": 0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "cc:2:12:1",
+          "b": "seed:0",
+          "circIdx": 12,
+          "angleA": 5.684341886080804e-16,
+          "angleB": -0.5235987755982989,
+          "sweep": -0.5235987755982991
+        }
+      ],
+      "color": "#8b1a1a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:6",
+      "vertices": [
+        "cc:7:12:0",
+        "cc:1:5:0",
+        "cc:5:14:1",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:7:12:0",
+          "b": "cc:1:5:0",
+          "circIdx": 7,
+          "angleA": 2.617993877991494,
+          "angleB": 3.141592653589793,
+          "sweep": 0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:1:5:0",
+          "b": "cc:5:14:1",
+          "circIdx": 5,
+          "angleA": -1.0471975511965976,
+          "angleB": -0.5235987755982991,
+          "sweep": 0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "cc:5:14:1",
+          "b": "seed:0",
+          "circIdx": 14,
+          "angleA": -3.141592653589793,
+          "angleB": 2.6179938779914944,
+          "sweep": -0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:7:12:0",
+          "circIdx": 12,
+          "angleA": -0.5235987755982989,
+          "angleB": -1.0471975511965976,
+          "sweep": -0.5235987755982983
+        }
+      ],
+      "color": "#8b1a1a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:7",
+      "vertices": [
+        "lc:18:10:0",
+        "lc:18:12:1",
+        "cc:7:12:0",
+        "seed:0",
+        "cc:4:10:1"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "lc:18:10:0",
+          "b": "lc:18:12:1"
+        },
+        {
+          "type": "arc",
+          "a": "lc:18:12:1",
+          "b": "cc:7:12:0",
+          "circIdx": 12,
+          "angleA": -1.421931983905338,
+          "angleB": -1.0471975511965976,
+          "sweep": 0.3747344327087401
+        },
+        {
+          "type": "arc",
+          "a": "cc:7:12:0",
+          "b": "seed:0",
+          "circIdx": 7,
+          "angleA": 2.617993877991494,
+          "angleB": 2.0943951023931957,
+          "sweep": -0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:4:10:1",
+          "circIdx": 4,
+          "angleA": -1.0471975511965976,
+          "angleB": -1.5707963267948968,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:4:10:1",
+          "b": "lc:18:10:0",
+          "circIdx": 10,
+          "angleA": 2.0943951023931957,
+          "angleB": 2.4691295351019353,
+          "sweep": 0.3747344327087401
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:8",
+      "vertices": [
+        "lc:17:9:1",
+        "cc:6:9:0",
+        "seed:0",
+        "cc:3:13:1",
+        "lc:17:13:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "lc:17:9:1",
+          "b": "cc:6:9:0",
+          "circIdx": 9,
+          "angleA": -2.4691295351019353,
+          "angleB": -2.0943951023931957,
+          "sweep": 0.3747344327087401
+        },
+        {
+          "type": "arc",
+          "a": "cc:6:9:0",
+          "b": "seed:0",
+          "circIdx": 6,
+          "angleA": 1.5707963267948968,
+          "angleB": 1.0471975511965976,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:3:13:1",
+          "circIdx": 3,
+          "angleA": -2.0943951023931957,
+          "angleB": -2.617993877991494,
+          "sweep": -0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "cc:3:13:1",
+          "b": "lc:17:13:0",
+          "circIdx": 13,
+          "angleA": 1.0471975511965976,
+          "angleB": 1.421931983905338,
+          "sweep": 0.3747344327087401
+        },
+        {
+          "type": "seg",
+          "a": "lc:17:13:0",
+          "b": "lc:17:9:1"
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:9",
+      "vertices": [
+        "cc:4:14:0",
+        "seed:0",
+        "cc:7:9:1",
+        "lc:15:9:0",
+        "lc:15:14:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:4:14:0",
+          "b": "seed:0",
+          "circIdx": 4,
+          "angleA": -0.5235987755982984,
+          "angleB": -1.0471975511965976,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:7:9:1",
+          "circIdx": 7,
+          "angleA": 2.0943951023931957,
+          "angleB": 1.5707963267948963,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:7:9:1",
+          "b": "lc:15:9:0",
+          "circIdx": 9,
+          "angleA": -1.0471975511965976,
+          "angleB": -0.6724631184878578,
+          "sweep": 0.3747344327087401
+        },
+        {
+          "type": "seg",
+          "a": "lc:15:9:0",
+          "b": "lc:15:14:1"
+        },
+        {
+          "type": "arc",
+          "a": "lc:15:14:1",
+          "b": "cc:4:14:0",
+          "circIdx": 14,
+          "angleA": 1.7196606696844556,
+          "angleB": 2.094395102393195,
+          "sweep": 0.3747344327087392
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:10",
+      "vertices": [
+        "seed:0",
+        "cc:6:11:1",
+        "lc:20:11:0",
+        "lc:20:10:1",
+        "cc:3:10:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:6:11:1",
+          "circIdx": 6,
+          "angleA": 1.0471975511965976,
+          "angleB": 0.5235987755982984,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:6:11:1",
+          "b": "lc:20:11:0",
+          "circIdx": 11,
+          "angleA": -2.094395102393195,
+          "angleB": -1.7196606696844556,
+          "sweep": 0.3747344327087392
+        },
+        {
+          "type": "seg",
+          "a": "lc:20:11:0",
+          "b": "lc:20:10:1"
+        },
+        {
+          "type": "arc",
+          "a": "lc:20:10:1",
+          "b": "cc:3:10:0",
+          "circIdx": 10,
+          "angleA": 0.6724631184878578,
+          "angleB": 1.0471975511965976,
+          "sweep": 0.3747344327087401
+        },
+        {
+          "type": "arc",
+          "a": "cc:3:10:0",
+          "b": "seed:0",
+          "circIdx": 3,
+          "angleA": -1.5707963267948963,
+          "angleB": -2.0943951023931957,
+          "sweep": -0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:11",
+      "vertices": [
+        "cc:1:4:0",
+        "cc:6:9:0",
+        "lc:17:9:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:1:4:0",
+          "b": "cc:6:9:0",
+          "circIdx": 6,
+          "angleA": 2.0943951023931957,
+          "angleB": 1.5707963267948968,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:6:9:0",
+          "b": "lc:17:9:1",
+          "circIdx": 9,
+          "angleA": -2.0943951023931957,
+          "angleB": -2.4691295351019353,
+          "sweep": -0.3747344327087401
+        },
+        {
+          "type": "seg",
+          "a": "lc:17:9:1",
+          "b": "cc:1:4:0"
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:12",
+      "vertices": [
+        "lc:18:12:1",
+        "cc:1:5:0",
+        "cc:7:12:0"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "lc:18:12:1",
+          "b": "cc:1:5:0"
+        },
+        {
+          "type": "arc",
+          "a": "cc:1:5:0",
+          "b": "cc:7:12:0",
+          "circIdx": 7,
+          "angleA": 3.141592653589793,
+          "angleB": 2.617993877991494,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:7:12:0",
+          "b": "lc:18:12:1",
+          "circIdx": 12,
+          "angleA": -1.0471975511965976,
+          "angleB": -1.421931983905338,
+          "sweep": -0.3747344327087401
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:13",
+      "vertices": [
+        "cc:1:3:0",
+        "cc:5:11:0",
+        "lc:16:11:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:1:3:0",
+          "b": "cc:5:11:0",
+          "circIdx": 5,
+          "angleA": 1.0471975511965976,
+          "angleB": 0.5235987755982991,
+          "sweep": -0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "cc:5:11:0",
+          "b": "lc:16:11:1",
+          "circIdx": 11,
+          "angleA": 3.141592653589793,
+          "angleB": 2.766858220881053,
+          "sweep": -0.3747344327087401
+        },
+        {
+          "type": "seg",
+          "a": "lc:16:11:1",
+          "b": "cc:1:3:0"
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:14",
+      "vertices": [
+        "cc:2:13:0",
+        "lc:19:13:1",
+        "cc:1:2:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:2:13:0",
+          "b": "lc:19:13:1",
+          "circIdx": 13,
+          "angleA": -5.684341886080804e-16,
+          "angleB": -0.37473443270874013,
+          "sweep": -0.3747344327087392
+        },
+        {
+          "type": "seg",
+          "a": "lc:19:13:1",
+          "b": "cc:1:2:1"
+        },
+        {
+          "type": "arc",
+          "a": "cc:1:2:1",
+          "b": "cc:2:13:0",
+          "circIdx": 2,
+          "angleA": -2.0943951023931957,
+          "angleB": -2.617993877991494,
+          "sweep": -0.5235987755982983
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:15",
+      "vertices": [
+        "cc:5:14:1",
+        "cc:1:5:0",
+        "lc:19:14:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:5:14:1",
+          "b": "cc:1:5:0",
+          "circIdx": 5,
+          "angleA": -0.5235987755982991,
+          "angleB": -1.0471975511965976,
+          "sweep": -0.5235987755982983
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:5:0",
+          "b": "lc:19:14:0"
+        },
+        {
+          "type": "arc",
+          "a": "lc:19:14:0",
+          "b": "cc:5:14:1",
+          "circIdx": 14,
+          "angleA": -2.766858220881053,
+          "angleB": -3.141592653589793,
+          "sweep": -0.3747344327087401
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:16",
+      "vertices": [
+        "lc:16:12:0",
+        "cc:2:12:1",
+        "cc:1:2:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "lc:16:12:0",
+          "b": "cc:2:12:1",
+          "circIdx": 12,
+          "angleA": 0.37473443270874013,
+          "angleB": 5.684341886080804e-16,
+          "sweep": -0.3747344327087392
+        },
+        {
+          "type": "arc",
+          "a": "cc:2:12:1",
+          "b": "cc:1:2:0",
+          "circIdx": 2,
+          "angleA": 2.617993877991494,
+          "angleB": 2.0943951023931957,
+          "sweep": -0.5235987755982983
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:2:0",
+          "b": "lc:16:12:0"
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:17",
+      "vertices": [
+        "cc:1:2:0",
+        "cc:4:14:0",
+        "lc:15:14:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:1:2:0",
+          "b": "cc:4:14:0",
+          "circIdx": 4,
+          "angleA": 0,
+          "angleB": -0.5235987755982984,
+          "sweep": -0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "cc:4:14:0",
+          "b": "lc:15:14:1",
+          "circIdx": 14,
+          "angleA": 2.094395102393195,
+          "angleB": 1.7196606696844556,
+          "sweep": -0.3747344327087392
+        },
+        {
+          "type": "seg",
+          "a": "lc:15:14:1",
+          "b": "cc:1:2:0"
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:18",
+      "vertices": [
+        "cc:1:4:0",
+        "lc:18:10:0",
+        "cc:4:10:1"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "cc:1:4:0",
+          "b": "lc:18:10:0"
+        },
+        {
+          "type": "arc",
+          "a": "lc:18:10:0",
+          "b": "cc:4:10:1",
+          "circIdx": 10,
+          "angleA": 2.4691295351019353,
+          "angleB": 2.0943951023931957,
+          "sweep": -0.3747344327087401
+        },
+        {
+          "type": "arc",
+          "a": "cc:4:10:1",
+          "b": "cc:1:4:0",
+          "circIdx": 4,
+          "angleA": -1.5707963267948968,
+          "angleB": -2.0943951023931957,
+          "sweep": -0.5235987755982991
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:19",
+      "vertices": [
+        "cc:6:11:1",
+        "cc:1:2:1",
+        "lc:20:11:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:6:11:1",
+          "b": "cc:1:2:1",
+          "circIdx": 6,
+          "angleA": 0.5235987755982984,
+          "angleB": 0,
+          "sweep": -0.5235987755982983
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:2:1",
+          "b": "lc:20:11:0"
+        },
+        {
+          "type": "arc",
+          "a": "lc:20:11:0",
+          "b": "cc:6:11:1",
+          "circIdx": 11,
+          "angleA": -1.7196606696844556,
+          "angleB": -2.094395102393195,
+          "sweep": -0.3747344327087392
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:20",
+      "vertices": [
+        "cc:3:10:0",
+        "lc:20:10:1",
+        "seed:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:3:10:0",
+          "b": "lc:20:10:1",
+          "circIdx": 10,
+          "angleA": 1.0471975511965976,
+          "angleB": 0.6724631184878578,
+          "sweep": -0.3747344327087401
+        },
+        {
+          "type": "seg",
+          "a": "lc:20:10:1",
+          "b": "seed:1"
+        },
+        {
+          "type": "arc",
+          "a": "seed:1",
+          "b": "cc:3:10:0",
+          "circIdx": 3,
+          "angleA": -1.0471975511965976,
+          "angleB": -1.5707963267948963,
+          "sweep": -0.5235987755982983
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:21",
+      "vertices": [
+        "cc:7:9:1",
+        "seed:1",
+        "lc:15:9:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:7:9:1",
+          "b": "seed:1",
+          "circIdx": 7,
+          "angleA": 1.5707963267948963,
+          "angleB": 1.0471975511965976,
+          "sweep": -0.5235987755982983
+        },
+        {
+          "type": "seg",
+          "a": "seed:1",
+          "b": "lc:15:9:0"
+        },
+        {
+          "type": "arc",
+          "a": "lc:15:9:0",
+          "b": "cc:7:9:1",
+          "circIdx": 9,
+          "angleA": -0.6724631184878578,
+          "angleB": -1.0471975511965976,
+          "sweep": -0.3747344327087401
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:22",
+      "vertices": [
+        "lc:17:13:0",
+        "cc:3:13:1",
+        "cc:1:3:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "lc:17:13:0",
+          "b": "cc:3:13:1",
+          "circIdx": 13,
+          "angleA": 1.421931983905338,
+          "angleB": 1.0471975511965976,
+          "sweep": -0.3747344327087401
+        },
+        {
+          "type": "arc",
+          "a": "cc:3:13:1",
+          "b": "cc:1:3:0",
+          "circIdx": 3,
+          "angleA": -2.617993877991494,
+          "angleB": 3.141592653589793,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "seg",
+          "a": "cc:1:3:0",
+          "b": "lc:17:13:0"
+        }
+      ],
+      "color": "#1a3a8c",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:23",
+      "vertices": [
+        "cc:5:11:0",
+        "seed:0",
+        "ll:8:16",
+        "lc:16:11:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:5:11:0",
+          "b": "seed:0",
+          "circIdx": 5,
+          "angleA": 0.5235987755982991,
+          "angleB": 0,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "seg",
+          "a": "seed:0",
+          "b": "ll:8:16"
+        },
+        {
+          "type": "seg",
+          "a": "ll:8:16",
+          "b": "lc:16:11:1"
+        },
+        {
+          "type": "arc",
+          "a": "lc:16:11:1",
+          "b": "cc:5:11:0",
+          "circIdx": 11,
+          "angleA": 2.766858220881053,
+          "angleB": 3.141592653589793,
+          "sweep": 0.3747344327087401
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:24",
+      "vertices": [
+        "cc:5:14:1",
+        "lc:19:14:0",
+        "ll:8:19",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:5:14:1",
+          "b": "lc:19:14:0",
+          "circIdx": 14,
+          "angleA": -3.141592653589793,
+          "angleB": -2.766858220881053,
+          "sweep": 0.3747344327087401
+        },
+        {
+          "type": "seg",
+          "a": "lc:19:14:0",
+          "b": "ll:8:19"
+        },
+        {
+          "type": "seg",
+          "a": "ll:8:19",
+          "b": "seed:0"
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:5:14:1",
+          "circIdx": 5,
+          "angleA": 0,
+          "angleB": -0.5235987755982991,
+          "sweep": -0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:25",
+      "vertices": [
+        "seed:0",
+        "ll:8:19",
+        "lc:19:13:1",
+        "cc:2:13:0"
+      ],
+      "edges": [
+        {
+          "type": "seg",
+          "a": "seed:0",
+          "b": "ll:8:19"
+        },
+        {
+          "type": "seg",
+          "a": "ll:8:19",
+          "b": "lc:19:13:1"
+        },
+        {
+          "type": "arc",
+          "a": "lc:19:13:1",
+          "b": "cc:2:13:0",
+          "circIdx": 13,
+          "angleA": -0.37473443270874013,
+          "angleB": -5.684341886080804e-16,
+          "sweep": 0.3747344327087392
+        },
+        {
+          "type": "arc",
+          "a": "cc:2:13:0",
+          "b": "seed:0",
+          "circIdx": 2,
+          "angleA": -2.617993877991494,
+          "angleB": 3.141592653589793,
+          "sweep": -0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:26",
+      "vertices": [
+        "seed:0",
+        "cc:2:12:1",
+        "lc:16:12:0",
+        "ll:8:16"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:2:12:1",
+          "circIdx": 2,
+          "angleA": 3.141592653589793,
+          "angleB": 2.617993877991494,
+          "sweep": -0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:2:12:1",
+          "b": "lc:16:12:0",
+          "circIdx": 12,
+          "angleA": 5.684341886080804e-16,
+          "angleB": 0.37473443270874013,
+          "sweep": 0.3747344327087392
+        },
+        {
+          "type": "seg",
+          "a": "lc:16:12:0",
+          "b": "ll:8:16"
+        },
+        {
+          "type": "seg",
+          "a": "ll:8:16",
+          "b": "seed:0"
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:27",
+      "vertices": [
+        "seed:0",
+        "cc:2:12:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:2:12:1",
+          "circIdx": 12,
+          "angleA": -0.5235987755982989,
+          "angleB": 5.684341886080804e-16,
+          "sweep": 0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:2:12:1",
+          "b": "seed:0",
+          "circIdx": 2,
+          "angleA": 2.617993877991494,
+          "angleB": 3.141592653589793,
+          "sweep": 0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:28",
+      "vertices": [
+        "seed:0",
+        "cc:6:9:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:6:9:0",
+          "circIdx": 6,
+          "angleA": 1.0471975511965976,
+          "angleB": 1.5707963267948968,
+          "sweep": 0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:6:9:0",
+          "b": "seed:0",
+          "circIdx": 9,
+          "angleA": -2.0943951023931957,
+          "angleB": -1.5707963267948966,
+          "sweep": 0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:29",
+      "vertices": [
+        "seed:0",
+        "cc:2:13:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:2:13:0",
+          "circIdx": 2,
+          "angleA": 3.141592653589793,
+          "angleB": -2.617993877991494,
+          "sweep": 0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:2:13:0",
+          "b": "seed:0",
+          "circIdx": 13,
+          "angleA": -5.684341886080804e-16,
+          "angleB": 0.5235987755982989,
+          "sweep": 0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:30",
+      "vertices": [
+        "seed:0",
+        "cc:4:10:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:4:10:1",
+          "circIdx": 10,
+          "angleA": 1.5707963267948966,
+          "angleB": 2.0943951023931957,
+          "sweep": 0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "cc:4:10:1",
+          "b": "seed:0",
+          "circIdx": 4,
+          "angleA": -1.5707963267948968,
+          "angleB": -1.0471975511965976,
+          "sweep": 0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:31",
+      "vertices": [
+        "cc:3:10:0",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:3:10:0",
+          "b": "seed:0",
+          "circIdx": 10,
+          "angleA": 1.0471975511965976,
+          "angleB": 1.5707963267948966,
+          "sweep": 0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:3:10:0",
+          "circIdx": 3,
+          "angleA": -2.0943951023931957,
+          "angleB": -1.5707963267948963,
+          "sweep": 0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:32",
+      "vertices": [
+        "cc:7:9:1",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:7:9:1",
+          "b": "seed:0",
+          "circIdx": 7,
+          "angleA": 1.5707963267948963,
+          "angleB": 2.0943951023931957,
+          "sweep": 0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:7:9:1",
+          "circIdx": 9,
+          "angleA": -1.5707963267948966,
+          "angleB": -1.0471975511965976,
+          "sweep": 0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:33",
+      "vertices": [
+        "seed:0",
+        "cc:6:11:1"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:6:11:1",
+          "circIdx": 11,
+          "angleA": -2.6179938779914944,
+          "angleB": -2.094395102393195,
+          "sweep": 0.5235987755983
+        },
+        {
+          "type": "arc",
+          "a": "cc:6:11:1",
+          "b": "seed:0",
+          "circIdx": 6,
+          "angleA": 0.5235987755982984,
+          "angleB": 1.0471975511965976,
+          "sweep": 0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:34",
+      "vertices": [
+        "cc:4:14:0",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:4:14:0",
+          "b": "seed:0",
+          "circIdx": 14,
+          "angleA": 2.094395102393195,
+          "angleB": 2.6179938779914944,
+          "sweep": 0.5235987755983
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:4:14:0",
+          "circIdx": 4,
+          "angleA": -1.0471975511965976,
+          "angleB": -0.5235987755982984,
+          "sweep": 0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:35",
+      "vertices": [
+        "cc:5:11:0",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:5:11:0",
+          "b": "seed:0",
+          "circIdx": 11,
+          "angleA": 3.141592653589793,
+          "angleB": -2.6179938779914944,
+          "sweep": 0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:5:11:0",
+          "circIdx": 5,
+          "angleA": 0,
+          "angleB": 0.5235987755982991,
+          "sweep": 0.5235987755982991
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:36",
+      "vertices": [
+        "cc:3:13:1",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:3:13:1",
+          "b": "seed:0",
+          "circIdx": 3,
+          "angleA": -2.617993877991494,
+          "angleB": -2.0943951023931957,
+          "sweep": 0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:3:13:1",
+          "circIdx": 13,
+          "angleA": 0.5235987755982989,
+          "angleB": 1.0471975511965976,
+          "sweep": 0.5235987755982983
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:37",
+      "vertices": [
+        "cc:7:12:0",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:7:12:0",
+          "b": "seed:0",
+          "circIdx": 12,
+          "angleA": -1.0471975511965976,
+          "angleB": -0.5235987755982989,
+          "sweep": 0.5235987755982983
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:7:12:0",
+          "circIdx": 7,
+          "angleA": 2.0943951023931957,
+          "angleB": 2.617993877991494,
+          "sweep": 0.5235987755982983
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    },
+    {
+      "op": "fill",
+      "fillId": "fill:38",
+      "vertices": [
+        "cc:5:14:1",
+        "seed:0"
+      ],
+      "edges": [
+        {
+          "type": "arc",
+          "a": "cc:5:14:1",
+          "b": "seed:0",
+          "circIdx": 5,
+          "angleA": -0.5235987755982991,
+          "angleB": 0,
+          "sweep": 0.5235987755982991
+        },
+        {
+          "type": "arc",
+          "a": "seed:0",
+          "b": "cc:5:14:1",
+          "circIdx": 14,
+          "angleA": 2.6179938779914944,
+          "angleB": -3.141592653589793,
+          "sweep": 0.5235987755982983
+        }
+      ],
+      "color": "#c8780a",
+      "opacity": 1
+    }
+  ]
+}

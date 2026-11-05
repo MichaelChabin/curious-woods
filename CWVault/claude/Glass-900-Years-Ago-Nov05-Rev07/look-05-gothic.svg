@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="555" viewBox="-1 -2.5 4 3.7">
+<rect x="-1" y="-2.5" width="4" height="3.7" fill="#f2efe6"/>
+<g transform="scale(1,-1)">
+<path d="M0 0A2 2 0 0 0 1 1.7320508075688772A2 2 0 0 0 2 0L0 0Z" fill="#4a1a8c" stroke="none"/>
+<path d="M0 0A1 1 0 0 0 0.5000000000000001 0.8660254037844386A1 1 0 0 0 1 0L0 0Z" fill="#1a3a8c" stroke="none"/>
+<path d="M1 0A1 1 0 0 0 1.5 0.8660254037844386A1 1 0 0 0 2 0L1 0Z" fill="#1a3a8c" stroke="none"/>
+<path d="M0.5 1.118033988749895A0.5 0.5 0 1 0 1.5 1.118033988749895A0.5 0.5 0 1 0 0.5 1.118033988749895Z" fill="#8b1a1a" stroke="none"/>
+<path d="M0 0A2 2 0 0 0 1 1.7320508075688772A2 2 0 0 0 2 0L0 0Z" fill="none" stroke="#3b3a36" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+<path d="M0 0A1 1 0 0 0 0.5000000000000001 0.8660254037844386A1 1 0 0 0 1 0L0 0Z" fill="none" stroke="#3b3a36" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+<path d="M1 0A1 1 0 0 0 1.5 0.8660254037844386A1 1 0 0 0 2 0L1 0Z" fill="none" stroke="#3b3a36" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+<path d="M0.5 1.118033988749895A0.5 0.5 0 1 0 1.5 1.118033988749895A0.5 0.5 0 1 0 0.5 1.118033988749895Z" fill="none" stroke="#3b3a36" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+</g></svg>

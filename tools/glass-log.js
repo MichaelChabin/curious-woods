@@ -73,6 +73,8 @@ function create(opts) {
     LEAD_BORDER_COLOR: '#777777', LEAD_WIDTH: 2, isStepThroughActive() { return false; }, forkStepThrough() {},
     hitPt() { return null; }, interactionState: 'IDLE', isPanning: false, panStart: null,
     state: { palette: { selected: null } },
+    // The table's board (30 Oct 2026) and sunlight (31 Oct): neither is on in Node; the record's init may carry both and replay reads them.
+    TABLE: null, setSunlight() {}, sunlight: 0, stepState: { active: false }, COLORS: { background: '#f4f1e8', border: '#546A80', point: '#BE622F' },
     plane: {
       setUnitFrame(ox, oy, len) { unit.x = ox; unit.y = oy; unit.len = len; },
       unitOrigin() { return { x: unit.x, y: unit.y }; },

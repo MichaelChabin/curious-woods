@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "comment": "The construction library's manifest (controls build, 13 Aug 2026 — ledger §15). The picker reads this at load; library growth is a log file plus a line here, no code. Keys keep the _builtin_ prefix so preview caches stay stable and the picker knows they are the standard set: never deleted, never replaced. An entry may carry `speed` (seconds, 0–15) to open at a chosen playback duration. The standard set of 2 Oct 2026 (Michael's list, in the geometry spine's order) is written by tools/glass-constructions.js through tools/glass-log.js, which runs the lab's own geometry code, so every id is the lab's; svgFile is only a fallback thumbnail, the picker draws previews from the logs. Michael's own saved designs from the window profile, 9 Oct 2026, join the set at the end (Top): his file as Save wrote it, under a _builtin_ key so the Demo list and the picker find it. An entry may carry `level` (since 17 Oct 2026): only that level offers it, since its record opens on the board's frame and no other mount opens on one. Wright (19 Oct 2026, level wright): the Wright window's demo, written by tools/glass-wright-constructions.js. Halves, the retired lines board's demo, left with the board on 24 Oct 2026 (kept in _CW/outdated-files/glass-lines-retired-2026-10-24/).",
+  "comment": "The construction library's manifest (controls build, 13 Aug 2026 — ledger §15). The picker reads this at load; library growth is a log file plus a line here, no code. Keys keep the _builtin_ prefix so preview caches stay stable and the picker knows they are the standard set: never deleted, never replaced. An entry may carry `speed` (seconds, 0–15) to open at a chosen playback duration. The standard set of 2 Oct 2026 (Michael's list, in the geometry spine's order) is written by tools/glass-constructions.js through tools/glass-log.js, which runs the lab's own geometry code, so every id is the lab's; svgFile is only a fallback thumbnail, the picker draws previews from the logs. Michael's own saved designs from the window profile, 9 Oct 2026, join the set at the end (Top): his file as Save wrote it, under a _builtin_ key so the Demo list and the picker find it. An entry may carry `level` (since 17 Oct 2026): only that level offers it, since its record opens on the board's frame and no other mount opens on one. Wright (19 Oct 2026, level wright): the Wright window's demo, written by tools/glass-wright-constructions.js. Halves, the retired lines board's demo, left with the board on 24 Oct 2026 (kept in _CW/outdated-files/glass-lines-retired-2026-10-24/). The six demos of Glass 900 years ago (5 Nov 2026, revision 7; tools/glass-demos-theophilus.js from CWVault/claude/Demos-Glass-900-Years-Ago-01.md) carry `board: 'theophilus'`: an entry with `board` is offered on that board alone, in its Demos box and its picker, and no other board fetches it.",
   "constructions": [
     {
       "key": "_builtin_rose",
@@ -79,6 +79,54 @@
       "logFile": "../models/logs/geo_wright.json",
       "level": "wright",
       "note": ""
+    },
+    {
+      "key": "_builtin_theo_two_circles",
+      "name": "The two first circles",
+      "svgFile": "",
+      "logFile": "../models/logs/theo_two_circles.json",
+      "note": "",
+      "board": "theophilus"
+    },
+    {
+      "key": "_builtin_theo_six_petal_rose",
+      "name": "The six-petal rose",
+      "svgFile": "",
+      "logFile": "../models/logs/theo_six_petal_rose.json",
+      "note": "",
+      "board": "theophilus"
+    },
+    {
+      "key": "_builtin_theo_double_rose",
+      "name": "The double rose and hexagon",
+      "svgFile": "",
+      "logFile": "../models/logs/theo_double_rose.json",
+      "note": "",
+      "board": "theophilus"
+    },
+    {
+      "key": "_builtin_theo_twelve_petal_rose",
+      "name": "The twelve-petal rose",
+      "svgFile": "",
+      "logFile": "../models/logs/theo_twelve_petal_rose.json",
+      "note": "",
+      "board": "theophilus"
+    },
+    {
+      "key": "_builtin_theo_gothic_window",
+      "name": "A Gothic window",
+      "svgFile": "",
+      "logFile": "../models/logs/theo_gothic_window.json",
+      "note": "",
+      "board": "theophilus"
+    },
+    {
+      "key": "_builtin_theo_quatrefoil",
+      "name": "The quatrefoil",
+      "svgFile": "",
+      "logFile": "../models/logs/theo_quatrefoil.json",
+      "note": "",
+      "board": "theophilus"
     }
   ]
 }
