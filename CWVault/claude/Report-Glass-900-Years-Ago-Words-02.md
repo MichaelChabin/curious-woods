@@ -1,8 +1,8 @@
 ---
-status: Built and checked 4 Nov 2026; committed and pushed the same day on Michael's word in the prompt ("When you are finished, please commit and push the result. I'll be away from this machine but would like to see it on the iPad"). Waiting on his read on the iPad.
+status: Built and checked 4 Nov 2026; committed and pushed the same day on Michael's word in the prompt ("When you are finished, please commit and push the result. I'll be away from this machine but would like to see it on the iPad"). `fb3245f8`. The compass picture fetched and placed 5 Nov on his word ("Yes, fetch one"), committed and pushed. Waiting on his read on the iPad.
 role: What Story-Glass-900-Years-Ago-02.md asked for (Michael's text of 4 Nov replacing all the earlier text of the Glass 900 years ago page), what was built, how it was checked, what needs his eye, and what is open.
 related: Story-Glass-900-Years-Ago-02.md, Report-Glass-900-Years-Ago-Revise-05.md, cw-deploys/active/geo-1-glass-circles.html, cw-deploys/art/stories/geo-1-glass-circles/double-rose-and-hexagon.svg
-pictures: Glass-900-Years-Ago-Nov04-Words02/ (mac-*.jpg are the pane at 1440 × 900; ipad-upright-*.jpg the pane at 768 × 1024; ipad-side-*.jpg at 1024 × 768; draw-double-rose.py drew the SVG)
+pictures: Glass-900-Years-Ago-Nov04-Words02/ (mac-*.jpg are the pane at 1440 × 900; ipad-upright-*.jpg the pane at 768 × 1024; ipad-side-*.jpg at 1024 × 768; draw-double-rose.py drew the SVG; compasses-oxfordshire-commons-whole.jpg is the Commons photograph whole, four views and the scale, from which the page's crop was taken)
 ---
 
 # Report: Glass 900 years ago, the words (text 02)
@@ -63,3 +63,21 @@ Built on `10b39b6d` (the tree after the Time lab bench was pushed). The story fi
 - The compass picture. A photograph wants his word before it is fetched.
 - The story's frontmatter (per Story-Voice: title, year, placement, the timeline line, sources, the gallery picture) is not in `Story-Glass-900-Years-Ago-02.md`; the page keeps what the earlier build had (across; Rose II as the gallery picture).
 - The Stories Ledger line still names the story *Stained Glass Circles* and says the draft is not in a story file; both corrected to the 4 Nov text.
+
+## 5 Nov: the compass picture
+
+Michael's word, 5 Nov: "find a photograph of a real iron compass of about 1100 on Wikimedia Commons with a free licence, put it where the text says [picture: a compass], and commit and push."
+
+**What Commons has.** Searched by its own API in English, German, French and Dutch (dividers, compasses, Zirkel, compas, passer; medieval, early medieval, Anglo-Saxon, Viking, Roman; 11th, 12th, 13th century). No iron compass of about 1100 is there. What is there: a few dozen post-medieval dividers (1500s on), five Roman or late Roman pairs from the Portable Antiquities Scheme, and one find dated only "70 to 1100," which is copper alloy, closed, and reads as tongs. The nearest real thing to the words is **PAS record 843214**: a complete pair of compasses found in Oxfordshire, of probable late Roman or early Saxon date (300 to 600), two cast copper-alloy arms on an iron spindle, with an iron peg through a slot in the hinge to lock the arms open at the width wanted, the hook on the hinge an eagle's head, 19 cm long. Photographed by Anni Byard for Oxfordshire County Council, 2017; on Commons as "Roman dividers, Dividers (FindID 843214).jpg", 872 × 768, CC BY 2.0.
+
+**What is on the page.** The top two of the record's four views, cropped from the Commons file (`art/stories/geo-1-glass-circles/compasses-oxfordshire-300-600.jpg`, 872 × 317, 41 kB; the whole photograph beside this report), in the flow at the column's width where the text says `[picture: a compass]`, between the straight-edge paragraph and "The compass is made of iron." In the rail it would have been a 300-px picture of two 2-px lines; in the flow the hinge and the points read. The caption says what it is and what it is not: the same tool, five hundred years or more older than the story, bronze arms on an iron hinge where the text's compass is iron. A References line credits the record and the licence. Stamp `2026-11-05 d6570ca · glass 05 · words 02 · compass`.
+
+**Checked** in the pane at 1440 × 900 (`mac-05`) and 768 × 1024 (`ipad-upright-04`): the picture loads, sits centred in the column with its caption, and the examples stack still ends level with the last paragraph before the board. Console: the stamp only. `check-deploys`: no errors.
+
+**For his eye:** whether a Roman pair five hundred years early is the right evidence, or whether the gap was better; the caption's length; the crop (two views of four).
+
+| File | What it shows |
+|---|---|
+| `mac-05-compass.jpg` | The compass in the flow at 1440 wide, with its caption. |
+| `ipad-upright-04-compass.jpg` | The iPad upright: the compass between its two paragraphs. |
+| `compasses-oxfordshire-commons-whole.jpg` | The Commons photograph whole: four views and the scale. |

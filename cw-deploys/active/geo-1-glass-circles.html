@@ -24,7 +24,8 @@
   (_mscVault/0. Current/Designing Glass with Circles.md, with the counts after the board) is replaced whole.
   The two pictures his text names: the double rose and hexagon is drawn as a construction in lead on chalk
   (art/stories/geo-1-glass-circles/double-rose-and-hexagon.svg, this session's reading of his words, for his
-  eye); the compass has no picture yet, a named gap. The three stacks (the book, the came, the examples) stay
+  eye); the compass is a real pair found in Oxfordshire, 300 to 600, from Wikimedia Commons, fetched on his word of 5 Nov
+  (its comment below says what and whose). The three stacks (the book, the came, the examples) stay
   level with the sentences that speak of them. The board after the last paragraph, no More.
   The board: ../js/glass.js, board 'theophilus' (29 Oct 2026; 'circles' until then): the window profile with
   circles and lines, no grid, numbers on the axes, the controls in the How this works boxes; since 30 Oct 2026 (Michael's
@@ -139,9 +140,22 @@
 
     <p>To make the lines, you'll use a &ldquo;straight edge.&rdquo; Yours looks like a flat wooden ruler, without the markings. For circles, you use your grandfather's compass. Actually, it is yours now. He gave it to you, but it belonged to his father when he was a boy.</p>
 
-    <!-- [picture: a compass] — Michael's text names a picture of the compass here. None exists on disk and none was
-         fetched (a photograph of a real iron compass of the period is the picture the words want, with its source and
-         licence); a named gap, not filled. -->
+    <!-- THE COMPASS, in the flow at the column's width, where Michael's text says "[picture: a compass]" (fetched on his word,
+         5 Nov 2026: "find a photograph of a real iron compass of about 1100 on Wikimedia Commons with a free licence"). No iron
+         compass of about 1100 is on Commons; the nearest real thing is this complete pair of compasses found in Oxfordshire,
+         of probable late Roman or early Saxon date (300 to 600): two cast copper-alloy arms on an iron spindle, with an iron
+         peg through a slot in the hinge to lock the arms open; the hook on the hinge is an eagle's head; 19 cm long. The
+         Portable Antiquities Scheme record 843214, photographed by Anni Byard for Oxfordshire County Council (2017); Wikimedia
+         Commons, "Roman dividers, Dividers (FindID 843214).jpg", CC BY 2.0. The file here is the top two of the record's four
+         views, cropped from the Commons original (872 × 768; the whole beside the session report). The caption says what it
+         is and what it is not: the text's compass is iron; this one is copper alloy on an iron hinge, and five hundred years
+         older. -->
+    <figure class="still" id="compassFig">
+      <img src="../art/stories/geo-1-glass-circles/compasses-oxfordshire-300-600.jpg" width="872" height="317" loading="lazy" style="max-width: 600px;"
+           alt="Two views of an old pair of compasses, dark green with age: two long arms tapering to points, joined at one end by a round hinge with a small hooked peg on top; the second view shows one arm's face, decorated with rings and lines near the hinge.">
+      <figcaption>A real pair of compasses, found in Oxfordshire. It was made some time between 300 and 600, five hundred years or more before Theophilus, and it is the same tool: two arms that come to points, joined by a hinge. The arms are bronze; the hinge pin and the peg that locked the arms open are iron. The hook on the hinge is an eagle&rsquo;s head. About nineteen centimetres long. Photograph by Anni Byard for Oxfordshire County Council and the Portable Antiquities Scheme; Wikimedia Commons, CC BY 2.0.</figcaption>
+    </figure>
+
 
     <p>The compass is made of iron, and has two points joined by a stiff hinge. You can put one of the points anywhere you like. That will be the center of the circle. Then, holding that center point in place, you drag the second point across the chalky surface all the way around the center. The result is always a perfect circle.</p>
 
@@ -217,6 +231,7 @@
     <section class="refs">
       <h2>References</h2>
       <p>Theophilus, <i>On Divers Arts</i> (<i>De diversis artibus</i>), about 1100 to 1120. Book II is the glass book; chapter 17 is the whitewashed board, and the chapters after it the lead. Translated by John G. Hawthorne and Cyril Stanley Smith, and in print cheaply.</p>
+      <p>The pair of compasses: Portable Antiquities Scheme record 843214, a find from Oxfordshire of probable late Roman or early Saxon date, recorded by Anni Byard, 2017. The photograph is on Wikimedia Commons, CC BY 2.0.</p>
     </section>
 
   </article>
@@ -236,7 +251,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-11-04 10b39b6 · glass 05 · words 02';   // date + short commit hash; bump in the same commit as any change. words 02: Michael's text of 4 Nov 2026 (Story-Glass-900-Years-Ago-02.md) replacing the 8 Oct draft. The board: 'theophilus' with the table, free until the first circle or line, lead at its edges, its corners and the crossings on its edges points since the 30 Oct revisions 3 and 4; since 31 Oct (revision 5) edge to edge, the table 6 m by 4 m centred on 1, the piece under the tip outlined, Save New Open, sunlight; glass.js?v=2026-10-31
+  const CW_VERSION = '2026-11-05 d6570ca · glass 05 · words 02 · compass';   // date + short commit hash; bump in the same commit as any change. words 02: Michael's text of 4 Nov 2026 (Story-Glass-900-Years-Ago-02.md) replacing the 8 Oct draft; compass: the Oxfordshire pair, 5 Nov. The board: 'theophilus' with the table, free until the first circle or line, lead at its edges, its corners and the crossings on its edges points since the 30 Oct revisions 3 and 4; since 31 Oct (revision 5) edge to edge, the table 6 m by 4 m centred on 1, the piece under the tip outlined, Save New Open, sunlight; glass.js?v=2026-10-31
   console.log('geo-1-glass-circles', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 
