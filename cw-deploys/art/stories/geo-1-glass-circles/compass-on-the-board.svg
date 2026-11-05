@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 520" role="img" aria-label="An iron compass drawing a circle on a white chalk board">
+  <title>An iron compass drawing a circle on a white chalk board</title>
+  <defs>
+    <linearGradient id="iron" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3a3e43"/><stop offset="0.45" stop-color="#6c727a"/><stop offset="1" stop-color="#34383d"/>
+    </linearGradient>
+    <radialGradient id="boss" cx="0.38" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#8a9098"/><stop offset="0.6" stop-color="#4c5157"/><stop offset="1" stop-color="#2e3135"/>
+    </radialGradient>
+    <linearGradient id="board" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4f1ea"/><stop offset="1" stop-color="#e9e5dc"/>
+    </linearGradient>
+  </defs>
+  <path d="M40,330 L560,330 L590,505 L10,505 Z" fill="url(#board)" stroke="#d6d1c6" stroke-width="2"/>
+  <path d="M168.6,483.2 L163.6,482.7 L158.5,482.0 L153.6,481.3 L148.8,480.6 L144.0,479.8 L139.3,479.0 L134.8,478.1 L130.3,477.2 L126.0,476.2 L121.7,475.2 L117.6,474.2 L113.6,473.1 L109.8,472.0 L106.1,470.8 L102.5,469.6 L99.1,468.3 L95.8,467.0 L92.7,465.7 L89.7,464.4 L86.9,463.0 L84.3,461.6 L81.8,460.2 L79.5,458.7 L77.4,457.2 L75.4,455.7 L73.6,454.2 L72.0,452.7 L70.6,451.1 L69.4,449.6 L68.4,448.0 L67.5,446.4 L66.9,444.8 L66.4,443.2 L66.1,441.6 L66.0,440.0 L66.1,438.4 L66.4,436.8 L66.9,435.2 L67.5,433.6 L68.4,432.0 L69.4,430.4 L70.6,428.9 L72.0,427.3 L73.6,425.8 L75.4,424.3 L77.4,422.8 L79.5,421.3 L81.8,419.8 L84.3,418.4 L86.9,417.0 L89.7,415.6 L92.7,414.3 L95.8,413.0 L99.1,411.7 L102.5,410.4 L106.1,409.2 L109.8,408.0 L113.6,406.9 L117.6,405.8 L121.7,404.8 L126.0,403.8 L130.3,402.8 L134.8,401.9 L139.3,401.0 L144.0,400.2 L148.8,399.4 L153.6,398.7 L158.5,398.0 L163.6,397.3 L168.6,396.8 L173.8,396.3 L179.0,395.8 L184.3,395.4 L189.6,395.0 L194.9,394.7 L200.3,394.4 L205.7,394.3 L211.1,394.1 L216.6,394.0 L222.0,394.0 L227.4,394.0 L232.9,394.1 L238.3,394.3 L243.7,394.4 L249.1,394.7 L254.4,395.0 L259.7,395.4 L265.0,395.8 L270.2,396.3 L275.4,396.8 L280.4,397.3 L285.5,398.0 L290.4,398.7 L295.2,399.4 L300.0,400.2 L304.7,401.0 L309.2,401.9 L313.7,402.8 L318.0,403.8 L322.3,404.8 L326.4,405.8 L330.4,406.9 L334.2,408.0 L337.9,409.2 L341.5,410.4 L344.9,411.7 L348.2,413.0 L351.3,414.3 L354.3,415.6 L357.1,417.0 L359.7,418.4 L362.2,419.8 L364.5,421.3 L366.6,422.8 L368.6,424.3 L370.4,425.8 L372.0,427.3 L373.4,428.9 L374.6,430.4 L375.6,432.0 L376.5,433.6 L377.1,435.2 L377.6,436.8 L377.9,438.4 L378.0,440.0" fill="none" stroke="#6b6e73" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="222" cy="443" rx="10" ry="3" fill="#000" opacity="0.12"/>
+  <ellipse cx="378" cy="443" rx="10" ry="3" fill="#000" opacity="0.12"/>
+  <path d="M291.7,98.1 L227.9,398.4 L222.0,440.0 L234.8,400.0 L308.3,101.9 Z" fill="url(#iron)" stroke="#25282b" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M298.1,99.6 L230.4,399.0" stroke="#8d939b" stroke-width="1.5" opacity="0.7"/>
+  <path d="M291.7,101.9 L365.2,400.0 L378.0,440.0 L372.1,398.4 L308.3,98.1 Z" fill="url(#iron)" stroke="#25282b" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M298.1,100.4 L367.7,399.4" stroke="#8d939b" stroke-width="1.5" opacity="0.7"/>
+  <path d="M294,82 L296,52 L304,52 L306,82 Z" fill="url(#iron)" stroke="#25282b" stroke-width="1.5"/>
+  <circle cx="300" cy="44" r="11" fill="url(#boss)" stroke="#25282b" stroke-width="1.5"/>
+  <circle cx="300" cy="100" r="24" fill="url(#boss)" stroke="#25282b" stroke-width="2"/>
+  <circle cx="300" cy="100" r="7" fill="#3a3e43" stroke="#1f2124" stroke-width="1.5"/>
+  <circle cx="298" cy="98" r="2.2" fill="#9aa0a8"/>
+</svg>

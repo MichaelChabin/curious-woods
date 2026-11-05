@@ -24,8 +24,8 @@
   (_mscVault/0. Current/Designing Glass with Circles.md, with the counts after the board) is replaced whole.
   The two pictures his text names: the double rose and hexagon is drawn as a construction in lead on chalk
   (art/stories/geo-1-glass-circles/double-rose-and-hexagon.svg, this session's reading of his words, for his
-  eye); the compass is a real pair found in Oxfordshire, 300 to 600, from Wikimedia Commons, fetched on his word of 5 Nov
-  (its comment below says what and whose). The three stacks (the book, the came, the examples) stay
+  eye); the compass is Michael's own drawing of 5 Nov, the tool at work on the chalked board (its comment below says
+  what it replaced). The three stacks (the book, the came, the examples) stay
   level with the sentences that speak of them. The board after the last paragraph, no More.
   The board: ../js/glass.js, board 'theophilus' (29 Oct 2026; 'circles' until then): the window profile with
   circles and lines, no grid, numbers on the axes, the controls in the How this works boxes; since 30 Oct 2026 (Michael's
@@ -131,7 +131,7 @@
          half a step, twelve petals meeting at the centre, six of them reaching the corners of a hexagon; the thirteen circles
          that make the petals drawn faintly, as the lead would leave them on the chalk. To be replaced by his own if he has one. -->
     <figure class="still" id="doubleRose">
-      <img src="../art/stories/geo-1-glass-circles/double-rose-and-hexagon.svg" width="900" height="900" style="max-width: 440px;"
+      <img src="../art/stories/geo-1-glass-circles/double-rose-and-hexagon.svg" width="900" height="900" style="max-width: 440px; height: auto;"
            alt="A design drawn in grey lines on a chalk-white board: twelve narrow petals meeting at a centre, six of them reaching the corners of a hexagon drawn around them, with the circles that made the petals drawn faintly.">
       <figcaption>The double rose and hexagon, drawn with the compass and the straight edge. The faint circles are the ones that made the petals.</figcaption>
     </figure>
@@ -140,20 +140,17 @@
 
     <p>To make the lines, you'll use a &ldquo;straight edge.&rdquo; Yours looks like a flat wooden ruler, without the markings. For circles, you use your grandfather's compass. Actually, it is yours now. He gave it to you, but it belonged to his father when he was a boy.</p>
 
-    <!-- THE COMPASS, in the flow at the column's width, where Michael's text says "[picture: a compass]" (fetched on his word,
-         5 Nov 2026: "find a photograph of a real iron compass of about 1100 on Wikimedia Commons with a free licence"). No iron
-         compass of about 1100 is on Commons; the nearest real thing is this complete pair of compasses found in Oxfordshire,
-         of probable late Roman or early Saxon date (300 to 600): two cast copper-alloy arms on an iron spindle, with an iron
-         peg through a slot in the hinge to lock the arms open; the hook on the hinge is an eagle's head; 19 cm long. The
-         Portable Antiquities Scheme record 843214, photographed by Anni Byard for Oxfordshire County Council (2017); Wikimedia
-         Commons, "Roman dividers, Dividers (FindID 843214).jpg", CC BY 2.0. The file here is the top two of the record's four
-         views, cropped from the Commons original (872 × 768; the whole beside the session report). The caption says what it
-         is and what it is not: the text's compass is iron; this one is copper alloy on an iron hinge, and five hundred years
-         older. -->
+    <!-- THE COMPASS, in the flow at the column's width, where Michael's text says "[picture: a compass]": his own drawing,
+         pasted in chat 5 Nov 2026, an iron compass standing on a chalked board seen at a slant, one point planted and the
+         other three-quarters of the way round a circle. "It is meant to show how the tool would be used on a chalk covered
+         board." The file is his SVG without the content-credentials manifest it came with (the manifest could not be copied
+         byte for byte, so it is left out rather than broken). No wider than the double rose above (440 px). It replaces the
+         Oxfordshire pair of compasses (PAS 843214) that stood here for a few hours the same morning: a good photograph that
+         needed explaining; the photograph whole stays beside the session report. -->
     <figure class="still" id="compassFig">
-      <img src="../art/stories/geo-1-glass-circles/compasses-oxfordshire-300-600.jpg" width="872" height="317" loading="lazy" style="max-width: 600px;"
-           alt="Two views of an old pair of compasses, dark green with age: two long arms tapering to points, joined at one end by a round hinge with a small hooked peg on top; the second view shows one arm's face, decorated with rings and lines near the hinge.">
-      <figcaption>A real pair of compasses, found in Oxfordshire. It was made some time between 300 and 600, five hundred years or more before Theophilus, and it is the same tool: two arms that come to points, joined by a hinge. The arms are bronze; the hinge pin and the peg that locked the arms open are iron. The hook on the hinge is an eagle&rsquo;s head. About nineteen centimetres long. Photograph by Anni Byard for Oxfordshire County Council and the Portable Antiquities Scheme; Wikimedia Commons, CC BY 2.0.</figcaption>
+      <img src="../art/stories/geo-1-glass-circles/compass-on-the-board.svg" width="600" height="520" loading="lazy" style="max-width: 440px; height: auto;"
+           alt="An iron compass standing on a white chalked board: two tapering legs meeting in a round hinge, one point held still and the other three-quarters of the way round a circle drawn on the board.">
+      <figcaption>The compass at work on a chalked board: one point held still, the other dragged all the way round.</figcaption>
     </figure>
 
 
@@ -231,7 +228,6 @@
     <section class="refs">
       <h2>References</h2>
       <p>Theophilus, <i>On Divers Arts</i> (<i>De diversis artibus</i>), about 1100 to 1120. Book II is the glass book; chapter 17 is the whitewashed board, and the chapters after it the lead. Translated by John G. Hawthorne and Cyril Stanley Smith, and in print cheaply.</p>
-      <p>The pair of compasses: Portable Antiquities Scheme record 843214, a find from Oxfordshire of probable late Roman or early Saxon date, recorded by Anni Byard, 2017. The photograph is on Wikimedia Commons, CC BY 2.0.</p>
     </section>
 
   </article>
@@ -251,7 +247,7 @@
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-11-05 d6570ca · glass 05 · words 02 · compass';   // date + short commit hash; bump in the same commit as any change. words 02: Michael's text of 4 Nov 2026 (Story-Glass-900-Years-Ago-02.md) replacing the 8 Oct draft; compass: the Oxfordshire pair, 5 Nov. The board: 'theophilus' with the table, free until the first circle or line, lead at its edges, its corners and the crossings on its edges points since the 30 Oct revisions 3 and 4; since 31 Oct (revision 5) edge to edge, the table 6 m by 4 m centred on 1, the piece under the tip outlined, Save New Open, sunlight; glass.js?v=2026-10-31
+  const CW_VERSION = '2026-11-05 affeb6c · glass 05 · words 02 · compass 2';   // date + short commit hash; bump in the same commit as any change. words 02: Michael's text of 4 Nov 2026 (Story-Glass-900-Years-Ago-02.md) replacing the 8 Oct draft; compass 2: Michael's drawing of the compass on the board, 5 Nov (the Oxfordshire pair for a few hours before it). The board: 'theophilus' with the table, free until the first circle or line, lead at its edges, its corners and the crossings on its edges points since the 30 Oct revisions 3 and 4; since 31 Oct (revision 5) edge to edge, the table 6 m by 4 m centred on 1, the piece under the tip outlined, Save New Open, sunlight; glass.js?v=2026-10-31
   console.log('geo-1-glass-circles', CW_VERSION);
   window.CW = window.CW || {}; CW.flags = CW.flags || { maya: false };
 

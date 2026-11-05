@@ -1,5 +1,5 @@
 ---
-status: Built and checked 4 Nov 2026; committed and pushed the same day on Michael's word in the prompt ("When you are finished, please commit and push the result. I'll be away from this machine but would like to see it on the iPad"). `fb3245f8`. The compass picture fetched and placed 5 Nov on his word ("Yes, fetch one"), committed and pushed. Waiting on his read on the iPad.
+status: Built and checked 4 Nov 2026; committed and pushed the same day on Michael's word in the prompt ("When you are finished, please commit and push the result. I'll be away from this machine but would like to see it on the iPad"). `fb3245f8`. The compass picture fetched and placed 5 Nov on his word ("Yes, fetch one"), `497df525`; replaced the same morning by his own drawing ("Please do"), committed and pushed. Waiting on his read on the iPad.
 role: What Story-Glass-900-Years-Ago-02.md asked for (Michael's text of 4 Nov replacing all the earlier text of the Glass 900 years ago page), what was built, how it was checked, what needs his eye, and what is open.
 related: Story-Glass-900-Years-Ago-02.md, Report-Glass-900-Years-Ago-Revise-05.md, cw-deploys/active/geo-1-glass-circles.html, cw-deploys/art/stories/geo-1-glass-circles/double-rose-and-hexagon.svg
 pictures: Glass-900-Years-Ago-Nov04-Words02/ (mac-*.jpg are the pane at 1440 × 900; ipad-upright-*.jpg the pane at 768 × 1024; ipad-side-*.jpg at 1024 × 768; draw-double-rose.py drew the SVG; compasses-oxfordshire-commons-whole.jpg is the Commons photograph whole, four views and the scale, from which the page's crop was taken)
@@ -81,3 +81,16 @@ Michael's word, 5 Nov: "find a photograph of a real iron compass of about 1100 o
 | `mac-05-compass.jpg` | The compass in the flow at 1440 wide, with its caption. |
 | `ipad-upright-04-compass.jpg` | The iPad upright: the compass between its two paragraphs. |
 | `compasses-oxfordshire-commons-whole.jpg` | The Commons photograph whole: four views and the scale. |
+
+## 5 Nov, later: his drawing in the photograph's place
+
+Michael, on seeing the Oxfordshire pair: "That is a good image but it will require explanation to the user." He pasted his own drawing, an SVG made with Claude on the Desktop: an iron compass standing on a chalked board seen at a slant, two tapering legs meeting in a round hinge with a boss and pin, a knob above as a handle, one point planted and the other three-quarters of the way round a circle, with a soft shadow where each point touches. "It is meant to show how the tool would be used on a chalk covered board." On his word ("Please do but it doesn't need to be any taller than your drawing is") it stands where the photograph stood, in the flow at 440 px wide, 381 tall, with a one-line caption: *The compass at work on a chalked board: one point held still, the other dragged all the way round.* The file is `art/stories/geo-1-glass-circles/compass-on-the-board.svg`, 3.7 kB, his SVG without the content-credentials manifest it came with: the manifest could not be copied byte for byte from the paste, and a broken signature is worse than none, so it is left out and said so here. The photograph is off the page and out of `cw-deploys/` (`git rm`); the record's References line with it; the photograph whole stays beside this report.
+
+**A fix found on the way.** Both in-flow drawings carried `width` and `height` attributes with `max-width: 440px` and no `height: auto`, so the box kept the attribute's height while the SVG scaled to fit inside it: the double rose sat in a 440 × 576 box with blank bands above and below (the stylesheet's 64 vh cap), the compass in 440 × 520. Both now say `height: auto`: the rose is 440 × 440, the compass 440 × 381, no taller than the rose, as he asked. Stamp `2026-11-05 affeb6c · glass 05 · words 02 · compass 2`.
+
+**Checked** in the pane at 1440 × 900 and 768 × 1024 (`mac-06`, `ipad-upright-05`): the drawing in the column at 440 wide with its caption; the rose square; the examples stack still ending level with the last paragraph before the board; console the stamp only; `check-deploys` no errors.
+
+| File | What it shows |
+|---|---|
+| `mac-06-compass-drawing.jpg` | His drawing in the flow at 1440 wide. |
+| `ipad-upright-05-compass-drawing.jpg` | The iPad upright: the drawing between its two paragraphs. |
