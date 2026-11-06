@@ -1,5 +1,5 @@
 ---
-status: Report, 6 Nov 2026. Step 4 of the Time lab bench built on `9d5023c2` (the step-3 page as committed in `aaec50e8`), checked in the pane at 1,024 × 768 by pointer and 768 × 1,024 by finger events. Not committed — the prompt says stop and report. Michael's prompt `Prompt-Revise-Time-Lab-Bench-04.md`.
+status: Report, 6 Nov 2026. Step 4 of the Time lab bench built on `9d5023c2` (the step-3 page as committed in `aaec50e8`), checked in the pane at 1,024 × 768 by pointer and 768 × 1,024 by finger events. Committed and pushed on Michael's word, "Commit and push", `9eed2d35`, this session's hunks only. Michael's prompt `Prompt-Revise-Time-Lab-Bench-04.md`.
 role: What step 4 did to `experiments/time-lab.html`, what it found, and what needs Michael's eye.
 related: Prompt-Revise-Time-Lab-Bench-04.md, Report-Time-Lab-Bench-03.md (the page as it stood), Lab-Time-01.md, Periods-12000-01.md, Worknote-Mosaic-Focus-01.md (step 5)
 ---
@@ -8,7 +8,7 @@ related: Prompt-Revise-Time-Lab-Bench-04.md, Report-Time-Lab-Bench-03.md (the pa
 
 `cw-deploys/experiments/time-lab.html` only. Every shared script untouched; the store read, not written. Stamp
 `2026-11-06 9d5023c · time-lab step 4`. Nineteen pictures in `Time-Lab-Bench-04-Nov06/`, numbered as they are named
-below. `check-deploys` no errors. Not committed.
+below. `check-deploys` no errors. Committed as `9eed2d35`.
 
 ## The timeline is always there
 
