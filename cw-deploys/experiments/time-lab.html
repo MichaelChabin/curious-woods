@@ -50,7 +50,20 @@
      right of the row with a hairline to the gold tile and Electricity beside the year; the last million with period
      names under the row (placeholders) over the ice and warm spells. Three bench switches became rulings and are gone:
      the Earth follows the handle live; the last million is graded (B); a flag at the end of the line puts its year
-     inside. small / large stays bench only. -->
+     inside. small / large stays bench only.
+     Step 4 (6 Nov 2026; Michael's prompt Prompt-Revise-Time-Lab-Bench-04.md, after a day with step 3): the timeline is
+     always there — the line spans the whole mosaic in use from the start, its flags at the ends, the handle at today,
+     the whole span's events on it; a scale word resets the line to that mosaic's whole; focus and back alone stay absent
+     until there is something to focus on or step back to. The plaque on the mosaic is gone with its styles; the lift
+     stays, the text under the Earth does the telling. The handle carries its year with the word of knowing (252 million
+     years ago · inferred), set as the flags' labels are and following the handle live; where it would collide with a
+     flag's label the handle's wins and the flag's steps aside. Line one of the text block is the thing she touched last
+     — a period's name, span and length; an event's label and date as the summary's first words have them; at rest the
+     scale in use — and under it two columns of the house text, six lines each, of fixed height, stacked under 800 px:
+     the period's box words on the left, the event's summary ending in More on the right, each empty until there is
+     something to show, an event cleared when the selection moves to a span it is not in. The grade's sentence has left
+     the block for How this works. The last million has no year numbers under its blocks: the names are its labels, and
+     now stays at the right end as the 12,000 row keeps its year there. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
@@ -105,18 +118,21 @@
      the ball centred and filling the height; under it nothing but the text block */
   .earth { grid-row: 1; margin: 0 0 10px; }
   .stage { position: relative; width: 100%; height: 256px; overflow: hidden; touch-action: none; background: var(--cw-parchment, #f4f1e8); }
-  /* the text block (step 3): one block of fixed height directly under the Earth. Line one the year and the word of
-     knowing (copper); lines two to four whatever she touched last, three lines of the house text at most, cut with an
-     ellipsis, never growing the block; at rest the grade's sentence */
-  .knowing { margin: 6px auto 0; max-width: 680px; text-align: center; }
-  .year-line { margin: 0; font-size: 17px; line-height: 1.5; height: 1.5em; white-space: nowrap; overflow: hidden; color: var(--cw-ink, #2a241c); font-variant-numeric: tabular-nums; }
-  .year-line .know { color: var(--cw-copper, #b5652b); font-style: italic; }
-  .know-words { margin: 2px 0 0; font-size: 15px; line-height: 1.45; height: 4.35em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; color: var(--cw-ink, #2a241c); }
-  .know-words.ph { color: var(--cw-grey-word, #7d7a72); }
-  .know-words b { font-weight: bold; }
-  .know-words.event { cursor: pointer; }   /* an event's summary: the whole of it opens the More, so a summary cut short still can */
-  .know-words .more-word { font-style: italic; color: var(--cw-payne, #546A80); cursor: pointer; user-select: none; -webkit-user-select: none; }
-  .know-words .more-word:hover { color: var(--cw-payne-hover, #3D3D3A); }
+  /* the text block (step 4): one block of fixed height directly under the Earth. Line one the thing she touched last —
+     a period's name, span and length; an event's label and date; at rest the scale in use (the year is on the handle).
+     Under it two columns of the house text, six lines each, of fixed height, each cut with an ellipsis and never growing:
+     the period's box words on the left, the event's summary ending in More on the right; empty, not collapsed, until
+     there is something to show; stacked at iPad width (under 800 px) */
+  .knowing { margin: 6px auto 0; max-width: 680px; }
+  .line-one { margin: 0; font-size: 17px; line-height: 1.5; height: 1.5em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; color: var(--cw-ink, #2a241c); font-variant-numeric: tabular-nums; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; margin-top: 2px; }
+  .col { margin: 0; font-size: 15px; line-height: 1.45; height: 8.7em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; color: var(--cw-ink, #2a241c); }
+  .col.ph { color: var(--cw-grey-word, #7d7a72); }   /* placeholder words (the last million's periods), in grey */
+  .col b { font-weight: bold; }
+  .col.tap { cursor: pointer; }   /* an event's summary: the whole of it opens the More, so a summary cut short still can */
+  .col .more-word { font-style: italic; color: var(--cw-payne, #546A80); cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .col .more-word:hover { color: var(--cw-payne-hover, #3D3D3A); }
+  @media (max-width: 799px) { .cols { grid-template-columns: 1fr; } }
   #still { display: none; margin: 0 auto; }
   #still img { display: block; height: 100%; width: auto; margin: 0 auto; }
   #still .under { margin: 6px 0 0; font-size: 13px; font-style: italic; color: var(--cw-ink-soft, #6b655a); text-align: center; }
@@ -128,21 +144,12 @@
   canvas.glass { display: block; width: 100%; cursor: crosshair; touch-action: none; }
   .cursor-label { position: absolute; z-index: 7; pointer-events: none; font-size: 12px; line-height: 1.3; color: var(--cw-ink, #2a241c);
                   background: rgba(244,241,232,0.94); border: 0.5px solid #c8b89a; border-radius: 4px; padding: 2px 7px; white-space: nowrap; display: none; }
-  /* the period box: white, legible, below the period, a pointer line up to it; one at a time, inside the mosaic */
-  .pbox { position: absolute; z-index: 6; display: none; background: #fff; color: var(--cw-ink, #2a241c); border: 0.5px solid #b9b2a3; border-radius: 3px;
-          padding: 7px 11px 8px; font-size: 14px; line-height: 1.45; box-shadow: 0 2px 10px rgba(42,38,32,0.16); pointer-events: none; box-sizing: border-box; }
-  .pbox.up { display: block; }
-  .pbox .head { display: block; font-size: 12px; color: var(--cw-grey-word, #7d7a72); margin-bottom: 1px; }
-  .pbox.ph { color: var(--cw-grey-word, #7d7a72); }   /* placeholder words (the last million's periods), in grey */
-  .pline { position: absolute; z-index: 6; display: none; width: 0; border-left: 1px solid #3a3530; pointer-events: none; }
-  .pline.up { display: block; }
-  /* the timeline: the mosaic page's line (the Earth bench's age row, 6c, 6d, as 7c has it), its words to the right; absent
-     until she chooses a span (visibility, so its room is kept and nothing below moves) */
-  .track-col { grid-row: 4; margin: 0; position: relative; visibility: hidden; }   /* tight under the mosaic: the flags' labels need 18 px and get no more */
+  /* the timeline: the mosaic page's line (the Earth bench's age row, 6c, 6d, as 7c has it), its words to the right; there
+     from the start (step 4), spanning the whole mosaic in use */
+  .track-col { grid-row: 4; margin: 0; position: relative; }   /* tight under the mosaic: the flags' labels need 18 px and get no more */
   /* focus and back: to the right of the line, in the gutter the years hang in, placed from the timeline's own box (the
      script sets left), so a change of mosaic moves nothing else */
-  .stretch-words { position: absolute; top: 36px; width: 80px; display: flex; flex-direction: column; gap: 2px; align-items: flex-start; visibility: hidden; }
-  .main.live .track-col, .main.live .stretch-words { visibility: visible; }
+  .stretch-words { position: absolute; top: 36px; display: flex; flex-direction: column; gap: 2px; align-items: flex-start; white-space: nowrap; }
   .stretch-words .word { font-size: 15px; font-style: italic; }
   .stretch-track { position: relative; height: 62px; touch-action: none; cursor: default; user-select: none; -webkit-user-select: none; }
   .stretch-line { position: absolute; left: 0; right: 0; top: 45px; height: 2px; background: var(--cw-grey, #9a958b); border-radius: 1px; }
@@ -156,13 +163,19 @@
   .flag.a::before { left: 2px; border-radius: 0 3px 3px 0; }
   .flag.b::before { right: 2px; border-radius: 3px 0 0 3px; }
   .flag-label { position: absolute; top: 15px; line-height: 14px; font-size: 12px; color: var(--cw-grey-word, #7d7a72); font-variant-numeric: tabular-nums; white-space: nowrap; pointer-events: none; display: none; }
+  .flag-label.up { top: 1px; }   /* no room on the labels' row beside the handle's (step 4): the row above */
+  /* the handle's year (step 4), set as the flags' labels are, with the word of knowing after it in copper italic; it follows
+     the handle live, on parchment so it reads over a pennant it crosses; a flag's label it would cover steps aside */
+  .handle-label { background: var(--cw-parchment, #f4f1e8); padding: 0 3px; z-index: 2; }
+  .handle-label .know { color: var(--cw-copper, #b5652b); font-style: italic; }
   /* the year handle: the Time Machine's marker (a copper dot, 6.5 px in radius, ringed in parchment) on the line, the
      lab's year; above the flags, so it can be taken hold of where a flag stands */
   .handle { position: absolute; top: 39.5px; width: 13px; height: 13px; margin-left: -6.5px; border-radius: 50%; background: var(--cw-copper, #b5652b);
             box-shadow: 0 0 0 2px var(--cw-parchment, #f4f1e8); z-index: 3; cursor: grab; }
   .handle::after { content: ""; position: absolute; left: -9px; right: -9px; top: -9px; bottom: -9px; }   /* room for a finger */
   /* the events under the line (the Time Machine's deep timeline, drawn here): a fixed box, four rows of labels at most */
-  svg.events { display: block; width: 100%; height: 70px; margin-top: -15px; overflow: visible; }
+  svg.events { display: block; width: 100%; height: 70px; margin-top: -15px; overflow: visible; position: relative; pointer-events: none; }   /* above the track, so a mark's stem takes the tap (found in step 4's check: the positioned track painted over the top 15 px, where every stem is); the empty glass lets taps through to the line */
+  svg.events .mark { pointer-events: auto; }
   svg.events text { font-family: var(--cw-font, Georgia, serif); }
   svg.events .mark { cursor: pointer; }
   svg.events .mark line, svg.events .mark text { pointer-events: none; }
@@ -227,12 +240,12 @@
       <div class="earth" id="earthBlock">
         <div id="stage3d" class="stage"></div>
         <div id="still"><img alt="The Earth, a still picture" src="../art/globe/earth-3d-still.webp"><p class="under" id="stillLine">This one needs a newer device.</p></div>
-        <div class="knowing" id="knowing"><p class="year-line" id="yearLine">Today</p><p class="know-words" id="knowWords"></p></div>
+        <div class="knowing" id="knowing"><p class="line-one" id="lineOne"></p><div class="cols"><p class="col" id="colPeriod"></p><p class="col" id="colEvent"></p></div></div>
       </div>
       <p class="explain" id="explain"></p>
-      <div class="glass-box" id="glassBox"><canvas class="glass" id="glass" aria-label="A mosaic of time: each tile a stretch of time, the past at the top left"></canvas><div class="cursor-label" id="cursorLabel"></div><div class="pline" id="pline"></div><div class="pbox" id="pbox"></div></div>
+      <div class="glass-box" id="glassBox"><canvas class="glass" id="glass" aria-label="A mosaic of time: each tile a stretch of time, the past at the top left"></canvas><div class="cursor-label" id="cursorLabel"></div></div>
       <div class="track-col" id="trackCol">
-        <div class="stretch-track" id="stretchTrack" aria-label="The timeline: a line over the span chosen on the mosaic; the copper dot is the year, the flags pick a span, focus closes in on it, and a flag pulled past an end adds years"><div class="stretch-line" id="stretchLine"></div><div class="span-line" id="spanLine"></div><div class="flag a" id="flagA" title="drag"></div><div class="flag b" id="flagB" title="drag"></div><div class="handle" id="handle" title="the year"></div><span class="flag-label" id="labelA"></span><span class="flag-label" id="labelB"></span><span class="span-word" id="spanWord"></span></div>
+        <div class="stretch-track" id="stretchTrack" aria-label="The timeline: a line over the span chosen on the mosaic; the copper dot is the year, the flags pick a span, focus closes in on it, and a flag pulled past an end adds years"><div class="stretch-line" id="stretchLine"></div><div class="span-line" id="spanLine"></div><div class="flag a" id="flagA" title="drag"></div><div class="flag b" id="flagB" title="drag"></div><div class="handle" id="handle" title="the year"></div><span class="flag-label" id="labelA"></span><span class="flag-label" id="labelB"></span><span class="flag-label handle-label" id="labelH"></span><span class="span-word" id="spanWord"></span></div>
         <svg class="events" id="events" aria-label="The events of the span, from the store"><defs><linearGradient id="tl-tail" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#2a241c" stop-opacity="0"></stop><stop offset="1" stop-color="#2a241c" stop-opacity="0.32"></stop></linearGradient></defs></svg>
         <div class="stretch-under"><span class="pixel" id="pixelLine"></span></div>
         <div class="stretch-words" id="stretchWords"><button class="word absent" id="wStretch" type="button">focus</button><button class="word absent" id="wBack" type="button">back</button></div>
@@ -250,7 +263,7 @@
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-05 c738328 · time-lab step 3';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-06 9d5023c · time-lab step 4';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -280,7 +293,6 @@
     backlitL: 0.22, backlitS: 0.18, goldMix: 0.75,   // an event: brighter than its own colour; a pale square goes toward gold instead
     lift: 0.06,               // the period under the cursor is lifted by this much lightness
     dimRest: 0.12,            // with Periods, the rest of the window dims gently by this much toward the parchment (0: nothing dims — Michael's rule of 1 Nov)
-    boxWidth: 420, boxPointer: 14,   // the period box: its widest, and the pointer line's length
     plain: '#c4bfae', clear: '#e6e8e4',   // plain glass (the 12,000 window: a pale stone, so the gold square at now shows); clear glass is unused now that no window has a future
     warm: '#7fa86a',          // the last million: a warm spell
     iceDeep: '#7a9cad', icePale: '#e6eef1',   // the ice, graded: at the threshold, and the palest at the lowest sea (B, ruled 5 Nov)
@@ -305,6 +317,7 @@
     focus: 'focus', back: 'back',
     periods: ['Periods', 'Hide periods'], cities: ['Cities', 'Hide cities'],
     now: 'now', nowLabel: 'Now', notYet: 'not yet', more: 'More',
+    scaleLines: ['The Solar System · 4,600 million years', 'The last million years', 'The last 12,000 years'],   // line one at rest: the scale in use (step 4)
     iceTile: 'ice age', warmTile: 'warm spell'   // the last million: what the tile under the cursor is, after its period's name
   };
   // The fourteen periods of the 4.6 billion mosaic (Worknote-Deep-Time-Window-03's thirteen, and Before the Sun from
@@ -379,8 +392,9 @@
 
   // ---------- the lab's state: the year, the Earth, the timeline ----------
   // One year, the handle's (Lab-Time: "one year is the lab's shared state"); the Earth reads it and nothing else sets the
-  // Earth. The timeline is absent until the first span is chosen. The Earth attaches when its module has stood it up.
-  const lab = { ma: 0, shown: false, size: Q.get('size') === 'large' ? 'large' : 'small', earth: null, rec: null, flat: false };
+  // Earth. The timeline is there from the start (step 4). The Earth attaches when its module has stood it up. rough: the
+  // year came from a pixel on the line (a tap, a drag), so the handle's label rounds it as the flags' labels round theirs.
+  const lab = { ma: 0, rough: false, size: Q.get('size') === 'large' ? 'large' : 'small', earth: null, flat: false };
 
   // ---------- the three mosaics ----------
   // Each: the tiles (100 a block, 10 columns of 10; time down each column and then right), the blocks in a row, the
@@ -391,8 +405,7 @@
   const WINDOWS = [
     { id: 'w0', blocks: 10, rows: 5, unitMa: 1, startMa: 4600, squares: 4600, gutter: LOOK.gutter,
       rowLabel: k => k < 4 ? (k + 1) + ' billion' : WORDS.nowLabel },   // the years count forward; the last label, where 4.6 billion sat, is Now
-    { id: 'w1', blocks: 10, rows: 1, unitMa: 0.001, startMa: 1, squares: 1000, gutter: LOOK.gutter, names: true,
-      blockLabel: j => j < 9 ? fmt((9 - j) * 100000) : null, endLabel: WORDS.now,   // years ago, read against now at the right
+    { id: 'w1', blocks: 10, rows: 1, unitMa: 0.001, startMa: 1, squares: 1000, gutter: LOOK.gutter, names: true, endLabel: WORDS.now,   // no numbers under the row (step 4): the blocks are the ruler, the names the labels; now at the right end, as the 12,000 keeps its year there
       nameOf: i => (WINDOWS[1].warmOf && WINDOWS[1].warmOf[i]) ? WORDS.warmTile : WORDS.iceTile },
     { id: 'w2', blocks: 13, rows: 1, unitMa: 0.00001, startMa: (THIS_YEAR - ICE_YEAR) / 1e6, squares: 1300, real: 1200 + DECADES_BEGUN, gutter: LOOK.gutter12, names: true, yearEnd: true,
       nameOf: i => decadeWord(i) }   // no numbers under the row: the blocks are the ruler, the names the labels; the year stands at the row's right end
@@ -464,7 +477,7 @@
   // ---------- layout and drawing ----------
   const cv = $('glass'), ctx = cv.getContext('2d');
   const state = { w: WINDOWS[0], L: null, hover: -1, drag: null, anchor: -1, down: null, moved: false, touch: false, periods: true, cities: false };
-  const LABEL_H = 18, NAMES_H = 16, NAME_GAP = 8;   // the years under a row; the period names under them (the 12,000), a row of names, the least gap between two
+  const NAMES_H = 16, NAME_GAP = 8;   // the period names under a row: a row of names, the least gap between two
   // the period names under the 12,000 row: each centred under its span (kept inside it where the span is narrower than
   // the name), on the line that holds the larger part of the span; a name that would run into one already placed drops
   // to the next row of names, as the events' labels do. Placed on the tiles' geometry alone, so layout can size the row.
@@ -493,8 +506,8 @@
   function layout() {
     const w = state.w, W = $('glassBox').clientWidth, dpr = window.devicePixelRatio || 1;
     const wide = W >= 640, BPL = wide ? w.blocks : Math.ceil(w.blocks / 2), lines = Math.ceil(w.blocks / BPL);
-    const under = (w.blockLabel ? LABEL_H : 0) + (w.names ? NAMES_H * nameRows(w) : 0);   // the years, and the period names, under each line of the row
-    const F = LOOK.frame, GB = LOOK.gapBlock, G = gut(), GL = (w.blockLabel || w.names) ? under + 2 * F + 2 : LOOK.gapLine, GR = LOOK.gapRow;   // room for the labels under a wrapped line
+    const under = w.names ? NAMES_H * nameRows(w) : 0;   // the period names under each line of the row
+    const F = LOOK.frame, GB = LOOK.gapBlock, G = gut(), GL = w.names ? under + 2 * F + 2 : LOOK.gapLine, GR = LOOK.gapRow;   // room for the names under a wrapped line
     const p = (W - 2 * G - 2 * F - (BPL - 1) * GB) / (BPL * 10);   // the tiles inset by the gutter on each side: the row centred on the column, the years hanging outside it to the right
     const lineH = 10 * p, rowH = lines * lineH + (lines - 1) * GL, glassH = w.rows * rowH + (w.rows - 1) * GR + 2 * F;
     const H = glassH + under;
@@ -505,7 +518,7 @@
     // the timeline and the reminder line line up with the coloured tiles: from the first column of tiles to the last, not the years on the right
     const r0 = rect(Math.min(w.real, BPL * 100) - 1), r1 = rect(w.real - 1), right = Math.max(r0.x + r0.s, r1.x + r1.s), left = G + F;   // to the last real tile's column, not the clear glass
     [$('trackCol'), $('explain')].forEach(el => { el.style.marginLeft = left + 'px'; el.style.width = (right - left) + 'px'; });
-    $('stretchWords').style.left = (right + 12) + 'px';   // focus and back: to the right of the line, in the gutter
+    $('stretchWords').style.left = (right - left + 12) + 'px';   // focus and back: to the right of the line, in the gutter (from the timeline's own box, which starts at left; step 3 added right to that box's own offset and put the words 67 px into the margin, past the column — found in step 4's check)
     state.L.tilesRight = right; state.L.tilesLeft = left;
   }
   const blocksInRow = (w, row) => Math.min(w.blocks, Math.ceil((w.squares - row * w.blocks * 100) / 100));
@@ -525,7 +538,7 @@
     const i = row * w.blocks * 100 + blk * 100 + Math.floor(xin / L.p) * 10 + Math.floor(yl / L.p);
     return i < w.real ? i : -1;   // the clear glass past the last real tile is inert
   }
-  const litSpan = () => lab.shown ? [Math.min(STR.flags[0], STR.flags[1]), Math.max(STR.flags[0], STR.flags[1])] : null;   // the flags' span, in ma: what the window lights; nothing at rest
+  const litSpan = () => [Math.min(STR.flags[0], STR.flags[1]), Math.max(STR.flags[0], STR.flags[1])];   // the flags' span, in ma: what the window lights (the whole lights nothing)
   function draw() {
     const w = state.w, L = state.L; if (!L) return;
     if (!w.built) build(w);
@@ -562,29 +575,18 @@
     }
     // the hovered square
     if (state.hover >= 0 && !state.drag) { const r = rect(state.hover); ctx.strokeStyle = S.ink; ctx.lineWidth = 1; ctx.strokeRect(r.x - 0.5, r.y - 0.5, r.s - L.lw + 1, r.s - L.lw + 1); }
-    // the years: on the right of each row (4.6 billion), or under each block's right edge and after the last square
-    ctx.fillStyle = S.greyWord || '#7d7a72'; ctx.font = LOOK.labelFont + ' ' + (S.font || 'Georgia, serif'); ctx.textBaseline = 'alphabetic';
+    // the years: on the right of each row (4.6 billion); now after the last million's last square (its only word)
+    ctx.fillStyle = S.greyWord || '#7d7a72'; ctx.font = LOOK.labelFont + ' ' + (S.font || 'Georgia, serif'); ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
     if (w.rowLabel) {
-      ctx.textAlign = 'left';
       for (let k = 0; k < w.rows; k++) { const last = rect(k * w.blocks * 100 + (blocksInRow(w, k) - 1) * 100 + 99); ctx.fillText(w.rowLabel(k), last.x + last.s + L.F + 6, last.y + last.s - 1); }
     }
-    if (w.blockLabel) {
-      ctx.textAlign = 'right'; let lastRight = -1e9;
-      for (let j = 0; j < w.blocks; j++) {
-        const text = w.blockLabel(j); if (!text) continue;
-        const r = rect(Math.min(j * 100 + 99, w.real - 1)), x = r.x + r.s, y = r.y + r.s + L.F + 12, tw = ctx.measureText(text).width;   // a block cut short by now: its label at the last real column
-        if (j % L.BPL === 0) lastRight = -1e9;
-        if (x - tw < lastRight + 4) continue;
-        ctx.fillText(text, x, y); lastRight = x;
-      }
-      if (w.endLabel) { const last = rect(w.squares - 1); ctx.textAlign = 'left'; ctx.fillText(w.endLabel, last.x + last.s + L.F + 6, last.y + last.s - 1); }
-    }
-    // the period names under the row at all times (the 12,000, Michael, 4 Nov; the last million, 5 Nov): small capitals,
-    // each centred under its span on the line that holds the larger part of it, under the years where there are years
+    if (w.endLabel) { const last = rect(w.squares - 1); ctx.fillText(w.endLabel, last.x + last.s + L.F + 6, last.y + last.s - 1); }
+    // the period names under the row at all times (the 12,000, Michael, 4 Nov; the last million, 5 Nov; no year numbers
+    // on either since step 4): small capitals, each centred under its span on the line that holds the larger part of it
     if (w.names && L.names) {
       ctx.font = nameFont(); ctx.fillStyle = S.inkSoft || '#6b655a'; ctx.textAlign = 'center';
       if ('letterSpacing' in ctx) ctx.letterSpacing = '0.06em';
-      const base = L.F + (w.blockLabel ? LABEL_H : 0) + 12;
+      const base = L.F + 12;
       L.names.forEach(n => ctx.fillText(n.text, n.x, n.yTop + base + NAMES_H * n.row));
       if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
     }
@@ -600,7 +602,7 @@
   }
 
   // ---------- the pointer on the glass: rollover names the period, a tap selects it, a drag selects the tiles crossed ----------
-  const label = $('cursorLabel'), pbox = $('pbox'), pline = $('pline');
+  const label = $('cursorLabel');
   function labelFor(i) {   // the period's short name (the decade on the 12,000), the tile's events, and now for the gold tile
     const w = state.w; if (i < 0) return '';
     const k = w.kind[i]; let t = k >= 0 ? w.plaques[k].n : ''; if (w.nameOf) t += (t ? ' · ' : '') + w.nameOf(i);   // the period's name; on the 12,000 the tile's decade after it
@@ -645,31 +647,18 @@
     if (p.rough) t = 'about ' + t;
     return t.charAt(0).toUpperCase() + t.slice(1) + (p.toMa <= 1e-9 ? ', so far.' : '.');
   }
-  function hideBox() { pbox.classList.remove('up'); pline.classList.remove('up'); state.boxKey = null; }
-  function showBox(i) {   // the period box, below the period under the cursor, a pointer line up to it, inside the window; the same words to the block under the Earth
-    const w = state.w, k = i >= 0 ? w.kind[i] : null, p = k !== null && k >= 0 ? w.plaques[k] : null;
-    if (!p) { hideBox(); return; }
+  // pointing (step 4): no plaque on the mosaic; the period under the pointer is lifted on the glass and told in the block
+  // under the Earth — line one its name, span and length, the left column its box words — and leaves the block again when
+  // the pointer does, the selected period's words coming back
+  function pointAt(i) {
+    const w = state.w, k = i >= 0 ? w.kind[i] : -1, p = k >= 0 ? w.plaques[k] : null;
+    if (!p) { unpoint(); return; }
     const key = w.id + ':' + k;
-    if (state.boxKey !== key) {
-      state.boxKey = key;
-      const text = nextText(p.key, p.t);
-      tellPeriod(p, text);
-      if (!state.periods) { hideBox(); return; }
-      const head = p.n || (p.toMa <= 1e-9 ? maWord(p.fromMa) + ' years ago to now' : maWord(p.fromMa) + ' to ' + maWord(p.toMa) + ' years ago');
-      pbox.innerHTML = ''; const h = document.createElement('span'); h.className = 'head'; h.textContent = head + ' · ' + lengthWord(p).replace(/\.$/, '').toLowerCase(); pbox.appendChild(h); pbox.appendChild(document.createTextNode(text));
-      pbox.classList.toggle('ph', !!p.ph);
-    }
-    if (!state.periods) { hideBox(); return; }
-    // the period's squares on the hovered square's own row and line: the box is centred on them and points up at them
-    const L = state.L, perRow = w.blocks * 100, row = Math.floor(i / perRow), blk = Math.floor((i % perRow) / 100), line = Math.floor(blk / L.BPL);
-    const first = row * perRow + line * L.BPL * 100, last = Math.min(w.squares, row * perRow + (line + 1) * L.BPL * 100);
-    let x0 = Infinity, x1 = -Infinity, yb = -Infinity;
-    for (let j = first; j < last; j++) if (w.kind[j] === k) { const r = rect(j); if (r.x < x0) x0 = r.x; if (r.x + r.s > x1) x1 = r.x + r.s; if (r.y + r.s > yb) yb = r.y + r.s; }
-    const W = L.W - 2 * L.G; pbox.style.maxWidth = Math.min(LOOK.boxWidth, W) + 'px'; pbox.classList.add('up');   // inside the panes, not the gutters
-    const bw = Math.min(pbox.offsetWidth, W), cx = (x0 + x1) / 2, left = L.G + Math.max(0, Math.min(W - bw, cx - L.G - bw / 2));
-    pbox.style.left = left + 'px'; pbox.style.top = (yb + LOOK.boxPointer) + 'px';
-    pline.style.left = Math.max(left + 8, Math.min(left + bw - 8, cx)) + 'px'; pline.style.top = yb + 'px'; pline.style.height = LOOK.boxPointer + 'px'; pline.classList.add('up');
+    if (state.pointKey === key) return;
+    state.pointKey = key;
+    tellPointed(p, nextText(p.key, p.t));
   }
+  function unpoint() { if (state.pointKey == null) return; state.pointKey = null; tellPointed(null); }
   const at = e => { const r = cv.getBoundingClientRect(); return hit(e.clientX - r.left, e.clientY - r.top); };
   function unitSpan(i) {   // what a tap selects: the whole period (a run of ice or warmth on the last million), or the thousand-year block where there is no period
     const w = state.w, k = w.kind[i];
@@ -677,23 +666,27 @@
     const j = Math.floor(i / 100), last = Math.min(w.squares - 1, j * 100 + 99);
     return [Math.max(0, w.newerMa(last)), Math.min(LINE_END, w.olderMa(j * 100))];
   }
-  function tapSelect(i) { const [a, b] = unitSpan(i); chooseSpan(a, b); }
+  function tapSelect(i) {   // a tap: the whole period under it chosen, its words kept in the block (the text she saw while pointing)
+    const w = state.w, k = w.kind[i], p = k >= 0 ? w.plaques[k] : null, [a, b] = unitSpan(i);
+    selectPeriod(p, p ? (know.pointed && know.pointed.p === p ? know.pointed.text : nextText(p.key, p.t)) : '');
+    chooseSpan(a, b);
+  }
   cv.addEventListener('pointerdown', e => {
     e.preventDefault();   // every press on the glass, in the came too: no text selection starts here
     const i = at(e); state.touch = e.pointerType === 'touch'; if (i < 0) return;
     state.drag = [i, i]; state.anchor = i; state.hover = i; state.down = [e.clientX, e.clientY]; state.moved = false;
     try { cv.setPointerCapture(e.pointerId); } catch (err) {}
-    draw(); showLabel(e, i); showBox(i);
+    draw(); showLabel(e, i); pointAt(i);
   });
   cv.addEventListener('pointermove', e => {
     const i = at(e);
     if (state.drag) {
       if (!state.moved && Math.hypot(e.clientX - state.down[0], e.clientY - state.down[1]) > (state.touch ? LOOK.tapSlopTouch : LOOK.tapSlop)) state.moved = true;
       if (i >= 0) { state.drag = [state.anchor, i]; state.hover = i; }
-      draw(); showLabel(e, i >= 0 ? i : state.hover); showBox(state.hover); return;
+      draw(); showLabel(e, i >= 0 ? i : state.hover); pointAt(state.hover); return;
     }
-    if (e.pointerType === 'touch') return;   // by finger the box is for while it is down
-    if (i !== state.hover) { state.hover = i; draw(); showBox(i); }
+    if (e.pointerType === 'touch') return;   // by finger the pointing is for while it is down
+    if (i !== state.hover) { state.hover = i; draw(); pointAt(i); }
     showLabel(e, i);
   });
   function endDrag(e) {
@@ -701,31 +694,34 @@
     const w = state.w; let [a, b] = state.drag; const tap = !state.moved; state.drag = null;
     if (a > b) [a, b] = [b, a];
     b = Math.min(b, w.real - 1); if (a > b) a = b;
-    if (state.touch) { state.hover = -1; label.style.display = 'none'; hideBox(); }
-    else if (e && state.hover >= 0) showLabel(e, state.hover);   // the drag's span word gives way to the name again
     if (tap) tapSelect(state.anchor);   // a press that did not move: the whole period under it
-    else chooseSpan(Math.max(0, w.newerMa(b)), Math.min(LINE_END, w.olderMa(a)));   // a drag: the tiles crossed, one for a tiny drag
+    else { selectPeriod(null, ''); chooseSpan(Math.max(0, w.newerMa(b)), Math.min(LINE_END, w.olderMa(a))); }   // a drag: the tiles crossed, one for a tiny drag; no period is chosen by it
+    if (state.touch) { state.hover = -1; label.style.display = 'none'; unpoint(); }
+    else if (e && state.hover >= 0) showLabel(e, state.hover);   // the drag's span word gives way to the name again
     draw();
   }
   cv.addEventListener('pointerup', endDrag);
-  cv.addEventListener('pointercancel', () => { state.drag = null; state.hover = -1; label.style.display = 'none'; hideBox(); draw(); });
-  cv.addEventListener('pointerleave', () => { if (state.drag) return; state.hover = -1; label.style.display = 'none'; hideBox(); draw(); });
+  cv.addEventListener('pointercancel', () => { state.drag = null; state.hover = -1; label.style.display = 'none'; unpoint(); draw(); });
+  cv.addEventListener('pointerleave', () => { if (state.drag) return; state.hover = -1; label.style.display = 'none'; unpoint(); draw(); });
 
   // ---------- Select years: the three scales, the one in use in copper ----------
   const scaleEls = WINDOWS.map((w, k) => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'word cmd'; b.textContent = WORDS.scales[k]; b.setAttribute('aria-pressed', k === 0 ? 'true' : 'false');
     b.addEventListener('click', () => setWindow(k, true)); $('scales').appendChild(b); return b;
   });
-  function setWindow(k, byHer) {   // the mosaic of that scale; the line keeps its span if the mosaic reaches it, else takes the mosaic's whole
-    const w = WINDOWS[k]; state.w = w; state.hover = -1; state.drag = null; hideBox(); label.style.display = 'none';
+  function setWindow(k, byHer) {   // the mosaic of that scale; chosen by her, the line resets to the mosaic's whole span (step 4); stepped up by the line, the line stays as it is
+    const w = WINDOWS[k]; state.w = w; state.hover = -1; state.drag = null; unpoint(); label.style.display = 'none';
     scaleEls.forEach((el, j) => el.setAttribute('aria-pressed', j === k ? 'true' : 'false'));
     $('explain').textContent = WORDS.explain[k];
     layout();
-    if (byHer && !STR.anim && STR.b > w.spanMa + 1e-9) {
-      if (lab.shown) chooseSpan(0, w.spanMa);   // the line takes the mosaic's whole: a span chosen, so the handle and the Earth go to its older end
-      else { STR.a = 0; STR.b = w.spanMa; STR.flags = [0, w.spanMa]; STR.stack = []; }   // at rest the hidden line follows quietly: nothing appears, nothing moves
-    }
-    draw(); if (lab.shown) renderStretch();
+    if (byHer) resetSpan(0, w.spanMa);
+    renderStretch(); tellBlock();
+  }
+  function resetSpan(a, b) {   // a scale chosen: the line is that whole span, the flags at its ends, nothing to step back from; the handle stays at its year if the line still holds it, else goes to the nearer end
+    if (STR.anim) { cancelAnimationFrame(STR.anim); STR.anim = null; STR.target = null; }
+    if (STR.pull) endPull(false);
+    STR.a = a; STR.b = b; STR.flags = [a, b]; STR.stack = [];
+    settleHandle(); spanSettled();
   }
   function windowFor(spanB) {   // the smallest window that reaches the span's older end, for the step up
     for (let k = WINDOWS.length - 1; k >= 0; k--) if (WINDOWS[k].spanMa >= spanB - 1e-9) return k;
@@ -741,9 +737,10 @@
   // of the line is a pull (STR.pull): it travels on as if the line continued, counting years at the line's scale, and
   // held there keeps adding years, faster the longer it is held; on release the line rescales so the flag sits at its
   // end again. STR.flags[0] is the recent flag (the right one), STR.flags[1] the older (the left). New here (step 1 of
-  // the lab): the handle, the lab's year, on the line; and the span's events under it.
+  // the lab): the handle, the lab's year, on the line; and the span's events under it. Since step 4 the line is there
+  // from the start, the whole of the mosaic in use, its flags at the ends and the handle at today.
   const STR = { a: 0, b: LINE_END, stack: [], flags: [0, LINE_END], anim: null, target: null, pull: null };
-  const track = $('stretchTrack'), flagEls = [$('flagB'), $('flagA')], labelEls = [$('labelB'), $('labelA')], spanLine = $('spanLine'), spanWord = $('spanWord'), handleEl = $('handle');
+  const track = $('stretchTrack'), flagEls = [$('flagB'), $('flagA')], labelEls = [$('labelB'), $('labelA')], labelH = $('labelH'), spanLine = $('spanLine'), spanWord = $('spanWord'), handleEl = $('handle');
   const trackW = () => track.clientWidth || 1;
   const lineW = trackW;
   const xOf = ma => (STR.b - ma) / (STR.b - STR.a) * lineW();
@@ -778,21 +775,40 @@
   }
   function updatePull(now) { const p = STR.pull; if (!p) return; STR.flags[p.i] = pullMa(p.i, p.beyond, (now || performance.now()) - p.since); }
   function pullFrame(now) { if (!STR.pull) return; updatePull(now); renderStretch(); STR.pull.raf = requestAnimationFrame(pullFrame); }
-  function placeLabels(W) {   // the flags' years on the outside: the right flag's to its right, the left flag's to its left; the span on the copper line between
+  function placeLabels(W) {   // the flags' years on the outside: the right flag's to its right, the left flag's to its left; the handle's year over the handle (step 4), which wins where the two would collide; the span on the copper line between
     const show = !STR.anim;
-    labelEls.forEach(el => { el.style.display = show ? 'block' : 'none'; });
+    labelEls.forEach(el => { el.style.display = show ? 'block' : 'none'; }); labelH.style.display = show ? 'block' : 'none';
     spanLine.style.display = show ? 'block' : 'none'; spanWord.style.display = show ? 'block' : 'none';
     if (!show) return;
-    const step = pixelStep(), xR = flagX(0), xL = flagX(1);
+    const step = pixelStep(), xR = flagX(0), xL = flagX(1), xH = handleX();
     labelEls[0].textContent = STR.flags[0] <= STR.a + EPS && !pulling(0) ? spanEndWord(STR.a) : flagWord(STR.flags[0], step);
     labelEls[1].textContent = STR.flags[1] >= STR.b - EPS && !pulling(1) ? spanEndWord(STR.b) : flagWord(STR.flags[1], step);
     spanWord.textContent = gapWord(STR.flags[1] - STR.flags[0], flagsMoved() || STR.pull ? step : endStep());   // the whole line's span exact; a flag's to the pixel
-    const wR = labelEls[0].offsetWidth, wL = labelEls[1].offsetWidth, wG = spanWord.offsetWidth;
+    const wR = labelEls[0].offsetWidth, wL = labelEls[1].offsetWidth, wG = spanWord.offsetWidth, wH = labelH.offsetWidth;
+    const hL = Math.max(0, Math.min(W - wH, xH - wH / 2)), hR = hL + wH;   // the handle's label: centred on the handle, kept on the track
+    labelH.style.left = hL + 'px';
     const inR = xR + LABEL_PAD + wR > W, inL = xL - LABEL_PAD - wL < 0;   // no room outside at an end: the year goes inside the flag
     let lR = inR ? xR - PENNANT - LABEL_PAD - wR : Math.min(W - wR, xR + LABEL_PAD);
     let lL = inL ? xL + PENNANT + LABEL_PAD : Math.max(0, xL - LABEL_PAD - wL);
     if (inL && !inR && lR < lL + wL + LABEL_GAP) lR = lL + wL + LABEL_GAP;
     if (inR && !inL && lL + wL > lR - LABEL_GAP) lL = lR - LABEL_GAP - wL;
+    // the handle's label wins: a flag's label it would cover steps aside, outward where there is room, else inward past
+    // it; a place has room when it is on the track, clear of the handle's label and of both pennants. Then the two flags'
+    // labels against each other once more (the push can bring them together on a short line): the right one steps right
+    // if there is room, else the left one steps left; a label with no room anywhere steps up a row
+    const hits = (l, w) => l < hR + LABEL_GAP && l + w > hL - LABEL_GAP;
+    const pens = [[xL, xL + PENNANT], [xR - PENNANT, xR]];
+    const room = (l, w) => l >= 0 && l + w <= W && !hits(l, w) && !pens.some(z => l < z[1] + LABEL_PAD && l + w > z[0] - LABEL_PAD);
+    const place = (l, w, tries) => { if (!hits(l, w)) return l; for (const t of tries) if (room(t, w)) return t; return null; };
+    let pR = place(lR, wR, [hR + LABEL_GAP, hL - LABEL_GAP - wR]), pL = place(lL, wL, [hL - LABEL_GAP - wL, hR + LABEL_GAP]);
+    if (pR !== null && pL !== null && pL < pR + wR + LABEL_GAP && pL + wL + LABEL_GAP > pR) {
+      if (room(pL + wL + LABEL_GAP, wR)) pR = pL + wL + LABEL_GAP;
+      else if (room(pR - LABEL_GAP - wL, wL)) pL = pR - LABEL_GAP - wL;
+      else pL = null;
+    }
+    // a flag's label with no room on the labels' row steps up to the row above (where the span word goes when the line has no room for it), at its own place
+    labelEls[0].classList.toggle('up', pR === null); labelEls[1].classList.toggle('up', pL === null);
+    if (pR !== null) lR = pR; if (pL !== null) lL = pL;
     labelEls[0].style.left = lR + 'px'; labelEls[1].style.left = lL + 'px';
     spanLine.style.left = xL + 'px'; spanLine.style.width = Math.max(0, xR - xL) + 'px';
     const innerL = inL ? lL + wL : xL + PENNANT, innerR = inR ? lR : xR - PENNANT;
@@ -838,14 +854,14 @@
       STR.a = a0 + (a1 - a0) * s; STR.b = b0 + (b1 - b0) * s;
       STR.flags = [f0[0] + (f1[0] - f0[0]) * s, f0[1] + (f1[1] - f0[1]) * s];
       renderStretch();
-      if (u < 1) STR.anim = requestAnimationFrame(step); else { STR.anim = null; STR.target = null; STR.a = a1; STR.b = b1; STR.flags = f1.slice(); settleHandle(); renderStretch(); }
+      if (u < 1) STR.anim = requestAnimationFrame(step); else { STR.anim = null; STR.target = null; STR.a = a1; STR.b = b1; STR.flags = f1.slice(); settleHandle(); spanSettled(); renderStretch(); }
     };
     STR.anim = requestAnimationFrame(step);
     renderStretch();
   }
   function finishStretch() {   // bench only: the glide finished at once, for a browser pane that runs frames only while looked at
     if (!STR.anim) return; cancelAnimationFrame(STR.anim); STR.anim = null;
-    STR.a = STR.target[0]; STR.b = STR.target[1]; STR.flags = STR.target[2].slice(); STR.target = null; settleHandle(); renderStretch();
+    STR.a = STR.target[0]; STR.b = STR.target[1]; STR.flags = STR.target[2].slice(); STR.target = null; settleHandle(); spanSettled(); renderStretch();
   }
   const YEARS_PER_PX_LEAST = 1;
   function doStretch() {   // focus: the line glides to run between the flags
@@ -868,11 +884,10 @@
     glideStretch(a, b);
   }
   // The one gesture (step 1 of the lab): a span chosen on the mosaic — a tap on a period, a drag across tiles — does three
-  // things at once. The span is selected on the mosaic (the lit tiles follow the flags); the timeline appears below with
-  // that span, its events on it, the flags at its ends, focus and back beside it; and the handle lands at the span's
-  // older end, the Earth going to that age.
-  function showTimeline() { if (lab.shown) return; lab.shown = true; $('main').classList.add('live'); }
-  function chooseSpan(a, b) { showTimeline(); goToSpan(a, b); setYear(b); }
+  // things at once. The span is selected on the mosaic (the lit tiles follow the flags); the timeline glides to that
+  // span, its events on it, the flags at its ends, back beside it; and the handle lands at the span's older end, the
+  // Earth going to that age.
+  function chooseSpan(a, b) { goToSpan(a, b); setYear(b); }
   function setFlag(i, ma) {   // a flag dragged along the line: kept inside it and on its own side of the other flag
     const gap = (STR.b - STR.a) * 2 / lineW();
     STR.flags[i] = i === 0 ? Math.max(STR.a, Math.min(STR.flags[1] - gap, ma)) : Math.min(STR.b, Math.max(STR.flags[0] + gap, ma));
@@ -925,13 +940,13 @@
     if (Math.abs(x - sPtr.x0) > 2) sPtr.moved = true;
     if (!sPtr.moved) return;
     if (sPtr.target === 'tap') sPtr.target = 'handle';   // a press on the line that moves drags the handle
-    if (sPtr.target === 'handle') dragYear(maOf(x));
+    if (sPtr.target === 'handle') setYear(maOf(x), true);   // the handle under her finger: the Earth follows live (ruled 5 Nov)
     else moveFlag(sPtr.target, x);
   });
   const sUp = e => {
     if (!sPtr) return; const p = sPtr; sPtr = null;
-    if (p.target === 'tap' && !p.moved && e) { const r = track.getBoundingClientRect(); setYear(maOf(e.clientX - r.left)); return; }   // a tap on the line: the handle jumps
-    if (p.target === 'handle') { setYear(lab.ma); return; }   // let go: the Earth is at the handle's year whichever way it followed
+    if (p.target === 'tap' && !p.moved && e) { const r = track.getBoundingClientRect(); setYear(maOf(e.clientX - r.left), true); return; }   // a tap on the line: the handle jumps
+    if (p.target === 'handle') { setYear(lab.ma, true); return; }   // let go: the Earth is at the handle's year
     if (STR.pull) endPull(true); else renderStretch();
   };
   track.addEventListener('pointerup', sUp); track.addEventListener('pointercancel', () => sUp(null));
@@ -939,38 +954,74 @@
   $('wStretch').addEventListener('click', doStretch);
   $('wBack').addEventListener('click', stretchBack);
 
-  // ---------- the year: the handle's, and the Earth's; the text block under the Earth ----------
-  // setYear is the one door: the handle moves to the year and the Earth goes there. dragYear is the handle under her
-  // finger: the handle, the words and the Earth move at once (live, ruled 5 Nov).
+  // ---------- the year: the handle's, and the Earth's; the handle's label; the text block under the Earth ----------
+  // setYear is the one door: the handle moves to the year, its label with it, and the Earth goes there — under her finger
+  // too (live, ruled 5 Nov). rough: the year came from a pixel on the line, so the label rounds it as the flags' do.
   function ageWord(ma) { return ma === 0 ? 'today' : ma < 1 ? Math.round(ma * 1e6).toLocaleString('en') + ' years ago' : (ma < 10 ? (Math.round(ma * 1000) / 1000).toLocaleString('en', { maximumFractionDigits: 3 }) : Math.round(ma).toLocaleString('en')) + ' million years ago'; }
   const clampMa = ma => Math.max(0, Math.min(LINE_END, ma));
-  function placeYear(ma) { lab.ma = clampMa(ma); tellYear(); if (lab.shown) { handleEl.style.left = handleX() + 'px'; } }
-  function earthTo(ma) { if (lab.earth) lab.earth.setTime(Math.min(EARTH_AGE, ma)); tellYear(); if (know.what === 'rest') tellWords(); }
-  function setYear(ma) { placeYear(ma); earthTo(lab.ma); }
-  function dragYear(ma) { placeYear(ma); earthTo(lab.ma); }
-  // The text block (step 3). Line one, always: the year and the word of knowing — the three words a child sees
-  // (measured, inferred, guessed; Lab-Time, ruled 4 Nov), the Earth's seven grades underneath: ground and measured show
-  // as measured, inferred and fitted as inferred, guessed and invented as guessed, none shows no word. Lines two to
-  // four: whatever she touched last — a period's box words, or an event's summary ending in More; at rest the grade's
-  // sentence. Three lines of the house text at most, cut with an ellipsis; the block never grows.
+  function setYear(ma, rough) { lab.ma = clampMa(ma); lab.rough = !!rough; if (lab.earth) lab.earth.setTime(Math.min(EARTH_AGE, lab.ma)); tellYear(); }
+  // The handle's label (step 4): the year and the word of knowing — the three words a child sees (measured, inferred,
+  // guessed; Lab-Time, ruled 4 Nov), the Earth's seven grades underneath: ground and measured show as measured, inferred
+  // and fitted as inferred, guessed and invented as guessed, none shows no word. The grade's sentence is in How this works.
   const KNOW_WORD = { ground: 'measured', measured: 'measured', inferred: 'inferred', fitted: 'inferred', guessed: 'guessed', invented: 'guessed', none: '' };
-  const know = { what: 'rest', p: null, text: '' };   // what the block holds: 'rest', 'period', 'event'
-  const yearEl = $('yearLine'), wordsEl = $('knowWords');
   const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
   function knowing() { const g = lab.earth && lab.earth.grade ? lab.earth.grade() : null; return g ? { word: KNOW_WORD[g.grade] || '', sentence: g.why || '', credit: g.credit || '' } : { word: '', sentence: '', credit: '' }; }
+  const handleWord = () => lab.rough ? flagWord(lab.ma, pixelStep()) : ageWord(lab.ma);
   function tellYear() {
     const k = knowing();
-    yearEl.innerHTML = esc(cap(ageWord(lab.ma))) + (k.word ? ' · <span class="know">' + esc(k.word) + '</span>' : '');
+    labelH.innerHTML = esc(handleWord()) + (k.word ? ' · <span class="know">' + esc(k.word) + '</span>' : '');
+    handleEl.style.left = handleX() + 'px'; placeLabels(trackW());   // the label follows the handle; a flag's label steps aside
     $('credit').textContent = k.credit;
+    const hk = $('htwKnow'); if (hk) hk.innerHTML = k.sentence ? (k.word ? '<i>' + esc(cap(k.word)) + '</i> · ' : '') + esc(k.sentence) : '';
   }
-  function tellWords() {   // lines two to four
-    wordsEl.classList.remove('ph', 'event');
-    if (know.what === 'period') { wordsEl.innerHTML = '<b>' + esc(sentence(know.p.n)) + '</b> ' + esc(lengthWord(know.p)) + ' ' + esc(know.text); wordsEl.classList.toggle('ph', !!know.p.ph); return; }
-    if (know.what === 'event') { const rec = lab.rec; wordsEl.innerHTML = '<b>' + esc(sentence(rec.label)) + '</b> ' + cwDeepTime.prose(rec.summary) + (rec.more ? ' <span class="more-word" id="more" role="button" tabindex="0">' + WORDS.more + '</span>' : ''); wordsEl.classList.toggle('event', !!rec.more); return; }
-    wordsEl.textContent = knowing().sentence;
+  // The text block (step 4). Line one: the thing she touched last — a period's name, span and length (Formation · 4,567
+  // to 4,400 million years ago · 167 million years), the one under the pointer while she points; an event's label and
+  // date as the summary's first words have them (The asteroid · about 66 million years ago); at rest the scale in use.
+  // Two columns under it, each six lines of fixed height: left the period's box words (the name in bold, then the text),
+  // right the event's summary ending in More, the whole summary a tap; each empty until there is something to show.
+  const know = { pointed: null, period: null, event: null, last: 'rest' };   // pointed and period: { p, text }; event: the event tapped last; last: 'period', 'event' or 'rest' — what line one tells
+  const lineEl = $('lineOne'), colP = $('colPeriod'), colE = $('colEvent');
+  function spanWords(fromMa, toMa) {   // a period's span, counting ago as the flags do: 4,567 to 4,400 million years ago; 600,000 to 300,000 years ago; 150 years ago to now
+    if (toMa <= 1e-9) return maWord(fromMa) + ' years ago to now';
+    const mF = fromMa >= 1, mT = toMa >= 1;
+    return (mF === mT ? maWord(fromMa).replace(' million', '') + ' to ' + maWord(toMa) : maWord(fromMa) + ' to ' + maWord(toMa)) + ' years ago';
   }
-  function tellPeriod(p, text) { know.what = 'period'; know.p = p; know.text = text; lab.rec = null; tellWords(); }
-  wordsEl.addEventListener('click', ev => { if (know.what === 'event' && lab.rec && lab.rec.more) { ev.stopPropagation(); openMore(lab.rec); } });
+  const periodLine = p => p.n + ' · ' + spanWords(p.fromMa, p.toMa) + ' · ' + lengthWord(p).replace(/\.$/, '').toLowerCase();
+  const DATE_FIRST = /^(.*?(?:ago|\d|\ds|CE|BCE|now|today))\.\s+(\S[\s\S]*)$/;   // the summary's first sentence is its date (About 66 million years ago. / 1990. / 1500s.)
+  function eventParts(e) {   // line one's date, and the column's rest; a summary whose first sentence is not a plain date keeps its whole and the store's own date word stands in
+    const s = String(e.rec.summary || '').trim(), m = s.match(DATE_FIRST);
+    if (!m) return { date: cwDeepTime.fmt(e.ma), rest: s };
+    const d = m[1], lower = /^[A-Z][a-z]/.test(d) ? d.charAt(0).toLowerCase() + d.slice(1) : d;
+    return { date: lower, rest: m[2] };
+  }
+  const eventLine = e => e.rec.label + ' · ' + eventParts(e).date;
+  function lineOne() {
+    if (know.pointed) return periodLine(know.pointed.p);
+    if (know.last === 'event' && know.event) return eventLine(know.event);
+    if (know.last === 'period' && know.period) return periodLine(know.period.p);
+    return WORDS.scaleLines[WINDOWS.indexOf(state.w)];
+  }
+  function tellBlock() {
+    lineEl.textContent = lineOne();
+    const pp = know.pointed || know.period;
+    colP.innerHTML = pp ? '<b>' + esc(sentence(pp.p.n)) + '</b> ' + esc(pp.text) : ''; colP.classList.toggle('ph', !!(pp && pp.p.ph));
+    const e = know.event, rec = e && e.rec;
+    colE.innerHTML = rec ? cwDeepTime.prose(eventParts(e).rest) + (rec.more ? ' <span class="more-word" id="more" role="button" tabindex="0">' + WORDS.more + '</span>' : '') : '';
+    colE.classList.toggle('tap', !!(rec && rec.more));
+  }
+  function tellPointed(p, text) { know.pointed = p ? { p, text } : null; tellBlock(); }
+  function selectPeriod(p, text) { know.period = p ? { p, text } : null; know.last = p ? 'period' : 'rest'; tellBlock(); }
+  function showEvent(e) { know.event = e; know.last = 'event'; tellBlock(); }
+  function spanSettled() {   // the selection has moved: a period the new span does not reach, or an event not in it, leaves the block
+    let changed = false;
+    if (know.period && (know.period.p.fromMa <= STR.a + EPS || know.period.p.toMa >= STR.b - EPS)) { know.period = null; changed = true; }
+    if (know.event && (know.event.ma < STR.a - EPS || know.event.ma > STR.b + EPS)) { know.event = null; changed = true; }
+    if (!changed) return;
+    if (know.last === 'period' && !know.period) know.last = know.event ? 'event' : 'rest';
+    if (know.last === 'event' && !know.event) know.last = know.period ? 'period' : 'rest';
+    tellBlock();
+  }
+  colE.addEventListener('click', ev => { if (know.event && know.event.rec.more) { ev.stopPropagation(); openMore(know.event.rec); } });
 
   // ---------- the events under the line: the Time Machine's deep timeline, drawn here (js/deep-time.js's rules) ----------
   // The span's events from the store, each a line 0.8 px from the rail down to its label, the labels packed into rows
@@ -1010,7 +1061,6 @@
   function wireMark(mg, e) { mg.addEventListener('pointerdown', ev => { ev.stopPropagation(); }); mg.addEventListener('click', ev => { ev.stopPropagation(); tapEvent(e); }); }
   function drawEvents() {
     while (evSvg.lastChild && evSvg.lastChild.tagName !== 'defs') evSvg.removeChild(evSvg.lastChild);
-    if (!lab.shown) return;
     const { labels, ticks } = placeEvents();
     labels.forEach(l => {
       const e = l.e, ly = LOOK.evLine + l.row * LOOK.evRow + 9;
@@ -1034,10 +1084,9 @@
       wireMark(mg, e);
     });
   }
-  // a tapped event: the handle to its year (the Earth with it), its summary in the block under the Earth, More at the end
+  // a tapped event: the handle to its year (the Earth with it), its label and date on line one, its summary in the right column, More at the end
   function sentence(label) { const t = cap(label.trim()); return /[.!?]$/.test(t) ? t : t + '.'; }
-  function tapEvent(e) { setYear(e.ma); showRec(e.rec); }
-  function showRec(rec) { lab.rec = rec; know.what = 'event'; tellWords(); }
+  function tapEvent(e) { setYear(e.ma); showEvent(e); }
   function openMore(rec) {   // the More in the movable window, as the Time Machine opens it
     const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec);
     cwWindow(box, {}); cwDeepTime.wirePictures(box);
@@ -1054,6 +1103,7 @@
       '<p>Below the mosaic is a timeline. The span of years you choose in the mosaic appears there, along with any events from that period. Tap an event to find out more about it.</p>' +
       '<p>There are two flags, one at each end of the timeline. Move them closer together and tap <i>focus</i>, and the timeline stretches to give your events more room. If you’d rather widen your selection, drag either flag past the end of the line to add years to it.</p>' +
       '<p class="ph">The Earth above shows the world at the year under the handle. Choose a period or a span on the mosaic and the Earth goes there; drag the handle along the timeline and the Earth follows.</p>' +
+      '<p id="htwKnow"></p>' +   // the grade's sentence at the handle's year (step 4: it left the block under the Earth; the word on the handle is enough there)
       '</div>';
     const bw = $('benchWords'); bw.style.display = ''; htwPanel.body.appendChild(bw);
   }
@@ -1065,8 +1115,8 @@
   }
   $('wHtw').addEventListener('click', () => togglePanel(htwPanel, $('wHtw')));
   if (htwPanel) htwPanel.el.querySelector('span').addEventListener('click', () => $('wHtw').setAttribute('aria-pressed', 'false'));
-  // Periods / Hide periods: the word renames, the Glass Geometry way. With Periods off the lighting stays and the box doesn't appear (the block under the Earth still takes the words).
-  function setPeriods(on) { state.periods = on; $('wPeriods').textContent = WORDS.periods[on ? 1 : 0]; if (!on) hideBox(); else if (state.hover >= 0) { state.boxKey = null; showBox(state.hover); } draw(); }
+  // Periods / Hide periods: the word renames, the Glass Geometry way. With Periods off the rest of the mosaic no longer dims while she points; the lift and the words stay (the plaque it hid is gone, step 4).
+  function setPeriods(on) { state.periods = on; $('wPeriods').textContent = WORDS.periods[on ? 1 : 0]; draw(); }
   $('wPeriods').addEventListener('click', () => setPeriods(!state.periods));
   // Cities / Hide cities: the word renames; on this page the Earth has them (the bench's places: the dozen cities and the stories' places, riding their plates)
   function setCities(on) { state.cities = on; $('wCities').textContent = WORDS.cities[on ? 1 : 0]; if (lab.earth) lab.earth.setPlaces(on); }
@@ -1088,7 +1138,7 @@
   if (FS) {
     wFull.style.display = '';
     wFull.addEventListener('click', () => { if (isFull()) exitFull(); else enterFull(); });
-    ['fullscreenchange', 'webkitfullscreenchange'].forEach(t => document.addEventListener(t, () => { fullWord(); sizeStage(); layout(); if (lab.shown) renderStretch(); else draw(); }));
+    ['fullscreenchange', 'webkitfullscreenchange'].forEach(t => document.addEventListener(t, () => { fullWord(); sizeStage(); layout(); renderStretch(); }));
     fullWord();
   }
   // Map / Globe (step 3): the Earth bench's flat world (Equal Earth, whole and still, at the lab's year, the places on
@@ -1123,17 +1173,17 @@
   $('explain').textContent = WORDS.explain[0];
   layout(); draw();
   setPeriods(true); setCities(false); setSize(lab.size);
-  placeYear(0); tellWords();
-  if (Q.get('w')) setWindow(Math.max(0, Math.min(WINDOWS.length - 1, +Q.get('w'))), false);
-  loadAll().then(() => { WINDOWS.forEach(w => build(w)); draw(); if (lab.shown) drawEvents(); }).catch(e => { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The events or the sea curve did not load: ' + e.message; });
-  window.addEventListener('resize', () => { layout(); sizeStage(); if (lab.shown) renderStretch(); else draw(); });
-  if (window.ResizeObserver) new ResizeObserver(() => { layout(); if (lab.shown) renderStretch(); else draw(); }).observe($('glassBox'));
+  setYear(0); tellBlock(); renderStretch();   // the line from the start: the whole 4.6 billion, its flags at the ends, the handle at today
+  if (Q.get('w')) setWindow(Math.max(0, Math.min(WINDOWS.length - 1, +Q.get('w'))), true);
+  loadAll().then(() => { WINDOWS.forEach(w => build(w)); renderStretch(); }).catch(e => { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The events or the sea curve did not load: ' + e.message; });
+  window.addEventListener('resize', () => { layout(); sizeStage(); renderStretch(); });
+  if (window.ResizeObserver) new ResizeObserver(() => { layout(); renderStretch(); }).observe($('glassBox'));
 
   // ---------- the bench's readout (in How this works): the store, the Earth's backend, tier and rate, the window ----------
   function readout() {
     const st = $('stage3d').getBoundingClientRect();
     let t = events.length ? events.length + ' events from deep-time-events.json (' + events.filter(e => e.side === 'deep').length + ' deep, ' + events.filter(e => e.side !== 'deep').length + ' after the ice)' : 'the store is loading';
-    t += ' · on the line: ' + (lab.shown ? eventsOnLine().length : 0) + ' · the year ' + ageWord(lab.ma);
+    t += ' · on the line: ' + eventsOnLine().length + ' · the year ' + ageWord(lab.ma);
     if (lab.earth && lab.earth.view) { const v = lab.earth.view; t += '\n' + v.backend + ' · tier ' + v.tier + (v.timing !== 'done' ? ' (timing)' : '') + ' · ' + v.fps + ' fps on screen · the Earth’s window ' + Math.round(st.width) + ' × ' + Math.round(st.height); }
     else t += '\nno 3D view yet';
     $('readout').textContent = t;
@@ -1141,11 +1191,12 @@
   setInterval(readout, 500);
 
   // ---------- for the bench's own checks (the browser pane) ----------
-  window.cwLab = { WINDOWS, PERIODS, PERIODS_12, PERIODS_M, LOOK, WORDS, state, STR, lab, know, set: k => setWindow(k, true), draw, layout, rect, hit, select: (a, b) => chooseSpan(a, b), finish: finishStretch,
-    stretch: doStretch, focus: doStretch, back: stretchBack, flag: setFlag, pull: pullFlag, pullMa, tap: tapSelect, unitSpan, lit: litSpan, labelFor, showBox, hideBox, setPeriods, setCities, setSize, build, lengthWord,
-    year: () => lab.ma, setYear, dragYear, handleX, xOf, maOf, events: () => events, onLine: eventsOnLine, placed: placeEvents, tapEvent: id => { const e = events.find(x => x.id === id); if (e) tapEvent(e); return !!e; }, rec: () => lab.rec, openMore: () => { if (lab.rec) openMore(lab.rec); }, shown: () => lab.shown,
-    setFlat, flat: () => lab.flat, flatWord, knowing, tellYear, tellWords, fullscreen: { on: isFull, enter: enterFull, exit: exitFull, available: FS },
-    attachEarth: api => { lab.earth = api; api.setPlaces(state.cities); if (api.setFlat) $('wFlat').style.display = ''; earthTo(lab.ma); tellWords(); },
+  window.cwLab = { WINDOWS, PERIODS, PERIODS_12, PERIODS_M, LOOK, WORDS, state, STR, lab, know, set: k => setWindow(k, true), draw, layout, rect, hit, select: (a, b) => chooseSpan(a, b), finish: finishStretch, reset: resetSpan,
+    stretch: doStretch, focus: doStretch, back: stretchBack, flag: setFlag, pull: pullFlag, pullMa, tap: tapSelect, unitSpan, lit: litSpan, labelFor, point: pointAt, unpoint, setPeriods, setCities, setSize, build, lengthWord,
+    year: () => lab.ma, setYear, handleX, xOf, maOf, events: () => events, onLine: eventsOnLine, placed: placeEvents, tapEvent: id => { const e = events.find(x => x.id === id); if (e) tapEvent(e); return !!e; }, rec: () => know.event && know.event.rec, openMore: () => { if (know.event) openMore(know.event.rec); },
+    lineOne: () => lineEl.textContent, columns: () => [colP.textContent, colE.textContent], handleWord: () => labelH.textContent, labels: () => [labelEls[1].textContent, labelH.textContent, labelEls[0].textContent].map((t, i) => t + ' @ ' + [labelEls[1], labelH, labelEls[0]][i].style.left),
+    setFlat, flat: () => lab.flat, flatWord, knowing, tellYear, tellBlock, fullscreen: { on: isFull, enter: enterFull, exit: exitFull, available: FS },
+    attachEarth: api => { lab.earth = api; api.setPlaces(state.cities); if (api.setFlat) $('wFlat').style.display = ''; setYear(lab.ma, lab.rough); },
     warmSpells: () => { const w = WINDOWS[1]; if (!w.built) build(w); const runs = []; let cur = null; for (let i = 0; i < w.real; i++) { const warm = w.warmOf[i]; if (warm && !cur) cur = [i, i]; else if (warm) cur[1] = i; else if (cur) { runs.push(cur); cur = null; } } if (cur) runs.push(cur); return runs.map(([a, b]) => [(1000 - a) * 1000, (999 - b) * 1000]); },
     eventsIn: k => { const w = WINDOWS[k]; const out = []; w.ev.forEach((e, i) => { if (e) out.push([i, e]); }); return out; } };
 </script>
