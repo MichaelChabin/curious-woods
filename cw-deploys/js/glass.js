@@ -1185,12 +1185,13 @@ function replayLog(animateNew) {
             // "the same point", and that decision cannot depend on zoom or
             // saved constructions would replay differently per device.
             _dupEpsilon = seedUnit * 0.025;
+            _onTol = seedUnit * 1e-6;   // the on-curve tolerance for joining (THE OVERDRAW)
             if (TABLE) syncTableCorners(prev, animateNew);   // the corners as points from the start (THE TABLE, 04)
         } else if (op.op === 'line') {
             var p1 = points.get(op.p1Id), p2 = points.get(op.p2Id); if (!p1||!p2) continue;
             var line = { logIdx:i, p1Id:op.p1Id, p2Id:op.p2Id, pointsOnLine:[op.p1Id,op.p2Id], isScaffold:false };
             lines.set(i, line);
-            points.forEach(function(pt) { if (pt.id===op.p1Id||pt.id===op.p2Id) return; if (ptOnLine(pt.x,pt.y,p1,p2)) line.pointsOnLine.push(pt.id); });
+            points.forEach(function(pt) { if (pt.id===op.p1Id||pt.id===op.p2Id) return; if (ptOnLine(pt.x,pt.y,p1,p2,_onTol)) line.pointsOnLine.push(pt.id); });
             sortLine(line); updateSegs(line, i); detectLineX(i, prev, animateNew);
             if (TABLE) detectTableX('line', i, prev, animateNew);   // where it crosses the table's edges (THE TABLE, 04)
         } else if (op.op === 'circle') {
@@ -1198,7 +1199,7 @@ function replayLog(animateNew) {
             var radius = dist(c.x,c.y,e.x,e.y);
             var circ = { logIdx:i, centerId:op.centerId, edgeId:op.edgeId, radius:radius, pointsOnCircle:[op.edgeId], isScaffold:false };
             circles.set(i, circ);
-            points.forEach(function(pt) { if (pt.id===op.centerId||pt.id===op.edgeId) return; if (ptOnCircle(pt.x,pt.y,c,radius)) circ.pointsOnCircle.push(pt.id); });
+            points.forEach(function(pt) { if (pt.id===op.centerId||pt.id===op.edgeId) return; if (ptOnCircle(pt.x,pt.y,c,radius,_onTol)) circ.pointsOnCircle.push(pt.id); });
             sortCirc(circ); updateArcs(circ, i); detectCircX(i, prev, animateNew);
             if (TABLE) detectTableX('circle', i, prev, animateNew);
         } else if (op.op === 'emphasize') {
@@ -1318,19 +1319,37 @@ function detectCircX(circI, prev, an) {
 }
 
 var _dupEpsilon = 5; // world units; set from the seed unit on every init replay
+var _onTol = 2e-4;    // world units; set with it: how far off a curve a point may be and still join it
 
 // A crossing registered: a new point where none is near, which then joins whatever it lies on. One that lands within the merge radius
 // of a point already there is that point — and that point joins the two curves that cross there (`on`: the line or circle indices),
 // where it is not on them already. THE LEAK (31 Oct 2026, revision 5): until today such a crossing was simply dropped, and where the
 // point already there was not on one of the two curves — a near miss, under the merge radius but over the on-curve tolerance — that
 // curve went undivided there, so the face walk ran straight across the other and one tap coloured across several lead lines.
+// THE OVERDRAW (6 Nov 2026, the Gothic window of Glass 900 years ago): that join declared the point on a curve it was up to the
+// merge radius off — 0.015 of a unit, six times the on-curve tolerance of the day — and the walk, given a vertex on the round
+// window that was not on it, ran out of the window through it. So now: a crossing that lands within the merge radius of a point
+// already there is that point only when the point lies on both curves within floating error (liesOn, _onTol); otherwise it is a
+// crossing of its own, a hair from the other point, and both curves are divided where they truly cross. And a point joins a curve
+// it was not constructed on (_integrateNewPoint, a new line or circle at replay) within that same floating error, not within a
+// quarter of a percent: at a quarter of a percent a crossing 0.028 from where two circles touch joined the second circle too, and
+// two circles that only touch had a second shared vertex, which the walk read as a crossing. A construction that nearly concurs
+// now shows two or three points a hair apart, and the slivers between them are pieces — honest, and local.
 function regX(id, pt, prev, an, on) {
     if (points.has(id)) return;
     var near = null, nd = _dupEpsilon;
     points.forEach(function(ex) { var d = dist(pt.x,pt.y,ex.x,ex.y); if (d < nd) { nd = d; near = ex; } });
-    if (near) { if (on) joinCurves(near.id, on); return; }
+    if (near && (!on || liesOn(near, on))) { if (on) joinCurves(near.id, on); return; }
     _addPt(id, pt.x, pt.y, 'intersection', prev, an);
     _integrateNewPoint(id);
+}
+// Whether a point lies on every one of the curves (`on`: line or circle indices) within floating error.
+function liesOn(p, on) {
+    return on.every(function(c) {
+        if (c.line !== undefined) { var l = lines.get(c.line); return !l || ptOnLine(p.x, p.y, points.get(l.p1Id), points.get(l.p2Id), _onTol); }
+        var ci = circles.get(c.circle); if (!ci) return true; if (ci.centerId === p.id) return false;
+        return ptOnCircle(p.x, p.y, points.get(ci.centerId), ci.radius, _onTol);
+    });
 }
 function joinCurves(pid, on) {
     on.forEach(function(c) {
@@ -1345,12 +1364,12 @@ function _integrateNewPoint(id) {
     var np = points.get(id);
     lines.forEach(function(l) {
         var lp1 = points.get(l.p1Id), lp2 = points.get(l.p2Id);
-        if (!l.pointsOnLine.includes(id) && ptOnLine(np.x,np.y,lp1,lp2)) { l.pointsOnLine.push(id); sortLine(l); updateSegs(l,l.logIdx); }
+        if (!l.pointsOnLine.includes(id) && ptOnLine(np.x,np.y,lp1,lp2,_onTol)) { l.pointsOnLine.push(id); sortLine(l); updateSegs(l,l.logIdx); }
     });
     circles.forEach(function(cir) {
         var ce = points.get(cir.centerId);
         if (id === cir.centerId) return;
-        if (!cir.pointsOnCircle.includes(id) && ptOnCircle(np.x,np.y,ce,cir.radius)) { cir.pointsOnCircle.push(id); sortCirc(cir); updateArcs(cir,cir.logIdx); }
+        if (!cir.pointsOnCircle.includes(id) && ptOnCircle(np.x,np.y,ce,cir.radius,_onTol)) { cir.pointsOnCircle.push(id); sortCirc(cir); updateArcs(cir,cir.logIdx); }
     });
 }
 
