@@ -1,5 +1,5 @@
 ---
-status: Report, 12 Nov 2026. Step 6 of the Time lab bench, built on `0f55db97` (the step-5 page as committed in `2575c7f7`). Checked in the pane at 1,024 × 768 by pointer and 768 × 1,024 by finger events, and on the iPadOS 26.5 iPad Air simulator by real taps. Reported first, as the prompt asks; then committed and pushed on Michael's word, "please commit and push", this session's hunks only. Michael's prompt `Prompt-Revise-Time-Lab-Bench-06.md`.
+status: Report, 12 Nov 2026. Step 6 of the Time lab bench, built on `0f55db97` (the step-5 page as committed in `2575c7f7`). Checked in the pane at 1,024 × 768 by pointer and 768 × 1,024 by finger events, and on the iPadOS 26.5 iPad Air simulator by real taps. Reported first, as the prompt asks; then committed and pushed on Michael's word, "please commit and push", `30bc7d5c`, this session's hunks only. Michael's prompt `Prompt-Revise-Time-Lab-Bench-06.md`.
 role: What step 6 did to `experiments/time-lab.html`, what it found, and what needs Michael's eye.
 related: Prompt-Revise-Time-Lab-Bench-06.md, Report-Time-Lab-Bench-05.md (the page as it stood), Worknote-Mosaic-Focus-01.md, Ruling-Sound-01.md, Lab-Time-01.md
 ---
