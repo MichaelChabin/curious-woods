@@ -71,7 +71,7 @@
 </div>
 
 <script>
-var CW_VERSION = '2026-08-13 b32d541'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-11-12 2a9c4e0 · plane rules 1'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 (function () {
 'use strict';
 
@@ -200,9 +200,10 @@ function buildSteps() {
     }
   });
 
-  // labels arrive last, quickly, along both axes
-  for (k = b.x0; k <= b.x1; k++) if (k !== 0) s.push({ t: 'lab', x: k, y: 0, txt: '' + k });
-  for (k = b.y0; k <= b.y1; k++) if (k !== 0) s.push({ t: 'lab', x: 0, y: k, txt: '' + k });
+  // labels arrive last, quickly, along both axes. No minus sign: the numbers count outward from 0,
+  // positive in all four directions (Ruling-The-Plane-02, rule 1, 12 Nov 2026). The positions stay signed.
+  for (k = b.x0; k <= b.x1; k++) if (k !== 0) s.push({ t: 'lab', x: k, y: 0, txt: '' + Math.abs(k) });
+  for (k = b.y0; k <= b.y1; k++) if (k !== 0) s.push({ t: 'lab', x: 0, y: k, txt: '' + Math.abs(k) });
 
   // ---------- timing ----------
   var T = +kDur.value, L0 = +kLeg.value, c = +kAcc.value;

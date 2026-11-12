@@ -1,0 +1,564 @@
+<meta charset="utf-8">
+<title>Powers in Glass</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: a narrow column of words on the left (CW's tool column), the board filling the rest; on a phone the column folds above the board. */
+:root{
+  --bg:#f3f2ec; --ink:#23262b; --muted:#6b6f68; --rule:#d8d6cc; --pick:#8b1a1a;
+  --board:#f8f7f2; --grid:rgba(40,44,50,.07); --axis:rgba(40,44,50,.22); --halo:rgba(248,247,242,.9);
+  --face:Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1b1d20; --ink:#e7e5dc; --muted:#9a9c94; --rule:#34373b; --pick:#e0786a;
+  --board:#121416; --grid:rgba(230,228,220,.06); --axis:rgba(230,228,220,.2); --halo:rgba(18,20,22,.85); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1b1d20; --ink:#e7e5dc; --muted:#9a9c94; --rule:#34373b; --pick:#e0786a;
+  --board:#121416; --grid:rgba(230,228,220,.06); --axis:rgba(230,228,220,.2); --halo:rgba(18,20,22,.85); color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.4 var(--face);font-variant-numeric:lining-nums tabular-nums}
+.app{display:grid;grid-template-columns:250px 1fr;height:100%}
+.col{overflow-y:auto;padding-block:18px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:14px;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:16px}
+.col h1{font-size:21px;font-weight:normal;margin:0;text-wrap:balance}
+.col p{margin:0;color:var(--muted);font-size:13.5px}
+.grp{display:flex;flex-direction:column;gap:5px}
+.lab{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+button.w{all:unset;cursor:pointer;font:italic 15px var(--face);color:var(--ink);border-bottom:1px solid transparent}
+button.w:hover{border-bottom-color:var(--rule)}
+button.w.on{font-style:normal;font-weight:bold;color:var(--pick)}
+button.w:focus-visible,button.sw:focus-visible{outline:2px solid var(--pick);outline-offset:2px}
+.layers{display:flex;flex-direction:column;gap:3px}
+.layers button.w{font-style:normal}
+.swatches{display:grid;grid-template-columns:repeat(6,26px);gap:6px}
+button.sw{all:unset;cursor:pointer;width:26px;height:26px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)}
+button.sw.on{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--pick)}
+.read{font-size:13.5px;min-height:3.6em}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.85em;line-height:1.1;margin:0 1px}
+.fr>span:first-child{border-bottom:1px solid currentColor;padding:0 2px}
+.stage{position:relative;min-width:0;padding-right:env(safe-area-inset-right,0px)}
+canvas{display:block;width:100%;height:100%;touch-action:none;background:var(--board)}
+@media (max-width:720px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto 62vh;height:auto}
+  .col{border-right:0;border-bottom:1px solid var(--rule);max-height:none;padding-right:max(16px,env(safe-area-inset-right,0px))}
+}
+</style>
+
+<div class="app">
+  <aside class="col" aria-label="Tools">
+    <div class="grp">
+      <h1>Powers in Glass</h1>
+      <p>Every power of a number, drawn as a rectangle from the corner at 0. Where rectangles meet, there is lead. Tap a colour, then tap the glass. Drag to move the board; pinch or scroll to zoom.</p>
+    </div>
+
+    <div class="grp">
+      <div class="lab">Powers</div>
+      <div class="layers" id="layers"></div>
+      <div class="row"><button class="w" id="addLayer">Add another power</button><button class="w" id="dropLayer">Take this one off</button></div>
+    </div>
+
+    <div class="grp">
+      <div class="lab">Powers of</div>
+      <div class="row" id="bases"></div>
+    </div>
+
+    <div class="grp">
+      <div class="lab">From and to</div>
+      <div class="row"><span>from</span><button class="w" id="fromDn" aria-label="from one lower">−</button><b id="fromV"></b><button class="w" id="fromUp" aria-label="from one higher">+</button>
+      <span>to</span><button class="w" id="toDn" aria-label="to one lower">−</button><b id="toV"></b><button class="w" id="toUp" aria-label="to one higher">+</button></div>
+    </div>
+
+    <div class="grp">
+      <div class="lab">Odd powers lie</div>
+      <div class="row" id="orders"></div>
+    </div>
+
+    <div class="grp">
+      <div class="lab">Steps</div>
+      <div class="row" id="steps"></div>
+    </div>
+
+    <div class="grp">
+      <div class="lab">Quarters of the plane</div>
+      <div class="row" id="quads"></div>
+    </div>
+
+    <div class="grp">
+      <div class="lab">Lines from 0 through the corners</div>
+      <div class="row" id="rays"></div>
+    </div>
+
+    <div class="grp">
+      <div class="lab">Colour</div>
+      <div class="swatches" id="swatches"></div>
+      <div class="row"><button class="w" id="paintPow">Paint by power</button><button class="w" id="paintOv">Paint by overlap</button><button class="w" id="clearAll">Clear all the glass</button></div>
+    </div>
+
+    <div class="grp">
+      <div class="lab">View</div>
+      <div class="row"><button class="w" id="nums">Numbers</button><button class="w" id="bare">Came only</button><button class="w" id="glassOnly">Glass only</button><button class="w" id="reset">Reset view</button><button class="w" id="startOver">Start over</button></div>
+    </div>
+
+    <div class="grp">
+      <div class="lab">The glass</div>
+      <div class="read" id="read" aria-live="polite"></div>
+      <div class="read" id="small"></div>
+    </div>
+  </aside>
+  <div class="stage" id="stage"><canvas id="cv" aria-label="The board"></canvas></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+// ---------- glass (from palettes.json: Chartres, plus Gaudí's silver stain for the gold 1) ----------
+var GOLD = {hex:'#c8a800', name:'silver stain (gold)'};
+var CLEAR = {hex:'#e8ebe2', name:'clear glass'};
+var PAL = [
+  {hex:'#1a3a8c',name:'cobalt oxide'},{hex:'#8b1a1a',name:'copper, flashed'},{hex:'#c8780a',name:'iron, sulfur'},
+  {hex:'#4a1a8c',name:'cobalt, manganese'},{hex:'#1a6a2a',name:'copper oxide'},{hex:'#8a8a7a',name:'iron, unrefined'},
+  {hex:'#d4a878',name:'iron oxide, lead'},{hex:'#c8c0a8',name:'tin oxide'},{hex:'#c84878',name:'manganese'},
+  GOLD, {hex:'#4a8ab0',name:'cobalt, copper'}, CLEAR
+];
+var DARKS = ['#1a3a8c','#8b1a1a','#4a1a8c','#1a6a2a'];
+var LIGHTS = ['#c8b878','#d4a878','#4a8ab0','#c8c0a8'];
+var CAME = ['#1f4fb8','#c8780a','#1a7a3a','#a8231a'];   // one per power, for its lines from 0 and its bar in the column: cobalt, amber, green, red.
+                                                        // Never the came: came is lead and is not coloured (sketch 07, Ruling-The-Plane-02, rule 7).
+
+var BASES = [{p:2,q:1},{p:3,q:1},{p:5,q:1},{p:10,q:1},{p:3,q:2},{p:4,q:3},{p:1,q:2},{p:2,q:3}];
+function bval(b){return b.p/b.q}
+function blabel(b){return b.q===1? String(b.p) : b.p+'⁄'+b.q}
+
+var state = {
+  layers:[{b:BASES[0], from:-6, to:6, order:'wide'}],
+  active:0, half:false, quad:4, color:PAL[0], numbers:true, glassOnly:false, bare:false, rays:{ur:false, ul:false, ll:false, lr:false}, paints:[]
+};
+
+// ---------- the staircase: area b^n as a rectangle from (0,0) ----------
+// n counts doublings (multiplications by b). Even n: a square. Odd n: two squares side by side.
+// Between whole n the corner slides along the staircase edge, so b^(n+1/2) sits halfway along it.
+function wh(b, n){
+  var k = Math.floor(n/2), r = n - 2*k;
+  if (r <= 1) return [Math.pow(b, k + r), Math.pow(b, k)];
+  return [Math.pow(b, k + 1), Math.pow(b, k + r - 1)];
+}
+var QUADS = {1:[[1,1]], 2:[[1,1],[-1,1]], 4:[[1,1],[-1,1],[-1,-1],[1,-1]]};
+
+function buildRects(){
+  var out = [], step = state.half ? 0.5 : 1;
+  state.layers.forEach(function(L, li){
+    var b = bval(L.b);
+    for (var n = L.from; n <= L.to + 1e-9; n += step){
+      var d = wh(b, n), vs;
+      if (L.order==='wide') vs=[[d[0],d[1]]]; else if (L.order==='tall') vs=[[d[1],d[0]]]; else vs=[[d[0],d[1]],[d[1],d[0]]];
+      vs.forEach(function(v){
+        QUADS[state.quad].forEach(function(s){
+          var X = s[0]*v[0], Y = s[1]*v[1];
+          out.push({x0:Math.min(0,X), x1:Math.max(0,X), y0:Math.min(0,Y), y1:Math.max(0,Y), n:n, layer:li,
+                    square: Math.abs(v[0]/v[1]-1) < 1e-9, area:v[0]*v[1]});
+        });
+      });
+    }
+  });
+  return out;
+}
+
+function uniq(vals){
+  vals.sort(function(a,b){return a-b});
+  var out=[];
+  for (var i=0;i<vals.length;i++){
+    var v=vals[i], l=out[out.length-1];
+    if (!out.length || Math.abs(v-l) > 1e-9*Math.max(Math.abs(v),Math.abs(l))) out.push(v);
+  }
+  return out;
+}
+function near(arr, v){ // index of v in arr, within tolerance
+  var lo=0, hi=arr.length-1;
+  while (lo<hi){ var m=(lo+hi)>>1; if (arr[m] < v - 1e-9*Math.max(Math.abs(v),1e-300)) lo=m+1; else hi=m; }
+  return lo;
+}
+function cellIdx(arr, v){ // i with arr[i] <= v < arr[i+1]
+  if (v < arr[0] || v >= arr[arr.length-1]) return -1;
+  var lo=0, hi=arr.length-2;
+  while (lo<hi){ var m=(lo+hi+1)>>1; if (arr[m] <= v) lo=m; else hi=m-1; }
+  return lo;
+}
+
+// ---------- the panes: cells of the uneven grid, joined wherever no lead separates them ----------
+var G = null;
+function compute(){
+  var rects = buildRects();
+  var xs = uniq(rects.flatMap(function(r){return [r.x0,r.x1]}));
+  var ys = uniq(rects.flatMap(function(r){return [r.y0,r.y1]}));
+  var nx = xs.length-1, ny = ys.length-1;
+  var cover = new Int32Array(nx*ny), minA = new Float64Array(nx*ny).fill(Infinity), minR = new Int32Array(nx*ny).fill(-1);
+  var vE = new Uint8Array((nx+1)*ny), hE = new Uint8Array((ny+1)*nx);
+  rects.forEach(function(r, ri){
+    var i0=near(xs,r.x0), i1=near(xs,r.x1), j0=near(ys,r.y0), j1=near(ys,r.y1), i, j;
+    for (j=j0;j<j1;j++){ vE[i0*ny+j]=1; vE[i1*ny+j]=1; }
+    for (i=i0;i<i1;i++){ hE[j0*nx+i]=1; hE[j1*nx+i]=1; }
+    for (i=i0;i<i1;i++) for (j=j0;j<j1;j++){
+      var c=i*ny+j; cover[c]++;
+      if (r.area < minA[c]){ minA[c]=r.area; minR[c]=ri; }
+    }
+  });
+  var par = new Int32Array(nx*ny); for (var k=0;k<par.length;k++) par[k]=k;
+  function f(a){ while(par[a]!==a){ par[a]=par[par[a]]; a=par[a]; } return a; }
+  function u(a,b){ a=f(a); b=f(b); if (a!==b) par[b]=a; }
+  for (var i=0;i<nx;i++) for (var j=0;j<ny;j++){
+    var c=i*ny+j; if (!cover[c]) continue;
+    if (i+1<nx && cover[c+ny] && !vE[(i+1)*ny+j]) u(c, c+ny);
+    if (j+1<ny && cover[c+1] && !hE[(j+1)*nx+i]) u(c, c+1);
+  }
+  var regOf = new Int32Array(nx*ny).fill(-1), regs = [], map = {};
+  for (i=0;i<nx;i++) for (j=0;j<ny;j++){
+    c=i*ny+j; if (!cover[c]) continue;
+    var root=f(c), id=map[root];
+    if (id===undefined){ id=map[root]=regs.length; regs.push({cells:[], area:0, best:0, rep:null, rect:minR[c], over:cover[c]}); }
+    regOf[c]=id;
+    var R=regs[id], w=xs[i+1]-xs[i], h=ys[j+1]-ys[j], a=w*h;
+    R.cells.push(c); R.area+=a;
+    if (a > R.best){ R.best=a; R.rep=[(xs[i]+xs[i+1])/2, (ys[j]+ys[j+1])/2]; }
+  }
+  var minArea = Infinity; regs.forEach(function(R){ if (R.area<minArea) minArea=R.area; });
+  G = {rects:rects, xs:xs, ys:ys, nx:nx, ny:ny, cover:cover, vE:vE, hE:hE, regOf:regOf, regs:regs, minArea:minArea};
+  applyPaints();
+}
+function regionAt(x, y){
+  var i=cellIdx(G.xs,x), j=cellIdx(G.ys,y);
+  if (i<0||j<0) return -1;
+  return G.regOf[i*G.ny+j];
+}
+function applyPaints(){
+  G.color = new Array(G.regs.length).fill(null);
+  state.paints.forEach(function(p){ var r=regionAt(p.x,p.y); if (r>=0) G.color[r]=p.c; });
+}
+
+// ---------- numbers, written the CW way ----------
+var SUP = {'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+function sup(n){ return String(n).split('').map(function(ch){return SUP[ch]||ch}).join(''); }
+// Sketch 07 (12 Nov 2026, Ruling-The-Plane-02, rule 5): commas in threes to the left of the decimal point, thin
+// spaces in threes to the right (1,710,830 and 3.141 592 653). Until 06: thin spaces on the left, every other group tinted.
+function groups(intStr){ // a comma between groups of three, counted from the right
+  var out=''; for (var i=0;i<intStr.length;i++){ if (i && (intStr.length-i)%3===0) out+=','; out+=intStr[i]; } return out;
+}
+function decimalText(str){ // a decimal as the browser wrote it: the whole part with commas, the digits after the point in threes
+  if (!/^\d+(\.\d+)?$/.test(str)) return str;   // an exponent form is left as it is
+  var dot=str.indexOf('.'); if (dot<0) return groups(str);
+  return groups(str.slice(0,dot)) + '.' + str.slice(dot+1).replace(/(\d{3})(?=\d)/g, '$1\u2009');
+}
+function powNum(p, n){ return Math.round(Math.pow(p, n)); }
+function powerValueText(b, n){ // b^n as a whole number or a stacked-looking fraction
+  var num = n>=0 ? powNum(b.p,n) : powNum(b.q,-n), den = n>=0 ? powNum(b.q,n) : powNum(b.p,-n);
+  if (den===1) return groups(String(num));
+  return groups(String(num)) + '⁄' + groups(String(den));
+}
+function powerValueParts(b, n){ // [numerator, denominator or null]
+  var num = n>=0 ? powNum(b.p,n) : powNum(b.q,-n), den = n>=0 ? powNum(b.q,n) : powNum(b.p,-n);
+  return [groups(String(num)), den===1 ? null : groups(String(den))];
+}
+function powerName(b, n){ return (b.q===1 ? blabel(b) : '('+blabel(b)+')') + sup(n); }
+function gcd(a,b){ while(b){ var t=a%b; a=b; b=t; } return a; }
+function asFraction(v){
+  if (state.half) return null;   // half steps bring in square roots, which no fraction can write
+  var pq = 1; state.layers.forEach(function(L){ pq *= L.b.p*L.b.q; });
+  for (var K=0, den=1; den < 1e15; K++, den*=pq){
+    var num = v*den, rn = Math.round(num);
+    if (rn>0 && Math.abs(num-rn) < 1e-9*Math.max(1,num)){ var g=gcd(rn,den); return [rn/g, den/g]; }
+    if (pq===1) break;
+  }
+  return null;
+}
+function areaHTML(v){
+  var fr = asFraction(v), L = state.layers[state.active], b = bval(L.b);
+  var k = Math.log(v)/Math.log(b), name = '';
+  if (Math.abs(k-Math.round(k)) < 1e-9) name = powerName(L.b, Math.round(k)) + ' = ';
+  if (fr){
+    if (fr[1]===1) return name + groups(String(fr[0])) + ' m²';
+    return name + '<span class="fr"><span>' + groups(String(fr[0])) + '</span><span>' + groups(String(fr[1])) + '</span></span> m²';
+  }
+  return name + decimalText(v.toPrecision(5)) + ' m²';
+}
+
+// ---------- the board ----------
+var cv = document.getElementById('cv'), ctx = cv.getContext('2d'), stage = document.getElementById('stage');
+var view = {s:60, ox:0, oy:0}, W=0, H=0, dpr=1;
+function css(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function resize(){
+  var r = stage.getBoundingClientRect(); dpr = window.devicePixelRatio||1;
+  var first = !W; W = r.width; H = r.height;
+  cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+  if (first) fit(); draw();
+}
+function fit(){
+  var x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
+  G.rects.forEach(function(r){ x0=Math.min(x0,r.x0); x1=Math.max(x1,r.x1); y0=Math.min(y0,r.y0); y1=Math.max(y1,r.y1); });
+  var s = Math.min(W/(x1-x0), H/(y1-y0))*0.86;
+  view.s = s; view.ox = W/2 - (x0+x1)/2*s; view.oy = H/2 + (y0+y1)/2*s;
+}
+function SX(x){ return view.ox + x*view.s; } function SY(y){ return view.oy - y*view.s; }
+function WX(px){ return (px-view.ox)/view.s; } function WY(py){ return (view.oy-py)/view.s; }
+
+var noise = (function(){ // a little waviness in the glass
+  var c=document.createElement('canvas'); c.width=c.height=160; var g=c.getContext('2d'), d=g.createImageData(160,160);
+  for (var i=0;i<d.data.length;i+=4){ var v=128+(Math.random()-.5)*90; d.data[i]=d.data[i+1]=d.data[i+2]=v; d.data[i+3]=255; }
+  g.putImageData(d,0,0); return c;
+})();
+var noisePat = null;
+
+function shade(hex, f){ // lighten (f>0) or darken (f<0) a colour a touch
+  var n=parseInt(hex.slice(1),16), r=n>>16, g=(n>>8)&255, b=n&255;
+  function m(c){ return Math.round(f>0 ? c+(255-c)*f : c*(1+f)); }
+  return 'rgb('+m(r)+','+m(g)+','+m(b)+')';
+}
+
+function draw(){
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle = css('--board'); ctx.fillRect(0,0,W,H);
+  if (!state.glassOnly) drawGrid();
+  // glass
+  var xs=G.xs, ys=G.ys, ny=G.ny;
+  if (!state.bare){
+  for (var id=0; id<G.regs.length; id++){
+    var R=G.regs[id], hex=G.color[id] || CLEAR.hex;
+    ctx.fillStyle = shade(hex, ((id*2654435761>>>0)%100)/100*0.12-0.06);
+    for (var k=0;k<R.cells.length;k++){
+      var c=R.cells[k], i=Math.floor(c/ny), j=c%ny;
+      var a=SX(xs[i]), b=SX(xs[i+1]), t=SY(ys[j+1]), bt=SY(ys[j]);
+      if (b<0||a>W||bt<0||t>H) continue;
+      ctx.fillRect(a-.4, t-.4, b-a+.8, bt-t+.8);
+    }
+  }
+  // the light coming through: a faint wave over all the glass
+  if (!noisePat) noisePat = ctx.createPattern(noise,'repeat');
+  ctx.save(); ctx.globalAlpha=.07; ctx.globalCompositeOperation='overlay';
+  ctx.beginPath();
+  G.regs.forEach(function(R){ R.cells.forEach(function(c){ var i=Math.floor(c/ny), j=c%ny; ctx.rect(SX(xs[i]),SY(ys[j+1]),SX(xs[i+1])-SX(xs[i]),SY(ys[j])-SY(ys[j+1])); }); });
+  ctx.fillStyle=noisePat; ctx.fill(); ctx.restore();
+  }
+  drawLead();
+  drawRays();
+  if (state.numbers && !state.glassOnly) drawNumbers();
+  smallReport();
+}
+function drawGrid(){
+  var target = 70/view.s, p = Math.pow(10, Math.floor(Math.log10(target))), step = p;
+  if (target/p > 5) step = 10*p; else if (target/p > 2) step = 5*p;
+  ctx.lineWidth = 1; ctx.strokeStyle = css('--grid'); ctx.beginPath();
+  var x = Math.ceil(WX(0)/step)*step; for (; SX(x) < W; x+=step){ var X=Math.round(SX(x))+.5; ctx.moveTo(X,0); ctx.lineTo(X,H); }
+  var y = Math.ceil(WY(H)/step)*step; for (; SY(y) > 0; y+=step){ var Y=Math.round(SY(y))+.5; ctx.moveTo(0,Y); ctx.lineTo(W,Y); }
+  ctx.stroke();
+  ctx.strokeStyle = css('--axis'); ctx.beginPath();
+  ctx.moveTo(Math.round(SX(0))+.5,0); ctx.lineTo(Math.round(SX(0))+.5,H);
+  ctx.moveTo(0,Math.round(SY(0))+.5); ctx.lineTo(W,Math.round(SY(0))+.5); ctx.stroke();
+}
+function leadPath(){
+  var xs=G.xs, ys=G.ys, nx=G.nx, ny=G.ny, vE=G.vE, hE=G.hE, xi, j, s;
+  ctx.beginPath();
+  for (xi=0; xi<=nx; xi++){ j=0; while (j<ny){ if (vE[xi*ny+j]){ s=j; while (j<ny && vE[xi*ny+j]) j++; ctx.moveTo(SX(xs[xi]),SY(ys[s])); ctx.lineTo(SX(xs[xi]),SY(ys[j])); } else j++; } }
+  for (var yj=0; yj<=ny; yj++){ var i=0; while (i<nx){ if (hE[yj*nx+i]){ s=i; while (i<nx && hE[yj*nx+i]) i++; ctx.moveTo(SX(xs[s]),SY(ys[yj])); ctx.lineTo(SX(xs[i]),SY(ys[yj])); } else i++; } }
+}
+var RAYQ = {ur:[1,1], ul:[-1,1], ll:[-1,-1], lr:[1,-1]};
+function drawRays(){ // the diagonal for the even powers, one line per number for the odd ones (and for the halves)
+  var qs = Object.keys(RAYQ).filter(function(k){ return state.rays[k]; });
+  if (!qs.length) return;
+  var lines = [{m:1, c:css('--ink')}];
+  state.layers.forEach(function(L, li){
+    var b = bval(L.b), c = CAME[li % CAME.length], ms = [];
+    if (L.order!=='tall') ms.push(1/b); if (L.order!=='wide') ms.push(b);
+    if (state.half){ if (L.order!=='tall') ms.push(1/Math.sqrt(b)); if (L.order!=='wide') ms.push(Math.sqrt(b)); }
+    ms.forEach(function(m){ lines.push({m:m, c:c}); });
+  });
+  var far = 3*Math.max(W,H)/view.s;
+  ctx.save(); ctx.setLineDash([9,6]); ctx.lineWidth=1.8; ctx.lineCap='butt';
+  lines.forEach(function(l){
+    var k = far/Math.sqrt(1+l.m*l.m);
+    ctx.strokeStyle = l.c; ctx.beginPath();
+    qs.forEach(function(q){ var s=RAYQ[q]; ctx.moveTo(SX(0),SY(0)); ctx.lineTo(SX(s[0]*k), SY(s[1]*l.m*k)); });
+    ctx.stroke();
+  });
+  ctx.restore();
+}
+function drawLead(){
+  ctx.lineCap='square'; ctx.lineJoin='miter';
+  leadPath(); ctx.strokeStyle='#2e3033'; ctx.lineWidth=3.4; ctx.stroke();
+  ctx.strokeStyle='rgba(150,154,158,.55)'; ctx.lineWidth=.8; ctx.stroke();
+}
+function drawNumbers(){
+  var L = state.layers[state.active], b = bval(L.b), boxes = [];
+  ctx.textBaseline='alphabetic';
+  var halo=css('--halo'), ink=css('--ink');
+  function say(t, tx, ty){ ctx.lineWidth=3; ctx.strokeStyle=halo; ctx.strokeText(t,tx,ty); ctx.fillStyle=ink; ctx.fillText(t,tx,ty); }
+  for (var n=L.from; n<=L.to; n++){
+    var d = wh(b,n); if (L.order==='tall') d=[d[1],d[0]];
+    var x=SX(d[0]), y=SY(d[1]);
+    if (x<-40||x>W+40||y<-30||y>H+20) continue;
+    var head = powerName(L.b,n) + ' = ', fr = powerValueParts(L.b,n), tall = !!fr[1];
+    ctx.font='12px Georgia, serif'; var hw = ctx.measureText(head).width, fw;
+    if (tall){ ctx.font='11px Georgia, serif'; fw = Math.max(ctx.measureText(fr[0]).width, ctx.measureText(fr[1]).width); }
+    else fw = ctx.measureText(fr[0]).width;
+    var x0 = x+7, base = y-(tall?13:4);
+    var box = [x0-2, base-(tall?16:12), x0+hw+fw+4, base+(tall?13:3)];
+    if (boxes.some(function(o){ return !(box[2]<o[0]||box[0]>o[2]||box[3]<o[1]||box[1]>o[3]); })) continue;
+    boxes.push(box);
+    ctx.font='12px Georgia, serif'; ctx.textAlign='left'; say(head, x0, base);
+    if (!tall) say(fr[0], x0+hw, base);
+    else {
+      ctx.font='11px Georgia, serif'; ctx.textAlign='center';
+      var cx = x0+hw+fw/2, by = Math.round(base-4)+.5;
+      say(fr[0], cx, by-3); say(fr[1], cx, by+10);
+      ctx.lineWidth=3; ctx.strokeStyle=halo; ctx.beginPath(); ctx.moveTo(x0+hw,by); ctx.lineTo(x0+hw+fw,by); ctx.stroke();
+      ctx.lineWidth=1; ctx.strokeStyle=ink; ctx.stroke();
+      ctx.textAlign='left';
+    }
+    ctx.fillStyle=ink; ctx.beginPath(); ctx.arc(x,y,2.6,0,7); ctx.fill();
+  }
+}
+function smallReport(){
+  var a = G.minArea, px = a*view.s*view.s, el = document.getElementById('small');
+  var line = 'The smallest piece is ' + areaHTML(a) + '. ';
+  if (px < 1) line += 'On the screen as it is now, it is smaller than one pixel.';
+  else line += 'On the screen as it is now, it covers about ' + groups(String(Math.round(px))) + ' pixel' + (Math.round(px)===1?'':'s') + '.';
+  el.innerHTML = line;
+}
+
+// ---------- hands ----------
+var ptrs = new Map(), downAt=null, moved=false, pinch=null;
+cv.addEventListener('pointerdown', function(e){
+  cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.offsetX,y:e.offsetY});
+  if (ptrs.size===1){ downAt={x:e.offsetX,y:e.offsetY,ox:view.ox,oy:view.oy}; moved=false; }
+  if (ptrs.size===2){ var p=[...ptrs.values()]; pinch={d:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y), cx:(p[0].x+p[1].x)/2, cy:(p[0].y+p[1].y)/2, s:view.s, ox:view.ox, oy:view.oy}; moved=true; }
+});
+cv.addEventListener('pointermove', function(e){
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.set(e.pointerId,{x:e.offsetX,y:e.offsetY});
+  if (ptrs.size===2 && pinch){
+    var p=[...ptrs.values()], d=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y), cx=(p[0].x+p[1].x)/2, cy=(p[0].y+p[1].y)/2;
+    var k=d/pinch.d, wx=(pinch.cx-pinch.ox)/pinch.s, wy=(pinch.oy-pinch.cy)/pinch.s;
+    view.s=pinch.s*k; view.ox=cx-wx*view.s; view.oy=cy+wy*view.s; draw(); return;
+  }
+  if (ptrs.size===1 && downAt){
+    var dx=e.offsetX-downAt.x, dy=e.offsetY-downAt.y;
+    if (!moved && Math.hypot(dx,dy) > 6) moved=true;
+    if (moved){ view.ox=downAt.ox+dx; view.oy=downAt.oy+dy; draw(); }
+  }
+});
+function up(e){
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.delete(e.pointerId);
+  if (ptrs.size===0){ if (!moved && downAt) tap(e.offsetX, e.offsetY); downAt=null; pinch=null; }
+  if (ptrs.size===1){ var p=[...ptrs.values()][0]; downAt={x:p.x,y:p.y,ox:view.ox,oy:view.oy}; pinch=null; }
+}
+cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+cv.addEventListener('wheel', function(e){
+  e.preventDefault();
+  var k=Math.exp(-e.deltaY*0.0015), wx=WX(e.offsetX), wy=WY(e.offsetY);
+  view.s*=k; view.ox=e.offsetX-wx*view.s; view.oy=e.offsetY+wy*view.s; draw();
+},{passive:false});
+
+function tap(px, py){
+  var x=WX(px), y=WY(py), r=regionAt(x,y), read=document.getElementById('read');
+  if (r<0){ read.innerHTML='That is outside the window.'; return; }
+  var R=G.regs[r];
+  state.paints = state.paints.filter(function(p){ return regionAt(p.x,p.y)!==r; });
+  state.paints.push({x:R.rep[0], y:R.rep[1], c: state.color===CLEAR ? null : state.color.hex});
+  G.color[r] = state.color===CLEAR ? null : state.color.hex;
+  read.innerHTML = 'This piece is ' + areaHTML(R.area) + '.';
+  draw();
+}
+
+// ---------- painting it for her ----------
+function paintBy(kind){
+  state.paints = G.regs.map(function(R){
+    var rect = G.rects[R.rect], c;
+    if (kind==='power'){
+      if (Math.abs(rect.n) < 1e-9) c = GOLD.hex;
+      else { var k = Math.floor(Math.abs(rect.n)) % 4; c = rect.square ? LIGHTS[k] : DARKS[k]; }
+    } else {
+      var all = PAL.filter(function(p){ return p!==CLEAR && p.hex!=='#c84878'; });
+      c = all[(R.over-1) % all.length].hex;
+    }
+    return {x:R.rep[0], y:R.rep[1], c:c};
+  });
+  applyPaints(); draw();
+}
+
+// ---------- the column ----------
+function words(host, items, isOn, onTap){
+  host.innerHTML='';
+  items.forEach(function(it){
+    var b=document.createElement('button'); b.className='w'+(isOn(it)?' on':''); b.textContent=it.t;
+    b.addEventListener('click', function(){ onTap(it); }); host.appendChild(b);
+  });
+}
+function layerName(L){
+  var o = L.order==='wide'?'lying down':L.order==='tall'?'standing up':'both ways';
+  return powerName(L.b,'n').replace('ⁿ','')+'ⁿ, from '+L.from+' to '+L.to+', '+o;
+}
+function renderColumn(){
+  var L = state.layers[state.active];
+  var lh = document.getElementById('layers'); lh.innerHTML='';
+  state.layers.forEach(function(M, i){
+    var b=document.createElement('button'); b.className='w'+(i===state.active?' on':'');
+    b.innerHTML = (Object.keys(state.rays).some(function(k){ return state.rays[k]; }) ? '<span style="display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:6px;background:'+CAME[i%CAME.length]+'"></span>' : '') + (M.b.q!==1 ? '('+blabel(M.b)+')' : blabel(M.b)) + 'ⁿ  from ' + M.from + ' to ' + M.to + ', ' + (M.order==='wide'?'lying down':M.order==='tall'?'standing up':'both ways');
+    b.addEventListener('click', function(){ state.active=i; renderColumn(); draw(); });
+    lh.appendChild(b);
+  });
+  document.getElementById('dropLayer').hidden = state.layers.length<2;
+  document.getElementById('addLayer').hidden = state.layers.length>=4;
+  words(document.getElementById('bases'), BASES.map(function(b){return {t:blabel(b), b:b}}),
+        function(it){return it.b===L.b}, function(it){ L.b=it.b; rebuild(); });
+  document.getElementById('fromV').textContent = L.from;
+  document.getElementById('toV').textContent = L.to;
+  words(document.getElementById('orders'), [{t:'lying down',v:'wide'},{t:'standing up',v:'tall'},{t:'both ways',v:'both'}],
+        function(it){return it.v===L.order}, function(it){ L.order=it.v; rebuild(); });
+  words(document.getElementById('steps'), [{t:'whole',v:false},{t:'halves',v:true}],
+        function(it){return it.v===state.half}, function(it){ state.half=it.v; rebuild(); });
+  words(document.getElementById('quads'), [{t:'one',v:1},{t:'two',v:2},{t:'four',v:4}],
+        function(it){return it.v===state.quad}, function(it){ state.quad=it.v; rebuild(true); });
+  words(document.getElementById('rays'), [{t:'upper right',v:'ur'},{t:'upper left',v:'ul'},{t:'lower left',v:'ll'},{t:'lower right',v:'lr'}],
+        function(it){return state.rays[it.v]}, function(it){ state.rays[it.v]=!state.rays[it.v]; renderColumn(); draw(); });
+  var sw = document.getElementById('swatches'); sw.innerHTML='';
+  PAL.forEach(function(p){
+    var b=document.createElement('button'); b.className='sw'+(p===state.color?' on':''); b.style.background=p.hex;
+    b.title=p.name; b.setAttribute('aria-label', p.name);
+    b.addEventListener('click', function(){ state.color=p; renderColumn(); }); sw.appendChild(b);
+  });
+  document.getElementById('nums').className='w'+(state.numbers?' on':'');
+  document.getElementById('glassOnly').className='w'+(state.glassOnly?' on':'');
+  document.getElementById('bare').className='w'+(state.bare?' on':'');
+}
+function rebuild(refit){ compute(); if (refit) fit(); renderColumn(); draw(); }
+
+document.getElementById('fromDn').onclick=function(){ var L=state.layers[state.active]; if (L.from>-16){ L.from--; rebuild(); } };
+document.getElementById('fromUp').onclick=function(){ var L=state.layers[state.active]; if (L.from<L.to){ L.from++; rebuild(); } };
+document.getElementById('toDn').onclick=function(){ var L=state.layers[state.active]; if (L.to>L.from){ L.to--; rebuild(); } };
+document.getElementById('toUp').onclick=function(){ var L=state.layers[state.active]; if (L.to<16){ L.to++; rebuild(); } };
+document.getElementById('addLayer').onclick=function(){
+  var used = state.layers.map(function(L){return L.b});
+  var b = BASES.filter(function(x){return used.indexOf(x)<0})[0] || BASES[1];
+  state.layers.push({b:b, from:-4, to:4, order:'tall'}); state.active=state.layers.length-1; rebuild(true);
+};
+document.getElementById('dropLayer').onclick=function(){
+  if (state.layers.length<2) return; state.layers.splice(state.active,1); state.active=0; rebuild(true);
+};
+document.getElementById('paintPow').onclick=function(){ paintBy('power'); };
+document.getElementById('paintOv').onclick=function(){ paintBy('overlap'); };
+document.getElementById('clearAll').onclick=function(){ state.paints=[]; applyPaints(); draw(); };
+document.getElementById('nums').onclick=function(){ state.numbers=!state.numbers; renderColumn(); draw(); };
+document.getElementById('glassOnly').onclick=function(){ state.glassOnly=!state.glassOnly; renderColumn(); draw(); };
+document.getElementById('bare').onclick=function(){ state.bare=!state.bare; renderColumn(); draw(); };
+document.getElementById('reset').onclick=function(){ fit(); draw(); };
+document.getElementById('startOver').onclick=function(){
+  state.layers=[{b:BASES[0], from:0, to:0, order:'wide'}]; state.active=0; state.half=false; state.quad=1;
+  state.paints=[]; state.color=PAL[0];
+  document.getElementById('read').innerHTML='Nothing but the 1. Raise <i>to</i> and the powers grow out of it.';
+  rebuild(true);
+};
+if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+
+compute(); renderColumn();
+paintBy('power');
+new ResizeObserver(resize).observe(stage);
+document.getElementById('read').innerHTML = 'Tap a piece of glass to colour it, and its size appears here.';
+})();
+</script>

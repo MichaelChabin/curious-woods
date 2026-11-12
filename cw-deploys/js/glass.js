@@ -3764,8 +3764,12 @@ function drawAxisLabels() {
 // What:    The x axis is the line through 0 and 1; the y axis the line through 0 at right angles to it,
 //          up positive. A point that lies on either wears its number beside it, fading in as the point
 //          appears, whether or not she has drawn that axis; 0 and 1 from the start. Points anywhere
-//          else wear none. A number is named exactly when it is a whole number or a fraction (2, −1, 1/2);
-//          a point whose number is neither (√3) wears none in this version, which is open. Where it sits
+//          else wear none. A number is named exactly when it is a whole number or a fraction (2, 1 over 2);
+//          a point whose number is neither (√3) wears none in this version, which is open.
+//          12 Nov 2026 (Ruling-The-Plane-02, rules 1 and 5): no minus sign is written; the numbers count outward
+//          from 0 and are positive both ways along each axis, as plane.js numbers its grid, so the point one unit
+//          left of 0 wears 1. A fraction is stacked by CW.num, never slashed. The positions underneath stay signed.
+//          Where it sits
 //          (30 Oct 2026, to agree with the coordinate plane that comes later): a number on the x axis just
 //          below its point, centred; a number on the y axis just to the left of its point. 0 is on the x axis.
 // How exact: the engine keeps positions as floating-point numbers, not exact values. A position is read
@@ -3774,18 +3778,17 @@ function drawAxisLabels() {
 //          number that is not a fraction (√2, √3, the golden ratio) stays far outside it at every q up to
 //          the limit, so the test tells them apart. The same tolerance decides that a point is on an axis.
 // Depends: points, PARAMS (birthDuration), plane (unitLength, declared at the init replay), w2s(), showGlass
-// Exposes: axisNumberText(v), drawAxisNumbers()
+// Exposes: axisNumber(v), drawAxisNumbers()
 // ============================================================
 
 var AXIS_TOL = 1e-9, AXIS_MAX_DENOM = 100;   // in metres (the 0-to-1 distance)
+var AXIS_NUM_SIZE = 11;                      // px, Georgia; a fraction's digits are CW.num's share of it
 var axisNumberSeen = new Map();              // a number's first frame, for its fade-in: point id and text → time
-function axisNumberText(v) {
+function axisNumber(v) {   // { n, d }: the number as written, unsigned; d is 1 for a whole number. null when it is neither.
     for (var q = 1; q <= AXIS_MAX_DENOM; q++) {
         var p = Math.round(v * q);
         if (Math.abs(v - p / q) > AXIS_TOL) continue;
-        if (p === 0) return '0';
-        var sign = p < 0 ? '−' : '';
-        return q === 1 ? sign + Math.abs(p) : sign + Math.abs(p) + '/' + q;
+        return { n: Math.abs(p), d: p === 0 ? 1 : q };
     }
     return null;
 }
@@ -3801,22 +3804,23 @@ function drawAxisNumbers() {
         if (pt.isScaffold) return;
         var dx = (pt.x - s0.x) / unit, dy = (pt.y - s0.y) / unit;
         var u = dx * ex + dy * ey, w = -dx * ey + dy * ex;   // the point's place along each axis, in metres
-        var text = null, onX = Math.abs(w) <= AXIS_TOL;
-        if (onX) text = axisNumberText(u);
-        else if (Math.abs(u) <= AXIS_TOL) text = axisNumberText(w);
-        if (text === null) return;
+        var num = null, onX = Math.abs(w) <= AXIS_TOL;
+        if (onX) num = axisNumber(u);
+        else if (Math.abs(u) <= AXIS_TOL) num = axisNumber(w);
+        if (num === null) return;
+        var text = num.n + (num.d === 1 ? '' : ' over ' + num.d);   // the key for its fade only; never drawn
         // Its own clock, not the point's birth animation, which the record restarts for every point at each new mark.
         var key = pt.id + '@' + text; live[key] = true;
         if (!axisNumberSeen.has(key)) axisNumberSeen.set(key, now);
         var grow = Math.min(1, (now - axisNumberSeen.get(key)) / PARAMS.birthDuration);
-        var s = w2s(pt.x, pt.y), tx, ty;
-        if (onX) { ctx.textAlign = 'center'; ctx.textBaseline = 'top'; tx = s.x; ty = s.y + 6; }
-        else { ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; tx = s.x - 7; ty = s.y + 1; }
+        var s = w2s(pt.x, pt.y);
+        // CW.num writes it: y is the math axis, the middle of a whole number and the bar of a fraction. On the x axis
+        // the number hangs with its top 6 px below the point, as it did; on the y axis it sits beside the point.
         // A thin parchment halo, so a number stays legible where it sits on glass (0 at the corner of a pane).
+        var o = { size: AXIS_NUM_SIZE, color: '#546A80', halo: COLORS.background, align: onX ? 'center' : 'right' };
         ctx.globalAlpha = 0.8 * grow;
-        ctx.strokeStyle = COLORS.background; ctx.lineWidth = 3; ctx.lineJoin = 'round';
-        ctx.strokeText(text, tx, ty);
-        ctx.fillText(text, tx, ty);
+        if (onX) CW.num.draw(ctx, num.n, num.d, s.x, s.y + 6 + CW.num.measure(ctx, num.n, num.d, o).h / 2, o);
+        else CW.num.draw(ctx, num.n, num.d, s.x - 7, s.y + 1, o);
     });
     ctx.restore();
     // A number whose point has gone (Undo, New, another design) is forgotten, so it fades in again if the point returns.

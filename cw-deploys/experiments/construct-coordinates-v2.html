@@ -99,9 +99,9 @@
 <div id="fail"></div>
 
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
-<script src="../js/cw-number.js?v=2026-09-03"></script>
+<script src="../js/cw-number.js?v=2026-11-12"></script>
 <script>
-var CW_VERSION = '2026-10-28 da958b6 · construct-coordinates v2'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-11-12 2a9c4e0 · construct-coordinates v2 · plane rules 1'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 (function () {
 'use strict';
 
@@ -239,8 +239,10 @@ function buildMain() {
   // a point, and its number the moment it appears, if it is an integer on an axis
   function pt(x, y) {
     s.push({ t: 'pt', x: x, y: y });
-    if (y === 0 && x !== 0 && x === Math.round(x)) s.push({ t: 'lab', x: x, y: 0, txt: '' + x });
-    else if (x === 0 && y !== 0 && y === Math.round(y)) s.push({ t: 'lab', x: 0, y: y, txt: '' + y });
+    // No minus sign: the numbers count outward from 0, positive in all four directions
+    // (Ruling-The-Plane-02, rule 1, 12 Nov 2026). The positions stay signed.
+    if (y === 0 && x !== 0 && x === Math.round(x)) s.push({ t: 'lab', x: x, y: 0, txt: '' + Math.abs(x) });
+    else if (x === 0 && y !== 0 && y === Math.round(y)) s.push({ t: 'lab', x: 0, y: y, txt: '' + Math.abs(y) });
   }
 
   // seeds

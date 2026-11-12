@@ -17,8 +17,11 @@
 //   • A number never speaks more precision than the act that made it showed.
 //     (Decisions-Controls-Aug12 §6.) So nothing here rounds. A decimal is exact
 //     or it is not written as a decimal.
-//   • Trailing zeros are trimmed; thousands are grouped. (plane.js's own tick
-//     labels, which this file now serves.)
+//   • Trailing zeros are trimmed; long numbers are grouped in threes: commas to
+//     the left of the decimal point, thin spaces to the right, so 1,710,830 and
+//     3.141 592 653. (Ruling-The-Plane-02, rule 5, Michael, 12 Nov 2026. Until
+//     then an ordinary space on the left, plane.js's old habit, and nothing on
+//     the right.)
 //   • Names are small and earned; the shape carries the magnitude, so a numeral
 //     does not grow without bound. (Walk-Glass-Aug26, step 1.)
 //   • THE MATH AXIS. Every term on a line — whole number, operator, fraction —
@@ -35,11 +38,9 @@
 // a pixel at panel sizes. Alignment here is by box, not by ink: correcting per
 // glyph would make the digits bob against each other, which is worse.
 //
-// Deliberately NOT changed while extracting: the thousands separator stays the
-// ordinary space plane.js has always used, so adopting this file re-renders
-// nothing. plane.js's own comment says "thin space" and means U+2009, which is
-// typographically the right answer and one constant away — but a standardisation
-// pass is the wrong place to smuggle in a restyle. See GROUP_SEP.
+// The separators were left as plane.js had them when this file was extracted
+// (an ordinary space, so adopting the file re-rendered nothing). They were ruled
+// on 12 Nov 2026: see GROUP_SEP and FRAC_SEP.
 //
 // Classic script, no build step. Load BEFORE plane.js, which uses it.
 // Depends on nothing. CW.snap is used if present and worked around if not.
@@ -50,8 +51,8 @@
 
 window.CW = window.CW || {};
 
-var GROUP_SEP  = ' ';    // plane.js's long-standing separator. U+2009 is the
-                         // documented intent; changing it is a design decision.
+var GROUP_SEP  = ',';        // between threes to the left of the decimal point
+var FRAC_SEP   = '\u2009';   // a thin space between threes to the right of it
 var FRAC_SCALE = 0.82;   // numerator and denominator, as a share of the number
 var FRAC_PAD   = 0.22;   // bar overhang past the widest of the two, in its ems
 var FRAC_GAP   = 0.06;   // clear air between a bar and the digits it separates
@@ -67,6 +68,7 @@ function group(s) {
     var ip = dot < 0 ? s : s.slice(0, dot), rest = dot < 0 ? '' : s.slice(dot);
     var sign = '';
     if (ip.charAt(0) === '-') { sign = '-'; ip = ip.slice(1); }
+    if (rest) rest = '.' + rest.slice(1).replace(/(\d{3})(?=\d)/g, '$1' + FRAC_SEP);
     return sign + ip.replace(/\B(?=(\d{3})+(?!\d))/g, GROUP_SEP) + rest;
 }
 function snap(v) { return (CW.snap ? CW.snap(v) : Math.round(v) + 0.5); }
@@ -77,6 +79,10 @@ CW.num = {
     reduce: function(n, d) { var g = gcd(n, d) || 1; return { n: n / g, d: d / g }; },
 
     // ---- as text ----------------------------------------------------------
+
+    // A string of digits, with or without a decimal point, grouped in threes: for a
+    // page that has the digits already (a number too long for an ordinary number).
+    group: function(s) { return group(String(s)); },
 
     // A whole number, thousands grouped.
     count: function(n) { return group(String(n)); },
@@ -135,7 +141,9 @@ CW.num = {
     // In every call below (x, y) anchors the number and **y is the math axis**,
     // not a baseline: for a fraction it is the bar, for anything else it is the
     // middle. Pass the same y for a whole row and the row is aligned.
-    // opts: {size, weight, color, align: 'center'|'left'|'right'}
+    // opts: {size, weight, color, align: 'center'|'left'|'right', halo}
+    // halo: a colour (the paper's) drawn 3 px wide behind the number, so it stays
+    // legible where it sits on glass or on a line.
 
     drawText: function(ctx, text, x, y, opts) {
         opts = opts || {};
@@ -145,6 +153,7 @@ CW.num = {
         if (opts.color) ctx.fillStyle = opts.color;
         ctx.textAlign = opts.align || 'center';
         ctx.textBaseline = 'middle';
+        if (opts.halo) { ctx.strokeStyle = opts.halo; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.strokeText(text, x, y); }
         ctx.fillText(text, x, y);
         ctx.restore();
     },
@@ -190,6 +199,14 @@ CW.num = {
         if (opts.align === 'right')               cx = x - bar / 2;
 
         ctx.textAlign = 'center';
+        if (opts.halo) {
+            ctx.save();
+            ctx.strokeStyle = opts.halo; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+            ctx.textBaseline = 'bottom'; ctx.strokeText(nu, cx, y - gap);
+            ctx.textBaseline = 'top';    ctx.strokeText(de, cx, y + gap);
+            ctx.beginPath(); ctx.moveTo(cx - bar / 2, snap(y)); ctx.lineTo(cx + bar / 2, snap(y)); ctx.stroke();
+            ctx.restore();
+        }
         ctx.textBaseline = 'bottom';
         ctx.fillText(nu, cx, y - gap);
         ctx.textBaseline = 'top';

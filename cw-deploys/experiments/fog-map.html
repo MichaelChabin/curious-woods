@@ -35,7 +35,7 @@
   <div id="corner"></div>
 </footer>
 <script>
-var CW_VERSION = '2026-08-13 b32d541'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-11-12 2a9c4e0 · plane rules 1'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 (function(){
 "use strict";
 /* ---------- primes and ranks ---------- */
@@ -145,7 +145,7 @@ function cornerReadout(){
   document.getElementById('corner').textContent=
     (u>=1&&v>=1)? `far corner ${fmt(u)} \u00D7 ${fmt(v)} = ${fmt(u*v)}` : '';
 }
-const fmt=n=>n.toLocaleString('en-US').replace(/,/g,'\u2009');
+const fmt=n=>n.toLocaleString('en-US');   // commas in threes (Ruling-The-Plane-02, rule 5, 12 Nov 2026; thin spaces until then)
 
 /* ---------- hover readout ---------- */
 function factorization(n){

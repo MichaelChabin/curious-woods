@@ -178,7 +178,7 @@
   <div class="recipe">&nbsp;</div>
 </div>
 
-<script src="../js/cw-number.js?v=2026-09-03"></script>
+<script src="../js/cw-number.js?v=2026-11-12"></script>
 
 <script>
 // ============================================================================
@@ -318,7 +318,7 @@ CW.resolutionDial = function(host, opts) {
 // x axis, left of the y axis — and keep to the edge of the box when an axis is off it.
 //
 //   CW.axisNumbers.step(pxPerUnit, needPx) → 1, 2, 5, 10 …
-//   CW.axisNumbers.text(v)                 → "1 000" (grouped, no sign)
+//   CW.axisNumbers.text(v)                 → "1,000" (grouped, no sign)
 //   CW.axisNumbers.draw(ctx, { w2s, z, box:{l,r,t,b}, negative, color })
 // ============================================================================
 (function() {
@@ -373,7 +373,7 @@ CW.axisNumbers = { step: step, text: text, draw: draw };
 </script>
 
 <script>
-var CW_VERSION = '2026-10-24g bb4b8dd'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+var CW_VERSION = '2026-11-12 2a9c4e0 · plane rules 1'; try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 // ============================================================================
 // SAME GLASS — A BENCH (15 Oct 2026; first revision the same day, from Michael's
 // first impressions)
@@ -436,9 +436,11 @@ function qkey(a) { return a.n + '/' + a.d; }
 
 // --------------------------------------------------------------- the resolutions
 var RES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 10000];   // step is 1/q metre
-// Lead colours, one per resolution, from the glass palettes (darker members, so
-// a came reads as a came). The grid of a resolution is the same colour, faint.
-// She can give any resolution another colour from the palette (see the key).
+// A colour for each resolution, from the glass palettes: its glass (Fill), its grid, faint,
+// its labels and its Join lines. She can give any resolution another colour from the
+// palette (see the key). The came is never coloured (Ruling-The-Plane-02, rule 7, 12 Nov
+// 2026): every rectangle's lead is LEAD, the grey the glass boards use, and the cuts are
+// told apart by the glass alone. Until then the lead took its cut's colour.
 var RES_COLOR = ['#4a4540', '#1a3a8c', '#8b1a1a', '#1a6a2a', '#c8780a', '#4a1a8c', '#2a8a8a',
                  '#a83018', '#6a5a2a', '#c84878', '#2a6a5a', '#7a3a8a', '#9a7a1a'];
 var resColor = RES_COLOR.slice();
@@ -454,6 +456,7 @@ function rowColor(row) {
 // A held number's own colour, on its corner and its readout. Copper first: Geometry's point colour.
 var NUM_COLOR = ['#BE622F', '#2c5aa0', '#3f7a3a', '#8b1a1a', '#6a3a8c'];
 var INK = '#3D3D3A', SLATE = '#546A80', PAPER = '#f4f1e8';
+var LEAD = '#777777';            // came: glass.js's lead grey, on every rectangle whatever its cut
 var AXIS_COLOR = '#3f4f60';      // the axes: Payne's grey, darker than any grid
 var LEAD_ALPHA = 0.55, LABEL_ALPHA = 0.7;   // overlapping lines darken where they cross
 var FILL_ALPHA = 0.035;                     // each rectangle's glass when Fill is on: light, because
@@ -631,7 +634,7 @@ function decimalParts(v) {        // exact decimal, or null when the denominator
 // past that size the bench writes it itself, digit for digit from the BigInts, in CW.num's
 // own markup and grouping: still exact, never rounded, never 5.7e+38.
 var SAFE = 9007199254740991n;
-function bigGroup(b) { var t = String(b < 0n ? -b : b).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); return (b < 0n ? '-' : '') + t; }
+function bigGroup(b) { return CW.num.group(String(b)); }
 function numHTML(v) {
     var small = (v.n < 0n ? -v.n : v.n) <= SAFE && v.d <= SAFE;
     if (numForm === 'decimal') {
@@ -640,7 +643,7 @@ function numHTML(v) {
         if (dp) {
             var str = String(dp.num).padStart(dp.places + 1, '0'), ip = str.slice(0, str.length - dp.places);
             var fp = str.slice(str.length - dp.places).replace(/0+$/, '');
-            return '<span class="big">' + bigGroup(BigInt(ip)) + (fp ? '.' + fp : '') + '</span>';
+            return '<span class="big">' + CW.num.group(ip + (fp ? '.' + fp : '')) + '</span>';
         }
     }
     if (small) return CW.num.html(Number(v.n), Number(v.d), { mixed: true });
@@ -925,7 +928,7 @@ function drawOutlines() {
         var p = paths[row];
         ctx.beginPath();
         for (var i = 0; i < p.length; i += 4) { ctx.moveTo(p[i], p[i + 1]); ctx.lineTo(p[i + 2], p[i + 3]); }
-        ctx.strokeStyle = rowColor(Number(row)); ctx.stroke();
+        ctx.strokeStyle = LEAD; ctx.stroke();
     });
 }
 
@@ -1100,7 +1103,7 @@ function drawTiles(now) {
     ctx.globalAlpha = 0.6 * (1 - finish); ctx.strokeStyle = '#4a4540'; ctx.lineWidth = 0.6; ctx.stroke(leadP);
     // the finish: the ordinary rectangle, and its label, come in as the tiles go
     if (finish > 0) {
-        ctx.globalAlpha = LEAD_ALPHA * finish; ctx.lineWidth = 2; ctx.strokeStyle = col;
+        ctx.globalAlpha = LEAD_ALPHA * finish; ctx.lineWidth = 2; ctx.strokeStyle = LEAD;
         ctx.beginPath(); rectPath(0, 0, T.r.wf, T.r.hf); ctx.stroke();
         ctx.restore();
         drawLabelAt(T.r, labelBox(T.r), LABEL_ALPHA * finish);
@@ -1643,7 +1646,7 @@ function renderKey() {
             : '<span class="fr cw-line">' + CW.num.html(1, RES[i]) + '</span>';
         return '<div class="krow' + (isShown(i) ? '' : ' off') + '" data-i="' + i + '">' +
             '<span class="dot"><i style="border-color:' + c + ';background:' + (isShown(i) ? c : 'transparent') + '"></i></span>' +
-            '<span class="lead" style="border-color:' + c + '"></span>' + label +
+            '<span class="lead" style="border-color:' + LEAD + '"></span>' + label +
             (wc ? '<span class="ways">' + CW.num.count(wc.per[i] || 0) + '</span>' : '') + '</div>';
     }).join('');
     if (wc && used.length) html += '<div class="ktotal">Total: ' + CW.num.count(wc.total) + (wc.total === 1 ? ' way' : ' ways') + '</div>';

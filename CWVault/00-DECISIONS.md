@@ -414,3 +414,4 @@ Added 24 Aug:
   could reasonably conclude from four buttons, then five, then six, that someone
   has the complete list. Not a flaw to patch here. A hook for something later.
 - 3 Nov 2026 — Chartres red is copper, flashed; Chartres pink is manganese. The earlier gold lines were out of period by ~500 years.
+- 12 Nov 2026 — House rules for the plane ruled (Ruling-The-Plane-02.md). No negative numbers on an axis; fractions stacked; commas left of the point, thin spaces right; came never coloured.

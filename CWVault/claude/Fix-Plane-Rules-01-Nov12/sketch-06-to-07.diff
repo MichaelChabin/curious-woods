@@ -1,0 +1,65 @@
+0a1
+> <meta charset="utf-8">
+35d35
+< .read .g2{background:rgba(139,26,26,.09);border-radius:2px}
+98c98
+<       <div class="row"><button class="w" id="nums">Numbers</button><button class="w" id="cameCol">Coloured came</button><button class="w" id="bare">Came only</button><button class="w" id="glassOnly">Glass only</button><button class="w" id="reset">Reset view</button><button class="w" id="startOver">Start over</button></div>
+---
+>       <div class="row"><button class="w" id="nums">Numbers</button><button class="w" id="bare">Came only</button><button class="w" id="glassOnly">Glass only</button><button class="w" id="reset">Reset view</button><button class="w" id="startOver">Start over</button></div>
+124c124,125
+< var CAME = ['#1f4fb8','#c8780a','#1a7a3a','#a8231a'];   // one per power: cobalt, amber, green, red
+---
+> var CAME = ['#1f4fb8','#c8780a','#1a7a3a','#a8231a'];   // one per power, for its lines from 0 and its bar in the column: cobalt, amber, green, red.
+>                                                         // Never the came: came is lead and is not coloured (sketch 07, Ruling-The-Plane-02, rule 7).
+132c133
+<   active:0, half:false, quad:4, color:PAL[0], numbers:true, glassOnly:false, came:false, bare:false, rays:{ur:false, ul:false, ll:false, lr:false}, paints:[]
+---
+>   active:0, half:false, quad:4, color:PAL[0], numbers:true, glassOnly:false, bare:false, rays:{ur:false, ul:false, ll:false, lr:false}, paints:[]
+238,239c239,242
+< function groups(intStr){ // a thin space between groups of three, counted from the right
+<   var out=''; for (var i=0;i<intStr.length;i++){ if (i && (intStr.length-i)%3===0) out+=' '; out+=intStr[i]; } return out;
+---
+> // Sketch 07 (12 Nov 2026, Ruling-The-Plane-02, rule 5): commas in threes to the left of the decimal point, thin
+> // spaces in threes to the right (1,710,830 and 3.141 592 653). Until 06: thin spaces on the left, every other group tinted.
+> function groups(intStr){ // a comma between groups of three, counted from the right
+>   var out=''; for (var i=0;i<intStr.length;i++){ if (i && (intStr.length-i)%3===0) out+=','; out+=intStr[i]; } return out;
+241,243c244,247
+< function groupsHTML(intStr){ // the same, with every other group tinted
+<   var gs=[]; for (var e=intStr.length; e>0; e-=3) gs.unshift(intStr.slice(Math.max(0,e-3), e));
+<   return gs.map(function(g,i){ return (gs.length-1-i)%2 ? '<span class="g2">'+g+'</span>' : g; }).join(' ');
+---
+> function decimalText(str){ // a decimal as the browser wrote it: the whole part with commas, the digits after the point in threes
+>   if (!/^\d+(\.\d+)?$/.test(str)) return str;   // an exponent form is left as it is
+>   var dot=str.indexOf('.'); if (dot<0) return groups(str);
+>   return groups(str.slice(0,dot)) + '.' + str.slice(dot+1).replace(/(\d{3})(?=\d)/g, '$1\u2009');
+272,273c276,277
+<     if (fr[1]===1) return name + groupsHTML(String(fr[0])) + ' m²';
+<     return name + '<span class="fr"><span>' + groupsHTML(String(fr[0])) + '</span><span>' + groupsHTML(String(fr[1])) + '</span></span> m²';
+---
+>     if (fr[1]===1) return name + groups(String(fr[0])) + ' m²';
+>     return name + '<span class="fr"><span>' + groups(String(fr[0])) + '</span><span>' + groups(String(fr[1])) + '</span></span> m²';
+275c279
+<   return name + v.toPrecision(5) + ' m²';
+---
+>   return name + decimalText(v.toPrecision(5)) + ' m²';
+334c338
+<   if (state.came) drawCameColoured(); else drawLead();
+---
+>   drawLead();
+376,383d379
+< }
+< function drawCameColoured(){ // each power's rectangles in its own colour; the first power drawn last, on top
+<   ctx.lineJoin='miter'; ctx.lineWidth = state.bare ? 2.2 : 3;
+<   for (var li=state.layers.length-1; li>=0; li--){
+<     ctx.strokeStyle = CAME[li % CAME.length]; ctx.beginPath();
+<     G.rects.forEach(function(r){ if (r.layer!==li) return; ctx.rect(SX(r.x0), SY(r.y1), (r.x1-r.x0)*view.s, (r.y1-r.y0)*view.s); });
+<     ctx.stroke();
+<   }
+506c502
+<     b.innerHTML = (state.came || Object.keys(state.rays).some(function(k){ return state.rays[k]; }) ? '<span style="display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:6px;background:'+CAME[i%CAME.length]+'"></span>' : '') + (M.b.q!==1 ? '('+blabel(M.b)+')' : blabel(M.b)) + 'ⁿ  from ' + M.from + ' to ' + M.to + ', ' + (M.order==='wide'?'lying down':M.order==='tall'?'standing up':'both ways');
+---
+>     b.innerHTML = (Object.keys(state.rays).some(function(k){ return state.rays[k]; }) ? '<span style="display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:6px;background:'+CAME[i%CAME.length]+'"></span>' : '') + (M.b.q!==1 ? '('+blabel(M.b)+')' : blabel(M.b)) + 'ⁿ  from ' + M.from + ' to ' + M.to + ', ' + (M.order==='wide'?'lying down':M.order==='tall'?'standing up':'both ways');
+532d527
+<   document.getElementById('cameCol').className='w'+(state.came?' on':'');
+554d548
+< document.getElementById('cameCol').onclick=function(){ state.came=!state.came; renderColumn(); draw(); };
