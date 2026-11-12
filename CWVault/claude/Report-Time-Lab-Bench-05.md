@@ -1,5 +1,5 @@
 ---
-status: Report, 12 Nov 2026. Step 5 of the Time lab bench, built on `f90aa9fc` (the step-4 page as committed in `9eed2d35`). Checked in the pane at 1,024 × 768 by pointer and at 768 × 1,024 by finger events. Reported before committing, as the prompt asks; committed and pushed on Michael's word, "commit it and push", this session's hunks only. Michael's prompt `Prompt-Revise-Time-Lab-Bench-05.md`.
+status: Report, 12 Nov 2026. Step 5 of the Time lab bench, built on `f90aa9fc` (the step-4 page as committed in `9eed2d35`). Checked in the pane at 1,024 × 768 by pointer and at 768 × 1,024 by finger events. Reported before committing, as the prompt asks; committed and pushed on Michael's word, "commit it and push", `2575c7f7`, this session's hunks only. Michael's prompt `Prompt-Revise-Time-Lab-Bench-05.md`.
 role: What step 5 did to `experiments/time-lab.html`, what it found, and what needs Michael's eye.
 related: Prompt-Revise-Time-Lab-Bench-05.md, Report-Time-Lab-Bench-04.md (the page as it stood), Prompt-Revise-Time-Lab-Bench-06.md (the next step), Lab-Time-01.md
 ---
