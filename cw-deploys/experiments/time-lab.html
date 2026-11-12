@@ -74,7 +74,18 @@
      Earth / Map; Reset) and Information (Show cities, Show coastlines, Place markers); Hide periods is gone with its code
      (nothing dims). Today's coastlines and her markers ride their plates as the cities do (drawn by this page over the
      Earth, each point carried by the plate whose piece holds it today). Select years sits to the left of the mosaic,
-     centred on its height. -->
+     centred on its height.
+     Step 6 (12 Nov 2026; Michael's prompt Prompt-Revise-Time-Lab-Bench-06.md): Select years holds eight spans, every one
+     to now — 4.6 billion, Complex life (720 Ma), Humans (a million years), Civilization (12,000 years), Writing (3300
+     BCE), Paper (200 BCE), Machines (1720), Computing (1950) — each its own mosaic as wide as the line (tiles laid in
+     blocks of ten columns, colH tall; LOOK.colH); Complex life, Writing and Paper are cut from the 4.6 billion and
+     Civilization and keep their glass; Machines and Computing are years in the 12,000's periods' colours. Civilization's
+     last three decades stand apart at its right end. The mosaic gathers: a period selected on the mosaic in front of her
+     (a tap, and a drag unless the bench says not) sends its tiles into one line directly above the timeline, oldest at
+     the left, merged by tens first where one line cannot hold them, while the rest vanish (three ways on the bench); back
+     plays it in reverse; a Select years word whose span lies inside the mosaic showing plays the same move, otherwise a
+     cut. Under a second (LOOK.move). One sound for the move, under Ruling-Sound-01: Sound OK? asked once, Sound on /
+     Sound off under Information; three candidates on the bench. Reduced motion: cuts, and no sound. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
@@ -151,11 +162,17 @@
   #still img { display: block; height: 100%; width: auto; margin: 0 auto; }
   #still .under { margin: 6px 0 0; font-size: 13px; font-style: italic; color: var(--cw-ink-soft, #6b655a); text-align: center; }
   /* the reminder line above each mosaic (step 3): the labels' size, tight to the mosaic */
-  .explain { grid-row: 2; margin: 0 0 3px; font-size: 11px; line-height: 1.3; color: var(--cw-ink-soft, #6b655a); text-align: center; box-sizing: border-box; }
+  .explain { grid-row: 2; margin: 0 0 3px; font-size: 11px; line-height: 1.3; min-height: 1.3em; color: var(--cw-ink-soft, #6b655a); text-align: center; box-sizing: border-box; }
+  @media (max-width: 799px) { .explain { min-height: 2.6em; } }   /* two lines held at iPad width, where the 4.6 billion's wraps, so a change of unit moves nothing */
   /* nothing on the mosaic selects as text: a drag that starts in the came or runs past the glass must never start a
      selection, whose highlight would wash over the canvas and hide the colours (Michael, 1 Nov) */
   .glass-box { grid-row: 3; position: relative; min-width: 0; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
   canvas.glass { display: block; width: 100%; cursor: crosshair; touch-action: none; }
+  /* the move (step 6): its own canvas over the glass while tiles travel, the glass hidden under it until the last lands */
+  canvas.move { position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; display: none; z-index: 6; }
+  /* Sound OK? (Ruling-Sound-01): where the sound comes from, at the mosaic's top right on the reminder line's row, until she answers */
+  .sound-ask { position: absolute; right: 0; top: -19px; margin: 0; z-index: 8; font-size: 13px; line-height: 16px; color: var(--cw-ink, #2a241c); background: var(--cw-parchment, #f4f1e8); padding: 0 0 0 8px; white-space: nowrap; }
+  .sound-ask .word { font-size: 13px; font-style: italic; padding: 0; line-height: 16px; }
   .cursor-label { position: absolute; z-index: 7; pointer-events: none; font-size: 12px; line-height: 1.3; color: var(--cw-ink, #2a241c);
                   background: rgba(244,241,232,0.94); border: 0.5px solid #c8b89a; border-radius: 4px; padding: 2px 7px; white-space: nowrap; display: none; }
   /* the timeline: the mosaic page's line (the Earth bench's age row, 6c, 6d, as 7c has it), its words to the right; there
@@ -246,7 +263,7 @@
       <button class="word" id="wHtw" type="button" aria-pressed="false">How this works</button>
       <ul class="items">
         <li><span class="head" id="hEarth">Earth</span><div class="subs" id="cmds"><button class="word cmd" id="wFull" type="button" style="display:none">Full screen</button><button class="word cmd" id="wLarge" type="button" aria-pressed="false">Large Earth</button><button class="word cmd" id="wSmall" type="button" aria-pressed="true">Small Earth</button><button class="word cmd" id="wFlat" type="button" aria-pressed="false" style="display:none">Map</button></div></li>
-        <li><span class="head" id="hInfo">Information</span><div class="subs"><button class="word cmd" id="wCities" type="button">Show cities</button><button class="word cmd" id="wCoasts" type="button" style="display:none">Show coastlines</button><button class="word cmd" id="wMarkers" type="button" style="display:none">Place markers</button></div></li>
+        <li><span class="head" id="hInfo">Information</span><div class="subs"><button class="word cmd" id="wCities" type="button">Show cities</button><button class="word cmd" id="wCoasts" type="button" style="display:none">Show coastlines</button><button class="word cmd" id="wMarkers" type="button" style="display:none">Place markers</button><button class="word cmd" id="wSound" type="button">Sound on</button></div></li>
       </ul>
     </div>
     <div class="lower" id="lower"><ul class="items select-years" id="selectYears"><li><span class="head" id="hSelect">Select years</span><div class="subs" id="scales"></div></li></ul><p class="credit" id="credit"></p></div>
@@ -257,7 +274,7 @@
         <div class="knowing" id="knowing"><p class="line-one" id="lineOne"></p><div class="cols"><p class="col" id="colPeriod"></p><p class="col" id="colEvent"></p></div></div>
       </div>
       <p class="explain" id="explain"></p>
-      <div class="glass-box" id="glassBox"><canvas class="glass" id="glass" aria-label="A mosaic of time: each tile a stretch of time, the past at the top left"></canvas><div class="cursor-label" id="cursorLabel"></div></div>
+      <div class="glass-box" id="glassBox"><canvas class="glass" id="glass" aria-label="A mosaic of time: each tile a stretch of time, the past at the top left"></canvas><canvas class="move" id="moveCv" aria-hidden="true"></canvas><div class="cursor-label" id="cursorLabel"></div><p class="sound-ask" id="soundAsk" style="display:none"><span id="soundAskQ"></span> <button class="word" id="wSoundYes" type="button"></button> · <button class="word" id="wSoundNo" type="button"></button></p></div>
       <div class="track-col" id="trackCol">
         <div class="stretch-track" id="stretchTrack" aria-label="The timeline: a line over the span chosen on the mosaic; the copper dot is the year, the flags pick a span, focus closes in on it, and a flag pulled past an end adds years"><div class="stretch-line" id="stretchLine"></div><div class="span-line" id="spanLine"></div><div class="flag a" id="flagA" title="drag"></div><div class="flag b" id="flagB" title="drag"></div><div class="handle" id="handle" title="the year"></div><span class="flag-label" id="labelA"></span><span class="flag-label" id="labelB"></span><span class="flag-label handle-label" id="labelH"></span><span class="span-word" id="spanWord"></span></div>
         <svg class="events" id="events" aria-label="The events of the span, from the store"><defs><linearGradient id="tl-tail" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#2a241c" stop-opacity="0"></stop><stop offset="1" stop-color="#2a241c" stop-opacity="0.32"></stop></linearGradient></defs></svg>
@@ -272,11 +289,14 @@
 <!-- the bench's own words (moved into the How this works panel by the script) -->
 <div id="benchWords" class="bench-words" style="display:none">
   <span class="label">bench only</span>
+  <div class="pair"><span class="what">the tiles go</span><span id="bVanish"></span></div>
+  <div class="pair"><span class="what">the sound</span><span id="bSound"></span></div>
+  <div class="pair"><span class="what">a drag gathers</span><span id="bDrag"></span></div>
   <p class="readout" id="readout"></p>
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-12 f90aa9f · time-lab step 5';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-12 0f55db9 · time-lab step 6';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -321,20 +341,37 @@
     // step 5:
     calYears: 12000,          // years ago: inside this, a year is written as the calendar year (200 BCE, 1720); older, ka, Ma, Ba
     markerR: 4.5, markerRing: 1.5, markerTap: 12,   // a marker: the copper dot's radius, its parchment ring, px from it a tap deletes it
-    coastW: 1.5, coastA: 0.6, markerFade: 20        // today's coastlines as the Earth draws them (its COAST_PX, COAST_A); the million years a marker or a coast fades over before its ground was born (the cities')
+    coastW: 1.5, coastA: 0.6, markerFade: 20,       // today's coastlines as the Earth draws them (its COAST_PX, COAST_A); the million years a marker or a coast fades over before its ground was born (the cities')
+    // step 6: the eight mosaics, the gathering, the sound
+    colH: { cl: 10, wr: 10, pa: 5, ma: 5, co: 1 },   // tiles in a column (the 4.6 billion, Humans and Civilization: 10), so each mosaic spans the line at a sensible tile size
+    selectBelowMenu: 18,      // px: Select years, centred on the mosaic, never closer than this under the menu
+    apartGap: 8,            // px of parchment between Civilization's block and its last decades, which stand apart
+    lineReadable: 4,          // px: a gathered line's tiles narrower than this merge by tens before they travel
+    lineTileMax: 18, lineTileMin: 8,   // px: the gathered line's height (a tile's width, within these)
+    lineGap: 4,               // px between the gathered line and the timeline under it
+    move: { lead: 120, merge: 220, stagger: 300, flight: 420, vanish: 200, spread: 150, bgOut: 220, bgIn: 200, fall: 26 },   // the move, in ms: before the first tile leaves (a merge's glide instead, where there is one), the spread of departures, one tile's flight, one tile's going and the spread of those, the came going and coming; fall: px a falling tile drops
+    moveMax: 12000,           // tiles a move may carry (travelling and vanishing) before it is a cut instead
+    soundVol: 0.22            // the move's sound, at most
   };
   const WORDS = {
-    scales: ['4.6 billion', 'Last million', 'Last 12,000'],
+    scales: ['4.6 billion', 'Complex life', 'Humans', 'Civilization', 'Writing', 'Paper', 'Machines', 'Computing'],   // step 6: eight spans, every one to now
     explain: [
       'Each tile is a million years. Each large square is 100 million. Each row is a billion.',
+      'Each tile is a million years. Each large square is 100 million.',
       'Each tile is 1,000 years. Each large square is 100,000.',
-      'Each tile is ten years. Each large square is 1,000.'
+      'Each tile is ten years. Each large square is 1,000.',
+      'Each tile is ten years. Each large square is 1,000.',
+      'Each tile is ten years. Each block is 500.',
+      'Each tile is a year. Each block is 50.',
+      'Each tile is a year. Each block is ten.'
     ],
+    sound: ['Sound on', 'Sound off'], soundAsk: 'Sound OK?', yes: 'yes', no: 'no',
     focus: 'focus', back: 'back',
     cities: ['Show cities', 'Hide cities'], coasts: ['Show coastlines', 'Hide coastlines'], markers: ['Place markers', 'Hide markers'],
     earth: ['Large Earth', 'Small Earth', 'Map'], reset: 'Reset',
     now: 'now', nowLabel: 'Now', notYet: 'not yet', more: 'More',
-    scaleLines: ['The Solar System · 4,600 million years', 'The last million years', 'The last 12,000 years'],   // line one at rest: the scale in use (step 4)
+    scaleLines: ['The Solar System · 4,600 million years', 'Complex life · 720 Ma to now · 720 million years', 'Humans · the last million years', 'Civilization · the last 12,000 years',
+                 'Writing · 3300 BCE to now · ' + fmt(THIS_YEAR + 3300) + ' years', 'Paper · 200 BCE to now · ' + fmt(THIS_YEAR + 200) + ' years', 'Machines · 1720 to now · ' + fmt(THIS_YEAR - 1720) + ' years', 'Computing · 1950 to now · ' + (THIS_YEAR - 1950) + ' years'],   // line one at rest: the span in use (step 4)
     iceTile: 'ice age', warmTile: 'warm spell'   // the last million: what the tile under the cursor is, after its period's name
   };
   // The fourteen periods of the 4.6 billion mosaic (Worknote-Deep-Time-Window-03's thirteen, and Before the Sun from
@@ -467,25 +504,42 @@
   // year came from a pixel on the line (a tap, a drag), so the handle's label rounds it as the flags' labels round theirs.
   const lab = { ma: 0, rough: false, size: Q.get('size') === 'large' ? 'large' : 'small', earth: null, flat: false };
 
-  // ---------- the three mosaics ----------
-  // Each: the tiles (100 a block, 10 columns of 10; time down each column and then right), the blocks in a row, the
+  // ---------- the eight mosaics (step 6) ----------
+  // Each lays its tiles in blocks of ten columns, colH tiles tall: time runs down each column and then right, the blocks
+  // left to right, the rows of blocks top to bottom (the 4.6 billion's reading). Given for each: the blocks in a row, the
   // rows, the gutter the tiles are inset by on each side (its years hang in the right one), and the time of tile i as its
-  // older and newer edges in million years ago (ma, the line's unit). nameOf: what the tile under the cursor is, after
-  // its period's name (the 12,000: its decade; the last million: ice age or warm spell).
-  const DECADES_BEGUN = Math.floor((THIS_YEAR - 2000) / 10) + 1;   // the thirteenth block of the 12,000 mosaic: the 2000s, 2010s, 2020s in 2026 — from today's date, so the row fills itself a tile a decade
+  // older and newer edges in million years ago (ma, the line's unit). A mosaic cut from another of the same unit (from:
+  // Complex life from the 4.6 billion, Writing and Paper from Civilization) takes that one's tiles as they are, colour and
+  // shade, so a move from one to the other carries the same glass. Machines and Computing are years: their tiles are
+  // coloured by the 12,000's periods they fall in (they have none of their own yet). nameOf: what the tile under the
+  // cursor is, after its period's name (a decade, a year; on Humans ice age or warm spell).
+  const DECADES_BEGUN = Math.floor((THIS_YEAR - 2000) / 10) + 1;   // Civilization's last decades: the 2000s, 2010s, 2020s in 2026 — from today's date, so the row fills itself a tile a decade
   const WINDOWS = [
-    { id: 'w0', blocks: 10, rows: 5, unitMa: 1, startMa: 4600, squares: 4600, gutter: LOOK.gutter,
+    { id: 'w0', blocks: 10, rows: 5, colH: 10, unitMa: 1, startMa: 4600, squares: 4600, gutter: LOOK.gutter,
       rowLabel: k => k < 4 ? (k + 1) + ' billion' : WORDS.nowLabel },   // the years count forward; the last label, where 4.6 billion sat, is Now
-    { id: 'w1', blocks: 10, rows: 1, unitMa: 0.001, startMa: 1, squares: 1000, gutter: LOOK.gutter, names: true, endLabel: WORDS.now,   // no numbers under the row (step 4): the blocks are the ruler, the names the labels; now at the right end, as the 12,000 keeps its year there
-      nameOf: i => (WINDOWS[1].warmOf && WINDOWS[1].warmOf[i]) ? WORDS.warmTile : WORDS.iceTile },
-    { id: 'w2', blocks: 13, rows: 1, unitMa: 0.00001, startMa: (THIS_YEAR - ICE_YEAR) / 1e6, squares: 1300, real: 1200 + DECADES_BEGUN, gutter: LOOK.gutter12, names: true, yearEnd: true,
-      nameOf: i => decadeWord(i) }   // no numbers under the row: the blocks are the ruler, the names the labels; the year stands at the row's right end
+    { id: 'cl', from: { id: 'w0', at: 4600 - 720 }, colH: LOOK.colH.cl, gutter: LOOK.gutter, endLabel: WORDS.now },
+    { id: 'w1', blocks: 10, rows: 1, colH: 10, unitMa: 0.001, startMa: 1, squares: 1000, gutter: LOOK.gutter, names: true, endLabel: WORDS.now,   // no numbers under the row (step 4): the blocks are the ruler, the names the labels; now at the right end
+      nameOf: i => (W_HUM.warmOf && W_HUM.warmOf[i]) ? WORDS.warmTile : WORDS.iceTile },
+    { id: 'w2', cal: true, colH: 10, unitMa: 0.00001, startMa: (THIS_YEAR - ICE_YEAR) / 1e6, squares: 1200 + DECADES_BEGUN, gutter: LOOK.gutter12, names: true, yearEnd: true, apart: true,
+      nameOf: i => decadeWord(i) },   // the last decades stand apart, by themselves, at the right end (step 6); the year at the row's right end
+    { id: 'wr', from: { id: 'w2', at: (-3300 - ICE_YEAR) / 10 }, colH: LOOK.colH.wr, gutter: LOOK.gutter12, names: true, yearEnd: true },   // the earliest writing, about 3300 BCE
+    { id: 'pa', from: { id: 'w2', at: (-200 - ICE_YEAR) / 10 }, colH: LOOK.colH.pa, gutter: LOOK.gutter12, names: true, yearEnd: true },     // paper, about 200 BCE
+    { id: 'ma', cal: true, first: 1720, colH: LOOK.colH.ma, unitMa: 1e-6, gutter: LOOK.gutter12, names: true, yearEnd: true },              // machines, about 1720
+    { id: 'co', cal: true, first: 1950, colH: LOOK.colH.co, unitMa: 1e-6, gutter: LOOK.gutter12, names: true, yearEnd: true }               // computing, about 1950
   ];
-  function decadeWord(i) {   // the 12,000 mosaic: the tile's decade, the nearest thing it has to a period's name
-    const start = ICE_YEAR + 10 * i;   // astronomer's years: 0 is 1 BCE
+  const byId = id => WINDOWS.find(w => w.id === id), W_HUM = byId('w1');
+  function decadeWord(i) {   // Civilization: the tile's decade, the nearest thing it has to a period's name
+    const start = ICE_YEAR + 10 * i;   // the store's years: −200 is 200 BCE
     return start >= 10 ? 'the ' + start + 's' : start >= 0 ? 'the first years CE' : 'about ' + calendarWord(start);   // about 9000 BCE (step 5: as the store writes its years)
   }
-  WINDOWS.forEach(w => { w.olderMa = i => w.startMa - i * w.unitMa; w.newerMa = i => w.startMa - (i + 1) * w.unitMa; w.real = w.real || w.squares; w.spanMa = Math.min(w.startMa, LINE_END); w.nowSq = w.real - 1; });
+  WINDOWS.forEach((w, k) => {
+    w.k = k; w.word = WORDS.scales[k];
+    if (w.from) { const P = byId(w.from.id), o = w.from.at; w.unitMa = P.unitMa; w.startMa = P.startMa - o * P.unitMa; w.squares = P.squares - o; w.cal = P.cal; if (P.nameOf) w.nameOf = i => P.nameOf(i + o); }
+    if (w.first != null) { w.startMa = (THIS_YEAR - w.first) / 1e6; w.squares = THIS_YEAR - w.first + 1; w.nameOf = i => String(w.first + i); }   // a year a tile, the last this year's
+    w.rows = w.rows || 1; w.blocks = w.blocks || Math.ceil(w.squares / (w.colH * 10));
+    w.olderMa = i => w.startMa - i * w.unitMa; w.newerMa = i => w.startMa - (i + 1) * w.unitMa;
+    w.real = w.squares; w.spanMa = Math.min(w.startMa, LINE_END); w.nowSq = w.real - 1;
+  });
 
   let events = [], sea = null;   // loaded below: the store's events, each with its record kept (rec) for the summary and the More
   const seaAt = year => sea ? CW.curveAt(sea.points, year) : null;
@@ -494,10 +548,14 @@
   // For each square: its kind (a period, an ice or warm run, plain), its colour (the period's, graded along it; the ice by
   // the sea; handmade shading by a hash), its events. Built once per window and glass mode, drawn many times.
   function build(w) {
-    const n = w.squares, col = new Array(n), kind = new Array(n), ev = new Array(n);
-    const plaques = [];   // one per period or run, by kind index: { key, n, c, t[], fromMa, toMa }
+    const n = w.squares, ev = new Array(n);
+    let col = new Array(n), kind = new Array(n), plaques = [];   // plaques: one per period or run, by kind index: { key, n, c, t[], fromMa, toMa }
     const addPlaque = p => { plaques.push(p); return plaques.length - 1; };
-    if (w.id === 'w0') {
+    if (w.from) {
+      // a mosaic cut from another of the same unit: its tiles, as they are
+      const P = byId(w.from.id), o = w.from.at; if (!P.built) build(P);
+      col = P.col.slice(o, o + n); kind = P.kind.slice(o, o + n); plaques = P.plaques;
+    } else if (w.id === 'w0') {
       const ids = PERIODS.map((p, k) => addPlaque({ key: 'p' + k, n: p.n, c: p.c, t: p.t, fromMa: 4600 - p.from, toMa: 4600 - p.to }));
       for (let i = 0; i < n; i++) {
         const fwd = i + 0.5; let k = PERIODS.findIndex(p => fwd >= p.from && fwd < p.to); if (k < 0) k = PERIODS.length - 1;
@@ -506,8 +564,8 @@
         col[i] = shade(hex2rgb(p.c), -LOOK.gradient / 2 + LOOK.gradient * u + (hash(i, 1) - 0.5) * LOOK.shadeL, (hash(i, 2) - 0.5) * LOOK.shadeS);
       }
     } else if (w.id === 'w1') {
-      // the last million: the tiles coloured by the sea (a warm spell at or above the threshold; the ice graded, palest at
-      // the lowest sea), the periods laid over them by the tile's middle year; the last 12,000 years belong to no period
+      // Humans, the last million: the tiles coloured by the sea (a warm spell at or above the threshold; the ice graded,
+      // palest at the lowest sea), the periods laid over them by the tile's middle year; the last 12,000 years belong to no period
       const warmOf = new Array(n), mOf = new Array(n);
       for (let i = 0; i < n; i++) {
         let sum = 0; for (let k = 0; k < 5; k++) sum += seaAt(CW.maToYear(w.newerMa(i) + (k + 0.5) / 5 * w.unitMa));
@@ -523,16 +581,16 @@
       }
       w.seaOf = mOf; w.warmOf = warmOf;
     } else {
-      // the 12,000 row: eight periods by the tile's middle year, the row's first tiles in the first period; past the last
-      // real tile the thirteenth block's rest is clear glass, no period and no time
+      // Civilization (decades) and the years of Machines and Computing: the 12,000's eight periods by the tile's middle
+      // year, Civilization's first tiles in the first period; a year's tile has its own shade, graded along its period
+      const h0 = w.first != null ? 20000 + w.first : 0;
       const ids = PERIODS_12.map((p, k) => addPlaque({ key: 'q' + k, n: p.n, c: p.c, t: p.t, fromMa: k === 0 ? w.startMa : p.from / 1e6, toMa: p.to / 1e6, len: p.from - p.to, beside: k === PERIODS_12.length - 1 }));   // the length is the period's own (Farms: six thousand, though the row starts at the ice); the last period's name stands beside the year, not under the row
       for (let i = 0; i < n; i++) {
-        if (i >= w.real) { kind[i] = -3; col[i] = shade(CLEAR, (hash(i, 1) - 0.5) * 0.04, 0); continue; }
         const mid = (w.olderMa(i) + w.newerMa(i)) / 2 * 1e6;   // years ago
         let k = PERIODS_12.findIndex(p => mid < p.from && mid >= p.to); if (k < 0) k = mid >= PERIODS_12[0].from ? 0 : PERIODS_12.length - 1;
         const p = PERIODS_12[k], u = Math.max(0, Math.min(1, (p.from - mid) / (p.from - p.to)));
         kind[i] = ids[k];
-        col[i] = shade(hex2rgb(p.c), -LOOK.gradient / 2 + LOOK.gradient * u + (hash(i, 1) - 0.5) * LOOK.shadeL, (hash(i, 2) - 0.5) * LOOK.shadeS);
+        col[i] = shade(hex2rgb(p.c), -LOOK.gradient / 2 + LOOK.gradient * u + (hash(i + h0, 1) - 0.5) * LOOK.shadeL, (hash(i + h0, 2) - 0.5) * LOOK.shadeS);
       }
     }
     // the events, each a single square
@@ -547,18 +605,18 @@
 
   // ---------- layout and drawing ----------
   const cv = $('glass'), ctx = cv.getContext('2d');
-  const state = { w: WINDOWS[0], L: null, hover: -1, drag: null, anchor: -1, down: null, moved: false, touch: false, cities: false, coasts: false, markers: false };
+  const state = { w: WINDOWS[0], L: null, LG: null, gather: null, hover: -1, drag: null, anchor: -1, down: null, moved: false, touch: false, cities: false, coasts: false, markers: false };
   const NAMES_H = 16, NAME_GAP = 8;   // the period names under a row: a row of names, the least gap between two
-  // the period names under the 12,000 row: each centred under its span (kept inside it where the span is narrower than
-  // the name), on the line that holds the larger part of the span; a name that would run into one already placed drops
-  // to the next row of names, as the events' labels do. Placed on the tiles' geometry alone, so layout can size the row.
+  // the period names under a row: each centred under its span (kept inside it where the span is narrower than the name),
+  // on the line that holds the larger part of the span; a name that would run into one already placed drops to the next
+  // row of names, as the events' labels do. Placed on the tiles' geometry alone, so layout can size the row.
   const nameFont = () => 'small-caps 11px ' + (S.font || 'Georgia, serif');
   function placeNames(w, L) {
     if (!w.names || !w.plaques) return [];
     ctx.font = nameFont(); if ('letterSpacing' in ctx) ctx.letterSpacing = '0.06em';
-    const perLine = L.BPL * 100, rows = [], out = [];
+    const perLine = L.BPL * L.bt, rows = [], out = [];
     w.plaques.forEach((p, k) => {
-      if (p.beside) return;   // the 12,000's Electricity: beside the year, to the right of the row
+      if (p.beside) return;   // Electricity: beside the year, to the right of the row
       const parts = [];
       for (let i = 0; i < w.real; i++) if (w.kind[i] === k) { const ln = Math.floor(i / perLine); if (!parts[ln]) parts[ln] = [i, i]; else parts[ln][1] = i; }
       let best = null, bestLn = 0; parts.forEach((pt, ln) => { if (pt && (!best || pt[1] - pt[0] > best[1] - best[0])) { best = pt; bestLn = ln; } });
@@ -567,133 +625,227 @@
       const tw = ctx.measureText(p.n).width, cx = Math.max(x0 + tw / 2, Math.min(x1 - tw / 2, (x0 + x1) / 2));
       let row = 0; while ((rows[bestLn] || {})[row] && rows[bestLn][row].some(sp => !(cx + tw / 2 + NAME_GAP < sp[0] || cx - tw / 2 - NAME_GAP > sp[1]))) row++;
       rows[bestLn] = rows[bestLn] || []; (rows[bestLn][row] = rows[bestLn][row] || []).push([cx - tw / 2, cx + tw / 2]);
-      out.push({ text: p.n, x: cx, row, line: bestLn, yTop: rectIn(Math.floor(best[0] / 10) * 10 + 9, L).y + L.p });
+      out.push({ text: p.n, x: cx, row, line: bestLn, yTop: rectIn(Math.floor(best[0] / w.colH) * w.colH + w.colH - 1, L).y + L.p });
     });
     if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
     return out;
   }
-  function nameRows(w) { const n = state.L && state.L.names ? state.L.names : []; return Math.max(1, ...n.map(x => x.row + 1)); }
-  const gut = () => state.w.gutter;
-  function layout() {
-    const w = state.w, W = $('glassBox').clientWidth, dpr = window.devicePixelRatio || 1;
-    const wide = W >= 640, BPL = wide ? w.blocks : Math.ceil(w.blocks / 2), lines = Math.ceil(w.blocks / BPL);
-    const under = w.names ? NAMES_H * nameRows(w) : 0;   // the period names under each line of the row
-    const F = LOOK.frame, GB = LOOK.gapBlock, G = gut(), GL = w.names ? under + 2 * F + 2 : LOOK.gapLine, GR = LOOK.gapRow;   // room for the names under a wrapped line
-    const p = (W - 2 * G - 2 * F - (BPL - 1) * GB) / (BPL * 10);   // the tiles inset by the gutter on each side: the row centred on the column, the years hanging outside it to the right
-    const lineH = 10 * p, rowH = lines * lineH + (lines - 1) * GL, glassH = w.rows * rowH + (w.rows - 1) * GR + 2 * F;
-    const H = glassH + under;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.height = H + 'px';
-    const prevRows = state.L && state.L.names ? nameRows(w) : 1;
-    state.L = { W, H, p, BPL, lines, lineH, rowH, glassH, dpr, F, GB, G, GL, GR, lw: p < LOOK.smallBelow ? LOOK.lineWSmall : LOOK.lineW, names: [] };
-    if (w.names) { state.L.names = placeNames(w, state.L); if (nameRows(w) !== prevRows && !layout.again) { layout.again = true; layout(); layout.again = false; return; } }
+  // the room before Civilization's last decades, which stand apart (step 6): their own frame, and parchment between
+  const APART = () => 2 * LOOK.frame + LOOK.apartGap - LOOK.gapBlock;
+  const apartBlock = (w, bt) => w.apart && w.squares % bt ? w.blocks - 1 : -1;
+  // A mosaic's geometry at a width, as a value (the move lays out the mosaic it leaves and the one it goes to): the tiles
+  // inset by the gutter on each side, line one of the row spanning the width, the years hanging outside to the right.
+  function computeLayout(w, W) {
+    if (!w.built) build(w);
+    const dpr = window.devicePixelRatio || 1, wide = W >= 640, BPL = wide ? w.blocks : Math.ceil(w.blocks / 2), lines = Math.ceil(w.blocks / BPL);
+    const F = LOOK.frame, GB = LOOK.gapBlock, G = w.gutter, GR = LOOK.gapRow, bt = w.colH * 10;
+    const nb0 = Math.min(BPL, w.blocks); let cols0 = 0;
+    for (let b = 0; b < nb0; b++) cols0 += Math.ceil(Math.max(0, Math.min(bt, w.squares - b * bt)) / w.colH);   // line one's columns (a short last block, Civilization's last decades, as many as it has)
+    const ap = apartBlock(w, bt), p = (W - 2 * G - 2 * F - (nb0 - 1) * GB - (ap >= 0 && ap < nb0 ? APART() : 0)) / cols0;
+    const L = { w, W, p, BPL, lines, dpr, F, GB, G, GR, bt, ap, lineH: w.colH * p, lw: p < LOOK.smallBelow ? LOOK.lineWSmall : LOOK.lineW, names: [] };
+    const rowH = () => lines * L.lineH + (lines - 1) * L.GL;
+    L.GL = w.names ? NAMES_H + 2 * F + 2 : LOOK.gapLine; L.rowH = rowH();   // room for the names under a wrapped line
+    let rows = 1;
+    if (w.names) { L.names = placeNames(w, L); rows = Math.max(1, ...L.names.map(x => x.row + 1)); if (rows > 1) { L.GL = rows * NAMES_H + 2 * F + 2; L.rowH = rowH(); L.names = placeNames(w, L); } }
+    L.rowH = rowH(); L.glassH = w.rows * L.rowH + (w.rows - 1) * GR + 2 * F; L.H = L.glassH + (w.names ? NAMES_H * rows : 0);
     // the timeline and the reminder line line up with the coloured tiles: from the first column of tiles to the last, not the years on the right
-    const r0 = rect(Math.min(w.real, BPL * 100) - 1), r1 = rect(w.real - 1), right = Math.max(r0.x + r0.s, r1.x + r1.s), left = G + F;   // to the last real tile's column, not the clear glass
+    const r0 = rectIn(Math.min(w.real, BPL * bt) - 1, L), r1 = rectIn(w.real - 1, L);
+    L.tilesLeft = G + F; L.tilesRight = Math.max(r0.x + r0.s, r1.x + r1.s);
+    return L;
+  }
+  // The gathered line (step 6): a selection's tiles in one line directly above the timeline, oldest at the left, as wide
+  // as the line, each as wide as its share of the tiles (a merged tile ten, the last group what it holds), and as tall as
+  // a tile is wide up to lineTileMax.
+  function lineLayout(g, BL) {
+    const F = LOOK.frame, x0 = BL.tilesLeft, x1 = BL.tilesRight, tw = x1 - x0, full = tw * g.f / g.count;
+    const h = Math.max(LOOK.lineTileMin, Math.min(LOOK.lineTileMax, full));
+    let x = x0; const rects = g.tiles.map(t => { const ww = tw * t.m / g.count, r = { x, y: F, w: ww, h }; x += ww; return r; });
+    return { line: true, W: BL.W, dpr: BL.dpr, F, x0, x1, y: F, h, H: F + h + F + LOOK.lineGap, rects, lw: full < LOOK.smallBelow ? LOOK.lineWSmall : LOOK.lineW };
+  }
+  // the tiles of [a, b] on mosaic w, merged by tens until one line holds them at a readable size
+  function gatherOf(w, a, b, BL) {
+    if (!w.built) build(w);
+    const idx = []; for (let i = 0; i < w.real; i++) if ((w.olderMa(i) > a + 1e-12 && w.newerMa(i) < b - 1e-12) || (i === w.nowSq && a <= EPS)) idx.push(i);
+    if (!idx.length) return null;
+    const tw = BL.tilesRight - BL.tilesLeft; let f = 1;
+    while (tw * f / idx.length < LOOK.lineReadable && f < 1e6) f *= 10;
+    const tiles = [];
+    for (let s = 0; s < idx.length; s += f) {
+      const mem = idx.slice(s, s + f), rep = mem[Math.floor((mem.length - 1) / 2)];   // a merged tile wears its middle tile's colour
+      tiles.push({ i0: mem[0], i1: mem[mem.length - 1], m: mem.length, rep, o: w.olderMa(mem[0]), n: w.newerMa(mem[mem.length - 1]), col: w.col[rep], now: mem.includes(w.nowSq), ev: !!w.ev[rep] });   // a merged tile wears its middle tile as it is, an event's glow with it (not the glow of any of its ten: the line went patchy)
+    }
+    return { k: w.k, a, b, f, count: idx.length, tiles };
+  }
+  // the canvas sized for the view showing; the line and the reminder under the mosaic's tiles; focus and back at the right
+  function placeUnder(left, right, W) {
     [$('trackCol'), $('explain')].forEach(el => { el.style.marginLeft = left + 'px'; el.style.width = (right - left) + 'px'; });
     // focus and back (step 5): side by side on the row above the flags' labels, their right end at the column's, so no
     // event's stem or label under the line can reach them; the handle's year keeps clear of them (STR.wordsLeft)
     const sw = $('stretchWords'), wordsLeft = W - left - 2 - sw.offsetWidth;
     sw.style.left = wordsLeft + 'px'; STR.wordsLeft = wordsLeft;
-    state.L.tilesRight = right; state.L.tilesLeft = left;
+  }
+  function layout() {
+    const W = $('glassBox').clientWidth;
+    state.L = computeLayout(state.w, W);
+    state.LG = state.gather ? lineLayout(state.gather, state.L) : null;
+    if (MOVE.active) return;   // the move sizes the box itself until the last tile lands
+    const L = state.L, H = state.LG ? state.LG.H : L.H;
+    cv.width = Math.round(W * L.dpr); cv.height = Math.round(H * L.dpr); cv.style.height = H + 'px';
+    placeUnder(L.tilesLeft, L.tilesRight, W);
     placeSelect();
   }
   // Select years (step 5): to the left of the mosaic, centred on its height, there again whenever the mosaic or what is
-  // above it changes; in the narrow layout (one column) it stays where the column puts it
+  // above it changes (and through the move, which changes it); in the narrow layout (one column) it stays where the column puts it
   function placeSelect() {
     const lo = $('lower'), sy = $('selectYears'); if (!lo || !sy) return;
     if (getComputedStyle(lo).position !== 'absolute') { lo.style.top = ''; return; }
     const b = document.querySelector('.bench').getBoundingClientRect(), g = $('glassBox').getBoundingClientRect();
-    lo.style.top = Math.round(g.top - b.top + g.height / 2 - sy.offsetHeight / 2) + 'px';   // Select years centred on the mosaic, the credit under it
+    const menu = $('words').getBoundingClientRect().bottom - b.top + LOOK.selectBelowMenu;   // step 6: eight words, and a gathered line 28 px tall — centred, it would ride up over Information; it stops under the menu
+    lo.style.top = Math.round(Math.max(menu, g.top - b.top + g.height / 2 - sy.offsetHeight / 2)) + 'px';   // Select years centred on the mosaic, the credit under it
   }
-  const blocksInRow = (w, row) => Math.min(w.blocks, Math.ceil((w.squares - row * w.blocks * 100) / 100));
+  const blocksInRow = (w, row, bt) => Math.min(w.blocks, Math.ceil((w.squares - row * w.blocks * bt) / bt));
   function rect(i) { return rectIn(i, state.L); }
+  const blockX = (blk, L) => L.G + L.F + (blk % L.BPL) * (10 * L.p + L.GB) + (blk === L.ap ? APART() : 0);
   function rectIn(i, L) {
-    const w = state.w, perRow = w.blocks * 100, row = Math.floor(i / perRow), r0 = i % perRow, blk = Math.floor(r0 / 100), hw = r0 % 100;
-    const c = Math.floor(hw / 10), r = hw % 10, line = Math.floor(blk / L.BPL), bx = blk % L.BPL;
-    return { x: L.G + L.F + bx * (10 * L.p + L.GB) + c * L.p, y: L.F + row * (L.rowH + L.GR) + line * (L.lineH + L.GL) + r * L.p, s: L.p };
+    const w = L.w, perRow = w.blocks * L.bt, row = Math.floor(i / perRow), r0 = i % perRow, blk = Math.floor(r0 / L.bt), hw = r0 % L.bt;
+    const c = Math.floor(hw / w.colH), r = hw % w.colH, line = Math.floor(blk / L.BPL);
+    return { x: blockX(blk, L) + c * L.p, y: L.F + row * (L.rowH + L.GR) + line * (L.lineH + L.GL) + r * L.p, s: L.p };
   }
-  function hit(x, y) {
-    const w = state.w, L = state.L; x -= L.G + L.F; y -= L.F;
-    if (x < 0 || y < 0) return -1;
-    const bw = 10 * L.p + L.GB, bx = Math.floor(x / bw), xin = x - bx * bw; if (bx >= L.BPL || xin >= 10 * L.p) return -1;
+  function hit(x, y) {   // the tile under a point: on the mosaic, its index; on the gathered line, the line tile's
+    if (state.gather) {
+      const G = state.LG; if (y < G.y - 2 || y > G.y + G.h + 2) return -1;
+      for (let j = 0; j < G.rects.length; j++) { const r = G.rects[j]; if (x >= r.x && x < r.x + r.w) return j; }
+      return -1;
+    }
+    const L = state.L, w = L.w; y -= L.F; if (y < 0) return -1;
     const row = Math.floor(y / (L.rowH + L.GR)), yr = y - row * (L.rowH + L.GR); if (row >= w.rows || yr >= L.rowH) return -1;
     const line = Math.floor(yr / (L.lineH + L.GL)), yl = yr - line * (L.lineH + L.GL); if (line >= L.lines || yl >= L.lineH) return -1;
-    const blk = line * L.BPL + bx; if (blk >= w.blocks) return -1;
-    const i = row * w.blocks * 100 + blk * 100 + Math.floor(xin / L.p) * 10 + Math.floor(yl / L.p);
-    return i < w.real ? i : -1;   // the clear glass past the last real tile is inert
+    const r = Math.floor(yl / L.p);
+    for (let bx = 0; bx < L.BPL; bx++) {
+      const blk = line * L.BPL + bx; if (blk >= w.blocks) break;
+      const x0 = blockX(blk, L); if (x < x0 || x >= x0 + 10 * L.p) continue;
+      const i = row * w.blocks * L.bt + blk * L.bt + Math.floor((x - x0) / L.p) * w.colH + r;
+      return i < w.real ? i : -1;   // past the last tile is inert
+    }
+    return -1;
   }
   const litSpan = () => [Math.min(STR.flags[0], STR.flags[1]), Math.max(STR.flags[0], STR.flags[1])];   // the flags' span, in ma: what the window lights (the whole lights nothing)
-  function draw() {
-    const w = state.w, L = state.L; if (!L) return;
-    if (!w.built) build(w);
-    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.setTransform(L.dpr, 0, 0, L.dpr, 0, 0);
-    // the came: a silver sheet behind each line of blocks (between blocks and as a frame); between rows, came or parchment
-    ctx.fillStyle = rgbStr(CAME);
-    if (LOOK.rowGapCame) ctx.fillRect(L.G, 0, L.W - 2 * L.G, L.glassH);
-    for (let row = 0; row < w.rows; row++) {
-      const nb = blocksInRow(w, row);
-      for (let line = 0; line < L.lines; line++) {
-        const b0 = line * L.BPL, b1 = Math.min(nb, b0 + L.BPL); if (b1 <= b0) continue;
-        const r0 = rect(row * w.blocks * 100 + b0 * 100), r1 = rect(Math.min(w.squares - 1, row * w.blocks * 100 + (b1 - 1) * 100 + 99));   // a short last block (the 12,000's thirteenth) gets a sheet as wide as its squares
-        ctx.fillRect(r0.x - L.F, r0.y - L.F, r1.x + L.p + L.F - (r0.x - L.F), 10 * L.p + 2 * L.F);
+  const showingSpan = () => state.gather ? [state.gather.a, state.gather.b] : [0, state.w.spanMa];   // the span of the mosaic in front of her: the mosaic's, or the gathered line's
+  const restColour = (c, ev, now) => now ? hex2rgb(LOOK.gold) : ev ? backlit(c) : c;   // a tile at rest, nothing lit: its colour, an event's brighter, now gold
+  // the silver sheets behind the tiles: one per line of joined blocks over its full columns, a short one hugging a part
+  // column at the end, the apart piece its own
+  function cameSheets(L) {
+    const w = L.w, out = [], F = L.F, p = L.p;
+    for (let row = 0; row < w.rows; row++) for (let line = 0; line < L.lines; line++) {
+      const b0 = line * L.BPL, b1 = Math.min(w.blocks, b0 + L.BPL); let x0 = null, x1 = 0, y0 = 0;
+      const close = () => { if (x0 != null) out.push([x0 - F, y0 - F, x1 - x0 + 2 * F, w.colH * p + 2 * F]); x0 = null; };
+      for (let b = b0; b < b1; b++) {
+        const i0 = row * w.blocks * L.bt + b * L.bt, n = Math.min(L.bt, w.squares - i0); if (n <= 0) break;
+        if (b === L.ap) close();
+        const r = rectIn(i0, L), full = Math.floor(n / w.colH), part = n % w.colH;
+        if (full) { if (x0 == null) { x0 = r.x; y0 = r.y; } x1 = r.x + full * p; }
+        if (part) { const rp = rectIn(i0 + full * w.colH, L); out.push([rp.x - F, rp.y - F, p + 2 * F, part * p + 2 * F]); }
+      }
+      close();
+    }
+    return out;
+  }
+  // A mosaic on a canvas: o.bg the came, the lines and its words; o.tiles the glass; o.live the glass as she sees it now
+  // (lit, lifted, the drag), else at rest (the move's colours)
+  function drawMosaic(c, L, o) {
+    const w = L.w;
+    if (o.bg) {
+      c.fillStyle = rgbStr(CAME); cameSheets(L).forEach(s => c.fillRect(s[0], s[1], s[2], s[3]));
+      // the near-black lines: under every square a patch of line colour one line wider than the square, so the lines run between and round them
+      c.fillStyle = LOOK.line;
+      for (let i = 0; i < w.squares; i++) { const r = rectIn(i, L); c.fillRect(r.x - L.lw, r.y - L.lw, r.s + L.lw, r.s + L.lw); }
+      // the years: on the right of each row (4.6 billion); now after the last tile (Complex life, Humans)
+      c.fillStyle = S.greyWord || '#7d7a72'; c.font = LOOK.labelFont + ' ' + (S.font || 'Georgia, serif'); c.textBaseline = 'alphabetic'; c.textAlign = 'left';
+      if (w.rowLabel) for (let k = 0; k < w.rows; k++) { const last = rectIn(k * w.blocks * L.bt + (blocksInRow(w, k, L.bt) - 1) * L.bt + L.bt - 1, L); c.fillText(w.rowLabel(k), last.x + last.s + L.F + 6, last.y + last.s - 1); }
+      if (w.endLabel) { const last = rectIn(w.squares - 1, L); c.fillText(w.endLabel, last.x + last.s + L.F + 6, last.y + last.s - 1); }
+      // the period names under the row at all times: small capitals, each centred under its span on the line that holds the larger part of it
+      if (w.names && L.names) {
+        c.font = nameFont(); c.fillStyle = S.inkSoft || '#6b655a'; c.textAlign = 'center';
+        if ('letterSpacing' in c) c.letterSpacing = '0.06em';
+        L.names.forEach(n => c.fillText(n.text, n.x, n.yTop + L.F + 12 + NAMES_H * n.row));
+        if ('letterSpacing' in c) c.letterSpacing = '0px';
+      }
+      // the calendar rows' right end (step 3): this year in the house text to the right of the row, a hairline from it to
+      // the gold tile at now, the row's only number; the last period's name beside the year, not under the row
+      if (w.yearEnd) {
+        const g = rectIn(w.nowSq, L), x0 = g.x + g.s, x1 = L.tilesRight + L.F + 8, y = g.y + g.s / 2;
+        if (x1 - 4 > x0) { c.strokeStyle = LOOK.line; c.lineWidth = 1; c.beginPath(); c.moveTo(x0, Math.round(y) + 0.5); c.lineTo(x1 - 4, Math.round(y) + 0.5); c.stroke(); }
+        c.fillStyle = S.ink; c.font = LOOK.yearFont + ' ' + (S.font || 'Georgia, serif'); c.textAlign = 'left'; c.fillText(String(THIS_YEAR), x1, y + 6);
+        const beside = w.plaques.find(p => p.beside && w.kind.includes(w.plaques.indexOf(p)));
+        if (beside) { c.font = nameFont(); c.fillStyle = S.inkSoft || '#6b655a'; if ('letterSpacing' in c) c.letterSpacing = '0.06em'; c.fillText(beside.n, x1, y + 6 + NAMES_H); if ('letterSpacing' in c) c.letterSpacing = '0px'; }
       }
     }
-    // the near-black lines: under every square a patch of line colour one line wider than the square, so the lines run between and round them
-    ctx.fillStyle = LOOK.line;
-    for (let i = 0; i < w.squares; i++) { const r = rect(i); ctx.fillRect(r.x - L.lw, r.y - L.lw, r.s + L.lw, r.s + L.lw); }
-    // The light (Michael, 1 Nov): every square wears its true colour at rest, nothing is greyed. The chosen span is
-    // lit as an event is lit, and inside it the events drop back to their own colour, so they still show; a span that
-    // is the whole of the window lights nothing. The period under the cursor is lifted a little; nothing dims (step 5:
-    // Hide periods is gone with the dimming it switched).
-    const span = state.drag ? null : litSpan(), hoverKind = state.hover >= 0 ? w.kind[state.hover] : null;
-    const whole = span && span[0] <= 1e-12 && span[1] >= w.spanMa - 1e-9;
-    const dragA = state.drag ? Math.min(state.drag[0], state.drag[1]) : -1, dragB = state.drag ? Math.max(state.drag[0], state.drag[1]) : -1;
-    for (let i = 0; i < w.squares; i++) {
-      const r = rect(i), k = w.kind[i];
-      const inside = state.drag ? i >= dragA && i <= dragB : !!span && !whole && w.olderMa(i) > span[0] + 1e-12 && w.newerMa(i) < span[1] - 1e-12;
-      let c = (inside !== !!w.ev[i]) ? backlit(w.col[i]) : w.col[i];
-      if (i === w.nowSq) c = hex2rgb(LOOK.gold);
-      if (!inside && hoverKind !== null && hoverKind >= 0 && k === hoverKind) c = shade(c, LOOK.lift, 0);
-      ctx.fillStyle = rgbStr(c); ctx.fillRect(r.x, r.y, r.s - L.lw, r.s - L.lw);
+    if (o.tiles) {
+      // The light (Michael, 1 Nov): every square wears its true colour at rest, nothing is greyed. The chosen span is
+      // lit as an event is lit, and inside it the events drop back to their own colour, so they still show; a span that
+      // is the whole of the window lights nothing. The period under the cursor is lifted a little; nothing dims.
+      const span = o.live && !state.drag ? litSpan() : null, hoverKind = o.live && state.hover >= 0 ? w.kind[state.hover] : null;
+      const whole = span && span[0] <= 1e-12 && span[1] >= w.spanMa - 1e-9;
+      const dragA = o.live && state.drag ? Math.min(state.drag[0], state.drag[1]) : -1, dragB = o.live && state.drag ? Math.max(state.drag[0], state.drag[1]) : -1;
+      for (let i = 0; i < w.squares; i++) {
+        const r = rectIn(i, L), k = w.kind[i];
+        const inside = state.drag && o.live ? i >= dragA && i <= dragB : !!span && !whole && w.olderMa(i) > span[0] + 1e-12 && w.newerMa(i) < span[1] - 1e-12;
+        let col = (inside !== !!w.ev[i]) ? backlit(w.col[i]) : w.col[i];
+        if (i === w.nowSq) col = hex2rgb(LOOK.gold);
+        if (!inside && hoverKind !== null && hoverKind >= 0 && k === hoverKind) col = shade(col, LOOK.lift, 0);
+        c.fillStyle = rgbStr(col); c.fillRect(r.x, r.y, r.s - L.lw, r.s - L.lw);
+      }
+      if (o.live && state.hover >= 0 && !state.drag) { const r = rectIn(state.hover, L); c.strokeStyle = S.ink; c.lineWidth = 1; c.strokeRect(r.x - 0.5, r.y - 0.5, r.s - L.lw + 1, r.s - L.lw + 1); }
     }
-    // the hovered square
-    if (state.hover >= 0 && !state.drag) { const r = rect(state.hover); ctx.strokeStyle = S.ink; ctx.lineWidth = 1; ctx.strokeRect(r.x - 0.5, r.y - 0.5, r.s - L.lw + 1, r.s - L.lw + 1); }
-    // the years: on the right of each row (4.6 billion); now after the last million's last square (its only word)
-    ctx.fillStyle = S.greyWord || '#7d7a72'; ctx.font = LOOK.labelFont + ' ' + (S.font || 'Georgia, serif'); ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
-    if (w.rowLabel) {
-      for (let k = 0; k < w.rows; k++) { const last = rect(k * w.blocks * 100 + (blocksInRow(w, k) - 1) * 100 + 99); ctx.fillText(w.rowLabel(k), last.x + last.s + L.F + 6, last.y + last.s - 1); }
+  }
+  // the gathered line on a canvas: its frame of came and lines (o.bg), its tiles (o.tiles), lit and lifted as the mosaic's are (o.live)
+  function drawLine(c, G, g, o) {
+    if (o.bg) {
+      c.fillStyle = rgbStr(CAME); c.fillRect(G.x0 - G.F, G.y - G.F, G.x1 - G.x0 + 2 * G.F, G.h + 2 * G.F);
+      c.fillStyle = LOOK.line; c.fillRect(G.x0 - G.lw, G.y - G.lw, G.x1 - G.x0 + G.lw, G.h + G.lw);
     }
-    if (w.endLabel) { const last = rect(w.squares - 1); ctx.fillText(w.endLabel, last.x + last.s + L.F + 6, last.y + last.s - 1); }
-    // the period names under the row at all times (the 12,000, Michael, 4 Nov; the last million, 5 Nov; no year numbers
-    // on either since step 4): small capitals, each centred under its span on the line that holds the larger part of it
-    if (w.names && L.names) {
-      ctx.font = nameFont(); ctx.fillStyle = S.inkSoft || '#6b655a'; ctx.textAlign = 'center';
-      if ('letterSpacing' in ctx) ctx.letterSpacing = '0.06em';
-      const base = L.F + 12;
-      L.names.forEach(n => ctx.fillText(n.text, n.x, n.yTop + base + NAMES_H * n.row));
-      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+    if (o.tiles) {
+      const w = WINDOWS[g.k], span = o.live && !state.drag ? litSpan() : null, whole = span && span[0] <= g.a + 1e-12 && span[1] >= g.b - 1e-9;
+      const hoverKind = o.live && state.hover >= 0 ? w.kind[g.tiles[state.hover].rep] : null;
+      const dragA = o.live && state.drag ? Math.min(state.drag[0], state.drag[1]) : -1, dragB = o.live && state.drag ? Math.max(state.drag[0], state.drag[1]) : -1;
+      g.tiles.forEach((t, j) => {
+        const r = G.rects[j], inside = state.drag && o.live ? j >= dragA && j <= dragB : !!span && !whole && t.o > span[0] + 1e-12 && t.n < span[1] - 1e-12;
+        let col = (inside !== t.ev) ? backlit(t.col) : t.col;
+        if (t.now) col = hex2rgb(LOOK.gold);
+        if (!inside && hoverKind !== null && hoverKind >= 0 && w.kind[t.rep] === hoverKind) col = shade(col, LOOK.lift, 0);
+        c.fillStyle = rgbStr(col); c.fillRect(r.x, r.y, r.w - G.lw, r.h - G.lw);
+      });
+      if (o.live && state.hover >= 0 && !state.drag) { const r = G.rects[state.hover]; c.strokeStyle = S.ink; c.lineWidth = 1; c.strokeRect(r.x - 0.5, r.y - 0.5, r.w - G.lw + 1, r.h - G.lw + 1); }
     }
-    // the 12,000 row's right end (step 3): the current year in the house text to the right of the row, a hairline from it
-    // to the gold tile at now, the row's only number; the last period's name beside the year, not under the row
-    if (w.yearEnd) {
-      const g = rect(w.nowSq), blockEnd = rect(Math.floor(w.nowSq / 100) * 100 + 99), x0 = g.x + g.s, x1 = blockEnd.x + blockEnd.s + L.F + 8, y = g.y + g.s / 2;
-      ctx.strokeStyle = LOOK.line; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, Math.round(y) + 0.5); ctx.lineTo(x1 - 4, Math.round(y) + 0.5); ctx.stroke();
-      ctx.fillStyle = S.ink; ctx.font = LOOK.yearFont + ' ' + (S.font || 'Georgia, serif'); ctx.textAlign = 'left'; ctx.fillText(String(THIS_YEAR), x1, y + 6);
-      const beside = w.plaques.find(p => p.beside);
-      if (beside) { ctx.font = nameFont(); ctx.fillStyle = S.inkSoft || '#6b655a'; if ('letterSpacing' in ctx) ctx.letterSpacing = '0.06em'; ctx.fillText(beside.n, x1, y + 6 + NAMES_H); if ('letterSpacing' in ctx) ctx.letterSpacing = '0px'; }
-    }
+  }
+  function draw() {
+    const L = state.L; if (!L || MOVE.active) return;   // while the move runs, its own canvas shows the glass
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.setTransform(L.dpr, 0, 0, L.dpr, 0, 0);
+    if (state.gather) drawLine(ctx, state.LG, state.gather, { bg: true, tiles: true, live: true });
+    else drawMosaic(ctx, L, { bg: true, tiles: true, live: true });
   }
 
   // ---------- the pointer on the glass: rollover names the period, a tap selects it, a drag selects the tiles crossed ----------
+  // On the gathered line the same, by the line's tiles: a tile stands for the mosaic's tiles it holds (baseOf: the middle one).
   const label = $('cursorLabel');
-  function labelFor(i) {   // the period's short name (the decade on the 12,000), the tile's events, and now for the gold tile
+  const baseOf = i => state.gather && i >= 0 ? state.gather.tiles[i].rep : i;
+  const lastIndex = () => state.gather ? state.gather.tiles.length - 1 : state.w.real - 1;
+  function labelFor(i) {   // the period's short name (the decade on Civilization, the year on Machines), the tile's events, and now for the gold tile
     const w = state.w; if (i < 0) return '';
-    const k = w.kind[i]; let t = k >= 0 ? w.plaques[k].n : ''; if (w.nameOf) t += (t ? ' · ' : '') + w.nameOf(i);   // the period's name; on the 12,000 the tile's decade after it
+    if (state.gather && state.gather.f > 1) {   // a merged tile: its period, its span, its events
+      const t = state.gather.tiles[i], k = w.kind[t.rep]; let s = (k >= 0 ? w.plaques[k].n + ' · ' : '') + spanWords(t.o, Math.max(0, t.n));
+      let ne = 0; for (let m = t.i0; m <= t.i1; m++) if (w.ev[m]) ne += w.ev[m].length;
+      return s + (ne ? ' · ' + ne + (ne === 1 ? ' event' : ' events') : '');
+    }
+    i = baseOf(i);
+    const k = w.kind[i]; let t = k >= 0 ? w.plaques[k].n : ''; if (w.nameOf) t += (t ? ' · ' : '') + w.nameOf(i);
     if (i === w.nowSq) t += ' · ' + WORDS.now;
     if (w.ev[i]) t += ' · ' + (w.ev[i].length > LOOK.labelEvents ? w.ev[i].length + ' events' : w.ev[i].join(' · '));
     return t;
   }
   function dragWord() {   // while dragging: the span being chosen, in years
-    const w = state.w, n = Math.abs(state.drag[1] - state.drag[0]) + 1;
+    const w = state.w, a = Math.min(state.drag[0], state.drag[1]), b = Math.max(state.drag[0], state.drag[1]);
+    const n = state.gather ? state.gather.tiles.slice(a, b + 1).reduce((s, t) => s + t.m, 0) : b - a + 1;
     return w.unitMa >= 1 ? fmt(n) + ' million years' : fmt(Math.round(n * w.unitMa * 1e6)) + ' years';
   }
   function showLabel(e, i) {
@@ -728,11 +880,15 @@
     if (p.rough) t = 'about ' + t;
     return t.charAt(0).toUpperCase() + t.slice(1) + (p.toMa <= 1e-9 ? ', so far.' : '.');
   }
+  // the unit of a tile in words, for the reminder line (step 6: the gathered line's merged tiles say theirs)
+  const UNIT_WORDS = { 1: 'a year', 10: 'ten years', 100: 'a hundred years', 1000: 'a thousand years', 10000: 'ten thousand years', 100000: 'a hundred thousand years', 1000000: 'a million years', 10000000: 'ten million years', 100000000: 'a hundred million years', 1000000000: 'a billion years' };
+  const unitWord = ma => { const y = Math.round(ma * 1e6); return UNIT_WORDS[y] || fmt(y) + ' years'; };
+  const explainFor = s => s.g ? 'Each tile is ' + unitWord(WINDOWS[s.k].unitMa * s.g.f) + '.' : WORDS.explain[s.k];
   // pointing (step 4): no plaque on the mosaic; the period under the pointer is lifted on the glass and told in the block
   // under the Earth — line one its name, span and length, the left column its box words — and leaves the block again when
   // the pointer does, the selected period's words coming back
   function pointAt(i) {
-    const w = state.w, k = i >= 0 ? w.kind[i] : -1, p = k >= 0 ? w.plaques[k] : null;
+    const w = state.w; i = baseOf(i); const k = i >= 0 ? w.kind[i] : -1, p = k >= 0 ? w.plaques[k] : null;
     if (!p) { unpoint(); return; }
     const key = w.id + ':' + k;
     if (state.pointKey === key) return;
@@ -745,33 +901,39 @@
   // years ago, the pointer having left the glass by the tile above it): right of the last tile, at or below the top of
   // the line of blocks that holds it — the row's empty end, the clear glass, the gutter — counts as the last tile
   function pastEnd(e) {
-    const w = state.w, r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, t = rect(w.real - 1);
-    const lineTop = t.y - (w.real - 1) % 10 * t.s;   // the top of the last tile's column of squares
+    const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    if (state.gather) { const G = state.LG, last = G.rects[G.rects.length - 1]; return x >= last.x + last.w && y >= G.y - G.F; }
+    const w = state.w, t = rect(w.real - 1);
+    const lineTop = t.y - (w.real - 1) % w.colH * t.s;   // the top of the last tile's column of squares
     return x >= t.x + t.s && y >= lineTop - LOOK.frame;
   }
-  function unitSpan(i) {   // what a tap selects: the whole period (a run of ice or warmth on the last million), or the thousand-year block where there is no period
-    const w = state.w, k = w.kind[i];
-    if (k >= 0) { const p = w.plaques[k]; return [Math.max(0, p.toMa), Math.min(LINE_END, p.fromMa)]; }
-    const j = Math.floor(i / 100), last = Math.min(w.squares - 1, j * 100 + 99);
-    return [Math.max(0, w.newerMa(last)), Math.min(LINE_END, w.olderMa(j * 100))];
+  function unitSpan(i) {   // what a tap selects: the whole period (a run of ice or warmth on Humans), or the block where there is no period; within the mosaic in front of her
+    const w = state.w, k = w.kind[i], s = showingSpan();
+    let a, b;
+    if (k >= 0) { const p = w.plaques[k]; a = p.toMa; b = p.fromMa; }
+    else { const bt = w.colH * 10, j = Math.floor(i / bt), last = Math.min(w.squares - 1, j * bt + bt - 1); a = w.newerMa(last); b = w.olderMa(j * bt); }
+    return [Math.max(0, s[0], a), Math.min(LINE_END, s[1], b)];
   }
-  function tapSelect(i) {   // a tap: the whole period under it chosen, its words kept in the block (the text she saw while pointing)
+  function tapSelect(i) {   // a tap: the whole period under it chosen, its words kept in the block (the text she saw while pointing); it gathers (step 6)
+    i = baseOf(i);
     const w = state.w, k = w.kind[i], p = k >= 0 ? w.plaques[k] : null, [a, b] = unitSpan(i);
     selectPeriod(p, p ? (know.pointed && know.pointed.p === p ? know.pointed.text : nextText(p.key, p.t)) : '');
-    chooseSpan(a, b);
+    chooseSpan(a, b, true);
   }
   cv.addEventListener('pointerdown', e => {
     e.preventDefault();   // every press on the glass, in the came too: no text selection starts here
+    if (MOVE.active) return;
     const i = at(e); state.touch = e.pointerType === 'touch'; if (i < 0) return;
     state.drag = [i, i]; state.anchor = i; state.hover = i; state.down = [e.clientX, e.clientY]; state.moved = false;
     try { cv.setPointerCapture(e.pointerId); } catch (err) {}
     draw(); showLabel(e, i); pointAt(i);
   });
   cv.addEventListener('pointermove', e => {
+    if (MOVE.active) return;
     const i = at(e);
     if (state.drag) {
       if (!state.moved && Math.hypot(e.clientX - state.down[0], e.clientY - state.down[1]) > (state.touch ? LOOK.tapSlopTouch : LOOK.tapSlop)) state.moved = true;
-      const j = i >= 0 ? i : state.moved && pastEnd(e) ? state.w.real - 1 : -1;
+      const j = i >= 0 ? i : state.moved && pastEnd(e) ? lastIndex() : -1;
       if (j >= 0) { state.drag = [state.anchor, j]; state.hover = j; }
       draw(); showLabel(e, i >= 0 ? i : state.hover); pointAt(state.hover); return;
     }
@@ -783,41 +945,212 @@
     if (!state.drag) return;
     const w = state.w; let [a, b] = state.drag; const tap = !state.moved; state.drag = null;
     if (a > b) [a, b] = [b, a];
-    b = Math.min(b, w.real - 1); if (a > b) a = b;
+    b = Math.min(b, lastIndex()); if (a > b) a = b;
     if (tap) tapSelect(state.anchor);   // a press that did not move: the whole period under it
-    else { selectPeriod(null, ''); chooseSpan(Math.max(0, w.newerMa(b)), Math.min(LINE_END, w.olderMa(a))); }   // a drag: the tiles crossed, one for a tiny drag; no period is chosen by it
+    else {   // a drag: the tiles crossed, one for a tiny drag; no period is chosen by it. It gathers too, unless the bench says not (step 6)
+      const g = state.gather, older = g ? g.tiles[a].o : w.olderMa(a), newer = g ? g.tiles[b].n : w.newerMa(b);
+      selectPeriod(null, ''); chooseSpan(Math.max(0, newer), Math.min(LINE_END, older), bench.dragGathers);
+    }
     if (state.touch) { state.hover = -1; label.style.display = 'none'; unpoint(); }
-    else if (e && state.hover >= 0) showLabel(e, state.hover);   // the drag's span word gives way to the name again
+    else if (e && state.hover >= 0 && !MOVE.active) showLabel(e, state.hover);   // the drag's span word gives way to the name again
+    else { state.hover = -1; label.style.display = 'none'; }
     draw();
   }
   cv.addEventListener('pointerup', endDrag);
   cv.addEventListener('pointercancel', () => { state.drag = null; state.hover = -1; label.style.display = 'none'; unpoint(); draw(); });
   cv.addEventListener('pointerleave', () => { if (state.drag) return; state.hover = -1; label.style.display = 'none'; unpoint(); draw(); });
 
-  // ---------- Select years: the three scales, the one in use in copper ----------
+  // ---------- the mosaic's state, and the move between two (step 6) ----------
+  // What the glass shows is a mosaic (k) and, when a selection has gathered, its line (g). Every change of it goes through
+  // transition(): a move where the step allows one and motion is not reduced, else a cut. The page takes its new state at
+  // once; the move only shows the way there, on its own canvas over the glass, and the glass comes back when the last
+  // tile lands.
+  const mosaicNow = () => ({ k: state.w.k, g: state.gather });
+  const sameGather = (g, h) => g === h || !!(g && h && g.k === h.k && Math.abs(g.a - h.a) < 1e-12 && Math.abs(g.b - h.b) < 1e-12);
+  const sameMosaic = (s, t) => s.k === t.k && sameGather(s.g, t.g);
+  const reduced = () => Q.get('motion') === 'reduce' || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const VANISH = ['fade', 'fall', 'ripple'], SOUND_KINDS = ['shuffle', 'glass', 'brush'];
+  const bench = { vanish: VANISH.includes(Q.get('vanish')) ? Q.get('vanish') : 'ripple', sound: SOUND_KINDS.includes(Q.get('sound')) ? Q.get('sound') : 'shuffle', dragGathers: Q.get('drag') !== 'stay' };
+  function applyState(s) {
+    state.w = WINDOWS[s.k]; state.gather = s.g || null; state.hover = -1; state.drag = null; unpoint(); label.style.display = 'none';
+    scaleEls.forEach((el, j) => el.setAttribute('aria-pressed', j === s.k ? 'true' : 'false'));
+    $('explain').textContent = explainFor(s);
+    layout();
+  }
+  // how: 'move' (from → to), 'back' (the move from `to` to `from`, played in reverse), 'cut'
+  function transition(from, to, how) {
+    finishMove();
+    let P = null;
+    if (how !== 'cut' && !reduced()) {
+      const W = $('glassBox').clientWidth, A = viewOf(how === 'back' ? to : from, W), B = viewOf(how === 'back' ? from : to, W);
+      P = planMove(A, B); P.dir = how === 'back' ? -1 : 1; P.how = how === 'back' ? 'back' : (from.k === to.k ? 'gather' : 'words');
+      if (P.sprites.length > LOOK.moveMax) { MOVE.last = { how: P.how, cut: 'more than ' + fmt(LOOK.moveMax) + ' tiles: a cut', tiles: P.sprites.length }; P = null; }
+    }
+    if (P) MOVE.active = true;
+    applyState(to);
+    if (P) startMove(P); else { draw(); }
+  }
+  // a view the move runs between: its tiles where they are drawn, at rest; its height; its came, lines and words on a
+  // canvas of their own; and the edge it stands on (a mosaic hangs from the top, the gathered line stands on the timeline)
+  function viewOf(s, W) {
+    const BL = computeLayout(WINDOWS[s.k], W), w = BL.w, tiles = [], bg = document.createElement('canvas'), dpr = BL.dpr;
+    let H, bottom = false, G = null;
+    if (s.g) {
+      G = lineLayout(s.g, BL); H = G.H; bottom = true;
+      s.g.tiles.forEach((t, j) => { const r = G.rects[j]; tiles.push({ o: t.o, n: t.n, x: r.x, y: r.y, w: r.w - G.lw, h: r.h - G.lw, c: restColour(t.col, t.ev, t.now) }); });
+    } else {
+      H = BL.H;
+      for (let i = 0; i < w.real; i++) { const r = rectIn(i, BL); tiles.push({ o: w.olderMa(i), n: w.newerMa(i), x: r.x, y: r.y, w: r.s - BL.lw, h: r.s - BL.lw, c: restColour(w.col[i], !!w.ev[i], i === w.nowSq) }); }
+    }
+    bg.width = Math.round(W * dpr); bg.height = Math.round(H * dpr);
+    const c = bg.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (G) drawLine(c, G, s.g, { bg: true }); else drawMosaic(c, BL, { bg: true });
+    return { s, BL, tiles, H, bg, bottom, W };
+  }
+  // The plan: for each tile of B, where it comes from in A. The same tile (the same years) travels; a finer tile comes
+  // out of the coarser one that holds it (Humans out of the 4.6 billion's last tile); a coarser one is ten (or a hundred)
+  // of A's that first glide together onto their middle one, which travels. A's tiles that go nowhere vanish. Time order:
+  // B's tiles leave oldest first, the sweep running down each column and on to the right, landing left to right.
+  function planMove(A, B) {
+    const M = LOOK.move, nA = A.tiles.length, used = new Uint8Array(nA), sprites = [], ov = (a, t) => Math.min(a.o, t.o) - Math.max(a.n, t.n);
+    let merged = false, j0 = 0, nT = 0;
+    B.tiles.forEach((t, bi) => {
+      while (j0 < nA - 1 && A.tiles[j0].n >= t.o - 1e-15) j0++;
+      const over = [];
+      for (let j = j0; j < nA && A.tiles[j].o > t.n + 1e-15; j++) if (ov(A.tiles[j], t) > 1e-15) over.push(j);
+      if (!over.length) over.push(Math.min(j0, nA - 1));   // this year's tile, which has no past to overlap: the nearest
+      const a0 = A.tiles[over[0]];
+      if (over.length > 1 && t.o - t.n > 1.5 * (a0.o - a0.n)) {   // a merge: the group gathers onto its middle tile, which travels
+        merged = true; const rep = over[Math.floor((over.length - 1) / 2)];
+        over.forEach(j => { used[j] = 1; if (j !== rep) sprites.push({ k: 'm', a: A.tiles[j], to: A.tiles[rep], c1: t.c }); });
+        sprites.push({ k: 't', a: A.tiles[rep], b: t, c0: A.tiles[rep].c, c1: t.c, rank: bi, m: true });
+      } else {
+        let best = over[0]; over.forEach(j => { if (ov(A.tiles[j], t) > ov(A.tiles[best], t)) best = j; });
+        used[best] = 1; sprites.push({ k: 't', a: A.tiles[best], b: t, c0: A.tiles[best].c, c1: t.c, rank: bi });
+      }
+      nT++;
+    });
+    // the tiles that go: each its own delay, by the bench's way of going
+    let cx = 0, cy = 0, nu = 0, maxD = 1;
+    A.tiles.forEach((a, j) => { if (used[j]) { cx += a.x + a.w / 2; cy += a.y + a.h / 2; nu++; } });
+    if (nu) { cx /= nu; cy /= nu; }
+    const gone = [];
+    A.tiles.forEach((a, j) => { if (!used[j]) { const d = Math.hypot(a.x + a.w / 2 - cx, a.y + a.h / 2 - cy); maxD = Math.max(maxD, d); gone.push({ k: 'v', a, j, d }); } });
+    gone.forEach(s => { s.d = bench.vanish === 'ripple' ? s.d / maxD * M.spread * 1.6 : hash(s.j, 7) * M.spread; });
+    const T0 = merged ? M.merge : M.lead, end = T0 + M.stagger + M.flight;
+    sprites.forEach(s => { if (s.k === 't') s.dep = T0 + (nT > 1 ? s.rank / (nT - 1) : 0) * M.stagger; });
+    sprites.forEach(s => { s.cs0 = rgbStr(s.k === 'm' ? s.a.c : s.c0); s.same = s.k === 't' && s.c0 === s.c1; });
+    gone.forEach(s => { s.cs0 = rgbStr(s.a.c); });
+    return { A, B, sprites: gone.concat(sprites), merged, T0, end, nT, nV: gone.length, nM: sprites.length - nT, vanish: bench.vanish };
+  }
+  const mv = $('moveCv'), mctx = mv.getContext('2d');
+  const MOVE = { active: false, raf: null, plan: null, t0: 0, frames: 0, worst: 0, held: false, last: null };
+  const clamp01 = u => u < 0 ? 0 : u > 1 ? 1 : u;
+  const ease = u => u * u * (3 - 2 * u);
+  const lerp = (a, b, u) => a + (b - a) * u;
+  function moveFrame(tau) {
+    const P = MOVE.plan, M = LOOK.move, A = P.A, B = P.B, W = A.W, dpr = A.BL.dpr;
+    const hu = ease(clamp01((tau - P.T0 - M.stagger) / M.flight)), Hc = lerp(A.H, B.H, hu);   // the box closes once every tile has left, so none is ever below the timeline as it rises
+    const dyA = A.bottom ? Hc - A.H : 0, dyB = B.bottom ? Hc - B.H : 0;
+    mctx.setTransform(1, 0, 0, 1, 0, 0); mctx.clearRect(0, 0, mv.width, mv.height); mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    mctx.save(); mctx.beginPath(); mctx.rect(0, -40, W, Hc + 40); mctx.clip();   // nothing below the box as it stands: the timeline is there
+    // the came, lines and words: A's go as its tiles leave, B's come as the last tiles land
+    const aA = 1 - clamp01(tau / M.bgOut), aB = clamp01((tau - (P.end - M.bgIn)) / M.bgIn);
+    if (aA > 0) { mctx.globalAlpha = aA; mctx.drawImage(A.bg, 0, dyA, W, A.H); }
+    if (aB > 0) { mctx.globalAlpha = aB; mctx.drawImage(B.bg, 0, dyB, W, B.H); }
+    mctx.globalAlpha = 1;
+    const mu = P.merged ? ease(clamp01(tau / M.merge)) : 1, floor = Hc - (B.bottom ? LOOK.lineGap + LOOK.frame : 0);
+    for (const s of P.sprites) {
+      const a = s.a;
+      if (s.k === 'v') {   // a tile that goes: fades, falls, or shrinks away in a ripple out from the tiles that stay
+        const v = clamp01((tau - s.d) / M.vanish); if (v >= 1) continue;
+        const e = ease(v); mctx.fillStyle = s.cs0;
+        if (P.vanish === 'fade') { mctx.globalAlpha = 1 - e; mctx.fillRect(a.x, a.y + dyA, a.w, a.h); }
+        else if (P.vanish === 'fall') { mctx.globalAlpha = 1 - v * v; mctx.fillRect(a.x, a.y + dyA + v * v * M.fall, a.w, a.h); }
+        else { const k = 1 - e; mctx.fillRect(a.x + a.w * (1 - k) / 2, a.y + dyA + a.h * (1 - k) / 2, a.w * k, a.h * k); }
+        mctx.globalAlpha = 1; continue;
+      }
+      if (s.k === 'm') {   // ten glide into one, in place
+        if (tau >= M.merge) continue;
+        const to = s.to; mctx.fillStyle = mu > 0 ? rgbStr(mix(a.c, s.c1, mu)) : s.cs0;
+        mctx.fillRect(lerp(a.x, to.x, mu), lerp(a.y, to.y, mu) + dyA, a.w, a.h); continue;
+      }
+      const b = s.b, u = ease(clamp01((tau - s.dep) / M.flight));
+      const x = lerp(a.x, b.x, u), w = lerp(a.w, b.w, u), h = lerp(a.h, b.h, u), y = Math.min(lerp(a.y + dyA, b.y + dyB, u), floor - h);   // a tile still low as the box closes is lifted by the timeline, never left below it
+      mctx.fillStyle = s.same ? s.cs0 : rgbStr(mix(s.c0, s.c1, s.m ? Math.max(mu, u) : u));
+      mctx.fillRect(x, y, w, h);
+    }
+    mctx.restore();
+    $('glassBox').style.height = Hc + 'px';
+    // the line and the reminder under the mosaic's tiles, from A's to B's (a change of gutter, 4.6 billion to Civilization)
+    const L0 = A.BL, L1 = B.BL;
+    if (L0.tilesLeft !== L1.tilesLeft || L0.tilesRight !== L1.tilesRight) { placeUnder(lerp(L0.tilesLeft, L1.tilesLeft, hu), lerp(L0.tilesRight, L1.tilesRight, hu), W); if (!STR.anim) renderStretch(); }
+    placeSelect();
+  }
+  function startMove(P) {
+    MOVE.plan = P; MOVE.active = true; MOVE.held = false; MOVE.frames = 0; MOVE.worst = 0;
+    const H = Math.max(P.A.H, P.B.H), dpr = P.A.BL.dpr;
+    mv.width = Math.round(P.A.W * dpr); mv.height = Math.round(H * dpr); mv.style.height = H + 'px'; mv.style.display = 'block';
+    cv.style.visibility = 'hidden'; label.style.display = 'none';
+    moveSound(P);
+    MOVE.t0 = performance.now();
+    const tick = now => {
+      const el = now - MOVE.t0; if (el >= P.end) { endMove(); return; }
+      const f0 = performance.now(); moveFrame(P.dir > 0 ? el : P.end - el); MOVE.frames++; MOVE.worst = Math.max(MOVE.worst, performance.now() - f0);
+      MOVE.raf = requestAnimationFrame(tick);
+    };
+    const f0 = performance.now(); moveFrame(P.dir > 0 ? 0 : P.end); MOVE.frames++; MOVE.worst = performance.now() - f0;
+    MOVE.raf = requestAnimationFrame(tick);
+  }
+  function endMove() {
+    if (!MOVE.active) return;
+    const P = MOVE.plan; if (MOVE.raf) cancelAnimationFrame(MOVE.raf); MOVE.raf = null;
+    MOVE.last = { how: P.how, tiles: P.nT, merged: P.nM, vanished: P.nV, sprites: P.sprites.length, designedMs: Math.round(P.end), tookMs: Math.round(performance.now() - MOVE.t0), frames: MOVE.frames, worstFrameMs: +MOVE.worst.toFixed(2), held: MOVE.held, vanish: P.vanish };
+    MOVE.active = false; MOVE.plan = null; MOVE.held = false;
+    mv.style.display = 'none'; $('glassBox').style.height = ''; cv.style.visibility = '';
+    layout(); renderStretch();
+  }
+  function finishMove() { if (MOVE.active) endMove(); }
+  function holdMove(tau) {   // bench only: the move held at a moment (ms from its start), for a picture
+    if (!MOVE.active) return false;
+    if (MOVE.raf) cancelAnimationFrame(MOVE.raf); MOVE.raf = null; MOVE.held = true;
+    const P = MOVE.plan; moveFrame(P.dir > 0 ? tau : P.end - tau); return true;
+  }
+
+  // ---------- Select years: the eight spans, the one in use in copper ----------
   const scaleEls = WINDOWS.map((w, k) => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'word cmd'; b.textContent = WORDS.scales[k]; b.setAttribute('aria-pressed', k === 0 ? 'true' : 'false');
     b.addEventListener('click', () => setWindow(k, true)); $('scales').appendChild(b); return b;
   });
-  function setWindow(k, byHer) {   // the mosaic of that scale; chosen by her, the line resets to the mosaic's whole span (step 4); stepped up by the line, the line stays as it is
-    const w = WINDOWS[k]; state.w = w; state.hover = -1; state.drag = null; unpoint(); label.style.display = 'none';
-    scaleEls.forEach((el, j) => el.setAttribute('aria-pressed', j === k ? 'true' : 'false'));
-    $('explain').textContent = WORDS.explain[k];
-    layout();
+  // a span chosen under Select years: its mosaic, the line its whole span (step 4). It moves where the new span lies
+  // inside the mosaic showing — its tiles stay, the rest vanish, they re-form as the new mosaic — and is a cut otherwise
+  // (step 6). Stepped up by the line (byHer false), a cut and the line as it is.
+  function insideShowing(w) { const s = showingSpan(); return w !== state.w && s[0] <= EPS && w.spanMa <= s[1] + 1e-9; }
+  function setWindow(k, byHer, cut) {   // cut: no move whatever the spans (a link's ?w=)
+    finishMove();
+    const w = WINDOWS[k], from = mosaicNow(), to = { k, g: null };
+    if (!sameMosaic(from, to)) transition(from, to, byHer && !cut && insideShowing(w) ? 'move' : 'cut');
     if (byHer) resetSpan(0, w.spanMa);
     renderStretch(); tellBlock();
   }
-  function resetSpan(a, b) {   // a scale chosen: the line is that whole span, the flags at its ends, nothing to step back from; the handle stays at its year if the line still holds it, else goes to the nearer end
+  function resetSpan(a, b) {   // a span chosen: the line is that whole span, the flags at its ends, nothing to step back from; the handle stays at its year if the line still holds it, else goes to the nearer end
     if (STR.anim) { cancelAnimationFrame(STR.anim); STR.anim = null; STR.target = null; }
     if (STR.pull) endPull(false);
     STR.a = a; STR.b = b; STR.flags = [a, b]; STR.stack = [];
     settleHandle(); spanSettled();
   }
-  function windowFor(spanB) {   // the smallest window that reaches the span's older end, for the step up
-    for (let k = WINDOWS.length - 1; k >= 0; k--) if (WINDOWS[k].spanMa >= spanB - 1e-9) return k;
-    return 0;
+  function windowFor(spanB) {   // the shortest span that reaches the line's older end, for the step up
+    let best = 0; WINDOWS.forEach((w, k) => { if (w.spanMa >= spanB - 1e-9 && w.spanMa < WINDOWS[best].spanMa) best = k; });
+    return best;
   }
-  function stepUpIfNeeded(b1) { const k = WINDOWS.indexOf(state.w); if (b1 > state.w.spanMa + 1e-9) setWindow(Math.min(k, windowFor(b1)), false); }
+  // a line the mosaic showing cannot reach (a focus, a pull, a back): a cut to its mosaic, or up to one that reaches it;
+  // returns the state it left, for back
+  function stepUpIfNeeded(b1, a1) {
+    const s = showingSpan(); if (b1 <= s[1] + 1e-9 && !(a1 != null && a1 < s[0] - 1e-9)) return null;
+    const before = mosaicNow(), k = b1 > state.w.spanMa + 1e-9 ? windowFor(b1) : state.w.k;
+    transition(before, { k, g: null }, 'cut');
+    return before;
+  }
 
   // ---------- the timeline: the mosaic page's stretching line (experiments/earth-3d-window.html, 7c), copied ----------
   // One even line, drawn past-left so it runs the way the mosaic above does: the older end at its left, the newer at its
@@ -935,7 +1268,7 @@
     if (lab.ma < STR.a - EPS) setYear(STR.a); else if (lab.ma > STR.b + EPS) setYear(STR.b);
   }
   function glideStretch(a1, b1, flagsTo) {   // the line glides to [a1, b1]; the flags glide to flagsTo, the line's ends unless a pull says otherwise
-    const a0 = STR.a, b0 = STR.b, f0 = STR.flags.slice(), f1 = flagsTo || [a1, b1], t0 = performance.now(), T = LOOK.glideMs;
+    const a0 = STR.a, b0 = STR.b, f0 = STR.flags.slice(), f1 = flagsTo || [a1, b1], t0 = performance.now(), T = reduced() ? 0 : LOOK.glideMs;   // reduced motion (step 6): the line jumps too
     if (STR.anim) cancelAnimationFrame(STR.anim);
     STR.target = [a1, b1, f1];
     const step = now => {
@@ -960,23 +1293,37 @@
     if (STR.b - STR.a < least) least = 0;   // a line already finer than a year a pixel (a span from the mosaic) focuses on: a focus never makes the line longer
     if (b1 - a1 < least) { const c = (a1 + b1) / 2; a1 = Math.max(0, c - least / 2); b1 = Math.min(LINE_END, a1 + least); }
     if (Math.abs(a1 - STR.a) < 1e-12 && Math.abs(b1 - STR.b) < 1e-12) { STR.flags = [STR.a, STR.b]; renderStretch(); return; }
-    STR.stack.push([STR.a, STR.b]);
-    stepUpIfNeeded(b1);   // a span the mosaic in use cannot reach: the mosaic steps up so the lit tiles can follow
+    const entry = [STR.a, STR.b, null, 'cut'];
+    entry[2] = stepUpIfNeeded(b1, a1);   // a span the mosaic in use cannot reach: the mosaic steps up so the lit tiles can follow
+    STR.stack.push(entry);
     glideStretch(a1, b1);
   }
-  function stretchBack() { if (STR.anim || STR.pull) return; const prev = STR.stack.pop(); if (prev) { stepUpIfNeeded(prev[1]); glideStretch(prev[0], prev[1]); } }
-  function goToSpan(a, b) {   // from the mosaic: the line glides to the span, as a focus would; back returns
-    if (STR.anim) finishStretch();
-    if (b - a < 1e-12) return;
-    if (Math.abs(a - STR.a) < 1e-12 && Math.abs(b - STR.b) < 1e-12) { STR.flags = [STR.a, STR.b]; renderStretch(); return; }
-    STR.stack.push([STR.a, STR.b]);
-    glideStretch(a, b);
+  // back (step 6): steps the line out one, and where that step changed the mosaic (a selection that gathered, a step up)
+  // puts the mosaic back too — a gathering by the move played in reverse, a cut by a cut
+  function stretchBack() {
+    if (STR.anim || STR.pull) return; finishMove();
+    const prev = STR.stack.pop(); if (!prev) return;
+    if (prev[2]) transition(mosaicNow(), prev[2], prev[3] === 'move' ? 'back' : 'cut'); else stepUpIfNeeded(prev[1], prev[0]);
+    glideStretch(prev[0], prev[1]);
   }
   // The one gesture (step 1 of the lab): a span chosen on the mosaic — a tap on a period, a drag across tiles — does three
   // things at once. The span is selected on the mosaic (the lit tiles follow the flags); the timeline glides to that
   // span, its events on it, the flags at its ends, back beside it; and the handle lands at the span's older end, the
-  // Earth going to that age.
-  function chooseSpan(a, b) { goToSpan(toNow(a), b); setYear(b); }
+  // Earth going to that age. Step 6: with gather, the span's tiles gather into one line above the timeline, the rest of
+  // the mosaic vanishing; back returns the line and the mosaic together.
+  function chooseSpan(a, b, gather) {
+    finishMove(); if (STR.anim) finishStretch();
+    a = toNow(a);
+    if (b - a < 1e-12) { setYear(b); return; }
+    const before = mosaicNow(); let after = before;
+    if (gather) { const g = gatherOf(state.w, a, b, state.L); if (g && !sameGather(before.g, g)) after = { k: before.k, g }; }
+    const sameLine = Math.abs(a - STR.a) < 1e-12 && Math.abs(b - STR.b) < 1e-12;
+    if (sameLine && after === before) { STR.flags = [STR.a, STR.b]; renderStretch(); setYear(b); return; }
+    STR.stack.push([STR.a, STR.b, after === before ? null : before, 'move']);
+    if (after !== before) transition(before, after, 'move');
+    if (!sameLine) glideStretch(a, b); else { STR.flags = [a, b]; renderStretch(); }
+    setYear(b);
+  }
   // a selection that reaches into the mosaic's last tile ends at now (step 5), however it was made: a tap, a drag, a pull
   // (a flag dragged along the line is fine-grained and is left where she puts it)
   const lastTileMa = () => { const w = state.w; return Math.max(0, w.olderMa(w.real - 1)); };
@@ -1001,12 +1348,12 @@
     updatePull(); STR.pull = null;
     if (!release) return;
     const ma = STR.flags[p.i], b1 = p.i === 1 ? ma : STR.b;
-    stepUpIfNeeded(b1);   // the line outgrew the mosaic in use: the mosaic steps up a scale (before the end at now is judged, by the mosaic it lands on)
+    const left = stepUpIfNeeded(b1, p.i === 0 ? STR.flags[0] : STR.a);   // the line outgrew the mosaic in use: the mosaic steps up a scale, or the gathered line goes back to its mosaic, by a cut (before the end at now is judged, by the mosaic it lands on)
     if (p.i === 0) STR.flags[0] = toNow(STR.flags[0]);   // a pull toward now that reaches into the last tile ends at now
     const a1 = p.i === 1 ? STR.a : STR.flags[0];
     if (b1 - a1 <= STR.b - STR.a + 1e-12) { STR.flags[p.i] = p.i === 1 ? STR.b : STR.a; renderStretch(); return; }
     const flagsTo = STR.flags.slice();   // the pulled flag at the new end; the other where it was, so the selection has grown
-    STR.stack.push([STR.a, STR.b]);
+    STR.stack.push([STR.a, STR.b, left, 'cut']);
     glideStretch(a1, b1, flagsTo);
   }
   function pullFlag(i, beyondPx, heldSec) {   // bench only: a pull as the pointer would make it, let go at once
@@ -1097,7 +1444,7 @@
     if (know.pointed) return periodLine(know.pointed.p);
     if (know.last === 'event' && know.event) return eventLine(know.event);
     if (know.last === 'period' && know.period) return periodLine(know.period.p);
-    return WORDS.scaleLines[WINDOWS.indexOf(state.w)];
+    return WORDS.scaleLines[state.w.k];
   }
   function tellBlock() {
     lineEl.textContent = lineOne();
@@ -1197,7 +1544,8 @@
     htwPanel.body.innerHTML = '<div class="panel-text">' +
       '<p>The Solar System is about 4.6 billion years old.</p>' +
       '<p>You can use this mosaic to explore its history. Each of its 4,600 tiles is a million years. The tiles are grouped by colour, each colour marking something that characterized that period, like dinosaurs or thick ice. Point to one of these coloured periods and you’ll see what was going on at the time. Tap to select the period and learn still more.</p>' +
-      '<p>You can drag across the tiles to select any span of years from the beginning to today. You can also choose one of two other mosaics: the last million years, which holds much of the history of humans as a species, or the last 12,000 years, which holds much of the history of civilization.</p>' +
+      '<p>You can drag across the tiles to select any span of years from the beginning to today. Under <i>Select years</i> you can also choose a shorter stretch, each its own mosaic and every one running to now: Complex life, Humans, Civilization, Writing, Paper, Machines and Computing.</p>' +
+      '<p class="ph">When you select a period, its tiles gather into a line above the timeline and the rest of the mosaic goes. <i>back</i> brings the mosaic back.</p>' +
       '<p>Below the mosaic is a timeline. The span of years you choose in the mosaic appears there, along with any events from that period. Tap an event to find out more about it.</p>' +
       '<p>There are two flags, one at each end of the timeline. Move them closer together and tap <i>focus</i>, and the timeline stretches to give your events more room. If you’d rather widen your selection, drag either flag past the end of the line to add years to it.</p>' +
       '<p class="ph">The Earth above shows the world at the year under the handle. Choose a period or a span on the mosaic and the Earth goes there; drag the handle along the timeline and the Earth follows.</p>' +
@@ -1225,6 +1573,121 @@
   // a drag still turns the Earth; Hide markers hides them all and ends the placing, and Place markers brings them back.
   function setMarkers(on) { state.markers = on; $('wMarkers').textContent = WORDS.markers[on ? 1 : 0]; $('stage3d').classList.toggle('placing', on); if (lab.earth && lab.earth.setMarkers) lab.earth.setMarkers(on); }
   $('wMarkers').addEventListener('click', () => setMarkers(!state.markers));
+  // ---------- the sound (step 6, under Ruling-Sound-01) ----------
+  // One sound for the move, not one per tile: it runs while the tiles travel and ends as the last one lands. Silent until
+  // she has answered Sound OK?, which appears where the sound would come from (the mosaic's top right) the first time a
+  // move would make one; that move is silent. Her answer is kept on the device for the whole site (localStorage
+  // 'cw-sound', 'on' or 'off': the key js/glass.js already reads, where 'off' is off); her yes is the tap that unlocks the
+  // browser's audio. Sound on / Sound off under Information flips it, and says what a tap will do, as the column's words
+  // do. Reduced motion is reduced sound: none. Three candidates on the bench, made here (no files): shuffle, glass, brush.
+  const SND = { key: 'cw-sound', ctx: null, noise: null, asking: false, played: 0, lastErr: null };
+  function soundAnswer() { try { const v = localStorage.getItem(SND.key); return v === 'on' || v === 'off' ? v : null; } catch (e) { return null; } }
+  function unlockSound() {
+    try {
+      if (!SND.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; SND.ctx = new AC(); }
+      if (SND.ctx.state !== 'running') SND.ctx.resume();
+    } catch (e) { SND.lastErr = e.message; }
+    return SND.ctx;
+  }
+  function setSound(on) { try { localStorage.setItem(SND.key, on ? 'on' : 'off'); } catch (e) {} SND.asking = false; if (on) unlockSound(); soundWords(); }
+  function soundWords() {
+    $('wSound').textContent = WORDS.sound[soundAnswer() === 'on' ? 1 : 0];
+    $('soundAsk').style.display = SND.asking && !soundAnswer() ? '' : 'none';
+  }
+  $('soundAskQ').textContent = WORDS.soundAsk; $('wSoundYes').textContent = WORDS.yes; $('wSoundNo').textContent = WORDS.no;
+  $('wSoundYes').addEventListener('click', () => setSound(true));
+  $('wSoundNo').addEventListener('click', () => setSound(false));
+  $('wSound').addEventListener('click', () => setSound(soundAnswer() !== 'on'));
+  function moveSound(P) {   // the move's one sound: from the first departure to the last landing (in reverse, from the line's first departure to the last tile home)
+    if (reduced()) return;
+    const ans = soundAnswer();
+    if (!ans) { SND.asking = true; soundWords(); return; }   // the first sound she would hear: the question, and silence this time
+    if (ans !== 'on') return;
+    const ac = unlockSound(); if (!ac) return;
+    const delay = P.dir > 0 ? P.T0 : 0, dur = P.end - P.T0;
+    try { SOUNDS[bench.sound](ac, ac.currentTime + 0.01 + delay / 1000, dur / 1000, P.merged ? (P.dir > 0 ? 0.04 : dur / 1000) : -1, ac.destination); SND.played++; } catch (e) { SND.lastErr = e.message; }
+  }
+  function noiseOf(ac) {   // a second of white noise, made once
+    if (SND.noise && SND.noise.sampleRate === ac.sampleRate) return SND.noise;
+    const n = ac.sampleRate, b = ac.createBuffer(1, n, n), d = b.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    return SND.noise = b;
+  }
+  function settle(ac, out, t, f, amp) {   // the last tile landing: one quiet, soft knock
+    const o = ac.createOscillator(), g = ac.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 0.8, t + 0.14);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(amp, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.16);
+    o.connect(g); g.connect(out); o.start(t); o.stop(t + 0.2);
+  }
+  function lowNote(ac, out, t, amp) {   // a merge: ten tiles become one, a slightly lower note inside the sound (the worknote's)
+    const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = 164.8;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(amp, t + 0.03); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.35);
+    o.connect(g); g.connect(out); o.start(t); o.stop(t + 0.4);
+  }
+  const SOUNDS = {
+    // shuffle: tiles sliding over one another, many soft grains of filtered noise, thickest mid-flight, and a quiet knock as the last lands
+    shuffle(ac, t0, dur, mergeAt, dest) {
+      const out = ac.createGain(); out.gain.value = LOOK.soundVol; out.connect(dest);
+      const buf = noiseOf(ac), grains = Math.round(dur * 80);
+      for (let k = 0; k < grains; k++) {
+        const u = (k + Math.random()) / grains, t = t0 + u * dur * 0.94, amp = Math.pow(Math.sin(Math.PI * Math.min(1, u * 1.15)), 1.2) * (0.45 + 0.55 * Math.random());
+        const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(), len = 0.014 + Math.random() * 0.03;
+        s.buffer = buf; f.type = 'bandpass'; f.frequency.value = 1500 + Math.random() * 2500; f.Q.value = 1.4;
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(amp, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0005, t + len);
+        s.connect(f); f.connect(g); g.connect(out); s.start(t, Math.random() * 0.9, len + 0.01);
+      }
+      settle(ac, out, t0 + dur, 300, 0.55);
+      if (mergeAt >= 0) lowNote(ac, out, t0 - 0.2 + mergeAt, 0.5);
+    },
+    // glass: the worknote's shimmer, a few high soft partials swelling while tiles are in flight and thinning as they land, then one settle
+    glass(ac, t0, dur, mergeAt, dest) {
+      const out = ac.createGain(); out.gain.value = LOOK.soundVol * 0.7; out.connect(dest);
+      [1318.5, 1568, 1760, 2093, 2349, 2637].forEach((f, k) => {
+        const o = ac.createOscillator(), g = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
+        o.type = 'sine'; o.frequency.value = f * (1 + (Math.random() - 0.5) * 0.006);
+        const st = t0 + k / 6 * dur * 0.35, pk = st + dur * 0.22, end = t0 + dur;
+        g.gain.setValueAtTime(0, st); g.gain.linearRampToValueAtTime(0.16, pk); g.gain.exponentialRampToValueAtTime(0.0005, end);
+        lfo.frequency.value = 6 + k * 1.3; lg.gain.value = 0.04; lfo.connect(lg); lg.connect(g.gain);
+        o.connect(g); g.connect(out); o.start(st); o.stop(end + 0.05); lfo.start(st); lfo.stop(end + 0.05);
+      });
+      [880, 1318.5].forEach(f => { const o = ac.createOscillator(), g = ac.createGain(), t = t0 + dur; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.18, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.45); o.connect(g); g.connect(out); o.start(t); o.stop(t + 0.5); });
+      if (mergeAt >= 0) lowNote(ac, out, t0 - 0.2 + mergeAt, 0.45);
+    },
+    // brush: a soft brush drawn across the glass, noise through a low-pass that opens and closes over the flight, and a small tap at the end
+    brush(ac, t0, dur, mergeAt, dest) {
+      const out = ac.createGain(); out.gain.value = LOOK.soundVol; out.connect(dest);
+      const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+      s.buffer = noiseOf(ac); s.loop = true; f.type = 'lowpass'; f.Q.value = 0.8;
+      f.frequency.setValueAtTime(450, t0); f.frequency.linearRampToValueAtTime(2800, t0 + dur * 0.45); f.frequency.linearRampToValueAtTime(600, t0 + dur);
+      g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.42, t0 + dur * 0.35); g.gain.linearRampToValueAtTime(0.0005, t0 + dur);
+      s.connect(f); f.connect(g); g.connect(out); s.start(t0); s.stop(t0 + dur + 0.05);
+      settle(ac, out, t0 + dur, 520, 0.3);
+      if (mergeAt >= 0) lowNote(ac, out, t0 - 0.2 + mergeAt, 0.45);
+    }
+  };
+  // bench only: the switches in How this works — how the tiles that are not chosen go, which sound, whether a drag gathers
+  function benchChoice(host, options, get, set) {
+    const els = options.map((v, i) => {
+      if (i) { const sl = document.createElement('span'); sl.className = 'slash'; sl.textContent = ' / '; host.appendChild(sl); }
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'word'; b.textContent = v; host.appendChild(b);
+      b.addEventListener('click', () => { set(v); mark(); }); return b;
+    });
+    const mark = () => els.forEach((b, i) => b.setAttribute('aria-pressed', options[i] === get() ? 'true' : 'false'));
+    mark();
+  }
+  benchChoice($('bVanish'), VANISH, () => bench.vanish, v => { bench.vanish = v; });
+  benchChoice($('bSound'), SOUND_KINDS, () => bench.sound, v => {   // choosing one plays it once, so it can be heard without a move
+    bench.sound = v;
+    if (soundAnswer() === 'on' && !reduced()) { const ac = unlockSound(); if (ac) SOUNDS[v](ac, ac.currentTime + 0.05, 0.72, -1, ac.destination); }
+  });
+  benchChoice($('bDrag'), ['yes', 'no'], () => bench.dragGathers ? 'yes' : 'no', v => { bench.dragGathers = v === 'yes'; });
+  // bench only: a candidate rendered off-line (no speakers needed), for the check and for a file Michael can play
+  async function renderSound(kind, durMs, merged) {
+    const sr = 44100, dur = (durMs || 720) / 1000, ac = new OfflineAudioContext(1, Math.ceil(sr * (dur + 0.8)), sr);
+    SOUNDS[kind](ac, 0.05, dur, merged ? 0.24 : -1, ac.destination);
+    const buf = await ac.startRendering(), d = buf.getChannelData(0);
+    let peak = 0, sum = 0, last = 0; for (let i = 0; i < d.length; i++) { const v = Math.abs(d[i]); peak = Math.max(peak, v); sum += v * v; if (v > 0.002) last = i; }
+    return { kind, peak: +peak.toFixed(3), rms: +Math.sqrt(sum / d.length).toFixed(4), endsMs: Math.round(last / sr * 1000), samples: d };
+  }
   // Full screen (step 3), as the Time Machine has it: a word under How this works takes the page full screen where the
   // browser allows it; the page is the full-screen element (the panels and the More window build on the body); the word
   // says what tapping it will do — Full screen, then Exit full screen; absent where the browser has no full screen.
@@ -1283,12 +1746,12 @@
   sea = null;
   $('explain').textContent = WORDS.explain[0];
   layout(); draw();
-  setCities(false); setCoasts(false); setMarkers(false); setSize(lab.size);
+  setCities(false); setCoasts(false); setMarkers(false); setSize(lab.size); soundWords();
   setYear(0); tellBlock(); renderStretch();   // the line from the start: the whole 4.6 billion, its flags at the ends, the handle at today
-  if (Q.get('w')) setWindow(Math.max(0, Math.min(WINDOWS.length - 1, +Q.get('w'))), true);
+  if (Q.get('w')) setWindow(Math.max(0, Math.min(WINDOWS.length - 1, +Q.get('w'))), true, true);
   loadAll().then(() => { WINDOWS.forEach(w => build(w)); renderStretch(); }).catch(e => { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The events or the sea curve did not load: ' + e.message; });
   window.addEventListener('resize', () => { layout(); sizeStage(); renderStretch(); });
-  if (window.ResizeObserver) { new ResizeObserver(() => { layout(); renderStretch(); }).observe($('glassBox')); new ResizeObserver(placeSelect).observe($('main')); }
+  if (window.ResizeObserver) { new ResizeObserver(() => { layout(); renderStretch(); }).observe($('glassBox')); const ro = new ResizeObserver(placeSelect); ro.observe($('main')); ro.observe($('words')); }
 
   // ---------- the bench's readout (in How this works): the store, the Earth's backend, tier and rate, the window ----------
   function readout() {
@@ -1297,6 +1760,9 @@
     t += ' · on the line: ' + eventsOnLine().length + ' · the year ' + agoWord(lab.ma);
     if (lab.earth && lab.earth.view) { const v = lab.earth.view; t += '\n' + v.backend + ' · tier ' + v.tier + (v.timing !== 'done' ? ' (timing)' : '') + ' · ' + v.fps + ' fps on screen · the Earth’s window ' + Math.round(st.width) + ' × ' + Math.round(st.height); }
     else t += '\nno 3D view yet';
+    const m = MOVE.last;   // step 6: the last move, and the sound
+    if (m) t += '\nthe last move: ' + (m.cut ? m.how + ', ' + m.cut : m.how + ', ' + fmt(m.tiles) + ' tiles travelled' + (m.merged ? ' (' + fmt(m.merged) + ' merged into them)' : '') + ', ' + fmt(m.vanished) + ' went (' + m.vanish + '); ' + m.designedMs + ' ms designed, ' + m.tookMs + ' ms taken' + (m.held ? ' (held for a picture)' : '') + ', ' + m.frames + ' frames, the slowest ' + m.worstFrameMs + ' ms');
+    t += '\nsound: ' + (soundAnswer() || 'not yet asked') + (reduced() ? ' · reduced motion: no sound, no moves' : '') + (SND.ctx ? ' · audio ' + SND.ctx.state : '') + (SND.played ? ' · played ' + SND.played : '') + (SND.lastErr ? ' · ' + SND.lastErr : '');
     $('readout').textContent = t;
   }
   setInterval(readout, 500);
@@ -1308,7 +1774,13 @@
     lineOne: () => lineEl.textContent, columns: () => [colP.textContent, colE.textContent], handleWord: () => labelH.textContent, labels: () => [labelEls[1], labelH, labelEls[0], spanWord].map(el => el.textContent + ' @ ' + el.style.left + (el.style.visibility === 'hidden' ? ' (not drawn)' : '') + (el.classList.contains('up') ? ' (up)' : '')),
     setFlat, flat: () => lab.flat, flatWord, knowing, tellYear, tellBlock, fullscreen: { on: isFull, enter: enterFull, exit: exitFull, available: FS },
     attachEarth: api => { lab.earth = api; api.setPlaces(state.cities); if (api.setFlat) $('wFlat').style.display = ''; if (api.setCoasts) { $('wCoasts').style.display = ''; api.setCoasts(state.coasts); } if (api.setMarkers) { $('wMarkers').style.display = ''; api.setMarkers(state.markers); } setYear(lab.ma, lab.rough, lab.ofEvent); },
-    warmSpells: () => { const w = WINDOWS[1]; if (!w.built) build(w); const runs = []; let cur = null; for (let i = 0; i < w.real; i++) { const warm = w.warmOf[i]; if (warm && !cur) cur = [i, i]; else if (warm) cur[1] = i; else if (cur) { runs.push(cur); cur = null; } } if (cur) runs.push(cur); return runs.map(([a, b]) => [(1000 - a) * 1000, (999 - b) * 1000]); },
+    warmSpells: () => { const w = W_HUM; if (!w.built) build(w); const runs = []; let cur = null; for (let i = 0; i < w.real; i++) { const warm = w.warmOf[i]; if (warm && !cur) cur = [i, i]; else if (warm) cur[1] = i; else if (cur) { runs.push(cur); cur = null; } } if (cur) runs.push(cur); return runs.map(([a, b]) => [(1000 - a) * 1000, (999 - b) * 1000]); },
+    // step 6: the move, the gathered line, the sound
+    move: { active: () => MOVE.active, finish: finishMove, hold: holdMove, last: () => MOVE.last, plan: () => MOVE.plan && { how: MOVE.plan.how, end: MOVE.plan.end, T0: MOVE.plan.T0, tiles: MOVE.plan.nT, merged: MOVE.plan.nM, vanished: MOVE.plan.nV } },
+    gather: () => state.gather && { k: state.gather.k, a: state.gather.a, b: state.gather.b, f: state.gather.f, count: state.gather.count, tiles: state.gather.tiles.length, rects: state.LG && state.LG.rects.map(r => [+r.x.toFixed(1), +r.w.toFixed(2), +r.h.toFixed(1)]) },
+    showing: () => ({ k: state.w.k, word: state.w.word, gathered: !!state.gather, explain: $('explain').textContent, span: showingSpan() }),
+    bench, sound: { answer: soundAnswer, set: setSound, asking: () => SND.asking, ctx: () => SND.ctx && SND.ctx.state, played: () => SND.played, render: renderSound, kinds: SOUND_KINDS },
+    layoutOf: (k, W) => { const L = computeLayout(WINDOWS[k], W || $('glassBox').clientWidth); return { p: +L.p.toFixed(2), BPL: L.BPL, lines: L.lines, H: +L.H.toFixed(1), tilesLeft: L.tilesLeft, tilesRight: +L.tilesRight.toFixed(1), colH: L.w.colH, blocks: L.w.blocks, tiles: L.w.real }; },
     eventsIn: k => { const w = WINDOWS[k]; const out = []; w.ev.forEach((e, i) => { if (e) out.push([i, e]); }); return out; } };
 </script>
 
