@@ -1,5 +1,5 @@
 ---
-status: Report, 12 Nov 2026, for Michael. Built and checked in the browser pane on the Mac; reported before committing; committed and pushed on his word, "Commit and push", the same day.
+status: Report, 12 Nov 2026, for Michael. Built and checked in the browser pane on the Mac; reported before committing; committed and pushed on his word, "Commit and push", the same day (`76d45a54`).
 role: What changed when the boards were brought to the plane's house rules (Ruling-The-Plane-02.md, rules 1, 5 and 7), file by file, with what she sees before and after; the two things the prompt asked to be reported and not changed; what the prompt did not expect.
 related: Ruling-The-Plane-02.md, Prompt-Fix-Plane-Rules-01.md, Report-Survey-Plane-Tools-01.md, Fix-Plane-Rules-01-Nov12/ (eight pictures), Sketch-Powers-in-Glass-07.html
 ---
