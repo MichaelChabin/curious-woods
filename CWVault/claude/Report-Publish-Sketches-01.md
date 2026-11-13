@@ -1,5 +1,5 @@
 ---
-status: Report, 12 Nov 2026 (evening, Mountain time; the prompt's 13 Nov is the chat's date). Built on `47fb78b9`. Checked in the pane at 1,024 × 768 and 768 × 1,024; not on an iPad. Reported first, as the prompt asks; not committed, not pushed.
+status: Report, 12 Nov 2026 (evening, Mountain time; the prompt's 13 Nov is the chat's date). Built on `47fb78b9`. Checked in the pane at 1,024 × 768 and 768 × 1,024; not on an iPad. Reported first, as the prompt asks; then committed and pushed on Michael's word, "Commit and push", `a796b122`, this session's hunks only.
 role: What publishing the two simulation sketches under Experiments did, what the pane showed, and what needs Michael's eye.
 related: Prompt-Publish-Sketches-01.md, Prompt-Publish-Two-Galaxies-01.md (not run; covered by this one), cw-deploys/experiments/two-galaxies-meet.html, cw-deploys/experiments/the-day-the-moon-was-made.html, cw-deploys/experiments/index.html, cw-deploys/MANIFEST.md
 ---
