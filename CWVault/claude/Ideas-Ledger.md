@@ -10,7 +10,7 @@ Status words: **loose** (came up, not weighed) · **candidate** (worth pursuing,
 
 Michael adds by hand in the same form. Nothing is deleted; it is marked dropped.
 
-The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 5 Oct entries marked *merged from the holding pen* came from Desktop chats and were merged on 6 Oct; the pen was emptied.
+The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 5 Oct entries marked *merged from the holding pen* came from Desktop chats and were merged on 6 Oct; the pen was emptied. The twenty-two marked *merged from the holding pen, 12 Nov* came from chats of 7 Oct to 12 Nov and were merged on 12 Nov; the pen was emptied again.
 
 ## Circles
 
@@ -34,6 +34,20 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** Answers the aiming worry in Worknote-Glass-Grid-24Sept item 13. Radius 1, area 3.14; radius 2, area 12.57 — pi arrives by her dividing, not by being told.
 **Costs.** Nothing known.
 **Source.** Michael, experiment of 3 Oct, built that morning.
+
+### A circles-only glass app   · 7 Oct 2026 · candidate
+**Idea.** The Glass Rose's lab becomes a simple app for making stained-glass designs with circles alone. Geometry is the hidden purpose, never the stated one. Panel: How this works (Circles, Colors) · Colors · Glass only · Undo · New · Open · Save · Share · Reset view (appears only after pan or zoom, in held space) · Demo (up to eight, two columns).
+**Where it sits.** Level 1, circles. The Glass Rose is its door.
+**Opens.** Rules settled 7 Oct: a tap with the color panel closed fills pale-green Roman glass; coloring brings its lead, including lead between same-colored neighbours (a feature); *clear* stands in for removing color; Undo steps back through circles and color alike; no erasing single circles or segments; Demo, New and Open ask "Save first?"; Save quietly overwrites her own file; Share sends glass only, framed, with optional name and note; files live on her device only.
+**Costs.** One bad circle twenty steps back costs twenty undos (accepted, to see how it lives). Moving designs between devices has no answer yet without tracking.
+**Source.** Glass Rose chat, 7 Oct; Michael's panel, Claude's conflict list. *(Merged from the holding pen, 12 Nov.)*
+
+### Demos are starting points   · 7 Oct 2026 · candidate
+**Idea.** Demo constructions (Rose, Bird, …) load and play with the replay controls; tapping the name again replays from the start. Drawing anything ends the replay where it stands, and what was played becomes her design. Demos can't be overwritten; saving one asks for a new name.
+**Where it sits.** Circles; the replay panel already in Glass Geometry.
+**Opens.** Every demo is a door into her own window, not a film to watch. Replaces *again*.
+**Costs.** Someone has to make the demos; Michael expects to make them himself (a Claude Code search for candidate shapes was offered and held).
+**Source.** Glass Rose chat, 7 Oct; Michael, with Claude's replay rule. *(Merged from the holding pen, 12 Nov.)*
 
 ## Lines
 
@@ -70,6 +84,27 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Source.** This Claude Code session, 4 Nov 2026, building the page from Michael's text (`Story-Glass-900-Years-Ago-02.md`).
 
 ## Grid
+
+### Fractions as triangles   · 14 Oct 2026 · candidate
+**Idea.** A right triangle with its point at the origin and its far side from (2, 0) up to (2, 1). Its diagonal crosses x = 1 at one half, and a compass swings that height onto either axis. Every fraction can be built this way. Michael thinks the triangle, not the bare diagonal, makes fractions easier to hold onto. Pólya's orchard joins it: the trees visible from the origin are the fractions in lowest terms.
+**Where it sits.** The plane; a door shared with the trig trail.
+**Opens.** Fractions with Euclid's tools and no arithmetic, and equivalent fractions as similar triangles.
+**Costs.** None known.
+**Source.** iPad chat, 14 Oct; Michael. *(Merged from the holding pen, 12 Nov.)*
+
+### Unit tile and unit circle   · 14 Oct 2026 · loose
+**Idea.** Glass multiplication puts a tile at 1 (Euclid starts there; 7 = 1 × 7 without calling 1 prime). The tile shrinks to show resolution, a reminder that the plane's numbers are a convenience. Michael is considering leaving a unit circle on the plane as a reminder that it is a construction, and to make angles easy. With the line x = 1 it holds fractions, angles and trig in one picture.
+**Where it sits.** The plane.
+**Opens.** Tangent, sine and cosine are there to find before they're named.
+**Costs.** Always-on pieces become wallpaper. Undecided, and Michael reframed it: ask which ideas need the circle.
+**Source.** iPad chat, 14 Oct; Michael. *(Merged from the holding pen, 12 Nov.)*
+
+### A trig trail   · 14 Oct 2026 · loose
+**Idea.** Michael's goal: "interesting questions with a destination," with a path toward MIT that runs through quadratics and trig. The trail goes shadow sticks, Thales' pyramid, the seked, her own table of steepness numbers, the river, the rope on a stake (sine and cosine unnamed), the ladder, Hipparchus's chords, Eratosthenes, the Ferris wheel, waves and the Sound series, and finding your place. The names come last.
+**Where it sits.** The plane and the idea map.
+**Opens.** Trig as the tool for questions she already wants answered. Eileen finds trig intuitive.
+**Costs.** A sketch, not designed.
+**Source.** iPad chat, 14 Oct; Michael's goal, Claude's sketch. *(Merged from the holding pen, 12 Nov.)*
 
 ## Rectangles
 
@@ -383,6 +418,83 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Source.** Michael's prompt of 19 Oct, *Coming later*; the audit's §8.
 *Built 21–22 Oct 2026 in three commits (the look, the outlines, the motion), from the brief `claude/Prompt-Build-Earliest-Continents.md`; MANIFEST entries of those dates. The motion is a stepped model from the seed: the plates leave the model at its own speed, wander, stick for 150 to 600 million years and break along a rift line; five numbers at the head of the model set how often they touch and how long they hold. Not yet seen by Michael.*
 
+### An idea map for mathematics (working name)   · 14 Oct 2026 · loose
+**Idea.** The graph Michael already uses to describe CW, built for real for mathematics. Each idea is a small card, like a timeline event, linked to the ideas it grows out of. Michael pictures a high-level map of a few dozen nodes, each opening into more, like an atlas. One possible ruler is distance from counting, which would let the map scroll and zoom like the timeline. Michael would not start a child at the map. It is for looking back on the chain of ideas behind her.
+**Where it sits.** A sibling of the timeline; it touches every math strand and the geometry spine.
+**Opens.** Stories hang from cards, gaps show as missing cards, threads become walks along branches, and the cards a child has visited could light up as her own route, something she can share. Shown beside the timeline, it reveals that the order ideas grow out of each other isn't the order they were discovered.
+**Costs.** No natural axis, so the layout has to be chosen. Whether the map shows whole or reveals itself is open. A visible trail bends the threads-are-for-us ruling.
+**Source.** iPad chat, 14 Oct; Claude proposed it, and Michael took it up and added the nested map and looking back. *(Merged from the holding pen, 12 Nov.)*
+
+### The first tier   · 14 Oct 2026 · candidate
+**Idea.** The first tier of the idea map is every idea a child can reach with only what a story gives her: "could have happened sooner" bridges (Ahmose and binary, Socrates and random walks, Archimedes and calculus, Euclid and the coordinate plane), combinatorics from tic-tac-toe, and more. Michael: history and curriculum push these away from "a more rational beginning"; his Friday group of four fifth graders handled several easily. Working test: reached through something she can see or hold, and she does something with it before the story ends.
+**Where it sits.** The idea map. Candidate list (about 65) in the Claude Doc *First Tier — candidate ideas*.
+**Opens.** Places to go first, whatever order history used.
+**Costs.** Needs pruning, and sources for the next hundred (math circles, Gardner, Kordemsky).
+**Source.** iPad chat, 14 Oct; Michael named the goal, Claude drafted the list. *(Merged from the holding pen, 12 Nov.)*
+
+### Near versus needs   · 14 Oct 2026 · loose
+**Idea.** Michael's worry: a network of dependent nodes slides into curriculum, and familiarity grows from re-exposure. (Is familiarity a node?) Claude's proposal: two kinds of links. *Needs* (can't do this without that) is rare. *Near* (having been here makes that easier) is common and imposes no order. Familiarity isn't a node. It's the child's footprints around one. Tools and stories declare what they touch (as What-CW-Is says), so Glass triangles that show side lengths touch Pythagoras, and each visit warms nearby nodes.
+**Where it sits.** The idea map's structure.
+**Opens.** Something systematic without standards language.
+**Costs.** Unsettled; Michael said he doesn't yet know precisely what he's after.
+**Source.** iPad chat, 14 Oct. *(Merged from the holding pen, 12 Nov.)*
+
+### A size ruler for science (working name)   · 14 Oct 2026 · loose
+**Idea.** Science gets its own ruler the way history has time: size, from atoms to galaxies in powers of ten, with things placed along it like events on the timeline.
+**Where it sits.** Beside the timeline and the idea map; near the Earth-as-ruler strand, and near *Big and Small* (1 Nov, above).
+**Opens.** A repository for much of science that can be counted and threaded like the timeline.
+**Costs.** Nothing known; it was only mentioned.
+**Source.** iPad chat, 14 Oct; Claude. *(Merged from the holding pen, 12 Nov.)*
+
+### General tools besides the plane   · 14 Oct 2026 · loose
+**Idea.** Michael worried he treats the coordinate plane as a hammer for every nail. The map's real question is "what ideas can use the plane?" It makes the map the foundation and the plane its busiest crossroads. Other general tools: the branching tree (powers of two, combinatorics, binary, chance), the network (Königsberg, map coloring, handshakes), the necklace (cycles, clock arithmetic; near the bead lab), the balance (weights, later algebra), fold and cut (symmetry, Möbius, fractions), and the chance machine.
+**Where it sits.** Labs; the idea map tells which tool serves each idea.
+**Opens.** Gaps in the plane's reach show which labs are missing.
+**Costs.** Which are real tools and which are stretches is undecided.
+**Source.** iPad chat, 14 Oct; Michael's worry and the tree, Claude's list. *(Merged from the holding pen, 12 Nov.)*
+
+### The chance machine and Major Saunders   · 14 Oct 2026 · candidate
+**Idea.** Run something many times and see what piles up: chance as a measuring tool, and chance that fools intuition. Michael once built a darts tool that finds areas of shapes inside a bounding rectangle (ovals give the same share as a circle in a square). The darts were slow enough to watch the guess converge, and kids got good at guessing areas. Its story: how big are the UK plus Ireland, on a 1,000 km map pinned to a dartboard, when the world's worst dart player arrives. That's Major Saunders, a Brit who loved randomness. Pressure to throw randomly ruined his gift until a ten-year-old introduced him to golf. Michael has the story written and will share it.
+**Where it sits.** A new lab; the maps resource supplies endless shapes.
+**Opens.** A low-anxiety excuse to guess. Saunders could recur for fish counts, coin streaks and the like. Error shrinks with the square root of the darts, the same law as the random walk.
+**Costs.** Michael's original story needs fetching.
+**Source.** iPad chat, 14 Oct; Michael. *(Merged from the holding pen, 12 Nov.)*
+
+### Evolution of neurons (working name)   · 12 Nov 2026 · loose
+**Idea.** A strand asking how neurons came to be. It starts with a single cell that steers toward light by signals from its light receptors to its flagella. The creatures are speculative. Michael can imagine other kinds of animated creatures following.
+**Where it sits.** A new lab strand, near the brain stories. Two benches since 12 Nov: `experiments/two-eyes.html` and `experiments/pond.html` (the board's entry of 12 Nov).
+**Opens.** A beginning for the brain material: the simplest thing a signal can do is turn a body.
+**Costs.** Invented creatures need a plain word that they are invented. The real cell (Chlamydomonas) has one eyespot and rolls.
+**Source.** iPad chat, 12 Nov; Michael. *(Merged from the holding pen, 12 Nov.)*
+
+### Swap the wires   · 12 Nov 2026 · loose
+**Idea.** A glassy two-eyed creature with two flagella, each eye wired to one oar. One tap crosses or uncrosses the wires. Crossed, it chases the light; straight, the same creature flees it. (Braitenberg's vehicles.)
+**Where it sits.** Evolution of neurons. Built as *Two eyes, two oars* (`experiments/two-eyes.html`, 12 Nov).
+**Opens.** A gesture: she changes what the creature does by changing its wiring and nothing else.
+**Costs.** Two wirings so far. Whether she can also change the eyes or the oars is open.
+**Source.** iPad chat, 12 Nov; Michael asked for the two-eyed creature, Claude added the swap. *(Merged from the holding pen, 12 Nov.)*
+
+### One eye and two (working name)   · 12 Nov 2026 · loose
+**Idea.** A pair: the real one-eyed cell, which rolls so its single eyespot sweeps past the light once a turn, and the invented two-eyed one, which compares left with right.
+**Where it sits.** Evolution of neurons.
+**Opens.** Two answers to one problem, one real and one invented, so she can tell which is which.
+**Costs.** The one-eyed version exists only as a plain sketch in chat.
+**Source.** iPad chat, 12 Nov; Claude. *(Merged from the holding pen, 12 Nov.)*
+
+### The pond   · 12 Nov 2026 · candidate
+**Idea.** A pond of small creatures whose wiring is inherited: crossed, straight or none. Light is food, shared by whoever is near it. A fed creature splits, a starved one fades, and one child in twenty is miscopied. In about a minute the pond fills with light seekers. Make the light burn and they swim into it and die; the pond crashes, then recovers from a few that were losing a minute before. A ribbon keeps the history. Michael will set it up with a story, so a minute's wait is right.
+**Where it sits.** Evolution of neurons; natural selection. Built as *The pond* (`experiments/pond.html`, 12 Nov); the minute is Michael's ruling.
+**Opens.** She watches selection happen, and causes it by moving or changing the light. The crash and recovery is a moment a story could set up without giving away.
+**Costs.** The light has to wander, or wireless creatures born beside it do fine sitting still. A few strangers drift in if the pond nearly empties. Hundreds of creatures need the plain look; tapping one to see it in glass is not built.
+**Source.** iPad chat, 12 Nov; Michael's environment, Claude's inherited wiring. *(Merged from the holding pen, 12 Nov.)*
+
+### Sun and temperature world (working name)   · 12 Nov 2026 · loose
+**Idea.** An environment of creatures whose reproduction depends on temperature and sunlight. Children vary the two and watch natural selection. Claude's sketch: body traits, such as dark bodies that warm fast and pale ones that don't.
+**Where it sits.** Beside the pond.
+**Opens.** Selection on bodies as well as wiring, with two things to vary.
+**Costs.** The trait must show at a glance, and a generation must take seconds. Not built.
+**Source.** iPad chat, 12 Nov; Michael. *(Merged from the holding pen, 12 Nov.)*
+
 ## Stories
 
 ### The edge of knowing (working name)   · 5 Oct 2026 · candidate
@@ -406,6 +518,20 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** The deep events get their first story a child can picture; the Apollo mirrors tie it to something measured today.
 **Costs.** Nothing known; the story's words through the pool.
 **Source.** Michael, 12 Oct: "there will be a story or two in the gallery about this"; the close Moon Claude's suggestion.
+
+### A Japan corner (working name)   · 14 Oct 2026 · loose
+**Idea.** A corner of the woods a child can explore as deeply as she likes, not a required path. A survey course's thirteen stops, from the Jomon to Japan now, serve as our private map. Each stop becomes stories on the timeline and map. France and Mexico could follow the same way.
+**Where it sits.** Stories, timeline, map. The Great Wave is already a door into the Edo stop.
+**Opens.** Interactives such as writing your name in kana, layering a woodblock print, walking around Edo, and storms against the Mongol fleets.
+**Costs.** The Second World War stop needs careful thought for ten-year-olds.
+**Source.** iPad chat, 14 Oct; Michael chose a corner over a path. *(Merged from the holding pen, 12 Nov.)*
+
+### The Eiffel Tower   · 14 Oct 2026 · loose
+**Idea.** Several easy stories, and at about 300 m a useful reference size. The load flows down like a tree upside down, so the average weight per rivet (about 3 kg) hides how it piles up toward the base. Melted into a slab over its base, the iron would be only a few centimeters thick (to verify).
+**Where it sits.** Stories; the branching tree; a reference size.
+**Opens.** Michael especially liked the slab.
+**Costs.** Check the figures.
+**Source.** iPad chat, 14 Oct; Michael's tree question, Claude's numbers. *(Merged from the holding pen, 12 Nov.)*
 
 ## Practice and Maya
 
@@ -452,3 +578,31 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** Michael can be in geometry while a batch runs and still miss nothing, because the missing is found by the sweep, not by memory.
 **Costs.** The brief's four stops shrink to one, so Claude's round-two and round-three choices go unreviewed until the file is read. The weekly task's day is not chosen.
 **Source.** Michael's ask for a checkable routine, chat of 11 Oct; the ladder, inbox and sweep Claude's.
+
+### Ask before sound   · 7 Oct 2026 · ruled
+**Idea.** Any story or tool that may make sound opens by asking whether sound is all right. Michael thought there was already a ruling; the March geometry app already asks "may I use sound?" with *yes* / *no*, and has a Sound toggle.
+**Where it sits.** Every story and lab that uses sound, starting with the circles-only Glass app (a quiet sound when a circle is drawn).
+**Opens.** A child in a classroom or up past bedtime isn't surprised; one consistent question everywhere.
+**Costs.** Nothing known. Ruled since: `Ruling-Sound-01.md` (5 Nov 2026), *Sound OK?* asked once by the site, silent until she answers; the Time lab's sound (12 Nov) is the first under it.
+**Source.** Glass Rose chat, 7 Oct; Michael. *(Merged from the holding pen, 12 Nov.)*
+
+### Threads through the repository   · 14 Oct 2026 · loose
+**Idea.** The timeline's real strength is the pile of small, well-made events beneath it. A thread is a path through that pile plus the map: a France thread, a Mexico thread, a Japan thread. If Maya is in the woods, she can help an interested child follow one, and the child can step off whenever she likes. Because events can be counted, gaps show up as empty stretches of time or blank parts of the world. Michael's phrase: the timeline is "a quantitative measure of what can be done."
+**Where it sits.** Timelines and maps; Maya.
+**Opens.** An overview of a country or a subject with no new material, only a new path; a visible measure of what is covered and what is missing.
+**Costs.** What-CW-Is says threads are for us and the child never sees them; Maya following one with a child bends that, so it may need a ruling.
+**Source.** iPad chat, 14 Oct; Michael, with Claude on the repository framing. *(Merged from the holding pen, 12 Nov.)*
+
+### Weekly batch of timeline events   · 14 Oct 2026 · loose
+**Idea.** A scheduled task takes the next group of events off a list, drafts their stories, gathers and checks images, and stages the batch for Michael. After he approves, Claude Code loads it, about once a week, so the timeline grows steadily.
+**Where it sits.** Timelines; the pool workflow.
+**Opens.** Steady growth without Michael starting each batch.
+**Costs.** It differs from the weekly status sweep already in Prompt-Pool.md, which only reports. Machines can't judge voice or image rights, so a human yes or no stays in the loop. A cloud routine runs with the Mac asleep, while Cowork and desktop tasks need it awake.
+**Source.** iPad chat, 14 Oct; Michael. *(Merged from the holding pen, 12 Nov.)*
+
+### Review desk   · 14 Oct 2026 · loose
+**Idea.** A desktop page for going through a staged batch quickly. It shows one item at a time (story, candidate images, date, sources) with approve, reject and note buttons and keyboard shortcuts. Michael can fix wording right on the screen, and the edited version is what gets loaded.
+**Where it sits.** Across the whole; it serves the weekly batch and any story review. Near *The Pool Desk* (19 Oct, above), which may be what this became.
+**Opens.** Fast review. Because the desk saves before and after for each edit, later batches can be written with Michael's edits in hand, so there's less to fix over time.
+**Costs.** Needs a decisions file Claude Code reads. A hosted version would work from the iPad too.
+**Source.** iPad chat, 14 Oct; Michael asked for editing; saving edits as examples was Claude's suggestion. *(Merged from the holding pen, 12 Nov.)*
