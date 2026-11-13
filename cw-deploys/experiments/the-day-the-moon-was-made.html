@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The day the Moon was made</title>
+<style>
+:root{
+  --sky:#04050c; --on-sky:#e8e4d8; --on-sky-soft:#9a9fb5;
+  --panel:#e3e6ee; --ink:#1a2033; --line:#b9bfd0; --btn:#f4f6fb; --accent:#3c5aa8;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --panel:#0d1020; --ink:#d9def0; --line:#2a3050; --btn:#171b33; --accent:#9cc8ff;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --panel:#0d1020; --ink:#d9def0; --line:#2a3050; --btn:#171b33; --accent:#9cc8ff;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+body{
+  background:var(--sky); color:var(--ink);
+  font-family:Georgia,"Times New Roman",serif;
+  display:flex; flex-direction:column;
+}
+#stage{position:relative; flex:1; min-height:0; background:var(--sky); overflow:hidden}
+canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:grab}
+canvas:active{cursor:grabbing}
+.over{position:absolute; pointer-events:none; color:var(--on-sky)}
+#title{left:16px; top:12px; font-size:1.25rem; letter-spacing:.01em}
+#clock{right:16px; top:14px; font-size:1rem; color:var(--on-sky-soft); font-variant-numeric:tabular-nums; text-align:right}
+#orbit{right:16px; top:38px; font-size:.95rem; color:var(--on-sky); text-align:right; max-width:60%}
+#note{left:16px; right:16px; bottom:10px; font-style:italic; font-size:.85rem; color:var(--on-sky-soft); max-width:56ch}
+#panel{
+  background:var(--panel); border-top:1px solid var(--line);
+  padding:10px 16px 12px; display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center;
+  font-size:.95rem;
+}
+#panel label{display:flex; align-items:center; gap:8px; flex:1 1 220px; min-width:0}
+#panel label span{white-space:nowrap}
+#panel input[type=range]{flex:1; min-width:80px; accent-color:var(--accent)}
+.btns{display:flex; flex-wrap:wrap; gap:8px}
+button{
+  font:inherit; color:var(--ink); background:var(--btn);
+  border:1px solid var(--line); border-radius:4px; padding:7px 12px; cursor:pointer;
+}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c" aria-label="A small planet striking the young Earth and throwing rock into orbit"></canvas>
+  <div class="over" id="title">The day the Moon was made</div>
+  <div class="over" id="clock">0 hours</div>
+  <div class="over" id="orbit"></div>
+  <div class="over" id="note">Nobody saw this happen; it is our best guess. It is drawn as a flat slice made of a few hundred lumps, so the two sizes are right but the fine details are not.</div>
+</div>
+<div id="panel">
+  <div class="btns">
+    <button id="again">Start again</button>
+    <button id="pause">Pause</button>
+    <button id="colour">Colours show heat</button>
+  </div>
+  <label><span>Theia’s size</span><input id="ratio" type="range" min="0.3" max="0.7" step="0.01" value="0.53"></label>
+  <label><span>Head-on</span><input id="b" type="range" min="0" max="0.95" step="0.05" value="0.6"><span>glancing</span></label>
+</div>
+<script>
+const CW_VERSION = '2026-11-12 47fb78b · a sketch from a chat';   // date + short commit hash; bump in the same commit as any change
+try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+function createSim(P){
+  var K=P.k||60, C=P.c||3, DT=P.dt||0.035, E2=0.25;
+  var RL=P.RL||16.5, ratio=P.ratio, b=P.b, speed=P.speed||1.0;
+  function lattice(R){var pts=[],h=Math.sqrt(3)/2,n=Math.ceil(R)+2;
+    for(var j=-n;j<=n;j++)for(var i=-n;i<=n;i++){var x=i+(j&1?0.5:0),y=j*h;if(x*x+y*y<=R*R)pts.push([x,y]);}return pts;}
+  var pe=lattice(RL), pt=lattice(RL*ratio);
+  var NE=pe.length, NT=pt.length, N=NE+NT;
+  var mT=0.72*ratio*ratio*ratio*NE/NT;
+  var G=RL*RL/NE;
+  var x=new Float64Array(N),y=new Float64Array(N),vx=new Float64Array(N),vy=new Float64Array(N),
+      ax=new Float64Array(N),ay=new Float64Array(N),m=new Float64Array(N),heat=new Float32Array(N),tag=new Uint8Array(N);
+  var i;
+  for(i=0;i<NE;i++){x[i]=pe[i][0];y[i]=pe[i][1];m[i]=1;tag[i]=(x[i]*x[i]+y[i]*y[i]<0.27*RL*RL)?1:0;}
+  for(i=0;i<NT;i++){var q=NE+i;x[q]=pt[i][0];y[q]=pt[i][1];m[q]=mT;tag[q]=(x[q]*x[q]+y[q]*y[q]<0.27*RL*RL*ratio*ratio)?3:2;}
+  var S={N:N,NE:NE,NT:NT,x:x,y:y,vx:vx,vy:vy,m:m,heat:heat,tag:tag,t:0,G:G,RL:RL,mT:mT,DT:DT};
+  function forces(lo,hi,doHeat){
+    var i,j;for(i=lo;i<hi;i++){ax[i]=0;ay[i]=0;}
+    for(i=lo;i<hi;i++){var xi=x[i],yi=y[i],mi=m[i],axi=0,ayi=0;
+      for(j=i+1;j<hi;j++){var dx=x[j]-xi,dy=y[j]-yi,r2=dx*dx+dy*dy,s=r2+E2,inv=G/(s*Math.sqrt(s));
+        var fx=dx*inv,fy=dy*inv;axi+=fx*m[j];ayi+=fy*m[j];ax[j]-=fx*mi;ay[j]-=fy*mi;
+        if(r2<1){var r=Math.sqrt(r2)+1e-9,vr=((vx[j]-vx[i])*dx+(vy[j]-vy[i])*dy)/r,f=K*(1-r)-C*vr;
+          if(f>0){var ux=dx/r*f,uy=dy/r*f;axi-=ux/mi;ayi-=uy/mi;ax[j]+=ux/m[j];ay[j]+=uy/m[j];}
+          if(doHeat){var h=0.5*C*vr*vr*DT;heat[i]+=h/mi;heat[j]+=h/m[j];}}}
+      ax[i]+=axi;ay[i]+=ayi;}
+  }
+  function stepRange(lo,hi,damp,doHeat){var i,h=DT/2;
+    for(i=lo;i<hi;i++){vx[i]+=ax[i]*h;vy[i]+=ay[i]*h;x[i]+=vx[i]*DT;y[i]+=vy[i]*DT;}
+    forces(lo,hi,doHeat);
+    for(i=lo;i<hi;i++){vx[i]=(vx[i]+ax[i]*h)*damp;vy[i]=(vy[i]+ay[i]*h)*damp;}
+  }
+  function relax(lo,hi,n){forces(lo,hi,false);for(var s=0;s<n;s++)stepRange(lo,hi,0.9,false);
+    var cx=0,cy=0,mm=0,i;for(i=lo;i<hi;i++){cx+=x[i]*m[i];cy+=y[i]*m[i];mm+=m[i];}cx/=mm;cy/=mm;
+    var R=0;for(i=lo;i<hi;i++){x[i]-=cx;y[i]-=cy;vx[i]=0;vy[i]=0;var d=Math.hypot(x[i],y[i]);if(d>R)R=d;}return R;}
+  var RE=relax(0,NE,P.relax||160), RT=relax(NE,N,P.relax||160);
+  S.RE=RE;S.RT=RT;
+  var ME=NE, MT=mT*NT, M=ME+MT, mu=G*M, Rc=RE+RT+1, D=Rc*2.2;
+  var vc=speed*Math.sqrt(2*mu/Rc), En=vc*vc/2-mu/Rc, vD=Math.sqrt(2*(En+mu/D)), hh=b*Rc*vc, vt=hh/D, vr=-Math.sqrt(Math.max(0,vD*vD-vt*vt));
+  for(i=0;i<NE;i++){x[i]+=-MT/M*D;vx[i]+=-MT/M*vr;vy[i]+=-MT/M*vt;}
+  for(i=NE;i<N;i++){x[i]+=ME/M*D;vx[i]+=ME/M*vr;vy[i]+=ME/M*vt;}
+  S.tdyn=Math.sqrt(RE*RE*RE/(G*ME));
+  forces(0,N,false);
+  S.step=function(){stepRange(0,N,1,true);S.t+=DT;};
+  S.clumps=function(){ // friends of friends
+    var id=new Int32Array(N).fill(-1),groups=[],i,j;
+    for(i=0;i<N;i++){if(id[i]>=0)continue;var g=groups.length,st=[i],mem=[];id[i]=g;
+      while(st.length){var a=st.pop();mem.push(a);for(j=0;j<N;j++){if(id[j]<0){var dx=x[j]-x[a],dy=y[j]-y[a];if(dx*dx+dy*dy<1.7){id[j]=g;st.push(j);}}}}
+      var mm=0,cx=0,cy=0,cvx=0,cvy=0;for(j=0;j<mem.length;j++){var q=mem[j];mm+=m[q];cx+=x[q]*m[q];cy+=y[q]*m[q];cvx+=vx[q]*m[q];cvy+=vy[q]*m[q];}
+      groups.push({mass:mm,n:mem.length,x:cx/mm,y:cy/mm,vx:cvx/mm,vy:cvy/mm,mem:mem});}
+    groups.sort(function(a,b){return b.mass-a.mass;});return groups;};
+  return S;
+}
+
+(function(){
+  'use strict';
+  var cv = document.getElementById('c'), ctx = cv.getContext('2d');
+  var clock = document.getElementById('clock'), orbitEl = document.getElementById('orbit');
+  var ratio = 0.53, b = 0.6, running = true, heatMode = true, S = null;
+  var W = 1, H = 1, dpr = 1, stars = null, tall = false;
+  var zoom = 1, panX = 0, panY = 0, frameN = 0, hit = false;
+
+  var ORIGIN = ['#6f8fae', '#3d5570', '#d08a4e', '#8a4a22'];
+  var RAMP = [[0,[107,102,96]],[0.18,[150,46,30]],[0.42,[226,84,24]],[0.68,[255,170,50]],[0.88,[255,228,130]],[1,[255,248,222]]];
+  var LUT = [[],[]];
+  (function(){
+    for (var core = 0; core < 2; core++) for (var i = 0; i < 64; i++){
+      var u = i/63, k = 0; while (k < RAMP.length-2 && u > RAMP[k+1][0]) k++;
+      var a = RAMP[k], c = RAMP[k+1], f = (u-a[0])/(c[0]-a[0]), d = core ? 0.72 + 0.28*u : 1;
+      LUT[core].push('rgb(' + Math.round((a[1][0]+(c[1][0]-a[1][0])*f)*d) + ',' + Math.round((a[1][1]+(c[1][1]-a[1][1])*f)*d) + ',' + Math.round((a[1][2]+(c[1][2]-a[1][2])*f)*d) + ')');
+    }
+  })();
+
+  function init(){
+    S = createSim({ratio:ratio, b:b, RL:13, relax:160});
+    zoom = 1; panX = 0; panY = 0; hit = false; orbitEl.textContent = '';
+  }
+
+  function resize(){
+    var r = cv.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = Math.max(1, Math.round(r.width*dpr)); H = Math.max(1, Math.round(r.height*dpr));
+    cv.width = W; cv.height = H; tall = H > W;
+    stars = document.createElement('canvas'); stars.width = W; stars.height = H;
+    var s = stars.getContext('2d');
+    s.fillStyle = '#04050c'; s.fillRect(0, 0, W, H);
+    var n = Math.round(W*H/(5200*dpr*dpr));
+    for (var i = 0; i < n; i++){
+      var q = Math.random();
+      s.fillStyle = 'rgba(' + (190+60*Math.random()|0) + ',' + (200+40*Math.random()|0) + ',255,' + (0.15+0.5*q*q).toFixed(2) + ')';
+      var z = dpr*(0.6 + q);
+      s.fillRect(Math.random()*W, Math.random()*H, z, z);
+    }
+  }
+
+  function com(lo, hi){
+    var x = 0, y = 0, m = 0;
+    for (var i = lo; i < hi; i++){ x += S.x[i]*S.m[i]; y += S.y[i]*S.m[i]; m += S.m[i]; }
+    return [x/m, y/m];
+  }
+
+  function draw(){
+    var N = S.N, x = S.x, y = S.y, heat = S.heat, tag = S.tag;
+    var scale = Math.min(W, H)/(2*4.6*S.RE)*zoom;
+    var cx = W/2 + panX*dpr, cy = H/2 + panY*dpr, rad = 0.62*scale, i, X, Y;
+    ctx.globalAlpha = 1;
+    ctx.drawImage(stars, 0, 0);
+    function sx(px, py){ return tall ? cx + py*scale : cx + px*scale; }
+    function sy(px, py){ return tall ? cy + px*scale : cy - py*scale; }
+    if (heatMode){
+      ctx.globalAlpha = 0.22;
+      for (i = 0; i < N; i++){
+        var u0 = 1 - Math.exp(-heat[i]/4);
+        if (u0 > 0.45){
+          ctx.fillStyle = LUT[0][Math.round(u0*63)];
+          ctx.beginPath(); ctx.arc(sx(x[i], y[i]), sy(x[i], y[i]), rad*1.9, 0, 6.2832); ctx.fill();
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+    for (i = 0; i < N; i++){
+      X = sx(x[i], y[i]); Y = sy(x[i], y[i]);
+      if (X < -rad || Y < -rad || X > W+rad || Y > H+rad) continue;
+      ctx.fillStyle = heatMode ? LUT[tag[i] & 1][Math.round((1 - Math.exp(-heat[i]/4))*63)] : ORIGIN[tag[i]];
+      ctx.beginPath(); ctx.arc(X, Y, rad, 0, 6.2832); ctx.fill();
+    }
+    if (!hit){
+      var e = com(0, S.NE), th = com(S.NE, N);
+      var sep = Math.hypot(th[0]-e[0], th[1]-e[1]);
+      if (sep < S.RE + S.RT + 1.5) hit = true;
+      else {
+        ctx.fillStyle = '#e8e4d8'; ctx.font = 'italic ' + Math.round(14*dpr) + 'px Georgia, serif'; ctx.textAlign = 'center';
+        var off = function(R){ return (R*scale + 20*dpr); };
+        ctx.fillText('the young Earth', sx(e[0], e[1]), sy(e[0], e[1]) - off(S.RE));
+        ctx.fillText('Theia, about as big as Mars', sx(th[0], th[1]), sy(th[0], th[1]) - off(S.RT));
+      }
+    }
+    clock.textContent = Math.round(S.t*805/S.tdyn/3600) + ' hours';
+  }
+
+  function measure(){
+    if (!hit){ orbitEl.textContent = ''; return; }
+    var g = S.clumps(), main = g[0], moon = 0.0123*S.NE, big = 0;
+    for (var k = 1; k < g.length; k++){
+      var c = g[k], dx = c.x-main.x, dy = c.y-main.y, r = Math.hypot(dx, dy), vx = c.vx-main.vx, vy = c.vy-main.vy;
+      var mu = S.G*main.mass, E = (vx*vx + vy*vy)/2 - mu/r, h = Math.abs(dx*vy - dy*vx);
+      if (E >= 0) continue;
+      var a = -mu/(2*E), ec = Math.sqrt(Math.max(0, 1 - h*h/(mu*a)));
+      if (a*(1-ec) > S.RE*1.05 && c.mass > big) big = c.mass;
+    }
+    var n = big/moon;
+    orbitEl.textContent = n < 0.05 ? 'Nothing big circling the Earth' :
+      'Biggest piece circling the Earth: ' + (n < 0.95 || n > 1.05 ? n.toFixed(1) + ' Moons' : 'one Moon');
+  }
+
+  function frame(){
+    if (running){
+      var t0 = performance.now(), n = 0;
+      do { S.step(); n++; } while (n < 5 && performance.now() - t0 < 9);
+    }
+    draw();
+    if (++frameN % 45 === 0) measure();
+    requestAnimationFrame(frame);
+  }
+
+  /* gestures: one finger slides the view, pinch or wheel zooms */
+  var pts = {}, pinch0 = 0, zoom0 = 1;
+  function count(){ return Object.keys(pts).length; }
+  function spread(){ var k = Object.keys(pts), p = pts[k[0]], r = pts[k[1]]; return Math.hypot(p.x-r.x, p.y-r.y); }
+  cv.addEventListener('pointerdown', function(e){
+    cv.setPointerCapture(e.pointerId); pts[e.pointerId] = {x:e.clientX, y:e.clientY};
+    if (count() === 2){ pinch0 = spread(); zoom0 = zoom; }
+  });
+  cv.addEventListener('pointermove', function(e){
+    var p = pts[e.pointerId]; if (!p) return;
+    var dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
+    if (count() === 1){ panX += dx; panY += dy; }
+    else if (count() === 2 && pinch0 > 0){ zoom = Math.min(8, Math.max(0.25, zoom0*spread()/pinch0)); }
+  });
+  function up(e){ delete pts[e.pointerId]; }
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+  cv.addEventListener('wheel', function(e){
+    e.preventDefault(); zoom = Math.min(8, Math.max(0.25, zoom*Math.exp(-e.deltaY*0.0015)));
+  }, {passive:false});
+
+  var bPause = document.getElementById('pause'), bCol = document.getElementById('colour');
+  function setRun(r){ running = r; bPause.textContent = r ? 'Pause' : 'Go on'; }
+  document.getElementById('again').onclick = function(){ init(); setRun(true); };
+  bPause.onclick = function(){ setRun(!running); };
+  bCol.onclick = function(){
+    heatMode = !heatMode;
+    bCol.textContent = heatMode ? 'Colours show heat' : 'Colours show where it came from';
+  };
+  document.getElementById('ratio').addEventListener('change', function(){ ratio = +this.value; init(); setRun(true); });
+  document.getElementById('b').addEventListener('change', function(){ b = +this.value; init(); setRun(true); });
+
+  resize();
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(cv); else window.addEventListener('resize', resize);
+  init();
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) setRun(false);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

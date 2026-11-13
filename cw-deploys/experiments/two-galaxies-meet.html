@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Two galaxies meet</title>
+<style>
+:root{
+  --sky:#04050c; --on-sky:#e8e4d8; --on-sky-soft:#9a9fb5;
+  --panel:#e3e6ee; --ink:#1a2033; --line:#b9bfd0; --btn:#f4f6fb; --accent:#3c5aa8;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --panel:#0d1020; --ink:#d9def0; --line:#2a3050; --btn:#171b33; --accent:#9cc8ff;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --panel:#0d1020; --ink:#d9def0; --line:#2a3050; --btn:#171b33; --accent:#9cc8ff;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+body{
+  background:var(--sky); color:var(--ink);
+  font-family:Georgia,"Times New Roman",serif;
+  display:flex; flex-direction:column;
+}
+#stage{position:relative; flex:1; min-height:0; background:var(--sky); overflow:hidden}
+canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:grab}
+canvas:active{cursor:grabbing}
+.over{position:absolute; pointer-events:none; color:var(--on-sky)}
+#title{left:16px; top:12px; font-size:1.25rem; letter-spacing:.01em}
+#clock{right:16px; top:14px; font-size:1rem; color:var(--on-sky-soft); font-variant-numeric:tabular-nums}
+#note{left:16px; right:16px; bottom:10px; font-style:italic; font-size:.85rem; color:var(--on-sky-soft); max-width:52ch}
+#panel{
+  background:var(--panel); border-top:1px solid var(--line);
+  padding:10px 16px 12px; display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center;
+  font-size:.95rem;
+}
+#panel label{display:flex; align-items:center; gap:8px; flex:1 1 220px; min-width:0}
+#panel label span{white-space:nowrap}
+#panel input[type=range]{flex:1; min-width:80px; accent-color:var(--accent)}
+.btns{display:flex; flex-wrap:wrap; gap:8px}
+button{
+  font:inherit; color:var(--ink); background:var(--btn);
+  border:1px solid var(--line); border-radius:4px; padding:7px 12px; cursor:pointer;
+}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c" aria-label="Two galaxies of stars passing each other"></canvas>
+  <div class="over" id="title">Two galaxies meet</div>
+  <div class="over" id="clock">0 million years</div>
+  <div class="over" id="note">Each dot stands for millions of stars; the colours only tell the two galaxies apart. Only the two bright centres pull. The slowing that lets them join is put in by hand.</div>
+</div>
+<div id="panel">
+  <div class="btns">
+    <button id="again">Start again</button>
+    <button id="pause">Pause</button>
+    <button id="spin">Stars circle with the visitor</button>
+    <button id="join">They join</button>
+  </div>
+  <label><span>Visitor’s weight</span><input id="q" type="range" min="0.2" max="1" step="0.05" value="0.5"></label>
+  <label><span>How near they pass</span><input id="rp" type="range" min="0.5" max="3" step="0.1" value="1.2"></label>
+</div>
+<script>
+const CW_VERSION = '2026-11-12 47fb78b · a sketch from a chat';   // date + short commit hash; bump in the same commit as any change
+try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+(function(){
+  'use strict';
+  var EPS2 = 0.12*0.12, EPSC2 = 0.3*0.3, DT = 0.01, MYR = 47, STEPS = 3;
+  var cv = document.getElementById('c'), ctx = cv.getContext('2d');
+  var clock = document.getElementById('clock');
+  var q = 0.5, rp = 1.2, spin = 1, running = true, t = 0, merge = true;
+  var N = 0, nA = 0, px, py, pz, vx, vy, vz, ax, ay, az;
+  var c = [null, null];
+  var W = 1, H = 1, dpr = 1, stars = null;
+  var yaw = 0, pitch = 0.9, userZoom = 1, viewR = 4.6, tx = 0, ty = 0, tz = 0;
+
+  function disk(start, n, cen, R, inc, s){
+    var ci = Math.cos(inc), si = Math.sin(inc);
+    for (var k = 0; k < n; k++){
+      var i = start + k;
+      var r = R*(0.15 + 0.85*Math.random());
+      var th = Math.random()*Math.PI*2;
+      var r2 = r*r + EPS2;
+      var vc = Math.sqrt(cen.m*r*r/(r2*Math.sqrt(r2)))*s;
+      var x = r*Math.cos(th), y = r*Math.sin(th), z = (Math.random()-0.5)*0.04*R;
+      var ux = -vc*Math.sin(th), uy = vc*Math.cos(th);
+      px[i] = cen.x + x;  py[i] = cen.y + y*ci - z*si;  pz[i] = cen.z + y*si + z*ci;
+      vx[i] = cen.vx + ux; vy[i] = cen.vy + uy*ci;       vz[i] = cen.vz + uy*si;
+    }
+  }
+
+  function init(){
+    var M = 1 + q, d0 = 6;
+    var v = Math.sqrt(2*M/d0), vt = Math.sqrt(2*M*rp)/d0;
+    var vr = -Math.sqrt(Math.max(0, v*v - vt*vt));
+    c[0] = {m:1, x:-q/M*d0, y:0, z:0, vx:-q/M*vr, vy:-q/M*vt, vz:0, ax:0, ay:0, az:0};
+    c[1] = {m:q, x:d0/M,    y:0, z:0, vx:vr/M,    vy:vt/M,    vz:0, ax:0, ay:0, az:0};
+    nA = 5000;
+    var nB = Math.round(5000*(0.35 + 0.65*q));
+    N = nA + nB;
+    px = new Float32Array(N); py = new Float32Array(N); pz = new Float32Array(N);
+    vx = new Float32Array(N); vy = new Float32Array(N); vz = new Float32Array(N);
+    ax = new Float32Array(N); ay = new Float32Array(N); az = new Float32Array(N);
+    disk(0, nA, c[0], 1.0, 0.26, spin);
+    disk(nA, nB, c[1], Math.sqrt(q), 0.96, spin);
+    t = 0; viewR = 4.6; tx = (c[0].x + c[1].x)/2; ty = 0; tz = 0;
+    accel();
+  }
+
+  function accel(){
+    var a = c[0], b = c[1];
+    var dx = b.x-a.x, dy = b.y-a.y, dz = b.z-a.z;
+    var r2 = dx*dx + dy*dy + dz*dz + EPSC2, inv = 1/(r2*Math.sqrt(r2));
+    a.ax = b.m*dx*inv; a.ay = b.m*dy*inv; a.az = b.m*dz*inv;
+    b.ax = -a.m*dx*inv; b.ay = -a.m*dy*inv; b.az = -a.m*dz*inv;
+    if (merge){
+      var fr = 0.08/(1 + Math.pow(Math.sqrt(r2)/2, 3)), Mt = a.m + b.m;
+      var wx = b.vx-a.vx, wy = b.vy-a.vy, wz = b.vz-a.vz;
+      a.ax += fr*b.m/Mt*wx; a.ay += fr*b.m/Mt*wy; a.az += fr*b.m/Mt*wz;
+      b.ax -= fr*a.m/Mt*wx; b.ay -= fr*a.m/Mt*wy; b.az -= fr*a.m/Mt*wz;
+    }
+    for (var i = 0; i < N; i++){
+      var x = px[i], y = py[i], z = pz[i];
+      var d1x = x-a.x, d1y = y-a.y, d1z = z-a.z;
+      var s1 = d1x*d1x + d1y*d1y + d1z*d1z + EPS2; var i1 = a.m/(s1*Math.sqrt(s1));
+      var d2x = x-b.x, d2y = y-b.y, d2z = z-b.z;
+      var s2 = d2x*d2x + d2y*d2y + d2z*d2z + EPS2; var i2 = b.m/(s2*Math.sqrt(s2));
+      ax[i] = -d1x*i1 - d2x*i2; ay[i] = -d1y*i1 - d2y*i2; az[i] = -d1z*i1 - d2z*i2;
+    }
+  }
+
+  function step(){
+    var h = DT/2, i, k, o;
+    for (k = 0; k < 2; k++){ o = c[k];
+      o.vx += o.ax*h; o.vy += o.ay*h; o.vz += o.az*h;
+      o.x += o.vx*DT; o.y += o.vy*DT; o.z += o.vz*DT; }
+    for (i = 0; i < N; i++){
+      vx[i] += ax[i]*h; vy[i] += ay[i]*h; vz[i] += az[i]*h;
+      px[i] += vx[i]*DT; py[i] += vy[i]*DT; pz[i] += vz[i]*DT;
+    }
+    accel();
+    for (k = 0; k < 2; k++){ o = c[k]; o.vx += o.ax*h; o.vy += o.ay*h; o.vz += o.az*h; }
+    for (i = 0; i < N; i++){ vx[i] += ax[i]*h; vy[i] += ay[i]*h; vz[i] += az[i]*h; }
+    t += DT;
+  }
+
+  function resize(){
+    var r = cv.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = Math.max(1, Math.round(r.width*dpr)); H = Math.max(1, Math.round(r.height*dpr));
+    cv.width = W; cv.height = H;
+    stars = document.createElement('canvas'); stars.width = W; stars.height = H;
+    var s = stars.getContext('2d');
+    s.fillStyle = '#04050c'; s.fillRect(0, 0, W, H);
+    var n = Math.round(W*H/(5200*dpr*dpr));
+    for (var i = 0; i < n; i++){
+      var b = Math.random();
+      s.fillStyle = 'rgba(' + (190+60*Math.random()|0) + ',' + (200+40*Math.random()|0) + ',255,' + (0.15+0.5*b*b).toFixed(2) + ')';
+      var z = dpr*(0.6 + b);
+      s.fillRect(Math.random()*W, Math.random()*H, z, z);
+    }
+  }
+
+  function draw(){
+    var a = c[0], b = c[1];
+    var sx = b.x-a.x, sy = b.y-a.y, sz = b.z-a.z, sep = Math.sqrt(sx*sx + sy*sy + sz*sz);
+    var target = Math.max(3.2, sep*0.5 + 1.7);
+    viewR += (target - viewR)*0.04;
+    tx += ((a.x+b.x)/2 - tx)*0.08; ty += ((a.y+b.y)/2 - ty)*0.08; tz += ((a.z+b.z)/2 - tz)*0.08;
+    var scale = Math.min(W, H)/(2*viewR)*userZoom;
+    var cy0 = Math.cos(yaw), sy0 = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var cx = W/2, cyy = H/2, sz1 = dpr*1.25, half = sz1/2;
+
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.drawImage(stars, 0, 0);
+    ctx.globalCompositeOperation = 'lighter';
+
+    function cloud(from, to, col){
+      ctx.fillStyle = col;
+      for (var i = from; i < to; i++){
+        var x = px[i]-tx, y = py[i]-ty, z = pz[i]-tz;
+        var x1 = x*cy0 - y*sy0, y1 = x*sy0 + y*cy0;
+        var y2 = y1*cp - z*sp, z2 = y1*sp + z*cp;
+        var f = scale/(1 - z2*0.14/viewR);
+        ctx.fillRect(cx + x1*f - half, cyy - y2*f - half, sz1, sz1);
+      }
+    }
+    cloud(0, nA, 'rgba(255,196,120,0.55)');
+    cloud(nA, N, 'rgba(140,190,255,0.6)');
+
+    function core(o, rgb, rad){
+      var x = o.x-tx, y = o.y-ty, z = o.z-tz;
+      var x1 = x*cy0 - y*sy0, y1 = x*sy0 + y*cy0;
+      var y2 = y1*cp - z*sp, z2 = y1*sp + z*cp;
+      var f = scale/(1 - z2*0.14/viewR);
+      var X = cx + x1*f, Y = cyy - y2*f, R = rad*scale;
+      var g = ctx.createRadialGradient(X, Y, 0, X, Y, R);
+      g.addColorStop(0, 'rgba(' + rgb + ',0.9)');
+      g.addColorStop(0.25, 'rgba(' + rgb + ',0.35)');
+      g.addColorStop(1, 'rgba(' + rgb + ',0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(X, Y, R, 0, 6.2832); ctx.fill();
+    }
+    core(a, '255,226,180', 0.32);
+    core(b, '200,225,255', 0.32*Math.sqrt(q));
+    clock.textContent = Math.round(t*MYR/10)*10 + ' million years';
+  }
+
+  function frame(){
+    if (running) for (var k = 0; k < STEPS; k++) step();
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  /* gestures: one finger turns, pinch or wheel zooms */
+  var pts = {}, pinch0 = 0, zoom0 = 1;
+  function count(){ return Object.keys(pts).length; }
+  function spread(){ var k = Object.keys(pts), p = pts[k[0]], r = pts[k[1]]; return Math.hypot(p.x-r.x, p.y-r.y); }
+  cv.addEventListener('pointerdown', function(e){
+    cv.setPointerCapture(e.pointerId); pts[e.pointerId] = {x:e.clientX, y:e.clientY};
+    if (count() === 2){ pinch0 = spread(); zoom0 = userZoom; }
+  });
+  cv.addEventListener('pointermove', function(e){
+    var p = pts[e.pointerId]; if (!p) return;
+    var dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
+    if (count() === 1){
+      yaw += dx*0.008; pitch = Math.min(1.5, Math.max(0, pitch + dy*0.008));
+    } else if (count() === 2 && pinch0 > 0){
+      userZoom = Math.min(6, Math.max(0.3, zoom0*spread()/pinch0));
+    }
+  });
+  function up(e){ delete pts[e.pointerId]; }
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+  cv.addEventListener('wheel', function(e){
+    e.preventDefault(); userZoom = Math.min(6, Math.max(0.3, userZoom*Math.exp(-e.deltaY*0.0015)));
+  }, {passive:false});
+
+  var bPause = document.getElementById('pause'), bSpin = document.getElementById('spin');
+  function setRun(r){ running = r; bPause.textContent = r ? 'Pause' : 'Go on'; }
+  document.getElementById('again').onclick = function(){ init(); setRun(true); };
+  bPause.onclick = function(){ setRun(!running); };
+  bSpin.onclick = function(){
+    spin = -spin;
+    bSpin.textContent = spin > 0 ? 'Stars circle with the visitor' : 'Stars circle against the visitor';
+    init(); setRun(true);
+  };
+  var bJoin = document.getElementById('join'), note = document.getElementById('note');
+  bJoin.onclick = function(){
+    merge = !merge;
+    bJoin.textContent = merge ? 'They join' : 'They pass';
+    note.textContent = 'Each dot stands for millions of stars; the colours only tell the two galaxies apart. Only the two bright centres pull. ' +
+      (merge ? 'The slowing that lets them join is put in by hand.' : 'Real galaxies would also slow down and join.');
+    init(); setRun(true);
+  };
+  document.getElementById('q').addEventListener('change', function(){ q = +this.value; init(); setRun(true); });
+  document.getElementById('rp').addEventListener('change', function(){ rp = +this.value; init(); setRun(true); });
+
+  resize();
+  if (H > W) yaw = Math.PI/2;
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(cv); else window.addEventListener('resize', resize);
+  init();
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) setRun(false);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
