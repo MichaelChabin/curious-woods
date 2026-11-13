@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The pond</title>
+<link rel="icon" type="image/png" href="../art/icons/two-eyes-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/two-eyes-icon-256.png">
+<style>
+:root{
+  --water:#041419; --ink:#e8fbf6; --dim:rgba(232,251,246,.7);
+  --glass:rgba(150,235,220,.10); --edge:rgba(190,255,240,.30);
+  --crossed:rgb(255,184,92); --straight:rgb(120,208,255); --none:rgb(226,160,232);
+  color-scheme:dark; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;margin:0}
+body{background:var(--water);color:var(--ink);overflow:hidden;
+  font-family:Georgia,"Times New Roman",serif}
+#c{position:fixed;inset:0;width:100%;height:100%;touch-action:none;display:block}
+.top{position:fixed;left:14px;right:14px;top:calc(env(safe-area-inset-top,0px) + 12px);pointer-events:none}
+#rib{width:100%;height:22px;display:block;border-radius:6px;border:1px solid var(--edge)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:14px;color:var(--dim)}
+.legend b{font-weight:500;color:var(--ink)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.bar{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);
+  display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:0 10px}
+button{font:inherit;font-size:15px;font-weight:500;color:var(--ink);background:var(--glass);
+  border:1px solid var(--edge);border-radius:999px;padding:11px 16px;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);cursor:pointer}
+button:active{transform:scale(.97)}
+button:focus-visible{outline:2px solid #ffd58a;outline-offset:3px}
+</style>
+</head>
+<body>
+<canvas id="c" aria-label="A pond of small swimming creatures around a light you can drag"></canvas>
+<div class="top">
+  <canvas id="rib" aria-hidden="true"></canvas>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--crossed)"></i>crossed wires <b id="n0">0</b></span>
+    <span><i class="dot" style="background:var(--straight)"></i>straight wires <b id="n1">0</b></span>
+    <span><i class="dot" style="background:var(--none)"></i>no wires <b id="n2">0</b></span>
+  </div>
+</div>
+<div class="bar">
+  <button id="mode" aria-pressed="false">Make the light burn</button>
+  <button id="fast" aria-pressed="false">Faster</button>
+  <button id="reset">Start over</button>
+</div>
+<script>
+const CW_VERSION = '2026-11-12 5a16f88 · a sketch from a chat';   // date + short commit hash; bump in the same commit as any change
+try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+(function(){
+const cv=document.getElementById('c'),g=cv.getContext('2d');
+const rib=document.getElementById('rib'),rg=rib.getContext('2d');
+const COL=[[255,184,92],[120,208,255],[226,160,232]];
+const CAP=220,P=7;
+let W=0,H=0,dpr=1,M=0,r=9,D=100;
+const light={x:0,y:0,a:Math.random()*6.28,held:false};
+let pop=[],ghosts=[],hist=[],burn=false,speed=1,last=performance.now(),histT=0,placed=false;
+
+function sprite(c){const s=document.createElement('canvas');s.width=s.height=64;const x=s.getContext('2d');
+  const gr=x.createRadialGradient(32,32,0,32,32,32);
+  gr.addColorStop(0,`rgba(${c[0]},${c[1]},${c[2]},.5)`);gr.addColorStop(1,`rgba(${c[0]},${c[1]},${c[2]},0)`);
+  x.fillStyle=gr;x.fillRect(0,0,64,64);return s;}
+const SPR=COL.map(sprite);
+
+function make(x,y,type,E){return {x,y,th:Math.random()*6.28,ph:Math.random()*6,E,type,wander:0,a:.3,b:.3};}
+function seed(){pop=[];ghosts=[];hist=[];
+  for(let i=0;i<75;i++)pop.push(make(Math.random()*W,Math.random()*H,i%3,.35+Math.random()*.35));}
+function size(){
+  dpr=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;M=Math.max(W,H);
+  cv.width=W*dpr;cv.height=H*dpr;r=Math.max(7,Math.min(W,H)*.02);D=.17*M;
+  rib.width=rib.clientWidth*dpr;rib.height=22*dpr;
+  if(!placed){placed=true;light.x=W*.5;light.y=H*.45;seed();}
+}
+size();addEventListener('resize',size);
+
+function setLight(e){light.x=Math.min(W-20,Math.max(20,e.clientX));light.y=Math.min(H-20,Math.max(20,e.clientY));}
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);light.held=true;setLight(e);});
+cv.addEventListener('pointermove',e=>{if(light.held)setLight(e);});
+['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,()=>light.held=false));
+const mb=document.getElementById('mode'),fb=document.getElementById('fast');
+mb.onclick=()=>{burn=!burn;mb.textContent=burn?'Make the light feed':'Make the light burn';mb.setAttribute('aria-pressed',burn);};
+fb.onclick=()=>{speed=speed===1?4:1;fb.textContent=speed===1?'Faster':'Slower';fb.setAttribute('aria-pressed',speed!==1);};
+document.getElementById('reset').onclick=seed;
+
+function step(dt){
+  if(!light.held){
+    light.a+=(Math.random()-.5)*dt*1.2;
+    const m=60;
+    if(light.x<m||light.x>W-m||light.y<m||light.y>H-m){
+      const t=Math.atan2(H/2-light.y,W/2-light.x);
+      light.a+=Math.atan2(Math.sin(t-light.a),Math.cos(t-light.a))*dt*2;}
+    const sp=.03*M;
+    light.x=Math.min(W-20,Math.max(20,light.x+Math.cos(light.a)*sp*dt));
+    light.y=Math.min(H-20,Math.max(20,light.y+Math.sin(light.a)*sp*dt));
+  }
+  let sum=0;const n=pop.length;
+  for(const c of pop){const dx=light.x-c.x,dy=light.y-c.y,d=Math.hypot(dx,dy)||1;
+    c.d=d;c.ang=Math.atan2(dy,dx);c.w=1/(1+(d/D)*(d/D));sum+=c.w;}
+  const born=[];let count=n;
+  for(const c of pop){
+    const fall=.3+.7/(1+Math.pow(c.d/(.7*M),2));
+    const sA=Math.max(0,Math.cos(c.th+.95-c.ang))*fall,sB=Math.max(0,Math.cos(c.th-.95-c.ang))*fall;
+    let ta,tb;
+    if(c.type===0){ta=.3+sB;tb=.3+sA;}else if(c.type===1){ta=.3+sA;tb=.3+sB;}else{ta=tb=.45;}
+    const k=Math.min(1,dt/.15);c.a+=(ta-c.a)*k;c.b+=(tb-c.b)*k;
+    c.wander+=(Math.random()-.5)*dt*5;c.wander*=.98;
+    c.th+=(2.4*(c.b-c.a)+c.wander*.6)*dt;
+    const m=r*2;
+    if(c.x<m||c.x>W-m||c.y<m||c.y>H-m){const t=Math.atan2(H/2-c.y,W/2-c.x);
+      c.th+=Math.atan2(Math.sin(t-c.th),Math.cos(t-c.th))*dt*3;}
+    const sp=r*(1+2.2*(c.a+c.b));
+    c.x=Math.min(W-r,Math.max(r,c.x+Math.cos(c.th)*sp*dt));
+    c.y=Math.min(H-r,Math.max(r,c.y+Math.sin(c.th)*sp*dt));
+    c.ph+=dt*(7+4.5*(c.a+c.b));
+    let gain,hurt=0;
+    if(burn){gain=Math.min(.22,P/n);hurt=.7*c.w;}
+    else gain=Math.min(.5*c.w,P*c.w/sum);
+    c.E+=(gain-.035-.012*(c.a+c.b)-hurt)*dt;
+    if(c.E>=1&&count<CAP){c.E=.5;count++;
+      let t=c.type;if(Math.random()<.05)t=(t+1+Math.floor(Math.random()*2))%3;
+      born.push(make(c.x+(Math.random()-.5)*r*2,c.y+(Math.random()-.5)*r*2,t,.5));}
+    else if(c.E>1)c.E=1;
+  }
+  pop=pop.filter(c=>{if(c.E>0)return true;ghosts.push({x:c.x,y:c.y,t:0,type:c.type});return false;}).concat(born);
+  if(pop.length<8&&Math.random()<dt*2)pop.push(make(Math.random()*W,Math.random()*H,Math.floor(Math.random()*3),.6));
+  ghosts.forEach(q=>q.t+=dt*1.6);ghosts=ghosts.filter(q=>q.t<1);
+  histT+=dt;
+  if(histT>.4){histT=0;const k=[0,0,0];pop.forEach(c=>k[c.type]++);hist.push(k);if(hist.length>260)hist.shift();
+    k.forEach((v,i)=>document.getElementById('n'+i).textContent=v);}
+}
+
+function glow(x,y,rad,c,a){
+  const gr=g.createRadialGradient(x,y,0,x,y,rad);
+  gr.addColorStop(0,`rgba(${c[0]},${c[1]},${c[2]},${a})`);gr.addColorStop(1,`rgba(${c[0]},${c[1]},${c[2]},0)`);
+  g.fillStyle=gr;g.beginPath();g.arc(x,y,rad,0,7);g.fill();
+}
+function draw(){
+  g.setTransform(dpr,0,0,dpr,0,0);
+  g.globalCompositeOperation='source-over';
+  g.fillStyle='#041419';g.fillRect(0,0,W,H);
+  g.globalCompositeOperation='lighter';
+  const lc=burn?[255,96,64]:[255,214,150];
+  glow(light.x,light.y,M*.8,burn?[120,50,60]:[70,150,140],.3);
+  glow(light.x,light.y,D*1.6,lc,.3);
+  glow(light.x,light.y,30,lc,.9);
+  g.fillStyle='rgba(255,250,235,.95)';g.beginPath();g.arc(light.x,light.y,6,0,7);g.fill();
+  ghosts.forEach(q=>{const c=COL[q.type];g.strokeStyle=`rgba(${c[0]},${c[1]},${c[2]},${.5*(1-q.t)})`;
+    g.lineWidth=1;g.beginPath();g.arc(q.x,q.y,r*(1+q.t),0,7);g.stroke();});
+  g.lineCap='round';
+  for(const c of pop){
+    const col=COL[c.type],s=r*(.75+.45*c.E),cs=Math.cos(c.th)*dpr,sn=Math.sin(c.th)*dpr;
+    g.setTransform(cs,sn,-sn,cs,c.x*dpr,c.y*dpr);
+    g.drawImage(SPR[c.type],-s*2.2,-s*2.2,s*4.4,s*4.4);
+    g.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},.75)`;g.lineWidth=1;
+    g.beginPath();
+    for(let sd=-1;sd<=1;sd+=2){
+      const amp=sd===1?c.a:c.b,an=sd*(.3+(.5+1.1*amp)*(.5+.5*Math.sin(c.ph+(sd===1?0:1.6))));
+      const bx=.9*s,by=sd*.2*s,L=1.9*s;
+      g.moveTo(bx,by);g.quadraticCurveTo(bx+L*.5,by+sd*.05*s,bx+Math.cos(an)*L,by+Math.sin(an)*L);}
+    g.stroke();
+    g.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},.18)`;
+    g.beginPath();g.ellipse(0,0,s,s*.78,0,0,7);g.fill();g.stroke();
+    if(c.type<2){
+      g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=.8;g.beginPath();
+      const f=c.type===0?-1:1;
+      g.moveTo(.45*s,.45*s);g.lineTo(.9*s,f*.2*s);g.moveTo(.45*s,-.45*s);g.lineTo(.9*s,-f*.2*s);g.stroke();}
+    g.fillStyle='rgba(255,255,255,.85)';
+    g.beginPath();g.arc(.45*s,.45*s,.11*s,0,7);g.arc(.45*s,-.45*s,.11*s,0,7);g.fill();
+  }
+  const rw=rib.width,rh=rib.height;rg.clearRect(0,0,rw,rh);
+  const cw=rw/260;
+  hist.forEach((k,i)=>{const t=k[0]+k[1]+k[2]||1;let y=0;
+    for(let j=0;j<3;j++){const h=k[j]/t*rh;rg.fillStyle=`rgba(${COL[j][0]},${COL[j][1]},${COL[j][2]},.85)`;
+      rg.fillRect(i*cw,y,cw+1,h+1);y+=h;}});
+}
+function loop(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;
+  for(let i=0;i<speed;i++)step(dt);
+  draw();requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

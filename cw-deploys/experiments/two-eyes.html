@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Two eyes, two oars</title>
+<link rel="icon" type="image/png" href="../art/icons/two-eyes-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/two-eyes-icon-256.png">
+<style>
+:root{
+  --water:#041419; --ink:#e8fbf6; --dim:rgba(232,251,246,.66);
+  --glass:rgba(150,235,220,.10); --edge:rgba(190,255,240,.30);
+  color-scheme:dark; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;margin:0}
+body{background:var(--water);color:var(--ink);overflow:hidden;
+  font-family:Georgia,"Times New Roman",serif}
+canvas{position:fixed;inset:0;width:100%;height:100%;touch-action:none;display:block}
+.hint{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 18px);
+  text-align:center;color:var(--dim);font-size:16px;pointer-events:none;transition:opacity 1.2s}
+.bar{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);
+  display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:0 12px}
+button{font:inherit;font-size:16px;font-weight:500;color:var(--ink);background:var(--glass);
+  border:1px solid var(--edge);border-radius:999px;padding:12px 20px;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);cursor:pointer}
+button:active{transform:scale(.97)}
+button:focus-visible{outline:2px solid #ffd58a;outline-offset:3px}
+</style>
+</head>
+<body>
+<canvas id="c" aria-label="A translucent two-eyed creature swimming toward a light you can drag"></canvas>
+<div class="hint" id="hint">Drag the light</div>
+<div class="bar">
+  <button id="wire" aria-pressed="true">Uncross the wires</button>
+  <button id="slow" aria-pressed="false">Slow down</button>
+</div>
+<script>
+const CW_VERSION = '2026-11-12 5a16f88 · a sketch from a chat';   // date + short commit hash; bump in the same commit as any change
+try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+(function(){
+const cv=document.getElementById('c'),g=cv.getContext('2d');
+let W=0,H=0,dpr=1,R=30,M=0;
+const light={x:0,y:0},cell={x:0,y:0,th:-0.3,wander:0};
+const eyes=[{side:1,s:0,acc:0,col:[255,184,92]},{side:-1,s:0,acc:0,col:[120,208,255]}];
+const flags=[{side:1,ph:0,amp:.3},{side:-1,ph:1.6,amp:.3}];
+let crossed=true,slow=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let pulses=[],trail=[],motes=[],time=0,last=performance.now(),placed=false;
+
+function size(){
+  dpr=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;M=Math.max(W,H);
+  cv.width=W*dpr;cv.height=H*dpr;R=Math.max(28,Math.min(W,H)*0.09);
+  if(!placed){placed=true;light.x=W*.7;light.y=H*.26;cell.x=W*.25;cell.y=H*.68;
+    for(let i=0;i<80;i++)motes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*6,vy:(Math.random()-.5)*6,r:.6+Math.random()*1.6});}
+}
+size();addEventListener('resize',size);
+
+function setLight(e){light.x=Math.min(W-20,Math.max(20,e.clientX));light.y=Math.min(H-20,Math.max(20,e.clientY));
+  document.getElementById('hint').style.opacity=0;}
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);setLight(e);});
+cv.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch')setLight(e);});
+const wb=document.getElementById('wire'),sb=document.getElementById('slow');
+wb.onclick=()=>{crossed=!crossed;pulses=[];wb.textContent=crossed?'Uncross the wires':'Cross the wires';wb.setAttribute('aria-pressed',crossed);};
+function slowLabel(){sb.textContent=slow?'Speed up':'Slow down';sb.setAttribute('aria-pressed',slow);}
+sb.onclick=()=>{slow=!slow;slowLabel();};slowLabel();
+
+const src=f=>crossed?eyes[f.side===1?1:0]:eyes[f.side===1?0:1];
+function wirePts(eye){
+  const tgt=crossed?-eye.side:eye.side;
+  return [[.5*R,eye.side*.5*R],crossed?[-.15*R,0]:[.3*R,eye.side*.62*R],[.92*R,tgt*.2*R]];
+}
+function bez(p,t){const u=1-t;return [u*u*p[0][0]+2*u*t*p[1][0]+t*t*p[2][0],u*u*p[0][1]+2*u*t*p[1][1]+t*t*p[2][1]];}
+
+function step(dt){
+  time+=dt;
+  const dx=light.x-cell.x,dy=light.y-cell.y,d=Math.hypot(dx,dy)||1,ang=Math.atan2(dy,dx);
+  const fall=.3+.7/(1+Math.pow(d/(.7*M),2));
+  eyes.forEach((e,i)=>{
+    const raw=Math.max(0,Math.cos(cell.th+e.side*.95-ang))*fall;
+    e.s+=(raw-e.s)*Math.min(1,dt/.12);
+    e.acc+=e.s*dt*9;
+    if(e.acc>1){e.acc=0;pulses.push({e:i,t:0});}
+  });
+  flags.forEach(f=>{f.amp+=((.3+src(f).s)-f.amp)*Math.min(1,dt/.15);f.ph+=dt*(7+9*f.amp);});
+  pulses.forEach(p=>p.t+=dt/.4);pulses=pulses.filter(p=>p.t<1);
+  const a=flags[0].amp,b=flags[1].amp;
+  cell.wander+=(Math.random()-.5)*dt*4;cell.wander*=.985;
+  cell.th+=(2.4*(b-a)+cell.wander*.5)*dt;
+  const m=R*1.3;
+  if(cell.x<m||cell.x>W-m||cell.y<m||cell.y>H-m){
+    const t=Math.atan2(H/2-cell.y,W/2-cell.x);
+    cell.th+=Math.atan2(Math.sin(t-cell.th),Math.cos(t-cell.th))*dt*2.5;
+  }
+  const sp=R*(.35+.85*(a+b));
+  cell.x=Math.min(W-R*.6,Math.max(R*.6,cell.x+Math.cos(cell.th)*sp*dt));
+  cell.y=Math.min(H-R*.6,Math.max(R*.6,cell.y+Math.sin(cell.th)*sp*dt));
+  trail.push([cell.x,cell.y]);if(trail.length>240)trail.shift();
+  motes.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;
+    if(p.x<0)p.x+=W;if(p.x>W)p.x-=W;if(p.y<0)p.y+=H;if(p.y>H)p.y-=H;});
+}
+
+function glow(x,y,r,c,a){
+  const gr=g.createRadialGradient(x,y,0,x,y,r);
+  gr.addColorStop(0,`rgba(${c[0]},${c[1]},${c[2]},${a})`);gr.addColorStop(1,`rgba(${c[0]},${c[1]},${c[2]},0)`);
+  g.fillStyle=gr;g.beginPath();g.arc(x,y,r,0,7);g.fill();
+}
+function flagellum(f){
+  const s=src(f),k=Math.min(1,s.s*1.2),c=s.col;
+  const col=[Math.round(200+(c[0]-200)*k),Math.round(250+(c[1]-250)*k),Math.round(238+(c[2]-238)*k)];
+  g.beginPath();let x=.92*R,y=f.side*.2*R;g.moveTo(x,y);
+  for(let i=1;i<=20;i++){const t=i/20;
+    const an=f.side*(.15+t*(.5+1.5*f.amp)*(.5+.5*Math.sin(f.ph-t*1.9)));
+    x+=Math.cos(an)*.1*R;y+=Math.sin(an)*.1*R;g.lineTo(x,y);}
+  g.lineCap='round';g.lineJoin='round';
+  g.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},.16)`;g.lineWidth=.12*R;g.stroke();
+  g.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},.85)`;g.lineWidth=.035*R;g.stroke();
+}
+
+function draw(){
+  g.setTransform(dpr,0,0,dpr,0,0);
+  g.globalCompositeOperation='source-over';
+  g.fillStyle='#041419';g.fillRect(0,0,W,H);
+  g.globalCompositeOperation='lighter';
+  glow(light.x,light.y,M*.85,[70,150,140],.34);
+  glow(light.x,light.y,M*.3,[255,214,150],.26);
+  motes.forEach(p=>{const d=Math.hypot(p.x-light.x,p.y-light.y);
+    g.fillStyle=`rgba(210,245,235,${.07+.5/(1+Math.pow(d/(.3*M),2))})`;
+    g.beginPath();g.arc(p.x,p.y,p.r,0,7);g.fill();});
+  g.strokeStyle='rgba(170,240,225,.10)';g.lineWidth=2;g.beginPath();
+  trail.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();
+  glow(light.x,light.y,34,[255,236,190],.9);
+  g.fillStyle='rgba(255,250,235,.95)';g.beginPath();g.arc(light.x,light.y,7,0,7);g.fill();
+
+  g.save();g.translate(cell.x,cell.y);g.rotate(cell.th);
+  flags.forEach(flagellum);
+  const ry=.78*R;
+  glow(0,0,R*1.7,[90,220,200],.10);
+  const bg=g.createRadialGradient(.2*R,-.2*R,R*.1,0,0,R*1.05);
+  bg.addColorStop(0,'rgba(150,255,225,.05)');bg.addColorStop(.75,'rgba(120,235,210,.13)');bg.addColorStop(1,'rgba(170,255,235,.34)');
+  g.fillStyle=bg;g.beginPath();g.ellipse(0,0,R,ry,0,0,7);g.fill();
+  g.strokeStyle='rgba(200,255,242,.5)';g.lineWidth=1.2;g.stroke();
+  const rel=Math.atan2(light.y-cell.y,light.x-cell.x)-cell.th;
+  g.strokeStyle='rgba(255,240,205,.75)';g.lineWidth=2.2;g.lineCap='round';
+  g.beginPath();g.ellipse(0,0,R*.97,ry*.97,0,rel-.8,rel+.8);g.stroke();
+  glow(-.3*R,0,.36*R,[140,200,255],.28);
+  g.strokeStyle='rgba(190,225,255,.35)';g.lineWidth=1;g.beginPath();g.arc(-.3*R,0,.26*R,0,7);g.stroke();
+  [[-.62,.3,.09],[-.05,-.42,.07],[.12,.36,.06],[-.7,-.22,.06],[.3,-.1,.05]].forEach((v,i)=>{
+    const wx=Math.sin(time*.9+i*2)*.03*R,wy=Math.cos(time*.7+i)*.03*R;
+    g.strokeStyle='rgba(210,255,245,.35)';g.fillStyle='rgba(180,255,235,.07)';
+    g.beginPath();g.arc(v[0]*R+wx,v[1]*R+wy,v[2]*R,0,7);g.fill();g.stroke();});
+  eyes.forEach(e=>{const p=wirePts(e),c=e.col;
+    g.strokeStyle=`rgba(${c[0]},${c[1]},${c[2]},${.22+.3*e.s})`;g.lineWidth=1.3;
+    g.beginPath();g.moveTo(p[0][0],p[0][1]);g.quadraticCurveTo(p[1][0],p[1][1],p[2][0],p[2][1]);g.stroke();});
+  pulses.forEach(p=>{const e=eyes[p.e],q=bez(wirePts(e),p.t);
+    glow(q[0],q[1],.2*R,e.col,.9);
+    g.fillStyle='rgba(255,255,255,.95)';g.beginPath();g.arc(q[0],q[1],.035*R,0,7);g.fill();});
+  eyes.forEach(e=>{const x=.5*R,y=e.side*.5*R,c=e.col;
+    glow(x,y,(.2+.5*e.s)*R,c,.35+.5*e.s);
+    g.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},.9)`;g.beginPath();g.arc(x,y,.085*R,0,7);g.fill();
+    g.fillStyle='rgba(255,255,255,.8)';g.beginPath();g.arc(x+.02*R,y-.02*R,.03*R,0,7);g.fill();});
+  flags.forEach(f=>{const s=src(f);glow(.92*R,f.side*.2*R,(.1+.25*s.s)*R,s.col,.3+.5*s.s);});
+  g.restore();
+}
+
+function loop(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;
+  step(slow?dt*.2:dt);draw();requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
