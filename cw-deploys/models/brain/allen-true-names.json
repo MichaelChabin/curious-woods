@@ -1,0 +1,13 @@
+{
+ "about": "Eight parts in HuBMAP's file (3D Reference Organ for Brain, v1.4) wear each other's names, in a ring, the same on both sides. Found 15 Nov 2026 by fitting the model to the Allen label volume; see CWVault/claude/Report-Survey-Brain-Atlas-01.md. Key: the name in the file, without Allen_ and the side. Value: the part it really is. Apply as the model loads; the model file itself is never changed.",
+ "true_name": {
+  "posteroventral_putamen": "paracingulate_gyrus",
+  "paracingulate_gyrus": "frontomarginal_gyrus",
+  "frontomarginal_gyrus": "perirhinal_gyrus_rostral_part_of_FuGt",
+  "perirhinal_gyrus_rostral_part_of_FuGt": "atrium_of_lateral_ventricle",
+  "atrium_of_lateral_ventricle": "rostral_gyrus",
+  "rostral_gyrus": "frontal_pole",
+  "frontal_pole": "optic_radiation",
+  "optic_radiation": "posteroventral_putamen"
+ }
+}

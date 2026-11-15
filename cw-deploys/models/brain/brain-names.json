@@ -1,0 +1,1026 @@
+{
+ "about": "Curious Woods names for the Allen brain (Michael's rulings, 15 Nov 2026). The model is never renamed. Each part keeps the atlas's own name (parts, below); CW's names sit on top (names). One CW name may point to several parts and one part may serve several names. Part keys are the names in HuBMAP's file without Allen_ and the side letter, after allen-true-names.json has put the eight swapped names right. A mesh is Allen_<key>_L or Allen_<key>_R.",
+ "space": "Positions below are in the bench's model space: the model centred on its bounding box, scaled so its longest side is 1.72, x flipped so +x is the brain's left, +y up, +z front. One unit is 97.1 mm.",
+ "kinds": {
+  "true part": "the atlas has a part of its own for this",
+  "loose fit": "atlas parts stand for it, but they take in more or less than the name means",
+  "placed by hand": "the atlas has no part for it; CW places or draws it"
+ },
+ "names": [
+  {
+   "cw": "getting better at things",
+   "common": "basal ganglia",
+   "kind": "true part",
+   "status": "ruled 15 Nov 2026",
+   "groups": [
+    {
+     "common": "caudate",
+     "colour": "#7fb4e0",
+     "parts": [
+      "head_of_caudate",
+      "body_of_caudate",
+      "tail_of_caudate"
+     ]
+    },
+    {
+     "common": "putamen",
+     "colour": "#86cfa6",
+     "parts": [
+      "putamen",
+      "posteroventral_putamen"
+     ],
+     "note": "posteroventral_putamen is the small part the file calls optic_radiation; the atlas counts it apart from the putamen. Included here on the survey's word; Michael did not name it."
+    },
+    {
+     "common": "pallidum",
+     "colour": "#d29ac8",
+     "parts": [
+      "external_segment_of_globus_pallidus",
+      "internal_segment_of_globus_pallidus"
+     ]
+    },
+    {
+     "common": "nucleus accumbens",
+     "colour": "#9fb0c8",
+     "parts": [
+      "nucleus_accumbens"
+     ]
+    },
+    {
+     "common": "subthalamic nucleus",
+     "colour": "#b6d9e6",
+     "parts": [
+      "subthalamic_nucleus"
+     ]
+    },
+    {
+     "common": "substantia nigra",
+     "colour": "#8ea0b8",
+     "parts": [
+      "substantia_nigra"
+     ]
+    }
+   ],
+   "note": "Colours are placeholders."
+  },
+  {
+   "cw": "the switchboard",
+   "common": "thalamus",
+   "kind": "true part",
+   "status": "ruled 15 Nov 2026",
+   "groups": [
+    {
+     "common": "thalamus",
+     "colour": "#a89cf0",
+     "parts": [
+      "thalamus",
+      "anterior_nuclear_complex_of_thalamus",
+      "lateral_dorsal_nucleus_of_thalamus",
+      "lateral_posterior_nucleus_of_thalamus",
+      "centromedian_nucleus_of_thalamus",
+      "parafascicular_nucleus_of_thalamus",
+      "mediodorsal_nucleus_of_thalamus",
+      "midline_nuclear_complex",
+      "pulvinar_of_thalamus",
+      "reuniens_nucleus_medioventral_nucleus_of_thalamus",
+      "ventral_anterior_nucleus_of_thalamus",
+      "ventral_lateral_nucleus_of_thalamus",
+      "ventral_posterior_lateral_nucleus",
+      "ventral_posterior_medial_nucleus",
+      "dorsal_lateral_geniculate_nucleus",
+      "medial_geniculate_nuclei"
+     ]
+    }
+   ],
+   "note": "The atlas's thalamus and its fifteen named nuclei, drawn as one. Colour is a placeholder."
+  },
+  {
+   "cw": "hearing",
+   "common": "auditory cortex",
+   "kind": "true part",
+   "status": "ruled 15 Nov 2026; not lit on this bench",
+   "groups": [
+    {
+     "common": "auditory cortex",
+     "parts": [
+      "transverse_temporal_gyrus_Heschls_gyrus"
+     ]
+    }
+   ]
+  },
+  {
+   "cw": "moving",
+   "common": "motor cortex",
+   "common_status": "proposed",
+   "kind": "true part",
+   "status": "ruled 15 Nov 2026; not lit on this bench",
+   "groups": [
+    {
+     "common": "motor cortex",
+     "parts": [
+      "primary_motor_cortex"
+     ]
+    }
+   ],
+   "note": "paracentral_lobule_rostral_part carries the strip over the top to the midline; not included."
+  },
+  {
+   "cw": "touch",
+   "common": "somatosensory cortex",
+   "common_status": "proposed",
+   "kind": "true part",
+   "status": "ruled 15 Nov 2026; not lit on this bench",
+   "groups": [
+    {
+     "common": "somatosensory cortex",
+     "parts": [
+      "postcentral_gyrus"
+     ]
+    }
+   ],
+   "note": "paracentral_lobule_caudal_part carries it to the midline; not included."
+  },
+  {
+   "cw": "experience",
+   "common": "hippocampus",
+   "common_status": "proposed",
+   "kind": "true part",
+   "status": "ruled 15 Nov 2026; not lit on this bench",
+   "groups": [
+    {
+     "common": "hippocampus",
+     "parts": [
+      "head_of_hippocampus",
+      "body_of_hippocampus",
+      "tail_of_hippocampus"
+     ]
+    }
+   ]
+  },
+  {
+   "cw": "smoothness and balance",
+   "common": "cerebellum",
+   "common_status": "proposed",
+   "kind": "true part",
+   "status": "ruled 15 Nov 2026; not lit on this bench",
+   "groups": [
+    {
+     "common": "cerebellum",
+     "parts": [
+      "lateral_hemisphere_of_cerebellum",
+      "paravermis_of_cerebellum",
+      "cerebellar_vermis",
+      "cerebellar_deep_nuclei"
+     ]
+    }
+   ]
+  },
+  {
+   "cw": "where seeing starts",
+   "common": "primary visual cortex",
+   "common_status": "proposed",
+   "kind": "placed by hand",
+   "status": "placed, not yet made",
+   "fold": "the calcarine fissure: the fold between cuneus and lingual_gyrus_medial_occipitotemporal_gyrus, with occipital_pole capping the back",
+   "sides": "both"
+  },
+  {
+   "cw": "reading",
+   "common": "visual word form area",
+   "common_status": "proposed",
+   "kind": "placed by hand",
+   "status": "placed, not yet made",
+   "fold": "a spot in the left fusiform gyrus: occipitotemporal_fusiform_gyrus_temporal_part or lateral_occipitotemporal_fusiform_gyrus_occipital_part",
+   "sides": "left"
+  },
+  {
+   "cw": "the words you know",
+   "common": "Wernicke's area",
+   "common_status": "proposed",
+   "kind": "placed by hand",
+   "status": "placed, not yet made",
+   "fold": "the back of superior_temporal_gyrus with planum_temporale; some accounts add supramarginal_gyrus and angular_gyrus",
+   "sides": "mostly left"
+  },
+  {
+   "cw": "how many",
+   "common": "intraparietal sulcus",
+   "common_status": "proposed",
+   "kind": "placed by hand",
+   "status": "placed, not yet made",
+   "fold": "the groove between supraparietal_lobule above and supramarginal_gyrus and angular_gyrus below",
+   "sides": "both"
+  },
+  {
+   "cw": "conscious thought",
+   "common": "prefrontal cortex",
+   "common_status": "proposed",
+   "kind": "loose fit",
+   "status": "not ruled",
+   "candidates": [
+    "frontal_pole",
+    "superior_frontal_gyrus",
+    "middle_frontal_gyrus",
+    "inferior_frontal_gyrus_opercular_part",
+    "inferior_frontal_gyrus_triangular_part",
+    "frontomarginal_gyrus",
+    "anterior_intermediate_orbital_gyrus",
+    "posterior_intermediate_orbital_gyrus",
+    "lateral_orbital_gyrus",
+    "medial_orbital_gyrus",
+    "gyrus_rectus_straight_gyrus",
+    "rostral_gyrus"
+   ],
+   "note": "The superior and middle frontal gyri run back to the moving strip, so they take in more than prefrontal cortex. The atlas draws no line."
+  }
+ ],
+ "placed": {
+  "eyes": {
+   "kind": "placed by hand",
+   "note": "The atlas has no eyes. Two plain glass spheres, 24 mm across, set where eyes would sit under the front of the brain. Judged by eye, not measured from a head.",
+   "radius": 0.124,
+   "right": [
+    -0.335,
+    -0.19,
+    0.78
+   ],
+   "left": [
+    0.32,
+    -0.19,
+    0.78
+   ]
+  }
+ },
+ "road": {
+  "cw": "a signal from the right eye",
+  "common": "the visual pathway",
+  "common_status": "proposed",
+  "steps": [
+   {
+    "name": "right eye",
+    "kind": "placed by hand"
+   },
+   {
+    "name": "optic nerve",
+    "kind": "placed by hand",
+    "note": "Drawn by hand from the eye to the front of the chiasm. The atlas has no optic nerve."
+   },
+   {
+    "part": "optic_chiasm",
+    "kind": "true part",
+    "sides": "one piece"
+   },
+   {
+    "part": "optic_tract",
+    "kind": "true part",
+    "sides": "both"
+   },
+   {
+    "part": "dorsal_lateral_geniculate_nucleus",
+    "kind": "true part",
+    "sides": "both",
+    "time_ms": 35
+   },
+   {
+    "name": "geniculate to radiation",
+    "kind": "placed by hand",
+    "note": "Drawn by hand, about 13 mm. The atlas's optic radiation starts that far to the side of the geniculate; the ground between is its unnamed white matter."
+   },
+   {
+    "part": "optic_radiation",
+    "kind": "true part",
+    "sides": "both",
+    "note": "The file calls this part frontal_pole."
+   },
+   {
+    "name": "the fold between cuneus and lingual gyrus",
+    "kind": "placed by hand",
+    "time_ms": 60,
+    "note": "The last 4 mm or so, from the back end of the radiation to the nearest point where cuneus and lingual gyrus meet, is drawn by hand."
+   }
+  ]
+ },
+ "parts": {
+  "amygdalohippocampal_area": {
+   "atlas": "amygdalohippocampal area",
+   "common": "amygdala",
+   "status": "proposed"
+  },
+  "amygdaloid_complex": {
+   "atlas": "amygdaloid complex",
+   "common": "amygdala",
+   "status": "proposed"
+  },
+  "angular_gyrus": {
+   "atlas": "angular gyrus",
+   "common": "angular gyrus",
+   "status": "proposed"
+  },
+  "anterior_amygdaloid_area": {
+   "atlas": "anterior amygdaloid area",
+   "common": "amygdala",
+   "status": "proposed"
+  },
+  "anterior_commissure": {
+   "atlas": "anterior commissure",
+   "common": "anterior commissure",
+   "status": "proposed"
+  },
+  "anterior_cortical_nucleus": {
+   "atlas": "anterior cortical nucleus",
+   "common": "amygdala",
+   "status": "proposed"
+  },
+  "anterior_horn_of_lateral_ventricle": {
+   "atlas": "anterior horn of lateral ventricle",
+   "common": "lateral ventricle",
+   "status": "proposed"
+  },
+  "anterior_intermediate_orbital_gyrus": {
+   "atlas": "anterior intermediate orbital gyrus",
+   "common": "orbital gyri",
+   "status": "proposed"
+  },
+  "anterior_nuclear_complex_of_thalamus": {
+   "atlas": "anterior nuclear complex of thalamus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "anterior_olfactory_nucleus": {
+   "atlas": "anterior olfactory nucleus",
+   "common": "olfactory parts",
+   "status": "proposed"
+  },
+  "anterior_parahippocampal_gyrus": {
+   "atlas": "anterior parahippocampal gyrus",
+   "common": "parahippocampal gyrus",
+   "status": "proposed"
+  },
+  "atrium_of_lateral_ventricle": {
+   "atlas": "atrium of lateral ventricle",
+   "common": "lateral ventricle",
+   "status": "proposed"
+  },
+  "basal_forebrain": {
+   "atlas": "basal forebrain",
+   "common": "basal forebrain",
+   "status": "proposed"
+  },
+  "basilar_part_of_pons": {
+   "atlas": "basilar part of pons",
+   "common": "pons",
+   "status": "proposed"
+  },
+  "basolateral_nucleus_basal_nucleus": {
+   "atlas": "basolateral nucleus (basal nucleus)",
+   "common": "amygdala",
+   "status": "proposed"
+  },
+  "basomedial_nucleus_accessory_basal_nucleus": {
+   "atlas": "basomedial nucleus (accessory basal nucleus)",
+   "common": "amygdala",
+   "status": "proposed"
+  },
+  "bed_nucleus_of_stria_terminalis": {
+   "atlas": "bed nucleus of stria terminalis",
+   "common": "bed nucleus of the stria terminalis",
+   "status": "proposed"
+  },
+  "body_of_caudate": {
+   "atlas": "body of caudate",
+   "common": "caudate",
+   "status": "used on this bench"
+  },
+  "body_of_hippocampus": {
+   "atlas": "body of hippocampus",
+   "common": "hippocampus",
+   "status": "proposed",
+   "note": "the word About Your Brain uses"
+  },
+  "body_of_lateral_ventricle": {
+   "atlas": "body of lateral ventricle",
+   "common": "lateral ventricle",
+   "status": "proposed"
+  },
+  "central_canal_of_medulla_oblongata": {
+   "atlas": "central canal of medulla oblongata",
+   "common": "medulla",
+   "status": "proposed"
+  },
+  "central_nuclear_group": {
+   "atlas": "central nuclear group",
+   "common": "amygdala",
+   "status": "proposed"
+  },
+  "centromedian_nucleus_of_thalamus": {
+   "atlas": "centromedian nucleus of thalamus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "cerebellar_deep_nuclei": {
+   "atlas": "cerebellar deep nuclei",
+   "common": "cerebellum",
+   "status": "proposed",
+   "note": "the word About Your Brain uses"
+  },
+  "cerebellar_vermis": {
+   "atlas": "cerebellar vermis",
+   "common": "cerebellum",
+   "status": "proposed",
+   "note": "the word About Your Brain uses"
+  },
+  "cerebral_aqueduct": {
+   "atlas": "cerebral aqueduct",
+   "common": "midbrain",
+   "status": "proposed"
+  },
+  "cerebral_peduncle_crus_cerebri": {
+   "atlas": "cerebral peduncle (crus cerebri)",
+   "common": "midbrain",
+   "status": "proposed"
+  },
+  "cingulate_gyrus_caudal_posterior_part": {
+   "atlas": "cingulate gyrus, caudal (posterior) part",
+   "common": "cingulate gyrus",
+   "status": "proposed"
+  },
+  "cingulate_gyrus_rostral_anterior_part": {
+   "atlas": "cingulate gyrus, rostral (anterior) part",
+   "common": "cingulate gyrus",
+   "status": "proposed"
+  },
+  "claustrum": {
+   "atlas": "claustrum",
+   "common": "claustrum",
+   "status": "proposed"
+  },
+  "corpus_callosum": {
+   "atlas": "corpus callosum",
+   "common": "corpus callosum",
+   "status": "proposed"
+  },
+  "cuneus": {
+   "atlas": "cuneus",
+   "common": "cuneus",
+   "status": "used on this bench"
+  },
+  "dorsal_lateral_geniculate_nucleus": {
+   "atlas": "dorsal lateral geniculate nucleus",
+   "common": "lateral geniculate body",
+   "status": "used on this bench"
+  },
+  "external_segment_of_globus_pallidus": {
+   "atlas": "external segment of globus pallidus",
+   "common": "pallidum",
+   "status": "used on this bench"
+  },
+  "fornix": {
+   "atlas": "fornix",
+   "common": "fornix",
+   "status": "proposed"
+  },
+  "fourth_ventricle": {
+   "atlas": "fourth ventricle",
+   "common": "fourth ventricle",
+   "status": "proposed"
+  },
+  "frontal_agranular_insular_cortex_area_Fl": {
+   "atlas": "frontal agranular insular cortex (area FI)",
+   "common": "insula",
+   "status": "proposed"
+  },
+  "frontal_operculum": {
+   "atlas": "frontal operculum",
+   "common": "frontal operculum",
+   "status": "proposed"
+  },
+  "frontal_pole": {
+   "atlas": "frontal pole",
+   "common": "frontal pole",
+   "status": "proposed"
+  },
+  "frontomarginal_gyrus": {
+   "atlas": "frontomarginal gyrus",
+   "common": "frontomarginal gyrus",
+   "status": "proposed"
+  },
+  "gyrus_ambiens": {
+   "atlas": "ambiens gyrus",
+   "common": "olfactory parts",
+   "status": "proposed"
+  },
+  "gyrus_rectus_straight_gyrus": {
+   "atlas": "gyrus rectus (straight gyrus)",
+   "common": "straight gyrus",
+   "status": "proposed"
+  },
+  "habenular_nuclei": {
+   "atlas": "habenular nuclei",
+   "common": "habenula",
+   "status": "proposed"
+  },
+  "head_of_caudate": {
+   "atlas": "head of caudate",
+   "common": "caudate",
+   "status": "used on this bench"
+  },
+  "head_of_hippocampus": {
+   "atlas": "head of hippocampus",
+   "common": "hippocampus",
+   "status": "proposed",
+   "note": "the word About Your Brain uses"
+  },
+  "hypothalamus": {
+   "atlas": "hypothalamus",
+   "common": "hypothalamus",
+   "status": "proposed"
+  },
+  "inferior_cerebellar_peduncle": {
+   "atlas": "inferior cerebellar peduncle",
+   "common": "cerebellar peduncles",
+   "status": "proposed"
+  },
+  "inferior_colliculus": {
+   "atlas": "inferior colliculus",
+   "common": "midbrain",
+   "status": "proposed"
+  },
+  "inferior_frontal_gyrus_opercular_part": {
+   "atlas": "inferior frontal gyrus, opercular part",
+   "common": "inferior frontal gyrus",
+   "status": "proposed"
+  },
+  "inferior_frontal_gyrus_triangular_part": {
+   "atlas": "inferior frontal gyrus, triangular part",
+   "common": "inferior frontal gyrus",
+   "status": "proposed"
+  },
+  "inferior_horn_of_lateral_ventricle": {
+   "atlas": "inferior horn of lateral ventricle",
+   "common": "lateral ventricle",
+   "status": "proposed"
+  },
+  "inferior_occipital_gyrus": {
+   "atlas": "inferior occipital gyrus",
+   "common": "inferior occipital gyrus",
+   "status": "proposed"
+  },
+  "inferior_olive": {
+   "atlas": "inferior olive",
+   "common": "medulla",
+   "status": "proposed"
+  },
+  "inferior_temporal_gyrus": {
+   "atlas": "inferior temporal gyrus",
+   "common": "inferior temporal gyrus",
+   "status": "proposed"
+  },
+  "ingulo_parahippocampal_isthmus": {
+   "atlas": "cingulo-parahippocampal isthmus",
+   "common": "isthmus of the cingulate gyrus",
+   "status": "proposed"
+  },
+  "internal_segment_of_globus_pallidus": {
+   "atlas": "internal segment of globus pallidus",
+   "common": "pallidum",
+   "status": "used on this bench"
+  },
+  "lateral_dorsal_nucleus_of_thalamus": {
+   "atlas": "lateral dorsal nucleus of thalamus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "lateral_hemisphere_of_cerebellum": {
+   "atlas": "lateral hemisphere of cerebellum",
+   "common": "cerebellum",
+   "status": "proposed",
+   "note": "the word About Your Brain uses"
+  },
+  "lateral_nucleus": {
+   "atlas": "lateral nucleus",
+   "common": "amygdala",
+   "status": "proposed"
+  },
+  "lateral_occipitotemporal_fusiform_gyrus_occipital_part": {
+   "atlas": "occipitotemporal (fusiform) gyrus, occipital part",
+   "common": "fusiform gyrus",
+   "status": "proposed"
+  },
+  "lateral_olfactory_gyrus": {
+   "atlas": "lateral olfactory gyrus",
+   "common": "olfactory parts",
+   "status": "proposed"
+  },
+  "lateral_orbital_gyrus": {
+   "atlas": "lateral orbital gyrus",
+   "common": "orbital gyri",
+   "status": "proposed"
+  },
+  "lateral_posterior_nucleus_of_thalamus": {
+   "atlas": "lateral posterior nucleus of thalamus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "limen_insula": {
+   "atlas": "limen insula",
+   "common": "insula",
+   "status": "proposed"
+  },
+  "lingual_gyrus_medial_occipitotemporal_gyrus": {
+   "atlas": "lingual gyrus",
+   "common": "lingual gyrus",
+   "status": "used on this bench"
+  },
+  "long_insular_gyri": {
+   "atlas": "long insular gyri",
+   "common": "insula",
+   "status": "proposed"
+  },
+  "mammillary_region_of_HTH": {
+   "atlas": "mammillary region of HTH",
+   "common": "hypothalamus",
+   "status": "proposed"
+  },
+  "mammillothalamic_tract": {
+   "atlas": "mammillothalamic tract",
+   "common": "mammillothalamic tract",
+   "status": "proposed"
+  },
+  "medial_geniculate_nuclei": {
+   "atlas": "medial geniculate nuclei",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "medial_nucleus": {
+   "atlas": "medial nucleus",
+   "common": "amygdala",
+   "status": "proposed"
+  },
+  "medial_orbital_gyrus": {
+   "atlas": "medial orbital gyrus",
+   "common": "orbital gyri",
+   "status": "proposed"
+  },
+  "mediodorsal_nucleus_of_thalamus": {
+   "atlas": "mediodorsal nucleus of thalamus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "midbrain_tegmentum": {
+   "atlas": "midbrain tegmentum",
+   "common": "midbrain",
+   "status": "proposed"
+  },
+  "middle_cerebellar_peduncle": {
+   "atlas": "middle cerebellar peduncle",
+   "common": "cerebellar peduncles",
+   "status": "proposed"
+  },
+  "middle_frontal_gyrus": {
+   "atlas": "middle frontal gyrus",
+   "common": "middle frontal gyrus",
+   "status": "proposed"
+  },
+  "middle_temporal_gyrus": {
+   "atlas": "middle temporal gyrus",
+   "common": "middle temporal gyrus",
+   "status": "proposed"
+  },
+  "midline_nuclear_complex": {
+   "atlas": "midline nuclear complex",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "nucleus_accumbens": {
+   "atlas": "nucleus accumbens",
+   "common": "nucleus accumbens",
+   "status": "used on this bench"
+  },
+  "occipital_pole": {
+   "atlas": "occipital pole",
+   "common": "occipital pole",
+   "status": "proposed"
+  },
+  "occipitotemporal_fusiform_gyrus_temporal_part": {
+   "atlas": "occipitotemporal (fusiform) gyrus, temporal part",
+   "common": "fusiform gyrus",
+   "status": "proposed"
+  },
+  "olfactory_bulb": {
+   "atlas": "olfactory bulb",
+   "common": "olfactory parts",
+   "status": "proposed"
+  },
+  "olfactory_tract": {
+   "atlas": "olfactory tract",
+   "common": "olfactory parts",
+   "status": "proposed"
+  },
+  "optic_radiation": {
+   "atlas": "optic radiation",
+   "common": "optic radiation",
+   "status": "used on this bench"
+  },
+  "optic_tract": {
+   "atlas": "optic tract",
+   "common": "optic tract",
+   "status": "used on this bench"
+  },
+  "paracentral_lobule_caudal_part": {
+   "atlas": "paracentral lobule, caudal part",
+   "common": "paracentral lobule",
+   "status": "proposed"
+  },
+  "paracentral_lobule_rostral_part": {
+   "atlas": "paracentral lobule, rostral part",
+   "common": "paracentral lobule",
+   "status": "proposed"
+  },
+  "paracingulate_gyrus": {
+   "atlas": "paracingulate gyrus",
+   "common": "paracingulate gyrus",
+   "status": "proposed"
+  },
+  "parafascicular_nucleus_of_thalamus": {
+   "atlas": "parafascicular nucleus of thalamus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "paravermis_of_cerebellum": {
+   "atlas": "paravermis of cerebellum",
+   "common": "cerebellum",
+   "status": "proposed",
+   "note": "the word About Your Brain uses"
+  },
+  "parietal_operculum": {
+   "atlas": "parietal operculum",
+   "common": "parietal operculum",
+   "status": "proposed"
+  },
+  "perirhinal_gyrus_rostral_part_of_FuGt": {
+   "atlas": "perirhinal gyrus ( rostral part of FuGt)",
+   "common": "perirhinal gyrus",
+   "status": "proposed"
+  },
+  "pineal_body": {
+   "atlas": "pineal body",
+   "common": "pineal gland",
+   "status": "proposed"
+  },
+  "piriform_region": {
+   "atlas": "piriform cortex",
+   "common": "olfactory parts",
+   "status": "proposed"
+  },
+  "planum_polare": {
+   "atlas": "planum polare",
+   "common": "planum polare",
+   "status": "proposed"
+  },
+  "planum_temporale": {
+   "atlas": "planum temporale",
+   "common": "planum temporale",
+   "status": "proposed"
+  },
+  "pontine_tegmentum": {
+   "atlas": "pontine tegmentum",
+   "common": "pons",
+   "status": "proposed"
+  },
+  "postcentral_gyrus": {
+   "atlas": "postcentral gyrus",
+   "common": "somatosensory cortex",
+   "status": "proposed",
+   "note": "the word About Your Brain uses"
+  },
+  "posterior_cortical_nucleus": {
+   "atlas": "posterior cortical nucleus",
+   "common": "amygdala",
+   "status": "proposed"
+  },
+  "posterior_horn_of_lateral_ventricle": {
+   "atlas": "posterior horn of lateral ventricle",
+   "common": "lateral ventricle",
+   "status": "proposed"
+  },
+  "posterior_intermediate_orbital_gyrus": {
+   "atlas": "posterior intermediate orbital gyrus",
+   "common": "orbital gyri",
+   "status": "proposed"
+  },
+  "posterior_parahippocampal_gyrus": {
+   "atlas": "posterior parahippocampal gyrus",
+   "common": "parahippocampal gyrus",
+   "status": "proposed"
+  },
+  "posteroventral_putamen": {
+   "atlas": "posteroventral putamen",
+   "common": "putamen",
+   "status": "used on this bench"
+  },
+  "precuneus": {
+   "atlas": "precuneus",
+   "common": "precuneus",
+   "status": "proposed"
+  },
+  "preoptic_region_of_HTH": {
+   "atlas": "preoptic region of HTH",
+   "common": "hypothalamus",
+   "status": "proposed"
+  },
+  "pretectal_region": {
+   "atlas": "pretectal region",
+   "common": "midbrain",
+   "status": "proposed"
+  },
+  "primary_motor_cortex": {
+   "atlas": "precentral gyrus",
+   "common": "motor cortex",
+   "status": "proposed",
+   "note": "the word About Your Brain uses"
+  },
+  "pulvinar_of_thalamus": {
+   "atlas": "pulvinar of thalamus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "putamen": {
+   "atlas": "putamen",
+   "common": "putamen",
+   "status": "used on this bench"
+  },
+  "pyramidal_part_of_medulla_oblongata": {
+   "atlas": "pyramidal part of medulla oblongata",
+   "common": "medulla",
+   "status": "proposed"
+  },
+  "red_nucleus": {
+   "atlas": "red nucleus",
+   "common": "midbrain",
+   "status": "proposed"
+  },
+  "reuniens_nucleus_medioventral_nucleus_of_thalamus": {
+   "atlas": "reuniens nucleus (medioventral nucleus) of thalamus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "rostral_gyrus": {
+   "atlas": "rostral gyrus",
+   "common": "rostral gyrus",
+   "status": "proposed"
+  },
+  "septal_nuclei": {
+   "atlas": "septal nuclei",
+   "common": "septal nuclei",
+   "status": "proposed"
+  },
+  "short_insular_gyri": {
+   "atlas": "short insular gyri",
+   "common": "insula",
+   "status": "proposed"
+  },
+  "subcallosal_gyrus_parolfactory_gyrus": {
+   "atlas": "subcallosal gyrus (parolfactory gyrus)",
+   "common": "subcallosal gyrus",
+   "status": "proposed"
+  },
+  "substantia_nigra": {
+   "atlas": "substantia nigra",
+   "common": "substantia nigra",
+   "status": "used on this bench"
+  },
+  "subthalamic_nucleus": {
+   "atlas": "subthalamic nucleus",
+   "common": "subthalamic nucleus",
+   "status": "used on this bench"
+  },
+  "superior_cerebellar_peduncle_brachium_conjunctivum": {
+   "atlas": "superior cerebellar peduncle (brachium conjunctivum)",
+   "common": "cerebellar peduncles",
+   "status": "proposed"
+  },
+  "superior_colliculus": {
+   "atlas": "superior colliculus",
+   "common": "midbrain",
+   "status": "proposed"
+  },
+  "superior_frontal_gyrus": {
+   "atlas": "superior frontal gyrus",
+   "common": "superior frontal gyrus",
+   "status": "proposed"
+  },
+  "superior_occipital_gyrus": {
+   "atlas": "superior occipital gyrus",
+   "common": "superior occipital gyrus",
+   "status": "proposed"
+  },
+  "superior_temporal_gyrus": {
+   "atlas": "superior temporal gyrus",
+   "common": "superior temporal gyrus",
+   "status": "proposed"
+  },
+  "supramarginal_gyrus": {
+   "atlas": "supramarginal gyrus",
+   "common": "supramarginal gyrus",
+   "status": "proposed"
+  },
+  "supraoptic_region_of_HTH": {
+   "atlas": "supraoptic region of HTH",
+   "common": "hypothalamus",
+   "status": "proposed"
+  },
+  "supraparietal_lobule": {
+   "atlas": "supraparietal lobule",
+   "common": "superior parietal lobule",
+   "status": "proposed"
+  },
+  "tail_of_caudate": {
+   "atlas": "tail of caudate",
+   "common": "caudate",
+   "status": "used on this bench"
+  },
+  "tail_of_hippocampus": {
+   "atlas": "tail of hippocampus",
+   "common": "hippocampus",
+   "status": "proposed",
+   "note": "the word About Your Brain uses"
+  },
+  "tegmentum_of_medulla_oblongata": {
+   "atlas": "tegmentum of medulla oblongata",
+   "common": "medulla",
+   "status": "proposed"
+  },
+  "temporal_agranular_insular_cortex_area_Tl": {
+   "atlas": "temporal agranular insular cortex (area TI)",
+   "common": "insula",
+   "status": "proposed"
+  },
+  "temporal_pole": {
+   "atlas": "temporal pole",
+   "common": "temporal pole",
+   "status": "proposed"
+  },
+  "thalamus": {
+   "atlas": "thalamus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "third_ventricle": {
+   "atlas": "third ventricle",
+   "common": "third ventricle",
+   "status": "proposed"
+  },
+  "transverse_temporal_gyrus_Heschls_gyrus": {
+   "atlas": "transverse temporal gyrus (Heschl's gyrus)",
+   "common": "auditory cortex",
+   "status": "proposed",
+   "note": "Michael's example, 15 Nov 2026"
+  },
+  "tuberal_region_of_HTH": {
+   "atlas": "tuberal region of HTH",
+   "common": "hypothalamus",
+   "status": "proposed"
+  },
+  "ventral_anterior_nucleus_of_thalamus": {
+   "atlas": "ventral anterior nucleus of thalamus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "ventral_lateral_nucleus_of_thalamus": {
+   "atlas": "ventral lateral nucleus of thalamus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "ventral_posterior_lateral_nucleus": {
+   "atlas": "ventral posterior lateral nucleus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "ventral_posterior_medial_nucleus": {
+   "atlas": "ventral posterior medial nucleus",
+   "common": "thalamus",
+   "status": "used on this bench"
+  },
+  "white_matter_of_forebrain": {
+   "atlas": "white matter of forebrain",
+   "common": "white matter",
+   "status": "proposed"
+  },
+  "white_matter_of_hindbrain": {
+   "atlas": "white matter of hindbrain",
+   "common": "white matter of the brainstem and cerebellum",
+   "status": "proposed"
+  },
+  "zona_incerta": {
+   "atlas": "zona incerta",
+   "common": "zona incerta",
+   "status": "proposed"
+  },
+  "optic_chiasm": {
+   "atlas": "optic chiasm",
+   "common": "optic chiasm",
+   "status": "used on this bench",
+   "note": "Not one of the Allen atlas's 141 structures. HuBMAP added it to the model as VH_F_optic_chiasm; one piece, no left or right."
+  }
+ }
+}

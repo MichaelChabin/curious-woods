@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The brain bench</title>
+<link rel="icon" type="image/png" href="../art/icons/brain-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/brain-icon-256.png">
+<!-- The brain bench, 15 Nov 2026 (CWVault/claude/Prompt-Build-Brain-Bench-01.md; report Report-Build-Brain-Bench-01.md).
+     A bench, not a story page: its words are for Michael. The Allen brain as glass, as the survey drew it; two sets
+     that light; one amber signal from the right eye along the model's own chiasm, tracts and radiations.
+     The model and its two tables are separate files in ../models/brain/ so later pages can call the same brain.
+     three.js r186, the WebGL build (the glass is a GLSL shader), from ../js/vendor/three-r186/. -->
+<style>
+:root{
+  --ground:#041419; --ink:#e8fbf6; --dim:rgba(232,251,246,.66); --faint:rgba(232,251,246,.42);
+  --glass:rgba(150,235,220,.10); --edge:rgba(190,255,240,.30);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--ground);color:var(--ink);font-family:Georgia,"Times New Roman",serif;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;height:100dvh;
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+header{width:100%;max-width:1024px;display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 16px 0;font-size:14px;color:var(--dim)}
+header b{font-weight:normal;color:var(--ink);font-size:16px}
+#stage{position:relative;flex:1 1 auto;min-height:0;width:100%}
+#c{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#c:active{cursor:grabbing}
+#wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:16px;pointer-events:none}
+#ms{position:absolute;left:0;right:0;bottom:4px;text-align:center;font-size:18px;color:var(--ink);pointer-events:none;opacity:0;transition:opacity .4s;font-variant-numeric:tabular-nums}
+#ms.on{opacity:1}
+#names{width:100%;max-width:760px;height:100px;padding:6px 16px 0;text-align:center;overflow:hidden}
+#names .cw{font-size:19px}
+#names .common{font-size:15px;color:var(--dim);margin-top:2px}
+#names .atlas{font-size:12px;color:var(--faint);margin-top:3px;line-height:1.35}
+#names .kind{font-style:italic}
+.bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:8px 12px 6px}
+button{font:inherit;font-size:16px;color:var(--ink);background:var(--glass);border:1px solid var(--edge);border-radius:999px;padding:11px 18px;cursor:pointer;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+button[aria-pressed="true"]{background:rgba(190,255,240,.30);border-color:rgba(220,255,248,.75)}
+button:active{transform:scale(.97)}
+button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+footer{width:100%;max-width:900px;padding:2px 16px 8px;font-size:10.5px;line-height:1.35;color:var(--faint);text-align:center}
+footer a{color:inherit}
+</style>
+<script type="importmap">{"imports":{"three":"../js/vendor/three-r186/three.module.js"}}</script>
+</head>
+<body>
+<header><span><b>The brain bench</b> · the Allen brain, as glass</span><span id="read"></span></header>
+<div id="stage">
+  <canvas id="c" aria-label="A glass brain that turns under a finger"></canvas>
+  <div id="wait">Fetching the brain…</div>
+  <div id="ms"></div>
+</div>
+<div id="names" aria-live="polite"></div>
+<div class="bar">
+  <button id="b-better" aria-pressed="false">Getting better at things</button>
+  <button id="b-switch" aria-pressed="false">The switchboard</button>
+  <button id="b-signal" aria-pressed="false">A signal from the right eye</button>
+</div>
+<footer>
+  Brain model: Browne, Kristen, and Heidi Schlehlein. 2024. “3D Reference Organ for Brain, Female v1.4.” <a href="https://doi.org/10.48539/HBM674.NTLM.353">https://doi.org/10.48539/HBM674.NTLM.353</a> (HuBMAP), CC BY 4.0; repacked, centred and mirrored left for right here, and eight swapped part names put right.
+  Made from Song-Lin Ding, Joshua J. Royall, Susan M. Sunkin, Benjamin A.C. Facer, Phil Lesnar, Amy Bernard, Lydia Ng, Ed S. Lein (2020). “Allen Human Reference Atlas – 3D, 2020,” RRID:SCR_017764, version 1.0.0. © 2019 Allen Institute for Brain Science, CC BY 4.0.
+  The atlas was drawn on the ICBM 2009b template: Copyright (C) 1993–2004 Louis Collins, McConnell Brain Imaging Centre, Montreal Neurological Institute, McGill University.
+  The eyes, the optic nerve and the dotted stretches are Curious Woods’ own, placed by hand.
+</footer>
+<script type="module">
+const CW_VERSION = '2026-11-15 acc00e2 · bench 1';   // date + short commit hash; bump in the same commit as any change
+try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
+import * as THREE from 'three';
+import { GLTFLoader } from '../js/vendor/three-r186/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from '../js/vendor/three-r186/jsm/libs/meshopt_decoder.module.js';
+
+const Q = new URLSearchParams(location.search);
+const DIR = '../models/brain/';
+const GROUND = 0x041419;
+const AMBER = '#ffb454';                       // the signal's colour, and nothing else's
+const MS_PER_SECOND = 7;                       // brain time shown per second of watching
+const T_RELAY = 35, T_END = 60;                // ms, from About Your Brain: the switchboard at about 35, the back of the head about 25 later
+const HOLD = 1.6, REST = 0.9;                  // seconds held at the end, then dark before it starts again
+
+// ---------- the glass, as the survey drew it (atlas-sources/brain/viewer); uDim and uGlow are the bench's two additions ----------
+const LIGHT = new THREE.Vector3(-0.35, 0.75, 0.55).normalize();
+const GLOWCOL = new THREE.Color().setRGB(1.0, 0.706, 0.33, THREE.LinearSRGBColorSpace);
+const VERT = `
+  varying vec3 vN; varying vec3 vP;
+  void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); vP = mv.xyz; vN = normalMatrix * normal; gl_Position = projectionMatrix * mv; }`;
+const FRAG = `
+  uniform vec3 uColor; uniform vec3 uGround; uniform vec3 uLight; uniform vec3 uGlowCol;
+  uniform float uBase, uRim, uPow, uSpec, uNear, uFar, uFog, uShade, uDim, uGlow;
+  varying vec3 vN; varying vec3 vP;
+  void main(){
+    vec3 n = normalize(vN); if (!gl_FrontFacing) n = -n;
+    vec3 v = normalize(-vP);
+    float ndv = clamp(dot(n, v), 0.0, 1.0);
+    float f = pow(1.0 - ndv, uPow);
+    float d = 0.5 + 0.5 * dot(n, uLight);
+    float s = pow(max(dot(reflect(-uLight, n), v), 0.0), 48.0) * uSpec;
+    vec3 col = uColor * mix(1.0, 0.35 + 0.75 * d, uShade) + vec3(s);
+    col += uColor * f * 0.35;
+    float fog = clamp((-vP.z - uNear) / (uFar - uNear), 0.0, 1.0) * uFog;
+    col = mix(col, uGround, fog);
+    col = mix(col, uGlowCol * (0.75 + 0.5 * f), uGlow);
+    float a = clamp((uBase + uRim * f + s * 0.6) * uDim + uGlow * 0.8, 0.0, 1.0);
+    gl_FragColor = vec4(col, a);
+  }`;
+const dimU = { value: 1 };                      // shared: the rest of the brain dims a little while the signal runs
+const one = { value: 1 };
+function glass(color, o){
+  o = o || {};
+  return new THREE.ShaderMaterial({ vertexShader:VERT, fragmentShader:FRAG, transparent:true, depthWrite: !!o.depthWrite, side:THREE.FrontSide,
+    uniforms:{ uColor:{value:new THREE.Color(color)}, uGround:{value:new THREE.Color(GROUND)}, uLight:{value:LIGHT}, uGlowCol:{value:GLOWCOL},
+      uBase:{value:o.base ?? 0.07}, uRim:{value:o.rim ?? 0.55}, uPow:{value:o.pow ?? 2.2}, uSpec:{value:o.spec ?? 0.5},
+      uNear:{value:1}, uFar:{value:3}, uFog:{value:o.fog ?? 0.0}, uShade:{value:o.shade ?? 1.0}, uDim: o.dims ? dimU : one, uGlow:{value:0} } });
+}
+const M = {
+  lit:    c => glass(c,        { base:0.62, rim:0.38, pow:1.4, spec:0.35, depthWrite:true, fog:0.6 }),
+  inner:  () => glass(0x9fc9cc, { base:0.09, rim:0.34, pow:1.6, spec:0.0, fog:0.5, shade:0.6, dims:true }),
+  shell:  () => glass(0xd4f3ee, { base:0.03, rim:0.42, pow:1.7, spec:0.6, shade:0.55, dims:true }),
+  road:   () => glass(0xcfe9e4, { base:0.13, rim:0.46, pow:1.5, spec:0.0, fog:0.35, shade:0.6 }),
+  eye:    () => glass(0xd4f3ee, { base:0.05, rim:0.55, pow:1.7, spec:0.8, shade:0.55 })
+};
+
+// ---------- scene ----------
+const stage = document.getElementById('stage'), canvas = document.getElementById('c');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias:true, preserveDrawingBuffer:true, alpha:false }); }
+catch (e) { document.getElementById('wait').textContent = 'This browser would not start WebGL, so there is no brain to show.'; throw e; }
+renderer.autoClear = false; renderer.setClearColor(GROUND, 1);
+const camera = new THREE.PerspectiveCamera(28, 4/3, 0.1, 30);
+const sceneDeep = new THREE.Scene(), sceneShell = new THREE.Scene(), sceneSig = new THREE.Scene();
+const prepass = new THREE.MeshBasicMaterial({ colorWrite:false });
+
+const view = { az:42, el:12, zoom:1, turning: !matchMedia('(prefers-reduced-motion: reduce)').matches };   // picture 4 of the survey: front-left
+let W = 0, H = 0;
+function fit(){
+  const w = Math.max(50, stage.clientWidth), h = Math.max(50, stage.clientHeight);
+  if (w === W && h === H) return; W = w; H = h;
+  renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1)); renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+function place(){
+  const R = Math.max(3.75, 4.3 / camera.aspect) * view.zoom, a = view.az * Math.PI / 180, e = view.el * Math.PI / 180;   // azimuth from the front (+z) toward the brain's left (+x)
+  camera.position.set(R * Math.sin(a) * Math.cos(e), R * Math.sin(e), R * Math.cos(a) * Math.cos(e)); camera.up.set(0, 1, 0); camera.lookAt(0, 0, 0);
+}
+
+// ---------- the model and its tables ----------
+let parts = [], byKey = {}, NAMES = null, eyes = {}, road = null, state = { lit:'' };
+const HIDDEN = ['anterior_horn_of_lateral_ventricle','body_of_lateral_ventricle','inferior_horn_of_lateral_ventricle','posterior_horn_of_lateral_ventricle',
+  'atrium_of_lateral_ventricle','third_ventricle','fourth_ventricle','cerebral_aqueduct','central_canal_of_medulla_oblongata'];
+// the parts the survey drew as inner shapes, faint when unlit; the sets in the names table are added to these
+const INNER = ['amygdaloid_complex','central_nuclear_group','lateral_nucleus','medial_nucleus','basolateral_nucleus_basal_nucleus','basomedial_nucleus_accessory_basal_nucleus',
+  'anterior_cortical_nucleus','posterior_cortical_nucleus','anterior_amygdaloid_area','amygdalohippocampal_area','head_of_hippocampus','body_of_hippocampus','tail_of_hippocampus','red_nucleus'];
+const ROAD_PARTS = ['optic_chiasm','optic_tract','optic_radiation','dorsal_lateral_geniculate_nucleus'];
+const setOf = cw => NAMES.names.find(n => n.cw === cw);
+
+async function load(){
+  const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
+  const [gltf, ring, names] = await Promise.all([
+    loader.loadAsync(DIR + 'allen-f-full-meshopt.glb'),
+    fetch(DIR + 'allen-true-names.json').then(r => r.json()),
+    fetch(DIR + 'brain-names.json').then(r => r.json()) ]);
+  NAMES = names; const TRUE = ring.true_name;
+  gltf.scene.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(gltf.scene), c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3());
+  const k = 1.72 / Math.max(s.x, s.y, s.z);
+  // HuBMAP's file has the parts named _L on the brain's right. Flip x so the named left is the true left; the halves are mirror twins.
+  const meshes = []; gltf.scene.traverse(o => { if (o.isMesh) meshes.push(o); });
+  const inner = new Set(INNER); for (const n of ['getting better at things','the switchboard']) for (const g of setOf(n).groups) for (const p of g.parts) inner.add(p);
+  for (const o of meshes) {
+    const src = o.geometry.attributes.position, pos = new Float32Array(src.count * 3), v = new THREE.Vector3();
+    for (let i = 0; i < src.count; i++) { v.fromBufferAttribute(src, i).applyMatrix4(o.matrixWorld); pos[3*i] = -(v.x - c.x) * k; pos[3*i+1] = (v.y - c.y) * k; pos[3*i+2] = (v.z - c.z) * k; }
+    const ix = Uint32Array.from(o.geometry.index.array); for (let i = 0; i < ix.length; i += 3) { const t = ix[i]; ix[i] = ix[i+1]; ix[i+1] = t; }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setIndex(new THREE.BufferAttribute(ix, 1));
+    g.computeVertexNormals(); g.computeBoundingSphere();
+    const file = (!o.name || /^mesh_\d+$/.test(o.name)) ? o.parent.name : o.name, m = file.match(/^Allen_(.+)_([LR])$/);
+    const key = m ? (TRUE[m[1]] || m[1]) : file.replace(/^VH_[FM]_/, ''), side = m ? m[2] : '-';
+    const mesh = new THREE.Mesh(g, prepass); mesh.name = file;      // the mesh keeps the file's own name; key is the true part
+    mesh.userData = { key, side, centre: g.boundingSphere.center.clone(), inner: inner.has(key), hidden: HIDDEN.includes(key) };
+    parts.push(mesh); (byKey[key + ':' + side] = mesh);
+  }
+  // two plain glass eyes, placed by hand (the atlas has none)
+  const E = NAMES.placed.eyes;
+  for (const side of ['right','left']) {
+    const e = new THREE.Mesh(new THREE.SphereGeometry(E.radius, 40, 28), M.eye()); e.position.fromArray(E[side]);
+    e.userData = { key:'eye', side: side === 'right' ? 'R' : 'L', centre: e.position.clone(), eye:true }; eyes[side] = e;
+  }
+  road = buildRoad(); buildSignal(); apply();
+}
+
+// ---------- what is lit ----------
+function apply(){
+  sceneDeep.clear(); sceneShell.clear();
+  const colour = {};
+  const set = state.lit === 'better' ? setOf('getting better at things') : state.lit === 'switch' ? setOf('the switchboard') : null;
+  if (set) for (const g of set.groups) for (const p of g.parts) colour[p] = g.colour;
+  const sig = state.lit === 'signal';
+  for (const m of parts) {
+    const u = m.userData; m.visible = !u.hidden;
+    if (colour[u.key]) { m.material = M.lit(colour[u.key]); u.on = true; sceneDeep.add(m); }
+    else if (sig && ROAD_PARTS.includes(u.key)) { m.material = M.road(); u.on = true; sceneDeep.add(m); }
+    else if (u.inner) { m.material = M.inner(); u.on = false; sceneDeep.add(m); }
+    else { m.material = M.shell(); sceneShell.add(m); }
+  }
+  for (const s in eyes) { eyes[s].material.uniforms.uGlow.value = 0; sceneDeep.add(eyes[s]); }
+  sig0 = performance.now() / 1000; sigGroup.visible = sig; dimU.value = sig ? 0.6 : 1;
+  for (const id of ['better','switch','signal']) document.getElementById('b-' + id).setAttribute('aria-pressed', state.lit === id);
+  document.getElementById('ms').classList.toggle('on', sig); if (!sig) document.getElementById('ms').textContent = '';
+  say();
+}
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+function say(){
+  const el = document.getElementById('names'), P = NAMES.parts, line = (cw, common, atlas) =>
+    '<div class="cw">' + cw + '</div><div class="common">' + common + '</div><div class="atlas">' + atlas + '</div>';
+  const up = s => s[0].toUpperCase() + s.slice(1);
+  if (state.lit === 'better') { const n = setOf('getting better at things');
+    el.innerHTML = line(up(n.cw), n.common + ': ' + n.groups.map(g => '<span style="color:' + g.colour + '">' + esc(g.common) + '</span>').join(' · '),
+      'The atlas’s names: ' + n.groups.flatMap(g => g.parts).map(p => esc(P[p].atlas)).join(', ') + '. <span class="kind">True parts, both sides.</span>'); }
+  else if (state.lit === 'switch') { const n = setOf('the switchboard'), g = n.groups[0];
+    el.innerHTML = line(up(n.cw), '<span style="color:' + g.colour + '">' + n.common + '</span>',
+      'The atlas’s names: ' + esc(P.thalamus.atlas) + ', and the fifteen nuclei it names inside it, the ' + esc(P.dorsal_lateral_geniculate_nucleus.atlas) + ' among them. <span class="kind">True parts, both sides.</span>'); }
+  else if (state.lit === 'signal') { const r = NAMES.road;
+    el.innerHTML = line(up(r.cw), 'eye · optic nerve · optic chiasm · optic tract · ' + esc(P.dorsal_lateral_geniculate_nucleus.common) + ' · optic radiation · the back of the head',
+      'The atlas’s names: ' + r.steps.filter(s => s.part).map(s => esc(P[s.part].atlas)).join(', ') + '; the end is the fold between cuneus and lingual gyrus. <span class="kind">The eyes and the dotted stretches are placed by hand.</span> At the chiasm about half the fibres cross and half stay.'); }
+  else el.innerHTML = '<div class="common" style="margin-top:14px">Nothing is lit. Drag to turn it; pinch or scroll to come closer.</div>';
+}
+for (const id of ['better','switch','signal']) document.getElementById('b-' + id).onclick = () => { state.lit = state.lit === id ? '' : id; apply(); };
+
+// ---------- the road: centre lines taken from the model's own parts ----------
+function weld(mesh){           // unique points and their neighbours, so a walk over the surface is possible
+  const p = mesh.geometry.attributes.position.array, ix = mesh.geometry.index.array, id = new Map(), map = new Int32Array(p.length / 3), V = [];
+  for (let i = 0; i < p.length / 3; i++) { const k = Math.round(p[3*i] * 2e4) + ',' + Math.round(p[3*i+1] * 2e4) + ',' + Math.round(p[3*i+2] * 2e4);
+    if (!id.has(k)) { id.set(k, V.length); V.push(new THREE.Vector3(p[3*i], p[3*i+1], p[3*i+2])); } map[i] = id.get(k); }
+  const adj = V.map(() => new Set());
+  for (let i = 0; i < ix.length; i += 3) { const a = map[ix[i]], b = map[ix[i+1]], c = map[ix[i+2]]; adj[a].add(b); adj[a].add(c); adj[b].add(a); adj[b].add(c); adj[c].add(a); adj[c].add(b); }
+  return { V, adj };
+}
+const mean = pts => pts.reduce((s, q) => s.add(q), new THREE.Vector3()).multiplyScalar(1 / pts.length);
+function bands(mesh, near, n){ // walk the surface outward from the end nearest `near`; the middle of each band of the walk is a point on the part's centre line
+  const { V, adj } = weld(mesh), N = V.length, d = new Float64Array(N).fill(Infinity), done = new Uint8Array(N);
+  let seed = 0, best = Infinity; V.forEach((q, i) => { const x = q.distanceToSquared(near); if (x < best) { best = x; seed = i; } }); d[seed] = 0;
+  for (let it = 0; it < N; it++) { let a = -1, m = Infinity; for (let i = 0; i < N; i++) if (!done[i] && d[i] < m) { m = d[i]; a = i; } if (a < 0) break; done[a] = 1;
+    for (const b of adj[a]) { const x = m + V[a].distanceTo(V[b]); if (x < d[b]) d[b] = x; } }
+  let far = 0; for (let i = 0; i < N; i++) if (isFinite(d[i]) && d[i] > far) far = d[i];
+  const out = []; for (let j = 0; j < n; j++) { const s = V.filter((q, i) => d[i] >= far * j / n && d[i] <= far * (j + 1) / n); if (s.length) out.push(mean(s)); }
+  return out;
+}
+const pointsOf = mesh => weld(mesh).V;
+function curve(pts, n){ return new THREE.CatmullRomCurve3(pts, false, 'centripetal').getSpacedPoints(n); }
+function buildRoad(){
+  const ch = pointsOf(byKey['optic_chiasm:-']), mid = mean(ch).x;
+  let z0 = -Infinity, z1 = Infinity; for (const q of ch) { z0 = Math.max(z0, q.z); z1 = Math.min(z1, q.z); }
+  // the chiasm, front to back in eight slices: the middle of its right half, and of its left half (the brain's right is at -x)
+  const cR = [], cL = [];
+  for (let i = 0; i < 8; i++) { const a = z0 + (z1 - z0) * i / 8, b = z0 + (z1 - z0) * (i + 1) / 8, s = ch.filter(q => q.z <= a && q.z >= b);
+    cR.push(mean(s.filter(q => q.x < mid))); cL.push(mean(s.filter(q => q.x >= mid))); }
+  const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const stay = cR, cross = cR.map((q, i) => q.clone().lerp(cL[i], sm(1.5, 6, i)));
+  // the optic nerve, drawn by hand: from the back of the right eye to the front of the chiasm's right half
+  const E = eyes.right.position, rad = NAMES.placed.eyes.radius, entry = cR[0].clone().setZ(z0);
+  const p0 = E.clone().add(entry.clone().sub(E).setY(0).normalize().multiplyScalar(rad)), L = p0.distanceTo(entry);
+  const p1 = p0.clone().add(new THREE.Vector3(0.25, 0.1, -1).normalize().multiplyScalar(L * 0.35));
+  const p2 = entry.clone().add(new THREE.Vector3(-0.35, -0.12, 1).normalize().multiplyScalar(L * 0.35));
+  const nerve = new THREE.CubicBezierCurve3(p0, p1, p2, entry).getPoints(14);
+  const out = { nerve, first:{}, second:{}, lgn:{}, end:{}, drawn:[nerve] };
+  for (const side of ['R','L']) {
+    const lgn = mean(pointsOf(byKey['dorsal_lateral_geniculate_nucleus:' + side])), limb = (side === 'R' ? cR : cL)[7];
+    const tract = bands(byKey['optic_tract:' + side], limb, 7), rad = bands(byKey['optic_radiation:' + side], lgn, 12);
+    // the fold: the nearest place to the radiation's back end where cuneus and lingual gyrus meet
+    const tip = rad[rad.length - 1], near = k => pointsOf(byKey[k + ':' + side]).filter(q => q.distanceTo(tip) < 0.14);
+    const cu = near('cuneus'), li = near('lingual_gyrus_medial_occipitotemporal_gyrus'); let fold = null, bd = Infinity;
+    for (const a of cu) { const x = a.distanceTo(tip); if (x >= bd) continue; for (const b of li) if (a.distanceToSquared(b) < 0.004 * 0.004) { bd = x; fold = a; break; } }
+    out.first[side] = curve([...nerve.slice(0, -1), ...(side === 'R' ? stay : cross), ...tract, lgn], 240);
+    out.second[side] = curve([lgn, ...rad, fold || tip], 200);
+    out.lgn[side] = lgn; out.end[side] = fold || tip;
+    out.drawn.push([lgn, rad[0]], [tip, fold || tip]);
+    out['tract' + side] = tract; out['rad' + side] = rad;
+  }
+  out.cR = cR; out.cL = cL;
+  return out;
+}
+const along = (pts, u) => { const x = Math.min(1, Math.max(0, u)) * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(x)); return pts[i].clone().lerp(pts[i + 1], x - i); };
+
+// ---------- the signal ----------
+const sigGroup = new THREE.Group(); sceneSig.add(sigGroup);
+let sig0 = 0, held = null, pulses = [], blooms = {};
+const TAIL = 9;
+function dot(){ const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'), r = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(0.16, 'rgba(255,214,150,1)'); r.addColorStop(0.42, 'rgba(255,180,84,.45)'); r.addColorStop(1, 'rgba(255,180,84,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 128, 128); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; }
+function buildSignal(){
+  const tex = dot(), sprite = () => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, color:AMBER, blending:THREE.AdditiveBlending, depthTest:false, depthWrite:false, transparent:true })); sigGroup.add(s); return s; };
+  for (const cell of ['first','second']) for (const side of ['R','L']) pulses.push({ cell, side, s: Array.from({ length:TAIL }, sprite) });
+  for (const k of ['eye','lgnR','lgnL','endR','endL']) blooms[k] = sprite();
+  // the stretches drawn by hand show as dots
+  const pts = []; for (const seg of road.drawn) { let len = 0; for (let i = 1; i < seg.length; i++) len += seg[i].distanceTo(seg[i-1]); const n = Math.max(2, Math.round(len / 0.018));
+    for (let i = 0; i <= n; i++) pts.push(along(seg, i / n)); }
+  const g = new THREE.BufferGeometry().setFromPoints(pts);
+  sigGroup.add(new THREE.Points(g, new THREE.PointsMaterial({ color:0xcfe9e4, size:2.6, sizeAttenuation:false, transparent:true, opacity:0.55, depthTest:false, depthWrite:false })));
+  sigGroup.visible = false;
+}
+function put(s, p, size, a){ s.visible = a > 0.004; if (!s.visible) return; s.position.copy(p); s.scale.setScalar(size); s.material.opacity = a; }
+function signal(S){               // everything the signal shows is a function of S, seconds since it left the eye
+  const tRelay = T_RELAY / MS_PER_SECOND, tEnd = T_END / MS_PER_SECOND, loop = tEnd + HOLD + REST; S = ((S % loop) + loop) % loop;
+  const ms = Math.min(T_END, S * MS_PER_SECOND), out = Math.max(0, 1 - Math.max(0, S - tEnd - HOLD + 0.4) / 0.4), rest = S > tEnd + HOLD;
+  for (const p of pulses) {
+    const pts = road[p.cell][p.side], first = p.cell === 'first';
+    const u = first ? S / tRelay : (S - tRelay) / (tEnd - tRelay), live = first ? u <= 1 : u >= 0;
+    const fadeIn = first ? Math.min(1, S / 0.25) : Math.min(1, Math.max(0, u) * 14);
+    for (let i = 0; i < TAIL; i++) { const ui = u - i * 0.011, k = 1 - i / TAIL;
+      put(p.s[i], along(pts, ui), (i ? 0.055 : 0.105) * (0.45 + 0.55 * k), live && ui >= 0 && !rest ? (i ? 0.5 * k * k : 1) * fadeIn * (u > 1 ? out : 1) : 0); }
+  }
+  // the eye answers the light; each geniculate brightens as the first pulse arrives and the second leaves; the fold glows at the end
+  const eye = Math.exp(-S / 0.45) * (rest ? 0 : 1), rise = S < tRelay ? Math.max(0, 1 - (tRelay - S) / 0.12) : Math.exp(-(S - tRelay) / 0.55), end = S >= tEnd && !rest ? out : 0;
+  eyes.right.material.uniforms.uGlow.value = 0.75 * eye;
+  put(blooms.eye, road.nerve[0], 0.2, 0.55 * eye);
+  for (const side of ['R','L']) {
+    byKey['dorsal_lateral_geniculate_nucleus:' + side].material.uniforms.uGlow.value = rest ? 0 : rise;
+    put(blooms['lgn' + side], road.lgn[side], 0.14 + 0.16 * rise, rest ? 0 : 0.8 * rise);
+    put(blooms['end' + side], road.end[side], 0.16 + 0.1 * Math.min(1, (S - tEnd) / 0.5), 0.75 * end);
+  }
+  document.getElementById('ms').textContent = rest ? '' : Math.round(ms) + ' ms of brain time';
+}
+
+// ---------- drawing ----------
+function draw(now){
+  fit(); place();
+  const cp = camera.position, dist = cp.length();
+  for (const m of sceneDeep.children) m.renderOrder = (m.userData.on ? 1000 : 0) - m.userData.centre.distanceTo(cp) * 100;   // far first, lit after unlit
+  for (const m of parts) { const u = m.material.uniforms; if (u) { u.uNear.value = dist - 0.45; u.uFar.value = dist + 0.75; } }
+  for (const s in eyes) { const u = eyes[s].material.uniforms; u.uNear.value = dist - 0.45; u.uFar.value = dist + 0.75; }
+  if (state.lit === 'signal') signal(held !== null ? held : now / 1000 - sig0);
+  renderer.clear();
+  renderer.render(sceneDeep, camera);
+  renderer.clearDepth();
+  sceneShell.overrideMaterial = prepass; renderer.render(sceneShell, camera);     // depth only: keeps just the nearest layer of the cortex
+  sceneShell.overrideMaterial = null;   renderer.render(sceneShell, camera);
+  if (sigGroup.visible) renderer.render(sceneSig, camera);
+  if (firstSeen === null) { firstSeen = performance.now(); document.getElementById('wait').remove(); }
+}
+let last = 0, frames = [], firstSeen = null, ready = false;
+const read = document.getElementById('read');
+function tick(now){
+  requestAnimationFrame(tick); if (!ready) return;
+  const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  if (view.turning) view.az += 5 * dt;                                         // slowly, until touched
+  draw(now);
+  frames.push(now); while (frames.length && frames[0] < now - 1000) frames.shift();
+  if (frames.length % 20 === 0) read.textContent = 'first seen after ' + (firstSeen / 1000).toFixed(1) + ' s · ' + frames.length + ' frames a second';
+}
+
+// ---------- one finger turns it; two pinch; the wheel comes closer ----------
+const fingers = new Map(); let pinch = 0;
+canvas.addEventListener('pointerdown', e => { try { canvas.setPointerCapture(e.pointerId); } catch (x) {} fingers.set(e.pointerId, [e.clientX, e.clientY]); view.turning = false; pinch = 0; });
+canvas.addEventListener('pointermove', e => {
+  const f = fingers.get(e.pointerId); if (!f) return;
+  if (fingers.size === 1) { view.az -= (e.clientX - f[0]) * 0.4; view.el = Math.max(-85, Math.min(85, view.el + (e.clientY - f[1]) * 0.4)); }
+  fingers.set(e.pointerId, [e.clientX, e.clientY]);
+  if (fingers.size === 2) { const [a, b] = [...fingers.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch) view.zoom = Math.max(0.4, Math.min(1.5, view.zoom * pinch / d)); pinch = d; }
+});
+for (const t of ['pointerup','pointercancel']) canvas.addEventListener(t, e => { fingers.delete(e.pointerId); pinch = 0; });
+canvas.addEventListener('wheel', e => { e.preventDefault(); view.turning = false; view.zoom = Math.max(0.4, Math.min(1.5, view.zoom * Math.exp(e.deltaY * 0.0015))); }, { passive:false });
+addEventListener('resize', () => { fit(); });
+
+// ---------- bench-only hooks, for making the pictures and the measurements in the report ----------
+window.cwBrain = {
+  view, state, road: () => road, parts: () => parts.map(m => [m.name, m.userData.key, m.userData.side]),
+  // set what is lit, the view, and (for the signal) hold it at a moment of brain time; then draw once, now
+  set(o){ if (o.lit !== undefined) { state.lit = o.lit; apply(); } if (o.az !== undefined) { view.az = o.az; view.turning = false; } if (o.el !== undefined) view.el = o.el; if (o.zoom) view.zoom = o.zoom;
+    if (o.turning !== undefined) view.turning = o.turning; held = o.ms === undefined || o.ms === null ? null : o.ms / MS_PER_SECOND; W = 0; draw(performance.now()); return [W, H, firstSeen]; },
+  png(){ draw(performance.now()); return canvas.toDataURL('image/png'); },
+  stats: () => ({ firstSeen, fps: frames.length })
+};
+
+fit(); place();
+load().then(() => { ready = true; last = performance.now();
+  // bench only: ?lit=better|switch|signal, ?az= ?el= ?zoom= for the view, ?ms= to hold the signal at a moment of brain time
+  if (Q.get('lit') || Q.get('az') || Q.get('ms')) { const n = k => Q.get(k) === null ? undefined : +Q.get(k);
+    window.cwBrain.set({ lit: Q.get('lit') || '', az: n('az'), el: n('el'), zoom: n('zoom'), ms: n('ms'), turning: Q.get('az') ? false : undefined }); }
+  if (Q.get('measure')) setTimeout(() => {       // ?measure=<port>: after eight seconds of turning, post what was measured to a local listener
+    fetch('http://localhost:' + Q.get('measure') + '/save?name=measure-' + (Q.get('lit') || 'plain'), { method:'POST', body: JSON.stringify({ firstSeenMs: Math.round(firstSeen), framesInLastSecond: frames.length, size:[W, H], pixelRatio: renderer.getPixelRatio(), agent: navigator.userAgent }) }).catch(() => {}); }, 8000);
+}).catch(e => { document.getElementById('wait').textContent = 'The brain did not arrive: ' + e.message; console.error(e); });
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
