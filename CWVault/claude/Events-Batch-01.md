@@ -507,7 +507,7 @@ Their descendants kept sailing. Over the next two thousand years, they reached H
 **Summary (34 words)**
 From about 900 BCE. In what is now central Nigeria, people made life-size clay heads with carefully shaped eyes and hair. They are among the oldest large sculptures from Africa south of the Sahara. *More*
 
-**More (292 words)**
+**More (294 words)**
 
 ```
 About 9,100 years after the ice
@@ -515,19 +515,17 @@ About 9,100 years after the ice
             or about 2,900 years ago.
 ```
 
-A clay head, about as big as a real one, looks straight ahead. Its eyes are shaped like triangles, with a hole in the middle of each for the pupil. Its hair is piled up in neat rolls and buns. Someone spent a long time on it.
+A clay head, about as big as a real one, looks straight ahead. Its eyes are shaped like triangles, each with a hole in the middle for the pupil, and its hair is piled up in neat rolls and buns. Someone spent a long time on it, between two and three thousand years ago.
 
-It is between two and three thousand years old.
-
-In 1943, men digging for tin near the village of Nok, in central Nigeria, found a clay head in the gravel. A clerk at the mine took it home and used it as a scarecrow in a yam field for a year. Then a young archaeologist named Bernard Fagg saw it. Since then, hundreds of heads and parts of figures have been found across the region.
+In 1943, men digging for tin near the village of Nok, in central Nigeria, found a clay head in the gravel. A clerk at the mine took it home and used it as a scarecrow in a yam field for a year, until a young archaeologist named Bernard Fagg saw it. Since then, hundreds of heads and parts of figures have been found across the region.
 
 Nok is the name of the village. It is not the name of the people who made the heads.
 
 What do we know about them?
 
-They farmed pearl millet and cowpeas. They were among the first people in West Africa to make iron, heating iron ore with charcoal in clay furnaces until a lump of iron formed inside. Their figures were hollow, built up from coils of clay and then carved, with walls thin enough to fire without cracking. Almost none has been found whole.
+They farmed pearl millet and cowpeas, and they were among the first people in West Africa to make iron, heating iron ore with charcoal in clay furnaces until a lump of iron formed inside. They built their figures hollow, from coils of clay, and then carved them, keeping the walls thin enough to fire without cracking. Almost none has been found whole.
 
-Most of what we don't know was lost more recently. For fifty years, Nok figures have been dug up and sold to collectors. When a figure is pulled out of the ground in a hurry, nobody writes down where it was, what lay beside it, or how deep it was buried. The figure survives. The answers to how it was used do not.
+Most of what we don't know was lost more recently. For fifty years, Nok figures have been dug up and sold to collectors, and when a figure is pulled out of the ground in a hurry, nobody writes down where it was, what lay beside it, or how deep it was buried. The figure survives, but the answers to how it was used do not.
 
 Were the heads portraits? Were they made for the dead? Nobody knows.
 
