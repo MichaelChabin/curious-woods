@@ -1,5 +1,5 @@
 ---
-status: built. Batch 1, 30 Sept 2026. Twenty events, all before 1500, chosen by Claude and kept whole by Michael. Written to Timeline-Stories.md and the two samples; checked by four independent fact-checkers, whose changes are applied. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
+status: built. Batch 1, 30 Sept 2026. Twenty events, all before 1500, chosen by Claude and kept whole by Michael. Written to Timeline-Stories.md and the two samples; checked by four independent fact-checkers, whose changes are applied. Read by Claude, editor pass 1, 15 Nov 2026 (Editor-Pass-01.md); changes applied. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
 role: The first batch of generated timeline events, for the After the Ice bench and, later, the shared list.
 ---
 
@@ -37,7 +37,7 @@ We know roughly where it started because of the plant's own genes. Every kind of
 
 The earliest maize cobs that survive, from a dry cave in Oaxaca, are about 6,250 years old. They are about as long as the top joint of your thumb.
 
-A scientist named George Beadle once heated teosinte seeds in a pan. They popped. So one of the first things people could have done with teosinte, even before it changed, was make popcorn.
+A geneticist named George Beadle once heated teosinte seeds in a pan. They popped. So one of the first things people could have done with teosinte, even before it changed, was make popcorn.
 
 Today more maize is grown than any other grain.
 
@@ -86,7 +86,7 @@ Where the North Sea is now, there was land.
 
 The ice had melted, and the sea was rising, but slowly. Between Britain and the rest of Europe lay low hills, marshes and rivers, where people hunted and fished. Archaeologists call it Doggerland. By the time of the slide much of it was already underwater, and what was left may have been islands.
 
-Did the wave finish Doggerland? Some scientists think it did. Others think the islands lasted a while longer. Nobody knows how many people lived there, or how many were lost.
+Did the wave finish Doggerland? Some archaeologists think it did. Others think the islands lasted a while longer. Nobody knows how many people lived there, or how many were lost.
 
 Fishing boats still pull up bones and stone tools from the bottom of the North Sea.
 
@@ -295,6 +295,8 @@ The great irons still lie on the plain, and people can touch them.
 
 **Notes for us.** The beat: iron from the sky, known to the people who lived there long before scientists. Checks: Gancedo about 30.8 t, found 2016, third after Hoba (about 60 t) and Ahnighito (about 30.9 t); El Chaco about 28.8 t. "Heavy as five elephants" assumes about 6 t per elephant. Crater field about 18–20 km long, at least 26 craters, largest about 115 m (Laguna Negra). The Moqoit name, Piguen N'onaxa, is from the Argentine government; no source translates it, so the text translates only the Spanish. 1576 expedition under Hernán Mexía de Miraval, looking for iron the local people used for weapons. Dating: 4,000–4,700 years, from charcoal (sources range 4,000–5,000). Whether Cassidy and Renard 1996 holds the charcoal dates is not yet confirmed. "More than a hundred tonnes" is the safe total.
 
+*Watch:* Gancedo third-heaviest meteorite found · last checked 15 Nov 2026 · every year
+
 ---
 
 ---
@@ -327,11 +329,11 @@ People lived on Thera. Their town, now called Akrotiri, was buried in ash, and t
 
 What happened to Crete?
 
-Crete is a large island about 110 kilometres to the south. A people now called the Minoans lived there, in towns with great palaces. Ash from Thera fell on Crete. At Palaikastro, on Crete's eastern end, scientists have found a layer of sea sand, broken pottery and shells thrown far inland by a tsunami.
+Crete is a large island about 110 kilometres to the south. A people now called the Minoans lived there, in towns with great palaces. Ash from Thera fell on Crete. At Palaikastro, on Crete's eastern end, geologists have found a layer of sea sand, broken pottery and shells thrown far inland by a tsunami.
 
 In 1939, a Greek archaeologist named Spyridon Marinatos suggested that the eruption destroyed the Minoans. It is a good story, and for a long time many people believed it. But digging since then shows that the Minoan palaces carried on for several generations after the eruption. They were hurt, but not destroyed. What finally ended them is still argued about.
 
-Even the date is argued about. Some methods give about 1600 BCE. Others give about 1500. Scientists have been arguing for fifty years.
+Even the date is argued about. Some methods give about 1600 BCE. Others give about 1500. The argument has run for fifty years.
 
 The ships anchor where the middle of the island used to be.
 
@@ -407,7 +409,7 @@ Every recording you can find is someone's best guess.
 **Summary (30 words)**
 About 1550 BCE. In Egypt, a scribe named Ahmes copied out a scroll of arithmetic problems and their answers. It shows how Egyptians multiplied using nothing but doubling and adding. *More*
 
-**More (303 words)**
+**More (308 words)**
 
 ```
 About 8,450 years after the ice
@@ -415,7 +417,7 @@ About 8,450 years after the ice
             or about 3,600 years ago.
 ```
 
-A scroll of papyrus, a kind of paper made from reeds, is about five metres long. It begins with a promise: it will give "accurate reckoning for inquiring into things, and the knowledge of all things."
+A scroll of papyrus, a kind of paper made from reeds, is about five metres long. It begins with a promise. It will show the right way to reckon, and with it a way into the knowledge of everything that exists.
 
 Then come more than eighty problems, with their answers.
 
@@ -459,7 +461,7 @@ It is in the British Museum. At the very start of the scroll, the scribe's name 
 **Summary (31 words)**
 About 850 BCE. Sailors from the islands near New Guinea, whose pottery is called Lapita, reached Tonga, in the middle of the Pacific. No human had ever set foot there before. *More*
 
-**More (293 words)**
+**More (296 words)**
 
 ```
 About 9,150 years after the ice
@@ -483,7 +485,7 @@ They did not travel light. They brought pigs, dogs and chickens, and plants to g
 
 About 2,850 years ago they reached Tonga. At a place called Nukuleka, archaeologists have found some of the oldest Lapita pottery in Tonga, dated by the coral tools buried with it.
 
-Their descendants kept sailing. Over the next two thousand years, they reached Hawaii, New Zealand and Easter Island.
+Their descendants kept sailing. Over the next two thousand years, they reached Hawaiʻi, Aotearoa (New Zealand) and Rapa Nui (Easter Island).
 
 **Pictures wanted:** a Lapita pot or sherd with dentate stamping (Commons; museum sources in Fiji, Vanuatu or New Caledonia).
 
@@ -505,7 +507,7 @@ Their descendants kept sailing. Over the next two thousand years, they reached H
 **Summary (34 words)**
 From about 900 BCE. In what is now central Nigeria, people made life-size clay heads with carefully shaped eyes and hair. They are among the oldest large sculptures from Africa south of the Sahara. *More*
 
-**More (287 words)**
+**More (292 words)**
 
 ```
 About 9,100 years after the ice
@@ -523,7 +525,7 @@ Nok is the name of the village. It is not the name of the people who made the he
 
 What do we know about them?
 
-They farmed pearl millet and cowpeas. They were among the first people in West Africa to make iron, heating rock in clay furnaces until the metal ran out. Their figures were hollow, built up from coils of clay and then carved, with walls thin enough to fire without cracking. Almost none has been found whole.
+They farmed pearl millet and cowpeas. They were among the first people in West Africa to make iron, heating iron ore with charcoal in clay furnaces until a lump of iron formed inside. Their figures were hollow, built up from coils of clay and then carved, with walls thin enough to fire without cracking. Almost none has been found whole.
 
 Most of what we don't know was lost more recently. For fifty years, Nok figures have been dug up and sold to collectors. When a figure is pulled out of the ground in a hurry, nobody writes down where it was, what lay beside it, or how deep it was buried. The figure survives. The answers to how it was used do not.
 
@@ -539,7 +541,7 @@ Nobody knows what the people who made them called themselves.
 - Peter Breunig, ed., *Nok: African Sculpture in Archaeological Context* (Africa Magna Verlag, 2014). How the figures were made.
 - Gabriele Franke, "A chronology of the Central Nigerian Nok Culture," *Journal of African Archaeology*, 2016. The dates.
 
-**Notes for us.** The beat: faces from people whose own name is lost. Checks: the 1943 head from tin mining near Nok (a piece had turned up in 1928, so it is not called the first); the scarecrow story, a clerk's, not the manager's (Fagg). Terracottas from about 900 BCE; the culture from about 1500 BCE. Pearl millet and cowpea (Breunig and Rupp). Iron smelting by about 500 BCE; "among the first in West Africa" is the usual view. Looting: widely documented. "Among the oldest large sculptures south of the Sahara" is the usual claim.
+**Notes for us.** The beat: faces from people whose own name is lost. Checks: the 1943 head from tin mining near Nok (a piece had turned up in 1928, so it is not called the first); the scarecrow story, a clerk's, not the manager's (Fagg). Terracottas from about 900 BCE; the culture from about 1500 BCE. Pearl millet and cowpea (Breunig and Rupp). Iron smelting by about 500 BCE; "among the first in West Africa" is the usual view. Looting: widely documented. "Among the oldest large sculptures south of the Sahara" is the usual claim. Bloomery smelting; the iron is never molten (Historical Metallurgy Society, Datasheet 301).
 
 ---
 
@@ -612,7 +614,7 @@ It is in a library in Venice.
 
 A message from a king is carved on a rock face in India. Part of it reads:
 
-"One hundred and fifty thousand people were deported, one hundred thousand were killed, and many times that number perished."
+"A hundred and fifty thousand people were deported, a hundred thousand were killed and many times that number perished."
 
 The king is talking about his own war.
 
@@ -699,10 +701,10 @@ His own book is lost. We know his method from a writer named Cleomedes, who desc
 **Place:** the Antikythera wreck, off the island of Antikythera, Greece (35.89 N, 23.30 E)
 **Replaces:** `antikythera`
 
-**Summary (36 words)**
-About 100 BCE. A Greek ship sank carrying a box of bronze gears that showed the movements of the Sun and Moon and predicted eclipses. Nothing like it is known again for over a thousand years. *More*
+**Summary (37 words)**
+About 100 BCE. A ship sank off Greece carrying a box of bronze gears that showed the movements of the Sun and Moon and predicted eclipses. Nothing like it is known again for over a thousand years. *More*
 
-**More (292 words)**
+**More (294 words)**
 
 ```
 About 9,900 years after the ice
@@ -718,7 +720,7 @@ In 1900, sponge divers sheltering from a storm off the small island of Antikythe
 
 What was it?
 
-It took most of the next century to find out. From the 1950s, a scientist named Derek de Solla Price studied it, and in the 1970s he had it X-rayed. In 2005, a team scanned the pieces in layers, the way a hospital scans a body, and read writing on them that had been hidden for two thousand years.
+It took most of the next century to find out. From the 1950s, a historian of science named Derek de Solla Price studied it, and in the 1970s he had it X-rayed. In 2005, a team scanned the pieces in layers, the way a hospital scans a body, and read writing on them that had been hidden for two thousand years.
 
 It had been a wooden box about the size of a shoebox, with a handle on the side. Turning the handle turned dozens of bronze gears inside. About thirty survive. On the front, pointers showed where the Sun and Moon were among the stars, and a little ball, half silver and half dark, turned to show the phase of the Moon. On the back, dials showed which months would have an eclipse, and when the great athletic games were held.
 
@@ -849,7 +851,7 @@ All that is left of the jar is one paragraph.
 **Summary (31 words)**
 11 May 868. In China, a man named Wang Jie paid to have a book printed from carved wooden blocks. It is the oldest printed book that carries its own date. *More*
 
-**More (319 words)**
+**More (341 words)**
 
 ```
 10,868 years after the ice
@@ -873,7 +875,7 @@ The printing is so clean that it was not a first try. People in China had been p
 
 It was found in a cave. Near the town of Dunhuang, in western China, hundreds of caves were cut into a cliff and painted inside. Around the year 1000, someone filled a small side cave with tens of thousands of scrolls and paintings and walled it up. Nobody knows why.
 
-In 1900, a man looking after the caves found the hidden door. The scroll is now in the British Library in London.
+In 1900, a man looking after the caves found the hidden door. In 1907 Aurel Stein, an archaeologist working for Britain, bought the scroll from him, with thousands of others, for a small sum. The scroll is now in the British Library in London.
 
 It was printed nearly six hundred years before Gutenberg, in Germany, printed his Bible.
 
@@ -887,6 +889,8 @@ Wang Jie made it to be given away, for his mother and father.
 - Valerie Hansen, *The Silk Road: A New History* (Oxford, 2012), chapter on Dunhuang. The sealed cave.
 
 **Notes for us.** The beat: a printed book that says when it was made, by whom, and why. Religion: "a Buddhist teaching" is a plain fact; nothing more is said about its content. Checks: colophon wording follows the British Library's translation; confirm. 11 May 868. About 5.3 m long; seven sheets. Library Cave (Cave 17) sealed about 1000; reason unknown. Found in 1900 by Wang Yuanlu, the cave's caretaker; Aurel Stein acquired it in 1907 (left out, as a second story). Gutenberg's Bible about 1455: "nearly six hundred years" is 587.
+
+*Watch:* where the scroll is kept · last checked 15 Nov 2026 · every year
 
 ---
 
@@ -955,7 +959,7 @@ The cloud is still growing, by more than a thousand kilometres every second.
 **Summary (31 words)**
 About 1300. In southern Africa, the builders of Great Zimbabwe raised walls of fitted granite as high as eleven metres, without mortar. Later, outsiders claimed Africans could not have built them. *More*
 
-**More (305 words)**
+**More (315 words)**
 
 ```
 11,300 years after the ice
@@ -967,7 +971,7 @@ A curving wall of granite blocks stands on a plain in southern Africa. It is mor
 
 Inside the wall stands a solid tower of stone, shaped like a cone.
 
-This is Great Zimbabwe. It was the centre of a kingdom that grew rich trading gold. Its gold went to towns on the coast of East Africa, and from there across the Indian Ocean. At Great Zimbabwe, archaeologists have found glass beads from India, pottery from China and Persia, and a coin from the coastal city of Kilwa. Perhaps ten thousand people lived there at its height.
+This is Great Zimbabwe. It was the centre of a kingdom that grew rich trading gold. Its gold went to towns on the coast of East Africa, and from there across the Indian Ocean. At Great Zimbabwe, archaeologists have found glass beads from India, pottery from China and Persia, and a coin from the coastal city of Kilwa. How many people lived there at its height is argued: estimates run from a few thousand to nearly twenty thousand.
 
 Who built it?
 
@@ -979,7 +983,7 @@ From the 1870s on, some of the Europeans who came said the walls must have been 
 
 In 1905, and again in 1929, archaeologists who dug carefully showed that everything they found was African. Even so, the government of the country, run by white settlers, kept the old story alive in guidebooks and school books all through the 1960s and 1970s.
 
-In 1980, the country became independent. It took its new name from the ruins: Zimbabwe, from a Shona word for houses of stone.
+In 1980, the country became independent. It took its new name from the ruins: Zimbabwe, from Shona words for houses of stone.
 
 **Pictures wanted:** the Great Enclosure wall and the conical tower (Commons); one of the soapstone birds found at the site.
 
@@ -988,5 +992,6 @@ In 1980, the country became independent. It took its new name from the ruins: Zi
 - Gertrude Caton-Thompson, *The Zimbabwe Culture: Ruins and Reactions* (Oxford, 1931). The 1929 excavation.
 - Innocent Pikirayi, *The Zimbabwe Culture: Origins and Decline of Southern Zambezian States* (AltaMira, 2001). The kingdom and its trade.
 - UNESCO World Heritage Centre, "Great Zimbabwe National Monument." Dimensions and dates.
+- Shadreck Chirikure and others, "What was the population of Great Zimbabwe (CE1000 – 1800)?", *PLoS ONE*, 2017.
 
 **Notes for us.** The beat: a great African city, and the people who refused to believe it was African. This is the batch's "someone wrong for a long time". Religion: "people from the Bible" (the Queen of Sheba story) is stated as a claim without comment. Checks: Great Enclosure wall about 250 m long, up to 11 m high, up to 6 m thick. Built about 1100–1450; height of its power about 1300s. Population probably never above about 10,000. Trade goods: Persian and Chinese ceramics, Indian beads, a Kilwa coin. Randall-MacIver 1905, Caton-Thompson 1929. The settler government's censorship of the African-origin view in the 1970s is well documented (Garlake left the country in 1970). "Zimbabwe" from dzimba dza mabwe, "houses of stone" (one of two proposed derivations).

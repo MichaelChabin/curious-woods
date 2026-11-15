@@ -109,7 +109,7 @@ The hour still has sixty minutes.
 **Summary (30 words)**
 1752. In Philadelphia, Benjamin Franklin flew a kite under a thunder cloud and drew sparks from a key tied to its string. He wanted to know whether lightning was electricity. *More*
 
-**More (348 words)**
+**More (354 words)**
 
 ```
 11,752 years after the ice
@@ -119,7 +119,7 @@ The hour still has sixty minutes.
 
 Under a dark summer sky, a man stood in a shed in a field, holding a kite string by a silk ribbon. The kite was made of a silk handkerchief, with a sharp wire sticking up from its top, and a metal key hung on the string just above the ribbon. The loose threads of the string stood out on end, and when the man brought his knuckle near the key, a spark jumped to it. Once rain had soaked the string, the sparks came freely.
 
-The man was Benjamin Franklin, a printer in Philadelphia, and his question was whether lightning is electricity.
+The man was Benjamin Franklin, who had made his living as a printer in Philadelphia, and his question was whether lightning is electricity.
 
 In 1752, electricity was something people made for themselves, by rubbing glass tubes or spinning glass globes. It could be stored in a glass jar coated with metal foil, called a Leyden jar, and let go all at once with a bang. A spark and a bang looked like lightning and thunder, only much smaller.
 

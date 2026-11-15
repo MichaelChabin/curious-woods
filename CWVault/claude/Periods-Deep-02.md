@@ -474,7 +474,7 @@ About 201 million years ago. Just after the dying that ended the Triassic, big m
 About 201 million years ago.
 ```
 
-On 23 August 1966, in Rocky Hill, Connecticut, Edward McCarthy was digging with a bulldozer for a new state building when he turned over a slab of sandstone. On it were footprints, each with three long toes, some longer than a grown-up's foot. More digging found about two thousand of them. The building went somewhere else. Over hundreds of the tracks the state put a dome, and around it a park.
+On 23 August 1966, in Rocky Hill, Connecticut, Edward McCarthy was digging with a bulldozer for a new state building when he turned over a slab of sandstone. On it were footprints, each with three long toes, some longer than an adult's foot. More digging found about two thousand of them. The building went somewhere else. Over hundreds of the tracks the state put a dome, and around it a park.
 
 The rock was mud at the edge of a shallow lake, in a valley where the land was pulling apart as Pangaea cracked (*Pangaea cracks*). The mud has cracks where it dried in the sun, ripples from the water, and the dents of raindrops.
 

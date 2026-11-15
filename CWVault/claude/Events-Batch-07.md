@@ -415,7 +415,7 @@ At the trial the next spring, the driver, Guillaume-Marie Pellerin, was fined fi
 **Summary (38 words)**
 28 December 1895. In a room below a café in Paris, ten short moving pictures made by Louis and Auguste Lumière were shown to an audience that had paid to see them. Each film lasted about fifty seconds. *More*
 
-**More (340 words)**
+**More (335 words)**
 
 ```
 11,895 years after the ice
@@ -433,7 +433,7 @@ There is no train on the programme.
 
 You may have read that when the Lumières showed a film of a train coming into a station, the audience screamed and ran. The first known showing of a train film was in Lyon a month later, in January 1896, and the best-known version seems to have been filmed in 1897. Martin Loiperdinger, a German historian of film, points out that no report of a panic can be found in the newspapers of the time.
 
-In the summer of 1896, the Russian writer Maxim Gorky saw the Lumières' films and wrote about the train: "Suddenly something clicks, everything vanishes and a train appears on the screen. It speeds straight at you — watch out!" Then he imagined it crashing into the room. He did not say that anyone ran.
+In the summer of 1896, the Russian writer Maxim Gorky saw the Lumières' films and wrote that with a click everything vanished and a train appeared on the screen, coming straight at the audience. Then he imagined it crashing into the room. He did not say that anyone ran.
 
 **Pictures wanted:** frames from *La Sortie de l'usine Lumière à Lyon* and *L'Arroseur arrosé* (Louis Lumière died in 1948, so the films are out of copyright; use older copies, not the Institut Lumière's restorations); Marcellin Auzolle's 1896 poster for the Cinématographe, showing the gardener and the hose (public domain).
 

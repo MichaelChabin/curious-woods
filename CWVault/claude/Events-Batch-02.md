@@ -1,5 +1,5 @@
 ---
-status: built. Batch 2, 30 Sept 2026. Twenty-one events, 1500 to now, outside Europe. Chosen by Claude; Michael kept all twenty and asked for Hubble to be split into two (Leavitt's rule, and the VAR! plate). Checked by four independent fact-checkers, whose changes are applied. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
+status: built. Batch 2, 30 Sept 2026. Twenty-one events, 1500 to now, outside Europe. Chosen by Claude; Michael kept all twenty and asked for Hubble to be split into two (Leavitt's rule, and the VAR! plate). Checked by four independent fact-checkers, whose changes are applied. Read by Claude, editor pass 2, 15 Nov 2026 (Editor-Pass-02.md); changes applied. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use).
 role: The second batch of generated timeline events, for the Time Machine bench and, later, the shared list.
 ---
 
@@ -16,7 +16,7 @@ Written in round 2 of Prompt-Generate-Timeline-Events.md and checked in round 3.
 **Summary (30 words)**
 1500s. Portuguese ships carried chilli peppers from the Americas to Goa, in India. Within a century chillies were growing across Asia, in places whose cooking now seems impossible without them. *More*
 
-**More (285 words)**
+**More (289 words)**
 
 ```
 About 11,540 years after the ice
@@ -40,7 +40,7 @@ In Korea, red chilli in kimchi came later still, in the 1700s, and became common
 
 So the cooking that tastes oldest in many parts of Asia uses a plant that arrived only a few lifetimes ago.
 
-Today India grows more chillies than any other country.
+In the 2020s India has grown more dried chillies than any other country.
 
 **Pictures wanted:** chilli plants with ripe fruit; a spice market in India (Commons).
 
@@ -54,6 +54,8 @@ Today India grows more chillies than any other country.
 
 ---
 
+*Watch:* largest grower of dried chillies · last checked 15 Nov 2026 · every year
+
 ---
 
 ## 2. Timbuktu's books
@@ -65,7 +67,7 @@ Today India grows more chillies than any other country.
 **Summary (33 words)**
 1500s. Timbuktu, a trading town at the edge of the Sahara, in what is now Mali, was full of scholars and books. Families there kept hundreds of thousands of handwritten books for centuries. *More*
 
-**More (279 words)**
+**More (281 words)**
 
 ```
 About 11,550 years after the ice
@@ -75,7 +77,7 @@ About 11,550 years after the ice
 
 In 2012, men with guns took over the town of Timbuktu, at the southern edge of the Sahara desert. Soon afterwards, a librarian named Abdel Kader Haidara began packing books into metal trunks.
 
-He and his helpers moved them at night, a few trunks at a time, by donkey cart, car and boat, hundreds of kilometres south to the city of Bamako. By the time they were done, they had moved more than three hundred thousand books.
+He and his helpers moved them at night, a few trunks at a time, by donkey cart, car and boat, hundreds of kilometres south to the city of Bamako. By their own count, when they were done they had moved more than three hundred thousand books.
 
 Why were there so many books in a desert town?
 
@@ -108,10 +110,10 @@ Nobody knows exactly how many books there are. Many families still keep theirs p
 **Year:** 1545 · precision: year · kind: place
 **Place:** Potosí, Bolivia (19.59 S, 65.75 W)
 
-**Summary (35 words)**
-1545. High in the Andes, in what is now Bolivia, Spanish colonists began mining a mountain made rich with silver. Its silver changed prices as far away as China. The miners paid a terrible price. *More*
+**Summary (34 words)**
+1545. High in the Andes, in what is now Bolivia, Spanish colonists began mining a mountain full of silver. Its silver changed prices as far away as China. The miners paid a terrible price. *More*
 
-**More (282 words)**
+**More (284 words)**
 
 ```
 11,545 years after the ice
@@ -121,7 +123,7 @@ Nobody knows exactly how many books there are. Many families still keep theirs p
 
 A red-brown mountain rises above a city in the Andes. It is called Cerro Rico, the Rich Hill. Inside, it is full of tunnels, so many that its top has begun to sink.
 
-It is still being mined, almost five hundred years later.
+It was still being mined in 2026, almost five hundred years later.
 
 In 1545, Spanish colonists in the Andes learned of silver in this mountain. The ore near the top was so rich that silver could be melted straight out of it. Within thirty years, the town at its foot, Potosí, had become one of the biggest cities in the Americas. It stands about 4,000 metres high, where the air is thin and nothing much grows.
 
@@ -146,6 +148,8 @@ In Spanish there is still a saying for something priceless: "vale un Potosí," i
 
 **Notes for us.** The beat: a mountain of silver that tied the world together, and who paid for it. Not a war, but the cost rule applies. Checks: silver found 1545. City about 4,000 m (4,090). Population about 160,000 by about 1610 is often given; "one of the biggest cities in the Americas" is safe. Manila galleons from 1571. Ming taxes paid in silver (Single Whip reform). Mita from 1573 (Viceroy Toledo). Mercury amalgamation from the 1570s. "Eight million dead" is widely repeated and unsupported; the text refuses it. The mountain's summit is subsiding (reported by UNESCO).
 
+*Watch:* Cerro Rico still mined · last checked 15 Nov 2026 · every year
+
 ---
 
 ## 4. Florentine Codex
@@ -157,7 +161,7 @@ In Spanish there is still a saying for something priceless: "vale un Potosí," i
 **Summary (33 words)**
 1577. In Mexico, Nahua scholars and a Spanish friar finished twelve books describing the Aztec world, in the Aztecs' own language and pictures. The Spanish conquest had ended that world fifty years earlier. *More*
 
-**More (286 words)**
+**More (293 words)**
 
 ```
 11,577 years after the ice
@@ -165,13 +169,13 @@ In Spanish there is still a saying for something priceless: "vale un Potosí," i
             or 449 years ago.
 ```
 
-A page shows a small painted picture of people at work. Beside the picture are two columns of writing. The left column is in Spanish. The right column is in Nahuatl, the language of the Aztecs. Say "NAH-wah-tl."
+A page shows a small painted picture of people at work. Beside the picture are two columns of writing. The left column is in Spanish. The right column is in Nahuatl, the language of the Aztecs, who called themselves the Mexica. Say "NAH-wah-tl."
 
 There are about 2,500 pages like it, and nearly as many pictures.
 
 The book was made in Mexico between the 1540s and 1577. Fifty years before, the Aztec capital, Tenochtitlan, had been a city of perhaps two hundred thousand people, built on a lake. In 1521, Spanish soldiers and their Indigenous allies destroyed it. Disease killed far more people than the fighting did.
 
-A Spanish friar named Bernardino de Sahagún wanted to know what the Aztec world had been like. Partly this was so that missionaries would understand the people they were trying to convert. Partly he was simply fascinated. He asked Nahua elders who remembered the old days, and young Nahua scholars who could write both languages, to help him.
+A Spanish friar named Bernardino de Sahagún wanted to know what the Aztec world had been like. Partly this was so that missionaries would understand the people they were trying to convert. Partly, it seems, he was simply fascinated. He asked Nahua elders who remembered the old days, and young Nahua scholars who could write both languages, to help him.
 
 What did they write about?
 
@@ -206,7 +210,7 @@ In 2023 the whole book was put online, free for anyone to read.
 **Summary (36 words)**
 19 February 1600. A volcano in southern Peru erupted in the largest eruption in South America's recorded history. Its ash cooled the whole world, and the next year's summer in Europe and Russia was bitterly cold. *More*
 
-**More (273 words)**
+**More (272 words)**
 
 ```
 11,600 years after the ice
@@ -214,7 +218,7 @@ In 2023 the whole book was put online, free for anyone to read.
             or 426 years ago.
 ```
 
-In the Andes of southern Peru there is a mountain that hardly looks like a volcano. It has no tall cone. Before 1600, the people living nearby did not know it was one.
+In the Andes of southern Peru there is a mountain that hardly looks like a volcano. It has no tall cone.
 
 On 19 February 1600, it exploded.
 
@@ -226,11 +230,11 @@ A large eruption throws a fine mist high into the sky, higher than any clouds. T
 
 In 1601, the summer in much of Europe and Asia was one of the coldest in six hundred years. We know this because trees grow less in a cold year, and their growth rings for 1601 are thin. In France the grapes ripened late. In Russia, the harvest failed that year, and the next, and the one after. About two million people died in the famine that followed.
 
-Did the volcano cause the Russian famine? Many scientists think it helped. The cold year matches. But crops fail for many reasons, and nobody can be sure.
+Did the volcano cause the Russian famine? Many climate scientists and historians think it helped. The cold year matches. But crops fail for many reasons, and nobody can be sure.
 
 This is the same thing that happened after the eruption of Tambora, in Indonesia, 215 years later, when Europe had a year without a summer.
 
-The mountain's name is from Quechua, the language of the Andes. Say "WHY-na-poo-TEE-na." It is often translated as "young volcano" or "new volcano."
+The mountain was given its name after the eruption. The name is from Quechua, the language of the Andes. Say "WHY-na-poo-TEE-na." It is often translated as "young volcano" or "new volcano."
 
 **Pictures wanted:** the crater today (Commons); a tree-ring picture showing a thin ring (NOAA or Commons).
 
@@ -295,10 +299,10 @@ He was buried beside her. In the whole building, his tomb is the only thing that
 **Year:** 1662 · precision: year · kind: crop or animal
 **Place:** Mauritius, in the Indian Ocean (20.20 S, 57.50 E)
 
-**Summary (37 words)**
-1662. Sailors shipwrecked on the island of Mauritius, in the Indian Ocean, reported seeing dodos. It is the last sighting most scientists accept. Less than a hundred years after the first Dutch ships, the bird was gone. *More*
+**Summary (38 words)**
+1662. Sailors shipwrecked on the island of Mauritius, in the Indian Ocean, reported seeing dodos. It is the last sighting that is widely accepted. Less than a hundred years after the first Dutch ships, the bird was gone. *More*
 
-**More (291 words)**
+**More (292 words)**
 
 ```
 11,662 years after the ice
@@ -314,11 +318,11 @@ For millions of years, no people, cats, rats or pigs lived on Mauritius. A bird 
 
 Dutch sailors began stopping at Mauritius in 1598. They ate dodos, though they complained about the taste. They also brought animals: rats that came ashore from the ships, and pigs and monkeys that they let loose. These ate the dodos' eggs and chicks.
 
-In 1662, a Dutch sailor named Volkert Evertsz, shipwrecked on the island, reported catching dodos on a small islet off the coast. It is the last sighting most scientists accept. By about 1690, there were none.
+In 1662, a Dutch sailor named Volkert Evertsz, shipwrecked on the island, reported catching dodos on a small islet off the coast. It is the last sighting that is widely accepted. By about 1690, there were none.
 
 What did a dodo really look like?
 
-Nobody knows exactly. The famous paintings show a round, fat bird. But some of those painters worked from dodos that had been overfed on ships, or from stuffed birds, or from other paintings. From its bones, scientists now think the living bird was slimmer.
+Nobody knows exactly. The famous paintings show a round, fat bird. But some of those painters worked from dodos that had been overfed on ships, or from stuffed birds, or from other paintings. From its bones, zoologists now think the living bird was slimmer.
 
 Almost nothing of the bird itself survives: skeletons, pieced together from bones dug out of a swamp on Mauritius in the 1860s, and one dried head and one foot, in a museum in Oxford.
 
@@ -447,7 +451,7 @@ On a sunny day, the Samrat Yantra still tells the time.
 **Summary (32 words)**
 1769. On Tahiti, a Polynesian navigator named Tupaia joined Captain Cook's ship and drew a chart of more than seventy islands. Europeans could not read it properly for over two hundred years. *More*
 
-**More (308 words)**
+**More (309 words)**
 
 ```
 11,769 years after the ice
@@ -461,7 +465,7 @@ The man who knew these islands was named Tupaia.
 
 He was born on the island of Raiatea, near Tahiti. He was a priest and a navigator, trained in the knowledge of the sea: how to find your way by the stars, the swells, the winds and the birds. He was descended from the people who first sailed into the Pacific, thousands of years before.
 
-In 1769, the English ship Endeavour, under Captain James Cook, came to Tahiti. When it left, Tupaia went with it. He helped the English talk to the people of the islands. In New Zealand, he could speak with the Māori, whose language is close to Tahitian.
+In 1769, the English ship Endeavour, under Captain James Cook, came to Tahiti. When it left, Tupaia went with it. He helped the English talk to the people of the islands. In Aotearoa (New Zealand), he could speak with the Māori, whose language is close to Tahitian.
 
 While he was on board, he drew his map, and the ship's officers copied it.
 
@@ -469,7 +473,7 @@ What was strange about it?
 
 The islands were in roughly the right places, but not quite. Some seemed to be in the wrong direction altogether. For more than two hundred years, people who studied the chart thought Tupaia had made mistakes, or that the English had copied it wrong.
 
-In 2019, two researchers suggested another reading, though not everyone agrees. Tupaia had not drawn the ocean from above, as a European chart does. He had drawn it the way a navigator thinks: each island placed by the direction you would sail to reach it, from wherever you were starting. Read that way, the chart makes sense.
+In 2019, two scholars suggested another reading, though not everyone agrees. Tupaia had not drawn the ocean from above, as a European chart does. He had drawn it the way a navigator thinks: each island placed by the direction you would sail to reach it, from wherever you were starting. Read that way, the chart makes sense.
 
 Tupaia never came home. He died of illness in 1770, in Batavia, now Jakarta, on the way to England.
 
@@ -497,7 +501,7 @@ The copy made on the ship is in the British Library. If the new reading is right
 **Summary (38 words)**
 1 January 1804. After thirteen years of war, people who had been enslaved in the French colony of Saint-Domingue declared it the free country of Haiti. It was the first country founded by an uprising of enslaved people. *More*
 
-**More (299 words)**
+**More (301 words)**
 
 ```
 11,804 years after the ice
@@ -505,7 +509,7 @@ The copy made on the ship is in the British Library. If the new reading is right
             or 222 years ago.
 ```
 
-In 1789, the French colony of Saint-Domingue, in the Caribbean, was the richest colony in the world. It grew about four tenths of the world's sugar and more than half of Europe's coffee.
+In 1789, the French colony of Saint-Domingue, in the Caribbean, was the richest colony in the world. It grew about four tenths of the sugar and more than half of the coffee that Europe consumed.
 
 About half a million of the people there were enslaved.
 
@@ -564,7 +568,7 @@ Digging began in 1859. It took ten years.
 
 Who dug it?
 
-For the first years, most of the work was done by Egyptian peasants, forced to leave their villages and dig. Tens of thousands worked at a time, many with nothing but picks and baskets, in the heat, often short of water. Thousands died, of heat, thirst and disease. Nobody knows how many.
+For the first years, most of the work was done by Egyptian farmers, forced to leave their villages and dig. Tens of thousands worked at a time, many with nothing but picks and baskets, in the heat, often short of water. Thousands died, of heat, thirst and disease. Nobody knows how many.
 
 In 1864, forced labour on the canal was stopped. After that, most of the digging was done by huge steam machines, some of them designed for the job.
 
@@ -596,7 +600,7 @@ The canal has no locks. The two seas are at almost the same height, so the water
 **Summary (28 words)**
 27 August 1883. The volcanic island of Krakatoa, in what is now Indonesia, blew apart. It made the loudest sound in recorded history, heard nearly 5,000 kilometres away. *More*
 
-**More (302 words)**
+**More (310 words)**
 
 ```
 11,883 years after the ice
@@ -608,11 +612,11 @@ On Rodrigues, a small island in the Indian Ocean, the chief of police heard what
 
 It was a volcano, nearly five thousand kilometres away.
 
-The volcano was Krakatoa, an island between Java and Sumatra, in what is now Indonesia. It had been rumbling for months. On the morning of 27 August 1883, it blew itself apart in a series of explosions. The biggest came just after ten o'clock.
+The volcano was Krakatau, which English speakers have long spelled Krakatoa, an island between Java and Sumatra, in what is now Indonesia. It had been rumbling for months. On the morning of 27 August 1883, it blew itself apart in a series of explosions. The biggest came just after ten o'clock.
 
 Is that really the loudest sound ever?
 
-It is the loudest in recorded history. At 160 kilometres away, it was louder than a rock concert heard from the front row. Sailors on a ship about 60 kilometres away wrote that half the crew's eardrums had burst.
+It is the loudest in recorded history. At 160 kilometres away, it was louder than a rock concert heard from the front row. The captain of a ship about 60 kilometres away wrote that half his crew's eardrums had burst.
 
 Sound is a wave of pressure moving through the air. Most of the Krakatoa wave was too low to hear, but instruments caught it. In cities around the world, weather instruments that measure air pressure showed a jump as the wave passed. Then another jump, hours later, as the wave came back the other way. Some instruments saw it pass seven times, as it went back and forth around the Earth for five days.
 
@@ -644,7 +648,7 @@ Most of the island was gone. In 1927, a new island rose out of the sea where it 
 **Summary (26 words)**
 30 June 1908. Over a forest in Siberia, something from space exploded in the air. It flattened millions of trees. No crater has ever been found. *More*
 
-**More (287 words)**
+**More (306 words)**
 
 ```
 11,908 years after the ice
@@ -656,15 +660,15 @@ At a trading post in the Siberian forest, early on a summer morning, a man was s
 
 The explosion was about sixty kilometres away.
 
-It happened on 30 June 1908, over a forest near the Tunguska River in Siberia. Almost no one lived there. The blast flattened millions of trees across an area bigger than a large city, all lying with their tops pointing away from the middle. At the very middle, strangely, trees were left standing, stripped of their branches, like telegraph poles.
+It happened on 30 June 1908, over a forest near the Tunguska River in Siberia. Few people lived there. Those who did were Evenki reindeer herders, and some were camped close enough that the blast threw down their tents. The blast flattened millions of trees across an area bigger than a large city, all lying with their tops pointing away from the middle. At the very middle, strangely, trees were left standing, stripped of their branches, like telegraph poles.
 
 Nobody reached the place for nineteen years.
 
-In 1927, a scientist named Leonid Kulik led an expedition into the forest. He expected to find a crater and a huge meteorite. He found the flattened trees, and the standing poles at the centre. He found no crater. He searched for years and never found the meteorite either.
+In 1927, a mineralogist named Leonid Kulik led an expedition into the forest. He expected to find a crater and a huge meteorite. He found the flattened trees, and the standing poles at the centre. He found no crater. He searched for years and never found the meteorite either.
 
 So what was it?
 
-Most scientists now think it was a piece of rock, or perhaps part of a comet, a few tens of metres across. It came in from space at tremendous speed. The air in front of it pushed back so hard that it heated up and burst apart several kilometres above the ground, before it could hit. The blast did the damage. Almost nothing was left to land.
+Most astronomers now think it was a piece of rock, or perhaps part of a comet, a few tens of metres across. It came in from space at tremendous speed. The air in front of it pushed back so hard that it heated up and burst apart several kilometres above the ground, before it could hit. The blast did the damage. Almost nothing was left to land.
 
 For a few nights afterwards, the sky over Europe glowed so bright that people in London could read a newspaper outdoors at midnight.
 
@@ -804,7 +808,7 @@ On a glass photograph of the sky, someone has written a small letter N next to a
 
 The exclamation mark is the story.
 
-The photograph was taken on the night of 5 October 1923, with the largest telescope in the world, on Mount Wilson in California. It shows part of the Andromeda nebula, a faint oval smudge that you can see without a telescope on a dark autumn night.
+The photograph was taken on the night of 5 October 1923, with the largest telescope in the world, on Mount Wilson in California. It shows part of the Andromeda nebula, a faint oval smudge that you can see without a telescope on a dark, moonless night.
 
 At the time, astronomers were arguing about smudges like this one. Some thought they were clouds of gas inside our own galaxy, the Milky Way, which they took to be the whole universe. Others thought they might be galaxies of their own, far outside ours, each made of millions of stars.
 
@@ -865,7 +869,7 @@ The earthquake also pushed up the sea floor, and that made a tsunami: a wave cau
 
 Out in the open ocean, a tsunami is low and fast, moving about as fast as a jet plane. Ships barely notice it. When it reaches shallow water near land, it slows down and piles up.
 
-About fifteen hours after the earthquake, the tsunami reached Hawaii, more than 10,000 kilometres away. It killed sixty-one people in the town of Hilo. About twenty-two hours after the earthquake, it reached Japan, on the far side of the Pacific. Nobody there had felt anything. More than a hundred people died there.
+About fifteen hours after the earthquake, the tsunami reached Hawaiʻi, more than 10,000 kilometres away. It killed sixty-one people in the town of Hilo. About twenty-two hours after the earthquake, it reached Japan, on the far side of the Pacific. Nobody there had felt anything. More than a hundred people died there.
 
 Two days after the earthquake, a volcano in Chile called Cordón Caulle began to erupt, and kept erupting for weeks.
 
@@ -895,7 +899,7 @@ The dead trees are still standing in the marsh.
 **Summary (30 words)**
 20 July 1969. Two American astronauts, Neil Armstrong and Buzz Aldrin, landed on the Moon and walked on it. They were the first people ever to stand on another world. *More*
 
-**More (296 words)**
+**More (300 words)**
 
 ```
 11,969 years after the ice
@@ -921,7 +925,7 @@ On the leg of the landing craft they left a metal sign. It says: "Here men from 
 
 Over the next three and a half years, ten more people walked on the Moon. The last left in December 1972.
 
-The footprints are still there. Nobody has walked on the Moon since.
+The footprints are still there. As of 2026, nobody has walked on the Moon since 1972.
 
 **Pictures wanted:** Aldrin's bootprint (NASA, AS11-40-5878, public domain); Earth seen from the Moon (NASA, public domain).
 
@@ -933,6 +937,8 @@ The footprints are still there. Nobody has walked on the Moon since.
 **Notes for us.** The beat: the first people to stand on another world, and the prints they left. It is the batch's only event off the Earth; the map marks the launch site (Michael's ruling, 30 Sept), and the panel should say so. Checks: landing 20 July 1969, 20:17 UTC; first step 21 July 02:56 UTC (still 20 July in the Americas). Bootprint photo was Aldrin's, taken deliberately. Low-fuel landing: about 25–45 seconds of fuel "to a bingo call" is argued about; "less than a minute" is safe. Moonwalk about 2 h 31 min. Samples 21.5 kg. Plaque text exact. Twelve moonwalkers in all; the last, December 1972. "Nobody since": true as of September 2026 (Artemis II flew around the Moon in April 2026 without landing; the next landing is planned no earlier than 2028). Do not say nobody has been to the Moon since. The Lunar Surface Journal is now at nasa.gov/history/alsj.
 
 ---
+
+*Watch:* crewed Moon landing · last checked 15 Nov 2026 (from the batch's own note of Sept 2026; not searched again) · every 6 months
 
 ---
 
@@ -984,6 +990,8 @@ Ali Maow Maalin spent his later years working to vaccinate children in Somalia a
 
 ---
 
+*Watch:* smallpox the only human disease eradicated (Guinea worm and polio are close) · last checked 15 Nov 2026 · every year
+
 ---
 
 ## 21. The Green Belt
@@ -995,7 +1003,7 @@ Ali Maow Maalin spent his later years working to vaccinate children in Somalia a
 **Summary (32 words)**
 1977. In Kenya, Wangari Maathai began paying women a small sum for every tree seedling they grew that survived. The Green Belt Movement she started has planted tens of millions of trees. *More*
 
-**More (299 words)**
+**More (302 words)**
 
 ```
 11,977 years after the ice
@@ -1023,7 +1031,7 @@ It was not always peaceful work. When Maathai stood up against plans to build on
 
 In 2004 she was awarded the Nobel Peace Prize. She was the first African woman to receive it.
 
-By the time she died in 2011, the Green Belt Movement had planted more than thirty million trees. Today the count is more than fifty million.
+By the time she died in 2011, the Green Belt Movement had planted more than thirty million trees. By 2026 the movement's own count was more than fifty million.
 
 **Pictures wanted:** Wangari Maathai planting a tree (Commons or Green Belt Movement; licence to check); women with tree seedlings.
 
@@ -1034,3 +1042,5 @@ By the time she died in 2011, the Green Belt Movement had planted more than thir
 - Green Belt Movement (greenbeltmovement.org). Current tree count.
 
 **Notes for us.** The beat: tens of millions of trees, planted one paid seedling at a time. Checks: 5 June 1977, World Environment Day, seven trees in Kamukunji Park. First woman in East and Central Africa with a doctorate (1971, University of Nairobi). The frogs' eggs stream: from Unbowed. Payment per surviving seedling: check the timing (how long a tree must survive). Uhuru Park (1989) and Karura Forest (1998–99) protests; arrested and beaten (documented). Nobel 2004, first African woman. Died 25 September 2011. Tree counts: 30 million by about 2004; "over 51 million" on the movement's site.
+
+*Watch:* Green Belt Movement tree count · last checked 15 Nov 2026 · every year

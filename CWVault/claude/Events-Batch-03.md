@@ -1,5 +1,5 @@
 ---
-status: built. Batch 3, 1 Oct 2026. Fifteen events from the worklist (Events-To-Upgrade.md), the first fifteen keeps in date order, from the ice letting go to the Great Pyramid. Upgraded from the September blurbs, which were used as starting points only. Researched by three agents, written in one pass, checked by four independent fact-checkers whose changes are applied. The checkers' web searches ran out partway, so each event says what was confirmed by the checker, what only by the research pass, and what by neither. Awaiting Michael's reading. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use). (11 Oct, Michael, from Periods-Deep-03.md: sea-level falls are given as ranges, the same in every file.) *Ice lets go*: the sea "120 to 130 metres lower", not "about 130".
+status: built. Batch 3, 1 Oct 2026. Fifteen events from the worklist (Events-To-Upgrade.md), the first fifteen keeps in date order, from the ice letting go to the Great Pyramid. Upgraded from the September blurbs, which were used as starting points only. Researched by three agents, written in one pass, checked by four independent fact-checkers whose changes are applied. The checkers' web searches ran out partway, so each event says what was confirmed by the checker, what only by the research pass, and what by neither. Read by Claude, editor pass 2, 15 Nov 2026 (Editor-Pass-02.md); changes applied. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use). (11 Oct, Michael, from Periods-Deep-03.md: sea-level falls are given as ranges, the same in every file.) *Ice lets go*: the sea "120 to 130 metres lower", not "about 130".
 role: The third batch of timeline events, and the first upgraded from the September Time Machine. Each event names the old record it replaces.
 ---
 
@@ -17,7 +17,7 @@ Written in round 2 of Prompt-Upgrade-Timeline-Events.md and checked in round 3. 
 **Summary (35 words)**
 About 10,000 BCE. After a hundred thousand years of cold, the world warmed for good, and it happened fast. Ice drilled from Greenland shows the warming took only a few decades. This line starts there. *More*
 
-**More (320 words)**
+**More (322 words)**
 
 ```
 Year 0 after the ice
@@ -39,7 +39,7 @@ Then, 1,492 metres down in one of the Greenland ice cores, something changes. In
 
 The ice at that depth is about 11,700 years old. This line starts near there, at a round number.
 
-Why did the cold end so suddenly? Scientists are still working on it.
+Why did the cold end so suddenly? Climate scientists are still working on it.
 
 The great ice sheets took thousands of years more to melt, and the sea took thousands of years to rise. But the cold had broken, and it has not come back.
 
@@ -81,7 +81,7 @@ Nine small figs, burnt black, lie in the remains of a house. With them are hundr
 
 The house is at a place called Gilgal, in the Jordan Valley, not far from the town of Jericho. Say "GIL-gahl." The people who lived there about 11,400 years ago hunted and gathered their food. They also stored wild barley, wild oats and acorns.
 
-In 2006, three scientists, Mordechai Kislev, Anat Hartmann and Ofer Bar-Yosef, looked closely at the figs, and found something odd about the seeds.
+In 2006, three archaeologists, Mordechai Kislev, Anat Hartmann and Ofer Bar-Yosef, looked closely at the figs, and found something odd about the seeds.
 
 A wild fig tree needs help to make good seeds. A tiny wasp crawls inside the young fig and carries pollen in. Without the wasp, most wild figs fall off before they ripen.
 
@@ -95,7 +95,7 @@ A fig tree has a second way to make more of itself. Cut off a branch, push it in
 
 Not everyone agrees.
 
-Other scientists answered the same year. Fig trees of this kind, they said, also make some figs with good seeds, so they can spread on their own. The people at Gilgal may simply have picked figs from wild trees that happened to be sweet.
+Other botanists answered the same year. Fig trees of this kind, they said, also make some figs with good seeds, so they can spread on their own. The people at Gilgal may simply have picked figs from wild trees that happened to be sweet.
 
 Planted, or picked? Nobody can be sure.
 
@@ -254,7 +254,7 @@ Rice-growing in that part of China had begun long before. At Shangshan, about 9,
 
 How long did it take to turn wild rice into a crop that keeps its grain?
 
-That is still argued. Fuller and others think it took thousands of years. Other scientists study tiny specks of glassy stone that form inside rice leaves. They think the change had already begun about 10,000 years ago. The two sides are measuring different things, and nobody has settled it.
+That is still argued. Fuller and others think it took thousands of years. Other archaeologists study tiny specks of glassy stone that form inside rice leaves. They think the change had already begun about 10,000 years ago. The two sides are measuring different things, and nobody has settled it.
 
 Today rice is the main food of more than half the people in the world.
 
@@ -302,7 +302,7 @@ And under the floors, people buried their dead. They slept and cooked and worked
 
 How many people lived there?
 
-When James Mellaart first dug at Çatalhöyük, in the 1960s, he guessed five to seven thousand. Later guesses went as high as ten thousand. Later, from 1993, a team led by Ian Hodder dug much more slowly, sometimes spending a whole season on a single house. They found that not every house was lived in at the same time.
+When James Mellaart first dug at Çatalhöyük, in the 1960s, he guessed five to seven thousand. Later guesses went as high as ten thousand. Then, from 1993, a team led by Ian Hodder dug much more slowly, sometimes spending a whole season on a single house. They found that not every house was lived in at the same time.
 
 In 2024 two archaeologists, Ian Kuijt and Arkadiusz Marciniak, went through the evidence again. In a typical year, they think, about 600 to 800 people lived there. On their count, Çatalhöyük was less like a city than a large, crowded village that lasted a very long time.
 
@@ -358,7 +358,7 @@ The layers of ice from just after the flood show a sudden cold. For about a cent
 
 Why would a lake make the world colder?
 
-Fresh water is lighter than salt water, so it floats on top. Many scientists think a great sheet of fresh water spread over the North Atlantic and slowed an ocean current that carries warm water north.
+Fresh water is lighter than salt water, so it floats on top. Many oceanographers think a great sheet of fresh water spread over the North Atlantic and slowed an ocean current that carries warm water north.
 
 What did the cold mean for people?
 
@@ -450,7 +450,7 @@ But someone was almost certainly there.
 **Summary (36 words)**
 About 5000 BCE. The Sahara was grassland, with lakes and rivers. People there herded cattle, milked them, and painted them on the rocks. Over the next two thousand years the rains failed and the desert came. *More*
 
-**More (317 words)**
+**More (318 words)**
 
 ```
 About 5,000 years after the ice
@@ -474,7 +474,7 @@ When food is cooked in a clay pot, a little of its fat soaks into the clay and s
 
 So the people of the green Sahara did not keep cattle only for meat. About 7,000 years ago, they were milking them.
 
-Then the rains moved south again. Some scientists think the change came quickly, over a few hundred years. Others think it came at different times in different places, later the farther south you go. Either way, the lakes dried up and the grass died, and the herders and their cattle moved away.
+Then the rains moved south again. Some climate scientists think the change came quickly, over a few hundred years. Others think it came at different times in different places, later the farther south you go. Either way, the lakes dried up and the grass died, and the herders and their cattle moved away.
 
 The paintings stayed where they were.
 
@@ -661,7 +661,7 @@ The wheel from the marsh is in a museum in Ljubljana. It is more than 5,000 year
 **Summary (32 words)**
 About 1320 BCE. A ship sank off the south coast of Turkey carrying ten tonnes of copper and one tonne of tin. Melted together, they would have made eleven tonnes of bronze. *More*
 
-**More (315 words)**
+**More (334 words)**
 
 ```
 About 8,680 years after the ice
@@ -679,11 +679,11 @@ It was carrying about ten tonnes of copper, in flat slabs with a stubby handle a
 
 Ten to one. That is the recipe for bronze.
 
-Copper alone is soft. A copper blade bends and soon loses its edge. Melt about one part tin with ten parts copper and you get bronze, which is about twice as hard. It can be poured into a mould to make an axe, a sword, a pot or a statue. By the time this ship sailed, people had been making bronze for well over a thousand years.
+Copper alone is soft. A copper blade bends and soon loses its edge. Melt about one part tin with ten parts copper and you get bronze, which is much harder. It can be poured into a mould to make an axe, a sword, a pot or a statue. By the time this ship sailed, people had been making bronze for well over a thousand years.
 
 So why carry the two metals separately?
 
-Because they came from different places. Copper is found in many places. Tin is found in only a few. In 2022 scientists traced the ship's tin. About a third of it came from mines in what is now Uzbekistan, thousands of kilometres to the east. The rest came from Kestel, in Turkey.
+Because they came from different places. Copper is found in many places. Tin is found in only a few. In 2022 a team of archaeologists and chemists argued that about a third of the tin came from mines in what is now Uzbekistan, thousands of kilometres to the east, and the rest from Kestel, in Turkey. Other specialists answered the next year that the evidence cannot show it. The argument is not settled.
 
 The ship carried other things too: glass, ebony, ivory, amber from the shores of the Baltic Sea, and a small gold beetle with the name of Nefertiti, a queen of Egypt.
 
@@ -715,7 +715,7 @@ The copper and the tin are in a museum in Bodrum, farther west along the same co
 **Summary (38 words)**
 About 2600 BCE. In a desert valley in Peru, people built a city of stepped stone mounds and sunken plazas, about as old as Egypt's great pyramids. They made no pottery and left no writing. They left flutes. *More*
 
-**More (304 words)**
+**More (305 words)**
 
 ```
 About 7,400 years after the ice
@@ -737,7 +737,7 @@ Who were the people of Caral?
 
 They grew cotton, squash and beans. Down on the coast, other people fished for anchovies and sardines. Shady thinks the two traded: the farmers gave cotton for fishing nets, and the fishers gave dried fish.
 
-They made no pottery. No writing has been found. Shady has said she found a quipu, a bundle of knotted strings like those that people in the Andes used much later to keep records. She has not yet published it, so nobody else can judge.
+They made no pottery. No writing has been found. Shady has said she found a quipu, a bundle of knotted strings like those that people in the Andes used much later to keep records. By 2026 she had not published it, so nobody else could judge.
 
 No signs of war have been found at Caral, so far.
 
@@ -754,6 +754,8 @@ Someone carved the flutes and played them. Nobody knows what music they made.
 **Notes for us.** The beat: a city with no pottery and no writing, and its flutes. Checks: reed-bag (shicra) dates to 2627 BCE (Shady, Haas and Creamer 2001). Six large pyramidal structures (UNESCO). Pirámide Mayor about 150 × 110 m at the base; heights given variously (28 m, or 18 m), so only the base is used. About 3,000 people (Shady). 32 flutes of pelican and condor bone (Smithsonian 2002); "about 4,500 years old" assumes they date to the main occupation, checker to confirm. 23 km inland. Cotton for fish: Shady's view, so "Shady thinks". A 2022 bone-chemistry study found plants were most of the diet at Caral; not needed here. Quipu announced 2005, never formally published. "No signs of war": absence of evidence, hedged with "so far"; a possible sacrifice on the main mound is left out as a second story. "About as old as the great pyramids" is safe; "older than the pyramids" is a myth. Ruth Shady began 1994 (some sources 1996). Smithsonian author and title: checker to confirm.
 
 **Checked (1 Oct 2026, four independent checkers).** Changed: sources give 32 or 33 flutes, and the only date found for them is about 4,200 years ago, so "more than thirty" and "more than 4,000 years old". Confirmed: 23 km, about 3,000 people, base 150 × 110 m, six mounds, UNESCO 2009, Shady from 1994, cotton, squash, beans, anchovies and sardines, the quipu reported, both papers. The reed-bag dating and the Smithsonian article were confirmed in the research pass; the checker's fetches were refused.
+
+*Watch:* Shady's quipu published · last checked 15 Nov 2026 (from the batch's Checked line of 1 Oct 2026) · every year
 
 ---
 

@@ -503,7 +503,7 @@ Add up the first row and you get 60. The third also comes to 60. The middle one 
 
 The numbers 11, 13, 17 and 19 are the only prime numbers between 10 and 20: numbers that can't be divided evenly except by 1 and by themselves. In the middle row, 3 is followed by its double, 6, and 4 by its double, 8; then 10 comes before its half, 5.
 
-What does it mean? De Heinzelin wondered, in 1962, whether the people of Ishango knew about primes. Alexander Marshack argued that the notches kept track of the moon over six months. Vladimir Pletser and Dirk Huylebrouck have argued that they show counting in twelves. In 2026 a team asked grown-ups to work with notches as small as these, and found they could not count them exactly enough to do sums.
+What does it mean? De Heinzelin wondered, in 1962, whether the people of Ishango knew about primes. Alexander Marshack argued that the notches kept track of the moon over six months. Vladimir Pletser and Dirk Huylebrouck have argued that they show counting in twelves. In 2026 a team asked adults to work with notches as small as these, and found they could not count them exactly enough to do sums.
 
 At first the layers were thought to be about 8,500 to 11,000 years old. In 1987 Alison Brooks and Catherine Smith dated them again, and the bone is now thought to be about 20,000 years old.
 
