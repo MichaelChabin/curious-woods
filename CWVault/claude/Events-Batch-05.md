@@ -1,5 +1,5 @@
 ---
-status: built. Batch 5, DRAFT 8 Oct 2026. Thirteen events from the worklist (Events-To-Upgrade.md), the next thirteen keeps in date order, from Anaxagoras to Gutenberg; Michael approved the list the same day. Researched by four agents with web search, one share each; written in one pass from their fact sheets, with Michael's note of 8 Oct in mind (uncertainty is one of history's great lessons: say "about" or "nobody knows" unless a date is really known). Checked the same day by four independent agents with web search (three took a share each; one read only dates, units and numbers); their changes are applied, and each event ends with what was changed, confirmed and not confirmed. Awaiting Michael's reading.
+status: built. Batch 5, DRAFT 8 Oct 2026. Thirteen events from the worklist (Events-To-Upgrade.md), the next thirteen keeps in date order, from Anaxagoras to Gutenberg; Michael approved the list the same day. Researched by four agents with web search, one share each; written in one pass from their fact sheets, with Michael's note of 8 Oct in mind (uncertainty is one of history's great lessons: say "about" or "nobody knows" unless a date is really known). Checked the same day by four independent agents with web search (three took a share each; one read only dates, units and numbers); their changes are applied, and each event ends with what was changed, confirmed and not confirmed. Read by Claude, editor pass 3, 15 Nov 2026 (Editor-Pass-03.md); changes applied.
 role: The fifth batch of timeline events, upgraded from the September Time Machine. Each event names the old record it replaces.
 ---
 
@@ -185,6 +185,8 @@ The Aztecs believed that the gods had met at Teotihuacan to make the Sun. What t
 **Notes for us.** The beat: a huge city whose own name, language and rulers are lost, so that everything in it carries a stranger's name. Research pass: population about 100,000 (Smith 2019, "the most reasonable estimate"); Millon (1973) 125,000 or more, up to 200,000; Cowgill (2015) about 85,000. Pyramid of the Sun 66 m high, 224 m at the base (Sarabia 2020; UNESCO gives 75 m and 225 × 222, so the INAH figure is used). The September blurb's two-kilometre avenue is wrong: the avenue runs more than 4 km (Boston University's Tlajinga project says more than 5); "runs for kilometres" avoids choosing. Name and translations: UNESCO "where the gods were created"; Sullivan otherwise. Mexica arrival about 1325, roughly 750 years after the fall: "hundreds of years". Language: Kaufman (Totonacan or Mixe-Zoquean), Otomi and Nahua proposals; Hansen and Helmke, *Current Anthropology*, October 2025, call theirs a hypothesis; under a year old, so said to be new and unsettled. Burning about 550 (Beramendi-Orosco 2009, a century earlier than once thought); cause disputed (revolt, invasion, drought). The Aztec belief about the Sun is stated as their belief, per the religion rule. Left out: the tunnel and liquid mercury under the Feathered Serpent temple (a good story of its own, and a second argument); Tikal and the "arrival of strangers" in 378 (Stuart himself hedges the link). Year: the old 200 is the start of the city's height; the event moves to about 400, the middle of it. For the checkers: "as tall as a twenty-storey building" for 66 m (at 3.3 m a storey, yes); "one of the largest cities in the Americas" in the summary (the September blurb said "in the world", which has no source); whether the apartment compounds were stone (stone and adobe with plaster; adjust); "painted and carved signs on walls and pots" (murals and ceramics; check); the Aztec belief that the gods met there to make the Sun (Sahagún, *Florentine Codex* book 7).
 
 **Checked (8 Oct 2026, four independent checkers).** Changed: the distance from Mexico City (UNESCO about 50 km, Wikipedia about 40) is now "less than fifty kilometres"; the signs were painted, not carved; Hansen and Helmke argue for an *ancestor* of Nahuatl, so "an early language from which Nahuatl later grew"; Millon's 200,000 is "one well-known estimate" (others ran higher still); Beramendi-Orosco's full title, and it dates the end of the city's height, not the burning (the burning about 550 is in many sources; Wikipedia: "sacked and burned around 550"). Confirmed: Smith et al. 2019 as cited, about 100,000, stone apartment compounds, height about 200–550; Sarabia 66 × 224 m; twenty storeys; UNESCO's translation; the Aztec names; the avenue 2–4+ km; Kaufman; the *Florentine Codex* (book 7) on the gods making the Sun; the Copenhagen release of 6 Oct 2025.
+
+*Watch:* whether other scholars accept Pharao Hansen and Helmke's 2025 reading · last checked 15 Nov 2026 (from the batch's Checked line of 8 Oct 2026) · every year
 
 ---
 
@@ -528,7 +530,7 @@ The new figures spread slowly. In 1299, almost a hundred years after the book, t
 **Summary (31 words)**
 About 1280. People sailing from the islands of eastern Polynesia reached Aotearoa, New Zealand, one of the last large lands on Earth to be settled. The date comes partly from rats. *More*
 
-**More (346 words)**
+**More (347 words)**
 
 ```
 About 11,280 years after the ice
@@ -540,9 +542,9 @@ In 1939, near the mouth of the Wairau River, at the top of Te Waipounamu ("teh w
 
 The place is a long strip of shingle called Te Pokohiwi ("teh poh-koh-HEE-wee"), the Wairau Bar. Digging there over the next twenty-odd years uncovered the graves of forty-four people and more than three thousand things they had made or used, among them a necklace of more than a hundred dolphin teeth. Te Pokohiwi is one of the oldest places where people are known to have lived in Aotearoa ("ah-oh-teh-ah-ROH-ah").
 
-Some of the people buried there may have been born far away. In 2013 scientists studied chemical traces in their bones, which record what a person ate in the years before death, and in their teeth, which record where a person grew up. One group had eaten alike and grown up in similar places; the scientists suggested they were perhaps among the first arrivals.
+Some of the people buried there may have been born far away. In 2013 a team studied chemical traces in their bones, which record what a person ate in the years before death, and in their teeth, which record where a person grew up. One group had eaten alike and grown up in similar places; the team suggested they were perhaps among the first arrivals.
 
-When did people first arrive? The kiore, the Pacific rat, could only have reached Aotearoa in a canoe, with people, so the oldest rats date the first people. Some scientists once thought that was two thousand years ago. In 2008 Janet Wilmshurst and her colleagues dated rat bones again, along with seeds that rats had gnawed. Nothing was older than about 1280.
+When did people first arrive? The kiore, the Pacific rat, could only have reached Aotearoa in a canoe, with people, so the oldest rats date the first people. Some archaeologists once thought that was two thousand years ago. In 2008 Janet Wilmshurst and her colleagues dated rat bones again, along with seeds that rats had gnawed. Nothing was older than about 1280.
 
 There is a second clock. About 1314, the volcano Tarawera erupted and spread a layer of ash across the North Island. The first signs of people clearing forest lie just below that ash.
 

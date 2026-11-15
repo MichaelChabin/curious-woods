@@ -1,5 +1,5 @@
 ---
-status: built. Batch 4, DRAFT 1 Oct 2026. Fifteen events from the worklist (Events-To-Upgrade.md), the next fifteen keeps in date order, from Stonehenge to Aeschylus. Researched by three agents with web search. Rewritten the same day after Michael's note: labels cut to a word or two, and the prose made to read as good prose for adults (longer, joined sentences; fewer one-line paragraphs), on the model of his own edit of Pythagoras. Checked the same day by four independent fact-checkers with web search; their changes are applied, and each event's notes say what was changed, confirmed and not confirmed. Awaiting Michael's reading.
+status: built. Batch 4, DRAFT 1 Oct 2026. Fifteen events from the worklist (Events-To-Upgrade.md), the next fifteen keeps in date order, from Stonehenge to Aeschylus. Researched by three agents with web search. Rewritten the same day after Michael's note: labels cut to a word or two, and the prose made to read as good prose for adults (longer, joined sentences; fewer one-line paragraphs), on the model of his own edit of Pythagoras. Checked the same day by four independent fact-checkers with web search; their changes are applied, and each event's notes say what was changed, confirmed and not confirmed. Read by Claude, editor pass 3, 15 Nov 2026 (Editor-Pass-03.md); changes applied.
 role: The fourth batch of timeline events, upgraded from the September Time Machine. Each event names the old record it replaces.
 ---
 
@@ -31,7 +31,7 @@ Those big stones are called sarsens ("SAR-senz"). A typical one weighs about twe
 
 The smaller stones inside the ring, called bluestones, came much farther. They were brought from the Preseli Hills in Wales, about 230 kilometres away.
 
-Then, in 2024, came a surprise. Deep inside the ring lies a flat stone of about six tonnes, called the Altar Stone. When scientists dated tiny mineral grains in chips of the stone, the grains matched rock in the far northeast of Scotland, more than 750 kilometres away. Some scientists have since questioned that, and the argument is not over.
+Then, in 2024, came a surprise. Deep inside the ring lies a flat stone of about six tonnes, called the Altar Stone. When geologists dated tiny mineral grains in chips of the stone, the grains matched rock in the far northeast of Scotland, more than 750 kilometres away. Some geologists have since questioned that, and the argument is not over.
 
 How do you move a six-tonne stone 750 kilometres? Nobody knows. The people who built Stonehenge had no writing and left no record. Some think the Altar Stone came around the coast by boat; others think it was dragged over land on wooden sledges. Nobody knows, either, why anyone would bring stones so far when there was stone close at hand.
 
@@ -50,6 +50,8 @@ The Altar Stone from Scotland still lies in the middle of the ring, under two st
 **Notes for us.** The beat: stones from three places, one of them 750 km away, and nobody knows how or why. Research pass: sarsens average about 20–25 t (Nash 2020; English Heritage gives 25 tons); 50 of 52 match West Woods, about 25 km north. Bluestones from Carn Goedog and Craig Rhos-y-felin, about 230 km (Parker Pearson 2019; English Heritage says 240). Altar Stone about 6 t, from the Orcadian Basin, at least 750 km (Clarke 2024). Sarsens raised about 2500 BCE; the site began about 3000 BCE. Midsummer sunrise "just to the left of the Heel Stone"; midwinter sunset once between the uprights of the great trilithon (English Heritage). The old blurb's "five elephants" fits only the largest stone; "three elephants" assumes about 6–7 t each and a 20-t stone. "Taller than a house of two storeys": uprights are typically 6–7 m above ground. Left out: Brian John's view that glaciers carried the bluestones (a second argument; most specialists accept the quarries). For the checkers: Clarke's first name (Anthony J. I. Clarke); whether "tiny grains of mineral" fairly describes the dating method (zircon and rutile grains); whether the Altar Stone lies under one or two fallen stones; the elephant comparison.
 
 **Checked (1 Oct 2026, four independent checkers).** Changed: only the tallest stones clear a two-storey house; the grains were dated in chips of the stone (zircon, apatite, rutile); the Altar Stone lies under two stones from the fallen great trilithon; "three big elephants" (a bull is about 6–7 t). Added: a 2026 reply by Ciborowski and Nash questions the Scottish source (seen only as reported on sarsen.org, Sept 2026), so the summary says "probably" and the More says the argument is not over. Confirmed: 20 t, West Woods 25 km and 50 of 52, Preseli 230 km, 6 t and at least 750 km, midsummer and midwinter alignments, built in stages from about 3000 BCE, sarsens about 2500 BCE, all four references (Clarke is Anthony J. I. Clarke).
+
+*Watch:* the Altar Stone's Scottish source, still argued · last checked 15 Nov 2026 (from the batch's Checked line of 1 Oct 2026) · every year
 
 ---
 
@@ -203,7 +205,7 @@ For years, farmers near Anyang dug up the bones and sold them as "dragon bones,"
 **Summary (36 words)**
 About 900 BCE. Around the eastern Mediterranean, making iron became common. Copper and tin, the metals of bronze, are rare. Iron is in rock almost everywhere. Metal no longer had to come from far away. *More*
 
-**More (344 words)**
+**More (347 words)**
 
 ```
 About 9,100 years after the ice
@@ -211,7 +213,7 @@ About 9,100 years after the ice
             or about 2,900 years ago.
 ```
 
-In the tomb of Tutankhamun ("toot-ahnk-AH-mun"), a young king of Egypt who died about 3,350 years ago, lay a dagger with a gold handle and a blade of iron. The iron came from the sky. In 2016 scientists found nickel and cobalt in the blade, mixed with the iron the way they are mixed in meteorites, which are pieces of rock or metal from space that have reached the ground. In the young king's time iron was a treasure, and kings sent gifts of it to other kings.
+In the tomb of Tutankhamun ("toot-ahnk-AH-mun"), a young king of Egypt who died about 3,350 years ago, lay a dagger with a gold handle and a blade of iron. The iron came from the sky. In 2016 a team using X-rays found nickel and cobalt in the blade, mixed with the iron the way they are mixed in meteorites, which are pieces of rock or metal from space that have reached the ground. In the young king's time iron was a treasure, and kings sent gifts of it to other kings.
 
 About four hundred years later, at a place called Tell Hammeh in the Jordan Valley, people were making iron so often that they left heaps of waste behind. What had changed?
 
@@ -418,7 +420,9 @@ It is one of the oldest bridges for water known anywhere. Parts of it still stan
 
 **Notes for us.** The beat: a bridge for a river, and how many stones it took. Research pass: about 280 × 22 m, about 9 m high at the arches; built about 703–688 BCE (Fales and Del Fabbro 2014). Jacobsen and Lloyd's "more than two million" blocks revised to about 443,520 of about 250 kg each; 250 kg is about three adults at 80 kg. Inscription (type B): "I had an aqueduct of white stone blocks made." The canal ran from Khinis to Nineveh, about 95 km (MacGinnis, Morandi Bonacossi and Ur 2021); the old "fifty kilometres" was the straight-line distance. "One of the oldest bridges for water": Jacobsen and Lloyd's own claim was narrower (the type of structure unknown elsewhere before Roman times); "oldest aqueduct" was an overclaim. Left out: Stephanie Dalley's idea that the Hanging Gardens were Sennacherib's at Nineveh (a second argument; many specialists reject it, e.g. Bagg 2014). For the checkers: Del Fabbro's first name (the research pass had only "R."; the More no longer names either scholar); Fales's first names (Frederick Mario); "the longest ran about 95 kilometres" (whether that is the Jerwan canal); "pointed arches" (corbelled); whether "fields, orchards and gardens" matches Sennacherib's own stated purpose.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: the 95 km canal (Khinis to Nineveh) is not called the longest anywhere, so "one of them"; the inscription says "the meadows of Nineveh" and the canals mostly watered farmland, so "fields and meadows"; Jacobsen was Danish and Lloyd British, so "working for the Oriental Institute in Chicago"; Del Fabbro is Roswitha (confirmed); Iraq 76, 65–98. Confirmed: over 280 m, 22 m, about 9 m; corbelled pointed arches; "I had an aqueduct of white stone blocks made" (Fales and Del Fabbro's translation; Jacobsen and Lloyd read "bridge"); 704–681 BCE; "well in excess of two million"; 443,520 blocks at about 250 kg; the oldest such bridge with remains before Roman times. Not confirmed: that parts still stand with inscribed blocks in place (implied by Fales and Del Fabbro's 2012 visit, not stated).
+**Checked (1 Oct 2026, four independent checkers).** Changed: the 95 km canal (Khinis to Nineveh) is not called the longest anywhere, so "one of them"; the inscription says "the meadows of Nineveh" and the canals mostly watered farmland, so "fields and meadows"; Jacobsen was Danish and Lloyd British, so "working for the Oriental Institute in Chicago"; Del Fabbro is Roswitha (confirmed); Iraq 76, 65–98. Confirmed: over 280 m, 22 m, about 9 m; corbelled pointed arches; "I had an aqueduct of white stone blocks made" (Fales and Del Fabbro's translation; Jacobsen and Lloyd read "bridge"); 704–681 BCE; "well in excess of two million"; 443,520 blocks at about 250 kg; the oldest such bridge with remains before Roman times. Confirmed 15 Nov 2026: remains standing and inscriptions legible on the stones (Columbia, *Mapping Mesopotamian Monuments*; visitors' photographs) (implied by Fales and Del Fabbro's 2012 visit, not stated).
+
+*Watch:* the aqueduct's remains and inscribed blocks · last checked 15 Nov 2026 · every year
 
 ---
 
