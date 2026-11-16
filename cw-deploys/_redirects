@@ -36,9 +36,12 @@
 /experiments/wordplay.html   /active/wordplay.html   301
 /experiments/wordplay        /active/wordplay.html   301
 
-# After the Ice was read at its experiments address, then hung on 28 Sep 2026.
-/experiments/after-the-ice.html   /active/after-the-ice.html   301
-/experiments/after-the-ice        /active/after-the-ice.html   301
+# After the Ice was read at its experiments address, hung on 28 Sep 2026, and retired on 16 Nov 2026
+# on Michael's ruling of 15 Nov ("The after the ice can go"): every old address lands on the Time Machine.
+/experiments/after-the-ice.html   /active/time-machine.html   301
+/experiments/after-the-ice        /active/time-machine.html   301
+/active/after-the-ice.html        /active/time-machine.html   301
+/active/after-the-ice             /active/time-machine.html   301
 
 # Time Machine was built at its experiments address and hung the same day, 30 Sep 2026.
 /experiments/time-machine.html   /active/time-machine.html   301

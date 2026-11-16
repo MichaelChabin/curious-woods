@@ -81,15 +81,6 @@
     "size": "small"
   },
   {
-    "slug": "after-the-ice",
-    "title": "After the Ice",
-    "href": "active/after-the-ice.html",
-    "picture": "art/icons/after-the-ice-icon-a-256.svg",
-    "frame": "#3C5C83",
-    "frameWidth": 8,
-    "size": "medium"
-  },
-  {
     "slug": "time-machine",
     "title": "Time Machine",
     "href": "active/time-machine.html",

@@ -48,7 +48,7 @@ lane E; the China and Egypt viewings keep their own fixed lines with no deep lin
 
 1. When the last rung opens, the Time Machine's Main, Focus window and Detail appear beneath it, the map and the summary below as today, the marker handing to the copper handle. The deep bar above is the Time Machine's Main made recursive, so Main's own line may become the last rung itself; decide with the code in front of us and say which.
 2. `active/time-machine.html` opens on the Earth bar; `active/deep-time.html` redirects to it; the gallery hangs one painting (its picture Michael's choice: the earth from space, or the hourglass). After the Ice's own page comes off the wall or stays, Michael's call.
-3. The Time Machine reads the one store only; `stories/after-the-ice-events.json` retires from the page (After the Ice's page still reads it); her line's old ids resolve through the store's `aliases`.
+3. The Time Machine reads the one store only; `stories/after-the-ice-events.json` retires from the page (After the Ice's page still reads it; *16 Nov 2026: that page is retired and the store is `outdated-files/after-the-ice-events-retired-2026-11-16.json`, read only by `tools/deep-events-from-vault.py`*); her line's old ids resolve through the store's `aliases`.
 4. **The column** is Geometry's left column (`#htw-panel`, `css/htw.css`), holding only words that act: How this works (with the page's explaining paragraphs inside it), What I've seen, Globe · Map · Both, Climate, another guess (present only when the word is *guessed* or *invented*), the curves (lane E), the question.
 5. **The arrival run** on first visit stays as the Time Machine has it today, on the bottom rung. The descent from the Earth bar is deferred (Michael, 9 Oct).
 

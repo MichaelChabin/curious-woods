@@ -13,7 +13,7 @@ three verbs. An idea that is not one of the nouns waits.
 ## Five nouns
 
 **Event.** A point in time, usually with a place. What the store holds today
-(`stories/timeline-events.json`, `stories/after-the-ice-events.json`, `stories/world-events.json`).
+(`stories/timeline-events.json`, `stories/world-events.json`; the September `after-the-ice-events.json` was retired to `outdated-files/` on 16 Nov 2026).
 The label, the summary and the More are Timeline-Stories.md.
 
 **Period.** A span in time, often with a region: the Tang (618–907); a language while it was

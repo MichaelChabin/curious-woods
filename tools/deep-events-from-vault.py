@@ -6,7 +6,7 @@ Reads CWVault/claude/Events-Deep-NN.md (written to Prompt-Deep-Time-Events.md), 
 period batches carry (CWVault/claude/Periods-Deep-NN.md, the sections whose Kind is not 'period', in the same
 event form: Fern spike, Lystrosaurus, Big footprints, Dimetrodon, Lucy; 11 Oct 2026), then the timeline
 batches through tools/events-from-vault.py's own parser (Events-Batch-01.md to -07.md and the samples),
-then the September survivors of cw-deploys/stories/after-the-ice-events.json that no record replaces,
+then the September survivors of outdated-files/after-the-ice-events-retired-2026-11-16.json that no record replaces,
 and writes cw-deploys/stories/deep-time-events.json: one list, oldest first, each record with `ma`
 and `chunk`, and `line` saying whether it is a deep record or an after-the-ice one. The markdown is
 the source; the JSON is generated and never edited by hand. Where a new record and an old one
@@ -252,7 +252,7 @@ def chunk_of(tree, ma):
 CUT = {'lead-socrates-2': 'Heraclitus: a saying, not an event (1 Oct)', 'lead-frank-3': 'Aldini: uneasy about it for a child; he stays in the Frankenstein story (8 Oct)'}
 # Two timeline records cover the sketches the deep tree's bottom rung carried (After the ice: 'The ice lets go', 'Writing').
 SKETCHES_BY_ID = {'the-ice-lets-go': ['The ice lets go'], 'writing-at-uruk': ['Writing']}
-OLD = 'cw-deploys/stories/after-the-ice-events.json'
+OLD = 'outdated-files/after-the-ice-events-retired-2026-11-16.json'   # the September store, retired with After the Ice's page on 16 Nov 2026
 PLACES = 'cw-deploys/stories/places.json'
 
 ROUND = {'decade': 10, 'century': 100, 'millennium': 1000}
@@ -377,7 +377,7 @@ def main():
                   '("earth", …), null until agreed, and WEIGHT is written from it (3 on the Earth line, else at most 2); "after-the-ice" records are the timeline events (Events-Batch-01.md to -07.md and Timeline-Samples.md, parsed by '
                   'tools/events-from-vault.py, the same records as stories/timeline-events.json) with ma added — year (the astronomer\'s year), '
                   'precision (exact, year, decade, century, millennium), place { name, short, lat, lon }, more.dateLine as its parts { count, ordinary, ago }, '
-                  'replaces (the September ids this record retires) — plus the September survivors of stories/after-the-ice-events.json that no '
+                  'replaces (the September ids this record retires) — plus the September survivors of outdated-files/after-the-ice-events-retired-2026-11-16.json (the September store, retired 16 Nov 2026) that no '
                   'record replaces (marked legacy: a blurb as the summary, no More). YEAR is the astronomer\'s year throughout; every record has ma and '
                   'chunk (the path of chunk names in deep-time.json holding its age). WEIGHT is proposed (deep: 3 replaces a tree mark, 2 otherwise; '
                   'timeline: the converter\'s table), Michael\'s to change. ALIASES maps every retired September id to the record that stands for it, '

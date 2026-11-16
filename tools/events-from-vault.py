@@ -376,7 +376,7 @@ def main():
                   'kept as written and marked with kindNote. WEIGHT (1 to 3) is proposed by the tool and marked '
                   'proposed: editorial, Michael\'s to change. place.short is derived for the map label; place.name is '
                   'the source\'s words. REPLACES (batch 3 onward) names the September ids in '
-                  'stories/after-the-ice-events.json that this record retires; the page drops those and keeps their '
+                  'the September store (outdated-files/after-the-ice-events-retired-2026-11-16.json, retired 16 Nov 2026) that this record retires; the page drops those and keeps their '
                   'ids as aliases, so her line still finds them (since 9 Oct 2026 batches 1 and 2 carry Replaces lines too, '
                   'for the pairs the page once held in SAME). Notes for us and the Checked paragraph never enter this file. Read by '
                   'active/time-machine.html; folded into stories/deep-time-events.json by tools/deep-events-from-vault.py.',
