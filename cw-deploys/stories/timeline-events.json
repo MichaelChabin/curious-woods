@@ -4617,14 +4617,14 @@
     },
     "paragraphs": [
      "Under a dark summer sky, a man stood in a shed in a field, holding a kite string by a silk ribbon. The kite was made of a silk handkerchief, with a sharp wire sticking up from its top, and a metal key hung on the string just above the ribbon. The loose threads of the string stood out on end, and when the man brought his knuckle near the key, a spark jumped to it. Once rain had soaked the string, the sparks came freely.",
-     "The man was Benjamin Franklin, who had made his living as a printer in Philadelphia, and his question was whether lightning is electricity.",
+     "The man was Benjamin Franklin, once a printer in Philadelphia, and his question was whether lightning is electricity.",
      "In 1752, electricity was something people made for themselves, by rubbing glass tubes or spinning glass globes. It could be stored in a glass jar coated with metal foil, called a Leyden jar, and let go all at once with a bang. A spark and a bang looked like lightning and thunder, only much smaller.",
      "Two years earlier, Franklin had suggested a way to find out: set up a tall, pointed iron rod on a high place and see whether it drew sparks from a passing storm. His letters were printed in London in 1751, and on 10 May 1752, in a garden at Marly, near Paris, a retired soldier named Coiffier did it and drew sparks. Franklin seems not to have heard about it when he flew his kite.",
      "The kite was not struck by lightning. The sharp wire drew electricity from the storm cloud, and the wet string carried it down. The next year, in St Petersburg, Georg Wilhelm Richmann was killed by lightning that came down a rod he had set up to study it.",
      "Franklin's own account, printed that October, does not say when he flew the kite. The date comes from Joseph Priestley, who wrote fifteen years later, probably from what Franklin told him.",
      "Franklin's answer to the danger was the lightning rod: a pointed iron rod on a roof, with a wire down into the ground. By the end of 1752 there were rods on two buildings in Philadelphia."
     ],
-    "words": 354
+    "words": 349
    },
    "picturesWanted": "a page of the *Pennsylvania Gazette*, 19 October 1752 (Library of Congress or Founders Online; licence to check); a drawing for CW of the kite, the key, the silk ribbon and the shed, from Franklin's and Priestley's descriptions.",
    "references": [
@@ -4791,7 +4791,7 @@
     },
     "paragraphs": [
      "In a room in Bologna, in Italy, a frog had been cut up for study, down to its legs and the nerves that run to them. It lay on a table near a machine that made electricity. One of Luigi Galvani's (\"gal-VAH-nee\") assistants touched a nerve lightly with the tip of a scalpel, and the frog's legs jerked as if they were alive. Someone else noticed that this happened just when a spark leapt from the machine.",
-     "Galvani's notebooks put the first such twitch in the winter of 1780 to 1781. He was a doctor who taught anatomy, the study of how bodies are built, and he spent the next ten years trying to understand what he had seen.",
+     "Galvani's notebooks put the first such twitch in the winter of 1780 to 1781. He was a physician who taught anatomy, the study of how bodies are built, and he spent the next ten years trying to understand what he had seen.",
      "The strangest result came in 1786. Frogs prepared with brass hooks through their spines were hung on an iron railing, and the legs twitched whenever a hook touched the iron. They did it in calm weather as well as in storms, and they did it indoors. There was no machine and no lightning.",
      "So where was the electricity coming from?",
      "Galvani's answer was the frog. In 1791 he published a long report saying that animals make electricity of their own, and that nerves carry it to the muscles and make them move. The metal, he thought, only gave it a path.",
@@ -4850,7 +4850,7 @@
     },
     "paragraphs": [
      "Around the end of 1799, near Como, a town on a lake in northern Italy, Alessandro Volta (\"VOL-tuh\") built a strange stack. At the bottom was a disc of silver or copper, then a disc of zinc, then a disc of card soaked in salt water. Then metal, metal and wet card again, and again, twenty times over. When he touched the top and the bottom with wet hands, he felt a shock, and when he touched them again he felt another. The stack did not run down.",
-     "Volta was a professor of physics at Pavia, and for years he had argued with Luigi Galvani, a doctor in Bologna, who died in 1798. Galvani had found that frogs' legs twitch when they touch two different metals, and he said the electricity came from the frog. Volta said it came from the metals. The stack was his proof. It had no frog in it at all.",
+     "Volta was a professor of physics at Pavia, and for years he had argued with Luigi Galvani, a physician in Bologna, who died in 1798. Galvani had found that frogs' legs twitch when they touch two different metals, and he said the electricity came from the frog. Volta said it came from the metals. The stack was his proof. It had no frog in it at all.",
      "Until then, electricity came one spark at a time. People made it by rubbing glass and stored it in a jar coated with metal foil, and once the jar had given its spark, it had to be charged again. Volta's stack needed no charging. As long as the card stayed wet, it kept electricity moving, a steady flow that we now call a current. Volta called his stack an artificial electric organ, after the electric fish that can give a shock.",
      "On 20 March 1800 he described it in a letter to Joseph Banks, the president of the Royal Society in London. Word of the letter reached a surgeon, Anthony Carlisle, who built a stack of his own with William Nicholson. They put two wires from it into water, and bubbles of gas rose around the wires: the current was splitting the water into hydrogen and oxygen.",
      "In 1801 Volta showed his stack in Paris, with Napoleon Bonaparte, who then ruled France, in the audience, and he was given a gold medal.",
@@ -5635,7 +5635,7 @@
     "file": "CWVault/claude/Events-Batch-07.md",
     "section": "7. Van Gogh in Arles"
    },
-   "label": "Van Gogh in Arles",
+   "label": "Van Gogh",
    "year": 1888,
    "yearAbout": false,
    "precision": "exact",
