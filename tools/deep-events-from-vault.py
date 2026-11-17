@@ -28,6 +28,8 @@ The deep fields, as the batches write them:
   **Place now:**  'none' | 'Erawondoo Hill, Jack Hills, … (26.18 S, 116.93 E)' → placeNow: null | { name, short, lat, lon }
   **Place then:** optional (13 Oct 2026, the asteroid): where it happened, in today's coordinates, for the drifting map to carry on its plate → place: { name, short, lat, lon }
   **Kind:**       a word from the closed list
+  **Id:**         optional (17 Nov 2026): the id to keep when the heading has been renamed; without it the id is the heading's slug
+  **Also called:** optional: the event's old names, comma-separated → alsoCalled: [names], and each name's slug into `aliases`
   **Replaces:**   'sketch *Blue Earth*' | 'a new mark (Michael, 7 Oct)' | "the sketch *X*'s …" → replacesSketch: [labels] | []
   the date line:  one or two lines in a code block, 'About 4.4 billion years ago' / 'and probably begun by …'
                   → more.dateLine: { ago: text, tail: text | null, sure?: text }  (deep lines count ago only; the ruling of 6 Oct;
@@ -147,6 +149,16 @@ def parse_event(block, source, where):
         raise ParseError('%s: no heading' % where)
     name = re.sub(r'\s*\((revised|revision)\)\s*$', '', m.group(1), flags=re.I)   # batch 7's 'Archaeopteryx (revised)' is the same event, revised
     rec = {'id': slug(name), 'source': {'file': source, 'section': lines[0].lstrip('# ').strip()}}
+    # 17 Nov 2026 (Editor-Pass-05-Labels-01.md): a heading may be renamed without moving the record. An **Id:** line
+    # keeps the id the event was first given (the pictures manifest, her line and the aliases all key on it), and an
+    # **Also called:** line lists its old names, comma-separated; main() writes each one's slug into `aliases`, so a
+    # period's or plot's italic name (*Black Earth*, *Moon formed*) still finds the event.
+    keep = field(lines, 'Id', where, required=False)
+    if keep:
+        if keep != slug(keep): raise ParseError('%s: the Id line is not a plain id: %r' % (where, keep))
+        rec['id'] = keep
+    also = field(lines, 'Also called', where, required=False)
+    if also: rec['alsoCalled'] = [a.strip() for a in also.split(',') if a.strip()]
     rec['label'] = field(lines, 'Label', where)
     rec.update(parse_age(field(lines, 'Age', where), where))
     rec['tail'] = parse_tail(field(lines, 'Tail', where), where)
@@ -336,6 +348,13 @@ def main():
     for e in events:
         for oid in e.get('replaces') or []: aliases[oid] = e['id']
     have = set(seen); survivors = []
+    for e in events:                                   # old names of a renamed event (its Also called line)
+        for old_name in e.get('alsoCalled') or []:
+            k = slug(old_name)
+            if k == e['id']: continue
+            if k in have or (k in aliases and aliases[k] != e['id']):
+                print('FAILED %s: its old name %r is already the id or alias of another record' % (e['id'], old_name), file=sys.stderr); sys.exit(1)
+            aliases[k] = e['id']
     for r in old.get('events') or []:
         if r['id'] in aliases or r['id'] in CUT: continue
         if r.get('same') and (r['same'] in have or r['same'] in aliases):
