@@ -6,6 +6,8 @@ role: The decisions that came out of building The Man Who Learned Without Knowin
 # Rulings, September 2026
 
 ## Dates
+
+*Superseded 17 Nov 2026 by Ruling-Dates-01.md.*
 In prose, conventional years, full stop: 1953, 1874, 2008. Michael's reason: "1953 is a word, not a number." The "after the ice" count (11,953) is retired from story text and the atlas.
 
 After-the-ice years are **not** eliminated. They stay on the timeline, where they are distances, not labels. The scale of time is the timeline's job, not the date's. Whether the timeline runs before a story or hangs in the gallery is a separate question (see What-CW-Is; currently leaning gallery).

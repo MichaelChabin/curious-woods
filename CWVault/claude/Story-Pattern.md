@@ -26,6 +26,8 @@ does not point them out.
 
 ## The shape, top to bottom
 
+*Superseded 17 Nov 2026 by Ruling-Dates-01.md.* (Item 1, the date line.)
+
 1. **Title and a date line.** The subtitle carries the after-the-ice count and the plain
    year. No timeline at the top.
 2. **The thing itself, first, with something to do.** "Tap the pearl." She is looking before

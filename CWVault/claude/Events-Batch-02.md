@@ -14,14 +14,12 @@ Written in round 2 of Prompt-Generate-Timeline-Events.md and checked in round 3.
 **Place:** Goa, on the west coast of India (15.50 N, 73.83 E)
 
 **Summary (30 words)**
-1500s. Portuguese ships carried chilli peppers from the Americas to Goa, in India. Within a century chillies were growing across Asia, in places whose cooking now seems impossible without them. *More*
+1500s (about 490 years ago). Portuguese ships carried chilli peppers from the Americas to Goa, in India. Within a century chillies were growing across Asia, in places whose cooking now seems impossible without them. *More*
 
 **More (289 words)**
 
 ```
-About 11,540 years after the ice
-      or about 1540
-            or about 490 years ago.
+About 1540 (about 490 years ago)
 ```
 
 A bowl of curry in southern India. A plate of noodles in Thailand. A pot of kimchi in Korea. All three are hot with chilli.
@@ -65,14 +63,12 @@ In the 2020s India has grown more dried chillies than any other country.
 **Place:** Timbuktu, Mali (16.77 N, 3.01 W)
 
 **Summary (33 words)**
-1500s. Timbuktu, a trading town at the edge of the Sahara, in what is now Mali, was full of scholars and books. Families there kept hundreds of thousands of handwritten books for centuries. *More*
+1500s (about 500 years ago). Timbuktu, a trading town at the edge of the Sahara, in what is now Mali, was full of scholars and books. Families there kept hundreds of thousands of handwritten books for centuries. *More*
 
 **More (281 words)**
 
 ```
-About 11,550 years after the ice
-      or about 1550
-            or about 480 years ago.
+About 1550 (about 500 years ago)
 ```
 
 In 2012, men with guns took over the town of Timbuktu, at the southern edge of the Sahara desert. Soon afterwards, a librarian named Abdel Kader Haidara began packing books into metal trunks.
@@ -111,14 +107,12 @@ Nobody knows exactly how many books there are. Many families still keep theirs p
 **Place:** Potosí, Bolivia (19.59 S, 65.75 W)
 
 **Summary (34 words)**
-1545. High in the Andes, in what is now Bolivia, Spanish colonists began mining a mountain full of silver. Its silver changed prices as far away as China. The miners paid a terrible price. *More*
+1545 (481 years ago). High in the Andes, in what is now Bolivia, Spanish colonists began mining a mountain full of silver. Its silver changed prices as far away as China. The miners paid a terrible price. *More*
 
 **More (284 words)**
 
 ```
-11,545 years after the ice
-      or 1545
-            or 481 years ago.
+1545 (481 years ago)
 ```
 
 A red-brown mountain rises above a city in the Andes. It is called Cerro Rico, the Rich Hill. Inside, it is full of tunnels, so many that its top has begun to sink.
@@ -159,14 +153,12 @@ In Spanish there is still a saying for something priceless: "vale un Potosí," i
 **Place:** Tlatelolco, now part of Mexico City (19.45 N, 99.14 W). The finished copy is in Florence.
 
 **Summary (33 words)**
-1577. In Mexico, Nahua scholars and a Spanish friar finished twelve books describing the Aztec world, in the Aztecs' own language and pictures. The Spanish conquest had ended that world fifty years earlier. *More*
+1577 (449 years ago). In Mexico, Nahua scholars and a Spanish friar finished twelve books describing the Aztec world, in the Aztecs' own language and pictures. The Spanish conquest had ended that world fifty years earlier. *More*
 
 **More (293 words)**
 
 ```
-11,577 years after the ice
-      or 1577
-            or 449 years ago.
+1577 (449 years ago)
 ```
 
 A page shows a small painted picture of people at work. Beside the picture are two columns of writing. The left column is in Spanish. The right column is in Nahuatl, the language of the Aztecs, who called themselves the Mexica. Say "NAH-wah-tl."
@@ -208,14 +200,12 @@ In 2023 the whole book was put online, free for anyone to read.
 **Place:** Huaynaputina, southern Peru (16.61 S, 70.85 W)
 
 **Summary (36 words)**
-19 February 1600. A volcano in southern Peru erupted in the largest eruption in South America's recorded history. Its ash cooled the whole world, and the next year's summer in Europe and Russia was bitterly cold. *More*
+19 February 1600 (426 years ago). A volcano in southern Peru erupted in the largest eruption in South America's recorded history. Its ash cooled the whole world, and the next year's summer in Europe and Russia was bitterly cold. *More*
 
 **More (272 words)**
 
 ```
-11,600 years after the ice
-      or 19 February 1600
-            or 426 years ago.
+19 February 1600 (426 years ago)
 ```
 
 In the Andes of southern Peru there is a mountain that hardly looks like a volcano. It has no tall cone.
@@ -256,14 +246,12 @@ The mountain was given its name after the eruption. The name is from Quechua, th
 **Place:** Agra, India (27.18 N, 78.04 E)
 
 **Summary (30 words)**
-About 1653. In Agra, India, the Mughal emperor Shah Jahan finished a white marble tomb for his wife, Mumtaz Mahal. It took about twenty years and many thousands of workers. *More*
+About 1653 (about 370 years ago). In Agra, India, the Mughal emperor Shah Jahan finished a white marble tomb for his wife, Mumtaz Mahal. It took about twenty years and many thousands of workers. *More*
 
 **More (291 words)**
 
 ```
-About 11,653 years after the ice
-      or about 1653
-            or about 370 years ago.
+About 1653 (about 370 years ago)
 ```
 
 A white building stands at the end of a long garden, beside a river. It has a great dome, four smaller domes, and a tall thin tower at each corner. From the front, its left half is a mirror of its right half. So is the garden. So are the buildings on either side.
@@ -300,14 +288,12 @@ He was buried beside her. In the whole building, his tomb is the only thing that
 **Place:** Mauritius, in the Indian Ocean (20.20 S, 57.50 E)
 
 **Summary (38 words)**
-1662. Sailors shipwrecked on the island of Mauritius, in the Indian Ocean, reported seeing dodos. It is the last sighting that is widely accepted. Less than a hundred years after the first Dutch ships, the bird was gone. *More*
+1662 (364 years ago). Sailors shipwrecked on the island of Mauritius, in the Indian Ocean, reported seeing dodos. It is the last sighting that is widely accepted. Less than a hundred years after the first Dutch ships, the bird was gone. *More*
 
 **More (292 words)**
 
 ```
-11,662 years after the ice
-      or 1662
-            or 364 years ago.
+1662 (364 years ago)
 ```
 
 A large grey bird stands on a beach. It is about a metre tall, with a huge hooked beak, tiny wings and a tuft of curly feathers for a tail. It cannot fly. It has never needed to.
@@ -349,14 +335,12 @@ That head and foot hold the only dodo skin left in the world.
 **Place:** Japan; the oldest surviving tablet is in Tochigi Prefecture (36.57 N, 139.88 E)
 
 **Summary (29 words)**
-From the 1680s. In Japan, people began hanging painted wooden tablets of geometry puzzles in shrines and temples. Farmers, samurai, women and children made them. About nine hundred survive. *More*
+From the 1680s (about 340 years ago). In Japan, people began hanging painted wooden tablets of geometry puzzles in shrines and temples. Farmers, samurai, women and children made them. About nine hundred survive. *More*
 
 **More (292 words)**
 
 ```
-About 11,683 years after the ice
-      or about 1683
-            or about 340 years ago.
+About 1683 (about 340 years ago)
 ```
 
 Under the roof of a shrine in Japan hangs a wooden board, painted in bright colours. On it are circles inside a triangle, each circle just touching its neighbours. Beneath the picture, written in Japanese, is a question: if you know the size of the big circle, how big are the small ones?
@@ -399,14 +383,12 @@ Some are still hanging where they were first put up.
 **Place:** Jaipur, India (26.92 N, 75.82 E)
 
 **Summary (30 words)**
-About 1734. In Jaipur, India, Maharaja Jai Singh II finished an observatory of giant stone instruments for measuring the sky. Its largest sundial is as tall as a nine-storey building. *More*
+About 1734 (about 290 years ago). In Jaipur, India, Maharaja Jai Singh II finished an observatory of giant stone instruments for measuring the sky. Its largest sundial is as tall as a nine-storey building. *More*
 
 **More (293 words)**
 
 ```
-About 11,734 years after the ice
-      or about 1734
-            or about 290 years ago.
+About 1734 (about 290 years ago)
 ```
 
 A stone staircase climbs into the sky. It is as tall as a nine-storey building, and it leads nowhere. On either side of it are huge curved walls, like the inside of a bowl cut in half.
@@ -449,14 +431,12 @@ On a sunny day, the Samrat Yantra still tells the time.
 **Place:** Tahiti (17.49 S, 149.49 W)
 
 **Summary (32 words)**
-1769. On Tahiti, a Polynesian navigator named Tupaia joined Captain Cook's ship and drew a chart of more than seventy islands. Europeans could not read it properly for over two hundred years. *More*
+1769 (257 years ago). On Tahiti, a Polynesian navigator named Tupaia joined Captain Cook's ship and drew a chart of more than seventy islands. Europeans could not read it properly for over two hundred years. *More*
 
 **More (309 words)**
 
 ```
-11,769 years after the ice
-      or 1769
-            or 257 years ago.
+1769 (257 years ago)
 ```
 
 On a sheet of paper, islands are scattered across an empty sea. There are about seventy of them. Their names are written in Tahitian. At the centre is Tahiti.
@@ -499,14 +479,12 @@ The copy made on the ship is in the British Library. If the new reading is right
 **Place:** Gonaïves, Haiti, where independence was declared (19.45 N, 72.69 W)
 
 **Summary (38 words)**
-1 January 1804. After thirteen years of war, people who had been enslaved in the French colony of Saint-Domingue declared it the free country of Haiti. It was the first country founded by an uprising of enslaved people. *More*
+1 January 1804 (222 years ago). After thirteen years of war, people who had been enslaved in the French colony of Saint-Domingue declared it the free country of Haiti. It was the first country founded by an uprising of enslaved people. *More*
 
 **More (301 words)**
 
 ```
-11,804 years after the ice
-      or 1 January 1804
-            or 222 years ago.
+1 January 1804 (222 years ago)
 ```
 
 In 1789, the French colony of Saint-Domingue, in the Caribbean, was the richest colony in the world. It grew about four tenths of the sugar and more than half of the coffee that Europe consumed.
@@ -546,14 +524,12 @@ In 1825, France demanded that Haiti pay for the plantations it had lost, as the 
 **Place:** Ismailia, midway along the canal, Egypt (30.60 N, 32.27 E)
 
 **Summary (29 words)**
-17 November 1869. The Suez Canal opened in Egypt, joining the Mediterranean Sea to the Red Sea. Ships between Europe and Asia no longer had to sail around Africa. *More*
+17 November 1869 (157 years ago). The Suez Canal opened in Egypt, joining the Mediterranean Sea to the Red Sea. Ships between Europe and Asia no longer had to sail around Africa. *More*
 
 **More (315 words)**
 
 ```
-11,869 years after the ice
-      or 17 November 1869
-            or 157 years ago.
+17 November 1869 (157 years ago)
 ```
 
 Look at a map of Africa and Asia. At the top right corner of Africa, a narrow strip of desert joins it to Asia. On one side is the Mediterranean Sea. On the other is the Red Sea, which leads to the Indian Ocean.
@@ -598,14 +574,12 @@ The canal has no locks. The two seas are at almost the same height, so the water
 **Place:** Krakatoa, between Java and Sumatra, Indonesia (6.10 S, 105.42 E)
 
 **Summary (28 words)**
-27 August 1883. The volcanic island of Krakatoa, in what is now Indonesia, blew apart. It made the loudest sound in recorded history, heard nearly 5,000 kilometres away. *More*
+27 August 1883 (143 years ago). The volcanic island of Krakatoa, in what is now Indonesia, blew apart. It made the loudest sound in recorded history, heard nearly 5,000 kilometres away. *More*
 
 **More (310 words)**
 
 ```
-11,883 years after the ice
-      or 27 August 1883
-            or 143 years ago.
+27 August 1883 (143 years ago)
 ```
 
 On Rodrigues, a small island in the Indian Ocean, the chief of police heard what sounded like the roar of heavy guns, far away to the east. He thought a ship was in trouble.
@@ -646,14 +620,12 @@ Most of the island was gone. In 1927, a new island rose out of the sea where it 
 **Place:** near the Podkamennaya Tunguska River, Siberia, Russia (60.89 N, 101.89 E)
 
 **Summary (26 words)**
-30 June 1908. Over a forest in Siberia, something from space exploded in the air. It flattened millions of trees. No crater has ever been found. *More*
+30 June 1908 (118 years ago). Over a forest in Siberia, something from space exploded in the air. It flattened millions of trees. No crater has ever been found. *More*
 
 **More (306 words)**
 
 ```
-11,908 years after the ice
-      or 30 June 1908
-            or 118 years ago.
+30 June 1908 (118 years ago)
 ```
 
 At a trading post in the Siberian forest, early on a summer morning, a man was sitting on the porch. Suddenly the sky to the north seemed to split in two, and fire appeared over the forest. He felt heat so strong that his shirt seemed to be burning. Then a blast threw him off the porch.
@@ -694,14 +666,12 @@ Nobody has ever found a piece of it large enough to be sure.
 **Place:** Madras (now Chennai), India (13.08 N, 80.27 E)
 
 **Summary (33 words)**
-16 January 1913. Srinivasa Ramanujan, a clerk in Madras, India, with almost no university training, mailed pages of astonishing mathematics to a stranger in Cambridge, England. The stranger, G. H. Hardy, recognised genius. *More*
+16 January 1913 (113 years ago). Srinivasa Ramanujan, a clerk in Madras, India, with almost no university training, mailed pages of astonishing mathematics to a stranger in Cambridge, England. The stranger, G. H. Hardy, recognised genius. *More*
 
 **More (318 words)**
 
 ```
-11,913 years after the ice
-      or 16 January 1913
-            or 113 years ago.
+16 January 1913 (113 years ago)
 ```
 
 A letter arrives at Trinity College, Cambridge, from India. It begins politely: "Dear Sir, I beg to introduce myself to you as a clerk in the Accounts Department of the Port Trust Office at Madras on a salary of only £20 per annum."
@@ -744,14 +714,12 @@ Hardy liked to tell one story. He once visited Ramanujan in hospital and said th
 **Place:** Harvard College Observatory, Cambridge, Massachusetts, USA (42.38 N, 71.13 W)
 
 **Summary (31 words)**
-1912. At Harvard College Observatory, Henrietta Leavitt found that certain flickering stars reveal their true brightness by how fast they flicker. Her rule let astronomers measure distances far across the universe. *More*
+1912 (114 years ago). At Harvard College Observatory, Henrietta Leavitt found that certain flickering stars reveal their true brightness by how fast they flicker. Her rule let astronomers measure distances far across the universe. *More*
 
 **More (324 words)**
 
 ```
-11,912 years after the ice
-      or 1912
-            or 114 years ago.
+1912 (114 years ago)
 ```
 
 A glass plate the size of a book is covered with thousands of tiny black dots. Each dot is a star. The plate is a photograph of the sky, taken in Peru, with the colours reversed so the stars show dark.
@@ -794,14 +762,12 @@ She died in 1921. In 1925, a Swedish mathematician wrote to her, wanting to put 
 **Place:** Mount Wilson Observatory, California, USA (34.23 N, 118.06 W)
 
 **Summary (32 words)**
-6 October 1923. At Mount Wilson in California, Edwin Hubble photographed a flickering star in the Andromeda nebula. It showed Andromeda was far outside our galaxy: a whole galaxy of its own. *More*
+6 October 1923 (103 years ago). At Mount Wilson in California, Edwin Hubble photographed a flickering star in the Andromeda nebula. It showed Andromeda was far outside our galaxy: a whole galaxy of its own. *More*
 
 **More (327 words)**
 
 ```
-11,923 years after the ice
-      or 6 October 1923
-            or 103 years ago.
+6 October 1923 (103 years ago)
 ```
 
 On a glass photograph of the sky, someone has written a small letter N next to a star, in ink. Then he has crossed the N out, and written beside it, in capitals: "VAR!"
@@ -847,14 +813,12 @@ The glass plate is kept at the Carnegie Observatories in Pasadena. The "VAR!" is
 **Place:** near Valdivia, Chile (39.8 S, 73.2 W)
 
 **Summary (36 words)**
-22 May 1960. Near Valdivia, in Chile, the ground shook for about ten minutes in the largest earthquake ever measured. The tsunami it made crossed the whole Pacific and killed people in Japan a day later. *More*
+22 May 1960 (66 years ago). Near Valdivia, in Chile, the ground shook for about ten minutes in the largest earthquake ever measured. The tsunami it made crossed the whole Pacific and killed people in Japan a day later. *More*
 
 **More (286 words)**
 
 ```
-11,960 years after the ice
-      or 22 May 1960
-            or 66 years ago.
+22 May 1960 (66 years ago)
 ```
 
 In southern Chile, near the coast, there are marshes where dead trees stand up out of the water. Their bark is gone. Their branches are grey. They have been standing like that since 1960.
@@ -897,14 +861,12 @@ The dead trees are still standing in the marsh.
 **Replaces:** `moon`
 
 **Summary (30 words)**
-20 July 1969. Two American astronauts, Neil Armstrong and Buzz Aldrin, landed on the Moon and walked on it. They were the first people ever to stand on another world. *More*
+20 July 1969 (57 years ago). Two American astronauts, Neil Armstrong and Buzz Aldrin, landed on the Moon and walked on it. They were the first people ever to stand on another world. *More*
 
 **More (300 words)**
 
 ```
-11,969 years after the ice
-      or 20 July 1969
-            or 57 years ago.
+20 July 1969 (57 years ago)
 ```
 
 In a grey plain of dust on the Moon, there is a footprint. It is the print of a boot, with ridges across the sole. It has been there since 1969.
@@ -949,14 +911,12 @@ The footprints are still there. As of 2026, nobody has walked on the Moon since 
 **Place:** Merca, Somalia (1.71 N, 44.77 E)
 
 **Summary (35 words)**
-26 October 1977. In Merca, Somalia, a hospital cook named Ali Maow Maalin fell ill with smallpox. He recovered. He was the last person in the world to catch the disease in the ordinary way. *More*
+26 October 1977 (49 years ago). In Merca, Somalia, a hospital cook named Ali Maow Maalin fell ill with smallpox. He recovered. He was the last person in the world to catch the disease in the ordinary way. *More*
 
 **More (284 words)**
 
 ```
-11,977 years after the ice
-      or 26 October 1977
-            or 49 years ago.
+26 October 1977 (49 years ago)
 ```
 
 In October 1977, a young man named Ali Maow Maalin was working as a cook in a hospital in the town of Merca, in Somalia. He agreed to ride in a car with two sick children, to show the driver the way. The ride took about fifteen minutes.
@@ -1001,14 +961,12 @@ Ali Maow Maalin spent his later years working to vaccinate children in Somalia a
 **Place:** Nairobi, Kenya (1.29 S, 36.82 E)
 
 **Summary (32 words)**
-1977. In Kenya, Wangari Maathai began paying women a small sum for every tree seedling they grew that survived. The Green Belt Movement she started has planted tens of millions of trees. *More*
+1977 (49 years ago). In Kenya, Wangari Maathai began paying women a small sum for every tree seedling they grew that survived. The Green Belt Movement she started has planted tens of millions of trees. *More*
 
 **More (302 words)**
 
 ```
-11,977 years after the ice
-      or 1977
-            or 49 years ago.
+1977 (49 years ago)
 ```
 
 On 5 June 1977, in a park in Nairobi, Kenya, a small group of people planted seven trees.

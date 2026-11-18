@@ -15,7 +15,10 @@
   Copy to cw-deploys/active/<slug>.html and replace, in order:
     SLUG         the file's own name, used for the icon (art/icons/SLUG-icon-256.png)
     TITLE        the page title, "Name: Thing"
-    YEAR         the plain year, and YEAR+10000 for the after-the-ice count
+    YEAR         the plain year (three places: the subtitle, twice, and its data-cw-ago), and AGO, this year less
+                 YEAR; js/cw-time.js rewrites the parentheses each time the page opens, so AGO never goes
+                 stale. An "about" date: About YEAR, data-cw-round="10" (or 100), and (about … years ago).
+                 A BCE date: data-cw-ago="1000 BCE". Ruling-Dates-01.md, 17 Nov 2026.
     ART          the main picture's file name, W and H its pixel size
     STORY        the short folder name for this story's pictures (vermeer, hokusai, van-gogh)
   Then delete every comment marked DELETE once you have done what it says.
@@ -39,11 +42,11 @@
   <div class="shell">
   <article>
 
-    <!-- 1. TITLE AND A DATE LINE. No timeline at the top. The count is the year + 10,000. -->
+    <!-- 1. TITLE AND A DATE LINE. No timeline at the top. The ordinary date, then the years ago in parentheses. -->
     <div class="titleblock">
       <div class="eyebrow">Curious Woods</div>
       <h1>TITLE</h1>
-      <p class="subtitle">~1YEAR after the ice, or YEAR.</p>
+      <p class="subtitle">YEAR <span data-cw-ago="YEAR">(AGO years ago)</span></p>
     </div>
 
     <!-- 2. THE THING ITSELF, FIRST, WITH SOMETHING TO DO.
@@ -185,7 +188,7 @@
 <!-- THE SHELVES. Tools live here, not inside pages. Drop any line you do not use. -->
 <script src="../js/cw-flags.js?v=2026-09-21"></script>
 <script src="../js/cw-style.js?v=2026-10-19"></script>
-<script src="../js/cw-time.js?v=2026-10-19"></script>
+<script src="../js/cw-time.js?v=2026-11-17"></script>
 <script src="../js/map.js?v=2026-10-24-pinch"></script>
 <script src="../js/sampler.js?v=2026-09-22"></script>
 <script src="../js/timeline.js?v=2026-10-19"></script>

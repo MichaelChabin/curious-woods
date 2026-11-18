@@ -46,7 +46,7 @@ its spire is Dutch.
 
 ## The shape of the page
 
-1. **Van Gogh: Starry Night** — *~11,889 after the ice, or 1889.*
+1. **Van Gogh: Starry Night** — *1889 (137 years ago)*
 2. **Look at the big star.** The painting full width, captioned *Tap the big star to the
    right of the tree*. It is Venus, and it was really there.
 3. **The window.** The asylum in one plain paragraph, then letter 760 set apart, then

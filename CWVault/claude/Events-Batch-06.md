@@ -15,14 +15,12 @@ Written in round 2 of Prompt-Upgrade-Timeline-Events.md and checked in round 3. 
 **Replaces:** `galileo`
 
 **Summary (33 words)**
-1610. In Padua, in Italy, Galileo Galilei pointed a telescope he had made himself at the night sky. He saw mountains on the Moon, and four small moons travelling around the planet Jupiter. *More*
+1610 (416 years ago). In Padua, in Italy, Galileo Galilei pointed a telescope he had made himself at the night sky. He saw mountains on the Moon, and four small moons travelling around the planet Jupiter. *More*
 
 **More (347 words)**
 
 ```
-11,610 years after the ice
-      or January 1610
-            or 416 years ago.
+January 1610 (416 years ago)
 ```
 
 On the night of 7 January 1610, in Padua, in northern Italy, a professor of mathematics named Galileo Galilei ("gal-ih-LAY-oh gal-ih-LAY-ee") pointed a tube with two glass lenses in it at the planet Jupiter. Beside the planet he saw three small stars in a line. The next night they were in different places. On 13 January he found a fourth, and over the following weeks he watched all four move from one side of Jupiter to the other and back. They were not stars. They were moons, going around Jupiter as our Moon goes around the Earth.
@@ -59,14 +57,12 @@ Galileo named Jupiter's moons after the Medici family, who ruled Florence. That 
 **Replaces:** `decimal`
 
 **Summary (35 words)**
-1585. In Leiden, in the Netherlands, Simon Stevin published a short booklet showing how to write parts of things in tenths, hundredths and thousandths, so that they could be added and multiplied like whole numbers. *More*
+1585 (441 years ago). In Leiden, in the Netherlands, Simon Stevin published a short booklet showing how to write parts of things in tenths, hundredths and thousandths, so that they could be added and multiplied like whole numbers. *More*
 
 **More (349 words)**
 
 ```
-11,585 years after the ice
-      or 1585
-            or 441 years ago.
+1585 (441 years ago)
 ```
 
 A merchant in 1585 might need to add three eighths of a guilder, the Dutch money of the day, to seven twentieths of a guilder. How much is that altogether?
@@ -107,14 +103,12 @@ The hour still has sixty minutes.
 **Replaces:** `lead-frank-0`
 
 **Summary (30 words)**
-1752. In Philadelphia, Benjamin Franklin flew a kite under a thunder cloud and drew sparks from a key tied to its string. He wanted to know whether lightning was electricity. *More*
+1752 (274 years ago). In Philadelphia, Benjamin Franklin flew a kite under a thunder cloud and drew sparks from a key tied to its string. He wanted to know whether lightning was electricity. *More*
 
 **More (349 words)**
 
 ```
-11,752 years after the ice
-      or June 1752
-            or 274 years ago.
+June 1752 (274 years ago)
 ```
 
 Under a dark summer sky, a man stood in a shed in a field, holding a kite string by a silk ribbon. The kite was made of a silk handkerchief, with a sharp wire sticking up from its top, and a metal key hung on the string just above the ribbon. The loose threads of the string stood out on end, and when the man brought his knuckle near the key, a spark jumped to it. Once rain had soaked the string, the sparks came freely.
@@ -154,14 +148,12 @@ Franklin's answer to the danger was the lightning rod: a pointed iron rod on a r
 **Replaces:** `lead-frank-1`
 
 **Summary (36 words)**
-1791. In Bologna, in Italy, Luigi Galvani published eleven years of experiments on frogs' legs that twitched when touched with metal. He said animals make electricity of their own. Alessandro Volta said the metal made it. *More*
+1791 (235 years ago). In Bologna, in Italy, Luigi Galvani published eleven years of experiments on frogs' legs that twitched when touched with metal. He said animals make electricity of their own. Alessandro Volta said the metal made it. *More*
 
 **More (350 words)**
 
 ```
-11,791 years after the ice
-      or 1791
-            or 235 years ago.
+1791 (235 years ago)
 ```
 
 In a room in Bologna, in Italy, a frog had been cut up for study, down to its legs and the nerves that run to them. It lay on a table near a machine that made electricity. One of Luigi Galvani's ("gal-VAH-nee") assistants touched a nerve lightly with the tip of a scalpel, and the frog's legs jerked as if they were alive. Someone else noticed that this happened just when a spark leapt from the machine.
@@ -201,14 +193,12 @@ In the end, both men were partly right. Nerves do carry electrical signals to th
 **Replaces:** `laki`
 
 **Summary (36 words)**
-1783. In the south of Iceland, a crack in the ground 27 kilometres long poured out lava and poisonous gas for eight months. Most of Iceland's farm animals died, and then about one Icelander in six. *More*
+1783 (243 years ago). In the south of Iceland, a crack in the ground 27 kilometres long poured out lava and poisonous gas for eight months. Most of Iceland's farm animals died, and then about one Icelander in six. *More*
 
 **More (349 words)**
 
 ```
-11,783 years after the ice
-      or 8 June 1783
-            or 243 years ago.
+8 June 1783 (243 years ago)
 ```
 
 On 8 June 1783, in the south of Iceland, the ground split open near a mountain called Laki ("LAH-kee"), and lava began pouring out. Within a few weeks, Jón Steingrímsson, the pastor at Prestbakki, near the village of Kirkjubæjarklaustur, began writing down what he saw. His account is one of the main ways we know what happened.
@@ -245,14 +235,12 @@ He had the right country but the wrong volcano.
 **Replaces:** `lead-frank-2`
 
 **Summary (33 words)**
-1800. In Como, in Italy, Alessandro Volta described a stack of metal discs and wet card that made electricity on its own and kept on making it. It was the first electric battery. *More*
+1800 (226 years ago). In Como, in Italy, Alessandro Volta described a stack of metal discs and wet card that made electricity on its own and kept on making it. It was the first electric battery. *More*
 
 **More (347 words)**
 
 ```
-11,800 years after the ice
-      or 20 March 1800
-            or 226 years ago.
+20 March 1800 (226 years ago)
 ```
 
 Around the end of 1799, near Como, a town on a lake in northern Italy, Alessandro Volta ("VOL-tuh") built a strange stack. At the bottom was a disc of silver or copper, then a disc of zinc, then a disc of card soaked in salt water. Then metal, metal and wet card again, and again, twenty times over. When he touched the top and the bottom with wet hands, he felt a shock, and when he touched them again he felt another. The stack did not run down.
@@ -288,14 +276,12 @@ The number printed on a battery, 1.5 on a small one, is counted in volts, a unit
 **Replaces:** `tambora`, `lead-frank-4`
 
 **Summary (36 words)**
-1815. On the island of Sumbawa, in what is now Indonesia, the volcano Tambora blew apart in one of the largest eruptions ever recorded. The next year, in much of the world, summer never properly came. *More*
+1815 (211 years ago). On the island of Sumbawa, in what is now Indonesia, the volcano Tambora blew apart in one of the largest eruptions ever recorded. The next year, in much of the world, summer never properly came. *More*
 
 **More (346 words)**
 
 ```
-11,815 years after the ice
-      or 10 April 1815
-            or 211 years ago.
+10 April 1815 (211 years ago)
 ```
 
 On 5 April 1815, people on the island of Java heard heavy booms far away. Most of them took it for cannon fire. It was a volcano, far to the east.
@@ -335,14 +321,12 @@ Nobody at the time connected the cold to a volcano on the other side of the worl
 **Replaces:** `frank`, `lead-frank-5`
 
 **Summary (34 words)**
-1816. In a wet June beside Lake Geneva, the poet Lord Byron challenged his friends to write ghost stories. Two monsters came out of it: Frankenstein's creature, and a vampire who was a lord. *More*
+1816 (210 years ago). In a wet June beside Lake Geneva, the poet Lord Byron challenged his friends to write ghost stories. Two monsters came out of it: Frankenstein's creature, and a vampire who was a lord. *More*
 
 **More (345 words)**
 
 ```
-11,816 years after the ice
-      or June 1816
-            or 210 years ago.
+June 1816 (210 years ago)
 ```
 
 It rained and rained that June beside Lake Geneva, and the thunderstorms, Mary Godwin wrote in a letter, were grander and more terrible than any she had seen before. The rain kept a group of young English people indoors.
@@ -381,14 +365,12 @@ So one wet week gave the world two monsters, and neither of them first came out 
 **Replaces:** `photo`
 
 **Summary (38 words)**
-1827. At his country house in France, Nicéphore Niépce left a coated metal plate in a camera, facing out of a window, for several days. The picture it made is the oldest photograph from a camera that survives. *More*
+1827 (199 years ago). At his country house in France, Nicéphore Niépce left a coated metal plate in a camera, facing out of a window, for several days. The picture it made is the oldest photograph from a camera that survives. *More*
 
 **More (350 words)**
 
 ```
-11,827 years after the ice
-      or 1827
-            or 199 years ago.
+1827 (199 years ago)
 ```
 
 From an upstairs window of the house at Le Gras, in the countryside of eastern France, you could see a courtyard, a pigeon house, a pear tree, the sloping roof of a barn and the chimney of the bakehouse. Joseph Nicéphore Niépce ("nee-EPS") set a box at that window and left it there for days.
@@ -425,14 +407,12 @@ Today it is at the Harry Ransom Center in Austin, Texas, sealed in a case with n
 **Replaces:** `faraday`
 
 **Summary (35 words)**
-29 August 1831. In London, Michael Faraday wound two coils of wire on an iron ring and found that electricity in one coil made electricity in the other, but only when it started or stopped. *More*
+29 August 1831 (195 years ago). In London, Michael Faraday wound two coils of wire on an iron ring and found that electricity in one coil made electricity in the other, but only when it started or stopped. *More*
 
 **More (347 words)**
 
 ```
-11,831 years after the ice
-      or 29 August 1831
-            or 195 years ago.
+29 August 1831 (195 years ago)
 ```
 
 The ring is iron, about fifteen centimetres across and nearly as thick as a thumb. Around one side of it, and separately around the other side, Michael Faraday wound coils of copper wire, wrapped in cotton and twine so that the turns would not touch. Some of the wire had been made for bonnets. The ring is still at the Royal Institution in London, where he made it.
@@ -469,14 +449,12 @@ Most of the electricity made in the world today comes from machines that do what
 **Replaces:** `darwin`
 
 **Summary (31 words)**
-1837. In London, Charles Darwin wrote "I think" in his notebook and then drew a small branching tree. It was a guess at how kinds of living things might be related. *More*
+1837 (about 190 years ago). In London, Charles Darwin wrote "I think" in his notebook and then drew a small branching tree. It was a guess at how kinds of living things might be related. *More*
 
 **More (334 words)**
 
 ```
-About 11,837 years after the ice
-      or about July 1837
-            or about 189 years ago.
+About July 1837 (about 190 years ago)
 ```
 
 On a page of a small notebook, someone has written two words, "I think," and then stopped and drawn instead. The drawing starts at a point marked 1. Lines branch out from it, and branch again, and again. Some of the branches end in a short crossing line, and others just stop. Four of the ends are labelled A, B, C and D.

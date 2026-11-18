@@ -1,6 +1,6 @@
 ---
 title: "Vermeer: Girl with a Pearl Earring"
-subtitle: "~11,665 after the ice, or about 1665."      # the date line (Spec-Timeline-and-Map)
+subtitle: "About 1665 (about 360 years ago)"      # the date line (Spec-Timeline-and-Map)
 year: 1665
 cw_year: 11665
 placement: across, with a left margin

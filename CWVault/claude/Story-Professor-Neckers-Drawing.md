@@ -1,6 +1,6 @@
 ---
 title: "Professor Necker's Drawing"
-subtitle: "~11,832 after the ice, or 1832."      # the date line, as on the paintings
+subtitle: "1832 (194 years ago)"      # the date line, as on the paintings
 year: 1832
 cw_year: 11832
 slug: professor-neckers-drawing
@@ -72,7 +72,7 @@ status: Draft 2.3 — 25 Sept 2026. "The corner closest to A"; copper letters. D
 
 # Professor Necker's Drawing
 
-*~11,832 after the ice, or 1832.*
+*1832 (194 years ago)*
 
 In 1832, a professor in Geneva was looking at a drawing like this one when it turned inside out.
 

@@ -8,6 +8,8 @@
 
 ## The Convention
 
+*Superseded 17 Nov 2026 by Ruling-Dates-01.md.*
+
 **Year 0 = 10,000 BCE.** Today = approximately 12,026.
 
 All of human history runs in positive numbers. Distances between events are visible at a glance. No subtraction required. A child can feel that 2,000 years separates two events without converting from BC to AD.

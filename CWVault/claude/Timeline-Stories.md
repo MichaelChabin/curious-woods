@@ -90,11 +90,15 @@ Religious words still follow the honesty rule. Where calling something a temple 
 
 **2. The summary.** It appears when she taps the event's mark on a timeline or its place on a map. It is 20 to 40 words. It includes the date, as a plain year. It says plainly what happened, so that she knows which event this is without having read anything else. It ends with the word *More*.
 
+*Superseded 17 Nov 2026 by Ruling-Dates-01.md.*
+
 **3. The More.** It appears when she taps *More*. It is a story that stands alone: 250 to 350 words, in its own movable window, and it may carry pictures. Its date line gives the after-the-ice count and the ordinary date together (see Dates). It follows Story-Voice.md like any other story: one beat, open on something she can see, end on a fact or an image, never on a lesson. The window is the picture-in-a-window of the Rulings (backdrop, drag handle, close), so it opens in a thing she already knows how to shut.
 
 If there are references, they go at the bottom of the More, and they do not count toward the 250 to 350 words.
 
 ## Dates
+
+*Superseded 17 Nov 2026 by Ruling-Dates-01.md.*
 
 **Where zero is.** Timeline marks are placed as if year 0 was 12,026 years ago, when the ice began to melt. In the event store, years are astronomers' years (negative for BC), and each timeline adds its own zero, per Spec-Maps.md. After the Ice adds 10,000.
 

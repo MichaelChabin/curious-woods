@@ -15,14 +15,12 @@ Written in round 2 of Prompt-Upgrade-Timeline-Events.md and checked in round 3. 
 **Replaces:** `lead-socrates-4`
 
 **Summary (34 words)**
-About 450 BCE. In Athens, a teacher named Anaxagoras said that the Sun was a red-hot stone bigger than southern Greece, and that the Moon's light was borrowed from the Sun. Athens grew nervous. *More*
+About 450 BCE (about 2,480 years ago). In Athens, a teacher named Anaxagoras said that the Sun was a red-hot stone bigger than southern Greece, and that the Moon's light was borrowed from the Sun. Athens grew nervous. *More*
 
 **More (350 words)**
 
 ```
-About 9,550 years after the ice
-      or about 450 BCE
-            or about 2,475 years ago.
+About 450 BCE (about 2,480 years ago)
 ```
 
 Around 467 BCE, a stone fell out of the sky at a place called Aegospotami ("ee-gos-POT-uh-my"), on the narrow strait between Europe and Asia that is now called the Dardanelles. Plutarch, a Greek writer who lived more than five hundred years later, says people believed the stone was huge, and that it was still being shown in his own day.
@@ -59,14 +57,12 @@ Anaxagoras spent his last years at Lampsacus, across the strait from where the s
 **Replaces:** `socrates`
 
 **Summary (36 words)**
-399 BCE. In Athens, a jury of citizens sentenced a man named Socrates to death, for not honouring the city's gods and for corrupting the young. He wrote nothing, so we know him only through others. *More*
+399 BCE (2,425 years ago). In Athens, a jury of citizens sentenced a man named Socrates to death, for not honouring the city's gods and for corrupting the young. He wrote nothing, so we know him only through others. *More*
 
 **More (350 words)**
 
 ```
-9,601 years after the ice
-      or 399 BCE
-            or 2,425 years ago.
+399 BCE (2,425 years ago)
 ```
 
 At a festival in Athens in 423 BCE, the audience watched an actor playing a real, living man, hung up in the air in a basket. The man was Socrates ("SOK-ruh-teez"), and the play was *Clouds*, a comedy by Aristophanes ("air-is-TOF-uh-neez"). It showed Socrates as a crank who gazed at the sky and taught young men tricks for winning arguments they ought to lose. The play came third in the contest.
@@ -103,14 +99,12 @@ Plato describes the death in detail: Socrates calm, talking with his friends to 
 **Replaces:** `paper`
 
 **Summary (38 words)**
-105 CE. At the Han court in China, an official named Cai Lun showed the emperor paper made from bark, hemp, rags and old fishing nets. History books called him its inventor. But paper is older than that. *More*
+105 CE (1,921 years ago). At the Han court in China, an official named Cai Lun showed the emperor paper made from bark, hemp, rags and old fishing nets. History books called him its inventor. But paper is older than that. *More*
 
 **More (350 words)**
 
 ```
-10,105 years after the ice
-      or 105 CE
-            or 1,921 years ago.
+105 CE (1,921 years ago)
 ```
 
 In 1986, near the city of Tianshui in northwest China, archaeologists opened a tomb more than two thousand years old. Inside lay a scrap of paper about the size of two postage stamps, with fine black ink lines that seem to show mountains, rivers and roads. It is probably part of a map. The tomb was made between about 179 and 141 BCE.
@@ -156,9 +150,7 @@ From about 200 to 550 CE, Teotihuacan, in the Valley of Mexico, was one of the l
 **More (330 words)**
 
 ```
-About 10,400 years after the ice
-      or about 400 CE
-            or about 1,625 years ago.
+About 400 CE (about 1,600 years ago)
 ```
 
 A wide, straight avenue runs for kilometres through the ruins of an old city in the Valley of Mexico, less than fifty kilometres northeast of Mexico City. Beside it stands a pyramid sixty-six metres high, as tall as a twenty-storey building, on a base more than two hundred metres along each side.
@@ -198,14 +190,12 @@ The Aztecs believed that the gods had met at Teotihuacan to make the Sun. What t
 **Replaces:** `zero`
 
 **Summary (36 words)**
-628 CE. In northwest India, an astronomer named Brahmagupta wrote rules for calculating with nothing, treating it as a number you could add, subtract and multiply. Dividing a number by it, he left as a puzzle. *More*
+628 CE (1,398 years ago). In northwest India, an astronomer named Brahmagupta wrote rules for calculating with nothing, treating it as a number you could add, subtract and multiply. Dividing a number by it, he left as a puzzle. *More*
 
 **More (349 words)**
 
 ```
-10,628 years after the ice
-      or 628 CE
-            or 1,398 years ago.
+628 CE (1,398 years ago)
 ```
 
 Take a debt of five and add nothing to it, and you still owe five. Take nothing away from nothing, and you have nothing. Multiply any number by nothing, and the answer is nothing.
@@ -246,14 +236,12 @@ The oldest dated zero in India that everyone agrees is genuine is carved on a st
 **Replaces:** `baghdad`
 
 **Summary (34 words)**
-About 825 CE. In Baghdad, a scholar named al-Khwarizmi wrote a book on solving problems by "restoring" and "balancing," entirely in words. The word algebra comes from its title, and algorithm from his name. *More*
+About 825 CE (about 1,200 years ago). In Baghdad, a scholar named al-Khwarizmi wrote a book on solving problems by "restoring" and "balancing," entirely in words. The word algebra comes from its title, and algorithm from his name. *More*
 
 **More (350 words)**
 
 ```
-About 10,825 years after the ice
-      or about 825 CE
-            or about 1,200 years ago.
+About 825 CE (about 1,200 years ago)
 ```
 
 What square, when ten of its roots are added to it, makes thirty-nine?
@@ -299,9 +287,7 @@ Sometime between about 950 and 1250, people sailing canoes across the open Pacif
 **More (350 words)**
 
 ```
-About 11,100 years after the ice
-      or about 1100
-            or about 925 years ago.
+About 1100 (about 900 years ago)
 ```
 
 In the 1930s, someone picked up a stone adze, a cutting tool like an axe, on a small coral island in the Tuamotus, in the middle of the South Pacific. In 2007 a geochemist and an archaeologist, Kenneth Collerson and Marshall Weisler, measured the chemistry of the stone. It was rock from Hawaiʻi, about four thousand kilometres to the north, and most likely from Kahoʻolawe ("kah-HOH-oh-LAH-veh"), a small Hawaiian island whose western point is called Kealaikahiki, "the way to Tahiti."
@@ -344,9 +330,7 @@ Probably in the 1020s or 1030s, in Cairo, Ibn al-Haytham wrote a *Book of Optics
 **More (334 words)**
 
 ```
-About 11,030 years after the ice
-      or about 1030
-            or about 995 years ago.
+About 1030 (about 1,000 years ago)
 ```
 
 Set several candles in a row outside a dark room that has a small hole in its wall. Inside, on the wall facing the hole, a spot of light appears for each candle, but in the opposite order: the candle on the left makes the spot on the right. Cover one candle, and only its spot goes out.
@@ -387,14 +371,12 @@ His *Book of Optics* filled seven books. Around 1200 it was put into Latin, and 
 **Replaces:** `compass`
 
 **Summary (31 words)**
-About 1088. In China, a retired official named Shen Kuo wrote down how to hang a magnetised needle so that it points south, and noticed that it never points exactly south. *More*
+About 1088 (about 940 years ago). In China, a retired official named Shen Kuo wrote down how to hang a magnetised needle so that it points south, and noticed that it never points exactly south. *More*
 
 **More (348 words)**
 
 ```
-About 11,088 years after the ice
-      or about 1088
-            or about 940 years ago.
+About 1088 (about 940 years ago)
 ```
 
 Rub a needle on a lodestone, a kind of rock that is naturally magnetic, and the needle becomes a magnet too. Hang it so that it can turn freely, and one end swings round to point south, and the other north.
@@ -434,14 +416,12 @@ The difference Shen Kuo noticed is still printed on many walking maps, so that p
 **Replaces:** `chartres`
 
 **Summary (36 words)**
-About 1180. Glaziers in France made a window of Mary and her child, in a clear, bright blue, for the cathedral at Chartres. It survived a fire. Where the blue came from is still not certain. *More*
+About 1180 (about 850 years ago). Glaziers in France made a window of Mary and her child, in a clear, bright blue, for the cathedral at Chartres. It survived a fire. Where the blue came from is still not certain. *More*
 
 **More (348 words)**
 
 ```
-About 11,180 years after the ice
-      or about 1180
-            or about 845 years ago.
+About 1180 (about 850 years ago)
 ```
 
 In a window of the cathedral at Chartres ("SHART"), southwest of Paris, Mary sits with her child on her lap, in glass of a clear, bright blue. The window is called Notre-Dame de la Belle Verrière ("bel vair-YAIR"), Our Lady of the Beautiful Window. The middle of it, the part with Mary and the child, was made about 1180.
@@ -482,14 +462,12 @@ The Belle Verrière still hangs in the cathedral, with the glass from before the
 **Replaces:** `fibonacci`
 
 **Summary (33 words)**
-1202. In Pisa, Leonardo of Pisa, whom we now call Fibonacci, finished a book showing merchants how to calculate with the nine figures of India and the sign 0. The figures spread slowly. *More*
+1202 (824 years ago). In Pisa, Leonardo of Pisa, whom we now call Fibonacci, finished a book showing merchants how to calculate with the nine figures of India and the sign 0. The figures spread slowly. *More*
 
 **More (346 words)**
 
 ```
-11,202 years after the ice
-      or 1202
-            or 824 years ago.
+1202 (824 years ago)
 ```
 
 A book written in Italy in 1202 begins by setting out nine figures, 9 8 7 6 5 4 3 2 1, which it calls the figures of the Indians. Then it adds a tenth sign, 0, which it says the Arabs call *zephirum*. With these ten signs, it says, any number at all can be written.
@@ -528,14 +506,12 @@ The new figures spread slowly. In 1299, almost a hundred years after the book, t
 **Replaces:** `aotearoa`
 
 **Summary (31 words)**
-About 1280. People sailing from the islands of eastern Polynesia reached Aotearoa, New Zealand, one of the last large lands on Earth to be settled. The date comes partly from rats. *More*
+About 1280 (about 750 years ago). People sailing from the islands of eastern Polynesia reached Aotearoa, New Zealand, one of the last large lands on Earth to be settled. The date comes partly from rats. *More*
 
 **More (347 words)**
 
 ```
-About 11,280 years after the ice
-      or about 1280
-            or about 745 years ago.
+About 1280 (about 750 years ago)
 ```
 
 In 1939, near the mouth of the Wairau River, at the top of Te Waipounamu ("teh wai-poh-NAH-moo"), the South Island of New Zealand, a boy named Jim Eyles found a moa egg. A moa was a huge bird that could not fly; the tallest stood higher than a person.
@@ -575,14 +551,12 @@ In 2009, after up to seventy years in a museum, the people of Te Pokohiwi were b
 **Replaces:** `gutenberg`
 
 **Summary (30 words)**
-About 1455. In Mainz, in Germany, Johannes Gutenberg printed a Bible with letters cast in metal, about 180 copies. Within fifty years, printers across Europe had made millions of books. *More*
+About 1455 (about 570 years ago). In Mainz, in Germany, Johannes Gutenberg printed a Bible with letters cast in metal, about 180 copies. Within fifty years, printers across Europe had made millions of books. *More*
 
 **More (350 words)**
 
 ```
-About 11,455 years after the ice
-      or about 1455
-            or about 570 years ago.
+About 1455 (about 570 years ago)
 ```
 
 In March 1455, a churchman named Enea Silvio Piccolomini ("pee-koh-LOH-mee-nee"), who later became pope, wrote to a cardinal about something he had seen at Frankfurt, in Germany. It was a Bible, or parts of one: loose bundles of pages, printed, not written by hand. He had been told, he said, that 158 copies were finished, though others said 180.

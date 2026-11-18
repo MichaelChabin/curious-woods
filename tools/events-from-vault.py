@@ -14,8 +14,9 @@ is generated and never edited by hand.
 What each record holds (Timeline-Stories.md, "What an event record holds"): an id; the year
 (astronomers' year) and its precision; the place, with name and latitude and longitude; the
 kind; the label; the summary (without its trailing More); the More, as paragraphs, with its
-date line stored as its parts (the after-the-ice count, the ordinary date, years ago, and whether
-each is "about"), not as one string; its references; and the "Pictures wanted" line kept as data.
+date line stored as the ordinary date, whether it is "about", and the year as the date writes it
+(Ruling-Dates-01.md, 17 Nov 2026: the after-the-ice count is retired and the page works out the years
+ago; both the old three-line block and the new one-line one are read); its references; and the "Pictures wanted" line kept as data.
 "Notes for us" never enters the file. A proposed weight (1 to 3) is added to each, marked as
 proposed: weights are editorial and Michael's to change (Spec-Maps, "Zoom is a tool").
 
@@ -110,7 +111,7 @@ def num(s):
 
 
 def parse_year(line, where):
-    m = re.match(r"\*\*Year:\*\*\s*(about\s+)?([−\-]?[\d.,]+)\s*(?:\(([^)]*)\))?\s*·\s*precision:\s*(\w+)\s*(?:\(([^)]*)\))?\s*·\s*kind:\s*(.+?)\s*$", line)
+    m = re.match(r"\*\*Year:\*\*\s*((?:about|probably)\s+)?([−\-]?[\d.,]+)\s*(?:\(([^)]*)\))?\s*·\s*precision:\s*(\w+)\s*(?:\(([^)]*)\))?\s*·\s*kind:\s*(.+?)\s*$", line)
     if not m:
         raise ParseError('%s: the Year line does not parse: %r' % (where, line))
     about, year, year_note, precision, prec_note, kind_raw = m.groups()
@@ -171,32 +172,47 @@ def parse_place(line, where):
     return place
 
 
+AGO_PAREN = r'\((?:about\s+)?[\d,]+\s+years ago\)'
+
+
 def parse_date_line(lines, where):
-    parts = {}
-    for raw in lines:
-        s = raw.strip().rstrip('.').rstrip(',').strip()
-        if not s:
-            continue
-        low = s.lower()
-        if 'after the ice' in low:
-            # "About 3,000 years after the ice", or batch 3's "Year 0 after the ice" for the ice itself
-            m = re.match(r'(about\s+)?(?:year\s+)?([\d,]+)\s+(?:years\s+)?after the ice', low)
-            if not m:
-                raise ParseError('%s: date line %r does not parse (after the ice)' % (where, raw))
-            parts['count'] = {'value': num(m.group(2)), 'about': bool(m.group(1))}
-        elif low.endswith('years ago'):
-            m = re.match(r'(?:or\s+)?(about\s+)?([\d,]+)\s+years ago', low)
-            if not m:
-                raise ParseError('%s: date line %r does not parse (years ago)' % (where, raw))
-            parts['ago'] = {'value': num(m.group(2)), 'about': bool(m.group(1))}
-        else:
-            m = re.match(r'(?:or\s+)?(about\s+)?(.+)$', s, re.I)
-            if not m:
-                raise ParseError('%s: date line %r does not parse (ordinary date)' % (where, raw))
-            parts['ordinary'] = {'text': m.group(2).strip(), 'about': bool(m.group(1))}
-    if 'count' not in parts or 'ordinary' not in parts:
-        raise ParseError('%s: the date line lacks the count or the ordinary date: %r' % (where, lines))
-    return parts
+    """The date line of a More, as { ordinary: { text, about, lead? }, calendar: { year, bce } }.
+
+    Two forms are read (Ruling-Dates-01.md, 17 Nov 2026). The new one is one line, the ordinary date
+    with the years ago in parentheses: 'About 6200 BCE (about 8,200 years ago)'. The old one is three
+    stepped lines: the after-the-ice count, 'or' the ordinary date, 'or' the years ago. From either,
+    only the ordinary date is kept: the count is retired, and the years ago is worked out by the page
+    from this year when it draws the line, so the figure written in the batch (true in the year of
+    writing) never reaches the store. 'calendar' is the year as the date writes it (508 for 508 BCE),
+    which is what the page adds to or takes from this year; the record's own 'year' is untouched.
+    """
+    kept = [raw.strip() for raw in lines if raw.strip()]
+    ordinary = None
+    if len(kept) == 1 and re.search(AGO_PAREN + r'\.?$', kept[0], re.I):
+        ordinary = re.sub(r'\s*' + AGO_PAREN + r'\.?$', '', kept[0], flags=re.I).strip()
+    else:
+        for raw in kept:
+            s = raw.rstrip('.').rstrip(',').strip()
+            low = s.lower()
+            if 'after the ice' in low:
+                if not re.match(r'(about\s+)?(?:year\s+)?([\d,]+)\s+(?:years\s+)?after the ice', low):
+                    raise ParseError('%s: date line %r does not parse (after the ice)' % (where, raw))
+            elif low.endswith('years ago'):
+                if not re.match(r'(?:or\s+)?(about\s+)?([\d,]+)\s+years ago', low):
+                    raise ParseError('%s: date line %r does not parse (years ago)' % (where, raw))
+            else:
+                ordinary = re.sub(r'^or\s+', '', s, flags=re.I).strip()
+    if not ordinary:
+        raise ParseError('%s: the date line lacks the ordinary date: %r' % (where, lines))
+    m = re.match(r'(about|probably)\s+(.+)$', ordinary, re.I)
+    text = m.group(2).strip() if m else ordinary
+    part = {'text': text, 'about': bool(m)}
+    if m and m.group(1).lower() != 'about':
+        part['lead'] = m.group(1).capitalize()          # 'Probably 1533': the word the line opens with, where it is not 'About'
+    y = re.search(r'([\d,]+)(?:\s+(BCE|CE))?$', text)
+    if not y:
+        raise ParseError('%s: the ordinary date %r does not end in a year' % (where, text))
+    return {'ordinary': part, 'calendar': {'year': num(y.group(1)), 'bce': y.group(2) == 'BCE'}}
 
 
 def parse_event(block, source, where):
@@ -244,7 +260,9 @@ def parse_event(block, source, where):
     m = re.match(r'^(.*?)\s*\*More\*\s*$', summary)
     if not m:
         raise ParseError('%s: the summary does not end with *More*: %r' % (where, summary[-40:]))
-    rec['summary'] = m.group(1).strip()
+    # a summary that opens with its date may carry the years ago in parentheses after it (the new form);
+    # the page writes those, so they are taken out here and the opening date stays as written
+    rec['summary'] = re.sub(r'^([^.()]{1,60}?)\s*' + AGO_PAREN + r'\.', r'\1.', m.group(1).strip(), flags=re.I)
 
     # the More: a code block holding the date line, then paragraphs until Pictures wanted
     try:
@@ -316,11 +334,12 @@ def parse_event(block, source, where):
     rec['weight'] = WEIGHTS[rec['id']]
     rec['weightStatus'] = 'proposed'
 
-    # the after-the-ice count must agree with the year (the standard: the store's year + 10 000)
-    count = rec['more']['dateLine']['count']['value']
-    expect = rec['year'] + 10000
-    if abs(count - expect) > (500 if rec['precision'] == 'millennium' else 60 if rec['precision'] == 'century' else 6):
-        raise ParseError('%s: the date line says %s after the ice but the year %s gives %s' % (where, count, rec['year'], expect))
+    # the date line's year must agree with the Year line (the store's year is the astronomer's, so a BCE
+    # date may sit one off: 508 BCE is -507; and a day inside a year is a fraction)
+    cal = rec['more']['dateLine']['calendar']
+    expect = -cal['year'] if cal['bce'] else cal['year']
+    if abs(rec['year'] - expect) > 1:
+        raise ParseError('%s: the date line says %s%s but the Year line gives %s' % (where, cal['year'], ' BCE' if cal['bce'] else '', rec['year']))
     return rec
 
 
@@ -368,8 +387,9 @@ def main():
         '_about': 'GENERATED by tools/events-from-vault.py from ' + ' and '.join(r for r, _ in SOURCES) +
                   ' — do not edit by hand; edit the markdown and run the tool. The timeline events '
                   'written to Timeline-Stories.md: label, summary (its trailing More removed; the page adds the word), '
-                  'the More as paragraphs with its date line as parts (count after the ice, the ordinary date, years ago, '
-                  'each with whether it is "about"; a paragraph that is a set-apart quotation is {"quote": text}), '
+                  'the More as paragraphs with its date line as { ordinary: { text, about, lead? }, calendar: { year, bce } } '
+                  '(Ruling-Dates-01.md, 17 Nov 2026: no after-the-ice count and no stored years ago; the page adds calendar.year to this year '
+                  'for BCE, or takes it away, when it draws the line, and rounds an "about" date by its precision; a paragraph that is a set-apart quotation is {"quote": text}), '
                   'references, and the Pictures wanted line as data. YEAR is the '
                   'astronomer\'s year (negative for BC), PRECISION one of exact, year, decade, century, millennium. '
                   'KIND is the closed list (sky, earth, crop, craft, object, place, person, text); a kind outside it is '

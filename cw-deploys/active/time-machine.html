@@ -43,7 +43,7 @@
 -->
 <title>Time Machine</title>
 <script src="../js/cw-style.js?v=2026-10-21f"></script>
-<script src="../js/cw-time.js?v=2026-10-19"></script>
+<script src="../js/cw-time.js?v=2026-11-17"></script>
 <link rel="stylesheet" href="../css/htw.css?v=2026-09-29">
 <style>
   /* the colours are js/cw-style.js's, the one style file (19 Oct 2026), which writes them to the page as --cw-* ;
@@ -240,12 +240,12 @@
 
 <script src="../js/map.js?v=2026-10-24-pinch"></script>
 <script src="../js/globe.js?v=2026-10-22c"></script>
-<script src="../js/deep-time.js?v=2026-10-21c"></script>
+<script src="../js/deep-time.js?v=2026-11-17b"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-10-24-pinch 56b88f0';   // 22 Oct 2026, later: full screen a word in the column above Cities, not the default (Michael on the iPad); earlier: full screen on Next; 19 Oct, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-17 dd1bd3d · dates';   // 17 Nov 2026: dates by Ruling-Dates-01.md (one date line with the years ago in parentheses, worked out here; the same after a summary's opening date; ordinary years on After the ice and the lines beneath it); 22 Oct 2026, later: full screen a word in the column above Cities, not the default (Michael on the iPad); earlier: full screen on Next; 19 Oct, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- the numbers that shape the page ----------
@@ -527,7 +527,7 @@
       else if (pl && pl.lat != null) { if (!stays(pl.lat, pl.lon)) goTo(pl.lat, pl.lon); map.deepTurn(pl.lon, pl.lat); }
       markMap();
     }
-    summary.innerHTML = (passed ? '<span class="passed">just passed</span><br>' : '') + '<b>' + esc(sentence(rec.label)) + '</b> ' + cwDeepTime.prose(rec.summary) + (rec.more ? ' <span class="cmd" id="more" role="button" tabindex="0">More</span>' : '');
+    summary.innerHTML = (passed ? '<span class="passed">just passed</span><br>' : '') + '<b>' + esc(sentence(rec.label)) + '</b> ' + cwDeepTime.prose(cwDeepTime.summaryText(rec)) + (rec.more ? ' <span class="cmd" id="more" role="button" tabindex="0">More</span>' : '');
     const m = $('more'); if (m) m.addEventListener('click', ev => { ev.stopPropagation(); const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec); cwWindow(box, {}); cwDeepTime.wirePictures(box); });
   }
   // the place carried to where it was at the age; on the first deep year of a visit the plates are still arriving, and the

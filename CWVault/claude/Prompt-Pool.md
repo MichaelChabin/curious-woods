@@ -88,6 +88,8 @@ In Claude Code, in `_CW`, for pictures and for the store check:
 
 ### Events
 
+*Superseded 17 Nov 2026 by Ruling-Dates-01.md.*
+
 **Brief.** `claude/Prompt-Deep-Time-Events.md`, whole: the fields (Age, Tail, Known from, Place now, Kind), the date line, the traps, and *Learned from earlier batches*. For events after the ice, `claude/Timeline-Stories.md` is the rulebook and `claude/Prompt-Upgrade-Timeline-Events.md` the brief.
 **Agree with.** `Events-Deep-01` to `-07`, the three period batches (`Periods-Deep-01` to `-03`), `Plots-Deep-01`, and for After the Ice `Events-Batch-01` to `-07`.
 **File.** `claude/Events-Deep-NN.md`, continuing the series; after the ice, `claude/Events-Batch-NN.md`.

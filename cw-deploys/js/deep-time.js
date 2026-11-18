@@ -72,7 +72,7 @@
    the More as the Time Machine page does (the date line stepped, the paragraphs, the references).
    Since 9 Oct 2026 the store is the one store, every event deep and after the ice (Stage 7's first
    step); a mark is a short vertical bar, not a dot, and events() and span() let the page say which
-   event the marker has just passed: an after-the-ice record's date line is its parts { count, ordinary, ago } and is stepped
+   event the marker has just passed: an after-the-ice record's date line is one line, the ordinary date with the years ago in parentheses (Ruling-Dates-01.md, 17 Nov 2026)
    as the Time Machine steps it; a September survivor has no More (rec.more is null), so the page
    offers the word only when there is one.
 
@@ -167,7 +167,8 @@
   function durText(span) { return fmt(span).replace(' ago', ''); }   // a length of time: '570 million years'
   /* the short age (Michael, 12 Oct 2026): 4.6 Ga, 720 Ma, 5.3 Ma, 130 ka, today — the titles, the knob and the readout.
      Ga for billions (Michael's ruling of 18 Oct 2026: the real forms people in the field use, never an invented one). */
-  function fmtShort(ma) {
+  function fmtShort(ma, cal) {
+    if (cal) return calYear(ma, cal, false);
     if (ma <= 0) return 'today';
     var r = function (v) { return (v >= 10 ? Math.round(v) : Math.round(v * 10) / 10).toString(); };
     if (ma >= 1000) return r(ma / 1000) + ' Ga';
@@ -175,7 +176,8 @@
     return r(ma * 1000) + ' ka';
   }
   /* the same age in full words, for press-and-hold and Full words (18 Oct 2026): 4.6 billion years ago */
-  function fmtLong(ma) {
+  function fmtLong(ma, cal) {
+    if (cal) return calYear(ma, cal, true);
     if (ma <= 0) return 'today';
     var r = function (v) { return (v >= 10 ? Math.round(v) : Math.round(v * 10) / 10).toString(); };
     if (ma >= 1000) return r(ma / 1000) + ' billion years ago';
@@ -185,8 +187,26 @@
   var fullWords = false;      // Full words, the column's word: every label with room shows its full words
   var introduced = false;     // the first abbreviation on a page appears once in full with the short form after it
   var heldJustNow = false;    // a press-and-hold that showed full words is not also a tap
-  function age(ma) { return fullWords ? fmtLong(ma) : fmtShort(ma); }
-  function rangeText(name, from, to) { return (name ? name + ' ' : '') + age(from) + ' to ' + age(to); }
+  function age(ma, cal) { return fullWords ? fmtLong(ma, cal) : fmtShort(ma, cal); }
+  function rangeText(name, from, to, cal) { return (name ? name + ' ' : '') + age(from, cal) + ' to ' + age(to, cal); }
+  /* The last 12,000 years are written in ordinary years (Ruling-Dates-01.md, 17 Nov 2026: the axis is labelled in
+     ordinary years, with the years ago where there is room). A line that lies wholly inside them — After the ice and
+     every line opened beneath it — answers calSpan with its length in years, and its title, its readout, its markers'
+     dates and its marks' tooltips are written by calYear: 3300 BCE, 825 CE, 1816, today; in full words (Full words, or
+     press and hold) the years ago follow in parentheses, 3300 BCE (about 5,300 years ago). The year is rounded to what
+     the line can show: to the hundred on a line longer than 5,000 years, to the ten on one longer than 500, else to the
+     year; a rounded year's years ago are rounded the same and say "about". BCE year plus this year, or this year less
+     the CE year; the missing year 0 is ignored, as the house does. Deep lines are untouched: ago only, never BCE. */
+  function calSpan(L) { return L && L.from * 1e6 <= 12100 ? Math.max(1, (L.from - L.to) * 1e6) : 0; }
+  function calYear(ma, span, long) {
+    var y = ma * 1e6, step = span > 5000 ? 100 : span > 500 ? 10 : 1;
+    var c = Math.round((THIS_YEAR - y) / step) * step, s, ago;
+    if (y < 0.5 || c >= THIS_YEAR) return 'today';
+    if (c > 0) { s = c < 1000 ? c + ' CE' : String(c); ago = THIS_YEAR - c; }
+    else { var n = Math.max(1, -c); s = (n >= 10000 ? withCommas(n) : n) + ' BCE'; ago = n + THIS_YEAR; }
+    if (!long) return s;
+    return s + ' (' + (step > 1 ? 'about ' + withCommas(Math.round(ago / step) * step) : withCommas(ago)) + ' years ago)';
+  }
   /* press and hold on a label shows its full words in place; release puts the short form back. `t` is the text
      node to swap (a tspan or a text), `elm` the element that takes the press. */
   function holdToExpand(elm, t, longText, shortText) {
@@ -310,9 +330,9 @@
     /* the title: the name and, beside it, the age the line begins at — "Animals 720 Ma"; a free span its two ages;
        the Earth's the same */
     function titleNum(L, depth, long) {
-      var f = long ? fmtLong : fmtShort;
-      if (depth === 0 || L.snapped) return f(L.from);
-      return f(L.from) + ' to ' + f(L.to);
+      var f = long ? fmtLong : fmtShort, cal = calSpan(L);
+      if (depth === 0 || L.snapped) return f(L.from, cal);
+      return f(L.from, cal) + ' to ' + f(L.to, cal);
     }
     function titleOf(L, depth) {
       if (depth === 0) return { name: root.name, num: titleNum(L, depth, fullWords) };   // the tree says Earth since 12 Oct (Michael)
@@ -340,13 +360,13 @@
 
       // the readout, top left: the deepest line's name and range, "Earth 4.6 Ga to today" (Michael, 12 Oct); under it
       // what this line is known from
-      var tt0 = titleOf(deepL, n - 1), readout;
-      if (!introduced && !fullWords) {   // the page's first abbreviation, once in full with the short form after it (18 Oct 2026)
+      var tt0 = titleOf(deepL, n - 1), readout, cal0 = calSpan(deepL);
+      if (!introduced && !fullWords && !cal0) {   // the page's first abbreviation, once in full with the short form after it (18 Oct 2026)
         readout = (tt0.name ? tt0.name + ' ' : '') + fmtLong(deepL.from) + ' (' + fmtShort(deepL.from) + ') to ' + fmtShort(deepL.to);
-      } else readout = rangeText(tt0.name, deepL.from, deepL.to);
+      } else readout = rangeText(tt0.name, deepL.from, deepL.to, cal0);
       var rd = el('text', { x: PAD, y: 18, 'font-size': 16, 'font-weight': 'bold', fill: INK, 'class': 'halo' }, svg, readout);
-      if (!fitText(rd, W - 2 * PAD)) rd.textContent = rangeText(tt0.name, deepL.from, deepL.to);
-      holdToExpand(rd, rd, (tt0.name ? tt0.name + ' ' : '') + fmtLong(deepL.from) + ' to ' + fmtLong(deepL.to), rd.textContent);
+      if (!fitText(rd, W - 2 * PAD)) rd.textContent = (tt0.name ? tt0.name + ' ' : '') + fmtShort(deepL.from, cal0) + ' to ' + fmtShort(deepL.to, cal0);
+      holdToExpand(rd, rd, (tt0.name ? tt0.name + ' ' : '') + fmtLong(deepL.from, cal0) + ' to ' + fmtLong(deepL.to, cal0), rd.textContent);
       var kfn = periodWords && periodWords[deep.node.name] ? periodWords[deep.node.name].knownFrom : deep.node.knownFrom;
       if (kfn) {
         var kf = el('text', { x: PAD, y: 36, 'font-size': 12, 'font-style': 'italic', fill: INK_SOFT, 'class': 'halo' }, svg);
@@ -428,7 +448,7 @@
             el('rect', { x: l.mx - 11, y: g.stripY + STRIP + 1, width: 22, height: ly - g.stripY - STRIP + 3, fill: 'transparent' }, mg);   // the band and its name are the period's to tap; below the band is the event's
             var lw2 = l.mk.label.length * 5.6 + 8;   // the label itself is a tap too (13 Oct 2026, Michael: events were hard to hit with a mouse)
             el('rect', { x: l.mx - lw2 / 2, y: ly - 11, width: lw2, height: 15, fill: 'transparent' }, mg);
-            el('title', {}, mg, l.mk.label + ' · ' + fmt(l.mk.ma) + (l.mk.tail ? ' (probably began by ' + fmt(l.mk.tail).replace(' ago', '') + ')' : ''));
+            el('title', {}, mg, l.mk.label + ' · ' + markWhen(l.mk) + (l.mk.tail ? ' (probably began by ' + fmt(l.mk.tail).replace(' ago', '') + ')' : ''));
             mg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
             mg.addEventListener('click', function (ev) { ev.stopPropagation(); tapMark(d, l.mk, L); });
           });
@@ -445,7 +465,7 @@
           if (g.open) drawStretch(g, tk.mk, grp, tailY);
           el('line', { x1: tk.mx, y1: g.stripY + STRIP, x2: tk.mx, y2: g.stripY + STRIP + len, stroke: g.open ? INK : GREY, 'stroke-width': 0.8, opacity: g.open ? 0.9 : 0.6 }, mg);
           el('rect', { x: tk.mx - 9, y: g.stripY + STRIP + 1, width: 18, height: len + 8, fill: 'transparent' }, mg);
-          el('title', {}, mg, tk.mk.label + ' · ' + fmt(tk.mk.ma));
+          el('title', {}, mg, tk.mk.label + ' · ' + markWhen(tk.mk));
           mg.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
           mg.addEventListener('click', function (ev) { ev.stopPropagation(); tapMark(d, tk.mk, L); });
         });
@@ -700,12 +720,12 @@
       hit.addEventListener('pointerdown', function (ev) { startBarDrag(ev, d); });
       // the dates, outside the markers; a date that would fall off the line's end flips inside
       [['a', xa, -1], ['b', xb, 1]].forEach(function (m) {
-        var which = m[0], x = m[1], side = m[2], txt = age(k[which]);
+        var which = m[0], x = m[1], side = m[2], calK = calSpan(g), txt = age(k[which], calK);
         var dt = el('text', { x: x + side * 11, y: ky + 4, 'font-size': 12, fill: COPPER, 'text-anchor': side < 0 ? 'end' : 'start', 'class': 'halo' }, grp, txt);
         var dw = 0; try { dw = dt.getComputedTextLength(); } catch (e) { dw = txt.length * 6; }
         if (side < 0 ? x - 11 - dw < g.xL : x + 11 + dw > g.xR) { dt.setAttribute('x', x - side * 11); dt.setAttribute('text-anchor', side < 0 ? 'start' : 'end'); dt.setAttribute('y', ky - 10); }
-        if (fullWords && !fitText(dt, (g.xR - g.xL) * 0.45)) dt.textContent = fmtShort(k[which]);
-        holdToExpand(dt, dt, fmtLong(k[which]), dt.textContent);
+        if (fullWords && !fitText(dt, (g.xR - g.xL) * 0.45)) dt.textContent = fmtShort(k[which], calK);
+        holdToExpand(dt, dt, fmtLong(k[which], calK), dt.textContent);
       });
       // the markers: the current year solid, the other hollow; each a line down to the band's top
       [['a', xa], ['b', xb]].forEach(function (m) {
@@ -831,15 +851,39 @@
   /* the More, as the Time Machine page draws it: the label, the date line stepped, the paragraphs
      (a {quote} as a blockquote), the references; the page gives the element the class tm-more */
   function withCommasStr(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
-  /* the date line of an after-the-ice record, as active/time-machine.html steps it: the count after
-     the ice, the ordinary date, the years ago, each with its "about" */
-  function timelineDateLines(dl) {
-    var c = dl.count, o = dl.ordinary, g = dl.ago, L = [];
-    L.push((c.about ? 'About ' : '') + withCommasStr(c.value) + ' years after the ice' + (g ? '' : ','));
-    L.push('or ' + (o.about ? 'about ' : '') + o.text + (g ? '' : '.'));
-    if (g) L.push('or ' + (g.about ? 'about ' : '') + withCommasStr(g.value) + ' years ago.');
-    return L;
+  /* The date line of a timeline record (Ruling-Dates-01.md, 17 Nov 2026): one line, the ordinary date and the years
+     ago in parentheses — 1000 BCE (3,026 years ago); About 6200 BCE (about 8,200 years ago). The store keeps the date
+     as written and its year (more.dateLine.calendar); the years ago are worked out here, from this year, each time
+     the line is drawn, so the figure never goes stale. BCE year plus this year, or this year less the CE year (the
+     missing year 0 ignored). An exact date gets the exact sum. A date that is "about" (the record's yearAbout,
+     or a date line that opens "About" or "Probably") gets a round figure with its own "about", as round as the date is known, by the
+     record's precision: millennium to the nearest 500 years, century to the nearest 100, anything finer to the
+     nearest 10. */
+  function yearsAgo(rec) {
+    var dl = rec.more.dateLine, c = dl.calendar, n = c.bce ? c.year + THIS_YEAR : THIS_YEAR - c.year;
+    var about = !!rec.yearAbout || !!dl.ordinary.about;   // the Year line's "about", or the date line's own (About, Probably): the daily files mark it only there
+    if (about) { var u = rec.precision === 'millennium' ? 500 : rec.precision === 'century' ? 100 : 10, r = Math.round(n / u) * u; if (r > 0) n = r; }
+    return { years: n, about: about };
   }
+  function agoParen(rec) { var a = yearsAgo(rec); return '(' + (a.about ? 'about ' : '') + withCommasStr(a.years) + (a.years === 1 ? ' year ago)' : ' years ago)'); }
+  /* a mark's tooltip: a timeline record's own date as its date line writes it (508 BCE, About 3300 BCE); a deep mark's age, ago */
+  function markWhen(mk) { var o = isTimeline(mk.rec) ? mk.rec.more.dateLine.ordinary : null; return o ? (o.lead ? o.lead + ' ' : o.about ? 'About ' : '') + o.text : fmt(mk.ma); }
+  function isTimeline(rec) { return !!(rec && rec.more && rec.more.dateLine && rec.more.dateLine.calendar); }
+  function timelineDateLine(rec) {
+    var o = rec.more.dateLine.ordinary;
+    return (o.lead ? o.lead + ' ' : o.about ? 'About ' : '') + o.text + ' ' + agoParen(rec);
+  }
+  /* the summary, with the same parentheses after the date that opens it ("1500s (about 490 years ago). Chillies…");
+     the page writes them, the store's summary holds none. A summary whose date is woven into its first sentence
+     ("Sometime between about 950 and 1250, people…") is running prose and is left as written. */
+  cwDeepTime.summaryText = function (rec) {
+    var s = String(rec.summary || '');
+    if (!isTimeline(rec)) return s;
+    var m = /^(.{1,40}?)\. (?=[A-Z\u201c"'\u2018])/.exec(s);
+    return m && /\d/.test(m[1]) ? m[1] + ' ' + agoParen(rec) + s.slice(m[1].length) : s;
+  };
+  cwDeepTime.yearsAgo = yearsAgo;
+  cwDeepTime.dateLine = function (rec) { return isTimeline(rec) ? timelineDateLine(rec) : null; };
   /* Pictures in the Mores (13 Oct 2026, CWVault/claude/Prompt-Build-Pictures-in-the-Mores.md). The manifest,
      art/stories/deep/manifest.json (written by tools/pictures-manifest.py), is keyed period-<id> and event-<id>; each
      key a list in the order the More shows them. cwDeepTime.pictures(url) fetches it once; moreBody(key, paragraphs)
@@ -899,7 +943,7 @@
   };
   cwDeepTime.moreHTML = function (rec) {
     var dl = rec.more.dateLine, lines;
-    if (dl.count && dl.ordinary) lines = timelineDateLines(dl);
+    if (isTimeline(rec)) lines = [timelineDateLine(rec)];
     else { lines = [dl.ago]; if (dl.tail) lines.push(dl.tail); if (dl.sure) lines.push(dl.sure); }
     var h = '<h3>' + escapeHTML(rec.label) + '</h3><div class="stepped">' + lines.map(function (l) { return '<div>' + escapeHTML(l) + '</div>'; }).join('') + '</div>';
     h += cwDeepTime.moreBody(rec.id ? 'event-' + rec.id : null, rec.more.paragraphs);

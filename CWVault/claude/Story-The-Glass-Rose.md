@@ -16,7 +16,7 @@ one-liner: Nobody told the compass to count to six. It does anyway.
 
 # The Glass Rose
 
-*~11,120 after the ice, or 1120*
+*About 1120 (about 910 years ago)*
 
 **[the table, full width and full height]**
 *Two locations, 0 and 1, and nothing else. Touch 0, hold for a moment, and drag out to 1.*

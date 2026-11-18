@@ -15,14 +15,12 @@ Written in round 2 of Prompt-Generate-Timeline-Events.md and checked in round 3.
 **Replaces:** `maize`
 
 **Summary (35 words)**
-About 7000 BCE. In the hills of southwest Mexico, people began choosing seeds from a wild grass called teosinte. Over thousands of years it became maize, the corn that now feeds much of the world. *More*
+About 7000 BCE (about 9,000 years ago). In the hills of southwest Mexico, people began choosing seeds from a wild grass called teosinte. Over thousands of years it became maize, the corn that now feeds much of the world. *More*
 
 **More (271 words)**
 
 ```
-About 3,000 years after the ice
-      or about 7000 BCE
-            or about 9,000 years ago.
+About 7000 BCE (about 9,000 years ago)
 ```
 
 A wild grass grows on the hillsides of southwest Mexico. Its name is teosinte. Say "tay-oh-SIN-tay." Its ear is about as long as your little finger, and it holds only five to twelve seeds. Each seed is locked inside a case so hard that you could break a tooth on it.
@@ -64,14 +62,12 @@ Teosinte still grows wild in those hills. It still has its hard little seeds.
 **Place:** the Storegga, on the edge of the sea floor off western Norway (64.5 N, 5.5 E)
 
 **Summary (36 words)**
-About 6150 BCE. Under the sea off Norway, a piece of the sea floor almost as big as Iceland slid into deep water. The tsunami it made swept across the North Sea to Scotland and beyond. *More*
+About 6150 BCE (about 8,200 years ago). Under the sea off Norway, a piece of the sea floor almost as big as Iceland slid into deep water. The tsunami it made swept across the North Sea to Scotland and beyond. *More*
 
 **More (288 words)**
 
 ```
-About 3,850 years after the ice
-      or about 6150 BCE
-            or about 8,200 years ago.
+About 6150 BCE (about 8,200 years ago)
 ```
 
 In the Shetland Islands, north of Scotland, there is a layer of sand in the peat. The peat was made by plants, slowly, in quiet water. The sand does not belong there. It was thrown in by the sea, and in some places it lies about twenty metres above where the sea was at the time.
@@ -110,14 +106,12 @@ Fishing boats still pull up bones and stone tools from the bottom of the North S
 **Replaces:** `writing`, `uruk`
 
 **Summary (38 words)**
-About 3300 BCE. In Uruk, in what is now Iraq, people began pressing signs into wet clay to keep track of barley, beer and sheep. It is one of the two oldest kinds of writing we know of. *More*
+About 3300 BCE (about 5,300 years ago). In Uruk, in what is now Iraq, people began pressing signs into wet clay to keep track of barley, beer and sheep. It is one of the two oldest kinds of writing we know of. *More*
 
 **More (299 words)**
 
 ```
-About 6,700 years after the ice
-      or about 3300 BCE
-            or about 5,300 years ago.
+About 3300 BCE (about 5,300 years ago)
 ```
 
 A piece of clay about the size of a bar of soap has marks pressed into it. Some of the marks are round holes. Some are little wedges. One looks like a jar with a pointed bottom.
@@ -159,14 +153,12 @@ It started with beer and barley.
 **Replaces:** `otzi`
 
 **Summary (32 words)**
-About 3300 BCE. A man died high in the Alps between what are now Italy and Austria. The ice kept his body, clothes and tools until two hikers found him in 1991. *More*
+About 3300 BCE (about 5,300 years ago). A man died high in the Alps between what are now Italy and Austria. The ice kept his body, clothes and tools until two hikers found him in 1991. *More*
 
 **More (282 words)**
 
 ```
-About 6,700 years after the ice
-      or about 3300 BCE
-            or about 5,300 years ago.
+About 3300 BCE (about 5,300 years ago)
 ```
 
 In September 1991, two hikers crossing a pass high in the Alps saw a brown shape sticking out of melting ice. It was a man's head and shoulders. They thought he was a climber who had died a few years before.
@@ -209,14 +201,12 @@ For ten years, everyone thought he had died of cold. Then, in 2001, an X-ray sho
 **Replaces:** `mohenjo`
 
 **Summary (33 words)**
-About 2500 BCE. In the valley of the Indus River, in what is now Pakistan, people built a city of brick with covered drains under its streets. Their writing has never been read. *More*
+About 2500 BCE (about 4,500 years ago). In the valley of the Indus River, in what is now Pakistan, people built a city of brick with covered drains under its streets. Their writing has never been read. *More*
 
 **More (274 words)**
 
 ```
-About 7,500 years after the ice
-      or about 2500 BCE
-            or about 4,500 years ago.
+About 2500 BCE (about 4,500 years ago)
 ```
 
 Along a street of baked brick runs a drain. It is covered with more bricks, so the dirty water flows out of sight. Smaller drains come into it from the houses on each side. Many of the houses had a room with a brick floor for washing, and some had a toilet.
@@ -258,14 +248,12 @@ The seals are small enough to hold in your hand.
 **Place:** Campo del Cielo, Chaco and Santiago del Estero provinces, Argentina (27.47 S, 60.58 W)
 
 **Summary (31 words)**
-About 2500 BCE. A mass of iron from space broke apart over what is now Argentina. Its pieces made a line of craters and left tonnes of iron in the ground. *More*
+About 2500 BCE (about 4,500 years ago). A mass of iron from space broke apart over what is now Argentina. Its pieces made a line of craters and left tonnes of iron in the ground. *More*
 
 **More (266 words)**
 
 ```
-About 7,500 years after the ice
-      or about 2500 BCE
-            or about 4,500 years ago.
+About 2500 BCE (about 4,500 years ago)
 ```
 
 In a field in northern Argentina lies a lump of metal as heavy as five elephants. It is dark and pitted, with smooth hollows like thumbprints. It is made of iron and nickel.
@@ -309,14 +297,12 @@ The great irons still lie on the plain, and people can touch them.
 **Replaces:** `thera`
 
 **Summary (32 words)**
-About 1600 BCE. The volcanic island of Thera, in the Aegean Sea, blew apart in one of the largest eruptions of the last ten thousand years. Its ash and waves reached Crete. *More*
+About 1600 BCE (about 3,600 years ago). The volcanic island of Thera, in the Aegean Sea, blew apart in one of the largest eruptions of the last ten thousand years. Its ash and waves reached Crete. *More*
 
 **More (298 words)**
 
 ```
-About 8,400 years after the ice
-      or about 1600 BCE
-            or about 3,600 years ago.
+About 1600 BCE (about 3,600 years ago)
 ```
 
 Today, big ships sail into a bay on the Greek island of Santorini and anchor in water hundreds of metres deep. Cliffs rise all around them, striped red, black and white.
@@ -358,14 +344,12 @@ The ships anchor where the middle of the island used to be.
 **Place:** Ugarit (Ras Shamra), on the coast of Syria (35.60 N, 35.78 E)
 
 **Summary (36 words)**
-About 1400 BCE. In the city of Ugarit, in what is now Syria, someone wrote a song on a clay tablet, with instructions for playing it. It is the oldest nearly complete written music we have. *More*
+About 1400 BCE (about 3,400 years ago). In the city of Ugarit, in what is now Syria, someone wrote a song on a clay tablet, with instructions for playing it. It is the oldest nearly complete written music we have. *More*
 
 **More (276 words)**
 
 ```
-About 8,600 years after the ice
-      or about 1400 BCE
-            or about 3,400 years ago.
+About 1400 BCE (about 3,400 years ago)
 ```
 
 A broken clay tablet has two parts, separated by a line. Above the line are the words of a song. Below the line are names and numbers.
@@ -407,14 +391,12 @@ Every recording you can find is someone's best guess.
 **Place:** Thebes (Luxor), Egypt (25.70 N, 32.64 E)
 
 **Summary (30 words)**
-About 1550 BCE. In Egypt, a scribe named Ahmes copied out a scroll of arithmetic problems and their answers. It shows how Egyptians multiplied using nothing but doubling and adding. *More*
+About 1550 BCE (about 3,580 years ago). In Egypt, a scribe named Ahmes copied out a scroll of arithmetic problems and their answers. It shows how Egyptians multiplied using nothing but doubling and adding. *More*
 
 **More (308 words)**
 
 ```
-About 8,450 years after the ice
-      or about 1550 BCE
-            or about 3,600 years ago.
+About 1550 BCE (about 3,580 years ago)
 ```
 
 A scroll of papyrus, a kind of paper made from reeds, is about five metres long. It begins with a promise. It will show the right way to reckon, and with it a way into the knowledge of everything that exists.
@@ -459,14 +441,12 @@ It is in the British Museum. At the very start of the scroll, the scribe's name 
 **Replaces:** `lapita`
 
 **Summary (31 words)**
-About 850 BCE. Sailors from the islands near New Guinea, whose pottery is called Lapita, reached Tonga, in the middle of the Pacific. No human had ever set foot there before. *More*
+About 850 BCE (about 2,900 years ago). Sailors from the islands near New Guinea, whose pottery is called Lapita, reached Tonga, in the middle of the Pacific. No human had ever set foot there before. *More*
 
 **More (296 words)**
 
 ```
-About 9,150 years after the ice
-      or about 850 BCE
-            or about 2,900 years ago.
+About 850 BCE (about 2,900 years ago)
 ```
 
 A piece of broken pottery lies on a beach in Tonga. Its surface is covered with fine patterns: rows of tiny dots, pressed into the wet clay with a toothed stamp before it was fired.
@@ -505,14 +485,12 @@ Their descendants kept sailing. Over the next two thousand years, they reached H
 **Place:** the Nok region, Kaduna State, central Nigeria (9.50 N, 8.00 E)
 
 **Summary (34 words)**
-From about 900 BCE. In what is now central Nigeria, people made life-size clay heads with carefully shaped eyes and hair. They are among the oldest large sculptures from Africa south of the Sahara. *More*
+From about 900 BCE (about 2,900 years ago). In what is now central Nigeria, people made life-size clay heads with carefully shaped eyes and hair. They are among the oldest large sculptures from Africa south of the Sahara. *More*
 
 **More (294 words)**
 
 ```
-About 9,100 years after the ice
-      or about 900 BCE
-            or about 2,900 years ago.
+About 900 BCE (about 2,900 years ago)
 ```
 
 A clay head, about as big as a real one, looks straight ahead. Its eyes are shaped like triangles, each with a hole in the middle for the pupil, and its hair is piled up in neat rolls and buns. Someone spent a long time on it, between two and three thousand years ago.
@@ -553,14 +531,12 @@ Nobody knows what the people who made them called themselves.
 **Replaces:** `homer`, `lead-nineveh-2`
 
 **Summary (29 words)**
-700s or 600s BCE. Homer is thought to have been a travelling poet who recited stories about the Trojan War. Around this time, his stories were first written down. *More*
+700s or 600s BCE (about 2,700 years ago). Homer is thought to have been a travelling poet who recited stories about the Trojan War. Around this time, his stories were first written down. *More*
 
 **More (276 words)**
 
 ```
-About 9,300 years after the ice
-      or about 700 BCE
-            or about 2,700 years ago.
+About 700 BCE (about 2,700 years ago)
 ```
 
 A long poem called the Iliad tells about a few weeks near the end of a war at a city called Troy. It is more than fifteen thousand lines long. Another, the Odyssey, tells about a soldier's ten-year journey home from that war. It is about twelve thousand lines.
@@ -600,14 +576,12 @@ It is in a library in Venice.
 **Place:** Kalinga (now Odisha), eastern India; Dhauli, near Bhubaneswar, marks it (20.19 N, 85.84 E)
 
 **Summary (31 words)**
-261 BCE. King Ashoka of India conquered the land of Kalinga. Afterwards he had the cost of the war carved on rock, said he regretted it, and changed how he ruled. *More*
+261 BCE (2,287 years ago). King Ashoka of India conquered the land of Kalinga. Afterwards he had the cost of the war carved on rock, said he regretted it, and changed how he ruled. *More*
 
 **More (281 words)**
 
 ```
-9,739 years after the ice
-      or 261 BCE
-            or 2,287 years ago.
+261 BCE (2,287 years ago)
 ```
 
 A message from a king is carved on a rock face in India. Part of it reads:
@@ -651,14 +625,12 @@ The rocks inside Kalinga itself carry Ashoka's messages too. On them, the passag
 **Replaces:** `eratos`
 
 **Summary (31 words)**
-About 240 BCE. In Alexandria, in Egypt, a scholar named Eratosthenes worked out the size of the whole Earth from the length of a shadow and the distance between two cities. *More*
+About 240 BCE (about 2,270 years ago). In Alexandria, in Egypt, a scholar named Eratosthenes worked out the size of the whole Earth from the length of a shadow and the distance between two cities. *More*
 
 **More (315 words)**
 
 ```
-About 9,760 years after the ice
-      or about 240 BCE
-            or about 2,270 years ago.
+About 240 BCE (about 2,270 years ago)
 ```
 
 In the town of Syene, in the south of Egypt, there was said to be a deep well. On one day a year, at noon, the Sun shone straight down into it and lit the water at the bottom. On that day the Sun was directly overhead, and a stick standing upright cast no shadow at all.
@@ -700,14 +672,12 @@ His own book is lost. We know his method from a writer named Cleomedes, who desc
 **Replaces:** `antikythera`
 
 **Summary (37 words)**
-About 100 BCE. A ship sank off Greece carrying a box of bronze gears that showed the movements of the Sun and Moon and predicted eclipses. Nothing like it is known again for over a thousand years. *More*
+About 100 BCE (about 2,100 years ago). A ship sank off Greece carrying a box of bronze gears that showed the movements of the Sun and Moon and predicted eclipses. Nothing like it is known again for over a thousand years. *More*
 
 **More (294 words)**
 
 ```
-About 9,900 years after the ice
-      or about 100 BCE
-            or about 2,100 years ago.
+About 100 BCE (about 2,100 years ago)
 ```
 
 A lump of green, crumbling bronze sits in a museum in Athens. On one side, if you look closely, you can see the teeth of a gear wheel about as wide as your hand.
@@ -746,14 +716,12 @@ No machine with gears this fine is known again for more than a thousand years.
 **Replaces:** `vesuvius`
 
 **Summary (33 words)**
-79 CE. The volcano Vesuvius, near Naples in Italy, erupted and buried the town of Pompeii under ash and stone. A seventeen-year-old named Pliny watched from across the bay and later described it. *More*
+79 CE (1,947 years ago). The volcano Vesuvius, near Naples in Italy, erupted and buried the town of Pompeii under ash and stone. A seventeen-year-old named Pliny watched from across the bay and later described it. *More*
 
 **More (316 words)**
 
 ```
-10,079 years after the ice
-      or 79 CE
-            or 1,947 years ago.
+79 CE (1,947 years ago)
 ```
 
 A young man is staying in a house across the bay from a mountain. One afternoon his mother points out a strange cloud rising over the mountain. He says it looks like an umbrella pine: a tall trunk, spreading out at the top into branches.
@@ -795,14 +763,12 @@ Volcanologists still call a tall eruption like this one "Plinian," after the you
 **Place:** Luoyang, China (34.62 N, 112.45 E)
 
 **Summary (35 words)**
-132 CE. At the Han court in Luoyang, China, an astronomer named Zhang Heng built a bronze jar that dropped a ball when the ground shook, even from an earthquake too far away to feel. *More*
+132 CE (1,894 years ago). At the Han court in Luoyang, China, an astronomer named Zhang Heng built a bronze jar that dropped a ball when the ground shook, even from an earthquake too far away to feel. *More*
 
 **More (307 words)**
 
 ```
-10,132 years after the ice
-      or 132 CE
-            or 1,894 years ago.
+132 CE (1,894 years ago)
 ```
 
 A bronze jar nearly two metres across stands in a room at the emperor's court. Around its outside are eight dragons, facing eight directions. Each dragon holds a bronze ball in its mouth. Below each dragon sits a bronze toad, looking up, with its mouth open.
@@ -847,14 +813,12 @@ All that is left of the jar is one paragraph.
 **Place:** found in the Mogao Caves, Dunhuang, China (40.04 N, 94.81 E)
 
 **Summary (31 words)**
-11 May 868. In China, a man named Wang Jie paid to have a book printed from carved wooden blocks. It is the oldest printed book that carries its own date. *More*
+11 May 868 (1,158 years ago). In China, a man named Wang Jie paid to have a book printed from carved wooden blocks. It is the oldest printed book that carries its own date. *More*
 
 **More (341 words)**
 
 ```
-10,868 years after the ice
-      or 11 May 868
-            or 1,158 years ago.
+11 May 868 (1,158 years ago)
 ```
 
 At the end of a paper scroll, about five metres long, there is a line of writing:
@@ -902,14 +866,12 @@ Wang Jie made it to be given away, for his mother and father.
 **Replaces:** `supernova`
 
 **Summary (30 words)**
-4 July 1054. Astronomers in China recorded a new star, bright enough to see in daylight for more than three weeks. What is left of it is the Crab Nebula. *More*
+4 July 1054 (972 years ago). Astronomers in China recorded a new star, bright enough to see in daylight for more than three weeks. What is left of it is the Crab Nebula. *More*
 
 **More (310 words)**
 
 ```
-11,054 years after the ice
-      or 4 July 1054
-            or 972 years ago.
+4 July 1054 (972 years ago)
 ```
 
 A report from the court astronomers of China, in the summer of 1054:
@@ -955,14 +917,12 @@ The cloud is still growing, by more than a thousand kilometres every second.
 **Replaces:** `zimbabwe`
 
 **Summary (31 words)**
-About 1300. In southern Africa, the builders of Great Zimbabwe raised walls of fitted granite as high as eleven metres, without mortar. Later, outsiders claimed Africans could not have built them. *More*
+About 1300 (about 700 years ago). In southern Africa, the builders of Great Zimbabwe raised walls of fitted granite as high as eleven metres, without mortar. Later, outsiders claimed Africans could not have built them. *More*
 
 **More (315 words)**
 
 ```
-11,300 years after the ice
-      or about 1300
-            or about 700 years ago.
+About 1300 (about 700 years ago)
 ```
 
 A curving wall of granite blocks stands on a plain in southern Africa. It is more than two hundred and fifty metres long, and in places eleven metres high and five metres thick. No mortar holds the blocks together. They are cut and fitted so well that they have stood for about seven hundred years.

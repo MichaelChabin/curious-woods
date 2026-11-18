@@ -15,14 +15,12 @@ Written in round 2 of Prompt-Upgrade-Timeline-Events.md and checked in round 3. 
 **Replaces:** `ice`
 
 **Summary (35 words)**
-About 10,000 BCE. After a hundred thousand years of cold, the world warmed for good, and it happened fast. Ice drilled from Greenland shows the warming took only a few decades. This line starts there. *More*
+About 10,000 BCE (about 12,000 years ago). After a hundred thousand years of cold, the world warmed for good, and it happened fast. Ice drilled from Greenland shows the warming took only a few decades. This line starts there. *More*
 
 **More (322 words)**
 
 ```
-Year 0 after the ice
-      or about 10,000 BCE
-            or about 12,000 years ago.
+About 10,000 BCE (about 12,000 years ago)
 ```
 
 In a freezer near Copenhagen there are long sticks of ice, a little thicker than your arm. They were drilled out of the ice that covers Greenland, piece after piece, from the top all the way down to the rock, more than three kilometres below.
@@ -67,14 +65,12 @@ Farms, cities, writing and everything else on this line happened in the warm.
 **Replaces:** `figs`
 
 **Summary (34 words)**
-About 9400 BCE. In a village near Jericho, people stored figs of a kind that cannot grow from seed. Someone may have planted the trees, which would make figs one of the first crops. *More*
+About 9400 BCE (about 11,400 years ago). In a village near Jericho, people stored figs of a kind that cannot grow from seed. Someone may have planted the trees, which would make figs one of the first crops. *More*
 
 **More (309 words)**
 
 ```
-About 600 years after the ice
-      or about 9400 BCE
-            or about 11,400 years ago.
+About 9400 BCE (about 11,400 years ago)
 ```
 
 Nine small figs, burnt black, lie in the remains of a house. With them are hundreds of tiny fig seeds.
@@ -123,14 +119,12 @@ Either way, someone stored the figs, and perhaps dried them first. They are stil
 **Replaces:** `jericho`
 
 **Summary (33 words)**
-About 8300 BCE. At Jericho, near the Jordan River, people built a round stone tower about eight metres tall, with a staircase inside. Nobody knows what it was for. It is still standing. *More*
+About 8300 BCE (about 10,300 years ago). At Jericho, near the Jordan River, people built a round stone tower about eight metres tall, with a staircase inside. Nobody knows what it was for. It is still standing. *More*
 
 **More (304 words)**
 
 ```
-About 1,700 years after the ice
-      or about 8300 BCE
-            or about 10,300 years ago.
+About 8300 BCE (about 10,300 years ago)
 ```
 
 A round tower of rough stones stands in a deep trench. It is about eight metres tall, as high as a house of three storeys. At its foot is a small doorway. Inside, a narrow staircase of twenty-two stone steps climbs through the tower to the top.
@@ -175,14 +169,12 @@ A metal grate now covers the top of the stairs.
 **Replaces:** `squash`
 
 **Summary (35 words)**
-About 8000 BCE. In a cave in the hills of southern Mexico, people left squash seeds bigger than wild squash makes. Someone was growing squash. Farming had begun in the Americas, separately from anywhere else. *More*
+About 8000 BCE (about 10,000 years ago). In a cave in the hills of southern Mexico, people left squash seeds bigger than wild squash makes. Someone was growing squash. Farming had begun in the Americas, separately from anywhere else. *More*
 
 **More (301 words)**
 
 ```
-About 2,000 years after the ice
-      or about 8000 BCE
-            or about 10,000 years ago.
+About 8000 BCE (about 10,000 years ago)
 ```
 
 A squash seed, about as long as your thumbnail, was dug from the floor of a cave in southern Mexico. It is pale and flat, like a pumpkin seed. It is about 10,000 years old.
@@ -226,14 +218,12 @@ Many pumpkins, courgettes and acorn squash belong to the same kind of plant as t
 **Replaces:** `rice`
 
 **Summary (35 words)**
-About 7500 BCE. Along the Yangtze River in southern China, people gathered wild rice and began to plant it. Over thousands of years it became the rice that now feeds more than half the world. *More*
+About 7500 BCE (about 9,500 years ago). Along the Yangtze River in southern China, people gathered wild rice and began to plant it. Over thousands of years it became the rice that now feeds more than half the world. *More*
 
 **More (349 words)**
 
 ```
-About 2,500 years after the ice
-      or about 7500 BCE
-            or about 9,500 years ago.
+About 7500 BCE (about 9,500 years ago)
 ```
 
 Look at a grain of rice under a microscope, at the very bottom, where it was joined to the plant. There is a little scar.
@@ -280,14 +270,12 @@ Today rice is the main food of more than half the people in the world.
 **Replaces:** `catal`
 
 **Summary (36 words)**
-About 7100 BCE. On a plain in central Turkey, people built a town of mud-brick houses packed so tightly that it had no streets. They walked across the roofs and climbed down ladders into their homes. *More*
+About 7100 BCE (about 9,100 years ago). On a plain in central Turkey, people built a town of mud-brick houses packed so tightly that it had no streets. They walked across the roofs and climbed down ladders into their homes. *More*
 
 **More (310 words)**
 
 ```
-About 2,900 years after the ice
-      or about 7100 BCE
-            or about 9,100 years ago.
+About 7100 BCE (about 9,100 years ago)
 ```
 
 A low hill rises about twenty metres above a flat plain in central Turkey. It is not a natural hill. It is made of houses, built one on top of another for more than a thousand years.
@@ -332,14 +320,12 @@ Most of the hill has still not been dug.
 **Replaces:** `agassiz`
 
 **Summary (38 words)**
-About 6200 BCE. In Canada, a huge lake left by the melting ice broke through the ice that held it back and poured into the Atlantic. For about 150 years, the lands around the North Atlantic turned colder. *More*
+About 6200 BCE (about 8,200 years ago). In Canada, a huge lake left by the melting ice broke through the ice that held it back and poured into the Atlantic. For about 150 years, the lands around the North Atlantic turned colder. *More*
 
 **More (331 words)**
 
 ```
-About 3,800 years after the ice
-      or about 6200 BCE
-            or about 8,200 years ago.
+About 6200 BCE (about 8,200 years ago)
 ```
 
 Around the city of Winnipeg, in Canada, the land is flat as a table for hundreds of kilometres. It is flat because it was once the bottom of a lake.
@@ -391,14 +377,12 @@ The land around Winnipeg is still flat.
 **Replaces:** `mazama`
 
 **Summary (36 words)**
-About 5700 BCE. In what is now Oregon, a volcano called Mount Mazama erupted and its top fell in. Rain and snow filled the hole, and made Crater Lake, the deepest lake in the United States. *More*
+About 5700 BCE (about 7,700 years ago). In what is now Oregon, a volcano called Mount Mazama erupted and its top fell in. Rain and snow filled the hole, and made Crater Lake, the deepest lake in the United States. *More*
 
 **More (332 words)**
 
 ```
-About 4,300 years after the ice
-      or about 5700 BCE
-            or about 7,700 years ago.
+About 5700 BCE (about 7,700 years ago)
 ```
 
 In 1938, in a cave in the desert of Oregon, an archaeologist named Luther Cressman dug up dozens of sandals. They were woven from the shredded bark of sagebrush, a grey bush of the desert. Each had a flap to fold over the toes.
@@ -448,14 +432,12 @@ But someone was almost certainly there.
 **Replaces:** `cattle`
 
 **Summary (36 words)**
-About 5000 BCE. The Sahara was grassland, with lakes and rivers. People there herded cattle, milked them, and painted them on the rocks. Over the next two thousand years the rains failed and the desert came. *More*
+About 5000 BCE (about 7,000 years ago). The Sahara was grassland, with lakes and rivers. People there herded cattle, milked them, and painted them on the rocks. Over the next two thousand years the rains failed and the desert came. *More*
 
 **More (318 words)**
 
 ```
-About 5,000 years after the ice
-      or about 5000 BCE
-            or about 7,000 years ago.
+About 5000 BCE (about 7,000 years ago)
 ```
 
 On the walls of rock shelters in the Sahara Desert, there are paintings of cattle. Whole herds of them, with long curving horns. People walk among them.
@@ -501,14 +483,12 @@ The paintings stayed where they were.
 **Replaces:** `copper`
 
 **Summary (39 words)**
-About 5000 BCE. At Belovode, in what is now Serbia, people heated green and black rocks in a fire until copper ran out of them. It is the oldest sure sign anyone has found of metal made from stone. *More*
+About 5000 BCE (about 7,000 years ago). At Belovode, in what is now Serbia, people heated green and black rocks in a fire until copper ran out of them. It is the oldest sure sign anyone has found of metal made from stone. *More*
 
 **More (328 words)**
 
 ```
-About 5,000 years after the ice
-      or about 5000 BCE
-            or about 7,000 years ago.
+About 5000 BCE (about 7,000 years ago)
 ```
 
 In the ground of a village called Belovode, in Serbia, archaeologists found small lumps of black, glassy stuff, none bigger than a grape. Say "BEH-loh-voh-deh."
@@ -555,14 +535,12 @@ At Belovode, the fire was lit on purpose.
 **Replaces:** `silk`
 
 **Summary (35 words)**
-About 3500 BCE. In central China, people buried babies with cloth woven of silk. Burnt scraps of it are the oldest silk cloth yet found. Silk is a single thread, unwound from a caterpillar's cocoon. *More*
+About 3500 BCE (about 5,500 years ago). In central China, people buried babies with cloth woven of silk. Burnt scraps of it are the oldest silk cloth yet found. Silk is a single thread, unwound from a caterpillar's cocoon. *More*
 
 **More (348 words)**
 
 ```
-About 6,500 years after the ice
-      or about 3500 BCE
-            or about 5,500 years ago.
+About 3500 BCE (about 5,500 years ago)
 ```
 
 In 1926, at a village called Xiyincun, in northern China, an archaeologist named Li Ji found half of a silkworm's cocoon. Say "shee-yin-TSWUN." Someone had cut it in half, cleanly, with a sharp edge, about 6,000 years before.
@@ -607,14 +585,12 @@ Every silkworm moth that people raise depends on them. Not one of them can fly a
 **Replaces:** `wheel`
 
 **Summary (39 words)**
-About 3500 BCE. In what is now southern Poland, someone drew a wagon on a clay pot: a box, four wheels, and a pole to pull it by. It is one of the oldest pictures of a wheel anywhere. *More*
+About 3500 BCE (about 5,500 years ago). In what is now southern Poland, someone drew a wagon on a clay pot: a box, four wheels, and a pole to pull it by. It is one of the oldest pictures of a wheel anywhere. *More*
 
 **More (350 words)**
 
 ```
-About 6,500 years after the ice
-      or about 3500 BCE
-            or about 5,500 years ago.
+About 3500 BCE (about 5,500 years ago)
 ```
 
 A clay pot, found in southern Poland, has pictures scratched into its side. One of them is tiny and very simple: a box with a small circle at each corner, and a long line out in front.
@@ -659,14 +635,12 @@ The wheel from the marsh is in a museum in Ljubljana. It is more than 5,000 year
 **Replaces:** `bronze`
 
 **Summary (32 words)**
-About 1320 BCE. A ship sank off the south coast of Turkey carrying ten tonnes of copper and one tonne of tin. Melted together, they would have made eleven tonnes of bronze. *More*
+About 1320 BCE (about 3,350 years ago). A ship sank off the south coast of Turkey carrying ten tonnes of copper and one tonne of tin. Melted together, they would have made eleven tonnes of bronze. *More*
 
 **More (334 words)**
 
 ```
-About 8,680 years after the ice
-      or about 1320 BCE
-            or about 3,350 years ago.
+About 1320 BCE (about 3,350 years ago)
 ```
 
 In 1982 a sponge diver named Mehmed Çakır came up from the sea floor off the south coast of Turkey. He said he had seen "metal biscuits with ears."
@@ -713,14 +687,12 @@ The copper and the tin are in a museum in Bodrum, farther west along the same co
 **Replaces:** `caral`
 
 **Summary (38 words)**
-About 2600 BCE. In a desert valley in Peru, people built a city of stepped stone mounds and sunken plazas, about as old as Egypt's great pyramids. They made no pottery and left no writing. They left flutes. *More*
+About 2600 BCE (about 4,600 years ago). In a desert valley in Peru, people built a city of stepped stone mounds and sunken plazas, about as old as Egypt's great pyramids. They made no pottery and left no writing. They left flutes. *More*
 
 **More (305 words)**
 
 ```
-About 7,400 years after the ice
-      or about 2600 BCE
-            or about 4,600 years ago.
+About 2600 BCE (about 4,600 years ago)
 ```
 
 More than thirty flutes, made from the bones of pelicans and condors, were found at Caral, in Peru. They are more than 4,000 years old.
@@ -767,14 +739,12 @@ Someone carved the flutes and played them. Nobody knows what music they made.
 **Replaces:** `pyramid`
 
 **Summary (35 words)**
-About 2560 BCE. In Egypt, the Great Pyramid was finished as a tomb for King Khufu. It was the tallest thing people had built for almost 3,800 years. Some of the workers' own records survive. *More*
+About 2560 BCE (about 4,590 years ago). In Egypt, the Great Pyramid was finished as a tomb for King Khufu. It was the tallest thing people had built for almost 3,800 years. Some of the workers' own records survive. *More*
 
 **More (323 words)**
 
 ```
-About 7,440 years after the ice
-      or about 2560 BCE
-            or about 4,600 years ago.
+About 2560 BCE (about 4,590 years ago)
 ```
 
 On a sheet of papyrus, a kind of paper made from reeds, someone kept a diary. Day by day, it records a crew of about forty men loading blocks of white limestone onto a boat, carrying them along the Nile, and delivering them to a building site called the Horizon of Khufu.

@@ -13,14 +13,12 @@ role: The worked examples for timeline events. Once approved, these become the e
 **Replaces:** `gobekli`
 
 **Summary (35 words)**
-About 9500 BCE. On a hill in what is now southeast Turkey, people who hunted and gathered their food carved stone pillars as tall as a house and stood them in rings. Nobody knows why. *More*
+About 9500 BCE (about 11,500 years ago). On a hill in what is now southeast Turkey, people who hunted and gathered their food carved stone pillars as tall as a house and stood them in rings. Nobody knows why. *More*
 
 **More (326 words; Michael's edit of 30 Sept, with small fixes)**
 
 ```
-About 500 years after the ice
-      or about 9500 BCE
-            or about 11,500 years ago.
+About 9500 BCE (about 11,500 years ago)
 ```
 
 A stone pillar stands in a ring of other pillars. It is shaped like a capital T, is as tall as a two-storey house, and weighs about as much as seven cars. Down its sides, someone carved two long arms. The hands meet at the front, above a belt. Other pillars nearby are covered with carved foxes, boars, snakes, vultures and scorpions.
@@ -66,14 +64,12 @@ For now, we know the pillars with arms have no faces. Maybe someday we'll know w
 **Replaces:** `thales`
 
 **Summary (34 words)**
-28 May 585 BCE. During a battle between two kings in what is now Turkey, the Moon covered the Sun and the day went dark. The armies stopped fighting, and the kings made peace. *More*
+28 May 585 BCE (2,611 years ago). During a battle between two kings in what is now Turkey, the Moon covered the Sun and the day went dark. The armies stopped fighting, and the kings made peace. *More*
 
 **More (310 words; Michael's edit of 30 Sept, with small fixes)**
 
 ```
-9,415 years after the ice
-      or 28 May 585 BCE
-            or 2,611 years ago.
+28 May 585 BCE (2,611 years ago)
 ```
 
 Two armies were fighting beside a river in what is now Turkey when darkness fell. It was evening, but the Sun had not yet set. The day had turned into night.

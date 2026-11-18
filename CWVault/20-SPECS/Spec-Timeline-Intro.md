@@ -42,6 +42,8 @@ anchors per millennium, each met several times.
 
 ## 1. The calendar
 
+*Superseded 17 Nov 2026 by Ruling-Dates-01.md.*
+
 Year 0 = 10 000 BCE, per `00-FOUNDATION/CW-Date-Convention.md`. Today is 12 026.
 
 **The name of year 0 is "after the ice."** Tested as a suffix: *Socrates was born about

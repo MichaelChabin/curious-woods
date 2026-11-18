@@ -29,6 +29,8 @@ Math and science are not privileged. They arrive because they're interesting and
 
 *Stories and the graph.* Stories are nodes; links are edges; the timeline's event pool and the story graph are one thing. A link to a story not yet written is the to-write list. Every story carries a one-line explanation for the moment a child taps it on a timeline.
 
+*Superseded 17 Nov 2026 by Ruling-Dates-01.md.*
+
 *The timeline.* After the Ice, and later its deep-time cousins, each with its own pool and scale. After-the-ice years live on the timeline, where they are distances. In prose, a year is written the ordinary way, 1808, and placed beside something she already knows ("thirteen years after Mozart died").
 
 *Tools on the plane.* Glass (multiplication), Glass Geometry, Sound, and whatever the plane can carry next. Every perceptual question gets a bench in `experiments/` before anyone argues.

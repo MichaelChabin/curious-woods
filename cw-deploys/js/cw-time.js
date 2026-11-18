@@ -14,6 +14,13 @@
                              set tells every listener (year, source) and answers whether the year changed;
                              setMa rounds to a whole year, as the deep lines always did. A listener that set
                              the year itself can tell by the source and not redraw twice.
+     CW.yearsAgo(year, bce, round)   the years ago of a calendar year, by the house's sum (Ruling-Dates-01.md,
+                             17 Nov 2026): the BCE year plus this year, or this year less the CE year, the
+                             missing year 0 ignored; `round` (10, 100, 500) for an "about" date
+     CW.agoWords(year, bce, round)   the same in parentheses: (196 years ago), (about 360 years ago)
+   And one thing done on load: every element marked data-cw-ago="1830" (or "1000 BCE"), with data-cw-round="10"
+   where the date is "about", has its text set to those parentheses, so a story's subtitle — 1830 (196 years ago)
+   — is right in any year. The text typed in the page is what shows if this script does not run.
    The deep lines (js/deep-time.js, opts.time), the Time Machine's own line and the map keep only what they
    last drew; the page hands the year to the map. Classic script, no dependencies. */
 (function () {
@@ -22,6 +29,23 @@
   CW.THIS_YEAR = new Date().getFullYear();
   CW.maToYear = function (ma) { return CW.THIS_YEAR - ma * 1e6; };
   CW.yearToMa = function (year) { return (CW.THIS_YEAR - year) / 1e6; };
+  CW.yearsAgo = function (year, bce, round) {
+    var n = bce ? +year + CW.THIS_YEAR : CW.THIS_YEAR - year;
+    if (round) { var r = Math.round(n / round) * round; if (r > 0) n = r; }
+    return n;
+  };
+  CW.agoWords = function (year, bce, round) {
+    var n = CW.yearsAgo(year, bce, round);
+    return '(' + (round ? 'about ' : '') + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (n === 1 ? ' year ago)' : ' years ago)');
+  };
+  function fillAgo() {
+    if (typeof document === 'undefined' || !document.querySelectorAll) return;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cw-ago]'), function (el) {
+      var m = /^\s*(\d+)\s*(BCE)?\s*$/.exec(el.getAttribute('data-cw-ago') || '');
+      if (m) el.textContent = CW.agoWords(+m[1], !!m[2], +el.getAttribute('data-cw-round') || 0);
+    });
+  }
+  if (typeof document !== 'undefined') { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fillAgo); fillAgo(); }
   CW.curveAt = function (pts, x, k) {
     k = k || 1;
     if (!pts || !pts.length) return null;

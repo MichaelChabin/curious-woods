@@ -15,14 +15,12 @@ Written in round 2 of the upgrade prompt. Each event's "Notes for us" gives the 
 **Replaces:** `stonehenge`
 
 **Summary (36 words)**
-About 2500 BCE. On a plain in southern England, people raised a ring of giant stones. The stones came from three places: a wood nearby, hills in Wales, and probably the far northeast of Scotland. *More*
+About 2500 BCE (about 4,500 years ago). On a plain in southern England, people raised a ring of giant stones. The stones came from three places: a wood nearby, hills in Wales, and probably the far northeast of Scotland. *More*
 
 **More (343 words)**
 
 ```
-About 7,500 years after the ice
-      or about 2500 BCE
-            or about 4,500 years ago.
+About 2500 BCE (about 4,500 years ago)
 ```
 
 On a grassy plain in the south of England, a ring of huge grey stones stands against the sky. The tallest are higher than a two-storey house, and some pairs carry a third stone laid across their tops. This is Stonehenge. Its biggest stones were raised about 4,500 years ago.
@@ -63,14 +61,12 @@ The Altar Stone from Scotland still lies in the middle of the ring, under two st
 **Replaces:** `enhed`
 
 **Summary (40 words)**
-About 2300 BCE. At Ur, in what is now Iraq, a king's daughter named Enheduanna was high priestess of the moon god. Poems copied centuries later carry her name. She may be the first author whose name we know. *More*
+About 2300 BCE (about 4,300 years ago). At Ur, in what is now Iraq, a king's daughter named Enheduanna was high priestess of the moon god. Poems copied centuries later carry her name. She may be the first author whose name we know. *More*
 
 **More (293 words)**
 
 ```
-About 7,700 years after the ice
-      or about 2300 BCE
-            or about 4,300 years ago.
+About 2300 BCE (about 4,300 years ago)
 ```
 
 A round stone about as wide as a dinner plate was dug up in pieces at Ur, in what is now southern Iraq. On one side, a row of people are carved making an offering. On the other side is writing that names Enheduanna ("en-hed-oo-AH-na"), daughter of King Sargon, and scholars think she is one of the people in the row.
@@ -111,14 +107,12 @@ The round stone has been put back together, and it is in a museum in Philadelphi
 **Replaces:** `alphabet`
 
 **Summary (38 words)**
-About 1850 BCE. At turquoise mines in Egypt's Sinai desert, people who did not write Egyptian borrowed a few Egyptian pictures and used each one for a single sound. Most alphabets used today come from their idea. *More*
+About 1850 BCE (about 3,900 years ago). At turquoise mines in Egypt's Sinai desert, people who did not write Egyptian borrowed a few Egyptian pictures and used each one for a single sound. Most alphabets used today come from their idea. *More*
 
 **More (348 words)**
 
 ```
-About 8,150 years after the ice
-      or about 1850 BCE
-            or about 3,900 years ago.
+About 1850 BCE (about 3,900 years ago)
 ```
 
 A little stone sphinx, a bit longer than a pencil, is kept at the British Museum in London. On its right shoulder is a line of Egyptian writing, made of tiny pictures, saying that the sphinx is "beloved of Hathor, mistress of turquoise." Hathor was an Egyptian goddess. On its left shoulder and its base are other marks. Some of them look like Egyptian pictures, but they are not Egyptian writing.
@@ -157,14 +151,12 @@ Over many hundreds of years the signs changed shape again and again, as traders 
 **Replaces:** `oracle`
 
 **Summary (38 words)**
-About 1200 BCE. At Anyang, in China, the kings of the Shang carved their questions to their ancestors on bones and turtle shells. The writing is already fully grown. Today's Chinese characters come straight down from it. *More*
+About 1200 BCE (about 3,200 years ago). At Anyang, in China, the kings of the Shang carved their questions to their ancestors on bones and turtle shells. The writing is already fully grown. Today's Chinese characters come straight down from it. *More*
 
 **More (350 words)**
 
 ```
-About 8,800 years after the ice
-      or about 1200 BCE
-            or about 3,200 years ago.
+About 1200 BCE (about 3,200 years ago)
 ```
 
 On the inside of a turtle's flat undershell, someone has cut neat rows of small hollows and scorched each one. On the outside, a crack runs from each scorched spot, and next to the cracks someone has carved a question: Will it rain? Will the harvest be good? Is one of the king's ancestors causing his toothache?
@@ -203,14 +195,12 @@ For years, farmers near Anyang dug up the bones and sold them as "dragon bones,"
 **Replaces:** `iron`
 
 **Summary (36 words)**
-About 900 BCE. Around the eastern Mediterranean, making iron became common. Copper and tin, the metals of bronze, are rare. Iron is in rock almost everywhere. Metal no longer had to come from far away. *More*
+About 900 BCE (about 2,900 years ago). Around the eastern Mediterranean, making iron became common. Copper and tin, the metals of bronze, are rare. Iron is in rock almost everywhere. Metal no longer had to come from far away. *More*
 
 **More (347 words)**
 
 ```
-About 9,100 years after the ice
-      or about 900 BCE
-            or about 2,900 years ago.
+About 900 BCE (about 2,900 years ago)
 ```
 
 In the tomb of Tutankhamun ("toot-ahnk-AH-mun"), a young king of Egypt who died about 3,350 years ago, lay a dagger with a gold handle and a blade of iron. The iron came from the sky. In 2016 a team using X-rays found nickel and cobalt in the blade, mixed with the iron the way they are mixed in meteorites, which are pieces of rock or metal from space that have reached the ground. In the young king's time iron was a treasure, and kings sent gifts of it to other kings.
@@ -249,14 +239,12 @@ Tutankhamun's dagger is in the Grand Egyptian Museum, near Cairo. Its blade has 
 **Replaces:** `olmec`
 
 **Summary (34 words)**
-Before 900 BCE. Near the Gulf coast of Mexico, a people we call the Olmec carved giant stone heads, each a different face in a different helmet. Nobody knows whose faces they are. *More*
+Before 900 BCE (about 3,100 years ago). Near the Gulf coast of Mexico, a people we call the Olmec carved giant stone heads, each a different face in a different helmet. Nobody knows whose faces they are. *More*
 
 **More (300 words)**
 
 ```
-About 8,900 years after the ice
-      or about 1100 BCE
-            or about 3,100 years ago.
+About 1100 BCE (about 3,100 years ago)
 ```
 
 A stone face almost three metres tall looks out from a museum in Xalapa ("hah-LAH-pah"), in Mexico. It weighs about twenty-five tonnes. It has full cheeks, a broad, flat nose and thick lips, and it wears a close-fitting helmet.
@@ -295,14 +283,12 @@ Seventeen faces, and not one name.
 **Replaces:** `lead-nineveh-0`
 
 **Summary (39 words)**
-About 775 BCE. Greeks borrowed the alphabet of the Phoenicians, traders from what is now Lebanon. Phoenician letters had none for vowels, so the Greeks made some. Within fifty years, Greeks were scratching verses onto cups and jugs. *More*
+About 775 BCE (about 2,800 years ago). Greeks borrowed the alphabet of the Phoenicians, traders from what is now Lebanon. Phoenician letters had none for vowels, so the Greeks made some. Within fifty years, Greeks were scratching verses onto cups and jugs. *More*
 
 **More (323 words)**
 
 ```
-About 9,225 years after the ice
-      or about 775 BCE
-            or about 2,800 years ago.
+About 775 BCE (about 2,800 years ago)
 ```
 
 Around the shoulder of a wine jug found in a graveyard in Athens, someone has scratched a line of writing. It runs from right to left, the letters face backwards, and it says:
@@ -345,14 +331,12 @@ Alpha and beta, the first two Greek letters, gave us the word alphabet, and alph
 **Replaces:** `lead-nineveh-1`
 
 **Summary (39 words)**
-15 June 763 BCE. In Assyria, in what is now northern Iraq, the Moon covered the Sun. Scribes wrote it in their list of years. That one line puts dates on about three hundred years of Assyrian history. *More*
+15 June 763 BCE (2,789 years ago). In Assyria, in what is now northern Iraq, the Moon covered the Sun. Scribes wrote it in their list of years. That one line puts dates on about three hundred years of Assyrian history. *More*
 
 **More (339 words)**
 
 ```
-9,237 years after the ice
-      or 15 June 763 BCE
-            or 2,789 years ago.
+15 June 763 BCE (2,789 years ago)
 ```
 
 A clay tablet holds a list of years. In Assyria, a year did not have a number; it had a name. Each year was named after an important official, and scribes kept long lists of the names, in order, with a few words about what happened in each year. One line reads:
@@ -391,14 +375,12 @@ The eclipse that stopped a battle beside the Halys River, 178 years later, was d
 **Replaces:** `lead-nineveh-3`
 
 **Summary (35 words)**
-About 690 BCE. In what is now northern Iraq, the Assyrian king Sennacherib built a stone bridge to carry a canal of water across a valley, on its way to his capital city, Nineveh. *More*
+About 690 BCE (about 2,720 years ago). In what is now northern Iraq, the Assyrian king Sennacherib built a stone bridge to carry a canal of water across a valley, on its way to his capital city, Nineveh. *More*
 
 **More (322 words)**
 
 ```
-About 9,310 years after the ice
-      or about 690 BCE
-            or about 2,700 years ago.
+About 690 BCE (about 2,720 years ago)
 ```
 
 In a valley in the hills of northern Iraq, a long, broken wall of cut stone runs across the fields. It is about 280 metres long and 22 metres wide, and where it crossed a stream it once stood about nine metres high, with the stream running under it through pointed arches. On top of the wall ran water.
@@ -434,14 +416,12 @@ It is one of the oldest bridges for water known anywhere. Parts of it still stan
 **Replaces:** `nineveh` and `lead-nineveh-4`
 
 **Summary (37 words)**
-About 650 BCE. At Nineveh, in what is now Iraq, King Ashurbanipal, who could read, gathered tens of thousands of clay tablets: stories, medicine, omens and word lists. Thousands survived the city's destruction, broken into pieces. *More*
+About 650 BCE (about 2,680 years ago). At Nineveh, in what is now Iraq, King Ashurbanipal, who could read, gathered tens of thousands of clay tablets: stories, medicine, omens and word lists. Thousands survived the city's destruction, broken into pieces. *More*
 
 **More (335 words)**
 
 ```
-About 9,350 years after the ice
-      or about 650 BCE
-            or about 2,700 years ago.
+About 650 BCE (about 2,680 years ago)
 ```
 
 In 1872, at the British Museum in London, a broken clay tablet lay half hidden under a thick, hard crust. When the crust was cleaned away, the writing underneath told of a great flood: a man builds a boat, fills it with animals and rides out the storm, then sends out birds to look for dry land. The first person in more than two thousand years to read it was George Smith, an assistant at the museum who had trained as a banknote engraver and taught himself to read the old writing. The tablet was part of a long poem now called the Epic of Gilgamesh.
@@ -478,14 +458,12 @@ Archaeologists began digging up the pieces in 1849, and the British Museum now h
 **Replaces:** `coins`
 
 **Summary (36 words)**
-About 610 BCE. In Lydia, a kingdom in what is now western Turkey, someone began stamping small lumps of gold and silver with a lion's head. They are among the oldest coins anyone has found. *More*
+About 610 BCE (about 2,640 years ago). In Lydia, a kingdom in what is now western Turkey, someone began stamping small lumps of gold and silver with a lion's head. They are among the oldest coins anyone has found. *More*
 
 **More (320 words)**
 
 ```
-About 9,390 years after the ice
-      or about 610 BCE
-            or about 2,600 years ago.
+About 610 BCE (about 2,640 years ago)
 ```
 
 A lump of pale yellow metal, about as big as a lentil, has a lion's head stamped on one side, with its mouth open. On the other side there is only a plain dent, where a punch struck it. It is a coin, one of the oldest anyone has found. It was dug up, with ninety-two others, at the ruins of the temple of Artemis at Ephesus, on the west coast of Turkey, where the coins had been buried more than 2,600 years ago.
@@ -522,14 +500,12 @@ At about the same time, people in China were making coins of their own, in bronz
 **Replaces:** `lead-socrates-0`
 
 **Summary (39 words)**
-About 530 BCE. A man named Pythagoras moved from the Greek island of Samos to Croton, in southern Italy, and gathered followers. He left no writings that we know of. What he actually discovered, nobody knows for sure. *More*
+About 530 BCE (about 2,560 years ago). A man named Pythagoras moved from the Greek island of Samos to Croton, in southern Italy, and gathered followers. He left no writings that we know of. What he actually discovered, nobody knows for sure. *More*
 
 **More (332 words)**
 
 ```
-About 9,470 years after the ice
-      or about 530 BCE
-            or about 2,550 years ago.
+About 530 BCE (about 2,560 years ago)
 ```
 
 We think Pythagoras ("pih-THAG-or-us") was born on the Greek island of Samos about 570 BCE, and that when he was about forty he moved to Croton, a Greek city on the coast of southern Italy. There he gathered followers and gave them rules: don't eat beans, never walk on the public roads. He taught that after death, a person's soul is born again in another person or an animal.
@@ -568,14 +544,12 @@ Did Pythagoras find these fractions himself? Nobody knows for sure. He became a 
 **Replaces:** `lead-socrates-1`
 
 **Summary (39 words)**
-508 BCE. The people of Athens trapped a Spartan king on their city's hill and brought back a man named Cleisthenes, whose new rules put the city in its citizens' hands. Most people in Athens were not citizens. *More*
+508 BCE (2,534 years ago). The people of Athens trapped a Spartan king on their city's hill and brought back a man named Cleisthenes, whose new rules put the city in its citizens' hands. Most people in Athens were not citizens. *More*
 
 **More (342 words)**
 
 ```
-9,492 years after the ice
-      or 508 BCE
-            or 2,534 years ago.
+508 BCE (2,534 years ago)
 ```
 
 For two days, a king of Sparta and his soldiers were trapped on the Acropolis ("uh-KROP-uh-lis"), the rocky hill in the middle of Athens, surrounded by the ordinary people of the city. On the third day the king gave up and was allowed to leave.
@@ -610,14 +584,12 @@ One of the new rules let the citizens vote to send a powerful man away from Athe
 **Replaces:** `confucius`
 
 **Summary (38 words)**
-About 500 BCE. In the state of Lu, in China, a teacher named Kongzi, whom Europeans later called Confucius, taught how to live and how to govern. He wrote nothing. His students wrote down what he said. *More*
+About 500 BCE (about 2,530 years ago). In the state of Lu, in China, a teacher named Kongzi, whom Europeans later called Confucius, taught how to live and how to govern. He wrote nothing. His students wrote down what he said. *More*
 
 **More (314 words)**
 
 ```
-About 9,500 years after the ice
-      or about 500 BCE
-            or about 2,500 years ago.
+About 500 BCE (about 2,530 years ago)
 ```
 
 In the town of Qufu ("choo-foo"), in eastern China, there is a graveyard with more than a hundred thousand graves. Almost everyone buried there belongs to one family, the Kong family, the descendants of one man.
@@ -659,14 +631,12 @@ His family has kept track of itself for centuries. An edition of the Kong family
 **Replaces:** `lead-socrates-3`
 
 **Summary (39 words)**
-499 BCE. In Athens, a young man named Aeschylus entered the city's contest for new plays for the first time. He would put a second actor on the stage, so that two characters could talk to each other. *More*
+499 BCE (2,525 years ago). In Athens, a young man named Aeschylus entered the city's contest for new plays for the first time. He would put a second actor on the stage, so that two characters could talk to each other. *More*
 
 **More (293 words)**
 
 ```
-9,501 years after the ice
-      or 499 BCE
-            or 2,525 years ago.
+499 BCE (2,525 years ago)
 ```
 
 In Athens, people sit on wooden benches, looking down on a flat floor where the chorus will dance. It is spring, and the city is holding its festival for Dionysus, a god of wine. For several days the city watches new plays, and judges choose the best.

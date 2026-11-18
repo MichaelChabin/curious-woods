@@ -1,6 +1,6 @@
 ---
 title: "Have You Thought of a Story?"
-subtitle: "~11,816 after the ice, or 1816."
+subtitle: "1816 (210 years ago)"
 year: 1816
 cw_year: 11816
 placement: across, with a left margin        # the Vermeer arrangement: the manuscript page first, full width; tools as words in the margin
@@ -49,7 +49,7 @@ world_region: europe-and-a-card-east   # London, Geneva, Bologna, Como, Waterloo
 
 # Have You Thought of a Story?
 
-*~11,816 after the ice, or 1816.*
+*1816 (210 years ago)*
 
 The book Mary wrote began with a student. His name was Victor Frankenstein, and he built a creature that was very much like a human, and brought it to life. The creature he built wasn't a monster either, not at first anyway. Mary called him handsome.
 

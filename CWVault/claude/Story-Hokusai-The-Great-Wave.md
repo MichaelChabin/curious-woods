@@ -1,6 +1,6 @@
 ---
 title: "Hokusai: The Great Wave"
-subtitle: "~11,830 after the ice, or 1830."
+subtitle: "1830 (196 years ago)"
 year: 1830
 cw_year: 11830
 placement: across, with a left margin      # the 20 Sept ruling

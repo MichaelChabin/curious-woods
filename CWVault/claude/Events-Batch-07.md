@@ -15,14 +15,12 @@ Written in round 2 of Prompt-Upgrade-Timeline-Events.md and checked in round 3. 
 **Replaces:** none (new record)
 
 **Summary (36 words)**
-About 1665. A printed book of short tales from Japan told the story of Issun-bōshi, a boy as tall as a thumb who set out in a bowl. Nobody knows how much older the story is. *More*
+About 1665 (about 360 years ago). A printed book of short tales from Japan told the story of Issun-bōshi, a boy as tall as a thumb who set out in a bowl. Nobody knows how much older the story is. *More*
 
 **More (350 words)**
 
 ```
-About 11,665 years after the ice
-      or about 1665
-            or about 360 years ago.
+About 1665 (about 360 years ago)
 ```
 
 An old couple in Naniwa, the town that is now Osaka, had no children, so they prayed at the shrine of Sumiyoshi, and when the wife was forty-one she had a son. He was one *sun* tall, an old Japanese measure of about three centimetres, so he was called Issun-bōshi ("ee-SOON BOH-shee"), the one-sun boy.
@@ -58,14 +56,12 @@ Retellings for children, like Iwaya Sazanami's of 1896, left out the trick with 
 **Replaces:** `lead-starry-0`
 
 **Summary (38 words)**
-19 August 1839. In Paris, the French government gave away a way of making pictures with light, invented by Louis Daguerre. Anyone could use it free, except in England, where Daguerre had taken out a patent days before. *More*
+19 August 1839 (187 years ago). In Paris, the French government gave away a way of making pictures with light, invented by Louis Daguerre. Anyone could use it free, except in England, where Daguerre had taken out a patent days before. *More*
 
 **More (315 words)**
 
 ```
-11,839 years after the ice
-      or 19 August 1839
-            or 187 years ago.
+19 August 1839 (187 years ago)
 ```
 
 On 19 August 1839, in a hall of the Institut de France in Paris, the members of two academies, one for the sciences and one for the fine arts, met together to hear a secret given away. The secret was how to make a daguerreotype ("dah-GAIR-oh-type"), a picture made by light.
@@ -102,14 +98,12 @@ But it did not belong to everyone. A few days before the meeting in Paris, an ag
 **Replaces:** `lead-starry-1`
 
 **Summary (34 words)**
-1841. In London, John Goffe Rand, an American portrait painter, patented a small tube of thin metal for keeping oil paint. Squeezed, it let out a little paint, and it could be closed again. *More*
+1841 (185 years ago). In London, John Goffe Rand, an American portrait painter, patented a small tube of thin metal for keeping oil paint. Squeezed, it let out a little paint, and it could be closed again. *More*
 
 **More (328 words)**
 
 ```
-11,841 years after the ice
-      or 1841
-            or 185 years ago.
+1841 (185 years ago)
 ```
 
 Before 1841, a painter who wanted to keep oil paint fresh for a few days tied it up in a little bag made from a pig's bladder. To get paint out, you pricked the bladder with a tack and squeezed. The hole could not be properly closed again, so the paint near it dried, and a bladder carried in a pocket or a box could burst. Some painters kept paint in glass tubes or syringes, which kept it better but broke.
@@ -147,14 +141,12 @@ Many years later, Jean Renoir, a film director, wrote a book about his father, t
 **Replaces:** `lead-starry-2`
 
 **Summary (36 words)**
-1867. At a world's fair in Paris, Japan took part for the first time, and sent woodblock prints among much else. Over the next twenty years, painters in France collected Japanese prints, and some copied them. *More*
+1867 (159 years ago). At a world's fair in Paris, Japan took part for the first time, and sent woodblock prints among much else. Over the next twenty years, painters in France collected Japanese prints, and some copied them. *More*
 
 **More (287 words)**
 
 ```
-11,867 years after the ice
-      or 1867
-            or 159 years ago.
+1867 (159 years ago)
 ```
 
 In April 1867 a world's fair opened in Paris on the Champ de Mars, a great open field beside the river Seine, and countries from all over the world showed what they made. For the first time, Japan sent things to show: lacquer, pottery, paintings, and prints.
@@ -189,14 +181,12 @@ In 1888 Theo wrote to Vincent about a wave by Hokusai, almost certainly *The Gre
 **Replaces:** `lead-starry-3`
 
 **Summary (33 words)**
-1874. In Paris, about thirty artists put on an exhibition of their own. A critic made fun of a painting by Claude Monet, *Impression, Sunrise*, and called the painters "Impressionists." The name stuck. *More*
+1874 (152 years ago). In Paris, about thirty artists put on an exhibition of their own. A critic made fun of a painting by Claude Monet, *Impression, Sunrise*, and called the painters "Impressionists." The name stuck. *More*
 
 **More (312 words)**
 
 ```
-11,874 years after the ice
-      or 1874
-            or 152 years ago.
+1874 (152 years ago)
 ```
 
 In April 1874, in rooms on the boulevard des Capucines in Paris, hung a small painting of a harbour early in the morning. The harbour is half hidden in mist. There are dark boats on the water, the shapes of ships and cranes behind them, and a small orange sun, with its reflection laid across the water in short strokes of paint.
@@ -234,14 +224,12 @@ He meant it as an insult. Four days later another critic, Jules Castagnary, used
 **Replaces:** `lead-montp-1`
 
 **Summary (36 words)**
-19 June 1878. In California, Eadweard Muybridge set twelve cameras beside a racetrack and photographed a horse named Sallie Gardner at a gallop. One picture caught all four of her hooves off the ground at once. *More*
+19 June 1878 (148 years ago). In California, Eadweard Muybridge set twelve cameras beside a racetrack and photographed a horse named Sallie Gardner at a gallop. One picture caught all four of her hooves off the ground at once. *More*
 
 **More (308 words)**
 
 ```
-11,878 years after the ice
-      or 19 June 1878
-            or 148 years ago.
+19 June 1878 (148 years ago)
 ```
 
 On 19 June 1878, a mare named Sallie Gardner galloped down a track at Palo Alto, in California, with a rider on her back. Beside the track stood twelve cameras in a row, and on the far side of the track, facing them, a sloping white screen.
@@ -280,14 +268,12 @@ Muybridge sold the pictures on cards called *The Horse in Motion*, and that Octo
 **Replaces:** `lead-starry-4`
 
 **Summary (40 words)**
-20 February 1888. Vincent van Gogh, a Dutch painter, came by train to Arles, in the south of France, hoping it would look like a Japanese print. It was snowing. In fifteen months there he made about two hundred paintings. *More*
+20 February 1888 (138 years ago). Vincent van Gogh, a Dutch painter, came by train to Arles, in the south of France, hoping it would look like a Japanese print. It was snowing. In fifteen months there he made about two hundred paintings. *More*
 
 **More (328 words)**
 
 ```
-11,888 years after the ice
-      or 20 February 1888
-            or 138 years ago.
+20 February 1888 (138 years ago)
 ```
 
 Vincent van Gogh left Paris on the night train on 19 February 1888. All the way south, as he wrote later, he kept watching to see "if it was like Japan yet." He had been collecting Japanese prints, with their bright flat colours, and he hoped the south of France would look like them.
@@ -326,14 +312,12 @@ In May 1889 he moved to Saint-Rémy, a town about twenty kilometres away, and th
 **Replaces:** `lead-montp-2`
 
 **Summary (33 words)**
-1889. For a world's fair in Paris, Gustave Eiffel's company built a tower of iron 300 metres tall, the tallest thing anyone had built. It was meant to come down after twenty years. *More*
+1889 (137 years ago). For a world's fair in Paris, Gustave Eiffel's company built a tower of iron 300 metres tall, the tallest thing anyone had built. It was meant to come down after twenty years. *More*
 
 **More (335 words)**
 
 ```
-11,889 years after the ice
-      or 1889
-            or 137 years ago.
+1889 (137 years ago)
 ```
 
 In February 1887, while workers were digging the foundations of a tower on the Champ de Mars in Paris, a newspaper called *Le Temps* printed a protest signed by about forty artists and writers. Among them were the writer Guy de Maupassant, the composer Charles Gounod, and Charles Garnier, who had designed the Paris opera house. They called the tower useless and monstrous, and compared it to a gigantic black factory chimney.
@@ -368,14 +352,12 @@ Eiffel's permit was for twenty years. After that, the tower belonged to the city
 **Replaces:** `montp`, `lead-montp-0`
 
 **Summary (38 words)**
-22 October 1895. In Paris, an express train came into the Montparnasse station too fast, ran through the end of the line, crossed the station hall and broke through the wall. The engine fell to the street below. *More*
+22 October 1895 (131 years ago). In Paris, an express train came into the Montparnasse station too fast, ran through the end of the line, crossed the station hall and broke through the wall. The engine fell to the street below. *More*
 
 **More (345 words)**
 
 ```
-11,895 years after the ice
-      or 22 October 1895
-            or 131 years ago.
+22 October 1895 (131 years ago)
 ```
 
 Express number 56 left Granville, on the coast of Normandy, at a quarter to nine on 22 October 1895. It was due at the Montparnasse station in Paris at five to four in the afternoon, and it was running a few minutes late.
@@ -413,14 +395,12 @@ At the trial the next spring, the driver, Guillaume-Marie Pellerin, was fined fi
 **Replaces:** `lead-montp-3`
 
 **Summary (38 words)**
-28 December 1895. In a room below a café in Paris, ten short moving pictures made by Louis and Auguste Lumière were shown to an audience that had paid to see them. Each film lasted about fifty seconds. *More*
+28 December 1895 (131 years ago). In a room below a café in Paris, ten short moving pictures made by Louis and Auguste Lumière were shown to an audience that had paid to see them. Each film lasted about fifty seconds. *More*
 
 **More (335 words)**
 
 ```
-11,895 years after the ice
-      or 28 December 1895
-            or 131 years ago.
+28 December 1895 (131 years ago)
 ```
 
 On the evening of 28 December 1895, about thirty people each paid a franc and went down the stairs into the Salon Indien, a room beneath the Grand Café on the boulevard des Capucines in Paris. What they saw there was ten films, each about fifty seconds long, thrown onto a screen by a machine called the Cinématographe.
@@ -458,14 +438,12 @@ In the summer of 1896, the Russian writer Maxim Gorky saw the Lumières' films a
 **Replaces:** `curie`
 
 **Summary (36 words)**
-26 December 1898. In Paris, Marie and Pierre Curie, with the chemist Gustave Bémont, announced a new element, hidden in a black rock called pitchblende. They named it radium, from the Latin word for a ray. *More*
+26 December 1898 (128 years ago). In Paris, Marie and Pierre Curie, with the chemist Gustave Bémont, announced a new element, hidden in a black rock called pitchblende. They named it radium, from the Latin word for a ray. *More*
 
 **More (324 words)**
 
 ```
-11,898 years after the ice
-      or 26 December 1898
-            or 128 years ago.
+26 December 1898 (128 years ago)
 ```
 
 In 1896 a physicist in Paris named Henri Becquerel found that uranium, a metal, gives off rays that nobody can see, which pass through black paper and fog a photographic plate. Marie Curie, a young physicist from Poland who was working in Paris, chose those rays as the subject of her doctorate.
@@ -503,14 +481,12 @@ They had no radium to show yet. There was so little of it in pitchblende that it
 **Replaces:** `web`
 
 **Summary (37 words)**
-1990. At CERN, a laboratory for physics near Geneva, Tim Berners-Lee put the first page of the World Wide Web on a computer where others could read it. The page explained the web. Nobody has a copy. *More*
+1990 (36 years ago). At CERN, a laboratory for physics near Geneva, Tim Berners-Lee put the first page of the World Wide Web on a computer where others could read it. The page explained the web. Nobody has a copy. *More*
 
 **More (317 words)**
 
 ```
-11,990 years after the ice
-      or 1990
-            or 36 years ago.
+1990 (36 years ago)
 ```
 
 In March 1989, Tim Berners-Lee, an English computer scientist, wrote a proposal at CERN ("SERN"), a great laboratory for physics that straddles the border between Switzerland and France, near Geneva. Thousands of people came and went at CERN, and information got lost: who had written which program, which notes went with which experiment. He suggested a way of linking documents, on any kind of computer, so that a reader could jump from one to another. His boss, Mike Sendall, wrote on the cover: "Vague but exciting…"
