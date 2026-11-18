@@ -1,5 +1,5 @@
 ---
-status: Report, 17 Nov 2026. Step 8 of the Time lab bench, built on the working tree at `f511ad71` (step 7 as live, `94319125`, with the dates session's uncommitted lines in the same files). Checked in the pane at 1,024 × 768 and 768 × 1,024. Reported first, as the prompt asks. Amended 18 Nov on Michael's word, "Yes, use the gutter": the text block runs through the right gutter (see *The text block*). Not committed.
+status: Report, 17 Nov 2026. Step 8 of the Time lab bench, built on the working tree at `f511ad71` (step 7 as live, `94319125`, with the dates session's uncommitted lines in the same files). Checked in the pane at 1,024 × 768 and 768 × 1,024. Reported first, as the prompt asks. Amended 18 Nov on Michael's word, "Yes, use the gutter": the text block runs through the right gutter (see *The text block*). Committed on his word, "Yes", 18 Nov (`8d3cfe1f`), this session's hunks only; pushed on his word, "Push it", 18 Nov.
 role: What step 8 did to `experiments/time-lab.html`, to the store and to two documents, what it found, and what needs Michael's eye.
 related: Prompt-Revise-Time-Lab-Bench-08.md (Michael's prompt, saved as it arrived), Report-Time-Lab-Bench-07.md (the page as it stood), Ruling-Dates-01.md, Rulings-Sept-2026.md
 ---
