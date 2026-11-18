@@ -98,7 +98,18 @@
      edge on the mosaic's (the span and its length; the name in bold; the description; the whole mosaic's when nothing
      is selected), and the event area (the date and label; the summary ending in More), each of a fixed height that
      holds the longest text in the store. A word under Information, years from the start / years ago, flips how years
-     older than the last 12,000 are counted (COUNT: one block, built to be struck). -->
+     older than the last 12,000 are counted (COUNT: one block, built to be struck).
+     Step 8 (17 Nov 2026; Michael's prompt Prompt-Revise-Time-Lab-Bench-08.md, after step 7 went live): Ga, not Ba
+     (Michael's word, 17 Nov; the abbreviations ruling of 18 Oct stands and step 5's Ba is withdrawn). The two areas under
+     the Earth share the mosaic's width unequally, the event area the larger share (LOOK.areasShare), and stand side by
+     side or one over the other, whichever is shorter at this width, and run on through the right gutter to the column's
+     edge (Michael, 18 Nov); a period's description is 30 words at most and an
+     event's summary 40. Dates under Ruling-Dates-01: inside the last 12,000 years an event's first line is its ordinary
+     date with the years ago in parentheses, and the flags and the handle write calendar years to the row's start
+     (10,000 BCE, not 12 ka). On the 4.6 billion the Small Earth is as small as it takes (LOOK.earthMin at the least)
+     for the timeline to be in sight without scrolling. Sound OK? asks at the foot of the left column, under Select
+     years. from the start / years ago shows on the 4.6 billion and Complex life only; from Humans down the page counts
+     in the ordinary way, and her choice comes back when she returns. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-10-19"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
@@ -166,7 +177,7 @@
      in bold and the description. Right, the event area: the date and the label, then the summary ending in More; empty
      until an event is chosen. Each has a fixed height, measured to hold the longest text in the store at this width
      (sizeAreas), so nothing below moves as the text changes; stacked where the mosaic is narrow */
-  .knowing { margin: 6px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+  .knowing { margin: 6px 0 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 24px; }   /* step 8: the script sets the two shares (LOOK.areasShare), the event area the larger */
   .area { margin: 0; overflow: hidden; font-size: 15px; line-height: 1.45; color: var(--cw-ink, #2a241c); }
   .area p { margin: 0; }
   .area .first { color: var(--cw-ink-soft, #6b655a); font-variant-numeric: tabular-nums; }
@@ -176,7 +187,7 @@
   .area .more-word { font-style: italic; color: var(--cw-payne, #546A80); cursor: pointer; user-select: none; -webkit-user-select: none; }
   .area .more-word:hover { color: var(--cw-payne-hover, #3D3D3A); }
   .area.measure { position: absolute; left: -9999px; top: 0; visibility: hidden; overflow: visible; height: auto; }
-  .knowing.stack { grid-template-columns: 1fr; gap: 6px 0; }   /* the script stacks them where the mosaic is too narrow for two columns of text (LOOK.areasSide) */
+  .knowing.stack { grid-template-columns: minmax(0, 1fr); gap: 6px 0; }   /* the script stacks them where one over the other is the shorter block (step 8) */
   /* Full screen on a touch device (step 7): a full page, not the browser's full screen, which a downward swipe leaves */
   html.fullpage body { padding-top: max(10px, env(safe-area-inset-top, 0px)); padding-bottom: 10px; overscroll-behavior: none; }
   html.fullpage .wide { max-width: none; }
@@ -193,11 +204,12 @@
   canvas.glass { display: block; width: 100%; cursor: crosshair; touch-action: none; }
   /* the move (step 6): its own canvas over the glass while tiles travel, the glass hidden under it until the last lands */
   canvas.move { position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; display: none; z-index: 6; }
-  /* Sound OK? (Ruling-Sound-01): where the sound comes from, at the mosaic's top right on the reminder line's row, until she answers */
+  /* Sound OK? (Ruling-Sound-01; step 8): at the foot of the left column, under Select years, until she answers; its line is kept whether it shows or not, so the credit under it never moves */
   /* select and back (step 7): at the right of the mosaic, on the reminder line's row above its right gutter (the gutter
      itself holds the rows' years); one place for both, select stepping left when both are there */
   .word.mosaic-word { position: absolute; right: 0; top: -21px; z-index: 8; font-size: 15px; line-height: 18px; font-style: italic; padding: 0; background: var(--cw-parchment, #f4f1e8); }
-  .sound-ask { position: absolute; right: 0; top: -19px; margin: 0; z-index: 8; font-size: 13px; line-height: 16px; color: var(--cw-ink, #2a241c); background: var(--cw-parchment, #f4f1e8); padding: 0 0 0 8px; white-space: nowrap; }
+  .sound-ask { margin: 8px 0 0; padding: 0 0 0 14px; height: 16px; font-size: 13px; line-height: 16px; color: var(--cw-ink, #2a241c); white-space: nowrap; visibility: hidden; }
+  .sound-ask.asking { visibility: visible; }
   .sound-ask .word { font-size: 13px; font-style: italic; padding: 0; line-height: 16px; }
   .cursor-label { position: absolute; z-index: 7; pointer-events: none; font-size: 12px; line-height: 1.3; color: var(--cw-ink, #2a241c);
                   background: rgba(244,241,232,0.94); border: 0.5px solid #c8b89a; border-radius: 4px; padding: 2px 7px; white-space: nowrap; display: none; }
@@ -278,6 +290,7 @@
     .items { flex-direction: row; gap: 4px 24px; }
     .items .subs { flex-direction: row; flex-wrap: wrap; gap: 1px 14px; }
     .credit { width: 100%; max-width: none; }
+    .sound-ask { padding-left: 0; }
   }
 </style>
 </head>
@@ -289,10 +302,10 @@
       <button class="word" id="wHtw" type="button" aria-pressed="false">How this works</button>
       <ul class="items">
         <li><span class="head" id="hEarth">Earth</span><div class="subs" id="cmds"><button class="word cmd" id="wFull" type="button" style="display:none">Full screen</button><button class="word cmd" id="wEarth" type="button">Large Earth</button></div></li>
-        <li><span class="head" id="hInfo">Information</span><div class="subs"><button class="word cmd" id="wCities" type="button">Show cities</button><button class="word cmd" id="wCoasts" type="button" style="display:none">Show coastlines</button><button class="word cmd" id="wMarkers" type="button" style="display:none">Place markers</button><button class="word cmd" id="wSound" type="button">Sound on</button><button class="word cmd" id="wCount" type="button">years from the start</button></div></li>
+        <li><span class="head" id="hInfo">Information</span><div class="subs"><button class="word cmd" id="wCities" type="button">Show cities</button><button class="word cmd" id="wCoasts" type="button" style="display:none">Show coastlines</button><button class="word cmd" id="wMarkers" type="button" style="display:none">Place markers</button><button class="word cmd" id="wSound" type="button">Sound on</button><button class="word cmd" id="wCount" type="button">from the start</button></div></li>
       </ul>
     </div>
-    <div class="lower" id="lower"><ul class="items select-years" id="selectYears"><li><span class="head" id="hSelect">Select years</span><div class="subs" id="scales"></div></li></ul><p class="credit" id="credit"></p></div>
+    <div class="lower" id="lower"><ul class="items select-years" id="selectYears"><li><span class="head" id="hSelect">Select years</span><div class="subs" id="scales"></div></li></ul><p class="sound-ask" id="soundAsk"><span id="soundAskQ"></span> <button class="word" id="wSoundYes" type="button"></button> · <button class="word" id="wSoundNo" type="button"></button></p><p class="credit" id="credit"></p></div>
     <div class="main" id="main">
       <div class="earth" id="earthBlock">
         <div id="stage3d" class="stage"></div>
@@ -301,7 +314,7 @@
         <div class="area measure" id="areaMeasure" aria-hidden="true"><p class="first"></p><p class="body"></p></div>
       </div>
       <p class="explain" id="explain"></p>
-      <div class="glass-box" id="glassBox"><canvas class="glass" id="glass" aria-label="A mosaic of time: each tile a stretch of time, the past at the top left"></canvas><canvas class="move" id="moveCv" aria-hidden="true"></canvas><div class="cursor-label" id="cursorLabel"></div><button class="word mosaic-word absent" id="wSelect" type="button">select</button><button class="word mosaic-word absent" id="wBack" type="button">back</button><p class="sound-ask" id="soundAsk" style="display:none"><span id="soundAskQ"></span> <button class="word" id="wSoundYes" type="button"></button> · <button class="word" id="wSoundNo" type="button"></button></p></div>
+      <div class="glass-box" id="glassBox"><canvas class="glass" id="glass" aria-label="A mosaic of time: each tile a stretch of time, the past at the top left"></canvas><canvas class="move" id="moveCv" aria-hidden="true"></canvas><div class="cursor-label" id="cursorLabel"></div><button class="word mosaic-word absent" id="wSelect" type="button">select</button><button class="word mosaic-word absent" id="wBack" type="button">back</button></div>
       <div class="track-col" id="trackCol">
         <div class="stretch-track" id="stretchTrack" aria-label="The timeline: a line over the span chosen on the mosaic; the copper dot is the year, the flags pick a span, focus closes in on it, and a flag pulled past an end adds years"><div class="stretch-line" id="stretchLine"></div><div class="span-line" id="spanLine"></div><div class="flag a" id="flagA" title="drag"></div><div class="flag b" id="flagB" title="drag"></div><div class="handle" id="handle" title="the year"></div><span class="flag-label" id="labelA"></span><span class="flag-label" id="labelB"></span><span class="flag-label handle-label" id="labelH"></span><span class="span-word" id="spanWord"></span></div>
         <svg class="events" id="events" aria-label="The events of the span, from the store"><defs><linearGradient id="tl-tail" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#2a241c" stop-opacity="0"></stop><stop offset="1" stop-color="#2a241c" stop-opacity="0.32"></stop></linearGradient></defs></svg>
@@ -322,7 +335,7 @@
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-16 cad0ed3 · time-lab step 7';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-17 f511ad7 · time-lab step 8';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -362,10 +375,11 @@
     labelEvents: 3,           // events named in the label under the cursor; a tile with more says how many
     // the lab's rows (step 1):
     earthSmall: 1 / 3, earthLarge: 1 / 2,   // the Earth's stage, as a share of the screen's height: small (the rule) and large (bench only)
+    earthMin: 120,            // px (step 8): on the 4.6 billion the Small Earth gives up height until the timeline is in sight on arrival, and stops here
     evLine: 12, evRow: 13, evRows: 4, evTick: 7, evThin: 3,   // the events under the line, as the deep timeline draws them: the line to the first label row, a row's height, rows at most, a short line's length, marks closer than this thinned
     handleReach: 14, flagReach: 16,        // px from the handle, and from a flag, a press still takes hold of it
     // step 5:
-    calYears: 12000,          // years ago: inside this, a year is written as the calendar year (200 BCE, 1720); older, ka, Ma, Ba
+    calYears: 12000,          // years ago: inside this, a year is written as the calendar year (200 BCE, 1720); older, ka, Ma, Ga
     markerR: 4.5, markerRing: 1.5, markerTap: 12,   // a marker: the copper dot's radius, its parchment ring, px from it a tap deletes it
     coastW: 1.5, coastA: 0.6, markerFade: 20,       // today's coastlines as the Earth draws them (its COAST_PX, COAST_A); the million years a marker or a coast fades over before its ground was born (the cities')
     // step 6: the eight mosaics, the gathering, the sound
@@ -375,7 +389,10 @@
     lineReadable: 4,          // px: a gathered line's tiles narrower than this merge by tens before they travel
     lineTileMax: 18, lineTileMin: 8,   // px: the gathered line's height (a tile's width, within these)
     lineGap: 4,               // px between the gathered line and the timeline under it
-    areasSide: 560,           // px: the period area and the event area stand side by side where the narrowest mosaic's tiles are at least this wide (1,024: 626), else one over the other (an iPad upright: 370 to 434)
+    areasShare: 0.42,         // step 8: side by side, the period area's share of the width (a description is 30 words at most, a summary 40, and its first line the longer); the two stand one over the other only where that is the shorter block
+    areasGap: 24,             // px between the two areas side by side (the style sheet's gap)
+    areasColMin: 200,         // px: side by side only where the period area would be at least this wide (an iPad upright: 139 px, nineteen letters a line, for a block 6 px shorter than the stack)
+    areasGutter: true,        // true (Michael, 18 Nov: "Yes, use the gutter"): the block runs on past the mosaic's last tile, through the right gutter where the years hang, to the column's edge — 88 px wider. false (bench: ?areas=tiles): it ends at the last tile, as the timeline does
     move: { lead: 240, merge: 440, stagger: 600, flight: 840, vanish: 400, spread: 300, bgOut: 440, bgIn: 400, fall: 26 },   // step 7: every time doubled (step 6's: 120, 220, 300, 420, 200, 150, 220, 200), 1,680 ms without a merge and 1,880 with one, against 840 and 940. The move, in ms: before the first tile leaves (a merge's glide instead, where there is one), the spread of departures, one tile's flight, one tile's going and the spread of those, the came going and coming; fall: px a falling tile drops
     moveMax: 12000,           // tiles a move may carry (travelling and vanishing) before it is a cut instead
     soundVol: 0.22            // the move's sound, at most
@@ -414,7 +431,7 @@
       'Since about 1720, engines have been doing work that muscles used to do.',
       'Since about 1950, machines have been doing arithmetic, and then a good deal more.'
     ],
-    count: { words: ['years from the start', 'years ago'], start: 'the start', theStart: 'The start', from: ' years from the start' },   // the menu word says what a tap will do
+    count: { words: ['from the start', 'years ago'], start: 'the start', theStart: 'The start', from: ' years from the start' },   // the menu word says what a tap will do
     iceTile: 'ice age', warmTile: 'warm spell'   // the last million: what the tile under the cursor is, after its period's name
   };
   // The fourteen periods of the 4.6 billion mosaic (Worknote-Deep-Time-Window-03's thirteen, and Before the Sun from
@@ -443,7 +460,7 @@
   // the last reaches now), the colour the sketch's, the plaque's words his. The row's first 2.6 tiles, older than 12,000,
   // are Farms too: the row starts at the ice.
   const PERIODS_12 = [
-    { from: 12000, to: 6000, n: 'Farms',       c: '#b8923e', t: ['The ice is gone and the world is warming. People who have always followed the herds begin to keep plants and animals instead, and villages grow up around the fields.'] },
+    { from: 12000, to: 6000, n: 'Farms',       c: '#b8923e', t: ['The ice is gone and the world is warming. People who followed the herds begin to keep plants and animals, and villages grow up around the fields.'] },
     { from: 6000,  to: 5200, n: 'Cities',      c: '#a3472b', t: ['In the river valleys, villages grow into cities: walls, temples, streets, and thousands of people who have never met one another.'] },
     { from: 5200,  to: 3200, n: 'Writing',     c: '#1f6b73', t: ['Marks pressed into clay keep count of grain and sheep. Then they keep names, then laws, then stories. Bronze is the metal of the age, and the pyramids go up.'] },
     { from: 3200,  to: 2000, n: 'Iron',        c: '#3b4f7a', t: ['Iron ore is common everywhere, so tools and weapons are cheap for the first time. Empires grow large, and in Greece, India and China people begin writing down how to think.'] },
@@ -463,13 +480,13 @@
   ];
   // ======== end of the table ========
 
-  // ---------- years written short (step 5): Ba, Ma, ka; the calendar year inside the last 12,000; now ----------
-  // A year that counts back from now is written in the unit it wants: a billion years ago and older in Ba (4.6 Ba), a
+  // ---------- years written short (step 5; Ga since step 8): Ga, Ma, ka; the calendar year inside the last 12,000; now ----------
+  // A year that counts back from now is written in the unit it wants: a billion years ago and older in Ga (4.6 Ga), a
   // million to a billion in Ma (720 Ma), 12,000 years to a million in ka (474 ka), inside the last 12,000 years the
   // calendar year (200 BCE, 1720), and the present now. A length is not a date and stays in words (719 million years);
   // nothing here writes one. step: a year that came from a pixel (a dragged flag, the handle under her finger) is rounded
   // to the pixel's step and its figures show that step and no more (96.2 Ma); a year from a thing (a period's edge, an
-  // event, a line's end) is exact, three figures past the point under 10, one under 100, none above (4.567 Ba, 2.58 Ma,
+  // event, a line's end) is exact, three figures past the point under 10, one under 100, none above (4.567 Ga, 2.58 Ma,
   // 67.8 ka, 252 Ma). The 12,000 row's period edges are round numbers of years ago (6,000, 600, 250), so their calendar
   // years are rounded to the same place (4000 BCE, 1400, 1780) wherever they are written — line one, the flags and the
   // handle alike — unless the year is an event's own (exact). The store's years: 200 BCE is −200; there is no year 0.
@@ -482,12 +499,17 @@
     if (y === 0) return '1 CE';
     const b = -y; return (b >= 10000 ? fmt(b) : String(b)) + ' BCE';   // 10,000 BCE, 3200 BCE, as the store writes them
   }
-  const AGO_UNITS = [[1e9, 'Ba'], [1e6, 'Ma'], [1e3, 'ka']];
+  const CAL_END = THIS_YEAR - ICE_YEAR;   // years ago: the start of Civilization's row, 10,000 BCE
+  const AGO_UNITS = [[1e9, 'Ga'], [1e6, 'Ma'], [1e3, 'ka']];   // step 8: Ga, the form people in the field use (the ruling of 18 Oct; step 5's Ba is withdrawn)
   function agoWord(ma, step, exact) {
     let y = ma * 1e6;
     if (step) y = Math.round(y / step) * step;
     if (y < 0.5) return WORDS.now;
-    if (y < LOOK.calYears - 1e-6) {
+    // step 8: the last 12,000 years are Civilization's whole row, which starts at the ice, 10,000 BCE (12,026 years ago in
+    // 2026): a year past 12,000 and not past the row's start is a calendar year too (the left flag read 12 ka beside a
+    // text that said 10,000 BCE), and so is 12,000 itself on a line that lies inside the row. ka is for 12,000 years to
+    // a million: Humans' edge at 12,000 years stays 12 ka.
+    if (y < LOOK.calYears - 1e-6 || (y <= CAL_END + 0.5 && (y > LOOK.calYears + 1e-6 || STR.b * 1e6 <= CAL_END + 0.5))) {
       let yr = THIS_YEAR - y;
       if (step > 1) yr = Math.round(yr / step) * step;
       else if (!step && !exact) { for (const [e, k] of ROUND_EDGES) if (Math.abs(e - y) < 0.01) { yr = Math.round(yr / k) * k; break; } }
@@ -498,13 +520,13 @@
     for (;;) {
       const [u, w] = AGO_UNITS[k], v = y / u;
       const d = step ? Math.max(0, Math.ceil(Math.log10(u / step) - 1e-9)) : v < 10 ? 3 : v < 100 ? 1 : 0;
-      if (k > 0 && Math.round(v * Math.pow(10, d)) >= 1000 * Math.pow(10, d)) { k--; continue; }   // 999.97 Ma rounds to 1,000: written 1 Ba
+      if (k > 0 && Math.round(v * Math.pow(10, d)) >= 1000 * Math.pow(10, d)) { k--; continue; }   // 999.97 Ma rounds to 1,000: written 1 Ga
       return v.toLocaleString('en', { maximumFractionDigits: d }) + ' ' + w;
     }
   }
-  // two years as a span, the unit once where both share it: 252 to 66 Ma, 1.8 Ba to 720 Ma, 4000 to 3200 BCE, 1400 to 1780, 1880 to now
+  // two years as a span, the unit once where both share it: 252 to 66 Ma, 1.8 Ga to 720 Ma, 4000 to 3200 BCE, 1400 to 1780, 1880 to now
   function agoSpan(a, b) {
-    const m = a.match(/^(.*) (Ba|Ma|ka|BCE)$/), n = b.match(/^(.*) (Ba|Ma|ka|BCE)$/);
+    const m = a.match(/^(.*) (Ga|Ma|ka|BCE)$/), n = b.match(/^(.*) (Ga|Ma|ka|BCE)$/);
     return m && n && m[2] === n[2] ? m[1] + ' to ' + b : a + ' to ' + b;
   }
   // an event's date as its summary's first sentence has it, written short: about 149 million years ago → about 149 Ma,
@@ -526,7 +548,10 @@
   // event's first line. A length is the same in both modes and never comes through here.
   // To strike it: delete the word wCount and its listener, WORDS.count and WORDS.wholeStart, and this block down to the
   // three functions, leaving each its last line — yearWord = agoWord, yearPhrase = agoWord, yearSpan = agoSpan of two agoWords.
-  const COUNT = { fromStart: Q.get('count') === 'start' };
+  // Step 8: the word shows on the 4.6 billion and Complex life only. From Humans down it is not there and the page
+  // counts in the ordinary way; COUNT.want keeps her choice, so it is on again when she returns (syncCount, from applyState).
+  const COUNT = { want: Q.get('count') === 'start', fromStart: Q.get('count') === 'start' };
+  const countSpan = k => k <= 1;
   const deepYear = ma => ma * 1e6 > THIS_YEAR - ICE_YEAR + 0.5;   // older than the last 12,000 years, which here is Civilization's whole mosaic, from 10,000 BCE: its own start is written as years ago writes it, in both modes
   function startNum(ma) {   // the years from the start, three figures at most: ['4.13', 'billion'], ['470', 'million'], ['0', '']
     const y = Math.max(0, (LINE_END - ma) * 1e6); if (y < 0.5) return ['0', ''];
@@ -585,6 +610,8 @@
   // One year, the handle's (Lab-Time: "one year is the lab's shared state"); the Earth reads it and nothing else sets the
   // Earth. The timeline is there from the start (step 4). The Earth attaches when its module has stood it up. rough: the
   // year came from a pixel on the line (a tap, a drag), so the handle's label rounds it as the flags' labels round theirs.
+  const AREAS_GUTTER = Q.get('areas') === 'tiles' ? false : Q.get('areas') === 'gutter' || LOOK.areasGutter;
+  const FIT = { key: '', h: null, hides: 0, third: 0 };   // step 8: the Small Earth's height on the 4.6 billion (fitFirst)
   const lab = { ma: 0, rough: false, size: Q.get('size') === 'large' ? 'large' : 'small', earth: null, flat: false, canFlat: false };
 
   // ---------- the eight mosaics (step 6) ----------
@@ -599,7 +626,7 @@
   const DECADES_BEGUN = Math.floor((THIS_YEAR - 2000) / 10) + 1;   // Civilization's last decades: the 2000s, 2010s, 2020s in 2026 — from today's date, so the row fills itself a tile a decade
   const WINDOWS = [
     { id: 'w0', blocks: 10, rows: 5, colH: 10, unitMa: 1, startMa: 4600, squares: 4600, gutter: LOOK.gutter,
-      rowLabel: k => k < 4 ? yearWord(4600 - (k + 1) * 1000) : WORDS.nowLabel },   // step 7: each row's end as the page is counting — 3.6 Ba, 2.6 Ba, 1.6 Ba, 600 Ma, or 1 billion to 4 billion from the start; the last label is Now
+      rowLabel: k => k < 4 ? yearWord(4600 - (k + 1) * 1000) : WORDS.nowLabel },   // step 7: each row's end as the page is counting — 3.6 Ga, 2.6 Ga, 1.6 Ga, 600 Ma, or 1 billion to 4 billion from the start; the last label is Now
     { id: 'cl', from: { id: 'w0', at: 4600 - 720 }, colH: LOOK.lay.cl[0], bw: LOOK.lay.cl[1], gutter: LOOK.gutter, endLabel: WORDS.now },
     { id: 'w1', blocks: 10, rows: 1, colH: 10, unitMa: 0.001, startMa: 1, squares: 1000, gutter: LOOK.gutter, names: true, endLabel: WORDS.now,   // no numbers under the row (step 4): the blocks are the ruler, the names the labels; now at the right end
       nameOf: i => (W_HUM.warmOf && W_HUM.warmOf[i]) ? WORDS.warmTile : WORDS.iceTile },
@@ -777,7 +804,7 @@
   }
   // the canvas sized for the view showing; the line and the reminder under the mosaic's tiles; focus and back at the right
   function placeUnder(left, right, W) {
-    [$('trackCol'), $('explain'), $('knowing')].forEach(el => { el.style.marginLeft = left + 'px'; el.style.width = (right - left) + 'px'; });   // step 7: the text under the Earth too, so the period area's left edge is the mosaic's
+    [$('trackCol'), $('explain'), $('knowing')].forEach(el => { el.style.marginLeft = left + 'px'; el.style.width = ((el.id === 'knowing' && AREAS_GUTTER ? W - 2 : right) - left) + 'px'; });   // step 7: the text under the Earth too, so the period area's left edge is the mosaic's
     // focus and back (step 5): side by side on the row above the flags' labels, their right end at the column's, so no
     // event's stem or label under the line can reach them; the handle's year keeps clear of them (STR.wordsLeft)
     const sw = $('stretchWords'), wordsLeft = W - left - 2 - sw.offsetWidth;
@@ -792,7 +819,7 @@
     cv.width = Math.round(W * L.dpr); cv.height = Math.round(H * L.dpr); cv.style.height = H + 'px';
     placeUnder(L.tilesLeft, L.tilesRight, W);
     sizeAreas();
-    placeSelect();
+    sizeStage();   // step 8: the Earth's fit on the 4.6 billion follows the layout (it places Select years too)
   }
   // Select years (step 5): to the left of the mosaic, centred on its height, there again whenever the mosaic or what is
   // above it changes (and through the move, which changes it); in the narrow layout (one column) it stays where the column puts it
@@ -1089,7 +1116,10 @@
     state.w = WINDOWS[s.k]; state.gather = s.g || null; state.mark = null; state.hover = -1; state.drag = null; label.style.display = 'none';
     scaleEls.forEach((el, j) => el.setAttribute('aria-pressed', j === s.k ? 'true' : 'false'));
     $('explain').textContent = explainFor(s);
+    const counted = COUNT.fromStart; syncCount();   // step 8: from the start is for the two deep mosaics
+    sizeStage(true);   // step 8: the Small Earth's size is the 4.6 billion's own (before the layout, so a move starts from the new place)
     layout();
+    if (counted !== COUNT.fromStart) tellYear();
   }
   // how: 'move' (from → to), 'back' and 'out' (the move from `to` to `from`, played in reverse: a select undone, and a
   // Select years word going out to a larger mosaic, step 7), 'cut'
@@ -1372,7 +1402,7 @@
     return (Math.round(y / p) * p).toLocaleString('en', { maximumFractionDigits: 1 }) + ' years';
   }
   const endStep = () => STR.b - STR.a >= 1 ? Math.min(pixelStep(), 1e5) : 1;   // the line's own ends are exact (12,026 years, 3,476.3 million), not rounded to the pixel
-  function spanEndWord(ma) {   // the line's own ends are exact (12 ka, 3.476 Ba), not rounded to the pixel
+  function spanEndWord(ma) {   // the line's own ends are exact (10,000 BCE, 3.476 Ga), not rounded to the pixel
     if (ma <= 0) return WORDS.now;
     return yearWord(Math.min(ma, LINE_END));
   }
@@ -1392,13 +1422,12 @@
   }
   // select and back, at the right of the mosaic (step 7): select while a choice is marked, back while there is a step to
   // undo; each alone stands at the right end, so select turns into back in place; both, and select steps to the left.
-  // Sound OK?, on the same row, keeps to the left of whichever is there.
+  // (Sound OK? left this row in step 8: it asks at the foot of the left column.)
   function mosaicWords() {
     const sel = !!state.mark && !state.mark.whole && !STR.anim && !STR.pull, back = !STR.anim && !STR.pull && STR.stack.length > 0;
     const ws = $('wSelect'), wb = $('wBack');
     present(ws, sel); present(wb, back);
     ws.style.right = back ? (wb.offsetWidth + 12) + 'px' : '0';
-    $('soundAsk').style.right = ((sel ? ws.offsetWidth + 12 : 0) + (back ? wb.offsetWidth + 12 : 0)) + 'px';
   }
   // the view as it stands, for back to put back exactly (step 7): the line, the flags, the year, the mark, the event
   const snap = () => ({ a: STR.a, b: STR.b, flags: STR.flags.slice(), ma: lab.ma, rough: lab.rough, ofEvent: lab.ofEvent, mark: state.mark, event: know.event, mosaic: null, how: 'cut' });
@@ -1579,7 +1608,7 @@
   // Pointing writes in neither. Each area has a fixed height (sizeAreas), so nothing below them moves.
   const know = { event: null };   // the event tapped last
   const knowEl = $('knowing'), areaP = $('areaPeriod'), areaE = $('areaEvent'), firstP = $('periodFirst'), colP = $('colPeriod'), firstE = $('eventFirst'), colE = $('colEvent');
-  function spanWords(fromMa, toMa) { return yearSpan(fromMa, toMa); }   // a span, written short as the flags write their years (step 5): 4.567 to 4.4 Ba; 252 to 66 Ma; 1400 to 1780; 1880 to now (step 7: or counted from the start)
+  function spanWords(fromMa, toMa) { return yearSpan(fromMa, toMa); }   // a span, written short as the flags write their years (step 5): 4.567 to 4.4 Ga; 252 to 66 Ma; 1400 to 1780; 1880 to now (step 7: or counted from the start)
   const lengthLower = p => lengthWord(p).replace(/\.$/, '').toLowerCase();
   function periodView() {   // what the period area describes: { p, text } a period, { a, b } a span, { whole: k } the mosaic
     const m = state.mark || state.gather;
@@ -1603,7 +1632,29 @@
     const d = m[1], lower = /^[A-Z][a-z]/.test(d) ? d.charAt(0).toLowerCase() + d.slice(1) : d;
     return { date: shortDate(lower), rest: m[2] };   // about 149 million years ago → about 149 Ma (step 5)
   }
-  const eventFirstLine = e => cap(eventParts(e).date) + ' · ' + e.rec.label;   // the date, then the label (step 7)
+  // Step 8, Ruling-Dates-01 (17 Nov 2026): an event inside the last 12,000 years (a timeline record) writes its ordinary
+  // date and then the years ago in parentheses — 29 August 1831 (195 years ago) · Faraday's ring; About 3300 BCE (about
+  // 5,300 years ago) · Writing at Uruk. The date is the one that opens its summary, or the More's date line where the
+  // summary opens on a sentence; the years ago are js/deep-time.js's sum (this year, the record's year and precision),
+  // worked out as the line is drawn, and the same sum here for the two September records that have no More. Deep events
+  // are untouched: ago only.
+  const calendarEvent = e => e.rec.side !== 'deep' && e.rec.year != null;
+  function agoParen(e) {
+    const rec = e.rec; let n, about;
+    if (rec.more && rec.more.dateLine && rec.more.dateLine.calendar && cwDeepTime.yearsAgo) { const a = cwDeepTime.yearsAgo(rec); n = a.years; about = a.about; }
+    else {
+      about = !!rec.yearAbout || /^(about|probably)\b/i.test(String(rec.summary || '')); n = rec.year <= 0 ? 1 - rec.year + THIS_YEAR : THIS_YEAR - rec.year;   // the store's year is the astronomer's: −9899 is 9900 BCE
+      if (about) { const u = rec.precision === 'millennium' ? 500 : rec.precision === 'century' ? 100 : 10, r = Math.round(n / u) * u; if (r > 0) n = r; }
+    }
+    return '(' + (about ? 'about ' : '') + fmt(n) + (n === 1 ? ' year ago)' : ' years ago)');
+  }
+  function eventDate(e) {
+    if (!calendarEvent(e)) return cap(eventParts(e).date);
+    const s = String(e.rec.summary || '').trim(), dl = cwDeepTime.dateLine && cwDeepTime.dateLine(e.rec);
+    if (!DATE_FIRST.test(s) && dl) return dl;   // the More's own date line, parentheses and all
+    return cap(eventParts(e).date) + ' ' + agoParen(e);
+  }
+  const eventFirstLine = e => eventDate(e) + ' · ' + e.rec.label;   // the date, then the label (step 7)
   const eventBody = e => cwDeepTime.prose(eventParts(e).rest) + (e.rec.more ? ' <span class="more-word" id="more" role="button" tabindex="0">' + WORDS.more + '</span>' : '');
   function tellBlock() {
     const v = periodView();
@@ -1620,26 +1671,37 @@
   // (each mosaic's, and the eight whole spans), every event's first line and summary, counted both ways, set in a hidden
   // copy at the width a column has on the narrowest mosaic (the calendar rows, whose gutters are the widest), so the
   // heights are the same on every span. Measured again only when that width or the store changes.
-  const AREAS = { key: '', colW: 0, period: 0, event: 0, longestPeriod: '', longestEvent: '' };
-  function sizeAreas() {
-    const L = state.L; if (!L) return;
-    const narrow = L.W - 2 * LOOK.gutter12 - 2 * LOOK.frame, two = narrow >= LOOK.areasSide;
-    knowEl.classList.toggle('stack', !two);
-    const colW = Math.floor(two ? (narrow - 24) / 2 : narrow), key = colW + ':' + events.length;
-    if (key === AREAS.key || colW < 40) return;
+  // Step 8: the two areas share the width unequally (LOOK.areasShare: the event area the larger), and the block is
+  // measured both ways — side by side, and one over the other — and stands whichever way is shorter (side by side where
+  // they are equal). Counted from the start only what can be: the periods of the two deep mosaics and the deep events.
+  const AREAS = { key: '', width: 0, side: true, colP: 0, colE: 0, period: 0, event: 0, block: 0, other: 0, longestPeriod: '', longestEvent: '' };
+  function measureAreas(wP, wE) {   // the tallest period text at width wP, the tallest event text at wE
     const box = $('areaMeasure'), f = box.firstChild, b = box.lastChild, was = COUNT.fromStart;
-    box.style.width = colW + 'px';
     let hp = 0, he = 0, lp = '', le = '';
-    const views = []; WINDOWS.forEach(w => { if (!w.built) build(w); views.push({ whole: w.k }); w.plaques.forEach(p => p.t.forEach(text => views.push({ p, text }))); });
+    const views = []; WINDOWS.forEach(w => { if (!w.built) build(w); views.push({ whole: w.k, k: w.k }); w.plaques.forEach(p => p.t.forEach(text => views.push({ p, text, k: w.k }))); });
     [false, true].forEach(mode => {
       COUNT.fromStart = mode;
-      views.forEach(v => { f.textContent = periodFirstLine(v); b.innerHTML = periodBody(v); const h = box.offsetHeight; if (h > hp) { hp = h; lp = v.p ? v.p.n : WORDS.spanNames[v.whole]; } });
-      events.forEach(e => { f.textContent = eventFirstLine(e); b.innerHTML = eventBody(e); const h = box.offsetHeight; if (h > he) { he = h; le = e.label; } });
+      box.style.width = wP + 'px';
+      views.forEach(v => { if (mode && !countSpan(v.k)) return; f.textContent = periodFirstLine(v); b.innerHTML = periodBody(v); const h = box.offsetHeight; if (h > hp) { hp = h; lp = v.p ? v.p.n : WORDS.spanNames[v.whole]; } });
+      box.style.width = wE + 'px';
+      events.forEach(e => { if (mode && !deepYear(e.ma)) return; f.textContent = eventFirstLine(e); b.innerHTML = eventBody(e); const h = box.offsetHeight; if (h > he) { he = h; le = e.label; } });
     });
     COUNT.fromStart = was; f.textContent = ''; b.innerHTML = '';
     if (!he) he = hp;   // before the store loads
-    areaP.style.height = hp + 'px'; areaE.style.height = he + 'px';
-    Object.assign(AREAS, { key, colW, period: hp, event: he, longestPeriod: lp, longestEvent: le });
+    return { hp, he, lp, le };
+  }
+  function sizeAreas() {
+    const L = state.L; if (!L) return;
+    const narrow = Math.floor(AREAS_GUTTER ? L.W - LOOK.gutter12 - LOOK.frame - 2 : L.W - 2 * LOOK.gutter12 - 2 * LOOK.frame), key = narrow + ':' + events.length;
+    if (key === AREAS.key || narrow < 80) return;
+    const wP = Math.floor((narrow - LOOK.areasGap) * LOOK.areasShare), wE = narrow - LOOK.areasGap - wP;
+    const two = measureAreas(wP, wE), one = measureAreas(narrow, narrow);
+    const hTwo = Math.max(two.hp, two.he), hOne = one.hp + 6 + one.he, side = Q.get('areas') === 'stack' ? false : Q.get('areas') === 'side' ? true : hTwo <= hOne && wP >= LOOK.areasColMin, m = side ? two : one;
+    knowEl.classList.toggle('stack', !side);
+    knowEl.style.gridTemplateColumns = side ? 'minmax(0, ' + wP + 'fr) minmax(0, ' + wE + 'fr)' : '';
+    areaP.style.height = m.hp + 'px'; areaE.style.height = m.he + 'px';
+    Object.assign(AREAS, { key, width: narrow, side, colP: side ? wP : narrow, colE: side ? wE : narrow, period: m.hp, event: m.he, block: side ? hTwo : hOne, other: side ? hOne : hTwo, longestPeriod: m.lp, longestEvent: m.le });
+    FIT.key = '';   // the block's height changed: the Earth's fit on the 4.6 billion is taken again
   }
   colE.addEventListener('click', ev => { if (know.event && know.event.rec.more) { ev.stopPropagation(); openMore(know.event.rec); } });
 
@@ -1718,7 +1780,7 @@
     document.body.appendChild(htwPanel.el); htwPanel.el.style.zIndex = '600'; htwPanel.el.style.cursor = 'default'; htwPanel.el.classList.add('cw-info-panel');
     htwPanel.body.innerHTML = '<div class="panel-text">' +
       '<p>The Solar System is about 4.6 billion years old.</p>' +
-      '<p>You can use this mosaic to explore its history. Each of its 4,600 tiles is a million years. The tiles are grouped by colour, each colour marking something that characterized that period, like dinosaurs or thick ice. Point to one of these coloured periods and you’ll see what was going on at the time. Tap to select the period and learn still more.</p>' +
+      '<p>You can use this mosaic to explore its history. Each of its 4,600 tiles is a million years. The tiles are grouped by colour, each colour marking something that characterized that period, like dinosaurs or thick ice. Tap a period on the mosaic and its story appears above. Tap <i>select</i> to open it on the line below.</p>' +
       '<p>You can drag across the tiles to select any span of years from the beginning to today. Under <i>Select years</i> you can also choose a shorter stretch, each its own mosaic and every one running to now: Complex life, Humans, Civilization, Writing, Paper, Machines and Computing.</p>' +
       '<p class="ph">Tap a period, or drag across tiles, to mark it; then tap <i>select</i>, and its tiles gather into a line above the timeline while the rest of the mosaic goes. <i>back</i> brings the mosaic back.</p>' +
       '<p>Below the mosaic is a timeline. The span of years you choose in the mosaic appears there, along with any events from that period. Tap an event to find out more about it.</p>' +
@@ -1767,7 +1829,7 @@
   function setSound(on) { try { localStorage.setItem(SND.key, on ? 'on' : 'off'); } catch (e) {} SND.asking = false; if (on) unlockSound(); soundWords(); }
   function soundWords() {
     $('wSound').textContent = WORDS.sound[soundAnswer() === 'on' ? 1 : 0];
-    $('soundAsk').style.display = SND.asking && !soundAnswer() ? '' : 'none';
+    $('soundAsk').classList.toggle('asking', SND.asking && !soundAnswer());
   }
   $('soundAskQ').textContent = WORDS.soundAsk; $('wSoundYes').textContent = WORDS.yes; $('wSoundNo').textContent = WORDS.no;
   $('wSoundYes').addEventListener('click', () => setSound(true));
@@ -1903,14 +1965,38 @@
   function flatWord(on) { lab.flat = !!on; earthWords(); }
   function setFlat(on) { if (!lab.earth || !lab.earth.setFlat) return; lab.earth.setFlat(!!on); flatWord(on); }
   // the Earth's stage: as wide as the column, a share of the screen's height tall (Small Earth: a third, the rule; Large Earth: half)
-  function stageHeight() { return Math.max(160, Math.round(window.innerHeight * (lab.size === 'large' ? LOOK.earthLarge : LOOK.earthSmall))); }
-  function sizeStage() { const h = stageHeight() + 'px'; $('stage3d').style.height = h; $('still').style.height = h; if (lab.earth) lab.earth.resized(); placeSelect(); }
+  // Step 8: on the 4.6 billion, whose five rows pushed the timeline off the first screen, the Small Earth gives up as much
+  // height as it takes for the timeline and its events' labels to be in sight without scrolling, and no more than leaves
+  // it LOOK.earthMin tall. What stands under the Earth there is measured on the page (the whole mosaic at rest, not a
+  // gathered line, not a move) and kept, so the Earth's size on that span does not change with what she selects.
+  function stageHeight() {
+    const h = Math.max(160, Math.round(window.innerHeight * (lab.size === 'large' ? LOOK.earthLarge : LOOK.earthSmall)));
+    return lab.size === 'small' && state.w.k === 0 && FIT.h != null ? Math.min(h, FIT.h) : h;
+  }
+  function fitFirst() {   // FIT.h: the Small Earth's height on the 4.6 billion at this window; FIT.hides: px of the timeline still under the fold at that height
+    if (state.w.k !== 0 || state.gather || MOVE.active) return;
+    const key = window.innerWidth + 'x' + window.innerHeight + ':' + AREAS.key + ':' + AREAS.block + ':' + document.documentElement.classList.contains('fullpage');
+    if (key === FIT.key) return;
+    const st = $('stage3d').getBoundingClientRect(), under = $('events').getBoundingClientRect().bottom - st.bottom, top = st.top + window.scrollY;
+    const line = $('stretchTrack').getBoundingClientRect().bottom - st.bottom;   // down to the line itself, its flags and their years
+    const third = Math.max(160, Math.round(window.innerHeight * LOOK.earthSmall)), want = Math.floor(window.innerHeight - top - under - 2);
+    // where the smallest Earth would still leave the line itself under the fold (an iPad upright, the 4.6 billion's ten
+    // lines of blocks), giving up the Earth buys nothing: it keeps its third
+    const reach = window.innerHeight - top - line - LOOK.earthMin >= 0;
+    FIT.key = key; FIT.h = reach ? Math.max(LOOK.earthMin, Math.min(third, want)) : third; FIT.hides = Math.max(0, FIT.h - want); FIT.third = third; FIT.reach = reach;
+  }
+  function sizeStage(keep) {   // keep: use the fit as it was measured (the mosaic is about to change)
+    if (!keep) fitFirst();
+    const h = stageHeight() + 'px'; if ($('stage3d').style.height === h) { placeSelect(); return; }
+    $('stage3d').style.height = h; $('still').style.height = h; if (lab.earth) lab.earth.resized(); placeSelect();
+  }
   function setSize(s) { lab.size = s; earthWords(); sizeStage(); }
   function earthStep() { const n = earthNext(); if (n === 'map') setFlat(true); else { if (lab.flat) setFlat(false); setSize(n); } }
   $('wEarth').addEventListener('click', earthStep);
   // Years from the start / years ago (step 7): the word says what a tap will do; everything that writes a year is told again
-  function setCount(fromStart) { COUNT.fromStart = !!fromStart; $('wCount').textContent = WORDS.count.words[COUNT.fromStart ? 1 : 0]; tellYear(); tellBlock(); renderStretch(); }
-  $('wCount').addEventListener('click', () => setCount(!COUNT.fromStart));
+  function syncCount() { const here = countSpan(state.w.k); COUNT.fromStart = COUNT.want && here; $('wCount').classList.toggle('absent', !here); $('wCount').textContent = WORDS.count.words[COUNT.want ? 1 : 0]; }
+  function setCount(fromStart) { COUNT.want = !!fromStart; syncCount(); tellYear(); tellBlock(); renderStretch(); }
+  $('wCount').addEventListener('click', () => setCount(!COUNT.want));
   sizeStage();
 
   // ---------- the data, then the first drawing ----------
@@ -1932,7 +2018,7 @@
   $('explain').textContent = WORDS.explain[0];
   layout(); draw();
   setCities(false); setCoasts(false); setMarkers(false); setSize(lab.size); soundWords();
-  setYear(0); tellBlock(); setCount(COUNT.fromStart); renderStretch();   // the line from the start: the whole 4.6 billion, its flags at the ends, the handle at today
+  setYear(0); tellBlock(); setCount(COUNT.want); renderStretch();   // the line from the start: the whole 4.6 billion, its flags at the ends, the handle at today
   if (Q.get('w')) setWindow(Math.max(0, Math.min(WINDOWS.length - 1, +Q.get('w'))), true, true);
   loadAll().then(() => { WINDOWS.forEach(w => build(w)); layout(); tellBlock(); renderStretch(); }).catch(e => { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The events or the sea curve did not load: ' + e.message; });
   window.addEventListener('resize', () => { layout(); sizeStage(); renderStretch(); });
@@ -1956,7 +2042,7 @@
   window.cwLab = { WINDOWS, PERIODS, PERIODS_12, PERIODS_M, LOOK, WORDS, state, STR, lab, know, set: k => setWindow(k, true), draw, layout, rect, hit, select: (a, b) => chooseSpan(a, b), finish: finishStretch, reset: resetSpan,
     stretch: doStretch, focus: doStretch, back: stretchBack, flag: setFlag, pull: pullFlag, pullMa, tap: markAt, mark: () => state.mark, setMark, clearMark, doSelect, unitSpan, lit: litSpan, labelFor, setCities, setCoasts, setMarkers, setSize, build, lengthWord, agoWord, shortDate, spanWords, placeSelect,
     year: () => lab.ma, setYear, handleX, xOf, maOf, events: () => events, onLine: eventsOnLine, placed: placeEvents, tapEvent: id => { const e = events.find(x => x.id === id); if (e) tapEvent(e); return !!e; }, rec: () => know.event && know.event.rec, openMore: () => { if (know.event) openMore(know.event.rec); },
-    firsts: () => [firstP.textContent, firstE.textContent], columns: () => [colP.textContent, colE.textContent], areas: () => Object.assign({}, AREAS), sizeAreas, count: { set: setCount, fromStart: () => COUNT.fromStart, yearWord, yearSpan, yearPhrase }, earthStep, earthWord: () => $('wEarth').textContent, earthShowing, full: { kind: FULL, on: isFull, page: setFullPage, touch: TOUCH }, nesting: k => nesting(WINDOWS[k]), stack: () => STR.stack.length, handleWord: () => labelH.textContent, labels: () => [labelEls[1], labelH, labelEls[0], spanWord].map(el => el.textContent + ' @ ' + el.style.left + (el.style.visibility === 'hidden' ? ' (not drawn)' : '') + (el.classList.contains('up') ? ' (up)' : '')),
+    firsts: () => [firstP.textContent, firstE.textContent], columns: () => [colP.textContent, colE.textContent], areas: () => Object.assign({}, AREAS), sizeAreas, measureAreas, fit: () => Object.assign({}, FIT), eventFirstLine, agoParen, count: { set: setCount, fromStart: () => COUNT.fromStart, yearWord, yearSpan, yearPhrase }, earthStep, earthWord: () => $('wEarth').textContent, earthShowing, full: { kind: FULL, on: isFull, page: setFullPage, touch: TOUCH }, nesting: k => nesting(WINDOWS[k]), stack: () => STR.stack.length, handleWord: () => labelH.textContent, labels: () => [labelEls[1], labelH, labelEls[0], spanWord].map(el => el.textContent + ' @ ' + el.style.left + (el.style.visibility === 'hidden' ? ' (not drawn)' : '') + (el.classList.contains('up') ? ' (up)' : '')),
     setFlat, flat: () => lab.flat, flatWord, knowing, tellYear, tellBlock, fullscreen: { on: isFull, enter: enterFull, exit: exitFull, available: FS },
     attachEarth: api => { lab.earth = api; api.setPlaces(state.cities); lab.canFlat = !!api.setFlat; earthWords(); if (api.setCoasts) { $('wCoasts').style.display = ''; api.setCoasts(state.coasts); } if (api.setMarkers) { $('wMarkers').style.display = ''; api.setMarkers(state.markers); } setYear(lab.ma, lab.rough, lab.ofEvent); },
     warmSpells: () => { const w = W_HUM; if (!w.built) build(w); const runs = []; let cur = null; for (let i = 0; i < w.real; i++) { const warm = w.warmOf[i]; if (warm && !cur) cur = [i, i]; else if (warm) cur[1] = i; else if (cur) { runs.push(cur); cur = null; } } if (cur) runs.push(cur); return runs.map(([a, b]) => [(1000 - a) * 1000, (999 - b) * 1000]); },

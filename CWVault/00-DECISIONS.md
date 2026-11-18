@@ -415,3 +415,4 @@ Added 24 Aug:
   has the complete list. Not a flaw to patch here. A hook for something later.
 - 3 Nov 2026 — Chartres red is copper, flashed; Chartres pink is manganese. The earlier gold lines were out of period by ~500 years.
 - 12 Nov 2026 — House rules for the plane ruled (Ruling-The-Plane-02.md). No negative numbers on an axis; fractions stacked; commas left of the point, thin spaces right; came never coloured.
+- 17 Nov 2026 — Ga, not Ba. The abbreviations ruling of 18 Oct stands (Ma, Ga, km; never an invented form); the Time lab's Ba of step 5 is withdrawn and the page writes Ga from step 8 (Rulings-Sept-2026.md, the amendment at its foot).

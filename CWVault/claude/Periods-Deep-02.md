@@ -466,7 +466,7 @@ It ended about 66 million years ago, when an asteroid about ten kilometres acros
 **Replaces:** none; new
 
 **Summary**
-About 201 million years ago. Just after the dying that ended the Triassic, big meat-eating dinosaurs left thousands of footprints on lake shores in what is now Connecticut. Before the dying, meat-eaters' footprints in that part of the world were smaller. *More*
+About 201 million years ago. Just after the dying that ended the Triassic, big meat-eating dinosaurs left thousands of footprints on lake shores in what is now Connecticut. Before it, the meat-eaters there were smaller. *More*
 
 **More**
 
