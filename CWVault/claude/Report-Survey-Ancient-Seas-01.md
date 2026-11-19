@@ -34,6 +34,16 @@ Either needs Michael's word, and a walk through the ice ages and the deep cold a
 
 The survey's files only, as the prompt lists them: `cw-deploys/experiments/ancient-seas.html` (with the fix above and its version line), `cw-deploys/experiments/ancient-seas/`, this report, `Creature-Trex-Finds-01.md`, the `Ancient-Seas-Nov18/` folder, and the survey's own lines in `MANIFEST.md` and the board. `experiments/index.html` has no line of the survey's (the bench is hung nowhere), so nothing of that file was committed; its uncommitted edits are another session's. The other sessions' edits and deletions were left alone.
 
+**The hash:** `848fd3d7`, pushed to `main` on 19 Nov on Michael's word, given in the prompt. One board-only commit of another session's (`004554d8`, a line recording the pushes of 18 Nov) sat beneath it unpushed and went up with it. `tools/check-deploys.sh` passes for the page; its two errors today are another session's untracked pages under `experiments/simple_rules/` (no version stamp), which are not committed and not deployed.
+
+### What the live page shows
+
+`https://curiouswoods.org/experiments/ancient-seas.html`, loaded in the pane about a minute after the push. The console's version line reads *2026-11-19 · ancient-seas survey bench · 18 pictures asked of the device*, and the device reports 18. Nothing in the fail line.
+
+- **262 Ma, as it opens:** Scotese and Wright's Earth on the left, New Mexico on its island at Pangaea's western edge. The Time lab's Earth on the right with its land drawn: Pangaea in rock colours, a pale shelf round each piece, New Mexico ringed and named.
+- **69 Ma** (tapped): North America on both Earths, the T. rex finds as red dots up the western interior on each, New Mexico ringed. The *Show T. rex* word is present.
+- **Not seen:** the journey running at its own speed (the pane draws few frames for a WebGPU page), and the iPad. Both are Michael's to watch. If the right Earth is a blue ball on the iPad, its browser is drawing with WebGL or its adapter has no more than 16, and the lasting fix in `earth.js` is the answer.
+
 ### Michael's answers to the six questions (recorded; none built in this step)
 
 1. **Which sea:** flooded to Kocsis and Scotese's coastline. It is the widest sea of the age, so it will need a word of honesty where it is shown.
