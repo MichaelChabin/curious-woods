@@ -28,7 +28,7 @@ On Michael's word, "Yes, fix earth.js", the same session.
 - **A walk through the ice ages by eye.** The count and the errors were checked there; I looked at one far picture at 20,700 years (land, ice and shelf drawn) and not at each step.
 - One test picture, taken close in from a rewritten copy of the page that I used to count the device's calls, came out white. The same steps on the page itself gave land, so I take it for a fault of the test copy. I could not make the page do it.
 
-**Committed, not pushed.** The site still serves this morning's bench (asking for 18) and the unfixed Time lab until Michael says push.
+**Committed (`628fe223`) and pushed on Michael's word, "Push it", 19 Nov.** On the site a minute later: `experiments/ancient-seas.html` reads *earth.js at 16 pictures* in its version line, the device reports 16, and both Earths draw at 262 Ma. `experiments/time-lab.html` carries the new version line; set to 262 Ma and rebuilt there, its Earth shows land, with no errors.
 
 ## 19 Nov 2026: the blank Earth, the publish, and Michael's six answers
 
