@@ -6,6 +6,30 @@ related: Lab-Time-01.md, Spec-Earth-3D.md (Open: Scotese), Report-Time-Lab-Bench
 
 # Survey: ancient seas, and fossils where they lay
 
+## 19 Nov 2026, later: the lasting fix in `earth.js`
+
+On Michael's word, "Yes, fix earth.js", the same session.
+
+**What changed.** The land read two sea masks as two pictures, the old ground's and Blue Marble's. They are now one picture, the old ground's mask in red and Blue Marble's in green, built once at load from the same two masks. The land reads 16 pictures at most, whatever the two ice slots hold, so the count no longer depends on the age the materials were built at. What the land draws is the same: each mask is read from its own channel exactly as it was read from its own picture.
+
+- `js/3d/earth.js`: the one picture (`maskBoth`), its two reads in the land's shaders, and the list of things disposed.
+- `experiments/ancient-seas.html`: the asking for 18 taken out again, so the bench's right Earth is once more made exactly as the Time lab makes it.
+- `experiments/time-lab.html`, `experiments/earth-3d.html`, `experiments/ancient-seas.html`: the import's version (`earth.js?v=2026-11-19a`), so no browser keeps the old script, and each page's version line.
+
+**How it was checked**, in the pane, on WebGPU at the default limit of 16 (the device reports 16; nothing is asked of it).
+- On the bench, with the device's calls counted: nine ages (262 Ma, 20,700 years, 12,300 years, 1.2 Ma, 30 Ma, 300 Ma, 700 Ma, today, 262 Ma again), the materials rebuilt at each, far and close in. The most pictures any shader asked for was 16. No errors. This includes 20,700 and 12,300 years, where the two ice slots hold two different real masks, and 262 Ma rebuilt at 262 Ma, the case that failed.
+- On WebGL (`ancient-seas.html?gl=1`): both Earths draw at 262 Ma, and the console's *exceeds MAX_TEXTURE_IMAGE_UNITS(16)* is gone. This morning the same address drew the right Earth as sea alone.
+- `time-lab.html`: set to 262 Ma and rebuilt there, its Earth shows land. No errors.
+- `earth-3d.html`: opens on today's Earth with its cities.
+- `tools/check-deploys.sh`: the three pages pass.
+
+**Not checked.**
+- **The iPad, and Safari on the Mac.** Michael's to try.
+- **A walk through the ice ages by eye.** The count and the errors were checked there; I looked at one far picture at 20,700 years (land, ice and shelf drawn) and not at each step.
+- One test picture, taken close in from a rewritten copy of the page that I used to count the device's calls, came out white. The same steps on the page itself gave land, so I take it for a fault of the test copy. I could not make the page do it.
+
+**Committed, not pushed.** The site still serves this morning's bench (asking for 18) and the unfixed Time lab until Michael says push.
+
 ## 19 Nov 2026: the blank Earth, the publish, and Michael's six answers
 
 A Claude Code session, on Michael's prompt `claude/Prompt-Publish-Ancient-Seas-01.md`.

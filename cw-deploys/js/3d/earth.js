@@ -943,7 +943,18 @@ export async function cwEarth(view, o = {}) {
   const lookOld = buildMask(pictureCanvas(imgOld, MW, MH, imgVeg), MW, MH, false);
   const lookBlue = imgBlueSmall ? buildMask(pictureCanvas(imgBlueSmall, MW, MH, null), MW, MH, true) : lookOld;
   const canvasTex = c => prep(new THREE.CanvasTexture(c));
-  const maskOld = canvasTex(lookOld.maskCanvas), maskBlue = canvasTex(lookBlue.maskCanvas);
+  // one picture for the two masks, the old ground's in red and Blue Marble's in green (19 Nov 2026). As two pictures they
+  // made the land's count 17 whenever the two ice slots held different masks (three gives one binding to two slots
+  // holding the same picture), one more than a WebGPU device grants unasked and one more than WebGL has: the land's
+  // shader was refused and the Earth drew as sea alone, or not, by the age the materials were last built at
+  // (Report-Survey-Ancient-Seas-01.md). With one, the land reads 16 at most, whatever the slots hold
+  const maskBoth = (() => {
+    const c = document.createElement('canvas'); c.width = MW; c.height = MH;
+    const x = c.getContext('2d'), d = x.createImageData(MW, MH), a = lookOld.mask, b = lookBlue.mask;
+    for (let i = 0, j = 0; i < MW * MH; i++, j += 4) { d.data[j] = a[i] ? 255 : 0; d.data[j + 1] = b[i] ? 255 : 0; d.data[j + 3] = 255; }
+    x.putImageData(d, 0, 0);
+    return canvasTex(c);
+  })();
   const lookMs = lookOld.ms + (imgBlueSmall ? lookBlue.ms : 0);
   // ---- the ground this side of the seam: ETOPO's depths from the pyramid's floor tiles, and the ICE-6G masks ----
   // the floor: the tiles of one level drawn into a canvas (nearest, as map.js draws a number), its red channel as an
@@ -1476,7 +1487,8 @@ export async function cwEarth(view, o = {}) {
       const pixelSea = select(blueLeads.or(uBlue.greaterThan(0.5).and(nearBlack)), float(1), float(0));
       // close in, where a tile shows, the tile's own texel decides alone: the mask (2,048 texels wide) would lay a band of
       // sea twenty kilometres wide over every coast
-      let sea = mix(max(mix(read(maskOld).r, read(maskBlue).r, uBlue), pixelSea), pixelSea, tileCover).mul(float(1).sub(uOld));   // today's inland seas fade out of the old pieces as the old look comes in
+      const seaMasks = read(maskBoth);
+      let sea = mix(max(mix(seaMasks.r, seaMasks.g, uBlue), pixelSea), pixelSea, tileCover).mul(float(1).sub(uOld));   // today's inland seas fade out of the old pieces as the old look comes in
       // this side of the seam, the ground grade (paintSkin's ground block): the floor's depth under the point; where the
       // picture's sea is shallower than the lowered sea it is bared, painted as land by its height above the new shore,
       // and no longer sea; then the ICE-6G sheets at their steps' weights, never below the sea at its level
@@ -1573,7 +1585,8 @@ export async function cwEarth(view, o = {}) {
       let col = mix(paint, mix(photo, liftLand(photo), uBlue), clamp(float(1).sub(uAge.div(SEAM)), 0, 1));
       const pr = photo.r.mul(255), pgr = photo.g.mul(255), pb = photo.b.mul(255);
       const pixelSea = select(pb.greaterThan(pr.mul(1.2)).and(pb.greaterThan(pgr)).or(uBlue.greaterThan(0.5).and(pr.add(pgr).add(pb).lessThan(70)).and(pb.greaterThanEqual(pr))), float(1), float(0));
-      let sea = mix(max(mix(read(maskOld).r, read(maskBlue).r, uBlue), pixelSea), pixelSea, cover);
+      const seaMasks = read(maskBoth);
+      let sea = mix(max(mix(seaMasks.r, seaMasks.g, uBlue), pixelSea), pixelSea, cover);
       const fv = read(texFloor).r.mul(255), depth0 = select(fv.lessThan(0.5), float(-1), fv.sub(1).div(253).pow(2).mul(FLOOR_MAX));
       const depth = fl ? depth0 : tileDepth(uvn, page, depth0);
       const bared = select(uSea.lessThan(0).and(depth.greaterThan(0)).and(depth.lessThanEqual(uSea.negate())), uGroundT, float(0)).mul(sea);
@@ -2408,7 +2421,7 @@ export async function cwEarth(view, o = {}) {
       outlineGeo.dispose(); flatLimb.geometry.dispose(); if (flatCoast) flatCoast.geometry.dispose();
       [...Object.values(flatMats || {}).flat(), flatSeaMat, flatMoltenMat, flatUnderMat, flatCoastMat, flatLimbMat].forEach(m => { if (m) m.dispose(); });
       if (flat) view.drawWith(null); view.hold = false;
-      [landMat, islandMat, rimMat, seaMat, moltenMat, hazeMat, blobLandMat, blobIslandMat, blobRimMat, coastMat, texOld, texVeg, texGrain, texCool, texCracks, texBlue, maskOld, maskBlue, texFloor, floorEmpty, iceEmpty, ...Object.values(iceTexByAge),
+      [landMat, islandMat, rimMat, seaMat, moltenMat, hazeMat, blobLandMat, blobIslandMat, blobRimMat, coastMat, texOld, texVeg, texGrain, texCool, texCracks, texBlue, maskBoth, texFloor, floorEmpty, iceEmpty, ...Object.values(iceTexByAge),
        picH.arr, dataH.arr, texPageA, texPageB, texPageF, ...iceLocalTex].forEach(t => { if (t) t.dispose(); });
       for (const m of coastMeshes.values()) { m.geometry.dispose(); group.remove(m); }
       if (markCanvas) markCanvas.remove();

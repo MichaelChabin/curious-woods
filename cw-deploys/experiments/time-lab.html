@@ -335,7 +335,7 @@
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-18 8d3cfe1 · time-lab step 8 · dates';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-19 · time-lab step 8 · dates · earth.js at 16 pictures';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -2060,7 +2060,7 @@
   // globe, no sliders, no crop, no Save or share on this page) ----------
   import * as THREE from 'three';
   import { cwScene } from '../js/3d/scene.js?v=2026-10-30b';
-  import { cwEarth } from '../js/3d/earth.js?v=2026-10-30a';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-11-19a';
   const $ = id => document.getElementById(id), S = window.CW.STYLE, Q = new URLSearchParams(location.search);
   if (Q.get('log') === '1') {   // bench only: every console error and warning also written under the page, for a browser whose console cannot be reached
     const show = (kind, args) => { const f = $('fail'); f.style.display = 'block'; f.textContent += '\n' + kind + ': ' + [...args].map(a => a && a.message ? a.message : String(a)).join(' ').slice(0, 1500); };

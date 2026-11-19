@@ -103,29 +103,18 @@
   </div>
 </div>
 <script>
-  const CW_VERSION = '2026-11-19 · ancient-seas survey bench · 18 pictures asked of the device';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-19 · ancient-seas survey bench · earth.js at 16 pictures';   // date + short commit hash; bump in the same commit as any change
   console.log('ancient-seas', CW_VERSION);
-  // 19 Nov 2026, the blank Earth: the Time lab's land (js/3d/earth.js) samples 16 pictures while its two ice slots hold
-  // the same mask and 17 when they differ, as they do at 262 Ma (the 26,000-year outline in one slot, nothing in the
-  // other). A WebGPU device grants 16 to a page that asks for nothing, so the land's shader was refused and the Earth
-  // drew as sea alone. This page asks for 18 where the adapter has them. The lasting fix belongs in the shared scripts
-  // (Report-Survey-Ancient-Seas-01.md, 19 Nov); a WebGL device has 16 and no more, and is not helped by this.
-  try {
-    if (window.GPUAdapter) {
-      const ask = GPUAdapter.prototype.requestDevice;
-      GPUAdapter.prototype.requestDevice = function (d) {
-        const has = this.limits.maxSampledTexturesPerShaderStage;
-        if (!(has > 16)) return ask.call(this, d);
-        return ask.call(this, Object.assign({}, d, { requiredLimits: Object.assign({}, d && d.requiredLimits, { maxSampledTexturesPerShaderStage: Math.min(18, has) }) }));
-      };
-    }
-  } catch (e) { console.warn('ancient-seas: the device could not be asked for more pictures', e); }
+  // 19 Nov 2026, the blank Earth: the Time lab's land (js/3d/earth.js) sampled 17 pictures when its two ice slots held
+  // different masks, as at 262 Ma, against a device's 16, and the right Earth drew as sea alone. For a few hours this page
+  // asked the device for 18; the same day earth.js was brought down to 16 and the asking was taken out again
+  // (Report-Survey-Ancient-Seas-01.md).
 </script>
 <script type="module">
   import * as THREE from 'three';
   import { texture, uniform, mix, uv } from 'three/tsl';
   import { cwScene } from '../js/3d/scene.js?v=2026-10-30b';
-  import { cwEarth } from '../js/3d/earth.js?v=2026-10-30a';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-11-19a';
   const $ = id => document.getElementById(id), S = window.CW.STYLE, D2R = Math.PI / 180;
   const DIR = 'ancient-seas/';
   const HOME_DISTANCE = 4.9;
