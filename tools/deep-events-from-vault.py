@@ -5,7 +5,7 @@ Stage 6; the one store, a first step of Stage 7, 9 Oct 2026).
 Reads CWVault/claude/Events-Deep-NN.md (written to Prompt-Deep-Time-Events.md), then the new events the
 period batches carry (CWVault/claude/Periods-Deep-NN.md, the sections whose Kind is not 'period', in the same
 event form: Fern spike, Lystrosaurus, Big footprints, Dimetrodon, Lucy; 11 Oct 2026), then the timeline
-batches through tools/events-from-vault.py's own parser (Events-Batch-01.md to -07.md and the samples),
+batches through tools/events-from-vault.py's own parser (Events-Batch-01.md to -08.md and the samples),
 then the September survivors of outdated-files/after-the-ice-events-retired-2026-11-16.json that no record replaces,
 and writes cw-deploys/stories/deep-time-events.json: one list, oldest first, each record with `ma`
 and `chunk`, and `line` saying whether it is a deep record or an after-the-ice one. The markdown is
@@ -393,7 +393,7 @@ def main():
                   'tail ({ ma, year, reason } or null) with evidence "earliest" or "dated", knownFrom, placeNow ({ name, short, lat, lon } or null), '
                   'replacesSketch (the labels of the marks in deep-time.json this record replaces), more.dateLine as { ago, tail, sure? } (deep lines '
                   'count ago only); LINE (10 Oct, Event-Lines.md) is the widest line of the tree on which the event earns a label, by the tree\'s id '
-                  '("earth", …), null until agreed, and WEIGHT is written from it (3 on the Earth line, else at most 2); "after-the-ice" records are the timeline events (Events-Batch-01.md to -07.md and Timeline-Samples.md, parsed by '
+                  '("earth", …), null until agreed, and WEIGHT is written from it (3 on the Earth line, else at most 2); "after-the-ice" records are the timeline events (Events-Batch-01.md to -08.md and Timeline-Samples.md, parsed by '
                   'tools/events-from-vault.py, the same records as stories/timeline-events.json) with ma added — year (the astronomer\'s year), '
                   'precision (exact, year, decade, century, millennium), place { name, short, lat, lon }, more.dateLine as { ordinary, calendar } (Ruling-Dates-01.md, 17 Nov 2026: the count is retired, the page works out the years ago), '
                   'replaces (the September ids this record retires) — plus the September survivors of outdated-files/after-the-ice-events-retired-2026-11-16.json (the September store, retired 16 Nov 2026) that no '

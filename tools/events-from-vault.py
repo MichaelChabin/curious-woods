@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """events-from-vault.py — the timeline events, from the vault to the site.
 
-Reads the event batches written to Timeline-Stories.md (CWVault/claude/Events-Batch-01.md to -07.md
+Reads the event batches written to Timeline-Stories.md (CWVault/claude/Events-Batch-01.md to -08.md
 and the two worked samples in Timeline-Samples.md) and writes cw-deploys/stories/timeline-events.json
 for the Time Machine (active/time-machine.html). tools/deep-events-from-vault.py imports this file's
 parser and folds the same records into stories/deep-time-events.json, the one store of Deep Time
@@ -37,6 +37,7 @@ SOURCES = [
     ('CWVault/claude/Events-Batch-05.md', 'batch-05'),
     ('CWVault/claude/Events-Batch-06.md', 'batch-06'),
     ('CWVault/claude/Events-Batch-07.md', 'batch-07'),
+    ('CWVault/claude/Events-Batch-08.md', 'batch-08'),
     ('CWVault/claude/Timeline-Samples.md', 'samples'),
 ]
 OUT = 'cw-deploys/stories/timeline-events.json'
@@ -89,6 +90,9 @@ WEIGHTS = {
     'issun-boshi': 1, 'daguerreotype': 2, 'paint-tubes': 1, 'japanese-prints': 2, 'impression-sunrise': 2,
     'galloping-horse': 2, 'van-gogh-in-arles': 2, 'eiffel-tower': 2, 'montparnasse-train': 2, 'lumiere-show': 2,
     'radium': 2, 'first-web-page': 3,
+    # batch 8 (the daily run of 16 Nov 2026, read by editor pass 6; 19 Nov). All ten at 2 until Michael weighs them.
+    'dufuna-canoe': 2, 'budj-bim': 2, 'belitung-wreck': 2, 'jikji': 2, 'oranjemund-wreck': 2, 'sequoyah': 2,
+    'sobral-eclipse': 2, 'coelacanth': 2, 'monarch-winter': 2, 'ozone-hole': 2,
 }
 
 
@@ -293,6 +297,10 @@ def parse_event(block, source, where):
                 flush(); cur = []
             quoting = True
             cur.append(ln.lstrip('>').strip())
+        elif ln.startswith('*Watch:*'):
+            # a Watch line is for us, never for her: it stands after the Checked line (batches 1 to 8). The daily
+            # files write it at the foot of the More, where it would be read as a paragraph; nothing is guessed.
+            raise ParseError('%s: a Watch line stands inside the More; move it to after the Checked line' % where)
         elif ln:
             if cur and quoting:
                 flush(); cur = []; quoting = False
