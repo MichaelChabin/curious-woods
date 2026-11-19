@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/png" href="../art/icons/time-machine-icon-256.png">
+<link rel="apple-touch-icon" href="../art/icons/time-machine-icon-256.png">
+<title>Ancient Seas — Curious Woods</title>
+<!-- Ancient seas, a survey bench (18 Nov 2026; Michael's survey prompt of 18 Nov, from the "time lab review" chat;
+     the report is CWVault/claude/Report-Survey-Ancient-Seas-01.md). Nothing here is wired into time-lab.html, and no
+     shared script changes: the page stands on js/3d/scene.js and js/3d/earth.js as time-lab.html does.
+
+     Two Earths side by side, each turned so that New Mexico faces her:
+     - Left, Scotese and Wright's (2018) PALEOMAP PaleoDEMs, painted in the house colours (Spec-Maps' sea ramp, deeper
+       darker; the Time lab's quiet green on land, lifting to rock with height, never white; white only for today's
+       ice): a ball of our own, one picture at a time, from the 0.1° grids (Zenodo 5460860), 3,600 by 1,800 at the two
+       moments and today, 1,800 by 900 for the five-million-year steps between 69 Ma and now. Under *Sea at its
+       highest* the ball is painted from the same heights flooded to Kocsis and Scotese's (2021) paleocoastlines
+       (Zenodo 7994000, v7): outside the coastline is sea, inside is land.
+     - Right, the Time lab's Earth as time-lab.html draws it today (Merdith and others 2021), at the same moments.
+     The moments: 262 Ma (Scotese's map 51, Capitanian, its plates at 260) and 69 Ma (map 17, Maastrichtian, its plates
+     at 70); now. Show coastlines lays Kocsis and Scotese's line for the moment, thin, over the left Earth. Show T. rex
+     puts the Paleobiology Database's 70 finds of Tyrannosaurus rex on both Earths (left: each find carried to 70 Ma by
+     the PALEOMAP model through the GPlates Web Service; right: carried by the Time lab's own plates); a ring is a
+     doubtful find. From 69 Ma, *now* plays the journey: the left Earth steps through Scotese's maps every five million
+     years to today while each mark travels its own path to where its rock is now, the right Earth's year runs with it.
+     Data beside the page in experiments/ancient-seas/ (pictures, coasts.json, trex.json), built by the scratch
+     script the report names. Bench hooks: window.cwSeas (set, journeyTo, finish, picture). -->
+<script src="../js/cw-style.js?v=2026-10-27b"></script>
+<script type="importmap">
+{ "imports": {
+  "three":        "../js/vendor/three-r186/three.webgpu.js",
+  "three/webgpu": "../js/vendor/three-r186/three.webgpu.js",
+  "three/tsl":    "../js/vendor/three-r186/three.tsl.js"
+} }
+</script>
+<style>
+  :root { color-scheme: light; }
+  html, body { margin: 0; }
+  body {
+    background: var(--cw-parchment, #f4f1e8); color: var(--cw-ink, #2a241c);
+    font-family: var(--cw-font, Georgia, serif); font-size: 17px; line-height: 1.5;
+    padding: 28px max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px));
+  }
+  .wide { max-width: 1180px; margin: 0 auto; }
+  h1 { font-weight: normal; font-size: 1.5rem; line-height: 1.2; margin: 0 0 10px; }
+  .bench { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 18px 24px; align-items: start; }
+  .left { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .word { background: none; border: 0; padding: 2px 0; color: var(--cw-payne, #546A80); font: inherit; cursor: pointer; text-align: left; }
+  .word:hover { color: var(--cw-payne-hover, #3D3D3A); }
+  .word:focus-visible { outline: 2px solid var(--cw-copper, #b5652b); outline-offset: 3px; }
+  .word.absent { opacity: 0; pointer-events: none; }
+  .items { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .items li { position: relative; padding-left: 14px; font-size: 15px; }
+  .items li::before { content: '\2022'; position: absolute; left: 0; color: var(--cw-payne, #546A80); }
+  .items .head { display: block; color: var(--cw-ink, #2a241c); }
+  .items .subs { display: flex; flex-direction: column; gap: 1px; align-items: flex-start; padding-left: 12px; margin-top: 3px; }
+  .items .word { font-size: 15px; }
+  .items li.absent { opacity: 0; pointer-events: none; }
+  .cmd { font-style: italic; }
+  .cmd[aria-pressed="true"] { color: var(--cw-copper, #b5652b); }
+  .credit { margin: 14px 0 0; font-size: 12px; line-height: 1.4; color: var(--cw-ink-soft, #6b655a); max-width: 160px; }
+  .main { min-width: 0; }
+  .intro { margin: 0 0 12px; font-size: 15px; line-height: 1.45; max-width: 46em; }
+  .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 16px; }
+  @media (max-width: 799px) { .pair { grid-template-columns: minmax(0, 1fr); gap: 14px 0; } .bench { grid-template-columns: minmax(0, 1fr); } .credit { max-width: none; } }
+  .stage { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; touch-action: none; background: var(--cw-parchment, #f4f1e8); }
+  .stage canvas.over { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+  .cap { margin: 6px 0 0; font-size: 14px; line-height: 1.4; min-height: 4.2em; }
+  .cap .t { display: block; color: var(--cw-ink, #2a241c); }
+  .cap .s { display: block; color: var(--cw-ink-soft, #6b655a); }
+  #fail { display: none; white-space: pre-wrap; font-size: 13px; color: var(--cw-vermilion, #c84830); }
+</style>
+</head>
+<body>
+<div class="wide">
+  <div class="bench">
+    <div class="left" id="words">
+      <h1>Ancient Seas</h1>
+      <ul class="items">
+        <li><span class="head">Moment</span><div class="subs" id="moments">
+          <button class="word cmd" data-m="262" type="button">262 Ma</button>
+          <button class="word cmd" data-m="069" type="button">69 Ma</button>
+          <button class="word cmd" data-m="000" type="button">now</button></div></li>
+        <li><span class="head">Sea</span><div class="subs" id="seaWords">
+          <button class="word cmd" data-sea="dem" type="button">from the heights</button>
+          <button class="word cmd" data-sea="high" type="button">at its highest</button></div></li>
+        <li><span class="head">Information</span><div class="subs">
+          <button class="word cmd" id="wCoast" type="button">Show coastlines</button>
+          <button class="word cmd" id="wRex" type="button">Show T. rex</button>
+          <button class="word cmd" id="wReset" type="button">Reset view</button></div></li>
+      </ul>
+      <p class="credit">Ancient heights and depths: C. R. Scotese and N. Wright, PALEOMAP PaleoDEMs, 2018. Coastlines: Á. T. Kocsis and C. R. Scotese, PaleoMAP PaleoCoastlines, 2021. Both CC BY 4.0. Finds: the Paleobiology Database, paleobiodb.org. Plates: PALEOMAP (Scotese 2016) by the GPlates Web Service; the right Earth, Merdith and others 2021. Today's land under the right Earth: NASA Earth Observatory.</p>
+    </div>
+    <div class="main">
+      <p class="intro">A survey bench, for Michael. Left, the Earth painted from Scotese and Wright's ancient heights and depths. Right, the Time lab's Earth as it is now, at the same moment. Both are turned so that New Mexico faces you. Pale blue is shallow sea; deeper is darker.</p>
+      <div class="pair">
+        <div><div class="stage" id="stageL"></div><p class="cap"><span class="t" id="capLt"></span><span class="s" id="capLs"></span></p></div>
+        <div><div class="stage" id="stageR"></div><p class="cap"><span class="t" id="capRt"></span><span class="s" id="capRs"></span></p></div>
+      </div>
+      <p id="fail"></p>
+    </div>
+  </div>
+</div>
+<script>
+  const CW_VERSION = '2026-11-19 · ancient-seas survey bench · 18 pictures asked of the device';   // date + short commit hash; bump in the same commit as any change
+  console.log('ancient-seas', CW_VERSION);
+  // 19 Nov 2026, the blank Earth: the Time lab's land (js/3d/earth.js) samples 16 pictures while its two ice slots hold
+  // the same mask and 17 when they differ, as they do at 262 Ma (the 26,000-year outline in one slot, nothing in the
+  // other). A WebGPU device grants 16 to a page that asks for nothing, so the land's shader was refused and the Earth
+  // drew as sea alone. This page asks for 18 where the adapter has them. The lasting fix belongs in the shared scripts
+  // (Report-Survey-Ancient-Seas-01.md, 19 Nov); a WebGL device has 16 and no more, and is not helped by this.
+  try {
+    if (window.GPUAdapter) {
+      const ask = GPUAdapter.prototype.requestDevice;
+      GPUAdapter.prototype.requestDevice = function (d) {
+        const has = this.limits.maxSampledTexturesPerShaderStage;
+        if (!(has > 16)) return ask.call(this, d);
+        return ask.call(this, Object.assign({}, d, { requiredLimits: Object.assign({}, d && d.requiredLimits, { maxSampledTexturesPerShaderStage: Math.min(18, has) }) }));
+      };
+    }
+  } catch (e) { console.warn('ancient-seas: the device could not be asked for more pictures', e); }
+</script>
+<script type="module">
+  import * as THREE from 'three';
+  import { texture, uniform, mix, uv } from 'three/tsl';
+  import { cwScene } from '../js/3d/scene.js?v=2026-10-30b';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-10-30a';
+  const $ = id => document.getElementById(id), S = window.CW.STYLE, D2R = Math.PI / 180;
+  const DIR = 'ancient-seas/';
+  const HOME_DISTANCE = 4.9;
+  const fail = m => { const f = $('fail'); f.style.display = 'block'; f.textContent += m + '\n'; };
+  window.addEventListener('error', e => fail('error: ' + e.message));
+
+  // ---------- the state ----------
+  const st = { moment: '262', sea: 'dem', coast: false, rex: true, t: 262 };   // t: the age shown (Ma); between 70 and 0 during the journey
+  const MOMENTS = {
+    '262': { word: '262 million years ago (262 Ma)', map: 'Scotese and Wright’s map for 262 Ma (the Capitanian); his plates at 260 Ma.' },
+    '069': { word: '69 million years ago (69 Ma)', map: 'Scotese and Wright’s map for 69 Ma (the Maastrichtian); his plates at 70 Ma.' },
+    '000': { word: 'Now', map: 'Scotese and Wright’s map of today’s heights and depths; today’s ice over it.' }
+  };
+
+  const [rex, coasts] = await Promise.all([fetch(DIR + 'trex.json').then(r => r.json()), fetch(DIR + 'coasts.json').then(r => r.json())]);
+  const AGES = rex.ages;   // 70, 65 … 5, 0: the plate ages of the journey's steps
+  const nmPath = rex.newMexicoPath, nmPathM = rex.newMexicoPathMerdith;
+  const CARLSBAD = [-104.44, 32.18];
+
+  // ---------- the left Earth: our own ball, painted from the paleoDEMs ----------
+  let L = null, R = null, earth = null;
+  const loader = new THREE.TextureLoader();
+  const texCache = new Map();
+  function tex(name) {
+    if (!texCache.has(name)) texCache.set(name, loader.loadAsync(DIR + name).then(t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; }));
+    return texCache.get(name);
+  }
+  const picFor = (key, sea) => key === '000' ? 'earth-000.jpg' : (key === '262' || key === '069') ? 'earth-' + key + (sea === 'high' ? '-high' : '') + '.jpg' : 'earth-' + key + '.jpg';
+  const keyOfAge = a => a === 70 ? '069' : String(a).padStart(3, '0');   // the step at plate age 70 is the 69 Ma map
+  function ballGeometry(nLon = 256, nLat = 128) {   // lon = atan2(x, z), lat = asin(y), as scene.js reads the ball; u, v from the picture's longitude and latitude
+    const pos = [], uvs = [], idx = [];
+    for (let j = 0; j <= nLat; j++) {
+      const lat = -90 + 180 * j / nLat, cl = Math.cos(lat * D2R), sl = Math.sin(lat * D2R);
+      for (let i = 0; i <= nLon; i++) { const lon = -180 + 360 * i / nLon; pos.push(cl * Math.sin(lon * D2R), sl, cl * Math.cos(lon * D2R)); uvs.push(i / nLon, j / nLat); }
+    }
+    for (let j = 0; j < nLat; j++) for (let i = 0; i < nLon; i++) { const a = j * (nLon + 1) + i, b = a + nLon + 1; idx.push(a, a + 1, b, a + 1, b + 1, b); }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2)); g.setIndex(idx);
+    return g;
+  }
+  const ballPoint = (lon, lat) => new THREE.Vector3(Math.cos(lat * D2R) * Math.sin(lon * D2R), Math.sin(lat * D2R), Math.cos(lat * D2R) * Math.cos(lon * D2R));
+  let texA = null, texB = null, uMix = uniform(0), ball = null;
+  try {
+    L = await cwScene($('stageL'), { ground: S.parchment, key: 'ancient-seas-left', phone: 'run', gesture: 'globe', home: { lon: nmPath[0][0], lat: nmPath[0][1] },
+      camera: { fov: 24, position: [0, 0, HOME_DISTANCE], near: 0.1, far: 50, min: 1.25, max: 12 } });
+    const first = await tex(picFor('262', 'dem'));
+    texA = texture(first); texB = texture(first);
+    const mat = new THREE.MeshBasicNodeMaterial();
+    mat.colorNode = mix(texA, texB, uMix);
+    ball = new THREE.Mesh(ballGeometry(), mat);
+    L.ball.add(ball);
+  } catch (e) { fail('The left Earth could not start: ' + (e && e.message ? e.message : e)); }
+
+  // ---------- the right Earth: the Time lab's, as time-lab.html draws it ----------
+  try {
+    R = await cwScene($('stageR'), { ground: S.parchment, key: 'ancient-seas-right', phone: 'run', gesture: 'globe', home: { lon: 20, lat: 15 },
+      camera: { fov: 24, position: [0, 0, HOME_DISTANCE], near: 0.1, far: 50, min: 1.4, max: 12 },
+      onTier: async tier => { if (earth) await earth.setTier(tier); },
+      onTap: (x, y) => !!(earth && earth.tap(x, y)) });
+    earth = await cwEarth(R, { marksHost: $('stageR'), seed: 1 });
+    await earth.setTier(R.tier);
+    earth.setPlaces(false);   // the cities' names off, as the Time lab opens
+    earth.setTime(262); earth.step(); earth.resetFill(); earth.settle(); R.redraw();
+  } catch (e) { fail('The right Earth could not start: ' + (e && e.message ? e.message : e)); }
+
+  // ---------- where things are at an age ----------
+  function slerpLL(a, b, f) {   // between two longitude/latitude pairs along the great circle
+    const p = ballPoint(a[0], a[1]), q = ballPoint(b[0], b[1]), d = Math.acos(Math.min(1, Math.max(-1, p.dot(q))));
+    if (d < 1e-6) return a.slice();
+    const s = Math.sin(d), v = p.multiplyScalar(Math.sin((1 - f) * d) / s).add(q.multiplyScalar(Math.sin(f * d) / s));
+    return [Math.atan2(v.x, v.z) / D2R, Math.asin(Math.max(-1, Math.min(1, v.y))) / D2R];
+  }
+  function bracket(t) {   // the two steps of the journey either side of age t (70 ≥ t ≥ 0), and how far between
+    for (let i = 0; i < AGES.length - 1; i++) if (t <= AGES[i] && t >= AGES[i + 1]) return { i, f: (AGES[i] - t) / (AGES[i] - AGES[i + 1]) };
+    return { i: AGES.length - 2, f: 1 };
+  }
+  const along = (path, t) => { const b = bracket(t); return slerpLL(path[b.i], path[b.i + 1], b.f); };
+  function nmLeft(t) { return st.moment === '262' && t > 70 ? [rex.newMexico['262'][0], rex.newMexico['262'][1]] : along(nmPath, Math.min(70, t)); }
+  function nmRight(t) { return t > 70 ? rex.newMexicoMerdith['262'] : along(nmPathM, Math.min(70, t)); }
+
+  // ---------- the overlays: a 2D canvas over each stage ----------
+  function overCanvas(host) { const c = document.createElement('canvas'); c.className = 'over'; host.appendChild(c); return c; }
+  const overL = overCanvas($('stageL')), overR = overCanvas($('stageR'));
+  const tmp = new THREE.Vector3(), tmpN = new THREE.Vector3(), tmpC = new THREE.Vector3();
+  function projector(view, cam, w, h) {   // a world point → stage pixels, front or not
+    return wp => { tmpN.copy(wp).normalize(); tmpC.copy(cam.position).sub(wp); const front = tmpN.dot(tmpC) > 0; tmp.copy(wp).project(cam); return { x: (tmp.x + 1) / 2 * w, y: (1 - tmp.y) / 2 * h, front }; };
+  }
+  const leftWorld = (lon, lat) => L.ball.localToWorld(ballPoint(lon, lat).multiplyScalar(1.0005));
+  function rightWorld(lon, lat) {   // a place of today, carried by the North American plate as earth.project carries it
+    const la = lat * D2R, lo = lon * D2R, v = new THREE.Vector3(Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la));
+    const mesh = earth.meshes.get('101'); return mesh ? mesh.localToWorld(v) : earth.group.localToWorld(v);
+  }
+  function drawFinds(ctx, P, posOf, scale) {
+    if (!st.rex || st.t > 70) return;
+    for (const f of rex.finds) {
+      const q = P(posOf(f)); if (!q.front) continue;
+      ctx.beginPath(); ctx.arc(q.x, q.y, 3.2 * scale, 0, 2 * Math.PI);
+      if (f.doubt) { ctx.strokeStyle = S.vermilion; ctx.lineWidth = 1.4 * scale; ctx.stroke(); }
+      else { ctx.fillStyle = S.vermilion; ctx.fill(); ctx.strokeStyle = S.parchment; ctx.lineWidth = 0.8 * scale; ctx.stroke(); }
+    }
+  }
+  function drawPlace(ctx, q, name, scale) {   // New Mexico: an ink ring and its name, haloed as the map's labels are
+    if (!q.front) return;
+    ctx.beginPath(); ctx.arc(q.x, q.y, 5 * scale, 0, 2 * Math.PI); ctx.strokeStyle = S.ink; ctx.lineWidth = 1.3 * scale; ctx.stroke();
+    ctx.font = (13 * scale) + 'px ' + S.font; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = 'rgba(244,241,234,0.75)'; ctx.lineWidth = 3 * scale; ctx.strokeText(name, q.x + 9 * scale, q.y); ctx.fillStyle = S.ink; ctx.fillText(name, q.x + 9 * scale, q.y);
+  }
+  function drawLeftOverlay(ctx, P, scale) {
+    // the paleocoastline for the moment (only at the two moments: Kocsis and Scotese have one every five million years, drawn
+    // on the map it belongs to, not between)
+    const ck = st.t === 262 ? '262' : st.t === 70 ? '069' : null;
+    if (st.coast && ck) {
+      ctx.strokeStyle = S.coast || '#4a4336'; ctx.globalAlpha = 0.85; ctx.lineWidth = 1.1 * scale; ctx.lineJoin = 'round';
+      for (const line of coasts[ck]) {
+        let prev = null; ctx.beginPath();
+        for (const [lon, lat] of line) { const q = P(leftWorld(lon, lat)); if (q.front && prev && prev.front) ctx.lineTo(q.x, q.y); else ctx.moveTo(q.x, q.y); prev = q; }
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+    drawFinds(ctx, P, f => leftWorld(...along(f.path, Math.min(70, st.t))), scale);
+    const nm = st.t > 70 ? rex.newMexico['262'] : along(nmPath, st.t);
+    drawPlace(ctx, P(leftWorld(nm[0], nm[1])), 'New Mexico', scale);
+  }
+  function drawRightOverlay(ctx, P, scale) {
+    drawFinds(ctx, P, f => rightWorld(f.path[f.path.length - 1][0], f.path[f.path.length - 1][1]), scale);
+    drawPlace(ctx, P(rightWorld(CARLSBAD[0], CARLSBAD[1])), 'New Mexico', scale);
+  }
+  function sizeOver(c, host) {
+    const w = host.clientWidth, h = host.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+    const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, w, h); return { x, w, h };
+  }
+  let keyL = '', keyR = '';
+  function overlays(force) {
+    if (L) {
+      const cam = L.camera.position, q = L.ball.quaternion, k = [cam.x, cam.y, cam.z, q.x, q.y, q.z, q.w, st.t, st.coast, st.rex, L.host.clientWidth].join();
+      if (force || k !== keyL) { keyL = k; L.scene.updateMatrixWorld(); const { x, w, h } = sizeOver(overL, L.host); drawLeftOverlay(x, projector(L, L.camera, w, h), 1); }
+    }
+    if (R && earth) {
+      const cam = R.camera.position, q = R.ball.quaternion, k = [cam.x, cam.y, cam.z, q.x, q.y, q.z, q.w, earth.time(), st.rex, st.t, R.host.clientWidth].join();
+      if (force || k !== keyR) { keyR = k; R.scene.updateMatrixWorld(); const { x, w, h } = sizeOver(overR, R.host); drawRightOverlay(x, projector(R, R.camera, w, h), 1); }
+    }
+  }
+  if (L) L.onFrame(() => overlays(false));
+  if (R) R.onFrame(() => overlays(false));
+
+  // ---------- setting a moment ----------
+  async function paintLeft(t) {   // the left ball at age t: one picture, or two blended during the journey
+    if (!ball) return;
+    if (t > 70) { const a = await tex(picFor('262', st.sea)); texA.value = a; texB.value = a; uMix.value = 0; }
+    else {
+      const b = bracket(t), ka = keyOfAge(AGES[b.i]), kb = keyOfAge(AGES[b.i + 1]);
+      const [a, c] = await Promise.all([tex(picFor(ka, st.sea)), tex(picFor(kb, st.sea))]);
+      texA.value = a; texB.value = c; uMix.value = b.f;
+    }
+    L.redraw();
+  }
+  function captions() {
+    const m = st.t > 70 ? '262' : st.t === 70 ? '069' : st.t === 0 ? '000' : null;
+    const ageWord = m ? MOMENTS[m].word : 'About ' + Math.round(st.t) + ' million years ago';
+    $('capLt').textContent = ageWord + ' · Scotese and Wright';
+    const step = !m && AGES.includes(Math.round(st.t * 1000) / 1000);
+    $('capLs').textContent = (m ? MOMENTS[m].map : step ? 'Scotese and Wright’s map for this step; his plates at ' + st.t + ' Ma.' : 'Between two of Scotese and Wright’s maps, five million years apart, blended.') + (m !== '000' && st.sea === 'high' ? ' Flooded to Kocsis and Scotese’s coastline.' : '')
+      + (st.rex && st.t <= 70 ? ' Red: the 70 finds of T. rex; a ring is doubtful.' : '');
+    $('capRt').textContent = ageWord + ' · the Time lab’s Earth';
+    $('capRs').textContent = st.t === 0 ? 'Today’s photograph.' : 'Merdith and others (2021), painted by the Time lab’s rule: a pale shelf round each piece, no sea across a continent.';
+  }
+  function words() {
+    document.querySelectorAll('#moments .word').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === st.moment)));
+    document.querySelectorAll('#seaWords .word').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sea === st.sea)));
+    $('seaWords').parentElement.classList.toggle('absent', st.moment === '000' && !journey);   // today has one sea: the Sea words go, heading and all
+    $('wCoast').setAttribute('aria-pressed', String(st.coast)); $('wCoast').classList.toggle('absent', st.moment === '000');
+    $('wRex').setAttribute('aria-pressed', String(st.rex)); $('wRex').classList.toggle('absent', st.moment === '262');
+  }
+  function face(t) {   // turn each Earth so that New Mexico faces her
+    const a = nmLeft(t), b = nmRight(t);
+    if (L) L.turnTo(a[0], a[1]);
+    if (R) R.turnTo(b[0], b[1]);
+  }
+  async function setAge(t) {
+    st.t = t;
+    await paintLeft(t);
+    if (earth) { earth.setTime(t > 70 ? 262 : t === 70 ? 69 : t); earth.step(); earth.settle(); R.redraw(); }
+    captions(); overlays(true);
+  }
+  async function set(moment, opt = {}) {
+    st.moment = moment;
+    const t = moment === '262' ? 262 : moment === '069' ? 70 : 0;
+    await setAge(t); if (!opt.keepView) { face(t); resetZoom(); } words(); overlays(true);
+  }
+  function resetZoom() { for (const v of [L, R]) if (v) v.zoomTo(HOME_DISTANCE); }
+
+  // ---------- the journey: 69 Ma to now, or back ----------
+  let journey = null;
+  const JOURNEY_MS = 7000;
+  function journeyTo(target) {
+    const from = st.t; if (from > 70) return set(target === 0 ? '000' : '069');
+    st.moment = target === 0 ? '000' : '069'; words();
+    const t0 = performance.now(), me = {};
+    journey = me;
+    const tick = async () => {
+      if (journey !== me) return;
+      const u = Math.min(1, (performance.now() - t0) / JOURNEY_MS), e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+      const t = from + (target - from) * e;
+      await setAge(u >= 1 ? target : t); face(st.t);
+      if (u < 1) requestAnimationFrame(tick); else { journey = null; words(); }
+    };
+    requestAnimationFrame(tick);
+  }
+  async function finish() { if (!journey) return; const target = st.moment === '000' ? 0 : 70; journey = null; await setAge(target); face(target); words(); }
+
+  // ---------- the words ----------
+  document.querySelectorAll('#moments .word').forEach(b => b.addEventListener('click', () => {
+    const m = b.dataset.m;
+    if (m === '000' && st.t <= 70 && st.t > 0) return journeyTo(0);
+    if (m === '069' && st.t < 70) return journeyTo(70);
+    journey = null; set(m);
+  }));
+  document.querySelectorAll('#seaWords .word').forEach(b => b.addEventListener('click', async () => { st.sea = b.dataset.sea; await paintLeft(st.t); captions(); words(); }));
+  $('wCoast').addEventListener('click', () => { st.coast = !st.coast; words(); overlays(true); });
+  $('wRex').addEventListener('click', () => { st.rex = !st.rex; words(); captions(); overlays(true); });
+  $('wReset').addEventListener('click', () => { face(st.t); resetZoom(); });
+
+  await set('262');
+  // warm the journey's pictures after the first paint, so now plays without waiting
+  setTimeout(() => { for (const a of AGES) tex(picFor(keyOfAge(a), 'dem')); tex(picFor('262', 'high')); tex(picFor('069', 'high')); }, 400);
+
+  // ---------- bench hooks: set a state and take a picture of both Earths, for the report ----------
+  async function snapOne(view, drawOver, px) {
+    const r = view.renderer, cam = view.camera;
+    const rt = new THREE.RenderTarget(px, px, { type: THREE.UnsignedByteType, colorSpace: THREE.SRGBColorSpace, depthBuffer: true });
+    const old = cam.aspect; cam.aspect = 1; cam.updateProjectionMatrix();
+    if (view === R && earth) earth.frame();
+    view.scene.updateMatrixWorld();
+    r.setRenderTarget(rt); r.render(view.stage().scene, view.stage().camera);
+    const data = await r.readRenderTargetPixelsAsync(rt, 0, 0, px, px);
+    r.setRenderTarget(null); rt.dispose();
+    const cv = document.createElement('canvas'); cv.width = px; cv.height = px; const ctx = cv.getContext('2d');
+    const img = ctx.createImageData(px, px), src = new Uint8ClampedArray(data.buffer, data.byteOffset, px * px * 4);
+    if (r.backend && r.backend.isWebGLBackend) { for (let y = 0; y < px; y++) img.data.set(src.subarray((px - 1 - y) * px * 4, (px - y) * px * 4), y * px * 4); } else img.data.set(src);
+    for (let i = 3; i < img.data.length; i += 4) img.data[i] = 255;
+    ctx.putImageData(img, 0, 0);
+    drawOver(ctx, projector(view, cam, px, px), px / 480);
+    cam.aspect = old; cam.updateProjectionMatrix();
+    return cv;
+  }
+  window.cwSeas = {
+    st, set, setAge, journeyTo, finish, face, L, R, get earth() { return earth; },
+    sea: async s => { st.sea = s; await paintLeft(st.t); captions(); words(); },
+    coast: on => { st.coast = !!on; words(); overlays(true); }, rex: on => { st.rex = !!on; words(); captions(); overlays(true); },
+    zoom: d => { for (const v of [L, R]) if (v) v.zoomTo(d); },
+    // both Earths side by side with their captions, as one JPEG data URL (px a multiple of 64)
+    picture: async (px = 768, which = 'both') => {
+      const parts = [];
+      if (which !== 'right') parts.push([await snapOne(L, drawLeftOverlay, px), $('capLt').textContent, $('capLs').textContent]);
+      if (which !== 'left') parts.push([await snapOne(R, drawRightOverlay, px), $('capRt').textContent, $('capRs').textContent]);
+      const gap = 24, W = parts.length * px + (parts.length - 1) * gap, H = px + 70;
+      const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const ctx = cv.getContext('2d');
+      ctx.fillStyle = S.parchment; ctx.fillRect(0, 0, W, H);
+      parts.forEach(([c, t, s], i) => {
+        const x = i * (px + gap); ctx.drawImage(c, x, 0);
+        ctx.fillStyle = S.ink; ctx.font = '17px ' + S.font; ctx.textBaseline = 'top'; ctx.fillText(t, x + 4, px + 8);
+        ctx.fillStyle = S.inkSoft; ctx.font = '13px ' + S.font;
+        const words = s.split(' '); let line = '', y = px + 32;
+        for (const w of words) { if (ctx.measureText(line + w).width > px - 8) { ctx.fillText(line, x + 4, y); line = ''; y += 17; } line += w + ' '; }
+        ctx.fillText(line, x + 4, y);
+      });
+      return cv.toDataURL('image/jpeg', 0.9);
+    }
+  };
+</script>
+</body>
+</html>
