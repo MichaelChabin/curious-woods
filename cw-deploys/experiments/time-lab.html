@@ -137,7 +137,15 @@
      1054 is 1054, not 1055). The Earth wears the satellite picture (earth.setGround('blue'), which this page had never
      asked for: it showed the old height-tinted map under the photograph's credit), so today's ice is there.
      ?build=1 (bench): the first time in a visit she goes from a smaller span to the 4.6 billion, it is built tile by
-     tile, from now back to the beginning, a year count running beside the tiles. -->
+     tile, from now back to the beginning, a year count running beside the tiles.
+     The shallow seas (20 Nov 2026; Michael's word of 20 Nov, "bring the seas into the time lab this way", after the
+     test on experiments/ancient-seas.html and Report-Survey-Ancient-Seas-02.md): the Earth is asked for its shallow
+     seas (earth.js's o.seas, new the same day and off on every other page). From 5 to 535 million years ago the ground
+     Kocsis and Scotese drew under shallow sea is painted on the lab's own pieces in the shore blue, riding Merdith's
+     plates; it comes in from the seam at 2.6 million years and goes past 535. The credit at the column's foot names
+     the seas' source while they show. Bench only, in How this works: the shallow seas on / off (?seas=0 opens with
+     them off). Nothing else on the page is changed. Not in this step: any ruling on the places where the two plate
+     models tear the sea (Tibet and its neighbours), the honesty word for the seas, animals and plants. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-11-17"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
@@ -418,11 +426,12 @@
   <div class="pair"><span class="what">the sound</span><span id="bSound"></span></div>
   <div class="pair"><span class="what">north up, within</span><span id="bDetent"></span></div>
   <div class="pair"><span class="what">its pull in a drag</span><span id="bPull"></span></div>
+  <div class="pair"><span class="what">the shallow seas</span><span id="bSeas"></span></div>
   <p class="readout" id="readout"></p>
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-20 82ebccd · time-lab step 10';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-20 eb47e2c · time-lab step 10 · the shallow seas';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -2172,6 +2181,8 @@
     mark();
   }
   benchChoice($('bVanish'), VANISH, () => bench.vanish, v => { bench.vanish = v; });
+  const SEAS = { on: Q.get('seas') !== '0' };   // the shallow seas (20 Nov): bench only, on / off; the Earth is asked for them either way
+  benchChoice($('bSeas'), ['on', 'off'], () => SEAS.on ? 'on' : 'off', v => { SEAS.on = v === 'on'; if (lab.earth && lab.earth.setSeas) lab.earth.setSeas(SEAS.on); tellYear(); });
   benchChoice($('bSound'), SOUND_KINDS, () => bench.sound, v => {   // choosing one plays it once, so it can be heard without a move
     bench.sound = v;
     if (soundAnswer() === 'on' && !reduced()) { const ac = unlockSound(); if (ac) SOUNDS[v](ac, ac.currentTime + 0.05, (LOOK.move.stagger + LOOK.move.flight) / 1000, -1, ac.destination); }
@@ -2549,7 +2560,7 @@
   // globe, no sliders, no crop, no Save or share on this page) ----------
   import * as THREE from 'three';
   import { cwScene } from '../js/3d/scene.js?v=2026-10-30b';
-  import { cwEarth } from '../js/3d/earth.js?v=2026-11-19a';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-11-20a';
   const $ = id => document.getElementById(id), S = window.CW.STYLE, Q = new URLSearchParams(location.search);
   if (Q.get('log') === '1') {   // bench only: every console error and warning also written under the page, for a browser whose console cannot be reached
     const show = (kind, args) => { const f = $('fail'); f.style.display = 'block'; f.textContent += '\n' + kind + ': ' + [...args].map(a => a && a.message ? a.message : String(a)).join(' ').slice(0, 1500); };
@@ -2578,7 +2589,8 @@
       onTap: (x, y) => (marking && earth ? markerTap(x, y) : cityTap(x, y) || !!(earth && earth.tap(x, y)))   // placing markers (step 5): a tap sets or deletes one; else a city's point shows or hides its name (step 10); else, on the flat world, a tap goes back to the globe centred there
     });
     if (view.resetWord) view.resetWord.remove();   // step 10: no Reset: the Earth has two resting places instead (below)
-    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, onFlat: (on) => window.cwLab.flatWord(on) });
+    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, onFlat: (on) => window.cwLab.flatWord(on), seas: true });   // the shallow seas (20 Nov)
+    if (Q.get('seas') === '0') earth.setSeas(false);
     // Step 10: the satellite picture. This page had never asked for it: the Earth's own default is the old ground, the
     // map's height-tinted picture, which paints high ground pale (the Himalaya and Tibet looked iced) and knows no ice
     // (Greenland and Antarctica bare), while the credit under Select years named the photograph. The Earth bench has
@@ -2833,11 +2845,13 @@
   // what the Earth knows at its year, for the text block and the credit (the classic script writes both): the grade
   // (the molten phase's sentence while there is no grade, as gradeFor gives it) and the credit — the photograph's this
   // side of the seam, the plate model's past it
+  const seasShow = () => { const s = earth.seas && earth.seas(); return !!(s && s.on && s.between); };   // the seas are on and the year has some
   if (earth) {
     window.cwLab.attachEarth({
       view, earth,
       setTime: m => { ma = Math.max(0, Math.min(EARTH_AGE, m)); earth.setTime(ma); },
-      grade: () => { const g = earth.grade(); return { grade: g.grade, why: g.why, credit: ma < earth.seam ? SHORT_CREDIT : 'The continents: Merdith et al. 2021 (EarthByte)' }; },
+      grade: () => { const g = earth.grade(); return { grade: g.grade, why: g.why, credit: ma < earth.seam ? SHORT_CREDIT : 'The continents: Merdith et al. 2021 (EarthByte)' + (seasShow() ? '. The shallow seas: Kocsis & Scotese 2021' : '') }; },
+      setSeas: on => { earth.setSeas(on); view.redraw(); },   // the shallow seas (20 Nov), bench only
       setPlaces: on => { cityOn = !!on; if (!cityOn) cityNamed = null; else loadCities().then(() => drawOverlay(true)); drawOverlay(true); },   // step 10: Show cities / Hide cities: the points
       ground: css => { view.renderer.setClearColor(new THREE.Color(css), 1); view.redraw(); },   // step 10: the colour round the Earth, parchment in Time and near-black in The World
       setCoasts: on => { coastOn = !!on; if (coastOn) loadCoasts().then(() => drawOverlay(true)); drawOverlay(true); },   // step 5: today's coastlines, riding their plates

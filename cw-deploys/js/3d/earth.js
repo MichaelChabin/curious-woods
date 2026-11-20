@@ -181,6 +181,7 @@
        places, blueTiles,              // stories/places.json, art/globe/tiles/blue-marble.json: files or URLs
        coldTiles: false,               // bench only: every tile past the browser's cache, for a cold timing
        onFlat: (on, at) => {}          // step 6: a tap on the flat world went back to the globe, centred on `at`
+       seas: true | 'url/seas.json'    // 20 Nov: the shallow seas on the pieces (below); off unless asked for
      });
    Returns { group, setTime(ma), time(), grade() → { grade, why }, moltenPhase(), setGround('old'|'blue'), ground(),
    seaLevel() (metres, ≤ 0), icePairs(), setCoasts(on), coasts(),
@@ -190,7 +191,23 @@
    setTier(tier), placeAt, project → {x, y, front}, cities,
    step 6: setFlat(on), flat(), tap(x, y) → { to, lon, lat, place } or null, markAt(x, y), flatLonLatAt(x, y), projectFlat,
    flatScene, flatCamera, eeForward, eeInverse, glide() → { on, t, to },
-   stats: { pieces, rings, plates, triangles, rimTriangles, buildMs, lookMs, fetchMs, blue() }, meshes, dispose() }. */
+   stats: { pieces, rings, plates, triangles, rimTriangles, buildMs, lookMs, fetchMs, blue() }, meshes, dispose() }.
+
+   The shallow seas (20 Nov 2026; Michael's word of 20 Nov after Report-Survey-Ancient-Seas-02.md; only with o.seas, so
+   every other page is as it was). Kocsis and Scotese's flooded ground at each age their record has a coastline for
+   (80 ages, 5 to 535 million years), carried back to today on Scotese's own plates and saved as pictures in today's
+   longitudes and latitudes (art/globe/seas/, three ages to a picture, one in each of red, green and blue; the script is
+   CWVault/claude/Time-Lab-Seas-Nov20/build-seas.py). The pieces already carry today's ground on Merdith's plates, so
+   the picture rides them: each plate's land has a second mesh on the same triangles, painted right after it (its order
+   + 0.25, so a later plate's land still covers it), that reads the picture where the fragment lies today and paints
+   the shore blue of Spec-Maps' ramp (S.seaShore). It keeps the land's rules — nothing before a piece's birth, the far
+   side discarded, the birth fade, the deep ice over it, the limb — and has its two copies on the flat world. Between
+   two ages the two pictures are mixed before the edge is cut, so a shore moves and does not ghost. None this side of
+   the seam (it comes in from the seam to the first picture at 5), none past the last picture (out over SEAS_OUT), none
+   at the guessed and invented ages. The pictures load as the age asks for them, SEAS_HOLD held at most; until a pair
+   has come the pair before it stays. Where Scotese's plates and Merdith's cut the ground differently the sea tears
+   (Tibet and its neighbours worst; the report lists them): left as it falls, Michael's ruling pending.
+   setSeas(on), seas() → { on, showing, ages, credit }. */
 import * as THREE from 'three';
 import { Fn, vec2, vec3, vec4, float, int, uniform, texture, uv, attribute, varying, positionView, positionWorld, modelViewMatrix,
          normalize, dot, cross, length, mix, smoothstep, clamp, abs, min, max, select, If, Discard, sRGBTransferEOTF, atan, asin, sqrt, fract, dFdx, dFdy,
@@ -215,6 +232,8 @@ const UNDER_PAST = 0.3;   // million years past the seam over which today's grou
 const GLIDE_TO = 5;       // the glide: from the seam to this age each piece eases from today's place to the model's (Michael, 29 Oct: "about 5")
 const TAP_GLIDE_S = 0.6;  // a tap on a place: seconds for it to glide to the centre
 const TAP_ZOOM_STEP = 2.5;   // and the zoom's step: the height above the ground divided by this
+const SEAS_OUT = 5;       // million years past the last sea picture over which the shallow seas go
+const SEAS_HOLD = 5;      // sea pictures held at once (three ages each, 1,800 by 900)
 const FROM_FLAT_KM = 3000;   // a tap on the flat world: the globe comes back with this many kilometres across the window's height
 const FLAT_MARGIN = 14;   // CSS pixels of parchment round the flat world, at least
 // the places by today's names (Michael, 29 Oct: Tokyo, not Edo), by their ids in stories/places.json, which keeps its own
@@ -1880,6 +1899,78 @@ export async function cwEarth(view, o = {}) {
     return m;
   }
   let molten = false;
+  // ---- the shallow seas on the pieces (20 Nov; see the header): only with o.seas ----
+  const seasFile = o.seas ? await getJson(typeof o.seas === 'string' ? o.seas : null, '../art/globe/seas/seas.json') : null;
+  let seasOn = !!(seasFile && seasFile.ages && seasFile.ages.length), seasWant = null;
+  const seaLayer = seasOn ? (() => {
+    const base = (typeof o.seas === 'string' ? o.seas : '../art/globe/seas/seas.json').replace(/[^/]*$/, '');
+    const list = seasFile.ages.slice().sort((a, b) => a[0] - b[0]);   // [age, file, channel], youngest first
+    const blank = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1); blank.needsUpdate = true;
+    const texA = texture(blank), texB = texture(blank);
+    const uChA = uniform(new THREE.Vector3(1, 0, 0)), uChB = uniform(new THREE.Vector3(1, 0, 0)), uMix = uniform(0), uOn = uniform(0);
+    const SHORE3 = rgb(S.seaShore || '#93bed7');
+    const make = shift => {   // shift: undefined on the ball; 0 and 1, the flat world's two copies
+      const isFlat = shift != null, m = flatMat();
+      const p = mix(attribute('position', 'vec3'), attribute('soft', 'vec3'), uOld);
+      m.positionNode = isFlat ? flatPos(p, attribute('tricentre', 'vec3'), shift) : p;
+      const out = Fn(() => {
+        const fl = isFlat ? flatCtx() : null;
+        aliveOrDiscard(fl);
+        const pT = fl ? normalize(modelWorldMatrixInverse.mul(vec4(fl.pAge, 1)).xyz) : todayPoint();
+        const uvn = uvOf(pT), u2 = fract(uvn.x.add(0.5));   // the gradient across the dateline, as readAt takes it
+        const gx = vec2(select(abs(dFdx(uvn.x)).lessThan(0.5), dFdx(uvn.x), dFdx(u2)), dFdx(uvn.y));
+        const gy = vec2(select(abs(dFdy(uvn.x)).lessThan(0.5), dFdy(uvn.x), dFdy(u2)), dFdy(uvn.y));
+        const a = dot(texA.sample(uvn).grad(gx, gy).rgb, uChA), b = dot(texB.sample(uvn).grad(gx, gy).rgb, uChB);
+        const wet = smoothstep(0.4, 0.6, mix(a, b, uMix));
+        return vec4(finish(SHORE3, fl), wet.mul(uOn).mul(lifeNode()));
+      })();
+      m.colorNode = out.rgb; m.opacityNode = out.a;
+      return m;
+    };
+    const mat = make(), flatSeaMats = [make(0), make(1)];
+    const kids = [];   // { land, sea, t: the flat world's two }
+    for (const land of meshes.values()) {
+      const mk = mt => { const k = new THREE.Mesh(land.geometry, mt); k.frustumCulled = false; k.visible = false; return k; };
+      const sea = mk(mat), t = [mk(flatSeaMats[0]), mk(flatSeaMats[1])];
+      group.add(sea); flatGroup.add(t[0], t[1]); kids.push({ land, sea, t });
+    }
+    // the pictures: fetched as the age asks, SEAS_HOLD held, the least lately used let go
+    const held = new Map(); let tick = 0;
+    const get = k => {
+      let h = held.get(k);
+      if (!h) {
+        h = { tex: null, used: 0 }; held.set(k, h);
+        h.promise = loader.loadAsync(base + seasFile.files[k]).then(t => { h.tex = prep(t); return h; }).catch(e => { held.delete(k); console.warn('earth.js: a sea picture did not load', seasFile.files[k], e); return null; });
+      }
+      h.used = ++tick; return h;
+    };
+    const trim = () => {
+      if (held.size <= SEAS_HOLD) return;
+      const cur = [texA.value, texB.value];
+      [...held.entries()].filter(([, h]) => h.tex && !cur.includes(h.tex)).sort((x, y) => x[1].used - y[1].used).slice(0, held.size - SEAS_HOLD).forEach(([k, h]) => { h.tex.dispose(); held.delete(k); });
+    };
+    const CH = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+    const put = w => { texA.value = w.ha.tex; texB.value = w.hb.tex; uChA.value.set(...CH[w.a[2]]); uChB.value.set(...CH[w.b[2]]); uMix.value = w.f; uOn.value = w.on; trim(); };
+    const show = () => { const on = seasOn && uOn.value > 0; for (const k of kids) { k.sea.visible = on && k.land.visible; k.sea.quaternion.copy(k.land.quaternion); k.sea.renderOrder = k.land.renderOrder + 0.25; } };
+    // the age: the two pictures either side of it and how far between; in from the seam to the first, out past the last
+    function time(age, pieces) {
+      const n = list.length, first = list[0][0], last = list[n - 1][0];
+      let a = null, b = null, f = 0, on = 0;
+      if (pieces && seasOn && age > seam && age < last + SEAS_OUT) {
+        if (age <= first) { a = b = list[0]; on = (age - seam) / (first - seam); }
+        else if (age >= last) { a = b = list[n - 1]; on = 1 - (age - last) / SEAS_OUT; }
+        else { let i = 0; while (list[i + 1][0] <= age) i++; a = list[i]; b = list[i + 1]; f = (age - a[0]) / (b[0] - a[0]); on = 1; }
+      }
+      if (!a) { seasWant = null; uOn.value = 0; show(); return; }
+      const w = { a, b, f, on, ha: get(a[1]), hb: get(b[1]) }; seasWant = w;
+      if (w.ha.tex && w.hb.tex) put(w);
+      else Promise.all([w.ha.promise, w.hb.promise]).then(r => { if (seasWant !== w || !r[0] || !r[1]) return; put(w); show(); if (flat) twinsOf(); view.redraw(); });
+      show();
+    }
+    const twinsOf = () => { for (const k of kids) for (let i = 0; i < 2; i++) { const m = k.t[i]; m.quaternion.copy(k.sea.quaternion); m.renderOrder = k.sea.renderOrder; m.visible = k.sea.visible && (i === 0 || nearEdge(k.land)); } };
+    return { time, show, twinsOf, uOn, list, dispose: () => { [mat, ...flatSeaMats, blank].forEach(x => x.dispose()); for (const h of held.values()) if (h.tex) h.tex.dispose(); } };
+  })() : null;
+
   function rebuildMaterials() {
     const olds = [landMat, islandMat, rimMat, seaMat, moltenMat, hazeMat, blobLandMat, blobIslandMat, blobRimMat, coastMat, underMat];
     underMat = makeUnder(); under.material = underMat;
@@ -1993,6 +2084,7 @@ export async function cwEarth(view, o = {}) {
       if (st.phase !== phaseNow) { phaseNow = st.phase; if (o.onMolten) o.onMolten(st.phase, ma); }
     }
     uSteam.value = steam;
+    if (seaLayer) seaLayer.time(ma, showPieces && how === 'model');
     if (flat) syncTwins();
     ageMoved();
     view.redraw();
@@ -2013,6 +2105,7 @@ export async function cwEarth(view, o = {}) {
       for (const m of tw.t) { m.quaternion.copy(s.quaternion); m.renderOrder = s.renderOrder; }
       tw.t[0].visible = s.visible; tw.t[1].visible = s.visible && nearEdge(s);
     }
+    if (seaLayer) seaLayer.twinsOf();
     flatUnder.visible = under.visible;
     flatSea.material = molten ? flatMoltenMat : flatSeaMat;
     if (flatCoast) flatCoast.visible = !!(coastLine && coastLine.userData.on);
@@ -2414,7 +2507,11 @@ export async function cwEarth(view, o = {}) {
     plateQuatAt: (pid, age) => plateQuatAt(plates[String(pid)], ages, age),
     bodyQuat: (pid, age) => bodyQuat(String(pid), age, age > reach ? 'guessed' : 'model'),
     looks: { maskOld: lookOld.maskCanvas, maskBlue: lookBlue.maskCanvas },   // for the bench's checks
+    // the shallow seas (20 Nov): on or off, and what is showing
+    setSeas: on => { if (!seaLayer) return; seasOn = !!on; setTime(ma); },
+    seas: () => seaLayer ? { on: seasOn, showing: seasOn && seaLayer.uOn.value > 0 ? seaLayer.uOn.value : 0, between: seasWant ? [seasWant.a[0], seasWant.b[0]] : null, ages: seaLayer.list.map(a => a[0]), credit: seasFile.credit || '' } : null,
     dispose: () => {
+      if (seaLayer) seaLayer.dispose();
       for (const m of meshes.values()) m.geometry.dispose(); for (const m of rims.values()) m.geometry.dispose();
       for (const m of blobMeshes) { m.land.geometry.dispose(); if (m.rim) m.rim.geometry.dispose(); }
       sea.geometry.dispose(); haze.geometry.dispose(); under.geometry.dispose(); if (underMat) underMat.dispose();
