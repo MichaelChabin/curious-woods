@@ -1,5 +1,5 @@
 ---
-status: Report, 20 Nov 2026, a Claude Code session, on Michael's word of 20 Nov, "Yes bring the seas into the time lab this way", his answer to the first question of Report-Survey-Ancient-Seas-02.md. Built, checked and committed locally. NOT pushed; the push waits for his word.
+status: Report, 20 Nov 2026, a Claude Code session, on Michael's word of 20 Nov, "Yes bring the seas into the time lab this way", his answer to the first question of Report-Survey-Ancient-Seas-02.md. Built, checked and committed (`013cc380`); PUSHED on his word, "Push it", 20 Nov; the live page shows the new version line and the seaway at 69 Ma.
 role: The shallow seas are in the Time lab. What was built, what was checked, what is left for Michael.
 related: Report-Survey-Ancient-Seas-02.md (the test this follows), Time-Lab-Seas-Nov20/build-seas.py, Time-Lab-Seas-Nov20/numbers.json, cw-deploys/js/3d/earth.js, cw-deploys/experiments/time-lab.html, cw-deploys/art/globe/seas/
 ---
@@ -71,6 +71,4 @@ related: Report-Survey-Ancient-Seas-02.md (the test this follows), Time-Lab-Seas
 1. Whether the look is right, most of all before 400 Ma where the land is mostly sea.
 2. The tears: leave them, hide the worst, or hide Asia's alone.
 3. Whether the seas should have their own word of knowing.
-4. The push. This is committed and not pushed.
-
-To see it before it is pushed: the local page, or say "push" and look at `curiouswoods.org/experiments/time-lab.html`.
+**It is on the site** (pushed 20 Nov, `013cc380`): `curiouswoods.org/experiments/time-lab.html`.
