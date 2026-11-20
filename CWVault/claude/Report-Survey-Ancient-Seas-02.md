@@ -1,5 +1,5 @@
 ---
-status: Report, 20 Nov 2026, a Claude Code session, on Michael's prompt of 20 Nov from the "Woods This Week" session (pasted whole). A test on the ancient-seas bench. Nothing in `time-lab.html` and no shared script changed. Not committed, as the prompt asks.
+status: Report, 20 Nov 2026, a Claude Code session, on Michael's prompt of 20 Nov from the "Woods This Week" session (pasted whole). A test on the ancient-seas bench. Nothing in `time-lab.html` and no shared script changed. Reported first, as the prompt asks; then committed and pushed on Michael's word, "Commit and push", 20 Nov (`b01d9a55`); the live page shows the new version line and the seaway on the right Earth at 69 Ma.
 role: Whether the shallow seas of Kocsis and Scotese's coastlines can ride the Time lab's own plates (Merdith), so the lab gets its seaway without moving onto Scotese's Earth. They can, for North America, to the kilometre.
 related: Report-Survey-Ancient-Seas-01.md (the survey; this tests its path 3), Ancient-Seas-Nov20/build.py, Ancient-Seas-Nov20/numbers.json, cw-deploys/experiments/ancient-seas.html, Spec-Earth-3D.md (the ruling of 27 Oct)
 ---
@@ -184,4 +184,4 @@ This would leave the Time lab on Merdith's plates, with the code moving them, an
 2. What to do about Asia's tears (item 5 above).
 3. Whether 80 Ma stays as a moment on the bench.
 
-**The bench is ready for your word to commit and push**, so you can look at it on the iPad at `curiouswoods.org/experiments/ancient-seas.html`.
+**The bench is on the site** (pushed 20 Nov, `b01d9a55`): `curiouswoods.org/experiments/ancient-seas.html`.
