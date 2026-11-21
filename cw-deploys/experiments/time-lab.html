@@ -145,7 +145,22 @@
      plates; it comes in from the seam at 2.6 million years and goes past 535. The credit at the column's foot names
      the seas' source while they show. Bench only, in How this works: the shallow seas on / off (?seas=0 opens with
      them off). Nothing else on the page is changed. Not in this step: any ruling on the places where the two plate
-     models tear the sea (Tibet and its neighbours), the honesty word for the seas, animals and plants. -->
+     models tear the sea (Tibet and its neighbours), the honesty word for the seas, animals and plants.
+     Step 10b (21 Nov 2026; Michael's prompt Prompt-Revise-Time-Lab-Bench-10b-01.md, the parts of his 20 Nov morning
+     decisions that step 10 did not build): the lab opens in The World, on Complex life, the handle at Chengjiang
+     (518 Ma; the store has no event of the first trilobites, and this is the nearest that shows them) with that
+     event's panel open and the globe upright, turned to the longitude where that ground lay then (ARRIVE). ?w= still
+     opens in Time, on the span it names (?w=0 the 4.6 billion). In The World, How This Works is a panel
+     (js/cw-panel.js as it is), open on the left at every arrival: its title, the words it takes to use The World, then
+     the tools as words (Map / Globe, Full screen where the browser has one, Show cities, Show coastlines, Place
+     markers, Sound on, Pick a time), each the left column's own word again (mirrorWord). Its close sends it, shrinking,
+     to the upper left, where it becomes the word How this works; a tap on the word brings it back out; a cut under
+     reduced motion. Under that word stand Time and back, always. Map / Globe and Full screen have left the upper
+     right, where nothing stands now. The words at the upper left fade when she is quiet, as step 10's did, and a
+     faded word acts at the first tap (the chat's default; Michael has not ruled). A word in the panel may open a tool
+     panel of its own, which stays when How This Works closes (toolPanel); ?toolpanel=1 shows one, Test tools, holding
+     Show cities and Show coastlines. The handle's label is the year alone: the word of knowing is on the date line
+     of the event's panel. In Time nothing is changed. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-11-17"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
@@ -218,6 +233,7 @@
   .lab-text .period-word { color: var(--cw-payne, #546A80); cursor: pointer; }
   .lab-text .period-word:hover { color: var(--cw-payne-hover, #3D3D3A); }
   .lab-text .first { font-size: 13px; color: var(--cw-ink-soft, #6b655a); font-variant-numeric: tabular-nums; margin: 0 0 2px; }
+  .lab-text .first .know { color: var(--cw-copper, #b5652b); font-style: italic; }   /* step 10b: the word of knowing, from the handle's label */
   .lab-text .body.ph { color: var(--cw-grey-word, #7d7a72); }   /* placeholder words (the last million's periods), in grey */
   .lab-text .body b { font-weight: bold; }
   .lab-text .body.tap { cursor: pointer; }   /* an event's summary: the whole of it opens the More */
@@ -272,8 +288,7 @@
   .flag-label.up { top: 1px; }   /* a pulled flag's year with no room outside it in the column: the row above */
   /* the handle's year (step 4), set as the flags' labels are, with the word of knowing after it in copper italic; it follows
      the handle live. Step 5: on the row above the flags' labels, so it never meets a flag, a pennant or the span */
-  .handle-label { top: 1px; z-index: 2; }
-  .handle-label .know { color: var(--cw-copper, #b5652b); font-style: italic; }
+  .handle-label { top: 1px; z-index: 2; }   /* step 10b: the year alone; the word of knowing is on the date line of the event's panel */
   /* the year handle: the Time Machine's marker (a copper dot, 6.5 px in radius, ringed in parchment) on the line, the
      lab's year; above the flags, so it can be taken hold of where a flag stands */
   .handle { position: absolute; top: 39.5px; width: 13px; height: 13px; margin-left: -6.5px; border-radius: 50%; background: var(--cw-copper, #b5652b);
@@ -326,11 +341,16 @@
      keep their places and are not seen. html.world.moving: the move between the views, both ways — the stage drawn at
      the World's size and shown at its size between the two (a transform the script sets), the column and the mosaic
      going or coming (--furn), the World's own words and ground coming or going (--chrome) */
-  .world-words { display: none; position: fixed; left: max(14px, env(safe-area-inset-left, 0px)); top: max(12px, env(safe-area-inset-top, 0px)); z-index: 7; gap: 14px; align-items: baseline; }
+  /* step 10b: at the upper left, How this works (there only while its panel is closed; its line is kept, so Time never
+     moves), and under it Time, with back beside it after Pick a time. Nothing stands at the upper right */
+  .world-words { display: none; position: fixed; left: max(14px, env(safe-area-inset-left, 0px)); top: max(12px, env(safe-area-inset-top, 0px)); z-index: 7; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .world-words .row { display: flex; gap: 14px; align-items: baseline; }
   .world-words .word { font-size: 15px; line-height: 18px; font-style: italic; }
-  /* step 10: the World's two essential tools, small and faint, at the upper right: Map / Globe, then Full screen */
-  .world-tools { display: none; position: fixed; right: max(14px, env(safe-area-inset-right, 0px)); top: max(12px, env(safe-area-inset-top, 0px)); z-index: 7; gap: 12px; align-items: baseline; }
-  .world-tools .word { font-size: 13px; line-height: 18px; font-style: italic; }
+  /* How This Works in The World (step 10b), and a tool panel: js/cw-panel.js's window, the title at the head of its bar */
+  .htw-world .htw-title { font: 15px/1.3 var(--cw-font, Georgia, serif); color: var(--cw-ink, #2a241c); margin-right: auto; }
+  .htw-world .tools { display: flex; flex-direction: column; gap: 0; align-items: flex-start; margin-top: 4px; }
+  .htw-world .tools .word { font-size: 14px; line-height: 18px; padding: 4px 0; }
+  .htw-world .tools .label { font-size: 11px; color: var(--cw-grey-word, #7d7a72); font-style: italic; margin-top: 8px; padding-top: 6px; border-top: 1px solid #e0d8c6; align-self: stretch; }
   .world-ground { display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 4; pointer-events: none; }
   html.world, html.world body { overflow: hidden; overscroll-behavior: none; }
   html.world .stage, html.world #still { position: fixed; left: 0; right: 0; top: 0; margin: 0; z-index: 1; }
@@ -341,17 +361,15 @@
   html.world .stretch-words .word.absent { pointer-events: none; }
   html.world .stretch-under { display: none; }
   html.world .world-ground { display: block; opacity: var(--chrome, 1); }
-  html.world .world-words, html.world .world-tools { display: flex; opacity: var(--chrome, 1); }
+  html.world .world-words { display: flex; opacity: var(--chrome, 1); }
   /* Step 10: The World is dark. html.dark is on while the ground is more dark than parchment (the script sets it: in
      The World, and through the second half of the move), and under it everything that stands on the ground is in
      parchment and pale copper: the World's words, the line, the flags, the handle, the years and the events' names.
      A word may come to stand over the Earth when she zooms in, so each keeps a little of the dark under it. The panel
      and the More window keep their parchment, as the house's panels do */
-  html.dark .world-words .word, html.dark .world-tools .word, html.dark .stretch-words .word { color: #ece6d6; background: rgba(12,10,8,0.5); border-radius: 4px; padding: 1px 7px; }
-  html.dark .world-tools .word { color: rgba(236,230,214,0.55); }
-  html.dark .world-words .word:hover, html.dark .world-tools .word:hover, html.dark .stretch-words .word:hover { color: #fbf7ec; }
+  html.dark .world-words .word, html.dark .stretch-words .word { color: #ece6d6; background: rgba(12,10,8,0.5); border-radius: 4px; padding: 1px 7px; }
+  html.dark .world-words .word:hover, html.dark .stretch-words .word:hover { color: #fbf7ec; }
   html.dark .flag-label, html.dark .span-word { color: #ece6d6; }
-  html.dark .handle-label .know { color: #dc9a63; }
   html.dark svg.events text { fill: #ece6d6; }
   html.dark svg.events .halo { stroke: #0c0a08; }
   html.dark svg.events .mark line { stroke: rgba(236,230,214,0.8); }
@@ -360,17 +378,18 @@
   html.dark .stretch-line { background: rgba(236,230,214,0.55); }
   html.dark .flag, html.dark .flag::before, html.dark .span-line, html.dark .handle { background: #dc9a63; }
   html.dark .handle { box-shadow: 0 0 0 2px #0c0a08; }
-  /* The fade (step 9's bench switch; on by default since step 10): in The World the World's own words — Time, back, Map /
-     Globe, Full screen — fade when she is quiet, and return at a touch. ?fade=1 (html.fadeall) fades the line's words
-     too, all but the handle's year, as step 9's switch did; ?fade=0 fades nothing */
-  html.fades .world-words, html.fades .world-tools { transition: opacity 600ms ease-in-out; }
+  /* The fade (step 9's bench switch; on by default since step 10): in The World the words at the upper left — How this
+     works, Time, back — fade when she is quiet, and return at a touch. Step 10b: a faded word acts at the first tap
+     (the chat's default; step 10's rule was that the first tap only woke it), and an open panel does not fade.
+     ?fade=1 (html.fadeall) fades the line's words too, all but the handle's year, as step 9's switch did (those still
+     take no tap while faded); ?fade=0 fades nothing */
+  html.fades .world-words { transition: opacity 600ms ease-in-out; }
   html.fadeall .flag-label, html.fadeall .span-word, html.fadeall svg.events text, html.fadeall .stretch-words { transition: opacity 600ms ease-in-out; }
-  html.moving .world-words, html.moving .world-tools { transition: none; }
-  html.world.quiet .world-words, html.world.quiet .world-tools { opacity: 0; }
-  html.world.quiet .world-words .word, html.world.quiet .world-tools .word { pointer-events: none; }
+  html.moving .world-words { transition: none; }
+  html.world.quiet .world-words { opacity: 0; }
   html.world.quiet.fadeall .flag-label:not(.handle-label), html.world.quiet.fadeall .span-word, html.world.quiet.fadeall svg.events text, html.world.quiet.fadeall .stretch-words { opacity: 0; }
   html.world.quiet.fadeall .stretch-words .word { pointer-events: none; }
-  @media (prefers-reduced-motion: reduce) { html.fades .world-words, html.fades .world-tools, html.fadeall .flag-label, html.fadeall .span-word, html.fadeall svg.events text, html.fadeall .stretch-words { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { html.fades .world-words, html.fadeall .flag-label, html.fadeall .span-word, html.fadeall svg.events text, html.fadeall .stretch-words { transition: none; } }
   @media (max-width: 760px) {
     .bench { grid-template-columns: 1fr; gap: 12px; }
     .lower { position: static; width: auto; }
@@ -414,9 +433,8 @@
   </div>
   <p id="fail"></p>
 </div>
-<!-- The World's own words and ground (steps 9 and 10): Time at the upper left, back beside it after Pick a time; Map / Globe and Full screen, small and faint, at the upper right; the dark ground under the timeline -->
-<div class="world-words" id="worldWords"><button class="word" id="wTime" type="button">Time</button><button class="word absent" id="wPickBack" type="button">back</button></div>
-<div class="world-tools" id="worldTools"><button class="word" id="wMap2" type="button" style="display:none">Map</button><button class="word" id="wFull2" type="button" style="display:none">Full screen</button></div>
+<!-- The World's own words and ground (steps 9, 10 and 10b): at the upper left How this works, while its panel is closed, and under it Time, back beside it after Pick a time; the dark ground under the timeline -->
+<div class="world-words" id="worldWords"><button class="word absent" id="wHtw2" type="button">How this works</button><div class="row"><button class="word" id="wTime" type="button">Time</button><button class="word absent" id="wPickBack" type="button">back</button></div></div>
 <div class="world-ground" id="worldGround"></div>
 
 <!-- the bench's own words (moved into the How this works panel by the script) -->
@@ -431,7 +449,7 @@
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-20 eb47e2c · time-lab step 10 · the shallow seas';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-21 e61f5ab · time-lab step 10b';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -495,12 +513,17 @@
     worldSoft: 26,            // px over which that ground fades in at its top edge: no hard line across the Earth
     panelW: 252, panelStep: 20, panelPad: 8, panelStay: 0.15,   // the panel: its text's width (the window is 30 px wider); the grid its place is searched on; its least distance from the window's edge; how much worse than the best place the place it stands in may be before it moves
     fadeAfter: 4000,          // ms: in The World the words fade after this long with no touch
+    fadeLift: 140,            // ms after a finger lifts before faded words come back (step 10b: after its tap has been delivered)
     // step 10: the dark World, the two resting places, the cities, the build
     worldDark: '#0c0a08',     // The World's ground, near-black (the house's black, cw-style.js)
     detent: { angle: 10, pull: 0.35, tau: 90, zoomTau: 110, zoomTol: 0.002, wheelWait: 220, dragged: 8 },   // north up, a resting place: let go within `angle` degrees of upright and the globe eases the rest of the way (tau: ms, the ease's time constant); dragged inside the angle, a move away from upright is cut by up to `pull` and a move toward it helped by as much. The opening size, the other: zoomed out past it by more than zoomTol of its height, it eases back (zoomTau), once the wheel has been still for wheelWait ms. dragged: px a finger must travel for its letting go to count
     cityR: 2.5, cityRing: 1, cityTap: 14, cityFont: 12,   // a city: its point's radius, the parchment round it, px from it a tap is its own, its name's size
     build: { open: 400, run: 4700, coda: 900, power: 3 },   // ?build=1, in ms: room is made above the mosaic she was on; the older tiles land, the count of them landed rising as the time's cube (a few at first, then faster and faster); her mosaic's own tiles fold into their places and the came comes
     move: { lead: 240, merge: 440, stagger: 600, flight: 840, vanish: 400, spread: 300, bgOut: 440, bgIn: 400, fall: 26 },   // step 7: every time doubled (step 6's: 120, 220, 300, 420, 200, 150, 220, 200), 1,680 ms without a merge and 1,880 with one, against 840 and 940. The move, in ms: before the first tile leaves (a merge's glide instead, where there is one), the spread of departures, one tile's flight, one tile's going and the spread of those, the came going and coming; fall: px a falling tile drops
+    // step 10b: How This Works in The World
+    htwW: 286, htwMs: 380, htwGap: 10,   // its text's width (the window is 30 px wider); its travel to the upper left and back out; px between it and the words above it
+    toolW: 150,               // a tool panel's text's width
+    arrive: 'chengjiang',     // the event the lab opens at (the store has none of the first trilobites; this is the nearest that shows them)
     moveMax: 12000,           // tiles a move may carry (travelling and vanishing) before it is a cut instead
     soundVol: 0.22            // the move's sound, at most
   };
@@ -522,6 +545,10 @@
     view: ['The World', 'Time'], map: ['Map', 'Globe'], pick: 'Pick a time',   // step 9: each word names what a tap will give her
     full: ['Full screen', 'Exit full screen', 'Leave full screen'],   // the browser's full screen (the Mac), and the full page (a touch device)
     now: 'now', nowLabel: 'Now', notYet: 'not yet', more: 'More',
+    // step 10b: How This Works in The World — the title, the words (the prompt's draft, Michael's to rewrite; *…* names a word on the page), the bench's test panel
+    htwTitle: 'How This Works',
+    htwWorld: 'This is the Earth at the moment marked on the line below. Drag the round marker along the line and the Earth changes with it. Tap a name on the line to read what happened there. Turn the globe with a finger; spread two fingers to come closer. *Time* takes you to all the years there are.',
+    testTools: 'Test tools',
     // the whole mosaic in front of her (step 7) — its span and length, its name, its description (the prompt's drafts,
     // Michael's to change). Step 9: the text block that showed these at rest is gone, and nothing shows them now; kept
     // here for whatever shows a whole span next.
@@ -1802,10 +1829,13 @@
   const KNOW_WORD = { ground: 'measured', measured: 'measured', inferred: 'inferred', fitted: 'inferred', guessed: 'guessed', invented: 'guessed', none: '' };
   const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
   function knowing() { const g = lab.earth && lab.earth.grade ? lab.earth.grade() : null; return g ? { word: KNOW_WORD[g.grade] || '', sentence: g.why || '', credit: g.credit || '' } : { word: '', sentence: '', credit: '' }; }
+  // Step 10b: the word of knowing at an event's own year, for the date line of its panel (the Earth's grade there, not
+  // at the handle, which she may since have moved)
+  function knowWordAt(ma) { const g = lab.earth && lab.earth.gradeAt ? lab.earth.gradeAt(Math.min(EARTH_AGE, ma)) : null; return g ? KNOW_WORD[g.grade] || '' : ''; }
   const handleWord = () => lab.rough ? flagWord(lab.ma, pixelStep()) : yearWord(lab.ma, null, lab.ofEvent);
   function tellYear() {
     const k = knowing();
-    labelH.innerHTML = esc(handleWord()) + (k.word ? ' · <span class="know">' + esc(k.word) + '</span>' : '');
+    labelH.textContent = handleWord();   // step 10b: the year alone (14.3 ka, not 14.3 ka · measured); the word of knowing is on the date line of the event's panel
     handleEl.style.left = handleX() + 'px'; placeLabels(trackW());   // the label follows the handle; a flag's label steps aside
     $('credit').textContent = k.credit;
     const hk = $('htwKnow'); if (hk) hk.innerHTML = k.sentence ? (k.word ? '<i>' + esc(cap(k.word)) + '</i> · ' : '') + esc(k.sentence) : '';
@@ -1868,9 +1898,9 @@
   const eventBody = e => cwDeepTime.prose(eventParts(e).rest) + (e.rec.more ? moreWord : '');
   function panelHTML(s) {
     if (s.kind === 'event') {
-      const e = s.e, p = periodOf(e.ma);
+      const e = s.e, p = periodOf(e.ma), kw = knowWordAt(e.ma);
       return (p ? '<p class="of"><span class="period-word" role="button" tabindex="0">' + esc(p.n) + '</span></p>' : '') +
-        '<p class="first">' + esc(eventDate(e)) + '</p><p class="body' + (e.rec.more ? ' tap' : '') + '"><b>' + esc(sentence(e.rec.label)) + '</b> ' + eventBody(e) + '</p>';
+        '<p class="first">' + esc(eventDate(e)) + (kw ? ' · <span class="know">' + esc(kw) + '</span>' : '') + '</p><p class="body' + (e.rec.more ? ' tap' : '') + '"><b>' + esc(sentence(e.rec.label)) + '</b> ' + eventBody(e) + '</p>';
     }
     if (s.kind === 'period') return '<p class="first">' + esc(periodLine(s.p)) + '</p><p class="body' + (s.p.ph ? ' ph' : '') + '"><b>' + esc(sentence(s.p.n)) + '</b> ' + esc(s.text) + (s.p.more ? moreWord : '') + '</p>';
     return '<p class="first">' + esc(spanTold(s.a, s.b)) + '</p>';
@@ -1892,7 +1922,7 @@
     const t = boxOf(track), ev = boxOf(evSvg); add({ x0: t.x0 - 20, y0: t.y0, x1: t.x1 + 20, y1: ev.y1 }, 14);
     const st = boxOf($('stage3d')), r = Math.min(st.x1 - st.x0, st.y1 - st.y0) / 2 * 0.9, cx = (st.x0 + st.x1) / 2, cy = (st.y0 + st.y1) / 2;
     add({ x0: cx - r, y0: cy - r, x1: cx + r, y1: cy + r }, world ? 4 : 8);
-    if (world) { add(grown(boxOf($('worldWords')), 6), 10); add(grown(boxOf($('worldTools')), 6), 10); }
+    if (world) { add(grown(boxOf($('worldWords')), 6), 10); standingPanels().forEach(r => add(grown(r, 8), 60)); }   // step 10b: clear of How This Works and of any tool panel
     else { add(boxOf($('glassBox')), 6); add(boxOf($('explain')), 6); add(boxOf($('words')), 10); add(boxOf($('lower')), 10); }
     return out;
   }
@@ -2224,17 +2254,16 @@
     try { const p = page.requestFullscreen ? page.requestFullscreen() : page.webkitRequestFullscreen(); if (p && p.catch) p.catch(said); } catch (e) { said(e); }
   }
   function exitFull() { try { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); } catch (e) {} }
-  function fullWord() { wFull.textContent = $('wFull2').textContent = WORDS.full[isFull() ? (FULL === 'page' ? 2 : 1) : 0]; }
+  function fullWord() { wFull.textContent = WORDS.full[isFull() ? (FULL === 'page' ? 2 : 1) : 0]; }
   const fullChanged = () => { fullWord(); relayout(); };
   function setFullPage(on) { page.classList.toggle('fullpage', !!on); if (on) window.scrollTo(0, 0); fullChanged(); }
   if (FULL) {
     wFull.style.display = '';
     const toggleFull = () => { if (FULL === 'page') setFullPage(!isFull()); else if (isFull()) exitFull(); else enterFull(); };
     wFull.addEventListener('click', toggleFull);
-    // step 10: Full screen from The World too, where the browser's own full screen is to be had. On a touch device Full
-    // screen is the full page (step 7), and The World is the full page already: the word would change nothing she
-    // could see, so it is not there
-    if (FULL === 'browser') { $('wFull2').style.display = ''; $('wFull2').addEventListener('click', toggleFull); }
+    // Full screen from The World too (step 10; in How This Works since step 10b), where the browser's own full screen
+    // is to be had. On a touch device Full screen is the full page (step 7), and The World is the full page already:
+    // the word would change nothing she could see, so it is not there
     if (FULL === 'browser') ['fullscreenchange', 'webkitfullscreenchange'].forEach(t => document.addEventListener(t, fullChanged));
     fullWord();
   }
@@ -2242,10 +2271,9 @@
   // (Equal Earth, whole and still, at the lab's year, the places on it) in the stage at the size it has; a tap on the
   // flat world goes back to the globe centred there (the Earth's own tap), and the word follows. With no 3D view there
   // is no Map, and the word is not there. Small Earth and Large Earth are gone: The World does the work of Large Earth.
-  function flatWord(on) { lab.flat = !!on; $('wMap').textContent = $('wMap2').textContent = WORDS.map[lab.flat ? 1 : 0]; }
+  function flatWord(on) { lab.flat = !!on; $('wMap').textContent = WORDS.map[lab.flat ? 1 : 0]; }
   function setFlat(on) { if (!lab.earth || !lab.earth.setFlat) return; lab.earth.setFlat(!!on); flatWord(on); }
   $('wMap').addEventListener('click', () => setFlat(!lab.flat));
-  $('wMap2').addEventListener('click', () => setFlat(!lab.flat));   // step 10: the same word in The World, at the upper right
   // (Reset and Align North, step 9's two words by the Earth, are gone with their code: step 10's two resting places, in
   // the module below, do their work without a word.)
 
@@ -2360,6 +2388,7 @@
     sizeStage(); layout();
     if (world) { worldGround(); setLine(worldRects().line); }
     renderStretch(); pickWords(); quietTouch();
+    worldPanels(world);   // step 10b: How This Works as she left it (open at every arrival), and the tool panels she has open
     const then = VIEW.then; VIEW.then = null; if (then) then(); else panelToView();
   }
   function viewFrame(tau) {   // tau: 0 the Time view, 1 The World
@@ -2377,6 +2406,7 @@
     if ((v !== 'time' && v !== 'world') || v === lab.view) return;
     finishView(); finishMove(); finishSizing(); if (STR.anim) finishStretch(); if (STR.pull) endPull(false);
     const toWorld = v === 'world', from = lab.view; let T;
+    if (!toWorld) worldPanels(false);   // step 10b: How This Works and the tool panels are The World's, and go with it at once
     if (toWorld) {
       T = timeRects();
       if (htwPanel && htwPanel.visible()) { htwPanel.hide(); $('wHtw').setAttribute('aria-pressed', 'false'); }
@@ -2385,7 +2415,7 @@
     lab.view = v; $('wView').textContent = WORDS.view[toWorld ? 1 : 0];
     if (!toWorld) {   // the Time layout for a moment, unseen, to learn where things will stand
       const tc = $('trackCol'), st = stageBox(), h = st.style.height;
-      root.classList.remove('world'); tc.style.left = ''; tc.style.top = ''; LINE.c0 = LINE.c1 = null; st.style.height = earthHeight() + 'px';
+      root.classList.remove('world'); tc.style.left = ''; tc.style.top = ''; LINE.c0 = LINE.c1 = null; fitEarth(); st.style.height = earthHeight() + 'px';   // step 10b: fitEarth here too — a lab that opened in The World has not yet sized its Earth for Time with the store loaded
       layout(); T = timeRects();
       st.style.height = h;
     }
@@ -2417,6 +2447,7 @@
   function relayout() {   // the window changed: everything to its place in the view in force
     finishView(); if (BUILD.run) endBuild(); finishSizing(); FIT.key = ''; sizeStage(); layout();
     if (lab.view === 'world') { worldGround(); setLine(worldRects().line); }
+    worldPanels(lab.view === 'world');
     renderStretch(); panelToView();
   }
   $('wView').textContent = WORDS.view[0]; $('wTime').textContent = WORDS.view[1];
@@ -2466,19 +2497,164 @@
   $('wPickBack').addEventListener('click', pickBack);
 
   // ---------- the fade (step 9's bench switch; on by default since step 10) ----------
-  // In The World her attention is the Earth's. The World's own words — Time, back, Map / Globe, Full screen — fade after
-  // LOOK.fadeAfter with no touch, and return at a touch, a move of the pointer, the wheel or a key. While they are faded
-  // they take no tap: the touch that brings them back is only that. The year on the handle never fades, nor the line,
+  // In The World her attention is the Earth's. The words at the upper left — How this works, Time, back — fade after
+  // LOOK.fadeAfter with no touch, and return at a touch, a move of the pointer, the wheel or a key. Step 10b: a faded
+  // word acts at the first tap (the chat's default; step 10's rule was that the touch that brought the words back was
+  // only that), and an open panel does not fade. The year on the handle never fades, nor the line,
   // the flags, the handle and the events. ?fade=1 fades the line's words too (the flags' years, the span, focus, the
   // events' names), as step 9's switch did; ?fade=0 fades nothing.
   const QUIET = { mode: Q.get('fade') === '0' ? 'none' : Q.get('fade') === '1' ? 'all' : 'corner', timer: null };
   QUIET.on = QUIET.mode !== 'none';
-  function quietTouch() {
+  // Step 10b: by finger, faded words come back when the finger lifts, not when it lands. Safari on an iPad gives no
+  // click to a tap during which something on the page became visible (it takes the tap for a hover), where the thing
+  // tapped answers a hover: a panel's close word took two taps whenever the words were faded (found in the simulator).
+  // So a finger that lands on a quiet page changes nothing until it is up and its tap has been delivered (QUIET.lift).
+  function quietTouch(ev) {
     if (!QUIET.on) return;
+    if (ev && ev.pointerType === 'touch' && root.classList.contains('quiet')) {
+      if (ev.type === 'pointerdown' || ev.type === 'pointermove') return;
+    }
     root.classList.remove('quiet'); clearTimeout(QUIET.timer);
     if (lab.view === 'world') QUIET.timer = setTimeout(() => { if (lab.view === 'world' && !VIEW.plan) root.classList.add('quiet'); }, LOOK.fadeAfter);
   }
-  if (QUIET.on) { root.classList.add('fades'); root.classList.toggle('fadeall', QUIET.mode === 'all'); ['pointerdown', 'pointermove', 'keydown', 'wheel'].forEach(t => window.addEventListener(t, quietTouch, { capture: true, passive: true })); }
+  if (QUIET.on) { root.classList.add('fades'); root.classList.toggle('fadeall', QUIET.mode === 'all'); ['pointerdown', 'pointermove', 'keydown', 'wheel'].forEach(t => window.addEventListener(t, quietTouch, { capture: true, passive: true }));
+    ['pointerup', 'pointercancel'].forEach(t => window.addEventListener(t, ev => { if (ev.pointerType === 'touch') { clearTimeout(QUIET.lift); QUIET.lift = setTimeout(quietTouch, LOOK.fadeLift); } }, { capture: true, passive: true })); }
+
+  // ---------- step 10b: How This Works in The World, and tool panels ----------
+  // In The World, How This Works is a panel (js/cw-panel.js's window, as the event's panel is), open on the left at
+  // every arrival, for now, while Michael tests. Its title at the head; the words it takes to use The World; then the
+  // tools, as words. Each tool is the left column's own word again (mirrorWord): a tap on it is a tap on the column's
+  // word, and it says whatever that word says and is there only when that word is, so there is one act and one state.
+  // Its close sends it, shrinking, to the upper left corner, where it becomes the word How this works; a tap on that
+  // word brings it back out to where it stood (LOOK.htwMs; a cut under reduced motion). The word's line is kept while
+  // the panel is open, so Time, under it, never moves. In Time the panel is not there, and Time's own How this works
+  // is as it was.
+  // A word in the panel may open a panel of its own, a small set of tools for one kind of task, which stays open when
+  // How This Works closes (toolPanel: a title and the words it holds). Each is hers to move and close, and is shown in
+  // The World only. The first real one will be Measure; ?toolpanel=1 shows the plumbing once, a word Test tools at the
+  // foot of How This Works opening a panel that holds Show cities and Show coastlines.
+  const wHtw2 = $('wHtw2');
+  function mirrorWord(src) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'word cmd';
+    const sync = () => { b.textContent = src.textContent; b.style.display = src.style.display; };
+    b.addEventListener('click', () => src.click());
+    new MutationObserver(sync).observe(src, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['style'] });
+    sync(); return b;
+  }
+  function titledPanel(width, title, onClose) {   // cw-panel's window with a title at the head of its bar, where its close word is
+    const pn = CW.createInfoPanel({ width, onClose }), bar = pn.el.firstChild, t = document.createElement('span');
+    pn.el.classList.add('htw-world'); pn.el.style.zIndex = '600';
+    t.className = 'htw-title'; t.textContent = title; bar.insertBefore(t, bar.firstChild); bar.style.alignItems = 'baseline';
+    const tools = document.createElement('div'); tools.className = 'tools';
+    return { pn, tools };
+  }
+  const restBox = el => { const x = parseInt(el.style.left) || 0, y = parseInt(el.style.top) || 0; return { x0: x, y0: y, x1: x + el.offsetWidth, y1: y + el.offsetHeight }; };   // where a panel stands, whatever a travel is doing to it
+  const keepIn = (el, x, y) => { const pad = LOOK.panelPad; return { x: Math.round(Math.max(pad, Math.min(window.innerWidth - el.offsetWidth - pad, x))), y: Math.round(Math.max(pad, Math.min(window.innerHeight - el.offsetHeight - pad, y))) }; };
+  const putUp = (el, cut) => { el.style.display = ''; if (!cut) void el.offsetWidth; el.style.opacity = '1'; };   // on the screen (cw-panel's own show waits for a frame)
+  const putAway = el => { el.style.opacity = '0'; el.style.display = 'none'; };
+  const HTW2 = { open: true, at: null, up: false, anim: null, timer: null, flights: 0 };   // open: as she left it (open when the page opens); at: where she left it; up: on the screen
+  const TOOLP = [];   // the tool panels: { id, pn, open, at }
+  function standingPanels() { const out = []; if (htw2 && HTW2.up) out.push(restBox(htw2.el)); TOOLP.forEach(t => { if (t.up) out.push(restBox(t.pn.el)); }); return out; }
+  const htw2 = window.CW.createInfoPanel ? (() => {
+    const { pn, tools } = titledPanel(LOOK.htwW, WORDS.htwTitle, () => closeHtw2());
+    pn.body.innerHTML = '<div class="panel-text"><p>' + esc(WORDS.htwWorld).replace(/\*([^*]+)\*/g, '<i>$1</i>') + '</p></div>';
+    const list = [$('wMap')]; if (FULL === 'browser') list.push(wFull);   // Full screen is left out on a touch device, as in step 10
+    list.push($('wCities'), $('wCoasts'), $('wMarkers'), $('wSound'), $('wPick'));
+    list.forEach(src => tools.appendChild(mirrorWord(src)));
+    pn.body.appendChild(tools);
+    return pn;
+  })() : null;
+  function htwHome() { const r = $('worldWords').getBoundingClientRect(); return { x: Math.round(r.left), y: Math.round(r.bottom + LOOK.htwGap) }; }   // on the left, under the words at the upper left
+  function htwPlace() { const el = htw2.el, p = HTW2.at || htwHome(), c = keepIn(el, p.x, p.y); htw2.setPosition(c.x, c.y); }
+  function htwLand() {   // a travel ended, or cut short: the panel where its state says
+    if (HTW2.anim) { const a = HTW2.anim; HTW2.anim = null; try { a.cancel(); } catch (e) {} }
+    clearTimeout(HTW2.timer); HTW2.timer = null;
+    if (!htw2) return;
+    const show = HTW2.open && lab.view === 'world';
+    if (show) putUp(htw2.el, true); else putAway(htw2.el);
+    HTW2.up = show; present(wHtw2, !HTW2.open);
+  }
+  function htwFly(opening) {   // between the panel's place and the word at the upper left, shrinking as it goes
+    const el = htw2.el, w = wHtw2.getBoundingClientRect(), p = restBox(el), s = Math.max(0.05, w.width / Math.max(1, p.x1 - p.x0));
+    const far = { transform: 'translate(' + (w.left - p.x0).toFixed(1) + 'px,' + (w.top - p.y0).toFixed(1) + 'px) scale(' + s.toFixed(4) + ')', opacity: 0 }, near = { transform: 'translate(0px,0px) scale(1)', opacity: 1 };
+    el.style.transformOrigin = '0 0'; HTW2.flights++;
+    if (!el.animate) { htwLand(); return; }
+    HTW2.anim = el.animate(opening ? [far, near] : [near, far], { duration: LOOK.htwMs, easing: 'ease-in-out', fill: 'forwards' });
+    HTW2.anim.onfinish = htwLand;
+    HTW2.timer = setTimeout(htwLand, LOOK.htwMs + 120);   // a page that is running no frames lands all the same
+  }
+  function closeHtw2() {   // its close word (cw-panel has already begun its own fade: taken back, the travel is the leaving)
+    if (!htw2 || !HTW2.open) return;
+    htwLand(); HTW2.open = false;
+    const b = restBox(htw2.el); HTW2.at = { x: b.x0, y: b.y0 };
+    if (lab.view !== 'world' || reduced()) { htwLand(); return; }
+    putUp(htw2.el, true); HTW2.up = false; present(wHtw2, true);   // the word comes as the panel reaches it; the event's panel may take the room at once
+    htwFly(false);
+  }
+  function openHtw2() {
+    if (!htw2 || HTW2.open) return;
+    htwLand(); HTW2.open = true;
+    if (lab.view !== 'world') return;
+    const el = htw2.el; el.style.visibility = 'hidden'; el.style.display = ''; htwPlace(); el.style.visibility = '';
+    HTW2.up = true; present(wHtw2, false); clearOf();
+    if (reduced()) { htwLand(); return; }
+    putUp(el, true); htwFly(true);
+  }
+  function clearOf() {   // a panel has come to stand: the event's panel, unless she placed it herself, steps clear of it
+    if (!info || !PANEL.up || !PANEL.at || PANEL.pos[lab.view]) return;
+    const r = restBox(info.el); if (standingPanels().some(b => overlap(r, b) > 0)) setPanel(leastHiding(null, PANEL.at));
+  }
+  wHtw2.addEventListener('click', openHtw2);
+  // a tool panel: a title, and the column's words it holds. open() puts it up beside How This Works (or where she left it)
+  function toolPanel(id, title, sources) {
+    const t = { id, open: false, up: false, at: null, pn: null };
+    const { pn, tools } = titledPanel(LOOK.toolW, title, () => { const b = restBox(pn.el); t.at = { x: b.x0, y: b.y0 }; t.open = false; t.up = false; });
+    sources.forEach(src => tools.appendChild(mirrorWord(src))); tools.style.marginTop = '0'; pn.body.appendChild(tools);
+    t.pn = pn;
+    t.place = () => {
+      const el = pn.el; let p = t.at;
+      if (!p) { const h = htw2 && HTW2.up ? restBox(htw2.el) : null, hm = htwHome(); p = h ? (h.x1 + 12 + el.offsetWidth <= window.innerWidth - LOOK.panelPad ? { x: h.x1 + 12, y: h.y0 } : { x: h.x0, y: h.y1 + 12 }) : hm; }
+      const c = keepIn(el, p.x, p.y); pn.setPosition(c.x, c.y); t.at = c;
+    };
+    t.show = cut => { const el = pn.el; if (t.up) return; el.style.visibility = 'hidden'; el.style.display = ''; t.place(); el.style.visibility = ''; putUp(el, cut); t.up = true; clearOf(); };
+    t.openIt = () => { t.open = true; if (lab.view === 'world') t.show(reduced()); };
+    const moved = () => { if (t.up) { const b = restBox(pn.el), c = keepIn(pn.el, b.x0, b.y0); pn.setPosition(c.x, c.y); t.at = c; } };
+    pn.el.addEventListener('pointerup', moved); pn.el.addEventListener('pointercancel', moved);
+    TOOLP.push(t); return t;
+  }
+  if (htw2) {
+    const moved = () => { if (HTW2.up && !HTW2.anim) { const b = restBox(htw2.el), c = keepIn(htw2.el, b.x0, b.y0); htw2.setPosition(c.x, c.y); if (htw2.userMoved()) HTW2.at = c; } };
+    htw2.el.addEventListener('pointerup', moved); htw2.el.addEventListener('pointercancel', moved);
+    if (Q.get('toolpanel') === '1') {   // bench only: the plumbing shown once
+      const test = toolPanel('test', WORDS.testTools, [$('wCities'), $('wCoasts')]), tools = htw2.body.querySelector('.tools');
+      const lb = document.createElement('span'); lb.className = 'label'; lb.textContent = 'bench only'; tools.appendChild(lb);
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'word cmd'; b.textContent = WORDS.testTools; b.addEventListener('click', test.openIt); tools.appendChild(b);
+    }
+  }
+  function worldPanels(world) {   // the view in force, or the window changed: The World's panels up as she left them, and in Time not there
+    if (!htw2) return;
+    htwLand();
+    if (world && HTW2.open) { const el = htw2.el; el.style.visibility = 'hidden'; el.style.display = ''; htwPlace(); el.style.visibility = ''; putUp(el, true); HTW2.up = true; }
+    TOOLP.forEach(t => { if (world && t.open) { if (t.up) { const c = keepIn(t.pn.el, t.at.x, t.at.y); t.pn.setPosition(c.x, c.y); t.at = c; } else t.show(true); } else { putAway(t.pn.el); t.up = false; } });
+  }
+
+  // ---------- step 10b: arriving ----------
+  // The lab opens in The World, on Complex life, the handle at an event of the first trilobites with that event's panel
+  // open, the globe upright and turned to the longitude where the event's ground lay at the time (the record's place,
+  // carried back on its plate; where no piece holds it, the place as it is today). The store has no event of the first
+  // trilobites (about 521 Ma): LOOK.arrive is Chengjiang, 518 Ma, the nearest that shows them. An address that names a
+  // span (?w=) opens in Time on that span, as before: ?w=0 the 4.6 billion, ?w=1 Complex life.
+  const ARRIVE = { on: !(Q.get('w') != null && Q.get('w') !== '' && !isNaN(+Q.get('w'))), shown: false, faced: false, lon: null };
+  function arrive() {   // called when the store has loaded and when the Earth has stood up, whichever is first
+    if (!ARRIVE.on) return;
+    const e = events.find(x => x.id === LOOK.arrive); if (!e) return;
+    if (!ARRIVE.shown) { ARRIVE.shown = true; setYear(e.ma, false, true); showEvent(e, null); }
+    if (!ARRIVE.faced && lab.earth && lab.earth.faceUpright) {
+      ARRIVE.faced = true;
+      const pl = e.rec.place && e.rec.place.lon != null ? e.rec.place : e.rec.placeNow;
+      if (pl && pl.lon != null) lab.earth.faceUpright(pl.lon, pl.lat, Math.min(EARTH_AGE, e.ma)).then(p => { ARRIVE.lon = p && p.lon; });
+    }
+  }
 
   // Years from the start / years ago (step 7): the word says what a tap will do; everything that writes a year is told again
   function syncCount() { const here = countSpan(state.w.k); COUNT.fromStart = COUNT.want && here; $('wCount').classList.toggle('absent', !here); $('wCount').textContent = WORDS.count.words[COUNT.want ? 1 : 0]; }
@@ -2509,9 +2685,11 @@
   setYear(0); setCount(COUNT.want); renderStretch();   // the line from the start, its flags at the ends, the handle at today
   // Step 10: the lab opens on Complex life, on every screen (Michael: showing all 4.6 billion years is neat, but not the
   // point). The 4.6 billion is first under Select years, one tap away. ?w= opens on another (0 the 4.6 billion … 7 Computing).
-  setWindow(Q.get('w') != null && Q.get('w') !== '' && !isNaN(+Q.get('w')) ? Math.max(0, Math.min(WINDOWS.length - 1, Math.round(+Q.get('w')))) : 1, true, true);
+  // Step 10b: and in The World, at the first trilobites (ARRIVE), unless the address names a span, which opens in Time.
+  setWindow(!ARRIVE.on ? Math.max(0, Math.min(WINDOWS.length - 1, Math.round(+Q.get('w')))) : 1, true, true);
+  if (ARRIVE.on) setView('world', true);
   setTimeout(() => { if (!reduced()) root.classList.add('eased'); }, 900);   // from here on a change of the Earth's size is eased (never the first sizing, never under reduced motion)
-  loadAll().then(() => { WINDOWS.forEach(w => build(w)); lendMores(); FIT.key = ''; layout(); renderPanel(); renderStretch(); }).catch(e => { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The events or the sea curve did not load: ' + e.message; });
+  loadAll().then(() => { WINDOWS.forEach(w => build(w)); lendMores(); FIT.key = ''; layout(); renderPanel(); renderStretch(); arrive(); }).catch(e => { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The events or the sea curve did not load: ' + e.message; });
   window.addEventListener('resize', relayout);
   if (window.ResizeObserver) { new ResizeObserver(() => { layout(); renderStretch(); }).observe($('glassBox')); const ro = new ResizeObserver(placeSelect); ro.observe($('main')); ro.observe($('words')); }
 
@@ -2538,14 +2716,16 @@
     year: () => lab.ma, setYear, handleX, xOf, maOf, events: () => events, onLine: eventsOnLine, placed: placeEvents, tapEvent: id => { const e = events.find(x => x.id === id); if (e) tapEvent(e, null); return !!e; }, rec: () => know.event && know.event.rec, openMore: () => { if (know.event) openMore(know.event.rec); },
     fit: () => Object.assign({}, FIT), eventDate, agoParen, periodOf, count: { set: setCount, fromStart: () => COUNT.fromStart, yearWord, yearSpan, yearPhrase }, mapWord: () => $('wMap').textContent, full: { kind: FULL, on: isFull, page: setFullPage, touch: TOUCH }, nesting: k => nesting(WINDOWS[k]), stack: () => STR.stack.length, handleWord: () => labelH.textContent, labels: () => [labelEls[1], labelH, labelEls[0], spanWord].map(el => el.textContent + ' @ ' + el.style.left + (el.style.visibility === 'hidden' ? ' (not drawn)' : '') + (el.classList.contains('up') ? ' (up)' : '')),
     setFlat, flat: () => lab.flat, flatWord, knowing, tellYear, reduced, detent: DETENT, ground: () => GROUND.u, build: { on: () => BUILD.on, set: on => { BUILD.on = !!on; BUILD.done = false; }, done: () => BUILD.done, running: () => !!BUILD.run, hold: holdBuild, finish: endBuild, last: () => BUILD.last, phase: () => BUILD.run && BUILD.run.phase, count: () => $('buildCount').style.display === 'none' ? null : $('buildCount').textContent }, fullscreen: { on: isFull, enter: enterFull, exit: exitFull, available: FS },
-    attachEarth: api => { lab.earth = api; api.setPlaces(state.cities); if (api.ground) api.ground(rgbStr(mix(PARCH, DARK, GROUND.u))); lab.canFlat = !!api.setFlat; if (lab.canFlat) { $('wMap').style.display = ''; $('wMap2').style.display = ''; } flatWord(false); if (api.setCoasts) { $('wCoasts').style.display = ''; api.setCoasts(state.coasts); } if (api.setMarkers) { $('wMarkers').style.display = ''; api.setMarkers(state.markers); } setYear(lab.ma, lab.rough, lab.ofEvent); },
+    attachEarth: api => { lab.earth = api; api.setPlaces(state.cities); if (api.ground) api.ground(rgbStr(mix(PARCH, DARK, GROUND.u))); lab.canFlat = !!api.setFlat; if (lab.canFlat) $('wMap').style.display = ''; flatWord(false); if (api.setCoasts) { $('wCoasts').style.display = ''; api.setCoasts(state.coasts); } if (api.setMarkers) { $('wMarkers').style.display = ''; api.setMarkers(state.markers); } setYear(lab.ma, lab.rough, lab.ofEvent); renderPanel(); arrive(); },
     warmSpells: () => { const w = W_HUM; if (!w.built) build(w); const runs = []; let cur = null; for (let i = 0; i < w.real; i++) { const warm = w.warmOf[i]; if (warm && !cur) cur = [i, i]; else if (warm) cur[1] = i; else if (cur) { runs.push(cur); cur = null; } } if (cur) runs.push(cur); return runs.map(([a, b]) => [(1000 - a) * 1000, (999 - b) * 1000]); },
     // step 9: the two views, the panel, Pick a time, the Earth's two words
     view: { set: setView, now: () => lab.view, moving: () => !!VIEW.plan, finish: finishView, hold: holdView, last: () => VIEW.last, rects: () => ({ time: lab.view === 'time' && !VIEW.plan ? timeRects() : null, world: worldRects() }), relayout },
     panel: { open: () => !!PANEL.show && PANEL.up, kind: () => PANEL.show && PANEL.show.kind, of: () => PANEL.show && (PANEL.show.e ? PANEL.show.e.id : PANEL.show.p ? PANEL.show.p.n : 'span'), text: () => info && PANEL.show ? info.body.innerText : '', html: () => info ? info.body.innerHTML : '', el: info && info.el, at: () => PANEL.at && Object.assign({}, PANEL.at), mine: () => JSON.parse(JSON.stringify(PANEL.pos)), close: closePanel, leastHiding, avoid: avoidList,
       period: (id, name) => { const w = byId(id), p = w && w.plaques.find(x => x.n === name); if (p) showPanel({ kind: 'period', p, text: nextText(p.key, p.t) }, null); return !!p; } },
+    htw: { open: () => HTW2.open, up: () => HTW2.up, show: openHtw2, close: closeHtw2, land: htwLand, flying: () => !!HTW2.anim, flights: () => HTW2.flights, el: htw2 && htw2.el, at: () => htw2 && restBox(htw2.el), tools: () => TOOLP.map(t => ({ id: t.id, open: t.open, up: t.up, at: t.at })), toolEl: id => { const t = TOOLP.find(x => x.id === id); return t && t.pn.el; } },
+    arrive: () => Object.assign({}, ARRIVE),
     pick: pickTime, pickBack, picked: () => ({ before: PICK.before && { view: PICK.before.view, k: PICK.before.mosaic.k, a: PICK.before.a, b: PICK.before.b, ma: PICK.before.ma }, last: PICK.last }),
-    words: () => ({ view: $('wView').textContent, map: $('wMap').textContent, map2: $('wMap2').textContent, full2: $('wFull2').style.display === 'none' ? null : $('wFull2').textContent, back: !$('wPickBack').classList.contains('absent') }), quiet: QUIET,
+    words: () => ({ view: $('wView').textContent, map: $('wMap').textContent, htw: !$('wHtw2').classList.contains('absent'), back: !$('wPickBack').classList.contains('absent') }), quiet: QUIET,
     // step 6: the move, the gathered line, the sound
     move: { active: () => MOVE.active, finish: finishMove, hold: holdMove, last: () => MOVE.last, plan: () => MOVE.plan && { how: MOVE.plan.how, end: MOVE.plan.end, T0: MOVE.plan.T0, tiles: MOVE.plan.nT, merged: MOVE.plan.nM, vanished: MOVE.plan.nV } },
     gather: () => state.gather && { k: state.gather.k, a: state.gather.a, b: state.gather.b, f: state.gather.f, count: state.gather.count, tiles: state.gather.tiles.length, rects: state.LG && state.LG.rects.map(r => [+r.x.toFixed(1), +r.w.toFixed(2), +r.h.toFixed(1)]) },
@@ -2851,6 +3031,7 @@
       view, earth,
       setTime: m => { ma = Math.max(0, Math.min(EARTH_AGE, m)); earth.setTime(ma); },
       grade: () => { const g = earth.grade(); return { grade: g.grade, why: g.why, credit: ma < earth.seam ? SHORT_CREDIT : 'The continents: Merdith et al. 2021 (EarthByte)' + (seasShow() ? '. The shallow seas: Kocsis & Scotese 2021' : '') }; },
+      gradeAt: age => earth.gradeFor(age),   // step 10b: the grade at an event's own year, for the date line of its panel
       setSeas: on => { earth.setSeas(on); view.redraw(); },   // the shallow seas (20 Nov), bench only
       setPlaces: on => { cityOn = !!on; if (!cityOn) cityNamed = null; else loadCities().then(() => drawOverlay(true)); drawOverlay(true); },   // step 10: Show cities / Hide cities: the points
       ground: css => { view.renderer.setClearColor(new THREE.Color(css), 1); view.redraw(); },   // step 10: the colour round the Earth, parchment in Time and near-black in The World
@@ -2861,6 +3042,8 @@
       turn: () => { const t = view.turnOf(); return { lon: t.lon, lat: t.lat, dist: view.camera.position.length() }; },
       setTurn: t => { REST.north = false; view.turnTo(t.lon, t.lat); view.zoomTo(t.dist); earth.settle(); view.redraw(); },
       face: async (lon, lat, age) => { const p = await thenOf(lon, lat, age); view.turnTo(p.lon, p.lat); view.zoomTo(homeV ? homeV.dist : HOME_DISTANCE); REST.north = false; earth.settle(); view.redraw(); return p; },
+      // step 10b: arriving — the globe upright, turned to the longitude where a place of today's ground lay at an age
+      faceUpright: async (lon, lat, age) => { const p = await thenOf(lon, lat, age); view.turnTo(p.lon, 0); view.zoomTo(homeV ? homeV.dist : HOME_DISTANCE); REST.north = false; earth.settle(); view.redraw(); return p; },
       home: () => homeV && Object.assign({}, homeV),
       resized: () => { view.setFrame(null); earth.settle(); view.redraw(); }   // the renderer and the camera take the stage's new size at once, not at the next observed frame
     });
