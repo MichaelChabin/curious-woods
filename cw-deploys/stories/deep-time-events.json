@@ -9,6 +9,7 @@
   "CWVault/claude/Events-Deep-05.md",
   "CWVault/claude/Events-Deep-06.md",
   "CWVault/claude/Events-Deep-07.md",
+  "CWVault/claude/Events-Deep-08.md",
   "CWVault/claude/Periods-Deep-01.md",
   "CWVault/claude/Periods-Deep-02.md",
   "CWVault/claude/Periods-Deep-03.md",
@@ -23,7 +24,7 @@
   "CWVault/claude/Timeline-Samples.md",
   "outdated-files/after-the-ice-events-retired-2026-11-16.json"
  ],
- "count": 195,
+ "count": 196,
  "aliases": {
   "maize": "maize",
   "writing": "writing-at-uruk",
@@ -1996,6 +1997,71 @@
    "checked": true,
    "weight": 3,
    "weightStatus": "from the Line field",
+   "side": "deep",
+   "chunk": [
+    "Animals",
+    "Trilobites",
+    "Shells"
+   ]
+  },
+  {
+   "id": "first-trilobites",
+   "source": {
+    "file": "CWVault/claude/Events-Deep-08.md",
+    "section": "First trilobites"
+   },
+   "label": "First trilobites",
+   "ma": 521.0,
+   "ageText": "521 Ma · ± 2 Ma · estimate: the oldest trilobites are placed by their layer, between beds of volcanic ash dated elsewhere; no date on the fossils' own rock",
+   "ageHow": "estimate: the oldest trilobites are placed by their layer, between beds of volcanic ash dated elsewhere; no date on the fossils' own rock",
+   "uncertaintyMa": 2.0,
+   "ageNote": null,
+   "year": -520997974,
+   "precisionYears": 2000000,
+   "tail": null,
+   "evidence": "dated",
+   "knownFrom": "armour of calcite, kept in shale and limestone",
+   "placeNow": {
+    "name": "the middle Lena River, Sakha (Yakutia), Siberia, Russia (about 61 N, 127 E, approximate), where *Profallotaspis* was found. Others as old come from Morocco, Spain, and the Nevada–California border.",
+    "short": "the middle Lena River",
+    "lat": 61.0,
+    "lon": 127.0,
+    "note": "approximate"
+   },
+   "place": null,
+   "kindRaw": "a crop or animal",
+   "kind": "a crop or animal",
+   "kindNote": "not in the closed list; kept as written",
+   "replacesSketch": [],
+   "line": null,
+   "summary": "About 521 million years ago. Trilobites, armoured sea animals with many legs and eyes of crystal, turn up in rock in Siberia, Morocco and Nevada, already different from one another. No older rock holds one.",
+   "more": {
+    "dateLine": {
+     "ago": "About 521 million years ago",
+     "tail": null
+    },
+    "paragraphs": [
+     "Split the right piece of shale on a hillside in Nevada, in Morocco, or along the Lena River in Siberia, and an animal may be looking back at you. It has a head like a half moon, a body of many jointed pieces, and two eyes. It is a trilobite (\"TRY-luh-bite\").",
+     "The name means three lobes. Look along its back and there they are: a raised middle running from head to tail, and a flatter part on each side.",
+     "Trilobites lived in the sea and walked the bottom on many pairs of legs. Their armour was calcite, the mineral that limestone and seashells are made of. So were the lenses of their eyes. A trilobite saw the world through crystals of stone, and because stone keeps, the lenses can still be counted.",
+     "Here is the strange part. Rock a little older holds tracks, burrows and tiny shells, but no trilobites at all. Then, in the layers just above, there they are: in Siberia, in Morocco, in Spain, in Nevada. And they are not all alike. The first ones in Siberia are a different kind from the first ones in Nevada.",
+     "Charles Darwin knew this, and it bothered him. Animals so complicated, he thought, must have had a long line of ancestors. Where were they?",
+     "There are two answers, and people still argue. One is that the ancestors had no armour. Soft animals almost never turn to stone, so the rock kept nothing until the armour came. The other, from a study in 2022, is that there was no long line to lose: trilobites really did begin about then, and spread through the seas quickly.",
+     "Nobody has dated a first trilobite itself. Its age comes from layers of volcanic ash above and below such fossils, whose crystals can be dated. They say about 521 million years, give or take a million or two.",
+     "Trilobites went on for almost 270 million years. More than 22,000 kinds have been named."
+    ],
+    "words": 327
+   },
+   "picturesWanted": "one of the oldest trilobites, whole (*Fritzaspis*, *Profallotaspis* or *Hupetina*; Commons; licence to check); a trilobite eye close up, with its lenses showing (any age, said so); the Lena Pillars or the Montezuma Range.",
+   "references": [
+    "J. Stewart Hollingsworth, \"The first trilobites in Laurentia and elsewhere,\" in *Advances in Trilobite Research* (Instituto Geológico y Minero de España, 2008). The contenders. (Title and volume to confirm.)",
+    "James D. Holmes and Graham E. Budd, \"Reassessing a cryptic history of early trilobite evolution,\" *Communications Biology*, 2022. The second answer, and Darwin's puzzle.",
+    "American Museum of Natural History, \"The First Trilobites,\" on its trilobite website. For a parent.",
+    "Richard Fortey, *Trilobite! Eyewitness to Evolution* (HarperCollins, 2000). For a parent; the eyes."
+   ],
+   "checked": false,
+   "weight": 2,
+   "weightStatus": "proposed",
    "side": "deep",
    "chunk": [
     "Animals",
