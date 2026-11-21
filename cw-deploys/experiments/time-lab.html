@@ -172,7 +172,16 @@
      the date line for a line of its own at the foot of an event's panel (The Earth shown here: measured). The lab
      arrives on an event labelled First trilobites if the store holds one, else on Chengjiang. The Time view's How this
      works has Michael's words of 21 Nov, its second sentence written for the mosaic she is on. No shared script is
-     touched. -->
+     touched.
+     Step 10d (21 Nov 2026; Michael's prompt Prompt-Revise-Time-Lab-Bench-10d-02.md). The globe tips no further than
+     70° north or south (LOOK.turn.limit; a bench switch, the tilt stops at 60° / 70° / 80° / the pole, and ?tilt=):
+     the page takes back what the scene turns past it, as it does for the favouring drag. A tap on a city beyond the
+     limit comes as near the middle as the limit allows. A tap on the flat map brings back the globe with the place
+     tapped at the middle, tipped to its latitude within the limit, the whole Earth in sight. A trial behind a bench
+     switch (the periods: the lab's / the tree, and ?periods=tree): the Time Machine's tree of periods laid on the two
+     deep-time mosaics, eight on the 4.6 billion and fifteen on Complex life, names, spans, summaries and Mores from
+     stories/deep-time-periods.json, the tree's shape and colours from stories/deep-time.json (three colours changed
+     here, LOOK.treeColours). Nothing of the lab's own periods is removed. No shared script is touched. -->
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-11-17"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
@@ -458,12 +467,14 @@
   <div class="pair"><span class="what">its pull in a drag</span><span id="bPull"></span></div>
   <div class="pair"><span class="what">the axis, in a drag</span><span id="bAxis"></span></div>
   <div class="pair"><span class="what">a drag favours one way</span><span id="bBias"></span></div>
+  <div class="pair"><span class="what">the tilt stops at</span><span id="bTilt"></span></div>
+  <div class="pair"><span class="what">the periods</span><span id="bPeriods"></span></div>
   <div class="pair"><span class="what">the shallow seas</span><span id="bSeas"></span></div>
   <p class="readout" id="readout"></p>
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-21 6dd344a · time-lab step 10c';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-21 4748116 · time-lab step 10d';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -540,8 +551,15 @@
     arriveLabel: 'First trilobites',   // step 10c: the lab opens at the store's event with this label, if it holds one
     arrive: 'chengjiang',     // else at this one (the nearest that shows trilobites)
     // step 10c: the axis shown in a drag, the drag that favours one way, a city brought to the middle, the map in The World
-    turn: { axis: true, bias: 24, memory: 40, least: 3, axisOut: 0.16, axisW: 1.5, axisIn: 120, axisFade: 400 },   // axis: a thin line through the poles while she drags the globe (axisOut: how far it stands out of each pole, in the Earth's radii; axisW: px; axisIn, axisFade: ms it takes to come and to go). bias: degrees — a drag within half this of level turns the globe east-west only, within half this of upright tips it only, and beyond this angle from both it is free (0: no favour; light 24, firm 40); memory: px of the finger's recent travel its heading is read from; least: px before a heading is read at all
+    turn: { axis: true, bias: 24, limit: 70, memory: 40, least: 3, axisOut: 0.16, axisW: 1.5, axisIn: 120, axisFade: 400 },   // axis: a thin line through the poles while she drags the globe (axisOut: how far it stands out of each pole, in the Earth's radii; axisW: px; axisIn, axisFade: ms it takes to come and to go). bias: degrees — a drag within half this of level turns the globe east-west only, within half this of upright tips it only, and beyond this angle from both it is free (0: no favour; light 24, firm 40); memory: px of the finger's recent travel its heading is read from; least: px before a heading is read at all
     cityGlide: 600,           // ms: a tapped city comes to the middle
+    // step 10d: turn.limit — degrees the globe may tip north or south (90: to the pole, as step 10c). The trial of the
+    // Time Machine's tree of periods: for each of the two deep-time mosaics, the part of the tree it shows (root: the
+    // period whose children it shows, else the whole tree's) and which of those open into their own children instead
+    // of standing themselves; and the colours changed from the Time Machine's (stories/deep-time.json), where two of
+    // the fifteen on Complex life were alike
+    tree: { w0: { open: ['Animals'] }, cl: { root: 'Animals', open: ['Trilobites', 'Dinosaurs', 'Mammals'] } },
+    treeColours: { 'First dinosaurs': '#6e4a7e', 'Heat': '#a83018', 'Cooling': '#3b4f7a' },
     flatMargin: 14,           // px round the flat map in The World, at least (the Earth's own FLAT_MARGIN)
     moveMax: 12000,           // tiles a move may carry (travelling and vanishing) before it is a cut instead
     soundVol: 0.22            // the move's sound, at most
@@ -827,6 +845,22 @@
   let events = [], sea = null;   // loaded below: the store's events, each with its record kept (rec) for the summary and the More
   const seaAt = year => sea ? CW.curveAt(sea.points, year) : null;
 
+  // ---------- step 10d, a trial: the Time Machine's tree of periods on the two deep-time mosaics ----------
+  // Behind a bench switch (the periods: the lab's / the tree; ?periods=tree). The tree's shape and colours are
+  // stories/deep-time.json's (the Time Machine's own file); a period's name, span, length, summary and More are
+  // stories/deep-time-periods.json's, found by name. treeList(w): the periods a mosaic shows with the tree on, oldest
+  // first, or null (the switch off, a mosaic the tree does not reach, or a file that did not load: the lab's own).
+  const TREE = { on: Q.get('periods') === 'tree', doc: null };
+  function treeNode(name, n) { if (!n) return null; if (n.name === name) return n; for (const c of n.chunks || []) { const f = treeNode(name, c); if (f) return f; } return null; }
+  function treeList(w) {
+    const row = LOOK.tree[w.id]; if (!TREE.on || !row || !TREE.doc || !periodRecs) return null;
+    const root = row.root ? treeNode(row.root, TREE.doc) : TREE.doc; if (!root) return null;
+    const out = [], walk = n => (n.chunks || []).forEach(c => { if (row.open.includes(c.name) && c.chunks && c.chunks.length) walk(c); else out.push(c); });
+    walk(root);
+    const list = out.map(c => { const rec = periodRecs.find(x => x.name === c.name); return rec ? { rec, c: LOOK.treeColours[c.name] || c.colour || LOOK.plain } : null; });
+    return list.length && list.every(Boolean) ? list : null;
+  }
+
   // ---------- building a window's glass ----------
   // For each square: its kind (a period, an ice or warm run, plain), its colour (the period's, graded along it; the ice by
   // the sea; handmade shading by a hash), its events. Built once per window and glass mode, drawn many times.
@@ -834,7 +868,21 @@
     const n = w.squares, ev = new Array(n);
     let col = new Array(n), kind = new Array(n), plaques = [];   // plaques: one per period or run, by kind index: { key, n, c, t[], fromMa, toMa }
     const addPlaque = p => { plaques.push(p); return plaques.length - 1; };
-    if (w.from) {
+    const tl = treeList(w);
+    if (tl) {
+      // step 10d, the tree on: the Time Machine's periods by the tile's middle year (a tile is a million years, so the
+      // edge at 5.3 Ma falls inside a tile: the tile of 6 to 5 Ma is Grass, its middle being older than the edge). The
+      // period keeps its own span for its panel and for select. The handmade wander is the 4.6 billion's tile's own.
+      const o = w.from ? w.from.at : 0;
+      const ids = tl.map(t => addPlaque({ key: 't-' + t.rec.id, n: t.rec.name, c: t.c, t: [t.rec.summary], fromMa: t.rec.from, toMa: t.rec.to, lenWords: t.rec.length ? String(t.rec.length).replace(/\s*\(.*\)\s*$/, '') : null, more: t.rec.more && t.rec.more.paragraphs ? t.rec : null, tree: true }));
+      for (let i = 0; i < n; i++) {
+        const mid = (w.olderMa(i) + w.newerMa(i)) / 2;
+        let k = tl.findIndex(t => mid <= t.rec.from && mid > t.rec.to); if (k < 0) k = mid > tl[0].rec.from ? 0 : tl.length - 1;
+        const r = tl[k].rec, u = Math.max(0, Math.min(1, (r.from - mid) / (r.from - r.to)));
+        kind[i] = ids[k];
+        col[i] = shade(hex2rgb(tl[k].c), -LOOK.gradient / 2 + LOOK.gradient * u + (hash(i + o, 1) - 0.5) * LOOK.shadeL, (hash(i + o, 2) - 0.5) * LOOK.shadeS);
+      }
+    } else if (w.from) {
       // a mosaic cut from another of the same unit: its tiles, as they are
       const P = byId(w.from.id), o = w.from.at; if (!P.built) build(P);
       col = P.col.slice(o, o + n); kind = P.kind.slice(o, o + n); plaques = P.plaques;
@@ -1184,6 +1232,7 @@
     return fmt(n);
   }
   function lengthWord(p) {
+    if (p.lenWords) return p.lenWords.charAt(0).toUpperCase() + p.lenWords.slice(1) + (p.toMa <= 1e-9 ? ', so far.' : '.');   // step 10d: a period of the tree says its length as the Time Machine's store does
     const yrs = p.len || Math.round((p.fromMa - Math.max(0, p.toMa)) * 1e6);
     let t = yrs >= 1e6 ? (yrs % 1e6 === 0 ? fmt(yrs / 1e6) : (Math.round(yrs / 1e5) / 10).toLocaleString('en')) + ' million years' : countWords(yrs) + ' years';
     if (p.rough) t = 'about ' + t;
@@ -1894,7 +1943,7 @@
   // the period an event falls in: by the finest of the three tables that holds its year — the 12,000's eight inside
   // Civilization's row, the last million's four inside Humans', else the 4.6 billion's fourteen
   function periodOf(ma) {
-    const w = ma * 1e6 <= CAL_END + 0.5 ? byId('w2') : ma <= 1 ? byId('w1') : byId('w0');
+    const w = ma * 1e6 <= CAL_END + 0.5 ? byId('w2') : ma <= 1 ? byId('w1') : TREE.on && state.w.id === 'cl' ? byId('cl') : byId('w0');   // step 10d: with the tree on, on Complex life the leaf, elsewhere the coarse period
     if (!w.built) build(w);
     return w.plaques.find(p => ma <= p.fromMa + 1e-12 && ma > p.toMa + 1e-12) || w.plaques.find(p => ma <= p.fromMa + 1e-12 && ma >= p.toMa - 1e-12) || null;
   }
@@ -1937,7 +1986,7 @@
         '<p class="first">' + esc(eventDate(e)) + '</p><p class="body' + (e.rec.more ? ' tap' : '') + '"><b>' + esc(sentence(e.rec.label)) + '</b> ' + eventBody(e) + '</p>' +
         (kw ? '<p class="know">' + esc(WORDS.earthShown) + ' ' + esc(kw) + '</p>' : '');   // step 10c: the word of knowing, a line of its own at the foot
     }
-    if (s.kind === 'period') return '<p class="first">' + esc(periodLine(s.p)) + '</p><p class="body' + (s.p.ph ? ' ph' : '') + '"><b>' + esc(sentence(s.p.n)) + '</b> ' + esc(s.text) + (s.p.more ? moreWord : '') + '</p>';
+    if (s.kind === 'period') return '<p class="first">' + esc(periodLine(s.p)) + '</p><p class="body' + (s.p.ph ? ' ph' : '') + '"><b>' + esc(sentence(s.p.n)) + '</b> ' + (s.p.tree ? cwDeepTime.prose(s.text) : esc(s.text)) + (s.p.more ? moreWord : '') + '</p>';   // step 10d: a period of the tree has the store's summary, set as an event's is (its *italics*)
     return '<p class="first">' + esc(spanTold(s.a, s.b)) + '</p>';
   }
   const info = window.CW.createInfoPanel ? CW.createInfoPanel({ width: LOOK.panelW, onClose: () => { PANEL.show = null; PANEL.up = false; } }) : null;
@@ -2099,7 +2148,7 @@
   let periodRecs = null;   // the Time Machine's periods, loaded below
   function lendMores() {
     if (!periodRecs) return;
-    WINDOWS.forEach(w => { if (w.from || !w.plaques) return; w.plaques.forEach(p => { p.more = periodRecs.find(x => x.more && x.more.paragraphs && x.name === p.n && Math.abs(x.from - p.fromMa) < 1e-6 && Math.abs(x.to - Math.max(0, p.toMa)) < 1e-6) || null; }); });
+    WINDOWS.forEach(w => { if (!w.plaques || (w.from && w.plaques === byId(w.from.id).plaques)) return; w.plaques.forEach(p => { if (p.tree) return; p.more = periodRecs.find(x => x.more && x.more.paragraphs && x.name === p.n && Math.abs(x.from - p.fromMa) < 1e-6 && Math.abs(x.to - Math.max(0, p.toMa)) < 1e-6) || null; }); });
   }
   function openMore(rec) {   // the More in the movable window, as the Time Machine opens it
     const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec);
@@ -2266,6 +2315,22 @@
   const TURN = { axis: Q.get('axis') == null ? LOOK.turn.axis : Q.get('axis') !== '0', bias: BIASES[Q.get('bias')] != null ? BIASES[Q.get('bias')] : LOOK.turn.bias };
   benchChoice($('bAxis'), ['on', 'off'], () => TURN.axis ? 'on' : 'off', v => { TURN.axis = v === 'on'; });
   benchChoice($('bBias'), Object.keys(BIASES), () => nameIn(BIASES, TURN.bias), v => { TURN.bias = BIASES[v]; });
+  // bench only (step 10d): where the tilt stops (?tilt=60|70|80|pole, or any degrees from 10 to 90), and the periods the
+  // two deep-time mosaics show (?periods=tree)
+  const TILTS = { '60°': 60, '70°': 70, '80°': 80, 'the pole': 90 };
+  const TILT = { limit: Q.get('tilt') === 'pole' ? 90 : numQ('tilt', 10, 90, LOOK.turn.limit) };
+  benchChoice($('bTilt'), Object.keys(TILTS), () => nameIn(TILTS, TILT.limit), v => { TILT.limit = TILTS[v]; if (window.cwRest && window.cwRest.cap) window.cwRest.cap(); });
+  function setPeriods(tree) {   // the switch thrown: the glass built again; a line gathered from the old periods, a mark and a period's panel go with them
+    tree = !!tree; if (tree === TREE.on) return;
+    finishMove(); TREE.on = tree;
+    WINDOWS.forEach(w => { w.built = null; }); WINDOWS.forEach(w => build(w)); lendMores();
+    if (PANEL.show && PANEL.show.kind !== 'event') closePanel();
+    if (state.gather || STR.stack.length) { transition(mosaicNow(), { k: state.w.k, g: null }, 'cut'); resetSpan(0, state.w.spanMa); }
+    state.mark = null; state.hover = -1;
+    FIT.key = ''; layout(); draw(); mosaicWords(); renderPanel(); renderStretch();
+  }
+  const PERIOD_SETS = ['the lab\u2019s', 'the tree'];
+  benchChoice($('bPeriods'), PERIOD_SETS, () => PERIOD_SETS[TREE.on ? 1 : 0], v => setPeriods(v === PERIOD_SETS[1]));
   // bench only: a candidate rendered off-line (no speakers needed), for the check and for a file Michael can play
   async function renderSound(kind, durMs, merged) {
     const sr = 44100, dur = (durMs || LOOK.move.stagger + LOOK.move.flight) / 1000, ac = new OfflineAudioContext(1, Math.ceil(sr * (dur + 0.8)), sr);
@@ -2709,11 +2774,13 @@
 
   // ---------- the data, then the first drawing ----------
   async function loadAll() {
-    const [ev, curve, per] = await Promise.all([
+    const [ev, curve, per, tree] = await Promise.all([
       fetch('../stories/deep-time-events.json').then(r => r.json()),
       fetch('../stories/curves/sea-level-ice-ages.json').then(r => r.json()),
-      fetch('../stories/deep-time-periods.json').then(r => r.json()).catch(e => { console.warn('time-lab: the periods\' Mores did not load;', e && e.message); return null; })   // step 10: the Time Machine's periods, for the Mores they can lend
+      fetch('../stories/deep-time-periods.json').then(r => r.json()).catch(e => { console.warn('time-lab: the periods\' Mores did not load;', e && e.message); return null; }),   // step 10: the Time Machine's periods, for the Mores they can lend
+      fetch('../stories/deep-time.json').then(r => r.json()).catch(e => { console.warn('time-lab: the tree of periods did not load;', e && e.message); return null; })   // step 10d: the tree's shape and colours
     ]);
+    TREE.doc = tree;
     periodRecs = per && per.periods ? Object.values(per.periods) : null;   // the file keys them by name
     // the store's records kept whole (rec) for the summary and the More; this page changes nothing in the store
     events = ev.events.map(e => ({ id: e.id, label: e.label, ma: e.ma != null ? e.ma : CW.yearToMa(e.year), side: e.side, weight: e.weight || 1, tail: e.tail && e.tail.ma != null ? e.tail.ma : null, precision: e.precision || null, rec: e })).filter(e => e.ma != null && !isNaN(e.ma));
@@ -2761,7 +2828,7 @@
     stretch: doStretch, focus: doStretch, back: stretchBack, flag: setFlag, pull: pullFlag, pullMa, tap: markAt, mark: () => state.mark, setMark, clearMark, doSelect, unitSpan, lit: litSpan, labelFor, setCities, setCoasts, setMarkers, build, lengthWord, agoWord, shortDate, spanWords, placeSelect,
     year: () => lab.ma, setYear, handleX, xOf, maOf, events: () => events, onLine: eventsOnLine, placed: placeEvents, tapEvent: id => { const e = events.find(x => x.id === id); if (e) tapEvent(e, null); return !!e; }, rec: () => know.event && know.event.rec, openMore: () => { if (know.event) openMore(know.event.rec); },
     fit: () => Object.assign({}, FIT), eventDate, agoParen, periodOf, count: { set: setCount, fromStart: () => COUNT.fromStart, yearWord, yearSpan, yearPhrase }, mapWord: () => $('wMap').textContent, full: { kind: FULL, on: isFull, page: setFullPage, touch: TOUCH }, nesting: k => nesting(WINDOWS[k]), stack: () => STR.stack.length, handleWord: () => labelH.textContent, labels: () => [labelEls[1], labelH, labelEls[0], spanWord].map(el => el.textContent + ' @ ' + el.style.left + (el.style.visibility === 'hidden' ? ' (not drawn)' : '') + (el.classList.contains('up') ? ' (up)' : '')),
-    setFlat, flat: () => lab.flat, flatWord, knowing, tellYear, reduced, detent: DETENT, turnBench: TURN, htwSpan, ground: () => GROUND.u, build: { on: () => BUILD.on, set: on => { BUILD.on = !!on; BUILD.done = false; }, done: () => BUILD.done, running: () => !!BUILD.run, hold: holdBuild, finish: endBuild, last: () => BUILD.last, phase: () => BUILD.run && BUILD.run.phase, count: () => $('buildCount').style.display === 'none' ? null : $('buildCount').textContent }, fullscreen: { on: isFull, enter: enterFull, exit: exitFull, available: FS },
+    setFlat, flat: () => lab.flat, flatWord, knowing, tellYear, reduced, detent: DETENT, turnBench: TURN, tilt: TILT, tree: { on: () => TREE.on, set: setPeriods, list: k => { const l = treeList(WINDOWS[k]); return l && l.map(t => ({ n: t.rec.name, from: t.rec.from, to: t.rec.to, c: t.c })); } }, htwSpan, ground: () => GROUND.u, build: { on: () => BUILD.on, set: on => { BUILD.on = !!on; BUILD.done = false; }, done: () => BUILD.done, running: () => !!BUILD.run, hold: holdBuild, finish: endBuild, last: () => BUILD.last, phase: () => BUILD.run && BUILD.run.phase, count: () => $('buildCount').style.display === 'none' ? null : $('buildCount').textContent }, fullscreen: { on: isFull, enter: enterFull, exit: exitFull, available: FS },
     attachEarth: api => { lab.earth = api; api.setPlaces(state.cities); if (api.ground) api.ground(rgbStr(mix(PARCH, DARK, GROUND.u))); lab.canFlat = !!api.setFlat; if (lab.canFlat) $('wMap').style.display = ''; flatWord(false); if (api.setCoasts) { $('wCoasts').style.display = ''; api.setCoasts(state.coasts); } if (api.setMarkers) { $('wMarkers').style.display = ''; api.setMarkers(state.markers); } setYear(lab.ma, lab.rough, lab.ofEvent); renderPanel(); arrive(); },
     warmSpells: () => { const w = W_HUM; if (!w.built) build(w); const runs = []; let cur = null; for (let i = 0; i < w.real; i++) { const warm = w.warmOf[i]; if (warm && !cur) cur = [i, i]; else if (warm) cur[1] = i; else if (cur) { runs.push(cur); cur = null; } } if (cur) runs.push(cur); return runs.map(([a, b]) => [(1000 - a) * 1000, (999 - b) * 1000]); },
     // step 9: the two views, the panel, Pick a time, the Earth's two words
@@ -2864,6 +2931,10 @@
   const AXIS = { a: 0, drawn: false }, axisCv = document.createElement('canvas');
   const wrap180 = l => { l = ((l + 180) % 360 + 360) % 360 - 180; return l === -180 ? 180 : l; };
   const turnBench = () => window.cwLab.turnBench, LT = window.cwLab.LOOK.turn;
+  // step 10d: the tilt stops short of the poles (TILT.limit, 70°; 90 is the pole, as step 10c). The scene turns the
+  // globe as it always has; capTilt takes back what went past the limit, in every move of a finger and every frame.
+  const tiltMax = () => window.cwLab.tilt.limit, capLat = lat => Math.max(-tiltMax(), Math.min(tiltMax(), lat));
+  function capTilt() { if (!view || !earth || earth.flat()) return false; const t = view.turnOf(); if (Math.abs(t.lat) <= tiltMax() + 1e-9) return false; view.turnTo(null, capLat(t.lat)); return true; }
   const turned = () => { REST.north = false; REST.coast = null; REST.last = null; };   // the page turned the globe itself (an arrival, the map, a glide): nothing of a drag is left over
   function favour() {   // how much of a sideways move and of an up-and-down move the heading lets through: [east-west, tilt]
     const B = turnBench().bias, ax = Math.abs(REST.hx), ay = Math.abs(REST.hy);
@@ -2907,8 +2978,9 @@
           const w = DET.pull * (1 - Math.abs(lat) / DET.angle), away = Math.abs(lat) > Math.abs(was.lat);
           lat = was.lat + (lat - was.lat) * (away ? 1 - w : 1 + w);
         }
+        lat = capLat(lat);   // step 10d: no further than the limit
         if (m[0] !== 1 || lat !== cur.lat) view.turnTo(was.lon + dLon, lat);
-      } else REST.mult = null;
+      } else { REST.mult = null; capTilt(); }
       REST.last = view.turnOf();
     });
     const letGo = e => {
@@ -2922,9 +2994,10 @@
       if (!REST.fingers.size) {
         if (REST.coast && REST.last && view.busy && !earth.flat()) {   // the coasting after a flick keeps the favour it was let go with
           const cur = view.turnOf(), was = REST.last, m = REST.coast;
-          if ((m[0] !== 1 || m[1] !== 1) && (cur.lon !== was.lon || cur.lat !== was.lat)) view.turnTo(was.lon + wrap180(cur.lon - was.lon) * m[0], was.lat + (cur.lat - was.lat) * m[1]);
+          if ((m[0] !== 1 || m[1] !== 1) && (cur.lon !== was.lon || cur.lat !== was.lat)) view.turnTo(was.lon + wrap180(cur.lon - was.lon) * m[0], capLat(was.lat + (cur.lat - was.lat) * m[1]));
         } else if (REST.coast && !view.busy) REST.coast = null;
         restStep(dt);
+        if (capTilt()) view.redraw();   // step 10d: a coast, a glide or a wheel that carried the globe past the limit
         REST.last = view.turnOf();
       }
       axisStep(dt);
@@ -2965,12 +3038,14 @@
     }
     x.globalAlpha = 1;
   }
-  // a tap on the flat world (step 10c; Michael's answer 2 of 21 Nov): back to the globe, untilted and whole, turned to
-  // the longitude tapped (the Earth's own tap centres the place and closes in; this page then stands it up)
+  // a tap on the flat world (step 10d; Michael, 21 Nov, on step 10c's point 6): back to the globe with the place she
+  // tapped at the middle, as a tap on a city does — turned to its longitude and tipped to its latitude, within the
+  // tilt's limit — the whole Earth in sight, no zoom (the Earth's own tap centres the place and closes in; this page
+  // then sets the tilt and the size). Step 10c stood it upright; Pick a time and the opening still do.
   function mapTap(x, y) {
     if (!earth) return false;
     const r = earth.tap(x, y); if (!r) return false;
-    if (r.to === 'globe') { view.turnTo(r.lon, 0); view.zoomTo(homeV ? homeV.dist : HOME_DISTANCE); turned(); earth.settle(); view.redraw(); }
+    if (r.to === 'globe') { view.turnTo(r.lon, capLat(r.lat)); view.zoomTo(homeV ? homeV.dist : HOME_DISTANCE); turned(); earth.settle(); view.redraw(); }
     return true;
   }
   // the flat map in The World (step 10c): centred between the top of the window and the top of the line's ground, and
@@ -2990,7 +3065,7 @@
     FLATFIT.key = key; FLATFIT.left = c.left; FLATFIT.top = c.top; FLATFIT.room = room; FLATFIT.mapH = 2 * Y * sc; FLATFIT.mapW = 2 * X * sc;
     overlayKey = ''; earth.settle(); view.redraw();
   }
-  window.cwRest = { step: restStep, state: REST, arm: () => { REST.north = true; }, favour, axis: AXIS, flatFit: () => Object.assign({}, FLATFIT), fitMap: () => fitMap(), run: (n = 60, ms = 16) => { let k = 0; while (k < n && restStep(ms / 1000)) k++; return k; } };   // bench only: the springs run by hand, for a pane that runs frames only while looked at
+  window.cwRest = { cap: () => { if (capTilt()) { earth.settle(); view.redraw(); } }, capLat, step: restStep, state: REST, arm: () => { REST.north = true; }, favour, axis: AXIS, flatFit: () => Object.assign({}, FLATFIT), fitMap: () => fitMap(), run: (n = 60, ms = 16) => { let k = 0; while (k < n && restStep(ms / 1000)) k++; return k; } };   // bench only: the springs run by hand, for a pane that runs frames only while looked at
   // where a point of today's ground was at an age: carried by the plate whose piece holds it today (Pick a time turns the globe to face an event's place)
   async function thenOf(lon, lat, age) {
     if (!(age > 0.01)) return { lon, lat };
@@ -3040,7 +3115,7 @@
       const show = cityNamed !== best; cityNamed = show ? best : null;
       if (show && !earth.flat()) {   // step 10c: on the globe the city comes to the middle, with an ease and no zoom; on the map nothing moves
         const hit = cityHits.find(hc => hc.c === best), here = hit && view.lonLatAt(hit.x, hit.y);   // where its ground is at this year
-        if (here) { turned(); if (window.cwLab.reduced()) { view.turnTo(here.lon, here.lat); earth.settle(); view.redraw(); } else view.glideTo(here.lon, here.lat, null, LK.cityGlide); }
+        if (here) { turned(); if (window.cwLab.reduced()) { view.turnTo(here.lon, capLat(here.lat)); earth.settle(); view.redraw(); } else view.glideTo(here.lon, capLat(here.lat), null, LK.cityGlide); }
       }
       drawOverlay(true); return true;
     }
