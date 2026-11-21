@@ -1,5 +1,5 @@
 ---
-status: Report, 21 Nov 2026. Step 10b of the Time lab bench, built on `e61f5abe` (step 10 with the shallow seas, committed and pushed). Checked in the pane at 1,024 × 768 and 768 × 1,024, by pointer and by finger events, and once in Safari on the iPad simulator by real taps. Reported first, as the prompt asks. Committed on Michael's word, "Now you can commit this", 21 Nov; not pushed.
+status: Report, 21 Nov 2026. Step 10b of the Time lab bench, built on `e61f5abe` (step 10 with the shallow seas, committed and pushed). Checked in the pane at 1,024 × 768 and 768 × 1,024, by pointer and by finger events, and once in Safari on the iPad simulator by real taps. Reported first, as the prompt asks. Committed on Michael's word, "Now you can commit this", 21 Nov (`94929fd3`); pushed on his word, "Push it", 21 Nov; the live page shows the step 10b version line.
 role: What step 10b did to `experiments/time-lab.html`, what the check found, and what needs Michael's eye.
 related: Prompt-Revise-Time-Lab-Bench-10b-01.md (Michael's prompt, as it arrived), Report-Time-Lab-Bench-10.md and Report-Time-Lab-Seas-Nov20.md (the page as it stood), Worknote-Focus-View-02.md, Ruling-Dates-01.md, js/cw-panel.js
 ---
