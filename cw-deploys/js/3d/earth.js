@@ -182,6 +182,7 @@
        coldTiles: false,               // bench only: every tile past the browser's cache, for a cold timing
        onFlat: (on, at) => {}          // step 6: a tap on the flat world went back to the globe, centred on `at`
        seas: true | 'url/seas.json'    // 20 Nov: the shallow seas on the pieces (below); off unless asked for
+       seasStrength: 0 to 1            // 21 Nov: how strongly the seas' blue lies over the land; 1, as they came, unless a page asks
      });
    Returns { group, setTime(ma), time(), grade() → { grade, why }, moltenPhase(), setGround('old'|'blue'), ground(),
    seaLevel() (metres, ≤ 0), icePairs(), setCoasts(on), coasts(),
@@ -207,7 +208,10 @@
    at the guessed and invented ages. The pictures load as the age asks for them, SEAS_HOLD held at most; until a pair
    has come the pair before it stays. Where Scotese's plates and Merdith's cut the ground differently the sea tears
    (Tibet and its neighbours worst; the report lists them): left as it falls, Michael's ruling pending.
-   setSeas(on), seas() → { on, showing, ages, credit }. */
+   setSeas(on), seas() → { on, showing, ages, credit }.
+   21 Nov 2026 (the Time lab's step 11; Michael, after looking at 480 Ma: the pale blue was too strong, and a continent
+   mostly under water did not read as a continent): o.seasStrength and setSeasStrength(v), 0 to 1, multiply the sea's
+   opacity, so the land's own picture shows through the blue. 1 unless a page asks: every other page is as it was. */
 import * as THREE from 'three';
 import { Fn, vec2, vec3, vec4, float, int, uniform, texture, uv, attribute, varying, positionView, positionWorld, modelViewMatrix,
          normalize, dot, cross, length, mix, smoothstep, clamp, abs, min, max, select, If, Discard, sRGBTransferEOTF, atan, asin, sqrt, fract, dFdx, dFdy,
@@ -1908,6 +1912,7 @@ export async function cwEarth(view, o = {}) {
     const blank = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1); blank.needsUpdate = true;
     const texA = texture(blank), texB = texture(blank);
     const uChA = uniform(new THREE.Vector3(1, 0, 0)), uChB = uniform(new THREE.Vector3(1, 0, 0)), uMix = uniform(0), uOn = uniform(0);
+    const uStr = uniform(o.seasStrength != null ? Math.max(0, Math.min(1, +o.seasStrength)) : 1);   // 21 Nov: how strongly the blue lies over the land
     const SHORE3 = rgb(S.seaShore || '#93bed7');
     const make = shift => {   // shift: undefined on the ball; 0 and 1, the flat world's two copies
       const isFlat = shift != null, m = flatMat();
@@ -1922,7 +1927,7 @@ export async function cwEarth(view, o = {}) {
         const gy = vec2(select(abs(dFdy(uvn.x)).lessThan(0.5), dFdy(uvn.x), dFdy(u2)), dFdy(uvn.y));
         const a = dot(texA.sample(uvn).grad(gx, gy).rgb, uChA), b = dot(texB.sample(uvn).grad(gx, gy).rgb, uChB);
         const wet = smoothstep(0.4, 0.6, mix(a, b, uMix));
-        return vec4(finish(SHORE3, fl), wet.mul(uOn).mul(lifeNode()));
+        return vec4(finish(SHORE3, fl), wet.mul(uOn).mul(uStr).mul(lifeNode()));
       })();
       m.colorNode = out.rgb; m.opacityNode = out.a;
       return m;
@@ -1968,7 +1973,7 @@ export async function cwEarth(view, o = {}) {
       show();
     }
     const twinsOf = () => { for (const k of kids) for (let i = 0; i < 2; i++) { const m = k.t[i]; m.quaternion.copy(k.sea.quaternion); m.renderOrder = k.sea.renderOrder; m.visible = k.sea.visible && (i === 0 || nearEdge(k.land)); } };
-    return { time, show, twinsOf, uOn, list, dispose: () => { [mat, ...flatSeaMats, blank].forEach(x => x.dispose()); for (const h of held.values()) if (h.tex) h.tex.dispose(); } };
+    return { time, show, twinsOf, uOn, uStr, list, dispose: () => { [mat, ...flatSeaMats, blank].forEach(x => x.dispose()); for (const h of held.values()) if (h.tex) h.tex.dispose(); } };
   })() : null;
 
   function rebuildMaterials() {
@@ -2509,7 +2514,8 @@ export async function cwEarth(view, o = {}) {
     looks: { maskOld: lookOld.maskCanvas, maskBlue: lookBlue.maskCanvas },   // for the bench's checks
     // the shallow seas (20 Nov): on or off, and what is showing
     setSeas: on => { if (!seaLayer) return; seasOn = !!on; setTime(ma); },
-    seas: () => seaLayer ? { on: seasOn, showing: seasOn && seaLayer.uOn.value > 0 ? seaLayer.uOn.value : 0, between: seasWant ? [seasWant.a[0], seasWant.b[0]] : null, ages: seaLayer.list.map(a => a[0]), credit: seasFile.credit || '' } : null,
+    setSeasStrength: v => { if (!seaLayer) return; seaLayer.uStr.value = Math.max(0, Math.min(1, +v)); view.redraw(); },   // 21 Nov: 1 is the seas as they came
+    seas: () => seaLayer ? { on: seasOn, strength: seaLayer.uStr.value, showing: seasOn && seaLayer.uOn.value > 0 ? seaLayer.uOn.value : 0, between: seasWant ? [seasWant.a[0], seasWant.b[0]] : null, ages: seaLayer.list.map(a => a[0]), credit: seasFile.credit || '' } : null,
     dispose: () => {
       if (seaLayer) seaLayer.dispose();
       for (const m of meshes.values()) m.geometry.dispose(); for (const m of rims.values()) m.geometry.dispose();
