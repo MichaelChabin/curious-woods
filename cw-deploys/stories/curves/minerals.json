@@ -2,12 +2,15 @@
  "_about": "How many kinds of mineral there were on Earth, by stage: Hazen's mineral evolution. Minerals set what can be made; the count jumps when the air gets oxygen. Each point [year, value, low, high]; year is the store's astronomer's year. Made by tools/curves-deep-time.py.",
  "source": {
   "citation": "Hazen, R.M. et al. (2008), Mineral evolution, American Mineralogist 93, 1693–1720, the ten stages and their counts; Hazen, R.M. (2012), The Story of Earth",
-  "note": "the counts are Hazen's of 2008 (about 4,400 kinds then known); the catalogue has grown to about 6,000 since by finding, not by Earth changing, so the curve keeps the 2008 scale throughout"
+  "note": "the counts are Hazen's of 2008: 4,300 kinds known in 2008 (4,259 approved, 1 March 2008); the catalogue has grown to more than 6,000 since by finding, not by Earth changing, so the curve keeps the 2008 scale throughout. The 12 at the start is from Hazen, R.M. & Ferry, J.M. (2010), Mineral evolution: mineralogy in the fourth dimension, Elements 6, 9–12; the 4,400 million year point from Hazen, R.M. (2013), American Journal of Science 313, 807–843 (\"no more than about 420\", an upper bound; its high edge rests on Hazen & Morrison 2022 alone); the 2,300 million year point is an interpolation, not Hazen's"
  },
  "howSure": "The stages are well argued; the counts within them are estimates, and the band says so. The jump at 2.4 billion years is the one firm thing.",
  "unit": "kinds",
  "scale": "linear",
  "say": "about {v} kinds of mineral",
+ "today": 4300,
+ "fade": -4566997974,
+ "sayToday": "about 4,300 kinds known in 2008",
  "points": [
   [
    -4566997974,
@@ -29,12 +32,18 @@
   ],
   [
    -4399997974,
-   420,
+   400,
    350,
-   500
+   750
   ],
   [
    -3999997974,
+   500,
+   350,
+   750
+  ],
+  [
+   -3499997974,
    1000,
    800,
    1200
@@ -58,34 +67,28 @@
    3200
   ],
   [
-   -1999997974,
+   -1899997974,
    4000,
    3500,
    4300
   ],
   [
    -999997974,
-   4100,
+   4000,
    3800,
-   4400
+   4300
   ],
   [
    -539997974,
-   4300,
-   4000,
-   4500
-  ],
-  [
-   -399997974,
-   4400,
-   4200,
-   4600
+   4050,
+   3900,
+   4300
   ],
   [
    2026,
-   4400,
    4300,
-   4500
+   4250,
+   4400
   ]
  ],
  "from": -4566997974,

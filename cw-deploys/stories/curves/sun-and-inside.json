@@ -5,13 +5,15 @@
    "citation": "the sun: Gough, D.O. (1981), Solar interior structure and luminosity variations, Solar Physics 74, 21–34 — L(t) = L_now / (1 + 0.4 (1 − t/t_now)); 1361 W/m² today at the top of the air, a quarter per unit of surface, 0.7 absorbed"
   },
   {
-   "citation": "the inside: today 47 ± 2 TW over 5.1 × 10¹⁴ m² (Davies, J.H. & Davies, D.R. (2010), Earth's surface heat flux, Solid Earth 1, 5–24); the past from the thermal-history models in Korenaga, J. (2008), Urey ratio and the structure and evolution of Earth's mantle, Reviews of Geophysics 46; the Hadean from Zahnle, K. et al. (2007), Emergence of a habitable planet, Space Science Reviews 129, 35–78"
+   "citation": "the inside: today 47 ± 2 TW over 5.1 × 10¹⁴ m² (Davies, J.H. & Davies, D.R. (2010), Earth's surface heat flux, Solid Earth 1, 5–24); the past from the thermal-history models in Korenaga, J. (2008), Urey ratio and the structure and evolution of Earth's mantle, Reviews of Geophysics 46; the magma ocean just after the Moon-making impact (about 140 W/m² for about 2 million years) and the 0.5 W/m² at 4,400 million years from Zahnle, K. et al. (2007), Emergence of a habitable planet, Space Science Reviews 129, 35–78; the first point, at the impact, is an order of magnitude only; the low edge of the band back to 3,500 million years (heat lost at about today's rate) from Korenaga, J. (2011), Journal of Geophysical Research 116, B12403; nearly half of today's heat from uranium and thorium, Gando, A. and others (2011), Partial radiogenic heat model for Earth revealed by geoneutrino measurements, Nature Geoscience"
   }
  ],
- "howSure": "The sun's curve is as sure as physics gets, within a few percent. The inside is a sketch: today's number is measured; back to 3 billion years the models disagree by a factor of two, and the band says so; the Hadean values are the models' orders of magnitude only. Drawn on a log axis, because the two differ by a thousand.",
+ "howSure": "The sun's curve is as sure as physics gets, within a few percent. The inside is a sketch: today's number is measured; back to 3.5 billion years the models disagree by a factor of two to five, and the band says so; the Hadean values are the models' orders of magnitude only. Drawn on a log axis, because the two differ by a thousand.",
  "unit": "W/m²",
  "scale": "log",
  "say": "the sun at about {v} W/m²",
+ "today": 238.2,
+ "fade": -4566997974,
  "points": [
   [
    -4566997974,
@@ -89,77 +91,67 @@
  "second": {
   "name": "from inside",
   "say": "the inside at about {v} W/m²",
+  "today": 0.092,
+  "fade": -4509997974,
   "points": [
    [
-    -4566997974,
-    100000.0,
+    -4509997974,
     10000.0,
-    1000000.0
-   ],
-   [
-    -4539997974,
-    10000.0,
-    1000.0,
+    140,
     100000.0
    ],
    [
-    -4499997974,
-    30000.0,
-    1000.0,
-    100000.0
-   ],
-   [
-    -4479997974,
-    150,
+    -4507997974,
+    140,
     50,
     500
    ],
    [
     -4449997974,
-    20,
-    5,
-    100
-   ],
-   [
-    -4399997974,
     2,
     0.5,
     10
    ],
    [
-    -3999997974,
-    0.4,
-    0.25,
-    0.7
+    -4399997974,
+    0.5,
+    0.3,
+    1
    ],
    [
-    -3499997974,
+    -3999997974,
     0.3,
     0.2,
     0.5
    ],
    [
+    -3499997974,
+    0.3,
+    0.09,
+    0.5
+   ],
+   [
     -2999997974,
     0.25,
-    0.15,
+    0.09,
     0.4
    ],
    [
     -2499997974,
     0.2,
-    0.13,
+    0.09,
     0.3
    ],
    [
     -1999997974,
     0.16,
-    0.11,
+    0.09,
     0.22
    ],
    [
     -999997974,
     0.12,
-    0.1,
+    0.09,
     0.15
    ],
    [

@@ -62,7 +62,11 @@
    second?: { name, say, points } } — along the deepest bar's span, as a band (low to high, soft) with
    the value as a line, a second series if there is one, and the value at the marker written out
    from `say` ('{v}' the number, '{dir}' above/below for a signed metre). The band is the point: a
-   wide band says little is known, and the words at the marker say 'about'.
+   wide band says little is known, and the words at the marker say 'about'. Since 22 Nov 2026 a file (and
+   its second series) may carry `fade`, the store year before which the series is not drawn or read out (a
+   curve's first point is not its value for all the time before it); `today`, the value now, drawn as a faint
+   dashed line where it falls inside the plot; and `sayToday`, the words at the marker when it stands at today
+   (Minerals: the count of 2008, not a count of this year).
 
    The marks from the store (Stage 6, 7 Oct 2026): given `events`, the records of
    stories/deep-time-events.json (tools/deep-events-from-vault.py), a bar's marks are the events
@@ -502,17 +506,18 @@
       if (n === 0) txt = '0';
       else if (n >= 100) txt = withCommas(Math.round(n));
       else if (n >= 10) txt = (Math.round(n * 10) / 10).toString();
-      else if (n >= 0.01) txt = (Math.round(n * 100) / 100).toString();
+      else if (n >= 0.01 - 1e-12) txt = (Math.round(n * 100) / 100).toString();   // the margin: a value interpolated to 0.01 can arrive a hair under it and was said as "a 10^-2"
       else { var e = Math.floor(Math.log10(n)), lead = Math.round(n / Math.pow(10, e)); txt = (lead === 1 ? 'a ' : lead + ' ') + ({ '-3': 'thousandth', '-4': 'ten-thousandth', '-5': 'hundred-thousandth', '-6': 'millionth', '-7': 'ten-millionth', '-8': 'hundred-millionth' }[String(e)] || ('10^' + e)) + (lead === 1 ? '' : 's'); }
       return (tmpl || '{v} ' + (unit || '')).replace('{v}', txt).replace('{dir}', v < 0 ? 'below' : 'above');
     }
     function drawCurve(deep) {
       var c = curve, n = deep, y0 = deep.top + deep.h - BOX_GAP + 6, y1 = y0 + CURVE_H, xL = deep.xL, xR = deep.xR;
-      var series = [{ pts: c.points, fill: CURVE_FILL, line: CURVE_LINE, say: c.say, name: c.name || '' }];
-      if (c.second && c.second.points) series.push({ pts: c.second.points, fill: CURVE_FILL_2, line: CURVE_LINE_2, say: c.second.say, name: c.second.name || '' });
+      var series = [{ pts: c.points, fill: CURVE_FILL, line: CURVE_LINE, say: c.say, name: c.name || '', fade: c.fade, today: c.today, sayToday: c.sayToday }];
+      if (c.second && c.second.points) series.push({ pts: c.second.points, fill: CURVE_FILL_2, line: CURVE_LINE_2, say: c.second.say, name: c.second.name || '', fade: c.second.fade, today: c.second.today, sayToday: c.second.sayToday });
+      var at = function (S, year, k) { return S.fade != null && year < S.fade ? null : curveAt(S.pts, year, k); };   // nothing before the fade
       var log = c.scale === 'log', N = 160, lo = Infinity, hi = -Infinity, samples = [];
       for (var i = 0; i <= N; i++) { var m = n.from + (n.to - n.from) * i / N; samples.push({ ma: m, year: storeYear(m) }); }
-      series.forEach(function (S) { samples.forEach(function (sm) { var a = curveAt(S.pts, sm.year, 2), b = curveAt(S.pts, sm.year, 3); if (a != null) { lo = Math.min(lo, a); hi = Math.max(hi, b); } }); });
+      series.forEach(function (S) { samples.forEach(function (sm) { var a = at(S, sm.year, 2), b = at(S, sm.year, 3); if (a != null) { lo = Math.min(lo, a); hi = Math.max(hi, b); } }); });
       if (!(hi > lo)) { lo = lo - 1; hi = hi + 1; }
       var tf = log ? function (v) { return Math.log10(Math.max(v, 1e-12)); } : function (v) { return v; };
       var tlo = tf(lo), thi = tf(hi);
@@ -528,15 +533,17 @@
       series.forEach(function (S) {
         var up = '', down = '', mid = '';
         samples.forEach(function (sm, i) {
-          var x = deep.x(sm.ma).toFixed(1), h = curveAt(S.pts, sm.year, 3), l = curveAt(S.pts, sm.year, 2), v = curveAt(S.pts, sm.year, 1);
+          var x = deep.x(sm.ma).toFixed(1), h = at(S, sm.year, 3), l = at(S, sm.year, 2), v = at(S, sm.year, 1);
           if (v == null) return;
-          up += (i ? 'L' : 'M') + x + ',' + vy(h).toFixed(1) + ' ';
+          up += (up ? 'L' : 'M') + x + ',' + vy(h).toFixed(1) + ' ';
           down = 'L' + x + ',' + vy(l).toFixed(1) + ' ' + down;
           mid += (mid ? 'L' : 'M') + x + ',' + vy(v).toFixed(1) + ' ';
         });
         if (!up) return;
         el('path', { d: up + down + 'Z', fill: S.fill, opacity: 0.32 }, grp);
         el('path', { d: mid, fill: 'none', stroke: S.line, 'stroke-width': 1.5 }, grp);
+        // today's value, a faint dashed line across the plot, where it falls inside the box
+        if (S.today != null && tf(S.today) >= tlo && tf(S.today) <= thi) el('line', { x1: xL, y1: vy(S.today), x2: xR, y2: vy(S.today), stroke: S.line, 'stroke-width': 0.75, 'stroke-dasharray': '3 4', opacity: 0.45 }, grp);
       });
       // the axis words: the unit at the left, how sure at the right, both small
       if (deep.small || deep.depth === 0) el('text', { x: xL, y: y0 - 6, 'font-size': 11, fill: INK_SOFT, 'class': 'halo' }, grp, (c.name || '') + (c.unit ? ' \u00b7 ' + c.unit : '') + (log ? ' \u00b7 log scale' : ''));
@@ -548,10 +555,10 @@
       var mx = Math.max(xL, Math.min(xR, deep.x(ma))), yr = storeYear(ma), row = 0;
       el('line', { x1: mx, y1: y0, x2: mx, y2: y1, stroke: COPPER, 'stroke-width': 1.5, opacity: 0.9 }, grp);
       series.forEach(function (S) {
-        var v = curveAt(S.pts, yr, 1); if (v == null) return;
+        var v = at(S, yr, 1); if (v == null) return;
         el('circle', { cx: mx, cy: vy(v), r: 3.5, fill: S.line, stroke: PARCH, 'stroke-width': 1.5 }, grp);
         var tx = Math.max(xL + 90, Math.min(xR - 90, mx));
-        var said = typeof S.say === 'function' ? S.say(v) : 'about ' + sayValue(S.say, v, c.unit).replace(/^about /, '');   // a page's own function owns its words
+        var said = (S.sayToday && yr >= THIS_YEAR) ? S.sayToday : typeof S.say === 'function' ? S.say(v) : 'about ' + sayValue(S.say, v, c.unit).replace(/^about /, '');   // a page's own function owns its words; at today a file may have its own
         el('text', { x: tx, y: y1 + 16 + row * 14, 'font-size': 12, 'font-style': 'italic', fill: S.line, 'text-anchor': 'middle', 'class': 'halo' }, grp, said);
         row++;
       });

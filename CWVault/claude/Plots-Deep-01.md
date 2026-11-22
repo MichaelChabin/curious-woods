@@ -1,5 +1,5 @@
 ---
-status: built. Deep time, plots, batch 1, 9 Oct 2026. Seven plots, in Michael's order: Oxygen, Sea level, Day length, Minerals, Sun and inside, Continents, People. Researched 9 Oct by three agents with web search (oxygen, day length, sun and inside; sea level; minerals, continents, people), each opening the sources the curve files name and checking their key values. Written in one pass by Claude from their fact sheets. Checked the same day by four independent agents with web search (three took a share of the plots; one read only the numbers: units, log ratios, store years against ages, the Data sections against the prose, the plots against the events); their changes are applied, and each plot ends with what was changed, confirmed and not confirmed. Not reviewed by Michael yet. Michael's rulings of 9 Oct are folded in (see below). (11 Oct, Michael, from Periods-Deep-03.md: sea-level falls are given as ranges, the same in every file.) *Sea level*: the glacial low is "120 to 130 metres", as *Last glacial maximum* has it.
+status: changes applied. Deep time, plots, batch 1, 9 Oct 2026. Seven plots, in Michael's order: Oxygen, Sea level, Day length, Minerals, Sun and inside, Continents, People. Researched 9 Oct by three agents with web search (oxygen, day length, sun and inside; sea level; minerals, continents, people), each opening the sources the curve files name and checking their key values. Written in one pass by Claude from their fact sheets. Checked the same day by four independent agents with web search (three took a share of the plots; one read only the numbers: units, log ratios, store years against ages, the Data sections against the prose, the plots against the events); their changes are applied, and each plot ends with what was changed, confirmed and not confirmed. Michael's rulings of 9 Oct are folded in (see below). (11 Oct, Michael, from Periods-Deep-03.md: sea-level falls are given as ranges, the same in every file.) *Sea level*: the glacial low is "120 to 130 metres", as *Last glacial maximum* has it. Read by Claude, editor pass 10, 22 Nov 2026 (Editor-Pass-10.md); changes applied. The words are in no store; they wait for Michael's Plot Buttons prompt.
 role: The words for the seven Deep Time plots in the event form (Prompt-Deep-Time-Plots.md), each with a Data section for Claude Code saying what to change in tools/curves-deep-time.py and what new data to add. Claude Code's brief is Prompt-Build-Plots-Deep-01.md.
 ---
 
@@ -26,14 +26,14 @@ What the research found wrong in the files, in short. The ice-ages sea-level fil
 **Shines on:** the whole Earth; best on *Oxygen arrives* and *Animals*
 **Unit and scale:** times today's amount (1 = today's, about 21 parts in 100 of the air); log scale
 **Today:** 1 (oxygen is about 20.9 percent of dry air by volume)
-**Known from:** sulphur and metals in old seafloor rock before about 420 million years ago; charcoal in coal, and models of how rocks weather, since
-**Links:** the jump at about 2.43 billion years → *Oxygen in the air*; the ice at about 2.45 billion → *Great freeze*; red sand at about 2.31 billion → *Red rocks*; the high near 305 million → *Coal*; the step down at 252 million → *The Great Dying*
+**Known from:** sulphur and metals in old seafloor rock before about 430 million years ago; charcoal in coal, and models of how rocks weather, since
+**Links:** the jump at about 2.43 billion years → *Oxygen alone*; the ice at about 2.45 billion → *Great freeze*; red sand at about 2.31 billion → *Red rocks*; the high near 305 million → *Coal*; the step down at 252 million → *The Great Dying*
 **Replaces:** the spec's row *oxygen* (Spec-Deep-Time-Interface.md, *Plots*)
 
 **Summary (35 words)**
 Oxygen in the air, from four billion years ago to now. For almost half of the Earth's life there was hardly any. It came in steps, and the shaded band shows how little is known. *More*
 
-**More (347 words)**
+**More (350 words)**
 
 ```
 From about 4 billion years ago to now.
@@ -43,11 +43,11 @@ In a seam of coal, among the black layers made from squashed plants, there are b
 
 In 2010 Ian Glasspool and Andrew Scott gathered measurements of how much of the coal from each age was charcoal. Coal from about 300 million years ago has a lot of it. They worked out that the air then held more oxygen than it does now: at least a quarter as much again, and perhaps more.
 
-The oldest charcoal is about 420 million years old. For older times, geologists read the rock of old seafloors. Sulphur in it shows when the air had almost no oxygen at all. Iron and other metals behave differently with oxygen and without it, and they show roughly how much there was.
+The oldest charcoal yet found is about 430 million years old. For older times, geologists read the rock of old seafloors. Sulphur in it shows when the air had almost no oxygen at all. Iron and other metals behave differently with oxygen and without it, and they show roughly how much there was.
 
-The plot is drawn so that each step up the side means ten times as much oxygen as the step below. Before about 2.43 billion years ago the line sits five or more steps below today: a hundred-thousandth of today's oxygen or less. Then it rises. For about two hundred million years the oxygen came and went, more than once, before it stayed. The shaded band around the line widens there to hold the dips.
+The plot is drawn so that each step up the side means ten times as much oxygen as the step below. Before about 2.43 billion years ago the line sits five or more steps below today: a hundred-thousandth of today's oxygen or less. Then it rises. For about two hundred million years the oxygen came and went before it stayed. The shaded band around the line widens there to hold the dips.
 
-For more than a billion years after that there was some oxygen, but not much. How much is argued. Some geochemists say less than a thousandth of today's, others a few hundredths. The band holds both, and it is wide because nobody yet knows which is right.
+For more than a billion years after that there was some oxygen, but not much. How much is argued. Some geochemists say less than a thousandth of today's, others a few hundredths. The line is drawn between them and the band holds both, wide because nobody yet knows which is right.
 
 Between about 800 and 380 million years ago, oxygen climbed to near today's. Large animals appeared over the same stretch of time. A large body needs a lot of oxygen, and many geologists think the two are linked; which came first is argued.
 
@@ -56,6 +56,7 @@ Nearly all the oxygen in the air was made by living things: tiny ones in the sea
 **References**
 - Timothy Lyons, Christopher Reinhard and Noah Planavsky, "The rise of oxygen in Earth's early ocean and atmosphere," *Nature*, 2014. The whole curve, and how little is known.
 - Ian Glasspool and Andrew Scott, "Phanerozoic concentrations of atmospheric oxygen reconstructed from sedimentary charcoal," *Nature Geoscience*, 2010. Charcoal in coal.
+- Ian Glasspool and Robert Gastaldo, "Silurian wildfire proxies and atmospheric oxygen," *Geology*, 2022. The oldest charcoal.
 - Alexander Krause, Benjamin Mills, Shuang Zhang, Noah Planavsky, Timothy Lenton and Simon Poulton, "Stepwise oxygenation of the Paleozoic atmosphere," *Nature Communications*, 2018. The climb to near today's.
 - Nick Lane, *Oxygen: The Molecule that Made the World* (Oxford, 2002). For a parent.
 
@@ -66,7 +67,7 @@ Nearly all the oxygen in the air was made by living things: tiny ones in the sea
 - **The band:** readings off the envelope of Lyons 2014, figure 1, before 540 Ma; after GEOCARBSULF (Berner 2006, 2009) and the spread of later models (Krause 2018, Lenton 2018) since. A judgment drawn from published envelopes, not a published bound.
 - **Today:** 1.0.
 - **Fade:** older than 4,000 Ma (store −3999997974): not drawn.
-- **Links:** −2429997974 → *Oxygen in the air*; −2449997974 → *Great freeze*; −2309997974 → *Red rocks*; −304997974 → *Coal*; −251937974 → *The Great Dying*.
+- **Links:** −2429997974 → *Oxygen alone*; −2449997974 → *Great freeze*; −2309997974 → *Red rocks*; −304997974 → *Coal*; −251937974 → *The Great Dying*.
 - **Checked values:**
 
 | Age | File | Found | Source |
@@ -93,7 +94,7 @@ Nearly all the oxygen in the air was made by living things: tiny ones in the sea
 
 **Notes for us.** The beat: oxygen arrived late, in steps, and how much there was for most of the time is still unknown. The scene is charcoal, not sulphur, because *Oxygen in the air* already tells the sulphur in full; the plot names it in a sentence. The coming and going is drawn as a band (Michael's choice, 9 Oct), and the More says so in one sentence; *Oxygen in the air* tells it. "Five steps below today" is 1e-5 on a log scale: checked. The peak: charcoal gives above 26 percent, models 25 to 30, against about 21 now, so 1.24 to 1.45 times; the More says "at least a quarter as much again, and perhaps more", and the 300 Ma point comes down to 1.35 to match. The link to *Coal* uses its age as the event gives it, 305 Ma; to *The Great Dying*, 251.94 Ma. Links not drawn: the "whiffs" near 2.5 billion (no event; the evidence is argued, Slotznick 2022 against Anbar 2023); *Cyanobacteria* (2,500 Ma) is the oxygen-makers' own tail, not a feature of the line. Wants an event: none.
 
-**Checked (9 Oct 2026, four independent checkers).** Changed: Glasspool & Scott "gathered measurements" (they compiled published charcoal counts), coal of 300 million years "has a lot of" charcoal, and the peak is "at least a quarter as much again, and perhaps more" (above 26 percent, their paper; 25 to 30, Krause), with the 300 Ma point lowered to 1.35; the climb to near today's ends about 380 million years, in the Devonian (Krause 2018), not 400; the line crosses a hundred-thousandth at 2.43 billion, not before the *Great freeze* (a point added); "the shaded band" for a reader who has not met the band. Confirmed: under 15 percent fire cannot spread (Glasspool); the oldest charcoal about 420 million (Glasspool, Edwards & Axe 2004, *Geology*); Poulton 2021, fluctuating across 10⁻⁵ for about 200 million years; Planavsky 2014, at most 0.1 percent of today's; Zhang 2016, at least 4 percent; Krause 2018 and its six authors; Lyons 2014; Lane 2002; all store years. Not confirmed: "nearly all" the oxygen made by living things (the main source is photosynthesis; not opened as "nearly all"); 20.9 percent exactly (about 21 confirmed); Berner 2006's 15 percent at the boundary (not opened).
+**Checked (9 Oct 2026, four independent checkers).** Changed: Glasspool & Scott "gathered measurements" (they compiled published charcoal counts), coal of 300 million years "has a lot of" charcoal, and the peak is "at least a quarter as much again, and perhaps more" (above 26 percent, their paper; 25 to 30, Krause), with the 300 Ma point lowered to 1.35; the climb to near today's ends about 380 million years, in the Devonian (Krause 2018), not 400; the line crosses a hundred-thousandth at 2.43 billion, not before the *Great freeze* (a point added); "the shaded band" for a reader who has not met the band. Confirmed: under 15 percent fire cannot spread (Glasspool); the oldest charcoal about 420 million (Glasspool, Edwards & Axe 2004, *Geology*); Poulton 2021, fluctuating across 10⁻⁵ for about 200 million years; Planavsky 2014, at most 0.1 percent of today's; Zhang 2016, at least 4 percent; Krause 2018 and its six authors; Lyons 2014; Lane 2002; all store years. Not confirmed: "nearly all" the oxygen made by living things (the main source is photosynthesis; not opened as "nearly all"); 20.9 percent exactly (about 21 confirmed); Berner 2006's 15 percent at the boundary (not opened). Editor pass 10: Glasspool and Gastaldo 2022 put the oldest charcoal at about 430 million years, from Wales and Poland (two accounts opened: 'the previous record by about 10 million years'); the period *Green land* already cites the paper. The More now says the line is drawn between the published answers. 'Nearly all' the oxygen from living things is right, to the editor's knowledge. Editor pass 10, 22 Nov 2026 (Editor-Pass-10.md): changes applied.
 
 ---
 
@@ -118,9 +119,9 @@ Sea level, from about 540 million years ago to now. It has stood much higher tha
 From about 540 million years ago to now.
 ```
 
-Under the farms and beach towns of the New Jersey coast lie layers of sand and mud hundreds of metres thick. Since 1993 Kenneth Miller of Rutgers University and his colleagues have drilled down through them. Some layers are beach sand, and some are mud from deeper water. Where mud lies on beach sand, the sea came in; where beach sand lies on mud, it went out. Once dated, the layers tell how the sea rose and fell over the last hundred million years.
+Under the farms and beach towns of the New Jersey coast lie layers of sand and mud hundreds of metres thick. From 1993 Kenneth Miller of Rutgers University and his colleagues drilled down through them. Some layers are beach sand, and some are mud from deeper water. Where mud lies on beach sand, the sea came in; where beach sand lies on mud, it went out. Once dated, the layers tell how the sea rose and fell over the last hundred million years.
 
-The answer is hard to read, because the land can sink or rise as well. Others, working from how much water the ocean basins could hold, get a much higher sea. Between about 90 and 80 million years ago, the guesses run from about 50 metres above today's sea to more than 200.
+The answer is hard to read, because the land can sink or rise too. Others, working from how much water the ocean basins could hold, get a much higher sea. Between about 90 and 80 million years ago, the guesses run from about 50 metres above today's sea to more than 200.
 
 Why so high? There was little or no ice at the poles, so nearly all the water was in the sea. And the ocean floors were younger and warmer. Warm rock stands higher than cold, so the basins were shallower, and the sea spilled over the edges of the continents.
 
@@ -128,7 +129,7 @@ About 34 million years ago ice began to stay on Antarctica, and the sea fell. Ic
 
 The shaded band shows how unsure the answer is. It is narrow over the last 20,000 years and wider before. Before 3 million years ago the line is a guess made for Curious Woods, drawn through the middle of the published curves, and the band holds them all. Before about 540 million years ago nobody has a curve worth drawing, and the line fades.
 
-Today the sea is rising again, by about four millimetres a year.
+In the 2020s the sea was rising again, about four millimetres a year.
 
 **References**
 - Kenneth Miller and others, "The Phanerozoic record of global sea-level change," *Science*, 2005. New Jersey, and how high the sea stood.
@@ -220,7 +221,9 @@ The last point matches the ice-ages file at 3 Ma, so the two join.
 
 **Notes for us.** The beat: the sea has stood far higher and far lower, and for most of the bar the height is a guess. The scene is New Jersey, not Barbados, because *Last glacial maximum* tells the Barbados coral. The mechanism for the high Cretaceous sea (young, warm ocean floor stands high) is given in two sentences; it is Müller 2008's argument and the usual textbook one. "In the biggest swings it fell by more than a hundred metres": Spratt & Lisiecki's lows in the last 800,000 years run from about −103 to −130; some cycles were weaker, so the More no longer says "each time". The glacial low is said as "about 130 metres" (Lambeck about 134; Fairbanks's older 121); *Last glacial maximum* says 120 to 130, which still agrees. "Within a few metres by about 7,000 years ago" is Lambeck (about 4 m of rise since 6,700 years). The rate today: NOAA gives 3.6 mm a year for 2006–2015; NASA gives about 4.5 for recent years and 5.9 for 2024; "about four" is fair to the last decade. Michael's "guesses are fine if we say so" covers the deep stretch; the alternative of fading the line by steps (solid to 66 Ma, faint to 540) is left for the build to try, if the band alone does not show the doubt. *Antarctica freezes* says "about seventy metres"; the plot's fall is about 60 (from +60 at 35 Ma to 0 at 33.5); the event should say "about 55 to 70 metres" (Miller 2005, about 55; Hutchinson 2021, "of the order of 70"). Wants events: the last warm spell, about 125,000 years ago (a sea 6 to 9 metres higher, and hippos in the Thames); the high Cretaceous sea and the chalk.
 
-**Checked (9 Oct 2026, four independent checkers).** Changed: Rachel Spratt, not Rebecca; "the New Jersey coast" (the drill sites run from Sandy Hook to Cape May); the high Cretaceous sea "between about 90 and 80 million years ago" (Müller's 170 m is at about 80) and "little or no ice … nearly all the water" (Miller 2005 describes short-lived Antarctic ice); "more than a hundred metres each time" softened to the biggest swings; the glacial low "about 130 metres" (Lambeck about 134); meltwater pulse 1A "in less than 350 years" (Deschamps 2012); the 90 Ma band's low edge to 50, to match the prose; the disagreement "up to about 200 metres", to match the bands drawn. Confirmed: onshore drilling since 1993 at Island Beach and Atlantic City; cores up to 596 m (Bass River); Miller 2005, 100 ± 50 m and its title; Müller 2008, 170 (85 to 270); young, shallow seafloor as the cause; 55 to 70 m at 34 million (Miller 2005; Hutchinson 2021); Lambeck, about 4 m of rise since 6,700 years; the Spratt & Lisiecki stack pinned at 0 m at 5,000 years and −130 at 24,000 (quoted from the paper); Dutton 2015, +6 to +9 and +6 to +13; Dumitru 2019 (16.2 m) and Grant 2019 (about 20, under 25); today's rate about 4 mm a year (NASA); all references and store years; the deep table joins the ice-ages file at 3 Ma. Not confirmed: van der Meer's "about 211 m at 91 Ma" (the Utrecht release says "up to 220" in the Cretaceous); that the ice-ages file's band is the stack's 95 percent bounds (the paper gives 95 percent intervals for highs and lows and 9 to 12 m at 1σ throughout); Lambeck's figure and table (abstract and quotations only).
+**Checked (9 Oct 2026, four independent checkers).** Changed: Rachel Spratt, not Rebecca; "the New Jersey coast" (the drill sites run from Sandy Hook to Cape May); the high Cretaceous sea "between about 90 and 80 million years ago" (Müller's 170 m is at about 80) and "little or no ice … nearly all the water" (Miller 2005 describes short-lived Antarctic ice); "more than a hundred metres each time" softened to the biggest swings; the glacial low "about 130 metres" (Lambeck about 134); meltwater pulse 1A "in less than 350 years" (Deschamps 2012); the 90 Ma band's low edge to 50, to match the prose; the disagreement "up to about 200 metres", to match the bands drawn. Confirmed: onshore drilling since 1993 at Island Beach and Atlantic City; cores up to 596 m (Bass River); Miller 2005, 100 ± 50 m and its title; Müller 2008, 170 (85 to 270); young, shallow seafloor as the cause; 55 to 70 m at 34 million (Miller 2005; Hutchinson 2021); Lambeck, about 4 m of rise since 6,700 years; the Spratt & Lisiecki stack pinned at 0 m at 5,000 years and −130 at 24,000 (quoted from the paper); Dutton 2015, +6 to +9 and +6 to +13; Dumitru 2019 (16.2 m) and Grant 2019 (about 20, under 25); today's rate about 4 mm a year (NASA); all references and store years; the deep table joins the ice-ages file at 3 Ma. Not confirmed: van der Meer's "about 211 m at 91 Ma" (the Utrecht release says "up to 220" in the Cretaceous); that the ice-ages file's band is the stack's 95 percent bounds (the paper gives 95 percent intervals for highs and lows and 9 to 12 m at 1σ throughout); Lambeck's figure and table (abstract and quotations only). Editor pass 10: the More was 351 words after the change of 11 Oct and is 350 again. The notes above still say the glacial low is given as 'about 130 metres'; it is '120 to 130', by Michael's ruling. NASA, 29 Jan 2026: the sea rose 0.08 cm in 2025 and 0.59 in 2024, against a long-term expected rate of 0.44 cm a year; its Earthdata page gives 4.5 mm a year by 2024. So 'about four millimetres' in the 2020s. Editor pass 10, 22 Nov 2026 (Editor-Pass-10.md): changes applied.
+
+*Watch:* the rate at which the sea is rising (NASA: about 4.4 mm a year expected, 4.5 by 2024) · last checked 22 Nov 2026 · every year
 
 ---
 
@@ -233,19 +236,19 @@ The last point matches the ice-ages file at 3 Ma, so the two join.
 **Unit and scale:** hours; linear
 **Today:** 24 hours (about 86,400 seconds; the day lengthens by about 1.8 thousandths of a second a century, Stephenson 2016)
 **Known from:** daily growth lines in fossil corals and shells; the rhythm of tides and climate kept in layered rock; before about 2.5 billion years, models of the Moon's pull
-**Links:** about five and a half hours at about 4.51 billion years → *Big thwack*; about 17 hours at 2.46 billion → *Short days*
+**Links:** about five hours at about 4.51 billion years → *Moon forms*; about 17 hours at 2.46 billion → *Short days*
 **Replaces:** the spec's row *day length*
 
 **Summary (38 words)**
 The length of a day, from about 4.5 billion years ago to now. The young Earth spun fast, and the Moon's tides have been slowing it ever since. Early on, a day may have lasted about five hours. *More*
 
-**More (341 words)**
+**More (345 words)**
 
 ```
 From about 4.5 billion years ago to now.
 ```
 
-In 1963 John Wells, a palaeontologist at Cornell University, looked closely at fossil corals about 390 million years old from New York State and Ontario. A coral adds a fine ridge to its skin every day, and the ridges bunch into bands, one band a year, as tree rings do. A living coral he studied has about 360 ridges in a year's band. Wells counted about 400. A year has stayed about as long as it was, so the days must have been shorter: about 22 hours each.
+In 1963 John Wells, a palaeontologist at Cornell University, looked closely at fossil corals about 390 million years old from New York State and Ontario. A coral adds a fine ridge to the outside of its stony skeleton every day, and the ridges bunch into bands, one band a year, as tree rings do. A living coral he studied has about 360 ridges in a year's band. Wells counted about 400. A year has stayed about as long as it was, so the days must have been shorter: about 22 hours each.
 
 The reason is the Moon. The Moon pulls on the sea and raises tides, and the tides drag on the turning Earth like a hand on a wheel, slowing it. As the Earth slows, the Moon drifts outward, about four centimetres a year now.
 
@@ -262,6 +265,7 @@ The day is still growing longer, by a little under two thousandths of a second e
 - George Williams, "Geological constraints on the Precambrian history of Earth's rotation and the Moon's orbit," *Reviews of Geophysics*, 2000. Tidal layers in South Australia.
 - Margriet Lantink, Joshua Davies, Maria Ovtcharova and Frederik Hilgen, "Milankovitch cycles in banded iron formations constrain the Earth–Moon system 2.46 billion years ago," *PNAS*, 2022. The 17-hour day.
 - Ross Mitchell and Uwe Kirscher, "Mid-Proterozoic day length stalled by tidal resonance," *Nature Geoscience*, 2023. The 19-hour plateau.
+- Jacques Laskar, Mohammad Farhat, Margriet Lantink and others, "Did atmospheric thermal tides cause a daylength locking in the Precambrian? A review on recent results," *Sedimentologika*, 2024. The doubt.
 - Robert Hazen, *The Story of Earth: The First 4.5 Billion Years, from Stardust to Living Planet* (Viking, 2012). For a parent.
 
 **Data**
@@ -271,7 +275,7 @@ The day is still growing longer, by a little under two thousandths of a second e
 - **The band:** at the dated points (2,460, 1,400, 620, about 390, about 70 Ma), the published uncertainty; between them a judgment; before 2,500 Ma the spread of models, a judgment.
 - **Today:** 24.
 - **Fade:** older than 4,510 Ma (store −4509997974), the Moon-making impact; there was no Moon to slow the day before it, and the file's first point is from impact models.
-- **Links:** −4509997974 → *Big thwack*; −2458997974 → *Short days* (its age as the event gives it, 2,459 Ma).
+- **Links:** −4509997974 → *Moon forms*; −2458997974 → *Short days* (its age as the event gives it, 2,459 Ma).
 - **Checked values:**
 
 | Age | File | Found | Source |
@@ -293,13 +297,15 @@ The day is still growing longer, by a little under two thousandths of a second e
   - 400 Ma point moves to 390 Ma (−389997974): 21.9, low 21.4, high 22.8 (Wells 1963, Middle Devonian, about 400 ridges a year, range 385–410).
   - 300 Ma (−299997974): 22.6, low 22.4, high 22.8 (Wells 1963, Pennsylvanian corals, 385 and 390 ridges).
   - 65 Ma point moves to 70 Ma (−69997974): 23.5, low 23.4, high 23.6 (de Winter 2020).
-  - 4,500 Ma point moves to 4,510 Ma (−4509997974), to meet *Big thwack*; value and band unchanged; source "models of the Moon-making impact".
+  - 4,500 Ma point moves to 4,510 Ma (−4509997974), to meet *Big thwack*; value 5, low 4, high 7 (the More, the summary and *Moon forms* all say about five hours; the file's 5.5 has no source of its own); source "models of the Moon-making impact".
   - 4,000, 3,500 and 3,000 Ma: source note says "model".
 - **New data:** none.
 
 **Notes for us.** The beat: the day keeps getting longer, and old rock and old shells kept count. Wells opens because a coral is something she can picture and the arithmetic is one step. "Living corals have about 360 ridges in a year's band" is Wells's own comparison (to check). "A year has stayed about as long as it was" is said plainly; the reason (the Earth's path round the Sun hardly changes) is left out for space. The plateau's mechanism (an atmospheric tide resonating with the day) is told only as "the Sun, by heating the air each day, gave the Earth a small push"; the resonance itself is left out. Note a tension the line will show: corals at 380 Ma and tidal rock at 620 Ma both give about 21.9 hours; the band covers it, and nobody has settled it. Wants events: the 1.4-billion-year day (Xiamaling, China); Wells's corals; the clam in Oman.
 
-**Checked (9 Oct 2026, four independent checkers).** Changed: Wells's corals "about 390 million years" (Middle Devonian; the paper gives no number), and the point moves to 390 Ma with the band widened to his range (385 to 410 ridges, 21.4 to 22.8 h); "a living coral he studied" (Wells measured one species, about 360); "the Earth's spin" pushed, not the Earth; before 2.5 billion, one rock in South Africa, about 3.2 billion years old, has been read twice (about 15.2 h in Farhat 2022's table; about 13 h, Eulenfeld & Heubeck 2023), so the More no longer says none has; "about five hours" just after the Moon formed (the review of impact models says about 5); today "about 86,400 seconds" (the extra changes year to year). Confirmed: Wells at Cornell, 1963, New York and Ontario, about 400 ridges, Pennsylvanian 385 and 390; the Moon receding 3.8 cm a year; Williams 2000, Flinders Ranges, 21.9 ± 0.4 h; de Winter 2020, *Torreites sanchezi*, Oman, 372 days; Lantink 2022, 16.9 ± 0.2 h, title and authors; Meyers & Malinverno, about 18.7 h at 1.4 billion; Mitchell & Kirscher 2023 and the mechanism as told; Farhat 2024's dissent; Bartlett & Stevenson's lock near 21 h (so the file's citation is wrong, as the Data says); Stephenson 2016, +1.8 ms a century; all store years and hour arithmetic. Not confirmed: "palaeontologist" for Wells (very likely); de Winter's 23.5 h from the paper itself (from a news report and the arithmetic: 23.57).
+**Checked (9 Oct 2026, four independent checkers).** Changed: Wells's corals "about 390 million years" (Middle Devonian; the paper gives no number), and the point moves to 390 Ma with the band widened to his range (385 to 410 ridges, 21.4 to 22.8 h); "a living coral he studied" (Wells measured one species, about 360); "the Earth's spin" pushed, not the Earth; before 2.5 billion, one rock in South Africa, about 3.2 billion years old, has been read twice (about 15.2 h in Farhat 2022's table; about 13 h, Eulenfeld & Heubeck 2023), so the More no longer says none has; "about five hours" just after the Moon formed (the review of impact models says about 5); today "about 86,400 seconds" (the extra changes year to year). Confirmed: Wells at Cornell, 1963, New York and Ontario, about 400 ridges, Pennsylvanian 385 and 390; the Moon receding 3.8 cm a year; Williams 2000, Flinders Ranges, 21.9 ± 0.4 h; de Winter 2020, *Torreites sanchezi*, Oman, 372 days; Lantink 2022, 16.9 ± 0.2 h, title and authors; Meyers & Malinverno, about 18.7 h at 1.4 billion; Mitchell & Kirscher 2023 and the mechanism as told; Farhat 2024's dissent; Bartlett & Stevenson's lock near 21 h (so the file's citation is wrong, as the Data says); Stephenson 2016, +1.8 ms a century; all store years and hour arithmetic. Not confirmed: "palaeontologist" for Wells (very likely); de Winter's 23.5 h from the paper itself (from a news report and the arithmetic: 23.57). Editor pass 10: the ridges are on the coral's outer skeleton, not its skin (the editor's knowledge of Wells 1963). The reply to Mitchell and Kirscher opened as arXiv 2309.11479: its abstract says the locking 'is not supported'. That it appeared in *Sedimentologika* in 2024 is from a search result's address and should be opened once. Wells a palaeontologist at Cornell: right, to the editor's knowledge. Editor pass 10, 22 Nov 2026 (Editor-Pass-10.md): changes applied.
+
+*Watch:* the argument over a day held near 19 hours (Mitchell and Kirscher 2023; Laskar and others against) · last checked 22 Nov 2026 · every two years
 
 ---
 
@@ -310,9 +316,9 @@ The day is still growing longer, by a little under two thousandths of a second e
 **Span:** 4,567 Ma to now
 **Shines on:** the whole Earth; best on *The young Earth* and *Oxygen arrives*
 **Unit and scale:** kinds of mineral, on Hazen's count of 2008; linear
-**Today:** about 4,300 on the 2008 count (4,259 approved on 1 March 2008); the official list now has 6,226 (International Mineralogical Association, July 2026)
+**Today:** about 4,300 on the 2008 count (4,259 approved on 1 March 2008); the official list had 6,252 in November 2026 (International Mineralogical Association)
 **Known from:** meteorites, the oldest grains of zircon, and which minerals turn up in rocks of each age
-**Links:** about a dozen at 4,567 Ma → *Oldest grains*; the jump after about 2.4 billion → *Oxygen in the air* (2,430 Ma) and *Red rocks* (2,310 Ma)
+**Links:** about a dozen at 4,567 Ma → *Oldest grains*; the jump after about 2.4 billion → *Oxygen alone* (2,430 Ma) and *Red rocks* (2,310 Ma)
 **Replaces:** the spec's row *number of minerals*
 
 **Summary (34 words)**
@@ -324,13 +330,13 @@ Kinds of mineral, from the dust the Earth was made from to the Earth now. There 
 From about 4.57 billion years ago to now.
 ```
 
-At a Christmas party, in about 2006, the biologist Harold Morowitz asked the mineralogist Robert Hazen a question: were there clay minerals on the Earth in its first half-billion years? Hazen said later, "No mineralogist in history had ever asked a question like that." Mineralogists had studied what minerals are made of and where they are found, but hardly ever when each one first appeared.
+At a Christmas party in 2006, the biologist Harold Morowitz asked the mineralogist Robert Hazen a question: were there clay minerals on the Earth in its first half-billion years? Hazen said later, "No mineralogist in history had ever asked a question like that." Mineralogists had studied what minerals are made of and where they are found, but hardly ever when each one first appeared.
 
 So Hazen and seven colleagues tried to answer it for every mineral they could, and in 2008 they published their answer. In the dust the Sun and planets formed from, there were about a dozen kinds of mineral. In the first meteorites, about 60. As small worlds melted and changed, about 250. On the young Earth, with its lava and its water and its first granite, perhaps a thousand; once the plates of the crust were moving, about 1,500.
 
 Then the count leaps. Once there was oxygen in the air, rock at the surface could rust, and rusting makes new minerals. By Hazen's count, more than two thousand kinds formed that way, most of them metals joined with oxygen. Hazen thinks hardly any of them could have formed without the oxygen that living things made. After that, for more than a billion years, hardly any new kinds appeared.
 
-The line uses Hazen's count of 2008, when about 4,300 kinds were known. Mineralogists keep finding new ones, and the official list now has more than 6,000. The Earth did not make the new ones lately; people found them. So the line keeps the 2008 count all the way to today.
+The line uses Hazen's count of 2008, when about 4,300 kinds were known. Mineralogists keep finding new ones, and in 2026 the official list had more than 6,000. The Earth did not make the new ones lately; people found them. So the line keeps the 2008 count all the way to today.
 
 Each count is an estimate, and the band says so. In 2022 Hazen and Shaunna Morrison looked again, mineral by mineral, at how each one forms. They argued that much of the Earth's variety came earlier than the 2008 paper said, within about the first 250 million years. If they are right, the line's early rise is too slow.
 
@@ -338,6 +344,7 @@ Each count is an estimate, and the band says so. In 2022 Hazen and Shaunna Morri
 - Robert Hazen, Dominic Papineau, Wouter Bleeker and others, "Mineral evolution," *American Mineralogist*, 2008. The stages and their counts.
 - Robert Hazen and John Ferry, "Mineral evolution: mineralogy in the fourth dimension," *Elements*, 2010. The dozen, and the count of 2010.
 - Robert Hazen and Shaunna Morrison, "On the paragenetic modes of minerals: a mineral evolution perspective," *American Mineralogist*, 2022. The newer, earlier view.
+- Maya Wei-Haas, "Life and Rocks May Have Co-Evolved on Earth," *Smithsonian* magazine, 13 January 2016. The party, and Hazen's words.
 - Robert Hazen, *The Story of Earth: The First 4.5 Billion Years, from Stardust to Living Planet* (Viking, 2012). For a parent.
 
 **Data**
@@ -347,7 +354,7 @@ Each count is an estimate, and the band says so. In 2022 Hazen and Shaunna Morri
 - **The band:** a judgment around Hazen's stage counts (Hazen 2008, table 1); the stages are dated as ranges, and the counts are cumulative estimates.
 - **Today:** 4,300 on the 2008 count (the dashed line); the read-out at today should say "about 4,300 kinds known in 2008".
 - **Fade:** older than 4,567 Ma (store −4566997974).
-- **Links:** −4567297974 → *Oldest grains*; −2429997974 → *Oxygen in the air*; −2309997974 → *Red rocks*.
+- **Links:** −4567297974 → *Oldest grains*; −2429997974 → *Oxygen alone*; −2309997974 → *Red rocks*.
 - **Checked values:**
 
 | Age | File | Found | Source |
@@ -376,26 +383,28 @@ Each count is an estimate, and the band says so. In 2022 Hazen and Shaunna Morri
 
 **Notes for us.** The beat: the Earth's minerals came in waves, and the biggest wave came with oxygen. The scene is the party, which is where the idea came from, not where the evidence is; it is the one place to stand in a story about counting everything (Smithsonian, 13 Jan 2016, "ten years ago", so about 2006). "Seven colleagues": the 2008 paper has eight authors. "More than two thousand kinds formed that way, most of them metals joined with oxygen": Hazen 2008's table note, ">2,000 new oxide and hydroxide species". "For more than a billion years, hardly any new kinds": stages 8 and 9, 1,900 to 542 Ma, "minimal mineralogical innovation". Today's list: the event *Oldest grains* gives 6,226 (July 2026) and *Red rocks* 6,239 (September 2026); the More says "more than 6,000" and so agrees with both. *Red rocks*'s "4,300 kinds then known" agrees with this plot. Wants an event: none.
 
-**Checked (9 Oct 2026, four independent checkers).** Changed: Morowitz asked about clay minerals "in the Earth's first half-billion years" (the Hadean, in his words), not "before there was life"; "Hazen thinks hardly any of them could have formed without the oxygen" (his paper: "may not have occurred to any significant extent prior to biological oxygenesis"), not "none could"; the 4,400 Ma point lowered to 400, since Hazen 2013's 420 is an upper bound. Confirmed: the Christmas party "ten years ago" (Smithsonian, 13 Jan 2016) and the quotation word for word; Morowitz a theoretical biologist; eight authors in 2008; the stage counts, a dozen, 60, 250, 1,000 (granite), 1,500 (plate tectonics); more than 2,000 new oxides and hydroxides; "relative stasis" for the billion years from 1.9; 4,300 known (4,259 approved, 1 March 2008); 6,226 on the IMA list of July 2026; Hazen & Morrison 2022, title and "within the first 250 million years"; Hazen & Ferry 2010, 12 minerals and about 4,400; all store years. The file already has 1,500 at 3,000 and 2,500 Ma, which the More's "about 1,500" reads. Not confirmed: the end page of Hazen 2013.
+**Checked (9 Oct 2026, four independent checkers).** Changed: Morowitz asked about clay minerals "in the Earth's first half-billion years" (the Hadean, in his words), not "before there was life"; "Hazen thinks hardly any of them could have formed without the oxygen" (his paper: "may not have occurred to any significant extent prior to biological oxygenesis"), not "none could"; the 4,400 Ma point lowered to 400, since Hazen 2013's 420 is an upper bound. Confirmed: the Christmas party "ten years ago" (Smithsonian, 13 Jan 2016) and the quotation word for word; Morowitz a theoretical biologist; eight authors in 2008; the stage counts, a dozen, 60, 250, 1,000 (granite), 1,500 (plate tectonics); more than 2,000 new oxides and hydroxides; "relative stasis" for the billion years from 1.9; 4,300 known (4,259 approved, 1 March 2008); 6,226 on the IMA list of July 2026; Hazen & Morrison 2022, title and "within the first 250 million years"; Hazen & Ferry 2010, 12 minerals and about 4,400; all store years. The file already has 1,500 at 3,000 and 2,500 Ma, which the More's "about 1,500" reads. Not confirmed: the end page of Hazen 2013. Editor pass 10: the quotation is word for word in *Smithsonian* magazine, 13 Jan 2016, which also names Morowitz and the Hadean; the source is now in the references. Two other accounts give the party as 2006, one as 6 December. The IMA's list of November 2026 has 6,252 valid species. Editor pass 10, 22 Nov 2026 (Editor-Pass-10.md): changes applied.
+
+*Watch:* the IMA's count of minerals (6,252 in November 2026) · last checked 22 Nov 2026 · every year
 
 ---
 
 ## 5. Sun and inside
 
-**Label:** Sun and inside
+**Label:** Energy source
 **Kind:** plot
 **Span:** Sun, 4,567 Ma to now; inside, 4,510 Ma to now (after the change below)
 **Shines on:** the whole Earth; best on *The young Earth*
 **Unit and scale:** watts on each square metre of the Earth's surface; log scale
 **Today:** Sun, about 238 W/m² (1,361 at the top of the air, spread over the whole globe and over day and night, less the 30 percent reflected); inside, about 0.092 W/m² (47 terawatts over the Earth's surface; Davies & Davies 2010)
 **Known from:** the physics of stars like the Sun; for the inside, heat measured in boreholes and the seafloor, and particles from inside the Earth caught underground; for the past, models
-**Links:** the burst of heat at about 4.51 billion → *Big thwack*
+**Links:** the burst of heat at about 4.51 billion → *Moon forms*
 **Replaces:** the spec's row *heating of the crust (Sun versus internal heat)*
 
 **Summary (38 words)**
 Two lines: the heat the Earth's surface gets from the Sun, and the heat that comes up from inside. Since the Earth's first few hundred million years, the Sun has given hundreds to thousands of times as much. *More*
 
-**More (348 words)**
+**More (350 words)**
 
 ```
 From about 4.57 billion years ago to now.
@@ -407,7 +416,7 @@ Between 2002 and 2009 KamLAND counted 841 flashes of the right kind. Most came f
 
 That heat is small. Spread over the Earth, it comes to about a tenth of a watt on each square metre. The Sun gives each square metre about 240 watts, averaged over day and night. That is more than 2,000 times as much, which is why the plot is drawn so that each step up the side means ten times the step below.
 
-The young Sun was about 30 percent dimmer than it is now, and it has slowly brightened, as stars like it do. That line is one of the surest on the bar. It leaves a puzzle: with a Sun so dim, the young Earth should have frozen, yet it had oceans. Carl Sagan and George Mullen pointed this out in 1972, and nobody has settled why.
+The young Sun was about 30 percent dimmer than it is now, and it has slowly brightened, as stars like it do. That line is one of the surest on the bar. It leaves a puzzle: with a Sun so dim, the young Earth should have frozen, yet it had oceans. The astronomers Carl Sagan and George Mullen pointed this out in 1972, and nobody has settled why.
 
 The inside line is much less sure. Models say that just after the Moon-making impact the Earth's surface was molten, and for a short time more heat came up from below than came down from the Sun. By about 4.4 billion years ago the heat from below was about half a watt on each square metre. How fast it fell after that is argued. Many geophysicists think that about 3 billion years ago the Earth lost heat much faster than now. Jun Korenaga argues it lost heat at about today's rate. The band holds both.
 
@@ -427,7 +436,7 @@ The inside line is much less sure. Models say that just after the Moon-making im
 - **The band:** the Sun, ±3 percent, a judgment on Gough's formula and the fixed 30 percent reflected (the formula is less good in the first 200 million years; Feulner 2012); the inside, today's measured range (Davies & Davies 2010), and before that the spread of the models, a judgment.
 - **Today:** Sun 238.2; inside 0.092.
 - **Fade:** the Sun, older than 4,567 Ma; the inside, older than 4,510 Ma (store −4509997974) after the change below.
-- **Links:** −4509997974 → *Big thwack*.
+- **Links:** −4509997974 → *Moon forms*.
 - **Checked values:**
 
 | Age | File | Found | Source |
@@ -457,9 +466,11 @@ The inside line is much less sure. Models say that just after the Moon-making im
   - Source note: Zahnle 2007 for the magma ocean and 4,400; Korenaga 2011, *JGR* 116, B12403, for the low edge; Gando 2011 for the share from uranium and thorium.
 - **New data:** none.
 
-**Notes for us.** The beat: the Sun runs the surface; the inside's heat is small, and nobody knows how small it was. The label *Sun and inside* is three words; *Surface heat* was the other choice. KamLAND opens because it is a measurement of the inside that a child can picture; the More does not explain what an antineutrino is beyond "particles so slight they pass straight through". "In a mine in the mountains of central Japan": KamLAND is in the Kamioka mine, Hida, Gifu Prefecture (to check). "Two or three times faster": the classical scaling against Korenaga's nearly constant flux, at about 3 billion years. The crossing of the two lines (the inside above the Sun just after the impact) rests on the spike, which is an order of magnitude from Zahnle's 8,000 K surface, not a number in the paper; the More says "models say". The arithmetic in the More: 238 ÷ 0.092 = 2,587, said as "more than 2,000 times" so that her own rounding (240 ÷ 0.1 = 2,400) agrees; "about 240 watts" for 238.2. Wants events: the faint young Sun; the magma ocean (perhaps *Black Earth*, 4,450 Ma, if it tells the molten surface; to check).
+**Notes for us.** The beat: the Sun runs the surface; the inside's heat is small, and nobody knows how small it was. The label *Sun and inside* is three words; *Surface heat* was the other choice. KamLAND opens because it is a measurement of the inside that a child can picture; the More does not explain what an antineutrino is beyond "particles so slight they pass straight through". "In a mine in the mountains of central Japan": KamLAND is in the Kamioka mine, Hida, Gifu Prefecture (to check). "Two or three times faster": the classical scaling against Korenaga's nearly constant flux, at about 3 billion years. The crossing of the two lines (the inside above the Sun just after the impact) rests on the spike, which is an order of magnitude from Zahnle's 8,000 K surface, not a number in the paper; the More says "models say". The arithmetic in the More: 238 ÷ 0.092 = 2,587, said as "more than 2,000 times" so that her own rounding (240 ÷ 0.1 = 2,400) agrees; "about 240 watts" for 238.2. Wants events: the faint young Sun; the magma ocean (perhaps *Black Earth*, 4,450 Ma, if it tells the molten surface; to check). Editor pass 10: the label follows the page, where the graph has been *Energy source* since Michael's timeline changes of 13 Oct 2026 (the board). KamLAND in Gifu Prefecture is right, to the editor's knowledge.
 
-**Checked (9 Oct 2026, four independent checkers).** Changed: KamLAND's 841 flashes were candidates of the right kind, most from nuclear power stations, with about a hundred (111, or 106 by another fit) from uranium and thorium; the heat result came from KamLAND together with Borexino in Italy, and uranium and thorium give "nearly half" (20 of 44 TW; about half only with potassium); "more than 2,000 times" (238 ÷ 0.092 = 2,587; her rounding gives 2,400); "one of the surest on the bar"; "many geophysicists think that about 3 billion years ago the Earth lost heat much faster", not "most … two or three times" (no source for either); the summary's "hundreds to thousands of times". Confirmed: KamLAND under about 1,000 m of rock at Kamioka, about 1,000 tonnes of liquid, 1,879 light detectors, 2002 to 2009; 47 ± 2 TW (Davies & Davies 2010); 1,360.8 W/m² (Kopp & Lean 2011) and 238 absorbed; about 30 percent dimmer (Feulner); Sagan & Mullen 1972 and "not solved"; Zahnle 2007: interior heat of 140 to 190 W/m² against 120 to 170 of sunlight while the surface was molten, about 2 million years to freeze, about 0.5 W/m² by 4.4 billion; Korenaga 2011, heat flow roughly constant; all references and store years. Not confirmed: Gough 1981 in the sources opened (its formula is confirmed through Feulner 2012); Gifu Prefecture ("central Japan" kept).
+**Checked (9 Oct 2026, four independent checkers).** Changed: KamLAND's 841 flashes were candidates of the right kind, most from nuclear power stations, with about a hundred (111, or 106 by another fit) from uranium and thorium; the heat result came from KamLAND together with Borexino in Italy, and uranium and thorium give "nearly half" (20 of 44 TW; about half only with potassium); "more than 2,000 times" (238 ÷ 0.092 = 2,587; her rounding gives 2,400); "one of the surest on the bar"; "many geophysicists think that about 3 billion years ago the Earth lost heat much faster", not "most … two or three times" (no source for either); the summary's "hundreds to thousands of times". Confirmed: KamLAND under about 1,000 m of rock at Kamioka, about 1,000 tonnes of liquid, 1,879 light detectors, 2002 to 2009; 47 ± 2 TW (Davies & Davies 2010); 1,360.8 W/m² (Kopp & Lean 2011) and 238 absorbed; about 30 percent dimmer (Feulner); Sagan & Mullen 1972 and "not solved"; Zahnle 2007: interior heat of 140 to 190 W/m² against 120 to 170 of sunlight while the surface was molten, about 2 million years to freeze, about 0.5 W/m² by 4.4 billion; Korenaga 2011, heat flow roughly constant; all references and store years. Not confirmed: Gough 1981 in the sources opened (its formula is confirmed through Feulner 2012); Gifu Prefecture ("central Japan" kept). Editor pass 10, 22 Nov 2026 (Editor-Pass-10.md): changes applied.
+
+*Watch:* the faint young Sun puzzle still unsettled · last checked 22 Nov 2026 (from the batch's Checked line; not searched again) · every five years
 
 ---
 
@@ -472,13 +483,13 @@ The inside line is much less sure. Models say that just after the Moon-making im
 **Unit and scale:** fraction of the Earth's surface; two series, continental crust and land above the sea; linear
 **Today:** continental crust 0.40 of the surface (Cawood and others 2018 and Hawkesworth 2020: about 40 percent, with the shelves under the sea); land 0.29 (29.2 percent, CIA World Factbook)
 **Known from:** the ages of tiny zircon grains worn out of old continents; the chemistry of old shale and sea water
-**Links:** the oldest zircon, 4,404 Ma → *Blue Earth*; the oldest rock, 4,031 Ma → *Grey Earth*
+**Links:** the oldest zircon, 4,404 Ma → *Oceans form*; the oldest rock, 4,031 Ma → *Oldest rock*
 **Replaces:** none; not in the spec's list of current plots (Michael, 9 Oct: "it has data, and Michael wants it")
 
 **Summary (38 words)**
 How much of the Earth's surface was continent, from the young Earth to now: the crust that existed, and the part of it standing above the sea. For two billion years, most of it was probably under water. *More*
 
-**More (348 words)**
+**More (350 words)**
 
 ```
 From about 4.5 billion years ago to now.
@@ -486,9 +497,9 @@ From about 4.5 billion years ago to now.
 
 On Erawondoo Hill, in the Jack Hills of Western Australia, there is a layer of old sand turned to stone. Among its grains are tiny crystals of zircon, a mineral so tough that it survives being worn out of one rock and laid down in another. One of them formed 4.4 billion years ago. It is older than any rock on Earth.
 
-Zircon forms mostly in granite, the pale rock that continents are made of. So zircon grains are a record of continents, even after the continents themselves have been worn away. Geologists have dated many thousands of zircons from old sands and rivers around the world, and counting their ages is one way to work out how much continent there was at each time.
+Zircon forms mostly in granite, the pale rock that continents are made of. So zircon grains are a record of continents, even after the continents themselves have been worn away. Geologists have dated many thousands of zircons from old sands and rivers, and counting their ages is one way to work out how much continent there was at each time.
 
-It is not simple, because old continent gets worn down or pushed back into the Earth, and its zircons go with it. So the answers differ. Bruno Dhuime and his colleagues worked out in 2012 that about two-thirds of today's continental crust existed by 3 billion years ago. Others argue that most of it was there much earlier still, and has been worn away and rebuilt ever since. The band around the crust line is wide because of this.
+It is not simple, because old continent gets worn down or pushed back into the Earth, and its zircons go with it. So the answers differ. Bruno Dhuime and his colleagues worked out in 2012 that about two-thirds of today's continental crust existed by 3 billion years ago. Others argue that most of it was there much earlier still, and has been worn away and rebuilt ever since. The crust line runs between these answers, and its band is wide enough to hold them.
 
 Continent is not the same as land. Today about four-tenths of the Earth's surface is continental crust, but only about three-tenths is dry land. Most of the rest lies under shallow sea around the coasts.
 
@@ -512,7 +523,7 @@ How much land there was before that is still argued.
 - **The band:** the spread of the published growth curves (crust) and of the estimates of land above the sea, a judgment; today's values are measured.
 - **Today:** crust 0.40; land 0.29.
 - **Fade:** older than 4,567 Ma.
-- **Links:** −4403997974 → *Blue Earth*; −4030997974 → *Grey Earth*.
+- **Links:** −4403997974 → *Oceans form*; −4030997974 → *Oldest rock*.
 - **Checked values:**
 
 | Age | File | Found | Source |
@@ -535,7 +546,7 @@ How much land there was before that is still argued.
 
 **Notes for us.** The beat: continents existed long before land did, and how much of each is argued. "Continent", not "crust", in the summary and label; the More explains crust once by example ("the pale rock that continents are made of"). Granite is a fair stand-in for continental crust for her; geologists would say felsic crust. Fractions are said as tenths and hundredths throughout, never as percent, to match the unit. Bindeman's mechanism is given in one sentence and hedged ("in the way that rain falling on wide land would change them"); the paper reads a change in triple oxygen isotopes in shales as the start of a modern water cycle on wide land. Michael may want a plainer version or none. Wants events: land rising about 2.5 billion years ago (perhaps *Kenorland*, 2,700 Ma, if it tells land above the sea; to check).
 
-**Checked (9 Oct 2026, four independent checkers).** Changed: "most of the rest lies under shallow sea" (the gap between continent and land also holds slopes and sunken pieces of continent); "by some estimates", not "most", for a few hundredths of land before 2.5 billion; "read the rise", so the pronoun points at one thing; today's 40 percent sourced to Cawood and others 2018 (Hawkesworth 2020 not opened by the checker). Confirmed: Erawondoo Hill as the great store of the oldest crystals; Wilde 2001, 4,404 ± 8 Ma, title and authors; Dhuime 2012, about 65 percent by 3 billion, title and authors; Guo & Korenaga 2020, more than 80 percent by the early Archean; land 29.2 percent; Bindeman 2018, triple oxygen isotopes in shales, emergence about 2.5 billion, and the More's sentence fair; Flament 2008, 2 to 3 percent emerged by about 2.5 billion; about two-thirds of today's land by 2.4 billion (Chicago's release on Bindeman); Nield 2007; all fractions and store years. Not confirmed: "zircon forms mostly in granite" (a fair simplification; geologists say felsic rock); that the 4,404 grain came from Erawondoo Hill itself; Belousova's 60 to 70 percent; Korenaga, Planavsky & Evans 2017.
+**Checked (9 Oct 2026, four independent checkers).** Changed: "most of the rest lies under shallow sea" (the gap between continent and land also holds slopes and sunken pieces of continent); "by some estimates", not "most", for a few hundredths of land before 2.5 billion; "read the rise", so the pronoun points at one thing; today's 40 percent sourced to Cawood and others 2018 (Hawkesworth 2020 not opened by the checker). Confirmed: Erawondoo Hill as the great store of the oldest crystals; Wilde 2001, 4,404 ± 8 Ma, title and authors; Dhuime 2012, about 65 percent by 3 billion, title and authors; Guo & Korenaga 2020, more than 80 percent by the early Archean; land 29.2 percent; Bindeman 2018, triple oxygen isotopes in shales, emergence about 2.5 billion, and the More's sentence fair; Flament 2008, 2 to 3 percent emerged by about 2.5 billion; about two-thirds of today's land by 2.4 billion (Chicago's release on Bindeman); Nield 2007; all fractions and store years. Not confirmed: "zircon forms mostly in granite" (a fair simplification; geologists say felsic rock); that the 4,404 grain came from Erawondoo Hill itself; Belousova's 60 to 70 percent; Korenaga, Planavsky & Evans 2017. Editor pass 10: the 4,404-million-year grain is from Erawondoo Hill itself, to the editor's knowledge (Wilde and others' sample site). The More now says the line is drawn between the published answers. Editor pass 10, 22 Nov 2026 (Editor-Pass-10.md): changes applied.
 
 ---
 
@@ -554,7 +565,7 @@ How much land there was before that is still argued.
 **Summary (36 words)**
 How many people were alive, from the oldest bones of our kind, about 315,000 years ago, to now. For almost all that time there were fewer than ten million. Today there are more than eight billion. *More*
 
-**More (341 words)**
+**More (350 words)**
 
 ```
 From about 315,000 years ago to now.
@@ -562,17 +573,17 @@ From about 315,000 years ago to now.
 
 In 2011 Heng Li and Richard Durbin, at the Wellcome Trust Sanger Institute near Cambridge, in England, found a way to read how large a population had been from the genes of one person.
 
-Everyone has two copies of each chromosome, one from their mother and one from their father. Follow both copies back, parent to parent, and somewhere in the past they meet in one ancestor. In a small population they meet sooner; in a large one, later. The number of small differences between the two copies says how long ago they met. Li and Durbin read this along the whole length of a person's genes, and from it worked out how large the population had been at each time.
+Everyone has two copies of nearly all their genes, one from their mother and one from their father. Follow both copies back, parent to parent, and somewhere in the past they meet in one ancestor. In a small population they meet sooner; in a large one, later. The number of small differences between the two copies says how long ago they met. Li and Durbin read this along the whole length of a person's genes, and from it worked out how large the population had been at each time.
 
 The number they get is not the number of people. It is the number of parents it would take to pass on that much variety, and a real population is probably several times larger. For the ancestors of one man from West Africa, about 100,000 years ago, Li and Durbin's answer was about 16,000 parents, not 16,000 people.
 
-Archaeologists come at it another way, from the camps people left and how much land hunters need. In 2003 Jean-Noël Biraben, a demographer, guessed that there were perhaps 800,000 people at the start, and that the number passed a million between 30,000 and 40,000 years ago.
+Others come at it another way, from the camps people left and how much land hunters need. In 2003 Jean-Noël Biraben, a demographer, guessed that there were perhaps 800,000 people between 300,000 and 200,000 years ago, and that the number passed a million between 30,000 and 40,000 years ago.
 
-The two ways disagree. Before about 50,000 years ago the band runs from tens of thousands to around a million, and it is that wide because nobody knows better.
+The two ways disagree, and the line between them is a guess made for Curious Woods. Before about 50,000 years ago the band runs from tens of thousands to around a million, and it is that wide because nobody knows better.
 
-The plot is drawn so that each mark up the side stands for ten times as many people as the mark below it. That way 100,000 people and 8 billion both fit.
+The plot is drawn so that each mark up the side stands for ten times as many people as the mark below it.
 
-After the ice, people began to farm, and their numbers began to climb: about four and a half million 12,000 years ago, about 230 million 2,000 years ago, a billion in about 1805. Since about 1950 most countries have counted their people, and the numbers are much surer. Today there are about 8.3 billion people.
+After the ice, people began to farm, and their numbers began to climb: about four and a half million 12,000 years ago, about 230 million 2,000 years ago, a billion in about 1805. Since about 1950 most countries have counted their people, and the numbers are much surer. In 2026 there were about 8.3 billion people.
 
 **References**
 - Heng Li and Richard Durbin, "Inference of human population history from individual whole-genome sequences," *Nature*, 2011. Population from one person's genes.
@@ -620,4 +631,6 @@ The band on `people.json`'s first point (−10000) is 1 to 10 million, so the tw
 
 **Notes for us.** The beat: for almost all of our time there were very few of us, and the number is a guess until the censuses. The scene is the genome lab because the trap the prompt names (breeding ancestors against people) is the thing she needs to see, and the More shows it with Li and Durbin's own number. The coalescence argument is given in one paragraph and is fair to PSMC; the method also uses how the meeting times change along the genome, which is left out. "Several times larger" is Frankham's tenth for wild animals, softened, as people may differ. Biraben's "perhaps 800,000" is for our kind 300,000 to 200,000 years ago, in Africa and southern Asia, per his text; it is the high edge of the band, not the line. The 1805 billion is OWID's; the More says "about 1805". Li and Durbin's 16,100 is a peak, from the genome of one Yoruba man, and rests on the mutation rate they assumed (2.5 × 10⁻⁸ a generation); the slower rate now favoured would roughly double it. The More says "about 16,000 parents" and leaves the rate out. Log scale: the Time Machine bench may already draw people on a linear scale on *After the ice*; the build should keep that line as it is, if it suits, and use log on the deep lines. Michael to say. Wants events: the Toba eruption (74,000 years; a story of a claim and its testing); the first farming.
 
-**Checked (9 Oct 2026, four independent checkers).** Changed: Li and Durbin's 16,000 is for "the ancestors of one man from West Africa" (their Yoruba genome), not of people in Africa; "probably several times larger" (Frankham's tenth is for wild animals); "each mark up the side stands for ten times as many people"; the census sentence softened to "the numbers are much surer" (no source found for "a few percent"); a point added at 15,000 years so the new data meets `people.json` without a gap of 8,000 years. Confirmed: Li & Durbin 2011, title, the Sanger Institute, 16,100 at 100,000 to 150,000 years and 5,700 at 50,000; the method as told; Biraben 2003, perhaps 800,000 of our kind in Africa and southern Asia, and past a million 30,000 to 40,000 years ago; OWID's 4,501,152, 232,268,832, 1805 and 8,091,734,933; 8.30 billion for 2026 (WPP 2024 medium, read from a copy of the UN table); Hublin 2017; Klein Goldewijk 2017; Reich 2018; all six US Census Bureau ranges; all store years. Not confirmed: Deevey via Kremer, Tallavaara 2015 and Smith 2018 (opened in research, not by the checker); the UN's own page for 2026 (it would not load).
+**Checked (9 Oct 2026, four independent checkers).** Changed: Li and Durbin's 16,000 is for "the ancestors of one man from West Africa" (their Yoruba genome), not of people in Africa; "probably several times larger" (Frankham's tenth is for wild animals); "each mark up the side stands for ten times as many people"; the census sentence softened to "the numbers are much surer" (no source found for "a few percent"); a point added at 15,000 years so the new data meets `people.json` without a gap of 8,000 years. Confirmed: Li & Durbin 2011, title, the Sanger Institute, 16,100 at 100,000 to 150,000 years and 5,700 at 50,000; the method as told; Biraben 2003, perhaps 800,000 of our kind in Africa and southern Asia, and past a million 30,000 to 40,000 years ago; OWID's 4,501,152, 232,268,832, 1805 and 8,091,734,933; 8.30 billion for 2026 (WPP 2024 medium, read from a copy of the UN table); Hublin 2017; Klein Goldewijk 2017; Reich 2018; all six US Census Bureau ranges; all store years. Not confirmed: Deevey via Kremer, Tallavaara 2015 and Smith 2018 (opened in research, not by the checker); the UN's own page for 2026 (it would not load). Editor pass 10: 'chromosome' was not explained and is now 'genes'; 'nearly all', because a man has one copy of some. Biraben's 800,000 is given with his own span, as this line's Confirmed list has it. The UN's news page of July 2024 gives nearly 8.2 billion for mid-2024 and no figure for 2026; the 8.3 rests on the batch's reading of the UN table. Editor pass 10, 22 Nov 2026 (Editor-Pass-10.md): changes applied.
+
+*Watch:* the world's population (about 8.3 billion for 2026, UN *World Population Prospects 2024*; the summary's "more than eight billion" holds for the rest of the century on the UN's projection) · last checked 22 Nov 2026 · every two years

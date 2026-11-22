@@ -1,10 +1,12 @@
 {
- "_about": "World population, people by astronomers' year, for the People curve of the Time Machine bench (experiments/time-machine.html) and any timeline that wants it. Read from Our World in Data's long-run population series (which joins HYDE 3.3 before 1800, Gapminder to 1950 and the UN's World Population Prospects after) and thinned: every thousand years to year 0, every century to 1700, every decade to 1900, every five years after. Between points, interpolate linearly. HOW SURE: before 1800 these are reconstructions, not counts, and the HYDE authors give wide ranges; the deep past is uncertain by a factor of two or more. After 1950 the figures are censuses and registers and are good to a few percent. A curve drawn from this is a shape, and the number at any one year is 'about'.",
+ "_about": "World population, people by astronomers' year, for the People curve of the Time Machine (active/time-machine.html) and any timeline that wants it. Read from Our World in Data's long-run population series (which joins HYDE 3.3 before 1800, Gapminder to 1950 and the UN's World Population Prospects after) and thinned: every thousand years to year 0, every century to 1700, every decade to 1900, every five years after. Between points, interpolate linearly. HOW SURE: before 1800 these are reconstructions, not counts, and the HYDE authors give wide ranges; the deep past is uncertain by a factor of two or more. After 1950 the figures are censuses and registers and are good to a few percent. A curve drawn from this is a shape, and the number at any one year is 'about'. Made by tools/curves-deep-time.py.",
  "source": "Our World in Data, “Population – HYDE, Gapminder, UN – Long-run data” [dataset], fetched 30 Sep 2026 from ourworldindata.org/grapher/population (World). Underlying: PBL Netherlands Environmental Assessment Agency, HYDE 3.3 (2023); Gapminder, Population v7 (2022); United Nations, World Population Prospects (2024).",
  "licence": "Our World in Data publishes its processed data under Creative Commons BY 4.0; HYDE 3.3 and Gapminder are CC BY; the UN's World Population Prospects is CC BY 3.0 IGO. Credit: Our World in Data, with the sources above.",
  "unit": "people",
  "version": "2026-09-30",
  "firstYearAtOneBillion": 1805,
+ "today": 8300000000,
+ "fade": -10000,
  "points": [
   [
    -10000,

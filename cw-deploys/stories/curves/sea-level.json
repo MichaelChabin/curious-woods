@@ -1,112 +1,173 @@
 {
- "_about": "Global sea level, metres against today's, by astronomers' year, for the Sea level curve of the Time Machine bench (experiments/time-machine.html). The same readings as stories/sea-level.json (which the map's own sea-level painting reads, by years ago), converted to the store's year (years ago subtracted from 2026) so a timeline can draw it along its span. Between points, interpolate linearly. HOW SURE: approximate. The points are read from the global ice-volume-equivalent curve of Lambeck and others (2014) and rounded to a few metres; the paper's own uncertainty is a few metres for most of the last twelve thousand years and larger before. It is one global figure: where the ice left, the land itself rose, most in Scandinavia and around Hudson Bay, and the local shore there followed the land, not this curve. Nothing a child does on the line makes the difference show, but no story should lean on a single number from here without checking the paper's table.",
- "source": "Lambeck, Rouby, Purcell, Sun and Sambridge, “Sea level and global ice volumes from the Last Glacial Maximum to the Holocene”, PNAS 111 (43): 15296–15303 (2014), doi:10.1073/pnas.1411762111; the global curve, read from the figure and rounded.",
+ "_about": "Global sea level, metres against today's, by astronomers' year, for the Sea level curve of the Time Machine (active/time-machine.html). The same readings as stories/sea-level.json (which the map's own sea-level painting reads, by years ago), converted to the store's year (years ago subtracted from this year) so a timeline can draw it along its span. Each point [year, metres, low, high]. Between points, interpolate linearly. HOW SURE: approximate. The points are read from the global ice-volume-equivalent curve of Lambeck and others (2014) and rounded to a few metres; the paper's own uncertainty is a few metres for most of the last twelve thousand years and larger before. It is one global figure: where the ice left, the land itself rose, most in Scandinavia and around Hudson Bay, and the local shore there followed the land, not this curve. Nothing a child does on the line makes the difference show, but no story should lean on a single number from here without checking the paper's table. Made by tools/curves-deep-time.py.",
+ "source": "Lambeck, Rouby, Purcell, Sun and Sambridge, “Sea level and global ice volumes from the Last Glacial Maximum to the Holocene”, PNAS 111 (43): 15296–15303 (2014), doi:10.1073/pnas.1411762111; the global curve, read from the figure and rounded. The point at 21,000 years (about 134 m below today's) and the last 6,500 years (about 4 m of rise since 6,700 years, 3 m of it by 4,200) are from the paper's abstract, interpolated, and wait to be checked against its table. The band is not the paper's: for the glacial maximum it spans Lambeck 2014 and Fairbanks (1989), 121 ± 5 m below today's.",
  "licence": "The paper is © the authors and the National Academy of Sciences and is open to read; the numbers here are our approximate readings of its published curve, cited, not the paper's own table.",
+ "howSure": "Approximate: readings of a published curve, rounded. The band is our judgment of its uncertainty: 6 m either way from 21,000 to 18,000 years ago, 5 m to 11,000, 3 m to 8,000, 1.5 m to 4,000, and nothing today.",
  "unit": "metres against today's sea level",
- "version": "2026-09-30",
+ "scale": "linear",
+ "say": "the sea about {v} m {dir} today",
+ "version": "2026-11-22",
+ "today": 0,
+ "fade": -18974,
  "points": [
   [
+   -18974,
+   -134,
+   -140,
+   -128
+  ],
+  [
    -17974,
-   -130
+   -130,
+   -136,
+   -124
   ],
   [
    -15974,
-   -125
+   -125,
+   -131,
+   -119
   ],
   [
    -14474,
-   -118
+   -118,
+   -123,
+   -113
   ],
   [
    -12974,
-   -105
-  ],
-  [
-   -12574,
+   -105,
+   -110,
    -100
   ],
   [
+   -12574,
+   -100,
+   -105,
+   -95
+  ],
+  [
    -12274,
-   -82
+   -82,
+   -87,
+   -77
   ],
   [
    -11474,
-   -75
-  ],
-  [
-   -10974,
+   -75,
+   -80,
    -70
   ],
   [
+   -10974,
+   -70,
+   -75,
+   -65
+  ],
+  [
    -10474,
-   -64
+   -64,
+   -69,
+   -59
   ],
   [
    -9974,
-   -60
+   -60,
+   -65,
+   -55
   ],
   [
    -9474,
-   -56
+   -56,
+   -61,
+   -51
   ],
   [
    -8974,
-   -49
-  ],
-  [
-   -8474,
+   -49,
+   -54,
    -44
   ],
   [
+   -8474,
+   -44,
+   -47,
+   -41
+  ],
+  [
    -7974,
-   -38
+   -38,
+   -41,
+   -35
   ],
   [
    -7474,
-   -32
+   -32,
+   -35,
+   -29
   ],
   [
    -6974,
-   -26
+   -26,
+   -29,
+   -23
   ],
   [
    -6474,
-   -18
+   -18,
+   -21,
+   -15
   ],
   [
    -5974,
-   -13
+   -13,
+   -16,
+   -10
   ],
   [
    -5474,
-   -8
+   -8,
+   -9.5,
+   -6.5
   ],
   [
    -4974,
-   -5
+   -5,
+   -6.5,
+   -3.5
   ],
   [
    -4474,
-   -3
+   -3.8,
+   -5.3,
+   -2.3
   ],
   [
    -3974,
-   -2
+   -3.2,
+   -4.7,
+   -1.7
   ],
   [
    -2974,
-   -1
-  ],
-  [
-   -1974,
+   -2.0,
+   -3.5,
    -0.5
   ],
   [
+   -1974,
+   -0.9,
+   -2.4,
+   0.6
+  ],
+  [
    2026,
+   0,
+   0,
    0
   ]
  ],
- "from": -17974,
+ "from": -18974,
  "to": 2026,
  "minPoints": 3,
  "_range": "from and to are the store years (astronomer's years) the curve is meaningful between — its first and last points; minPoints is the fewest points a period must hold for the curve to be offered (Prompt-Build-Timeline-Stack.md, part 6, 10 Oct 2026)"

@@ -2,12 +2,14 @@
  "_about": "Oxygen in the air as a fraction of today's (1 = 21 %), 4 billion years to now: the envelope of the published reconstruction, read off the figure, the band being the point. Each point [year, value, low, high]; year is the store's astronomer's year. Made by tools/curves-deep-time.py.",
  "source": {
   "citation": "Lyons, T.W., Reinhard, C.T. & Planavsky, N.J. (2014), The rise of oxygen in Earth's early ocean and atmosphere, Nature 506, 307–315, figure 1; the Phanerozoic after Berner's GEOCARBSULF",
-  "note": "values read from the figure's envelope, not from a table; the figure is drawn on a log axis and so is this"
+  "note": "values read from the figure's envelope, not from a table; the figure is drawn on a log axis and so is this. The points changed on the checkers' reading of 9 Oct 2026 (Plots-Deep-01.md): the rise across a hundred-thousandth of today's at 2,430 million years after Gumsley and others 2017; the coming and going until about 2,220 million years after Poulton and others 2021, drawn as a band that widens down to a millionth; the low edge from 2,000 to 800 million years after Planavsky and others 2014 (under 0.1 percent of today's); 300 million years (1.35, about 28 percent of the air) after Glasspool & Scott 2010 and Krause and others 2018; the step down at 252 million years, its size argued, after Berner 2006 and Krause and others 2018"
  },
- "howSure": "A sketch of a published envelope. Before 2.4 billion years the air had almost none; the band across the Boring Billion is two orders of magnitude wide because that is how little is known; the Carboniferous high is the best-known point. Treat the line as the middle of the band, never as a reading.",
+ "howSure": "A sketch of a published envelope. Before 2.4 billion years the air had almost none; the band across the Boring Billion is three orders of magnitude wide because that is how little is known; the Carboniferous high is the best-known point. Treat the line as the middle of the band, never as a reading.",
  "unit": "times today's",
  "scale": "log",
  "say": "about {v} of today's oxygen",
+ "today": 1.0,
+ "fade": -3999997974,
  "points": [
   [
    -3999997974,
@@ -29,21 +31,33 @@
   ],
   [
    -2449997974,
-   0.0001,
+   1e-06,
+   1e-07,
+   1e-05
+  ],
+  [
+   -2429997974,
    1e-05,
-   0.001
+   1e-06,
+   0.0001
   ],
   [
    -2399997974,
    0.001,
-   0.0001,
+   1e-06,
    0.01
   ],
   [
    -2299997974,
-   0.01,
-   0.001,
+   0.003,
+   1e-06,
    0.1
+  ],
+  [
+   -2219997974,
+   0.03,
+   0.003,
+   0.3
   ],
   [
    -2149997974,
@@ -54,31 +68,31 @@
   [
    -1999997974,
    0.01,
-   0.001,
+   0.0001,
    0.1
   ],
   [
    -1799997974,
    0.01,
-   0.001,
+   0.0001,
    0.1
   ],
   [
    -1399997974,
    0.01,
-   0.001,
+   0.0001,
    0.1
   ],
   [
    -999997974,
    0.01,
-   0.001,
+   0.0001,
    0.1
   ],
   [
    -799997974,
    0.01,
-   0.001,
+   0.0001,
    0.1
   ],
   [
@@ -125,21 +139,21 @@
   ],
   [
    -299997974,
-   1.5,
+   1.35,
    1.2,
-   1.7
+   1.5
   ],
   [
-   -259997974,
-   1.0,
+   -251997974,
+   0.9,
    0.7,
-   1.3
+   1.4
   ],
   [
    -229997974,
+   0.85,
    0.7,
-   0.5,
-   1.0
+   1.4
   ],
   [
    -179997974,

@@ -1,0 +1,233 @@
+{
+ "_about": "Global sea level, metres against today's, 540 to 3 million years ago: a guess made for Curious Woods, a middle line through the published curves, with a band that spans them (CWVault/claude/Plots-Deep-01.md, Sea level, New data, 9 Oct 2026). At this spacing the line is an average and hides the ice-age swings within it, of up to about a hundred metres, wherever there was ice (the late Carboniferous, the end of the Ordovician, the last 34 million years). Its last point is the ice-ages file's first, so the two join. Built 22 Nov 2026; read by no page yet. Each point [year, metres, low, high]; year is the store's astronomer's year. Made by tools/curves-deep-time.py.",
+ "source": [
+  {
+   "citation": "Miller, K.G. and others (2005), The Phanerozoic record of global sea-level change, Science; cited for its published values"
+  },
+  {
+   "citation": "Miller and others (2020); the curve at PANGAEA, doi:10.1594/PANGAEA.923139",
+   "licence": "CC BY 4.0"
+  },
+  {
+   "citation": "Müller and others (2008); cited for its published values"
+  },
+  {
+   "citation": "Haq & Schutter (2008); the shape only"
+  },
+  {
+   "citation": "van der Meer, D.G. and others (2022), Long-term Phanerozoic global mean sea level: insights from strontium isotope variations and estimates of continental glaciation, Gondwana Research",
+   "licence": "CC BY 4.0"
+  }
+ ],
+ "licence": "Our judgment on cited published curves; Miller 2020 and van der Meer 2022 are CC BY 4.0.",
+ "howSure": "A guess. The published curves disagree by up to about 200 metres in the Cretaceous and in the early Paleozoic; the band is that disagreement, not a measurement.",
+ "unit": "m",
+ "scale": "linear",
+ "say": "the sea about {v} m {dir} today",
+ "today": 0,
+ "fade": -539997974,
+ "points": [
+  [
+   -539997974,
+   0,
+   -50,
+   80
+  ],
+  [
+   -519997974,
+   30,
+   -30,
+   120
+  ],
+  [
+   -499997974,
+   60,
+   -25,
+   150
+  ],
+  [
+   -479997974,
+   100,
+   -25,
+   200
+  ],
+  [
+   -454997974,
+   150,
+   0,
+   250
+  ],
+  [
+   -444997974,
+   40,
+   -50,
+   150
+  ],
+  [
+   -429997974,
+   100,
+   0,
+   200
+  ],
+  [
+   -409997974,
+   60,
+   0,
+   150
+  ],
+  [
+   -384997974,
+   100,
+   20,
+   150
+  ],
+  [
+   -337997974,
+   80,
+   0,
+   130
+  ],
+  [
+   -299997974,
+   0,
+   -60,
+   80
+  ],
+  [
+   -264997974,
+   80,
+   0,
+   160
+  ],
+  [
+   -249997974,
+   20,
+   -40,
+   100
+  ],
+  [
+   -229997974,
+   25,
+   -30,
+   120
+  ],
+  [
+   -199997974,
+   50,
+   -25,
+   150
+  ],
+  [
+   -179997974,
+   80,
+   0,
+   170
+  ],
+  [
+   -154997974,
+   130,
+   40,
+   200
+  ],
+  [
+   -139997974,
+   120,
+   40,
+   200
+  ],
+  [
+   -116997974,
+   150,
+   50,
+   250
+  ],
+  [
+   -89997974,
+   160,
+   50,
+   250
+  ],
+  [
+   -69997974,
+   100,
+   50,
+   210
+  ],
+  [
+   -59997974,
+   75,
+   25,
+   190
+  ],
+  [
+   -49997974,
+   100,
+   60,
+   210
+  ],
+  [
+   -39997974,
+   70,
+   50,
+   170
+  ],
+  [
+   -34997974,
+   60,
+   40,
+   150
+  ],
+  [
+   -33497974,
+   0,
+   -20,
+   80
+  ],
+  [
+   -29997974,
+   15,
+   -10,
+   90
+  ],
+  [
+   -19997974,
+   15,
+   -5,
+   70
+  ],
+  [
+   -14997974,
+   25,
+   0,
+   60
+  ],
+  [
+   -9997974,
+   5,
+   -15,
+   40
+  ],
+  [
+   -4997974,
+   10,
+   -10,
+   30
+  ],
+  [
+   -3997974,
+   5,
+   -15,
+   25
+  ],
+  [
+   -2997974,
+   -1.5,
+   -20,
+   25
+  ]
+ ],
+ "from": -539997974,
+ "to": -2997974,
+ "minPoints": 3,
+ "_range": "from and to are the store years (astronomer's years) the curve is meaningful between — its first and last points; minPoints is the fewest points a period must hold for the curve to be offered (Prompt-Build-Timeline-Stack.md, part 6, 10 Oct 2026)"
+}

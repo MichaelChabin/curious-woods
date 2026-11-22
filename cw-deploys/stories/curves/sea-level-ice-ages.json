@@ -1,8 +1,8 @@
 {
- "_about": "Global sea level, metres against today, 0 to 3 million years ago, by the store's year, for the deep-time bar and the map's sea past the Lambeck curve (stories/curves/sea-level.json, 20,000 years, stays the one for After the Ice). Each point [year, metres, low, high]. Made by tools/curves-deep-time.py.",
+ "_about": "Global sea level, metres against today, 0 to 3 million years ago, by the store's year, for the deep-time bar and the map's sea past the Lambeck curve (stories/curves/sea-level.json, 21,000 years, stays the one for After the Ice). Each point [year, metres, low, high]. Since 22 Nov 2026 the points younger than 20,000 years are the Lambeck curve's, so the map's sea agrees with the plot and reads 0 today. Made by tools/curves-deep-time.py.",
  "source": [
   {
-   "span": "0 to 798,000 years",
+   "span": "20,000 to 798,000 years",
    "citation": "Spratt, R.M. & Lisiecki, L.E. (2016), A Late Pleistocene sea level stack, Climate of the Past 12, 1079–1092; the long stack (five reconstructions) with its 95 % bootstrap bounds",
    "url": "https://www.ncei.noaa.gov/access/paleo-search/study/19982",
    "licence": "NOAA paleoclimate archive, public"
@@ -12,9 +12,21 @@
    "citation": "Bintanja, R. & van de Wal, R.S.W. (2008), North American ice-sheet dynamics and the onset of 100,000-year glacial cycles, Nature 454, 869–872; the modelled global sea level",
    "url": "https://www.ncei.noaa.gov/access/paleo-search/study/11933",
    "licence": "NOAA paleoclimate archive, public"
+  },
+  {
+   "span": "the last 20,000 years",
+   "citation": "Lambeck, K., Rouby, H., Purcell, A., Sun, Y. & Sambridge, M. (2014), Sea level and global ice volumes from the Last Glacial Maximum to the Holocene, PNAS 111, 15296–15303; the points of stories/curves/sea-level.json, with its band. The stack is pinned at 0 m at 5,000 years and −130 m at 24,000, and its younger values are scaling noise (it read 9 m above today's sea at today)"
+  },
+  {
+   "span": "the two warm spells",
+   "citation": "Dutton and others (2015): the sea 6 to 9 m above today's about 125,000 years ago (the points from 126,000 to 118,000 years) and 6 to 13 m above about 400,000 years ago (the point at 410,000 years); the values set here are a judgment from those ranges"
+  },
+  {
+   "span": "3.0 to 2.6 million years",
+   "citation": "Dumitru and others (2019) and Grant and others (2019): warm peaks about 16 to 20 m above today's; the band there reaches at least −20 and +25 m"
   }
  ],
- "howSure": "Good to 800,000 years: a stack of five reconstructions with its own 95 % bounds, drawn as the band. Beyond that a model inverted from the deep-sea oxygen record; the file carries no bounds, so the band there is ±20 m, a judgment from the paper's figures. Before 3 million years the file ends and the map should say nothing.",
+ "howSure": "Good to 800,000 years: a stack of five reconstructions with its own 95 % bounds, drawn as the band. Beyond that a model inverted from the deep-sea oxygen record; the file carries no bounds, so the band there is ±20 m, a judgment from the paper's figures, widened to +25 m from 3.0 to 2.6 million years for the warm peaks. The two warm spells (about 125,000 and 400,000 years ago) are set from Dutton and others 2015, a judgment. The last 20,000 years are the Lambeck curve with our band. The store years count back from this year and the stack from 1950; the 76 years do not show at this scale. Before 3 million years the file ends and the map should say nothing.",
  "unit": "m",
  "scale": "linear",
  "say": "the sea about {v} m {dir} today",
@@ -23,487 +35,487 @@
    -2997974,
    -1.5,
    -21.5,
-   18.5
+   25.0
   ],
   [
    -2992974,
    -0.0,
    -20.0,
-   20.0
+   25.0
   ],
   [
    -2987974,
    0.3,
-   -19.7,
-   20.3
+   -20.0,
+   25.0
   ],
   [
    -2982974,
    0.3,
-   -19.7,
-   20.3
+   -20.0,
+   25.0
   ],
   [
    -2977974,
    -1.7,
    -21.7,
-   18.3
+   25.0
   ],
   [
    -2972974,
    -3.2,
    -23.2,
-   16.8
+   25.0
   ],
   [
    -2967974,
    -1.0,
    -21.0,
-   19.0
+   25.0
   ],
   [
    -2962974,
    0.1,
-   -19.9,
-   20.1
+   -20.0,
+   25.0
   ],
   [
    -2957974,
    0.3,
-   -19.7,
-   20.3
+   -20.0,
+   25.0
   ],
   [
    -2952974,
    0.9,
-   -19.1,
-   20.9
+   -20.0,
+   25.0
   ],
   [
    -2947974,
    0.9,
-   -19.1,
-   20.9
+   -20.0,
+   25.0
   ],
   [
    -2942974,
    1.2,
-   -18.8,
-   21.2
+   -20.0,
+   25.0
   ],
   [
    -2937974,
    0.4,
-   -19.6,
-   20.4
+   -20.0,
+   25.0
   ],
   [
    -2932974,
    -1.0,
    -21.0,
-   19.0
+   25.0
   ],
   [
    -2927974,
    -5.1,
    -25.1,
-   14.9
+   25.0
   ],
   [
    -2922974,
    -4.4,
    -24.4,
-   15.6
+   25.0
   ],
   [
    -2917974,
    -5.1,
    -25.1,
-   14.9
+   25.0
   ],
   [
    -2912974,
    -5.4,
    -25.4,
-   14.6
+   25.0
   ],
   [
    -2907974,
    -2.7,
    -22.7,
-   17.3
+   25.0
   ],
   [
    -2902974,
    -1.7,
    -21.7,
-   18.3
+   25.0
   ],
   [
    -2897974,
    0.0,
    -20.0,
-   20.0
+   25.0
   ],
   [
    -2892974,
    -0.1,
    -20.1,
-   19.9
+   25.0
   ],
   [
    -2887974,
    -1.7,
    -21.7,
-   18.3
+   25.0
   ],
   [
    -2882974,
    -2.7,
    -22.7,
-   17.3
+   25.0
   ],
   [
    -2877974,
    -2.7,
    -22.7,
-   17.3
+   25.0
   ],
   [
    -2872974,
    -0.4,
    -20.4,
-   19.6
+   25.0
   ],
   [
    -2867974,
    -0.2,
    -20.2,
-   19.8
+   25.0
   ],
   [
    -2862974,
    -0.2,
    -20.2,
-   19.8
+   25.0
   ],
   [
    -2857974,
    -0.1,
    -20.1,
-   19.9
+   25.0
   ],
   [
    -2852974,
    -1.4,
    -21.4,
-   18.6
+   25.0
   ],
   [
    -2847974,
    -1.5,
    -21.5,
-   18.5
+   25.0
   ],
   [
    -2842974,
    -2.2,
    -22.2,
-   17.8
+   25.0
   ],
   [
    -2837974,
    -1.5,
    -21.5,
-   18.5
+   25.0
   ],
   [
    -2832974,
    0.4,
-   -19.6,
-   20.4
+   -20.0,
+   25.0
   ],
   [
    -2827974,
    0.4,
-   -19.6,
-   20.4
+   -20.0,
+   25.0
   ],
   [
    -2822974,
    0.1,
-   -19.9,
-   20.1
+   -20.0,
+   25.0
   ],
   [
    -2817974,
    -0.1,
    -20.1,
-   19.9
+   25.0
   ],
   [
    -2812974,
    -5.1,
    -25.1,
-   14.9
+   25.0
   ],
   [
    -2807974,
    -14.4,
    -34.4,
-   5.6
+   25.0
   ],
   [
    -2802974,
    -25.1,
    -45.1,
-   -5.1
+   25.0
   ],
   [
    -2797974,
    -17.8,
    -37.8,
-   2.2
+   25.0
   ],
   [
    -2792974,
    -9.3,
    -29.3,
-   10.7
+   25.0
   ],
   [
    -2787974,
    -1.2,
    -21.2,
-   18.8
+   25.0
   ],
   [
    -2782974,
    0.2,
-   -19.8,
-   20.2
+   -20.0,
+   25.0
   ],
   [
    -2777974,
    0.1,
-   -19.9,
-   20.1
+   -20.0,
+   25.0
   ],
   [
    -2772974,
    -0.0,
    -20.0,
-   20.0
+   25.0
   ],
   [
    -2767974,
    0.4,
-   -19.6,
-   20.4
+   -20.0,
+   25.0
   ],
   [
    -2762974,
    -0.0,
    -20.0,
-   20.0
+   25.0
   ],
   [
    -2757974,
    0.1,
-   -19.9,
-   20.1
+   -20.0,
+   25.0
   ],
   [
    -2752974,
    0.1,
-   -19.9,
-   20.1
+   -20.0,
+   25.0
   ],
   [
    -2747974,
    0.5,
-   -19.5,
-   20.5
+   -20.0,
+   25.0
   ],
   [
    -2742974,
    0.6,
-   -19.4,
-   20.6
+   -20.0,
+   25.0
   ],
   [
    -2737974,
    0.3,
-   -19.7,
-   20.3
+   -20.0,
+   25.0
   ],
   [
    -2732974,
    0.0,
    -20.0,
-   20.0
+   25.0
   ],
   [
    -2727974,
    -1.6,
    -21.6,
-   18.4
+   25.0
   ],
   [
    -2722974,
    -6.3,
    -26.3,
-   13.7
+   25.0
   ],
   [
    -2717974,
    -21.3,
    -41.3,
-   -1.3
+   25.0
   ],
   [
    -2712974,
    -34.3,
    -54.3,
-   -14.3
+   25.0
   ],
   [
    -2707974,
    -27.0,
    -47.0,
-   -7.0
+   25.0
   ],
   [
    -2702974,
    -23.9,
    -43.9,
-   -3.9
+   25.0
   ],
   [
    -2697974,
    -16.9,
    -36.9,
-   3.1
+   25.0
   ],
   [
    -2692974,
    -19.6,
    -39.6,
-   0.4
+   25.0
   ],
   [
    -2687974,
    -21.5,
    -41.5,
-   -1.5
+   25.0
   ],
   [
    -2682974,
    -24.1,
    -44.1,
-   -4.1
+   25.0
   ],
   [
    -2677974,
    -12.8,
    -32.8,
-   7.2
+   25.0
   ],
   [
    -2672974,
    -4.0,
    -24.0,
-   16.0
+   25.0
   ],
   [
    -2667974,
    0.1,
-   -19.9,
-   20.1
+   -20.0,
+   25.0
   ],
   [
    -2662974,
    0.3,
-   -19.7,
-   20.3
+   -20.0,
+   25.0
   ],
   [
    -2657974,
    0.2,
-   -19.8,
-   20.2
+   -20.0,
+   25.0
   ],
   [
    -2652974,
    -0.0,
    -20.0,
-   20.0
+   25.0
   ],
   [
    -2647974,
    -5.1,
    -25.1,
-   14.9
+   25.0
   ],
   [
    -2642974,
    -30.4,
    -50.4,
-   -10.4
+   25.0
   ],
   [
    -2637974,
    -27.5,
    -47.5,
-   -7.5
+   25.0
   ],
   [
    -2632974,
    -14.1,
    -34.1,
-   5.9
+   25.0
   ],
   [
    -2627974,
    -5.2,
    -25.2,
-   14.8
+   25.0
   ],
   [
    -2622974,
    -2.0,
    -22.0,
-   18.0
+   25.0
   ],
   [
    -2617974,
    -1.0,
    -21.0,
-   19.0
+   25.0
   ],
   [
    -2612974,
    -2.3,
    -22.3,
-   17.7
+   25.0
   ],
   [
    -2607974,
    -6.8,
    -26.8,
-   13.2
+   25.0
   ],
   [
    -2602974,
    -31.4,
    -51.4,
-   -11.4
+   25.0
   ],
   [
    -2597974,
    -46.9,
    -66.9,
-   -26.9
+   25.0
   ],
   [
    -2592974,
@@ -3831,9 +3843,9 @@
   ],
   [
    -407974,
-   -4.3,
-   -38.7,
-   20.6
+   9.0,
+   6.0,
+   13.0
   ],
   [
    -405974,
@@ -4683,33 +4695,33 @@
   ],
   [
    -123974,
-   -16.2,
-   -53.2,
-   0.3
+   6.0,
+   0.0,
+   9.0
   ],
   [
    -121974,
-   -5.4,
-   -31.4,
-   8.2
+   7.0,
+   5.0,
+   9.0
   ],
   [
    -119974,
-   -3.0,
-   -24.7,
-   13.0
+   7.0,
+   5.0,
+   9.0
   ],
   [
    -117974,
-   -0.6,
-   -25.1,
-   12.8
+   7.0,
+   5.0,
+   9.0
   ],
   [
    -115974,
-   -9.2,
-   -37.2,
-   5.0
+   2.0,
+   -10.0,
+   9.0
   ],
   [
    -113974,
@@ -5007,63 +5019,147 @@
   ],
   [
    -15974,
-   -113.8,
-   -131.8,
-   -73.2
+   -125.0,
+   -131.0,
+   -119.0
   ],
   [
-   -13974,
-   -98.4,
-   -125.4,
-   -61.9
+   -14474,
+   -118.0,
+   -123.0,
+   -113.0
   ],
   [
-   -11974,
-   -76.0,
-   -107.7,
-   -44.5
+   -12974,
+   -105.0,
+   -110.0,
+   -100.0
+  ],
+  [
+   -12574,
+   -100.0,
+   -105.0,
+   -95.0
+  ],
+  [
+   -12274,
+   -82.0,
+   -87.0,
+   -77.0
+  ],
+  [
+   -11474,
+   -75.0,
+   -80.0,
+   -70.0
+  ],
+  [
+   -10974,
+   -70.0,
+   -75.0,
+   -65.0
+  ],
+  [
+   -10474,
+   -64.0,
+   -69.0,
+   -59.0
   ],
   [
    -9974,
-   -49.7,
-   -83.7,
-   -24.0
+   -60.0,
+   -65.0,
+   -55.0
+  ],
+  [
+   -9474,
+   -56.0,
+   -61.0,
+   -51.0
+  ],
+  [
+   -8974,
+   -49.0,
+   -54.0,
+   -44.0
+  ],
+  [
+   -8474,
+   -44.0,
+   -47.0,
+   -41.0
   ],
   [
    -7974,
-   -23.2,
-   -56.0,
-   -3.8
+   -38.0,
+   -41.0,
+   -35.0
+  ],
+  [
+   -7474,
+   -32.0,
+   -35.0,
+   -29.0
+  ],
+  [
+   -6974,
+   -26.0,
+   -29.0,
+   -23.0
+  ],
+  [
+   -6474,
+   -18.0,
+   -21.0,
+   -15.0
   ],
   [
    -5974,
-   -7.1,
-   -31.7,
-   4.1
+   -13.0,
+   -16.0,
+   -10.0
+  ],
+  [
+   -5474,
+   -8.0,
+   -9.5,
+   -6.5
+  ],
+  [
+   -4974,
+   -5.0,
+   -6.5,
+   -3.5
+  ],
+  [
+   -4474,
+   -3.8,
+   -5.3,
+   -2.3
   ],
   [
    -3974,
+   -3.2,
+   -4.7,
+   -1.7
+  ],
+  [
+   -2974,
    -2.0,
-   -17.7,
-   2.3
+   -3.5,
+   -0.5
   ],
   [
    -1974,
-   1.9,
-   -10.5,
-   7.6
-  ],
-  [
-   26,
-   6.0,
-   -5.0,
-   14.2
+   -0.9,
+   -2.4,
+   0.6
   ],
   [
    2026,
-   9.0,
-   -1.2,
-   20.4
+   0.0,
+   0.0,
+   0.0
   ]
  ],
  "from": -2997974,
