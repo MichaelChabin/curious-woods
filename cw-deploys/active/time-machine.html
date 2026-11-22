@@ -32,8 +32,9 @@
   Data, read and never written: ../stories/deep-time-events.json, the one store of every event
   (tools/deep-events-from-vault.py; its `aliases` map every retired September id to the record that stands
   for it, so her line still finds them; its `cut` names the two dropped), ../stories/deep-time.json (the
-  periods), ../stories/curves/people.json and sea-level.json (the curves of After the ice),
-  sea-level-ice-ages.json (the map's sea, three million years), and the curve files the deep words
+  periods), ../stories/curves/people-deep.json (People, from 315,000 years ago), sea-level-deep.json,
+  sea-level-ice-ages.json and sea-level.json (Sea level, one line from the three; the middle one is also the
+  map's sea, three million years), and the curve files the deep words
   fetch. Her line: the ids kept in localStorage under cw-after-the-ice (the key After the Ice's
   page kept, until it was retired on 16 Nov 2026).
 
@@ -194,7 +195,9 @@
     <div>Ice sheets: Peltier, Argus and Drummond, 2015 (ICE-6G_C, via PMIP4)</div>
     <div>Sea level since the ice: Lambeck and others, 2014</div>
     <div>Sea level in the ice ages: Spratt and Lisiecki, 2016; Bintanja and van de Wal, 2008 (the ice sheets beyond 26,000 years ago follow this curve)</div>
+    <div>Sea level before the ice ages: Miller and others, 2005 and 2020; Müller and others, 2008; Haq and Schutter, 2008; van der Meer and others, 2022</div>
     <div>People: Our World in Data, from HYDE, 2023, Gapminder, 2022, and the United Nations, 2024</div>
+    <div>People before farming: Biraben, 2003; Deevey, 1960; Li and Durbin, 2011; Tallavaara and others, 2015</div>
     <div>Oxygen: Lyons, Reinhard and Planavsky, 2014</div>
     <div>Day length: Williams, 2000; Meyers and Malinverno, 2018; Lantink and others, 2022; Mitchell and Kirscher, 2023</div>
     <div>Minerals: Hazen and others, 2008</div>
@@ -240,12 +243,12 @@
 
 <script src="../js/map.js?v=2026-10-24-pinch"></script>
 <script src="../js/globe.js?v=2026-10-22c"></script>
-<script src="../js/deep-time.js?v=2026-11-22"></script>
+<script src="../js/deep-time.js?v=2026-11-22c"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
 <script>
 (function () {
   'use strict';
-  const CW_VERSION = '2026-11-22 461ee0e · graphs';   // 22 Nov 2026: the graphs' data as checked on 9 Oct (Plots-Deep-01.md, editor pass 10), the Day length line in the sources, and deep-time.js's fade, today's dashed line and the words at today; 17 Nov 2026: dates by Ruling-Dates-01.md (one date line with the years ago in parentheses, worked out here; the same after a summary's opening date; ordinary years on After the ice and the lines beneath it); 22 Oct 2026, later: full screen a word in the column above Cities, not the default (Michael on the iPad); earlier: full screen on Next; 19 Oct, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-22 efb33bc · deep graphs';   // 22 Nov 2026, later (Michael: wire both in): People is people-deep.json (a band, a log scale, back to 315,000 years ago) and Sea level one line from 540 million years ago, with their words under a million and above today's sea; 22 Nov 2026: the graphs' data as checked on 9 Oct (Plots-Deep-01.md, editor pass 10), the Day length line in the sources, and deep-time.js's fade, today's dashed line and the words at today; 17 Nov 2026: dates by Ruling-Dates-01.md (one date line with the years ago in parentheses, worked out here; the same after a summary's opening date; ordinary years on After the ice and the lines beneath it); 22 Oct 2026, later: full screen a word in the column above Cities, not the default (Michael on the iPad); earlier: full screen on Next; 19 Oct, later: step 4, the textures stay through play (the fast flag gone); earlier that day the tidying — one style file, one owner of the year, the dead code out (Michael's rulings on the audit)   // date + short commit hash; bump in the same commit as any change
   try { console.log('Curious Woods · ' + document.title + ' · ' + CW_VERSION); } catch (e) {}
 
   // ---------- the numbers that shape the page ----------
@@ -290,9 +293,11 @@
     // what would round to 1000 million is a billion
     if (v >= 0.9995e9) { const b = v / 1e9; return 'about ' + (b < 10 ? (Math.round(b * 10) / 10).toString().replace(/\.0$/, '') : Math.round(b)) + ' billion people'; }
     const m = v / 1e6;
+    // under a million (the guessed stretch before farming, 22 Nov 2026): two figures, in thousands
+    if (m < 0.95) { const e = Math.pow(10, Math.floor(Math.log10(v)) - 1); return 'about ' + (Math.round(v / e) * e).toLocaleString('en-US') + ' people'; }
     return 'about ' + (m < 20 ? Math.round(m) : Math.round(m / 10) * 10) + ' million people';
   }
-  function saySea(v) { return v > -0.75 ? 'the sea about where it is today' : 'the sea about ' + Math.round(-v) + ' m lower than today'; }
+  function saySea(v) { return Math.abs(v) < 0.75 ? 'the sea about where it is today' : 'the sea about ' + Math.round(Math.abs(v)) + ' m ' + (v < 0 ? 'lower' : 'higher') + ' than today'; }   // higher too, since 22 Nov 2026: the deep stretch stands above today's sea
 
   // ---------- state ----------
   // the year is owned once (js/cw-time.js, 19 Oct 2026): the deep lines set it when she moves a marker, play sets it as
@@ -612,12 +617,21 @@
 
   // ---------- load ----------
   const get = u => fetch(u, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
-  Promise.all([get('../stories/deep-time-events.json'), get('../stories/curves/people.json'), get('../stories/curves/sea-level.json'),
+  Promise.all([get('../stories/deep-time-events.json'), get('../stories/curves/people-deep.json'), get('../stories/curves/sea-level.json'),
                get('../stories/curves/sea-level-ice-ages.json'), cwMap.load(PYRAMID),
                get('../stories/curves/oxygen.json'), get('../stories/curves/day-length.json'), get('../stories/curves/minerals.json'), get('../stories/curves/sun-and-inside.json'),
-               get('../stories/ice-outlines.json').catch(e => { console.warn('Time Machine: no ice outlines', e.message); return null; })])
-    .then(([store, people, sea, seaIce, pyramid, oxygen, dayLength, minerals, sunInside, ice]) => {
+               get('../stories/ice-outlines.json').catch(e => { console.warn('Time Machine: no ice outlines', e.message); return null; }),
+               get('../stories/curves/sea-level-deep.json')])
+    .then(([store, people, seaLate, seaIce, pyramid, oxygen, dayLength, minerals, sunInside, ice, seaDeep]) => {
+      // Sea level is one line from three files (22 Nov 2026, Michael: wire both in): the deep guess to three million
+      // years ago, then the ice ages' file, whose last 20,000 years are already the Lambeck curve's. How sure is said
+      // for the stretch on show, each file in its own words.
+      const first = c => (c.howSure || '').split('.')[0];
+      const sea = Object.assign({}, seaLate, { points: seaDeep.points.concat(seaIce.points.slice(1)), fade: seaDeep.fade, from: seaDeep.from,
+        howSure: (from) => first(from < seaDeep.to ? seaDeep : from < seaLate.from ? seaIce : seaLate) });
       raw = { store, people, sea, seaIce, pyramid, ice };
+      const sure = people.howSure.split('. ');   // People's two sentences: before farming, and from 10,000 BCE
+      people.howSure = (from) => (from < -10000 ? sure[0] : sure[1] || sure[0]).replace(/\.$/, '');
       people.say = sayPeople; sea.say = saySea;   // the words at the marker, the page's (the module takes a function)
       curveFiles = { people, sea, oxygen, 'day-length': dayLength, minerals, 'sun-and-inside': sunInside };
       if (wanted) showBench();

@@ -1,5 +1,5 @@
 {
- "_about": "How many people were alive, from the oldest bones of our kind, about 315,000 years ago, to now, with a band and a log scale (CWVault/claude/Plots-Deep-01.md, People, 9 Oct 2026). From 10,000 BCE the values are those of stories/curves/people.json (Our World in Data); before that, eight points that are a guess made for Curious Woods: people alive, not breeding ancestors, and where a genetic number is used it is multiplied by 3 to 10. Built 22 Nov 2026; read by no page yet. Each point [year, people, low, high]; year is the store's astronomer's year. Made by tools/curves-deep-time.py.",
+ "_about": "How many people were alive, from the oldest bones of our kind, about 315,000 years ago, to now, with a band and a log scale (CWVault/claude/Plots-Deep-01.md, People, 9 Oct 2026). From 10,000 BCE the values are those of stories/curves/people.json (Our World in Data); before that, eight points that are a guess made for Curious Woods: people alive, not breeding ancestors, and where a genetic number is used it is multiplied by 3 to 10. Built 22 Nov 2026 and read by the Time Machine (active/time-machine.html). Each point [year, people, low, high]; year is the store's astronomer's year. Made by tools/curves-deep-time.py.",
  "source": [
   {
    "span": "10,000 BCE to 2023",

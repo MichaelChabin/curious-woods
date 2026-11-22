@@ -10,10 +10,10 @@ Writes to cw-deploys/stories/curves/:
                             Lambeck curve's, so the map's sea agrees with the plot and reads 0 today
   sea-level.json            the last 21,000 years (Lambeck and others 2014), with a band that is our judgment
   sea-level-deep.json       540 to 3 million years ago: a guess, a middle line through the published curves.
-                            Built 22 Nov 2026 and read by no page yet (Michael to say)
+                            Built 22 Nov 2026; read by the Time Machine since that day, on Michael's word
   people.json               the world's people, 10,000 BCE to now (Our World in Data), as After the ice draws it
   people-deep.json          the same series with a band, a log scale and a guessed stretch from 315,000 to
-                            15,000 years ago. Built 22 Nov 2026 and read by no page yet (Michael to say)
+                            15,000 years ago. Built 22 Nov 2026; read by the Time Machine since that day, on Michael's word
   oxygen.json               oxygen in the air as a fraction of today's, 4 billion years to now — the
                             envelope of Lyons, Reinhard & Planavsky 2014, figure 1, read off the figure
   day-length.json           hours in a day, from the moon's formation to now
@@ -184,7 +184,7 @@ SEA_DEEP = [[540, 0, -50, 80], [520, 30, -30, 120], [500, 60, -25, 150], [480, 1
             [5, 10, -10, 30], [4, 5, -15, 25], [3, -1.5, -20, 25]]
 def sea_level_deep():
     write('sea-level-deep.json', {
-        '_about': 'Global sea level, metres against today\'s, 540 to 3 million years ago: a guess made for Curious Woods, a middle line through the published curves, with a band that spans them (CWVault/claude/Plots-Deep-01.md, Sea level, New data, 9 Oct 2026). At this spacing the line is an average and hides the ice-age swings within it, of up to about a hundred metres, wherever there was ice (the late Carboniferous, the end of the Ordovician, the last 34 million years). Its last point is the ice-ages file\'s first, so the two join. Built 22 Nov 2026; read by no page yet. Each point [year, metres, low, high]; year is the store\'s astronomer\'s year. Made by tools/curves-deep-time.py.',
+        '_about': 'Global sea level, metres against today\'s, 540 to 3 million years ago: a guess made for Curious Woods, a middle line through the published curves, with a band that spans them (CWVault/claude/Plots-Deep-01.md, Sea level, New data, 9 Oct 2026). At this spacing the line is an average and hides the ice-age swings within it, of up to about a hundred metres, wherever there was ice (the late Carboniferous, the end of the Ordovician, the last 34 million years). Its last point is the ice-ages file\'s first, so the two join. Built 22 Nov 2026 and read by the Time Machine (active/time-machine.html). Each point [year, metres, low, high]; year is the store\'s astronomer\'s year. Made by tools/curves-deep-time.py.',
         'source': [
             {'citation': 'Miller, K.G. and others (2005), The Phanerozoic record of global sea-level change, Science; cited for its published values'},
             {'citation': 'Miller and others (2020); the curve at PANGAEA, doi:10.1594/PANGAEA.923139', 'licence': 'CC BY 4.0'},
@@ -250,7 +250,7 @@ def people_deep():
     pts.append([2026, 8300000000, 8200000000, 8400000000])   # the UN's medium projection for 2026 (World Population Prospects 2024), as the batch's checker read it from a copy of the UN table
     print(f'  people-deep: the band opened to hold the fetched value at {opened}')
     write('people-deep.json', {
-        '_about': 'How many people were alive, from the oldest bones of our kind, about 315,000 years ago, to now, with a band and a log scale (CWVault/claude/Plots-Deep-01.md, People, 9 Oct 2026). From 10,000 BCE the values are those of stories/curves/people.json (Our World in Data); before that, eight points that are a guess made for Curious Woods: people alive, not breeding ancestors, and where a genetic number is used it is multiplied by 3 to 10. Built 22 Nov 2026; read by no page yet. Each point [year, people, low, high]; year is the store\'s astronomer\'s year. Made by tools/curves-deep-time.py.',
+        '_about': 'How many people were alive, from the oldest bones of our kind, about 315,000 years ago, to now, with a band and a log scale (CWVault/claude/Plots-Deep-01.md, People, 9 Oct 2026). From 10,000 BCE the values are those of stories/curves/people.json (Our World in Data); before that, eight points that are a guess made for Curious Woods: people alive, not breeding ancestors, and where a genetic number is used it is multiplied by 3 to 10. Built 22 Nov 2026 and read by the Time Machine (active/time-machine.html). Each point [year, people, low, high]; year is the store\'s astronomer\'s year. Made by tools/curves-deep-time.py.',
         'source': [
             {'span': '10,000 BCE to 2023', 'citation': PEOPLE_SOURCE, 'licence': PEOPLE_LICENCE},
             {'span': '2026', 'citation': 'United Nations, World Population Prospects 2024, medium projection: about 8.3 billion (low and high here 8.2 and 8.4 billion)'},

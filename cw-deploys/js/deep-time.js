@@ -66,7 +66,8 @@
    its second series) may carry `fade`, the store year before which the series is not drawn or read out (a
    curve's first point is not its value for all the time before it); `today`, the value now, drawn as a faint
    dashed line where it falls inside the plot; and `sayToday`, the words at the marker when it stands at today
-   (Minerals: the count of 2008, not a count of this year).
+   (Minerals: the count of 2008, not a count of this year). `howSure` may be a function of the span on show
+   (from, to, store years), for a line a page joins from several files (the Time Machine's Sea level).
 
    The marks from the store (Stage 6, 7 Oct 2026): given `events`, the records of
    stories/deep-time-events.json (tools/deep-events-from-vault.py), a bar's marks are the events
@@ -549,7 +550,7 @@
       if (deep.small || deep.depth === 0) el('text', { x: xL, y: y0 - 6, 'font-size': 11, fill: INK_SOFT, 'class': 'halo' }, grp, (c.name || '') + (c.unit ? ' \u00b7 ' + c.unit : '') + (log ? ' \u00b7 log scale' : ''));
       else { el('text', { x: xL - 12, y: y0 + CURVE_H / 2, 'font-size': 13, fill: INK, 'text-anchor': 'end', 'class': 'halo' }, grp, c.name || ''); el('text', { x: xL - 12, y: y0 + CURVE_H / 2 + 14, 'font-size': 11, fill: GREY, 'text-anchor': 'end', 'class': 'halo' }, grp, (c.unit || '') + (log ? ' \u00b7 log scale' : '')); }
       var hs = el('text', { x: xR, y: y0 - 6, 'font-size': 11, 'font-style': 'italic', fill: INK_SOFT, 'text-anchor': 'end', 'class': 'halo' }, grp);
-      var words = (c.howSureShort || (c.howSure || '').split('.')[0]).split(' '); hs.textContent = words.join(' ');
+      var words = (typeof c.howSure === 'function' ? c.howSure(storeYear(n.from), storeYear(n.to)) : c.howSureShort || (c.howSure || '').split('.')[0]).split(' '); hs.textContent = words.join(' ');   // a function says it for the span on show (a line joined from several files)
       while (words.length > 2 && !fitText(hs, (xR - xL) * 0.55)) { words.pop(); hs.textContent = words.join(' ') + '\u2026'; }
       // the marker's value, each series: the marker's line down through the plot, a dot on its line and the words below
       var mx = Math.max(xL, Math.min(xR, deep.x(ma))), yr = storeYear(ma), row = 0;
