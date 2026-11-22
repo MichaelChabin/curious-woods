@@ -1,5 +1,5 @@
 ---
-status: built. Batch 3, 1 Oct 2026. Fifteen events from the worklist (Events-To-Upgrade.md), the first fifteen keeps in date order, from the ice letting go to the Great Pyramid. Upgraded from the September blurbs, which were used as starting points only. Researched by three agents, written in one pass, checked by four independent fact-checkers whose changes are applied. The checkers' web searches ran out partway, so each event says what was confirmed by the checker, what only by the research pass, and what by neither. Read by Claude, editor pass 2, 15 Nov 2026 (Editor-Pass-02.md); changes applied. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use). (11 Oct, Michael, from Periods-Deep-03.md: sea-level falls are given as ranges, the same in every file.) *Ice lets go*: the sea "120 to 130 metres lower", not "about 130".
+status: built. Batch 3, 1 Oct 2026. Fifteen events from the worklist (Events-To-Upgrade.md), the first fifteen keeps in date order, from the ice letting go to the Great Pyramid. Upgraded from the September blurbs, which were used as starting points only. Researched by three agents, written in one pass, checked by four independent fact-checkers whose changes are applied. The checkers' web searches ran out partway, so each event says what was confirmed by the checker, what only by the research pass, and what by neither. Read by Claude, editor pass 2, 15 Nov 2026 (Editor-Pass-02.md); changes applied. Labels shortened 1 Oct 2026 (Michael: a word or two; long labels make the timeline hard to use). (11 Oct, Michael, from Periods-Deep-03.md: sea-level falls are given as ranges, the same in every file.) *Ice lets go*: the sea "120 to 130 metres lower", not "about 130". Mores rewritten for rhythm, 21 Nov 2026 (Rewrite-Rhythm-02.md).
 role: The third batch of timeline events, and the first upgraded from the September Time Machine. Each event names the old record it replaces.
 ---
 
@@ -17,8 +17,7 @@ Written in round 2 of Prompt-Upgrade-Timeline-Events.md and checked in round 3. 
 **Summary (35 words)**
 About 10,000 BCE (about 12,000 years ago). After a hundred thousand years of cold, the world warmed for good, and it happened fast. Ice drilled from Greenland shows the warming took only a few decades. This line starts there. *More*
 
-**More (322 words)**
-
+**More (319 words)**
 ```
 About 10,000 BCE (about 12,000 years ago)
 ```
@@ -27,15 +26,13 @@ In a freezer near Copenhagen there are long sticks of ice, a little thicker than
 
 The ice is made of snow.
 
-Every year, snow falls on the middle of Greenland and does not melt. The next year's snow falls on top of it and presses it down. Over thousands of years the old snow turns to ice, in layers, one for each year, like the rings of a tree. Count the layers and you know how old the ice is. The ice also keeps signs of how cold it was when the snow fell.
+Every year, snow falls on the middle of Greenland and does not melt, and the next year's snow falls on top of it and presses it down. Over thousands of years the old snow turns to ice, in layers, one for each year, like the rings of a tree. Count the layers and you know how old the ice is, and the ice also keeps signs of how cold it was when the snow fell.
 
 So what does the ice say?
 
-For most of the last hundred thousand years, the world was colder than it is now. Ice sheets covered much of North America and northern Europe. At the coldest, so much water was locked up in ice that the sea was 120 to 130 metres lower than it is today, and people could walk from Asia to America.
+For most of the last hundred thousand years, the world was colder than it is now, and ice sheets covered much of North America and northern Europe. At the coldest, so much water was locked up in ice that the sea was 120 to 130 metres lower than it is today, and people could walk from Asia to America.
 
-Then, 1,492 metres down in one of the Greenland ice cores, something changes. In the layers below that point, the snow fell in bitter cold. In the layers above it, Greenland is about ten degrees warmer. Some of the signs in the ice change from one year to the next. The whole warming took a few decades.
-
-The ice at that depth is about 11,700 years old. This line starts near there, at a round number.
+Then, 1,492 metres down in one of the Greenland ice cores, something changes. In the layers below that point, the snow fell in bitter cold, and in the layers above it, Greenland is about ten degrees Celsius warmer. Some of the signs in the ice change from one year to the next, and the whole warming took a few decades. The ice at that depth is about 11,700 years old.
 
 Why did the cold end so suddenly? Climate scientists are still working on it.
 
@@ -53,7 +50,7 @@ Farms, cities, writing and everything else on this line happened in the warm.
 
 **Notes for us.** The beat: the ice age ended fast, and the snow wrote it down. This is the line's own zero, so it is the one event that says "this line". The line's zero (12,026 years ago) is about 300 years before the ice-core date (11,700 years before 2000); the More says so plainly ("starts near there, at a round number"). Checks: Holocene boundary at 1,492.45 m in NGRIP, 11,700 b2k (Walker 2009). Some signals switch in 1 to 3 years; temperature over decades (Steffensen 2008). About +10 °C (Grachev and Severinghaus 2005; earlier estimates 7 to 15). Sea level about 120 to 134 m lower at the Last Glacial Maximum (Lambeck 2014). NGRIP reached bedrock at about 3,085 m. The comet idea for the Younger Dryas is left out: most specialists reject it, and it would be a second argument. Dansgaard, who first read the jump in the ice, is left out for length; he could be a story of his own.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: the freezer is near Copenhagen (Brøndby), not in it; the sea about 130 m lower, not 120 (Lambeck 2014). Confirmed: 1,492 m, 11,700 years, about 10 °C, signs switching in 1 to 3 years, warming over decades, NGRIP bedrock at 3,085 m, all four references. Not independently confirmed by the checker (search ran out): walking from Asia to America, which the research pass did confirm (Bering land bridge flooded about 11,000 years ago).
+**Checked (1 Oct 2026, four independent checkers).** Changed: the freezer is near Copenhagen (Brøndby), not in it; the sea about 130 m lower, not 120 (Lambeck 2014). Confirmed: 1,492 m, 11,700 years, about 10 °C, signs switching in 1 to 3 years, warming over decades, NGRIP bedrock at 3,085 m, all four references. Not independently confirmed by the checker (search ran out): walking from Asia to America, which the research pass did confirm (Bering land bridge flooded about 11,000 years ago). Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -67,31 +64,26 @@ Farms, cities, writing and everything else on this line happened in the warm.
 **Summary (34 words)**
 About 9400 BCE (about 11,400 years ago). In a village near Jericho, people stored figs of a kind that cannot grow from seed. Someone may have planted the trees, which would make figs one of the first crops. *More*
 
-**More (309 words)**
-
+**More (308 words)**
 ```
 About 9400 BCE (about 11,400 years ago)
 ```
 
-Nine small figs, burnt black, lie in the remains of a house. With them are hundreds of tiny fig seeds.
+Nine small figs, burnt black, lie in the remains of a house, and with them are hundreds of tiny fig seeds.
 
-The house is at a place called Gilgal, in the Jordan Valley, not far from the town of Jericho. Say "GIL-gahl." The people who lived there about 11,400 years ago hunted and gathered their food. They also stored wild barley, wild oats and acorns.
+The house is at a place called Gilgal ("GIL-gahl"), in the Jordan Valley, not far from the town of Jericho. The people who lived there about 11,400 years ago hunted and gathered their food, and they also stored wild barley, wild oats and acorns.
 
 In 2006, three archaeologists, Mordechai Kislev, Anat Hartmann and Ofer Bar-Yosef, looked closely at the figs, and found something odd about the seeds.
 
-A wild fig tree needs help to make good seeds. A tiny wasp crawls inside the young fig and carries pollen in. Without the wasp, most wild figs fall off before they ripen.
-
-Some fig trees are different. Their figs ripen without the wasp. They stay on the tree and turn soft and sweet. But their seeds are empty, and cannot grow into new trees.
+A wild fig tree needs help to make good seeds. A tiny wasp crawls inside the young fig and carries pollen in, and without the wasp, most wild figs fall off before they ripen. Some fig trees are different. Their figs ripen without the wasp, stay on the tree and turn soft and sweet, but their seeds are empty, and cannot grow into new trees.
 
 The figs at Gilgal were that kind.
 
 So how did those trees spread?
 
-A fig tree has a second way to make more of itself. Cut off a branch, push it into the ground, and it grows roots. Kislev, Hartmann and Bar-Yosef thought that is what the people at Gilgal did. They chose trees whose figs stayed on the branch and turned sweet, and they planted cuttings. If so, people were growing figs on purpose about a thousand years before they grew wheat or barley.
+A fig tree has a second way to make more of itself: cut off a branch, push it into the ground, and it grows roots. Kislev, Hartmann and Bar-Yosef thought that is what the people at Gilgal did, choosing trees whose figs stayed on the branch and turned sweet, and planting cuttings. If so, people were growing figs on purpose about a thousand years before they grew wheat or barley.
 
-Not everyone agrees.
-
-Other botanists answered the same year. Fig trees of this kind, they said, also make some figs with good seeds, so they can spread on their own. The people at Gilgal may simply have picked figs from wild trees that happened to be sweet.
+Not everyone agrees. Botanists answered the same year that fig trees of this kind also make some figs with good seeds, so they can spread on their own, and that the people at Gilgal may simply have picked figs from wild trees that happened to be sweet.
 
 Planted, or picked? Nobody can be sure.
 
@@ -107,7 +99,7 @@ Either way, someone stored the figs, and perhaps dried them first. They are stil
 
 **Notes for us.** The beat: planted or picked, nobody can be sure. Michael's worklist note was "keep"; my round-1 doubt was that the claim rests on one study, and the More now argues the question rather than stating the claim. Checks: nine carbonized figs and 313 drupelets, stored in a house (Kislev 2006; the count from Harvard's release). Gilgal I about 11,400–11,200 years ago. Wild barley, oats and acorns stored at the site. "Parthenocarpic" (fruit without pollination) is never named; the More describes it. "A thousand years before wheat or barley" is the authors' claim, hedged with "if so". "Seeds" stands for drupelets, which are botanically tiny fruits; a child would call them seeds. "Most wild figs fall off without the wasp" simplifies fig pollination; the fig wasp story is a wonderful second story and is kept to one sentence here.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: "from more figs that have crumbled away" cut (unsourced); "someone dried the figs" softened to "perhaps dried them first" (the source says the figs may have been dried). Confirmed: nine figs, 313 drupelets, the house, barley, oats and acorns, the cuttings, the thousand years, the rebuttal and its authors, all references (the Gazette article with the count is the June 2006 one). The fig-wasp sentence is standard botany; no page was reached for it.
+**Checked (1 Oct 2026, four independent checkers).** Changed: "from more figs that have crumbled away" cut (unsourced); "someone dried the figs" softened to "perhaps dried them first" (the source says the figs may have been dried). Confirmed: nine figs, 313 drupelets, the house, barley, oats and acorns, the cuttings, the thousand years, the rebuttal and its authors, all references (the Gazette article with the count is the June 2006 one). The fig-wasp sentence is standard botany; no page was reached for it. Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -121,27 +113,22 @@ Either way, someone stored the figs, and perhaps dried them first. They are stil
 **Summary (33 words)**
 About 8300 BCE (about 10,300 years ago). At Jericho, near the Jordan River, people built a round stone tower about eight metres tall, with a staircase inside. Nobody knows what it was for. It is still standing. *More*
 
-**More (304 words)**
-
+**More (303 words)**
 ```
 About 8300 BCE (about 10,300 years ago)
 ```
 
-A round tower of rough stones stands in a deep trench. It is about eight metres tall, as high as a house of three storeys. At its foot is a small doorway. Inside, a narrow staircase of twenty-two stone steps climbs through the tower to the top.
+A round tower of rough stones stands in a deep trench. It is about eight metres tall, as high as a house of three storeys, and at its foot is a small doorway. Inside, a narrow staircase of twenty-two stone steps climbs through the tower to the top.
 
-The tower is at Jericho, beside a spring that never runs dry, near the Jordan River in what is now the West Bank. It was built about 10,300 years ago. At that time nobody in this part of the world made pottery, and the people of Jericho were only beginning to grow some of their food. Yet they gathered and stacked enough stone to build this, and a long wall beside it.
-
-The archaeologist Kathleen Kenyon dug the tower out in the 1950s.
+The tower is at Jericho, beside a spring that never runs dry, near the Jordan River in what is now the West Bank. It was built about 10,300 years ago, when nobody in this part of the world made pottery, and the people of Jericho were only beginning to grow some of their food. Yet they gathered and stacked enough stone to build this, and a long wall beside it. The archaeologist Kathleen Kenyon dug the tower out in the 1950s.
 
 What was it for?
 
-Kenyon thought it was for defence: a lookout beside a town wall. But nobody has found signs of an enemy at that time.
+Kenyon thought it was for defence, a lookout beside a town wall, but nobody has found signs of an enemy at that time. In 1986 another archaeologist, Ofer Bar-Yosef, suggested that the wall was built to hold back floods and mud washing down from the hills, and that the tower was used for ceremonies.
 
-In 1986 another archaeologist, Ofer Bar-Yosef, suggested that the wall was built to hold back floods and mud washing down from the hills, and that the tower was used for ceremonies.
+Later, two other archaeologists, Roy Liran and Ran Barkai, pointed to the sky. West of Jericho rises a mountain called Quruntul ("koo-roon-TOOL"). On the longest day of the year, the Sun sets behind that mountain, and as it sets, the mountain's shadow stretches out across the plain and reaches the tower. The staircase inside points toward the same mountain. Liran and Barkai suggested the tower helped persuade people to live together as one community.
 
-Later, two other archaeologists, Roy Liran and Ran Barkai, pointed to the sky. West of Jericho rises a mountain called Quruntul. Say "koo-roon-TOOL." On the longest day of the year, the Sun sets behind that mountain, and as it sets, the mountain's shadow stretches out across the plain and reaches the tower. The staircase inside points toward the same mountain. Liran and Barkai suggested the tower helped persuade people to live together as one community.
-
-A lookout, a place for ceremonies, or something to do with the Sun? Each idea still has supporters. Nobody knows.
+A lookout, a place for ceremonies, or something to do with the Sun? Each idea still has supporters, and nobody knows.
 
 It is one of the oldest stone towers anyone has found.
 
@@ -157,7 +144,7 @@ A metal grate now covers the top of the stairs.
 
 **Notes for us.** The beat: a tower nobody can explain. Three ideas, given in turn, with no winner. Religion: the Sun idea is stated as Liran and Barkai's, and the More does not call it a temple or ritual. Checks: built about 8300 BCE, used to about 7800 (radiocarbon). Height given variously as 7.75 m surviving, 8.25 m and 8.5 m, so "about eight metres". 22 steps. Kenyon dug 1952–58. Quruntul about 1.3 km away and 350 m higher; the shadow reaches the tower at midsummer sunset (Liran and Barkai; they also published in *Time and Mind*, 2008). "Older than any other stone tower anyone has found" is the usual claim; worth a checker's eye. Left out: the "11,000 working days" figure (no traceable source); the twelve skeletons later put in the passage (a second story); Joshua's walls (thousands of years later, and scripture is not evidence).
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: "nobody in the world made pottery" was wrong (pottery in East Asia is far older), now "nobody in this part of the world"; Bar-Yosef thought the tower ceremonial, not part of his flood wall; Liran and Barkai's idea now in their words (the tower persuaded people to live as one community); "older than any other stone tower" softened to "one of the oldest" (Tell Qaramel in Syria may be older); Kenyon's publisher dropped (not confirmed). Confirmed: height, 22 steps, Kenyon's dig, the shadow, the 290° axis, UNESCO 2023. Doorway and grate confirmed in the research pass only (Chadwick; University of Michigan image database). Bar-Yosef's journal page could not be opened.
+**Checked (1 Oct 2026, four independent checkers).** Changed: "nobody in the world made pottery" was wrong (pottery in East Asia is far older), now "nobody in this part of the world"; Bar-Yosef thought the tower ceremonial, not part of his flood wall; Liran and Barkai's idea now in their words (the tower persuaded people to live as one community); "older than any other stone tower" softened to "one of the oldest" (Tell Qaramel in Syria may be older); Kenyon's publisher dropped (not confirmed). Confirmed: height, 22 steps, Kenyon's dig, the shadow, the 290° axis, UNESCO 2023. Doorway and grate confirmed in the research pass only (Chadwick; University of Michigan image database). Bar-Yosef's journal page could not be opened. Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -171,27 +158,24 @@ A metal grate now covers the top of the stairs.
 **Summary (35 words)**
 About 8000 BCE (about 10,000 years ago). In a cave in the hills of southern Mexico, people left squash seeds bigger than wild squash makes. Someone was growing squash. Farming had begun in the Americas, separately from anywhere else. *More*
 
-**More (301 words)**
-
+**More (307 words)**
 ```
 About 8000 BCE (about 10,000 years ago)
 ```
 
-A squash seed, about as long as your thumbnail, was dug from the floor of a cave in southern Mexico. It is pale and flat, like a pumpkin seed. It is about 10,000 years old.
+A squash seed, about as long as your thumbnail, was dug from the floor of a cave in southern Mexico. It is pale and flat, like a pumpkin seed, and it is about 10,000 years old.
 
-The cave is called Guilá Naquitz. Say "gee-LAH nah-KEETS." It is high in the dry hills of Oaxaca. Small groups of people camped there from time to time. They left behind scraps of what they ate: acorns, nuts, cactus fruit, agave, and bits of squash.
+The cave is called Guilá Naquitz ("gee-LAH nah-KEETS"), and it is high in the dry hills of Oaxaca. Small groups of people camped there from time to time, and left behind scraps of what they ate: acorns, nuts, cactus fruit, agave, and bits of squash.
 
-The archaeologist Kent Flannery dug the cave in the 1960s. His team kept everything, down to the seeds.
-
-Thirty years later, another archaeologist, Bruce Smith, looked at the squash again. By then it was possible to find the age of a single seed, using a speck of the seed itself. The oldest was about 10,000 years old.
+The archaeologist Kent Flannery dug the cave in the 1960s, and his team kept everything, down to the seeds. Thirty years later, another archaeologist, Bruce Smith, looked at the squash again. By then it was possible to find the age of a single seed, using a speck of the seed itself, and the oldest was about 10,000 years old.
 
 But was it wild squash, or grown?
 
-Smith compared the seeds and stems from the cave with those of wild squash. Wild squash is small and hard, with small seeds and a thin stem. The squash from the cave had bigger seeds and thicker stems.
+Smith compared the seeds and stems from the cave with those of wild squash. Wild squash is small and hard, with small seeds and a thin stem, and the squash from the cave had bigger seeds and thicker stems.
 
-When people save seeds from the plants they like best, and plant them, year after year, the plants change. Their fruits and seeds get bigger. Someone at Guilá Naquitz was choosing and planting squash.
+When people save seeds from the plants they like best, and plant them, year after year, the plants change, and their fruits and seeds get bigger. Someone at Guilá Naquitz was choosing and planting squash.
 
-At about the same time, people in the Middle East were beginning to farm wheat and barley. Nobody in Mexico knew that. Nobody in the Middle East knew there was a Mexico. Farming was invented at least twice, by people who never met.
+At about the same time, people in the Middle East were beginning to farm wheat and barley. Nobody in Mexico knew that, and nobody in the Middle East knew there was a Mexico. Farming was invented at least twice, by people who never met.
 
 Maize came later. In this same cave, the oldest cobs of maize are about four thousand years younger than the oldest squash seed.
 
@@ -206,7 +190,7 @@ Many pumpkins, courgettes and acorn squash belong to the same kind of plant as t
 
 **Notes for us.** The beat: someone was choosing, and the seeds show it. It leans on Maize (batch 1), which uses the same cave's cobs. Checks: seed 13.8 mm, dated 8910 ± 50 radiocarbon years (about 10,000 calendar years); larger seeds and thicker peduncles than wild (Smith 1997). Flannery dug 1964–66. Cave used about 10,750–8,900 years ago. Foods: acorns, piñon nuts, cactus fruit, wild beans (Flannery 1986; checker to confirm the list). Maize cobs about 6,250 years old (batch 1), about four thousand years younger. "Farming invented at least twice" is safe; it was invented several times. *Cucurbita pepo* includes pumpkins, courgettes (zucchini) and acorn squash. Pronunciation of Guilá Naquitz is from the spelling, not a source.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: seed now "about as long as your thumbnail" (13.8 mm); foods now acorns, nuts, cactus fruit, agave (wild beans not confirmed); "over about two thousand years" cut; "wild squash, which still grows in Mexico" cut (the wild ancestor is not clearly identified); Piperno and Flannery's full title. Confirmed: dates, maize four thousand years younger, *Cucurbita pepo*. Not independently confirmed (search ran out): Smith 1997's seed and stem details and the 1986 book, both confirmed in the research pass (AGRIS; eHRAF). Flannery's dig was 1964–66 per eHRAF; Wikipedia's "1970s" looks wrong.
+**Checked (1 Oct 2026, four independent checkers).** Changed: seed now "about as long as your thumbnail" (13.8 mm); foods now acorns, nuts, cactus fruit, agave (wild beans not confirmed); "over about two thousand years" cut; "wild squash, which still grows in Mexico" cut (the wild ancestor is not clearly identified); Piperno and Flannery's full title. Confirmed: dates, maize four thousand years younger, *Cucurbita pepo*. Not independently confirmed (search ran out): Smith 1997's seed and stem details and the 1986 book, both confirmed in the research pass (AGRIS; eHRAF). Flannery's dig was 1964–66 per eHRAF; Wikipedia's "1970s" looks wrong. Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -220,33 +204,28 @@ Many pumpkins, courgettes and acorn squash belong to the same kind of plant as t
 **Summary (35 words)**
 About 7500 BCE (about 9,500 years ago). Along the Yangtze River in southern China, people gathered wild rice and began to plant it. Over thousands of years it became the rice that now feeds more than half the world. *More*
 
-**More (349 words)**
-
+**More (350 words)**
 ```
 About 7500 BCE (about 9,500 years ago)
 ```
 
-Look at a grain of rice under a microscope, at the very bottom, where it was joined to the plant. There is a little scar.
-
-On some grains the scar is smooth and round, like a clean break. On others it is rough and torn.
+Look at a grain of rice under a microscope, at the very bottom, where it was joined to the plant. There is a little scar. On some grains the scar is smooth and round, like a clean break, and on others it is rough and torn.
 
 The difference tells you whether people were growing the rice.
 
-Wild rice drops its grains as soon as they are ripe. Each grain breaks off cleanly by itself and falls to the ground, where it can grow. That leaves the smooth scar. Dropping its grain is good for the rice, and bad for anyone who wants to eat it, because by the time the rice is ripe, much of it is already on the ground.
+Wild rice drops its grains as soon as they are ripe. Each grain breaks off cleanly by itself and falls to the ground, where it can grow, and that leaves the smooth scar. Dropping its grain is good for the rice, and bad for anyone who wants to eat it, because by the time the rice is ripe, much of it is already on the ground.
 
 Now and then, a wild rice plant holds on to its grains. If people cut the stalks to gather rice, those are the plants whose grain they carry home. If they plant some of that grain the next year, more of the next crop holds on. To get the grain off, people have to beat the stalks, and that leaves the rough, torn scar.
 
 So archaeologists count scars.
 
-At Tianluoshan, a village near the coast of China about 7,000 years ago, Dorian Fuller and his colleagues looked at the bottoms of 2,641 rice grains. Say "tyen-lwoh-shahn." Over about three hundred years, the share with torn scars rose from about a quarter to nearly four in ten.
+At Tianluoshan ("tyen-lwoh-shahn"), a village near the coast of China about 7,000 years ago, Dorian Fuller and his colleagues looked at the bottoms of 2,641 rice grains. Over about three hundred years, the share with torn scars rose from about a quarter to nearly four in ten.
 
-Rice-growing in that part of China had begun long before. At Shangshan, about 9,500 years ago, potters mixed rice husks into their clay. Some husks are still inside the broken pots. Say "shahng-shahn."
+Rice-growing in that part of China had begun long before. At Shangshan ("shahng-shahn"), about 9,500 years ago, potters mixed rice husks into their clay. Some husks are still inside the broken pots.
 
-How long did it take to turn wild rice into a crop that keeps its grain?
+How long did it take to turn wild rice into a crop that keeps its grain? That is still argued. Fuller and others think it took thousands of years. Other archaeologists, who study tiny specks of glassy stone that form inside rice leaves, think the change had already begun about 10,000 years ago. The two sides are measuring different things, and nobody has settled it.
 
-That is still argued. Fuller and others think it took thousands of years. Other archaeologists study tiny specks of glassy stone that form inside rice leaves. They think the change had already begun about 10,000 years ago. The two sides are measuring different things, and nobody has settled it.
-
-Today rice is the main food of more than half the people in the world.
+By 2026 rice was the main food of more than half the people in the world.
 
 **Pictures wanted:** spikelet bases under the microscope, wild and domesticated side by side (from Fuller 2009 or Zheng 2016; licence to check; a drawing for CW may be needed); the Shangshan site (Commons, `Shangshan Relic Site(West site) 2013.JPG`; licence to check).
 
@@ -258,7 +237,9 @@ Today rice is the main food of more than half the people in the world.
 
 **Notes for us.** The beat: the scar on a grain tells whether people were growing it. One argument, how fast, kept to two sentences. Checks: 2,641 spikelet bases; non-shattering rose from 27.4% to 38.8% over about 300 years, about 6900–6600 years ago (Fuller 2009). Shangshan from about 9,400 years ago, possibly 10,000; husks as temper in pottery (Liu 2007). "Tiny specks of glassy stone" are phytoliths. "More than half the world" (FAO). Gathering by cutting stalks is the usual explanation for why non-shattering spread; hedged with "if". The date on the line (7500 BCE) is a middle for "rice tended", not a single find. Title of Zheng et al. 2016: checker to confirm.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: "his Chinese colleagues" to "his colleagues" (one co-author is Japanese); "rice-growing there" now "in that part of China" (Shangshan is a different site); the phytolith side argues an earlier start, not a faster change. Confirmed: Tianluoshan near the coast, 27% to 39% over about 300 years, husks in Shangshan pots, all four references, more than half the world. The figure 2,641 is from the research pass (paper summaries), not seen by the checker.
+**Checked (1 Oct 2026, four independent checkers).** Changed: "his Chinese colleagues" to "his colleagues" (one co-author is Japanese); "rice-growing there" now "in that part of China" (Shangshan is a different site); the phytolith side argues an earlier start, not a faster change. Confirmed: Tianluoshan near the coast, 27% to 39% over about 300 years, husks in Shangshan pots, all four references, more than half the world. The figure 2,641 is from the research pass (paper summaries), not seen by the checker. Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
+
+*Watch:* rice the main food of more than half the world's people · last checked 21 Nov 2026 (from the batch's own text; not searched again) · every two years
 
 ---
 
@@ -272,25 +253,22 @@ Today rice is the main food of more than half the people in the world.
 **Summary (36 words)**
 About 7100 BCE (about 9,100 years ago). On a plain in central Turkey, people built a town of mud-brick houses packed so tightly that it had no streets. They walked across the roofs and climbed down ladders into their homes. *More*
 
-**More (310 words)**
-
+**More (312 words)**
 ```
 About 7100 BCE (about 9,100 years ago)
 ```
 
-A low hill rises about twenty metres above a flat plain in central Turkey. It is not a natural hill. It is made of houses, built one on top of another for more than a thousand years.
+A low hill rises about twenty metres above a flat plain in central Turkey. It is not a natural hill. It is made of houses, built one on top of another for more than a thousand years, and the place is now called Çatalhöyük ("chah-TAHL-huh-yook").
 
-The place is now called Çatalhöyük. Say "chah-TAHL-huh-yook."
+The houses were built of mud brick, wall against wall, like the cells of a honeycomb, with no streets between them and no doors in their outside walls. To visit a neighbour, you walked across the flat roofs, and to go home, you climbed down a wooden ladder through a hole in your roof. The same hole let out the smoke from the oven.
 
-The houses were built of mud brick, wall against wall, like the cells of a honeycomb. There were no streets between them, and no doors in their outside walls. To visit a neighbour, you walked across the flat roofs. To go home, you climbed down a wooden ladder through a hole in your roof. The same hole let out the smoke from the oven.
-
-Inside, people plastered their walls white, and plastered them again, many times. Some painted the walls with red patterns, with wild cattle, and with vultures. Some set the horns of wild cattle into the walls and covered them in plaster.
+Inside, people plastered their walls white, and plastered them again, many times. Some painted the walls with red patterns, with wild cattle, and with vultures, and some set the horns of wild cattle into the walls and covered them in plaster.
 
 And under the floors, people buried their dead. They slept and cooked and worked above the graves of those who had lived there before.
 
 How many people lived there?
 
-When James Mellaart first dug at Çatalhöyük, in the 1960s, he guessed five to seven thousand. Later guesses went as high as ten thousand. Then, from 1993, a team led by Ian Hodder dug much more slowly, sometimes spending a whole season on a single house. They found that not every house was lived in at the same time.
+When James Mellaart first dug at Çatalhöyük, in the 1960s, he guessed five to seven thousand, and later guesses went as high as ten thousand. Then, from 1993, a team led by Ian Hodder dug much more slowly, sometimes spending a whole season on a single house, and found that not every house was lived in at the same time.
 
 In 2024 two archaeologists, Ian Kuijt and Arkadiusz Marciniak, went through the evidence again. In a typical year, they think, about 600 to 800 people lived there. On their count, Çatalhöyük was less like a city than a large, crowded village that lasted a very long time.
 
@@ -308,7 +286,7 @@ Most of the hill has still not been dug.
 
 **Notes for us.** The beat: a town with no streets, and an old guess about its size cut down. Checks: East Mound settled about 7100 BCE, left about 5950 BCE; about 20 m high (Bayliss 2015; Wikipedia for height). Roof entry by ladder; burials under floors; aurochs horns (bucrania); paintings of aurochs, vultures, red patterns (Hodder). Smoke through the roof hole: checker to confirm. Mellaart dug 1961–65; Hodder 1993–2018. Population: older 5,000–10,000; Kuijt and Marciniak 2024, 600–800 in an average year of the Middle phase. "Most of the hill has not been dug": checker to confirm a figure. Left out: the "map" or "leopard skin" painting (a second argument), and the doubts about some of Mellaart's drawings (behind the picture rule). Hodder's book title and Bayliss's first name: checker to confirm.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: "no doors in their outside walls" (rooms inside were linked); Mellaart himself guessed five to seven thousand, and later guesses reached ten thousand; Bayliss is Alex, not Anthony. Confirmed: 20 m, more than a thousand years, roof entry, ladders, smoke out of the roof, paintings, burials, Hodder's season on one building, Kuijt and Marciniak 2024 (vol. 74), about 5% dug, Hodder's book.
+**Checked (1 Oct 2026, four independent checkers).** Changed: "no doors in their outside walls" (rooms inside were linked); Mellaart himself guessed five to seven thousand, and later guesses reached ten thousand; Bayliss is Alex, not Anthony. Confirmed: 20 m, more than a thousand years, roof entry, ladders, smoke out of the roof, paintings, burials, Hodder's season on one building, Kuijt and Marciniak 2024 (vol. 74), about 5% dug, Hodder's book. Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -322,33 +300,26 @@ Most of the hill has still not been dug.
 **Summary (38 words)**
 About 6200 BCE (about 8,200 years ago). In Canada, a huge lake left by the melting ice broke through the ice that held it back and poured into the Atlantic. For about 150 years, the lands around the North Atlantic turned colder. *More*
 
-**More (331 words)**
-
+**More (330 words)**
 ```
 About 6200 BCE (about 8,200 years ago)
 ```
 
-Around the city of Winnipeg, in Canada, the land is flat as a table for hundreds of kilometres. It is flat because it was once the bottom of a lake.
+Around the city of Winnipeg, in Canada, the land is flat as a table for hundreds of kilometres. It is flat because it was once the bottom of a lake, called Lake Agassiz ("AG-uh-see").
 
-The lake is called Lake Agassiz. Say "AG-uh-see."
-
-As the great ice sheet over North America melted, its water had nowhere to go. The rivers there run north, and the ice was in the way. So the meltwater piled up along the edge of the ice, in a lake that at times was bigger than any lake on Earth today.
+As the great ice sheet over North America melted, its water had nowhere to go, because the rivers there run north, and the ice was in the way. So the meltwater piled up along the edge of the ice, in a lake that at times was bigger than any lake on Earth today.
 
 Then the ice holding the lake back gave way.
 
-A little more than 8,200 years ago, the lake drained out through Hudson Bay into the Atlantic Ocean. It held more than enough water to cover the whole of the United States ten metres deep. Nobody knows exactly how fast it emptied.
+A little more than 8,200 years ago, the lake drained out through Hudson Bay into the Atlantic Ocean. It held more than enough water to cover the whole of the United States ten metres deep, and nobody knows exactly how fast it emptied.
 
-What happened next shows up in the ice of Greenland.
-
-The layers of ice from just after the flood show a sudden cold. For about a century and a half, Greenland was colder, by several degrees at the worst. Mud from lakes and the sea floor shows the cold too, in many places around the North Atlantic.
+What happened next shows up in the ice of Greenland. The layers of ice from just after the flood show a sudden cold: for about a century and a half, Greenland was colder, by several degrees at the worst. Mud from lakes and the sea floor shows the cold too, in many places around the North Atlantic.
 
 Why would a lake make the world colder?
 
 Fresh water is lighter than salt water, so it floats on top. Many oceanographers think a great sheet of fresh water spread over the North Atlantic and slowed an ocean current that carries warm water north.
 
-What did the cold mean for people?
-
-By then people in the Middle East had been farming for about three thousand years. Some archaeologists once thought the cold drove them out of their villages. When others checked thousands of dates from those villages, they found no sign of that. People changed instead. In one village in what is now Syria, they changed the way they built their houses, kept their animals and made their pots, all at about this time.
+What did the cold mean for people? By then people in the Middle East had been farming for about three thousand years. Some archaeologists once thought the cold drove them out of their villages, but when others checked thousands of dates from those villages, they found no sign of that. People changed instead. In one village in what is now Syria, they changed the way they built their houses, kept their animals and made their pots, all at about this time.
 
 They stayed.
 
@@ -365,7 +336,7 @@ The land around Winnipeg is still flat.
 
 **Notes for us.** The beat: a lake drains in Canada and Greenland gets cold. It sits beside Storegga (batch 1), a few decades to a century later; they are separate events and the More does not link them. The mechanism (fresh water slowing the current) is given in two sentences and hedged as "many scientists think"; if Michael finds it a half-explanation, cut the paragraph and the question before it. Checks: drainage about 8,470 years ago in Barber 1999, nearer 8,200–8,300 in later work, so "a little more than 8,200 years ago". Volume more than 10¹⁴ m³ (100,000 km³); US area about 9.8 million km², so about 10 m. Cold 160.5 years with a 69-year core (Thomas 2007); about 6 ± 2 °C at the peak in central Greenland (Alley 1997), other estimates nearer 3 °C, hence "several degrees". Lake Agassiz at its largest (about 440,000 km²) exceeded the Caspian Sea (about 371,000 km²): checker to confirm. Farming in the Middle East from about 9500 BCE. Tell Sabi Abyad changes about 6200 BCE (Akkermans 2010). Flohr's author list: checker to confirm. The Winnipeg flatness from the old lake bed: checker to confirm. Louis Agassiz, after whom the lake is named, is left out.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: "about 160 years" to "a century and a half" (Thomas 2007 gives 160.5, others 150); "may have taken less than a year" cut (unsourced). Confirmed: Winnipeg flatness, larger than the Caspian at its largest, drainage through Hudson Bay, the fresh-water explanation as the leading view, several degrees, Tell Sabi Abyad. Not independently confirmed (sites blocked): Barber's volume, Thomas 2007, Flohr and Akkermans titles; all were confirmed in the research pass. Flohr's full author list (Pascal Flohr, Dominik Fleitmann, Roger Matthews, Wendy Matthews, Stuart Black) is unconfirmed, hence "and others".
+**Checked (1 Oct 2026, four independent checkers).** Changed: "about 160 years" to "a century and a half" (Thomas 2007 gives 160.5, others 150); "may have taken less than a year" cut (unsourced). Confirmed: Winnipeg flatness, larger than the Caspian at its largest, drainage through Hudson Bay, the fresh-water explanation as the leading view, several degrees, Tell Sabi Abyad. Not independently confirmed (sites blocked): Barber's volume, Thomas 2007, Flohr and Akkermans titles; all were confirmed in the research pass. Flohr's full author list (Pascal Flohr, Dominik Fleitmann, Roger Matthews, Wendy Matthews, Stuart Black) is unconfirmed, hence "and others". Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -379,31 +350,26 @@ The land around Winnipeg is still flat.
 **Summary (36 words)**
 About 5700 BCE (about 7,700 years ago). In what is now Oregon, a volcano called Mount Mazama erupted and its top fell in. Rain and snow filled the hole, and made Crater Lake, the deepest lake in the United States. *More*
 
-**More (332 words)**
-
+**More (333 words)**
 ```
 About 5700 BCE (about 7,700 years ago)
 ```
 
-In 1938, in a cave in the desert of Oregon, an archaeologist named Luther Cressman dug up dozens of sandals. They were woven from the shredded bark of sagebrush, a grey bush of the desert. Each had a flap to fold over the toes.
+In 1938, in a cave in the desert of Oregon, an archaeologist named Luther Cressman dug up dozens of sandals. They were woven from the shredded bark of sagebrush, a grey bush of the desert, and each had a flap to fold over the toes.
 
-The sandals lay under a layer of volcanic ash.
-
-So the sandals were older than the ash. Years later, when it became possible to measure the age of old plant material, some of the sandals were tested. They were more than 9,000 years old. They are among the oldest shoes ever found.
+The sandals lay under a layer of volcanic ash, so the sandals were older than the ash. Years later, when it became possible to measure the age of old plant material, some of the sandals were tested, and they were more than 9,000 years old. They are among the oldest shoes ever found.
 
 Where did the ash come from?
 
-About a hundred kilometres to the southwest there had been a mountain about 3,700 metres high. It is called Mount Mazama. Say "muh-ZAH-muh."
-
-About 7,700 years ago, Mount Mazama erupted. It threw out about fifty cubic kilometres of melted rock, as ash and pumice. With so much gone from inside it, the top half of the mountain fell in. Where the peak had been, there was a hole about ten kilometres across.
+About a hundred kilometres to the southwest there had been a mountain about 3,700 metres high, called Mount Mazama ("muh-ZAH-muh"). About 7,700 years ago, Mount Mazama erupted, and threw out about fifty cubic kilometres of melted rock, as ash and pumice. With so much gone from inside it, the top half of the mountain fell in, and where the peak had been, there was a hole about ten kilometres across.
 
 Ash fell over eight of today's states and into Canada, as far as Alberta and Saskatchewan. Geologists still use the ash to date what lies above and below it, just as at the cave.
 
-Over the next few hundred years, rain and snow filled the hole. It became Crater Lake. It is 592 metres deep, the deepest lake in the United States.
+Over the next few hundred years, rain and snow filled the hole, and it became Crater Lake. It is 592 metres deep, the deepest lake in the United States.
 
 Were people there to see it?
 
-The sandals show that people had lived in that country for a thousand years and more before the eruption. The Klamath people live there still. Their name for the lake is giiwas. Say "GEE-wahs." They tell of a fight between Llao, the chief of the world below, and Skell, the chief of the world above, which ends with Llao's mountain falling in.
+The sandals show that people had lived in that country for a thousand years and more before the eruption. The Klamath people live there still, and their name for the lake is giiwas ("GEE-wahs"). They tell of a fight between Llao, the chief of the world below, and Skell, the chief of the world above, which ends with Llao's mountain falling in.
 
 The Klamath Tribes say the story is their ancestors' memory of the eruption. Nobody can prove how old a spoken story is.
 
@@ -420,7 +386,7 @@ But someone was almost certainly there.
 
 **Notes for us.** The beat: shoes under the ash, and a story the Klamath say is a memory. The story is given as the Klamath Tribes' account, in their words where possible, and the More neither proves nor dismisses it. Checks: about 7,700 years ago (Egan 2015: 7,682–7,584 cal BP; Greenland ice 7,627 ± 150). Height about 3,700 m; upper half collapsed (USGS). About 50 km³ of magma (Bacon and Lanphere 2006; larger figures elsewhere). Caldera about 8 × 10 km. Lake 592 m deep (USGS and NPS; NPS also gives 594). Fill took about 420 to 740 years (Nathenson 2007), so "a few hundred years". Ash in eight states and three provinces. Sandals: Cressman 1938, under Mazama ash; Libby's 1951 date over 9,000 years; directly dated 10,400 to 9,100 radiocarbon years; "the oldest directly dated footwear" (Connolly), softened to "among the oldest shoes ever found". Fort Rock Cave about 100 km from Crater Lake, to the northeast, so Mazama is southwest of the cave (my measurement from coordinates; checker to confirm). Llao and Skell from the Klamath Tribes News and the Crater Lake Institute; Llao as chief of the below-world and Skell of the above-world: checker to confirm. Egan title: checker to confirm.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: the 1951 test was on the sandals, not one sandal, and found them "more than 9,000 years old". Confirmed: Cressman 1938, sagebrush bark, toe flap, under the ash, about 100 km apart with Mazama to the southwest, 3,700 m, top half collapsed, 8 × 10 km, eight states and three provinces, fill time, 592 m, giiwas, Llao and Skell, Egan title. The 50 km³, Bacon and Lanphere, and the Klamath Tribes News article were confirmed in the research pass; the checker's fetches were blocked. Michael may want to open the Klamath Tribes News article himself before this goes out.
+**Checked (1 Oct 2026, four independent checkers).** Changed: the 1951 test was on the sandals, not one sandal, and found them "more than 9,000 years old". Confirmed: Cressman 1938, sagebrush bark, toe flap, under the ash, about 100 km apart with Mazama to the southwest, 3,700 m, top half collapsed, 8 × 10 km, eight states and three provinces, fill time, 592 m, giiwas, Llao and Skell, Egan title. The 50 km³, Bacon and Lanphere, and the Klamath Tribes News article were confirmed in the research pass; the checker's fetches were blocked. Michael may want to open the Klamath Tribes News article himself before this goes out. Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -434,29 +400,26 @@ But someone was almost certainly there.
 **Summary (36 words)**
 About 5000 BCE (about 7,000 years ago). The Sahara was grassland, with lakes and rivers. People there herded cattle, milked them, and painted them on the rocks. Over the next two thousand years the rains failed and the desert came. *More*
 
-**More (318 words)**
-
+**More (321 words)**
 ```
 About 5000 BCE (about 7,000 years ago)
 ```
 
-On the walls of rock shelters in the Sahara Desert, there are paintings of cattle. Whole herds of them, with long curving horns. People walk among them.
+On the walls of rock shelters in the Sahara Desert, there are paintings of cattle, whole herds of them, with long curving horns, and people walk among them.
 
-The paintings are in Tassili n'Ajjer, a range of sandstone mountains in Algeria. Say "tah-SEE-lee nah-ZHAIR." Today it hardly ever rains there. Cattle could not live there.
+The paintings are in Tassili n'Ajjer ("tah-SEE-lee nah-ZHAIR"), a range of sandstone mountains in Algeria. Today it hardly ever rains there, and cattle could not live there.
 
 So why are there cattle on the walls?
 
-Because the Sahara was not always a desert. From about 15,000 years ago until about 5,500 years ago, the summer rains reached much farther north than they do now. The Sahara was grassland, with lakes, rivers and trees.
+Because the Sahara was not always a desert. From about 15,000 years ago until about 5,500 years ago, the summer rains reached much farther north than they do now, and the Sahara was grassland, with lakes, rivers and trees.
 
 People herded cattle there, and painted them. But a painting on a rock is hard to date, so nobody knows exactly how old the cattle paintings are. Most are thought to be between about 7,000 and 3,000 years old.
 
-A cooking pot is easier. And a pot remembers what was in it.
-
-When food is cooked in a clay pot, a little of its fat soaks into the clay and stays there, for thousands of years. At Takarkori, a rock shelter in the next range of mountains, across the border in Libya, archaeologists found broken pots about 7,000 years old. Say "tah-kar-KOR-ee." In 2012 a team of chemists, led by Julie Dunne and Richard Evershed, tested the fat in those pots. Of the pots that still held animal fat from that time, about half had held milk.
+A cooking pot is easier, and a pot remembers what was in it. When food is cooked in a clay pot, a little of its fat soaks into the clay and stays there, for thousands of years. At Takarkori ("tah-kar-KOR-ee"), a rock shelter in the next range of mountains, across the border in Libya, archaeologists found broken pots about 7,000 years old. In 2012 a team of chemists, led by Julie Dunne and Richard Evershed, tested the fat in those pots, and of the pots that still held animal fat from that time, about half had held milk.
 
 So the people of the green Sahara did not keep cattle only for meat. About 7,000 years ago, they were milking them.
 
-Then the rains moved south again. Some climate scientists think the change came quickly, over a few hundred years. Others think it came at different times in different places, later the farther south you go. Either way, the lakes dried up and the grass died, and the herders and their cattle moved away.
+Then the rains moved south again. Some climate scientists think the change came quickly, over a few hundred years, and others think it came at different times in different places, later the farther south you go. Either way, the lakes dried up and the grass died, and the herders and their cattle moved away.
 
 The paintings stayed where they were.
 
@@ -471,7 +434,7 @@ The paintings stayed where they were.
 
 **Notes for us.** The beat: the paintings can't be dated, but the pots remember the milk. Place chosen (round 1): Tassili for the paintings, with Takarkori named for the milk. Nabta Playa is left out. Checks: African Humid Period about 14,800 to 5,500 years ago (deMenocal 2000). Pastoral (cattle) paintings about 7,200 to 3,000 years ago on one chronology; dates argued by thousands of years. Dairy fats in about half the sherds tested, fifth millennium BCE (Dunne 2012). Abrupt or gradual end: deMenocal versus Kröpelin and Shanahan. "Spotted and patched hides" is a general description of the pastoral paintings; checker to confirm. "The herders moved away" is kept general on purpose; where they went is argued. The Acacus and Tassili are neighbouring ranges across the Algeria–Libya border. Coulson and Campbell book details: checker to confirm.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: "spotted and patched hides" cut (not confirmed); "about half of the pots" was wrong: about half of the Middle Pastoral fat residues tested were milk, so now "of the pots that still held animal fat from that time, about half had held milk"; the second view on the end of the green Sahara is Shanahan's: abrupt in each place, later farther south, not slower. Confirmed: Tassili, sandstone, Algeria, 14,800–5,500 years, pastoral paintings 7,200–3,000 years, Takarkori, Dunne 2012 and its authors, deMenocal, Shanahan, Coulson and Campbell (Abrams, 2001).
+**Checked (1 Oct 2026, four independent checkers).** Changed: "spotted and patched hides" cut (not confirmed); "about half of the pots" was wrong: about half of the Middle Pastoral fat residues tested were milk, so now "of the pots that still held animal fat from that time, about half had held milk"; the second view on the end of the green Sahara is Shanahan's: abrupt in each place, later farther south, not slower. Confirmed: Tassili, sandstone, Algeria, 14,800–5,500 years, pastoral paintings 7,200–3,000 years, Takarkori, Dunne 2012 and its authors, deMenocal, Shanahan, Coulson and Campbell (Abrams, 2001). Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -485,29 +448,24 @@ The paintings stayed where they were.
 **Summary (39 words)**
 About 5000 BCE (about 7,000 years ago). At Belovode, in what is now Serbia, people heated green and black rocks in a fire until copper ran out of them. It is the oldest sure sign anyone has found of metal made from stone. *More*
 
-**More (328 words)**
-
+**More (331 words)**
 ```
 About 5000 BCE (about 7,000 years ago)
 ```
 
-In the ground of a village called Belovode, in Serbia, archaeologists found small lumps of black, glassy stuff, none bigger than a grape. Say "BEH-loh-voh-deh."
+In the ground of a village called Belovode ("BEH-loh-voh-deh"), in Serbia, archaeologists found small lumps of black, glassy stuff, none bigger than a grape.
 
-The lumps are slag. Slag is what is left of a rock after metal has been melted out of it. These lumps are about 7,000 years old.
+The lumps are slag, which is what is left of a rock after metal has been melted out of it. These lumps are about 7,000 years old.
 
 How do you get metal out of a rock?
 
-Now and then, copper is found in the ground as metal, in lumps. People had been hammering lumps like that into beads for thousands of years. But most copper is not lying about as metal. It is locked inside rocks, often green or blue or black ones, mixed with other things.
+Now and then, copper is found in the ground as metal, in lumps, and people had been hammering lumps like that into beads for thousands of years. But most copper is not lying about as metal. It is locked inside rocks, often green or blue or black ones, mixed with other things. To get it out, you heat the rock in a fire far hotter than a cooking fire, about 1,100 degrees Celsius, until the copper runs out as tiny shining drops. What is left of the rock becomes slag.
 
-To get it out, you heat the rock in a fire far hotter than a cooking fire, about 1,100 degrees. The copper runs out as tiny shining drops. What is left of the rock becomes slag.
-
-But could the people of Belovode simply have melted down copper lumps they had found?
-
-No. Miljana Radivojević and her colleagues looked at the slag under a microscope and tested what was in it. It held crystals that form only when rock is heated in this way. It also held other metals, such as manganese, that a lump of pure copper would not have. The people of Belovode had been getting copper out of stone.
+But could the people of Belovode simply have melted down copper lumps they had found? No. Miljana Radivojević and her colleagues looked at the slag under a microscope and tested what was in it. It held crystals that form only when rock is heated in this way, and it held other metals, such as manganese, that a lump of pure copper would not have. The people of Belovode had been getting copper out of stone.
 
 Was this the first place anyone did it?
 
-Nobody knows. When the results were published, in 2010, the Belovode slag was the oldest certain evidence of it anywhere. Some archaeologists think the idea was invented only once, in the Middle East, and that older evidence there will turn up. Others think people worked it out in several places, on their own.
+Nobody knows. When the results were published, in 2010, the Belovode slag was the oldest certain evidence of it anywhere. Some archaeologists think the idea was invented only once, in the Middle East, and that older evidence there will turn up, and others think people worked it out in several places, on their own.
 
 One older claim, at Çatalhöyük in Turkey, was checked again in 2017. The "slag" there turned out to be green paint, made from a copper rock, that had melted by accident when a house burned down.
 
@@ -523,7 +481,7 @@ At Belovode, the fire was lit on purpose.
 
 **Notes for us.** The beat: metal hidden inside stone, and how we know someone got it out on purpose. It links back to Çatalhöyük (event 6). Checks: smelting from about 5000 BCE at a settlement lived in about 5350–4650 BCE (Radivojević 2010). Slag droplets no larger than 2 cm, so "none bigger than a grape". About 1,100 °C. Smelting minerals (spinel, delafossite) and manganese, iron, zinc, cobalt. Native copper hammered and annealed at Çayönü from about 8000 BCE, so "thousands of years". "The oldest sure sign anyone has found" in the summary, and "when the results were published" in the More: checker to confirm nothing older has been accepted since 2010 (Tal-i Iblis in Iran is argued and poorly dated). The Çatalhöyük re-examination (2017). Charcoal's role (it takes the oxygen out of the ore) is not explained: a half-explanation would be worse.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: "with charcoal" cut (the source mentions wood ash, not charcoal). Confirmed: the 2010 paper and its six authors, 7,000 years, 1,100 °C, manganese and other metals, Roberts and Thornton's single-invention view, Belovode still the oldest securely dated smelting, Çatalhöyük overturned in 2017, Bower in *Science News*. The slag size, the smelting crystals and the 2017 title were confirmed in the research pass, not by the checker.
+**Checked (1 Oct 2026, four independent checkers).** Changed: "with charcoal" cut (the source mentions wood ash, not charcoal). Confirmed: the 2010 paper and its six authors, 7,000 years, 1,100 °C, manganese and other metals, Roberts and Thornton's single-invention view, Belovode still the oldest securely dated smelting, Çatalhöyük overturned in 2017, Bower in *Science News*. The slag size, the smelting crystals and the 2017 title were confirmed in the research pass, not by the checker. Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -538,26 +496,25 @@ At Belovode, the fire was lit on purpose.
 About 3500 BCE (about 5,500 years ago). In central China, people buried babies with cloth woven of silk. Burnt scraps of it are the oldest silk cloth yet found. Silk is a single thread, unwound from a caterpillar's cocoon. *More*
 
 **More (348 words)**
-
 ```
 About 3500 BCE (about 5,500 years ago)
 ```
 
-In 1926, at a village called Xiyincun, in northern China, an archaeologist named Li Ji found half of a silkworm's cocoon. Say "shee-yin-TSWUN." Someone had cut it in half, cleanly, with a sharp edge, about 6,000 years before.
+In 1926, at a village called Xiyincun ("shee-yin-TSWUN"), in northern China, an archaeologist named Li Ji found half of a silkworm's cocoon. Someone had cut it in half, cleanly, with a sharp edge, about 6,000 years before.
 
 Nobody knows why.
 
-A cocoon is made by a caterpillar called a silkworm. Before it turns into a moth, the caterpillar wraps itself in a thread that it makes inside its own body. The thread is finer than a hair, and it goes round and round. It is all one thread. Unwound, it can be several hundred metres long. A sticky gum holds the cocoon together.
+A cocoon is made by a caterpillar called a silkworm. Before it turns into a moth, the caterpillar wraps itself in a thread that it makes inside its own body. The thread is finer than a hair, and it goes round and round, all one thread, which unwound can be several hundred metres long. A sticky gum holds the cocoon together.
 
-To unwind it, you drop the cocoon into hot water. The gum softens, and the thread comes away in one long strand. Twist several strands together and you have thread strong enough to weave.
+To unwind it, you drop the cocoon into hot water, so that the gum softens and the thread comes away in one long strand. Twist several strands together and you have thread strong enough to weave.
 
 Who first did it, and when?
 
-The oldest silk cloth anyone has found comes from Qingtai, in central China, from about 5,500 years ago. Say "ching-TIE." Babies who had died were buried there in large clay jars, and two scraps of silk cloth were found with them. The cloth is burnt black, but it is still woven cloth.
+The oldest silk cloth anyone has found comes from Qingtai ("ching-TIE"), in central China, from about 5,500 years ago. Babies who had died were buried there in large clay jars, and two scraps of silk cloth were found with them. The cloth is burnt black, but it is still woven cloth.
 
-There are older traces. At Jiahu, also in central China, scientists tested soil from under the bodies in graves about 8,500 years old. Say "jyah-HOO." In two of the graves they found tiny traces of silk. There is no cloth left, only the stuff that silk is made of. Nobody can tell whether it came from wild silkworms or ones that people raised.
+There are older traces. At Jiahu ("jyah-HOO"), also in central China, archaeologists tested soil from under the bodies in graves about 8,500 years old, and in two of the graves they found tiny traces of silk. There is no cloth left, only the stuff that silk is made of, and nobody can tell whether it came from wild silkworms or ones that people raised.
 
-Wild silkworms still live in China. The silkworm that people raise is a different kind, bred from the wild one over thousands of years. Its moths cannot fly. Like the wild ones, they do not eat, and they live only long enough to lay eggs.
+Wild silkworms still live in China. The silkworm that people raise is a different kind, bred from the wild one over thousands of years. Its moths cannot fly, and like the wild ones, they do not eat, and they live only long enough to lay eggs.
 
 An old Chinese story says that silk was discovered by an empress named Leizu, when a cocoon fell into her cup of hot tea. It is a story.
 
@@ -573,7 +530,7 @@ Every silkworm moth that people raise depends on them. Not one of them can fly a
 
 **Notes for us.** The beat: a whole cocoon is one thread, and nobody knows who first unwound it. Checks: Xiyincun half cocoon found 1926 by Li Ji (report 1927), cut with a sharp edge; date about 4000–3600 BCE (Zhang and Yang 2024). Qingtai (the worklist's "Qingtaishan") silk fabric about 3500–3100 BCE, two charred scraps from urn burials of infants (Zhang and Yang 2024, citing the 1999 report). Jiahu: silk protein in two of three tombs, M436 and M451 (Gong 2016). Thread length: 300–900 m (common), 600–1,500 m (FAO); "several hundred metres" is safe. Boiling softens sericin (gum). *Bombyx mori* moths cannot fly and do not feed as adults; bred from *B. mandarina*. Leizu: legend. Left out: the monks who smuggled silkworm eggs to Byzantium (a legend, and a second story); silk reaching Central Asia by about 1900 BCE (a 2026 paper, newer than anything else here). "Two scraps... found with them" is safer than "wrapped in": checker to confirm. First names of Zhang and Yang: checker to confirm.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: Zhang's first name is Xiyao; the silk moths' not eating is true of wild ones too, so the More now says so (only the not-flying comes from breeding). Confirmed: *B. mandarina* ancestry, several hundred metres, hot water and sericin, Qingtai about 5,500 years, Jiahu two of three tombs, Leizu as legend, Li Ji in southern Shanxi, Gong 2016 and Vainker. The half cocoon and the Qingtai details were confirmed in the research pass (Zhang and Yang 2024), not by the checker.
+**Checked (1 Oct 2026, four independent checkers).** Changed: Zhang's first name is Xiyao; the silk moths' not eating is true of wild ones too, so the More now says so (only the not-flying comes from breeding). Confirmed: *B. mandarina* ancestry, several hundred metres, hot water and sericin, Qingtai about 5,500 years, Jiahu two of three tombs, Leizu as legend, Li Ji in southern Shanxi, Gong 2016 and Vainker. The half cocoon and the Qingtai details were confirmed in the research pass (Zhang and Yang 2024), not by the checker. Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -588,16 +545,13 @@ Every silkworm moth that people raise depends on them. Not one of them can fly a
 About 3500 BCE (about 5,500 years ago). In what is now southern Poland, someone drew a wagon on a clay pot: a box, four wheels, and a pole to pull it by. It is one of the oldest pictures of a wheel anywhere. *More*
 
 **More (350 words)**
-
 ```
 About 3500 BCE (about 5,500 years ago)
 ```
 
-A clay pot, found in southern Poland, has pictures scratched into its side. One of them is tiny and very simple: a box with a small circle at each corner, and a long line out in front.
+A clay pot, found in southern Poland, has pictures scratched into its side. One is tiny and very simple: a box with a small circle at each corner, and a long line out in front. It is a wagon, seen from above, with four wheels and a pole to hitch an animal to.
 
-It is a wagon, seen from above, with four wheels and a pole to hitch an animal to.
-
-The pot was dug up at Bronocice, near the city of Kraków, in the 1970s. Say "bro-no-CHEE-tseh." It is about 5,500 years old. It is one of the oldest pictures of a wheel anywhere.
+The pot was dug up at Bronocice ("bro-no-CHEE-tseh"), near the city of Kraków, in the 1970s. It is about 5,500 years old, and its wagon is one of the oldest pictures of a wheel anywhere.
 
 Where was the wheel invented?
 
@@ -607,7 +561,7 @@ The wheel from the marsh is made of two planks of ash wood, held together by cro
 
 People had been making round things for thousands of years. So why did the wheel take so long?
 
-Because the wheel is the easy part. The axle is hard. The archaeologist David Anthony points out that the axle, and the hole it turns in, have to be almost perfectly round and smooth, or they grind and stick. A thick axle rubs too much. A thin one breaks under the load. Getting it right takes careful woodwork.
+Because the wheel is the easy part. The axle is hard. The archaeologist David Anthony points out that the axle, and the hole it turns in, have to be almost perfectly round and smooth, or they grind and stick. A thick axle rubs too much, and a thin one breaks under the load. Getting it right takes careful woodwork.
 
 So which came first: the drawing in Poland, the signs in Iraq, or the ruts in Germany? Archaeologists still argue. Some think the idea spread fast from one place. Others think more than one people worked it out.
 
@@ -623,7 +577,7 @@ The wheel from the marsh is in a museum in Ljubljana. It is more than 5,000 year
 
 **Notes for us.** The beat: the wheel appears everywhere at once, and the axle was the hard part. Checks: Bronocice pot dug 1974–76, dated about 3635–3370 BCE from associated bone, Archaeological Museum of Kraków. "Pictures marked on its side": whether incised or painted, and how many wagon figures, checker to confirm (sources say five wagon-like figures in some accounts). Uruk wagon signs about 3370–3310 BCE. Flintbek ruts about 3400 BCE. Ljubljana Marshes wheel found 2002, 72 cm, ash planks, oak axle 124 cm, about 3340–3030 BCE; wheel and axle turned together. Anthony quoted in paraphrase (via LiveScience 2012). Bulliet's copper-mine idea is left out as a second argument. Note the summary's "oldest pictures of a wheel anywhere" is hedged with "one of".
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: the pictures are scratched, not painted; the wagon is drawn from above, with a circle at each corner, not under the box; the Ljubljana wheel is 5,100–5,350 years old, so "more than 5,000"; "found nearby" now "found too"; the Kiel release's real title. Confirmed: dug 1974, 3637–3373 BCE, Uruk, Flintbek under a long barrow, the wheel's planks, cross-pieces, 72 cm, oak axle turning with it, City Museum of Ljubljana, Anthony on axles, Bakker 1999, Bulliet 2016. Each wagon figure is about 1.8 × 1.5 cm, hence "tiny".
+**Checked (1 Oct 2026, four independent checkers).** Changed: the pictures are scratched, not painted; the wagon is drawn from above, with a circle at each corner, not under the box; the Ljubljana wheel is 5,100–5,350 years old, so "more than 5,000"; "found nearby" now "found too"; the Kiel release's real title. Confirmed: dug 1974, 3637–3373 BCE, Uruk, Flintbek under a long barrow, the wheel's planks, cross-pieces, 72 cm, oak axle turning with it, City Museum of Ljubljana, Anthony on axles, Bakker 1999, Bulliet 2016. Each wagon figure is about 1.8 × 1.5 cm, hence "tiny". Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -637,31 +591,28 @@ The wheel from the marsh is in a museum in Ljubljana. It is more than 5,000 year
 **Summary (32 words)**
 About 1320 BCE (about 3,350 years ago). A ship sank off the south coast of Turkey carrying ten tonnes of copper and one tonne of tin. Melted together, they would have made eleven tonnes of bronze. *More*
 
-**More (334 words)**
-
+**More (336 words)**
 ```
 About 1320 BCE (about 3,350 years ago)
 ```
 
-In 1982 a sponge diver named Mehmed Çakır came up from the sea floor off the south coast of Turkey. He said he had seen "metal biscuits with ears."
+In 1982 a sponge diver named Mehmed Çakır came up from the sea floor off the south coast of Turkey, and said he had seen "metal biscuits with ears."
 
 They were slabs of copper.
 
-Archaeologists dived on the spot for eleven summers. The wreck lay more than forty metres down, so each dive was short, and they made more than twenty-two thousand of them. The ship had sunk about 3,300 years ago. It is called the Uluburun ship, after the cape where it lies. Say "oo-loo-boo-ROON."
+Archaeologists dived on the spot for eleven summers. The wreck lay more than forty metres down, so each dive was short, and they made more than twenty-two thousand of them. The ship had sunk about 3,300 years ago, and it is called the Uluburun ship ("oo-loo-boo-ROON"), after the cape where it lies.
 
-It was carrying about ten tonnes of copper, in flat slabs with a stubby handle at each of the four corners. Those were the ears. And it was carrying about one tonne of tin.
+It was carrying about ten tonnes of copper, in flat slabs with a stubby handle at each of the four corners. Those were the ears. The ship was also carrying about one tonne of tin.
 
 Ten to one. That is the recipe for bronze.
 
-Copper alone is soft. A copper blade bends and soon loses its edge. Melt about one part tin with ten parts copper and you get bronze, which is much harder. It can be poured into a mould to make an axe, a sword, a pot or a statue. By the time this ship sailed, people had been making bronze for well over a thousand years.
+Copper alone is soft, and a copper blade bends and soon loses its edge. Melt about one part tin with ten parts copper and you get bronze, which is much harder, and which can be poured into a mould to make an axe, a sword, a pot or a statue. By the time this ship sailed, people had been making bronze for well over a thousand years.
 
 So why carry the two metals separately?
 
-Because they came from different places. Copper is found in many places. Tin is found in only a few. In 2022 a team of archaeologists and chemists argued that about a third of the tin came from mines in what is now Uzbekistan, thousands of kilometres to the east, and the rest from Kestel, in Turkey. Other specialists answered the next year that the evidence cannot show it. The argument is not settled.
+Because they came from different places. Copper is found in many places, and tin in only a few. In 2022 a team of archaeologists and chemists argued that about a third of the tin came from mines in what is now Uzbekistan, thousands of kilometres to the east, and the rest from Kestel, in Turkey. Other specialists answered the next year that the evidence cannot show it. The argument is not settled.
 
-The ship carried other things too: glass, ebony, ivory, amber from the shores of the Baltic Sea, and a small gold beetle with the name of Nefertiti, a queen of Egypt.
-
-Nobody knows for certain where it was going, or who owned it.
+The ship carried other things too: glass, ebony, ivory, amber from the shores of the Baltic Sea, and a small gold beetle with the name of Nefertiti, a queen of Egypt. Nobody knows for certain where it was going, or who owned it.
 
 The copper and the tin are in a museum in Bodrum, farther west along the same coast.
 
@@ -675,7 +626,7 @@ The copper and the tin are in a museum in Bodrum, farther west along the same co
 
 **Notes for us.** The beat: ten to one, the recipe for bronze, on one ship. A change from the worklist: the old `bronze` record (Ur, about 3300 BCE, date guessed) had no scene to open in, and the ship is the clearest scene for copper-and-tin anywhere. So this event moves to 1320 BCE and replaces `bronze`. If Michael would rather keep an event for bronze's beginning (about 2700 BCE in Mesopotamia, or the first tin-bronze foil at Pločnik, Serbia, about 4650 BCE), it can be written separately. Checks: found 1982 by Mehmed Çakır ("metal biscuits with ears"); dug 1984–94, eleven seasons, George Bass then Cemal Pulak; 22,413 dives; 44–61 m down (INA). Sank about 1320 BCE. About 10 t copper (354 oxhide and 121 bun ingots; counts vary), about 1 t tin; Pulak's "11 tons of bronze in the optimal 10 to 1 ratio". Tin a third from Mušiston (Uzbekistan), two thirds from Kestel (Powell 2022). Bronze about twice as hard as copper (Brinell figures, a course text; hedged with "about"). Gold scarab with Nefertiti's name; Baltic amber; ebony; ivory; glass ingots. Oxhide ingots: the "ears" are the projecting corners, described in the More as "a stubby handle at each of the four corners"; checker to confirm the description is right (an oxhide ingot has four projecting corners). Bodrum Museum of Underwater Archaeology.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: "gold seal" to "gold beetle" (it is a scarab); Bodrum is 150–200 km west of the wreck, so "farther west along the same coast". Confirmed: Çakır 1982, eleven seasons, 22,413 dives, depth, 1320 BCE, 10 t copper and 1 t tin, the handles (36 ingots have only two), the cargo, the tin sources (a published response disputes the 2022 paper), all references. "About twice as hard" is plausible but not pinned to a primary source.
+**Checked (1 Oct 2026, four independent checkers).** Changed: "gold seal" to "gold beetle" (it is a scarab); Bodrum is 150–200 km west of the wreck, so "farther west along the same coast". Confirmed: Çakır 1982, eleven seasons, 22,413 dives, depth, 1320 BCE, 10 t copper and 1 t tin, the handles (36 ingots have only two), the cargo, the tin sources (a published response disputes the 2022 paper), all references. "About twice as hard" is plausible but not pinned to a primary source. Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 ---
 
@@ -689,27 +640,26 @@ The copper and the tin are in a museum in Bodrum, farther west along the same co
 **Summary (38 words)**
 About 2600 BCE (about 4,600 years ago). In a desert valley in Peru, people built a city of stepped stone mounds and sunken plazas, about as old as Egypt's great pyramids. They made no pottery and left no writing. They left flutes. *More*
 
-**More (305 words)**
-
+**More (313 words)**
 ```
 About 2600 BCE (about 4,600 years ago)
 ```
 
 More than thirty flutes, made from the bones of pelicans and condors, were found at Caral, in Peru. They are more than 4,000 years old.
 
-Caral stands in the valley of the Supe River, about twenty-three kilometres inland from the Pacific coast. Say "kah-RAHL." Almost no rain falls there. The river comes down from the Andes mountains, and along its banks the valley is green.
+Caral ("kah-RAHL") stands in the valley of the Supe River, about twenty-three kilometres inland from the Pacific coast. Almost no rain falls there, but the river comes down from the Andes mountains, and along its banks the valley is green.
 
-The city had six great mounds, built in steps like pyramids, with flat tops and stairways. The biggest has a base longer than a football field. There were sunken round plazas, houses and workshops. Perhaps three thousand people lived there.
+The city had six great mounds, built in steps like pyramids, with flat tops and stairways, and the biggest has a base longer than a football field. There were sunken round plazas, houses and workshops, and perhaps three thousand people lived there.
 
 How do we know how old it is?
 
-The builders filled the insides of their mounds with stones, carried in bags woven from reeds, and they left the bags in place. Reeds can be dated. In 2001 the archaeologist Ruth Shady, who began digging at Caral in 1994, published the dates with two colleagues, Jonathan Haas and Winifred Creamer. The oldest bags were about 4,600 years old. Caral was being built at about the same time as the great pyramids of Egypt, on the other side of the world.
+The builders filled the insides of their mounds with stones, carried in bags woven from reeds, and they left the bags in place. Reeds can be dated. In 2001 the archaeologist Ruth Shady, who began digging at Caral in 1994, published the dates with two colleagues, Jonathan Haas and Winifred Creamer, and the oldest bags were about 4,600 years old. Caral was being built at about the same time as the great pyramids of Egypt, on the other side of the world.
 
 Who were the people of Caral?
 
-They grew cotton, squash and beans. Down on the coast, other people fished for anchovies and sardines. Shady thinks the two traded: the farmers gave cotton for fishing nets, and the fishers gave dried fish.
+They grew cotton, squash and beans, and down on the coast, other people fished for anchovies and sardines. Shady thinks the two traded: the farmers gave cotton for fishing nets, and the fishers gave dried fish.
 
-They made no pottery. No writing has been found. Shady has said she found a quipu, a bundle of knotted strings like those that people in the Andes used much later to keep records. By 2026 she had not published it, so nobody else could judge.
+The people of Caral made no pottery, and no writing has been found. Shady has said she found a quipu, a bundle of knotted strings like those that people in the Andes used much later to keep records. By 2026 she had not published it, so nobody else could judge.
 
 No signs of war have been found at Caral, so far.
 
@@ -725,7 +675,7 @@ Someone carved the flutes and played them. Nobody knows what music they made.
 
 **Notes for us.** The beat: a city with no pottery and no writing, and its flutes. Checks: reed-bag (shicra) dates to 2627 BCE (Shady, Haas and Creamer 2001). Six large pyramidal structures (UNESCO). Pirámide Mayor about 150 × 110 m at the base; heights given variously (28 m, or 18 m), so only the base is used. About 3,000 people (Shady). 32 flutes of pelican and condor bone (Smithsonian 2002); "about 4,500 years old" assumes they date to the main occupation, checker to confirm. 23 km inland. Cotton for fish: Shady's view, so "Shady thinks". A 2022 bone-chemistry study found plants were most of the diet at Caral; not needed here. Quipu announced 2005, never formally published. "No signs of war": absence of evidence, hedged with "so far"; a possible sacrifice on the main mound is left out as a second story. "About as old as the great pyramids" is safe; "older than the pyramids" is a myth. Ruth Shady began 1994 (some sources 1996). Smithsonian author and title: checker to confirm.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: sources give 32 or 33 flutes, and the only date found for them is about 4,200 years ago, so "more than thirty" and "more than 4,000 years old". Confirmed: 23 km, about 3,000 people, base 150 × 110 m, six mounds, UNESCO 2009, Shady from 1994, cotton, squash, beans, anchovies and sardines, the quipu reported, both papers. The reed-bag dating and the Smithsonian article were confirmed in the research pass; the checker's fetches were refused.
+**Checked (1 Oct 2026, four independent checkers).** Changed: sources give 32 or 33 flutes, and the only date found for them is about 4,200 years ago, so "more than thirty" and "more than 4,000 years old". Confirmed: 23 km, about 3,000 people, base 150 × 110 m, six mounds, UNESCO 2009, Shady from 1994, cotton, squash, beans, anchovies and sardines, the quipu reported, both papers. The reed-bag dating and the Smithsonian article were confirmed in the research pass; the checker's fetches were refused. Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
 
 *Watch:* Shady's quipu published · last checked 15 Nov 2026 (from the batch's Checked line of 1 Oct 2026) · every year
 
@@ -741,29 +691,26 @@ Someone carved the flutes and played them. Nobody knows what music they made.
 **Summary (35 words)**
 About 2560 BCE (about 4,590 years ago). In Egypt, the Great Pyramid was finished as a tomb for King Khufu. It was the tallest thing people had built for almost 3,800 years. Some of the workers' own records survive. *More*
 
-**More (323 words)**
-
+**More (330 words)**
 ```
 About 2560 BCE (about 4,590 years ago)
 ```
 
-On a sheet of papyrus, a kind of paper made from reeds, someone kept a diary. Day by day, it records a crew of about forty men loading blocks of white limestone onto a boat, carrying them along the Nile, and delivering them to a building site called the Horizon of Khufu.
+On a sheet of papyrus, a kind of paper made from the stems of a marsh plant, someone kept a diary. Day by day, it records a crew of about forty men loading blocks of white limestone onto a boat, carrying them along the Nile, and delivering them to a building site called the Horizon of Khufu.
 
-The man who kept the diary was named Merer. Say "MEH-rer." He was the inspector in charge of the crew. His diary was found in 2013 by the archaeologist Pierre Tallet and his team, in caves near the Red Sea, where boats had once been stored. It is the oldest papyrus with writing on it that anyone has found.
+The man who kept the diary was named Merer ("MEH-rer"), and he was the inspector in charge of the crew. His diary was found in 2013 by the archaeologist Pierre Tallet and his team, in caves near the Red Sea, where boats had once been stored. It is the oldest papyrus with writing on it that anyone has found.
 
 The building site was the Great Pyramid.
 
-It was built as a tomb for Khufu, a king of Egypt. Say "KOO-foo." It was made of about two million three hundred thousand blocks of stone, and it stood 146 metres high. For nearly 3,800 years, nothing people built anywhere was taller.
+It was built as a tomb for Khufu ("KOO-foo"), a king of Egypt. It was made of about two million three hundred thousand blocks of stone, and it stood 146 metres high. For nearly 3,800 years, nothing people built anywhere was taller.
 
 Who built it?
 
-A Greek writer, Herodotus, who visited Egypt about two thousand years later, said that a hundred thousand men worked on it. Others have said they were slaves. What has been found since tells a different story.
+A Greek writer, Herodotus, who visited Egypt about two thousand years later, said that a hundred thousand men worked on it, and others have said they were slaves. What has been found since tells a different story.
 
-In 1990 a tourist's horse stumbled on a buried mud-brick wall near the pyramids. Behind it was a cemetery for the workers, with hundreds of graves. Their bones show hard lives, and also care: broken arms and legs that had been set, and had healed.
+In 1990 a tourist's horse stumbled on a buried mud-brick wall near the pyramids, and behind it was a cemetery for the workers, with hundreds of graves. Their bones show hard lives, and also care: broken arms and legs that had been set, and had healed. Nearby, archaeologists have dug up a town where pyramid workers lived, with bakeries and the bones of the cattle, sheep and goats they ate.
 
-Nearby, archaeologists have dug up a town where pyramid workers lived, with bakeries and the bones of the cattle, sheep and goats they ate.
-
-How many workers were there? Estimates run from about ten thousand to forty thousand. Nobody knows exactly. Most archaeologists now think they were not slaves, but people working for the king for a time, in gangs with names like "Friends of Khufu".
+How many workers were there? Estimates run from about ten thousand to forty thousand, and nobody knows exactly. Most archaeologists now think they were not slaves, but people working for the king for a time, in gangs with names like "Friends of Khufu".
 
 Pieces of Merer's diary are now in the Egyptian Museum in Cairo.
 
@@ -777,4 +724,4 @@ Pieces of Merer's diary are now in the Egyptian Museum in Cairo.
 
 **Notes for us.** The beat: the people who built it left their own records. Checks: Khufu's pyramid about 2560 BCE. Height 146.6 m originally; about 2.3 million blocks. Overtaken by Old St Paul's, London, about 1221 (reputed 149 m), so nearly 3,780 years; Lincoln's spire (by 1311) is the usual answer but came second. Merer's diary found 2013 by Pierre Tallet and Gregory Marouard at Wadi al-Jarf; oldest inscribed papyri; about 40 men; Tura limestone to Giza; Akhet-Khufu ("Horizon of Khufu") is the pyramid's name; some fragments in the Egyptian Museum, Cairo. Herodotus, Book 2: 100,000 men in three-month shifts; he does not say slaves. Workers' cemetery found 1990 when a horse stumbled on a wall; about 600 workers' graves and 30 overseers' tombs; healed fractures (Hawass). The workers' town (Heit el-Ghurab) with bakeries; Redding's meat figures belong to the later (Menkaure-era) town, so no numbers are given. Workforce estimates: Lehner about 5,000 to about 13,000–40,000; Hawass 20,000–36,000. Gang names ("Friends of Khufu"). Lehner and Hawass's *Giza and the Pyramids*: checker to confirm title, publisher, year.
 
-**Checked (1 Oct 2026, four independent checkers).** Changed: the caves are near the Red Sea, not beside it; workforce estimates found run from about 10,000 to 40,000 (the 5,000 was Lehner's count of builders and haulers only), so the More says so; the Hawass page's real title; the Lehner and Hawass subtitle. Confirmed: Merer, forty men, Tura limestone, Horizon of Khufu, 2013, Wadi al-Jarf, oldest inscribed papyri, Cairo, 2.3 million blocks, 146.6 m, Old St Paul's, Herodotus's 100,000, the 1990 horse, about 600 graves, healed bones, Friends of Khufu. The workers' town was confirmed in the research pass. Tallet and Lehner: 2021 in the UK (Thames & Hudson); Wikipedia gives 2022, likely the US edition.
+**Checked (1 Oct 2026, four independent checkers).** Changed: the caves are near the Red Sea, not beside it; workforce estimates found run from about 10,000 to 40,000 (the 5,000 was Lehner's count of builders and haulers only), so the More says so; the Hawass page's real title; the Lehner and Hawass subtitle. Confirmed: Merer, forty men, Tura limestone, Horizon of Khufu, 2013, Wadi al-Jarf, oldest inscribed papyri, Cairo, 2.3 million blocks, 146.6 m, Old St Paul's, Herodotus's 100,000, the 1990 horse, about 600 graves, healed bones, Friends of Khufu. The workers' town was confirmed in the research pass. Tallet and Lehner: 2021 in the UK (Thames & Hudson); Wikipedia gives 2022, likely the US edition. Rhythm rewrite, 21 Nov 2026 (Rewrite-Rhythm-02.md): More replaced; facts unchanged but for the ten items listed on that page.
