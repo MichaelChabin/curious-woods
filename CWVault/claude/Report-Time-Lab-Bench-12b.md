@@ -13,7 +13,9 @@ updated: 2026-11-23
 
 ## Against Report 12
 
-Nothing in the prompt disagrees with what Report 12 says was built. One thing in it went further than I expected: "Hide shallow seas … hide both kinds". Until now the word hid only the seaways. It hides the shelves too now. See below.
+Nothing in the prompt disagrees with what Report 12 says was built.
+
+**Changed later the same day, on Michael's word.** As first built, Hide shallow seas hid the shelves as well as the seaways, which is how I read "hide both kinds". Michael looked at it live and missed the continental crust the land stands on. Hide now takes away the seaways only, as it did before this step. The stamp is `2026-11-23 91a2e9a · time-lab step 12b · the shelves stay`.
 
 ## What was changed
 
@@ -51,7 +53,7 @@ Before, the seaway was the grey `#a3a29c` with a second blue, `#93bed7`, faint o
 
 **Kept.** Dry land has its picture. The deep ocean has its blue. The shorelines are soft, as step 12 built them. The tears are straight and sharp.
 
-**Hide shallow seas and `?seas=0` hide both kinds** (`11`). The seaways go, and so do the shelves. The pieces are then dry land and nothing else, on deep ocean. This follows the blue: turn the grey back on and the word hides only the seaways, as before.
+**Hide shallow seas and `?seas=0` hide the seaways only** (`11`, at 72 Ma). The shelves stay: they are the continental crust each piece carries beyond today's coast.
 
 **The grey, kept and off.**
 
@@ -113,7 +115,7 @@ Before, the seaway was the grey `#a3a29c` with a second blue, `#93bed7`, faint o
 ## Known and left
 
 - **Faint lighter lines inside the blue**, most in the Gulf at 90 and 69 Ma (`03`, `04`). They are where two pieces' shelves overlap and the wash falls twice. They were there in step 12; the grey made them hard to see. They are edges of pieces, the same kind of thing as the tears.
-- **Hudson Bay and the Great Lakes are blue at every age.** That is today's water in the land's own picture, the first of the three sets of data in Report 12. With the seas hidden they are deep ocean (`11`).
+- **Hudson Bay and the Great Lakes are blue at every age.** That is today's water in the land's own picture, the first of the three sets of data in Report 12. With the seas hidden they are still that pale blue (`11`).
 
 ## Needs Michael's eye
 
@@ -122,7 +124,7 @@ Before, the seaway was the grey `#a3a29c` with a second blue, `#93bed7`, faint o
 3. **1.2 seconds.** The arrival takes 1.7 for a 35° turn. This may be a half turn.
 4. **Upright against "in the middle".** A place far north or south is not at the middle of the ball. Upright won, as on arrival.
 5. **The panel opens at once, at the upper right**, while the globe is still turning under it (`21`).
-6. **Hide shallow seas hiding the shelves** (`11`). The continents look bare without them. Is that what you meant by both kinds?
+6. ~~Hide shallow seas hiding the shelves.~~ Answered 23 Nov: the shelves stay.
 7. **The faint lines in the Gulf.** Leave them with the tears, or mend them?
 
 ## The chat's three defaults
@@ -133,7 +135,7 @@ Before, the seaway was the grey `#a3a29c` with a second blue, `#93bed7`, faint o
 
 ## The files in `Time-Lab-Bench-12b-Nov23/`
 
-**The seas.** `01` to `04`: 480, 201, 90 and 69 Ma, The World, the globe. `05` to `08`: the same on the map. `09`: 90 Ma with the grey turned on, for comparison. `10`: 90 Ma in Time. `11`: 90 Ma, the seas hidden, both kinds.
+**The seas.** `01` to `04`: 480, 201, 90 and 69 Ma, The World, the globe. `05` to `08`: the same on the map. `09`: 90 Ma with the grey turned on, for comparison. `10`: 90 Ma in Time. `11`: 72 Ma, the seas hidden, the shelves still there.
 
 **The turn.** `20`: The World, before, tipped and facing Asia. `21`: The asteroid tapped, its place in front. `22`: Time, before. `23`: Dimetrodon tapped. `24`: the map, The asteroid tapped, nothing moved.
 

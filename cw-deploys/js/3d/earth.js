@@ -232,9 +232,9 @@
    the same option: seasCrust: 'shelf', setSeasCrust('shelf'). The flooded ground is painted whole, with nothing of the
    land's picture through it and whatever seasStrength says, in the paint the land already lays on its own shelf: the
    shelf wash (cw-style's shelfWash at shelfWashAlpha, by uWash) over the sea ball's colour at that point. So Kocsis
-   and Scotese's seaways and the pieces' own shelves are one blue, with no seam where they meet. And since they are
-   then one thing, setSeas(false) hides both: the pieces' own shelf wash goes too (uWash at 0), and the picture's sea
-   inside a piece is clear, the sea ball alone, as it is this side of the seam. The grey is kept as
+   and Scotese's seaways and the pieces' own shelves are one blue, with no seam where they meet. setSeas(false) hides
+   the seaways only: the pieces' own shelf wash stays, since it is the continental crust the land stands on (for some
+   hours of 23 Nov it hid both; Michael, the same day: the crust was missing, put it back). The grey is kept as
    it was built and is off: seasCrust: true or '#hex', or setSeasCrust(true), turns it on. seas() also answers shelf. */
 import * as THREE from 'three';
 import { Fn, vec2, vec3, vec4, float, int, uniform, texture, uv, attribute, varying, positionView, positionWorld, modelViewMatrix,
@@ -2074,7 +2074,6 @@ export async function cwEarth(view, o = {}) {
     const groundT = ma < seam ? 1 : Math.max(0, 1 - (ice ? ice[1] : 1));
     uGroundT.value = groundT;
     uWash.value = Math.max(0, Math.min(1, (ma - seam) / WASH_IN));   // the pieces' pale wash: none this side of the seam, in over the ramp past it
-    if (seaLayer && seaLayer.uShelf.value > 0 && !seasOn) uWash.value = 0;   // 23 Nov, seasCrust 'shelf': the shelves and the seaways are one thing, so the seas hidden hides the pieces' shelves too (the picture's sea is then clear, the sea ball alone, as it is this side of the seam)
     const iceAgo = Math.max(0, ma * 1e6);
     pairsNow = iceData && iceAgo > 0 && groundT > 0 ? icePairs(iceAgo, seaM) : [];
     setIceSlot(0, pairsNow[0] ? pairsNow[0][0] : null); setIceSlot(1, pairsNow[1] ? pairsNow[1][0] : null);
@@ -2559,7 +2558,7 @@ export async function cwEarth(view, o = {}) {
     // the shallow seas (20 Nov): on or off, and what is showing
     setSeas: on => { if (!seaLayer) return; seasOn = !!on; setTime(ma); },
     setSeasStrength: v => { if (!seaLayer) return; seaLayer.uStr.value = Math.max(0, Math.min(1, +v)); view.redraw(); },   // 21 Nov: 1 is the seas as they came
-    setSeasCrust: on => { if (!seaLayer || !seaLayer.canCrust) return; seaLayer.uShelf.value = on === 'shelf' ? 1 : 0; seaLayer.uCrust.value = on && on !== 'shelf' ? 1 : 0; setTime(ma); view.redraw(); },   // 22 Nov: the flooded crust in grey (only where the page named o.seasCrust); 23 Nov: 'shelf', as the shelf is painted
+    setSeasCrust: on => { if (!seaLayer || !seaLayer.canCrust) return; seaLayer.uShelf.value = on === 'shelf' ? 1 : 0; seaLayer.uCrust.value = on && on !== 'shelf' ? 1 : 0; view.redraw(); },   // 22 Nov: the flooded crust in grey (only where the page named o.seasCrust); 23 Nov: 'shelf', as the shelf is painted
     setSeasSoft: on => { if (!seaLayer || !seaLayer.canSoft) return; seaLayer.uSoft.value = on ? 1 : 0; view.redraw(); },      // 22 Nov: the seas' edges soft (only where the page named o.seasSoft)
     seas: () => seaLayer ? { on: seasOn, crust: seaLayer.canCrust && seaLayer.uCrust.value > 0, shelf: seaLayer.canCrust && seaLayer.uShelf.value > 0, soft: seaLayer.canSoft && seaLayer.uSoft.value > 0, strength: seaLayer.uStr.value, showing: seasOn && seaLayer.uOn.value > 0 ? seaLayer.uOn.value : 0, between: seasWant ? [seasWant.a[0], seasWant.b[0]] : null, ages: seaLayer.list.map(a => a[0]), credit: seasFile.credit || '' } : null,
     dispose: () => {
