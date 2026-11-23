@@ -193,7 +193,26 @@
      panel shows the two years and the time between. The bench's test panel and ?toolpanel=1 are gone. The shallow
      seas are fainter (earth.js's seasStrength, new this step and 1 unless a page asks; a bench switch of three
      strengths, opening on the middle one) and have a word of her own, Show shallow seas / Hide shallow seas, on when
-     the page opens (?seas=0 opens with them off). No other shared script is touched. -->
+     the page opens (?seas=0 opens with them off). No other shared script is touched.
+     Step 12 (22 Nov 2026; Michael's prompt Prompt-Revise-Time-Lab-Bench-12-01.md): a quieter arrival, and one panel.
+     The Time Machine's tree of periods is the lab's own on both deep-time mosaics; the lab's fourteen, the switch and
+     ?periods= are gone. Arriving: dark from the first paint, the Earth shown only when it is ready and never at
+     today, no cities; the handle starts near First trilobites, flashes once and eases onto it, the Earth easing with
+     it through the years and turning to face the place; the event is selected with no panel (its name in copper,
+     its place ringed on the globe). One panel: an event, a period and a More share one place, at the upper right
+     level with How This Works, in both views; More replaces the panel, and closing it closes everything; the search
+     for the place that hid least is gone. The zoom: no easing back to the opening size; the nearest zoom set by the
+     grade of knowing at the handle's year (LOOK.zoomIn). N and S at the ends of the axis. The flooded crust in a
+     light grey and the shorelines soft (earth.js's seasCrust and seasSoft, new this step and not there unless a page
+     names them; a bench switch each). The fault of a panel dragged to the top: a panel cannot leave the window, a
+     drag never selects, a pinch or ctrl-wheel never zooms the page over a panel or in The World. -->
+<script>
+  // Step 12: dark from the first paint. The lab opens in The World unless the address names a span (?w=), and The
+  // World's ground is near-black; until now the page was parchment until its script had run. This runs before
+  // anything is drawn: the ground is set, nothing of the page shows until the script below has put it in place
+  // (html.arriving), and the Earth does not show until it is ready and stands where the arrival starts (html.earthwait).
+  (function () { var w = new URLSearchParams(location.search).get('w'); if (w != null && w !== '' && !isNaN(+w)) return; var r = document.documentElement; r.style.setProperty('--ground', '#0c0a08'); r.classList.add('arriving', 'earthwait'); })();
+</script>
 <script src="../js/cw-style.js?v=2026-10-27b"></script>
 <script src="../js/cw-time.js?v=2026-11-17"></script>
 <script src="../js/cw-panel.js?v=2026-10-01b"></script>
@@ -209,6 +228,18 @@
 <style>
   :root { color-scheme: light; }
   html, body { margin: 0; }
+  /* step 12, the arrival: nothing but the dark ground until the page is in place; then the page, and the Earth when it is ready (a short fade; a cut under reduced motion) */
+  html.arriving body > * { visibility: hidden; }
+  html.earthwait #stage3d, html.earthwait #still { opacity: 0; }
+  html.earthwait .handle, html.earthwait .handle-label { visibility: hidden; }
+  #stage3d { transition: opacity 360ms ease-in; }
+  @media (prefers-reduced-motion: reduce) { #stage3d { transition: none; } }
+  /* step 12, the fault of a panel dragged to the top: the page's own text never selects (the More's words and the bench's readout do); while a panel is dragged nothing does; a pinch on a More or anywhere in The World never zooms the page */
+  body { user-select: none; -webkit-user-select: none; }
+  .tm-more { user-select: text; -webkit-user-select: text; }
+  html.panel-drag, html.panel-drag * { user-select: none !important; -webkit-user-select: none !important; }
+  html.world { touch-action: pan-x pan-y; }
+  .cw-map-window { touch-action: pan-y; }
   html { background: var(--ground, var(--cw-parchment, #f4f1e8)); }   /* --ground (step 10): the page's ground, parchment in Time and near-black in The World; the script sets it, and mixes the two through the move */
   body {
     background: var(--ground, var(--cw-parchment, #f4f1e8)); color: var(--cw-ink, #2a241c);
@@ -327,12 +358,18 @@
   .handle { position: absolute; top: 39.5px; width: 13px; height: 13px; margin-left: -6.5px; border-radius: 50%; background: var(--cw-copper, #b5652b);
             box-shadow: 0 0 0 2px var(--cw-parchment, #f4f1e8); z-index: 3; cursor: grab; }
   .handle::after { content: ""; position: absolute; left: -9px; right: -9px; top: -9px; bottom: -9px; }   /* room for a finger */
+  /* the arrival's flash (step 12): once, light, then dark, then the handle's own copper; no more than says here I am */
+  @keyframes handle-flash { 0% { transform: scale(1); } 28% { background: #fff6e2; transform: scale(1.45); } 62% { background: #4a2a12; transform: scale(1); } 100% { transform: scale(1); } }
+  .handle.flash { animation: handle-flash 900ms ease-in-out 1; }
   /* the events under the line (the Time Machine's deep timeline, drawn here): a fixed box, four rows of labels at most */
   svg.events { display: block; width: 100%; height: 70px; margin-top: -15px; overflow: visible; position: relative; pointer-events: none; }   /* above the track, so a mark's stem takes the tap (found in step 4's check: the positioned track painted over the top 15 px, where every stem is); the empty glass lets taps through to the line */
   svg.events .mark { pointer-events: auto; }
   svg.events text { font-family: var(--cw-font, Georgia, serif); }
   svg.events .mark { cursor: pointer; }
   svg.events .mark line, svg.events .mark text { pointer-events: none; }
+  /* the selected event (step 12): its name in copper and bold, its stem in copper and heavier */
+  svg.events .mark.sel text { fill: var(--cw-copper-deep, #8f4a1c); font-weight: bold; }
+  svg.events .mark.sel line { stroke: var(--cw-copper, #b5652b); stroke-width: 1.8px; opacity: 1; }
   svg.events .halo { paint-order: stroke; stroke: var(--cw-parchment, #f4f1e8); stroke-width: 4px; stroke-linejoin: round; }
   .stretch-under { display: flex; justify-content: center; gap: 12px; font-size: 12px; line-height: 18px; height: 18px; color: var(--cw-grey-word, #7d7a72); margin-top: 0; font-variant-numeric: tabular-nums; }   /* its height fixed, so the box under the line is the same size before and after the line appears */
   /* the More window's contents (the window itself is map.js's cwWindow), as the Time Machine styles them */
@@ -410,6 +447,8 @@
   html.dark svg.events text { fill: #ece6d6; }
   html.dark svg.events .halo { stroke: #0c0a08; }
   html.dark svg.events .mark line { stroke: rgba(236,230,214,0.8); }
+  html.dark svg.events .mark.sel text { fill: #f0b98a; }
+  html.dark svg.events .mark.sel line { stroke: #dc9a63; }
   html.dark svg.events rect.soft { fill: #ece6d6; opacity: 0.22; }
   html.dark #tl-tail stop { stop-color: #ece6d6; }
   html.dark .stretch-line, html.dark .stretch-ghost { background: rgba(236,230,214,0.55); }
@@ -486,13 +525,14 @@
   <div class="pair"><span class="what">the axis, in a drag</span><span id="bAxis"></span></div>
   <div class="pair"><span class="what">a drag favours one way</span><span id="bBias"></span></div>
   <div class="pair"><span class="what">the tilt stops at</span><span id="bTilt"></span></div>
-  <div class="pair"><span class="what">the periods</span><span id="bPeriods"></span></div>
   <div class="pair"><span class="what">the shallow seas, how strong</span><span id="bSeas"></span></div>
+  <div class="pair"><span class="what">the flooded crust</span><span id="bCrust"></span></div>
+  <div class="pair"><span class="what">the shorelines</span><span id="bShores"></span></div>
   <p class="readout" id="readout"></p>
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-21 e2b53a6 · time-lab step 11';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-22 616ad56 · time-lab step 12';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -538,7 +578,7 @@
     // step 11: the arrows at the ends of the line, Measure's markers, the shallow seas
     arrow: { gap: 12, w: 30, edge: 28, double: 1000, tiles: 10 },   // gap: px between an end of the line and its arrow; w: the arrow's length; edge: px from the window's edge within which a finger dragging outward is holding there, and the span keeps growing; double: ms held there for the span to double; tiles: the least span an arrow can make, in tiles of the mosaic she is on
     measReach: 14, measW: 252, measApart: 8,   // px from a Measure marker a press still takes hold of it; the Measure panel's text's width; px the two markers must stand apart on a changed line to keep their years
-    seas: { strengths: { 'as before': 1, 'fainter': 0.55, 'faintest': 0.3 }, open: 'fainter' },   // how strongly the shallow seas' blue lies over the land (earth.js's seasStrength; 1 is the seas as they came on 20 Nov), and the one the page opens on
+    seas: { strengths: { 'as before': 1, 'fainter': 0.55, 'faintest': 0.3 }, open: 'fainter', crust: true, crustGrey: /^[0-9a-f]{6}$/i.test(Q.get('crustgrey') || '') ? '#' + Q.get('crustgrey') : '#a3a29c', soft: true },   // how strongly the shallow seas' blue lies over the land (earth.js's seasStrength; 1 is the seas as they came on 20 Nov), and the one the page opens on. Step 12: crust — the flooded continental crust in a light grey (crustGrey; a darker grey is left for the deep sea floor, when the oceans are drained) under that blue, in place of the land's own picture; soft — the shorelines soft; both as the page opens, each a bench switch
     // step 5:
     calYears: 12000,          // years ago: inside this, a year is written as the calendar year (200 BCE, 1720); older, ka, Ma, Ga
     markerR: 4.5, markerRing: 1.5, markerTap: 12,   // a marker: the copper dot's radius, its parchment ring, px from it a tap deletes it
@@ -556,25 +596,32 @@
     worldFoot: 10,            // px under the events' names in The World
     worldGround: 0.72,        // the ground under the timeline in The World: parchment at this strength, so the Earth shows through
     worldSoft: 26,            // px over which that ground fades in at its top edge: no hard line across the Earth
-    panelW: 252, panelStep: 20, panelPad: 8, panelStay: 0.15,   // the panel: its text's width (the window is 30 px wider); the grid its place is searched on; its least distance from the window's edge; how much worse than the best place the place it stands in may be before it moves
+    panelW: 252, panelPad: 8, moreLeast: 240, moreNarrow: 380,   // the panel: its text's width (the window is 30 px wider); its least distance from the window's edge. Step 12, a More in the panel's place: the least height it is given, and the least width it may be narrowed to so as to leave How This Works clear
     fadeAfter: 4000,          // ms: in The World the words fade after this long with no touch
     fadeLift: 140,            // ms after a finger lifts before faded words come back (step 10b: after its tap has been delivered)
-    // step 10: the dark World, the two resting places, the cities, the build
+    // step 10: the dark World, north up as a resting place, the cities, the build
     worldDark: '#0c0a08',     // The World's ground, near-black (the house's black, cw-style.js)
-    detent: { angle: 10, pull: 0.35, tau: 90, zoomTau: 110, zoomTol: 0.002, wheelWait: 220, dragged: 8 },   // north up, a resting place: let go within `angle` degrees of upright and the globe eases the rest of the way (tau: ms, the ease's time constant); dragged inside the angle, a move away from upright is cut by up to `pull` and a move toward it helped by as much. The opening size, the other: zoomed out past it by more than zoomTol of its height, it eases back (zoomTau), once the wheel has been still for wheelWait ms. dragged: px a finger must travel for its letting go to count
+    detent: { angle: 10, pull: 0.35, tau: 90, dragged: 8 },   // north up, a resting place: let go within `angle` degrees of upright and the globe eases the rest of the way (tau: ms, the ease's time constant); dragged inside the angle, a move away from upright is cut by up to `pull` and a move toward it helped by as much. (The opening size was the other, until step 12.) dragged: px a finger must travel for its letting go to count
     cityR: 2.5, cityRing: 1, cityTap: 14, cityFont: 12,   // a city: its point's radius, the parchment round it, px from it a tap is its own, its name's size
     build: { open: 400, run: 4700, coda: 900, power: 3 },   // ?build=1, in ms: room is made above the mosaic she was on; the older tiles land, the count of them landed rising as the time's cube (a few at first, then faster and faster); her mosaic's own tiles fold into their places and the came comes
     move: { lead: 240, merge: 440, stagger: 600, flight: 840, vanish: 400, spread: 300, bgOut: 440, bgIn: 400, fall: 26 },   // step 7: every time doubled (step 6's: 120, 220, 300, 420, 200, 150, 220, 200), 1,680 ms without a merge and 1,880 with one, against 840 and 940. The move, in ms: before the first tile leaves (a merge's glide instead, where there is one), the spread of departures, one tile's flight, one tile's going and the spread of those, the came going and coming; fall: px a falling tile drops
     // step 10b: How This Works in The World
     htwW: 286, htwMs: 380, htwGap: 10,   // its text's width (the window is 30 px wider); its travel to the upper left and back out; px between it and the words above it
     toolW: 150,               // a tool panel's text's width
+    arrival: { years: 40, turn: 35, wait: 350, lead: 250, ms: 1700, patience: 2500, giveUp: 9000 },   // step 12, the arrival: the handle starts this many million years older than the event and the globe this many degrees short of facing its place; ms after the Earth is shown before the flash, and after the flash begins before the ease; the ease; how long the dark waits for the year's pictures of the seas, and for everything
     arriveLabel: 'First trilobites',   // step 10c: the lab opens at the store's event with this label, if it holds one
     arrive: 'chengjiang',     // else at this one (the nearest that shows trilobites)
     // step 10c: the axis shown in a drag, the drag that favours one way, a city brought to the middle, the map in The World
-    turn: { axis: true, bias: 24, limit: 70, memory: 40, least: 3, axisOut: 0.16, axisW: 1.5, axisIn: 120, axisFade: 400 },   // axis: a thin line through the poles while she drags the globe (axisOut: how far it stands out of each pole, in the Earth's radii; axisW: px; axisIn, axisFade: ms it takes to come and to go). bias: degrees — a drag within half this of level turns the globe east-west only, within half this of upright tips it only, and beyond this angle from both it is free (0: no favour; light 24, firm 40); memory: px of the finger's recent travel its heading is read from; least: px before a heading is read at all
+    turn: { axis: true, bias: 24, limit: 70, memory: 40, least: 3, axisOut: 0.16, axisW: 1.5, axisIn: 120, axisFade: 400, axisLetter: 0.075, axisFont: 12 },   // step 12: axisLetter, axisFont — the N and the S at the ends of the axis: how far beyond the line's end each stands, in the Earth's radii, and its size in px   // axis: a thin line through the poles while she drags the globe (axisOut: how far it stands out of each pole, in the Earth's radii; axisW: px; axisIn, axisFade: ms it takes to come and to go). bias: degrees — a drag within half this of level turns the globe east-west only, within half this of upright tips it only, and beyond this angle from both it is free (0: no favour; light 24, firm 40); memory: px of the finger's recent travel its heading is read from; least: px before a heading is read at all
     cityGlide: 600,           // ms: a tapped city comes to the middle
-    // step 10d: turn.limit — degrees the globe may tip north or south (90: to the pole, as step 10c). The trial of the
-    // Time Machine's tree of periods: for each of the two deep-time mosaics, the part of the tree it shows (root: the
+    // step 12: the nearest zoom, by what the Earth is showing at the handle's year. For each grade of knowing, the
+    // kilometres of ground the window's height takes in at the nearest she may come (the photograph, this side of
+    // the seam, has none: the Earth's own limit, two pixels to a texel of its deepest picture); tau: ms, the ease
+    // out when the handle takes her to a year that allows less; far: the camera's furthest, in the Earth's radii
+    zoomIn: { measured: 2500, inferred: 4000, fitted: 5500, guessed: 8000, invented: 10500, none: 10500, tau: 220 },
+    eventRing: { r: 6, w: 1.8 },   // step 12: the selected event's place on the Earth, a small open ring (its radius and its line's width, px)
+    // step 10d: turn.limit — degrees the globe may tip north or south (90: to the pole, as step 10c). The
+    // Time Machine's tree of periods (the lab's own since step 12): for each of the two deep-time mosaics, the part of the tree it shows (root: the
     // period whose children it shows, else the whole tree's) and which of those open into their own children instead
     // of standing themselves; and the colours changed from the Time Machine's (stories/deep-time.json), where two of
     // the fifteen on Complex life were alike
@@ -639,27 +686,8 @@
     count: { words: ['from the start', 'years ago'], start: 'the start', theStart: 'The start', from: ' years from the start' },   // the menu word says what a tap will do
     iceTile: 'ice age', warmTile: 'warm spell'   // the last million: what the tile under the cursor is, after its period's name
   };
-  // The fourteen periods of the 4.6 billion mosaic (Worknote-Deep-Time-Window-03's thirteen, and Before the Sun from
-  // revision 4): the span counted forward from the mosaic's first tile in million years, the short name the label under
-  // the cursor shows (revision 4's first try, Michael's to change), the colour (revision 1's twelve as the mockup has
-  // them, a pale ice for the last three tiles, and the cloud before the Sun a dark grey), and the box's words — a table
-  // that can hold several texts per period, shown shuffled.
-  const PERIODS = [
-    { from: 0, to: 33, n: 'Before the Sun', c: '#3b3a40', t: ['A cloud of gas and dust, slowly gathering. The Sun has not yet lit up.'] },
-    { from: 33, to: 200, n: 'Formation', c: '#b75027', t: ['The solar system comes together. Something the size of Mars hits the young Earth, and the Moon forms from the splash.'] },
-    { from: 200, to: 700, n: 'First seas', c: '#1e3b47', t: ['Small, dark, volcanic continents under constant rain that fills the seas.'] },
-    { from: 700, to: 2150, n: 'Early life', c: '#c39444', t: ['Microscopic life, perhaps under a hazy orange sky. The air has no oxygen.'] },
-    { from: 2150, to: 2400, n: 'Early oxygen', c: '#8daec1', t: ['Bacteria begin to release oxygen. It probably destroyed the methane that kept the Earth warm, and ice spread almost to the equator.'] },
-    { from: 2400, to: 2800, n: 'Rust', c: '#8f3321', t: ['Oxygen builds up and turns an ocean full of iron to rust.'] },
-    { from: 2800, to: 3880, n: 'Two parents', c: '#2a5c8c', t: ['Some cells need two parents, others form colonies, while continents grow larger.'] },
-    { from: 3880, to: 3965, n: 'Ice to the equator', c: '#c2dae5', t: ['Ice reaches the equator, twice. The first animals may date from these frozen years.'] },
-    { from: 3965, to: 4061, n: 'Visible life', c: '#21848c', t: ['The first living things big enough to see.'] },
-    { from: 4061, to: 4130, n: 'Eyes and shells', c: '#163d87', t: ['Animals with eyes and shells fill the seas.'] },
-    { from: 4130, to: 4348, n: 'Life on land', c: '#2b763f', t: ['Plants and animals come to land.'] },
-    { from: 4348, to: 4534, n: 'Dinosaurs', c: '#a6c24a', t: ['Dinosaurs rule the land, and one great continent slowly breaks apart.'] },
-    { from: 4534, to: 4597, n: 'Mammals', c: '#cb7d22', t: ['After the asteroid, mammals spread everywhere, and grass covers the plains.'] },
-    { from: 4597, to: 4600, n: 'Ice ages', c: '#dbe6ec', t: ['Ice sheets come and go. Everyone who has ever lived is in the last tile.'] }
-  ];
+  // (Step 12: the lab's own fourteen periods of the 4.6 billion mosaic are gone, with their colours and their code.
+  // The two deep-time mosaics show the Time Machine's tree of periods: see treeList, below.)
   // The eight periods of the 12,000 row (Michael's rule, 4 Nov 2026): a period's name says what was common in that span,
   // not what was invented at its start, so the edges are round. The span in years ago (the first takes the row's start,
   // the last reaches now), the colour the sketch's, the plaque's words his. The row's first 2.6 tiles, older than 12,000,
@@ -864,15 +892,16 @@
   let events = [], sea = null;   // loaded below: the store's events, each with its record kept (rec) for the summary and the More
   const seaAt = year => sea ? CW.curveAt(sea.points, year) : null;
 
-  // ---------- step 10d, a trial: the Time Machine's tree of periods on the two deep-time mosaics ----------
-  // Behind a bench switch (the periods: the lab's / the tree; ?periods=tree). The tree's shape and colours are
+  // ---------- the Time Machine's tree of periods on the two deep-time mosaics (step 10d's trial; the lab's own since
+  // step 12, Michael's ruling of 22 Nov: "the new tiles look great") ----------
+  // No switch and no ?periods=. The tree's shape and colours are
   // stories/deep-time.json's (the Time Machine's own file); a period's name, span, length, summary and More are
   // stories/deep-time-periods.json's, found by name. treeList(w): the periods a mosaic shows with the tree on, oldest
-  // first, or null (the switch off, a mosaic the tree does not reach, or a file that did not load: the lab's own).
-  const TREE = { on: Q.get('periods') === 'tree', doc: null };
+  // first, or null (a mosaic the tree does not reach; or a file not yet loaded, or that did not load: plain glass).
+  const TREE = { doc: null };
   function treeNode(name, n) { if (!n) return null; if (n.name === name) return n; for (const c of n.chunks || []) { const f = treeNode(name, c); if (f) return f; } return null; }
   function treeList(w) {
-    const row = LOOK.tree[w.id]; if (!TREE.on || !row || !TREE.doc || !periodRecs) return null;
+    const row = LOOK.tree[w.id]; if (!row || !TREE.doc || !periodRecs) return null;
     const root = row.root ? treeNode(row.root, TREE.doc) : TREE.doc; if (!root) return null;
     const out = [], walk = n => (n.chunks || []).forEach(c => { if (row.open.includes(c.name) && c.chunks && c.chunks.length) walk(c); else out.push(c); });
     walk(root);
@@ -889,7 +918,7 @@
     const addPlaque = p => { plaques.push(p); return plaques.length - 1; };
     const tl = treeList(w);
     if (tl) {
-      // step 10d, the tree on: the Time Machine's periods by the tile's middle year (a tile is a million years, so the
+      // the Time Machine's periods (step 10d) by the tile's middle year (a tile is a million years, so the
       // edge at 5.3 Ma falls inside a tile: the tile of 6 to 5 Ma is Grass, its middle being older than the edge). The
       // period keeps its own span for its panel and for select. The handmade wander is the 4.6 billion's tile's own.
       const o = w.from ? w.from.at : 0;
@@ -906,13 +935,8 @@
       const P = byId(w.from.id), o = w.from.at; if (!P.built) build(P);
       col = P.col.slice(o, o + n); kind = P.kind.slice(o, o + n); plaques = P.plaques;
     } else if (w.id === 'w0') {
-      const ids = PERIODS.map((p, k) => addPlaque({ key: 'p' + k, n: p.n, c: p.c, t: p.t, fromMa: 4600 - p.from, toMa: 4600 - p.to }));
-      for (let i = 0; i < n; i++) {
-        const fwd = i + 0.5; let k = PERIODS.findIndex(p => fwd >= p.from && fwd < p.to); if (k < 0) k = PERIODS.length - 1;
-        const p = PERIODS[k], u = (fwd - p.from) / (p.to - p.from);   // 0 at the period's old end
-        kind[i] = ids[k];
-        col[i] = shade(hex2rgb(p.c), -LOOK.gradient / 2 + LOOK.gradient * u + (hash(i, 1) - 0.5) * LOOK.shadeL, (hash(i, 2) - 0.5) * LOOK.shadeS);
-      }
+      // the tree has not loaded yet (the first drawing), or did not load: plain glass with no periods
+      for (let i = 0; i < n; i++) { kind[i] = -1; col[i] = shade(hex2rgb(LOOK.plain), (hash(i, 1) - 0.5) * LOOK.shadeL, (hash(i, 2) - 0.5) * LOOK.shadeS); }
     } else if (w.id === 'w1') {
       // Humans, the last million: the tiles coloured by the sea (a warm spell at or above the threshold; the ice graded,
       // palest at the lowest sea), the periods laid over them by the tile's middle year; the last 12,000 years belong to no period
@@ -1289,8 +1313,8 @@
     // step 9: a tapped period opens the panel; a dragged span, which is no period, only replaces what an open panel shows
     const m = state.mark;
     mosaicWords();   // (first, so the panel opens clear of the word)
-    if (m && m.p) showPanel({ kind: 'period', p: m.p, text: m.text }, anchor || null);
-    else if (m && PANEL.show) showPanel({ kind: 'span', a: m.a, b: m.b }, null);
+    if (m && m.p) showPanel({ kind: 'period', p: m.p, text: m.text });
+    else if (m && PANEL.show) showPanel({ kind: 'span', a: m.a, b: m.b });
     draw();
   }
   function clearMark() { if (!state.mark) return; state.mark = null; if (PANEL.show && PANEL.show.kind === 'span') closePanel(); mosaicWords(); draw(); }
@@ -1773,8 +1797,6 @@
     ws.textContent = sel ? WORDS.select : WORDS.unselect;
     const y = state.gather && state.LG ? state.LG.y + state.LG.h / 2 : markLevel(state.mark);
     ws.style.left = Math.round(L.tilesLeft - L.F - 8 - ws.offsetWidth) + 'px'; ws.style.top = Math.round(y - 9) + 'px';
-    // a period's panel standing over the word steps clear of it, unless she put the panel there herself
-    if (info && PANEL.up && PANEL.at && !PANEL.pos[lab.view] && overlap(restBox(info.el), boxOf(ws)) > 0) setPanel(leastHiding(null, PANEL.at));
   }
   function settleHandle() {   // the line has changed: the handle stays at its year if it is still on the line, else goes to the nearer end, and the Earth with it
     if (lab.ma < STR.a - EPS) setYear(STR.a); else if (lab.ma > STR.b + EPS) setYear(STR.b);
@@ -1999,11 +2021,10 @@
   // summary, ending in More. A period's panel: its span and its length; its name in bold and its words; More where it
   // has one (p.more: none has, yet — the events' store holds no period). A dragged span, which is no period, opens
   // nothing; if the panel is open it shows the span and its length, so the panel never describes what is no longer marked.
-  // Where it opens (leastHiding): the place on the screen that hides least — clear of the thing she tapped and of the
-  // handle first, then of the line, the words, the Earth's ball and the mosaic. Once she has dragged it, in a view, it
-  // opens where she left it in that view, for the visit (PANEL.pos).
-  const know = { event: null };   // the event tapped last
-  const PANEL = { show: null, up: false, at: null, pos: { time: null, world: null } };   // up: the window is on the screen; show: { kind: 'event', e } | { kind: 'period', p, text } | { kind: 'span', a, b }; at: where it stands; pos: where she put it, by view
+  // Where it opens: one place, the upper right (step 12, below). Once she has dragged it, in a view, it opens where
+  // she left it in that view, for the visit (PANEL.pos).
+  const know = { event: null };   // the selected event: the one tapped last, or arrived at (step 12: setSelected)
+  const PANEL = { show: null, up: false, at: null, pos: { time: null, world: null }, more: null };   // more: the More's window (map.js's cwWindow), while a More stands in the panel's place   // up: the window is on the screen; show: { kind: 'event', e } | { kind: 'period', p, text } | { kind: 'span', a, b }; at: where it stands; pos: where she put it, by view
   function spanWords(fromMa, toMa) { return yearSpan(fromMa, toMa); }   // a span, written short as the flags write their years (step 5): 4.567 to 4.4 Ga; 252 to 66 Ma; 1400 to 1780; 1880 to now (step 7: or counted from the start)
   const lengthLower = p => lengthWord(p).replace(/\.$/, '').toLowerCase();
   const periodLine = p => spanWords(p.fromMa, p.toMa) + ' · ' + lengthLower(p);   // 470 to 252 Ma · 218 million years
@@ -2011,7 +2032,7 @@
   // the period an event falls in: by the finest of the three tables that holds its year — the 12,000's eight inside
   // Civilization's row, the last million's four inside Humans', else the 4.6 billion's fourteen
   function periodOf(ma) {
-    const w = ma * 1e6 <= CAL_END + 0.5 ? byId('w2') : ma <= 1 ? byId('w1') : TREE.on && state.w.id === 'cl' ? byId('cl') : byId('w0');   // step 10d: with the tree on, on Complex life the leaf, elsewhere the coarse period
+    const w = ma * 1e6 <= CAL_END + 0.5 ? byId('w2') : ma <= 1 ? byId('w1') : state.w.id === 'cl' ? byId('cl') : byId('w0');   // step 10d: on Complex life the tree's leaf, elsewhere the coarse period
     if (!w.built) build(w);
     return w.plaques.find(p => ma <= p.fromMa + 1e-12 && ma > p.toMa + 1e-12) || w.plaques.find(p => ma <= p.fromMa + 1e-12 && ma >= p.toMa - 1e-12) || null;
   }
@@ -2055,87 +2076,138 @@
         (kw ? '<p class="know">' + esc(WORDS.earthShown) + ' ' + esc(kw) + '</p>' : '');   // step 10c: the word of knowing, a line of its own at the foot
     }
     if (s.kind === 'period') return '<p class="first">' + esc(periodLine(s.p)) + '</p><p class="body' + (s.p.ph ? ' ph' : '') + '"><b>' + esc(sentence(s.p.n)) + '</b> ' + (s.p.tree ? cwDeepTime.prose(s.text) : esc(s.text)) + (s.p.more ? moreWord : '') + '</p>';   // step 10d: a period of the tree has the store's summary, set as an event's is (its *italics*)
-    return '<p class="first">' + esc(spanTold(s.a, s.b)) + '</p>';
+    return s.kind === 'span' ? '<p class="first">' + esc(spanTold(s.a, s.b)) + '</p>' : '';   // (kind 'more': a More opened with no panel under it)
   }
   const info = window.CW.createInfoPanel ? CW.createInfoPanel({ width: LOOK.panelW, onClose: () => { PANEL.show = null; PANEL.up = false; } }) : null;
   if (info) { info.el.classList.add('lab-panel'); info.el.style.zIndex = '550'; }
   function renderPanel() { if (info && PANEL.show) info.body.innerHTML = '<div class="lab-text">' + panelHTML(PANEL.show) + '</div>'; }
-  function closePanel() { if (!info || !PANEL.show) return; PANEL.show = null; if (PANEL.up) info.hide(); PANEL.up = false; }
   const boxOf = el => { const r = el.getBoundingClientRect(); return { x0: r.left, y0: r.top, x1: r.right, y1: r.bottom }; };
-  const grown = (r, g) => ({ x0: r.x0 - g, y0: r.y0 - g, x1: r.x1 + g, y1: r.y1 + g });
-  const overlap = (a, b) => Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)) * Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
-  function handleBox() { const h = boxOf(handleEl), l = boxOf(labelH); return { x0: Math.min(h.x0, l.x0), y0: Math.min(h.y0, l.y0), x1: Math.max(h.x1, l.x1), y1: Math.max(h.y1, l.y1) }; }
-  // what the panel should not hide, each with its weight: the thing tapped and the handle (never, if there is anywhere
-  // else), then the line with its events, the words, the Earth's ball, the mosaic
-  function avoidList(anchor) {
-    const out = [], add = (r, wt) => { if (r && r.x1 - r.x0 > 1 && r.y1 - r.y0 > 1) out.push([r, wt]); }, world = lab.view === 'world';
-    if (anchor) add(grown(anchor, 12), 100);
-    add(grown(handleBox(), 10), 100);
-    const t = boxOf(track), ev = boxOf(evSvg); add({ x0: t.x0 - 46, y0: t.y0, x1: t.x1 + 46, y1: ev.y1 }, 14);   // the line, its arrows and its events
-    const st = boxOf($('stage3d')), r = Math.min(st.x1 - st.x0, st.y1 - st.y0) / 2 * 0.9, cx = (st.x0 + st.x1) / 2, cy = (st.y0 + st.y1) / 2;
-    add({ x0: cx - r, y0: cy - r, x1: cx + r, y1: cy + r }, world ? 4 : 8);
-    standingPanels().forEach(r => add(grown(r, 8), 60));   // step 10b: clear of How This Works and of any tool panel (step 11: Measure's stands in Time too)
-    if (world) add(grown(boxOf($('worldWords')), 6), 10);
-    else { add(boxOf($('glassBox')), 6); add(boxOf($('explain')), 6); add(boxOf($('words')), 10); add(boxOf($('lower')), 10); if (!$('wSelect').classList.contains('absent')) add(grown(boxOf($('wSelect')), 10), 80); }   // step 11: and never over select / unselect
-    return out;
+  // Step 12 (Michael, 22 Nov: too many panels open at once): an event, a period and a More share one place, in both
+  // views. The place is the upper right of the window, its top level with the top of How This Works (panelHome). An
+  // event or a period opens there. More replaces the panel it was tapped in: it stands in the same place (its right
+  // edge where the panel's was; larger, and never out of sight: fitMore). Another event or period replaces whatever is
+  // there, panel or More. Closing a More closes everything; the event's panel does not come back. If she has moved
+  // the panel, or a More, the next one opens where she left it, in that view, for the visit (PANEL.pos). The search
+  // for the place that hid least (steps 9 to 11: leastHiding, the stepping clear of How This Works, of Measure and of
+  // select) is gone with its code: nothing else stands at the upper right.
+  // The More is map.js's cwWindow, as it was; this page takes the cover off the page behind it (its backdrop took the
+  // first tap anywhere), so the line stays live under it, and gives it the panel's place.
+  const keepInWindow = (el, x, y) => { const pad = LOOK.panelPad; return { x: Math.round(Math.max(pad, Math.min(window.innerWidth - el.offsetWidth - pad, x))), y: Math.round(Math.max(pad, Math.min(window.innerHeight - el.offsetHeight - pad, y))) }; };
+  const panelEl = () => PANEL.more ? PANEL.more.window : info.el;
+  const htwTop = () => lab.view === 'world' ? htwHome().y : Math.round($('wHtw').getBoundingClientRect().top);   // the top of How This Works: its panel's own place in The World, its word in Time
+  function panelHome(w) { return { x: window.innerWidth - w - LOOK.panelPad, y: Math.max(LOOK.panelPad, htwTop()) }; }
+  function fitMore() {   // a More is never out of sight: no taller than the window below its top, and in The World no lower than the line, which stays in reach under it (unless she has put it so low that this would leave it no room); no wider than leaves How This Works clear, where that still leaves it room to read
+    const win = PANEL.more.window, pad = LOOK.panelPad, mine = PANEL.pos[lab.view], world = lab.view === 'world';
+    const top = Math.max(pad, mine ? Math.min(mine.y, window.innerHeight - LOOK.moreLeast - pad) : htwTop());
+    let foot = window.innerHeight - pad;
+    if (world) { const line = Math.round(track.getBoundingClientRect().top) - 6; if (line - top >= LOOK.moreLeast) foot = Math.min(foot, line); }   // wherever it stands above the line, with room to read
+    win.style.maxHeight = Math.max(LOOK.moreLeast, foot - top) + 'px';
+    const h = world && !mine && htw2 && HTW2.up ? restBox(htw2.el) : null, room = h ? window.innerWidth - pad - (h.x1 + 10) : 0;
+    win.style.maxWidth = room >= LOOK.moreNarrow ? room + 'px' : '';
   }
-  function panelSize() { const el = info.el; return { w: el.offsetWidth || LOOK.panelW + 30, h: el.offsetHeight || 160 }; }
-  function clampPanel(x, y) { const s = panelSize(), pad = LOOK.panelPad; return { x: Math.round(Math.max(pad, Math.min(window.innerWidth - s.w - pad, x))), y: Math.round(Math.max(pad, Math.min(window.innerHeight - s.h - pad, y))) }; }
-  function hidingAt(x, y, s, list, near) {   // how much a panel standing at (x, y) hides, and, a little, how far it is from what she tapped
-    const r = { x0: x, y0: y, x1: x + s.w, y1: y + s.h }, area = s.w * s.h;
-    let score = 0.5 * Math.hypot(x + s.w / 2 - (near.x0 + near.x1) / 2, y + s.h / 2 - (near.y0 + near.y1) / 2) / Math.hypot(window.innerWidth, window.innerHeight);   // of two places that hide the same, the nearer
-    for (const [a, wt] of list) score += wt * overlap(r, a) / area;
-    return score;
+  function placeOne() {   // the panel, or the More standing in for it, to its place: where she left one in this view, else the upper right
+    const el = panelEl(); if (PANEL.more) fitMore();
+    const mine = PANEL.pos[lab.view], p = mine || panelHome(el.offsetWidth), c = keepInWindow(el, p.x, p.y);
+    PANEL.at = c; el.style.left = c.x + 'px'; el.style.top = c.y + 'px';
   }
-  function leastHiding(anchor, stay) {   // the place on the screen where the panel hides least; stay: the place it stands in, kept unless another is clearly better (LOOK.panelStay), so it does not hop about from tap to tap
-    const s = panelSize(), pad = LOOK.panelPad, vw = window.innerWidth, vh = window.innerHeight, list = avoidList(anchor), near = anchor || handleBox();
-    let best = null, bestScore = Infinity;
-    for (let y = pad; y <= Math.max(pad, vh - s.h - pad); y += LOOK.panelStep) for (let x = pad; x <= Math.max(pad, vw - s.w - pad); x += LOOK.panelStep) {
-      const score = hidingAt(x, y, s, list, near);
-      if (score < bestScore - 1e-9) { bestScore = score; best = { x, y }; }
-    }
-    if (stay) { const c = clampPanel(stay.x, stay.y); if (hidingAt(c.x, c.y, s, list, near) <= bestScore + LOOK.panelStay) return c; }
-    return best || clampPanel(pad, pad);
+  function closeMore(quiet) {   // quiet: something is taking its place (else its own close, which closes everything)
+    const m = PANEL.more; if (!m) return;
+    if (quiet) PANEL.more = null;
+    m.close();
   }
-  function setPanel(p) { PANEL.at = { x: p.x, y: p.y }; info.setPosition(p.x, p.y); }
-  function placePanel2(anchor, fresh) {   // where she left it in this view; else where it hides least, staying where it stands unless that is clearly worse
-    const mine = PANEL.pos[lab.view];
-    setPanel(mine ? clampPanel(mine.x, mine.y) : leastHiding(anchor, fresh ? null : PANEL.at));
+  function closePanel() {
+    if (!info) return; closeMore(true); if (!PANEL.show) return;
+    PANEL.show = null; if (PANEL.up) info.hide(); PANEL.up = false;
+    requestAnimationFrame(() => { if (!PANEL.up && info.el.style.display !== 'none' && info.el.style.opacity !== '0') info.hide(); });   // opened and closed inside one frame (a script, not a finger): cw-panel's own show lands a frame late and would bring it back
   }
-  function showPanel(s, anchor) {
+  function showPanel(s) {
     if (!info) return;
+    closeMore(true);
     const was = PANEL.up, el = info.el;
     PANEL.show = s; renderPanel();
-    if (VIEW.plan) { VIEW.then = () => showPanel(s, null); return; }   // the views are changing: placed, and opened if it is not open, when the move has landed
+    if (VIEW.plan) { VIEW.then = () => showPanel(s); return; }   // the views are changing: placed, and opened if it is not open, when the move has landed
     if (!was) { el.style.visibility = 'hidden'; el.style.display = ''; }
-    placePanel2(anchor, !was);
+    placeOne();
     if (!was) { el.style.visibility = ''; el.style.opacity = '0.01'; info.show(); PANEL.up = true; }   // 0.01: a close still fading out (cw-panel's 220 ms) must not take this opening with it
   }
-  function panelToView() {   // the view changed, or the window: the open panel to its place in the view in force
+  function panelToView() {   // the view changed, or the window: the open panel, or the More, to its place in the view in force
     if (!info || !PANEL.show) return;
-    if (!PANEL.up) { showPanel(PANEL.show, null); return; }
-    const mine = PANEL.pos[lab.view]; setPanel(mine ? clampPanel(mine.x, mine.y) : leastHiding(null, null));
+    if (!PANEL.more && !PANEL.up) { showPanel(PANEL.show); return; }
+    placeOne();
   }
+  function dropped(el) {   // where she leaves the panel, or a More, after a drag is where the next one opens in this view, for the visit
+    if (!PANEL.at || el !== panelEl()) return;
+    const x = parseInt(el.style.left) || 0, y = parseInt(el.style.top) || 0; if (Math.abs(x - PANEL.at.x) <= 1 && Math.abs(y - PANEL.at.y) <= 1) return;
+    const c = keepInWindow(el, x, y); el.style.left = c.x + 'px'; el.style.top = c.y + 'px'; PANEL.at = c; PANEL.pos[lab.view] = { x: c.x, y: c.y };
+  }
+  function standMore(box) {   // a More, in the panel's place, in place of the panel
+    if (!info) { cwWindow(box, {}); return; }
+    closeMore(true);
+    if (!PANEL.show) PANEL.show = { kind: 'more' };
+    if (PANEL.up) { info.el.style.opacity = '0'; info.el.style.display = 'none'; PANEL.up = false; }   // at once, not by cw-panel's fade: the More stands where it stood
+    const m = cwWindow(box, { onClose: () => { if (PANEL.more === m) { PANEL.more = null; PANEL.show = null; } } });
+    PANEL.more = m;
+    const bd = m.window.previousElementSibling; if (bd && bd.classList.contains('cw-map-backdrop')) bd.style.pointerEvents = 'none';
+    const grip = m.window.querySelector('.cw-map-drag');
+    if (grip) { guardDrag(m.window, grip); ['pointerup', 'pointercancel'].forEach(t => grip.addEventListener(t, () => dropped(m.window))); }
+    placeOne();
+  }
+  // ---------- step 12: a panel's drag, guarded (the fault Michael found: a panel dragged to the top of the window) ----------
+  // Three things, for every window this page puts up (the event's and the period's panel, both How This Works,
+  // Measure, a More): it cannot be dragged out of the window (each move of a drag is brought back inside, after the
+  // window's own code has moved it); a press on it never starts a selection of the page's text, and nothing on the
+  // page selects while one is being dragged (html.panel-drag; the body itself selects nothing, the More's own words
+  // and the bench's readout excepted); and a pinch or a ctrl-wheel never zooms the page itself while one is being
+  // dragged, over one, or anywhere in The World, where the page is one fixed window (the browsers' page zoom by the
+  // trackpad: a ctrl-wheel in Chrome and Firefox, a gesture in Safari; by fingers, touch-action in the styles above).
+  const GUARD = { el: null, id: null };
+  const ownText = t => !!(t && t.closest && t.closest('input, a, .readout'));
+  function guardDrag(el, grip) {   // el: the window; grip: the part that drags it (all of a cw-panel; a More's bar)
+    const g = grip || el;
+    g.addEventListener('pointerdown', e => {
+      if (e.button > 0 || ownText(e.target)) return;
+      GUARD.el = el; GUARD.id = e.pointerId;
+      try { const sl = window.getSelection(); if (sl && sl.rangeCount) sl.removeAllRanges(); } catch (err) {}
+    });
+    g.addEventListener('mousedown', e => { if (!ownText(e.target)) e.preventDefault(); });
+    g.addEventListener('pointermove', e => {
+      if (GUARD.el !== el || e.pointerId !== GUARD.id) return;
+      if (e.pointerType === 'mouse' && !e.buttons) { GUARD.el = null; document.documentElement.classList.remove('panel-drag'); return; }
+      document.documentElement.classList.add('panel-drag');
+      const x = parseFloat(el.style.left) || 0, y = parseFloat(el.style.top) || 0, c = keepInWindow(el, x, y);
+      if (Math.abs(c.x - x) > 0.5) el.style.left = c.x + 'px';
+      if (Math.abs(c.y - y) > 0.5) el.style.top = c.y + 'px';
+    });
+    const end = e => { if (GUARD.el === el && (!e || e.pointerId === GUARD.id)) { GUARD.el = null; document.documentElement.classList.remove('panel-drag'); } };
+    g.addEventListener('pointerup', end); g.addEventListener('pointercancel', end);
+  }
+  const overWindow = t => !!(t && t.closest && t.closest('.cw-info-panel, .cw-map-window'));
+  const noPageZoom = e => { if (GUARD.el || lab.view === 'world' || overWindow(e.target)) e.preventDefault(); };
+  window.addEventListener('wheel', e => { if (e.ctrlKey) noPageZoom(e); }, { passive: false, capture: true });
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(t => window.addEventListener(t, noPageZoom, { passive: false, capture: true }));
+  document.addEventListener('selectstart', e => { if (GUARD.el) e.preventDefault(); }, true);
   if (info) {
-    // where she leaves the panel after a drag is its place in this view, for the visit
-    // (and a panel let go past the window's edge is brought back inside it, so it can never be lost off the screen)
-    const dropped = () => {
-      if (!PANEL.show || !PANEL.at) return;
-      const x = parseInt(info.el.style.left) || 0, y = parseInt(info.el.style.top) || 0; if (Math.abs(x - PANEL.at.x) <= 1 && Math.abs(y - PANEL.at.y) <= 1) return;
-      const c = clampPanel(x, y); setPanel(c); PANEL.pos[lab.view] = { x: c.x, y: c.y };
-    };
-    info.el.addEventListener('pointerup', dropped); info.el.addEventListener('pointercancel', dropped);
+    guardDrag(info.el);
+    info.el.addEventListener('pointerup', () => dropped(info.el)); info.el.addEventListener('pointercancel', () => dropped(info.el));
     // the period's name at the top of an event's panel shows the period; an event's text opens its More; a period's More word, its own
     info.body.addEventListener('click', ev => {
-      const s = PANEL.show; if (!s || !ev.target.closest) return;
-      if (s.kind === 'event' && ev.target.closest('.period-word')) { const p = periodOf(s.e.ma); if (p) showPanel({ kind: 'period', p, text: nextText(p.key, p.t) }, null); return; }
-      if (s.kind === 'event' && s.e.rec.more && ev.target.closest('.body')) openMore(s.e.rec);
-      else if (s.kind === 'period' && s.p.more && ev.target.closest('.more-word')) openPeriodMore(s.p);
+      const sh = PANEL.show; if (!sh || !ev.target.closest) return;
+      if (sh.kind === 'event' && ev.target.closest('.period-word')) { const p = periodOf(sh.e.ma); if (p) showPanel({ kind: 'period', p, text: nextText(p.key, p.t) }); return; }
+      if (sh.kind === 'event' && sh.e.rec.more && ev.target.closest('.body')) openMore(sh.e.rec);
+      else if (sh.kind === 'period' && sh.p.more && ev.target.closest('.more-word')) openPeriodMore(sh.p);
     });
   }
-  function showEvent(e, anchor) { know.event = e; showPanel({ kind: 'event', e }, anchor || null); }
-  function spanSettled() {   // the line has moved: an event not on it is no longer the event tapped last (its panel, if open, stays: it is hers to close)
-    if (know.event && (know.event.ma < STR.a - EPS || know.event.ma > STR.b + EPS)) know.event = null;
+  // The selected event (step 12): the event tapped last, or the one the lab arrived at. It shows on the line without a
+  // panel: its name in copper and bold, its stem in copper and heavier (drawEvents; it is placed first, so it always
+  // has its name). If its record has a place, a small ring marks the place on the Earth, riding its plate (the
+  // module's setEventPlace). It stays selected while she moves the handle, until another event is tapped or the line
+  // no longer holds it.
+  const placeOfEvent = e => { const pl = e && (e.rec.place && e.rec.place.lon != null ? e.rec.place : e.rec.placeNow); return pl && pl.lon != null ? pl : null; };
+  function tellPlace() { const pl = placeOfEvent(know.event); if (lab.earth && lab.earth.setEventPlace) lab.earth.setEventPlace(pl ? { lon: pl.lon, lat: pl.lat } : null); }
+  function setSelected(e) { know.event = e || null; drawEvents(); tellPlace(); }
+  function showEvent(e) { setSelected(e); showPanel({ kind: 'event', e }); }
+  function spanSettled() {   // the line has moved: an event not on it is no longer selected (its panel, if open, stays: it is hers to close)
+    if (know.event && (know.event.ma < STR.a - EPS || know.event.ma > STR.b + EPS)) { know.event = null; tellPlace(); }
   }
 
   // ---------- the events under the line: the Time Machine's deep timeline, drawn here (js/deep-time.js's rules) ----------
@@ -2148,7 +2220,7 @@
   function sel(tag, attrs, parent, text) { const e = document.createElementNS(SVG, tag); for (const k in attrs) if (attrs[k] != null) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; if (parent) parent.appendChild(e); return e; }
   const PREC = { decade: 10, century: 100, millennium: 1000 };
   const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  function eventsOnLine() { return events.filter(e => e.ma <= STR.b + EPS && e.ma >= STR.a - EPS).sort((p, q) => (q.weight || 1) - (p.weight || 1) || q.ma - p.ma); }
+  function eventsOnLine() { const first = e => e === know.event ? 1 : 0; return events.filter(e => e.ma <= STR.b + EPS && e.ma >= STR.a - EPS).sort((p, q) => first(q) - first(p) || (q.weight || 1) - (p.weight || 1) || q.ma - p.ma); }   // step 12: the selected event first, so it always has its name
   function placeEvents() {   // which marks get a label, and in which row; the rest are short lines
     const rows = [], drawn = [], labels = [], ticks = [];
     eventsOnLine().forEach(e => {
@@ -2173,14 +2245,14 @@
     sel('rect', { 'class': 'soft', x: x0, y: tailY, width: x1 - x0, height: 3, rx: 1.5, fill: S.ink, opacity: 0.12 }, evSvg);
   }
   const markTitle = e => e.label + ' · ' + agoWord(e.ma, null, true) + (e.tail ? ' (probably began by ' + agoWord(e.tail, null, true) + ')' : '');
-  function wireMark(mg, e) { mg.addEventListener('pointerdown', ev => { ev.stopPropagation(); }); mg.addEventListener('click', ev => { ev.stopPropagation(); tapEvent(e, boxOf(mg)); }); }
+  function wireMark(mg, e) { mg.addEventListener('pointerdown', ev => { ev.stopPropagation(); }); mg.addEventListener('click', ev => { ev.stopPropagation(); tapEvent(e); }); }
   function drawEvents() {
     while (evSvg.lastChild && evSvg.lastChild.tagName !== 'defs') evSvg.removeChild(evSvg.lastChild);
     const { labels, ticks } = placeEvents();
     labels.forEach(l => {
       const e = l.e, ly = LOOK.evLine + l.row * LOOK.evRow + 9;
       drawStretch(e, l.mx);
-      const mg = sel('g', { 'class': 'mark' }, evSvg);
+      const mg = sel('g', { 'class': e === know.event ? 'mark sel' : 'mark' }, evSvg);
       sel('line', { x1: l.mx, y1: 0, x2: l.mx, y2: ly - 10, stroke: S.ink, 'stroke-width': 0.8 }, mg);
       sel('text', { x: l.mx, y: ly, 'font-size': 11, fill: S.inkSoft, 'text-anchor': 'middle', 'class': 'halo' }, mg, e.label);
       sel('rect', { x: l.mx - 11, y: 1, width: 22, height: ly + 3, fill: 'transparent' }, mg);
@@ -2192,7 +2264,7 @@
     ticks.forEach(t => {
       const e = t.e, len = LOOK.evTick + 2;
       drawStretch(e, t.mx);
-      const mg = sel('g', { 'class': 'mark' }, evSvg);
+      const mg = sel('g', { 'class': e === know.event ? 'mark sel' : 'mark' }, evSvg);
       sel('line', { x1: t.mx, y1: 0, x2: t.mx, y2: len, stroke: S.ink, 'stroke-width': 0.8, opacity: 0.9 }, mg);
       sel('rect', { x: t.mx - 9, y: 1, width: 18, height: len + 8, fill: 'transparent' }, mg);
       sel('title', {}, mg, markTitle(e));
@@ -2201,7 +2273,7 @@
   }
   // a tapped event: the handle to its year (the Earth with it), its label and date on line one, its summary in the right column, More at the end
   function sentence(label) { const t = cap(label.trim()); return /[.!?]$/.test(t) ? t : t + '.'; }
-  function tapEvent(e, anchor) { setYear(e.ma, false, true); showEvent(e, anchor); }
+  function tapEvent(e) { leaveArrive(); setYear(e.ma, false, true); showEvent(e); }
   // A period's own More (step 10), in the same movable window, built as the Time Machine builds it (active/time-machine.html):
   // the name, the official name, the span, the paragraphs with the period's pictures placed, Known from, the references.
   // p.more is the Time Machine's record of the period (stories/deep-time-periods.json), lent to a period of this page
@@ -2212,22 +2284,22 @@
     h += cwDeepTime.moreBody('period-' + rec.id, rec.more.paragraphs || []);
     if (rec.knownFrom) h += '<p class="known"><i>Known from</i> ' + esc(rec.knownFrom) + '.</p>';
     if (rec.references && rec.references.length) h += '<div class="refs">' + rec.references.map(x => '<div>' + cwDeepTime.prose(x) + '</div>').join('') + '</div>';
-    box.innerHTML = h; cwWindow(box, {}); cwDeepTime.wirePictures(box);
+    box.innerHTML = h; standMore(box); cwDeepTime.wirePictures(box);
   }
   let periodRecs = null;   // the Time Machine's periods, loaded below
   function lendMores() {
     if (!periodRecs) return;
     WINDOWS.forEach(w => { if (!w.plaques || (w.from && w.plaques === byId(w.from.id).plaques)) return; w.plaques.forEach(p => { if (p.tree) return; p.more = periodRecs.find(x => x.more && x.more.paragraphs && x.name === p.n && Math.abs(x.from - p.fromMa) < 1e-6 && Math.abs(x.to - Math.max(0, p.toMa)) < 1e-6) || null; }); });
   }
-  function openMore(rec) {   // the More in the movable window, as the Time Machine opens it
+  function openMore(rec) {   // the More in the movable window, as the Time Machine opens it; step 12: in the panel's place
     const box = document.createElement('div'); box.className = 'tm-more'; box.innerHTML = cwDeepTime.moreHTML(rec);
-    cwWindow(box, {}); cwDeepTime.wirePictures(box);
+    standMore(box); cwDeepTime.wirePictures(box);
   }
 
   // ---------- the left column: How this works; Focus (The World, Map / Globe, Full screen); Information; Pick a time ----------
   const htwPanel = window.CW.createInfoPanel ? CW.createInfoPanel({ width: 344 }) : null;
   if (htwPanel) {
-    document.body.appendChild(htwPanel.el); htwPanel.el.style.zIndex = '600'; htwPanel.el.style.cursor = 'default'; htwPanel.el.classList.add('cw-info-panel');
+    document.body.appendChild(htwPanel.el); guardDrag(htwPanel.el); htwPanel.el.style.zIndex = '600'; htwPanel.el.style.cursor = 'default'; htwPanel.el.classList.add('cw-info-panel');
     const it = t => esc(t).replace(/\*([^*]+)\*/g, '<i>$1</i>');
     htwPanel.body.innerHTML = '<div class="panel-text">' +
       '<p>' + esc(WORDS.htwFirst) + ' <span id="htwSpan"></span></p>' +   // step 10c: Michael's words of 21 Nov; the second sentence is the mosaic's own
@@ -2369,11 +2441,17 @@
   // continent. Bench only, how strong: as before / fainter / faintest (LOOK.seas; ?seastrength=1|2|3), the page opening
   // on the middle one. The tears where the two plate models disagree stay; nothing hides them.
   const SEA_NAMES = Object.keys(LOOK.seas.strengths);
-  const SEAS = { on: Q.get('seas') !== '0', name: SEA_NAMES[+Q.get('seastrength') - 1] || LOOK.seas.open };
+  const SEAS = { on: Q.get('seas') !== '0', name: SEA_NAMES[+Q.get('seastrength') - 1] || LOOK.seas.open, crust: Q.get('crust') == null ? LOOK.seas.crust : Q.get('crust') !== '0', soft: Q.get('shores') == null ? LOOK.seas.soft : Q.get('shores') !== '0' };   // step 12: ?crust=0 the crust as it was (the land's picture through the blue), ?shores=0 the shorelines sharp
   function setSeas(on) { SEAS.on = !!on; $('wSeas').textContent = WORDS.seas[SEAS.on ? 1 : 0]; if (lab.earth && lab.earth.setSeas) lab.earth.setSeas(SEAS.on); tellYear(); }
   function setSeaStrength(name) { if (LOOK.seas.strengths[name] == null) return; SEAS.name = name; if (lab.earth && lab.earth.setSeasStrength) lab.earth.setSeasStrength(LOOK.seas.strengths[name]); }
   $('wSeas').addEventListener('click', () => setSeas(!SEAS.on));
   benchChoice($('bSeas'), SEA_NAMES, () => SEAS.name, setSeaStrength);
+  // bench only (step 12): the flooded crust as it was (the land's own picture through the blue) or in a light grey; the shorelines sharp or soft
+  const CRUSTS = ['as now', 'light grey'], SHORES = ['sharp', 'soft'];
+  function setCrust(on) { SEAS.crust = !!on; if (lab.earth && lab.earth.setSeasCrust) lab.earth.setSeasCrust(SEAS.crust); }
+  function setShores(soft) { SEAS.soft = !!soft; if (lab.earth && lab.earth.setSeasSoft) lab.earth.setSeasSoft(SEAS.soft); }
+  benchChoice($('bCrust'), CRUSTS, () => CRUSTS[SEAS.crust ? 1 : 0], v => setCrust(v === CRUSTS[1]));
+  benchChoice($('bShores'), SHORES, () => SHORES[SEAS.soft ? 1 : 0], v => setShores(v === SHORES[1]));
   benchChoice($('bSound'), SOUND_KINDS, () => bench.sound, v => {   // choosing one plays it once, so it can be heard without a move
     bench.sound = v;
     if (soundAnswer() === 'on' && !reduced()) { const ac = unlockSound(); if (ac) SOUNDS[v](ac, ac.currentTime + 0.05, (LOOK.move.stagger + LOOK.move.flight) / 1000, -1, ac.destination); }
@@ -2393,22 +2471,10 @@
   const TURN = { axis: Q.get('axis') == null ? LOOK.turn.axis : Q.get('axis') !== '0', bias: BIASES[Q.get('bias')] != null ? BIASES[Q.get('bias')] : LOOK.turn.bias };
   benchChoice($('bAxis'), ['on', 'off'], () => TURN.axis ? 'on' : 'off', v => { TURN.axis = v === 'on'; });
   benchChoice($('bBias'), Object.keys(BIASES), () => nameIn(BIASES, TURN.bias), v => { TURN.bias = BIASES[v]; });
-  // bench only (step 10d): where the tilt stops (?tilt=60|70|80|pole, or any degrees from 10 to 90), and the periods the
-  // two deep-time mosaics show (?periods=tree)
+  // bench only (step 10d): where the tilt stops (?tilt=60|70|80|pole, or any degrees from 10 to 90)
   const TILTS = { '60°': 60, '70°': 70, '80°': 80, 'the pole': 90 };
   const TILT = { limit: Q.get('tilt') === 'pole' ? 90 : numQ('tilt', 10, 90, LOOK.turn.limit) };
   benchChoice($('bTilt'), Object.keys(TILTS), () => nameIn(TILTS, TILT.limit), v => { TILT.limit = TILTS[v]; if (window.cwRest && window.cwRest.cap) window.cwRest.cap(); });
-  function setPeriods(tree) {   // the switch thrown: the glass built again; a line gathered from the old periods, a mark and a period's panel go with them
-    tree = !!tree; if (tree === TREE.on) return;
-    finishMove(); TREE.on = tree;
-    WINDOWS.forEach(w => { w.built = null; }); WINDOWS.forEach(w => build(w)); lendMores();
-    if (PANEL.show && PANEL.show.kind !== 'event') closePanel();
-    if (state.gather || SEL.length) { transition(mosaicNow(), { k: state.w.k, g: null }, 'cut'); resetSpan(0, state.w.spanMa); }
-    state.mark = null; state.hover = -1;
-    FIT.key = ''; layout(); draw(); mosaicWords(); renderPanel(); renderStretch();
-  }
-  const PERIOD_SETS = ['the lab\u2019s', 'the tree'];
-  benchChoice($('bPeriods'), PERIOD_SETS, () => PERIOD_SETS[TREE.on ? 1 : 0], v => setPeriods(v === PERIOD_SETS[1]));
   // bench only: a candidate rendered off-line (no speakers needed), for the check and for a file Michael can play
   async function renderSound(kind, durMs, merged) {
     const sr = 44100, dur = (durMs || LOOK.move.stagger + LOOK.move.flight) / 1000, ac = new OfflineAudioContext(1, Math.ceil(sr * (dur + 0.8)), sr);
@@ -2648,7 +2714,7 @@
   function pickTime(id) {
     if (!events.length) return null;
     const e = id ? events.find(x => x.id === id) : events[Math.floor(Math.random() * events.length)]; if (!e) return null;
-    finishView(); finishMove(); if (STR.anim) finishStretch(); dropArrow();
+    leaveArrive(); finishView(); finishMove(); if (STR.anim) finishStretch(); dropArrow();
     if (!PICK.before) PICK.before = { view: lab.view, mosaic: mosaicNow(), a: STR.a, b: STR.b, sel: SEL.slice(), ma: lab.ma, rough: lab.rough, ofEvent: lab.ofEvent,
       mark: state.mark, event: know.event, panel: PANEL.show, flat: lab.flat, turn: lab.earth && lab.earth.turn ? lab.earth.turn() : null };
     let k = 0; WINDOWS.forEach((w, j) => { if (w.spanMa >= e.ma - 1e-12 && w.spanMa < WINDOWS[k].spanMa) k = j; });   // the smallest span that holds it
@@ -2663,7 +2729,7 @@
     }
     PICK.last = { id: e.id, label: e.label, span: WORDS.scales[k], place: place ? place.short || place.name : null };
     setView('world');
-    showEvent(e, null); pickWords();
+    showEvent(e); pickWords();
     return e.id;
   }
   function pickBack() {
@@ -2671,11 +2737,11 @@
     finishView(); finishMove(); if (STR.anim) finishStretch(); dropArrow();
     if (!sameMosaic(mosaicNow(), b.mosaic)) transition(mosaicNow(), b.mosaic, 'cut');
     STR.a = b.a; STR.b = b.b; SEL.length = 0; b.sel.forEach(x => SEL.push(x)); measSettle();
-    state.mark = b.mark; know.event = b.event;
+    state.mark = b.mark; setSelected(b.event);
     setYear(b.ma, b.rough, b.ofEvent);
     if (b.flat !== lab.flat) setFlat(b.flat);
     if (b.turn && lab.earth && lab.earth.setTurn) lab.earth.setTurn(b.turn);
-    if (b.panel) { PANEL.show = b.panel; renderPanel(); } else closePanel();
+    closeMore(true); if (b.panel && b.panel.kind !== 'more') { PANEL.show = b.panel; renderPanel(); } else closePanel();
     pickWords();
     if (b.view !== lab.view) setView(b.view); else { renderStretch(); panelToView(); }
     mosaicWords(); draw();
@@ -2731,7 +2797,7 @@
   }
   function titledPanel(width, title, onClose) {   // cw-panel's window with a title at the head of its bar, where its close word is
     const pn = CW.createInfoPanel({ width, onClose }), bar = pn.el.firstChild, t = document.createElement('span');
-    pn.el.classList.add('htw-world'); pn.el.style.zIndex = '600';
+    pn.el.classList.add('htw-world'); pn.el.style.zIndex = '600'; guardDrag(pn.el);
     t.className = 'htw-title'; t.textContent = title; bar.insertBefore(t, bar.firstChild); bar.style.alignItems = 'baseline';
     const tools = document.createElement('div'); tools.className = 'tools';
     return { pn, tools };
@@ -2784,13 +2850,9 @@
     htwLand(); HTW2.open = true;
     if (lab.view !== 'world') return;
     const el = htw2.el; el.style.visibility = 'hidden'; el.style.display = ''; htwPlace(); el.style.visibility = '';
-    HTW2.up = true; present(wHtw2, false); clearOf();
+    HTW2.up = true; present(wHtw2, false); if (PANEL.more) placeOne();
     if (reduced()) { htwLand(); return; }
     putUp(el, true); htwFly(true);
-  }
-  function clearOf() {   // a panel has come to stand: the event's panel, unless she placed it herself, steps clear of it
-    if (!info || !PANEL.up || !PANEL.at || PANEL.pos[lab.view]) return;
-    const r = restBox(info.el); if (standingPanels().some(b => overlap(r, b) > 0)) setPanel(leastHiding(null, PANEL.at));
   }
   wHtw2.addEventListener('click', openHtw2);
   // a tool panel: a title, and the column's words it holds (sources) or a body of its own (o.body). openIt puts it up
@@ -2807,10 +2869,10 @@
     t.place = () => {
       const el = pn.el; let p = t.ats[lab.view];
       if (!p && lab.view !== 'world' && o.home) p = o.home(el);
-      if (!p) { const h = htw2 && HTW2.up ? restBox(htw2.el) : null, hm = htwHome(); p = h ? (h.x1 + 12 + el.offsetWidth <= window.innerWidth - LOOK.panelPad ? { x: h.x1 + 12, y: h.y0 } : { x: h.x0, y: h.y1 + 12 }) : hm; }
+      if (!p) { const h = htw2 && HTW2.up ? restBox(htw2.el) : null; p = h ? { x: h.x0, y: h.y1 + 12 } : htwHome(); }   // step 12: under How This Works, at its left edge (beside it was the event's panel's way, on an upright iPad); where How This Works would stand, when it is closed
       const c = keepIn(el, p.x, p.y); pn.setPosition(c.x, c.y); t.at = c;
     };
-    t.show = cut => { const el = pn.el; if (t.up) return; el.style.visibility = 'hidden'; el.style.display = ''; t.place(); el.style.visibility = ''; putUp(el, cut); t.up = true; clearOf(); };
+    t.show = cut => { const el = pn.el; if (t.up) return; el.style.visibility = 'hidden'; el.style.display = ''; t.place(); el.style.visibility = ''; putUp(el, cut); t.up = true; };
     t.openIt = () => { t.open = true; if (here()) t.show(reduced()); };
     t.here = here;
     const moved = () => { if (t.up) { const b = restBox(pn.el), c = keepIn(pn.el, b.x0, b.y0); pn.setPosition(c.x, c.y); if (Math.abs(c.x - t.at.x) > 1 || Math.abs(c.y - t.at.y) > 1) t.ats[lab.view] = c; t.at = c; } };
@@ -2821,11 +2883,11 @@
     const moved = () => { if (HTW2.up && !HTW2.anim) { const b = restBox(htw2.el), c = keepIn(htw2.el, b.x0, b.y0); htw2.setPosition(c.x, c.y); if (htw2.userMoved()) HTW2.at = c; } };
     htw2.el.addEventListener('pointerup', moved); htw2.el.addEventListener('pointercancel', moved);
   }
-  // Measure's panel (step 11): in both views; in Time it opens at the upper right of the Earth's box, clear of the line
+  // Measure's panel (step 11): in both views. Step 12: in Time it opens at the lower left of the Earth's box, clear of the line and of the panel's place at the upper right
   if (window.CW.createInfoPanel) {
     MEAS.body = document.createElement('div'); MEAS.body.className = 'meas-text';
     MEAS.tool = toolPanel('measure', WORDS.measure, null, { both: true, width: LOOK.measW, body: MEAS.body, onClose: measClosed,
-      home: el => { const m = $('main').getBoundingClientRect(), e = $('earthBlock').getBoundingClientRect(); return { x: m.right - el.offsetWidth - 8, y: e.top + 8 }; } });
+      home: el => { const m = $('main').getBoundingClientRect(), e = $('earthBlock').getBoundingClientRect(); return { x: m.left + 8, y: e.bottom - el.offsetHeight - 8 }; } });
   }
   $('wMeasure').textContent = WORDS.measure;
   $('wMeasure').addEventListener('click', measOpen);
@@ -2835,24 +2897,84 @@
     TOOLP.forEach(t => { if ((world || t.both) && t.open) { if (t.up) { t.up = false; putAway(t.pn.el); } t.show(true); } else { putAway(t.pn.el); t.up = false; } });   // each to its place in the view in force
   }
 
-  // ---------- step 10b: arriving ----------
-  // The lab opens in The World, on Complex life, the handle at an event of the first trilobites with that event's panel
-  // open, the globe upright and turned to the longitude where the event's ground lay at the time (the record's place,
-  // carried back on its plate; where no piece holds it, the place as it is today). The store has no event of the first
-  // trilobites (about 521 Ma): LOOK.arrive is Chengjiang, 518 Ma, the nearest that shows them. An address that names a
-  // span (?w=) opens in Time on that span, as before: ?w=0 the 4.6 billion, ?w=1 Complex life.
-  const ARRIVE = { on: !(Q.get('w') != null && Q.get('w') !== '' && !isNaN(+Q.get('w'))), shown: false, faced: false, lon: null, id: null };
-  function arrive() {   // called when the store has loaded and when the Earth has stood up, whichever is first
-    if (!ARRIVE.on) return;
-    const e = events.find(x => (x.rec.label || x.label) === LOOK.arriveLabel) || events.find(x => x.id === LOOK.arrive); if (!e) return;   // step 10c: First trilobites, once the store holds it
-    ARRIVE.id = e.id;
-    if (!ARRIVE.shown) { ARRIVE.shown = true; setYear(e.ma, false, true); showEvent(e, null); }
-    if (!ARRIVE.faced && lab.earth && lab.earth.faceUpright) {
-      ARRIVE.faced = true;
-      const pl = e.rec.place && e.rec.place.lon != null ? e.rec.place : e.rec.placeNow;
-      if (pl && pl.lon != null) lab.earth.faceUpright(pl.lon, pl.lat, Math.min(EARTH_AGE, e.ma)).then(p => { ARRIVE.lon = p && p.lon; });
-    }
+  // ---------- arriving (step 10b; step 12: a quieter arrival) ----------
+  // The lab opens in The World, on Complex life, at the store's event First trilobites (LOOK.arriveLabel; else
+  // LOOK.arrive). An address that names a span (?w=) opens in Time on that span, as before, and none of this runs.
+  // Step 12 (Michael, 22 Nov: a light screen, then the Earth with cities, then How This Works, then a panel was too
+  // much, in the wrong order):
+  //   Dark from the first paint (the small script in the head sets the ground before anything is drawn), How This
+  //   Works open at the upper left. The Earth is not shown until it is ready and stands where the arrival starts: the
+  //   dark waits for it (html.earthwait; LOOK.arrival.patience for the pictures of the seas, and never more than
+  //   LOOK.arrival.giveUp in all). It is never shown at today, and Show cities is off.
+  //   The handle starts near the event, LOOK.arrival.years older (so time runs forward as she arrives), the globe
+  //   upright and LOOK.arrival.turn degrees short of facing the event's place. The handle flashes once, light, then
+  //   dark, then its own copper (?flash=0: none), and eases onto the event; the Earth eases with it through the
+  //   years between, turning so the place faces her. They arrive together (LOOK.arrival.ms).
+  //   Then the event is selected, and its panel stays closed: its name on the line is in copper, and its place is
+  //   ringed on the globe. A tap on the event opens its panel, as always.
+  //   Under reduced motion: a cut to the event, no flash. If she takes hold of the line or the globe on the way in,
+  //   everything stays where it is at that moment, and is hers (leaveArrive).
+  const ARRIVE = { on: !(Q.get('w') != null && Q.get('w') !== '' && !isNaN(+Q.get('w'))), state: 'wait', id: null, e: null, from: null, lon0: null, lon1: null, raf: null, timer: null, t0: 0, noEarth: false, flash: Q.get('flash') !== '0', shownAt: null };   // state: wait (for the store and the Earth), ready (placed, the Earth coming), run (the ease), done
+  function showEarth() {   // the dark has waited long enough
+    if (!root.classList.contains('earthwait')) return;
+    if (reduced()) $('stage3d').style.transition = 'none';
+    root.classList.remove('earthwait'); ARRIVE.shownAt = Math.round(performance.now());
   }
+  function stopArrive() { const A = ARRIVE; if (A.raf) cancelAnimationFrame(A.raf); clearTimeout(A.timer); A.raf = A.timer = null; }
+  function arrive() {   // called when the store has loaded, when the Earth has stood up, and if it could not; it acts once it has the store and the Earth (or knows there is none)
+    const A = ARRIVE, AL = LOOK.arrival;
+    if (!A.on || A.state !== 'wait' || !events.length || (!lab.earth && !A.noEarth)) return;
+    const e = events.find(x => (x.rec.label || x.label) === LOOK.arriveLabel) || events.find(x => x.id === LOOK.arrive);
+    if (!e) { A.state = 'done'; showEarth(); return; }
+    A.id = e.id; A.e = e; A.state = 'ready';
+    const calm = reduced() || !lab.earth, pl = placeOfEvent(e);
+    A.from = calm ? e.ma : Math.min(STR.b, e.ma + AL.years);
+    setYear(e.ma, false, true);   // unseen, at the event's own year first: the pictures of its seas are fetched while the dark waits, so none arrives halfway through the ease
+    const begin = p => {
+      if (A.state !== 'ready') return;
+      A.lon1 = p && p.lon != null ? p.lon : null; A.lon0 = A.lon1 != null && !calm ? A.lon1 - AL.turn : A.lon1;
+      const go = () => {
+        if (A.state !== 'ready') return;
+        if (!calm) { setYear(A.from, true); if (A.lon0 != null && lab.earth.spin) lab.earth.spin(A.lon0, true); }   // where the arrival starts
+        showEarth(); if (calm) landArrive(); else if (Q.get('arrive') !== 'hold') A.timer = setTimeout(runArrive, AL.wait);   // ?arrive=hold (bench): shown and waiting, for a picture of each moment
+      };
+      if (lab.earth && lab.earth.ready) lab.earth.ready(AL.patience).then(go, go); else go();
+    };
+    if (lab.earth && lab.earth.faceUpright && pl) lab.earth.faceUpright(pl.lon, pl.lat, Math.min(EARTH_AGE, e.ma)).then(begin, () => begin(null)); else begin(null);
+  }
+  function arriveAt(u) {   // the ease at a moment, 0 to 1: the handle's year, and the globe's turn
+    const A = ARRIVE, sm = ease(clamp01(u));
+    setYear(A.from + (A.e.ma - A.from) * sm, true);
+    if (A.lon0 != null && lab.earth && lab.earth.spin) lab.earth.spin(A.lon0 + (A.lon1 - A.lon0) * sm, false);
+  }
+  function runArrive() {
+    const A = ARRIVE, AL = LOOK.arrival; if (A.state !== 'ready') return;
+    A.state = 'run'; A.t0 = performance.now();
+    if (A.flash) { handleEl.classList.remove('flash'); void handleEl.offsetWidth; handleEl.classList.add('flash'); }
+    const step = now => {
+      if (A.state !== 'run') return;
+      const u = (now - A.t0 - AL.lead) / AL.ms;
+      if (u >= 1) { landArrive(); return; }
+      if (u > 0) arriveAt(u);
+      A.raf = requestAnimationFrame(step);
+    };
+    A.raf = requestAnimationFrame(step);
+    A.timer = setTimeout(landArrive, AL.lead + AL.ms + 700);   // a page that is running no frames arrives all the same
+  }
+  function landArrive() {   // arrived: on the event, facing its place, the event selected and no panel
+    const A = ARRIVE; if (A.state === 'done' || !A.e) return;
+    stopArrive(); A.state = 'done'; showEarth();
+    setYear(A.e.ma, false, true);
+    if (A.lon1 != null && lab.earth && lab.earth.spin) lab.earth.spin(A.lon1, true);
+    setSelected(A.e);
+  }
+  function leaveArrive() {   // she took hold of the line or the globe, or tapped an event, on the way in
+    const A = ARRIVE; if (A.state !== 'ready' && A.state !== 'run') return;
+    stopArrive(); A.state = 'done'; showEarth(); handleEl.classList.remove('flash');
+  }
+  track.addEventListener('pointerdown', leaveArrive, true); $('stage3d').addEventListener('pointerdown', leaveArrive, true);
+  handleEl.addEventListener('animationend', () => handleEl.classList.remove('flash'));
+  if (ARRIVE.on && Q.get('arrive') !== 'hold') setTimeout(() => { if (ARRIVE.state === 'ready') landArrive(); else showEarth(); }, LOOK.arrival.giveUp);   // the dark never waits for ever
 
   // Years from the start / years ago (step 7): the word says what a tap will do; everything that writes a year is told again
   function syncCount() { const here = countSpan(state.w.k); COUNT.fromStart = COUNT.want && here; $('wCount').classList.toggle('absent', !here); $('wCount').textContent = WORDS.count.words[COUNT.want ? 1 : 0]; }
@@ -2888,6 +3010,7 @@
   // Step 10b: and in The World, at the first trilobites (ARRIVE), unless the address names a span, which opens in Time.
   setWindow(!ARRIVE.on ? Math.max(0, Math.min(WINDOWS.length - 1, Math.round(+Q.get('w')))) : 1, true, true);
   if (ARRIVE.on) setView('world', true);
+  root.classList.remove('arriving');   // step 12: the page as it opens, in place; until here nothing was drawn but the dark
   setTimeout(() => { if (!reduced()) root.classList.add('eased'); }, 900);   // from here on a change of the Earth's size is eased (never the first sizing, never under reduced motion)
   loadAll().then(() => { WINDOWS.forEach(w => build(w)); lendMores(); FIT.key = ''; layout(); renderPanel(); renderStretch(); arrive(); }).catch(e => { console.error(e); $('fail').style.display = 'block'; $('fail').textContent = 'The events or the sea curve did not load: ' + e.message; });
   window.addEventListener('resize', relayout);
@@ -2911,24 +3034,26 @@
   setInterval(readout, 500);
 
   // ---------- for the bench's own checks (the browser pane) ----------
-  window.cwLab = { WINDOWS, PERIODS, PERIODS_12, PERIODS_M, LOOK, WORDS, state, STR, lab, know, set: k => setWindow(k, true), draw, layout, rect, hit, finish: finishStretch, reset: resetSpan,
+  window.cwLab = { WINDOWS, PERIODS_12, PERIODS_M, LOOK, WORDS, state, STR, lab, know, set: k => setWindow(k, true), draw, layout, rect, hit, finish: finishStretch, reset: resetSpan,
     // step 11: the arrows (hold: an arrow as the pointer would have it, dx px from where it took hold, heldMs at the window's edge; release: let go; drag: both), select and unselect, Measure, the seas
     arrow: { hold: (i, dx, heldMs) => { dropArrow(); arrowMove(i, dx, null); if (heldMs) { STR.drag.zoneT = heldMs; STR.drag.end = dragEnd(STR.drag); renderStretch(); } return Object.assign({}, STR.drag.end); }, release: () => releaseArrow(false), drag(i, dx, heldMs) { const e = this.hold(i, dx, heldMs); releaseArrow(false); return e; }, end: () => STR.drag && Object.assign({}, STR.drag.end), x: endX, room: roomOut, snapTo: (k, ma) => snapTo(WINDOWS[k], ma) },
     setSpan, selectWord, doUnselect, sel: () => SEL.length, selectShown: () => $('wSelect').classList.contains('absent') ? null : $('wSelect').textContent,
     measure: { open: measOpen, on: () => MEAS.on, ma: () => MEAS.ma && MEAS.ma.slice(), set: (j, ma) => { MEAS.ma[j] = ma; renderStretch(); }, text: () => MEAS.body ? MEAS.body.innerText : '', tool: () => MEAS.tool, word: measureWord },
-    seas: { on: () => SEAS.on, set: setSeas, strength: () => SEAS.name, setStrength: setSeaStrength },
+    seas: { on: () => SEAS.on, set: setSeas, strength: () => SEAS.name, setStrength: setSeaStrength, crust: () => SEAS.crust, setCrust, soft: () => SEAS.soft, setShores },
     tap: markAt, mark: () => state.mark, setMark, clearMark, doSelect, unitSpan, lit: litSpan, labelFor, setCities, setCoasts, setMarkers, build, lengthWord, agoWord, shortDate, spanWords, placeSelect,
-    year: () => lab.ma, setYear, handleX, xOf, maOf, events: () => events, onLine: eventsOnLine, placed: placeEvents, tapEvent: id => { const e = events.find(x => x.id === id); if (e) tapEvent(e, null); return !!e; }, rec: () => know.event && know.event.rec, openMore: () => { if (know.event) openMore(know.event.rec); },
+    year: () => lab.ma, setYear, handleX, xOf, maOf, events: () => events, onLine: eventsOnLine, placed: placeEvents, tapEvent: id => { const e = events.find(x => x.id === id); if (e) tapEvent(e); return !!e; }, rec: () => know.event && know.event.rec, openMore: () => { if (know.event) openMore(know.event.rec); },
     fit: () => Object.assign({}, FIT), eventDate, agoParen, periodOf, count: { set: setCount, fromStart: () => COUNT.fromStart, yearWord, yearSpan, yearPhrase }, mapWord: () => $('wMap').textContent, full: { kind: FULL, on: isFull, page: setFullPage, touch: TOUCH }, nesting: k => nesting(WINDOWS[k]), handleWord: () => labelH.textContent, labels: () => [labelEls[1], labelH, labelEls[0], spanWord].map(el => el.textContent + ' @ ' + el.style.left + (el.style.visibility === 'hidden' ? ' (not drawn)' : '') + (el.classList.contains('up') ? ' (up)' : '')),
-    setFlat, flat: () => lab.flat, flatWord, knowing, tellYear, reduced, detent: DETENT, turnBench: TURN, tilt: TILT, tree: { on: () => TREE.on, set: setPeriods, list: k => { const l = treeList(WINDOWS[k]); return l && l.map(t => ({ n: t.rec.name, from: t.rec.from, to: t.rec.to, c: t.c })); } }, htwSpan, ground: () => GROUND.u, build: { on: () => BUILD.on, set: on => { BUILD.on = !!on; BUILD.done = false; }, done: () => BUILD.done, running: () => !!BUILD.run, hold: holdBuild, finish: endBuild, last: () => BUILD.last, phase: () => BUILD.run && BUILD.run.phase, count: () => $('buildCount').style.display === 'none' ? null : $('buildCount').textContent }, fullscreen: { on: isFull, enter: enterFull, exit: exitFull, available: FS },
-    attachEarth: api => { lab.earth = api; api.setPlaces(state.cities); if (api.ground) api.ground(rgbStr(mix(PARCH, DARK, GROUND.u))); lab.canFlat = !!api.setFlat; if (lab.canFlat) $('wMap').style.display = ''; flatWord(false); if (api.setCoasts) { $('wCoasts').style.display = ''; api.setCoasts(state.coasts); } if (api.setMarkers) { $('wMarkers').style.display = ''; api.setMarkers(state.markers); } if (api.setSeas) { $('wSeas').style.display = ''; api.setSeas(SEAS.on); if (api.setSeasStrength) api.setSeasStrength(LOOK.seas.strengths[SEAS.name]); } setYear(lab.ma, lab.rough, lab.ofEvent); renderPanel(); arrive(); },
+    setFlat, flat: () => lab.flat, flatWord, knowing, tellYear, reduced, detent: DETENT, turnBench: TURN, tilt: TILT, tree: { list: k => { const l = treeList(WINDOWS[k]); return l && l.map(t => ({ n: t.rec.name, from: t.rec.from, to: t.rec.to, c: t.c })); } }, htwSpan, ground: () => GROUND.u, build: { on: () => BUILD.on, set: on => { BUILD.on = !!on; BUILD.done = false; }, done: () => BUILD.done, running: () => !!BUILD.run, hold: holdBuild, finish: endBuild, last: () => BUILD.last, phase: () => BUILD.run && BUILD.run.phase, count: () => $('buildCount').style.display === 'none' ? null : $('buildCount').textContent }, fullscreen: { on: isFull, enter: enterFull, exit: exitFull, available: FS },
+    attachEarth: api => { lab.earth = api; api.setPlaces(state.cities); if (api.ground) api.ground(rgbStr(mix(PARCH, DARK, GROUND.u))); lab.canFlat = !!api.setFlat; if (lab.canFlat) $('wMap').style.display = ''; flatWord(false); if (api.setCoasts) { $('wCoasts').style.display = ''; api.setCoasts(state.coasts); } if (api.setMarkers) { $('wMarkers').style.display = ''; api.setMarkers(state.markers); } if (api.setSeas) { $('wSeas').style.display = ''; api.setSeas(SEAS.on); if (api.setSeasStrength) api.setSeasStrength(LOOK.seas.strengths[SEAS.name]); } setYear(lab.ma, lab.rough, lab.ofEvent); renderPanel(); tellPlace(); arrive(); },
+    noEarth: () => { ARRIVE.noEarth = true; if (ARRIVE.state === 'wait' && !events.length) showEarth(); arrive(); },   // step 12: the 3D view could not start: nothing to wait for
+    arrival: { state: () => ARRIVE.state, of: () => Object.assign({}, ARRIVE, { e: ARRIVE.e && ARRIVE.e.id, raf: !!ARRIVE.raf, timer: !!ARRIVE.timer }), land: landArrive, hold: u => { if (ARRIVE.state === 'ready') { stopArrive(); showEarth(); ARRIVE.state = 'run'; } if (ARRIVE.state !== 'run') return false; stopArrive(); arriveAt(u); return true; }, flash: () => { handleEl.classList.remove('flash'); void handleEl.offsetWidth; handleEl.classList.add('flash'); }, waiting: () => root.classList.contains('earthwait') },
     warmSpells: () => { const w = W_HUM; if (!w.built) build(w); const runs = []; let cur = null; for (let i = 0; i < w.real; i++) { const warm = w.warmOf[i]; if (warm && !cur) cur = [i, i]; else if (warm) cur[1] = i; else if (cur) { runs.push(cur); cur = null; } } if (cur) runs.push(cur); return runs.map(([a, b]) => [(1000 - a) * 1000, (999 - b) * 1000]); },
     // step 9: the two views, the panel, Pick a time, the Earth's two words
     view: { set: setView, now: () => lab.view, moving: () => !!VIEW.plan, finish: finishView, hold: holdView, last: () => VIEW.last, rects: () => ({ time: lab.view === 'time' && !VIEW.plan ? timeRects() : null, world: worldRects() }), relayout },
-    panel: { open: () => !!PANEL.show && PANEL.up, kind: () => PANEL.show && PANEL.show.kind, of: () => PANEL.show && (PANEL.show.e ? PANEL.show.e.id : PANEL.show.p ? PANEL.show.p.n : 'span'), text: () => info && PANEL.show ? info.body.innerText : '', html: () => info ? info.body.innerHTML : '', el: info && info.el, at: () => PANEL.at && Object.assign({}, PANEL.at), mine: () => JSON.parse(JSON.stringify(PANEL.pos)), close: closePanel, leastHiding, avoid: avoidList,
-      period: (id, name) => { const w = byId(id), p = w && w.plaques.find(x => x.n === name); if (p) showPanel({ kind: 'period', p, text: nextText(p.key, p.t) }, null); return !!p; } },
+    panel: { open: () => !!PANEL.show && PANEL.up, kind: () => PANEL.show && PANEL.show.kind, of: () => PANEL.show && (PANEL.show.e ? PANEL.show.e.id : PANEL.show.p ? PANEL.show.p.n : PANEL.show.kind), text: () => info && PANEL.show ? info.body.innerText : '', html: () => info ? info.body.innerHTML : '', el: info && info.el, at: () => PANEL.at && Object.assign({}, PANEL.at), mine: () => JSON.parse(JSON.stringify(PANEL.pos)), close: closePanel, home: panelHome, place: placeOne,
+      more: () => PANEL.more && PANEL.more.window, moreOpen: () => !!PANEL.more, closeMore: () => closeMore(false), periodMore: openPeriodMore, selected: () => know.event && know.event.id, select: id => setSelected(events.find(x => x.id === id) || null), guard: GUARD,
+      period: (id, name) => { const w = byId(id), p = w && w.plaques.find(x => x.n === name); if (p) showPanel({ kind: 'period', p, text: nextText(p.key, p.t) }); return !!p; } },
     htw: { open: () => HTW2.open, up: () => HTW2.up, show: openHtw2, close: closeHtw2, land: htwLand, flying: () => !!HTW2.anim, flights: () => HTW2.flights, el: htw2 && htw2.el, at: () => htw2 && restBox(htw2.el), tools: () => TOOLP.map(t => ({ id: t.id, open: t.open, up: t.up, at: t.at, ats: t.ats })), toolEl: id => { const t = TOOLP.find(x => x.id === id); return t && t.pn.el; } },
-    arrive: () => Object.assign({}, ARRIVE),
     pick: pickTime, pickBack, picked: () => ({ before: PICK.before && { view: PICK.before.view, k: PICK.before.mosaic.k, a: PICK.before.a, b: PICK.before.b, ma: PICK.before.ma }, last: PICK.last }),
     words: () => ({ view: $('wView').textContent, map: $('wMap').textContent, htw: !$('wHtw2').classList.contains('absent'), back: !$('wPickBack').classList.contains('absent') }), quiet: QUIET,
     // step 6: the move, the gathered line, the sound
@@ -2945,7 +3070,7 @@
   // globe, no sliders, no crop, no Save or share on this page) ----------
   import * as THREE from 'three';
   import { cwScene } from '../js/3d/scene.js?v=2026-10-30b';
-  import { cwEarth } from '../js/3d/earth.js?v=2026-11-21a';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-11-22c';
   const $ = id => document.getElementById(id), S = window.CW.STYLE, Q = new URLSearchParams(location.search);
   if (Q.get('log') === '1') {   // bench only: every console error and warning also written under the page, for a browser whose console cannot be reached
     const show = (kind, args) => { const f = $('fail'); f.style.display = 'block'; f.textContent += '\n' + kind + ': ' + [...args].map(a => a && a.message ? a.message : String(a)).join(' ').slice(0, 1500); };
@@ -2974,7 +3099,7 @@
       onTap: (x, y) => (marking && earth ? markerTap(x, y) : cityTap(x, y) || mapTap(x, y))   // placing markers (step 5): a tap sets or deletes one; else a city's point shows or hides its name (step 10) and, on the globe, comes to the middle (step 10c); else, on the flat world, a tap goes back to the globe turned to that longitude (mapTap)
     });
     if (view.resetWord) view.resetWord.remove();   // step 10: no Reset: the Earth has two resting places instead (below)
-    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, onFlat: (on) => window.cwLab.flatWord(on), seas: true, seasStrength: window.cwLab.LOOK.seas.strengths[window.cwLab.seas.strength()] });   // the shallow seas (20 Nov), at the strength the page opens on (step 11)
+    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, onFlat: (on) => window.cwLab.flatWord(on), seas: true, seasStrength: window.cwLab.LOOK.seas.strengths[window.cwLab.seas.strength()], seasCrust: window.cwLab.seas.crust() ? window.cwLab.LOOK.seas.crustGrey : false, seasSoft: window.cwLab.seas.soft() });   // the shallow seas (20 Nov), at the strength the page opens on (step 11); step 12: the flooded crust in grey, and the shores soft
     if (Q.get('seas') === '0') earth.setSeas(false);
     // Step 10: the satellite picture. This page had never asked for it: the Earth's own default is the old ground, the
     // map's height-tinted picture, which paints high ground pale (the Himalaya and Tibet looked iced) and knows no ice
@@ -2993,6 +3118,7 @@
     console.warn('time-lab: no 3D view;', e && e.message ? e.message : e);
     $('stage3d').style.display = 'none'; $('still').style.display = 'block';
     if (Q.get('no3d') !== '1') { $('fail').style.display = 'block'; $('fail').textContent = 'This page could not start its 3D view: ' + (e && e.message ? e.message : e); }
+    window.cwLab.noEarth();   // step 12: the arrival has no Earth to wait for
   }
   // ---------- step 10: two resting places, in place of Reset and Align North ----------
   // Michael asked for Align North because it is easy to lose one's bearings turning the globe two ways at once. Reset
@@ -3004,8 +3130,8 @@
   //   toward upright: a move away from it is cut, a move toward it helped, most at upright and nothing at the angle
   //   (DET.pull). Nothing is said. Only her own drag arms it: a globe turned to face a place (Pick a time, a tap on
   //   the map) stays as it was turned.
-  //   The opening size is a resting place too. Pinched or scrolled out past the size the Earth opened at, it eases back
-  //   to that size once her fingers are off and the wheel is still. Zooming in is free.
+  //   (Step 10 made the opening size a resting place too: zoomed out past it, the Earth eased back. Step 12 took that
+  //   out: Michael, 22 Nov, it read as a fault. She zooms out as far as the camera goes, and the Earth stays there.)
   // On the map nothing changes: it is whole and still. Under reduced motion both are a cut. restStep is one frame of both.
   // Step 10c: the stand stays (this page has turned by scene.js's desk-globe gesture since step 1: the axis never leaves
   // the upright of the screen, and what loses north is the tilt). Two of Michael's ideas of 21 Nov, each a bench switch:
@@ -3019,7 +3145,7 @@
   //   only: two fingers carry the ground between them as before.
   // Both are this page's: the scene turns the globe as it always has, and these listeners, which come after the
   // scene's own, take back what the favour does not allow (as the resting place's pull has done since step 10).
-  const REST = { fingers: new Set(), north: false, last: null, wheelAt: 0, moved: 0, x: 0, y: 0, hx: 0, hy: 0, mult: null, coast: null };
+  const REST = { fingers: new Set(), north: false, last: null, moved: 0, x: 0, y: 0, hx: 0, hy: 0, mult: null, coast: null };
   const AXIS = { a: 0, drawn: false }, axisCv = document.createElement('canvas');
   const wrap180 = l => { l = ((l + 180) % 360 + 360) % 360 - 180; return l === -180 ? 180 : l; };
   const turnBench = () => window.cwLab.turnBench, LT = window.cwLab.LOOK.turn;
@@ -3041,11 +3167,6 @@
       if (DET.angle <= 0 || Math.abs(t.lat) > DET.angle) { if (!view.busy) REST.north = false; }   // flung clear of the angle: nothing to do, unless the spin brings it back in
       else if (calm || Math.abs(t.lat) < 0.02) { view.turnTo(null, 0); REST.north = false; did = true; }
       else { view.turnTo(null, t.lat * Math.exp(-dt * 1000 / LD.tau)); did = true; }
-    }
-    const alt = view.camera.position.length() - 1, alt0 = homeV.dist - 1;
-    if (alt > alt0 * (1 + LD.zoomTol) && performance.now() - REST.wheelAt > LD.wheelWait) {
-      const a = calm ? alt0 : alt0 * Math.pow(alt / alt0, Math.exp(-dt * 1000 / LD.zoomTau));
-      view.zoomTo(1 + (a <= alt0 * (1 + LD.zoomTol) ? alt0 : a)); did = true;
     }
     if (did) view.redraw();
     return did;
@@ -3081,7 +3202,6 @@
       REST.last = view.turnOf();
     };
     cvs.addEventListener('pointerup', letGo); cvs.addEventListener('pointercancel', letGo);
-    cvs.addEventListener('wheel', () => { REST.wheelAt = performance.now(); }, { passive: true });
     view.onFrame(dt => {
       if (!REST.fingers.size) {
         if (REST.coast && REST.last && view.busy && !earth.flat()) {   // the coasting after a flick keeps the favour it was let go with
@@ -3092,8 +3212,28 @@
         if (capTilt()) view.redraw();   // step 10d: a coast, a glide or a wheel that carried the globe past the limit
         REST.last = view.turnOf();
       }
+      zoomStep(dt);
       axisStep(dt);
     });
+  }
+  // ---------- step 12: the nearest zoom, by what the Earth is showing ----------
+  // Michael, 22 Nov: it makes no sense to zoom in further than the picture can bear. Far in is right on the satellite
+  // photograph; it is wrong on a reconstruction, where the lab shows rough positions. So the nearest she may come is
+  // set by the grade of knowing at the handle's year (LOOK.zoomIn): the photograph keeps the Earth's own limit, and
+  // each grade past the seam allows less. The Earth sets its own limit on the scene (fitZoom, when the window or the
+  // depth of its pictures changes); this page lays the larger of the two over it each frame, and knows the Earth's
+  // by its being different from what the page last set. If she is nearer than a year allows and the handle takes her
+  // there, the Earth eases out to that year's limit (a cut under reduced motion): the limit itself is walked out, so
+  // a pinch on the way cannot go back in.
+  const ZL = window.cwLab.LOOK.zoomIn, ZOOM = { earthMin: null, set: null, want: null, grade: null };
+  const distFor = km => 1 + km / (6371 * 2 * Math.tan(view.camera.fov * D2R / 2));   // the camera's distance at which the window's height takes in so many kilometres of ground at the middle
+  function zoomStep(dt) {
+    const lim = view.zoomLimits(); if (ZOOM.set == null || Math.abs(lim.min - ZOOM.set) > 1e-9) ZOOM.earthMin = lim.min;
+    const g = earth.gradeFor(earth.time()).grade, km = ZL[g], want = Math.max(ZOOM.earthMin, km ? distFor(km) : 0), d = view.camera.position.length();
+    let next = want;
+    if (d < want - 1e-5 && !earth.flat() && !window.cwLab.reduced()) { next = want - (want - d) * Math.exp(-dt * 1000 / ZL.tau); if (want - next < 2e-4) next = want; }
+    if (Math.abs(next - lim.min) > 1e-9) { view.setZoomLimits(next); earth.settle(); view.redraw(); }
+    ZOOM.set = next; ZOOM.want = want; ZOOM.grade = g;
   }
   // the axis (step 10c): drawn on a canvas of its own over the Earth, under the cities and the markers
   function axisStep(dt) {
@@ -3123,6 +3263,15 @@
     for (const sign of [1, -1]) {   // out of each pole, where the Earth is not in front of it
       let prev = at(sign);
       for (let k = 1; k <= 6; k++) { const q = at(sign * (1 + LT.axisOut * k / 6)); if (!prev.hidden && !q.hidden) line(prev, q, LT.axisW, 0.95); prev = q; }
+    }
+    // step 12: a small N beyond the north end of the line and a small S beyond the south, on the part that stands
+    // out of the ball; upright on the screen however the globe is tipped; gone where the Earth is in front of the end
+    x.font = 'bold ' + LT.axisFont + 'px ' + (S.font || 'Georgia, serif'); x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round';
+    for (const [sign, letter] of [[1, 'N'], [-1, 'S']]) {
+      const end = at(sign * (1 + LT.axisOut)), q = at(sign * (1 + LT.axisOut + LT.axisLetter)); if (end.hidden || q.hidden) continue;
+      const dxl = q.x - end.x, dyl = q.y - end.y, len = Math.hypot(dxl, dyl) || 1, off = Math.max(len, LT.axisFont * 0.8), lx = end.x + dxl / len * off, ly = end.y + dyl / len * off;   // never closer to the line's end than the letter needs, when the axis points nearly at her
+      x.globalAlpha = AXIS.a * 0.85; x.lineWidth = 3; x.strokeStyle = S.parchment; x.strokeText(letter, lx, ly);
+      x.globalAlpha = AXIS.a; x.fillStyle = S.copperDeep || '#8f4a1c'; x.fillText(letter, lx, ly);
     }
     for (const pole of [n, s]) if (!pole.hidden) {   // the pole she can see
       x.globalAlpha = AXIS.a; x.beginPath(); x.arc(pole.x, pole.y, 3.2, 0, 2 * Math.PI); x.fillStyle = S.parchment; x.fill();
@@ -3178,7 +3327,7 @@
   // under the Earth's places, the markers over them. A marker set at an age long ago is put on the piece under the tap at
   // that age, carried back by its plate to where that ground is today, and rides from there like any other.
   const LK = window.cwLab.LOOK, D2R = Math.PI / 180;
-  let pieces = null, coastPts = null, coastOn = false, markers = [], markerHits = [], overlayKey = '';
+  let pieces = null, coastPts = null, coastOn = false, markers = [], markerHits = [], overlayKey = '', eventHit = null;
   const coastCv = document.createElement('canvas'), markCv = document.createElement('canvas'), cityCv = document.createElement('canvas');
   [coastCv, markCv, cityCv, axisCv].forEach(c => { c.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;'; });
   // Step 10: cities as points. With Show cities on, each of the Earth's places — the stories' places (stories/places.json)
@@ -3189,6 +3338,16 @@
   // before its birth, and nowhere at an age the Earth has no map for.
   const TODAY = { edo: 'Tokyo', antioch: 'Antakya' };   // the Earth's names are today's (earth.js's TODAY_NAMES, which it does not hand out)
   let cityPts = null, cityOn = false, cityNamed = null, cityHits = [];
+  // Step 12: the selected event's place, where its record has one: a small open ring, parchment with a dark line
+  // inside and out so it reads on land, sea and ice. No label. Not a city's point (a small vermilion dot) nor one of
+  // her markers (a copper dot): a ring, and empty. It is a point of today's ground and rides its plate as they do,
+  // showing while its piece lives; drawn with the cities, in both views and on the map.
+  let eventPt = null, eventAsk = 0;
+  function setEventPlace(pl) {
+    const ask = ++eventAsk;
+    if (!pl) { eventPt = null; overlayKey = ''; if (earth) drawOverlay(true); return; }
+    loadPieces().then(() => { if (ask !== eventAsk) return; eventPt = Object.assign({ lon: pl.lon, lat: pl.lat }, ride(pieceAt(pl.lon, pl.lat))); overlayKey = ''; drawOverlay(true); if (view) view.redraw(); });
+  }
   async function loadCities() {
     if (cityPts) return;
     const [file] = await Promise.all([fetch('../stories/places.json').then(r => r.json()), loadPieces()]);
@@ -3255,7 +3414,7 @@
     if (!earth) return;
     const w = view.host.clientWidth, h = view.host.clientHeight; if (!w || !h) return;
     const cam = view.camera.position, bq = view.ball.quaternion, age = earth.time(), flat = earth.flat();
-    const key = [cam.x, cam.y, cam.z, bq.x, bq.y, bq.z, bq.w, w, h, age, flat, coastOn, marking, markers.length, !!coastPts, cityOn, !!cityPts, cityNamed ? cityNamed.name : ''].join();
+    const key = [cam.x, cam.y, cam.z, bq.x, bq.y, bq.z, bq.w, w, h, age, flat, coastOn, marking, markers.length, !!coastPts, cityOn, !!cityPts, cityNamed ? cityNamed.name : '', eventPt ? eventPt.lon + '/' + eventPt.lat : ''].join();
     if (!force && key === overlayKey) return;
     overlayKey = key;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -3302,6 +3461,16 @@
       }
       kx.globalAlpha = 1;
     }
+    eventHit = null;
+    if (eventPt) {   // step 12: the selected event's place
+      const a = alpha(eventPt, age), q = a > 0 ? at(eventPt, flat) : null;
+      if (q && q.front) {
+        const R = LK.eventRing;
+        kx.globalAlpha = a * 0.75; kx.strokeStyle = '#1c1712'; kx.lineWidth = R.w + 1.6; kx.beginPath(); kx.arc(q.x, q.y, R.r, 0, 2 * Math.PI); kx.stroke();
+        kx.globalAlpha = a; kx.strokeStyle = S.parchment; kx.lineWidth = R.w; kx.beginPath(); kx.arc(q.x, q.y, R.r, 0, 2 * Math.PI); kx.stroke();
+        kx.globalAlpha = 1; eventHit = { x: q.x, y: q.y, a };
+      }
+    }
     // the markers: a copper dot ringed in parchment, as the year's handle is drawn
     const mx = sizeCanvas(markCv, w, h, dpr);
     markerHits = [];
@@ -3347,7 +3516,7 @@
     coastCv.style.zIndex = '1'; axisCv.style.zIndex = '1'; if (marks) marks.style.zIndex = '2'; cityCv.style.zIndex = '3'; markCv.style.zIndex = '4';
     view.onFrame(() => { fitMap(); drawOverlay(false); });   // step 10c: the map's place in The World, before what is drawn on it
   }
-  window.cwOverlay = { cities: () => cityPts, cityHits: () => cityHits.slice(), cityNamed: () => cityNamed && cityNamed.name, cityTap, loadCities, markers: () => markers.slice(), hits: () => markerHits.slice(), tap: x => markerTap(x[0], x[1]), markAt: (lon, lat) => markAt(lon, lat, earth.time()), loadPieces, loadCoasts, coasts: () => coastPts, draw: () => drawOverlay(true),
+  window.cwOverlay = { eventPt: () => eventPt && Object.assign({}, eventPt), eventHit: () => eventHit && Object.assign({}, eventHit), cities: () => cityPts, cityHits: () => cityHits.slice(), cityNamed: () => cityNamed && cityNamed.name, cityTap, loadCities, markers: () => markers.slice(), hits: () => markerHits.slice(), tap: x => markerTap(x[0], x[1]), markAt: (lon, lat) => markAt(lon, lat, earth.time()), loadPieces, loadCoasts, coasts: () => coastPts, draw: () => drawOverlay(true),
     coastStats: () => coastPts ? { rings: coastPts.length, points: coastPts.reduce((n, r) => n + r.length, 0), unheld: coastPts.reduce((n, r) => n + r.filter(p => p.plate == null).length, 0) } : null };
 
   // what the Earth knows at its year, for the text block and the credit (the classic script writes both): the grade
@@ -3362,6 +3531,7 @@
       gradeAt: age => earth.gradeFor(age),   // step 10b: the grade at an event's own year, for the date line of its panel
       setSeas: on => { earth.setSeas(on); view.redraw(); },   // the shallow seas (20 Nov; step 11: Show shallow seas / Hide shallow seas)
       setSeasStrength: v => { if (earth.setSeasStrength) { earth.setSeasStrength(v); view.redraw(); } },   // step 11: how strongly their blue lies over the land (bench)
+      setSeasCrust: on => { if (earth.setSeasCrust) earth.setSeasCrust(on); }, setSeasSoft: on => { if (earth.setSeasSoft) earth.setSeasSoft(on); },   // step 12 (bench): the flooded crust in grey; the shorelines soft
       setPlaces: on => { cityOn = !!on; if (!cityOn) cityNamed = null; else loadCities().then(() => drawOverlay(true)); drawOverlay(true); },   // step 10: Show cities / Hide cities: the points
       ground: css => { view.renderer.setClearColor(new THREE.Color(css), 1); view.redraw(); },   // step 10: the colour round the Earth, parchment in Time and near-black in The World
       setCoasts: on => { coastOn = !!on; if (coastOn) loadCoasts().then(() => drawOverlay(true)); drawOverlay(true); },   // step 5: today's coastlines, riding their plates
@@ -3374,6 +3544,11 @@
       // step 10b: arriving — the globe upright, turned to the longitude where a place of today's ground lay at an age
       faceUpright: async (lon, lat, age) => { const p = await thenOf(lon, lat, age); view.turnTo(p.lon, 0); view.zoomTo(homeV ? homeV.dist : HOME_DISTANCE); turned(); earth.settle(); view.redraw(); return p; },
       home: () => homeV && Object.assign({}, homeV),
+      // step 12: the arrival — the globe upright at a longitude (rest: the view has settled there); the Earth ready to be shown at its year (the year's pictures of the seas are in, or ms have passed); the selected event's place
+      spin: (lon, rest) => { view.turnTo(lon, 0); turned(); if (rest) earth.settle(); view.redraw(); },
+      ready: ms => new Promise(res => { const t0 = performance.now(), look = () => { const sn = earth.seas && earth.seas(); if (!sn || !sn.on || !sn.between || sn.showing > 0 || performance.now() - t0 > ms) res(); else setTimeout(look, 40); }; look(); }),
+      setEventPlace,
+      zoom: () => Object.assign({ dist: view.camera.position.length(), limits: view.zoomLimits() }, ZOOM), zoomStep,
       resized: () => { view.setFrame(null); fitMap(); earth.settle(); view.redraw(); }   // the renderer and the camera take the stage's new size at once, not at the next observed frame
     });
   }

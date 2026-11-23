@@ -183,6 +183,8 @@
        onFlat: (on, at) => {}          // step 6: a tap on the flat world went back to the globe, centred on `at`
        seas: true | 'url/seas.json'    // 20 Nov: the shallow seas on the pieces (below); off unless asked for
        seasStrength: 0 to 1            // 21 Nov: how strongly the seas' blue lies over the land; 1, as they came, unless a page asks
+       seasCrust: false | true | '#hex'   // 22 Nov: the flooded crust in a light grey under the blue (below); not there unless a page names it
+       seasSoft: false | true          // 22 Nov: the seas' edges soft (below); not there unless a page names it
      });
    Returns { group, setTime(ma), time(), grade() → { grade, why }, moltenPhase(), setGround('old'|'blue'), ground(),
    seaLevel() (metres, ≤ 0), icePairs(), setCoasts(on), coasts(),
@@ -211,7 +213,20 @@
    setSeas(on), seas() → { on, showing, ages, credit }.
    21 Nov 2026 (the Time lab's step 11; Michael, after looking at 480 Ma: the pale blue was too strong, and a continent
    mostly under water did not read as a continent): o.seasStrength and setSeasStrength(v), 0 to 1, multiply the sea's
-   opacity, so the land's own picture shows through the blue. 1 unless a page asks: every other page is as it was. */
+   opacity, so the land's own picture shows through the blue. 1 unless a page asks: every other page is as it was.
+   22 Nov 2026 (the Time lab's step 12; Michael: the seas no longer garish, the flooded land is now hard to tell from
+   dry land). Two more options, each built into the seas' paint only when a page names it (o.seasCrust, o.seasSoft,
+   true or false), so a page that names neither has the paint it had:
+     seasCrust, setSeasCrust(on): the flooded continental crust in a light grey (SEAS_CRUST, or the page's own
+     colour) in place of the land's picture showing through, with the water's blue laid over it at SEAS_CRUST_BLUE of
+     seasStrength. The
+     grey is light so that a darker one is left for the deep sea floor, when the oceans are drained.
+     seasSoft, setSeasSoft(on): the edges of the flooded ground soft. The sea pictures are read a second time,
+     coarser (SEAS_SOFT texels across, from the pictures' own smaller copies), and the edge is cut wide from that, so
+     a shore is a band about a degree across and not a line. It softens every edge that is in the pictures: where
+     shallow sea meets dry land, and where it ends at Scotese's margin inside a piece. The edge of a piece itself,
+     where the flooded crust meets the deep ocean, is the mesh's own outline and stays sharp, and so do the tears,
+     which are those outlines. seas() also answers crust and soft. */
 import * as THREE from 'three';
 import { Fn, vec2, vec3, vec4, float, int, uniform, texture, uv, attribute, varying, positionView, positionWorld, modelViewMatrix,
          normalize, dot, cross, length, mix, smoothstep, clamp, abs, min, max, select, If, Discard, sRGBTransferEOTF, atan, asin, sqrt, fract, dFdx, dFdy,
@@ -238,6 +253,9 @@ const TAP_GLIDE_S = 0.6;  // a tap on a place: seconds for it to glide to the ce
 const TAP_ZOOM_STEP = 2.5;   // and the zoom's step: the height above the ground divided by this
 const SEAS_OUT = 5;       // million years past the last sea picture over which the shallow seas go
 const SEAS_HOLD = 5;      // sea pictures held at once (three ages each, 1,800 by 900)
+const SEAS_CRUST = '#a3a29c';   // 22 Nov: the flooded continental crust, a light grey (o.seasCrust)
+const SEAS_CRUST_BLUE = 0.5;    // and how much of the seas' strength the blue over that grey is given: the water is faint over it, so it reads as grey
+const SEAS_SOFT = 4;      // 22 Nov: texels of a sea picture (0.2 degrees each) its soft edge is read across (o.seasSoft)
 const FROM_FLAT_KM = 3000;   // a tap on the flat world: the globe comes back with this many kilometres across the window's height
 const FLAT_MARGIN = 14;   // CSS pixels of parchment round the flat world, at least
 // the places by today's names (Michael, 29 Oct: Tokyo, not Edo), by their ids in stories/places.json, which keeps its own
@@ -1914,6 +1932,9 @@ export async function cwEarth(view, o = {}) {
     const uChA = uniform(new THREE.Vector3(1, 0, 0)), uChB = uniform(new THREE.Vector3(1, 0, 0)), uMix = uniform(0), uOn = uniform(0);
     const uStr = uniform(o.seasStrength != null ? Math.max(0, Math.min(1, +o.seasStrength)) : 1);   // 21 Nov: how strongly the blue lies over the land
     const SHORE3 = rgb(S.seaShore || '#93bed7');
+    const canCrust = o.seasCrust != null, canSoft = o.seasSoft != null;   // 22 Nov: built in only for a page that names them
+    const uCrust = uniform(o.seasCrust ? 1 : 0), uSoft = uniform(o.seasSoft ? 1 : 0);
+    const CRUST3 = rgb(typeof o.seasCrust === 'string' ? o.seasCrust : SEAS_CRUST);
     const make = shift => {   // shift: undefined on the ball; 0 and 1, the flat world's two copies
       const isFlat = shift != null, m = flatMat();
       const p = mix(attribute('position', 'vec3'), attribute('soft', 'vec3'), uOld);
@@ -1926,8 +1947,15 @@ export async function cwEarth(view, o = {}) {
         const gx = vec2(select(abs(dFdx(uvn.x)).lessThan(0.5), dFdx(uvn.x), dFdx(u2)), dFdx(uvn.y));
         const gy = vec2(select(abs(dFdy(uvn.x)).lessThan(0.5), dFdy(uvn.x), dFdy(u2)), dFdy(uvn.y));
         const a = dot(texA.sample(uvn).grad(gx, gy).rgb, uChA), b = dot(texB.sample(uvn).grad(gx, gy).rgb, uChB);
-        const wet = smoothstep(0.4, 0.6, mix(a, b, uMix));
-        return vec4(finish(SHORE3, fl), wet.mul(uOn).mul(uStr).mul(lifeNode()));
+        let wet = smoothstep(0.4, 0.6, mix(a, b, uMix));
+        if (canSoft) {   // the same two pictures, read coarser, and the edge cut wide
+          const sx = vec2(SEAS_SOFT / 1800, 0), sy = vec2(0, SEAS_SOFT / 900);
+          const as = dot(texA.sample(uvn).grad(sx, sy).rgb, uChA), bs = dot(texB.sample(uvn).grad(sx, sy).rgb, uChB);
+          wet = mix(wet, smoothstep(0.22, 0.78, mix(as, bs, uMix)), uSoft);
+        }
+        const col = canCrust ? mix(SHORE3, mix(CRUST3, SHORE3, uStr.mul(SEAS_CRUST_BLUE)), uCrust) : SHORE3;   // the crust's grey with the blue over it at the seas' strength
+        const str = canCrust ? mix(uStr, float(1), uCrust) : uStr;                         // and nothing of the land's picture through it
+        return vec4(finish(col, fl), wet.mul(uOn).mul(str).mul(lifeNode()));
       })();
       m.colorNode = out.rgb; m.opacityNode = out.a;
       return m;
@@ -1973,7 +2001,7 @@ export async function cwEarth(view, o = {}) {
       show();
     }
     const twinsOf = () => { for (const k of kids) for (let i = 0; i < 2; i++) { const m = k.t[i]; m.quaternion.copy(k.sea.quaternion); m.renderOrder = k.sea.renderOrder; m.visible = k.sea.visible && (i === 0 || nearEdge(k.land)); } };
-    return { time, show, twinsOf, uOn, uStr, list, dispose: () => { [mat, ...flatSeaMats, blank].forEach(x => x.dispose()); for (const h of held.values()) if (h.tex) h.tex.dispose(); } };
+    return { time, show, twinsOf, uOn, uStr, uCrust, uSoft, canCrust, canSoft, list, dispose: () => { [mat, ...flatSeaMats, blank].forEach(x => x.dispose()); for (const h of held.values()) if (h.tex) h.tex.dispose(); } };
   })() : null;
 
   function rebuildMaterials() {
@@ -2515,7 +2543,9 @@ export async function cwEarth(view, o = {}) {
     // the shallow seas (20 Nov): on or off, and what is showing
     setSeas: on => { if (!seaLayer) return; seasOn = !!on; setTime(ma); },
     setSeasStrength: v => { if (!seaLayer) return; seaLayer.uStr.value = Math.max(0, Math.min(1, +v)); view.redraw(); },   // 21 Nov: 1 is the seas as they came
-    seas: () => seaLayer ? { on: seasOn, strength: seaLayer.uStr.value, showing: seasOn && seaLayer.uOn.value > 0 ? seaLayer.uOn.value : 0, between: seasWant ? [seasWant.a[0], seasWant.b[0]] : null, ages: seaLayer.list.map(a => a[0]), credit: seasFile.credit || '' } : null,
+    setSeasCrust: on => { if (!seaLayer || !seaLayer.canCrust) return; seaLayer.uCrust.value = on ? 1 : 0; view.redraw(); },   // 22 Nov: the flooded crust in grey (only where the page named o.seasCrust)
+    setSeasSoft: on => { if (!seaLayer || !seaLayer.canSoft) return; seaLayer.uSoft.value = on ? 1 : 0; view.redraw(); },      // 22 Nov: the seas' edges soft (only where the page named o.seasSoft)
+    seas: () => seaLayer ? { on: seasOn, crust: seaLayer.canCrust && seaLayer.uCrust.value > 0, soft: seaLayer.canSoft && seaLayer.uSoft.value > 0, strength: seaLayer.uStr.value, showing: seasOn && seaLayer.uOn.value > 0 ? seaLayer.uOn.value : 0, between: seasWant ? [seasWant.a[0], seasWant.b[0]] : null, ages: seaLayer.list.map(a => a[0]), credit: seasFile.credit || '' } : null,
     dispose: () => {
       if (seaLayer) seaLayer.dispose();
       for (const m of meshes.values()) m.geometry.dispose(); for (const m of rims.values()) m.geometry.dispose();
