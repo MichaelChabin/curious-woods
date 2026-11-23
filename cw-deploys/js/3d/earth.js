@@ -183,7 +183,7 @@
        onFlat: (on, at) => {}          // step 6: a tap on the flat world went back to the globe, centred on `at`
        seas: true | 'url/seas.json'    // 20 Nov: the shallow seas on the pieces (below); off unless asked for
        seasStrength: 0 to 1            // 21 Nov: how strongly the seas' blue lies over the land; 1, as they came, unless a page asks
-       seasCrust: false | true | '#hex'   // 22 Nov: the flooded crust in a light grey under the blue (below); not there unless a page names it
+       seasCrust: false | true | '#hex' | 'shelf'   // 22 Nov: the flooded crust in a light grey under the blue (below); not there unless a page names it. 23 Nov: 'shelf', the flooded ground in the shelf's own blue
        seasSoft: false | true          // 22 Nov: the seas' edges soft (below); not there unless a page names it
      });
    Returns { group, setTime(ma), time(), grade() → { grade, why }, moltenPhase(), setGround('old'|'blue'), ground(),
@@ -226,7 +226,16 @@
      a shore is a band about a degree across and not a line. It softens every edge that is in the pictures: where
      shallow sea meets dry land, and where it ends at Scotese's margin inside a piece. The edge of a piece itself,
      where the flooded crust meets the deep ocean, is the mesh's own outline and stays sharp, and so do the tears,
-     which are those outlines. seas() also answers crust and soft. */
+     which are those outlines. seas() also answers crust and soft.
+   23 Nov 2026 (the Time lab's step 12b; Michael: the seaway was grey and the shelf off the coast blue, two colours for
+   two kinds of shallow sea; the grey belongs to the Earth with its oceans drained, a later picture). A third value of
+   the same option: seasCrust: 'shelf', setSeasCrust('shelf'). The flooded ground is painted whole, with nothing of the
+   land's picture through it and whatever seasStrength says, in the paint the land already lays on its own shelf: the
+   shelf wash (cw-style's shelfWash at shelfWashAlpha, by uWash) over the sea ball's colour at that point. So Kocsis
+   and Scotese's seaways and the pieces' own shelves are one blue, with no seam where they meet. And since they are
+   then one thing, setSeas(false) hides both: the pieces' own shelf wash goes too (uWash at 0), and the picture's sea
+   inside a piece is clear, the sea ball alone, as it is this side of the seam. The grey is kept as
+   it was built and is off: seasCrust: true or '#hex', or setSeasCrust(true), turns it on. seas() also answers shelf. */
 import * as THREE from 'three';
 import { Fn, vec2, vec3, vec4, float, int, uniform, texture, uv, attribute, varying, positionView, positionWorld, modelViewMatrix,
          normalize, dot, cross, length, mix, smoothstep, clamp, abs, min, max, select, If, Discard, sRGBTransferEOTF, atan, asin, sqrt, fract, dFdx, dFdy,
@@ -1933,8 +1942,9 @@ export async function cwEarth(view, o = {}) {
     const uStr = uniform(o.seasStrength != null ? Math.max(0, Math.min(1, +o.seasStrength)) : 1);   // 21 Nov: how strongly the blue lies over the land
     const SHORE3 = rgb(S.seaShore || '#93bed7');
     const canCrust = o.seasCrust != null, canSoft = o.seasSoft != null;   // 22 Nov: built in only for a page that names them
-    const uCrust = uniform(o.seasCrust ? 1 : 0), uSoft = uniform(o.seasSoft ? 1 : 0);
-    const CRUST3 = rgb(typeof o.seasCrust === 'string' ? o.seasCrust : SEAS_CRUST);
+    const asShelf = v => v === 'shelf';   // 23 Nov: the flooded ground painted as the shelf is (below)
+    const uCrust = uniform(o.seasCrust && !asShelf(o.seasCrust) ? 1 : 0), uShelf = uniform(asShelf(o.seasCrust) ? 1 : 0), uSoft = uniform(o.seasSoft ? 1 : 0);
+    const CRUST3 = rgb(typeof o.seasCrust === 'string' && o.seasCrust[0] === '#' ? o.seasCrust : SEAS_CRUST);
     const make = shift => {   // shift: undefined on the ball; 0 and 1, the flat world's two copies
       const isFlat = shift != null, m = flatMat();
       const p = mix(attribute('position', 'vec3'), attribute('soft', 'vec3'), uOld);
@@ -1954,8 +1964,13 @@ export async function cwEarth(view, o = {}) {
           wet = mix(wet, smoothstep(0.22, 0.78, mix(as, bs, uMix)), uSoft);
         }
         const col = canCrust ? mix(SHORE3, mix(CRUST3, SHORE3, uStr.mul(SEAS_CRUST_BLUE)), uCrust) : SHORE3;   // the crust's grey with the blue over it at the seas' strength
-        const str = canCrust ? mix(uStr, float(1), uCrust) : uStr;                         // and nothing of the land's picture through it
-        return vec4(finish(col, fl), wet.mul(uOn).mul(str).mul(lifeNode()));
+        let str = canCrust ? mix(uStr, float(1), uCrust) : uStr;                           // and nothing of the land's picture through it
+        let fin = finish(col, fl);
+        if (canCrust) {   // 23 Nov, 'shelf': the very paint the land lays on its own shelf (the shelf wash at SHELF_A over the sea ball), whole, so a seaway and a shelf are one blue with no seam
+          fin = mix(fin, mix(finish(seaNode(fl), fl), finish(SHELF3, fl), SHELF_A.mul(uWash)), uShelf);
+          str = mix(str, float(1), uShelf);
+        }
+        return vec4(fin, wet.mul(uOn).mul(str).mul(lifeNode()));
       })();
       m.colorNode = out.rgb; m.opacityNode = out.a;
       return m;
@@ -2001,7 +2016,7 @@ export async function cwEarth(view, o = {}) {
       show();
     }
     const twinsOf = () => { for (const k of kids) for (let i = 0; i < 2; i++) { const m = k.t[i]; m.quaternion.copy(k.sea.quaternion); m.renderOrder = k.sea.renderOrder; m.visible = k.sea.visible && (i === 0 || nearEdge(k.land)); } };
-    return { time, show, twinsOf, uOn, uStr, uCrust, uSoft, canCrust, canSoft, list, dispose: () => { [mat, ...flatSeaMats, blank].forEach(x => x.dispose()); for (const h of held.values()) if (h.tex) h.tex.dispose(); } };
+    return { time, show, twinsOf, uOn, uStr, uCrust, uShelf, uSoft, canCrust, canSoft, list, dispose: () => { [mat, ...flatSeaMats, blank].forEach(x => x.dispose()); for (const h of held.values()) if (h.tex) h.tex.dispose(); } };
   })() : null;
 
   function rebuildMaterials() {
@@ -2059,6 +2074,7 @@ export async function cwEarth(view, o = {}) {
     const groundT = ma < seam ? 1 : Math.max(0, 1 - (ice ? ice[1] : 1));
     uGroundT.value = groundT;
     uWash.value = Math.max(0, Math.min(1, (ma - seam) / WASH_IN));   // the pieces' pale wash: none this side of the seam, in over the ramp past it
+    if (seaLayer && seaLayer.uShelf.value > 0 && !seasOn) uWash.value = 0;   // 23 Nov, seasCrust 'shelf': the shelves and the seaways are one thing, so the seas hidden hides the pieces' shelves too (the picture's sea is then clear, the sea ball alone, as it is this side of the seam)
     const iceAgo = Math.max(0, ma * 1e6);
     pairsNow = iceData && iceAgo > 0 && groundT > 0 ? icePairs(iceAgo, seaM) : [];
     setIceSlot(0, pairsNow[0] ? pairsNow[0][0] : null); setIceSlot(1, pairsNow[1] ? pairsNow[1][0] : null);
@@ -2543,9 +2559,9 @@ export async function cwEarth(view, o = {}) {
     // the shallow seas (20 Nov): on or off, and what is showing
     setSeas: on => { if (!seaLayer) return; seasOn = !!on; setTime(ma); },
     setSeasStrength: v => { if (!seaLayer) return; seaLayer.uStr.value = Math.max(0, Math.min(1, +v)); view.redraw(); },   // 21 Nov: 1 is the seas as they came
-    setSeasCrust: on => { if (!seaLayer || !seaLayer.canCrust) return; seaLayer.uCrust.value = on ? 1 : 0; view.redraw(); },   // 22 Nov: the flooded crust in grey (only where the page named o.seasCrust)
+    setSeasCrust: on => { if (!seaLayer || !seaLayer.canCrust) return; seaLayer.uShelf.value = on === 'shelf' ? 1 : 0; seaLayer.uCrust.value = on && on !== 'shelf' ? 1 : 0; setTime(ma); view.redraw(); },   // 22 Nov: the flooded crust in grey (only where the page named o.seasCrust); 23 Nov: 'shelf', as the shelf is painted
     setSeasSoft: on => { if (!seaLayer || !seaLayer.canSoft) return; seaLayer.uSoft.value = on ? 1 : 0; view.redraw(); },      // 22 Nov: the seas' edges soft (only where the page named o.seasSoft)
-    seas: () => seaLayer ? { on: seasOn, crust: seaLayer.canCrust && seaLayer.uCrust.value > 0, soft: seaLayer.canSoft && seaLayer.uSoft.value > 0, strength: seaLayer.uStr.value, showing: seasOn && seaLayer.uOn.value > 0 ? seaLayer.uOn.value : 0, between: seasWant ? [seasWant.a[0], seasWant.b[0]] : null, ages: seaLayer.list.map(a => a[0]), credit: seasFile.credit || '' } : null,
+    seas: () => seaLayer ? { on: seasOn, crust: seaLayer.canCrust && seaLayer.uCrust.value > 0, shelf: seaLayer.canCrust && seaLayer.uShelf.value > 0, soft: seaLayer.canSoft && seaLayer.uSoft.value > 0, strength: seaLayer.uStr.value, showing: seasOn && seaLayer.uOn.value > 0 ? seaLayer.uOn.value : 0, between: seasWant ? [seasWant.a[0], seasWant.b[0]] : null, ages: seaLayer.list.map(a => a[0]), credit: seasFile.credit || '' } : null,
     dispose: () => {
       if (seaLayer) seaLayer.dispose();
       for (const m of meshes.values()) m.geometry.dispose(); for (const m of rims.values()) m.geometry.dispose();

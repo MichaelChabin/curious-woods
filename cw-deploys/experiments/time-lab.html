@@ -205,7 +205,16 @@
      grade of knowing at the handle's year (LOOK.zoomIn). N and S at the ends of the axis. The flooded crust in a
      light grey and the shorelines soft (earth.js's seasCrust and seasSoft, new this step and not there unless a page
      names them; a bench switch each). The fault of a panel dragged to the top: a panel cannot leave the window, a
-     drag never selects, a pinch or ctrl-wheel never zooms the page over a panel or in The World. -->
+     drag never selects, a pinch or ctrl-wheel never zooms the page over a panel or in The World.
+     Step 12b (23 Nov 2026; Michael's prompt of 23 Nov, CWVault/claude/Prompt-Revise-Time-Lab-Bench-12b-01.md).
+     The shallow seas are blue: the flooded ground is painted in the shelf's own blue, whole (earth.js's seasCrust:
+     'shelf', a third value of step 12's option), so a seaway and a shelf are one colour with no seam, and there is no
+     grey on the Earth while the oceans are full. The grey is kept, off, for the day the oceans are drained
+     (?crust=grey shows it here; ?crustgrey= takes another grey). The bench's two rows for the crust and for the
+     seas' strength are gone: the first has one answer now, and the second does nothing to a sea painted whole.
+     A selected event's place turns to face her: a tap on an event whose record has a place eases the globe round,
+     upright, with no zoom, while the handle travels to the event's year (LOOK.face; faceEvent). Only a tap on an
+     event does it. Her finger on the globe wins. Under reduced motion, a cut. On the map nothing moves. -->
 <script>
   // Step 12: dark from the first paint. The lab opens in The World unless the address names a span (?w=), and The
   // World's ground is near-black; until now the page was parchment until its script had run. This runs before
@@ -525,14 +534,12 @@
   <div class="pair"><span class="what">the axis, in a drag</span><span id="bAxis"></span></div>
   <div class="pair"><span class="what">a drag favours one way</span><span id="bBias"></span></div>
   <div class="pair"><span class="what">the tilt stops at</span><span id="bTilt"></span></div>
-  <div class="pair"><span class="what">the shallow seas, how strong</span><span id="bSeas"></span></div>
-  <div class="pair"><span class="what">the flooded crust</span><span id="bCrust"></span></div>
   <div class="pair"><span class="what">the shorelines</span><span id="bShores"></span></div>
   <p class="readout" id="readout"></p>
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-22 616ad56 · time-lab step 12';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-23 7a2f8d5 · time-lab step 12b';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -578,7 +585,7 @@
     // step 11: the arrows at the ends of the line, Measure's markers, the shallow seas
     arrow: { gap: 12, w: 30, edge: 28, double: 1000, tiles: 10 },   // gap: px between an end of the line and its arrow; w: the arrow's length; edge: px from the window's edge within which a finger dragging outward is holding there, and the span keeps growing; double: ms held there for the span to double; tiles: the least span an arrow can make, in tiles of the mosaic she is on
     measReach: 14, measW: 252, measApart: 8,   // px from a Measure marker a press still takes hold of it; the Measure panel's text's width; px the two markers must stand apart on a changed line to keep their years
-    seas: { strengths: { 'as before': 1, 'fainter': 0.55, 'faintest': 0.3 }, open: 'fainter', crust: true, crustGrey: /^[0-9a-f]{6}$/i.test(Q.get('crustgrey') || '') ? '#' + Q.get('crustgrey') : '#a3a29c', soft: true },   // how strongly the shallow seas' blue lies over the land (earth.js's seasStrength; 1 is the seas as they came on 20 Nov), and the one the page opens on. Step 12: crust — the flooded continental crust in a light grey (crustGrey; a darker grey is left for the deep sea floor, when the oceans are drained) under that blue, in place of the land's own picture; soft — the shorelines soft; both as the page opens, each a bench switch
+    seas: { strengths: { 'as before': 1, 'fainter': 0.55, 'faintest': 0.3 }, open: 'fainter', crust: 'shelf', crustGrey: /^[0-9a-f]{6}$/i.test(Q.get('crustgrey') || '') ? '#' + Q.get('crustgrey') : '#a3a29c', soft: true },   // how strongly the shallow seas' blue lies over the land (earth.js's seasStrength; 1 is the seas as they came on 20 Nov), and the one the page opens on. Step 12: crust — the flooded continental crust in a light grey (crustGrey; a darker grey is left for the deep sea floor, when the oceans are drained) under that blue, in place of the land's own picture; soft — the shorelines soft; both as the page opens, each a bench switch
     // step 5:
     calYears: 12000,          // years ago: inside this, a year is written as the calendar year (200 BCE, 1720); older, ka, Ma, Ga
     markerR: 4.5, markerRing: 1.5, markerTap: 12,   // a marker: the copper dot's radius, its parchment ring, px from it a tap deletes it
@@ -614,6 +621,7 @@
     // step 10c: the axis shown in a drag, the drag that favours one way, a city brought to the middle, the map in The World
     turn: { axis: true, bias: 24, limit: 70, memory: 40, least: 3, axisOut: 0.16, axisW: 1.5, axisIn: 120, axisFade: 400, axisLetter: 0.075, axisFont: 12 },   // step 12: axisLetter, axisFont — the N and the S at the ends of the axis: how far beyond the line's end each stands, in the Earth's radii, and its size in px   // axis: a thin line through the poles while she drags the globe (axisOut: how far it stands out of each pole, in the Earth's radii; axisW: px; axisIn, axisFade: ms it takes to come and to go). bias: degrees — a drag within half this of level turns the globe east-west only, within half this of upright tips it only, and beyond this angle from both it is free (0: no favour; light 24, firm 40); memory: px of the finger's recent travel its heading is read from; least: px before a heading is read at all
     cityGlide: 600,           // ms: a tapped city comes to the middle
+    face: { ms: 1200, travel: true },   // step 12b: a tapped event's place comes round to face her in this many ms; travel: the handle eases to the event's year over the same time (false: it cuts there, as every tap did before, and the globe alone eases)
     // step 12: the nearest zoom, by what the Earth is showing at the handle's year. For each grade of knowing, the
     // kilometres of ground the window's height takes in at the nearest she may come (the photograph, this side of
     // the seam, has none: the Earth's own limit, two pixels to a texel of its deepest picture); tau: ms, the ease
@@ -2273,7 +2281,45 @@
   }
   // a tapped event: the handle to its year (the Earth with it), its label and date on line one, its summary in the right column, More at the end
   function sentence(label) { const t = cap(label.trim()); return /[.!?]$/.test(t) ? t : t + '.'; }
-  function tapEvent(e) { leaveArrive(); setYear(e.ma, false, true); showEvent(e); }
+  // Step 12b: a selected event's place turns to face her. A tap on an event whose record has a place eases the globe
+  // round until the place, where that ground lay at the event's year, is at the middle: upright, the short way, no
+  // zoom (LOOK.face.ms). The handle travels to the event's year over the same time, so the turn and the travel
+  // happen together and land together, as on arrival (LOOK.face.travel; false: the handle cuts there, as before).
+  // Only a tap on an event does this: not the events the handle passes, not her own markers, not Pick a time or the
+  // arrival, which face their places their own way. An event with no place moves nothing, and its tap is as it was.
+  // If she is turning the globe when it would start, the globe is hers and only the handle travels; a finger put on
+  // the globe on the way ends the turn (the scene's own rule for a glide). A hold of the line, or anything else
+  // that sets the year, ends the travel where it is. Under reduced motion, a cut. On the map nothing moves (it is
+  // whole and still, and the ring marks the place); the globe under it is turned, so Globe shows the place in front.
+  const FACE = { raf: null, timer: null, e: null, from: 0, t0: 0, last: null, n: 0 };
+  function stopFace() { if (FACE.raf) cancelAnimationFrame(FACE.raf); clearTimeout(FACE.timer); FACE.raf = FACE.timer = null; FACE.e = null; }
+  function landFace() { const e = FACE.e; if (!e) return; stopFace(); setYear(e.ma, false, true); }
+  function faceEvent(e) {
+    stopFace();
+    const E = lab.earth, pl = placeOfEvent(e), n = ++FACE.n, t0 = performance.now();
+    if (!pl || !E || !E.placeThen || !E.aim) { setYear(e.ma, false, true); return; }
+    if (reduced()) { setYear(e.ma, false, true); E.placeThen(pl.lon, pl.lat, Math.min(EARTH_AGE, e.ma)).then(p => { if (n === FACE.n && !E.held()) E.aim(p.lon, 0, 0); }); return; }
+    const travel = LOOK.face.travel && Math.abs(lab.ma - e.ma) > EPS;
+    if (!travel) setYear(e.ma, false, true);
+    else {   // the handle sets off at once; the globe as soon as the place is known (the pieces are in hand after the first ring)
+      FACE.e = e; FACE.from = lab.ma; FACE.t0 = t0; FACE.last = lab.ma;
+      const step = now => {
+        if (FACE.e !== e) return;
+        if (Math.abs(lab.ma - FACE.last) > 1e-12) { stopFace(); return; }   // something else has set the year: it is theirs
+        const u = (now - FACE.t0) / LOOK.face.ms;
+        if (u >= 1) { landFace(); return; }
+        setYear(FACE.from + (e.ma - FACE.from) * ease(clamp01(u)), true); FACE.last = lab.ma;
+        FACE.raf = requestAnimationFrame(step);
+      };
+      FACE.raf = requestAnimationFrame(step);
+      FACE.timer = setTimeout(() => { if (FACE.e === e && Math.abs(lab.ma - FACE.last) <= 1e-12) landFace(); }, LOOK.face.ms + 500);   // a page that is running no frames arrives all the same
+    }
+    E.placeThen(pl.lon, pl.lat, Math.min(EARTH_AGE, e.ma)).then(p => {
+      if (n !== FACE.n || E.held()) return;   // another event since, or her finger is on the globe: hers
+      E.aim(p.lon, 0, Math.max(200, LOOK.face.ms - (performance.now() - t0)));   // to land with the handle
+    });
+  }
+  function tapEvent(e) { leaveArrive(); faceEvent(e); showEvent(e); }
   // A period's own More (step 10), in the same movable window, built as the Time Machine builds it (active/time-machine.html):
   // the name, the official name, the span, the paragraphs with the period's pictures placed, Known from, the references.
   // p.more is the Time Machine's record of the period (stories/deep-time-periods.json), lent to a period of this page
@@ -2441,16 +2487,17 @@
   // continent. Bench only, how strong: as before / fainter / faintest (LOOK.seas; ?seastrength=1|2|3), the page opening
   // on the middle one. The tears where the two plate models disagree stay; nothing hides them.
   const SEA_NAMES = Object.keys(LOOK.seas.strengths);
-  const SEAS = { on: Q.get('seas') !== '0', name: SEA_NAMES[+Q.get('seastrength') - 1] || LOOK.seas.open, crust: Q.get('crust') == null ? LOOK.seas.crust : Q.get('crust') !== '0', soft: Q.get('shores') == null ? LOOK.seas.soft : Q.get('shores') !== '0' };   // step 12: ?crust=0 the crust as it was (the land's picture through the blue), ?shores=0 the shorelines sharp
+  const SEAS = { on: Q.get('seas') !== '0', name: SEA_NAMES[+Q.get('seastrength') - 1] || LOOK.seas.open, crust: Q.get('crust') === 'grey' ? LOOK.seas.crustGrey : Q.get('crust') === '0' ? false : LOOK.seas.crust, soft: Q.get('shores') == null ? LOOK.seas.soft : Q.get('shores') !== '0' };   // step 12: ?crust=0 the crust as it was (the land's picture through the blue), ?shores=0 the shorelines sharp
   function setSeas(on) { SEAS.on = !!on; $('wSeas').textContent = WORDS.seas[SEAS.on ? 1 : 0]; if (lab.earth && lab.earth.setSeas) lab.earth.setSeas(SEAS.on); tellYear(); }
   function setSeaStrength(name) { if (LOOK.seas.strengths[name] == null) return; SEAS.name = name; if (lab.earth && lab.earth.setSeasStrength) lab.earth.setSeasStrength(LOOK.seas.strengths[name]); }
   $('wSeas').addEventListener('click', () => setSeas(!SEAS.on));
-  benchChoice($('bSeas'), SEA_NAMES, () => SEAS.name, setSeaStrength);
-  // bench only (step 12): the flooded crust as it was (the land's own picture through the blue) or in a light grey; the shorelines sharp or soft
-  const CRUSTS = ['as now', 'light grey'], SHORES = ['sharp', 'soft'];
-  function setCrust(on) { SEAS.crust = !!on; if (lab.earth && lab.earth.setSeasCrust) lab.earth.setSeasCrust(SEAS.crust); }
+  // Step 12b: the flooded ground is painted as the shelf is (SEAS.crust 'shelf': earth.js's seasCrust), one blue for
+  // every shallow sea. The grey of step 12 is kept for the day the oceans are drained and is off: ?crust=grey opens
+  // with it (SEAS.crust a colour), ?crust=0 with step 11's look (the shore blue over the land's picture, at the
+  // strength above). The bench's rows for the two are gone; the shorelines' row stays.
+  const SHORES = ['sharp', 'soft'];
+  function setCrust(v) { SEAS.crust = v === true ? LOOK.seas.crustGrey : v || false; if (lab.earth && lab.earth.setSeasCrust) lab.earth.setSeasCrust(SEAS.crust === 'shelf' ? 'shelf' : !!SEAS.crust); }
   function setShores(soft) { SEAS.soft = !!soft; if (lab.earth && lab.earth.setSeasSoft) lab.earth.setSeasSoft(SEAS.soft); }
-  benchChoice($('bCrust'), CRUSTS, () => CRUSTS[SEAS.crust ? 1 : 0], v => setCrust(v === CRUSTS[1]));
   benchChoice($('bShores'), SHORES, () => SHORES[SEAS.soft ? 1 : 0], v => setShores(v === SHORES[1]));
   benchChoice($('bSound'), SOUND_KINDS, () => bench.sound, v => {   // choosing one plays it once, so it can be heard without a move
     bench.sound = v;
@@ -2973,6 +3020,7 @@
     stopArrive(); A.state = 'done'; showEarth(); handleEl.classList.remove('flash');
   }
   track.addEventListener('pointerdown', leaveArrive, true); $('stage3d').addEventListener('pointerdown', leaveArrive, true);
+  track.addEventListener('pointerdown', stopFace, true);   // step 12b: a hold of the line on the way to a tapped event: the handle stays where it is, and is hers
   handleEl.addEventListener('animationend', () => handleEl.classList.remove('flash'));
   if (ARRIVE.on && Q.get('arrive') !== 'hold') setTimeout(() => { if (ARRIVE.state === 'ready') landArrive(); else showEarth(); }, LOOK.arrival.giveUp);   // the dark never waits for ever
 
@@ -3051,7 +3099,7 @@
     // step 9: the two views, the panel, Pick a time, the Earth's two words
     view: { set: setView, now: () => lab.view, moving: () => !!VIEW.plan, finish: finishView, hold: holdView, last: () => VIEW.last, rects: () => ({ time: lab.view === 'time' && !VIEW.plan ? timeRects() : null, world: worldRects() }), relayout },
     panel: { open: () => !!PANEL.show && PANEL.up, kind: () => PANEL.show && PANEL.show.kind, of: () => PANEL.show && (PANEL.show.e ? PANEL.show.e.id : PANEL.show.p ? PANEL.show.p.n : PANEL.show.kind), text: () => info && PANEL.show ? info.body.innerText : '', html: () => info ? info.body.innerHTML : '', el: info && info.el, at: () => PANEL.at && Object.assign({}, PANEL.at), mine: () => JSON.parse(JSON.stringify(PANEL.pos)), close: closePanel, home: panelHome, place: placeOne,
-      more: () => PANEL.more && PANEL.more.window, moreOpen: () => !!PANEL.more, closeMore: () => closeMore(false), periodMore: openPeriodMore, selected: () => know.event && know.event.id, select: id => setSelected(events.find(x => x.id === id) || null), guard: GUARD,
+      more: () => PANEL.more && PANEL.more.window, moreOpen: () => !!PANEL.more, closeMore: () => closeMore(false), periodMore: openPeriodMore, selected: () => know.event && know.event.id, tapEvent: id => { const e = events.find(x => x.id === id); if (e) tapEvent(e); return !!e; }, face: FACE, landFace, select: id => setSelected(events.find(x => x.id === id) || null), guard: GUARD,
       period: (id, name) => { const w = byId(id), p = w && w.plaques.find(x => x.n === name); if (p) showPanel({ kind: 'period', p, text: nextText(p.key, p.t) }); return !!p; } },
     htw: { open: () => HTW2.open, up: () => HTW2.up, show: openHtw2, close: closeHtw2, land: htwLand, flying: () => !!HTW2.anim, flights: () => HTW2.flights, el: htw2 && htw2.el, at: () => htw2 && restBox(htw2.el), tools: () => TOOLP.map(t => ({ id: t.id, open: t.open, up: t.up, at: t.at, ats: t.ats })), toolEl: id => { const t = TOOLP.find(x => x.id === id); return t && t.pn.el; } },
     pick: pickTime, pickBack, picked: () => ({ before: PICK.before && { view: PICK.before.view, k: PICK.before.mosaic.k, a: PICK.before.a, b: PICK.before.b, ma: PICK.before.ma }, last: PICK.last }),
@@ -3099,7 +3147,7 @@
       onTap: (x, y) => (marking && earth ? markerTap(x, y) : cityTap(x, y) || mapTap(x, y))   // placing markers (step 5): a tap sets or deletes one; else a city's point shows or hides its name (step 10) and, on the globe, comes to the middle (step 10c); else, on the flat world, a tap goes back to the globe turned to that longitude (mapTap)
     });
     if (view.resetWord) view.resetWord.remove();   // step 10: no Reset: the Earth has two resting places instead (below)
-    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, onFlat: (on) => window.cwLab.flatWord(on), seas: true, seasStrength: window.cwLab.LOOK.seas.strengths[window.cwLab.seas.strength()], seasCrust: window.cwLab.seas.crust() ? window.cwLab.LOOK.seas.crustGrey : false, seasSoft: window.cwLab.seas.soft() });   // the shallow seas (20 Nov), at the strength the page opens on (step 11); step 12: the flooded crust in grey, and the shores soft
+    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, onFlat: (on) => window.cwLab.flatWord(on), seas: true, seasStrength: window.cwLab.LOOK.seas.strengths[window.cwLab.seas.strength()], seasCrust: window.cwLab.seas.crust(), seasSoft: window.cwLab.seas.soft() });   // the shallow seas (20 Nov), at the strength the page opens on (step 11); step 12: the shores soft; step 12b: the flooded ground in the shelf's blue ('shelf'; a colour: step 12's grey; false: step 11's look)
     if (Q.get('seas') === '0') earth.setSeas(false);
     // Step 10: the satellite picture. This page had never asked for it: the Earth's own default is the old ground, the
     // map's height-tinted picture, which paints high ground pale (the Himalaya and Tibet looked iced) and knows no ice
@@ -3153,7 +3201,8 @@
   // globe as it always has; capTilt takes back what went past the limit, in every move of a finger and every frame.
   const tiltMax = () => window.cwLab.tilt.limit, capLat = lat => Math.max(-tiltMax(), Math.min(tiltMax(), lat));
   function capTilt() { if (!view || !earth || earth.flat()) return false; const t = view.turnOf(); if (Math.abs(t.lat) <= tiltMax() + 1e-9) return false; view.turnTo(null, capLat(t.lat)); return true; }
-  const turned = () => { REST.north = false; REST.coast = null; REST.last = null; };   // the page turned the globe itself (an arrival, the map, a glide): nothing of a drag is left over
+  const still = () => { if (view) { const h = view.hold; view.hold = true; view.hold = h; } };   // step 12b: the scene's own coasting and any glide of its own under way are let go (its hold does both), so a turn the page sets is not taken back at the next frame
+  const turned = () => { REST.north = false; REST.coast = null; REST.last = null; still(); };   // the page turned the globe itself (an arrival, the map, a glide): nothing of a drag is left over
   function favour() {   // how much of a sideways move and of an up-and-down move the heading lets through: [east-west, tilt]
     const B = turnBench().bias, ax = Math.abs(REST.hx), ay = Math.abs(REST.hy);
     if (!(B > 0) || ax + ay < LT.least) return [1, 1];
@@ -3548,6 +3597,9 @@
       spin: (lon, rest) => { view.turnTo(lon, 0); turned(); if (rest) earth.settle(); view.redraw(); },
       ready: ms => new Promise(res => { const t0 = performance.now(), look = () => { const sn = earth.seas && earth.seas(); if (!sn || !sn.on || !sn.between || sn.showing > 0 || performance.now() - t0 > ms) res(); else setTimeout(look, 40); }; look(); }),
       setEventPlace,
+      // step 12b: a tapped event's place — where a point of today's ground lay at an age; whether her finger is on the globe; the globe turned to a longitude and a tilt, with an ease (ms; the scene's glide, which a gesture ends) or at once, no zoom. On the map the globe under it is turned at once
+      placeThen: (lon, lat, age) => thenOf(lon, lat, age), held: () => REST.fingers.size > 0,
+      aim: (lon, lat, ms) => { turned(); if (ms > 0 && !earth.flat()) view.glideTo(lon, capLat(lat), null, ms); else { view.turnTo(lon, capLat(lat)); earth.settle(); view.redraw(); } },
       zoom: () => Object.assign({ dist: view.camera.position.length(), limits: view.zoomLimits() }, ZOOM), zoomStep,
       resized: () => { view.setFrame(null); fitMap(); earth.settle(); view.redraw(); }   // the renderer and the camera take the stage's new size at once, not at the next observed frame
     });
