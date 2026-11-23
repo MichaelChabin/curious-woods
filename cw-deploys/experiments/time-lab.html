@@ -216,6 +216,7 @@
      Nov, after a few hours with both hidden: the continental crust the land stands on was missing). With the seas
      hidden the shelves are grey, #777878 (Michael's colour, the same day: they had come back the colour of the
      shallow seas), so they read as bare crust; earth.js's seasBare, LOOK.seas.bare; ?bare= takes another colour.
+     Then #505083, a darker blue-grey, also his: to stand apart from the continents, and whole so no overlap shows.
      A selected event's place turns to face her: a tap on an event whose record has a place eases the globe round,
      upright, with no zoom, while the handle travels to the event's year (LOOK.face; faceEvent). Only a tap on an
      event does it. Her finger on the globe wins. Under reduced motion, a cut. On the map nothing moves. -->
@@ -543,7 +544,7 @@
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-23 465ccce · time-lab step 12b · the shelves grey when the seas are hidden';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-23 6527122 · time-lab step 12b · the shelves blue-grey when the seas are hidden';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -589,7 +590,7 @@
     // step 11: the arrows at the ends of the line, Measure's markers, the shallow seas
     arrow: { gap: 12, w: 30, edge: 28, double: 1000, tiles: 10 },   // gap: px between an end of the line and its arrow; w: the arrow's length; edge: px from the window's edge within which a finger dragging outward is holding there, and the span keeps growing; double: ms held there for the span to double; tiles: the least span an arrow can make, in tiles of the mosaic she is on
     measReach: 14, measW: 252, measApart: 8,   // px from a Measure marker a press still takes hold of it; the Measure panel's text's width; px the two markers must stand apart on a changed line to keep their years
-    seas: { strengths: { 'as before': 1, 'fainter': 0.55, 'faintest': 0.3 }, open: 'fainter', crust: 'shelf', bare: /^[0-9a-f]{6}$/i.test(Q.get('bare') || '') ? '#' + Q.get('bare') : '#777878', crustGrey: /^[0-9a-f]{6}$/i.test(Q.get('crustgrey') || '') ? '#' + Q.get('crustgrey') : '#a3a29c', soft: true },   // how strongly the shallow seas' blue lies over the land (earth.js's seasStrength; 1 is the seas as they came on 20 Nov), and the one the page opens on. Step 12: crust — the flooded continental crust in a light grey (crustGrey; a darker grey is left for the deep sea floor, when the oceans are drained) under that blue, in place of the land's own picture; soft — the shorelines soft; both as the page opens, each a bench switch
+    seas: { strengths: { 'as before': 1, 'fainter': 0.55, 'faintest': 0.3 }, open: 'fainter', crust: 'shelf', bare: /^[0-9a-f]{6}$/i.test(Q.get('bare') || '') ? '#' + Q.get('bare') : '#505083', crustGrey: /^[0-9a-f]{6}$/i.test(Q.get('crustgrey') || '') ? '#' + Q.get('crustgrey') : '#a3a29c', soft: true },   // how strongly the shallow seas' blue lies over the land (earth.js's seasStrength; 1 is the seas as they came on 20 Nov), and the one the page opens on. Step 12: crust — the flooded continental crust in a light grey (crustGrey; a darker grey is left for the deep sea floor, when the oceans are drained) under that blue, in place of the land's own picture; soft — the shorelines soft; both as the page opens, each a bench switch
     // step 5:
     calYears: 12000,          // years ago: inside this, a year is written as the calendar year (200 BCE, 1720); older, ka, Ma, Ga
     markerR: 4.5, markerRing: 1.5, markerTap: 12,   // a marker: the copper dot's radius, its parchment ring, px from it a tap deletes it

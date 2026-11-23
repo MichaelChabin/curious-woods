@@ -17,7 +17,9 @@ Nothing in the prompt disagrees with what Report 12 says was built.
 
 **Changed later the same day, on Michael's word.** As first built, Hide shallow seas hid the shelves as well as the seaways, which is how I read "hide both kinds". Michael looked at it live and missed the continental crust the land stands on. Hide now takes away the seaways only, as it did before this step. 
 
-**And again, on his word.** The shelves had come back the colour of the shallow seas. With the seas hidden they are now grey, `#777878`, his colour, painted whole, so what is left reads as bare crust (`12`). With the seas shown nothing changes: one blue. Today's lakes and bays inside the land are in the same paint, so Hudson Bay and the Great Lakes are grey too while the seas are hidden. `?bare=` takes another colour. The stamp is `2026-11-23 465ccce · time-lab step 12b · the shelves grey when the seas are hidden`.
+**And again, on his word.** The shelves had come back the colour of the shallow seas. With the seas hidden they are now grey, `#777878`, his colour, painted whole, so what is left reads as bare crust (`12`). With the seas shown nothing changes: one blue. Today's lakes and bays inside the land are in the same paint, so Hudson Bay and the Great Lakes are grey too while the seas are hidden. `?bare=` takes another colour.
+
+**And the colour once more.** He looked at the live page, which did not yet have the grey, and asked for a darker blue-grey, `#505083`, opaque so the overlaps do not show. It was already opaque; the colour is now his second one. Picture `12` shows the first grey; the blue-grey has no picture. The stamp is `2026-11-23 6527122 · time-lab step 12b · the shelves blue-grey when the seas are hidden`.
 
 ## What was changed
 
