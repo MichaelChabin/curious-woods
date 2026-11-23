@@ -12,6 +12,8 @@ hook: How small a difference can you tell? Find out, then find out again next mo
 
 # The Perception Lab
 
+*23 Nov 2026: this lab belongs to the* You *view of the lab called* The Brain *(Michael's ruling of 13 Nov; `claude/Brain-Lab-Map.md`). Its `lab` facet stays `perception`, because the closed vocabulary has no word for The Brain; a value has been proposed to Michael, not added.*
+
 Colour discrimination, pitch discrimination, rhythm discrimination. **One build, three
 axes** — the measurement harness is the expensive part and it is shared. The child picks
 the dimension she wants to be tested in, which is the point: she is not being assessed,

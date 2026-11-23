@@ -4,6 +4,8 @@ pillar: Stories (tool called by The Man Who Learned Without Knowing; second skel
 role: Build brief. Paste the "Prompt" section into Claude Code as-is; the rest is context it can read if it needs it.
 ---
 
+> **ARCHIVED — 23 Nov 2026**, on Michael's ruling of 13 Nov 2026 (`claude/Brain-Lab-Map.md`) and his word of 23 Nov to lift its context first. `20-SPECS/Spec-Trace-Bench.md` replaced it on 11 Sept 2026; its context section and the star's own rules are now in that spec, under *The star: what the first spec said*. Moved from `20-SPECS/`; kept for the record, not current.
+
 # Mirror-Star — build spec
 
 ## Prompt for Claude Code

@@ -1,5 +1,5 @@
 ---
-status: Approved 9 Sept 2026; rulings folded in through 15 Sept. Every chat reads this first.
+status: Approved 9 Sept 2026; rulings folded in through 15 Sept; amended 23 Nov 2026 for the Brain lab's rulings of 13 Nov (Practice is the fourth view of The Brain). Every chat reads this first.
 role: What Curious Woods is, on one page. Read before the board, before any spec.
 ---
 
@@ -35,9 +35,9 @@ Math and science are not privileged. They arrive because they're interesting and
 
 *Tools on the plane.* Glass (multiplication), Glass Geometry, Sound, and whatever the plane can carry next. Every perceptual question gets a bench in `experiments/` before anyone argues.
 
-*Practice.* Her list of what she has asked to remember exists (the ensō opens it); the practice itself, rhythmic tapping for keeping things long-term, is still to build. The list lives on her device; on an iPad it survives best when the site is on her home screen, and the site invites that once, quietly.
+*Practice.* The fourth view of the lab called *The Brain* (ruled 13 Nov 2026; `claude/Brain-Lab-Map.md`). The ensō stays where it is in the gallery and opens straight onto today's sitting. Her list of what she has asked to remember exists (the ensō opens it); the practice itself, rhythmic tapping for keeping things long-term, is still to build. The list lives on her device; on an iPad it survives best when the site is on her home screen, and the site invites that once, quietly.
 
-*The brain.* One painting, two views, one set of names: standalone as *About Your Brain*, and inside stories with only the controls the story needs. Stories and the map together give her a sense of her own brain: magnitude, speed, why three at a glance, why negative numbers are hard.
+*The brain.* A lab with four views: the cell, the brain, you, practice (ruled 13 Nov 2026). The brain view is one painting, two views, one set of names: standalone as *About Your Brain*, and inside stories with only the controls the story needs. Stories and the map together give her a sense of her own brain: magnitude, speed, why three at a glance, why negative numbers are hard.
 
 *Maya.* Pathfinder, not tutor. Not in the project yet; the Maya flag marks what changes when she is.
 

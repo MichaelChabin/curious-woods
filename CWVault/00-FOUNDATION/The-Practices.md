@@ -3,6 +3,8 @@ status: First draft — April 2026
 role: Foundational document — the forms of practice the platform supports
 ---
 
+> **See `claude/Brain-Lab-Map.md`, *The Practice view*** (13 Nov 2026): Practice is the fourth view of the lab called *The Brain*, and this file is that view's charter.
+
 # The Practices
 
 ## What practice means in this project

@@ -29,7 +29,7 @@ Stages, from Publishing-a-Story: **written** (Michael has said yes to the words)
 
 *Have You Thought of a Story?* — Frankenstein hub story, 1816. Draft 1, 15 Sept. Open: one sentence near the end, a prose anchor for the year, which picture.
 *The Compass Counts to Six* — the rosette; door to Stained Glass. Draft 1, 15 Sept; Michael called it good. Needs the yes; the picture is his rosette screenshot.
- *The God Who Would Not Move* · *A Very Strange Cube* — drafts in the project; state to confirm with their chats.
+ *The God Who Would Not Move* · *A Very Strange Cube* — drafts in the project; state to confirm with their chats. *A Very Strange Cube* is superseded by *Professor Necker's Drawing* (hung 25 Sept); nothing more is wanted of it (`claude/Brain-Lab-Map.md`, 13 Nov).
 
 ## Shared parts that exist
 
@@ -47,7 +47,7 @@ After the Ice (timeline-bench, events.json) · Star in a Mirror / Trace · Pull 
 
 From *Have You Thought of a Story?*: Tambora · The Year Without a Summer · Byron's "Darkness" · Galvani's Frogs · Aldini in London · Erasmus Darwin · Ada Lovelace · Polidori's *Vampyre*.
 Frankenstein constellation, previews until written: Sophie Germain · Darwin's "I think" · Jane Marcet · Chladni's plates · Faraday · Volta · Turner's skies · Franklin's kite · Drais's running machine · Typhus in Ireland · Arctic ice 1817.
-Brain series (map approved, 24 stories): Sleep on It · Leave It Alone · The Brain That Rebuilds Itself · the colour, sound, and time thresholds · 47 vs 54 · why negative numbers are hard · the rest per Brain-Series-Map.md.
+Brain series (map approved, 24 stories): Sleep on It · Leave It Alone · The Brain That Rebuilds Itself · the colour, sound, and time thresholds · 47 vs 54 · why negative numbers are hard · the rest per Brain-Series-Map.md. The map of the whole lab, with the cell-view candidates and the new ones for the You view, is `claude/Brain-Lab-Map.md` (13 Nov).
 Paintings: every picture on the wall earns a story (who made it, how, the pigments); candidates in Candidates-Grid-Lab-Stories.md and cw-paintings.
 Geometry: Frank Lloyd Wright's windows · both together, her own window · Euclid in Alexandria · Pythagoras · the pentagram.
 Numbers: Ahmes the Scribe · primes · pronic numbers · hexagram.

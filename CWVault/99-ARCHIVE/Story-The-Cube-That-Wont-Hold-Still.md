@@ -18,6 +18,8 @@ size: medium
 status: Draft 2 — 20 Sept 2026. Michael's rewrite of Draft 1, adopted whole. Typos and two garbled sentences fixed; notes, bench spec and references reconciled to his changes. Every fix is listed in the notes.
 ---
 
+> **ARCHIVED — 23 Nov 2026**, on Michael's ruling of 13 Nov 2026 (`claude/Brain-Lab-Map.md`). An earlier telling of the cube; *Professor Necker's Drawing* is the one that hung. Its three useful notes (the name *Counting the Limerick*, the undocumented counting-backwards experiment, and the disagreement with the star story about the hippocampus) are carried in `claude/Brain-Lab-Map.md`. Moved from `claude/`; kept for the record, not current.
+
 # The Cube That Won't Hold Still
 
 There's a cube on the left. Look at it for a moment, and decide which way it's facing.

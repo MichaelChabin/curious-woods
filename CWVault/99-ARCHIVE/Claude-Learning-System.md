@@ -1,3 +1,5 @@
+> **ARCHIVED — 23 Nov 2026**, on Michael's ruling of 13 Nov 2026 (`claude/Brain-Lab-Map.md`). It designs a record of each child, and `00-WHAT-CW-IS.md` says no identity and no records, ever. Nothing was built from it. Moved from `00-FOUNDATION/`; kept for the record, not current.
+
 # Claude Learning System - Data Access & Learning Management
 
 ## BRIEF (read this, skip the rest if you're building)

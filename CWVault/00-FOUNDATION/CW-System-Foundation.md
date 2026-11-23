@@ -1,3 +1,5 @@
+> **Note, 23 Nov 2026** (Michael's ruling of 13 Nov 2026; `claude/Brain-Lab-Map.md`). Where this file differs from `00-WHAT-CW-IS.md`, that file governs. The known differences are the list of labs, and what Maya knows and stores.
+
 # Curious Woods — System Foundation
 
 **Source:** Original "__ CW System 25-12-30" (Michael Chabin, Dec 2025), restructured around the four pillars in May 2026.

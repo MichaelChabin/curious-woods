@@ -1,7 +1,7 @@
 ---
 status: Spec v1.1 — 11 Sept 2026 (empty road added; H/Z/O note corrected); from Michael's sketch and the star prototype
 pillar: Labs (a bench; also called by Stories with its controls fixed)
-role: What Trace is, what a story or a child can set on it, and how it is built once for every road we will ever draw. Replaces Spec-Mirror-Star.md, which becomes one setting of this bench.
+role: What Trace is, what a story or a child can set on it, and how it is built once for every road we will ever draw. Replaces Spec-Mirror-Star.md, which becomes one setting of this bench (archived 23 Nov 2026 to `99-ARCHIVE/Superseded-Specs/`; its context is lifted below, under *The star: what the first spec said*).
 intuitions: #10 (build a model, run it, look), #9 (how do you know? — the counter answers), #17 (the feeling of not learning is not evidence), #3 (the same trip as a trail, a count, and a graph)
 ---
 
@@ -68,6 +68,24 @@ The star's track (6% of width) and the Path tolerance are the two numbers that d
 ## The stories that call it (so far)
 
 The Man Who Learned Without Knowing — star, channel, mirror left-right, ten attempts, then *again* / *without the mirror*. The Bridges (to write) — Königsberg, once only, no transform; the reveal is that every attempt ends stuck. A Character (to write) — in order, no transform; the "again" curve is the star's curve in a different costume. The Labyrinth (to write) — Chartres, path, no transform; the surprise is the length. Sleep on It — any road, with the tomorrow point as the whole point.
+
+## The star: what the first spec said
+
+Lifted on 23 Nov 2026 from `Spec-Mirror-Star.md`, when that file went to `99-ARCHIVE/Superseded-Specs/`. The reasons below are that spec's context section, word for word. The rules after them are the star's own, which this spec did not carry.
+
+*Why the graphs are hidden until the end.* The story's beat is that the feeling of not learning is not evidence. She must spend ten trips feeling clumsy with no counter reassuring her, then see the line drop. A running score would give the game away and turn the experiment into a game.
+
+*Why mirror-off exists.* It's the cheapest way to show that the difficulty is entirely in her head, and therefore so is the learning.
+
+*Why no comparison to others.* "Most people bump twenty or thirty times" is in the story text; the tool must never rank her.
+
+*Source apparatus.* Milner 1962; the classic mirror-drawing star (Lafayette Instrument still sells it) is a two-outline star with a metal stylus that closes a circuit when it touches the edge. Our "error" is the same event: contact with the edge.
+
+*Related.* flash-the-dots (Three at a Glance) is the first skeleton: show, answer, time, plot. This is the second: do, count, reveal. Sleep on It and Leave It Alone will reuse the "tomorrow" mechanism.
+
+*The star's own rules.* A trip begins when the pointer goes down within 20px of the start dot and ends when, after having travelled at least 80% of the track's length, it returns within 20px of the start dot. If the pointer is lifted mid-trip, the trip is abandoned and the cursor returns to the start with no count; nothing is said about it. Direction is her choice. After ten trips the star fades out and the graphs fade in, with one line beneath them: "Your hand learned the mirror." Nothing else: no score, no average, no comparison to anyone. Tapping Remember with the graphs showing saves the graph image on her device. *Without the mirror* is three trips.
+
+*Calibration.* First-trip counts for an adult should land in the 15–40 range and tenth-trip counts in the 2–6 range; if they don't, the track width is what to adjust.
 
 ## For Claude Code, when it's time
 

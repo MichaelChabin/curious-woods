@@ -1,5 +1,5 @@
 ---
-status: Live ledger — started 29 Sept 2026, from Michael's geometry tree; the Glass shelf corrected 1 Oct (one story, not two), given its **door** column from `claude/Geometry-Spine.md`, and rewritten the same day as **levels of one lab** rather than separate tools (Michael's ruling). The manager chat keeps it; Michael reads it. Companion to 00-STORIES-LEDGER.md.
+status: Live ledger — started 29 Sept 2026, from Michael's geometry tree; the Glass shelf corrected 1 Oct (one story, not two), given its **door** column from `claude/Geometry-Spine.md`, and rewritten the same day as **levels of one lab** rather than separate tools (Michael's ruling); *The Brain* given its four views and the two cell benches on 23 Nov, from Michael's rulings of 13 Nov. The manager chat keeps it; Michael reads it. Companion to 00-STORIES-LEDGER.md.
 role: The labs: what equipment each stands on, what levels and interactives it holds and their state, which story opens each, and which stories call it. If an interactive isn't here, it doesn't exist yet.
 related: claude/Geometry-Spine.md (the capability order and the one-door rule), claude/Rulings-Sept-2026.md (*a lab is a place*; *capability levels*), claude/Ruling-Labs-and-the-Plane.md, claude/Spec-Gallery.md, 00-STORIES-LEDGER.md
 ---
@@ -56,7 +56,7 @@ The levels below are the spine's steps, in order, so the shelf reads top to bott
 **Equipment.** Web Audio; the Jankó lattice; MIDI. *Why You Hear What You Hear* as grounding.
 
 *Sound benches* (translator, Six Against Five, rhythm roll, prime tones) — **bench**. Door: none yet.
-*The tapping bench* — the practice's instrument. **bench**. Practice: rhythmic practice (not built).
+*The tapping bench* — the practice's instrument. **bench**. Practice: rhythmic practice (not built). See *The Brain*, the Practice view: the practice is that lab's fourth view (`claude/Brain-Lab-Map.md`, *The Practice view*).
 *Beads* — beads on a string linked by springs; pluck, friction, stiffness. **bench** (Pull a Bead). Door: wanted (sound first; measuring curves; pi by beads).
 
 ## Colour and Pixels
@@ -67,9 +67,17 @@ The levels below are the spine's steps, in order, so the shelf reads top to bott
 
 ## The Brain
 
+**Four views of one lab** (Michael, 13 Nov 2026; the map is `claude/Brain-Lab-Map.md`): the cell, the brain, you, practice.
+
 **Equipment.** The brain painting, two views, one set of names (Spec-Brain-Bench); Flash, Creep, Trace (Spec-Trace-Bench); `js/necker.js`.
 
-*About Your Brain* — **tool**, hung. *Star in a Mirror* — **tool** (door: the star story). *Three at a Glance's flash* — **tool** (door: Three at a Glance). *Necker's drawings* — **tool** (door: Professor Necker's Drawing, hung). Stories: the brain series (24, per Brain-Series-Map).
+**The cell.** The neuron: one cell, one pulse, the gap between two cells, a net. Its steps, which a story asks for by name as a geometry story asks for `circles`: `signal`, `neuron`, `gap`, `net`, `centre`, `change`, `silicon`. Each becomes a real level only when it is built. *Two eyes, two oars* — **bench** (`experiments/two-eyes.html`). *The pond* — **bench** (`experiments/pond.html`); it stays in this view for now. Door: none yet; the candidates are in the map.
+
+**The brain.** *About Your Brain* — **tool**, hung.
+
+**You.** *Star in a Mirror* — **tool** (door: the star story). *Three at a Glance's flash* — **tool** (door: Three at a Glance). *Necker's drawings* — **tool** (door: Professor Necker's Drawing, hung). Stories: the brain series (24, per Brain-Series-Map).
+
+**Practice.** Her list and the tapping. *The tapping bench* is listed under *Sound and Music*; her list is `practice.html`, opened by the ensō.
 
 ## Probability and Statistics
 

@@ -460,37 +460,37 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** Michael's original story needs fetching.
 **Source.** iPad chat, 14 Oct; Michael. *(Merged from the holding pen, 12 Nov.)*
 
-### Evolution of neurons (working name)   · 12 Nov 2026 · loose
+### Evolution of neurons (working name)   · 12 Nov 2026 · ruled
 **Idea.** A strand asking how neurons came to be. It starts with a single cell that steers toward light by signals from its light receptors to its flagella. The creatures are speculative. Michael can imagine other kinds of animated creatures following.
-**Where it sits.** A new lab strand, near the brain stories. Two benches since 12 Nov: `experiments/two-eyes.html` and `experiments/pond.html` (the board's entry of 12 Nov).
+**Where it sits.** The cell view of The Brain (ruled 13 Nov 2026; `claude/Brain-Lab-Map.md`). Two benches since 12 Nov: `experiments/two-eyes.html` and `experiments/pond.html` (the board's entry of 12 Nov).
 **Opens.** A beginning for the brain material: the simplest thing a signal can do is turn a body.
 **Costs.** Invented creatures need a plain word that they are invented. The real cell (Chlamydomonas) has one eyespot and rolls.
 **Source.** iPad chat, 12 Nov; Michael. *(Merged from the holding pen, 12 Nov.)*
 
 ### Swap the wires   · 12 Nov 2026 · loose
 **Idea.** A glassy two-eyed creature with two flagella, each eye wired to one oar. One tap crosses or uncrosses the wires. Crossed, it chases the light; straight, the same creature flees it. (Braitenberg's vehicles.)
-**Where it sits.** Evolution of neurons. Built as *Two eyes, two oars* (`experiments/two-eyes.html`, 12 Nov).
+**Where it sits.** The cell view of The Brain (`claude/Brain-Lab-Map.md`, C2). Built as *Two eyes, two oars* (`experiments/two-eyes.html`, 12 Nov).
 **Opens.** A gesture: she changes what the creature does by changing its wiring and nothing else.
 **Costs.** Two wirings so far. Whether she can also change the eyes or the oars is open.
 **Source.** iPad chat, 12 Nov; Michael asked for the two-eyed creature, Claude added the swap. *(Merged from the holding pen, 12 Nov.)*
 
 ### One eye and two (working name)   · 12 Nov 2026 · loose
 **Idea.** A pair: the real one-eyed cell, which rolls so its single eyespot sweeps past the light once a turn, and the invented two-eyed one, which compares left with right.
-**Where it sits.** Evolution of neurons.
+**Where it sits.** The cell view of The Brain (`claude/Brain-Lab-Map.md`), beside *Swap the wires*.
 **Opens.** Two answers to one problem, one real and one invented, so she can tell which is which.
 **Costs.** The one-eyed version exists only as a plain sketch in chat.
 **Source.** iPad chat, 12 Nov; Claude. *(Merged from the holding pen, 12 Nov.)*
 
-### The pond   · 12 Nov 2026 · candidate
+### The pond   · 12 Nov 2026 · ruled
 **Idea.** A pond of small creatures whose wiring is inherited: crossed, straight or none. Light is food, shared by whoever is near it. A fed creature splits, a starved one fades, and one child in twenty is miscopied. In about a minute the pond fills with light seekers. Make the light burn and they swim into it and die; the pond crashes, then recovers from a few that were losing a minute before. A ribbon keeps the history. Michael will set it up with a story, so a minute's wait is right.
-**Where it sits.** Evolution of neurons; natural selection. Built as *The pond* (`experiments/pond.html`, 12 Nov); the minute is Michael's ruling.
+**Where it sits.** The cell view of The Brain, for now (ruled 13 Nov 2026; `claude/Brain-Lab-Map.md`, C3 and ruling 5); natural selection gets a home of its own only when a second story needs it. Built as *The pond* (`experiments/pond.html`, 12 Nov); the minute is Michael's ruling.
 **Opens.** She watches selection happen, and causes it by moving or changing the light. The crash and recovery is a moment a story could set up without giving away.
 **Costs.** The light has to wander, or wireless creatures born beside it do fine sitting still. A few strangers drift in if the pond nearly empties. Hundreds of creatures need the plain look; tapping one to see it in glass is not built.
 **Source.** iPad chat, 12 Nov; Michael's environment, Claude's inherited wiring. *(Merged from the holding pen, 12 Nov.)*
 
 ### Sun and temperature world (working name)   · 12 Nov 2026 · loose
 **Idea.** An environment of creatures whose reproduction depends on temperature and sunlight. Children vary the two and watch natural selection. Claude's sketch: body traits, such as dark bodies that warm fast and pale ones that don't.
-**Where it sits.** Beside the pond.
+**Where it sits.** Beside the pond, in the cell view of The Brain (`claude/Brain-Lab-Map.md`, ruling 5).
 **Opens.** Selection on bodies as well as wiring, with two things to vary.
 **Costs.** The trait must show at a glance, and a generation must take seconds. Not built.
 **Source.** iPad chat, 12 Nov; Michael. *(Merged from the holding pen, 12 Nov.)*

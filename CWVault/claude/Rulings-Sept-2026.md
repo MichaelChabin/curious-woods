@@ -1,5 +1,5 @@
 ---
-status: Rulings — 14 Sept 2026, from the brain-series sessions; amended 15 Sept (dates), 16 Sept (picture placement; instructions to the child; the Maya flag and Remember; gestures across tools; images as evidence), 18 Sept (colour; a picture in a window; the three conflicts reconciled), 19–20 Sept (the gallery: what comes and goes; the paintings as stories; Spec-Gallery), 25 Sept (the practice list exists; the home screen). Canonical until Michael says otherwise; where this contradicts CW-System-Foundation.md, ask. Where it contradicts UI-Language.md or other earlier design documents, this wins. One copy lives in the project and one in the vault; the manager chat keeps them identical. If they differ, tell the manager chat and don't guess., 30 Sept (the map at the story's year)
+status: Rulings — 14 Sept 2026, from the brain-series sessions; amended 15 Sept (dates), 16 Sept (picture placement; instructions to the child; the Maya flag and Remember; gestures across tools; images as evidence), 18 Sept (colour; a picture in a window; the three conflicts reconciled), 19–20 Sept (the gallery: what comes and goes; the paintings as stories; Spec-Gallery), 25 Sept (the practice list exists; the home screen). Canonical until Michael says otherwise; where this contradicts CW-System-Foundation.md, ask. Where it contradicts UI-Language.md or other earlier design documents, this wins. One copy lives in the project and one in the vault; the manager chat keeps them identical. If they differ, tell the manager chat and don't guess., 30 Sept (the map at the story's year), 13 Nov (the Brain lab, carried in 23 Nov)
 role: The decisions that came out of building The Man Who Learned Without Knowing, Three at a Glance and About Your Brain, written down so no later session relitigates them.
 ---
 
@@ -187,3 +187,16 @@ Michael, 17 Oct 2026: **when the point of an interactive is the picture — a ma
 6. **The grid is off.** Spec-Maps rules out a graticule and a frame; the globe follows the map.
 
 *Amended 17 Nov 2026 (Michael, on the contradiction the Time lab's step 7 reported):* **Ga, not Ba.** The abbreviations ruling of 18 Oct stands: *Ma*, *Ga*, *km*, never an invented form. The Time lab's *Ba* (its step 5, 12 Nov) is withdrawn, and the page writes *Ga* from its step 8. The *Ba* in point 13 above (12 Oct) is the record of that day and was already replaced by the ruling of 18 Oct.
+
+## The Brain lab (13 Nov 2026)
+
+Michael, 13 Nov 2026, on eight points put to him with Claude's advice: "None" to change. The map of the lab, with the reasons, the stories and everything else, is `claude/Brain-Lab-Map.md`. Carried here 23 Nov 2026.
+
+1. **Four views.** The lab has four views: the cell, the brain, you, practice.
+2. **Practice is the fourth view.** The ensō stays where it is in the gallery and opens straight onto today's sitting. `00-WHAT-CW-IS.md` is amended to match.
+3. **The seven steps** of the cell view (`signal`, `neuron`, `gap`, `net`, `centre`, `change`, `silicon`) are our order now. Each becomes a real level of the lab only when it is built. Some (`centre`, `silicon`) may prove to be subjects more than powers.
+4. **One neuron, one amber pulse, everywhere,** as a principle. The look gets a bench before it is settled, and the pulse must not be mistaken for the timeline's copper.
+5. **The pond** stays in the cell view for now. Natural selection gets a home of its own only when a second story needs it. The first neurons go on the deep timeline as an age nobody knows exactly.
+6. **Guessing: two memories, two rules.** For what she is making automatic, never rehearse a wrong answer. For understanding, a guess followed at once by the answer is a surprise, and surprise helps. Michael: "Guessing what 7x8 is practices errors but an explorer who can't guess never moves." The evidence for both halves is still to be checked.
+7. **The Brain Series Map is not merged yet.** `Brain-Series-Map.md` and `Brain-Lab-Map.md` both stand, the second pointing at the first, until those stories are next revised.
+8. **The name is *The Brain*,** as the Labs Ledger already has it.

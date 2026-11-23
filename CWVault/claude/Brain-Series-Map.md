@@ -2,6 +2,7 @@
 status: Draft 2 — 10 Sept 2026 (stories 23–24, voice rulings, date commas added)
 pillar: Stories — the "your brain, tested by you" set, widened from perception to learning
 role: Series map. Each entry is a candidate story with its claim, the experiment she runs on herself, the neuroscience behind it, and the intuitions it serves. Nothing here is written yet except Three at a Glance.
+related: claude/Brain-Lab-Map.md (the map of the Brain lab, 13 Nov 2026). This file is now the chapter for that lab's You view.
 ---
 
 # Your Brain, Tested by You — series map
@@ -41,7 +42,7 @@ Each entry: the beat; what she does; the science and its source; what it links t
 ### 1. Three at a Glance — written
 Subitizing; the IPS; Jevons's beans. See Story-Three-at-a-Glance.md. Its flash-the-dots tool is the template for every timed interactive below.
 
-### 2. The Man Who Learned Without Knowing — drafted (Story-The-Man-Who-Learned-Without-Knowing.md; tool spec in Spec-Mirror-Star.md)
+### 2. The Man Who Learned Without Knowing — drafted (Story-The-Man-Who-Learned-Without-Knowing.md; tool spec in Spec-Trace-Bench.md, which replaced Spec-Mirror-Star.md on 11 Sept and now holds its context)
 *Beat.* You can learn something and have no idea you learned it.
 *She does.* Mirror-drawing on screen: trace a star while seeing only the mirror image of her hand's path. The tool counts the times she leaves the track. Ten trials. The count falls from twenty-odd to two or three. She felt clumsy the whole time; the graph says otherwise.
 *Science.* H.M., who could form no new memories after 1953, learned mirror-drawing over three days and each day insisted he had never seen the task. Milner 1962; Scoville & Milner 1957, *J. Neurol. Neurosurg. Psychiatry*. Two memory systems: the one that remembers events (hippocampus, which H.M. lost) and the one that gets better at things (basal ganglia, cerebellum), which he kept.
