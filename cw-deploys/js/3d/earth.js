@@ -185,6 +185,7 @@
        seasStrength: 0 to 1            // 21 Nov: how strongly the seas' blue lies over the land; 1, as they came, unless a page asks
        seasCrust: false | true | '#hex' | 'shelf'   // 22 Nov: the flooded crust in a light grey under the blue (below); not there unless a page names it. 23 Nov: 'shelf', the flooded ground in the shelf's own blue
        seasSoft: false | true          // 22 Nov: the seas' edges soft (below); not there unless a page names it
+      seasBare: '#hex'                // 23 Nov: with the seas hidden, the pieces' shelf in this colour, whole (below); not there unless a page names it
      });
    Returns { group, setTime(ma), time(), grade() → { grade, why }, moltenPhase(), setGround('old'|'blue'), ground(),
    seaLevel() (metres, ≤ 0), icePairs(), setCoasts(on), coasts(),
@@ -234,7 +235,11 @@
    shelf wash (cw-style's shelfWash at shelfWashAlpha, by uWash) over the sea ball's colour at that point. So Kocsis
    and Scotese's seaways and the pieces' own shelves are one blue, with no seam where they meet. setSeas(false) hides
    the seaways only: the pieces' own shelf wash stays, since it is the continental crust the land stands on (for some
-   hours of 23 Nov it hid both; Michael, the same day: the crust was missing, put it back). The grey is kept as
+   hours of 23 Nov it hid both; Michael, the same day: the crust was missing, put it back). And a page may name
+   seasBare: '#hex': with the seas hidden, the shelf is then painted whole in that colour in place of the blue wash,
+   so what is left reads as bare continental crust and not as a shallow sea (Michael, 23 Nov: the shelves came back
+   the same colour as the seas; he proposed #777878). It is the land's own paint, and is built in only for a page that
+   names it; it takes the picture's sea inside a piece wherever that is, today's lakes and bays among it. The grey is kept as
    it was built and is off: seasCrust: true or '#hex', or setSeasCrust(true), turns it on. seas() also answers shelf. */
 import * as THREE from 'three';
 import { Fn, vec2, vec3, vec4, float, int, uniform, texture, uv, attribute, varying, positionView, positionWorld, modelViewMatrix,
@@ -1370,6 +1375,9 @@ export async function cwEarth(view, o = {}) {
   // Oct: close in it showed as straight-sided polygons, the pieces' cut lines), coming in past it as the ground's look goes
   // (over WASH_IN, the ramp the deep ice comes in on), so it never snaps
   const uWash = uniform(0);
+  // 23 Nov (o.seasBare, a colour; not there unless a page names it): with the shallow seas hidden, the pieces' shelf is
+  // painted whole in this colour in place of the wash, so it reads as bare continental crust and not as shallow sea
+  const canBare = typeof o.seasBare === 'string', uBare = uniform(0);
   // close in, the ICE-6G ice is also filled at the view's own size (ICE_LOCAL px square over the lon/lat box in view, as the
   // map fills its outlines at the screen's), the box (west, south, width, height in degrees) and whether it is in use
   const uIceBox = uniform(new THREE.Vector4(-180, -90, 360, 180)), uIceLocal = uniform(0);
@@ -1560,8 +1568,8 @@ export async function cwEarth(view, o = {}) {
       }
       const ia = min(ice0.mul(uIceW[0]).add(ice1.mul(uIceW[1])), 1).mul(0.94).mul(uGroundT).mul(select(belowSea, float(0), float(1)));
       col = mix(col, ICEF3, ia); sea = sea.mul(float(1).sub(ia));
-      col = mix(col, SHELF3, sea.mul(uWash));
-      let alpha = float(1).sub(sea.mul(float(1).sub(SHELF_A.mul(uWash))));   // this side of the seam the picture's sea is clear: the sea ball alone
+      col = mix(col, canBare ? mix(SHELF3, rgb(o.seasBare), uBare) : SHELF3, sea.mul(uWash));
+      let alpha = float(1).sub(sea.mul(float(1).sub((canBare ? mix(SHELF_A, float(1), uBare) : SHELF_A).mul(uWash))));   // this side of the seam the picture's sea is clear: the sea ball alone
       const oldA = uOld.mul(life);
       col = island ? mix(col, LIFT3, LIFT_A.mul(oldA)) : mix(col, SHELF3, DROWN_W.mul(oldA));
       // the dissolve into the sea round a piece's birth: only as the ground's look goes past the seam — this side of it a
@@ -2074,6 +2082,7 @@ export async function cwEarth(view, o = {}) {
     const groundT = ma < seam ? 1 : Math.max(0, 1 - (ice ? ice[1] : 1));
     uGroundT.value = groundT;
     uWash.value = Math.max(0, Math.min(1, (ma - seam) / WASH_IN));   // the pieces' pale wash: none this side of the seam, in over the ramp past it
+    uBare.value = canBare && seaLayer && !seasOn ? 1 : 0;   // the seas hidden: the shelf as bare crust (o.seasBare)
     const iceAgo = Math.max(0, ma * 1e6);
     pairsNow = iceData && iceAgo > 0 && groundT > 0 ? icePairs(iceAgo, seaM) : [];
     setIceSlot(0, pairsNow[0] ? pairsNow[0][0] : null); setIceSlot(1, pairsNow[1] ? pairsNow[1][0] : null);

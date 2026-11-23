@@ -15,7 +15,9 @@ updated: 2026-11-23
 
 Nothing in the prompt disagrees with what Report 12 says was built.
 
-**Changed later the same day, on Michael's word.** As first built, Hide shallow seas hid the shelves as well as the seaways, which is how I read "hide both kinds". Michael looked at it live and missed the continental crust the land stands on. Hide now takes away the seaways only, as it did before this step. The stamp is `2026-11-23 91a2e9a · time-lab step 12b · the shelves stay`.
+**Changed later the same day, on Michael's word.** As first built, Hide shallow seas hid the shelves as well as the seaways, which is how I read "hide both kinds". Michael looked at it live and missed the continental crust the land stands on. Hide now takes away the seaways only, as it did before this step. 
+
+**And again, on his word.** The shelves had come back the colour of the shallow seas. With the seas hidden they are now grey, `#777878`, his colour, painted whole, so what is left reads as bare crust (`12`). With the seas shown nothing changes: one blue. Today's lakes and bays inside the land are in the same paint, so Hudson Bay and the Great Lakes are grey too while the seas are hidden. `?bare=` takes another colour. The stamp is `2026-11-23 465ccce · time-lab step 12b · the shelves grey when the seas are hidden`.
 
 ## What was changed
 
@@ -115,7 +117,7 @@ Before, the seaway was the grey `#a3a29c` with a second blue, `#93bed7`, faint o
 ## Known and left
 
 - **Faint lighter lines inside the blue**, most in the Gulf at 90 and 69 Ma (`03`, `04`). They are where two pieces' shelves overlap and the wash falls twice. They were there in step 12; the grey made them hard to see. They are edges of pieces, the same kind of thing as the tears.
-- **Hudson Bay and the Great Lakes are blue at every age.** That is today's water in the land's own picture, the first of the three sets of data in Report 12. With the seas hidden they are still that pale blue (`11`).
+- **Hudson Bay and the Great Lakes are blue at every age.** That is today's water in the land's own picture, the first of the three sets of data in Report 12. With the seas hidden they are grey, with the shelves (`12`).
 
 ## Needs Michael's eye
 
@@ -135,7 +137,7 @@ Before, the seaway was the grey `#a3a29c` with a second blue, `#93bed7`, faint o
 
 ## The files in `Time-Lab-Bench-12b-Nov23/`
 
-**The seas.** `01` to `04`: 480, 201, 90 and 69 Ma, The World, the globe. `05` to `08`: the same on the map. `09`: 90 Ma with the grey turned on, for comparison. `10`: 90 Ma in Time. `11`: 72 Ma, the seas hidden, the shelves still there.
+**The seas.** `01` to `04`: 480, 201, 90 and 69 Ma, The World, the globe. `05` to `08`: the same on the map. `09`: 90 Ma with the grey turned on, for comparison. `10`: 90 Ma in Time. `11`: 72 Ma, the seas hidden, the shelves still there, in blue (as it stood for an hour). `12`: the same, the shelves grey, as it stands.
 
 **The turn.** `20`: The World, before, tipped and facing Asia. `21`: The asteroid tapped, its place in front. `22`: Time, before. `23`: Dimetrodon tapped. `24`: the map, The asteroid tapped, nothing moved.
 
