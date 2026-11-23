@@ -19,7 +19,18 @@ Nothing in the prompt disagrees with what Report 12 says was built.
 
 **And again, on his word.** The shelves had come back the colour of the shallow seas. With the seas hidden they are now grey, `#777878`, his colour, painted whole, so what is left reads as bare crust (`12`). With the seas shown nothing changes: one blue. Today's lakes and bays inside the land are in the same paint, so Hudson Bay and the Great Lakes are grey too while the seas are hidden. `?bare=` takes another colour.
 
-**And the colour once more.** He looked at the live page, which did not yet have the grey, and asked for a darker blue-grey, `#505083`, opaque so the overlaps do not show. It was already opaque; the colour is now his second one. Picture `12` shows the first grey; the blue-grey has no picture. The stamp is `2026-11-23 6527122 · time-lab step 12b · the shelves blue-grey when the seas are hidden`.
+**And the colour once more.** He looked at the live page, which did not yet have the grey, and asked for a darker blue-grey, `#505083`, opaque so the overlaps do not show. It was already opaque; the colour is now his second one. Picture `12` shows the first grey; the blue-grey has no picture. 
+
+**Then his ruling, which overturns the prompt's "the same thing, and take the same colour".** The shelf is never the seas' colour. It is a feature of its own, the submerged edge of the continent, and he wants to be able to tell her about it. So:
+
+- The shelf is `#505083`, painted whole, at every age past the seam, whether the seas show or not (`13`).
+- The shallow seas keep their light blue, and lie over the shelf where Kocsis and Scotese have flooded ground.
+- A word of its own, *Show shelf / Hide shelf*, beside the seas' word in both views. On when the page opens. `?shelf=0` opens with it hidden.
+- The four ways: both (`13`), the seas hidden (`14`), the shelf hidden (`15`), both hidden (bare land on the ocean).
+- Today's lakes and bays inside the land are in the shelf's paint, so Hudson Bay and the Great Lakes are blue-grey at every age past the seam, and go with Hide shelf.
+- In `earth.js` the option is `shelfColour`, with `setShelf(on)` and `shelf()`. A page that does not name it is unchanged.
+
+Everything above this section about one blue, and about the grey only while the seas are hidden, is superseded. The stamp is `2026-11-23 9de98d6 · time-lab step 12b · the shelf its own colour, and its own word`.
 
 ## What was changed
 
@@ -139,7 +150,7 @@ Before, the seaway was the grey `#a3a29c` with a second blue, `#93bed7`, faint o
 
 ## The files in `Time-Lab-Bench-12b-Nov23/`
 
-**The seas.** `01` to `04`: 480, 201, 90 and 69 Ma, The World, the globe. `05` to `08`: the same on the map. `09`: 90 Ma with the grey turned on, for comparison. `10`: 90 Ma in Time. `11`: 72 Ma, the seas hidden, the shelves still there, in blue (as it stood for an hour). `12`: the same, the shelves grey, as it stands.
+**The seas.** `01` to `04`: 480, 201, 90 and 69 Ma, The World, the globe. `05` to `08`: the same on the map. `09`: 90 Ma with the grey turned on, for comparison. `10`: 90 Ma in Time. `11`: 72 Ma, the seas hidden, the shelves still there, in blue (as it stood for an hour). `12`: the same, the shelves grey (superseded). `13`: 107 Ma, the seas and the shelf, as it stands. `14`: the seas hidden. `15`: the shelf hidden.
 
 **The turn.** `20`: The World, before, tipped and facing Asia. `21`: The asteroid tapped, its place in front. `22`: Time, before. `23`: Dimetrodon tapped. `24`: the map, The asteroid tapped, nothing moved.
 
