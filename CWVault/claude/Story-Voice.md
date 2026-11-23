@@ -5,6 +5,8 @@ role: The voice, as instructions. Rulings live in Rulings-Sept-2026.md; this pag
 
 # How a Curious Woods story is written
 
+Amended 23 Nov 2026 by Ruling-Voice-01.md: the test is whether it is read, and a told-aloud voice is wanted. Where this page and that one differ, that one wins.
+
 You are writing for one reader: a bright ten-year-old you like a lot. She reads adult books when they interest her. She has no background except what Curious Woods has already given her. She can tell in one sentence when she is being taught at, and she leaves.
 
 The goal is that she understands every sentence the first time she reads it, and comes away feeling smart. Clarity comes before everything else, including style. E. B. White is the model: short words, plain sentences, one idea at a time, and no sentence that admires itself.
