@@ -220,6 +220,17 @@
      Then his ruling the same day: the shelf is never the seas' colour. It is a feature of its own, the submerged
      edge of the continent, in that blue-grey whether the seas show or not (earth.js's shelfColour), with a word of
      its own beside the seas', Show shelf / Hide shelf, on when the page opens (?shelf=0 opens with it hidden).
+     Step 12c (24 Nov 2026; Michael's prompt of 24 Nov, CWVault/claude/Prompt-Revise-Time-Lab-Bench-12c-01.md, which
+     withdraws his ruling of 23 Nov: "Yesterday I had it backward"). One sea. Past the seam the shelf and the shallow
+     seas are the ocean's own colour at every point, painted whole (earth.js's oneSea, new this step and not there
+     unless a page names it). A shelf is under water and a shallow sea is sea; going back in time she sees land and
+     sea. Show shelf / Hide shelf is gone, and ?shelf= with it. Hide shallow seas and ?seas=0 stay: the seaways go,
+     the land's picture shows there, and the shelf stays sea. Kept, off, for Drain the Sea: the shelf's own colour
+     (earth.js's shelfColour and setShelf; LOOK.seas.bare, ?bare=) and step 12's grey (seasCrust; ?crust=grey).
+     Bench only, in How this works in both views, until Michael has ruled: the sea, one blue / as before; as before is step 12b's
+     look exactly (the shelf #505083, the seas their light blue); ?sea=before opens on it. One new sentence in How
+     this works, in both views, saying what the shallow seas are and where they stop (WORDS.htwSeas; the chat's
+     draft, not yet Michael's word).
      A selected event's place turns to face her: a tap on an event whose record has a place eases the globe round,
      upright, with no zoom, while the handle travels to the event's year (LOOK.face; faceEvent). Only a tap on an
      event does it. Her finger on the globe wins. Under reduced motion, a cut. On the map nothing moves. -->
@@ -507,7 +518,7 @@
       <button class="word" id="wHtw" type="button" aria-pressed="false">How this works</button>
       <ul class="items">
         <li><span class="head" id="hFocus">Focus</span><div class="subs" id="cmds"><button class="word cmd" id="wView" type="button">The World</button><button class="word cmd" id="wMap" type="button" style="display:none">Map</button><button class="word cmd" id="wFull" type="button" style="display:none">Full screen</button></div></li>
-        <li><span class="head" id="hInfo">Information</span><div class="subs"><button class="word cmd" id="wCities" type="button">Show cities</button><button class="word cmd" id="wCoasts" type="button" style="display:none">Show coastlines</button><button class="word cmd" id="wSeas" type="button" style="display:none">Hide shallow seas</button><button class="word cmd" id="wShelf" type="button" style="display:none">Hide shelf</button><button class="word cmd" id="wMarkers" type="button" style="display:none">Place markers</button><button class="word cmd" id="wMeasure" type="button">Measure</button><button class="word cmd" id="wSound" type="button">Sound on</button><button class="word cmd" id="wCount" type="button">from the start</button></div></li>
+        <li><span class="head" id="hInfo">Information</span><div class="subs"><button class="word cmd" id="wCities" type="button">Show cities</button><button class="word cmd" id="wCoasts" type="button" style="display:none">Show coastlines</button><button class="word cmd" id="wSeas" type="button" style="display:none">Hide shallow seas</button><button class="word cmd" id="wMarkers" type="button" style="display:none">Place markers</button><button class="word cmd" id="wMeasure" type="button">Measure</button><button class="word cmd" id="wSound" type="button">Sound on</button><button class="word cmd" id="wCount" type="button">from the start</button></div></li>
       </ul>
       <button class="word cmd pick" id="wPick" type="button">Pick a time</button>
     </div>
@@ -543,11 +554,12 @@
   <div class="pair"><span class="what">a drag favours one way</span><span id="bBias"></span></div>
   <div class="pair"><span class="what">the tilt stops at</span><span id="bTilt"></span></div>
   <div class="pair"><span class="what">the shorelines</span><span id="bShores"></span></div>
+  <div class="pair"><span class="what">the sea</span><span id="bSea"></span></div>
   <p class="readout" id="readout"></p>
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-23 9de98d6 · time-lab step 12b · the shelf its own colour, and its own word';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-24 1e724ac · time-lab step 12c · one sea';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -661,13 +673,15 @@
     ],
     sound: ['Sound on', 'Sound off'], soundAsk: 'Sound OK?', yes: 'yes', no: 'no',
     back: 'back', select: 'select', unselect: 'unselect', measure: 'Measure',
-    cities: ['Show cities', 'Hide cities'], coasts: ['Show coastlines', 'Hide coastlines'], seas: ['Show shallow seas', 'Hide shallow seas'], shelf: ['Show shelf', 'Hide shelf'], markers: ['Place markers', 'Hide markers'],
+    cities: ['Show cities', 'Hide cities'], coasts: ['Show coastlines', 'Hide coastlines'], seas: ['Show shallow seas', 'Hide shallow seas'], markers: ['Place markers', 'Hide markers'],
     view: ['The World', 'Time'], map: ['Map', 'Globe'], pick: 'Pick a time',   // step 9: each word names what a tap will give her
     full: ['Full screen', 'Exit full screen', 'Leave full screen'],   // the browser's full screen (the Mac), and the full page (a touch device)
     now: 'now', nowLabel: 'Now', notYet: 'not yet', more: 'More',
     // step 10b: How This Works in The World — the title, the words (the prompt's draft, Michael's to rewrite; *…* names a word on the page), the bench's test panel
     htwTitle: 'How This Works',
     htwWorld: 'This is the Earth at the moment marked on the line below. Drag the round marker along the line and the Earth changes with it. Tap a name on the line to read what happened there. Turn the globe with a finger; spread two fingers to come closer. Drag an arrow at either end of the line to see more years or fewer. *Time* takes you to all the years there are.',
+    // step 12c: what the shallow seas are and where they stop; one paragraph after the words above, in both views (the chat's draft of 24 Nov, not yet Michael's word)
+    htwSeas: 'The shallow seas over the land were worked out by geologists, one map for every five million years, back to about 535 million years ago. Before that this Earth shows none. That means we have no map of them, not that there were none.',
     earthShown: 'The Earth shown here:',   // step 10c: before the word of knowing, at the foot of an event's panel
     // step 10c: How this works in the Time view (Michael's words, approved 21 Nov, the second and fifth paragraphs his of step 11's prompt; *…* names a word on the page). The
     // second sentence of the first paragraph is written for the mosaic she is on (htwSpan, from htwSpans and htwTiles)
@@ -2359,6 +2373,7 @@
       '<p>' + esc(WORDS.htwFirst) + ' <span id="htwSpan"></span></p>' +   // step 10c: Michael's words of 21 Nov; the second sentence is the mosaic's own
       WORDS.htwTime.map(t => '<p>' + it(t) + '</p>').join('') +
       '<p id="htwKnow"></p>' +   // the grade's sentence at the handle's year (step 4: it left the block under the Earth; the word on the handle is enough there)
+      '<p>' + it(WORDS.htwSeas) + '</p>' +   // step 12c: what the shallow seas are, after the words that were there
       '</div>';
     const bw = $('benchWords'); bw.style.display = ''; htwPanel.body.appendChild(bw);
   }
@@ -2486,7 +2501,7 @@
       b.addEventListener('click', () => { set(v); mark(); }); return b;
     });
     const mark = () => els.forEach((b, i) => b.setAttribute('aria-pressed', options[i] === get() ? 'true' : 'false'));
-    mark();
+    mark(); return mark;
   }
   benchChoice($('bVanish'), VANISH, () => bench.vanish, v => { bench.vanish = v; });
   // The shallow seas (20 Nov; Michael's rulings of 21 Nov after looking at 480 Ma). A word of her own, Show shallow seas /
@@ -2499,11 +2514,15 @@
   function setSeas(on) { SEAS.on = !!on; $('wSeas').textContent = WORDS.seas[SEAS.on ? 1 : 0]; if (lab.earth && lab.earth.setSeas) lab.earth.setSeas(SEAS.on); tellYear(); }
   function setSeaStrength(name) { if (LOOK.seas.strengths[name] == null) return; SEAS.name = name; if (lab.earth && lab.earth.setSeasStrength) lab.earth.setSeasStrength(LOOK.seas.strengths[name]); }
   $('wSeas').addEventListener('click', () => setSeas(!SEAS.on));
-  // The shelf (step 12b, Michael's ruling of 23 Nov): the submerged edge of each continent, a feature of its own in its
-  // own colour (LOOK.seas.bare), with a word of its own, Show shelf / Hide shelf, on when the page opens (?shelf=0: off)
-  const SHELF = { on: Q.get('shelf') !== '0' };
-  function setShelf(on) { SHELF.on = !!on; $('wShelf').textContent = WORDS.shelf[SHELF.on ? 1 : 0]; if (lab.earth && lab.earth.setShelf) lab.earth.setShelf(SHELF.on); }
-  $('wShelf').addEventListener('click', () => setShelf(!SHELF.on));
+  // Step 12c (Michael, 24 Nov): one sea. Past the seam the shelf and the shallow seas are the ocean's own colour
+  // (earth.js's oneSea). Show shelf / Hide shelf and ?shelf= are gone. Bench only, until he has ruled: the sea, one
+  // blue / as before, where as before is step 12b's look exactly; ?sea=before opens on it
+  const SEA_LOOKS = ['one blue', 'as before'];
+  SEAS.one = Q.get('sea') !== 'before';
+  const seaMarks = [];   // the row stands in both views' panels (Time's with the bench's other rows, The World's alone); each marks itself when either is tapped
+  function setOneSea(on) { SEAS.one = !!on; if (lab.earth && lab.earth.setOneSea) lab.earth.setOneSea(SEAS.one); seaMarks.forEach(m => m()); }
+  const seaRow = host => seaMarks.push(benchChoice(host, SEA_LOOKS, () => SEA_LOOKS[SEAS.one ? 0 : 1], v => setOneSea(v === SEA_LOOKS[0])));
+  seaRow($('bSea'));
   // Step 12b: the flooded ground is painted as the shelf is (SEAS.crust 'shelf': earth.js's seasCrust), one blue for
   // every shallow sea. The grey of step 12 is kept for the day the oceans are drained and is off: ?crust=grey opens
   // with it (SEAS.crust a colour), ?crust=0 with step 11's look (the shore blue over the land's picture, at the
@@ -2871,11 +2890,15 @@
   function standingPanels() { const out = []; if (htw2 && HTW2.up && lab.view === 'world') out.push(restBox(htw2.el)); TOOLP.forEach(t => { if (t.up) out.push(restBox(t.pn.el)); }); return out; }
   const htw2 = window.CW.createInfoPanel ? (() => {
     const { pn, tools } = titledPanel(LOOK.htwW, WORDS.htwTitle, () => closeHtw2());
-    pn.body.innerHTML = '<div class="panel-text"><p>' + esc(WORDS.htwWorld).replace(/\*([^*]+)\*/g, '<i>$1</i>') + '</p></div>';
+    pn.body.innerHTML = '<div class="panel-text"><p>' + esc(WORDS.htwWorld).replace(/\*([^*]+)\*/g, '<i>$1</i>') + '</p><p>' + esc(WORDS.htwSeas) + '</p></div>';
     const list = [$('wMap')]; if (FULL === 'browser') list.push(wFull);   // Full screen is left out on a touch device, as in step 10
-    list.push($('wCities'), $('wCoasts'), $('wSeas'), $('wShelf'), $('wMarkers'), $('wMeasure'), $('wSound'), $('wPick'));
+    list.push($('wCities'), $('wCoasts'), $('wSeas'), $('wMarkers'), $('wMeasure'), $('wSound'), $('wPick'));
     list.forEach(src => tools.appendChild(mirrorWord(src)));
     pn.body.appendChild(tools);
+    // step 12c, bench only, until Michael has ruled: the sea, one blue / as before, here too, so the two can be compared in The World
+    const bw = document.createElement('div'); bw.className = 'bench-words';
+    bw.innerHTML = '<span class="label">bench only</span><div class="pair"><span class="what">the sea</span><span id="bSea2"></span></div>';
+    pn.body.appendChild(bw); seaRow(bw.querySelector('#bSea2'));
     return pn;
   })() : null;
   function htwHome() { const r = $('worldWords').getBoundingClientRect(); return { x: Math.round(r.left), y: Math.round(r.bottom + LOOK.htwGap) }; }   // on the left, under the words at the upper left
@@ -3064,7 +3087,7 @@
   sea = null;
   $('explain').textContent = WORDS.explain[0];
   layout(); draw();
-  setCities(false); setCoasts(false); setMarkers(false); setSeas(SEAS.on); setShelf(SHELF.on); flatWord(false); pickWords(); soundWords();
+  setCities(false); setCoasts(false); setMarkers(false); setSeas(SEAS.on); flatWord(false); pickWords(); soundWords();
   setYear(0); setCount(COUNT.want); renderStretch();   // the line from the start, its flags at the ends, the handle at today
   // Step 10: the lab opens on Complex life, on every screen (Michael: showing all 4.6 billion years is neat, but not the
   // point). The 4.6 billion is first under Select years, one tap away. ?w= opens on another (0 the 4.6 billion … 7 Computing).
@@ -3100,7 +3123,7 @@
     arrow: { hold: (i, dx, heldMs) => { dropArrow(); arrowMove(i, dx, null); if (heldMs) { STR.drag.zoneT = heldMs; STR.drag.end = dragEnd(STR.drag); renderStretch(); } return Object.assign({}, STR.drag.end); }, release: () => releaseArrow(false), drag(i, dx, heldMs) { const e = this.hold(i, dx, heldMs); releaseArrow(false); return e; }, end: () => STR.drag && Object.assign({}, STR.drag.end), x: endX, room: roomOut, snapTo: (k, ma) => snapTo(WINDOWS[k], ma) },
     setSpan, selectWord, doUnselect, sel: () => SEL.length, selectShown: () => $('wSelect').classList.contains('absent') ? null : $('wSelect').textContent,
     measure: { open: measOpen, on: () => MEAS.on, ma: () => MEAS.ma && MEAS.ma.slice(), set: (j, ma) => { MEAS.ma[j] = ma; renderStretch(); }, text: () => MEAS.body ? MEAS.body.innerText : '', tool: () => MEAS.tool, word: measureWord },
-    seas: { on: () => SEAS.on, set: setSeas, strength: () => SEAS.name, setStrength: setSeaStrength, shelf: () => SHELF.on, setShelf, crust: () => SEAS.crust, setCrust, soft: () => SEAS.soft, setShores },
+    seas: { on: () => SEAS.on, set: setSeas, strength: () => SEAS.name, setStrength: setSeaStrength, one: () => SEAS.one, setOne: setOneSea, crust: () => SEAS.crust, setCrust, soft: () => SEAS.soft, setShores },
     tap: markAt, mark: () => state.mark, setMark, clearMark, doSelect, unitSpan, lit: litSpan, labelFor, setCities, setCoasts, setMarkers, build, lengthWord, agoWord, shortDate, spanWords, placeSelect,
     year: () => lab.ma, setYear, handleX, xOf, maOf, events: () => events, onLine: eventsOnLine, placed: placeEvents, tapEvent: id => { const e = events.find(x => x.id === id); if (e) tapEvent(e); return !!e; }, rec: () => know.event && know.event.rec, openMore: () => { if (know.event) openMore(know.event.rec); },
     fit: () => Object.assign({}, FIT), eventDate, agoParen, periodOf, count: { set: setCount, fromStart: () => COUNT.fromStart, yearWord, yearSpan, yearPhrase }, mapWord: () => $('wMap').textContent, full: { kind: FULL, on: isFull, page: setFullPage, touch: TOUCH }, nesting: k => nesting(WINDOWS[k]), handleWord: () => labelH.textContent, labels: () => [labelEls[1], labelH, labelEls[0], spanWord].map(el => el.textContent + ' @ ' + el.style.left + (el.style.visibility === 'hidden' ? ' (not drawn)' : '') + (el.classList.contains('up') ? ' (up)' : '')),
@@ -3160,7 +3183,7 @@
       onTap: (x, y) => (marking && earth ? markerTap(x, y) : cityTap(x, y) || mapTap(x, y))   // placing markers (step 5): a tap sets or deletes one; else a city's point shows or hides its name (step 10) and, on the globe, comes to the middle (step 10c); else, on the flat world, a tap goes back to the globe turned to that longitude (mapTap)
     });
     if (view.resetWord) view.resetWord.remove();   // step 10: no Reset: the Earth has two resting places instead (below)
-    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, onFlat: (on) => window.cwLab.flatWord(on), seas: true, seasStrength: window.cwLab.LOOK.seas.strengths[window.cwLab.seas.strength()], seasCrust: window.cwLab.seas.crust(), shelfColour: window.cwLab.LOOK.seas.bare, seasSoft: window.cwLab.seas.soft() });   // the shallow seas (20 Nov), at the strength the page opens on (step 11); step 12: the shores soft; step 12b: the flooded ground in the shelf's blue ('shelf'; a colour: step 12's grey; false: step 11's look)
+    earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, onFlat: (on) => window.cwLab.flatWord(on), seas: true, seasStrength: window.cwLab.LOOK.seas.strengths[window.cwLab.seas.strength()], seasCrust: window.cwLab.seas.crust(), shelfColour: window.cwLab.LOOK.seas.bare, oneSea: window.cwLab.seas.one(), seasSoft: window.cwLab.seas.soft() });   // the shallow seas (20 Nov), at the strength the page opens on (step 11); step 12: the shores soft; step 12b: the flooded ground in the shelf's blue ('shelf'; a colour: step 12's grey; false: step 11's look)
     if (Q.get('seas') === '0') earth.setSeas(false);
     // Step 10: the satellite picture. This page had never asked for it: the Earth's own default is the old ground, the
     // map's height-tinted picture, which paints high ground pale (the Himalaya and Tibet looked iced) and knows no ice
@@ -3593,7 +3616,7 @@
       gradeAt: age => earth.gradeFor(age),   // step 10b: the grade at an event's own year, for the date line of its panel
       setSeas: on => { earth.setSeas(on); view.redraw(); },   // the shallow seas (20 Nov; step 11: Show shallow seas / Hide shallow seas)
       setSeasStrength: v => { if (earth.setSeasStrength) { earth.setSeasStrength(v); view.redraw(); } },   // step 11: how strongly their blue lies over the land (bench)
-      setShelf: on => { if (earth.setShelf) earth.setShelf(on); },   // step 12b: Show shelf / Hide shelf
+      setOneSea: on => { if (earth.setOneSea) earth.setOneSea(on); },   // step 12c (bench): the sea, one blue / as before
       setSeasCrust: on => { if (earth.setSeasCrust) earth.setSeasCrust(on); }, setSeasSoft: on => { if (earth.setSeasSoft) earth.setSeasSoft(on); },   // step 12 (bench): the flooded crust in grey; the shorelines soft
       setPlaces: on => { cityOn = !!on; if (!cityOn) cityNamed = null; else loadCities().then(() => drawOverlay(true)); drawOverlay(true); },   // step 10: Show cities / Hide cities: the points
       ground: css => { view.renderer.setClearColor(new THREE.Color(css), 1); view.redraw(); },   // step 10: the colour round the Earth, parchment in Time and near-black in The World

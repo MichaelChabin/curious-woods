@@ -186,6 +186,7 @@
        seasCrust: false | true | '#hex' | 'shelf'   // 22 Nov: the flooded crust in a light grey under the blue (below); not there unless a page names it. 23 Nov: 'shelf', the flooded ground in the shelf's own blue
        seasSoft: false | true          // 22 Nov: the seas' edges soft (below); not there unless a page names it
       shelfColour: '#hex'             // 23 Nov: the pieces' shelf in this colour, whole, and setShelf(on) to hide it (below); not there unless a page names it
+      oneSea: false | true            // 24 Nov: past the seam the shelf and the shallow seas in the ocean's own colour at each point, whole (below); not there unless a page names it
      });
    Returns { group, setTime(ma), time(), grade() → { grade, why }, moltenPhase(), setGround('old'|'blue'), ground(),
    seaLevel() (metres, ≤ 0), icePairs(), setCoasts(on), coasts(),
@@ -243,7 +244,18 @@
    ground. setShelf(on) shows or hides it (hidden, the picture's sea inside a piece is clear, the sea ball alone);
    shelf() answers. It is the land's own paint, built in only for a page that names it; it takes the picture's sea
    inside a piece wherever that is, today's lakes and bays among it. The grey is kept as
-   it was built and is off: seasCrust: true or '#hex', or setSeasCrust(true), turns it on. seas() also answers shelf. */
+   it was built and is off: seasCrust: true or '#hex', or setSeasCrust(true), turns it on. seas() also answers shelf.
+   24 Nov 2026 (the Time lab's step 12c; Michael, withdrawing the ruling of 23 Nov: a shelf is under water and a shallow
+   sea is sea, so past the seam there is one sea). oneSea: true, setOneSea(on), oneSea(). The pieces' shelf (the
+   picture's sea inside a piece) and the flooded ground of the shallow seas are both painted whole in the sea ball's own
+   colour at that point (seaNode, the paint a piece's dissolve already uses), so neither can be told from the ocean
+   beside it and nothing lies twice where two pieces overlap. It is painted, not left clear, so a piece's shelf still
+   covers a piece drawn under it exactly as the wash did: what is land and what is sea does not change with the
+   colour. It comes in on the wash's own ramp past the seam (uWash) and the seas' own (uOn), so nothing snaps; this
+   side of the seam nothing is drawn, as before. setSeas(false) still hides the seaways only. setOneSea(false) gives
+   back whatever the page's other options paint (shelfColour, seasCrust), which are kept whole and untouched under
+   it: shelfColour and setShelf for the shelf's own colour, seasCrust: true or '#hex' for the grey. Built in only for
+   a page that names it. The shelf rim and the drowned wash of the guessed and invented ages are not touched. */
 import * as THREE from 'three';
 import { Fn, vec2, vec3, vec4, float, int, uniform, texture, uv, attribute, varying, positionView, positionWorld, modelViewMatrix,
          normalize, dot, cross, length, mix, smoothstep, clamp, abs, min, max, select, If, Discard, sRGBTransferEOTF, atan, asin, sqrt, fract, dFdx, dFdy,
@@ -1382,6 +1394,9 @@ export async function cwEarth(view, o = {}) {
   // of the wash, a feature of its own and never the seas' blue; uShelfOn: shown or hidden (setShelf)
   const canBare = typeof o.shelfColour === 'string', uShelfOn = uniform(1);
   let shelfOn = true;
+  // 24 Nov (o.oneSea; not there unless a page names it): past the seam the shelf and the shallow seas in the sea
+  // ball's own colour at each point, whole; uOne: 1 one sea, 0 the page's other paint (setOneSea)
+  const canOne = o.oneSea != null, uOne = uniform(o.oneSea ? 1 : 0);
   // close in, the ICE-6G ice is also filled at the view's own size (ICE_LOCAL px square over the lon/lat box in view, as the
   // map fills its outlines at the screen's), the box (west, south, width, height in degrees) and whether it is in use
   const uIceBox = uniform(new THREE.Vector4(-180, -90, 360, 180)), uIceLocal = uniform(0);
@@ -1573,8 +1588,10 @@ export async function cwEarth(view, o = {}) {
       const ia = min(ice0.mul(uIceW[0]).add(ice1.mul(uIceW[1])), 1).mul(0.94).mul(uGroundT).mul(select(belowSea, float(0), float(1)));
       col = mix(col, ICEF3, ia); sea = sea.mul(float(1).sub(ia));
       const washK = canBare ? uWash.mul(uShelfOn) : uWash;
-      col = mix(col, canBare ? rgb(o.shelfColour) : SHELF3, sea.mul(washK));
-      let alpha = float(1).sub(sea.mul(float(1).sub((canBare ? float(1) : SHELF_A).mul(washK))));   // this side of the seam the picture's sea is clear: the sea ball alone
+      const shelfPaint = canBare ? rgb(o.shelfColour) : SHELF3, shelfA = canBare ? float(1) : SHELF_A;
+      const oneK = canOne ? mix(washK, uWash, uOne) : washK;   // one sea: there whether or not the shelf's own colour is hidden
+      col = mix(col, canOne ? mix(shelfPaint, seaNode(fl), uOne) : shelfPaint, sea.mul(oneK));
+      let alpha = float(1).sub(sea.mul(float(1).sub((canOne ? mix(shelfA, float(1), uOne) : shelfA).mul(oneK))));   // this side of the seam the picture's sea is clear: the sea ball alone
       const oldA = uOld.mul(life);
       col = island ? mix(col, LIFT3, LIFT_A.mul(oldA)) : mix(col, SHELF3, DROWN_W.mul(oldA));
       // the dissolve into the sea round a piece's birth: only as the ground's look goes past the seam — this side of it a
@@ -1983,6 +2000,7 @@ export async function cwEarth(view, o = {}) {
           fin = mix(fin, mix(finish(seaNode(fl), fl), finish(SHELF3, fl), SHELF_A.mul(uWash)), uShelf);
           str = mix(str, float(1), uShelf);
         }
+        if (canOne) { fin = mix(fin, finish(seaNode(fl), fl), uOne); str = mix(str, float(1), uOne); }   // 24 Nov, one sea: the ocean's own colour at this point, whole
         return vec4(fin, wet.mul(uOn).mul(str).mul(lifeNode()));
       })();
       m.colorNode = out.rgb; m.opacityNode = out.a;
@@ -2573,6 +2591,7 @@ export async function cwEarth(view, o = {}) {
     setSeasStrength: v => { if (!seaLayer) return; seaLayer.uStr.value = Math.max(0, Math.min(1, +v)); view.redraw(); },   // 21 Nov: 1 is the seas as they came
     setSeasCrust: on => { if (!seaLayer || !seaLayer.canCrust) return; seaLayer.uShelf.value = on === 'shelf' ? 1 : 0; seaLayer.uCrust.value = on && on !== 'shelf' ? 1 : 0; view.redraw(); },   // 22 Nov: the flooded crust in grey (only where the page named o.seasCrust); 23 Nov: 'shelf', as the shelf is painted
     setShelf: on => { if (!canBare) return; shelfOn = !!on; uShelfOn.value = shelfOn ? 1 : 0; view.redraw(); }, shelf: () => canBare ? { on: shelfOn, colour: o.shelfColour } : null,   // 23 Nov: the pieces' shelf shown or hidden (only where the page named o.shelfColour)
+    setOneSea: on => { if (!canOne) return; uOne.value = on ? 1 : 0; view.redraw(); }, oneSea: () => canOne ? uOne.value > 0 : null,   // 24 Nov: the shelf and the shallow seas as the ocean (only where the page named o.oneSea)
     setSeasSoft: on => { if (!seaLayer || !seaLayer.canSoft) return; seaLayer.uSoft.value = on ? 1 : 0; view.redraw(); },      // 22 Nov: the seas' edges soft (only where the page named o.seasSoft)
     seas: () => seaLayer ? { on: seasOn, crust: seaLayer.canCrust && seaLayer.uCrust.value > 0, shelf: seaLayer.canCrust && seaLayer.uShelf.value > 0, soft: seaLayer.canSoft && seaLayer.uSoft.value > 0, strength: seaLayer.uStr.value, showing: seasOn && seaLayer.uOn.value > 0 ? seaLayer.uOn.value : 0, between: seasWant ? [seasWant.a[0], seasWant.b[0]] : null, ages: seaLayer.list.map(a => a[0]), credit: seasFile.credit || '' } : null,
     dispose: () => {
