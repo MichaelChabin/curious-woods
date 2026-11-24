@@ -1,5 +1,5 @@
 ---
-status: Report, 23 Nov 2026, by Claude Code, on `claude/Prompt-Brain-Lab-Rulings-01.md` (written 13 Nov, run 23 Nov). Vault work only. Committed on Michael's word, 23 Nov 2026; not pushed.
+status: Report, 23 Nov 2026, by Claude Code, on `claude/Prompt-Brain-Lab-Rulings-01.md` (written 13 Nov, run 23 Nov). Vault work only. Committed and pushed on Michael's word, 23 Nov 2026 (`e4d5fba3`). A follow-up commit of this session, `f986e3a1`, was a mistake: see the correction at the head of `00-BOARD.md`.
 role: What changed, file by file; what was not done; and every reference left.
 related: claude/Brain-Lab-Map.md (the source), claude/Prompt-Brain-Lab-Rulings-01.md, 00-BOARD.md
 ---
@@ -11,7 +11,7 @@ related: claude/Brain-Lab-Map.md (the source), claude/Prompt-Brain-Lab-Rulings-0
 1. **`Spec-Mirror-Star.md` was held, then archived on your word.** The prompt says to open it and to stop if it holds anything the Trace spec does not. It did, and I stopped. You said "Lift context first" the same day, so what it held is now in `Spec-Trace-Bench.md` under *The star: what the first spec said*, and the file is in `99-ARCHIVE/Superseded-Specs/`. The detail is below.
 2. **The `lab` facet has no word for The Brain.** The closed vocabulary is `euclid`, `number-theory`, `codes-bases-modulus`, `perception`, `none`. I added nothing. Proposed for your approval: a value `brain`.
 3. **Ruling 2 and the ruling of 25 Sept say different things about the ensō.** On 25 Sept the ensō opens her list (`practice.html`). On 13 Nov it "opens straight onto today's sitting". I carried the newer ruling as written and left the 25 Sept section alone. If today's sitting is her list offering what is ready, the two agree; if it is the tapping, the 25 Sept section and the line "nothing may promise that" want amending. I did not decide this.
-4. **Committed on your word, 23 Nov; not pushed.** One other session has uncommitted work in `claude/Ideas-Ledger.md` (about 395 lines), `claude/Prompt-Pool.md`, `claude/Report-3D-Shelf-Oct26.md` and two files under `cw-deploys/`. The commit holds only this session's lines; in the Ideas Ledger that is the seven changed lines of the five entries, and the other session's work is still uncommitted.
+4. **Committed and pushed on your word, 23 Nov (`e4d5fba3`).** One other session has uncommitted work in `claude/Ideas-Ledger.md` (about 395 lines), `claude/Prompt-Pool.md`, `claude/Report-3D-Shelf-Oct26.md` and two files under `cw-deploys/`. The commit holds only this session's lines; in the Ideas Ledger that is the seven changed lines of the five entries, and the other session's work is still uncommitted.
 
 ## Canonical files changed (for the manager chat to refresh in the project)
 
