@@ -1,5 +1,5 @@
 ---
-status: Report, 25 Nov 2026, by a Claude Code session, on Michael's prompt "Loose ends, 25 Nov 2026" (from the "Woods this week" chat). Two commits made on the prompt's own instructions (`dbc78e9b`, `25c09f60`); everything else in the working tree, waiting for Michael's word. Nothing pushed.
+status: Report, 25 Nov 2026, by a Claude Code session, on Michael's prompt "Loose ends, 25 Nov 2026" (from the "Woods this week" chat). Two commits made on the prompt's own instructions (`dbc78e9b`, `25c09f60`); the rest committed (`0ac08d19`) and all of it pushed on Michael's word, "Commit and push", 25 Nov 2026.
 role: What was done and what was skipped for each of the eight loose ends.
 related: 00-BOARD.md, Life-Trial-01.md, Events-Deep-09.md, Ruling-Dates-01.md, Report-Brain-Lab-Rulings-01.md, Report-Build-Brain-Bench-01.md, Archive/Editor-Pass-11-02.md, Elements-Batch-01.md, Ideas-Ledger.md
 updated: 2026-11-25
