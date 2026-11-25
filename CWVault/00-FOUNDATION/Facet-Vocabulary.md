@@ -108,10 +108,14 @@ not `art` and not `engineering`; the distinction is load-bearing for the Glass s
 
 ## `lab` — optional, exactly one
 
-`euclid` · `number-theory` · `codes-bases-modulus` · `perception` · `none`
+`euclid` · `number-theory` · `codes-bases-modulus` · `perception` · `brain` · `none`
 
 *Added 2026-08-05: `perception` — colour, pitch, and rhythm discrimination share one
 measurement harness and therefore constitute a Lab, not three interactives.*
+
+*Added 2026-11-25: `brain` — The Brain, the lab of four views (`claude/Brain-Lab-Map.md`), ruled by
+Michael 25 Nov 2026 (`claude/Report-Brain-Lab-Rulings-01.md`, point 2). Only items that belong to The
+Brain take it; `perception` stays as it is.*
 
 ## `status` — required, exactly one
 

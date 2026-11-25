@@ -1,6 +1,6 @@
 ---
 title: Red Metal
-status: Draft 1 — 24 Oct 2026. Words only, for Michael's reading. Nothing built.
+status: approved — approved by Michael on the Pool Desk, 23 Nov 2026. Draft 1 — 24 Oct 2026. Words only, for Michael's reading. Nothing built.
 date-line: "About 3,500 years after the ice, or about 6500 BCE"
 placement: as Starry Night (tool words in the left column, pictures and stacks full width, World at the end)
 timeline-line: "Around Lake Superior the copper lay in the ground already metal. People there learned to hammer it and soften it with fire, four thousand years before the pyramids."

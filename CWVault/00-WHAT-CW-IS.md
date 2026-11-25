@@ -11,7 +11,7 @@ Curious Woods is a place where a curious ten-year-old reads stories and, by foll
 
 Her home is a gallery. Stories and tools hang there like paintings in a show: each in a coloured frame that suits it, a mat, its name under it in one and the same type, sizes varying as paintings do. The wall is rehung every visit, so it is always appealing and never the same; a story she has finished comes down unless she keeps it, and another goes up. Below the wall, Practice, and three small plaques: Saved Stories, Labs, Experiments. That's all that's there.
 
-*After the Ice* hangs in the gallery too: a copper dot leaves year 0, when the ice let go, and rolls up the years, leaving events behind it, including the stories on the wall. She can watch it if she likes, stop it, tap anything, and open a story from it or from its icon. It does not run in front of every story; that risked losing her. Her copy accumulates every event she has ever been shown, and zooms. That is her map of history. (Where exactly it hangs and how it starts is still open.)
+*The Time Machine* hangs in the gallery too, in the place of *After the Ice*, whose page can go (Michael, 15 Nov 2026). What follows describes After the Ice and is still to be rewritten for the Time Machine: a copper dot leaves year 0, when the ice let go, and rolls up the years, leaving events behind it, including the stories on the wall. She can watch it if she likes, stop it, tap anything, and open a story from it or from its icon. It does not run in front of every story; that risked losing her. Her copy accumulates every event she has ever been shown, and zooms. That is her map of history. (Where exactly it hangs and how it starts is still open.)
 
 The story itself is a story, told straight through, in the form of *The Man Who Learned Without Knowing*: the interactives sit with the text that calls them (in a left panel, beside each passage, or across the page; the story says which, per the Rulings), links go anywhere (Mary Shelley to Tambora to Faraday), and a "More:" at the end holds the depth. A name she doesn't know (Archimedes) gets two sentences in place and a button to add him to her list. When a story needs a tool, the tool appears: Glass for multiplication, Geometry for constructions, Sound, the brain. When she wants to keep something, Remember appears, and what she keeps goes on her practice list. The interface is earned, never ad hoc.
 
@@ -31,7 +31,7 @@ Math and science are not privileged. They arrive because they're interesting and
 
 *Superseded 17 Nov 2026 by Ruling-Dates-01.md.*
 
-*The timeline.* After the Ice, and later its deep-time cousins, each with its own pool and scale. After-the-ice years live on the timeline, where they are distances. In prose, a year is written the ordinary way, 1808, and placed beside something she already knows ("thirteen years after Mozart died").
+*The timeline.* The Time Machine, in the place of After the Ice, whose page can go (Michael, 15 Nov 2026), and its deep-time cousins, each with its own pool and scale. After-the-ice years live on the timeline, where they are distances. In prose, a year is written the ordinary way, 1808, and placed beside something she already knows ("thirteen years after Mozart died").
 
 *Tools on the plane.* Glass (multiplication), Glass Geometry, Sound, and whatever the plane can carry next. Every perceptual question gets a bench in `experiments/` before anyone argues.
 

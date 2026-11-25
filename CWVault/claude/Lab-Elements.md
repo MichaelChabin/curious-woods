@@ -1,5 +1,5 @@
 ---
-status: Draft — 24 Oct 2026, from two chats with Michael; proposed until he says yes. Rulings marked.
+status: Draft — 24 Oct 2026, from two chats with Michael; proposed until he says yes. Rulings marked. Amended 25 Nov 2026 (Elements-Batch-01.md's changes 6 to 8, and editor pass 11's addition on the universe bar; Editor-Pass-11-02.md).
 role: Lab spec, in the Time Machine sense — a standalone app that stories borrow from
 related: Laws-Macroscopic.md, Schema-Elements.md, The-Intuitions.md, Lab-The-Ship.md, World-Theophilus.md
 ---
@@ -48,9 +48,9 @@ The tiles never change; only where they stand. The child picks a sort and watche
 
 Every tile opens to the same shape, so no two entries can disagree about what matters. The record is specified in Schema-Elements.md, with carbon worked.
 
-1. **How much.** In the universe, in the Earth, in you. Three bars.
+1. **How much.** In the universe, in the Earth, in you. Three bars. The universe bar is measured at the Sun's surface, the best sample there is; the lab says so once, where the bars are explained.
 2. **Birth.** Which furnace made it, and roughly what it took (below).
-3. **Who first held it as itself, and when.** Aluminium: the most common metal in the crust, and in 1850 rarer than gold.
+3. **Who first held it as itself, and when.** Aluminium: the most common metal in the crust, and in the 1850s priced like silver.
 4. **Its rulers.** The common comparisons, below.
 5. **Its spectrum.** The lines it shows when it glows.
 6. **Stories that met it.**
@@ -78,9 +78,9 @@ Melting and boiling points sit on this ruler too. Where a child's hand stops (ab
 **Birth: what kind of star.** Rough but true:
 
 - Hydrogen, helium, a little lithium: the Big Bang itself.
-- Carbon, nitrogen, oxygen: stars of about one to eight suns, late in life, which then shed their outer layers and give the stuff away.
-- Everything up to iron: stars of more than about eight suns, which build the elements in shells and then explode.
-- Most of the heavy ones, gold and uranium among them: the explosions themselves, and, we now think, the collision of two dead stars' cores. Gold is mostly from the collisions.
+- Carbon and nitrogen: stars of about one to eight suns, late in life, which then shed their outer layers and give the stuff away (about half the carbon, about three quarters of the nitrogen; Kobayashi 2020). Oxygen comes almost all from the bigger stars.
+- Everything up to iron: stars of more than about eight suns, which build the elements in shells and then explode; about half the iron instead comes from exploding white dwarfs, which the lab files under the last bin.
+- Most of the heavy ones, gold and uranium among them: the explosions themselves, and, we now think, the collision of two dead stars' cores. Gold is mostly from the collisions. The `collisions` bin also holds exploding white dwarfs (Type Ia supernovae), which make about half of all iron.
 
 So the "stellar type" sort is really three or four bins, and the tile for gold should say that most of the gold on Earth was made in an event a child can picture: two neutron stars spiralling together.
 

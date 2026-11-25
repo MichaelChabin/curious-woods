@@ -594,7 +594,7 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** Nothing known.
 **Source.** Michael, 1 Nov, the "recent rows" chat.
 
-### The glass, painted by the story (working name)   · 1 Nov 2026 · loose
+### The glass, painted by the story (working name)   · 1 Nov 2026 · candidate
 **Idea.** Michael: the window's glass is dynamic. A story colours it with eras, dynasties, ice and warmth. At the end of a story ("the world of Van Gogh") it may stay up, set to the story's span, beside the timeline and globe, for context.
 **Where it sits.** Timelines and every story that ends on its world.
 **Opens.** Each story's world placed in the whole at a glance; the same window speaking many subjects.
@@ -748,6 +748,102 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** The scene makes claims too: plants and ground need the same checking as the animal. The burrow is argued, and a model that goes down one makes it look settled unless the note says so.
 **Source.** Chat of 23 Nov 2026. Michael asked for Lystrosaurus "in a different kind of environment"; the button and burrow are Claude's. Artifact *Lystrosaurus, a model to walk around*.
 
+### A glass brain from a real atlas   · 15 Nov 2026 · ruled
+**Idea.** One brain for every story: the Allen Human Reference Atlas, as HuBMAP's 3D model, drawn as clear glass with inner parts partly transparent and firm-edged. Parts light when asked; an amber signal runs along the true road from the right eye, divides at the chiasm, and hands off at the switchboard.
+**Where it sits.** The Brain lab, brain view. Built as *The brain bench* (`experiments/brain-bench.html`, live 18 Nov); model and tables in `cw-deploys/models/brain/`.
+**Opens.** Precision the painted brain could never have: true shapes, true roads, any of 283 parts on call from any page.
+**Costs.** No eyes, optic nerve, head or one-piece cortex in the atlas; soft folds. Rulings in `Handoff-Brain-Lab-01.md`.
+**Source.** Michael, from an Allen Institute video, 14 to 15 Nov; atlas found and surveyed by Claude.
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
+
+### Three names for every part   · 15 Nov 2026 · ruled
+**Idea.** Each part keeps the atlas's own name, untouched. CW's names sit on top in a separate table: ours ("the switchboard"), the common one ("thalamus"), the atlas's small beneath. Each match marked true part, loose fit, or placed by hand.
+**Where it sits.** The Brain lab; `brain-names.json`.
+**Opens.** One CW name can cover many parts and one part many names; a new story finds any part under its proper name; the page can say honestly which matches are ours.
+**Costs.** 111 proposed common names wait for Michael's reading. Conscious thought is unruled.
+**Source.** Michael and Claude, 15 Nov. Michael named the IPS as an example.
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
+
+### The brain in the corner (working name)   · 18 Nov 2026 · candidate
+**Idea.** Anything she does that has a known pattern in the brain can show on it. A small glass brain in the corner of any lab or story shows the parts people use for what she is doing now: building with circles lights the parietal network around the IPS, not the language areas (Amalric and Dehaene 2016).
+**Where it sits.** Between labs: the Brain lab as a service to every other lab. Each lab or story carries an activity tag; the brain answers "what am I doing now?".
+**Opens.** The brain stops being one lab among six and becomes a companion to all of them. H.M.'s story shows memory in two places; the Necker cube can point to its parts, with a word that the "where" is less settled.
+**Costs.** Must say plainly it is what studies found in people, never a reading of her brain. Unasked: always in the labs, or only when a story calls it? Start with about twenty curated activities.
+**Source.** Michael, 18 Nov ("connected to anything a child does that generates a particular neural pattern"); the corner and the tags are Claude's.
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
+
+### Her record on the brain (working name)   · 18 Nov 2026 · candidate
+**Idea.** Everything she has done in the Woods leaves a faint glow on the glass brain, so over months it fills in: a map of where her time has gone.
+**Where it sits.** The Brain lab, its second door (the first is by place: tap a part).
+**Opens.** Something she made and can share. Answers access without a catalogue.
+**Costs.** Needs the line "these are the parts people use for the things you've done". Needs the activity tags, and somewhere to keep what she has done.
+**Source.** Claude, 18 Nov; Michael: "I really like your idea of viewing what the child has learned in the brain."
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
+
+### Open activity maps on the glass (working name)   · 18 Nov 2026 · candidate
+**Idea.** Lay published maps of brain activity on the glass brain: NeuroVault (CC0) and Neurosynth (meta-analyses of 1,334 terms from about 14,000 studies), both in the standard space the Allen atlas was drawn in. Dehaene's own maps may be on NeuroVault. His book *Seeing the Mind* (2023) is copyrighted, but is a guide to which findings matter.
+**Where it sits.** The Brain lab; feeds the corner and her record.
+**Opens.** Real data, many studies' worth, behind every glow.
+**Costs.** The maps are averages and blurry; Neurosynth's word-to-place links are coarse. Not yet tried on the glass: a survey prompt was proposed.
+**Source.** Michael asked how well CW can show Dehaene's data, 18 Nov; Claude found the open sources.
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
+
+### Roads (working name)   · 18 Nov 2026 · loose
+**Idea.** The eye's road is one of about six: hearing (ear, brainstem, its own relay in the switchboard, hearing cortex), touch (fingertip, spinal cord, another relay, touch strip), moving (strip to hand), and the hot-stove reflex that pulls the hand back before the signal reaches the brain.
+**Where it sits.** The Brain lab, brain view; most of the old page's ten things are roads.
+**Opens.** With maps, what makes the lab a complete tool rather than a viewer, as the ship's path does for the Time Lab.
+**Costs.** The atlas has the relays but no body: a spinal cord, hand and ear would be drawn by hand, so the head shell grows into a faint body.
+**Source.** Claude, 18 Nov, answering Michael's question about what makes it complete.
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
+
+### Guess the road first (working name)   · 18 Nov 2026 · loose
+**Idea.** Before a signal runs, she draws the route she thinks it takes; then the true one runs beside hers.
+**Where it sits.** Roads.
+**Opens.** Almost everyone guesses the eye's road wrong. Fits Michael's "an explorer who can't guess never moves".
+**Costs.** A drawing gesture in 3D on a phone; might be a choice among a few routes instead.
+**Source.** Claude, 18 Nov.
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
+
+### Maps inside the brain   · 18 Nov 2026 · loose
+**Idea.** Each sense keeps a map: the body from toes to tongue along the touch strip (lips and fingers huge), notes from low to high along the hearing cortex, her field of vision on the back of the head, left half of the world on the right side. She plays them: touch a spot on a hand, its place lights; play a note, a spot slides along.
+**Where it sits.** The Brain lab, brain view. Source: Schwarzlose, *Brainscapes*.
+**Opens.** The brain answering her senses, not just being looked at. Claude's pick for the most significant feature.
+**Costs.** The maps lie inside folds; showing them on soft-folded glass needs care. Roads or maps first is Michael's to say.
+**Source.** Claude, 18 Nov, answering Michael's question about touch and hearing.
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
+
+### Zoom from brain to neuron   · 18 Nov 2026 · loose
+**Idea.** From the glass brain down to a fold, a column of cells, then one neuron, where the pond's creatures and *Two eyes, two oars* wait.
+**Where it sits.** Joins the cell view and the brain view of Brain-Lab-Map.
+**Opens.** One continuous picture from the creature to the brain.
+**Costs.** Each level is a drawing of its own; a ladder of scales (see *Big and Small*) might carry it.
+**Source.** Claude, 18 Nov.
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
+
+### Other brains, and growth   · 18 Nov 2026 · loose
+**Idea.** Mouse, macaque and marmoset brains beside ours (BICAN's atlases are open), meeting the Time Lab on the deep timeline; and the brain at birth, at ten, and with practice.
+**Where it sits.** The Brain lab; the deep timeline.
+**Opens.** The neuron series' "variety across animals", and the series map's "brain that rebuilds itself".
+**Costs.** Different atlases, different looks; licences per atlas.
+**Source.** Claude, 18 Nov.
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
+
+### Random walks in three dimensions (working name)   · 2 Nov 2026 · loose
+**Idea.** Michael: "Random walks in 3 space are different." Pólya's result is the difference: a walker on a city's streets is sure to get home eventually; a walker in three dimensions may never come back. She watches the bird drift off instead of being told. The same walk runs inside the Sun: light from the core bounces for something like ten thousand to a hundred thousand years (estimates vary that much), then reaches us in eight minutes.
+**Where it sits.** Random walks are already a level in the geometry lab's sequence (the "one core and a sequence of levels" entry); this is its 3D sequel. The desk's story *The Drunk Man and the Drunk Bird* is the door.
+**Opens.** One gesture shared by the geometry lab, the Star lab and the Furnace. An honest edge: the photon's time is argued.
+**Costs.** Needs 2D random walks first, so the 3D surprise lands. The photon figure wants checking before any story uses it.
+**Source.** Michael, 2 Nov, Cowork; the Pólya and Sun connections are Claude's.
+*Merged 25 Nov 2026 from Ideas-Pending-2026-11-02.md.*
+
+### Glass 900 years ago as the spine's first step (working name)   · 2 Nov 2026 · loose
+**Idea.** Michael: Glass 900 "really does seem to be the first step in the geometry to arithmetic to algebra and all the rest." It may be done or nearly so, but some of its changes (the table, corners that make points, numbers on the axes) need merging into the larger geometry definition.
+**Where it sits.** Between the Glass boards and the grid; meets Construct Coordinates and Spec-Glass-Shell.md.
+**Opens.** One kit for every glass board, so a fraction is carried the same way everywhere.
+**Costs.** A sitting to say what belongs to the whole geometry and what stays with this board. Spec-Glass-Shell is unread, as far as is known.
+**Source.** Michael, 2 Nov, Cowork.
+*Merged 25 Nov 2026 from Ideas-Pending-2026-11-02.md.*
+
 ## Stories
 
 ### The edge of knowing (working name)   · 5 Oct 2026 · candidate
@@ -809,6 +905,7 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 *Later, 25 Oct (Cowork):* Michael has done stellar evolution with kids; they handle one element burning into another if they can see it. He pictures nested spheres expanding and contracting in step, on the same cut-away 3D object as the early Earth.
 *Same chat:* the reason it matters now is the Elements lab: every tile has a creation story, so the star is part of each tile's Birth, and spheres for nuclei could be too (Michael). Claude's sketch: one 3D "furnace" piece per birth bin, a magnifier from the star's shell down to nuclei as clumps of balls; the common elements step by four (C, O, Mg, Si, S, Ca) because big stars build by adding helium; star core to star, and nucleus to atom, are both roughly 100,000 to one.
 *Later, 23 Nov (Cowork, after editor pass 11):* Michael's sense, while rewriting carbon, that the carbon a Sun-like star gives away is not made at its centre but in a layer farther out. Claude's answer, from its own knowledge and unchecked: that is right. The carbon made at the centre stays there and ends as the white dwarf; the carbon that escapes is made later in a thin helium-burning shell around that core, and is stirred up to the surface before the star sheds its outer layers. Two shells in a small star, many in a big one. A story of its own, or the first act of this one.
+*Later, 2 Nov (Cowork):* Michael: with 3D, stellar evolution "becomes gorgeous" and simulating element production "becomes possible." See *3D widens what CW can attempt*. *Merged 25 Nov 2026 from Ideas-Pending-2026-11-02.md.*
 
 ### Listening to the Earth: the shadow and Lehmann (working name)   · 25 Oct 2026 · candidate
 **Idea.** The third Earth-as-a-ruler story, the listening one. A full slice through the Earth; she taps the rim to start a quake; push (P) and shake (S) waves spread as rings, bending as rock gets faster with depth. S stops at the liquid core, P bends, and a shadow appears on the far side. Lehmann (1936) saw faint P waves inside the shadow and found the solid inner core. One switch, *solid all the way through*, makes the shadow vanish. Listening posts can play their squiggles as sound, sped up.
@@ -833,7 +930,7 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 
 **More journeys (30 Oct, Michael and Claude).** Shackleton's *Endurance* is well recorded: Worsley's near-daily positions, the *James Caird* logbook at the Canterbury Museum, the wreck found in 2022 about four miles from where he put it; the record itself is a "how do we know?" story. Others: Bligh's open-boat voyage after the *Bounty* mutiny (1789, about 3,600 nautical miles in 47 days); HMS *Challenger* (1872–76, the first soundings of the deep sea, a partner for Drain the Sea); Zheng He's treasure fleets (1405–33); Magellan and Elcano (1519–22, the day "lost" to the date line); Darwin's *Beagle*; Polynesian wayfinding (Tupaia; *Hōkūleʻa*, 1976); Nansen's *Fram* drifting in the Arctic ice on purpose (1893–96); Ibn Battuta (1325–54); Nellie Bly (1889, 72 days); animal journeys (the Arctic tern pole to pole; eels to the Sargasso Sea). **A pair:** Xuanzang's real walk to India and back (629–645) beside *Journey to the West*, the novel it became, with Monkey, Pigsy and Sandy: the real road on the globe, the legend along it, and which parts are real. Michael is skipping Columbus.
 
-### Milanković in Budapest (working name)   · 1 Nov 2026 · loose
+### Milanković in Budapest (working name)   · 1 Nov 2026 · candidate
 **Idea.** Arrested on his honeymoon in 1914, interned at Nezsider, then let out to Budapest under police watch, Milutin Milanković worked in the Academy's library and worked out how the Earth's orbit sets the sunlight that brings the ice ages. Vindicated by sea-floor mud in 1976. The twist: the 100,000-year rhythm she sees in the window is the part his theory explains least well, still argued.
 **Where it sits.** Stories; opened from the *last million years* window.
 **Opens.** The window's rhythm gets a person and a puzzle that is still open.
@@ -874,6 +971,14 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** A true case of the difference between knowing that a thing is so and seeing why, which is the house rule about constructions. The first event in which Claude is a character. A reason to say what Riemann guessed about the primes in words she can hold.
 **Costs.** Nothing is settled: the event needs "may have", its year, and a Watch line checked often (whether the proof stands, whether Masullo's does, whether anyone has explained it). Mathematicians are divided about how it was done, and each side gets its own reasons. Claude writing about Claude wants a reader who is not Claude. The hypothesis itself cannot be half-explained.
 **Source.** Michael, 23 Nov, from the *Science* article of that week; the event was Claude's suggestion, the telescope Eileen's.
+
+### The seam you can't find (working name)   · 18 Nov 2026 · loose
+**Idea.** Each eye's view is cut down the middle at the chiasm, so each half of the brain sees the opposite half of the world, through both eyes, and she never notices the join. Sequel: the split-brain patients of the 1960s, whose halves could no longer tell each other what they had seen.
+**Where it sits.** The brain stories; the bench's signal already shows it.
+**Opens.** Michael, on the bench: he had not known the right eye's signal reaches both halves. Most people don't.
+**Costs.** The fibres don't split; about half cross. Split-brain material needs care.
+**Source.** Claude, 18 Nov, after Michael's surprise.
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
 
 ## Practice and Maya
 
@@ -1036,3 +1141,19 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** Runs about half again as long as the 150 to 250 words the schema allows. Bends the standard's rule against sentences that admire themselves, so the standard needs a line saying what is wanted, or editors will flatten it. Each added detail (the carbon rising to the outer layers, Tennant weighing the gas) must be checked before it ships. Carbon's wording is Michael's by ruling.
 **Source.** Michael, 23 Nov, in the editor pass 11 session; the Kipling draft was Claude's, the trimmed register and the Lavoisier sentence Michael's.
 *Ruled the same evening:* Ruling-Voice-01.md. The test is whether it is read; the voice is never finished.
+
+### One store, opened at a moment (working name)   · 18 Nov 2026 · loose
+**Idea.** The Time Lab opening at an event, year and place, and the brain answering "what am I doing now?", are the same mechanism: a big store of things and a page that opens at the right one. Build it once.
+**Where it sits.** Across the Time Lab and the Brain lab (Michael's two focuses from 18 Nov).
+**Opens.** Access without catalogues in both labs; stories call either the same way.
+**Costs.** The two stores differ (events with dates and places; activities with brain parts).
+**Source.** Claude, 18 Nov.
+*Merged 25 Nov 2026 from Ideas-Ledger-02.md.*
+
+### 3D widens what CW can attempt (working name)   · 2 Nov 2026 · loose
+**Idea.** Michael, after the Earth bench: finding how good Claude is at 3D "changes things, or expands them." Subjects that looked like diagrams become things she can watch and run: random walks in three dimensions, stellar evolution ("gorgeous"), the making of the elements.
+**Where it sits.** Across the whole; first felt on the 3D Earth (Spec-Earth-3D.md) and the 3D shelf.
+**Opens.** Labs that were out of reach. A reason to reread the three chat prompts of 26 Oct (Star lab, Furnace, physics shelf), which were written before he knew what 3D could do.
+**Costs.** Every new 3D piece pulls on the same small amount of Michael's time as the Earth does. Phones stay low priority.
+**Source.** Michael, 2 Nov, Cowork chat after The Woods This Week.
+*Merged 25 Nov 2026 from Ideas-Pending-2026-11-02.md.*

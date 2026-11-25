@@ -21,7 +21,7 @@
     "section": "1. The ice lets go"
    },
    "label": "Ice lets go",
-   "year": -10000,
+   "year": -9700,
    "yearAbout": true,
    "precision": "century",
    "kindRaw": "earth event",
@@ -35,15 +35,15 @@
    "replaces": [
     "ice"
    ],
-   "summary": "About 10,000 BCE. After a hundred thousand years of cold, the world warmed for good, and it happened fast. Ice drilled from Greenland shows the warming took only a few decades. This line starts there.",
+   "summary": "About 9700 BCE. After a hundred thousand years of cold, the world warmed for good, and it happened fast. Ice drilled from Greenland shows the warming took only a few decades. This line starts there.",
    "more": {
     "dateLine": {
      "ordinary": {
-      "text": "10,000 BCE",
+      "text": "9700 BCE",
       "about": true
      },
      "calendar": {
-      "year": 10000,
+      "year": 9700,
       "bce": true
      }
     },
@@ -1762,7 +1762,7 @@
    "replaces": [
     "olmec"
    ],
-   "summary": "Before 900 BCE. Near the Gulf coast of Mexico, a people we call the Olmec carved giant stone heads, each a different face in a different helmet. Nobody knows whose faces they are.",
+   "summary": "Before 900 BCE (more than 2,900 years ago). Near the Gulf coast of Mexico, a people we call the Olmec carved giant stone heads, each a different face in a different helmet. Nobody knows whose faces they are.",
    "more": {
     "dateLine": {
      "ordinary": {

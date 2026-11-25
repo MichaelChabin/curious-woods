@@ -10,16 +10,16 @@ Written in round 2 of Prompt-Upgrade-Timeline-Events.md and checked in round 3. 
 ## 1. The ice lets go
 
 **Label:** Ice lets go
-**Year:** about −10000 · precision: century · kind: earth event
+**Year:** about −9700 · precision: century · kind: earth event
 **Place:** the NorthGRIP drill site, central Greenland (75.10 N, 42.32 W), where the ice that records the change was drilled
 **Replaces:** `ice`
 
 **Summary (35 words)**
-About 10,000 BCE (about 12,000 years ago). After a hundred thousand years of cold, the world warmed for good, and it happened fast. Ice drilled from Greenland shows the warming took only a few decades. This line starts there. *More*
+About 9700 BCE (about 11,700 years ago). After a hundred thousand years of cold, the world warmed for good, and it happened fast. Ice drilled from Greenland shows the warming took only a few decades. This line starts there. *More*
 
 **More (319 words)**
 ```
-About 10,000 BCE (about 12,000 years ago)
+About 9700 BCE (about 11,700 years ago)
 ```
 
 In a freezer near Copenhagen there are long sticks of ice, a little thicker than your arm. They were drilled out of the ice that covers Greenland, piece after piece, from the top all the way down to the rock, more than three kilometres below.

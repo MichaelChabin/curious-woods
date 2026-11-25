@@ -25,6 +25,10 @@ Stages, from Publishing-a-Story: **written** (Michael has said yes to the words)
 
 (none)
 
+## Written, not built (Michael has said yes to the words)
+
+*Red Metal* — the copper of Lake Superior, about 6500 BCE; opens Cu for the Elements lab. Words approved by Michael on the Pool Desk, 23 Nov 2026 (`claude/Story-Copper-Red-Metal.md`, draft 1 of 24 Oct). Nothing built; next is a build prompt, on Michael's word.
+
 ## Waiting for Michael's yes to the words (stage 1)
 
 *Have You Thought of a Story?* — Frankenstein hub story, 1816. Draft 1, 15 Sept. Open: one sentence near the end, a prose anchor for the year, which picture.

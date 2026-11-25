@@ -239,7 +239,7 @@ Tutankhamun's dagger is in the Grand Egyptian Museum, near Cairo. Its blade has 
 **Replaces:** `olmec`
 
 **Summary (34 words)**
-Before 900 BCE (about 3,100 years ago). Near the Gulf coast of Mexico, a people we call the Olmec carved giant stone heads, each a different face in a different helmet. Nobody knows whose faces they are. *More*
+Before 900 BCE (more than 2,900 years ago). Near the Gulf coast of Mexico, a people we call the Olmec carved giant stone heads, each a different face in a different helmet. Nobody knows whose faces they are. *More*
 
 **More (300 words)**
 

@@ -151,3 +151,12 @@ Michael said "Commit the working tree changes" the same day. Committed, this ses
 - `cw-deploys/models/brain/brain-names.json`: `908a96371ef1849c7dc23e7f6a9635646bf7ce6a7003f3f842254c391009f58c`
 - `cw-deploys/models/brain/README.md`: `54927ccc043a3cfb569064e076a5159c9b7ebbe3c4e6df0a2bc59bc572205c59`
 - `cw-deploys/js/vendor/three-r186/three.module.js`: `9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea`
+
+## Decided by default, 19 to 20 Nov 2026
+
+Added 25 Nov 2026, after the checksums so that the sum above still holds. Michael did not rule on four small choices in this report; on 25 Nov ("I agree with all your recommendations", the "Woods this week" chat) they were recorded as decided, each standing as built. No code changed.
+
+1. **The switchboard while the signal runs: as built.** One button at a time, so lighting the signal clears the switchboard: the thalamus is not lit as a whole while the signal runs, and only the two geniculate bodies inside it turn amber at the handoff. (The prompt of 25 Nov put this as "the switchboard stays lit while the signal runs". That is not what the page does; the page is what stands. Recorded so, for Michael to correct.)
+2. **The 13 mm straight crossing stays,** from each geniculate body to the atlas's radiation, drawn by hand and shown as dots.
+3. **The back of the head stays** as the end's name, though the fold is about 25 mm in from the back surface.
+4. **Conscious thought stays unplaced:** a loose fit, not ruled; its candidates stay in the names table.

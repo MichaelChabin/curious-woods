@@ -134,7 +134,7 @@ Three skeletons cover most brain-series interactives: Flash, Creep, Trace (Spec-
 A story's World section opens on the world as it was in the story's own year. The layers that change with time — the sea, the ice, the Sahara (Spec-Maps, *Time on the map*) — belong to the map engine, and a story borrows them by naming its year; Van Gogh's World shows today's sea, a story set eight thousand years ago shows Doggerland. A story that spans a change lets the timeline drive it. Michael's reason: the goal is one capable map-and-time lab whose capabilities any story can call, so what the lab can show, the story shows. The timeline and the maps are one thread from this date.
 
 ## What still needs a ruling
-Where the home-screen invitation appears (gallery on first visit, or at first Remember). Whether gallery size means anything, and whether the hang is fixed or shuffles. Whether the two-brain comparison should ever be side by side. Where the Remember inscription lives in a one-column story when Maya *is* present. Where After the Ice hangs and how it starts. Draft 3 of the star story document, to match the page.
+Where the home-screen invitation appears (gallery on first visit, or at first Remember). Whether gallery size means anything, and whether the hang is fixed or shuffles. Whether the two-brain comparison should ever be side by side. Where the Remember inscription lives in a one-column story when Maya *is* present. Where After the Ice hangs and how it starts: settled, 15 Nov 2026 (Michael: the After the Ice page can go; the Time Machine takes its place; marked here 25 Nov 2026). Draft 3 of the star story document, to match the page.
 
 ## Deep time (6 Oct 2026)
 Michael's rulings for the deep-time Time Machine, given as `claude/Plan-Deep-Time.md` Stage 0 wrote them ("the rulings as the plan has them"):
@@ -200,3 +200,5 @@ Michael, 13 Nov 2026, on eight points put to him with Claude's advice: "None" to
 6. **Guessing: two memories, two rules.** For what she is making automatic, never rehearse a wrong answer. For understanding, a guess followed at once by the answer is a surprise, and surprise helps. Michael: "Guessing what 7x8 is practices errors but an explorer who can't guess never moves." The evidence for both halves is still to be checked.
 7. **The Brain Series Map is not merged yet.** `Brain-Series-Map.md` and `Brain-Lab-Map.md` both stand, the second pointing at the first, until those stories are next revised.
 8. **The name is *The Brain*,** as the Labs Ledger already has it.
+
+*Ruled by Michael, 25 Nov 2026:* "opens straight onto today's sitting" (point 2) means her list (`practice.html`) offering what is ready. So the 13 Nov ruling and the 25 Sept ruling (*Practice, her list, and the home screen*) agree, and nothing in the 25 Sept section is amended.
