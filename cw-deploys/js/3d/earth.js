@@ -187,6 +187,7 @@
        seasSoft: false | true          // 22 Nov: the seas' edges soft (below); not there unless a page names it
       shelfColour: '#hex'             // 23 Nov: the pieces' shelf in this colour, whole, and setShelf(on) to hide it (below); not there unless a page names it
       oneSea: false | true            // 24 Nov: past the seam the shelf and the shallow seas in the ocean's own colour at each point, whole (below); not there unless a page names it
+      closeLakes: false | true | 'url/lakes.png'   // 25 Nov: past the seam today's lakes are land on the pieces (below); not there unless a page names it
      });
    Returns { group, setTime(ma), time(), grade() → { grade, why }, moltenPhase(), setGround('old'|'blue'), ground(),
    seaLevel() (metres, ≤ 0), icePairs(), setCoasts(on), coasts(),
@@ -255,7 +256,17 @@
    side of the seam nothing is drawn, as before. setSeas(false) still hides the seaways only. setOneSea(false) gives
    back whatever the page's other options paint (shelfColour, seasCrust), which are kept whole and untouched under
    it: shelfColour and setShelf for the shelf's own colour, seasCrust: true or '#hex' for the grey. Built in only for
-   a page that names it. The shelf rim and the drowned wash of the guessed and invented ages are not touched. */
+   a page that names it. The shelf rim and the drowned wash of the guessed and invented ages are not touched.
+  25 Nov 2026 (the Time lab's step 12d; Michael: thin blue slashes in the middle of Pangaea at 262 Ma read as
+  scratches). They were today's lakes, Victoria, Tanganyika, Malawi and the rest: the sea masks find water by colour
+  in today's picture, the pieces carry that picture back, and a lake rode Africa to 262 million years as a sliver of
+  sea. closeLakes: true, setCloseLakes(on), closeLakes(). art/globe/lakes.png marks today's lakes (water in the
+  picture where ETOPO's floor is not joined to the ocean, at least three cells from any ocean, the Black Sea left
+  out: its join at the Bosporus is narrower than ETOPO's cells; the script is CWVault/claude/Time-Lab-Bench-12d-Nov25/
+  build-lakes.py). It rides in the sea masks' blue channel, so the land reads no more pictures than it did. Past the
+  seam, on the wash's ramp (uWash), the picture's sea is taken out where a lake is, and the land's paint shows there.
+  This side of the seam nothing changes. The shallow seas still lie over a lake wherever Kocsis and Scotese flood it
+  (the Caspian and the Great Lakes, at many ages). Built in only for a page that names it. */
 import * as THREE from 'three';
 import { Fn, vec2, vec3, vec4, float, int, uniform, texture, uv, attribute, varying, positionView, positionWorld, modelViewMatrix,
          normalize, dot, cross, length, mix, smoothstep, clamp, abs, min, max, select, If, Discard, sRGBTransferEOTF, atan, asin, sqrt, fract, dFdx, dFdy,
@@ -1010,6 +1021,8 @@ export async function cwEarth(view, o = {}) {
   // the sea masks, from the pictures' own pixels: the old ground as the 2D globe multiplies it, Blue Marble from its
   // 2,048 px file whatever the tier shows
   const MW = 2048, MH = 1024;
+  // 25 Nov (o.closeLakes; not there unless a page names it): today's lakes, 255 where one is (art/globe/lakes.png)
+  const imgLakes = o.closeLakes ? await loadImg(typeof o.closeLakes === 'string' ? o.closeLakes : texBase + 'lakes.png?v=2026-11-25b').catch(e => { console.warn('earth.js: the lakes did not load', e); return null; }) : null;
   const lookOld = buildMask(pictureCanvas(imgOld, MW, MH, imgVeg), MW, MH, false);
   const lookBlue = imgBlueSmall ? buildMask(pictureCanvas(imgBlueSmall, MW, MH, null), MW, MH, true) : lookOld;
   const canvasTex = c => prep(new THREE.CanvasTexture(c));
@@ -1020,8 +1033,11 @@ export async function cwEarth(view, o = {}) {
   // (Report-Survey-Ancient-Seas-01.md). With one, the land reads 16 at most, whatever the slots hold
   const maskBoth = (() => {
     const c = document.createElement('canvas'); c.width = MW; c.height = MH;
-    const x = c.getContext('2d'), d = x.createImageData(MW, MH), a = lookOld.mask, b = lookBlue.mask;
-    for (let i = 0, j = 0; i < MW * MH; i++, j += 4) { d.data[j] = a[i] ? 255 : 0; d.data[j + 1] = b[i] ? 255 : 0; d.data[j + 3] = 255; }
+    const x = c.getContext('2d', { willReadFrequently: !!imgLakes }), a = lookOld.mask, b = lookBlue.mask;
+    let lk = null;   // 25 Nov: the lakes in blue (o.closeLakes), so the land reads no more pictures than it did
+    if (imgLakes) { x.imageSmoothingEnabled = false; x.drawImage(imgLakes, 0, 0, MW, MH); lk = x.getImageData(0, 0, MW, MH).data; }
+    const d = x.createImageData(MW, MH);
+    for (let i = 0, j = 0; i < MW * MH; i++, j += 4) { d.data[j] = a[i] ? 255 : 0; d.data[j + 1] = b[i] ? 255 : 0; d.data[j + 2] = lk ? lk[j] : 0; d.data[j + 3] = 255; }
     x.putImageData(d, 0, 0);
     return canvasTex(c);
   })();
@@ -1397,6 +1413,8 @@ export async function cwEarth(view, o = {}) {
   // 24 Nov (o.oneSea; not there unless a page names it): past the seam the shelf and the shallow seas in the sea
   // ball's own colour at each point, whole; uOne: 1 one sea, 0 the page's other paint (setOneSea)
   const canOne = o.oneSea != null, uOne = uniform(o.oneSea ? 1 : 0);
+  // 25 Nov (o.closeLakes): past the seam today's lakes are land; uLakes: 1 closed, 0 as they were (setCloseLakes)
+  const canLakes = !!imgLakes, uLakes = uniform(canLakes ? 1 : 0);
   // close in, the ICE-6G ice is also filled at the view's own size (ICE_LOCAL px square over the lon/lat box in view, as the
   // map fills its outlines at the screen's), the box (west, south, width, height in degrees) and whether it is in use
   const uIceBox = uniform(new THREE.Vector4(-180, -90, 360, 180)), uIceLocal = uniform(0);
@@ -1587,6 +1605,7 @@ export async function cwEarth(view, o = {}) {
       }
       const ia = min(ice0.mul(uIceW[0]).add(ice1.mul(uIceW[1])), 1).mul(0.94).mul(uGroundT).mul(select(belowSea, float(0), float(1)));
       col = mix(col, ICEF3, ia); sea = sea.mul(float(1).sub(ia));
+      if (canLakes) sea = sea.mul(float(1).sub(seaMasks.b.mul(uWash).mul(uLakes)));   // 25 Nov: past the seam a lake of today's is land
       const washK = canBare ? uWash.mul(uShelfOn) : uWash;
       const shelfPaint = canBare ? rgb(o.shelfColour) : SHELF3, shelfA = canBare ? float(1) : SHELF_A;
       const oneK = canOne ? mix(washK, uWash, uOne) : washK;   // one sea: there whether or not the shelf's own colour is hidden
@@ -2592,6 +2611,7 @@ export async function cwEarth(view, o = {}) {
     setSeasCrust: on => { if (!seaLayer || !seaLayer.canCrust) return; seaLayer.uShelf.value = on === 'shelf' ? 1 : 0; seaLayer.uCrust.value = on && on !== 'shelf' ? 1 : 0; view.redraw(); },   // 22 Nov: the flooded crust in grey (only where the page named o.seasCrust); 23 Nov: 'shelf', as the shelf is painted
     setShelf: on => { if (!canBare) return; shelfOn = !!on; uShelfOn.value = shelfOn ? 1 : 0; view.redraw(); }, shelf: () => canBare ? { on: shelfOn, colour: o.shelfColour } : null,   // 23 Nov: the pieces' shelf shown or hidden (only where the page named o.shelfColour)
     setOneSea: on => { if (!canOne) return; uOne.value = on ? 1 : 0; view.redraw(); }, oneSea: () => canOne ? uOne.value > 0 : null,   // 24 Nov: the shelf and the shallow seas as the ocean (only where the page named o.oneSea)
+    setCloseLakes: on => { if (!canLakes) return; uLakes.value = on ? 1 : 0; view.redraw(); }, closeLakes: () => canLakes ? uLakes.value > 0 : null,   // 25 Nov: today's lakes as land past the seam (only where the page named o.closeLakes)   // 24 Nov: the shelf and the shallow seas as the ocean (only where the page named o.oneSea)
     setSeasSoft: on => { if (!seaLayer || !seaLayer.canSoft) return; seaLayer.uSoft.value = on ? 1 : 0; view.redraw(); },      // 22 Nov: the seas' edges soft (only where the page named o.seasSoft)
     seas: () => seaLayer ? { on: seasOn, crust: seaLayer.canCrust && seaLayer.uCrust.value > 0, shelf: seaLayer.canCrust && seaLayer.uShelf.value > 0, soft: seaLayer.canSoft && seaLayer.uSoft.value > 0, strength: seaLayer.uStr.value, showing: seasOn && seaLayer.uOn.value > 0 ? seaLayer.uOn.value : 0, between: seasWant ? [seasWant.a[0], seasWant.b[0]] : null, ages: seaLayer.list.map(a => a[0]), credit: seasFile.credit || '' } : null,
     dispose: () => {
