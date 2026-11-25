@@ -1,5 +1,5 @@
 ---
-status: Report, 25 Nov 2026. Step 13 of the Time lab bench, built on `8c669f91` (step 12d, committed and pushed). Checked in the pane at 1,024 × 768 and 768 × 1,024 on WebGPU. Reported first, as the prompt asks; COMMITTED on Michael's word, "Yes, commit", 25 Nov; NOT pushed.
+status: Report, 25 Nov 2026. Step 13 of the Time lab bench, built on `8c669f91` (step 12d, committed and pushed). Checked in the pane at 1,024 × 768 and 768 × 1,024 on WebGPU. Reported first, as the prompt asks; COMMITTED (`f92c7b44`) on Michael's word, "Yes, commit", and PUSHED on his word, "Push it", 25 Nov.
 role: What step 13 did to `experiments/time-lab.html` (Places, following, the equator and poles, the distances, the coastlines); what I chose where the prompt left a choice; what the check found; whether England and Scotland come together in this plate model.
 related: Prompt-Revise-Time-Lab-Bench-13-01.md (Michael's prompt, as it arrived), Report-Time-Lab-Bench-12d.md (the page as it stood), Report-Time-Lab-Bench-12.md (the coastlines' table), Report-Time-Lab-Bench-11.md (Measure), Report-Time-Lab-Bench-12b.md (an event's place turns to face her)
 updated: 2026-11-25
