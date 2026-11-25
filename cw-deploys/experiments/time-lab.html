@@ -240,7 +240,17 @@
      Pangaea at 262 Ma were today's lakes (Victoria, Tanganyika, Malawi and the rest), found as water in today's
      picture and carried back on the pieces: past the seam they are land now (earth.js's closeLakes, new this step;
      ?lakes=0 opens without it, for a picture of before). The Time view's How this works opens at the top of the
-     window and is never taller than it; what does not fit scrolls inside it (fitPanel). -->
+     window and is never taller than it; what does not fit scrolls inside it (fitPanel).
+     Step 13 (25 Nov 2026; Michael's prompt CWVault/claude/Prompt-Revise-Time-Lab-Bench-13-01.md, on his word "Please
+     do. I think this is hugely useful"): Places. One tool panel for the marks laid on the Earth, in place of Show
+     cities, Show coastlines and Place markers: the three show words (Show equator and poles is new: a thin line and a
+     mark at each pole in the Earth's own frame, riding no plate), Place a marker / Stop placing, her markers in the
+     order she placed them, each named near the nearest of the lab's cities within 500 km (else Marker 1, 2…) with
+     follow and remove, and with two or more the distance from the followed one (else the first) to each of the others
+     at the year on the line, with a distance she can feel. A tap on a marker opens Places with it lit; it no longer
+     deletes it. Following keeps the marker in the middle of the globe as the year changes, upright, no zoom; her
+     finger turning the globe lets go. One tool panel at a time (Places or Measure). Today's coastlines: a point just
+     outside a piece's simplified outline (within LOOK.places.coastSnap km) rides that piece (?coastsnap=0: as before). -->
 <script>
   // Step 12: dark from the first paint. The lab opens in The World unless the address names a span (?w=), and The
   // World's ground is near-black; until now the page was parchment until its script had run. This runs before
@@ -442,6 +452,17 @@
   .meas-text { font: 13px/1.45 var(--cw-font, Georgia, serif); color: var(--cw-ink, #2a241c); font-variant-numeric: tabular-nums; }
   .meas-text p { margin: 0; }
   .meas-text .to { font-size: 11px; color: var(--cw-grey-word, #7d7a72); font-style: italic; }
+  /* step 13: the Places panel: the show words, her markers (the lit one's name in copper), the distances */
+  .places .tools { margin-top: 0; }
+  .places .pl-list { margin-top: 6px; padding-top: 6px; border-top: 1px solid #e0d8c6; }
+  .places .pl-row { display: flex; align-items: baseline; gap: 10px; font: 14px/1.3 var(--cw-font, Georgia, serif); color: var(--cw-ink, #2a241c); padding: 2px 0; cursor: pointer; }
+  .places .pl-name { flex: 1 1 auto; min-width: 0; }
+  .places .pl-name.lit { color: var(--cw-copper, #b5652b); }
+  .places .pl-acts { flex: none; color: var(--cw-grey-word, #7d7a72); font-size: 13px; white-space: nowrap; }
+  .htw-world .places .pl-acts .word { font-size: 13px; padding: 2px 0; line-height: 16px; }
+  .places .pl-follow[aria-pressed="true"] { color: var(--cw-copper, #b5652b); border-bottom-color: transparent; }
+  .places .pl-dist { margin-top: 7px; padding-top: 6px; border-top: 1px solid #e0d8c6; font: 13px/1.45 var(--cw-font, Georgia, serif); color: var(--cw-payne, #546A80); font-variant-numeric: tabular-nums; }
+  .places .pl-dist p { margin: 0 0 4px; }
   .meas-text .gap { margin-top: 7px; padding-top: 6px; border-top: 1px solid #e0d8c6; color: var(--cw-payne, #546A80); }
   #fail { color: var(--cw-vermilion, #c84830); display: none; margin: 12px 0 0; white-space: pre-wrap; font-size: 13px; }
   .word.pick { font-size: 15px; padding-left: 26px; margin-top: 4px; }   /* Pick a time (temporary): at the end of the tools, set as their words are */
@@ -525,7 +546,7 @@
       <button class="word" id="wHtw" type="button" aria-pressed="false">How this works</button>
       <ul class="items">
         <li><span class="head" id="hFocus">Focus</span><div class="subs" id="cmds"><button class="word cmd" id="wView" type="button">The World</button><button class="word cmd" id="wMap" type="button" style="display:none">Map</button><button class="word cmd" id="wFull" type="button" style="display:none">Full screen</button></div></li>
-        <li><span class="head" id="hInfo">Information</span><div class="subs"><button class="word cmd" id="wCities" type="button">Show cities</button><button class="word cmd" id="wCoasts" type="button" style="display:none">Show coastlines</button><button class="word cmd" id="wSeas" type="button" style="display:none">Hide shallow seas</button><button class="word cmd" id="wMarkers" type="button" style="display:none">Place markers</button><button class="word cmd" id="wMeasure" type="button">Measure</button><button class="word cmd" id="wSound" type="button">Sound on</button><button class="word cmd" id="wCount" type="button">from the start</button></div></li>
+        <li><span class="head" id="hInfo">Information</span><div class="subs"><button class="word cmd" id="wPlaces" type="button">Places</button><button class="word cmd" id="wSeas" type="button" style="display:none">Hide shallow seas</button><button class="word cmd" id="wMeasure" type="button">Measure</button><button class="word cmd" id="wSound" type="button">Sound on</button><button class="word cmd" id="wCount" type="button">from the start</button></div></li>
       </ul>
       <button class="word cmd pick" id="wPick" type="button">Pick a time</button>
     </div>
@@ -550,6 +571,8 @@
 <div class="world-words" id="worldWords"><button class="word absent" id="wHtw2" type="button">How this works</button><div class="row"><button class="word" id="wTime" type="button">Time</button><button class="word absent" id="wPickBack" type="button">back</button></div></div>
 <div class="world-ground" id="worldGround"></div>
 
+<!-- step 13: the words of the Places panel (moved into it by the script) -->
+<div id="placesWords" style="display:none"><button class="word cmd" id="wCities" type="button">Show cities</button><button class="word cmd" id="wCoasts" type="button" style="display:none">Show coastlines</button><button class="word cmd" id="wGrid" type="button">Show equator and poles</button><button class="word cmd" id="wMarkers" type="button" style="display:none">Place a marker</button></div>
 <!-- the bench's own words (moved into the How this works panel by the script) -->
 <div id="benchWords" class="bench-words" style="display:none">
   <span class="label">bench only</span>
@@ -565,7 +588,7 @@
 </div>
 
 <script>
-  const CW_VERSION = '2026-11-25 5626473 · time-lab step 12d · after one sea';   // date + short commit hash; bump in the same commit as any change
+  const CW_VERSION = '2026-11-25 8c669f9 · time-lab step 13 · Places';   // date + short commit hash; bump in the same commit as any change
   console.log('time-lab', CW_VERSION);
   const $ = id => document.getElementById(id);
   const S = window.CW && window.CW.STYLE;
@@ -614,7 +637,14 @@
     seas: { strengths: { 'as before': 1, 'fainter': 0.55, 'faintest': 0.3 }, open: 'fainter', crust: 'shelf', bare: /^[0-9a-f]{6}$/i.test(Q.get('bare') || '') ? '#' + Q.get('bare') : '#505083', crustGrey: /^[0-9a-f]{6}$/i.test(Q.get('crustgrey') || '') ? '#' + Q.get('crustgrey') : '#a3a29c', soft: true },   // how strongly the shallow seas' blue lies over the land (earth.js's seasStrength; 1 is the seas as they came on 20 Nov), and the one the page opens on. Step 12: crust — the flooded continental crust in a light grey (crustGrey; a darker grey is left for the deep sea floor, when the oceans are drained) under that blue, in place of the land's own picture; soft — the shorelines soft; both as the page opens, each a bench switch
     // step 5:
     calYears: 12000,          // years ago: inside this, a year is written as the calendar year (200 BCE, 1720); older, ka, Ma, Ga
-    markerR: 4.5, markerRing: 1.5, markerTap: 12,   // a marker: the copper dot's radius, its parchment ring, px from it a tap deletes it
+    markerR: 4.5, markerRing: 1.5, markerTap: 12,   // a marker: the copper dot's radius, its parchment ring, px from it a tap is the marker's (step 13: it opens Places, lit; it no longer deletes)
+    // step 13, Places: a marker's name is near the nearest of the lab's cities within nameKm, else Marker 1, 2…; the followed
+    // marker's ring (px out from its dot, its line's width); following: the ease's time constant (ms) when the marker is more
+    // than jump degrees from the middle (a smaller step, as the handle is dragged, is taken at once); the equator and poles
+    // (their line's width and strength, the pole's mark's arms in px); the distances that she can feel, in km (worked out
+    // along the surface from the cities' places, Report 13), nearest first
+    places: { nameKm: 500, followRing: 4, followRingW: 1.5, tau: 160, jump: 3, gridW: 1, gridA: 0.42, poleArm: 4, coastSnap: 10,   // coastSnap (step 13): km within which a coastline's point that no piece holds rides the nearest living piece (?coastsnap=0: none, as before)
+      feel: [['London to Paris', 340], ['Paris to Marseille', 660], ['Paris to Berlin', 880], ['London to Rome', 1430], ['London to Moscow', 2500], ['New York to Los Angeles', 3940], ['London to New York', 5570], ['London to Beijing', 8140], ['London to Buenos Aires', 11130], ['London to Sydney', 16990], ['halfway round the Earth', 20000]] },
     coastW: 1.5, coastA: 0.6, markerFade: 20,       // today's coastlines as the Earth draws them (its COAST_PX, COAST_A); the million years a marker or a coast fades over before its ground was born (the cities')
     // step 6: the eight mosaics, the gathering, the sound
     lay: { cl: [8, 25], wr: [5, 20], pa: [4, 25], ma: [5, 10], co: [1, 10] },   // step 7: tiles in a column, columns in a block (the 4.6 billion, Humans and Civilization: 10 and 10), so each mosaic spans the line in one line of blocks no taller than one row of the 4.6 billion
@@ -641,6 +671,7 @@
     // step 10b: How This Works in The World
     htwW: 286, htwMs: 380, htwGap: 10,   // its text's width (the window is 30 px wider); its travel to the upper left and back out; px between it and the words above it
     toolW: 150,               // a tool panel's text's width
+    placesW: 252,             // step 13: the Places panel's text's width (Measure's)
     arrival: { years: 40, turn: 35, wait: 350, lead: 250, ms: 1700, patience: 2500, giveUp: 9000 },   // step 12, the arrival: the handle starts this many million years older than the event and the globe this many degrees short of facing its place; ms after the Earth is shown before the flash, and after the flash begins before the ease; the ease; how long the dark waits for the year's pictures of the seas, and for everything
     arriveLabel: 'First trilobites',   // step 10c: the lab opens at the store's event with this label, if it holds one
     arrive: 'chengjiang',     // else at this one (the nearest that shows trilobites)
@@ -679,7 +710,10 @@
     ],
     sound: ['Sound on', 'Sound off'], soundAsk: 'Sound OK?', yes: 'yes', no: 'no',
     back: 'back', select: 'select', unselect: 'unselect', measure: 'Measure',
-    cities: ['Show cities', 'Hide cities'], coasts: ['Show coastlines', 'Hide coastlines'], seas: ['Show shallow seas', 'Hide shallow seas'], markers: ['Place markers', 'Hide markers'],
+    cities: ['Show cities', 'Hide cities'], coasts: ['Show coastlines', 'Hide coastlines'], seas: ['Show shallow seas', 'Hide shallow seas'], markers: ['Place a marker', 'Stop placing'],
+    // step 13: Places, the one panel for the marks laid on the Earth
+    places: 'Places', grid: ['Show equator and poles', 'Hide equator and poles'], follow: ['follow', 'following'], remove: 'remove', near: 'near ', markerN: 'Marker ',
+    to: ' to ', km: ' km', aboutAs: 'about as far as ', lessThan: 'less than ', together: 'in the same place', plNotYet: '{m} is not on this Earth yet: the ground under it had not formed.', plGone: 'The ground under {m} is gone by this year.', plSea: '{m} is on the sea, and this Earth does not carry the sea floor back this far.', noMap: 'This Earth has no map for this year, so there are no distances.',
     view: ['The World', 'Time'], map: ['Map', 'Globe'], pick: 'Pick a time',   // step 9: each word names what a tap will give her
     full: ['Full screen', 'Exit full screen', 'Leave full screen'],   // the browser's full screen (the Mac), and the full page (a touch device)
     now: 'now', nowLabel: 'Now', notYet: 'not yet', more: 'More',
@@ -1015,7 +1049,7 @@
 
   // ---------- layout and drawing ----------
   const cv = $('glass'), ctx = cv.getContext('2d');
-  const state = { w: WINDOWS[0], L: null, LG: null, gather: null, mark: null, hover: -1, drag: null, anchor: -1, down: null, moved: false, touch: false, cities: false, coasts: false, markers: false };
+  const state = { w: WINDOWS[0], L: null, LG: null, gather: null, mark: null, hover: -1, drag: null, anchor: -1, down: null, moved: false, touch: false, cities: false, coasts: false, markers: false, grid: false };
   const NAMES_H = 16, NAME_GAP = 8;   // the period names under a row: a row of names, the least gap between two
   // the period names under a row: each centred under its span (kept inside it where the span is narrower than the name),
   // on the line that holds the larger part of the span; a name that would run into one already placed drops to the next
@@ -2394,11 +2428,11 @@
   // A finger on the words scrolls them (touch-action pan-y; the press is kept from the panel's drag while they can
   // scroll); a finger on the panel's edge, or the mouse, still moves it. Its height is set again whenever it is placed,
   // and when the window changes (fitPanel, from relayout).
-  function fitPanel(pn) {
+  function fitPanel(pn, foot) {   // foot (step 13): px from the window's top that the panel stays above, where not the window's foot
     if (!pn || !pn.el.isConnected) return;
     const el = pn.el, b = pn.body, top = parseInt(el.style.top) || 0, pad = LOOK.panelPad;
     b.style.maxHeight = ''; b.style.overflowY = ''; b.style.touchAction = '';
-    const room = window.innerHeight - Math.max(pad, top) - pad - (el.offsetHeight - b.offsetHeight);
+    const room = (foot > 0 ? Math.min(foot, window.innerHeight) : window.innerHeight) - Math.max(pad, top) - pad - (el.offsetHeight - b.offsetHeight);
     if (b.scrollHeight > room) { b.style.maxHeight = Math.max(120, room) + 'px'; b.style.overflowY = 'auto'; b.style.touchAction = 'pan-y'; b.style.overscrollBehavior = 'contain'; }
   }
   function placePanel(pn) {
@@ -2423,10 +2457,15 @@
   // (drawn by this page over the Earth: see the module below).
   function setCoasts(on) { state.coasts = on; $('wCoasts').textContent = WORDS.coasts[on ? 1 : 0]; if (lab.earth && lab.earth.setCoasts) lab.earth.setCoasts(on); }
   $('wCoasts').addEventListener('click', () => setCoasts(!state.coasts));
-  // Place markers / Hide markers: with Place markers chosen a tap on the Earth sets a marker, a tap on a marker deletes it,
-  // a drag still turns the Earth; Hide markers hides them all and ends the placing, and Place markers brings them back.
-  function setMarkers(on) { state.markers = on; $('wMarkers').textContent = WORDS.markers[on ? 1 : 0]; $('stage3d').classList.toggle('placing', on); if (lab.earth && lab.earth.setMarkers) lab.earth.setMarkers(on); }
+  // Step 13: Place a marker / Stop placing (step 5's Place markers / Hide markers, now a word of Places): while placing,
+  // a tap on the Earth sets a marker and opens Places with it lit; a drag still turns the Earth. The markers no longer
+  // hide: they stay on the Earth until she removes one. She stops placing with Stop placing, or by closing Places.
+  function setMarkers(on) { state.markers = !!on; $('wMarkers').textContent = WORDS.markers[state.markers ? 1 : 0]; $('stage3d').classList.toggle('placing', state.markers); if (lab.earth && lab.earth.setMarkers) lab.earth.setMarkers(state.markers); }
   $('wMarkers').addEventListener('click', () => setMarkers(!state.markers));
+  // Step 13: Show equator and poles / Hide equator and poles: a thin line and a small mark at each pole, in the Earth's
+  // own frame (they ride no plate; the continents move under them), drawn by the module below in the coastlines' line
+  function setGrid(on) { state.grid = !!on; $('wGrid').textContent = WORDS.grid[state.grid ? 1 : 0]; if (lab.earth && lab.earth.setGrid) lab.earth.setGrid(state.grid); }
+  $('wGrid').addEventListener('click', () => setGrid(!state.grid));
   // ---------- the sound (step 6, under Ruling-Sound-01) ----------
   // One sound for the move, not one per tile: it runs while the tiles travel and ends as the last one lands. Silent until
   // she has answered Sound OK?, which appears where the sound would come from (the mosaic's top right) the first time a
@@ -2801,6 +2840,7 @@
     worldPanels(lab.view === 'world');
     renderStretch(); panelToView();
     if (htwPanel && htwPanel.visible()) fitPanel(htwPanel);   // step 12d: the Time panel never taller than the window
+    if (PLACES.tool && PLACES.tool.up) placesFit();   // step 13: Places too
   }
   $('wView').textContent = WORDS.view[0]; $('wTime').textContent = WORDS.view[1];
   $('wView').addEventListener('click', () => setView('world'));
@@ -2916,7 +2956,7 @@
     const { pn, tools } = titledPanel(LOOK.htwW, WORDS.htwTitle, () => closeHtw2());
     pn.body.innerHTML = '<div class="panel-text"><p>' + esc(WORDS.htwWorld).replace(/\*([^*]+)\*/g, '<i>$1</i>') + '</p><p>' + esc(WORDS.htwSeas) + '</p></div>';
     const list = [$('wMap')]; if (FULL === 'browser') list.push(wFull);   // Full screen is left out on a touch device, as in step 10
-    list.push($('wCities'), $('wCoasts'), $('wSeas'), $('wMarkers'), $('wMeasure'), $('wSound'), $('wPick'));
+    list.push($('wPlaces'), $('wSeas'), $('wMeasure'), $('wSound'), $('wPick'));   // step 13: Places in place of Show cities, Show coastlines and Place markers
     list.forEach(src => tools.appendChild(mirrorWord(src)));
     pn.body.appendChild(tools);   // step 12d: the bench row of step 12c (the sea, one blue / as before) is gone from here
     return pn;
@@ -2972,11 +3012,13 @@
     t.place = () => {
       const el = pn.el; let p = t.ats[lab.view];
       if (!p && lab.view !== 'world' && o.home) p = o.home(el);
+      if (!p && lab.view === 'world' && o.homeWorld) p = o.homeWorld(el);
       if (!p) { const h = htw2 && HTW2.up ? restBox(htw2.el) : null; p = h ? { x: h.x0, y: h.y1 + 12 } : htwHome(); }   // step 12: under How This Works, at its left edge (beside it was the event's panel's way, on an upright iPad); where How This Works would stand, when it is closed
       const c = keepIn(el, p.x, p.y); pn.setPosition(c.x, c.y); t.at = c;
     };
-    t.show = cut => { const el = pn.el; if (t.up) return; el.style.visibility = 'hidden'; el.style.display = ''; t.place(); el.style.visibility = ''; putUp(el, cut); t.up = true; };
-    t.openIt = () => { t.open = true; if (here()) t.show(reduced()); };
+    t.show = cut => { const el = pn.el; if (t.up) return; el.style.visibility = 'hidden'; el.style.display = ''; t.place(); if (o.fit) { o.fit(); t.place(); o.fit(); } el.style.visibility = ''; putUp(el, cut); t.up = true; };   // o.fit (step 13): never taller than the window, its words scrolling inside it
+    t.openIt = () => { TOOLP.forEach(x => { if (x !== t) x.closeIt(); }); t.open = true; if (here()) t.show(reduced()); if (o.onShow) o.onShow(); };   // step 13: one tool panel at a time; opening one closes the other
+    t.closeIt = () => { if (!t.open) return; if (t.up) { const b = restBox(pn.el); t.ats[lab.view] = { x: b.x0, y: b.y0 }; } t.open = false; t.up = false; pn.hide(); if (o.onClose) o.onClose(); };   // step 13: as its close word does
     t.here = here;
     const moved = () => { if (t.up) { const b = restBox(pn.el), c = keepIn(pn.el, b.x0, b.y0); pn.setPosition(c.x, c.y); if (Math.abs(c.x - t.at.x) > 1 || Math.abs(c.y - t.at.y) > 1) t.ats[lab.view] = c; t.at = c; } };
     pn.el.addEventListener('pointerup', moved); pn.el.addEventListener('pointercancel', moved);
@@ -2994,6 +3036,110 @@
   }
   $('wMeasure').textContent = WORDS.measure;
   $('wMeasure').addEventListener('click', measOpen);
+  // ---------- step 13: Places ----------
+  // One tool panel for the marks laid on the Earth (Michael, 25 Nov: he would rather not have several tool panels open
+  // at once). The word Places stands where Show cities, Show coastlines and Place markers stood: in the column in Time,
+  // among the tools of How This Works in The World. Its panel holds the three show words (Show cities, Show coastlines,
+  // Show equator and poles), Place a marker, her markers in the order she placed them, each with follow (or following)
+  // and remove, and with two or more the distance from the followed one (else the first placed) to each of the others,
+  // along the surface at the year on the line, with a distance she can feel beside it (LOOK.places.feel). A tap on a
+  // marker on the Earth opens Places with it lit (its name in copper); placing one does the same, so follow is right
+  // there. Remove is the only way to delete one. One tool panel at a time: opening Places closes Measure, and the other
+  // way round; an event's panel is not a tool panel. Closing Places closes only the panel: what is shown stays shown
+  // and the markers stay where they are; the placing stops, since the word that stops it is in the panel she closed. It
+  // moves, keeps its place in each view, and is never taller than the window, its words scrolling inside it (fitPanel,
+  // as step 12d's Time panel). In Time it opens at the upper left of the Earth's box, clear of its middle; in The World under
+  // How This Works where there is room above the line, else beside it; in The World it stays above the line.
+  // Following (module below): the globe keeps the followed marker in the middle as the year changes, upright (no roll:
+  // turned to its longitude and tipped to its latitude, within the tilt's limit), no zoom. Only one is followed; her
+  // finger turning the globe lets go of it; an event tapped meanwhile does not turn the globe. Following turns Show
+  // equator and poles on, since the line is what shows the motion.
+  const PLACES = { tool: null, body: null, list: null, dist: null, lit: null, key: '', dist0: '' };
+  const kmBetween = (a, b) => 6371 * Math.acos(Math.max(-1, Math.min(1, Math.sin(a.lat * D2R_) * Math.sin(b.lat * D2R_) + Math.cos(a.lat * D2R_) * Math.cos(b.lat * D2R_) * Math.cos((a.lon - b.lon) * D2R_))));
+  const D2R_ = Math.PI / 180;
+  function kmWord(km) {   // two figures, never finer than ten kilometres: the plate model is not sure to better than that
+    if (km < 10) return fmt(Math.round(km)) + WORDS.km;
+    const e = Math.pow(10, Math.max(1, Math.floor(Math.log10(km)) - 1));
+    return fmt(Math.round(km / e) * e) + WORDS.km;
+  }
+  function feelWord(km) {   // the nearest of the distances she can feel, by ratio
+    const F = LOOK.places.feel;
+    if (km < 20) return WORDS.together;
+    if (km < F[0][1] / 1.4) return WORDS.lessThan + F[0][0];
+    let best = F[0]; F.forEach(f => { if (Math.abs(Math.log(km / f[1])) < Math.abs(Math.log(km / best[1]))) best = f; });
+    return WORDS.aboutAs + best[0];
+  }
+  function placesHTML() {
+    const E = lab.earth, ms = E && E.markers ? E.markers() : [], fol = E && E.followed ? E.followed() : null;
+    if (!ms.length) return { list: '', dist: '' };
+    let list = '';
+    ms.forEach(m => {
+      list += '<div class="pl-row" data-id="' + m.id + '"><span class="pl-name' + (PLACES.lit === m.id ? ' lit' : '') + '">' + esc(m.name) + '</span>' +
+        '<span class="pl-acts"><button class="word cmd pl-follow" type="button" aria-pressed="' + (fol === m.id) + '">' + WORDS.follow[fol === m.id ? 1 : 0] + '</button> · <button class="word cmd pl-remove" type="button">' + WORDS.remove + '</button></span></div>';
+    });
+    let dist = '';
+    if (ms.length > 1) {
+      const from = ms.find(m => m.id === fol) || ms[0], here = E.markerNow ? E.markerNow(from.id) : null;
+      const say = (m, r) => esc((r === 'young' ? WORDS.plNotYet : r === 'gone' ? WORDS.plGone : WORDS.plSea).replace('{m}', m.name));
+      if (!here) dist = '<p>' + esc(WORDS.noMap) + '</p>';   // the molten Earth, or no map at all: one sentence
+      else if (!here.on) dist = '<p>' + say(from, here.why) + '</p>';   // the one measured from is not there: said once
+      else ms.forEach(m => {
+        if (m === from) return;
+        const there = E.markerNow(m.id);
+        if (!there || !there.on) { dist += '<p>' + say(m, there ? there.why : 'young') + '</p>'; return; }
+        const km = kmBetween(here, there);
+        dist += '<p>' + esc(from.name + WORDS.to + m.name) + ': ' + esc(kmWord(km)) + ', ' + esc(feelWord(km)) + '</p>';
+      });
+    }
+    return { list, dist };
+  }
+  function renderPlaces() {   // the list and the distances; written only when they change (the year changes them, every frame of a drag)
+    if (!PLACES.body) return;
+    const h = placesHTML();
+    if (h.list !== PLACES.key) { PLACES.list.innerHTML = h.list; PLACES.key = h.list; PLACES.list.style.display = h.list ? '' : 'none'; if (PLACES.tool && PLACES.tool.up) placesFit(); }
+    if (h.dist !== PLACES.dist0) { PLACES.dist.innerHTML = h.dist; PLACES.dist0 = h.dist; PLACES.dist.style.display = h.dist ? '' : 'none'; if (PLACES.tool && PLACES.tool.up) placesFit(); }
+  }
+  function placesOpen(lit) {   // the word Places, a tap on a marker (lit: its id), a marker placed
+    if (!PLACES.tool) return;
+    PLACES.lit = lit != null ? lit : null; renderPlaces();
+    if (!(PLACES.tool.open && PLACES.tool.up)) PLACES.tool.openIt(); else placesFit();
+    if (lit != null) { const b = PLACES.tool.pn.body; b.scrollTop = b.scrollHeight; }   // where the panel scrolls (an upright iPad, How This Works open), the lit marker and the distances come into sight
+  }
+  function placesFoot() { if (lab.view !== 'world') return 0; const g = $('worldGround').getBoundingClientRect(); return g.height > 0 ? g.top : 0; }   // in The World the panel stays above the line's ground, so the handle and the events stay in reach while she follows
+  function placesFit() { if (PLACES.tool) fitPanel(PLACES.tool.pn, placesFoot()); }
+  function placesClosed() { PLACES.lit = null; renderPlaces(); if (state.markers) setMarkers(false); }
+  function follow(id) {   // id, or null to let go
+    if (!lab.earth || !lab.earth.follow) return;
+    if (id != null && !state.grid) setGrid(true);   // the chat's default: the line is what shows the motion
+    lab.earth.follow(id); renderPlaces();
+  }
+  if (window.CW.createInfoPanel) {
+    const body = document.createElement('div'); body.className = 'places';
+    const words = document.createElement('div'); words.className = 'tools';
+    ['wCities', 'wCoasts', 'wGrid', 'wMarkers'].forEach(id => words.appendChild($(id)));
+    PLACES.list = document.createElement('div'); PLACES.list.className = 'pl-list'; PLACES.list.style.display = 'none';
+    PLACES.dist = document.createElement('div'); PLACES.dist.className = 'pl-dist'; PLACES.dist.style.display = 'none';
+    body.append(words, PLACES.list, PLACES.dist); PLACES.body = body;
+    PLACES.tool = toolPanel('places', WORDS.places, null, { both: true, width: LOOK.placesW, body, fit: placesFit, onClose: placesClosed,
+      home: el => { const e = $('earthBlock').getBoundingClientRect(), cx = e.left + e.width / 2; return { x: Math.max(LOOK.panelPad, Math.min(e.left + 8, cx - 24 - el.offsetWidth)), y: e.top + 8 }; },   // the upper left of the Earth's box, and clear of its middle, where a followed marker stands (on an upright iPad it reaches a little left of the box)
+      homeWorld: el => {   // under How This Works where there is room above the line; else beside it, level with its top
+        const h = htw2 && HTW2.up ? restBox(htw2.el) : null, foot = placesFoot();
+        if (!h) return htwHome();
+        if (h.y1 + 12 + el.offsetHeight <= foot - LOOK.panelPad) return { x: h.x0, y: h.y1 + 12 };
+        return { x: h.x1 + 12, y: h.y0 };
+      } });
+    // a touch on the words, while they can scroll, scrolls them and does not take hold of the panel (step 12d's rule)
+    PLACES.tool.pn.body.addEventListener('pointerdown', e => { const b = PLACES.tool.pn.body; if (e.pointerType !== 'mouse' && b.scrollHeight > b.clientHeight + 1) e.stopPropagation(); });
+    PLACES.list.addEventListener('click', e => {
+      const b = e.target.closest('button'), row = e.target.closest('.pl-row'); if (!row) return;
+      const id = +row.dataset.id;
+      if (b && b.classList.contains('pl-follow')) follow(lab.earth.followed() === id ? null : id);
+      else if (b && b.classList.contains('pl-remove')) { if (PLACES.lit === id) PLACES.lit = null; lab.earth.removeMarker(id); renderPlaces(); }
+      else { PLACES.lit = PLACES.lit === id ? null : id; renderPlaces(); }
+    });
+  }
+  $('wPlaces').textContent = WORDS.places;
+  $('wPlaces').addEventListener('click', () => placesOpen(null));
   function worldPanels(world) {   // the view in force, or the window changed: The World's panels up as she left them, and in Time not there (Measure's in both)
     if (htw2) htwLand();
     if (htw2 && world && HTW2.open) { const el = htw2.el; el.style.visibility = 'hidden'; el.style.display = ''; htwPlace(); el.style.visibility = ''; putUp(el, true); HTW2.up = true; }
@@ -3107,7 +3253,7 @@
   sea = null;
   $('explain').textContent = WORDS.explain[0];
   layout(); draw();
-  setCities(false); setCoasts(false); setMarkers(false); setSeas(SEAS.on); flatWord(false); pickWords(); soundWords();
+  setCities(false); setCoasts(false); setGrid(false); setMarkers(false); setSeas(SEAS.on); flatWord(false); pickWords(); soundWords();
   setYear(0); setCount(COUNT.want); renderStretch();   // the line from the start, its flags at the ends, the handle at today
   // Step 10: the lab opens on Complex life, on every screen (Michael: showing all 4.6 billion years is neat, but not the
   // point). The 4.6 billion is first under Select years, one tap away. ?w= opens on another (0 the 4.6 billion … 7 Computing).
@@ -3142,13 +3288,15 @@
     // step 11: the arrows (hold: an arrow as the pointer would have it, dx px from where it took hold, heldMs at the window's edge; release: let go; drag: both), select and unselect, Measure, the seas
     arrow: { hold: (i, dx, heldMs) => { dropArrow(); arrowMove(i, dx, null); if (heldMs) { STR.drag.zoneT = heldMs; STR.drag.end = dragEnd(STR.drag); renderStretch(); } return Object.assign({}, STR.drag.end); }, release: () => releaseArrow(false), drag(i, dx, heldMs) { const e = this.hold(i, dx, heldMs); releaseArrow(false); return e; }, end: () => STR.drag && Object.assign({}, STR.drag.end), x: endX, room: roomOut, snapTo: (k, ma) => snapTo(WINDOWS[k], ma) },
     setSpan, selectWord, doUnselect, sel: () => SEL.length, selectShown: () => $('wSelect').classList.contains('absent') ? null : $('wSelect').textContent,
+    // step 13: Places
+    places: { open: placesOpen, render: renderPlaces, follow, setGrid, tool: () => PLACES.tool, text: () => PLACES.body ? PLACES.body.innerText : '', html: () => PLACES.body ? PLACES.body.innerHTML : '', lit: () => PLACES.lit, km: kmWord, feel: feelWord },
     measure: { open: measOpen, on: () => MEAS.on, ma: () => MEAS.ma && MEAS.ma.slice(), set: (j, ma) => { MEAS.ma[j] = ma; renderStretch(); }, text: () => MEAS.body ? MEAS.body.innerText : '', tool: () => MEAS.tool, word: measureWord },
     seas: { on: () => SEAS.on, set: setSeas, strength: () => SEAS.name, setStrength: setSeaStrength, one: () => SEAS.one, setOne: setOneSea, crust: () => SEAS.crust, setCrust, soft: () => SEAS.soft, setShores },
     tap: markAt, mark: () => state.mark, setMark, clearMark, doSelect, unitSpan, lit: litSpan, labelFor, setCities, setCoasts, setMarkers, build, lengthWord, agoWord, shortDate, spanWords, placeSelect,
     year: () => lab.ma, setYear, handleX, xOf, maOf, events: () => events, onLine: eventsOnLine, placed: placeEvents, tapEvent: id => { const e = events.find(x => x.id === id); if (e) tapEvent(e); return !!e; }, rec: () => know.event && know.event.rec, openMore: () => { if (know.event) openMore(know.event.rec); },
     fit: () => Object.assign({}, FIT), eventDate, agoParen, periodOf, count: { set: setCount, fromStart: () => COUNT.fromStart, yearWord, yearSpan, yearPhrase }, mapWord: () => $('wMap').textContent, full: { kind: FULL, on: isFull, page: setFullPage, touch: TOUCH }, nesting: k => nesting(WINDOWS[k]), handleWord: () => labelH.textContent, labels: () => [labelEls[1], labelH, labelEls[0], spanWord].map(el => el.textContent + ' @ ' + el.style.left + (el.style.visibility === 'hidden' ? ' (not drawn)' : '') + (el.classList.contains('up') ? ' (up)' : '')),
     setFlat, flat: () => lab.flat, flatWord, knowing, tellYear, reduced, detent: DETENT, turnBench: TURN, tilt: TILT, tree: { list: k => { const l = treeList(WINDOWS[k]); return l && l.map(t => ({ n: t.rec.name, from: t.rec.from, to: t.rec.to, c: t.c })); } }, htwSpan, ground: () => GROUND.u, build: { on: () => BUILD.on, set: on => { BUILD.on = !!on; BUILD.done = false; }, done: () => BUILD.done, running: () => !!BUILD.run, hold: holdBuild, finish: endBuild, last: () => BUILD.last, phase: () => BUILD.run && BUILD.run.phase, count: () => $('buildCount').style.display === 'none' ? null : $('buildCount').textContent }, fullscreen: { on: isFull, enter: enterFull, exit: exitFull, available: FS },
-    attachEarth: api => { lab.earth = api; api.setPlaces(state.cities); if (api.ground) api.ground(rgbStr(mix(PARCH, DARK, GROUND.u))); lab.canFlat = !!api.setFlat; if (lab.canFlat) $('wMap').style.display = ''; flatWord(false); if (api.setCoasts) { $('wCoasts').style.display = ''; api.setCoasts(state.coasts); } if (api.setMarkers) { $('wMarkers').style.display = ''; api.setMarkers(state.markers); } if (api.setShelf) { $('wShelf').style.display = ''; setShelf(SHELF.on); } if (api.setSeas) { $('wSeas').style.display = ''; api.setSeas(SEAS.on); if (api.setSeasStrength) api.setSeasStrength(LOOK.seas.strengths[SEAS.name]); } setYear(lab.ma, lab.rough, lab.ofEvent); renderPanel(); tellPlace(); arrive(); },
+    attachEarth: api => { lab.earth = api; api.setPlaces(state.cities); if (api.ground) api.ground(rgbStr(mix(PARCH, DARK, GROUND.u))); lab.canFlat = !!api.setFlat; if (lab.canFlat) $('wMap').style.display = ''; flatWord(false); if (api.setCoasts) { $('wCoasts').style.display = ''; api.setCoasts(state.coasts); } if (api.setMarkers) { $('wMarkers').style.display = ''; api.setMarkers(state.markers); } if (api.setGrid) api.setGrid(state.grid); if (api.setShelf) { $('wShelf').style.display = ''; setShelf(SHELF.on); } if (api.setSeas) { $('wSeas').style.display = ''; api.setSeas(SEAS.on); if (api.setSeasStrength) api.setSeasStrength(LOOK.seas.strengths[SEAS.name]); } setYear(lab.ma, lab.rough, lab.ofEvent); renderPanel(); tellPlace(); arrive(); },
     noEarth: () => { ARRIVE.noEarth = true; if (ARRIVE.state === 'wait' && !events.length) showEarth(); arrive(); },   // step 12: the 3D view could not start: nothing to wait for
     arrival: { state: () => ARRIVE.state, of: () => Object.assign({}, ARRIVE, { e: ARRIVE.e && ARRIVE.e.id, raf: !!ARRIVE.raf, timer: !!ARRIVE.timer }), land: landArrive, hold: u => { if (ARRIVE.state === 'ready') { stopArrive(); showEarth(); ARRIVE.state = 'run'; } if (ARRIVE.state !== 'run') return false; stopArrive(); arriveAt(u); return true; }, flash: () => { handleEl.classList.remove('flash'); void handleEl.offsetWidth; handleEl.classList.add('flash'); }, waiting: () => root.classList.contains('earthwait') },
     warmSpells: () => { const w = W_HUM; if (!w.built) build(w); const runs = []; let cur = null; for (let i = 0; i < w.real; i++) { const warm = w.warmOf[i]; if (warm && !cur) cur = [i, i]; else if (warm) cur[1] = i; else if (cur) { runs.push(cur); cur = null; } } if (cur) runs.push(cur); return runs.map(([a, b]) => [(1000 - a) * 1000, (999 - b) * 1000]); },
@@ -3200,7 +3348,7 @@
       camera: { fov: 24, position: [0, 0, HOME_DISTANCE], near: 0.1, far: 50, min: 1.4, max: 12 },
       words: $('cmds'),   // the scene's own words (Let it move, under reduced motion) go under Focus; its Reset view is taken away (step 10)
       onTier: async (tier) => { if (earth) await earth.setTier(tier); },
-      onTap: (x, y) => (marking && earth ? markerTap(x, y) : cityTap(x, y) || mapTap(x, y))   // placing markers (step 5): a tap sets or deletes one; else a city's point shows or hides its name (step 10) and, on the globe, comes to the middle (step 10c); else, on the flat world, a tap goes back to the globe turned to that longitude (mapTap)
+      onTap: (x, y) => (earth ? markerHitTap(x, y) || (marking ? markerTap(x, y) : cityTap(x, y) || mapTap(x, y)) : false)   // step 13: a tap on one of her markers opens Places with it lit, placing or not; while placing (step 5) a tap elsewhere sets one; else a city's point shows or hides its name (step 10) and, on the globe, comes to the middle (step 10c); else, on the flat world, a tap goes back to the globe turned to that longitude (mapTap)
     });
     if (view.resetWord) view.resetWord.remove();   // step 10: no Reset: the Earth has two resting places instead (below)
     earth = await cwEarth(view, { marksHost: $('stage3d'), seed: seed0, onFlat: (on) => window.cwLab.flatWord(on), seas: true, seasStrength: window.cwLab.LOOK.seas.strengths[window.cwLab.seas.strength()], seasCrust: window.cwLab.seas.crust(), shelfColour: window.cwLab.LOOK.seas.bare, oneSea: window.cwLab.seas.one(), seasSoft: window.cwLab.seas.soft(), closeLakes: Q.get('lakes') !== '0' });   // the shallow seas (20 Nov), at the strength the page opens on (step 11); step 12: the shores soft; step 12b: the flooded ground in the shelf's blue ('shelf'; a colour: step 12's grey; false: step 11's look)
@@ -3287,6 +3435,7 @@
       if (!REST.fingers.has(e.pointerId)) return;
       const dx = e.clientX - REST.x, dy = e.clientY - REST.y, d = Math.hypot(dx, dy), keep = Math.exp(-d / LT.memory);
       REST.moved += Math.abs(dx) + Math.abs(dy); REST.x = e.clientX; REST.y = e.clientY;
+      if (FOL.m && !earth.flat() && REST.moved >= window.cwLab.LOOK.detent.dragged) unfollow();   // step 13: her finger turning the globe lets go of the followed marker (a tap does not)
       REST.hx = REST.hx * keep + dx; REST.hy = REST.hy * keep + dy;   // her heading: the last stretch of the finger's travel
       const DET = window.cwLab.detent, cur = view.turnOf(), was = REST.last || cur;
       if (REST.fingers.size === 1 && !earth.flat()) {
@@ -3319,6 +3468,7 @@
       }
       zoomStep(dt);
       axisStep(dt);
+      followStep(dt);   // step 13
     });
   }
   // ---------- step 12: the nearest zoom, by what the Earth is showing ----------
@@ -3391,7 +3541,7 @@
   function mapTap(x, y) {
     if (!earth) return false;
     const r = earth.tap(x, y); if (!r) return false;
-    if (r.to === 'globe') { view.turnTo(r.lon, capLat(r.lat)); view.zoomTo(homeV ? homeV.dist : HOME_DISTANCE); turned(); earth.settle(); view.redraw(); }
+    if (r.to === 'globe') { if (!FOL.m) view.turnTo(r.lon, capLat(r.lat)); view.zoomTo(homeV ? homeV.dist : HOME_DISTANCE); turned(); earth.settle(); view.redraw(); followStep(null); }   // step 13: a followed marker keeps the middle
     return true;
   }
   // the flat map in The World (step 10c): centred between the top of the window and the top of the line's ground, and
@@ -3431,7 +3581,7 @@
   // cities' rule), and nowhere at an age the Earth has no map for. Drawn on two canvases over the stage: the coastlines
   // under the Earth's places, the markers over them. A marker set at an age long ago is put on the piece under the tap at
   // that age, carried back by its plate to where that ground is today, and rides from there like any other.
-  const LK = window.cwLab.LOOK, D2R = Math.PI / 180;
+  const LK = window.cwLab.LOOK, LP = LK.places, WORDS = window.cwLab.WORDS, D2R = Math.PI / 180;
   let pieces = null, coastPts = null, coastOn = false, markers = [], markerHits = [], overlayKey = '', eventHit = null;
   const coastCv = document.createElement('canvas'), markCv = document.createElement('canvas'), cityCv = document.createElement('canvas');
   [coastCv, markCv, cityCv, axisCv].forEach(c => { c.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;'; });
@@ -3471,7 +3621,7 @@
       const show = cityNamed !== best; cityNamed = show ? best : null;
       if (show && !earth.flat()) {   // step 10c: on the globe the city comes to the middle, with an ease and no zoom; on the map nothing moves
         const hit = cityHits.find(hc => hc.c === best), here = hit && view.lonLatAt(hit.x, hit.y);   // where its ground is at this year
-        if (here) { turned(); if (window.cwLab.reduced()) { view.turnTo(here.lon, capLat(here.lat)); earth.settle(); view.redraw(); } else view.glideTo(here.lon, capLat(here.lat), null, LK.cityGlide); }
+        if (here && !FOL.m) { turned(); if (window.cwLab.reduced()) { view.turnTo(here.lon, capLat(here.lat)); earth.settle(); view.redraw(); } else view.glideTo(here.lon, capLat(here.lat), null, LK.cityGlide); }
       }
       drawOverlay(true); return true;
     }
@@ -3511,15 +3661,40 @@
   async function loadCoasts() {
     if (coastPts) return;
     const [file] = await Promise.all([fetch('../art/maps/world-tiles/contours-0.json').then(r => r.json()), loadPieces()]);
-    coastPts = (file['0'] || []).map(ring => ring.map(([lon, lat]) => Object.assign({ lon, lat }, ride(pieceAt(lon, lat)))));
+    const snap = Q.get('coastsnap') != null ? Math.max(0, +Q.get('coastsnap') || 0) : LP.coastSnap;
+    coastPts = (file['0'] || []).map(ring => ring.map(([lon, lat]) => {
+      const p = pieceAt(lon, lat); if (p || !(snap > 0)) return Object.assign({ lon, lat }, ride(p));
+      const n = nearPiece(lon, lat, snap); return Object.assign({ lon, lat, snapped: !!n }, ride(n));   // step 13: just outside a piece's simplified outline, it rides that piece
+    }));
     overlayKey = '';
+  }
+  // Step 13: a coastline's point that no piece holds, within km of a living piece's outline: that piece (the nearest
+  // edge). Report 12 found 385 stretches of today's coast not drawn past the seam because one end lay just outside a
+  // piece's simplified outline. A stretch whose ends now ride two plates is still not drawn, and nothing shows before
+  // its piece exists (the rules below are unchanged). Islands no piece comes near (Iceland, Hawaii) still ride nothing.
+  function nearPiece(lon, lat, km) {
+    const dLat = km / 111.2, cl = Math.max(0.02, Math.cos(lat * D2R)), dLon = Math.min(180, dLat / cl);
+    let best = null, bd = km;
+    for (const p of pieces) {
+      if (p.to > 0) continue;
+      for (let k = 0; k < p.ll.length; k++) {
+        const b = p.box[k]; if (lon < b[0] - dLon || lon > b[1] + dLon || lat < b[2] - dLat || lat > b[3] + dLat) continue;
+        const r = p.ll[k], n = r.length / 2;
+        for (let i = 0; i < n; i++) {
+          const j = (i + 1) % n, ax = wrap180(r[2 * i] - lon) * cl * 111.2, ay = (r[2 * i + 1] - lat) * 111.2, bx = wrap180(r[2 * j] - lon) * cl * 111.2, by = (r[2 * j + 1] - lat) * 111.2;
+          const dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy, t = L > 0 ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / L)) : 0, d = Math.hypot(ax + t * dx, ay + t * dy);
+          if (d < bd) { bd = d; best = p; }
+        }
+      }
+    }
+    return best;
   }
   function sizeCanvas(c, w, h, dpr) { if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); } const x = c.getContext('2d'); x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, c.width, c.height); x.setTransform(dpr, 0, 0, dpr, 0, 0); return x; }
   function drawOverlay(force) {
     if (!earth) return;
     const w = view.host.clientWidth, h = view.host.clientHeight; if (!w || !h) return;
     const cam = view.camera.position, bq = view.ball.quaternion, age = earth.time(), flat = earth.flat();
-    const key = [cam.x, cam.y, cam.z, bq.x, bq.y, bq.z, bq.w, w, h, age, flat, coastOn, marking, markers.length, !!coastPts, cityOn, !!cityPts, cityNamed ? cityNamed.name : '', eventPt ? eventPt.lon + '/' + eventPt.lat : ''].join();
+    const key = [cam.x, cam.y, cam.z, bq.x, bq.y, bq.z, bq.w, w, h, age, flat, coastOn, gridOn, FOL.m ? FOL.m.id : 0, markers.map(m => m.id).join('.'), !!coastPts, cityOn, !!cityPts, cityNamed ? cityNamed.name : '', eventPt ? eventPt.lon + '/' + eventPt.lat : ''].join();
     if (!force && key === overlayKey) return;
     overlayKey = key;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -3527,6 +3702,16 @@
     // the coastlines: a segment where both ends show, face the camera, ride one plate (or the plates have not moved yet),
     // and on the flat world do not run round the back across the edge
     const cx = sizeCanvas(coastCv, w, h, dpr);
+    if (gridOn) {   // step 13: the equator and the poles, in the Earth's own frame (no plate): the continents move under them
+      const nil = { plate: null }, put = (lon, lat) => at(Object.assign(nil, { lon, lat }), flat);
+      cx.strokeStyle = S.coast || '#4a4336'; cx.lineWidth = LP.gridW; cx.lineCap = 'round'; cx.globalAlpha = LP.gridA;
+      let pp = null; cx.beginPath();
+      for (let lon = -180; lon <= 180; lon += 2) { const q = put(lon, 0); if (pp && pp.front && q.front) { cx.moveTo(pp.x, pp.y); cx.lineTo(q.x, q.y); } pp = q; }
+      cx.stroke();
+      const A = LP.poleArm; cx.lineWidth = LP.gridW + 0.5; cx.globalAlpha = Math.min(1, LP.gridA * 1.6);
+      for (const sgn of [1, -1]) { const q = put(0, 90 * sgn); if (!q.front) continue; cx.beginPath(); cx.moveTo(q.x - A, q.y); cx.lineTo(q.x + A, q.y); cx.moveTo(q.x, q.y - A); cx.lineTo(q.x, q.y + A); cx.stroke(); }
+      cx.globalAlpha = 1;
+    }
     if (coastOn && coastPts) {
       cx.strokeStyle = S.coast || '#4a4336'; cx.lineWidth = LK.coastW; cx.lineJoin = 'round'; cx.lineCap = 'round';
       const still = age < earth.seam;
@@ -3579,28 +3764,79 @@
     // the markers: a copper dot ringed in parchment, as the year's handle is drawn
     const mx = sizeCanvas(markCv, w, h, dpr);
     markerHits = [];
-    if (marking) {
+    {   // step 13: they stay on the Earth whether she is placing or not, until she removes one; the followed one has a ring
       for (const m of markers) {
         const a = alpha(m, age); if (a <= 0) continue;
         const q = at(m, flat); if (!q.front) continue;
         mx.globalAlpha = a; mx.beginPath(); mx.arc(q.x, q.y, LK.markerR + LK.markerRing, 0, 2 * Math.PI); mx.fillStyle = S.parchment; mx.fill();
         mx.beginPath(); mx.arc(q.x, q.y, LK.markerR, 0, 2 * Math.PI); mx.fillStyle = S.copper || '#b5652b'; mx.fill();
+        if (FOL.m === m) {
+          mx.lineWidth = LP.followRingW + 2; mx.strokeStyle = S.parchment; mx.beginPath(); mx.arc(q.x, q.y, LK.markerR + LP.followRing, 0, 2 * Math.PI); mx.stroke();
+          mx.lineWidth = LP.followRingW; mx.strokeStyle = S.copper || '#b5652b'; mx.stroke();
+        }
         markerHits.push({ m, x: q.x, y: q.y });
       }
       mx.globalAlpha = 1;
     }
   }
-  // a tap while placing: on a marker, it goes; elsewhere on the Earth, one is set on the piece under the tap at this age
-  function markerTap(x, y) {
+  // Step 13: a tap on one of her markers (placing or not) opens Places with it lit; it no longer deletes it (remove, in
+  // the panel, is the only way). While placing, a tap elsewhere on the Earth sets one on the piece under the tap at
+  // this age, named for the nearest of the lab's cities, and opens Places with it lit.
+  function markerHitTap(x, y) {
     let best = null, bd = LK.markerTap;
     for (const hm of markerHits) { const d = Math.hypot(x - hm.x, y - hm.y); if (d <= bd) { bd = d; best = hm.m; } }
-    if (best) { markers.splice(markers.indexOf(best), 1); drawOverlay(true); return true; }
-    if (!pieces) { loadPieces().then(() => markerTap(x, y)); return true; }
+    if (!best) return false;
+    window.cwLab.places.open(best.id); return true;
+  }
+  function markerTap(x, y) {
+    if (!pieces || !cityPts) { Promise.all([loadPieces(), loadCities()]).then(() => markerTap(x, y)); return true; }
     const age = earth.time(), g = earth.grade().grade; if (g === 'none' || g === 'invented') return true;
     const here = earth.flat() ? earth.flatLonLatAt(x, y) : view.lonLatAt(x, y); if (!here) return true;
-    const m = markAt(here.lon, here.lat, age); if (m) { markers.push(m); drawOverlay(true); }
+    const m = markAt(here.lon, here.lat, age);
+    if (m) { m.id = ++MK.n; m.name = nameFor(m); markers.push(m); drawOverlay(true); window.cwLab.places.open(m.id); }
     return true;
   }
+  const MK = { n: 0, unnamed: 0 };
+  function nameFor(m) {   // near the nearest of the lab's cities within LOOK.places.nameKm of today's ground under it (today's names), else Marker 1, 2…
+    const km = (a, b) => 6371 * Math.acos(Math.max(-1, Math.min(1, Math.sin(a.lat * D2R) * Math.sin(b.lat * D2R) + Math.cos(a.lat * D2R) * Math.cos(b.lat * D2R) * Math.cos((a.lon - b.lon) * D2R))));
+    let best = null, bd = LP.nameKm;
+    for (const c of cityPts || []) { const d = km(m, c); if (d < bd) { bd = d; best = c; } }
+    if (!best) return WORDS.markerN + (++MK.unnamed);
+    const base = WORDS.near + best.name, same = markers.filter(x => x.base === base).length; m.base = base;
+    return same ? base + ' ' + (same + 1) : base;
+  }
+  function markerNow(m) {   // where a marker is at the year on the line (the Earth's own frame), and whether it is on the Earth then; null: no map
+    const age = earth.time(), g = earth.grade().grade; if (g === 'none' || g === 'invented') return null;
+    if (alpha(m, age) <= 0) return { on: false, why: m.plate == null ? 'sea' : age < m.to ? 'gone' : 'young' };
+    const p = earth.placeAt(m.lon, m.lat, m.plate); return { on: true, lon: p.lon, lat: p.lat };
+  }
+  // Step 13: following. While a marker is followed the globe keeps it in the middle as the year changes, however the
+  // year is changed (the handle, the arrows, Pick a time, an event's travel): upright, as every turn has been since step
+  // 10c (no roll: turned to its longitude and tipped to its latitude, within the tilt's limit), and no zoom. A step of
+  // the year that moves it LOOK.places.jump degrees or less (a drag of the handle) is taken at once; a larger one, and
+  // the start of following, eases (LOOK.places.tau). Under reduced motion, and on the map, the turn is taken at once (on
+  // the map nothing shows it: the globe under it is kept turned, so Globe comes back to the marker). Every other turn
+  // the page makes gives way while a marker is followed: an event's place, Pick a time's, a city's, the map's tap, back.
+  // Her finger turning the globe lets go. Where the marker is not on the Earth at the year (its ground not yet formed,
+  // or past the seam for a marker on the sea), the globe stays where it is and the marker is still followed.
+  const FOL = { m: null, easing: false };
+  function followStep(dt) {   // dt: a frame's; null: the year has just changed
+    if (!FOL.m || !view || !earth || REST.fingers.size) return false;
+    const t = markerNow(FOL.m); if (!t || !t.on) { FOL.easing = false; return false; }
+    const cur = view.turnOf(), lat = capLat(t.lat), dl = wrap180(t.lon - cur.lon), db = lat - cur.lat, off = Math.max(Math.abs(dl), Math.abs(db));
+    if (off < 1e-4) { FOL.easing = false; return false; }
+    const calm = window.cwLab.reduced() || earth.flat();
+    if (!calm && off > LP.jump) FOL.easing = true;
+    let k = 1;
+    if (FOL.easing && !calm) { if (dt == null) return false; k = 1 - Math.exp(-dt * 1000 / LP.tau); if (off * (1 - k) < 0.05) k = 1; }
+    if (k === 1) FOL.easing = false;
+    turned(); view.turnTo(cur.lon + dl * k, cur.lat + db * k); earth.settle(); view.redraw(); drawOverlay(false);
+    return true;
+  }
+  function follow(id) { FOL.m = id != null ? markers.find(m => m.id === id) || null : null; FOL.easing = !!FOL.m && !window.cwLab.reduced(); if (FOL.m) followStep(null); drawOverlay(true); if (view) view.redraw(); }
+  function unfollow() { FOL.m = null; FOL.easing = false; drawOverlay(true); window.cwLab.places.render(); }
+  function removeMarker(id) { const m = markers.find(x => x.id === id); if (!m) return; if (FOL.m === m) { FOL.m = null; FOL.easing = false; } markers.splice(markers.indexOf(m), 1); drawOverlay(true); }
+  let gridOn = false;
   function markAt(lon, lat, age) {   // the ground under a point at an age, as today's point and its plate; null on the sea past the seam
     const la = lat * D2R, lo = lon * D2R, v = new THREE.Vector3(Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la)), q = new THREE.Quaternion(), u = new THREE.Vector3();
     const plates = [...new Set(pieces.filter(p => age <= p.from && age >= p.to).map(p => p.plate))];
@@ -3622,6 +3858,11 @@
     view.onFrame(() => { fitMap(); drawOverlay(false); });   // step 10c: the map's place in The World, before what is drawn on it
   }
   window.cwOverlay = { eventPt: () => eventPt && Object.assign({}, eventPt), eventHit: () => eventHit && Object.assign({}, eventHit), cities: () => cityPts, cityHits: () => cityHits.slice(), cityNamed: () => cityNamed && cityNamed.name, cityTap, loadCities, markers: () => markers.slice(), hits: () => markerHits.slice(), tap: x => markerTap(x[0], x[1]), markAt: (lon, lat) => markAt(lon, lat, earth.time()), loadPieces, loadCoasts, coasts: () => coastPts, draw: () => drawOverlay(true),
+    // step 13 (bench): the coastlines' stretches at an age, by why each is or is not drawn (Report 12's table; the front of the ball not counted); following; the equator
+    coastCount: age => { if (!coastPts) return null; const on = p => age < p.from && age >= p.to, c = { noPiece: 0, notYet: 0, twoPlates: 0, drawn: 0, snapped: coastPts.reduce((n, r) => n + r.filter(p => p.snapped).length, 0) };
+      for (const ring of coastPts) for (let k = 0; k < ring.length; k++) { const a = ring[k], b = ring[(k + 1) % ring.length]; if (a.plate == null || b.plate == null) c.noPiece++; else if (!on(a) || !on(b)) c.notYet++; else if (a.plate !== b.plate) c.twoPlates++; else c.drawn++; }
+      return c; },
+    follow: { of: () => FOL.m && FOL.m.id, easing: () => FOL.easing, step: followStep, finish: () => { let k = 0; while (FOL.easing && k++ < 400) followStep(0.05); followStep(null); return k; } }, grid: () => gridOn, place: (lon, lat) => { const m = markAt(lon, lat, earth.time()); if (!m) return null; m.id = ++MK.n; m.name = nameFor(m); markers.push(m); drawOverlay(true); return m.id; },
     coastStats: () => coastPts ? { rings: coastPts.length, points: coastPts.reduce((n, r) => n + r.length, 0), unheld: coastPts.reduce((n, r) => n + r.filter(p => p.plate == null).length, 0) } : null };
 
   // what the Earth knows at its year, for the text block and the credit (the classic script writes both): the grade
@@ -3631,7 +3872,7 @@
   if (earth) {
     window.cwLab.attachEarth({
       view, earth,
-      setTime: m => { ma = Math.max(0, Math.min(EARTH_AGE, m)); earth.setTime(ma); },
+      setTime: m => { ma = Math.max(0, Math.min(EARTH_AGE, m)); earth.setTime(ma); followStep(null); if (markers.length > 1 || FOL.m) window.cwLab.places.render(); },   // step 13: a followed marker keeps the middle; the distances are at the year on the line
       grade: () => { const g = earth.grade(); return { grade: g.grade, why: g.why, credit: ma < earth.seam ? SHORT_CREDIT : 'The continents: Merdith et al. 2021 (EarthByte)' + (seasShow() ? '. The shallow seas: Kocsis & Scotese 2021' : '') }; },
       gradeAt: age => earth.gradeFor(age),   // step 10b: the grade at an event's own year, for the date line of its panel
       setSeas: on => { earth.setSeas(on); view.redraw(); },   // the shallow seas (20 Nov; step 11: Show shallow seas / Hide shallow seas)
@@ -3641,22 +3882,27 @@
       setPlaces: on => { cityOn = !!on; if (!cityOn) cityNamed = null; else loadCities().then(() => drawOverlay(true)); drawOverlay(true); },   // step 10: Show cities / Hide cities: the points
       ground: css => { view.renderer.setClearColor(new THREE.Color(css), 1); view.redraw(); },   // step 10: the colour round the Earth, parchment in Time and near-black in The World
       setCoasts: on => { coastOn = !!on; if (coastOn) loadCoasts().then(() => drawOverlay(true)); drawOverlay(true); },   // step 5: today's coastlines, riding their plates
-      setMarkers: on => { marking = !!on; if (marking) loadPieces(); drawOverlay(true); },   // step 5: Place markers / Hide markers
+      setMarkers: on => { marking = !!on; if (marking) { loadPieces(); loadCities(); } drawOverlay(true); },   // step 5: Place markers; step 13: Place a marker / Stop placing (the markers stay shown either way)
+      // step 13: Places — the equator and poles; her markers, in the order she placed them; where one is at the year on the line; following; remove
+      setGrid: on => { gridOn = !!on; drawOverlay(true); if (view) view.redraw(); },
+      markers: () => markers.map(m => ({ id: m.id, name: m.name, lon: m.lon, lat: m.lat, plate: m.plate, from: m.from, to: m.to, set: m.set })),
+      markerNow: id => { const m = markers.find(x => x.id === id); return m ? markerNow(m) : null; },
+      follow, followed: () => FOL.m ? FOL.m.id : null, removeMarker,
       setFlat: on => { earth.setFlat(on); turned(); fitMap(); }, flat: () => earth.flat(),
       // step 9: the Earth's turn and scale, for Pick a time and its back; the globe turned to face a place of today's ground where it was at an age
       turn: () => { const t = view.turnOf(); return { lon: t.lon, lat: t.lat, dist: view.camera.position.length() }; },
-      setTurn: t => { turned(); view.turnTo(t.lon, t.lat); view.zoomTo(t.dist); earth.settle(); view.redraw(); },
-      face: async (lon, lat, age) => { const p = await thenOf(lon, lat, age); view.turnTo(p.lon, p.lat); view.zoomTo(homeV ? homeV.dist : HOME_DISTANCE); turned(); earth.settle(); view.redraw(); return p; },
+      setTurn: t => { turned(); if (!FOL.m) view.turnTo(t.lon, t.lat); view.zoomTo(t.dist); earth.settle(); view.redraw(); followStep(null); },   // step 13: while a marker is followed, every turn the page makes gives way to it (the size is still set)
+      face: async (lon, lat, age) => { const p = await thenOf(lon, lat, age); if (!FOL.m) view.turnTo(p.lon, p.lat); view.zoomTo(homeV ? homeV.dist : HOME_DISTANCE); turned(); earth.settle(); view.redraw(); return p; },
       // step 10b: arriving — the globe upright, turned to the longitude where a place of today's ground lay at an age
-      faceUpright: async (lon, lat, age) => { const p = await thenOf(lon, lat, age); view.turnTo(p.lon, 0); view.zoomTo(homeV ? homeV.dist : HOME_DISTANCE); turned(); earth.settle(); view.redraw(); return p; },
+      faceUpright: async (lon, lat, age) => { const p = await thenOf(lon, lat, age); if (!FOL.m) view.turnTo(p.lon, 0); view.zoomTo(homeV ? homeV.dist : HOME_DISTANCE); turned(); earth.settle(); view.redraw(); return p; },
       home: () => homeV && Object.assign({}, homeV),
       // step 12: the arrival — the globe upright at a longitude (rest: the view has settled there); the Earth ready to be shown at its year (the year's pictures of the seas are in, or ms have passed); the selected event's place
-      spin: (lon, rest) => { view.turnTo(lon, 0); turned(); if (rest) earth.settle(); view.redraw(); },
+      spin: (lon, rest) => { if (FOL.m) return; view.turnTo(lon, 0); turned(); if (rest) earth.settle(); view.redraw(); },
       ready: ms => new Promise(res => { const t0 = performance.now(), look = () => { const sn = earth.seas && earth.seas(); if (!sn || !sn.on || !sn.between || sn.showing > 0 || performance.now() - t0 > ms) res(); else setTimeout(look, 40); }; look(); }),
       setEventPlace,
       // step 12b: a tapped event's place — where a point of today's ground lay at an age; whether her finger is on the globe; the globe turned to a longitude and a tilt, with an ease (ms; the scene's glide, which a gesture ends) or at once, no zoom. On the map the globe under it is turned at once
       placeThen: (lon, lat, age) => thenOf(lon, lat, age), held: () => REST.fingers.size > 0,
-      aim: (lon, lat, ms) => { turned(); if (ms > 0 && !earth.flat()) view.glideTo(lon, capLat(lat), null, ms); else { view.turnTo(lon, capLat(lat)); earth.settle(); view.redraw(); } },
+      aim: (lon, lat, ms) => { if (FOL.m) return; turned(); if (ms > 0 && !earth.flat()) view.glideTo(lon, capLat(lat), null, ms); else { view.turnTo(lon, capLat(lat)); earth.settle(); view.redraw(); } },
       zoom: () => Object.assign({ dist: view.camera.position.length(), limits: view.zoomLimits() }, ZOOM), zoomStep,
       resized: () => { view.setFrame(null); fitMap(); earth.settle(); view.redraw(); }   // the renderer and the camera take the stage's new size at once, not at the next observed frame
     });
