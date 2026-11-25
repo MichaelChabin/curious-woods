@@ -8,7 +8,8 @@ A lake: water in either picture where ETOPO's floor (art/maps/world-tiles level 
 to the ocean') is 0, with no ocean floor within NEAR pixels (about 60 km), so no coast is touched. Widened by GROW
 pixels so the finer picture the land reads close in is covered too (the widening falls on land). The Black Sea is
 left out: ETOPO does not join it to the ocean at the Bosporus, which is narrower than its cells, and it is sea.
-So is everything south of 60 S: Antarctica's blue ice reads as water in the picture, which is another question.
+Antarctica's blue ice reads as water in the picture too, and is closed with the lakes (Michael, 25 Nov; until then
+everything south of 60 S was left out).
 
 Run from cw-deploys/:  python3 -I ../CWVault/claude/Time-Lab-Bench-12d-Nov25/build-lakes.py
 """
@@ -19,7 +20,6 @@ from scipy import ndimage
 
 W, H, NEAR, GROW = 2048, 1024, 3, 2
 BLACK_SEA = (27.0, 42.0, 40.2, 47.5)   # lon from, lon to, lat from, lat to (with the Sea of Azov and the Marmara)
-SOUTH = -60.0   # Antarctica left as it was: its blue ice reads as water too, a question for Michael (Report 12d), not this step's
 
 def rgb(path, mul=None):
     a = np.asarray(Image.open(path).convert('RGB').resize((W, H), Image.BILINEAR)).astype(float)
@@ -54,7 +54,7 @@ lon = (np.arange(W) + 0.5) / W * 360 - 180; lat = 90 - (np.arange(H) + 0.5) / H 
 LON, LAT = np.meshgrid(lon, lat)
 black = (LON >= BLACK_SEA[0]) & (LON <= BLACK_SEA[1]) & (LAT >= BLACK_SEA[2]) & (LAT <= BLACK_SEA[3])
 
-lake = pic & ~ocean & far & ~black & (LAT > SOUTH)
+lake = pic & ~ocean & far & ~black
 lake = ndimage.binary_dilation(np.pad(lake, ((0, 0), (pad, pad)), mode='wrap'), iterations=GROW)[:, pad:-pad] & ~ocean
 Image.fromarray((lake * 255).astype(np.uint8)).save('art/globe/lakes.png', optimize=True)
 lab, n = ndimage.label(lake, structure=np.ones((3, 3)))

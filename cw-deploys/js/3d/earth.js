@@ -1022,7 +1022,7 @@ export async function cwEarth(view, o = {}) {
   // 2,048 px file whatever the tier shows
   const MW = 2048, MH = 1024;
   // 25 Nov (o.closeLakes; not there unless a page names it): today's lakes, 255 where one is (art/globe/lakes.png)
-  const imgLakes = o.closeLakes ? await loadImg(typeof o.closeLakes === 'string' ? o.closeLakes : texBase + 'lakes.png?v=2026-11-25b').catch(e => { console.warn('earth.js: the lakes did not load', e); return null; }) : null;
+  const imgLakes = o.closeLakes ? await loadImg(typeof o.closeLakes === 'string' ? o.closeLakes : texBase + 'lakes.png?v=2026-11-25c').catch(e => { console.warn('earth.js: the lakes did not load', e); return null; }) : null;
   const lookOld = buildMask(pictureCanvas(imgOld, MW, MH, imgVeg), MW, MH, false);
   const lookBlue = imgBlueSmall ? buildMask(pictureCanvas(imgBlueSmall, MW, MH, null), MW, MH, true) : lookOld;
   const canvasTex = c => prep(new THREE.CanvasTexture(c));

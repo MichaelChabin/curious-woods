@@ -3174,7 +3174,7 @@
   // globe, no sliders, no crop, no Save or share on this page) ----------
   import * as THREE from 'three';
   import { cwScene } from '../js/3d/scene.js?v=2026-10-30b';
-  import { cwEarth } from '../js/3d/earth.js?v=2026-11-25b';
+  import { cwEarth } from '../js/3d/earth.js?v=2026-11-25c';
   const $ = id => document.getElementById(id), S = window.CW.STYLE, Q = new URLSearchParams(location.search);
   if (Q.get('log') === '1') {   // bench only: every console error and warning also written under the page, for a browser whose console cannot be reached
     const show = (kind, args) => { const f = $('fail'); f.style.display = 'block'; f.textContent += '\n' + kind + ': ' + [...args].map(a => a && a.message ? a.message : String(a)).join(' ').slice(0, 1500); };

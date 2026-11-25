@@ -2,7 +2,7 @@
 status: Report, 25 Nov 2026. Step 12d of the Time lab bench, built on `56264736` (step 12c, committed and live). Checked in the pane at 1,024 × 768 and 768 × 1,024 on WebGPU. Reported first, as the prompt asks; NOT committed, NOT pushed.
 role: What step 12d did to `experiments/time-lab.html` and, behind a new option, to `js/3d/earth.js`; what the slashes at 262 Ma were; what the panel now does; what the check found; one question for Michael.
 related: Prompt-Revise-Time-Lab-Bench-12d-01.md (Michael's prompt, as it arrived), Report-Time-Lab-Bench-12c.md (the page as it stood), Time-Lab-Bench-12d-Nov25/build-lakes.py, js/3d/earth.js
-updated: 2026-11-25
+updated: 2026-11-25 (afternoon: Antarctica's blue ice closed too, on Michael's word)
 ---
 
 # Report: the Time lab bench, step 12d (25 Nov 2026)
@@ -44,6 +44,8 @@ How I found it: I switched today's picture water off past the seam, and the blob
 **What closes them.** `art/globe/lakes.png` marks today's lakes. A lake is water in today's picture where ETOPO's sea floor says "not joined to the ocean" and no ocean lies within about 60 km, so no coast is touched. The finest Blue Marble (8,192 px) is read too, because Tanganyika is only two or three cells wide at 2,048. Past the seam, on the same ramp as the shelf, the picture's water is taken out where a lake is, and the land's own paint shows there. This side of the seam nothing changes.
 
 **Hide nothing the data says is sea.** The shallow seas still lie over a closed lake wherever Kocsis and Scotese flood it, as they do the Caspian and the Great Lakes at many ages. Hudson Bay, the Mediterranean, the Baltic, the Red Sea and the Persian Gulf are joined to the ocean, so they are not lakes, and they stay.
+
+**Antarctica, after Michael's word** (25 Nov, afternoon: "I agree that Antarctica's patches should be closed"). Antarctica's blue ice reads as water in today's picture, so past the seam it showed as small flecks and slashes of sea on Antarctica, the same fault as the lakes. The script no longer leaves out everything south of 60° S, so those close too (`27`, `28`: 90 Ma, close in, before and after). Nothing north of 60° S changed in `lakes.png`. At the lab's home distance the flecks were too small to see: the 90 and 262 Ma globes differ from the live site by at most 5 pixels. Today matches the live site to the pixel. The page now asks for `earth.js?v=2026-11-25c`, and earth.js for `lakes.png?v=2026-11-25c`.
 
 **The Black Sea is left out by hand.** ETOPO does not join it to the ocean, because the Bosporus is narrower than ETOPO's cells, so by the rule alone it would have closed. It is sea, so the script leaves it as it was.
 
@@ -87,5 +89,5 @@ The timeline's labels differ from the live site's at 12,000 and 21,000 years. Th
 ## Needs Michael's eye
 
 1. **The Great Lakes at 90 Ma are gone** (`16`). That is the rule working: today's lakes are not on a 90-million-year-old continent unless the seas data floods them. But it is the most visible change outside 262 Ma.
-2. **Antarctica's blue ice** is a question, and I left it alone. In today's picture some of Antarctica's blue ice reads as water by its colour, so past the seam it shows as small patches of sea on Antarctica, the same fault as the lakes. The script can close those too: it is one line, taking out `LAT > SOUTH`. I kept them out because the prompt asked about Pangaea, and closing them would change Antarctica at every age. Say if they should go.
+2. ~~**Antarctica's blue ice**~~ Ruled: closed (see *Antarctica, after Michael's word*). What follows is the question as it was asked. In today's picture some of Antarctica's blue ice reads as water by its colour, so past the seam it shows as small patches of sea on Antarctica, the same fault as the lakes. The script can close those too: it is one line, taking out `LAT > SOUTH`. I kept them out because the prompt asked about Pangaea, and closing them would change Antarctica at every age. Say if they should go.
 3. **The hair-thin slivers** between pieces stay. If one bothers her as much as the lakes did, say where, and I will look at that one.
