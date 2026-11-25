@@ -395,6 +395,48 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** Four to sixteen times the raster, built per half-million-year step and per seed; the skin pass slower by the same on the iPad. Outlines as paths are a second renderer beside the raster.
 **Source.** Claude, 22 Oct, holding the zoom at the picture's resolution for Michael's "pixelated image".
 
+### Pulled, not pushed: a string of beads that sinks (working name)   · 16 Oct 2026 · candidate
+**Idea.** Why the sea floor spreads, shown rather than told. A string of beads lies on a table; new hot beads appear at one end, each cools and grows heavier as it travels, and when the heavy end slips over the table's edge it drags the whole string after it. She sets how fast beads cool and watches the spreading change. The ridge is the gap the plates leave, not a fountain pushing them apart, which most adults (Michael included) have backwards.
+**Where it sits.** Bead Lab, grown from Pull a Bead; called by a sea-floor story and the Time Machine.
+**Opens.** A mechanism she runs herself (#10), and a surprise worth a story. Gives Convection from the first its late, large form.
+**Costs.** Slab pull is most of the force but not all (ridge push, convection beneath); the words must not claim it is the whole answer.
+**Source.** Claude's proposal, 16 Oct; Michael: "I think you are right about the beads."
+
+### Older is deeper (working name)   · 16 Oct 2026 · loose
+**Idea.** She taps anywhere on the ocean floor and reads its depth and its age; the dots fall along a curve, because old floor has cooled, shrunk and sunk.
+**Where it sits.** The map, once the sea-floor age map is in; a plot in the Time Machine's sense.
+**Opens.** Evidence for the beads that she finds herself (#9); a function she discovers (#2).
+**Costs.** Needs the sea-floor age map (EarthByte, free, CC BY). Sediment and hot spots scatter the dots; that scatter is honest and should stay.
+**Source.** Claude, 16 Oct. Michael: hold onto all four.
+
+### Make your own stripes (working name)   · 16 Oct 2026 · loose
+**Idea.** The floor spreads on screen and she flips the Earth's magnet when she likes; each new strip of rock keeps the direction it was born with, so her pattern comes out the same on both sides of the ridge. Then she lays it beside the real stripes.
+**Where it sits.** Maps, beside Stripes as a jigsaw.
+**Opens.** The evidence that convinced the world, made by her own hand (#3, #9).
+**Costs.** Needs the magnetic stripes (NOAA's EMAG2, free) and the table of reversals.
+**Source.** Claude, 16 Oct. Michael: hold onto all four.
+
+### Wax in a pan (working name)   · 16 Oct 2026 · loose
+**Idea.** A simulation of the 1972 experiment (Oldenburg and Brune) in which pulling apart the skin on cooling wax made ridges with the same zigzag offsets as the real ocean floor.
+**Where it sits.** Bead Lab or Maps; uncertain.
+**Opens.** A beautiful thing to watch that is also true.
+**Costs.** Less in her hands than the beads; a real fluid simulation.
+**Source.** Claude, 16 Oct. Michael: hold onto all four.
+
+### Stripes as a jigsaw (working name)   · 16 Oct 2026 · candidate
+**Idea.** She drags continents apart and they leave stripes behind. Then she is given a continent surrounded by stripes and finds where it was by tapping matching stripes on either side, pushing them together and nudging the continent into place.
+**Where it sits.** Maps and the plate model; pairs with Make your own stripes.
+**Opens.** She reconstructs the past the way geologists do, which is how the 200-million-year limit becomes something she understands rather than is told.
+**Costs.** Needs the age map or the stripes, and the plate boundaries.
+**Source.** Michael, from an earlier conversation, restated 16 Oct: "potentially wonderful." Not found in the ledger before today.
+
+### Plate boundaries and the sea floor's age (working name)   · 16 Oct 2026 · candidate
+**Idea.** Pull the plate boundaries (Topologies) and continent–ocean edges (COBs) out of the Merdith 2021 model already cached on the Mac, by running tools/plates-from-gplates.py again; fetch the sea-floor age map (EarthByte) and the magnetic stripes (EMAG2). The fine ETOPO sea floor is already in cw-deploys/_data.
+**Where it sits.** Data under the map and the globe.
+**Opens.** Every sea-floor idea above, and Pull the plug.
+**Costs.** No new download for the boundaries; two modest downloads for the rest.
+**Source.** Michael, 16 Oct: "We should definitely do that" (the boundaries).
+
 ### Two year markers, equals (working name)   · 19 Oct 2026 · ruled
 **Idea.** Two markers on the timeline, neither first nor second. The one she last touched is the current year and the map and globe show it; dragging one moves the world, tapping the other flips the world to its year, and the distance between them is always written. Pangaea, then Pangaea breaking; the world before the ice, then after; copper to bronze.
 **Where it sits.** The Time Machine, on the deep lines; the first of the tools Michael wants children to bring to the timeline.
@@ -417,6 +459,175 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** The look is cheap once the skin is cheap and the shelf is masked (the audit's steps 4 and 5). The collisions are the hard part: a stepped motion model with contact, run from the seed so *another guess* and replay agree, joined seamlessly to the real cratons at 1,000 million years, cached per age step. Last, after the look.
 **Source.** Michael's prompt of 19 Oct, *Coming later*; the audit's §8.
 *Built 21–22 Oct 2026 in three commits (the look, the outlines, the motion), from the brief `claude/Prompt-Build-Earliest-Continents.md`; MANIFEST entries of those dates. The motion is a stepped model from the seed: the plates leave the model at its own speed, wander, stick for 150 to 600 million years and break along a rift line; five numbers at the head of the model set how often they touch and how long they hold. Not yet seen by Michael.*
+
+### A real 3D Earth you can cut open (working name)   · 25 Oct 2026 · loose
+**Idea.** A true 3D ball (WebGL) with a slice taken out, so she sees the surface and the inside at once: the early Earth's crust dripping down, melt rising, light rock gathering into rafts. Sketch made 25 Oct (claude.ai artifact *Early Earth, Cut Open*). Michael "hates having two approaches to the same problem", so the thought is to move the globe's per-pixel plate lookup onto the graphics card (a shader), making the Time Machine globe and the cut-away one object.
+**Where it sits.** Maps and timelines (`globe.js`); the future geophysics series that Drain the Sea begins.
+**Opens.** The inside of the Earth (and of stars, the onion model) becomes something she can turn and look into; lighting and glow come free; the globe gets faster.
+**Costs.** Nothing in CW is WebGL yet; rebuilding the globe touches the Time Machine just refactored. Wants a read-only cost report first. Michael is thinking it over, not decided.
+**Source.** Michael and Claude, 25 Oct, Cowork chat on Drain the Sea.
+
+### The globe as the usual picture at a story's end (working name)   · 25 Oct 2026 · loose
+**Idea.** Michael: the globe is probably the better default than the flat map for the map-and-timeline at the end of stories (Van Gogh's travels, the Silk Road), because it has no distortion; stories still choose. Far out it is a globe, close in it flattens into the map's detail. A control for the time in a voyage, with the globe turning so the boat stays centred. NASA Blue Marble imagery for the ground.
+**Where it sits.** Maps and timelines; the Time Machine's map/globe switch.
+**Opens.** True distances and shapes in every story; long routes (cruises, Magellan) that follow themselves.
+**Costs.** The per-pixel JavaScript globe is too slow to follow a route smoothly; points at the same shader globe as the cut-away. A smooth globe-to-map zoom is new.
+**Source.** Michael, 25 Oct, Cowork chat. *Later, same chat:* when she lowers the sea or moves the continents, the picture shifting from the photograph to the painted kind is "far from a bad thing, it signals the transition from data to model" (Michael). Fits the globe's five words of knowing: the photograph is *measured* at its purest.
+
+### A flat plane touching the round Earth (working name)   · 25 Oct 2026 · loose
+**Idea.** Michael's: a Euclidean plane resting on a perfectly round, Earth-sized globe, touching at one point. Three things come out of it: lines a degree apart drawn on the plane from the touching point become the meridians on the globe; the gap between plane and globe grows with distance (a hair's width at 30 m, about 8 cm at 1 km, about 8 m at 10 km); and a map and a globe side by side where a line drawn on either shows on both.
+**Where it sits.** Between the geometry spine's plane (Glass Geometry's shared plane) and the globe; the map/globe drawing tool already wanted in the maps strand.
+**Opens.** Flat geometry meets round geometry; the plane, lit from the Earth's centre, is a real map (the gnomonic projection, where every straight line is a shortest route), so the touching plane and the drawing tool are one idea.
+**Costs.** Needs a globe that takes drawing, and drawing is not yet on any globe.
+**Source.** Michael, 25 Oct, Cowork chat; the gnomonic link and gap figures Claude's.
+*Later, same chat:* Michael's lines are 20,000 km long, measured along the surface: on the plane their ends make a near-circle; on the globe they all meet at the opposite pole. Laid along the surface at true length, the plane is the azimuthal equidistant map (the UN emblem); the light-from-the-centre version only reaches the equator. Two ways to carry a line; Michael: both on the bench, for now.
+
+### One Earth: a ball all the way in, flat as a word   · 27 Oct 2026 · ruled
+**Idea.** The globe, the deep map, a story's world map, Drain the Sea and the cut-away are one Earth. She zooms in on the ball all the way; close in it already looks flat. When she wants the whole world at once, *Map* lays the same Earth out flat, whole and still; *Globe* brings the ball back. Michael's question ("if we zoom in on a high-res globe, what is the advantage of a map?") removed the morph.
+**Where it sits.** Maps and timelines; `js/3d/earth.js`.
+**Opens.** One way to look at the Alps instead of two; the hardest step of the plan gone.
+**Costs.** The map that pans and zooms on story pages retires; the tiles must be draped on the ball (step 5).
+**Source.** Michael and Claude, 26–27 Oct, Cowork chat. Ruled in `claude/Spec-Earth-3D.md`, *Close in, and flat*.
+
+### A story map is the globe at the story's zoom (working name)   · 27 Oct 2026 · ruled
+**Idea.** The story maps match the globe, because they are the globe. A story chooses where it opens: Van Gogh's Provence close in (it looks like an ordinary map), Hokusai's blue far out, because a pigment from Berlin reaching Japan wants half the world turning.
+**Where it sits.** Maps; every story's world section.
+**Opens.** Routes at true scale; one look across the stories.
+**Costs.** A story page loads the 3D engine only if it asks; the small still maps' future is open.
+**Source.** Michael, 26 Oct. Ruled in `claude/Spec-Earth-3D.md`.
+
+### The photograph is today only; the past is green and rock   · 28 Oct 2026 · ruled
+**Idea.** Blue Marble (July 2004) is the skin of today's ground, with ETOPO's heights underneath as the data. Going back it fades to paint and is gone by 2.6 million years. The paint is one quiet green over rock while there are plants, bare rock before, near-black before oxygen. A softened photograph was tried and refused: it carried today's deserts and ice sheets back on the moving plates (Michael: "desert in the arctic?").
+**Where it sits.** Maps and timelines; the Earth's skin.
+**Opens.** The shift from photograph to paint shows the move from data to model before a word is read.
+**Costs.** A photograph under vermilion marks bends *no red on the earth*; labels may be harder to read. A bench question.
+**Source.** Michael, 26–28 Oct. Ruled in `claude/Spec-Earth-3D.md`.
+
+### Two honest signals: the surface and the edges (working name)   · 27 Oct 2026 · candidate
+**Idea.** The picture says two separate things. The surface says how sure we are of what the ground looked like (photograph or paint). The edges say how sure we are of where the pieces were (crisp for measured, inferred, fitted; soft and uneven for guessed and invented).
+**Where it sits.** Maps and timelines; the five words of knowing.
+**Opens.** A child can read the knowing off the picture without the words.
+**Costs.** Nothing known.
+**Source.** Claude, in the spec of 27 Oct, which Michael read.
+
+### Today's lines on the past are a word   · 26 Oct 2026 · ruled
+**Idea.** Today's coastlines (and any modern line) drawn over an ancient surface are off by default; a word in the left column turns them on.
+**Where it sits.** Maps and timelines.
+**Opens.** The past seen as itself, with today's outline there when she wants a bearing.
+**Costs.** Nothing known.
+**Source.** Michael, 26 Oct, prompted by Google's Ancient Earth globe. Ruled in `claude/Spec-Earth-3D.md`.
+
+### The flooded continents: Scotese's heights for the past (working name)   · 27 Oct 2026 · candidate
+**Idea.** Scotese and Wright's PaleoDEMs (heights every 5 million years back to 540, CC BY) could put real mountains and shallow seas under the paint of the past, above all the seas that flooded the continents, like the one over Kansas in the age of dinosaurs. The data behind Google's Ancient Earth and dinosaurpictures.org.
+**Where it sits.** Maps and timelines; the Earth's paint between 2.6 and 540 million years.
+**Opens.** The past's own landscape instead of a rule; a story about walking where the sea was.
+**Costs.** Sits on Scotese's plate model, not Merdith's; snapshots, not pieces. Ruled: keep Merdith; a bench of three moments, ours beside his; look first for the same thing on Merdith's model.
+**Source.** Michael, 26 Oct; ruling 27 Oct in `claude/Spec-Earth-3D.md`.
+
+### Three insides, lined up with the outside (working name)   · 27 Oct 2026 · candidate
+**Idea.** *Cut open* (a word, ruled 26 Oct) shows the inside at the same age as the outside, in three eras: molten (to 4,400), dripping (to about 2,500, the 25 Oct sketch), plates (after, with the inner core appearing late). The rafts at the cut's rim are the pieces on the outside where they cross it.
+**Where it sits.** Maps and timelines; `cutaway.js` on the Earth; the geophysics strand.
+**Opens.** One Earth, inside and out, at any age.
+**Costs.** Where the eras meet and when the inner core appears are open.
+**Source.** The audit of 26 Oct found the mismatch; Claude's proposal in the spec.
+
+### The water ball as a real sphere (working name)   · 26 Oct 2026 · loose
+**Idea.** Drain the Sea's water ball becomes a real sphere at true scale, lit like the Earth, beside it in space or sitting where the water was. The whole ocean is a ball a little over a tenth of the Earth's width.
+**Where it sits.** Drain the Sea; the Earth's scene.
+**Opens.** Order of magnitude she can turn and look at.
+**Costs.** Where it sits is Michael's.
+**Source.** The audit of 26 Oct.
+
+### The slider as the Time Machine's main control   · 28 Oct 2026 · loose
+**Idea.** Michael, wondering if making a timeline the main control was a mistake: the age slider does the same work. She moves to an epoch and that epoch's events appear below. The slider can be played with a narration, one of several, each about different things, and she can stop it whenever she likes to see what we know about that moment.
+**Where it sits.** Maps and timelines: the Time Machine, at the swap onto the 3D Earth (step 8 of Spec-Earth-3D). It would replace Main, the Focus window and Detail.
+**Opens.** One control in place of three; narrated trips; a way to replay an event such as the Moon's impact with its words.
+**Costs.** The slider is stretched on purpose, so it hides true scale; it would need a word to show it at true scale. The curves (people, sea level) need a new home. Near today it lacks resolution (21,000 years can't be reached by hand), so either one slider zooms or each trip opens on its own span: undecided. Wants a worknote before the swap.
+**Source.** Michael, 28 Oct, Cowork chat on the Earth's fourth bench.
+
+### NASA's sea at today, ours as soon as she moves back   · 28 Oct 2026 · ruled
+**Idea.** At today the Earth shows Blue Marble's own sea, as a photograph should. From the first step back our sea, in the deeper blue, takes over, because the sea level changes all the time and that change is worth seeing.
+**Where it sits.** The 3D Earth's ground and sea.
+**Opens.** Today looks like the real photograph, sea and all; the first move back says at once that the sea is not fixed.
+**Costs.** A second Blue Marble picture, with the ocean. Drain the Sea keeps its grey floor.
+**Source.** Michael, 28 Oct. Ruled in Spec-Earth-3D.md, *The ground*; the bench is Prompt-Revise-Earth-Bench-04.md.
+
+### Cut open, for any planet, opened as far as she likes   · 28 Oct 2026 · loose
+**Idea.** Michael: *Cut open* is a general tool (the Sun bench already has one), so the Earth, Jupiter, Mars and the Sun share it. And she might control the cut herself, opening it wider until the ball is sliced in half.
+**Where it sits.** The 3D shelf (`cutaway.js`); the Earth's step 7; the Earth-as-a-ruler planets story and its bench, where every inside is measured in fractions of 1.
+**Opens.** Planets' insides side by side at one scale: Saturn lighter than water, Jupiter's smeared core, the Earth's thin crust. One engine for every ball.
+**Costs.** The general tool is ruled (Spec-Earth-3D). Opening it by hand is a new gesture, so by the one-gesture rule it wants its own story. `cutaway.js` cuts a fixed quarter today; a wider cut is mostly geometry.
+**Source.** Michael, 28 Oct, Cowork chat, after the Earth's fourth bench.
+
+### Plant a flag and watch where it goes   · 29 Oct 2026 · loose
+**Idea.** Michael: let her plant flags on the Earth, then move the age and watch where they go. A flag rides its plate as the cities do now.
+**Where it sits.** The 3D Earth; Time Machine; any story that wants a place carried back in time (her house, a fossil site, Arles).
+**Opens.** Her own places in deep time: where her town was when the dinosaurs walked, which flags end up together, which drift apart. Something she makes and can keep or share.
+**Costs.** Little in the engine (the cities already ride their plates). A new gesture, so by the one-gesture rule it wants a story. Where a flag goes past the seam depends on the guessed ages, and the flag should say how sure it is.
+**Source.** Michael, 29 Oct, Cowork chat, after the Earth's fifth bench.
+
+### Hawaii's trail, bared by the ice-age sea (working name)   · 29 Oct 2026 · loose
+**Idea.** Michael, on the iPad: at about 800,000 years ago, with the sea lower, a chain of islands shows beyond Hawaii, the old, worn-down volcanoes and banks of the Northwestern Hawaiian Islands. The chain traces the islands' history: the plate carrying them over one hot spot, the oldest furthest away. It appeared by itself, from the sea-floor data and the sea curve; nobody put it there.
+**Where it sits.** The 3D Earth (Spec-Earth-3D), this side of the seam; a candidate story beside plate boundaries and Drain the Sea.
+**Opens.** A discovery she can make on her own by lowering the sea, which then wants a story: why the islands get older in a line.
+**Costs.** Hawaii's own history (the Big Island is under a million years old) isn't modelled yet; accuracy waits for plate boundaries and the sea floor's age.
+**Source.** Michael, 29 Oct, Cowork chat: "to have that show up incidentally is amazing."
+
+### The Earth in squares (working name)   · 1 Nov 2026 · candidate
+**Idea.** A stained-glass window of 4,600 squares, each a million years, each row a billion: deep time as something she can count and see whole on one screen. Each era coloured by what she'd have seen, events as backlit squares, a plaque on rollover. Michael: "one of the great gifts science has to give to kids."
+**Where it sits.** Timelines: the Time Machine and the 3D Earth; first tried on a page in front of the Earth bench (Prompt-Build-Earth-Bench-07.md).
+**Opens.** A felt sense of 4.6 billion years without a lesson; also the way she picks a span (the next entry).
+**Costs.** Colour carries the eras, so it needs a color-blindness check, and perhaps a glass texture per era as a second channel.
+**Source.** Michael, 31 Oct to 1 Nov, the "how to convey 4.6 billion" chat (Worknote-Deep-Time-Window.md).
+
+### A ladder of windows over the timeline (working name)   · 1 Nov 2026 · candidate
+**Idea.** The window picks roughly *when*; the timeline below shows *what happened*, its flags doing the fine work. One window at a time, chosen by four italic commands: *4.6 billion years*, *The last million years*, *The last 100,000 years*, *The last 12,000 years* (12,000 because this year is 12,026 after the ice). Dragging across squares sets the timeline; moving the flags lights the squares.
+**Where it sits.** Timelines: the Earth bench first, then the 3D Earth, then the Time Machine's content.
+**Opens.** Any period reached in two or three moves (the industrial revolution is eight squares on the 12,000 window). The glass takes over the period tiers' job (click a period, a finer line opens), so the timeline becomes one line.
+**Costs.** Replaces the old buttons for the last thousand and hundred years and the chunk arrow. Changes *The slider as the Time Machine's main control* (28 Oct): the slider stays as the fine control, under a coarse one. A finger can't pick one square at the 12,000 scale; the glass picks spans, the timeline picks years.
+**Source.** Michael, 1 Nov, the "recent rows" chat (Worknote-Deep-Time-Window-02.md).
+
+### Shrink, the opposite of stretch   · 1 Nov 2026 · candidate
+**Idea.** Michael: place the two flags, tap *shrink*, and the whole line as it stands fits between them, new time filling in on both sides. Now is a wall. If the span outgrows the window in use, the window steps up to the next scale.
+**Where it sits.** The stretching timeline (Earth bench); the window ladder.
+**Opens.** Zooming out by the same gesture as zooming in, and a way to walk up the ladder without leaving the timeline.
+**Costs.** Nothing known.
+**Source.** Michael, 1 Nov, the "recent rows" chat.
+
+### The glass, painted by the story (working name)   · 1 Nov 2026 · loose
+**Idea.** Michael: the window's glass is dynamic. A story colours it with eras, dynasties, ice and warmth. At the end of a story ("the world of Van Gogh") it may stay up, set to the story's span, beside the timeline and globe, for context.
+**Where it sits.** Timelines and every story that ends on its world.
+**Opens.** Each story's world placed in the whole at a glance; the same window speaking many subjects.
+**Costs.** One colour theme at a time or it stops reading. It could distract at a story's end; Michael means to try it.
+**Source.** Michael, 1 Nov, the "recent rows" chat.
+
+### The ice ages as a sawtooth in glass (working name)   · 1 Nov 2026 · loose
+**Idea.** The last million years in squares of 1,000, coloured from the real record, graded by how much ice: each ice age grows paler slowly, then the warmth comes all at once. Warm spells are thin, a column or two of a block, so "most of it cold" shows itself. The rhythm is about 100,000 years but drifts against round numbers.
+**Where it sits.** The *last million years* window; the Mammoths and Ice lines.
+**Opens.** The shape of the ice ages seen, not told. A door to Milanković.
+**Costs.** The colouring must come from a published record (the repo's sea-level curve, Spratt and Lisiecki, then Bintanja and van de Wal). Michael chooses two colours or graded by looking.
+**Source.** The "recent rows" chat, 1 Nov; Michael and Eileen first noticed the rhythm in the sketch.
+
+### Big and Small (working name)   · 1 Nov 2026 · loose
+**Idea.** A lab: a block of a thousand squares where each square opens into a thousand more; ladders for how many, how long ago, how small. The same tool for neurons, stars, atoms in a drop of water. Michael is intrigued by the lab and by stories on how big is big and how small is small.
+**Where it sits.** A new lab, beside the timelines; a sketch exists (Big and Small, claude.ai artifact).
+**Opens.** Order of magnitude felt across subjects, with one gesture learned once.
+**Costs.** A lab to build; wants its own story by the one-gesture rule.
+**Source.** The "how to convey 4.6 billion" chat, 31 Oct to 1 Nov (Worknote-Deep-Time-Window.md, not logged then: that chat couldn't reach the vault).
+
+### Period boxes, a pool of true texts each (working name)   · 2 Nov 2026 · candidate
+**Idea.** Michael: with *Periods* on, a white box below the period under her cursor, with a pointer up to it. Each period gets several short, true texts, shown shuffled without repeats, so each visit brings something new. The same for the 12,000 window's thousand-year blocks.
+**Where it sits.** The deep-time window (Worknote-Deep-Time-Window-03.md); the batch is Prompt-Chat-Window-Period-Boxes.md.
+**Opens.** A window she can return to and still learn from; room for "clearer is better, and more information."
+**Costs.** A writing batch with checkers, and later the swings and the thousand-year blocks.
+**Source.** Michael, 2 Nov, the "recent rows" chat.
+
+### A probe for the whole Earth (working name)   · 3 Nov 2026 · candidate
+**Idea.** Michael: a probe she moves over the 3D Earth that measures what is under it. A basic set in the lab from data already in the repo (height and depth, sea-floor age, magnetics, ice, trees, where the spot was and how fast it moves); specialized later (heat flow, gravity, crust thickness). "Stories could be built around this alone."
+**Where it sits.** The 3D Earth; grows from Drain the Sea's probe and Lab-The-Ship's instruments (Worknote-Probe-01.md).
+**Opens.** She measures the Earth herself, anywhere, at any age; stories on the warm ridges, the sea floor seen from space, the ship, her town carried back in time, the world's forests.
+**Costs.** A place in Spec-Earth-3D's sequence; new datasets for the later readings; one probe that switches, or a shelf of them, is undecided.
+**Source.** Michael, 3 Nov, the "recent rows" chat.
 
 ### An idea map for mathematics (working name)   · 14 Oct 2026 · loose
 **Idea.** The graph Michael already uses to describe CW, built for real for mathematics. Each idea is a small card, like a timeline event, linked to the ideas it grows out of. Michael pictures a high-level map of a few dozen nodes, each opening into more, like an atlas. One possible ruler is distance from counting, which would let the map scroll and zoom like the timeline. Michael would not start a child at the map. It is for looking back on the chain of ideas behind her.
@@ -495,6 +706,48 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** The trait must show at a glance, and a generation must take seconds. Not built.
 **Source.** iPad chat, 12 Nov; Michael. *(Merged from the holding pen, 12 Nov.)*
 
+### An animation takes the Earth's place (working name)   · 21 Nov 2026 · loose
+**Idea.** Michael: an event's panel in the Time lab's World could carry a button for an animation. Tapped, the animation replaces the Earth, or sits on top of it, until the panel closes. The trilobite animation and the early Earth and Moon formation sketch are the first two that could be shown this way.
+**Where it sits.** Other labs: the Time lab, The World view and its event panels. Beside *A story is an event with art and an interactive* (19 Oct).
+**Opens.** The World becomes a stage for more than the globe: a creature at its own moment, or the time before there was an Earth to show. An event gets something that moves without becoming a full story.
+**Costs.** Michael: too soon to try. The animations are artifacts and sketches, not yet pieces the lab can call. Needs a rule for what the timeline and handle do while the Earth is covered.
+**Source.** Michael, 21 Nov 2026, in the Time lab chat that wrote step 10c.
+
+### Creatures as carved models you can walk around (working name)   · 23 Nov 2026 · candidate
+**Idea.** A creature built in 3D from plain shapes, like a carved model: she touches the ground and it walks there, drags to see it from above or the side, and pinches closer. Claude built a triceratops four ways (top, side, a plain 3D model, a closer 3D model with scaly skin). Michael: the plain 3D model is "close to the right amount of realism"; he likes letting kids use their brains, and realistic drawings can be shown in a pinch.
+**Where it sits.** Other labs: the Time lab's creatures and their events; the spacetime-machine stories. Beside *An animation takes the Earth's place* and the trilobite animation.
+**Opens.** A gesture: she walks round an animal nobody has seen, and one model gives her top and side. The top view shows the trackway (hind feet inside the front).
+**Costs.** Each creature needs a fact sheet first; legs are the hard part and show every mistake. More realism means more claims: the scaly skin is known from fossils, the colour is not. Sketches only, as artifacts; not yet pieces a page can call. The drawing-style note says "nothing else for scale" and "one view", written for drawings; it may need a line for models.
+**Source.** Chat of 23 Nov 2026. Michael asked for a triceratops in the style of the trilobite, then for 3D; artifacts *Triceratops*, *Triceratops, from the side*, *Triceratops, a model to walk around*, *Triceratops, a closer model*.
+
+### A measuring stick planted beside the animal   · 23 Nov 2026 · candidate
+**Idea.** A post 1.4 metres tall, a ten-year-old's height, that she can stand beside a creature model, with its length and weight said plainly and how the weight is worked out. Michael: "an enormous advantage"; CW can also say what is known about mass and environment.
+**Where it sits.** Other labs: creature models, the Time lab. A standard tool any creature could call.
+**Opens.** Size becomes something she reads off with her eyes, on any creature, by the same post.
+**Costs.** Weights are estimates that differ (triceratops: 6 to 12 tonnes); the note has to say so. Nothing else known.
+**Source.** Chat of 23 Nov 2026. Claude proposed a post; Michael's judgment of its worth.
+
+### One body plan, many species (working name)   · 23 Nov 2026 · loose
+**Idea.** Michael: with a model like this "we could conceivably talk about how species varied, how one evolved into another." Claude: the model is a short list of numbers (the body's ovals, the frill, horn and leg lengths), so changing the numbers gives a relative, and a page could slide from one to the other.
+**Where it sits.** Other labs: creature models and the Time lab. Touches the neuron series' pond, where traits are inherited.
+**Opens.** She compares relatives by moving them, and each number points back to a bone ("how do you know?").
+**Costs.** Relatives are easy to show; ancestors are hard to claim. Needs a research pass before any page says one became another. Needs measured numbers for each species.
+**Source.** Chat of 23 Nov 2026. Michael's idea; the numbers observation is Claude's.
+
+### Showing how a mouth worked   · 23 Nov 2026 · loose
+**Idea.** Michael: no interest in showing a fight between dinosaurs, but a model "suggests that, if we wanted to show how his mouth worked, we could do it." The closer triceratops has an *Open its mouth* button as a first sketch: the jaw drops and the view moves to the head.
+**Where it sits.** Other labs: creature models. Could serve a story about beaks and teeth.
+**Opens.** A model can show how a part works (a jaw, a joint, an eye), not only what the animal looked like.
+**Costs.** The sketch has no teeth; the tooth rows would need modelling and checking. The note's wording about the teeth is from Claude's knowledge, unchecked.
+**Source.** Chat of 23 Nov 2026. Michael's idea.
+
+### A model that says how we know   · 23 Nov 2026 · loose
+**Idea.** A creature model carries a *How do we know?* button beside *How big?*: a few lines saying which parts come from fossils and which are guessed. Tried on Lystrosaurus: shape from bones, skin from two dried-out bodies (leathery, dimpled, no hair or scales), colour guessed, the burrow argued. The model also stands in its own kind of place (cracked red mud, horsetails by a stream, a burrow it goes into), not a stock landscape.
+**Where it sits.** Other labs: creature models; the Time lab event *Lystrosaurus*. Does for models what the italic notes do for drawings in Life-Drawing-Style.md.
+**Opens.** "How do you know?" sits on the animal itself. What she does to it (send it down the burrow) can be one of the reasons offered for why it survived.
+**Costs.** The scene makes claims too: plants and ground need the same checking as the animal. The burrow is argued, and a model that goes down one makes it look settled unless the note says so.
+**Source.** Chat of 23 Nov 2026. Michael asked for Lystrosaurus "in a different kind of environment"; the button and burrow are Claude's. Artifact *Lystrosaurus, a model to walk around*.
+
 ## Stories
 
 ### The edge of knowing (working name)   · 5 Oct 2026 · candidate
@@ -519,6 +772,88 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** Nothing known; the story's words through the pool.
 **Source.** Michael, 12 Oct: "there will be a story or two in the gallery about this"; the close Moon Claude's suggestion.
 
+### Pull the plug (working name)   · 16 Oct 2026 · loose
+**Idea.** From Randall Munroe's *What If?*: a drain at the bottom of the deepest trench. The sea does not empty; it falls until ridges surface, and what is left is a scatter of separate seas, each in its own basin. She lowers the sea a step at a time and watches which basins cut off where.
+**Where it sits.** Stories, map strand; next to the sea-level story (lower the sea by any amount).
+**Opens.** A door to the shape of the ocean floor, ridges, trenches and why they are where they are.
+**Costs.** Needs the fine ETOPO sea floor rendered for the whole world (the shipped world map is about 80 km a point). Munroe is a source, not a text to borrow.
+**Source.** Michael, 16 Oct.
+
+### A story is an event with art and an interactive   · 19 Oct 2026 · candidate
+**Idea.** Michael: the difference between an event with a More and a story may be only artwork and an interactive. Good events make good stories; an event that has a story links to it. And perhaps every story can carry something she does with her hands.
+**Where it sits.** Stories, and the pool: every event is a story's seed, and the Pool Desk marks which ones are wanted as stories too.
+**Opens.** One pipeline instead of two. A child can climb from a dot on the timeline to its More to a full story with a tool, and the shipwrecks and creatures become a story list without a second search.
+**Costs.** An interactive in every story is the expensive half; the "at most one new piece of machinery per story" rule decides how fast it goes. Needs the link from event to story in the store.
+**Source.** Michael, 19 Oct 2026, in the chat that built the Pool Desk.
+
+### Chains, not crowds (working name)   · 19 Oct 2026 · candidate
+**Idea.** Living things on the timeline come in short chains where one kind seems to turn into another: fish walk (Tiktaalik, Acanthostega, the land egg), dinosaurs fly (Sinosauropteryx, Archaeopteryx, Microraptor), whales had legs (Pakicetus, Ambulocetus, Basilosaurus), the horse grows up. Each chain says once that its links are cousins, not grandparents.
+**Where it sits.** Stories, deep-time strand; Plan-Life-in-Deep-Time.md.
+**Opens.** A feel for evolution from about forty animals instead of an encyclopedia; maybe a chain label she can follow along the line.
+**Costs.** The cousin rule has to hold in every More; the trial's checkers already caught one "its descendants".
+**Source.** Michael asked how many animals give a sense of the milestones; Claude proposed chains, 19 Oct.
+
+### Four wings on four limbs (working name)   · 19 Oct 2026 · loose
+**Idea.** Microraptor and its new cousin Norellraptor (Sept 2026) flew with long feathers on their legs as well as their arms: four wings, but no extra limbs. No animal with a backbone has ever grown a fifth limb; evolution rearranges what is there.
+**Where it sits.** Stories, Life strand; the Microraptor event.
+**Opens.** A story about reuse, not invention, from Michael's own doubt ("an extra pair of anything" seemed unlikely), which is the right doubt.
+**Costs.** Norellraptor waits under the five-year rule until someone replies to its paper.
+**Source.** Eileen's news; Michael's question, 19 Oct.
+
+### How stars make the elements (working name)   · 25 Oct 2026 · candidate
+**Idea.** The Elements lab needs stories about stellar evolution, more than one: how a star lives and dies by its weight, and the onion-skin model of a big star near its end, each shell burning a heavier element around an iron core.
+**Where it sits.** Stories called by the Elements lab; the birth bins (`ordinary-stars`, `massive-stars`, `collisions`) are where a tile would link to them.
+**Opens.** Gives every tile's "where it came from" paragraph somewhere to go; carries iron's point where building stops paying; ties the lab to the Big Bang end of the one timeline.
+**Costs.** A star's life is a mechanism, so the half-explanation rule bites hard; each story needs an interactive she can run, not a diagram to read.
+**Source.** Michael, 25 Oct, in the morning-page chat.
+*Later, 25 Oct (Cowork):* Michael has done stellar evolution with kids; they handle one element burning into another if they can see it. He pictures nested spheres expanding and contracting in step, on the same cut-away 3D object as the early Earth.
+*Same chat:* the reason it matters now is the Elements lab: every tile has a creation story, so the star is part of each tile's Birth, and spheres for nuclei could be too (Michael). Claude's sketch: one 3D "furnace" piece per birth bin, a magnifier from the star's shell down to nuclei as clumps of balls; the common elements step by four (C, O, Mg, Si, S, Ca) because big stars build by adding helium; star core to star, and nucleus to atom, are both roughly 100,000 to one.
+*Later, 23 Nov (Cowork, after editor pass 11):* Michael's sense, while rewriting carbon, that the carbon a Sun-like star gives away is not made at its centre but in a layer farther out. Claude's answer, from its own knowledge and unchecked: that is right. The carbon made at the centre stays there and ends as the white dwarf; the carbon that escapes is made later in a thin helium-burning shell around that core, and is stirred up to the surface before the star sheds its outer layers. Two shells in a small star, many in a big one. A story of its own, or the first act of this one.
+
+### Listening to the Earth: the shadow and Lehmann (working name)   · 25 Oct 2026 · candidate
+**Idea.** The third Earth-as-a-ruler story, the listening one. A full slice through the Earth; she taps the rim to start a quake; push (P) and shake (S) waves spread as rings, bending as rock gets faster with depth. S stops at the liquid core, P bends, and a shadow appears on the far side. Lehmann (1936) saw faint P waves inside the shadow and found the solid inner core. One switch, *solid all the way through*, makes the shadow vanish. Listening posts can play their squiggles as sound, sped up.
+**Where it sits.** Stories, Earth-as-a-ruler strand; its bench on the Sound and Earth shelves; drawn on the same cut-away as the 3D Earth.
+**Opens.** How we know what we cannot see, in a form her finger runs; ties sound to geology; a real person reasoning from paper records.
+**Costs.** Needs the cut-away (above) and a travel-time table worked out once from the published speed model (PREM). Time has to be slowed (P crosses the Earth in about 20 minutes), and the page should say so.
+**Source.** Michael asked how to animate the acoustics of finding the core, 25 Oct; logged as a candidate on his word.
+
+### The Moon's birth, without the fireworks (working name)   · 25 Oct 2026 · loose
+**Idea.** Michael's: most pictures of the giant impact look like video games. What happened was dramatic, but nobody could have seen it: a flash, then mostly dust settling into a spiral around a molten Earth and Moon. He wants no drama, but a sense of scale; Theia's core ending up as part of the Earth; and controls that show in a gross way why the angle mattered. Not a physical model, but something that leaves her feeling she understands what happened.
+**Where it sits.** Stories, timeline strand; the *Moon forms* event; beside *The Moon that filled the sky* and *Molten to black, twice*.
+**Opens.** The first deep event she can run rather than watch.
+**Costs.** Being right in a "gross way" without a simulation needs care about what is guessed (Theia's size, the angle, how much of the Moon is Earth).
+**Source.** Michael, 25 Oct, Cowork chat. Later the same chat: the angle is a dial she turns, "as long as the results are reasonable" (three rough outcomes blended: head-on, about 45°, too glancing). 28 Oct, on the Earth bench: the impact on the globe is *no flash*, the crust sinking into the melt (ruled, Spec-Earth-3D.md). Telling it in detail would be this story, linked from there; replaying it with its words belongs with play.
+
+### Journeys close in: Shackleton, Marco Polo, Li Bai (working name)   · 29 Oct 2026 · loose
+**Idea.** Michael, seeing the Earth at half a kilometre a pixel: stories that follow a real journey close in on the globe. Shackleton across the Antarctic ice and sea; Marco Polo into China; Li Bai's wanderings through China; Mary Shelley's summer of 1816 round Geneva.
+**Where it sits.** Stories, on the 3D Earth once the story maps move onto it (Spec-Earth-3D step 10); beside the voyage idea (the globe turning so the traveller stays centred).
+**Opens.** A journey she can follow at the scale it was walked or sailed, with the time control the voyage idea wanted.
+**Costs.** Waits on the story maps moving onto the Earth. Michael's own caution: he is behind on proving the stories already written.
+**Source.** Michael, 29 Oct, Cowork chat.
+
+**More journeys (30 Oct, Michael and Claude).** Shackleton's *Endurance* is well recorded: Worsley's near-daily positions, the *James Caird* logbook at the Canterbury Museum, the wreck found in 2022 about four miles from where he put it; the record itself is a "how do we know?" story. Others: Bligh's open-boat voyage after the *Bounty* mutiny (1789, about 3,600 nautical miles in 47 days); HMS *Challenger* (1872–76, the first soundings of the deep sea, a partner for Drain the Sea); Zheng He's treasure fleets (1405–33); Magellan and Elcano (1519–22, the day "lost" to the date line); Darwin's *Beagle*; Polynesian wayfinding (Tupaia; *Hōkūleʻa*, 1976); Nansen's *Fram* drifting in the Arctic ice on purpose (1893–96); Ibn Battuta (1325–54); Nellie Bly (1889, 72 days); animal journeys (the Arctic tern pole to pole; eels to the Sargasso Sea). **A pair:** Xuanzang's real walk to India and back (629–645) beside *Journey to the West*, the novel it became, with Monkey, Pigsy and Sandy: the real road on the globe, the legend along it, and which parts are real. Michael is skipping Columbus.
+
+### Milanković in Budapest (working name)   · 1 Nov 2026 · loose
+**Idea.** Arrested on his honeymoon in 1914, interned at Nezsider, then let out to Budapest under police watch, Milutin Milanković worked in the Academy's library and worked out how the Earth's orbit sets the sunlight that brings the ice ages. Vindicated by sea-floor mud in 1976. The twist: the 100,000-year rhythm she sees in the window is the part his theory explains least well, still argued.
+**Where it sits.** Stories; opened from the *last million years* window.
+**Opens.** The window's rhythm gets a person and a puzzle that is still open.
+**Costs.** "All by hand, in 100 days" not yet confirmed. The orbit's three wobbles want a picture, which may want its own interactive.
+**Source.** The "how to convey 4.6 billion" chat and the "recent rows" chat, 1 Nov (facts checked so far in Worknote-Deep-Time-Window-02.md).
+
+### The Earth experimenting: a glide across the window (working name)   · 2 Nov 2026 · loose
+**Idea.** Michael: the periods could inspire poetry. Glide across the first seas, aware of the deep-sea vents, and feel that the Earth isn't boring but is relentlessly experimenting with whatever chemistry is available, the chemistry getting richer, above all once oxygen arrives. A narrated glide across the window, square by square, the boxes rising as it passes.
+**Where it sits.** A Time Machine narration (Worknote-Time-Slider) or a story of its own.
+**Opens.** Every period exciting; the feeling of change without a lesson.
+**Costs.** Must stay honest: whether life (and intelligence) was inevitable is argued. Michael believes it was; the narration lets her reach her own view.
+**Source.** Michael, 2 Nov, the "recent rows" chat.
+
+### Life freezes the planet; animals in the snowball (working name)   · 2 Nov 2026 · loose
+**Idea.** The first great freeze, about 2.4 billion years ago, was probably caused by life: bacteria's oxygen destroyed the methane that kept the young Earth warm. The second, about 720 to 635 million years ago, may be when the first animals, and with them nerve cells, began. Michael: usually a gee-whiz, but it didn't stop much. Remember neurons for the brain stories.
+**Where it sits.** Period boxes 4 and 7 of the window; the brain stories (Brain-Series-Map.md).
+**Opens.** A bridge from deep time to the brain series: where nerve cells came from.
+**Costs.** When animals and neurons began is argued; the box batch checks it.
+**Source.** Michael and Claude, 2 Nov, the "recent rows" chat.
+
 ### A Japan corner (working name)   · 14 Oct 2026 · loose
 **Idea.** A corner of the woods a child can explore as deeply as she likes, not a required path. A survey course's thirteen stops, from the Jomon to Japan now, serve as our private map. Each stop becomes stories on the timeline and map. France and Mexico could follow the same way.
 **Where it sits.** Stories, timeline, map. The Great Wave is already a door into the Edo stop.
@@ -532,6 +867,13 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** Michael especially liked the slab.
 **Costs.** Check the figures.
 **Source.** iPad chat, 14 Oct; Michael's tree question, Claude's numbers. *(Merged from the holding pen, 12 Nov.)*
+
+### The proof nobody can read yet (working name)   · 23 Nov 2026 · candidate
+**Idea.** A timeline event for November 2026: Levent Alpöge, a mathematician at Anthropic, working with Claude, posted what he believes is a proof of the Riemann hypothesis. Others ran the 17 million lines of checking code and it passed; the explanation runs to 250,000 pages and nobody has yet understood it. The same day Alessandro Masullo and Brian Conrad released an unfinished 940-page proof made by hand. Told as a thing that happened this month, with its ending unknown. Eileen's way in: astronomers have long used telescopes to see a thing first and then spent years explaining it; this is the same.
+**Where it sits.** An event in the last 150 years (*Electricity*), and a story too if the primes get one. Near *The edge of knowing* and the story *Primes* on the desk.
+**Opens.** A true case of the difference between knowing that a thing is so and seeing why, which is the house rule about constructions. The first event in which Claude is a character. A reason to say what Riemann guessed about the primes in words she can hold.
+**Costs.** Nothing is settled: the event needs "may have", its year, and a Watch line checked often (whether the proof stands, whether Masullo's does, whether anyone has explained it). Mathematicians are divided about how it was done, and each side gets its own reasons. Claude writing about Claude wants a reader who is not Claude. The hypothesis itself cannot be half-explained.
+**Source.** Michael, 23 Nov, from the *Science* article of that week; the event was Claude's suggestion, the telescope Eileen's.
 
 ## Practice and Maya
 
@@ -579,6 +921,86 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Costs.** The brief's four stops shrink to one, so Claude's round-two and round-three choices go unreviewed until the file is read. The weekly task's day is not chosen.
 **Source.** Michael's ask for a checkable routine, chat of 11 Oct; the ladder, inbox and sweep Claude's.
 
+### Enablers   · 16 Oct 2026 · loose
+**Idea.** A brief, well-made explanation, interactive where it can be, that any story, lab or map can call when the child picks something that leans on an idea she has not met. Written once, called from anywhere, never required. First case: how the sea floor records the magnet in stripes, a minute long, the smallest form of Make your own stripes.
+**Where it sits.** Across the whole; called the way stories call lab tools. The full story on the subject can contain it or open from it.
+**Opens.** Makes Why-Stories' rule (a story teaches what it needs inside itself) cheap to keep. Things usually fenced off behind prerequisites become reachable from wherever she is.
+**Costs.** This is where teaching sneaks back in. It must never block, never say "first you need", never check readiness; it is offered, and it returns her to where she was (see A story opens the lab, and a marker is the way back). Each one has to be good enough to stand alone.
+**Source.** Michael, 16 Oct: "a brief explanation maybe interactive, that we can call if the child picks something that needs it first."
+*Added the same day.* Michael's name for them: **enablers**, the tool she needs at the moment (our word, not hers). His model is Tom Ingerson, an astronomer who told physics as stories and, when one leaned on something, asked "do you know about x?" and, if not, gave only the part of x that mattered here. It never felt like teaching; it felt like being let into a secret space by a secret passage. So: offered as a question, partial on purpose, cut to the context. Much of math (combinatorics, Königsberg) and of physics needs no enabler at all; how often one is needed is an open question.
+*Added later the same day, Michael:* lots of prerequisites are vocabulary that is not really necessary. Making 2 on a plane re-ruled by halves shows her what fractions are; finding π with darts works for a child who has never heard of percentages. Three kinds, then: a **word** (drop it, or name the thing after she has seen it), something the **tool can show** (no enabler needed), and a **fact about the world** she could not guess (the magnet flips, rock remembers, old sea floor sinks). Only the third is an enabler.
+
+### The Pool Desk: wanted, in review, done   · 19 Oct 2026 · candidate
+**Idea.** One private page on claude.ai, on the Mac and the iPad, for everything wanted for the timelines and stories: three rooms (Wanted, In review, Done) with filters for kind, timeline, strand and "wanted as a story". Michael approves, asks for a fix or drops; he can add an idea from anywhere. The desk holds the lists and his verdicts; the words stay in the vault, one home each.
+**Where it sits.** Across the whole; the front door the pool brief's events ledger was meant to be (Prompt-Pool.md). Described in Pool-Desk.md.
+**Opens.** A map of where CW is going, not just of what exists. Daily runs start from it and put their drafts back on it.
+**Costs.** Must not drift from the vault: the vault stays the source for words, the desk for state. The older wanted lists (Candidates-Deep-06-07, Events-To-Upgrade, Stories-Ledger) are not on it yet.
+**Source.** Michael, 19 Oct: "maps, candidate lists, and filters are all things we need to begin to take seriously."
+
+### Drawings that say what is guessed   · 19 Oct 2026 · candidate
+**Idea.** Creatures are drawn in ink and wash, not painted: what the fossils show in solid line, what is guessed in a light broken line, with a short italic note on the drawing saying which. No drama.
+**Where it sits.** Across the whole; Life-Drawing-Style.md.
+**Opens.** Pictures that carry "how do you know?" inside them; Claude can draw them, so every creature can have one.
+**Costs.** Each drawing took two or three tries in the trial.
+**Source.** Michael, after dinosaurpictures.org: game-engine pictures are sugar; Claude's trilobite, 19 Oct.
+
+### One prose standard, with a fresh reader   · 25 Oct 2026 · candidate
+**Idea.** All prose a child reads is held to one page, Prose-Standard.md, which every brief names rather than copies; its test is that she reads to the end and tells someone one thing. Each batch ends with a fresh reader's four questions, and the morning page runs a voice check on Mondays.
+**Where it sits.** Across the whole: Prompt-Pool, Prompt-Elements-Entries, the cw-story skill, the morning page.
+**Opens.** One place where lessons from Michael's edits land once and reach every kind of writing; drift shows in the batch files instead of on the iPad.
+**Costs.** One more agent per batch. The standard must stay short, or it becomes the checklist it was meant to replace.
+**Source.** Michael, 25 Oct, after the elements of batch 01 read as walls of text beside the events.
+
+### Aim high, then scale   · 26 Oct 2026 · candidate
+**Idea.** Every interactive is made for the best machine we have (Michael's iPad Pro M5) and steps itself down on smaller machines through three tiers, full, middle and floor, chosen by timing its own frames, never by asking what the device is. The child never sees a setting. Each interactive names the one thing that must survive the floor. Phones get a still picture and *This one needs a bigger screen*. A picture she keeps is always made at full tier, whatever the live view runs at.
+**Where it sits.** Across the whole; `claude/Standard-Interactives.md` (draft, 26 Oct). The four other 3D chats build to it.
+**Opens.** Art made once at full size; no story held back by "a 5 year old platform" (Michael).
+**Costs.** Each interactive needs its tier numbers and its floor named in its spec, and a test on a lower machine than Michael's.
+**Source.** Michael, 25–26 Oct; the tier scheme Claude's.
+
+### One way to write shaders: WebGPU and TSL   · 26 Oct 2026 · candidate
+**Idea.** WebGPU is on by default in Safari 26 and later, on the iPad and the Mac. CW's 3D uses three.js's WebGPU renderer, which falls back to WebGL 2, and every shader is written in TSL, which runs on both. The 25 Oct sketches (old GLSL) get rewritten first.
+**Where it sits.** Across the whole; the technology floor of the standard and the shared 3D shelf (`js/3d/`).
+**Opens.** Compute on the graphics card: the gas of hundreds of thousands of balls; one shader language, not two.
+**Costs.** three.js's own manual still calls the WebGPU renderer experimental; the two sketches must be ported. three.js pinned (r186) and kept in the site, not loaded from a CDN.
+**Source.** Michael's yes to Claude's recommendation, 26 Oct.
+
+### One finger turns the ball (working name)   · 26 Oct 2026 · ruled
+**Idea.** In 3D, one finger turns the ball the way you'd turn a globe in your hand; pinch zooms, two fingers move the view, tap picks, *Reset view* as in Glass.
+**Where it sits.** Across the whole; the gestures of `js/3d/scene.js`.
+**Opens.** The Earth, the Sun and the furnace all handle alike.
+**Costs.** In Glass one finger moves the view, so this is a new gesture; by the gestures ruling it waits for Michael.
+**Source.** Claude, in the standard of 26 Oct.
+*Ruled the same day:* Michael said yes; now in `claude/Standard-Interactives.md`, section 4.
+
+### A globe on a stand turns like a globe on a stand   · 27 Oct 2026 · ruled
+**Idea.** Things with an axis (the Earth) keep the deep-time ruling: north up at rest, the poles the limits of the tilt, a drag right moves the surface east. The free trackball stays for the Sun.
+**Where it sits.** Across the whole; `scene.js`.
+**Opens.** Antarctica never ends up on top by accident.
+**Costs.** Amends *One finger turns the ball* (26 Oct): the standard should say which gesture a thing with an axis gets.
+**Source.** The audit of 26 Oct; Michael, 27 Oct.
+
+### The Earth runs on phones, plainly   · 27 Oct 2026 · ruled
+**Idea.** The Earth is an exception to the standard's no-3D-on-phones rule: one version for every screen, at the lowest tier on a phone, with the still picture only for a phone too old to draw 3D. Michael: not focused on phones, and not designing around them.
+**Where it sits.** Across the whole; the standard's section 1.
+**Opens.** No second engine kept alive for phones.
+**Costs.** The standard needs a line for the exception.
+**Source.** Michael, 27 Oct. In `claude/Spec-Earth-3D.md`, *Where it runs*.
+
+### Logs as a house habit, named late through Napier   · 1 Nov 2026 · candidate
+**Idea.** Michael: make logarithms intuitive across CW, idea first, named later through Napier's story. Candidates: the log spiral (Bernoulli's tombstone, the mason who carved the wrong spiral), octaves, Powers of Ten, folding paper, ancestors (32 doublings back), twenty questions (33 find anyone on Earth), rice on a chessboard. Michael: "All of them appeal."
+**Where it sits.** Across the whole: stories, the sound lab (octaves), the window and Big and Small.
+**Opens.** A sense of scale that adults lack, built up quietly before the word arrives.
+**Costs.** Each needs its own story; the Napier story must come after enough of them.
+**Source.** The "how to convey 4.6 billion" chat, 31 Oct to 1 Nov (not logged then: that chat couldn't reach the vault).
+
+### Counting in squares of a thousand travels (working name)   · 1 Nov 2026 · loose
+**Idea.** The window's method, a block of a thousand squares and a ladder of such blocks, can quantify anything big: time, people, stars, money, distance.
+**Where it sits.** Across the whole; the window and Big and Small are the first two.
+**Opens.** One picture of magnitude she learns once and meets everywhere.
+**Costs.** Nothing known.
+**Source.** The "how to convey 4.6 billion" chat (not logged then).
+
 ### Ask before sound   · 7 Oct 2026 · ruled
 **Idea.** Any story or tool that may make sound opens by asking whether sound is all right. Michael thought there was already a ruling; the March geometry app already asks "may I use sound?" with *yes* / *no*, and has a Sound toggle.
 **Where it sits.** Every story and lab that uses sound, starting with the circles-only Glass app (a quiet sound when a circle is drawn).
@@ -606,3 +1028,11 @@ The entries below are from the chats of 3 to 6 Oct 2026 and are real. The 4 and 
 **Opens.** Fast review. Because the desk saves before and after for each edit, later batches can be written with Michael's edits in hand, so there's less to fix over time.
 **Costs.** Needs a decisions file Claude Code reads. A hosted version would work from the iPad too.
 **Source.** iPad chat, 14 Oct; Michael asked for editing; saving edits as examples was Claude's suggestion. *(Merged from the holding pen, 12 Nov.)*
+
+### Told aloud: the element entries in a storyteller's voice (working name)   · 23 Nov 2026 · ruled
+**Idea.** Michael asked what the element entries would sound like if Kipling had written them, caring more for delight than word limits. Carbon was rewritten that way; he then took out the overt Kipling and kept the delight. What survived: things a hand can touch (soot, chimneys, a pencil), a list that climbs ("A few had it as diamonds."), a turn on its own line, the strangest fact first and again last ("both of them are a quarter of you"), and saying what a person did, not what they had ("used a large lens to focus sunlight onto small diamonds, and the diamonds burned").
+**Where it sits.** Across the whole: Prose-Standard.md and Prompt-Elements-Entries.md; first the ten entries of Elements batch 01, then any reference prose.
+**Opens.** A reference entry she reads for pleasure and repeats to someone. A register between the plain entry and a full story.
+**Costs.** Runs about half again as long as the 150 to 250 words the schema allows. Bends the standard's rule against sentences that admire themselves, so the standard needs a line saying what is wanted, or editors will flatten it. Each added detail (the carbon rising to the outer layers, Tennant weighing the gas) must be checked before it ships. Carbon's wording is Michael's by ruling.
+**Source.** Michael, 23 Nov, in the editor pass 11 session; the Kipling draft was Claude's, the trimmed register and the Lavoisier sentence Michael's.
+*Ruled the same evening:* Ruling-Voice-01.md. The test is whether it is read; the voice is never finished.
