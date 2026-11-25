@@ -9,7 +9,7 @@ updated: 2026-11-25
 
 ## For Michael, first
 
-Nearly everything is done. Two commits are made, because the prompt asked for them: the Ideas Ledger's 430 lines as they stood, and the 23 Nov tidy of `claude/` as moves. Everything else is in the working tree, waiting for your word to commit and push.
+Nearly everything is done. Two commits are made, because the prompt asked for them: the Ideas Ledger's 430 lines as they stood, and the 23 Nov tidy of `claude/` as moves. Everything else was committed (`0ac08d19`) and all of it pushed on your word, "Commit and push", 25 Nov 2026.
 
 Four things need you:
 
@@ -99,10 +99,10 @@ All three status lines say they were amended. No Elements lab or `data/elements.
   - `Editor-Pass-11-02.md`: `git mv`. `c5861241d83c2b0372944278e505fa373bdb868f565e922176862c50b36f1b88`, the same.
   - `Prompt-Elements-Voice-01.md`: never committed, so moved by hand. `916f8eb005a9f5ff82a6c507510826919dad670bf47b8109136353448372ae55`, the same.
 
-  The moves are not staged; they go in with the rest, on your word.
+  The moves went in with the rest, in `0ac08d19`.
 
 ## 8. Board and MANIFEST
 
 The board's head line records this session. The Brain lab entry records the four choices. MANIFEST has one entry, dated 25 Nov, for the two stores. Both will go in the same commit as the items they record.
 
-**When you say go:** one commit with items 1 to 7's remaining changes, this report, the board and this session's MANIFEST hunk, then the push. On the site, the five creatures and the two dates show in the Time lab and the Time Machine once it is pushed.
+**Committed and pushed:** one commit (`0ac08d19`) with items 1 to 7's remaining changes, this report, the board and this session's MANIFEST hunk, then the push. Checked on curiouswoods.org the same day: the live store holds the five creatures, and the Time lab shows them and the two dates.
